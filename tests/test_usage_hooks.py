@@ -1,4 +1,5 @@
 """Triggers: tools/hooks/usage_log.py, tools/hooks/skill_gate.py, their wiring, /reuse-scan and agent descriptions."""
+import datetime
 import glob
 import json
 import os
@@ -120,6 +121,67 @@ def test_stats_counts_and_names_the_unused(tmp_path):
     assert "bench-runner 1" in out and "mesh-reader 0" in out                 # the 2020 line is outside 7 days
     assert re.search(r"never called: .*mesh-reader", out) and "Explore (agent) 1" in out
     assert "handover 0" in out and "validate-delivery 0" in out
+
+
+def _slug(path):
+    return re.sub(r"[^A-Za-z0-9]", "-", str(path))
+
+
+def test_backfill_from_past_transcripts(tmp_path):                # #109
+    repo, projects, log = tmp_path / "repo", tmp_path / "projects", tmp_path / "logs/u.jsonl"
+    repo.mkdir()
+    now = datetime.datetime.now(datetime.timezone.utc)
+    ts = [(now - datetime.timedelta(hours=h)).strftime("%Y-%m-%dT%H:%M:%S.123Z") for h in (5, 4, 3, 2, 1)]
+    old = "2020-01-01T00:00:00.000Z"
+
+    def at(e, t, sid="s1", **kw):
+        return {**e, "timestamp": t, "sessionId": sid, "gitBranch": "harness/x", **kw}
+
+    def agent(sub):
+        return {"type": "assistant", "message": {"content": [
+            {"type": "tool_use", "id": "a", "name": "Agent", "input": {"subagent_type": sub} if sub else {}}]}}
+
+    main = projects / _slug(repo)
+    wt = projects / (_slug(repo) + "--claude-worktrees-wt-1")
+    other = projects / (_slug(repo) + "-other")                         # another repo with the same prefix
+    for d in (main, wt, other):
+        d.mkdir(parents=True)
+    (main / "s1.jsonl").write_text("".join(json.dumps(e, ensure_ascii=False) + "\n" for e in [
+        at(command("takeover"), ts[0]),
+        at(agent("bench-runner"), ts[1]),
+        at(quoted("<command-name>/handover</command-name>"), ts[1]),      # quoted: not a command
+        at(skill_call("blender-mcp"), ts[2]),
+        at(skill_call("revit-mcp", success=False), ts[2]),               # failed load: not logged
+        at(agent("source-inspector"), ts[3], isSidechain=True),          # a subagent's own call
+        at(agent("mesh-reader"), old),                                   # outside --days
+    ]) + "not json\n", encoding="utf-8")
+    (wt / "s2.jsonl").write_text(json.dumps(at(agent(None), ts[4], sid="s2")) + "\n", encoding="utf-8")
+    (other / "s3.jsonl").write_text(json.dumps(at(agent("bench-runner"), ts[4], sid="s3")) + "\n", encoding="utf-8")
+    env = {**os.environ, "AGR_USAGE_LOG": str(log), "AGR_CLAUDE_PROJECTS": str(projects),
+           "CLAUDE_PROJECT_DIR": str(repo), "GIT_DIR": str(tmp_path / "no-repo")}
+
+    def backfill():
+        r = subprocess.run([sys.executable, str(LOG_HOOK), "backfill", "--days", "3"], capture_output=True, text=True,
+                           encoding="utf-8", env=env)
+        assert r.returncode == 0, r.stderr
+        return r.stdout
+
+    out = backfill()
+    got = [(r["session_id"], r["kind"], r["name"], r["command"], r["branch"]) for r in lines(log)]
+    assert got == [("s1", "command", "takeover", None, "harness/x"),
+                   ("s1", "agent", "bench-runner", "takeover", "harness/x"),
+                   ("s1", "skill", "blender-mcp", "takeover", "harness/x"),
+                   ("s2", "agent", "general-purpose", None, "harness/x")]
+    assert lines(log)[1]["time"] == ts[1][:19] + "+00:00" and all(r["source"] == "backfill" for r in lines(log))
+    assert "4 new" in out
+    assert "0 new" in backfill() and len(lines(log)) == 4                 # idempotent
+
+    # a session the live hook already logged is not backfilled again (no double count)
+    live = {"time": now.isoformat(timespec="seconds"), "session_id": "s4", "kind": "agent", "name": "bench-runner"}
+    with open(log, "a", encoding="utf-8") as f:
+        f.write(json.dumps(live) + "\n")
+    (main / "s4.jsonl").write_text(json.dumps(at(agent("bench-runner"), ts[4], sid="s4")) + "\n", encoding="utf-8")
+    assert "0 new" in backfill() and len(lines(log)) == 5
 
 
 @pytest.mark.parametrize("tool, loaded_by, denied", [

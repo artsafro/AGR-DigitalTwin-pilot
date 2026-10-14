@@ -130,7 +130,8 @@ registered for Codex and Antigravity; Claude uses only its own user-scope regist
 - `tools/hooks/skill_gate.py`: PreToolUse on DCC MCP tools (3ds Max, Blender, Revit) denies the call in the
   main session until `3dsmax-mcp-dev` / `blender-mcp` / `revit-mcp` is loaded.
 - `tools/hooks/usage_log.py`: PostToolUse on Agent / Skill and UserPromptSubmit `/commands` ->
-  `logs/agent-usage.jsonl` in the main checkout (git-ignored); `stats --days N`.
+  `logs/agent-usage.jsonl` in the main checkout (git-ignored); `stats --days N`; `backfill --days N` (#109) adds
+  past usage from this repository's `~/.claude/projects` transcripts (idempotent; skips sessions the hooks logged).
 - `tools/hooks/save_transcript.py` (#121): `/handover` copies the session transcript to `logs/transcripts/
   <branch>-pr<N>-<session>.jsonl` in the main checkout (git-ignored), never over an existing copy; the handoff's
   `Transcript:` line names it and `session_context.py` prints it. The session is proven by a nonce: the agent's Bash call

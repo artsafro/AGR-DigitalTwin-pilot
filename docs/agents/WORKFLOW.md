@@ -73,7 +73,7 @@ An event makes a skill or subagent mandatory, not optional:
 Hooks (Claude Code): `tools/hooks/skill_gate.py` (PreToolUse) denies a DCC MCP call in the main session until its
 skill is loaded; `tools/hooks/usage_log.py` writes every subagent call, skill load and /command to
 `logs/agent-usage.jsonl` (local, main checkout). `/takeover` ends with the 7-day counts, so what is never called
-shows up.
+shows up. `py -3 tools/hooks/usage_log.py backfill --days N` fills the log from past transcripts (#109).
 
 ## Rule of three (user 2026-10-14 [D075])
 
