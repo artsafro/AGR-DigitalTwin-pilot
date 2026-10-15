@@ -1,7 +1,7 @@
 """FBX scene checks from a Blender readback (tools/blender/fbx_readback.py).
 
 Fills the scene stages the header-only validator leaves not_run: V003 (triangulation,
-triangle limits, object types), V004 (applied transforms), V006 (NPM embedded images),
+triangle limits, object types), V004 (applied transforms, regulatory topology defect count), V006 (NPM embedded images),
 V008 (one UV channel, mirrored islands, glass tile), V010 (UCX triangle budget only),
 V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
 """
@@ -74,6 +74,52 @@ def _pivot_findings(meshes: list[dict], ucx: list[dict], src: str) -> list[Findi
     return out
 
 
+def _topology_finding(meshes: list[dict], profile: dict, src: str) -> Finding:
+    """Regulatory defect ceiling for every mesh, UCX included (reg p.8 §3.7, p.29 §3.11)."""
+    limit = profile["geometry"].get("duplicate_or_self_intersection_count_max", 100)
+    tol = float(profile["geometry"].get("geometric_error_tolerance_m", 0.002))
+    expected = (f"<= {limit} duplicates/self-intersections at {tol} m per mesh; "
+                "0 isolated vertices/edges/polygons; 0 zero-length edges")
+    blocked = []
+    for mesh in meshes:
+        topo = mesh.get("topology")
+        if not isinstance(topo, dict):
+            blocked.append(f"{mesh['name']} (no topology)")
+        elif "error" in topo:
+            blocked.append(f"{mesh['name']} ({topo['error']})")
+        else:
+            got = topo.get("tol_m")
+            try:
+                differs = abs(float(got) - tol) > 1e-12
+            except (TypeError, ValueError):
+                differs = True
+            if differs:
+                blocked.append(f"{mesh['name']} (tol_m {got})")
+    if blocked:
+        return _f("not_run", "topology defects", f"{src}: {blocked[:5]}", expected, [8, 29], src)
+    offenders = []
+    max_dup = 0
+    element_keys = ("isolated_vertices", "isolated_edges", "isolated_polygons", "zero_length_edges")
+    for mesh in meshes:
+        topo = mesh["topology"]
+        dup = int(topo["duplicates_and_self_intersections"])
+        max_dup = max(max_dup, dup)
+        nonzero = []
+        if dup > 0:
+            nonzero.append(f"duplicates_and_self_intersections={dup}")
+        for key in element_keys:
+            count = int(topo[key])
+            if count > 0:
+                nonzero.append(f"{key}={count}")
+        if dup > limit or any(int(topo[key]) > 0 for key in element_keys):
+            offenders.append(f"{mesh['name']} ({', '.join(nonzero)})")
+    if offenders:
+        return _f("fail", "topology defects", f"{src}: {offenders[:5]}", expected, [8, 29], src)
+    return _f("pass", "topology defects",
+              f"{src}: max {max_dup} duplicates/self-intersections, no isolated or zero-length elements",
+              expected, [8, 29], src)
+
+
 def scene_findings(rb: dict, kind: str, role: str, profile: dict) -> dict[str, list[Finding]]:
     """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}."""
     src = Path(rb["source"]).name
@@ -114,6 +160,7 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict) -> dict[str, l
            if any(abs(a) > ANGLE_TOL_DEG for a in m["rotation_euler_deg"]) or any(abs(s - 1) > SCALE_TOL for s in m["scale"])]
     out["V004"].append(_f("fail" if bad else "pass", "applied transforms", f"{src}: {bad or 'rotation 0, scale 1'}",
                           "rotation 0, scale 1 after reset", [8, 29, 33], src))
+    out["V004"].append(_topology_finding(meshes, profile, src))
 
     if kind == "vpm" and role != "light":
         # V010: UCX triangle budget only; shape, coverage and offsets need other checks (reg p.34-37)

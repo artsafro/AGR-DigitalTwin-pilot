@@ -1,7 +1,8 @@
 # Ported from AGR max/AGR_Workbench/check_fbx.py (sha256 e8c032b17279) and
 # tools/profile_snapshot_common.py (sha256 cbb176e2b241) object/image facts on 2026-10-06; changes: one standalone
 # script, no RunRecord/config files, adds triangles, polygon degrees, UV channels, UDIM tiles,
-# mirrored UV triangles, transforms and embedded image facts for the V002-V013 scene stages.
+# mirrored UV triangles, transforms, embedded image facts and regulatory topology counts
+# for the V002-V013 scene stages.
 """Structural FBX readback in an isolated factory Blender process.
 
     blender --background --factory-startup --python-exit-code 1 \
@@ -11,12 +12,27 @@ Readback facts only; it does not judge the delivery (twinqa.scene does) and neve
 the source. Exit 2 when the file imports but holds no non-empty mesh.
 """
 import hashlib
+import importlib.util
 import json
 import math
 import sys
 from pathlib import Path
 
 import bpy
+
+_TOPOLOGY = None
+
+
+def _topology_module():
+    """Load the regulatory counter by path. Blender runs this file as a script, not a package."""
+    global _TOPOLOGY
+    if _TOPOLOGY is None:
+        path = Path(__file__).resolve().parents[2] / "src" / "twinqa" / "geometry" / "topology.py"
+        spec = importlib.util.spec_from_file_location("regulatory_topology", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        _TOPOLOGY = module
+    return _TOPOLOGY
 
 args = sys.argv[sys.argv.index("--") + 1:]
 if len(args) != 2:
@@ -65,6 +81,18 @@ def mesh_facts(obj):
         facts["udim_tiles"] = sorted(t for t in tiles if t is not None)
         facts["uv_outside_udim_grid"] = None in tiles
         facts["mirrored_uv_triangles"] = mirrored
+    try:
+        from mathutils.bvhtree import BVHTree
+
+        coords = [[float(p.x), float(p.y), float(p.z)] for p in world]
+        polys = [list(p.vertices) for p in mesh.polygons]
+        edge_ix = [tuple(int(i) for i in e.vertices) for e in mesh.edges]
+        tree = BVHTree.FromPolygons(world, polys, epsilon=0.0)
+        overlaps = tree.overlap(tree) or []
+        pairs = [(int(a), int(b)) for a, b in overlaps if a != b]
+        facts["topology"] = _topology_module().count_defects(coords, polys, edge_ix, candidate_pairs=pairs)
+    except Exception as exc:  # record, never hide, never crash the readback
+        facts["topology"] = {"error": f"{type(exc).__name__}: {exc}"}
     return facts
 
 

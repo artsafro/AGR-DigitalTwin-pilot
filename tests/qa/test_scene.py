@@ -12,11 +12,31 @@ from test_validator import PROFILES, STEM, good_files
 from twinqa.scene import find_blender, readback, scene_findings, ucx_triangle_limit
 
 
+def _clean_topology(**overrides):
+    topo = {
+        "duplicate_vertices": 0,
+        "duplicate_edges": 0,
+        "duplicate_polygons": 0,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 0,
+        "tol_m": 0.002,
+    }
+    topo.update(overrides)
+    return topo
+
+
 def mesh(name="SM_Test_K_1_Main", tris=12, degrees=None, rot=(0, 0, 0), scale=(1, 1, 1), uv=1, mirrored=0,
-         tiles=(1001,), loc=(0, 0, 0)):
-    return {"name": name, "triangles": tris, "polygon_degrees": degrees or {"3": tris}, "rotation_euler_deg": list(rot),
-            "scale": list(scale), "uv_channels": uv, "mirrored_uv_triangles": mirrored, "udim_tiles": list(tiles),
-            "location": list(loc)}
+         tiles=(1001,), loc=(0, 0, 0), topology=None, omit_topology=False):
+    facts = {"name": name, "triangles": tris, "polygon_degrees": degrees or {"3": tris}, "rotation_euler_deg": list(rot),
+             "scale": list(scale), "uv_channels": uv, "mirrored_uv_triangles": mirrored, "udim_tiles": list(tiles),
+             "location": list(loc)}
+    if not omit_topology:
+        facts["topology"] = _clean_topology(**(topology or {}))
+    return facts
 
 
 def rb(*meshes, other=()):
@@ -31,7 +51,7 @@ def statuses(found, stage):
 def test_clean_vpm_mesh_passes_scene_stages():
     found = scene_findings(rb(mesh()), "vpm", "oks", PROFILES.vpm)
     assert set(statuses(found, "V003").values()) == {"pass"}
-    assert statuses(found, "V004") == {"applied transforms": "pass"}
+    assert statuses(found, "V004") == {"applied transforms": "pass", "topology defects": "pass"}
     assert set(statuses(found, "V008").values()) == {"pass"}
 
 
@@ -181,6 +201,43 @@ def test_readback_returncode_0_with_valid_report_returns_dictionary(monkeypatch)
     assert result == expected_data
 
 
+@pytest.mark.parametrize("kind", ["npm", "vpm"])
+@pytest.mark.parametrize("count, status", [(100, "pass"), (101, "fail")])
+def test_topology_duplicate_limit(kind, count, status):
+    profile = PROFILES.npm if kind == "npm" else PROFILES.vpm
+    found = scene_findings(rb(mesh(topology={"duplicates_and_self_intersections": count})), kind, "oks", profile)
+    assert statuses(found, "V004")["topology defects"] == status
+
+
+@pytest.mark.parametrize("kind", ["npm", "vpm"])
+@pytest.mark.parametrize("key", ["isolated_vertices", "isolated_edges", "isolated_polygons", "zero_length_edges"])
+def test_topology_isolated_or_zero_length_fails(kind, key):
+    profile = PROFILES.npm if kind == "npm" else PROFILES.vpm
+    found = scene_findings(rb(mesh(topology={key: 1})), kind, "oks", profile)
+    assert statuses(found, "V004")["topology defects"] == "fail"
+
+
+def test_topology_missing_readback_is_not_run():
+    found = scene_findings(rb(mesh(omit_topology=True)), "vpm", "oks", PROFILES.vpm)
+    assert statuses(found, "V004")["topology defects"] == "not_run"
+
+
+def test_topology_error_is_not_run():
+    found = scene_findings(rb(mesh(topology={"error": "RuntimeError: boom"})), "npm", "oks", PROFILES.npm)
+    assert statuses(found, "V004")["topology defects"] == "not_run"
+
+
+def test_topology_tolerance_mismatch_is_not_run():
+    found = scene_findings(rb(mesh(topology={"tol_m": 0.001})), "vpm", "ground", PROFILES.vpm)
+    assert statuses(found, "V004")["topology defects"] == "not_run"
+
+
+def test_ucx_topology_defects_fail():
+    found = scene_findings(rb(mesh(name="UCX_SM_Test_K_1_Main_001", topology={"zero_length_edges": 1})),
+                           "vpm", "oks", PROFILES.vpm)
+    assert statuses(found, "V004")["topology defects"] == "fail"
+
+
 BLENDER = find_blender()
 MAKE_CUBE = """
 import bpy, sys
@@ -219,3 +276,58 @@ def test_blender_roundtrip_through_validator(tmp_path, variant):
     else:
         assert st["V003"].status == "fail" and st["V008"].status == "fail"
         assert report.exit_code == 1
+
+
+MAKE_TOPOLOGY = """
+import bmesh, bpy, sys
+out, variant = sys.argv[sys.argv.index('--') + 1], sys.argv[-1]
+bpy.ops.wm.read_factory_settings(use_empty=True)
+bpy.ops.mesh.primitive_cube_add(size=1, location=(0.5, 0.5, 0.5))
+obj = bpy.context.active_object
+obj.name = 'SM_Test_K_1_Main'
+if variant == 'defect':
+    bpy.ops.mesh.primitive_cube_add(size=1, location=(1.0, 0.75, 0.6))
+    other = bpy.context.active_object
+    bpy.ops.object.select_all(action='DESELECT')
+    obj.select_set(True)
+    other.select_set(True)
+    bpy.context.view_layer.objects.active = obj
+    bpy.ops.object.join()
+    obj = bpy.context.active_object
+    obj.name = 'SM_Test_K_1_Main'
+bpy.context.view_layer.objects.active = obj
+obj.select_set(True)
+bpy.ops.object.modifier_add(type='TRIANGULATE')
+bpy.ops.object.modifier_apply(modifier='Triangulate')
+if variant == 'defect':
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    bm.verts.new((10.0, 10.0, 10.0))
+    bm.to_mesh(obj.data)
+    bm.free()
+    obj.data.update()
+bpy.ops.export_scene.fbx(filepath=out)
+"""
+
+
+@pytest.mark.blender
+@pytest.mark.skipif(BLENDER is None, reason="Blender not installed")
+@pytest.mark.parametrize("variant", ["clean", "defect"])
+def test_blender_topology_counts(tmp_path, variant):
+    fbx_path = tmp_path / f"topology_{variant}.fbx"
+    subprocess.run([BLENDER, "--background", "--factory-startup", "--python-exit-code", "1",
+                    "--python-expr", MAKE_TOPOLOGY, "--", str(fbx_path), variant],
+                   check=True, capture_output=True, timeout=300)
+    report = readback(fbx_path, blender=BLENDER)
+    topo = report["meshes"][0]["topology"]
+    found = scene_findings(report, "vpm", "oks", PROFILES.vpm)
+    if variant == "clean":
+        for key in ("duplicate_vertices", "duplicate_edges", "duplicate_polygons", "self_intersections",
+                    "isolated_vertices", "isolated_edges", "isolated_polygons", "zero_length_edges",
+                    "duplicates_and_self_intersections"):
+            assert topo[key] == 0
+        assert statuses(found, "V004")["topology defects"] == "pass"
+    else:
+        assert topo["isolated_vertices"] >= 1
+        assert topo["self_intersections"] > 0
+        assert statuses(found, "V004")["topology defects"] == "fail"
