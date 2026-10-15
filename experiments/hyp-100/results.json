@@ -1,0 +1,1322 @@
+{
+  "synthetic": true,
+  "delivery_passed": false,
+  "versions": {
+    "ezdxf": "1.4.3",
+    "python": "3.14.7 (main, Aug  7 2026, 02:26:22) [MSC v.1944 64 bit (AMD64)]"
+  },
+  "source_hashes": {
+    "experiments/bim-autocad-agr/experiment.py": "902eb59b709c53d00f4e288e9d69e7dddf81d5c6de5ee200d7a432580af881d8",
+    "experiments/acad-coreconsole-agr-plans/experiment.py": "e151de898ebc37acd42d6d7492718d241e50e8fe23bebac6ee450230c63b85e9",
+    "experiments/hyp-100/decoder.py": "5f86b5dee61a80ef087ef3d5f4ba0a215b1bc5a7aaf1dad9a1f71c42bc23fd48",
+    "experiments/hyp-100/driver.py": "18bb64de109f714fb2d70ef44d8bdb1166eb251602d515feefc82c5a958a2e35"
+  },
+  "fixtures": {
+    "label": "synthetic",
+    "dxf_version": "R2018",
+    "insunits": 4,
+    "normals": {
+      "default": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "neg_z": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "tilted": [
+        0.0,
+        0.6,
+        0.8
+      ]
+    },
+    "point_wcs": [
+      123.0,
+      456.0,
+      789.0
+    ],
+    "polyline3d_wcs": [
+      [
+        100.0,
+        200.0,
+        300.0
+      ],
+      [
+        1100.0,
+        200.0,
+        300.0
+      ],
+      [
+        1100.0,
+        200.0,
+        1300.0
+      ],
+      [
+        100.0,
+        200.0,
+        1300.0
+      ]
+    ],
+    "lwpolyline_xy": [
+      [
+        100.0,
+        200.0
+      ],
+      [
+        1100.0,
+        200.0
+      ],
+      [
+        1100.0,
+        700.0
+      ],
+      [
+        100.0,
+        700.0
+      ]
+    ],
+    "lwpolyline_elevation": 300.0,
+    "lwpolyline_format": "xy",
+    "ocs_bases": {
+      "default": {
+        "X": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "Y": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "N": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "neg_z": {
+        "X": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "Y": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "N": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      "tilted": {
+        "X": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "Y": [
+          0.0,
+          -0.8,
+          0.6
+        ],
+        "N": [
+          0.0,
+          0.6,
+          0.8
+        ]
+      }
+    },
+    "expected_features": {
+      "P_POINT": {
+        "kind": "POINT",
+        "closed": false,
+        "vertex_count": 1
+      },
+      "P_3D": {
+        "kind": "POLYLINE",
+        "closed": true,
+        "vertex_count": 4
+      },
+      "P_LW": {
+        "kind": "LWPOLYLINE",
+        "closed": true,
+        "vertex_count": 4
+      }
+    }
+  },
+  "oracle": {
+    "default": {
+      "P_POINT": [
+        [
+          123.0,
+          456.0,
+          789.0
+        ]
+      ],
+      "P_3D": [
+        [
+          100.0,
+          200.0,
+          300.0
+        ],
+        [
+          1100.0,
+          200.0,
+          300.0
+        ],
+        [
+          1100.0,
+          200.0,
+          1300.0
+        ],
+        [
+          100.0,
+          200.0,
+          1300.0
+        ]
+      ],
+      "P_LW": [
+        [
+          100.0,
+          200.0,
+          300.0
+        ],
+        [
+          1100.0,
+          200.0,
+          300.0
+        ],
+        [
+          1100.0,
+          700.0,
+          300.0
+        ],
+        [
+          100.0,
+          700.0,
+          300.0
+        ]
+      ]
+    },
+    "neg_z": {
+      "P_POINT": [
+        [
+          123.0,
+          456.0,
+          789.0
+        ]
+      ],
+      "P_3D": [
+        [
+          100.0,
+          200.0,
+          300.0
+        ],
+        [
+          1100.0,
+          200.0,
+          300.0
+        ],
+        [
+          1100.0,
+          200.0,
+          1300.0
+        ],
+        [
+          100.0,
+          200.0,
+          1300.0
+        ]
+      ],
+      "P_LW": [
+        [
+          -100.0,
+          200.0,
+          -300.0
+        ],
+        [
+          -1100.0,
+          200.0,
+          -300.0
+        ],
+        [
+          -1100.0,
+          700.0,
+          -300.0
+        ],
+        [
+          -100.0,
+          700.0,
+          -300.0
+        ]
+      ]
+    },
+    "tilted": {
+      "P_POINT": [
+        [
+          123.0,
+          456.0,
+          789.0
+        ]
+      ],
+      "P_3D": [
+        [
+          100.0,
+          200.0,
+          300.0
+        ],
+        [
+          1100.0,
+          200.0,
+          300.0
+        ],
+        [
+          1100.0,
+          200.0,
+          1300.0
+        ],
+        [
+          100.0,
+          200.0,
+          1300.0
+        ]
+      ],
+      "P_LW": [
+        [
+          -100.0,
+          20.0,
+          360.0
+        ],
+        [
+          -1100.0,
+          20.0,
+          360.0
+        ],
+        [
+          -1100.0,
+          -380.0,
+          660.0
+        ],
+        [
+          -100.0,
+          -380.0,
+          660.0
+        ]
+      ]
+    }
+  },
+  "repetitions": [
+    {
+      "rep": 1,
+      "dxf_sha256": {
+        "default": "d846db8d9145f38ac7aecfcd45557820e0c21721422b2b1b6ea1a3e4ffb99281",
+        "neg_z": "f095ef0ccba7777548e5c81675aa6b7e976464860a13370e08cbacc3144dc36e",
+        "tilted": "4a2e0ef7597e423f073549f5df070c67ea210f6107a1239bd93b7bd148bd023d"
+      },
+      "drawings": {
+        "default": {
+          "entities": [
+            {
+              "dxftype": "POINT",
+              "layer": "P_POINT",
+              "handle": "2F",
+              "extrusion": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "has_extrusion": false
+            },
+            {
+              "dxftype": "POLYLINE",
+              "layer": "P_3D",
+              "handle": "30",
+              "extrusion": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "has_extrusion": false,
+              "flags": 9,
+              "is_3d_polyline": true
+            },
+            {
+              "dxftype": "LWPOLYLINE",
+              "layer": "P_LW",
+              "handle": "36",
+              "extrusion": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "has_extrusion": false,
+              "flags": 1,
+              "elevation": 300.0,
+              "closed": true,
+              "points_xyseb": [
+                [
+                  100.0,
+                  200.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  1100.0,
+                  200.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  1100.0,
+                  700.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  100.0,
+                  700.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              ]
+            }
+          ],
+          "raw_group_codes": [
+            {
+              "dxftype": "POINT",
+              "layer": "P_POINT",
+              "210": null,
+              "220": null,
+              "230": null,
+              "70": null
+            },
+            {
+              "dxftype": "POLYLINE",
+              "layer": "P_3D",
+              "210": null,
+              "220": null,
+              "230": null,
+              "70": [
+                "9"
+              ]
+            },
+            {
+              "dxftype": "LWPOLYLINE",
+              "layer": "P_LW",
+              "210": null,
+              "220": null,
+              "230": null,
+              "70": [
+                "1"
+              ]
+            }
+          ]
+        },
+        "neg_z": {
+          "entities": [
+            {
+              "dxftype": "POINT",
+              "layer": "P_POINT",
+              "handle": "2F",
+              "extrusion": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "has_extrusion": true
+            },
+            {
+              "dxftype": "POLYLINE",
+              "layer": "P_3D",
+              "handle": "30",
+              "extrusion": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "has_extrusion": true,
+              "flags": 9,
+              "is_3d_polyline": true
+            },
+            {
+              "dxftype": "LWPOLYLINE",
+              "layer": "P_LW",
+              "handle": "36",
+              "extrusion": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "has_extrusion": true,
+              "flags": 1,
+              "elevation": 300.0,
+              "closed": true,
+              "points_xyseb": [
+                [
+                  100.0,
+                  200.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  1100.0,
+                  200.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  1100.0,
+                  700.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  100.0,
+                  700.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              ]
+            }
+          ],
+          "raw_group_codes": [
+            {
+              "dxftype": "POINT",
+              "layer": "P_POINT",
+              "210": [
+                "0.0"
+              ],
+              "220": [
+                "0.0"
+              ],
+              "230": [
+                "-1.0"
+              ],
+              "70": null
+            },
+            {
+              "dxftype": "POLYLINE",
+              "layer": "P_3D",
+              "210": [
+                "0.0"
+              ],
+              "220": [
+                "0.0"
+              ],
+              "230": [
+                "-1.0"
+              ],
+              "70": [
+                "9"
+              ]
+            },
+            {
+              "dxftype": "LWPOLYLINE",
+              "layer": "P_LW",
+              "210": [
+                "0.0"
+              ],
+              "220": [
+                "0.0"
+              ],
+              "230": [
+                "-1.0"
+              ],
+              "70": [
+                "1"
+              ]
+            }
+          ]
+        },
+        "tilted": {
+          "entities": [
+            {
+              "dxftype": "POINT",
+              "layer": "P_POINT",
+              "handle": "2F",
+              "extrusion": [
+                0.0,
+                0.6,
+                0.8
+              ],
+              "has_extrusion": true
+            },
+            {
+              "dxftype": "POLYLINE",
+              "layer": "P_3D",
+              "handle": "30",
+              "extrusion": [
+                0.0,
+                0.6,
+                0.8
+              ],
+              "has_extrusion": true,
+              "flags": 9,
+              "is_3d_polyline": true
+            },
+            {
+              "dxftype": "LWPOLYLINE",
+              "layer": "P_LW",
+              "handle": "36",
+              "extrusion": [
+                0.0,
+                0.6,
+                0.8
+              ],
+              "has_extrusion": true,
+              "flags": 1,
+              "elevation": 300.0,
+              "closed": true,
+              "points_xyseb": [
+                [
+                  100.0,
+                  200.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  1100.0,
+                  200.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  1100.0,
+                  700.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  100.0,
+                  700.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              ]
+            }
+          ],
+          "raw_group_codes": [
+            {
+              "dxftype": "POINT",
+              "layer": "P_POINT",
+              "210": [
+                "0.0"
+              ],
+              "220": [
+                "0.6"
+              ],
+              "230": [
+                "0.8"
+              ],
+              "70": null
+            },
+            {
+              "dxftype": "POLYLINE",
+              "layer": "P_3D",
+              "210": [
+                "0.0"
+              ],
+              "220": [
+                "0.6"
+              ],
+              "230": [
+                "0.8"
+              ],
+              "70": [
+                "9"
+              ]
+            },
+            {
+              "dxftype": "LWPOLYLINE",
+              "layer": "P_LW",
+              "210": [
+                "0.0"
+              ],
+              "220": [
+                "0.6"
+              ],
+              "230": [
+                "0.8"
+              ],
+              "70": [
+                "1"
+              ]
+            }
+          ]
+        }
+      },
+      "comparable_sha256": "37d4611e5eebdc4a8b9d0c6bc34b1c8fcaecb634ed59ae0eeb8a6d8d394aca66"
+    },
+    {
+      "rep": 2,
+      "dxf_sha256": {
+        "default": "a8c0831a79b3f452e111e431b3116dcad58f7d44406625db29a232a80a874c90",
+        "neg_z": "81025b595b87ec03e93af283e8437fe88af46630260e4c1bc11ff0bec4fbde74",
+        "tilted": "664b7ab65d9f8430169714d6aedcfa5696a491b57a58708b7c353837dfeac98b"
+      },
+      "observation_sha256": "3a307f45b34fd4d4a243a9e176df533f325cd51c7dc49fa317512aff41223509",
+      "comparable_sha256": "37d4611e5eebdc4a8b9d0c6bc34b1c8fcaecb634ed59ae0eeb8a6d8d394aca66"
+    },
+    {
+      "rep": 3,
+      "dxf_sha256": {
+        "default": "d9d979b769ce9f1e57ae2b3cb59b4bb8b212d32b26b7b6117c6bf6ee9cc68ff2",
+        "neg_z": "c0dc3fd248773b54b127ff00058f927f73c630c89c845b9ec6ee8b30b7133450",
+        "tilted": "e04cff69f7c52450f4b6b02396f0f9e0b0806493a819275a162980898ca446fc"
+      },
+      "observation_sha256": "3a307f45b34fd4d4a243a9e176df533f325cd51c7dc49fa317512aff41223509",
+      "comparable_sha256": "37d4611e5eebdc4a8b9d0c6bc34b1c8fcaecb634ed59ae0eeb8a6d8d394aca66"
+    }
+  ],
+  "dxf_sha256_identical_across_reps": false,
+  "rep1_readers": {
+    "baseline": {
+      "default": {
+        "accepted": true,
+        "diagnostics": [],
+        "insunits": 4,
+        "feature_count": 3,
+        "missing_layers": [],
+        "extra_layers": [],
+        "features": [
+          {
+            "layer": "P_POINT",
+            "kind": "POINT",
+            "closed": false,
+            "vertex_count": 1,
+            "vertices_mm": [
+              [
+                123.0,
+                456.0,
+                789.0
+              ]
+            ],
+            "errors_mm": [
+              0.0
+            ],
+            "max_error_mm": 0.0
+          },
+          {
+            "layer": "P_3D",
+            "kind": "POLYLINE",
+            "closed": true,
+            "vertex_count": 4,
+            "vertices_mm": [
+              [
+                100.0,
+                200.0,
+                300.0
+              ],
+              [
+                1100.0,
+                200.0,
+                300.0
+              ],
+              [
+                1100.0,
+                200.0,
+                1300.0
+              ],
+              [
+                100.0,
+                200.0,
+                1300.0
+              ]
+            ],
+            "errors_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max_error_mm": 0.0
+          },
+          {
+            "layer": "P_LW",
+            "kind": "LWPOLYLINE",
+            "closed": true,
+            "vertex_count": 4,
+            "vertices_mm": [
+              [
+                100.0,
+                200.0,
+                300.0
+              ],
+              [
+                1100.0,
+                200.0,
+                300.0
+              ],
+              [
+                1100.0,
+                700.0,
+                300.0
+              ],
+              [
+                100.0,
+                700.0,
+                300.0
+              ]
+            ],
+            "errors_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max_error_mm": 0.0
+          }
+        ]
+      },
+      "neg_z": {
+        "accepted": true,
+        "diagnostics": [],
+        "insunits": 4,
+        "feature_count": 3,
+        "missing_layers": [],
+        "extra_layers": [],
+        "features": [
+          {
+            "layer": "P_POINT",
+            "kind": "POINT",
+            "closed": false,
+            "vertex_count": 1,
+            "vertices_mm": [
+              [
+                -123.0,
+                456.0,
+                -789.0
+              ]
+            ],
+            "errors_mm": [
+              1597.0597985047398
+            ],
+            "max_error_mm": 1597.0597985047398
+          },
+          {
+            "layer": "P_3D",
+            "kind": "POLYLINE",
+            "closed": true,
+            "vertex_count": 4,
+            "vertices_mm": [
+              [
+                -100.0,
+                200.0,
+                -300.0
+              ],
+              [
+                -1100.0,
+                200.0,
+                -300.0
+              ],
+              [
+                -1100.0,
+                200.0,
+                -1300.0
+              ],
+              [
+                -100.0,
+                200.0,
+                -1300.0
+              ]
+            ],
+            "errors_mm": [
+              632.4555320336759,
+              2280.350850198276,
+              3405.87727318528,
+              2607.6809620810595
+            ],
+            "max_error_mm": 3405.87727318528
+          },
+          {
+            "layer": "P_LW",
+            "kind": "LWPOLYLINE",
+            "closed": true,
+            "vertex_count": 4,
+            "vertices_mm": [
+              [
+                -100.0,
+                200.0,
+                -300.0
+              ],
+              [
+                -1100.0,
+                200.0,
+                -300.0
+              ],
+              [
+                -1100.0,
+                700.0,
+                -300.0
+              ],
+              [
+                -100.0,
+                700.0,
+                -300.0
+              ]
+            ],
+            "errors_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max_error_mm": 0.0
+          }
+        ]
+      },
+      "tilted": {
+        "accepted": true,
+        "diagnostics": [],
+        "insunits": 4,
+        "feature_count": 3,
+        "missing_layers": [],
+        "extra_layers": [],
+        "features": [
+          {
+            "layer": "P_POINT",
+            "kind": "POINT",
+            "closed": false,
+            "vertex_count": 1,
+            "vertices_mm": [
+              [
+                -123.0,
+                108.59999999999997,
+                904.8
+              ]
+            ],
+            "errors_mm": [
+              441.1489544360272
+            ],
+            "max_error_mm": 441.1489544360272
+          },
+          {
+            "layer": "P_3D",
+            "kind": "POLYLINE",
+            "closed": true,
+            "vertex_count": 4,
+            "vertices_mm": [
+              [
+                -100.0,
+                20.0,
+                360.0
+              ],
+              [
+                -1100.0,
+                20.0,
+                360.0
+              ],
+              [
+                -1100.0,
+                620.0,
+                1160.0
+              ],
+              [
+                -100.0,
+                620.0,
+                1160.0
+              ]
+            ],
+            "errors_mm": [
+              275.68097504180446,
+              2208.1666603768836,
+              2244.1033844277317,
+              485.7983120596448
+            ],
+            "max_error_mm": 2244.1033844277317
+          },
+          {
+            "layer": "P_LW",
+            "kind": "LWPOLYLINE",
+            "closed": true,
+            "vertex_count": 4,
+            "vertices_mm": [
+              [
+                -100.0,
+                20.0,
+                360.0
+              ],
+              [
+                -1100.0,
+                20.0,
+                360.0
+              ],
+              [
+                -1100.0,
+                -380.0,
+                660.0
+              ],
+              [
+                -100.0,
+                -380.0,
+                660.0
+              ]
+            ],
+            "errors_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max_error_mm": 0.0
+          }
+        ]
+      }
+    },
+    "candidate": {
+      "default": {
+        "accepted": true,
+        "diagnostics": [],
+        "insunits": 4,
+        "feature_count": 3,
+        "missing_layers": [],
+        "extra_layers": [],
+        "features": [
+          {
+            "layer": "P_POINT",
+            "kind": "POINT",
+            "closed": false,
+            "vertex_count": 1,
+            "vertices_mm": [
+              [
+                123.0,
+                456.0,
+                789.0
+              ]
+            ],
+            "errors_mm": [
+              0.0
+            ],
+            "max_error_mm": 0.0
+          },
+          {
+            "layer": "P_3D",
+            "kind": "POLYLINE",
+            "closed": true,
+            "vertex_count": 4,
+            "vertices_mm": [
+              [
+                100.0,
+                200.0,
+                300.0
+              ],
+              [
+                1100.0,
+                200.0,
+                300.0
+              ],
+              [
+                1100.0,
+                200.0,
+                1300.0
+              ],
+              [
+                100.0,
+                200.0,
+                1300.0
+              ]
+            ],
+            "errors_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max_error_mm": 0.0
+          },
+          {
+            "layer": "P_LW",
+            "kind": "LWPOLYLINE",
+            "closed": true,
+            "vertex_count": 4,
+            "vertices_mm": [
+              [
+                100.0,
+                200.0,
+                300.0
+              ],
+              [
+                1100.0,
+                200.0,
+                300.0
+              ],
+              [
+                1100.0,
+                700.0,
+                300.0
+              ],
+              [
+                100.0,
+                700.0,
+                300.0
+              ]
+            ],
+            "errors_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max_error_mm": 0.0
+          }
+        ]
+      },
+      "neg_z": {
+        "accepted": true,
+        "diagnostics": [],
+        "insunits": 4,
+        "feature_count": 3,
+        "missing_layers": [],
+        "extra_layers": [],
+        "features": [
+          {
+            "layer": "P_POINT",
+            "kind": "POINT",
+            "closed": false,
+            "vertex_count": 1,
+            "vertices_mm": [
+              [
+                123.0,
+                456.0,
+                789.0
+              ]
+            ],
+            "errors_mm": [
+              0.0
+            ],
+            "max_error_mm": 0.0
+          },
+          {
+            "layer": "P_3D",
+            "kind": "POLYLINE",
+            "closed": true,
+            "vertex_count": 4,
+            "vertices_mm": [
+              [
+                100.0,
+                200.0,
+                300.0
+              ],
+              [
+                1100.0,
+                200.0,
+                300.0
+              ],
+              [
+                1100.0,
+                200.0,
+                1300.0
+              ],
+              [
+                100.0,
+                200.0,
+                1300.0
+              ]
+            ],
+            "errors_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max_error_mm": 0.0
+          },
+          {
+            "layer": "P_LW",
+            "kind": "LWPOLYLINE",
+            "closed": true,
+            "vertex_count": 4,
+            "vertices_mm": [
+              [
+                -100.0,
+                200.0,
+                -300.0
+              ],
+              [
+                -1100.0,
+                200.0,
+                -300.0
+              ],
+              [
+                -1100.0,
+                700.0,
+                -300.0
+              ],
+              [
+                -100.0,
+                700.0,
+                -300.0
+              ]
+            ],
+            "errors_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max_error_mm": 0.0
+          }
+        ]
+      },
+      "tilted": {
+        "accepted": true,
+        "diagnostics": [],
+        "insunits": 4,
+        "feature_count": 3,
+        "missing_layers": [],
+        "extra_layers": [],
+        "features": [
+          {
+            "layer": "P_POINT",
+            "kind": "POINT",
+            "closed": false,
+            "vertex_count": 1,
+            "vertices_mm": [
+              [
+                123.0,
+                456.0,
+                789.0
+              ]
+            ],
+            "errors_mm": [
+              0.0
+            ],
+            "max_error_mm": 0.0
+          },
+          {
+            "layer": "P_3D",
+            "kind": "POLYLINE",
+            "closed": true,
+            "vertex_count": 4,
+            "vertices_mm": [
+              [
+                100.0,
+                200.0,
+                300.0
+              ],
+              [
+                1100.0,
+                200.0,
+                300.0
+              ],
+              [
+                1100.0,
+                200.0,
+                1300.0
+              ],
+              [
+                100.0,
+                200.0,
+                1300.0
+              ]
+            ],
+            "errors_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max_error_mm": 0.0
+          },
+          {
+            "layer": "P_LW",
+            "kind": "LWPOLYLINE",
+            "closed": true,
+            "vertex_count": 4,
+            "vertices_mm": [
+              [
+                -100.0,
+                20.0,
+                360.0
+              ],
+              [
+                -1100.0,
+                20.0,
+                360.0
+              ],
+              [
+                -1100.0,
+                -380.0,
+                660.0
+              ],
+              [
+                -100.0,
+                -380.0,
+                660.0
+              ]
+            ],
+            "errors_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max_error_mm": 0.0
+          }
+        ]
+      }
+    }
+  },
+  "summary_table": {
+    "baseline": {
+      "default": {
+        "P_POINT": 0.0,
+        "P_3D": 0.0,
+        "P_LW": 0.0
+      },
+      "neg_z": {
+        "P_POINT": 1597.0597985047398,
+        "P_3D": 3405.87727318528,
+        "P_LW": 0.0
+      },
+      "tilted": {
+        "P_POINT": 441.1489544360272,
+        "P_3D": 2244.1033844277317,
+        "P_LW": 0.0
+      }
+    },
+    "candidate": {
+      "default": {
+        "P_POINT": 0.0,
+        "P_3D": 0.0,
+        "P_LW": 0.0
+      },
+      "neg_z": {
+        "P_POINT": 0.0,
+        "P_3D": 0.0,
+        "P_LW": 0.0
+      },
+      "tilted": {
+        "P_POINT": 0.0,
+        "P_3D": 0.0,
+        "P_LW": 0.0
+      }
+    }
+  },
+  "decisions": {
+    "baseline_blind_spot": true,
+    "candidate_ok": true,
+    "default_unchanged": true,
+    "serialization_ok": true,
+    "reps_agree": true
+  },
+  "verdict": "CONFIRMED"
+}
