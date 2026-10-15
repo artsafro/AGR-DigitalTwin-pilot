@@ -7,13 +7,13 @@ deliberate embeds vs defects), 2 on input errors.
 """
 import argparse
 import json
-import subprocess
 import sys
 import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
+from twinqa.blender_run import run_blender_script  # noqa: E402
 from twinqa.clearance import near_parallel_overlaps, summary  # noqa: E402
 from twinqa.profiles import load_profiles  # noqa: E402
 from twinqa.scene import find_blender  # noqa: E402
@@ -22,13 +22,9 @@ EXPORT_FACES = Path(__file__).resolve().parents[1] / "blender" / "export_faces.p
 
 
 def faces_from_fbx(fbx: Path) -> list[dict]:
-    blender = find_blender()
-    if not blender:
-        raise FileNotFoundError("Blender not found (set TWINQA_BLENDER)")
     with tempfile.TemporaryDirectory() as tmp:
         out = Path(tmp) / "faces.json"
-        subprocess.run([blender, "--background", "--factory-startup", "--python-exit-code", "1",
-                        "--python", str(EXPORT_FACES), "--", str(fbx), str(out)], check=True, capture_output=True, timeout=900)
+        run_blender_script(EXPORT_FACES, [fbx, out], timeout=900, blender=find_blender())
         return json.loads(out.read_text(encoding="utf-8"))
 
 

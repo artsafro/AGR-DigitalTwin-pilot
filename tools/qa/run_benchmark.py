@@ -29,6 +29,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from dt_ai.geometry.from_spec import BuildError, BuildInputs, build  # noqa: E402
 from dt_ai.spec import SpecError, extract_spec  # noqa: E402
 from dt_ai.spec.model import Spec  # noqa: E402
+from twinqa.blender_run import run_blender_script  # noqa: E402
 from twinqa.geometry import checks  # noqa: E402
 from twinqa.geometry.mesh import assign_material_ids, from_dump  # noqa: E402
 from twinqa.io import read_json  # noqa: E402
@@ -39,11 +40,7 @@ EXPORT = ROOT / "tools/export/export_mesh_blender.py"
 
 
 def blender_run(blender, script, *args, timeout=900):
-    cmd = [blender, "--background", "--factory-startup", "--disable-autoexec", "--python-exit-code", "1",
-           "--python", str(script), "--", *map(str, args)]
-    done = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
-    if done.returncode != 0:
-        raise RuntimeError(f"{script.name} exit {done.returncode}: {(done.stderr or done.stdout)[-800:]}")
+    return run_blender_script(script, args, timeout=timeout, blender=blender, tail_chars=800)
 
 
 def write(path, value):

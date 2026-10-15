@@ -9,10 +9,10 @@ import json
 import math
 import os
 import shutil
-import subprocess
 import tempfile
 from pathlib import Path
 
+from twinqa.blender_run import run_blender_script
 from twinqa.report import Finding
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
@@ -48,16 +48,10 @@ def readback(fbx_path: Path, blender: str | None = None, timeout: int = 600) -> 
         raise FileNotFoundError("Blender not found (set TWINQA_BLENDER)")
     with tempfile.TemporaryDirectory() as tmp:
         out = Path(tmp) / "readback.json"
-        try:
-            proc = subprocess.run([blender, "--background", "--factory-startup", "--python-exit-code", "1",
-                                   "--python", str(READBACK), "--", str(fbx_path), str(out)],
-                                  capture_output=True, text=True, timeout=timeout)
-        except subprocess.TimeoutExpired as exc:
-            raise RuntimeError(f"Blender readback timed out after {timeout} seconds") from exc
-        if proc.returncode != 0:
-            raise RuntimeError(f"Blender readback failed (exit {proc.returncode}): {proc.stderr[-400:]}")
+        proc = run_blender_script(READBACK, [fbx_path, out], timeout=timeout, blender=blender)
         if not out.is_file():
-            raise RuntimeError(f"Blender readback produced no report (exit {proc.returncode}): {proc.stderr[-400:]}")
+            raise RuntimeError(
+                f"Blender readback produced no report (exit {proc.returncode}): {(proc.stderr or '')[-400:]}")
         return json.loads(out.read_text(encoding="utf-8"))
 
 
