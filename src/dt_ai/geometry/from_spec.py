@@ -58,6 +58,7 @@ from shapely.geometry import Point, Polygon
 from shapely.geometry.polygon import orient
 
 from dt_ai.spec.model import Spec
+from twinqa.geometry.mesh import weld as _checker_weld   # the checkers' distance weld (issue #101)
 
 KEY_M = 1e-6          # vertices on one 1 µm grid are one vertex
 MIN_FEATURE_M = 1e-4  # no decor edge shorter than 0.1 mm is built
@@ -807,9 +808,7 @@ def _hold(mesh, joints, w):
     slab joints (flat at a joint height). Else BuildError: an input at the weld limit is refused rather
     than returned broken."""
     v = np.asarray(mesh.vertices)
-    keys = np.round(v / w).astype(np.int64)
-    _, cell = np.unique(keys, axis=0, return_inverse=True)
-    cell = cell.reshape(-1)
+    cell = _checker_weld(v, w)
     uses = {}
     for ids, _ in mesh.faces:
         c = [int(cell[i]) for i in ids]

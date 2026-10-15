@@ -60,13 +60,64 @@ def from_dump(dump: dict, to_object=None) -> Soup:
                 tuple(m["name"] for m in render), cat(owner, (0,), int))
 
 
+WELD_EPS_M = 1e-9  # exactly weld_m apart is welded despite floating-point arithmetic (inclusive, as the engine)
+
+
 def weld(vertices: np.ndarray, weld_m: float) -> np.ndarray:
-    """Vertex -> welded id; vertices on one weld_m grid cell are one vertex (across meshes)."""
-    if len(vertices) == 0:
+    """Vertex -> welded id (0..k-1), across meshes: a distance weld, as the engine welds (spec weld_m, issue #101).
+    Positions are taken in lexicographic order; a position no group has taken starts a group and takes every free
+    position within weld_m (Euclidean, inclusive) of it. So vertices within weld_m of a group's first are one and
+    no vertex is welded further than weld_m from its group's first, wherever the mesh lies (no grid)."""
+    v = np.asarray(vertices, dtype=float).reshape(-1, 3)
+    if len(v) == 0:
         return np.zeros(0, dtype=int)
-    keys = np.round(vertices / weld_m).astype(np.int64)
-    _, ids = np.unique(keys, axis=0, return_inverse=True)
-    return ids.reshape(-1)
+    pts, back = np.unique(v, axis=0, return_inverse=True)   # sorted lexicographically
+    back = back.reshape(-1)
+    reach = weld_m + WELD_EPS_M
+    first, second = _pairs_within(pts, reach)
+    rep = np.arange(len(pts))
+    if len(first):
+        taken = np.zeros(len(pts), dtype=bool)
+        order = np.argsort(first, kind="stable")
+        first, second = first[order], second[order]
+        starts = np.searchsorted(first, np.arange(len(pts)))
+        ends = np.searchsorted(first, np.arange(len(pts)), side="right")
+        for i in np.unique(first):
+            if taken[i]:
+                continue
+            near = second[starts[i]:ends[i]]
+            near = near[~taken[near]]
+            rep[near] = i
+            taken[near] = True
+    _, ids = np.unique(rep, return_inverse=True)
+    return ids.reshape(-1)[back]
+
+
+def _pairs_within(pts: np.ndarray, reach: float) -> tuple[np.ndarray, np.ndarray]:
+    """Index pairs (i < j) of distinct points at most reach apart, through a grid of reach-sized cells (a pair
+    lies in one cell or two neighbouring ones)."""
+    keys = np.floor(pts / reach).astype(np.int64)
+    keys -= keys.min(axis=0) - 1                         # >= 1, so a neighbour offset never goes negative
+    span = keys.max(axis=0) + 2
+    code = (keys[:, 0] * span[1] + keys[:, 1]) * span[2] + keys[:, 2]
+    order = np.argsort(code, kind="stable")
+    sorted_code = code[order]
+    cells, start, count = np.unique(sorted_code, return_index=True, return_counts=True)
+    firsts, seconds = [], []
+    for dx in (-1, 0, 1):
+        for dy in (-1, 0, 1):
+            for dz in (-1, 0, 1):
+                target = code + (dx * span[1] + dy) * span[2] + dz
+                c = np.searchsorted(cells, target)
+                hit = (c < len(cells)) & (cells[np.minimum(c, len(cells) - 1)] == target)
+                i_hit, c_hit = np.nonzero(hit)[0], c[hit]
+                for k in range(int(count.max())):
+                    ok = count[c_hit] > k
+                    i, j = i_hit[ok], order[start[c_hit[ok]] + k]
+                    keep = (i < j) & (np.linalg.norm(pts[i] - pts[j], axis=1) <= reach)
+                    firsts.append(i[keep])
+                    seconds.append(j[keep])
+    return np.concatenate(firsts), np.concatenate(seconds)
 
 
 def edge_uses(triangles: np.ndarray, ids: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
