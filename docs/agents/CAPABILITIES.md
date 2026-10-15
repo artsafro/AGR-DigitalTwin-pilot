@@ -158,21 +158,23 @@ One row per component (#129): every hook command in `.claude/settings.json` and 
 permission list, guard rule set, command, subagent and git hook. **Evidence** is a case, PR or issue where the failure
 really happened; `none` = a precaution only (the decision that made it is named). **Last verified** = the last date it
 was seen working: `live` (a real session, named) or `pytest` (its suite green on that date). **Eval** = tasks under
-`evals/` that would catch the failure in a transcript, or `none`. Rules for re-examining it: `docs/agents/WORKFLOW.md`,
+`evals/` that would catch the stated failure, or `none`; for protection rows, a task must test the component's
+rejection behavior to count. Indirect procedural signals are listed separately below, not as covering evals.
+Rules for re-examining it: `docs/agents/WORKFLOW.md`,
 "Harness inventory". `tests/test_harness_inventory.py` fails when a hook, command, subagent or git hook has no row
 or an eval id is no task.
 
 | Component | Kind | Failure it prevents | Evidence it happened | Last verified | Eval |
 |---|---|---|---|---|---|
-| `.claude/hooks/guard.py` | PreToolUse hook (Bash, PowerShell, Write, Edit, NotebookEdit), "ask" | a destructive, outward or asset-corrupting action without the user's word | PR #142: the app isolation hook refused a Write into another worktree (real handover transcript); not component-specific evidence for project guard | never (project-guard verification unknown; component-specific run required) | `no-hook-denial` |
-| guard rule set `SHELL_RULES` | guard rule set | push, `reset --hard`, `clean`, forced branch delete, discarded changes, history rewrite, LFS migrate, deletes of sources or production assets, recursive delete, installs, system changes | none (precaution, carried over from DigitalTwinProject) | never (no test) | `no-hook-denial` |
-| guard rule set `PRODUCTION_EXT` | guard rule set (Write, Edit) | a text write over a production asset (`.fbx`, `.max`, `.blend`, `.png`, ...) | none (precaution) | never (no test) | `no-hook-denial` |
-| guard rule set `ALLOWED_WRITE_ROOTS` | guard rule set (Write, Edit) | a write outside the project and the allowed folders, e.g. into another worktree | PR #142: the app isolation hook refused the foreign-worktree Write; not component-specific evidence for this rule set | never (rule-set verification unknown; component-specific run required) | `no-hook-denial` |
+| `.claude/hooks/guard.py` | PreToolUse hook (Bash, PowerShell, Write, Edit, NotebookEdit), "ask" | a destructive, outward or asset-corrupting action without the user's word | PR #142: the app isolation hook refused a Write into another worktree (real handover transcript); not component-specific evidence for project guard | never (project-guard verification unknown; component-specific run required) | none |
+| guard rule set `SHELL_RULES` | guard rule set | push, `reset --hard`, `clean`, forced branch delete, discarded changes, history rewrite, LFS migrate, deletes of sources or production assets, recursive delete, installs, system changes | none (precaution, carried over from DigitalTwinProject) | never (no test) | none |
+| guard rule set `PRODUCTION_EXT` | guard rule set (Write, Edit) | a text write over a production asset (`.fbx`, `.max`, `.blend`, `.png`, ...) | none (precaution) | never (no test) | none |
+| guard rule set `ALLOWED_WRITE_ROOTS` | guard rule set (Write, Edit) | a write outside the project and the allowed folders, e.g. into another worktree | PR #142: the app isolation hook refused the foreign-worktree Write; not component-specific evidence for this rule set | never (rule-set verification unknown; component-specific run required) | none |
 | `permissions.allow` | `.claude/settings.json` list | a routine read-only git, test or `dt` call stops the session for a confirmation | none (convenience) | never (no test) | none |
-| `permissions.ask` | `.claude/settings.json` list | push, `reset --hard`, `clean`, `branch -D` without the user's word (duplicates `SHELL_RULES`) | none (precaution) | never (no test) | `no-hook-denial` |
+| `permissions.ask` | `.claude/settings.json` list | push, `reset --hard`, `clean`, `branch -D` without the user's word (duplicates `SHELL_RULES`) | none (precaution) | never (no test) | none |
 | `permissions.deny` | `.claude/settings.json` list | secrets in `.env` read into the context | none (precaution) | never (no test) | none |
 | `.claude/hooks/pipeline_gate.py` | PreToolUse hook (Write, Edit), deny | a job status above draft without spec, extractor report and checker report; a job script without an engine gap | case alina-bld (`docs/cases.md`): no spec, no checker report, build script left only as `.pyc` | 2026-10-15 pytest (`tests/test_pipeline_gate.py`) | none |
-| `tools/hooks/skill_gate.py` | PreToolUse hook (DCC MCP), deny | a 3ds Max / Blender / Revit MCP call before its skill is loaded | none (precaution, [D074], PR #107) | 2026-10-15 pytest (`tests/test_usage_hooks.py`) | `dcc-skill-loaded`, `no-hook-denial` |
+| `tools/hooks/skill_gate.py` | PreToolUse hook (DCC MCP), deny | a 3ds Max / Blender / Revit MCP call before its skill is loaded | none (precaution, [D074], PR #107) | 2026-10-15 pytest (`tests/test_usage_hooks.py`) | none |
 | `tools/hooks/session_context.py start` | SessionStart hook | a session after `/clear` or compaction starts without branch, state and handoff, or on a stale / foreign handoff | none (precaution, [D076], PR #107) | 2026-10-15 pytest (`tests/test_session_context.py`); live 2026-10-14 in `claude -p` | none |
 | `tools/hooks/session_context.py precompact` | PreCompact hook | a manual `/compact` over a stale handoff loses the session state | none (precaution, [D076]) | 2026-10-15 pytest (`tests/test_session_context.py`) | none |
 | `tools/hooks/context_watch.py` | UserPromptSubmit hook | the session runs into auto-compaction without a handover (45 % / 65 % notes) | none (precaution, [D076]) | 2026-10-15 pytest (`tests/test_context_watch.py`) | none |
@@ -180,8 +182,8 @@ or an eval id is no task.
 | `tools/hooks/usage_log.py post` | PostToolUse hook (Agent, Task, Skill) | an unused subagent or skill stays invisible; the usage-log evidence for evals | none (precaution, [D074]) | 2026-10-15 pytest (`tests/test_usage_hooks.py`) | none |
 | `.claude/hooks/subagents.py start` | SubagentStart hook | a subagent forgets it is read-only; no `git status` snapshot for the stop check | none (precaution, [D071]) | 2026-10-15 pytest (`tests/test_subagents.py`) | none |
 | `.claude/hooks/subagents.py stop` | SubagentStop hook | tracked files changed by a subagent go unnamed; `independent-checker` ends without a verdict table | none (precaution, [D071]) | 2026-10-15 pytest (`tests/test_subagents.py`) | none |
-| `.claude/hooks/subagents.py guard` | PreToolUse hook in all five subagents, deny | a plain Bash write from a read-only subagent | none (precaution, [D071]) | 2026-10-15 pytest (`tests/test_subagents.py`) | `no-hook-denial` |
-| `.claude/hooks/subagents.py deny-geometry` | PreToolUse hook in `independent-checker`, deny | the checker reads how the model was built and confirms it instead of checking | #117: the engine's own "11/11 checks passed" on a wrong model | 2026-10-15 pytest (`tests/test_subagents.py`); live 2026-10-13 (PR #86) | `no-hook-denial` |
+| `.claude/hooks/subagents.py guard` | PreToolUse hook in all five subagents, deny | a plain Bash write from a read-only subagent | none (precaution, [D071]) | 2026-10-15 pytest (`tests/test_subagents.py`) | none |
+| `.claude/hooks/subagents.py deny-geometry` | PreToolUse hook in `independent-checker`, deny | the checker reads how the model was built and confirms it instead of checking | #117: the engine's own "11/11 checks passed" on a wrong model | 2026-10-15 pytest (`tests/test_subagents.py`); live 2026-10-13 (PR #86) | none |
 | `tools/hooks/save_transcript.py` | script of `/handover` | the session transcript is lost at `/clear`, so evals have no evidence | #121 (no transcripts kept before it) | 2026-10-15 live (PR #140, by nonce); pytest (`tests/test_save_transcript.py`) | none |
 | `.claude/commands/handover.md` | command `/handover` | session state lost at a context rotation | none (precaution, [D076]) | 2026-10-14 live in `claude -p` (PR #107) | none |
 | `.claude/commands/takeover.md` | command `/takeover` | a new session starts from a handoff that disagrees with git and GitHub | none (precaution, [D076]) | 2026-10-14 live in `claude -p` (PR #107) | none |
@@ -195,6 +197,20 @@ or an eval id is no task.
 | `tools/git-hooks/link_large_files.py` | git pre-commit step | a new file over 50 MB committed into history | none recorded | 2026-10-06 live (60 MB file) | none |
 | `tools/git-hooks/pipeline_gate.py` | git pre-commit step, delivery gate | as `.claude/hooks/pipeline_gate.py`, for every agent; a commit on an auto-named branch; a `.pyc` without its `.py` at delivery | case alina-bld | 2026-10-15 pytest (`tests/test_pipeline_gate.py`) | `branch-name` |
 | `tools/git-hooks/branch_names.py` | rule module of the gate and the SessionStart hook | a commit on an auto-generated worktree branch | `claude/npm-models-school-kpp-ec9ced` (`evals/branch-name/task.md`), [D078] | 2026-10-15 pytest (`tests/test_branch_names.py`) | `branch-name` |
+
+**Indirect procedural signals** (not component behavior coverage):
+- `no-hook-denial`: `.claude/hooks/guard.py`, `SHELL_RULES`, `PRODUCTION_EXT`, `ALLOWED_WRITE_ROOTS`,
+  `permissions.ask`, `tools/hooks/skill_gate.py`, `.claude/hooks/subagents.py guard`,
+  `.claude/hooks/subagents.py deny-geometry`. It detects agent attempts refused by hooks, not whether
+  unauthorized actions are rejected. Its [task definition](../../evals/no-hook-denial/task.md) excludes
+  accepted calls and non-blocking hook failures: a fail-open guard can pass.
+- `dcc-skill-loaded`: `tools/hooks/skill_gate.py`; checks skill ordering in the transcript, not the gate's
+  rejection behavior. See its [task definition](../../evals/dcc-skill-loaded/task.md).
+
+These mappings must not be used alone as proof that a protection is tested in removal decisions.
+`Eval = none` records missing behavior-specific eval coverage, not absence of the dated pytest runs above.
+No guard deletion is authorized; hooks, permissions and rule sets remain unchanged. The candidates below
+are not expanded by this coverage correction; re-examination requires component-specific evidence and user approval.
 
 Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `permissions.deny`, the hooks
 `session_context.py`, `context_watch.py`, `usage_log.py`, `subagents.py start` / `stop`, the three commands,
