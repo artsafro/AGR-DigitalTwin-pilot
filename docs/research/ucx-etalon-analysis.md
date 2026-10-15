@@ -28,6 +28,10 @@ blender --background --factory-startup --python-exit-code 1 --python tools/blend
 blender --background --factory-startup --python-exit-code 1 --python tools/blender/ucx_audit.py   -- <copy.fbx> <audit.json> 20000
 ```
 
+Exit codes: 0 measured, 2 readback failed (report written), 4 refused before any write — missing
+arguments, or the report path aliases the model (same path in any spelling, or the same file via a
+hard/sym link; `tests/qa/test_ucx_audit_output_guard.py`).
+
 `tools/blender/ucx_audit.py` (new, read-only) uses the pure geometry in
 `src/twinqa/geometry/ucx_audit.py` (probed by `tests/qa/test_ucx_audit.py`):
 

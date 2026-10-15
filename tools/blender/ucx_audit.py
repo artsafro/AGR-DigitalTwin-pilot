@@ -3,6 +3,9 @@
     blender --background --factory-startup --python-exit-code 1 \
         --python tools/blender/ucx_audit.py -- <model.fbx> <report.json> [samples]
 
+Exit 0 measured, 2 readback failed (report written), 4 refused: missing arguments or the
+report path aliases the model (same path or same file via a link) -- nothing is written.
+
 Measures (does not judge, never writes the source): per UCX piece kind (box_aabb /
 box_oriented / convex / custom), triangles, size; naming against reg p.34 §4.2; pairwise
 overlap / touch / gap against the 2 mm - 1 cm band (reg p.36 §13.4, [D098]) for neighbours; Main coverage: area-weighted points
@@ -17,17 +20,26 @@ import random
 import sys
 from pathlib import Path
 
-import bpy
-from mathutils import Vector
-from mathutils.bvhtree import BVHTree
-
 ROOT = Path(__file__).resolve().parents[2]
 _spec = importlib.util.spec_from_file_location("ucx_audit", ROOT / "src/twinqa/geometry/ucx_audit.py")
 ua = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(ua)
 
-args = sys.argv[sys.argv.index("--") + 1:]
+args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
+if len(args) < 2:
+    print("UCX_AUDIT refused: usage -- <model.fbx> <report.json> [samples]", file=sys.stderr)
+    sys.exit(4)
+# guard before bpy and before every write (the failure report too): the JSON must never replace the model
+_alias = ua.output_alias_reason(args[0], args[1])
+if _alias:
+    print(f"UCX_AUDIT refused: {_alias}; nothing written", file=sys.stderr)
+    sys.exit(4)
 source, out = Path(args[0]).resolve(), Path(args[1]).resolve()
+
+import bpy  # noqa: E402
+from mathutils import Vector  # noqa: E402
+from mathutils.bvhtree import BVHTree  # noqa: E402
+
 SAMPLES = int(args[2]) if len(args) > 2 else 20000
 BANDS = (0.01, 0.3, 1.0)  # covered / pedestrian-zone tolerance / other OKS tolerance (reg p.36 §13.5)
 
@@ -196,6 +208,10 @@ except Exception as exc:  # report, never hide
     import traceback
     report["error"] = f"{type(exc).__name__}: {exc}"
     report["traceback"] = traceback.format_exc()
+_alias = ua.output_alias_reason(source, out)  # re-check: a link may have appeared during the run
+if _alias:
+    print(f"UCX_AUDIT refused: {_alias}; nothing written", file=sys.stderr)
+    sys.exit(4)
 out.parent.mkdir(parents=True, exist_ok=True)
 out.write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
 print("UCX_AUDIT", report["readback_ok"], report.get("error", ""))

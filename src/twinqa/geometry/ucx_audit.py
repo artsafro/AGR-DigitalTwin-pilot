@@ -269,6 +269,34 @@ def inside_convex(p, verts, tris, tol=0.0):
     return True
 
 
+def output_alias_reason(source, out):
+    """Why `out` must not be written for `source` (None when it is safe).
+
+    The audit writes a JSON report; it must never land on the model it reads. Rejected:
+    the same resolved path (case-insensitive on Windows, `..`, symlinks) and an existing
+    output that is the same file as the source (hard link, symlink, junction).
+    """
+    import os
+    from pathlib import Path
+
+    src, dst = Path(source), Path(out)
+    try:
+        src_r, dst_r = src.resolve(), dst.resolve()
+    except OSError as exc:
+        return f"cannot resolve paths: {exc}"
+    if os.path.normcase(str(src_r)) == os.path.normcase(str(dst_r)):
+        return f"output path is the input path: {dst_r}"
+    if src.exists() and dst.exists():
+        try:
+            if os.path.samefile(src, dst):
+                return f"output {dst_r} is the same file as input {src_r} (link alias)"
+        except OSError as exc:
+            return f"cannot compare input and output identity: {exc}"
+    if dst.is_dir():
+        return f"output path is a directory: {dst_r}"
+    return None
+
+
 def name_report(names, main_name):
     """Collision names vs reg p.34 §4.2: UCX_SM_{Address}_{Main|Ground}_{001..999}."""
     address = main_name[3:-5] if main_name.startswith("SM_") and main_name.endswith("_Main") else None
