@@ -808,6 +808,170 @@ def check_decor(model: Soup, spec: Spec, tol: dict, ranges: dict) -> dict:
     return result("decor", bad == 0, bad, 0, {"elements": [{k: v for k, v in r.items() if k != "k"} for r in rows]})
 
 
+# rays level or down (never up: a from_spec body is open at the bottom). 16 azimuths at 0/30/60 deg, plus
+# one near-vertical ray at 89 deg -> 49. Grid is rays per side of the projected window.
+ORIENTATION_GRID = 32
+_ORI_AZ = np.deg2rad(np.arange(16) * 22.5)
+_ORI_EL = np.deg2rad(np.array([0.0, 30.0, 60.0]))
+_ORI_AZS = np.append(np.tile(_ORI_AZ, len(_ORI_EL)), 0.0)
+_ORI_ELS = np.append(np.repeat(_ORI_EL, len(_ORI_AZ)), np.deg2rad(89.0))
+ORIENTATION_DIRECTIONS = np.stack((
+    np.cos(_ORI_ELS) * np.cos(_ORI_AZS), np.cos(_ORI_ELS) * np.sin(_ORI_AZS), -np.sin(_ORI_ELS)), axis=1)
+_ORI_EDGE = 1e-6
+_ORI_BARY = -1e-9
+
+
+def _orientation_groups(model: Soup):
+    """Render-mesh names and the mesh index of every triangle. No mesh_index: one mesh named model."""
+    if model.mesh_index is None or len(model.mesh_names) == 0:
+        return ("model",), np.zeros(len(model.triangles), dtype=np.int64)
+    return tuple(model.mesh_names), np.asarray(model.mesh_index, dtype=np.int64)
+
+
+def winding_bad_edges(model: Soup, weld_m: float) -> np.ndarray:
+    """Per render mesh, shared edges whose two triangles traverse them the same way.
+
+    Vertices are welded per mesh (meshes never join). A triangle whose welded corners repeat is dropped.
+    An edge used by one triangle or by more than two is not judged (that is check_mesh). Vectorised with
+    np.unique."""
+    names, owner = _orientation_groups(model)
+    out = np.zeros(len(names), dtype=int)
+    for m in range(len(names)):
+        tri = model.triangles[owner == m]
+        if len(tri) == 0:
+            continue
+        uniq, inv = np.unique(tri.reshape(-1), return_inverse=True)
+        welded = weld(model.vertices[uniq], weld_m)[inv].reshape(-1, 3)
+        welded = welded[(welded[:, 0] != welded[:, 1]) & (welded[:, 1] != welded[:, 2])
+                        & (welded[:, 2] != welded[:, 0])]
+        if len(welded) == 0:
+            continue
+        directed = np.stack((welded[:, [0, 1]], welded[:, [1, 2]], welded[:, [2, 0]]), axis=1).reshape(-1, 2)
+        undirected = np.sort(directed, axis=1)
+        _, inverse, counts = np.unique(undirected, axis=0, return_inverse=True, return_counts=True)
+        twice = counts[inverse] == 2
+        if not twice.any():
+            continue
+        _, directed_counts = np.unique(directed[twice], axis=0, return_counts=True)
+        out[m] = int((directed_counts == 2).sum())
+    return out
+
+
+def _ray_basis(direction):
+    """Orthonormal u, w perpendicular to a unit direction."""
+    helper = np.array([0.0, 0.0, 1.0]) if abs(direction[2]) < 0.9 else np.array([1.0, 0.0, 0.0])
+    along = np.cross(helper, direction)
+    along /= np.linalg.norm(along)
+    across = np.cross(direction, along)
+    return along, across
+
+
+def _cell_span(lo, hi, centre, radius, grid):
+    """Grid cells whose centres lie in [lo, hi], clipped to the window. `inside` is the rows that cover any."""
+    rel_lo = (lo - centre) / radius
+    rel_hi = (hi - centre) / radius
+    i0 = np.ceil((rel_lo + 1.0) * (grid * 0.5) - 0.5 - 1e-9).astype(np.int64)
+    i1 = np.floor((rel_hi + 1.0) * (grid * 0.5) - 0.5 + 1e-9).astype(np.int64)
+    inside = (i1 >= 0) & (i0 < grid)
+    return np.clip(i0, 0, grid - 1), np.clip(i1, 0, grid - 1), inside & (i1 >= i0)
+
+
+def outside_back_faces(model: Soup) -> np.ndarray:
+    """Per render mesh, triangles a ray from outside hits first on their back side.
+
+    Rays travel along +d (level or down; rays from below are never cast) on an ORIENTATION_GRID square about
+    the bounding sphere. The first hit is the smallest depth; it is a back hit when the triangle normal
+    (cross of its edges) points the same way as the ray. Faces not visible from outside — the back of an
+    inner niche — are not judged, because a closer face takes the ray."""
+    names, owner = _orientation_groups(model)
+    out = np.zeros(len(names), dtype=int)
+    if len(model.triangles) == 0 or len(model.vertices) == 0:
+        return out
+    corners = model.corners()
+    lo, hi = model.vertices.min(axis=0), model.vertices.max(axis=0)
+    centre = (lo + hi) / 2
+    radius = float(np.linalg.norm(hi - lo) / 2) + 1.0
+    scale = ((np.arange(ORIENTATION_GRID) + 0.5) / ORIENTATION_GRID * 2.0 - 1.0) * radius
+    normals = np.cross(corners[:, 1] - corners[:, 0], corners[:, 2] - corners[:, 0])
+    length = np.linalg.norm(normals, axis=1)
+    back = np.zeros(len(corners), dtype=bool)
+    for direction in ORIENTATION_DIRECTIONS:
+        along, across = _ray_basis(direction)
+        unit_dot = (normals @ direction) / np.maximum(length, 1e-30)
+        keep = np.flatnonzero((length > 0) & (np.abs(unit_dot) >= _ORI_EDGE))
+        if len(keep) == 0:
+            continue
+        s = corners[keep] @ along
+        t = corners[keep] @ across
+        depth = corners[keep] @ direction
+        su, sv = float(centre @ along), float(centre @ across)
+        s_lo, s_hi, s_ok = _cell_span(s.min(1), s.max(1), su, radius, ORIENTATION_GRID)
+        t_lo, t_hi, t_ok = _cell_span(t.min(1), t.max(1), sv, radius, ORIENTATION_GRID)
+        cover = s_ok & t_ok
+        counts = np.where(cover, (s_hi - s_lo + 1) * (t_hi - t_lo + 1), 0).astype(np.int64)
+        total = int(counts.sum())
+        if total == 0:
+            continue
+        chosen = np.repeat(np.arange(len(keep)), counts)
+        base = np.repeat(np.cumsum(counts) - counts, counts)
+        local = np.arange(total) - base
+        span_t = np.repeat(t_hi - t_lo + 1, counts)
+        di = local // span_t
+        cells_s = np.repeat(s_lo, counts) + di
+        cells_t = np.repeat(t_lo, counts) + (local - di * span_t)
+        ps = su + scale[cells_s] - s[chosen, 0]
+        pt = sv + scale[cells_t] - t[chosen, 0]
+        e1s, e1t = s[chosen, 1] - s[chosen, 0], t[chosen, 1] - t[chosen, 0]
+        e2s, e2t = s[chosen, 2] - s[chosen, 0], t[chosen, 2] - t[chosen, 0]
+        dot00 = e1s * e1s + e1t * e1t
+        dot01 = e1s * e2s + e1t * e2t
+        dot11 = e2s * e2s + e2t * e2t
+        dot02 = e1s * ps + e1t * pt
+        dot12 = e2s * ps + e2t * pt
+        den = dot00 * dot11 - dot01 * dot01
+        inv = np.divide(1.0, den, out=np.zeros_like(den), where=np.abs(den) > 1e-20)
+        bu = (dot11 * dot02 - dot01 * dot12) * inv
+        bv = (dot00 * dot12 - dot01 * dot02) * inv
+        inside = (np.abs(den) > 1e-20) & (bu >= _ORI_BARY) & (bv >= _ORI_BARY) & (bu + bv <= 1.0 - _ORI_BARY)
+        if not inside.any():
+            continue
+        picked = chosen[inside]
+        bw, bv_ = bu[inside], bv[inside]
+        hit_depth = (1.0 - bw - bv_) * depth[picked, 0] + bw * depth[picked, 1] + bv_ * depth[picked, 2]
+        hit_tri = keep[picked]
+        hit_ray = cells_s[inside].astype(np.int64) * ORIENTATION_GRID + cells_t[inside]
+        hit_dot = unit_dot[hit_tri]
+        # smallest depth; a shared edge (equal depth) keeps the front face, the smaller normal dot
+        order = np.lexsort((hit_dot, hit_depth, hit_ray))
+        ray_s = hit_ray[order]
+        first = np.empty(len(order), dtype=bool)
+        first[0] = True
+        first[1:] = ray_s[1:] != ray_s[:-1]
+        winners = hit_tri[order][first]
+        back[winners[hit_dot[order][first] > 0]] = True
+    if back.any():
+        np.add.at(out, owner[back], 1)
+    return out
+
+
+def check_orientation(model: Soup, tol: dict) -> dict:
+    """Winding agrees on shared edges, and every face first seen from outside faces the ray.
+
+    value is bad winding edges plus back-hit triangles; 0 passes, and an empty model passes. Origin:
+    experiment card t_fea03fc1 (docs/experiments/blender-bpy-automation.md on branch
+    experiment/blender-bpy-automation, methods M1a/M1b). The BMesh prototype stays the native cross-check."""
+    names, _ = _orientation_groups(model)
+    winding = winding_bad_edges(model, tol["weld_m"])
+    backs = outside_back_faces(model)
+    value = int(winding.sum() + backs.sum())
+    meshes = [{"name": name, "winding_bad_edges": int(winding[i]), "outside_back_faces": int(backs[i])}
+              for i, name in enumerate(names)]
+    note = ("rays from below are not cast (open body bottom); faces not visible from outside are not judged")
+    return result("orientation", value == 0, value, 0, {
+        "meshes": meshes, "rays": ORIENTATION_GRID * ORIENTATION_GRID * len(ORIENTATION_DIRECTIONS),
+        "directions": len(ORIENTATION_DIRECTIONS), "note": note})
+
+
 def run(model: Soup, etalon: Soup, spec: Spec, tol: dict, ranges: dict | None = None,
         source_class: str | None = None, build: str = "from_spec") -> dict:
     """All §5 checks; tol is the `geometry` block of tolerances.json. The weld is the building's (spec weld_m,
@@ -822,7 +986,7 @@ def run(model: Soup, etalon: Soup, spec: Spec, tol: dict, ranges: dict | None = 
                          build),
               check_budget(model, tol),
               check_opening_planes(model, spec, tol, ranges), check_material_ids(model, tol, ranges),
-              check_decor(model, spec, tol, ranges)]
+              check_decor(model, spec, tol, ranges), check_orientation(model, tol)]
     return {"passed": all(c["status"] == "pass" for c in checks),
             "failed": [c["id"] for c in checks if c["status"] == "fail"],
             "not_measured": [c["id"] for c in checks if c["status"] == "not_measured"],
