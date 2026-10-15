@@ -90,7 +90,11 @@ def run_blender(script, args=(), *, executable=None, output_json=None, outputs=(
             except subprocess.TimeoutExpired as exc:
                 with log.open('a', encoding='utf-8') as stream:
                     stream.write(_text(exc.stdout) + _text(exc.stderr))
-                fail('timeout', f'Blender timed out after {timeout} seconds', exc)
+                tail = (_text(exc.stderr) or _text(exc.stdout))[-400:]
+                message = f'Blender timed out after {timeout} seconds'
+                if tail:
+                    message += f': {tail}'
+                fail('timeout', message, exc)
             code = result.returncode
             stdout, stderr = _text(result.stdout), _text(result.stderr)
             with log.open('a', encoding='utf-8') as stream:

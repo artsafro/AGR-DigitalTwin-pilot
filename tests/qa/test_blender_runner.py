@@ -256,3 +256,113 @@ def test_native_pinned_blender_smoke(runner, tmp_path):
                                 log_path=out.with_suffix('.blender.log'))
     assert result['version'] == '5.1.2'
     assert out.with_suffix('.blender.log').is_file()
+
+
+def test_timeout_retains_diagnostic_in_envelope_message(runner, monkeypatch, tmp_path):
+    out = tmp_path / 'report.json'
+    log = tmp_path / 'blender.log'
+    precreated = subprocess.TimeoutExpired(cmd=['b'], timeout=1, stderr=b'IMPORTANT_TIMEOUT_DIAGNOSTIC')
+
+    def fake_run(*args, **kwargs):
+        raise precreated
+
+    monkeypatch.setattr(subprocess, 'run', fake_run)
+    with pytest.raises(runner.BlenderRunError) as exc_info:
+        runner.run_blender('probe.py', output_json=out, log_path=log, timeout=1)
+
+    error = exc_info.value
+    assert error.envelope['code'] == 'timeout'
+    assert 'IMPORTANT_TIMEOUT_DIAGNOSTIC' in error.envelope['message']
+    assert 'IMPORTANT_TIMEOUT_DIAGNOSTIC' in str(error)
+    assert error.__cause__ is precreated
+    assert 'IMPORTANT_TIMEOUT_DIAGNOSTIC' in log.read_text(encoding='utf-8')
+
+
+@pytest.mark.parametrize(
+    ('stderr', 'stdout', 'expected_message', 'check_mode'),
+    [
+        (
+            'stderr_priority',
+            'stdout_ignored',
+            'Blender timed out after 1 seconds: stderr_priority',
+            'basic',
+        ),
+        (
+            None,
+            'partial',
+            'Blender timed out after 1 seconds: partial',
+            'basic',
+        ),
+        (
+            None,
+            b'partial',
+            'Blender timed out after 1 seconds: partial',
+            'basic',
+        ),
+        (
+            None,
+            None,
+            'Blender timed out after 1 seconds',
+            'basic',
+        ),
+        (
+            '',
+            'stdout_fallback',
+            'Blender timed out after 1 seconds: stdout_fallback',
+            'basic',
+        ),
+        (
+            'PREFIX_' + ('x' * 5000) + '_FINAL_DIAGNOSTIC',
+            'FULL_STDOUT',
+            'Blender timed out after 1 seconds: ' + ('PREFIX_' + ('x' * 5000) + '_FINAL_DIAGNOSTIC')[-400:],
+            'long_stderr',
+        ),
+        (
+            ('а' * 50).encode('utf-8') + b'\xff' + ('б' * 399).encode('utf-8'),
+            None,
+            'Blender timed out after 1 seconds: \ufffd' + ('б' * 399),
+            'unicode_invalid_utf8',
+        ),
+    ],
+    ids=[
+        'stderr_str_precedence_over_stdout',
+        'stderr_none_stdout_str_partial',
+        'stderr_none_stdout_bytes',
+        'both_none_exact_message',
+        'empty_stderr_fallback',
+        'long_stderr_5000_x_last_400_chars',
+        'invalid_utf8_replacement_and_unicode_slicing',
+    ],
+)
+def test_timeout_diagnostic_edge_coverage(runner, monkeypatch, tmp_path, stderr, stdout, expected_message, check_mode):
+    out = tmp_path / 'report.json'
+    log = tmp_path / 'blender.log'
+    precreated = subprocess.TimeoutExpired(cmd=['b'], timeout=1, output=stdout, stderr=stderr)
+
+    def fake_run(*args, **kwargs):
+        raise precreated
+
+    monkeypatch.setattr(subprocess, 'run', fake_run)
+    with pytest.raises(runner.BlenderRunError) as exc_info:
+        runner.run_blender('probe.py', output_json=out, log_path=log, timeout=1)
+
+    error = exc_info.value
+    assert error.envelope['code'] == 'timeout'
+    assert error.__cause__ is precreated
+    assert error.envelope['message'] == expected_message
+    assert expected_message in str(error)
+
+    log_content = log.read_text(encoding='utf-8')
+    if check_mode == 'long_stderr':
+        assert 'PREFIX_' not in error.envelope['message']
+        assert '_FINAL_DIAGNOSTIC' in error.envelope['message']
+        assert len(error.envelope['message'].split(': ', 1)[1]) == 400
+        assert ('PREFIX_' + ('x' * 5000) + '_FINAL_DIAGNOSTIC') in log_content
+        assert 'FULL_STDOUT' in log_content
+    elif check_mode == 'unicode_invalid_utf8':
+        assert '\ufffd' in error.envelope['message']
+        assert 'а' not in error.envelope['message']
+        assert len(error.envelope['message'].split(': ', 1)[1]) == 400
+        assert '\ufffd' in log_content
+        assert ('а' * 50) in log_content
+        assert ('б' * 399) in log_content
