@@ -371,41 +371,31 @@ def _reference_fan_oracle(
     Checks vertex fans per component subset, handling repeated triangle indices
     once per vertex. Does not mutate inputs.
     """
-    from collections import defaultdict, deque
-
     for v_idx in unique_verts:
-        incident_tris = [t for t in comp_tri_ids if v_idx in triangles[t]]
-        if len(incident_tris) <= 1:
+        incident_faces = list(dict.fromkeys(t for t in comp_tri_ids if v_idx in triangles[t]))
+        if len(incident_faces) <= 1:
             continue
 
-        adj: dict[int, list[int]] = defaultdict(list)
-        edge_neighbor_to_tris: dict[int, list[int]] = defaultdict(list)
-        for t in incident_tris:
-            for other in {x for x in triangles[t] if x != v_idx}:
-                edge_neighbor_to_tris[other].append(t)
+        n = len(incident_faces)
+        connected = [
+            [
+                i == j
+                or bool(
+                    {u for u in triangles[incident_faces[i]] if u != v_idx}
+                    & {u for u in triangles[incident_faces[j]] if u != v_idx}
+                )
+                for j in range(n)
+            ]
+            for i in range(n)
+        ]
+        for k in range(n):
+            for i in range(n):
+                for j in range(n):
+                    connected[i][j] = connected[i][j] or (connected[i][k] and connected[k][j])
 
-        for tris in edge_neighbor_to_tris.values():
-            if len(tris) > 1:
-                first = tris[0]
-                for other in tris[1:]:
-                    adj[first].append(other)
-                    adj[other].append(first)
+        if not all(all(row) for row in connected):
+            return False
 
-        visited: set[int] = set()
-        fan_count = 0
-        for t in incident_tris:
-            if t not in visited:
-                fan_count += 1
-                if fan_count > 1:
-                    return False
-                q = deque([t])
-                visited.add(t)
-                while q:
-                    curr = q.popleft()
-                    for nbr in adj[curr]:
-                        if nbr not in visited:
-                            visited.add(nbr)
-                            q.append(nbr)
     return True
 
 
