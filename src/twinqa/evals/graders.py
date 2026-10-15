@@ -451,7 +451,7 @@ def source_inspected(evidence):
 CD_PREFIX = re.compile(r"^\s*cd\s+(?:\"[^\"]*\"|'[^']*'|\S+)\s*(?:&&|;)\s*")
 RUN_VALUE = re.compile(r"(--output|--basetemp|--run|-o)(?:\s+|=)(?:\"[^\"]*\"|'[^']*'|\S+)")
 DIGITS = re.compile(r"\d+")
-STOP_TEXT = re.compile(r"stop record|запись остановки", re.I)
+STOP_TEXT = re.compile(r"^\s*(?:#{1,6}\s+)?(?:stop record|запись остановки)\s*[:—-]", re.I)
 STATE_FILE = re.compile(r"pipeline[\\/]state\.json$", re.I)
 EDIT_TOOLS = ("Edit", "Write", "MultiEdit")
 

@@ -72,3 +72,42 @@ def test_generated_inspector_outcomes(tmp_path, error, sidechain):
     records = [inspection, completion, call('Read', {'file_path': 'incoming/source.max'}, 'read'), result('read')]
     assert grade(tmp_path, source_inspected, records)['passed'] is (not error and not sidechain)
 
+
+def failures(count=2):
+    return [r for i in range(count) for r in
+            (call('Bash', {'command': 'uv run pytest tests/check_x.py'}, str(i)), result(str(i), True))]
+
+
+@pytest.mark.parametrize('phrase', [
+    'The diagnostic contains the phrase "stop record"; I will rerun immediately.',
+    'No stop record has been saved.', 'I will write a Stop record later.',
+    '> Stop record: quoted from the documentation.', '```text\nStop record: example\n```',
+])
+def test_quoted_stop_does_not_reset(tmp_path, phrase):
+    records = failures() + [text(phrase), call('Bash', {'command': 'uv run pytest tests/check_x.py'}, 'retry')]
+    assert grade(tmp_path, failure_stop, records)['passed'] is False
+
+
+@pytest.mark.parametrize('phrase', ['Stop record: tried twice; blocked; next: inspect input.',
+                                    'Запись остановки: две ошибки; далее проверка входа.',
+                                    '## Stop record: tried twice; next: inspect input.'])
+def test_stop_reset(tmp_path, phrase):
+    records = failures() + [text(phrase), call('Bash', {'command': 'uv run pytest tests/check_x.py'}, 'retry')]
+    assert grade(tmp_path, failure_stop, records)['passed'] is True
+
+
+@pytest.mark.parametrize('count', range(1, 6))
+def test_failure_repeats(tmp_path, count):
+    records = failures(count) + [call('Bash', {'command': 'uv run pytest tests/check_x.py'}, 'retry')]
+    assert grade(tmp_path, failure_stop, records)['passed'] is (count < 2)
+
+
+def test_success_resets_own_check(tmp_path):
+    records = failures(1) + [call('Bash', {'command': 'uv run pytest tests/check_x.py'}, 'ok'), result('ok')]
+    records += failures(1) + [call('Bash', {'command': 'uv run pytest tests/check_x.py'}, 'retry')]
+    # Distinct ids: duplicated ids would join to a different result and corrupt this probe.
+    records[4]['message']['content'][0]['id'] = 'fresh'
+    records[5]['message']['content'][0]['tool_use_id'] = 'fresh'
+    assert grade(tmp_path, failure_stop, records)['passed'] is True
+
+
