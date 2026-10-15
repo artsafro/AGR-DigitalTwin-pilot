@@ -5,6 +5,7 @@ wheel lane and is not a delivery: delivery_passed is false. Dumps are synthetic 
 """
 import hashlib
 import json
+import math
 import os
 import shutil
 import subprocess
@@ -76,6 +77,49 @@ def build_dumps(out: Path) -> dict:
     return {"hashes": hashes, "triangles": triangles}
 
 
+def _job(work, lane, script, args, log):
+    args = [Path(arg) for arg in args]
+    job_id = f"{lane}|{Path(script).name}|" + "|".join(arg.relative_to(work).as_posix() for arg in args)
+    return {"lane": lane, "script": Path(script), "args": args, "log": Path(log), "job": job_id}
+
+
+def expected_jobs(work, reps, models=tuple(MODELS)):
+    """Jobs run_matrix executes, in order. reps is an int (1..n) or an iterable of rep numbers."""
+    work = Path(work)
+    jobs = []
+    for rep in _rep_numbers(work, reps):
+        base = work / f"rep{rep}"
+        for model in models:
+            dump = work / "common" / f"{model}-dump.json"
+            for exporter in LANES:
+                slot = base / model / exporter
+                jobs.append(_job(work, exporter, EXPORT,
+                                 [dump, slot / "model.blend", slot / "model.fbx"], slot / "export.log"))
+                jobs.append(_job(work, exporter, MEASURE,
+                                 [slot / "model.blend", slot / "ms-blend.json"], slot / "ms-blend.log"))
+                for reader in LANES:
+                    jobs.append(_job(work, reader, READBACK,
+                                     [slot / "model.fbx", slot / f"rb-{reader}.json"],
+                                     slot / f"rb-{reader}.log"))
+                    jobs.append(_job(work, reader, MEASURE,
+                                     [slot / "model.fbx", slot / f"ms-fbx-{reader}.json"],
+                                     slot / f"ms-fbx-{reader}.log"))
+        for exporter in LANES:
+            slot = base / "UV" / exporter
+            jobs.append(_job(work, exporter, UV_FIXTURE,
+                             [slot / "model.blend", slot / "model.fbx"], slot / "export.log"))
+            jobs.append(_job(work, exporter, MEASURE,
+                             [slot / "model.blend", slot / "ms-blend.json"], slot / "ms-blend.log"))
+            for reader in LANES:
+                jobs.append(_job(work, reader, READBACK,
+                                 [slot / "model.fbx", slot / f"rb-{reader}.json"],
+                                 slot / f"rb-{reader}.log"))
+                jobs.append(_job(work, reader, MEASURE,
+                                 [slot / "model.fbx", slot / f"ms-fbx-{reader}.json"],
+                                 slot / f"ms-fbx-{reader}.log"))
+    return jobs
+
+
 def run_matrix(work, blender, wheel, reps=2, models=tuple(MODELS), timeout=300,
                runner=subprocess.run) -> list[dict]:
     """Export/readback matrix plus the synthetic UV fixture. Writes <work>/runs.json.
@@ -88,7 +132,8 @@ def run_matrix(work, blender, wheel, reps=2, models=tuple(MODELS), timeout=300,
     work.mkdir(parents=True, exist_ok=True)
     runs = []
 
-    def call(lane, script, args, log):
+    def call(job):
+        lane, script, args, log = job["lane"], job["script"], job["args"], job["log"]
         cmd = lane_cmd(lane, blender, wheel, script, args)
         started = time.perf_counter()
         try:
@@ -104,33 +149,14 @@ def run_matrix(work, blender, wheel, reps=2, models=tuple(MODELS), timeout=300,
         log.write_text(text, encoding="utf-8")
         runs.append({"lane": lane, "script": Path(script).name, "args": [str(a) for a in args],
                      "exit": code, "seconds": round(elapsed, 3), "log": str(log),
-                     "tail": text.strip().splitlines()[-2:]})
+                     "tail": text.strip().splitlines()[-2:], "job": job["job"]})
         print(f"{lane} {Path(script).name:26s} exit={code} {elapsed:6.2f}s "
               f"{Path(args[-1]).relative_to(work)}", flush=True)
 
-    for rep in range(1, reps + 1):
-        base = work / f"rep{rep}"
-        base.mkdir(exist_ok=False)
-        for model in models:
-            dump = work / "common" / f"{model}-dump.json"
-            for exporter in LANES:
-                slot = base / model / exporter
-                call(exporter, EXPORT, [dump, slot / "model.blend", slot / "model.fbx"], slot / "export.log")
-                call(exporter, MEASURE, [slot / "model.blend", slot / "ms-blend.json"], slot / "ms-blend.log")
-                for reader in LANES:
-                    call(reader, READBACK, [slot / "model.fbx", slot / f"rb-{reader}.json"],
-                         slot / f"rb-{reader}.log")
-                    call(reader, MEASURE, [slot / "model.fbx", slot / f"ms-fbx-{reader}.json"],
-                         slot / f"ms-fbx-{reader}.log")
-        for exporter in LANES:
-            slot = base / "UV" / exporter
-            call(exporter, UV_FIXTURE, [slot / "model.blend", slot / "model.fbx"], slot / "export.log")
-            call(exporter, MEASURE, [slot / "model.blend", slot / "ms-blend.json"], slot / "ms-blend.log")
-            for reader in LANES:
-                call(reader, READBACK, [slot / "model.fbx", slot / f"rb-{reader}.json"],
-                     slot / f"rb-{reader}.log")
-                call(reader, MEASURE, [slot / "model.fbx", slot / f"ms-fbx-{reader}.json"],
-                     slot / f"ms-fbx-{reader}.log")
+    for rep in _rep_numbers(work, reps):
+        (work / f"rep{rep}").mkdir(exist_ok=False)
+    for job in expected_jobs(work, reps, models):
+        call(job)
     (work / "runs.json").write_text(json.dumps(runs, indent=1), encoding="utf-8")
     return runs
 
@@ -153,7 +179,9 @@ def diff(a, b, path="", cat="other", acc=None):
         if a != b:
             acc["discrete"].append(f"{path}: {str(a)[:60]} != {str(b)[:60]}")
     elif isinstance(a, (int, float)) and isinstance(b, (int, float)):
-        if isinstance(a, int) and isinstance(b, int):
+        if not math.isfinite(a) or not math.isfinite(b):
+            acc["discrete"].append(f"{path}: non-finite {a!r} vs {b!r}")
+        elif isinstance(a, int) and isinstance(b, int):
             if a != b:
                 acc["discrete"].append(f"{path}: {a} != {b}")
         else:
@@ -176,7 +204,7 @@ def diff(a, b, path="", cat="other", acc=None):
 
 
 def verdict(acc):
-    bad = [f"{c} {m:.3g}>{LIMIT[c]:g}" for c, m in acc["max"].items() if m > LIMIT[c]]
+    bad = [f"{c} {m:.3g}>{LIMIT[c]:g}" for c, m in acc["max"].items() if not (m <= LIMIT[c])]
     return {"ok": not bad and not acc["discrete"], "max": {c: m for c, m in acc["max"].items()},
             "over": bad, "discrete": acc["discrete"][:5], "n_discrete": len(acc["discrete"])}
 
@@ -225,7 +253,22 @@ def compare(work, reps=None, models=tuple(MODELS)) -> dict:
     work = Path(work)
     reps = _rep_numbers(work, reps)
     runs = _load(work / "runs.json")
-    completion_fail = [row for row in runs if row["exit"] != 0]
+    completion_fail = []
+    if not isinstance(runs, list):
+        completion_fail.append({"runs_json": "not a list"})
+    else:
+        completion_fail.extend(row for row in runs if not isinstance(row, dict) or row.get("exit") != 0)
+        seen = {}
+        for row in runs:
+            job_id = row.get("job") if isinstance(row, dict) else None
+            if job_id is not None:
+                seen[job_id] = seen.get(job_id, 0) + 1
+        for job in expected_jobs(work, reps, models):
+            count = seen.get(job["job"], 0)
+            if count == 0:
+                completion_fail.append({"missing_job": job["job"]})
+            elif count > 1:
+                completion_fail.append({"duplicate_job": job["job"], "count": count})
     rows = []
     expected_tiles = {"udim_tiles": list(UV_EXPECTED_TILES)}
 
