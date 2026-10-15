@@ -221,7 +221,8 @@ def backfill(days):
     """Append past usage from this repository's transcripts. Idempotent and without double counts, per event:
     a backfill line with the same session_id+time+name is skipped; so is an event the live hooks already logged,
     i.e. a live line of the same session, kind and name inside the call's span (+-LIVE_SLACK), each live line
-    matched once. Other events of a session the hooks logged in part are added."""
+    matched once. The same record read twice (repeated in a transcript, or a session in two folders) is one event.
+    Other events of a session the hooks logged in part are added."""
     since = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=days)
     seen, live = set(), {}
     for r in read():
@@ -242,14 +243,14 @@ def backfill(days):
         key = (row["session_id"], start, row["name"])
         times = live.get((row["session_id"], row["kind"], row["name"]), [])
         hit = next((t for t in times if start - LIVE_SLACK <= t <= end + LIVE_SLACK), None)
-        if key in seen:
+        if key in seen:                              # logged already, or the same record read twice
             skipped += 1
             continue
+        seen.add(key)                                # a live-matched event is reconciled too: a copy is not new
         if hit is not None:
             times.remove(hit)
             skipped += 1
             continue
-        seen.add(key)
         new.append(row)
     if new:
         path = log_path()

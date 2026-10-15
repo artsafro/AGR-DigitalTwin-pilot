@@ -314,3 +314,29 @@ def test_descriptions_have_use_when_examples(path):
     meta = yaml.safe_load(Path(path).read_text(encoding="utf-8").split("---\n")[1])
     tail = meta["description"].split("Use when:")[-1]
     assert "Use when:" in meta["description"] and 2 <= tail.count("«") <= 3, meta["description"]
+
+
+def _duplicate_with_live(tmp_path, across_files):                   # #109 review 2
+    repo, projects, log = tmp_path / "repo", tmp_path / "projects", tmp_path / "u.jsonl"
+    repo.mkdir()
+    t = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=1)
+    call = _at(_agent("bench-runner", "a1"), _stamp(t), sid="s")
+    done = _at(_agent_done("a1"), _stamp(t + datetime.timedelta(seconds=30)), sid="s")
+    if across_files:                                                    # a resumed session copied into a worktree folder
+        _write(projects / _slug(repo) / "s.jsonl", call, done)
+        _write(projects / (_slug(repo) + "--claude-worktrees-wt") / "s.jsonl", call, done)
+    else:                                                               # the same record written twice
+        _write(projects / _slug(repo) / "s.jsonl", call, call, done)
+    _write(log, {"time": (t + datetime.timedelta(seconds=31)).isoformat(timespec="seconds"), "session_id": "s",
+                 "kind": "agent", "name": "bench-runner"})
+    env = _env(tmp_path, repo, projects, log)
+    assert "0 new" in _backfill(env) and len(lines(log)) == 1
+    assert "0 new" in _backfill(env) and len(lines(log)) == 1
+
+
+def test_backfill_duplicate_call_in_one_transcript_counts_once(tmp_path):
+    _duplicate_with_live(tmp_path, across_files=False)
+
+
+def test_backfill_duplicate_call_across_transcripts_counts_once(tmp_path):
+    _duplicate_with_live(tmp_path, across_files=True)
