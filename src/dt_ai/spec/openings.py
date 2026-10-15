@@ -24,6 +24,8 @@ from collections import defaultdict
 import numpy as np
 import shapely
 from shapely.geometry import LineString, MultiLineString, Polygon
+from shapely.geometry.polygon import orient
+from shapely.ops import substring
 
 SNAP_M = 1e-5            # section points closer than this are one point (real meshes left 1 um gaps at window jambs)
 OPENING_MAX_M = 8.0      # widest gap in a wall that is bridged as an opening
@@ -583,6 +585,42 @@ def _source_items(items, li, contour):
     return out
 
 
+def _measurement_walls(contour, section):
+    """Recover dropped-kink facets for opening calculations, without changing the spec contour.
+
+    Each calculation wall retains (spec wall, arc-length offset from its start). Rounded-corner
+    spans keep their existing representation; only straight spans with retained real endpoints
+    are expanded. Use the CCW real ring, independent of its start vertex or source direction.
+    """
+    ring = LineString(orient(section, sign=1.0).exterior.coords)
+    points, owners = [], []
+    for w, a in enumerate(contour):
+        b = contour[(w + 1) % len(contour)]
+        chord = LineString([a[:2], b[:2]])
+        path = None
+        if (len(a) == len(b) == 2
+                and all(ring.distance(shapely.Point(p[:2])) <= 0.003 for p in (a, b))):
+            start, end = (ring.project(shapely.Point(p[:2])) for p in (a, b))
+            if end > start:
+                path = substring(ring, start, end)
+            elif end < start:
+                tail, head = substring(ring, start, ring.length), substring(ring, 0, end)
+                coords = list(tail.coords) + list(head.coords)[1:]
+                path = LineString(coords)
+        if path is None or path.hausdorff_distance(chord) <= 0.001:
+            points.append(a)
+            owners.append((w, 0.0))
+            continue
+        # Triangulation introduces collinear section vertices; they are not supporting facets.
+        coords = list(path.simplify(SNAP_M).coords)
+        offset = 0.0
+        for p, q in zip(coords, coords[1:]):
+            points.append(list(p))
+            owners.append((w, offset))
+            offset += float(np.linalg.norm(np.asarray(q) - p))
+    return points, owners
+
+
 def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=None, recesses=None, sources=None,
              depth_default=0.4, thresholds=None):
     """Openings per floor, the plan footprints that clear recess questions, break questions, report.
@@ -590,6 +628,8 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
     doors: door recesses per level (mesh._door_recesses); recesses: recess pieces per level (the
     reveals that give a glass opening its rough size, #36); sources: openings a source gives
     explicitly, per level (Revit)."""
+    measurement = [_measurement_walls(f["contour"], p) for f, p in zip(floors, polys)]
+    floors = [{**f, "contour": points} for f, (points, _) in zip(floors, measurement)]
     thresholds = thresholds or {}
     frame = thresholds.get("glass_frame_m", GLASS_FRAME_M)
     depth_exception = thresholds.get("depth_exception_m", DEPTH_EXCEPTION_M)
@@ -666,7 +706,8 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
         pts = np.array([q[:2] for q in floor["contour"]], dtype=float)
         items = []
         for o in sorted(holes, key=lambda o: (o["wall"], o["x0"])):
-            item = {"wall": o["wall"], "x_m": round(max(o["x0"], 0.0), 3), "sill_m": round(o["z0"] - elev, 3),
+            wall, offset = measurement[li][1][o["wall"]]
+            item = {"wall": wall, "x_m": round(max(offset + o["x0"], 0.0), 3), "sill_m": round(o["z0"] - elev, 3),
                     "w_m": round(o["x1"] - o["x0"], 3), "h_m": round(o["z1"] - o["z0"], 3),
                     "window_type": None, "source": o["source"],
                     "material_id": o.get("material_id"), "plane_conflict": o.get("plane_conflict", False),
@@ -680,7 +721,7 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
             if no_depth:
                 # the default, marked in the report, never 0 or a minimum (OD1, user decision 2026-10-11)
                 p0, p1, _ = _world(o, floor["contour"])
-                by_default.append({"level": levels[li]["name"], "wall": o["wall"], "x_m": item["x_m"],
+                by_default.append({"level": levels[li]["name"], "wall": wall, "x_m": item["x_m"],
                                    "sill_m": item["sill_m"], "at": [round(float(c), 2) for c in (p0 + p1) / 2]})
             elif abs(depth - depth_default) > depth_exception:
                 item["depth_m"] = round(depth, 3)   # a measured reveal off the default: an exception (#36)
