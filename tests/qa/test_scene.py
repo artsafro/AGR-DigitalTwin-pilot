@@ -1,6 +1,7 @@
 """Scene stages from the Blender readback: rule logic on fixed readbacks, plus a real
 background-Blender roundtrip (skipped when Blender is not installed)."""
 import json
+import random
 import subprocess
 import zipfile
 from pathlib import Path
@@ -9,7 +10,11 @@ import pytest
 
 import validate_package as vp
 from test_validator import PROFILES, STEM, good_files
+from twinqa.geometry.ucx_audit import TOUCH_M
 from twinqa.scene import find_blender, readback, scene_findings, ucx_triangle_limit
+
+BOX_TRIS = [(0, 1, 3), (0, 3, 2), (4, 6, 7), (4, 7, 5), (0, 4, 5), (0, 5, 1),
+            (2, 3, 7), (2, 7, 6), (0, 2, 6), (0, 6, 4), (1, 5, 7), (1, 7, 3)]
 
 
 def mesh(name="SM_Test_K_1_Main", tris=12, degrees=None, rot=(0, 0, 0), scale=(1, 1, 1), uv=1, mirrored=0,
@@ -52,7 +57,116 @@ def test_ucx_excluded_from_model_triangles_and_budget_checked():
     found = scene_findings(rb(mesh(tris=100_000), mesh(name="UCX_SM_Test_K_1_Main_001", tris=5_001)), "vpm", "oks",
                            PROFILES.vpm)
     assert next(f for f in found["V003"] if f.name == "triangle count").observed.endswith(": 100000")
-    assert statuses(found, "V010") == {"UCX triangle budget": "fail", "UCX shape and coverage": "not_run"}
+    assert statuses(found, "V010") == {"UCX triangle budget": "fail", "UCX shape and coverage": "not_run",
+                                       "UCX intersections": "not_run", "UCX piece gap (advisory)": "not_run"}
+
+
+def ucx_box(name, lo, hi):
+    """UCX mesh whose hull is an axis-aligned box (8 verts, 12 triangles)."""
+    verts = [[hi[0] if i & 4 else lo[0], hi[1] if i & 2 else lo[1], hi[2] if i & 1 else lo[2]] for i in range(8)]
+    m = mesh(name=name, tris=12)
+    m["hull"] = {"verts": verts, "tris": [list(t) for t in BOX_TRIS]}
+    return m
+
+
+def _pair(a, b, kind="vpm", role="oks"):
+    profile = PROFILES.vpm if kind == "vpm" else PROFILES.npm
+    return statuses(scene_findings(rb(mesh(), a, b), kind, role, profile), "V010")
+
+
+def test_ucx_overlap_5cm_fails_intersections():
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (0.95, 0, 0), (1.95, 1, 1)))
+    assert st["UCX intersections"] == "fail"
+    assert "fail" in st.values()
+
+
+def test_ucx_nested_piece_fails_intersections():
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (4, 4, 4)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (1, 1, 1), (2, 2, 2)))
+    assert st["UCX intersections"] == "fail"
+
+
+@pytest.mark.parametrize("gap_m", [0.002, 0.005, 0.01])
+def test_ucx_gap_inside_band_passes_both(gap_m):
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (1 + gap_m, 0, 0), (2 + gap_m, 1, 1)))
+    assert st["UCX intersections"] == "pass"
+    assert st["UCX piece gap (advisory)"] == "pass"
+
+
+def test_ucx_touching_boxes_pass_intersection_and_review_gap():
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (1, 0, 0), (2, 1, 1)))
+    assert st["UCX intersections"] == "pass"
+    assert st["UCX piece gap (advisory)"] == "review"
+
+
+@pytest.mark.parametrize("gap_m", [0.001, 0.03])
+def test_ucx_gap_outside_band_is_review(gap_m):
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (1 + gap_m, 0, 0), (2 + gap_m, 1, 1)))
+    assert st["UCX intersections"] == "pass"
+    assert st["UCX piece gap (advisory)"] == "review"
+
+
+def test_ucx_one_metre_apart_is_not_a_neighbour():
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (2, 0, 0), (3, 1, 1)))
+    assert st["UCX intersections"] == "pass"
+    assert st["UCX piece gap (advisory)"] == "pass"
+
+
+def test_ucx_overlap_is_not_counted_in_the_gap_finding():
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (0.5, 0, 0), (1.5, 1, 1)))
+    assert st["UCX intersections"] == "fail"
+    assert st["UCX piece gap (advisory)"] == "pass"
+
+
+def test_ucx_without_hull_is_not_run():
+    st = statuses(scene_findings(rb(mesh(), mesh(name="UCX_SM_Test_K_1_Main_001"),
+                                    mesh(name="UCX_SM_Test_K_1_Main_002")), "vpm", "oks", PROFILES.vpm), "V010")
+    assert st["UCX intersections"] == "not_run"
+    assert st["UCX piece gap (advisory)"] == "not_run"
+
+
+def test_single_ucx_piece_passes_both_pair_findings():
+    found = scene_findings(rb(mesh(), ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1))),
+                           "vpm", "oks", PROFILES.vpm)
+    st = statuses(found, "V010")
+    assert st["UCX intersections"] == "pass"
+    assert st["UCX piece gap (advisory)"] == "pass"
+
+
+@pytest.mark.parametrize("kind, role", [("npm", "oks"), ("vpm", "light")])
+def test_ucx_pair_findings_absent_for_npm_or_light(kind, role):
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (0.5, 0, 0), (1.5, 1, 1)), kind, role)
+    assert "UCX intersections" not in st
+    assert "UCX piece gap (advisory)" not in st
+
+
+@pytest.mark.parametrize("seed", range(200))
+def test_ucx_random_pair_gap_never_fails_and_overlap_matches_signed_gap(seed):
+    rng = random.Random(seed)
+    axis = rng.randrange(3)
+    signed = rng.uniform(-0.05, 0.15)
+    size_a = [rng.uniform(0.4, 2.0) for _ in range(3)]
+    size_b = [rng.uniform(0.4, 2.0) for _ in range(3)]
+    lo_b = [0.0, 0.0, 0.0]
+    hi_b = [0.0, 0.0, 0.0]
+    for i in range(3):
+        if i == axis:
+            lo_b[i] = size_a[i] + signed
+        else:
+            lo_b[i] = rng.uniform(-(size_b[i] - 0.25), size_a[i] - 0.25)
+        hi_b[i] = lo_b[i] + size_b[i]
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), tuple(size_a)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", tuple(lo_b), tuple(hi_b)))
+    assert st["UCX piece gap (advisory)"] != "fail"
+    if abs(abs(signed) - TOUCH_M) >= 1e-6:
+        assert (st["UCX intersections"] == "fail") is (signed < -TOUCH_M)
 
 
 def test_npm_oks_over_150k_fails():
@@ -219,3 +333,39 @@ def test_blender_roundtrip_through_validator(tmp_path, variant):
     else:
         assert st["V003"].status == "fail" and st["V008"].status == "fail"
         assert report.exit_code == 1
+
+
+MAKE_UCX = """
+import bpy, sys
+out, variant = sys.argv[sys.argv.index('--') + 1:]
+bpy.ops.wm.read_factory_settings(use_empty=True)
+
+def cube(name, loc):
+    bpy.ops.mesh.primitive_cube_add(size=1, location=loc)
+    bpy.context.object.name = name
+    bpy.ops.object.modifier_add(type='TRIANGULATE')
+    bpy.ops.object.modifier_apply(modifier='Triangulate')
+
+cube('SM_Test_K_1_Main', (0, 0, 1))
+cube('UCX_SM_Test_K_1_Main_001', (0, 0, 0.5))
+# size 1: half-extent 0.5. overlap shares 0.5 m; gap leaves 2 mm between faces.
+cube('UCX_SM_Test_K_1_Main_002', (0.5, 0, 0.5) if variant == 'overlap' else (1.002, 0, 0.5))
+bpy.ops.export_scene.fbx(filepath=out)
+"""
+
+
+@pytest.mark.blender
+@pytest.mark.skipif(BLENDER is None, reason="Blender not installed")
+@pytest.mark.parametrize("variant", ["overlap", "gap"])
+def test_blender_ucx_hull_roundtrip(tmp_path, variant):
+    fbx_path = tmp_path / f"ucx_{variant}.fbx"
+    subprocess.run([BLENDER, "--background", "--factory-startup", "--python-exit-code", "1",
+                    "--python-expr", MAKE_UCX, "--", str(fbx_path), variant],
+                   check=True, capture_output=True, timeout=300)
+    report = readback(fbx_path)
+    ucx = [m for m in report["meshes"] if m["name"].upper().startswith("UCX_")]
+    other = [m for m in report["meshes"] if not m["name"].upper().startswith("UCX_")]
+    assert ucx and all("hull" in m and m["hull"]["verts"] and m["hull"]["tris"] for m in ucx)
+    assert other and all("hull" not in m for m in other)
+    st = statuses(scene_findings(report, "vpm", "oks", PROFILES.vpm), "V010")
+    assert st["UCX intersections"] == ("fail" if variant == "overlap" else "pass")

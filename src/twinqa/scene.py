@@ -2,14 +2,17 @@
 
 Fills the scene stages the header-only validator leaves not_run: V003 (triangulation,
 triangle limits, object types), V004 (applied transforms), V006 (NPM embedded images),
-V008 (one UV channel, mirrored islands, glass tile), V010 (UCX triangle budget only),
-V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
+V008 (one UV channel, mirrored islands, glass tile), V010 (UCX triangle budget, mutual
+intersections, advisory gap report), V013 (origin, geometric-centre pivot, shared pivot).
+Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
 """
+import itertools
 import math
 import tempfile
 from pathlib import Path
 
 from dt_ai.core.blender_runner import blender_executable, run_blender
+from twinqa.geometry.ucx_audit import NEIGHBOUR_M, bbox_gap, bounds, pair_relation, weld
 from twinqa.report import Finding
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
@@ -74,6 +77,43 @@ def _pivot_findings(meshes: list[dict], ucx: list[dict], src: str) -> list[Findi
     return out
 
 
+def _ucx_pair_findings(ucx: list[dict], src: str) -> list[Finding]:
+    """Mutual intersection (fail) and the advisory neighbour gap (review, never fail). [D098]"""
+    welded, missing = [], []
+    for mesh in ucx:
+        hull = mesh.get("hull") or {}
+        verts, tris = hull.get("verts") or (), hull.get("tris") or ()
+        if not verts or not tris:
+            missing.append(mesh["name"])
+        else:
+            welded.append((mesh["name"], weld(verts, tris)))
+    inter_expected = "no two UCX pieces intersect (reg p.36 §13.4)"
+    gap_expected = "neighbour gap 2 mm - 1 cm inclusive [D098] (advisory, never a failure)"
+    if missing:
+        observed = f"{src}: readback without UCX hull data: {missing}"
+        return [_f("not_run", "UCX intersections", observed, inter_expected, [36], src),
+                _f("not_run", "UCX piece gap (advisory)", observed, gap_expected, [36], src, [15])]
+    overlaps, counts, offending = [], {"touch": 0, "below_band": 0, "in_band": 0, "wide": 0}, []
+    for (na, a), (nb, b) in itertools.combinations(welded, 2):
+        if bbox_gap(bounds(a[0]), bounds(b[0])) > NEIGHBOUR_M:
+            continue
+        kind, gap_m, pen_m = pair_relation(a, b)
+        if kind == "overlap":
+            overlaps.append((na, nb, round(pen_m * 1000, 1)))
+        elif kind != "apart":
+            counts[kind] += 1
+            if kind != "in_band":
+                offending.append((na, nb, round(gap_m * 1000, 2)))
+    inter = (_f("fail", "UCX intersections", f"{src}: {len(overlaps)} overlapping pair(s): {overlaps[:5]}",
+                inter_expected, [36], src) if overlaps else
+             _f("pass", "UCX intersections", f"{src}: no overlapping pairs among {len(welded)} pieces",
+                inter_expected, [36], src))
+    bad = counts["touch"] or counts["below_band"] or counts["wide"]
+    gap_obs = (f"{src}: touch={counts['touch']} below_band={counts['below_band']} "
+               f"in_band={counts['in_band']} wide={counts['wide']}; {offending[:5]}")
+    return [inter, _f("review" if bad else "pass", "UCX piece gap (advisory)", gap_obs, gap_expected, [36], src, [15])]
+
+
 def scene_findings(rb: dict, kind: str, role: str, profile: dict) -> dict[str, list[Finding]]:
     """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}."""
     src = Path(rb["source"]).name
@@ -116,12 +156,13 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict) -> dict[str, l
                           "rotation 0, scale 1 after reset", [8, 29, 33], src))
 
     if kind == "vpm" and role != "light":
-        # V010: UCX triangle budget only; shape, coverage and offsets need other checks (reg p.34-37)
+        # V010: triangle budget, mutual intersections, advisory gap; shape and coverage stay not_run (reg p.34-37)
         if ucx:
             ucx_tris, budget = sum(m["triangles"] for m in ucx), ucx_triangle_limit(tris)
             out["V010"].append(_f("fail" if ucx_tris > budget else "pass", "UCX triangle budget",
                                   f"{src}: {ucx_tris} UCX for {tris} model triangles", f"<= {budget}", [36, 37], src))
-            out["V010"].append(_f("not_run", "UCX shape and coverage", "convex, closed, no intersections, coverage, offsets",
+            out["V010"].extend(_ucx_pair_findings(ucx, src))
+            out["V010"].append(_f("not_run", "UCX shape and coverage", "convex, closed, coverage, offsets",
                                   "reg p.34-37", [34, 36, 37], src))
         # V008: one UV channel, no mirrored islands, glass only in 1001 (reg p.31-32, 39)
         multi = [m["name"] for m in meshes if m["uv_channels"] != 1]
