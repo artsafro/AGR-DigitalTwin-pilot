@@ -39,7 +39,7 @@ MIN_PART_M2 = 0.0                   # region parts smaller than this are dropped
 OPENING_DEPTH_M = 0.8               # an opening box this close to a wall line belongs to it
 OPENING_MARGIN_M = 0.02             # an opening plane keeps this clear of its wall quad's edges
 Z_Q = 0.1
-K_EXTRA = 24
+K_EXTRA = 44
 FACADE_ID, ROOF_ID, SOFFIT_ID = 1, 21, 1
 # ---------------------------------------------------------------------------------------------------------------
 
@@ -295,6 +295,60 @@ def wall(mesh, p, q, z0, z1, openings, stats):
         stats[o[4]] = stats.get(o[4], 0) + 1
 
 
+def wall_chain(mesh, p, q, bot, top, z0, z1, openings, stats):
+    """Side wall p -> q over [z0, z1] whose bottom edge is split at bot and top edge at top (int points between p
+    and q, in order): the faces at z0 and z1 split it there and nowhere else. No openings: a zipper strip;
+    openings: a CDT of the strip less the opening rectangles, plus the opening planes."""
+    P, Q = np.array(p, float), np.array(q, float)
+    L2 = float((Q - P) @ (Q - P))
+    uu = lambda c: float((np.array(c, float) - P) @ (Q - P)) / L2   # noqa: E731  0..1 along the wall
+    B = [(p, 0.0)] + [(c, uu(c)) for c in bot] + [(q, 1.0)]
+    T = [(p, 0.0)] + [(c, uu(c)) for c in top] + [(q, 1.0)]
+    ops = wall_openings(p, q, z0, z1, openings) if openings else []
+    if not ops:
+        bi, ti = [mesh.vid(*c, z0) for c, _ in B], [mesh.vid(*c, z1) for c, _ in T]
+        i = j = 0
+        while i < len(B) - 1 or j < len(T) - 1:      # advance the chain whose next point comes first
+            if j == len(T) - 1 or (i < len(B) - 1 and B[i + 1][1] <= T[j + 1][1]):
+                mesh.tri(bi[i], bi[i + 1], ti[j], FACADE_ID)
+                i += 1
+            else:
+                mesh.tri(bi[i], ti[j + 1], ti[j], FACADE_ID)
+                j += 1
+        return
+    L = float(np.sqrt(L2)) * SNAP_M
+    ring = [(u * L, z0) for _, u in B] + [(u * L, z1) for _, u in reversed(T)]
+    look = {(round(u * L, 9), z0): mesh.vid(*c, z0) for c, u in B}
+    look.update({(round(u * L, 9), z1): mesh.vid(*c, z1) for c, u in T})
+    face = Polygon(ring).difference(shapely.union_all([box(o[0], o[2], o[1], o[3]) for o in ops]))
+    Pm, Qm = P * SNAP_M, Q * SNAP_M
+
+    def vid_uv(u, z):
+        k = (round(u, 9), z)
+        if k in look:
+            return look[k]
+        xy = Pm + (Qm - Pm) * (u / L)
+        key = ("w", round(float(xy[0]), 6), round(float(xy[1]), 6), round(z, 6))
+        if key not in mesh.index:
+            mesh.index[key] = len(mesh.v)
+            mesh.v.append([float(xy[0]), float(xy[1]), z])
+        return mesh.index[key]
+
+    for tr in shapely.get_parts(shapely.constrained_delaunay_triangles(face)):
+        cc = tr.exterior.coords[:3]
+        ids = [vid_uv(*xy) for xy in cc]
+        e1 = (cc[1][0] - cc[0][0], cc[1][1] - cc[0][1])
+        e2 = (cc[2][0] - cc[0][0], cc[2][1] - cc[0][1])
+        if e1[0] * e2[1] - e1[1] * e2[0] < 0:
+            ids = [ids[0], ids[2], ids[1]]
+        mesh.tri(*ids, FACADE_ID)
+    for o in ops:
+        i = [vid_uv(o[0], o[2]), vid_uv(o[1], o[2]), vid_uv(o[1], o[3]), vid_uv(o[0], o[3])]
+        mesh.tri(i[0], i[1], i[2], o[4])
+        mesh.tri(i[0], i[2], i[3], o[4])
+        stats[o[4]] = stats.get(o[4], 0) + 1
+
+
 def build(rows, levels):
     body = [r for r in rows if r["category"] in BODY]
     t = thresholds(body, levels)
@@ -307,21 +361,25 @@ def build(rows, levels):
         above = regions[k] if k < len(regions) else empty
         up, down = polys(below.difference(above)), polys(above.difference(below))
         horiz += [(z, polys(shapely.set_precision(up, 1.0)), True), (z, polys(shapely.set_precision(down, 1.0)), False)]
-    pts = Points([c for reg in regions for ring in rings_of(reg) for c in ring]
-                 + [c for _, poly, _ in horiz for ring in rings_of(poly) for c in ring])
+    # the points of each threshold height: vertices of the regions below and above it and of its faces
+    at = []
+    for k in range(len(t)):
+        near = [regions[j] for j in (k - 1, k) if 0 <= j < len(regions)]
+        near += [poly for z, poly, _ in horiz[2 * k:2 * k + 2]]
+        at.append(Points([c for gm in near for ring in rings_of(gm) for c in ring]))
     mesh, stats = Mesh(), {}
-    for (z0, z1), reg in zip(zip(t, t[1:]), regions):
+    for j, ((z0, z1), reg) in enumerate(zip(zip(t, t[1:]), regions)):
         for ring in rings_of(reg):
-            r = pts.split(ring)
-            for i, p in enumerate(r):
-                wall(mesh, p, r[(i + 1) % len(r)], z0, z1, openings, stats)
-    for z, poly, up in horiz:
+            for i, p in enumerate(ring):
+                q = ring[(i + 1) % len(ring)]
+                wall_chain(mesh, p, q, at[j].on(p, q), at[j + 1].on(p, q), z0, z1, openings, stats)
+    for k, (z, poly, up) in enumerate(horiz):
         if poly.is_empty:
             continue
         for part in shapely.get_parts(poly):
             if part.geom_type != "Polygon" or part.area == 0:
                 continue
-            for c in triangulate(part, pts):
+            for c in triangulate(part, at[k // 2]):
                 ids = [mesh.vid(x, y, z) for x, y in c]
                 if not up:
                     ids = [ids[0], ids[2], ids[1]]
