@@ -1,7 +1,7 @@
 # Ported from AGR max/AGR_Workbench/check_fbx.py (sha256 e8c032b17279) and
 # tools/profile_snapshot_common.py (sha256 cbb176e2b241) object/image facts on 2026-10-06; changes: one standalone
 # script, no RunRecord/config files, adds triangles, polygon degrees, UV channels, UDIM tiles,
-# mirrored UV triangles, transforms and embedded image facts for the V002-V013 scene stages.
+# mirrored UV triangles, transforms, UCX world-space hulls and embedded image facts for the V002-V013 scene stages.
 """Structural FBX readback in an isolated factory Blender process.
 
     blender --background --factory-startup --python-exit-code 1 \
@@ -65,6 +65,9 @@ def mesh_facts(obj):
         facts["udim_tiles"] = sorted(t for t in tiles if t is not None)
         facts["uv_outside_udim_grid"] = None in tiles
         facts["mirrored_uv_triangles"] = mirrored
+    if obj.name.upper().startswith("UCX_"):
+        facts["hull"] = {"verts": [[float(p[i]) for i in range(3)] for p in world],
+                         "tris": [[int(i) for i in tri.vertices] for tri in mesh.loop_triangles]}
     return facts
 
 
