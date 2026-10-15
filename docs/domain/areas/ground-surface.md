@@ -8,7 +8,8 @@ OKS and usable-roof landscaping, Ground textures production (roadmap §7.10), pa
 UCX construction details are in `ucx.md`.
 
 **Readiness:** [roadmap §7.9](../../research/capability-roadmap.md#79-ground-surface--l1-partial)
-records L1-partial. This sheet is T-GND-1's rule index. There is no skill, no `dt ground` tool
+records L1-partial. This sheet is T-GND-1's rule index. The procedure is the
+[`model-ground` skill](../../../.agents/skills/model-ground/SKILL.md); there is no `dt ground` tool
 (T-GND-3), and no benchmark (T-GND-4). v008 awaits the user's review (T-GND-2). This is not a
 delivery acceptance; no L2 or L3 is claimed.
 
