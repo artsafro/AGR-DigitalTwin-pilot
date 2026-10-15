@@ -418,6 +418,68 @@ def test_mixed_inputs_regression():
         assert _named(found, "MAF dimensions vs specification").status == "fail"
 
 
+def _bounds_finding(bounds, sizes=SPEC, meshes=None):
+    if meshes is None:
+        item = mesh(name="SM_Test_GroundEl")
+        item["bounds_m"] = bounds
+        meshes = [item]
+    return _named(maf_findings(meshes, "npm", "a.fbx", maf_sizes=sizes), "MAF dimensions vs specification")
+
+
+def test_r2_nonfinite_or_malformed_bounds_never_pass():
+    valid = [[0.0, 0.0, 0.0], [1.5, 0.6, 0.8]]
+    bad_values = (float("nan"), float("inf"), float("-inf"), "1.5", None, True)
+    for axis in range(3):
+        for end in (0, 1):
+            for value in bad_values:
+                bounds = [list(valid[0]), list(valid[1])]
+                bounds[end][axis] = value
+                finding = _bounds_finding(bounds)
+                assert finding.status == "fail"
+                assert "invalid bounds" in finding.observed
+    for bounds in (
+        [[0, 0, float("-inf")], [1.5, 0.6, float("inf")]],
+        [[float("nan"), float("nan"), float("nan")], [float("nan"), float("nan"), float("nan")]],
+        [[1.5, 0.6, 0.8], [0, 0, 0]],
+        [[0, 0, 0], [1.5, 0.6, 10**400]],
+        [[0, 0, -1e308], [1.5, 0.6, 1e308]],
+    ):
+        finding = _bounds_finding(bounds)
+        assert finding.status == "fail"
+        assert "invalid bounds" in finding.observed
+    for bounds in ("x", [1, 2], [[0, 0], [1, 1]], [[0, 0, 0], "abc"], {"a": 1},
+                   [[0, 0, 0], [1.5, 0.6, 0.8], [1, 1, 1]]):
+        finding = _bounds_finding(bounds)
+        assert finding.status == "fail"
+        assert "invalid bounds" in finding.observed or "missing bounds" in finding.observed
+
+
+def test_r2_valid_bounds_controls_pass():
+    for bounds in (
+        [[0, 0, 0], [1.5, 0.6, 0.8]],
+        [[-0.75, -0.3, -0.1], [0.75, 0.3, 0.7]],
+        ((0, 0, 0), (1.5, 0.6, 0.8)),
+    ):
+        assert _bounds_finding(bounds).status == "pass"
+
+
+def test_r2_invalid_bounds_with_known_dimension_failure_both_orders():
+    nan_box = mesh(name="SM_Test_GroundEl")
+    nan_box["bounds_m"] = [[0, 0, 0], [1.5, 0.6, float("nan")]]
+    long_box = mesh(name="SM_Big_GroundEl")
+    long_box["bounds_m"] = [[0, 0, 0], [2.0, 0.6, 0.8]]
+    size_orders = (
+        {"SM_Test_GroundEl": [1.5, 0.6, 0.8], "SM_Big_GroundEl": [1.5, 0.6, 0.8]},
+        {"SM_Big_GroundEl": [1.5, 0.6, 0.8], "SM_Test_GroundEl": [1.5, 0.6, 0.8]},
+    )
+    for meshes in ((nan_box, long_box), (long_box, nan_box)):
+        for sizes in size_orders:
+            finding = _bounds_finding(None, sizes=sizes, meshes=list(meshes))
+            assert finding.status == "fail"
+            assert "SM_Test_GroundEl: invalid bounds" in finding.observed
+            assert "SM_Big_GroundEl: plan" in finding.observed
+
+
 BLENDER = find_blender()
 MAKE_MAF = r"""
 import bpy, sys

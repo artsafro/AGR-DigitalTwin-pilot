@@ -60,14 +60,34 @@ def _note_unmeasured(text, names):
     return text if not names else f"{text}; unmeasured: {', '.join(names)}"
 
 
+def _coord(value):
+    return not isinstance(value, bool) and isinstance(value, (int, float)) and math.isfinite(value)
+
+
 def _bbox_size(mesh):
-    bounds = mesh.get("bounds_m")
-    if not isinstance(bounds, (list, tuple)) or len(bounds) != 2:
-        return None
-    lo, hi = bounds
-    if not isinstance(lo, (list, tuple)) or not isinstance(hi, (list, tuple)) or len(lo) != 3 or len(hi) != 3:
-        return None
-    return [float(hi[i]) - float(lo[i]) for i in range(3)]
+    """Axis sizes, None when the box is missing, or 'invalid bounds' when it is malformed."""
+    try:
+        if not isinstance(mesh, dict):
+            return "invalid bounds"
+        bounds = mesh.get("bounds_m")
+        if not isinstance(bounds, (list, tuple)) or len(bounds) != 2:
+            return None
+        lo, hi = bounds
+        if (not isinstance(lo, (list, tuple)) or not isinstance(hi, (list, tuple))
+                or len(lo) != 3 or len(hi) != 3):
+            return None
+        size = []
+        for i in range(3):
+            a, b = lo[i], hi[i]
+            if not _coord(a) or not _coord(b):
+                return "invalid bounds"
+            delta = float(b) - float(a)
+            if not math.isfinite(delta) or delta < 0:
+                return "invalid bounds"
+            size.append(delta)
+        return size
+    except (TypeError, ValueError, IndexError, AttributeError, OverflowError):
+        return "invalid bounds"
 
 
 def maf_findings(meshes: list[dict], role: str, src: str, *, smoothing_angle_deg: float = SMOOTHING_ANGLE_DEG,
@@ -144,6 +164,9 @@ def maf_findings(meshes: list[dict], role: str, src: str, *, smoothing_angle_deg
             size = _bbox_size(mesh)
             if size is None:
                 failed.append(f"{name}: missing bounds")
+                continue
+            if size == "invalid bounds":
+                failed.append(f"{name}: invalid bounds")
                 continue
             plan_b, plan_s = sorted(size[:2]), sorted((sx, sy))
             deltas = (plan_b[0] - plan_s[0], plan_b[1] - plan_s[1], size[2] - sz)
