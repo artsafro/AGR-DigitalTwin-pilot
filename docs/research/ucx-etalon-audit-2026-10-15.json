@@ -1,0 +1,724 @@
+{
+ "SM_BolshoyBulvar_64.fbx": {
+  "blender": "5.1.2",
+  "readback_ok": true,
+  "scope": "UCX measurement only; not a delivery verdict",
+  "samples": 20000,
+  "meshes": {
+   "SM_BolshoyBulvar_64_Main": 55926,
+   "SM_BolshoyBulvar_64_MainGlass": 442
+  },
+  "ucx": {
+   "count": 215,
+   "triangles": 2580,
+   "model_triangles_excl_ucx": 56368,
+   "limit_D012": 2819,
+   "kinds": {
+    "box_aabb": 0,
+    "box_oriented": 194,
+    "convex": 21,
+    "custom": 0
+   },
+   "tris_per_piece": {
+    "12": 215
+   },
+   "faces_hvt": {
+    "1-2-0": 207,
+    "1-0-2": 2,
+    "1-3-0": 2,
+    "1-0-4": 1,
+    "1-1-3": 1,
+    "1-3-2": 1,
+    "1-2-2": 1
+   },
+   "with_slots": 0,
+   "with_uv": 0,
+   "min_dim_hist": {
+    "lt_0.05": 0,
+    "0.05-0.3": 5,
+    "0.3-1": 100,
+    "ge_1": 110
+   },
+   "volume_m3": 303762.2
+  },
+  "naming": {
+   "address": "BolshoyBulvar_64",
+   "mask_ok": 215,
+   "mask_bad": [],
+   "mask_bad_count": 0,
+   "Main": {
+    "count": 215,
+    "duplicates": [],
+    "contiguous_from_1": true
+   },
+   "Ground": {
+    "count": 0,
+    "duplicates": [],
+    "contiguous_from_1": true
+   }
+  },
+  "targets": {
+   "main": [
+    "SM_BolshoyBulvar_64_Main"
+   ],
+   "ground": [],
+   "ucx_ground_pieces": 0
+  },
+  "pairs": {
+   "neighbour_pairs": 550,
+   "overlap": 0,
+   "touch": 0,
+   "below_band": 2,
+   "in_band": 483,
+   "wide": 65,
+   "overlap_max_pen_mm": 0.0,
+   "overlap_examples": [],
+   "gap_mm_min": 0.65,
+   "gap_mm_p50": 6.01,
+   "gap_mm_hist": {
+    "0": 0,
+    "0.2-2": 14,
+    "2-10": 471,
+    "10-100": 65
+   }
+  },
+  "coverage": {
+   "SM_BolshoyBulvar_64_Main": {
+    "surface_area_m2": 13027.5,
+    "inside_ucx": 0.7575,
+    "main_to_ucx": {
+     "n": 20000,
+     "le_0.01m": 0.9224,
+     "le_0.3m": 0.9885,
+     "le_1.0m": 0.9979,
+     "p50_m": 0.0,
+     "p95_m": 0.099,
+     "max_m": 6.026
+    },
+    "by_height": {
+     "z_lt_0": {
+      "n": 1130,
+      "le_0.01m": 0.8752,
+      "le_0.3m": 1.0,
+      "le_1.0m": 1.0,
+      "p50_m": 0.0,
+      "p95_m": 0.012,
+      "max_m": 0.067
+     },
+     "z_0_6": {
+      "n": 4254,
+      "le_0.01m": 0.9582,
+      "le_0.3m": 0.9894,
+      "le_1.0m": 0.9972,
+      "p50_m": 0.0,
+      "p95_m": 0.002,
+      "max_m": 1.211
+     },
+     "z_ge_6": {
+      "n": 14616,
+      "le_0.01m": 0.9156,
+      "le_0.3m": 0.9873,
+      "le_1.0m": 0.9979,
+      "p50_m": 0.0,
+      "p95_m": 0.128,
+      "max_m": 6.026
+     }
+    },
+    "ucx_exposed_share": 0.2845,
+    "ucx_exposed_to_surface": {
+     "n": 2845,
+     "le_0.01m": 0.3634,
+     "le_0.3m": 0.503,
+     "le_1.0m": 0.6453,
+     "p50_m": 0.283,
+     "p95_m": 8.6,
+     "max_m": 14.213
+    }
+   }
+  }
+ },
+ "SM_MashiPoryvaevoj_34_001.fbx": {
+  "blender": "5.1.2",
+  "readback_ok": true,
+  "scope": "UCX measurement only; not a delivery verdict",
+  "samples": 20000,
+  "meshes": {
+   "SM_MashiPoryvaevoj_34_001_Main": 45550,
+   "SM_MashiPoryvaevoj_34_001_MainGlass": 1725
+  },
+  "ucx": {
+   "count": 139,
+   "triangles": 1692,
+   "model_triangles_excl_ucx": 47275,
+   "limit_D012": 15000,
+   "kinds": {
+    "box_aabb": 0,
+    "box_oriented": 54,
+    "convex": 85,
+    "custom": 0
+   },
+   "tris_per_piece": {
+    "8": 1,
+    "12": 135,
+    "16": 1,
+    "20": 1,
+    "28": 1
+   },
+   "faces_hvt": {
+    "1-2-0": 56,
+    "1-4-0": 45,
+    "1-2-1": 16,
+    "1-3-0": 10,
+    "1-4-1": 3,
+    "1-5-0": 2,
+    "1-4-2": 1,
+    "1-2-2": 1,
+    "1-4-3": 1,
+    "0-4-1": 1,
+    "1-6-2": 1,
+    "1-2-4": 1,
+    "0-5-2": 1
+   },
+   "with_slots": 0,
+   "with_uv": 0,
+   "min_dim_hist": {
+    "lt_0.05": 0,
+    "0.05-0.3": 9,
+    "0.3-1": 43,
+    "ge_1": 87
+   },
+   "volume_m3": 174660.9
+  },
+  "naming": {
+   "address": "MashiPoryvaevoj_34_001",
+   "mask_ok": 139,
+   "mask_bad": [],
+   "mask_bad_count": 0,
+   "Main": {
+    "count": 139,
+    "duplicates": [],
+    "contiguous_from_1": true
+   },
+   "Ground": {
+    "count": 0,
+    "duplicates": [],
+    "contiguous_from_1": true
+   }
+  },
+  "targets": {
+   "main": [
+    "SM_MashiPoryvaevoj_34_001_Main"
+   ],
+   "ground": [],
+   "ucx_ground_pieces": 0
+  },
+  "pairs": {
+   "neighbour_pairs": 484,
+   "overlap": 8,
+   "touch": 0,
+   "below_band": 1,
+   "in_band": 269,
+   "wide": 206,
+   "overlap_max_pen_mm": 260.11,
+   "overlap_examples": [
+    [
+     "106",
+     "110",
+     0.0,
+     260.11
+    ],
+    [
+     "021",
+     "138",
+     0.0,
+     48.0
+    ],
+    [
+     "004",
+     "138",
+     0.0,
+     46.53
+    ],
+    [
+     "006",
+     "016",
+     0.0,
+     44.66
+    ],
+    [
+     "006",
+     "017",
+     0.0,
+     44.54
+    ],
+    [
+     "004",
+     "017",
+     0.0,
+     43.52
+    ],
+    [
+     "002",
+     "016",
+     0.0,
+     43.16
+    ],
+    [
+     "004",
+     "008",
+     0.0,
+     2.27
+    ]
+   ],
+   "gap_mm_min": 1.18,
+   "gap_mm_p50": 9.0,
+   "gap_mm_hist": {
+    "0": 0,
+    "0.2-2": 1,
+    "2-10": 269,
+    "10-100": 206
+   }
+  },
+  "coverage": {
+   "SM_MashiPoryvaevoj_34_001_Main": {
+    "surface_area_m2": 21161.1,
+    "inside_ucx": 0.9748,
+    "main_to_ucx": {
+     "n": 20000,
+     "le_0.01m": 0.9869,
+     "le_0.3m": 0.9959,
+     "le_1.0m": 0.9977,
+     "p50_m": 0.0,
+     "p95_m": 0.0,
+     "max_m": 4.966
+    },
+    "by_height": {
+     "z_lt_0": {
+      "n": 1432,
+      "le_0.01m": 0.9651,
+      "le_0.3m": 0.9944,
+      "le_1.0m": 1.0,
+      "p50_m": 0.0,
+      "p95_m": 0.0,
+      "max_m": 0.981
+     },
+     "z_0_6": {
+      "n": 2196,
+      "le_0.01m": 0.9759,
+      "le_0.3m": 0.9959,
+      "le_1.0m": 1.0,
+      "p50_m": 0.0,
+      "p95_m": 0.0,
+      "max_m": 0.909
+     },
+     "z_ge_6": {
+      "n": 16372,
+      "le_0.01m": 0.9903,
+      "le_0.3m": 0.996,
+      "le_1.0m": 0.9971,
+      "p50_m": 0.0,
+      "p95_m": 0.0,
+      "max_m": 4.966
+     }
+    },
+    "ucx_exposed_share": 0.4729,
+    "ucx_exposed_to_surface": {
+     "n": 4729,
+     "le_0.01m": 0.0755,
+     "le_0.3m": 0.4675,
+     "le_1.0m": 0.6951,
+     "p50_m": 0.36,
+     "p95_m": 10.111,
+     "max_m": 18.409
+    }
+   }
+  }
+ },
+ "1113_77_17_0130206_5812_01.fbx": {
+  "blender": "5.1.2",
+  "readback_ok": true,
+  "scope": "UCX measurement only; not a delivery verdict",
+  "samples": 20000,
+  "meshes": {
+   "SM_Kvartal_191_ZU_1_007_MainGlass": 84,
+   "SM_Kvartal_191_ZU_1_008_Main": 122324,
+   "SM_Kvartal_191_ZU_1_007_Main": 21105
+  },
+  "ucx": {
+   "count": 0,
+   "triangles": 0,
+   "model_triangles_excl_ucx": 143513,
+   "limit_D012": 7176,
+   "kinds": {
+    "box_aabb": 0,
+    "box_oriented": 0,
+    "convex": 0,
+    "custom": 0
+   },
+   "tris_per_piece": {},
+   "faces_hvt": {},
+   "with_slots": 0,
+   "with_uv": 0,
+   "min_dim_hist": {
+    "lt_0.05": 0,
+    "0.05-0.3": 0,
+    "0.3-1": 0,
+    "ge_1": 0
+   },
+   "volume_m3": 0
+  },
+  "naming": {
+   "address": "Kvartal_191_ZU_1_008",
+   "mask_ok": 0,
+   "mask_bad": [],
+   "mask_bad_count": 0,
+   "Main": {
+    "count": 0,
+    "duplicates": [],
+    "contiguous_from_1": true
+   },
+   "Ground": {
+    "count": 0,
+    "duplicates": [],
+    "contiguous_from_1": true
+   }
+  },
+  "targets": {
+   "main": [
+    "SM_Kvartal_191_ZU_1_008_Main",
+    "SM_Kvartal_191_ZU_1_007_Main"
+   ],
+   "ground": [],
+   "ucx_ground_pieces": 0
+  },
+  "pairs": {
+   "neighbour_pairs": 0,
+   "overlap": 0,
+   "touch": 0,
+   "below_band": 0,
+   "in_band": 0,
+   "wide": 0,
+   "overlap_max_pen_mm": 0.0,
+   "overlap_examples": [],
+   "gap_mm_min": null,
+   "gap_mm_p50": null,
+   "gap_mm_hist": {
+    "0": 0,
+    "0.2-2": 0,
+    "2-10": 0,
+    "10-100": 0
+   }
+  },
+  "coverage": {
+   "SM_Kvartal_191_ZU_1_008_Main": {
+    "surface_area_m2": 12152.4,
+    "inside_ucx": 0.0,
+    "main_to_ucx": {
+     "n": 20000,
+     "le_0.01m": 0.0,
+     "le_0.3m": 0.0,
+     "le_1.0m": 0.0,
+     "p50_m": null,
+     "p95_m": null,
+     "max_m": null
+    },
+    "by_height": {
+     "z_lt_0": null,
+     "z_0_6": null,
+     "z_ge_6": {
+      "n": 20000,
+      "le_0.01m": 0.0,
+      "le_0.3m": 0.0,
+      "le_1.0m": 0.0,
+      "p50_m": null,
+      "p95_m": null,
+      "max_m": null
+     }
+    }
+   },
+   "SM_Kvartal_191_ZU_1_007_Main": {
+    "surface_area_m2": 2121.2,
+    "inside_ucx": 0.0,
+    "main_to_ucx": {
+     "n": 20000,
+     "le_0.01m": 0.0,
+     "le_0.3m": 0.0,
+     "le_1.0m": 0.0,
+     "p50_m": null,
+     "p95_m": null,
+     "max_m": null
+    },
+    "by_height": {
+     "z_lt_0": null,
+     "z_0_6": null,
+     "z_ge_6": {
+      "n": 20000,
+      "le_0.01m": 0.0,
+      "le_0.3m": 0.0,
+      "le_1.0m": 0.0,
+      "p50_m": null,
+      "p95_m": null,
+      "max_m": null
+     }
+    }
+   }
+  }
+ },
+ "SM_Kpp_1.fbx": {
+  "blender": "5.1.2",
+  "readback_ok": true,
+  "scope": "UCX measurement only; not a delivery verdict",
+  "samples": 20000,
+  "meshes": {
+   "SM_Kpp_1_Main": 24298,
+   "SM_Kpp_1_MainGlass": 76
+  },
+  "ucx": {
+   "count": 33,
+   "triangles": 396,
+   "model_triangles_excl_ucx": 24374,
+   "limit_D012": 15000,
+   "kinds": {
+    "box_aabb": 31,
+    "box_oriented": 0,
+    "convex": 2,
+    "custom": 0
+   },
+   "tris_per_piece": {
+    "12": 33
+   },
+   "faces_hvt": {
+    "1-2-0": 31,
+    "0-2-1": 2
+   },
+   "with_slots": 0,
+   "with_uv": 0,
+   "min_dim_hist": {
+    "lt_0.05": 0,
+    "0.05-0.3": 0,
+    "0.3-1": 30,
+    "ge_1": 3
+   },
+   "volume_m3": 3037.6
+  },
+  "naming": {
+   "address": "Kpp_1",
+   "mask_ok": 33,
+   "mask_bad": [],
+   "mask_bad_count": 0,
+   "Main": {
+    "count": 33,
+    "duplicates": [],
+    "contiguous_from_1": true
+   },
+   "Ground": {
+    "count": 0,
+    "duplicates": [],
+    "contiguous_from_1": true
+   }
+  },
+  "targets": {
+   "main": [
+    "SM_Kpp_1_Main"
+   ],
+   "ground": [],
+   "ucx_ground_pieces": 0
+  },
+  "pairs": {
+   "neighbour_pairs": 49,
+   "overlap": 0,
+   "touch": 0,
+   "below_band": 0,
+   "in_band": 48,
+   "wide": 1,
+   "overlap_max_pen_mm": 0.0,
+   "overlap_examples": [],
+   "gap_mm_min": 2.0,
+   "gap_mm_p50": 2.0,
+   "gap_mm_hist": {
+    "0": 0,
+    "0.2-2": 47,
+    "2-10": 1,
+    "10-100": 1
+   }
+  },
+  "coverage": {
+   "SM_Kpp_1_Main": {
+    "surface_area_m2": 1936.2,
+    "inside_ucx": 0.8411,
+    "main_to_ucx": {
+     "n": 20000,
+     "le_0.01m": 0.8469,
+     "le_0.3m": 0.938,
+     "le_1.0m": 0.9939,
+     "p50_m": 0.0,
+     "p95_m": 0.478,
+     "max_m": 1.239
+    },
+    "by_height": {
+     "z_lt_0": {
+      "n": 2829,
+      "le_0.01m": 0.6232,
+      "le_0.3m": 0.6985,
+      "le_1.0m": 0.9912,
+      "p50_m": 0.0,
+      "p95_m": 0.87,
+      "max_m": 1.224
+     },
+     "z_0_6": {
+      "n": 8951,
+      "le_0.01m": 0.9076,
+      "le_0.3m": 0.9778,
+      "le_1.0m": 0.9975,
+      "p50_m": 0.0,
+      "p95_m": 0.09,
+      "max_m": 1.195
+     },
+     "z_ge_6": {
+      "n": 8220,
+      "le_0.01m": 0.8578,
+      "le_0.3m": 0.9771,
+      "le_1.0m": 0.9908,
+      "p50_m": 0.0,
+      "p95_m": 0.025,
+      "max_m": 1.239
+     }
+    },
+    "ucx_exposed_share": 0.901,
+    "ucx_exposed_to_surface": {
+     "n": 9010,
+     "le_0.01m": 0.6747,
+     "le_0.3m": 0.8048,
+     "le_1.0m": 0.8555,
+     "p50_m": 0.0,
+     "p95_m": 3.539,
+     "max_m": 5.738
+    }
+   }
+  }
+ },
+ "SM_Psu_1.fbx": {
+  "blender": "5.1.2",
+  "readback_ok": true,
+  "scope": "UCX measurement only; not a delivery verdict",
+  "samples": 20000,
+  "meshes": {
+   "SM_Psu_1_Main": 73112,
+   "SM_Psu_1_MainGlass": 5440
+  },
+  "ucx": {
+   "count": 23,
+   "triangles": 276,
+   "model_triangles_excl_ucx": 78552,
+   "limit_D012": 3928,
+   "kinds": {
+    "box_aabb": 23,
+    "box_oriented": 0,
+    "convex": 0,
+    "custom": 0
+   },
+   "tris_per_piece": {
+    "12": 23
+   },
+   "faces_hvt": {
+    "1-2-0": 23
+   },
+   "with_slots": 0,
+   "with_uv": 0,
+   "min_dim_hist": {
+    "lt_0.05": 0,
+    "0.05-0.3": 0,
+    "0.3-1": 2,
+    "ge_1": 21
+   },
+   "volume_m3": 505286.1
+  },
+  "naming": {
+   "address": "Psu_1",
+   "mask_ok": 23,
+   "mask_bad": [],
+   "mask_bad_count": 0,
+   "Main": {
+    "count": 23,
+    "duplicates": [],
+    "contiguous_from_1": true
+   },
+   "Ground": {
+    "count": 0,
+    "duplicates": [],
+    "contiguous_from_1": true
+   }
+  },
+  "targets": {
+   "main": [
+    "SM_Psu_1_Main"
+   ],
+   "ground": [],
+   "ucx_ground_pieces": 0
+  },
+  "pairs": {
+   "neighbour_pairs": 28,
+   "overlap": 0,
+   "touch": 0,
+   "below_band": 0,
+   "in_band": 28,
+   "wide": 0,
+   "overlap_max_pen_mm": 0.0,
+   "overlap_examples": [],
+   "gap_mm_min": 2.0,
+   "gap_mm_p50": 2.0,
+   "gap_mm_hist": {
+    "0": 0,
+    "0.2-2": 28,
+    "2-10": 0,
+    "10-100": 0
+   }
+  },
+  "coverage": {
+   "SM_Psu_1_Main": {
+    "surface_area_m2": 36570.2,
+    "inside_ucx": 0.365,
+    "main_to_ucx": {
+     "n": 20000,
+     "le_0.01m": 0.9562,
+     "le_0.3m": 0.9609,
+     "le_1.0m": 0.9726,
+     "p50_m": 0.001,
+     "p95_m": 0.001,
+     "max_m": 2.769
+    },
+    "by_height": {
+     "z_lt_0": null,
+     "z_0_6": {
+      "n": 2027,
+      "le_0.01m": 0.9339,
+      "le_0.3m": 0.9383,
+      "le_1.0m": 0.9551,
+      "p50_m": 0.001,
+      "p95_m": 0.833,
+      "max_m": 2.289
+     },
+     "z_ge_6": {
+      "n": 17973,
+      "le_0.01m": 0.9587,
+      "le_0.3m": 0.9634,
+      "le_1.0m": 0.9746,
+      "p50_m": 0.001,
+      "p95_m": 0.001,
+      "max_m": 2.769
+     }
+    },
+    "ucx_exposed_share": 0.7205,
+    "ucx_exposed_to_surface": {
+     "n": 7205,
+     "le_0.01m": 0.4559,
+     "le_0.3m": 0.5241,
+     "le_1.0m": 0.6132,
+     "p50_m": 0.156,
+     "p95_m": 25.599,
+     "max_m": 38.458
+    }
+   }
+  }
+ }
+}
