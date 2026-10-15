@@ -76,6 +76,25 @@ def test_dimensions_blender_duplicate_suffix_and_missing_plant():
                                              "Flora dimensions: SM_Test_Flora_Tilia_02": "review"}
 
 
+@pytest.mark.parametrize("alias_first", [True, False])
+def test_dimensions_exact_name_wins_over_suffix_alias(alias_first):
+    # review round 1, P1: alias height 5 must not mask the exact scheduled mesh at height 9 (+80 %)
+    alias, exact = plant("SM_Test_Flora_Acer_01.001", 5, 3), plant("SM_Test_Flora_Acer_01", 9, 3)
+    meshes = (alias, exact) if alias_first else (exact, alias)
+    found = scene_findings(rb(*meshes), "vpm", "ground", PROFILES.vpm, flora_schedule=SCHEDULE)
+    assert named(found, "V015", "Flora") == {"Flora dimensions: SM_Test_Flora_Acer_01": "fail"}
+    f = next(x for x in found["V015"] if x.name == "Flora dimensions: SM_Test_Flora_Acer_01")
+    assert "+80.0 %" in f.observed
+
+
+def test_dimensions_ambiguous_suffix_aliases_are_review():
+    found = scene_findings(rb(plant("SM_Test_Flora_Acer_01.001", 5, 3), plant("SM_Test_Flora_Acer_01.002", 9, 3)),
+                           "vpm", "ground", PROFILES.vpm, flora_schedule=SCHEDULE)
+    assert named(found, "V015", "Flora") == {"Flora dimensions: SM_Test_Flora_Acer_01": "review"}
+    f = next(x for x in found["V015"] if x.name == "Flora dimensions: SM_Test_Flora_Acer_01")
+    assert ".001" in f.observed and ".002" in f.observed
+
+
 @pytest.mark.parametrize("entry", [{"height_m": 0, "crown_m": 3}, {"height_m": 5}, {"height_m": "5", "crown_m": 3}])
 def test_dimensions_invalid_schedule_entry_is_review(entry):
     found = scene_findings(rb(plant("SM_Test_Flora_Acer_01", 5, 3)), "vpm", "ground", PROFILES.vpm,
@@ -165,7 +184,33 @@ def test_maps_not_run_on_old_readback_and_vpm_not_checked():
 def test_maps_flora_mesh_without_material_fails():
     found = scene_findings(rb(plant("SM_Test_Flora", 5, 3, materials=()), materials=[]), "npm", "ground",
                            PROFILES.npm)
-    assert named(found, "V005", "Flora maps") == {"Flora maps": "fail"}
+    assert named(found, "V005", "Flora maps") == {"Flora maps: SM_Test_Flora": "fail"}
+
+
+@pytest.mark.parametrize("bare_slots", [[], [None], [""], ["M_Test_Flora_1", None]])
+@pytest.mark.parametrize("bare_first", [False, True])
+def test_maps_good_neighbour_does_not_hide_unmaterialed_flora_mesh(bare_slots, bare_first):
+    # review round 1, P1: coverage is per Flora mesh, not "any Flora material exists"
+    good = plant("SM_Test_Flora_Good", 5, 3)
+    bare = plant("SM_Test_Flora_Bare", 5, 3, materials=bare_slots)
+    meshes = (bare, good) if bare_first else (good, bare)
+    found = scene_findings(rb(*meshes), "npm", "ground", PROFILES.npm)
+    assert named(found, "V005", "Flora maps") == {"Flora maps: M_Test_Flora_1": "pass",
+                                                  "Flora maps: SM_Test_Flora_Bare": "fail"}
+    bare_f = next(f for f in found["V005"] if f.name == "Flora maps: SM_Test_Flora_Bare")
+    assert "SM_Test_Flora_Bare" in bare_f.observed and "no material" in bare_f.observed
+
+
+@pytest.mark.parametrize("order", [0, 1, 2])
+def test_mixed_scene_bare_mesh_alias_and_exact_any_order(order):
+    # combined: bare Flora mesh + good neighbour + .001 alias of a scheduled exact mesh, permuted
+    items = [plant("SM_Test_Flora_Acer_01.001", 5, 3), plant("SM_Test_Flora_Acer_01", 9, 3),
+             plant("SM_Test_Flora_Bare", 5, 3, materials=[])]
+    items = items[order:] + items[:order]
+    found = scene_findings(rb(*items), "npm", "ground", PROFILES.npm, flora_schedule=SCHEDULE)
+    assert named(found, "V015", "Flora") == {"Flora dimensions: SM_Test_Flora_Acer_01": "fail"}
+    assert named(found, "V005", "Flora maps") == {"Flora maps: M_Test_Flora_1": "pass",
+                                                  "Flora maps: SM_Test_Flora_Bare": "fail"}
 
 
 # --- Budget: Flora share 70 000, Ground total 180 000 (V003, NPM) ---
