@@ -1,4 +1,17 @@
-"""Deterministic labelled grid rectangle extraction."""
+"""Deterministic coordinate clustering and labelled grid rectangle extraction."""
+
+
+def clustered(values, span=.001):
+    """Map coordinates to span-bounded group midpoints, without chain merging."""
+    groups=[]
+    for value in sorted(set(map(float,values))):
+        if not groups or value-groups[-1][0]>span:
+            groups.append([value])
+        else:
+            groups[-1].append(value)
+    return {v:(g[0]+g[-1])/2 for g in groups for v in g}
+
+
 def rectangles(mask):
     remaining = mask.copy()
     for i in range(mask.shape[0]):
