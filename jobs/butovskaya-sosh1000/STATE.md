@@ -32,6 +32,9 @@ uv run python jobs/butovskaya-sosh1000/scripts/evaluate.py --model C:/x/butovska
 
 ## Model (current best, see the report for the loop)
 
+Exp 15 of 20: `silhouette_err_m2` 17.584 (first build 334.066), 141 132 triangles, 0 open / non-manifold /
+winding edges, levels exact; report `docs/experiments/autoresearch-butovskaya-npm.md`.
+
 One closed mesh `SM_butovskaya_sosh1000_body`: plan regions per height layer (thresholds = the 8 levels + the box
 tops with the most plan area), extruded and meshed edge to edge on a 0.05 m grid; up faces roof id 21, walls and
 soffits facade id 1; flush opening planes (ids 11 window, 12 door) cut into the wall faces where an opening box
