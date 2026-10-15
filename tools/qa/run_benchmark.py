@@ -19,7 +19,6 @@ not measured, or the input is wrong. The run folder must not exist (never overwr
 """
 import argparse
 import json
-import subprocess
 import sys
 from pathlib import Path
 
@@ -32,18 +31,20 @@ from dt_ai.spec.model import Spec  # noqa: E402
 from twinqa.geometry import checks  # noqa: E402
 from twinqa.geometry.mesh import assign_material_ids, from_dump  # noqa: E402
 from twinqa.io import read_json  # noqa: E402
-from twinqa.scene import find_blender  # noqa: E402
+from dt_ai.core.blender_runner import blender_executable, run_blender  # noqa: E402
 
 MEASURE = ROOT / "tools/source/measure_spec_blender.py"
 EXPORT = ROOT / "tools/export/export_mesh_blender.py"
 
 
 def blender_run(blender, script, *args, timeout=900):
-    cmd = [blender, "--background", "--factory-startup", "--disable-autoexec", "--python-exit-code", "1",
-           "--python", str(script), "--", *map(str, args)]
-    done = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
-    if done.returncode != 0:
-        raise RuntimeError(f"{script.name} exit {done.returncode}: {(done.stderr or done.stdout)[-800:]}")
+    # Both exporters (including run_from_source's modules) have native-only protocols.
+    is_export = script.name in ('export_mesh_blender.py', 'export_modules_blender.py')
+    native = args[1:] if is_export else ()
+    report = None if is_export else args[-1]
+    log = Path(args[1]).with_suffix('.blender.log')
+    return run_blender(script, args, executable=blender, output_json=report,
+                       outputs=native, timeout=timeout, log_path=log)
 
 
 def write(path, value):
@@ -95,7 +96,7 @@ def run(etalon, obj_path, tol_path, out, blender):
         readback = read_json((out / "model-readback.json").read_bytes())
         steps["readback"] = "done"
         model_check = checks.run(from_dump(readback), etalon_soup, spec, geometry, source_class=obj.get("source_class"))
-    except (SpecError, BuildError, RuntimeError, subprocess.TimeoutExpired, OSError, ValueError, KeyError,
+    except (SpecError, BuildError, RuntimeError, OSError, ValueError, KeyError,
             TypeError) as exc:
         summary["stopped"] = f"{type(exc).__name__}: {exc}"
         return summary
@@ -110,9 +111,9 @@ def main(argv=None) -> int:
     ap.add_argument("--object", type=Path, required=True)
     ap.add_argument("--tolerances", type=Path, required=True)
     ap.add_argument("--output", type=Path, required=True)
-    ap.add_argument("--blender", help="default: TWINQA_BLENDER, PATH, newest Program Files install")
+    ap.add_argument("--blender", help="default: TWINQA_BLENDER or pinned Blender 5.1.2 installation")
     args = ap.parse_args(argv)
-    blender = args.blender or find_blender()
+    blender = blender_executable(args.blender)
     if args.output.exists():
         print(f"Error: {args.output} exists; use a new versioned run folder", file=sys.stderr)
         return 2
