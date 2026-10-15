@@ -15,6 +15,60 @@ TOOLS = {"bash": "Bash", "powershell": "PowerShell", "edit": "Edit", "write": "W
 HOOKS = ("guard.py", "pipeline_gate.py")
 
 
+def preview_edit(tin, path):
+    """Exact Pi edits: match disjoint ranges in the original LF-normalized file.
+
+    Fuzzy-only matches are deliberately blocked: guessing Pi's fuzzy output could
+    validate different content. No file is changed by this preview.
+    """
+    edits = tin.get("edits", [])
+    if isinstance(edits, str):
+        edits = json.loads(edits)
+    if isinstance(edits, dict):
+        edits = [edits]
+    if not isinstance(edits, list):
+        raise ValueError("edits must be an array")
+    edits = list(edits)
+    if "oldText" in tin or "newText" in tin:
+        edits.append({"oldText": tin.get("oldText"), "newText": tin.get("newText")})
+    elif "old_string" in tin or "new_string" in tin:
+        edits.append({"oldText": tin.get("old_string"), "newText": tin.get("new_string")})
+    if not edits:
+        raise ValueError("edits must contain at least one replacement")
+    raw = path.read_bytes().decode("utf-8")
+    bom = "\ufeff" if raw.startswith("\ufeff") else ""
+    content = raw[len(bom):]
+    ending = "\r\n" if content.find("\n") > 0 and content[content.find("\n") - 1] == "\r" else "\n"
+
+    def lf(text):
+        return text.replace("\r\n", "\n").replace("\r", "\n")
+
+    base = lf(content)
+    replacements = []
+    for edit in edits:
+        if (not isinstance(edit, dict)
+                or not isinstance(edit.get("oldText"), str)
+                or not isinstance(edit.get("newText"), str)):
+            raise ValueError("each edit requires oldText and newText strings")
+        old, new = lf(edit["oldText"]), lf(edit["newText"])
+        if not old or base.count(old) != 1:
+            raise ValueError("edit needs a unique exact match; fuzzy-only edits are unsupported")
+        start = base.index(old)
+        replacements.append((start, start + len(old), new))
+    replacements.sort()
+    if any(a[1] > b[0] for a, b in zip(replacements, replacements[1:])):
+        raise ValueError("edits overlap")
+    result = base
+    for start, end, new in reversed(replacements):
+        result = result[:start] + new + result[end:]
+    if result == base:
+        raise ValueError("edits produce no change")
+    # Claude Edit reconstructs from read_text() (universal newlines). Replacing
+    # that entire text lets pipeline_gate inspect the full Pi result, not just
+    # one replacement; also retains Edit-specific hook rules/matchers.
+    return raw.replace("\r\n", "\n").replace("\r", "\n"), bom + result.replace("\n", ending)
+
+
 def evaluate(call):
     tool = TOOLS[call["tool"]]
     tin = dict(call["input"])
@@ -38,12 +92,11 @@ def evaluate(call):
                     or (Path(path).drive and not Path(path).is_absolute())))):
             raise ValueError("unsupported Pi path syntax; use a relative or native absolute path")
         tin["file_path"] = str((cwd / path).resolve())
-        fields = ("content",) if tool == "Write" else ("old_string", "new_string")
         if tool == "Edit":
-            tin["old_string"] = tin.get("oldText", tin.get("old_string"))
-            tin["new_string"] = tin.get("newText", tin.get("new_string"))
-        if any(not isinstance(tin.get(field), str) for field in fields):
-            raise ValueError("file content/edit fields must be strings")
+            tin["old_string"], tin["new_string"] = preview_edit(tin, Path(tin["file_path"]))
+            tin["replace_all"] = False
+        elif not isinstance(tin.get("content"), str):
+            raise ValueError("file content must be a string")
     payload = json.dumps({"tool_name": tool, "tool_input": tin,
                           "hook_event_name": "PreToolUse", "cwd": str(cwd)})
     env = {**os.environ, "CLAUDE_PROJECT_DIR": str(ROOT), "PYTHONIOENCODING": "utf-8"}

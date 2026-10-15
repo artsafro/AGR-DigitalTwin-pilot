@@ -87,7 +87,7 @@ def test_current_pi_multi_edit_checks_complete_result(sandbox, absolute):
     path = sandbox / "note.txt"
     before = "alpha\nbeta\n"
     after = "beta\ngamma\n"  # matched in ORIGINAL, not sequentially
-    path.write_text(before, encoding="utf-8")
+    path.write_bytes(before.encode("utf-8"))
     check = f'''import json, sys
 p = json.load(sys.stdin)
 assert p['tool_name'] == 'Edit'
@@ -152,6 +152,8 @@ def test_hook_timeout_blocks(sandbox, name):
      {"old_string": "old", "new_string": "new"}),
 ])
 def test_names_fields_cwd_and_project_root_match_claude(sandbox, tool, claude, tin, expected):
+    if tool == "edit":
+        (sandbox / "a.txt").write_text("old", encoding="utf-8")
     settings = json.loads((ROOT / ".claude/settings.json").read_text())
     entries = settings["hooks"]["PreToolUse"][:2]
     assert all(re.fullmatch(entry["matcher"], claude) for entry in entries)
