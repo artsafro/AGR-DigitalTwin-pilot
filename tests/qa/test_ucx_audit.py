@@ -50,7 +50,7 @@ def test_gap_matches_construction(seed):
     """Two rotated boxes pushed apart along X by a known gap: measured gap == gap, class by threshold."""
     rng = random.Random(seed)
     yaw = rng.uniform(-math.pi, math.pi)
-    gap = rng.choice([0.0005, 0.002, 0.006, 0.03, 0.08])
+    gap = rng.choice([0.0005, 0.0015, 0.002, 0.006, 0.01, 0.03, 0.08])
     a = box((0, 0, 0), (2, 1, 3))
     b = box((2 + gap, rng.uniform(-0.5, 0.5), rng.uniform(-1, 1)), (4, 1.5, 3.5))
     rot = lambda hull: ([(x * math.cos(yaw) - y * math.sin(yaw), x * math.sin(yaw) + y * math.cos(yaw), z)
@@ -58,7 +58,7 @@ def test_gap_matches_construction(seed):
     cls, measured, pen = ua.pair_relation(rot(a), rot(b))
     assert measured == pytest.approx(gap, abs=1e-7)
     assert pen == 0.0
-    assert cls == ("recommended" if gap <= 0.01 else "wide")
+    assert cls == ("below_band" if gap < 0.002 else "in_band" if gap <= 0.01 else "wide")
 
 
 @pytest.mark.parametrize("seed", range(40))
@@ -89,7 +89,15 @@ def test_edge_edge_gap_rotated_45():
     a = box((-1, -1, 0), (1, 1, 1), yaw=math.pi / 4)  # corner reaches x = sqrt(2)
     b = box((math.sqrt(2) + 0.005, -1, 0), (4, 1, 1))
     cls, gap, _ = ua.pair_relation(a, b)
-    assert gap == pytest.approx(0.005, abs=1e-7) and cls == "recommended"
+    assert gap == pytest.approx(0.005, abs=1e-7) and cls == "in_band"
+
+
+@pytest.mark.parametrize("gap,expected", [
+    (0.0001, "touch"), (0.0019, "below_band"), (0.002, "in_band"), (0.002 - 5e-6, "in_band"),
+    (0.01, "in_band"), (0.0101, "wide"), (0.0999, "wide"), (0.1001, "apart")])
+def test_gap_band_boundaries_d098(gap, expected):
+    """[D098]: 2 mm - 1 cm inclusive; float32 read-back noise below 0.01 mm stays in band."""
+    assert ua.pair_relation(box((0, 0, 0), (1, 1, 1)), box((1 + gap, 0, 0), (2, 1, 1)))[0] == expected
 
 
 @pytest.mark.parametrize("seed", range(15))

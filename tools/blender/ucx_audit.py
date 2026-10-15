@@ -5,7 +5,7 @@
 
 Measures (does not judge, never writes the source): per UCX piece kind (box_aabb /
 box_oriented / convex / custom), triangles, size; naming against reg p.34 §4.2; pairwise
-overlap / touch / gap (reg p.36 §13.4) for neighbours; Main coverage: area-weighted points
+overlap / touch / gap against the 2 mm - 1 cm band (reg p.36 §13.4, [D098]) for neighbours; Main coverage: area-weighted points
 on the Main surface either inside a UCX piece or at a distance from the nearest piece
 (reg p.36 §13.5 tolerances 0.3 m / 1 m), and the reverse distance from UCX surface to the
 Main surface (collision standing in the air). Geometry helpers: src/twinqa/geometry/ucx_audit.py.
@@ -122,14 +122,14 @@ try:
     report["targets"] = {"main": [o.name for o in mains], "ground": [o.name for o in grounds],
                          "ucx_ground_pieces": report["naming"]["Ground"]["count"]}
     # pairwise relations for neighbours (AABB gap < NEIGHBOUR_M)
-    rel = {"overlap": [], "touch": [], "recommended": [], "wide": [], "apart": []}
+    rel = {"overlap": [], "touch": [], "below_band": [], "in_band": [], "wide": [], "apart": []}
     for i, a in enumerate(pieces):
         for b in pieces[i + 1:]:
             if ua.bbox_gap(a["_b"], b["_b"]) > ua.NEIGHBOUR_M:
                 continue
             cls, gap, pen = ua.pair_relation(a["_hull"], b["_hull"])
             rel[cls].append((a["name"][-3:], b["name"][-3:], round(gap * 1000, 2), round(pen * 1000, 2)))
-    gaps = [g for cls in ("touch", "recommended", "wide") for (_, _, g, _) in rel[cls]]
+    gaps = [g for cls in ("touch", "below_band", "in_band", "wide") for (_, _, g, _) in rel[cls]]
     report["pairs"] = {
         "neighbour_pairs": sum(len(v) for k, v in rel.items() if k != "apart"),
         **{k: len(v) for k, v in rel.items() if k != "apart"},

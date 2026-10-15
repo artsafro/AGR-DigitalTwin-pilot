@@ -1,4 +1,4 @@
-"""Read-only UCX hull measurements (reg p.36 §13; docs/domain/areas/ucx.md R06, R08-R10).
+"""Read-only UCX hull measurements (reg p.36 §13; docs/domain/areas/ucx.md R06, R08-R10; [D098]).
 
 Pure Python (no numpy, no bpy) so the same functions run inside Blender
 (`tools/blender/ucx_audit.py`) and under pytest. Measurement only: no verdict, no
@@ -11,8 +11,9 @@ import itertools
 import math
 import re
 
-GAP_RECOMMENDED_M = (0.0002, 0.01)  # reg p.36 §13.4, recommendation only (C15)
-TOUCH_M = 0.0002  # below the recommended minimum: faces practically touch
+GAP_BAND_M = (0.002, 0.01)  # [D098]: 2 mm - 1 cm inclusive (reg p.36 §13.4 0.02-1 cm is a typo, C15)
+BAND_TOL_M = 1e-5  # float32 FBX coordinates: a modelled 2.000 mm gap reads back within 0.01 mm
+TOUCH_M = 0.0002  # faces practically touch
 NEIGHBOUR_M = 0.10  # pairs closer than this are "neighbours" in the gap report
 CONVEX_TOL_M = 1e-4  # float32 FBX coordinates around 100 m carry ~1e-5 noise
 
@@ -235,8 +236,9 @@ def surface_distance(a, b):
 def pair_relation(a, b):
     """Relation of two convex hulls: (class, gap_m, penetration_m).
 
-    class: overlap (penetration > TOUCH_M), touch (gap < TOUCH_M), recommended (gap in
-    0.2-10 mm), wide (10 mm < gap <= NEIGHBOUR_M), apart (gap > NEIGHBOUR_M, not neighbours).
+    class: overlap (penetration > TOUCH_M), touch (gap < TOUCH_M), below_band (TOUCH_M <= gap
+    < 2 mm), in_band (2 mm - 1 cm inclusive, [D098]), wide (1 cm < gap <= NEIGHBOUR_M), apart
+    (gap > NEIGHBOUR_M, not neighbours).
     """
     sep = sat_separation(a, b)
     if sep < -TOUCH_M:
@@ -244,8 +246,10 @@ def pair_relation(a, b):
     gap = surface_distance(a, b) if sep > -TOUCH_M else 0.0
     if gap < TOUCH_M:
         return "touch", gap, max(0.0, -sep)
-    if gap <= GAP_RECOMMENDED_M[1]:
-        return "recommended", gap, 0.0
+    if gap < GAP_BAND_M[0] - BAND_TOL_M:
+        return "below_band", gap, 0.0
+    if gap <= GAP_BAND_M[1] + BAND_TOL_M:
+        return "in_band", gap, 0.0
     if gap <= NEIGHBOUR_M:
         return "wide", gap, 0.0
     return "apart", gap, 0.0

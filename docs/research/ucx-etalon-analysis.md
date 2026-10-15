@@ -38,8 +38,9 @@ blender --background --factory-startup --python-exit-code 1 --python tools/blend
   tilted face directions (a box is 1-2-0).
 - **Intersections and gaps** for every pair whose bounding boxes are within 10 cm: SAT over
   face normals and edge crosses (penetration depth, nesting counts as overlap), exact surface
-  distance (vertex-triangle both ways + edge-edge). Classes: overlap (> 0.2 mm), touch
-  (< 0.2 mm), recommended (0.2-10 mm, reg p.36 §13.4, recommendation only, C15), wide (10-100 mm).
+  distance (vertex-triangle both ways + edge-edge). Classes against the project band
+  2 mm - 1 cm inclusive ([D098], C15; reg p.36 §13.4): overlap (> 0.2 mm), touch (< 0.2 mm),
+  below band (0.2-2 mm), in band (2-10 mm, 0.01 mm float32 tolerance), wide (10-100 mm).
 - **Coverage of Main**: 20 000 area-weighted points on the Main surface (seed 165); a point
   inside a UCX piece has deviation 0, else the distance to the nearest UCX surface. Shares
   within 0.3 m and 1 m are the reg p.36 §13.5 tolerances; height bands use world Z (project
@@ -64,7 +65,7 @@ blender --background --factory-startup --python-exit-code 1 --python tools/blend
 | Overlaps (max penetration) | **0** | **8 (260 mm)** | - | 0 | 0 |
 | Touching (< 0.2 mm) | 0 | 0 | - | 0 | 0 |
 | Gap min / median, mm | 0.65 / 6.0 | 1.18 / 9.0 | - | 2.0 / 2.0 | 2.0 / 2.0 |
-| Gaps 0.2-2 / 2-10 / 10-100 mm | 14 / 471 / 65 | 1 / 269 / 206 | - | 47 / 1 / 1 | 28 / 0 / 0 |
+| Gaps below band / in band 2-10 / wide 10-100 mm | 2 / 483 / 65 | 1 / 269 / 206 | - | 0 / 48 / 1 | 0 / 28 / 0 |
 | Main surface m² | 13 028 | 21 161 | 12 152 + 2 121 | 1 936 | 36 570 |
 | Main inside UCX | 75.8 % | 97.5 % | 0 % | 84.1 % | 36.5 % |
 | Main within 0.3 m / 1 m | **98.9 % / 99.8 %** | **99.6 % / 99.8 %** | 0 / 0 | 93.8 % / 99.4 % | 96.1 % / 97.3 % |
@@ -87,7 +88,7 @@ trapezoid prisms over non-rectangular plan quads, 6 with tilted faces. Built in 
 slices: 18 pieces start at -2.48 (basement), 46 at 0.08 (body, p90 height 12.26 m), and
 140 roof-level pieces start at 12.34 (82) or 13.31 (58) with tops up to 17.59 (parapets,
 roof structures; 5 pieces thinner than 30 cm). 0 overlaps, 0 touches, gaps 0.65-100 mm, median
-6 mm; 14 pairs below 2 mm. Coverage is the best of the OKS set: 98.9 % of the Main surface
+6 mm; 2 pairs below the 2 mm band of [D098] (min 0.65 mm). Coverage is the best of the OKS set: 98.9 % of the Main surface
 within 0.3 m, 99.8 % within 1 m. It uses 91.5 % of the [D012] budget: the piece count is
 budget-bound.
 
@@ -121,8 +122,9 @@ surface (exposed UCX p95 25.6 m): one box per mass is too coarse for §13.5.
    plan corners become trapezoid / parallelogram prisms instead of overlapping boxes.
 3. Decomposition by plan blocks and height slices (10-21 distinct bottom levels): body
    blocks, then roof-level parapets and structures as separate thin pieces, basement layer.
-4. Gaps are small but not fixed: typically 2-10 mm (median 6 / 9 mm), a few below 2 mm,
-   none below 0.2 mm. Our fixed 2 mm is inside the same recommended band.
+4. Gaps are small but not fixed: 752 of 1 034 neighbour pairs lie in the [D098] band
+   2-10 mm (median 6 / 9 mm), 3 pairs below 2 mm (0.65 and 1.18 mm minimum), none below
+   0.2 mm. Our fixed 2 mm sits on the lower edge of the same band.
 5. Tilted faces are rare (6 and 26 pieces): sloped or chamfered parts, not the default.
 6. Density: 16.5 (Skolkovo) and 6.6 (Mashi) pieces per 1 000 m² of Main surface, against
    17.0 for KPP1 and 0.6 for PSU275; delivered coverage within 0.3 m is 98.9-99.6 %.
@@ -154,8 +156,9 @@ user decisions. Regulation limits stay those of the [UCX sheet](../domain/areas/
    overlapping axis-aligned boxes.
 3. Split by plan blocks and by height levels (basement, body, roof-level parapets and
    structures); pieces thinner than 5 cm are not built (R04).
-4. Target gap 2-6 mm, measured and reported per pair; < 0.2 mm (touch) and any overlap,
-   including a nested piece, are findings (R09/R10, C15 keeps the gap advisory).
+4. Target gap 3-6 mm, which keeps float32 read-back safely inside the [D098] band
+   2 mm - 1 cm; measure every neighbour pair and report gaps outside the band, touches and
+   any overlap, including a nested piece (R09/R10).
 5. Coverage benchmark from the deliveries: Main surface >= 98.5 % within 0.3 m and
    >= 99.7 % within 1 m; maximum deviations by zone follow R11-R13.
 6. Check the [D012] budget before export; the primary etalon shows the piece count can hit
