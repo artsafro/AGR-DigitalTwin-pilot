@@ -12,6 +12,13 @@ import ifcopenshell.geom, ifcopenshell.util.placement, ifcopenshell.util.unit
 import numpy as np, shapely
 from dt_ai.spec.model import Spec
 
+try:
+    import relation_multimap
+except ModuleNotFoundError:
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import relation_multimap
+
 THICKNESS, SLAB_DEPTH, INSET, PAD = 0.20, 0.20, 0.02, 0.001
 ROT_DEG, SHIFT, TOL_M, TOL_V = 23.0, (100.0, -50.0, 7.0), 1e-3, 1e-5
 SUPPORTED = {"IfcSite", "IfcBuilding", "IfcBuildingStorey", "IfcSlab", "IfcWall", "IfcWallStandardCase", "IfcOpeningElement", "IfcWindow"}
@@ -183,19 +190,12 @@ def read_ledger(path):
     scale = float(ifcopenshell.util.unit.calculate_unit_scale(ifc))
     project = ifc.by_type("IfcProject")
 
-    def pairs(kind, left, right):
-        out = {}
-        for rel in ifc.by_type(kind):
-            a, b = getattr(rel, left), getattr(rel, right)
-            if a and b:
-                out[a.GlobalId] = b.GlobalId
-        return out
+    census = relation_multimap.census(ifc)
+    voids = relation_multimap.singletons(census["maps"], "void")
+    fills = relation_multimap.singletons(census["maps"], "fill")
+    contained = relation_multimap.singletons(census["maps"], "contain")
+    conflicting_containment = {d["source_id"] for d in census["diagnostics"] if d["family"] == "contain"}
 
-    voids, fills, contained = pairs("IfcRelVoidsElement", "RelatedOpeningElement", "RelatingBuildingElement"), pairs("IfcRelFillsElement", "RelatingOpeningElement", "RelatedBuildingElement"), {}
-    for rel in ifc.by_type("IfcRelContainedInSpatialStructure"):
-        host = rel.RelatingStructure.GlobalId if rel.RelatingStructure else None
-        for el in rel.RelatedElements or []:
-            contained[el.GlobalId] = host
     cut, plain = _geom_settings(True), _geom_settings(False)
     supported, unsupported, issues = {}, {}, []
     slabs, walls, openings, windows, storeys = [], [], [], [], []
@@ -225,7 +225,7 @@ def read_ledger(path):
             if prod.Representation is None:
                 issues.append(f"geometry failed {gid} no representation")
             sid = contained.get(gid)
-            if sid is None:
+            if sid is None and gid not in conflicting_containment:
                 issues.append(f"missing containment {gid}")
             row = {"name": name, "global_id": gid, "storey_id": sid}
             if kind == "IfcWindow":
@@ -255,11 +255,14 @@ def read_ledger(path):
             if body:
                 row["bbox_min"], row["bbox_max"] = body[0], body[1]
             openings.append(row)
+    for d in census["diagnostics"]:
+        issues.append(f"cardinality {d['family']} {d['source_id']} unresolved")
     return {"sha256": _sha(path), "schema": ifc.schema, "unit_scale_m": scale,
             "synthetic_root": bool(project and project[0].Name and "SYNTHETIC" in project[0].Name),
             "volume_meaning": {"cut": "opening subtractions at engine default", "uncut": "opening subtractions disabled"},
             "counts": {"supported": supported, "unsupported": unsupported, "products": sum(supported.values()) + sum(unsupported.values())},
-            "storeys": storeys, "slabs": slabs, "walls": walls, "openings": openings, "windows": windows, "issues": issues}
+            "storeys": storeys, "slabs": slabs, "walls": walls, "openings": openings, "windows": windows, "issues": issues,
+            "relation_census": census}
 
 
 def expect(spec):
