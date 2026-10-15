@@ -12,6 +12,18 @@ import pytest
 from dt_ai.materials import flora
 
 
+@pytest.mark.parametrize("authorization", [None, False, 0])
+def test_upscale_missing_authorization_is_not_stringified(tmp_path, authorization):
+    source = tmp_path / "synthetic.png"
+    image = Image.new("RGB", (1254, 1254), "white")
+    ImageDraw.Draw(image).rectangle((300, 100, 900, 1200), fill=(20, 130, 40))
+    image.save(source)
+    out = tmp_path / "must-not-exist"
+    with pytest.raises(ValueError, match="authorization"):
+        flora.upscale(source, out, authorization)
+    assert not out.exists()
+
+
 def test_authorized_upscale_records_source_and_requires_consent(tmp_path):
     source = tmp_path / "synthetic-1254.png"
     image = Image.new("RGB", (1254, 1254), "white")
