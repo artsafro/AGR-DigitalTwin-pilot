@@ -11,6 +11,7 @@ from pathlib import Path
 
 from dt_ai.core.blender_runner import blender_executable, run_blender
 from twinqa.report import Finding
+from twinqa.naming import mesh_name_findings
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
 ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
@@ -141,4 +142,8 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict) -> dict[str, l
         loose = [i["name"] for i in rb.get("images", []) if not i["packed"]]
         out["V006"].append(_f("fail" if loose else "pass", "embedded textures", f"{src}: {loose or 'all embedded'}",
                               "PNG embedded in FBX", [9], src))
+
+    # V012: internal mesh names and UCX index grammar (reg p.11-12 §3.3, p.33-34 §4.2) -> twinqa.naming
+    out["V012"] = mesh_name_findings([m["name"] for m in meshes], kind, role, Path(rb["source"]).stem,
+                                     profile["naming"]["max_characters"], src)
     return out
