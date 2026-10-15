@@ -96,7 +96,7 @@
         ]
       },
       {
-        "matcher": "Write|Edit",
+        "matcher": "Bash|PowerShell|Write|Edit",
         "hooks": [
           {
             "type": "command",

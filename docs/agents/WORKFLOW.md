@@ -30,7 +30,8 @@ code-review (user 2026-10-14 [D091]); production work runs the steps below.
    not evidence. Read the actual files back. Classify a failure (source / tool / code /
    test / contract), fix the cause, rerun the affected checks. A failed mandatory check is
    never turned into a pass by rewording. After two failures with the same cause, stop that
-   path, save the state and propose the next step.
+   path, save the state and propose the next step. The limit is recorded in
+   `jobs/<JOB>/pipeline/state.json` and enforced by the pipeline gate, see `docs/HARNESS_PLAN.md` §8.
 7. **Hand off.** Compare the result with the Requirement (the user's wording, profile and
    acceptance in the contract), item by item: met, not met, or changed by a later user decision
    (with its date or `D<n>`); report what is done, what was checked (commands, evidence paths)
@@ -307,6 +308,7 @@ Roles in `ROLES.md` assign work, not extra permissions. More restrictive task po
 | Force push | never | never | never | guard: `git push --force origin task/example`; gate: [Publication review](WORKFLOW.md#gate-publication-review) |
 | Write into another agent's worktree | never | never | never | gate: [Worktree ownership](WORKFLOW.md#gate-worktree-ownership) |
 | Manual /compact over a stale handoff without force | never | never | never | gate: [PreCompact](../../tools/hooks/session_context.py#precompact) |
+| Retry after the failure limit (two failures with the same cause, or three of one item) without a stop record (#128) | never | never | never | gate: [pipeline gate](../../.claude/hooks/pipeline_gate.py#main) (deny: writes, and Bash/PowerShell runner commands on a locked job); also `tools/git-hooks/pipeline_gate.py` (pre-commit, `--job`) and `dt build/validate/from-source/spec extract` (exit 2 before the run; run interception is partial, gaps tracked in #144) |
 
 The guard (`.claude/hooks/guard.py`) asks; it is not a deny sandbox or an authorization
 ledger. Its lexical shell rules can over-ask and do not interpret aliases, `gh api`, embedded
