@@ -65,7 +65,26 @@ EXPECTED_IMPORT_EDGES: dict[str, tuple[str, ...]] = {
 }
 
 
-def _is_kpp_sys_path_insert(node: ast.AST) -> bool:
+_HERE_CALL_TEMPLATE_DUMP: str = ast.dump(
+    ast.parse('sys.path.insert(0, os.path.join(HERE, "..", "..", "KPP1", "scripts"))').body[0].value
+)
+_ROOT_CALL_TEMPLATE_DUMP: str = ast.dump(
+    ast.parse('sys.path.insert(0, str(ROOT / "jobs" / "KPP1" / "scripts"))').body[0].value
+)
+_HERE_ASSIGN_TEMPLATE_DUMP: str = ast.dump(
+    ast.parse("os.path.dirname(os.path.abspath(__file__))").body[0].value
+)
+_ROOT_ASSIGN_TEMPLATE_DUMP: str = ast.dump(
+    ast.parse("Path(__file__).resolve().parents[3]").body[0].value
+)
+
+
+def _is_kpp_sys_path_insert(
+    node: ast.AST,
+    tree: ast.AST,
+    py_path: Path,
+    kpp_scripts: Path,
+) -> bool:
     """Recognize supported sys.path.insert calls for KPP1/scripts without expression evaluation.
 
     Limited static resolver (not a general Python import interpreter):
@@ -73,46 +92,71 @@ def _is_kpp_sys_path_insert(node: ast.AST) -> bool:
     1. sys.path.insert(0, os.path.join(HERE, "..", "..", "KPP1", "scripts"))
     2. sys.path.insert(0, str(ROOT / "jobs" / "KPP1" / "scripts"))
 
-    Strictly requires an ast.Call to sys.path.insert with string constants containing
-    both 'KPP1' and 'scripts'.
+    Matches exact structural AST templates, requires a preceding top-level single-name
+    assignment for HERE or ROOT with verified value AST dump, and verifies the target
+    resolves to kpp_scripts.
     """
     if not isinstance(node, ast.Call):
         return False
 
-    func = node.func
-    if not (
-        isinstance(func, ast.Attribute)
-        and func.attr == "insert"
-        and isinstance(func.value, ast.Attribute)
-        and func.value.attr == "path"
-        and isinstance(func.value.value, ast.Name)
-        and func.value.value.id == "sys"
-    ):
+    node_dump = ast.dump(node)
+    if node_dump == _HERE_CALL_TEMPLATE_DUMP:
+        form = "HERE"
+    elif node_dump == _ROOT_CALL_TEMPLATE_DUMP:
+        form = "ROOT"
+    else:
         return False
 
-    if len(node.args) < 2:
+    target_var = "HERE" if form == "HERE" else "ROOT"
+    expected_assign_dump = (
+        _HERE_ASSIGN_TEMPLATE_DUMP if form == "HERE" else _ROOT_ASSIGN_TEMPLATE_DUMP
+    )
+
+    stores = [
+        n
+        for n in ast.walk(tree)
+        if isinstance(n, ast.Name) and n.id == target_var and isinstance(n.ctx, ast.Store)
+    ]
+    if len(stores) != 1:
         return False
 
-    path_arg = node.args[1]
-    literals = {
-        n.value
-        for n in ast.walk(path_arg)
-        if isinstance(n, ast.Constant) and isinstance(n.value, str)
-    }
-    if not ("KPP1" in literals and "scripts" in literals):
+    if not isinstance(tree, ast.Module):
         return False
 
-    if isinstance(path_arg, ast.Call):
-        call_func = path_arg.func
-        # Form 1: os.path.join(...)
-        if isinstance(call_func, ast.Attribute) and call_func.attr == "join":
-            return True
-        # Form 2: str(ROOT / ... / "KPP1" / "scripts")
-        if isinstance(call_func, ast.Name) and call_func.id == "str":
-            if any(isinstance(sub, ast.BinOp) for sub in ast.walk(path_arg)):
-                return True
+    matching_assign = None
+    for stmt in tree.body:
+        if isinstance(stmt, ast.Assign) and len(stmt.targets) == 1:
+            target = stmt.targets[0]
+            if isinstance(target, ast.Name) and target.id == target_var:
+                matching_assign = stmt
+                break
 
-    return False
+    if matching_assign is None:
+        return False
+
+    if matching_assign.targets[0] is not stores[0]:
+        return False
+
+    if getattr(matching_assign, "lineno", 0) >= getattr(node, "lineno", 0):
+        return False
+
+    if ast.dump(matching_assign.value) != expected_assign_dump:
+        return False
+
+    resolved_kpp = kpp_scripts.resolve()
+    if form == "HERE":
+        expected_kpp = py_path.parent.parent.parent / "KPP1" / "scripts"
+        if expected_kpp != resolved_kpp and expected_kpp.resolve() != resolved_kpp:
+            return False
+    elif form == "ROOT":
+        parents = py_path.resolve().parents
+        if len(parents) < 4:
+            return False
+        expected_kpp = parents[3] / "jobs" / "KPP1" / "scripts"
+        if expected_kpp != resolved_kpp and expected_kpp.resolve() != resolved_kpp:
+            return False
+
+    return True
 
 
 def _extract_script_kpp_imports(py_path: Path, kpp_scripts: Path) -> tuple[str, ...]:
@@ -129,7 +173,7 @@ def _extract_script_kpp_imports(py_path: Path, kpp_scripts: Path) -> tuple[str, 
     insert_linenos = [
         node.lineno
         for node in ast.walk(tree)
-        if _is_kpp_sys_path_insert(node)
+        if _is_kpp_sys_path_insert(node, tree, py_path, kpp_scripts)
     ]
     if not insert_linenos:
         return ()
@@ -207,8 +251,8 @@ def dependency_inventory(psu_scripts: Path, kpp_scripts: Path) -> dict:
       identified by literal KPP1 and scripts routing.
     - Imports: AST parse every PSU275 *.py script, resolving imports to KPP1 only
       when the target exists as a .py in kpp_scripts and the importing script has
-      a preceding sys.path.insert call targeting KPP1/scripts (supporting os.path.join
-      and Path / forms containing literal 'KPP1' and 'scripts').
+      a preceding sys.path.insert call targeting KPP1/scripts (matching exact AST
+      templates for os.path.join and Path / forms with verified HERE/ROOT bindings).
     """
     all_targets, all_raw, kpp_targets, kpp_raw = _extract_shell_targets(psu_scripts / "run_all.sh")
 
@@ -489,4 +533,56 @@ def test_duplicate_cli_call_reports_sequence_mismatch(tmp_path):
     inv = dependency_inventory(psu_scripts, kpp_scripts)
     assert inv["kpp_cli_targets"].count("qa_overlap.py") == 2
     with pytest.raises(AssertionError, match=r"(?i)sequence mismatch.*duplicate"):
+        assert_dependency_contract(psu_scripts, kpp_scripts)
+
+
+def test_python_wrong_root_join_reports_missing_import(tmp_path):
+    psu_scripts, kpp_scripts = copy_job_scripts(tmp_path)
+    target_script = psu_scripts / "export_npm.py"
+    content = target_script.read_text(encoding="utf-8")
+    old_call = 'os.path.join(HERE, "..", "..", "KPP1", "scripts")'
+    new_call = 'os.path.join(HERE, "..", "..", "OTHER", "KPP1", "scripts")'
+    assert old_call in content, f"Expected {old_call} in export_npm.py"
+    target_script.write_text(content.replace(old_call, new_call), encoding="utf-8")
+
+    with pytest.raises(AssertionError, match=r"(?i)missing.*export_safety.*export_npm\.py"):
+        assert_dependency_contract(psu_scripts, kpp_scripts)
+
+
+def test_python_wrong_root_path_reports_missing_import(tmp_path):
+    psu_scripts, kpp_scripts = copy_job_scripts(tmp_path)
+    target_script = psu_scripts / "make_textures_psu275.py"
+    content = target_script.read_text(encoding="utf-8")
+    old_call = 'ROOT / "jobs" / "KPP1" / "scripts"'
+    new_call = 'ROOT / "OTHER" / "KPP1" / "scripts"'
+    assert old_call in content, f"Expected {old_call} in make_textures_psu275.py"
+    target_script.write_text(content.replace(old_call, new_call), encoding="utf-8")
+
+    with pytest.raises(AssertionError, match=r"(?i)missing.*make_textures.*make_textures_psu275\.py"):
+        assert_dependency_contract(psu_scripts, kpp_scripts)
+
+
+def test_changed_here_binding_reports_missing_import(tmp_path):
+    psu_scripts, kpp_scripts = copy_job_scripts(tmp_path)
+    target_script = psu_scripts / "export_npm.py"
+    content = target_script.read_text(encoding="utf-8")
+    old_binding = "HERE = os.path.dirname(os.path.abspath(__file__))"
+    new_binding = 'HERE = "/wrong/root"'
+    assert old_binding in content, f"Expected {old_binding} in export_npm.py"
+    target_script.write_text(content.replace(old_binding, new_binding), encoding="utf-8")
+
+    with pytest.raises(AssertionError, match=r"(?i)missing.*export_safety.*export_npm\.py"):
+        assert_dependency_contract(psu_scripts, kpp_scripts)
+
+
+def test_changed_root_binding_reports_missing_import(tmp_path):
+    psu_scripts, kpp_scripts = copy_job_scripts(tmp_path)
+    target_script = psu_scripts / "make_textures_psu275.py"
+    content = target_script.read_text(encoding="utf-8")
+    old_binding = "ROOT = Path(__file__).resolve().parents[3]"
+    new_binding = "ROOT = Path(__file__).resolve().parents[2]"
+    assert old_binding in content, f"Expected {old_binding} in make_textures_psu275.py"
+    target_script.write_text(content.replace(old_binding, new_binding), encoding="utf-8")
+
+    with pytest.raises(AssertionError, match=r"(?i)missing.*make_textures.*make_textures_psu275\.py"):
         assert_dependency_contract(psu_scripts, kpp_scripts)
