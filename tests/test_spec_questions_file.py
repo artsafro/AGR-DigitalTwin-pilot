@@ -93,6 +93,44 @@ def test_two_close_rows_keep_their_own_answers():
     assert by_answer["A"]["At (x, y)"] == "5.00, -0.05" and by_answer["A"]["Last"] == "v002"
 
 
+@pytest.mark.parametrize("old_positions", [(5.0, 5.06), (5.06, 5.0)])
+@pytest.mark.parametrize("new_positions", [(4.96, 5.02), (5.02, 4.96)])
+def test_global_pairing_keeps_all_answers(old_positions, new_positions):
+    # Synthetic geometry: the nearest edge blocks a complete pairing within 5 cm.
+    text = merge(None, "tec26-kpp1", "v001", [q(x=x) for x in old_positions])
+    text = text.replace("| 5.00, -0.05 |  |", "| 5.00, -0.05 | A |", 1)
+    text = text.replace("| 5.06, -0.05 |  |", "| 5.06, -0.05 | B |", 1)
+    _, rows = parse(merge(text, "tec26-kpp1", "v002", [q(x=x) for x in new_positions]))
+    assert len(rows) == 2
+    by_answer = {r["Answer"]: r for r in rows}
+    assert by_answer["A"]["At (x, y)"] == "4.96, -0.05"
+    assert by_answer["B"]["At (x, y)"] == "5.02, -0.05"
+    assert all(r["Status"] == "answered" and r["Last"] == "v002" for r in rows)
+
+
+@pytest.mark.parametrize("positions", [(5.03, 5.04), (5.04, 5.03), (5.01,), (5.01, 5.01)])
+def test_equal_optimal_assignments_are_reported_as_ambiguous(positions):
+    text = merge(None, "tec26-kpp1", "v001", [q(x=5.0), q(x=5.02)])
+    text = text.replace("| 5.00, -0.05 |  |", "| 5.00, -0.05 | A |", 1)
+    text = text.replace("| 5.02, -0.05 |  |", "| 5.02, -0.05 | B |", 1)
+    with pytest.raises(ValueError, match=r"ambiguous.*Q001.*Q002.*not merging"):
+        merge(text, "tec26-kpp1", "v002", [q(x=x) for x in positions])
+
+
+def test_cli_ambiguous_assignment_does_not_overwrite_answers(tmp_path, capsys):
+    into = tmp_path / "questions.md"
+    original = merge(None, "tec26-kpp1", "v001", [q(x=5.0), q(x=5.02)])
+    original = original.replace("| 5.00, -0.05 |  |", "| 5.00, -0.05 | A |", 1)
+    into.write_text(original, encoding="utf-8")
+    report = tmp_path / "spec.report.json"
+    report.write_text(json.dumps({"questions": [q(x=5.01)]}), encoding="utf-8")
+    report.with_name("spec.json").write_text(json.dumps({"id": "tec26-kpp1"}), encoding="utf-8")
+    assert main(["spec", "merge-questions", "--report", str(report), "--version", "v002",
+                 "--into", str(into)]) == 1
+    assert "ambiguous" in capsys.readouterr().err
+    assert into.read_text(encoding="utf-8") == original
+
+
 def test_escaped_pipe_at_the_end_of_an_answer_survives():
     # N5: a row written without padding whose answer ends with an escaped pipe
     text = merge(None, "tec26-kpp1", "v001", [q()])
