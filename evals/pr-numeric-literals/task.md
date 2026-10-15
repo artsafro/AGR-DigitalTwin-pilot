@@ -18,10 +18,13 @@ into `<main checkout>/logs/pr/<branch slug>/view.json` and `diff.patch`. The bod
 rule: missing, the check is not measured unless a failure was already found in the diff.
 
 **Detection rule** (grader `twinqa.evals.pr_graders.pr_numeric_literals`). Added lines of in-scope `.py` files
-only. The scanner walks each hunk's new side and skips comments and string literals (a hunk starts outside a
-string). `0`, `1` and `2` in any spelling are exempt (identities, halves `/ 2`, xy slices `[:, :2]`, rounding digits; PR #76
-showed `2` only in those roles). A value that also occurs on a removed code line of the same
-file was moved. Referenced means a decision-log id (`D` and one to four digits, as in `[D073]`) or the word
+only. The scanner walks each hunk's new side and skips comments and plain string literals (a hunk starts
+outside a string). Every new numeric literal counts, including `0`, `1` and `2`. A moved line is an added
+line whose text, with leading and trailing whitespace stripped, is identical to a removed line's stripped
+text in the same file; each removed line matches at most one added line, and the literals on that added line
+are not new. f-string replacement-field expressions are code, including a nested field in a format spec;
+plain format-spec text is not, and `{{` / `}}` are literal braces. An f-string field that cannot be parsed
+is not measured. Referenced means a decision-log id (`D` and one to four digits, as in `[D073]`) or the word
 `tolerances` on that added line; or the same numeric value on a PR-body line or any added line that also
 carries such a reference; or the same value added in a file whose path contains `tolerances`.
 

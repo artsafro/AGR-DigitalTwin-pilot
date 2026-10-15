@@ -93,15 +93,13 @@ def test_numeric_literals_on_the_recorded_pull_requests():
     assert (good["measured"], good["passed"]) == (0, True)
 
 
-def test_numeric_literals_ignore_comments_strings_exempt_and_out_of_scope_files(tmp_path):
+def test_numeric_literals_ignore_comments_strings_and_out_of_scope_files(tmp_path):
     body = "see 0.25 m in the source [D090]\n"
     view = view_file(tmp_path / "v.json", body)
     clean = diff_file(tmp_path / "clean.diff", py_diff([
         '+"""docstring keeps 2.5"""',
         "+# comment keeps 2.5",
         '+s = "2.5"',
-        "+a = 0",
-        "+b = 1.0",
         "+name = x2",
         "+limit = 0.25  # [D073]",
     ]))
@@ -118,7 +116,7 @@ def test_numeric_literals_ignore_comments_strings_exempt_and_out_of_scope_files(
     row = pr_numeric_literals({"pr": [plain], "diff": [tol]})
     assert (row["measured"], row["passed"]) == (0, True)
 
-    moved = diff_file(tmp_path / "moved.diff", py_diff(["-OLD = 0.33", "+NEW = 0.33"]))
+    moved = diff_file(tmp_path / "moved.diff", py_diff(["-OLD = 0.33", "+OLD = 0.33"]))
     row = pr_numeric_literals({"pr": [plain], "diff": [moved]})
     assert (row["measured"], row["passed"]) == (0, True)
 
@@ -131,6 +129,58 @@ def test_numeric_literals_ignore_comments_strings_exempt_and_out_of_scope_files(
     assert row["passed"] is None and row["measured"] == "not measured" and "not a gh pr diff" in row["error"]
     with pytest.raises(EvidenceError, match="not a gh pr diff"):
         read_diff(junk)
+
+
+@pytest.mark.parametrize("line", [
+    "+MAX_EMBED_M = 2",
+    "+MAX_EMBED_M = 1",
+    "+MAX_EMBED_M = 0",
+    "+result = points[3:5]",
+])
+def test_numeric_literals_count_small_values_and_slices(tmp_path, line):
+    plain = view_file(tmp_path / "v.json", "reviewed, no citation")
+    row = pr_numeric_literals({"pr": [plain], "diff": [diff_file(tmp_path / "d.diff", py_diff([line]))]})
+    assert row["passed"] is False and row["measured"] >= 1
+
+
+def test_numeric_literals_same_value_on_a_different_line_is_new(tmp_path):
+    plain = view_file(tmp_path / "v.json", "reviewed, no citation")
+    diff = diff_file(tmp_path / "d.diff", py_diff(["-OLD_RETRY_DELAY = 0.33", "+MAX_EMBED_M = 0.33"]))
+    row = pr_numeric_literals({"pr": [plain], "diff": [diff]})
+    assert row["passed"] is False
+    assert [item["literal"] for item in row["details"]] == ["0.33"]
+
+
+@pytest.mark.parametrize("lines, ok, literal", [
+    (['+result = f"{width * 0.37}"'], False, "0.37"),
+    (['+s = f"{x:.2f} and {{0.5}}"'], True, None),
+    (['+s = f"{x:{width}}"'], True, None),
+    (['+s = f"{x:{3}}"'], False, "3"),
+    (['+s = f"""', '+{a * 0.4}"""'], False, "0.4"),
+])
+def test_numeric_literals_scan_fstring_expressions(tmp_path, lines, ok, literal):
+    plain = view_file(tmp_path / "v.json", "reviewed, no citation")
+    row = pr_numeric_literals({"pr": [plain], "diff": [diff_file(tmp_path / "d.diff", py_diff(lines))]})
+    if ok:
+        assert (row["measured"], row["passed"]) == (0, True)
+    else:
+        assert row["passed"] is False and literal in [item["literal"] for item in row["details"]]
+
+
+def test_numeric_literals_unparseable_fstring_is_not_measured(tmp_path):
+    plain = view_file(tmp_path / "v.json", "reviewed, no citation")
+    diff = diff_file(tmp_path / "d.diff", py_diff(['+s = f"{width * 0.37"']))
+    row = pr_numeric_literals({"pr": [plain], "diff": [diff]})
+    assert row["passed"] is None and row["measured"] == "not measured"
+    assert row["error"].startswith("incomplete evidence:")
+    assert "src/dt_ai/a.py" in row["error"] and ":1:" in row["error"]
+
+
+def test_numeric_literals_a_cited_threshold_passes(tmp_path):
+    plain = view_file(tmp_path / "v.json", "reviewed, no citation")
+    diff = diff_file(tmp_path / "d.diff", py_diff(["+MAX_EMBED_M = 0.37  # [D090]"]))
+    row = pr_numeric_literals({"pr": [plain], "diff": [diff]})
+    assert (row["measured"], row["passed"]) == (0, True)
 
 
 def test_review_rounds_on_the_recorded_pull_requests():
@@ -215,4 +265,4 @@ def test_numeric_literals_catch_unreferenced_values_around_skipped_text(tmp_path
     ]))
     row = pr_numeric_literals({"pr": [plain], "diff": [diff]})
     assert row["passed"] is False
-    assert sorted(item["literal"] for item in row["details"]) == ["0.25", "3"]
+    assert sorted(item["literal"] for item in row["details"]) == ["0.25", "2", "3"]

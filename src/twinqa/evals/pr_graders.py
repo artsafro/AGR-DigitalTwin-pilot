@@ -5,13 +5,15 @@
 a placeholder that starts with `<` does not.
 
 `pr_numeric_literals` — an added numeric literal in `src/dt_ai/` (the engine) or `src/twinqa/`
-(the delivery checker) must be 0, 1 or 2, a move of a value removed in the same file, or referenced.
-`src/twinqa/evals/` is the harness, not the delivery checker, and is not scanned. A reference is a
-decision-log id (`D<n>`, as in `[D073]`) or the word `tolerances` on the added line, on a PR-body
-line or another added line that also contains the same numeric value, or an added line of a file
-whose path contains `tolerances`. The scanner walks each hunk's new side (context and added lines)
-so a string can continue; a hunk starts outside a string, and f-string expressions are skipped with
-the string. Comments and string literals are not code.
+(the delivery checker) must be referenced. `src/twinqa/evals/` is the harness, not the delivery
+checker, and is not scanned. A reference is a decision-log id (`D<n>`, as in `[D073]`) or the word
+`tolerances` on the added line, on a PR-body line or another added line that also contains the same
+numeric value, or an added line of a file whose path contains `tolerances`. An added line whose
+stripped text matches a removed line in the same file (each removed line once) was moved; its
+literals are not new. The scanner walks each hunk's new side (context and added lines) so a string
+can continue; a hunk starts outside a string. Comments and plain string literals are not code.
+f-string replacement-field expressions are code, including a nested field in a format spec;
+format-spec text is not. An f-string field that cannot be parsed is not measured.
 
 `pr_review_rounds` — the highest review-round marker on the first non-empty line of a PR comment
 is at most 3 (`docs/agents/REVIEW_CHECKLIST.md` [D073]). A quote further down is not a marker.
@@ -108,8 +110,9 @@ def _header_paths(line):
 def read_diff(path):
     """One `gh pr diff` file: per file the new path, added `(line, text)`, removed texts and hunks.
 
-    A hunk is `(kind, text)` with kind `+`, `-` or ` `. An empty file is no diff. A non-empty file
-    without a `diff --git` header is not a gh pr diff. `\\ No newline at end of file` is not a line.
+    A hunk is `{"start": new-file line, "lines": [(kind, text), ...]}` with kind `+`, `-` or ` `.
+    An empty file is no diff. A non-empty file without a `diff --git` header is not a gh pr diff.
+    `\\ No newline at end of file` is not a line.
     """
     path = Path(path)
     if not path.is_file():
@@ -151,7 +154,7 @@ def read_diff(path):
             close_hunk()
             match = _HUNK.match(line)
             new_line = int(match.group(1)) if match else 1
-            hunk = []
+            hunk = {"start": new_line, "lines": []}
             continue
         if hunk is None:
             continue
@@ -164,7 +167,7 @@ def read_diff(path):
             continue
         else:
             kind, body = line[0], line[1:]
-        hunk.append((kind, body))
+        hunk["lines"].append((kind, body))
         if kind == "+":
             current["added"].append((new_line, body))
             new_line += 1
@@ -249,9 +252,7 @@ def pr_agent_trace(evidence):
     return row
 
 
-def _exempt(value):
-    """0, 1 and 2 are structure, not thresholds: identities, halves (`/ 2`), xy slices (`[:, :2]`), digits."""
-    return value in (0, 1, 2)
+_PAIRS = {")": "(", "]": "[", "}": "{"}
 
 
 def _number_value(token):
@@ -274,8 +275,11 @@ def _escaped(text, index):
 
 
 def _open_string(text, i):
-    """If a string literal starts at i, return (index after it, unclosed triple or None). Else None."""
-    if text[i] not in _PREFIX and text[i] not in "'\"":
+    """If a string literal starts at i, return a description, else None.
+
+    Keys: quote, triple, raw, fstring, content (index of the first body character).
+    """
+    if i >= len(text) or (text[i] not in _PREFIX and text[i] not in "'\""):
         return None
     end = i
     limit = len(text)
@@ -285,59 +289,192 @@ def _open_string(text, i):
         return None
     if i > 0 and (text[i - 1].isalnum() or text[i - 1] == "_"):
         return None
-    raw = "r" in text[i:end].lower()
+    prefix = text[i:end]
     quote = text[end]
     triple = text[end:end + 3] == quote * 3
-    cursor = end + (3 if triple else 1)
+    return {"quote": quote, "triple": triple, "raw": "r" in prefix.lower(), "fstring": "f" in prefix.lower(),
+            "content": end + (3 if triple else 1)}
+
+
+def _find_string_end(text, index, quote, triple, raw):
+    """Index after a plain string's closer, or None when this line does not close it."""
     if triple:
-        close = text.find(quote * 3, cursor)
+        close = text.find(quote * 3, index)
         while close >= 0 and not raw and _escaped(text, close):
             close = text.find(quote * 3, close + 1)
         if close < 0:
-            return limit, (quote, raw)
-        return close + 3, None
+            return None
+        return close + 3
+    cursor, limit = index, len(text)
     while cursor < limit:
         if text[cursor] == "\\" and not raw:
             cursor += 2
             continue
         if text[cursor] == quote:
-            return cursor + 1, None
+            return cursor + 1
         cursor += 1
-    return limit, None
+    return None
 
 
 def _scan(items):
-    """`(include, text, extra...)` in order. Yields code numbers on included lines. Starts outside a string."""
-    triple = None
-    for item in items:
-        include, text, extra = item[0], item[1], item[2:]
+    """`(include, text, line_no, path)` in order. Returns `(literals, errors)`. Starts outside a string.
+
+    Literals are `(text, token, value, line_no)` from included lines. Plain strings and comments are not
+    code. An f-string's replacement-field expression is code (a `:` or `!` ends it only outside `()`, `[]`,
+    `{}` and nested strings; `:=` is a walrus only inside parentheses, so a top-level `:` starts the format
+    spec). `{{` and `}}` in the literal text are braces, not fields. A nested field in a format spec is an
+    expression; format-spec text is not. An unclosed field is an error naming the file and the line of `{`.
+    """
+    found, errors, stack = [], [], []
+
+    def fail(frame):
+        fields = frame.get("fields") or []
+        if not fields:
+            return
+        errors.append(f"{frame['path']}:{fields[0]['line']}: unparseable f-string field")
+        fields.clear()
+
+    def frame_for(opened, path):
+        frame = {"kind": "f" if opened["fstring"] else "plain", "quote": opened["quote"],
+                 "triple": opened["triple"], "raw": opened["raw"], "path": path}
+        if opened["fstring"]:
+            frame["fields"] = []
+        return frame
+
+    def closes(frame, text, index):
+        quote, raw = frame["quote"], frame["raw"]
+        if frame["triple"]:
+            return text.startswith(quote * 3, index) and (raw or not _escaped(text, index))
+        return text[index] == quote and (raw or not _escaped(text, index))
+
+    for include, text, line_no, path in items:
         index, limit = 0, len(text)
         while index < limit:
-            if triple:
-                quote, raw = triple
-                close = text.find(quote * 3, index)
-                while close >= 0 and not raw and _escaped(text, close):
-                    close = text.find(quote * 3, close + 1)
-                if close < 0:
+            if stack and stack[-1]["kind"] == "plain":
+                end = _find_string_end(text, index, stack[-1]["quote"], stack[-1]["triple"], stack[-1]["raw"])
+                if end is None:
                     break
-                index = close + 3
-                triple = None
+                index = end
+                stack.pop()
+                continue
+            if stack and stack[-1]["kind"] == "f":
+                fs = stack[-1]
+                fields = fs["fields"]
+                if not fields:
+                    if closes(fs, text, index):
+                        index += 3 if fs["triple"] else 1
+                        stack.pop()
+                        continue
+                    if text.startswith("{{", index) or text.startswith("}}", index):
+                        index += 2
+                        continue
+                    if text[index] == "{":
+                        fields.append({"stage": "expr", "groups": [], "line": line_no, "nums": []})
+                        index += 1
+                        continue
+                    if text[index] == "}":
+                        errors.append(f"{path}:{line_no}: unparseable f-string field")
+                        index += 1
+                        continue
+                    index += 1
+                    continue
+                field = fields[-1]
+                if field["stage"] == "expr":
+                    opened = _open_string(text, index)
+                    if opened is not None:
+                        stack.append(frame_for(opened, path))
+                        index = opened["content"]
+                        continue
+                    char = text[index]
+                    if char in "([{":
+                        field["groups"].append(char)
+                        index += 1
+                        continue
+                    if char in ")]}":
+                        if field["groups"] and field["groups"][-1] == _PAIRS[char]:
+                            field["groups"].pop()
+                            index += 1
+                            continue
+                        if not field["groups"] and char == "}":
+                            found.extend(field["nums"])
+                            fields.pop()
+                            index += 1
+                            continue
+                        index += 1
+                        continue
+                    if not field["groups"] and char == ":":
+                        field["stage"] = "format"
+                        index += 1
+                        continue
+                    if not field["groups"] and char == "!" and not text.startswith("!=", index):
+                        field["stage"] = "conv"
+                        index += 1
+                        continue
+                    match = _NUMBER.match(text, index)
+                    if match:
+                        value = _number_value(match.group(0))
+                        if value is not None and include:
+                            field["nums"].append((text, match.group(0), value, line_no))
+                        index = match.end()
+                        continue
+                    index += 1
+                    continue
+                if field["stage"] == "conv":
+                    if text[index] not in ":}":
+                        index += 1
+                        if index >= limit:
+                            break
+                    if text[index] == ":":
+                        field["stage"] = "format"
+                        index += 1
+                        continue
+                    if text[index] == "}":
+                        found.extend(field["nums"])
+                        fields.pop()
+                        index += 1
+                        continue
+                    index += 1
+                    continue
+                if text[index] == "{":
+                    fields.append({"stage": "expr", "groups": [], "line": line_no, "nums": []})
+                    index += 1
+                    continue
+                if text[index] == "}":
+                    found.extend(field["nums"])
+                    fields.pop()
+                    index += 1
+                    continue
+                if closes(fs, text, index):
+                    fail(fs)
+                    index += 3 if fs["triple"] else 1
+                    stack.pop()
+                    continue
+                index += 1
                 continue
             if text[index] == "#":
                 break
             opened = _open_string(text, index)
             if opened is not None:
-                index, triple = opened
+                stack.append(frame_for(opened, path))
+                index = opened["content"]
                 continue
             match = _NUMBER.match(text, index)
             if match:
-                if include:
-                    value = _number_value(match.group(0))
-                    if value is not None:
-                        yield (text, match.group(0), value, *extra)
+                value = _number_value(match.group(0))
+                if value is not None and include:
+                    found.append((text, match.group(0), value, line_no))
                 index = match.end()
                 continue
             index += 1
+        while stack and not stack[-1]["triple"]:
+            frame = stack[-1]
+            if frame["kind"] == "f":
+                fail(frame)
+            stack.pop()
+    for frame in stack:
+        if frame["kind"] == "f":
+            fail(frame)
+    return found, errors
 
 
 def _line_has_reference(text):
@@ -363,8 +500,12 @@ def _in_scope(path):
 
 
 def _literals(files):
-    """Added in-scope literals that are not exempt and not a move of a removed value in the same file."""
-    scanned, pending = [], []
+    """Added in-scope literals that are not on a line moved unchanged inside the same file.
+
+    A move is an added line whose stripped text equals a removed line's stripped text; each removed line
+    matches at most one added line. Also returns unparseable f-string fields.
+    """
+    scanned, pending, problems = [], [], []
     for entry in files:
         path = entry["path"]
         if not _in_scope(path):
@@ -373,28 +514,25 @@ def _literals(files):
             scanned.append(path)
         removed = Counter()
         for hunk in entry["hunks"]:
-            for _text, _token, value in _scan((True, text) for kind, text in hunk if kind == "-"):
-                if not _exempt(value):
-                    removed[value] += 1
-        added_lines = iter(entry["added"])  # one iterator: `+` lines follow the hunks
+            for kind, text in hunk["lines"]:
+                if kind == "-":
+                    removed[text.strip()] += 1
         for hunk in entry["hunks"]:
-            side = []
-            for kind, text in hunk:
+            side, line_no = [], hunk["start"]
+            for kind, text in hunk["lines"]:
                 if kind == "-":
                     continue
-                if kind == "+":
-                    line_no, _body = next(added_lines)
-                    side.append((True, text, line_no))
-                else:
-                    side.append((False, text, None))
-            for text, token, value, line_no in _scan(side):
-                if _exempt(value):
-                    continue
-                if removed[value]:
-                    removed[value] -= 1
-                    continue
-                pending.append({"file": path, "line": line_no, "literal": token, "value": value, "text": text})
-    return scanned, pending
+                include = kind == "+"
+                if include and removed[text.strip()]:
+                    removed[text.strip()] -= 1
+                    include = False
+                side.append((include, text, line_no, path))
+                line_no += 1
+            found, errors = _scan(side)
+            problems.extend(errors)
+            for text, token, value, lit_line in found:
+                pending.append({"file": path, "line": lit_line, "literal": token, "value": value, "text": text})
+    return scanned, pending, problems
 
 
 def pr_numeric_literals(evidence):
@@ -423,7 +561,8 @@ def pr_numeric_literals(evidence):
         else:
             bodies.append(body)
     files = [entry for diff in parsed for entry in diff]
-    scanned, pending = _literals(files) if parsed else ([], [])
+    scanned, pending, scan_problems = _literals(files) if parsed else ([], [], [])
+    problems.extend(scan_problems)
     referenced = set()
     for body in bodies:
         for line in body.splitlines():
