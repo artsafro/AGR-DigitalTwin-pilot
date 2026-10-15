@@ -149,3 +149,10 @@ def test_pane_matching_survives_a_1_mm_shift():
     a = entry("A", "a", "window", 1.0, 1.8, [[0.05, 0.05, 0.95, 0.8], [0.05, 0.9, 0.95, 1.75]], source={})
     b = entry("B", "b", "window", 1.0, 1.8, [[0.051, 0.05, 0.95, 0.8], [0.05, 0.9, 0.95, 1.75]], source={})
     assert [t["same_as"] for t in dedupe([a, b])] == [None, "A"]
+
+
+def test_opaque_fanlight_above_glazed_lower_band_keeps_main_fields():
+    # issue #45: synthetic geometry
+    glass = [[0.05, 0.05, 1.95, 0.45], [0.05, 0.55, 0.95, 2.0], [1.05, 0.55, 1.95, 2.0]]
+    opaque = [[0.05, 2.1, 1.95, 2.7]]
+    assert layout(glass + opaque, opaque) == (2, 2)
