@@ -1,13 +1,15 @@
 """Scene stages from the Blender readback: rule logic on fixed readbacks, plus a real
 background-Blender roundtrip (skipped when Blender is not installed)."""
+import json
 import subprocess
 import zipfile
+from pathlib import Path
 
 import pytest
 
 import validate_package as vp
 from test_validator import PROFILES, STEM, good_files
-from twinqa.scene import find_blender, scene_findings, ucx_triangle_limit
+from twinqa.scene import find_blender, readback, scene_findings, ucx_triangle_limit
 
 
 def mesh(name="SM_Test_K_1_Main", tris=12, degrees=None, rot=(0, 0, 0), scale=(1, 1, 1), uv=1, mirrored=0,
@@ -98,6 +100,85 @@ def test_origin_at_zero_and_ucx_exempt_from_shared_pivot():
                               mesh(name="UCX_SM_Test_K_1_Main_001", loc=(9, 9, 0))), "vpm", "oks", PROFILES.vpm)
     assert statuses(found, "V013")["origin at FBX zero"] == "fail"
     assert statuses(found, "V013")["shared pivot"] == "pass"
+
+
+def test_readback_exit_code_7_with_valid_report_raises_runtime_error(monkeypatch):
+    synthetic_fbx = Path("synthetic/model.fbx")
+    report_data = {"readback_ok": True, "source": str(synthetic_fbx), "meshes": []}
+    prefix = "HEAD_STDERR_PREFIX_DISCARDED_" * 5
+    tail = "TAIL_STDERR_ERROR_CODE_7_REPORTED"
+    long_stderr = f"{prefix}_{'A' * 350}_{tail}"
+    assert len(long_stderr) > 400
+
+    def fake_run(cmd, *args, **kwargs):
+        Path(cmd[-1]).write_text(json.dumps(report_data), encoding="utf-8")
+        return subprocess.CompletedProcess(cmd, returncode=7, stdout="", stderr=long_stderr)
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    with pytest.raises(RuntimeError) as exc_info:
+        readback(synthetic_fbx, blender="not-executed")
+
+    msg = str(exc_info.value)
+    assert "exit 7" in msg
+    assert long_stderr[-400:] in msg
+    assert prefix not in msg
+
+
+def test_readback_returncode_0_with_no_report_raises_runtime_error(monkeypatch):
+    synthetic_fbx = Path("synthetic/model.fbx")
+
+    def fake_run(cmd, *args, **kwargs):
+        return subprocess.CompletedProcess(cmd, returncode=0, stdout="", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    with pytest.raises(RuntimeError) as exc_info:
+        readback(synthetic_fbx, blender="not-executed")
+
+    assert "no report" in str(exc_info.value).lower()
+
+
+def test_readback_timeout_raises_runtime_error_preserving_cause(monkeypatch):
+    synthetic_fbx = Path("synthetic/model.fbx")
+    timeout_duration = 45
+
+    def fake_run(cmd, *args, **kwargs):
+        raise subprocess.TimeoutExpired(cmd=cmd, timeout=timeout_duration)
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    with pytest.raises(RuntimeError) as exc_info:
+        readback(synthetic_fbx, blender="not-executed", timeout=timeout_duration)
+
+    err = exc_info.value
+    msg = str(err).lower()
+    assert "timed out" in msg or "timeout" in msg
+    assert str(timeout_duration) in str(err)
+    assert err.__cause__ is not None
+    assert isinstance(err.__cause__, subprocess.TimeoutExpired)
+
+
+def test_readback_returncode_0_with_valid_report_returns_dictionary(monkeypatch):
+    synthetic_fbx = Path("synthetic/model.fbx")
+    expected_data = {
+        "source": str(synthetic_fbx),
+        "readback_ok": True,
+        "meshes": [
+            {"name": "SM_Synthetic_Main", "triangles": 24, "polygon_degrees": {"3": 24}}
+        ],
+        "other_objects": [],
+        "images": [],
+    }
+
+    def fake_run(cmd, *args, **kwargs):
+        Path(cmd[-1]).write_text(json.dumps(expected_data), encoding="utf-8")
+        return subprocess.CompletedProcess(cmd, returncode=0, stdout="", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    result = readback(synthetic_fbx, blender="not-executed")
+    assert result == expected_data
 
 
 BLENDER = find_blender()
