@@ -20,9 +20,6 @@ ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
 PROJECT_TRIANGLE_TARGET = 150_000
 PIVOT_CENTRE_TOL_PCT, PIVOT_SHARED_TOL_M = 10, 0.001  # SINTEZ AGR Checker 2.9.4a / 2.9.5
 UCX_SMALL_MODEL, UCX_SMALL_LIMIT, UCX_SHARE, UCX_CAP = 50_000, 15_000, 0.05, 100_000
-# Bounded search for overlaid co-directional layers; pairs farther than this are treated as separate
-# surfaces (an implementation scope, not a regulation number; 0.1 m is the minimum wall thickness, reg p.29 §3.12).
-CLEARANCE_WINDOW_M = 0.1
 
 
 def ucx_triangle_limit(model_triangles: int) -> int:
@@ -90,7 +87,7 @@ def _clearance_finding(meshes: list[dict], ucx: list[dict], src: str, profile: d
     band_min, band_max = float(band["min"]), float(band["max"])
     min_mm, max_mm = band_min * 1000, band_max * 1000
     expected = (f"co-directional overlapping faces {min_mm:g}-{max_mm:g} mm apart "
-                f"(pairs beyond {max_mm:g} mm within {CLEARANCE_WINDOW_M:g} m: review)")
+                f"(pairs beyond {max_mm:g} mm: review)")
     geometry = [mesh for mesh in meshes if mesh not in ucx]
     if any("face_geometry" not in mesh for mesh in geometry):
         return _f("not_run", "co-directional clearance", f"{src}: no face geometry in readback",
@@ -103,7 +100,7 @@ def _clearance_finding(meshes: list[dict], ucx: list[dict], src: str, profile: d
             points = [vertices[vertex] for vertex in polygon]
             if len(points) >= 3:
                 faces.append({"object": mesh["name"], "index": index, "points": points})
-    pairs = co_directional_pairs(faces, CLEARANCE_WINDOW_M)
+    pairs = co_directional_pairs(faces)
     distribution = co_directional_distribution(pairs, band_min, band_max)
     if distribution["below_band"]:
         status = "fail"
@@ -120,7 +117,7 @@ def _clearance_finding(meshes: list[dict], ucx: list[dict], src: str, profile: d
                                            f"d={distance * 1000:.1f} mm"))
     out_of_band.sort(key=lambda item: (not item[0], -item[1]))
     worst = [label for _, _, label in out_of_band]
-    observed = (f"{src}: {distribution['pairs']} co-directional overlapping pairs within {CLEARANCE_WINDOW_M:g} m: "
+    observed = (f"{src}: {distribution['pairs']} co-directional overlapping pairs: "
                 f"{distribution['below_band']} < {min_mm:g} mm, {distribution['in_band']} in band, "
                 f"{distribution['above_band']} > {max_mm:g} mm; "
                 f"distance mm min/median/max {_mm_text(distribution['min_mm'])}/"

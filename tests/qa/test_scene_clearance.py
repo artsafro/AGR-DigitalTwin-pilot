@@ -54,7 +54,7 @@ def test_overlapping_quads_2mm_apart_fail_below_band():
     assert item.source_pdf_pages == [8, 29]
     assert item.conflicts == [30]
     assert item.expected == ("co-directional overlapping faces 5-20 mm apart "
-                             "(pairs beyond 20 mm within 0.1 m: review)")
+                             "(pairs beyond 20 mm: review)")
 
 
 def test_coplanar_overlapping_quads_fail():
@@ -70,9 +70,56 @@ def test_quads_inside_band_pass():
         assert "1 in band" in item.observed
 
 
-def test_quads_above_band_are_review_and_outside_window_pass():
+def _face_records(quads):
+    return [{"object": "SM_Test_K_1_Main", "index": index, "points": quad} for index, quad in enumerate(quads)]
+
+
+def test_quads_above_band_are_review_at_any_distance():
+    band = PROFILES.vpm["geometry"]["near_coplanar_spacing_m"]
     assert clearance(scene(faced("SM_Test_K_1_Main", [y_quad(0.0), y_quad(0.030)]))).status == "review"
-    assert clearance(scene(faced("SM_Test_K_1_Main", [y_quad(0.0), y_quad(0.150)]))).status == "pass"
+    item = clearance(scene(faced("SM_Test_K_1_Main", [y_quad(0.0), y_quad(0.150)])))
+    assert item.status == "review"
+    assert "1 > 20 mm" in item.observed
+    distribution = co_directional_distribution(
+        co_directional_pairs(_face_records([y_quad(0.0), y_quad(0.150)])), band["min"], band["max"])
+    assert distribution["max_mm"] == 150
+    assert distribution["histogram_mm"]["100-1000"] == 1
+    assert clearance(scene(faced("SM_Test_K_1_Main", [y_quad(0.0), y_quad(3.0)]))).status == "review"
+    far = co_directional_distribution(
+        co_directional_pairs(_face_records([y_quad(0.0), y_quad(3.0)])), band["min"], band["max"])
+    assert far["histogram_mm"]["1000+"] == 1
+
+
+def test_tilted_narrow_strip_2mm_pair_is_found():
+    normal = np.array([0.0009, 0.0, 1.0])
+    normal /= np.linalg.norm(normal)
+    along = np.array([normal[2], 0.0, -normal[0]])
+    across = np.array([0.0, 1.0, 0.0])
+    corners = np.stack([np.zeros(3), along, along + across, across])
+    shifted = corners + 0.999999 * along + 0.002 * normal
+    pairs = co_directional_pairs(_face_records([corners.tolist(), shifted.tolist()]))
+    assert len(pairs) == 1
+    assert pairs[0]["distance_m"] == pytest.approx(0.002, abs=1e-9)
+    assert pairs[0]["projected_area_m2"] > 1e-7
+    assert clearance(scene(faced("SM_Test_K_1_Main", [corners.tolist(), shifted.tolist()]))).status == "fail"
+
+
+def test_combined_controls_one_scene():
+    quads = [
+        y_quad(0.0, x0=0.0),
+        y_quad(0.002, x0=0.0),
+        y_quad(0.0, x0=5.0),
+        y_quad(0.010, x0=5.0),
+        y_quad(0.0, x0=10.0),
+        y_quad(0.150, x0=10.0),
+        y_quad(0.0, x0=20.0),
+        y_quad(0.002, x0=21.0),
+        y_quad(0.0, x0=30.0),
+        y_quad(0.003, x0=30.0, reverse=True),
+    ]
+    item = clearance(scene(faced("SM_Test_K_1_Main", quads)))
+    assert item.status == "fail"
+    assert "3 co-directional overlapping pairs: 1 < 5 mm, 1 in band, 1 > 20 mm" in item.observed
 
 
 def test_opposite_facing_quads_are_not_co_directional():
@@ -123,7 +170,8 @@ def test_co_directional_distribution_histogram():
     distribution = co_directional_distribution(pairs, band["min"], band["max"])
     assert distribution["pairs"] == 3
     assert (distribution["below_band"], distribution["in_band"], distribution["above_band"]) == (1, 1, 1)
-    assert distribution["histogram_mm"] == {"0-1": 0, "1-5": 1, "5-10": 0, "10-20": 1, "20-50": 1, "50-100": 0}
+    assert distribution["histogram_mm"] == {
+        "0-1": 0, "1-5": 1, "5-10": 0, "10-20": 1, "20-50": 1, "50-100": 0, "100-1000": 0, "1000+": 0}
     assert distribution["min_mm"] == pytest.approx(2)
     assert distribution["median_mm"] == pytest.approx(10)
     assert distribution["max_mm"] == pytest.approx(30)
@@ -138,7 +186,8 @@ def test_band_edges_tolerate_fbx_float_noise():
              for k, gap in enumerate((0.00498, 0.0049999, 0.0200013, 0.020011))]
     distribution = co_directional_distribution(pairs, band["min"], band["max"])
     assert (distribution["below_band"], distribution["in_band"], distribution["above_band"]) == (1, 2, 1)
-    assert distribution["histogram_mm"] == {"0-1": 0, "1-5": 1, "5-10": 1, "10-20": 1, "20-50": 1, "50-100": 0}
+    assert distribution["histogram_mm"] == {
+        "0-1": 0, "1-5": 1, "5-10": 1, "10-20": 1, "20-50": 1, "50-100": 0, "100-1000": 0, "1000+": 0}
 
 
 def test_worst_lists_below_band_first_then_largest_deviation():
@@ -159,8 +208,11 @@ def _basis(normal):
     return tangent, bitangent
 
 
-def _reference_pairs(faces, window_m):
-    """Straightforward O(n^2) co-directional overlap, same definitions as the checker."""
+def _reference_pairs(faces, window_m=None):
+    """Straightforward O(n^2) co-directional overlap, same definitions as the checker.
+
+    `window_m=None` is unlimited: no distance filter.
+    """
     prepared = []
     for face in faces:
         points = np.asarray(face["points"], dtype=float)
@@ -184,7 +236,7 @@ def _reference_pairs(faces, window_m):
             if float(np.dot(normal_i, normal_j)) <= PARALLEL_COS_MIN:
                 continue
             distance = abs(float(np.dot(normal_i, centroid_j - centroid_i)))
-            if distance > window_m + 1e-9:
+            if window_m is not None and distance > window_m + 1e-9:
                 continue
             polygon_j = Polygon(np.column_stack((points_j @ tangent, points_j @ bitangent)))
             area = float(polygon_i.intersection(polygon_j).area)
@@ -237,11 +289,12 @@ def _random_faces(seed):
     return faces
 
 
+@pytest.mark.parametrize("window_m", [0.1, None])
 @pytest.mark.parametrize("seed", range(30))
-def test_co_directional_pairs_match_reference(seed):
+def test_co_directional_pairs_match_reference(seed, window_m):
     faces = _random_faces(seed)
-    got = co_directional_pairs(faces, 0.1)
-    expected = _reference_pairs(faces, 0.1)
+    got = co_directional_pairs(faces, window_m)
+    expected = _reference_pairs(faces, window_m)
     assert [(pair["a"], pair["b"]) for pair in got] == [(pair["a"], pair["b"]) for pair in expected]
     assert [pair["distance_m"] for pair in got] == pytest.approx(
         [pair["distance_m"] for pair in expected], abs=1e-9)
@@ -296,12 +349,13 @@ def _assert_pairs_match(got, expected):
         [pair["distance_m"] for pair in expected], abs=1e-9)
 
 
+@pytest.mark.parametrize("window_m", [0.1, None])
 @pytest.mark.parametrize("seed", range(20))
-def test_co_directional_pairs_match_reference_on_noisy_planes(seed):
+def test_co_directional_pairs_match_reference_on_noisy_planes(seed, window_m):
     faces = _noisy_plane_faces(seed)
     assert 150 <= len(faces) <= 300
-    got = co_directional_pairs(faces, 0.1)
-    expected = _reference_pairs(faces, 0.1)
+    got = co_directional_pairs(faces, window_m)
+    expected = _reference_pairs(faces, window_m)
     _assert_pairs_match(got, expected)
 
 
@@ -327,7 +381,7 @@ def test_two_layer_grid_scales_to_fifty_thousand_triangles():
     faces = _two_layer_grid()
     assert len(faces) == 50_000
     started = time.perf_counter()
-    pairs = co_directional_pairs(faces, 0.1)
+    pairs = co_directional_pairs(faces)
     elapsed = time.perf_counter() - started
     assert elapsed < 60  # catches O(n^2); measured 7-14 s on an idle machine
     assert len(pairs) == 25_000
@@ -372,7 +426,7 @@ def test_jittered_two_layer_grid_scales_to_fifty_thousand_triangles():
     faces = _jittered_two_layer_grid(161)
     assert len(faces) == 50_000
     started = time.perf_counter()
-    pairs = co_directional_pairs(faces, 0.1)
+    pairs = co_directional_pairs(faces)
     elapsed = time.perf_counter() - started
     assert elapsed < 60, elapsed  # catches O(n^2); measured 7-14 s idle
     assert len(pairs) == 25_000
@@ -394,21 +448,24 @@ def _flat_grid(z, index_start, name, nx=50, ny=25, cell=0.2):
     return faces, index
 
 
-def test_stacked_layers_match_only_the_near_sheet():
+def test_stacked_layers_report_every_pair():
     faces = []
     index = 0
-    for layer in range(20):
+    for layer in range(10):  # 11 identical footprints per column: every pair is reported, no cutoff
         chunk, index = _flat_grid(layer * 3.0, index, f"SM_Test_K_1_L{layer}")
         faces.extend(chunk)
     chunk, index = _flat_grid(0.002, index, "SM_Test_K_1_Near")
     faces.extend(chunk)
-    assert len(faces) == 21 * 2_500
+    assert len(faces) == 11 * 2_500
     started = time.perf_counter()
-    pairs = co_directional_pairs(faces, 0.1)
+    pairs = co_directional_pairs(faces)
     elapsed = time.perf_counter() - started
-    assert elapsed < 60, elapsed  # catches O(n^2); measured 7-14 s idle
-    assert len(pairs) == 2_500
-    assert max(abs(pair["distance_m"] - 0.002) for pair in pairs) < 1e-9
+    assert elapsed < 90, elapsed  # 525k pairs at 21 layers measured 97-102 s; 10 layers keeps headroom
+    assert len(pairs) == 2_500 * 55
+    band = PROFILES.vpm["geometry"]["near_coplanar_spacing_m"]
+    distribution = co_directional_distribution(pairs, band["min"], band["max"])
+    assert distribution["below_band"] == 2_500
+    assert sum(abs(pair["distance_m"] - 0.002) < 1e-9 for pair in pairs) == 2_500
 
 
 def test_large_tilted_quads_match_reference():
@@ -427,6 +484,84 @@ def test_large_tilted_quads_match_reference():
     assert len(got) == 1
     _assert_pairs_match(got, expected)
     assert got[0]["distance_m"] == pytest.approx(0.008, abs=1e-6)
+
+
+def _proper_rotation(rng):
+    orthogonal, _triangular = np.linalg.qr(rng.normal(size=(3, 3)))
+    if np.linalg.det(orthogonal) < 0:
+        orthogonal[:, 0] *= -1
+    return orthogonal
+
+
+def _boundary_normal(rng):
+    axis = int(rng.integers(0, 3))
+    normal = np.zeros(3)
+    normal[axis] = 1.0 if rng.random() < 0.5 else -1.0
+    for component in range(3):
+        if component == axis:
+            continue
+        odd = float(rng.choice((-3, -1, 1, 3))) * 0.001
+        normal[component] = odd + float(rng.uniform(-5e-6, 5e-6))
+    normal /= np.linalg.norm(normal)
+    return _tilt_normal(normal, rng, math.nextafter(0.0007, 0.0))
+
+
+def _strip_corners(triangle, width):
+    edge = 1.0
+    if triangle:
+        corners = np.array([[0.0, 0.0], [edge, 0.0], [0.0, edge]])
+    else:
+        corners = np.array([[0.0, 0.0], [edge, 0.0], [edge, edge], [0.0, edge]])
+    moved = corners + np.array([edge - width, 0.0])
+    area = float(Polygon(corners).intersection(Polygon(moved)).area)
+    return corners, moved, area
+
+
+def _near_edge_faces(seed):
+    """Narrow in-plane overlaps on normals near a quantised-cell boundary, then a rigid move."""
+    rng = np.random.default_rng(seed)
+    faces = []
+    index = 0
+    for pair in range(int(rng.integers(5, 16))):
+        normal = _boundary_normal(rng)
+        tangent, bitangent = _basis(normal)
+        triangle = pair > 0 and rng.random() < 0.5
+        corners = moved = None
+        area = 0.0
+        for _attempt in range(40):
+            width = float(rng.uniform(1e-6, 1e-2))
+            corners, moved, area = _strip_corners(triangle, width)
+            if not (5e-8 < area < 2e-7):
+                break
+        if 5e-8 < area < 2e-7:
+            corners, moved, area = _strip_corners(False, 1e-3)
+        offset = float(rng.uniform(0.2, 30.0) if rng.random() < 0.25 else rng.uniform(0.0, 0.2))
+        origin = np.array([pair * 25.0, (pair % 4) * 25.0, (pair % 3) * 25.0])
+
+        def embed(uv, shift):
+            return origin + shift + uv[:, 0:1] * tangent + uv[:, 1:2] * bitangent
+
+        for points in (embed(corners, np.zeros(3)), embed(moved, offset * normal)):
+            faces.append({"object": "M0", "index": index, "points": [point.tolist() for point in points]})
+            index += 1
+    rotation = _proper_rotation(rng)
+    translation = rng.uniform(-1000.0, 1000.0, size=3)
+    for face in faces:
+        points = np.asarray(face["points"], dtype=float) @ rotation.T + translation
+        face["points"] = [point.tolist() for point in points]
+    return faces
+
+
+@pytest.mark.parametrize("seed", range(40))
+def test_rotated_translated_near_edge_pairs_match_reference(seed):
+    faces = _near_edge_faces(seed)
+    assert 10 <= len(faces) <= 30
+    got = co_directional_pairs(faces)
+    expected = _reference_pairs(faces)
+    assert len(got) >= 1
+    assert [(pair["a"], pair["b"]) for pair in got] == [(pair["a"], pair["b"]) for pair in expected]
+    assert [pair["distance_m"] for pair in got] == pytest.approx(
+        [pair["distance_m"] for pair in expected], rel=1e-9, abs=1e-6)
 
 
 BLENDER = find_blender()
