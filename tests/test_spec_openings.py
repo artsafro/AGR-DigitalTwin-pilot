@@ -246,6 +246,35 @@ def test_wide_hole_in_a_small_building_is_not_a_pier(width):
     assert [(o[1], o[3]) for o in openings(spec)] == [(1.0, pytest.approx(width))]
 
 
+@pytest.mark.parametrize("length,width", [(9.0, 8.0), (8.0, 7.0)])
+def test_wide_hole_in_a_very_small_building_is_not_a_pier(length, width):
+    # #21 (Codex review 3 of PR #20): a length x 1 m body; the way round is shorter than gap + 4 m,
+    # but it leaves the gap line, so it is no pier
+    contour = [(0, 0), (length, 0), (length, 1), (0, 1)]
+    spec, report = extract_spec(building(contour, boxes=[(0, 0.5, 0.5 + width, 0.9, 2.4, 0.0)]), OBJECT)
+    assert [(o[1], o[3]) for o in openings(spec)] == [(0.5, pytest.approx(width))]
+    assert report["questions"] == []
+
+
+def test_pier_with_reveals_between_two_windows_is_not_bridged():
+    b = Mesh("Body")
+    walls(b, SQUARE10, 0.0, 6.6, [(0, 2.0, 3.5, 0.9, 2.4, 0.0), (0, 3.8, 5.3, 0.9, 2.4, 0.0)])
+    reveal(b, 2.0, 3.5, 0.9, 2.4, 0.25)
+    reveal(b, 3.8, 5.3, 0.9, 2.4, 0.25)
+    flat(b, Polygon(SQUARE10), 6.6, up=True)
+    flat(b, Polygon(SQUARE10), 0.0, up=False)
+    spec, report = extract_spec(dump_of(b), OBJECT)
+    assert [(o[1], o[3]) for o in openings(spec)] == [(2.0, 1.5), (3.8, 1.5)]
+    assert report["questions"] == []
+
+
+def test_a_rejected_pier_candidate_leaves_an_unresolved_break():
+    # #21: a wall missing from corner to corner - the only candidate is rejected; the break is reported
+    _, mouths, unresolved = op.close_section([[(0, 0), (0, 1)], [(0, 1), (6, 1)], [(6, 1), (6, 0)]])
+    assert mouths == []
+    assert sorted(tuple(map(tuple, (np.round(p, 6), np.round(q, 6)))) for p, q in unresolved) == [((0, 0), (6, 0))]
+
+
 def test_pier_between_two_windows_is_not_bridged():
     spec, _ = extract_spec(building(boxes=[(0, 2.0, 3.5, 0.9, 2.4, 0.0), (0, 3.8, 5.3, 0.9, 2.4, 0.0)]), OBJECT)
     assert [(o[1], o[3]) for o in openings(spec)] == [(2.0, 1.5), (3.8, 1.5)]
