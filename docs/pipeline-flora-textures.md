@@ -125,16 +125,29 @@ of identity: agents must not manufacture it. Test fixtures are explicitly synthe
 ```bash
 uv run python -m dt_ai.materials.flora pack \
   --review "$ARTIFACTS/review-v001" --approvals "$ARTIFACTS/approvals-v001.json" \
-  --out "$ARTIFACTS/atlas-v001"
+  --out "$ARTIFACTS/atlas-v001" --max-tile-size 768
 ```
 
-No shared MAF packer exists in the supplied tree (only case-specific GLB/window
-builders), so this route has its own deterministic grid packer. It packs the entire
+At initial implementation no shared MAF packer existed in the supplied tree.
+Rechecked `git log` and fetched `origin/main` before final packing: #184/#196
+is now merged, but `tools/materials/atlas_maf.py` hard-rejects any atlas other than
+512 and its renderer supports only RGB material squares, not coupled Flora opacity.
+It cannot be called for this 2048 output without changing its GroundEl contract;
+this route therefore retains its own deterministic grid packer. It packs the entire
 approved batch, not an incremental modification of an existing atlas. Use one batch
 for all current Flora species. Repacking with added species changes placements:
 consume the new `atlas.json`, never reuse old UVs. Silhouettes are cropped and fitted
 without rotation, maintaining aspect ratio. Each grid cell has an 8px inset; unique
 images therefore have at least 16px separation and 8px atlas-edge margin.
+
+`--max-tile-size` is an explicit optional cap (integer 1..2048, default 2048) on
+each fitted tile's longest side, not on atlas dimensions. Actual rectangles and
+the cap are recorded in `atlas.json`. Nothing silently retries, quantizes RGB or
+changes approved candidates. The first real batch exceeded the 3 MiB diffuse
+limit even with lossless PNG optimization (3,770,740 bytes); packing stopped before
+any atlas write. The documented 768px layout fits (2,416,707 bytes diffuse), with
+LANCZOS diffuse and nearest-neighbor opacity. This sacrifices tile detail explicitly,
+not native source resolution; originals and reviewed files remain unchanged.
 
 Outputs: `Flora_d_1.png` RGB, `Flora_o_1.png` binary L, both exactly 2048 square,
 and `atlas.json` with pixel/UV rectangles, map hashes and approval provenance.

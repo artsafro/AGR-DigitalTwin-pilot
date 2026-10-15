@@ -1,10 +1,45 @@
 # Flora textures — issue #190
 
-Status: actual three-species cut-outs and review sheet READY; awaiting Artem's
-explicit approval of the exact resulting cut-out/opacity pairs before atlas packing.
+Status: three exact cut-out/opacity candidates APPROVED by Artem (2026-10-15);
+external 2048 atlas packed and read back. Texture approval only, not full NPM delivery QA.
 Native-size blocker resolved by the user's explicit 1254 -> 2048 LANCZOS exception.
 
-## Current continuation (2026-10-15, after the 20:44 user decision)
+## Final continuation (2026-10-15, explicit cut-out approval)
+
+- Operator direct message: Artem «Одобряю», 2026-10-15 ~21:58, Telegram via
+  orchestrator, all three pairs in `C:/x/flora-textures/review-sheet-v001.png`.
+  Independently confirmed by owner comment on pilot #190. No repeat approval request.
+- Recorded quote/date, exact unchanged candidate IDs/review hash in external
+  `C:/x/flora-textures/approvals-v001.json`; read it back before packing.
+- First real pack correctly stopped before output because diffuse exceeded 3 MiB.
+  Lossless compression probe still gave 3,770,740 bytes. No retry of that layout.
+  Added explicit `pack --max-tile-size` (1..2048, default 2048); no silent fallback,
+  quantization, source/candidate changes or alpha. Manifest records the actual cap.
+- Tests-first commit `dac8230`: `test_pack_explicit_tile_limit_via_cli` RED
+  **1 failed, 56 deselected** (missing CLI option); same command after fix GREEN
+  within affected suite **63 passed in 4.33s**, including six invalid cap values.
+  Command: `env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q
+  -p no:cacheprovider --basetemp=C:/x/t_4005c4b2 tests/test_flora_textures.py`.
+- Actual pack: `uv run python -m dt_ai.materials.flora pack --review
+  C:/x/flora-textures/review-v001 --approvals C:/x/flora-textures/approvals-v001.json
+  --out C:/x/flora-textures/atlas-v001 --max-tile-size 768`.
+- External atlas: **2/2** maps 2048 square, RGB/L, no alpha/transparency metadata;
+  opacity strictly 0/255, diffuse 2,416,707 bytes, opacity 61,294 bytes (both <=3 MiB).
+  **3/3** exact approved IDs and UV rectangles; **3/3** rectangle pairs separated;
+  >=8px atlas-border margin. Viewed both maps: distinct complete silhouettes and
+  foliage gaps, no obvious corruption. Full hashes: [review-pending.md](review-pending.md).
+- `dt profiles check`: **3 profiles OK**; `dt schemas --check`: **11 schemas OK**.
+- Final regression eval receipt: `tmp/evals/flora-regression-final/report.json`,
+  **0 passed, 0 failed, 10 not measured**, exit 2 (no matching Claude transcript/PR
+  capture on this Hermes branch; not a passing eval).
+- Fetched main before packing: MAF #184/#196 is now merged, but its public planner
+  enforces 512 and renderer is RGB material-only. No compatible shared 2048/binary
+  opacity API; own Flora packer retained without modifying the GroundEl tool.
+- Captured narrow user acceptance as a row in `docs/cases.md`. No modelling/DCC,
+  FBX/geometry/Checker/package gates claimed. PROJECT_STATE stays main-only.
+- The sections below are historical continuation evidence, not current blockers.
+
+## Historical continuation (2026-10-15, after the 20:44 user decision)
 
 > source 1254x1254 (codex image_generation, no size control) -> upscaled 2048x2048 LANCZOS, accepted by the user
 

@@ -247,7 +247,10 @@ def grid_regions(count):
              cell - PAD * 2, cell - PAD * 2) for i in range(count)]
 
 
-def pack(review, approvals, output):
+def pack(review, approvals, output, max_tile_size=SIZE):
+    if (isinstance(max_tile_size, bool) or not isinstance(max_tile_size, int)
+            or not 1 <= max_tile_size <= SIZE):
+        raise ValueError("max_tile_size must be an integer in 1..2048")
     output = external_destination(output)
     loaded = load_approved(review, approvals)
     regions = grid_regions(len(loaded))
@@ -256,7 +259,8 @@ def pack(review, approvals, output):
     placements = []
     for (entry, d, o), (x, y, available_w, available_h) in zip(loaded, regions):
         bbox = o.getbbox()
-        tile = ImageOps.contain(d.crop(bbox), (available_w, available_h), Image.Resampling.LANCZOS)
+        tile = ImageOps.contain(d.crop(bbox), (min(available_w, max_tile_size),
+                                             min(available_h, max_tile_size)), Image.Resampling.LANCZOS)
         mask = o.crop(bbox).resize(tile.size, Image.Resampling.NEAREST)
         diffuse.paste(tile, (x, y))
         opacity.paste(mask, (x, y))
@@ -279,7 +283,8 @@ def pack(review, approvals, output):
     for filename, content in encoded.items():
         (output / filename).write_bytes(content)
     result = {"schema": 1, "status": "user_reviewed_atlas_not_delivery_validated",
-              "size": SIZE, "padding": PAD, "placements": placements, "approvals": approvals,
+              "size": SIZE, "padding": PAD, "max_tile_size": max_tile_size,
+              "placements": placements, "approvals": approvals,
               "files_sha256": {f: digest((output / f).read_bytes()) for f in ("Flora_d_1.png", "Flora_o_1.png")}}
     write_json(output / "atlas.json", result)
     return result
@@ -304,6 +309,8 @@ def main():
     p.add_argument("--review", required=True)
     p.add_argument("--approvals", required=True)
     p.add_argument("--out", required=True)
+    p.add_argument("--max-tile-size", type=int, default=SIZE,
+                   help="Explicit tile-side cap in pixels; does not change the 2048 atlas or sources")
     args = parser.parse_args()
     if args.command == "plan":
         out = Path(args.out)
@@ -314,7 +321,7 @@ def main():
     elif args.command == "prepare":
         prepare(read_json(args.plan), read_json(args.incoming), args.out, args.threshold)
     else:
-        pack(args.review, read_json(args.approvals), args.out)
+        pack(args.review, read_json(args.approvals), args.out, args.max_tile_size)
 
 
 if __name__ == "__main__":

@@ -246,6 +246,14 @@ def test_pack_explicit_tile_limit_via_cli(review, tmp_path, monkeypatch):
     assert result["approvals"] == approvals
 
 
+@pytest.mark.parametrize("limit", [0, -1, 2049, True, 1.5, None])
+def test_invalid_tile_limit_rejected_before_output(tmp_path, limit):
+    out = tmp_path / "invalid-limit"
+    with pytest.raises(ValueError, match="max_tile_size"):
+        flora.pack(tmp_path, {}, out, max_tile_size=limit)
+    assert not out.exists()
+
+
 def test_geometry_generated_probe():
     # 1..40 species: exhaustive rectangle pairs; includes the first 10..20.
     for count in range(1, 41):
