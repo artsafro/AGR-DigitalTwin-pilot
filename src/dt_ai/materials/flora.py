@@ -1,7 +1,7 @@
-"""Flora image handoff, white cut-out, review and approval-gated NPM atlas.
+"""Flora image handoff, white cut-out, review and approved per-species maps.
 
 Pattern / new-case: explicit external generation handoff, content-addressed
-candidates, and an all-or-nothing human approval gate before atlas writes.
+candidates, and an all-or-nothing human approval gate before library publication.
 No image generation or approval is simulated. Generation is an external manual
 handoff. Approval records are user attestations, not an authentication mechanism.
 The issue #190 Codex 1254 -> 2048 exception is explicit and records LANCZOS
@@ -15,14 +15,14 @@ import hashlib
 from io import BytesIO
 from html import escape
 import json
-import math
+import re
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageOps
+from PIL import Image
 
 SIZE = 2048
-PAD = 8
+
 REPO = Path(__file__).resolve().parents[3]
 
 
@@ -190,7 +190,7 @@ def prepare(plan, incoming, output, threshold=245):
 
 
 def load_approved(review, approvals):
-    """Validate the entire batch before packing or creating any atlas output."""
+    """Validate the entire batch before publishing per-species library maps."""
     review = Path(review)
     manifest = read_json(review / "candidates.json")
     review_hash = digest((review / "review.html").read_bytes())
@@ -235,58 +235,42 @@ def load_approved(review, approvals):
     return loaded
 
 
-def grid_regions(count):
-    """Content rectangles with >=8px border padding; no rotations or overlap."""
-    if count < 1:
-        raise ValueError("Empty atlas")
-    columns = math.ceil(math.sqrt(count))
-    cell = SIZE // columns
-    if cell <= PAD * 2:
-        raise ValueError("Atlas capacity exceeded")
-    return [((i % columns) * cell + PAD, (i // columns) * cell + PAD,
-             cell - PAD * 2, cell - PAD * 2) for i in range(count)]
-
-
-def pack(review, approvals, output, max_tile_size=SIZE):
-    if (isinstance(max_tile_size, bool) or not isinstance(max_tile_size, int)
-            or not 1 <= max_tile_size <= SIZE):
-        raise ValueError("max_tile_size must be an integer in 1..2048")
-    output = external_destination(output)
+def publish_library(review, approvals, output):
+    """Copy approved maps byte-for-byte; never make an atlas or overwrite assets."""
+    output = Path(output).resolve()
+    if output.is_relative_to(REPO):
+        raise ValueError("Binary output must be outside the repository")
     loaded = load_approved(review, approvals)
-    regions = grid_regions(len(loaded))
-    diffuse = Image.new("RGB", (SIZE, SIZE), "white")
-    opacity = Image.new("L", (SIZE, SIZE), 0)
-    placements = []
-    for (entry, d, o), (x, y, available_w, available_h) in zip(loaded, regions):
-        bbox = o.getbbox()
-        tile = ImageOps.contain(d.crop(bbox), (min(available_w, max_tile_size),
-                                             min(available_h, max_tile_size)), Image.Resampling.LANCZOS)
-        mask = o.crop(bbox).resize(tile.size, Image.Resampling.NEAREST)
-        diffuse.paste(tile, (x, y))
-        opacity.paste(mask, (x, y))
-        w, h = tile.size
-        placements.append({"species": entry["species"], "candidate_id": entry["candidate_id"],
-                           "rect_px": [x, y, w, h],
-                           "uv_bottom_left": [x / SIZE, 1 - (y + h) / SIZE, (x + w) / SIZE, 1 - y / SIZE]})
-    encoded = {}
-    for filename, image in (("Flora_d_1.png", diffuse), ("Flora_o_1.png", opacity)):
-        buffer = BytesIO()
-        image.save(buffer, format="PNG")
-        if len(buffer.getvalue()) > 3 * 1024 * 1024:
-            raise ValueError("Atlas map exceeds the NPM 3 MiB limit")
-        with Image.open(BytesIO(buffer.getvalue())) as readback:
-            readback.load()
-            if readback.size != (SIZE, SIZE) or readback.mode != image.mode:
-                raise ValueError("Atlas readback failed")
-        encoded[filename] = buffer.getvalue()
-    output.mkdir(parents=True)
-    for filename, content in encoded.items():
-        (output / filename).write_bytes(content)
-    result = {"schema": 1, "status": "user_reviewed_atlas_not_delivery_validated",
-              "size": SIZE, "padding": PAD, "max_tile_size": max_tile_size,
-              "placements": placements, "approvals": approvals,
-              "files_sha256": {f: digest((output / f).read_bytes()) for f in ("Flora_d_1.png", "Flora_o_1.png")}}
-    write_json(output / "atlas.json", result)
+    manifest_path = external_destination(output / "library-v001.json")
+    payloads = []
+    entries = []
+    seen = set()
+    for entry, _, _ in loaded:
+        slug = re.sub(r"[^a-z0-9]+", "-", entry["species"].lower()).strip("-")
+        if not slug or slug in seen:
+            raise ValueError("Species must have unique nonempty library folder names")
+        seen.add(slug)
+        item = {"species": entry["species"], "candidate_id": entry["candidate_id"],
+                "files_sha256": {}}
+        for key in ("diffuse", "opacity"):
+            relative = f"{slug}/{key}-v001.png"
+            target = external_destination(output / relative)
+            content = (Path(review) / entry[key]).read_bytes()
+            if digest(content) != entry["files_sha256"][entry[key]]:
+                raise ValueError("Reviewed image changed before publication")
+            payloads.append((target, content))
+            item[key] = relative
+            item["files_sha256"][relative] = digest(content)
+        entries.append(item)
+    result = {"schema": 1, "status": "user_approved_species_maps_not_delivery_validated",
+              "species": entries, "approvals": approvals}
+    # Validate all destinations before the first write, including existing species folders.
+    for target, content in payloads:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with target.open("xb") as stream:
+            stream.write(content)
+    with manifest_path.open("xb") as stream:
+        stream.write(canonical(result))
     return result
 
 
@@ -305,12 +289,10 @@ def main():
     p.add_argument("--incoming", required=True)
     p.add_argument("--out", required=True)
     p.add_argument("--threshold", type=int, default=245)
-    p = sub.add_parser("pack")
+    p = sub.add_parser("library")
     p.add_argument("--review", required=True)
     p.add_argument("--approvals", required=True)
     p.add_argument("--out", required=True)
-    p.add_argument("--max-tile-size", type=int, default=SIZE,
-                   help="Explicit tile-side cap in pixels; does not change the 2048 atlas or sources")
     args = parser.parse_args()
     if args.command == "plan":
         out = Path(args.out)
@@ -321,7 +303,7 @@ def main():
     elif args.command == "prepare":
         prepare(read_json(args.plan), read_json(args.incoming), args.out, args.threshold)
     else:
-        pack(args.review, read_json(args.approvals), args.out, args.max_tile_size)
+        publish_library(args.review, read_json(args.approvals), args.out)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 # Flora texture route (#190)
 
-Scope: NPM Flora diffuse + separate binary opacity, one 2048 square set.
+Scope: approved per-species 2048 diffuse + separate binary opacity library assets.
+Atlas construction is deferred to #217, after library #216 and scene placement.
 Sources: issue #190 (Artem, 2026-10-15, grilling rounds 1–2),
 [UV rules](domain/uv-textures.md#npm-textures-app1), [workflow](agents/WORKFLOW.md).
 No modelling, VPM shells, or delivery acceptance. Generation uses the authorized
@@ -115,55 +116,50 @@ the operator transcribes the decision to an external JSON document:
 ```
 
 One record per candidate; an absent, rejected, pending, duplicate, stale or
-unattributed decision blocks the whole batch before creating the atlas directory.
+unattributed decision blocks the whole library batch before any output write.
 Changed species/prompt/parameters/reference/diffuse/opacity or sheet invalidate
 previous approval. Approval JSON is a human attestation, not a signature or proof
 of identity: agents must not manufacture it. Test fixtures are explicitly synthetic.
 
-## 4. Approved atlas only
+## 4. Approved per-species library assets (current scope)
+
+Artem's scope change, 2026-10-15 via orchestrator: **no atlas in #190**.
+First consolidate the library (#216), then place plants, then build one atlas from
+that placed scene (#217, reusing/extending #184). This command does not pack an
+atlas, resize maps, assign UVs or consolidate a .max library:
 
 ```bash
-uv run python -m dt_ai.materials.flora pack \
-  --review "$ARTIFACTS/review-v001" --approvals "$ARTIFACTS/approvals-v001.json" \
-  --out "$ARTIFACTS/atlas-v001" --max-tile-size 768
+uv run python -m dt_ai.materials.flora library \
+  --review C:/x/flora-textures/review-v001 \
+  --approvals C:/x/flora-textures/approvals-v001.json \
+  --out C:/x/flora-textures
 ```
 
-At initial implementation no shared MAF packer existed in the supplied tree.
-Rechecked `git log` and fetched `origin/main` before final packing: #184/#196
-is now merged, but `tools/materials/atlas_maf.py` hard-rejects any atlas other than
-512 and its renderer supports only RGB material squares, not coupled Flora opacity.
-It cannot be called for this 2048 output without changing its GroundEl contract;
-this route therefore retains its own deterministic grid packer. It packs the entire
-approved batch, not an incremental modification of an existing atlas. Use one batch
-for all current Flora species. Repacking with added species changes placements:
-consume the new `atlas.json`, never reuse old UVs. Silhouettes are cropped and fitted
-without rotation, maintaining aspect ratio. Each grid cell has an 8px inset; unique
-images therefore have at least 16px separation and 8px atlas-edge margin.
+After validating every approval, copy the exact approved map bytes into one
+species folder: `betula-pendula/diffuse-v001.png`, `betula-pendula/opacity-v001.png`,
+and similarly for `pinus-sylvestris` and `spiraea-japonica`. Both maps remain
+2048 square: RGB diffuse and L binary opacity (0 transparent, 255 opaque), without
+alpha per [D020]. The separate opacity PNG supplies transparency to the material;
+it is not an RGBA diffuse. `library-v001.json` records candidate IDs, paths, hashes
+and approvals. Existing species folders may contain original source images; none
+are overwritten. All target files are checked before writes; existing destination
+files or manifest fail rather than replacing an approved version. For another
+publication run use a new external root/version.
 
-`--max-tile-size` is an explicit optional cap (integer 1..2048, default 2048) on
-each fitted tile's longest side, not on atlas dimensions. Actual rectangles and
-the cap are recorded in `atlas.json`. Nothing silently retries, quantizes RGB or
-changes approved candidates. The first real batch exceeded the 3 MiB diffuse
-limit even with lossless PNG optimization (3,770,740 bytes); packing stopped before
-any atlas write. The documented 768px layout fits (2,416,707 bytes diffuse), with
-LANCZOS diffuse and nearest-neighbor opacity. This sacrifices tile detail explicitly,
-not native source resolution; originals and reviewed files remain unchanged.
+The output root is explicitly supplied with `--out` for each command; there is no
+`AGR_FLORA_OUT` implicit default. Resolve paths before running. All generated and
+review binaries stay outside git, including ignored repository directories.
 
-Outputs: `Flora_d_1.png` RGB, `Flora_o_1.png` binary L, both exactly 2048 square,
-and `atlas.json` with pixel/UV rectangles, map hashes and approval provenance.
-PNG size is gated at <=3 MiB per map, and encoded maps are read back before writing.
-Opacity is resized with nearest-neighbor to retain black/white values. Diffuse
-uses Lanczos; possible edge artifacts remain a visual review concern. Names are
-working names, not final address-specific delivery names. Every output directory
-must be new; approved versions are not overwritten. A produced atlas is user-reviewed
-texture output only: no claim of full delivery QA or geometry/UV acceptance.
+No atlas command is exposed. An atlas made earlier, before the scope change, is
+an external scratch artefact only, not part of this issue's deliverable, PR evidence
+or acceptance. No atlas binary or implementation is in the final PR diff.
 
 ## Checks and evidence
 
 `tests/test_flora_textures.py` uses synthetic white-background rectangles with a
 foliage hole, not generated plants. It covers all 255 cut-out thresholds against
 256 gray levels, missing/invalid approvals at each of three positions, changed
-review artifacts, repository-output rejection, geometry for 1–40 species, exact
+review artifacts, repository-output rejection, byte-identical library publication, exact
 input dimensions, separate no-alpha maps and binary opacity. Tests write binaries
 only to pytest's harness-assigned external temporary directory. A generated probe
 also checks all 256 grayscale PNG transparency keys through cut-out and PNG
