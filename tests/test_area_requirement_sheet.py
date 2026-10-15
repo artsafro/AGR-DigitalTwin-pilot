@@ -153,7 +153,7 @@ def quote_evidence_contract(text: str, filenames: list[str]):
 
 def numeric_contract(rows: list[list[str]]):
     expected = {
-        4: "<= 5 cm", 8: "001..999", 10: "0.02-1 cm", 11: "<= 10 cm", 12: "<= 30 cm", 13: "<= 1 m",
+        4: "<= 5 cm", 8: "001..999", 10: "2 mm - 1 cm",  # D098 overrides the R10 typo 11: "<= 10 cm", 12: "<= 30 cm", 13: "<= 1 m",
         15: "n < 50,000: 15,000; otherwise min(ceil(n * 0.05), 100,000)",
     }
     for number, value in expected.items():
@@ -409,7 +409,7 @@ def test_ucx_sheet_numeric_and_profile_index():
             numeric_contract(changed)
     assert "Ground" in rows[1][3]
     assert all(word in rows[2][3] for word in ("MAF", "lighting", "vegetation", "none"))
-    assert "recommendation" in rows[9][3]
+    assert "project rule" in rows[9][3]
     assert "[D012]" in rows[14][1]
 
 
@@ -497,3 +497,49 @@ def test_indented_mutation_probes(tmp_path: Path, capsys: pytest.CaptureFixture,
     out_gap = capsys.readouterr().out
     assert "gaps: 4/4 rejected" in out_gap, f"Expected 4 rejected gaps, got: {out_gap!r}"
 
+
+DECIDED_RECORDS = {
+    "D097": ("docs/decisions.md", "| D097 |", (
+        "2026-10-15", '"texel density is per linear metre: NPM 10-40 at 2K, VPM 520-1706 at 4K"',
+        "pixels per linear metre", "10-40 px/m", "2K", "520-1706 px/m", "4K", "[D021]",
+        '"the NPM Ground budget is 180 000"', "reg p.7 §3.6",
+        "surface 50k / MAF 60k / Flora 70k",
+    )),
+    "D098": ("docs/decisions.md", "| D098 |", (
+        "2026-10-15", '"UCX: as the regulation, except the gap - from 2 mm to 1 cm, the regulation\'s 0.02-1 cm is a typo"',
+        "2 mm - 1 cm", "project rule", "reg p.36 §13.4", "reports gaps outside the band",
+    )),
+    "R10": ("docs/domain/areas/ucx.md", "| R10 ", (
+        "[D098]", "2 mm - 1 cm", "project rule", "Report gaps outside the band", "| none |",
+    )),
+}
+
+
+def decided_record_contract(line, tokens):
+    for token in tokens:
+        assert token in line, token
+
+
+@pytest.mark.parametrize("record", DECIDED_RECORDS)
+def test_ground_and_ucx_decided_records(record):
+    path, prefix, tokens = DECIDED_RECORDS[record]
+    lines = (ROOT / path).read_text(encoding="utf-8").splitlines()
+    matches = [line for line in lines if line.startswith(prefix)]
+    assert len(matches) == 1, record
+    decided_record_contract(matches[0], tokens)
+    if record.startswith("D"):
+        number = {"D097": 4, "D098": 15}[record]
+        conflict = next(line for line in (ROOT / "docs/domain/conflicts.md").read_text(
+            encoding="utf-8").splitlines() if line.startswith(f"{number}. "))
+        assert f"**Decided 2026-10-15 [{record}] (user):**" in conflict
+
+
+def test_decided_records_generated_negative_probes():
+    # Every required quote, unit, bound and provenance token must be retained.
+    for path, prefix, tokens in DECIDED_RECORDS.values():
+        line = next((line for line in (ROOT / path).read_text(encoding="utf-8").splitlines()
+                     if line.startswith(prefix)), "")
+        decided_record_contract(line, tokens)
+        for token in tokens:
+            with pytest.raises(AssertionError):
+                decided_record_contract(line.replace(token, "UNVERIFIED"), tokens)
