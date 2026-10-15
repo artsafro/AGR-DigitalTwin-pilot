@@ -568,16 +568,20 @@ def branch_name(evidence):
     or `job/<object-id>-<stage>`, never the auto-generated worktree name ([D078]); `main` passes, as a state
     update after a merge happens there.
 
-    Graded branches: the `gitBranch` of every record that holds a commit, push or `gh pr create`, plus the last
-    `gitBranch` of the file (the branch the session ended on). A file with neither is not measured."""
+    Graded branches: the `gitBranch` of every main-session record that holds a commit, push or `gh pr create`, plus
+    the last `gitBranch` of the main session (the branch the main session ended on); sidechain records are ignored.
+    A file with neither is not measured."""
     sessions, problems = _sessions(evidence["transcript"])
     details = []
     for path, records in sessions:
         committing = {ev["record"] for ev in events(records)
-                      if ev["kind"] == "tool_use" and ev["name"] == "Bash"
+                      if not records[ev["record"]].get("isSidechain")
+                      and ev["kind"] == "tool_use" and ev["name"] == "Bash"
                       and COMMIT.search(str(ev["input"].get("command") or ""))}
         branches, last = {}, None
         for n, rec in enumerate(records):
+            if rec.get("isSidechain"):
+                continue
             branch = rec.get("gitBranch")
             if not isinstance(branch, str) or not branch:
                 continue
