@@ -110,6 +110,10 @@ A long session loses detail when it is compacted. Rotate instead, in the same wo
    a proposal; it waits for «да». The names avoid the built-ins `/checkpoint` (alias of `/rewind`) and
    `/resume` (session picker), and the `handoff` skills.
 
+Agent trace (#124): `/handover` generates the `## Agent trace` block with `tools/hooks/agent_trace.py` from the
+usage log and the transcript, and writes it into the handoff and the PR body. Fixed fields: Sessions, Written by,
+Subagents, Skills, Commands, Hook denials, Retries, Context at handover, Duration, Commits. Never written by hand.
+
 Compaction: a manual `/compact` with a stale handoff is blocked (`/compact force` passes). An automatic one is
 never blocked (that can fail the request); after it the hook tells the agent to run the handover procedure
 first. Each compaction is logged to `<git dir>/agr-compactions.log`.

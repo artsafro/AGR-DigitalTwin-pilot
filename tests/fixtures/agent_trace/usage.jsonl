@@ -1,0 +1,7 @@
+{"time": "2026-10-15T08:10:00+00:00", "session_id": "sess-trace-124", "branch": "fixture", "kind": "agent", "name": "Explore", "command": null}
+{"time": "2026-10-15T08:11:00+00:00", "session_id": "sess-trace-124", "branch": "fixture", "kind": "agent", "name": "Explore", "command": null}
+{"time": "2026-10-15T08:20:00+00:00", "session_id": "sess-trace-124", "branch": "fixture", "kind": "skill", "name": "tdd", "command": "handover"}
+{"time": "2026-10-15T08:00:00+00:00", "session_id": "sess-trace-124", "branch": "fixture", "kind": "command", "name": "handover", "command": null}
+{"time": "2026-10-15T08:00:00+00:00", "session_id": "sess-other", "branch": "fixture", "kind": "agent", "name": "codex-rescue", "command": null}
+{"time": "2026-10-15T08:00:00+00:00", "session_id": "sess-other", "branch": "fixture", "kind": "skill", "name": "pr", "command": null}
+{"time": "2026-10-15T08:00:00+00:00", "session_id": "sess-other", "branch": "fixture", "kind": "command", "name": "takeover", "command": null}

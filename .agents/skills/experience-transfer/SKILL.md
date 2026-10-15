@@ -22,6 +22,10 @@ others, template `docs/agr/case_studies/TEMPLATE.md`):
 - checks actually run and their results; failures and how they were fixed;
 - what is reusable and what is object-specific.
 
+When the row is a lesson (a failure), ask for its cause class and record it in the `Cause` column of
+`docs/cases.md`. Exactly one of: wrong context, wrong tool, misread tool answer, lost state, wrong conclusion,
+early stop. An accepted result gets `-`.
+
 Praise never closes topology, export, Checker or delivery checks.
 
 ## Choosing a reuse form
