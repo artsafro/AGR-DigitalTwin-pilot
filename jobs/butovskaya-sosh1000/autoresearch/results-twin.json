@@ -507,5 +507,57 @@
   "levels_status": "pass",
   "guard_seconds": 301.9,
   "status": "keep"
+ },
+ {
+  "n": "16",
+  "description": "neighbouring layers differing by < 2 m2 merged into one prism (their union): fewer gaps",
+  "build_seconds": 0.0,
+  "delivery_passed": false,
+  "build": {
+   "thresholds": 54,
+   "layers": 53,
+   "prisms": 44,
+   "gaps": 43,
+   "openings_placed": {
+    "12": 431,
+    "11": 710
+   },
+   "openings_in_snapshot": 835,
+   "vertices": 64358,
+   "triangles": 124976
+  },
+  "silhouette_err_m2": 170.512,
+  "per_view_m2": {
+   "x": 25.891,
+   "y": 37.517,
+   "top": 43.697
+  },
+  "iou": {
+   "x": 0.9787,
+   "y": 0.9853,
+   "top": 0.9929
+  },
+  "metric_seconds": 31.6,
+  "best_before": 172.154,
+  "guard_passed": true,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "mesh_status": "pass",
+  "per_mesh_status": {
+   "SM_butovskaya_sosh1000_body": "pass"
+  },
+  "winding_bad_edges": 0,
+  "triangles": 124976,
+  "budget_status": "pass",
+  "levels_worst_m": 0.0,
+  "levels_status": "pass",
+  "guard_seconds": 421.7,
+  "status": "keep"
  }
 ]

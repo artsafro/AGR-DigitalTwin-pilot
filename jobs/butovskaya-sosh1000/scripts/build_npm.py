@@ -54,6 +54,7 @@ PRISM_GAP_M = 0.0031                # "prisms": gap under a prism standing on an
 PRISM_SHRINK_U = 0.1                # "prisms": every prism outline offset inward by this (grid units; 0.1 = 5 mm)
 SLAB_KINDS = {"OST_Floors", "OST_Roofs"}
 SLAB_COVER_M = 0.05                 # "mesh": a floor / roof piece joins every layer it overlaps by this much (thin slabs)
+MERGE_M2 = 2.0                      # "prisms": neighbouring layers differing by less than this (m2) are one prism
 PINCH_CUT_U = 0.3                   # "prisms": radius of the octagon cut out at a pinch left after the offset
 # ---------------------------------------------------------------------------------------------------------------
 
@@ -685,8 +686,11 @@ def build_prisms(rows, levels):
     openings = [(r["box"][0], r["box"][1], OPENINGS[r["category"]]) for r in rows if r["category"] in OPENINGS]
     runs = []                                       # [z0, z1, region]
     for (z0, z1), reg in zip(zip(t, t[1:]), regions):
-        if runs and runs[-1][1] == z0 and runs[-1][2].equals(reg):
-            runs[-1][1] = z1
+        if runs and runs[-1][1] == z0 and (runs[-1][2].equals(reg) or (
+                MERGE_M2 > 0 and shapely.symmetric_difference(runs[-1][2], reg).area * SNAP_M ** 2 < MERGE_M2)):
+            runs[-1][1] = z1                        # near-equal neighbours: one prism (their union), one gap less
+            if not runs[-1][2].equals(reg):
+                runs[-1][2] = unpinch(polys(shapely.set_precision(shapely.union(runs[-1][2], reg), 1.0)))
         else:
             runs.append([z0, z1, reg])
     runs = [r for r in runs if not r[2].is_empty]
