@@ -11,6 +11,12 @@ confidence. Source: `docs/HARNESS_PLAN.md` §8. Post the answer as a PR comment:
    not support — guessed levels, made-up geometry, a silent fallback that hides a failure?
 3. **Evidence.** Did the checker or the tests pass **with numbers**, run by the reviewer?
    Every regression test must fail on the commit before the fix and pass after it.
+   The regression evals go with them: before a merge to `main` the author runs `uv run dt evals --suite
+   regression` on the evidence of the branch (`--references` as well after a change to a grader) and names in
+   the PR the report path (`logs/evals/runs/<time>-regression/report.json`) and its passed / failed / not
+   measured counts. The pass criterion is 100 %: a failed check blocks the merge, and a check that is not
+   measured is named with its reason (no transcript, a torn line, an unclassified question), never counted as a
+   pass. The tasks and what fails each: `evals/README.md`, "Regression tasks".
 
 ## Procedure (user 2026-10-13 [D073])
 
