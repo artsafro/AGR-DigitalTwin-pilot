@@ -206,7 +206,7 @@ def test_twin_export_refuses_existing_folder(tmp_path, monkeypatch):
     assert called == []
 
 
-CORRUPTIONS = ["none", "modified_after", "drop_obj", "truncate", "quad", "oob", "empty_object", "clip", "no_levels"]
+CORRUPTIONS = ["none", "modified_after", "drop_obj", "truncate", "quad", "oob", "empty_object", "clip", "no_levels", "all_empty"]
 
 
 def corrupt(src: Path, kind: str):
@@ -229,6 +229,11 @@ def corrupt(src: Path, kind: str):
         obj.write_text(obj.read_text(encoding="utf-8") + "f 1 2 10000\n", encoding="utf-8")
     elif kind == "empty_object":
         obj.write_text(obj.read_text(encoding="utf-8") + "o wall_77\n", encoding="utf-8")
+    elif kind == "all_empty":
+        for d in src.glob("band-*"):
+            (d / "reference.obj").write_text("# empty\n", encoding="utf-8")
+            (d / "floor.json").write_text(json.dumps({"mesh": {"triangles": 0, "clipFallbacks": 0}}),
+                                          encoding="utf-8")
     elif kind == "clip":
         f = src / "band-1" / "floor.json"
         d = json.loads(f.read_text(encoding="utf-8"))
@@ -264,6 +269,88 @@ def test_twin_published_iff_export_valid_generated(tmp_path):
                 run(src, out)
             assert not (out / "hashes.json").exists() and not (out / "snapshot_dump.json").exists(), kind
             assert (out / "blocked.json").exists()
+
+
+# ---------------------------------------------------------------- empty acquisition (review round 2, P1)
+
+def empty_band_export(root: Path, n_bands: int):
+    """The reviewer's input: every listed band holds a comment-only reference.obj and floor.json triangles 0."""
+    src = make_export(root, bands={n: [] for n in range(1, n_bands + 1)},
+                      twin={"revit_levels": [{"id": 1, "name": "L0", "elevation_m": 0}]})
+    for n in range(1, n_bands + 1):
+        (src / f"band-{n}" / "reference.obj").write_text("# SYNTHETIC empty export\n", encoding="utf-8")
+        (src / f"band-{n}" / "floor.json").write_text(json.dumps({"mesh": {"triangles": 0, "clipFallbacks": 0}}),
+                                                      encoding="utf-8")
+    return src
+
+
+@pytest.mark.parametrize("n_bands", [1, 2])
+def test_twin_all_empty_export_blocks(tmp_path, n_bands):
+    out = tmp_path / "snap"
+    rep = run_blocked(empty_band_export(tmp_path / "src", n_bands), out, "no_geometry")
+    assert rep["pieces_read"] == 0 and str(n_bands) in rep["detail"]
+    with pytest.raises(SystemExit):
+        ev.require_mesh_reference(out)
+
+
+def test_twin_one_empty_band_with_geometry_elsewhere_publishes(tmp_path):
+    out = run(make_export(tmp_path / "src", bands={1: [], 2: [("wall_10", [0, 0, 3], [4, 1, 6])]}), tmp_path / "snap")
+    h = ev.require_mesh_reference(out)
+    assert h["pieces"] == 1 and h["triangles_total"] == 12 and h["bands"] == 2
+
+
+def test_twin_valid_nonempty_control_accepted(tmp_path):
+    h = ev.require_mesh_reference(run(make_export(tmp_path / "src"), tmp_path / "snap"))
+    assert h["pieces"] == 4 and h["triangles_total"] == 48
+
+
+def test_twin_empty_blocked_then_valid_recovers_and_repeat_refused(tmp_path):
+    """blocked (empty) -> valid publishes and clears the report -> a later empty export is refused unread."""
+    out = tmp_path / "snap"
+    run_blocked(empty_band_export(tmp_path / "empty1", 2), out, "no_geometry")
+    run(make_export(tmp_path / "src"), out)
+    assert not (out / "blocked.json").exists() and not (tmp_path / "snap.partial").exists()
+    assert ev.require_mesh_reference(out)["triangles_total"] == 48
+    before = {p.name: p.read_bytes() for p in out.iterdir()}
+    with pytest.raises(SystemExit) as e:
+        run(empty_band_export(tmp_path / "empty2", 1), out)
+    assert e.value.code == st.BLOCKED_EXIT
+    assert {p.name: p.read_bytes() for p in out.iterdir()} == before
+
+
+def test_twin_empty_blocked_after_other_blocked_keeps_no_snapshot(tmp_path):
+    """Two blocked acquisitions in a row (modified, then empty): the report is replaced, nothing is published."""
+    out = tmp_path / "snap"
+    run_blocked(make_export(tmp_path / "src", twin={"modified_after": True}), out, "document_modified")
+    run_blocked(empty_band_export(tmp_path / "empty", 1), out, "no_geometry")
+
+
+@pytest.mark.parametrize("field,value", [("pieces", 0), ("triangles_total", 0), ("pieces", None),
+                                         ("triangles_total", None)])
+def test_evaluate_rejects_reference_without_geometry(tmp_path, field, value):
+    """A hashes.json that claims a complete mesh reference with no geometry (as the round-2 code wrote) is no
+    reference for the loop, even with matching file hashes."""
+    out = run(make_export(tmp_path / "src"), tmp_path / "snap")
+    hf = out / "hashes.json"
+    h = json.loads(hf.read_text(encoding="utf-8"))
+    if value is None:
+        h.pop(field)
+    else:
+        h[field] = value
+    hf.write_text(json.dumps(h), encoding="utf-8")
+    with pytest.raises(SystemExit):
+        ev.require_mesh_reference(out)
+
+
+def test_evaluate_rejects_dump_without_triangles(tmp_path):
+    """Counts say geometry, the hashed dump holds none: rejected (counts are cross-checked against the dump)."""
+    out = run(make_export(tmp_path / "src"), tmp_path / "snap")
+    (out / "snapshot_dump.json").write_text(json.dumps({"meshes": [], "helpers": []}), encoding="utf-8")
+    h = json.loads((out / "hashes.json").read_text(encoding="utf-8"))
+    h["sha256"]["snapshot_dump.json"] = hashlib.sha256((out / "snapshot_dump.json").read_bytes()).hexdigest()
+    (out / "hashes.json").write_text(json.dumps(h), encoding="utf-8")
+    with pytest.raises(SystemExit):
+        ev.require_mesh_reference(out)
 
 
 # ---------------------------------------------------------------- loop step (keep rule)
