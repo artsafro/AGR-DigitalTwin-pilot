@@ -161,6 +161,16 @@ def test_snapshot_repeat_refused_before_any_call(run_snapshot, tmp_path):
     assert (out / "hashes.json").read_text(encoding="utf-8") == "{\"old\": true}"
 
 
+def test_snapshot_success_after_blocked_run_clears_blocked_report(run_snapshot, tmp_path):
+    out = tmp_path / "snapshot"
+    with pytest.raises(SystemExit):
+        run_snapshot(FakeRevit({1: {"boundingBox": bbox_ft([0, 0, 0], [1, 1, 1])}}), out)
+    assert (out / "blocked.json").exists()
+    run_snapshot(FakeRevit({1: {"mesh": mesh_ft([0, 0, 0], [1, 1, 1])}}), out)
+    assert not (out / "blocked.json").exists()
+    assert ev.require_mesh_reference(out)["complete"] is True
+
+
 def test_snapshot_published_iff_every_element_has_mesh(monkeypatch, tmp_path):
     """Generated probe: 300 random element sequences (valid mesh / bbox-only / call error / malformed mesh,
     0-6 elements, with or without levels). A snapshot (hashes.json) is published iff the listing is non-empty,
