@@ -268,6 +268,23 @@ def test_walk_rejects_beds_after_atlas(text):  # R1 negative control: the round-
     assert any("no atlas tile" in f or "never reaches" in f for f in walk_findings(late))
 
 
+def test_generated_schedules_keep_the_invariant(text):  # probe: seed 188, 500 random schedules
+    import random
+    rng = random.Random(188)
+    kinds = ("point", "bed_listed", "bed_unlisted", "lawn")
+    for case in range(500):
+        rows = []
+        for pos in range(rng.randint(0, 8)):
+            kind = rng.choice(kinds)
+            n = 1 if kind == "point" else rng.randint(1, 4) if kind == "bed_listed" else 0
+            rows.append({"pos": pos, "kind": kind, "species": tuple(f"sp{case}_{pos}_{i}" for i in range(n))})
+        state = procedure_walk(text, rows)
+        flora = {s for r in rows if r["kind"] in ("point", "bed_listed") for s in r["species"]}
+        assert state["atlas"] == flora == set(state["scene"]), case
+        assert sorted(state["ground"]) == sorted(r["pos"] for r in rows if r["kind"] in ("bed_unlisted", "lawn"))
+        assert walk_findings(text, rows) == [], case
+
+
 def test_walk_empty_schedule():  # edge: empty input
     assert procedure_walk(SKILL.read_text(encoding="utf-8"), [])["atlas"] == set()
 

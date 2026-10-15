@@ -12,7 +12,8 @@ The user's Flora practice (Flora grilling, [D099], [D100], [D101], [D102]) as a 
 Open conflicts that touch Flora (C7, C8, C18, C21 in [conflicts.md](../../../docs/domain/conflicts.md)) end as
 `review`; never pick a side.
 
-Order: the library comes first, single NPM plants are placed next, and the one Flora atlas is built last, from the
+Order: beds are classified first, so that modelled bed plants follow the same route as point plants; the library
+comes next, single NPM plants and the bed scatter are placed after it, and the one Flora atlas is built last, from the
 placed scene ([#216](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/216),
 [#217](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/217)). An atlas packed in advance from a species
 list is not used, and a second Flora atlas is never made: tiles are scaled down instead.
@@ -56,7 +57,23 @@ position number; hedges are lines or areas with a planting rate, flower beds are
 - Done when: a table position -> species (Russian + Latin) -> count -> size note, and per position the number of
   SPOZU points equals the scheduled count (differences listed for the user).
 
-### Step 2 — Pick the species from the library
+### Step 2 — Flower beds: texture or models
+
+Classify the bed and lawn rows of step 1 before anything is looked up or placed, so that every modelled plant goes
+through the library, the size check and the texture review like a point plant. Apply [D101]
+([FLO-02](../../../docs/domain/areas/flora.md)): a row that only says flower bed or small greenery stays in the Ground
+texture — hand it to `model-ground`; it gets no Flora tile and no Flora object. A row that lists the plants in the bed
+is modelled: split it into species rows (Russian + Latin name, the bed area from the drawing, the planting rate when
+the schedule gives one, else `review`) that join the point plants in steps 3-8; the plants are scattered over the bed
+area in step 8; big bushes are always models. Lawn rows are Ground texture
+([FLO-01](../../../docs/domain/areas/flora.md)).
+
+- Route: the step 1 table wording; bed areas (closed polylines, hatches) from the SPOZU DWG via `ezdxf`.
+- Needs: headless for the classification; human when the wording is unclear or the bed has no planting rate.
+- Done when: every bed and lawn row has a verdict texture / models with the wording that decided it, and each
+  modelled bed has its species rows with area and rate (or `review`).
+
+### Step 3 — Pick the species from the library
 
 Match every position by Latin name in the Flora library. Once
 [#216](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/216) is merged, the catalogue
@@ -71,22 +88,22 @@ Triangle counts per plant come from the library, never invented.
 - Needs: headless; human when one species has several variants (`v1`, `v2`, cultivars) and the schedule does not
   say which.
 - Done when: every position has a library object (name, variant, triangles, bounding box) or is listed as a new
-  species for step 4.
+  species for step 5.
 
-### Step 3 — Check against the schedule
+### Step 4 — Check against the schedule
 
 Compare the measured model with the schedule ([FLO-04](../../../docs/domain/areas/flora.md), [D099]): height and
 crown diameter within ±20 % of the scheduled value, leaf and flower colour as the specification shows it, otherwise
 as photos of the species show it. A schedule that gives only a lower bound («h свыше 0,9 м») or no crown is
 recorded as `review` with the numbers; the user says which target applies. A model outside the band is scaled
-uniformly into it only when the silhouette stays plausible; otherwise it goes to step 4 as a new variant.
+uniformly into it only when the silhouette stays plausible; otherwise it goes to step 5 as a new variant.
 
-- Route: bounding box from step 2 (3ds Max batch readback) against the step 1 table, in a script or by hand.
+- Route: bounding box from step 3 (3ds Max batch readback) against the step 1 table, in a script or by hand.
 - Needs: headless for the numbers; human for colour and for every `review` row.
 - Done when: per position measured height and crown, the band, the verdict (`pass` / `fail` / `review`) and the
   scale applied, if any.
 
-### Step 4 — New species: texture route
+### Step 5 — New species: texture route
 
 A species missing from the library, or without usable maps, gets its diffuse and opacity maps through the Flora
 texture route ([pipeline](../../../docs/pipeline-flora-textures.md)): reference picture -> generated 2K front view on
@@ -100,10 +117,10 @@ writes an approval record.
 - Done when: the species folder holds `diffuse-v<NNN>.png` and `opacity-v<NNN>.png` listed in the library manifest
   with the approval record, or the species is listed as waiting for review.
 
-### Step 5 — NPM bush star and VPM shell
+### Step 6 — NPM bush star and VPM shell
 
 NPM bush: a star — one vertical plane carrying the species' diffuse and opacity, copied and rotated around the
-plant's vertical axis; size from the schedule band. The library's NPM bushes show the scale of it (tens of
+plant's vertical axis; size from the schedule band of step 4. The library's NPM bushes show the scale of it (tens of
 triangles per bush). VPM bush: by default the shell of that star; a detailed bush only when the user asks for one
 ([FLO-10](../../../docs/domain/areas/flora.md), [D102]). Before building a new one, open the library's VPM bushes
 and follow their construction; record what was learned. Opacity and two-sided planes differ between the profiles
@@ -113,13 +130,13 @@ of the species its library material ID (bushes 201-299, hedges 301-399, flowers 
 - Route: 3ds Max batch (`dcc_batch.py max`) or Blender headless; library objects are copied, not rebuilt, when
   they exist.
 - Needs: headless, no tool yet (no reviewed star builder); live 3ds Max when the user wants to see the bush.
-- Done when: an NPM star and a VPM shell per new bush species, triangles counted, size inside the step 3 band,
+- Done when: an NPM star and a VPM shell per new bush species, triangles counted, size inside the step 4 band,
   one material ID on all faces.
 
-### Step 6 — Trees from the library
+### Step 7 — Trees from the library
 
-Trees follow steps 2-5 the same way: the library tree of the species, sized into the band of step 3, a new tree
-species through step 4. A VPM tree stays realistic: trunk and main branches as geometry, small twigs and leaves as
+Trees follow steps 3-6 the same way: the library tree of the species, sized into the band of step 4, a new tree
+species through step 5. A VPM tree stays realistic: trunk and main branches as geometry, small twigs and leaves as
 planes with cut-out ([FLO-10](../../../docs/domain/areas/flora.md)). Tree material IDs are 101-199 (#216).
 
 - Route: library copy via 3ds Max batch; for a tree that the library lacks, SpeedTree export through the
@@ -127,23 +144,26 @@ planes with cut-out ([FLO-10](../../../docs/domain/areas/flora.md)). Tree materi
 - Needs: headless, no tool yet for a new tree; human to accept a SpeedTree or new-tree source.
 - Done when: an NPM and a VPM tree per species with triangles, size verdict and material ID recorded.
 
-### Step 7 — Placement on SPOZU points
+### Step 8 — Placement on SPOZU points and bed scatter
 
 Place one instance per SPOZU point ([FLO-17](../../../docs/domain/areas/flora.md), [D100], same seating as MAF
 [D095]): pivot on the point and raised above the plant's lowest point so the plant ends 10 cm below the Ground
 surface after projection; each copy gets a random rotation about Z and a uniform random scale within ±10 %, and
-the result must still fall inside the ±20 % band of step 3, so narrow the scale range for a model already near
+the result must still fall inside the ±20 % band of step 4, so narrow the scale range for a model already near
 the band edge. Use a fixed random seed and store it. Place single NPM
-plants of every species first; the atlas of step 8 is built from this scene. Hedges: plants along the line at the
-scheduled rate, or a hedge object when the library has one.
+plants of every species first. Hedges: plants along the line at the scheduled rate, or a hedge object when the
+library has one. Modelled beds of step 2: scatter their species over the bed area at the planting rate, with the same
+seating, rotation and scale rules. The atlas of step 9 is built from this scene, so every Flora species is placed
+here; a species added later goes back through steps 3-8 before the atlas is packed.
 
-- Route: 3ds Max batch or Blender headless reading the step 1 point table; projection onto the Ground relief
-  from `model-ground`.
-- Needs: headless, no tool yet (no reviewed placement script); live when the user checks the scene.
-- Done when: instance count per position equals the point count, seating depth 10 cm measured on a sample, the
+- Route: 3ds Max batch or Blender headless reading the step 1 point table and the step 2 bed areas; projection onto
+  the Ground relief from `model-ground`.
+- Needs: headless, no tool yet (no reviewed placement or scatter script); live when the user checks the scene.
+- Done when: instance count per position equals the point count, every modelled bed species has instances inside
+  its bed area, seating depth 10 cm measured on a sample, the
   seed and the per-instance rotation and scale written to the run record.
 
-### Step 8 — One 2048 Flora atlas from the placed scene
+### Step 9 — One 2048 Flora atlas from the placed scene
 
 From the placed scene list the species actually used, take each one's diffuse and opacity map and pack them into
 one atlas pair of at most 2048 × 2048 for all Flora ([FLO-08](../../../docs/domain/areas/flora.md)): diffuse
@@ -157,18 +177,6 @@ instead of starting a second atlas. Remap each plant's UVs into its tile and kee
 - Needs: headless, no tool yet; human for the visual check of the atlas.
 - Done when: one diffuse and one opacity map at most 2048 px, the report species -> tile -> material ID, scale
   factor, and no second Flora atlas.
-
-### Step 9 — Flower beds: texture or models
-
-Apply [D101] ([FLO-02](../../../docs/domain/areas/flora.md)): a schedule row that only says flower bed or small
-greenery stays in the Ground texture (hand it to `model-ground`); a row that lists the plants in the bed is
-modelled with those plants (library or step 4) scattered over the bed area; big bushes are always models. Lawn
-rows are Ground texture ([FLO-01](../../../docs/domain/areas/flora.md)).
-
-- Route: the step 1 table wording; bed areas from the SPOZU DWG via `ezdxf`; scatter via 3ds Max batch or
-  Blender headless.
-- Needs: headless for the classification; human when the wording is unclear; no tool yet for the scatter.
-- Done when: every bed and lawn row has a verdict texture / models with the wording that decided it.
 
 ### Step 10 — Checks before handover
 
