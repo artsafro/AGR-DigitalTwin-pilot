@@ -376,6 +376,14 @@ manual DCC skill/reviewer gate, not a generic MCP sandbox.
 - Start independent work from fresh `main` in a new worktree; continue a task in its own
   worktree. Check existing worktrees, branch, base/head and dirty state before choosing.
 - Commit successes and useful failed attempts with an honest status message.
+- **RED before fix (authors and reviewers).** Prefer a tests-first run/commit: run the same regression
+  on the pre-fix code (RED, an assertion failure for the expected cause), then on the fix (GREEN).
+  Record both commands, revisions, counts and environment in the PR. For a later replay use a private
+  per-card scratch path: `git worktree add --detach <private-dir>/prev <pre-fix-sha>`; copy only the
+  regression there and run it against that revision, without modifying another card's worktree.
+  Keep useful evidence before removing only your throwaway worktree. Never use `git stash` for this:
+  `refs/stash` is shared by worktrees, so a pop can apply another card's changes. An import/setup error
+  is not RED evidence. This recipe isolates source revisions; it does not replace independent review.
 - Permissions for publication, merge, deletion and history are defined only in the
   [Permission matrix](#permission-matrix); apply its named gates before executing.
 - Remove a worktree only after its ignored outputs that matter are saved.
