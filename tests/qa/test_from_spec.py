@@ -1248,3 +1248,68 @@ def test_pointed_corners_build_as_triangle_fans(contour):
     n = np.cross(c[:, 1] - c[:, 0], c[:, 2] - c[:, 0])
     top = shapely.union_all([Polygon(t[:, :2]) for t, nz in zip(c, n[:, 2]) if nz > 1e-9])
     assert top.area == pytest.approx(Polygon([p[:2] for p in contour]).area, abs=1e-6)
+
+
+# Task #103: oblique wall opening with projected weld mismatch
+
+
+def test_oblique_wall_opening_reveals_and_topology():
+    """An opening on an oblique wall (wall 1: [10,0]->[12,10]) with parapet_h_m=0 must build
+    a closed, T-junction-free model with all four reveal sides (left jamb, right jamb, head, sill)
+    and one opening plane.  The current engine fails with an open edge at 0.9 m because the
+    projected welded opening s0 (0.498734720) differs from the strip cut (0.5)."""
+    contour = [[0, 0], [10, 0], [12, 10], [14, 10], [14, 14], [0, 14], [0, 0.489]]
+    opening = {"wall": 1, "x_m": 0.5, "sill_m": 0.9, "w_m": 1, "h_m": 1.5, "kind": "window"}
+    def edit(d):
+        d["floors"] = [
+            {"level": "L0", "contour": contour, "openings": [opening]},
+            {"level": "L1", "contour": contour, "openings": []},
+        ]
+        d["roof"] = {"parapet_h_m": 0.0}
+    dump = build(edited(edit), INPUTS)
+
+    # --- polygon count ---
+    body = dump["meshes"][0]
+    # Historical f05d28c produces 70 for this exact one-opening synthetic fixture.
+    assert len(body["polygon_sizes"]) == 70
+
+    # --- topology: no open edges except the bottom ring ---
+    soup = from_dump(dump)
+    ids = weld(soup.vertices, TOL["weld_m"])
+    edges, counts, _ = edge_uses(soup.triangles, ids)
+    assert counts.max() <= 2                                    # no fin
+    assert t_junctions(dump) == 0
+    open_z = soup.vertices[np.unique(ids, return_index=True)[1]][edges[counts == 1].ravel(), 2]
+    assert set(np.round(open_z, 6).tolist()) == {0.0}          # open only at the bottom
+
+    # --- all four reveal sides present ---
+    c = soup.corners()
+    reveal_mask = soup.material_ids == REVEAL
+    reveal_faces = c[reveal_mask]
+    # each reveal face is a quad (2 triangles); the four sides of the reveal around one opening
+    # are: left jamb, right jamb, head (horizontal top), sill (horizontal bottom).
+    # Identify them by their normal directions relative to the oblique wall's outward normal.
+    n = np.cross(reveal_faces[:, 1] - reveal_faces[:, 0], reveal_faces[:, 2] - reveal_faces[:, 0])
+    # wall 1 direction: from [10,0] to [12,10], tangent (2,10)/|..|, outward normal is 90° CW: (10,-2)/|..|
+    wall_dir = np.array([2.0, 10.0])
+    wall_len = np.linalg.norm(wall_dir)
+    outward = np.array([10.0, -2.0]) / wall_len
+    tangent = wall_dir / wall_len
+    # classify by dominant normal component
+    n_tan = n[:, :2] @ tangent                                 # component along wall tangent
+    n_z = n[:, 2]
+    has_head = np.any(n_z < -1e-9)                             # downward into the opening
+    has_sill = np.any(n_z > 1e-9)                              # upward into the opening
+    has_left_jamb = np.any(n_tan > 1e-9)                       # along the wall tangent
+    has_right_jamb = np.any(n_tan < -1e-9)                      # against the wall tangent
+    assert has_head, "head reveal missing"
+    assert has_sill, "sill reveal missing"
+    assert has_left_jamb, "left jamb reveal missing"
+    assert has_right_jamb, "right jamb reveal missing"
+
+    # --- opening plane present and facing outward ---
+    plane_mask = soup.material_ids == PLANE
+    assert plane_mask.any(), "opening plane missing"
+    plane_faces = c[plane_mask]
+    pn = np.cross(plane_faces[:, 1] - plane_faces[:, 0], plane_faces[:, 2] - plane_faces[:, 0])
+    assert np.all(pn[:, :2] @ outward > 0), "opening plane does not face outward"

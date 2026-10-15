@@ -277,7 +277,11 @@ def _openings(spec, floors, contours, inputs, raw, welds):
             ra, rb = raw[k][o.wall], raw[k][(o.wall + 1) % len(pts)]
             ru = (rb - ra) / float(np.linalg.norm(rb - ra))
             ends = _weld_plan([ra + ru * o.x_m, ra + ru * (o.x_m + o.w_m)], *welds)
-            s0, s1 = (round(float((q - a) @ u), 9) for q in ends)   # its ends welded as the contour
+            # Use the same welded strip line as along_cuts: x for oblique walls,
+            # y for walls along y. A dot projection mixes both welded coordinates
+            # and can put the hole boundary between strip cuts, losing a jamb.
+            axis = 1 if abs(b[0] - a[0]) <= KEY_M else 0
+            s0, s1 = (round(float((q[axis] - a[axis]) / u[axis]), 9) for q in ends)
             out.append({"wall": o.wall, "level": f.level, "a": a, "u": u, "length": length,
                         "s0": s0, "s1": s1, "z0": z0, "z1": z0 + o.h_m, "id": mid,
                         "depth": depth, "where": f"floor {f.level} wall {o.wall} x {o.x_m}"})
