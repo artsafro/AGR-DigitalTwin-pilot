@@ -1,10 +1,12 @@
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 
 import pytest
 
+from dt_ai.core import run_record as run_record_module
 from dt_ai.core.run_record import (
     EvidenceMismatch, OwnershipConflict, RunRecord, RunStopped, resource_lock,
 )
@@ -191,3 +193,68 @@ def test_cached_earlier_stage_verifies_exact_returned_evidence(tmp_path):
     assert verified["outputs"]["out"]["path"] == str(first.resolve())
     assert run.read()["attempts"][0]["stages"]["export"]["status"] == "verified"
     assert run.read()["attempts"][1]["stages"]["export"]["status"] == "produced"
+
+
+def test_stage_requires_evidence_output(tmp_path):
+    run, _ = fixture_run(tmp_path)
+    with pytest.raises(ValueError, match="Stage must declare at least one evidence output"):
+        run.run_stage("export", [sys.executable, "-c", "pass"], {})
+
+
+def test_inputs_changed_while_stage_ran(tmp_path):
+    run, inputs = fixture_run(tmp_path)
+    source, output = inputs["source"], tmp_path / "out.txt"
+    script = (
+        "from pathlib import Path; "
+        f"Path({str(output)!r}).write_text('exported'); "
+        f"Path({str(source)!r}).write_text('revised-during-stage')"
+    )
+    record = run.run_stage("export", [sys.executable, "-c", script], {"out": output})
+    assert record["status"] == "failed"
+    assert record["error"] == "Inputs changed while stage ran"
+    assert record["outputs"]["out"]["path"] == str(output.resolve())
+    assert record["outputs"]["out"]["bytes"] == len(b"exported")
+    saved = run.read()["attempts"][0]["stages"]["export"]
+    assert saved["status"] == "failed"
+    assert saved["error"] == "Inputs changed while stage ran"
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows taskkill cleanup")
+def test_windows_timeout_cleanup_nonzero_returncode(tmp_path, monkeypatch):
+    def fake_run(argv, **kwargs):
+        return subprocess.CompletedProcess(argv, 128, stdout=b"denied", stderr=b"err")
+
+    monkeypatch.setattr(run_record_module.subprocess, "run", fake_run)
+    run, _ = fixture_run(tmp_path)
+    record = run.run_stage("export", [sys.executable, "-c", "import time; time.sleep(30)"],
+                           {"out": tmp_path / "missing"}, timeout=0.5)
+    assert record["status"] == "interrupted"
+    assert record["reason"] == "timeout"
+    assert record["timeout_cleanup_returncode"] == 128
+    assert record["timeout_cleanup_stdout"] == "denied"
+    assert record["timeout_cleanup_error"] == "Tree cleanup did not terminate root promptly; direct root killed"
+    assert record["returncode"] is not None
+    ledger = run.read()
+    assert ledger["stopped"] is True
+    assert ledger["stop_reason"] == "timeout_cleanup_failed"
+    assert run.read()["attempts"][0]["stages"]["export"]["status"] == "interrupted"
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows taskkill cleanup")
+def test_windows_timeout_cleanup_oserror(tmp_path, monkeypatch):
+    def fake_run(argv, **kwargs):
+        raise OSError("taskkill missing")
+
+    monkeypatch.setattr(run_record_module.subprocess, "run", fake_run)
+    run, _ = fixture_run(tmp_path)
+    record = run.run_stage("export", [sys.executable, "-c", "import time; time.sleep(30)"],
+                           {"out": tmp_path / "missing"}, timeout=0.5)
+    assert record["status"] == "interrupted"
+    assert record["reason"] == "timeout"
+    assert record["timeout_cleanup_error"] == "Tree cleanup did not terminate root promptly; direct root killed"
+    assert "timeout_cleanup_returncode" not in record
+    assert record["returncode"] is not None
+    ledger = run.read()
+    assert ledger["stopped"] is True
+    assert ledger["stop_reason"] == "timeout_cleanup_failed"
+    assert run.read()["attempts"][0]["stages"]["export"]["status"] == "interrupted"
