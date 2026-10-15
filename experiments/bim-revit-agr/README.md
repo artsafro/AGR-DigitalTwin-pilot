@@ -17,3 +17,9 @@ The runner recomputes expected storey coordinates, slab boxes and volumes (shape
 Unsupported, and not a production result: recovering a spec contour from IFC, rounded corners, roofs, materials and families, georeferencing, and a real Revit export.
 
 `results.json` holds compact samples, deviations, and timings. One ledger JSON per IFC sits in `ledgers/`. IFC files sit in `ifc/`.
+
+## Relation multimap (`new-case`)
+
+`relation_multimap.py` is marked as `new-case` (no registered pattern applies from `docs/domain/patterns/INDEX.md`). It provides a report-only census helper for synthetic IFC void, fill, and containment relations, capturing raw evidence (`relation_id`, `source_id`, `endpoint_id`) without picking arbitrary winners. Conflicting associations are reported as unresolved cardinality conflicts (`diagnostics` with `kind="cardinality"`, `status="unresolved"`, and `selected_endpoint=None`).
+
+Boundary: synthetic-only evaluation on generated IFC models. It claims no real Revit export compatibility and no production adapter policy.
