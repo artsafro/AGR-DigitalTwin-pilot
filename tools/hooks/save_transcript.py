@@ -12,7 +12,8 @@ Pattern: new-case (a harness tool; no domain pattern applies).
 Which transcript - proven, never guessed (reviews 1-2 of #140): `--transcript`, else `$CLAUDE_SESSION_ID`, else
 `--nonce`. The agent's Bash call is written to its own transcript before the command runs, so the one transcript
 in the worktree's project folder `<config dir>/projects/<path, every non-alphanumeric character as '-'>` that
-contains the nonce is the calling session's. None (after a short wait) or more than one: exit 2.
+contains the nonce is the calling session's. The nonce is searched in bounded chunks (#141), so a huge unrelated
+transcript cannot exhaust memory. None (after a short wait) or more than one: exit 2.
 
 The copy goes to a temporary file first and is published with a hard link, which never replaces a file.
 Exit 0 copied, 1 a copy of this session exists already (kept), 2 any other failure (nothing written).
@@ -28,6 +29,22 @@ import time
 from pathlib import Path
 
 NONCE = re.compile(r"^[A-Za-z0-9_-]{12,}$")
+CHUNK = 4 * 1024 * 1024
+
+
+def contains(path, token):
+    """Whether `token` occurs in `path`, read CHUNK bytes at a time with a len(token)-1 overlap."""
+    overlap = len(token) - 1
+    carry = b""
+    with open(path, "rb") as f:
+        while True:
+            chunk = f.read(CHUNK)
+            if not chunk:
+                return False
+            window = carry + chunk
+            if token in window:
+                return True
+            carry = window[-overlap:] if overlap else b""
 
 
 def _root():
@@ -56,7 +73,7 @@ def holding(nonce):
     for folder in project_folders():
         for f in sorted(folder.glob("*.jsonl")) if folder.is_dir() else []:
             try:
-                if nonce.encode() in f.read_bytes():
+                if contains(f, nonce.encode()):
                     found[os.path.normcase(os.path.realpath(f))] = f
             except OSError:
                 continue

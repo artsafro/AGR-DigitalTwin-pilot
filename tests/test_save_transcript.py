@@ -184,3 +184,29 @@ def test_a_non_ascii_checkout_and_branch(tmp_path):
     assert r.returncode == 0, r.stderr
     dest = repo / "logs/transcripts/harness--------prnone-s-1.jsonl"
     assert Path(r.stdout.strip()) == dest and dest.is_file()
+
+
+def test_the_nonce_is_found_across_a_chunk_boundary_without_reading_whole_files(repo, config, monkeypatch):
+    spec = importlib.util.spec_from_file_location("save_transcript", HOOK)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    monkeypatch.setenv("CLAUDE_PROJECT_DIR", str(repo))
+    monkeypatch.setenv("CLAUDE_CONFIG_DIR", str(config))
+    monkeypatch.delenv("CLAUDE_SESSION_ID", raising=False)
+    monkeypatch.setattr(module, "CHUNK", 8, raising=False)
+
+    def whole_file(*_args, **_kwargs):
+        raise MemoryError("read_bytes")
+
+    monkeypatch.setattr(module.Path, "read_bytes", whole_file)
+    folder = folder_for(config, repo)
+    (folder / "unrelated.jsonl").write_bytes(b"x" * 65536)
+    nonce = NONCE.encode()
+    (folder / "s-123.jsonl").write_bytes(b"a" * 13 + nonce)
+    assert module.holding(NONCE) == [folder / "s-123.jsonl"]
+    absent = b"ABSENT-TOKEN-XXXX"
+    for offset in range(21):
+        path = folder / f"off-{offset}.bin"
+        path.write_bytes(b"q" * offset + nonce)
+        assert module.contains(path, nonce)
+        assert not module.contains(path, absent)
