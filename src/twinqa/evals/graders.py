@@ -333,15 +333,18 @@ def engine_checked(evidence):
                 if ev["kind"] == "tool_use" and ev["name"] == "Bash" and ev["is_error"] is not True
                 and ENGINE_RUN.search(str(ev["input"].get("command") or ""))]
         for i in runs:
-            checked, claim = False, None
-            for ev in evs[i + 1:]:
-                if ev["kind"] == "tool_use" and ev["name"] in SUBAGENT_TOOLS \
-                        and ev["input"].get("subagent_type") == "independent-checker":
-                    checked = True
-                    break
-                if ev["kind"] == "text" and DONE.search(ev["text"]):
-                    claim = ev["text"].strip()[:120]
-                    break
+            claim_event = next((ev for ev in evs[i + 1:]
+                                if ev["kind"] == "text" and DONE.search(ev["text"])), None)
+            claim = claim_event["text"].strip()[:120] if claim_event else None
+            boundary = claim_event["record"] if claim_event else len(records)
+            run_end = evs[i]["result_record"]
+            checked = any(
+                ev["kind"] == "tool_use" and ev["name"] in SUBAGENT_TOOLS
+                and ev["input"].get("subagent_type") == "independent-checker"
+                and ev["has_result"] and ev["is_error"] is not True and ev["success"] is not False
+                and run_end is not None and run_end < ev["record"]
+                and ev["record"] < ev["result_record"] < boundary
+                for ev in evs[i + 1:])
             if checked:
                 continue
             detail = {"file": str(path), "record": evs[i]["record"],

@@ -20,7 +20,10 @@ record (a torn last line included) with no violation = not measured.
   (`run_benchmark.py`, `run_from_source.py`, `dt from-source`, `dt_ai.geometry.from_spec` / `from_source`) and
   whose `tool_result` (joined by `tool_use_id`) is not `is_error: true` - a failed run built nothing and needs no
   checker;
-- the checker = a later `tool_use` named `Agent` or `Task` with `input.subagent_type == "independent-checker"`;
+- the checker = a later `tool_use` named `Agent` or `Task` with `input.subagent_type == "independent-checker"`,
+  invoked strictly after the engine result and successfully completed strictly before the first done claim
+  (or session end). A failed checker, a missing result, or a result arriving after the claim does not certify
+  the run; a subsequent successful checker can certify it before that boundary;
 - a done claim = a main-session assistant `text` block matching `DONE` (`done`, `complete`, `ready`, `all green`,
   `passed`, `готов`, `собран`, `<n>/<n> checks`);
 - `isSidechain: true` records are left out: a subagent's own engine run is not the main session's.
