@@ -139,5 +139,7 @@ def test_snapshot_world_coordinates_are_not_transformed_twice(monkeypatch):
 def test_species_comparison_retains_cultivars_and_yo():
     assert mod.portable('C:\\x\\t_366e8d9d\\out\\asset.fbx') == 'out/asset.fbx'
     assert mod.portable('C:\\Users\\artsafro\\Desktop\\source.max') == '<USER>/Desktop/source.max'
+    assert mod.portable('G:/textures/leaf.png') == '<DRIVE_G>/textures/leaf.png'
+    assert mod.portable('C:/x/t_366e8d9d') == 'C:/x/t_366e8d9d'
     assert mod.species_keys({'id':'library-001', 'species_labels':['Липа\nмелколистная']}) == {'липа мелколистная'}
     assert mod.species_keys({'id':'project-001', 'species_labels':['Клён Гиннала (Acer) H175\nКлен татарский H175']}) == {'клен гиннала', 'клен татарский'}

@@ -2,13 +2,14 @@
 
 Standalone, card-scoped experiment. Production code and standards are untouched.
 
-**Current status: native v003 exports complete; corrected v004 verification pending.**
-All 136 FBX files exist. The v003 measurement wrongly applied node.transform to
-already-world-space snapshot vertices; six readbacks disagreed and the independent
-bbox probe exposed the measurement bug. `tools/max_flora_verify.py` probes the
-coordinate convention, re-extracts expected signatures and creates new v004 SVG
-previews, then re-reads the SAME unchanged FBX files. No binary is overwritten.
-`verify_archive.py` accepts only full v004 receipts; `--partial` never means pass.
+**Current status: complete source audit, not an approved model delivery.**
+136 selected FBX variants and previews have native readback receipts. Original
+FBXs are preserved: Tree_LP uses an isolated Mesh snapshot in `repairs-v006`;
+four sheared flowers use identity-transform world TriMesh values in `repairs-v007`.
+Other files remain in `assets-v003`, with corrected previews in `verified-v004`.
+The independent bbox probe caught a double-transform measurement bug; no matcher
+tolerance was relaxed. `verify_archive.py` accepts only all-file equal receipts;
+`--partial` never substitutes for that check. Missing maps/appearance remain open.
 
 ## Inputs and safety
 
@@ -36,10 +37,13 @@ FLORA_JOB_SECONDS=3900 python C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.
 # Repeat the SAME archive command to skip hash-verified finished exports.
 FLORA_JOB_SECONDS=1200 python C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py max --file tools/max_flora_verify.py --card t_366e8d9d --wait 3600 --timeout 4400 --out C:/x/t_366e8d9d/verify-fbx-batch-v004.json
 # Repeat the SAME verification command to skip hash-verified v004 rows/readbacks.
+python C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py max --file tools/max_flora_tri_repair.py --card t_366e8d9d --timeout 900 --out C:/x/t_366e8d9d/tri-repair-batch-v006.json
+python C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py max --file tools/max_flora_transform_repair.py --card t_366e8d9d --timeout 600 --out C:/x/t_366e8d9d/identity-repair-batch-v007.json
 python experiments/flora-library-audit/catalogue.py --output experiments/flora-library-audit/catalogue.json
 python experiments/flora-library-audit/report_findings.py
 python experiments/flora-library-audit/verify_archive.py
-env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q experiments/flora-library-audit/test_catalogue.py -p no:cacheprovider --basetemp=C:/x/t_366e8d9d/pytest-probes
+python experiments/flora-library-audit/report_summary.py
+env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q experiments/flora-library-audit -p no:cacheprovider --basetemp=C:/x/t_366e8d9d/pytest-probes
 ```
 
 Long native calls should run through the terminal's tracked background mode; poll

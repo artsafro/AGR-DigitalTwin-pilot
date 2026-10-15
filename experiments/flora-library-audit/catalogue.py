@@ -214,8 +214,22 @@ def make_catalogue(source, project=False):
             findings.append('measured_height_outside_20pct_of_node_token')
         entry_id = ('project' if project else 'library') + f'-{index:03d}'
         archive = ROOT / 'out/verified-v004'
+        repair_receipt = ROOT / 'out/repairs-v006' / (entry_id + '.json')
+        identity_receipt = ROOT / 'out/repairs-v007' / (entry_id + '.json')
+        if identity_receipt.exists():
+            repair_receipt = identity_receipt
+        if repair_receipt.exists():
+            archive = repair_receipt.parent
         export_receipt = archive / (entry_id + '.json')
         readback_receipt = archive / (entry_id + '-readback.json')
+        planned_file = 'out/assets-v003/' + entry_id + '.fbx'
+        planned_preview = 'out/verified-v004/' + entry_id + '.svg'
+        artifact_basis = 'native_direct_fbx'
+        if export_receipt.exists():
+            artifact_row = json.loads(export_receipt.read_text(encoding='utf-8'))
+            planned_file = Path(artifact_row['file']).relative_to(ROOT).as_posix()
+            planned_preview = Path(artifact_row['preview']).relative_to(ROOT).as_posix()
+            artifact_basis = artifact_row.get('repair_basis', artifact_basis)
         artifact_status = 'not_produced'
         if export_receipt.exists():
             artifact_status = 'produced_unverified'
@@ -238,10 +252,10 @@ def make_catalogue(source, project=False):
                         'atlas_use': {'bitmap_users_in_scene': {b['filename']: bitmap_users[b['filename']] for b in (material or {}).get('bitmaps', [])},
                                       'status': 'reference_sharing_only_uv_islands_and_texture_pixels_not_audited'},
                         'findings': findings,
-                        'planned_file': 'out/assets-v003/' + entry_id + '.fbx',
-                        'planned_preview': 'out/verified-v004/' + entry_id + '.svg',
-                        'file': 'out/assets-v003/' + entry_id + '.fbx' if export_receipt.exists() else None,
-                        'preview': 'out/verified-v004/' + entry_id + '.svg' if export_receipt.exists() else None,
+                        'planned_file': planned_file, 'planned_preview': planned_preview,
+                        'file': planned_file if export_receipt.exists() else None,
+                        'preview': planned_preview if export_receipt.exists() else None,
+                        'artifact_basis': artifact_basis,
                         'artifact_status': artifact_status,
                         'preview_kind': 'untextured_front_wireframe_not_appearance_approval',
                         'delivery_passed': False})
@@ -309,9 +323,16 @@ def portable(value):
     if isinstance(value, str):
         normalized = value.replace('\\', '/')
         root = str(ROOT).replace('\\', '/')
+        if normalized == root:
+            return root  # explicitly authorized artifact root
         if normalized.startswith(root + '/'):
             return normalized[len(root) + 1:]
-        return normalized.replace('C:/Users/artsafro/', '<USER>/')
+        normalized = normalized.replace('C:/Users/artsafro/', '<USER>/')
+        if re.match(r'^[A-Za-z]:/', normalized):
+            return '<DRIVE_' + normalized[0].upper() + '>/' + normalized[3:]
+        if normalized.startswith('//'):
+            return '<UNC>/' + normalized[2:]
+        return normalized
     if isinstance(value, list):
         return [portable(v) for v in value]
     if isinstance(value, dict):
@@ -328,11 +349,13 @@ def main():
     for index, name in enumerate(SCENES):
         data = json.loads((ROOT / (name + '-detailed.json')).read_text(encoding='utf-8'))
         timings = []
+        result = None
         for _ in range(3):
             start = time.perf_counter()
             result = make_catalogue(data, project=bool(index))
             timings.append(time.perf_counter() - start)
-        result['pairing_seconds'] = timings
+        assert result is not None
+        result['catalogue_build_seconds_including_receipt_io'] = timings
         scenes.append(result)
         meshes = [o for o in data['objects'] if role(o, bool(index)) == 'plant']
         for plane in (['xy', 'xz', 'bounded_row'] if index == 0 else ['xy', 'y', 'bounded_row']):

@@ -5,7 +5,7 @@ import statistics
 import subprocess
 from collections import Counter
 from pathlib import Path
-from catalogue import ROOT, portable
+from catalogue import ROOT, SCENES, portable
 from checkpoints import load_valid, sha
 
 HERE = Path(__file__).resolve().parent
@@ -40,12 +40,22 @@ def main():
         integrity.append(dict(source, sha256_after_audit=a, copy_sha256_after_audit=b))
     rows, exported, readbacks, missing, failed, accounting = [], [], [], [], [], []
     for index, scene in enumerate(catalog['scenes']):
+        raw = json.loads((ROOT / (SCENES[index] + '-detailed.json')).read_text(encoding='utf-8'))
+        raw_labels = {o['handle']: o.get('text', o.get('plain_text', '')) for o in raw['objects'] if o['class'] in ('text', 'TextPlus')}
+        assert set(raw_labels) == {l['handle'] for l in scene['labels']}
+        assert all(l['text'] == raw_labels[l['handle']] for l in scene['labels'])
         counts = Counter(l['status'] for l in scene['labels'])
         assert sum(counts.values()) == scene['counts']['label']
         assert set(counts) <= {'paired', 'ambiguous', 'unpaired', 'category_heading'}
         accounting.append(dict(total=len(scene['labels']), **counts))
         for entry in scene['entries']:
             root = ROOT / 'out/verified-v004'
+            repair_root = ROOT / 'out/repairs-v006'
+            if (repair_root / (entry['id'] + '.json')).exists():
+                root = repair_root
+            identity_root = ROOT / 'out/repairs-v007'
+            if (identity_root / (entry['id'] + '.json')).exists():
+                root = identity_root
             exp = load_valid(root / (entry['id'] + '.json'), entry, sources[index]['copy_sha256'])
             if exp is None:
                 missing.append(entry['id'])
@@ -58,6 +68,13 @@ def main():
             assert entry['preview'] in (None, entry['planned_preview'])
             assert Path(exp['file']) == ROOT / entry['planned_file']
             assert Path(exp['preview']) == ROOT / entry['planned_preview']
+            if exp.get('repair_basis'):
+                if exp['repair_basis'] == 'identity_transform_world_TriMesh_value':
+                    assert exp['derived_before_export']['equal']
+                else:
+                    proof = json.loads((ROOT / ('tri-repair-v006-' + entry['id'] + '.json')).read_text(encoding='utf-8'))
+                    assert proof['derived_before_export']['equal']
+                assert sha(exp['original_unmodified_fbx']) == exp['original_unmodified_fbx_sha256']
             assert len(exp['expected']['triangles']) == entry['triangles']
             header = Path(exp['file']).read_bytes()[:27]
             assert header[:23] == b'Kaydara FBX Binary  \x00\x1a\x00'
@@ -71,6 +88,8 @@ def main():
                     failed.append(entry['id'])
             rows.append({'id': entry['id'], 'source_name': entry['source_name'], 'triangles': entry['triangles'],
                          'source_snapshot_bbox_error_mm': exp['expected']['bbox_probe_error_mm'],
+                         'artifact_basis': exp.get('repair_basis', 'native_direct_fbx'),
+                         'source_transform': exp.get('source_transform'), 'derived_transform': exp.get('derived_transform'),
                          'corrected_signature_preview_seconds': exp['corrected_signature_preview_seconds'],
                          'file': entry['planned_file'], 'preview': entry['planned_preview'], 'file_sha256': exp['sha256'],
                          'preview_sha256': exp['preview_sha256'], 'export_seconds': exp['seconds'], 'readback': rb})
@@ -91,6 +110,14 @@ def main():
         'median_readback_seconds': statistics.median(e['seconds'] for e in readbacks) if readbacks else None,
         'no_binary_diff_probe': {'checked_paths': verify_diff(), 'binary_count': 0}, 'artifacts': rows})
     assert isinstance(result, dict)
+    baseline_path = ROOT / 'readback-v003.json'
+    if baseline_path.exists():
+        baseline = json.loads(baseline_path.read_text(encoding='utf-8'))
+        result['superseded_v003_measurement_mismatch_ids'] = baseline['failures']
+    export_run = ROOT / 'export-fbx-batch-v003.json'
+    if export_run.exists():
+        native = json.loads(export_run.read_text(encoding='utf-8'))
+        result['native_export_runner'] = portable({k:native[k] for k in ['status', 'exit_code', 'seconds', 'warnings']})
     measured_path = ROOT / 'readback-v004.json'
     if measured_path.exists():
         measured = json.loads(measured_path.read_text(encoding='utf-8'))
@@ -100,6 +127,13 @@ def main():
     if native_path.exists():
         native = json.loads(native_path.read_text(encoding='utf-8'))
         result['native_runner'] = portable({k:native[k] for k in ['status', 'exit_code', 'seconds', 'warnings']})
+    for key, filename in [('native_tri_repair_runner', 'tri-repair-batch-v006.json'), ('native_identity_repair_runner', 'identity-repair-batch-v007.json')]:
+        path = ROOT / filename
+        if path.exists():
+            run = json.loads(path.read_text(encoding='utf-8'))
+            result[key] = portable({k:run[k] for k in ['status','exit_code','seconds','warnings']})
+    result['artifact_basis_counts'] = dict(Counter(r['artifact_basis'] for r in rows))
+    result['superseded_v004_mismatch_ids'] = json.loads((ROOT / 'readback-v004.json').read_text(encoding='utf-8'))['failures']
     filename = 'partial-verification.json' if args.partial else 'verification.json'
     (HERE / filename).write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     print(json.dumps({k:v for k,v in result.items() if k not in ['artifacts', 'source_integrity', 'missing_export_ids', 'no_binary_diff_probe']}, indent=2))

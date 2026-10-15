@@ -5,7 +5,7 @@ Hnnn heights below assume cm, unverified. Export paths are relative to `C:/x/t_3
 
 ## Accounting
 
-| Source | Text | Paired | Ambiguous | Orphan/note | Headings | Meshes | Normalized captions | NPM candidates | VPM candidates |
+| Source | Text | Paired | Ambiguous | Orphan/note | Headings | Plant meshes | Normalized captions | NPM candidates | VPM candidates |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | FLORA_Union_v1.max | 326 | 319 | 4 | 1 | 2 | 90 | 53 | 71 | 66 |
 | FLORIO_2BT_2022.max | 23 | 0 | 23 | 0 | 0 | 46 | 35 | 23 | 23 |
