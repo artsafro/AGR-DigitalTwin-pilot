@@ -739,7 +739,7 @@ def check_decor(model: Soup, spec: Spec, tol: dict, ranges: dict) -> dict:
             if (dd.min() < -reader.EMBED_MAX_M and 0 < dd.max() <= reader.ATTACHMENT_FROM_M
                     and s.max() > FACE_M and s.min() < length - FACE_M
                     and all(_pieces_outside(plan, polys[i], weld_m) == 1 for i in bands)
-                    and reader._is_box(t3, u, n, float(a @ n)) is not None):
+                    and reader._is_box(t3, u, n, float(a @ n), spec.plate_gap_m) is not None):
                 stray += len(free)
                 break
     if stray:

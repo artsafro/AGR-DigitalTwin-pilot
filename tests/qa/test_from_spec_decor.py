@@ -383,6 +383,17 @@ def test_a_corner_pilaster_passes_every_check():
     assert report["passed"], [(c["id"], c["value"]) for c in report["checks"] if c["status"] != "pass"]
 
 
+def test_a_corner_end_lies_beyond_the_weld_off_the_body():
+    # #101 (user 2026-10-15): the corner end face starts plate_gap_m off the wall face, not 0.5 mm, so the
+    # checker's distance weld (weld_m) never joins it to the body's corner edge
+    sp = spec(dict(PILASTER, x_m=0.0, h_m=3.3))
+    m = meshes(build(sp, INPUTS))
+    body, decor = np.array(m["body"]["vertices"]), np.array(m["decor"]["vertices"])
+    near = np.linalg.norm(decor[:, None, :] - body[None, :, :], axis=2).min()
+    assert near > sp.weld_m
+    assert near == pytest.approx(sp.plate_gap_m)
+
+
 def test_a_full_width_band_on_a_propagated_body_line_is_no_cut():
     sp = spec(dict(BELT, wall=2, x_m=0.0, w_m=10.0, z_m=2.4, h_m=0.3))
     report = decor_check(build(sp, INPUTS), sp)

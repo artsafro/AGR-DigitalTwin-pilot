@@ -81,6 +81,10 @@ recorded from a real job; catalogue `benchmark/bench-k02-decor-fragment/decor-ca
   part beyond is closed by nothing): a build error, the `decor-corner` question. The extractor reads a part
   wrapped round a corner as one arm per wall (the corner block to the longer arm), each with its source
   extent to the corner, and asks `decor-corner` when the other arm is higher.
+- **An element ending at a convex building corner** (no other element there): its end face starts
+  `plate_gap_m` (5 mm) off the wall face, beyond `weld_m`, so it shares no point with the body's corner edge
+  even after the checker's distance weld (user 2026-10-15 [D093], #101; was 0.5 mm). The extractor reads such
+  an end, covering its rectangle from `plate_gap_m` out, as a whole end.
 - Build errors (the rule does not cover them): side by side or crossing, one rank and one length, a
   subordinate standing out of the main one, a corner meeting at a concave or an oblique corner.
 - ID: the element's `material_id`, else the object's decor ID (`object.json` build ids `decor`).

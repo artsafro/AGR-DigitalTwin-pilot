@@ -538,7 +538,6 @@ def _roof_structures(spec: Spec, inputs: BuildInputs, roof: float) -> "_Mesh":
 
 
 DECOR_INSET_M = 0.02   # pattern facade-decor-inset: a wall element runs this far into the body (user 2026-10-11)
-CORNER_END_M = 0.0005  # at a building corner its end face starts this far off the wall face (no shared point)
 
 
 def _decor(spec, floors, contours, openings, inputs, elev, polys, top):
@@ -641,10 +640,12 @@ def _decor(spec, floors, contours, openings, inputs, elev, polys, top):
                 continue
             if turn < 0:                                # a right turn of a counter-clockwise contour: concave
                 raise BuildError(f"{where}: it ends at a concave corner, into the next wall; not built")
-            if which == 0:                              # 0.5 mm off the wall face: no point shared with the
-                e0 = CORNER_END_M                        # body's corner edge (review 2 of PR #75)
+            # plate_gap_m off the wall face: no point within weld_m of the body's corner edge (review 2 of
+            # PR #75; user 2026-10-15 [D093], #101: 0.5 mm lay inside the 3 mm weld and welded to the corner)
+            if which == 0:
+                e0 = gap
             else:
-                e1 = CORNER_END_M
+                e1 = gap
         walls.append({"a": a, "u": u, "n": n, "c": float(a @ n), "o": float(a @ u), "s0": s0, "s1": s1, "z0": z0,
                       "z1": z1, "d0": d0, "d1": d1, "e0": e0, "e1": e1, "mid": mid, "where": where, "skip": set(),
                       "rank": 0 if e.kind == "strip" else 1, "length": length,
