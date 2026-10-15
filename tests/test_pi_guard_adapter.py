@@ -82,6 +82,29 @@ def test_pi_special_paths_fail_closed(sandbox, tool, path):
     assert "unsupported Pi path syntax" in result["reason"]
 
 
+@pytest.mark.parametrize("absolute", [False, True])
+def test_current_pi_multi_edit_checks_complete_result(sandbox, absolute):
+    path = sandbox / "note.txt"
+    before = "alpha\nbeta\n"
+    after = "beta\ngamma\n"  # matched in ORIGINAL, not sequentially
+    path.write_text(before, encoding="utf-8")
+    check = f'''import json, sys
+p = json.load(sys.stdin)
+assert p['tool_name'] == 'Edit'
+assert p['tool_input']['old_string'] == {before!r}
+assert p['tool_input']['new_string'] == {after!r}
+assert not p['tool_input'].get('replace_all')
+'''
+    for name in ("guard.py", "pipeline_gate.py"):
+        (sandbox / ".claude/hooks" / name).write_text(check, encoding="utf-8")
+    result = invoke("edit", {"path": str(path) if absolute else "note.txt", "edits": [
+        {"oldText": "alpha", "newText": "beta"},
+        {"oldText": "beta", "newText": "gamma"},
+    ]}, sandbox, sandbox / "tools/hooks/pi_guard_adapter.py")
+    assert result["decision"] == "allow", result
+    assert path.read_text(encoding="utf-8") == before  # preview never writes
+
+
 @pytest.mark.parametrize("source", [
     "raise RuntimeError('synthetic adapter crash')",
     "print('null')", "print('{}')", "print('not json')",
