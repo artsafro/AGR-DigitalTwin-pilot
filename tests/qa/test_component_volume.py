@@ -312,3 +312,241 @@ def test_ndarray_inputs_success():
     assert len(res) == 1 and res[0]["eligible"] is True
     assert res[0]["status"] == "measured" and res[0]["sign"] == 1
     assert math.isclose(res[0]["signed_volume"], 1.0, rel_tol=1e-6)
+
+
+# ---------------------------------------------------------------------------
+# Task #110: Single-vertex fan performance and incidence tests (synthetic data)
+# ---------------------------------------------------------------------------
+
+
+class SyntheticAccessCountingArray(np.ndarray):
+    """Synthetic ndarray subclass tracking integer-row __getitem__ accesses."""
+
+    row_read_count: int
+
+    def __new__(cls, input_array):
+        obj = np.asarray(input_array).view(cls)
+        obj.row_read_count = 0
+        return obj
+
+    def __array_finalize__(self, obj):
+        if obj is None:
+            return
+        self.row_read_count = getattr(obj, "row_read_count", 0)
+
+    def __getitem__(self, item):
+        if isinstance(item, (int, np.integer)):
+            self.row_read_count += 1
+        elif isinstance(item, tuple) and len(item) > 0 and isinstance(item[0], (int, np.integer)):
+            self.row_read_count += 1
+        return super().__getitem__(item)
+
+
+def _build_synthetic_bipyramid(
+    n: int, radius: float = 1.0, height: float = 1.0
+) -> tuple[np.ndarray, np.ndarray]:
+    """Generate synthetic closed bipyramid mesh with n equatorial vertices and 2*n triangles."""
+    theta = np.linspace(0.0, 2.0 * math.pi, n, endpoint=False)
+    v_eq = np.column_stack([radius * np.cos(theta), radius * np.sin(theta), np.zeros(n, dtype=float)])
+    v_top = np.array([[0.0, 0.0, height]], dtype=float)
+    v_bot = np.array([[0.0, 0.0, -height]], dtype=float)
+    vertices = np.vstack([v_eq, v_top, v_bot])
+
+    top = n
+    bot = n + 1
+    tris = []
+    for i in range(n):
+        nxt = (i + 1) % n
+        tris.append([i, nxt, top])
+        tris.append([nxt, i, bot])
+    triangles = np.array(tris, dtype=np.int64)
+    return vertices, triangles
+
+
+def _reference_fan_oracle(
+    triangles: np.ndarray, comp_tri_ids: list[int], unique_verts: list[int]
+) -> bool:
+    """Synthetic brute-force reference fan oracle matching current semantics.
+
+    Checks vertex fans per component subset, handling repeated triangle indices
+    once per vertex. Does not mutate inputs.
+    """
+    for v_idx in unique_verts:
+        incident_faces = list(dict.fromkeys(t for t in comp_tri_ids if v_idx in triangles[t]))
+        if len(incident_faces) <= 1:
+            continue
+
+        n = len(incident_faces)
+        connected = [
+            [
+                i == j
+                or bool(
+                    {u for u in triangles[incident_faces[i]] if u != v_idx}
+                    & {u for u in triangles[incident_faces[j]] if u != v_idx}
+                )
+                for j in range(n)
+            ]
+            for i in range(n)
+        ]
+        for k in range(n):
+            for i in range(n):
+                for j in range(n):
+                    connected[i][j] = connected[i][j] or (connected[i][k] and connected[k][j])
+
+        if not all(all(row) for row in connected):
+            return False
+
+    return True
+
+
+@pytest.mark.parametrize("n", [40, 80])
+def test_check_single_vertex_fans_linear_row_access_regression(n: int):
+    """Regression test: _check_single_vertex_fans must perform linear row accesses.
+
+    With O(V*F) face scanning per vertex, reads grow quadratically and exceed 12*F.
+    Building incidence once per component keeps reads <= 12*number_faces.
+    """
+    from twinqa.geometry.component_volume import _check_single_vertex_fans
+
+    _, triangles_raw = _build_synthetic_bipyramid(n)
+    counting_triangles = SyntheticAccessCountingArray(triangles_raw)
+    number_faces = len(counting_triangles)
+    comp_tri_ids = list(range(number_faces))
+    unique_verts = list(range(n + 2))
+
+    is_single_fan = _check_single_vertex_fans(counting_triangles, comp_tri_ids, unique_verts)
+    assert is_single_fan is True
+    assert counting_triangles.row_read_count <= 12 * number_faces
+
+
+def test_check_single_vertex_fans_oracle_random_cases():
+    """Verify _check_single_vertex_fans against seeded brute-force oracle across 100 cases."""
+    import random
+    from twinqa.geometry.component_volume import _check_single_vertex_fans
+
+    rng = random.Random(110)
+    for i in range(100):
+        if i == 0:
+            # Empty triangles, empty comp_tri_ids, empty unique_verts
+            triangles = np.empty((0, 3), dtype=np.int64)
+            comp_tri_ids = []
+            unique_verts = []
+        elif i == 1:
+            # Empty comp_tri_ids with non-empty triangles
+            triangles = np.array([[0, 1, 2], [2, 3, 0]], dtype=np.int64)
+            comp_tri_ids = []
+            unique_verts = [0, 1, 2, 3]
+        elif i == 2:
+            # Repeated triangle indices in comp_tri_ids
+            triangles = np.array([[0, 1, 2], [0, 2, 3]], dtype=np.int64)
+            comp_tri_ids = [0, 0, 1, 1, 0]
+            unique_verts = [0, 1, 2, 3]
+        elif i == 3:
+            # Empty unique_verts
+            triangles = np.array([[0, 1, 2]], dtype=np.int64)
+            comp_tri_ids = [0]
+            unique_verts = []
+        else:
+            n_v = rng.randint(1, 8)
+            n_t = rng.randint(0, 12)
+            if n_t == 0:
+                triangles = np.empty((0, 3), dtype=np.int64)
+                comp_tri_ids = []
+                unique_verts = list(range(n_v)) if rng.random() > 0.5 else []
+            else:
+                raw_tris = [[rng.randint(0, n_v - 1) for _ in range(3)] for _ in range(n_t)]
+                triangles = np.array(raw_tris, dtype=np.int64)
+                subset_size = rng.randint(0, 15)
+                comp_tri_ids = [rng.randint(0, n_t - 1) for _ in range(subset_size)]
+                if rng.random() < 0.2:
+                    unique_verts = sorted(list(set(rng.randint(0, n_v - 1) for _ in range(rng.randint(0, n_v)))))
+                else:
+                    unique_verts = list(range(n_v))
+
+        tri_before = triangles.copy()
+        comp_before = list(comp_tri_ids)
+        verts_before = list(unique_verts)
+
+        actual = _check_single_vertex_fans(triangles, comp_tri_ids, unique_verts)
+        expected = _reference_fan_oracle(triangles, comp_tri_ids, unique_verts)
+
+        assert actual == expected
+        assert np.array_equal(triangles, tri_before)
+        assert comp_tri_ids == comp_before
+        assert unique_verts == verts_before
+
+
+def test_reordered_triangle_and_inverted_box_controls():
+    """Synthetic controls for deterministic triangle order invariance and inverted orientation."""
+    helper = _get_helper()
+
+    # 1. Inverted box control: reversed winding must still be recognized as closed single-fan manifold
+    inv_tris = [[a, c, b] for a, b, c in _BOX_TRIS]
+    res_inv = helper([{"name": "synthetic_inverted_box", "vertices": _UNIT_BOX_VERTS, "triangles": inv_tris}])
+    assert len(res_inv) == 1
+    assert res_inv[0]["eligible"] is True
+    assert res_inv[0]["status"] == "measured"
+    assert res_inv[0]["sign"] == -1
+    assert math.isclose(res_inv[0]["signed_volume"], -1.0, rel_tol=1e-6)
+    assert res_inv[0]["reasons"] == []
+
+    # 2. Deterministic reordered triangles on valid closed box: output must remain identical
+    perm = [5, 2, 11, 0, 7, 1, 9, 3, 8, 4, 10, 6]
+    reord_box_tris = [_BOX_TRIS[i] for i in perm]
+    res_reord_box = helper([{"name": "synthetic_reordered_box", "vertices": _UNIT_BOX_VERTS, "triangles": reord_box_tris}])
+    assert len(res_reord_box) == 1
+    assert res_reord_box[0]["eligible"] is True
+    assert res_reord_box[0]["status"] == "measured"
+    assert res_reord_box[0]["sign"] == 1
+    assert math.isclose(res_reord_box[0]["signed_volume"], 1.0, rel_tol=1e-6)
+    assert res_reord_box[0]["reasons"] == []
+
+    # 3. Deterministic reordered triangles on disconnected-fan hourglass: must preserve ineligible defect
+    hourglass_verts = [
+        [0.0, 0.0, 0.0], [-1.0, -1.0, 1.0], [1.0, -1.0, 1.0], [0.0, 1.0, 1.0],
+        [-1.0, -1.0, 2.0], [1.0, -1.0, 2.0], [0.0, 1.0, 2.0],
+    ]
+    hourglass_tris = [
+        [0, 2, 1], [0, 3, 2], [0, 1, 3], [1, 2, 5], [1, 5, 4],
+        [2, 3, 6], [2, 6, 5], [3, 1, 4], [3, 4, 6], [0, 4, 5], [0, 5, 6], [0, 6, 4],
+    ]
+    reord_hg_tris = hourglass_tris[::-1]
+    res_reord_hg = helper([{"name": "synthetic_reordered_hourglass", "vertices": hourglass_verts, "triangles": reord_hg_tris}])
+    assert len(res_reord_hg) == 1
+    assert res_reord_hg[0]["eligible"] is False
+    assert res_reord_hg[0]["status"] == "not_measured"
+    assert res_reord_hg[0]["signed_volume"] is None
+    assert res_reord_hg[0]["reasons"] == ["vertex_not_single_fan"]
+
+
+@pytest.mark.parametrize("n", [250, 500, 1000])
+def test_benchmark_synthetic_bipyramid_component_signed_volumes(n: int):
+    """Descriptive performance benchmark for synthetic closed bipyramid components.
+
+    Produces synthetic bipyramid with n equatorial vertices and 2*n triangles (500, 1000, 2000).
+    Times component_signed_volumes with time.perf_counter, prints elapsed seconds without timing assertions.
+    Asserts one eligible positive measured component and matches analytical volume.
+    """
+    import time
+
+    helper = _get_helper()
+    vertices, triangles = _build_synthetic_bipyramid(n)
+    number_faces = len(triangles)
+    assert number_faces == 2 * n
+
+    start_time = time.perf_counter()
+    results = helper([{"name": f"synthetic_bipyramid_n{n}", "vertices": vertices, "triangles": triangles}])
+    elapsed_seconds = time.perf_counter() - start_time
+    print(f"\n[benchmark] synthetic bipyramid n={n} ({number_faces} triangles): elapsed = {elapsed_seconds:.6f} s")
+
+    assert len(results) == 1
+    row = results[0]
+    assert row["eligible"] is True
+    assert row["status"] == "measured"
+    assert row["sign"] == 1
+    assert row["reasons"] == []
+    assert row["n_triangles"] == number_faces
+
+    analytical_volume = (n / 3.0) * math.sin(2.0 * math.pi / n)
+    assert math.isclose(row["signed_volume"], analytical_volume, rel_tol=1e-7)
+

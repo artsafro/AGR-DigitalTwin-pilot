@@ -123,9 +123,21 @@ def _partition_components(triangles: np.ndarray) -> list[list[int]]:
 def _check_single_vertex_fans(
     triangles: np.ndarray, comp_tri_ids: list[int], unique_verts: list[int]
 ) -> bool:
-    """Verify that every unique vertex in the component forms a single incident face fan."""
+    """Verify that every unique vertex in the component forms a single incident face fan.
+
+    Complexity: O(F + V + total incident entries) time for fan work and O(F) extra storage.
+    """
+    vert_to_tris: dict[int, list[int]] = defaultdict(list)
+    for t in comp_tri_ids:
+        seen_verts: set[int] = set()
+        for v in triangles[t]:
+            v_int = int(v)
+            if v_int not in seen_verts:
+                seen_verts.add(v_int)
+                vert_to_tris[v_int].append(t)
+
     for v_idx in unique_verts:
-        incident_tris = [t for t in comp_tri_ids if v_idx in triangles[t]]
+        incident_tris = vert_to_tris.get(int(v_idx), [])
         if len(incident_tris) <= 1:
             continue
 
