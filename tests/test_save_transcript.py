@@ -184,3 +184,45 @@ def test_a_non_ascii_checkout_and_branch(tmp_path):
     assert r.returncode == 0, r.stderr
     dest = repo / "logs/transcripts/harness--------prnone-s-1.jsonl"
     assert Path(r.stdout.strip()) == dest and dest.is_file()
+
+
+def _load():
+    spec = importlib.util.spec_from_file_location("save_transcript", HOOK)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_the_nonce_search_reads_bounded_chunks(repo, config, monkeypatch):
+    """#141: a transcript too large for memory is never read whole; a nonce split across chunks is still found."""
+    module = _load()
+    monkeypatch.setenv("CLAUDE_PROJECT_DIR", str(repo))
+    monkeypatch.setenv("CLAUDE_CONFIG_DIR", str(config))
+    monkeypatch.setattr(module, "CHUNK", 7, raising=False)          # absent before #141: whole reads
+    folder = folder_for(config, repo)
+
+    def whole_read(self, *args, **kwargs):
+        raise MemoryError("a whole transcript was read")
+    monkeypatch.setattr(Path, "read_bytes", whole_read)
+    monkeypatch.setattr(Path, "read_text", whole_read)
+    reads = []
+    real_open = open
+
+    def tracking_open(*args, **kwargs):
+        handle = real_open(*args, **kwargs)
+        real_read = handle.read
+
+        def read(size=-1):
+            assert size is not None and 0 < size <= 7, size     # never an unbounded read
+            reads.append(size)
+            return real_read(size)
+        handle.read = read
+        return handle
+    monkeypatch.setattr("builtins.open", tracking_open)
+    # Every offset of the nonce relative to the 7-byte chunk grid, including splits across every boundary.
+    for shift in range(8):
+        (folder / "s-123.jsonl").write_bytes(b"x" * shift + NONCE.encode() + b"y" * shift)
+        assert module.holding(NONCE) == [folder / "s-123.jsonl"], shift
+    assert reads
+    (folder / "s-123.jsonl").write_bytes(b"x" * 40)
+    assert module.holding(NONCE) == []
