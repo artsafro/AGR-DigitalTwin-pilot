@@ -589,17 +589,25 @@ def _measurement_walls(contour, section):
     """Recover dropped-kink facets for opening calculations, without changing the spec contour.
 
     Each calculation wall retains (spec wall, arc-length offset from its start). Rounded-corner
-    spans keep their existing representation; only straight spans with retained real endpoints
-    are expanded. Use the CCW real ring, independent of its start vertex or source direction.
+    spans keep their existing representation. Collapse their tessellation with the contour's
+    own arc recognizer, but keep small kinks on the neighbouring straight spans. This recovers
+    virtual radius vertices too, which do not lie on the original section ring.
     """
     ring = LineString(orient(section, sign=1.0).exterior.coords)
+    if any(len(p) == 3 for p in contour):
+        # Local import: mesh orchestrates assemble and uses this module for section closure.
+        from .mesh import SIMPLIFY_M, _rounded_corners
+
+        poly = orient(section.simplify(SIMPLIFY_M, preserve_topology=True), sign=1.0)
+        corners = _rounded_corners(np.array(poly.exterior.coords)[:-1])
+        coords = [p.tolist() for p, _ in corners]
+        ring = LineString(coords + coords[:1])
     points, owners = [], []
     for w, a in enumerate(contour):
         b = contour[(w + 1) % len(contour)]
         chord = LineString([a[:2], b[:2]])
         path = None
-        if (len(a) == len(b) == 2
-                and all(ring.distance(shapely.Point(p[:2])) <= 0.003 for p in (a, b))):
+        if all(ring.distance(shapely.Point(p[:2])) <= 0.003 for p in (a, b)):
             start, end = (ring.project(shapely.Point(p[:2])) for p in (a, b))
             if end > start:
                 path = substring(ring, start, end)
@@ -614,8 +622,8 @@ def _measurement_walls(contour, section):
         # Triangulation introduces collinear section vertices; they are not supporting facets.
         coords = list(path.simplify(SNAP_M).coords)
         offset = 0.0
-        for p, q in zip(coords, coords[1:]):
-            points.append(list(p))
+        for i, (p, q) in enumerate(zip(coords, coords[1:])):
+            points.append(a if i == 0 and len(a) == 3 else list(p))
             owners.append((w, offset))
             offset += float(np.linalg.norm(np.asarray(q) - p))
     return points, owners

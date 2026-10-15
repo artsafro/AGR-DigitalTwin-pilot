@@ -119,6 +119,40 @@ def test_dropped_kink_hole_endpoints_follow_the_real_wall():
     assert report["questions"] == []
 
 
+@pytest.mark.parametrize("rounded", [False, True])
+@pytest.mark.parametrize("mirror", [False, True])
+def test_dropped_kink_coordinates_beside_rounded_endpoint(rounded, mirror):
+    # Review #22: the virtual radius vertex is not on the original section ring.
+    if rounded:
+        arc = [[98.5 + 1.5 * math.cos(a), 2.3 + 1.5 * math.sin(a)]
+               for a in np.linspace(-math.pi / 2, 0, 13)]
+        contour = [[0, 0], [10, 0.8], *arc, [100, 20], [0, 20]]
+    else:
+        contour = [[0, 0], [10, 0.8], [100, 0.8], [100, 20], [0, 20]]
+    dump = building(contour, boxes=[(1, 0.5, 8.5, 0.9, 2.4, 0)])
+    if mirror:
+        for mesh in dump["meshes"]:
+            for v in mesh["vertices"]:
+                v[0] = -v[0]
+            mesh["triangles"] = [t[::-1] for t in mesh["triangles"]]
+    spec, report = extract_spec(dump, OBJECT)
+    floor = spec.expanded_floors()[0]
+    expected_contour = [[0, 0], [100, 0.8], [100, 20], [0, 20]]
+    if rounded:
+        expected_contour[1].append({"r": 1.5})
+    if mirror:
+        expected_contour = [expected_contour[0], *expected_contour[:0:-1]]
+        expected_contour = [[-p[0], *p[1:]] for p in expected_contour]
+    assert floor.contour == expected_contour
+    (o,) = floor.openings
+    expected = 81.5 if mirror else math.hypot(10, 0.8) + 0.5
+    errors = [abs(o.x_m - expected), abs(o.x_m + o.w_m - expected - 8)]
+    print(f"{rounded=}: x_m={o.x_m}, w_m={o.w_m}, endpoint_errors_m={errors}")
+    assert o.wall == (3 if mirror else 0) and o.w_m == pytest.approx(8, abs=0.01)
+    assert errors == pytest.approx([0, 0], abs=0.01)
+    assert report["questions"] == []
+
+
 def test_dropped_kink_100_m_wall_keeps_real_opening_width():
     # #22: 4.89 degree turn dropped; projection onto the 100 m chord loses over 2 cm.
     contour = [[0, 0], [10, 0], [100, 7.7], [100, 20], [0, 20]]
