@@ -57,9 +57,10 @@ uv run --extra pdf-review python -c "from pathlib import Path; import pymupdf; o
 ```
 
 Renders are local-only in ignored `tmp/l1-evidence/textures/pNN.png`, with no PNG links or
-committed binaries. Fresh PyMuPDF renders matched all 16 inspected PNGs byte-for-byte (16/16). The requested external `C:/x/l1-evidence/textures/` location cannot be
-written under this run's worktree-only constraint; a reviewer must reproduce/copy evidence
-there in an authorised session. Five short verbatim anchors transcribed from the images:
+committed binaries. Fresh PyMuPDF renders matched all 16 inspected PNGs byte-for-byte (16/16).
+The driver has copied the evidence from `tmp/l1-evidence/textures/` to the requested external
+`C:/x/l1-evidence/textures/` location: 18 files total, including the 16 inspected page renders.
+Five short verbatim anchors transcribed from the images:
 
 - **TEX-01, reg p.11 §9:** “_d — диффузного цвета”; “_n — нормалей”; “_o — прозрачности”; “_m — металличности”; “_r — шероховатости” (table cells; dashes separate columns).
 - **TEX-02, reg p.12 §3.4:** “Название текстурных карт внутри редактора должно быть идентичным соответствующим файлам формата PNG.”
@@ -107,5 +108,5 @@ The generic contract discovers the new sheet and exhaustively mutates its column
 coverage and gap entries. Issue-specific probes reject missing sources (20/20), missing
 `none` gaps (12/12) and omitted scope/limit anchors (23/23). These test documentation only;
 production texture limits remain subject to the L2 gaps above. Image review is manual evidence,
-not automated by pytest. Independent docs review (five rendered-page spot checks), copying
-renders to the requested external location and user acceptance remain pending.
+not automated by pytest. Copying evidence to the requested external location is complete.
+Independent docs review (five rendered-page spot checks) and user acceptance remain pending.
