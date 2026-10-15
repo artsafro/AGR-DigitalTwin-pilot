@@ -1,4 +1,5 @@
 """Pull-request graders (#125): Agent trace, numeric literals, review rounds, on recorded gh output."""
+import difflib
 import importlib.util
 import json
 import subprocess
@@ -219,6 +220,45 @@ def test_numeric_literals_an_executable_move_below_context_is_cancelled(tmp_path
     ]))
     row = pr_numeric_literals({"pr": [plain], "diff": [diff]})
     assert (row["measured"], row["passed"]) == (0, True)
+
+
+@pytest.mark.parametrize("quote", ['"""', "'''"])
+@pytest.mark.parametrize("cited", [False, True])
+def test_numeric_literals_partial_docstring_hunk_is_not_measured(tmp_path, quote, cited):
+    """Synthetic valid files: omitted opener makes the context's closer ambiguous."""
+    old = quote + "Module description\n" + "paragraph\n" * 10 + quote + "\n"
+    new = old + "MAX_EMBED_M = 0.37" + ("  # [D090]" if cited else "") + "\n"
+    compile(old, "<old>", "exec")
+    compile(new, "<new>", "exec")
+    path = "src/dt_ai/a.py"
+    patch = f"diff --git a/{path} b/{path}\n" + "".join(difflib.unified_diff(
+        old.splitlines(True), new.splitlines(True), fromfile=f"a/{path}", tofile=f"b/{path}"))
+    diff = diff_file(tmp_path / "partial.diff", patch)
+    assert read_diff(diff)[0]["hunks"][0]["start"] > 1
+    view = view_file(tmp_path / "v.json", "No reference")
+    row = pr_numeric_literals({"pr": [view], "diff": [diff]})
+    assert (row["measured"], row["passed"]) == ("not measured", None)
+    assert "ambiguous" in row["error"] and path in row["error"]
+
+
+@pytest.mark.parametrize("cited", [False, True])
+def test_numeric_literals_full_docstring_context_remains_measured(tmp_path, cited):
+    """Control: a hunk from file start supplies both multiline delimiters."""
+    old = '\"\"\"Module description\n' + "paragraph\n" * 10 + '\"\"\"\n'
+    new = old + "MAX_EMBED_M = 0.37" + ("  # [D090]" if cited else "") + "\n"
+    compile(old, "<old>", "exec")
+    compile(new, "<new>", "exec")
+    path = "src/dt_ai/a.py"
+    patch = f"diff --git a/{path} b/{path}\n" + "".join(difflib.unified_diff(
+        old.splitlines(True), new.splitlines(True), fromfile=f"a/{path}", tofile=f"b/{path}",
+        n=len(old.splitlines())))
+    diff = diff_file(tmp_path / "full.diff", patch)
+    assert read_diff(diff)[0]["hunks"][0]["start"] == 1
+    view = view_file(tmp_path / "v.json", "No reference")
+    row = pr_numeric_literals({"pr": [view], "diff": [diff]})
+    assert (row["measured"], row["passed"]) == ((0, True) if cited else (1, False))
+    if not cited:
+        assert [item["literal"] for item in row["details"]] == ["0.37"]
 
 
 def test_review_rounds_on_the_recorded_pull_requests():

@@ -12,7 +12,9 @@ numeric value, or an added line of a file whose path contains `tolerances`. A re
 one added line in the same file only when the stripped texts match and both sides of the hunk yield
 the same literal tokens (old side: context and `-` lines; new side: context and `+` lines). Text
 that was only inside a string does not cancel the same line in code. Each side starts outside a
-string. Comments and plain string literals are not code.
+string. An unclosed multiline delimiter at a hunk boundary is ambiguous evidence and is not
+measured (unless an independently detected unreferenced literal already fails the check).
+Comments and plain string literals are not code.
 f-string replacement-field expressions are code, including a nested field in a format spec;
 format-spec text is not. An f-string field that cannot be parsed is not measured.
 
@@ -480,6 +482,10 @@ def _scan(items):
     for frame in stack:
         if frame["kind"] == "f":
             fail(frame)
+        if frame["triple"]:
+            # A partial hunk may show a closer without its opener. Starting outside
+            # a string then hides following code; never certify that scan as PASS.
+            errors.append(f"{frame['path']}: ambiguous multiline string state at hunk boundary")
     return found, errors
 
 
