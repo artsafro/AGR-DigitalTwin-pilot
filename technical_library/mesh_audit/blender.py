@@ -12,6 +12,7 @@ def main():
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--object',action='append',default=[])
     parser.add_argument('--collection',action='append',default=[])
+    parser.add_argument('--near-m',type=float,default=0.001)
     args=parser.parse_args(sys.argv[sys.argv.index('--')+1:])
     source=args.source.resolve()
     if args.output.exists():parser.error('Report exists; refusing overwrite')
@@ -34,7 +35,7 @@ def main():
         mesh=obj.data
         vertices=[list((obj.matrix_world@v.co)*unit) for v in mesh.vertices]
         faces=[list(p.vertices) for p in mesh.polygons]
-        row=inspect_mesh(vertices,faces,[list(e.vertices) for e in mesh.edges],[p.material_index for p in mesh.polygons])
+        row=inspect_mesh(vertices,faces,[list(e.vertices) for e in mesh.edges],[p.material_index for p in mesh.polygons],near_m=args.near_m)
         row.update(name=obj.name,materials=[m.name if m else None for m in mesh.materials],uv_layers=[])
         for layer in mesh.uv_layers:
             values=[tuple(v.uv) for v in layer.data];finite=all(math.isfinite(c) for uv in values for c in uv)
@@ -50,7 +51,10 @@ def main():
       'native_max_verified':False,'delivery_passed':False}
     args.output.parent.mkdir(parents=True,exist_ok=True)
     with args.output.open('x',encoding='utf-8') as stream:json.dump(report,stream,indent=2)
-    print(json.dumps({'mesh_objects':len(rows),'faces':sum(r['faces'] for r in rows),'source_unchanged':unchanged}))
+    print(json.dumps({'mesh_objects':len(rows),'faces':sum(r['faces'] for r in rows),'source_unchanged':unchanged,
+      'inconsistent_winding_edges':sum(r['inconsistent_winding_edges'] for r in rows),
+      'near_duplicate_vertices':sum(r['near_duplicate_vertices'] for r in rows),
+      'self_intersecting_polygons':sum(r['self_intersecting_polygons'] for r in rows)}))
 
 
 if __name__=='__main__':main()

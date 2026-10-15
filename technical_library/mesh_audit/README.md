@@ -25,6 +25,16 @@ Revit, знаках, mesh optimization и продуктовых Blender-кей�
 растяжение UV, texel density, сохранение исходного контура, shaders, BVH/визуальный вид.
 `delivery_passed=false` всегда: basic inventory не сдача модели.
 
+По каждому объекту в отчёт добавляются три счётчика, на `delivery_passed=false` они не влияют:
+`inconsistent_winding_edges` — рёбра с ровно двумя петлями, которые начинаются в одной вершине
+(оба полигона обходят ребро в одну сторону); `near_duplicate_vertices` — вершины, у которых
+есть более ранняя вершина не дальше `--near-m` (по умолчанию 1 мм, ключ
+`near_duplicate_threshold_m`), включая точные дубли; `self_intersecting_polygons` — эвристика
+нормалей веера от первой вершины грани (отрицательное скалярное произведение). Сильно
+вогнутый ngon тоже может попасть в этот счёт. Источник: эксперимент
+`docs/experiments/blender-mesh-audit-live.md` (ветка `experiment/blender-mesh-audit-live`),
+вердикт M2.
+
 [REPLAY.json](REPLAY.json): 9 запусков Blender4.4 на фактических сохранённых
 blend/FBX, SHA всех входов неизменны. Ground blend и FBX: 33103 vertices /
 32392 quads / 18 slots; ранее допустимые исходные overlaps сохранены. MASHI:
