@@ -5,7 +5,10 @@
 
 Prints a Markdown `## Agent trace` block with fixed fields: Sessions, Written by, Subagents, Skills,
 Commands, Hook denials, Retries, Context at handover, Duration, Commits. `--into FILE` replaces that
-section (through the next `## ` heading) or appends it; the rest of the file stays byte-identical.
+span or appends the block; the rest of the file stays byte-identical, including CRLF newlines.
+The span is the heading plus the lines directly after it that are blank, field lines (`- `), a lone
+`-`, or a placeholder starting with `<`. It stops at the first other line (a heading, `Refs`, prose).
+Trailing blank lines of the span are kept as one blank line before the following text.
 A value that cannot be measured is `not measured (<reason>)`; an empty count is `none`.
 Exit 0, except an argparse error or a failed `--into` write (exit 2, message on stderr).
 """
@@ -282,10 +285,20 @@ def trace(transcripts, usage_rows, commits, writer):
         _context(paths[-1]), _duration(records), commit_line))
 
 
-def replace_section(text, block):
-    """Replace the `## Agent trace` section, or append `block` when the text has none.
+def _span_line(line):
+    body = line.rstrip("\r\n")
+    if body.strip() == "" or body.strip() == "-":
+        return True
+    return body.startswith("- ") or body.startswith("<")
 
-    The parts outside that section are unchanged, including their newlines.
+
+def replace_section(text, block):
+    """Replace the `## Agent trace` span, or append `block` when the text has none.
+
+    The span is the heading plus the lines directly after it that are blank, start with `- `,
+    are a lone `-`, or start with `<`. It stops at the first other line. When text follows,
+    trailing blank lines of the span are kept as one blank line. Everything outside the span
+    stays byte-identical, including newlines.
     """
     if not block.endswith("\n"):
         block += "\n"
@@ -295,11 +308,16 @@ def replace_section(text, block):
         if text and not text.endswith(("\n", "\r")):
             text += "\n"
         return text + block
-    end = next((index for index in range(start + 1, len(lines))
-                if lines[index].rstrip("\r\n").startswith("## ")), len(lines))
+    end = start + 1
+    while end < len(lines) and _span_line(lines[end]):
+        end += 1
+    trailing = end
+    while trailing > start + 1 and lines[trailing - 1].rstrip("\r\n").strip() == "":
+        trailing -= 1
     head, tail = "".join(lines[:start]), "".join(lines[end:])
-    if tail and not block.endswith("\n\n"):
-        block += "\n"
+    if tail and trailing < end and not block.endswith("\n\n"):
+        blank = lines[trailing]
+        block += "\r\n" if blank.endswith("\r\n") else "\n"
     return head + block + tail
 
 
