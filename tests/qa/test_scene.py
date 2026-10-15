@@ -102,8 +102,8 @@ def test_origin_at_zero_and_ucx_exempt_from_shared_pivot():
     assert statuses(found, "V013")["shared pivot"] == "pass"
 
 
-def test_readback_exit_code_7_with_valid_report_raises_runtime_error(monkeypatch):
-    synthetic_fbx = Path("synthetic/model.fbx")
+def test_readback_exit_code_7_with_valid_report_raises_runtime_error(monkeypatch, tmp_path):
+    synthetic_fbx = tmp_path / "model.fbx"
     report_data = {"readback_ok": True, "source": str(synthetic_fbx), "meshes": []}
     prefix = "HEAD_STDERR_PREFIX_DISCARDED_" * 5
     tail = "TAIL_STDERR_ERROR_CODE_7_REPORTED"
@@ -125,8 +125,8 @@ def test_readback_exit_code_7_with_valid_report_raises_runtime_error(monkeypatch
     assert prefix not in msg
 
 
-def test_readback_returncode_0_with_no_report_raises_runtime_error(monkeypatch):
-    synthetic_fbx = Path("synthetic/model.fbx")
+def test_readback_returncode_0_with_no_report_raises_runtime_error(monkeypatch, tmp_path):
+    synthetic_fbx = tmp_path / "model.fbx"
 
     def fake_run(cmd, *args, **kwargs):
         return subprocess.CompletedProcess(cmd, returncode=0, stdout="", stderr="")
@@ -139,8 +139,8 @@ def test_readback_returncode_0_with_no_report_raises_runtime_error(monkeypatch):
     assert "no report" in str(exc_info.value).lower()
 
 
-def test_readback_timeout_raises_runtime_error_preserving_cause(monkeypatch):
-    synthetic_fbx = Path("synthetic/model.fbx")
+def test_readback_timeout_raises_runtime_error_preserving_cause(monkeypatch, tmp_path):
+    synthetic_fbx = tmp_path / "model.fbx"
     timeout_duration = 45
 
     def fake_run(cmd, *args, **kwargs):
@@ -159,8 +159,8 @@ def test_readback_timeout_raises_runtime_error_preserving_cause(monkeypatch):
     assert isinstance(err.__cause__, subprocess.TimeoutExpired)
 
 
-def test_readback_returncode_0_with_valid_report_returns_dictionary(monkeypatch):
-    synthetic_fbx = Path("synthetic/model.fbx")
+def test_readback_returncode_0_with_valid_report_returns_dictionary(monkeypatch, tmp_path):
+    synthetic_fbx = tmp_path / "model.fbx"
     expected_data = {
         "source": str(synthetic_fbx),
         "readback_ok": True,

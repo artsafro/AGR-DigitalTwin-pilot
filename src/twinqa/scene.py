@@ -5,15 +5,12 @@ triangle limits, object types), V004 (applied transforms), V006 (NPM embedded im
 V008 (one UV channel, mirrored islands, glass tile), V010 (UCX triangle budget only),
 V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
 """
-import json
 import math
-import os
-import shutil
-import subprocess
 import tempfile
 from pathlib import Path
 
 from twinqa.report import Finding
+from dt_ai.core.blender import find_blender, run_blender
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
 ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
@@ -32,33 +29,12 @@ def ucx_triangle_limit(model_triangles: int) -> int:
     return min(math.ceil(model_triangles * UCX_SHARE), UCX_CAP)
 
 
-def find_blender() -> str | None:
-    """TWINQA_BLENDER, then blender on PATH, then the newest install under Program Files."""
-    explicit = os.environ.get("TWINQA_BLENDER") or shutil.which("blender")
-    if explicit:
-        return explicit
-    root = Path(os.environ.get("ProgramFiles", r"C:\Program Files")) / "Blender Foundation"
-    found = sorted(root.glob("Blender */blender.exe"), key=lambda p: [int(x) for x in p.parent.name.split()[1].split(".")])
-    return str(found[-1]) if found else None
-
-
 def readback(fbx_path: Path, blender: str | None = None, timeout: int = 600) -> dict:
-    blender = blender or find_blender()
-    if not blender:
-        raise FileNotFoundError("Blender not found (set TWINQA_BLENDER)")
     with tempfile.TemporaryDirectory() as tmp:
         out = Path(tmp) / "readback.json"
-        try:
-            proc = subprocess.run([blender, "--background", "--factory-startup", "--python-exit-code", "1",
-                                   "--python", str(READBACK), "--", str(fbx_path), str(out)],
-                                  capture_output=True, text=True, timeout=timeout)
-        except subprocess.TimeoutExpired as exc:
-            raise RuntimeError(f"Blender readback timed out after {timeout} seconds") from exc
-        if proc.returncode != 0:
-            raise RuntimeError(f"Blender readback failed (exit {proc.returncode}): {proc.stderr[-400:]}")
-        if not out.is_file():
-            raise RuntimeError(f"Blender readback produced no report (exit {proc.returncode}): {proc.stderr[-400:]}")
-        return json.loads(out.read_text(encoding="utf-8"))
+        return run_blender(READBACK, [fbx_path, out], outputs=[out],
+                           log=fbx_path.with_name(fbx_path.name + '.readback.log'),
+                           blender=blender, timeout=timeout)[out]
 
 
 def _f(status, name, observed, expected, pages, evidence, conflicts=()):

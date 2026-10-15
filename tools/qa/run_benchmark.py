@@ -32,18 +32,17 @@ from dt_ai.spec.model import Spec  # noqa: E402
 from twinqa.geometry import checks  # noqa: E402
 from twinqa.geometry.mesh import assign_material_ids, from_dump  # noqa: E402
 from twinqa.io import read_json  # noqa: E402
-from twinqa.scene import find_blender  # noqa: E402
+from dt_ai.core.blender import find_blender, run_blender  # noqa: E402
 
 MEASURE = ROOT / "tools/source/measure_spec_blender.py"
 EXPORT = ROOT / "tools/export/export_mesh_blender.py"
 
 
 def blender_run(blender, script, *args, timeout=900):
-    cmd = [blender, "--background", "--factory-startup", "--disable-autoexec", "--python-exit-code", "1",
-           "--python", str(script), "--", *map(str, args)]
-    done = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
-    if done.returncode != 0:
-        raise RuntimeError(f"{script.name} exit {done.returncode}: {(done.stderr or done.stdout)[-800:]}")
+    outputs = list(args[1:]) if script == EXPORT else [args[-1]]
+    run_blender(script, args, outputs=outputs,
+                log=Path(outputs[-1]).with_suffix('.blender.log'),
+                blender=blender, timeout=timeout)
 
 
 def write(path, value):
@@ -110,7 +109,7 @@ def main(argv=None) -> int:
     ap.add_argument("--object", type=Path, required=True)
     ap.add_argument("--tolerances", type=Path, required=True)
     ap.add_argument("--output", type=Path, required=True)
-    ap.add_argument("--blender", help="default: TWINQA_BLENDER, PATH, newest Program Files install")
+    ap.add_argument("--blender", help="default: TWINQA_BLENDER or pinned Blender 5.1.2 installation")
     args = ap.parse_args(argv)
     blender = args.blender or find_blender()
     if args.output.exists():

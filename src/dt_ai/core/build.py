@@ -1,11 +1,11 @@
 import math
-import subprocess
 import tempfile
 from pathlib import Path
 
 from PIL import Image
 
 from dt_ai import __version__
+from dt_ai.core.blender import run_blender as headless_blender
 from dt_ai.core.io import digest, json_bytes, read_json, write_json
 from dt_ai.core.models import BuildJob
 from dt_ai.core.profiles import load_profiles
@@ -18,16 +18,10 @@ def run_blender(executable: str, root: Path, request: dict, work: Path):
     work.mkdir(parents=True, exist_ok=True)
     request_path = work / "request.json"
     write_json(request_path, request)
-    command = [executable, "--background", "--factory-startup", "--python-exit-code", "1",
-               "--python", str(root / "adapters/blender/bridge.py"), "--", str(request_path.resolve())]
-    result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=180)
-    (work / "blender.log").write_text(result.stdout + result.stderr, encoding="utf-8")
-    if result.returncode:
-        raise RuntimeError(f"Blender failed; see {work / 'blender.log'}")
     result_path = Path(request["result"])
-    if not result_path.is_file():
-        raise RuntimeError("Blender did not produce evidence")
-    return read_json(result_path.read_bytes())
+    return headless_blender(root / 'adapters/blender/bridge.py', [request_path.resolve()],
+                            outputs=[result_path], log=work / 'blender.log',
+                            blender=executable, timeout=180)[result_path]
 
 
 def prepare_assets(job: BuildJob, profiles):

@@ -9,10 +9,12 @@ import json
 from pathlib import Path
 import shutil
 import sys
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
 from dt_ai.core.run_record import RunRecord, atomic_json, file_evidence
+from dt_ai.core.blender import executable, run_blender
 from dt_ai.publish.bundle import read_bundle
 
 
@@ -60,10 +62,33 @@ def sha(path):
     return h.hexdigest()
 
 
+def run_blender_stage(record, name, script, cfg, outputs, directory, blender, timeout):
+    """Keep ledger ownership and process-tree cleanup while sharing Blender policy."""
+    result = None
+
+    def execute(command, **options):
+        nonlocal result
+        result = record.run_stage(name, command, outputs, cwd=ROOT,
+                                  timeout=options['timeout'], resources=[directory])
+        stdout = Path(result['stdout']).read_text(encoding='utf-8', errors='replace')
+        stderr = Path(result['stderr']).read_text(encoding='utf-8', errors='replace')
+        if result.get('reason') == 'timeout':
+            raise subprocess.TimeoutExpired(command, options['timeout'], stdout, stderr)
+        if result.get('error'):
+            raise RuntimeError(result['error'])
+        return subprocess.CompletedProcess(command, result.get('returncode', 0), stdout, stderr)
+
+    run_blender(script, [cfg], outputs=outputs.values(),
+                log=directory / 'blender.log', blender=blender,
+                timeout=timeout, execute=execute)
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run', type=Path, required=True, help='Ready pilot run (latest ledger attempt) or explicit attempt directory')
-    parser.add_argument('--blender', type=Path, required=True)
+    parser.add_argument('--blender', type=Path, default=executable(),
+                        help='default: TWINQA_BLENDER or pinned Blender 5.1.2 installation')
     parser.add_argument('--review-id', required=True, help='Fresh review identifier; existing directory refused')
     parser.add_argument('--agr-addon', type=Path)
     parser.add_argument('--max-batch', type=Path)
@@ -184,11 +209,14 @@ def main():
     report = {'scope': 'OBR22 snapshot component review', 'review': str(review), 'delivery_passed': False,
               'pilot_accepted': False, 'findings': [], 'stages': {}}
     def blender(script, cfg):
-        return [str(args.blender.resolve()), '--background', '--factory-startup', '--disable-autoexec',
-                '--python-exit-code', '1', '--python', str(script), '--', str(cfg)]
+        return (script, cfg)
     def stage(name, argv, outputs, directory, predicate):
         try:
-            result = record.run_stage(name, argv, outputs, cwd=ROOT, timeout=args.timeout, resources=[directory])
+            if isinstance(argv, tuple):
+                result = run_blender_stage(record, name, argv[0], argv[1], outputs,
+                                           directory, args.blender.resolve(), args.timeout)
+            else:
+                result = record.run_stage(name, argv, outputs, cwd=ROOT, timeout=args.timeout, resources=[directory])
             report['stages'][name] = {'status': result['status'], 'stdout': result['stdout'], 'stderr': result['stderr']}
             if result['status'] not in ('produced', 'verified'):
                 raise RuntimeError('Stage process did not produce evidence; see saved logs')
