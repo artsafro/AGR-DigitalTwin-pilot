@@ -248,3 +248,239 @@ def test_cli_malformed_stage_state_is_controlled(tmp_path, capsys, invalid_statu
     assert main(["--run", str(run.directory), "--manifest", str(manifest)]) == 2
     assert json.loads(capsys.readouterr().out) == {"error": "Invalid stage state", "delivery_passed": False}
     assert {str(p): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
+
+
+def test_manifest_outside_run_directory(tmp_path):
+    run, manifest, _, _ = fixture_run(tmp_path)
+    outside = tmp_path / "outside-manifest.json"
+    outside.write_bytes(manifest.read_bytes())
+    with pytest.raises(ValueError, match="Manifest points outside the run directory"):
+        inspect_run(run.directory, outside)
+
+
+@pytest.mark.parametrize("field,value,message", [
+    ("version", 2, "Unsupported ledger version"),
+    ("version", True, "Unsupported ledger version"),
+    ("run_id", "", "Invalid run_id"),
+    ("run_id", "../x", "Invalid run_id"),
+    ("run_id", "-bad", "Invalid run_id"),
+    ("run_id", 5, "Invalid run_id"),
+    ("input_fingerprint", "abc", "Invalid ledger fingerprint"),
+    ("input_fingerprint", "A" * 64, "Invalid ledger fingerprint"),
+    ("stopped", "no", "Invalid stopped state"),
+])
+def test_malformed_ledger_rejected(tmp_path, field, value, message):
+    run, manifest, _, _ = fixture_run(tmp_path)
+    ledger = run.read()
+    ledger[field] = value
+    atomic_json(run.path, ledger)
+    with pytest.raises(ValueError, match=message):
+        inspect_run(run.directory, manifest)
+
+
+@pytest.mark.parametrize("change,message", [
+    ("empty", "Manifest must declare inputs"),
+    ("relative", "inputs:source must be an absolute path"),
+    ("blank", "inputs:source must be a nonempty absolute path"),
+    ("sha", "inputs:source has invalid size/hash"),
+    ("upper", "inputs:source has invalid size/hash"),
+    ("negative", "inputs:source has invalid size/hash"),
+    ("key", "inputs has an invalid key"),
+])
+def test_manifest_inputs_rejected(tmp_path, change, message):
+    run, manifest, _, _ = fixture_run(tmp_path)
+    data = json.loads(manifest.read_text())
+    if change == "empty":
+        data["inputs"] = {}
+    elif change == "relative":
+        data["inputs"]["source"]["path"] = "source.txt"
+    elif change == "blank":
+        data["inputs"]["source"]["path"] = ""
+    elif change == "sha":
+        data["inputs"]["source"]["sha256"] = "abc"
+    elif change == "upper":
+        data["inputs"]["source"]["sha256"] = "A" * 64
+    elif change == "negative":
+        data["inputs"]["source"]["bytes"] = -1
+    else:
+        data["inputs"] = {"": data["inputs"]["source"]}
+    atomic_json(manifest, data)
+    with pytest.raises(ValueError, match=message):
+        inspect_run(run.directory, manifest)
+
+
+def test_ledger_fingerprint_mismatch(tmp_path):
+    run, manifest, _, _ = fixture_run(tmp_path)
+    ledger = run.read()
+    ledger["input_fingerprint"] = "a" * 64
+    atomic_json(run.path, ledger)
+    with pytest.raises(ValueError, match="Manifest inputs/context are not bound to the ledger fingerprint"):
+        inspect_run(run.directory, manifest)
+
+
+@pytest.mark.parametrize("check_id", ["", "x" * 121])
+def test_invalid_required_check_identifier(tmp_path, check_id):
+    run, manifest, _, _ = fixture_run(tmp_path)
+    with pytest.raises(ValueError, match="Invalid required check identifier"):
+        inspect_run(run.directory, manifest, required_checks=[check_id])
+
+
+@pytest.mark.parametrize("failure", ["digest", "oserror"])
+def test_inputs_changed_during_inspection(tmp_path, monkeypatch, failure):
+    run, manifest, _, _ = fixture_run(tmp_path)
+
+    def changed(inputs, context):
+        if failure == "oserror":
+            raise OSError("unreadable")
+        return "0" * 64
+
+    monkeypatch.setattr("dt_ai.core.run_inspection.input_fingerprint", changed)
+    result = inspect_run(run.directory, manifest)
+    assert "Inputs changed during inspection" in result["errors"]
+    assert result["current_inputs"] == "failed"
+
+
+def test_attempts_must_be_a_list(tmp_path):
+    run, manifest, _, _ = fixture_run(tmp_path)
+    ledger = run.read()
+    ledger["attempts"] = {"number": 1}
+    atomic_json(run.path, ledger)
+    with pytest.raises(ValueError, match="Attempts must be a list"):
+        inspect_run(run.directory, manifest)
+
+
+@pytest.mark.parametrize("number", [2, "1"])
+def test_attempt_numbers_must_be_consecutive(tmp_path, number):
+    run, manifest, _, _ = fixture_run(tmp_path)
+    ledger = run.read()
+    ledger["attempts"][0]["number"] = number
+    atomic_json(run.path, ledger)
+    with pytest.raises(ValueError, match="Attempt numbers must be consecutive"):
+        inspect_run(run.directory, manifest)
+
+
+def test_attempt_directory_not_bound_to_number(tmp_path):
+    run, manifest, _, _ = fixture_run(tmp_path)
+    ledger = run.read()
+    ledger["attempts"][0]["directory"] = str(run.directory / "attempt-002")
+    atomic_json(run.path, ledger)
+    with pytest.raises(ValueError, match="Attempt directory is not bound to its number"):
+        inspect_run(run.directory, manifest)
+
+
+@pytest.mark.parametrize("name", ["bad name", "-x"])
+def test_invalid_stage_identifier(tmp_path, name):
+    run, manifest, _, _ = fixture_run(tmp_path)
+    ledger = run.read()
+    stages = ledger["attempts"][0]["stages"]
+    stages[name] = stages.pop("export")
+    atomic_json(run.path, ledger)
+    with pytest.raises(ValueError, match="Invalid stage identifier"):
+        inspect_run(run.directory, manifest)
+
+
+def test_stage_stdout_outside_run(tmp_path):
+    run, manifest, source, _ = fixture_run(tmp_path)
+    ledger = run.read()
+    ledger["attempts"][0]["stages"]["export"]["stdout"] = str(source.resolve())
+    atomic_json(run.path, ledger)
+    with pytest.raises(ValueError, match="stdout points outside the run directory"):
+        inspect_run(run.directory, manifest)
+
+
+def test_produced_stage_must_declare_outputs(tmp_path):
+    run, manifest, _, _ = fixture_run(tmp_path, "produced")
+    ledger = run.read()
+    ledger["attempts"][0]["stages"]["export"]["outputs"] = {}
+    atomic_json(run.path, ledger)
+    with pytest.raises(ValueError, match="Produced/verified stage must declare outputs"):
+        inspect_run(run.directory, manifest)
+
+
+@pytest.mark.parametrize("argv", [[], ["a", 1]])
+def test_invalid_stage_argv(tmp_path, argv):
+    run, manifest, _, _ = fixture_run(tmp_path, "produced")
+    ledger = run.read()
+    ledger["attempts"][0]["stages"]["export"]["argv"] = argv
+    atomic_json(run.path, ledger)
+    with pytest.raises(ValueError, match="Invalid stage argv"):
+        inspect_run(run.directory, manifest)
+
+
+def _report(manifest, **kwargs):
+    report_path = manifest.parent / "report.json"
+    report = AdapterReport(operation="fixture", tool_version="v1", scope="fixture",
+                           execution="completed", input_manifest=str(manifest), **kwargs)
+    atomic_json(report_path, report.model_dump(mode="json"))
+    return report_path
+
+
+def test_tampered_stage_output_manifest(tmp_path):
+    run, manifest, _, output = fixture_run(tmp_path, "verified")
+    output.write_text("tampered")
+    report_path = _report(manifest, output_manifest=str(output.resolve()))
+    result = inspect_run(run.directory, manifest, report_path)
+    assert result["report"]["output_manifest"]["binding"] == "stage_output"
+    assert result["report"]["output_manifest"]["integrity"] == "failed"
+    assert {"id": "output_manifest", "status": "pending", "detail": "stage_evidence_not_intact"} in result["unresolved_gates"]
+
+
+def test_unreadable_report_output_manifest(tmp_path, monkeypatch):
+    run, manifest, _, _ = fixture_run(tmp_path, "verified")
+    claimed = run.directory / "side-manifest.json"
+    claimed.write_text("{}\n")
+    report_path = _report(manifest, output_manifest=str(claimed.resolve()))
+    real_open = Path.open
+
+    def guarded_open(self, mode="r", *args, **kwargs):
+        if self.resolve() == claimed.resolve():
+            raise PermissionError("denied")
+        return real_open(self, mode, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", guarded_open)
+    result = inspect_run(run.directory, manifest, report_path)
+    assert result["report"]["output_manifest"]["integrity"] == "unreadable"
+    assert "Report output manifest is unreadable" in result["errors"]
+    assert {"id": "output_manifest", "status": "pending", "detail": "unreadable"} in result["unresolved_gates"]
+
+
+def test_duplicate_report_check_identifiers(tmp_path):
+    run, manifest, _, _ = fixture_run(tmp_path, "verified")
+    report_path = _report(manifest, checks=(
+        Check(id="native", status="pass", evidence="first"),
+        Check(id="native", status="fail", evidence="second"),
+    ))
+    with pytest.raises(ValueError, match="Duplicate report check identifiers"):
+        inspect_run(run.directory, manifest, report_path)
+
+
+@pytest.mark.parametrize("execution", ["failed", "not_run"])
+def test_report_execution_not_completed(tmp_path, execution):
+    run, manifest, _, _ = fixture_run(tmp_path, "verified")
+    report_path = manifest.parent / "report.json"
+    report = AdapterReport(operation="fixture", tool_version="v1", scope="fixture",
+                           execution=execution, input_manifest=str(manifest))
+    atomic_json(report_path, report.model_dump(mode="json"))
+    result = inspect_run(run.directory, manifest, report_path)
+    assert {"id": "report_execution", "status": "pending", "detail": execution} in result["unresolved_gates"]
+
+
+def test_check_evidence_binds_to_stage_output(tmp_path):
+    run, manifest, _, output = fixture_run(tmp_path, "verified")
+    report_path = _report(manifest, checks=(
+        Check(id="native", status="pass", evidence=str(output.resolve())),
+    ))
+    result = inspect_run(run.directory, manifest, report_path)
+    gate = {item["id"]: item for item in result["unresolved_gates"]}["native"]
+    assert gate["evidence_file_binding"] == "stage_output"
+    assert gate["evidence_file_integrity"] == "intact"
+
+
+def test_zero_attempts_plans_authorized_stage(tmp_path):
+    run, manifest, _, _ = fixture_run(tmp_path)
+    ledger = run.read()
+    ledger["attempts"] = []
+    atomic_json(run.path, ledger)
+    result = inspect_run(run.directory, manifest)
+    assert result["next_action"] == "plan_authorized_stage"
+    assert result["evidence_integrity"] == "incomplete"

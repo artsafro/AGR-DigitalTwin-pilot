@@ -16,6 +16,9 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+cad = [
+    { name = "ezdxf" },
+]
 pdf-review = [
     { name = "pymupdf" },
 ]
@@ -28,6 +31,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "ezdxf", marker = "extra == 'cad'", specifier = "==1.4.3" },
     { name = "numpy", specifier = "==2.5.3" },
     { name = "pillow", specifier = "==12.3.0" },
     { name = "pydantic", specifier = "==2.13.5" },
@@ -36,7 +40,7 @@ requires-dist = [
     { name = "pyyaml", specifier = "==6.0.3" },
     { name = "shapely", specifier = "==2.1.2" },
 ]
-provides-extras = ["pdf-review"]
+provides-extras = ["pdf-review", "cad"]
 
 [package.metadata.requires-dev]
 dev = [
