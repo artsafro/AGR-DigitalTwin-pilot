@@ -1,8 +1,10 @@
-"""Closed-component signed-volume diagnostic helper (Card #93).
+"""Closed-component signed-volume diagnostic helper (Card #93 / Task #111).
 
-Advisory report-only diagnostic helper that identifies edge-connected components
-within individual meshes, checks closed-manifold eligibility, and computes
-high-precision signed volumes using compensated summation.
+Scoped as a new-case, bounded optional report-only diagnostic. It identifies
+edge-connected components within individual meshes, checks closed-manifold
+eligibility, and computes high-precision signed volumes using compensated summation.
+No registered building-node pattern is defined or modified by this helper.
+For detailed semantics and evidence boundary, see docs/qa/component-volume.md.
 """
 
 from __future__ import annotations

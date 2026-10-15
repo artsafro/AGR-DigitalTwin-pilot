@@ -1,0 +1,88 @@
+{
+  "synthetic": true,
+  "delivery_passed": false,
+  "author": "Hermes driver; code written by agy gemini-3.8-flash-high",
+  "environment": "Windows-11-10.0.26200-SP0; Python 3.14.7",
+  "base": "2e61c73eca03c9def317a7b36eb5a31e5186004b",
+  "tests_first_commit": "fab1fdd74a07b30f2caccf88135938f2338ab0a0",
+  "revision_note": "RED: base plus new test file; GREEN/probe/full: tests-first commit plus module docstring and docs/qa/component-volume.md edits; no numerical implementation changes",
+  "runs": {
+    "red": {
+      "command": "env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q -p no:cacheprovider --basetemp=C:/x/t_fe1430a0 tests/qa/test_component_volume_evidence.py --junitxml=tmp/issue-111/red.xml",
+      "xml_sha256": "940e49e3c9bc2464e3823e6b40a99abaae2429ba18e65ace27796b906aafaa7d",
+      "counts": {
+        "failed": 1,
+        "passed": 400
+      },
+      "timestamp": "2026-10-15T17:53:11.615070+02:00",
+      "seconds": "2.725",
+      "failures": [
+        {
+          "test": "test_diagnostic_documentation_regression",
+          "message": "AssertionError: twinqa.geometry.component_volume.__doc__ must explicitly contain 'new-case'\nassert 'new-case' in 'Closed-component signed-volume diagnostic helper (Card #93).\\n\\nAdvisory report-only diagnostic helper that identifie...meshes, checks closed-manifold eligibility, and computes\\nhigh-precision signed volumes using compensated summation.\\n'\n +  where 'Closed-component signed-volume diagnostic helper (Card #93).\\n\\nAdvisory report-only diagnostic helper that identifie...meshes, checks closed-manifold eligibility, and computes\\nhigh-precision signed volumes using compensated summation.\\n' = <module 'twinqa.geometry.component_volume' from 'C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_fe1430a0\\\\src\\\\twinqa\\\\geometry\\\\component_volume.py'>.__doc__"
+        }
+      ]
+    },
+    "green": {
+      "command": "env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q -p no:cacheprovider --basetemp=C:/x/t_fe1430a0 tests/qa/test_component_volume_evidence.py tests/qa/test_component_volume.py --junitxml=tmp/issue-111/green.xml",
+      "xml_sha256": "14e93252e1fc998b1c9250fa109f86a1aa07a99020ad636b91ab4ba5968e347b",
+      "counts": {
+        "passed": 449
+      },
+      "timestamp": "2026-10-15T17:57:46.333964+02:00",
+      "seconds": "5.274"
+    },
+    "probe": {
+      "command": "env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q -p no:cacheprovider --basetemp=C:/x/t_fe1430a0 tests/qa/test_component_volume_evidence.py -k synthetic --junitxml=tmp/issue-111/probe.xml",
+      "xml_sha256": "638f6fe2aa7214f5a2bd3548d63379321accd5c7d6904881fe856dc1e8dd9aff",
+      "counts": {
+        "passed": 400
+      },
+      "timestamp": "2026-10-15T17:57:54.644491+02:00",
+      "seconds": "1.859",
+      "passed_by_family": {
+        "test_synthetic_signed_volume_analytic": 100,
+        "test_synthetic_coincident_and_separate": 100,
+        "test_synthetic_abstain_defects": 100,
+        "test_synthetic_determinism_and_immutability": 100
+      }
+    },
+    "full": {
+      "command": "env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q -p no:cacheprovider --basetemp=C:/x/t_fe1430a0 --junitxml=tmp/issue-111/full.xml",
+      "xml_sha256": "a1e08e017bbfa36cb0c9199ee1bf3616f9667e923306cd37e8ee2d7d2ea90fcf",
+      "counts": {
+        "passed": 3109,
+        "skipped": 9
+      },
+      "timestamp": "2026-10-15T17:58:11.095672+02:00",
+      "seconds": "543.005",
+      "deselected": 13,
+      "warnings": 48,
+      "note": "Deselection and warning counts from pytest stdout; not included in JUnit testcase totals."
+    },
+    "final_targeted": {
+      "command": "env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q -p no:cacheprovider --basetemp=C:/x/t_fe1430a0 tests/qa/test_component_volume_evidence.py tests/qa/test_component_volume.py --junitxml=tmp/issue-111/final-targeted.xml",
+      "counts": {
+        "passed": 449
+      },
+      "xml_sha256": "60a19bf45bb7a7a9420b91e0609e68d03d98ccd7d3a04037816eaffbf6d483ba",
+      "timestamp": "2026-10-15T18:12:08.886439+02:00",
+      "seconds": "2.553",
+      "note": "Rerun after final docs-only polish; all other tested files unchanged."
+    }
+  },
+  "tested_file_sha256": {
+    "src/twinqa/geometry/component_volume.py": "52b3a82941db95fa316f01ab9363f9b9b0e24e356a631ea86fa71498a9cb0bdf",
+    "docs/qa/component-volume.md": "119ebb9d45ba1d7a54148ef309a5870bd6a50c876d17bc77673999f67520d2ef",
+    "tests/qa/test_component_volume_evidence.py": "2eccd6c168be2c145d00c84612b82a1a11c57a8f409ae172f8e2a04920359c71"
+  },
+  "final_targeted_file_sha256": {
+    "src/twinqa/geometry/component_volume.py": "52b3a82941db95fa316f01ab9363f9b9b0e24e356a631ea86fa71498a9cb0bdf",
+    "docs/qa/component-volume.md": "59094601a5488be6159a136f83af63a8c8473e1d3666facb993504b7e450b522",
+    "tests/qa/test_component_volume_evidence.py": "2eccd6c168be2c145d00c84612b82a1a11c57a8f409ae172f8e2a04920359c71"
+  },
+  "additional_checks": {
+    "uv run dt profiles check": "OK: 3 profiles, source hash, traceability pages",
+    "uv run dt schemas --check": "OK: 11 schemas"
+  }
+}
