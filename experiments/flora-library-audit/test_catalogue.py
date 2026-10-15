@@ -69,6 +69,8 @@ def test_real_catalogue_accounts_for_every_node_and_label():
         handles = {e['source_handle'] for e in scene['entries']}
         assert len({l['handle'] for l in scene['labels']}) == len(scene['labels'])
         for label in scene['labels']:
+            assert label['bbox'] is not None
+            assert label['parsed']['raw'] == label['text']
             assert set(label['candidate_handles']) <= handles
             if len(label['candidate_handles']) > 1:
                 assert label['status'] == 'ambiguous'
@@ -76,7 +78,7 @@ def test_real_catalogue_accounts_for_every_node_and_label():
             assert entry['delivery_passed'] is False
             assert Path(entry['planned_file']).name == entry['id'] + '.fbx'
             assert Path(entry['planned_preview']).name == entry['id'] + '.svg'
-            assert entry['artifact_status'] in ('not_produced', 'produced_unverified')
+            assert entry['artifact_status'] in ('not_produced', 'produced_unverified', 'readback_equal', 'readback_mismatch')
             if entry['file'] is None:
                 assert entry['artifact_status'] == 'not_produced'
             else:

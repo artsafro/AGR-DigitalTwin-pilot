@@ -20,7 +20,9 @@ def xyz(p):
 
 def mesh_data(obj):
     mesh = rt.snapshotAsMesh(obj)
-    vertices = [xyz(rt.getVert(mesh, i) * obj.transform) for i in range(1, int(rt.getNumVerts(mesh)) + 1)]
+    # snapshotAsMesh vertices are already in world space (native bbox probe).
+    # Applying node.transform again double-translates/rotates the measurement.
+    vertices = [xyz(rt.getVert(mesh, i)) for i in range(1, int(rt.getNumVerts(mesh)) + 1)]
     ntv = int(rt.getNumTVerts(mesh))
     uv = [xyz(rt.getTVert(mesh, i))[:2] for i in range(1, ntv + 1)]
     mat = obj.material
@@ -38,6 +40,7 @@ def mesh_data(obj):
         triangles.append({'corners': corners, 'material': finish})
     rt.delete(mesh)
     return {'vertices': len(vertices), 'triangles': triangles, 'uv_vertices': ntv,
+            'snapshot_bbox': [[min(v[i] for v in vertices) for i in range(3)], [max(v[i] for v in vertices) for i in range(3)]],
             'bitmap_files': sorted({str(t.filename) for t in rt.getClassInstances(rt.Bitmaptexture, target=mat)}) if mat else [],
             'system_units': str(rt.units.SystemType), 'system_scale': float(rt.units.SystemScale)}
 
@@ -125,6 +128,5 @@ def main():
     print('FLORA_AUDIT_COMPLETE', len(evidence['exports']), len(evidence['readbacks']), len(evidence['failures']), evidence['seconds_total'])
     if evidence['failures']:
         raise RuntimeError('Readback mismatch ' + repr(evidence['failures']))
-
-
-main()
+if __name__ == '__main__':
+    main()

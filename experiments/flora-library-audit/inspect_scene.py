@@ -37,6 +37,7 @@ def inventory():
                'transform': str(obj.transform),
                'material': material_info(obj.material) if rt.isProperty(obj, 'material') else None}
         if str(rt.classOf(obj)) == 'TextPlus':
+            row['plain_text'] = str(rt.agrReadPlaintext(obj))
             row['properties'] = [str(p) for p in rt.getPropNames(obj)]
             for prop in rt.getPropNames(obj):
                 if any(s in str(prop).lower() for s in ['text', 'string']):
@@ -70,8 +71,13 @@ def inventory():
 def main():
     if len(rt.objects) or str(rt.maxFileName):
         raise RuntimeError('Expected empty headless session')
-    for name in ['FLORA_Union_v1', 'FLORIO_2BT_2022']:
+    rt.execute('fn agrReadPlaintext o = (local s=""; o.GetPlaintextString &s; s)')
+    manifest = json.loads((ROOT / 'sources-verified.json').read_text(encoding='utf-8'))
+    for index, name in enumerate(['FLORA_Union_v1', 'FLORIO_2BT_2022']):
         source = ROOT / (name + '.max')
+        import hashlib
+        if hashlib.sha256(source.read_bytes()).hexdigest() != manifest[index]['copy_sha256']:
+            raise RuntimeError('Copy hash differs')
         if not rt.loadMaxFile(str(source), quiet=True):
             raise RuntimeError('Load failed: ' + str(source))
         results = [inventory() for _ in range(3)]

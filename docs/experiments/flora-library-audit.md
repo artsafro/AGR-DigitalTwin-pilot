@@ -1,218 +1,113 @@
-# Flora library audit: Max Text labels to catalogue (#189)
+# Flora library audit: catalogue and triangle budgets (#189)
 
 ## Question and scope
 
-Can the supplied real 3ds Max Flora display library become a lossless, inspectable
-catalogue without guessing species/profile assignments? Compare naive nearest XY
-labels with a display-plane-aware rule, then archive each plant mesh separately.
-This is an audit, not a modelling operation or a passed delivery. No species,
-textures, production checker, standards, `data/`, or source scene is changed.
+Audit the supplied Max library and FLORIO set without inventing species identity: enumerate every label, compare XY nearest pairing against bounded display-row pairing, export every plant variant, and read the outputs back.
+This is a source audit, not a passed AGR delivery. No new species/textures, original-scene edits, standards changes or production checker changes.
 
-Research starting point: [Max scripting](../research/3dsmax-scripting.md),
-`tools/max_profile_roundtrip.py`; source practice: the user-provided Flora grilling
-notes (2026-10-15). TextPlus needs `GetPlaintextString`, not a `.text` property:
-[Autodesk API](https://help.autodesk.com/cloudhelp/2017/ENU/MAXScript-Help/files/GUID-09B39BE2-1752-4715-BD00-6B623DA75F9E.htm).
-The script uses a static MAXScript by-reference adapter, without interpolated input.
+## Setup and commands
 
-## Setup and reproducibility
+- Headless 3ds Max 2026.3 (28.3.0.30732), embedded Python 3.11.12, via `dcc_batch.py max` only, one locked batch at a time. No live bridge/safe-mode changes.
+- Both originals were hashed before copying to `C:/x/t_366e8d9d/`; Max loads only those copies. Both scenes report meters, SystemScale 1 and one scene unit per metre.
+- Native entry points: `tools/max_flora_inventory.py`, `tools/max_flora_archive.py`. Pure analysis and reproduction commands: [README](../../experiments/flora-library-audit/README.md).
+- Actual FBX outputs: `C:/x/t_366e8d9d/out/assets-v003/`; corrected SVG previews and coordinate-verified receipts: `out/verified-v004/`. FBX 2014 / 7.4 binary. No binaries in Git.
+- Machine [catalogue](../../experiments/flora-library-audit/catalogue.json); schema/fields in README; complete [findings](flora-library-audit-findings.md).
+- Source method context: [Max scripting research](../research/3dsmax-scripting.md), `tools/max_profile_roundtrip.py`, user Flora grilling notes (2026-10-15).
+- Startup warning: `polyunwrapper_autoload.mse` CLR error returns native -130; the wrapper classifies it as a warning. Current job markers/receipts and independent hash/readback checks determine completion, not native exit alone. Legacy mental-ray attributes are unavailable.
 
-- Branch base: `7840deb`; dedicated worktree/card `t_366e8d9d`.
-- **Headless 3ds Max 2026**, actual product 2026.3 (28.3.0.30732), embedded Python
-  3.11.12. Both input scenes report meters, SystemScale 1, `decodeValue('1m') = 1`.
-- Only `dcc_batch.py max`, ping first, shared session lock; no live bridge and no
-  safe-mode changes. The orchestrator explicitly confirmed headless-only scope.
-- Desktop originals were hashed, copied to `C:/x/t_366e8d9d/`, then copies checked
-  against the recorded originals. Max loads those copies, never Desktop paths.
-- Outputs: new `C:/x/t_366e8d9d/assets-v001/` (MAX baseline) and `assets-v002/`
-  (FBX alternative), outside Git. Test basetemps use
-  **children** of the card root, never its root (pytest deletes its basetemp).
-- Commands and exact script roles: [experiment README](../../experiments/flora-library-audit/README.md).
-  Machine catalogue: [catalogue.json](../../experiments/flora-library-audit/catalogue.json).
-- Baseline and prototype use the **same extracted nodes**, exclude the same
-  envelopes/planters/references, and each pairing is timed three times. Pairing
-  timing excludes Max startup, scene loading and saving; it is not a batch-speed claim.
+## Counts and interpretation
 
-The installed `polyunwrapper_autoload.mse` reports a CLR startup error, native exit
-`4294967166` (-130). The wrapper classifies this as a startup warning. Real job
-markers, current JSON, artifact hashes and readbacks—not that exit alone—determine
-whether this audit ran. Both inventories also warn about missing
-`mrmaterialattribs.gup` (legacy mental-ray displacement attributes). These are
-preserved caveats, not repaired by changing the user's installation.
+| Source | All nodes | Text / TextPlus | Plant meshes | Paired labels | Ambiguous | Orphan incl headings | Normalized captions | NPM / VPM candidates |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| FLORA_Union_v1.max | 506 | 320 / 6 | 90 | 319 | 4 | 3 | 53 | 71 / 66 |
+| FLORIO_2BT_2022.max | 69 | 23 / 0 | 46 | 0 | 23 | 0 | 35 | 23 / 23 |
 
-## Inventory and interpretation
+The 80 display slots are not 90 proven unique species. Normalized caption counts include cultivar-only strings and project multiline alternatives; see the complete names in findings. LP -> HP entries overlap both descriptive profiles. NPM/VPM candidates are not conformity assertions.
+Library nonplants: 80 Box envelopes, five planters, four size cylinders, one helper; all retained under `excluded_nodes`. Every Box has 20 triangles, Multi_Ground and a bbox top at/below placement Z within 1mm; its display-plinth role remains unverified.
+Library species/profile labels contain no height/crown dimensions. Project Hnnn tokens assume cm explicitly (unverified); all alternatives and >10% mismatches are retained. Hidden TextPlus uses the static GetPlaintextString by-reference adapter. No raw caption is repaired.
 
-| Scene | Nodes | Text / TextPlus | Plant meshes | Other nodes accounted |
-|---|---:|---:|---:|---|
-| FLORA_Union_v1 | 506 | 320 / 6 | 90 | 80 `Box*` envelopes (role unverified), 5 planters, 4 size cylinders, 1 particle-view helper |
-| FLORIO_2BT_2022 | 69 | 23 / 0 | 46 | none |
+## Baseline versus prototype
 
-The library contains 80 ordinary species-label display slots, co-located plant
-alternatives and extra/unlabelled plants, **not 90 proven unique species**.
-Do not deduplicate by nearest position or replace a raw label with a guessed name.
-Tree/bush type is inferred from the display-heading regions; bush includes
-ornamental perennials, and project grouping uses node-name evidence. No labelled
-hedge samples were found, so hedge statistics are `n=0`, budget `null`.
+Same extracted nodes and exclusions; median of three pairing runs, excluding Max startup, I/O and scene loading. Concordance means agreement with a literal triangle-count label, not independently established botanical correctness.
 
-Exclusion evidence, not just the `Box*` name: **80/80** have 20 triangles,
-`Multi_Ground` material, and their bbox top is at/below their placement Z (within
-1 mm); plants extend above that level. These are display-plinth candidates, not
-assumed vegetation or UCX. Their names, positions, bboxes and material names remain
-in `excluded_nodes` for review; they are not silently discarded.
+| Source | Method | Median s | Unique / ambiguous | Triangle-label concordance |
+|---|---|---:|---|---|
+| FLORA_Union_v1 | xy | 0.0275421 | 116 / 210 | 26 / 81 |
+| FLORA_Union_v1 | xz | 0.0264309 | 321 / 5 | 78 / 81 |
+| FLORA_Union_v1 | bounded_row | 0.0192333 | 319 / 4 | 78 / 81 |
+| FLORIO_2BT_2022 | xy | 0.0008993 | 23 / 0 | 0 / 0 |
+| FLORIO_2BT_2022 | y | 0.0006444 | 0 / 23 | 0 / 0 |
+| FLORIO_2BT_2022 | bounded_row | 0.0001752 | 0 / 23 | 0 / 0 |
 
-Raw `LP`, `HP`, `LP -> HP` tokens are retained. Their NPM/VPM candidate interpretation
-is explicit; a shared candidate participates in both descriptive profile groups.
-These tokens do not establish regulatory conformity. Project `_high` / `_low`
-names are retained as the basis for its profile candidates.
+Pairing function size: XY baseline `pair` 9 lines; bounded row prototype `row_pair` 25 lines. It adds row/right selection, bounded nearest fallback and <=20% distance ties. In this library labels sit below mesh pivots in XZ, so fallback is intentional; FLORIO is a left-hand XY schedule with two high/low columns, retained together by Y row. Conflicting same-role captions are ambiguous; identical Text/TextPlus duplicates corroborate rather than compete.
+All ambiguous pairs, headings, orphan notes and unlabelled plant names are enumerated in the generated findings; no silent nearest-first resolution. Three ordinary source count discrepancies remain: SM_klen_tatarsky001 (1901 label / 1091 measured), Object002 (10 / 8), co-located SM_boyaryshnyck_obyknovennyi001 (488 / 574).
 
-Library labels contain species names, triangle counts, profile/variant tokens and
-notes, not height/crown-diameter strings. Missing labelled dimensions remain null;
-world-bbox XYZ dimensions in meters are always recorded. The project contains
-multiline `Hnnn` labels; interpreting H as centimeters is explicitly an assumption,
-not a unit inferred from Max's system units. All heights and species alternatives
-in a row remain available alongside the node-name H value and measured deviation.
+## Triangle statistics and proposed budgets
 
-All plant entries reference bitmap paths that Max cannot resolve at those stored
-paths. The catalogue inventories materials/submaterials, original bitmap paths,
-and bitmap-sharing counts (atlas **candidates**, not verified atlas pixels).
-No texture search/repath/copy or new texture was attempted. SVG previews are actual
-native-mesh XZ wireframe projections, **not textured botanical appearance approval**.
+| Type | Profile | n | Min | Median | p90 nearest-rank | Max | Review above |
+|---|---|---:|---:|---:|---:|---:|---:|
+| tree | NPM | 28 | 8 | 531.0 | 1266 | 3830 | 3900 |
+| tree | VPM | 26 | 264 | 830.0 | 4894 | 6267 | 6300 |
+| bush | NPM | 43 | 18 | 80 | 120 | 1254 | 1300 |
+| bush | VPM | 40 | 32 | 84.0 | 160 | 1254 | 1300 |
+| hedge | NPM | 0 | None | None | None | None | None |
+| hedge | VPM | 0 | None | None | None | None | None |
 
-## Methods and baseline
+Review thresholds round the observed maximum up to 100, rather than failing the upper 10% of the current library. p90 is descriptive. No hedge samples means no hedge budget. Bush includes ornamental perennials. These are not regulation limits or a checker change: NPM Ground+GroundEl+Flora still share 180k triangles; VPM Ground limits depend on area and unresolved regulation conflicts.
 
-1. **Baseline:** unbounded nearest mesh-pivot distance in XY, retaining ties.
-2. **Prototype:** library front-facing display uses XZ. Project labels sit far left
-   of two high/low mesh columns, so use Y-row distance and retain both candidates.
-   The final catalogue uses bounded distance, distinguishes category headings,
-   and reports ties/unpaired nodes. This is the only method evaluated for adoption.
+## Library versus FLORIO
 
-The quality proxy is **unique agreement with the literal triangle-count label**,
-not independently proven species accuracy. The library comparison does not count
-the excluded boxes as plants. Project two-profile ties are expected row membership,
-not permission to silently choose one species from a multiline schedule.
+Exact normalized captions: 13 shared, 40 library-only, 22 project-only. Project variants with name candidates: 26/46; with exact-triangle and bbox-within-20% candidates: 2/46. Exact mesh-name matches: 0.
+Full name lists and per-entry candidates are in findings/JSON. No synonym, typo or cultivar normalization beyond case/yo-e is invented. Candidates are not approved replacements.
 
-The three discrepancies in the ordinary triangle labels remain findings:
+## Native archive and independent verification
 
-| Source node | Label triangles | Measured triangles | Interpretation |
-|---|---:|---:|---|
-| `SM_klen_tatarsky001` | 1901 | 1091 | literal source-label mismatch; not corrected |
-| `Object002` (Клен Гиннала slot) | 10 | 8 | literal source-label mismatch; not corrected |
-| `SM_boyaryshnyck_obyknovennyi001` | 488 | 574 | co-located alternative; ambiguous pairing, not corrected |
+**Acceptance complete: False.** Exports/previews: 90/136; native readbacks: 0/136; exact-with-tolerance readback checks equal: 0; failed IDs: [].
 
-The audit never claims those labels are the ground truth for automatic repair.
-Nine library meshes have no paired species/profile label (hidden spare linden plus
-plants accompanying planters); the source names and measurements remain catalogued.
+| Native variant | Observed result |
+|---|---|
+| MAX v001 baseline | 9 saves, median 47.043s between saves; cancelled, no readback; retained outside Git |
+| FBX v002 early attempt | 1 file + SVG before cancellation, no readback; retained unverified |
+| FBX v003 | 136 exports + 136 initial readbacks; six apparent mismatches exposed a double-transform bug in the measurement, not promoted as a pass |
+| Same FBX files, corrected v004 signatures/readback | Median original export+preview 2.6805050000039046s; corrected signature+preview 0.33768530000088504s; native readback Nones; maximum matched-corner deviation Nonemm |
 
-## Results
+Corrected native source snapshot bboxes agree with independent nodeGetBoundingBox (maximum 0.0mm); maximum matched UV deviation None. `tools/max_flora_verify.py` first checks a translated/rotated SYNTHETIC mesh, then every real source and imported object. `snapshotAsMesh` vertices are already world coordinates here: multiplying node.transform again created placement-dependent errors. The correction removes that multiplication, preserves the FBX bytes, regenerates previews to a new version and repeats every readback without relaxing the matcher tolerance.
+Readback is native Max FBX import into a reset headless scene, one geometry object per file, binary header/version independently checked. The bijective matcher checks every triangle/cyclic corner (preserving winding), world positions, per-corner UV and finish material names, plus bitmap-reference equality and metre units. It does not certify shading/smoothing, topology quality of the originals, texture pixels or botanical appearance.
+All stored bitmap references were unresolved in the source inventory. Atlas use is reference sharing only; no atlas pixel/UV-island validation is claimed. Previews are actual untextured native-mesh XZ wireframes, not rendered/opacity appearance approval. Materials are not repathed and no textures are generated.
+The v003 first two exports measured 156.85s and 97.56s; later calls were materially faster. The initial abort-based extrapolation from a cold first file was not representative. Per-row checkpoints preserve progress and source/artifact hashes; repeating the same command skips only verified receipts. Cause of the cold delays is not proven.
 
-| Metric (same inputs, median of 3 pairing runs) | XY baseline | Layout-aware prototype |
-|---|---:|---:|
-| Library pairing runtime | 0.0218773 s | 0.0219857 s (XZ) |
-| Uniquely triangle-concordant labels, including hidden TextPlus | 26/81 | 78/81 |
-| Unique / ambiguous labels, before heading/distance classification | 116 / 210 | 321 / 5 |
-| Project pairing runtime | 0.0007941 s | 0.0006168 s (Y row) |
-| Project rows associated with both variants | 0/23 | 23/23 (explicit two-candidate ties) |
+Independent receipt: [partial-verification.json](../../experiments/flora-library-audit/partial-verification.json). Both original hashes were re-read after the archive audit; copied scenes are equal too.
 
-Final bounded library classification: 319 paired, 4 ambiguous, 2 category headings,
-1 unpaired note. Final project classification: 23 ambiguous/two-variant rows.
-Ordinary Text-only concordance is 25/80 -> 77/80; the additional hidden TextPlus
-triangle count raises both numerators/denominators by one. This is not 78 proven
-species assignments, only agreement with recorded count strings.
+| Source | Bytes | SHA-256 before | SHA-256 after |
+|---|---:|---|---|
+| FLORA_Union_v1.max | 19519734 | `30d7fc32fc534e7165ac1f47385cdcf2a91adb967228a087e3a9404a6e397416` | `30d7fc32fc534e7165ac1f47385cdcf2a91adb967228a087e3a9404a6e397416` |
+| FLORIO_2BT_2022.max | 6041600 | `787dce8aeb7aa826c4f35c583a869e4cd89f34e035f92c4d83bd0fd696faaca8` | `787dce8aeb7aa826c4f35c583a869e4cd89f34e035f92c4d83bd0fd696faaca8` |
 
-### Proposed descriptive library budgets
+## Invariants
 
-| Type | Profile candidates | n | Min / median / max triangles | Proposed review above |
-|---|---|---:|---|---:|
-| Tree | NPM | 28 | 8 / 531 / 3830 | 3900 |
-| Tree | VPM | 26 | 264 / 830 / 6267 | 6300 |
-| Bush/perennial | NPM | 43 | 18 / 80 / 1254 | 1300 |
-| Bush/perennial | VPM | 40 | 32 / 84 / 1254 | 1300 |
-| Hedge | NPM / VPM | 0 / 0 | no samples | null |
+- Original untouched: two original/copy hash equalities; generated synthetic hash probe mutates a copy 30 times and proves the reference unchanged; hostile-path probe rejects 100 traversals.
+- Every Text accounted: library 326 = 319 paired + 4 ambiguous + 3 explicit orphan/non-asset records; project 23 = 0 + 23 + 0. Synthetic competing-caption/accounting probe covers 21 translated layouts; every candidate resolves to a plant handle.
+- No binaries committed: actual diff/untracked-path scan rejects native/image extensions and NUL bytes, plus generated probes for seven binary/image suffixes and disguised NUL text. Final Git diff check is also recorded in the PR.
+- Resume safety: synthetic checkpoint probe rejects changed source hashes and 30 modified outputs; real archive verifies each receipt before skipping. Existing unreceipted files are never overwritten.
+- RED on prior catalogue implementation (20420b4 plus new acceptance tests): 3 assertion failures / 1 pass for missing structured parser, row matcher and p90. GREEN: 20 standalone audit tests, including the additional double-transform regression (RED: actual X=20 vs expected X=10; GREEN after removing extra node transform). The earlier collection ImportError is not valid RED evidence.
+- Full unchanged project suite rerun: 3279 passed, 9 skipped, 13 deselected, 327.76s. Prior run: same counts, 326.45s; no claimed speed improvement. Profiles: 3 OK; schemas: 11 OK; `git diff --check` clean.
+- Regression evals: `tmp/evals/flora-library-audit-resume/report.json`, exit 2, 0 passed / 0 failed / 10 NOT MEASURED (Hermes has no expected Claude-format transcript/PR evidence); not an eval pass.
+- Pattern / new case: module docstrings mark #189 as a standalone source-audit case, not production modelling or a reusable general-layout rule.
+- CI: not run (billing lock). No fabricated subagent or trace claims.
 
-Counts overlap where a mesh is labelled `LP -> HP`; they must not be summed as
-unique assets. The complete plant inventory is 90 library meshes / 49,929 triangles
-and 46 project meshes / 12,186 triangles; there are 67 / 24 distinct top-level
-material names respectively. Project comparison: tree NPM max 238 versus VPM 1914;
-bush NPM max 979 versus VPM 5074. Project bushes mostly use 10/20 triangle low/high
-pairs, unlike the library's broader variants. Name-based type grouping is an
-explicit audit heuristic, not permission to substitute one library for another.
-No exact mesh names are shared across the two sources.
+## Author receipts
 
-### Native export outcome: INCOMPLETE — acceptance not met
+- Pattern / new-case: new case #189 in catalogue/checkpoint/native-entry module docstrings; explicit non-delivery scope and empirical layout rule.
+- Regression evals: local `tmp/evals/flora-library-audit-resume/report.json`, 10 not measured, exit 2; missing Claude-format transcript is recorded, not treated as green.
+- Probe: generated source-integrity, label-accounting, binary-diff and resume-tampering probes plus every-file native readback receipt; see Invariants above.
 
-| Attempt | Real result | Readback status |
-|---|---|---|
-| Per-node `saveNodes` MAX | 9 completed MAX files; 8 inter-save intervals, median **47.043 s** | not run; stopped because 136 outputs cannot fit this timebox at this cost |
-| Per-node binary FBX alternative | 1 FBX file produced before cancellation; none existed at the observed 259 s checkpoint | not run; still too slow to finish all 136 outputs within the remaining time |
+## Verdicts and follow-up
 
-Both tracked native process trees were stopped, and a process query confirmed
-only the pre-existing user's Max remained (PID 164400). No source save, live
-command or safe-mode change was used. Partial native outputs remain outside Git,
-not replaced or promoted to verified assets. The catalogue marks only the one
-FBX as `produced_unverified`, all other requested FBX files `not_produced`;
-missing file/preview paths are null and planned paths are explicitly separate.
-The standalone final verifier is deliberately fail-closed until a complete
-136-entry native readback exists. No `verification.json` or all-asset pass is claimed.
+**ADOPT, limited to this display layout:** bounded row/display-plane association with raw labels, ambiguity and orphan lists. It improves the triangle-label proxy without inventing species identity. Proposed follow-up: **Flora catalogue intake: explicit layout schema and reviewed species/profile IDs**; scope: review co-located/unlabelled/cultivar-only entries, reject unknown layouts and add hedge fixtures before checker thresholds.
+**MAYBE:** observed type/profile ceilings as review-only budgets; no regulation or checker update without planting-quantity/site context. **REJECT:** automatic authoritative species substitution, appearance approval or a delivery pass from this audit.
 
-Evidence: [partial-verification.json](../../experiments/flora-library-audit/partial-verification.json).
-The original and copied source hashes were checked **again after both native
-attempts**, unchanged 2/2:
+## Out of scope / seen, not mine
 
-| Source | Bytes | SHA-256 before = after audit = copy |
-|---|---:|---|
-| FLORA_Union_v1.max | 19519734 | `30d7fc32fc534e7165ac1f47385cdcf2a91adb967228a087e3a9404a6e397416` |
-| FLORIO_2BT_2022.max | 6041600 | `787dce8aeb7aa826c4f35c583a869e4cd89f34e035f92c4d83bd0fd696faaca8` |
-
-**Blocker:** the required one-file-per-species/version archive and all-file
-readback are not delivered. Two native export variants have failed to complete
-within the card's bounded run; do not claim #189 complete. The next decision is
-whether to authorize a longer native archive/performance-diagnosis run, or accept
-geometry-only per-variant OBJ snapshots with material references in the catalogue
-instead of self-contained native/shader assets. No third native attempt is made.
-
-Automation caveat: while the first tracked export was active, the shared lock
-file disappeared; this card never manually removed a lock. The wrapper's stale
-check uses the **waiting caller's** timeout, which can be shorter than the holder's
-run. This is a wrapper-side coordination risk, not fixed outside the worktree.
-No further native call was launched until this card's own process tree was stopped
-and only the user's pre-existing Max was observed.
-
-## Verification already executed
-
-- Tests-first RED commit `072feca`: missing `catalogue.py`, collection failed as
-  expected. GREEN: first 7 probes passed; expanded standalone suite **11 passed**.
-- Generated order-invariance probe: 41 coordinate cases, both mesh orders.
-- Generated overwrite/traversal probe: 100 rejected hostile names, synthetic
-  reference content unchanged; explicit existing-path refusal also tested.
-- Catalogue accounting probe: 506/69 nodes and 326/23 labels accounted; 136 unique
-  entry IDs, all candidate links refer to present plant handles, no delivery pass.
-- Existing project suite: **3279 passed, 9 skipped, 13 deselected**, 326.45 s.
-  Initial 360 s foreground attempt timed out at 94%; complete retry used a tracked
-  background process. No production/test/benchmark fixture changes versus `7840deb`.
-- `dt profiles check`: 3 profiles, source hash/traceability OK;
-  `dt schemas --check`: 11 schemas OK.
-- Regression eval receipt: `tmp/evals/flora-library-audit/report.json`, exit 2,
-  0 passed / 0 failed / 10 not measured: Hermes lacks the expected Claude-format
-  transcript and PR evidence files. This is not a regression-eval pass.
-- CI: not run (billing lock).
-
-## Verdict and proposed follow-up
-
-**ADOPT, bounded to this display layout:** explicit display-plane/row pairing with
-raw tokens, tie lists and unpaired records. It is preferable to XY nearest-neighbour
-selection on this source; no claim is made for arbitrary library layouts.
-
-Proposed follow-up (not an issue created): **"Flora catalogue intake: explicit
-layout schema and reviewed species/profile IDs"**. Scope: promote the audit only
-after a reviewed mapping for ambiguous/co-located and unlabelled entries; retain
-raw source evidence, reject unknown layouts, add a hedge fixture before proposing
-its budget. Keep empirical per-plant review thresholds distinct from the existing
-whole-Ground regulatory budgets.
-
-**MAYBE:** use the observed type/profile maxima as review-only planning budgets.
-They are not regulatory limits and do not account for planting quantities or site
-area. The NPM 180k budget covers Ground + GroundEl + Flora together; nothing here
-allocates it per plant or changes a checker.
-
-**REJECT:** automatic authoritative species substitution, textured appearance
-approval or a delivery pass from this audit. Missing maps, raw ambiguities and
-unverified H-token units remain explicit review items.
+- Missing maps, curated species deduplication and stable Flora material IDs belong to [#216](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/216); texture generation belongs to #190. No new species or texture is added here.
+- Shared runner stale-lock ownership risk: [#223](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/223), filed after two duplicate searches. The waiter timeout can expire a healthy longer holder; no external wrapper was edited or lock manually removed, and this card never submitted overlapping native calls.
+- No PROJECT_STATE edit on this task branch; merge/acceptance/publication remain separate gates.

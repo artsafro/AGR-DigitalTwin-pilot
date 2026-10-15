@@ -27,6 +27,64 @@ def pair(label, meshes, plane, max_distance=math.inf, tolerance=1e-4):
     return sorted(h for d, h in ranked if d <= best + tolerance)
 
 
+def percentile90(values):
+    values = sorted(values)
+    return values[math.ceil(.9 * len(values)) - 1] if values else None
+
+
+def parse_label(text):
+    """Keep raw text; Hnnn is an explicit unverified cm convention."""
+    s = text.casefold().replace(',', '.')
+    kind = 'other'
+    for candidate, tokens in [('hedge', ('hedge', 'изгород')), ('bush', ('bush', 'куст')), ('tree', ('tree', 'дерев'))]:
+        if any(t in s for t in tokens):
+            kind = candidate
+            break
+    prof = profiles(text)
+    for token, value in [('npm', 'NPM'), ('нпм', 'NPM'), ('vpm', 'VPM'), ('впм', 'VPM')]:
+        if token in s and value not in prof:
+            prof.append(value)
+    def dimension(pattern):
+        match = re.search(pattern + r'\s*[:=]?\s*(\d+(?:\.\d+)?)\s*(cm|см|m|м)?', s)
+        if not match:
+            return None
+        number = float(match[1])
+        return number / 100 if match[2] in ('cm', 'см') else number
+    h = dimension(r'(?:height|высота|\bh\b)')
+    shorthand = re.findall(r'\bh(\d+(?:\.\d+)?)\b', s)
+    return {'raw': text, 'type': kind, 'profiles': sorted(prof), 'height_m': h,
+            'width_m': dimension(r'(?:width|crown|диаметр|ширина|крона|\bd\b)'),
+            'height_tokens_m_if_cm': [float(v) / 100 for v in shorthand],
+            'height_token_units_verified': False}
+
+
+def row_pair(label, meshes, plane, max_distance, row_band=.5):
+    """Try a rightward row first, otherwise bounded nearest; retain <=20% ties.
+
+    XZ library card labels lie below their own pivot, so the row band rejects
+    neighbouring display rows and falls back to nearest XZ when appropriate.
+    Project XY schedule may label multiple columns: all meshes on its nearest Y
+    row remain candidates, regardless of different rightward column distances.
+    """
+    vertical = 2 if plane == 'xz' else 1
+    axes = (0, vertical)
+    p = label['position']
+    row = [m for m in meshes if abs(m['position'][vertical] - p[vertical]) <= row_band and m['position'][0] > p[0] + .001]
+    if plane == 'xz':
+        row = [m for m in row if math.dist([p[i] for i in axes], [m['position'][i] for i in axes]) <= max_distance]
+    candidates = row or meshes
+    # The project has two intended high/low columns; row distance, not X distance,
+    # is bounded here. Retain both and report the association as ambiguous.
+    row_schedule = plane == 'y' and bool(row)
+    ranked = [(abs(m['position'][vertical] - p[vertical]) if row_schedule else math.dist([p[i] for i in axes], [m['position'][i] for i in axes]), m['handle']) for m in candidates]
+    if not ranked or min(d for d, _ in ranked) > max_distance:
+        return {'handles': [], 'method': 'no_mesh_within_threshold', 'distances': []}
+    best = min(d for d, _ in ranked)
+    selected = sorted((d, h) for d, h in ranked if d <= max(best * 1.2, best + 1e-4) and d <= max_distance)
+    return {'handles': sorted(h for _, h in selected), 'method': 'row_right' if row else 'nearest_fallback',
+            'distances': [{'handle': h, 'distance': d} for d, h in selected]}
+
+
 def dimensions(node, units_per_meter):
     return [(b - a) / units_per_meter for a, b in zip(*node['bbox'])]
 
@@ -85,15 +143,30 @@ def make_catalogue(source, project=False):
     # Library is a front-facing XZ grid. Project is a top XY display with labels
     # far to the left: Y-row distance, not Euclidean XY, preserves both profiles.
     for label in labels:
+        association = {'handles': [], 'method': 'category_heading', 'distances': []}
         if label['class'] == 'TextPlus' and label['name'] in ('Tree', 'Bush'):
             ids, status = [], 'category_heading'
         else:
-            ids = pair(label, plants, 'y' if project else 'xz', max_distance=10 if project else 3)
-            status = 'ambiguous' if len(ids) > 1 else ('paired' if ids else 'unpaired')
+            association = row_pair(label, plants, 'y' if project else 'xz', 10 if project else 3, row_band=10 if project else .5)
+            ids = association['handles']
+            label_role = 'schedule_row' if project else text_role(label['text'])
+            status = 'ambiguous' if len(ids) > 1 else ('paired' if ids else ('unpaired' if label_role in ('note', 'empty') else 'ambiguous'))
         links.append({'handle': label['handle'], 'name': label['name'], 'text': label['text'],
+                      'bbox': label.get('bbox'), 'parsed': parse_label(label['text']), 'association': association,
+                      'ambiguity_reasons': ['distances_within_20pct'] if len(ids) > 1 else (['no_mesh_within_threshold'] if not ids and status != 'category_heading' else []),
                       'class': label['class'], 'hidden': label['hidden'], 'position': label['position'],
                       'role': 'schedule_row' if project else text_role(label['text']),
                       'candidate_handles': ids, 'status': status})
+    # Duplicate Text/TextPlus copies of the same caption are corroboration;
+    # different captions of the same role competing for a node are ambiguous.
+    for plant in plants:
+        assigned = [l for l in links if plant['handle'] in l['candidate_handles']]
+        for role_name in ('species', 'profile', 'triangle_count'):
+            group = [l for l in assigned if l['role'] == role_name]
+            if len({l['text'].strip().casefold() for l in group}) > 1:
+                for label in group:
+                    label['status'] = 'ambiguous'
+                    label['ambiguity_reasons'].append('competing_' + role_name + '_labels')
     entries = []
     bitmap_users = Counter(filename for plant in plants for filename in {b['filename'] for b in (plant.get('material') or {}).get('bitmaps', [])})
     for index, plant in enumerate(sorted(plants, key=lambda o: o['name']), 1):
@@ -135,9 +208,20 @@ def make_catalogue(source, project=False):
             findings.append('multiple_schedule_species_or_heights')
         if project and nominal is not None and heights and nominal not in heights:
             findings.append('node_height_token_not_in_schedule_row')
+        if nominal is not None and abs(dims[2] / nominal - 1) > .1:
+            findings.append('measured_height_outside_10pct_of_node_token')
         if nominal is not None and abs(dims[2] / nominal - 1) > .2:
             findings.append('measured_height_outside_20pct_of_node_token')
         entry_id = ('project' if project else 'library') + f'-{index:03d}'
+        archive = ROOT / 'out/verified-v004'
+        export_receipt = archive / (entry_id + '.json')
+        readback_receipt = archive / (entry_id + '-readback.json')
+        artifact_status = 'not_produced'
+        if export_receipt.exists():
+            artifact_status = 'produced_unverified'
+        if readback_receipt.exists():
+            checked = json.loads(readback_receipt.read_text(encoding='utf-8'))
+            artifact_status = 'readback_equal' if checked['equal'] else 'readback_mismatch'
         entries.append({'id': entry_id, 'source_name': plant['name'], 'source_handle': plant['handle'],
                         'species_labels': names, 'type': kind, 'type_basis': 'display_heading_region' if not project else 'object_name',
                         'profile_raw': raw_profile, 'profile_candidates': sorted({p for r in raw_profile for p in profiles(r)}),
@@ -147,17 +231,18 @@ def make_catalogue(source, project=False):
                         'dimensions_m': dims, 'labelled_triangles': labelled_tris,
                         'labelled_dimensions': {'raw_height_tokens_m_if_cm': heights, 'height_from_node_name_m_if_cm': nominal,
                                                'unit_assumption': 'H values interpreted as cm, not a verified text unit',
+                                               'schedule_height_deviations_pct_if_cm': [(dims[2] / h - 1) * 100 for h in heights if h],
                                                'height_deviation_from_name_mm': (dims[2] - nominal) * 1000 if nominal is not None else None,
                                                'library_dimension_text': None},
                         'material': material,
                         'atlas_use': {'bitmap_users_in_scene': {b['filename']: bitmap_users[b['filename']] for b in (material or {}).get('bitmaps', [])},
                                       'status': 'reference_sharing_only_uv_islands_and_texture_pixels_not_audited'},
                         'findings': findings,
-                        'planned_file': str(ROOT / 'assets-v002' / (entry_id + '.fbx')),
-                        'planned_preview': str(ROOT / 'assets-v002' / (entry_id + '.svg')),
-                        'file': str(ROOT / 'assets-v002' / (entry_id + '.fbx')) if (ROOT / 'assets-v002' / (entry_id + '.fbx')).exists() else None,
-                        'preview': str(ROOT / 'assets-v002' / (entry_id + '.svg')) if (ROOT / 'assets-v002' / (entry_id + '.svg')).exists() else None,
-                        'artifact_status': 'produced_unverified' if (ROOT / 'assets-v002' / (entry_id + '.fbx')).exists() else 'not_produced',
+                        'planned_file': 'out/assets-v003/' + entry_id + '.fbx',
+                        'planned_preview': 'out/verified-v004/' + entry_id + '.svg',
+                        'file': 'out/assets-v003/' + entry_id + '.fbx' if export_receipt.exists() else None,
+                        'preview': 'out/verified-v004/' + entry_id + '.svg' if export_receipt.exists() else None,
+                        'artifact_status': artifact_status,
                         'preview_kind': 'untextured_front_wireframe_not_appearance_approval',
                         'delivery_passed': False})
     return {'source': {k: v for k, v in source.items() if k != 'objects'}, 'counts': dict(Counter(role(o, project) for o in objects)),
@@ -174,10 +259,64 @@ def budgets(scenes):
             selected = [e for s in scenes for e in s['entries'] if e['type'] == kind and (profile in e['profile_candidates'] if profile != 'unknown' else not e['profile_candidates'])]
             values = sorted(e['triangles'] for e in selected)
             rows.append({'type': kind, 'profile': profile, 'n': len(values), 'min': min(values) if values else None,
-                         'median': statistics.median(values) if values else None, 'max': max(values) if values else None,
+                         'median': statistics.median(values) if values else None, 'p90': percentile90(values), 'max': max(values) if values else None,
                          'proposed_review_above': math.ceil(max(values) / 100) * 100 if values else None,
                          'status': 'observed_ceiling_review_only_not_regulatory_limit' if values else 'no_samples_no_budget'})
     return rows
+
+
+def species_keys(entry):
+    keys = set()
+    for raw in entry['species_labels']:
+        # A library multiline caption is one name including its cultivar. A
+        # project row separates species after each Hnnn token, not each newline.
+        chunks = re.split(r'\bh\d+(?:[.,]\d+)?\b', raw, flags=re.I) if entry['id'].startswith('project') else [raw]
+        for line in chunks:
+            value = re.sub(r'\([^)]*\)', '', line.casefold().replace('ё', 'е'))
+            value = re.sub(r'\bh\d+(?:[.,]\d+)?\b', '', value)
+            value = re.sub(r'[^a-zа-я0-9]+', ' ', value).strip()
+            if value:
+                keys.add(value)
+    return keys
+
+
+def compare_libraries(library, project):
+    library_names = set().union(*(species_keys(e) for e in library))
+    project_names = set().union(*(species_keys(e) for e in project))
+    rows = []
+    for entry in project:
+        by_name = [e['id'] for e in library if species_keys(entry) & species_keys(e)]
+        dims = sorted(entry['dimensions_m'][:2]) + entry['dimensions_m'][2:]
+        by_geometry = []
+        for other in library:
+            ref = sorted(other['dimensions_m'][:2]) + other['dimensions_m'][2:]
+            if entry['triangles'] == other['triangles'] and all(abs(a-b) <= .2 * max(abs(b), .001) for a, b in zip(dims, ref)):
+                by_geometry.append(other['id'])
+        rows.append({'project_id': entry['id'], 'normalized_species_names': sorted(species_keys(entry)),
+                     'library_name_candidates': by_name, 'dimension_and_triangle_candidates': by_geometry,
+                     'status': 'candidate_only_not_botanical_identity'})
+    return {'normalization': 'casefold, yo/e, remove parenthetical Latin and H tokens; exact remaining name',
+            'dimension_tolerance': .2, 'triangle_tolerance': 0,
+            'shared_species_names': sorted(library_names & project_names),
+            'library_only_species_names': sorted(library_names - project_names),
+            'project_only_species_names': sorted(project_names - library_names), 'entries': rows,
+            'exact_mesh_name_matches': sorted({e['source_name'] for e in library} & {e['source_name'] for e in project}),
+            'note': 'Candidates, not approved substitutions. Multiline rows and unlabelled meshes remain unresolved.'}
+
+
+def portable(value):
+    """Redact user-root references, keep paths relative to the authorized card root."""
+    if isinstance(value, str):
+        normalized = value.replace('\\', '/')
+        root = str(ROOT).replace('\\', '/')
+        if normalized.startswith(root + '/'):
+            return normalized[len(root) + 1:]
+        return normalized.replace('C:/Users/artsafro/', '<USER>/')
+    if isinstance(value, list):
+        return [portable(v) for v in value]
+    if isinstance(value, dict):
+        return {portable(k): portable(v) for k, v in value.items()}
+    return value
 
 
 def main():
@@ -196,11 +335,18 @@ def main():
         result['pairing_seconds'] = timings
         scenes.append(result)
         meshes = [o for o in data['objects'] if role(o, bool(index)) == 'plant']
-        for plane in (['xy', 'xz'] if index == 0 else ['xy', 'y']):
+        for plane in (['xy', 'xz', 'bounded_row'] if index == 0 else ['xy', 'y', 'bounded_row']):
             durations = []
             for _ in range(3):
                 start = time.perf_counter()
-                pairs = [pair(l, meshes, plane) for l in result['labels']]
+                pairs = []
+                for label in result['labels']:
+                    if plane == 'bounded_row':
+                        association = row_pair(label, meshes, 'y' if index else 'xz',
+                                               10 if index else 3, row_band=10 if index else .5)
+                        pairs.append([] if label['status'] == 'category_heading' else association['handles'])
+                    else:
+                        pairs.append(pair(label, meshes, plane))
                 durations.append(time.perf_counter() - start)
             by_handle = {o['handle']: o for o in meshes}
             tris = [(l, ids) for l, ids in zip(result['labels'], pairs) if l['role'] == 'triangle_count']
@@ -210,8 +356,9 @@ def main():
     result = {'schema': 'flora-audit-v1', 'application': 'headless 3ds Max 2026', 'delivery_passed': False,
               'sources': json.loads((ROOT / 'sources-verified.json').read_text()), 'scenes': scenes,
               'proposed_budgets': budgets(scenes[:1]), 'project_statistics': budgets(scenes[1:]), 'pairing_comparison': comparison,
-              'project_vs_library': {'exact_name_matches': sorted({e['source_name'] for e in scenes[0]['entries']} & {e['source_name'] for e in scenes[1]['entries']}),
-                                     'note': 'Distinct libraries. Triangle equality is not species equivalence; no automatic cross-library substitution.'}}
+              'artifact_root': 'C:/x/t_366e8d9d',
+              'project_vs_library': compare_libraries(scenes[0]['entries'], scenes[1]['entries'])}
+    result = portable(result)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     print(json.dumps({'entries': [len(s['entries']) for s in scenes], 'labels': [len(s['labels']) for s in scenes], 'comparison': comparison}, indent=2))
