@@ -24,7 +24,7 @@ shared delivery validation. [Image verification and PR acceptance evidence](ucx-
 | R07 Material slots | reg p.36 §13.1 | n/a | No material slots on UCX | Inspect exported mesh slots; construction without slots is not an independent check | none | [Collision hull contract](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec) |
 | R08 Collision names | reg p.34 §4.2 | n/a | UCX_SM_{Address}_{Main\|Ground}_{001..999} | Inspect internal names and indices; V012 does not check internal mesh names | none | [VPM names](../geometry.md#naming---vpm-reg-p33-36), [V012 limits](../validation.md#implementation-status-inventory-static-audit) |
 | R09 Mutual intersections | reg p.36 §13.4 | n/a | Pieces must not intersect | KPP1 SAT intersect checks hull pairs; PSU275 checks box pairs; no general V010 geometry check | KPP1 vpm_ucx.py:intersect; PSU275 vpm_ucx.py:clash (job-local only) | [Rule](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec), [KPP1](../../../jobs/KPP1/scripts/vpm_ucx.py), [PSU275](../../../jobs/PSU275/scripts/vpm_ucx.py) |
-| R10 Recommended gap | reg p.36 §13.4 | n/a | 0.02-1 cm recommendation, not a blocking minimum | Measure nearest separation separately from overlap; retain recommendation status (C15) | none | [C15](../conflicts.md#a-inside-the-regulation), [ADR-0002 §3](../../agr/decisions/ADR-0002-source-discrepancies.md#3-зазор-ucx--рекомендация) |
+| R10 Collision-piece gap | reg p.36 §13.4; [D095] | n/a | 2 mm - 1 cm inclusive, project rule; regulation's 0.02-1 cm treated as a typo | Report gaps outside the band; measure nearest separation separately from overlap; check not implemented | none | [C15 / D095](../conflicts.md#a-inside-the-regulation), [decision](../../decisions.md), [ADR-0002 §3 (historical)](../../agr/decisions/ADR-0002-source-discrepancies.md#3-зазор-ucx--рекомендация) |
 | R11 Ground deviation | reg p.36 §13.5 | n/a | <= 10 cm, especially perimeter | V016 manual surface overlay and maximum deviation by target | none | [Shape tolerances](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec) |
 | R12 Pedestrian-zone deviation | reg p.36 §13.5 | n/a | <= 30 cm at pedestrian-reachable lower OKS floors, stylobates and bridge/platform approaches | V016 manual height-zone overlay and walkthrough | none | [Shape tolerances](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec), [V016](../validation.md#implementation-status-inventory-static-audit) |
 | R13 Other OKS deviation | reg p.36 §13.5 | n/a | <= 1 m elsewhere on OKS | V016 manual overlay outside pedestrian zones | none | [Shape tolerances](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec) |
@@ -43,8 +43,8 @@ not a shared tool; pipeline.md is deliberately unchanged here. PSU275 explicitly
 stair collision and fills parapet wells: script existence is not blanket compliance.
 V010 checks budget only when UCX is present; its shape/coverage placeholder is not an
 implemented validator. No benchmark or Ground UCX case exists in the roadmap snapshot.
-C3 is decided by the user [D012]; C15 retains the gap as a recommendation. No new
-conflict is introduced or open conflict decided by this sheet.
+C3 is decided by the user [D012]; C15 is decided by the user [D095]: 2 mm - 1 cm
+inclusive is the project gap rule. The gap report remains unimplemented.
 
 ## L2 gaps
 
@@ -58,7 +58,7 @@ in R06/R09 still needs shared readback and an etalon benchmark (T-UCX-2 / T-UCX-
 - R05: Required collision presence per geometry FBX.
 - R07: Exported UCX material-slot absence.
 - R08: Internal collision name mask and index range.
-- R10: Measured advisory gap report, separate from mandatory intersection checks.
+- R10: Measured gap report outside 2 mm - 1 cm [D095], separate from intersection checks.
 - R11: Ground maximum deviation and perimeter coverage.
 - R12: Pedestrian-zone classification and maximum deviation.
 - R13: Remaining OKS maximum deviation.
