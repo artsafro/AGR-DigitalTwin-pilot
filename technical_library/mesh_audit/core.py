@@ -1,6 +1,56 @@
 """Read-only topology inventory shared by DCC jobs; never certifies delivery."""
 from collections import Counter, defaultdict
+import itertools
 import math
+
+
+def _has_proper_crossing(poly):
+    """Detect bounded proper edge crossings on a planar polygon.
+
+    Uses maximal-magnitude cross-product projection to 2D and tests non-adjacent
+    edge pairs against a signed determinant tolerance of +/-1e-10 m^2.
+    When all vertex triples are collinear (no usable cross product, best_mag2 <= 0.0),
+    returns False as a fallback; this zero return does not certify mesh or face validity.
+    """
+    if len(poly) < 4:
+        return False
+    best_cross = None
+    best_mag2 = 0.0
+    for p1, p2, p3 in itertools.combinations(poly, 3):
+        v1 = (p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2])
+        v2 = (p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2])
+        cx = v1[1] * v2[2] - v1[2] * v2[1]
+        cy = v1[2] * v2[0] - v1[0] * v2[2]
+        cz = v1[0] * v2[1] - v1[1] * v2[0]
+        mag2 = cx * cx + cy * cy + cz * cz
+        if mag2 > best_mag2:
+            best_mag2 = mag2
+            best_cross = (cx, cy, cz)
+    if best_cross is None or best_mag2 <= 0.0:
+        return False
+    abs_c = (abs(best_cross[0]), abs(best_cross[1]), abs(best_cross[2]))
+    drop = max(range(3), key=lambda k: abs_c[k])
+    axes = [k for k in range(3) if k != drop]
+    pts2d = [(p[axes[0]], p[axes[1]]) for p in poly]
+    n = len(pts2d)
+    for i in range(n):
+        a = pts2d[i]
+        b = pts2d[(i + 1) % n]
+        for j in range(i + 1, n):
+            if j == i + 1 or (i == 0 and j == n - 1):
+                continue
+            c = pts2d[j]
+            d = pts2d[(j + 1) % n]
+            cp1 = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+            cp2 = (b[0] - a[0]) * (d[1] - a[1]) - (b[1] - a[1]) * (d[0] - a[0])
+            if not ((cp1 > 1e-10 and cp2 < -1e-10) or (cp1 < -1e-10 and cp2 > 1e-10)):
+                continue
+            cp3 = (d[0] - c[0]) * (a[1] - c[1]) - (d[1] - c[1]) * (a[0] - c[0])
+            cp4 = (d[0] - c[0]) * (b[1] - c[1]) - (d[1] - c[1]) * (b[0] - c[0])
+            if not ((cp3 > 1e-10 and cp4 < -1e-10) or (cp3 < -1e-10 and cp4 > 1e-10)):
+                continue
+            return True
+    return False
 
 
 def inspect_mesh(vertices, faces, edges=None, material_ids=None, decimals=8, near_m=0.001):
@@ -33,14 +83,14 @@ def inspect_mesh(vertices, faces, edges=None, material_ids=None, decimals=8, nea
     zero_area = 0; bowties = 0; winding = defaultdict(list)
     for face, material in zip(faces, material_ids):
         face = list(face); used.update(face); canonical[tuple(sorted(face))] += 1
-        area = 0.0; origin = vertices[face[0]]; crosses = []
+        area = 0.0; origin = vertices[face[0]]
         for i in range(1, len(face)-1):
             a = [vertices[face[i]][k]-origin[k] for k in range(3)]
             b = [vertices[face[i+1]][k]-origin[k] for k in range(3)]
             cross = [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]]
-            crosses.append(cross); area += math.sqrt(sum(c*c for c in cross))/2
+            area += math.sqrt(sum(c*c for c in cross))/2
         zero_area += area < 1e-12
-        bowties += any(sum(u[k]*w[k] for k in range(3)) < 0 for u in crosses for w in crosses)
+        bowties += 1 if _has_proper_crossing([vertices[i] for i in face]) else 0
         for a,b in zip(face, face[1:]+face[:1]):
             edge = tuple(sorted((a,b))); incidence[edge] += 1; winding[edge].append(a)
             material_edges.setdefault(edge,set()).add(material); connect(a,b)
