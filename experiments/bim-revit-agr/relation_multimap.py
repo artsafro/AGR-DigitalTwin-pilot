@@ -1,5 +1,7 @@
 """IFC relation multi-map census helper.
 
+new-case: report-only synthetic IFC void/fill/contain relation census, no production adapter policy.
+
 Extracts void, fill, and containment relations with deterministic ordering,
 deduplication, and cardinality diagnostic detection.
 """
