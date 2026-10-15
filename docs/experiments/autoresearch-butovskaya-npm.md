@@ -145,7 +145,7 @@ brown. They show the silhouette and the opening planes, not materials.
   21/21 records; guard numbers of every kept build 5/5.
 - Non-DCC suite: at the start exit 0 (2 321 passed, 9 skipped by the progress dots); at the end 2 321 passed, 9 skipped,
   12 deselected, exit 0 (286.8 s).
-- ORIENT_RESULT
+- `check_orientation` (outward normals, report-only, not part of the fixed guard) on the final model: pass, 0 winding errors, 0 outside back faces, 25 632 faces judged by 5 833 127 rays (976.7 s).
 
 ## Cost
 
