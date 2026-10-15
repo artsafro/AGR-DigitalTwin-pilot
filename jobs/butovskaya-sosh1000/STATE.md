@@ -22,7 +22,7 @@ attempt's box run stays non-conforming exploration (review round 1, P1-1; report
 
 | Script | Does |
 |---|---|
-| `scripts/snapshot_twin.py` | step 0, mesh route: TwinPack export -> snapshot; fails closed (exit 2, `blocked.json`) |
+| `scripts/snapshot_twin.py` | step 0, mesh route: TwinPack export -> snapshot; fails closed (exit 2, `blocked.json`), also on an export without any triangle (`no_geometry`) |
 | `scripts/snapshot_revit.py` | step 0 through the read API; fails closed on a bbox-only answer (the first attempt's route) |
 | `scripts/evaluate.py` | metric `silhouette_err_m2` and guard, fixed after step 0; refuses any non-mesh reference |
 | `scripts/build_npm.py` | the NPM, built from the snapshot only; the one file the loop edits |

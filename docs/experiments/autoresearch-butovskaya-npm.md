@@ -42,9 +42,10 @@ what the mesh reference shows and the box reference hid.
   `C:/x/butovskaya-snapshot-twin/` (local, git-ignored, nothing in `data/`): one mesh per band piece of an element
   (`band-<n>/<kind>_<revitId>`, the band's clipped geometry), the 8 levels, hashes; 6.1 s. It fails closed (exit 2,
   `blocked.json`, no snapshot files) on a missing export, a modified document, no band or level, a missing or
-  truncated band file, a non-triangle or out-of-range face, an empty object, clip fallbacks, and refuses a second
-  run into a published snapshot (tests below). `scripts/evaluate.py` takes it unchanged (`reference: mesh`,
-  hash-checked on every run).
+  truncated band file, a non-triangle or out-of-range face, an empty object, clip fallbacks, an export with no triangle in any band (`no_geometry`, review round 2),
+  and refuses a second run into a published snapshot (tests below). `scripts/evaluate.py` takes it unchanged
+  (`reference: mesh`, hash-checked on every run; a reference with 0 pieces / 0 triangles, or with counts the
+  hashed dump does not hold, is rejected).
 
 | Category | Elements | Band pieces | Triangles | In the box snapshot (first attempt) |
 |---|---|---|---|---|
