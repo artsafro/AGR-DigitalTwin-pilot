@@ -178,7 +178,7 @@ def test_ground_anchors():
 
 def test_ground_conflict_c36():
     lines = CONFLICTS.read_text(encoding="utf-8").splitlines()
-    matches = [i for i, line in enumerate(lines) if line.startswith("36. Ground small level differences")]
+    matches = [i for i, line in enumerate(lines) if line.startswith("37. Ground small level differences")]
     assert len(matches) == 1
     index = matches[0]
     section_c = next(i for i, line in enumerate(lines) if line.startswith("## C."))
