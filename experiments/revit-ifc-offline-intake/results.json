@@ -1,0 +1,1614 @@
+{
+  "ok": true,
+  "problems": [],
+  "cases": [
+    {
+      "id": "bench-b01-box",
+      "units": "metre",
+      "baseline_s": [
+        0.0002375999974901788,
+        0.0001548000000184402,
+        0.0001405000002705492,
+        0.00013810000382363796,
+        0.00014179999561747536
+      ],
+      "baseline_median_s": 0.00014179999561747536,
+      "bytes": 12231,
+      "parse_s": [
+        0.0006524999989778735,
+        0.0005966000026091933,
+        0.000644500003545545,
+        0.0005768000046373345,
+        0.0007207000016933307
+      ],
+      "parse_median_s": 0.000644500003545545,
+      "parse_extract_s": [
+        0.1907296999997925,
+        0.03946140000334708,
+        0.04058390000136569,
+        0.03884809999726713,
+        0.0398879999993369
+      ],
+      "parse_extract_median_s": 0.0398879999993369,
+      "schema": "IFC4",
+      "sha256": "96881e9a74c971093f17695ad362f80ecccb1262ccde60a8b88bd15ca073c29c",
+      "global_ids": {
+        "building": "1UJN4CblL7jRMaMvaDEwFD",
+        "storeys": [
+          "0yZ_7QO21DbRkG1JjoHSR7",
+          "3G87kuGDb1gxiIQJcGHgvb",
+          "3kWHKhXEH7Xvsud4FlC8NG"
+        ],
+        "slabs": [
+          "0oQ9O9MWL63fgzOP4Vf1rV",
+          "3GCa1caqnBp9exkV66DS7E"
+        ],
+        "walls": [
+          "3x8AKX135FkgrFchkSDRxJ",
+          "0A8ppCP1HB$xVgSxUrjwFf",
+          "3REE61VjHF58OhybfXlBfQ",
+          "2kPfyCOWz5hgh056El3Bse",
+          "2k$Ok11MXCwRoElEAHpvRw",
+          "0uUM4HZAj2GO8Kgz6k3gQZ",
+          "16CLI2ryn3jvAdi9yi3bGA",
+          "0hyb5za$j9zfEkuba0GT7m"
+        ],
+        "openings": [
+          "0TkuQr8LjBKBws4BpGS4e1",
+          "1kepVQFin4jAGf01QqDlkN"
+        ]
+      },
+      "counts": {
+        "storeys": 3,
+        "slabs": 2,
+        "walls": 8,
+        "openings": 2
+      },
+      "expected_counts": {
+        "storeys": 3,
+        "slabs": 2,
+        "walls": 8,
+        "openings": 2
+      },
+      "counts_ok": true,
+      "comparison_rows": [
+        {
+          "criterion": "level count",
+          "a": 3,
+          "b": 3,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 0.0,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 3.3,
+          "b": 3.3,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 6.6,
+          "b": 6.6,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "roof",
+          "reference": "revit"
+        },
+        {
+          "criterion": "floors",
+          "a": [
+            "L0",
+            "L1"
+          ],
+          "b": [
+            "L0",
+            "L1"
+          ],
+          "delta": null,
+          "threshold": null,
+          "within": true,
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour area, m2 (relative)",
+          "a": 100.0,
+          "b": 100.0,
+          "delta": 0.0,
+          "threshold": 0.02,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour Hausdorff, m",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour kinks",
+          "a": 4,
+          "b": 4,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "opening count",
+          "a": 1,
+          "b": 1,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0"
+        },
+        {
+          "criterion": "opening pairs within bbox tolerance, m (worst pair)",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L0",
+          "pairs": 1,
+          "unpaired": {
+            "a": 0,
+            "b": 0
+          }
+        },
+        {
+          "criterion": "openings of kind grille, not in the verdict",
+          "a": 0,
+          "b": 0,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0",
+          "info": true
+        },
+        {
+          "criterion": "contour area, m2 (relative)",
+          "a": 100.0,
+          "b": 100.0,
+          "delta": 0.0,
+          "threshold": 0.02,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour Hausdorff, m",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour kinks",
+          "a": 4,
+          "b": 4,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "opening count",
+          "a": 1,
+          "b": 1,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1"
+        },
+        {
+          "criterion": "opening pairs within bbox tolerance, m (worst pair)",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L1",
+          "pairs": 1,
+          "unpaired": {
+            "a": 0,
+            "b": 0
+          }
+        },
+        {
+          "criterion": "openings of kind grille, not in the verdict",
+          "a": 0,
+          "b": 0,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1",
+          "info": true
+        }
+      ],
+      "failing": [],
+      "max_level_dev_mm": 0.0,
+      "max_coord_dev_mm": 1.7763568394002505e-12,
+      "max_opening_bbox_dev_mm": 3.552713678800501e-12,
+      "wall_profile_vs_geom_mm": 3.608049683182238e-12
+    },
+    {
+      "id": "bench-b01-box",
+      "units": "millimetre",
+      "baseline_s": [
+        0.0002375999974901788,
+        0.0001548000000184402,
+        0.0001405000002705492,
+        0.00013810000382363796,
+        0.00014179999561747536
+      ],
+      "baseline_median_s": 0.00014179999561747536,
+      "bytes": 12406,
+      "parse_s": [
+        0.0006434999959310517,
+        0.0006557000015163794,
+        0.0006391999995685183,
+        0.0006468999999924563,
+        0.0006753999987267889
+      ],
+      "parse_median_s": 0.0006468999999924563,
+      "parse_extract_s": [
+        0.04195659999822965,
+        0.0398503000033088,
+        0.03486539999721572,
+        0.03243519999523414,
+        0.031225099999574013
+      ],
+      "parse_extract_median_s": 0.03486539999721572,
+      "schema": "IFC4",
+      "sha256": "633ddacf48be6234eacca88f68a63d5d0fe0a0be64cbcd225eead0fc94949c25",
+      "global_ids": {
+        "building": "2vbDi1Q9P6ogbOnubYsifD",
+        "storeys": [
+          "3mGG$Ixln7qPh1Y_tDYvtw",
+          "3bFV2K9aP99hxPBhXIWOV_",
+          "38d5wlgEj9uuu0vE4YET1Z"
+        ],
+        "slabs": [
+          "3U$ep7ZbbFxOTT5SIIrVKE",
+          "3QpVZlCNDFvRHpDuxRUT9v"
+        ],
+        "walls": [
+          "3GncvEKQLC7uvlmjbV__id",
+          "3lBfnFR3H3YPpQ7GBEZL9j",
+          "1HMbHtpfn26Pe0S3fXgHl$",
+          "1bXLIJ9czCGBSeeIraVZW2",
+          "2mzUwSjUTD_9N30jKobTDS",
+          "1k1piM1r1CHAiERrSyXUWt",
+          "3fahK4_gH2l9CxePmG_4va",
+          "35J47$kXP71f95YVbObzzC"
+        ],
+        "openings": [
+          "1Y8m0BKhT4wgGtRHEm7q3P",
+          "2fvNrjzUX6_A_5Pyr8kwxN"
+        ]
+      },
+      "counts": {
+        "storeys": 3,
+        "slabs": 2,
+        "walls": 8,
+        "openings": 2
+      },
+      "expected_counts": {
+        "storeys": 3,
+        "slabs": 2,
+        "walls": 8,
+        "openings": 2
+      },
+      "counts_ok": true,
+      "comparison_rows": [
+        {
+          "criterion": "level count",
+          "a": 3,
+          "b": 3,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 0.0,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 3.3,
+          "b": 3.3,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 6.6,
+          "b": 6.6,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "roof",
+          "reference": "revit"
+        },
+        {
+          "criterion": "floors",
+          "a": [
+            "L0",
+            "L1"
+          ],
+          "b": [
+            "L0",
+            "L1"
+          ],
+          "delta": null,
+          "threshold": null,
+          "within": true,
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour area, m2 (relative)",
+          "a": 100.0,
+          "b": 100.0,
+          "delta": 0.0,
+          "threshold": 0.02,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour Hausdorff, m",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour kinks",
+          "a": 4,
+          "b": 4,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "opening count",
+          "a": 1,
+          "b": 1,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0"
+        },
+        {
+          "criterion": "opening pairs within bbox tolerance, m (worst pair)",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L0",
+          "pairs": 1,
+          "unpaired": {
+            "a": 0,
+            "b": 0
+          }
+        },
+        {
+          "criterion": "openings of kind grille, not in the verdict",
+          "a": 0,
+          "b": 0,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0",
+          "info": true
+        },
+        {
+          "criterion": "contour area, m2 (relative)",
+          "a": 100.0,
+          "b": 100.0,
+          "delta": 0.0,
+          "threshold": 0.02,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour Hausdorff, m",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour kinks",
+          "a": 4,
+          "b": 4,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "opening count",
+          "a": 1,
+          "b": 1,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1"
+        },
+        {
+          "criterion": "opening pairs within bbox tolerance, m (worst pair)",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L1",
+          "pairs": 1,
+          "unpaired": {
+            "a": 0,
+            "b": 0
+          }
+        },
+        {
+          "criterion": "openings of kind grille, not in the verdict",
+          "a": 0,
+          "b": 0,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1",
+          "info": true
+        }
+      ],
+      "failing": [],
+      "max_level_dev_mm": 8.881784197001252e-13,
+      "max_coord_dev_mm": 4.267461160120978e-12,
+      "max_opening_bbox_dev_mm": 3.763875277697566e-12,
+      "wall_profile_vs_geom_mm": 7.944109290391274e-12
+    },
+    {
+      "id": "bench-b02-corner-niche",
+      "units": "metre",
+      "baseline_s": [
+        0.00017120000120485201,
+        0.00015659999917261302,
+        0.00015519999578827992,
+        0.00014930000179447234,
+        0.00014460000238614157
+      ],
+      "baseline_median_s": 0.00015519999578827992,
+      "bytes": 17524,
+      "parse_s": [
+        0.0008013999977265485,
+        0.0007256000026245601,
+        0.0007468999974662438,
+        0.0007477999970433302,
+        0.0007541000013588928
+      ],
+      "parse_median_s": 0.0007477999970433302,
+      "parse_extract_s": [
+        0.060175800004799385,
+        0.055644799998844974,
+        0.059450299995660316,
+        0.057465900004899595,
+        0.06078680000064196
+      ],
+      "parse_extract_median_s": 0.059450299995660316,
+      "schema": "IFC4",
+      "sha256": "b6c5a7a1864664c72d5eb4c1c213b09781257fb00b0eeb0d061c1ebc817e7f60",
+      "global_ids": {
+        "building": "1YXT9u7ITAcBuQihyQFg02",
+        "storeys": [
+          "0gp8SkKMH3lfy3J_HmA0el",
+          "1r1yK4PBH6FfrLUnfsZnrL",
+          "2a90wH3Nz55e3Ab_5oLHnE"
+        ],
+        "slabs": [
+          "277VGL$x9ETPsXgjSLP57K",
+          "0BRO_LJoHEC8nm3NcV7WfF"
+        ],
+        "walls": [
+          "06ahQLT3b9gP$9zuEgukRc",
+          "0j2jkZZ6f9Y8Av7Zyv9wkE",
+          "1MPnd4VIj9Yff0zMp1$pFv",
+          "2gMgLGlij6HvvN1CGuClWZ",
+          "2BEX0yPCPCz9xwTh_J$59M",
+          "3XT5aIvR52Zwg$tW_S0nJK",
+          "2Re881TD90Y83$S9GOQ4D$",
+          "0T$a2e_j90D8TMWaH5$oTq",
+          "3gDFOwYOTEyOHqfyaD$3pA",
+          "1sQbaHCt51hREbALFt9YM7",
+          "0Wpe01BLH8TRCRgW8uvB6o",
+          "08EPZnbbrASu4yAtvADMzK",
+          "3VCPou_T13i8zLdkpRaqdl",
+          "0sJ$IQ5655excgTPAgsrGS"
+        ],
+        "openings": [
+          "34vZBW9JT1Kg69DRcd10Nb",
+          "06YYBbqyLBi8idr$AbZQdT"
+        ]
+      },
+      "counts": {
+        "storeys": 3,
+        "slabs": 2,
+        "walls": 14,
+        "openings": 2
+      },
+      "expected_counts": {
+        "storeys": 3,
+        "slabs": 2,
+        "walls": 14,
+        "openings": 2
+      },
+      "counts_ok": true,
+      "comparison_rows": [
+        {
+          "criterion": "level count",
+          "a": 3,
+          "b": 3,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 0.0,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 3.3,
+          "b": 3.3,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 6.6,
+          "b": 6.6,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "roof",
+          "reference": "revit"
+        },
+        {
+          "criterion": "floors",
+          "a": [
+            "L0",
+            "L1"
+          ],
+          "b": [
+            "L0",
+            "L1"
+          ],
+          "delta": null,
+          "threshold": null,
+          "within": true,
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour area, m2 (relative)",
+          "a": 101.4,
+          "b": 101.4,
+          "delta": 0.0,
+          "threshold": 0.02,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour Hausdorff, m",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour kinks",
+          "a": 9,
+          "b": 9,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "opening count",
+          "a": 1,
+          "b": 1,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0"
+        },
+        {
+          "criterion": "opening pairs within bbox tolerance, m (worst pair)",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L0",
+          "pairs": 1,
+          "unpaired": {
+            "a": 0,
+            "b": 0
+          }
+        },
+        {
+          "criterion": "openings of kind grille, not in the verdict",
+          "a": 0,
+          "b": 0,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0",
+          "info": true
+        },
+        {
+          "criterion": "contour area, m2 (relative)",
+          "a": 49.5,
+          "b": 49.5,
+          "delta": 0.0,
+          "threshold": 0.02,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour Hausdorff, m",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour kinks",
+          "a": 5,
+          "b": 5,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "opening count",
+          "a": 1,
+          "b": 1,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1"
+        },
+        {
+          "criterion": "opening pairs within bbox tolerance, m (worst pair)",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L1",
+          "pairs": 1,
+          "unpaired": {
+            "a": 0,
+            "b": 0
+          }
+        },
+        {
+          "criterion": "openings of kind grille, not in the verdict",
+          "a": 0,
+          "b": 0,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1",
+          "info": true
+        }
+      ],
+      "failing": [],
+      "max_level_dev_mm": 0.0,
+      "max_coord_dev_mm": 1.7763568394002505e-12,
+      "max_opening_bbox_dev_mm": 5.329070518200751e-12,
+      "wall_profile_vs_geom_mm": 4.1718393690839265e-12
+    },
+    {
+      "id": "bench-b02-corner-niche",
+      "units": "millimetre",
+      "baseline_s": [
+        0.00017120000120485201,
+        0.00015659999917261302,
+        0.00015519999578827992,
+        0.00014930000179447234,
+        0.00014460000238614157
+      ],
+      "baseline_median_s": 0.00015519999578827992,
+      "bytes": 17792,
+      "parse_s": [
+        0.0009022000012919307,
+        0.0007693000006838702,
+        0.0007849000030546449,
+        0.0007655999943381175,
+        0.0007884000006015413
+      ],
+      "parse_median_s": 0.0007849000030546449,
+      "parse_extract_s": [
+        0.05839620000188006,
+        0.05812099999457132,
+        0.056670799996936694,
+        0.04792500000621658,
+        0.04801939999742899
+      ],
+      "parse_extract_median_s": 0.056670799996936694,
+      "schema": "IFC4",
+      "sha256": "be13cef6ff80b46ba1076517c8c456e3e6a1c471d437e84ba665dd0817cdafb1",
+      "global_ids": {
+        "building": "2n0SkTXd1AxAnfRMeQZ_Nt",
+        "storeys": [
+          "3MWkmp0HLCDPJpDQEXzADi",
+          "3F8c5QSWzArPiucbzVTxMC",
+          "3wbtxwEaTEqgT0ceYOUAP$"
+        ],
+        "slabs": [
+          "13QysO_v53Cuwoc_cP3eih",
+          "0SZB9g0YPFSB5Wt$Gfz1tE"
+        ],
+        "walls": [
+          "1YJJyNIJPC2hC4hnikDAUV",
+          "2ULmyu3rT2HvKuOlreeegu",
+          "1njM3857HEfQOLy4CJshk0",
+          "2msSBeHYr91h2UCLPM04tF",
+          "0RDhRG3t11FRgIJhZc7lZ1",
+          "1WXkC$nJT74B_hvdi_DVQl",
+          "3HG0D2TGrCD8gOFWdYn_2b",
+          "2Q862xzAzEz8FGlcs8vJGh",
+          "3Sxl3O7hjDKBgE$$aLDSxU",
+          "2nvAnJuRjCmvYArCNdQMyB",
+          "2YK7FyCgn9nxZPSEPmjebs",
+          "2q842sjNL11uXvuNjv1nee",
+          "0j818JMhjDv8dBn7rlgNrc",
+          "0kNOtJS21BYx9Lmra8Ofc5"
+        ],
+        "openings": [
+          "2vf9RqUUrB1f43eNGkcxns",
+          "2IcUACPHX8KhtYpb8Re5wR"
+        ]
+      },
+      "counts": {
+        "storeys": 3,
+        "slabs": 2,
+        "walls": 14,
+        "openings": 2
+      },
+      "expected_counts": {
+        "storeys": 3,
+        "slabs": 2,
+        "walls": 14,
+        "openings": 2
+      },
+      "counts_ok": true,
+      "comparison_rows": [
+        {
+          "criterion": "level count",
+          "a": 3,
+          "b": 3,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 0.0,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 3.3,
+          "b": 3.3,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 6.6,
+          "b": 6.6,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "roof",
+          "reference": "revit"
+        },
+        {
+          "criterion": "floors",
+          "a": [
+            "L0",
+            "L1"
+          ],
+          "b": [
+            "L0",
+            "L1"
+          ],
+          "delta": null,
+          "threshold": null,
+          "within": true,
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour area, m2 (relative)",
+          "a": 101.4,
+          "b": 101.4,
+          "delta": 0.0,
+          "threshold": 0.02,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour Hausdorff, m",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour kinks",
+          "a": 9,
+          "b": 9,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "opening count",
+          "a": 1,
+          "b": 1,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0"
+        },
+        {
+          "criterion": "opening pairs within bbox tolerance, m (worst pair)",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L0",
+          "pairs": 1,
+          "unpaired": {
+            "a": 0,
+            "b": 0
+          }
+        },
+        {
+          "criterion": "openings of kind grille, not in the verdict",
+          "a": 0,
+          "b": 0,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0",
+          "info": true
+        },
+        {
+          "criterion": "contour area, m2 (relative)",
+          "a": 49.5,
+          "b": 49.5,
+          "delta": 0.0,
+          "threshold": 0.02,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour Hausdorff, m",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour kinks",
+          "a": 5,
+          "b": 5,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "opening count",
+          "a": 1,
+          "b": 1,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1"
+        },
+        {
+          "criterion": "opening pairs within bbox tolerance, m (worst pair)",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L1",
+          "pairs": 1,
+          "unpaired": {
+            "a": 0,
+            "b": 0
+          }
+        },
+        {
+          "criterion": "openings of kind grille, not in the verdict",
+          "a": 0,
+          "b": 0,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1",
+          "info": true
+        }
+      ],
+      "failing": [],
+      "max_level_dev_mm": 8.881784197001252e-13,
+      "max_coord_dev_mm": 4.440892098500626e-12,
+      "max_opening_bbox_dev_mm": 5.329070518200751e-12,
+      "wall_profile_vs_geom_mm": 8.335226260505778e-12
+    },
+    {
+      "id": "bench-b02t-terrace",
+      "units": "metre",
+      "baseline_s": [
+        0.00021879999985685572,
+        0.00020139999833190814,
+        0.00019520000205375254,
+        0.00018929999350802973,
+        0.00018950000230688602
+      ],
+      "baseline_median_s": 0.00019520000205375254,
+      "bytes": 17520,
+      "parse_s": [
+        0.0008694999996805564,
+        0.0007691999999224208,
+        0.0007990000012796372,
+        0.000705099999322556,
+        0.0008696000004420057
+      ],
+      "parse_median_s": 0.0007990000012796372,
+      "parse_extract_s": [
+        0.058561900004860945,
+        0.056795900003635325,
+        0.05364530000224477,
+        0.04809509999904549,
+        0.04778210000222316
+      ],
+      "parse_extract_median_s": 0.05364530000224477,
+      "schema": "IFC4",
+      "sha256": "5e6fee5e61dd200d84fdac57b875905760281cea9ed0f7e05f1d68e56eb5761a",
+      "global_ids": {
+        "building": "2vUmfDLY17OvpVBKyEGdam",
+        "storeys": [
+          "2WNPyYItnFCBXtmidPuwu_",
+          "2LJzmEpeP2YOar3tybDPd_",
+          "3Fc3J6LhPF8hpUHOX8EDPZ"
+        ],
+        "slabs": [
+          "1$mE4MoU9EDe5Pnhath6Lk",
+          "1XO98f5orACQz3tm9CaYJM"
+        ],
+        "walls": [
+          "0SQi4puOD75Rih46dnTlN_",
+          "2vtMSUQ$r0pv15aHBTgpxv",
+          "173FQ6EgH5hfw2Hikq7Hpr",
+          "3En057Z_P7qgkBL1t0Rpmv",
+          "3u$cLXZn589BZQ1zL_tmcs",
+          "0zGvcl3Vb9L8hqohe67ia5",
+          "23KValuGr6PR2NhNCOfDcS",
+          "3cLDPc7r92du4XaTeHy27x",
+          "11XUtA1xv3wBqAMBX2xzsQ",
+          "0sVELnBg993QZAevn0pRsT",
+          "2OOowWZK19zxTKhUSxYxRb",
+          "0ohOkEfXL5MPrzure9iue9",
+          "221ep9aaP3s8k0SaUoUBCA",
+          "3Fc3Ud$qXBdOrhqS6eg1mu"
+        ],
+        "openings": [
+          "3ANi9naSfA1uxSRkaE5oge",
+          "2LiNegCizFb88h6ZEfDFO5"
+        ]
+      },
+      "counts": {
+        "storeys": 3,
+        "slabs": 2,
+        "walls": 14,
+        "openings": 2
+      },
+      "expected_counts": {
+        "storeys": 3,
+        "slabs": 2,
+        "walls": 14,
+        "openings": 2
+      },
+      "counts_ok": true,
+      "comparison_rows": [
+        {
+          "criterion": "level count",
+          "a": 3,
+          "b": 3,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 0.0,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 3.3,
+          "b": 3.3,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 6.6,
+          "b": 6.6,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "roof",
+          "reference": "revit"
+        },
+        {
+          "criterion": "floors",
+          "a": [
+            "L0",
+            "L1"
+          ],
+          "b": [
+            "L0",
+            "L1"
+          ],
+          "delta": null,
+          "threshold": null,
+          "within": true,
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour area, m2 (relative)",
+          "a": 101.4,
+          "b": 101.4,
+          "delta": 0.0,
+          "threshold": 0.02,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour Hausdorff, m",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour kinks",
+          "a": 9,
+          "b": 9,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "opening count",
+          "a": 1,
+          "b": 1,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0"
+        },
+        {
+          "criterion": "opening pairs within bbox tolerance, m (worst pair)",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L0",
+          "pairs": 1,
+          "unpaired": {
+            "a": 0,
+            "b": 0
+          }
+        },
+        {
+          "criterion": "openings of kind grille, not in the verdict",
+          "a": 0,
+          "b": 0,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0",
+          "info": true
+        },
+        {
+          "criterion": "contour area, m2 (relative)",
+          "a": 49.5,
+          "b": 49.5,
+          "delta": 0.0,
+          "threshold": 0.02,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour Hausdorff, m",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour kinks",
+          "a": 5,
+          "b": 5,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "opening count",
+          "a": 1,
+          "b": 1,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1"
+        },
+        {
+          "criterion": "opening pairs within bbox tolerance, m (worst pair)",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L1",
+          "pairs": 1,
+          "unpaired": {
+            "a": 0,
+            "b": 0
+          }
+        },
+        {
+          "criterion": "openings of kind grille, not in the verdict",
+          "a": 0,
+          "b": 0,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1",
+          "info": true
+        }
+      ],
+      "failing": [],
+      "max_level_dev_mm": 0.0,
+      "max_coord_dev_mm": 1.7763568394002505e-12,
+      "max_opening_bbox_dev_mm": 5.329070518200751e-12,
+      "wall_profile_vs_geom_mm": 4.1718393690839265e-12
+    },
+    {
+      "id": "bench-b02t-terrace",
+      "units": "millimetre",
+      "baseline_s": [
+        0.00021879999985685572,
+        0.00020139999833190814,
+        0.00019520000205375254,
+        0.00018929999350802973,
+        0.00018950000230688602
+      ],
+      "baseline_median_s": 0.00019520000205375254,
+      "bytes": 17788,
+      "parse_s": [
+        0.0009185000017168932,
+        0.0008270999969681725,
+        0.0008869999946909957,
+        0.0008927000017138198,
+        0.0008379999999306165
+      ],
+      "parse_median_s": 0.0008869999946909957,
+      "parse_extract_s": [
+        0.059360500003094785,
+        0.059828400000697,
+        0.05823719999898458,
+        0.06048840000585187,
+        0.06224510000174632
+      ],
+      "parse_extract_median_s": 0.059828400000697,
+      "schema": "IFC4",
+      "sha256": "39a56492d88e1bca6dd4f60dc89bb76757ff0f037715e35dd8c085cb4d9d6f0c",
+      "global_ids": {
+        "building": "1asb52gY1By9xsEUsiIkaJ",
+        "storeys": [
+          "26oNYWoQn0GfvlnR5KX1ba",
+          "3M_NKFl7f579Cx_MMHUhu8",
+          "04RkAF8iv2AAwe90lko0tr"
+        ],
+        "slabs": [
+          "3PhIj2xST20AoUciNaoXzI",
+          "3HMCFOtLzCzwCmeU7PUbzr"
+        ],
+        "walls": [
+          "1R90jQ9zL8MhIzM98UO6ZV",
+          "2HiGHQ735Baf6G4ztrIAwP",
+          "3FUOXzyIn5$R1ApNMLx5rV",
+          "2bASnBKcb33hETvVtVXqbV",
+          "1cyQjZ24PBsxo9n4se_vm5",
+          "0k3q$vV0n4CP6LtAp6jhnG",
+          "1M72rg439FtxgCNfoaec4P",
+          "2lZwb2x6z6mByxHDNhyG3d",
+          "3wKQ3VHxb7jATNsMSKf1rf",
+          "3Q8vOG8GT6396IVcTEXL_1",
+          "1Rjlbvu6b6fvJbLR_03aIC",
+          "1dHtQM96jCtvtfHZtvj_jm",
+          "3Y48oZASL0RB3Q7XV_xTd9",
+          "2DgfXTpk14MAl_esnovoW7"
+        ],
+        "openings": [
+          "3fCIcJX$L8vet62VDAO$ca",
+          "3brhYKffbCLPZZyohjUMKu"
+        ]
+      },
+      "counts": {
+        "storeys": 3,
+        "slabs": 2,
+        "walls": 14,
+        "openings": 2
+      },
+      "expected_counts": {
+        "storeys": 3,
+        "slabs": 2,
+        "walls": 14,
+        "openings": 2
+      },
+      "counts_ok": true,
+      "comparison_rows": [
+        {
+          "criterion": "level count",
+          "a": 3,
+          "b": 3,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 0.0,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 3.3,
+          "b": 3.3,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "level elevation, m",
+          "a": 6.6,
+          "b": 6.6,
+          "delta": 0.0,
+          "threshold": 0.03,
+          "within": true,
+          "level": "roof",
+          "reference": "revit"
+        },
+        {
+          "criterion": "floors",
+          "a": [
+            "L0",
+            "L1"
+          ],
+          "b": [
+            "L0",
+            "L1"
+          ],
+          "delta": null,
+          "threshold": null,
+          "within": true,
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour area, m2 (relative)",
+          "a": 101.4,
+          "b": 101.4,
+          "delta": 0.0,
+          "threshold": 0.02,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour Hausdorff, m",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour kinks",
+          "a": 9,
+          "b": 9,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0",
+          "reference": "revit"
+        },
+        {
+          "criterion": "opening count",
+          "a": 1,
+          "b": 1,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0"
+        },
+        {
+          "criterion": "opening pairs within bbox tolerance, m (worst pair)",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L0",
+          "pairs": 1,
+          "unpaired": {
+            "a": 0,
+            "b": 0
+          }
+        },
+        {
+          "criterion": "openings of kind grille, not in the verdict",
+          "a": 0,
+          "b": 0,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L0",
+          "info": true
+        },
+        {
+          "criterion": "contour area, m2 (relative)",
+          "a": 49.5,
+          "b": 49.5,
+          "delta": 0.0,
+          "threshold": 0.02,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour Hausdorff, m",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "contour kinks",
+          "a": 5,
+          "b": 5,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1",
+          "reference": "revit"
+        },
+        {
+          "criterion": "opening count",
+          "a": 1,
+          "b": 1,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1"
+        },
+        {
+          "criterion": "opening pairs within bbox tolerance, m (worst pair)",
+          "a": null,
+          "b": 0.0,
+          "delta": 0.0,
+          "threshold": 0.05,
+          "within": true,
+          "level": "L1",
+          "pairs": 1,
+          "unpaired": {
+            "a": 0,
+            "b": 0
+          }
+        },
+        {
+          "criterion": "openings of kind grille, not in the verdict",
+          "a": 0,
+          "b": 0,
+          "delta": 0,
+          "threshold": null,
+          "within": true,
+          "level": "L1",
+          "info": true
+        }
+      ],
+      "failing": [],
+      "max_level_dev_mm": 8.881784197001252e-13,
+      "max_coord_dev_mm": 4.440892098500626e-12,
+      "max_opening_bbox_dev_mm": 5.329070518200751e-12,
+      "wall_profile_vs_geom_mm": 8.335226260505778e-12
+    }
+  ],
+  "negative": {
+    "missing_units": true,
+    "missing_slab_representation": true,
+    "orphan_opening": true,
+    "level_inside": true,
+    "level_outside": true,
+    "opening_bbox_inside": true,
+    "opening_bbox_outside": true,
+    "dropped_floor": true,
+    "dropped_opening": true,
+    "level_tol_m": 0.03,
+    "opening_bbox_tol_m": 0.05
+  },
+  "ifcopenshell.version": "0.9.0",
+  "scope": {
+    "supported": [
+      "synthetic IFC4",
+      "one placed IfcBuilding",
+      "storey elevation from the placement chain",
+      "horizontal polygonal slabs extruded along positive building Z",
+      "straight vertical walls named W0000..Wnnnn whose origin and X axis match the slab contour edge",
+      "openings voided from those walls",
+      "metre and millimetre IfcSIUnit length"
+    ],
+    "unsupported": [
+      "native Revit and generic IFC import",
+      "wall mapping other than the W0000..Wnnnn contour-edge contract",
+      "holes",
+      "mapped representations",
+      "curves, non-polyline profiles, rounded corners",
+      "nonplanar points and invalid polygons",
+      "nonpositive depth and extrusion not along positive Z",
+      "slabs or walls tilted or rotated off building Z",
+      "terrace and roof-parapet semantics (roof is null)"
+    ]
+  },
+  "evidence_note": "Measured synthetic IFC4 only; no live Revit; times exclude Python startup and library import; 5 repetitions per stage.",
+  "input_sha256": {
+    "bench-b01-box": "48d6fa4619c9c5ec36faca23d54787aeafe115fbaca13e263d3d0866e624e4a8",
+    "bench-b02-corner-niche": "85f1b7d2b8b8912688290bf56fe601f5ae641ae753221acdff6b97c62d640bea",
+    "bench-b02t-terrace": "4a9a5aa76c2c906fa3844c2009fb127532aed82fa4835ef96e2336a384122cec"
+  }
+}
