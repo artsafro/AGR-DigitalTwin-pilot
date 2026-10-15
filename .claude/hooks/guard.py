@@ -35,6 +35,7 @@ SHELL_RULES = [
 HOME = Path.home()
 ALLOWED_WRITE_ROOTS = [
     HOME / ".claude" / "projects",
+    HOME / ".claude" / "plans",  # plan-mode plan files (#111)
     HOME / ".claude" / "skills",
     HOME / ".gemini",
     Path(os.environ.get("TEMP", HOME / "AppData/Local/Temp")) / "claude",
