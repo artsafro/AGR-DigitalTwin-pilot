@@ -242,6 +242,22 @@ Each kind of fact lives in one place; the others point to it.
 
 A rule question is looked up in the order of `AGENTS.md` ("Where things are"): decision log first.
 
+## Harness inventory (#129)
+
+`docs/agents/CAPABILITIES.md`, "Harness inventory", lists every hook, permission list, guard rule set, command,
+subagent and git hook with the failure it prevents, the evidence that the failure happened, the date it was last
+verified and the eval that covers it (`tests/test_harness_inventory.py`).
+
+- Re-examine the whole inventory at a model change (a new model or a new major version of the agent app), and the
+  new row when a component is added: its row lands in the same PR as the component. Not on a calendar; the weekly
+  run belongs to the capability evals.
+- At a re-examination: refresh "Last verified" from a live run or the component's tests, and check whether the
+  failure still happens with the new model (the covering eval, the usage log).
+- A component with no evidence and no eval is proposed to the user for removal in the PR or the handoff; it is
+  removed only on the user's word.
+- Re-measure the rule-layer size (`CAPABILITIES.md`, "Rule-layer size", same command) at a model change. Retrieval
+  tooling (an index, a vector store) is reconsidered only when the size passes the 200k-token threshold.
+
 ## Project state (#119)
 
 `docs/PROJECT_STATE.md` is state, not history: at most 80 lines, exactly the sections Goal, In production
