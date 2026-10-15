@@ -1,0 +1,8 @@
+{
+  "bench-b01-box/spec.json": "48d6fa4619c9c5ec36faca23d54787aeafe115fbaca13e263d3d0866e624e4a8",
+  "bench-b01-box/object.json": "42004aa39b3ef094431f185e7e439ae85cd5277a764a24923699a4617517fa41",
+  "bench-b02-corner-niche/spec.json": "85f1b7d2b8b8912688290bf56fe601f5ae641ae753221acdff6b97c62d640bea",
+  "bench-b02-corner-niche/object.json": "b10d8829e2d6d303fb0739c1198673e3b9b49f44c6f82452fd8bbf45f475b3d1",
+  "bench-b02t-terrace/spec.json": "4a9a5aa76c2c906fa3844c2009fb127532aed82fa4835ef96e2336a384122cec",
+  "bench-b02t-terrace/object.json": "55a86b2381bc87e1de5dd0b0a22bdc578ae780021244c2ca3f7ccc321b82d613"
+}
