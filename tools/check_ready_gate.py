@@ -5,6 +5,9 @@ versions, Out of scope, Evidence the PR must bring) and Context. Every field mus
 template's HTML comments are removed; Acceptance needs at least one non-empty checkbox item. "None" is a
 valid answer and counts as filled. The four fields count only as subheadings of the Specification section;
 headings and checkboxes inside fenced code (``` or ~~~) are example text, never contract structure.
+A field's answer is its own text: a nested heading that names another contract field or section ends it,
+so an empty field never borrows a neighbour's answer. A checkbox indented four or more columns (tab = 4)
+counts only as a nested list item; outside a list it is an indented code block, not a criterion.
 
     py -3 tools/check_ready_gate.py --issue 130 [--repo OWNER/NAME]
     py -3 tools/check_ready_gate.py --label ready-for-agent [--repo OWNER/NAME]
@@ -25,7 +28,9 @@ FIELDS = ("Requirement", *SPEC_FIELDS, "Context")
 HEADING = re.compile(r"^ {0,3}(#{1,6})[ \t]+(.*?)(?:[ \t]+#+)?[ \t]*$")
 FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 COMMENT = re.compile(r"<!--.*?-->", re.S)
-CHECKBOX = re.compile(r"^\s*[-*+]\s+\[[ xX]\]\s*(.*)$")
+CHECKBOX = re.compile(r"^[-*+][ \t]+\[[ xX]\][ \t]*(.*)$")
+LIST_ITEM = re.compile(r"^(?:[-*+]|\d{1,9}[.)])(?:[ \t]|$)")
+CONTRACT = {name.lower() for name in FIELDS} | {"specification"}
 
 
 def lines_with_fences(text):
@@ -81,6 +86,41 @@ def span(blocks, index):
     return blocks[index:end]
 
 
+def own_span(blocks, index):
+    """Like span, but a nested heading that names a contract field or section ends the answer:
+    a required field never supplies another one's content (malformed nesting stays empty)."""
+    section = span(blocks, index)
+    for end, block in enumerate(section[1:], 1):
+        if block["name"] in CONTRACT:
+            return section[:end]
+    return section
+
+
+def checklist_items(section):
+    """Checkbox texts outside code. Indent of four or more columns (tab = 4) is a nested list item only
+    while a list is open; otherwise CommonMark reads it as an indented code block."""
+    items = []
+    for block in section:
+        in_list = False
+        for line, is_fenced in block["lines"]:
+            if is_fenced:
+                in_list = False
+                continue
+            expanded = line.expandtabs(4)
+            stripped = expanded.lstrip(" ")
+            if not stripped:
+                continue
+            indent = len(expanded) - len(stripped)
+            if indent < 4:
+                in_list = bool(LIST_ITEM.match(stripped)) or (in_list and indent > 0)
+            elif not in_list:
+                continue
+            match = CHECKBOX.match(stripped)
+            if match:
+                items.append(match.group(1).strip())
+    return items
+
+
 def section_text(section):
     return "\n".join(line for block in section for line, _ in block["lines"]).strip()
 
@@ -106,7 +146,7 @@ def gate_problems(body):
                    if b["name"] == name.lower() and id(b) not in inside), None)
         if at is None:
             problems.append(f"{name}: section missing")
-        elif not section_text(span(blocks, at)):
+        elif not section_text(own_span(blocks, at)):
             problems.append(f"{name}: empty")
     if spec_at is None:
         return problems
@@ -116,11 +156,9 @@ def gate_problems(body):
         if at is None:
             problems.append(f"{name}: field missing under Specification")
             continue
-        field = span(spec, at)
+        field = own_span(spec, at)
         if name == "Acceptance":
-            items = [m.group(1).strip() for block in field for line, is_fenced in block["lines"]
-                     if not is_fenced and (m := CHECKBOX.match(line))]
-            if not any(items):
+            if not any(checklist_items(field)):
                 problems.append("Acceptance: no checkable item (`- [ ] ...`)")
         elif not section_text(field):
             problems.append(f"{name}: empty")
