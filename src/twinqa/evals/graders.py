@@ -706,11 +706,17 @@ def _classify(question, rows):
     """(category, matched row) of one question: an allowed category by keyword, a violation by keyword
     (`implementation`) or by word overlap with a rule row (`decision_log` / `pattern`), else (None, None)."""
     low = question.lower()
+    contextual = None
     for category, patterns in ALLOWED_RE.items():
         if any(pattern.search(low) for pattern in patterns):
-            return category, None
+            if category not in ("model", "data"):
+                return category, None             # required permissions still take precedence
+            contextual = category
+            break
     if any(pattern.search(low) for pattern in IMPLEMENTATION_RE):
         return "implementation", None
+    if contextual:
+        return contextual, None
     q = _tokens(question)
     best = (0.0, None, None)
     for category, row_id, text in rows:

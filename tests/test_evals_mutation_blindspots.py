@@ -111,3 +111,33 @@ def test_success_resets_own_check(tmp_path):
     assert grade(tmp_path, failure_stop, records)['passed'] is True
 
 
+@pytest.mark.parametrize('question', [
+    'Which cache strategy should I use for model indexing?',
+    'Which algorithm should I use for model indexing?',
+    'Which report format should I use for object data?',
+    'Which hint threshold should I use for model indexing?',
+])
+def test_implementation_question_with_model_context(tmp_path, question):
+    transcript = tmp_path / 'question.jsonl'
+    transcript.write_text(json.dumps(call('AskUserQuestion', {'questions': [{'question': question}]}, 'ask')) + '\n')
+    empty = tmp_path / 'rules.md'
+    empty.write_text('', encoding='utf-8')
+    row = routine_question({'transcript': [transcript], 'decisions': [empty], 'patterns': [empty]})
+    assert row['passed'] is False
+    assert row['details'][0]['category'] == 'implementation'
+
+
+@pytest.mark.parametrize('question', [
+    'Should I delete the model cache?', 'May I push the algorithm fix?',
+    'Do you approve the model depth?', 'What model depth is correct?',
+    'Which source file dimensions are correct?',
+])
+def test_implementation_context_keeps_required_permissions(tmp_path, question):
+    transcript = tmp_path / 'question.jsonl'
+    transcript.write_text(json.dumps(call('AskUserQuestion', {'questions': [{'question': question}]}, 'ask')) + '\n')
+    empty = tmp_path / 'rules.md'
+    empty.write_text('', encoding='utf-8')
+    assert routine_question({'transcript': [transcript], 'decisions': [empty], 'patterns': [empty]})['passed'] is True
+
+
+

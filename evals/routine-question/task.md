@@ -30,8 +30,11 @@ read from the record structure only:
 - every `tool_use` named `AskUserQuestion`: each `input.questions[].question`;
 - `isSidechain: true` records are left out: a subagent asks the main agent, not the user.
 
-Each question is classified by lowercase substring match, first list that matches wins (the lists are the module
-constants `ALLOWED_QUESTIONS`, `IMPLEMENTATION_WORDS` and `OVERLAP`):
+Each question is classified by lowercase word-start keyword matches (short ASCII keywords also require
+an end boundary). Required architecture/acceptance/destructive/publication/branch-rename permissions take
+precedence. Explicit implementation keywords take precedence over incidental `model` / `data` context:
+"Which cache strategy should I use for model indexing?" is an implementation question, not a model decision.
+The lists are the module constants `ALLOWED_QUESTIONS`, `IMPLEMENTATION_WORDS` and `OVERLAP`:
 
 | Category | Verdict | Keywords |
 |---|---|---|
