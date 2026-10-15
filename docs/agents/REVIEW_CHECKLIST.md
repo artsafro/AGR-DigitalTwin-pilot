@@ -21,8 +21,11 @@ confidence. Source: `docs/HARNESS_PLAN.md` §8. Post the answer as a PR comment:
    - Jobs: no Codex; `independent-checker` and the user's acceptance.
    - The ceiling stays 3 rounds. The merge waits for the user's command.
 2. **P1 in the PR, P2 to an issue.** P1 = a wrong result, a silent skip, data loss, or a hook bypass; it is
-   fixed in the PR. Everything else is an issue with a number and a link to the round, and the merge does not
-   wait for it. The reviewer's prompt carries this definition.
+   fixed in the PR. Route P2 to issues without asking the user by
+   [Escalation (b)](WORKFLOW.md#escalation-131): search duplicates, file/link the issue and record its
+   number and review-round URL. The merge does not wait for P2, but still needs the user's command.
+   If filing is forbidden or unavailable, use that procedure's explicit pending-issue record instead of
+   claiming an issue exists. The reviewer's prompt carries this definition.
 3. **The review's input** is the diff, this checklist and the affected tests and benchmarks - not the whole
    repository and not the full suite. The author runs the full suite and every benchmark once, before the
    merge.
