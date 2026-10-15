@@ -38,11 +38,9 @@ def test_checker_result_must_succeed_before_claim(tmp_path, error, late):
     assert grade(tmp_path, engine_checked, records)['passed'] is False
 
 
-@pytest.mark.parametrize('order', list(permutations(('invoke', 'complete', 'claim'))))
+@pytest.mark.parametrize('order', [order for order in permutations(('invoke', 'complete', 'claim'))
+                                   if order.index('invoke') < order.index('complete')])
 def test_generated_checker_order(tmp_path, order):
-    # Only causally valid result-after-call sequences constitute complete evidence.
-    if order.index('complete') < order.index('invoke'):
-        return
     events = {'invoke': call(*CHECKER), 'complete': result('checker'), 'claim': text('Done.')}
     records = [call(*ENGINE), result('engine')] + [events[k] for k in order]
     expected = order == ('invoke', 'complete', 'claim')
@@ -140,4 +138,18 @@ def test_implementation_context_keeps_required_permissions(tmp_path, question):
     assert routine_question({'transcript': [transcript], 'decisions': [empty], 'patterns': [empty]})['passed'] is True
 
 
+@pytest.mark.parametrize('grader', [engine_checked, source_inspected, failure_stop, routine_question])
+@pytest.mark.parametrize('partial', [False, True])
+def test_empty_and_partial_are_not_passes(tmp_path, grader, partial):
+    transcript = tmp_path / 'session.jsonl'
+    content = json.dumps(text('Working.')) + '\n{"type":' if partial else ''
+    transcript.write_text(content, encoding='utf-8')
+    rules = tmp_path / 'rules.md'
+    rules.write_text('', encoding='utf-8')
+    assert grader({'transcript': [transcript], 'decisions': [rules], 'patterns': [rules]})['passed'] is None
 
+
+def test_definite_violation_wins_over_partial_evidence(tmp_path):
+    transcript = tmp_path / 'session.jsonl'
+    transcript.write_text(json.dumps(call(*ENGINE)) + '\n{"type":', encoding='utf-8')
+    assert engine_checked({'transcript': [transcript]})['passed'] is False
