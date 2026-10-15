@@ -1,0 +1,14 @@
+{
+  "id": "pr-agent-trace",
+  "suite": "regression",
+  "grader": "pr_agent_trace",
+  "evidence": {
+    "pr": {"root": "main", "path": "logs/pr/{branch_slug}/view.json", "gh": "gh pr view {branch} --json body,comments"}
+  },
+  "references": [
+    {"name": "agr-pr76", "verdict": "fail",
+     "evidence": {"pr": {"root": "task", "path": "fixtures/agr-pr76.view.json"}}},
+    {"name": "pilot-pr30", "verdict": "pass",
+     "evidence": {"pr": {"root": "task", "path": "fixtures/pilot-pr30.view.json"}}}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "pr-review-rounds",
+  "suite": "regression",
+  "grader": "pr_review_rounds",
+  "evidence": {
+    "pr": {"root": "main", "path": "logs/pr/{branch_slug}/view.json", "gh": "gh pr view {branch} --json body,comments"}
+  },
+  "references": [
+    {"name": "four-rounds-synthetic", "verdict": "fail",
+     "evidence": {"pr": {"root": "task", "path": "fixtures/four-rounds.synthetic.view.json"}}},
+    {"name": "pilot-pr30", "verdict": "pass",
+     "evidence": {"pr": {"root": "task", "path": "fixtures/pilot-pr30.view.json"}}},
+    {"name": "agr-pr76", "verdict": "pass",
+     "evidence": {"pr": {"root": "task", "path": "fixtures/agr-pr76.view.json"}}}
+  ]
+}
