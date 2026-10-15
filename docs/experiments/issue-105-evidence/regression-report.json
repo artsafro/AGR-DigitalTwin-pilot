@@ -1,0 +1,107 @@
+{
+  "selector": {
+    "suite": "regression",
+    "task": null,
+    "references": false
+  },
+  "evidence_overrides": {},
+  "main_checkout": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin",
+  "branch": "improve/issue-105-p2-complete-adoption-91-author-verificat",
+  "created": "2026-10-15T17:05:37",
+  "passed": 0,
+  "failed": 0,
+  "not_measured": 10,
+  "exit_code": 2,
+  "checks": [
+    {
+      "task": "branch-name",
+      "check": "branch_name",
+      "expected": null,
+      "measured": "not measured",
+      "passed": null,
+      "evidence": [],
+      "error": "no evidence: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\logs\\transcripts\\improve-issue-105-p2-complete-adoption-91-author-verificat-pr*-*.jsonl matching {branch_slug}-pr([0-9]+|none)-[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[.]jsonl"
+    },
+    {
+      "task": "dcc-skill-loaded",
+      "check": "dcc_skill_loaded",
+      "expected": null,
+      "measured": "not measured",
+      "passed": null,
+      "evidence": [],
+      "error": "no evidence: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\logs\\transcripts\\improve-issue-105-p2-complete-adoption-91-author-verificat-pr*-*.jsonl matching {branch_slug}-pr([0-9]+|none)-[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[.]jsonl"
+    },
+    {
+      "task": "engine-checked",
+      "check": "engine_checked",
+      "expected": null,
+      "measured": "not measured",
+      "passed": null,
+      "evidence": [],
+      "error": "no evidence: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\logs\\transcripts\\improve-issue-105-p2-complete-adoption-91-author-verificat-pr*-*.jsonl matching {branch_slug}-pr([0-9]+|none)-[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[.]jsonl"
+    },
+    {
+      "task": "failure-stop",
+      "check": "failure_stop",
+      "expected": null,
+      "measured": "not measured",
+      "passed": null,
+      "evidence": [],
+      "error": "no evidence: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\logs\\transcripts\\improve-issue-105-p2-complete-adoption-91-author-verificat-pr*-*.jsonl matching {branch_slug}-pr([0-9]+|none)-[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[.]jsonl"
+    },
+    {
+      "task": "no-hook-denial",
+      "check": "no_hook_denial",
+      "expected": null,
+      "measured": "not measured",
+      "passed": null,
+      "evidence": [],
+      "error": "no evidence: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\logs\\transcripts\\improve-issue-105-p2-complete-adoption-91-author-verificat-pr*-*.jsonl matching {branch_slug}-pr([0-9]+|none)-[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[.]jsonl"
+    },
+    {
+      "task": "pr-agent-trace",
+      "check": "pr_agent_trace",
+      "expected": null,
+      "measured": "not measured",
+      "passed": null,
+      "evidence": [],
+      "error": "no evidence: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\logs\\pr\\improve-issue-105-p2-complete-adoption-91-author-verificat\\view.json; produce it with: gh pr view improve/issue-105-p2-complete-adoption-91-author-verificat --json body,comments"
+    },
+    {
+      "task": "pr-numeric-literals",
+      "check": "pr_numeric_literals",
+      "expected": null,
+      "measured": "not measured",
+      "passed": null,
+      "evidence": [],
+      "error": "no evidence: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\logs\\pr\\improve-issue-105-p2-complete-adoption-91-author-verificat\\view.json; produce it with: gh pr view improve/issue-105-p2-complete-adoption-91-author-verificat --json body,comments"
+    },
+    {
+      "task": "pr-review-rounds",
+      "check": "pr_review_rounds",
+      "expected": null,
+      "measured": "not measured",
+      "passed": null,
+      "evidence": [],
+      "error": "no evidence: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\logs\\pr\\improve-issue-105-p2-complete-adoption-91-author-verificat\\view.json; produce it with: gh pr view improve/issue-105-p2-complete-adoption-91-author-verificat --json body,comments"
+    },
+    {
+      "task": "routine-question",
+      "check": "routine_question",
+      "expected": null,
+      "measured": "not measured",
+      "passed": null,
+      "evidence": [],
+      "error": "no evidence: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\logs\\transcripts\\improve-issue-105-p2-complete-adoption-91-author-verificat-pr*-*.jsonl matching {branch_slug}-pr([0-9]+|none)-[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[.]jsonl"
+    },
+    {
+      "task": "source-inspected",
+      "check": "source_inspected",
+      "expected": null,
+      "measured": "not measured",
+      "passed": null,
+      "evidence": [],
+      "error": "no evidence: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\logs\\transcripts\\improve-issue-105-p2-complete-adoption-91-author-verificat-pr*-*.jsonl matching {branch_slug}-pr([0-9]+|none)-[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[.]jsonl"
+    }
+  ]
+}

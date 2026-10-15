@@ -1,0 +1,20 @@
+{
+  "seed": 105,
+  "bounds": [
+    -15,
+    15
+  ],
+  "attempts": 245,
+  "rejections": 45,
+  "accepted": 200,
+  "clean_population": 27,
+  "crossed_population": 173,
+  "multiple_population": 117,
+  "populations": {
+    "clean": 27,
+    "crossed": 173,
+    "multiple": 117
+  },
+  "checked_variants": 9920,
+  "mismatches": 0
+}
