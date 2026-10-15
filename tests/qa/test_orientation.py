@@ -185,6 +185,53 @@ def test_engine_model_is_oriented(bench):
     assert next(c for c in report["checks"] if c["id"] == "orientation")["status"] == "pass"
 
 
+def _corner_pilaster(wall=1, at_end=False):
+    # D093: the corner end starts 5 mm off the body, leaving an intentional open slit.
+    from test_from_spec_decor import INPUTS, PILASTER, spec
+
+    sp = spec(dict(PILASTER, wall=wall, x_m=9.5 if at_end else 0.0, h_m=3.3))
+    return sp, build(sp, INPUTS)
+
+
+def test_corner_pilaster_ground_cap_is_not_inverted():
+    sp, dump = _corner_pilaster()
+    model = from_dump(dump)
+    assert checks.winding_bad_edges(model, sp.weld_m).tolist() == [0, 0]
+    result = _check(dump, sp.weld_m)
+    assert result["status"] == "pass", result
+
+
+@pytest.mark.parametrize("wall", range(4))
+@pytest.mark.parametrize("at_end", [False, True])
+def test_corner_pilaster_orientation_and_defect_probe(wall, at_end):
+    sp, dump = _corner_pilaster(wall, at_end)
+    assert _check(dump, sp.weld_m)["status"] == "pass"
+    for defect in ("flip1", "flipall", "mirrored"):
+        broken = copy.deepcopy(dump)
+        decor = next(m for m in broken["meshes"] if m["name"] == "decor")
+        if defect == "flip1":
+            # The outward bottom cap is exempt from rays, not from shared-edge winding.
+            _reverse(decor["triangles"], 4)
+        elif defect == "flipall":
+            decor["triangles"] = [[a, c, b] for a, b, c in decor["triangles"]]
+        else:
+            for mesh in broken["meshes"]:
+                mesh["vertices"] = [[-x, y, z] for x, y, z in mesh["vertices"]]
+        assert _check(broken, sp.weld_m)["status"] == "fail", (wall, at_end, defect)
+
+
+@pytest.mark.parametrize("elevated, sloped", [(False, False), (True, False), (False, True)])
+def test_ground_cap_exception_does_not_hide_elevated_or_sloped_back_faces(elevated, sloped):
+    # A remote box sets the scene minimum without occluding this isolated downward face.
+    floor = -3.25
+    z = floor + (0.01 if elevated else 0.0)
+    face = {"name": "cap", "vertices": [[0, 0, z], [0, 1, z], [1, 0, z + (0.01 if sloped else 0.0)]],
+            "triangles": [[0, 1, 2]]}
+    dump = {"meshes": [_box("body", shift=(10, 10, floor)), face]}
+    row = _row(_check(dump), "cap")
+    assert (row["outside_back_faces"] > 0) == (elevated or sloped)
+
+
 def test_b01_one_flipped_triangle_fails_winding():
     spec, dump, tol = _built("bench-b01-box")
     body = dump["meshes"][0]

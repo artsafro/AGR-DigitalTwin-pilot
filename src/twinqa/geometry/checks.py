@@ -995,6 +995,13 @@ def _orientation_hits(model: Soup):
     grid_s, grid_t = grid_s.ravel(), grid_t.ravel()
     normals = np.cross(corners[:, 1] - corners[:, 0], corners[:, 2] - corners[:, 0])
     length = np.linalg.norm(normals, axis=1)
+    # D093 corner ends leave a 5 mm slit: a descending ray can enter there and hit
+    # the back of a correctly downward-facing ground cap. At the global minimum Z,
+    # a horizontal downward normal is provably outward (all geometry is above it).
+    # Exempt only this supporting plane from back-hit failures, not from winding;
+    # elevated caps, sloped faces and upward normals at the minimum remain judged.
+    ground_caps = ((corners[:, :, 2] == lo[2]).all(axis=1)
+                   & (normals[:, 0] == 0) & (normals[:, 1] == 0) & (normals[:, 2] < 0))
     nondeg = np.zeros(n_mesh, dtype=int)
     np.add.at(nondeg, owner[length > 0], 1)
     back = np.zeros(len(corners), dtype=bool)
@@ -1017,7 +1024,8 @@ def _orientation_hits(model: Soup):
         if len(win_local):
             seen[keep[win_local]] = True
         if len(back_local):
-            back[keep[back_local]] = True
+            hit = keep[back_local]
+            back[hit[~ground_caps[hit]]] = True
     backs = np.zeros(n_mesh, dtype=int)
     judged = np.zeros(n_mesh, dtype=int)
     if back.any():
@@ -1033,8 +1041,9 @@ def outside_back_faces(model: Soup) -> np.ndarray:
     Rays travel along +d (level or down; rays from below are never cast) on an ORIENTATION_GRID square about
     the bounding sphere, plus one ray through each non-edge-on triangle centroid. The first hit is the
     smallest depth; equal depth keeps the front face. It is a back hit when the triangle normal (cross of
-    its edges) points the same way as the ray. Faces not visible from outside — the back of an inner niche —
-    are not judged, because a closer face takes the ray."""
+    its edges) points the same way as the ray, except a horizontal downward cap at the global minimum Z
+    (provably outward, even if seen through an open corner slit). Faces not visible from outside — the back
+    of an inner niche — are not judged, because a closer face takes the ray."""
     backs, _, _, _ = _orientation_hits(model)
     return backs
 
@@ -1053,7 +1062,8 @@ def check_orientation(model: Soup, tol: dict) -> dict:
     meshes = [{"name": name, "winding_bad_edges": int(winding[i]), "outside_back_faces": int(backs[i]),
                "judged_faces": int(judged[i])} for i, name in enumerate(names)]
     unjudged = [name for i, name in enumerate(names) if nondeg[i] > 0 and judged[i] == 0]
-    note = ("rays from below are not cast (open body bottom); faces not visible from outside are not judged")
+    note = ("rays from below are not cast (open body bottom); faces not visible from outside are not judged; "
+            "horizontal downward caps at global minimum Z are outward and exempt from back-hit failures")
     return result("orientation", value == 0, value, 0, {
         "meshes": meshes, "rays": rays, "directions": len(ORIENTATION_DIRECTIONS),
         "unjudged_meshes": unjudged, "note": note})
