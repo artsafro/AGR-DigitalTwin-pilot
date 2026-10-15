@@ -78,30 +78,54 @@ for VPM cuts [D021] records about 4 m against this 3 m cell — when a VPM proje
 
 ### Step 5 — Elevations from vertical planning
 
-Build the flat Ground first and stop here when the project is flat. Otherwise read the SPOZU vertical-planning
-sheet: elevation points (design marks) with their XY.
+The flat Ground of step 4 is always built first. Then decide whether the project is flat:
+
+- **Flat project:** confirmed flat only when the vertical-planning sheet shows the same design mark everywhere
+  inside the boundary, or the user says so. No elevation marks found is not proof: ask the user. When flat,
+  skip only the relief Steps 5-7 (record "skipped: flat, confirmed by <sheet or user>") and continue at Step 8;
+  Steps 8-10 stay mandatory, a flat Ground still gets curbs, derivation, export, readback and checks.
+- **Relief project:** read the SPOZU vertical-planning sheet: elevation points (design marks) with their XY.
 
 - Route: `ezdxf` text/block-attribute parse of elevation marks (nested block references included).
-- Needs: headless; human to tell design marks from existing ones and to confirm the sheet.
-- Done when: a point list `x, y, z` with its source layer, a count, and the min/max Z is recorded; marks outside the boundary are listed separately.
+- Needs: headless; human to tell design marks from existing ones, to confirm the sheet and to confirm a flat project.
+- Done when: either the flat decision with its source is recorded and the walk goes on at Step 8, or a point list `x, y, z` with its source layer, a count, and the min/max Z is recorded; marks outside the boundary are listed separately.
 
 ### Step 6 — Relief surface
 
-Triangulate the elevation points into a relief surface inside the boundary. Level differences and unevenness
-are worked separately afterwards; the treatment of small steps is open ([C37](../../../docs/domain/conflicts.md)).
+Triangulate the elevation points into a relief surface (a TIN) in XY; every vertex keeps its source Z, no new
+vertex is invented. Before triangulating: merge points with the same XY and the same Z; points with the same XY
+and different Z are a finding (often a curb top and bottom, Step 8) and go to the user, not into the TIN; fewer
+than 3 distinct points, or all of them on one line, give no relief: stop the relief branch and ask. The relief is
+a projection target, not a deliverable, so it is not clipped to the boundary; Step 7 proves it lies under every
+Ground vertex. Level differences and unevenness are worked separately afterwards; the treatment of small steps is
+open ([C37](../../../docs/domain/conflicts.md)).
 
-- Route: Blender headless (bmesh triangulation) or 3ds Max batch (`Terrain` from points).
-- Needs: headless, no tool yet (T-GND-3 in the [roadmap](../../../docs/research/capability-roadmap.md)).
-- Done when: the surface passes through every source point (Z difference below 1 mm) and covers the boundary.
+- Route: Blender headless: `mathutils.geometry.delaunay_2d_cdt(xy_points, [], [], 0, eps)` (output type 0 = full
+  triangulation of the point set), then each output vertex takes Z from its source point through the returned
+  `orig_verts` map; build the mesh with `from_pydata`. Not `bmesh.ops.triangulate`: it splits existing faces and
+  gives 0 faces from bare points. 3ds Max `Terrain` (compound object over spline or mesh operands) is not
+  verified for this input; not used here.
+- Needs: headless, no tool yet (T-GND-3 in the [roadmap](../../../docs/research/capability-roadmap.md)); human
+  for contradictory Z, too few or collinear points.
+- Done when: the surface passes through every source point (Z difference below 1 mm), it has at least one face, and the contradictory-Z list is empty or answered by the user.
 
 ### Step 7 — Project the flat Ground onto the relief
 
 Project the flat, already textured Ground onto the relief along Z only: XY, contours, material IDs and UVs stay
-as built in step 4.
+as built in step 4. The layered cake must survive: record each layer's vertical offset against the common flat
+datum (the base plane Z: 0, 6 mm, 12 mm ...), sample the relief straight below each vertex XY and set
+`z = relief(x, y) + offset`. A vertex with no relief below it (a miss) is listed and never moved; any miss stops
+the step until the relief is extended or the user narrows the Ground. A plain projection (Blender Shrinkwrap
+`PROJECT` along Z, 3ds Max `Conform`) snaps every layer to the same surface and collapses the 6 mm steps to 0; the
+Shrinkwrap offset is measured along the surface normal, not along Z, so it does not restore them on a slope.
+Between vertices the relief may bend inside a 3 m cell: measure the layer gap also at face centres; where it
+differs from the 6 mm step by more than 1 mm (a lower layer dips under the relief, an upper one floats), cut the
+lower layer along the relief edges or ask about method A.
 
-- Route: 3ds Max batch (`Conform`) or Blender headless (Shrinkwrap, project along Z, then apply).
-- Needs: headless, no tool yet; human for the visual look of slopes.
-- Done when: XY of every vertex and every UV is unchanged against step 4, material IDs per face are unchanged, and the layer steps are still 6 mm after projection.
+- Route: Blender headless: `mathutils.bvhtree.BVHTree.FromObject(relief, depsgraph)` and a downward
+  `ray_cast((x, y, z_top), (0, 0, -1))` per vertex, then `z = hit.z + offset`; only `co.z` is written.
+- Needs: headless, no tool yet; human for misses and for the visual look of slopes.
+- Done when: misses are 0, XY of every vertex and every UV is unchanged against step 4, material IDs per face are unchanged, and the layer steps are still 6 mm (±1 mm) after projection at vertices and face centres.
 
 ### Step 8 — Curbs, steps, ramps, retaining walls
 

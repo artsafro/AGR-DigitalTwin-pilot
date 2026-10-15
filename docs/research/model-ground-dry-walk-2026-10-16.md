@@ -42,12 +42,12 @@ layer name varies by project (step 2 asks the user when no layer matches).
 | 3 Coverings to contours | contours implicit in `Ground` faces (18 IDs, accepted in v003) | `ezdxf` hatch paths -> polylines; DXF -> DWG via core console `SAVEAS` | partly: no reviewed contour script; covering -> material list is human |
 | 4 Layered cake | 18 covering regions, flat | 3ds Max batch (startup `polyunwrapper_autoload.mse` error) or Blender headless | no tool yet; route exists (Blender 4.4/5.1 headless, Max 2026 batch smoke-checked) |
 | 5 Elevations | none: `Relef` is already a surface, no marks | `ezdxf` text/attribute parse | partly: 2530 candidate marks found nested in the probe; design vs existing marks need the user |
-| 6 Relief surface | `Relef` mesh (given) | Blender headless / Max batch | step skipped for this job (input already a surface); no tool yet in general (T-GND-3) |
-| 7 Project onto relief | `Ground` + `Relef` | Blender headless (done in v003 by job scripts) / Max `Conform` | yes in Blender via the job scripts, not reviewed tooling; v003 dense projection and v008 smoothing are lessons, not the method (C37) |
+| 6 Relief surface | `Relef` mesh (given) | Blender headless `mathutils.geometry.delaunay_2d_cdt` + source Z (probe `tests/fixtures/model_ground_route_probe.py`) | step skipped for this job (input already a surface); route proven on synthetic points (4 points -> 2 faces, Z kept; empty/2/collinear/contradictory-Z rejected), no reviewed tool yet (T-GND-3) |
+| 7 Project onto relief | `Ground` + `Relef` | Blender headless `BVHTree.ray_cast` per vertex, `z = relief + layer offset` (same probe) | partly: route proven on synthetic layers (6 mm kept, XY/UV/material IDs unchanged, misses listed); the job's v003 projection was single-layer and is a lesson, not the method (C37); plain Shrinkwrap/`Conform` collapses the 6 mm steps |
 | 8 Curbs, steps, ramps, walls | not modelled in the job (v008 smoothed steps away) | Max batch / Blender headless extrusions | no: live or human today; threshold open (C37) |
 | 9 NPM and VPM | NPM only (v008, TD 19.5-20.3 px/m measured with AGR Checker's TD body) | Blender headless export + TD per face | partly: NPM TD measurement exists in the job scripts; VPM derivation, UDIM, perimeter skirt not done |
 | 10 Checks | v003/v008 readbacks (material IDs, contours ≤ 0.715 mm, no duplicates) | `tools/qa/validate_package.py`, Blender readback/renders | partly: readback and package checks headless; seams, collisions, visual verdict human |
 
 Summary: of 10 steps, 1 is automatable end-to-end today (1), 6 partly (2, 3, 5, 7, 9, 10), 2 have a route but no
-tool (4, 6), 1 needs a live program or a human (8). GROUND-PROJECTION cannot exercise steps 1-3 and 5 at all, because
+reviewed tool (4, 6), 1 needs a live program or a human (8). GROUND-PROJECTION cannot exercise steps 1-3 and 5 at all, because
 it has no SPOZU DWG; a benchmark from a SPOZU drawing (T-GND-4) is the input those steps need.
