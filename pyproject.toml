@@ -30,8 +30,9 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "-m 'not blender and not dcc'"
 pythonpath = [".", "tools/qa"]
 markers = [
     "dcc: requires an explicitly supplied Blender executable (DT_BLENDER)",
-    "blender: runs a real background Blender process (skipped when Blender is not found)",
+    "blender: opt-in real background Blender process (select with -m blender)",
 ]
