@@ -8,6 +8,8 @@ import json
 import re
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 CAPABILITIES = ROOT / "docs" / "agents" / "CAPABILITIES.md"
 WORKFLOW = ROOT / "docs" / "agents" / "WORKFLOW.md"
@@ -99,6 +101,22 @@ def test_cells_are_filled_and_eval_ids_are_tasks():
         assert ids and re.fullmatch(r"(`[^`]+`(,\s*)?)+", evals), (name, evals)
         unknown = sorted(set(ids) - tasks)
         assert not unknown, f"{name}: eval ids with no evals/<id>/task.json: {unknown}"
+
+
+@pytest.mark.parametrize("component", [".claude/hooks/guard.py", "ALLOWED_WRITE_ROOTS"])
+def test_isolation_incident_is_not_project_guard_verification(component):
+    cells = inventory_rows()[component]
+    evidence, verified = cells[3:5]
+    assert "app isolation hook" in evidence, (component, evidence)
+    assert "not project-guard evidence" in evidence, (component, evidence)
+    assert "unknown" in verified and "live" not in verified, (component, verified)
+
+
+def test_guard_summary_does_not_claim_live_verification():
+    text = CAPABILITIES.read_text(encoding="utf-8")
+    summary = text.split("### Guard hook — `.claude/hooks/guard.py`\n", 1)[1].split("\n### ", 1)[0]
+    claude = next(line for line in summary.splitlines() if line.startswith("- Claude Code:"))
+    assert "CONFIGURED" in claude and "unknown" in claude, claude
 
 
 def test_rule_layer_size_and_threshold_recorded():
