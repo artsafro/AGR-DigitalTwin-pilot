@@ -2,7 +2,14 @@
 
 Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N. `local:` relative to the repo root (AGR knowledge base; AGR `docs/` lives in `docs/agr/`).
 
-## Delivery validator spec (V001-V017) - local: standards/DELIVERY_VALIDATOR.yaml (spec only, not implemented)
+## Delivery validator spec (V001-V017) - local: standards/DELIVERY_VALIDATOR.yaml (partially implemented)
+
+`tools/qa/validate_package.py` implements package checks; scene-dependent checks require FBX readback
+(`--scene`), and V015-V017 require signed manual review. Missing evidence stays `not_run`/`review`.
+`src/dt_ai/validate/bundle.py` validates synthetic development bundles (C001-C004), not customer
+deliveries: its V001-V017 stages remain `not_run`/`review`. Neither partial tooling nor a synthetic
+bundle pass is an accepted delivery; all mandatory checks and manual gates below still apply.
+
 - V001 both: ZIP readable, no broken/extra files, size/composition per profile. reg NPM p.6-7, VPM p.26.
 - V002 both: binary FBX 7.4/2014, 1 unit = 1 m. reg p.4, 24.
 - V003 both: triangulated, triangle counts, object types, no empties/forbidden modifiers. reg p.6-8, 28-29.

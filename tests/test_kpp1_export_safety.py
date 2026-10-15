@@ -151,6 +151,10 @@ def shell_run(tmp_path):
         path.chmod(0o755)
     env = os.environ.copy()
     env.pop("KEEP_QUADS", None)
+    # The shell launchers pass /c/... paths to native Python via Git Bash.
+    # Terminal-level conversion opt-outs must not leak into this subprocess.
+    env.pop("MSYS_NO_PATHCONV", None)
+    env.pop("MSYS2_ARG_CONV_EXCL", None)
     env["KPP_TEST_PYTHON"] = sys.executable.replace("\\", "/")
     env["PATH"] = str(fake_bin) + os.pathsep + env["PATH"]
 

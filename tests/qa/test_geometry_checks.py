@@ -57,7 +57,8 @@ def box_dump(size=10.0, roof=6.6, top=7.2, parapet_t=0.3, windows=WINDOWS, depth
         inner = lambda s: a + u * parapet_t + inward * parapet_t + u * min(max(s - parapet_t, 0.0), size - 2 * parapet_t)  # noqa: E731
         for s0, s1 in zip(cuts, cuts[1:]):
             faces.append(([p(s0, top), p(s1, top), [*inner(s1), top], [*inner(s0), top]], ROOF))
-            faces.append(([[*inner(s0), roof], [*inner(s1), roof], [*inner(s1), top], [*inner(s0), top]], ROOF))
+            # inner parapet face, facing the roof well (inward)
+            faces.append(([[*inner(s0), roof], [*inner(s0), top], [*inner(s1), top], [*inner(s1), roof]], ROOF))
         ring_out += [p(s, 0.0) for s in cuts[:-1]]
         ring_in += [[*inner(s), roof] for s in cuts[:-1]]
     if roof_inset:                       # an inset roof plane (pattern roof-inset-plane): a loose element,
@@ -66,7 +67,8 @@ def box_dump(size=10.0, roof=6.6, top=7.2, parapet_t=0.3, windows=WINDOWS, depth
         ring_in = [[size / 2 + (x - size / 2) * k, size / 2 + (y - size / 2) * k, z + roof_inset] for x, y, z in ring_in]
     for ring, z, mid in ((ring_out, 0.0, FACADE), (ring_in, roof + roof_inset, ROOF)):
         c = [size / 2, size / 2, z]
-        faces += [([c, ring[k], ring[(k + 1) % len(ring)]], mid) for k in range(len(ring))]
+        fan = [([c, ring[k], ring[(k + 1) % len(ring)]], mid) for k in range(len(ring))]
+        faces += fan if z > 0 else [(pts[::-1], m) for pts, m in fan]   # the bottom faces down
     faces += list(extra)
     meshes = [_mesh("body", [f for f in faces if f[1] != PLANE or not planes]),
               _mesh("planes", [f for f in faces if f[1] == PLANE])]
@@ -135,7 +137,8 @@ def test_missing_opening_plane_fails_cover_and_leaves_a_hole():
     report = run(box_dump(planes=False, windows=WINDOWS))
     # the open window also stops the model section closing where the etalon's closes
     # an open window is no allowed open loop (pattern roof-inset-plane, user rule 2026-10-10)
-    assert report["failed"] == ["floor_areas", "mesh", "opening_planes"]
+    # and lets outside rays reach the back of the inner wall faces (orientation sees through the hole)
+    assert report["failed"] == ["floor_areas", "mesh", "opening_planes", "orientation"]
     assert by_id(report)["opening_planes"]["value"] == 0.0
     loops = by_id(report)["mesh"]["details"]["open_loops"]
     assert sorted((lp["kind"], lp["edges"], lp["allowed"]) for lp in loops if lp["kind"] == "other") ==         [("other", 4, False), ("other", 4, False)]

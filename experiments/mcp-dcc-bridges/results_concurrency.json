@@ -1,0 +1,175 @@
+{
+ "etalon_sha_before": {
+  "benchmark\\bench-b01-box\\etalon.json": "b8fa3bea8dd962a044adb1659eb4d109dcff13b927584e3c15fc1747dd6b59ec",
+  "benchmark\\bench-b01-box\\object.json": "42004aa39b3ef094431f185e7e439ae85cd5277a764a24923699a4617517fa41",
+  "benchmark\\bench-b01-box\\README.md": "d0aa6554a295b40215810cd9242cd1bb71b1cac1602cc955cef754a298daa28d",
+  "benchmark\\bench-b01-box\\spec.json": "48d6fa4619c9c5ec36faca23d54787aeafe115fbaca13e263d3d0866e624e4a8",
+  "benchmark\\bench-b01-box\\tolerances.json": "df2a20a7e5ebb1d127cd813c20529489d99f638c401684c78e8d7028d42e7638",
+  "benchmark\\bench-b02-corner-niche\\etalon.json": "b174e68cf36ecb433fb5cda9823fc0ac5ab904c25a70aadf9cd1779da5b4897a",
+  "benchmark\\bench-b02-corner-niche\\object.json": "b10d8829e2d6d303fb0739c1198673e3b9b49f44c6f82452fd8bbf45f475b3d1",
+  "benchmark\\bench-b02-corner-niche\\README.md": "3450ca41f2b6fbb684af8b45ba79f273d47efd34e5a22faa6b55b8c140fcb1d4",
+  "benchmark\\bench-b02-corner-niche\\spec.json": "85f1b7d2b8b8912688290bf56fe601f5ae641ae753221acdff6b97c62d640bea",
+  "benchmark\\bench-b02-corner-niche\\tolerances.json": "d36f5f24517986a0da64b9a9c41dc80cad09daa52e2c8d3d1f8d1cb4f273c214",
+  "benchmark\\bench-b02t-terrace\\etalon.json": "b2ddbc39268e74e52df53bd85a22d4bf8f617d8f36afb7989364f92eed42c24a",
+  "benchmark\\bench-b02t-terrace\\object.json": "55a86b2381bc87e1de5dd0b0a22bdc578ae780021244c2ca3f7ccc321b82d613",
+  "benchmark\\bench-b02t-terrace\\README.md": "d57d12ee7435e394085820734032840d8c5d0a5969eb68af91942395c2e44d8b",
+  "benchmark\\bench-b02t-terrace\\spec.json": "4a9a5aa76c2c906fa3844c2009fb127532aed82fa4835ef96e2336a384122cec",
+  "benchmark\\bench-b02t-terrace\\tolerances.json": "5d51f8b2279fae54bac45ea6f95bd14e77bc71fb0ea730f21bb74a42feaf47e5"
+ },
+ "configs": {
+  "percall+objects": {
+   "runs": [
+    {
+     "wall_s": 8.36,
+     "workflows": 12,
+     "torn": 6,
+     "errors": [],
+     "residual": {
+      "meshes": 12,
+      "materials": 12
+     },
+     "calls": 60
+    },
+    {
+     "wall_s": 8.48,
+     "workflows": 12,
+     "torn": 2,
+     "errors": [],
+     "residual": {
+      "meshes": 12,
+      "materials": 12
+     },
+     "calls": 60
+    },
+    {
+     "wall_s": 8.49,
+     "workflows": 12,
+     "torn": 5,
+     "errors": [],
+     "residual": {
+      "meshes": 12,
+      "materials": 12
+     },
+     "calls": 60
+    }
+   ],
+   "median_wall_s": 8.48
+  },
+  "percall+diff": {
+   "runs": [
+    {
+     "wall_s": 8.74,
+     "workflows": 12,
+     "torn": 1,
+     "errors": [
+      "move: KeyError: 'bpy_prop_collection[key]: key \"agrexp_B_bench-b02t-terrace_r1\" not found'"
+     ],
+     "residual": {},
+     "calls": 59
+    },
+    {
+     "wall_s": 8.68,
+     "workflows": 12,
+     "torn": 2,
+     "errors": [],
+     "residual": {},
+     "calls": 60
+    },
+    {
+     "wall_s": 8.57,
+     "workflows": 12,
+     "torn": 4,
+     "errors": [],
+     "residual": {},
+     "calls": 60
+    }
+   ],
+   "median_wall_s": 8.68
+  },
+  "lease+objects": {
+   "runs": [
+    {
+     "wall_s": 9.18,
+     "workflows": 12,
+     "torn": 0,
+     "errors": [],
+     "residual": {
+      "meshes": 12,
+      "materials": 12
+     },
+     "calls": 60
+    },
+    {
+     "wall_s": 8.92,
+     "workflows": 12,
+     "torn": 0,
+     "errors": [],
+     "residual": {
+      "meshes": 12,
+      "materials": 12
+     },
+     "calls": 60
+    },
+    {
+     "wall_s": 8.43,
+     "workflows": 12,
+     "torn": 0,
+     "errors": [],
+     "residual": {
+      "meshes": 12,
+      "materials": 12
+     },
+     "calls": 60
+    }
+   ],
+   "median_wall_s": 8.92
+  },
+  "lease+diff": {
+   "runs": [
+    {
+     "wall_s": 8.69,
+     "workflows": 12,
+     "torn": 0,
+     "errors": [],
+     "residual": {},
+     "calls": 60
+    },
+    {
+     "wall_s": 8.67,
+     "workflows": 12,
+     "torn": 0,
+     "errors": [],
+     "residual": {},
+     "calls": 60
+    },
+    {
+     "wall_s": 8.58,
+     "workflows": 12,
+     "torn": 0,
+     "errors": [],
+     "residual": {},
+     "calls": 60
+    }
+   ],
+   "median_wall_s": 8.67
+  }
+ },
+ "etalon_sha_after": {
+  "benchmark\\bench-b01-box\\etalon.json": "b8fa3bea8dd962a044adb1659eb4d109dcff13b927584e3c15fc1747dd6b59ec",
+  "benchmark\\bench-b01-box\\object.json": "42004aa39b3ef094431f185e7e439ae85cd5277a764a24923699a4617517fa41",
+  "benchmark\\bench-b01-box\\README.md": "d0aa6554a295b40215810cd9242cd1bb71b1cac1602cc955cef754a298daa28d",
+  "benchmark\\bench-b01-box\\spec.json": "48d6fa4619c9c5ec36faca23d54787aeafe115fbaca13e263d3d0866e624e4a8",
+  "benchmark\\bench-b01-box\\tolerances.json": "df2a20a7e5ebb1d127cd813c20529489d99f638c401684c78e8d7028d42e7638",
+  "benchmark\\bench-b02-corner-niche\\etalon.json": "b174e68cf36ecb433fb5cda9823fc0ac5ab904c25a70aadf9cd1779da5b4897a",
+  "benchmark\\bench-b02-corner-niche\\object.json": "b10d8829e2d6d303fb0739c1198673e3b9b49f44c6f82452fd8bbf45f475b3d1",
+  "benchmark\\bench-b02-corner-niche\\README.md": "3450ca41f2b6fbb684af8b45ba79f273d47efd34e5a22faa6b55b8c140fcb1d4",
+  "benchmark\\bench-b02-corner-niche\\spec.json": "85f1b7d2b8b8912688290bf56fe601f5ae641ae753221acdff6b97c62d640bea",
+  "benchmark\\bench-b02-corner-niche\\tolerances.json": "d36f5f24517986a0da64b9a9c41dc80cad09daa52e2c8d3d1f8d1cb4f273c214",
+  "benchmark\\bench-b02t-terrace\\etalon.json": "b2ddbc39268e74e52df53bd85a22d4bf8f617d8f36afb7989364f92eed42c24a",
+  "benchmark\\bench-b02t-terrace\\object.json": "55a86b2381bc87e1de5dd0b0a22bdc578ae780021244c2ca3f7ccc321b82d613",
+  "benchmark\\bench-b02t-terrace\\README.md": "d57d12ee7435e394085820734032840d8c5d0a5969eb68af91942395c2e44d8b",
+  "benchmark\\bench-b02t-terrace\\spec.json": "4a9a5aa76c2c906fa3844c2009fb127532aed82fa4835ef96e2336a384122cec",
+  "benchmark\\bench-b02t-terrace\\tolerances.json": "5d51f8b2279fae54bac45ea6f95bd14e77bc71fb0ea730f21bb74a42feaf47e5"
+ },
+ "etalon_unchanged": true
+}

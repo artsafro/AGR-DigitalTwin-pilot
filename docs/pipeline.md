@@ -10,11 +10,11 @@ object yet) · **missing**.
 | # | Stage | Status | Where | Backlog |
 |---|---|---|---|---|
 | 1 | Register and analyze the source (Revit / FBX / SKP / DWG / PDF album) | tool only | skill `analyze-architectural-source`, Revit/AutoCAD/SketchUp MCP | P1 |
-| 2 | Master building layer (elements, floors, openings, materials, sources) | missing | concept in `docs/agr/DIGITAL_TWIN_AI_PROJECT_BRIEF.md` | P2 |
+| 2 | Master building layer (elements, floors, openings, materials, sources) | partial (spec pipeline; full master layer not accepted) | `src/dt_ai/spec/model.py`, `src/dt_ai/spec/mesh.py`, `src/dt_ai/geometry/from_spec.py` | P2 |
 | 3 | BODY: exterior-only quad surface, cuts at corners/openings | proven (Obr22) | `src/dt_ai/geometry/exterior.py`, `connect.py`, `tools/build_exterior_surface.py` | — |
 | 4 | Shell 0.4 m inward | proven (Obr22) | `src/dt_ai/geometry/shell.py`, `tools/run_body_shell.py` | C23 |
 | 5 | Windows, stained glass, doors | partial | `tools/build_shell_windows.py`, `technical_library/window_atlas/`, REVIT-OPENINGS | P3 |
-| 6 | Roof, decor, exterior equipment | missing | — | P4 |
+| 6 | Roof, decor, exterior equipment | partial (roof/decor tooling; equipment incomplete) | `src/dt_ai/spec/decor.py`, `src/dt_ai/spec/mesh.py`, `src/twinqa/geometry/checks.py` (`check_decor`) | P4 |
 | 7 | Materials registry and IDs | partial | `src/dt_ai/materials/registry.py` | — |
 | 8 | NPM atlas (embedded PNG, shared regions by finish) | proven (Obr22 v012, GLB) | `technical_library/glb_atlas/`, `texture_tiles/` | C21 |
 | 9 | VPM UV/UDIM + Diffuse/ERM/Normal maps | proven (Obr22 v011, SOSH1150 v006) | `technical_library/uv_continuous/`, `src/dt_ai/geometry/uv.py` | C27, C29, C33 |
