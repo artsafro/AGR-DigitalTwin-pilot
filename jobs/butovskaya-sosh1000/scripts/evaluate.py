@@ -78,7 +78,8 @@ def require_mesh_reference(snap: Path = SNAP) -> dict:
 
     Fail closed (review round 1, P1-1): a box snapshot (no `reference: mesh`), a blocked step 0 (blocked.json, no
     hashes.json), a snapshot with failed elements or with a file changed after step 0 is no reference for the
-    loop. The first attempt's box snapshot is read only with --exploratory-box-reference, labelled non-conforming."""
+    loop; nor is one without geometry (review round 2, P1: pieces or triangles_total < 1, or counts that the hashed
+    dump does not hold). The first attempt's box snapshot is read only with --exploratory-box-reference, labelled non-conforming."""
     hf = snap / "hashes.json"
     if (snap / "blocked.json").exists() or not hf.exists():
         raise SystemExit(f"no reference: {snap} holds no complete snapshot (step 0 blocked or not run)")
@@ -86,10 +87,18 @@ def require_mesh_reference(snap: Path = SNAP) -> dict:
     if h.get("reference") != "mesh" or h.get("complete") is not True or h.get("failed") != 0:
         raise SystemExit(f"no reference: {snap} is not a complete mesh snapshot "
                          f"(reference={h.get('reference')!r}, complete={h.get('complete')!r}, failed={h.get('failed')!r})")
+    pieces, total = h.get("pieces"), h.get("triangles_total")
+    if not isinstance(pieces, int) or not isinstance(total, int) or pieces < 1 or total < 1:
+        raise SystemExit(f"no reference: {snap} holds no geometry (pieces={pieces!r}, triangles_total={total!r})")
     for name in SNAP_FILES:
         p = snap / name
         if not p.exists() or hashlib.sha256(p.read_bytes()).hexdigest() != h.get("sha256", {}).get(name):
             raise SystemExit(f"no reference: {p} is missing or differs from its step-0 hash")
+    dump = json.loads((snap / "snapshot_dump.json").read_text(encoding="utf-8"))
+    n_meshes, n_tris = len(dump.get("meshes") or []), sum(len(m.get("triangles") or []) for m in dump.get("meshes") or [])
+    if (n_meshes, n_tris) != (pieces, total):
+        raise SystemExit(f"no reference: snapshot_dump.json holds {n_meshes} meshes / {n_tris} triangles, "
+                         f"hashes.json says {pieces} / {total}")
     return h
 
 

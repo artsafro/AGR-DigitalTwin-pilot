@@ -159,6 +159,7 @@ def write(stage: Path, state, secs):
         counts[r["category"]] = counts.get(r["category"], 0) + 1
     summary = {"reference": "mesh", "complete": True, "counts": counts, "failed": 0, "seconds": round(secs, 1),
                "elements_per_s": round(len(elements) / max(secs, 1e-9), 1),
+               "pieces": len(meshes), "triangles_total": sum(len(m["triangles"]) for m in meshes),
                "sha256": {p: sha(stage / p) for p in FILES}}
     (stage / "hashes.json").write_text(json.dumps(summary, indent=1), encoding="utf-8")
     return summary

@@ -17,7 +17,8 @@ Fail closed (review round 1, P1-1): the snapshot is published only when the expo
 stayed unmodified. Any of these writes only <out>/blocked.json and exits 2, with no snapshot file next to it:
 no twin-data.json, a document modified before or after, no band, no level, a band without reference.obj or
 floor.json, an OBJ face that is not a triangle of valid 1-based vertex indices, an object without a triangle, a
-band whose triangle count differs from its floor.json, clip fallbacks. Files are staged in <out>.partial and moved
+band whose triangle count differs from its floor.json, clip fallbacks, an export with no triangle in any band (no_geometry, review round 2 P1; a single empty band is
+allowed when the others hold geometry). Files are staged in <out>.partial and moved
 in place hashes.json last. Step 0 runs once: an <out> that already holds hashes.json is refused.
 
     uv run python jobs/butovskaya-sosh1000/scripts/snapshot_twin.py --src C:/x/butovskaya/twin-v001 \
@@ -147,6 +148,10 @@ def acquire(src: Path, state):
                 "function": (r or {}).get("function"), "triangles": int(len(t)),
                 "box": [v.min(0).round(6).tolist(), v.max(0).round(6).tolist()],
                 "mesh": (v.round(6), t)})
+    if not state["pieces"] or not sum(p["triangles"] for p in state["pieces"]):
+        # review round 2, P1: bands that all exist and agree with floor.json but hold no triangle are no reference
+        raise Blocked("no_geometry", f"{len(bands)} band(s) listed, 0 element pieces and 0 triangles in all "
+                                     f"reference.obj files; re-run the TwinPack export on the open model")
 
 
 def write(stage: Path, state, src: Path, secs):
