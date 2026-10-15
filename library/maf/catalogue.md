@@ -7,8 +7,8 @@
 - split_objects: 26
 - maf_entries: 931
 - tris_total: 4392163
-- built_ok: 737
-- built_failed: 194
+- built_ok: 825
+- built_failed: 106
 - duplicates_groups: 33
 - duplicate_entries: 79
 - npm_rows: 368
@@ -759,94 +759,94 @@
 | MAF_0735 | 037 | no | 0.475 1.288 1.785 | 1948 | 2,6 |  | SM_NizhnieMnevniki_ZU_12_B_GroundEl.017 | C:/x/t_3e6ff1b3/library/preview/MAF_0735_037.png |
 | MAF_0736 | Object017 | no | 8.004 0.569 1.523 | 504 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0736_Object017.png |
 | MAF_0737 | 10 | no | 2.887 0.811 2.511 | 834 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0737_10.png |
-| MAF_0738 | Art 0322Т_4 | no | 1.155 0.701 0.431 | 4942 | 1,2,3 |  |  |  |
-| MAF_0739 | Art 0322Т_5 | no | 1.149 0.709 0.431 | 4902 | 1,2,3 |  |  |  |
-| MAF_0740 | Art 18694 | no | 8.000 0.610 0.448 | 352 | 1,3 |  |  |  |
-| MAF_0741 | Object046 | no | 2.039 2.037 0.453 | 962 | 1,3,4 |  |  |  |
-| MAF_0742 | Line1179 | no | 1.807 1.807 1.438 | 510 | 3 |  |  |  |
-| MAF_0743 | 3 | no | 4.028 4.030 0.370 | 3136 | 1 |  |  |  |
-| MAF_0744 | 5 | no | 0.998 1.395 0.414 | 194 | 1 |  |  |  |
-| MAF_0745 | 6 | no | 0.910 0.670 0.420 | 194 | 1 |  | crp_Cylinder919 |  |
-| MAF_0746 | 11 | no | 1.700 1.742 0.405 | 264 | 1 |  |  |  |
-| MAF_0747 | 12 | no | 1.698 1.847 0.802 | 364 | 1 |  | SM_NizhnieMnevniki_ZU_12_B_GroundEl.001 |  |
-| MAF_0748 | 13 | no | 2.200 1.900 0.743 | 444 | 1 |  | Cylinder.001 |  |
-| MAF_0749 | 15 | no | 2.200 1.500 2.270 | 56 | 1 |  |  |  |
-| MAF_0750 | 17 | no | 1.593 0.176 1.060 | 164 | 1,2 |  |  |  |
-| MAF_0751 | 19 | no | 1.235 0.617 0.244 | 97 | 1 |  |  |  |
-| MAF_0752 | 21 | no | 2.144 1.439 1.462 | 119 | 1 |  |  |  |
-| MAF_0753 | 23 | no | 1.862 2.676 4.697 | 2160 | 1 |  |  |  |
-| MAF_0754 | 24 | no | 2.576 3.235 1.846 | 900 | 1 |  |  |  |
-| MAF_0755 | 25 | no | 3.755 5.157 2.212 | 5568 | 1 |  |  |  |
-| MAF_0756 | 29 | no | 0.914 0.500 0.892 | 678 | 1 |  |  |  |
-| MAF_0757 | 30 | no | 1.447 0.500 1.608 | 582 | 1 |  |  |  |
-| MAF_0758 | 31 | no | 2.018 1.607 0.613 | 9648 | 1 |  |  |  |
-| MAF_0759 | 34 | no | 2.108 1.573 1.890 | 496 | 1 |  |  |  |
-| MAF_0760 | 37 | yes | 3.202 0.290 1.522 | 192 | 1 | 29 |  |  |
-| MAF_0761 | 37 | yes | 3.202 0.290 1.522 | 192 | 1 | 29 |  |  |
-| MAF_0762 | 22 | no | 1.643 2.090 0.078 | 1810 | 1 |  |  |  |
-| MAF_0763 | 16 | no | 3.654 1.982 4.023 | 608 | 1 |  |  |  |
-| MAF_0764 | 13 | no | 3.641 0.707 2.053 | 4394 | 1 |  |  |  |
-| MAF_0765 | 12 | no | 1.029 1.081 1.081 | 492 | 1,2 |  |  |  |
-| MAF_0766 | 15 | no | 1.364 2.853 2.860 | 1470 | 1,2 |  |  |  |
-| MAF_0767 | 16 | no | 6.083 2.229 1.694 | 5316 | 1 |  |  |  |
-| MAF_0768 | 17 | no | 2.573 1.976 0.777 | 372 | 1,2,3 |  |  |  |
-| MAF_0769 | 19 | no | 0.858 2.306 2.899 | 812 | 1 |  |  |  |
-| MAF_0770 | 20 | no | 2.547 1.930 2.043 | 472 | 1,2,3,4,5,6 |  |  |  |
-| MAF_0771 | 21 | no | 2.644 2.644 1.192 | 1393 | 1,2,3,4,5,6 |  |  |  |
-| MAF_0772 | 22 | no | 1.952 0.191 2.101 | 86 | 1,2,5,6,7 |  |  |  |
-| MAF_0773 | 23 | no | 2.547 1.930 2.043 | 1394 | 1,2 |  |  |  |
-| MAF_0774 | 24 | no | 0.544 0.113 1.416 | 92 | 1,2,3,4,5,6 |  |  |  |
-| MAF_0775 | 25 | no | 2.271 1.581 0.746 | 420 | 1 |  |  |  |
-| MAF_0776 | 26 | no | 2.950 2.953 0.370 | 2552 | 2 |  |  |  |
-| MAF_0777 | 28 | no | 1.129 1.515 0.785 | 636 | 2 |  |  |  |
-| MAF_0778 | 29 | no | 3.655 0.548 3.131 | 678 | 1 |  |  |  |
-| MAF_0779 | 32 | no | 0.431 0.430 0.796 | 992 | 2,3,23 |  |  |  |
-| MAF_0780 | 30 | no | 0.720 0.700 0.612 | 770 | 23 |  |  |  |
-| MAF_0781 | 33 | no | 1.880 0.465 0.456 | 96 | 1,3,4,5,6 |  |  |  |
-| MAF_0782 | 6 | no | 2.189 1.218 0.716 | 3886 | 1,2 |  |  |  |
-| MAF_0783 | 3 | no | 7.546 12.172 2.756 | 3838 | 2 |  |  |  |
-| MAF_0784 | 4 | no | 14.185 6.216 2.466 | 5682 | 2,3 |  |  |  |
-| MAF_0785 | 5 | no | 9.662 6.770 0.545 | 1134 | 1 |  |  |  |
-| MAF_0786 | 7 | no | 0.538 1.179 1.383 | 2730 | 2 |  |  |  |
-| MAF_0787 | 8 | no | 0.953 1.209 2.164 | 3295 | 2 |  |  |  |
-| MAF_0788 | 10 | no | 1.097 1.317 1.967 | 2164 | 2 |  |  |  |
-| MAF_0789 | MAF_OLD | no | 7.763 7.132 3.246 | 450 | 2,3 |  |  |  |
-| MAF_0790 | Box001 | no | 8.187 7.318 0.735 | 60 | 1 |  |  |  |
-| MAF_0791 | Object102 | no | 2.833 1.723 2.223 | 362 | 1 |  |  |  |
-| MAF_0792 | Object103 | no | 0.725 4.171 2.036 | 1105 | 1 |  |  |  |
-| MAF_0793 | Object104 | no | 0.501 0.252 2.000 | 328 | 1 |  |  |  |
-| MAF_0794 | Object105 | no | 0.644 0.475 1.064 | 146 | 1 |  |  |  |
-| MAF_0795 | Object106 | no | 1.767 0.669 0.943 | 108 | 1 |  |  |  |
-| MAF_0796 | Object108 | no | 1.067 1.046 0.926 | 668 | 1 |  | SM_PavlaAndreeva_Vld_23_GroundEl.010 |  |
-| MAF_0797 | Object109 | no | 0.640 0.641 0.750 | 120 | 3 |  |  |  |
-| MAF_0798 | Object110 | no | 2.701 1.994 0.800 | 644 | 3 |  |  |  |
-| MAF_0799 | Object111 | no | 0.625 0.972 0.285 | 26 | 2,3 |  |  |  |
-| MAF_0800 | Object113 | no | 1.384 0.608 1.133 | 482 | 4 |  |  |  |
-| MAF_0801 | Object114 | yes | 5.381 1.577 1.029 | 539 | 3 |  |  |  |
-| MAF_0802 | Object114 | yes | 0.968 1.500 0.513 | 20 | 3 |  |  |  |
-| MAF_0803 | Object115 | no | 5.534 2.032 2.320 | 4562 | 3 |  |  |  |
-| MAF_0804 | Object116 | no | 2.579 2.579 0.838 | 336 | 4 |  |  |  |
-| MAF_0805 | Object117 | no | 1.010 1.008 0.950 | 1504 | 4 |  |  |  |
-| MAF_0806 | Object118 | no | 2.007 0.703 1.192 | 376 | 4 |  |  |  |
-| MAF_0807 | Object119 | no | 7.978 6.264 3.895 | 2605 | 4 |  |  |  |
-| MAF_0808 | Object120 | no | 7.499 7.498 3.333 | 580 | 4 |  |  |  |
-| MAF_0809 | Object121 | no | 8.031 2.299 2.532 | 576 | 4 |  |  |  |
-| MAF_0810 | 1 | no | 4.106 9.014 5.735 | 1242 | 1 |  |  |  |
-| MAF_0811 | 2 | no | 7.515 5.294 6.430 | 1436 | 1 |  |  |  |
-| MAF_0812 | Навес_1 | no | 59.051 13.357 2.896 | 1690 | 1,2 |  |  |  |
-| MAF_0813 | Pergola_circle | no | 30.292 30.292 4.564 | 7236 | 4 |  |  |  |
-| MAF_0814 | Porgola_list | no | 10.820 4.570 3.697 | 1712 | 1,2,3,4,5,6 |  |  |  |
-| MAF_0815 | Wave_shelf | no | 11.521 3.109 0.671 | 852 | 1,3 |  |  |  |
-| MAF_0816 | Kachalka | no | 1.101 1.101 0.318 | 6312 | 1,2 |  |  |  |
-| MAF_0817 | Gorka | no | 1.199 3.420 2.212 | 2092 | 1,2,3,4,5,6 |  |  |  |
-| MAF_0818 | Brusya | no | 1.627 0.664 1.027 | 288 | 5 |  |  |  |
-| MAF_0819 | Puff_Chair | no | 1.138 1.517 1.629 | 432 | 1 |  |  |  |
-| MAF_0820 | Stolbiki | no | 1.741 1.464 0.344 | 440 | 1 |  |  |  |
-| MAF_0821 | Setka | no | 4.023 4.099 4.024 | 3964 | 1,2,3 |  |  |  |
-| MAF_0822 | Kubibki | no | 1.628 0.228 1.611 | 450 | 2,3,4,5 |  |  |  |
-| MAF_0823 | Dendrofon | no | 2.014 0.829 2.249 | 680 | 1,2,3,4,5,6 |  |  |  |
-| MAF_0824 | Doska | no | 1.968 0.681 1.824 | 134 | 1,2,3,4,5,6 |  |  |  |
-| MAF_0825 | Bird_sc;pture | no | 0.870 0.484 0.871 | 160 | 1,3,4,5,6 |  |  |  |
+| MAF_0738 | Art 0322Т_4 | no | 1.155 0.701 0.431 | 4942 | 1,2,3 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0738_Art_0322T_4.png |
+| MAF_0739 | Art 0322Т_5 | no | 1.149 0.709 0.431 | 4902 | 1,2,3 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0739_Art_0322T_5.png |
+| MAF_0740 | Art 18694 | no | 8.000 0.610 0.448 | 352 | 1,3 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0740_Art_18694.png |
+| MAF_0741 | Object046 | no | 2.039 2.037 0.453 | 962 | 1,3,4 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0741_Object046.png |
+| MAF_0742 | Line1179 | no | 1.807 1.807 1.438 | 510 | 3 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0742_Line1179.png |
+| MAF_0743 | 3 | no | 4.028 4.030 0.370 | 3136 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0743_3.png |
+| MAF_0744 | 5 | no | 0.998 1.395 0.414 | 194 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0744_5.png |
+| MAF_0745 | 6 | no | 0.910 0.670 0.420 | 194 | 1 |  | crp_Cylinder919 | C:/x/t_3e6ff1b3/library/preview/MAF_0745_6.png |
+| MAF_0746 | 11 | no | 1.700 1.742 0.405 | 264 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0746_11.png |
+| MAF_0747 | 12 | no | 1.698 1.847 0.802 | 364 | 1 |  | SM_NizhnieMnevniki_ZU_12_B_GroundEl.001 | C:/x/t_3e6ff1b3/library/preview/MAF_0747_12.png |
+| MAF_0748 | 13 | no | 2.200 1.900 0.743 | 444 | 1 |  | Cylinder.001 | C:/x/t_3e6ff1b3/library/preview/MAF_0748_13.png |
+| MAF_0749 | 15 | no | 2.200 1.500 2.270 | 56 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0749_15.png |
+| MAF_0750 | 17 | no | 1.593 0.176 1.060 | 164 | 1,2 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0750_17.png |
+| MAF_0751 | 19 | no | 1.235 0.617 0.244 | 97 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0751_19.png |
+| MAF_0752 | 21 | no | 2.144 1.439 1.462 | 119 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0752_21.png |
+| MAF_0753 | 23 | no | 1.862 2.676 4.697 | 2160 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0753_23.png |
+| MAF_0754 | 24 | no | 2.576 3.235 1.846 | 900 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0754_24.png |
+| MAF_0755 | 25 | no | 3.755 5.157 2.212 | 5568 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0755_25.png |
+| MAF_0756 | 29 | no | 0.914 0.500 0.892 | 678 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0756_29.png |
+| MAF_0757 | 30 | no | 1.447 0.500 1.608 | 582 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0757_30.png |
+| MAF_0758 | 31 | no | 2.018 1.607 0.613 | 9648 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0758_31.png |
+| MAF_0759 | 34 | no | 2.108 1.573 1.890 | 496 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0759_34.png |
+| MAF_0760 | 37 | yes | 3.202 0.290 1.522 | 192 | 1 | 29 |  | C:/x/t_3e6ff1b3/library/preview/MAF_0760_37.png |
+| MAF_0761 | 37 | yes | 3.202 0.290 1.522 | 192 | 1 | 29 |  | C:/x/t_3e6ff1b3/library/preview/MAF_0761_37.png |
+| MAF_0762 | 22 | no | 1.643 2.090 0.078 | 1810 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0762_22.png |
+| MAF_0763 | 16 | no | 3.654 1.982 4.023 | 608 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0763_16.png |
+| MAF_0764 | 13 | no | 3.641 0.707 2.053 | 4394 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0764_13.png |
+| MAF_0765 | 12 | no | 1.029 1.081 1.081 | 492 | 1,2 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0765_12.png |
+| MAF_0766 | 15 | no | 1.364 2.853 2.860 | 1470 | 1,2 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0766_15.png |
+| MAF_0767 | 16 | no | 6.083 2.229 1.694 | 5316 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0767_16.png |
+| MAF_0768 | 17 | no | 2.573 1.976 0.777 | 372 | 1,2,3 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0768_17.png |
+| MAF_0769 | 19 | no | 0.858 2.306 2.899 | 812 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0769_19.png |
+| MAF_0770 | 20 | no | 2.547 1.930 2.043 | 472 | 1,2,3,4,5,6 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0770_20.png |
+| MAF_0771 | 21 | no | 2.644 2.644 1.192 | 1393 | 1,2,3,4,5,6 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0771_21.png |
+| MAF_0772 | 22 | no | 1.952 0.191 2.101 | 86 | 1,2,5,6,7 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0772_22.png |
+| MAF_0773 | 23 | no | 2.547 1.930 2.043 | 1394 | 1,2 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0773_23.png |
+| MAF_0774 | 24 | no | 0.544 0.113 1.416 | 92 | 1,2,3,4,5,6 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0774_24.png |
+| MAF_0775 | 25 | no | 2.271 1.581 0.746 | 420 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0775_25.png |
+| MAF_0776 | 26 | no | 2.950 2.953 0.370 | 2552 | 2 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0776_26.png |
+| MAF_0777 | 28 | no | 1.129 1.515 0.785 | 636 | 2 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0777_28.png |
+| MAF_0778 | 29 | no | 3.655 0.548 3.131 | 678 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0778_29.png |
+| MAF_0779 | 32 | no | 0.431 0.430 0.796 | 992 | 2,3,23 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0779_32.png |
+| MAF_0780 | 30 | no | 0.720 0.700 0.612 | 770 | 23 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0780_30.png |
+| MAF_0781 | 33 | no | 1.880 0.465 0.456 | 96 | 1,3,4,5,6 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0781_33.png |
+| MAF_0782 | 6 | no | 2.189 1.218 0.716 | 3886 | 1,2 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0782_6.png |
+| MAF_0783 | 3 | no | 7.546 12.172 2.756 | 3838 | 2 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0783_3.png |
+| MAF_0784 | 4 | no | 14.185 6.216 2.466 | 5682 | 2,3 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0784_4.png |
+| MAF_0785 | 5 | no | 9.662 6.770 0.545 | 1134 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0785_5.png |
+| MAF_0786 | 7 | no | 0.538 1.179 1.383 | 2730 | 2 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0786_7.png |
+| MAF_0787 | 8 | no | 0.953 1.209 2.164 | 3295 | 2 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0787_8.png |
+| MAF_0788 | 10 | no | 1.097 1.317 1.967 | 2164 | 2 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0788_10.png |
+| MAF_0789 | MAF_OLD | no | 7.763 7.132 3.246 | 450 | 2,3 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0789_MAF_OLD.png |
+| MAF_0790 | Box001 | no | 8.187 7.318 0.735 | 60 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0790_Box001.png |
+| MAF_0791 | Object102 | no | 2.833 1.723 2.223 | 362 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0791_Object102.png |
+| MAF_0792 | Object103 | no | 0.725 4.171 2.036 | 1105 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0792_Object103.png |
+| MAF_0793 | Object104 | no | 0.501 0.252 2.000 | 328 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0793_Object104.png |
+| MAF_0794 | Object105 | no | 0.644 0.475 1.064 | 146 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0794_Object105.png |
+| MAF_0795 | Object106 | no | 1.767 0.669 0.943 | 108 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0795_Object106.png |
+| MAF_0796 | Object108 | no | 1.067 1.046 0.926 | 668 | 1 |  | SM_PavlaAndreeva_Vld_23_GroundEl.010 | C:/x/t_3e6ff1b3/library/preview/MAF_0796_Object108.png |
+| MAF_0797 | Object109 | no | 0.640 0.641 0.750 | 120 | 3 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0797_Object109.png |
+| MAF_0798 | Object110 | no | 2.701 1.994 0.800 | 644 | 3 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0798_Object110.png |
+| MAF_0799 | Object111 | no | 0.625 0.972 0.285 | 26 | 2,3 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0799_Object111.png |
+| MAF_0800 | Object113 | no | 1.384 0.608 1.133 | 482 | 4 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0800_Object113.png |
+| MAF_0801 | Object114 | yes | 5.381 1.577 1.029 | 539 | 3 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0801_Object114.png |
+| MAF_0802 | Object114 | yes | 0.968 1.500 0.513 | 20 | 3 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0802_Object114.png |
+| MAF_0803 | Object115 | no | 5.534 2.032 2.320 | 4562 | 3 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0803_Object115.png |
+| MAF_0804 | Object116 | no | 2.579 2.579 0.838 | 336 | 4 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0804_Object116.png |
+| MAF_0805 | Object117 | no | 1.010 1.008 0.950 | 1504 | 4 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0805_Object117.png |
+| MAF_0806 | Object118 | no | 2.007 0.703 1.192 | 376 | 4 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0806_Object118.png |
+| MAF_0807 | Object119 | no | 7.978 6.264 3.895 | 2605 | 4 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0807_Object119.png |
+| MAF_0808 | Object120 | no | 7.499 7.498 3.333 | 580 | 4 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0808_Object120.png |
+| MAF_0809 | Object121 | no | 8.031 2.299 2.532 | 576 | 4 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0809_Object121.png |
+| MAF_0810 | 1 | no | 4.106 9.014 5.735 | 1242 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0810_1.png |
+| MAF_0811 | 2 | no | 7.515 5.294 6.430 | 1436 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0811_2.png |
+| MAF_0812 | Навес_1 | no | 59.051 13.357 2.896 | 1690 | 1,2 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0812_Naves_1.png |
+| MAF_0813 | Pergola_circle | no | 30.292 30.292 4.564 | 7236 | 4 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0813_Pergola_circle.png |
+| MAF_0814 | Porgola_list | no | 10.820 4.570 3.697 | 1712 | 1,2,3,4,5,6 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0814_Porgola_list.png |
+| MAF_0815 | Wave_shelf | no | 11.521 3.109 0.671 | 852 | 1,3 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0815_Wave_shelf.png |
+| MAF_0816 | Kachalka | no | 1.101 1.101 0.318 | 6312 | 1,2 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0816_Kachalka.png |
+| MAF_0817 | Gorka | no | 1.199 3.420 2.212 | 2092 | 1,2,3,4,5,6 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0817_Gorka.png |
+| MAF_0818 | Brusya | no | 1.627 0.664 1.027 | 288 | 5 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0818_Brusya.png |
+| MAF_0819 | Puff_Chair | no | 1.138 1.517 1.629 | 432 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0819_Puff_Chair.png |
+| MAF_0820 | Stolbiki | no | 1.741 1.464 0.344 | 440 | 1 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0820_Stolbiki.png |
+| MAF_0821 | Setka | no | 4.023 4.099 4.024 | 3964 | 1,2,3 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0821_Setka.png |
+| MAF_0822 | Kubibki | no | 1.628 0.228 1.611 | 450 | 2,3,4,5 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0822_Kubibki.png |
+| MAF_0823 | Dendrofon | no | 2.014 0.829 2.249 | 680 | 1,2,3,4,5,6 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0823_Dendrofon.png |
+| MAF_0824 | Doska | no | 1.968 0.681 1.824 | 134 | 1,2,3,4,5,6 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0824_Doska.png |
+| MAF_0825 | Bird_sc;pture | no | 0.870 0.484 0.871 | 160 | 1,3,4,5,6 |  |  | C:/x/t_3e6ff1b3/library/preview/MAF_0825_Bird_sc_pture.png |
 | MAF_0826 | Karusel | no | 1.195 1.195 1.382 | 784 | 2,4 | 30 |  |  |
 | MAF_0827 | Ekskavator | no | 1.296 0.214 0.868 | 940 | 2 |  |  |  |
 | MAF_0828 | Table_tennis | no | 2.729 1.490 0.890 | 3050 | 1 | 0 |  |  |
