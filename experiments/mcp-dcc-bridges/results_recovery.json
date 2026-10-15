@@ -1,0 +1,38 @@
+{
+ "percall_after_crash": {
+  "lock_left": true,
+  "exit": 3,
+  "status": "busy",
+  "s": 10.1,
+  "stale_after_s_by_code": "max(1800, timeout+120) = 1800 s for --timeout 300"
+ },
+ "lease_after_crash": {
+  "acquired": true,
+  "s": 0.15,
+  "reclaims": [
+   {
+    "from": "exp-crash",
+    "why": "owner_dead"
+   }
+  ],
+  "token": 77
+ },
+ "lease_pid_reuse": {
+  "s": 0.12,
+  "reclaims": [
+   {
+    "from": "exp-ghost",
+    "why": "pid_reused"
+   }
+  ]
+ },
+ "lease_live_owner": {
+  "raised": "Busy",
+  "s": 2.01
+ },
+ "lease_dead_owner_dcc_silent": {
+  "raised": "Quarantined",
+  "lease_kept": true
+ },
+ "lease_acquire_release_ms_median": 1.201
+}
