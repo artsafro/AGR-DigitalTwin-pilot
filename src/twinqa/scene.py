@@ -4,12 +4,14 @@ Fills the scene stages the header-only validator leaves not_run: V003 (triangula
 triangle limits, object types), V004 (applied transforms), V006 (NPM embedded images),
 V008 (one UV channel, mirrored islands, glass tile), V010 (UCX triangle budget only),
 V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
+Ground FBX: Flora checks from twinqa.flora (V015 dimensions, V005 maps, V003 Flora share; #191).
 """
 import math
 import tempfile
 from pathlib import Path
 
 from dt_ai.core.blender_runner import blender_executable, run_blender
+from twinqa.flora import FLORA_SHARE, flora_findings
 from twinqa.report import Finding
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
@@ -74,8 +76,10 @@ def _pivot_findings(meshes: list[dict], ucx: list[dict], src: str) -> list[Findi
     return out
 
 
-def scene_findings(rb: dict, kind: str, role: str, profile: dict) -> dict[str, list[Finding]]:
-    """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}."""
+def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule: dict | None = None,
+                   flora_share: int = FLORA_SHARE) -> dict[str, list[Finding]]:
+    """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}. Ground FBX: Flora checks
+    (twinqa.flora; flora_schedule = {mesh name: {"height_m", "crown_m"}}, flora_share default 70 000)."""
     src = Path(rb["source"]).name
     out = {"V003": [], "V004": [], "V008": [], "V010": [], "V013": [], "V006": []}
     if not rb.get("readback_ok"):
@@ -141,4 +145,8 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict) -> dict[str, l
         loose = [i["name"] for i in rb.get("images", []) if not i["packed"]]
         out["V006"].append(_f("fail" if loose else "pass", "embedded textures", f"{src}: {loose or 'all embedded'}",
                               "PNG embedded in FBX", [9], src))
+    if role == "ground":  # Flora checks (#191): dimensions V015, maps V005, Flora share V003
+        geometry = [m for m in meshes if m not in ucx]
+        for stage_id, findings in flora_findings(rb, kind, geometry, tris, profile, flora_schedule, flora_share).items():
+            out.setdefault(stage_id, []).extend(findings)
     return out

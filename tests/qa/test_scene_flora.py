@@ -19,7 +19,7 @@ def mesh(name, tris=100, lo=(0, 0, 0), hi=(1, 1, 1), materials=()):
 
 def plant(name, height, crown, tris=100, materials=("M_Test_Flora_1",)):
     """A plant whose bbox height includes the 10 cm sunk into the Ground."""
-    return mesh(name, tris, lo=(-crown / 2, -crown / 2, -0.10), hi=(crown / 2, crown / 2, height - 0.10),
+    return mesh(name, tris, lo=(-crown / 2, -crown / 2, -0.10), hi=(crown / 2, crown / 2, height),
                 materials=materials)
 
 
@@ -106,12 +106,10 @@ def test_probe_dimension_boundary_brute_force():
         m = plant("SM_Test_Flora_P", eh * fh, ed * fd)
         got = scene_findings(rb(m), "vpm", "ground", PROFILES.vpm,
                              flora_schedule={"SM_Test_Flora_P": {"height_m": eh, "crown_m": ed}})
-        expect = "fail" if abs(fh - 1) > 0.2 + 1e-6 or abs(fd - 1) > 0.2 + 1e-6 else "pass"
-        if 0.2 - 1e-6 < abs(fh - 1) < 0.2 + 1e-6 or 0.2 - 1e-6 < abs(fd - 1) < 0.2 + 1e-6:
-            continue  # float noise exactly at the 20 % edge is covered by the boundary test below
+        expect = "fail" if abs(fh - 1) > 0.2 + 1e-12 or abs(fd - 1) > 0.2 + 1e-12 else "pass"  # exact 20 % is inside
         assert named(got, "V015", "Flora")["Flora dimensions: SM_Test_Flora_P"] == expect, (eh, ed, fh, fd)
         checked += 1
-    assert checked >= 450
+    assert checked == 500
 
 
 @pytest.mark.parametrize("factor,status", [(0.8, "pass"), (1.2, "pass"), (0.79, "fail"), (1.21, "fail")])
@@ -128,8 +126,14 @@ def test_maps_green_diffuse_plus_opacity():
     assert named(found, "V005", "Flora maps") == {"Flora maps: M_Test_Flora_1": "pass"}
 
 
+def test_maps_missing_opacity_is_review_pointing_to_open_conflict_18():
+    found = scene_findings(rb(plant("SM_Test_Flora", 5, 3), materials=[mat(Base_Color="T_Test_Flora_d_1")]),
+                           "npm", "ground", PROFILES.npm)
+    f = next(f for f in found["V005"] if f.name == "Flora maps: M_Test_Flora_1")
+    assert (f.status, f.conflicts, "no separate opacity map" in f.observed) == ("review", [18], True)
+
+
 @pytest.mark.parametrize("material", [
-    mat(Base_Color="T_Test_Flora_d_1"),                                                  # no opacity
     mat(Base_Color="T_Test_Flora_d_1", Alpha="T_Test_Flora_d_1"),                        # diffuse alpha channel
     mat(Base_Color="T_Test_Flora_d_1", Alpha="T_Test_Flora_o_1", Normal="T_Test_Flora_n_1"),  # extra map
     mat(Alpha="T_Test_Flora_o_1"),                                                       # no diffuse
@@ -142,7 +146,7 @@ def test_maps_red(material):
 
 def test_maps_material_found_by_mesh_slot_and_ground_material_ignored():
     ground_mat = mat("M_Test_Ground_1", Base_Color="T_g", Normal="T_n")
-    leaf = mat("M_Leaves", Base_Color="T_d")  # on a Flora mesh, name without the token
+    leaf = mat("M_Leaves", Base_Color="T_d", Alpha="T_o", Specular_IOR_Level="T_s")  # Flora mesh, no token
     found = scene_findings(rb(plant("SM_Test_Flora", 5, 3, materials=["M_Leaves"]),
                               mesh("SM_Test_Ground", materials=["M_Test_Ground_1"]),
                               materials=[ground_mat, leaf]), "npm", "ground", PROFILES.npm)
@@ -257,6 +261,6 @@ def test_blender_roundtrip_flora_maps_and_dimensions(tmp_path, variant):
         assert named(found, "V015", "Flora") == {"Flora dimensions: SM_Test_Flora": "pass"}
     else:
         assert maps == {"Base Color", "Normal"}
-        assert named(found, "V005", "Flora") == {"Flora maps: M_Test_Flora_1": "fail"}
+        assert named(found, "V005", "Flora") == {"Flora maps: M_Test_Flora_1": "fail"}  # Normal map
         assert named(found, "V015", "Flora") == {"Flora dimensions: SM_Test_Flora": "fail"}
     assert named(found, "V003", "Flora") == {"Flora triangle share": "pass"}
