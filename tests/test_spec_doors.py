@@ -6,7 +6,7 @@ from shapely.geometry import Polygon, box
 from dt_ai.spec import extract_spec
 from dt_ai.spec.mesh import _door_recesses
 from dt_ai.spec.model import Spec
-from test_spec_contour_shapes import SQUARE10, at
+from test_spec_contour_shapes import SQUARE10, at, dump_of, flat, walls
 from test_spec_extract import Mesh, close
 from test_spec_openings import building, pane
 
@@ -200,6 +200,64 @@ def test_two_ids_on_one_frame_across_a_level_give_no_id_and_a_conflict():
     (o,) = spec.expanded_floors()[0].openings
     assert (o.level_to, o.material_id, o.plane_conflict) == ("L1", None, True)
     assert report["openings"]["openings_with_conflicting_planes"] == 1
+
+
+# PR #33 review 3 (#34): a pane and an opening plane belong to the floor of their bottom before panes are
+# grouped and materials matched, and are measured on that floor's facade
+
+SETBACK_L0 = [[0, -2], [10, -2], [10, 10], [0, 10]]     # L0 wall at y = -2, L1 wall at y = 0
+
+
+def setback(extra=()):
+    b = Mesh("Body")
+    walls(b, SETBACK_L0, 0.0, 3.3)
+    walls(b, SQUARE10, 3.3, 6.6)
+    flat(b, Polygon(SETBACK_L0).difference(Polygon(SQUARE10)), 3.3, up=True)
+    flat(b, Polygon(SQUARE10), 6.6, up=True)
+    flat(b, Polygon(SETBACK_L0), 0.0, up=False)
+    d = dump_of(b)
+    d["meshes"] += [m.dump() for m in extra]
+    return d
+
+
+def test_a_pane_off_the_facade_of_its_bottom_floor_is_a_question_not_an_opening():
+    # review 3, P2 1: the glass is 0.1 m behind the L1 wall but 2.1 m behind the L0 wall of its bottom
+    spec, report = extract_spec(setback([pane("glass", 2.0, 3.0, 1.8, 5.5, y=0.1)]), at())
+    assert [f.openings for f in spec.expanded_floors()] == [[], []]
+    assert [(q["kind"], q["levels"]) for q in report["questions"]] == [("glass-off-facade", ["L0"])]
+    assert report["openings"]["glass_parts_skipped"] == 1
+
+
+def test_a_pane_on_the_facade_of_its_bottom_floor_is_measured_there():
+    # the same pane on the L0 wall line: one record L0 -> L1 on L0's facade, at its own position
+    spec, report = extract_spec(setback([pane("glass", 2.0, 3.0, 1.8, 5.5, y=-1.9)]), at())
+    floors = spec.expanded_floors()
+    assert [(x.wall, x.x_m, x.sill_m, x.w_m, x.h_m, x.panes, x.level_from, x.level_to) for x in floors[0].openings] == [
+        (0, 2.0, 1.8, 1.0, 3.7, 1, "L0", "L1")]
+    assert floors[1].openings == [] and "glass-off-facade" not in [q["kind"] for q in report["questions"]]
+
+
+@pytest.mark.parametrize("ids, material_id, conflict", [((12, 13), None, True), ((12, 12), 12, False)])
+def test_one_pane_across_a_level_keeps_the_ids_of_both_planes(ids, material_id, conflict):
+    # review 3, P2 2: one pane z 1.8-5.5, a plane below the level line and one above it
+    lower, upper = Mesh("OpeningPlane"), Mesh("OpeningPlane2")
+    lower.quad((2.0, 0.05, 1.8), (3.0, 0.05, 1.8), (3.0, 0.05, 3.2), (2.0, 0.05, 3.2))
+    upper.quad((2.0, 0.05, 3.32), (3.0, 0.05, 3.32), (3.0, 0.05, 5.5), (2.0, 0.05, 5.5))
+    d = building(extra=[pane("glass", 2.0, 3.0, 1.8, 5.5), lower, upper])
+    d["meshes"][-2]["material_ids"], d["meshes"][-1]["material_ids"] = [ids[0]] * 2, [ids[1]] * 2
+    spec, report = extract_spec(d, at())
+    (o,) = spec.expanded_floors()[0].openings
+    assert (o.level_to, o.material_id, o.plane_conflict) == ("L1", material_id, conflict)
+    assert report["openings"]["openings_with_conflicting_planes"] == int(conflict)
+
+
+def test_adjacent_panes_across_a_level_are_one_opening():
+    # review 3, P2 3: centres at 3.29 and 3.31 m fall on two floors; both bottoms are on L0
+    spec, _ = extract_spec(building(extra=[pane("glass", 2.0, 3.0, 1.3, 5.28), pane("glass2", 3.1, 4.1, 1.3, 5.32)]), at())
+    floors = spec.expanded_floors()
+    assert [(x.x_m, x.sill_m, x.w_m, x.h_m, x.panes, x.level_from, x.level_to) for x in floors[0].openings] == [
+        (2.0, 1.3, 2.1, 4.02, 2, "L0", "L1")]
+    assert floors[1].openings == []
 
 
 def test_a_door_recess_of_an_upper_floor_is_no_ledge():
