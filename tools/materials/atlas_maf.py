@@ -6,6 +6,7 @@ receive the leftover space; solid colours stay on the requested square.
 
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -14,8 +15,10 @@ import numpy as np
 from PIL import Image
 
 CELL = 64
-DEFAULT_ATLAS = 512
-DEFAULT_PADDING = 8
+ATLAS_SIZE = 512
+MIN_PADDING = 8
+DEFAULT_ATLAS = ATLAS_SIZE
+DEFAULT_PADDING = MIN_PADDING
 NEUTRAL = (128, 128, 128)
 
 _NAME_RE = re.compile(r"^[A-Za-z0-9_-]+$")
@@ -229,6 +232,7 @@ def build_atlas(list_path: str | Path, out_png: str | Path, out_json: str | Path
     """Plan, render, and write the PNG and UV JSON. Returns the UV map."""
 
     materials, atlas_size, padding_px = load_material_list(list_path)
+    _reject_aliased_outputs(list_path, out_png, out_json, materials)
     slots = plan_atlas(materials, atlas_size, padding_px)
     image = render_atlas(slots, materials, atlas_size, padding_px)
     mapping = uv_map(slots, atlas_size, padding_px)
@@ -383,12 +387,17 @@ def _validate_layout_args(materials: list[Material], atlas_size: int, padding_px
         raise AtlasError("material indexes must be unique")
     if isinstance(atlas_size, bool) or not isinstance(atlas_size, int):
         raise AtlasError("atlas_size must be an integer")
-    if atlas_size < CELL or not _is_pow2(atlas_size):
-        raise AtlasError(f"atlas_size must be a power of two >= {CELL}")
+    if atlas_size != ATLAS_SIZE:
+        raise AtlasError(
+            f"atlas_size must be {ATLAS_SIZE} "
+            f"(the shared MAF atlas is {ATLAS_SIZE}x{ATLAS_SIZE}), got {atlas_size}"
+        )
     if isinstance(padding_px, bool) or not isinstance(padding_px, int):
-        raise AtlasError("padding_px must be an even integer >= 0")
-    if padding_px < 0 or padding_px % 2 != 0:
-        raise AtlasError("padding_px must be an even integer >= 0")
+        raise AtlasError(f"padding_px must be an even integer >= {MIN_PADDING}")
+    if padding_px < MIN_PADDING or padding_px % 2 != 0:
+        raise AtlasError(
+            f"padding_px must be an even integer >= {MIN_PADDING}, got {padding_px}"
+        )
     for material in materials:
         if material.kind not in ("solid", "patterned"):
             raise AtlasError(f"material {material.name!r}: kind must be 'solid' or 'patterned'")
@@ -403,6 +412,56 @@ def _validate_layout_args(materials: list[Material], atlas_size: int, padding_px
                 f"material {material.name!r}: patterned size must be a power of two >= 128, "
                 f"got {material.size}"
             )
+
+
+def _reject_aliased_outputs(
+    list_path: str | Path,
+    out_png: str | Path,
+    out_json: str | Path,
+    materials: list[Material],
+) -> None:
+    """Refuse one destination used twice, and refuse writing over an input."""
+
+    if _same_destination(out_png, out_json):
+        raise AtlasError(
+            f"output PNG {out_png} and output JSON {out_json} are the same destination"
+        )
+    for output in (out_png, out_json):
+        if _same_destination(output, list_path):
+            raise AtlasError(f"output {output} is the input material list {list_path}")
+        for material in materials:
+            if material.texture is None:
+                continue
+            if _same_destination(output, material.texture):
+                raise AtlasError(
+                    f"output {output} is the source texture of material {material.name!r}"
+                )
+
+
+def _same_destination(left: str | Path, right: str | Path) -> bool:
+    """True when both paths name one file, including ``..`` and case aliases."""
+
+    if _path_forms(left) & _path_forms(right):
+        return True
+    left_path = Path(left)
+    right_path = Path(right)
+    if not left_path.exists() or not right_path.exists():
+        return False
+    try:
+        return os.path.samefile(left_path, right_path)
+    except OSError:
+        return False
+
+
+def _path_forms(path: str | Path) -> set[str]:
+    text = os.fspath(path)
+    forms = {os.path.normcase(os.path.abspath(text))}
+    try:
+        resolved = os.fspath(Path(text).resolve())
+    except OSError:
+        return forms
+    forms.add(os.path.normcase(os.path.abspath(resolved)))
+    return forms
 
 
 def _does_not_fit_message(materials: list[Material], atlas_size: int) -> str:

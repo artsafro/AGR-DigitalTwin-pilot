@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import os
 import random
 from pathlib import Path
 
@@ -420,6 +421,215 @@ def test_deterministic_bytes(atlas, fifteen_list, tmp_path):
     atlas.build_atlas(fifteen_list, second / "atlas.png", second / "atlas.json")
     assert (first / "atlas.png").read_bytes() == (second / "atlas.png").read_bytes()
     assert (first / "atlas.json").read_bytes() == (second / "atlas.json").read_bytes()
+
+
+def _two_solids(path: Path, **extra) -> Path:
+    return _write_list(path, [
+        {"name": "red", "kind": "solid", "color": "#FF0000"},
+        {"name": "blue", "kind": "solid", "color": "#0000FF"},
+    ], **extra)
+
+
+@pytest.mark.parametrize("atlas_size", [1024, 256])
+def test_rejects_non_512_atlas(atlas, tmp_path, capsys, atlas_size):
+    list_path = _two_solids(tmp_path / "list.json", atlas_size=atlas_size)
+    out_dir = tmp_path / "missing"
+    png = out_dir / "atlas.png"
+    uv_path = out_dir / "atlas.json"
+    code = atlas.main([str(list_path), "--out-png", str(png), "--out-json", str(uv_path)])
+    captured = capsys.readouterr()
+    assert code == 2
+    assert captured.err.startswith("error:")
+    assert "512" in captured.err
+    assert not png.exists()
+    assert not uv_path.exists()
+    assert not out_dir.exists()
+
+
+@pytest.mark.parametrize("padding_px", [0, 2, 6])
+def test_rejects_padding_below_8(atlas, tmp_path, capsys, padding_px):
+    list_path = _two_solids(tmp_path / "list.json", padding_px=padding_px)
+    out_dir = tmp_path / "missing"
+    png = out_dir / "atlas.png"
+    uv_path = out_dir / "atlas.json"
+    code = atlas.main([str(list_path), "--out-png", str(png), "--out-json", str(uv_path)])
+    captured = capsys.readouterr()
+    assert code == 2
+    assert captured.err.startswith("error:")
+    assert ">= 8" in captured.err
+    assert not png.exists()
+    assert not uv_path.exists()
+    assert not out_dir.exists()
+
+
+@pytest.mark.parametrize("extra", [{}, {"atlas_size": 512, "padding_px": 8}])
+def test_default_and_explicit_512_succeed(atlas, tmp_path, extra):
+    list_path = _two_solids(tmp_path / "list.json", **extra)
+    png = tmp_path / "atlas.png"
+    uv_path = tmp_path / "atlas.json"
+    code = atlas.main([str(list_path), "--out-png", str(png), "--out-json", str(uv_path)])
+    assert code == 0
+    raw = png.read_bytes()
+    assert raw.startswith(b"\x89PNG")
+    image = Image.open(png)
+    assert image.mode == "RGB"
+    assert image.size == (512, 512)
+    data = json.loads(uv_path.read_text(encoding="utf-8"))
+    assert data["atlas_size"] == 512
+    assert data["padding_px"] == 8
+    assert set(data["materials"]) == {"red", "blue"}
+
+
+@pytest.mark.parametrize("force", [False, True])
+def test_same_output_path_is_rejected(atlas, tmp_path, capsys, force):
+    list_path = _two_solids(tmp_path / "list.json")
+    target = tmp_path / "same.png"
+    argv = [str(list_path), "--out-png", str(target), "--out-json", str(target)]
+    if force:
+        argv.append("--force")
+    code = atlas.main(argv)
+    captured = capsys.readouterr()
+    assert code == 2
+    assert captured.err.startswith("error:")
+    assert not target.exists()
+
+
+def test_normalised_output_alias_is_rejected(atlas, tmp_path, capsys):
+    list_path = _two_solids(tmp_path / "list.json")
+    png = tmp_path / "x" / ".." / "atlas.png"
+    uv_path = tmp_path / "atlas.png"
+    code = atlas.main([str(list_path), "--out-png", str(png), "--out-json", str(uv_path)])
+    captured = capsys.readouterr()
+    assert code == 2
+    assert captured.err.startswith("error:")
+    assert not uv_path.exists()
+    assert not (tmp_path / "x").exists()
+
+
+@pytest.mark.skipif(os.name != "nt", reason="case-only aliases are Windows paths")
+def test_windows_case_alias_is_rejected(atlas, tmp_path, capsys):
+    list_path = _two_solids(tmp_path / "list.json")
+    png = tmp_path / "Atlas.PNG"
+    uv_path = tmp_path / "atlas.png"
+    code = atlas.main([str(list_path), "--out-png", str(png), "--out-json", str(uv_path)])
+    captured = capsys.readouterr()
+    assert code == 2
+    assert captured.err.startswith("error:")
+    assert not png.exists()
+    assert not uv_path.exists()
+
+
+@pytest.mark.parametrize("force", [False, True])
+def test_output_equals_material_list(atlas, tmp_path, capsys, force):
+    list_path = _two_solids(tmp_path / "list.json")
+    before = list_path.read_bytes()
+    mtime = list_path.stat().st_mtime_ns
+    other = tmp_path / "missing" / "atlas.png"
+    argv = [str(list_path), "--out-png", str(other), "--out-json", str(list_path)]
+    if force:
+        argv.append("--force")
+    code = atlas.main(argv)
+    captured = capsys.readouterr()
+    assert code == 2
+    assert captured.err.startswith("error:")
+    assert list_path.read_bytes() == before
+    assert list_path.stat().st_mtime_ns == mtime
+    assert not other.exists()
+    assert not other.parent.exists()
+
+
+def test_output_equals_source_texture(atlas, fifteen_list, tmp_path, capsys):
+    texture = fifteen_list.parent / "paving.png"
+    before = texture.read_bytes()
+    mtime = texture.stat().st_mtime_ns
+    other = tmp_path / "missing" / "atlas.json"
+    code = atlas.main([
+        str(fifteen_list),
+        "--out-png", str(texture),
+        "--out-json", str(other),
+        "--force",
+    ])
+    captured = capsys.readouterr()
+    assert code == 2
+    assert captured.err.startswith("error:")
+    assert "paving" in captured.err
+    assert texture.read_bytes() == before
+    assert texture.stat().st_mtime_ns == mtime
+    assert not other.exists()
+    assert not other.parent.exists()
+
+
+def test_force_replaces_distinct_outputs(atlas, tmp_path):
+    list_path = _two_solids(tmp_path / "list.json")
+    png = tmp_path / "atlas.png"
+    uv_path = tmp_path / "atlas.json"
+    png.write_bytes(b"old-png")
+    uv_path.write_text("old-json", encoding="utf-8")
+    code = atlas.main([
+        str(list_path), "--out-png", str(png), "--out-json", str(uv_path), "--force",
+    ])
+    assert code == 0
+    assert png.read_bytes().startswith(b"\x89PNG")
+    image = Image.open(png)
+    assert image.mode == "RGB"
+    assert image.size == (512, 512)
+    data = json.loads(uv_path.read_text(encoding="utf-8"))
+    assert data["atlas_size"] == 512
+    assert set(data["materials"]) == {"red", "blue"}
+
+
+def test_pack_shrink_and_layout_rejections(atlas, fifteen_list, tmp_path):
+    png = tmp_path / "atlas.png"
+    uv_path = tmp_path / "atlas.json"
+    assert atlas.main([str(fifteen_list), "--out-png", str(png), "--out-json", str(uv_path)]) == 0
+    data = json.loads(uv_path.read_text(encoding="utf-8"))
+    entries = list(data["materials"].values())
+    assert data["padding_px"] >= 8
+    for index, left in enumerate(entries):
+        for right in entries[index + 1:]:
+            assert not _positive_overlap(left["uv"], right["uv"])
+            assert _separated(left["content_px"], right["content_px"], 8)
+
+    solids = [
+        {"name": f"s{index:02d}", "kind": "solid", "color": "#112233", "size": 128}
+        for index in range(17)
+    ]
+    crowded = _write_list(tmp_path / "crowded.json", solids)
+    with pytest.raises(atlas.AtlasDoesNotFit) as crowded_caught:
+        loaded, atlas_size, padding_px = atlas.load_material_list(crowded)
+        atlas.plan_atlas(loaded, atlas_size, padding_px)
+    crowded_message = str(crowded_caught.value)
+    assert "does not fit" in crowded_message
+    assert "shrink" in crowded_message
+
+    payload = json.loads(fifteen_list.read_text(encoding="utf-8"))
+    payload["atlas_size"] = 1024
+    wide = tmp_path / "wide.json"
+    wide.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(atlas.AtlasError) as wide_caught:
+        loaded, atlas_size, padding_px = atlas.load_material_list(wide)
+        atlas.plan_atlas(loaded, atlas_size, padding_px)
+    assert type(wide_caught.value) is atlas.AtlasError
+    assert "512" in str(wide_caught.value)
+
+    payload["atlas_size"] = 512
+    payload["padding_px"] = 2
+    tight = tmp_path / "tight.json"
+    tight.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(atlas.AtlasError) as tight_caught:
+        loaded, atlas_size, padding_px = atlas.load_material_list(tight)
+        atlas.plan_atlas(loaded, atlas_size, padding_px)
+    assert type(tight_caught.value) is atlas.AtlasError
+    assert ">= 8" in str(tight_caught.value)
+
+
+def test_build_atlas_rejects_identical_outputs(atlas, tmp_path):
+    list_path = _two_solids(tmp_path / "list.json")
+    target = tmp_path / "absent" / "same.png"
+    with pytest.raises(atlas.AtlasError):
+        atlas.build_atlas(list_path, target, target)
+    assert not target.exists()
+    assert not target.parent.exists()
 
 
 def _positive_overlap(left: list[float], right: list[float]) -> bool:
