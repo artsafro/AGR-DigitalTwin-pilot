@@ -14,6 +14,10 @@ ROOT = Path(__file__).resolve().parents[1]
 CAPABILITIES = ROOT / "docs" / "agents" / "CAPABILITIES.md"
 WORKFLOW = ROOT / "docs" / "agents" / "WORKFLOW.md"
 HEADER = ["Component", "Kind", "Failure it prevents", "Evidence it happened", "Last verified", "Eval"]
+PROCEDURAL_ONLY = (
+    ".claude/hooks/guard.py", "SHELL_RULES", "PRODUCTION_EXT", "ALLOWED_WRITE_ROOTS",
+    "permissions.ask", ".claude/hooks/subagents.py guard", ".claude/hooks/subagents.py deny-geometry",
+)
 SCRIPT = re.compile(r"""["']?\$CLAUDE_PROJECT_DIR/((?:\.claude|tools)/[\w./-]+\.py)["']?((?:\s+[\w-]+)*)\s*$""")
 
 
@@ -121,8 +125,36 @@ def test_documentation_correction_keeps_all_guard_inventory_rows_and_hook():
     rows = inventory_rows()
     for component in (".claude/hooks/guard.py", "SHELL_RULES", "PRODUCTION_EXT", "ALLOWED_WRITE_ROOTS"):
         assert component in rows
-        assert rows[component][5] == "`no-hook-denial`"
+        assert rows[component][5] == "none"
     assert ".claude/hooks/guard.py" in settings_hooks()
+
+
+@pytest.mark.parametrize("component", (*PROCEDURAL_ONLY, "tools/hooks/skill_gate.py"))
+def test_no_hook_denial_is_only_an_indirect_procedural_signal(component):
+    """Exhaustively probe every protection previously mapped to no-hook-denial."""
+    cells = inventory_rows()[component]
+    assert cells[5] == "none"
+    text = CAPABILITIES.read_text(encoding="utf-8")
+    indirect = text.split("**Indirect procedural signals**", 1)[1].split("Removal candidates", 1)[0]
+    assert f"`{component}`" in indirect
+    assert "`no-hook-denial`" in indirect
+
+
+def test_no_inventory_behavior_eval_uses_no_hook_denial():
+    """Probe all rows, including future additions: procedural evidence is not behavior coverage."""
+    for component, cells in inventory_rows().items():
+        assert "`no-hook-denial`" not in cells[5], component
+
+
+def test_procedural_mapping_cannot_justify_guard_removal():
+    text = CAPABILITIES.read_text(encoding="utf-8")
+    body = text.split("### Harness inventory\n", 1)[1].split("### Rule-layer size", 1)[0]
+    for phrase in (
+        "not component behavior coverage", "accepted calls", "non-blocking hook failures",
+        "fail-open guard can pass", "must not be used alone", "removal decisions",
+        "No guard deletion is authorized",
+    ):
+        assert phrase in body, phrase
 
 
 def test_rule_layer_size_and_threshold_recorded():
