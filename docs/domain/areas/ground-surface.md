@@ -36,7 +36,7 @@ and [`scene_findings`](../../../src/twinqa/scene.py).
 
 ## Project practice
 
-Project practice from the user's Ground grilling (Artem, 2026-10-15, rounds 1-3). **This is project practice, not regulation**; it does not override the table.
+Project practice from Artem's Ground grilling, rounds 1-3 (notes: hermes_kanban docs/grill/ground-2026-10-15.md). **This is project practice, not regulation**; it does not override the table.
 
 - Source: the SPOZU DWG. Take the coverings sheet (or model space), hide everything else; needed: coverings, plant planting points, MAF placement points, plant and MAF specifications. Hatches -> contours (take existing contours); export contours per covering type, one DWG each.
 - Boundary: the Ground boundary is the designed-plot boundary, an AutoCAD layer named like «граница проектируемого участка» / «граница ГП» (feeds GND-01).
