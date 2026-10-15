@@ -1,0 +1,1082 @@
+[
+  {
+    "bench": "bench-b01-box",
+    "operation": "engine_vs_etalon",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.2
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 948.6831171035369,
+    "symmetric_sampled_surface_max_mm": 0.0003781171332000097
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 0,
+    "format": "fbx",
+    "operation": "native_vs_engine",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.0003781171332000097,
+    "symmetric_sampled_surface_max_mm": 0.0003781171332000097
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 0,
+    "format": "fbx",
+    "operation": "offline_vs_engine",
+    "seconds": [
+      0.0012198999975225888,
+      0.0011979000046267174,
+      0.0010670999981812201
+    ],
+    "median_seconds": 0.0011979000046267174,
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.0003781171332000097,
+    "symmetric_sampled_surface_max_mm": 0.0003781171332000097
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 0,
+    "format": "fbx",
+    "operation": "native_vs_etalon",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.0,
+    "symmetric_vertex_max_mm": 948.6832226559661,
+    "symmetric_sampled_surface_max_mm": 0.0
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 0,
+    "format": "obj",
+    "operation": "native_vs_engine",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.0003781171332000097,
+    "symmetric_sampled_surface_max_mm": 0.0003781171332000097
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 0,
+    "format": "obj",
+    "operation": "offline_vs_engine",
+    "seconds": [
+      0.0007142999966163188,
+      0.0005907000013394281,
+      0.0005551000067498535
+    ],
+    "median_seconds": 0.0005907000013394281,
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        -10.0
+      ],
+      [
+        10.0,
+        7.2,
+        0.0
+      ]
+    ],
+    "bbox_max_mm": 10000.0,
+    "symmetric_vertex_max_mm": 10885.311203635842,
+    "symmetric_sampled_surface_max_mm": 10938.667398017204
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 0,
+    "format": "obj",
+    "operation": "offline_yup_to_zup_vs_engine",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.2
+      ]
+    ],
+    "bbox_max_mm": 0.0,
+    "symmetric_vertex_max_mm": 1.7763568394002505e-12,
+    "symmetric_sampled_surface_max_mm": 1.7763568394002505e-12
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 0,
+    "format": "obj",
+    "operation": "native_vs_etalon",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.0,
+    "symmetric_vertex_max_mm": 948.6832226559661,
+    "symmetric_sampled_surface_max_mm": 0.0
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 1,
+    "format": "fbx",
+    "operation": "native_vs_engine",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.0003781171332000097,
+    "symmetric_sampled_surface_max_mm": 0.0003781171332000097
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 1,
+    "format": "fbx",
+    "operation": "offline_vs_engine",
+    "seconds": [
+      0.001234100003784988,
+      0.0011511000047903508,
+      0.001066900003934279
+    ],
+    "median_seconds": 0.0011511000047903508,
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.0003781171332000097,
+    "symmetric_sampled_surface_max_mm": 0.0003781171332000097
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 1,
+    "format": "fbx",
+    "operation": "native_vs_etalon",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.0,
+    "symmetric_vertex_max_mm": 948.6832226559661,
+    "symmetric_sampled_surface_max_mm": 0.0
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 1,
+    "format": "obj",
+    "operation": "native_vs_engine",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.0003781171332000097,
+    "symmetric_sampled_surface_max_mm": 0.0003781171332000097
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 1,
+    "format": "obj",
+    "operation": "offline_vs_engine",
+    "seconds": [
+      0.0012331000034464523,
+      0.0008191000015358441,
+      0.0006608000039705075
+    ],
+    "median_seconds": 0.0008191000015358441,
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        -10.0
+      ],
+      [
+        10.0,
+        7.2,
+        0.0
+      ]
+    ],
+    "bbox_max_mm": 10000.0,
+    "symmetric_vertex_max_mm": 10885.311203635842,
+    "symmetric_sampled_surface_max_mm": 10938.667398017204
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 1,
+    "format": "obj",
+    "operation": "offline_yup_to_zup_vs_engine",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.2
+      ]
+    ],
+    "bbox_max_mm": 0.0,
+    "symmetric_vertex_max_mm": 1.7763568394002505e-12,
+    "symmetric_sampled_surface_max_mm": 1.7763568394002505e-12
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 1,
+    "format": "obj",
+    "operation": "native_vs_etalon",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.0,
+    "symmetric_vertex_max_mm": 948.6832226559661,
+    "symmetric_sampled_surface_max_mm": 0.0
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 2,
+    "format": "fbx",
+    "operation": "native_vs_engine",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.0003781171332000097,
+    "symmetric_sampled_surface_max_mm": 0.0003781171332000097
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 2,
+    "format": "fbx",
+    "operation": "offline_vs_engine",
+    "seconds": [
+      0.001320099996519275,
+      0.0011763000002247281,
+      0.0010825000063050538
+    ],
+    "median_seconds": 0.0011763000002247281,
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.0003781171332000097,
+    "symmetric_sampled_surface_max_mm": 0.0003781171332000097
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 2,
+    "format": "fbx",
+    "operation": "native_vs_etalon",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.0,
+    "symmetric_vertex_max_mm": 948.6832226559661,
+    "symmetric_sampled_surface_max_mm": 0.0
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 2,
+    "format": "obj",
+    "operation": "native_vs_engine",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.0003781171332000097,
+    "symmetric_sampled_surface_max_mm": 0.0003781171332000097
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 2,
+    "format": "obj",
+    "operation": "offline_vs_engine",
+    "seconds": [
+      0.0006815000015194528,
+      0.0005801000006613322,
+      0.000564200003282167
+    ],
+    "median_seconds": 0.0005801000006613322,
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        -10.0
+      ],
+      [
+        10.0,
+        7.2,
+        0.0
+      ]
+    ],
+    "bbox_max_mm": 10000.0,
+    "symmetric_vertex_max_mm": 10885.311203635842,
+    "symmetric_sampled_surface_max_mm": 10938.667398017204
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 2,
+    "format": "obj",
+    "operation": "offline_yup_to_zup_vs_engine",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.2
+      ]
+    ],
+    "bbox_max_mm": 0.0,
+    "symmetric_vertex_max_mm": 1.7763568394002505e-12,
+    "symmetric_sampled_surface_max_mm": 1.7763568394002505e-12
+  },
+  {
+    "bench": "bench-b01-box",
+    "rep": 2,
+    "format": "obj",
+    "operation": "native_vs_etalon",
+    "vertices": 156,
+    "triangles": 282,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        10.0,
+        10.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.0,
+    "symmetric_vertex_max_mm": 948.6832226559661,
+    "symmetric_sampled_surface_max_mm": 0.0
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "operation": "engine_vs_etalon",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.2
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 3971.460501159252,
+    "symmetric_sampled_surface_max_mm": 0.32054611291107243
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 0,
+    "format": "fbx",
+    "operation": "native_vs_engine",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.00044089577298543945,
+    "symmetric_sampled_surface_max_mm": 0.0002961012155496747
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 0,
+    "format": "fbx",
+    "operation": "offline_vs_engine",
+    "seconds": [
+      0.001968799995665904,
+      0.0019809000004897825,
+      0.001319900002272334
+    ],
+    "median_seconds": 0.001968799995665904,
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.00044089577298543945,
+    "symmetric_sampled_surface_max_mm": 0.0002961012155496747
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 0,
+    "format": "fbx",
+    "operation": "native_vs_etalon",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00017881393432617188,
+    "symmetric_vertex_max_mm": 3971.460313856388,
+    "symmetric_sampled_surface_max_mm": 0.32065322347150627
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 0,
+    "format": "obj",
+    "operation": "native_vs_engine",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.06113703125977539,
+    "symmetric_sampled_surface_max_mm": 0.04492555034369125
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 0,
+    "format": "obj",
+    "operation": "offline_vs_engine",
+    "seconds": [
+      0.002118299998983275,
+      0.001642799994442612,
+      0.0021396000011009164
+    ],
+    "median_seconds": 0.002118299998983275,
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        -9.0
+      ],
+      [
+        12.0,
+        7.2,
+        0.0
+      ]
+    ],
+    "bbox_max_mm": 9000.0,
+    "symmetric_vertex_max_mm": 9780.081799248921,
+    "symmetric_sampled_surface_max_mm": 9974.467404327912
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 0,
+    "format": "obj",
+    "operation": "offline_yup_to_zup_vs_engine",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.2
+      ]
+    ],
+    "bbox_max_mm": 0.0,
+    "symmetric_vertex_max_mm": 0.06137263552094667,
+    "symmetric_sampled_surface_max_mm": 0.04530362436415488
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 0,
+    "format": "obj",
+    "operation": "native_vs_etalon",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00017881393432617188,
+    "symmetric_vertex_max_mm": 3971.460313856388,
+    "symmetric_sampled_surface_max_mm": 0.3581967058842029
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 1,
+    "format": "fbx",
+    "operation": "native_vs_engine",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.00044089577298543945,
+    "symmetric_sampled_surface_max_mm": 0.0002961012155496747
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 1,
+    "format": "fbx",
+    "operation": "offline_vs_engine",
+    "seconds": [
+      0.002495900000212714,
+      0.0022906000012881123,
+      0.002233300001535099
+    ],
+    "median_seconds": 0.0022906000012881123,
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.00044089577298543945,
+    "symmetric_sampled_surface_max_mm": 0.0002961012155496747
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 1,
+    "format": "fbx",
+    "operation": "native_vs_etalon",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00017881393432617188,
+    "symmetric_vertex_max_mm": 3971.460313856388,
+    "symmetric_sampled_surface_max_mm": 0.32065322347150627
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 1,
+    "format": "obj",
+    "operation": "native_vs_engine",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.06113703125977539,
+    "symmetric_sampled_surface_max_mm": 0.04492555034369125
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 1,
+    "format": "obj",
+    "operation": "offline_vs_engine",
+    "seconds": [
+      0.0015933000031509437,
+      0.0018588000020827167,
+      0.0015927000058582053
+    ],
+    "median_seconds": 0.0015933000031509437,
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        -9.0
+      ],
+      [
+        12.0,
+        7.2,
+        0.0
+      ]
+    ],
+    "bbox_max_mm": 9000.0,
+    "symmetric_vertex_max_mm": 9780.081799248921,
+    "symmetric_sampled_surface_max_mm": 9974.467404327912
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 1,
+    "format": "obj",
+    "operation": "offline_yup_to_zup_vs_engine",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.2
+      ]
+    ],
+    "bbox_max_mm": 0.0,
+    "symmetric_vertex_max_mm": 0.06137263552094667,
+    "symmetric_sampled_surface_max_mm": 0.04530362436415488
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 1,
+    "format": "obj",
+    "operation": "native_vs_etalon",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00017881393432617188,
+    "symmetric_vertex_max_mm": 3971.460313856388,
+    "symmetric_sampled_surface_max_mm": 0.3581967058842029
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 2,
+    "format": "fbx",
+    "operation": "native_vs_engine",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.00044089577298543945,
+    "symmetric_sampled_surface_max_mm": 0.0002961012155496747
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 2,
+    "format": "fbx",
+    "operation": "offline_vs_engine",
+    "seconds": [
+      0.002230799997050781,
+      0.0014343000002554618,
+      0.0012606000018422492
+    ],
+    "median_seconds": 0.0014343000002554618,
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.00044089577298543945,
+    "symmetric_sampled_surface_max_mm": 0.0002961012155496747
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 2,
+    "format": "fbx",
+    "operation": "native_vs_etalon",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00017881393432617188,
+    "symmetric_vertex_max_mm": 3971.460313856388,
+    "symmetric_sampled_surface_max_mm": 0.32065322347150627
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 2,
+    "format": "obj",
+    "operation": "native_vs_engine",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00019073486345888568,
+    "symmetric_vertex_max_mm": 0.06113703125977539,
+    "symmetric_sampled_surface_max_mm": 0.04492555034369125
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 2,
+    "format": "obj",
+    "operation": "offline_vs_engine",
+    "seconds": [
+      0.0011478000014903955,
+      0.0016012000050977804,
+      0.0009284999978262931
+    ],
+    "median_seconds": 0.0011478000014903955,
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        -9.0
+      ],
+      [
+        12.0,
+        7.2,
+        0.0
+      ]
+    ],
+    "bbox_max_mm": 9000.0,
+    "symmetric_vertex_max_mm": 9780.081799248921,
+    "symmetric_sampled_surface_max_mm": 9974.467404327912
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 2,
+    "format": "obj",
+    "operation": "offline_yup_to_zup_vs_engine",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.2
+      ]
+    ],
+    "bbox_max_mm": 0.0,
+    "symmetric_vertex_max_mm": 0.06137263552094667,
+    "symmetric_sampled_surface_max_mm": 0.04530362436415488
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "rep": 2,
+    "format": "obj",
+    "operation": "native_vs_etalon",
+    "vertices": 263,
+    "triangles": 472,
+    "bbox": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        12.0,
+        9.0,
+        7.199999809265137
+      ]
+    ],
+    "bbox_max_mm": 0.00017881393432617188,
+    "symmetric_vertex_max_mm": 3971.460313856388,
+    "symmetric_sampled_surface_max_mm": 0.3581967058842029
+  }
+]
