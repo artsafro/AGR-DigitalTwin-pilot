@@ -161,6 +161,47 @@ def test_snapshot_repeat_refused_before_any_call(run_snapshot, tmp_path):
     assert (out / "hashes.json").read_text(encoding="utf-8") == "{\"old\": true}"
 
 
+def test_snapshot_published_iff_every_element_has_mesh(monkeypatch, tmp_path):
+    """Generated probe: 300 random element sequences (valid mesh / bbox-only / call error / malformed mesh,
+    0-6 elements, with or without levels). A snapshot (hashes.json) is published iff the listing is non-empty,
+    levels exist and every answer is a valid mesh; otherwise exit 2, blocked.json and no snapshot file."""
+    import random
+    rnd = random.Random(118)
+    kinds = ["mesh", "mesh", "bbox", "error", "malformed"]
+    monkeypatch.setattr(sr, "CATEGORIES", ["OST_Walls"])
+    checked = 0
+    for k in range(300):
+        seq = [rnd.choice(kinds) for _ in range(rnd.randint(0, 6))]
+        has_levels = rnd.random() > 0.1
+        geo = {}
+        for i, kind in enumerate(seq, 1):
+            m = mesh_ft([i, 0, 0], [i + 1, 1, 1])
+            if kind == "malformed":
+                m["triangles"][3] = [0, 1]
+            geo[i] = ({"mesh": m} if kind in ("mesh", "malformed") else
+                      {"boundingBox": bbox_ft([i, 0, 0], [i + 1, 1, 1])} if kind == "bbox" else
+                      RuntimeError("SYNTHETIC"))
+        fake = FakeRevit(geo, levels=None if has_levels else [])
+        out = tmp_path / f"s{k}"
+        monkeypatch.setattr(sr, "listing", lambda cat, ids=list(geo): [{"id": i} for i in ids])
+        monkeypatch.setattr(sr, "call", fake.call)
+        monkeypatch.setattr(sys, "argv", ["snapshot_revit.py", "--out", str(out)])
+        expect = bool(seq) and has_levels and all(s == "mesh" for s in seq)
+        if expect:
+            sr.main()
+            h = json.loads((out / "hashes.json").read_text(encoding="utf-8"))
+            assert h["counts"] == {"OST_Walls": len(seq)} and not (out / "blocked.json").exists()
+        else:
+            with pytest.raises(SystemExit) as e:
+                sr.main()
+            assert e.value.code == 2
+            assert not any((out / n).exists() for n in ("hashes.json", "snapshot_dump.json", "elements.json"))
+            assert (out / "blocked.json").exists()
+        assert not out.with_name(out.name + ".partial").exists()
+        checked += 1
+    assert checked == 300
+
+
 def fake_out(excinfo) -> Path:
     """The --out of the run (sys.argv is still patched inside the test)."""
     return Path(sys.argv[sys.argv.index("--out") + 1])
