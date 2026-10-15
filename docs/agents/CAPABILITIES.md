@@ -164,10 +164,10 @@ or an eval id is no task.
 
 | Component | Kind | Failure it prevents | Evidence it happened | Last verified | Eval |
 |---|---|---|---|---|---|
-| `.claude/hooks/guard.py` | PreToolUse hook (Bash, PowerShell, Write, Edit, NotebookEdit), "ask" | a destructive, outward or asset-corrupting action without the user's word | PR #142: the guard stopped a Write into another worktree (real handover transcript) | 2026-10-15 live (PR #142 transcript); no pytest of its own | `no-hook-denial` |
+| `.claude/hooks/guard.py` | PreToolUse hook (Bash, PowerShell, Write, Edit, NotebookEdit), "ask" | a destructive, outward or asset-corrupting action without the user's word | [Upstream PR #142](https://github.com/artsafro/AGR-DigitalTwin/pull/142): foreign-worktree Write refused by the app isolation hook, not project-guard evidence | never (component-specific verification unknown) | `no-hook-denial` |
 | guard rule set `SHELL_RULES` | guard rule set | push, `reset --hard`, `clean`, forced branch delete, discarded changes, history rewrite, LFS migrate, deletes of sources or production assets, recursive delete, installs, system changes | none (precaution, carried over from DigitalTwinProject) | never (no test) | `no-hook-denial` |
 | guard rule set `PRODUCTION_EXT` | guard rule set (Write, Edit) | a text write over a production asset (`.fbx`, `.max`, `.blend`, `.png`, ...) | none (precaution) | never (no test) | `no-hook-denial` |
-| guard rule set `ALLOWED_WRITE_ROOTS` | guard rule set (Write, Edit) | a write outside the project and the allowed folders, e.g. into another worktree | PR #142 (see the guard row) | 2026-10-15 live (PR #142 transcript) | `no-hook-denial` |
+| guard rule set `ALLOWED_WRITE_ROOTS` | guard rule set (Write, Edit) | a write outside the project and the allowed folders, e.g. into another worktree | Upstream PR #142: app isolation hook (see guard row), not project-guard evidence | never (component-specific verification unknown) | `no-hook-denial` |
 | `permissions.allow` | `.claude/settings.json` list | a routine read-only git, test or `dt` call stops the session for a confirmation | none (convenience) | never (no test) | none |
 | `permissions.ask` | `.claude/settings.json` list | push, `reset --hard`, `clean`, `branch -D` without the user's word (duplicates `SHELL_RULES`) | none (precaution) | never (no test) | `no-hook-denial` |
 | `permissions.deny` | `.claude/settings.json` list | secrets in `.env` read into the context | none (precaution) | never (no test) | none |
@@ -211,7 +211,8 @@ Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `per
   no BM25. Retrieval tooling is reconsidered only when a measurement passes 200k.
 
 ### Guard hook — `.claude/hooks/guard.py`
-- Claude Code: WORKING (PreToolUse in `.claude/settings.json`).
+- Claude Code: CONFIGURED (PreToolUse in `.claude/settings.json`); component-specific runtime verification unknown. Upstream PR #142 verifies the app isolation hook, not this project hook.
+- `tests/test_guard_permissions.py` exercises shell permission decisions in a subprocess, not live hook wiring or the `ALLOWED_WRITE_ROOTS` file boundary. Keep the configured protections; runtime verification needs a run attributable to this component.
 - Antigravity: CONFIGURED (`.agents/hooks.json` → `guard.cmd`; Antigravity-side run not validated).
 - Codex: CONFIGURED (`.codex/hooks.json`; payload and "ask" support not validated — backlog H1).
 
@@ -250,7 +251,7 @@ Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `per
   `{branch_slug}`), `--evidence name=path` for one task, `--references` checks graders against known verdicts.
 - Tasks: `no-hook-denial` (regression): every transcript of the branch, a hook denial = `permissionDecision`
   `{source: hook, decision: reject}` (or a `PreToolUse:<tool> hook error:` tool_result); synthetic references.
-  Run on this branch's real handover transcript: 1 denial found (a Write into another worktree).
+  Run on this branch's real handover transcript: 1 denial found (a Write into another worktree refused by the app isolation hook, per upstream PR #142; not verification of the project guard).
 - Tests: `tests/test_evals.py`.
 
 ### Skills sync — `tools/sync_skills.py`
