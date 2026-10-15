@@ -19,7 +19,7 @@ source (PR, issue or `chat`). Put `[D<n>]` next to the decision in that file. Su
 | D007 | 2026-10-07 | PSU275 target profile: NPM and VPM | `docs/sources/psu275.md` | chat |
 | D008 | 2026-10-07 | PSU275 geometry reference is Revit only; missing parts from the FBX | `docs/sources/psu275.md` | chat |
 | D009 | 2026-10-07 | PSU275: work in the detached Revit 2025 copy; absolute mark from drawings, no MSK-77 yet; first-floor bounds by Claude | `docs/sources/psu275.md` | chat |
-| D010 | 2026-10-07 | C1: the VPM triangle table is the hard limit; project target <= 150 000 triangles per OKS FBX in VPM as in NPM | `docs/domain/conflicts.md` #1, `docs/domain/npm-vpm.md` | chat |
+| D010 | 2026-10-07 | C1: the VPM triangle table is the hard limit; project target <= 150 000 triangles per OKS FBX in VPM as in NPM. Clarified 2026-10-15 (#141): 150 000 is the budget of the one mid-poly master per OKS FBX from which NPM and VPM are derived | `docs/domain/conflicts.md` #1, `docs/domain/npm-vpm.md`, `docs/domain/areas/body.md` BODY-G | chat |
 | D011 | 2026-10-07 | C2: GeoJSON as the checker - OKS `FNO_code` mandatory, `act_AGR` may be empty, never invent | `docs/domain/conflicts.md` #2 | chat |
 | D012 | 2026-10-07 | C3: UCX budget by the checker formula (< 50 000 -> 15 000, else min(ceil 5 %, 100 000)) | `docs/domain/conflicts.md` #3, `docs/domain/validation.md` | chat |
 | D013 | 2026-10-07 | C5: NPM placeholders 128x128 (Metallic/Roughness only), VPM 256x256 | `docs/domain/conflicts.md` #5 | chat |
