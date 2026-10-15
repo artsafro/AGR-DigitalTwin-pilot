@@ -220,6 +220,18 @@ def test_corner_pilaster_orientation_and_defect_probe(wall, at_end):
         assert _check(broken, sp.weld_m)["status"] == "fail", (wall, at_end, defect)
 
 
+@pytest.mark.parametrize("elevated, sloped", [(False, False), (True, False), (False, True)])
+def test_ground_cap_exception_does_not_hide_elevated_or_sloped_back_faces(elevated, sloped):
+    # A remote box sets the scene minimum without occluding this isolated downward face.
+    floor = -3.25
+    z = floor + (0.01 if elevated else 0.0)
+    face = {"name": "cap", "vertices": [[0, 0, z], [0, 1, z], [1, 0, z + (0.01 if sloped else 0.0)]],
+            "triangles": [[0, 1, 2]]}
+    dump = {"meshes": [_box("body", shift=(10, 10, floor)), face]}
+    row = _row(_check(dump), "cap")
+    assert (row["outside_back_faces"] > 0) == (elevated or sloped)
+
+
 def test_b01_one_flipped_triangle_fails_winding():
     spec, dump, tol = _built("bench-b01-box")
     body = dump["meshes"][0]
