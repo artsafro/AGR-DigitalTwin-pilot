@@ -94,6 +94,31 @@ def test_a_failed_skill_call_does_not_load_the_skill(tmp_path):
     assert (row["measured"], row["passed"]) == (1, False)
 
 
+def test_a_skill_call_with_no_result_does_not_prove_the_load(tmp_path):
+    records = [user("inspect the open scene"), assistant(call("Skill", {"skill": "blender-mcp"}, id="s")),
+               assistant(call("mcp__blender-lab__get_scene_info", {}, id="d1")), result("d1", "{}")]
+    row = dcc_skill_loaded({"transcript": [write_jsonl(tmp_path / "t.jsonl", records)]})
+    assert row["passed"] is None and row["measured"] == "not measured"
+    assert "Skill blender-mcp has no result: load not proven" in row["error"]
+
+
+def test_a_dcc_call_before_an_unresolved_skill_is_still_a_violation(tmp_path):
+    records = [user("inspect the open scene"),
+               assistant(call("mcp__blender-lab__get_scene_info", {}, id="d1")), result("d1", "{}"),
+               assistant(call("Skill", {"skill": "blender-mcp"}, id="s")),
+               assistant(call("mcp__blender-lab__get_scene_info", {}, id="d2")), result("d2", "{}")]
+    row = dcc_skill_loaded({"transcript": [write_jsonl(tmp_path / "t.jsonl", records)]})
+    assert (row["measured"], row["passed"]) == (1, False)
+    assert row["details"][0]["record"] == 1
+
+
+def test_a_successful_skill_result_before_the_dcc_call_passes(tmp_path):
+    records = [user("inspect the open scene"), assistant(call("Skill", {"skill": "blender-mcp"}, id="s")),
+               result("s", "Launching skill"),
+               assistant(call("mcp__blender-lab__get_scene_info", {}, id="d1")), result("d1", "{}")]
+    assert dcc_skill_loaded({"transcript": [write_jsonl(tmp_path / "t.jsonl", records)]})["passed"] is True
+
+
 def test_a_sidechain_dcc_call_is_not_gated(tmp_path):
     records = [user("inspect the open scene"),
                {"type": "assistant", "isSidechain": True,
@@ -200,6 +225,60 @@ def test_an_inspection_in_another_session_of_the_task_counts(tmp_path):
     assert source_inspected({"transcript": [first, second]})["passed"] is True
 
 
+def _inspect_then_read(tmp_path, name, prompt, file_path):
+    records = [user("inventory the source"),
+               assistant(call("Task", {"subagent_type": "source-inspector", "prompt": prompt}, id="i")),
+               result("i", "412 objects"),
+               assistant(call("Read", {"file_path": file_path}, id="r")), result("r", "binary")]
+    return source_inspected({"transcript": [write_jsonl(tmp_path / name, records)]})
+
+
+def test_the_same_basename_under_another_directory_is_not_the_inspected_source(tmp_path):
+    row = _inspect_then_read(tmp_path, "ab.jsonl", "Inspect data/sources/A/source.max", "data/sources/B/source.max")
+    assert (row["measured"], row["passed"]) == (1, False)
+    assert row["details"][0]["source"] == "source.max" and row["details"][0]["path"].endswith("b/source.max")
+
+
+def test_the_inspected_path_read_back_passes(tmp_path):
+    row = _inspect_then_read(tmp_path, "aa.jsonl", "Inspect data/sources/A/source.max", "data/sources/A/source.max")
+    assert row["passed"] is True
+
+
+def test_a_windows_path_matches_the_inspected_relative_path(tmp_path):
+    row = _inspect_then_read(tmp_path, "win.jsonl", "Inspect data/sources/A/source.max",
+                             "C:\\repo\\data\\sources\\A\\source.max")
+    assert row["passed"] is True
+
+
+def test_a_basename_only_inspection_does_not_cover_a_pathed_source(tmp_path):
+    row = _inspect_then_read(tmp_path, "base.jsonl", "Inspect source.max", "data/sources/B/source.max")
+    assert (row["measured"], row["passed"]) == (1, False)
+    assert row["details"][0]["path"].endswith("b/source.max")
+
+
+def test_a_different_path_read_in_another_session_is_not_the_inspected_source(tmp_path):
+    inspected = write_jsonl(tmp_path / "s1.jsonl", [
+        user("inventory A"),
+        assistant(call("Task", {"subagent_type": "source-inspector", "prompt": "Inspect data/sources/A/source.max"})),
+        result(value="412 objects")])
+    other = write_jsonl(tmp_path / "s2.jsonl", [
+        user("build B"), assistant(call("Read", {"file_path": "data/sources/B/source.max"})), result(value="binary")])
+    same = write_jsonl(tmp_path / "s3.jsonl", [
+        user("build A"), assistant(call("Read", {"file_path": "data/sources/A/source.max"})), result(value="binary")])
+    row = source_inspected({"transcript": [inspected, other]})
+    assert (row["measured"], row["passed"]) == (1, False)
+    assert row["details"][0]["path"].endswith("b/source.max")
+    assert source_inspected({"transcript": [inspected, same]})["passed"] is True
+
+
+def test_two_uninspected_paths_with_the_same_basename_are_two_violations(tmp_path):
+    records = [user("read both"),
+               assistant(call("Read", {"file_path": "data/sources/A/source.max"}, id="a")), result("a", "binary"),
+               assistant(call("Read", {"file_path": "data/sources/B/source.max"}, id="b")), result("b", "binary")]
+    row = source_inspected({"transcript": [write_jsonl(tmp_path / "both.jsonl", records)]})
+    assert (row["measured"], row["passed"]) == (2, False)
+
+
 # --- 4. failure_stop ---------------------------------------------------------------------------------------------
 
 PYTEST_X = "uv run pytest -q tests/test_x.py"
@@ -257,6 +336,33 @@ def test_a_saved_state_json_stop_reopens_every_check(tmp_path):
                 result("e1", "updated"),
                 assistant(call("Bash", {"command": PYTEST_X}, id="t9")), result("t9", "13 passed", False)]
     assert failure_stop({"transcript": [write_jsonl(tmp_path / "t.jsonl", records)]})["passed"] is True
+
+
+STOP_WRITE = call("Write", {"file_path": "jobs/OBJ03/pipeline/state.json",
+                            "content": '{"stops":[{"reason":"failed twice"}]}'}, id="w")
+
+
+def _blocked_then_write(tmp_path, name, write_records):
+    records = attempts((PYTEST_X, "ERROR: same failure", True), (PYTEST_X, "ERROR: same failure", True))
+    records += write_records
+    records += [assistant(call("Bash", {"command": PYTEST_X}, id="t9")), result("t9", "ERROR: same failure", True)]
+    return failure_stop({"transcript": [write_jsonl(tmp_path / name, records)]})
+
+
+def test_a_failed_stop_write_does_not_reopen_the_check(tmp_path):
+    row = _blocked_then_write(tmp_path, "fail.jsonl", [assistant(STOP_WRITE), result("w", "write failed", error=True)])
+    assert (row["measured"], row["passed"]) == (1, False)
+
+
+def test_a_stop_write_with_no_result_is_not_measured(tmp_path):
+    row = _blocked_then_write(tmp_path, "none.jsonl", [assistant(STOP_WRITE)])
+    assert row["passed"] is None and row["measured"] == "not measured"
+    assert "stop record saved with no result: outcome unknown" in row["error"]
+
+
+def test_a_successful_stop_write_reopens_the_check(tmp_path):
+    row = _blocked_then_write(tmp_path, "ok.jsonl", [assistant(STOP_WRITE), result("w", "wrote")])
+    assert row["passed"] is True
 
 
 # --- 5. branch_name ----------------------------------------------------------------------------------------------
@@ -339,6 +445,8 @@ def test_a_decided_implementation_with_an_acceptance_question_passes():
     ("Which algorithm should I use for the hole triangulation, ear clipping or constrained Delaunay?",
      "implementation", None),
     ("Какой формат отчёта писать в PR после прогона?", "implementation", None),
+    ("Which cache algorithm should I use amid retries?", "implementation", None),
+    ("Which cache algorithm fits the padres dataset?", "implementation", None),
     ("Should the script name carry the object code, or only say what it does?", "decision_log", "D005"),
     ("Does the parapet follow the contour of the top level?", "pattern", "parapet"),
 ])
@@ -356,6 +464,8 @@ def test_a_routine_question_is_a_violation(tmp_path, question, category, match):
     ("Переименовать ветку в harness/evals-graders?", "branch_rename"),
     ("How deep is the window inset on the courtyard facade?", "model"),
     ("Какая отметка первого этажа у OBJ03?", "data"),
+    ("Is the MID level enough for this facade?", "model"),
+    ("Do you accept these changes?", "acceptance"),
 ])
 def test_an_allowed_question_is_never_a_violation(tmp_path, question, category):
     row = ask(tmp_path, question)

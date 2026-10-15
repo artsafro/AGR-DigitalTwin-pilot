@@ -6,8 +6,8 @@
 names; measured: the count, with the file, record number, branch and reason of each.
 
 **Why.** An auto-generated worktree branch (`claude/npm-models-school-kpp-ec9ced`) says nothing about the task
-and is renamed before its first commit - the agent proposes one name, the user confirms (user 2026-10-14
-[D078], `docs/agents/NAMING.md`, "Branches"). The pre-commit gate blocks such a commit; this grader shows the
+and is renamed before its first commit - the agent proposes one name, the user confirms
+(user 2026-10-14 [D078], `docs/agents/NAMING.md`, "Branches"). The pre-commit gate blocks such a commit; this grader shows the
 sessions that got past it or ran without it.
 
 **Evidence.** `transcript`: every transcript of the branch kept at `/handover`,

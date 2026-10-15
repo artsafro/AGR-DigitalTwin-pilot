@@ -173,7 +173,7 @@ def _command_of(rec):
 
 def _results(records):
     """`tool_use_id` -> the outcome of that call: `is_error` of the tool_result block, `success` of the record's
-    `toolUseResult` (a Skill call reports it there), and the result text."""
+    `toolUseResult` (a Skill call reports it there), the result text, and `has_result` (review 1 of #123)."""
     out = {}
     for rec in records:
         if rec.get("type") != "user" or rec.get("isSidechain"):
@@ -183,7 +183,7 @@ def _results(records):
             if b.get("type") == "tool_result" and isinstance(b.get("tool_use_id"), str):
                 out[b["tool_use_id"]] = {"is_error": b.get("is_error") is True,
                                          "success": outcome.get("success") if isinstance(outcome, dict) else None,
-                                         "result_text": _text(b.get("content"))}
+                                         "result_text": _text(b.get("content")), "has_result": True}
     return out
 
 
@@ -191,7 +191,8 @@ def events(records):
     """One transcript's main session as an ordered list of events, each with its `record` index:
 
     - `tool_use`: `name`, `input`, `id`, and from the result joined by `tool_use_id` `is_error`, `success`
-      (None when the transcript holds no result) and `result_text`;
+      (None when the transcript holds no result), `result_text`, and `has_result` (review 1 of #123: True only
+      when a tool_result was joined, otherwise False);
     - `text`: one text block of an assistant record;
     - `prompt`: a user record that is not only tool results - a human turn - with the `command` it ran.
 
@@ -207,7 +208,7 @@ def events(records):
                 if b.get("type") == "tool_use":
                     out.append({"kind": "tool_use", "record": n, "id": b.get("id"), "name": b.get("name") or "",
                                 "input": b["input"] if isinstance(b.get("input"), dict) else {},
-                                "is_error": None, "success": None, "result_text": "",
+                                "is_error": None, "success": None, "result_text": "", "has_result": False,
                                 **results.get(b.get("id"), {})})
                 elif b.get("type") == "text":
                     out.append({"kind": "text", "record": n, "text": b.get("text") or ""})
@@ -268,26 +269,40 @@ def dcc_skill_loaded(evidence):
     """Regression grader: every DCC MCP call of the main session had its skill loaded earlier in that session
     (docs/agents/WORKFLOW.md, "Triggers"; the gate is tools/hooks/skill_gate.py).
 
-    A load is a `Skill` call for the skill that did not fail, or the user's `/<skill>` command record. Subagents
-    preload their skills and are not gated, so sidechain records are ignored."""
+    A load is a `Skill` call whose result succeeded (`has_result`, not an error, `success` is not False; review 1
+    of #123), or the user's `/<skill>` command record. A Skill call with no result does not load: a later DCC
+    call for that skill is not measured. Subagents preload their skills and are not gated, so sidechain records
+    are ignored."""
     sessions, problems = _sessions(evidence["transcript"])
     details = []
     for path, records in sessions:
-        loaded = set()
+        loaded, pending = set(), {}
         for ev in events(records):
             if ev["kind"] == "prompt":
-                loaded |= {s for _, s in DCC_SKILLS if _names_skill(ev["command"], s)}
+                named = {s for _, s in DCC_SKILLS if _names_skill(ev["command"], s)}
+                loaded |= named
+                for skill in named:
+                    pending.pop(skill, None)
                 continue
             if ev["kind"] != "tool_use":
                 continue
             if ev["name"] == "Skill":
-                failed = ev["is_error"] is True or ev["success"] is False
-                if not failed:
-                    loaded |= {s for _, s in DCC_SKILLS if _names_skill(ev["input"].get("skill"), s)}
+                named = {s for _, s in DCC_SKILLS if _names_skill(ev["input"].get("skill"), s)}
+                # review 1 of #123: no tool_result means the load is not proven
+                if ev["has_result"] and ev["is_error"] is not True and ev["success"] is not False:
+                    loaded |= named
+                    for skill in named:
+                        pending.pop(skill, None)
+                elif not ev["has_result"]:
+                    for skill in named:
+                        pending.setdefault(skill, ev["record"])
                 continue
             skill = dcc_skill(ev["name"])
             if skill and skill not in loaded:
-                details.append({"file": str(path), "record": ev["record"], "tool": ev["name"], "skill": skill})
+                if skill in pending:
+                    problems.append(f"{path}: record {pending[skill]}: Skill {skill} has no result: load not proven")
+                else:
+                    details.append({"file": str(path), "record": ev["record"], "tool": ev["name"], "skill": skill})
     return _row("DCC calls before their skill", details, problems)
 
 
@@ -339,16 +354,43 @@ SOURCE = re.compile(r"[^\s\"'*?<>|/\\:]+\.(?:max|rvt|fbx|blend|skp|dwg|ifc)\b", 
 OUTPUT_FOLDERS = {"outputs", "runs", "benchmark", "logs", "fixtures", "temp", "tmp"}
 
 
+def _source_path(token):
+    """One path token, normalized (review 1 of #123): lowercase, `\\` to `/`, repeated slashes collapsed,
+    a leading `./` dropped."""
+    text = re.sub(r"/+", "/", token.replace("\\", "/")).lower()
+    while text.startswith("./"):
+        text = text[2:]
+    return text
+
+
 def _source_names(text):
-    """The source file names a string names, lowercased. The whole whitespace- or quote-delimited token carries
-    the path: a token under an output folder, and an engine output (`model.*`), is not a source."""
+    """The source paths a string names, normalized. The whole whitespace- or quote-delimited token is the path
+    (review 1 of #123), not only its basename: a token under an output folder, and an engine output (`model.*`),
+    is not a source."""
     found = []
     for token in re.split(r"[\s\"']+", text or ""):
-        if {p.lower() for p in re.split(r"[\\/]+", token)} & OUTPUT_FOLDERS:
+        if not token or {p.lower() for p in re.split(r"[\\/]+", token)} & OUTPUT_FOLDERS:
             continue
-        found += [m.group(0).lower() for m in SOURCE.finditer(token)
-                  if not m.group(0).lower().startswith("model.")]
+        if any(not m.group(0).lower().startswith("model.") for m in SOURCE.finditer(token)):
+            found.append(_source_path(token))
     return found
+
+
+def _segments(path):
+    return [part for part in path.split("/") if part]
+
+
+def _same_source(referenced, inspected):
+    """Trailing path segments match (review 1 of #123). A referenced path that has a directory is covered only
+    when the inspected path has the basename and a parent; a basename-only reference matches any inspection of
+    that basename. A basename-only inspection does not cover a longer path."""
+    ref, ins = _segments(referenced), _segments(inspected)
+    if not ref or not ins:
+        return False
+    shorter, longer = (ref, ins) if len(ref) <= len(ins) else (ins, ref)
+    if longer[-len(shorter):] != shorter:
+        return False
+    return not (len(ref) > 1 and len(ins) < 2)
 
 
 def source_inspected(evidence):
@@ -356,7 +398,8 @@ def source_inspected(evidence):
     (docs/agents/WORKFLOW.md, "Triggers": a new or updated source makes it mandatory).
 
     The inspection may happen in any session of the task, so every transcript of the evidence counts as one
-    inspection history; a source referenced in no inspector prompt is a violation."""
+    inspection history; a source referenced in no inspector prompt is a violation. Identity is the normalized
+    path (review 1 of #123): the same basename in two directories is two sources."""
     sessions, problems = _sessions(evidence["transcript"])
     referenced, inspected = {}, []
     for path, records in sessions:
@@ -364,7 +407,7 @@ def source_inspected(evidence):
             if ev["kind"] != "tool_use":
                 continue
             if ev["name"] in SUBAGENT_TOOLS and ev["input"].get("subagent_type") == "source-inspector":
-                inspected.append(str(ev["input"].get("prompt") or "").lower())
+                inspected += _source_names(str(ev["input"].get("prompt") or ""))
                 continue
             if ev["name"] == "Bash":
                 values = [ev["input"].get("command")]
@@ -376,8 +419,9 @@ def source_inspected(evidence):
                 continue
             for value in values:
                 for name in _source_names(value) if isinstance(value, str) else []:
-                    referenced.setdefault(name, {"file": str(path), "record": ev["record"], "source": name})
-    details = [d for name, d in referenced.items() if not any(name in prompt for prompt in inspected)]
+                    referenced.setdefault(name, {"file": str(path), "record": ev["record"],
+                                                 "source": name.split("/")[-1], "path": name})
+    details = [d for name, d in referenced.items() if not any(_same_source(name, seen) for seen in inspected)]
     return _row("sources used without source-inspector", details, problems)
 
 
@@ -427,30 +471,44 @@ def failure_stop(evidence):
 
     Per session, per check (the normalized command): two failures with the same cause, or three failures, block
     the check; the next attempt of a blocked check is a violation. A saved stop record (`pipeline/state.json`
-    with its `stops`, or a "Stop record" text) reopens every check, a success reopens its own."""
+    with its `stops`, or a "Stop record" text) reopens every check, a success reopens its own. A stop write
+    reopens only when it has a result and did not fail (review 1 of #123); a write with no result leaves that
+    attempt not measured."""
     sessions, problems = _sessions(evidence["transcript"])
     details = []
     for path, records in sessions:
-        failures = {}                                  # attempt key -> the causes still open
+        failures = {}                                  # attempt key -> (cause, seq) still open
+        unknown, seq = None, 0                         # latest stop write whose result never arrived
         for ev in events(records):
             if ev["kind"] == "text" and STOP_TEXT.search(ev["text"]):
                 failures.clear()
+                unknown = None
                 continue
             if ev["kind"] != "tool_use":
                 continue
             if _stop_record(ev):
-                failures.clear()
+                # review 1 of #123: a failed write changes nothing; no result is not a saved stop
+                if ev["has_result"] and ev["is_error"] is not True:
+                    failures.clear()
+                    unknown = None
+                elif not ev["has_result"]:
+                    unknown = (ev["record"], seq)
                 continue
             if ev["name"] != "Bash":
                 continue
             command = str(ev["input"].get("command") or "")
             key = _attempt_key(command)
-            rule = _blocked(failures.get(key, []))
-            if rule:
+            causes = failures.get(key, [])
+            open_causes = [cause for cause, seen in causes if unknown is None or seen >= unknown[1]]
+            rule = _blocked([cause for cause, _ in causes])
+            if rule and _blocked(open_causes):
                 details.append({"file": str(path), "record": ev["record"], "command": command[:160],
-                                "failures": len(failures[key]), "rule": rule})
+                                "failures": len(causes), "rule": rule})
+            elif rule and unknown is not None:
+                problems.append(f"{path}: record {unknown[0]}: stop record saved with no result: outcome unknown")
             if ev["is_error"] is True:
-                failures.setdefault(key, []).append(_cause(ev["result_text"]))
+                failures.setdefault(key, []).append((_cause(ev["result_text"]), seq))
+                seq += 1
             else:
                 failures.pop(key, None)
     return _row("attempts after a blocked check", details, problems)
@@ -505,8 +563,10 @@ def branch_name(evidence):
 # --- 6. routine_question -----------------------------------------------------------------------------------------
 
 # docs/agents/COMMANDS.md, "Что агент спрашивает, а что решает сам": the agent asks about the model and the
-# object's data, and decides the implementation itself. Keywords are lowercase substrings, English and Russian
-# stems; the first list that matches wins.
+# object's data, and decides the implementation itself. Keywords are lowercase English and Russian stems,
+# matched at a word start (review 1 of #123). ASCII keywords of 3 letters or fewer (`adr`, `mid`, `npm`, `vpm`)
+# also end at a word end; longer keywords and every Cyrillic keyword stay prefix stems. The first list that
+# matches wins.
 ALLOWED_QUESTIONS = {
     "architecture": ("architecture", "архитектур", "adr"),
     "acceptance": ("accept", "approve", "принимаешь", "принять", "утверд", "приёмк", "приемк"),
@@ -520,6 +580,17 @@ ALLOWED_QUESTIONS = {
 IMPLEMENTATION_WORDS = ("algorithm", "алгоритм", "cache", "кэш", "кеш", "pr structure", "структур pr",
                         "split the pr", "разбить pr", "hint threshold", "порог подсказ", "report format",
                         "формат отчёт", "формат отчет")
+
+
+def _keyword_re(word):
+    """A keyword at a word start. ASCII keywords of 3 letters or fewer also end at a word end (review 1 of #123);
+    longer keywords and Cyrillic stems stay prefixes (`accept` matches `accepted`, `модел` matches `модели`)."""
+    end = r"(?![a-zа-яё0-9])" if len(word) <= 3 and word.isascii() else ""
+    return re.compile(rf"(?<![a-zа-яё0-9]){re.escape(word)}{end}")
+
+
+ALLOWED_RE = {category: tuple(_keyword_re(word) for word in words) for category, words in ALLOWED_QUESTIONS.items()}
+IMPLEMENTATION_RE = tuple(_keyword_re(word) for word in IMPLEMENTATION_WORDS)
 WORD = re.compile(r"[a-zа-яё0-9]{4,}")
 STOPWORDS = {"this", "that", "with", "from", "what", "which", "should", "будет", "нужно", "этот", "какой",
              "какие", "можно", "или"}
@@ -597,10 +668,10 @@ def _classify(question, rows):
     """(category, matched row) of one question: an allowed category by keyword, a violation by keyword
     (`implementation`) or by word overlap with a rule row (`decision_log` / `pattern`), else (None, None)."""
     low = question.lower()
-    for category, words in ALLOWED_QUESTIONS.items():
-        if any(w in low for w in words):
+    for category, patterns in ALLOWED_RE.items():
+        if any(pattern.search(low) for pattern in patterns):
             return category, None
-    if any(w in low for w in IMPLEMENTATION_WORDS):
+    if any(pattern.search(low) for pattern in IMPLEMENTATION_RE):
         return "implementation", None
     q = _tokens(question)
     best = (0.0, None, None)
