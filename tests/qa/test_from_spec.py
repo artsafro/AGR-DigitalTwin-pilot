@@ -616,6 +616,60 @@ def test_inputs_at_the_limit_that_would_break_under_the_weld_are_errors():
     assert topology_ok(build(edited(step_case), INPUTS))
 
 
+@pytest.mark.parametrize("shift", [(0.0029, 0.0029), (-0.0029, -0.0029)])
+def test_plan_weld_refuses_a_diagonal_move_beyond_weld_m(shift):
+    # Synthetic issue #102: independent 2.9 mm x/y welds move a corner 4.101 mm.
+    def edit(d):
+        upper = (np.asarray(SQ) + shift).tolist()
+        d["floors"] = [{"level": "L0", "contour": SQ, "openings": []},
+                       {"level": "L1", "contour": upper, "openings": []}]
+        d["roof"] = {"parapet_h_m": 0.0}
+    with pytest.raises(BuildError, match="2D.*weld_m"):
+        build(edited(edit), INPUTS)
+
+
+def test_generated_plan_weld_refuses_a_diagonal_move_onto_fixed_lines():
+    # Synthetic: the parapet inset (0.3, 0.3) lies 2.9 mm off each lower-floor line.
+    def edit(d):
+        lower = [[0.2971, 0.2971], [9.7029, 0.2971], [9.7029, 9.7029], [0.2971, 9.7029]]
+        d["floors"] = [{"level": "L0", "contour": lower, "openings": []},
+                       {"level": "L1", "contour": SQ, "openings": []}]
+        d["roof"] = {"parapet_h_m": 0.6}
+    with pytest.raises(BuildError, match="2D.*weld_m"):
+        build(edited(edit), INPUTS)
+
+
+def test_opening_end_weld_refuses_a_diagonal_move_beyond_weld_m():
+    # Synthetic: the contour moves only along y, but an opening end also snaps along x.
+    def edit(d):
+        lower = (np.asarray(SQ) + [1, 0]).tolist()
+        upper = (np.asarray(SQ) + [0, 0.0029]).tolist()
+        window = {"wall": 0, "x_m": 1.0029, "sill_m": 0.9, "w_m": 1.0, "h_m": 1.5, "kind": "window"}
+        d["floors"] = [{"level": "L0", "contour": lower, "openings": []},
+                       {"level": "L1", "contour": upper, "openings": [window]}]
+        d["roof"] = {"parapet_h_m": 0.0}
+    with pytest.raises(BuildError, match="2D.*weld_m"):
+        build(edited(edit), INPUTS)
+
+
+@pytest.mark.parametrize("shift", [(0.003, 0), (0, 0.003), (0.0018, 0.0024),
+                                   (0.002, 0.002), (0.0029, -0.0029)])
+def test_plan_weld_within_2d_bound_still_builds(shift):
+    # Synthetic boundary controls: 3 mm inclusive, also mixed signs (one axis per floor).
+    def edit(d):
+        d["floors"] = [{"level": "L0", "contour": SQ, "openings": []},
+                       {"level": "L1", "contour": (np.asarray(SQ) + shift).tolist(), "openings": []}]
+        d["roof"] = {"parapet_h_m": 0.0}
+    sp = edited(edit)
+    dump = build(sp, INPUTS)
+    assert topology_ok(dump)
+    vertices = np.asarray(dump["meshes"][0]["vertices"])
+    for floor, z in zip(sp.expanded_floors(), [0, 6.6]):
+        plan = vertices[np.isclose(vertices[:, 2], z), :2]
+        distances = np.linalg.norm(np.asarray(floor.contour)[:, None, :] - plan[None, :, :], axis=2)
+        assert distances.min(axis=1).max() <= sp.weld_m + 1e-9
+
+
 # pattern terrace (spec v0.4, user decisions 2026-10-10): a parapet along a ledge's outer edges
 
 

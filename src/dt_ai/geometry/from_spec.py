@@ -182,9 +182,26 @@ class _Weld:
         return [*self.fixed, *(g[0] for g in self.groups)]
 
 
+def _weld_plan(points, wx, wy):
+    """Apply the axis groups only if every point's full 2D move fits weld_m.
+
+    Keep the common axis lines (and fixed values) rather than partially snapping a
+    corner and bending its walls. Like a collapsed contour, an excessive move is
+    a BuildError, not a silently changed model. FEATURE_TOL covers rounding only.
+    """
+    points = np.asarray(points, float).reshape(-1, 2)
+    welded = np.column_stack(([wx(x) for x in points[:, 0]], [wy(y) for y in points[:, 1]]))
+    distances = np.linalg.norm(welded - points, axis=1)
+    if np.any(distances > wx.w + FEATURE_TOL):
+        i = int(np.argmax(distances))
+        raise BuildError(f"2D plan weld moves {points[i].tolist()} by {distances[i]:.9f} m, "
+                         f"beyond weld_m {wx.w} m; not built")
+    return welded
+
+
 def _welded(g, wx, wy):
     """A plan geometry with every coordinate welded; polygons only, empty pieces dropped."""
-    out = shapely.transform(g, lambda c: np.column_stack([[wx(x) for x in c[:, 0]], [wy(y) for y in c[:, 1]]]))
+    out = shapely.transform(g, lambda c: _weld_plan(c, wx, wy))
     out = shapely.make_valid(out)
     return shapely.union_all([p for p in shapely.get_parts(out) if p.geom_type == "Polygon" and p.area > KEY_M]
                              or [Polygon()])
@@ -223,7 +240,7 @@ def _contours(spec: Spec):
     wx, wy = _Weld(every[:, 0], w), _Weld(every[:, 1], w)
     contours = []
     for f, pts in zip(floors, raw):
-        pts = np.asarray([[wx(x), wy(y)] for x, y in pts], float)
+        pts = _weld_plan(pts, wx, wy)
         for i in range(len(pts)):
             if np.linalg.norm(pts[(i + 1) % len(pts)] - pts[i]) <= KEY_M:
                 raise BuildError(f"floor {f.level} wall {i} collapses under the {w} m weld (weld_m); not built")
@@ -259,8 +276,8 @@ def _openings(spec, floors, contours, inputs, raw, welds):
             u = (b - a) / length
             ra, rb = raw[k][o.wall], raw[k][(o.wall + 1) % len(pts)]
             ru = (rb - ra) / float(np.linalg.norm(rb - ra))
-            s0, s1 = (round(float((np.array([welds[0](q[0]), welds[1](q[1])]) - a) @ u), 9)
-                      for q in (ra + ru * o.x_m, ra + ru * (o.x_m + o.w_m)))   # its ends welded as the contour
+            ends = _weld_plan([ra + ru * o.x_m, ra + ru * (o.x_m + o.w_m)], *welds)
+            s0, s1 = (round(float((q - a) @ u), 9) for q in ends)   # its ends welded as the contour
             out.append({"wall": o.wall, "level": f.level, "a": a, "u": u, "length": length,
                         "s0": s0, "s1": s1, "z0": z0, "z1": z0 + o.h_m, "id": mid,
                         "depth": depth, "where": f"floor {f.level} wall {o.wall} x {o.x_m}"})
@@ -388,8 +405,8 @@ def build(spec: Spec, inputs: BuildInputs) -> dict:
     wy = _Weld(made[:, 1], weld, fixed=wy0.values())
     faces = [(g, z, mid, up) for poly, z, mid, up in faces for g in shapely.get_parts(_welded(poly, wx, wy))
              if g.geom_type == "Polygon" and g.area > KEY_M]
-    in_pts = np.asarray([[wx(x), wy(y)] for x, y in in_pts], float)
-    tp_walls = [(kind, np.array([wx(a[0]), wy(a[1])]), np.array([wx(b[0]), wy(b[1])]), *rest)
+    in_pts = _weld_plan(in_pts, wx, wy)
+    tp_walls = [(kind, *_weld_plan([a, b], wx, wy), *rest)
                 for kind, a, b, *rest in tp_walls]
     tp_solids = [(_welded(band, wx, wy), z0, z1) for band, z0, z1 in tp_solids]
     slabs = [(_welded(hole, wx, wy), z, where, enclosure) for hole, z, where, enclosure in slabs]
