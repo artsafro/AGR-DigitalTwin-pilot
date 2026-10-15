@@ -1,0 +1,77 @@
+{
+ "bench-b01-box__clean": {
+  "passed": true,
+  "not_pass": [],
+  "s": 0.122
+ },
+ "bench-b01-box__flip1": {
+  "passed": true,
+  "not_pass": [],
+  "s": 0.081
+ },
+ "bench-b01-box__flipall": {
+  "passed": true,
+  "not_pass": [],
+  "s": 0.081
+ },
+ "bench-b01-box__cross": {
+  "passed": true,
+  "not_pass": [],
+  "s": 0.083
+ },
+ "bench-b01-box__selfx": {
+  "passed": true,
+  "not_pass": [],
+  "s": 0.082
+ },
+ "bench-b02-corner-niche__clean": {
+  "passed": true,
+  "not_pass": [],
+  "s": 0.138
+ },
+ "bench-b02-corner-niche__flip1": {
+  "passed": true,
+  "not_pass": [],
+  "s": 0.135
+ },
+ "bench-b02-corner-niche__flipall": {
+  "passed": true,
+  "not_pass": [],
+  "s": 0.135
+ },
+ "bench-b02-corner-niche__cross": {
+  "passed": true,
+  "not_pass": [],
+  "s": 0.138
+ },
+ "bench-b02-corner-niche__selfx": {
+  "passed": true,
+  "not_pass": [],
+  "s": 0.137
+ },
+ "bench-b02t-terrace__clean": {
+  "passed": true,
+  "not_pass": [],
+  "s": 0.182
+ },
+ "bench-b02t-terrace__flip1": {
+  "passed": true,
+  "not_pass": [],
+  "s": 0.185
+ },
+ "bench-b02t-terrace__flipall": {
+  "passed": true,
+  "not_pass": [],
+  "s": 0.182
+ },
+ "bench-b02t-terrace__cross": {
+  "passed": true,
+  "not_pass": [],
+  "s": 0.186
+ },
+ "bench-b02t-terrace__selfx": {
+  "passed": true,
+  "not_pass": [],
+  "s": 0.187
+ }
+}
