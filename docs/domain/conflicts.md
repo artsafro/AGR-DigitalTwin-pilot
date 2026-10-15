@@ -44,6 +44,8 @@ Decided items keep their text and carry a **Decided** note; the YAML `conflicts:
 33. One UDIM per texture ID (local: docs/agr/UV_RULES.md, project) - not a regulation rule; regulation only requires sequential tiles and no slot split < 100 maps. Brief explicitly warns not to derive UDIM from MAT number (local: docs/agr/DIGITAL_TWIN_AI_PROJECT_BRIEF.md#4). Compatible but easy to misread.
 34. SOSH1150 FBX hand-off embedded a UDIM-named diffuse (`T_Template_Address_001_Diffuse_FlipH_v005.1001.png`) - neither NPM (atlas name) nor VPM (external PNG, `T_Address_Diffuse_1.1001`) compliant; work hand-off only (local: docs/agr/case_studies/SOSH1150_CONTINUOUS_WALL_UV_FBX.md).
 
+35. MAF sunk bottoms versus VPM open geometry: reg p.29 §3.15 prohibits missing polygons visible from reachable views; a blanket open-boundary reading would also flag deleted MAF bottoms below Ground. The regulation does not explicitly name this MAF exception. **Decided 2026-10-15 [D096] (user):** Artem: "polygons that go under the ground are not visible". Faces below the Ground surface (sunk MAF bottoms) are not 'open polygons' for this rule. This is a user-decided interpretation, not a new regulatory quotation or a blanket exemption for visible holes. Placement and bottom deletion follow [D095]; see [MAF-20/23](areas/groundel-maf.md). No checker or standard is changed here.
+
 ## D. Dubious / unverified
 - NPM fig.6 PBR example colors (reg p.17) - OCR partly garbled; verify on page image before use.
 - Ground NPM: height smoothing params (2.5 m median, 25 cm quantization, sigma 1.6 m) tuned for one site, not accepted by user at write time (local: jobs/GROUND-PROJECTION/NPM_RESULT.md).
