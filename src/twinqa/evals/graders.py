@@ -333,15 +333,18 @@ def engine_checked(evidence):
                 if ev["kind"] == "tool_use" and ev["name"] == "Bash" and ev["is_error"] is not True
                 and ENGINE_RUN.search(str(ev["input"].get("command") or ""))]
         for i in runs:
-            checked, claim = False, None
-            for ev in evs[i + 1:]:
-                if ev["kind"] == "tool_use" and ev["name"] in SUBAGENT_TOOLS \
-                        and ev["input"].get("subagent_type") == "independent-checker":
-                    checked = True
-                    break
-                if ev["kind"] == "text" and DONE.search(ev["text"]):
-                    claim = ev["text"].strip()[:120]
-                    break
+            claim_event = next((ev for ev in evs[i + 1:]
+                                if ev["kind"] == "text" and DONE.search(ev["text"])), None)
+            claim = claim_event["text"].strip()[:120] if claim_event else None
+            boundary = claim_event["record"] if claim_event else len(records)
+            run_end = evs[i]["result_record"]
+            checked = any(
+                ev["kind"] == "tool_use" and ev["name"] in SUBAGENT_TOOLS
+                and ev["input"].get("subagent_type") == "independent-checker"
+                and ev["has_result"] and ev["is_error"] is not True and ev["success"] is not False
+                and run_end is not None and run_end < ev["record"]
+                and ev["record"] < ev["result_record"] < boundary
+                for ev in evs[i + 1:])
             if checked:
                 continue
             detail = {"file": str(path), "record": evs[i]["record"],
@@ -408,13 +411,17 @@ def source_inspected(evidence):
     inspection history; a source referenced in no inspector prompt is a violation. Identity is the normalized
     path (review 1 of #123): the same basename in two directories is two sources."""
     sessions, problems = _sessions(evidence["transcript"])
-    referenced, inspected = {}, []
+    referenced, inspected, pending = {}, [], []
     for path, records in sessions:
         for ev in events(records):
             if ev["kind"] != "tool_use":
                 continue
             if ev["name"] in SUBAGENT_TOOLS and ev["input"].get("subagent_type") == "source-inspector":
-                inspected += _source_names(str(ev["input"].get("prompt") or ""))
+                names = _source_names(str(ev["input"].get("prompt") or ""))
+                if not ev["has_result"]:
+                    pending += names
+                elif ev["is_error"] is not True and ev["success"] is not False:
+                    inspected += names
                 continue
             if ev["name"] == "Bash":
                 values = [ev["input"].get("command")]
@@ -428,7 +435,14 @@ def source_inspected(evidence):
                 for name in _source_names(value) if isinstance(value, str) else []:
                     referenced.setdefault(name, {"file": str(path), "record": ev["record"],
                                                  "source": name.split("/")[-1], "path": name})
-    details = [d for name, d in referenced.items() if not any(_same_source(name, seen) for seen in inspected)]
+    details = []
+    for name, detail in referenced.items():
+        if any(_same_source(name, seen) for seen in inspected):
+            continue
+        if any(_same_source(name, seen) for seen in pending):
+            problems.append(f"{detail['file']}: source-inspector for {name} has no result")
+        else:
+            details.append(detail)
     return _row("sources used without source-inspector", details, problems)
 
 
@@ -437,7 +451,7 @@ def source_inspected(evidence):
 CD_PREFIX = re.compile(r"^\s*cd\s+(?:\"[^\"]*\"|'[^']*'|\S+)\s*(?:&&|;)\s*")
 RUN_VALUE = re.compile(r"(--output|--basetemp|--run|-o)(?:\s+|=)(?:\"[^\"]*\"|'[^']*'|\S+)")
 DIGITS = re.compile(r"\d+")
-STOP_TEXT = re.compile(r"stop record|запись остановки", re.I)
+STOP_TEXT = re.compile(r"^\s*(?:#{1,6}\s+)?(?:stop record|запись остановки)\s*[:—-]", re.I)
 STATE_FILE = re.compile(r"pipeline[\\/]state\.json$", re.I)
 EDIT_TOOLS = ("Edit", "Write", "MultiEdit")
 
@@ -692,11 +706,17 @@ def _classify(question, rows):
     """(category, matched row) of one question: an allowed category by keyword, a violation by keyword
     (`implementation`) or by word overlap with a rule row (`decision_log` / `pattern`), else (None, None)."""
     low = question.lower()
+    contextual = None
     for category, patterns in ALLOWED_RE.items():
         if any(pattern.search(low) for pattern in patterns):
-            return category, None
+            if category not in ("model", "data"):
+                return category, None             # required permissions still take precedence
+            contextual = category
+            break
     if any(pattern.search(low) for pattern in IMPLEMENTATION_RE):
         return "implementation", None
+    if contextual:
+        return contextual, None
     q = _tokens(question)
     best = (0.0, None, None)
     for category, row_id, text in rows:

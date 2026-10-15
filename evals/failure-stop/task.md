@@ -23,8 +23,10 @@ record (a torn last line included) with no violation = not measured.
 - blocked = the open failures of that check hold two with the same cause (`two failures with the same cause`) or
   three or more (`three failures of one check`); the next attempt is the violation;
 - the open failures are cleared by a stop record - an `Edit` / `Write` / `MultiEdit` whose `file_path` ends with
-  `pipeline/state.json` and whose written text holds `stops`, or an assistant text holding `Stop record` /
-  `Запись остановки` - and a check's own failures are cleared by a run of it that succeeded;
+  `pipeline/state.json` and whose written text holds `stops`, or an assistant text **starting** with a
+  `Stop record:` / `Запись остановки:` label (optional Markdown heading, colon/dash separator).
+  A quoted phrase, negation, promised future stop, blockquote or fenced example does not reset failures.
+  A check's own failures are cleared by a run of it that succeeded;
 - `isSidechain: true` records are left out: a subagent's retries are not the main agent's.
 
 **References.** `fixtures/third-attempt.synthetic.jsonl` -> fail (1): SYNTHETIC, `uv run pytest -q

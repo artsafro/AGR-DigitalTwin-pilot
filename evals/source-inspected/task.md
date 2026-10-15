@@ -24,10 +24,14 @@ measured.
   `Temp` or `tmp` (case-insensitive), and a name starting with `model.` - those are what the pipeline produced,
   not what came in. A name inside an assistant text is never a reference: only tool inputs count;
 - inspected = a `tool_use` named `Agent` or `Task` with `input.subagent_type == "source-inspector"` whose
-  `input.prompt` holds the file's base name (case-insensitive);
+  `input.prompt` names the normalized source path and whose joined result succeeded (`is_error` is not true,
+  `success` is not false). A failed inspector does not cover a source; a missing result leaves that source
+  not measured unless another successful inspection covers it;
 - `isSidechain: true` records are left out: what a subagent read is not what the main session worked on.
 
-The key is the base name, lowercased: one violation per source, however often it was referenced.
+The key is the normalized path (case-insensitive, slash-normalized): one violation per source, however often
+it was referenced. Matching uses trailing path segments; a basename-only inspection cannot cover a source
+reference that includes a directory.
 
 **References.** `fixtures/no-inspector.synthetic.jsonl` -> fail (1): SYNTHETIC, the main agent reads and dumps
 `data/sources/obj03/source.max` itself. `fixtures/inspected.synthetic.jsonl` -> pass: the inspector goes first,

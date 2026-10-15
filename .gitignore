@@ -85,3 +85,4 @@ desktop.ini
 
 # Local usage log of subagents, skills and commands (tools/hooks/usage_log.py).
 /logs/
+/autoresearch-results/
