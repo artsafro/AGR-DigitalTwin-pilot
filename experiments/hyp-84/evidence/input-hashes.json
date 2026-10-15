@@ -1,0 +1,62 @@
+[
+  {
+    "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5071f110\\benchmark\\bench-b01-box\\spec.json",
+    "copy": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_5071f110\\inputs\\bench-b01-box\\spec.json",
+    "sha256": "48d6fa4619c9c5ec36faca23d54787aeafe115fbaca13e263d3d0866e624e4a8"
+  },
+  {
+    "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5071f110\\benchmark\\bench-b01-box\\object.json",
+    "copy": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_5071f110\\inputs\\bench-b01-box\\object.json",
+    "sha256": "42004aa39b3ef094431f185e7e439ae85cd5277a764a24923699a4617517fa41"
+  },
+  {
+    "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5071f110\\benchmark\\bench-b01-box\\etalon.json",
+    "copy": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_5071f110\\inputs\\bench-b01-box\\etalon.json",
+    "sha256": "b8fa3bea8dd962a044adb1659eb4d109dcff13b927584e3c15fc1747dd6b59ec"
+  },
+  {
+    "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5071f110\\benchmark\\bench-b01-box\\tolerances.json",
+    "copy": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_5071f110\\inputs\\bench-b01-box\\tolerances.json",
+    "sha256": "df2a20a7e5ebb1d127cd813c20529489d99f638c401684c78e8d7028d42e7638"
+  },
+  {
+    "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5071f110\\benchmark\\bench-b02-corner-niche\\spec.json",
+    "copy": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_5071f110\\inputs\\bench-b02-corner-niche\\spec.json",
+    "sha256": "85f1b7d2b8b8912688290bf56fe601f5ae641ae753221acdff6b97c62d640bea"
+  },
+  {
+    "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5071f110\\benchmark\\bench-b02-corner-niche\\object.json",
+    "copy": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_5071f110\\inputs\\bench-b02-corner-niche\\object.json",
+    "sha256": "b10d8829e2d6d303fb0739c1198673e3b9b49f44c6f82452fd8bbf45f475b3d1"
+  },
+  {
+    "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5071f110\\benchmark\\bench-b02-corner-niche\\etalon.json",
+    "copy": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_5071f110\\inputs\\bench-b02-corner-niche\\etalon.json",
+    "sha256": "b174e68cf36ecb433fb5cda9823fc0ac5ab904c25a70aadf9cd1779da5b4897a"
+  },
+  {
+    "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5071f110\\benchmark\\bench-b02-corner-niche\\tolerances.json",
+    "copy": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_5071f110\\inputs\\bench-b02-corner-niche\\tolerances.json",
+    "sha256": "d36f5f24517986a0da64b9a9c41dc80cad09daa52e2c8d3d1f8d1cb4f273c214"
+  },
+  {
+    "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5071f110\\benchmark\\bench-b02t-terrace\\spec.json",
+    "copy": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_5071f110\\inputs\\bench-b02t-terrace\\spec.json",
+    "sha256": "4a9a5aa76c2c906fa3844c2009fb127532aed82fa4835ef96e2336a384122cec"
+  },
+  {
+    "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5071f110\\benchmark\\bench-b02t-terrace\\object.json",
+    "copy": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_5071f110\\inputs\\bench-b02t-terrace\\object.json",
+    "sha256": "55a86b2381bc87e1de5dd0b0a22bdc578ae780021244c2ca3f7ccc321b82d613"
+  },
+  {
+    "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5071f110\\benchmark\\bench-b02t-terrace\\etalon.json",
+    "copy": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_5071f110\\inputs\\bench-b02t-terrace\\etalon.json",
+    "sha256": "b2ddbc39268e74e52df53bd85a22d4bf8f617d8f36afb7989364f92eed42c24a"
+  },
+  {
+    "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5071f110\\benchmark\\bench-b02t-terrace\\tolerances.json",
+    "copy": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_5071f110\\inputs\\bench-b02t-terrace\\tolerances.json",
+    "sha256": "5d51f8b2279fae54bac45ea6f95bd14e77bc71fb0ea730f21bb74a42feaf47e5"
+  }
+]
