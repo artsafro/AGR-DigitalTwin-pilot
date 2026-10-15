@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import ast
-from pathlib import Path
 import re
+from pathlib import Path
 
 import pytest
 
@@ -19,8 +19,6 @@ MODULES = [
 @pytest.mark.parametrize("relative_path", MODULES)
 def test_cad_module_docstring_contract(relative_path: str) -> None:
     path = ROOT / relative_path
-    if not path.is_file():
-        path = Path(relative_path)
     assert path.is_file(), f"Target module file does not exist: {path}"
 
     content = path.read_text(encoding="utf-8")

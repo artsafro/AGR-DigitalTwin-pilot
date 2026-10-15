@@ -1,4 +1,8 @@
-"""Straight-entity plan proxies in WCS.
+"""Straight-entity plan proxies in WCS and straight-entity serialization.
+
+Pattern: none — straight-entity CAD serialization proxy (REVIEW_CHECKLIST Q1: new-case).
+This is not an approved architectural pattern and provides no architectural or delivery
+certification.
 
 Supported: closed LWPOLYLINE contours, closed 3D POLYLINE rectangles for
 wall-plane openings, and POINT level markers. Drawings are R2018 with
