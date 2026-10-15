@@ -63,7 +63,8 @@
   "guard_passed": false,
   "guard_note": "check_budget fails (199 910 > 150 000); the topology checks were not run",
   "best_before": 1029.978,
-  "build_seconds": 267.3
+  "build_seconds": 267.3,
+  "delivery_passed": false
  },
  {
   "n": "2",
@@ -172,7 +173,8 @@
   "silhouette_err_m2": null,
   "error": "GEOSException TopologyException: side location conflict (the inserted points made self-intersecting rings)",
   "guard_passed": null,
-  "best_before": 1029.978
+  "best_before": 1029.978,
+  "delivery_passed": false
  },
  {
   "n": "5",
@@ -197,7 +199,8 @@
    "non_manifold": 364
   },
   "guard_note": "edge count of the welded mesh (the same weld 3 mm as check_mesh; on exp 2 it reproduced check_mesh exactly: 7241 boundary, 580 non-manifold): 0 open, 364 non-manifold edges (pinches at vertex-on-edge touches, layers touching edge to edge) -> guard fails; check_mesh not run",
-  "best_before": 1029.978
+  "best_before": 1029.978,
+  "delivery_passed": false
  },
  {
   "n": "6",
@@ -222,7 +225,8 @@
    "non_manifold": 354
   },
   "guard_note": "welded edge count (weld 3 mm): 0 open, 354 non-manifold (layers whose outlines run 0.8 mm apart: the union of each layer simplified separately) -> guard fails; check_mesh not run",
-  "best_before": 1029.978
+  "best_before": 1029.978,
+  "delivery_passed": false
  },
  {
   "n": "7",
@@ -231,7 +235,8 @@
   "silhouette_err_m2": null,
   "error": "timeout: the layer regions were not done after 5.5 min (unsimplified unions, 2x the whole previous build); killed",
   "guard_passed": null,
-  "best_before": 1029.978
+  "best_before": 1029.978,
+  "delivery_passed": false
  },
  {
   "n": "8",
@@ -249,7 +254,8 @@
    "non_manifold": 4354
   },
   "guard_note": "318 234 triangles (> 150 000) and 4 354 non-manifold welded edges (the snap undid the uncontact strips: layers touch edge to edge again); build 9 min; metric not computed",
-  "best_before": 1029.978
+  "best_before": 1029.978,
+  "delivery_passed": false
  },
  {
   "n": "9",
@@ -277,7 +283,8 @@
    "non_manifold": 119
   },
   "guard_note": "151 576 triangles (> 150 000) and 119 non-manifold welded edges (pinch points the unpinch squares do not remove: a square corner lands on a diagonal edge); check_mesh not run",
-  "best_before": 1029.978
+  "best_before": 1029.978,
+  "delivery_passed": false
  },
  {
   "n": "10",
@@ -302,7 +309,8 @@
    "non_manifold": 40
   },
   "guard_note": "153 956 triangles (> 150 000), 40 non-manifold welded edges left; check_mesh not run",
-  "best_before": 1029.978
+  "best_before": 1029.978,
+  "delivery_passed": false
  },
  {
   "n": "11",
@@ -325,7 +333,8 @@
    "non_manifold": 9
   },
   "guard_note": "9 non-manifold welded edges left (pinches the offset itself creates); check_mesh not run",
-  "best_before": 1029.978
+  "best_before": 1029.978,
+  "delivery_passed": false
  },
  {
   "n": "12",
@@ -559,5 +568,194 @@
   "levels_status": "pass",
   "guard_seconds": 421.7,
   "status": "keep"
+ },
+ {
+  "n": "17",
+  "description": "COVER_F 0.5 -> 0.3 (a piece joins a layer when it covers 30 % of its height)",
+  "status": "discard",
+  "silhouette_err_m2": 169.762,
+  "per_view_m2": {
+   "x": 25.963,
+   "y": 37.415,
+   "top": 43.005
+  },
+  "build": {
+   "triangles": 114836
+  },
+  "triangles": 114836,
+  "guard_passed": false,
+  "mesh": {
+   "boundary": 0,
+   "non_manifold": 3
+  },
+  "guard_note": "3 non-manifold welded edges (weld 3 mm edge count); check_mesh not run",
+  "best_before": 170.512,
+  "delivery_passed": false
+ },
+ {
+  "n": "18",
+  "description": "MERGE_M2 2 -> 10 m2 (more near-equal layers merged, 44 -> 36 prisms)",
+  "build_seconds": 0.0,
+  "delivery_passed": false,
+  "build": {
+   "thresholds": 54,
+   "layers": 53,
+   "prisms": 36,
+   "gaps": 35,
+   "openings_placed": {
+    "12": 465,
+    "11": 783
+   },
+   "openings_in_snapshot": 835,
+   "vertices": 58928,
+   "triangles": 114516
+  },
+  "silhouette_err_m2": 163.54,
+  "per_view_m2": {
+   "x": 24.923,
+   "y": 34.794,
+   "top": 44.106
+  },
+  "iou": {
+   "x": 0.9795,
+   "y": 0.9863,
+   "top": 0.9928
+  },
+  "metric_seconds": 26.8,
+  "best_before": 170.512,
+  "guard_passed": false,
+  "mesh": {
+   "non_manifold": 3,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "mesh_status": "fail",
+  "per_mesh_status": {
+   "SM_butovskaya_sosh1000_body": "fail"
+  },
+  "winding_bad_edges": 0,
+  "triangles": 114516,
+  "budget_status": "pass",
+  "levels_worst_m": 0.0,
+  "levels_status": "pass",
+  "guard_seconds": 311.1,
+  "status": "discard"
+ },
+ {
+  "n": "19",
+  "description": "exp 18 with MERGE_M2 10 -> 40 m2 (34 prisms)",
+  "delivery_passed": false,
+  "silhouette_err_m2": 167.583,
+  "per_view_m2": {
+   "x": 25.77,
+   "y": 34.165,
+   "top": 47.714
+  },
+  "iou": {
+   "x": 0.9788,
+   "y": 0.9866,
+   "top": 0.9922
+  },
+  "best_before": 170.512,
+  "guard_passed": false,
+  "mesh": {
+   "non_manifold": 3,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "mesh_status": "fail",
+  "per_mesh_status": {
+   "SM_butovskaya_sosh1000_body": "fail"
+  },
+  "winding_bad_edges": 0,
+  "triangles": 111040,
+  "budget_status": "pass",
+  "levels_worst_m": 0.0,
+  "levels_status": "pass",
+  "guard_seconds": 534.9,
+  "status": "discard",
+  "guard_note": "guard run on its own (three candidates in parallel, same evaluate.guard)"
+ },
+ {
+  "n": "20",
+  "description": "exp 18 with K_EXTRA 44 -> 56 (more thresholds now that near-equal layers merge)",
+  "delivery_passed": false,
+  "silhouette_err_m2": 164.755,
+  "per_view_m2": {
+   "x": 25.079,
+   "y": 35.18,
+   "top": 44.237
+  },
+  "iou": {
+   "x": 0.9794,
+   "y": 0.9862,
+   "top": 0.9928
+  },
+  "best_before": 170.512,
+  "guard_passed": false,
+  "mesh": {
+   "non_manifold": 6,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "mesh_status": "fail",
+  "per_mesh_status": {
+   "SM_butovskaya_sosh1000_body": "fail"
+  },
+  "winding_bad_edges": 0,
+  "triangles": 119216,
+  "budget_status": "pass",
+  "levels_worst_m": 0.0,
+  "levels_status": "pass",
+  "guard_seconds": 552.1,
+  "status": "discard",
+  "guard_note": "guard run on its own (three candidates in parallel, same evaluate.guard)"
+ },
+ {
+  "n": "21",
+  "description": "exp 18 with the prism offset 5 mm -> 3.5 mm (PRISM_SHRINK_U 0.07)",
+  "delivery_passed": false,
+  "silhouette_err_m2": 161.567,
+  "per_view_m2": {
+   "x": 23.508,
+   "y": 35.223,
+   "top": 44.106
+  },
+  "iou": {
+   "x": 0.9806,
+   "y": 0.9862,
+   "top": 0.9928
+  },
+  "best_before": 170.512,
+  "guard_passed": false,
+  "mesh": {
+   "non_manifold": 3,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "mesh_status": "fail",
+  "per_mesh_status": {
+   "SM_butovskaya_sosh1000_body": "fail"
+  },
+  "winding_bad_edges": 0,
+  "triangles": 111772,
+  "budget_status": "pass",
+  "levels_worst_m": 0.0,
+  "levels_status": "pass",
+  "guard_seconds": 582.3,
+  "status": "discard",
+  "guard_note": "guard run on its own (three candidates in parallel, same evaluate.guard)"
  }
 ]

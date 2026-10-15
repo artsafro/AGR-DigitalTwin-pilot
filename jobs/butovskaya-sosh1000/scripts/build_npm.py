@@ -1,18 +1,21 @@
 """NPM of the Butovskaya school (object `butovskaya-sosh1000`, #118): a low-poly massing with flush opening planes,
-built from the step-0 Revit snapshot only (pattern `primitive-first`: the body is one stack of extruded plan
-regions; openings are planes of the opening group on the facade faces).
+built from the step-0 snapshot only (pattern `primitive-first`: the body is a stack of extruded plan regions;
+openings are planes of the opening group on the facade faces).
 
-Method. Every snapshot box of the BODY categories is a plan rectangle with a z range. The height range is cut into
-layers at a set of thresholds; the plan region of a layer is the union of the rectangles whose z range covers at
-least COVER_F of that layer. The body is the union of region x layer prisms, meshed directly: side walls on every
-region ring, an up face where a layer ends and a down face where one starts. All plan coordinates are integers on
-a SNAP_M grid, every ring is split at every vertex of every other ring lying on it, so faces meet edge to edge (no
-T-junctions) and the mesh is closed. Opening planes: a window / door box at a side wall, inside one wall quad,
-becomes a flush rectangle of the opening id cut into that quad.
+Method of the final build (round 3, exp 16; SOURCE "mesh", HORIZ "prisms"). The height range is cut into layers at
+thresholds (the 8 levels + the K_EXTRA piece tops / bottoms carrying the most plan area). The plan region of a layer
+is the union of the plan footprints (projected triangles) of the snapshot pieces covering at least COVER_F of it -
+floors and roofs join every layer they overlap by SLAB_COVER_M - simplified, holes filled, on a SNAP_M grid, pinch
+points removed. Runs of equal (or near-equal, MERGE_M2) layers are one prism; every prism is a closed shell of its
+own (walls on its rings, CDT caps), offset PRISM_SHRINK_U inward, standing PRISM_GAP_M above the prism below (past
+the 3 mm weld), so no two shells share an edge. Opening planes: a window / door box at a wall, inside one wall
+quad, becomes a flush rectangle of the opening id cut into that quad.
+The earlier methods stay selectable (SOURCE "boxes": the box run's build, the round-3 setup; HORIZ "difference" /
+"arrangement": one closed stack, see the report for why they failed the guard).
 
-    uv run python jobs/butovskaya-sosh1000/scripts/build_npm.py --out C:/x/butovskaya-npm/model_dump.json
+    uv run python jobs/butovskaya-sosh1000/scripts/build_npm.py --out C:/x/butovskaya-npm-twin/model_dump.json
 
-The autoresearch loop (#118) edits only this file; the parameters below are the first build (setup).
+The autoresearch loop (#118) edits only this file.
 """
 import argparse
 import json

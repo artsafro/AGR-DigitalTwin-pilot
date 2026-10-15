@@ -1,7 +1,7 @@
 """Probes of the guarantees #118 states, run before the review (card policy): each prints `invariant -> N/N`.
 
 1. read-only: snapshot_revit.call refuses every non read-only add-in command before any request is sent;
-2. the loop never calls Revit: build_npm and evaluate import neither revit_exec nor an HTTP client;
+2. the loop never calls Revit: build_npm, evaluate and loop_step import neither revit_exec nor an HTTP client;
 3. deterministic: two builds give byte-identical dumps;
 4. keep rule: every `keep` in the log is strictly below the best kept before it with the guard passing, every
    `discard` is not (or fails the guard), and delivery_passed is false in every record;
@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-LOG = HERE.parent / "autoresearch" / "results.json"
+LOG = HERE.parent / "autoresearch" / "results-twin.json"      # round 3, mesh reference
 
 
 def probe_read_only():
@@ -40,17 +40,17 @@ def probe_read_only():
 
 def probe_no_revit_in_loop():
     hits = []
-    for name in ("build_npm.py", "evaluate.py"):
+    for name in ("build_npm.py", "evaluate.py", "loop_step.py"):
         text = (HERE / name).read_text(encoding="utf-8")
         for bad in ("revit_exec", "urllib", "http.client", "requests", "socket"):
             if bad in text:
                 hits.append(f"{name}:{bad}")
-    code = ("import sys; sys.path.insert(0, r'%s'); import build_npm, evaluate; "
+    code = ("import sys; sys.path.insert(0, r'%s'); import build_npm, evaluate, loop_step; "
             "print(sorted(m for m in sys.modules if m in ('revit_exec', 'snapshot_revit', 'urllib.request', 'http.client')))" % HERE)
     out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
     loaded = out.stdout.strip()
     ok = not hits and loaded == "[]"
-    return f"loop never calls Revit -> no Revit/HTTP import in build/evaluate (static {10 - len(hits)}/10, runtime {loaded})", ok
+    return f"loop never calls Revit -> no Revit/HTTP import in build/evaluate (static {15 - len(hits)}/15, runtime {loaded})", ok
 
 
 def probe_deterministic(work: Path):
@@ -78,7 +78,7 @@ def probe_keep_rule():
         elif r["status"] == "keep":
             ok = g and m < ref
         else:
-            ok = (not g) or ref is None or m >= ref or "note" in r   # a parallel candidate beaten by a sibling
+            ok = m is None or (not g) or ref is None or m >= ref or "note" in r
         ok = ok and r.get("delivery_passed") is False
         good += ok
         if r["status"] in ("baseline", "keep"):
@@ -89,7 +89,7 @@ def probe_keep_rule():
 def probe_guard_numbers():
     log = json.loads(LOG.read_text(encoding="utf-8"))
     kept = [r for r in log if r["status"] in ("baseline", "keep")]
-    good = sum(1 for r in kept if r["mesh"]["non_manifold"] == 0 and r["mesh"]["non_manifold_vertices"] == 0
+    good = sum(1 for r in kept if r["mesh"].get("boundary", 0) == 0 and r["mesh"]["non_manifold"] == 0 and r["mesh"]["non_manifold_vertices"] == 0
                and r["mesh"]["open_loops_not_allowed"] == 0 and r["mesh"]["overlaps"] == 0
                and r["winding_bad_edges"] == 0 and r["triangles"] <= 150_000 and r["levels_worst_m"] <= 0.02)
     return f"guard numbers of every kept build -> {good}/{len(kept)}", good == len(kept)
@@ -97,7 +97,7 @@ def probe_guard_numbers():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--builds", default="C:/x/butovskaya-npm/probe")
+    ap.add_argument("--builds", default="C:/x/butovskaya-npm-twin/probe")
     a = ap.parse_args()
     rows = [probe_read_only(), probe_no_revit_in_loop(), probe_deterministic(Path(a.builds)), probe_keep_rule(),
             probe_guard_numbers()]
