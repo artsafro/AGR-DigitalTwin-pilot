@@ -1,9 +1,15 @@
 """Read-only topology inventory shared by DCC jobs; never certifies delivery."""
-from collections import Counter
+from collections import Counter, defaultdict
 import math
 
 
-def inspect_mesh(vertices, faces, edges=None, material_ids=None, decimals=8):
+def inspect_mesh(vertices, faces, edges=None, material_ids=None, decimals=8, near_m=0.001):
+    try:
+        near_ok = math.isfinite(near_m) and near_m > 0
+    except TypeError:
+        near_ok = False
+    if not near_ok:
+        raise ValueError('near_m must be a finite number > 0')
     count = len(vertices)
     if any(len(v) != 3 or not all(math.isfinite(c) for c in v) for v in vertices):
         raise ValueError('Vertices must be finite XYZ triples')
@@ -24,18 +30,19 @@ def inspect_mesh(vertices, faces, edges=None, material_ids=None, decimals=8):
     material_ids = [0]*len(faces) if material_ids is None else material_ids
     if len(material_ids) != len(faces):
         raise ValueError('Material IDs must match face count')
-    zero_area = 0
+    zero_area = 0; bowties = 0; winding = defaultdict(list)
     for face, material in zip(faces, material_ids):
         face = list(face); used.update(face); canonical[tuple(sorted(face))] += 1
-        area = 0.0; origin = vertices[face[0]]
+        area = 0.0; origin = vertices[face[0]]; crosses = []
         for i in range(1, len(face)-1):
             a = [vertices[face[i]][k]-origin[k] for k in range(3)]
             b = [vertices[face[i+1]][k]-origin[k] for k in range(3)]
             cross = [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]]
-            area += math.sqrt(sum(c*c for c in cross))/2
+            crosses.append(cross); area += math.sqrt(sum(c*c for c in cross))/2
         zero_area += area < 1e-12
+        bowties += any(sum(u[k]*w[k] for k in range(3)) < 0 for u in crosses for w in crosses)
         for a,b in zip(face, face[1:]+face[:1]):
-            edge = tuple(sorted((a,b))); incidence[edge] += 1
+            edge = tuple(sorted((a,b))); incidence[edge] += 1; winding[edge].append(a)
             material_edges.setdefault(edge,set()).add(material); connect(a,b)
     all_edges = set(incidence)
     for a,b in edges or []:
@@ -44,6 +51,16 @@ def inspect_mesh(vertices, faces, edges=None, material_ids=None, decimals=8):
         all_edges.add(tuple(sorted((a,b)))); connect(a,b)
     rounded = [tuple(round(c,decimals) for c in v) for v in vertices]
     extent = [max(v[k] for v in vertices)-min(v[k] for v in vertices) for k in range(3)] if vertices else [0]*3
+    cells = defaultdict(list)
+    for index, point in enumerate(vertices):
+        cells[tuple(int(math.floor(c/near_m)) for c in point)].append(index)
+    near = set()
+    for key, ids in cells.items():
+        for dx,dy,dz in [(dx,dy,dz) for dx in (-1,0,1) for dy in (-1,0,1) for dz in (-1,0,1)]:
+            for j in cells.get((key[0]+dx, key[1]+dy, key[2]+dz), ()):
+                for i in ids:
+                    if i<j and sum((vertices[i][k]-vertices[j][k])**2 for k in range(3))<=near_m**2:
+                        near.add(j)
     return {'vertices':count,'faces':len(faces),'polygon_sizes':dict(Counter(map(len,faces))),
       'triangles':sum(len(f)-2 for f in faces),'connected_components':len({root(i) for i in range(count)}),
       'duplicate_vertices_rounded':count-len(set(rounded)),'duplicate_vertex_decimals':decimals,
@@ -52,4 +69,7 @@ def inspect_mesh(vertices, faces, edges=None, material_ids=None, decimals=8):
       'loose_edges':len(all_edges-set(incidence)),'vertices_unused_by_faces':count-len(used),
       'material_face_counts':dict(Counter(material_ids)),
       'material_interface_edges':sum(len(ids)>1 for ids in material_edges.values()),'extent_m':extent,
+      'inconsistent_winding_edges':sum(len(s)==2 and s[0]==s[1] for s in winding.values()),
+      'near_duplicate_vertices':len(near),'near_duplicate_threshold_m':near_m,
+      'self_intersecting_polygons':bowties,
       'intersection_test_performed':False,'delivery_passed':False}

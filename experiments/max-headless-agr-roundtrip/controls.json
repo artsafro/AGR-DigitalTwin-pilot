@@ -1,0 +1,22 @@
+[
+  {
+    "operation": "existing-direct",
+    "returncode": 1,
+    "wall_seconds": 42.60282630000438
+  },
+  {
+    "operation": "existing-configured",
+    "returncode": 0,
+    "wall_seconds": 39.88133430000016
+  },
+  {
+    "operation": "intentional-failure",
+    "returncode": 1,
+    "wall_seconds": 39.874163899999985
+  },
+  {
+    "operation": "missing-file",
+    "returncode": 1,
+    "wall_seconds": 0.13742750000528758
+  }
+]

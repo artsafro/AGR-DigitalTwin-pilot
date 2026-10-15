@@ -1,0 +1,26 @@
+[
+  {
+    "bench": "bench-b01-box",
+    "sha256": "a109aa9a9f25c72e8d4869ee43b0b33aee009f5c248caf62388c4dcb0c7816d9",
+    "build_seconds": [
+      0.01697270000295248,
+      0.016635100000712555,
+      0.015469899997697212
+    ],
+    "median_seconds": 0.016635100000712555,
+    "vertices": 156,
+    "triangles": 282
+  },
+  {
+    "bench": "bench-b02-corner-niche",
+    "sha256": "611dc7ec5fcb19f20b52656563519abf6e604b4cea81013c76daa5df717239b3",
+    "build_seconds": [
+      0.0243110000010347,
+      0.024063699995167553,
+      0.023324699999648146
+    ],
+    "median_seconds": 0.024063699995167553,
+    "vertices": 263,
+    "triangles": 472
+  }
+]

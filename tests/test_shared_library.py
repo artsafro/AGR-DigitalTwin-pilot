@@ -36,6 +36,59 @@ def test_mesh_invalid_inputs(vertices,faces,edges,materials):
         inspect_mesh(vertices,faces,edges,materials)
 
 
+def outward_unit_cube():
+    # Quads wound so the fan normal from face[0] points outward.
+    vertices = [(0,0,0),(1,0,0),(1,1,0),(0,1,0),(0,0,1),(1,0,1),(1,1,1),(0,1,1)]
+    faces = [(0,3,2,1),(4,5,6,7),(0,1,5,4),(3,7,6,2),(1,2,6,5),(0,4,7,3)]
+    return vertices, faces
+
+
+def test_mesh_closed_cube_report_counters_are_zero():
+    vertices, faces = outward_unit_cube()
+    result = inspect_mesh(vertices, faces)
+    assert result['inconsistent_winding_edges'] == 0
+    assert result['near_duplicate_vertices'] == 0
+    assert result['self_intersecting_polygons'] == 0
+    assert result['delivery_passed'] is False
+
+
+def test_mesh_one_reversed_quad_marks_four_winding_edges():
+    vertices, faces = outward_unit_cube()
+    faces = [faces[0][::-1]]+faces[1:]
+    result = inspect_mesh(vertices, faces)
+    assert result['inconsistent_winding_edges'] == 4
+    assert result['near_duplicate_vertices'] == 0
+    assert result['self_intersecting_polygons'] == 0
+
+
+def test_mesh_near_duplicate_within_default_millimetre():
+    vertices, faces = outward_unit_cube()
+    vertices = vertices+[(0.0005,0,0)]
+    faces = [(8,3,2,1)]+faces[1:]
+    result = inspect_mesh(vertices, faces)
+    assert result['near_duplicate_vertices'] == 1
+    assert result['duplicate_vertices_rounded'] == 0
+    tight = inspect_mesh(vertices, faces, near_m=0.0001)
+    assert tight['near_duplicate_vertices'] == 0
+    assert tight['duplicate_vertices_rounded'] == 0
+
+
+def test_mesh_bowtie_quad_counts_one_polygon():
+    vertices, faces = outward_unit_cube()
+    vertices = vertices+[(10,0,0),(11,0,0),(10,0,1),(11,0,1)]
+    faces = faces+[(8,9,10,11)]
+    result = inspect_mesh(vertices, faces)
+    assert result['self_intersecting_polygons'] == 1
+    assert result['inconsistent_winding_edges'] == 0
+
+
+@pytest.mark.parametrize('near_m', [0, -0.001, float('nan')])
+def test_mesh_near_m_rejects_non_positive(near_m):
+    vertices, faces = outward_unit_cube()
+    with pytest.raises(ValueError):
+        inspect_mesh(vertices, faces, near_m=near_m)
+
+
 def tile(**changes):
     return dict(id=1,udim=1001,rgb=[120,150,180],size=[16,16],kind='solid',**changes)
 

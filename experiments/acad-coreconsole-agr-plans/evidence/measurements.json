@@ -1,0 +1,771 @@
+{
+  "final_run": {
+    "ok": true,
+    "synthetic": true,
+    "limitation": "etalon.json is metadata and file hashes, not geometry. spec.json is the extracted etalon proxy. Benchmark fixtures are synthetic.",
+    "etalon_notes": [
+      {
+        "benchmark": "bench-b01-box",
+        "top_level_keys": [
+          "bench",
+          "blender_v001",
+          "files",
+          "history",
+          "note",
+          "spec"
+        ],
+        "contains_vertices": false,
+        "geometry": false
+      },
+      {
+        "benchmark": "bench-b02-corner-niche",
+        "top_level_keys": [
+          "bench",
+          "brief",
+          "files",
+          "history",
+          "note",
+          "spec"
+        ],
+        "contains_vertices": false,
+        "geometry": false
+      },
+      {
+        "benchmark": "bench-b02t-terrace",
+        "top_level_keys": [
+          "bench",
+          "brief",
+          "files",
+          "history",
+          "note",
+          "spec"
+        ],
+        "contains_vertices": false,
+        "geometry": false
+      }
+    ],
+    "inputs": "C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-exp-t_3d8b70a4",
+    "output": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002",
+    "repeats": 3,
+    "offline_only": false,
+    "expected_counts": {
+      "features": 21,
+      "LWPOLYLINE": 6,
+      "POLYLINE": 6,
+      "POINT": 9
+    },
+    "offline": {
+      "seconds_raw": [
+        0.023816199995053466,
+        0.017702199998893775,
+        0.019247500000346918
+      ],
+      "seconds_median": 0.019247500000346918,
+      "repetitions": [
+        {
+          "rep": 1,
+          "seconds": 0.023816199995053466,
+          "audit": {
+            "insunits": 4,
+            "counts": {
+              "LWPOLYLINE": 6,
+              "POLYLINE": 6,
+              "POINT": 9
+            },
+            "entities": 21,
+            "bytes": 29524
+          },
+          "compare": {
+            "ok": true,
+            "errors": [],
+            "max_deviation_mm": 0.0,
+            "matched": 21,
+            "expected_count": 21,
+            "actual_count": 21,
+            "point_count_expected": 69,
+            "point_count_actual": 69
+          },
+          "error": null,
+          "file": {
+            "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-01\\offline.dxf",
+            "exists": true,
+            "bytes": 29524
+          }
+        },
+        {
+          "rep": 2,
+          "seconds": 0.017702199998893775,
+          "audit": {
+            "insunits": 4,
+            "counts": {
+              "LWPOLYLINE": 6,
+              "POLYLINE": 6,
+              "POINT": 9
+            },
+            "entities": 21,
+            "bytes": 29524
+          },
+          "compare": {
+            "ok": true,
+            "errors": [],
+            "max_deviation_mm": 0.0,
+            "matched": 21,
+            "expected_count": 21,
+            "actual_count": 21,
+            "point_count_expected": 69,
+            "point_count_actual": 69
+          },
+          "error": null,
+          "file": {
+            "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-02\\offline.dxf",
+            "exists": true,
+            "bytes": 29524
+          }
+        },
+        {
+          "rep": 3,
+          "seconds": 0.019247500000346918,
+          "audit": {
+            "insunits": 4,
+            "counts": {
+              "LWPOLYLINE": 6,
+              "POLYLINE": 6,
+              "POINT": 9
+            },
+            "entities": 21,
+            "bytes": 29524
+          },
+          "compare": {
+            "ok": true,
+            "errors": [],
+            "max_deviation_mm": 0.0,
+            "matched": 21,
+            "expected_count": 21,
+            "actual_count": 21,
+            "point_count_expected": 69,
+            "point_count_actual": 69
+          },
+          "error": null,
+          "file": {
+            "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-03\\offline.dxf",
+            "exists": true,
+            "bytes": 29524
+          }
+        }
+      ]
+    },
+    "native": {
+      "repetitions": [
+        {
+          "rep": 1,
+          "write": {
+            "wall_s": 1.6457386999973096,
+            "wrapper_s": 1.5,
+            "returncode": 0,
+            "status": "ok",
+            "wrapper_code": 0,
+            "timeout": false,
+            "call_ok": true,
+            "write_done": true,
+            "read_done": false,
+            "identity": {
+              "acadver": "25.0",
+              "dwgname": "Drawing1.dwg",
+              "insunits": 4,
+              "ucsorg": "0,0,0"
+            },
+            "entity_count": 0,
+            "files": [
+              {
+                "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-01\\native.dwg",
+                "exists": true,
+                "bytes": 33899
+              },
+              {
+                "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-01\\native.dxf",
+                "exists": true,
+                "bytes": 132567
+              }
+            ]
+          },
+          "read_dwg": {
+            "wall_s": 1.801932800000941,
+            "wrapper_s": 1.6,
+            "returncode": 0,
+            "status": "ok",
+            "wrapper_code": 0,
+            "timeout": false,
+            "call_ok": true,
+            "write_done": false,
+            "read_done": true,
+            "identity": {
+              "acadver": "25.0",
+              "dwgname": "native.dwg",
+              "insunits": 4,
+              "ucsorg": "0,0,0"
+            },
+            "entity_count": 21,
+            "files": [
+              {
+                "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-01\\native.dwg",
+                "exists": true,
+                "bytes": 33899
+              }
+            ],
+            "compare": {
+              "ok": true,
+              "errors": [],
+              "max_deviation_mm": 1.2862197421537486e-12,
+              "matched": 21,
+              "expected_count": 21,
+              "actual_count": 21,
+              "point_count_expected": 69,
+              "point_count_actual": 69
+            }
+          },
+          "ezdxf_on_native_dxf": {
+            "audit": {
+              "insunits": 4,
+              "counts": {
+                "LWPOLYLINE": 6,
+                "POLYLINE": 6,
+                "POINT": 9
+              },
+              "entities": 21,
+              "bytes": 132567
+            },
+            "compare": {
+              "ok": true,
+              "errors": [],
+              "max_deviation_mm": 9.094947017729282e-13,
+              "matched": 21,
+              "expected_count": 21,
+              "actual_count": 21,
+              "point_count_expected": 69,
+              "point_count_actual": 69
+            }
+          },
+          "native_on_ezdxf_dxf": {
+            "wall_s": 1.0898454999987734,
+            "wrapper_s": 0.9,
+            "returncode": 0,
+            "status": "ok",
+            "wrapper_code": 0,
+            "timeout": false,
+            "call_ok": true,
+            "write_done": false,
+            "read_done": true,
+            "identity": {
+              "acadver": "25.0",
+              "dwgname": "offline.dxf",
+              "insunits": 4,
+              "ucsorg": "0,0,0"
+            },
+            "entity_count": 21,
+            "files": [
+              {
+                "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-01\\offline.dxf",
+                "exists": true,
+                "bytes": 29524
+              }
+            ],
+            "compare": {
+              "ok": true,
+              "errors": [],
+              "max_deviation_mm": 3.858659226461245e-12,
+              "matched": 21,
+              "expected_count": 21,
+              "actual_count": 21,
+              "point_count_expected": 69,
+              "point_count_actual": 69
+            }
+          },
+          "native_on_native_dxf": {
+            "wall_s": 1.582123500003945,
+            "wrapper_s": 1.5,
+            "returncode": 0,
+            "status": "ok",
+            "wrapper_code": 0,
+            "timeout": false,
+            "call_ok": true,
+            "write_done": false,
+            "read_done": true,
+            "identity": {
+              "acadver": "25.0",
+              "dwgname": "native.dxf",
+              "insunits": 4,
+              "ucsorg": "0,0,0"
+            },
+            "entity_count": 21,
+            "files": [
+              {
+                "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-01\\native.dxf",
+                "exists": true,
+                "bytes": 132567
+              }
+            ],
+            "compare": {
+              "ok": true,
+              "errors": [],
+              "max_deviation_mm": 3.858659226461245e-12,
+              "matched": 21,
+              "expected_count": 21,
+              "actual_count": 21,
+              "point_count_expected": 69,
+              "point_count_actual": 69
+            }
+          }
+        },
+        {
+          "rep": 2,
+          "write": {
+            "wall_s": 1.6180357999983244,
+            "wrapper_s": 1.5,
+            "returncode": 0,
+            "status": "ok",
+            "wrapper_code": 0,
+            "timeout": false,
+            "call_ok": true,
+            "write_done": true,
+            "read_done": false,
+            "identity": {
+              "acadver": "25.0",
+              "dwgname": "Drawing1.dwg",
+              "insunits": 4,
+              "ucsorg": "0,0,0"
+            },
+            "entity_count": 0,
+            "files": [
+              {
+                "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-02\\native.dwg",
+                "exists": true,
+                "bytes": 33899
+              },
+              {
+                "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-02\\native.dxf",
+                "exists": true,
+                "bytes": 132567
+              }
+            ]
+          },
+          "read_dwg": {
+            "wall_s": 1.7568313000010676,
+            "wrapper_s": 1.4,
+            "returncode": 0,
+            "status": "ok",
+            "wrapper_code": 0,
+            "timeout": false,
+            "call_ok": true,
+            "write_done": false,
+            "read_done": true,
+            "identity": {
+              "acadver": "25.0",
+              "dwgname": "native.dwg",
+              "insunits": 4,
+              "ucsorg": "0,0,0"
+            },
+            "entity_count": 21,
+            "files": [
+              {
+                "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-02\\native.dwg",
+                "exists": true,
+                "bytes": 33899
+              }
+            ],
+            "compare": {
+              "ok": true,
+              "errors": [],
+              "max_deviation_mm": 1.2862197421537486e-12,
+              "matched": 21,
+              "expected_count": 21,
+              "actual_count": 21,
+              "point_count_expected": 69,
+              "point_count_actual": 69
+            }
+          },
+          "ezdxf_on_native_dxf": {
+            "audit": {
+              "insunits": 4,
+              "counts": {
+                "LWPOLYLINE": 6,
+                "POLYLINE": 6,
+                "POINT": 9
+              },
+              "entities": 21,
+              "bytes": 132567
+            },
+            "compare": {
+              "ok": true,
+              "errors": [],
+              "max_deviation_mm": 9.094947017729282e-13,
+              "matched": 21,
+              "expected_count": 21,
+              "actual_count": 21,
+              "point_count_expected": 69,
+              "point_count_actual": 69
+            }
+          },
+          "native_on_ezdxf_dxf": {
+            "wall_s": 1.191718399997626,
+            "wrapper_s": 1.1,
+            "returncode": 0,
+            "status": "ok",
+            "wrapper_code": 0,
+            "timeout": false,
+            "call_ok": true,
+            "write_done": false,
+            "read_done": true,
+            "identity": {
+              "acadver": "25.0",
+              "dwgname": "offline.dxf",
+              "insunits": 4,
+              "ucsorg": "0,0,0"
+            },
+            "entity_count": 21,
+            "files": [
+              {
+                "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-02\\offline.dxf",
+                "exists": true,
+                "bytes": 29524
+              }
+            ],
+            "compare": {
+              "ok": true,
+              "errors": [],
+              "max_deviation_mm": 3.858659226461245e-12,
+              "matched": 21,
+              "expected_count": 21,
+              "actual_count": 21,
+              "point_count_expected": 69,
+              "point_count_actual": 69
+            }
+          },
+          "native_on_native_dxf": {
+            "wall_s": 1.3490622999961488,
+            "wrapper_s": 1.2,
+            "returncode": 0,
+            "status": "ok",
+            "wrapper_code": 0,
+            "timeout": false,
+            "call_ok": true,
+            "write_done": false,
+            "read_done": true,
+            "identity": {
+              "acadver": "25.0",
+              "dwgname": "native.dxf",
+              "insunits": 4,
+              "ucsorg": "0,0,0"
+            },
+            "entity_count": 21,
+            "files": [
+              {
+                "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-02\\native.dxf",
+                "exists": true,
+                "bytes": 132567
+              }
+            ],
+            "compare": {
+              "ok": true,
+              "errors": [],
+              "max_deviation_mm": 3.858659226461245e-12,
+              "matched": 21,
+              "expected_count": 21,
+              "actual_count": 21,
+              "point_count_expected": 69,
+              "point_count_actual": 69
+            }
+          }
+        },
+        {
+          "rep": 3,
+          "write": {
+            "wall_s": 1.4055997999967076,
+            "wrapper_s": 1.3,
+            "returncode": 0,
+            "status": "ok",
+            "wrapper_code": 0,
+            "timeout": false,
+            "call_ok": true,
+            "write_done": true,
+            "read_done": false,
+            "identity": {
+              "acadver": "25.0",
+              "dwgname": "Drawing1.dwg",
+              "insunits": 4,
+              "ucsorg": "0,0,0"
+            },
+            "entity_count": 0,
+            "files": [
+              {
+                "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-03\\native.dwg",
+                "exists": true,
+                "bytes": 33899
+              },
+              {
+                "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-03\\native.dxf",
+                "exists": true,
+                "bytes": 132567
+              }
+            ]
+          },
+          "read_dwg": {
+            "wall_s": 1.4848635000016657,
+            "wrapper_s": 1.4,
+            "returncode": 0,
+            "status": "ok",
+            "wrapper_code": 0,
+            "timeout": false,
+            "call_ok": true,
+            "write_done": false,
+            "read_done": true,
+            "identity": {
+              "acadver": "25.0",
+              "dwgname": "native.dwg",
+              "insunits": 4,
+              "ucsorg": "0,0,0"
+            },
+            "entity_count": 21,
+            "files": [
+              {
+                "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-03\\native.dwg",
+                "exists": true,
+                "bytes": 33899
+              }
+            ],
+            "compare": {
+              "ok": true,
+              "errors": [],
+              "max_deviation_mm": 1.2862197421537486e-12,
+              "matched": 21,
+              "expected_count": 21,
+              "actual_count": 21,
+              "point_count_expected": 69,
+              "point_count_actual": 69
+            }
+          },
+          "ezdxf_on_native_dxf": {
+            "audit": {
+              "insunits": 4,
+              "counts": {
+                "LWPOLYLINE": 6,
+                "POLYLINE": 6,
+                "POINT": 9
+              },
+              "entities": 21,
+              "bytes": 132567
+            },
+            "compare": {
+              "ok": true,
+              "errors": [],
+              "max_deviation_mm": 9.094947017729282e-13,
+              "matched": 21,
+              "expected_count": 21,
+              "actual_count": 21,
+              "point_count_expected": 69,
+              "point_count_actual": 69
+            }
+          },
+          "native_on_ezdxf_dxf": {
+            "wall_s": 1.1379461999968044,
+            "wrapper_s": 1.0,
+            "returncode": 0,
+            "status": "ok",
+            "wrapper_code": 0,
+            "timeout": false,
+            "call_ok": true,
+            "write_done": false,
+            "read_done": true,
+            "identity": {
+              "acadver": "25.0",
+              "dwgname": "offline.dxf",
+              "insunits": 4,
+              "ucsorg": "0,0,0"
+            },
+            "entity_count": 21,
+            "files": [
+              {
+                "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-03\\offline.dxf",
+                "exists": true,
+                "bytes": 29524
+              }
+            ],
+            "compare": {
+              "ok": true,
+              "errors": [],
+              "max_deviation_mm": 3.858659226461245e-12,
+              "matched": 21,
+              "expected_count": 21,
+              "actual_count": 21,
+              "point_count_expected": 69,
+              "point_count_actual": 69
+            }
+          },
+          "native_on_native_dxf": {
+            "wall_s": 1.4720847999997204,
+            "wrapper_s": 1.3,
+            "returncode": 0,
+            "status": "ok",
+            "wrapper_code": 0,
+            "timeout": false,
+            "call_ok": true,
+            "write_done": false,
+            "read_done": true,
+            "identity": {
+              "acadver": "25.0",
+              "dwgname": "native.dxf",
+              "insunits": 4,
+              "ucsorg": "0,0,0"
+            },
+            "entity_count": 21,
+            "files": [
+              {
+                "path": "C:\\Users\\artsafro\\.hermes\\profiles\\dt-experimenter-cursor\\cache\\scratch\\agr-autocad-t_3d8b70a4\\run-v002\\rep-03\\native.dxf",
+                "exists": true,
+                "bytes": 132567
+              }
+            ],
+            "compare": {
+              "ok": true,
+              "errors": [],
+              "max_deviation_mm": 3.858659226461245e-12,
+              "matched": 21,
+              "expected_count": 21,
+              "actual_count": 21,
+              "point_count_expected": 69,
+              "point_count_actual": 69
+            }
+          }
+        }
+      ],
+      "aborted": null
+    },
+    "probes": [
+      {
+        "name": "undefined-function",
+        "detected": [
+          "error log",
+          "marker missing"
+        ],
+        "returncode": 0,
+        "status": "ok",
+        "timeout": false,
+        "raw": {
+          "text": "{\"status\": \"ok\", \"exit_code\": 0, \"seconds\": 1.3, \"cmd\": [\"C:\\\\Program Files\\\\Autodesk\\\\AutoCAD 2025\\\\accoreconsole.exe\", \"/s\", \"C:\\\\Users\\\\artsafro\\\\.hermes\\\\profiles\\\\dt-experimenter-cursor\\\\cache\\\\scratch\\\\agr-autocad-t_3d8b70a4\\\\run-v002\\\\probes\\\\undefined-function.scr\", \"/l\", \"en-US\"], \"warnings\": [], \"log\": \"Redirect stdout (file: C:\\\\Users\\\\artsafro\\\\AppData\\\\Local\\\\Temp\\\\accc1347802).\\r\\nAcCoreConsole: StdOutConsoleMode: processed-output: disabled,auto\\r\\nAutoCAD Core Engine Console - Copyright 2024 Autodesk, Inc.  All rights reserved. (V.72.0.0)\\r\\n\\r\\nExecution Path:\\r\\nC:\\\\Program Files\\\\Autodesk\\\\AutoCAD 2025\\\\accoreconsole.exe\\r\\nCurrent Directory: C:\\\\Users\\\\artsafro\\\\AppData\\\\Local\\\\Temp\\\\agr-autocad-t_3d8b70a4\\r\\n\\r\\nVersion Number: V.72.0.0 (UNICODE)\\r\\nLogFilePath has been set to the working folder.\\r\\nCoreHeartBeat\\r\\nRegenerating model.\\r\\n\\r\\n**** System Variable Changed ****\\r\\n1 of the monitored system variables has changed from the preferred value. Use SYSVARMONITOR command to view changes.\\r\\n\\r\\n\\r\\nAutoCAD menu utilities loaded.\\r\\nCommand:\\r\\nCommand:\\r\\n\\r\\nCommand:\\r\\nCommand: (agr-deliberate-undefined-function)\\r\\n; error: no function definition: AGR-DELIBERATE-UNDEFINED-FUNCTION\\r\\n\\r\\n\"}\n\n\nRedirect stdout (file: C:\\Users\\artsafro\\AppData\\Local\\Temp\\accc1347802).\r\nAcCoreConsole: StdOutConsoleMode: processed-output: disabled,auto\r\nAutoCAD Core Engine Console - Copyright 2024 Autodesk, Inc.  All rights reserved. (V.72.0.0)\r\n\r\nExecution Path:\r\nC:\\Program Files\\Autodesk\\AutoCAD 2025\\accoreconsole.exe\r\nCurrent Directory: C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-autocad-t_3d8b70a4\r\n\r\nVersion Number: V.72.0.0 (UNICODE)\r\nLogFilePath has been set to the working folder.\r\nCoreHeartBeat\r\nRegenerating model.\r\n\r\n**** System Variable Changed ****\r\n1 of the monitored system variables has changed from the preferred value. Use SYSVARMONITOR command to view changes.\r\n\r\n\r\nAutoCAD menu utilities loaded.\r\nCommand:\r\nCommand:\r\n\r\nCommand:\r\nCommand: (agr-delibe",
+          "truncated": true
+        }
+      },
+      {
+        "name": "missing-dwg",
+        "detected": [
+          "missing file",
+          "error log",
+          "marker missing"
+        ],
+        "returncode": 1,
+        "status": "error",
+        "timeout": false,
+        "raw": {
+          "text": "{\"status\": \"error\", \"exit_code\": 76, \"seconds\": 0.3, \"cmd\": [\"C:\\\\Program Files\\\\Autodesk\\\\AutoCAD 2025\\\\accoreconsole.exe\", \"/i\", \"C:\\\\Users\\\\artsafro\\\\.hermes\\\\profiles\\\\dt-experimenter-cursor\\\\cache\\\\scratch\\\\agr-autocad-t_3d8b70a4\\\\run-v002\\\\probes\\\\missing.dwg\", \"/s\", \"C:\\\\Users\\\\artsafro\\\\.hermes\\\\profiles\\\\dt-experimenter-cursor\\\\cache\\\\scratch\\\\agr-autocad-t_3d8b70a4\\\\run-v002\\\\probes\\\\missing-dwg.scr\", \"/l\", \"en-US\"], \"warnings\": [], \"log\": \"Redirect stdout (file: C:\\\\Users\\\\artsafro\\\\AppData\\\\Local\\\\Temp\\\\accc1199842).\\r\\nAcCoreConsole: StdOutConsoleMode: processed-output: disabled,auto\\r\\nAutoCAD Core Engine Console - Copyright 2024 Autodesk, Inc.  All rights reserved. (V.72.0.0)\\r\\n\\r\\nExecution Path:\\r\\nC:\\\\Program Files\\\\Autodesk\\\\AutoCAD 2025\\\\accoreconsole.exe\\r\\nCurrent Directory: C:\\\\Users\\\\artsafro\\\\AppData\\\\Local\\\\Temp\\\\agr-autocad-t_3d8b70a4\\r\\n\\r\\nVersion Number: V.72.0.0 (UNICODE)\\r\\nLogFilePath has been set to the working folder.\\r\\n\\r\\n************************MessageBox****************************\\r\\nAutoCAD Message\\r\\nCannot find the specified drawing file.\\r\\nPlease verify that the file exists.\\r\\n>>>Responding: OK.\\r\\n**************************************************************\\r\\nLogFilePath has been restored to ''.\\r\\n\\r\\nERROR: Something went wrong. ErrorStatus=76.\\r\\n\"}\n\n\nRedirect stdout (file: C:\\Users\\artsafro\\AppData\\Local\\Temp\\accc1199842).\r\nAcCoreConsole: StdOutConsoleMode: processed-output: disabled,auto\r\nAutoCAD Core Engine Console - Copyright 2024 Autodesk, Inc.  All rights reserved. (V.72.0.0)\r\n\r\nExecution Path:\r\nC:\\Program Files\\Autodesk\\AutoCAD 2025\\accoreconsole.exe\r\nCurrent Directory: C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-autocad-t_3d8b70a4\r\n\r\nVersion Number: V.72.0.0 (UNICODE)\r\nLogFilePath has been set to the working folder.\r\n\r\n************************MessageBox****************************\r\nAutoCAD Message\r\nCannot find the specified drawing file.\r\nPlease verify that the file exists.\r\n>>>Responding: OK.\r\n************",
+          "truncated": true
+        }
+      },
+      {
+        "name": "ezdxf-missing",
+        "detected": [
+          "missing file",
+          "error log"
+        ],
+        "raw": {
+          "text": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\artsafro\\\\.hermes\\\\profiles\\\\dt-experimenter-cursor\\\\cache\\\\scratch\\\\agr-autocad-t_3d8b70a4\\\\run-v002\\\\probes\\\\missing.dxf'",
+          "truncated": false
+        }
+      }
+    ]
+  },
+  "dxf_audits": [
+    {
+      "rep": 1,
+      "file": "offline.dxf",
+      "errors": 0,
+      "fixes": 0
+    },
+    {
+      "rep": 1,
+      "file": "native.dxf",
+      "errors": 0,
+      "fixes": 0
+    },
+    {
+      "rep": 2,
+      "file": "offline.dxf",
+      "errors": 0,
+      "fixes": 0
+    },
+    {
+      "rep": 2,
+      "file": "native.dxf",
+      "errors": 0,
+      "fixes": 0
+    },
+    {
+      "rep": 3,
+      "file": "offline.dxf",
+      "errors": 0,
+      "fixes": 0
+    },
+    {
+      "rep": 3,
+      "file": "native.dxf",
+      "errors": 0,
+      "fixes": 0
+    }
+  ],
+  "independent_source_check": {
+    "method": "Native DXF compared with unrounded spec coordinates, analytic wall direction, Shapely polygon areas; v002 coordinates asserted identical to checked v001",
+    "rows": [
+      {
+        "id": "bench-b01-box",
+        "contour_max_mm": 0.0,
+        "contour_area_abs_m2": 0.0,
+        "opening_max_mm_vs_unrounded_spec": 0.0,
+        "level_max_mm": 0.0
+      },
+      {
+        "id": "bench-b02-corner-niche",
+        "contour_max_mm": 0.0,
+        "contour_area_abs_m2": 0.0,
+        "opening_max_mm_vs_unrounded_spec": 3.0182432469379865e-07,
+        "level_max_mm": 0.0
+      },
+      {
+        "id": "bench-b02t-terrace",
+        "contour_max_mm": 0.0,
+        "contour_area_abs_m2": 0.0,
+        "opening_max_mm_vs_unrounded_spec": 3.0182432469379865e-07,
+        "level_max_mm": 0.0
+      }
+    ]
+  },
+  "inputs_sha256": {
+    "bench-b01-box\\etalon.json": "b8fa3bea8dd962a044adb1659eb4d109dcff13b927584e3c15fc1747dd6b59ec",
+    "bench-b01-box\\object.json": "42004aa39b3ef094431f185e7e439ae85cd5277a764a24923699a4617517fa41",
+    "bench-b01-box\\spec.json": "48d6fa4619c9c5ec36faca23d54787aeafe115fbaca13e263d3d0866e624e4a8",
+    "bench-b01-box\\tolerances.json": "df2a20a7e5ebb1d127cd813c20529489d99f638c401684c78e8d7028d42e7638",
+    "bench-b02-corner-niche\\etalon.json": "b174e68cf36ecb433fb5cda9823fc0ac5ab904c25a70aadf9cd1779da5b4897a",
+    "bench-b02-corner-niche\\object.json": "b10d8829e2d6d303fb0739c1198673e3b9b49f44c6f82452fd8bbf45f475b3d1",
+    "bench-b02-corner-niche\\spec.json": "85f1b7d2b8b8912688290bf56fe601f5ae641ae753221acdff6b97c62d640bea",
+    "bench-b02-corner-niche\\tolerances.json": "d36f5f24517986a0da64b9a9c41dc80cad09daa52e2c8d3d1f8d1cb4f273c214",
+    "bench-b02t-terrace\\etalon.json": "b2ddbc39268e74e52df53bd85a22d4bf8f617d8f36afb7989364f92eed42c24a",
+    "bench-b02t-terrace\\object.json": "55a86b2381bc87e1de5dd0b0a22bdc578ae780021244c2ca3f7ccc321b82d613",
+    "bench-b02t-terrace\\spec.json": "4a9a5aa76c2c906fa3844c2009fb127532aed82fa4835ef96e2336a384122cec",
+    "bench-b02t-terrace\\tolerances.json": "5d51f8b2279fae54bac45ea6f95bd14e77bc71fb0ea730f21bb74a42feaf47e5"
+  },
+  "first_run_rejected": {
+    "reason": "wrapper timeout despite done markers and valid geometry; initial harness false-green corrected",
+    "write_wall_s": [
+      60.211731399998826,
+      60.20864360000269,
+      60.193959000003815
+    ]
+  }
+}
