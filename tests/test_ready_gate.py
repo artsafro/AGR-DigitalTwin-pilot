@@ -119,3 +119,56 @@ def test_docs_name_the_gate_recitation_and_contract():
     assert "Requirement" in handover
     commands = (ROOT / "docs/agents/COMMANDS.md").read_text(encoding="utf-8")
     assert ".github/ISSUE_TEMPLATE/task.md" in commands
+
+
+# Round 1 review (PR #13): the gate must follow Markdown structure, not a global heading map.
+
+MISPLACED = FILLED.replace("## Specification", "## Specification\n\n## Context\n\nRead WORKFLOW.")
+
+
+def fenced(body, fence):
+    return f"{fence}markdown\n{body}\n{fence}\n"
+
+
+def test_fields_outside_specification_do_not_count():
+    """An empty Specification is not filled by field headings that sit under Context."""
+    problems = load_gate().gate_problems(MISPLACED)
+    for field in load_gate().SPEC_FIELDS:
+        assert any(field in p for p in problems), (field, problems)
+
+
+def test_fenced_contract_does_not_pass():
+    gate = load_gate()
+    for fence in ("```", "~~~", "````"):
+        problems = gate.gate_problems(fenced(FILLED, fence))
+        for name in gate.SECTIONS:
+            assert any(name in p and "missing" in p for p in problems), (fence, name, problems)
+
+
+def test_fenced_checkbox_is_not_an_acceptance_item():
+    gate = load_gate()
+    for fence in ("```", "~~~"):
+        body = replace_field(FILLED, "Acceptance", fenced("- [ ] example only", fence))
+        assert any("Acceptance" in p for p in gate.gate_problems(body)), fence
+
+
+def test_fenced_heading_does_not_split_a_field():
+    """A heading inside a fenced example is text of the field it sits in, not a new section."""
+    gate = load_gate()
+    body = replace_field(FILLED, "Requirement", "> quote\n\n~~~\n## Specification\n### Acceptance\n~~~")
+    assert gate.gate_problems(body) == []
+    body = replace_field(FILLED, "Context", "```\n## Context\n```")
+    assert gate.gate_problems(body) == []  # fenced text still fills the field
+
+
+def test_cli_exit_code_for_malformed_bodies(tmp_path, capsys):
+    gate = load_gate()
+    good = tmp_path / "good.md"
+    good.write_text(FILLED, encoding="utf-8")
+    assert gate.main(["--file", str(good)]) == 0
+    for name, body in (("misplaced", MISPLACED), ("backtick", fenced(FILLED, "```")),
+                       ("tilde", fenced(FILLED, "~~~"))):
+        path = tmp_path / f"{name}.md"
+        path.write_text(body, encoding="utf-8")
+        assert gate.main(["--file", str(path)]) == 1, name
+        assert "FAIL" in capsys.readouterr().out, name
