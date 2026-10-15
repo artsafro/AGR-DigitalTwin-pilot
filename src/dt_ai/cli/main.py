@@ -50,7 +50,11 @@ def parser():
     spec.add_argument("--a", type=Path, help="compare: first spec.json (its <spec>.report.json beside it)")
     spec.add_argument("--b", type=Path, help="compare: second spec.json (its <spec>.report.json beside it)")
     spec.add_argument("--tolerances", type=Path, help="compare / extract: benchmark tolerances.json (extract: its spec_extract thresholds)")
-    fsrc = sub.add_parser("from-source", help="Build a model by source modules (modules.json) and its spec by modules")
+    fsrc_help = (
+        "Experimental; not for production (OBJ03 unsuccessful, #117). "
+        "Build a model by source modules (modules.json) and its spec by modules"
+    )
+    fsrc = sub.add_parser("from-source", help=fsrc_help, description=fsrc_help)
     for a in ("--dump", "--modules", "--object", "--output"):
         fsrc.add_argument(a, type=Path, required=True)
     intake = sub.add_parser("intake", help="Check an intake folder ('study the sources', HARNESS_PLAN §15)")
