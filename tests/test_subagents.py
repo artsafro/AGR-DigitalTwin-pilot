@@ -23,6 +23,21 @@ def run(mode, payload, root=ROOT):
     return json.loads(result.stdout) if result.stdout.strip() else {}
 
 
+@pytest.fixture
+def git_repo(tmp_path, monkeypatch):
+    """Keep status snapshots and tracked-file checks independent of the worktree."""
+    for key in ("TMP", "TEMP", "TMPDIR"):
+        monkeypatch.setenv(key, str(tmp_path))
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    for args in (["init", "-q"], ["config", "user.email", "t@x"], ["config", "user.name", "t"]):
+        subprocess.run(["git", *args], cwd=repo, check=True)
+    (repo / "a.txt").write_text("a\n", encoding="utf-8")
+    subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
+    subprocess.run(["git", "commit", "-qm", "a"], cwd=repo, check=True)
+    return repo
+
+
 def frontmatter(name):
     text = (ROOT / f".claude/agents/{name}.md").read_text(encoding="utf-8")
     assert text.startswith("---\n")
@@ -53,8 +68,8 @@ def test_subagent_hooks_are_wired():
     assert any("deny-geometry" in h["command"] for e in checker for h in e["hooks"])
 
 
-def test_start_gives_the_read_only_reminder():
-    out = run("start", {"agent_type": "bench-runner", "agent_id": "t-start"})
+def test_start_gives_the_read_only_reminder(git_repo):
+    out = run("start", {"agent_type": "bench-runner", "agent_id": "t-start"}, root=git_repo)
     assert out["hookSpecificOutput"]["hookEventName"] == "SubagentStart"
     assert "Read-only" in out["hookSpecificOutput"]["additionalContext"]
 
@@ -69,26 +84,21 @@ def test_start_gives_the_read_only_reminder():
     ("bbox | 10 | 10 | pass", False),                                          # review 2 of #86: no table
     ("| check | expected | measured | pass/fail |\n|---|---|---|---|\n| bbox | 10 | 10 | pass-through |", False),
 ])
-def test_stop_wants_a_verdict_table_from_the_checker(message, ok):
-    run("start", {"agent_id": "t-stop"})
-    out = run("stop", {"agent_type": "independent-checker", "agent_id": "t-stop", "last_assistant_message": message})
+def test_stop_wants_a_verdict_table_from_the_checker(message, ok, git_repo):
+    run("start", {"agent_id": "t-stop"}, root=git_repo)
+    out = run("stop", {"agent_type": "independent-checker", "agent_id": "t-stop", "last_assistant_message": message},
+              root=git_repo)
     assert (out == {}) is ok, out
     if not ok:                                                                # a retry must comply too (review 2)
-        run("start", {"agent_id": "t-stop"})
+        run("start", {"agent_id": "t-stop"}, root=git_repo)
         assert run("stop", {"agent_type": "independent-checker", "agent_id": "t-stop", "stop_hook_active": True,
-                            "last_assistant_message": message})["decision"] == "block"
+                            "last_assistant_message": message}, root=git_repo)["decision"] == "block"
     if not ok:
         assert out["decision"] == "block" and "report the table" in out["reason"]
 
 
-def test_stop_names_tracked_files_a_subagent_changed(tmp_path):
-    repo = tmp_path / "repo"
-    repo.mkdir()
-    for args in (["init", "-q"], ["config", "user.email", "t@x"], ["config", "user.name", "t"]):
-        subprocess.run(["git", *args], cwd=repo, check=True)
-    (repo / "a.txt").write_text("a\n", encoding="utf-8")
-    subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
-    subprocess.run(["git", "commit", "-qm", "a"], cwd=repo, check=True)
+def test_stop_names_tracked_files_a_subagent_changed(git_repo):
+    repo = git_repo
     run("start", {"agent_id": "t-changed"}, root=repo)
     (repo / "a.txt").write_text("changed\n", encoding="utf-8")
     out = run("stop", {"agent_type": "bench-runner", "agent_id": "t-changed", "last_assistant_message": "done"},

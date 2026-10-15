@@ -151,6 +151,9 @@ def shell_run(tmp_path):
         path.chmod(0o755)
     env = os.environ.copy()
     env.pop("KEEP_QUADS", None)
+    # Git Bash must convert POSIX arguments for the native Python process doubles.
+    env.pop("MSYS_NO_PATHCONV", None)
+    env.pop("MSYS2_ARG_CONV_EXCL", None)
     env["KPP_TEST_PYTHON"] = sys.executable.replace("\\", "/")
     env["PATH"] = str(fake_bin) + os.pathsep + env["PATH"]
 
@@ -158,6 +161,24 @@ def shell_run(tmp_path):
         return subprocess.run([bash, str(scripts / "run_all.sh"), version],
                               env=env | overrides, capture_output=True, text=True, timeout=30)
     return job / "outputs", run
+
+
+def test_shell_pipeline_does_not_inherit_msys_path_conversion_flags(monkeypatch, request):
+    monkeypatch.setenv("MSYS_NO_PATHCONV", "1")
+    monkeypatch.setenv("MSYS2_ARG_CONV_EXCL", "*")
+    _, run = request.getfixturevalue("shell_run")
+    real_run = subprocess.run
+
+    def checked_run(*args, **kwargs):
+        assert "MSYS_NO_PATHCONV" not in kwargs["env"]
+        assert "MSYS2_ARG_CONV_EXCL" not in kwargs["env"]
+        return real_run(*args, **kwargs)
+
+    monkeypatch.setattr(subprocess, "run", checked_run)
+    result = run()
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert os.environ["MSYS_NO_PATHCONV"] == "1"
+    assert os.environ["MSYS2_ARG_CONV_EXCL"] == "*"
 
 
 def test_pipeline_preserves_old_build_and_atlas_uses_fresh_version(shell_run):
