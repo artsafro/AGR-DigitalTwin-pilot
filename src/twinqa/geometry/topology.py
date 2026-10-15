@@ -23,13 +23,36 @@ by grid hashing (cell size ``tol``), neighbour-cell comparisons and union-find.
   self-intersections. ``candidate_pairs`` still decides which polygon pairs are
   tested. In both rules ``tol`` is the regulatory distance tolerance (0.002 m
   unless the caller overrides it); a penetration within ``tol`` is not counted.
-  Pierce. An edge of one fan triangle crosses the plane of another at a point
-  inside that triangle. The signed distances of the segment endpoints to the
-  plane have opposite signs and each absolute value is greater than ``tol``.
-  The crossing point is inside the closed triangle: every barycentric coordinate
-  is greater than -1e-9, so a transversal that lands on a triangle edge is
-  counted (two axis-aligned cubes that overlap by half a metre on every axis
-  and meet along a face diagonal). When the polygons share one cluster, that
+  Pierce. An edge A->B of one fan triangle crosses the plane of another fan
+  triangle t at a point X. The signed distances of A and B to the plane have
+  opposite signs and each absolute value is greater than ``tol``. X is a
+  candidate only when it lies in the closed triangle (every barycentric
+  coordinate greater than -1e-9). Acceptance is then the local surface at X:
+  1. If X is farther than ``tol`` from all three sides of t (distance in 3D
+     from X to each side segment), the hit is counted.
+  2. Else if X is within ``tol`` of exactly one side E of t and farther than
+     ``tol`` from t's vertices: look up the other fan triangles that share E
+     by unordered cluster pair. For each neighbour t2 with apex w2 (t has apex
+     w1, its vertex not on E), work in the 2D cross-section perpendicular to E
+     through X. Directions are the components perpendicular to E of (w1 - X),
+     (w2 - X), (A - X) and (B - X), as angles from atan2 in an orthonormal
+     frame of the plane perpendicular to E. The rays toward w1 and w2 split
+     the circle into two arcs. The neighbour crosses when A and B lie in
+     different open arcs and both are farther than ``tol`` from the plane of
+     t2 (otherwise A or B lies on t2: contact). The hit is counted if at least
+     one neighbour crosses. A coplanar continuation (a face diagonal: the
+     neighbour ray is opposite w1, so A and B lie on opposite sides) is
+     counted. A box resting on a box, where the neighbour is the lower face
+     and an endpoint lies in that plane, is not counted. If no neighbour
+     shares E, the edge is an open boundary and the hit is counted: X still
+     lies on the closed triangle, and no adjacent face is present to
+     reclassify that transversal as contact.
+  3. Else (X within ``tol`` of a vertex V of t, or near two sides): the hit is
+     counted only if every fan triangle of the mesh that has a vertex in V's
+     cluster has all three vertices within ``tol`` of the plane of t (a flat
+     star: a needle through a vertex of a flat floor). A crossing exactly
+     through a vertex of a folded surface is not counted (known limitation).
+  When the polygons share one cluster, that
   hit counts only if the crossing point is farther than ``tol`` from the shared
   vertex, using the position of a vertex of polygon p (the lower polygon index)
   in that cluster. When they share two clusters, it counts only if the point is
@@ -324,7 +347,8 @@ def _self_intersections(vertices, polys, clusters, candidate_pairs, tol: float) 
             continue
         p0 = int(poly[0])
         fans.append(np.asarray([(p0, int(poly[i]), int(poly[i + 1])) for i in range(1, len(poly) - 1)], dtype=np.int64))
-    edge_map, fan_ids = _fan_edge_map(fans, clusters)
+    edge_map, fan_ids, fan_verts = _fan_edge_map(fans, clusters)
+    cluster_fans = _fans_by_cluster(fan_verts, clusters)
     usable: list[tuple[int, int, set[int]]] = []
     for p, q in pairs:
         shared = poly_clusters[p] & poly_clusters[q]
@@ -333,7 +357,9 @@ def _self_intersections(vertices, polys, clusters, candidate_pairs, tol: float) 
         usable.append((p, q, shared))
     if not usable:
         return 0
-    pierced = _pierce_pairs(vertices, polys, clusters, fans, usable, tol)
+    pierced = _pierce_pairs(
+        vertices, polys, clusters, fans, usable, tol, edge_map, fan_ids, fan_verts, cluster_fans
+    )
     on_plane = _edge_on_plane_pairs(vertices, fans, fan_ids, usable, edge_map, clusters, tol)
     return len(pierced | on_plane)
 
@@ -378,15 +404,21 @@ def _plane_tol(tol: float) -> float:
 
 
 def _fan_edge_map(fans, clusters):
-    """Unordered cluster-pair -> (polygon index, fan id, apex vertex) for every fan edge."""
+    """Unordered cluster-pair -> (polygon index, fan id, apex vertex) for every fan edge.
+
+    Also returns per-polygon fan ids and ``fan_verts[fan id]`` = the three vertex
+    indices of that fan triangle.
+    """
     edge_map: dict[tuple[int, int], list[tuple[int, int, int]]] = {}
     fan_ids: list[np.ndarray] = []
+    fan_verts: list[tuple[int, int, int]] = []
     next_id = 0
     for pi, fan in enumerate(fans):
         ids = np.empty(len(fan), dtype=np.int64)
         for ti in range(len(fan)):
             ids[ti] = next_id
-            vs = [int(fan[ti, 0]), int(fan[ti, 1]), int(fan[ti, 2])]
+            vs = (int(fan[ti, 0]), int(fan[ti, 1]), int(fan[ti, 2]))
+            fan_verts.append(vs)
             cs = [int(clusters[v]) for v in vs]
             for i in range(3):
                 a, b = cs[i], cs[(i + 1) % 3]
@@ -396,7 +428,21 @@ def _fan_edge_map(fans, clusters):
                 edge_map.setdefault(key, []).append((pi, next_id, vs[(i + 2) % 3]))
             next_id += 1
         fan_ids.append(ids)
-    return edge_map, fan_ids
+    return edge_map, fan_ids, fan_verts
+
+
+def _fans_by_cluster(fan_verts, clusters):
+    """Cluster id -> fan ids of triangles that use a vertex of that cluster."""
+    grouped: dict[int, list[int]] = {}
+    for fid, tri in enumerate(fan_verts):
+        seen: set[int] = set()
+        for vertex in tri:
+            cluster = int(clusters[int(vertex)])
+            if cluster in seen:
+                continue
+            seen.add(cluster)
+            grouped.setdefault(cluster, []).append(fid)
+    return grouped
 
 
 def _shared_simplex(poly, clusters, shared, vertices):
@@ -413,19 +459,24 @@ def _shared_simplex(poly, clusters, shared, vertices):
     return count, slots
 
 
-def _pierce_pairs(vertices, polys, clusters, fans, usable, tol: float) -> set[tuple[int, int]]:
+def _pierce_pairs(
+    vertices, polys, clusters, fans, usable, tol: float, edge_map, fan_ids, fan_verts, cluster_fans
+) -> set[tuple[int, int]]:
     src_rows: list[np.ndarray] = []
     dst_rows: list[np.ndarray] = []
+    dst_fan_rows: list[np.ndarray] = []
     pair_rows: list[tuple[int, int]] = []
     simplex_n: list[int] = []
     simplex_pts: list[np.ndarray] = []
     for p, q, shared in usable:
         count, slots = _shared_simplex(polys[p], clusters, shared, vertices) if shared else (0, np.zeros((2, 3)))
         fa, fb = fans[p], fans[q]
+        fa_ids, fb_ids = fan_ids[p], fan_ids[q]
         for tri in fa:
             n = len(fb)
             src_rows.append(np.repeat(tri.reshape(1, 3), n, axis=0))
             dst_rows.append(fb)
+            dst_fan_rows.append(fb_ids)
             pair_rows.extend([(p, q)] * n)
             simplex_n.extend([count] * n)
             simplex_pts.extend([slots] * n)
@@ -433,6 +484,7 @@ def _pierce_pairs(vertices, polys, clusters, fans, usable, tol: float) -> set[tu
             n = len(fa)
             src_rows.append(np.repeat(tri.reshape(1, 3), n, axis=0))
             dst_rows.append(fa)
+            dst_fan_rows.append(fa_ids)
             pair_rows.extend([(p, q)] * n)
             simplex_n.extend([count] * n)
             simplex_pts.extend([slots] * n)
@@ -440,13 +492,17 @@ def _pierce_pairs(vertices, polys, clusters, fans, usable, tol: float) -> set[tu
         return set()
     src = np.concatenate(src_rows, axis=0)
     dst = np.concatenate(dst_rows, axis=0)
+    dst_fan = np.concatenate(dst_fan_rows, axis=0)
     counts = np.asarray(simplex_n, dtype=np.int64)
     slots = np.stack(simplex_pts, axis=0)
     hits: set[tuple[int, int]] = set()
     step = 8192
     for start in range(0, len(src), step):
         stop = min(start + step, len(src))
-        mask = _edges_pierce(vertices, src[start:stop], dst[start:stop], tol, counts[start:stop], slots[start:stop])
+        mask = _edges_pierce(
+            vertices, src[start:stop], dst[start:stop], tol, counts[start:stop], slots[start:stop],
+            dst_fan[start:stop], edge_map, fan_verts, clusters, cluster_fans,
+        )
         if np.any(mask):
             hits.update(pair_rows[start + i] for i in np.flatnonzero(mask).tolist())
     return hits
@@ -617,21 +673,203 @@ def _segment_inside_triangle_length(a, b, tri) -> float:
     return float((t1 - t0) * np.linalg.norm(b_p - a_p))
 
 
-def _edges_pierce(vertices, src, dst, tol, simplex_n=None, simplex_pts=None) -> np.ndarray:
+def _edges_pierce(
+    vertices, src, dst, tol, simplex_n=None, simplex_pts=None,
+    dst_fan=None, edge_map=None, fan_verts=None, clusters=None, cluster_fans=None,
+) -> np.ndarray:
     """True where any edge of src crosses the plane of dst inside that triangle.
 
     When a row carries a shared simplex (1 vertex or 2), the hit counts only if
-    the pierce point is farther than ``tol`` from that simplex.
+    the pierce point is farther than ``tol`` from that simplex. Points farther
+    than ``tol`` from every side are accepted in the vectorised path. Points
+    within ``tol`` of the boundary are reclassified in Python by the local
+    surface at the crossing.
     """
     out = np.zeros(len(src), dtype=bool)
     if len(src) == 0:
         return out
+    plane_tol = _plane_tol(tol)
     for e0, e1 in ((0, 1), (1, 2), (2, 0)):
-        inside, point = _segment_pierce_detail(vertices[src[:, e0]], vertices[src[:, e1]], vertices[dst], tol)
+        origin = vertices[src[:, e0]]
+        end = vertices[src[:, e1]]
+        closed, point = _segment_pierce_detail(origin, end, vertices[dst], tol)
         if simplex_n is not None:
-            inside &= _farther_than_simplex(point, simplex_n, simplex_pts, tol)
-        out |= inside
+            closed = closed & _farther_than_simplex(point, simplex_n, simplex_pts, tol)
+        if not np.any(closed):
+            continue
+        out |= _accept_pierce_location(
+            closed, point, origin, end, dst, vertices, plane_tol,
+            dst_fan, edge_map, fan_verts, clusters, cluster_fans,
+        )
     return out
+
+
+_EDGE_APEX = ((0, 1, 2), (1, 2, 0), (2, 0, 1))
+_EDGE_VERTS = ({0, 1}, {1, 2}, {2, 0})
+
+
+def _accept_pierce_location(
+    closed, point, origin, end, dst, vertices, plane_tol, dst_fan, edge_map, fan_verts, clusters, cluster_fans
+):
+    """Rule 1 is vectorised. Rules 2 and 3 run only on boundary rows."""
+    v0 = vertices[dst[:, 0]]
+    v1 = vertices[dst[:, 1]]
+    v2 = vertices[dst[:, 2]]
+    side = np.stack(
+        (
+            _distance_to_segment(point, v0, v1),
+            _distance_to_segment(point, v1, v2),
+            _distance_to_segment(point, v2, v0),
+        ),
+        axis=1,
+    )
+    far = closed & np.all(side > plane_tol, axis=1)
+    boundary = np.flatnonzero(closed & ~far)
+    if len(boundary) == 0:
+        return far
+    accepted = far.copy()
+    for row in boundary.tolist():
+        if _boundary_pierce_counts(
+            point[row], origin[row], end[row], dst[row], side[row], vertices, plane_tol,
+            int(dst_fan[row]), edge_map, fan_verts, clusters, cluster_fans,
+        ):
+            accepted[row] = True
+    return accepted
+
+
+def _boundary_pierce_counts(
+    point, origin, end, tri, side, vertices, plane_tol, fan_id, edge_map, fan_verts, clusters, cluster_fans
+) -> bool:
+    tri = (int(tri[0]), int(tri[1]), int(tri[2]))
+    near = [float(side[k]) <= plane_tol for k in range(3)]
+    vert_d = [float(np.linalg.norm(point - vertices[tri[k]])) for k in range(3)]
+    near_v = [dist <= plane_tol for dist in vert_d]
+    if sum(near) == 1 and not any(near_v):
+        return _edge_neighbour_crosses(
+            point, origin, end, tri, near.index(True), vertices, plane_tol,
+            fan_id, edge_map, fan_verts, clusters,
+        )
+    return _flat_star_counts(tri, near, near_v, vert_d, vertices, plane_tol, clusters, cluster_fans, fan_verts)
+
+
+def _edge_neighbour_crosses(
+    point, origin, end, tri, side_index, vertices, plane_tol, fan_id, edge_map, fan_verts, clusters
+) -> bool:
+    i0, i1, iw = _EDGE_APEX[side_index]
+    e0, e1, w1 = tri[i0], tri[i1], tri[iw]
+    c0, c1 = int(clusters[e0]), int(clusters[e1])
+    if c0 == c1:
+        return False
+    key = (c0, c1) if c0 < c1 else (c1, c0)
+    neighbours = [entry for entry in edge_map.get(key, ()) if int(entry[1]) != fan_id]
+    # Open boundary: X is on the closed triangle and no adjacent face can show contact.
+    if not neighbours:
+        return True
+    edge = vertices[e1] - vertices[e0]
+    edge_len = float(np.linalg.norm(edge))
+    if edge_len <= 1e-15:
+        return False
+    direction = edge / edge_len
+    axis0, axis1 = _perp_frame(direction)
+    r1 = _reject(vertices[w1] - point, direction)
+    if float(np.dot(r1, r1)) <= 1e-24:
+        return False
+    ang_r1 = _atan2(r1, axis0, axis1)
+    ang_a = _atan2(_reject(origin - point, direction), axis0, axis1)
+    ang_b = _atan2(_reject(end - point, direction), axis0, axis1)
+    for _poly, fid, apex in neighbours:
+        corners = fan_verts[int(fid)]
+        if not _both_off_plane(origin, end, vertices, corners, plane_tol):
+            continue
+        r2 = _reject(vertices[int(apex)] - point, direction)
+        if float(np.dot(r2, r2)) <= 1e-24:
+            continue
+        if _different_open_arcs(ang_r1, _atan2(r2, axis0, axis1), ang_a, ang_b):
+            return True
+    return False
+
+
+def _flat_star_counts(tri, near, near_v, vert_d, vertices, plane_tol, clusters, cluster_fans, fan_verts) -> bool:
+    """Rule 3. A folded vertex is a known miss: only a flat star is counted."""
+    if any(near_v):
+        chosen = [tri[k] for k in range(3) if near_v[k]]
+    else:
+        common: set[int] | None = None
+        for k in range(3):
+            if not near[k]:
+                continue
+            common = set(_EDGE_VERTS[k]) if common is None else common & _EDGE_VERTS[k]
+        if common:
+            chosen = [tri[k] for k in common]
+        else:
+            chosen = [tri[min(range(3), key=lambda i: vert_d[i])]]
+    return all(
+        _star_is_flat(vertex, tri, vertices, plane_tol, clusters, cluster_fans, fan_verts) for vertex in chosen
+    )
+
+
+def _star_is_flat(vertex, tri, vertices, plane_tol, clusters, cluster_fans, fan_verts) -> bool:
+    origin = vertices[tri[0]]
+    normal = np.cross(vertices[tri[1]] - origin, vertices[tri[2]] - origin)
+    length = float(np.linalg.norm(normal))
+    if length <= 1e-15:
+        return False
+    unit = normal / length
+    cluster = int(clusters[int(vertex)])
+    for fid in cluster_fans.get(cluster, ()):
+        for corner in fan_verts[fid]:
+            if abs(float(np.dot(unit, vertices[int(corner)] - origin))) > plane_tol:
+                return False
+    return True
+
+
+def _both_off_plane(origin, end, vertices, corners, plane_tol) -> bool:
+    p0 = vertices[int(corners[0])]
+    p1 = vertices[int(corners[1])]
+    p2 = vertices[int(corners[2])]
+    normal = np.cross(p1 - p0, p2 - p0)
+    length = float(np.linalg.norm(normal))
+    if length <= 1e-15:
+        return False
+    unit = normal / length
+    return (
+        abs(float(np.dot(unit, origin - p0))) > plane_tol
+        and abs(float(np.dot(unit, end - p0))) > plane_tol
+    )
+
+
+def _reject(vec, direction):
+    return vec - float(np.dot(vec, direction)) * direction
+
+
+def _perp_frame(direction):
+    helper = np.array([1.0, 0.0, 0.0]) if abs(float(direction[0])) < 0.9 else np.array([0.0, 1.0, 0.0])
+    axis0 = np.cross(direction, helper)
+    axis0 /= np.linalg.norm(axis0)
+    axis1 = np.cross(direction, axis0)
+    return axis0, axis1
+
+
+def _atan2(vec, axis0, axis1) -> float:
+    return float(np.arctan2(float(np.dot(vec, axis1)), float(np.dot(vec, axis0))))
+
+
+def _different_open_arcs(ang_r1, ang_r2, ang_a, ang_b) -> bool:
+    two_pi = 2.0 * np.pi
+    span = (ang_r2 - ang_r1) % two_pi
+    eps = 1e-8
+    if span <= eps or span >= two_pi - eps:
+        return False
+    a = (ang_a - ang_r1) % two_pi
+    b = (ang_b - ang_r1) % two_pi
+
+    def sector(value):
+        if value <= eps or abs(value - span) <= eps or value >= two_pi - eps:
+            return 0
+        return 1 if value < span else 2
+
+    sa, sb = sector(a), sector(b)
+    return sa != 0 and sb != 0 and sa != sb
 
 
 def _farther_than_simplex(points, simplex_n, simplex_pts, tol: float) -> np.ndarray:
@@ -688,7 +926,7 @@ def _segment_pierce_detail(origin: np.ndarray, end: np.ndarray, triangles: np.nd
     b1 = np.divide(b1, nn2, out=np.zeros_like(b1), where=safe)
     b2 = np.divide(b2, nn2, out=np.zeros_like(b2), where=safe)
     b0 = 1.0 - b1 - b2
-    # Closed by 1e-9 so a proper transversal along a triangulation diagonal counts.
-    # The open test (all coordinates > 1e-9) still rejects points outside the triangle.
+    # Closed by 1e-9 only selects candidates. Boundary hits are accepted or
+    # rejected afterwards by the local surface at X.
     inside = (b0 > -_PLANE_EPS) & (b1 > -_PLANE_EPS) & (b2 > -_PLANE_EPS) & safe & crosses
     return inside, point

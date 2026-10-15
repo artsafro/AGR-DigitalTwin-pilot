@@ -196,7 +196,7 @@ def _crossing_vertices(depth):
     )
 
 
-def _rigid(points, rng):
+def _rigid_motion(rng):
     axis = rng.normal(size=3)
     axis = axis / np.linalg.norm(axis)
     angle = float(rng.uniform(0.0, 2.0 * np.pi))
@@ -210,7 +210,12 @@ def _rigid(points, rng):
             [z * x * cross - y * s, z * y * cross + x * s, c + z * z * cross],
         ]
     )
-    return points @ rotation.T + rng.normal(size=3)
+    return rotation, rng.normal(size=3)
+
+
+def _rigid(points, rng):
+    rotation, translation = _rigid_motion(rng)
+    return np.asarray(points, dtype=np.float64) @ rotation.T + translation
 
 
 def test_shared_vertex_proper_crossing_counts():
@@ -319,3 +324,133 @@ def test_random_subdivided_crossings(seed):
         dtype=np.float64,
     )
     assert count_defects(_rigid(floor, rng), [(0, 1, 2), (3, 4, 5)])["self_intersections"] == 0
+
+
+def _aabb(x0, x1, y0, y1, z0, z1):
+    verts = np.array(
+        [
+            [x0, y0, z0],
+            [x1, y0, z0],
+            [x1, y1, z0],
+            [x0, y1, z0],
+            [x0, y0, z1],
+            [x1, y0, z1],
+            [x1, y1, z1],
+            [x0, y1, z1],
+        ],
+        dtype=np.float64,
+    )
+    _, faces = unit_cube()
+    return verts, faces
+
+
+def _cat(va, fa, vb, fb):
+    va = np.asarray(va, dtype=np.float64)
+    vb = np.asarray(vb, dtype=np.float64)
+    shift = len(va)
+    faces = list(fa) + [tuple(int(i) + shift for i in face) for face in fb]
+    return np.vstack([va, vb]), faces
+
+
+def test_box_resting_on_box_is_clean():
+    base = _aabb(0.0, 1.0, 0.0, 1.0, 0.0, 1.0)
+    resting = _cat(*base, *_aabb(0.1, 0.4, 0.1, 0.4, 1.0, 1.5))
+    assert count_defects(*resting)["self_intersections"] == 0
+    flush = _cat(*base, *_aabb(0.0, 0.3, 0.0, 0.3, 1.0, 1.5))
+    assert count_defects(*flush)["self_intersections"] == 0
+    sunk = _cat(*base, *_aabb(0.1, 0.4, 0.1, 0.4, 0.7, 1.2))
+    assert count_defects(*sunk)["self_intersections"] > 0
+
+
+def test_needle_through_flat_vertex_counts():
+    """Flat floor around the origin, and a vertical triangle whose z=0 section passes through it."""
+    verts = np.array(
+        [
+            [0.0, 0.0, 0.0],
+            [1.0, -1.0, 0.0],
+            [1.0, 1.0, 0.0],
+            [-1.0, 1.0, 0.0],
+            [-1.0, -1.0, 0.0],
+            [0.0, 0.0, -0.5],
+            [0.3, 0.0, 0.5],
+            [-0.3, 0.0, 0.5],
+        ],
+        dtype=np.float64,
+    )
+    faces = [(0, 1, 2), (0, 2, 3), (0, 3, 4), (0, 4, 1), (5, 6, 7)]
+    assert count_defects(verts, faces)["self_intersections"] > 0
+
+
+def _axis_cuts(rng):
+    count = int(rng.integers(1, 4))
+    for _ in range(50):
+        cuts = np.sort(rng.uniform(0.15, 0.85, size=count))
+        if count == 1 or np.all(np.diff(cuts) >= 0.05):
+            return [float(value) for value in cuts]
+    return [float(value) for value in np.linspace(0.15, 0.85, count)]
+
+
+def _grid_box(x0, x1, y0, y1, z0, z1, x_cuts, y_cuts, z_cuts):
+    """Closed box. Each face is a grid of quads split into two triangles; vertices are welded."""
+    xs = [x0, *sorted(x_cuts), x1]
+    ys = [y0, *sorted(y_cuts), y1]
+    zs = [z0, *sorted(z_cuts), z1]
+    verts: list[tuple[float, float, float]] = []
+    index: dict[tuple[int, int, int], int] = {}
+
+    def vid(ix, iy, iz):
+        key = (ix, iy, iz)
+        if key not in index:
+            index[key] = len(verts)
+            verts.append((xs[ix], ys[iy], zs[iz]))
+        return index[key]
+
+    faces: list[tuple[int, int, int]] = []
+
+    def quad(a, b, c, d):
+        faces.append((a, b, c))
+        faces.append((a, c, d))
+
+    nx, ny, nz = len(xs), len(ys), len(zs)
+    for iy in range(ny - 1):
+        for iz in range(nz - 1):
+            quad(vid(0, iy, iz), vid(0, iy, iz + 1), vid(0, iy + 1, iz + 1), vid(0, iy + 1, iz))
+    ix = nx - 1
+    for iy in range(ny - 1):
+        for iz in range(nz - 1):
+            quad(vid(ix, iy, iz), vid(ix, iy + 1, iz), vid(ix, iy + 1, iz + 1), vid(ix, iy, iz + 1))
+    for ix in range(nx - 1):
+        for iz in range(nz - 1):
+            quad(vid(ix, 0, iz), vid(ix + 1, 0, iz), vid(ix + 1, 0, iz + 1), vid(ix, 0, iz + 1))
+    iy = ny - 1
+    for ix in range(nx - 1):
+        for iz in range(nz - 1):
+            quad(vid(ix, iy, iz), vid(ix, iy, iz + 1), vid(ix + 1, iy, iz + 1), vid(ix + 1, iy, iz))
+    for ix in range(nx - 1):
+        for iy in range(ny - 1):
+            quad(vid(ix, iy, 0), vid(ix, iy + 1, 0), vid(ix + 1, iy + 1, 0), vid(ix + 1, iy, 0))
+    iz = nz - 1
+    for ix in range(nx - 1):
+        for iy in range(ny - 1):
+            quad(vid(ix, iy, iz), vid(ix + 1, iy, iz), vid(ix + 1, iy + 1, iz), vid(ix, iy + 1, iz))
+    return np.array(verts, dtype=np.float64), faces
+
+
+@pytest.mark.parametrize("seed", range(30))
+def test_random_grid_boxes(seed):
+    rng = np.random.default_rng(seed)
+    cuts = [_axis_cuts(rng) for _ in range(3)]
+    verts, faces = _grid_box(0.0, 1.0, 0.0, 1.0, 0.0, 1.0, *cuts)
+    rotation, translation = _rigid_motion(rng)
+    alone = verts @ rotation.T + translation
+    assert count_defects(alone, faces)["duplicates_and_self_intersections"] == 0
+
+    rest_v, rest_f = _grid_box(0.1, 0.9, 0.1, 0.9, 1.0, 1.5, [], [], [])
+    merged_v, merged_f = _cat(verts, faces, rest_v, rest_f)
+    assert count_defects(merged_v @ rotation.T + translation, merged_f)["self_intersections"] == 0
+
+    depth = float(rng.uniform(0.1, 0.4))
+    z0 = 1.0 - depth
+    sunk_v, sunk_f = _grid_box(0.1, 0.9, 0.1, 0.9, z0, z0 + 0.5, [], [], [1.0])
+    sunk_v, sunk_f = _cat(verts, faces, sunk_v, sunk_f)
+    assert count_defects(sunk_v @ rotation.T + translation, sunk_f)["self_intersections"] > 0
