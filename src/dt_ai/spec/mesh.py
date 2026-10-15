@@ -368,9 +368,12 @@ def _contour_points(poly, weld=WELD_DEFAULT_M):
     for p in out:
         if not welded or np.hypot(p[0] - welded[-1][0], p[1] - welded[-1][1]) > weld + 1e-9:
             welded.append(p)
-    while len(welded) > 3 and np.hypot(welded[-1][0] - welded[0][0], welded[-1][1] - welded[0][1]) <= weld + 1e-9:
+    while len(welded) > 1 and np.hypot(welded[-1][0] - welded[0][0], welded[-1][1] - welded[0][1]) <= weld + 1e-9:
         welded.pop()
-    if len(welded) < 3 or not Polygon([p[:2] for p in welded]).is_valid:
+    # A non-adjacent weld would repeat a vertex in the ring. Stop rather than delete a contour loop.
+    near_pair = any(np.hypot(a[0] - b[0], a[1] - b[1]) <= weld + 1e-9
+                    for i, a in enumerate(welded) for b in welded[i + 1:])
+    if len(welded) < 3 or near_pair or not Polygon([p[:2] for p in welded]).is_valid:
         raise SpecError(f"a level contour is no simple polygon once its points are welded at {weld} m (weld_m)")
     out = welded
     start = min(range(len(out)), key=lambda i: (out[i][1], out[i][0]))
