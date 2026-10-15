@@ -49,7 +49,7 @@ SHARE_TOL_M = 0.005       # a piece shares a wall when its boundary lies within 
 PRIORITY_SHARE = 0.10     # question priority high: >= 2 levels or > 10 % of the facade length
 ROOF_LEVEL_TOL_M = 0.10   # roof surfaces lie within this of the top input level (user decision 2026-10-08, #9)
 ROOF_SLOPE_MAX_DEG = 10.0 # drainage slopes up to this are a flat roof; steeper roof parts are a question
-ROOF_SLOPE_BAND_M = 2.0   # faces of a sloped roof surface reach this far below the input level
+ROOF_STEEP_BAND_M = 2.0   # lower search bound for pitched-roof questions, not drainage surfaces
 ROOF_STEEP_SHARE = 0.01   # steep up-facing roof area above this share of the floor stops the extractor
 ROOF_PART_SLIVER_M2 = 0.05  # a separate roof part with more than this both inside and outside is a question
 ROOF_SEARCH_M = 0.3       # only to name nearby surfaces in the error message
@@ -1214,10 +1214,44 @@ def _z_at(tri, pt):
     return float(a * z0 + b * z1 + (1 - a - b) * z2)
 
 
+def _roof_surface_groups(v, tris):
+    """Connected near-flat faces, including coplanar T-junctions and numeric seams.
+
+    This groups measurements only: no vertices are moved or faces added. Keep the existing
+    shared-vertex connectivity for changing drainage slopes; across unwelded boundaries require
+    coplanarity as well as plan proximity, so decks and caps at different heights stay separate.
+    """
+    sets = _Sets(len(tris))
+    first = {}
+    for k, ids in enumerate(tris):
+        for vid in ids:
+            if int(vid) in first:
+                sets.union(first[int(vid)], k)
+            else:
+                first[int(vid)] = k
+    if len(tris):
+        p = v[tris]
+        normals = np.cross(p[:, 1] - p[:, 0], p[:, 2] - p[:, 0])
+        normals /= np.linalg.norm(normals, axis=1)[:, None]
+        plans = [Polygon(t[:, :2]) for t in p]
+        tree = shapely.STRtree(plans)
+        for i, plan in enumerate(plans):
+            for j in tree.query(plan, predicate="dwithin", distance=SIMPLIFY_M):
+                if j <= i or sets.find(i) == sets.find(int(j)):
+                    continue
+                if (np.linalg.norm(normals[i] - normals[j]) <= 1e-6
+                        and np.max(np.abs((p[j] - p[i, 0]) @ normals[i])) <= SIMPLIFY_M):
+                    sets.union(i, int(j))
+    groups = defaultdict(list)
+    for k in range(len(tris)):
+        groups[sets.find(k)].append(k)
+    return list(groups.values())
+
+
 def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None):
     """The roof level is input, like every level; geometry only confirms it (issues #16, #9).
     Roof: up-facing body surfaces inside the top floor contour with a slope up to ROOF_SLOPE_MAX_DEG
-    (drainage slopes are a flat roof) whose centres lie within ROOF_LEVEL_TOL_M of the top input
+    (drainage slopes are a flat roof) whose surface means lie within ROOF_LEVEL_TOL_M of the top input
     level; the roof height is their area-weighted mean. The roof itself must cover ROOF_OWN of the
     top floor and, with every up-facing surface above it (cap, shaft tops), close ROOF_CLOSED of it.
     Steeper roof parts, no roof, an open roof or a hole that is not a shaft are questions, never a
@@ -1263,33 +1297,24 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None):
         return walls.intersection(inner.buffer(PARAPET_EDGE_M)).length >= SHAFT_WALL_SHARE * inner.length
 
     def surfaces_of(faces, vids):
-        """Faces sharing vertices form one surface: (faces, area-weighted height, plan)."""
-        sets = _Sets(len(faces))
-        first = {}
-        for k, ids in enumerate(vids):
-            for vid in ids:
-                if int(vid) in first:
-                    sets.union(first[int(vid)], k)
-                else:
-                    first[int(vid)] = k
-        groups = defaultdict(list)
-        for k in range(len(faces)):
-            groups[sets.find(k)].append(faces[k])
+        """Geometric surfaces: (faces, area-weighted height, unmodified plan)."""
         out = []
-        for members in groups.values():
+        for group in _roof_surface_groups(v, np.asarray(vids, dtype=np.int64)):
+            members = [faces[k] for k in group]
             w = np.array([a for _, _, a, _ in members])
             z = float(np.dot([zz for _, _, _, zz in members], w) / w.sum())
             out.append((members, z, shapely.unary_union([f for _, f, _, _ in members])))
         return out
 
     near_flat, steep = [], 0.0
-    for i in np.flatnonzero(ok & (n[:, 2] > 0) & (zc >= level - ROOF_SLOPE_BAND_M)):
+    for i in np.flatnonzero(ok & (n[:, 2] > 0)):
         is_in, face = inside(i)
         if not is_in:
             continue
         if slope[i] <= ROOF_SLOPE_MAX_DEG:
             near_flat.append((i, face))
-        elif slope[i] < 80.0 and zc[i] <= level + 1.5 and not (abs(zc[i] - parapet_top) <= 0.3 and touches_edge(face)):
+        elif (slope[i] < 80.0 and level - ROOF_STEEP_BAND_M <= zc[i] <= level + 1.5
+              and not (abs(zc[i] - parapet_top) <= 0.3 and touches_edge(face))):
             steep += float(length[i]) / 2
     if steep > ROOF_STEEP_SHARE * floor_area:
         raise SpecError(f"roof parts steeper than {ROOF_SLOPE_MAX_DEG:.0f} degrees cover {steep:.1f} m2 at {where}: "
@@ -1490,30 +1515,42 @@ def _parapet_thickness(v, tris, roof_z, top_z, top_contour):
     return None, "the section at mid parapet height is no closed ring on the outer line"
 
 
-def _roof_parts(v, parts, top_level, top_contour):
-    """Separate parts that are roof (#9, option (a)): their near-flat up-facing faces lie, on area
-    average, within ROOF_LEVEL_TOL_M of the top level and at least half of them inside the top
-    floor contour. A roof modelled as a separate object is normal."""
+def _roof_parts(v, parts, top_level, top_contour, body=None):
+    """Select separate roof parts by geometric surface mean, not by mesh/part mean (#28).
+
+    Include the body when grouping: a drainage plane can be split between it and separate parts.
+    Contour checks still apply to each selected part, and _roof selects the actual roof faces.
+    """
+    if not parts:
+        return []
+    chunks = [*parts, *([body] if body is not None else [])]
+    tris = np.vstack(chunks)
+    owners = np.repeat(np.arange(len(chunks)), [len(c) for c in chunks])
+    p = v[tris]
+    n = np.cross(p[:, 1] - p[:, 0], p[:, 2] - p[:, 0])
+    length = np.linalg.norm(n, axis=1)
+    flat = np.flatnonzero((length > 0) & (n[:, 2] >= np.cos(np.radians(ROOF_SLOPE_MAX_DEG)) * length))
+    selected = {}
+    for group in _roof_surface_groups(v, tris[flat]):
+        ids = flat[group]
+        a = length[ids] / 2
+        z = float(np.dot(p[ids, :, 2].mean(axis=1), a) / a.sum())
+        if abs(z - top_level["elev_m"]) <= ROOF_LEVEL_TOL_M:
+            for owner in np.unique(owners[ids]):
+                selected[int(owner)] = z
     out = []
-    for part in parts:
-        p = v[part]
-        n = np.cross(p[:, 1] - p[:, 0], p[:, 2] - p[:, 0])
-        length = np.linalg.norm(n, axis=1)
-        flat = (length > 0) & (n[:, 2] >= np.cos(np.radians(ROOF_SLOPE_MAX_DEG)) * length)
-        if not flat.any():
+    for k, part in enumerate(parts):
+        if k not in selected:
             continue
-        a = length[flat] / 2
-        z = float((p[flat][:, :, 2].mean(axis=1) * a).sum() / a.sum())
-        faces = [Polygon(t[:, :2]) for t in p[flat]]
-        plan = shapely.unary_union([f for f in faces if f.area > 0])
-        if abs(z - top_level["elev_m"]) > ROOF_LEVEL_TOL_M or plan.area <= 0:
-            continue
+        ids = flat[owners[flat] == k]
+        plan = shapely.unary_union([Polygon(t[:, :2]) for t in p[ids]])
         inner = plan.intersection(top_contour).area
         outer = plan.area - inner
         if outer <= ROOF_PART_SLIVER_M2:
             out.append(part)
         elif inner > ROOF_PART_SLIVER_M2:
             c = plan.centroid
+            z = selected[k]
             raise SpecError(f"a separate part at the roof level ({z:.3f} m) lies {outer:.2f} m2 outside and {inner:.2f} m2 "
                             f"inside the top floor contour at ({c.x:.2f}, {c.y:.2f}): roof or not? ask the user")
     return out
@@ -1784,7 +1821,7 @@ def _extract(dump, obj_cfg, profile, thresholds, found):
         under = [Polygon(rs["outline"]) for rs in structures]   # question (pattern roof-screen-enclosure)
         body = _off_structures(v, body, under, levels[-1]["elev_m"])
         others = [kept for kept in (_off_structures(v, o, under, levels[-1]["elev_m"]) for o in others) if len(kept)]
-    roof_parts = _roof_parts(v, others, levels[-1], polys[-1])
+    roof_parts = _roof_parts(v, others, levels[-1], polys[-1], body)
     roof_z, top_z, closed, roof_stats = _roof(v, body, levels[-2], levels[-1], polys[-1],
                                               np.vstack(roof_parts) if roof_parts else None,
                                               np.vstack(others) if others else None)
