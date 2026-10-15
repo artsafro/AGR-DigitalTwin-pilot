@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 
 import pytest
 
@@ -49,7 +50,7 @@ def test_current_multi_edit_combines_paths_and_pipeline(sandbox, absolute, rever
     assert invoke("bash", {"command": "git status"}, sandbox, adapter)["decision"] == "allow"
     assert invoke("bash", {"command": "git reset --hard HEAD"}, sandbox, adapter)["decision"] == "block"
     # Same dangerous current-schema edit cannot bypass by using Pi path syntax.
-    for raw in ("@" + str(target), target.as_uri(), rel.replace("STATE", "STATE\u202f")):
+    for raw in ("@" + str(target), target.as_uri(), "@" + rel):
         decision = invoke("edit", {"path": raw, "edits": edits}, sandbox, adapter)
         assert decision["decision"] == "block", (raw, decision)
 
@@ -136,6 +137,31 @@ assert p['tool_input']['new_string']=={actual!r}
     result = invoke("edit", {"path": "note.txt", "edits": edits}, sandbox, sandbox / "tools/hooks/pi_guard_adapter.py")
     assert result["decision"] == "allow", result
     assert (sandbox / "note.txt").read_bytes() == before.encode("utf-8")
+
+
+@pytest.mark.parametrize("tool", ["write", "edit"])
+def test_special_outside_paths_match_installed_pi_policy(sandbox, installed_pi, tool):
+    node, tools = installed_pi
+    outside = Path.home() / "agr-pi-synthetic-outside.txt"
+    spellings = ["~/agr-pi-synthetic-outside.txt", "@" + outside.as_posix(), outside.as_uri()]
+    if os.name == "nt":
+        suffix = outside.as_posix()[2:]
+        spellings += [prefix + outside.drive[0].lower() + suffix for prefix in ("/", "/mnt/", "/cygdrive/")]
+    for raw in spellings:
+        script = 'import {resolveToCwd} from ' + json.dumps((tools / "path-utils.js").as_uri()) + '; console.log(JSON.stringify(resolveToCwd(' + json.dumps(raw) + ',' + json.dumps(str(sandbox)) + ')));'
+        actual = json.loads(subprocess.check_output([node, "--input-type=module", "-e", script], text=True))
+        assert Path(actual) == outside
+        payload = {"tool_name": "Write" if tool == "write" else "Edit", "cwd": str(sandbox),
+                   "tool_input": {"file_path": actual, "content": "synthetic", "old_string": "a", "new_string": "b"}}
+        direct = json.loads(subprocess.check_output(
+            [sys.executable, str(sandbox / ".claude/hooks/guard.py")],
+            input=json.dumps(payload), text=True, cwd=sandbox,
+            env={**os.environ, "CLAUDE_PROJECT_DIR": str(sandbox)}))
+        assert direct["hookSpecificOutput"]["permissionDecision"] == "ask"
+        result = invoke(tool, {"path": raw, "content": "synthetic", "edits": [
+            {"oldText": "a", "newText": "b"}]}, sandbox, sandbox / "tools/hooks/pi_guard_adapter.py")
+        assert result["decision"] == "block", (raw, result)
+        assert "unsupported Pi path syntax" in result["reason"]
 
 
 @pytest.mark.parametrize("tool", ["write", "edit"])

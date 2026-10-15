@@ -31,8 +31,6 @@ def preview_edit(tin, path):
     edits = list(edits)
     if "oldText" in tin or "newText" in tin:
         edits.append({"oldText": tin.get("oldText"), "newText": tin.get("newText")})
-    elif "old_string" in tin or "new_string" in tin:
-        edits.append({"oldText": tin.get("old_string"), "newText": tin.get("new_string")})
     if not edits:
         raise ValueError("edits must contain at least one replacement")
     raw = path.read_bytes().decode("utf-8")

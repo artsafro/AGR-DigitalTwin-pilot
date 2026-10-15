@@ -150,6 +150,8 @@ def test_hook_timeout_blocks(sandbox, name):
     ("write", "Write", {"path": "a.txt", "content": "hello"}, {"content": "hello"}),
     ("edit", "Edit", {"path": "a.txt", "oldText": "old", "newText": "new"},
      {"old_string": "old", "new_string": "new"}),
+    ("edit", "Edit", {"path": "a.txt", "edits": [{"oldText": "old", "newText": "new"}]},
+     {"old_string": "old", "new_string": "new"}),
 ])
 def test_names_fields_cwd_and_project_root_match_claude(sandbox, tool, claude, tin, expected):
     if tool == "edit":
