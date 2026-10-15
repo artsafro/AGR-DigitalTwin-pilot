@@ -3,6 +3,14 @@
 Pipeline status: experiment (autoresearch lane 3 of 3, issue artsafro/AGR-DigitalTwin-pilot#118). Not a delivery:
 `delivery_passed=false`; technical QA, user acceptance and publication are open.
 
+**Step 0 blocked; the box run is non-conforming exploration** (review round 1, P1-1). The program needs element
+meshes; the add-in returns boxes only. `scripts/snapshot_revit.py` fails closed (exit 2, `<out>/blocked.json`,
+no snapshot files) on a bbox-only answer, a failed or malformed geometry read, an empty listing, no levels, and
+refuses an `<out>` that already holds a snapshot. `scripts/evaluate.py` refuses any reference that is not a
+complete, hash-matching mesh snapshot; `--exploratory-box-reference` reproduces the box numbers labelled
+`"conforming": false`. Acceptance tests: `tests/test_butovskaya_sosh1000.py`. Waiting on the user: authorize
+a mesh export of the envelope (or another reference) before a conforming loop.
+
 ## Source (read only)
 
 - The user's open Revit 2025 model `БУТОВСКАЯ_СОШ1000_АР_В3_ВИЗАМ_2025.rvt` (workshared, 8 levels -3.4 ... 18.6 m),
@@ -27,7 +35,8 @@ Pipeline status: experiment (autoresearch lane 3 of 3, issue artsafro/AGR-Digita
 
 ```
 uv run python jobs/butovskaya-sosh1000/scripts/build_npm.py --out C:/x/butovskaya-npm/model_dump.json
-uv run python jobs/butovskaya-sosh1000/scripts/evaluate.py --model C:/x/butovskaya-npm/model_dump.json
+uv run python jobs/butovskaya-sosh1000/scripts/evaluate.py --model C:/x/butovskaya-npm/model_dump.json \
+  --snapshot <mesh snapshot>          # the box snapshot only with --exploratory-box-reference
 ```
 
 ## Model (current best, see the report for the loop)

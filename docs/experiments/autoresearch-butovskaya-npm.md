@@ -4,6 +4,17 @@ Status: experiment report. `delivery_passed=false`. Visual acceptance is the use
 Object `butovskaya-sosh1000` (`jobs/REGISTRY.md`), job folder `jobs/butovskaya-sosh1000/`, branch
 `job/butovskaya-sosh1000-npm-autoresearch`.
 
+> **Non-conforming exploration (review round 1, P1-1).** Step 0 requires element **meshes**; the add-in's read
+> API returns only bounding boxes, so step 0 is **blocked** by the issue's own rule ("If the export is too slow or
+> blocked: stop and report with numbers"). Every number below is measured against per-element boxes, not the
+> Revit solids, and is **not** a result of the fixed program. `scripts/snapshot_revit.py` now fails closed on a
+> bbox-only answer (exit 2, `blocked.json`, no snapshot files) and `scripts/evaluate.py` refuses a box snapshot
+> unless run with `--exploratory-box-reference` (output `"conforming": false`). A conforming run needs an
+> authorized mesh export of the envelope (the user's decision; the card is blocked on it). Diagnostics of the
+> blocked step 0: 11 060 elements listed, geometry read at 63 elements/s, 0 call failures; the geometry answer
+> carries bounding box, centroid, volume, surface area, solid and face counts and no tessellation, and no
+> read-only command of add-in 0.8.40 exports meshes (step 0 notes below).
+
 ## Result
 
 | | First build (setup) | Final (exp 15) |

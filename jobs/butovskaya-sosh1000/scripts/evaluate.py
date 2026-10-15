@@ -69,15 +69,65 @@ def boxes_soup(boxes) -> Soup:
     return Soup(v, t, np.zeros(len(t), int), None, {})
 
 
-def etalon_silhouettes(snap: Path = SNAP):
-    """Silhouettes of the etalon, cached next to the snapshot (keyed by the elements.json hash)."""
-    h = hashlib.sha256((snap / "elements.json").read_bytes()).hexdigest()[:16]
-    cache = snap / f"etalon_silhouettes_{h}.json"
+SNAP_FILES = ("elements.json", "levels.json", "snapshot_dump.json")
+
+
+def require_mesh_reference(snap: Path = SNAP) -> dict:
+    """hashes.json of a complete mesh snapshot whose files match their hashes; SystemExit otherwise.
+
+    Fail closed (review round 1, P1-1): a box snapshot (no `reference: mesh`), a blocked step 0 (blocked.json, no
+    hashes.json), a snapshot with failed elements or with a file changed after step 0 is no reference for the
+    loop. The first attempt's box snapshot is read only with --exploratory-box-reference, labelled non-conforming."""
+    hf = snap / "hashes.json"
+    if (snap / "blocked.json").exists() or not hf.exists():
+        raise SystemExit(f"no reference: {snap} holds no complete snapshot (step 0 blocked or not run)")
+    h = json.loads(hf.read_text(encoding="utf-8"))
+    if h.get("reference") != "mesh" or h.get("complete") is not True or h.get("failed") != 0:
+        raise SystemExit(f"no reference: {snap} is not a complete mesh snapshot "
+                         f"(reference={h.get('reference')!r}, complete={h.get('complete')!r}, failed={h.get('failed')!r})")
+    for name in SNAP_FILES:
+        p = snap / name
+        if not p.exists() or hashlib.sha256(p.read_bytes()).hexdigest() != h.get("sha256", {}).get(name):
+            raise SystemExit(f"no reference: {p} is missing or differs from its step-0 hash")
+    return h
+
+
+def in_zone(lo, hi) -> bool:
+    (x0, y0), (x1, y1) = ZONE
+    return lo[0] >= x0 and lo[1] >= y0 and hi[0] <= x1 and hi[1] <= y1
+
+
+def mesh_reference_soup(snap: Path) -> Soup:
+    """The step-0 element meshes whose bounding box lies in the building zone, as one soup."""
+    dump = json.loads((snap / "snapshot_dump.json").read_text(encoding="utf-8"))
+    keep = []
+    for m in dump["meshes"]:
+        v = np.asarray(m["vertices"], float)
+        if in_zone(v.min(axis=0), v.max(axis=0)):
+            keep.append(m)
+    return from_dump({"meshes": keep, "helpers": []})
+
+
+def etalon_silhouettes(snap: Path = SNAP, exploratory_box: bool = False):
+    """Silhouettes of the etalon, cached next to the snapshot (keyed by the hash of the file they come from).
+
+    The etalon is the step-0 mesh reference (require_mesh_reference). exploratory_box=True reads the first
+    attempt's element boxes instead: non-conforming exploration, never a program result."""
+    if not exploratory_box:
+        require_mesh_reference(snap)
+        h = hashlib.sha256((snap / "snapshot_dump.json").read_bytes()).hexdigest()[:16]
+        cache = snap / f"etalon_silhouettes_mesh_{h}.json"
+    else:
+        h = hashlib.sha256((snap / "elements.json").read_bytes()).hexdigest()[:16]
+        cache = snap / f"etalon_silhouettes_{h}.json"
     if cache.exists():
         d = json.loads(cache.read_text())
         return {v: shapely.from_wkb(bytes.fromhex(w)) for v, w in d.items()}
-    keep, _ = etalon_boxes(snap)
-    soup = boxes_soup([r["box"] for r in keep])
+    if exploratory_box:
+        keep, _ = etalon_boxes(snap)
+        soup = boxes_soup([r["box"] for r in keep])
+    else:
+        soup = mesh_reference_soup(snap)
     sil = {v: measure.silhouette(soup.corners(), v) for v in VIEWS}
     cache.write_text(json.dumps({v: shapely.to_wkb(g).hex() for v, g in sil.items()}))
     return sil
@@ -134,11 +184,17 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="C:/x/butovskaya-npm/model_dump.json")
     ap.add_argument("--out")
+    ap.add_argument("--snapshot", default=str(SNAP))
+    ap.add_argument("--exploratory-box-reference", action="store_true",
+                    help="score against the first attempt's element boxes (non-conforming exploration only)")
     a = ap.parse_args()
     t = time.time()
-    sil = etalon_silhouettes()
+    snap = Path(a.snapshot)
+    sil = etalon_silhouettes(snap, exploratory_box=a.exploratory_box_reference)
     model = from_dump(json.loads(Path(a.model).read_text(encoding="utf-8")))
-    res = {**metric(model, sil), **guard(model), "seconds": None}
+    res = {"reference": "aabb-exploratory" if a.exploratory_box_reference else "mesh",
+           "conforming": not a.exploratory_box_reference,
+           **metric(model, sil), **guard(model, snap), "seconds": None}
     res["seconds"] = round(time.time() - t, 1)
     text = json.dumps(res, ensure_ascii=False, indent=1)
     if a.out:
