@@ -1,0 +1,15 @@
+{
+  "id": "dcc-skill-loaded",
+  "suite": "regression",
+  "grader": "dcc_skill_loaded",
+  "evidence": {
+    "transcript": {"root": "main", "glob": "logs/transcripts/{branch_slug}-pr*-*.jsonl",
+                   "match": "{branch_slug}-pr([0-9]+|none)-[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[.]jsonl"}
+  },
+  "references": [
+    {"name": "no-skill", "verdict": "fail",
+     "evidence": {"transcript": {"root": "task", "path": "fixtures/no-skill.real-excerpt.jsonl"}}},
+    {"name": "skill-loaded", "verdict": "pass",
+     "evidence": {"transcript": {"root": "task", "path": "fixtures/skill-loaded.corrected.synthetic.jsonl"}}}
+  ]
+}

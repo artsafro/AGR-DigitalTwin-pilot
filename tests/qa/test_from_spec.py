@@ -616,6 +616,60 @@ def test_inputs_at_the_limit_that_would_break_under_the_weld_are_errors():
     assert topology_ok(build(edited(step_case), INPUTS))
 
 
+@pytest.mark.parametrize("shift", [(0.0029, 0.0029), (-0.0029, -0.0029)])
+def test_plan_weld_refuses_a_diagonal_move_beyond_weld_m(shift):
+    # Synthetic issue #102: independent 2.9 mm x/y welds move a corner 4.101 mm.
+    def edit(d):
+        upper = (np.asarray(SQ) + shift).tolist()
+        d["floors"] = [{"level": "L0", "contour": SQ, "openings": []},
+                       {"level": "L1", "contour": upper, "openings": []}]
+        d["roof"] = {"parapet_h_m": 0.0}
+    with pytest.raises(BuildError, match="2D.*weld_m"):
+        build(edited(edit), INPUTS)
+
+
+def test_generated_plan_weld_refuses_a_diagonal_move_onto_fixed_lines():
+    # Synthetic: the parapet inset (0.3, 0.3) lies 2.9 mm off each lower-floor line.
+    def edit(d):
+        lower = [[0.2971, 0.2971], [9.7029, 0.2971], [9.7029, 9.7029], [0.2971, 9.7029]]
+        d["floors"] = [{"level": "L0", "contour": lower, "openings": []},
+                       {"level": "L1", "contour": SQ, "openings": []}]
+        d["roof"] = {"parapet_h_m": 0.6}
+    with pytest.raises(BuildError, match="2D.*weld_m"):
+        build(edited(edit), INPUTS)
+
+
+def test_opening_end_weld_refuses_a_diagonal_move_beyond_weld_m():
+    # Synthetic: the contour moves only along y, but an opening end also snaps along x.
+    def edit(d):
+        lower = (np.asarray(SQ) + [1, 0]).tolist()
+        upper = (np.asarray(SQ) + [0, 0.0029]).tolist()
+        window = {"wall": 0, "x_m": 1.0029, "sill_m": 0.9, "w_m": 1.0, "h_m": 1.5, "kind": "window"}
+        d["floors"] = [{"level": "L0", "contour": lower, "openings": []},
+                       {"level": "L1", "contour": upper, "openings": [window]}]
+        d["roof"] = {"parapet_h_m": 0.0}
+    with pytest.raises(BuildError, match="2D.*weld_m"):
+        build(edited(edit), INPUTS)
+
+
+@pytest.mark.parametrize("shift", [(0.003, 0), (0, 0.003), (0.0018, 0.0024),
+                                   (0.002, 0.002), (0.0029, -0.0029)])
+def test_plan_weld_within_2d_bound_still_builds(shift):
+    # Synthetic boundary controls: 3 mm inclusive, also mixed signs (one axis per floor).
+    def edit(d):
+        d["floors"] = [{"level": "L0", "contour": SQ, "openings": []},
+                       {"level": "L1", "contour": (np.asarray(SQ) + shift).tolist(), "openings": []}]
+        d["roof"] = {"parapet_h_m": 0.0}
+    sp = edited(edit)
+    dump = build(sp, INPUTS)
+    assert topology_ok(dump)
+    vertices = np.asarray(dump["meshes"][0]["vertices"])
+    for floor, z in zip(sp.expanded_floors(), [0, 6.6]):
+        plan = vertices[np.isclose(vertices[:, 2], z), :2]
+        distances = np.linalg.norm(np.asarray(floor.contour)[:, None, :] - plan[None, :, :], axis=2)
+        assert distances.min(axis=1).max() <= sp.weld_m + 1e-9
+
+
 # pattern terrace (spec v0.4, user decisions 2026-10-10): a parapet along a ledge's outer edges
 
 
@@ -1194,3 +1248,125 @@ def test_pointed_corners_build_as_triangle_fans(contour):
     n = np.cross(c[:, 1] - c[:, 0], c[:, 2] - c[:, 0])
     top = shapely.union_all([Polygon(t[:, :2]) for t, nz in zip(c, n[:, 2]) if nz > 1e-9])
     assert top.area == pytest.approx(Polygon([p[:2] for p in contour]).area, abs=1e-6)
+
+
+@pytest.mark.parametrize("edge_s", [2, 3], ids=["start", "end"])
+def test_near_vertical_opening_refuses_amplified_strip_weld(edge_s):
+    """Synthetic #103 review: a 2 mm X snap must not move either hole edge by 200 mm."""
+    u = np.array([0.1, 10.0]) / np.hypot(0.1, 10.0)
+    contour = [[0, 0], [10, 0], [10.1, 10], [14, 10], [14, 14],
+               [float(10 + edge_s * u[0] - 0.002), 14], [0, 14],
+               [0, float(2 * u[1] - 0.001)]]
+    opening = dict(wall=1, x_m=2, w_m=1, sill_m=0.9, h_m=1.5, kind="window")
+
+    def edit(d):
+        d["floors"] = [
+            {"level": "L0", "contour": contour, "openings": [opening]},
+            {"level": "L1", "contour": contour, "openings": []},
+        ]
+        d["roof"] = {"parapet_h_m": 0.0}
+
+    with pytest.raises(BuildError, match=r"canonical opening boundary.*beyond weld_m"):
+        build(edited(edit), INPUTS)
+
+
+@pytest.mark.parametrize("wall_dx, snap_x", [(0.1, 0), (0.1, 0.00001), (0, 0)],
+                         ids=["near-vertical-exact", "near-vertical-bounded-snap", "vertical"])
+def test_near_vertical_opening_keeps_bounded_source_endpoints(wall_dx, snap_x):
+    """Synthetic controls: steep/vertical walls remain buildable within the source weld budget."""
+    u = np.array([wall_dx, 10.0]) / np.hypot(wall_dx, 10.0)
+    contour = [[0, 0], [10, 0], [10 + wall_dx, 10], [14, 10], [14, 14]]
+    if snap_x:
+        contour.append([float(10 + 3 * u[0] - snap_x), 14])
+    contour += [[0, 14], [0, float(2 * u[1] - 0.001)]]
+    opening = dict(wall=1, x_m=2, w_m=1, sill_m=0.9, h_m=1.5, kind="window")
+
+    def edit(d):
+        d["floors"] = [
+            {"level": "L0", "contour": contour, "openings": [opening]},
+            {"level": "L1", "contour": contour, "openings": []},
+        ]
+        d["roof"] = {"parapet_h_m": 0.0}
+
+    source = edited(edit)
+    dump = build(source, INPUTS)
+    assert topology_ok(dump) and t_junctions(dump) == 0
+    soup = from_dump(dump)
+    reveals = soup.corners()[soup.material_ids == REVEAL]
+    assert len(reveals) == 8                         # all four reveal quads
+    xy = reveals[:, :, :2].reshape(-1, 2)
+    # Measure actual exterior reveal vertices, excluding their recessed seat.
+    rel = xy - [10, 0]
+    exterior = xy[np.abs(rel[:, 0] * u[1] - rel[:, 1] * u[0]) < 1e-7]
+    assert len(exterior) > 0
+    expected = np.array([[10, 0] + u * s for s in (2, 3)])
+    distances = np.linalg.norm(exterior[:, None, :] - expected[None, :, :], axis=2)
+    assert np.all(distances.min(axis=0) <= source.weld_m + 1e-7)
+    assert np.all(distances.min(axis=1) <= source.weld_m + 1e-7)
+    if snap_x:
+        assert distances.min(axis=0)[1] > 0.0005     # exercise an actual bounded reconstruction
+
+
+# Task #103: oblique wall opening with projected weld mismatch
+
+
+def test_oblique_wall_opening_reveals_and_topology():
+    """An opening on an oblique wall (wall 1: [10,0]->[12,10]) with parapet_h_m=0 must build
+    a closed, T-junction-free model with all four reveal sides (left jamb, right jamb, head, sill)
+    and one opening plane.  The current engine fails with an open edge at 0.9 m because the
+    projected welded opening s0 (0.498734720) differs from the strip cut (0.5)."""
+    contour = [[0, 0], [10, 0], [12, 10], [14, 10], [14, 14], [0, 14], [0, 0.489]]
+    opening = {"wall": 1, "x_m": 0.5, "sill_m": 0.9, "w_m": 1, "h_m": 1.5, "kind": "window"}
+    def edit(d):
+        d["floors"] = [
+            {"level": "L0", "contour": contour, "openings": [opening]},
+            {"level": "L1", "contour": contour, "openings": []},
+        ]
+        d["roof"] = {"parapet_h_m": 0.0}
+    dump = build(edited(edit), INPUTS)
+
+    # --- polygon count ---
+    body = dump["meshes"][0]
+    # Historical f05d28c produces 70 for this exact one-opening synthetic fixture.
+    assert len(body["polygon_sizes"]) == 70
+
+    # --- topology: no open edges except the bottom ring ---
+    soup = from_dump(dump)
+    ids = weld(soup.vertices, TOL["weld_m"])
+    edges, counts, _ = edge_uses(soup.triangles, ids)
+    assert counts.max() <= 2                                    # no fin
+    assert t_junctions(dump) == 0
+    open_z = soup.vertices[np.unique(ids, return_index=True)[1]][edges[counts == 1].ravel(), 2]
+    assert set(np.round(open_z, 6).tolist()) == {0.0}          # open only at the bottom
+
+    # --- all four reveal sides present ---
+    c = soup.corners()
+    reveal_mask = soup.material_ids == REVEAL
+    reveal_faces = c[reveal_mask]
+    # each reveal face is a quad (2 triangles); the four sides of the reveal around one opening
+    # are: left jamb, right jamb, head (horizontal top), sill (horizontal bottom).
+    # Identify them by their normal directions relative to the oblique wall's outward normal.
+    n = np.cross(reveal_faces[:, 1] - reveal_faces[:, 0], reveal_faces[:, 2] - reveal_faces[:, 0])
+    # wall 1 direction: from [10,0] to [12,10], tangent (2,10)/|..|, outward normal is 90° CW: (10,-2)/|..|
+    wall_dir = np.array([2.0, 10.0])
+    wall_len = np.linalg.norm(wall_dir)
+    outward = np.array([10.0, -2.0]) / wall_len
+    tangent = wall_dir / wall_len
+    # classify by dominant normal component
+    n_tan = n[:, :2] @ tangent                                 # component along wall tangent
+    n_z = n[:, 2]
+    has_head = np.any(n_z < -1e-9)                             # downward into the opening
+    has_sill = np.any(n_z > 1e-9)                              # upward into the opening
+    has_left_jamb = np.any(n_tan > 1e-9)                       # along the wall tangent
+    has_right_jamb = np.any(n_tan < -1e-9)                      # against the wall tangent
+    assert has_head, "head reveal missing"
+    assert has_sill, "sill reveal missing"
+    assert has_left_jamb, "left jamb reveal missing"
+    assert has_right_jamb, "right jamb reveal missing"
+
+    # --- opening plane present and facing outward ---
+    plane_mask = soup.material_ids == PLANE
+    assert plane_mask.any(), "opening plane missing"
+    plane_faces = c[plane_mask]
+    pn = np.cross(plane_faces[:, 1] - plane_faces[:, 0], plane_faces[:, 2] - plane_faces[:, 0])
+    assert np.all(pn[:, :2] @ outward > 0), "opening plane does not face outward"

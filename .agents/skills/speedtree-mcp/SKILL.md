@@ -5,6 +5,19 @@ description: 'Inspect SpeedTree SPM files and presets, then batch-export version
 
 # SpeedTree MCP for project agents
 
+## Risk gate before mutation
+
+Before any write, name the exact tool/operation and its risk class from
+[`CAPABILITIES.md#dcc-tool-risk-classes`](../../../docs/agents/CAPABILITIES.md#dcc-tool-risk-classes).
+For batches use the highest risk of any operation. `versioned-write` requires task
+authorization and a new versioned path (including sidecars); `destructive` requires
+explicit authorization for the exact mutation, even when the final save is versioned.
+Unknown operations and arbitrary code default to destructive. Confirm application,
+document, units and version; preserve sources and accepted outputs. Apply the
+[Permission matrix and DCC gate](../../../docs/agents/WORKFLOW.md#gate-dcc-authorization)
+before execution; authorization never permits a prohibited overwrite. Read outputs
+back before reporting success. Inspection and live-mutation coverage are separate.
+
 1. Use `speedtree`, backed by `tools/mcp/speedtree_server.py`. Call
    `installation_info` and verify the executable. This route reads files and
    launches separate CLI exports; it does not attach to or edit the active GUI.

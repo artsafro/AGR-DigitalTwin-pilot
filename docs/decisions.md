@@ -102,3 +102,4 @@ source (PR, issue or `chat`). Put `[D<n>]` next to the decision in that file. Su
 | D090 | 2026-10-14 | Agent-ready = two capability evals green (B01 from the root; ticket to PR) | `docs/prd/agent-ready-harness.md` | #118 |
 | D091 | 2026-10-14 | Harness work follows grilling -> to-spec -> to-tickets -> implement -> code-review | `docs/agents/WORKFLOW.md` (Loop) | chat |
 | D092 | 2026-10-14 | Merges stay on the user's command; the only added autonomy is the spec's two escalation classes | `docs/prd/agent-ready-harness.md` | #118 |
+| D093 | 2026-10-15 | A decor end at a building corner starts `plate_gap_m` (5 mm) off the wall face, beyond the weld (was 0.5 mm); the checker welds by distance | `docs/domain/patterns/facade-decor-inset.md` | #101 |
