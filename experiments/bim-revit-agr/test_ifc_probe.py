@@ -178,14 +178,9 @@ def test_collection_preserves_caller_temp_policy(tmp_path, debug_env_mode, legac
     else:
         modules = [str(probe_mod), str(cardinality_mod)]
 
-    child_script = tmp_path / "child_runner.py"
     child_code = textwrap.dedent("""
-        import pytest
-        import os
-        import sys
-        import tempfile
+        import os, sys, tempfile, pytest
         from pathlib import Path
-
 
         def snapshot_dir(root: Path) -> dict:
             items = {}
@@ -201,71 +196,45 @@ def test_collection_preserves_caller_temp_policy(tmp_path, debug_env_mode, legac
                     items[rel] = ("other",)
             return items
 
+        mod1, mod2, basetemp_dir, temp_root_str = sys.argv[1:]
+        temp_root = Path(temp_root_str).resolve()
+        current_temp = Path(tempfile.gettempdir()).resolve()
+        assert os.path.normcase(str(current_temp)) == os.path.normcase(str(temp_root)), (
+            f"tempfile.gettempdir() mismatch: {current_temp} != {temp_root}"
+        )
 
-        def main():
-            if len(sys.argv) < 5:
-                sys.stderr.write("Usage: child_runner.py <mod1> <mod2> <basetemp> <temp_root>\\n")
-                sys.exit(2)
+        initial_debug_env = os.environ.get("PYTEST_DEBUG_TEMPROOT")
+        initial_snapshot = snapshot_dir(temp_root)
 
-            mod1 = sys.argv[1]
-            mod2 = sys.argv[2]
-            basetemp_dir = sys.argv[3]
-            temp_root = Path(sys.argv[4]).resolve()
+        pytest_args = [
+            "--collect-only",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            f"--basetemp={basetemp_dir}",
+            mod1,
+            mod2,
+        ]
 
-            current_temp = Path(tempfile.gettempdir()).resolve()
-            assert os.path.normcase(str(current_temp)) == os.path.normcase(str(temp_root)), (
-                f"tempfile.gettempdir() mismatch: {current_temp} != {temp_root}"
-            )
-
-            initial_debug_env = os.environ.get("PYTEST_DEBUG_TEMPROOT")
-            initial_snapshot = snapshot_dir(temp_root)
-
-            pytest_args = [
-                "--collect-only",
-                "-q",
-                "-p",
-                "no:cacheprovider",
-                f"--basetemp={basetemp_dir}",
-                mod1,
-                mod2,
-            ]
-
-            # Collection 1
-            ret1 = pytest.main(pytest_args)
-            assert ret1 == 0, f"pytest.main collection 1 returned exit code {ret1}"
+        for i in range(2):
+            ret = pytest.main(pytest_args)
+            assert ret == 0, f"pytest.main collection {i + 1} returned exit code {ret}"
             assert os.environ.get("PYTEST_DEBUG_TEMPROOT") == initial_debug_env, (
-                f"PYTEST_DEBUG_TEMPROOT altered after collection 1: "
+                f"PYTEST_DEBUG_TEMPROOT altered after collection {i + 1}: "
                 f"expected {initial_debug_env!r}, got {os.environ.get('PYTEST_DEBUG_TEMPROOT')!r}"
             )
-            snap1 = snapshot_dir(temp_root)
-            assert snap1 == initial_snapshot, (
-                f"Caller temp root snapshot changed after collection 1: "
-                f"diff={set(snap1.items()) ^ set(initial_snapshot.items())}"
+            snap = snapshot_dir(temp_root)
+            assert snap == initial_snapshot, (
+                f"Caller temp root snapshot changed after collection {i + 1}: "
+                f"diff={set(snap.items()) ^ set(initial_snapshot.items())}"
             )
-
-            # Collection 2 (idempotency check)
-            ret2 = pytest.main(pytest_args)
-            assert ret2 == 0, f"pytest.main collection 2 returned exit code {ret2}"
-            assert os.environ.get("PYTEST_DEBUG_TEMPROOT") == initial_debug_env, (
-                f"PYTEST_DEBUG_TEMPROOT altered after collection 2: "
-                f"expected {initial_debug_env!r}, got {os.environ.get('PYTEST_DEBUG_TEMPROOT')!r}"
-            )
-            snap2 = snapshot_dir(temp_root)
-            assert snap2 == initial_snapshot, (
-                f"Caller temp root snapshot changed after collection 2: "
-                f"diff={set(snap2.items()) ^ set(initial_snapshot.items())}"
-            )
-
-
-        if __name__ == "__main__":
-            main()
     """)
-    child_script.write_text(child_code, encoding="utf-8")
 
     proc = subprocess.run(
         [
             sys.executable,
-            str(child_script),
+            "-c",
+            child_code,
             modules[0],
             modules[1],
             str(child_basetemp),
@@ -287,4 +256,3 @@ def test_collection_preserves_caller_temp_policy(tmp_path, debug_env_mode, legac
         assert legacy_file.read_text(encoding="utf-8") == "file collision blocking mkdir"
     else:
         assert not (child_temp_root / "pytest_temp_dir").exists()
-
