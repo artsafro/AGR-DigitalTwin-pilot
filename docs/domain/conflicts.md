@@ -46,6 +46,8 @@ Decided items keep their text and carry a **Decided** note; the YAML `conflicts:
 
 35. MAF sunk bottoms versus VPM open geometry: reg p.29 §3.15 prohibits missing polygons visible from reachable views; a blanket open-boundary reading would also flag deleted MAF bottoms below Ground. The regulation does not explicitly name this MAF exception. **Decided 2026-10-15 [D096] (user):** Artem: "polygons that go under the ground are not visible". Faces below the Ground surface (sunk MAF bottoms) are not 'open polygons' for this rule. This is a user-decided interpretation, not a new regulatory quotation or a blanket exemption for visible holes. Placement and bottom deletion follow [D095]; see [MAF-20/23](areas/groundel-maf.md). No checker or standard is changed here.
 
+36. VPM texel density lower bound: [D097] quotes "VPM 520-1706 at 4K" px/m, while reg p.32 §6.2 (image-verified) gives 512-1706 px/m and its examples 525-1638 px/m (4096) and 525-1575 px/m (2048); `uv-textures.md` and `validation.md` V009 use 512..1706. Open for the user: is 520 a deliberate project bound or a slip for 512? No side chosen; recorded by #153.
+
 ## D. Dubious / unverified
 - NPM fig.6 PBR example colors (reg p.17) - OCR partly garbled; verify on page image before use.
 - Ground NPM: height smoothing params (2.5 m median, 25 cm quantization, sigma 1.6 m) tuned for one site, not accepted by user at write time (local: jobs/GROUND-PROJECTION/NPM_RESULT.md).
