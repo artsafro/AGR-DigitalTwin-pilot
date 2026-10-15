@@ -1,0 +1,1109 @@
+[
+{
+"bench": "bench-b01-box",
+"variant": "clean",
+"route": "headless",
+"rep": 1,
+"wall_s": 1.1545047000035993,
+"readback_fbx_s": 1.201070900002378,
+"readback_blend_s": 1.0820703999997932,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b01-box",
+"variant": "clean",
+"route": "headless",
+"rep": 2,
+"wall_s": 1.2915961999970023,
+"readback_fbx_s": 1.3713048999998136,
+"readback_blend_s": 1.0663778999951319,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b01-box",
+"variant": "clean",
+"route": "headless",
+"rep": 3,
+"wall_s": 1.1089290000018082,
+"readback_fbx_s": 1.1051401000004262,
+"readback_blend_s": 1.062662199998158,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b01-box",
+"variant": "clean",
+"route": "live",
+"rep": 1,
+"wall_s": 0.18133120000129566,
+"build_s": 0.0019,
+"io_s": 0.0107,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.0385124999957043,
+"readback_blend_s": 0.9822394000002532,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b01-box",
+"variant": "clean",
+"route": "live",
+"rep": 2,
+"wall_s": 0.16570579999824986,
+"build_s": 0.0019,
+"io_s": 0.0109,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.0201468999948702,
+"readback_blend_s": 1.0466531999991275,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b01-box",
+"variant": "clean",
+"route": "live",
+"rep": 3,
+"wall_s": 0.18041580000135582,
+"build_s": 0.0023,
+"io_s": 0.0138,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.0500621999963187,
+"readback_blend_s": 0.9769702999983565,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b01-box",
+"variant": "flip1",
+"route": "headless",
+"rep": 1,
+"wall_s": 1.0114254000000074,
+"readback_fbx_s": 1.0459654000005685,
+"readback_blend_s": 0.9130118000030052,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b01-box",
+"variant": "flip1",
+"route": "headless",
+"rep": 2,
+"wall_s": 0.9782783000046038,
+"readback_fbx_s": 1.0531329000004916,
+"readback_blend_s": 0.9089492999992217,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b01-box",
+"variant": "flip1",
+"route": "headless",
+"rep": 3,
+"wall_s": 1.0269360000020242,
+"readback_fbx_s": 1.0411664999992354,
+"readback_blend_s": 0.9556641999952262,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b01-box",
+"variant": "flip1",
+"route": "live",
+"rep": 1,
+"wall_s": 0.2078886000017519,
+"build_s": 0.0023,
+"io_s": 0.0212,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.3334150000009686,
+"readback_blend_s": 0.9983205000025919,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b01-box",
+"variant": "flip1",
+"route": "live",
+"rep": 2,
+"wall_s": 0.12343829999736045,
+"build_s": 0.0018,
+"io_s": 0.0117,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 0.9443935000017518,
+"readback_blend_s": 0.9872400000022026,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b01-box",
+"variant": "flip1",
+"route": "live",
+"rep": 3,
+"wall_s": 0.16801090000080876,
+"build_s": 0.003,
+"io_s": 0.0164,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.0966071000002557,
+"readback_blend_s": 0.8319734999968205,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b01-box",
+"variant": "flipall",
+"route": "headless",
+"rep": 1,
+"wall_s": 1.1216270000004442,
+"readback_fbx_s": 1.067289200000232,
+"readback_blend_s": 1.0253925000070012,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b01-box",
+"variant": "flipall",
+"route": "headless",
+"rep": 2,
+"wall_s": 1.06314040000143,
+"readback_fbx_s": 1.085921400001098,
+"readback_blend_s": 0.9310695999956806,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b01-box",
+"variant": "flipall",
+"route": "headless",
+"rep": 3,
+"wall_s": 1.071899399998074,
+"readback_fbx_s": 1.1395621000046958,
+"readback_blend_s": 1.0419942999942577,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b01-box",
+"variant": "flipall",
+"route": "live",
+"rep": 1,
+"wall_s": 0.21687799999926938,
+"build_s": 0.0016,
+"io_s": 0.0656,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 0.9883006999953068,
+"readback_blend_s": 1.009508299997833,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b01-box",
+"variant": "flipall",
+"route": "live",
+"rep": 2,
+"wall_s": 0.16180619999795454,
+"build_s": 0.0014,
+"io_s": 0.0131,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.0108504000018002,
+"readback_blend_s": 0.9937707999997656,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b01-box",
+"variant": "flipall",
+"route": "live",
+"rep": 3,
+"wall_s": 0.1773551999940537,
+"build_s": 0.0018,
+"io_s": 0.0115,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.335748400000739,
+"readback_blend_s": 0.9902606999967247,
+"hd_fbx_vs_src_mm": 0.001972976766894942,
+"hd_blend_vs_src_mm": 0.0003781171332000097,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "clean",
+"route": "headless",
+"rep": 1,
+"wall_s": 1.0388174999970943,
+"readback_fbx_s": 1.1270139000043855,
+"readback_blend_s": 0.9882751999975881,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "clean",
+"route": "headless",
+"rep": 2,
+"wall_s": 1.137052699996275,
+"readback_fbx_s": 1.3581651000058628,
+"readback_blend_s": 0.981258899999375,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "clean",
+"route": "headless",
+"rep": 3,
+"wall_s": 1.1395589000021573,
+"readback_fbx_s": 1.0966030999989016,
+"readback_blend_s": 0.961962900000799,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "clean",
+"route": "live",
+"rep": 1,
+"wall_s": 0.12823550000030082,
+"build_s": 0.0024,
+"io_s": 0.0128,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.078344300003664,
+"readback_blend_s": 0.9258370000025025,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "clean",
+"route": "live",
+"rep": 2,
+"wall_s": 0.1500843000030727,
+"build_s": 0.0019,
+"io_s": 0.0137,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.0199663000021246,
+"readback_blend_s": 0.9939410999941174,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "clean",
+"route": "live",
+"rep": 3,
+"wall_s": 0.1487864000009722,
+"build_s": 0.0024,
+"io_s": 0.0132,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.112388200002897,
+"readback_blend_s": 0.8701864999966347,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "flip1",
+"route": "headless",
+"rep": 1,
+"wall_s": 1.0095737000010558,
+"readback_fbx_s": 1.012071700002707,
+"readback_blend_s": 0.8131818999972893,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "flip1",
+"route": "headless",
+"rep": 2,
+"wall_s": 0.9843670999980532,
+"readback_fbx_s": 0.9205001000009361,
+"readback_blend_s": 0.9661655999952927,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "flip1",
+"route": "headless",
+"rep": 3,
+"wall_s": 1.0720989999972517,
+"readback_fbx_s": 1.061061599997629,
+"readback_blend_s": 1.005888200001209,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "flip1",
+"route": "live",
+"rep": 1,
+"wall_s": 0.198363799994695,
+"build_s": 0.0022,
+"io_s": 0.0149,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 0.958492900004785,
+"readback_blend_s": 0.889215700000932,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "flip1",
+"route": "live",
+"rep": 2,
+"wall_s": 0.19600889999856008,
+"build_s": 0.0041,
+"io_s": 0.0187,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.0502249999990454,
+"readback_blend_s": 0.9520409000033396,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "flip1",
+"route": "live",
+"rep": 3,
+"wall_s": 0.15056080000067595,
+"build_s": 0.002,
+"io_s": 0.011,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.029469799999788,
+"readback_blend_s": 1.162104700000782,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "flipall",
+"route": "headless",
+"rep": 1,
+"wall_s": 1.1179711999939173,
+"readback_fbx_s": 1.0040329000039492,
+"readback_blend_s": 1.0762046000018017,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "flipall",
+"route": "headless",
+"rep": 2,
+"wall_s": 1.0813735999981873,
+"readback_fbx_s": 1.1029953000033856,
+"readback_blend_s": 1.0353647000010824,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "flipall",
+"route": "headless",
+"rep": 3,
+"wall_s": 1.20139570000174,
+"readback_fbx_s": 1.129553600003419,
+"readback_blend_s": 1.006132599999546,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "flipall",
+"route": "live",
+"rep": 1,
+"wall_s": 0.1696735000004992,
+"build_s": 0.0026,
+"io_s": 0.0151,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.0185734999977285,
+"readback_blend_s": 0.9019254000013461,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "flipall",
+"route": "live",
+"rep": 2,
+"wall_s": 0.19116719999874476,
+"build_s": 0.0027,
+"io_s": 0.0127,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 0.9527301999987685,
+"readback_blend_s": 0.8809366999994381,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b02-corner-niche",
+"variant": "flipall",
+"route": "live",
+"rep": 3,
+"wall_s": 0.17624919999798294,
+"build_s": 0.0029,
+"io_s": 0.0112,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 0.9391031000050134,
+"readback_blend_s": 0.8186556000000564,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "clean",
+"route": "headless",
+"rep": 1,
+"wall_s": 0.9698295999987749,
+"readback_fbx_s": 1.041992400001618,
+"readback_blend_s": 0.9086363000023994,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "clean",
+"route": "headless",
+"rep": 2,
+"wall_s": 1.0864664999971865,
+"readback_fbx_s": 1.0012645999959204,
+"readback_blend_s": 0.8998511000027065,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "clean",
+"route": "headless",
+"rep": 3,
+"wall_s": 1.0299936000010348,
+"readback_fbx_s": 1.077533499999845,
+"readback_blend_s": 0.9245251999964239,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "clean",
+"route": "live",
+"rep": 1,
+"wall_s": 0.13790919999883045,
+"build_s": 0.0034,
+"io_s": 0.0138,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.0674811999997473,
+"readback_blend_s": 1.0160653999992064,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "clean",
+"route": "live",
+"rep": 2,
+"wall_s": 0.19116950000170618,
+"build_s": 0.0048,
+"io_s": 0.0148,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.2154473000045982,
+"readback_blend_s": 1.2628476999962004,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "clean",
+"route": "live",
+"rep": 3,
+"wall_s": 0.289379399997415,
+"build_s": 0.0035,
+"io_s": 0.0178,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.133396500001254,
+"readback_blend_s": 1.0275611999968532,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": true,
+"checks_not_pass": []
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "flip1",
+"route": "headless",
+"rep": 1,
+"wall_s": 1.1649098999987473,
+"readback_fbx_s": 1.2342534000054002,
+"readback_blend_s": 0.9051213000057032,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "flip1",
+"route": "headless",
+"rep": 2,
+"wall_s": 1.0433042999939062,
+"readback_fbx_s": 1.0978637999942293,
+"readback_blend_s": 1.087965600003372,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "flip1",
+"route": "headless",
+"rep": 3,
+"wall_s": 1.2303341000006185,
+"readback_fbx_s": 1.030220200002077,
+"readback_blend_s": 0.9371269999974174,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "flip1",
+"route": "live",
+"rep": 1,
+"wall_s": 0.1554374999977881,
+"build_s": 0.0024,
+"io_s": 0.0096,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 0.9718205999961356,
+"readback_blend_s": 0.9792281000045477,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "flip1",
+"route": "live",
+"rep": 2,
+"wall_s": 0.16510099999868544,
+"build_s": 0.0023,
+"io_s": 0.0095,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 0.9805799000023399,
+"readback_blend_s": 0.9013152000043192,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "flip1",
+"route": "live",
+"rep": 3,
+"wall_s": 0.15286339999875054,
+"build_s": 0.0026,
+"io_s": 0.0108,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 1.0421866000033333,
+"readback_blend_s": 0.980054999999993,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"orientation"
+]
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "flipall",
+"route": "headless",
+"rep": 1,
+"wall_s": 0.9587193000043044,
+"readback_fbx_s": 0.9911141999982647,
+"readback_blend_s": 0.8053556999948341,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "flipall",
+"route": "headless",
+"rep": 2,
+"wall_s": 1.0249210999973002,
+"readback_fbx_s": 1.0156910000005155,
+"readback_blend_s": 0.8590086999975028,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "flipall",
+"route": "headless",
+"rep": 3,
+"wall_s": 0.9824937999946997,
+"readback_fbx_s": 0.938130500006082,
+"readback_blend_s": 0.8464145999969332,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "flipall",
+"route": "live",
+"rep": 1,
+"wall_s": 0.17443210000055842,
+"build_s": 0.0026,
+"io_s": 0.0088,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 0.9053278999999748,
+"readback_blend_s": 0.8519792000006419,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "flipall",
+"route": "live",
+"rep": 2,
+"wall_s": 0.1781912000005832,
+"build_s": 0.0026,
+"io_s": 0.0095,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 0.9390624000006937,
+"readback_blend_s": 0.8523788999955286,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+},
+{
+"bench": "bench-b02t-terrace",
+"variant": "flipall",
+"route": "live",
+"rep": 3,
+"wall_s": 0.15981629999441793,
+"build_s": 0.0036,
+"io_s": 0.0122,
+"renamed": [],
+"clean": true,
+"version": "4.4.0",
+"units": [
+"METRIC",
+1.0
+],
+"readback_fbx_s": 0.9780763000017032,
+"readback_blend_s": 0.9304794999989099,
+"hd_fbx_vs_src_mm": 0.0020100350373236354,
+"hd_blend_vs_src_mm": 0.00044089577298543945,
+"blend_eq_fbx_sig": true,
+"checks_passed": false,
+"checks_not_pass": [
+"mesh",
+"opening_planes",
+"orientation"
+]
+}
+]
