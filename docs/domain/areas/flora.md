@@ -49,7 +49,7 @@ Conflicts are pointed to [conflicts.md](../conflicts.md), not decided here.
 
 ## Project practice
 
-**Project practice, not regulation.** Source: the user's Flora grilling, rounds 1–2, 2026-10-15,
+**Project practice, not regulation.** Source: the user's Flora grilling [D099, D100, D101, D102], rounds 1–2, 2026-10-15,
 recorded in decisions issue [#187](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/187);
 numbers carry their decision ids. Where a point has no decision id it is the user's described
 working method from the same grilling, not a fixed rule.
