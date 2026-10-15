@@ -26,7 +26,7 @@ manual gates remain required. Partial coverage is explicitly qualified.
 | BODY-A — Architectural fidelity | reg p.4 §1.3; reg p.24 §1.3 | Approved source controls exterior | Same source and composition | Source overlays and signed V015; benchmark comparisons are not architectural sign-off | none | [Profile baseline](../npm-vpm.md#common-to-both), [manual gates](../validation.md) |
 | BODY-B — Exterior scope | reg p.6 §1.3; reg p.28 §3.1; reg p.29 §3.12; [D028] | Exterior shell; visible-interior exception in BODY-L | Exterior with simplified enclosing walls/floors | Compare source inventory with output; exclude internal services and unrelated objects | none | [Geometry scope](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted), [Body](../../../GLOSSARY.md#body) |
 | BODY-C — Usable roof belongs to OKS | reg p.7 §1.5, §3.2; reg p.28 §3.5 | Keep with owning OKS, not Ground | Keep with owning OKS | Review roof/terrace ownership and assembly before export | none | [Profile terms](../npm-vpm.md#terms), [geometry assembly](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted) |
-| BODY-D — Physical scale | reg p.4 §2.1, §4; reg p.24 §2.1, §4 | 1 unit = 1 m; 1:1 | 1 unit = 1 m; 1:1 | Check imported/exported units and source control dimensions; V002 units are not implemented | none | [Units](../geometry.md#units-coordinates-pivots), [V002 status](../validation.md#implementation-status-inventory-static-audit) |
+| BODY-D — Physical scale | reg p.4 §2.1, §4; reg p.24 §2.1, §4 | 1 unit = 1 m; 1:1 | 1 unit = 1 m; 1:1 | V002 scene readback checks declared system units (UnitScaleFactor 100) and import scale 1:1; compare source control dimensions manually | V002 (`src/twinqa/scene.py:scene_findings`, requires scene readback; source control dimensions stay manual) | [Units](../geometry.md#units-coordinates-pivots), [V002 status](../validation.md#implementation-status-inventory-static-audit) |
 | BODY-E — Silhouette economy | reg p.7 §3.1; reg p.28 §3.3 | Silhouette first; atlas for minor detail | Silhouette first; allow UV-driven splits | Compare silhouette to etalon; minimality still needs manual review | `src/twinqa/geometry/checks.py:check_silhouettes` (partial: shape only), B01/B02 | [Geometry](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted), [benchmarks](../../../benchmark/README.md) |
 | BODY-F — Regulatory triangle budget | reg p.7 §3.6; reg p.28 §3.9; [D010] | ≤ 150 000 per OKS FBX including usable roof | ≤ 1 000 000 per OKS FBX including usable roof, excluding UCX | Count triangles after export readback; C1 table/figure discrepancy already decided by the user [D010] | V003 (`src/twinqa/scene.py:scene_findings`, requires scene readback) | [Budgets](../npm-vpm.md#vpm-appendix-2), [C1](../conflicts.md#a-inside-the-regulation) |
 | BODY-G — Shared project target (mid-poly master) | [D010]; reg p.7 §3.6 | Mid-poly master ≤ 150 000 triangles per OKS FBX (user 2026-10-15, [D010]); NPM derived from it keeps ≤ 150 000 (regulatory) | VPM derived from the same master stays ≤ 150 000 by project target; 1 000 000 is the regulatory hard limit | VPM above target but within hard limit is review, not fail; follow linked fallback | V003; `tests/qa/test_scene.py::test_vpm_oks_triangles_project_target_and_hard_limit_conflict_1` | [D010 / C1, decided by the user](../conflicts.md#a-inside-the-regulation) |
@@ -77,12 +77,11 @@ No new conflict entry was needed; C1 and C23 also remain linked with their exist
 
 ## L2 gaps
 
-Rows with `none` (14):
+Rows with `none` (13):
 
 - **BODY-A** — approved-source architectural comparison (manual V015 today).
 - **BODY-B** — complete semantic exterior/interior inventory.
 - **BODY-C** — roof/terrace ownership and correct assembly with the OKS.
-- **BODY-D** — FBX units/scale readback wired to V002.
 - **BODY-H** — OKS perimeter extension measurement.
 - **BODY-J** — complete regulatory defect counting, isolated elements and zero edges.
 - **BODY-K** — complete co-directional overlap clearance band.
