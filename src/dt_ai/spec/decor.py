@@ -87,7 +87,8 @@ def _normals(t):
     return nv[keep] / (2 * area[keep, None]), area[keep], t[keep]
 
 
-AT_FACE_M = 0.0006        # a face this close to the wall face is at it (the engine's corner ends start 0.5 mm off)
+AT_FACE_M = 0.0006        # a face this close to the wall face is at it; so is one plate_gap_m off it: the engine's
+                          # corner ends start there, beyond the weld (user 2026-10-15 [D093], #101)
 DEPTH_TOL_M = 1e-4        # depths of one face (a thin box keeps its two faces, review 3 of PR #74)
 
 
@@ -115,10 +116,11 @@ def _covered(t, normals, coords, axis, sign, floor=None):
     return target.area > 0 and cover.intersection(target).area >= COVER * target.area
 
 
-def _is_box(t, u, n, c, hosts=()):
+def _is_box(t, u, n, c, gap, hosts=()):
     """A box in the wall frame (reviews 1-3 of PR #74): faces axis-aligned, two depths only (back and front,
     no stepped profile), and front, top, bottom and both ends each covering their whole rectangle; the back
-    may be open (inset decor). Inner s / z values are allowed: pieces of a row or a stack welded into one.
+    may be open (inset decor); an end face may start gap (plate_gap_m) off the wall face (the engine's corner
+    ends, #101). Inner s / z values are allowed: pieces of a row or a stack welded into one.
     An end (top, bottom or a side end) may be missing where it lies inside another element of the wall line
     (hosts: {s0, s1, z0, z1, d1} absolute): a subordinate element run into a main one (user 2026-10-12); its
     extent is then clipped at the main one's face. Returns the clip {key: value} (empty when whole), or None
@@ -130,7 +132,9 @@ def _is_box(t, u, n, c, hosts=()):
     coords = (t[..., :2] @ u, t[..., :2] @ n, t[..., 2])
     local = normals @ axes.T
     # two depths out of the wall face: the face and the front (the inset part inside the body is not seen)
-    seen = np.maximum(coords[1].ravel(), c + AT_FACE_M)
+    d = coords[1].ravel()
+    at_face = (d <= c + AT_FACE_M) | (np.abs(d - c - gap) <= DEPTH_TOL_M)
+    seen = np.where(at_face & (d < d.max() - DEPTH_TOL_M), c, d)
     if np.ptp(coords[0]) <= SAME_M or np.ptp(coords[2]) <= SAME_M or len(_levels_of(seen, DEPTH_TOL_M)) != 2:
         return None
     face = {1: c}                                      # out of the wall face (c along n) only
@@ -143,6 +147,8 @@ def _is_box(t, u, n, c, hosts=()):
     for axis, sign in ((2, 1), (2, -1), (0, 1), (0, -1)):
         if _covered(t, local, coords, axis, sign, face):
             continue
+        if axis == 0 and _covered(t, local, coords, axis, sign, {1: c + gap}):
+            continue                                   # an engine corner end, plate_gap_m off the face (#101)
         end = hi[axis] if sign > 0 else lo[axis]
         other = 2 if axis == 0 else 0
         key = {0: ("s0", "s1"), 2: ("z0", "z1")}
@@ -178,7 +184,7 @@ def _is_column(t):
     return all(_covered(t, normals, coords, axis, sign) for axis, sign in ((0, 1), (0, -1), (1, 1), (1, -1), (2, 1)))
 
 
-def _piece(v, part_tris, levels, contours, polys):
+def _piece(v, part_tris, levels, contours, polys, gap):
     """A wall piece, a non-box wall piece ("shape"), a column, or None (an attachment)."""
     p = v[np.unique(part_tris)]
     t = v[part_tris]
@@ -209,7 +215,7 @@ def _piece(v, part_tris, levels, contours, polys):
         # every storey it crosses has a wall on the same line holding its span (review 1 of PR #74)
         crossed = range(li, _storey(levels, z1 - SAME_M) + 1)
         on_walls = all(_wall_at(contours[k], u, c, pc["s0"], pc["s1"]) is not None for k in crossed)
-        pc["type"] = "wall" if on_walls and _is_box(t, u, n, c) is not None else "shape"
+        pc["type"] = "wall" if on_walls and _is_box(t, u, n, c, gap) is not None else "shape"
         pc["t"], pc["on_walls"] = t, on_walls
         return pc
     lo, hi = p[:, :2].min(axis=0), p[:, :2].max(axis=0)
@@ -374,7 +380,7 @@ def extract(v, tris, mats, parts, levels, contours, polys, plate_gap_m, attachme
     found, questions, kept = [], [], 0
     pieces = []
     for part in parts:
-        pc = _piece(v, tris[part], levels, contours, polys)
+        pc = _piece(v, tris[part], levels, contours, polys, plate_gap_m)
         if pc is None or pc["type"] == "shape":
             arms = _corner_arms(v, tris, part, levels, contours)
             if arms == "decor-corner":                # its part above the main one is closed by nothing
@@ -384,7 +390,7 @@ def extract(v, tris, mats, parts, levels, contours, polys, plate_gap_m, attachme
                                            [round(float(c), 2) for c in p[:, :2].mean(axis=0)]))
                 continue
             if arms:                                  # a belt round a building corner: one element per wall
-                found_arms = [(arm, _piece(v, tris[arm], levels, contours, polys)) for arm in arms]
+                found_arms = [(arm, _piece(v, tris[arm], levels, contours, polys, plate_gap_m)) for arm in arms]
                 if all(a_pc is not None for _, a_pc in found_arms):
                     pieces += found_arms
                     continue
@@ -412,7 +418,7 @@ def extract(v, tris, mats, parts, levels, contours, polys, plate_gap_m, attachme
                 hs, hd = h["t"][..., :2] @ pc["u"], h["t"][..., :2] @ pc["n"]
                 hosts.append({"s0": float(hs.min()), "s1": float(hs.max()), "z0": h["z0"], "z1": h["z1"],
                               "d1": float(hd.max()), "corner": True, "to0": pc["o"], "to1": pc["o"] + pc["length"]})
-            clip = _is_box(pc["t"], pc["u"], pc["n"], pc["c"], hosts) if hosts else None
+            clip = _is_box(pc["t"], pc["u"], pc["n"], pc["c"], plate_gap_m, hosts) if hosts else None
             if clip:
                 pc.update(clip, type="wall", inset_into=True)
     for part, pc in pieces:
