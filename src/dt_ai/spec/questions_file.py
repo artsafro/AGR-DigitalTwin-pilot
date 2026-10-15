@@ -6,7 +6,9 @@ Each question keeps a stable id across spec versions. The user's answers are nev
 matched by kind, levels and wall plus its heights and position within a tolerance (numbers move a
 little between versions), its Answer cell is kept, and a question that a newer spec no longer
 raises stays in the file as `gone <version>`. A file whose rows cannot be read is never
-overwritten. Write `\\|` for a pipe inside an answer.
+overwritten. Matching maximizes the number of pairs, then minimizes total height/position drift.
+Equally optimal assignments raise an ambiguous-assignment error before any file is written.
+Write `\\|` for a pipe inside an answer.
 """
 import re
 
@@ -75,6 +77,60 @@ def _same(row, cells):
     return dh + da if dh <= HEIGHT_TOL_M and da <= AT_TOL_M else None
 
 
+def _assignment(pairs, excluded=None):
+    """Maximum-cardinality, minimum-distance matching by residual augmenting paths."""
+    # Only candidate nodes participate; unrelated questions need no graph vertices.
+    source, sink = ("source",), ("sink",)
+    graph = {source: [], sink: []}
+
+    def edge(a, b, cost):
+        graph.setdefault(a, [])
+        graph.setdefault(b, [])
+        forward = [b, cost, 1, len(graph[b])]
+        backward = [a, -cost, 0, len(graph[a])]
+        graph[a].append(forward)
+        graph[b].append(backward)
+        return forward
+
+    candidates = {}
+    for k in sorted({k for k, i in pairs}):
+        edge(source, ("new", k), 0)
+    for i in sorted({i for k, i in pairs}):
+        edge(("old", i), sink, 0)
+    for (k, i), cost in pairs.items():
+        if (k, i) != excluded:
+            candidates[k, i] = edge(("new", k), ("old", i), cost)
+
+    while True:
+        distance, previous = {source: 0}, {}
+        # Reverse edges have negative costs: Bellman-Ford also permits reassignment
+        # of earlier pairs, unlike nearest-first matching.
+        for _ in range(len(graph) - 1):
+            changed = False
+            for a, edges in graph.items():
+                if a not in distance:
+                    continue
+                for index, (b, cost, capacity, reverse) in enumerate(edges):
+                    if capacity and distance[a] + cost < distance.get(b, float("inf")):
+                        distance[b] = distance[a] + cost
+                        previous[b] = a, index
+                        changed = True
+            if not changed:
+                break
+        if sink not in distance:
+            break
+        b = sink
+        while b != source:
+            a, index = previous[b]
+            forward = graph[a][index]
+            forward[2] -= 1
+            graph[b][forward[3]][2] += 1
+            b = a
+
+    match = {k: i for (k, i), forward in candidates.items() if not forward[2]}
+    return match, sum(pairs[k, i] for k, i in match.items())
+
+
 def merge(text, spec_id, version, questions):
     """New questions-file text: existing rows updated by this version's questions, new ones appended."""
     if not isinstance(questions, list):
@@ -83,13 +139,20 @@ def merge(text, spec_id, version, questions):
     if title and title != spec_id:
         raise ValueError(f"questions file belongs to {title}, not {spec_id}; not merging")
     cells = [_cells(q) for q in questions]
-    pairs = sorted((d, k, i) for k, c in enumerate(cells) for i, r in enumerate(rows)
-                   if (d := _same(r, c)) is not None)
-    match, seen = {}, set()
-    for d, k, i in pairs:                          # one-to-one, nearest first: exact matches keep answers
-        if k not in match and i not in seen:
-            match[k] = i
-            seen.add(i)
+    # Heights/positions are serialized to mm/cm. Integer micrometres remove
+    # binary-float noise from equal-distance assignments.
+    pairs = {(k, i): round(d * 1_000_000) for k, c in enumerate(cells) for i, r in enumerate(rows)
+             if (d := _same(r, c)) is not None}
+    match, cost = _assignment(pairs)
+    # Every different optimum omits at least one selected edge. Forbid each in
+    # turn to detect global ties, including ties involving an unmatched question.
+    for pair in match.items():
+        alternative, other_cost = _assignment(pairs, excluded=pair)
+        if len(alternative) == len(match) and other_cost == cost:
+            changed = {k for k in match.keys() | alternative.keys() if match.get(k) != alternative.get(k)}
+            ids = sorted({rows[m[k]]["ID"] for m in (match, alternative) for k in changed if k in m})
+            raise ValueError(f"ambiguous questions assignment for {', '.join(ids)}; not merging")
+    seen = set(match.values())
     for k, c in enumerate(cells):
         if k not in match:
             rows.append({"ID": f"Q{len(rows) + 1:03d}", "First": version, "Answer": ""})

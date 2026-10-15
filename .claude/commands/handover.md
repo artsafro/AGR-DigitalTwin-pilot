@@ -35,6 +35,10 @@ Do these steps in order. Talk to the user in Russian; files stay in English.
    PR body: `gh pr view --json body -q .body > <tmp>`, run the script with `--into <tmp>`, then
    `gh pr edit --body-file <tmp>`.
 6. **Job.** If the task is a job (`jobs/<ID>/`), update `jobs/<ID>/STATE.md` (status, next step, evidence paths).
+   **Compare with the Requirement** (`docs/agents/WORKFLOW.md`, "Job contract"; for a ticket, its Specification):
+   for each Acceptance item of the user's Requirement write met / not met / changed by a later decision (date or
+   `D<n>`), with the evidence path. Never edit the Requirement to fit the result. A contract with no Requirement
+   section: say so in the handoff ("Waiting for the user") instead of inventing one.
 7. **Repeats.** List the procedures done two or more times in this session (the same command chain, the same
    manual check, the same chain of judgement, the same question resolved). For each, add one line to
    `docs/backlog.md`, section "Reuse proposals", by the rule of three (`docs/agents/WORKFLOW.md`): kind

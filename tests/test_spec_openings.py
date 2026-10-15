@@ -99,6 +99,96 @@ def test_opening_on_a_non_90_wall_is_measured_along_that_wall():
     assert (o.wall, o.x_m, o.w_m, o.h_m) == (2, 1.0, 1.5, 1.2) and diag > 4
 
 
+def test_dropped_kink_hole_endpoints_follow_the_real_wall():
+    # #22: 4.57 degree turn removed from the spec; the 8 m hole stays on its real facet.
+    from shapely.geometry import LineString
+
+    contour = [[0, 0], [10, 0.8], [30, 0.8], [30, 10], [0, 10]]
+    spec, report = extract_spec(building(contour, boxes=[(1, 0.5, 8.5, 0.9, 2.4, 0.0)]), OBJECT)
+    floor = spec.expanded_floors()[0]
+    assert close(floor.contour, [[0, 0], [30, 0.8], [30, 10], [0, 10]])
+    (o,) = floor.openings
+    real_wall = LineString(contour[:3])
+    facet_start = math.dist(contour[0], contour[1])
+    errors = [real_wall.interpolate(measured).distance(real_wall.interpolate(expected))
+              for measured, expected in ((o.x_m, facet_start + 0.5),
+                                         (o.x_m + o.w_m, facet_start + 8.5))]
+    print(f"8 m hole: x_m={o.x_m:.3f}, w_m={o.w_m:.3f}, endpoint_errors_m={errors}")
+    assert errors == pytest.approx([0.0, 0.0], abs=0.01)
+    assert o.wall == 0 and o.w_m == pytest.approx(8.0, abs=0.01)
+    assert report["questions"] == []
+
+
+@pytest.mark.parametrize("rounded", [False, True])
+@pytest.mark.parametrize("mirror", [False, True])
+def test_dropped_kink_coordinates_beside_rounded_endpoint(rounded, mirror):
+    # Review #22: the virtual radius vertex is not on the original section ring.
+    if rounded:
+        arc = [[98.5 + 1.5 * math.cos(a), 2.3 + 1.5 * math.sin(a)]
+               for a in np.linspace(-math.pi / 2, 0, 13)]
+        contour = [[0, 0], [10, 0.8], *arc, [100, 20], [0, 20]]
+    else:
+        contour = [[0, 0], [10, 0.8], [100, 0.8], [100, 20], [0, 20]]
+    dump = building(contour, boxes=[(1, 0.5, 8.5, 0.9, 2.4, 0)])
+    if mirror:
+        for mesh in dump["meshes"]:
+            for v in mesh["vertices"]:
+                v[0] = -v[0]
+            mesh["triangles"] = [t[::-1] for t in mesh["triangles"]]
+    spec, report = extract_spec(dump, OBJECT)
+    floor = spec.expanded_floors()[0]
+    expected_contour = [[0, 0], [100, 0.8], [100, 20], [0, 20]]
+    if rounded:
+        expected_contour[1].append({"r": 1.5})
+    if mirror:
+        expected_contour = [expected_contour[0], *expected_contour[:0:-1]]
+        expected_contour = [[-p[0], *p[1:]] for p in expected_contour]
+    assert floor.contour == expected_contour
+    (o,) = floor.openings
+    expected = 81.5 if mirror else math.hypot(10, 0.8) + 0.5
+    errors = [abs(o.x_m - expected), abs(o.x_m + o.w_m - expected - 8)]
+    print(f"{rounded=}: x_m={o.x_m}, w_m={o.w_m}, endpoint_errors_m={errors}")
+    assert o.wall == (3 if mirror else 0) and o.w_m == pytest.approx(8, abs=0.01)
+    assert errors == pytest.approx([0, 0], abs=0.01)
+    assert report["questions"] == []
+
+
+def test_dropped_kink_100_m_wall_keeps_real_opening_width():
+    # #22: 4.89 degree turn dropped; projection onto the 100 m chord loses over 2 cm.
+    contour = [[0, 0], [10, 0], [100, 7.7], [100, 20], [0, 20]]
+    spec, _ = extract_spec(building(contour, extra=[pane("Glass", 1.0, 8.9, 0.9, 2.4, y=0.1)]), OBJECT)
+    floor = spec.expanded_floors()[0]
+    assert close(floor.contour, [[0, 0], [100, 7.7], [100, 20], [0, 20]])
+    (o,) = floor.openings
+    print(f"100 m wall: x_m={o.x_m:.3f}, w_m={o.w_m:.3f}, width_error_m={abs(o.w_m - 7.9):.3f}")
+    assert (o.x_m, o.w_m) == pytest.approx((1.0, 7.9), abs=0.01)
+    assert o.wall == 0
+
+
+@pytest.mark.parametrize("turn", [0, 1, 2, 3])
+@pytest.mark.parametrize("reverse", [False, True])
+def test_dropped_kink_coordinates_ignore_ring_start_and_direction(turn, reverse):
+    # Same real opening on all four sides; include the closing edge of the section ring.
+    rotations = [np.array([[1, 0], [0, 1]]), np.array([[0, -1], [1, 0]]),
+                 np.array([[-1, 0], [0, -1]]), np.array([[0, 1], [-1, 0]])]
+    contour = (np.array([[0, 0], [10, 0.8], [30, 0.8], [30, 10], [0, 10]]) @ rotations[turn].T).tolist()
+    mouth = np.array([[10.5, 0.8], [18.5, 0.8]]) @ rotations[turn].T
+    if reverse:
+        contour.reverse()
+        facet, lo, hi = 2, 11.5, 19.5  # reversed 20 m facet, same world mouth
+    else:
+        facet, lo, hi = 1, 0.5, 8.5
+    spec, report = extract_spec(building(contour, boxes=[(facet, lo, hi, 0.9, 2.4, 0.0)]), OBJECT)
+    (o,) = spec.expanded_floors()[0].openings
+    floor = spec.expanded_floors()[0]
+    start = np.array([0, 0]) @ rotations[turn].T
+    assert floor.contour[o.wall][:2] == pytest.approx(start)
+    assert (o.x_m, o.w_m) == pytest.approx((10.531948963, 8.0), abs=0.001)
+    row = report["openings"]["depth_by_default"][0]
+    assert row["wall"] == o.wall and row["x_m"] == o.x_m
+    assert row["at"] == pytest.approx(mouth.mean(axis=0), abs=0.01)
+
+
 def test_recess_with_glass_at_its_back_is_an_opening():
     # a closed recess (back face present) with glass in it: the opening clears the recess question
     spec, report = extract_spec(building(boxes=[(0, 2.0, 3.5, 0.9, 2.4, -0.2)],
@@ -246,6 +336,44 @@ def test_wide_hole_in_a_small_building_is_not_a_pier(width):
     assert [(o[1], o[3]) for o in openings(spec)] == [(1.0, pytest.approx(width))]
 
 
+@pytest.mark.parametrize("length,width", [(9.0, 8.0), (8.0, 7.0)])
+def test_wide_hole_in_a_very_small_building_is_not_a_pier(length, width):
+    # #21 (Codex review 3 of PR #20): a length x 1 m body; the way round is shorter than gap + 4 m,
+    # but it leaves the gap line, so it is no pier
+    contour = [(0, 0), (length, 0), (length, 1), (0, 1)]
+    spec, report = extract_spec(building(contour, boxes=[(0, 0.5, 0.5 + width, 0.9, 2.4, 0.0)]), OBJECT)
+    assert [(o[1], o[3]) for o in openings(spec)] == [(0.5, pytest.approx(width))]
+    assert report["questions"] == []
+
+
+def test_pier_with_reveals_between_two_windows_is_not_bridged():
+    b = Mesh("Body")
+    walls(b, SQUARE10, 0.0, 6.6, [(0, 2.0, 3.5, 0.9, 2.4, 0.0), (0, 3.8, 5.3, 0.9, 2.4, 0.0)])
+    reveal(b, 2.0, 3.5, 0.9, 2.4, 0.25)
+    reveal(b, 3.8, 5.3, 0.9, 2.4, 0.25)
+    flat(b, Polygon(SQUARE10), 6.6, up=True)
+    flat(b, Polygon(SQUARE10), 0.0, up=False)
+    spec, report = extract_spec(dump_of(b), OBJECT)
+    assert [(o[1], o[3]) for o in openings(spec)] == [(2.0, 1.5), (3.8, 1.5)]
+    assert report["questions"] == []
+
+
+def test_a_rejected_pier_candidate_leaves_an_unresolved_break():
+    # #21: a wall missing from corner to corner - the only candidate is rejected; the break is reported
+    _, mouths, unresolved = op.close_section([[(0, 0), (0, 1)], [(0, 1), (6, 1)], [(6, 1), (6, 0)]])
+    assert mouths == []
+    assert sorted(tuple(map(tuple, (np.round(p, 6), np.round(q, 6)))) for p, q in unresolved) == [((0, 0), (6, 0))]
+
+
+def test_unpaired_end_is_reported_when_its_rejected_candidate_pairs_elsewhere():
+    # #21 review 1 (synthetic section): (0, 0) rejects (6, 0) as a pier; (6, 0) then pairs with (6.5, 0)
+    # as an opening, while (0, 0) stays unpaired - it must be reported, not dropped
+    segments = [[(0, 0), (0, 1)], [(0, 1), (6, 1)], [(6, 1), (6, 0)], [(6.5, 0), (6.5, 1)], [(6.5, 1), (20, 1)]]
+    _, mouths, unresolved = op.close_section(segments)
+    assert len(mouths) == 1
+    assert sorted(tuple(map(tuple, (np.round(p, 6), np.round(q, 6)))) for p, q in unresolved) == [((0, 0), (6, 0))]
+
+
 def test_pier_between_two_windows_is_not_bridged():
     spec, _ = extract_spec(building(boxes=[(0, 2.0, 3.5, 0.9, 2.4, 0.0), (0, 3.8, 5.3, 0.9, 2.4, 0.0)]), OBJECT)
     assert [(o[1], o[3]) for o in openings(spec)] == [(2.0, 1.5), (3.8, 1.5)]
@@ -311,6 +439,48 @@ def test_pier_check_stays_cheap_on_a_comb():
     t = time.perf_counter()
     op.close_section(segs)
     assert time.perf_counter() - t < 5.0
+
+
+@pytest.mark.parametrize("n, open_ends", [(50, 41), (100, 68)])
+def test_pier_search_runs_once_per_dangling_end_on_a_dense_comb(n, open_ends, monkeypatch):
+    # R7 (#24): n teeth within 8 m are n dangling ends, every pair a candidate; one search per pair
+    # (n * (n - 1): 2 450 / 9 900 at n = 50 / 100) cost 54 s per section at n = 200. One bounded search
+    # per end, its distances reused for every candidate and for the rejected-pier check.
+    import heapq
+    starts, pop = [], heapq.heappop
+
+    def counting_pop(heap):
+        item = pop(heap)
+        if item[0] == 0.0:                               # the start of a shortest-path search
+            starts.append(item[1])
+        return item
+
+    monkeypatch.setattr(heapq, "heappop", counting_pop)
+    xs = np.linspace(0.0, 7.5, n)
+    segs = [[(0.0, 0.0), (7.5, 0.0)]] + [[(x, 0.0), (x, 0.3)] for x in xs]
+    _, mouths, unresolved = op.close_section(segs)
+    assert len(starts) <= n
+    assert mouths == [] and len(unresolved) == open_ends  # the answer of one search per pair
+
+
+def test_pier_search_reuse_keeps_the_pairing():
+    # R7 (#24): reused distances give the same answer as one search per pair: the pier between two
+    # windows is not bridged, both windows are; the free wall ends stay unresolved
+    segs = [[(-5, 0), (2.0, 0)], [(2.0, 0), (2.0, 0.3)], [(3.5, 0.3), (3.5, 0)], [(3.5, 0), (3.8, 0)],
+            [(3.8, 0), (3.8, 0.3)], [(5.3, 0.3), (5.3, 0)], [(5.3, 0), (10, 0)]]
+    _, mouths, unresolved = op.close_section(segs)
+    assert [(round(float(a[0]), 3), round(float(b[0]), 3)) for a, b, _ in mouths] == [(2.0, 3.5), (3.8, 5.3)]
+    assert sorted(round(float(a[0]), 3) for a, _ in unresolved) == [-5.0, 10.0]
+
+
+def test_pier_search_stays_fast_at_two_hundred_ends():
+    # R7 (#24): 200 dangling ends took 54 s per section (r3_v_cost.json)
+    import time
+    xs = np.linspace(0.0, 7.5, 200)
+    segs = [[(0.0, 0.0), (7.5, 0.0)]] + [[(x, 0.0), (x, 0.3)] for x in xs]
+    t = time.perf_counter()
+    op.close_section(segs)
+    assert time.perf_counter() - t < 10.0
 
 
 # --- regressions from Codex review 3 of PR #20 -------------------------------------------------

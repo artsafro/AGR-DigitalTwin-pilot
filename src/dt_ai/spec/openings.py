@@ -4,7 +4,9 @@ Pattern: none — this is extractor code, not a building node (REVIEW_CHECKLIST 
 
 Holes are found in the horizontal sections themselves. Dangling ends of the section are paired
 (mutually nearest, at most OPENING_MAX_M apart, not joined by a nearly direct path of the section
-itself — no longer than the gap plus two reveals — which is a pier between two openings); from each end the chain is
+itself — no longer than the gap plus two reveals and running along the gap line, from each end after its reveal
+towards the other — which is a pier between two openings; an end left unpaired after such a rejection is an
+unresolved break, #21); from each end the chain is
 followed back until it runs along the gap: that point is the mouth on the wall line, and the way
 back from it (a reveal, a chamfer) gives the depth. Bridging the mouths closes the section for the
 level contour (a door from the floor no longer opens the storey end). An opening must sit on a
@@ -22,6 +24,8 @@ from collections import defaultdict
 import numpy as np
 import shapely
 from shapely.geometry import LineString, MultiLineString, Polygon
+from shapely.geometry.polygon import orient
+from shapely.ops import substring
 
 SNAP_M = 1e-5            # section points closer than this are one point (real meshes left 1 um gaps at window jambs)
 OPENING_MAX_M = 8.0      # widest gap in a wall that is bridged as an opening
@@ -82,23 +86,61 @@ def _components(adj):
     return comp
 
 
-def _linked_within(adj, p, q, limit):
-    """True when the section itself joins p to q by a path no longer than limit (a pier between
-    two openings, not a gap across one)."""
+def _paths_from(adj, p, limit):
+    """Shortest paths of the section itself from p, no longer than limit: (distances, previous point).
+    One search per dangling end serves every candidate partner (#24)."""
     import heapq
-    best, heap = {p: 0.0}, [(0.0, p)]
+    best, came, heap = {p: 0.0}, {}, [(0.0, p)]
     while heap:
         d, x = heapq.heappop(heap)
-        if x == q:
-            return True
         if d > best.get(x, np.inf):
             continue
         for y in adj[x]:
             nd = d + float(np.hypot(y[0] - x[0], y[1] - x[1]))
             if nd <= limit and nd < best.get(y, np.inf):
-                best[y] = nd
+                best[y], came[y] = nd, x
                 heapq.heappush(heap, (nd, y))
+    return best, came
+
+
+def _path_to(tree, p, q, limit=np.inf):
+    """The path from p to q (a list of points) in the search tree of p when it is no longer than limit,
+    else None."""
+    best, came = tree
+    if best.get(q, np.inf) > limit:
+        return None
+    path = [q]
+    while path[-1] != p:
+        path.append(came[path[-1]])
+    return path[::-1]
+
+
+def _runs_to_other_end(path, gap):
+    """From the first point of path, the first stretch running along the gap (within ALONG_DEG)
+    heads along +gap - towards the other end, as a pier face does - and is reached within a reveal."""
+    cos, length = np.cos(np.radians(ALONG_DEG)), 0.0
+    for a, b in zip(path, path[1:]):
+        step = np.array(b) - np.array(a)
+        along = float(_unit(step) @ gap)
+        if abs(along) >= cos:
+            return along > 0
+        length += float(np.linalg.norm(step))
+        if length > REVEAL_PATH_MAX_M:
+            return False
     return False
+
+
+def _is_pier(tree, p, q, gap_len):
+    """True when the section itself joins p to q as a pier between two openings: a path no longer
+    than the gap plus two reveals whose chain runs along the gap line - from each end, after its
+    reveal, the first stretch along the gap heads to the other end. The way round a small building
+    may be short, but from at least one end it first runs away from the other (the wall beside the
+    hole) or reaches the gap direction only past a reveal (#21)."""
+    path = _path_to(tree, p, q, gap_len + 2 * REVEAL_PATH_MAX_M)
+    if path is None:
+        return False
+    gap = _unit(np.array(q) - np.array(p))
+    return _runs_to_other_end(path, gap) and _runs_to_other_end(path[::-1], -gap)
 
 
 def _mouth(adj, p, gap):
@@ -134,20 +176,29 @@ def close_section(segments):
     if dangles:
         comp = _components(adj)
         pts = np.array(dangles)
-        best = {}
+        best, rejected, trees = {}, {}, {}
+
+        def tree(i):                                    # one bounded search per end, reused (#24)
+            if i not in trees:
+                trees[i] = _paths_from(adj, dangles[i], OPENING_MAX_M + 2 * REVEAL_PATH_MAX_M)
+            return trees[i]
+
         for i, p in enumerate(dangles):
             d = np.linalg.norm(pts - pts[i], axis=1)
             for j in np.argsort(d):
                 if j == i or not 1e-6 < d[j] <= OPENING_MAX_M:
                     continue
-                # a pier joins the two ends nearly directly (its width plus two reveals at most);
-                # the way round the building is long and does not make a pier
-                if comp[dangles[j]] != comp[p] or not _linked_within(adj, p, dangles[j], d[j] + 2 * REVEAL_PATH_MAX_M):
+                # a pier joins the two ends along the gap line (its width plus two reveals at most);
+                # the way round the building leaves the gap line and does not make a pier (#21)
+                if comp[dangles[j]] != comp[p] or not _is_pier(tree(i), p, dangles[j], d[j]):
                     best[i] = int(j)
                     break
+                rejected.setdefault(i, int(j))
         cos = np.cos(np.radians(BRIDGE_DEG))
+        paired = set()
         for i, j in best.items():
             if i < j and best.get(j) == i:
+                paired.update((i, j))
                 p, q = dangles[i], dangles[j]
                 gap = _unit(np.array(q) - np.array(p))
                 mp, mq = _mouth(adj, p, gap), _mouth(adj, q, -gap)
@@ -155,6 +206,20 @@ def close_section(segments):
                     unresolved.append((np.array(p), np.array(q)))
                 else:
                     mouths.append((mp[0], mq[0], max(mp[1], mq[1])))
+        # an end left without a partner after its nearest candidate was taken for a pier is
+        # reported, never dropped silently (#21): a pier's ends are paired with their openings, and a
+        # straight stray piece (a fin across a wall) joins its ends along the gap line itself - no break.
+        # Only the end's own pairing counts: its rejected candidate may have paired elsewhere.
+        seen = set()
+        for i, j in rejected.items():
+            if i in paired or frozenset((i, j)) in seen:
+                continue
+            seen.add(frozenset((i, j)))
+            p, q = np.array(dangles[i]), np.array(dangles[j])
+            path = np.array(_path_to(tree(i), dangles[i], dangles[j]))   # a pier: within the search
+            normal = _unit(q - p)[::-1] * np.array([-1.0, 1.0])
+            if np.abs((path - p) @ normal).max() > ON_WALL_M:
+                unresolved.append((p, q))
     lines = list(shapely.get_parts(noded)) + [LineString([a, b]) for a, b, _ in mouths]
     polys = list(shapely.get_parts(shapely.polygonize(shapely.get_parts(shapely.unary_union(lines)))))
     if not polys:
@@ -533,6 +598,50 @@ def _source_items(items, li, contour):
     return out
 
 
+def _measurement_walls(contour, section):
+    """Recover dropped-kink facets for opening calculations, without changing the spec contour.
+
+    Each calculation wall retains (spec wall, arc-length offset from its start). Rounded-corner
+    spans keep their existing representation. Collapse their tessellation with the contour's
+    own arc recognizer, but keep small kinks on the neighbouring straight spans. This recovers
+    virtual radius vertices too, which do not lie on the original section ring.
+    """
+    ring = LineString(orient(section, sign=1.0).exterior.coords)
+    if any(len(p) == 3 for p in contour):
+        # Local import: mesh orchestrates assemble and uses this module for section closure.
+        from .mesh import SIMPLIFY_M, _rounded_corners
+
+        poly = orient(section.simplify(SIMPLIFY_M, preserve_topology=True), sign=1.0)
+        corners = _rounded_corners(np.array(poly.exterior.coords)[:-1])
+        coords = [p.tolist() for p, _ in corners]
+        ring = LineString(coords + coords[:1])
+    points, owners = [], []
+    for w, a in enumerate(contour):
+        b = contour[(w + 1) % len(contour)]
+        chord = LineString([a[:2], b[:2]])
+        path = None
+        if all(ring.distance(shapely.Point(p[:2])) <= 0.003 for p in (a, b)):
+            start, end = (ring.project(shapely.Point(p[:2])) for p in (a, b))
+            if end > start:
+                path = substring(ring, start, end)
+            elif end < start:
+                tail, head = substring(ring, start, ring.length), substring(ring, 0, end)
+                coords = list(tail.coords) + list(head.coords)[1:]
+                path = LineString(coords)
+        if path is None or path.hausdorff_distance(chord) <= 0.001:
+            points.append(a)
+            owners.append((w, 0.0))
+            continue
+        # Triangulation introduces collinear section vertices; they are not supporting facets.
+        coords = list(path.simplify(SNAP_M).coords)
+        offset = 0.0
+        for i, (p, q) in enumerate(zip(coords, coords[1:])):
+            points.append(a if i == 0 and len(a) == 3 else list(p))
+            owners.append((w, offset))
+            offset += float(np.linalg.norm(np.asarray(q) - p))
+    return points, owners
+
+
 def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=None, recesses=None, sources=None,
              depth_default=0.4, thresholds=None):
     """Openings per floor, the plan footprints that clear recess questions, break questions, report.
@@ -540,6 +649,8 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
     doors: door recesses per level (mesh._door_recesses); recesses: recess pieces per level (the
     reveals that give a glass opening its rough size, #36); sources: openings a source gives
     explicitly, per level (Revit)."""
+    measurement = [_measurement_walls(f["contour"], p) for f, p in zip(floors, polys)]
+    floors = [{**f, "contour": points} for f, (points, _) in zip(floors, measurement)]
     thresholds = thresholds or {}
     frame = thresholds.get("glass_frame_m", GLASS_FRAME_M)
     depth_exception = thresholds.get("depth_exception_m", DEPTH_EXCEPTION_M)
@@ -616,7 +727,8 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
         pts = np.array([q[:2] for q in floor["contour"]], dtype=float)
         items = []
         for o in sorted(holes, key=lambda o: (o["wall"], o["x0"])):
-            item = {"wall": o["wall"], "x_m": round(max(o["x0"], 0.0), 3), "sill_m": round(o["z0"] - elev, 3),
+            wall, offset = measurement[li][1][o["wall"]]
+            item = {"wall": wall, "x_m": round(max(offset + o["x0"], 0.0), 3), "sill_m": round(o["z0"] - elev, 3),
                     "w_m": round(o["x1"] - o["x0"], 3), "h_m": round(o["z1"] - o["z0"], 3),
                     "window_type": None, "source": o["source"],
                     "material_id": o.get("material_id"), "plane_conflict": o.get("plane_conflict", False),
@@ -630,7 +742,7 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
             if no_depth:
                 # the default, marked in the report, never 0 or a minimum (OD1, user decision 2026-10-11)
                 p0, p1, _ = _world(o, floor["contour"])
-                by_default.append({"level": levels[li]["name"], "wall": o["wall"], "x_m": item["x_m"],
+                by_default.append({"level": levels[li]["name"], "wall": wall, "x_m": item["x_m"],
                                    "sill_m": item["sill_m"], "at": [round(float(c), 2) for c in (p0 + p1) / 2]})
             elif abs(depth - depth_default) > depth_exception:
                 item["depth_m"] = round(depth, 3)   # a measured reveal off the default: an exception (#36)

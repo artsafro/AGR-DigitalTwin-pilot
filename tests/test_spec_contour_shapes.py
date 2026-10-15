@@ -738,7 +738,50 @@ def test_contour_points_within_the_weld_are_one():
     poly = Polygon([[0, 0], [5, 0], [5, 0.002], [10, 0.002], [10, 10], [0, 10]])   # a 2 mm step
     pts = _contour_points(poly, 0.003)
     assert len(pts) == len(_contour_points(poly, 0.0001)) - 1
-    assert all(np.hypot(a[0] - b[0], a[1] - b[1]) > 0.003 for a, b in zip(pts, pts[1:] + pts[:1]))
+    assert all(np.hypot(a[0] - b[0], a[1] - b[1]) > 0.003
+               for i, a in enumerate(pts) for b in pts[i + 1:])
+
+
+@pytest.mark.parametrize("weld,right_x", [(0.003, 1.003), (0.001, 1.001)])
+def test_non_adjacent_contour_points_beyond_the_configured_weld_stay(weld, right_x):
+    """A neck wider than weld_m stays intact; the configured tolerance is not always 3 mm."""
+    from dt_ai.spec.mesh import _contour_points
+    poly = Polygon([[0, 0], [2, 0], [2, 2], [right_x, 2], [2, 4], [0, 4], [0.999, 2], [0, 2]])
+    pts = _contour_points(poly, weld)
+    assert len(pts) == 8
+    assert Polygon(pts).is_valid
+    assert [right_x, 2] in pts and [0.999, 2] in pts
+
+
+def test_a_closing_weld_that_leaves_a_simple_triangle_succeeds():
+    from dt_ai.spec.mesh import _contour_points
+    assert _contour_points(Polygon([[0, 0], [10, 0], [10, 10], [0, 0.002]]), 0.003) == [
+        [0, 0], [10, 0], [10, 10]]
+
+
+def test_a_triangle_with_a_closing_edge_beyond_the_weld_stays():
+    from dt_ai.spec.mesh import _contour_points
+    assert _contour_points(Polygon([[0, 0], [10, 0], [0, 0.004]]), 0.003) == [
+        [0, 0], [10, 0], [0, 0.004]]
+
+
+@pytest.mark.parametrize("right_x", [1.001, 1.002])
+def test_non_adjacent_contour_points_within_the_weld_stop(right_x):
+    """#104: welding opposite sides of a narrow neck repeats a vertex, not a simple contour."""
+    from dt_ai.spec.mesh import _contour_points
+    poly = Polygon([[0, 0], [2, 0], [2, 2], [right_x, 2], [2, 4], [0, 4], [0.999, 2], [0, 2]])
+    assert poly.is_valid
+    with pytest.raises(SpecError, match="weld_m"):
+        _contour_points(poly, 0.003)
+
+
+@pytest.mark.parametrize("closing_edge", [0.002, 0.003])
+def test_a_triangle_collapsed_by_the_closing_weld_stops(closing_edge):
+    """#104: welding the closing edge must not leave a triangle with only two distinct points."""
+    from dt_ai.spec.mesh import _contour_points
+    poly = Polygon([[0, 0], [10, 0], [0, closing_edge]])
+    with pytest.raises(SpecError, match="weld_m"):
+        _contour_points(poly, 0.003)
 
 
 def test_a_self_crossing_contour_stops_and_is_never_written():

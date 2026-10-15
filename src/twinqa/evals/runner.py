@@ -142,9 +142,11 @@ def load_tasks(evals_dir, suite=None, task=None):
 
 
 def _fill(text, branch, regex=False):
-    values = {"{branch_slug}": branch_slug(branch), "{branch}": branch}
-    for key, value in values.items():
-        text = text.replace(key, re.escape(value) if regex else value)
+    if "{branch_slug}" in text:
+        slug = branch_slug(branch)
+        text = text.replace("{branch_slug}", re.escape(slug) if regex else slug)
+    if "{branch}" in text:
+        text = text.replace("{branch}", re.escape(branch) if regex else branch)
     return text
 
 
