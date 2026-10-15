@@ -1,10 +1,12 @@
 """Contract of the `model-flora` project skill (#188).
 
-The skill is an agent procedure: planting schedule + SPOZU points -> library species -> schedule check ->
-new-species texture route -> NPM star / VPM shell -> trees -> placement -> one 2048 atlas from the placed scene ->
-flower beds -> checks, each step with a tool route, a Needs marker and a completion criterion, and links instead of
+The skill is an agent procedure: planting schedule + SPOZU points -> flower beds (texture or models) -> library
+species -> schedule check -> new-species texture route -> NPM star / VPM shell -> trees -> placement and bed scatter ->
+one 2048 atlas from the placed scene -> checks, each step with a tool route, a Needs marker and a completion criterion, and links instead of
 copied rule text. `skill_findings` is the checker; the generated mutations prove it rejects each kind of breakage,
-not only that the real file passes.
+not only that the real file passes. `procedure_walk` follows the steps in their written order on a schedule with an
+area-only modelled bed (review round 1 of PR #237): every plant in the scene must have an atlas tile, and texture-only
+beds and lawns must stay Ground texture.
 """
 from __future__ import annotations
 
@@ -19,34 +21,37 @@ SHEET = ROOT / "docs/domain/areas/flora.md"
 DECISIONS = ROOT / "docs/decisions.md"
 CONFLICTS = ROOT / "docs/domain/conflicts.md"
 
-# (step number, words its heading must contain), in procedure order. Placement precedes the atlas (#216, #217).
+# (step number, words its heading must contain), in procedure order. Beds are classified before the library so their
+# species go through it; placement (points and bed scatter) precedes the one atlas (#216, #217, PR #237 round 1).
 STEPS = [
     (1, ("planting schedule", "spozu")),
-    (2, ("library",)),
-    (3, ("schedule",)),
-    (4, ("new species", "texture")),
-    (5, ("npm", "star", "vpm", "shell")),
-    (6, ("trees", "library")),
-    (7, ("placement", "spozu")),
-    (8, ("atlas", "2048", "placed scene")),
-    (9, ("flower beds", "texture", "models")),
+    (2, ("flower beds", "texture", "models")),
+    (3, ("library",)),
+    (4, ("schedule",)),
+    (5, ("new species", "texture")),
+    (6, ("npm", "star", "vpm", "shell")),
+    (7, ("trees", "library")),
+    (8, ("placement", "spozu", "bed")),
+    (9, ("atlas", "2048", "placed scene")),
     (10, ("checks",)),
 ]
 # Tokens the body of a step must carry (the issue's parameters for that step).
 STEP_TOKENS = {
     1: ("PyMuPDF", "DXFOUT", "ezdxf", "Latin", "no rotation"),
-    2: ("catalogue.json", "Text objects", "Tris", "#189", "never invented"),
-    3: ("±20 %", "[D099]", "FLO-04", "colour", "review"),
-    4: ("dt_ai.materials.flora", "review sheet", "explicit approval", "opacity", "2K front view"),
-    5: ("[D102]", "only when the user asks", "library's VPM bushes", "201-299", "opacity"),
-    6: ("101-199", "speedtree-mcp", "trunk"),
-    7: ("10 cm", "random rotation about Z", "±10 %", "±20 %", "[D100]", "[D095]", "seed", "pivot on the point"),
-    8: ("one atlas", "2048", "same factor", "[D020]", "#217", "material ID", "atlas_maf.py"),
-    9: ("[D101]", "Ground texture", "lists the plants", "big bushes"),
+    2: ("[D101]", "Ground texture", "lists the plants", "big bushes", "model-ground", "no Flora tile",
+        "species rows"),
+    3: ("catalogue.json", "Text objects", "Tris", "#189", "never invented"),
+    4: ("±20 %", "[D099]", "FLO-04", "colour", "review"),
+    5: ("dt_ai.materials.flora", "review sheet", "explicit approval", "opacity", "2K front view"),
+    6: ("[D102]", "only when the user asks", "library's VPM bushes", "201-299", "opacity"),
+    7: ("101-199", "speedtree-mcp", "trunk"),
+    8: ("10 cm", "random rotation about Z", "±10 %", "±20 %", "[D100]", "[D095]", "seed", "pivot on the point",
+        "scatter", "bed area"),
+    9: ("one atlas", "2048", "same factor", "[D020]", "#217", "material ID", "atlas_maf.py"),
     10: ("validate-delivery", "validate_package.py", "FLO-15", "[D097]", "`passed`"),
 }
 # Steps whose Needs line must name the user (texture review, colour, visual review).
-HUMAN_STEPS = (3, 4, 10)
+HUMAN_STEPS = (4, 5, 10)
 ROUTE_TOOLS = ("PyMuPDF", "dcc_batch.py", "ezdxf", "3ds Max batch", "Blender headless", "validate_package.py",
                "dt_ai.materials.flora", "catalogue", "atlas_maf.py")
 NEEDS = ("headless", "live", "human")
@@ -82,6 +87,75 @@ def _rule_text() -> str:
 
 def _anchor(heading: str) -> str:
     return re.sub(r"[^\w\- ]", "", heading.strip("# ").lower()).replace(" ", "-")
+
+
+# Schedule of the dry walk (Silikatniy UVK sheet 6): point plants, the area-only modelled bed pos. 10, a bed that only
+# says «цветник» and the lawns pos. 11-12.
+WALK_ROWS = [
+    {"pos": 3, "kind": "point", "species": ("Acer platanoides",)},
+    {"pos": 5, "kind": "point", "species": ("Hydrangea arborescens",)},
+    {"pos": 10, "kind": "bed_listed", "species": ("Iris hybrida", "Hosta glauca", "Geranium perenne"), "area_m2": 21.3},
+    {"pos": 90, "kind": "bed_unlisted", "species": (), "area_m2": 12.0},
+    {"pos": 11, "kind": "lawn", "species": (), "area_m2": 300.0},
+]
+
+
+def _role(title: str) -> str | None:
+    low = title.lower()
+    for role, word in (("beds", "flower beds"), ("library", "library"), ("placement", "placement"), ("atlas", "atlas")):
+        if word in low and not (role == "library" and "trees" in low):
+            return role
+    return None
+
+
+def procedure_walk(text: str, rows: list[dict] = WALK_ROWS) -> dict:
+    """Follow the steps in written order on `rows`; return the scene, the atlas and the Ground texture items.
+
+    Beds step: rows naming their plants become modelled species (scattered then, or by a later placement step whose
+    body scatters over the bed area); other beds and lawns go to Ground. Library step: every species known so far is
+    resolved. Placement: point species, plus modelled-bed species when it scatters. Atlas: tiles for the scene now.
+    """
+    state = {"scene": [], "atlas": None, "atlases": 0, "ground": [], "resolved": set(), "bed_species": []}
+    for _, title, body in _steps(text):
+        role = _role(title)
+        if role == "beds":
+            for row in rows:
+                if row["kind"] == "bed_listed" and "lists the plants" in body:
+                    state["bed_species"] += list(row["species"])
+                elif row["kind"] in ("bed_unlisted", "lawn") and "Ground texture" in body:
+                    state["ground"].append(row["pos"])
+            if state["atlases"] and "scatter" in body:  # a late scatter adds plants after the atlas
+                state["scene"] += state["bed_species"]
+        elif role == "library":
+            state["resolved"] |= {s for r in rows if r["kind"] == "point" for s in r["species"]}
+            state["resolved"] |= set(state["bed_species"])
+        elif role == "placement":
+            state["scene"] += [s for r in rows if r["kind"] == "point" for s in r["species"]]
+            if "scatter" in body and "bed area" in body:
+                state["scene"] += state["bed_species"]
+        elif role == "atlas":
+            state["atlases"] += 1
+            state["atlas"] = set(state["scene"])
+    return state
+
+
+def walk_findings(text: str, rows: list[dict] = WALK_ROWS) -> list[str]:
+    state = procedure_walk(text, rows)
+    found = []
+    atlas = state["atlas"] or set()
+    expected = {s for r in rows if r["kind"] in ("point", "bed_listed") for s in r["species"]}
+    for species in sorted(expected - set(state["scene"])):
+        found.append(f"walk: {species} never reaches the placed scene")
+    for species in sorted(set(state["scene"]) - atlas):
+        found.append(f"walk: {species} is in the scene but has no atlas tile")
+    for species in sorted(set(state["scene"]) - state["resolved"]):
+        found.append(f"walk: {species} placed without the library / texture route")
+    for row in rows:
+        if row["kind"] in ("bed_unlisted", "lawn") and row["pos"] not in state["ground"]:
+            found.append(f"walk: pos. {row['pos']} ({row['kind']}) is not handed to Ground texture")
+    if state["atlases"] != 1:
+        found.append(f"walk: {state['atlases']} atlas steps, expected 1")
+    return found
 
 
 def skill_findings(text: str, base: Path = SKILL.parent) -> list[str]:
@@ -140,6 +214,7 @@ def skill_findings(text: str, base: Path = SKILL.parent) -> list[str]:
     sheet_rows = set(re.findall(r"^\| (FLO-\d+) ", SHEET.read_text(encoding="utf-8"), re.M))
     for row in set(re.findall(r"\bFLO-\d+\b", text)) - sheet_rows:
         found.append(f"sheet row {row} is not in docs/domain/areas/flora.md")
+    found += walk_findings(text)
     copied = _shingles(text) & _shingles(_rule_text())
     if copied:
         found.append(f"rule text copied: {' '.join(sorted(copied)[0])!r} (+{len(copied) - 1})")
@@ -161,12 +236,40 @@ def test_skill_has_no_findings(text):  # A1-A6 on the real file
     assert skill_findings(text) == []
 
 
-def test_steps_in_issue_order_with_placement_before_atlas(text):  # A2, E1
+def test_steps_in_order_beds_library_placement_atlas(text):  # A2, E1
     steps = _steps(text)
     assert [n for n, _, _ in steps] == list(range(1, 11))
-    titles = [t.lower() for _, t, _ in steps]
-    assert titles.index(next(t for t in titles if "placement" in t)) < titles.index(
-        next(t for t in titles if "atlas" in t))
+    roles = [_role(t) for _, t, _ in steps]
+    assert roles.index("beds") < roles.index("library") < roles.index("placement") < roles.index("atlas")
+
+
+def test_area_only_modelled_bed_reaches_atlas(text):  # R1: PR #237 round 1 P1, dry-walk pos. 10
+    state = procedure_walk(text)
+    bed = {"Iris hybrida", "Hosta glauca", "Geranium perenne"}
+    assert bed <= set(state["scene"]) and bed <= state["atlas"] and bed <= state["resolved"]
+    assert {"Acer platanoides", "Hydrangea arborescens"} <= state["atlas"]  # point plants preserved
+    assert state["atlases"] == 1
+    assert walk_findings(text) == []
+
+
+def test_texture_only_beds_and_lawns_stay_ground(text):  # R1 edge: no Flora tile for texture rows
+    state = procedure_walk(text)
+    assert sorted(state["ground"]) == [11, 90]
+    assert state["atlas"] == {"Acer platanoides", "Hydrangea arborescens", "Iris hybrida", "Hosta glauca",
+                              "Geranium perenne"}
+
+
+def test_walk_rejects_beds_after_atlas(text):  # R1 negative control: the round-1 order
+    steps = _steps(text)
+    block = {n: f"### Step {n} — {title}{body}" for n, title, body in steps}
+    beds = next(n for n, t, _ in steps if _role(t) == "beds")
+    atlas = next(n for n, t, _ in steps if _role(t) == "atlas")
+    late = text.replace(block[beds], "").replace(block[atlas], block[atlas] + block[beds])
+    assert any("no atlas tile" in f or "never reaches" in f for f in walk_findings(late))
+
+
+def test_walk_empty_schedule():  # edge: empty input
+    assert procedure_walk(SKILL.read_text(encoding="utf-8"), [])["atlas"] == set()
 
 
 def test_every_step_has_route_needs_done(text):  # A4
@@ -177,7 +280,7 @@ def test_every_step_has_route_needs_done(text):  # A4
 
 
 def test_texture_review_step_needs_the_user(text):  # A5
-    body = dict((n, b) for n, _, b in _steps(text))[4]
+    body = next(b for _, t, b in _steps(text) if "new species" in t.lower())
     assert re.search(r"^- Needs: human \(texture review", body, re.M)
 
 
@@ -213,6 +316,11 @@ def _mutations(text: str):
             low = title.lower().find(word)
             yield f"step {n} heading lacks {word}", text.replace(
                 f"### Step {n} — {title}", f"### Step {n} — {title[:low]}X{title[low + len(word):]}")
+    beds = next(n for n, t, _ in steps if _role(t) == "beds")
+    atlas = next(n for n, t, _ in steps if _role(t) == "atlas")
+    yield "beds moved after atlas", text.replace(block[beds], "").replace(block[atlas], block[atlas] + block[beds])
+    place = next(n for n, t, _ in steps if _role(t) == "placement")
+    yield "placement without bed scatter", text.replace(block[place], block[place].replace("scatter", "X"))
     yield "broken link", text.replace("docs/domain/areas/flora.md)", "docs/domain/areas/floras.md)", 1)
     yield "broken anchor", text.replace("#project-practice", "#project-practise")
     yield "unknown decision", text.replace("[D099]", "[D9099]", 1)
