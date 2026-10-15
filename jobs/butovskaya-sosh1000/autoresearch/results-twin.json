@@ -1,0 +1,36 @@
+[
+ {
+  "n": "0",
+  "description": "first build (setup): build_npm.py of the box run's exp 15 (layers at levels + 44 box tops, grid 0.05 m, flush opening planes) reading the TwinPack snapshot's piece boxes",
+  "status": "baseline",
+  "silhouette_err_m2": 1029.978,
+  "per_view_m2": {
+   "x": 11.553,
+   "y": 14.967,
+   "top": 976.938
+  },
+  "iou": {
+   "x": 0.9905,
+   "y": 0.9941,
+   "top": 0.8618
+  },
+  "guard_passed": true,
+  "delivery_passed": false,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "mesh_status": "pass",
+  "winding_bad_edges": 0,
+  "triangles": 137672,
+  "budget_status": "pass",
+  "levels_worst_m": 0.0,
+  "levels_status": "pass",
+  "guard_seconds": 901.7,
+  "best_before": null
+ }
+]

@@ -21,6 +21,7 @@ from pathlib import Path
 
 import numpy as np
 import shapely
+import shapely.affinity
 from shapely.geometry import Polygon, box
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -41,6 +42,9 @@ OPENING_MARGIN_M = 0.02             # an opening plane keeps this clear of its w
 Z_Q = 0.05
 K_EXTRA = 44
 FACADE_ID, ROOF_ID, SOFFIT_ID = 1, 21, 1
+SOURCE = "boxes"                    # plan regions from: "boxes" (piece boxes) or "mesh" (projected piece meshes)
+SIMPLIFY_M = 0.0                    # "mesh": simplify tolerance of a layer region
+FILL_HOLES_M2 = 1e9                 # "mesh": holes of a layer region up to this area are filled (rooms)
 # ---------------------------------------------------------------------------------------------------------------
 
 
@@ -125,7 +129,68 @@ def uncontact(regions):
     return regions
 
 
+HULL_KINDS = {"OST_Windows", "OST_Doors", "OST_CurtainWallPanels", "OST_CurtainWallMullions"}
+
+
+def footprints(rows):
+    """name -> plan footprint (metres) of every snapshot piece in rows: the union of its triangles projected to the
+    plan (convex hull for the small opening / curtain pieces). Cached next to the build output by dump hash."""
+    import hashlib
+    from evaluate import SNAP
+    dump_p = SNAP / "snapshot_dump.json"
+    h = hashlib.sha256(dump_p.read_bytes()).hexdigest()[:16]
+    cache = Path("C:/x/butovskaya-npm-twin") / f"footprints_{h}.json"
+    if cache.exists():
+        d = json.loads(cache.read_text())
+        return {k: shapely.from_wkb(bytes.fromhex(w)) for k, w in d.items()}
+    want = {r["name"]: r["category"] for r in rows}
+    out = {}
+    for m in json.loads(dump_p.read_text(encoding="utf-8"))["meshes"]:
+        cat = want.get(m["name"])
+        if cat is None:
+            continue
+        v = np.asarray(m["vertices"], float)[:, :2]
+        if cat in HULL_KINDS:
+            out[m["name"]] = shapely.convex_hull(shapely.multipoints(v))
+            continue
+        c = v[np.asarray(m["triangles"], int)]
+        e1, e2 = c[:, 1] - c[:, 0], c[:, 2] - c[:, 0]
+        keep = np.abs(e1[:, 0] * e2[:, 1] - e1[:, 1] * e2[:, 0]) / 2 > 1e-6
+        out[m["name"]] = shapely.union_all(shapely.polygons(c[keep]), grid_size=1e-4) if keep.any() else Polygon()
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    cache.write_text(json.dumps({k: shapely.to_wkb(gm).hex() for k, gm in out.items()}))
+    return out
+
+
+def fill_holes(region):
+    parts = [Polygon(p.exterior.coords, [h.coords for h in p.interiors if Polygon(h).area * SNAP_M ** 2 > FILL_HOLES_M2])
+             for p in shapely.get_parts(region) if p.geom_type == "Polygon"]
+    return shapely.union_all(parts) if parts else Polygon()
+
+
+def layer_regions_mesh(rows, t):
+    fp = footprints(rows)
+    s = 1.0 / SNAP_M
+    pieces = [(shapely.affinity.scale(fp[r["name"]], s, s, origin=(0, 0)), r["box"][0][2], r["box"][1][2])
+              for r in rows if r["name"] in fp and not fp[r["name"]].is_empty]
+    out = []
+    for z0, z1 in zip(t, t[1:]):
+        h = z1 - z0
+        sel = [pg for pg, b, top in pieces if min(top, z1) - max(b, z0) >= COVER_F * h - 1e-9]
+        if not sel:
+            out.append(Polygon())
+            continue
+        reg = shapely.union_all(sel)
+        if SIMPLIFY_M > 0:
+            reg = reg.simplify(SIMPLIFY_M * s)
+        reg = fill_holes(shapely.set_precision(shapely.make_valid(reg), 1.0))
+        out.append(unpinch(clean(reg)))
+    return uncontact(out)
+
+
 def layer_regions(rows, t):
+    if SOURCE == "mesh":
+        return layer_regions_mesh(rows, t)
     rects = [(box(g(r["box"][0][0]), g(r["box"][0][1]), g(r["box"][1][0]), g(r["box"][1][1])),
               r["box"][0][2], r["box"][1][2]) for r in rows]
     rects = [x for x in rects if x[0].area > 0]
@@ -398,7 +463,7 @@ def main():
     dump = {"meshes": [{"name": "SM_butovskaya_sosh1000_body", "vertices": mesh.v, "triangles": mesh.t,
                         "material_ids": mesh.mid, "polygon_sizes": [3] * len(mesh.t)}],
             "helpers": [{"name": f"LEVEL_{n}", "location": [0.0, 0.0, z]} for n, z in levels.items()],
-            "synthetic": False, "source": "C:/x/butovskaya-snapshot (Revit read-only boxes, #118 step 0)"}
+            "synthetic": False, "source": "C:/x/butovskaya-snapshot-twin (Revit TwinPack mesh export, #118 step 0)"}
     out = Path(a.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(dump), encoding="utf-8")
