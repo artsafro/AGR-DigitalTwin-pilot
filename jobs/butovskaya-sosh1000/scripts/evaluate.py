@@ -35,7 +35,8 @@ from twinqa.geometry.checks import check_budget, check_levels, check_mesh, load_
 from twinqa.geometry.mesh import Soup, from_dump
 
 REPO = Path(__file__).resolve().parents[3]
-SNAP = Path("C:/x/butovskaya-snapshot")
+SNAP = Path("C:/x/butovskaya-snapshot-twin")    # step 0, mesh route (scripts/snapshot_twin.py)
+BOX_SNAP = Path("C:/x/butovskaya-snapshot")      # first attempt, element boxes: exploration only
 TOL_FILE = REPO / "benchmark" / "bench-b01-box" / "tolerances.json"
 WELD_M = 0.003
 LEVEL_TOL_M = 0.02
