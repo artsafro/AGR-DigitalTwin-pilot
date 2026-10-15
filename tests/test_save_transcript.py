@@ -184,3 +184,61 @@ def test_a_non_ascii_checkout_and_branch(tmp_path):
     assert r.returncode == 0, r.stderr
     dest = repo / "logs/transcripts/harness--------prnone-s-1.jsonl"
     assert Path(r.stdout.strip()) == dest and dest.is_file()
+
+
+CHUNK_SIZE = 4 * 1024 * 1024  # 4 MiB bounded scan size per task #141 spec
+
+
+class BoundedBinaryReader:
+    """Delegates binary reads to a real file while rejecting unbounded reads."""
+
+    def __init__(self, real_file, max_chunk=CHUNK_SIZE):
+        self._real = real_file
+        self._max_chunk = max_chunk
+
+    def __enter__(self):
+        self._real.__enter__()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        return self._real.__exit__(exc_type, exc_val, exc_tb)
+
+    def read(self, size=-1):
+        if size is None or not isinstance(size, int) or size <= 0:
+            raise AssertionError(f"unbounded read rejected: size={size!r}")
+        if size > self._max_chunk:
+            raise AssertionError(f"read size {size} exceeds bounded chunk limit {self._max_chunk}")
+        return self._real.read(size)
+
+
+@pytest.mark.parametrize("split_offset", [1, len(NONCE) // 2, len(NONCE) - 1])
+def test_holding_scans_bounded_chunks_with_overlap(tmp_path, monkeypatch, split_offset):
+    spec = importlib.util.spec_from_file_location("save_transcript", HOOK)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    folder = tmp_path / "projects" / "synthetic-project"
+    folder.mkdir(parents=True)
+
+    nonce_bytes = NONCE.encode("utf-8")
+    split_file = folder / f"split-{split_offset}.jsonl"
+    split_file.write_bytes(b"0" * (CHUNK_SIZE - split_offset) + nonce_bytes + b"0" * 1024)
+
+    unrelated_file = folder / "unrelated.jsonl"
+    unrelated_file.write_bytes(b"1" * (2 * CHUNK_SIZE + 1024))
+
+    candidate_paths = {split_file.resolve(), unrelated_file.resolve()}
+    orig_open = Path.open
+
+    def guarded_open(self, *args, **kwargs):
+        real = orig_open(self, *args, **kwargs)
+        if self.resolve() in candidate_paths:
+            return BoundedBinaryReader(real, max_chunk=CHUNK_SIZE)
+        return real
+
+    monkeypatch.setattr(Path, "open", guarded_open)
+    monkeypatch.setattr(module, "project_folders", lambda: [folder])
+
+    found = module.holding(NONCE)
+    assert found == [split_file]
+    assert module.holding("n0nce-absent-999999") == []
