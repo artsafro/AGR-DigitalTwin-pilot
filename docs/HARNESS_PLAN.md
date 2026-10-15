@@ -308,6 +308,21 @@ benchmark/
 
 **Эскалация после 3 fail на модуле**, агент сам, без тебя: (1) сменить паттерн, если в каталоге есть второй способ; (2) разрезать модуль по излому; (3) один раунд с ревьюером (Codex предлагает правку). После — **стоп**: модуль `blocked`, отчёт файлом (spec модуля, что пробовал, числа чекера, скриншот), остальные модули продолжаются.
 
+Лимит попыток ведётся в `jobs/<JOB>/pipeline/state.json` и проверяется pipeline gate (#128; `tools/git-hooks/pipeline_gate.py` — pre-commit и `--job`, `.claude/hooks/pipeline_gate.py` — deny):
+
+```json
+{
+  "failures": [{"item": "module:M01", "kind": "checker", "cause": "code", "detail": "bbox off by 0.12 m"}],
+  "stops": [{"item": "module:M01", "after": 3, "tried": "pattern A, split at kink",
+             "numbers": "bbox 0.12 m, 0.08 m, 0.11 m", "next_step": "review round with Codex"}]
+}
+```
+
+- `failures` — по порядку; `item` — `module:<id>` или `check:<id>`; `kind` — `checker` / `test` / `review`; `cause` — класс отказа из `docs/agents/WORKFLOW.md` (`source` / `tool` / `code` / `test` / `contract`); `detail` — необязательно.
+- `stops` — запись остановки закрывает первые `after` отказов своего `item` (1 ≤ `after` ≤ их число); `tried`, `numbers`, `next_step` непустые. Оба списка необязательны; файл не той формы блокирует.
+- Открытые отказы — после наибольшего `after`. Пункт **заблокирован**, когда среди открытых два с одной `cause` или их три и больше. Записать сам блокирующий отказ можно; дальше нельзя записать новый отказ этого пункта, переписать `pipeline/check.json` или сменить `Pipeline status` в `STATE.md`, пока нет записи остановки (её можно добавить в том же изменении). `--job` блокирует при любом заблокированном пункте.
+- Запись только дописывается: корректный `state.json` нельзя удалить, прежние `failures` остаются в начале списка без изменений, ни одна прежняя запись из `stops` не пропадает. Pre-commit сверяет HEAD с индексом, хук — диск с новым текстом; `pipeline/state.json` и `pipeline/check.json` в другом регистре pre-commit блокирует.
+
 **Ревью (Codex, `docs/agents/REVIEW_CHECKLIST.md`), три вопроса:**
 1. Ссылается ли модуль на паттерн из каталога или честно помечен `new-case`?
 2. Есть ли в коде то, чего нет в spec (выдумка)?

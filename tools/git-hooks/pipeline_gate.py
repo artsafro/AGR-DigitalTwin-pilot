@@ -16,6 +16,11 @@ Rules (user decisions 2026-10-11, case alina-bld):
   blocked until the branch is renamed by docs/agents/NAMING.md (user 2026-10-14).
 - Delivery (--job) also needs a committed `.py` for every `.pyc` under `scripts/` (a lost source with a
   live `.pyc` must not happen again).
+- Attempts limit (#128, docs/HARNESS_PLAN.md §8): `jobs/<JOB>/pipeline/state.json` records failures per item;
+  an item with two open failures of the same cause or three open failures is locked: no further failure, no
+  rewritten `check.json` and no status write until a stop record covers them. A malformed state.json blocks.
+  The record is append-only: a valid state.json is not deleted, its failures are only appended to and none of
+  its stops is dropped.
 Exit 0 pass, 1 blocked (reasons on stderr), 2 wrong input.
 Pattern: none — harness tooling (REVIEW_CHECKLIST Q1: new-case).
 """
@@ -41,6 +46,17 @@ GAP_HEAD_LINES = 30
 # every file under scripts/ is a script except data and bytecode (review 3 of PR #73: .bat, sources in __pycache__)
 NOT_SCRIPT_SUFFIXES = {".pyc", ".pyo", ".json", ".yaml", ".yml", ".csv", ".txt", ".md", ".png", ".jpg", ".jpeg"}
 JOB_PATH = re.compile(r"^jobs/([^/]+)/")
+# attempts limit (#128): the workflow's stop rule (two failures, same cause) and the plan's escalation (three)
+FAILURE_KINDS = ("checker", "test", "review")
+FAILURE_CAUSES = ("source", "tool", "code", "test", "contract")
+SAME_CAUSE_LIMIT = 2
+ITEM_LIMIT = 3
+STATE_JSON = "pipeline/state.json"
+ITEM = re.compile(r"^(module|check):\S+$")
+STOP_FIELDS = ("tried", "numbers", "next_step")
+ESCALATION = ("escalation (docs/HARNESS_PLAN.md §8): change the pattern, split the module, one review round, "
+              "then `blocked`; add a stop record (item, after, tried, numbers, next_step) to pipeline/state.json "
+              "to go on")
 
 
 def status_of(text):
@@ -129,6 +145,160 @@ def is_job_script(path):
         p.suffix.lower() not in NOT_SCRIPT_SUFFIXES
 
 
+def _failure_errors(failures, path):
+    errors = []
+    for i, f in enumerate(failures):
+        at = f"{path}: failures[{i}]"
+        if not isinstance(f, dict):
+            errors.append(f"{at} is not an object")
+            continue
+        if not isinstance(f.get("item"), str) or not ITEM.match(f["item"]):
+            errors.append(f"{at}.item {f.get('item')!r} is not 'module:<id>' or 'check:<id>'")
+        if f.get("kind") not in FAILURE_KINDS:
+            errors.append(f"{at}.kind {f.get('kind')!r} is not one of {list(FAILURE_KINDS)}")
+        if f.get("cause") not in FAILURE_CAUSES:
+            errors.append(f"{at}.cause {f.get('cause')!r} is not one of {list(FAILURE_CAUSES)}")
+        if "detail" in f and not isinstance(f["detail"], str):
+            errors.append(f"{at}.detail is not a string")
+    return errors
+
+
+def _stop_errors(stops, counts, path):
+    errors = []
+    for i, s in enumerate(stops):
+        at = f"{path}: stops[{i}]"
+        if not isinstance(s, dict):
+            errors.append(f"{at} is not an object")
+            continue
+        item = s.get("item")
+        if not isinstance(item, str) or not ITEM.match(item):
+            errors.append(f"{at}.item {item!r} is not 'module:<id>' or 'check:<id>'")
+        after, count = s.get("after"), counts.get(item, 0) if isinstance(item, str) else 0
+        if not isinstance(after, int) or isinstance(after, bool) or not 1 <= after <= count:
+            errors.append(f"{at}.after {after!r} is not between 1 and the {count} failure(s) of {item!r}")
+        for key in STOP_FIELDS:
+            if not isinstance(s.get(key), str) or not s[key].strip():
+                errors.append(f"{at}.{key} is empty; a stop record says what was tried, the numbers and the next step")
+    return errors
+
+
+def state_shape_errors(doc, path):
+    """Shape errors of a pipeline/state.json document (#128); each names its path."""
+    if not isinstance(doc, dict):
+        return [f"{path} is not a JSON object"]
+    lists = {key: doc.get(key, []) for key in ("failures", "stops")}
+    errors = [f"{path}: {key} is not a list" for key, value in lists.items() if not isinstance(value, list)]
+    if errors:
+        return errors
+    errors = _failure_errors(lists["failures"], path)
+    counts = {}
+    for f in lists["failures"]:
+        if isinstance(f, dict) and isinstance(f.get("item"), str):
+            counts[f["item"]] = counts.get(f["item"], 0) + 1
+    return errors + _stop_errors(lists["stops"], counts, path)
+
+
+def _failures_of(doc):
+    by_item = {}
+    for f in doc.get("failures", []):
+        by_item.setdefault(f["item"], []).append(f)
+    return by_item
+
+
+def locked_items(doc):
+    """item -> reason for every item over the attempts limit (#128); doc has a valid shape."""
+    covered = {}
+    for s in doc.get("stops", []):
+        covered[s["item"]] = max(covered.get(s["item"], 0), s["after"])
+    locked = {}
+    for item, failures in _failures_of(doc).items():
+        open_ = failures[covered.get(item, 0):]
+        causes = {}
+        for f in open_:
+            causes[f["cause"]] = causes.get(f["cause"], 0) + 1
+        same = [c for c in FAILURE_CAUSES if causes.get(c, 0) >= SAME_CAUSE_LIMIT]
+        if same:
+            locked[item] = f"{causes[same[0]]} open failures with cause '{same[0]}'"
+        elif len(open_) >= ITEM_LIMIT:
+            locked[item] = f"{len(open_)} open failures"
+    return locked
+
+
+def _text(raw):
+    return raw.decode("utf-8", "replace") if isinstance(raw, bytes) else raw
+
+
+def _state(read, path):
+    """(doc, errors) of a state.json; (None, []) when it is missing."""
+    raw = read(path)
+    if raw is None:
+        return None, []
+    try:
+        doc = json.loads(_text(raw))
+    except ValueError as exc:
+        return None, [f"{path} is not JSON ({exc})"]
+    errors = state_shape_errors(doc, path)
+    return (None, errors) if errors else (doc, [])
+
+
+def _status(read, path):
+    raw = read(path)
+    return None if raw is None else status_of(_text(raw))[0]   # status_of errors are job_errors' to report
+
+
+def _append_only_errors(old, new, path):
+    """Earlier failures and stops of a valid old state.json survive unchanged in the new one (#128)."""
+    errors = []
+    old_failures, new_failures = old.get("failures", []), new.get("failures", [])
+    for i, f in enumerate(old_failures):
+        if i >= len(new_failures) or new_failures[i] != f:
+            errors.append(f"{path}: failures[{i}] changed or removed; the failure record is append-only (#128)")
+    new_stops = new.get("stops", [])
+    for i, s in enumerate(old.get("stops", [])):
+        if s not in new_stops:
+            errors.append(f"{path}: stops[{i}] changed or removed; the failure record is append-only (#128)")
+    return errors
+
+
+def attempt_errors(job, old_read, new_read):
+    """A further run or status write of a locked item, between the old and the new tree (#128)."""
+    base = f"jobs/{job}"
+    path = f"{base}/{STATE_JSON}"
+    old, _ = _state(old_read, path)
+    if old is not None and new_read(path) is None:
+        return [f"{path} deleted; the failure record is append-only (#128)"]
+    new, errors = _state(new_read, path)
+    if errors:
+        return errors
+    if old is not None:
+        errors = _append_only_errors(old, new, path)
+        if errors:
+            return errors
+    old_locked = locked_items(old) if old else {}
+    new_locked = locked_items(new) if new else {}
+    old_counts = {k: len(v) for k, v in _failures_of(old).items()} if old else {}
+    new_counts = {k: len(v) for k, v in _failures_of(new).items()} if new else {}
+    errors = [f"{base}: {item} is locked ({reason}); a further run needs a stop record; {ESCALATION}"
+              for item, reason in new_locked.items()
+              if item in old_locked and new_counts.get(item, 0) > old_counts.get(item, 0)]
+    check = f"{base}/pipeline/check.json"
+    if _text(old_read(check)) != _text(new_read(check)):
+        errors += [f"{base}: pipeline/check.json rewritten while {item} is locked ({reason}); a further run needs "
+                   f"a stop record; {ESCALATION}" for item, reason in new_locked.items()]
+    if _status(old_read, f"{base}/STATE.md") != _status(new_read, f"{base}/STATE.md"):
+        errors += [f"{base}: status write while {item} is locked ({reason}); a status write needs a stop record; "
+                   f"{ESCALATION}" for item, reason in new_locked.items()]
+    return errors
+
+
+def locked_errors(job, read):
+    """Delivery (--job): every locked item of the state on disk blocks (#128)."""
+    doc, errors = _state(read, f"jobs/{job}/{STATE_JSON}")
+    if errors or doc is None:
+        return errors
+    return [f"jobs/{job}: {item} is locked ({reason}); {ESCALATION}" for item, reason in locked_items(doc).items()]
+
+
 class GitError(RuntimeError):
     """git failed: the gate cannot see the commit and blocks it (fail closed, 2026-10-12)."""
 
@@ -198,13 +368,32 @@ def staged(root):
         if path.lower() == f"jobs/{m.group(1)}/state.md".lower() and path != f"jobs/{m.group(1)}/STATE.md" \
                 and code != "D":                     # a case variant would escape the check
             errors.append(f"{path}: name it STATE.md")
+        for exact in ("pipeline/state.json", "pipeline/check.json"):
+            name = f"jobs/{m.group(1)}/{exact}"
+            if path.lower() == name.lower() and path != name and code != "D":
+                errors.append(f"{path}: name it {exact}")
         if path == f"jobs/{m.group(1)}/STATE.md" and code != "D":
             states.add(m.group(1))
         if code == "A" and is_job_script(path):
             errors += script_errors(path, (read(path) or b"").decode("utf-8", "replace"), backlog)
+    head_read = _head_reader(root)
     for job in sorted(jobs):
         errors += job_errors(job, read, require_line=job in states)
+        errors += attempt_errors(job, head_read, read)      # #128
     return errors
+
+
+def _head_reader(root):
+    """read(path) of HEAD's blobs; None for a path HEAD lacks or when there is no HEAD yet (#128)."""
+    if _git(root, "rev-parse", "--verify", "-q", "HEAD").returncode != 0:
+        return lambda path: None
+
+    def read(path):
+        if not _git_ok(root, "ls-tree", "-z", "HEAD", "--", path).stdout:
+            return None
+        return _git_ok(root, "cat-file", "blob", f"HEAD:{path}").stdout
+
+    return read
 
 
 def delivery(root, job_dir):
@@ -221,6 +410,7 @@ def delivery(root, job_dir):
     errors = job_errors(job, read, require_line=True)
     if read(f"jobs/{job}/STATE.md") is None:
         errors.append(f"jobs/{job}/STATE.md missing")
+    errors += locked_errors(job, read)               # #128
     # committed = in HEAD, not merely staged (review 1 of PR #73)
     tracked = set(_git_ok(root, "ls-tree", "-r", "-z", "--name-only", "HEAD", "--", f"jobs/{job}")
                   .stdout.decode("utf-8").split("\0"))

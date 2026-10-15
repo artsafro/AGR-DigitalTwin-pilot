@@ -3,7 +3,9 @@
 Blocks (permission "deny", unlike guard.py's "ask": it checks the pipeline state, not a danger):
 - a Write/Edit of `jobs/<JOB>/STATE.md` that leaves a `Pipeline status` above draft without the job's
   `pipeline/spec.json`, `spec.report.json` and `check.json` on disk (checked: also no failed check);
-- a Write of a new `jobs/<JOB>/scripts/*` file that does not name a listed engine gap (`Engine gap: EG<n>`).
+- a Write of a new `jobs/<JOB>/scripts/*` file that does not name a listed engine gap (`Engine gap: EG<n>`);
+- a Write/Edit of `jobs/<JOB>/STATE.md`, `pipeline/state.json` or `pipeline/check.json` that runs or sets the
+  status of an item over the attempts limit without a stop record, or leaves a malformed state.json (#128).
 Every other call passes. The git pre-commit runs the same rules for every agent.
 """
 import importlib.util
@@ -75,19 +77,22 @@ def main():
     job, rest = parts[1], parts[2:]
     gate = _gate()
     rel = "/".join(("jobs", job) + tuple(rest))
-    if tuple(r.lower() for r in rest) == ("state.md",):       # Windows names are case-blind (review 1 of PR #73)
-        rel = f"jobs/{job}/STATE.md"
+    lower = tuple(r.lower() for r in rest)            # Windows names are case-blind (review 1 of PR #73)
+    if lower in (("state.md",), ("pipeline", "state.json"), ("pipeline", "check.json")):
+        rel = f"jobs/{job}/STATE.md" if lower == ("state.md",) else f"jobs/{job}/{'/'.join(lower)}"
         text = new_text(tool, tin, path)
         if text is None:                              # a malformed call is the tool's to reject
             sys.exit(0)
 
-        def read(p):
-            if p == rel:
-                return text
+        def disk_read(p):
             f = root / p
             return f.read_bytes() if f.is_file() else None
 
-        errors = gate.job_errors(job, read, require_line=False)
+        def new_read(p):
+            return text if p == rel else disk_read(p)
+
+        errors = gate.job_errors(job, new_read, require_line=False) if lower == ("state.md",) else []
+        errors += gate.attempt_errors(job, disk_read, new_read)    # #128
         if errors:
             deny(errors)
     elif tool == "Write" and not path.exists() and gate.is_job_script(rel):

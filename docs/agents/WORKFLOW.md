@@ -28,7 +28,8 @@ code-review (user 2026-10-14 [D091]); production work runs the steps below.
    not evidence. Read the actual files back. Classify a failure (source / tool / code /
    test / contract), fix the cause, rerun the affected checks. A failed mandatory check is
    never turned into a pass by rewording. After two failures with the same cause, stop that
-   path, save the state and propose the next step.
+   path, save the state and propose the next step. The limit is recorded in
+   `jobs/<JOB>/pipeline/state.json` and enforced by the pipeline gate, see `docs/HARNESS_PLAN.md` §8.
 7. **Hand off.** Compare the result with the original goal; report what is done, what was
    checked (commands, evidence paths) and what is open. On restart, read saved outputs and
    hashes before repeating any mutation (`run-evidence` skill).
@@ -158,6 +159,14 @@ stage ends with the `experience-transfer` skill: exact acceptance scope, inputs/
 hashes, code used, checks actually run, failures and fixes, reuse candidates. Add it to
 `docs/cases.md`. Praise does not replace QA. A procedure becomes a general tool or skill
 only after it works on a second representative object.
+
+## Permission matrix (#127, #128)
+
+Rows per action class, columns per agent; #127 fills the other rows.
+
+| Action class | Claude Code | Codex | Antigravity | Enforced by |
+|---|---|---|---|---|
+| Retry after the failure limit (two failures with the same cause, or three of one item) | never without a stop record | never without a stop record | never without a stop record | pipeline gate: `.claude/hooks/pipeline_gate.py` (deny), `tools/git-hooks/pipeline_gate.py` (pre-commit, `--job`) |
 
 ## Git
 

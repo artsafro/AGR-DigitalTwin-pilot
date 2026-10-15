@@ -185,8 +185,8 @@ checker). Note: the desktop app did not load project subagents from this worktre
   of `Pipeline status: built` without `pipeline/` is blocked (manual test).
 - `tools/git-hooks/pipeline_gate.py --staged` (pre-commit, every agent) and `--job jobs/<JOB>` (delivery):
   `Pipeline status` above draft needs `pipeline/spec.json` + `spec.report.json` + `check.json`; new job
-  scripts name an engine gap `EG<n>`; delivery needs a committed `.py` for every `.pyc`
-  (`docs/HARNESS_PLAN.md` §16). Claude Code also blocks such writes at PreToolUse
+  scripts name an engine gap `EG<n>`; delivery needs a committed `.py` for every `.pyc`;
+  attempts limit (pipeline/state.json, #128) (`docs/HARNESS_PLAN.md` §16). Claude Code also blocks such writes at PreToolUse
   (`.claude/hooks/pipeline_gate.py`, permission "deny").
 - Limit (user 2026-10-12 [D064], #79): a compromised environment is not covered, for example a fake `py` on PATH.
 
