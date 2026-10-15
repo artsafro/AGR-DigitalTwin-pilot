@@ -15,7 +15,8 @@ Status: draft. Source: `docs/HARNESS_PLAN.md` §3–§4, §7; extractor `src/dt_
   and no overlap.
 - The corner edge carries the facade's shared Z cuts, so both walls split at the same heights.
 - Engine: horizontal faces cut into trapezoids by vertical strips; side cuts carried across by share
-  and kept in step with walls along y — quads, no T-junctions. Rounded corner (an arc tangent to both
+  and kept in step with walls along y — quads, no T-junctions; a piece whose one side is a point is a
+  triangle fan. Rounded corner (an arc tangent to both
   walls, chords as wall strips): not built yet.
 - The shell offset (and reveals near the corner) follows the true angle, not 90°.
 
@@ -37,4 +38,8 @@ Status: draft. Source: `docs/HARNESS_PLAN.md` §3–§4, §7; extractor `src/dt_
   openings with two planes (`opening-plane`).
 - Elements on a dropped small kink are still measured on the real facet.
 - If the inward shell offset self-intersects at a corner, stop and ask (user decision 2026-10-09 [D033]).
-- BuildError for now: an x-extreme corner between non-vertical walls; strip lines < 0.1 mm apart in x.
+- Pointed corner (an x-extreme corner between non-vertical walls, a pointed tip): a triangle fan from
+  the point to the other side's cuts, no T-junction (PR #100).
+- Strip lines closer in x than the building weld `weld_m` (3 mm, [D068]) are one line.
+- Still a BuildError: a face piece with no side on a strip line or that is no trapezoid/triangle;
+  cuts on the fan's side closer than `weld_m`; a face collapsing under the weld.

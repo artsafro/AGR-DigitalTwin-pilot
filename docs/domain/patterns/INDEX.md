@@ -16,7 +16,7 @@ Status: draft / proven on benchmark / in work. A pattern changes only with the u
 | Niche in the contour | `contour-niche` | facade recess given by contour points | draft |
 | Parapet | `parapet` | roof edge along the contour of the top level | draft |
 | Vent grille | `vent-grille` | inset grille: an opening of kind `grille`; texture in `npm_min`, geometry in `mid` | draft |
-| Inset slab | `roof-inset-plane` | every slab (roof in a parapet, terrace walkable) is a separate plate embedded into the faces around its hole, +2-10 mm: no height; its joint = two open loops (hole A, plate B), required (user 2026-10-10 [D038]) | proven on benchmark (B01, B02, B02t) |
+| Inset slab | `roof-inset-plane` | every slab (roof in a parapet, terrace walkable) is a separate plate embedded into the faces around its hole, + more than `weld_m` (3 mm, user 2026-10-13 [D068]) up to 10 mm: no height; its joint = two open loops (hole A, plate B), required (user 2026-10-10 [D038]) | proven on benchmark (B01, B02, B02t) |
 | Roof screen enclosure | `roof-screen-enclosure` | screens round roof equipment (marked `roof_screens`): npm_min planes on their outer outline up to their top, no bottom, roof ids; mid shell later (#91); spec v0.7 `roof_structures` (user 2026-10-13 [D067]) | draft (OBJ03) |
 | Floor step | `floor-step` | a contour per floor; at the step a ledge (up, roof ID) or a soffit (down, facade ID) | draft |
 | Terrace | `terrace` | a floor-step ledge with a parapet from the spec (`terraces`, v0.4): outer face, inner face, cap, walkable part | proven on benchmark (`bench-b02t-terrace`, user 2026-10-10 [D042]) |
