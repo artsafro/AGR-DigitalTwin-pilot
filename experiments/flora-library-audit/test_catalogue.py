@@ -55,3 +55,46 @@ def test_fresh_outputs_cannot_escape_or_overwrite(tmp_path):
     for name in ['../source.max', 'C:/source.max', '/source.max', 'nested/item.max', '..\\source.max']:
         with pytest.raises(ValueError):
             mod.fresh_path(tmp_path, name)
+
+
+def test_real_catalogue_accounts_for_every_node_and_label():
+    import json
+    data = json.loads(Path(__file__).with_name('catalogue.json').read_text(encoding='utf-8'))
+    assert [sum(s['counts'].values()) for s in data['scenes']] == [506, 69]
+    assert [len(s['labels']) for s in data['scenes']] == [326, 23]
+    entries = [e for s in data['scenes'] for e in s['entries']]
+    assert len(entries) == len({e['id'] for e in entries}) == 136
+    assert not data['delivery_passed']
+    for scene in data['scenes']:
+        handles = {e['source_handle'] for e in scene['entries']}
+        assert len({l['handle'] for l in scene['labels']}) == len(scene['labels'])
+        for label in scene['labels']:
+            assert set(label['candidate_handles']) <= handles
+            if len(label['candidate_handles']) > 1:
+                assert label['status'] == 'ambiguous'
+        for entry in scene['entries']:
+            assert entry['delivery_passed'] is False
+            assert Path(entry['file']).name == entry['id'] + '.max'
+            assert Path(entry['preview']).name == entry['id'] + '.svg'
+    for budget in data['proposed_budgets']:
+        if budget['type'] == 'hedge':
+            assert budget['n'] == 0 and budget['proposed_review_above'] is None
+
+
+def test_generated_rejected_paths_preserve_original(tmp_path):
+    original = tmp_path / 'source.max'
+    original.write_bytes(b'synthetic reference, not a MAX scene')
+    before = original.read_bytes()
+    for i in range(50):
+        for name in [f'../{i}/source.max', f'..\\{i}\\source.max']:
+            with pytest.raises(ValueError):
+                mod.fresh_path(tmp_path, name)
+    assert original.read_bytes() == before
+
+
+def test_envelopes_references_and_textplus_are_not_plants():
+    for cls, name, expected in [('PolyMeshObject', 'Box001', 'display_envelope_unverified'),
+                                ('Cylinder', '20 cm', 'size_reference'),
+                                ('TextPlus', 'Tree', 'label'),
+                                ('Editable_Poly', 'MAF_OKS_002_061', 'planter')]:
+        assert mod.role({'class': cls, 'name': name, 'triangles': 20}, False) == expected
