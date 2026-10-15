@@ -18,9 +18,11 @@ Rules (user decisions 2026-10-11, case alina-bld):
   live `.pyc` must not happen again).
 - Attempts limit (#128, docs/HARNESS_PLAN.md §8): `jobs/<JOB>/pipeline/state.json` records failures per item;
   an item with two open failures of the same cause or three open failures is locked: no further failure, no
-  rewritten `check.json` and no status write until a stop record covers them. A malformed state.json blocks.
-  The record is append-only: a valid state.json is not deleted, its failures are only appended to and none of
-  its stops is dropped.
+  rewritten `check.json`, no status write and no run of the job until a stop record covers them. Appended
+  failures are judged one by one, so one commit cannot walk an item past the limit. A malformed state.json
+  blocks. The record is append-only: a valid state.json is not deleted, its failures are only appended to and
+  none of its stops is dropped. `run_errors`/`command_jobs` serve the same rule to the Claude hook (Bash and
+  PowerShell runner commands) and to `dt` itself.
 Exit 0 pass, 1 blocked (reasons on stderr), 2 wrong input.
 Pattern: none — harness tooling (REVIEW_CHECKLIST Q1: new-case).
 """
@@ -205,22 +207,35 @@ def _failures_of(doc):
     return by_item
 
 
-def locked_items(doc):
-    """item -> reason for every item over the attempts limit (#128); doc has a valid shape."""
+def _lock_reason(failures, covered):
+    """The attempts rule (#128) on one item's failures, the first `covered` of them closed by a stop record."""
+    open_ = failures[covered:]
+    causes = {}
+    for f in open_:
+        causes[f["cause"]] = causes.get(f["cause"], 0) + 1
+    same = [c for c in FAILURE_CAUSES if causes.get(c, 0) >= SAME_CAUSE_LIMIT]
+    if same:
+        return f"{causes[same[0]]} open failures with cause '{same[0]}'"
+    return f"{len(open_)} open failures" if len(open_) >= ITEM_LIMIT else None
+
+
+def _covered(doc, item=None, upto=None):
+    """How many of an item's failures its stops close; `upto` keeps only stops with `after` <= upto (#128)."""
     covered = {}
     for s in doc.get("stops", []):
-        covered[s["item"]] = max(covered.get(s["item"], 0), s["after"])
+        if (item is None or s["item"] == item) and (upto is None or s["after"] <= upto):
+            covered[s["item"]] = max(covered.get(s["item"], 0), s["after"])
+    return covered
+
+
+def locked_items(doc):
+    """item -> reason for every item over the attempts limit (#128); doc has a valid shape."""
+    covered = _covered(doc)
     locked = {}
     for item, failures in _failures_of(doc).items():
-        open_ = failures[covered.get(item, 0):]
-        causes = {}
-        for f in open_:
-            causes[f["cause"]] = causes.get(f["cause"], 0) + 1
-        same = [c for c in FAILURE_CAUSES if causes.get(c, 0) >= SAME_CAUSE_LIMIT]
-        if same:
-            locked[item] = f"{causes[same[0]]} open failures with cause '{same[0]}'"
-        elif len(open_) >= ITEM_LIMIT:
-            locked[item] = f"{len(open_)} open failures"
+        reason = _lock_reason(failures, covered.get(item, 0))
+        if reason:
+            locked[item] = reason
     return locked
 
 
@@ -260,6 +275,24 @@ def _append_only_errors(old, new, path):
     return errors
 
 
+def _appended_errors(old, new, base):
+    """Every failure appended past the locking point needs a stop record covering it (#128).
+
+    Each appended failure is judged on its own prefix (the item's earlier failures, with the new document's
+    stops of that item that reach into the prefix), so one commit cannot walk an item past the limit.
+    """
+    old_counts = {k: len(v) for k, v in _failures_of(old).items()} if old else {}
+    errors = []
+    for item, failures in _failures_of(new).items():
+        for n in range(old_counts.get(item, 0), len(failures)):
+            reason = _lock_reason(failures[:n], _covered(new, item, n).get(item, 0))
+            if reason:                               # the locking failure itself is allowed, the next is not
+                errors.append(f"{base}: {item} failure #{n + 1} appended while locked ({reason}); "
+                              f"a further run needs a stop record; {ESCALATION}")
+                break
+    return errors
+
+
 def attempt_errors(job, old_read, new_read):
     """A further run or status write of a locked item, between the old and the new tree (#128)."""
     base = f"jobs/{job}"
@@ -274,13 +307,8 @@ def attempt_errors(job, old_read, new_read):
         errors = _append_only_errors(old, new, path)
         if errors:
             return errors
-    old_locked = locked_items(old) if old else {}
     new_locked = locked_items(new) if new else {}
-    old_counts = {k: len(v) for k, v in _failures_of(old).items()} if old else {}
-    new_counts = {k: len(v) for k, v in _failures_of(new).items()} if new else {}
-    errors = [f"{base}: {item} is locked ({reason}); a further run needs a stop record; {ESCALATION}"
-              for item, reason in new_locked.items()
-              if item in old_locked and new_counts.get(item, 0) > old_counts.get(item, 0)]
+    errors = _appended_errors(old, new, base) if new else []
     check = f"{base}/pipeline/check.json"
     if _text(old_read(check)) != _text(new_read(check)):
         errors += [f"{base}: pipeline/check.json rewritten while {item} is locked ({reason}); a further run needs "
@@ -297,6 +325,45 @@ def locked_errors(job, read):
     if errors or doc is None:
         return errors
     return [f"jobs/{job}: {item} is locked ({reason}); {ESCALATION}" for item, reason in locked_items(doc).items()]
+
+
+def _disk_reader(root):
+    def read(path):
+        p = Path(root) / path
+        return p.read_bytes() if p.is_file() else None
+
+    return read
+
+
+def run_errors(root, job):
+    """Reasons a run of jobs/<JOB> is denied, read from the working tree (#128): the attempts limit of any of
+    its items, or a malformed state.json."""
+    read = _disk_reader(root)
+    doc, errors = _state(read, f"jobs/{job}/{STATE_JSON}")
+    if errors or doc is None:
+        return errors
+    return [f"a run of jobs/{job} while {item} is locked ({reason}); a further run needs a stop record; "
+            f"{ESCALATION}" for item, reason in locked_items(doc).items()]
+
+
+# a runner invocation (#128): a verb that builds or runs something, as opposed to a read of the job's files
+RUN_VERB = re.compile(r"\bdt (?:build|validate|from-source|spec)\b|(?:^|[\s;&|(/\\])(?:python3?|py|blender|pytest)"
+                      r"(?:\.exe)?(?=$|[\s;&|)])", re.I)    # a program name, not `run.py` (#128)
+JOB_TOKEN = re.compile(r"(?:^|[/\\])jobs[/\\]([^/\\]+)", re.I)
+
+
+def command_jobs(command):
+    """The jobs a shell command would run (#128). A documented heuristic, not a parser: the command must hold
+    a run verb (`dt build|validate|from-source|spec`, with `uv run` or `python -m dt_ai.cli.main` in front too,
+    or a python/py/blender/pytest invocation), and then every path token naming `jobs/<JOB>` (also `jobs\\<JOB>`,
+    `./jobs/<JOB>`, an absolute path through `jobs/`) counts. A read of the job's files (cat, ls, type,
+    Get-Content, git diff, rg) has no run verb and targets nothing."""
+    if not isinstance(command, str):
+        return set()
+    tokens = [t.strip("'\"") for t in re.split(r"[\s=]+", command) if t]
+    if not RUN_VERB.search(" ".join(tokens)):
+        return set()
+    return {m.group(1) for t in tokens for m in [JOB_TOKEN.search(t)] if m}
 
 
 class GitError(RuntimeError):

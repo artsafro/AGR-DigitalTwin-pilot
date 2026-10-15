@@ -187,7 +187,8 @@ checker). Note: the desktop app did not load project subagents from this worktre
   `Pipeline status` above draft needs `pipeline/spec.json` + `spec.report.json` + `check.json`; new job
   scripts name an engine gap `EG<n>`; delivery needs a committed `.py` for every `.pyc`;
   attempts limit (pipeline/state.json, #128) (`docs/HARNESS_PLAN.md` §16). Claude Code also blocks such writes at PreToolUse
-  (`.claude/hooks/pipeline_gate.py`, permission "deny").
+  (`.claude/hooks/pipeline_gate.py`, permission "deny"), and runs of a locked job (Bash/PowerShell runner
+  commands; `dt` itself refuses with exit 2).
 - Limit (user 2026-10-12 [D064], #79): a compromised environment is not covered, for example a fake `py` on PATH.
 
 ## Pipeline core (src/dt_ai, technical_library, tools)

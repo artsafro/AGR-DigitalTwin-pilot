@@ -75,6 +75,25 @@ def parser():
     return p
 
 
+def _attempts_gate(root, path):
+    """#128: a runner whose path lies inside a locked jobs/<JOB>/ does not start. Prints the blocking reasons
+    and returns their number; the rule itself lives in tools/git-hooks/pipeline_gate.py (hooks share it)."""
+    rel = Path(os.path.relpath(os.path.abspath(path), os.path.abspath(root / "jobs"))).parts
+    if not rel or rel[0] in (".", ".."):              # outside jobs/: nothing to gate
+        return 0
+    gate_path = root / "tools" / "git-hooks" / "pipeline_gate.py"
+    if not gate_path.is_file():
+        return 0
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("pipeline_gate", gate_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    errors = module.run_errors(root, rel[0])
+    for e in errors:
+        print(f"ERROR: pipeline_gate: {e}", file=sys.stderr)
+    return len(errors)
+
+
 def main(argv=None):
     args = parser().parse_args(argv)
     try:
@@ -101,6 +120,8 @@ def main(argv=None):
             print(f"Indexed {len(result['pages'])} pages: {args.output / 'index.json'}")
         elif args.command == "from-source":
             from dt_ai.geometry import from_source
+            if _attempts_gate(root, args.output):     # #128
+                return 2
             if args.output.exists():
                 raise ValueError(f"{args.output} exists; write a new versioned run")
             obj = read_json(args.object.read_bytes())
@@ -170,6 +191,8 @@ def main(argv=None):
         elif args.command == "spec":
             if not (args.dump and args.object and args.output):
                 raise ValueError("extract needs --dump, --object and --output")
+            if _attempts_gate(root, args.output):     # #128
+                return 2
             outputs = [args.output.with_suffix(s) for s in (".json", ".report.json", ".questions.md")]
             for path in [args.output] + outputs[1:]:
                 if path.exists():
@@ -203,6 +226,8 @@ def main(argv=None):
             write_json(args.output.with_suffix(".conflicts.json"), conflicts)
             print(f"Merged; {len(conflicts)} conflicts preserved separately")
         else:
+            if _attempts_gate(root, args.job if args.command == "build" else args.archive):   # #128
+                return 2
             output = args.output or (args.job.parent / "outputs" if args.command == "build" else args.archive.parent / "validation")
             archive = build(root, args.job, output, args.blender) if args.command == "build" else args.archive
             report = validate(root, archive, output, args.blender)
