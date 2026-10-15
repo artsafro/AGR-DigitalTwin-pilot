@@ -13,10 +13,15 @@ from twinqa.scene import find_blender, readback, scene_findings, ucx_triangle_li
 
 
 def mesh(name="SM_Test_K_1_Main", tris=12, degrees=None, rot=(0, 0, 0), scale=(1, 1, 1), uv=1, mirrored=0,
-         tiles=(1001,), loc=(0, 0, 0)):
-    return {"name": name, "triangles": tris, "polygon_degrees": degrees or {"3": tris}, "rotation_euler_deg": list(rot),
-            "scale": list(scale), "uv_channels": uv, "mirrored_uv_triangles": mirrored, "udim_tiles": list(tiles),
-            "location": list(loc)}
+         tiles=(1001,), loc=(0, 0, 0), world_scale=None, parent=None):
+    facts = {"name": name, "triangles": tris, "polygon_degrees": degrees or {"3": tris}, "rotation_euler_deg": list(rot),
+             "scale": list(scale), "uv_channels": uv, "mirrored_uv_triangles": mirrored, "udim_tiles": list(tiles),
+             "location": list(loc)}
+    if world_scale is not None:
+        facts["world_scale"] = list(world_scale)
+    if parent is not None:
+        facts["parent"] = parent
+    return facts
 
 
 def rb(*meshes, other=(), units=None):
@@ -141,6 +146,35 @@ def test_v002_import_scale_not_one_fails(scale):
     finding = next(f for f in found["V002"] if f.name == "scale 1:1")
     assert finding.status == "fail"
     assert "SM_Test_K_1_Main" in finding.observed and "UCX_SM_Test_K_1_Main_001" in finding.observed
+
+
+@pytest.mark.parametrize("kind", ["npm", "vpm"])
+def test_v002_inherited_parent_scale_fails(kind):
+    profile = PROFILES.npm if kind == "npm" else PROFILES.vpm
+    main = mesh(scale=(1, 1, 1), world_scale=(2, 2, 2), parent="Parent")
+    ucx = mesh(name="UCX_SM_Test_K_1_Main_001", scale=(1, 1, 1), world_scale=(2, 2, 2), parent="Parent")
+    found = scene_findings(rb(main, ucx), kind, "oks", profile)
+    finding = next(f for f in found["V002"] if f.name == "scale 1:1")
+    assert finding.status == "fail"
+    assert "SM_Test_K_1_Main" in finding.observed and "UCX_SM_Test_K_1_Main_001" in finding.observed
+    assert "world" in finding.observed
+
+
+@pytest.mark.parametrize("kind", ["npm", "vpm"])
+def test_v002_unit_parent_passes(kind):
+    profile = PROFILES.npm if kind == "npm" else PROFILES.vpm
+    found = scene_findings(rb(mesh(scale=(1, 1, 1), world_scale=(1, 1, 1), parent="Parent")), kind, "oks", profile)
+    assert statuses(found, "V002")["scale 1:1"] == "pass"
+
+
+def test_v002_direct_scale_fails_even_if_world_reported_one():
+    found = scene_findings(rb(mesh(scale=(2, 2, 2), world_scale=(1, 1, 1))), "npm", "oks", PROFILES.npm)
+    assert statuses(found, "V002")["scale 1:1"] == "fail"
+
+
+def test_v002_world_scale_within_tolerance_passes():
+    found = scene_findings(rb(mesh(world_scale=(1 + 1e-5, 1, 1 - 1e-5))), "vpm", "oks", PROFILES.vpm)
+    assert statuses(found, "V002")["scale 1:1"] == "pass"
 
 
 def test_v002_import_scale_within_tolerance_passes():
@@ -321,3 +355,48 @@ def test_blender_roundtrip_through_validator(tmp_path, variant):
         assert st["V003"].status == "fail" and st["V008"].status == "fail"
         assert st["V002"].status == "fail"
         assert report.exit_code == 1
+
+
+MAKE_INHERITED_SCALE = """
+import bpy, sys
+out, mode = sys.argv[sys.argv.index('--') + 1:]
+bpy.ops.wm.read_factory_settings(use_empty=True)
+bpy.ops.mesh.primitive_cube_add(size=2, location=(0, 0, 1))
+main = bpy.context.object
+main.name = 'SM_Test_K_1_Main'
+bpy.ops.mesh.primitive_cube_add(size=2, location=(0, 0, 1))
+ucx = bpy.context.object
+ucx.name = 'UCX_SM_Test_K_1_Main_001'
+if mode == 'direct_scaled':
+    main.scale = (2, 2, 2)
+else:
+    bpy.ops.object.empty_add(type='PLAIN_AXES', location=(0, 0, 0))
+    parent = bpy.context.object
+    parent.name = 'Parent'
+    parent.scale = (1, 1, 1) if mode == 'unit_parent' else (2, 2, 2)
+    main.parent = parent
+    ucx.parent = parent
+bpy.ops.export_scene.fbx(filepath=out, apply_scale_options='FBX_SCALE_UNITS')
+"""
+
+
+@pytest.mark.blender
+@pytest.mark.skipif(BLENDER is None, reason="Blender not installed")
+@pytest.mark.parametrize("mode", ["unit_parent", "parent_scaled", "direct_scaled"])
+@pytest.mark.parametrize("profile", ["npm", "vpm"])
+def test_blender_v002_inherited_scale_roundtrip(tmp_path, mode, profile):
+    fbx_path = tmp_path / f"{mode}_{profile}.fbx"
+    subprocess.run([BLENDER, "--background", "--factory-startup", "--python-exit-code", "1",
+                    "--python-expr", MAKE_INHERITED_SCALE, "--", str(fbx_path), mode],
+                   check=True, capture_output=True, timeout=300)
+    found = scene_findings(readback(fbx_path), profile, "oks", getattr(PROFILES, profile))
+    assert statuses(found, "V002")["system units"] == "pass"
+    finding = next(f for f in found["V002"] if f.name == "scale 1:1")
+    if mode == "unit_parent":
+        assert finding.status == "pass"
+    elif mode == "parent_scaled":
+        assert finding.status == "fail"
+        assert "SM_Test_K_1_Main" in finding.observed and "UCX_SM_Test_K_1_Main_001" in finding.observed
+    else:
+        assert finding.status == "fail"
+        assert "SM_Test_K_1_Main local" in finding.observed

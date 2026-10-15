@@ -86,8 +86,33 @@ def _pivot_findings(meshes: list[dict], ucx: list[dict], src: str) -> list[Findi
     return out
 
 
+def _scale_not_one(values) -> bool:
+    return any(abs(s - 1) > SCALE_TOL for s in values)
+
+
+def _fmt_scale(values) -> str:
+    parts = []
+    for value in values:
+        parts.append(f"{value:g}" if isinstance(value, float) else str(value))
+    return "[" + ",".join(parts) + "]"
+
+
+def _v002_scale_bad(mesh: dict) -> bool:
+    """Local scale, or effective world scale when the readback recorded it (else local)."""
+    local = mesh["scale"]
+    world = mesh["world_scale"] if "world_scale" in mesh else local
+    return _scale_not_one(local) or _scale_not_one(world)
+
+
+def _v002_scale_text(mesh: dict) -> str:
+    text = f"{mesh['name']} local {_fmt_scale(mesh['scale'])}"
+    if "world_scale" in mesh:
+        text += f" world {_fmt_scale(mesh['world_scale'])}"
+    return f"{text} parent {mesh.get('parent')}"
+
+
 def _v002_findings(rb: dict, meshes: list[dict], src: str) -> list[Finding]:
-    """1 unit = 1 m (UnitScaleFactor 100 cm) and import scale 1 on every mesh, UCX included."""
+    """1 unit = 1 m (UnitScaleFactor 100 cm) and local and effective (inherited) scale 1 on every mesh, UCX included."""
     expected_units = "1 unit = 1 m (UnitScaleFactor 100)"
     if "fbx_units" not in rb:
         units = _f("not_run", "system units", "units not read", expected_units, UNIT_PAGES, src)
@@ -103,10 +128,10 @@ def _v002_findings(rb: dict, meshes: list[dict], src: str) -> list[Finding]:
             observed = (f"{src}: 1 unit = {usf:g} cm "
                         f"(UnitScaleFactor {usf:g}, OriginalUnitScaleFactor {ousf})")
             units = _f("pass" if ok else "fail", "system units", observed, expected_units, UNIT_PAGES, src)
-    bad = [m for m in meshes if any(abs(s - 1) > SCALE_TOL for s in m["scale"])]
-    expected_scale = "import scale 1 on every mesh (1:1)"
+    bad = [m for m in meshes if _v002_scale_bad(m)]
+    expected_scale = "local and effective (inherited) scale 1 on every mesh (1:1)"
     if bad:
-        shown = ", ".join(f"{m['name']} {m['scale']}" for m in bad[:5])
+        shown = ", ".join(_v002_scale_text(m) for m in bad[:5])
         scale = _f("fail", "scale 1:1", f"{src}: {shown}", expected_scale, UNIT_PAGES, src)
     else:
         scale = _f("pass", "scale 1:1", f"{src}: scale 1 on every mesh", expected_scale, UNIT_PAGES, src)
