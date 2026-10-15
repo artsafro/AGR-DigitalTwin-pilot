@@ -172,3 +172,50 @@ def test_cli_exit_code_for_malformed_bodies(tmp_path, capsys):
         path.write_text(body, encoding="utf-8")
         assert gate.main(["--file", str(path)]) == 1, name
         assert "FAIL" in capsys.readouterr().out, name
+
+
+# Round 2 review (PR #13): a field's answer is its own text, and indented code is not a checklist.
+
+BORROWED = (FILLED.replace("`main` at `abc1234`.\n", "")
+            .replace("### Out of scope", "#### Out of scope")
+            .replace("### Evidence the PR must bring", "#### Evidence the PR must bring"))
+INDENTED = {
+    "spaces": replace_field(FILLED, "Acceptance", "\n    - [ ] example only\n"),
+    "tab": replace_field(FILLED, "Acceptance", "\n\t- [ ] example only\n"),
+}
+
+
+def test_empty_field_does_not_borrow_a_nested_field():
+    problems = load_gate().gate_problems(BORROWED)
+    assert any("Inputs and versions" in p for p in problems), problems
+
+
+def test_descriptive_subheading_still_fills_a_field():
+    """A non-contract subheading under a field is that field's own text."""
+    body = replace_field(FILLED, "Inputs and versions", "\n#### Source\n\n`main` at `abc1234`.\n")
+    assert load_gate().gate_problems(body) == []
+
+
+def test_indented_code_checkbox_is_not_an_acceptance_item():
+    gate = load_gate()
+    for name, body in INDENTED.items():
+        assert any("Acceptance" in p for p in gate.gate_problems(body)), name
+
+
+def test_nested_checklist_items_still_count():
+    """An indented checkbox inside a list is a nested item, not code."""
+    gate = load_gate()
+    body = replace_field(FILLED, "Acceptance", "\n- [ ] parent\n    - [ ] child\n\t- [ ] tab child\n")
+    assert gate.gate_problems(body) == []
+    body = replace_field(FILLED, "Acceptance", "\n- Items:\n\n    - [ ] nested only\n")
+    assert gate.gate_problems(body) == []
+
+
+def test_cli_exit_code_for_round_two_bodies(tmp_path, capsys):
+    gate = load_gate()
+    for name, body in (("borrowed", BORROWED), *INDENTED.items()):
+        path = tmp_path / f"{name}.md"
+        path.write_text(body, encoding="utf-8")
+        assert gate.main(["--file", str(path)]) == 1, name
+        out = capsys.readouterr().out
+        assert "FAIL" in out and ("Inputs and versions" in out or "Acceptance" in out), (name, out)
