@@ -455,5 +455,57 @@
   "levels_status": "pass",
   "guard_seconds": 295.1,
   "status": "keep"
+ },
+ {
+  "n": "15",
+  "description": "PRISM_GAP_M 4 mm -> 3.1 mm (just past the 3 mm weld: thinner slits in the facades)",
+  "build_seconds": 0.0,
+  "delivery_passed": false,
+  "build": {
+   "thresholds": 54,
+   "layers": 53,
+   "prisms": 46,
+   "gaps": 45,
+   "openings_placed": {
+    "12": 431,
+    "11": 710
+   },
+   "openings_in_snapshot": 835,
+   "vertices": 65670,
+   "triangles": 126744
+  },
+  "silhouette_err_m2": 172.154,
+  "per_view_m2": {
+   "x": 26.149,
+   "y": 38.079,
+   "top": 43.697
+  },
+  "iou": {
+   "x": 0.9785,
+   "y": 0.985,
+   "top": 0.9929
+  },
+  "metric_seconds": 28.3,
+  "best_before": 184.666,
+  "guard_passed": true,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "mesh_status": "pass",
+  "per_mesh_status": {
+   "SM_butovskaya_sosh1000_body": "pass"
+  },
+  "winding_bad_edges": 0,
+  "triangles": 126744,
+  "budget_status": "pass",
+  "levels_worst_m": 0.0,
+  "levels_status": "pass",
+  "guard_seconds": 301.9,
+  "status": "keep"
  }
 ]

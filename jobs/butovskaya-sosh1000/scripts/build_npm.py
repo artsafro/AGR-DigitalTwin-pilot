@@ -50,7 +50,7 @@ FILL_HOLES_M2 = 1e9                 # "mesh": holes of a layer region up to this
 NODE_ITER = 0                       # "mesh": rounds of inserting outline crossings of neighbouring layers as vertices
 HORIZ = "prisms"                    # faces at a threshold: "difference" (snapped) or "arrangement" (noded outlines)
 UNCONTACT_U = 1.5                   # strip width (grid units) the upper region takes where two layers touch edge to edge
-PRISM_GAP_M = 0.004                 # "prisms": gap under a prism standing on another (> the 3 mm weld)
+PRISM_GAP_M = 0.0031                # "prisms": gap under a prism standing on another (> the 3 mm weld)
 PRISM_SHRINK_U = 0.1                # "prisms": every prism outline offset inward by this (grid units; 0.1 = 5 mm)
 SLAB_KINDS = {"OST_Floors", "OST_Roofs"}
 SLAB_COVER_M = 0.05                 # "mesh": a floor / roof piece joins every layer it overlaps by this much (thin slabs)
