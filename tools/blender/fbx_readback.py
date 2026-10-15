@@ -1,7 +1,8 @@
 # Ported from AGR max/AGR_Workbench/check_fbx.py (sha256 e8c032b17279) and
 # tools/profile_snapshot_common.py (sha256 cbb176e2b241) object/image facts on 2026-10-06; changes: one standalone
 # script, no RunRecord/config files, adds triangles, polygon degrees, UV channels, UDIM tiles,
-# mirrored UV triangles, transforms and embedded image facts for the V002-V013 scene stages.
+# mirrored UV triangles, transforms, embedded image facts and GroundEl maf_surface
+# (corner normals for smoothing and flipped faces) for the V002-V013 scene stages.
 """Structural FBX readback in an isolated factory Blender process.
 
     blender --background --factory-startup --python-exit-code 1 \
@@ -11,6 +12,7 @@ Readback facts only; it does not judge the delivery (twinqa.scene does) and neve
 the source. Exit 2 when the file imports but holds no non-empty mesh.
 """
 import hashlib
+import importlib.util
 import json
 import math
 import sys
@@ -18,10 +20,29 @@ from pathlib import Path
 
 import bpy
 
+ROOT = Path(__file__).resolve().parents[2]
+_spec = importlib.util.spec_from_file_location("maf_surface", ROOT / "src/twinqa/geometry/maf_surface.py")
+_maf = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_maf)
+surface_facts = _maf.surface_facts
+
 args = sys.argv[sys.argv.index("--") + 1:]
 if len(args) != 2:
     raise SystemExit("usage: ... -- <model.fbx> <report.json>")
 source, out = Path(args[0]).resolve(), Path(args[1]).resolve()
+
+
+def _loop_normals(mesh):
+    """Per-loop normals: corner_normals on Blender 4.1+, split normals on older builds."""
+    count = len(mesh.loops)
+    try:
+        corners = mesh.corner_normals
+        if len(corners) != count:
+            raise RuntimeError("corner_normals length")
+        return [corners[i].vector.copy() for i in range(count)]
+    except (AttributeError, RuntimeError, TypeError):
+        mesh.calc_normals_split()
+        return [mesh.loops[i].normal.copy() for i in range(count)]
 
 
 def udim(u, v):
@@ -65,6 +86,23 @@ def mesh_facts(obj):
         facts["udim_tiles"] = sorted(t for t in tiles if t is not None)
         facts["uv_outside_udim_grid"] = None in tiles
         facts["mirrored_uv_triangles"] = mirrored
+    if obj.name.endswith("_GroundEl"):
+        try:
+            xform = obj.matrix_world.to_3x3().inverted_safe().transposed()
+            loops = _loop_normals(mesh)
+            world_loops = []
+            for normal in loops:
+                transformed = xform @ normal
+                length = transformed.length
+                if length:
+                    transformed /= length
+                world_loops.append([transformed.x, transformed.y, transformed.z])
+            coords = [[c for c in p] for p in world]
+            polys = [list(p.vertices) for p in mesh.polygons]
+            corner_normals = [world_loops[p.loop_start:p.loop_start + p.loop_total] for p in mesh.polygons]
+            facts["maf_surface"] = surface_facts(coords, polys, corner_normals)
+        except Exception as exc:
+            facts["maf_surface"] = {"error": f"{type(exc).__name__}: {exc}"}
     return facts
 
 
