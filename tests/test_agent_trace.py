@@ -42,6 +42,33 @@ def field_names(text):
     return [line[2:].split(":", 1)[0] for line in text.splitlines() if line.startswith("- ")]
 
 
+def _field(text, name):
+    prefix = f"- {name}: "
+    return next(line[len(prefix):] for line in text.splitlines() if line.startswith(prefix))
+
+
+def _jsonl(tmp_path, name, lines):
+    """Dump dicts as JSON lines; a string item is written raw (a torn or malformed line)."""
+    path = tmp_path / name
+    rendered = [line if isinstance(line, str) else json.dumps(line) for line in lines]
+    path.write_text("\n".join(rendered) + "\n", encoding="utf-8")
+    return path
+
+
+def _user(content, session):
+    return {"sessionId": session, "isSidechain": False, "type": "user",
+            "message": {"role": "user", "content": content}}
+
+
+def _assistant(content, session):
+    return {"sessionId": session, "isSidechain": False, "type": "assistant",
+            "message": {"role": "assistant", "content": content}}
+
+
+def _tool(name, tool_id, payload, session):
+    return _assistant([{"type": "tool_use", "id": tool_id, "name": name, "input": payload}], session)
+
+
 def _clear_context_env(monkeypatch):
     monkeypatch.delenv("CLAUDE_CODE_MAX_CONTEXT_TOKENS", raising=False)
     monkeypatch.delenv("CLAUDE_CODE_DISABLE_1M_CONTEXT", raising=False)
@@ -146,3 +173,102 @@ def test_cli_writes_the_section_into_a_file(tmp_path):
     assert "- Retries: 2: `pytest -q` x2\n" in text
     assert "- Duration: 1 h 12 min (" in text
     assert field_names(text) == FIELDS
+
+
+def _trace(paths, rows, monkeypatch):
+    _clear_context_env(monkeypatch)
+    return agent_trace.trace(paths, rows, ("aaa1111", "bbb2222", 1), "-")
+
+
+def test_bad_middle_line(tmp_path, monkeypatch):
+    path = _jsonl(tmp_path, "bad.jsonl", [
+        _user("hello", "s-bad"),
+        "{not json",
+        _tool("Bash", "bash-9", {"command": "pytest -q"}, "s-bad"),
+    ])
+    text = _trace([path], [], monkeypatch)
+    for name in ("Hook denials", "Retries"):
+        assert _field(text, name).startswith("incomplete, none seen (")
+        assert "not a transcript record" in _field(text, name)
+    assert "- Hook denials: none\n" not in text
+
+
+def test_torn_tail(tmp_path, monkeypatch):
+    denial = next(line for line in TRANSCRIPT.read_text(encoding="utf-8").splitlines()
+                  if "permissionDecision" in line)
+    path = _jsonl(tmp_path, "torn.jsonl", [
+        _user("hello", "s-torn"),
+        _tool("Bash", "push-1", {"command": "git push origin HEAD"}, "s-torn"),
+        denial[:40],
+    ])
+    text = _trace([path], [], monkeypatch)
+    for name in ("Hook denials", "Retries"):
+        assert _field(text, name).startswith("incomplete, none seen (")
+        assert "not a transcript record" in _field(text, name)
+    assert "- Hook denials: none\n" not in text
+
+
+def test_no_conversation(tmp_path, monkeypatch):
+    path = _jsonl(tmp_path, "sum.jsonl", [{"type": "summary", "summary": "synthetic"}])
+    text = _trace([path], [], monkeypatch)
+    for name in ("Hook denials", "Retries", "Duration"):
+        value = _field(text, name)
+        assert "no user or assistant record" in value or value.startswith("not measured")
+    assert all(_field(text, name) != "none" for name in FIELDS)
+
+
+def test_partial_fallback(tmp_path, monkeypatch):
+    denial = next(line for line in TRANSCRIPT.read_text(encoding="utf-8").splitlines()
+                  if "permissionDecision" in line)
+    path = _jsonl(tmp_path, "part.jsonl", [
+        _tool("Agent", "agent-9", {"subagent_type": "Explore"}, "s-part"),
+        denial[:40],
+    ])
+    text = _trace([path], [], monkeypatch)
+    assert _field(text, "Subagents").startswith("incomplete, at least ")
+    assert "Explore" in _field(text, "Subagents")
+
+
+def test_mixed_sessions(tmp_path, monkeypatch):
+    path = _jsonl(tmp_path, "open.jsonl", [
+        _tool("Agent", "agent-9", {"subagent_type": "independent-checker"}, "sess-unlogged"),
+        _tool("Skill", "skill-9", {"skill": "grill-me"}, "sess-unlogged"),
+        _user("<command-name>/takeover</command-name>", "sess-unlogged"),
+    ])
+    rows = [row for row in usage_rows() if row["session_id"] == "sess-trace-124"]
+    text = _trace([TRANSCRIPT, path], rows, monkeypatch)
+    sub, skills, commands = _field(text, "Subagents"), _field(text, "Skills"), _field(text, "Commands")
+    assert "Explore 2" in sub and "independent-checker 1" in sub
+    assert "from the transcript for `sess-unlogged`" in sub
+    assert "tdd 1" in skills and "grill-me 1" in skills
+    assert "handover 1" in commands and "takeover 1" in commands
+    assert _field(text, "Sessions") == "`sess-trace-124`, `sess-unlogged`"
+
+
+def test_quiet_session(tmp_path, monkeypatch):
+    path = _jsonl(tmp_path, "quiet.jsonl", [
+        _user("hello", "sess-quiet"),
+        _assistant([{"type": "text", "text": "ok"}], "sess-quiet"),
+    ])
+    rows = [row for row in usage_rows() if row["session_id"] == "sess-trace-124"]
+    text = _trace([TRANSCRIPT, path], rows, monkeypatch)
+    assert "- Subagents: Explore 2 (from the transcript for `sess-quiet`)\n" in text
+
+
+def test_same_session_twice(monkeypatch):
+    text = _trace([TRANSCRIPT, TRANSCRIPT], usage_rows(), monkeypatch)
+    assert _field(text, "Subagents") == "Explore 2"
+    assert _field(text, "Sessions") == "`sess-trace-124`"
+    assert _field(text, "Retries") == "2: `pytest -q` x2"
+    assert _field(text, "Hook denials") == "1: Bash - push needs approval"
+
+
+def test_quoted_command_tag(tmp_path, monkeypatch):
+    path = _jsonl(tmp_path, "cmd.jsonl", [
+        _user("<command-name>/handover</command-name>\n<command-args></command-args>", "s-cmd"),
+        _user([{"type": "tool_result", "tool_use_id": "x",
+                "content": "see <command-name>/release</command-name>"}], "s-cmd"),
+    ])
+    text = _trace([path], [], monkeypatch)
+    assert "- Commands: handover 1 (from the transcript)\n" in text
+    assert "release" not in next(line for line in text.splitlines() if line.startswith("- Commands:"))

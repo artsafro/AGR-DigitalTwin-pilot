@@ -9,7 +9,9 @@ span or appends the block; the rest of the file stays byte-identical, including 
 The span is the heading plus the lines directly after it that are blank, field lines (`- `), a lone
 `-`, or a placeholder starting with `<`. It stops at the first other line (a heading, `Refs`, prose).
 Trailing blank lines of the span are kept as one blank line before the following text.
-A value that cannot be measured is `not measured (<reason>)`; an empty count is `none`.
+A value that cannot be measured is `not measured (<reason>)`; an empty count is `none`. A value from an
+incomplete transcript is `incomplete, at least <value> (<problems>)`, or `incomplete, none seen (<problems>)`
+when the known value is `none`.
 Exit 0, except an argparse error or a failed `--into` write (exit 2, message on stderr).
 """
 import argparse
@@ -44,11 +46,25 @@ def _git(*args):
     return result.stdout.strip() if result.returncode == 0 else None
 
 
-def _nm(reason):
+def _short(reason):
     text = " ".join(str(reason).split()) or "unknown"
     if len(text) > 160:
         text = text[:157] + "..."
-    return f"not measured ({text})"
+    return text
+
+
+def _nm(reason):
+    return f"not measured ({_short(reason)})"
+
+
+def _incomplete(value, problems):
+    """Keep a partial total visibly partial. An empty problem list leaves `value` unchanged."""
+    if not problems or value.startswith("not measured"):
+        return value
+    reason = _short("; ".join(str(item) for item in problems))
+    if value == "none" or value.startswith("none "):
+        return f"incomplete, none seen ({reason})"
+    return f"incomplete, at least {value} ({reason})"
 
 
 def _block(values):
@@ -91,39 +107,61 @@ def _format_counts(counter):
     return ", ".join(f"{name} {count}" for name, count in ranked)
 
 
-def _named(rows, kind):
+def _counter(rows, kind):
     counter = Counter()
     for row in rows:
         if not isinstance(row, dict) or row.get("kind") != kind:
             continue
         name = row.get("name")
         counter[name if isinstance(name, str) and name else "unknown"] += 1
-    return _format_counts(counter)
+    return counter
+
+
+def _named(rows, kind):
+    return _format_counts(_counter(rows, kind))
 
 
 def _counts_from_rows(rows):
     return _named(rows, "agent"), _named(rows, "skill"), _named(rows, "command")
 
 
-def _counts_from_transcript(groups):
-    agents, skills = Counter(), Counter()
+def _note_tool(block, agents, skills):
+    raw = block.get("input")
+    payload = raw if isinstance(raw, dict) else {}
+    if block.get("name") in ("Agent", "Task"):
+        kind = payload.get("subagent_type") or "general-purpose"
+        agents[kind if isinstance(kind, str) and kind else "general-purpose"] += 1
+    elif block.get("name") == "Skill":
+        skill = payload.get("skill")
+        skills[skill if isinstance(skill, str) and skill else "unknown"] += 1
+
+
+def _remember(seen, key):
+    """True when `key` was already counted. A missing key is counted every time."""
+    if not key:
+        return False
+    if key in seen:
+        return True
+    seen.add(key)
+    return False
+
+
+def _accumulate_transcript(groups, agents, skills, commands):
+    seen_tools, seen_commands = set(), set()
     for records in groups:
         for record in records:
-            if not isinstance(record, dict) or record.get("type") != "assistant":
+            if not isinstance(record, dict):
                 continue
-            for block in _blocks(record):
-                if block.get("type") != "tool_use":
-                    continue
-                raw = block.get("input")
-                payload = raw if isinstance(raw, dict) else {}
-                if block.get("name") in ("Agent", "Task"):
-                    kind = payload.get("subagent_type") or "general-purpose"
-                    agents[kind if isinstance(kind, str) and kind else "general-purpose"] += 1
-                elif block.get("name") == "Skill":
-                    skill = payload.get("skill")
-                    skills[skill if isinstance(skill, str) and skill else "unknown"] += 1
-    return (_format_counts(agents) + FROM_TRANSCRIPT, _format_counts(skills) + FROM_TRANSCRIPT,
-            "none" + FROM_TRANSCRIPT)
+            if record.get("type") == "assistant":
+                for block in _blocks(record):
+                    if block.get("type") != "tool_use" or _remember(seen_tools, block.get("id")):
+                        continue
+                    _note_tool(block, agents, skills)
+            if record.get("isSidechain"):
+                continue
+            name = usage_log.command_of(record)
+            if name and not _remember(seen_commands, record.get("uuid")):
+                commands[name] += 1
 
 
 def retries(records):
@@ -143,8 +181,8 @@ def retries(records):
                     continue
                 raw = block.get("input")
                 command = _norm((raw if isinstance(raw, dict) else {}).get("command"))
-                if command is None:
-                    continue
+                if command is None or (block.get("id") and block["id"] in calls):
+                    continue                     # the same call read twice (one session, two files)
                 if command in seen_error:
                     found.append(command)
                 if block.get("id"):
@@ -238,18 +276,60 @@ def _context(path):
 
 
 def _read_all(paths):
-    groups, sessions, errors = [], [], []
+    groups, sessions, errors, problems = [], [], [], []
     for path in paths:
         try:
-            records, _problems = read_jsonl(path)
+            records, issues = read_jsonl(path)
         except EvidenceError as exc:
             errors.append(str(exc))
             continue
         groups.append(records)
         sessions.append(_session_id(path, records))
+        problems.append(list(issues))
     if errors:
-        return [], [], "; ".join(errors)
-    return groups, sessions, None
+        return [], [], "; ".join(errors), []
+    return groups, sessions, None, problems
+
+
+def _by_session(groups, sessions, problems):
+    order, buckets = [], {}
+    for records, sid, issues in zip(groups, sessions, problems):
+        bucket = buckets.get(sid)
+        if bucket is None:
+            bucket = {"groups": [], "problems": []}
+            buckets[sid] = bucket
+            order.append(sid)
+        bucket["groups"].append(records)
+        bucket["problems"].extend(issues)
+    return order, buckets
+
+
+def _suffix(fallback, sessions):
+    if not fallback:
+        return ""
+    if len(fallback) == len(sessions):
+        return FROM_TRANSCRIPT
+    listed = ", ".join(f"`{sid}`" for sid in fallback)
+    return f" (from the transcript for {listed})"
+
+
+def _session_counts(order, buckets, usage_rows):
+    agents, skills, commands = Counter(), Counter(), Counter()
+    fallback, problems = [], []
+    rows = usage_rows if isinstance(usage_rows, list) else []
+    for sid in order:
+        matched = [row for row in rows if isinstance(row, dict) and row.get("session_id") == sid]
+        if matched:
+            agents.update(_counter(matched, "agent"))
+            skills.update(_counter(matched, "skill"))
+            commands.update(_counter(matched, "command"))
+            continue
+        fallback.append(sid)
+        problems.extend(buckets[sid]["problems"])
+        _accumulate_transcript(buckets[sid]["groups"], agents, skills, commands)
+    suffix = _suffix(fallback, order)
+    return tuple(_incomplete(_format_counts(counter) + suffix, problems)
+                 for counter in (agents, skills, commands))
 
 
 def trace(transcripts, usage_rows, commits, writer):
@@ -271,18 +351,22 @@ def trace(transcripts, usage_rows, commits, writer):
         sub, skill, command = ((_nm("no usage log, no transcript"),) * 3 if usage_rows is None
                                else _counts_from_rows(usage_rows))
         return _block((missing, written, sub, skill, command, missing, missing, missing, missing, commit_line))
-    groups, sessions, error = _read_all(paths)
+    groups, sessions, error, problems = _read_all(paths)
     if error:
         missing = _nm(error)
         return _block((missing, written, missing, missing, missing, missing, missing, missing, missing, commit_line))
-    matched = [row for row in (usage_rows or []) if isinstance(row, dict) and row.get("session_id") in set(sessions)]
-    sub, skill, command = _counts_from_rows(matched) if matched else _counts_from_transcript(groups)
+    order, buckets = _by_session(groups, sessions, problems)
+    sub, skill, command = _session_counts(order, buckets, usage_rows)
+    found = [item for issues in problems for item in issues]
     records = [record for group in groups for record in group]
-    retry_commands = [command for group in groups for command in retries(group)]
+    retry_commands = [command for sid in order
+                      for command in retries([record for group in buckets[sid]["groups"] for record in group])]
     return _block((
-        ", ".join(f"`{session}`" for session in sessions), written, sub, skill, command,
-        _format_denials(_collect_denials(groups)), _format_retries(retry_commands),
-        _context(paths[-1]), _duration(records), commit_line))
+        ", ".join(f"`{session}`" for session in order), written, sub, skill, command,
+        _incomplete(_format_denials(_collect_denials(groups)), found),
+        _incomplete(_format_retries(retry_commands), found),
+        _incomplete(_context(paths[-1]), problems[-1]),
+        _incomplete(_duration(records), found), commit_line))
 
 
 def _span_line(line):
