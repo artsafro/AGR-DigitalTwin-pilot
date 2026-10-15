@@ -1,9 +1,11 @@
 # MAF library catalogue (issue #183)
 
 Audit of the user's single 3ds Max MAF library scene, turned into one `.max` + one FBX + one preview PNG per MAF.
-Binaries stay **outside the repo** (`C:/x/t_3e6ff1b3/library/{max,fbx,preview}`, contact sheet
-`C:/x/t_3e6ff1b3/library/contact_sheet.png`); PNG/FBX/MAX are Git LFS types and the LFS budget is exhausted.
-This folder holds only text: `catalogue.json` (every entry, paths to its files) and `catalogue.md` (table).
+Binaries stay **outside the repo** (`C:/x/t_3e6ff1b3/library/{max,fbx,preview}`, with versioned
+preview repairs in `preview-v002`, and contact sheet
+`C:/x/t_3e6ff1b3/library/contact_sheet-v002.png`); PNG/FBX/MAX are Git LFS types and the LFS budget is exhausted.
+This folder holds only text: `catalogue.json` (every entry, paths to its files), `catalogue.md` (table),
+`contact_sheet.html` (local image grid linking external previews/assets), and `audit.json` (verification evidence).
 Status: technical audit only, not identification (T-MAF-1) and not user acceptance.
 
 ## Inputs (read only, worked on copies)
@@ -38,3 +40,43 @@ name (prefix `C_`/`crp_` and `.NNN` removed) plus dims within 10 cm, else dims o
 dimension-only (tolerance 10 cm, user grilling Q8) — candidates, not identification.
 
 `element_first_faces` (needed to rebuild a split) is kept in `plan.json` outside the repo and dropped here.
+
+## Verification and interpretation
+
+- `audit.json` records original-before/original-after/copy SHA-256 equality, export counts, timing and
+  independent Blender 5.1.2 FBX readback. `fbx_readback_dims_m` measures **referenced** vertices; three
+  source meshes contain loose vertices which enlarge all-vertex bounds but not their visible geometry.
+- 927/931 FBX triangle counts match exactly. Four imports differ by 1–2 triangles (7 triangles total);
+  the cause is not established by the audit and is not silently counted as a pass. All 931 referenced
+  dimensions agree within 5 mm. Full per-object UV/material/topology/transform observations remain
+  outside Git at the `details_path` in `audit.json`.
+- The source library is not a ready NPM/VPM delivery: readback includes 14 meshes without UV layers,
+  42 without material slots, non-triangle faces and degenerate triangles. This card inventories rather
+  than repairs those source defects. No texture, material appearance or publication approval is claimed.
+- Duplicate groups are **candidates** (triangle count + dimensions), not a topology identity proof.
+  NPM name/dimension matches are likewise candidates, not manufacturer/article identification.
+  Of the 289 meshes in the actual `НПМ` collection, 190 have name+dimension matches, 27 dimension-only
+  candidates and 72 no candidate. The older `npm_*` catalogue totals include all 368 Blender meshes;
+  `audit.json` separates the collection-specific counts. Sixteen NPM rows have lower-triangle candidates;
+  no new light versions were generated.
+- `preview_style=neutral-shape-only` explicitly marks repaired legacy-material previews. The original
+  material-bearing Max/FBX files and original PNGs are retained. These previews establish shape only.
+
+```bash
+# Fresh-process independent FBX readback (AGR_MAF_READBACK must be a NEW report path)
+AGR_MAF_LIB=C:/x/t_3e6ff1b3/library AGR_MAF_READBACK=C:/x/t_3e6ff1b3/fbx_readback_v004.json \
+  "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe" --background --factory-startup \
+  --python tools/library/maf_blender_readback.py
+# Repair only confirmed blank IDs; refuses to overwrite preview-v002 / its manifest
+python C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py max \
+  --file tools/library/maf_preview_repair_job.py --timeout 4400 --wait 3600
+# Real-output regression (opt-in; normal CI skips absent external assets)
+AGR_MAF_VERIFY_PLAN=C:/x/t_3e6ff1b3/plan.json \
+AGR_MAF_VERIFY_BUILT=C:/x/t_3e6ff1b3/library/built-v002.jsonl \
+  uv run pytest -q tests/test_maf_library_artifacts.py
+```
+
+Keep pytest `--basetemp` in a **child directory**, e.g. `C:/x/t_3e6ff1b3/full-v002`.
+Never use the evidence root as basetemp: pytest recursively clears that directory.
+Shared Max lock stale-age workaround: use a wrapper timeout at least as long as the current holder's;
+see pilot issue #223. No lock was bypassed or manually removed by this continuation.

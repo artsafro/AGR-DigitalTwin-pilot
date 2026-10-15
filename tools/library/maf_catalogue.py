@@ -2,6 +2,8 @@
 
 Pure Python: cluster mesh elements into one MAF entry each, match them to an NPM
 Blender inventory, and render a markdown catalogue plus a preview contact sheet.
+New case: retain preview override provenance, so neutral shape-only rerenders
+cannot be mistaken for validation of the source material appearance.
 """
 
 from __future__ import annotations
@@ -708,6 +710,8 @@ def build_catalogue(plan, built_rows, matches, duplicates, overlaps, spec_matche
                 "max_path": row.get("max_path"),
                 "fbx_path": row.get("fbx_path"),
                 "preview_path": row.get("preview_path"),
+                "preview_style": row.get("preview_style", "source-material"),
+                "preview_original_path": row.get("preview_original_path"),
                 "mat_ids": row.get("mat_ids"),
                 "tris_built": row.get("tris_built"),
                 "ok": bool(row.get("ok")),

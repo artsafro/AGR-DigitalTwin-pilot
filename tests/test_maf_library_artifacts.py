@@ -20,6 +20,15 @@ def test_real_maf_library_artifacts():
         row = json.loads(line)
         rows[row["id"]] = row
     assert rows, "empty build manifest"
+    plan_path = os.environ.get("AGR_MAF_VERIFY_PLAN")
+    if plan_path:
+        plan = json.loads(Path(plan_path).read_text(encoding="utf-8"))
+        expected = {entry["id"]: entry for entry in plan["entries"]}
+        assert set(rows) == set(expected), "missing or extra MAF outputs"
+        for key, row in rows.items():
+            assert row["tris_built"] == expected[key]["tris"], key
+    for field in ("max_path", "fbx_path", "preview_path"):
+        assert len({row[field] for row in rows.values()}) == len(rows), field
     blank = []
     for key, row in rows.items():
         assert row["ok"], (key, row)
@@ -27,7 +36,8 @@ def test_real_maf_library_artifacts():
             path = Path(row[field])
             assert path.is_file() and path.stat().st_size > 0, (key, field)
         with Image.open(row["preview_path"]) as image:
-            pixels = list(image.convert("RGB").resize((64, 64)).getdata())
+            thumb = image.convert("RGB").resize((64, 64))
+            pixels = [thumb.getpixel((x, y)) for y in range(64) for x in range(64)]
         background = pixels[0]
         foreground = sum(
             sum(abs(a - b) for a, b in zip(pixel, background)) > 12
@@ -36,3 +46,14 @@ def test_real_maf_library_artifacts():
         if foreground < 8:
             blank.append(key)
     assert not blank, f"blank previews ({len(blank)}): {blank}"
+
+
+def test_native_maf_library_renderability():
+    path = os.environ.get("AGR_MAF_VERIFY_NATIVE")
+    if not path:
+        pytest.skip("set AGR_MAF_VERIFY_NATIVE for native Max readback")
+    rows = json.loads(Path(path).read_text(encoding="utf-8"))["entries"]
+    assert rows
+    disabled = [row["id"] for row in rows if not row["renderable"]]
+    assert not disabled, f"library objects saved non-renderable: {disabled}"
+    assert all(row["meshes"] == 1 for row in rows)

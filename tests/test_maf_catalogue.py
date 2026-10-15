@@ -322,6 +322,20 @@ def test_build_catalogue_and_markdown():
     assert "| id | source object | split | dims m | tris | mat IDs | dup | NPM match | preview |" in md
 
 
+def test_build_catalogue_records_versioned_preview():
+    plan = {"entries": [{"id": "MAF_0001"}], "counts": {}}
+    first = {"id": "MAF_0001", "ok": True, "preview_path": "preview/old.png"}
+    repaired = dict(first, preview_path="preview-v002/new.png",
+                    preview_style="neutral-shape-only",
+                    preview_original_path=first["preview_path"])
+    result = cat.build_catalogue(plan, [first, repaired], [], [], [])
+    entry = result["entries"][0]
+    assert entry["preview_path"] == "preview-v002/new.png"
+    assert entry["preview_style"] == "neutral-shape-only"
+    assert entry["preview_original_path"] == "preview/old.png"
+    assert result["counts"]["built_ok"] == 1
+
+
 def test_contact_sheet(tmp_path):
     images = []
     entries = []
