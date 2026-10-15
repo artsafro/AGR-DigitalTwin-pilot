@@ -71,6 +71,10 @@ Limits:
 - Wheel NumPy (2.5.3) differs from the bundled one (2.3.4). No script used NumPy on this path.
 
 ## Adoption scope (if the user chooses it; separate card)
+Adopted (issue #89 adoption card): the three prototype scripts moved to `experiments/bpy-benchmark-parity/`
+(`build_dumps.py`, `run_matrix.py --wheel`, `compare.py` over `parity_lib.py`); the commands above now run from there.
+Evidence stays in `experiments/hyp-89/evidence/`.
+
 - `experiments/bpy-benchmark-parity/`: move `build_dumps.py`, `run_matrix.py` and `compare.py` there as an
   optional, reproducible harness with a parameterised wheel interpreter.
 - `tests/dcc/test_bpy_benchmark_parity.py`: skipped unless both `blender.exe` 5.1.2 and a `bpy==5.1.2` interpreter
