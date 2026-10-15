@@ -98,7 +98,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     for a in ("--dump", "--modules", "--object", "--tolerances", "--output"):
         ap.add_argument(a, type=Path, required=True)
-    ap.add_argument("--blender", help="default: TWINQA_BLENDER, PATH, newest Program Files install")
+    ap.add_argument("--blender", help="executable override; default TWINQA_BLENDER or pinned Blender 5.1.2 installation (C:/Program Files/Blender Foundation/Blender 5.1/blender.exe)")
     args = ap.parse_args(argv)
     blender = args.blender or find_blender()
     if not blender:
