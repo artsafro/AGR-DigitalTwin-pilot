@@ -1,0 +1,1841 @@
+{
+ "completion_fail": [],
+ "rows": [
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "-",
+   "check": "blend vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 2.6702880795426154e-07,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "-",
+   "check": "blend vs exe blend",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.7166137693536143e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.7166137693536143e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "-",
+   "check": "blend vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 2.6702880795426154e-07,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "-",
+   "check": "blend vs exe blend",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.7166137693536143e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.7166137693536143e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "-",
+   "check": "blend vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 3.5031542999774956e-07,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "-",
+   "check": "blend vs exe blend",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "-",
+   "check": "blend vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 3.5031542999774956e-07,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "-",
+   "check": "blend vs exe blend",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "-",
+   "check": "blend vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 3.5031542999774956e-07,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "-",
+   "check": "blend vs exe blend",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "-",
+   "check": "blend vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 3.5031542999774956e-07,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "-",
+   "check": "blend vs exe blend",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 1,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "-",
+   "check": "blend vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 2.6702880795426154e-07,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "-",
+   "check": "blend vs exe blend",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.7166137693536143e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "readback rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "fbx measure rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.7166137693536143e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "readback rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "fbx measure rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "-",
+   "check": "blend vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 2.6702880795426154e-07,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "-",
+   "check": "blend vs exe blend",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.7166137693536143e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "readback rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "fbx measure rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.7166137693536143e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "readback rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B01",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "fbx measure rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "-",
+   "check": "blend vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 3.5031542999774956e-07,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "-",
+   "check": "blend vs exe blend",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "readback rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "fbx measure rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "readback rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "fbx measure rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "-",
+   "check": "blend vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 3.5031542999774956e-07,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "-",
+   "check": "blend vs exe blend",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "readback rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "fbx measure rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "readback rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "fbx measure rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "-",
+   "check": "blend vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 3.5031542999774956e-07,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "-",
+   "check": "blend vs exe blend",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "readback rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "exe",
+   "check": "fbx measure rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "readback rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "exe",
+   "reader": "whl",
+   "check": "fbx measure rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "-",
+   "check": "blend vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 3.5031542999774956e-07,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "-",
+   "check": "blend vs exe blend",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "readback rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "exe",
+   "check": "fbx measure rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "readback vs exe/exe",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "fbx measure vs exe/exe",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "fbx measure vs engine dump",
+   "ok": true,
+   "max": {
+    "geom": 1.6212463380682607e-06,
+    "locscale": 9.536743128535363e-08
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "readback rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "locscale": 0.0,
+    "rot": 0.0,
+    "geom": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  },
+  {
+   "rep": 2,
+   "model": "B02t",
+   "exporter": "whl",
+   "reader": "whl",
+   "check": "fbx measure rep2 vs rep1",
+   "ok": true,
+   "max": {
+    "geom": 0.0,
+    "locscale": 0.0
+   },
+   "over": [],
+   "discrete": [],
+   "n_discrete": 0
+  }
+ ]
+}
