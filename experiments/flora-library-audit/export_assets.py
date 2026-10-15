@@ -34,7 +34,9 @@ def fingerprint(obj):
     result = {'vertices': len(vertices), 'triangles': len(faces), 'uv_vertices': ntv,
               'mesh_sha256': hashlib.sha256(json.dumps([vertices, faces, matids, uv, uvfaces]).encode()).hexdigest(),
               'bbox': [xyz(bb[0]), xyz(bb[1])], 'transform': str(obj.transform),
-              'material': str(obj.material.name) if obj.material else None, 'bitmaps': maps}
+              'material': str(obj.material.name) if obj.material else None, 'bitmaps': maps,
+              'system_units': str(rt.units.SystemType), 'system_scale': float(rt.units.SystemScale),
+              'units_per_meter': float(rt.units.decodeValue('1m'))}
     rt.delete(mesh)
     return result
 

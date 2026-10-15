@@ -63,6 +63,8 @@ def role(o, project):
 
 def text_role(text):
     s = text.strip()
+    if not s:
+        return 'empty'
     if re.fullmatch(r'\d+\s+Tris', s, re.I):
         return 'triangle_count'
     if profiles(s):
@@ -151,13 +153,18 @@ def make_catalogue(source, project=False):
                         'atlas_use': {'bitmap_users_in_scene': {b['filename']: bitmap_users[b['filename']] for b in (material or {}).get('bitmaps', [])},
                                       'status': 'reference_sharing_only_uv_islands_and_texture_pixels_not_audited'},
                         'findings': findings,
-                        'file': str(ROOT / 'assets-v001' / (entry_id + '.max')),
-                        'preview': str(ROOT / 'assets-v001' / (entry_id + '.svg')),
+                        'planned_file': str(ROOT / 'assets-v002' / (entry_id + '.fbx')),
+                        'planned_preview': str(ROOT / 'assets-v002' / (entry_id + '.svg')),
+                        'file': str(ROOT / 'assets-v002' / (entry_id + '.fbx')) if (ROOT / 'assets-v002' / (entry_id + '.fbx')).exists() else None,
+                        'preview': str(ROOT / 'assets-v002' / (entry_id + '.svg')) if (ROOT / 'assets-v002' / (entry_id + '.svg')).exists() else None,
+                        'artifact_status': 'produced_unverified' if (ROOT / 'assets-v002' / (entry_id + '.fbx')).exists() else 'not_produced',
                         'preview_kind': 'untextured_front_wireframe_not_appearance_approval',
                         'delivery_passed': False})
     return {'source': {k: v for k, v in source.items() if k != 'objects'}, 'counts': dict(Counter(role(o, project) for o in objects)),
             'labels': links, 'entries': entries,
-            'excluded_nodes': [{'name': o['name'], 'class': o['class'], 'role': role(o, project), 'triangles': o.get('triangles')} for o in objects if role(o, project) not in ('label', 'plant')]}
+            'excluded_nodes': [{'name': o['name'], 'class': o['class'], 'role': role(o, project),
+                                'triangles': o.get('triangles'), 'position': o['position'], 'bbox': o.get('bbox'),
+                                'material_name': (o.get('material') or {}).get('name')} for o in objects if role(o, project) not in ('label', 'plant')]}
 
 
 def budgets(scenes):

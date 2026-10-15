@@ -1,0 +1,86 @@
+{
+  "source_integrity": [
+    {
+      "source": "C:\\Users\\artsafro\\Desktop\\!Models & Textures\\AGR_Model's\\FLORA_Union_v1\\FLORA_Union_v1.max",
+      "copy": "C:\\x\\t_366e8d9d\\FLORA_Union_v1.max",
+      "bytes": 19519734,
+      "sha256": "30d7fc32fc534e7165ac1f47385cdcf2a91adb967228a087e3a9404a6e397416",
+      "sha256_after": "30d7fc32fc534e7165ac1f47385cdcf2a91adb967228a087e3a9404a6e397416",
+      "copy_sha256": "30d7fc32fc534e7165ac1f47385cdcf2a91adb967228a087e3a9404a6e397416",
+      "sha256_after_audit": "30d7fc32fc534e7165ac1f47385cdcf2a91adb967228a087e3a9404a6e397416",
+      "copy_sha256_after_audit": "30d7fc32fc534e7165ac1f47385cdcf2a91adb967228a087e3a9404a6e397416"
+    },
+    {
+      "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!\u0410101\\FLORIO_2BT_2022\\FLORIO_2BT_2022.max",
+      "copy": "C:\\x\\t_366e8d9d\\FLORIO_2BT_2022.max",
+      "bytes": 6041600,
+      "sha256": "787dce8aeb7aa826c4f35c583a869e4cd89f34e035f92c4d83bd0fd696faaca8",
+      "sha256_after": "787dce8aeb7aa826c4f35c583a869e4cd89f34e035f92c4d83bd0fd696faaca8",
+      "copy_sha256": "787dce8aeb7aa826c4f35c583a869e4cd89f34e035f92c4d83bd0fd696faaca8",
+      "sha256_after_audit": "787dce8aeb7aa826c4f35c583a869e4cd89f34e035f92c4d83bd0fd696faaca8",
+      "copy_sha256_after_audit": "787dce8aeb7aa826c4f35c583a869e4cd89f34e035f92c4d83bd0fd696faaca8"
+    }
+  ],
+  "max_partial_count": 9,
+  "max_save_intervals_seconds": [
+    42.54300022125244,
+    40.01099991798401,
+    46.687000036239624,
+    47.5789999961853,
+    45.90499997138977,
+    47.3989999294281,
+    48.394999980926514,
+    50.90700006484985
+  ],
+  "median_max_save_interval_seconds": 47.04299998283386,
+  "partial_max_files": [
+    {
+      "name": "library-001.max",
+      "sha256": "f6ea39428ac1cc49aca7b6fa71ffa4081e5cac2707d7abfef9c79d5acaf7829d"
+    },
+    {
+      "name": "library-002.max",
+      "sha256": "5e378514640570d920b39344d7adf3b1518df10bd97cadb5a426549487fb0e84"
+    },
+    {
+      "name": "library-003.max",
+      "sha256": "ae077f3f0e570d53fb0f7980abb7fc43297a00a1bec467bc11f0ec5e88c6a0a4"
+    },
+    {
+      "name": "library-004.max",
+      "sha256": "543a55f07330e5736337036cb1ddc6ab250d3a97209b0a6def0e6dc18216f29b"
+    },
+    {
+      "name": "library-005.max",
+      "sha256": "08cf59e9b8a0ea84ce887b98efb3817f059139c71c27c72ad14c5a704b226c29"
+    },
+    {
+      "name": "library-006.max",
+      "sha256": "49842cc79cc93e2a21a1d1b96b35dc366ca9b4dd8d30605b64631b7fce7ac1ad"
+    },
+    {
+      "name": "library-007.max",
+      "sha256": "c636c3757c1898bf10f0e963934b93be3f575383aaf310d3904968e3a9a2d850"
+    },
+    {
+      "name": "library-008.max",
+      "sha256": "b319e1ac8b9a7e3300a41a0fbd546ccedf274168538036b7cef5bc973c196f92"
+    },
+    {
+      "name": "library-009.max",
+      "sha256": "61a9a1fbc474fe404dcf9ff8448e3399b1daa80ee17b72b305b62469d050aeec"
+    }
+  ],
+  "fbx_count": 1,
+  "delivery_passed": false,
+  "status": "incomplete_native_export",
+  "partial_fbx_files": [
+    {
+      "name": "library-001.fbx",
+      "bytes": 86208,
+      "sha256": "fd442535fccbae1be77f83cf9199856ebcec0505f56c9c71a1f2845d5e322dfd",
+      "binary_version": 7400,
+      "readback_verified": false
+    }
+  ]
+}

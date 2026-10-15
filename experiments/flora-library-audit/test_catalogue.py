@@ -74,8 +74,16 @@ def test_real_catalogue_accounts_for_every_node_and_label():
                 assert label['status'] == 'ambiguous'
         for entry in scene['entries']:
             assert entry['delivery_passed'] is False
-            assert Path(entry['file']).name == entry['id'] + '.max'
-            assert Path(entry['preview']).name == entry['id'] + '.svg'
+            assert Path(entry['planned_file']).name == entry['id'] + '.fbx'
+            assert Path(entry['planned_preview']).name == entry['id'] + '.svg'
+            assert entry['artifact_status'] in ('not_produced', 'produced_unverified')
+            if entry['file'] is None:
+                assert entry['artifact_status'] == 'not_produced'
+            else:
+                assert entry['file'] == entry['planned_file']
+    boxes = [o for o in data['scenes'][0]['excluded_nodes'] if o['role'] == 'display_envelope_unverified']
+    assert len(boxes) == 80
+    assert all(o['triangles'] == 20 and o['material_name'] == 'Multi_Ground' and o['bbox'][1][2] <= o['position'][2] + .001 for o in boxes)
     for budget in data['proposed_budgets']:
         if budget['type'] == 'hedge':
             assert budget['n'] == 0 and budget['proposed_review_above'] is None
@@ -98,3 +106,26 @@ def test_envelopes_references_and_textplus_are_not_plants():
                                 ('TextPlus', 'Tree', 'label'),
                                 ('Editable_Poly', 'MAF_OKS_002_061', 'planter')]:
         assert mod.role({'class': cls, 'name': name, 'triangles': 20}, False) == expected
+
+
+def test_fbx_corner_matcher_rejects_semantic_and_geometry_loss():
+    import copy
+    spec = importlib.util.spec_from_file_location('flora_mesh_compare', Path(__file__).with_name('mesh_compare.py'))
+    matcher = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(matcher)
+    tri = {'corners': [[0., 0., 0., 0., 0.], [1., 0., 0., 1., 0.], [0., 1., 0., 0., 1.]], 'material': 'leaf'}
+    assert matcher.compare([tri], [tri])['equal']
+    rotated = dict(tri, corners=tri['corners'][1:] + tri['corners'][:1])
+    assert matcher.compare([tri], [rotated])['equal']
+    assert not matcher.compare([tri], [])['equal']
+    assert not matcher.compare([tri], [dict(tri, material='bark')])['equal']
+    assert not matcher.compare([tri], [dict(tri, corners=tri['corners'][::-1])])['equal']
+    assert not matcher.compare([tri], [tri, tri])['equal']
+    for i in range(1, 42):
+        shifted = copy.deepcopy(tri)
+        for corner in shifted['corners']:
+            corner[0] += i * .001
+        assert not matcher.compare([tri], [shifted])['equal']
+    moved_uv = copy.deepcopy(tri)
+    moved_uv['corners'][0][3] = .1
+    assert not matcher.compare([tri], [moved_uv])['equal']
