@@ -353,3 +353,44 @@ def test_compare_requires_every_expected_job_once(tmp_path):
     broken = lib.compare(tmp_path, models=("B01",))
     assert broken["ok"] is False
     assert {"runs_json": "not a list"} in broken["completion_fail"]
+
+
+def test_compare_rejects_empty_work_directory(tmp_path, monkeypatch):
+    lib = load_lib()
+
+    calls = []
+
+    def _fail_fast(name):
+        def _spy(*args, **kwargs):
+            calls.append((name, args, kwargs))
+            raise AssertionError(f"unexpected invocation of {name}")
+        return _spy
+
+    monkeypatch.setattr(lib, "run_matrix", _fail_fast("lib.run_matrix"))
+    monkeypatch.setattr(lib, "lane_cmd", _fail_fast("lib.lane_cmd"))
+    monkeypatch.setattr(subprocess, "run", _fail_fast("subprocess.run"))
+    monkeypatch.setattr(subprocess, "Popen", _fail_fast("subprocess.Popen"))
+
+    dir_names = [
+        f"plain_empty_{idx}" for idx in range(1, 3)
+    ] + [
+        f"work dir with spaces {idx}" for idx in range(1, 3)
+    ] + [
+        f"пустая_директория_юникод_{idx}" for idx in range(1, 3)
+    ]
+
+    for name in dir_names:
+        work = tmp_path / name
+        work.mkdir()
+        assert work.is_dir()
+        assert list(work.iterdir()) == []
+
+        for _ in range(2):
+            with pytest.raises(FileNotFoundError) as exc_info:
+                lib.compare(work)
+            assert str(exc_info.value) == f"no rep<N> directories in {work}"
+            assert not (work / "compare.json").exists()
+            assert list(work.iterdir()) == []
+            assert calls == []
+
+    assert calls == []
