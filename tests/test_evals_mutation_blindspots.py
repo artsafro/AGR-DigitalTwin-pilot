@@ -53,3 +53,22 @@ def test_failed_checker_then_successful_checker_passes(tmp_path):
     records = [call(*ENGINE), result('engine'), call(*CHECKER), result('checker', True),
                call('Task', CHECKER[1], 'retry'), result('retry'), text('Done.')]
     assert grade(tmp_path, engine_checked, records)['passed'] is True
+
+
+@pytest.mark.parametrize('outcome,expected', [('error', False), ('missing', None), ('success', True)])
+def test_inspector_completion(tmp_path, outcome, expected):
+    records = [call('Task', {'subagent_type': 'source-inspector', 'prompt': 'Inventory incoming/source.max'}, 'inspect')]
+    if outcome != 'missing':
+        records += [result('inspect', outcome == 'error')]
+    records += [call('Read', {'file_path': 'incoming/source.max'}, 'read'), result('read')]
+    assert grade(tmp_path, source_inspected, records)['passed'] is expected
+
+
+@pytest.mark.parametrize('error,sidechain', [(False, False), (True, False), (False, True), (True, True)])
+def test_generated_inspector_outcomes(tmp_path, error, sidechain):
+    inspection = call('Task', {'subagent_type': 'source-inspector', 'prompt': 'Inventory incoming/source.max'}, 'inspect')
+    completion = result('inspect', error)
+    inspection['isSidechain'] = completion['isSidechain'] = sidechain
+    records = [inspection, completion, call('Read', {'file_path': 'incoming/source.max'}, 'read'), result('read')]
+    assert grade(tmp_path, source_inspected, records)['passed'] is (not error and not sidechain)
+

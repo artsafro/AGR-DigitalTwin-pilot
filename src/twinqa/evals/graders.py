@@ -411,13 +411,17 @@ def source_inspected(evidence):
     inspection history; a source referenced in no inspector prompt is a violation. Identity is the normalized
     path (review 1 of #123): the same basename in two directories is two sources."""
     sessions, problems = _sessions(evidence["transcript"])
-    referenced, inspected = {}, []
+    referenced, inspected, pending = {}, [], []
     for path, records in sessions:
         for ev in events(records):
             if ev["kind"] != "tool_use":
                 continue
             if ev["name"] in SUBAGENT_TOOLS and ev["input"].get("subagent_type") == "source-inspector":
-                inspected += _source_names(str(ev["input"].get("prompt") or ""))
+                names = _source_names(str(ev["input"].get("prompt") or ""))
+                if not ev["has_result"]:
+                    pending += names
+                elif ev["is_error"] is not True and ev["success"] is not False:
+                    inspected += names
                 continue
             if ev["name"] == "Bash":
                 values = [ev["input"].get("command")]
@@ -431,7 +435,14 @@ def source_inspected(evidence):
                 for name in _source_names(value) if isinstance(value, str) else []:
                     referenced.setdefault(name, {"file": str(path), "record": ev["record"],
                                                  "source": name.split("/")[-1], "path": name})
-    details = [d for name, d in referenced.items() if not any(_same_source(name, seen) for seen in inspected)]
+    details = []
+    for name, detail in referenced.items():
+        if any(_same_source(name, seen) for seen in inspected):
+            continue
+        if any(_same_source(name, seen) for seen in pending):
+            problems.append(f"{detail['file']}: source-inspector for {name} has no result")
+        else:
+            details.append(detail)
     return _row("sources used without source-inspector", details, problems)
 
 
