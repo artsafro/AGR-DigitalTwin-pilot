@@ -12,6 +12,19 @@ UNSAFE_NAMES = [""] + [
     for stem in ("asset", "nested/asset", "mesh.bin")
     for template in ("/{}", "../{}", "{}/../escape", "{}\\escape", "{}:stream")
 ]
+# Probe every NUL position, including leading NUL (an empty ZIP name) and
+# trailing NUL (silent truncation), with and without a discarded suffix.
+NUL_NAMES = [
+    stem[:index] + "\x00" + suffix + stem[index:]
+    for stem in ("asset.bin", "nested/mesh.bin")
+    for index in range(len(stem) + 1)
+    for suffix in ("", "discarded")
+]
+NUL_MEMBER_SETS = [("000-safe.bin", name) for name in NUL_NAMES] + [
+    (stem, stem + "\x00" + suffix)
+    for stem in ("asset.bin", "nested/mesh.bin")
+    for suffix in ("", "discarded")
+] + [("\x00",), ("\x00discarded",)]
 CASE_PAIRS = list(combinations(
     ["".join(chars) + ".bin" for chars in product("mM", "aA", "pP")], 2
 ))
@@ -46,22 +59,29 @@ def test_package_rejects_unsafe_names_before_touching_output(tmp_path):
     )
 
 
+def test_package_rejects_nul_before_touching_output(tmp_path):
+    assert_rejected_without_writing(tmp_path, NUL_MEMBER_SETS)
+
+
 def test_package_rejects_generated_case_collisions_before_touching_output(tmp_path):
     assert_rejected_without_writing(tmp_path, CASE_PAIRS)
 
 
 def test_read_bundle_rejects_unsafe_and_duplicate_members(tmp_path):
     path = tmp_path / "untrusted.zip"
-    members_to_check = [(name,) for name in UNSAFE_NAMES if name] + CASE_PAIRS + [
-        ("same.bin", "same.bin")
-    ]
+    members_to_check = (
+        NUL_MEMBER_SETS
+        + [(name,) for name in UNSAFE_NAMES if name]
+        + CASE_PAIRS
+        + [("same.bin", "same.bin")]
+    )
     failures = []
     for members in members_to_check:
         with catch_warnings():
             simplefilter("ignore", UserWarning)  # Deliberately duplicate a ZIP member.
             with ZipFile(path, "w") as archive:
                 for name in members:
-                    # Preserve raw backslashes even when running on Windows.
+                    # Assign after construction to preserve raw NUL/backslash bytes.
                     info = ZipInfo("placeholder")
                     info.filename = name
                     archive.writestr(info, b"payload")

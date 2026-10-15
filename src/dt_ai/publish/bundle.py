@@ -6,7 +6,7 @@ def _validate_member_names(names):
     seen = set()
     for name in names:
         p = PurePosixPath(name)
-        if not name or p.is_absolute() or ".." in p.parts or "\\" in name or ":" in name:
+        if not name or "\x00" in name or p.is_absolute() or ".." in p.parts or "\\" in name or ":" in name:
             raise ValueError("Unsafe ZIP path")
         key = name.casefold()
         if key in seen:
