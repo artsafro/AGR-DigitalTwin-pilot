@@ -168,7 +168,7 @@ def test_the_branch_glob_skips_a_branch_whose_name_extends_the_slug(tmp_path):
     write(folder / f"harness-task-x-pr7-{S1}.jsonl", CLEAN.read_text(encoding="utf-8"))
     write(folder / f"harness-task-x-pr7-other-pr8-{S2}.jsonl", DENIED.read_text(encoding="utf-8"))  # task-x-pr7-other
     write(folder / "harness-task-x-pr7-notes.jsonl", DENIED.read_text(encoding="utf-8"))            # not a session id
-    code, report = dt(tmp_path, "--suite", "regression")
+    code, report = dt(tmp_path, "--task", "no-hook-denial")   # one task: the glob is the same rule for every task
     assert code == 0
     assert [Path(p).name for p in report["checks"][0]["evidence"]] == [f"harness-task-x-pr7-{S1}.jsonl"]
 

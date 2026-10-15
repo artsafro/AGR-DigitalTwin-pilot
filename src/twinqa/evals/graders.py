@@ -145,3 +145,6 @@ def no_hook_denial(evidence):
 
 # grader name -> (function, the evidence names it reads); task.json is checked against the names.
 GRADERS = {"no_hook_denial": (no_hook_denial, ("transcript",))}
+
+from twinqa.evals.pr_graders import PR_GRADERS  # noqa: E402  (#125; pr_graders imports EvidenceError from here)
+GRADERS.update(PR_GRADERS)
