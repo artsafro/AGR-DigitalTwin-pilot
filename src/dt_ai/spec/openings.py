@@ -86,18 +86,13 @@ def _components(adj):
     return comp
 
 
-def _path_within(adj, p, q, limit):
-    """The shortest path of the section itself from p to q (a list of points) when it is no longer
-    than limit, else None."""
+def _paths_from(adj, p, limit):
+    """Shortest paths of the section itself from p, no longer than limit: (distances, previous point).
+    One search per dangling end serves every candidate partner (#24)."""
     import heapq
     best, came, heap = {p: 0.0}, {}, [(0.0, p)]
     while heap:
         d, x = heapq.heappop(heap)
-        if x == q:
-            path = [q]
-            while path[-1] != p:
-                path.append(came[path[-1]])
-            return path[::-1]
         if d > best.get(x, np.inf):
             continue
         for y in adj[x]:
@@ -105,7 +100,19 @@ def _path_within(adj, p, q, limit):
             if nd <= limit and nd < best.get(y, np.inf):
                 best[y], came[y] = nd, x
                 heapq.heappush(heap, (nd, y))
-    return None
+    return best, came
+
+
+def _path_to(tree, p, q, limit=np.inf):
+    """The path from p to q (a list of points) in the search tree of p when it is no longer than limit,
+    else None."""
+    best, came = tree
+    if best.get(q, np.inf) > limit:
+        return None
+    path = [q]
+    while path[-1] != p:
+        path.append(came[path[-1]])
+    return path[::-1]
 
 
 def _runs_to_other_end(path, gap):
@@ -123,13 +130,13 @@ def _runs_to_other_end(path, gap):
     return False
 
 
-def _is_pier(adj, p, q, gap_len):
+def _is_pier(tree, p, q, gap_len):
     """True when the section itself joins p to q as a pier between two openings: a path no longer
     than the gap plus two reveals whose chain runs along the gap line - from each end, after its
     reveal, the first stretch along the gap heads to the other end. The way round a small building
     may be short, but from at least one end it first runs away from the other (the wall beside the
     hole) or reaches the gap direction only past a reveal (#21)."""
-    path = _path_within(adj, p, q, gap_len + 2 * REVEAL_PATH_MAX_M)
+    path = _path_to(tree, p, q, gap_len + 2 * REVEAL_PATH_MAX_M)
     if path is None:
         return False
     gap = _unit(np.array(q) - np.array(p))
@@ -169,7 +176,13 @@ def close_section(segments):
     if dangles:
         comp = _components(adj)
         pts = np.array(dangles)
-        best, rejected = {}, {}
+        best, rejected, trees = {}, {}, {}
+
+        def tree(i):                                    # one bounded search per end, reused (#24)
+            if i not in trees:
+                trees[i] = _paths_from(adj, dangles[i], OPENING_MAX_M + 2 * REVEAL_PATH_MAX_M)
+            return trees[i]
+
         for i, p in enumerate(dangles):
             d = np.linalg.norm(pts - pts[i], axis=1)
             for j in np.argsort(d):
@@ -177,7 +190,7 @@ def close_section(segments):
                     continue
                 # a pier joins the two ends along the gap line (its width plus two reveals at most);
                 # the way round the building leaves the gap line and does not make a pier (#21)
-                if comp[dangles[j]] != comp[p] or not _is_pier(adj, p, dangles[j], d[j]):
+                if comp[dangles[j]] != comp[p] or not _is_pier(tree(i), p, dangles[j], d[j]):
                     best[i] = int(j)
                     break
                 rejected.setdefault(i, int(j))
@@ -203,7 +216,7 @@ def close_section(segments):
                 continue
             seen.add(frozenset((i, j)))
             p, q = np.array(dangles[i]), np.array(dangles[j])
-            path = np.array(_path_within(adj, dangles[i], dangles[j], np.inf))
+            path = np.array(_path_to(tree(i), dangles[i], dangles[j]))   # a pier: within the search
             normal = _unit(q - p)[::-1] * np.array([-1.0, 1.0])
             if np.abs((path - p) @ normal).max() > ON_WALL_M:
                 unresolved.append((p, q))

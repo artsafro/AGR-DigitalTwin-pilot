@@ -441,6 +441,48 @@ def test_pier_check_stays_cheap_on_a_comb():
     assert time.perf_counter() - t < 5.0
 
 
+@pytest.mark.parametrize("n, open_ends", [(50, 41), (100, 68)])
+def test_pier_search_runs_once_per_dangling_end_on_a_dense_comb(n, open_ends, monkeypatch):
+    # R7 (#24): n teeth within 8 m are n dangling ends, every pair a candidate; one search per pair
+    # (n * (n - 1): 2 450 / 9 900 at n = 50 / 100) cost 54 s per section at n = 200. One bounded search
+    # per end, its distances reused for every candidate and for the rejected-pier check.
+    import heapq
+    starts, pop = [], heapq.heappop
+
+    def counting_pop(heap):
+        item = pop(heap)
+        if item[0] == 0.0:                               # the start of a shortest-path search
+            starts.append(item[1])
+        return item
+
+    monkeypatch.setattr(heapq, "heappop", counting_pop)
+    xs = np.linspace(0.0, 7.5, n)
+    segs = [[(0.0, 0.0), (7.5, 0.0)]] + [[(x, 0.0), (x, 0.3)] for x in xs]
+    _, mouths, unresolved = op.close_section(segs)
+    assert len(starts) <= n
+    assert mouths == [] and len(unresolved) == open_ends  # the answer of one search per pair
+
+
+def test_pier_search_reuse_keeps_the_pairing():
+    # R7 (#24): reused distances give the same answer as one search per pair: the pier between two
+    # windows is not bridged, both windows are; the free wall ends stay unresolved
+    segs = [[(-5, 0), (2.0, 0)], [(2.0, 0), (2.0, 0.3)], [(3.5, 0.3), (3.5, 0)], [(3.5, 0), (3.8, 0)],
+            [(3.8, 0), (3.8, 0.3)], [(5.3, 0.3), (5.3, 0)], [(5.3, 0), (10, 0)]]
+    _, mouths, unresolved = op.close_section(segs)
+    assert [(round(float(a[0]), 3), round(float(b[0]), 3)) for a, b, _ in mouths] == [(2.0, 3.5), (3.8, 5.3)]
+    assert sorted(round(float(a[0]), 3) for a, _ in unresolved) == [-5.0, 10.0]
+
+
+def test_pier_search_stays_fast_at_two_hundred_ends():
+    # R7 (#24): 200 dangling ends took 54 s per section (r3_v_cost.json)
+    import time
+    xs = np.linspace(0.0, 7.5, 200)
+    segs = [[(0.0, 0.0), (7.5, 0.0)]] + [[(x, 0.0), (x, 0.3)] for x in xs]
+    t = time.perf_counter()
+    op.close_section(segs)
+    assert time.perf_counter() - t < 10.0
+
+
 # --- regressions from Codex review 3 of PR #20 -------------------------------------------------
 
 def test_unused_vertices_do_not_hide_a_flat_object_in_the_wall():
