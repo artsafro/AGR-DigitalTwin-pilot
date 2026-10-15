@@ -18,6 +18,17 @@ confidence. Source: `docs/HARNESS_PLAN.md` §8. Post the answer as a PR comment:
    measured is named with its reason (no transcript, a torn line, an unclassified question), never counted as a
    pass. The tasks and what fails each: `evals/README.md`, "Regression tasks".
 
+## Author counterexamples
+
+Before requesting review of a change to a stated guarantee ("never dropped", "counted once",
+"within tolerance"), add a generated or brute-force probe beyond the issue's examples. Label invented
+inputs synthetic; record `invariant -> probe -> N/N` in the PR, with the command, seed or exhaustive
+bounds and evidence path so the reviewer can reproduce it. If a probe is not applicable, name the
+reason instead of inventing a count. After review fixes, test the combination of the new case with
+previous fixes, not just each finding in isolation. A required acceptance item belongs in the result
+or an explicit blocked/open item, never in "Out of scope" as a way to declare completion.
+The reviewer independently attacks the guarantee; the author's probe is input, not a clean verdict.
+
 ## Procedure (user 2026-10-13 [D073])
 
 1. **Rounds by risk.**
@@ -37,6 +48,23 @@ confidence. Source: `docs/HARNESS_PLAN.md` §8. Post the answer as a PR comment:
    merge.
 4. **Timing.** Round 1 starts right after the first code commit; docs and tests are written meanwhile. The
    last round reviews the final version.
+
+## Verification boundary
+
+Every review comment includes a machine-greppable line:
+`Verification boundary: reviewer ran <command, revision, environment, counts>; author-only <checks not re-run>; not measured <checks and reasons>; CI <status/reason>.`
+List the exact revision and any uncommitted changes for each run; if they changed after testing, name
+that limitation and rerun affected checks. Keep author full-suite counts separate from reviewer runs.
+Missing telemetry is `not measured`, never zero or pass. State the known CI limitation once; a billing
+lock is not a test failure or a successful CI run. This line supplements the existing risk-based review
+rounds and required reruns; it does not waive them.
+
+PR authors use `.github/pull_request_template.md` for the same evidence boundary. Keep verification
+commands, RED/GREEN results and environment outside the generated `## Agent trace` block: its fixed
+fields still come from `tools/hooks/agent_trace.py`. Preserve `not measured` output when the provider's
+transcript is unsupported or absent; do not fabricate a Claude transcript for another provider.
+The exact-head/redacted receipt engine proposed in `docs/research/agent-harness-practices.md` is not
+implemented by this template.
 
 ## Running a Codex review that can execute tests
 
