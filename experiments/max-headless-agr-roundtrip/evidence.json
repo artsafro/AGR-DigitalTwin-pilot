@@ -1,0 +1,1127 @@
+{
+  "native": {
+    "inventory": {
+      "version": "#(28000, 68, 0, 28, 3, 0, 30732, 2026, \".3\")",
+      "initial_objects": 0,
+      "document": "",
+      "initial_units": "meters"
+    },
+    "parameters": {
+      "Animation": {
+        "set": "True",
+        "readback": "False"
+      },
+      "EmbedTextures": {
+        "set": "True",
+        "readback": "False"
+      },
+      "ASCII": {
+        "set": "True",
+        "readback": "False"
+      },
+      "FileVersion": {
+        "set": "True",
+        "readback": "FBX201400"
+      },
+      "UpAxis": {
+        "set": "True",
+        "readback": "z"
+      },
+      "Cameras": {
+        "set": "True",
+        "readback": "False"
+      },
+      "Lights": {
+        "set": "True",
+        "readback": "False"
+      },
+      "Triangulate": {
+        "set": "True",
+        "readback": "True"
+      },
+      "ConvertUnit": {
+        "set": "True",
+        "readback": "m"
+      }
+    },
+    "rows": [
+      {
+        "bench": "bench-b01-box",
+        "operation": "etalon_import_dump",
+        "seconds": 0.3330848999976297
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "operation": "etalon_import_dump",
+        "seconds": 0.14984239999466809
+      },
+      {
+        "bench": "bench-b01-box",
+        "rep": 0,
+        "operation": "create_mesh",
+        "seconds": 0.011333900001773145
+      },
+      {
+        "bench": "bench-b01-box",
+        "rep": 0,
+        "format": "fbx",
+        "operation": "export",
+        "seconds": 0.054134999998495914
+      },
+      {
+        "bench": "bench-b01-box",
+        "rep": 0,
+        "format": "fbx",
+        "operation": "import",
+        "seconds": 0.09897810000256868
+      },
+      {
+        "bench": "bench-b01-box",
+        "rep": 0,
+        "format": "obj",
+        "operation": "export",
+        "seconds": 0.032000800005334895
+      },
+      {
+        "bench": "bench-b01-box",
+        "rep": 0,
+        "format": "obj",
+        "operation": "import",
+        "seconds": 0.7083290000009583
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "rep": 0,
+        "operation": "create_mesh",
+        "seconds": 0.008924500005377922
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "rep": 0,
+        "format": "fbx",
+        "operation": "export",
+        "seconds": 0.03535160000319593
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "rep": 0,
+        "format": "fbx",
+        "operation": "import",
+        "seconds": 0.0882701000009547
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "rep": 0,
+        "format": "obj",
+        "operation": "export",
+        "seconds": 0.02797100000316277
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "rep": 0,
+        "format": "obj",
+        "operation": "import",
+        "seconds": 0.7948541000005207
+      },
+      {
+        "bench": "bench-b01-box",
+        "rep": 1,
+        "operation": "create_mesh",
+        "seconds": 0.005415200001152698
+      },
+      {
+        "bench": "bench-b01-box",
+        "rep": 1,
+        "format": "fbx",
+        "operation": "export",
+        "seconds": 0.028263799998967443
+      },
+      {
+        "bench": "bench-b01-box",
+        "rep": 1,
+        "format": "fbx",
+        "operation": "import",
+        "seconds": 0.16636689999722876
+      },
+      {
+        "bench": "bench-b01-box",
+        "rep": 1,
+        "format": "obj",
+        "operation": "export",
+        "seconds": 0.02944250000291504
+      },
+      {
+        "bench": "bench-b01-box",
+        "rep": 1,
+        "format": "obj",
+        "operation": "import",
+        "seconds": 0.8266033999971114
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "rep": 1,
+        "operation": "create_mesh",
+        "seconds": 0.012715799995930865
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "rep": 1,
+        "format": "fbx",
+        "operation": "export",
+        "seconds": 0.029452900002070237
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "rep": 1,
+        "format": "fbx",
+        "operation": "import",
+        "seconds": 0.08232679999491666
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "rep": 1,
+        "format": "obj",
+        "operation": "export",
+        "seconds": 0.02241910000157077
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "rep": 1,
+        "format": "obj",
+        "operation": "import",
+        "seconds": 0.6707162999955472
+      },
+      {
+        "bench": "bench-b01-box",
+        "rep": 2,
+        "operation": "create_mesh",
+        "seconds": 0.00712099999509519
+      },
+      {
+        "bench": "bench-b01-box",
+        "rep": 2,
+        "format": "fbx",
+        "operation": "export",
+        "seconds": 0.027208100000279956
+      },
+      {
+        "bench": "bench-b01-box",
+        "rep": 2,
+        "format": "fbx",
+        "operation": "import",
+        "seconds": 0.08482899999944493
+      },
+      {
+        "bench": "bench-b01-box",
+        "rep": 2,
+        "format": "obj",
+        "operation": "export",
+        "seconds": 0.019779900001594797
+      },
+      {
+        "bench": "bench-b01-box",
+        "rep": 2,
+        "format": "obj",
+        "operation": "import",
+        "seconds": 0.8703034000063781
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "rep": 2,
+        "operation": "create_mesh",
+        "seconds": 0.00997089999873424
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "rep": 2,
+        "format": "fbx",
+        "operation": "export",
+        "seconds": 0.04765200000110781
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "rep": 2,
+        "format": "fbx",
+        "operation": "import",
+        "seconds": 0.10997650000354042
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "rep": 2,
+        "format": "obj",
+        "operation": "export",
+        "seconds": 0.025156099996820558
+      },
+      {
+        "bench": "bench-b02-corner-niche",
+        "rep": 2,
+        "format": "obj",
+        "operation": "import",
+        "seconds": 0.9012969999967027
+      }
+    ],
+    "delivery_passed": false
+  },
+  "sessions": {
+    "batched-0-session": {
+      "status": "ok",
+      "exit_code": 4294967166,
+      "seconds": 72.7,
+      "warnings": [
+        "15.10.2026 11:36:37;  MAXScript Auto-load Script Error Exception: -- Runtime error: .NET runtime exception: Common Language Runtime detected an invalid program.; Error occurred in anonymous codeblock; filename: C:\\Users\\artsafro\\AppData\\Local\\Autodesk\\3dsMax\\2026 - 64bit\\ENU\\scripts\\startup\\polyunwr"
+      ],
+      "markers": [
+        "MAX_COMPONENT_ROUNDTRIP True",
+        "MAX_COMPONENT_ROUNDTRIP True",
+        "MAX_COMPONENT_ROUNDTRIP True",
+        "AGR_BATCHED_EXISTING [{\"rep\": 0, \"seconds\": 1.314136499997403, \"output\": \"C:\\\\Users\\\\artsafro\\\\.hermes\\\\profiles\\\\dt-experimenter-codex\\\\cache\\\\scratch\\\\agr-exp-t_69ee7ca0\\\\agr-3dsmax-t_69ee7ca0\\\\batched-0-r0\"}, {\"rep\": 1, \"seconds\": 0.8227750000005472, \"output\": \"C:\\\\Users\\\\artsafro\\\\.hermes\\\\profiles\\\\dt-experimenter-codex\\\\cache\\\\scratch\\\\agr-exp-t_69ee7ca0\\\\agr-3dsmax-t_69ee7ca0\\\\batched-0-r1\"}, {\"rep\": 2, \"seconds\": 0.5053954000031808, \"output\": \"C:\\\\Users\\\\artsafro\\\\.hermes\\\\profiles\\\\dt-experimenter-codex\\\\cache\\\\scratch\\\\agr-exp-t_69ee7ca0\\\\agr-3dsmax-t_69ee7ca0\\\\batched-0-r2\"}] objects 0"
+      ]
+    },
+    "batched-1-session": {
+      "status": "ok",
+      "exit_code": 4294967166,
+      "seconds": 94.1,
+      "warnings": [
+        "15.10.2026 11:38:05;  MAXScript Auto-load Script Error Exception: -- Runtime error: .NET runtime exception: Common Language Runtime detected an invalid program.; Error occurred in anonymous codeblock; filename: C:\\Users\\artsafro\\AppData\\Local\\Autodesk\\3dsMax\\2026 - 64bit\\ENU\\scripts\\startup\\polyunwr"
+      ],
+      "markers": [
+        "MAX_COMPONENT_ROUNDTRIP True",
+        "MAX_COMPONENT_ROUNDTRIP True",
+        "MAX_COMPONENT_ROUNDTRIP True",
+        "AGR_BATCHED_EXISTING [{\"rep\": 0, \"seconds\": 2.626977899999474, \"output\": \"C:\\\\Users\\\\artsafro\\\\.hermes\\\\profiles\\\\dt-experimenter-codex\\\\cache\\\\scratch\\\\agr-exp-t_69ee7ca0\\\\agr-3dsmax-t_69ee7ca0\\\\batched-1-r0\"}, {\"rep\": 1, \"seconds\": 1.6046968000009656, \"output\": \"C:\\\\Users\\\\artsafro\\\\.hermes\\\\profiles\\\\dt-experimenter-codex\\\\cache\\\\scratch\\\\agr-exp-t_69ee7ca0\\\\agr-3dsmax-t_69ee7ca0\\\\batched-1-r1\"}, {\"rep\": 2, \"seconds\": 2.1789890000000014, \"output\": \"C:\\\\Users\\\\artsafro\\\\.hermes\\\\profiles\\\\dt-experimenter-codex\\\\cache\\\\scratch\\\\agr-exp-t_69ee7ca0\\\\agr-3dsmax-t_69ee7ca0\\\\batched-1-r2\"}] objects 0"
+      ]
+    },
+    "batched-2-session": {
+      "status": "ok",
+      "exit_code": 4294967166,
+      "seconds": 56.6,
+      "warnings": [
+        "15.10.2026 11:39:21;  MAXScript Auto-load Script Error Exception: -- Runtime error: .NET runtime exception: Common Language Runtime detected an invalid program.; Error occurred in anonymous codeblock; filename: C:\\Users\\artsafro\\AppData\\Local\\Autodesk\\3dsMax\\2026 - 64bit\\ENU\\scripts\\startup\\polyunwr"
+      ],
+      "markers": [
+        "MAX_COMPONENT_ROUNDTRIP True",
+        "MAX_COMPONENT_ROUNDTRIP True",
+        "MAX_COMPONENT_ROUNDTRIP True",
+        "AGR_BATCHED_EXISTING [{\"rep\": 0, \"seconds\": 0.9261449999976321, \"output\": \"C:\\\\Users\\\\artsafro\\\\.hermes\\\\profiles\\\\dt-experimenter-codex\\\\cache\\\\scratch\\\\agr-exp-t_69ee7ca0\\\\agr-3dsmax-t_69ee7ca0\\\\batched-2-r0\"}, {\"rep\": 1, \"seconds\": 0.4693513000020175, \"output\": \"C:\\\\Users\\\\artsafro\\\\.hermes\\\\profiles\\\\dt-experimenter-codex\\\\cache\\\\scratch\\\\agr-exp-t_69ee7ca0\\\\agr-3dsmax-t_69ee7ca0\\\\batched-2-r1\"}, {\"rep\": 2, \"seconds\": 0.5050265999961994, \"output\": \"C:\\\\Users\\\\artsafro\\\\.hermes\\\\profiles\\\\dt-experimenter-codex\\\\cache\\\\scratch\\\\agr-exp-t_69ee7ca0\\\\agr-3dsmax-t_69ee7ca0\\\\batched-2-r2\"}] objects 0"
+      ]
+    },
+    "existing-configured-session": {
+      "status": "ok",
+      "exit_code": 4294967166,
+      "seconds": 39.8,
+      "warnings": [
+        "15.10.2026 11:26:23;  MAXScript Auto-load Script Error Exception: -- Runtime error: .NET runtime exception: Common Language Runtime detected an invalid program.; Error occurred in anonymous codeblock; filename: C:\\Users\\artsafro\\AppData\\Local\\Autodesk\\3dsMax\\2026 - 64bit\\ENU\\scripts\\startup\\polyunwr"
+      ],
+      "markers": [
+        "MAX_COMPONENT_ROUNDTRIP True",
+        "AGR_EXISTING [{\"rep\": 0, \"seconds\": 0.5709066999988863, \"result\": \"completed\"}]"
+      ]
+    },
+    "existing-direct-session": {
+      "status": "error",
+      "exit_code": 4294967166,
+      "seconds": 42.5,
+      "warnings": [],
+      "markers": []
+    },
+    "existing-repeat1-session": {
+      "status": "ok",
+      "exit_code": 4294967166,
+      "seconds": 41.5,
+      "warnings": [
+        "15.10.2026 11:30:35;  MAXScript Auto-load Script Error Exception: -- Runtime error: .NET runtime exception: Common Language Runtime detected an invalid program.; Error occurred in anonymous codeblock; filename: C:\\Users\\artsafro\\AppData\\Local\\Autodesk\\3dsMax\\2026 - 64bit\\ENU\\scripts\\startup\\polyunwr"
+      ],
+      "markers": [
+        "MAX_COMPONENT_ROUNDTRIP True",
+        "AGR_EXISTING [{\"rep\": 1, \"seconds\": 0.7515442000003532, \"result\": \"completed\"}]"
+      ]
+    },
+    "existing-repeat2-session": {
+      "status": "ok",
+      "exit_code": 4294967166,
+      "seconds": 46.1,
+      "warnings": [
+        "15.10.2026 11:31:21;  MAXScript Auto-load Script Error Exception: -- Runtime error: .NET runtime exception: Common Language Runtime detected an invalid program.; Error occurred in anonymous codeblock; filename: C:\\Users\\artsafro\\AppData\\Local\\Autodesk\\3dsMax\\2026 - 64bit\\ENU\\scripts\\startup\\polyunwr"
+      ],
+      "markers": [
+        "MAX_COMPONENT_ROUNDTRIP True",
+        "AGR_EXISTING [{\"rep\": 2, \"seconds\": 0.6045094000000972, \"result\": \"completed\"}]"
+      ]
+    },
+    "final-readback-session": {
+      "status": "ok",
+      "exit_code": 4294967166,
+      "seconds": 53.8,
+      "warnings": [
+        "15.10.2026 11:41:21;  MAXScript Auto-load Script Error Exception: -- Runtime error: .NET runtime exception: Common Language Runtime detected an invalid program.; Error occurred in anonymous codeblock; filename: C:\\Users\\artsafro\\AppData\\Local\\Autodesk\\3dsMax\\2026 - 64bit\\ENU\\scripts\\startup\\polyunwr"
+      ],
+      "markers": [
+        "AGR_FRESH_READBACK 16 objects 0"
+      ]
+    },
+    "fresh-readback-session": {
+      "status": "ok",
+      "exit_code": 4294967166,
+      "seconds": 48.7,
+      "warnings": [
+        "15.10.2026 11:32:05;  MAXScript Auto-load Script Error Exception: -- Runtime error: .NET runtime exception: Common Language Runtime detected an invalid program.; Error occurred in anonymous codeblock; filename: C:\\Users\\artsafro\\AppData\\Local\\Autodesk\\3dsMax\\2026 - 64bit\\ENU\\scripts\\startup\\polyunwr"
+      ],
+      "markers": [
+        "AGR_FRESH_READBACK 7 objects 0"
+      ]
+    },
+    "intentional-failure-session": {
+      "status": "error",
+      "exit_code": 4294967166,
+      "seconds": 39.8,
+      "warnings": [],
+      "markers": []
+    },
+    "missing-file-session": {
+      "status": "error",
+      "exit_code": 4294967196,
+      "seconds": 0.0,
+      "warnings": [],
+      "markers": []
+    },
+    "native-session": {
+      "status": "ok",
+      "exit_code": 4294967166,
+      "seconds": 54.6,
+      "warnings": [
+        "15.10.2026 11:22:41;  MAXScript Auto-load Script Error Exception: -- Runtime error: .NET runtime exception: Common Language Runtime detected an invalid program.; Error occurred in anonymous codeblock; filename: C:\\Users\\artsafro\\AppData\\Local\\Autodesk\\3dsMax\\2026 - 64bit\\ENU\\scripts\\startup\\polyunwr"
+      ],
+      "markers": [
+        "AGR_INVENTORY {\"version\": \"#(28000, 68, 0, 28, 3, 0, 30732, 2026, \\\".3\\\")\", \"initial_objects\": 0, \"document\": \"\", \"initial_units\": \"meters\"}",
+        "AGR_EXPERIMENT_COMPLETE 32",
+        "AGR_CLEANUP_OBJECTS 0"
+      ]
+    }
+  },
+  "pings": [
+    {
+      "seconds": 40.9,
+      "status": "ok",
+      "exit_code": 4294967166
+    },
+    {
+      "seconds": 39.2,
+      "status": "ok",
+      "exit_code": 4294967166
+    },
+    {
+      "seconds": 44.9,
+      "status": "ok",
+      "exit_code": 4294967166
+    }
+  ],
+  "operation_medians": {
+    "bench-b01-box/etalon_import_dump/": {
+      "runs": [
+        0.3330848999976297
+      ],
+      "median_seconds": 0.3330848999976297
+    },
+    "bench-b02-corner-niche/etalon_import_dump/": {
+      "runs": [
+        0.14984239999466809
+      ],
+      "median_seconds": 0.14984239999466809
+    },
+    "bench-b01-box/create_mesh/": {
+      "runs": [
+        0.011333900001773145,
+        0.005415200001152698,
+        0.00712099999509519
+      ],
+      "median_seconds": 0.00712099999509519
+    },
+    "bench-b01-box/export/fbx": {
+      "runs": [
+        0.054134999998495914,
+        0.028263799998967443,
+        0.027208100000279956
+      ],
+      "median_seconds": 0.028263799998967443
+    },
+    "bench-b01-box/import/fbx": {
+      "runs": [
+        0.09897810000256868,
+        0.16636689999722876,
+        0.08482899999944493
+      ],
+      "median_seconds": 0.09897810000256868
+    },
+    "bench-b01-box/export/obj": {
+      "runs": [
+        0.032000800005334895,
+        0.02944250000291504,
+        0.019779900001594797
+      ],
+      "median_seconds": 0.02944250000291504
+    },
+    "bench-b01-box/import/obj": {
+      "runs": [
+        0.7083290000009583,
+        0.8266033999971114,
+        0.8703034000063781
+      ],
+      "median_seconds": 0.8266033999971114
+    },
+    "bench-b02-corner-niche/create_mesh/": {
+      "runs": [
+        0.008924500005377922,
+        0.012715799995930865,
+        0.00997089999873424
+      ],
+      "median_seconds": 0.00997089999873424
+    },
+    "bench-b02-corner-niche/export/fbx": {
+      "runs": [
+        0.03535160000319593,
+        0.029452900002070237,
+        0.04765200000110781
+      ],
+      "median_seconds": 0.03535160000319593
+    },
+    "bench-b02-corner-niche/import/fbx": {
+      "runs": [
+        0.0882701000009547,
+        0.08232679999491666,
+        0.10997650000354042
+      ],
+      "median_seconds": 0.0882701000009547
+    },
+    "bench-b02-corner-niche/export/obj": {
+      "runs": [
+        0.02797100000316277,
+        0.02241910000157077,
+        0.025156099996820558
+      ],
+      "median_seconds": 0.025156099996820558
+    },
+    "bench-b02-corner-niche/import/obj": {
+      "runs": [
+        0.7948541000005207,
+        0.6707162999955472,
+        0.9012969999967027
+      ],
+      "median_seconds": 0.7948541000005207
+    }
+  },
+  "same_input_batch_comparison": {
+    "isolated_seconds": [
+      39.8,
+      41.5,
+      46.1
+    ],
+    "batch_three_jobs_seconds": [
+      72.7,
+      94.1,
+      56.6
+    ],
+    "isolated_median_seconds_per_job": 41.5,
+    "batched_median_seconds_per_three_jobs": 72.7,
+    "batched_seconds_per_job": 24.233333333333334,
+    "speedup_per_job": 1.7125171939477304
+  },
+  "fresh_readback": [
+    {
+      "vertices": 88,
+      "triangles": 150,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.0,
+      "symmetric_vertex_max_mm": 0.0,
+      "symmetric_sampled_surface_max_mm": 0.0,
+      "checker_statuses": {
+        "bbox": "pass",
+        "levels": "pass",
+        "floor_areas": "pass",
+        "silhouettes": "pass",
+        "mesh": "pass",
+        "triangle_budget": "pass",
+        "opening_planes": "pass",
+        "material_ids": "pass",
+        "decor": "pass"
+      },
+      "file": "existing-r0\\max-roundtrip.fbx",
+      "seconds_import_dump": 0.4350073000023258,
+      "reference": "B01 etalon",
+      "material_ids": [
+        1,
+        6,
+        11,
+        21
+      ]
+    },
+    {
+      "vertices": 88,
+      "triangles": 150,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.0,
+      "symmetric_vertex_max_mm": 0.0,
+      "symmetric_sampled_surface_max_mm": 0.0,
+      "checker_statuses": {
+        "bbox": "pass",
+        "levels": "pass",
+        "floor_areas": "pass",
+        "silhouettes": "pass",
+        "mesh": "pass",
+        "triangle_budget": "pass",
+        "opening_planes": "pass",
+        "material_ids": "pass",
+        "decor": "pass"
+      },
+      "file": "existing-r1\\max-roundtrip.fbx",
+      "seconds_import_dump": 0.41889049999736017,
+      "reference": "B01 etalon",
+      "material_ids": [
+        1,
+        6,
+        11,
+        21
+      ]
+    },
+    {
+      "vertices": 88,
+      "triangles": 150,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.0,
+      "symmetric_vertex_max_mm": 0.0,
+      "symmetric_sampled_surface_max_mm": 0.0,
+      "checker_statuses": {
+        "bbox": "pass",
+        "levels": "pass",
+        "floor_areas": "pass",
+        "silhouettes": "pass",
+        "mesh": "pass",
+        "triangle_budget": "pass",
+        "opening_planes": "pass",
+        "material_ids": "pass",
+        "decor": "pass"
+      },
+      "file": "existing-r2\\max-roundtrip.fbx",
+      "seconds_import_dump": 0.20825249999325024,
+      "reference": "B01 etalon",
+      "material_ids": [
+        1,
+        6,
+        11,
+        21
+      ]
+    },
+    {
+      "vertices": 88,
+      "triangles": 150,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.0,
+      "symmetric_vertex_max_mm": 0.0,
+      "symmetric_sampled_surface_max_mm": 0.0,
+      "checker_statuses": {
+        "bbox": "pass",
+        "levels": "pass",
+        "floor_areas": "pass",
+        "silhouettes": "pass",
+        "mesh": "pass",
+        "triangle_budget": "pass",
+        "opening_planes": "pass",
+        "material_ids": "pass",
+        "decor": "pass"
+      },
+      "file": "batched-0-r0\\max-roundtrip.fbx",
+      "seconds_import_dump": 0.2784743000011076,
+      "reference": "B01 etalon",
+      "material_ids": [
+        1,
+        6,
+        11,
+        21
+      ]
+    },
+    {
+      "vertices": 88,
+      "triangles": 150,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.0,
+      "symmetric_vertex_max_mm": 0.0,
+      "symmetric_sampled_surface_max_mm": 0.0,
+      "checker_statuses": {
+        "bbox": "pass",
+        "levels": "pass",
+        "floor_areas": "pass",
+        "silhouettes": "pass",
+        "mesh": "pass",
+        "triangle_budget": "pass",
+        "opening_planes": "pass",
+        "material_ids": "pass",
+        "decor": "pass"
+      },
+      "file": "batched-0-r1\\max-roundtrip.fbx",
+      "seconds_import_dump": 0.20197470000130124,
+      "reference": "B01 etalon",
+      "material_ids": [
+        1,
+        6,
+        11,
+        21
+      ]
+    },
+    {
+      "vertices": 88,
+      "triangles": 150,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.0,
+      "symmetric_vertex_max_mm": 0.0,
+      "symmetric_sampled_surface_max_mm": 0.0,
+      "checker_statuses": {
+        "bbox": "pass",
+        "levels": "pass",
+        "floor_areas": "pass",
+        "silhouettes": "pass",
+        "mesh": "pass",
+        "triangle_budget": "pass",
+        "opening_planes": "pass",
+        "material_ids": "pass",
+        "decor": "pass"
+      },
+      "file": "batched-0-r2\\max-roundtrip.fbx",
+      "seconds_import_dump": 0.27073029999883147,
+      "reference": "B01 etalon",
+      "material_ids": [
+        1,
+        6,
+        11,
+        21
+      ]
+    },
+    {
+      "vertices": 88,
+      "triangles": 150,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.0,
+      "symmetric_vertex_max_mm": 0.0,
+      "symmetric_sampled_surface_max_mm": 0.0,
+      "checker_statuses": {
+        "bbox": "pass",
+        "levels": "pass",
+        "floor_areas": "pass",
+        "silhouettes": "pass",
+        "mesh": "pass",
+        "triangle_budget": "pass",
+        "opening_planes": "pass",
+        "material_ids": "pass",
+        "decor": "pass"
+      },
+      "file": "batched-1-r0\\max-roundtrip.fbx",
+      "seconds_import_dump": 0.3024017000061576,
+      "reference": "B01 etalon",
+      "material_ids": [
+        1,
+        6,
+        11,
+        21
+      ]
+    },
+    {
+      "vertices": 88,
+      "triangles": 150,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.0,
+      "symmetric_vertex_max_mm": 0.0,
+      "symmetric_sampled_surface_max_mm": 0.0,
+      "checker_statuses": {
+        "bbox": "pass",
+        "levels": "pass",
+        "floor_areas": "pass",
+        "silhouettes": "pass",
+        "mesh": "pass",
+        "triangle_budget": "pass",
+        "opening_planes": "pass",
+        "material_ids": "pass",
+        "decor": "pass"
+      },
+      "file": "batched-1-r1\\max-roundtrip.fbx",
+      "seconds_import_dump": 0.22660029999678954,
+      "reference": "B01 etalon",
+      "material_ids": [
+        1,
+        6,
+        11,
+        21
+      ]
+    },
+    {
+      "vertices": 88,
+      "triangles": 150,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.0,
+      "symmetric_vertex_max_mm": 0.0,
+      "symmetric_sampled_surface_max_mm": 0.0,
+      "checker_statuses": {
+        "bbox": "pass",
+        "levels": "pass",
+        "floor_areas": "pass",
+        "silhouettes": "pass",
+        "mesh": "pass",
+        "triangle_budget": "pass",
+        "opening_planes": "pass",
+        "material_ids": "pass",
+        "decor": "pass"
+      },
+      "file": "batched-1-r2\\max-roundtrip.fbx",
+      "seconds_import_dump": 0.49001480000151787,
+      "reference": "B01 etalon",
+      "material_ids": [
+        1,
+        6,
+        11,
+        21
+      ]
+    },
+    {
+      "vertices": 88,
+      "triangles": 150,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.0,
+      "symmetric_vertex_max_mm": 0.0,
+      "symmetric_sampled_surface_max_mm": 0.0,
+      "checker_statuses": {
+        "bbox": "pass",
+        "levels": "pass",
+        "floor_areas": "pass",
+        "silhouettes": "pass",
+        "mesh": "pass",
+        "triangle_budget": "pass",
+        "opening_planes": "pass",
+        "material_ids": "pass",
+        "decor": "pass"
+      },
+      "file": "batched-2-r0\\max-roundtrip.fbx",
+      "seconds_import_dump": 0.3427529000036884,
+      "reference": "B01 etalon",
+      "material_ids": [
+        1,
+        6,
+        11,
+        21
+      ]
+    },
+    {
+      "vertices": 88,
+      "triangles": 150,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.0,
+      "symmetric_vertex_max_mm": 0.0,
+      "symmetric_sampled_surface_max_mm": 0.0,
+      "checker_statuses": {
+        "bbox": "pass",
+        "levels": "pass",
+        "floor_areas": "pass",
+        "silhouettes": "pass",
+        "mesh": "pass",
+        "triangle_budget": "pass",
+        "opening_planes": "pass",
+        "material_ids": "pass",
+        "decor": "pass"
+      },
+      "file": "batched-2-r1\\max-roundtrip.fbx",
+      "seconds_import_dump": 0.30397879999509314,
+      "reference": "B01 etalon",
+      "material_ids": [
+        1,
+        6,
+        11,
+        21
+      ]
+    },
+    {
+      "vertices": 88,
+      "triangles": 150,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.0,
+      "symmetric_vertex_max_mm": 0.0,
+      "symmetric_sampled_surface_max_mm": 0.0,
+      "checker_statuses": {
+        "bbox": "pass",
+        "levels": "pass",
+        "floor_areas": "pass",
+        "silhouettes": "pass",
+        "mesh": "pass",
+        "triangle_budget": "pass",
+        "opening_planes": "pass",
+        "material_ids": "pass",
+        "decor": "pass"
+      },
+      "file": "batched-2-r2\\max-roundtrip.fbx",
+      "seconds_import_dump": 0.2204550000024028,
+      "reference": "B01 etalon",
+      "material_ids": [
+        1,
+        6,
+        11,
+        21
+      ]
+    },
+    {
+      "vertices": 156,
+      "triangles": 282,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.00019073486345888568,
+      "symmetric_vertex_max_mm": 0.0003781171332000097,
+      "symmetric_sampled_surface_max_mm": 0.0003781171332000097,
+      "file": "bench-b01-box-r0.fbx",
+      "seconds_import_dump": 0.276055099995574,
+      "reference": "bench-b01-box engine",
+      "material_ids": [
+        1
+      ]
+    },
+    {
+      "vertices": 156,
+      "triangles": 282,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.00019073486345888568,
+      "symmetric_vertex_max_mm": 0.0003781171332000097,
+      "symmetric_sampled_surface_max_mm": 0.0003781171332000097,
+      "file": "bench-b01-box-r0.obj",
+      "seconds_import_dump": 1.3316139999951702,
+      "reference": "bench-b01-box engine",
+      "material_ids": [
+        1
+      ]
+    },
+    {
+      "vertices": 263,
+      "triangles": 472,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          12.0,
+          9.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.00019073486345888568,
+      "symmetric_vertex_max_mm": 0.00044089577298543945,
+      "symmetric_sampled_surface_max_mm": 0.0002961012155496747,
+      "file": "bench-b02-corner-niche-r0.fbx",
+      "seconds_import_dump": 0.09221490000345511,
+      "reference": "bench-b02-corner-niche engine",
+      "material_ids": [
+        1
+      ]
+    },
+    {
+      "vertices": 263,
+      "triangles": 472,
+      "bbox": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          12.0,
+          9.0,
+          7.199999809265137
+        ]
+      ],
+      "bbox_max_mm": 0.00019073486345888568,
+      "symmetric_vertex_max_mm": 0.06113703125977539,
+      "symmetric_sampled_surface_max_mm": 0.04492555034369125,
+      "file": "bench-b02-corner-niche-r0.obj",
+      "seconds_import_dump": 1.2324135000017122,
+      "reference": "bench-b02-corner-niche engine",
+      "material_ids": [
+        1
+      ]
+    }
+  ],
+  "fbx_sha256": {
+    "batched-0-r0\\max-roundtrip.fbx": "8759bb83efab168daddc7fd8f09407ec64cee9fa90aafbeef9f9977413dadba2",
+    "batched-0-r1\\max-roundtrip.fbx": "b9216de335cbb5e2c958868d8ea5214df380b06536c5e54c7d0b1d883116dce0",
+    "batched-0-r2\\max-roundtrip.fbx": "6ac99cfad6cb1a843aa5aa45b595c7976961de58cd793e112a3a4c3fbf4ec667",
+    "batched-1-r0\\max-roundtrip.fbx": "0ff7028cbf8756fee6081cde83ce60263ebb3eff0bb215fb548769f48d2c6255",
+    "batched-1-r1\\max-roundtrip.fbx": "4bec0ac5af731f28e54b0a059c97b260606f1695a4313272592ba4e4313c6697",
+    "batched-1-r2\\max-roundtrip.fbx": "6578e50a7b5a90927c7bba637387ce41b5ca5ba5c0ab313762adaf7a0c46b5c6",
+    "batched-2-r0\\max-roundtrip.fbx": "8607f3ae4270167ae7827274d33f09043d27cb98107cd2e83bbad38e565a3770",
+    "batched-2-r1\\max-roundtrip.fbx": "e9d6e5820ae952542ec37534092077d2095ad41b4945717dfbea602f903497ff",
+    "batched-2-r2\\max-roundtrip.fbx": "28ad51581102d4d84339b7b879a77a94378485f7be16a1876c7442f89ce70cfc",
+    "bench-b01-box-r0.fbx": "af42362e47421cfb608dd3c348de74853d06f43223d9bd275e0b0fa286e4e87d",
+    "bench-b01-box-r1.fbx": "e4a13403288db4e0e4ddb6729fd2872e396f9fa926a83cbe350ccff3b15a377d",
+    "bench-b01-box-r2.fbx": "6ee0d2a2e296b12a453421482e43fa0c51b801f2bd7aaf693584cb82611b946b",
+    "bench-b02-corner-niche-r0.fbx": "f18ff49280f9a9da990fe4b0dacc1569a816c09f7051d97ac945eda6e50e2cf7",
+    "bench-b02-corner-niche-r1.fbx": "dfcf6d6707a51f6abea0c04a5de559f6dad0bddd3d3d9de667ae8bed9186ef8d",
+    "bench-b02-corner-niche-r2.fbx": "04176e58145144f32888de7949b93ea0a4bacbd0d5aa0930b9dbac3a9f0c96aa",
+    "existing-r0\\max-roundtrip.fbx": "d9876d12706bc32c1f353b27fd0a182fb31826507d5684f68f6429607ae8a958",
+    "existing-r1\\max-roundtrip.fbx": "2a6d874d8a67d0045293c1fbe8293f22058e2b6ef23e93abcebc41da45e46ac2",
+    "existing-r2\\max-roundtrip.fbx": "3b3e13b0773afbcc1bd58f25a19a88ad15e90e868e93406b027e17921fa32da3"
+  },
+  "baseline_tests": {
+    "seconds": 154.37575460000517,
+    "returncode": 0
+  },
+  "final_tests": {
+    "seconds": 169.3905786999967,
+    "returncode": 0
+  },
+  "delivery_passed": false
+}

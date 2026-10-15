@@ -1,0 +1,9 @@
+# Native sessions/logs and pytest scratch are local evidence, not sources.
+local/
+__pycache__/
+*.log
+*-session.json
+ping-*.json
+pings.json
+baseline-tests.json
+pr-body.md
