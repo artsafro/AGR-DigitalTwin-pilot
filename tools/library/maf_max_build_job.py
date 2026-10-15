@@ -75,7 +75,10 @@ def load_done(path):
             for line in fh:
                 line = line.strip()
                 if line:
-                    row = json.loads(line)
+                    try:
+                        row = json.loads(line)
+                    except ValueError:  # a killed run can leave a partial last line
+                        continue
                     if row.get('ok'):
                         done.add(row['id'])
     return done
@@ -111,8 +114,10 @@ def main():
     if limit:
         todo = todo[:limit]
     n_ok = 0
-    with open(built, 'a', encoding='utf-8') as out:
-        for e in todo:
+    with pymxs.undo(False), open(built, 'a', encoding='utf-8') as out:
+        for k, e in enumerate(todo):
+            if k and k % 50 == 0:
+                rt.gc()  # copies/renders accumulate memory; a long run slowed from ~1.5 s to ~12 s per entry
             t1 = time.time()
             row = {'id': e['id'], 'ok': False}
             c = None
