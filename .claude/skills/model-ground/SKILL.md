@@ -1,11 +1,11 @@
 ---
 name: model-ground
-description: 'Build a Ground surface (благоустройство) from the SPOZU DWG by the layered-cake method, one master for NPM and VPM. Use when: «сделай Ground по СПОЗУ», «построй благоустройство», «слоёный пирог для Ground», «спроецируй Ground на рельеф».'
+description: 'Build a Ground surface (благоустройство) from the SPOZU DWG by the layered-cake method, one master for NPM and VPM. Use when: «сделай Ground по СПОЗУ», «слоёный пирог для Ground», «спроецируй Ground на рельеф».'
 ---
 
 # Model Ground from SPOZU
 
-The user's practice (Ground grilling 2026-10-15) as a procedure. The rules live in the
+The user's Ground practice (Ground grilling notes, [D097], [D098]) as a procedure. The rules live in the
 [Ground surface sheet](../../../docs/domain/areas/ground-surface.md) (rows `GND-01`..`GND-12` and its
 "Project practice" section) and in [the decision log](../../../docs/decisions.md); each step names the rows
 it must satisfy instead of restating them. GROUND-PROJECTION is a source of lessons, never a reference
