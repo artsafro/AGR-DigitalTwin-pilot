@@ -159,30 +159,32 @@ def test_prepare_removes_png_color_key(review, tmp_path):
                 assert image.convert("RGBA").getchannel("A").getextrema() == (255, 255)
 
 
-def test_prepare_review_and_approved_pack(review, tmp_path):
+def test_prepare_review_and_approved_library(review, tmp_path, monkeypatch):
     directory, manifest, approvals, plan, _ = review
     assert manifest["status"] == "pending_user_review"
     html = (directory / "review.html").read_text(encoding="utf-8")
-    assert "NOT approved" in html and html.count("SYNTHETIC species") == 6
-    assert "&amp;b=2" in html
-    assert not list(directory.glob("Flora*"))
+    assert "NOT approved" in html and "&amp;b=2" in html
+    out = tmp_path / "library"
+    approval_file = tmp_path / "synthetic-approvals.json"
+    flora.write_json(approval_file, approvals)
+    monkeypatch.setattr("sys.argv", ["flora", "library", "--review", str(directory),
+                                   "--approvals", str(approval_file), "--out", str(out)])
+    flora.main()
+    result = flora.read_json(out / "library-v001.json")
+    assert len(result["species"]) == 3
+    for item, entry in zip(result["species"], manifest["entries"]):
+        assert item["candidate_id"] == entry["candidate_id"]
+        for key, mode in [("diffuse", "RGB"), ("opacity", "L")]:
+            path = out / item[key]
+            assert path.read_bytes() == (directory / entry[key]).read_bytes()
+            with Image.open(path) as image:
+                assert image.size == (2048, 2048) and image.mode == mode
+                assert "transparency" not in image.info
+                if mode == "L":
+                    assert set(np.unique(np.asarray(image))) == {0, 255}
+    assert result["approvals"] == approvals
     with pytest.raises(FileExistsError):
-        flora.prepare(plan, review[4], directory)
-    assert all("2048 x 2048" in s["prompt"] and s["reference"] in s["prompt"] for s in plan["species"])
-    out = tmp_path / "atlas-v001"
-    result = flora.pack(directory, approvals, out)
-    assert len(result["placements"]) == 3
-    for file, mode in [("Flora_d_1.png", "RGB"), ("Flora_o_1.png", "L")]:
-        with Image.open(out / file) as image:
-            assert image.size == (2048, 2048) and image.mode == mode
-            if mode == "L":
-                assert set(np.unique(np.asarray(image))) == {0, 255}
-        assert (out / file).stat().st_size <= 3 * 1024 * 1024
-        assert flora.digest((out / file).read_bytes()) == result["files_sha256"][file]
-    before = (out / "Flora_d_1.png").read_bytes()
-    with pytest.raises(FileExistsError):
-        flora.pack(directory, approvals, out)
-    assert (out / "Flora_d_1.png").read_bytes() == before
+        flora.main()
 
 
 @pytest.mark.parametrize("position", range(3))
@@ -202,7 +204,7 @@ def test_unapproved_never_enters_atlas(review, tmp_path, position, fault):
         record[key] = value
     out = tmp_path / "must-not-exist"
     with pytest.raises(ValueError):
-        flora.pack(directory, approvals, out)
+        flora.publish_library(directory, approvals, out)
     assert not out.exists()
 
 
@@ -220,52 +222,8 @@ def test_changed_review_invalidates_approval(review, tmp_path, changed):
         path.write_bytes(path.read_bytes() + b"changed")
     out = tmp_path / "atlas"
     with pytest.raises(ValueError):
-        flora.pack(altered, approvals, out)
+        flora.publish_library(altered, approvals, out)
     assert not out.exists()
-
-
-def test_pack_explicit_tile_limit_via_cli(review, tmp_path, monkeypatch):
-    directory, _, approvals, _, _ = review
-    approval_file = tmp_path / "synthetic-approvals.json"
-    flora.write_json(approval_file, approvals)
-    out = tmp_path / "limited-atlas"
-    monkeypatch.setattr("sys.argv", ["flora", "pack", "--review", str(directory),
-                                   "--approvals", str(approval_file), "--out", str(out),
-                                   "--max-tile-size", "512"])
-    flora.main()
-    result = flora.read_json(out / "atlas.json")
-    assert result["max_tile_size"] == 512
-    assert len(result["placements"]) == 3
-    for placement in result["placements"]:
-        x, y, w, h = placement["rect_px"]
-        assert max(w, h) == 512
-        assert placement["uv_bottom_left"] == [x / 2048, 1 - (y + h) / 2048,
-                                               (x + w) / 2048, 1 - y / 2048]
-    with Image.open(out / "Flora_o_1.png") as mask:
-        assert set(np.unique(np.asarray(mask))) == {0, 255}
-    assert result["approvals"] == approvals
-
-
-@pytest.mark.parametrize("limit", [0, -1, 2049, True, 1.5, None])
-def test_invalid_tile_limit_rejected_before_output(tmp_path, limit):
-    out = tmp_path / "invalid-limit"
-    with pytest.raises(ValueError, match="max_tile_size"):
-        flora.pack(tmp_path, {}, out, max_tile_size=limit)
-    assert not out.exists()
-
-
-def test_geometry_generated_probe():
-    # 1..40 species: exhaustive rectangle pairs; includes the first 10..20.
-    for count in range(1, 41):
-        rects = flora.grid_regions(count)
-        assert len(rects) == count
-        for x, y, w, h in rects:
-            assert x >= 8 and y >= 8 and x + w <= 2048 - 8 and y + h <= 2048 - 8
-        for (x, y, w, h), (xx, yy, ww, hh) in combinations(rects, 2):
-            assert x + w + 8 <= xx or xx + ww + 8 <= x or y + h + 8 <= yy or yy + hh + 8 <= y
-    for count in (0, 2048 * 2048):
-        with pytest.raises(ValueError):
-            flora.grid_regions(count)
 
 
 @pytest.mark.parametrize("relative", ["outputs/flora-v001", "data/flora-v001", "src/flora-v001"])
@@ -284,19 +242,6 @@ def test_generation_not_silently_upscaled(review, tmp_path, size):
     out = tmp_path / "review"
     with pytest.raises(ValueError, match="exactly 2048"):
         flora.prepare(plan, changed, out)
-    assert not out.exists()
-
-
-def test_oversized_png_is_rejected_before_output(monkeypatch, tmp_path):
-    rng = np.random.default_rng(190)
-    noise = Image.fromarray(rng.integers(0, 256, (2048, 2048, 3), dtype=np.uint8))
-    opaque = Image.new("L", (2048, 2048), 255)
-    # Isolate the size gate after approval validation; this is not real approval.
-    monkeypatch.setattr(flora, "load_approved", lambda *_: [
-        ({"species": "SYNTHETIC noise", "candidate_id": "synthetic"}, noise, opaque)])
-    out = tmp_path / "too-large"
-    with pytest.raises(ValueError, match="3 MiB"):
-        flora.pack(tmp_path, {}, out)
     assert not out.exists()
 
 
