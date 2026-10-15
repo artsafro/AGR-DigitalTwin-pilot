@@ -193,10 +193,11 @@ def close_section(segments):
                     mouths.append((mp[0], mq[0], max(mp[1], mq[1])))
         # an end left without a partner after its nearest candidate was taken for a pier is
         # reported, never dropped silently (#21): a pier's ends are paired with their openings, and a
-        # straight stray piece (a fin across a wall) joins its ends along the gap line itself - no break
+        # straight stray piece (a fin across a wall) joins its ends along the gap line itself - no break.
+        # Only the end's own pairing counts: its rejected candidate may have paired elsewhere.
         seen = set()
         for i, j in rejected.items():
-            if i in paired or j in paired or frozenset((i, j)) in seen:
+            if i in paired or frozenset((i, j)) in seen:
                 continue
             seen.add(frozenset((i, j)))
             p, q = np.array(dangles[i]), np.array(dangles[j])
