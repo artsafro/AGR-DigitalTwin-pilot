@@ -110,6 +110,63 @@ registered for Codex and Antigravity; Claude uses only its own user-scope regist
 
 ## Harness
 
+### Harness inventory
+One row per component (#129): every hook command in `.claude/settings.json` and in the subagents' frontmatter, every
+permission list, guard rule set, command, subagent and git hook. **Evidence** is a case, PR or issue where the failure
+really happened; `none` = a precaution only (the decision that made it is named). **Last verified** = the last date it
+was seen working: `live` (a real session, named) or `pytest` (its suite green on that date). **Eval** = tasks under
+`evals/` that would catch the failure in a transcript, or `none`. Rules for re-examining it: `docs/agents/WORKFLOW.md`,
+"Harness inventory". `tests/test_harness_inventory.py` fails when a hook, command, subagent or git hook has no row
+or an eval id is no task.
+
+| Component | Kind | Failure it prevents | Evidence it happened | Last verified | Eval |
+|---|---|---|---|---|---|
+| `.claude/hooks/guard.py` | PreToolUse hook (Bash, PowerShell, Write, Edit, NotebookEdit), "ask" | a destructive, outward or asset-corrupting action without the user's word | PR #142: the guard stopped a Write into another worktree (real handover transcript) | 2026-10-15 live (PR #142 transcript); no pytest of its own | `no-hook-denial` |
+| guard rule set `SHELL_RULES` | guard rule set | push, `reset --hard`, `clean`, forced branch delete, discarded changes, history rewrite, LFS migrate, deletes of sources or production assets, recursive delete, installs, system changes | none (precaution, carried over from DigitalTwinProject) | never (no test) | `no-hook-denial` |
+| guard rule set `PRODUCTION_EXT` | guard rule set (Write, Edit) | a text write over a production asset (`.fbx`, `.max`, `.blend`, `.png`, ...) | none (precaution) | never (no test) | `no-hook-denial` |
+| guard rule set `ALLOWED_WRITE_ROOTS` | guard rule set (Write, Edit) | a write outside the project and the allowed folders, e.g. into another worktree | PR #142 (see the guard row) | 2026-10-15 live (PR #142 transcript) | `no-hook-denial` |
+| `permissions.allow` | `.claude/settings.json` list | a routine read-only git, test or `dt` call stops the session for a confirmation | none (convenience) | never (no test) | none |
+| `permissions.ask` | `.claude/settings.json` list | push, `reset --hard`, `clean`, `branch -D` without the user's word (duplicates `SHELL_RULES`) | none (precaution) | never (no test) | `no-hook-denial` |
+| `permissions.deny` | `.claude/settings.json` list | secrets in `.env` read into the context | none (precaution) | never (no test) | none |
+| `.claude/hooks/pipeline_gate.py` | PreToolUse hook (Write, Edit), deny | a job status above draft without spec, extractor report and checker report; a job script without an engine gap | case alina-bld (`docs/cases.md`): no spec, no checker report, build script left only as `.pyc` | 2026-10-15 pytest (`tests/test_pipeline_gate.py`) | none |
+| `tools/hooks/skill_gate.py` | PreToolUse hook (DCC MCP), deny | a 3ds Max / Blender / Revit MCP call before its skill is loaded | none (precaution, [D074], PR #107) | 2026-10-15 pytest (`tests/test_usage_hooks.py`) | `dcc-skill-loaded`, `no-hook-denial` |
+| `tools/hooks/session_context.py start` | SessionStart hook | a session after `/clear` or compaction starts without branch, state and handoff, or on a stale / foreign handoff | none (precaution, [D076], PR #107) | 2026-10-15 pytest (`tests/test_session_context.py`); live 2026-10-14 in `claude -p` | none |
+| `tools/hooks/session_context.py precompact` | PreCompact hook | a manual `/compact` over a stale handoff loses the session state | none (precaution, [D076]) | 2026-10-15 pytest (`tests/test_session_context.py`) | none |
+| `tools/hooks/context_watch.py` | UserPromptSubmit hook | the session runs into auto-compaction without a handover (45 % / 65 % notes) | none (precaution, [D076]) | 2026-10-15 pytest (`tests/test_context_watch.py`) | none |
+| `tools/hooks/usage_log.py prompt` | UserPromptSubmit hook | an unused `/command` stays invisible (no 7-day counts at `/takeover`) | none (precaution, [D074]) | 2026-10-15 pytest (`tests/test_usage_hooks.py`) | none |
+| `tools/hooks/usage_log.py post` | PostToolUse hook (Agent, Task, Skill) | an unused subagent or skill stays invisible; the usage-log evidence for evals | none (precaution, [D074]) | 2026-10-15 pytest (`tests/test_usage_hooks.py`) | none |
+| `.claude/hooks/subagents.py start` | SubagentStart hook | a subagent forgets it is read-only; no `git status` snapshot for the stop check | none (precaution, [D071]) | 2026-10-15 pytest (`tests/test_subagents.py`) | none |
+| `.claude/hooks/subagents.py stop` | SubagentStop hook | tracked files changed by a subagent go unnamed; `independent-checker` ends without a verdict table | none (precaution, [D071]) | 2026-10-15 pytest (`tests/test_subagents.py`) | none |
+| `.claude/hooks/subagents.py guard` | PreToolUse hook in all five subagents, deny | a plain Bash write from a read-only subagent | none (precaution, [D071]) | 2026-10-15 pytest (`tests/test_subagents.py`) | `no-hook-denial` |
+| `.claude/hooks/subagents.py deny-geometry` | PreToolUse hook in `independent-checker`, deny | the checker reads how the model was built and confirms it instead of checking | #117: the engine's own "11/11 checks passed" on a wrong model | 2026-10-15 pytest (`tests/test_subagents.py`); live 2026-10-13 (PR #86) | `no-hook-denial` |
+| `tools/hooks/save_transcript.py` | script of `/handover` | the session transcript is lost at `/clear`, so evals have no evidence | #121 (no transcripts kept before it) | 2026-10-15 live (PR #140, by nonce); pytest (`tests/test_save_transcript.py`) | none |
+| `.claude/commands/handover.md` | command `/handover` | session state lost at a context rotation | none (precaution, [D076]) | 2026-10-14 live in `claude -p` (PR #107) | none |
+| `.claude/commands/takeover.md` | command `/takeover` | a new session starts from a handoff that disagrees with git and GitHub | none (precaution, [D076]) | 2026-10-14 live in `claude -p` (PR #107) | none |
+| `.claude/commands/reuse-scan.md` | command `/reuse-scan` | repeated procedures never become code, a skill or a pattern | none (precaution, [D075]) | 2026-10-15 pytest of `tools/reuse_candidates.py` (`tests/test_usage_hooks.py`) | none |
+| `.claude/agents/source-inspector.md` | subagent, read only | work on an uninspected source (scale, levels, dropped parts); a scene dump in the main context | none recorded | 2026-10-13 live (PR #86, B01 `etalon.max`) | `source-inspected` |
+| `.claude/agents/pattern-librarian.md` | subagent, read only | a rule question asked again or a new rule invented where one exists | none recorded | 2026-10-13 live (PR #86) | `routine-question` |
+| `.claude/agents/bench-runner.md` | subagent, read only | raw benchmark and test logs in the main context | none (precaution, [D071]) | 2026-10-13 live (PR #86, B01 9/9) | none |
+| `.claude/agents/independent-checker.md` | subagent, read only | "done" reported from the engine's own output | #117 | 2026-10-13 live (PR #86, B01 model) | `engine-checked` |
+| `.claude/agents/mesh-reader.md` | subagent, read only | a mesh dump read into the main context | none (precaution, [D071]) | never (not test-called) | none |
+| `tools/git-hooks/pre-commit` | git pre-commit (every agent) | a commit that skips linking or the pipeline gate; fail-open when the root or the gate is missing | case alina-bld (the gate it runs); fail-open versions were found in review of PR #79, not in use | 2026-10-13 live (manual blocked commit) | none |
+| `tools/git-hooks/link_large_files.py` | git pre-commit step | a new file over 50 MB committed into history | none recorded | 2026-10-06 live (60 MB file) | none |
+| `tools/git-hooks/pipeline_gate.py` | git pre-commit step, delivery gate | as `.claude/hooks/pipeline_gate.py`, for every agent; a commit on an auto-named branch; a `.pyc` without its `.py` at delivery | case alina-bld | 2026-10-15 pytest (`tests/test_pipeline_gate.py`) | `branch-name` |
+| `tools/git-hooks/branch_names.py` | rule module of the gate and the SessionStart hook | a commit on an auto-generated worktree branch | `claude/npm-models-school-kpp-ec9ced` (`evals/branch-name/task.md`), [D078] | 2026-10-15 pytest (`tests/test_branch_names.py`) | `branch-name` |
+
+Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `permissions.deny`, the hooks
+`session_context.py`, `context_watch.py`, `usage_log.py`, `subagents.py start` / `stop`, the three commands,
+`bench-runner`, `mesh-reader`, `link_large_files.py`. They are proposed to the user, not removed.
+
+### Rule-layer size
+- Measured 2026-10-15 at commit 32813c6: **141k tokens** (564 970 characters / 4; an estimate, not a tokenizer
+  count). Scope as in the spec: Markdown, YAML and JSON at the root (top level only), `docs/agents`, `docs/domain`,
+  `docs/adr`, `.agents/skills`, `standards/` and the plan / state files (`PROJECT_STATE`, `HARNESS_PLAN`, `backlog`,
+  `cases`, `pipeline`, `HANDOFF`, `decisions`). Out of it: `docs/agr`, `jobs`, `technical_library`.
+- Command (Git Bash, from the repository root; divide by four):
+  `{ find . -maxdepth 1 -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); find docs/agents docs/domain docs/adr .agents/skills standards -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); ls docs/PROJECT_STATE.md docs/HARNESS_PLAN.md docs/backlog.md docs/cases.md docs/pipeline.md docs/HANDOFF.md docs/decisions.md; } | tr '\n' '\0' | xargs -0 cat | wc -c`
+- Threshold: **200k tokens**. Below it the agent loads the relevant file whole; no semantic index, no vector store,
+  no BM25. Retrieval tooling is reconsidered only when a measurement passes 200k.
+
 ### Guard hook — `.claude/hooks/guard.py`
 - Claude Code: WORKING (PreToolUse in `.claude/settings.json`).
 - Antigravity: CONFIGURED (`.agents/hooks.json` → `guard.cmd`; Antigravity-side run not validated).
