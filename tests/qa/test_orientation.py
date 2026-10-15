@@ -87,12 +87,19 @@ def _largest_vertical(mesh):
     return int(pick[np.argmax(area[pick])])
 
 
+def _resize(mesh, factor, shift=(0.0, 0.0, 0.0)):
+    verts = np.asarray(mesh["vertices"], float) * float(factor) + np.asarray(shift, float)
+    return {**mesh, "vertices": verts.tolist()}
+
+
 def test_closed_box_passes():
     result = _check({"meshes": [_box()]})
     assert result["status"] == "pass" and result["value"] == 0
-    assert _row(result, "box") == {"name": "box", "winding_bad_edges": 0, "outside_back_faces": 0}
+    row = _row(result, "box")
+    assert (row["winding_bad_edges"], row["outside_back_faces"]) == (0, 0)
+    assert row["judged_faces"] > 0
     assert result["details"]["directions"] == 49
-    assert result["details"]["rays"] == 32 * 32 * 49
+    assert result["details"]["rays"] > 32 * 32 * 49
 
 
 def test_open_bottom_box_passes():
@@ -127,6 +134,44 @@ def test_only_the_flipped_mesh_is_named_bad():
     bad = [mesh["name"] for mesh in result["details"]["meshes"]
            if mesh["winding_bad_edges"] or mesh["outside_back_faces"]]
     assert bad == ["flipped"]
+
+
+def test_small_inverted_decor_on_big_body_fails():
+    body = _resize(_box("body"), 100.0)
+    decor = _resize(_box("decor", reverse=range(12)), 0.2, (101.0, 50.0, 50.0))
+    result = _check({"meshes": [body, decor]})
+    assert result["status"] == "fail"
+    assert _row(result, "decor")["outside_back_faces"] > 0
+    body_row = _row(result, "body")
+    assert body_row["outside_back_faces"] == 0 and body_row["winding_bad_edges"] == 0
+
+
+def test_same_scene_with_clean_decor_passes():
+    body = _resize(_box("body"), 100.0)
+    decor = _resize(_box("decor"), 0.2, (101.0, 50.0, 50.0))
+    result = _check({"meshes": [body, decor]})
+    assert result["status"] == "pass" and result["value"] == 0
+
+
+def test_tiny_isolated_inverted_box_fails():
+    result = _check({"meshes": [_resize(_box(reverse=range(12)), 0.05)]})
+    assert result["status"] == "fail"
+    assert _row(result, "box")["outside_back_faces"] > 0
+
+
+def test_tiny_clean_box_passes():
+    result = _check({"meshes": [_resize(_box(), 0.05)]})
+    assert result["status"] == "pass" and result["value"] == 0
+
+
+def test_enclosed_box_passes_and_is_unjudged():
+    body = _resize(_box("body"), 100.0)
+    inner = _resize(_box("inner"), 0.2, (49.9, 49.9, 49.9))
+    result = _check({"meshes": [body, inner]})
+    assert result["status"] == "pass" and result["value"] == 0
+    assert "inner" in result["details"]["unjudged_meshes"]
+    assert _row(result, "inner")["judged_faces"] == 0
+    assert _row(result, "body")["outside_back_faces"] == 0
 
 
 @pytest.mark.parametrize("bench", _benches())

@@ -819,6 +819,9 @@ ORIENTATION_DIRECTIONS = np.stack((
     np.cos(_ORI_ELS) * np.cos(_ORI_AZS), np.cos(_ORI_ELS) * np.sin(_ORI_AZS), -np.sin(_ORI_ELS)), axis=1)
 _ORI_EDGE = 1e-6
 _ORI_BARY = -1e-9
+_ORI_BINS = 64
+# depths within this (metres along the ray) are one hit; float noise on a shared edge is ~1e-14
+_ORI_DEPTH = 1e-8
 
 
 def _orientation_groups(model: Soup):
@@ -866,35 +869,137 @@ def _ray_basis(direction):
     return along, across
 
 
-def _cell_span(lo, hi, centre, radius, grid):
-    """Grid cells whose centres lie in [lo, hi], clipped to the window. `inside` is the rows that cover any."""
-    rel_lo = (lo - centre) / radius
-    rel_hi = (hi - centre) / radius
-    i0 = np.ceil((rel_lo + 1.0) * (grid * 0.5) - 0.5 - 1e-9).astype(np.int64)
-    i1 = np.floor((rel_hi + 1.0) * (grid * 0.5) - 0.5 + 1e-9).astype(np.int64)
-    inside = (i1 >= 0) & (i0 < grid)
-    return np.clip(i0, 0, grid - 1), np.clip(i1, 0, grid - 1), inside & (i1 >= i0)
+def _proj_bins(coord, origin, extent, bins):
+    """Bin ids in ``[0, bins)`` for coordinates on a window of ``extent`` starting at ``origin``."""
+    x = (coord - origin) / extent * bins
+    return np.clip(np.floor(x).astype(np.int64), 0, bins - 1)
 
 
-def outside_back_faces(model: Soup) -> np.ndarray:
-    """Per render mesh, triangles a ray from outside hits first on their back side.
+def _enumerate_bins(lo, hi):
+    """(cell_s, cell_t, row) for every integer cell in the inclusive ranges. Vectorised, no Python loop."""
+    counts = ((hi[0] - lo[0] + 1) * (hi[1] - lo[1] + 1)).astype(np.int64)
+    total = int(counts.sum())
+    if total == 0:
+        empty = np.zeros(0, dtype=np.int64)
+        return empty, empty, empty
+    chosen = np.repeat(np.arange(len(counts)), counts)
+    base = np.repeat(np.cumsum(counts) - counts, counts)
+    local = np.arange(total) - base
+    span_t = np.repeat(hi[1] - lo[1] + 1, counts)
+    di = local // span_t
+    cell_s = np.repeat(lo[0], counts) + di
+    cell_t = np.repeat(lo[1], counts) + (local - di * span_t)
+    return cell_s, cell_t, chosen
 
-    Rays travel along +d (level or down; rays from below are never cast) on an ORIENTATION_GRID square about
-    the bounding sphere. The first hit is the smallest depth; it is a back hit when the triangle normal
-    (cross of its edges) points the same way as the ray. Faces not visible from outside — the back of an
-    inner niche — are not judged, because a closer face takes the ray."""
+
+def _first_back_hits(s, t, depth, unit_dot, ray_s, ray_t):
+    """First hit of each ray. Returns ``(back, judged)`` — local indices into ``s``.
+
+    ``s``, ``t``, ``depth`` are ``(n, 3)`` projected corners of the triangles kept for this direction;
+    ``unit_dot`` is ``(n,)`` (normal · ray). ``ray_s``, ``ray_t`` are ray points in that plane. Candidates
+    come from a capped 2D bin grid: each triangle lists the bins its projected bbox covers (plus the bin of
+    its own centroid), rays are binned the same way, and the join is exact barycentric. The winning hit on
+    a ray is the smallest depth; equal depth keeps the smaller normal dot (the front face). A back hit has
+    ``unit_dot > 0``. ``judged`` is every triangle that wins at least one ray."""
+    n = len(s)
+    empty = np.zeros(0, dtype=np.int64)
+    if n == 0 or len(ray_s) == 0:
+        return empty, empty
+    bins = _ORI_BINS
+    s_min, s_max = s.min(1), s.max(1)
+    t_min, t_max = t.min(1), t.max(1)
+    lo_s = min(float(s_min.min()), float(ray_s.min()))
+    hi_s = max(float(s_max.max()), float(ray_s.max()))
+    lo_t = min(float(t_min.min()), float(ray_t.min()))
+    hi_t = max(float(t_max.max()), float(ray_t.max()))
+    pad_s = max(hi_s - lo_s, 1e-9) * 1e-9 + 1e-9
+    pad_t = max(hi_t - lo_t, 1e-9) * 1e-9 + 1e-9
+    origin_s, origin_t = lo_s - pad_s, lo_t - pad_t
+    extent_s, extent_t = (hi_s - lo_s) + 2.0 * pad_s, (hi_t - lo_t) + 2.0 * pad_t
+    grow_s = np.maximum(s_max - s_min, 1e-12) * 1e-8 + 1e-12
+    grow_t = np.maximum(t_max - t_min, 1e-12) * 1e-8 + 1e-12
+    bs_lo = _proj_bins(s_min - grow_s, origin_s, extent_s, bins)
+    bs_hi = _proj_bins(s_max + grow_s, origin_s, extent_s, bins)
+    bt_lo = _proj_bins(t_min - grow_t, origin_t, extent_t, bins)
+    bt_hi = _proj_bins(t_max + grow_t, origin_t, extent_t, bins)
+    # the centroid ray is strictly inside its triangle, so that bin is always one of the candidates
+    cb_s = _proj_bins(s.mean(1), origin_s, extent_s, bins)
+    cb_t = _proj_bins(t.mean(1), origin_t, extent_t, bins)
+    bs_lo, bs_hi = np.minimum(bs_lo, cb_s), np.maximum(bs_hi, cb_s)
+    bt_lo, bt_hi = np.minimum(bt_lo, cb_t), np.maximum(bt_hi, cb_t)
+    bin_s, bin_t, chosen = _enumerate_bins((bs_lo, bt_lo), (bs_hi, bt_hi))
+    if len(chosen) == 0:
+        return empty, empty
+    tri_bin = bin_s * bins + bin_t
+    ray_bin = _proj_bins(ray_s, origin_s, extent_s, bins) * bins + _proj_bins(ray_t, origin_t, extent_t, bins)
+    order = np.argsort(ray_bin)
+    uniq, start, rcount = np.unique(ray_bin[order], return_index=True, return_counts=True)
+    pos = np.searchsorted(uniq, tri_bin)
+    pos_c = np.minimum(pos, len(uniq) - 1)
+    valid = (pos < len(uniq)) & (uniq[pos_c] == tri_bin)
+    if not valid.any():
+        return empty, empty
+    n_hit = rcount[pos[valid]]
+    tri_idx = np.repeat(chosen[valid], n_hit)
+    pair_base = np.repeat(np.cumsum(n_hit) - n_hit, n_hit)
+    ray_idx = order[np.repeat(start[pos[valid]], n_hit) + (np.arange(int(n_hit.sum())) - pair_base)]
+    ps = ray_s[ray_idx] - s[tri_idx, 0]
+    pt = ray_t[ray_idx] - t[tri_idx, 0]
+    e1s, e1t = s[tri_idx, 1] - s[tri_idx, 0], t[tri_idx, 1] - t[tri_idx, 0]
+    e2s, e2t = s[tri_idx, 2] - s[tri_idx, 0], t[tri_idx, 2] - t[tri_idx, 0]
+    dot00 = e1s * e1s + e1t * e1t
+    dot01 = e1s * e2s + e1t * e2t
+    dot11 = e2s * e2s + e2t * e2t
+    dot02 = e1s * ps + e1t * pt
+    dot12 = e2s * ps + e2t * pt
+    den = dot00 * dot11 - dot01 * dot01
+    inv = np.divide(1.0, den, out=np.zeros_like(den), where=np.abs(den) > 1e-20)
+    bu = (dot11 * dot02 - dot01 * dot12) * inv
+    bv = (dot00 * dot12 - dot01 * dot02) * inv
+    inside = (np.abs(den) > 1e-20) & (bu >= _ORI_BARY) & (bv >= _ORI_BARY) & (bu + bv <= 1.0 - _ORI_BARY)
+    if not inside.any():
+        return empty, empty
+    picked = tri_idx[inside]
+    bw, bv_ = bu[inside], bv[inside]
+    hit_depth = (1.0 - bw - bv_) * depth[picked, 0] + bw * depth[picked, 1] + bv_ * depth[picked, 2]
+    hit_dot = unit_dot[picked]
+    hit_ray = ray_idx[inside]
+    # smallest depth; a shared edge (equal depth, within float noise) keeps the front face
+    ranked = np.lexsort((hit_dot, np.round(hit_depth / _ORI_DEPTH), hit_ray))
+    ranked_ray = hit_ray[ranked]
+    first = np.empty(len(ranked), dtype=bool)
+    first[0] = True
+    first[1:] = ranked_ray[1:] != ranked_ray[:-1]
+    winners = picked[ranked][first]
+    dots = hit_dot[ranked][first]
+    return winners[dots > 0], winners
+
+
+def _orientation_hits(model: Soup):
+    """Per mesh: back-hit triangles, judged triangles, rays cast, non-degenerate triangles.
+
+    Each direction casts the global ``ORIENTATION_GRID`` square about the bounding sphere and one ray
+    through the projected centroid of every triangle that is not edge-on. Every ray is tested against
+    every mesh, so a closer face still hides what is behind it."""
     names, owner = _orientation_groups(model)
-    out = np.zeros(len(names), dtype=int)
+    n_mesh = len(names)
+    zeros = np.zeros(n_mesh, dtype=int)
     if len(model.triangles) == 0 or len(model.vertices) == 0:
-        return out
+        return zeros, zeros.copy(), 0, zeros.copy()
     corners = model.corners()
     lo, hi = model.vertices.min(axis=0), model.vertices.max(axis=0)
     centre = (lo + hi) / 2
     radius = float(np.linalg.norm(hi - lo) / 2) + 1.0
     scale = ((np.arange(ORIENTATION_GRID) + 0.5) / ORIENTATION_GRID * 2.0 - 1.0) * radius
+    grid_s, grid_t = np.meshgrid(scale, scale, indexing="ij")
+    grid_s, grid_t = grid_s.ravel(), grid_t.ravel()
     normals = np.cross(corners[:, 1] - corners[:, 0], corners[:, 2] - corners[:, 0])
     length = np.linalg.norm(normals, axis=1)
+    nondeg = np.zeros(n_mesh, dtype=int)
+    np.add.at(nondeg, owner[length > 0], 1)
     back = np.zeros(len(corners), dtype=bool)
+    seen = np.zeros(len(corners), dtype=bool)
+    ray_total = 0
     for direction in ORIENTATION_DIRECTIONS:
         along, across = _ray_basis(direction)
         unit_dot = (normals @ direction) / np.maximum(length, 1e-30)
@@ -905,71 +1010,53 @@ def outside_back_faces(model: Soup) -> np.ndarray:
         t = corners[keep] @ across
         depth = corners[keep] @ direction
         su, sv = float(centre @ along), float(centre @ across)
-        s_lo, s_hi, s_ok = _cell_span(s.min(1), s.max(1), su, radius, ORIENTATION_GRID)
-        t_lo, t_hi, t_ok = _cell_span(t.min(1), t.max(1), sv, radius, ORIENTATION_GRID)
-        cover = s_ok & t_ok
-        counts = np.where(cover, (s_hi - s_lo + 1) * (t_hi - t_lo + 1), 0).astype(np.int64)
-        total = int(counts.sum())
-        if total == 0:
-            continue
-        chosen = np.repeat(np.arange(len(keep)), counts)
-        base = np.repeat(np.cumsum(counts) - counts, counts)
-        local = np.arange(total) - base
-        span_t = np.repeat(t_hi - t_lo + 1, counts)
-        di = local // span_t
-        cells_s = np.repeat(s_lo, counts) + di
-        cells_t = np.repeat(t_lo, counts) + (local - di * span_t)
-        ps = su + scale[cells_s] - s[chosen, 0]
-        pt = sv + scale[cells_t] - t[chosen, 0]
-        e1s, e1t = s[chosen, 1] - s[chosen, 0], t[chosen, 1] - t[chosen, 0]
-        e2s, e2t = s[chosen, 2] - s[chosen, 0], t[chosen, 2] - t[chosen, 0]
-        dot00 = e1s * e1s + e1t * e1t
-        dot01 = e1s * e2s + e1t * e2t
-        dot11 = e2s * e2s + e2t * e2t
-        dot02 = e1s * ps + e1t * pt
-        dot12 = e2s * ps + e2t * pt
-        den = dot00 * dot11 - dot01 * dot01
-        inv = np.divide(1.0, den, out=np.zeros_like(den), where=np.abs(den) > 1e-20)
-        bu = (dot11 * dot02 - dot01 * dot12) * inv
-        bv = (dot00 * dot12 - dot01 * dot02) * inv
-        inside = (np.abs(den) > 1e-20) & (bu >= _ORI_BARY) & (bv >= _ORI_BARY) & (bu + bv <= 1.0 - _ORI_BARY)
-        if not inside.any():
-            continue
-        picked = chosen[inside]
-        bw, bv_ = bu[inside], bv[inside]
-        hit_depth = (1.0 - bw - bv_) * depth[picked, 0] + bw * depth[picked, 1] + bv_ * depth[picked, 2]
-        hit_tri = keep[picked]
-        hit_ray = cells_s[inside].astype(np.int64) * ORIENTATION_GRID + cells_t[inside]
-        hit_dot = unit_dot[hit_tri]
-        # smallest depth; a shared edge (equal depth) keeps the front face, the smaller normal dot
-        order = np.lexsort((hit_dot, hit_depth, hit_ray))
-        ray_s = hit_ray[order]
-        first = np.empty(len(order), dtype=bool)
-        first[0] = True
-        first[1:] = ray_s[1:] != ray_s[:-1]
-        winners = hit_tri[order][first]
-        back[winners[hit_dot[order][first] > 0]] = True
+        ray_s = np.concatenate((su + grid_s, s.mean(1)))
+        ray_t = np.concatenate((sv + grid_t, t.mean(1)))
+        ray_total += int(ray_s.size)
+        back_local, win_local = _first_back_hits(s, t, depth, unit_dot[keep], ray_s, ray_t)
+        if len(win_local):
+            seen[keep[win_local]] = True
+        if len(back_local):
+            back[keep[back_local]] = True
+    backs = np.zeros(n_mesh, dtype=int)
+    judged = np.zeros(n_mesh, dtype=int)
     if back.any():
-        np.add.at(out, owner[back], 1)
-    return out
+        np.add.at(backs, owner[back], 1)
+    if seen.any():
+        np.add.at(judged, owner[seen], 1)
+    return backs, judged, ray_total, nondeg
+
+
+def outside_back_faces(model: Soup) -> np.ndarray:
+    """Per render mesh, triangles a ray from outside hits first on their back side.
+
+    Rays travel along +d (level or down; rays from below are never cast) on an ORIENTATION_GRID square about
+    the bounding sphere, plus one ray through each non-edge-on triangle centroid. The first hit is the
+    smallest depth; equal depth keeps the front face. It is a back hit when the triangle normal (cross of
+    its edges) points the same way as the ray. Faces not visible from outside — the back of an inner niche —
+    are not judged, because a closer face takes the ray."""
+    backs, _, _, _ = _orientation_hits(model)
+    return backs
 
 
 def check_orientation(model: Soup, tol: dict) -> dict:
     """Winding agrees on shared edges, and every face first seen from outside faces the ray.
 
-    value is bad winding edges plus back-hit triangles; 0 passes, and an empty model passes. Origin:
-    experiment card t_fea03fc1 (docs/experiments/blender-bpy-automation.md on branch
+    value is bad winding edges plus back-hit triangles; 0 passes, and an empty model passes. A mesh whose
+    triangles are all hidden (``judged_faces == 0``) is listed in ``unjudged_meshes`` and does not fail.
+    Origin: experiment card t_fea03fc1 (docs/experiments/blender-bpy-automation.md on branch
     experiment/blender-bpy-automation, methods M1a/M1b). The BMesh prototype stays the native cross-check."""
     names, _ = _orientation_groups(model)
     winding = winding_bad_edges(model, tol["weld_m"])
-    backs = outside_back_faces(model)
+    backs, judged, rays, nondeg = _orientation_hits(model)
     value = int(winding.sum() + backs.sum())
-    meshes = [{"name": name, "winding_bad_edges": int(winding[i]), "outside_back_faces": int(backs[i])}
-              for i, name in enumerate(names)]
+    meshes = [{"name": name, "winding_bad_edges": int(winding[i]), "outside_back_faces": int(backs[i]),
+               "judged_faces": int(judged[i])} for i, name in enumerate(names)]
+    unjudged = [name for i, name in enumerate(names) if nondeg[i] > 0 and judged[i] == 0]
     note = ("rays from below are not cast (open body bottom); faces not visible from outside are not judged")
     return result("orientation", value == 0, value, 0, {
-        "meshes": meshes, "rays": ORIENTATION_GRID * ORIENTATION_GRID * len(ORIENTATION_DIRECTIONS),
-        "directions": len(ORIENTATION_DIRECTIONS), "note": note})
+        "meshes": meshes, "rays": rays, "directions": len(ORIENTATION_DIRECTIONS),
+        "unjudged_meshes": unjudged, "note": note})
 
 
 def run(model: Soup, etalon: Soup, spec: Spec, tol: dict, ranges: dict | None = None,
