@@ -325,6 +325,74 @@ def test_audit_reports_fix_for_undefined_linetype(tmp_path):
     assert audited["fixes"] > 0
 
 
+def _rotation_plan(plans, tmp_path, filename):
+    import ezdxf
+
+    specs, raws = plans
+    name = "rotation37_then_translation"
+    source = tmp_path / f"{name}.dxf"
+    write_plan_dxf(build_plan_features(specs, _transform(name)), source)
+    doc = ezdxf.readfile(source)
+    edited = tmp_path / filename
+    return specs, raws, name, doc, edited
+
+
+def test_lwpolyline_bulge_rejected_as_unsupported_curve(plans, tmp_path):
+    _specs, raws, name, doc, edited = _rotation_plan(plans, tmp_path, "bulge.dxf")
+    entity = next(item for item in doc.modelspace() if item.dxftype() == "LWPOLYLINE")
+    points = list(entity.get_points("xyseb"))
+    first = list(points[0])
+    first[4] = 1.0
+    points[0] = first
+    entity.set_points(points, format="xyseb")
+    doc.saveas(edited)
+    actual, info = read_plan_dxf(edited)
+    report = compare_plan(oracle_features(raws, name), actual, info["insunits"])
+    assert report["ok"] is False and "unsupported curve" in report["errors"]
+
+
+def test_repeated_first_vertex_fails_point_count(plans, tmp_path):
+    _specs, raws, name, doc, edited = _rotation_plan(plans, tmp_path, "repeat-lw.dxf")
+    entity = next(item for item in doc.modelspace() if item.dxftype() == "LWPOLYLINE")
+    points = list(entity.get_points("xyseb"))
+    points.append(points[0])
+    entity.set_points(points, format="xyseb")
+    doc.saveas(edited)
+    actual, info = read_plan_dxf(edited)
+    contour = next(item for item in actual if item["kind"] == "LWPOLYLINE")
+    report = compare_plan(oracle_features(raws, name), actual, info["insunits"])
+    assert len(contour["vertices_mm"]) == 5
+    assert report["ok"] is False and "point count" in report["errors"]
+    assert census(actual)["coordinates"] == 70
+
+
+def test_polyline_repeated_first_vertex_fails_point_count(plans, tmp_path):
+    _specs, raws, name, doc, edited = _rotation_plan(plans, tmp_path, "repeat-poly.dxf")
+    entity = next(item for item in doc.modelspace() if item.dxftype() == "POLYLINE")
+    entity.append_vertex(entity.vertices[0].dxf.location)
+    doc.saveas(edited)
+    actual, info = read_plan_dxf(edited)
+    opening = next(item for item in actual if item["kind"] == "POLYLINE")
+    report = compare_plan(oracle_features(raws, name), actual, info["insunits"])
+    assert len(opening["vertices_mm"]) == 5
+    assert report["ok"] is False and "point count" in report["errors"]
+    assert census(actual)["coordinates"] == 70
+
+
+def test_cyclic_shift_and_reverse_contour_matches(plans, tmp_path):
+    specs, raws = plans
+    name = "rotation37_then_translation"
+    path = tmp_path / f"{name}.dxf"
+    write_plan_dxf(build_plan_features(specs, _transform(name)), path)
+    actual, info = read_plan_dxf(path)
+    contour = next(item for item in actual if item["kind"] == "LWPOLYLINE")
+    vertices = contour["vertices_mm"]
+    assert len(vertices) == 4
+    contour["vertices_mm"] = list(reversed(vertices[1:] + vertices[:1]))
+    report = compare_plan(oracle_features(raws, name), actual, info["insunits"])
+    assert report["ok"] is True
+
+
 def test_rounded_corner_contour_rejected(plans):
     specs, _raws = plans
     data = specs[0].model_dump()

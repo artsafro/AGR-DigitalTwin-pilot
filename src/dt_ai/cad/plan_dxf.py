@@ -164,12 +164,6 @@ def _closed(entity) -> bool:
     return bool(int(entity.dxf.flags) & 1)
 
 
-def _drop_repeated_close(vertices, closed: bool):
-    if closed and len(vertices) > 1 and math.dist(vertices[0], vertices[-1]) <= 1e-4:
-        return vertices[:-1]
-    return vertices
-
-
 def _as_wcs(entity, x, y, z) -> list[float]:
     extrusion = (0.0, 0.0, 1.0)
     if entity.dxf.hasattr("extrusion"):
@@ -182,14 +176,17 @@ def _as_wcs(entity, x, y, z) -> list[float]:
     return [float(x), float(y), float(z)]
 
 
-def _decoded(entity, kind: str, closed: bool, vertices, raw_flag) -> dict:
-    return {
+def _decoded(entity, kind: str, closed: bool, vertices, raw_flag, unsupported_curve: bool = False) -> dict:
+    item = {
         "layer": entity.dxf.layer,
         "kind": kind,
         "closed": closed,
-        "vertices_mm": _drop_repeated_close(vertices, closed),
+        "vertices_mm": vertices,
         "raw_flag": raw_flag,
     }
+    if unsupported_curve:
+        item["unsupported_curve"] = True
+    return item
 
 
 def read_plan_dxf(path) -> tuple[list[dict], dict]:
@@ -202,15 +199,20 @@ def read_plan_dxf(path) -> tuple[list[dict], dict]:
         if kind == "LWPOLYLINE":
             z = float(entity.dxf.elevation)
             closed = _closed(entity)
-            vertices = [_as_wcs(entity, point[0], point[1], z) for point in entity.get_points("xy")]
-            entities.append(_decoded(entity, kind, closed, vertices, int(entity.dxf.flags)))
+            points = entity.get_points("xyb")
+            vertices = [_as_wcs(entity, point[0], point[1], z) for point in points]
+            curve = any(abs(float(point[2])) > 0 for point in points)
+            entities.append(_decoded(entity, kind, closed, vertices, int(entity.dxf.flags), curve))
         elif kind == "POLYLINE":
             closed = _closed(entity)
-            vertices = [
-                _as_wcs(entity, vertex.dxf.location.x, vertex.dxf.location.y, vertex.dxf.location.z)
-                for vertex in entity.vertices
-            ]
-            entities.append(_decoded(entity, kind, closed, vertices, int(entity.dxf.flags)))
+            vertices = []
+            curve = False
+            for vertex in entity.vertices:
+                location = vertex.dxf.location
+                vertices.append(_as_wcs(entity, location.x, location.y, location.z))
+                if vertex.dxf.hasattr("bulge") and abs(float(vertex.dxf.bulge)) > 0:
+                    curve = True
+            entities.append(_decoded(entity, kind, closed, vertices, int(entity.dxf.flags), curve))
         elif kind == "POINT":
             location = entity.dxf.location
             vertices = [_as_wcs(entity, location.x, location.y, location.z)]
@@ -267,6 +269,8 @@ def compare_plan(expected, actual, units, tol_mm: float = TOL_MM) -> dict:
         errors.append("duplicate layer")
     if any(item.get("unsupported") for item in actual):
         errors.append("unsupported")
+    if any(item.get("unsupported_curve") for item in actual):
+        errors.append("unsupported curve")
     expected_map = {item["layer"]: item for item in expected}
     actual_map = {}
     for item in actual:
