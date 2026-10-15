@@ -1,0 +1,345 @@
+{
+ "headless": {
+  "realize_wall_s": {
+   "median": 1.072,
+   "min": 0.959,
+   "max": 1.292,
+   "n": 27
+  },
+  "readback_fbx_s": {
+   "median": 1.067,
+   "min": 0.921,
+   "max": 1.371,
+   "n": 27
+  },
+  "readback_blend_s": {
+   "median": 0.962,
+   "min": 0.805,
+   "max": 1.088,
+   "n": 27
+  },
+  "max_hd_fbx_vs_src_mm": 0.0020100350373236354,
+  "max_hd_blend_vs_src_mm": 0.00044089577298543945,
+  "blend_eq_fbx_sig": 27,
+  "n": 27
+ },
+ "live": {
+  "realize_wall_s": {
+   "median": 0.17,
+   "min": 0.123,
+   "max": 0.289,
+   "n": 27
+  },
+  "readback_fbx_s": {
+   "median": 1.02,
+   "min": 0.905,
+   "max": 1.336,
+   "n": 27
+  },
+  "readback_blend_s": {
+   "median": 0.979,
+   "min": 0.819,
+   "max": 1.263,
+   "n": 27
+  },
+  "max_hd_fbx_vs_src_mm": 0.0020100350373236354,
+  "max_hd_blend_vs_src_mm": 0.00044089577298543945,
+  "blend_eq_fbx_sig": 27,
+  "n": 27,
+  "in_dcc_build_s": {
+   "median": 0.002,
+   "min": 0.001,
+   "max": 0.005,
+   "n": 27
+  },
+  "in_dcc_io_s": {
+   "median": 0.013,
+   "min": 0.009,
+   "max": 0.066,
+   "n": 27
+  },
+  "scene_restored": 27,
+  "versions": [
+   "4.4.0"
+  ]
+ },
+ "detection": {
+  "headless:clean": "9/9",
+  "headless:flip1": "9/9",
+  "headless:flipall": "9/9",
+  "live:clean": "9/9",
+  "live:flip1": "9/9",
+  "live:flipall": "9/9"
+ },
+ "parity": {
+  "facts_equal": 27,
+  "sig_equal": 27,
+  "verdict_equal": 27,
+  "pairs": 27,
+  "max_sig_dev": 0.0,
+  "diffs": []
+ },
+ "facts": {
+  "bench-b01-box:clean": {
+   "body": {
+    "verts": 156,
+    "tris": 282,
+    "mat_hist": {
+     "1": 220,
+     "6": 16,
+     "11": 4,
+     "21": 42
+    }
+   },
+   "_helpers": {
+    "LEVEL_L0": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "LEVEL_L1": [
+     0.0,
+     0.0,
+     3.3
+    ],
+    "LEVEL_roof": [
+     0.0,
+     0.0,
+     6.6
+    ]
+   }
+  },
+  "bench-b01-box:flip1": {
+   "body": {
+    "verts": 156,
+    "tris": 282,
+    "mat_hist": {
+     "1": 220,
+     "6": 16,
+     "11": 4,
+     "21": 42
+    }
+   },
+   "_helpers": {
+    "LEVEL_L0": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "LEVEL_L1": [
+     0.0,
+     0.0,
+     3.3
+    ],
+    "LEVEL_roof": [
+     0.0,
+     0.0,
+     6.6
+    ]
+   }
+  },
+  "bench-b01-box:flipall": {
+   "body": {
+    "verts": 156,
+    "tris": 282,
+    "mat_hist": {
+     "1": 220,
+     "6": 16,
+     "11": 4,
+     "21": 42
+    }
+   },
+   "_helpers": {
+    "LEVEL_L0": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "LEVEL_L1": [
+     0.0,
+     0.0,
+     3.3
+    ],
+    "LEVEL_roof": [
+     0.0,
+     0.0,
+     6.6
+    ]
+   }
+  },
+  "bench-b02-corner-niche:clean": {
+   "body": {
+    "verts": 263,
+    "tris": 472,
+    "mat_hist": {
+     "1": 362,
+     "6": 16,
+     "11": 4,
+     "21": 90
+    }
+   },
+   "_helpers": {
+    "LEVEL_L0": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "LEVEL_L1": [
+     0.0,
+     0.0,
+     3.3
+    ],
+    "LEVEL_roof": [
+     0.0,
+     0.0,
+     6.6
+    ]
+   }
+  },
+  "bench-b02-corner-niche:flip1": {
+   "body": {
+    "verts": 263,
+    "tris": 472,
+    "mat_hist": {
+     "1": 362,
+     "6": 16,
+     "11": 4,
+     "21": 90
+    }
+   },
+   "_helpers": {
+    "LEVEL_L0": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "LEVEL_L1": [
+     0.0,
+     0.0,
+     3.3
+    ],
+    "LEVEL_roof": [
+     0.0,
+     0.0,
+     6.6
+    ]
+   }
+  },
+  "bench-b02-corner-niche:flipall": {
+   "body": {
+    "verts": 263,
+    "tris": 472,
+    "mat_hist": {
+     "1": 362,
+     "6": 16,
+     "11": 4,
+     "21": 90
+    }
+   },
+   "_helpers": {
+    "LEVEL_L0": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "LEVEL_L1": [
+     0.0,
+     0.0,
+     3.3
+    ],
+    "LEVEL_roof": [
+     0.0,
+     0.0,
+     6.6
+    ]
+   }
+  },
+  "bench-b02t-terrace:clean": {
+   "body": {
+    "verts": 370,
+    "tris": 648,
+    "mat_hist": {
+     "1": 478,
+     "6": 16,
+     "11": 4,
+     "21": 150
+    }
+   },
+   "_helpers": {
+    "LEVEL_L0": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "LEVEL_L1": [
+     0.0,
+     0.0,
+     3.3
+    ],
+    "LEVEL_roof": [
+     0.0,
+     0.0,
+     6.6
+    ]
+   }
+  },
+  "bench-b02t-terrace:flip1": {
+   "body": {
+    "verts": 370,
+    "tris": 648,
+    "mat_hist": {
+     "1": 478,
+     "6": 16,
+     "11": 4,
+     "21": 150
+    }
+   },
+   "_helpers": {
+    "LEVEL_L0": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "LEVEL_L1": [
+     0.0,
+     0.0,
+     3.3
+    ],
+    "LEVEL_roof": [
+     0.0,
+     0.0,
+     6.6
+    ]
+   }
+  },
+  "bench-b02t-terrace:flipall": {
+   "body": {
+    "verts": 370,
+    "tris": 648,
+    "mat_hist": {
+     "1": 478,
+     "6": 16,
+     "11": 4,
+     "21": 150
+    }
+   },
+   "_helpers": {
+    "LEVEL_L0": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "LEVEL_L1": [
+     0.0,
+     0.0,
+     3.3
+    ],
+    "LEVEL_roof": [
+     0.0,
+     0.0,
+     6.6
+    ]
+   }
+  }
+ }
+}
