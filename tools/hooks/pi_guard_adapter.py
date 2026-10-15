@@ -5,6 +5,7 @@ process and protocol errors fail closed; no shell or model input is executed.
 """
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -27,6 +28,15 @@ def evaluate(call):
         path = tin.get("path", tin.get("file_path"))
         if not isinstance(path, str) or not path:
             raise ValueError("path must be a nonempty string")
+        # Pi expands @, tilde, file URLs, Unicode spaces and Windows shell
+        # paths before writing. Reject those spellings rather than check a
+        # different target. Use ordinary relative or native absolute paths.
+        if (path.startswith(("@", "~", "file://"))
+                or re.search(r"[\u00a0\u2000-\u200a\u202f\u205f\u3000]", path)
+                or (os.name == "nt" and (
+                    path.startswith(("/", "\\"))
+                    or (Path(path).drive and not Path(path).is_absolute())))):
+            raise ValueError("unsupported Pi path syntax; use a relative or native absolute path")
         tin["file_path"] = str((cwd / path).resolve())
         fields = ("content",) if tool == "Write" else ("old_string", "new_string")
         if tool == "Edit":
