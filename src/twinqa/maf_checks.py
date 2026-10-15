@@ -7,7 +7,6 @@ from twinqa.report import Finding
 
 SMOOTHING_ANGLE_DEG = 40.0  # user practice: hard edges by angle 30-45 (MAF grilling 2026-10-15), configurable
 DIMENSION_TOL_M = 0.10  # [D094]
-SINK_M = 0.10  # [D095]
 
 
 def is_groundel(name: str) -> bool:
@@ -30,14 +29,35 @@ def _finding(name, status, observed, expected, pages, evidence):
     return Finding(name, status, observed, expected, list(pages), evidence)
 
 
-def _soft_over(hist, angle):
-    count, peak = 0, None
-    for key, n in hist.items():
-        deg = float(key)
-        if deg > angle:
-            count += n
-            peak = deg if peak is None else max(peak, deg)
-    return count, peak
+def _finite_nonneg(value):
+    return not isinstance(value, bool) and isinstance(value, (int, float)) and math.isfinite(value) and value >= 0
+
+
+def _count(value):
+    return isinstance(value, int) and not isinstance(value, bool) and value >= 0
+
+
+def _angles(facts):
+    if not isinstance(facts, dict) or "error" in facts or not isinstance(facts.get("soft_edge_dihedrals_deg"), list):
+        return None
+    angles = facts["soft_edge_dihedrals_deg"]
+    if any(not _finite_nonneg(angle) for angle in angles):
+        return None
+    return angles
+
+
+def _flip_counts(facts):
+    if not isinstance(facts, dict) or "error" in facts:
+        return None
+    keys = ("components", "undetermined_components", "flipped_faces", "inconsistent_edges")
+    values = [facts.get(key) for key in keys]
+    if any(not _count(value) for value in values) or values[1] > values[0]:
+        return None
+    return values
+
+
+def _note_unmeasured(text, names):
+    return text if not names else f"{text}; unmeasured: {', '.join(names)}"
 
 
 def _bbox_size(mesh):
@@ -51,8 +71,7 @@ def _bbox_size(mesh):
 
 
 def maf_findings(meshes: list[dict], role: str, src: str, *, smoothing_angle_deg: float = SMOOTHING_ANGLE_DEG,
-                 maf_sizes: dict[str, list[float]] | None = None, tol_m: float = DIMENSION_TOL_M,
-                 sink_m: float = SINK_M) -> list[Finding]:
+                 maf_sizes: dict[str, list[float]] | None = None, tol_m: float = DIMENSION_TOL_M) -> list[Finding]:
     """GroundEl smoothing and flipped normals, plus optional per-MAF bbox vs specification."""
     if not (0 < smoothing_angle_deg < 180):
         raise ValueError("smoothing_angle_deg must be between 0 and 180")
@@ -69,42 +88,49 @@ def maf_findings(meshes: list[dict], role: str, src: str, *, smoothing_angle_deg
     if role == "ground" and groundel:
         smooth_expected = f"hard edge / split normals where faces meet above {smoothing_angle_deg:g} deg"
         flip_expected = "outward faces, consistent winding (single-sided only for NPM Flora)"
-        missing = [m["name"] for m in groundel
-                   if not isinstance(m.get("maf_surface"), dict) or "error" in m["maf_surface"]]
-        if missing:
-            observed = f"{src}: {', '.join(missing)}"
-            out.append(_finding("MAF smoothing", "not_run", observed, smooth_expected, [8, 29], src))
-            out.append(_finding("MAF flipped normals", "not_run", observed, flip_expected, [8, 29], src))
+        smooth_bad, smooth_gap = [], []
+        flip_bad, flip_open, flip_gap = [], [], []
+        for item in groundel:
+            name = item["name"]
+            facts = item.get("maf_surface")
+            angles = _angles(facts)
+            if angles is None:
+                smooth_gap.append(name)
+            else:
+                over = [angle for angle in angles if angle > smoothing_angle_deg + 1e-6]
+                if over:
+                    smooth_bad.append((name, len(over), max(over)))
+            counts = _flip_counts(facts)
+            if counts is None:
+                flip_gap.append(name)
+            else:
+                _components, undetermined, flipped, inconsistent = counts
+                if flipped or inconsistent:
+                    flip_bad.append((name, flipped, inconsistent, undetermined))
+                elif undetermined:
+                    flip_open.append((name, undetermined))
+        if smooth_bad:
+            shown = [f"{name}: {count} soft edges > {smoothing_angle_deg:g} deg (max {peak:.2f} deg)"
+                     for name, count, peak in smooth_bad[:5]]
+            smooth_status, smooth_observed = "fail", _note_unmeasured(f"{src}: {'; '.join(shown)}", smooth_gap)
+        elif smooth_gap:
+            smooth_status, smooth_observed = "not_run", _note_unmeasured(src, smooth_gap)
         else:
-            rows = []
-            for mesh in groundel:
-                count, peak = _soft_over(mesh["maf_surface"].get("soft_edge_angles_deg", {}), smoothing_angle_deg)
-                if count:
-                    rows.append((mesh["name"], count, peak))
-            if rows:
-                shown = [f"{name}: {count} soft edges > {smoothing_angle_deg:g} deg (max {peak:.1f} deg)"
-                         for name, count, peak in rows[:5]]
-                out.append(_finding("MAF smoothing", "fail", f"{src}: {'; '.join(shown)}", smooth_expected, [8, 29], src))
-            else:
-                out.append(_finding("MAF smoothing", "pass", f"{src}: no soft edges above {smoothing_angle_deg:g} deg",
-                                    smooth_expected, [8, 29], src))
-            bad = []
-            undetermined = 0
-            for mesh in groundel:
-                facts = mesh["maf_surface"]
-                undetermined += int(facts.get("undetermined_components", 0))
-                if facts.get("flipped_faces", 0) or facts.get("inconsistent_edges", 0):
-                    bad.append(mesh)
-            if bad:
-                shown = [f"{m['name']}: flipped {m['maf_surface'].get('flipped_faces', 0)}, "
-                         f"inconsistent {m['maf_surface'].get('inconsistent_edges', 0)}, "
-                         f"undetermined {m['maf_surface'].get('undetermined_components', 0)}"
-                         for m in bad[:5]]
-                observed = f"{src}: {'; '.join(shown)}; undetermined components {undetermined}"
-                out.append(_finding("MAF flipped normals", "fail", observed, flip_expected, [8, 29], src))
-            else:
-                observed = f"{src}: outward, undetermined components {undetermined}"
-                out.append(_finding("MAF flipped normals", "pass", observed, flip_expected, [8, 29], src))
+            smooth_status = "pass"
+            smooth_observed = f"{src}: no soft edges above {smoothing_angle_deg:g} deg"
+        out.append(_finding("MAF smoothing", smooth_status, smooth_observed, smooth_expected, [8, 29], src))
+        if flip_bad:
+            shown = [f"{name}: flipped {flipped}, inconsistent {inconsistent}, undetermined {undetermined}"
+                     for name, flipped, inconsistent, undetermined in flip_bad[:5]]
+            shown.extend(f"{name}: {count} orientation undetermined" for name, count in flip_open)
+            flip_status, flip_observed = "fail", _note_unmeasured(f"{src}: {'; '.join(shown)}", flip_gap)
+        elif flip_open or flip_gap:
+            shown = [f"{name}: {count} orientation undetermined" for name, count in flip_open]
+            flip_status = "not_run"
+            flip_observed = _note_unmeasured(f"{src}: {'; '.join(shown)}" if shown else src, flip_gap)
+        else:
+            flip_status, flip_observed = "pass", f"{src}: outward"
+        out.append(_finding("MAF flipped normals", flip_status, flip_observed, flip_expected, [8, 29], src))
 
     if maf_sizes is not None:
         by_name = {m.get("name"): m for m in meshes}
@@ -120,10 +146,10 @@ def maf_findings(meshes: list[dict], role: str, src: str, *, smoothing_angle_deg
                 failed.append(f"{name}: missing bounds")
                 continue
             plan_b, plan_s = sorted(size[:2]), sorted((sx, sy))
-            deltas = (plan_b[0] - plan_s[0], plan_b[1] - plan_s[1], size[2] - (sz + sink_m))
+            deltas = (plan_b[0] - plan_s[0], plan_b[1] - plan_s[1], size[2] - sz)
             if any(abs(d) > tol_m + 1e-9 for d in deltas):
                 failed.append(f"{name}: plan {deltas[0]:.3f} {deltas[1]:.3f} Z {deltas[2]:.3f}")
-        expected = "|bbox - spec| <= 0.1 m per axis; Z = spec + 0.1 m sink [D094, D095]"
+        expected = "|bbox - spec| <= 0.1 m per axis on overall dimensions; the 10 cm sink is a translation [D094, D095]"
         if failed:
             out.append(_finding("MAF dimensions vs specification", "fail", f"{src}: {'; '.join(failed[:5])}",
                                 expected, [4, 24], src))

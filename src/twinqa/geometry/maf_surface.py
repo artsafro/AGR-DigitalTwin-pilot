@@ -85,6 +85,7 @@ def surface_facts(coords, polygons, corner_normals, weld_m=1e-5, split_tol_deg=1
     adj = defaultdict(list)
     inconsistent = 0
     hist = defaultdict(int)
+    dihedrals = []
     for key, occ in edges.items():
         if len(occ) != 2 or occ[0][0] == occ[1][0]:
             continue
@@ -108,6 +109,7 @@ def surface_facts(coords, polygons, corner_normals, weld_m=1e-5, split_tol_deg=1
         dihedral = _angle_deg(face_n[f0], nb)
         if dihedral > 1.0:
             hist[f"{round(dihedral, 1):.1f}"] += 1
+            dihedrals.append(dihedral)
 
     components = undetermined = flipped = 0
     seen = set()
@@ -156,6 +158,7 @@ def surface_facts(coords, polygons, corner_normals, weld_m=1e-5, split_tol_deg=1
         "flipped_faces": flipped,
         "inconsistent_edges": inconsistent,
         "soft_edge_angles_deg": dict(hist),
+        "soft_edge_dihedrals_deg": sorted(dihedrals),
         "weld_m": weld_m,
         "split_tol_deg": split_tol_deg,
     }

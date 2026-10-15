@@ -1,4 +1,5 @@
 """GroundEl surface facts and V004 MAF findings on the FBX readback (#185)."""
+import itertools
 import math
 import random
 import subprocess
@@ -247,7 +248,8 @@ def test_dimensions_against_specification():
     wired = scene_findings(rb(mesh(name="SM_Test_GroundEl")), "npm", "oks", PROFILES.npm, maf_sizes=SPEC)
     assert _named(wired["V004"], "MAF dimensions vs specification").status == "fail"
     finding = _dimension([1.5, 0.6, 0.9])
-    assert finding.expected == "|bbox - spec| <= 0.1 m per axis; Z = spec + 0.1 m sink [D094, D095]"
+    assert finding.expected == ("|bbox - spec| <= 0.1 m per axis on overall dimensions; "
+                                "the 10 cm sink is a translation [D094, D095]")
     assert finding.source_pdf_pages == [4, 24]
 
 
@@ -296,7 +298,7 @@ def test_dihedral_sweep_and_hard_normals_never_fail():
 
 def test_dimension_deltas_fail_beyond_ten_centimetres():
     spec = [1.5, 0.6, 0.8]
-    base_cm = [150, 60, 90]
+    base_cm = [150, 60, 80]
     for axis in range(3):
         for cm in range(-20, 21):
             bbox_cm = base_cm.copy()
@@ -304,9 +306,116 @@ def test_dimension_deltas_fail_beyond_ten_centimetres():
             status = _dimension([c / 100 for c in bbox_cm], {"SM_Test_GroundEl": spec}).status
             assert (status == "fail") is (abs(cm) > 10), (axis, cm)
         for delta in (-0.10, 0.10):
-            bounds = [1.5, 0.6, 0.9]
+            bounds = [1.5, 0.6, 0.8]
             bounds[axis] += delta
             assert _dimension(bounds, {"SM_Test_GroundEl": spec}).status == "pass"
+
+
+def _flat_quad():
+    coords = [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [0.0, 1.0, 0.0]]
+    return surface_facts(coords, [[0, 1, 2, 3]], [[(0.0, 0.0, 1.0)] * 4])
+
+
+def test_p1_1_fractional_angle_above_threshold_fails():
+    facts = surface_facts(*folded_quads(40.01, "soft"))
+    assert max(facts["soft_edge_dihedrals_deg"]) > 40.0
+    found = maf_findings([groundel(facts)], "ground", "a.fbx")
+    assert _named(found, "MAF smoothing").status == "fail"
+
+
+def test_p1_1_fractional_threshold_sweep():
+    thresholds = list(range(30, 46)) + [37.5, 40.05]
+    for threshold in thresholds:
+        for delta in (-0.04, -0.01, 0.01, 0.04):
+            angle = threshold + delta
+            soft = surface_facts(*folded_quads(angle, "soft"))
+            hard = surface_facts(*folded_quads(angle, "hard"))
+            soft_status = _named(maf_findings([groundel(soft)], "ground", "a.fbx", smoothing_angle_deg=threshold),
+                                 "MAF smoothing").status
+            hard_status = _named(maf_findings([groundel(hard)], "ground", "a.fbx", smoothing_angle_deg=threshold),
+                                 "MAF smoothing").status
+            assert soft_status == ("fail" if delta > 0 else "pass"), (threshold, delta)
+            assert hard_status == "pass", (threshold, delta)
+
+
+def test_p1_2_flat_quad_orientation_is_not_pass():
+    found = maf_findings([groundel(_flat_quad())], "ground", "a.fbx")
+    flip = _named(found, "MAF flipped normals")
+    assert flip.status == "not_run"
+    assert "SM_Test_GroundEl" in flip.observed
+    assert "undetermined" in flip.observed
+
+
+def test_p1_2_undetermined_plus_flipped_fails():
+    flat = groundel(_flat_quad(), "SM_Test_GroundEl")
+    inward = groundel(surface_facts(*box_mesh(flip=set(range(12)))), "SM_Other_GroundEl")
+    for meshes in ((flat, inward), (inward, flat)):
+        assert _named(maf_findings(list(meshes), "ground", "a.fbx"), "MAF flipped normals").status == "fail"
+
+
+def test_p1_3_empty_facts_never_pass():
+    found = maf_findings([groundel({})], "ground", "a.fbx")
+    assert {f.name: f.status for f in found} == {"MAF smoothing": "not_run", "MAF flipped normals": "not_run"}
+
+
+def test_p1_3_partial_or_malformed_facts_are_unmeasured():
+    base = surface_facts(*box_mesh())
+    missing = dict(base)
+    del missing["soft_edge_dihedrals_deg"]
+    legacy = {"soft_edge_angles_deg": {"90.0": 12}, "components": 1, "undetermined_components": 0,
+              "flipped_faces": 0, "inconsistent_edges": 0}
+    nan = dict(base, soft_edge_dihedrals_deg=[float("nan")])
+    for facts in (missing, legacy, nan):
+        smooth = _named(maf_findings([groundel(facts)], "ground", "a.fbx"), "MAF smoothing")
+        assert smooth.status == "not_run"
+    for bad in (-1, True, "0"):
+        facts = dict(base, flipped_faces=bad)
+        flip = _named(maf_findings([groundel(facts)], "ground", "a.fbx"), "MAF flipped normals")
+        assert flip.status == "not_run"
+
+
+def test_p1_3_complete_zero_defect_facts_pass():
+    found = maf_findings([groundel(surface_facts(*box_mesh()))], "ground", "a.fbx")
+    assert _named(found, "MAF smoothing").status == "pass"
+    assert _named(found, "MAF flipped normals").status == "pass"
+
+
+def test_p1_4_known_failures_survive_unmeasured_companion():
+    measured = groundel(surface_facts(*box_mesh(shading="soft", flip={0})))
+    companions = (
+        groundel({"error": "RuntimeError: boom"}, "SM_Other_GroundEl"),
+        groundel({}, "SM_Other_GroundEl"),
+        mesh(name="SM_Other_GroundEl"),
+    )
+    for other in companions:
+        for meshes in ((measured, other), (other, measured)):
+            found = maf_findings(list(meshes), "ground", "a.fbx")
+            for name in ("MAF smoothing", "MAF flipped normals"):
+                finding = _named(found, name)
+                assert finding.status == "fail"
+                assert "unmeasured: SM_Other_GroundEl" in finding.observed
+
+
+def test_p1_5_overall_height_ignores_sink():
+    spec = {"SM_Test_GroundEl": [1.5, 0.6, 0.8]}
+    for height, status in ((0.99, "fail"), (0.80, "pass"), (0.69, "fail"), (0.91, "fail"), (0.70, "pass"), (0.90, "pass")):
+        item = mesh(name="SM_Test_GroundEl")
+        item["bounds_m"] = [[0.0, 0.0, -0.10], [1.5, 0.6, -0.10 + height]]
+        finding = _named(maf_findings([item], "npm", "a.fbx", maf_sizes=spec), "MAF dimensions vs specification")
+        assert finding.status == status, height
+
+
+def test_mixed_inputs_regression():
+    folded = groundel(surface_facts(*folded_quads(40.01, "soft")))
+    folded["bounds_m"] = [[0.0, 0.0, -0.10], [1.5, 0.6, 0.89]]
+    flat = groundel(_flat_quad(), "SM_Flat_GroundEl")
+    broken = groundel({"error": "RuntimeError: boom"}, "SM_Other_GroundEl")
+    sizes = {"SM_Test_GroundEl": [1.5, 0.6, 0.8]}
+    for meshes in itertools.permutations((folded, flat, broken)):
+        found = maf_findings(list(meshes), "ground", "a.fbx", maf_sizes=sizes)
+        assert _named(found, "MAF smoothing").status == "fail"
+        assert _named(found, "MAF flipped normals").status == "not_run"
+        assert _named(found, "MAF dimensions vs specification").status == "fail"
 
 
 BLENDER = find_blender()
@@ -359,8 +468,10 @@ def test_blender_groundel_roundtrip(tmp_path, variant):
     report = readback(fbx_path, blender=BLENDER)
     item = next(m for m in report["meshes"] if m["name"] == "SM_Test_GroundEl")
     assert "error" not in item["maf_surface"], item["maf_surface"]
-    found = scene_findings(report, "npm", "ground", PROFILES.npm, maf_sizes={"SM_Test_GroundEl": [2, 2, 1.9]})
+    found = scene_findings(report, "npm", "ground", PROFILES.npm, maf_sizes={"SM_Test_GroundEl": [2, 2, 2]})
     statuses = {f.name: f.status for f in found["V004"]}
+    short = scene_findings(report, "npm", "ground", PROFILES.npm, maf_sizes={"SM_Test_GroundEl": [2, 2, 1.85]})
+    assert _named(short["V004"], "MAF dimensions vs specification").status == "fail"
     if variant == "good":
         assert statuses["MAF smoothing"] == "pass", item["maf_surface"]
         assert statuses["MAF flipped normals"] == "pass", item["maf_surface"]
