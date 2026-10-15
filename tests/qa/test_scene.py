@@ -1,6 +1,7 @@
 """Scene stages from the Blender readback: rule logic on fixed readbacks, plus a real
 background-Blender roundtrip (skipped when Blender is not installed)."""
 import json
+import math
 import random
 import subprocess
 import zipfile
@@ -10,8 +11,7 @@ import pytest
 
 import validate_package as vp
 from test_validator import PROFILES, STEM, good_files
-from twinqa.geometry.ucx_audit import TOUCH_M
-from twinqa.scene import find_blender, readback, scene_findings, ucx_triangle_limit
+from twinqa.scene import OVERLAP_EPS_M, find_blender, readback, scene_findings, ucx_triangle_limit
 
 BOX_TRIS = [(0, 1, 3), (0, 3, 2), (4, 6, 7), (4, 7, 5), (0, 4, 5), (0, 5, 1),
             (2, 3, 7), (2, 7, 6), (0, 2, 6), (0, 6, 4), (1, 5, 7), (1, 7, 3)]
@@ -58,7 +58,8 @@ def test_ucx_excluded_from_model_triangles_and_budget_checked():
                            PROFILES.vpm)
     assert next(f for f in found["V003"] if f.name == "triangle count").observed.endswith(": 100000")
     assert statuses(found, "V010") == {"UCX triangle budget": "fail", "UCX shape and coverage": "not_run",
-                                       "UCX intersections": "not_run", "UCX piece gap (advisory)": "not_run"}
+                                       "UCX intersections": "not_run", "UCX intersections coverage": "not_run",
+                                       "UCX piece gap (advisory)": "not_run"}
 
 
 def ucx_box(name, lo, hi):
@@ -128,6 +129,7 @@ def test_ucx_without_hull_is_not_run():
     st = statuses(scene_findings(rb(mesh(), mesh(name="UCX_SM_Test_K_1_Main_001"),
                                     mesh(name="UCX_SM_Test_K_1_Main_002")), "vpm", "oks", PROFILES.vpm), "V010")
     assert st["UCX intersections"] == "not_run"
+    assert st["UCX intersections coverage"] == "not_run"
     assert st["UCX piece gap (advisory)"] == "not_run"
 
 
@@ -144,6 +146,7 @@ def test_ucx_pair_findings_absent_for_npm_or_light(kind, role):
     st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
                ucx_box("UCX_SM_Test_K_1_Main_002", (0.5, 0, 0), (1.5, 1, 1)), kind, role)
     assert "UCX intersections" not in st
+    assert "UCX intersections coverage" not in st
     assert "UCX piece gap (advisory)" not in st
 
 
@@ -165,8 +168,167 @@ def test_ucx_random_pair_gap_never_fails_and_overlap_matches_signed_gap(seed):
     st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), tuple(size_a)),
                ucx_box("UCX_SM_Test_K_1_Main_002", tuple(lo_b), tuple(hi_b)))
     assert st["UCX piece gap (advisory)"] != "fail"
-    if abs(abs(signed) - TOUCH_M) >= 1e-6:
-        assert (st["UCX intersections"] == "fail") is (signed < -TOUCH_M)
+    assert st["UCX intersections coverage"] == "pass"
+    if abs(abs(signed) - OVERLAP_EPS_M) < 1e-6:
+        return
+    assert (st["UCX intersections"] == "fail") is (signed < -OVERLAP_EPS_M)
+
+
+def _v010(*ucx):
+    found = scene_findings(rb(mesh(), *ucx), "vpm", "oks", PROFILES.vpm)["V010"]
+    return {f.name: f for f in found}
+
+
+def _rotate_hull_z(piece, degrees):
+    radians = math.radians(degrees)
+    cosine, sine = math.cos(radians), math.sin(radians)
+    piece["hull"]["verts"] = [[cosine * x - sine * y, sine * x + cosine * y, z]
+                              for x, y, z in piece["hull"]["verts"]]
+    return piece
+
+
+def _two_boxes(name):
+    """One UCX hull: [0,1]^3 and [3,4]x[0,1]x[0,1], tris of the second box offset by 8."""
+    first = ucx_box(name, (0, 0, 0), (1, 1, 1))
+    second = ucx_box(name, (3, 0, 0), (4, 1, 1))
+    piece = mesh(name=name, tris=24)
+    piece["hull"] = {"verts": first["hull"]["verts"] + second["hull"]["verts"],
+                     "tris": first["hull"]["tris"] + [[i + 8 for i in tri] for tri in second["hull"]["tris"]]}
+    return piece
+
+
+def test_missing_hull_does_not_hide_proven_overlap():
+    found = _v010(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+                  ucx_box("UCX_SM_Test_K_1_Main_002", (0.5, 0, 0), (1.5, 1, 1)),
+                  mesh(name="UCX_SM_Test_K_1_Main_003"))
+    assert found["UCX intersections"].status == "fail"
+    coverage = found["UCX intersections coverage"]
+    assert coverage.status == "not_run"
+    assert "UCX_SM_Test_K_1_Main_003" in coverage.observed
+    assert "no hull" in coverage.observed
+
+
+def test_missing_hull_blocks_pass_when_neighbours_are_clear():
+    found = _v010(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+                  ucx_box("UCX_SM_Test_K_1_Main_002", (1.005, 0, 0), (2.005, 1, 1)),
+                  mesh(name="UCX_SM_Test_K_1_Main_003"))
+    assert found["UCX intersections"].status == "not_run"
+    coverage = found["UCX intersections coverage"]
+    assert coverage.status == "not_run"
+    assert "UCX_SM_Test_K_1_Main_003" in coverage.observed
+
+
+@pytest.mark.parametrize("penetration_m", [0.0001, 0.00005, 0.00019])
+def test_penetration_below_former_touch_allowance_fails(penetration_m):
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (1 - penetration_m, 0, 0), (2 - penetration_m, 1, 1)))
+    assert st["UCX intersections"] == "fail"
+
+
+@pytest.mark.parametrize("delta_m, intersections, gap", [(-0.0001, "fail", None), (0.0, "pass", "review"),
+                                                         (0.005, "pass", "pass")])
+def test_shared_z_rotation_keeps_overlap_touch_and_gap(delta_m, intersections, gap):
+    left = _rotate_hull_z(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)), 30)
+    right = _rotate_hull_z(ucx_box("UCX_SM_Test_K_1_Main_002", (1 + delta_m, 0, 0), (2 + delta_m, 1, 1)), 30)
+    st = _pair(left, right)
+    assert st["UCX intersections"] == intersections
+    if gap is not None:
+        assert st["UCX piece gap (advisory)"] == gap
+
+
+def test_nonconvex_hull_between_boxes_is_unresolved_not_fail():
+    found = _v010(_two_boxes("UCX_SM_Test_K_1_Main_001"),
+                  ucx_box("UCX_SM_Test_K_1_Main_002", (1.4, 0.2, 0.2), (2.6, 0.8, 0.8)))
+    assert found["UCX intersections"].status == "not_run"
+    coverage = found["UCX intersections coverage"]
+    assert coverage.status == "not_run"
+    assert "UCX_SM_Test_K_1_Main_001" in coverage.observed
+    assert "non-convex" in coverage.observed
+
+
+def test_nonconvex_pair_does_not_hide_an_independent_overlap():
+    found = _v010(_two_boxes("UCX_SM_Test_K_1_Main_001"),
+                  ucx_box("UCX_SM_Test_K_1_Main_002", (1.4, 0.2, 0.2), (2.6, 0.8, 0.8)),
+                  ucx_box("UCX_SM_Test_K_1_Main_003", (10, 0, 0), (11, 1, 1)),
+                  ucx_box("UCX_SM_Test_K_1_Main_004", (10.5, 0, 0), (11.5, 1, 1)))
+    assert found["UCX intersections"].status == "fail"
+    coverage = found["UCX intersections coverage"]
+    assert coverage.status == "not_run"
+    assert "UCX_SM_Test_K_1_Main_001" in coverage.observed
+
+
+def test_open_piece_bbox_touch_is_not_an_intersection_fail():
+    opened = ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1))
+    opened["hull"]["tris"] = opened["hull"]["tris"][:-2]
+    found = _v010(opened, ucx_box("UCX_SM_Test_K_1_Main_002", (1, 0, 0), (2, 1, 1)))
+    assert found["UCX intersections"].status != "fail"
+    coverage = found["UCX intersections coverage"]
+    assert coverage.status == "not_run"
+    assert "open" in coverage.observed
+
+
+def test_flat_degenerate_piece_coverage_not_run():
+    flat = ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1))
+    for vert in flat["hull"]["verts"]:
+        vert[2] = 0.0
+    found = _v010(flat, ucx_box("UCX_SM_Test_K_1_Main_002", (0, 0, 0), (1, 1, 1)))
+    assert found["UCX intersections"].status != "fail"
+    coverage = found["UCX intersections coverage"]
+    assert coverage.status == "not_run"
+    assert "UCX_SM_Test_K_1_Main_001" in coverage.observed
+    assert "degenerate" in coverage.observed
+
+
+def test_nonconvex_piece_a_metre_away_is_resolved_by_bbox():
+    found = _v010(_two_boxes("UCX_SM_Test_K_1_Main_001"),
+                  ucx_box("UCX_SM_Test_K_1_Main_002", (5, 0, 0), (6, 1, 1)))
+    assert found["UCX intersections"].status == "pass"
+    assert found["UCX intersections coverage"].status == "pass"
+    assert found["UCX piece gap (advisory)"].status == "pass"
+
+
+def test_rotated_pair_with_close_boxes_but_far_surfaces_is_not_a_wide_neighbour():
+    # Diamond |x|+|y| <= 0.707 (unit square turned 45 deg) and a 10 cm box in its bbox corner:
+    # bounding boxes overlap, surfaces are ~349 mm apart (> NEIGHBOUR_M), so no wide-gap review.
+    found = _v010(_rotate_hull_z(ucx_box("UCX_SM_Test_K_1_Main_001", (-0.5, -0.5, 0), (0.5, 0.5, 1)), 45),
+                  ucx_box("UCX_SM_Test_K_1_Main_002", (0.6, 0.6, 0), (0.7, 0.7, 1)))
+    assert found["UCX intersections"].status == "pass"
+    assert found["UCX intersections coverage"].status == "pass"
+    assert found["UCX piece gap (advisory)"].status == "pass"
+    assert "wide=0" in found["UCX piece gap (advisory)"].observed
+
+
+def test_nonconvex_neighbour_5cm_away_resolves_intersection_but_gap_is_unmeasured():
+    found = _v010(_two_boxes("UCX_SM_Test_K_1_Main_001"),
+                  ucx_box("UCX_SM_Test_K_1_Main_002", (4.05, 0, 0), (5.05, 1, 1)))
+    assert found["UCX intersections"].status == "pass"
+    assert found["UCX intersections coverage"].status == "pass"
+    assert found["UCX piece gap (advisory)"].status == "not_run"
+    assert "unmeasured=1" in found["UCX piece gap (advisory)"].observed
+
+
+def _axis_box(name, axis, delta):
+    lo, hi = [0.0, 0.0, 0.0], [1.0, 1.0, 1.0]
+    lo[axis] += delta
+    hi[axis] += delta
+    return ucx_box(name, tuple(lo), tuple(hi))
+
+
+@pytest.mark.parametrize("seed", range(200))
+def test_ucx_rotated_penetration_fails_and_positive_gap_never_fails(seed):
+    rng = random.Random(seed + 10_000)
+    axis = rng.randrange(3)
+    angle = rng.uniform(0.0, 360.0)
+    penetration = rng.uniform(2e-5, 5e-3)
+    left = _rotate_hull_z(_axis_box("UCX_SM_Test_K_1_Main_001", axis, 0.0), angle)
+    right = _rotate_hull_z(_axis_box("UCX_SM_Test_K_1_Main_002", axis, 1.0 - penetration), angle)
+    assert _pair(left, right)["UCX intersections"] == "fail"
+    gap = rng.uniform(2e-5, 0.05)
+    left = _rotate_hull_z(_axis_box("UCX_SM_Test_K_1_Main_001", axis, 0.0), angle)
+    right = _rotate_hull_z(_axis_box("UCX_SM_Test_K_1_Main_002", axis, 1.0 + gap), angle)
+    st = _pair(left, right)
+    assert st["UCX intersections"] != "fail"
+    assert st["UCX piece gap (advisory)"] != "fail"
 
 
 def test_npm_oks_over_150k_fails():
