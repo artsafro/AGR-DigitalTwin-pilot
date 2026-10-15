@@ -156,3 +156,66 @@ def test_opaque_fanlight_above_glazed_lower_band_keeps_main_fields():
     glass = [[0.05, 0.05, 1.95, 0.45], [0.05, 0.55, 0.95, 2.0], [1.05, 0.55, 1.95, 2.0]]
     opaque = [[0.05, 2.1, 1.95, 2.7]]
     assert layout(glass + opaque, opaque) == (2, 2)
+
+
+@pytest.mark.parametrize("n_fields", [1, 2, 3, 4])
+@pytest.mark.parametrize("fan_partitions", [1, 2, 3])
+@pytest.mark.parametrize("fan_opaque", [False, True])
+@pytest.mark.parametrize("lower_panel", [False, True])
+@pytest.mark.parametrize("fan_h", [0.6, 2.0])
+def test_synthetic_layout_probes(n_fields, fan_partitions, fan_opaque, lower_panel, fan_h):
+    # issue #45: deterministic generated synthetic probes covering fields 1..4,
+    # fanlight partitions 1..3, opaque vs glazed fanlight, optional lower panel,
+    # and fanlight height 0.6 vs 2.0.
+    total_w = 2.0
+    x0, x1 = 0.05, 2.05
+    glass, opaque = [], []
+    z = 0.05
+    if lower_panel:
+        opaque.append([x0, z, x1, z + 0.4])
+        z += 0.4 + 0.1
+
+    strip_h = 0.4
+    glass.append([x0, z, x1, z + strip_h])
+    z += strip_h + 0.1
+
+    main_h = 1.45
+    main_col_w = (total_w - (n_fields - 1) * 0.1) / n_fields
+    for i in range(n_fields):
+        cx0 = round(x0 + i * (main_col_w + 0.1), 4)
+        cx1 = round(cx0 + main_col_w, 4)
+        glass.append([cx0, z, cx1, z + main_h])
+    z += main_h + 0.1
+
+    fan_part_w = (total_w - (fan_partitions - 1) * 0.1) / fan_partitions
+    fan_panes = []
+    for j in range(fan_partitions):
+        fx0 = round(x0 + j * (fan_part_w + 0.1), 4)
+        fx1 = round(fx0 + fan_part_w, 4)
+        fan_panes.append([fx0, z, fx1, z + fan_h])
+
+    if fan_opaque:
+        opaque.extend(fan_panes)
+    else:
+        glass.extend(fan_panes)
+
+    panes = glass + opaque
+    fields, transoms = layout(panes, opaque)
+    assert fields == n_fields
+    assert transoms == 2 + int(lower_panel)
+
+
+def test_catalog_consistency_recomputes_stored_layout():
+    # issue #45: recompute layout for all 46 catalog entries panes_m plus opaque_m against stored sections/transoms
+    assert len(DOC["types"]) == 46
+    for t in DOC["types"]:
+        panes = (t.get("panes_m") or []) + (t.get("opaque_m") or [])
+        opaque = t.get("opaque_m") or []
+        sections, transoms = layout(panes, opaque)
+        assert (sections, transoms) == (t["sections"], t["transoms"]), t["id"]
+
+
+def test_all_opaque_fallback():
+    # issue #45: preserving all-opaque fallback (safeguards documented fallback for no glass)
+    opaque = [[0.05, 0.05, 0.95, 2.0], [1.05, 0.05, 1.95, 2.0], [0.05, 2.1, 1.95, 2.7]]
+    assert layout(opaque, opaque) == (2, 1)
