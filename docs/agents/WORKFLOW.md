@@ -8,8 +8,9 @@ task: a one-line fix skips most steps; a multi-stage delivery uses all of them.
 Harness work (issues labelled `harness`) runs grilling -> to-spec -> to-tickets -> implement ->
 code-review (user 2026-10-14 [D091]); production work runs the steps below.
 
-0. **Card.** A task with an issue moves on the board (`docs/agents/KANBAN.md`): In progress
-   when taken, Needs you when it waits on the user.
+0. **Card and recitation.** A task with an issue moves on the board (`docs/agents/KANBAN.md`): In progress
+   when taken, Needs you when it waits on the user. Then recite the ticket ("Recitation" below)
+   before any file is changed.
 1. **Goal and discovery.** Read `docs/PROJECT_STATE.md`, the relevant `docs/domain/` file,
    the matching accepted case (`docs/cases.md`) and the real inputs. A script or MCP that
    exists is not working until there is current evidence (`CAPABILITIES.md` status).
@@ -18,7 +19,8 @@ code-review (user 2026-10-14 [D091]); production work runs the steps below.
 3. **Contract.** For multi-stage work write in `jobs/<JOB>/STATE.md` (or the PR): goal and
    acceptance, exact inputs/versions, profile (NPM-OKS, VPM-OKS, NPM-territory…), owner of
    each scene/port/export, outputs, mandatory checks, stop conditions, next step. "Model"
-   alone does not define the profile — ask when it matters.
+   alone does not define the profile — ask when it matters. A job contract starts with the
+   Requirement section and the Context line (template below, "Job contract").
 4. **Plan.** Stages, dependencies, reused tools, checks. An open decision blocks only the
    stages that depend on it.
 5. **Execute** in narrow stages. Pure computation in `src/`, DCC calls in adapters/tools,
@@ -29,9 +31,51 @@ code-review (user 2026-10-14 [D091]); production work runs the steps below.
    test / contract), fix the cause, rerun the affected checks. A failed mandatory check is
    never turned into a pass by rewording. After two failures with the same cause, stop that
    path, save the state and propose the next step.
-7. **Hand off.** Compare the result with the original goal; report what is done, what was
-   checked (commands, evidence paths) and what is open. On restart, read saved outputs and
+7. **Hand off.** Compare the result with the Requirement (the user's wording, profile and
+   acceptance in the contract), item by item: met, not met, or changed by a later user decision
+   (with its date or `D<n>`); report what is done, what was checked (commands, evidence paths)
+   and what is open. On restart, read saved outputs and
    hashes before repeating any mutation (`run-evidence` skill).
+
+## Recitation (#130)
+
+The first step on a ticket, before any file is changed. Restate in the plan, one line per field, in the
+agent's own words:
+
+- **Requirement** - what the user asked, quoted, and the profile if a model is involved;
+- **Specification** - each Acceptance item, Inputs and versions, Out of scope, Evidence the PR must bring;
+- **Context** - the files and rules named, which are then read first.
+
+A field that is empty or missing, or two fields that contradict each other, stop the task before any work:
+name the field, move the card to Needs you and give the issue `needs-info` (`docs/agents/issue-tracker.md`,
+"Ready gate"). Do not fill a field from a guess. A ticket written before the template (no Specification
+section) is recited from what it has, the missing fields are named as missing, and the agent stops on them
+like on an empty field.
+
+## Job contract (#130)
+
+`jobs/<ID>/STATE.md` opens with the contract. The Requirement section is copied once from the user and not
+edited afterwards; a later decision is added below it with its date or `D<n>`, never written over it. The
+handover (step 7, `/handover`) compares the result with this section item by item.
+
+```markdown
+# <ID> (<object name>) - <profile>, <date>
+
+Status: <draft | built | accepted by the user (<date>) | ...>
+Context: <files and rules read first: docs/domain/<file>, patterns/<id>, [D<n>], cases.md#<case>>
+
+## Requirement
+
+> <the user's wording, verbatim, in its language> (user, <date>)
+
+- Profile: <NPM-OKS | VPM-OKS | NPM-territory | ...>
+- Acceptance:
+  - [ ] <checkable item>
+- Later decisions: <date or D<n>: what changed> (none yet)
+
+## Sources
+...
+```
 
 ## Subagents (Claude Code, user 2026-10-13 [D071])
 
