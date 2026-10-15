@@ -30,6 +30,33 @@ Status:
   rejected 2026-10-06): commit no LFS files until H9 is decided. Files over 50 MB go as links (below).
 - CI on GitHub does not start (account locked for billing, 2026-10-14): checks are the local suite only.
 
+## Headless toolchain smoke check
+
+Checked 2026-10-15 (#139): one short headless run per tool on this workstation, no GUI, no user scenes,
+scratch copies only, nothing installed. 18 runs, 149.381 s of probe time in total. Exact commands, exit
+codes and output tails: [toolchain-smoke-2026-10-15.md](../research/toolchain-smoke-2026-10-15.md). Helper scripts lived in the git-ignored
+scratch dir `tmp/issue139/`. A smoke run is not delivery validation (`passed=true`).
+
+| Tool | Version | Command used | Result (works / fails + error line) | Date checked |
+|---|---|---|---|---|
+| PyMuPDF | 1.28.2 | `uv run --offline --extra pdf-review python tmp/issue139/pdf.py` ([run 2](../research/toolchain-smoke-2026-10-15.md#run-2-pdf_extra_fallback)) | works: page 1 of the regulation PDF rendered to PNG 1232x1755 and read back. The issue's `--group pdf-review` fails: `error: Group 'pdf-review' is not defined in the project's 'dependency-groups' table` (it is an optional extra) | 2026-10-15 |
+| ezdxf | 1.4.3 | `uv run --offline --extra cad python tmp/issue139/cad.py` ([run 4](../research/toolchain-smoke-2026-10-15.md#run-4-cad_extra_fallback)) | works: 1 LINE written to DXF and read back. The issue's `--group cad` fails: `error: Group 'cad' is not defined in the project's 'dependency-groups' table` (it is an optional extra) | 2026-10-15 |
+| CheckToolBox | v1.5 add-on (no version in bl_info) on Blender 4.4.0 | `blender 4.4 --background --factory-startup --python-exit-code 1 --python jobs/KPP1/scripts/qa_checktoolbox.py -- <out.json> <synthetic_cube.fbx>` ([run 14](../research/toolchain-smoke-2026-10-15.md#run-14-blender_44_qa_checktoolbox_run)) | works on Blender 4.4 (the KPP1 host): faces 6, doubles 0, intersect_faces 0. Fails on Blender 5.1.2: `ModuleNotFoundError: No module named 'CheckToolBox_v1_5'` (add-on not installed there; Blender exits 0 unless `--python-exit-code` is set) | 2026-10-15 |
+| speedtree-mcp | mcp 1.30.0; SpeedTree Modeler v10.0.1 install | `python tmp/issue139/speedtree.py` (stdio client in the BlenderLab103 venv) ([run 5](../research/toolchain-smoke-2026-10-15.md#run-5-speedtree_mcp_client)) | works: server starts, 6 tools listed, `installation_info` installed=True. No `.spm` sample is tracked, so no inspect or export | 2026-10-15 |
+| AutoCAD core console | AutoCAD 2025, ACADVER 25.0 | `python hermes_kanban/scripts/dcc_batch.py acad --ping` ([run 10](../research/toolchain-smoke-2026-10-15.md#run-10-acad_dcc_batch_ping)) | works: `AGR_PING acad=25.0`, exit code 0, 4.0 s | 2026-10-15 |
+| 3ds Max batch | 3ds Max 2026.3 (28.3.0.30732) | `python hermes_kanban/scripts/dcc_batch.py max --ping` ([run 11](../research/toolchain-smoke-2026-10-15.md#run-11-max_dcc_batch_ping)) | works with an error: `AGR_PING max=28000` printed, wrapper status ok, but native exit 4294967166 and `MAXScript Auto-load Script Error Exception ... polyunwrapper_autoload.mse` (a startup script in the user profile; the whole batch run took 119.9 s) | 2026-10-15 |
+| Blender | 5.1.2 (hash ec6e62d40fa9) | `blender 5.1 --background --factory-startup --version` ([run 6](../research/toolchain-smoke-2026-10-15.md#run-6-blender_version)) | works: version printed, exit 0; the synthetic test FBX was also exported headless ([run 7](../research/toolchain-smoke-2026-10-15.md#run-7-blender_synthetic_cube_fbx)) | 2026-10-15 |
+| autocad-mcp | multiCAD (`tools/mcp/multicad_stdio.py`) | none | not checked: needs AutoCAD open (user); the MCP server drives a live AutoCAD session, which a headless smoke check does not start | 2026-10-15 |
+
+#### Not used, by decision
+
+User decisions of roadmap round 4 (COORDINATION_RULES 27, issue #139):
+- trimesh: not used.
+- CADCraft: not used.
+- ODA File Converter: not installed for now; DWG is read through the AutoCAD 2025 core console (DXFOUT) + ezdxf.
+- MTree/Sapling: not used until a Flora benchmark on the user's trees.
+- IfcOpenShell: transient `uv --with` only, no project dependency, until the Revit adapter.
+
 ## DCC / MCP
 
 Rules for every DCC: confirm the MCP tools are present **and** the intended application and
