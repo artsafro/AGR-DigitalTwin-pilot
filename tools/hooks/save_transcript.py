@@ -52,12 +52,21 @@ def project_folders():
 
 
 def holding(nonce):
+    token = nonce.encode()
+    overlap = max(0, len(token) - 1)
     found = {}
     for folder in project_folders():
         for f in sorted(folder.glob("*.jsonl")) if folder.is_dir() else []:
             try:
-                if nonce.encode() in f.read_bytes():
-                    found[os.path.normcase(os.path.realpath(f))] = f
+                with f.open("rb") as stream:
+                    tail = b""
+                    while chunk := stream.read(4 * 1024 * 1024):
+                        window = tail + chunk
+                        if token in window:
+                            found[os.path.normcase(os.path.realpath(f))] = f
+                            break
+                        # Keep matches spanning a read boundary without retaining the file.
+                        tail = window[-overlap:] if overlap else b""
             except OSError:
                 continue
     return list(found.values())

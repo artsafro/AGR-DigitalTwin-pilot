@@ -69,6 +69,45 @@ def test_the_session_holding_the_nonce_not_the_newest_file(repo, config):
     assert [p.name for p in dest.parent.iterdir()] == [dest.name]          # no temporary file left
 
 
+@pytest.mark.parametrize("split", [0, 1, len(NONCE) - 1])
+def test_nonce_search_uses_bounded_reads_across_chunk_boundary(tmp_path, monkeypatch, split):
+    spec = importlib.util.spec_from_file_location("save_transcript", HOOK)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    chunk_size = 4 * 1024 * 1024
+    unrelated = tmp_path / "a-unrelated.jsonl"
+    matching = tmp_path / "b-session.jsonl"
+    unrelated.write_bytes(b"x" * (2 * chunk_size + 1))
+    matching.write_bytes(b"x" * (chunk_size - split) + NONCE.encode() + b"\n")
+    monkeypatch.setattr(module, "project_folders", lambda: [tmp_path])
+    original_open = Path.open
+    reads = []
+
+    class BoundedReader:
+        def __init__(self, stream):
+            self.stream = stream
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            self.stream.close()
+
+        def read(self, size=-1):
+            assert 0 < size <= chunk_size, "transcripts must not be read whole"
+            reads.append(size)
+            return self.stream.read(size)
+
+    def bounded_open(path, *args, **kwargs):
+        stream = original_open(path, *args, **kwargs)
+        return BoundedReader(stream) if path in (unrelated, matching) else stream
+
+    monkeypatch.setattr(Path, "open", bounded_open)
+    assert module.holding(NONCE) == [matching]
+    assert reads
+
+
 def test_never_overwritten(repo, config):
     dest = Path(run(HOOK, repo, config, "--nonce", NONCE, "--pr", "140").stdout.strip())
     dest.write_text("kept", encoding="utf-8")
