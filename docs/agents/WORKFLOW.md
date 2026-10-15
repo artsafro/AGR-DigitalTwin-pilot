@@ -166,7 +166,7 @@ Rows per action class, columns per agent; #127 fills the other rows.
 
 | Action class | Claude Code | Codex | Antigravity | Enforced by |
 |---|---|---|---|---|
-| Retry after the failure limit (two failures with the same cause, or three of one item) | never without a stop record | never without a stop record | never without a stop record | pipeline gate: `.claude/hooks/pipeline_gate.py` (deny: writes, and Bash/PowerShell runner commands on a locked job), `tools/git-hooks/pipeline_gate.py` (pre-commit, `--job`), `dt build/validate/from-source/spec extract` (exit 2 before the run) |
+| Retry after the failure limit (two failures with the same cause, or three of one item) | never without a stop record | never without a stop record | never without a stop record | pipeline gate: `.claude/hooks/pipeline_gate.py` (deny: writes, and Bash/PowerShell runner commands on a locked job), `tools/git-hooks/pipeline_gate.py` (pre-commit, `--job`), `dt build/validate/from-source/spec extract` (exit 2 before the run; run interception is partial, gaps tracked in #144) |
 
 ## Git
 
