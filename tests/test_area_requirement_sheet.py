@@ -53,6 +53,12 @@ def row_str(cells: list[str]) -> str:
     return "| " + " | ".join(cells) + " |"
 
 
+def table_line_indices(lines: list[str] | str) -> list[int]:
+    """Return line indices for markdown table rows, tolerating leading whitespace."""
+    raw = lines.splitlines() if isinstance(lines, str) else lines
+    return [i for i, line in enumerate(raw) if line.lstrip().startswith("|")]
+
+
 def mutate_line(text: str, line_idx: int, new_line: str | None) -> str:
     lines = text.splitlines()
     if new_line is None:
@@ -90,7 +96,7 @@ def contract(text: str) -> list[list[str]]:
     """Generalized documentation contract for area requirement sheets."""
     assert text and text.strip(), "Requirement sheet text must not be empty"
     lines = text.splitlines()
-    t_indices = [i for i, line in enumerate(lines) if line.startswith("|")]
+    t_indices = table_line_indices(lines)
     assert len(t_indices) >= 3, "Requirement sheet must contain a table with header, separator, and data rows"
     assert t_indices[-1] - t_indices[0] + 1 == len(t_indices), "Requirement sheet must contain exactly one contiguous markdown table"
 
@@ -179,7 +185,7 @@ def test_columns_negative_probes(sheet_path: Path):
     text = sheet_path.read_text(encoding="utf-8")
     contract(text)
     lines = text.splitlines()
-    t_indices = [i for i, line in enumerate(lines) if line.startswith("|")]
+    t_indices = table_line_indices(lines)
     tested = 0
     for idx in [t_indices[0]] + t_indices[2:]:
         cells = parse_cells(lines[idx])
@@ -198,7 +204,7 @@ def test_sources_negative_probes(sheet_path: Path):
     text = sheet_path.read_text(encoding="utf-8")
     contract(text)
     lines = text.splitlines()
-    data_indices = [i for i, line in enumerate(lines) if line.startswith("|")][2:]
+    data_indices = table_line_indices(lines)[2:]
     tested = 0
     for r_idx in data_indices:
         r_cells = parse_cells(lines[r_idx])
@@ -217,7 +223,7 @@ def test_gaps_negative_probes(sheet_path: Path):
     text = sheet_path.read_text(encoding="utf-8")
     contract(text)
     lines = text.splitlines()
-    data_indices = [i for i, line in enumerate(lines) if line.startswith("|")][2:]
+    data_indices = table_line_indices(lines)[2:]
     gap_entries = find_gap_lines(text)
     tested = 0
 
@@ -272,7 +278,7 @@ def test_gap_section_boundaries_and_order():
     """Verify that reordering table rows or gaps is accepted, while out-of-section gaps fail."""
     contract(SYNTHETIC_REORDER_SHEET)
     lines = SYNTHETIC_REORDER_SHEET.splitlines()
-    t_idx = [i for i, l in enumerate(lines) if l.startswith("|")]
+    t_idx = table_line_indices(lines)
     lines[t_idx[2]], lines[t_idx[3]] = lines[t_idx[3]], lines[t_idx[2]]
     contract("\n".join(lines) + "\n")
 
@@ -293,12 +299,13 @@ def test_duplicate_table_rejected():
     """Verify that duplicate tables and duplicate IDs are rejected."""
     for text in ((AREAS_DIR / "ucx.md").read_text(encoding="utf-8"), SYNTHETIC_VALID_SHEET):
         contract(text)
-        tbl = "\n".join(line for line in text.splitlines() if line.startswith("|"))
+        lines = text.splitlines()
+        tbl = "\n".join(lines[i] for i in table_line_indices(lines))
         with pytest.raises(AssertionError):
             contract(text + "\n\n" + tbl + "\n")
 
-    t_synth = [i for i, line in enumerate(SYNTHETIC_VALID_SHEET.splitlines()) if line.startswith("|")]
     lines = SYNTHETIC_VALID_SHEET.splitlines()
+    t_synth = table_line_indices(lines)
     with pytest.raises(AssertionError):
         contract(mutate_line(SYNTHETIC_VALID_SHEET, t_synth[3], lines[t_synth[2]]))
 
@@ -382,7 +389,7 @@ def test_ucx_sheet_contract():
     rows = ucx_contract(ucx_text)
     tested = 0
     lines = ucx_text.splitlines()
-    data_indices = [i for i, line in enumerate(lines) if line.startswith("|")][2:]
+    data_indices = table_line_indices(lines)[2:]
     for r_idx, row in zip(data_indices, rows):
         changed = row.copy()
         changed[2] = "required"
