@@ -24,10 +24,24 @@ Native-size blocker resolved by the user's explicit 1254 -> 2048 LANCZOS excepti
   Companion: `C:/x/flora-textures/review-sheet-v001.png` (viewed by the worker).
 - Real-batch gate probe: **1/1 passed**; empty approval records rejected before
   creating `atlas-v001`. No real atlas exists, no approval JSON was fabricated.
-- New tests-first commit: `2447ea3`. Verified upscale RED: **1 failed, 52 passed**
-  (missing `upscale` on the inherited implementation); GREEN: **53 passed**.
-  This is separate from the inherited earlier RED/GREEN evidence below.
-- `uv sync` completed. Full suite result is recorded in the next milestone.
+- New tests-first commit: `2447ea3`. Initial feature smoke RED: **1 failed,
+  52 passed** (missing `upscale` on the inherited implementation); GREEN: **53 passed**.
+- Replayable assertion regression at tests-first commit `57eda28`: **3 failed,
+  53 passed** (`None`, `False`, `0` were stringified and accepted as authorization).
+  Require nonempty text authorization instead; GREEN: **56 passed in 4.89s**.
+  Command: `env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q
+  -p no:cacheprovider --basetemp=C:/x/t_4005c4b2 tests/test_flora_textures.py`.
+  RED log: `tmp/flora-red-authorization.txt`. Earlier tRNS evidence below is inherited.
+- `uv sync` completed. `dt profiles check`: **3 profiles OK**;
+  `dt schemas --check`: **11 schemas OK**. Final full suite (same environment and
+  basetemp, no file selector): **3251 passed, 9 skipped, 13 deselected, 48 warnings
+  in 382.46s (0:06:22)**; log `tmp/flora-final-tests.txt`. Warnings: ezdxf/pyparsing
+  deprecations and intentional duplicate-ZIP fixture. CI: not run (billing lock).
+- Current invariant probes (all pass): 256 PNG transparency keys; 255 thresholds x
+  256 gray levels; 24 approval faults across three positions; five changed review
+  artifacts; 40 packing batch sizes; three repository-output paths; three invalid
+  source dimensions; repeat plan/prepare/pack/upscale refuses overwrites; three
+  non-text authorization inputs; actual real-batch missing approvals rejected.
 - Regression eval receipt: `uv run dt evals --suite regression --output
   tmp/evals/flora-regression-v001`: **0 passed, 0 failed, 10 not measured**, exit 2.
   Hermes branch has no matching Claude transcript/PR evidence; not a passing eval.

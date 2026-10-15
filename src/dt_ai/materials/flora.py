@@ -103,7 +103,7 @@ def upscale(source, output, authorization):
     This technical conversion adds no detail and does not approve a texture.
     Keep the original unchanged; bind the conversion receipt to both files.
     """
-    if not str(authorization).strip():
+    if not isinstance(authorization, str) or not authorization.strip():
         raise ValueError("Explicit user authorization for upscaling is required")
     output = external_destination(output)
     source = Path(source)
