@@ -264,3 +264,53 @@ def test_twin_published_iff_export_valid_generated(tmp_path):
                 run(src, out)
             assert not (out / "hashes.json").exists() and not (out / "snapshot_dump.json").exists(), kind
             assert (out / "blocked.json").exists()
+
+
+# ---------------------------------------------------------------- loop step (keep rule)
+
+import loop_step as ls  # noqa: E402
+
+
+@pytest.fixture
+def loop(tmp_path, monkeypatch):
+    """loop_step.main with a prebuilt dump, metric and guard stubbed; returns run(err, guard_ok, *flags) -> row."""
+    monkeypatch.setattr(ls, "RESULTS", tmp_path / "results.json")
+    monkeypatch.setattr(ls, "OUT", tmp_path)
+    dump = tmp_path / "pre.json"
+    dump.write_text(json.dumps({"meshes": [], "helpers": []}), encoding="utf-8")
+    monkeypatch.setattr(ls, "from_dump", lambda d: object())
+    monkeypatch.setattr(ls.ev, "etalon_silhouettes", lambda snap: {})
+    calls = []
+
+    def run(err, guard_ok, *flags):
+        monkeypatch.setattr(ls.ev, "metric", lambda m, s: {"silhouette_err_m2": err, "per_view_m2": {}, "iou": {}})
+
+        def guard(m, snap):
+            calls.append(err)
+            return {"guard_passed": guard_ok, "delivery_passed": False, "mesh": {"status": "pass", "value": {}},
+                    "mesh_per_mesh": {}, "winding_bad_edges": {"body": 0}, "triangles": 12, "budget_status": "pass",
+                    "levels": {"status": "pass", "worst_m": 0.0}}
+        monkeypatch.setattr(ls.ev, "guard", guard)
+        n = str(len(calls) + 100 + len(json.loads(ls.RESULTS.read_text())) if ls.RESULTS.exists() else 100)
+        monkeypatch.setattr(sys, "argv", ["loop_step.py", "--n", n, "--desc", "t", "--prebuilt", str(dump),
+                                          "--prebuilt-info", '{"triangles": 12}', *flags])
+        ls.main()
+        return json.loads(ls.RESULTS.read_text(encoding="utf-8"))[-1]
+    run.calls = calls
+    return run
+
+
+def test_loop_keep_rule(loop):
+    assert loop(100.0, True, "--baseline")["status"] == "baseline"
+    better_fail = loop(90.0, False)
+    assert better_fail["status"] == "discard" and better_fail["guard_passed"] is False
+    equal = loop(100.0, True)                           # not strictly better: discarded, guard not run
+    assert equal["status"] == "discard" and equal["guard_passed"] is None
+    worse = loop(120.0, True)
+    assert worse["status"] == "discard" and worse["guard_passed"] is None
+    kept = loop(90.0, True)
+    assert kept["status"] == "keep" and kept["best_before"] == 100.0
+    assert loop(90.0, True)["status"] == "discard"      # the new best is 90: equal again
+    assert loop(89.999, True)["status"] == "keep"
+    assert loop.calls == [100.0, 90.0, 90.0, 89.999]     # the guard ran for the baseline and every better metric only
+    assert all(r["delivery_passed"] is False for r in json.loads(ls.RESULTS.read_text()))

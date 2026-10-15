@@ -48,13 +48,19 @@ def main():
     ap.add_argument("--desc", required=True)
     ap.add_argument("--guard-always", action="store_true")
     ap.add_argument("--baseline", action="store_true")
+    ap.add_argument("--prebuilt", help="model dump already written by the current build_npm.py")
+    ap.add_argument("--prebuilt-info", help="the build's stdout JSON line for --prebuilt")
     a = ap.parse_args()
     rows = json.loads(RESULTS.read_text(encoding="utf-8")) if RESULTS.exists() else []
     model_p = OUT / f"exp{a.n}_dump.json"
     t0 = time.time()
-    b = subprocess.run([sys.executable, str(HERE / "build_npm.py"), "--out", str(model_p)], capture_output=True,
-                       text=True)
-    row = {"n": a.n, "description": a.desc, "build_seconds": round(time.time() - t0, 1)}
+    if a.prebuilt:          # a dump this same build_npm.py wrote (deterministic): copied, info from its stdout
+        model_p.write_bytes(Path(a.prebuilt).read_bytes())
+        b = subprocess.CompletedProcess([], 0, stdout=a.prebuilt_info, stderr="")
+    else:
+        b = subprocess.run([sys.executable, str(HERE / "build_npm.py"), "--out", str(model_p)], capture_output=True,
+                           text=True)
+    row = {"n": a.n, "description": a.desc, "build_seconds": round(time.time() - t0, 1), "delivery_passed": False}
     if b.returncode:
         row.update(status="crash", error=b.stderr[-600:])
     else:

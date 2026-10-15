@@ -42,9 +42,19 @@ OPENING_MARGIN_M = 0.02             # an opening plane keeps this clear of its w
 Z_Q = 0.05
 K_EXTRA = 44
 FACADE_ID, ROOF_ID, SOFFIT_ID = 1, 21, 1
-SOURCE = "boxes"                    # plan regions from: "boxes" (piece boxes) or "mesh" (projected piece meshes)
-SIMPLIFY_M = 0.0                    # "mesh": simplify tolerance of a layer region
+SOURCE = "mesh"                     # plan regions from: "boxes" (piece boxes) or "mesh" (projected piece meshes)
+SIMPLIFY_M = 0.15                   # "mesh": simplify tolerance of a layer region
+SIMPLIFY_PIECE_M = 0.0              # "mesh": simplify tolerance of every piece footprint
+SNAP_LAYERS_U = 0.0                 # "mesh": outlines of neighbouring layers snapped to each other (grid units)
 FILL_HOLES_M2 = 1e9                 # "mesh": holes of a layer region up to this area are filled (rooms)
+NODE_ITER = 0                       # "mesh": rounds of inserting outline crossings of neighbouring layers as vertices
+HORIZ = "prisms"                    # faces at a threshold: "difference" (snapped) or "arrangement" (noded outlines)
+UNCONTACT_U = 1.5                   # strip width (grid units) the upper region takes where two layers touch edge to edge
+PRISM_GAP_M = 0.004                 # "prisms": gap under a prism standing on another (> the 3 mm weld)
+PRISM_SHRINK_U = 0.1                # "prisms": every prism outline offset inward by this (grid units; 0.1 = 5 mm)
+SLAB_KINDS = {"OST_Floors", "OST_Roofs"}
+SLAB_COVER_M = 0.05                 # "mesh": a floor / roof piece joins every layer it overlaps by this much (thin slabs)
+PINCH_CUT_U = 0.3                   # "prisms": radius of the octagon cut out at a pinch left after the offset
 # ---------------------------------------------------------------------------------------------------------------
 
 
@@ -91,19 +101,41 @@ def polys(geom):
     return shapely.union_all(parts) if parts else Polygon()
 
 
+def pinch_points(region):
+    """Grid points where the outline of region touches itself: a vertex used twice, or a vertex on another edge
+    (the outline noded, a node of degree > 2)."""
+    rings = rings_of(region)
+    if not rings:
+        return set()
+    seen, pinch = set(), set()
+    for ring in rings:
+        for c in ring:
+            if c in seen:
+                pinch.add(c)
+            seen.add(c)
+    lines = shapely.union_all([shapely.LineString(r + r[:1]) for r in rings])
+    deg = {}
+    for part in shapely.get_parts(lines):
+        cs = part.coords
+        for c in (cs[0], cs[-1]):
+            k = (int(round(c[0])), int(round(c[1])))
+            deg[k] = deg.get(k, 0) + 1
+    pinch |= {k for k, n in deg.items() if n > 2}
+    return pinch
+
+
 def unpinch(region):
-    """A plan region whose outline touches itself at a point (two parts at a corner, a hole at the outline) gives a
-    non-manifold vertex: a one-unit square fills every such point."""
-    for _ in range(5):
-        seen, pinch = {}, set()
-        for ring in rings_of(region):
-            for c in ring:
-                if c in seen:
-                    pinch.add(c)
-                seen[c] = 1
+    """A plan region whose outline touches itself at a point (two parts at a corner, a hole at the outline, a vertex
+    on another edge) gives a non-manifold vertex: a two-unit square fills every such point."""
+    for i in range(6):
+        pinch = pinch_points(region)
         if not pinch:
             return region
-        region = polys(shapely.set_precision(shapely.union_all([region] + [box(x - 1, y - 1, x + 1, y + 1) for x, y in pinch]), 1.0))
+        if i < 2:
+            region = polys(shapely.set_precision(shapely.union_all([region] + [box(x - 1, y - 1, x + 1, y + 1) for x, y in pinch]), 1.0))
+        else:                       # a square corner can land on a diagonal edge: close the region by 1-2 units
+            r = 1.0 + 0.5 * (i - 2)
+            region = polys(shapely.set_precision(region.buffer(r, quad_segs=1).buffer(-r, quad_segs=1), 1.0))
     return region
 
 
@@ -121,7 +153,7 @@ def uncontact(regions):
             touch = shapely.intersection(shapely.boundary(a), shapely.boundary(b))
             if touch is None or touch.is_empty:
                 continue
-            strip = touch.buffer(1, cap_style="square", join_style="mitre").intersection(lo)
+            strip = touch.buffer(UNCONTACT_U, cap_style="square", join_style="mitre").intersection(lo)
             regions[k] = unpinch(polys(shapely.set_precision(shapely.union_all([hi, polys(strip)]), 1.0)))
             changed = True
         if not changed:
@@ -168,15 +200,95 @@ def fill_holes(region):
     return shapely.union_all(parts) if parts else Polygon()
 
 
+def _ring_insert(ring, pts):
+    """ring (list of int (x, y), not closed) with each point of pts inserted into its nearest segment (< 1 unit)."""
+    ring = list(ring)
+    for p in pts:
+        if p in ring:
+            continue
+        P = np.array(p, float)
+        A = np.array(ring, float)
+        B = np.roll(A, -1, axis=0)
+        d = B - A
+        L2 = np.maximum((d * d).sum(1), 1e-12)
+        s = np.clip(((P - A) * d).sum(1) / L2, 0, 1)
+        dist = np.linalg.norm(A + d * s[:, None] - P, axis=1)
+        i = int(np.argmin(dist))
+        if dist[i] < 1.0:
+            ring.insert(i + 1, p)
+    return ring
+
+
+def _insert(region, pts):
+    out = []
+    for p in shapely.get_parts(region):
+        if p.geom_type != "Polygon" or p.is_empty:
+            continue
+        p = shapely.geometry.polygon.orient(p, 1.0)
+        ext = [tuple(map(int, map(round, c))) for c in p.exterior.coords[:-1]]
+        holes = [[tuple(map(int, map(round, c))) for c in h.coords[:-1]] for h in p.interiors]
+        near = [q for q in pts if p.buffer(1.5).contains(shapely.Point(q))]
+        if near:
+            rings = [ext] + holes
+            # every point goes to the one ring of this polygon it is nearest to
+            for q in near:
+                dists = [shapely.LineString(r + r[:1]).distance(shapely.Point(q)) for r in rings]
+                k = int(np.argmin(dists))
+                if dists[k] < 1.0:
+                    rings[k] = _ring_insert(rings[k], [q])
+            ext, holes = rings[0], rings[1:]
+        out.append(Polygon(ext, holes))
+    return shapely.MultiPolygon(out) if len(out) > 1 else (out[0] if out else Polygon())
+
+
+def _crossings(a, b):
+    """Grid points that must be a vertex of both outlines: where the outlines of a and b cross (snapped), and every
+    vertex of one lying within one unit of the other's outline (snap rounding: near-coincident edges share them)."""
+    ba, bb = shapely.boundary(a), shapely.boundary(b)
+    xy = shapely.get_coordinates(shapely.intersection(ba, bb))
+    pts = {(int(round(x)), int(round(y))) for x, y in xy}
+    va = {c for r in rings_of(a) for c in r}
+    vb = {c for r in rings_of(b) for c in r}
+    for src, other in ((vb - va, ba), (va - vb, bb)):
+        if src:
+            arr = sorted(src)
+            dist = shapely.distance(other, shapely.points(np.array(arr, float)))
+            pts.update(q for q, dd in zip(arr, dist) if dd < 1.0)
+    return [p for p in pts if p not in va or p not in vb]
+
+
+def node_regions(regions):
+    """Make every point where the outlines of two neighbouring layers meet a vertex of both (snapped to the grid and
+    inserted): with arbitrary angles a crossing is off the grid, and the faces at that height would not meet the
+    walls edge to edge."""
+    for it in range(NODE_ITER):
+        added = 0
+        for k in range(1, len(regions)):
+            a, b = regions[k - 1], regions[k]
+            if a.is_empty or b.is_empty:
+                continue
+            pts = _crossings(a, b)
+            if pts:
+                regions[k - 1], regions[k] = _insert(a, pts), _insert(b, pts)
+                added += len(pts)
+        print(f"node round {it}: {added} points", file=sys.stderr, flush=True)
+        if not added:
+            break
+    return regions
+
+
 def layer_regions_mesh(rows, t):
     fp = footprints(rows)
     s = 1.0 / SNAP_M
-    pieces = [(shapely.affinity.scale(fp[r["name"]], s, s, origin=(0, 0)), r["box"][0][2], r["box"][1][2])
-              for r in rows if r["name"] in fp and not fp[r["name"]].is_empty]
+    pieces = [(shapely.affinity.scale(fp[r["name"]], s, s, origin=(0, 0)), r["box"][0][2], r["box"][1][2],
+               r["category"] in SLAB_KINDS) for r in rows if r["name"] in fp and not fp[r["name"]].is_empty]
+    if SIMPLIFY_PIECE_M > 0:        # per piece, so layers holding the same pieces get the very same outline
+        pieces = [(shapely.make_valid(pg.simplify(SIMPLIFY_PIECE_M * s)), b, top, sl) for pg, b, top, sl in pieces]
     out = []
     for z0, z1 in zip(t, t[1:]):
         h = z1 - z0
-        sel = [pg for pg, b, top in pieces if min(top, z1) - max(b, z0) >= COVER_F * h - 1e-9]
+        sel = [pg for pg, b, top, slab in pieces
+               if min(top, z1) - max(b, z0) >= (COVER_F * h - 1e-9 if not slab else SLAB_COVER_M)]
         if not sel:
             out.append(Polygon())
             continue
@@ -185,7 +297,26 @@ def layer_regions_mesh(rows, t):
             reg = reg.simplify(SIMPLIFY_M * s)
         reg = fill_holes(shapely.set_precision(shapely.make_valid(reg), 1.0))
         out.append(unpinch(clean(reg)))
-    return uncontact(out)
+    out = uncontact(out) if HORIZ != "prisms" else out      # separate prisms never share an edge
+    if SNAP_LAYERS_U > 0:
+        out = snap_layers(out)
+    return node_regions(out) if NODE_ITER else out
+
+
+def snap_layers(regions):
+    """Outlines of neighbouring layers that run within SNAP_LAYERS_U of each other (each layer's union simplified
+    on its own) snapped together: vertices of one inserted into the other's near segments (GEOS snap), both ways."""
+    n = len(regions)
+    for _ in range(2):
+        for order in (range(1, n), range(n - 2, -1, -1)):
+            for k in order:
+                ref = regions[k - 1] if order.step == 1 else regions[k + 1]
+                if regions[k].is_empty or ref.is_empty:
+                    continue
+                snapped = polys(shapely.set_precision(shapely.make_valid(shapely.snap(regions[k], ref, SNAP_LAYERS_U),
+                                                                  method="structure", keep_collapsed=False), 1.0))
+                regions[k] = unpinch(snapped)
+    return regions
 
 
 def layer_regions(rows, t):
@@ -414,7 +545,186 @@ def wall_chain(mesh, p, q, bot, top, z0, z1, openings, stats):
         stats[o[4]] = stats.get(o[4], 0) + 1
 
 
+class FPoints:
+    """Float points (grid units); on(p, q) gives those strictly inside the segment p -> q (within EPS), in order."""
+    EPS = 1e-6
+
+    def __init__(self, pts):
+        a = np.array(sorted(set(pts)), float).reshape(-1, 2)
+        self.a, self.x = a, a[:, 0]
+
+    def on(self, p, q):
+        P, Q = np.array(p, float), np.array(q, float)
+        lo = np.searchsorted(self.x, min(P[0], Q[0]) - 1e-6)
+        hi = np.searchsorted(self.x, max(P[0], Q[0]) + 1e-6, side="right")
+        a = self.a[lo:hi]
+        if len(a):
+            a = a[(a[:, 1] >= min(P[1], Q[1]) - 1e-6) & (a[:, 1] <= max(P[1], Q[1]) + 1e-6)]
+        if not len(a):
+            return []
+        d = Q - P
+        L = float(np.sqrt(d @ d))
+        rel = a - P
+        cross = np.abs(rel[:, 0] * d[1] - rel[:, 1] * d[0]) / L
+        s = rel @ d / L
+        hit = (cross < self.EPS) & (s > self.EPS) & (s < L - self.EPS)
+        order = np.argsort(s[hit])
+        return [tuple(map(float, c)) for c in a[hit][order]]
+
+
+def arrangement(below, above):
+    """Faces at one threshold from the noded outlines of the regions below and above it: (up faces, down faces,
+    every vertex of the arrangement). Crossings are computed once, so walls and faces share them exactly."""
+    rings = rings_of(below) + rings_of(above)
+    if not rings:
+        return [], [], []
+    lines = shapely.union_all([shapely.LineString(r + r[:1]) for r in rings])
+    pts = [tuple(map(float, c)) for c in shapely.get_coordinates(lines)]
+    up, down = [], []
+    for f in shapely.get_parts(shapely.polygonize(shapely.get_parts(lines))):
+        if f.area <= 1e-9:
+            continue
+        rp = f.representative_point()
+        inb, ina = below.contains(rp), above.contains(rp)
+        if inb and not ina:
+            up.append(f)
+        elif ina and not inb:
+            down.append(f)
+    return up, down, pts
+
+
+def cdt(face):
+    out = []
+    for tr in shapely.get_parts(shapely.constrained_delaunay_triangles(face)):
+        c = [tuple(map(float, xy)) for xy in tr.exterior.coords[:3]]
+        area2 = (c[1][0] - c[0][0]) * (c[2][1] - c[0][1]) - (c[1][1] - c[0][1]) * (c[2][0] - c[0][0])
+        if area2 < 0:
+            c = [c[0], c[2], c[1]]
+        if abs(area2) > 1e-12:
+            out.append(c)
+    return out
+
+
+def build_arrangement(rows, levels):
+    body = [r for r in rows if r["category"] in BODY]
+    t = thresholds(body, levels)
+    import time
+    t0 = time.time()
+    regions = layer_regions(body, t)
+    print(f"regions {time.time() - t0:.1f} s", file=sys.stderr, flush=True)
+    openings = [(r["box"][0], r["box"][1], OPENINGS[r["category"]]) for r in rows if r["category"] in OPENINGS]
+    empty = Polygon()
+    faces, at = [], []
+    for k, z in enumerate(t):
+        below = regions[k - 1] if k > 0 else empty
+        above = regions[k] if k < len(regions) else empty
+        up, down, pts = arrangement(below, above)
+        faces.append((z, up, down))
+        at.append(FPoints(pts))
+    print(f"arrangements {time.time() - t0:.1f} s", file=sys.stderr, flush=True)
+    mesh, stats = Mesh(), {}
+    for j, ((z0, z1), reg) in enumerate(zip(zip(t, t[1:]), regions)):
+        for ring in rings_of(reg):
+            for i, p in enumerate(ring):
+                q = ring[(i + 1) % len(ring)]
+                wall_chain(mesh, p, q, at[j].on(p, q), at[j + 1].on(p, q), z0, z1, openings, stats)
+        if j % 10 == 0:
+            print(f"  layer {j}: {len(mesh.t)} triangles, {time.time() - t0:.1f} s", file=sys.stderr, flush=True)
+    print(f"walls {time.time() - t0:.1f} s", file=sys.stderr, flush=True)
+    for z, up, down in faces:
+        for flist, is_up in ((up, True), (down, False)):
+            for f in flist:
+                for c in cdt(f):
+                    ids = [mesh.vid(x, y, z) for x, y in c]
+                    if not is_up:
+                        ids = [ids[0], ids[2], ids[1]]
+                    mesh.tri(*ids, ROOF_ID if is_up else SOFFIT_ID)
+    return mesh, {"thresholds": t, "layers": len(regions), "openings_placed": stats,
+                  "openings_in_snapshot": len(openings)}
+
+
+def float_pinches(geom):
+    rings = rings_float(geom)
+    if not rings:
+        return []
+    seen, out = set(), set()
+    for r in rings:
+        for c in r:
+            k = (round(c[0], 6), round(c[1], 6))
+            if k in seen:
+                out.add(k)
+            seen.add(k)
+    deg = {}
+    for part in shapely.get_parts(shapely.union_all([shapely.LineString(r + r[:1]) for r in rings])):
+        for c in (part.coords[0], part.coords[-1]):
+            k = (round(c[0], 6), round(c[1], 6))
+            deg[k] = deg.get(k, 0) + 1
+    return sorted(out | {k for k, n in deg.items() if n > 2})
+
+
+def rings_float(geom):
+    out = []
+    for p in shapely.get_parts(geom):
+        if p.geom_type != "Polygon" or p.is_empty:
+            continue
+        p = shapely.geometry.polygon.orient(p, 1.0)
+        out.append([tuple(map(float, c)) for c in p.exterior.coords[:-1]])
+        out += [[tuple(map(float, c)) for c in h.coords[:-1]] for h in p.interiors]
+    return out
+
+
+def build_prisms(rows, levels):
+    """Every run of equal layer regions is one closed prism (walls on its rings, a cap top and bottom); a prism
+    standing on another starts PRISM_GAP_M above it, past the weld distance, so the shells never share an edge."""
+    import time
+    t0 = time.time()
+    body = [r for r in rows if r["category"] in BODY]
+    t = thresholds(body, levels)
+    regions = layer_regions(body, t)
+    print(f"regions {time.time() - t0:.1f} s", file=sys.stderr, flush=True)
+    openings = [(r["box"][0], r["box"][1], OPENINGS[r["category"]]) for r in rows if r["category"] in OPENINGS]
+    runs = []                                       # [z0, z1, region]
+    for (z0, z1), reg in zip(zip(t, t[1:]), regions):
+        if runs and runs[-1][1] == z0 and runs[-1][2].equals(reg):
+            runs[-1][1] = z1
+        else:
+            runs.append([z0, z1, reg])
+    runs = [r for r in runs if not r[2].is_empty]
+    mesh, stats, gaps = Mesh(), {}, 0
+    for i, (z0, z1, reg) in enumerate(runs):
+        if i and runs[i - 1][1] == z0:
+            z0 += PRISM_GAP_M
+            gaps += 1
+        if PRISM_SHRINK_U > 0:      # parts touching at a point or a hole at the outline come apart by 2 x shrink
+            reg = polys(shapely.make_valid(reg.buffer(-PRISM_SHRINK_U, join_style="mitre", mitre_limit=5.0)))
+        for _ in range(3):          # a pinch left (float outline noded, a node of degree > 2): cut a small octagon
+            pts = float_pinches(reg)
+            if not pts:
+                break
+            cut = shapely.union_all([shapely.Point(p).buffer(PINCH_CUT_U, quad_segs=2) for p in pts])
+            reg = polys(shapely.make_valid(shapely.difference(reg, cut)))
+        for ring in rings_float(reg):
+            for k, p in enumerate(ring):
+                q = ring[(k + 1) % len(ring)]
+                wall_chain(mesh, p, q, [], [], z0, z1, openings, stats)
+        for part in shapely.get_parts(reg):
+            if part.geom_type != "Polygon" or part.area == 0:
+                continue
+            for c in cdt(shapely.geometry.polygon.orient(part, 1.0)):
+                top = [mesh.vid(x, y, z1) for x, y in c]
+                bot = [mesh.vid(x, y, z0) for x, y in c]
+                mesh.tri(*top, ROOF_ID)
+                mesh.tri(bot[0], bot[2], bot[1], SOFFIT_ID)
+    print(f"prisms {time.time() - t0:.1f} s", file=sys.stderr, flush=True)
+    return mesh, {"thresholds": t, "layers": len(regions), "prisms": len(runs), "gaps": gaps,
+                  "openings_placed": stats, "openings_in_snapshot": len(openings)}
+
+
 def build(rows, levels):
+    if HORIZ == "prisms":
+        return build_prisms(rows, levels)
+    if HORIZ == "arrangement":
+        return build_arrangement(rows, levels)
     body = [r for r in rows if r["category"] in BODY]
     t = thresholds(body, levels)
     regions = layer_regions(body, t)
