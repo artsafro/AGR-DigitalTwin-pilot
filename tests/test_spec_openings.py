@@ -275,6 +275,15 @@ def test_a_rejected_pier_candidate_leaves_an_unresolved_break():
     assert sorted(tuple(map(tuple, (np.round(p, 6), np.round(q, 6)))) for p, q in unresolved) == [((0, 0), (6, 0))]
 
 
+def test_unpaired_end_is_reported_when_its_rejected_candidate_pairs_elsewhere():
+    # #21 review 1 (synthetic section): (0, 0) rejects (6, 0) as a pier; (6, 0) then pairs with (6.5, 0)
+    # as an opening, while (0, 0) stays unpaired - it must be reported, not dropped
+    segments = [[(0, 0), (0, 1)], [(0, 1), (6, 1)], [(6, 1), (6, 0)], [(6.5, 0), (6.5, 1)], [(6.5, 1), (20, 1)]]
+    _, mouths, unresolved = op.close_section(segments)
+    assert len(mouths) == 1
+    assert sorted(tuple(map(tuple, (np.round(p, 6), np.round(q, 6)))) for p, q in unresolved) == [((0, 0), (6, 0))]
+
+
 def test_pier_between_two_windows_is_not_bridged():
     spec, _ = extract_spec(building(boxes=[(0, 2.0, 3.5, 0.9, 2.4, 0.0), (0, 3.8, 5.3, 0.9, 2.4, 0.0)]), OBJECT)
     assert [(o[1], o[3]) for o in openings(spec)] == [(2.0, 1.5), (3.8, 1.5)]
