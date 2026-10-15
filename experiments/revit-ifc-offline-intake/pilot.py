@@ -1,8 +1,10 @@
 """Synthetic IFC4 intake pilot. Not a Revit importer and not a generic IFC importer.
 
 Supported: straight vertical walls and horizontal polygonal slabs extruded along positive
-building Z. Wall names are the bounded synthetic contract W0000..Wnnnn, one per slab-contour
-edge, and each host origin and X axis must match that edge. Openings are voids on those walls.
+building Z. Wall binding defaults to the strict synthetic contract W0000..Wnnnn (one per
+slab-contour edge, matching origin and X axis). Geometric mode (binding="geometric") is an
+opt-in alternative resolving wall-to-edge binding purely from building-local coordinates and
+contour frames without relying on wall names. Openings are voids on those walls.
 Metre and millimetre IfcSIUnit lengths are accepted.
 
 Unsupported: holes, mapped representations, curves and other non-polyline profiles, nonplanar
@@ -15,10 +17,12 @@ frame.to_object is the map from raw IFC file coordinates (file length unit) into
 """
 import argparse
 import hashlib
+import importlib.util
 import json
 import math
 import sys
 import time
+import types
 from pathlib import Path
 
 import ifcopenshell
@@ -75,7 +79,19 @@ def ifc_version_text():
     return str(value)
 
 
-def scope_payload():
+def scope_payload(binding="strict"):
+    if binding == "geometric":
+        supported = [
+            s if not s.startswith("straight vertical walls named")
+            else "straight vertical walls whose origin and X axis match the slab contour edge"
+            for s in SUPPORTED_SCOPE
+        ]
+        unsupported = [
+            u if not u.startswith("wall mapping other than")
+            else "wall mapping where origin or X axis does not match the slab contour edge"
+            for u in UNSUPPORTED_SCOPE
+        ]
+        return {"supported": supported, "unsupported": unsupported}
     return {"supported": list(SUPPORTED_SCOPE), "unsupported": list(UNSUPPORTED_SCOPE)}
 
 
@@ -405,6 +421,21 @@ def matrix_si(place, scale):
     return m
 
 
+_wb_spec = importlib.util.spec_from_file_location("wall_binding", Path(__file__).resolve().with_name("wall_binding.py"))
+if _wb_spec is None or _wb_spec.loader is None:
+    raise ImportError("cannot load wall_binding.py adjacent to pilot.py")
+_wb = importlib.util.module_from_spec(_wb_spec)
+_wb_spec.loader.exec_module(_wb)
+
+_helpers = types.SimpleNamespace(
+    IntakeError=IntakeError,
+    contour_xy=contour_xy,
+    edge_frames=edge_frames,
+    matrix_si=matrix_si,
+)
+UnresolvedBinding, bind_walls_geometric = _wb.make_geometric_binder(_helpers)
+
+
 def storey_of(product):
     rels = list(product.ContainedInStructure or [])
     if len(rels) != 1 or not rels[0].RelatingStructure.is_a("IfcBuildingStorey"):
@@ -432,7 +463,7 @@ def near0(v):
     return 0.0 if abs(x) < 1e-9 else x
 
 
-def extract(path):
+def extract(path, *, binding="strict"):
     """Recover a spec from IFC only.
 
     Storey Z comes from the placement chain, not Elevation. Contours, openings and level
@@ -440,6 +471,13 @@ def extract(path):
     IFC file coordinate (file length unit) into that frame: inverse of the raw building
     placement, with its first three rows multiplied by the length scale (metres per file unit).
     """
+    if binding == "strict":
+        binder = bind_walls
+    elif binding == "geometric":
+        binder = bind_walls_geometric
+    else:
+        raise IntakeError(f"unknown binding mode: {binding!r}")
+
     f = ifcopenshell.open(str(path))
     scale = length_scale(f)
     buildings = f.by_type("IfcBuilding")
@@ -488,7 +526,7 @@ def extract(path):
         ring = rings.get(gid)
         if ring is None or gid not in z_of:
             raise IntakeError("unsupported wall mapping")
-        for i, wall in bind_walls(group, ring, z_of[gid], bld_place, scale).items():
+        for i, wall in binder(group, ring, z_of[gid], bld_place, scale).items():
             index_of[wall.GlobalId] = i
     openings_by_storey = {}
     for opening in f.by_type("IfcOpeningElement"):
@@ -519,7 +557,8 @@ def extract(path):
         "source_sha256": hashlib.sha256(Path(path).read_bytes()).hexdigest(),
         "schema": f.schema, "unit_scale": scale,
         "ifcopenshell.version": ifc_version_text(),
-        "scope": scope_payload(),
+        "scope": scope_payload(binding=binding),
+        "binding": binding,
         "counts": {"storeys": len(levels), "slabs": len(floors), "walls": len(index_of),
                    "openings": sum(len(v) for v in openings_by_storey.values())},
         "global_ids": {
