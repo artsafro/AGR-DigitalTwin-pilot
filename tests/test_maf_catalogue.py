@@ -417,6 +417,30 @@ def test_parse_spec_dims_examples():
     assert (short["l_m"], short["w_m"], short["h_m"]) == pytest.approx((1.0, 0.5, 0.45))
 
 
+def test_parse_spec_dims_triples_and_ranges():
+    table = (
+        "Стол «Лидия» (комплект) со спинками\n\n"
+        "Размеры стола: 1800x780x760 мм\n"
+        "Размеры скамьи: 1800x560x850 мм"
+    )
+    got = cat.parse_spec_dims(table)
+    assert (got["l_m"], got["w_m"], got["h_m"]) == pytest.approx((1.8, 0.78, 0.76))
+
+    box = "Контейнер\n\nРазмеры: ~1370x1070x1370 мм (типовой евроконтейнер 1100 л)"
+    got = cat.parse_spec_dims(box)
+    assert (got["l_m"], got["w_m"], got["h_m"]) == pytest.approx((1.37, 1.07, 1.37))
+
+    pergola = "Пергола-качели «Радуга»\n\nРазмеры: от 2800х3000х3000 мм"
+    got = cat.parse_spec_dims(pergola)
+    assert (got["l_m"], got["w_m"], got["h_m"]) == pytest.approx((2.8, 3.0, 3.0))
+
+    stump = "Пенёк ИО 0906Т-7\n\nРазмеры: D 150-230 мм, H 200-400 мм"
+    got = cat.parse_spec_dims(stump)
+    assert (got["l_m"], got["w_m"], got["h_m"]) == pytest.approx((0.23, 0.23, 0.4))
+
+    assert cat.parse_spec_dims("RAINBOW R 5800 мм\n\nРазмеры: / характеристики: R 5800 мм") is None
+
+
 def test_match_spec_rotation_tolerance_and_name_hit():
     entries = [
         {"id": "MAF_0002", "source_object": "Other", "slug": "slug-other", "dims_m": [0.8, 0.7, 0.7]},

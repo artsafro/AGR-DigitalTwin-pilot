@@ -35,10 +35,23 @@ _LABEL_PX = 16
 _SPEC_TOL_EPS = 1e-6
 
 # Longer keys first so "Длина" is not read as the short form "Д".
+_SPEC_NUM = r"\d(?:[\d \u00a0\u202f]*\d)?(?:[.,]\d+)?"
 _SPEC_DIM = re.compile(
-    r"(?iu)\b(?P<key>диаметр|длина|ширина|высота|д|ш|в)\s*:\s*"
-    r"(?P<num>\d(?:[\d \u00a0\u202f]*\d)?(?:[.,]\d+)?)"
-    r"\s*(?P<unit>мм|м\b)?"
+    rf"(?iu)\b(?P<key>диаметр|длина|ширина|высота|д|ш|в)\s*:\s*"
+    rf"(?P<num>{_SPEC_NUM})"
+    rf"\s*(?P<unit>мм|м\b)?"
+)
+# First "A x B x C" when the named keys above are absent. Separators: Latin x,
+# Cyrillic х, ×, *. Unit is optional (мм default).
+_SPEC_TRIPLE = re.compile(
+    rf"(?iu)(?P<a>{_SPEC_NUM})\s*[xх×*]\s*(?P<b>{_SPEC_NUM})\s*[xх×*]\s*(?P<c>{_SPEC_NUM})"
+    rf"\s*(?P<unit>мм|см|м\b)?"
+)
+# "D 150-230 мм" / "Ø …" / "H …": upper bound. Radius (R) is not an axis.
+_SPEC_LETTER_AXIS = re.compile(
+    rf"(?iu)(?<!\w)(?P<key>[dhø⌀])(?=\s|\d)\s*"
+    rf"(?P<lo>{_SPEC_NUM})(?:\s*[-–—−]\s*(?P<hi>{_SPEC_NUM}))?"
+    rf"\s*(?P<unit>мм|см|м\b)?"
 )
 
 
@@ -415,32 +428,64 @@ def match_npm(entries, blend_doc, tol_m=0.10) -> list[dict]:
 def _number_to_m(num: str, unit: str | None) -> float:
     text = re.sub(r"\s", "", num).replace(",", ".")
     value = float(text)
-    if unit is not None and unit.casefold() == "м":
-        return value
+    if unit is not None:
+        folded = unit.casefold()
+        if folded == "м":
+            return value
+        if folded == "см":
+            return value / 100.0
     return value / 1000.0
+
+
+def _fill_spec_found(found, key: str, value: float) -> None:
+    if key == "диаметр":
+        found["d"] = value
+    elif key in ("длина", "д"):
+        found["l"] = value
+    elif key in ("ширина", "ш"):
+        found["w"] = value
+    elif key in ("высота", "в"):
+        found["h"] = value
 
 
 def parse_spec_dims(text) -> dict | None:
     """Overall size in metres from a specification name cell, or None.
 
     Keys: Длина, Ширина, Высота, Диаметр, and the short forms Д/Ш/В.
-    Millimetres are the default unit; a trailing "м" keeps the value in metres.
+    When those keys are absent, the first "A x B x C" triple is length, width
+    and height. Otherwise a D/Ø range is the diameter and an H range is the
+    height; a range uses its upper bound. Radius alone is ignored.
+    Millimetres are the default unit; "см" is centimetres; a trailing "м"
+    keeps the value in metres.
     Diameter fills both horizontal sizes. Missing axes stay None.
     """
     if text is None:
         return None
+    raw = str(text)
     found = {"l": None, "w": None, "h": None, "d": None}
-    for match in _SPEC_DIM.finditer(str(text)):
-        key = match.group("key").casefold()
-        value = _number_to_m(match.group("num"), match.group("unit"))
-        if key == "диаметр":
-            found["d"] = value
-        elif key in ("длина", "д"):
-            found["l"] = value
-        elif key in ("ширина", "ш"):
-            found["w"] = value
-        elif key in ("высота", "в"):
-            found["h"] = value
+    keyed = list(_SPEC_DIM.finditer(raw))
+    if keyed:
+        for match in keyed:
+            _fill_spec_found(
+                found,
+                match.group("key").casefold(),
+                _number_to_m(match.group("num"), match.group("unit")),
+            )
+    else:
+        triple = _SPEC_TRIPLE.search(raw)
+        if triple is not None:
+            unit = triple.group("unit")
+            found["l"] = _number_to_m(triple.group("a"), unit)
+            found["w"] = _number_to_m(triple.group("b"), unit)
+            found["h"] = _number_to_m(triple.group("c"), unit)
+        else:
+            for match in _SPEC_LETTER_AXIS.finditer(raw):
+                key = match.group("key").casefold()
+                value = _number_to_m(match.group("hi") or match.group("lo"), match.group("unit"))
+                if key in ("d", "ø", "⌀"):
+                    found["d"] = value
+                elif key == "h":
+                    found["h"] = value
     length = found["l"] if found["l"] is not None else found["d"]
     width = found["w"] if found["w"] is not None else found["d"]
     height = found["h"]
