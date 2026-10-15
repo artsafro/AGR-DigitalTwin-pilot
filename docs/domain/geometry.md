@@ -116,3 +116,9 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N (see npm-vpm
 
 - VPM main FBX holds meshes only; lights only in `SM_<Address>_Light.fbx` (conflict #14).
 - VPM pivot: Main origin at FBX 0,0,0; bbox centre X/Y within 10 % of the size from the origin; all meshes share the origin within 1 mm, UCX exempt; Z = project zero (conflict #19).
+
+## Flora project practice (source #187, grilling rounds 1-2 with user Artem)
+- Decided 2026-10-15 [D094] (matching): Height may vary +-20 %, crown diameter +-20 %; leaf/flower colour follows specification; without picture search species name on internet and match its look.
+- Decided 2026-10-15 [D095] (placement): SPOZU points have no rotation; authoring pivot on point, slightly above lowest point to sink into Ground when projected; random Z rotation and scale +-10 % inside +-20 % tolerance; sinking 10 cm as MAF. Authoring pivots and random rotations apply during placement; final FBX delivery resets transforms and shares common FBX origin per profile rules.
+- Decided 2026-10-15 [D096] (flower beds): Usually flower beds are Ground texture when specification just says flower beds / small greenery; models when it lists plants; big bushes always models.
+- Decided 2026-10-15 [D097] (VPM bush): Default VPM bush = shell of NPM star; detailed only on explicit request; study library VPM bushes and follow their logic, until then recommendation.
