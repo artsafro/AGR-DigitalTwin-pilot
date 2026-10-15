@@ -224,6 +224,28 @@ def test_changed_review_invalidates_approval(review, tmp_path, changed):
     assert not out.exists()
 
 
+def test_pack_explicit_tile_limit_via_cli(review, tmp_path, monkeypatch):
+    directory, _, approvals, _, _ = review
+    approval_file = tmp_path / "synthetic-approvals.json"
+    flora.write_json(approval_file, approvals)
+    out = tmp_path / "limited-atlas"
+    monkeypatch.setattr("sys.argv", ["flora", "pack", "--review", str(directory),
+                                   "--approvals", str(approval_file), "--out", str(out),
+                                   "--max-tile-size", "512"])
+    flora.main()
+    result = flora.read_json(out / "atlas.json")
+    assert result["max_tile_size"] == 512
+    assert len(result["placements"]) == 3
+    for placement in result["placements"]:
+        x, y, w, h = placement["rect_px"]
+        assert max(w, h) == 512
+        assert placement["uv_bottom_left"] == [x / 2048, 1 - (y + h) / 2048,
+                                               (x + w) / 2048, 1 - y / 2048]
+    with Image.open(out / "Flora_o_1.png") as mask:
+        assert set(np.unique(np.asarray(mask))) == {0, 255}
+    assert result["approvals"] == approvals
+
+
 def test_geometry_generated_probe():
     # 1..40 species: exhaustive rectangle pairs; includes the first 10..20.
     for count in range(1, 41):
