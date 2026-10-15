@@ -1,0 +1,21 @@
+{
+  "id": "pr-numeric-literals",
+  "suite": "regression",
+  "grader": "pr_numeric_literals",
+  "evidence": {
+    "pr": {"root": "main", "path": "logs/pr/{branch_slug}/view.json", "gh": "gh pr view {branch} --json body,comments"},
+    "diff": {"root": "main", "path": "logs/pr/{branch_slug}/diff.patch", "gh": "gh pr diff {branch}"}
+  },
+  "references": [
+    {"name": "agr-pr76", "verdict": "fail",
+     "evidence": {
+       "pr": {"root": "task", "path": "fixtures/agr-pr76.view.json"},
+       "diff": {"root": "task", "path": "fixtures/agr-pr76.diff"}
+     }},
+    {"name": "pilot-pr30", "verdict": "pass",
+     "evidence": {
+       "pr": {"root": "task", "path": "fixtures/pilot-pr30.view.json"},
+       "diff": {"root": "task", "path": "fixtures/pilot-pr30.diff"}
+     }}
+  ]
+}

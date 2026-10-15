@@ -587,7 +587,8 @@ def test_each_regression_task_has_a_failing_and_a_passing_reference(task_id):
     spec = spec_of(task_id)
     assert (spec["id"], spec["suite"]) == (task_id, "regression")
     assert spec["grader"] in GRADERS
-    assert [ref["verdict"] for ref in spec["references"]] == ["fail", "pass"]
+    verdicts = [ref["verdict"] for ref in spec["references"]]
+    assert verdicts[0] == "fail" and "pass" in verdicts and set(verdicts) <= {"fail", "pass"}
     assert (EVALS / task_id / "task.md").is_file()
 
 
@@ -596,5 +597,8 @@ def test_the_regression_references_all_match_their_verdicts(tmp_path):
     code = main(["evals", "--suite", "regression", "--references", "--main", str(ROOT), "--output", str(out)])
     report = json.loads((out / "report.json").read_text(encoding="utf-8"))
     assert (code, report["failed"], report["not_measured"]) == (0, 0, 0)
-    assert len(report["checks"]) == 14 and len({r["task"] for r in report["checks"]}) == 7
-    assert report["passed"] == 14
+    # Every regression task (procedural #123 and PR graders #125) runs each of its references once.
+    tasks = [t.name for t in EVALS.iterdir() if (t / "task.json").is_file() and spec_of(t.name)["suite"] == "regression"]
+    expected = sum(len(spec_of(t)["references"]) for t in tasks)
+    assert len(report["checks"]) == expected and len({r["task"] for r in report["checks"]}) == len(tasks)
+    assert report["passed"] == expected

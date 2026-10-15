@@ -743,3 +743,6 @@ GRADERS = {"no_hook_denial": (no_hook_denial, ("transcript",)),
            "failure_stop": (failure_stop, ("transcript",)),
            "branch_name": (branch_name, ("transcript",)),
            "routine_question": (routine_question, ("transcript", "decisions", "patterns"))}
+
+from twinqa.evals.pr_graders import PR_GRADERS  # noqa: E402  (#125; pr_graders imports EvidenceError from here)
+GRADERS.update(PR_GRADERS)
