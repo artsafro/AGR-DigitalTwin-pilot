@@ -16,7 +16,9 @@ Pattern: none — delivery validator findings for Flora (REVIEW_CHECKLIST Q1: ne
   target: above it -> review, never fail; the Ground total keeps its own V003 "triangle count" fail.
 
 Flora meshes and materials are recognised by the `Flora` name token (`SM_{Address}_Flora`,
-`M_{Address}_Flora_1`, reg p.12-13), Blender duplicate suffixes `.001` tolerated.
+`M_{Address}_Flora_1`, reg p.12-13), Blender duplicate suffixes `.001` tolerated: an exact schedule
+name always wins; a sole `.001` alias is used only when the exact mesh is absent (several -> review).
+V005 also fails every Flora mesh with no material or an empty slot, independent of its neighbours.
 """
 import re
 
@@ -56,10 +58,11 @@ def dimension_findings(meshes: list[dict], schedule: dict | None, src: str) -> l
             return [_f("not_run", "Flora dimensions", f"{src}: no planting schedule supplied",
                        "height and crown within 20 % of the schedule [D099]", [4, 24], src)]
         return []
-    by_name = {}
+    exact, aliases = {}, {}
     for m in meshes:
-        by_name.setdefault(m["name"], m)
-        by_name.setdefault(_base(m["name"]), m)
+        exact.setdefault(m["name"], m)
+        if _base(m["name"]) != m["name"]:
+            aliases.setdefault(_base(m["name"]), []).append(m)
     out = []
     for plant, want in sorted(schedule.items()):
         name = f"Flora dimensions: {plant}"
@@ -68,7 +71,14 @@ def dimension_findings(meshes: list[dict], schedule: dict | None, src: str) -> l
             out.append(_f("review", name, f"{src}: schedule entry {want}", "height_m > 0 and crown_m > 0",
                           [4, 24], src))
             continue
-        mesh = by_name.get(plant)
+        # exact name first; a Blender `.001` alias only when it is the sole candidate
+        candidates = [exact[plant]] if plant in exact else aliases.get(plant, [])
+        if len(candidates) > 1:
+            out.append(_f("review", name, f"{src}: no mesh named {plant}; ambiguous aliases "
+                          f"{sorted(c['name'] for c in candidates)}", "one mesh per placed plant in the checked FBX",
+                          [4, 24], src))
+            continue
+        mesh = candidates[0] if candidates else None
         if mesh is None or not mesh.get("bounds_m"):
             out.append(_f("review", name, f"{src}: no mesh named {plant} with bounds",
                           "one mesh per placed plant in the checked FBX", [4, 24], src))
@@ -94,10 +104,15 @@ def map_findings(rb: dict, flora_meshes: list[dict], src: str) -> list[Finding]:
         return [_f("not_run", "Flora maps", f"{src}: readback has no material map facts",
                    "diffuse + opacity map only (reg p.10 §5.13)", [9, 10], src)]
     materials = [m for m in facts if m["name"] in names or is_flora(m["name"])]
-    if flora_meshes and not materials:
-        return [_f("fail", "Flora maps", f"{src}: Flora meshes without a material",
-                   "diffuse + opacity map only (reg p.10 §5.13)", [9, 10], src)]
     out = []
+    # coverage per Flora mesh: a good neighbour must not hide a plant with no / empty material slots
+    for m in sorted(flora_meshes, key=lambda m: m["name"]):
+        slots = m.get("materials") or []
+        if not slots or not all(slots):
+            out.append(_f("fail", f"Flora maps: {m['name']}",
+                          f"{src}: {m['name']} has no material in {'all slots' if not any(slots) else 'some slots'} "
+                          f"({slots})", "every Flora mesh slot carries a diffuse + opacity material "
+                          "(reg p.10 §5.13)", [9, 10], src))
     for mat in sorted(materials, key=lambda m: m["name"]):
         maps = mat.get("maps", [])
         diffuse = {m["image"] for m in maps if m["socket"] == DIFFUSE}

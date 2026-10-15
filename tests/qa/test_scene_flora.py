@@ -213,6 +213,34 @@ def test_mixed_scene_bare_mesh_alias_and_exact_any_order(order):
                                                   "Flora maps: SM_Test_Flora_Bare": "fail"}
 
 
+def test_probe_coverage_and_exact_name_any_order_brute_force():
+    """Invariants: every bare Flora mesh gets its own fail, whatever the neighbours/order; the exact
+    scheduled mesh is always the one measured when present; a sole alias is used otherwise."""
+    rng, cases = random.Random(191), 0
+    for _ in range(400):
+        meshes, bare = [], set()
+        for i in range(rng.randint(1, 5)):
+            nm = f"SM_Test_Flora_P{i}"
+            slots = rng.choice([["M_Test_Flora_1"], [], [None], ["M_Test_Flora_1", None]])
+            if not all(slots) or not slots:
+                bare.add(nm)
+            meshes.append(plant(nm, 5, 3, materials=slots))
+        exact_h, alias_h = rng.choice([None, 5.0, 9.0]), rng.choice([None, 5.0, 9.0])
+        if exact_h:
+            meshes.append(plant("SM_Test_Flora_Acer_01", exact_h, 3))
+        if alias_h:
+            meshes.append(plant("SM_Test_Flora_Acer_01.001", alias_h, 3))
+        rng.shuffle(meshes)
+        found = scene_findings(rb(*meshes), "npm", "ground", PROFILES.npm, flora_schedule=SCHEDULE)
+        maps = named(found, "V005", "Flora maps")
+        assert {k for k, v in maps.items() if v == "fail"} == {f"Flora maps: {b}" for b in bare}
+        measured = exact_h or alias_h
+        want = "review" if measured is None else "pass" if measured == 5.0 else "fail"
+        assert named(found, "V015", "Flora") == {"Flora dimensions: SM_Test_Flora_Acer_01": want}
+        cases += 1
+    assert cases == 400
+
+
 # --- Budget: Flora share 70 000, Ground total 180 000 (V003, NPM) ---
 
 def test_budget_green_and_report_numbers():
