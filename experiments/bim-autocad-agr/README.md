@@ -6,6 +6,8 @@ Throwaway probe. Measured evidence is in `evidence/results.json`; the experiment
 
 Baseline `read_dxf` skips unknown entities and ignores bulge, so bulge, hatch, nested insert, missing xref and spline can still compare equal to the original features. An open contour is already a baseline mismatch.
 
+Entity coordinate frames: POINT and 3D POLYLINE coordinates are already stored directly in WCS, whereas elevated LWPOLYLINE (elevated LW) vertices are defined in 2D OCS with elevation and require conversion via the OCS extrusion normal. Regression tests cover synthetic extrusion normals (default `(0, 0, 1)`, negative-Z `(0, 0, -1)`, and tilted `(0, 0.6, 0.8)`), guarding against double-transform errors. This probe exercises synthetic limits only; it establishes no new production adapter and does not claim native AutoCAD parity.
+
 Phases do not call each other. Scratch must be an absolute path outside the worktree and must not exist before `prepare`. Drawings, scripts and logs stay in that scratch. Repeats must be >= 3. Native AutoCAD is only `python <wrapper> acad --card t_a0bf33bc --dwg <copy.dxf> --file <census.scr> --out <census.json> --timeout 60 --wait 30`. The script is read-only, written with the baseline `write_script` (CRLF, one trailing newline), and prints `AGR_ID`, `AGR_RAW` and `AGR_CENSUS_DONE`. Success needs wrapper code 0, status `ok`, process exit 0, `ACADVER` starting with `25`, the opened document name, `INSUNITS` 4, and the same top-level handle/type/layer multiset. Exit 3 (busy) waits 5s and retries; two failures of the same cause abort. Native skips repetitions already marked ok.
 
 Pinned dependency: `ezdxf==1.4.3`.

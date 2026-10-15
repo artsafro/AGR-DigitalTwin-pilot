@@ -128,15 +128,18 @@ def _extract(entity):
     kind = entity.dxftype()
     if kind == "POINT":
         loc = entity.dxf.location
+        # POINT coordinates are stored directly in WCS.
         return {"layer": entity.dxf.layer, "kind": kind, "closed": False,
-                "vertices_mm": [base._as_wcs(entity, loc.x, loc.y, loc.z)]}
+                "vertices_mm": [[float(loc.x), float(loc.y), float(loc.z)]]}
     if kind == "LWPOLYLINE":
         elevation = float(entity.dxf.elevation)
         closed = base._closed(entity)
+        # LWPOLYLINE points are stored in 2D OCS + elevation; converted to WCS via OCS extrusion.
         verts = [base._as_wcs(entity, point[0], point[1], elevation) for point in entity.get_points("xy")]
     else:
         closed = base._closed(entity)
-        verts = [base._as_wcs(entity, vertex.dxf.location.x, vertex.dxf.location.y, vertex.dxf.location.z)
+        # 3D POLYLINE vertices are stored directly in WCS.
+        verts = [[float(vertex.dxf.location.x), float(vertex.dxf.location.y), float(vertex.dxf.location.z)]
                  for vertex in entity.vertices]
     return {"layer": entity.dxf.layer, "kind": kind, "closed": closed, "vertices_mm": base._drop_repeated_close(verts, closed)}
 

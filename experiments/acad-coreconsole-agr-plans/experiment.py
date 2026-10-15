@@ -224,14 +224,21 @@ def read_dxf(path, ezdxf_mod=None, expect_count=None):
         if kind == "LWPOLYLINE":
             z = float(entity.dxf.elevation)
             closed = _closed(entity)
+            # LWPOLYLINE points are stored in 2D OCS + elevation; converted to WCS via OCS extrusion.
             verts = _drop_repeated_close([_as_wcs(entity, p[0], p[1], z) for p in entity.get_points("xy")], closed)
         elif kind == "POLYLINE":
             closed = _closed(entity)
-            verts = _drop_repeated_close(
-                [_as_wcs(entity, v.dxf.location.x, v.dxf.location.y, v.dxf.location.z) for v in entity.vertices], closed)
+            if getattr(entity, "is_3d_polyline", False):
+                # 3D POLYLINE vertices are stored directly in WCS.
+                raw_verts = [[float(v.dxf.location.x), float(v.dxf.location.y), float(v.dxf.location.z)] for v in entity.vertices]
+            else:
+                # 2D POLYLINE fallback in OCS converted to WCS.
+                raw_verts = [_as_wcs(entity, v.dxf.location.x, v.dxf.location.y, v.dxf.location.z) for v in entity.vertices]
+            verts = _drop_repeated_close(raw_verts, closed)
         elif kind == "POINT":
             loc = entity.dxf.location
-            verts = [_as_wcs(entity, loc.x, loc.y, loc.z)]
+            # POINT coordinates are stored directly in WCS.
+            verts = [[float(loc.x), float(loc.y), float(loc.z)]]
             closed = False
         else:
             continue
