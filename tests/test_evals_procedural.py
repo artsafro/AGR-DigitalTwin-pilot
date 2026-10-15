@@ -365,6 +365,33 @@ def test_a_successful_stop_write_reopens_the_check(tmp_path):
     assert row["passed"] is True
 
 
+@pytest.mark.parametrize("kind", ["skill", "stop"])
+@pytest.mark.parametrize("order, passed", [("late", False), ("early", True), ("same_record_late", False)])
+def test_a_result_authorizes_only_after_its_record(tmp_path, kind, order, passed):
+    """Review 2 of #123: a tool_result joined by id does not authorize a call that already happened."""
+    cmd = {"command": PYTEST_X}
+    if kind == "skill":
+        prefix = []
+        setup_call = call("Skill", {"skill": "blender-mcp"}, id="setup")
+        action_call = call("mcp__blender-lab__get_scene_info", {}, id="action")
+        grader = dcc_skill_loaded
+    else:
+        prefix = [assistant(call("Bash", cmd, id="f1")), result("f1", "ERROR: same failure", error=True),
+                  assistant(call("Bash", cmd, id="f2")), result("f2", "ERROR: same failure", error=True)]
+        setup_call = call("Write", {"file_path": "jobs/OBJ03/pipeline/state.json",
+                                    "content": '{"stops":[{"reason":"failed twice"}]}'}, id="setup")
+        action_call = call("Bash", cmd, id="action")
+        grader = failure_stop
+    if order == "late":
+        records = prefix + [assistant(setup_call), assistant(action_call), result("action"), result("setup")]
+    elif order == "early":
+        records = prefix + [assistant(setup_call), result("setup"), assistant(action_call), result("action")]
+    else:
+        records = prefix + [assistant(setup_call, action_call), result("action"), result("setup")]
+    row = grader({"transcript": [write_jsonl(tmp_path / f"{kind}-{order}.jsonl", records)]})
+    assert row["passed"] is passed
+
+
 # --- 5. branch_name ----------------------------------------------------------------------------------------------
 
 def test_a_commit_on_an_auto_generated_branch_fails():

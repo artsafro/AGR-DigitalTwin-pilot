@@ -173,9 +173,10 @@ def _command_of(rec):
 
 def _results(records):
     """`tool_use_id` -> the outcome of that call: `is_error` of the tool_result block, `success` of the record's
-    `toolUseResult` (a Skill call reports it there), the result text, and `has_result` (review 1 of #123)."""
+    `toolUseResult` (a Skill call reports it there), the result text, `has_result` (review 1 of #123), and
+    `result_record`, the index of the record holding that tool_result (review 2 of #123: completion order)."""
     out = {}
-    for rec in records:
+    for n, rec in enumerate(records):
         if rec.get("type") != "user" or rec.get("isSidechain"):
             continue
         outcome = rec.get("toolUseResult")
@@ -183,7 +184,8 @@ def _results(records):
             if b.get("type") == "tool_result" and isinstance(b.get("tool_use_id"), str):
                 out[b["tool_use_id"]] = {"is_error": b.get("is_error") is True,
                                          "success": outcome.get("success") if isinstance(outcome, dict) else None,
-                                         "result_text": _text(b.get("content")), "has_result": True}
+                                         "result_text": _text(b.get("content")), "has_result": True,
+                                         "result_record": n}
     return out
 
 
@@ -191,8 +193,9 @@ def events(records):
     """One transcript's main session as an ordered list of events, each with its `record` index:
 
     - `tool_use`: `name`, `input`, `id`, and from the result joined by `tool_use_id` `is_error`, `success`
-      (None when the transcript holds no result), `result_text`, and `has_result` (review 1 of #123: True only
-      when a tool_result was joined, otherwise False);
+      (None when the transcript holds no result), `result_text`, `has_result` (review 1 of #123: True only
+      when a tool_result was joined, otherwise False), and `result_record` (review 2 of #123: the index of
+      the record holding the tool_result, otherwise None);
     - `text`: one text block of an assistant record;
     - `prompt`: a user record that is not only tool results - a human turn - with the `command` it ran.
 
@@ -209,7 +212,7 @@ def events(records):
                     out.append({"kind": "tool_use", "record": n, "id": b.get("id"), "name": b.get("name") or "",
                                 "input": b["input"] if isinstance(b.get("input"), dict) else {},
                                 "is_error": None, "success": None, "result_text": "", "has_result": False,
-                                **results.get(b.get("id"), {})})
+                                "result_record": None, **results.get(b.get("id"), {})})
                 elif b.get("type") == "text":
                     out.append({"kind": "text", "record": n, "text": b.get("text") or ""})
             continue
@@ -270,17 +273,18 @@ def dcc_skill_loaded(evidence):
     (docs/agents/WORKFLOW.md, "Triggers"; the gate is tools/hooks/skill_gate.py).
 
     A load is a `Skill` call whose result succeeded (`has_result`, not an error, `success` is not False; review 1
-    of #123), or the user's `/<skill>` command record. A Skill call with no result does not load: a later DCC
-    call for that skill is not measured. Subagents preload their skills and are not gated, so sidechain records
-    are ignored."""
+    of #123) with its `result_record` strictly before the DCC call (review 2 of #123: completion order), or the
+    user's `/<skill>` command at its own record. A Skill call with no result does not load: a later DCC call for
+    that skill is not measured. A successful result that arrives after the DCC call is a violation. Subagents
+    preload their skills and are not gated, so sidechain records are ignored."""
     sessions, problems = _sessions(evidence["transcript"])
     details = []
     for path, records in sessions:
-        loaded, pending = set(), {}
+        loads, pending = [], {}                    # (skill, record the load completed)
         for ev in events(records):
             if ev["kind"] == "prompt":
                 named = {s for _, s in DCC_SKILLS if _names_skill(ev["command"], s)}
-                loaded |= named
+                loads.extend((skill, ev["record"]) for skill in named)
                 for skill in named:
                     pending.pop(skill, None)
                 continue
@@ -290,7 +294,7 @@ def dcc_skill_loaded(evidence):
                 named = {s for _, s in DCC_SKILLS if _names_skill(ev["input"].get("skill"), s)}
                 # review 1 of #123: no tool_result means the load is not proven
                 if ev["has_result"] and ev["is_error"] is not True and ev["success"] is not False:
-                    loaded |= named
+                    loads.extend((skill, ev["result_record"]) for skill in named)
                     for skill in named:
                         pending.pop(skill, None)
                 elif not ev["has_result"]:
@@ -298,11 +302,14 @@ def dcc_skill_loaded(evidence):
                         pending.setdefault(skill, ev["record"])
                 continue
             skill = dcc_skill(ev["name"])
-            if skill and skill not in loaded:
-                if skill in pending:
-                    problems.append(f"{path}: record {pending[skill]}: Skill {skill} has no result: load not proven")
-                else:
-                    details.append({"file": str(path), "record": ev["record"], "tool": ev["name"], "skill": skill})
+            if not skill or any(name == skill and seen is not None and seen < ev["record"]
+                                for name, seen in loads):
+                continue
+            # a result that lands after the call does not prove the load; no result at all is not measured
+            if skill in pending and not any(name == skill for name, _ in loads):
+                problems.append(f"{path}: record {pending[skill]}: Skill {skill} has no result: load not proven")
+            else:
+                details.append({"file": str(path), "record": ev["record"], "tool": ev["name"], "skill": skill})
     return _row("DCC calls before their skill", details, problems)
 
 
@@ -472,13 +479,14 @@ def failure_stop(evidence):
     Per session, per check (the normalized command): two failures with the same cause, or three failures, block
     the check; the next attempt of a blocked check is a violation. A saved stop record (`pipeline/state.json`
     with its `stops`, or a "Stop record" text) reopens every check, a success reopens its own. A stop write
-    reopens only when it has a result and did not fail (review 1 of #123); a write with no result leaves that
-    attempt not measured."""
+    reopens only when it has a result and did not fail (review 1 of #123), and only from its `result_record`
+    (review 2 of #123: completion order); a write with no result leaves that attempt not measured."""
     sessions, problems = _sessions(evidence["transcript"])
     details = []
     for path, records in sessions:
         failures = {}                                  # attempt key -> (cause, seq) still open
         unknown, seq = None, 0                         # latest stop write whose result never arrived
+        pending_stops = []                             # result records of successful stops not yet applied
         for ev in events(records):
             if ev["kind"] == "text" and STOP_TEXT.search(ev["text"]):
                 failures.clear()
@@ -488,14 +496,18 @@ def failure_stop(evidence):
                 continue
             if _stop_record(ev):
                 # review 1 of #123: a failed write changes nothing; no result is not a saved stop
-                if ev["has_result"] and ev["is_error"] is not True:
-                    failures.clear()
-                    unknown = None
+                if ev["has_result"] and ev["is_error"] is not True and ev["result_record"] is not None:
+                    pending_stops.append(ev["result_record"])
                 elif not ev["has_result"]:
                     unknown = (ev["record"], seq)
                 continue
             if ev["name"] != "Bash":
                 continue
+            # review 2 of #123: a stop clears failures only once its result is already in the transcript
+            if any(n < ev["record"] for n in pending_stops):
+                failures.clear()
+                unknown = None
+                pending_stops = [n for n in pending_stops if n >= ev["record"]]
             command = str(ev["input"].get("command") or "")
             key = _attempt_key(command)
             causes = failures.get(key, [])
