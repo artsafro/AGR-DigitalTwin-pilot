@@ -1250,6 +1250,63 @@ def test_pointed_corners_build_as_triangle_fans(contour):
     assert top.area == pytest.approx(Polygon([p[:2] for p in contour]).area, abs=1e-6)
 
 
+@pytest.mark.parametrize("edge_s", [2, 3], ids=["start", "end"])
+def test_near_vertical_opening_refuses_amplified_strip_weld(edge_s):
+    """Synthetic #103 review: a 2 mm X snap must not move either hole edge by 200 mm."""
+    u = np.array([0.1, 10.0]) / np.hypot(0.1, 10.0)
+    contour = [[0, 0], [10, 0], [10.1, 10], [14, 10], [14, 14],
+               [float(10 + edge_s * u[0] - 0.002), 14], [0, 14],
+               [0, float(2 * u[1] - 0.001)]]
+    opening = dict(wall=1, x_m=2, w_m=1, sill_m=0.9, h_m=1.5, kind="window")
+
+    def edit(d):
+        d["floors"] = [
+            {"level": "L0", "contour": contour, "openings": [opening]},
+            {"level": "L1", "contour": contour, "openings": []},
+        ]
+        d["roof"] = {"parapet_h_m": 0.0}
+
+    with pytest.raises(BuildError, match=r"canonical opening boundary.*beyond weld_m"):
+        build(edited(edit), INPUTS)
+
+
+@pytest.mark.parametrize("wall_dx, snap_x", [(0.1, 0), (0.1, 0.00001), (0, 0)],
+                         ids=["near-vertical-exact", "near-vertical-bounded-snap", "vertical"])
+def test_near_vertical_opening_keeps_bounded_source_endpoints(wall_dx, snap_x):
+    """Synthetic controls: steep/vertical walls remain buildable within the source weld budget."""
+    u = np.array([wall_dx, 10.0]) / np.hypot(wall_dx, 10.0)
+    contour = [[0, 0], [10, 0], [10 + wall_dx, 10], [14, 10], [14, 14]]
+    if snap_x:
+        contour.append([float(10 + 3 * u[0] - snap_x), 14])
+    contour += [[0, 14], [0, float(2 * u[1] - 0.001)]]
+    opening = dict(wall=1, x_m=2, w_m=1, sill_m=0.9, h_m=1.5, kind="window")
+
+    def edit(d):
+        d["floors"] = [
+            {"level": "L0", "contour": contour, "openings": [opening]},
+            {"level": "L1", "contour": contour, "openings": []},
+        ]
+        d["roof"] = {"parapet_h_m": 0.0}
+
+    source = edited(edit)
+    dump = build(source, INPUTS)
+    assert topology_ok(dump) and t_junctions(dump) == 0
+    soup = from_dump(dump)
+    reveals = soup.corners()[soup.material_ids == REVEAL]
+    assert len(reveals) == 8                         # all four reveal quads
+    xy = reveals[:, :, :2].reshape(-1, 2)
+    # Measure actual exterior reveal vertices, excluding their recessed seat.
+    rel = xy - [10, 0]
+    exterior = xy[np.abs(rel[:, 0] * u[1] - rel[:, 1] * u[0]) < 1e-7]
+    assert len(exterior) > 0
+    expected = np.array([[10, 0] + u * s for s in (2, 3)])
+    distances = np.linalg.norm(exterior[:, None, :] - expected[None, :, :], axis=2)
+    assert np.all(distances.min(axis=0) <= source.weld_m + 1e-7)
+    assert np.all(distances.min(axis=1) <= source.weld_m + 1e-7)
+    if snap_x:
+        assert distances.min(axis=0)[1] > 0.0005     # exercise an actual bounded reconstruction
+
+
 # Task #103: oblique wall opening with projected weld mismatch
 
 
