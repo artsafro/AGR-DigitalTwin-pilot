@@ -72,5 +72,193 @@
   },
   "seconds": 183.8,
   "best_before": 334.066
+ },
+ {
+  "n": "2",
+  "description": "COVER_F 0.5 -> 0.25 (thinner boxes join a layer)",
+  "status": "discard",
+  "silhouette_err_m2": 243.587,
+  "per_view_m2": {
+   "x": 36.055,
+   "y": 63.169,
+   "top": 45.14
+  },
+  "iou": {
+   "x": 0.9718,
+   "y": 0.9758,
+   "top": 0.9936
+  },
+  "guard_passed": true,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "slabs_not_inset": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "winding_bad_edges": 0,
+  "triangles": 75360,
+  "levels_worst_m": 0.0,
+  "delivery_passed": false,
+  "layers": 21,
+  "openings_placed": {
+   "12": 251,
+   "11": 41
+  },
+  "seconds": 204.3,
+  "best_before": 220.873
+ },
+ {
+  "n": "3",
+  "description": "K_EXTRA 12 -> 24 box-top thresholds",
+  "status": "keep",
+  "silhouette_err_m2": 75.091,
+  "per_view_m2": {
+   "x": 18.569,
+   "y": 16.136,
+   "top": 5.68
+  },
+  "iou": {
+   "x": 0.9854,
+   "y": 0.9938,
+   "top": 0.9992
+  },
+  "guard_passed": true,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "slabs_not_inset": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "winding_bad_edges": 0,
+  "triangles": 125104,
+  "levels_worst_m": 0.0,
+  "delivery_passed": false,
+  "layers": 33,
+  "openings_placed": {
+   "12": 397,
+   "11": 62
+  },
+  "seconds": 795.0,
+  "best_before": 220.873
+ },
+ {
+  "n": "4",
+  "description": "COVER_F 0.5 -> 0.75",
+  "status": "discard",
+  "silhouette_err_m2": 305.544,
+  "per_view_m2": {
+   "x": 44.481,
+   "y": 82.796,
+   "top": 50.989
+  },
+  "iou": {
+   "x": 0.9651,
+   "y": 0.968,
+   "top": 0.9928
+  },
+  "guard_passed": true,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "slabs_not_inset": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "winding_bad_edges": 0,
+  "triangles": 76388,
+  "levels_worst_m": 0.0,
+  "delivery_passed": false,
+  "layers": 21,
+  "openings_placed": {
+   "12": 491,
+   "11": 61
+  },
+  "seconds": 440.4,
+  "best_before": 220.873,
+  "note": "tried in parallel on the exp-1 base (best 220.873)"
+ },
+ {
+  "n": "5",
+  "description": "BODY without OST_Doors",
+  "status": "discard",
+  "silhouette_err_m2": 226.788,
+  "per_view_m2": {
+   "x": 34.206,
+   "y": 53.693,
+   "top": 50.989
+  },
+  "iou": {
+   "x": 0.9731,
+   "y": 0.9792,
+   "top": 0.9928
+  },
+  "guard_passed": true,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "slabs_not_inset": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "winding_bad_edges": 0,
+  "triangles": 69878,
+  "levels_worst_m": 0.0,
+  "delivery_passed": false,
+  "layers": 21,
+  "openings_placed": {
+   "12": 698,
+   "11": 54
+  },
+  "seconds": 409.0,
+  "best_before": 220.873,
+  "note": "tried in parallel on the exp-1 base (best 220.873)"
+ },
+ {
+  "n": "6",
+  "description": "MIN_PART_M2 0 -> 1.0 (drop region parts under 1 m2)",
+  "status": "discard",
+  "silhouette_err_m2": 227.418,
+  "per_view_m2": {
+   "x": 37.447,
+   "y": 53.692,
+   "top": 45.14
+  },
+  "iou": {
+   "x": 0.9706,
+   "y": 0.9792,
+   "top": 0.9936
+  },
+  "guard_passed": true,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "slabs_not_inset": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "winding_bad_edges": 0,
+  "triangles": 71950,
+  "levels_worst_m": 0.0,
+  "delivery_passed": false,
+  "layers": 21,
+  "openings_placed": {
+   "12": 256,
+   "11": 41
+  },
+  "seconds": 421.4,
+  "best_before": 220.873,
+  "note": "tried in parallel on the exp-1 base (best 220.873)"
  }
 ]
