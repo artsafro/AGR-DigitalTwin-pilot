@@ -480,14 +480,38 @@ def failure_stop(evidence):
     the check; the next attempt of a blocked check is a violation. A saved stop record (`pipeline/state.json`
     with its `stops`, or a "Stop record" text) reopens every check, a success reopens its own. A stop write
     reopens only when it has a result and did not fail (review 1 of #123), and only from its `result_record`
-    (review 2 of #123: completion order); a write with no result leaves that attempt not measured."""
+    (review 2 of #123: completion order); a write with no result leaves that attempt not measured.
+    Bash failures, successes and stop saves change state at their result records, while retry violations
+    are checked at invocation (review 3 of #123)."""
     sessions, problems = _sessions(evidence["transcript"])
     details = []
     for path, records in sessions:
         failures = {}                                  # attempt key -> (cause, seq) still open
         unknown, seq = None, 0                         # latest stop write whose result never arrived
-        pending_stops = []                             # result records of successful stops not yet applied
-        for ev in events(records):
+        result_positions = {(n, block.get("tool_use_id")): i
+                            for n, rec in enumerate(records) for i, block in enumerate(_blocks(rec))
+                            if block.get("type") == "tool_result"}
+        timeline = [(ev["record"], False, i, ev) for i, ev in enumerate(events(records))]
+        timeline += [(ev["result_record"], True, result_positions[(ev["result_record"], ev["id"])], ev)
+                     for _, _, _, ev in timeline
+                     if ev["kind"] == "tool_use" and ev["has_result"]
+                     and ev["result_record"] is not None
+                     and (ev["name"] == "Bash" or _stop_record(ev))]
+        # Preserve result block order too; a completion never authorizes a call in that same record.
+        for _, completed, _, ev in sorted(timeline, key=lambda item: item[:3]):
+            if completed:
+                if _stop_record(ev):
+                    if ev["is_error"] is not True:
+                        failures.clear()
+                        unknown = None
+                else:
+                    key = _attempt_key(str(ev["input"].get("command") or ""))
+                    if ev["is_error"] is True:
+                        failures.setdefault(key, []).append((_cause(ev["result_text"]), seq))
+                        seq += 1
+                    else:
+                        failures.pop(key, None)
+                continue
             if ev["kind"] == "text" and STOP_TEXT.search(ev["text"]):
                 failures.clear()
                 unknown = None
@@ -495,19 +519,12 @@ def failure_stop(evidence):
             if ev["kind"] != "tool_use":
                 continue
             if _stop_record(ev):
-                # review 1 of #123: a failed write changes nothing; no result is not a saved stop
-                if ev["has_result"] and ev["is_error"] is not True and ev["result_record"] is not None:
-                    pending_stops.append(ev["result_record"])
-                elif not ev["has_result"]:
+                # A failed write changes nothing; a missing result is not a saved stop.
+                if not ev["has_result"]:
                     unknown = (ev["record"], seq)
                 continue
             if ev["name"] != "Bash":
                 continue
-            # review 2 of #123: a stop clears failures only once its result is already in the transcript
-            if any(n < ev["record"] for n in pending_stops):
-                failures.clear()
-                unknown = None
-                pending_stops = [n for n in pending_stops if n >= ev["record"]]
             command = str(ev["input"].get("command") or "")
             key = _attempt_key(command)
             causes = failures.get(key, [])
@@ -518,11 +535,6 @@ def failure_stop(evidence):
                                 "failures": len(causes), "rule": rule})
             elif rule and unknown is not None:
                 problems.append(f"{path}: record {unknown[0]}: stop record saved with no result: outcome unknown")
-            if ev["is_error"] is True:
-                failures.setdefault(key, []).append((_cause(ev["result_text"]), seq))
-                seq += 1
-            else:
-                failures.pop(key, None)
     return _row("attempts after a blocked check", details, problems)
 
 

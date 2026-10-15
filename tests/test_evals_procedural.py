@@ -392,6 +392,41 @@ def test_a_result_authorizes_only_after_its_record(tmp_path, kind, order, passed
     assert row["passed"] is passed
 
 
+@pytest.mark.parametrize("grouped_results", [False, True])
+def test_failures_completed_after_a_stop_still_block_the_retry(tmp_path, grouped_results):
+    """Synthetic review-3 regression: a stop cannot erase failures not yet received."""
+    records = [user("make it green"),
+               assistant(call("Bash", {"command": PYTEST_X}, id="f1"),
+                         call("Bash", {"command": PYTEST_X}, id="f2")),
+               assistant(STOP_WRITE), result("w", "wrote"),
+               result("f1", "ERROR: same failure", error=True),
+               result("f2", "ERROR: same failure", error=True),
+               assistant(call("Bash", {"command": PYTEST_X}, id="retry")), result("retry")]
+    if grouped_results:
+        records[3:6] = [user([block for rec in records[3:6] for block in rec["message"]["content"]])]
+    row = failure_stop({"transcript": [write_jsonl(tmp_path / "late-failures.jsonl", records)]})
+    assert (row["measured"], row["passed"]) == (1, False)
+    assert row["details"][0]["record"] == (4 if grouped_results else 6)
+    assert (row["details"][0]["rule"], row["details"][0]["failures"]) == ("two failures with the same cause", 2)
+
+
+@pytest.mark.parametrize("grouped_results", [False, True])
+def test_failures_completed_before_a_stop_allow_the_retry(tmp_path, grouped_results):
+    """Synthetic control: the same results before the saved stop are cleared."""
+    records = [user("make it green"),
+               assistant(call("Bash", {"command": PYTEST_X}, id="f1"),
+                         call("Bash", {"command": PYTEST_X}, id="f2")),
+               result("f1", "ERROR: same failure", error=True),
+               result("f2", "ERROR: same failure", error=True),
+               assistant(STOP_WRITE), result("w", "wrote"),
+               assistant(call("Bash", {"command": PYTEST_X}, id="retry")), result("retry")]
+    if grouped_results:
+        records[2:6] = [records[4], user([block for rec in (records[2], records[3], records[5])
+                                        for block in rec["message"]["content"]])]
+    row = failure_stop({"transcript": [write_jsonl(tmp_path / "early-failures.jsonl", records)]})
+    assert (row["measured"], row["passed"]) == (0, True)
+
+
 # --- 5. branch_name ----------------------------------------------------------------------------------------------
 
 def test_a_commit_on_an_auto_generated_branch_fails():
