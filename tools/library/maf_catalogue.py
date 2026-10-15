@@ -32,6 +32,14 @@ _SLUG_MAX = 60
 _HELPER_TRIS = 12
 _HELPER_HEIGHT_M = 0.005
 _LABEL_PX = 16
+_SPEC_TOL_EPS = 1e-6
+
+# Longer keys first so "Длина" is not read as the short form "Д".
+_SPEC_DIM = re.compile(
+    r"(?iu)\b(?P<key>диаметр|длина|ширина|высота|д|ш|в)\s*:\s*"
+    r"(?P<num>\d(?:[\d \u00a0\u202f]*\d)?(?:[.,]\d+)?)"
+    r"\s*(?P<unit>мм|м\b)?"
+)
 
 
 def _lo_hi(box):
@@ -404,7 +412,204 @@ def match_npm(entries, blend_doc, tol_m=0.10) -> list[dict]:
     return rows
 
 
-def build_catalogue(plan, built_rows, matches, duplicates, overlaps) -> dict:
+def _number_to_m(num: str, unit: str | None) -> float:
+    text = re.sub(r"\s", "", num).replace(",", ".")
+    value = float(text)
+    if unit is not None and unit.casefold() == "м":
+        return value
+    return value / 1000.0
+
+
+def parse_spec_dims(text) -> dict | None:
+    """Overall size in metres from a specification name cell, or None.
+
+    Keys: Длина, Ширина, Высота, Диаметр, and the short forms Д/Ш/В.
+    Millimetres are the default unit; a trailing "м" keeps the value in metres.
+    Diameter fills both horizontal sizes. Missing axes stay None.
+    """
+    if text is None:
+        return None
+    found = {"l": None, "w": None, "h": None, "d": None}
+    for match in _SPEC_DIM.finditer(str(text)):
+        key = match.group("key").casefold()
+        value = _number_to_m(match.group("num"), match.group("unit"))
+        if key == "диаметр":
+            found["d"] = value
+        elif key in ("длина", "д"):
+            found["l"] = value
+        elif key in ("ширина", "ш"):
+            found["w"] = value
+        elif key in ("высота", "в"):
+            found["h"] = value
+    length = found["l"] if found["l"] is not None else found["d"]
+    width = found["w"] if found["w"] is not None else found["d"]
+    height = found["h"]
+    if height is None and length is None and width is None:
+        return None
+    return {"l_m": length, "w_m": width, "h_m": height}
+
+
+def _spec_text(value) -> str | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    return text or None
+
+
+def _spec_int(value) -> int | None:
+    if value is None or isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float):
+        if value != value:
+            return None
+        return int(round(value))
+    text = _spec_text(value)
+    if text is None:
+        return None
+    text = re.sub(r"\s", "", text).replace(",", ".")
+    try:
+        return int(round(float(text)))
+    except ValueError:
+        return None
+
+
+def _spec_name(text: str) -> str:
+    for line in str(text).splitlines():
+        line = line.strip()
+        if line:
+            return line
+    return str(text).strip()
+
+
+def _spec_max_names(value) -> list[str]:
+    text = _spec_text(value)
+    if text is None:
+        return []
+    return [part.strip() for part in re.split(r"\r\n|\n|\r", text) if part.strip()]
+
+
+def read_spec_xlsx(path) -> list[dict]:
+    """One dict per data row of sheet 'Ведомость' whose name cell is non-empty.
+
+    Header is row 1. Columns, 0-based: 1 type, 2 availability, 3 name and
+    dimensions, 4 URL, 6 .max object names, 8 tris VPM, 9 tris NPM.
+    """
+    import openpyxl
+
+    wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
+    try:
+        ws = wb["Ведомость"]
+        rows = []
+        for index, raw in enumerate(ws.iter_rows(values_only=True), start=1):
+            if index == 1:
+                continue
+            cells = tuple(raw)
+            label = cells[3] if len(cells) > 3 else None
+            if _spec_text(label) is None:
+                continue
+            body = str(label)
+
+            def cell(col):
+                return cells[col] if len(cells) > col else None
+
+            rows.append({
+                "row": index,
+                "type": _spec_text(cell(1)),
+                "availability": _spec_text(cell(2)),
+                "name": _spec_name(body),
+                "dims": parse_spec_dims(body),
+                "url": _spec_text(cell(4)),
+                "max_names": _spec_max_names(cell(6)),
+                "tris_vpm": _spec_int(cell(8)),
+                "tris_npm": _spec_int(cell(9)),
+            })
+        return rows
+    finally:
+        wb.close()
+
+
+def _usable_spec_dims(dims) -> bool:
+    if not isinstance(dims, dict):
+        return False
+    return any(dims.get(key) is not None for key in ("l_m", "w_m", "h_m"))
+
+
+def _spec_dim_score(entry_dims, spec_dims) -> float | None:
+    """Max abs delta of the axes the specification actually states.
+
+    Horizontal sizes are sorted, so a Z rotation still matches. Height is Z.
+    A diameter-only or height-only row compares just those axes.
+    """
+    horiz = [float(spec_dims[key]) for key in ("l_m", "w_m") if spec_dims.get(key) is not None]
+    diffs = []
+    if len(horiz) >= 2:
+        eh = sorted((float(entry_dims[0]), float(entry_dims[1])))
+        sh = sorted(horiz[:2])
+        diffs.append(abs(eh[0] - sh[0]))
+        diffs.append(abs(eh[1] - sh[1]))
+    elif len(horiz) == 1:
+        side = horiz[0]
+        diffs.append(min(abs(float(entry_dims[0]) - side), abs(float(entry_dims[1]) - side)))
+    height = spec_dims.get("h_m")
+    if height is not None:
+        diffs.append(abs(float(entry_dims[2]) - float(height)))
+    if not diffs:
+        return None
+    return max(diffs)
+
+
+def _spec_name_hit(entries, max_names) -> bool:
+    wanted = {name for name in max_names if name}
+    if not wanted:
+        return False
+    for entry in entries:
+        if entry.get("source_object") in wanted or entry.get("slug") in wanted:
+            return True
+    return False
+
+
+def match_spec(entries, spec_rows, tol_m=0.10) -> list[dict]:
+    """Candidate entries for each specification row. Pure; no identification."""
+    tol = float(tol_m)
+    indexed = [
+        entry for entry in entries
+        if entry.get("dims_m") and len(entry["dims_m"]) >= 3 and entry.get("id")
+    ]
+    out = []
+    for spec in spec_rows:
+        max_names = list(spec.get("max_names") or [])
+        dims = spec.get("dims")
+        usable = _usable_spec_dims(dims)
+        row = {
+            "spec_row": spec.get("row"),
+            "spec_name": spec.get("name"),
+            "type": spec.get("type"),
+            "availability": spec.get("availability"),
+            "spec_dims": dims if usable else None,
+            "max_names": max_names,
+            "name_hit": _spec_name_hit(entries, max_names),
+        }
+        if not usable:
+            row["n_candidates"] = 0
+            row["best"] = []
+            row["reason"] = "no dims"
+            out.append(row)
+            continue
+        scored = []
+        for entry in indexed:
+            score = _spec_dim_score(entry["dims_m"], dims)
+            if score is not None and score <= tol + _SPEC_TOL_EPS:
+                scored.append({"id": entry["id"], "score_m": score})
+        scored.sort(key=lambda item: (item["score_m"], item["id"]))
+        row["n_candidates"] = len(scored)
+        row["best"] = scored[:5]
+        out.append(row)
+    return out
+
+
+def build_catalogue(plan, built_rows, matches, duplicates, overlaps, spec_matches=None) -> dict:
     """Merge pass-B rows, NPM matches, duplicate groups and overlaps into the plan."""
     built: dict = {}
     for row in built_rows or []:
@@ -426,6 +631,16 @@ def build_catalogue(plan, built_rows, matches, duplicates, overlaps) -> dict:
         maf_id = match.get("maf_id")
         if maf_id:
             npm_map.setdefault(maf_id, []).append(match["blend_name"])
+    spec_rows = list(spec_matches or [])
+    spec_by_id: dict[str, list] = {}
+    for spec_row in spec_rows:
+        seen = set()
+        for item in spec_row.get("best") or []:
+            eid = item.get("id") if isinstance(item, dict) else item
+            if not eid or eid in seen:
+                continue
+            seen.add(eid)
+            spec_by_id.setdefault(eid, []).append(spec_row.get("spec_row"))
 
     entries = []
     built_ok = 0
@@ -460,6 +675,7 @@ def build_catalogue(plan, built_rows, matches, duplicates, overlaps) -> dict:
         entry["npm_matches"] = list(npm_map.get(entry["id"], []))
         entry["dup_group"] = dup_index.get(entry["id"])
         entry["overlaps_with"] = sorted(set(overlap_map.get(entry["id"], [])))
+        entry["spec_candidates"] = list(spec_by_id.get(entry["id"], []))
         entries.append(entry)
 
     counts = dict(plan.get("counts") or {})
@@ -472,6 +688,10 @@ def build_catalogue(plan, built_rows, matches, duplicates, overlaps) -> dict:
         "npm_matched_name": sum(1 for m in (matches or []) if m.get("method") == "name+dims"),
         "npm_matched_dims": sum(1 for m in (matches or []) if m.get("method") == "dims"),
         "npm_unmatched": sum(1 for m in (matches or []) if m.get("method") == "none"),
+        "spec_rows": len(spec_rows),
+        "spec_with_dims": sum(1 for row in spec_rows if row.get("spec_dims")),
+        "spec_rows_with_candidates": sum(1 for row in spec_rows if row.get("n_candidates")),
+        "spec_name_hits": sum(1 for row in spec_rows if row.get("name_hit")),
     })
     return {
         "gap_m": plan.get("gap_m"),
@@ -482,6 +702,7 @@ def build_catalogue(plan, built_rows, matches, duplicates, overlaps) -> dict:
         "entries": entries,
         "duplicates": list(duplicates or []),
         "overlaps": [list(pair) for pair in (overlaps or [])],
+        "spec_matches": spec_rows,
     }
 
 
@@ -497,7 +718,8 @@ def render_markdown(catalogue, limit=None) -> str:
         "objects", "maf_candidate", "helper_plane", "non_geometry", "split_objects",
         "maf_entries", "tris_total", "built_ok", "built_failed", "duplicates_groups",
         "duplicate_entries", "npm_rows", "npm_matched_name", "npm_matched_dims",
-        "npm_unmatched",
+        "npm_unmatched", "spec_rows", "spec_with_dims", "spec_rows_with_candidates",
+        "spec_name_hits",
     ):
         if key in counts:
             lines.append(f"- {key}: {counts[key]}")
@@ -529,6 +751,31 @@ def render_markdown(catalogue, limit=None) -> str:
         ]
         lines.append("| " + " | ".join(cells) + " |")
     lines.append("")
+    spec_lines = []
+    for spec_row in catalogue.get("spec_matches") or []:
+        if not spec_row.get("n_candidates"):
+            continue
+        dims = spec_row.get("spec_dims") or {}
+        dim_txt = " ".join(
+            "-" if dims.get(key) is None else f"{float(dims[key]):.3f}"
+            for key in ("l_m", "w_m", "h_m")
+        )
+        best_ids = ", ".join(
+            item["id"] if isinstance(item, dict) else str(item)
+            for item in (spec_row.get("best") or [])
+        )
+        spec_lines.append(" | ".join((
+            str(spec_row.get("spec_row")),
+            _md_cell(spec_row.get("spec_name") or ""),
+            dim_txt,
+            best_ids,
+        )))
+    if spec_lines:
+        lines.append("## Specification candidates (dimension-only, not identification)")
+        lines.append("")
+        for line in spec_lines:
+            lines.append(f"- {line}")
+        lines.append("")
     return "\n".join(lines)
 
 
@@ -598,8 +845,16 @@ def _cmd_catalogue(args) -> dict:
     blend = json.loads(Path(args.blend).read_text(encoding="utf-8"))
     duplicates = find_duplicates(plan.get("entries") or [])
     overlaps = find_overlaps(plan.get("entries") or [])
-    matches = match_npm(plan.get("entries") or [], blend)
-    catalogue = build_catalogue(plan, _read_jsonl(args.built), matches, duplicates, overlaps)
+    entries = plan.get("entries") or []
+    matches = match_npm(entries, blend)
+    spec_matches = None
+    if args.spec:
+        spec_matches = match_spec(entries, read_spec_xlsx(args.spec))
+        if args.spec_json:
+            _write_json(args.spec_json, spec_matches)
+    catalogue = build_catalogue(
+        plan, _read_jsonl(args.built), matches, duplicates, overlaps, spec_matches,
+    )
     _write_json(args.out_json, catalogue)
     md_path = Path(args.out_md)
     md_path.parent.mkdir(parents=True, exist_ok=True)
@@ -625,6 +880,8 @@ def _parser() -> argparse.ArgumentParser:
     catalogue.add_argument("--out-json", required=True, help="catalogue JSON path")
     catalogue.add_argument("--out-md", required=True, help="catalogue markdown path")
     catalogue.add_argument("--contact-sheet", default=None, help="optional preview grid PNG")
+    catalogue.add_argument("--spec", default=None, help="optional specification xlsx, sheet Ведомость")
+    catalogue.add_argument("--spec-json", default=None, help="optional JSON dump of specification matches")
     return parser
 
 
