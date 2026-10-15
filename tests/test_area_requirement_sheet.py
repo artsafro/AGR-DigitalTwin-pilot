@@ -414,3 +414,79 @@ def test_ucx_quote_evidence_is_binary_independent():
     for page in (29, 33, 34, 36, 37):
         with pytest.raises(AssertionError):
             quote_evidence_contract(text, [f"reg-p{page}.png"])
+
+
+# --- Issue #150 review round 1: regression tests for indented rows (R1-R5) ---
+
+SYNTHETIC_ROW_01 = (
+    "| NEW-01 — Synthetic first requirement | reg p.4 §1.1 | NPM scope | VPM scope | Manual review | none | [Detail](../geometry.md) |"
+)
+SYNTHETIC_ROW_02 = (
+    "| NEW-02 — Synthetic second requirement | [D010] | NPM scope | VPM scope | Automated check | V003 | [Detail](../geometry.md) |"
+)
+
+
+@pytest.mark.parametrize("indent", [0, 1, 2, 3])
+def test_indented_rows_are_validated(indent: int):
+    """Verify indented trailing synthetic row (NEW-02) is parsed and returned rather than omitted (R1)."""
+    spaces = " " * indent
+    sheet = SYNTHETIC_VALID_SHEET.replace(SYNTHETIC_ROW_02, f"{spaces}{SYNTHETIC_ROW_02}")
+    rows = contract(sheet)
+    assert len(rows) == 2, f"Expected 2 rows returned for indent {indent}, got {len(rows)}"
+    assert rows[0][0].startswith("NEW-01")
+    assert rows[1][0].startswith("NEW-02")
+    assert rows[1][1] == "[D010]"
+    assert rows[1][5] == "V003"
+
+
+@pytest.mark.parametrize("indent", [0, 1, 2, 3])
+@pytest.mark.parametrize("case, mutate_new_02_fn, expected_diagnostic", [
+    (
+        "missing_source",
+        lambda r: r.replace("[D010]", ""),
+        "missing valid source",
+    ),
+    (
+        "missing_npm_column",
+        lambda r: r.replace(" | NPM scope", ""),
+        "exactly 7 columns",
+    ),
+    (
+        "missing_gap_when_none",
+        lambda r: r.replace(" | V003 | ", " | none | "),
+        "Missing L2 gaps",
+    ),
+], ids=["missing_source", "missing_npm_column", "missing_gap_when_none"])
+def test_indented_rows_reject_invalid_cells(indent: int, case: str, mutate_new_02_fn, expected_diagnostic: str):
+    """Verify that invalid cells in indented trailing synthetic row (NEW-02) trigger proper diagnostics (R2, R3, R4)."""
+    spaces = " " * indent
+    mutated_new_02 = f"{spaces}{mutate_new_02_fn(SYNTHETIC_ROW_02)}"
+    sheet = SYNTHETIC_VALID_SHEET.replace(SYNTHETIC_ROW_02, mutated_new_02)
+    with pytest.raises(AssertionError, match=expected_diagnostic):
+        contract(sheet)
+
+
+@pytest.mark.parametrize("indent", [0, 1, 2, 3])
+def test_indented_mutation_probes(tmp_path: Path, capsys: pytest.CaptureFixture, indent: int):
+    """Verify mutation probes exercise both data rows when indented (R5)."""
+    spaces = " " * indent
+    sheet = SYNTHETIC_VALID_SHEET.replace(
+        SYNTHETIC_ROW_01, f"{spaces}{SYNTHETIC_ROW_01}"
+    ).replace(
+        SYNTHETIC_ROW_02, f"{spaces}{SYNTHETIC_ROW_02}"
+    )
+    scratch_path = tmp_path / f"synthetic_indented_{indent}.md"
+    scratch_path.write_text(sheet, encoding="utf-8")
+
+    test_columns_negative_probes(scratch_path)
+    out_col = capsys.readouterr().out
+    assert "columns: 24/24 rejected" in out_col, f"Expected 24 rejected columns, got: {out_col!r}"
+
+    test_sources_negative_probes(scratch_path)
+    out_src = capsys.readouterr().out
+    assert "sources: 4/4 rejected" in out_src, f"Expected 4 rejected sources, got: {out_src!r}"
+
+    test_gaps_negative_probes(scratch_path)
+    out_gap = capsys.readouterr().out
+    assert "gaps: 4/4 rejected" in out_gap, f"Expected 4 rejected gaps, got: {out_gap!r}"
+
