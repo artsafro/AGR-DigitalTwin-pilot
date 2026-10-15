@@ -1,7 +1,7 @@
 """FBX scene checks from a Blender readback (tools/blender/fbx_readback.py).
 
 Fills the scene stages the header-only validator leaves not_run: V003 (triangulation,
-triangle limits, object types), V004 (applied transforms), V006 (NPM embedded images),
+triangle limits, object types), V004 (applied transforms, co-directional overlap clearance), V006 (NPM embedded images),
 V008 (one UV channel, mirrored islands, glass tile), V010 (UCX triangle budget only),
 V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
 """
@@ -10,6 +10,7 @@ import tempfile
 from pathlib import Path
 
 from dt_ai.core.blender_runner import blender_executable, run_blender
+from twinqa.clearance import BAND_EDGE_TOL_M, co_directional_distribution, co_directional_pairs
 from twinqa.report import Finding
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
@@ -19,6 +20,9 @@ ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
 PROJECT_TRIANGLE_TARGET = 150_000
 PIVOT_CENTRE_TOL_PCT, PIVOT_SHARED_TOL_M = 10, 0.001  # SINTEZ AGR Checker 2.9.4a / 2.9.5
 UCX_SMALL_MODEL, UCX_SMALL_LIMIT, UCX_SHARE, UCX_CAP = 50_000, 15_000, 0.05, 100_000
+# Bounded search for overlaid co-directional layers; pairs farther than this are treated as separate
+# surfaces (an implementation scope, not a regulation number; 0.1 m is the minimum wall thickness, reg p.29 §3.12).
+CLEARANCE_WINDOW_M = 0.1
 
 
 def ucx_triangle_limit(model_triangles: int) -> int:
@@ -74,6 +78,57 @@ def _pivot_findings(meshes: list[dict], ucx: list[dict], src: str) -> list[Findi
     return out
 
 
+def _mm_text(value) -> str:
+    if value is None:
+        return "None"
+    return f"{value:.4f}".rstrip("0").rstrip(".")
+
+
+def _clearance_finding(meshes: list[dict], ucx: list[dict], src: str, profile: dict) -> Finding:
+    """One V004 co-directional clearance finding for every non-light readback."""
+    band = profile["geometry"]["near_coplanar_spacing_m"]
+    band_min, band_max = float(band["min"]), float(band["max"])
+    min_mm, max_mm = band_min * 1000, band_max * 1000
+    expected = (f"co-directional overlapping faces {min_mm:g}-{max_mm:g} mm apart "
+                f"(pairs beyond {max_mm:g} mm within {CLEARANCE_WINDOW_M:g} m: review)")
+    geometry = [mesh for mesh in meshes if mesh not in ucx]
+    if any("face_geometry" not in mesh for mesh in geometry):
+        return _f("not_run", "co-directional clearance", f"{src}: no face geometry in readback",
+                  expected, [8, 29], src, [30])
+    faces = []
+    for mesh in geometry:
+        shape = mesh["face_geometry"]
+        vertices = shape["vertices"]
+        for index, polygon in enumerate(shape["polygons"]):
+            points = [vertices[vertex] for vertex in polygon]
+            if len(points) >= 3:
+                faces.append({"object": mesh["name"], "index": index, "points": points})
+    pairs = co_directional_pairs(faces, CLEARANCE_WINDOW_M)
+    distribution = co_directional_distribution(pairs, band_min, band_max)
+    if distribution["below_band"]:
+        status = "fail"
+    elif distribution["above_band"]:
+        status = "review"
+    else:
+        status = "pass"
+    out_of_band = []  # (below band, deviation, label): below-band (fail) first, then largest deviation
+    for pair in pairs:
+        distance = pair["distance_m"]
+        deviation = max(band_min - distance, distance - band_max)
+        if deviation > BAND_EDGE_TOL_M:
+            out_of_band.append((distance < band_min, deviation, f"{pair['a'][0]}#{pair['a'][1]}/{pair['b'][0]}#{pair['b'][1]} "
+                                           f"d={distance * 1000:.1f} mm"))
+    out_of_band.sort(key=lambda item: (not item[0], -item[1]))
+    worst = [label for _, _, label in out_of_band]
+    observed = (f"{src}: {distribution['pairs']} co-directional overlapping pairs within {CLEARANCE_WINDOW_M:g} m: "
+                f"{distribution['below_band']} < {min_mm:g} mm, {distribution['in_band']} in band, "
+                f"{distribution['above_band']} > {max_mm:g} mm; "
+                f"distance mm min/median/max {_mm_text(distribution['min_mm'])}/"
+                f"{_mm_text(distribution['median_mm'])}/{_mm_text(distribution['max_mm'])}; "
+                f"histogram {distribution['histogram_mm']}; worst: {worst[:5]}")
+    return _f(status, "co-directional clearance", observed, expected, [8, 29], src, [30])
+
+
 def scene_findings(rb: dict, kind: str, role: str, profile: dict) -> dict[str, list[Finding]]:
     """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}."""
     src = Path(rb["source"]).name
@@ -114,6 +169,8 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict) -> dict[str, l
            if any(abs(a) > ANGLE_TOL_DEG for a in m["rotation_euler_deg"]) or any(abs(s - 1) > SCALE_TOL for s in m["scale"])]
     out["V004"].append(_f("fail" if bad else "pass", "applied transforms", f"{src}: {bad or 'rotation 0, scale 1'}",
                           "rotation 0, scale 1 after reset", [8, 29, 33], src))
+    if role != "light":
+        out["V004"].append(_clearance_finding(meshes, ucx, src, profile))
 
     if kind == "vpm" and role != "light":
         # V010: UCX triangle budget only; shape, coverage and offsets need other checks (reg p.34-37)
