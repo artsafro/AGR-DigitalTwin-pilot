@@ -14,8 +14,8 @@ code-review (user 2026-10-14 [D091]); production work runs the steps below.
 1. **Goal and discovery.** Read `docs/PROJECT_STATE.md`, the relevant `docs/domain/` file,
    the matching accepted case (`docs/cases.md`) and the real inputs. A script or MCP that
    exists is not working until there is current evidence (`CAPABILITIES.md` status).
-2. **Questions.** Ask only what changes the result, inputs, architecture, acceptance,
-   destructive actions or publication. Decide routine details yourself.
+2. **Questions.** Apply [Questions-only](#questions-only) and [Escalation](#escalation-131)
+   before asking. Decide routine details yourself; a quoted applicable decision is already answered.
 3. **Contract.** For multi-stage work write in `jobs/<JOB>/STATE.md` (or the PR): goal and
    acceptance, exact inputs/versions, profile (NPM-OKS, VPM-OKS, NPM-territory…), owner of
    each scene/port/export, outputs, mandatory checks, stop conditions, next step. "Model"
@@ -36,6 +36,66 @@ code-review (user 2026-10-14 [D091]); production work runs the steps below.
    (with its date or `D<n>`); report what is done, what was checked (commands, evidence paths)
    and what is open. On restart, read saved outputs and
    hashes before repeating any mutation (`run-evidence` skill).
+
+## Questions-only
+
+Ask only unresolved questions that change the model, object, data, inputs or result. Decide routine
+implementation details yourself. For a rule already found by `pattern-librarian`, use
+[Escalation](#escalation-131) instead of asking again. Keep mandatory confirmations for
+architecture, acceptance, destructive actions and publication; an existing modelling decision does not
+supply authorization for a new destructive action or a merge.
+
+Permission matrix row for question escalation (all agents; complements the action permissions of #127):
+
+| Action class | Claude Code | Codex | Antigravity | Condition |
+|---|---|---|---|---|
+| Question to the user | ask if unresolved | ask if unresolved | ask if unresolved | Apply [Escalation](#escalation-131) first; keep mandatory confirmations |
+
+## Escalation (#131)
+
+Source: `docs/prd/agent-ready-harness.md`, Process, stories 33–34 (approved [D088–D092]);
+review routing also follows [D073].
+
+### (a) Apply a found rule
+
+When `pattern-librarian` returns rule, quote and decision id, the main agent reads the cited source,
+checks that it applies to the current profile, inputs and object, and applies it without asking the user again.
+List the applied rule, exact quote, source path/section and `D<n>` in the PR. This reuses a user decision;
+it does not turn the librarian into a decision maker. Keep all mandatory confirmations.
+
+If the answer is `no rule`, or the quote/id is missing or inconsistent, do not invent a rule or an id.
+Inspect the cited material; ask the user only if the unresolved choice changes the result. An open
+conflict in `docs/domain/conflicts.md` still needs the user's decision; show both sides and stop the
+stage that depends on it. Do not apply an unrelated or superseded decision to avoid a question.
+
+**Worked example: quoted rule.** A source has a flush opening with no measured reveal depth. The
+librarian returns the applicable OD1 rule in `docs/domain/conflicts.md`, C.24, [D048]:
+
+> a source with no depth (no reveal, a flush back polygon) takes the default, listed in the extractor report as "depth by default"
+
+Read C.24 and verify the source/profile; apply its 0.4 m default (`npm_min` plane 0.4 m, `mid` plane
+0.2 m). Mark the report "depth by default" and include this quote, C.24 and D048 in the PR. Do not ask
+whether to use zero depth. This example grants neither source overwrite nor delivery acceptance.
+
+### (b) P2 findings to issues
+
+Turn P2 review findings into issues without asking the user ([D073], spec story 34). Search the task's
+issue tracker for a duplicate first; link an existing issue or create one with the finding, impact,
+reproduction/evidence, suggested acceptance and a link to the PR review round. Post the issue number
+and URL back in the PR/review. Keep the fix out of the current PR unless its scope explicitly includes it.
+P1 (wrong result, silent skip, data loss or hook bypass) stays a fix in the PR, not a deferred P2.
+If tracker access or an explicit task policy prevents issue creation, record the finding under the PR's
+"Out of scope" with the reason and pending issue action; do not claim it was filed. That constraint does
+not require asking whether the finding deserves an issue.
+
+**Worked example: P2 finding (synthetic).** Round 1 spots a missing optional CLI usage example; the
+command and its mandatory checks already work. Search for a duplicate, then create an issue titled
+"Docs: add CLI usage example", with the missing example, expected documentation and the review round
+URL. Read the created issue back, and add its actual number/URL to the round. Do not ask "Should I open
+an issue?" and do not add the unrelated docs fix to this PR. Tracking a P2 does not block the merge,
+but does not authorize a merge either.
+
+Merges stay on the user's command only; neither applying a rule nor routing a finding authorizes a merge.
 
 ## Recitation (#130)
 
@@ -94,8 +154,9 @@ Rules:
 - Only the main agent writes code, commits and decides. No subagent may write to `src/`, `docs/` or `jobs/`,
   and none is created with write tools. Agent Teams are not enabled.
 - After every engine run the main agent calls `independent-checker` before it reports "done".
-- A subagent's result is data, not a decision. The main agent weighs it, and it asks the user only about the
-  model or the object (`questions-only` rule).
+- A subagent's result is data, not a decision. The main agent verifies applicability and follows
+  [Questions-only](#questions-only): reuse a quoted decision by [Escalation](#escalation-131), and ask only
+  unresolved result-changing questions while preserving mandatory confirmations.
 - Disputed geometry: look first, then classify (user 2026-10-13 [D072]) - every group of a classifier's verdict, every
   question and every stop is shown isolated on the body (renders, three views, sizes) before a rule or a question.
 
