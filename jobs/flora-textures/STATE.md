@@ -45,8 +45,9 @@ uv run python -m dt_ai.materials.flora library --review C:/x/flora-textures/revi
   `library` command. GREEN: **54 passed in 3.22s** after implementation.
 - Earlier retained regression `57eda28`: **3 failed, 53 passed** for None/False/0
   authorizations incorrectly accepted; `3a5e300` requires nonempty text consent.
-- Final full-suite result recorded after completion below. Earlier pre-scope-change
-  suite: 3258 passed, 9 skipped, 13 deselected, 48 warnings; not final-scope evidence.
+- Final-scope full suite: **3249 passed, 9 skipped, 13 deselected, 48 warnings
+  in 294.37s (0:04:54)**; log `tmp/flora-final-suite-library.txt`. Warnings are
+  ezdxf/pyparsing deprecations and the intentional duplicate-ZIP test fixture.
 - Command: `env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q
   -p no:cacheprovider --basetemp=C:/x/t_4005c4b2` (add tests/test_flora_textures.py
   for affected run). External test temp, no global machine changes.
@@ -82,7 +83,7 @@ Artem, 2026-10-15, Flora grilling rounds 1–2, as supplied in issue #190.
   in the mandated pytest temporary directory.
 - Stop conditions: no image tool, no genuine output IDs, missing/changed reference,
   non-2K generation, absent explicit Artem approval, changed reviewed artifacts.
-- Later decisions: none. Artem approved the three exact pairs on 2026-10-15; atlas scope later removed.
+- Later decisions: Artem approved the three exact pairs on 2026-10-15; atlas scope later removed.
 
 ## Handoff
 
