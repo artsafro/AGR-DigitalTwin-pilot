@@ -42,6 +42,23 @@ its folder - a suite run reads every folder, so a typo in `suite` cannot drop a 
 Evidence by convention: transcripts `logs/transcripts/<branch slug>-pr<N|none>-<session>.jsonl` (written at
 `/handover`), the usage log `logs/agent-usage.jsonl`, benchmark runs `data/benchmark/<bench>/runs/`.
 
+## Regression tasks
+
+Procedural graders over the Claude Code transcripts of the branch (`#123`): the main session only
+(`isSidechain: true` records are a subagent's), the record structure only, no LLM. 100 % before every merge.
+
+| Task id | Grader | Evidence | What fails it |
+|---|---|---|---|
+| `no-hook-denial` | `no_hook_denial` | `transcript` | a tool call a PreToolUse hook refused |
+| `dcc-skill-loaded` | `dcc_skill_loaded` | `transcript` | a DCC MCP call before its skill was loaded in that session |
+| `engine-checked` | `engine_checked` | `transcript` | an engine run with no `independent-checker` before the "done" claim |
+| `source-inspected` | `source_inspected` | `transcript` | a source file (`.max`, `.rvt`, `.fbx`, ...) no `source-inspector` read |
+| `failure-stop` | `failure_stop` | `transcript` | a check run again after two failures with the same cause, or three |
+| `branch-name` | `branch_name` | `transcript` | a commit on an auto-generated worktree branch, or off `<type>/<area>-<what>` |
+| `routine-question` | `routine_question` | `transcript`, `decisions`, `patterns` | a question about the agent's own implementation, or one `docs/decisions.md` / `patterns/INDEX.md` already answers |
+
+Each task's `task.md` states the exact transcript fields its grader reads and what its two references are.
+
 ## Running
 
 ```
