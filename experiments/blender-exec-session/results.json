@@ -1,0 +1,165 @@
+{
+ "latency": {
+  "cli_ping_ms": 123.9,
+  "cli_trivial_code_ms": 123.6,
+  "raw_socket_ping_ms": 61.6,
+  "raw_socket_trivial_code_ms": 61.9,
+  "python_startup_ms": 82.4,
+  "cli_ping_min_max_ms": [
+   123,
+   183
+  ]
+ },
+ "output": [
+  {
+   "bytes": 1000,
+   "cli_rc": 0,
+   "cli_intact": true,
+   "cli_stdout_len": 1065,
+   "cli_truncated_marker": false,
+   "cli_s": 0.15,
+   "raw_intact": true,
+   "raw_s": 0.05
+  },
+  {
+   "bytes": 10000,
+   "cli_rc": 0,
+   "cli_intact": true,
+   "cli_stdout_len": 10065,
+   "cli_truncated_marker": false,
+   "cli_s": 0.14,
+   "raw_intact": true,
+   "raw_s": 0.05
+  },
+  {
+   "bytes": 19000,
+   "cli_rc": 0,
+   "cli_intact": true,
+   "cli_stdout_len": 19065,
+   "cli_truncated_marker": false,
+   "cli_s": 0.13,
+   "raw_intact": true,
+   "raw_s": 0.05
+  },
+  {
+   "bytes": 20000,
+   "cli_rc": 0,
+   "cli_intact": false,
+   "cli_stdout_len": 20015,
+   "cli_truncated_marker": true,
+   "cli_s": 0.14,
+   "raw_intact": true,
+   "raw_s": 0.05
+  },
+  {
+   "bytes": 100000,
+   "cli_rc": 0,
+   "cli_intact": false,
+   "cli_stdout_len": 20015,
+   "cli_truncated_marker": true,
+   "cli_s": 0.14,
+   "raw_intact": true,
+   "raw_s": 0.05
+  },
+  {
+   "bytes": 1000000,
+   "cli_rc": 0,
+   "cli_intact": false,
+   "cli_stdout_len": 20015,
+   "cli_truncated_marker": true,
+   "cli_s": 0.23,
+   "raw_intact": true,
+   "raw_s": 0.2
+  },
+  {
+   "bytes": 5000000,
+   "cli_rc": 0,
+   "cli_intact": false,
+   "cli_stdout_len": 20015,
+   "cli_truncated_marker": true,
+   "cli_s": 0.95,
+   "raw_intact": true,
+   "raw_s": 0.75
+  }
+ ],
+ "cubes": {
+  "before": "0 1",
+  "ops": {
+   "create_1x1000_s": 34.49,
+   "create_10x100_s": 30.71,
+   "delete_1000_after_1x_s": 0.46,
+   "delete_1000_after_10x_s": 0.41
+  },
+  "data": {
+   "create_1x1000_s": 0.41,
+   "create_10x100_s": 1.94,
+   "delete_1000_after_1x_s": 0.36,
+   "delete_1000_after_10x_s": 0.39
+  },
+  "after": "0 1"
+ },
+ "errors": {
+  "exception": {
+   "rc": 1,
+   "out": "{\"status\": \"error\", \"message\": \"Code execution error: boom\"}",
+   "s": 0.1
+  },
+  "syntax_error": {
+   "rc": 1,
+   "out": "{\"status\": \"error\", \"message\": \"Code execution error: invalid syntax (<string>, line 1)\"}",
+   "s": 0.1
+  },
+  "print_then_exception": {
+   "rc": 1,
+   "out": "{\"status\": \"error\", \"message\": \"Code execution error: division by zero\"}",
+   "s": 0.1
+  },
+  "sleep40_default_timeout": {
+   "rc": 0,
+   "out": "{\"status\": \"success\", \"result\": {\"executed\": true, \"result\": \"woke\\n\"}}",
+   "s": 40.1
+  },
+  "sleep40_timeout10": {
+   "rc": 2,
+   "out": "{\"status\": \"unreachable\", \"message\": \"Blender at 127.0.0.1:9876: timed out\"}",
+   "s": 10.1,
+   "ping_after": {
+    "rc": 0,
+    "s": 30.0,
+    "out": "{\"status\": \"success\", \"result\": {\"name\": \"Scene\", \"object_count\": 0, \"objects\": [], \"materials_count\": 2}}"
+   }
+  },
+  "wrong_port": {
+   "rc": 2,
+   "out": "{\"status\": \"unreachable\", \"message\": \"Blender at 127.0.0.1:9899: [WinError 10061] \\u041f\\u043e\\u0434\\u043a\\u043b\\u044e\\u0447\\u0435\\u043d\\u0438\\u0435 \\u043d\\u0435 \\u0443\\u0441\\u0442\\u0430\\u043d\\u043e\\u",
+   "s": 2.2
+  }
+ },
+ "lock": {
+  "lock_file_present": true,
+  "lock_content": {
+   "card": "manual",
+   "pid": 71948,
+   "t": 1792028924.5904458
+  },
+  "short_wait": {
+   "rc": 3,
+   "out": "{\"status\": \"busy\", \"message\": \"Blender session is used by another card (C:\\\\Users\\\\artsafro\\\\AppData\\\\Local\\\\Temp\\\\agr-blender-session.lock)\"}",
+   "s": 4.1
+  },
+  "long_wait": {
+   "rc": 0,
+   "s": 10.2,
+   "status": "success"
+  },
+  "A_rc": 0,
+  "lock_left_after": false
+ },
+ "tmpdir": {
+  "alt_tmp": "C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-exp-t_b4af19e2",
+  "second_caller_rc": 0,
+  "second_caller_s": 6.6,
+  "second_caller_status": "success",
+  "note": "rc 0 here means the lock did NOT exclude the second caller"
+ }
+}
