@@ -48,6 +48,7 @@ def mesh_facts(obj):
         "location": list(obj.location),
         "rotation_euler_deg": [math.degrees(a) for a in obj.rotation_euler],
         "scale": list(obj.scale),
+        "world_scale": list(obj.matrix_world.to_scale()),
         "parent": obj.parent.name if obj.parent else None,
         "uv_channels": len(mesh.uv_layers),
         "materials": [s.material.name if s.material else None for s in obj.material_slots],

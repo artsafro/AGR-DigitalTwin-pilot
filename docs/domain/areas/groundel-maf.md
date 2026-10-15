@@ -28,7 +28,7 @@ this research ran no DCC or delivery validation.
 | MAF-01 — Area membership and bounds | reg p.1–2 §2; reg p.21 §2 | GroundEl polygonal elements; exclude relief, Flora and OKS roof landscaping; current plot/stage only | Same project scope, represented within Ground | Manual project-plan inventory and boundary/roof classification | none | [Profile terms](../npm-vpm.md#terms) |
 | MAF-02 — Approved design and profile completeness | reg p.4 §1.3; reg p.24 §1.3 | All specified MAF present | Same project elements, including lighting masts and greenery | Manual V015: approved drawings/specification and paired-profile comparison; not a topology-equality test | none | [Common profile contract](../npm-vpm.md#common-to-both), [manual QA](../validation.md) |
 | MAF-03 — Silhouette and courtyard furniture | reg p.7 §3.1; reg p.28 §3.3; reg p.29 §3.19; reg p.32 §7 | Silhouette-led simplification; minor detail via texture | Silhouette-led simplification; retain specified courtyard/niche furniture; the 5 cm baking clause concerns details recessed into/protruding from the main building geometry (curbs excepted), not a blanket MAF simplification threshold | Manual silhouette views against the project, including urns, tables, chairs and planters; check applicability before using a building-detail baking threshold | none | [Geometry rules](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted), [courtyard scope](../npm-vpm.md#terms) |
-| MAF-04 — Metric scale and dimension tolerance | reg p.4 §4, §2.1; reg p.24 §4, §2.1; [D094] | 1 unit = 1 m; scale 1:1; MAF overall dimensions may differ from the specification by <= 10 cm (user decision, not a scale change) | Same | Manual exported system-unit and known-dimension readback, plus overall-dimension comparison to the specification under [D094]; V002 header check does not verify units | none | [Units](../geometry.md#units-coordinates-pivots), [V002 limitation](../validation.md#implementation-status-inventory-static-audit) |
+| MAF-04 — Metric scale and dimension tolerance | reg p.4 §4, §2.1; reg p.24 §4, §2.1; [D094] | 1 unit = 1 m; scale 1:1; MAF overall dimensions may differ from the specification by <= 10 cm (user decision, not a scale change) | Same | V002 scene readback checks system units and local and effective (inherited) import scale 1:1; overall-dimension comparison to the specification under [D094] stays manual | V002 (`src/twinqa/scene.py:scene_findings`, partial: system units and local and effective (inherited) import scale 1:1; [D094] 10 cm dimension tolerance stays manual) | [Units](../geometry.md#units-coordinates-pivots), [V002 limitation](../validation.md#implementation-status-inventory-static-audit) |
 | MAF-05 — Scene structure | reg p.6 §1.3; reg p.7 §3.5; reg p.28 §3.1–3.2, §3.8; reg p.29 §3.11 | Clean scene; no geometry hierarchy/groups | Same; default collection only | Manual scene audit for hierarchy, animation, modifiers and collection structure; generic V003 object-type checks are insufficient | none | [Geometry rules](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted) |
 | MAF-06 — Ground geometry/glass separation | reg p.6–7 §1.5; reg p.10 §7; reg p.28 §3.4–3.5; reg p.32 §8.1 | Ground FBX contains separate GroundEl and, when present, GroundElGlass; translucent glass has no texture set | Ground / GroundGlass contract, not an invented GroundEl suffix | Manual object/material inventory and glass classification | none | [NPM structure](../npm-vpm.md#npm-appendix-1), [glass geometry](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted) |
 | MAF-07 — Shared NPM triangle budget | reg p.7 §3.6 | Ground + GroundEl + Flora total ≤ 180 000 triangles, not a per-MAF allowance | See MAF-08; do not reuse the NPM ceiling | Sum exported non-UCX triangles for the complete Ground FBX | V003 — `scene_findings`, NPM `role=ground` total only | [Profile budgets](../npm-vpm.md#npm-appendix-1), [implementation](../../../src/twinqa/scene.py) |
@@ -80,13 +80,12 @@ original images/PDF are authoritative):
 
 ## L2 gaps
 
-The table contains **24 requirement rows**: **17** with `none` and **7** with implemented partial
+The table contains **24 requirement rows**: **16** with `none` and **8** with implemented partial
 coverage. Every `none` row is listed below; these are L2 ticket candidates, **not filed tickets**:
 
 - **MAF-01:** semantic membership, plot/stage boundary and roof exclusion.
 - **MAF-02:** approved-source completeness and paired NPM/VPM representation.
 - **MAF-03:** silhouette/minimal-detail judgement, building-only baking-clause applicability and courtyard-furniture preservation.
-- **MAF-04:** exported system units, physical scale and specification dimension tolerance [D094].
 - **MAF-05:** hierarchy, modifiers, animation and collection audit.
 - **MAF-06:** GroundEl/glass grouping and profile-specific mesh/material composition.
 - **MAF-08:** VPM Ground area calculation and hard-budget check (C1 decided [D010]).
@@ -103,7 +102,8 @@ coverage. Every `none` row is listed below; these are L2 ticket candidates, **no
 
 Partial rows also leave work: MAF-13/14 embedded PNG pixel extraction and full semantics;
 MAF-16 UV quality beyond its implemented subset; MAF-19 NPM plan-angle comparison;
-MAF-23 NPM georeferencing, project-zero, survey alignment and 10 cm sinking/bottom deletion [D095]. No complete MAF L2 is claimed.
+MAF-23 NPM georeferencing, project-zero, survey alignment and 10 cm sinking/bottom deletion [D095];
+MAF-04 specification dimension tolerance [D094]. No complete MAF L2 is claimed.
 The [Maf Tools review](../../agr/inventory/ZAVOD_AND_MAX_PLUGINS_REVIEW.md#2-andrew-maf-tools-matidudim-плотность-и-упаковка--max-31)
 is static prototype evidence, not a running validator or a MAF benchmark. Its MatID-to-UDIM
 mapping is not a regulation rule. T-MAF-4 still needs identified user etalons from T-MAF-1;

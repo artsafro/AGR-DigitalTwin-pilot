@@ -162,6 +162,9 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
     for stage_id, placeholder in covered.items():
         if stage_id in st and len(st[stage_id].findings) > 1:
             st[stage_id].findings = [f for f in st[stage_id].findings if f.name != placeholder]
+    v002 = st.get("V002")
+    if v002 is not None and any(f.name == "system units" for f in v002.findings):
+        v002.findings = [f for f in v002.findings if f.name != "units and scale"]
 
 
 def validate(target: Path, kind: str | None, profiles, scene: bool = False) -> ValidationReport:
