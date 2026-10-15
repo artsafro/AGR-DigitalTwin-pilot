@@ -108,6 +108,49 @@ substitute ad-hoc scripting.
 Adapters and evidence log: `tools/mcp/README.md`, `tools/mcp/verification.txt`. All routes are
 registered for Codex and Antigravity; Claude uses only its own user-scope registrations.
 
+### DCC tool risk classes
+
+This register is the single risk source for DCC skills and the guard's manual
+[DCC authorization gate](WORKFLOW.md#gate-dcc-authorization). Risk describes the
+**operation**, not connection status: `read-only` inspects without changing scene/file
+state; `versioned-write` creates only a new versioned output; `destructive` changes
+existing scene/session/data or can execute arbitrary code. Even creation in a live
+scene is destructive: unsaved user work may be affected. A new output path does not
+make arbitrary Python safe. Task authorization is required for versioned writes;
+destructive operations need explicit authorization for the exact mutation. The
+[Permission matrix](WORKFLOW.md#permission-matrix) still prohibits source overwrites.
+
+Match the actual tool schema and every operation in a batch before calling it; the
+highest risk wins. The rows below cover each registered route, including scripts.
+External catalogs are not pinned in this repo: only the enumerated inspection
+operations are read-only; **every unlisted/new/unknown tool defaults to destructive**
+until inspected and registered here. This fallback is a classification, not a claim
+that those tools have been tested. No generic MCP sandbox is implemented by guard.py.
+
+| Route | Tool / operation (all unmatched operations use the route's fallback) | Risk |
+|---|---|---|
+| 3dsmax-mcp | All tools, including script execution; inspect schema before use (no live inspection subset validated) | destructive |
+| revit-bridge | `revit_status` | read-only |
+| revit-bridge | `export_fbx*`, `agr_export_fbx` to new versioned destinations | versioned-write |
+| revit-bridge | All other tools, including `open_document`, link load/unload/reload/repath | destructive |
+| revit-http-2025 | `revit_ping`, `revit_get_document_info`, `revit_get_views`, `revit_list_categories`, `revit_list_elements`, `revit_get_element_info`, `revit_get_parameter`, `revit_list_levels`, `revit_list_families`, `revit_list_sheets`, `revit_list_rooms`, `revit_list_materials`, `revit_get_worksets`, `revit_get_linked_files`, `revit_get_model_health` | read-only |
+| revit-http-2025 | Inspected export-only tools to new versioned paths (including PDF) | versioned-write |
+| revit-http-2025 | All other tools, including create/edit/delete, arbitrary code and dry-run mutations until inspected | destructive |
+| revit-twin | All tools (broken route, no validated operation subset) | destructive |
+| multiCAD | `manage_files` list/info; `manage_layers` list/info; `manage_blocks` list/info/get_attrs; `manage_session` status/check_running; `export_data` JSON returned without saving | read-only |
+| multiCAD | `manage_files` save with explicit new versioned DWG/DXF destination via project wrapper | versioned-write |
+| multiCAD | All other tools/operations, including session connect/open/close, entity/layer/block edits and script execution | destructive |
+| blender | `get_blendfile_summary_path_info`, `get_blendfile_summary_datablocks`, `get_blendfile_summary_missing_files`, `get_blendfile_summary_of_linked_libraries`, `get_blendfile_summary_usage_guess`, `get_objects_summary`, `get_object_detail_summary` | read-only |
+| blender | Inspected typed save/export-only tools to new versioned paths | versioned-write |
+| blender | All other tools, including Python, `_for_cli`, scene mutation and crash-prone MCP image tools | destructive |
+| speedtree | `installation_info`, `list_templates`, `list_presets`, `inspect_preset`, `inspect_spm` | read-only |
+| speedtree | `export_tree` to a new path in an empty versioned directory | versioned-write |
+| speedtree | All other/new tools | destructive |
+| rizomuv | `get_session_status`, `get_version` | read-only |
+| rizomuv | `save_mesh` to a new path in a fresh versioned directory | versioned-write |
+| rizomuv | `open_session`, `load_obj`, `load_mesh`, `unfold_visible`, `optimize_visible`, `pack_visible`, `close_managed_session`, all other/new tools | destructive |
+| SketchUp | All scripts/extension operations until inspected (route not re-verified) | destructive |
+
 ## Harness
 
 ### Guard hook — `.claude/hooks/guard.py`

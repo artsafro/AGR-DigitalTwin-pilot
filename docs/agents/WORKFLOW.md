@@ -159,10 +159,96 @@ hashes, code used, checks actually run, failures and fixes, reuse candidates. Ad
 `docs/cases.md`. Praise does not replace QA. A procedure becomes a general tool or skill
 only after it works on a second representative object.
 
+## Permission matrix
+
+Single permission policy for all three agents (#127). `free` means read/inspect or local code
+work within the task's own worktree; `versioned write` requires task authorization and a new
+versioned output; `ask` requires the user's explicit authorization (a task may grant the exact
+operation); `never` prohibits the action as described, even if a hook offers an override.
+Roles in `ROLES.md` assign work, not extra permissions. More restrictive task policies win.
+
+| Action class | Claude Code | Codex | Antigravity | Enforcement |
+|---|---|---|---|---|
+| Read files, inspect DCC, local tests, gh pr view / gh issue list | free | free | free | Read-only tools; confirm application/document before DCC calls |
+| Edit task code/docs and commit in own worktree | free | free | free | Task scope and NAMING.md; pre-commit checks |
+| Authorized DCC saves/exports to new versioned paths | versioned write | versioned write | versioned write | CAPABILITIES.md risk classes; DCC skill and output readback |
+| Publish branch (git push) | ask | ask | ask | guard: `git push origin task/example` |
+| Merge after review on the user's explicit command | ask | ask | ask | guard: `gh pr merge 127`; gate: [Merge authorization](WORKFLOW.md#gate-merge-authorization) |
+| gh delete operations (issue, release, etc.) | ask | ask | ask | guard: `gh issue delete 127`; guard: `gh release delete v1` |
+| All gh repo operations (including reads) | ask | ask | ask | guard: `gh repo view owner/repo`; guard: `gh repo delete owner/repo` |
+| Destructive DCC tools or arbitrary DCC code | ask | ask | ask | gate: [DCC authorization](WORKFLOW.md#gate-dcc-authorization) |
+| Install software or change machine settings | ask | ask | ask | guard: `winget install example`; guard: `setx EXAMPLE value` |
+| Discard local work / recursive cleanup / rewrite history | ask | ask | ask | guard: `git reset --hard`; guard: `git clean -fd`; guard: `git rebase main` |
+| Delete sources or accepted versions | never | never | never | gate: [Asset preservation](WORKFLOW.md#gate-asset-preservation) |
+| Write over data/sources | never | never | never | gate: [Asset preservation](WORKFLOW.md#gate-asset-preservation) |
+| Merge without the user's command (git or gh) | never | never | never | gate: [Merge authorization](WORKFLOW.md#gate-merge-authorization) |
+| Change standards/ outside its procedure | never | never | never | gate: [Standards procedure](WORKFLOW.md#gate-standards-procedure) |
+| Force push | never | never | never | guard: `git push --force origin task/example`; gate: [Publication review](WORKFLOW.md#gate-publication-review) |
+| Write into another agent's worktree | never | never | never | gate: [Worktree ownership](WORKFLOW.md#gate-worktree-ownership) |
+| Manual /compact over a stale handoff without force | never | never | never | gate: [PreCompact](../../tools/hooks/session_context.py#precompact) |
+
+The guard (`.claude/hooks/guard.py`) asks; it is not a deny sandbox or an authorization
+ledger. Its lexical shell rules can over-ask and do not interpret aliases, `gh api`, embedded
+scripts or arbitrary MCP code. A guard confirmation cannot waive a `never` row. Named manual
+gates below cover these semantic cases before execution and at review; do not claim they are
+automatic enforcement. Claude Code hooks are working; Codex/Antigravity runtime enforcement
+remains unvalidated (H1 in `CAPABILITIES.md`). The same policy applies even without hooks.
+The PreCompact gate is Claude Code only; elsewhere follow the context-rotation procedure.
+Automatic compaction and `/compact force` retain the exceptions in Context rotation.
+`tests/test_guard_permissions.py` parses this table, exercises named shell probes and checks
+that every restricted row resolves to a guard rule or an existing gate.
+
+### Gate asset preservation
+
+Manual pre-write gate, owned by the executing agent and checked by the reviewer: resolve
+all target paths and sidecars; compare them with sources and user-accepted versions in the
+job state. Reject deletion of either, and any write into `data/sources/`. Work from copies
+and choose a new versioned destination; a save permission does not authorize an overwrite.
+The guard's production-extension/delete checks only supplement this gate.
+
+### Gate merge authorization
+
+Manual pre-execution gate: require review and the user's command naming the merge. A task
+approval to code, push or open a PR is not a merge command. Applies equally to `git merge`,
+`gh pr merge`, UI and API routes. Without it stop; the gh guard prompt is not evidence that
+the command was granted. Record the command in the handoff/PR when a merge is authorized.
+
+### Gate standards procedure
+
+Manual review gate: apply `standards/README.md`, "Changing a rule" (rule and traceability,
+domain rationale/user conflict decision, updated hash lock). The profiles loader verifies
+hashes, but a new hash alone does not prove that the procedure was followed. Reject a PR
+that changes standards without this evidence.
+
+### Gate publication review
+
+Manual pre-push gate: inspect the exact destination/refspec and flags. Reject force pushes
+(including `-f`, `--force-with-lease` and `+refspec`) regardless of the guard's confirmation.
+For allowed publication record the user's task authorization and use a normal branch push.
+
+### Gate worktree ownership
+
+Manual pre-write gate: inspect `git worktree list`, current branch/status, resolved targets
+and task ownership. Only the task's owner writes its worktree. Another agent may inspect it
+read-only; never edit there via an absolute path, shell, script, MCP or symlink. The guard's
+file boundary check is a supplementary ask, not proof of ownership.
+
+### Gate DCC authorization
+
+Before any mutation name the exact tool/operation and its risk class from
+`CAPABILITIES.md#dcc-tool-risk-classes`. Require the user's task authorization for a
+`versioned-write`; for `destructive` require explicit authorization for that exact mutation,
+confirmed document/units/version and a preserved source copy. Apply Asset preservation and
+Worktree ownership first; reject prohibited operations even with authorization. Save/export
+to new versioned paths and read back geometry, UV, materials and transforms. Unknown or
+arbitrary-code operations are destructive until their behavior is inspected. This is a
+manual DCC skill/reviewer gate, not a generic MCP sandbox.
+
 ## Git
 
 - Start independent work from fresh `main` in a new worktree; continue a task in its own
   worktree. Check existing worktrees, branch, base/head and dirty state before choosing.
 - Commit successes and useful failed attempts with an honest status message.
-- Merge only after review and the user's approval; remove a worktree only after its
-  ignored outputs that matter are saved.
+- Permissions for publication, merge, deletion and history are defined only in the
+  [Permission matrix](#permission-matrix); apply its named gates before executing.
+- Remove a worktree only after its ignored outputs that matter are saved.

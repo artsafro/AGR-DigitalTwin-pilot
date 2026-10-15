@@ -72,8 +72,8 @@ Checks: `uv run pytest -q`, `uv run dt profiles check`, `uv run dt schemas --che
 - `passed=true` is forbidden while any mandatory check or manual gate is open.
   Technical QA, user acceptance and publication are separate statuses.
 - Mark synthetic data as synthetic. Never present it as data of a real object.
-- Never push, rewrite history, delete source/production assets or change machine
-  settings without the user's explicit approval (the guard hook asks).
+- Apply the [Permission matrix](docs/agents/WORKFLOW.md#permission-matrix) for action
+  permissions and its named guard rules/gates; it is the single policy for all agents.
 - Update `docs/PROJECT_STATE.md` only on `main` after a merge, by replacing a section (≤ 80 lines, fixed
   sections; `docs/agents/WORKFLOW.md`); in task branches report
   state changes in the final summary.
