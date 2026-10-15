@@ -559,5 +559,228 @@
   },
   "seconds": 2622.7,
   "best_before": 75.091
+ },
+ {
+  "n": "15",
+  "description": "Z_Q 0.1 -> 0.05",
+  "status": "keep",
+  "silhouette_err_m2": 17.584,
+  "per_view_m2": {
+   "x": 2.707,
+   "y": 3.245,
+   "top": 5.68
+  },
+  "iou": {
+   "x": 0.9979,
+   "y": 0.9987,
+   "top": 0.9992
+  },
+  "guard_passed": true,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "slabs_not_inset": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "winding_bad_edges": 0,
+  "triangles": 141132,
+  "levels_worst_m": 0.0,
+  "delivery_passed": false,
+  "layers": 53,
+  "openings_placed": {
+   "12": 556,
+   "11": 207
+  },
+  "seconds": 2841.7,
+  "best_before": 31.964
+ },
+ {
+  "n": "16",
+  "description": "K_EXTRA 44 -> 48",
+  "status": "discard",
+  "silhouette_err_m2": 26.411,
+  "per_view_m2": {
+   "x": 3.952,
+   "y": 6.414,
+   "top": 5.68
+  },
+  "iou": {
+   "x": 0.9969,
+   "y": 0.9975,
+   "top": 0.9992
+  },
+  "guard_passed": false,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "slabs_not_inset": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "winding_bad_edges": 0,
+  "triangles": 150836,
+  "levels_worst_m": 0.0,
+  "delivery_passed": false,
+  "layers": 57,
+  "openings_placed": {
+   "12": 565,
+   "11": 140
+  },
+  "seconds": 3053.9,
+  "best_before": 31.964
+ },
+ {
+  "n": "17",
+  "description": "SNAP_M 0.05 -> 0.025 (finer plan grid)",
+  "status": "discard",
+  "silhouette_err_m2": 27.169,
+  "per_view_m2": {
+   "x": 3.59,
+   "y": 8.421,
+   "top": 3.147
+  },
+  "iou": {
+   "x": 0.9971,
+   "y": 0.9967,
+   "top": 0.9996
+  },
+  "guard_passed": true,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "slabs_not_inset": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "winding_bad_edges": 0,
+  "triangles": 146808,
+  "levels_worst_m": 0.0,
+  "delivery_passed": false,
+  "layers": 53,
+  "openings_placed": {
+   "12": 566,
+   "11": 140
+  },
+  "seconds": 2938.7,
+  "best_before": 31.964,
+  "note": "improved on the exp-14 base but beaten by sibling exp 15 of the same parallel batch (greedy: best of the batch kept)"
+ },
+ {
+  "n": "18",
+  "description": "extra thresholds at least 0.3 m apart",
+  "status": "discard",
+  "silhouette_err_m2": 59.868,
+  "per_view_m2": {
+   "x": 8.552,
+   "y": 17.049,
+   "top": 8.665
+  },
+  "iou": {
+   "x": 0.9932,
+   "y": 0.9934,
+   "top": 0.9988
+  },
+  "guard_passed": false,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "slabs_not_inset": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "winding_bad_edges": 0,
+  "triangles": 193578,
+  "levels_worst_m": 0.0,
+  "delivery_passed": false,
+  "layers": 49,
+  "openings_placed": {
+   "12": 846,
+   "11": 260
+  },
+  "seconds": 3458.9,
+  "best_before": 31.964
+ },
+ {
+  "n": "19",
+  "description": "COVER_F 0.5 -> 0.55",
+  "status": "discard",
+  "silhouette_err_m2": 50.709,
+  "per_view_m2": {
+   "x": 6.774,
+   "y": 15.613,
+   "top": 5.935
+  },
+  "iou": {
+   "x": 0.9946,
+   "y": 0.994,
+   "top": 0.9992
+  },
+  "guard_passed": true,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "slabs_not_inset": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "winding_bad_edges": 0,
+  "triangles": 138318,
+  "levels_worst_m": 0.0,
+  "delivery_passed": false,
+  "layers": 53,
+  "openings_placed": {
+   "12": 596,
+   "11": 138
+  },
+  "seconds": 2770.2,
+  "best_before": 31.964
+ },
+ {
+  "n": "20",
+  "description": "threshold weights without floor slabs",
+  "status": "discard",
+  "silhouette_err_m2": 61.589,
+  "per_view_m2": {
+   "x": 10.014,
+   "y": 16.448,
+   "top": 8.665
+  },
+  "iou": {
+   "x": 0.992,
+   "y": 0.9936,
+   "top": 0.9988
+  },
+  "guard_passed": true,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "slabs_not_inset": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "winding_bad_edges": 0,
+  "triangles": 145086,
+  "levels_worst_m": 0.0,
+  "delivery_passed": false,
+  "layers": 53,
+  "openings_placed": {
+   "12": 600,
+   "11": 94
+  },
+  "seconds": 2961.8,
+  "best_before": 31.964
  }
 ]

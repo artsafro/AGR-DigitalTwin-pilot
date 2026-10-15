@@ -38,7 +38,7 @@ OPEN_M = 0.0                        # opening radius (drops slivers), 0 = off
 MIN_PART_M2 = 0.0                   # region parts smaller than this are dropped
 OPENING_DEPTH_M = 0.8               # an opening box this close to a wall line belongs to it
 OPENING_MARGIN_M = 0.02             # an opening plane keeps this clear of its wall quad's edges
-Z_Q = 0.1
+Z_Q = 0.05
 K_EXTRA = 44
 FACADE_ID, ROOF_ID, SOFFIT_ID = 1, 21, 1
 # ---------------------------------------------------------------------------------------------------------------
