@@ -1,0 +1,1094 @@
+[
+ {
+  "lane": "exe",
+  "script": "export_mesh_blender.py",
+  "args": [
+   "\\common\\B01-dump.json",
+   "\\rep1\\B01\\exe\\model.blend",
+   "\\rep1\\B01\\exe\\model.fbx"
+  ],
+  "exit": 0,
+  "seconds": 1.704,
+  "log": "\\rep1\\B01\\exe\\export.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B01\\exe\\model.blend",
+   "\\rep1\\B01\\exe\\ms-blend.json"
+  ],
+  "exit": 0,
+  "seconds": 0.798,
+  "log": "\\rep1\\B01\\exe\\ms-blend.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep1\\B01\\exe\\model.fbx",
+   "\\rep1\\B01\\exe\\rb-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.92,
+  "log": "\\rep1\\B01\\exe\\rb-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B01\\exe\\model.fbx",
+   "\\rep1\\B01\\exe\\ms-fbx-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 1.104,
+  "log": "\\rep1\\B01\\exe\\ms-fbx-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep1\\B01\\exe\\model.fbx",
+   "\\rep1\\B01\\exe\\rb-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 1.093,
+  "log": "\\rep1\\B01\\exe\\rb-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "TWINQA_READBACK True"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B01\\exe\\model.fbx",
+   "\\rep1\\B01\\exe\\ms-fbx-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 1.074,
+  "log": "\\rep1\\B01\\exe\\ms-fbx-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep1\\B01\\exe\\ms-fbx-whl.json"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "export_mesh_blender.py",
+  "args": [
+   "\\common\\B01-dump.json",
+   "\\rep1\\B01\\whl\\model.blend",
+   "\\rep1\\B01\\whl\\model.fbx"
+  ],
+  "exit": 0,
+  "seconds": 1.209,
+  "log": "\\rep1\\B01\\whl\\export.log",
+  "tail": [
+   "export finished in 0.0119 sec.",
+   "EXPORT-MESH 1 meshes, 3 helpers -> model.blend, model.fbx"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B01\\whl\\model.blend",
+   "\\rep1\\B01\\whl\\ms-blend.json"
+  ],
+  "exit": 0,
+  "seconds": 0.772,
+  "log": "\\rep1\\B01\\whl\\ms-blend.log",
+  "tail": [
+   "00:00.437  blend            | Read blend: \"C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep1\\B01\\whl\\model.blend\"",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep1\\B01\\whl\\ms-blend.json"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep1\\B01\\whl\\model.fbx",
+   "\\rep1\\B01\\whl\\rb-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 1.095,
+  "log": "\\rep1\\B01\\whl\\rb-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B01\\whl\\model.fbx",
+   "\\rep1\\B01\\whl\\ms-fbx-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 1.057,
+  "log": "\\rep1\\B01\\whl\\ms-fbx-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep1\\B01\\whl\\model.fbx",
+   "\\rep1\\B01\\whl\\rb-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 1.264,
+  "log": "\\rep1\\B01\\whl\\rb-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "TWINQA_READBACK True"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B01\\whl\\model.fbx",
+   "\\rep1\\B01\\whl\\ms-fbx-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 1.167,
+  "log": "\\rep1\\B01\\whl\\ms-fbx-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep1\\B01\\whl\\ms-fbx-whl.json"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "export_mesh_blender.py",
+  "args": [
+   "\\common\\B02-dump.json",
+   "\\rep1\\B02\\exe\\model.blend",
+   "\\rep1\\B02\\exe\\model.fbx"
+  ],
+  "exit": 0,
+  "seconds": 1.116,
+  "log": "\\rep1\\B02\\exe\\export.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B02\\exe\\model.blend",
+   "\\rep1\\B02\\exe\\ms-blend.json"
+  ],
+  "exit": 0,
+  "seconds": 0.99,
+  "log": "\\rep1\\B02\\exe\\ms-blend.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep1\\B02\\exe\\model.fbx",
+   "\\rep1\\B02\\exe\\rb-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 1.025,
+  "log": "\\rep1\\B02\\exe\\rb-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B02\\exe\\model.fbx",
+   "\\rep1\\B02\\exe\\ms-fbx-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.894,
+  "log": "\\rep1\\B02\\exe\\ms-fbx-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep1\\B02\\exe\\model.fbx",
+   "\\rep1\\B02\\exe\\rb-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 1.004,
+  "log": "\\rep1\\B02\\exe\\rb-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "TWINQA_READBACK True"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B02\\exe\\model.fbx",
+   "\\rep1\\B02\\exe\\ms-fbx-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 1.065,
+  "log": "\\rep1\\B02\\exe\\ms-fbx-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep1\\B02\\exe\\ms-fbx-whl.json"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "export_mesh_blender.py",
+  "args": [
+   "\\common\\B02-dump.json",
+   "\\rep1\\B02\\whl\\model.blend",
+   "\\rep1\\B02\\whl\\model.fbx"
+  ],
+  "exit": 0,
+  "seconds": 0.963,
+  "log": "\\rep1\\B02\\whl\\export.log",
+  "tail": [
+   "export finished in 0.0082 sec.",
+   "EXPORT-MESH 1 meshes, 3 helpers -> model.blend, model.fbx"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B02\\whl\\model.blend",
+   "\\rep1\\B02\\whl\\ms-blend.json"
+  ],
+  "exit": 0,
+  "seconds": 0.81,
+  "log": "\\rep1\\B02\\whl\\ms-blend.log",
+  "tail": [
+   "00:00.406  blend            | Read blend: \"C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep1\\B02\\whl\\model.blend\"",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep1\\B02\\whl\\ms-blend.json"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep1\\B02\\whl\\model.fbx",
+   "\\rep1\\B02\\whl\\rb-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.988,
+  "log": "\\rep1\\B02\\whl\\rb-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B02\\whl\\model.fbx",
+   "\\rep1\\B02\\whl\\ms-fbx-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 1.107,
+  "log": "\\rep1\\B02\\whl\\ms-fbx-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep1\\B02\\whl\\model.fbx",
+   "\\rep1\\B02\\whl\\rb-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 1.058,
+  "log": "\\rep1\\B02\\whl\\rb-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "TWINQA_READBACK True"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B02\\whl\\model.fbx",
+   "\\rep1\\B02\\whl\\ms-fbx-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 0.902,
+  "log": "\\rep1\\B02\\whl\\ms-fbx-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep1\\B02\\whl\\ms-fbx-whl.json"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "export_mesh_blender.py",
+  "args": [
+   "\\common\\B02t-dump.json",
+   "\\rep1\\B02t\\exe\\model.blend",
+   "\\rep1\\B02t\\exe\\model.fbx"
+  ],
+  "exit": 0,
+  "seconds": 0.965,
+  "log": "\\rep1\\B02t\\exe\\export.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B02t\\exe\\model.blend",
+   "\\rep1\\B02t\\exe\\ms-blend.json"
+  ],
+  "exit": 0,
+  "seconds": 0.692,
+  "log": "\\rep1\\B02t\\exe\\ms-blend.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep1\\B02t\\exe\\model.fbx",
+   "\\rep1\\B02t\\exe\\rb-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.986,
+  "log": "\\rep1\\B02t\\exe\\rb-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B02t\\exe\\model.fbx",
+   "\\rep1\\B02t\\exe\\ms-fbx-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.937,
+  "log": "\\rep1\\B02t\\exe\\ms-fbx-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep1\\B02t\\exe\\model.fbx",
+   "\\rep1\\B02t\\exe\\rb-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 1.218,
+  "log": "\\rep1\\B02t\\exe\\rb-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "TWINQA_READBACK True"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B02t\\exe\\model.fbx",
+   "\\rep1\\B02t\\exe\\ms-fbx-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 1.054,
+  "log": "\\rep1\\B02t\\exe\\ms-fbx-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep1\\B02t\\exe\\ms-fbx-whl.json"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "export_mesh_blender.py",
+  "args": [
+   "\\common\\B02t-dump.json",
+   "\\rep1\\B02t\\whl\\model.blend",
+   "\\rep1\\B02t\\whl\\model.fbx"
+  ],
+  "exit": 0,
+  "seconds": 0.752,
+  "log": "\\rep1\\B02t\\whl\\export.log",
+  "tail": [
+   "export finished in 0.0105 sec.",
+   "EXPORT-MESH 1 meshes, 3 helpers -> model.blend, model.fbx"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B02t\\whl\\model.blend",
+   "\\rep1\\B02t\\whl\\ms-blend.json"
+  ],
+  "exit": 0,
+  "seconds": 1.01,
+  "log": "\\rep1\\B02t\\whl\\ms-blend.log",
+  "tail": [
+   "00:00.609  blend            | Read blend: \"C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep1\\B02t\\whl\\model.blend\"",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep1\\B02t\\whl\\ms-blend.json"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep1\\B02t\\whl\\model.fbx",
+   "\\rep1\\B02t\\whl\\rb-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.785,
+  "log": "\\rep1\\B02t\\whl\\rb-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B02t\\whl\\model.fbx",
+   "\\rep1\\B02t\\whl\\ms-fbx-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.771,
+  "log": "\\rep1\\B02t\\whl\\ms-fbx-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep1\\B02t\\whl\\model.fbx",
+   "\\rep1\\B02t\\whl\\rb-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 0.722,
+  "log": "\\rep1\\B02t\\whl\\rb-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "TWINQA_READBACK True"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep1\\B02t\\whl\\model.fbx",
+   "\\rep1\\B02t\\whl\\ms-fbx-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 0.738,
+  "log": "\\rep1\\B02t\\whl\\ms-fbx-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep1\\B02t\\whl\\ms-fbx-whl.json"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "export_mesh_blender.py",
+  "args": [
+   "\\common\\B01-dump.json",
+   "\\rep2\\B01\\exe\\model.blend",
+   "\\rep2\\B01\\exe\\model.fbx"
+  ],
+  "exit": 0,
+  "seconds": 0.777,
+  "log": "\\rep2\\B01\\exe\\export.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B01\\exe\\model.blend",
+   "\\rep2\\B01\\exe\\ms-blend.json"
+  ],
+  "exit": 0,
+  "seconds": 0.595,
+  "log": "\\rep2\\B01\\exe\\ms-blend.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep2\\B01\\exe\\model.fbx",
+   "\\rep2\\B01\\exe\\rb-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.728,
+  "log": "\\rep2\\B01\\exe\\rb-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B01\\exe\\model.fbx",
+   "\\rep2\\B01\\exe\\ms-fbx-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.767,
+  "log": "\\rep2\\B01\\exe\\ms-fbx-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep2\\B01\\exe\\model.fbx",
+   "\\rep2\\B01\\exe\\rb-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 0.751,
+  "log": "\\rep2\\B01\\exe\\rb-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "TWINQA_READBACK True"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B01\\exe\\model.fbx",
+   "\\rep2\\B01\\exe\\ms-fbx-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 0.999,
+  "log": "\\rep2\\B01\\exe\\ms-fbx-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep2\\B01\\exe\\ms-fbx-whl.json"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "export_mesh_blender.py",
+  "args": [
+   "\\common\\B01-dump.json",
+   "\\rep2\\B01\\whl\\model.blend",
+   "\\rep2\\B01\\whl\\model.fbx"
+  ],
+  "exit": 0,
+  "seconds": 0.923,
+  "log": "\\rep2\\B01\\whl\\export.log",
+  "tail": [
+   "export finished in 0.0093 sec.",
+   "EXPORT-MESH 1 meshes, 3 helpers -> model.blend, model.fbx"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B01\\whl\\model.blend",
+   "\\rep2\\B01\\whl\\ms-blend.json"
+  ],
+  "exit": 0,
+  "seconds": 0.833,
+  "log": "\\rep2\\B01\\whl\\ms-blend.log",
+  "tail": [
+   "00:00.469  blend            | Read blend: \"C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep2\\B01\\whl\\model.blend\"",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep2\\B01\\whl\\ms-blend.json"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep2\\B01\\whl\\model.fbx",
+   "\\rep2\\B01\\whl\\rb-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.986,
+  "log": "\\rep2\\B01\\whl\\rb-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B01\\whl\\model.fbx",
+   "\\rep2\\B01\\whl\\ms-fbx-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.935,
+  "log": "\\rep2\\B01\\whl\\ms-fbx-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep2\\B01\\whl\\model.fbx",
+   "\\rep2\\B01\\whl\\rb-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 1.034,
+  "log": "\\rep2\\B01\\whl\\rb-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "TWINQA_READBACK True"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B01\\whl\\model.fbx",
+   "\\rep2\\B01\\whl\\ms-fbx-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 0.912,
+  "log": "\\rep2\\B01\\whl\\ms-fbx-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep2\\B01\\whl\\ms-fbx-whl.json"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "export_mesh_blender.py",
+  "args": [
+   "\\common\\B02-dump.json",
+   "\\rep2\\B02\\exe\\model.blend",
+   "\\rep2\\B02\\exe\\model.fbx"
+  ],
+  "exit": 0,
+  "seconds": 0.908,
+  "log": "\\rep2\\B02\\exe\\export.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B02\\exe\\model.blend",
+   "\\rep2\\B02\\exe\\ms-blend.json"
+  ],
+  "exit": 0,
+  "seconds": 0.717,
+  "log": "\\rep2\\B02\\exe\\ms-blend.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep2\\B02\\exe\\model.fbx",
+   "\\rep2\\B02\\exe\\rb-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.823,
+  "log": "\\rep2\\B02\\exe\\rb-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B02\\exe\\model.fbx",
+   "\\rep2\\B02\\exe\\ms-fbx-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.783,
+  "log": "\\rep2\\B02\\exe\\ms-fbx-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep2\\B02\\exe\\model.fbx",
+   "\\rep2\\B02\\exe\\rb-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 0.822,
+  "log": "\\rep2\\B02\\exe\\rb-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "TWINQA_READBACK True"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B02\\exe\\model.fbx",
+   "\\rep2\\B02\\exe\\ms-fbx-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 0.866,
+  "log": "\\rep2\\B02\\exe\\ms-fbx-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep2\\B02\\exe\\ms-fbx-whl.json"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "export_mesh_blender.py",
+  "args": [
+   "\\common\\B02-dump.json",
+   "\\rep2\\B02\\whl\\model.blend",
+   "\\rep2\\B02\\whl\\model.fbx"
+  ],
+  "exit": 0,
+  "seconds": 0.908,
+  "log": "\\rep2\\B02\\whl\\export.log",
+  "tail": [
+   "export finished in 0.0095 sec.",
+   "EXPORT-MESH 1 meshes, 3 helpers -> model.blend, model.fbx"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B02\\whl\\model.blend",
+   "\\rep2\\B02\\whl\\ms-blend.json"
+  ],
+  "exit": 0,
+  "seconds": 0.682,
+  "log": "\\rep2\\B02\\whl\\ms-blend.log",
+  "tail": [
+   "00:00.391  blend            | Read blend: \"C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep2\\B02\\whl\\model.blend\"",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep2\\B02\\whl\\ms-blend.json"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep2\\B02\\whl\\model.fbx",
+   "\\rep2\\B02\\whl\\rb-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.982,
+  "log": "\\rep2\\B02\\whl\\rb-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B02\\whl\\model.fbx",
+   "\\rep2\\B02\\whl\\ms-fbx-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 1.0,
+  "log": "\\rep2\\B02\\whl\\ms-fbx-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep2\\B02\\whl\\model.fbx",
+   "\\rep2\\B02\\whl\\rb-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 0.999,
+  "log": "\\rep2\\B02\\whl\\rb-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "TWINQA_READBACK True"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B02\\whl\\model.fbx",
+   "\\rep2\\B02\\whl\\ms-fbx-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 1.008,
+  "log": "\\rep2\\B02\\whl\\ms-fbx-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep2\\B02\\whl\\ms-fbx-whl.json"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "export_mesh_blender.py",
+  "args": [
+   "\\common\\B02t-dump.json",
+   "\\rep2\\B02t\\exe\\model.blend",
+   "\\rep2\\B02t\\exe\\model.fbx"
+  ],
+  "exit": 0,
+  "seconds": 1.061,
+  "log": "\\rep2\\B02t\\exe\\export.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B02t\\exe\\model.blend",
+   "\\rep2\\B02t\\exe\\ms-blend.json"
+  ],
+  "exit": 0,
+  "seconds": 0.863,
+  "log": "\\rep2\\B02t\\exe\\ms-blend.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep2\\B02t\\exe\\model.fbx",
+   "\\rep2\\B02t\\exe\\rb-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.954,
+  "log": "\\rep2\\B02t\\exe\\rb-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B02t\\exe\\model.fbx",
+   "\\rep2\\B02t\\exe\\ms-fbx-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 0.959,
+  "log": "\\rep2\\B02t\\exe\\ms-fbx-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep2\\B02t\\exe\\model.fbx",
+   "\\rep2\\B02t\\exe\\rb-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 1.038,
+  "log": "\\rep2\\B02t\\exe\\rb-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "TWINQA_READBACK True"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B02t\\exe\\model.fbx",
+   "\\rep2\\B02t\\exe\\ms-fbx-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 1.106,
+  "log": "\\rep2\\B02t\\exe\\ms-fbx-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep2\\B02t\\exe\\ms-fbx-whl.json"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "export_mesh_blender.py",
+  "args": [
+   "\\common\\B02t-dump.json",
+   "\\rep2\\B02t\\whl\\model.blend",
+   "\\rep2\\B02t\\whl\\model.fbx"
+  ],
+  "exit": 0,
+  "seconds": 1.156,
+  "log": "\\rep2\\B02t\\whl\\export.log",
+  "tail": [
+   "export finished in 0.0093 sec.",
+   "EXPORT-MESH 1 meshes, 3 helpers -> model.blend, model.fbx"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B02t\\whl\\model.blend",
+   "\\rep2\\B02t\\whl\\ms-blend.json"
+  ],
+  "exit": 0,
+  "seconds": 0.924,
+  "log": "\\rep2\\B02t\\whl\\ms-blend.log",
+  "tail": [
+   "00:00.532  blend            | Read blend: \"C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep2\\B02t\\whl\\model.blend\"",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep2\\B02t\\whl\\ms-blend.json"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep2\\B02t\\whl\\model.fbx",
+   "\\rep2\\B02t\\whl\\rb-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 1.202,
+  "log": "\\rep2\\B02t\\whl\\rb-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "exe",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B02t\\whl\\model.fbx",
+   "\\rep2\\B02t\\whl\\ms-fbx-exe.json"
+  ],
+  "exit": 0,
+  "seconds": 1.08,
+  "log": "\\rep2\\B02t\\whl\\ms-fbx-exe.log",
+  "tail": [
+   "",
+   "Blender quit"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "fbx_readback.py",
+  "args": [
+   "\\rep2\\B02t\\whl\\model.fbx",
+   "\\rep2\\B02t\\whl\\rb-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 1.241,
+  "log": "\\rep2\\B02t\\whl\\rb-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "TWINQA_READBACK True"
+  ]
+ },
+ {
+  "lane": "whl",
+  "script": "measure_spec_blender.py",
+  "args": [
+   "\\rep2\\B02t\\whl\\model.fbx",
+   "\\rep2\\B02t\\whl\\ms-fbx-whl.json"
+  ],
+  "exit": 0,
+  "seconds": 1.189,
+  "log": "\\rep2\\B02t\\whl\\ms-fbx-whl.log",
+  "tail": [
+   "FBX version: 7400",
+   "MEASURE-SPEC 1 meshes, 3 level helpers -> C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-blender-t_f79d84bd\\rep2\\B02t\\whl\\ms-fbx-whl.json"
+  ]
+ }
+]

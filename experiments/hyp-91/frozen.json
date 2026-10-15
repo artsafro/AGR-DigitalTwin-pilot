@@ -1,0 +1,9446 @@
+{
+  "snapshot": {
+    "head": "3cf7c9358591a12813ec5bcbcb8e082ddf5fe342",
+    "branch": "experiment/hyp-91",
+    "source_sha256": {
+      "technical_library/mesh_audit/core.py": "e8e0c762152895d65fb6d910199bb8d2fd9324539559bb51374eb0adeae9949b",
+      "tests/test_shared_library.py": "2a456a80f328a677000de3bb48e66b969efde9884d28722488c2f35ef77d47ad"
+    }
+  },
+  "synthetic": true,
+  "units": "metres",
+  "repetitions": 3,
+  "orientation_tolerance_m2": 1e-10,
+  "prediction_columns": [
+    "metric",
+    "baseline",
+    "rejection threshold",
+    "measured median"
+  ],
+  "acceptance_table": [
+    [
+      "Clean concave false positives per repetition",
+      ">=1 predicted",
+      "<1 baseline FP",
+      null
+    ],
+    [
+      "Candidate clean false positives per repetition",
+      "may flag concave",
+      ">0",
+      null
+    ],
+    [
+      "Candidate crossed false negatives per repetition",
+      "0 predicted",
+      ">0",
+      null
+    ],
+    [
+      "Tracked controls preserved per repetition",
+      "2/2 predicted",
+      "<2/2",
+      null
+    ],
+    [
+      "Candidate transform-invariant outline groups",
+      "may vary by shift",
+      "<6/6",
+      null
+    ],
+    [
+      "Counter-identical repetitions",
+      "3 predicted",
+      "<3",
+      null
+    ],
+    [
+      "Runtime seconds per complete batch (3 runs)",
+      "unmeasured",
+      "descriptive only",
+      null
+    ]
+  ],
+  "outlines": [
+    {
+      "name": "square",
+      "expected": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          0,
+          3
+        ]
+      ]
+    },
+    {
+      "name": "L",
+      "expected": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          0,
+          3
+        ]
+      ]
+    },
+    {
+      "name": "U",
+      "expected": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          0,
+          3
+        ]
+      ]
+    },
+    {
+      "name": "arrow",
+      "expected": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          0,
+          3
+        ]
+      ]
+    },
+    {
+      "name": "crossed_A",
+      "expected": 1,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          0
+        ]
+      ]
+    },
+    {
+      "name": "crossed_B",
+      "expected": 1,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ]
+      ]
+    }
+  ],
+  "transformations": "Each shift s=0..n-1 of index boundary, then unchanged or reversed; XY/XZ/YZ",
+  "cases": [
+    {
+      "id": "square/XY/shift-0/reverse-0",
+      "outline": "square",
+      "plane": "XY",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/XY/shift-0/reverse-1",
+      "outline": "square",
+      "plane": "XY",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/XY/shift-1/reverse-0",
+      "outline": "square",
+      "plane": "XY",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/XY/shift-1/reverse-1",
+      "outline": "square",
+      "plane": "XY",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/XY/shift-2/reverse-0",
+      "outline": "square",
+      "plane": "XY",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          0,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/XY/shift-2/reverse-1",
+      "outline": "square",
+      "plane": "XY",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          3,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/XY/shift-3/reverse-0",
+      "outline": "square",
+      "plane": "XY",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/XY/shift-3/reverse-1",
+      "outline": "square",
+      "plane": "XY",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/XZ/shift-0/reverse-0",
+      "outline": "square",
+      "plane": "XZ",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/XZ/shift-0/reverse-1",
+      "outline": "square",
+      "plane": "XZ",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/XZ/shift-1/reverse-0",
+      "outline": "square",
+      "plane": "XZ",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/XZ/shift-1/reverse-1",
+      "outline": "square",
+      "plane": "XZ",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/XZ/shift-2/reverse-0",
+      "outline": "square",
+      "plane": "XZ",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          0,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/XZ/shift-2/reverse-1",
+      "outline": "square",
+      "plane": "XZ",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          3,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/XZ/shift-3/reverse-0",
+      "outline": "square",
+      "plane": "XZ",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/XZ/shift-3/reverse-1",
+      "outline": "square",
+      "plane": "XZ",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/YZ/shift-0/reverse-0",
+      "outline": "square",
+      "plane": "YZ",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/YZ/shift-0/reverse-1",
+      "outline": "square",
+      "plane": "YZ",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/YZ/shift-1/reverse-0",
+      "outline": "square",
+      "plane": "YZ",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/YZ/shift-1/reverse-1",
+      "outline": "square",
+      "plane": "YZ",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/YZ/shift-2/reverse-0",
+      "outline": "square",
+      "plane": "YZ",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          0,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/YZ/shift-2/reverse-1",
+      "outline": "square",
+      "plane": "YZ",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          3,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/YZ/shift-3/reverse-0",
+      "outline": "square",
+      "plane": "YZ",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "square/YZ/shift-3/reverse-1",
+      "outline": "square",
+      "plane": "YZ",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 0
+    },
+    {
+      "id": "L/XY/shift-0/reverse-0",
+      "outline": "L",
+      "plane": "XY",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XY/shift-0/reverse-1",
+      "outline": "L",
+      "plane": "XY",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          5,
+          4,
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XY/shift-1/reverse-0",
+      "outline": "L",
+      "plane": "XY",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XY/shift-1/reverse-1",
+      "outline": "L",
+      "plane": "XY",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XY/shift-2/reverse-0",
+      "outline": "L",
+      "plane": "XY",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          4,
+          5,
+          0,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XY/shift-2/reverse-1",
+      "outline": "L",
+      "plane": "XY",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          5,
+          4,
+          3,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XY/shift-3/reverse-0",
+      "outline": "L",
+      "plane": "XY",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          4,
+          5,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XY/shift-3/reverse-1",
+      "outline": "L",
+      "plane": "XY",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          5,
+          4,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XY/shift-4/reverse-0",
+      "outline": "L",
+      "plane": "XY",
+      "shift": 4,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          5,
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XY/shift-4/reverse-1",
+      "outline": "L",
+      "plane": "XY",
+      "shift": 4,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0,
+          5,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XY/shift-5/reverse-0",
+      "outline": "L",
+      "plane": "XY",
+      "shift": 5,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          5,
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XY/shift-5/reverse-1",
+      "outline": "L",
+      "plane": "XY",
+      "shift": 5,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          3,
+          2,
+          1,
+          0,
+          5
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XZ/shift-0/reverse-0",
+      "outline": "L",
+      "plane": "XZ",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XZ/shift-0/reverse-1",
+      "outline": "L",
+      "plane": "XZ",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          5,
+          4,
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XZ/shift-1/reverse-0",
+      "outline": "L",
+      "plane": "XZ",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XZ/shift-1/reverse-1",
+      "outline": "L",
+      "plane": "XZ",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XZ/shift-2/reverse-0",
+      "outline": "L",
+      "plane": "XZ",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          4,
+          5,
+          0,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XZ/shift-2/reverse-1",
+      "outline": "L",
+      "plane": "XZ",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          5,
+          4,
+          3,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XZ/shift-3/reverse-0",
+      "outline": "L",
+      "plane": "XZ",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          4,
+          5,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XZ/shift-3/reverse-1",
+      "outline": "L",
+      "plane": "XZ",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          5,
+          4,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XZ/shift-4/reverse-0",
+      "outline": "L",
+      "plane": "XZ",
+      "shift": 4,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          5,
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XZ/shift-4/reverse-1",
+      "outline": "L",
+      "plane": "XZ",
+      "shift": 4,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0,
+          5,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XZ/shift-5/reverse-0",
+      "outline": "L",
+      "plane": "XZ",
+      "shift": 5,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          5,
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/XZ/shift-5/reverse-1",
+      "outline": "L",
+      "plane": "XZ",
+      "shift": 5,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          3,
+          2,
+          1,
+          0,
+          5
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/YZ/shift-0/reverse-0",
+      "outline": "L",
+      "plane": "YZ",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/YZ/shift-0/reverse-1",
+      "outline": "L",
+      "plane": "YZ",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          5,
+          4,
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/YZ/shift-1/reverse-0",
+      "outline": "L",
+      "plane": "YZ",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/YZ/shift-1/reverse-1",
+      "outline": "L",
+      "plane": "YZ",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/YZ/shift-2/reverse-0",
+      "outline": "L",
+      "plane": "YZ",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          4,
+          5,
+          0,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/YZ/shift-2/reverse-1",
+      "outline": "L",
+      "plane": "YZ",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          5,
+          4,
+          3,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/YZ/shift-3/reverse-0",
+      "outline": "L",
+      "plane": "YZ",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          4,
+          5,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/YZ/shift-3/reverse-1",
+      "outline": "L",
+      "plane": "YZ",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          5,
+          4,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/YZ/shift-4/reverse-0",
+      "outline": "L",
+      "plane": "YZ",
+      "shift": 4,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          5,
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/YZ/shift-4/reverse-1",
+      "outline": "L",
+      "plane": "YZ",
+      "shift": 4,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0,
+          5,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/YZ/shift-5/reverse-0",
+      "outline": "L",
+      "plane": "YZ",
+      "shift": 5,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          5,
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "L/YZ/shift-5/reverse-1",
+      "outline": "L",
+      "plane": "YZ",
+      "shift": 5,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          3,
+          2,
+          1,
+          0,
+          5
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-0/reverse-0",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-0/reverse-1",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          7,
+          6,
+          5,
+          4,
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-1/reverse-0",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-1/reverse-1",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          7,
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-2/reverse-0",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          0,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-2/reverse-1",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          7,
+          6,
+          5,
+          4,
+          3,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-3/reverse-0",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          4,
+          5,
+          6,
+          7,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-3/reverse-1",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          7,
+          6,
+          5,
+          4,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-4/reverse-0",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 4,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          5,
+          6,
+          7,
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-4/reverse-1",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 4,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0,
+          7,
+          6,
+          5,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-5/reverse-0",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 5,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          5,
+          6,
+          7,
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-5/reverse-1",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 5,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          3,
+          2,
+          1,
+          0,
+          7,
+          6,
+          5
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-6/reverse-0",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 6,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          6,
+          7,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-6/reverse-1",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 6,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          5,
+          4,
+          3,
+          2,
+          1,
+          0,
+          7,
+          6
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-7/reverse-0",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 7,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          7,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XY/shift-7/reverse-1",
+      "outline": "U",
+      "plane": "XY",
+      "shift": 7,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1,
+          0,
+          7
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-0/reverse-0",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-0/reverse-1",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          7,
+          6,
+          5,
+          4,
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-1/reverse-0",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-1/reverse-1",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          7,
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-2/reverse-0",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          0,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-2/reverse-1",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          7,
+          6,
+          5,
+          4,
+          3,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-3/reverse-0",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          4,
+          5,
+          6,
+          7,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-3/reverse-1",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          7,
+          6,
+          5,
+          4,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-4/reverse-0",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 4,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          5,
+          6,
+          7,
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-4/reverse-1",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 4,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0,
+          7,
+          6,
+          5,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-5/reverse-0",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 5,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          5,
+          6,
+          7,
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-5/reverse-1",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 5,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          3,
+          2,
+          1,
+          0,
+          7,
+          6,
+          5
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-6/reverse-0",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 6,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          6,
+          7,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-6/reverse-1",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 6,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          5,
+          4,
+          3,
+          2,
+          1,
+          0,
+          7,
+          6
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-7/reverse-0",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 7,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          7,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/XZ/shift-7/reverse-1",
+      "outline": "U",
+      "plane": "XZ",
+      "shift": 7,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1,
+          0,
+          7
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-0/reverse-0",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-0/reverse-1",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          7,
+          6,
+          5,
+          4,
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-1/reverse-0",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-1/reverse-1",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          7,
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-2/reverse-0",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          0,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-2/reverse-1",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          7,
+          6,
+          5,
+          4,
+          3,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-3/reverse-0",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          4,
+          5,
+          6,
+          7,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-3/reverse-1",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          7,
+          6,
+          5,
+          4,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-4/reverse-0",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 4,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          5,
+          6,
+          7,
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-4/reverse-1",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 4,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0,
+          7,
+          6,
+          5,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-5/reverse-0",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 5,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          5,
+          6,
+          7,
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-5/reverse-1",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 5,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          3,
+          2,
+          1,
+          0,
+          7,
+          6,
+          5
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-6/reverse-0",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 6,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          6,
+          7,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-6/reverse-1",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 6,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          5,
+          4,
+          3,
+          2,
+          1,
+          0,
+          7,
+          6
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-7/reverse-0",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 7,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          7,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "U/YZ/shift-7/reverse-1",
+      "outline": "U",
+      "plane": "YZ",
+      "shift": 7,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1,
+          0,
+          7
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XY/shift-0/reverse-0",
+      "outline": "arrow",
+      "plane": "XY",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XY/shift-0/reverse-1",
+      "outline": "arrow",
+      "plane": "XY",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XY/shift-1/reverse-0",
+      "outline": "arrow",
+      "plane": "XY",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          4,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XY/shift-1/reverse-1",
+      "outline": "arrow",
+      "plane": "XY",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          4,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XY/shift-2/reverse-0",
+      "outline": "arrow",
+      "plane": "XY",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          4,
+          0,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XY/shift-2/reverse-1",
+      "outline": "arrow",
+      "plane": "XY",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          4,
+          3,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XY/shift-3/reverse-0",
+      "outline": "arrow",
+      "plane": "XY",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          4,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XY/shift-3/reverse-1",
+      "outline": "arrow",
+      "plane": "XY",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          4,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XY/shift-4/reverse-0",
+      "outline": "arrow",
+      "plane": "XY",
+      "shift": 4,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XY/shift-4/reverse-1",
+      "outline": "arrow",
+      "plane": "XY",
+      "shift": 4,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XZ/shift-0/reverse-0",
+      "outline": "arrow",
+      "plane": "XZ",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XZ/shift-0/reverse-1",
+      "outline": "arrow",
+      "plane": "XZ",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XZ/shift-1/reverse-0",
+      "outline": "arrow",
+      "plane": "XZ",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          4,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XZ/shift-1/reverse-1",
+      "outline": "arrow",
+      "plane": "XZ",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          4,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XZ/shift-2/reverse-0",
+      "outline": "arrow",
+      "plane": "XZ",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          4,
+          0,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XZ/shift-2/reverse-1",
+      "outline": "arrow",
+      "plane": "XZ",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          4,
+          3,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XZ/shift-3/reverse-0",
+      "outline": "arrow",
+      "plane": "XZ",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          4,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XZ/shift-3/reverse-1",
+      "outline": "arrow",
+      "plane": "XZ",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          4,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XZ/shift-4/reverse-0",
+      "outline": "arrow",
+      "plane": "XZ",
+      "shift": 4,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/XZ/shift-4/reverse-1",
+      "outline": "arrow",
+      "plane": "XZ",
+      "shift": 4,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/YZ/shift-0/reverse-0",
+      "outline": "arrow",
+      "plane": "YZ",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/YZ/shift-0/reverse-1",
+      "outline": "arrow",
+      "plane": "YZ",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/YZ/shift-1/reverse-0",
+      "outline": "arrow",
+      "plane": "YZ",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          4,
+          0
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/YZ/shift-1/reverse-1",
+      "outline": "arrow",
+      "plane": "YZ",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          4,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/YZ/shift-2/reverse-0",
+      "outline": "arrow",
+      "plane": "YZ",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          4,
+          0,
+          1
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/YZ/shift-2/reverse-1",
+      "outline": "arrow",
+      "plane": "YZ",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          4,
+          3,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/YZ/shift-3/reverse-0",
+      "outline": "arrow",
+      "plane": "YZ",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          4,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/YZ/shift-3/reverse-1",
+      "outline": "arrow",
+      "plane": "YZ",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          4,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/YZ/shift-4/reverse-0",
+      "outline": "arrow",
+      "plane": "YZ",
+      "shift": 4,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          4,
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "arrow/YZ/shift-4/reverse-1",
+      "outline": "arrow",
+      "plane": "YZ",
+      "shift": 4,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0,
+          4
+        ]
+      ],
+      "expected": 0,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XY/shift-0/reverse-0",
+      "outline": "crossed_A",
+      "plane": "XY",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XY/shift-0/reverse-1",
+      "outline": "crossed_A",
+      "plane": "XY",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XY/shift-1/reverse-0",
+      "outline": "crossed_A",
+      "plane": "XY",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          0
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XY/shift-1/reverse-1",
+      "outline": "crossed_A",
+      "plane": "XY",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XY/shift-2/reverse-0",
+      "outline": "crossed_A",
+      "plane": "XY",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          0,
+          1
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XY/shift-2/reverse-1",
+      "outline": "crossed_A",
+      "plane": "XY",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          3,
+          2
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XY/shift-3/reverse-0",
+      "outline": "crossed_A",
+      "plane": "XY",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XY/shift-3/reverse-1",
+      "outline": "crossed_A",
+      "plane": "XY",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          3
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XZ/shift-0/reverse-0",
+      "outline": "crossed_A",
+      "plane": "XZ",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XZ/shift-0/reverse-1",
+      "outline": "crossed_A",
+      "plane": "XZ",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XZ/shift-1/reverse-0",
+      "outline": "crossed_A",
+      "plane": "XZ",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          0
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XZ/shift-1/reverse-1",
+      "outline": "crossed_A",
+      "plane": "XZ",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XZ/shift-2/reverse-0",
+      "outline": "crossed_A",
+      "plane": "XZ",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          0,
+          1
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XZ/shift-2/reverse-1",
+      "outline": "crossed_A",
+      "plane": "XZ",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          3,
+          2
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XZ/shift-3/reverse-0",
+      "outline": "crossed_A",
+      "plane": "XZ",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/XZ/shift-3/reverse-1",
+      "outline": "crossed_A",
+      "plane": "XZ",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          3
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/YZ/shift-0/reverse-0",
+      "outline": "crossed_A",
+      "plane": "YZ",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/YZ/shift-0/reverse-1",
+      "outline": "crossed_A",
+      "plane": "YZ",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/YZ/shift-1/reverse-0",
+      "outline": "crossed_A",
+      "plane": "YZ",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          0
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/YZ/shift-1/reverse-1",
+      "outline": "crossed_A",
+      "plane": "YZ",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/YZ/shift-2/reverse-0",
+      "outline": "crossed_A",
+      "plane": "YZ",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          0,
+          1
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/YZ/shift-2/reverse-1",
+      "outline": "crossed_A",
+      "plane": "YZ",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          3,
+          2
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/YZ/shift-3/reverse-0",
+      "outline": "crossed_A",
+      "plane": "YZ",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_A/YZ/shift-3/reverse-1",
+      "outline": "crossed_A",
+      "plane": "YZ",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          3
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XY/shift-0/reverse-0",
+      "outline": "crossed_B",
+      "plane": "XY",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          3,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XY/shift-0/reverse-1",
+      "outline": "crossed_B",
+      "plane": "XY",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          3,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XY/shift-1/reverse-0",
+      "outline": "crossed_B",
+      "plane": "XY",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          3,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          0
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XY/shift-1/reverse-1",
+      "outline": "crossed_B",
+      "plane": "XY",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          3,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XY/shift-2/reverse-0",
+      "outline": "crossed_B",
+      "plane": "XY",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          3,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          0,
+          1
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XY/shift-2/reverse-1",
+      "outline": "crossed_B",
+      "plane": "XY",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          3,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          3,
+          2
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XY/shift-3/reverse-0",
+      "outline": "crossed_B",
+      "plane": "XY",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          3,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XY/shift-3/reverse-1",
+      "outline": "crossed_B",
+      "plane": "XY",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          3,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          3
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XZ/shift-0/reverse-0",
+      "outline": "crossed_B",
+      "plane": "XZ",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XZ/shift-0/reverse-1",
+      "outline": "crossed_B",
+      "plane": "XZ",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XZ/shift-1/reverse-0",
+      "outline": "crossed_B",
+      "plane": "XZ",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          0
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XZ/shift-1/reverse-1",
+      "outline": "crossed_B",
+      "plane": "XZ",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XZ/shift-2/reverse-0",
+      "outline": "crossed_B",
+      "plane": "XZ",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          0,
+          1
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XZ/shift-2/reverse-1",
+      "outline": "crossed_B",
+      "plane": "XZ",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          3,
+          2
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XZ/shift-3/reverse-0",
+      "outline": "crossed_B",
+      "plane": "XZ",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/XZ/shift-3/reverse-1",
+      "outline": "crossed_B",
+      "plane": "XZ",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          3
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/YZ/shift-0/reverse-0",
+      "outline": "crossed_B",
+      "plane": "YZ",
+      "shift": 0,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          4,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/YZ/shift-0/reverse-1",
+      "outline": "crossed_B",
+      "plane": "YZ",
+      "shift": 0,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          4,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/YZ/shift-1/reverse-0",
+      "outline": "crossed_B",
+      "plane": "YZ",
+      "shift": 1,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          4,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          2,
+          3,
+          0
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/YZ/shift-1/reverse-1",
+      "outline": "crossed_B",
+      "plane": "YZ",
+      "shift": 1,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          4,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/YZ/shift-2/reverse-0",
+      "outline": "crossed_B",
+      "plane": "YZ",
+      "shift": 2,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          4,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          3,
+          0,
+          1
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/YZ/shift-2/reverse-1",
+      "outline": "crossed_B",
+      "plane": "YZ",
+      "shift": 2,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          4,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          1,
+          0,
+          3,
+          2
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/YZ/shift-3/reverse-0",
+      "outline": "crossed_B",
+      "plane": "YZ",
+      "shift": 3,
+      "reverse": false,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          4,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          3,
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "crossed_B/YZ/shift-3/reverse-1",
+      "outline": "crossed_B",
+      "plane": "YZ",
+      "shift": 3,
+      "reverse": true,
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          4,
+          3
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          3,
+          0
+        ]
+      ],
+      "faces": [
+        [
+          2,
+          1,
+          0,
+          3
+        ]
+      ],
+      "expected": 1,
+      "baseline_prediction": 1
+    },
+    {
+      "id": "outward_unit_cube",
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          3,
+          2,
+          1
+        ],
+        [
+          4,
+          5,
+          6,
+          7
+        ],
+        [
+          0,
+          1,
+          5,
+          4
+        ],
+        [
+          3,
+          7,
+          6,
+          2
+        ],
+        [
+          1,
+          2,
+          6,
+          5
+        ],
+        [
+          0,
+          4,
+          7,
+          3
+        ]
+      ],
+      "expected": 0,
+      "outline": "control",
+      "baseline_prediction": 0
+    },
+    {
+      "id": "test_mesh_bowtie_quad_counts_one_polygon",
+      "vertices": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          10,
+          0,
+          0
+        ],
+        [
+          11,
+          0,
+          0
+        ],
+        [
+          10,
+          0,
+          1
+        ],
+        [
+          11,
+          0,
+          1
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          3,
+          2,
+          1
+        ],
+        [
+          4,
+          5,
+          6,
+          7
+        ],
+        [
+          0,
+          1,
+          5,
+          4
+        ],
+        [
+          3,
+          7,
+          6,
+          2
+        ],
+        [
+          1,
+          2,
+          6,
+          5
+        ],
+        [
+          0,
+          4,
+          7,
+          3
+        ],
+        [
+          8,
+          9,
+          10,
+          11
+        ]
+      ],
+      "expected": 1,
+      "outline": "control",
+      "baseline_prediction": 1
+    }
+  ],
+  "delivery_passed": false
+}
