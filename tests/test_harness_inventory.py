@@ -8,6 +8,8 @@ import json
 import re
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 CAPABILITIES = ROOT / "docs" / "agents" / "CAPABILITIES.md"
 WORKFLOW = ROOT / "docs" / "agents" / "WORKFLOW.md"
@@ -99,6 +101,28 @@ def test_cells_are_filled_and_eval_ids_are_tasks():
         assert ids and re.fullmatch(r"(`[^`]+`(,\s*)?)+", evals), (name, evals)
         unknown = sorted(set(ids) - tasks)
         assert not unknown, f"{name}: eval ids with no evals/<id>/task.json: {unknown}"
+
+
+@pytest.mark.parametrize("component", [".claude/hooks/guard.py", "ALLOWED_WRITE_ROOTS"])
+def test_pr142_is_app_isolation_evidence_not_project_guard_verification(component):
+    """PR #142 names the app isolation hook, not the project's guard, as the denier."""
+    cells = inventory_rows()[component]
+    evidence, verified = cells[3:5]
+    assert "PR #142" in evidence
+    assert "app isolation hook" in evidence
+    assert "not component-specific" in evidence
+    assert verified.startswith("never")
+    assert "unknown" in verified
+    assert "component-specific" in verified
+
+
+def test_documentation_correction_keeps_all_guard_inventory_rows_and_hook():
+    """Exhaustively probe the guard and its three rule-set inventory entries."""
+    rows = inventory_rows()
+    for component in (".claude/hooks/guard.py", "SHELL_RULES", "PRODUCTION_EXT", "ALLOWED_WRITE_ROOTS"):
+        assert component in rows
+        assert rows[component][5] == "`no-hook-denial`"
+    assert ".claude/hooks/guard.py" in settings_hooks()
 
 
 def test_rule_layer_size_and_threshold_recorded():

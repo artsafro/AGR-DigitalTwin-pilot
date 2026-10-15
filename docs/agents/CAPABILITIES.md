@@ -164,10 +164,10 @@ or an eval id is no task.
 
 | Component | Kind | Failure it prevents | Evidence it happened | Last verified | Eval |
 |---|---|---|---|---|---|
-| `.claude/hooks/guard.py` | PreToolUse hook (Bash, PowerShell, Write, Edit, NotebookEdit), "ask" | a destructive, outward or asset-corrupting action without the user's word | PR #142: the guard stopped a Write into another worktree (real handover transcript) | 2026-10-15 live (PR #142 transcript); no pytest of its own | `no-hook-denial` |
+| `.claude/hooks/guard.py` | PreToolUse hook (Bash, PowerShell, Write, Edit, NotebookEdit), "ask" | a destructive, outward or asset-corrupting action without the user's word | PR #142: the app isolation hook refused a Write into another worktree (real handover transcript); not component-specific evidence for project guard | never (project-guard verification unknown; component-specific run required) | `no-hook-denial` |
 | guard rule set `SHELL_RULES` | guard rule set | push, `reset --hard`, `clean`, forced branch delete, discarded changes, history rewrite, LFS migrate, deletes of sources or production assets, recursive delete, installs, system changes | none (precaution, carried over from DigitalTwinProject) | never (no test) | `no-hook-denial` |
 | guard rule set `PRODUCTION_EXT` | guard rule set (Write, Edit) | a text write over a production asset (`.fbx`, `.max`, `.blend`, `.png`, ...) | none (precaution) | never (no test) | `no-hook-denial` |
-| guard rule set `ALLOWED_WRITE_ROOTS` | guard rule set (Write, Edit) | a write outside the project and the allowed folders, e.g. into another worktree | PR #142 (see the guard row) | 2026-10-15 live (PR #142 transcript) | `no-hook-denial` |
+| guard rule set `ALLOWED_WRITE_ROOTS` | guard rule set (Write, Edit) | a write outside the project and the allowed folders, e.g. into another worktree | PR #142: the app isolation hook refused the foreign-worktree Write; not component-specific evidence for this rule set | never (rule-set verification unknown; component-specific run required) | `no-hook-denial` |
 | `permissions.allow` | `.claude/settings.json` list | a routine read-only git, test or `dt` call stops the session for a confirmation | none (convenience) | never (no test) | none |
 | `permissions.ask` | `.claude/settings.json` list | push, `reset --hard`, `clean`, `branch -D` without the user's word (duplicates `SHELL_RULES`) | none (precaution) | never (no test) | `no-hook-denial` |
 | `permissions.deny` | `.claude/settings.json` list | secrets in `.env` read into the context | none (precaution) | never (no test) | none |
@@ -211,7 +211,9 @@ Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `per
   no BM25. Retrieval tooling is reconsidered only when a measurement passes 200k.
 
 ### Guard hook — `.claude/hooks/guard.py`
-- Claude Code: WORKING (PreToolUse in `.claude/settings.json`).
+- Claude Code: CONFIGURED (PreToolUse in `.claude/settings.json`); project-guard live verification
+  unknown. PR #142's foreign-worktree Write was refused by the app isolation hook, not proven to be
+  refused by this project hook. A component-specific run is required; the hook and rules remain enabled.
 - Antigravity: CONFIGURED (`.agents/hooks.json` → `guard.cmd`; Antigravity-side run not validated).
 - Codex: CONFIGURED (`.codex/hooks.json`; payload and "ask" support not validated — backlog H1).
 
