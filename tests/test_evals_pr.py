@@ -183,6 +183,44 @@ def test_numeric_literals_a_cited_threshold_passes(tmp_path):
     assert (row["measured"], row["passed"]) == (0, True)
 
 
+@pytest.mark.parametrize("source", [
+    's = r"\\""; MAX_EMBED_M = 0.37',
+    "s = r'\\''; MAX_EMBED_M = 0.37",
+    's = r"""a\\""""; X = 0.37',
+])
+def test_numeric_literals_a_raw_string_does_not_hide_the_next_constant(tmp_path, source):
+    compile(source, "<raw>", "exec")
+    plain = view_file(tmp_path / "v.json", "reviewed, no citation")
+    diff = diff_file(tmp_path / "d.diff", py_diff(["+" + source]))
+    row = pr_numeric_literals({"pr": [plain], "diff": [diff]})
+    assert row["passed"] is False
+    assert [item["literal"] for item in row["details"]] == ["0.37"]
+
+
+def test_numeric_literals_a_move_out_of_a_docstring_is_new(tmp_path):
+    plain = view_file(tmp_path / "v.json", "reviewed, no citation")
+    diff = diff_file(tmp_path / "d.diff", py_diff([
+        ' """',
+        "-MAX_EMBED_M = 0.37",
+        ' """',
+        "+MAX_EMBED_M = 0.37",
+    ]))
+    row = pr_numeric_literals({"pr": [plain], "diff": [diff]})
+    assert row["passed"] is False
+    assert [item["literal"] for item in row["details"]] == ["0.37"]
+
+
+def test_numeric_literals_an_executable_move_below_context_is_cancelled(tmp_path):
+    plain = view_file(tmp_path / "v.json", "reviewed, no citation")
+    diff = diff_file(tmp_path / "d.diff", py_diff([
+        "-MAX_EMBED_M = 0.37",
+        " anchor = ready",
+        "+MAX_EMBED_M = 0.37",
+    ]))
+    row = pr_numeric_literals({"pr": [plain], "diff": [diff]})
+    assert (row["measured"], row["passed"]) == (0, True)
+
+
 def test_review_rounds_on_the_recorded_pull_requests():
     synthetic = pr_review_rounds({"pr": [ROUNDS / "four-rounds.synthetic.view.json"]})
     pilot = pr_review_rounds({"pr": [ROUNDS / "pilot-pr30.view.json"]})

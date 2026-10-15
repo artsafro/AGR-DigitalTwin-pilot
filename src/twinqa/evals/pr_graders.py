@@ -8,10 +8,11 @@ a placeholder that starts with `<` does not.
 (the delivery checker) must be referenced. `src/twinqa/evals/` is the harness, not the delivery
 checker, and is not scanned. A reference is a decision-log id (`D<n>`, as in `[D073]`) or the word
 `tolerances` on the added line, on a PR-body line or another added line that also contains the same
-numeric value, or an added line of a file whose path contains `tolerances`. An added line whose
-stripped text matches a removed line in the same file (each removed line once) was moved; its
-literals are not new. The scanner walks each hunk's new side (context and added lines) so a string
-can continue; a hunk starts outside a string. Comments and plain string literals are not code.
+numeric value, or an added line of a file whose path contains `tolerances`. A removed line cancels
+one added line in the same file only when the stripped texts match and both sides of the hunk yield
+the same literal tokens (old side: context and `-` lines; new side: context and `+` lines). Text
+that was only inside a string does not cancel the same line in code. Each side starts outside a
+string. Comments and plain string literals are not code.
 f-string replacement-field expressions are code, including a nested field in a format spec;
 format-spec text is not. An f-string field that cannot be parsed is not measured.
 
@@ -297,17 +298,22 @@ def _open_string(text, i):
 
 
 def _find_string_end(text, index, quote, triple, raw):
-    """Index after a plain string's closer, or None when this line does not close it."""
+    """Index after a plain string's closer, or None when this line does not close it.
+
+    `raw` does not change the closer: an odd run of backslashes keeps the quote open in a raw
+    string too (`r"\\""` is backslash + quote, then the real closer).
+    """
+    del raw
     if triple:
         close = text.find(quote * 3, index)
-        while close >= 0 and not raw and _escaped(text, close):
+        while close >= 0 and _escaped(text, close):
             close = text.find(quote * 3, close + 1)
         if close < 0:
             return None
         return close + 3
     cursor, limit = index, len(text)
     while cursor < limit:
-        if text[cursor] == "\\" and not raw:
+        if text[cursor] == "\\":
             cursor += 2
             continue
         if text[cursor] == quote:
@@ -342,10 +348,10 @@ def _scan(items):
         return frame
 
     def closes(frame, text, index):
-        quote, raw = frame["quote"], frame["raw"]
+        quote = frame["quote"]
         if frame["triple"]:
-            return text.startswith(quote * 3, index) and (raw or not _escaped(text, index))
-        return text[index] == quote and (raw or not _escaped(text, index))
+            return text.startswith(quote * 3, index) and not _escaped(text, index)
+        return text[index] == quote and not _escaped(text, index)
 
     for include, text, line_no, path in items:
         index, limit = 0, len(text)
@@ -500,10 +506,13 @@ def _in_scope(path):
 
 
 def _literals(files):
-    """Added in-scope literals that are not on a line moved unchanged inside the same file.
+    """Added in-scope literals not cancelled by the same executable line in the same file.
 
-    A move is an added line whose stripped text equals a removed line's stripped text; each removed line
-    matches at most one added line. Also returns unparseable f-string fields.
+    A removed line cancels one added line only when the stripped texts match and the literal-token
+    tuples match. Tokens come from `_scan`: the old side of each hunk is its context and `-` lines,
+    the new side is its context and `+` lines, and each side starts outside a string. A line that
+    was inside a string therefore does not cancel the same text in code. Each removed line matches
+    at most one added line. Unparseable f-string fields on either side are problems.
     """
     scanned, pending, problems = [], [], []
     for entry in files:
@@ -512,26 +521,48 @@ def _literals(files):
             continue
         if path not in scanned:
             scanned.append(path)
-        removed = Counter()
+        available = Counter()
+        added = []
         for hunk in entry["hunks"]:
+            old_side, removed_at, index = [], {}, 0
             for kind, text in hunk["lines"]:
+                if kind == "+":
+                    continue
+                old_side.append((kind == "-", text, index, path))
                 if kind == "-":
-                    removed[text.strip()] += 1
-        for hunk in entry["hunks"]:
-            side, line_no = [], hunk["start"]
+                    removed_at[index] = text.strip()
+                index += 1
+            old_found, old_errors = _scan(old_side)
+            problems.extend(old_errors)
+            old_tokens = {}
+            for _text, token, _value, lit_line in old_found:
+                old_tokens.setdefault(lit_line, []).append(token)
+            for line_id, stripped in removed_at.items():
+                available[(stripped, tuple(old_tokens.get(line_id, ())))] += 1
+
+            new_side, added_at, line_no = [], [], hunk["start"]
             for kind, text in hunk["lines"]:
                 if kind == "-":
                     continue
-                include = kind == "+"
-                if include and removed[text.strip()]:
-                    removed[text.strip()] -= 1
-                    include = False
-                side.append((include, text, line_no, path))
+                new_side.append((kind == "+", text, line_no, path))
+                if kind == "+":
+                    added_at.append((line_no, text))
                 line_no += 1
-            found, errors = _scan(side)
-            problems.extend(errors)
-            for text, token, value, lit_line in found:
-                pending.append({"file": path, "line": lit_line, "literal": token, "value": value, "text": text})
+            new_found, new_errors = _scan(new_side)
+            problems.extend(new_errors)
+            by_line = {}
+            for text, token, value, lit_line in new_found:
+                by_line.setdefault(lit_line, []).append(
+                    {"file": path, "line": lit_line, "literal": token, "value": value, "text": text})
+            for lit_line, text in added_at:
+                rows = by_line.get(lit_line, [])
+                added.append((text.strip(), tuple(row["literal"] for row in rows), rows))
+        for stripped, tokens, rows in added:
+            key = (stripped, tokens)
+            if available[key]:
+                available[key] -= 1
+                continue
+            pending.extend(rows)
     return scanned, pending, problems
 
 
