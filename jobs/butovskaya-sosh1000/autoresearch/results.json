@@ -1,0 +1,76 @@
+[
+ {
+  "n": "0",
+  "description": "first build (setup): layers at the 8 levels, COVER_F 0.5, grid 0.05 m, flush opening planes",
+  "status": "baseline",
+  "silhouette_err_m2": 334.066,
+  "per_view_m2": {
+   "x": 35.77,
+   "y": 96.607,
+   "top": 69.313
+  },
+  "iou": {
+   "x": 0.9719,
+   "y": 0.9626,
+   "top": 0.9902
+  },
+  "guard_passed": true,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "slabs_not_inset": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "winding_bad_edges": 0,
+  "triangles": 64278,
+  "levels_worst_m": 0.0,
+  "delivery_passed": false,
+  "layers": 9,
+  "openings_placed": {
+   "12": 239,
+   "11": 44
+  },
+  "seconds": 181.9,
+  "best_before": null
+ },
+ {
+  "n": "1",
+  "description": "thresholds: levels + 12 box tops/bottoms with the most plan area (z grid 0.1 m)",
+  "status": "keep",
+  "silhouette_err_m2": 220.873,
+  "per_view_m2": {
+   "x": 34.204,
+   "y": 53.663,
+   "top": 45.14
+  },
+  "iou": {
+   "x": 0.9732,
+   "y": 0.9792,
+   "top": 0.9936
+  },
+  "guard_passed": true,
+  "mesh": {
+   "non_manifold": 0,
+   "non_manifold_vertices": 0,
+   "boundary": 0,
+   "open_loops_not_allowed": 0,
+   "slabs_not_inset": 0,
+   "overlaps": 0,
+   "ngons": 0
+  },
+  "winding_bad_edges": 0,
+  "triangles": 75686,
+  "levels_worst_m": 0.0,
+  "delivery_passed": false,
+  "layers": 21,
+  "openings_placed": {
+   "12": 255,
+   "11": 41
+  },
+  "seconds": 183.8,
+  "best_before": 334.066
+ }
+]

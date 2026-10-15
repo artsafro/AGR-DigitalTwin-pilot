@@ -31,13 +31,15 @@ SNAP_M = 0.05                       # plan grid
 BODY = ["OST_Walls", "OST_CurtainWallPanels", "OST_CurtainWallMullions", "OST_Roofs", "OST_Floors",
         "OST_Windows", "OST_Doors"]
 OPENINGS = {"OST_Windows": 11, "OST_Doors": 12}
-THRESHOLDS = "levels"               # "levels": level elevations + body bottom and top
+THRESHOLDS = "levels+tops"  # "levels": level elevations + body bottom and top
 COVER_F = 0.5                       # a box joins a layer's region when it covers this share of the layer's height
 CLOSE_M = 0.0                       # closing radius of a region (fills slots), 0 = off
 OPEN_M = 0.0                        # opening radius (drops slivers), 0 = off
 MIN_PART_M2 = 0.0                   # region parts smaller than this are dropped
 OPENING_DEPTH_M = 0.8               # an opening box this close to a wall line belongs to it
 OPENING_MARGIN_M = 0.02             # an opening plane keeps this clear of its wall quad's edges
+Z_Q = 0.1
+K_EXTRA = 12
 FACADE_ID, ROOF_ID, SOFFIT_ID = 1, 21, 1
 # ---------------------------------------------------------------------------------------------------------------
 
@@ -52,6 +54,17 @@ def thresholds(rows, levels):
     lo, hi = min(zs), max(zs)
     if THRESHOLDS == "levels":
         t = [lo, hi] + [z for z in levels.values() if lo < z < hi]
+    elif THRESHOLDS == "levels+tops":           # + the box tops / bottoms carrying the most plan area
+        weight = {}
+        for r in rows:
+            (x0, y0, z0), (x1, y1, z1) = r["box"]
+            for z in (z0, z1):
+                zq = round(round(z / Z_Q) * Z_Q, 4)
+                weight[zq] = weight.get(zq, 0.0) + (x1 - x0) * (y1 - y0)
+        base = [lo, hi] + [z for z in levels.values() if lo < z < hi]
+        extra = [z for z, _ in sorted(weight.items(), key=lambda kv: -kv[1])
+                 if lo < z < hi and all(abs(z - b) > Z_Q / 2 for b in base)][:K_EXTRA]
+        t = base + extra
     else:
         raise ValueError(THRESHOLDS)
     return sorted(set(round(z, 4) for z in t))
