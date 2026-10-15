@@ -28,6 +28,7 @@ import time
 from pathlib import Path
 
 NONCE = re.compile(r"^[A-Za-z0-9_-]{12,}$")
+CHUNK = 4 * 1024 * 1024   # bytes read at a time when searching a transcript for the nonce (#141)
 
 
 def _root():
@@ -51,12 +52,28 @@ def project_folders():
     return list(dict.fromkeys(config / "projects" / re.sub(r"[^A-Za-z0-9]", "-", str(Path(p))) for p in paths))
 
 
+def contains(path, token):
+    """Whether the file holds `token`, read in CHUNK-byte pieces: a huge unrelated transcript never sits in
+    memory whole (#141). The last len(token) - 1 bytes carry over, so a token split across chunks is found."""
+    keep = len(token) - 1
+    tail = b""
+    with open(path, "rb") as handle:
+        while True:
+            chunk = handle.read(CHUNK)
+            if not chunk:
+                return False
+            window = tail + chunk
+            if token in window:
+                return True
+            tail = window[-keep:] if keep else b""
+
+
 def holding(nonce):
     found = {}
     for folder in project_folders():
         for f in sorted(folder.glob("*.jsonl")) if folder.is_dir() else []:
             try:
-                if nonce.encode() in f.read_bytes():
+                if contains(f, nonce.encode()):
                     found[os.path.normcase(os.path.realpath(f))] = f
             except OSError:
                 continue
