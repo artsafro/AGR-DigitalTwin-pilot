@@ -10,11 +10,11 @@ object yet) · **missing**.
 | # | Stage | Status | Where | Backlog |
 |---|---|---|---|---|
 | 1 | Register and analyze the source (Revit / FBX / SKP / DWG / PDF album) | tool only | skill `analyze-architectural-source`, Revit/AutoCAD/SketchUp MCP | P1 |
-| 2 | Master building layer (elements, floors, openings, materials, sources) | partial (spec pipeline; full master layer not accepted) | `src/dt_ai/spec/model.py`, `src/dt_ai/spec/mesh.py`, `src/dt_ai/geometry/from_spec.py` | P2 |
+| 2 | Master building layer (elements, floors, openings, materials, sources) | tool only | [`Spec`](../src/dt_ai/spec/model.py#L165), [`Floor`](../src/dt_ai/spec/model.py#L63), [`Opening`](../src/dt_ai/spec/model.py#L32), [`Roof`](../src/dt_ai/spec/model.py#L87), [`Decor`](../src/dt_ai/spec/model.py#L125), [`RoofStructure`](../src/dt_ai/spec/model.py#L94) in `src/dt_ai/spec/model.py`; extractor [`extract_spec`](../src/dt_ai/spec/mesh.py#L1627); engine [`build`](../src/dt_ai/geometry/from_spec.py#L355) (structured spec models, extractor and geometry builder active in test suites; master building workflow/intake across arbitrary sources incomplete; no real-object delivery acceptance) | P2 |
 | 3 | BODY: exterior-only quad surface, cuts at corners/openings | proven (Obr22) | `src/dt_ai/geometry/exterior.py`, `connect.py`, `tools/build_exterior_surface.py` | — |
 | 4 | Shell 0.4 m inward | proven (Obr22) | `src/dt_ai/geometry/shell.py`, `tools/run_body_shell.py` | C23 |
 | 5 | Windows, stained glass, doors | partial | `tools/build_shell_windows.py`, `technical_library/window_atlas/`, REVIT-OPENINGS | P3 |
-| 6 | Roof, decor, exterior equipment | partial (roof/decor tooling; equipment incomplete) | `src/dt_ai/spec/decor.py`, `src/dt_ai/spec/mesh.py`, `src/twinqa/geometry/checks.py` (`check_decor`) | P4 |
+| 6 | Roof, decor, exterior equipment | tool only | [`extract_spec`](../src/dt_ai/spec/mesh.py#L1627) (roof/parapet/structures), [`extract`](../src/dt_ai/spec/decor.py#L375) (facade decor), [`build`](../src/dt_ai/geometry/from_spec.py#L355) (parapet cap, inset plates, decor solids, roof structures), [`check_decor`](../src/twinqa/geometry/checks.py#L632); roof structures `npm_min` screen planes only; mid/VPM shell and full exterior equipment coverage incomplete; no real-object delivery acceptance | P4 |
 | 7 | Materials registry and IDs | partial | `src/dt_ai/materials/registry.py` | — |
 | 8 | NPM atlas (embedded PNG, shared regions by finish) | proven (Obr22 v012, GLB) | `technical_library/glb_atlas/`, `texture_tiles/` | C21 |
 | 9 | VPM UV/UDIM + Diffuse/ERM/Normal maps | proven (Obr22 v011, SOSH1150 v006) | `technical_library/uv_continuous/`, `src/dt_ai/geometry/uv.py` | C27, C29, C33 |
