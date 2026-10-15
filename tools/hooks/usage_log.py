@@ -4,7 +4,7 @@
   py -3 tools/hooks/usage_log.py prompt          UserPromptSubmit: one line when the prompt is a /command
   py -3 tools/hooks/usage_log.py stats [--days N]   counts per subagent, project skill and command (zeros too)
   py -3 tools/hooks/usage_log.py backfill [--days N]   past usage from ~/.claude/projects transcripts of this
-                                                  repository and its worktrees (#109); safe to run again
+                                                  repository and its registered worktrees (#109); safe to run again
 
 A line: time (UTC), session_id, branch, kind (agent | skill | command), name, command (the last /command of the
 session before the call, or null). The log lives in the main checkout (`git rev-parse --git-common-dir`/..), so
@@ -139,28 +139,45 @@ def stats(days):
     return "\n".join(out)
 
 
-def projects_dirs():
-    """Claude Code transcript folders of this repository: the main checkout and its worktrees under it.
-    Claude Code names a folder by the session cwd with every non-alphanumeric character replaced by '-', so a
-    worktree `<main>/.claude/worktrees/x` is `<slug>--claude-worktrees-x`; `<slug>-other` is another repository."""
-    base = Path(os.environ.get("AGR_CLAUDE_PROJECTS") or Path.home() / ".claude" / "projects")
+def _slug(path):
+    return re.sub(r"[^A-Za-z0-9]", "-", str(path))
+
+
+def worktrees():
+    """Paths of this repository's checkouts: the main checkout and every registered Git worktree, wherever it lives
+    (`git worktree list --porcelain`); without Git, the project dir alone."""
     common = _git("rev-parse", "--path-format=absolute", "--git-common-dir")
-    slug = re.sub(r"[^A-Za-z0-9]", "-", str(Path(common).parent if common else _root()))
+    paths = [Path(common).parent if common else _root()]
+    listed = _git("worktree", "list", "--porcelain") or ""
+    paths += [Path(x[len("worktree "):]) for x in listed.splitlines() if x.startswith("worktree ")]
+    return list(dict.fromkeys(paths))
+
+
+def projects_dirs():
+    """Claude Code transcript folders of this repository. Claude Code names a folder by the session cwd with every
+    non-alphanumeric character replaced by '-'. A folder belongs here when it is the slug of a checkout from
+    worktrees() (external worktrees included) or `<slug>--...`, a cwd inside one (`<main>/.claude/worktrees/x`, kept
+    after the worktree is removed). `<slug>-other` is another repository and is not read."""
+    base = Path(os.environ.get("AGR_CLAUDE_PROJECTS") or Path.home() / ".claude" / "projects")
     if not base.is_dir():
         return []
-    return sorted(d for d in base.iterdir() if d.is_dir() and (d.name == slug or d.name.startswith(slug + "--")))
+    slugs = {_slug(p) for p in worktrees()}
+    return sorted(d for d in base.iterdir()
+                  if d.is_dir() and any(d.name == s or d.name.startswith(s + "--") for s in slugs))
 
 
 def _time(stamp):
+    """A transcript or log time as an aware UTC datetime; fractions of a second are kept."""
     t = datetime.datetime.fromisoformat(stamp.replace("Z", "+00:00"))
     return (t if t.tzinfo else t.replace(tzinfo=datetime.timezone.utc)).astimezone(datetime.timezone.utc)
 
 
 def transcript_entries(path, since):
-    """Usage lines of one past transcript, in order: a genuine /command, an Agent/Task call of the main session,
-    a successful Skill load (toolUseResult.success + commandName). Same fields as the hooks write, plus
-    source=backfill."""
-    rows, current = [], None
+    """Usage events of one past transcript, in order: a genuine /command, an Agent/Task call of the main session,
+    a successful Skill load (toolUseResult.success + commandName). Each is (row, start, end): the row has the hook's
+    fields plus source=backfill and the transcript time with its fractions; start..end spans the call (an Agent call
+    ends at its tool_result, where the live PostToolUse hook would have logged it)."""
+    events, current, calls = [], None, {}
     for raw in Path(path).read_text(encoding="utf-8", errors="replace").splitlines():
         try:
             e = json.loads(raw)
@@ -169,44 +186,71 @@ def transcript_entries(path, since):
             continue
         if not isinstance(e, dict) or e.get("isSidechain"):
             continue
+        content = (e.get("message") or {}).get("content")
+        if isinstance(content, list):                 # the end of an Agent call logged below
+            for b in content:
+                if isinstance(b, dict) and b.get("type") == "tool_result" and b.get("tool_use_id") in calls:
+                    events[calls.pop(b["tool_use_id"])][2] = when
         found = []
         cmd = command_of(e)
         if cmd:
             current = cmd
-            found.append(("command", cmd))
-        content = (e.get("message") or {}).get("content")
+            found.append(("command", cmd, None))
         if e.get("type") == "assistant" and isinstance(content, list):
-            found += [("agent", (b.get("input") or {}).get("subagent_type") or "general-purpose") for b in content
+            found += [("agent", (b.get("input") or {}).get("subagent_type") or "general-purpose", b.get("id"))
+                      for b in content
                       if isinstance(b, dict) and b.get("type") == "tool_use" and b.get("name") in ("Agent", "Task")]
         result = e.get("toolUseResult")
         if isinstance(result, dict) and result.get("success") is True and result.get("commandName"):
-            found.append(("skill", result["commandName"]))
+            found.append(("skill", result["commandName"], None))
         if when < since:
             continue
-        rows += [{"time": when.isoformat(timespec="seconds"), "session_id": e.get("sessionId") or Path(path).stem,
-                  "branch": e.get("gitBranch") or None, "kind": kind, "name": name,
-                  "command": None if kind == "command" else current, "source": "backfill"} for kind, name in found]
-    return rows
+        for kind, name, call_id in found:
+            if call_id:
+                calls[call_id] = len(events)
+            events.append([{"time": when.isoformat(), "session_id": e.get("sessionId") or Path(path).stem,
+                            "branch": e.get("gitBranch") or None, "kind": kind, "name": name,
+                            "command": None if kind == "command" else current, "source": "backfill"}, when, when])
+    return [tuple(x) for x in events]
+
+
+LIVE_SLACK = datetime.timedelta(seconds=60)          # live hook time vs the transcript span of the same call
 
 
 def backfill(days):
-    """Append past usage from this repository's transcripts. Idempotent: a line whose session_id+time+name is
-    already logged is skipped, and so is every session the live hooks already logged (no double count)."""
+    """Append past usage from this repository's transcripts. Idempotent and without double counts, per event:
+    a backfill line with the same session_id+time+name is skipped; so is an event the live hooks already logged,
+    i.e. a live line of the same session, kind and name inside the call's span (+-LIVE_SLACK), each live line
+    matched once. Other events of a session the hooks logged in part are added."""
     since = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=days)
-    logged = read()
-    seen = {(r.get("session_id"), r.get("time"), r.get("name")) for r in logged}
-    live = {r.get("session_id") for r in logged if r.get("source") != "backfill"}
+    seen, live = set(), {}
+    for r in read():
+        try:
+            t = _time(r["time"])
+        except (ValueError, KeyError, TypeError, AttributeError):
+            continue
+        if r.get("source") == "backfill":
+            seen.add((r.get("session_id"), t, r.get("name")))
+        else:
+            live.setdefault((r.get("session_id"), r.get("kind"), r.get("name")), []).append(t)
+    for times in live.values():
+        times.sort()
     files = [f for d in projects_dirs() for f in d.glob("*.jsonl") if f.stat().st_mtime >= since.timestamp()]
+    events = sorted((ev for f in files for ev in transcript_entries(f, since)), key=lambda ev: ev[1])
     new, skipped = [], 0
-    for f in files:
-        for row in transcript_entries(f, since):
-            key = (row["session_id"], row["time"], row["name"])
-            if key in seen or row["session_id"] in live:
-                skipped += 1
-                continue
-            seen.add(key)
-            new.append(row)
-    new.sort(key=lambda r: r["time"])
+    for row, start, end in events:
+        key = (row["session_id"], start, row["name"])
+        times = live.get((row["session_id"], row["kind"], row["name"]), [])
+        hit = next((t for t in times if start - LIVE_SLACK <= t <= end + LIVE_SLACK), None)
+        if key in seen:
+            skipped += 1
+            continue
+        if hit is not None:
+            times.remove(hit)
+            skipped += 1
+            continue
+        seen.add(key)
+        new.append(row)
     if new:
         path = log_path()
         path.parent.mkdir(parents=True, exist_ok=True)
