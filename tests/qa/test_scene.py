@@ -331,3 +331,47 @@ def test_blender_topology_counts(tmp_path, variant):
         assert topo["isolated_vertices"] >= 1
         assert topo["self_intersections"] > 0
         assert statuses(found, "V004")["topology defects"] == "fail"
+
+
+MAKE_FALSE_NEGATIVE = """
+import bpy, sys
+out, variant = sys.argv[sys.argv.index('--') + 1], sys.argv[-1]
+bpy.ops.wm.read_factory_settings(use_empty=True)
+if variant == 'shared_vertex':
+    base = [(0.0, 0.0, 0.0), (2.0, 0.0, 0.0), (0.0, 2.0, 0.0), (1.0, 1.0, 1.0), (1.0, 1.0, -1.0)]
+    local = [(0, 1, 2), (0, 3, 4)]
+else:
+    base = [(-1.0, -1.0, 0.0), (1.0, -1.0, 0.0), (0.0, 1.0, 0.0),
+            (0.0, -0.3, -0.5), (0.0, -0.1, 0.5), (0.0, -0.5, 0.5),
+            (0.0, -0.2, 0.0), (0.0, -0.4, 0.0), (-2.0, -1.0, 0.0), (-1.0, -2.0, 0.0)]
+    local = [(0, 1, 2), (3, 6, 7), (6, 4, 5), (6, 5, 7), (0, 8, 9)]
+n = len(base)
+verts, faces = [], []
+for k in range(101):
+    ox = 4.0 * k
+    verts.extend([(x + ox, y, z) for x, y, z in base])
+    faces.extend([tuple(i + n * k for i in face) for face in local])
+mesh = bpy.data.meshes.new('SM_Test_K_1_Main')
+obj = bpy.data.objects.new('SM_Test_K_1_Main', mesh)
+bpy.context.scene.collection.objects.link(obj)
+mesh.from_pydata(verts, [], faces)
+mesh.update()
+bpy.context.view_layer.objects.active = obj
+obj.select_set(True)
+bpy.ops.export_scene.fbx(filepath=out)
+"""
+
+
+@pytest.mark.blender
+@pytest.mark.skipif(BLENDER is None, reason="Blender not installed")
+@pytest.mark.parametrize("variant", ["shared_vertex", "subdivided"])
+def test_blender_false_negative_crossings(tmp_path, variant):
+    fbx_path = tmp_path / f"false_negative_{variant}.fbx"
+    subprocess.run([BLENDER, "--background", "--factory-startup", "--python-exit-code", "1",
+                    "--python-expr", MAKE_FALSE_NEGATIVE, "--", str(fbx_path), variant],
+                   check=True, capture_output=True, timeout=300)
+    report = readback(fbx_path, blender=BLENDER)
+    topo = report["meshes"][0]["topology"]
+    found = scene_findings(report, "vpm", "oks", PROFILES.vpm)
+    assert topo["self_intersections"] >= 101
+    assert statuses(found, "V004")["topology defects"] == "fail"
