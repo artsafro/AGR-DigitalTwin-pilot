@@ -69,6 +69,19 @@ def test_status_is_allowed():
     assert invoke()["decision"] == "allow"
 
 
+@pytest.mark.parametrize("tool", ["write", "edit"])
+@pytest.mark.parametrize("path", [
+    "~/outside.txt", "~\\outside.txt", "@C:/outside.txt", "@@outside.txt",
+    "file:///C:/outside.txt", "/c/outside.txt", "/mnt/c/outside.txt",
+    "/cygdrive/c/outside.txt", "name\u202fspace.txt", "name\u00a0space.txt",
+])
+def test_pi_special_paths_fail_closed(sandbox, tool, path):
+    tin = {"path": path, "content": "synthetic", "oldText": "old", "newText": "new"}
+    result = invoke(tool, tin, sandbox, sandbox / "tools/hooks/pi_guard_adapter.py")
+    assert result["decision"] == "block", (path, result)
+    assert "unsupported Pi path syntax" in result["reason"]
+
+
 @pytest.mark.parametrize("source", [
     "raise RuntimeError('synthetic adapter crash')",
     "print('null')", "print('{}')", "print('not json')",
