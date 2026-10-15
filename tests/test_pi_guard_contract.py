@@ -80,6 +80,15 @@ def test_malformed_or_unpreviewable_edits_block(sandbox, edits):
     assert result["decision"] == "block", result
 
 
+def test_fuzzy_only_edit_is_explicitly_blocked(sandbox):
+    (sandbox / "note.txt").write_bytes("smart ‘quote’\n".encode("utf-8"))
+    result = invoke("edit", {"path": "note.txt", "edits": [
+        {"oldText": "smart 'quote'", "newText": "replacement"},
+    ]}, sandbox, sandbox / "tools/hooks/pi_guard_adapter.py")
+    assert result["decision"] == "block"
+    assert "fuzzy-only edits are unsupported" in result["reason"]
+
+
 @pytest.mark.parametrize("tool", ["edit", "write"])
 def test_generated_unicode_path_spellings_block(sandbox, tool):
     # Entire space class normalized by installed Pi, not just the two examples.

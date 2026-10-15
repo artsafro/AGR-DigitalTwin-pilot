@@ -76,6 +76,8 @@ def test_status_is_allowed():
     "/cygdrive/c/outside.txt", "name\u202fspace.txt", "name\u00a0space.txt",
 ])
 def test_pi_special_paths_fail_closed(sandbox, tool, path):
+    if os.name != "nt" and path.startswith("/"):
+        pytest.skip("Windows shell drive spellings are ordinary absolute paths on POSIX")
     tin = {"path": path, "content": "synthetic", "oldText": "old", "newText": "new"}
     result = invoke(tool, tin, sandbox, sandbox / "tools/hooks/pi_guard_adapter.py")
     assert result["decision"] == "block", (path, result)
