@@ -7,6 +7,7 @@ import pytest
 
 from dt_ai.cli.main import main
 from twinqa.evals.graders import EvidenceError, hook_denials, no_hook_denial, read_jsonl
+from twinqa.evals.runner import grade, resolve
 
 ROOT = Path(__file__).resolve().parents[1]
 TASK = ROOT / "evals/no-hook-denial"
@@ -280,3 +281,11 @@ def test_a_tool_result_without_its_payload_is_not_evidence(tmp_path, block):
     assert no_hook_denial({"transcript": [path]})["passed"] is None
     code, _ = dt(tmp_path, "--task", "no-hook-denial", "--evidence", f"transcript={path}")
     assert code == 2
+
+
+def test_a_literal_match_resolves_when_the_head_is_detached():
+    """A match with no `{branch}` placeholder must not call branch_slug (detached HEAD, branch is None)."""
+    rule = {"root": "task", "glob": "fixtures/*.jsonl", "match": r"clean\.synthetic\.jsonl"}
+    assert resolve(rule, TASK, None, None) == [CLEAN]
+    row = grade("no-hook-denial", {"grader": "no_hook_denial"}, {"transcript": rule}, TASK, None, None, {})
+    assert row["passed"] is True

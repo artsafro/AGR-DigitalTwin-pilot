@@ -138,7 +138,13 @@ def load_tasks(evals_dir, suite=None, task=None):
 
 
 def _fill(text, branch, regex=False):
-    values = {"{branch_slug}": branch_slug(branch), "{branch}": branch}
+    """Expand `{branch}` / `{branch_slug}` only when they occur. A literal pattern stays unchanged, so a
+    detached HEAD (`branch` is None) does not call `branch_slug`."""
+    values = {}
+    if "{branch_slug}" in text:
+        values["{branch_slug}"] = branch_slug(branch)
+    if "{branch}" in text:
+        values["{branch}"] = branch
     for key, value in values.items():
         text = text.replace(key, re.escape(value) if regex else value)
     return text
