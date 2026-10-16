@@ -1,0 +1,867 @@
+{
+ "schema": "flora-curation-v1",
+ "status": "draft_pending_user_decisions",
+ "audit_catalogue": "experiments/flora-library-audit/catalogue.json",
+ "order": "trees, bushes, flowers; inside a type the first appearance in the #189 audit (library before FLORIO)",
+ "species": [
+  {
+   "latin": "Tilia cordata",
+   "russian": "Липа мелколистная",
+   "type": "tree",
+   "sources": [
+    "library-001",
+    "library-002",
+    "library-028"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "library-002 is a hidden near-copy of library-001"
+  },
+  {
+   "latin": "Betula pendula",
+   "russian": "Берёза повислая",
+   "type": "tree",
+   "sources": [
+    "library-006"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "maps approved in #190"
+  },
+  {
+   "latin": "Crataegus mollis",
+   "russian": "Боярышник мягкий",
+   "type": "tree",
+   "sources": [
+    "library-007",
+    "library-039"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Padus maackii",
+   "russian": "Черёмуха Маака",
+   "type": "tree",
+   "sources": [
+    "library-009",
+    "library-042"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "syn. Prunus maackii"
+  },
+  {
+   "latin": "Amelanchier lamarckii",
+   "russian": "Ирга Ламарка",
+   "type": "tree",
+   "sources": [
+    "library-020",
+    "library-021",
+    "library-046",
+    "project-009",
+    "project-031"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "label typo 'Игра'; FLORIO calls it a bush"
+  },
+  {
+   "latin": "Acer tataricum subsp. ginnala",
+   "russian": "Клён Гиннала",
+   "type": "tree",
+   "sources": [
+    "library-024",
+    "library-031",
+    "library-079",
+    "project-012",
+    "project-034"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "syn. Acer ginnala"
+  },
+  {
+   "latin": "Acer platanoides",
+   "russian": "Клён остролистный",
+   "type": "tree",
+   "sources": [
+    "library-025",
+    "library-078"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Sorbus aucuparia",
+   "russian": "Рябина обыкновенная",
+   "type": "tree",
+   "sources": [
+    "library-036",
+    "project-013",
+    "project-035"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Acer tataricum",
+   "russian": "Клён татарский",
+   "type": "tree",
+   "sources": [
+    "library-049",
+    "library-050",
+    "project-012",
+    "project-034"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Sorbus commixta 'Dodong'",
+   "russian": "Рябина Додонг",
+   "type": "tree",
+   "sources": [
+    "library-051"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Syringa vulgaris 'Krasavitsa Moskvy'",
+   "russian": "Сирень обыкновенная Красавица Москвы",
+   "type": "tree",
+   "sources": [
+    "library-053"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Syringa vulgaris 'Andenken an Ludwig Späth'",
+   "russian": "Сирень обыкновенная Шпет",
+   "type": "tree",
+   "sources": [
+    "library-054"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Syringa josikaea",
+   "russian": "Сирень венгерская",
+   "type": "tree",
+   "sources": [
+    "library-055",
+    "project-018",
+    "project-040"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "FLORIO row is a bush form"
+  },
+  {
+   "latin": "Pinus nigra",
+   "russian": "Сосна чёрная",
+   "type": "tree",
+   "sources": [
+    "library-056",
+    "library-064",
+    "library-065",
+    "library-084"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Malus niedzwetzkyana",
+   "russian": "Яблоня Недзвецкого",
+   "type": "tree",
+   "sources": [
+    "library-061",
+    "project-013",
+    "project-035"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "library label 'Яблоня гибрид Недзвецкого'"
+  },
+  {
+   "latin": "Syringa vulgaris",
+   "russian": "Сирень обыкновенная",
+   "type": "tree",
+   "sources": [
+    "library-062",
+    "project-018",
+    "project-040"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "FLORIO row is a bush form"
+  },
+  {
+   "latin": "Picea pungens",
+   "russian": "Ель колючая (серебристая)",
+   "type": "tree",
+   "sources": [
+    "library-069",
+    "library-070",
+    "project-007",
+    "project-029"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "library label 'Ель серебристая'"
+  },
+  {
+   "latin": "Malus 'Evereste'",
+   "russian": "Яблоня Эверест",
+   "type": "tree",
+   "sources": [
+    "library-074"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Thuja occidentalis",
+   "russian": "Туя западная",
+   "type": "tree",
+   "sources": [
+    "library-086"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "library label only 'Туя'"
+  },
+  {
+   "latin": "Prunus padus",
+   "russian": "Черёмуха обыкновенная",
+   "type": "tree",
+   "sources": [
+    "project-003",
+    "project-025"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Quercus robur",
+   "russian": "Дуб черешчатый",
+   "type": "tree",
+   "sources": [
+    "project-006",
+    "project-028"
+   ],
+   "geometry_basis": "shared_multi_species_stand_in",
+   "note": ""
+  },
+  {
+   "latin": "Tilia cordata 'Greenspire'",
+   "russian": "Липа мелколистная Гринспайр",
+   "type": "tree",
+   "sources": [
+    "project-006",
+    "project-028"
+   ],
+   "geometry_basis": "shared_multi_species_stand_in",
+   "note": ""
+  },
+  {
+   "latin": "Alnus incana",
+   "russian": "Ольха серая",
+   "type": "tree",
+   "sources": [
+    "project-006",
+    "project-028"
+   ],
+   "geometry_basis": "shared_multi_species_stand_in",
+   "note": ""
+  },
+  {
+   "latin": "Picea abies",
+   "russian": "Ель обыкновенная",
+   "type": "tree",
+   "sources": [
+    "project-007",
+    "project-029"
+   ],
+   "geometry_basis": "shared_multi_species_stand_in",
+   "note": ""
+  },
+  {
+   "latin": "Abies koreana",
+   "russian": "Пихта корейская",
+   "type": "tree",
+   "sources": [
+    "project-007",
+    "project-029"
+   ],
+   "geometry_basis": "shared_multi_species_stand_in",
+   "note": ""
+  },
+  {
+   "latin": "Pinus sylvestris",
+   "russian": "Сосна обыкновенная",
+   "type": "tree",
+   "sources": [
+    "project-007",
+    "project-029"
+   ],
+   "geometry_basis": "shared_multi_species_stand_in",
+   "note": "maps approved in #190"
+  },
+  {
+   "latin": "Acer platanoides 'Royal Red'",
+   "russian": "Клён остролистный Роял Ред",
+   "type": "tree",
+   "sources": [
+    "project-013",
+    "project-035"
+   ],
+   "geometry_basis": "shared_multi_species_stand_in",
+   "note": ""
+  },
+  {
+   "latin": "Berberis × ottawensis",
+   "russian": "Барбарис оттавский",
+   "type": "bush",
+   "sources": [
+    "library-005"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Crataegus monogyna",
+   "russian": "Боярышник однопестичный",
+   "type": "bush",
+   "sources": [
+    "library-008"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Cornus alba",
+   "russian": "Дёрен белый",
+   "type": "bush",
+   "sources": [
+    "library-010",
+    "library-011",
+    "library-043"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Cornus sericea",
+   "russian": "Дёрен отпрысковый",
+   "type": "bush",
+   "sources": [
+    "library-012"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Physocarpus opulifolius 'Diabolo'",
+   "russian": "Пузыреплодник калинолистный Диабло",
+   "type": "bush",
+   "sources": [
+    "library-013",
+    "library-014"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "library label only 'Диабло'"
+  },
+  {
+   "latin": "Hydrangea paniculata",
+   "russian": "Гортензия метельчатая",
+   "type": "bush",
+   "sources": [
+    "library-018"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Hydrangea arborescens",
+   "russian": "Гортензия древовидная",
+   "type": "bush",
+   "sources": [
+    "library-019",
+    "project-008",
+    "project-030"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Salix purpurea 'Mayak'",
+   "russian": "Ива пурпурная Маяк",
+   "type": "bush",
+   "sources": [
+    "library-022"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Cotoneaster lucidus",
+   "russian": "Кизильник блестящий",
+   "type": "bush",
+   "sources": [
+    "library-023",
+    "library-048",
+    "library-089",
+    "project-011",
+    "project-033"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Juniperus sabina",
+   "russian": "Можжевельник казацкий",
+   "type": "bush",
+   "sources": [
+    "library-030"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Physocarpus opulifolius",
+   "russian": "Пузыреплодник калинолистный",
+   "type": "bush",
+   "sources": [
+    "library-034",
+    "library-035"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Sorbaria sorbifolia",
+   "russian": "Рябинник рябинолистный",
+   "type": "bush",
+   "sources": [
+    "library-037",
+    "project-017",
+    "project-039"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Dasiphora fruticosa 'Goldfinger'",
+   "russian": "Лапчатка кустарниковая Голдфингер",
+   "type": "bush",
+   "sources": [
+    "library-038"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Euonymus alatus",
+   "russian": "Бересклет крылатый",
+   "type": "bush",
+   "sources": [
+    "library-040"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Philadelphus coronarius",
+   "russian": "Чубушник венечный",
+   "type": "bush",
+   "sources": [
+    "library-041"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "label typo 'Чебушник'"
+  },
+  {
+   "latin": "Hydrangea arborescens 'Bounty'",
+   "russian": "Гортензия древовидная Баунти",
+   "type": "bush",
+   "sources": [
+    "library-044",
+    "library-087"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Hydrangea paniculata 'Limelight'",
+   "russian": "Гортензия метельчатая Лаймлайт",
+   "type": "bush",
+   "sources": [
+    "library-045",
+    "library-088"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Viburnum opulus 'Roseum'",
+   "russian": "Калина обыкновенная Бульдене",
+   "type": "bush",
+   "sources": [
+    "library-047",
+    "project-010",
+    "project-032"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "FLORIO 'Boule de Neige' = 'Roseum'"
+  },
+  {
+   "latin": "Sorbaria sorbifolia 'Sem'",
+   "russian": "Рябинник рябинолистный Сэм",
+   "type": "bush",
+   "sources": [
+    "library-052",
+    "library-090"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Spiraea betulifolia 'Tor'",
+   "russian": "Спирея берёзолистная Тор",
+   "type": "bush",
+   "sources": [
+    "library-057",
+    "project-021",
+    "project-043"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Spiraea × cinerea 'Grefsheim'",
+   "russian": "Спирея серая Грефсхейм",
+   "type": "bush",
+   "sources": [
+    "library-058",
+    "library-066",
+    "project-020",
+    "project-042"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Spiraea japonica 'Little Princess'",
+   "russian": "Спирея японская Литл Принцесс",
+   "type": "bush",
+   "sources": [
+    "library-059",
+    "project-024",
+    "project-046"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Stephanandra incisa 'Crispa'",
+   "russian": "Стефанандра надрезаннолистная Криспа",
+   "type": "bush",
+   "sources": [
+    "library-060",
+    "project-015",
+    "project-037"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Pinus mugo",
+   "russian": "Сосна горная",
+   "type": "bush",
+   "sources": [
+    "library-063",
+    "library-085",
+    "project-019",
+    "project-041"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "library-085 unlabelled 'Сосна_Горная_LP'"
+  },
+  {
+   "latin": "Spiraea japonica",
+   "russian": "Спирея японская",
+   "type": "bush",
+   "sources": [
+    "library-067",
+    "library-068"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "maps approved in #190"
+  },
+  {
+   "latin": "Berberis thunbergii",
+   "russian": "Барбарис Тунберга",
+   "type": "bush",
+   "sources": [
+    "library-075",
+    "library-076",
+    "library-077",
+    "project-011",
+    "project-033"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "library-075..077 unlabelled, name from node"
+  },
+  {
+   "latin": "Cornus alba 'Sibirica Variegata'",
+   "russian": "Дёрен белый Сибирика Вариегата",
+   "type": "bush",
+   "sources": [
+    "project-001",
+    "project-002"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Cornus sanguinea 'Anny's Winter Orange'",
+   "russian": "Дёрен кроваво-красный Эннис Винтер Оранж",
+   "type": "bush",
+   "sources": [
+    "project-004",
+    "project-026"
+   ],
+   "geometry_basis": "shared_multi_species_stand_in",
+   "note": ""
+  },
+  {
+   "latin": "Cornus alba 'Red Gnome'",
+   "russian": "Дёрен белый Ред Гном",
+   "type": "bush",
+   "sources": [
+    "project-004",
+    "project-026"
+   ],
+   "geometry_basis": "shared_multi_species_stand_in",
+   "note": ""
+  },
+  {
+   "latin": "Dasiphora fruticosa",
+   "russian": "Лапчатка кустарниковая",
+   "type": "bush",
+   "sources": [
+    "project-014",
+    "project-036"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Salix repens 'Green Carpet'",
+   "russian": "Ива ползучая Грин Карпет",
+   "type": "bush",
+   "sources": [
+    "project-015",
+    "project-037"
+   ],
+   "geometry_basis": "shared_multi_species_stand_in",
+   "note": ""
+  },
+  {
+   "latin": "Juniperus sabina 'Tamariscifolia'",
+   "russian": "Можжевельник казацкий Тамарисцифолия",
+   "type": "bush",
+   "sources": [
+    "project-015",
+    "project-037"
+   ],
+   "geometry_basis": "shared_multi_species_stand_in",
+   "note": ""
+  },
+  {
+   "latin": "Juniperus sabina 'Mas'",
+   "russian": "Можжевельник казацкий Мас",
+   "type": "bush",
+   "sources": [
+    "project-015",
+    "project-037"
+   ],
+   "geometry_basis": "shared_multi_species_stand_in",
+   "note": ""
+  },
+  {
+   "latin": "Physocarpus opulifolius 'Luteus'",
+   "russian": "Пузыреплодник калинолистный Лютеус",
+   "type": "bush",
+   "sources": [
+    "project-016",
+    "project-038"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Pinus mugo 'Mops'",
+   "russian": "Сосна горная Мопс",
+   "type": "bush",
+   "sources": [
+    "project-019",
+    "project-041"
+   ],
+   "geometry_basis": "shared_multi_species_stand_in",
+   "note": ""
+  },
+  {
+   "latin": "Picea abies 'Nidiformis'",
+   "russian": "Ель обыкновенная Нидиформис",
+   "type": "bush",
+   "sources": [
+    "project-019",
+    "project-041"
+   ],
+   "geometry_basis": "shared_multi_species_stand_in",
+   "note": ""
+  },
+  {
+   "latin": "Pinus mugo var. mughus",
+   "russian": "Сосна горная Мугус",
+   "type": "bush",
+   "sources": [
+    "project-019",
+    "project-041"
+   ],
+   "geometry_basis": "shared_multi_species_stand_in",
+   "note": ""
+  },
+  {
+   "latin": "Spiraea japonica 'Firelight'",
+   "russian": "Спирея японская Файрлайт",
+   "type": "bush",
+   "sources": [
+    "project-022",
+    "project-044"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Spiraea × bumalda",
+   "russian": "Спирея Бумальда",
+   "type": "bush",
+   "sources": [
+    "project-023",
+    "project-045"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Symphyotrichum novae-angliae",
+   "russian": "Астра новоанглийская",
+   "type": "flower",
+   "sources": [
+    "library-003",
+    "library-004"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Echinacea purpurea",
+   "russian": "Эхинацея пурпурная",
+   "type": "flower",
+   "sources": [
+    "library-015",
+    "library-016"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "library label only 'Эхинацея'"
+  },
+  {
+   "latin": "Heuchera",
+   "russian": "Гейхера",
+   "type": "flower",
+   "sources": [
+    "library-017"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "genus only in label"
+  },
+  {
+   "latin": "Actaea simplex 'Atropurpurea'",
+   "russian": "Клопогон Атропурпуреа",
+   "type": "flower",
+   "sources": [
+    "library-026"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Filipendula ulmaria",
+   "russian": "Лабазник вязолистный",
+   "type": "flower",
+   "sources": [
+    "library-027"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "label 'Лабазник обычный'"
+  },
+  {
+   "latin": "Miscanthus sinensis",
+   "russian": "Мискантус китайский",
+   "type": "flower",
+   "sources": [
+    "library-029"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Eutrochium maculatum",
+   "russian": "Посконник пятнистый",
+   "type": "flower",
+   "sources": [
+    "library-032",
+    "library-033"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  },
+  {
+   "latin": "Calamagrostis brachytricha",
+   "russian": "Вейник остроцветковый",
+   "type": "flower",
+   "sources": [
+    "library-071",
+    "library-072"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": "Russian label vs Latin needs user check"
+  },
+  {
+   "latin": "Calamagrostis × acutiflora 'Karl Foerster'",
+   "russian": "Вейник остроцветковый Карл Форстер",
+   "type": "flower",
+   "sources": [
+    "library-073"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
+  }
+ ],
+ "unresolved": [
+  {
+   "sources": [
+    "library-080",
+    "library-081",
+    "library-082",
+    "library-083"
+   ],
+   "reason": "unlabelled 'Многоцветник' v1-v4: species unknown (flower-bed mix?)"
+  },
+  {
+   "sources": [
+    "project-005",
+    "project-027"
+   ],
+   "latin": "Parthenocissus quinquefolia",
+   "russian": "Девичий виноград пятилисточковый",
+   "reason": "type climber has no material-ID range in #216"
+  }
+ ]
+}
