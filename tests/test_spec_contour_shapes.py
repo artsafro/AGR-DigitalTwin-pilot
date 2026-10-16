@@ -917,6 +917,26 @@ def test_a_fin_with_a_crossbar_leaves_no_stub():
     assert report["floors"]["L0"]["attachment_pieces_left_out"] == 1   # band's depth may stay (issue)
 
 
+def _fin_dump(cross, x0=4.0, x1=4.4, y_out=-1.2):
+    dump = panelised()
+    dump["meshes"] = [m for m in dump["meshes"] if m["name"] != "Panel_0_0"]
+    joined = Mesh("Panel_0_0")
+    walls(joined, [[-0.08, 0], [9.98, 0], [9.98, -0.1], [-0.08, -0.1]], 0.01, 3.29, extra_u={2: [5.58, 5.98]})
+    _fin(joined, x0, x1, y_out, cross=cross)
+    dump["meshes"].append(joined.dump())
+    return dump
+
+
+@pytest.mark.parametrize("cross", [-0.35, -0.4, -0.45, -0.5])
+@pytest.mark.parametrize("width", [0.1, 0.4, 1.0])
+def test_a_fin_root_inside_the_facade_band_leaves_no_stub(cross, width):
+    """#90: a fin 1.2 m out with a crossbar 0.25-0.4 m off the panels - its root (across the facade, from the cut
+    back to the panels' outer face) goes too, so the contour is the panels' line without a stub."""
+    spec, report = extract_spec(_fin_dump(cross, x1=4.0 + width), PANEL_OBJECT)
+    assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03)
+    assert report["floors"]["L0"]["attachment_pieces_left_out"] == 1
+
+
 def test_slab_data_follow_the_ceiling_not_the_reference():
     """Review 1 of #89: a 121 m2 floor slab and a 100 m2 ceiling - the share and the offset are the ceiling's."""
     big = [[-0.5, -0.5], [10.5, -0.5], [10.5, 10.5], [-0.5, 10.5]]
