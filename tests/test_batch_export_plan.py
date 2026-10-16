@@ -1,5 +1,7 @@
 """Pure-Python coverage for the resumable per-object export plan. No 3ds Max."""
+import hashlib
 import json
+import os
 import random
 import shutil
 import sys
@@ -80,10 +82,12 @@ def test_read_log_partial_line_and_last_row_wins(tmp_path):
         encoding="utf-8",
     )
     found = plan.read_log(path)
-    assert found["C:/out/a.max"]["status"] == "ok"
-    assert found["C:/out/a.max"]["bytes"] == 4
-    assert found["C:/out/b.max"]["status"] == "ok"
-    assert set(found) == {"C:/out/a.max", "C:/out/b.max"}
+    key_a = plan.path_key("C:/out/a.max")
+    key_b = plan.path_key("C:/out/b.max")
+    assert found[key_a]["status"] == "ok"
+    assert found[key_a]["bytes"] == 4
+    assert found[key_b]["status"] == "ok"
+    assert set(found) == {key_a, key_b}
     assert plan.read_log(tmp_path / "missing.jsonl") == {}
 
 
@@ -92,23 +96,41 @@ def test_append_log_round_trip(tmp_path):
     plan.append_log(path, {"output": "C:/out/ё.max", "status": "ok", "bytes": 3})
     plan.append_log(path, {"output": "C:/out/ё.max", "status": "failed", "bytes": 3})
     found = plan.read_log(path)
-    assert found["C:/out/ё.max"]["status"] == "failed"
+    assert found[plan.path_key("C:/out/ё.max")]["status"] == "failed"
     text = path.read_text(encoding="utf-8")
     assert "ё.max" in text
     assert text.count("\n") == 2
 
 
+def _receipt(task, payload: bytes, triangles, materials, status="ok"):
+    path = Path(task["output"])
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(payload)
+    return {
+        "node": task["node"],
+        "output": task["output"],
+        "format": task["format"],
+        "status": status,
+        "triangles": triangles,
+        "materials": materials,
+        "bytes": len(payload),
+        "sha256": plan.file_sha256(path),
+    }
+
+
 def test_decide_combinations(tmp_path):
     output = tmp_path / "Box.max"
     task = {"node": "Box", "output": str(output), "format": "max"}
-    assert plan.decide(task, {str(output): {"status": "ok", "bytes": 4}}) == "export"
-
-    output.write_bytes(b"abcd")
-    assert plan.decide(task, {}) == "verify"
-    assert plan.decide(task, {str(output): {"status": "failed", "bytes": 4}}) == "verify"
-    assert plan.decide(task, {str(output): {"status": "ok", "bytes": 1}}) == "verify"
-    assert plan.decide(task, {str(output): {"status": "ok"}}) == "verify"
-    assert plan.decide(task, {str(output): {"status": "ok", "bytes": 4}}) == "skip"
+    assert plan.decide(task, {}, 12, 1) == "export"
+    payload = b"abcd"
+    output.write_bytes(payload)
+    assert plan.decide(task, {}, 12, 1) == "export"
+    weak = {"status": "ok", "bytes": 4}
+    assert plan.decide(task, {plan.path_key(output): weak}, 12, 1) == "export"
+    row = _receipt(task, payload, 12, 1)
+    log = {plan.path_key(output): row}
+    assert plan.decide(task, log, 12, 1) == "verify"
+    assert plan.decide(task, log, 12, 1) != "skip"
 
 
 def test_readback_verdict_negatives_and_ok():
@@ -176,7 +198,7 @@ def test_cli_dry_run_prints_decide(tmp_path, monkeypatch, capsys):
     log.parent.mkdir(parents=True)
     plan.append_log(log, {
         "node": "Box", "output": planned[0]["output"], "format": "max", "status": "ok",
-        "bytes": 3,
+        "bytes": 3, "triangles": 12, "materials": 1, "sha256": plan.file_sha256(box),
     })
     node_file = tmp_path / "nodes.json"
     node_file.write_text(json.dumps(nodes), encoding="utf-8")
@@ -186,7 +208,7 @@ def test_cli_dry_run_prints_decide(tmp_path, monkeypatch, capsys):
     ])
     assert code == 0
     text = capsys.readouterr().out
-    assert "skip\tBox\t%s" % planned[0]["output"] in text
+    assert "verify\tBox\t%s" % planned[0]["output"] in text
     assert "export\tSphere\t%s" % planned[1]["output"] in text
     request = log.with_name("batch_export_request.json")
     assert request.is_file()
@@ -267,36 +289,274 @@ def test_probe_readback_verdict_never_ok_when_failed():
             assert status != "ok"
 
 
-def test_probe_decide_skip_only_when_file_ok_and_bytes_match(tmp_path):
+def _identity_oracle(exists, row, task_node, task_format, expected_tris, expected_mats, actual_size, actual_hash):
+    """Independent of plan.decide: verify iff every identity field holds."""
+    if not exists or not isinstance(row, dict):
+        return False
+    if row.get("status") != "ok":
+        return False
+    if row.get("node") != task_node or row.get("format") != task_format:
+        return False
+    if type(expected_tris) is not int or type(row.get("triangles")) is not int:
+        return False
+    if type(expected_mats) is not int or type(row.get("materials")) is not int:
+        return False
+    if row["triangles"] != expected_tris or row["materials"] != expected_mats:
+        return False
+    digest = row.get("sha256")
+    if type(digest) is not str or digest != actual_hash:
+        return False
+    if row.get("bytes") != actual_size:
+        return False
+    return True
+
+
+def test_decide_requires_identity_counts_and_hash(tmp_path):
+    output = tmp_path / "Box.max"
+    payload = b"abcd-identity"
+    task = {"node": "Box", "output": str(output), "format": "max"}
+    row = _receipt(task, payload, 12, 1)
+    key = plan.path_key(output)
+    log = {key: row}
+    assert plan.decide(task, log, 12, 1) == "verify"
+
+    output.write_bytes(b"X" * len(payload))
+    assert plan.decide(task, log, 12, 1) == "export"
+    output.write_bytes(payload)
+
+    assert plan.decide(task, log, 11, 1) == "export"
+    assert plan.decide(task, log, 12, 2) == "export"
+    assert plan.decide({"node": "box", "output": task["output"], "format": "max"}, log, 12, 1) == "export"
+    assert plan.decide({"node": "Box", "output": task["output"], "format": "fbx"}, log, 12, 1) == "export"
+
+    missing_sha = dict(row)
+    del missing_sha["sha256"]
+    assert plan.decide(task, {key: missing_sha}, 12, 1) == "export"
+
+    missing = tmp_path / "gone.max"
+    assert plan.decide({"node": "Box", "output": str(missing), "format": "max"}, log, 12, 1) == "export"
+
+    failed = dict(row)
+    failed["status"] = "failed"
+    assert plan.decide(task, {key: failed}, 12, 1) == "export"
+
+    assert plan.decide(task, log, True, 1) == "export"
+    assert plan.decide(task, log, 12, True) == "export"
+    bool_tris = dict(row)
+    bool_tris["triangles"] = True
+    assert plan.decide(task, {key: bool_tris}, 12, 1) == "export"
+    bool_mats = dict(row)
+    bool_mats["materials"] = False
+    assert plan.decide(task, {key: bool_mats}, 12, 1) == "export"
+
+    big = tmp_path / "big.bin"
+    size = (1024 * 1024) + 100
+    blob = b"ab" * (size // 2)
+    if len(blob) < size:
+        blob += b"a"
+    big.write_bytes(blob[:size])
+    assert plan.file_sha256(big) == hashlib.sha256(blob[:size]).hexdigest()
+    assert plan.file_sha256(tmp_path / "missing.bin") is None
+
+
+def test_probe_decide_verify_only_when_all_identity_holds(tmp_path):
     rng = random.Random(224)
-    for index in range(2000):
-        exists = rng.choice([True, False])
-        size = rng.randint(0, 8)
-        mode = rng.choice(["absent", "ok", "failed", "ok_wrong", "ok_missing_bytes"])
-        output = tmp_path / ("f%d.bin" % index)
-        if exists:
-            output.write_bytes(b"x" * size)
-        elif output.exists():
-            output.unlink()
-        task = {"node": "n", "output": str(output), "format": "max"}
-        log = {}
-        if mode == "ok":
-            log[str(output)] = {"status": "ok", "bytes": size}
-        elif mode == "failed":
-            log[str(output)] = {"status": "failed", "bytes": size}
-        elif mode == "ok_wrong":
-            log[str(output)] = {"status": "ok", "bytes": size + 3}
-        elif mode == "ok_missing_bytes":
-            log[str(output)] = {"status": "ok"}
-        action = plan.decide(task, log)
-        should_skip = exists and mode == "ok"
-        if should_skip:
-            assert action == "skip"
+    output = tmp_path / "n.max"
+    intact = b"receipt-body-224"
+    saw_verify = False
+    saw_export = False
+    nodes = ["Box", "box"]
+    formats = ["max", "fbx"]
+    counts = [12, 11, True, False]
+    for _ in range(2000):
+        file_mode = rng.choice(["intact", "missing", "corrupt_same", "corrupt_diff"])
+        if file_mode == "missing":
+            if output.exists():
+                output.unlink()
+            exists = False
+            actual_hash = None
+            actual_size = None
         else:
-            assert action != "skip"
-        if not exists:
+            if file_mode == "intact":
+                data = intact
+            elif file_mode == "corrupt_same":
+                data = b"X" * len(intact)
+            else:
+                data = b"Y" * (len(intact) + rng.choice([0, 5]))
+            output.write_bytes(data)
+            exists = True
+            actual_hash = hashlib.sha256(data).hexdigest()
+            actual_size = len(data)
+        task_node = rng.choice(nodes)
+        task_format = rng.choice(formats)
+        expected_tris = rng.choice(counts)
+        expected_mats = rng.choice([1, 2, True, False])
+        if rng.random() < 0.35:
+            row_node, row_format = task_node, task_format
+            row_tris, row_mats = expected_tris, expected_mats
+            status = "ok"
+            sha = actual_hash
+            nbytes = actual_size
+        else:
+            row_node = task_node if rng.random() < 0.5 else rng.choice(nodes + ["Other"])
+            row_format = task_format if rng.random() < 0.5 else rng.choice(formats)
+            row_tris = expected_tris if rng.random() < 0.5 else rng.choice(counts + [1.5])
+            row_mats = expected_mats if rng.random() < 0.5 else rng.choice([1, 0, False, 2])
+            status = rng.choice(["ok", "failed"])
+            sha_mode = rng.choice(["match", "wrong", "omit", "bool"])
+            if sha_mode == "match":
+                sha = actual_hash
+            elif sha_mode == "wrong":
+                sha = "0" * 64
+            elif sha_mode == "bool":
+                sha = True
+            else:
+                sha = None
+            nbytes = actual_size if rng.random() < 0.5 else rng.choice([0, None, True, 4])
+        row = {
+            "status": status,
+            "node": row_node,
+            "format": row_format,
+            "triangles": row_tris,
+            "materials": row_mats,
+            "bytes": nbytes,
+        }
+        if sha is not None:
+            row["sha256"] = sha
+        task = {"node": task_node, "output": str(output), "format": task_format}
+        log = {plan.path_key(output): row}
+        action = plan.decide(task, log, expected_tris, expected_mats)
+        oracle = _identity_oracle(
+            exists, row, task_node, task_format, expected_tris, expected_mats, actual_size, actual_hash,
+        )
+        if oracle:
+            assert action == "verify"
+            saw_verify = True
+        else:
             assert action == "export"
-            assert action != "skip"
+            saw_export = True
+        assert action in ("verify", "export")
+    assert saw_verify and saw_export
+
+
+def test_read_log_keys_are_case_insensitive_paths(tmp_path):
+    folder = tmp_path / "Out"
+    folder.mkdir()
+    target = folder / "Box.MAX"
+    target.write_bytes(b"abcd")
+    log = tmp_path / "run.jsonl"
+    plan.append_log(log, {"output": str(target), "status": "failed", "bytes": 1})
+    other = str(folder / "box.max").replace("/", "\\")
+    plan.append_log(log, {"output": str(folder / "." / "box.max"), "status": "ok", "bytes": 4})
+    plan.append_log(log, {"output": other, "status": "ok", "bytes": 4})
+    found = plan.read_log(log)
+    key = plan.path_key(target)
+    assert key == plan.path_key(folder / "BOX.max")
+    assert key == plan.path_key(str(folder) + "/./Box.MAX")
+    assert list(found) == [key]
+    assert found[key]["status"] == "ok"
+    assert found[key]["bytes"] == 4
+
+
+def test_collision_reorder_and_subset_invalidate_receipts(tmp_path):
+    out_dir = str(tmp_path / "out").replace("\\", "/")
+    first = plan.plan_outputs(["A", "a"], out_dir, "max")
+    assert [Path(task["output"]).stem for task in first] == ["A", "a__2"]
+    log_path = tmp_path / "run.jsonl"
+    for task, triangles in zip(first, (12, 8)):
+        plan.append_log(log_path, _receipt(task, ("%s-%s" % (task["node"], triangles)).encode("utf-8"), triangles, 1))
+    found = plan.read_log(log_path)
+    again = plan.plan_outputs(["A", "a"], out_dir, "max")
+    assert plan.decide(again[0], found, 12, 1) == "verify"
+    assert plan.decide(again[1], found, 8, 1) == "verify"
+
+    reordered = plan.plan_outputs(["a", "A"], out_dir, "max")
+    assert [Path(task["output"]).stem for task in reordered] == ["a", "A__2"]
+    for task in reordered:
+        receipt = found.get(plan.path_key(task["output"]))
+        assert isinstance(receipt, dict)
+        assert receipt.get("node") != task["node"]
+        assert plan.decide(task, found, receipt["triangles"], receipt["materials"]) == "export"
+
+    subset = plan.plan_outputs(["a"], out_dir, "max")
+    receipt = found.get(plan.path_key(subset[0]["output"]))
+    assert receipt["node"] == "A"
+    assert plan.decide(subset[0], found, receipt["triangles"], receipt["materials"]) == "export"
+
+
+def test_preflight_rejects_source_alias(tmp_path):
+    folder = tmp_path / "scene"
+    folder.mkdir()
+    scene = folder / "probe_1.max"
+    scene.write_bytes(b"SCENE")
+    out_dir = str(folder).replace("\\", "/")
+    tasks = plan.plan_outputs(["probe_1"], out_dir, "max")
+    assert plan.path_key(tasks[0]["output"]) == plan.path_key(scene)
+    log_path = str(tmp_path / "logs" / "run.jsonl")
+    spellings = [
+        str(scene),
+        str(scene).replace("/", "\\"),
+        str(scene).replace("\\", "/"),
+        str(scene).swapcase(),
+        str(folder / "." / "probe_1.max"),
+    ]
+    for protected in spellings:
+        with pytest.raises(ValueError) as exc:
+            plan.preflight(tasks, [protected], log_path)
+        assert "probe_1.max" in str(exc.value).replace("\\", "/").casefold()
+
+    link = tmp_path / "probe_1_link.max"
+    try:
+        os.link(scene, link)
+    except OSError:
+        link = None
+    if link is not None:
+        with pytest.raises(ValueError) as exc:
+            plan.preflight(tasks, [str(link)], log_path)
+        assert "probe_1.max" in str(exc.value).replace("\\", "/")
+
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    other = elsewhere / "probe_1.max"
+    other.write_bytes(b"OTHER")
+    plan.preflight(tasks, [str(other), None, ""], log_path)
+
+    with pytest.raises(ValueError) as exc:
+        plan.preflight(tasks, [str(other)], tasks[0]["output"])
+    assert "probe_1.max" in str(exc.value).replace("\\", "/")
+
+    with pytest.raises(ValueError) as exc:
+        plan.preflight(tasks, [str(other)], str(other))
+    assert "probe_1.max" in str(exc.value).replace("\\", "/")
+
+    dup = [
+        {"node": "A", "output": str(tmp_path / "dup.max"), "format": "max"},
+        {"node": "B", "output": str(tmp_path / "DUP.max"), "format": "max"},
+    ]
+    with pytest.raises(ValueError):
+        plan.preflight(dup, [], log_path)
+
+
+def test_cli_refuses_output_over_scene(tmp_path, monkeypatch, capsys):
+    def boom(*_args, **_kwargs):
+        raise AssertionError("dcc_batch must not run")
+
+    monkeypatch.setattr(plan.subprocess, "run", boom)
+    folder = tmp_path / "src"
+    folder.mkdir()
+    scene = folder / "probe_1.max"
+    payload = b"SCENE-BYTES-224"
+    scene.write_bytes(payload)
+    code = plan.main([
+        "run", "--scene", str(scene), "--out", str(folder),
+        "--nodes", "probe_1", "--format", "max", "--dry-run",
+    ])
+    assert code == 2
+    assert scene.read_bytes() == payload
+    assert not (folder / "batch_export_request.json").exists()
+    assert not (folder / "batch_export.jsonl").exists()
+    err = capsys.readouterr().err
+    assert "probe_1.max" in err.replace("\\", "/")
 
 
 class FakeMxsArray:

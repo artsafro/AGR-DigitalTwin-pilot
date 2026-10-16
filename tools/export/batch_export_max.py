@@ -149,6 +149,44 @@ def _file_size(path) -> int:
         return 0
 
 
+def _open_scene_path():
+    """Path of the scene currently open in Max, when it has a file name."""
+    try:
+        name = rt.maxFileName
+    except Exception:
+        return None
+    if name is None:
+        return None
+    text = str(name)
+    if text == "" or text == "undefined" or text == "None":
+        return None
+    try:
+        folder = rt.maxFilePath
+    except Exception:
+        return None
+    if folder is None:
+        return None
+    return str(folder) + text
+
+
+def _protected_paths(req: dict) -> list:
+    protected = []
+    scene = req.get("scene")
+    if scene:
+        protected.append(scene)
+    loaded = _open_scene_path()
+    if loaded:
+        protected.append(loaded)
+    extra = req.get("protect", [])
+    if isinstance(extra, list):
+        protected.extend(extra)
+    for key in ("request_path", "result_path"):
+        value = req.get(key)
+        if value:
+            protected.append(value)
+    return protected
+
+
 def _readback(fmt: str, path: str):
     if fmt == "max":
         return _as_triple(rt.agrReadbackMax(path))
@@ -179,9 +217,7 @@ def _export_one(task: dict, log: dict, fmt: str):
             return row, True
         expected_tris = int(rt.agrTris(node))
         expected_mats = int(rt.agrLeafMats(rt.Array(node)))
-        action = plan.decide(task, log)
-        if action == "skip":
-            return None, False
+        action = plan.decide(task, log, expected_tris, expected_mats)
 
         def readback():
             stamp = time.perf_counter()
@@ -198,19 +234,17 @@ def _export_one(task: dict, log: dict, fmt: str):
                 timings["export"] = round(time.perf_counter() - stamp, 4)
 
         if action == "verify":
-            ok_flag, got_tris, got_mats = readback()
-            exists = os.path.exists(task["output"])
-            error = None if ok_flag else "readback failed"
-            status, _reason = plan.readback_verdict(
-                expected_tris, got_tris, expected_mats, got_mats, exists, error,
-            )
-            if status == "ok":
-                seconds = round(time.perf_counter() - started, 4)
-                row = plan.make_row(
-                    task, "ok", seconds, expected_tris, expected_mats, got_tris, got_mats,
-                    _file_size(task["output"]), error=None, resumed=True, timings=dict(timings),
+            try:
+                ok_flag, got_tris, got_mats = readback()
+                exists = os.path.exists(task["output"])
+                error = None if ok_flag else "readback failed"
+                status, _reason = plan.readback_verdict(
+                    expected_tris, got_tris, expected_mats, got_mats, exists, error,
                 )
-                return row, True
+            except Exception:
+                status = "failed"
+            if status == "ok":
+                return None, False
             timings.pop("readback", None)
 
         wrote = write()
@@ -229,9 +263,11 @@ def _export_one(task: dict, log: dict, fmt: str):
             expected_tris, got_tris, expected_mats, got_mats, exists, error,
         )
         seconds = round(time.perf_counter() - started, 4)
+        sha = plan.file_sha256(task["output"]) if status == "ok" else None
         row = plan.make_row(
             task, status, seconds, expected_tris, expected_mats, got_tris, got_mats,
             _file_size(task["output"]), error=reason, resumed=False, timings=dict(timings),
+            sha256=sha,
         )
         return row, True
     except Exception as exc:
@@ -250,6 +286,7 @@ def export_nodes(req: dict, log_path) -> list[dict]:
     if fmt == "fbx":
         set_fbx_preset()
     tasks = plan.plan_outputs(list(req["nodes"]), req["out_dir"], fmt)
+    plan.preflight(tasks, _protected_paths(req), "" if log_path is None else str(log_path))
     found = plan.read_log(log_path)
     parent = req["out_dir"]
     if parent:
@@ -277,7 +314,7 @@ def export_nodes(req: dict, log_path) -> list[dict]:
                             row["seconds"] = round(float(row["seconds"]) + timings["gc"], 4)
                 if log_it and row is not None:
                     plan.append_log(log_path, row)
-                    found[row["output"]] = row
+                    found[plan.path_key(row["output"])] = row
                     rows.append(row)
                 else:
                     skipped += 1

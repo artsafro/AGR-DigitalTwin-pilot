@@ -60,3 +60,39 @@ def test_benchmark_one_pass_and_fbx(tmp_path):
         rows = [row for row in bench["rows"] if row["route"] == route]
         assert rows, route
         assert all(row["ok"] is True for row in rows)
+
+
+@pytest.mark.skipif(
+    not MAX_BATCH.exists() or not DCC_BATCH.exists(),
+    reason="3ds Max 2026 or dcc_batch.py is not installed",
+)
+def test_export_safety_probe(tmp_path):
+    out = tmp_path / "safety"
+    env = os.environ.copy()
+    env["AGR_SAFETY_OUT"] = str(out)
+    env.pop("AGR_BATCH_EXPORT_REQUEST", None)
+    probe = ROOT / "tools" / "export" / "export_safety_probe_max.py"
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(DCC_BATCH),
+            "max",
+            "--file",
+            str(probe),
+            "--timeout",
+            "900",
+            "--out",
+            str(tmp_path / "dcc-safety.json"),
+        ],
+        env=env,
+        check=False,
+    )
+    safety_path = out / "safety.json"
+    assert safety_path.is_file(), completed.returncode
+    safety = json.loads(safety_path.read_text(encoding="utf-8"))
+    assert set(safety) == {
+        "valid_resume", "corrupt_same_size", "changed_source",
+        "collision_reorder", "source_alias", "combination",
+    }
+    for name, step in safety.items():
+        assert step["passed"] is True, (name, step)

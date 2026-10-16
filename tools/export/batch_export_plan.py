@@ -8,6 +8,7 @@ session itself lives in ``batch_export_max.py``.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -96,8 +97,29 @@ def plan_outputs(nodes: list[str], out_dir: str, fmt: str) -> list[dict]:
     return rows
 
 
+def path_key(path) -> str:
+    """Absolute, slash-separated, case-folded key. Windows aliases share one key."""
+    text = os.path.normcase(os.path.abspath(str(path))).replace("\\", "/")
+    return text.casefold()
+
+
+def file_sha256(path) -> str | None:
+    """Hex SHA-256 of the file bytes, or None when the file is missing or unreadable."""
+    try:
+        digest = hashlib.sha256()
+        with open(path, "rb") as handle:
+            while True:
+                chunk = handle.read(1024 * 1024)
+                if not chunk:
+                    break
+                digest.update(chunk)
+        return digest.hexdigest()
+    except OSError:
+        return None
+
+
 def read_log(path) -> dict[str, dict]:
-    """Last JSONL row per output. A missing file is an empty log; bad lines are skipped."""
+    """Last JSONL row per output path key. A missing file is an empty log; bad lines are skipped."""
     if not path or not os.path.exists(path):
         return {}
     found: dict[str, dict] = {}
@@ -111,7 +133,7 @@ def read_log(path) -> dict[str, dict]:
             except (ValueError, TypeError):
                 continue
             if isinstance(row, dict) and "output" in row:
-                found[row["output"]] = row
+                found[path_key(row["output"])] = row
     return found
 
 
@@ -127,20 +149,82 @@ def append_log(path, row: dict) -> None:
         os.fsync(handle.fileno())
 
 
-def decide(task: dict, log: dict) -> str:
-    """``skip`` only when the file exists, the log says ok, and the byte size matches."""
+def decide(task: dict, log: dict, expected_tris, expected_mats) -> str:
+    """``verify`` only when the receipt is this node, these counts, and these file bytes.
+
+    A skip is not decided here. The Max job skips only after ``verify`` and a fresh
+    readback of the current file against the live node.
+    """
     output = task["output"]
-    if not os.path.exists(output):
+    try:
+        exists = os.path.exists(output)
+    except OSError:
         return "export"
-    row = log.get(output)
-    if isinstance(row, dict) and row.get("status") == "ok":
-        try:
-            size = os.path.getsize(output)
-        except OSError:
-            return "verify"
-        if row.get("bytes") == size:
-            return "skip"
+    if not exists:
+        return "export"
+    row = log.get(path_key(output))
+    if not isinstance(row, dict) or row.get("status") != "ok":
+        return "export"
+    if row.get("node") != task.get("node") or row.get("format") != task.get("format"):
+        return "export"
+    if not _is_int(expected_tris) or not _is_int(expected_mats):
+        return "export"
+    if not _is_int(row.get("triangles")) or row.get("triangles") != expected_tris:
+        return "export"
+    if not _is_int(row.get("materials")) or row.get("materials") != expected_mats:
+        return "export"
+    digest = row.get("sha256")
+    actual = file_sha256(output)
+    if not isinstance(digest, str) or actual is None or digest != actual:
+        return "export"
+    try:
+        size = os.path.getsize(output)
+    except OSError:
+        return "export"
+    if row.get("bytes") != size:
+        return "export"
     return "verify"
+
+
+def preflight(tasks, protected: list[str], log_path: str) -> None:
+    """Raise ValueError before any write when an output could replace a protected file or the log."""
+    seen: dict[str, str] = {}
+    outputs: list[str] = []
+    for task in tasks:
+        output = task["output"]
+        key = path_key(output)
+        if key in seen:
+            raise ValueError("colliding path: %s" % output)
+        seen[key] = output
+        outputs.append(output)
+    protected_paths: list[str] = []
+    for item in protected:
+        if item is None:
+            continue
+        text = str(item)
+        if text == "":
+            continue
+        protected_paths.append(text)
+    log_text = "" if log_path is None else str(log_path)
+    log_key = path_key(log_text) if log_text else None
+    for output in outputs:
+        out_key = path_key(output)
+        if log_key is not None and out_key == log_key:
+            raise ValueError("colliding path: %s" % output)
+        for prot in protected_paths:
+            if out_key == path_key(prot):
+                raise ValueError("colliding path: %s" % output)
+            if os.path.exists(output) and os.path.exists(prot):
+                try:
+                    same = os.path.samefile(output, prot)
+                except OSError:
+                    same = False
+                if same:
+                    raise ValueError("colliding path: %s" % output)
+    if log_key is not None:
+        for prot in protected_paths:
+            if log_key == path_key(prot):
+                raise ValueError("colliding path: %s" % log_text)
 
 
 def _is_int(value) -> bool:
@@ -166,7 +250,8 @@ def readback_verdict(expected_tris, got_tris, expected_mats, got_mats, exists, e
 
 
 def make_row(task, status, seconds, triangles, materials, readback_triangles,
-             readback_materials, bytes_, error=None, resumed=False, timings=None) -> dict:
+             readback_materials, bytes_, error=None, resumed=False, timings=None,
+             sha256=None) -> dict:
     """One per-object JSONL row."""
     return {
         "node": task["node"],
@@ -179,6 +264,7 @@ def make_row(task, status, seconds, triangles, materials, readback_triangles,
         "readback_triangles": readback_triangles,
         "readback_materials": readback_materials,
         "bytes": bytes_,
+        "sha256": sha256,
         "error": error,
         "resumed": resumed,
         "timings": {} if timings is None else timings,
@@ -230,10 +316,15 @@ def _validate_request(data: dict) -> dict:
     scene = data.get("scene", None)
     if scene is not None and not isinstance(scene, str):
         raise ValueError("scene must be a string or null")
+    for key in ("request_path", "result_path"):
+        if key not in data or data[key] is None:
+            continue
+        if not isinstance(data[key], str):
+            raise ValueError("%s must be a string or null" % key)
     return data
 
 
-def write_request(path, scene, nodes, out_dir, fmt, log_path) -> None:
+def write_request(path, scene, nodes, out_dir, fmt, log_path, request_path=None, result_path=None) -> None:
     """Write the JSON request the headless Max job reads."""
     payload = {
         "scene": scene,
@@ -242,6 +333,10 @@ def write_request(path, scene, nodes, out_dir, fmt, log_path) -> None:
         "format": fmt,
         "log_path": log_path,
     }
+    if request_path is not None:
+        payload["request_path"] = request_path
+    if result_path is not None:
+        payload["result_path"] = result_path
     _validate_request(payload)
     parent = os.path.dirname(path)
     if parent:
@@ -327,16 +422,33 @@ def main(argv=None) -> int:
         return 2
     scene = _slash(args.scene) if args.scene else None
     request_path = str(Path(log_path).with_name("batch_export_request.json")).replace("\\", "/")
-    write_request(request_path, scene, nodes, out_dir, args.format, log_path)
+    result_path = str(Path(log_path).with_name("dcc_batch_result.json")).replace("\\", "/")
+    try:
+        preflight(tasks, [scene, request_path, result_path], log_path)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+    write_request(
+        request_path, scene, nodes, out_dir, args.format, log_path,
+        request_path=request_path, result_path=result_path,
+    )
     if args.dry_run:
         found = read_log(log_path)
         print("DRY-RUN")
         for task in tasks:
-            print("%s\t%s\t%s" % (decide(task, found), task["node"], task["output"]))
+            row = found.get(path_key(task["output"]))
+            if isinstance(row, dict):
+                expected_tris = row.get("triangles")
+                expected_mats = row.get("materials")
+            else:
+                expected_tris = None
+                expected_mats = None
+            print("%s\t%s\t%s" % (
+                decide(task, found, expected_tris, expected_mats), task["node"], task["output"],
+            ))
         return 0
     dcc = os.environ.get("AGR_DCC_BATCH", _DEFAULT_DCC)
     job = Path(__file__).resolve().with_name("batch_export_max.py")
-    result_path = str(Path(log_path).with_name("dcc_batch_result.json"))
     cmd = [
         sys.executable,
         dcc,
