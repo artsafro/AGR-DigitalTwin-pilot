@@ -875,74 +875,38 @@ def _proj_bins(coord, origin, extent, bins):
     return np.clip(np.floor(x).astype(np.int64), 0, bins - 1)
 
 
-def _enumerate_bins(lo, hi):
-    """(cell_s, cell_t, row) for every integer cell in the inclusive ranges. Vectorised, no Python loop."""
-    counts = ((hi[0] - lo[0] + 1) * (hi[1] - lo[1] + 1)).astype(np.int64)
-    total = int(counts.sum())
-    if total == 0:
-        empty = np.zeros(0, dtype=np.int64)
-        return empty, empty, empty
-    chosen = np.repeat(np.arange(len(counts)), counts)
-    base = np.repeat(np.cumsum(counts) - counts, counts)
-    local = np.arange(total) - base
-    span_t = np.repeat(hi[1] - lo[1] + 1, counts)
-    di = local // span_t
-    cell_s = np.repeat(lo[0], counts) + di
-    cell_t = np.repeat(lo[1], counts) + (local - di * span_t)
-    return cell_s, cell_t, chosen
+def _enumerate_bins(lo, hi, s, t, origin_s, extent_s, bins, grow_s, grow_t):
+    """Projected triangle row spans, conservatively padded for the legacy narrow phase.
+
+    Return (row, first column, last column, triangle), not every cell of a bbox.
+    The caller bounds the number of rows before calling. Horizontal edges and
+    vertices in a strip contribute too; padding retains tolerance/roundoff hits.
+    """
+    counts = hi - lo + 1
+    chosen = np.repeat(np.arange(len(s)), counts)
+    row = np.repeat(lo, counts) + np.arange(int(counts.sum())) - np.repeat(np.cumsum(counts) - counts, counts)
+    left = origin_s + row / bins * extent_s - grow_s[chosen]
+    right = origin_s + (row + 1) / bins * extent_s + grow_s[chosen]
+    low = np.full(len(row), np.inf)
+    high = np.full(len(row), -np.inf)
+    for i in range(3):
+        j = (i + 1) % 3
+        x, y = s[chosen, i], t[chosen, i]
+        dx, dy = s[chosen, j] - x, t[chosen, j] - y
+        vertex = (x >= left) & (x <= right)
+        low = np.minimum(low, np.where(vertex, y, np.inf))
+        high = np.maximum(high, np.where(vertex, y, -np.inf))
+        for edge in (left, right):
+            f = np.divide(edge - x, dx, out=np.zeros_like(x), where=dx != 0)
+            cross = (dx != 0) & (f >= 0) & (f <= 1)
+            value = y + f * dy
+            low = np.minimum(low, np.where(cross, value, np.inf))
+            high = np.maximum(high, np.where(cross, value, -np.inf))
+    return row, low - grow_t[chosen], high + grow_t[chosen], chosen
 
 
-def _first_back_hits(s, t, depth, unit_dot, ray_s, ray_t):
-    """First hit of each ray. Returns ``(back, judged)`` — local indices into ``s``.
-
-    ``s``, ``t``, ``depth`` are ``(n, 3)`` projected corners of the triangles kept for this direction;
-    ``unit_dot`` is ``(n,)`` (normal · ray). ``ray_s``, ``ray_t`` are ray points in that plane. Candidates
-    come from a capped 2D bin grid: each triangle lists the bins its projected bbox covers (plus the bin of
-    its own centroid), rays are binned the same way, and the join is exact barycentric. The winning hit on
-    a ray is the smallest depth; equal depth keeps the smaller normal dot (the front face). A back hit has
-    ``unit_dot > 0``. ``judged`` is every triangle that wins at least one ray."""
-    n = len(s)
-    empty = np.zeros(0, dtype=np.int64)
-    if n == 0 or len(ray_s) == 0:
-        return empty, empty
-    bins = _ORI_BINS
-    s_min, s_max = s.min(1), s.max(1)
-    t_min, t_max = t.min(1), t.max(1)
-    lo_s = min(float(s_min.min()), float(ray_s.min()))
-    hi_s = max(float(s_max.max()), float(ray_s.max()))
-    lo_t = min(float(t_min.min()), float(ray_t.min()))
-    hi_t = max(float(t_max.max()), float(ray_t.max()))
-    pad_s = max(hi_s - lo_s, 1e-9) * 1e-9 + 1e-9
-    pad_t = max(hi_t - lo_t, 1e-9) * 1e-9 + 1e-9
-    origin_s, origin_t = lo_s - pad_s, lo_t - pad_t
-    extent_s, extent_t = (hi_s - lo_s) + 2.0 * pad_s, (hi_t - lo_t) + 2.0 * pad_t
-    grow_s = np.maximum(s_max - s_min, 1e-12) * 1e-8 + 1e-12
-    grow_t = np.maximum(t_max - t_min, 1e-12) * 1e-8 + 1e-12
-    bs_lo = _proj_bins(s_min - grow_s, origin_s, extent_s, bins)
-    bs_hi = _proj_bins(s_max + grow_s, origin_s, extent_s, bins)
-    bt_lo = _proj_bins(t_min - grow_t, origin_t, extent_t, bins)
-    bt_hi = _proj_bins(t_max + grow_t, origin_t, extent_t, bins)
-    # the centroid ray is strictly inside its triangle, so that bin is always one of the candidates
-    cb_s = _proj_bins(s.mean(1), origin_s, extent_s, bins)
-    cb_t = _proj_bins(t.mean(1), origin_t, extent_t, bins)
-    bs_lo, bs_hi = np.minimum(bs_lo, cb_s), np.maximum(bs_hi, cb_s)
-    bt_lo, bt_hi = np.minimum(bt_lo, cb_t), np.maximum(bt_hi, cb_t)
-    bin_s, bin_t, chosen = _enumerate_bins((bs_lo, bt_lo), (bs_hi, bt_hi))
-    if len(chosen) == 0:
-        return empty, empty
-    tri_bin = bin_s * bins + bin_t
-    ray_bin = _proj_bins(ray_s, origin_s, extent_s, bins) * bins + _proj_bins(ray_t, origin_t, extent_t, bins)
-    order = np.argsort(ray_bin)
-    uniq, start, rcount = np.unique(ray_bin[order], return_index=True, return_counts=True)
-    pos = np.searchsorted(uniq, tri_bin)
-    pos_c = np.minimum(pos, len(uniq) - 1)
-    valid = (pos < len(uniq)) & (uniq[pos_c] == tri_bin)
-    if not valid.any():
-        return empty, empty
-    n_hit = rcount[pos[valid]]
-    tri_idx = np.repeat(chosen[valid], n_hit)
-    pair_base = np.repeat(np.cumsum(n_hit) - n_hit, n_hit)
-    ray_idx = order[np.repeat(start[pos[valid]], n_hit) + (np.arange(int(n_hit.sum())) - pair_base)]
+def _orientation_pair_hits(s, t, depth, unit_dot, ray_s, ray_t, tri_idx, ray_idx):
+    """Unchanged barycentric/depth narrow phase on one bounded pair batch."""
     ps = ray_s[ray_idx] - s[tri_idx, 0]
     pt = ray_t[ray_idx] - t[tri_idx, 0]
     e1s, e1t = s[tri_idx, 1] - s[tri_idx, 0], t[tri_idx, 1] - t[tri_idx, 0]
@@ -958,21 +922,121 @@ def _first_back_hits(s, t, depth, unit_dot, ray_s, ray_t):
     bv = (dot00 * dot12 - dot01 * dot02) * inv
     inside = (np.abs(den) > 1e-20) & (bu >= _ORI_BARY) & (bv >= _ORI_BARY) & (bu + bv <= 1.0 - _ORI_BARY)
     if not inside.any():
-        return empty, empty
+        return None
     picked = tri_idx[inside]
     bw, bv_ = bu[inside], bv[inside]
     hit_depth = (1.0 - bw - bv_) * depth[picked, 0] + bw * depth[picked, 1] + bv_ * depth[picked, 2]
     hit_dot = unit_dot[picked]
     hit_ray = ray_idx[inside]
-    # smallest depth; a shared edge (equal depth, within float noise) keeps the front face
-    ranked = np.lexsort((hit_dot, np.round(hit_depth / _ORI_DEPTH), hit_ray))
-    ranked_ray = hit_ray[ranked]
-    first = np.empty(len(ranked), dtype=bool)
-    first[0] = True
-    first[1:] = ranked_ray[1:] != ranked_ray[:-1]
-    winners = picked[ranked][first]
-    dots = hit_dot[ranked][first]
-    return winners[dots > 0], winners
+    return picked, hit_depth, hit_dot, hit_ray
+
+
+# Row registrations and triangle/ray pairs have independent hard working-set bounds.
+_ORI_ROWS = 65536
+_ORI_PAIRS = 131072
+
+
+def _first_back_hits(s, t, depth, unit_dot, ray_s, ray_t):
+    """Legacy first hits, using adaptive triangle row spans as a candidate filter.
+
+    Rays, barycentric arithmetic and rounded-depth/dot ranking are unchanged.
+    Exact ties retain the first (lowest triangle index) legacy candidate. Pair
+    expansion is chunked even when all rays and triangles occupy a single cell.
+    Ill-conditioned triangles use the legacy bbox cells, rather than risk pruning
+    floating-point barycentric hits outside the mathematical triangle.
+    """
+    n, nr = len(s), len(ray_s)
+    empty = np.zeros(0, dtype=np.int64)
+    if n == 0 or nr == 0:
+        return empty, empty
+    bins = int(np.clip(np.ceil(4 * np.sqrt(n + nr)), _ORI_BINS, 1024))
+    s_min, s_max = s.min(1), s.max(1)
+    t_min, t_max = t.min(1), t.max(1)
+    lo_s = min(float(s_min.min()), float(ray_s.min()))
+    hi_s = max(float(s_max.max()), float(ray_s.max()))
+    lo_t = min(float(t_min.min()), float(ray_t.min()))
+    hi_t = max(float(t_max.max()), float(ray_t.max()))
+    pad_s = max(hi_s - lo_s, 1e-9) * 1e-9 + 1e-9
+    pad_t = max(hi_t - lo_t, 1e-9) * 1e-9 + 1e-9
+    origin_s, origin_t = lo_s - pad_s, lo_t - pad_t
+    extent_s, extent_t = hi_s - lo_s + 2 * pad_s, hi_t - lo_t + 2 * pad_t
+    # Retain the exact legacy candidate envelope as well as its stable tie order.
+    gs = np.maximum(s_max - s_min, 1e-12) * 1e-8 + 1e-12
+    gt = np.maximum(t_max - t_min, 1e-12) * 1e-8 + 1e-12
+    cb_s = _proj_bins(s.mean(1), origin_s, extent_s, _ORI_BINS)
+    cb_t = _proj_bins(t.mean(1), origin_t, extent_t, _ORI_BINS)
+    old_lo_s = np.minimum(_proj_bins(s_min - gs, origin_s, extent_s, _ORI_BINS), cb_s)
+    old_hi_s = np.maximum(_proj_bins(s_max + gs, origin_s, extent_s, _ORI_BINS), cb_s)
+    old_lo_t = np.minimum(_proj_bins(t_min - gt, origin_t, extent_t, _ORI_BINS), cb_t)
+    old_hi_t = np.maximum(_proj_bins(t_max + gt, origin_t, extent_t, _ORI_BINS), cb_t)
+    old_ray_s = _proj_bins(ray_s, origin_s, extent_s, _ORI_BINS)
+    old_ray_t = _proj_bins(ray_t, origin_t, extent_t, _ORI_BINS)
+    e1s, e1t = s[:, 1] - s[:, 0], t[:, 1] - t[:, 0]
+    e2s, e2t = s[:, 2] - s[:, 0], t[:, 2] - t[:, 0]
+    d00, d01, d11 = e1s * e1s + e1t * e1t, e1s * e2s + e1t * e2t, e2s * e2s + e2t * e2t
+    den = d00 * d11 - d01 * d01
+    error = 256 * np.finfo(float).eps * np.divide(
+        d00 * d11 + d01 * d01, np.abs(den), out=np.full(n, np.inf), where=np.abs(den) > 1e-20)
+    fallback = error > 1e-3
+    grow_s = np.minimum(error, 1) * extent_s + gs
+    grow_t = np.minimum(error, 1) * extent_t + gt
+    bs_lo = _proj_bins(s_min - grow_s, origin_s, extent_s, bins)
+    bs_hi = _proj_bins(s_max + grow_s, origin_s, extent_s, bins)
+    # A fallback must cover whole old cells, not just a more finely binned bbox.
+    bs_lo[fallback] = (old_lo_s[fallback] * bins // _ORI_BINS)
+    bs_hi[fallback] = np.minimum(bins - 1, (old_hi_s[fallback] + 1) * bins // _ORI_BINS)
+    ray_bin = _proj_bins(ray_s, origin_s, extent_s, bins) * bins + _proj_bins(ray_t, origin_t, extent_t, bins)
+    order = np.argsort(ray_bin)
+    sorted_bin = ray_bin[order]
+    best_depth = np.full(nr, np.inf)
+    best_dot = np.full(nr, np.inf)
+    best_tri = np.full(nr, n, dtype=np.int64)
+    row_end = np.cumsum(bs_hi - bs_lo + 1)
+    begin = 0
+    while begin < n:
+        prior = int(row_end[begin - 1]) if begin else 0
+        end = max(begin + 1, int(np.searchsorted(row_end, prior + _ORI_ROWS, side="right")))
+        row, low, high, chosen = _enumerate_bins(
+            bs_lo[begin:end], bs_hi[begin:end], s[begin:end], t[begin:end],
+            origin_s, extent_s, bins, grow_s[begin:end], grow_t[begin:end])
+        chosen += begin
+        fb = fallback[chosen]
+        low[fb] = origin_t + old_lo_t[chosen[fb]] / _ORI_BINS * extent_t
+        high[fb] = origin_t + (old_hi_t[chosen[fb]] + 1) / _ORI_BINS * extent_t
+        valid = low <= high
+        row, chosen, low, high = row[valid], chosen[valid], low[valid], high[valid]
+        first = np.searchsorted(sorted_bin, row * bins + _proj_bins(low, origin_t, extent_t, bins))
+        last = np.searchsorted(sorted_bin, row * bins + _proj_bins(high, origin_t, extent_t, bins), side="right")
+        counts = last - first
+        valid = counts > 0
+        chosen, first, counts = chosen[valid], first[valid], counts[valid]
+        cumulative = np.cumsum(counts)
+        total = int(cumulative[-1]) if len(cumulative) else 0
+        for offset in range(0, total, _ORI_PAIRS):
+            positions = np.arange(offset, min(offset + _ORI_PAIRS, total))
+            span = np.searchsorted(cumulative, positions, side="right")
+            base = cumulative[span] - counts[span]
+            tri_idx = chosen[span]
+            ray_idx = order[first[span] + positions - base]
+            valid = ((old_ray_s[ray_idx] >= old_lo_s[tri_idx]) & (old_ray_s[ray_idx] <= old_hi_s[tri_idx])
+                     & (old_ray_t[ray_idx] >= old_lo_t[tri_idx]) & (old_ray_t[ray_idx] <= old_hi_t[tri_idx]))
+            hits = _orientation_pair_hits(s, t, depth, unit_dot, ray_s, ray_t, tri_idx[valid], ray_idx[valid])
+            if hits is None:
+                continue
+            picked, hit_depth, hit_dot, hit_ray = hits
+            rounded = np.round(hit_depth / _ORI_DEPTH)
+            ranked = np.lexsort((picked, hit_dot, rounded, hit_ray))
+            rr = hit_ray[ranked]
+            take = np.r_[True, rr[1:] != rr[:-1]]
+            k = ranked[take]
+            r, d, dot, tr = hit_ray[k], rounded[k], hit_dot[k], picked[k]
+            better = ((d < best_depth[r]) | ((d == best_depth[r]) & ((dot < best_dot[r])
+                      | ((dot == best_dot[r]) & (tr < best_tri[r])))))
+            r = r[better]
+            best_depth[r], best_dot[r], best_tri[r] = d[better], dot[better], tr[better]
+        begin = end
+    judged = best_tri < n
+    return best_tri[judged & (best_dot > 0)], best_tri[judged]
 
 
 def _orientation_hits(model: Soup):
