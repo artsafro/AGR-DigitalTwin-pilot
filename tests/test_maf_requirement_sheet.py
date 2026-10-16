@@ -26,7 +26,7 @@ def sheet_contract(text):
 # Independent transcription of the issue's decisions; these are documentation probes only.
 REQUIRED = {
     4: ("[D094]", "overall dimensions", "<= 10 cm", "specification", "not a scale change"),
-    20: ("[D096]", "below the Ground surface", "not 'open polygons'", "visible holes remain defects", "C35"),
+    20: ("[D096]", "below the Ground surface", "not 'open polygons'", "visible holes remain defects", "C38"),
     23: ("[D095]", "lowest point raised by 10 cm", "projected onto the Ground surface", "sinks 10 cm", "bottom faces are deleted", "not the final shared FBX pivot"),
 }
 
@@ -55,7 +55,7 @@ def test_maf_decision_log_and_conflict():
         line = next((line for line in log.splitlines() if line.startswith(f"| {decision} |")), "")
         assert "2026-10-15" in line and quote in line and "Artem" in line
     conflicts = (ROOT / "docs/domain/conflicts.md").read_text(encoding="utf-8")
-    assert "35. MAF" in conflicts
+    assert "38. MAF" in conflicts
     assert "Decided 2026-10-15 [D096] (user)" in conflicts
 
 
