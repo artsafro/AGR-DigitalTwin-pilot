@@ -8,6 +8,8 @@ from test_area_requirement_sheet import contract, find_gap_lines
 
 ROOT = Path(__file__).resolve().parents[1]
 SHEET = ROOT / "docs/domain/areas/derivation.md"
+CONFLICTS = ROOT / "docs/domain/conflicts.md"
+VALIDATION = ROOT / "docs/domain/validation.md"
 
 REQUIRED = {
     "DER-01": ("[D010]", "reg p.7 §3.6", "reg p.28 §3.9", "<= 150 000", "<= 1 000 000", "excluding UCX", "review"),
@@ -126,3 +128,40 @@ def test_derivation_generated_gap_and_evidence_probes():
           f"quote omissions: {len(quote_lines)}/{len(quote_lines)} rejected; "
           f"PNG links: {len(suffixes)}/{len(suffixes)} rejected; "
           f"PNG artifacts: {len(suffixes)}/{len(suffixes)} rejected")
+
+
+def test_derivation_decided_rotation_conflict_and_v004_documentation():
+    assert CONFLICTS.is_file(), "docs/domain/conflicts.md must exist"
+    conflicts_text = CONFLICTS.read_text(encoding="utf-8")
+    assert "npm-vpm-plan-rotation-after-reset" in conflicts_text, (
+        "docs/domain/conflicts.md must define anchor #npm-vpm-plan-rotation-after-reset"
+    )
+    for phrase in ("Decided 2026-10-16", "[D103]", "reg p.10", "reg p.32"):
+        assert phrase in conflicts_text, f"docs/domain/conflicts.md must contain '{phrase}'"
+    quote1 = (
+        "Мы ставим нпм по двг, но это в конце, сначала мы моделируем в x y мировых "
+        "чтобы все ровно было и потом в самом конце подгружаем контуры из двг "
+        "выставляем нпм по контуру и делаем поворот как у контура, потом делаем такой же на впм"
+    )
+    quote2 = (
+        "Поворот 0, это когда ты повернул геометрию а потом скинул трансформации и поворот стал 0"
+    )
+    assert quote1 in conflicts_text, "docs/domain/conflicts.md must include exact user quote 1"
+    assert quote2 in conflicts_text, "docs/domain/conflicts.md must include exact user quote 2"
+
+    rows = contract(sheet_text())
+    indexed = {row[0].split()[0]: row for row in rows}
+    assert "DER-07" in indexed, "DER-07 row must exist in derivation sheet"
+    der07 = indexed["DER-07"]
+    assert "rotation 0" in der07[2], "DER-07 NPM profile cell must explicitly specify 'rotation 0'"
+    assert "rotation 0" in der07[3], "DER-07 VPM profile cell must explicitly specify 'rotation 0'"
+    assert "#npm-vpm-plan-rotation-after-reset" in " | ".join(der07), (
+        "DER-07 must link to anchor #npm-vpm-plan-rotation-after-reset"
+    )
+
+    assert VALIDATION.is_file(), "docs/domain/validation.md must exist"
+    val_text = VALIDATION.read_text(encoding="utf-8")
+    v004_row = next((line for line in val_text.splitlines() if line.startswith("| V004 |")), None)
+    assert v004_row is not None, "V004 row missing from docs/domain/validation.md"
+    for phrase in ("NPM", "VPM", "reset after placement", "geometry orientation not checked"):
+        assert phrase in v004_row, f"docs/domain/validation.md V004 row must contain '{phrase}'"
