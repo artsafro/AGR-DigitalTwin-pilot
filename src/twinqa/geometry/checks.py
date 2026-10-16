@@ -1069,6 +1069,351 @@ def check_orientation(model: Soup, tol: dict) -> dict:
         "unjudged_meshes": unjudged, "note": note})
 
 
+# |n_z| / |n| at least this close to 1: the face is horizontal. Issue #56.
+HORIZONTAL_COS_TOL = 1e-6
+# a hit this far (m) above the ray is a real crossing; closer is the face itself or a coplanar neighbour
+_HOR_DEPTH = 1e-6
+# weld for joining meshes into volumes when tol has none: the Spec default (weld_m 0 overflows the weld grid)
+_HOR_WELD_M = Spec.model_fields["weld_m"].default
+_HOR_NOTE = (
+    "per welded component (a closed component alone; open components independent except contained coplanar caps (<=0.01 m); "
+    "decor apart; render-mesh partition ignored): an upward ray from the centroid of every "
+    "horizontal face counts crossings of that context above it; an odd count means an upward "
+    "face is inside, an even count means a downward face is inside; rays from below are not "
+    "needed because the body top is closed")
+
+
+def _upward_crossings(tri: np.ndarray, ray: np.ndarray, tri_label: np.ndarray | None = None,
+                      ray_label: np.ndarray | None = None) -> np.ndarray:
+    """Distinct +Z crossings of each ray with ``tri`` (T, 3, 3). ``ray`` is (R, 3).
+
+    With ``tri_label`` (T,) and ``ray_label`` (R,), a ray counts only triangles of its own label
+    (one pass for every context of ``check_horizontal_faces``).
+
+    Point-in-triangle is barycentric in XY (``_ORI_BARY``), so a shared edge counts twice; heights that
+    round to the same multiple of ``_HOR_DEPTH`` are one crossing. Hits at or below the ray origin plus
+    ``_HOR_DEPTH`` are dropped. Same 2D bin join as ``_first_back_hits``."""
+    n_ray = len(ray)
+    counts = np.zeros(n_ray, dtype=int)
+    if len(tri) == 0 or n_ray == 0:
+        return counts
+    bins = _ORI_BINS
+    s, t, depth = tri[:, :, 0], tri[:, :, 1], tri[:, :, 2]
+    ray_s, ray_t = ray[:, 0], ray[:, 1]
+    s_min, s_max = s.min(1), s.max(1)
+    t_min, t_max = t.min(1), t.max(1)
+    lo_s = min(float(s_min.min()), float(ray_s.min()))
+    hi_s = max(float(s_max.max()), float(ray_s.max()))
+    lo_t = min(float(t_min.min()), float(ray_t.min()))
+    hi_t = max(float(t_max.max()), float(ray_t.max()))
+    pad_s = max(hi_s - lo_s, 1e-9) * 1e-9 + 1e-9
+    pad_t = max(hi_t - lo_t, 1e-9) * 1e-9 + 1e-9
+    origin_s, origin_t = lo_s - pad_s, lo_t - pad_t
+    extent_s, extent_t = (hi_s - lo_s) + 2.0 * pad_s, (hi_t - lo_t) + 2.0 * pad_t
+    grow_s = np.maximum(s_max - s_min, 1e-12) * 1e-8 + 1e-12
+    grow_t = np.maximum(t_max - t_min, 1e-12) * 1e-8 + 1e-12
+    bs_lo = _proj_bins(s_min - grow_s, origin_s, extent_s, bins)
+    bs_hi = _proj_bins(s_max + grow_s, origin_s, extent_s, bins)
+    bt_lo = _proj_bins(t_min - grow_t, origin_t, extent_t, bins)
+    bt_hi = _proj_bins(t_max + grow_t, origin_t, extent_t, bins)
+    cb_s = _proj_bins(s.mean(1), origin_s, extent_s, bins)
+    cb_t = _proj_bins(t.mean(1), origin_t, extent_t, bins)
+    bs_lo, bs_hi = np.minimum(bs_lo, cb_s), np.maximum(bs_hi, cb_s)
+    bt_lo, bt_hi = np.minimum(bt_lo, cb_t), np.maximum(bt_hi, cb_t)
+    bin_s, bin_t, chosen = _enumerate_bins((bs_lo, bt_lo), (bs_hi, bt_hi))
+    if len(chosen) == 0:
+        return counts
+    tri_bin = bin_s * bins + bin_t
+    ray_bin = _proj_bins(ray_s, origin_s, extent_s, bins) * bins + _proj_bins(ray_t, origin_t, extent_t, bins)
+    order = np.argsort(ray_bin)
+    uniq, start, rcount = np.unique(ray_bin[order], return_index=True, return_counts=True)
+    pos = np.searchsorted(uniq, tri_bin)
+    pos_c = np.minimum(pos, len(uniq) - 1)
+    valid = (pos < len(uniq)) & (uniq[pos_c] == tri_bin)
+    if not valid.any():
+        return counts
+    n_hit = rcount[pos[valid]]
+    tri_idx = np.repeat(chosen[valid], n_hit)
+    pair_base = np.repeat(np.cumsum(n_hit) - n_hit, n_hit)
+    ray_idx = order[np.repeat(start[pos[valid]], n_hit) + (np.arange(int(n_hit.sum())) - pair_base)]
+    ps = ray_s[ray_idx] - s[tri_idx, 0]
+    pt = ray_t[ray_idx] - t[tri_idx, 0]
+    e1s, e1t = s[tri_idx, 1] - s[tri_idx, 0], t[tri_idx, 1] - t[tri_idx, 0]
+    e2s, e2t = s[tri_idx, 2] - s[tri_idx, 0], t[tri_idx, 2] - t[tri_idx, 0]
+    dot00 = e1s * e1s + e1t * e1t
+    dot01 = e1s * e2s + e1t * e2t
+    dot11 = e2s * e2s + e2t * e2t
+    dot02 = e1s * ps + e1t * pt
+    dot12 = e2s * ps + e2t * pt
+    den = dot00 * dot11 - dot01 * dot01
+    inv = np.divide(1.0, den, out=np.zeros_like(den), where=np.abs(den) > 1e-20)
+    bu = (dot11 * dot02 - dot01 * dot12) * inv
+    bv = (dot00 * dot12 - dot01 * dot02) * inv
+    inside = (np.abs(den) > 1e-20) & (bu >= _ORI_BARY) & (bv >= _ORI_BARY) & (bu + bv <= 1.0 - _ORI_BARY)
+    if tri_label is not None and ray_label is not None:
+        inside &= np.asarray(tri_label)[tri_idx] == np.asarray(ray_label)[ray_idx]
+    if not inside.any():
+        return counts
+    picked = tri_idx[inside]
+    bu_i, bv_i = bu[inside], bv[inside]
+    hit_z = (1.0 - bu_i - bv_i) * depth[picked, 0] + bu_i * depth[picked, 1] + bv_i * depth[picked, 2]
+    hit_ray = ray_idx[inside]
+    above = hit_z > ray[hit_ray, 2] + _HOR_DEPTH
+    if not above.any():
+        return counts
+    hit_z, hit_ray = hit_z[above], hit_ray[above]
+    rounded = np.round(hit_z / _HOR_DEPTH).astype(np.int64)
+    order = np.lexsort((rounded, hit_ray))
+    hit_ray, rounded = hit_ray[order], rounded[order]
+    keep = np.empty(len(hit_ray), dtype=bool)
+    keep[0] = True
+    keep[1:] = (hit_ray[1:] != hit_ray[:-1]) | (rounded[1:] != rounded[:-1])
+    np.add.at(counts, hit_ray[keep], 1)
+    return counts
+
+
+def _side_contexts(tri_idx: np.ndarray, triangles: np.ndarray, vertices: np.ndarray,
+                   weld_m: float) -> list[np.ndarray]:
+    """Closed components alone; open components use the bounded cap-join contract.
+
+    ``tri_idx`` are global triangle indices. Welding uses only vertices this side references,
+    so the other side cannot join it. A component is closed when every non-degenerate welded
+    edge is used an even number of times (``edge_uses``)."""
+    if len(tri_idx) == 0:
+        return []
+    tris = np.asarray(triangles, dtype=np.int64)[tri_idx]
+    used = np.unique(tris.reshape(-1))
+    remap = np.empty(len(vertices), dtype=np.int64)
+    remap[used] = np.arange(len(used), dtype=np.int64)
+    local = remap[tris]
+    welded = weld(vertices[used], weld_m)
+    labels = parts(local, welded)
+    edges, counts, sides = edge_uses(local, welded)
+    odd = (edges[:, 0] != edges[:, 1]) & ((counts & 1) == 1)
+    uses_odd = odd[sides].any(axis=1)
+    order = np.argsort(labels, kind="mergesort")
+    labels_s = labels[order]
+    tri_s = tri_idx[order]
+    odd_s = uses_odd[order]
+    _uniq, start, count = np.unique(labels_s, return_index=True, return_counts=True)
+    opened = np.zeros(len(start), dtype=np.int32)
+    np.add.at(opened, np.repeat(np.arange(len(start), dtype=np.int32), count), odd_s.astype(np.int32))
+    closed = []
+    open_parts = []
+    for s, c, is_open in zip(start, count, opened):
+        chunk = tri_s[int(s):int(s) + int(c)]
+        if is_open:
+            open_parts.append(chunk)
+        else:
+            closed.append(chunk)
+    return closed + _cap_contexts(open_parts, triangles, vertices, weld_m)
+
+
+# User-authorized cap coplanarity bound (card #56, coordination rule 32).
+_HOR_CAP_M = 0.01
+
+
+def _cap_footprints(chunk, triangles, vertices, weld_m):
+    """Horizontal, simple open-boundary loops as (plane Z, polygon) pairs.
+
+    Only degree-two cycles are supported. Nested loops on the same plane are XORed,
+    preserving holes; neither a bounding box nor a convex hull proves containment.
+    Non-horizontal/incomplete/branched loops cannot authorize a cap join.
+    """
+    tris = triangles[chunk]
+    used = np.unique(tris)
+    xyz = vertices[used]
+    ids = weld(xyz, weld_m)
+    local = np.searchsorted(used, tris)
+    edges, counts, _ = edge_uses(local, ids)
+    _, representative = np.unique(ids, return_index=True)
+    points = xyz[representative]
+    boundary = edges[(counts == 1) & (edges[:, 0] != edges[:, 1])]
+    if not len(boundary):
+        return []
+    flat = np.abs(points[boundary[:, 0], 2] - points[boundary[:, 1], 2]) <= _HOR_DEPTH
+    adjacency = {}
+    for a, b in boundary[flat]:
+        adjacency.setdefault(int(a), set()).add(int(b))
+        adjacency.setdefault(int(b), set()).add(int(a))
+    pending = set(adjacency)
+    loops = []
+    while pending:
+        seed = min(pending)
+        seen, stack = set(), [seed]
+        while stack:
+            v = stack.pop()
+            if v not in seen:
+                seen.add(v)
+                stack.extend(adjacency[v] - seen)
+        pending -= seen
+        if any(len(adjacency[v]) != 2 for v in seen):
+            continue
+        ring, prev, current = [], None, seed
+        while current not in ring:
+            ring.append(current)
+            nxt = min(adjacency[current] - ({prev} if prev is not None else set()))
+            prev, current = current, nxt
+        if current != seed or len(ring) != len(seen):
+            continue
+        coords = points[ring]
+        if np.ptp(coords[:, 2]) > _HOR_DEPTH:
+            continue
+        poly = shapely.Polygon(coords[:, :2])
+        if poly.is_valid and poly.area > 0:
+            loops.append((float(coords[:, 2].mean()), poly))
+    planes = []
+    for z, poly in loops:
+        for i, (plane_z, footprint) in enumerate(planes):
+            if abs(z - plane_z) <= _HOR_DEPTH:
+                planes[i] = (plane_z, footprint.symmetric_difference(poly))
+                break
+        else:
+            planes.append((z, poly))
+    return planes
+
+
+def _cap_contexts(open_parts, triangles, vertices, weld_m):
+    """Join a planar open sheet only to its unique coplanar boundary-loop owner.
+
+    Closed components never enter here. Sheets cannot own sheets or bridge two owners.
+    All actual cap triangles (not only their vertices/centroids) must lie inside the
+    footprint. A non-cap remains independent, including Ground and stacked open boxes.
+    """
+    if not open_parts:
+        return []
+    corners = [vertices[triangles[ix]] for ix in open_parts]
+    sheet = [np.ptp(c[..., 2]) <= _HOR_DEPTH for c in corners]
+    footprints = [(i, z, poly) for i, ix in enumerate(open_parts) if not sheet[i]
+                  for z, poly in _cap_footprints(ix, triangles, vertices, weld_m)]
+    joined = {i: [ix] for i, ix in enumerate(open_parts) if not sheet[i]}
+    separate = []
+    for i, ix in enumerate(open_parts):
+        if not sheet[i]:
+            continue
+        c = corners[i]
+        cap = shapely.union_all(shapely.polygons(c[:, :, :2]))
+        owners = {owner for owner, z, footprint in footprints
+                  if np.max(np.abs(c[..., 2] - z)) <= _HOR_CAP_M
+                  and footprint.covers(cap)}
+        if len(owners) == 1:
+            joined[next(iter(owners))].append(ix)
+        else:
+            separate.append(ix)
+    return [np.concatenate(chunks) for chunks in joined.values()] + separate
+
+
+def _horizontal_contexts(model: Soup, weld_m: float) -> list[np.ndarray]:
+    """Triangle indices of each context, ordered by the smallest global index.
+
+    Decor triangles (owner mesh named ``DECOR_MESH``) and the other triangles are two sides
+    that never share a weld, a component or a ray. On one side, triangles form connected
+    components through shared welded vertices. A closed component is judged alone; an open
+    planar sheet joins only a unique open owner with a horizontal boundary-loop footprint
+    covering the entire sheet, within 0.01 m of its plane (user decision [D103]). Otherwise
+    open components stay independent. Grouping uses unordered welded edges, so
+    flipping a triangle's winding does not change it, and neither does the render-mesh partition."""
+    names, owner = _orientation_groups(model)
+    if len(model.triangles) == 0 or len(model.vertices) == 0:
+        return []
+    decor = np.array([name == DECOR_MESH for name in names], dtype=bool)
+    side = decor[owner]
+    contexts: list[np.ndarray] = []
+    for want_decor in (False, True):
+        tri_idx = np.flatnonzero(side == want_decor)
+        contexts.extend(_side_contexts(tri_idx, model.triangles, model.vertices, weld_m))
+    contexts.sort(key=lambda ix: int(ix.min()))
+    return contexts
+
+
+def _context_volume(names: tuple, owner: np.ndarray, tri_idx: np.ndarray) -> list[str]:
+    """Distinct render-mesh names of a context, sorted by mesh index."""
+    volume = []
+    seen = set()
+    for mesh_id in np.unique(owner[tri_idx]):
+        name = names[int(mesh_id)]
+        if name in seen:
+            continue
+        seen.add(name)
+        volume.append(name)
+    return volume
+
+
+def _judge_horizontal_faces(model: Soup, weld_m: float):
+    """Horizontal and inward counts per render mesh, judged per welded-component context."""
+    names, owner = _orientation_groups(model)
+    n_mesh = len(names)
+    inward = np.zeros(n_mesh, dtype=int)
+    horizontal = np.zeros(n_mesh, dtype=int)
+    if len(model.triangles) == 0 or len(model.vertices) == 0:
+        return inward, horizontal, [], []
+    contexts = _horizontal_contexts(model, weld_m)
+    volumes = [_context_volume(names, owner, ix) for ix in contexts]
+    corners = model.corners()
+    normal = np.cross(corners[:, 1] - corners[:, 0], corners[:, 2] - corners[:, 0])
+    length = np.linalg.norm(normal, axis=1)
+    nz = normal[:, 2]
+    horiz = (length > 0) & (np.abs(nz) >= (1.0 - HORIZONTAL_COS_TOL) * length)
+    nonvert = np.abs(nz) > 1e-9 * length
+    if horiz.any():
+        np.add.at(horizontal, owner[horiz], 1)
+    context = np.full(len(corners), -1, dtype=np.int64)
+    for label, tri_idx in enumerate(contexts):
+        context[tri_idx] = label
+    rays = np.flatnonzero(horiz)
+    wrong = []
+    if len(rays):
+        targets = np.flatnonzero(nonvert)
+        k = _upward_crossings(corners[targets], corners[rays].mean(1), context[targets], context[rays])
+        face_nz = nz[rays]
+        bad = ((face_nz > 0) & (k % 2 == 1)) | ((face_nz < 0) & (k % 2 == 0))
+        if bad.any():
+            found = rays[bad]
+            np.add.at(inward, owner[found], 1)
+            wrong.append(found)
+    if not wrong:
+        return inward, horizontal, [], volumes
+    found = np.sort(np.concatenate(wrong))
+    return inward, horizontal, [int(i) for i in found], volumes
+
+
+def inward_horizontal_faces(model: Soup, weld_m: float = _HOR_WELD_M) -> tuple[np.ndarray, np.ndarray, list[int]]:
+    """Per welded component (a closed component alone; open components independent except contained coplanar caps (<=0.01 m);
+    decor apart; render-mesh partition ignored): horizontal triangles, and those whose normal
+    points into the context.
+
+    Returns ``(inward, horizontal, wrong)``. ``wrong`` is the sorted global triangle indices.
+    Counts stay per render mesh. A body is open at the bottom and closed at the top, so the parity
+    of an upward ray separates inside from outside. Decor triangles never share a context with
+    the body (a decor shell must not flip the body's parity)."""
+    inward, horizontal, wrong, _volumes = _judge_horizontal_faces(model, weld_m)
+    return inward, horizontal, wrong
+
+
+def check_horizontal_faces(model: Soup, tol: dict) -> dict:
+    """Horizontal faces face out of their context (issue #56).
+
+    Covers ledges (up), roofs (up), soffits and window heads (down). A closed welded component
+    is judged alone; open components stay independent except planar caps contained in a unique
+    open boundary footprint at <=0.01 m; decor stays apart; the
+    render-mesh partition does not matter. Complements ``check_orientation``, whose rays never
+    come from below. ``tol`` is the same geometry block as the other checks; the cutoffs are
+    module constants. No horizontal face at all (or an empty model) is not measured: nothing was judged."""
+    weld_m = tol.get("weld_m") or _HOR_WELD_M
+    names, _ = _orientation_groups(model)
+    inward, horizontal, wrong, volumes = _judge_horizontal_faces(model, weld_m)
+    details = {
+        "meshes": [{"name": name, "horizontal_faces": int(horizontal[i]), "inward_faces": int(inward[i])}
+                   for i, name in enumerate(names)],
+        "volumes": volumes,
+        "inward_triangles": wrong[:50],
+        "note": _HOR_NOTE}
+    if int(horizontal.sum()) == 0:
+        return result("horizontal_faces", False, None, 0, details, measured=False)
+    value = int(inward.sum())
+    return result("horizontal_faces", value == 0, value, 0, details)
+
+
 def run(model: Soup, etalon: Soup, spec: Spec, tol: dict, ranges: dict | None = None,
         source_class: str | None = None, build: str = "from_spec") -> dict:
     """All §5 checks; tol is the `geometry` block of tolerances.json. The weld is the building's (spec weld_m,
@@ -1083,7 +1428,8 @@ def run(model: Soup, etalon: Soup, spec: Spec, tol: dict, ranges: dict | None = 
                          build),
               check_budget(model, tol),
               check_opening_planes(model, spec, tol, ranges), check_material_ids(model, tol, ranges),
-              check_decor(model, spec, tol, ranges), check_orientation(model, tol)]
+              check_decor(model, spec, tol, ranges), check_orientation(model, tol),
+              check_horizontal_faces(model, tol)]
     return {"passed": all(c["status"] == "pass" for c in checks),
             "failed": [c["id"] for c in checks if c["status"] == "fail"],
             "not_measured": [c["id"] for c in checks if c["status"] == "not_measured"],
