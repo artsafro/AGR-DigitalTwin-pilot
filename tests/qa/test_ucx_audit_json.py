@@ -6,6 +6,7 @@ Exercises dist_stats, strict JSON serialization, and missing UCX handling via AS
 from __future__ import annotations
 
 import ast
+import itertools
 import json
 import math
 from pathlib import Path
@@ -72,6 +73,22 @@ def _extract_dumps_callable(tree: ast.AST):
     return ns["dump_report"]
 
 
+def _extract_cov_nodes(tree: ast.AST) -> list[ast.stmt]:
+    for node in ast.walk(tree):
+        body = getattr(node, "body", None)
+        if isinstance(body, list):
+            for i, stmt in enumerate(body):
+                if (
+                    isinstance(stmt, ast.Assign)
+                    and any(isinstance(t, ast.Name) and t.id == "cov" for t in stmt.targets)
+                ):
+                    nodes: list[ast.stmt] = [stmt]
+                    if i + 1 < len(body) and isinstance(body[i + 1], ast.If):
+                        nodes.append(body[i + 1])
+                    return nodes
+    raise AssertionError("Could not locate 'cov' assignment in script AST")
+
+
 def _strict_json_loads(payload: str) -> Any:
     def _reject_constant(c: str):
         raise ValueError(f"Strict JSON rejected non-standard constant: {c}")
@@ -119,19 +136,15 @@ def test_dist_stats_missing_ucx_all_infinite():
     d = [math.inf] * 50
     stats = dist_stats(d)
 
-    assert stats is not None
-    assert stats["n"] == 50
-    # le-band fractions zero: unavailable samples never count as covered
-    assert stats["le_0.01m"] == 0.0
-    assert stats["le_0.3m"] == 0.0
-    assert stats["le_1.0m"] == 0.0
-    # p50, p95, max must be null (None in Python), not 0, not Infinity
-    assert stats["p50_m"] is None
-    assert stats["p95_m"] is None
-    assert stats["max_m"] is None
-    assert stats["p50_m"] != 0
-    assert stats["p95_m"] != 0
-    assert stats["max_m"] != 0
+    assert stats == {
+        "n": 50,
+        "le_0.01m": 0.0,
+        "le_0.3m": 0.0,
+        "le_1.0m": 0.0,
+        "p50_m": None,
+        "p95_m": None,
+        "max_m": None,
+    }
 
 
 def test_no_ucx_synthetic_report_across_height_bands_strict_json():
@@ -209,20 +222,51 @@ def test_strict_writer_rejects_unrelated_nonfinite_field():
     tree, _ = _load_script_ast()
     dump_report = _extract_dumps_callable(tree)
 
-    with pytest.raises(ValueError, match="Out of range float values are not JSON compliant"):
-        dump_report({"unrelated_nonfinite": float("nan")})
-
-    with pytest.raises(ValueError, match="Out of range float values are not JSON compliant"):
-        dump_report({"unrelated_nonfinite": float("inf")})
+    for val in (float("nan"), float("inf"), float("-inf")):
+        with pytest.raises(ValueError, match="Out of range float values"):
+            dump_report({"unrelated_nonfinite": val})
 
 
 def test_missing_ucx_coverage_report_plans_explanation_note():
-    """Script report must plan an explicit coverage_note explaining missing UCX when pieces are empty."""
-    _, source = _load_script_ast()
-    # The script must plan a coverage_note in the target coverage dictionary when no UCX pieces exist
-    assert "coverage_note" in source, (
-        "Expected tools/blender/ucx_audit.py to plan 'coverage_note' explaining missing UCX"
-    )
+    """Execute extracted cov assignment and following no-pieces note condition using a controlled namespace."""
+    tree, _ = _load_script_ast()
+    nodes = _extract_cov_nodes(tree)
+    assert len(nodes) >= 2, "Expected cov assignment and following no-pieces note condition"
+    code = compile(ast.Module(body=nodes, type_ignores=[]), filename="<cov_ast>", mode="exec")
+    dist_stats, _, _ = _extract_script_symbols()
+
+    # Case 1: no pieces -> coverage_note present and explains no pieces, unavailable distances, no verdict
+    ns_no_pieces: dict[str, Any] = {
+        "area": 150.0,
+        "d": [math.inf],
+        "dz": {"z_lt_0": [], "z_0_6": [math.inf], "z_ge_6": []},
+        "pieces": [],
+        "dist_stats": dist_stats,
+        "round": round,
+        "sum": sum,
+        "len": len,
+    }
+    exec(code, ns_no_pieces)
+    cov_no_pieces = ns_no_pieces["cov"]
+    assert "coverage_note" in cov_no_pieces
+    note = cov_no_pieces["coverage_note"].lower()
+    assert "no ucx pieces" in note or "no pieces" in note
+    assert "unavailable" in note or "null" in note
+    assert "verdict" in note
+
+    # Case 2: pieces present -> coverage_note must NOT be present
+    ns_pieces: dict[str, Any] = {
+        "area": 150.0,
+        "d": [0.05],
+        "dz": {"z_lt_0": [], "z_0_6": [0.05], "z_ge_6": []},
+        "pieces": [{"name": "UCX_SM_Main_001"}],
+        "dist_stats": dist_stats,
+        "round": round,
+        "sum": sum,
+        "len": len,
+    }
+    exec(code, ns_pieces)
+    assert "coverage_note" not in ns_pieces["cov"]
 
 
 @pytest.mark.parametrize(
@@ -263,7 +307,6 @@ def test_dist_stats_unavailable_values_never_counted_as_covered(d, expected_le_0
     ],
 )
 def test_dist_stats_nonfinite_aggregate_statistics_null(d, expected_null_aggregates):
-    """Any nonfinite aggregate statistic (p50/p95/max) must be null (None in JSON), never inf or nan."""
     dist_stats, _, _ = _extract_script_symbols()
     stats = dist_stats(d)
 
@@ -272,9 +315,56 @@ def test_dist_stats_nonfinite_aggregate_statistics_null(d, expected_null_aggrega
         val = stats[k]
         if expected_null_aggregates:
             assert val is None, f"{k} must be null for all-unavailable samples, got {val}"
-            assert val != 0, f"{k} must be null, not zero"
         else:
-            # If an aggregate cannot be computed as a finite number, it must be null (None)
             assert val is None or (isinstance(val, (int, float)) and math.isfinite(val)), (
                 f"{k} must be null or finite, got nonfinite {val}"
             )
+
+
+def test_dist_stats_brute_force_generated_probe():
+    """Brute-force generated probe over product of [0.0, 0.005, 0.3, 1.5, None, inf, -inf, nan] for lengths 1..3."""
+    dist_stats, pct, bands = _extract_script_symbols()
+    sample_values = [0.0, 0.005, 0.3, 1.5, None, math.inf, -math.inf, math.nan]
+    cases_checked = 0
+
+    for length in (1, 2, 3):
+        for case in itertools.product(sample_values, repeat=length):
+            cases_checked += 1
+            d = list(case)
+            stats = dist_stats(d)
+
+            assert stats is not None
+            assert stats["n"] == length
+
+            # all stats strictly serializable
+            serialized = json.dumps(stats, allow_nan=False)
+            parsed = _strict_json_loads(serialized)
+
+            # le bands equal finite <= band count divided by all samples
+            finite = [
+                x for x in d
+                if isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)
+            ]
+            for b in bands:
+                key = f"le_{b}m"
+                expected_le = round(sum(x <= b for x in finite) / length, 4)
+                assert stats[key] == expected_le
+                assert parsed[key] == expected_le
+
+            # all-unavailable aggregates null
+            if len(finite) == 0:
+                assert stats["p50_m"] is None
+                assert stats["p95_m"] is None
+                assert stats["max_m"] is None
+
+            # mixed max null
+            if 0 < len(finite) < length:
+                assert stats["max_m"] is None
+
+            # finite control preserved
+            if len(finite) == length:
+                assert stats["max_m"] == round(max(d), 3)
+                assert stats["p50_m"] == round(pct(d, 0.5), 3)
+                assert stats["p95_m"] == round(pct(d, 0.95), 3)
+
+    print(f"\nBrute-force generated probe: {cases_checked} cases checked")
