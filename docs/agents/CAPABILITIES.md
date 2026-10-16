@@ -114,6 +114,7 @@ substitute ad-hoc scripting.
   port 9877. Create/edit/material/UV, save/reopen, FBX export/import passed. MCP screenshots
   preceded an NVIDIA driver crash — use Computer Use for visuals. Runs arbitrary Python in the
   open scene: never on an unrelated production scene. Skill: `blender-mcp`.
+- bpy wheel pin rule: a bpy wheel lane, if used, must equal the baseline Blender version 5.1.2 (`BLENDER_VERSION` in `src/dt_ai/core/blender_runner.py`) and is re-verified on each Blender upgrade.
 
 ### SpeedTree Modeler — `speedtree`
 - Status: WORKING for file inspection and CLI FBX batch export (Codex, 2026-10-06, Modeler v10.0.1).
