@@ -634,3 +634,274 @@ def test_probe_plan_outputs_unique_inside_dir(tmp_path):
             assert "/" not in relative
             stems.append(Path(row["output"]).stem.casefold())
         assert len(stems) == len(set(stems))
+
+
+def _link_or_skip(src, dst):
+    try:
+        os.link(src, dst)
+    except OSError:
+        pytest.skip("os.link is not supported")
+
+
+def test_preflight_rejects_metadata_hardlink_to_source(tmp_path):
+    folder = tmp_path / "meta"
+    folder.mkdir()
+    source = folder / "source.max"
+    payload = b"SCENE-BYTES-224"
+    source.write_bytes(payload)
+    tasks = [{"node": "probe_0", "output": str(folder / "exports" / "probe_0.max"), "format": "max"}]
+
+    log_link = folder / "run.jsonl"
+    _link_or_skip(source, log_link)
+    with pytest.raises(ValueError):
+        plan.preflight(tasks, [str(source)], str(log_link))
+    assert source.read_bytes() == payload
+
+    request_link = folder / "batch_export_request.json"
+    _link_or_skip(source, request_link)
+    with pytest.raises(ValueError):
+        plan.preflight(tasks, [str(source)], str(folder / "other.jsonl"), writes=[str(request_link)])
+    assert source.read_bytes() == payload
+
+    result_link = folder / "dcc_batch_result.json"
+    _link_or_skip(source, result_link)
+    with pytest.raises(ValueError):
+        plan.preflight(tasks, [str(source)], str(folder / "another.jsonl"), writes=[str(result_link)])
+    assert source.read_bytes() == payload
+
+
+def test_preflight_rejects_write_target_pairs(tmp_path):
+    folder = tmp_path / "pairs"
+    folder.mkdir()
+    source = folder / "source.max"
+    source.write_bytes(b"SRC")
+    output = str(folder / "probe_0.max")
+    tasks = [{"node": "probe_0", "output": output, "format": "max"}]
+    request = str(folder / "batch_export_request.json")
+    log_spelled = request.replace("\\", "/").swapcase()
+    assert log_spelled != request
+    assert plan.path_key(log_spelled) == plan.path_key(request)
+    with pytest.raises(ValueError):
+        plan.preflight(tasks, [str(source)], log_spelled, writes=[request])
+
+    result = str(folder / "dcc_batch_result.json")
+    result_spelled = result.replace("\\", "/").swapcase()
+    assert result_spelled != result
+    assert plan.path_key(result_spelled) == plan.path_key(result)
+    with pytest.raises(ValueError):
+        plan.preflight(tasks, [str(source)], str(folder / "run.jsonl"), writes=[result, result_spelled])
+
+    request_for_output = output.replace("\\", "/").swapcase()
+    assert request_for_output != output
+    assert plan.path_key(request_for_output) == plan.path_key(output)
+    with pytest.raises(ValueError):
+        plan.preflight(tasks, [str(source)], str(folder / "run.jsonl"), writes=[request_for_output])
+
+    existing = folder / "linked_out.max"
+    existing.write_bytes(b"OUTPUT-BYTES")
+    log_link = folder / "linked_log.jsonl"
+    _link_or_skip(existing, log_link)
+    linked = [{"node": "probe_0", "output": str(existing), "format": "max"}]
+    with pytest.raises(ValueError):
+        plan.preflight(
+            linked, [str(source)], str(log_link),
+            writes=[str(folder / "batch_export_request.json"), str(folder / "dcc_batch_result.json")],
+        )
+
+
+def test_preflight_distinct_metadata_paths_pass(tmp_path):
+    folder = tmp_path / "same"
+    folder.mkdir()
+    source = folder / "source.max"
+    source.write_bytes(b"SOURCE")
+    tasks = [{"node": "probe_0", "output": str(folder / "probe_0.max"), "format": "max"}]
+    plan.preflight(
+        tasks, [str(source)], str(folder / "run.jsonl"),
+        writes=[str(folder / "batch_export_request.json"), str(folder / "dcc_batch_result.json")],
+    )
+
+    copied = tmp_path / "copycase"
+    copied.mkdir()
+    origin = copied / "source.max"
+    origin.write_bytes(b"SOURCE")
+    request_copy = copied / "batch_export_request.json"
+    request_copy.write_bytes(origin.read_bytes())
+    plan.preflight(
+        [{"node": "probe_0", "output": str(copied / "probe_0.max"), "format": "max"}],
+        [str(origin)], str(copied / "run.jsonl"),
+        writes=[str(request_copy), str(copied / "dcc_batch_result.json")],
+    )
+
+
+def test_cli_rejects_request_hardlinked_to_source(tmp_path, monkeypatch, capsys):
+    def boom(*_args, **_kwargs):
+        raise AssertionError("dcc_batch must not run")
+
+    monkeypatch.setattr(plan.subprocess, "run", boom)
+    payload = b"SCENE-BYTES-224"
+
+    def invoke(folder):
+        return plan.main([
+            "run", "--scene", str(folder / "source.max"),
+            "--nodes", "probe_0", "--out", str(folder / "exports"),
+            "--format", "max", "--log", str(folder / "run.jsonl"), "--dry-run",
+        ])
+
+    linked = tmp_path / "linked-request"
+    linked.mkdir()
+    source = linked / "source.max"
+    source.write_bytes(payload)
+    _link_or_skip(source, linked / "batch_export_request.json")
+    assert invoke(linked) == 2
+    assert source.read_bytes() == payload
+    assert not (linked / "run.jsonl").exists()
+    assert "colliding path" in capsys.readouterr().err
+
+    linked_log = tmp_path / "linked-log"
+    linked_log.mkdir()
+    source_log = linked_log / "source.max"
+    source_log.write_bytes(payload)
+    _link_or_skip(source_log, linked_log / "run.jsonl")
+    assert invoke(linked_log) == 2
+    assert source_log.read_bytes() == payload
+
+    plain = tmp_path / "plain"
+    plain.mkdir()
+    (plain / "source.max").write_bytes(payload)
+    assert invoke(plain) == 0
+    request = plain / "batch_export_request.json"
+    assert request.is_file()
+    assert json.loads(request.read_text(encoding="utf-8"))["nodes"] == ["probe_0"]
+
+
+def test_cli_rejects_log_equal_to_request_name(tmp_path, monkeypatch):
+    def boom(*_args, **_kwargs):
+        raise AssertionError("dcc_batch must not run")
+
+    monkeypatch.setattr(plan.subprocess, "run", boom)
+    folder = tmp_path / "log-is-request"
+    folder.mkdir()
+    scene = folder / "source.max"
+    scene.write_bytes(b"SCENE")
+    code = plan.main([
+        "run", "--scene", str(scene), "--nodes", "probe_0",
+        "--out", str(folder / "exports"), "--format", "max",
+        "--log", str(folder / "batch_export_request.json"), "--dry-run",
+    ])
+    assert code == 2
+    assert not (folder / "batch_export_request.json").exists()
+
+
+def _casefold_key(path) -> str:
+    text = os.path.normcase(os.path.abspath(str(path))).replace("\\", "/")
+    return text.casefold()
+
+
+def _stat_id(path):
+    try:
+        st = os.stat(path)
+    except OSError:
+        return None
+    return (st.st_dev, st.st_ino)
+
+
+def _targets_collide(left, right) -> bool:
+    if _casefold_key(left) == _casefold_key(right):
+        return True
+    left_id = _stat_id(left)
+    right_id = _stat_id(right)
+    if left_id is None or right_id is None:
+        return False
+    return left_id == right_id
+
+
+def _spell_path(rng, path: Path) -> str:
+    name = path.name
+    if rng.random() < 0.5:
+        name = "".join(char.swapcase() if char.isalpha() else char for char in name)
+    folder = str(path.parent)
+    if rng.random() < 0.5:
+        folder = folder.replace("\\", "/")
+    else:
+        folder = folder.replace("/", "\\")
+    sep = "/" if rng.random() < 0.5 else "\\"
+    middle = sep + "." + sep if rng.random() < 0.3 else sep
+    return folder + middle + name
+
+
+def test_probe_preflight_write_targets(tmp_path):
+    rng = random.Random(224)
+    payload = b"PROBE-SOURCE-224"
+    pool = [
+        "run.jsonl", "batch_export_request.json", "dcc_batch_result.json",
+        "probe_0.max", "other.max", "notes.txt",
+    ]
+    links_ok = True
+    origin = tmp_path / "link_origin.bin"
+    probe = tmp_path / "link_probe.bin"
+    origin.write_bytes(payload)
+    try:
+        os.link(origin, probe)
+    except OSError:
+        links_ok = False
+    if probe.exists():
+        probe.unlink()
+
+    verdicts = {True: 0, False: 0}
+    for index in range(500):
+        case_dir = tmp_path / ("c%d" % index)
+        case_dir.mkdir()
+        source = case_dir / "source.max"
+        source.write_bytes(payload)
+        files = {"source.max": source}
+        for name in (rng.choice(pool) for _ in range(rng.randint(2, 4))):
+            if name in files:
+                continue
+            dest = case_dir / name
+            if links_ok:
+                roll = rng.randrange(3)
+                if roll == 0:
+                    os.link(source, dest)
+                elif roll == 1:
+                    os.link(rng.choice(list(files.values())), dest)
+                else:
+                    dest.write_bytes(("distinct-%d-%s" % (index, name)).encode("utf-8"))
+            else:
+                dest.write_bytes(("distinct-%d-%s" % (index, name)).encode("utf-8"))
+            files[name] = dest
+        slots = list(files.values())
+
+        fresh = iter(range(10))
+
+        def pick():
+            if rng.random() < 0.5:
+                return _spell_path(rng, case_dir / ("fresh_%d.bin" % next(fresh)))
+            return _spell_path(rng, rng.choice(slots))
+
+        output = pick()
+        log_path = pick()
+        request = pick()
+        result = pick()
+        protected = [str(source)]
+        if rng.random() < 0.3:
+            protected.append(_spell_path(rng, source))
+        targets = [output, log_path, request, result]
+        expected = False
+        for left_index, left in enumerate(targets):
+            if _targets_collide(left, source):
+                expected = True
+            for right in targets[left_index + 1:]:
+                if _targets_collide(left, right):
+                    expected = True
+        raised = False
+        try:
+            plan.preflight(
+                [{"node": "probe_0", "output": output, "format": "max"}],
+                protected, log_path, writes=[request, result],
+            )
+        except ValueError:
+            raised = True
+        assert raised is expected, (index, expected, output, log_path, request, result)
+        assert source.read_bytes() == payload
+        verdicts[expected] += 1
+    assert verdicts[True] >= 100 and verdicts[False] >= 50, verdicts

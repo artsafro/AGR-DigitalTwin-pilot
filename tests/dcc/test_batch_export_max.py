@@ -92,7 +92,7 @@ def test_export_safety_probe(tmp_path):
     safety = json.loads(safety_path.read_text(encoding="utf-8"))
     assert set(safety) == {
         "valid_resume", "corrupt_same_size", "changed_source",
-        "collision_reorder", "source_alias", "combination",
+        "collision_reorder", "source_alias", "metadata_alias", "combination",
     }
     for name, step in safety.items():
         assert step["passed"] is True, (name, step)

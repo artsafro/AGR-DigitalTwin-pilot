@@ -170,6 +170,7 @@ def _open_scene_path():
 
 
 def _protected_paths(req: dict) -> list:
+    """Scene, the open scene, protect list, request path, and AGR_BATCH_EXPORT_REQUEST."""
     protected = []
     scene = req.get("scene")
     if scene:
@@ -180,11 +181,21 @@ def _protected_paths(req: dict) -> list:
     extra = req.get("protect", [])
     if isinstance(extra, list):
         protected.extend(extra)
-    for key in ("request_path", "result_path"):
-        value = req.get(key)
-        if value:
-            protected.append(value)
+    request = req.get("request_path")
+    if request:
+        protected.append(request)
+    env_request = os.environ.get("AGR_BATCH_EXPORT_REQUEST")
+    if env_request:
+        protected.append(env_request)
     return protected
+
+
+def _write_paths(req: dict) -> list:
+    """Result JSON that dcc_batch writes after the job."""
+    result = req.get("result_path")
+    if result:
+        return [result]
+    return []
 
 
 def _readback(fmt: str, path: str):
@@ -286,7 +297,10 @@ def export_nodes(req: dict, log_path) -> list[dict]:
     if fmt == "fbx":
         set_fbx_preset()
     tasks = plan.plan_outputs(list(req["nodes"]), req["out_dir"], fmt)
-    plan.preflight(tasks, _protected_paths(req), "" if log_path is None else str(log_path))
+    plan.preflight(
+        tasks, _protected_paths(req), "" if log_path is None else str(log_path),
+        writes=_write_paths(req),
+    )
     found = plan.read_log(log_path)
     parent = req["out_dir"]
     if parent:

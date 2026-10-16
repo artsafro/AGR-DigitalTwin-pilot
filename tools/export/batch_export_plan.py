@@ -186,45 +186,47 @@ def decide(task: dict, log: dict, expected_tris, expected_mats) -> str:
     return "verify"
 
 
-def preflight(tasks, protected: list[str], log_path: str) -> None:
-    """Raise ValueError before any write when an output could replace a protected file or the log."""
-    seen: dict[str, str] = {}
-    outputs: list[str] = []
-    for task in tasks:
-        output = task["output"]
-        key = path_key(output)
-        if key in seen:
-            raise ValueError("colliding path: %s" % output)
-        seen[key] = output
-        outputs.append(output)
-    protected_paths: list[str] = []
-    for item in protected:
+def _present_paths(items) -> list[str]:
+    """Skip None and empty strings. Other entries are path text."""
+    found: list[str] = []
+    if not items:
+        return found
+    for item in items:
         if item is None:
             continue
         text = str(item)
         if text == "":
             continue
-        protected_paths.append(text)
+        found.append(text)
+    return found
+
+
+def _same_existing(left: str, right: str) -> bool:
+    """True when both paths exist and name the same file. OSError counts as not the same."""
+    if not os.path.exists(left) or not os.path.exists(right):
+        return False
+    try:
+        return bool(os.path.samefile(left, right))
+    except OSError:
+        return False
+
+
+def preflight(tasks, protected: list[str], log_path: str, writes=None) -> None:
+    """Every write target is checked against every other write target and every protected input by normalized path and filesystem identity."""
+    targets: list[str] = [task["output"] for task in tasks]
     log_text = "" if log_path is None else str(log_path)
-    log_key = path_key(log_text) if log_text else None
-    for output in outputs:
-        out_key = path_key(output)
-        if log_key is not None and out_key == log_key:
-            raise ValueError("colliding path: %s" % output)
+    if log_text:
+        targets.append(log_text)
+    targets.extend(_present_paths(writes))
+    protected_paths = _present_paths(protected)
+    for index, left in enumerate(targets):
+        left_key = path_key(left)
+        for right in targets[index + 1:]:
+            if left_key == path_key(right) or _same_existing(left, right):
+                raise ValueError("colliding path: %s" % right)
         for prot in protected_paths:
-            if out_key == path_key(prot):
-                raise ValueError("colliding path: %s" % output)
-            if os.path.exists(output) and os.path.exists(prot):
-                try:
-                    same = os.path.samefile(output, prot)
-                except OSError:
-                    same = False
-                if same:
-                    raise ValueError("colliding path: %s" % output)
-    if log_key is not None:
-        for prot in protected_paths:
-            if log_key == path_key(prot):
-                raise ValueError("colliding path: %s" % log_text)
+            if left_key == path_key(prot) or _same_existing(left, prot):
+                raise ValueError("colliding path: %s" % left)
 
 
 def _is_int(value) -> bool:
@@ -424,7 +426,7 @@ def main(argv=None) -> int:
     request_path = str(Path(log_path).with_name("batch_export_request.json")).replace("\\", "/")
     result_path = str(Path(log_path).with_name("dcc_batch_result.json")).replace("\\", "/")
     try:
-        preflight(tasks, [scene, request_path, result_path], log_path)
+        preflight(tasks, [scene], log_path, writes=[request_path, result_path])
     except ValueError as exc:
         print(str(exc), file=sys.stderr)
         return 2

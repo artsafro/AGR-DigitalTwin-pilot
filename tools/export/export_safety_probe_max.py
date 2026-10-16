@@ -18,6 +18,7 @@ STEP_NAMES = (
     "changed_source",
     "collision_reorder",
     "source_alias",
+    "metadata_alias",
     "combination",
 )
 
@@ -210,6 +211,71 @@ def _run(job, out, steps):
             "loaded": loaded,
         }
 
+    def metadata_alias():
+        rt.resetMaxFile(rt.Name("noPrompt"))
+        _make_box(rt, "probe_0")
+        _make_box(rt, "probe_1")
+        _make_box(rt, "probe_2")
+        meta = _slash(os.path.join(out, "meta"))
+        os.makedirs(meta, exist_ok=True)
+        source = meta + "/source.max"
+        rt.saveMaxFile(source, quiet=True)
+        before = _sha256(source)
+        os.link(source, meta + "/batch_export_request.json")
+        try:
+            code = job.plan.main([
+                "run", "--scene", source, "--nodes", "probe_0",
+                "--out", meta + "/exports", "--format", "max",
+                "--log", meta + "/run.jsonl", "--dry-run",
+            ])
+        except Exception as exc:
+            return {"passed": False, "error": "%s: %s" % (type(exc).__name__, exc)}
+        after = _sha256(source)
+        rt.resetMaxFile(rt.Name("noPrompt"))
+        loaded = bool(rt.loadMaxFile(source, quiet=True))
+        count = int(rt.execute("objects.count"))
+
+        rt.resetMaxFile(rt.Name("noPrompt"))
+        _make_box(rt, "probe_0")
+        _make_box(rt, "probe_1")
+        _make_box(rt, "probe_2")
+        meta2 = _slash(os.path.join(out, "meta2"))
+        os.makedirs(meta2, exist_ok=True)
+        source2 = meta2 + "/source.max"
+        rt.saveMaxFile(source2, quiet=True)
+        before2 = _sha256(source2)
+        os.link(source2, meta2 + "/run.jsonl")
+        raised = False
+        try:
+            job.export_nodes(
+                {"nodes": ["probe_0"], "out_dir": meta2 + "/exports", "format": "max", "scene": source2},
+                meta2 + "/run.jsonl",
+            )
+        except ValueError:
+            raised = True
+        after2 = _sha256(source2)
+        rt.resetMaxFile(rt.Name("noPrompt"))
+        loaded2 = bool(rt.loadMaxFile(source2, quiet=True))
+        count2 = int(rt.execute("objects.count"))
+
+        meta3 = _slash(os.path.join(out, "meta3"))
+        rows = job.export_nodes(
+            {"nodes": ["probe_0"], "out_dir": meta3 + "/exports", "format": "max"},
+            meta3 + "/run.jsonl",
+        )
+        control_ok = len(rows) == 1 and rows[0].get("status") == "ok"
+        return {
+            "passed": code == 2 and before is not None and before == after and loaded and count == 3
+            and raised and before2 is not None and before2 == after2 and loaded2 and count2 == 3
+            and control_ok,
+            "code": code,
+            "raised": raised,
+            "count": count,
+            "count2": count2,
+            "control_rows": len(rows),
+            "control_status": rows[0].get("status") if rows else None,
+        }
+
     def combination():
         rt.resetMaxFile(rt.Name("noPrompt"))
         _make_box(rt, "Ka", 1)
@@ -242,6 +308,7 @@ def _run(job, out, steps):
     _record(steps, "changed_source", changed_source)
     _record(steps, "collision_reorder", collision_reorder)
     _record(steps, "source_alias", source_alias)
+    _record(steps, "metadata_alias", metadata_alias)
     _record(steps, "combination", combination)
 
 
