@@ -12,10 +12,29 @@ def section(path: str, heading: str) -> str:
 
 
 def test_author_probes_cover_guarantees_and_combined_review_fixes():
-    text = section("docs/agents/REVIEW_CHECKLIST.md", "Author counterexamples")
+    text = section("docs/agents/WORKFLOW.md", "Before requesting review (author)")
     for required in ("invariant", "probe", "N/N", "generated", "brute-force", "synthetic",
                      "combination", "previous fixes", "acceptance", "Out of scope"):
         assert required in text
+
+
+def test_author_receipts_are_discoverable():
+    author = section("docs/agents/WORKFLOW.md", "Before requesting review (author)")
+    for required in (
+        "uv run dt evals --suite regression --output <worktree>/tmp/evals",
+        "new-case", "module docstring", "PR body",
+        "0 passed, 0 failed, N not measured", "exit 2",
+        "no Claude transcript", "valid receipt",
+        "--references", "n/a: <reason>",
+    ):
+        assert required in author
+    checklist = (ROOT / "docs/agents/REVIEW_CHECKLIST.md").read_text(encoding="utf-8")
+    assert "WORKFLOW.md#before-requesting-review-author" in checklist
+    assert "uv run dt evals" not in checklist
+    agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    assert "author receipts" in agents.lower()
+    assert "docs/agents/WORKFLOW.md#before-requesting-review-author" in agents
+    assert "#before-requesting-review-author" in section("docs/agents/WORKFLOW.md", "Loop")
 
 
 def test_red_recipe_isolated_from_shared_stash():

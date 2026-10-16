@@ -21,7 +21,7 @@ collisions, plus the interactive Unreal experience. Priorities, in order:
 | Which kind of fact lives in which file | `docs/agents/WORKFLOW.md`, "Memory map" |
 | Who owns what (Claude / Codex / Antigravity) | `docs/agents/ROLES.md` |
 | Task loop, handoff, experience capture | `docs/agents/WORKFLOW.md` |
-| Review questions and how to run a Codex review | `docs/agents/REVIEW_CHECKLIST.md` |
+| Review questions, author receipts and how to run a Codex review | `docs/agents/REVIEW_CHECKLIST.md`, `docs/agents/WORKFLOW.md#before-requesting-review-author` |
 | Tools, MCP routes and their verified status | `docs/agents/CAPABILITIES.md` |
 | Production rules with citations (NPM/VPM, geometry, UV, materials, export, validation) | `docs/domain/` |
 | Open conflicts between sources | `docs/domain/conflicts.md` |
