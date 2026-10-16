@@ -1,6 +1,6 @@
 """Reader and fault checks for the synthetic IFC probe. No fabricated measurements."""
 
-import hashlib, inspect, json, sys
+import hashlib, inspect, json, os, subprocess, sys, textwrap
 from pathlib import Path
 
 import pytest
@@ -133,3 +133,126 @@ def test_missing_relation(job, name, units, arm, prefix):
     assert sum(i.startswith(prefix) for i in ledger["issues"]) == 1
     assert not any(i.startswith(other) for i in ledger["issues"])
     assert ledger["sha256"] != clean["sha256"] and _ids(ledger) == _ids(clean)
+
+
+@pytest.mark.parametrize("debug_env_mode", ["absent", "empty", "caller_path"])
+@pytest.mark.parametrize("legacy_target_mode", ["absent", "file_collision"])
+@pytest.mark.parametrize("order", ["cardinality_first", "probe_first"])
+def test_collection_preserves_caller_temp_policy(tmp_path, debug_env_mode, legacy_target_mode, order):
+    child_temp_root = tmp_path / "caller_temp_root"
+    child_temp_root.mkdir(parents=True, exist_ok=True)
+    sentinel_path = child_temp_root / "sentinel.txt"
+    sentinel_content = f"sentinel-payload-{debug_env_mode}-{legacy_target_mode}-{order}"
+    sentinel_path.write_text(sentinel_content, encoding="utf-8")
+
+    if legacy_target_mode == "file_collision":
+        legacy_file = child_temp_root / "pytest_temp_dir"
+        legacy_file.write_text("file collision blocking mkdir", encoding="utf-8")
+
+    child_basetemp = tmp_path / "child_basetemp"
+    child_basetemp.mkdir(parents=True, exist_ok=True)
+
+    env = os.environ.copy()
+    env["TMP"] = str(child_temp_root)
+    env["TEMP"] = str(child_temp_root)
+    env["TMPDIR"] = str(child_temp_root)
+    env["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] = "1"
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
+
+    if debug_env_mode == "absent":
+        env.pop("PYTEST_DEBUG_TEMPROOT", None)
+    elif debug_env_mode == "empty":
+        env["PYTEST_DEBUG_TEMPROOT"] = ""
+    elif debug_env_mode == "caller_path":
+        caller_debug_root = tmp_path / "caller_debug_temproot"
+        caller_debug_root.mkdir(parents=True, exist_ok=True)
+        env["PYTEST_DEBUG_TEMPROOT"] = str(caller_debug_root)
+
+    cardinality_mod = Path(__file__).resolve().parent / "test_relation_cardinality.py"
+    probe_mod = Path(__file__).resolve()
+    assert cardinality_mod.is_file(), f"Missing module: {cardinality_mod}"
+    assert probe_mod.is_file(), f"Missing module: {probe_mod}"
+
+    if order == "cardinality_first":
+        modules = [str(cardinality_mod), str(probe_mod)]
+    else:
+        modules = [str(probe_mod), str(cardinality_mod)]
+
+    child_code = textwrap.dedent("""
+        import os, sys, tempfile, pytest
+        from pathlib import Path
+
+        def snapshot_dir(root: Path) -> dict:
+            items = {}
+            if not root.exists():
+                return items
+            for p in sorted(root.rglob("*")):
+                rel = p.relative_to(root).as_posix()
+                if p.is_dir():
+                    items[rel] = ("dir",)
+                elif p.is_file():
+                    items[rel] = ("file", p.read_bytes())
+                else:
+                    items[rel] = ("other",)
+            return items
+
+        mod1, mod2, basetemp_dir, temp_root_str = sys.argv[1:]
+        temp_root = Path(temp_root_str).resolve()
+        current_temp = Path(tempfile.gettempdir()).resolve()
+        assert os.path.normcase(str(current_temp)) == os.path.normcase(str(temp_root)), (
+            f"tempfile.gettempdir() mismatch: {current_temp} != {temp_root}"
+        )
+
+        initial_debug_env = os.environ.get("PYTEST_DEBUG_TEMPROOT")
+        initial_snapshot = snapshot_dir(temp_root)
+
+        pytest_args = [
+            "--collect-only",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            f"--basetemp={basetemp_dir}",
+            mod1,
+            mod2,
+        ]
+
+        for i in range(2):
+            ret = pytest.main(pytest_args)
+            assert ret == 0, f"pytest.main collection {i + 1} returned exit code {ret}"
+            assert os.environ.get("PYTEST_DEBUG_TEMPROOT") == initial_debug_env, (
+                f"PYTEST_DEBUG_TEMPROOT altered after collection {i + 1}: "
+                f"expected {initial_debug_env!r}, got {os.environ.get('PYTEST_DEBUG_TEMPROOT')!r}"
+            )
+            snap = snapshot_dir(temp_root)
+            assert snap == initial_snapshot, (
+                f"Caller temp root snapshot changed after collection {i + 1}: "
+                f"diff={set(snap.items()) ^ set(initial_snapshot.items())}"
+            )
+    """)
+
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            child_code,
+            modules[0],
+            modules[1],
+            str(child_basetemp),
+            str(child_temp_root),
+        ],
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert proc.returncode == 0, (
+        f"Child collection process failed with exit code {proc.returncode}.\n"
+        f"STDOUT:\n{proc.stdout}\n"
+        f"STDERR:\n{proc.stderr}"
+    )
+    assert sentinel_path.read_text(encoding="utf-8") == sentinel_content
+    if legacy_target_mode == "file_collision":
+        assert legacy_file.is_file()
+        assert legacy_file.read_text(encoding="utf-8") == "file collision blocking mkdir"
+    else:
+        assert not (child_temp_root / "pytest_temp_dir").exists()

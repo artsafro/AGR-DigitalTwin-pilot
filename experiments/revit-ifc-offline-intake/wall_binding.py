@@ -1,11 +1,12 @@
-"""Geometric wall binding for synthetic IFC offline intake pilot.
+"""Geometric wall binding for synthetic IFC offline intake pilot (new-case).
 
+Provenance: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/107, report: docs/experiments/hyp-107.md.
+Status: experimental new-case; not a proven generic IFC pattern and no registry pattern is claimed.
 Contracts:
-- Report-only, opt-in alternative binder for straight vertical walls on horizontal slabs.
-- Tolerances:
-    ORIGIN_TOLERANCE_M = 1e-4 (metres)
-    AXIS_TOLERANCE = 1e-4 (normalized X-axis max-component residual)
-- Walls sorted deterministically by GlobalId and entity id; Name and Tag are ignored.
+- Scope: report-only, explicit geometric opt-in; strict mode is default (delivery_passed=false).
+- Topology: synthetic one-wall-per-edge constraint on horizontal slab contours.
+- Tolerances: ORIGIN_TOLERANCE_M = 1e-4 m, AXIS_TOLERANCE = 1e-4 (normalized X-axis residual).
+- Determinism: walls sorted by GlobalId and entity id; Name and Tag are ignored.
 - Fail-closed: returns complete edge_idx -> wall mapping or raises UnresolvedBinding.
 """
 

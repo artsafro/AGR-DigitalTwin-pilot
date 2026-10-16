@@ -2,19 +2,13 @@
 
 from collections import Counter
 from dataclasses import dataclass
-import os
 from pathlib import Path
 import sys
-import tempfile
 from typing import Any
 
 import ifcopenshell
 import ifcopenshell.guid
 import pytest
-
-_custom_temp = os.path.join(tempfile.gettempdir(), "pytest_temp_dir")
-os.makedirs(_custom_temp, exist_ok=True)
-os.environ.setdefault("PYTEST_DEBUG_TEMPROOT", _custom_temp)
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import ifc_probe

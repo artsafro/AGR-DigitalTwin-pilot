@@ -6,6 +6,13 @@ This directory contains experimental offline intake utilities for synthetic IFC4
 > This is a synthetic IFC pilot, **not** a native Revit importer and **not** a generic IFC importer.
 > `delivery_passed=false`: no customer delivery or production acceptance claims are made.
 
+## Classification & Provenance
+
+- **Classification**: Experimental `new-case` scoped strictly to synthetic IFC fixtures.
+- **Provenance**: Hypothesis [#107](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/107); report: [../../docs/experiments/hyp-107.md](../../docs/experiments/hyp-107.md).
+- **Pattern Status**: This is not a proven generic IFC pattern and no registry pattern is claimed.
+- **Contracts**: Synthetic one-wall-per-edge constraint; strict mode is default with report-only explicit geometric opt-in; `delivery_passed=false`.
+
 ## Wall Binding Modes
 
 The pilot provides two wall binding strategies for associating IFC wall elements with floor contour edges:

@@ -1,6 +1,7 @@
 """FBX scene checks from a Blender readback (tools/blender/fbx_readback.py).
 
-Fills the scene stages the header-only validator leaves not_run: V003 (triangulation,
+Fills the scene stages the header-only validator leaves not_run: V002 (units and scale;
+units come from a pure-Python GlobalSettings read), V003 (triangulation,
 triangle limits, object types), V004 (applied transforms, regulatory topology defect count), V006 (NPM embedded images),
 V008 (one UV channel, mirrored islands, glass tile), V010 (UCX triangle budget only),
 V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
@@ -10,10 +11,14 @@ import tempfile
 from pathlib import Path
 
 from dt_ai.core.blender_runner import blender_executable, run_blender
+from twinqa.fbx_header import fbx_units
 from twinqa.report import Finding
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
 ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
+METRE_UNIT_SCALE_CM = 100.0
+UNIT_REL_TOL = 1e-6
+UNIT_PAGES = [4, 24]
 # Project target (user decision on conflict #1, 2026-10-07): one model serves VPM and NPM, so
 # VPM OKS aims at the NPM limit; above it, windows go to atlas textures on planes.
 PROJECT_TRIANGLE_TARGET = 150_000
@@ -38,8 +43,15 @@ def find_blender() -> str | None:
 def readback(fbx_path: Path, blender: str | None = None, timeout: int = 600) -> dict:
     with tempfile.TemporaryDirectory() as tmp:
         out = Path(tmp) / "readback.json"
-        return run_blender(READBACK, [str(fbx_path), str(out)], executable=blender,
-                           output_json=out, timeout=timeout)
+        rb = run_blender(READBACK, [str(fbx_path), str(out)], executable=blender,
+                         output_json=out, timeout=timeout)
+    try:
+        data = Path(fbx_path).read_bytes()
+    except OSError as exc:
+        rb["fbx_units"] = {"unit_scale_factor": None, "original_unit_scale_factor": None, "error": str(exc)}
+    else:
+        rb["fbx_units"] = fbx_units(data)
+    return rb
 
 
 def _f(status, name, observed, expected, pages, evidence, conflicts=()):
@@ -120,15 +132,68 @@ def _topology_finding(meshes: list[dict], profile: dict, src: str) -> Finding:
               expected, [8, 29], src)
 
 
+def _scale_not_one(values) -> bool:
+    return any(abs(s - 1) > SCALE_TOL for s in values)
+
+
+def _fmt_scale(values) -> str:
+    parts = []
+    for value in values:
+        parts.append(f"{value:g}" if isinstance(value, float) else str(value))
+    return "[" + ",".join(parts) + "]"
+
+
+def _v002_scale_bad(mesh: dict) -> bool:
+    """Local scale, or effective world scale when the readback recorded it (else local)."""
+    local = mesh["scale"]
+    world = mesh["world_scale"] if "world_scale" in mesh else local
+    return _scale_not_one(local) or _scale_not_one(world)
+
+
+def _v002_scale_text(mesh: dict) -> str:
+    text = f"{mesh['name']} local {_fmt_scale(mesh['scale'])}"
+    if "world_scale" in mesh:
+        text += f" world {_fmt_scale(mesh['world_scale'])}"
+    return f"{text} parent {mesh.get('parent')}"
+
+
+def _v002_findings(rb: dict, meshes: list[dict], src: str) -> list[Finding]:
+    """1 unit = 1 m (UnitScaleFactor 100 cm) and local and effective (inherited) scale 1 on every mesh, UCX included."""
+    expected_units = "1 unit = 1 m (UnitScaleFactor 100)"
+    if "fbx_units" not in rb:
+        units = _f("not_run", "system units", "units not read", expected_units, UNIT_PAGES, src)
+    else:
+        info = rb.get("fbx_units") or {}
+        usf = info.get("unit_scale_factor")
+        ousf = info.get("original_unit_scale_factor")
+        if usf is None:
+            units = _f("fail", "system units", f"{src}: {info.get('error') or 'UnitScaleFactor not declared'}",
+                       expected_units, UNIT_PAGES, src)
+        else:
+            ok = abs(usf - METRE_UNIT_SCALE_CM) <= METRE_UNIT_SCALE_CM * UNIT_REL_TOL
+            observed = (f"{src}: 1 unit = {usf:g} cm "
+                        f"(UnitScaleFactor {usf:g}, OriginalUnitScaleFactor {ousf})")
+            units = _f("pass" if ok else "fail", "system units", observed, expected_units, UNIT_PAGES, src)
+    bad = [m for m in meshes if _v002_scale_bad(m)]
+    expected_scale = "local and effective (inherited) scale 1 on every mesh (1:1)"
+    if bad:
+        shown = ", ".join(_v002_scale_text(m) for m in bad[:5])
+        scale = _f("fail", "scale 1:1", f"{src}: {shown}", expected_scale, UNIT_PAGES, src)
+    else:
+        scale = _f("pass", "scale 1:1", f"{src}: scale 1 on every mesh", expected_scale, UNIT_PAGES, src)
+    return [units, scale]
+
+
 def scene_findings(rb: dict, kind: str, role: str, profile: dict) -> dict[str, list[Finding]]:
     """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}."""
     src = Path(rb["source"]).name
-    out = {"V003": [], "V004": [], "V008": [], "V010": [], "V013": [], "V006": []}
+    out = {"V003": [], "V004": [], "V008": [], "V010": [], "V013": [], "V006": [], "V002": []}
     if not rb.get("readback_ok"):
         out["V003"].append(_f("fail", "FBX readback", rb.get("error", "no meshes"), "importable FBX with meshes", [4, 24], src))
         return out
     meshes = rb["meshes"]
     ucx = [m for m in meshes if m["name"].upper().startswith("UCX_")]
+    out["V002"].extend(_v002_findings(rb, meshes, src))
     tris = sum(m["triangles"] for m in meshes if m not in ucx)  # collision is excluded (reg p.28 §3.9)
 
     # V003: triangulated on export, triangle limits, no foreign objects (reg p.6-8, 28-29)
