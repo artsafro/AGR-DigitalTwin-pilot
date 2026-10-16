@@ -48,7 +48,7 @@ class Opening(SpecPart):
     kind: Literal["window", "door", "grille"] | None = None
     # panes of one frame (gap <= 0.15 m) grouped into this opening: a curtain wall is one opening (#31)
     panes: int | None = Field(default=None, ge=1)
-    # an opening across a level is one record (spec v0.2, user decision 2026-10-08): kept by the
+    # an opening across a level is one record (spec v0.2, user decision 2026-10-08 [D103]): kept by the
     # floor of level_from, sill from that level, height up to level_to's floor and above
     level_from: str | None = None
     level_to: str | None = None
@@ -123,7 +123,7 @@ DECOR_TEXTURE_M = 0.10   # pattern facade-decor-inset (user 2026-10-11 [D051]): 
 
 
 class Decor(SpecPart):
-    """One facade decor element (spec v0.5, pattern facade-decor-inset, user decisions 2026-10-11/12 [D051, D054]): a
+    """One facade decor element (spec v0.5, pattern facade-decor-inset, user decisions 2026-10-11/12 [D051, D054, D056]): a
     simple solid, pieces of a split element merged. Wall-bound kinds by shape in the wall plane: band (width
     >= 3 x height), strip (height >= 3 x width: pilaster, lesene), panel (spandrel and the rest); a column
     stands free of the walls. Position from the floor of `level`: along `wall` of its contour (x_m, w_m) and

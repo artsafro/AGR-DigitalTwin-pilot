@@ -226,7 +226,7 @@ def test_the_decor_mesh_is_left_out_of_the_topology_checks():
 
 @pytest.mark.parametrize("gap, overlap", [(0.002, True), (0.005, False)])
 def test_an_overlap_is_a_crossing_deeper_than_the_weld(gap, overlap):
-    """User 2026-10-14: faces within weld_m (3 mm) overlap; a plate 5 mm off a face (plate_gap_m) does not."""
+    """User 2026-10-14 [D115]: faces within weld_m (3 mm) overlap; a plate 5 mm off a face (plate_gap_m) does not."""
     lo = _quad_box("slabs", (0, 0, 0), (4, 4, 1), 21)
     hi = _quad_box("terraces", (0, 0, 1 + gap), (4, 4, 2), 22)
     res = checks.check_mesh(from_dump(_dump(lo, hi)), TOL, checks.load_ranges(), build="from_source")

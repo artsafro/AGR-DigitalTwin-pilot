@@ -39,7 +39,7 @@ Status: draft. Source: `docs/HARNESS_PLAN.md` §3–§4, §7; extractor `src/dt_
 - Elements on a dropped small kink are still measured on the real facet.
 - If the inward shell offset self-intersects at a corner, stop and ask (user decision 2026-10-09 [D033]).
 - Pointed corner (an x-extreme corner between non-vertical walls, a pointed tip): a triangle fan from
-  the point to the other side's cuts, no T-junction (PR #100).
+  the point to the other side's cuts, no T-junction (PR #100, user 2026-10-13 [D112]).
 - Strip lines closer in x than the building weld `weld_m` (3 mm, [D068]) are one line.
 - Still a BuildError: a face piece with no side on a strip line or that is no trapezoid/triangle;
   cuts on the fan's side closer than `weld_m`; a face collapsing under the weld.

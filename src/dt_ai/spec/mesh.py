@@ -186,7 +186,7 @@ def _group_ids(group):
 
 @functools.lru_cache(maxsize=8)
 def _ranges(path, mtime_ns):
-    """The parsed ranges file, once per path and version (user 2026-10-13: the cache follows the file; parsed
+    """The parsed ranges file, once per path and version (user 2026-10-13 [D111]: the cache follows the file; parsed
     per call it cost OBJ03 42 of 48 minutes in _plane_suspects)."""
     import yaml
     return yaml.safe_load(open(path, encoding="utf-8").read())

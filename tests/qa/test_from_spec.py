@@ -1235,7 +1235,7 @@ def test_a_near_axis_wall_is_welded_straight():
     [[0, 0], [10, 0], [10, 4], [10.4, 5], [10, 6], [10, 10], [0, 10]],
 ])
 def test_pointed_corners_build_as_triangle_fans(contour):
-    """User 2026-10-13: a face piece with one side a point on a strip line is a triangle (a fan to the other
+    """User 2026-10-13 [D112]: a face piece with one side a point on a strip line is a triangle (a fan to the other
     side's cuts); the model stays closed, welded, without T-junctions."""
     def edit(d):
         d["floors"][0]["contour"] = contour

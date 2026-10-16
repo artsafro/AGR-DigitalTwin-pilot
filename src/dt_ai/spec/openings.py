@@ -34,7 +34,7 @@ ALONG_DEG = 10.0         # a chain runs along the gap within this angle
 BRIDGE_DEG = 3.0         # the mouth-to-mouth bridge runs along the gap within this angle
 MOUTH_KEY_M = 0.005      # bridges at different heights are one opening when each end moves under 5 mm
 ON_WALL_M = 0.05         # an opening mouth lies within this of its contour wall line
-PANE_JOIN_M = 0.15       # glass panes of one frame (gap <= 0.15 m, user decision 2026-10-08, #31) are one opening ...
+PANE_JOIN_M = 0.15       # glass panes of one frame (gap <= 0.15 m, user decision 2026-10-08 [D104], #31) are one opening ...
 PANE_BAND_M = 0.05       # ... when aligned: side by side, one's heights within the other's; stacked, one's width within
 # defaults of the extraction thresholds; a benchmark's tolerances.json (spec_extract) gives the values
 # in use (user decision 2026-10-09 [D034])
@@ -346,7 +346,7 @@ def _covered(rects, box):
 
 
 def _merge_panes(items):
-    """Panes of one frame are one opening (user decision 2026-10-08, #31): panes on the same wall
+    """Panes of one frame are one opening (user decision 2026-10-08 [D104], #31): panes on the same wall
     within PANE_JOIN_M of each other and aligned — side by side with one's heights inside the
     other's, or a transom with one's width inside the other's, within PANE_BAND_M. Two groups join
     only when their panes cover the joined rectangle, so staggered or L-shaped sets stay apart
@@ -438,7 +438,7 @@ def _world(o, contour):
 
 
 def _across_levels(by_level, levels, floors):
-    """One record for an opening that crosses a level (user decision 2026-10-08, spec v0.2): an
+    """One record for an opening that crosses a level (user decision 2026-10-08 [D103], spec v0.2): an
     opening of the floor above on the same facade line and plan span, starting within PANE_JOIN_M
     above the top of one of the floor below (either may reach past the level), joins it when their
     rectangles are covered as one frame; the lower floor keeps it with level_to. Runs top down, so

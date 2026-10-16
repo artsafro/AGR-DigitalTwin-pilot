@@ -122,15 +122,49 @@ def undecided_standards(conflicts_md_text, yaml_texts, known_ids):
     return problems
 
 
+def log_order_problems(rows):
+    """Regular rows are sorted by date; a backfill row (Source `backfill ...`, #138) is exempt but must be no later
+    than the regular row before it: it was decided before it was logged. Later regular rows follow as usual."""
+    problems = []
+    last = None
+    for row in rows:
+        date = datetime.date.fromisoformat(row[1])
+        if row[4].startswith("backfill"):
+            if last is not None and date > last:
+                problems.append(f"{row[0]}: a backfill row is later than the decision before it")
+            continue
+        if last is not None and date < last:
+            problems.append(f"{row[0]}: regular rows must be sorted by date")
+        last = date
+    return problems
+
+
 def test_log_format():
     rows = log_rows()
     assert rows, "no decisions"
-    dates = []
     for number, row in enumerate(rows, 1):
         assert len(row) == 5 and all(row), row
         assert row[0] == f"D{number:03d}", f"{row[0]}: ids must run D001, D002, ... without gaps"
-        dates.append(datetime.date.fromisoformat(row[1]))
-    assert dates == sorted(dates), "decisions must be sorted by date"
+    assert log_order_problems(rows) == []
+
+
+def test_backfill_rows_rule():
+    def row(id_, date, source):
+        return [id_, date, "decision", "file", source]
+
+    regular = [row("D001", "2026-10-06", "chat"), row("D002", "2026-10-08", "PR #1")]
+    backfill = [row("D003", "2026-10-07", "backfill #138 (a.py; #1)"),
+                row("D004", "2026-10-06", "backfill #138 (b.py)")]
+    assert log_order_problems(regular + backfill) == []
+    assert log_order_problems(regular + [row("D003", "2026-10-05", "chat")]) == [
+        "D003: regular rows must be sorted by date"]
+    later = row("D005", "2026-10-09", "chat")                    # a new decision after the backfill rows
+    assert log_order_problems(regular + backfill + [later]) == []
+    assert log_order_problems(regular + backfill + [row("D005", "2026-10-07", "chat")]) == [
+        "D005: regular rows must be sorted by date"]
+    assert log_order_problems(regular + [row("D003", "2026-10-09", "backfill #138 (c.py)")]) == [
+        "D003: a backfill row is later than the decision before it"]
+    assert log_order_problems([]) == []
 
 
 def test_every_dated_decision_carries_its_id():
@@ -140,8 +174,8 @@ def test_every_dated_decision_carries_its_id():
 
 def test_every_decision_is_anchored_where_it_applies():
     anchored = set()
-    markdown = [name for name in scope_files() if name.endswith(".md")]
-    for name in markdown + ["docs/prd/agent-ready-harness.md"]:
+    names = list(dict.fromkeys([*scope_files(), "docs/prd/agent-ready-harness.md"]))
+    for name in names:
         for group in REF.findall((ROOT / name).read_text(encoding="utf-8")):
             anchored.update(group.split(", "))
     assert [row[0] for row in log_rows() if row[0] not in anchored] == []
