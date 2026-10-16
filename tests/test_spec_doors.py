@@ -260,6 +260,75 @@ def test_adjacent_panes_across_a_level_are_one_opening():
     assert floors[1].openings == []
 
 
+# review of PR #241: a plane owned by another floor is a material candidate when the z spans meet,
+# not because of the floor of its bottom
+
+
+@pytest.mark.parametrize("z0", [1.8, 2.8, 3.0])
+@pytest.mark.parametrize("mid", [12, 13])
+def test_a_lower_floor_plane_reaching_an_upper_opening_gives_its_id(z0, mid):
+    p = Mesh("OpeningPlane")
+    p.quad((2, 0.05, z0), (3, 0.05, z0), (3, 0.05, 5.5), (2, 0.05, 5.5))
+    d = building(extra=[pane("glass", 2, 3, 3.6, 5.4), p])
+    d["meshes"][-1]["material_ids"] = [mid, mid]
+    spec, report = extract_spec(d, at())
+    (o,) = spec.expanded_floors()[1].openings
+    assert (o.material_id, o.plane_conflict) == (mid, False)
+    assert report["openings"]["opening_planes"] == 1
+
+
+@pytest.mark.parametrize("ids, material_id, conflict", [((12, 13), None, True), ((13, 12), None, True), ((12, 12), 12, False)])
+def test_a_lower_plane_and_an_upper_plane_on_one_opening(ids, material_id, conflict):
+    lower, upper = Mesh("OpeningPlane"), Mesh("OpeningPlane2")
+    lower.quad((2, 0.05, 1.8), (3, 0.05, 1.8), (3, 0.05, 5.5), (2, 0.05, 5.5))
+    upper.quad((2, 0.05, 3.6), (3, 0.05, 3.6), (3, 0.05, 5.4), (2, 0.05, 5.4))
+    d = building(extra=[pane("glass", 2, 3, 3.6, 5.4), lower, upper])
+    d["meshes"][-2]["material_ids"], d["meshes"][-1]["material_ids"] = [ids[0]] * 2, [ids[1]] * 2
+    spec, _ = extract_spec(d, at())
+    (o,) = spec.expanded_floors()[1].openings
+    assert (o.material_id, o.plane_conflict) == (material_id, conflict)
+
+
+@pytest.mark.parametrize("z0", [3.3, 3.32, 3.5])
+def test_a_plane_of_the_openings_own_floor_keeps_its_id(z0):
+    p = Mesh("OpeningPlane")
+    p.quad((2, 0.05, z0), (3, 0.05, z0), (3, 0.05, 5.5), (2, 0.05, 5.5))
+    d = building(extra=[pane("glass", 2, 3, 3.6, 5.4), p])
+    d["meshes"][-1]["material_ids"] = [12, 12]
+    spec, _ = extract_spec(d, at())
+    (o,) = spec.expanded_floors()[1].openings
+    assert (o.material_id, o.plane_conflict) == (12, False)
+
+
+def test_cross_level_plane_ids_stay_on_their_opening():
+    # the #34 single-piece glass still conflicts, and an L0 window keeps its own plane
+    lower, upper, own = Mesh("OpeningPlane"), Mesh("OpeningPlane2"), Mesh("OpeningPlane3")
+    lower.quad((2.0, 0.05, 1.8), (3.0, 0.05, 1.8), (3.0, 0.05, 3.2), (2.0, 0.05, 3.2))
+    upper.quad((2.0, 0.05, 3.32), (3.0, 0.05, 3.32), (3.0, 0.05, 5.5), (2.0, 0.05, 5.5))
+    own.quad((5.0, 0.05, 1.0), (6.0, 0.05, 1.0), (6.0, 0.05, 2.5), (5.0, 0.05, 2.5))
+    d = building(extra=[pane("glass", 2.0, 3.0, 1.8, 5.5), lower, upper, pane("glass2", 5.0, 6.0, 1.0, 2.5), own])
+    d["meshes"][-4]["material_ids"] = [12, 12]
+    d["meshes"][-3]["material_ids"] = [13, 13]
+    d["meshes"][-1]["material_ids"] = [12, 12]
+    spec, _ = extract_spec(d, at())
+    floors = spec.expanded_floors()
+    tall, window = sorted(floors[0].openings, key=lambda o: o.x_m)
+    assert (tall.material_id, tall.plane_conflict) == (None, True)
+    assert (window.material_id, window.plane_conflict) == (12, False)
+
+
+def test_a_plane_of_another_floor_within_a_frame_joint_is_no_candidate():
+    # an L1 plane reaching 0.08 m into an L0 window (less than LEVEL_JOINT_M) does not give it a conflict
+    own, upper = Mesh("OpeningPlane"), Mesh("OpeningPlane2")
+    own.quad((2, 0.05, 1.0), (3, 0.05, 1.0), (3, 0.05, 3.4), (2, 0.05, 3.4))
+    upper.quad((2, 0.05, 3.32), (3, 0.05, 3.32), (3, 0.05, 5.5), (2, 0.05, 5.5))
+    d = building(extra=[pane("glass", 2, 3, 1.0, 3.4), own, upper])
+    d["meshes"][-2]["material_ids"], d["meshes"][-1]["material_ids"] = [12, 12], [13, 13]
+    spec, _ = extract_spec(d, at())
+    (o,) = spec.expanded_floors()[0].openings
+    assert (o.material_id, o.plane_conflict) == (12, False)
+
+
 def test_a_door_recess_of_an_upper_floor_is_no_ledge():
     # KPP1 v006 run (2026-10-10): a recess from the floor of L1 leaves L1's contour as a door; its head is
     # not "something standing on a ledge" - ledges are looked for between final contours only
