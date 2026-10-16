@@ -28,13 +28,13 @@ Nothing here is a `D<n>` decision yet: agreed items move to `docs/decisions.md` 
 User: NPM and VPM fully match the source, pass the SINTEZ AGR Checker, and visually match the source.
 Acceptance order: geometry first, by a human, visual and mathematical; SINTEZ last.
 
-**Q2 How does pilot work reach the real repository?** — open.
+**Q2 How does pilot work reach the real repository?** — agreed (the proposal below).
 User: the pilot is a sandbox so the clean original is not broken; undecided whether the pilot becomes the main
 repository or core functions are carried over later.
 Proposed: decide at a fixed point, not by feel - the pilot becomes main when the first vertical slice
 (Ground + MAF + Flora site) is delivered; until then only `src/`, `standards/`, `docs/domain/` count as portable.
 
-**Q3 What did autoresearch and hypotheses give?** — open.
+**Q3 What did autoresearch and hypotheses give?** — agreed (the proposal below).
 User: unknown yet; needs reading and evaluation. Intent: find more efficient paths for workers and for the system,
 teach agents the math and keep requirements in context.
 Proposed: autoresearch pays only where evaluation is automatic and cheap; geometry is still judged by the user's
@@ -47,7 +47,7 @@ User will start keeping failing projects (archive + report).
 Proposed: read the extension's source, list every automatic check (what, threshold, regulation item), map it to
 V001-V017 (both / SINTEZ only / ours only); a report is useful only together with its archive.
 
-**Q5 Line A (spec -> engine) or line B (reduce the source mesh)?** — open, user is still testing approaches.
+**Q5 Line A (spec -> engine) or line B (reduce the source mesh)?** — agreed (the proposal below); user keeps testing approaches.
 User: KPP1 and PSU275 (simple architecture) were modelled by Claude almost perfectly. OBJ03 and the school failed
 (complex, multi-part). The engine did not give the agent an idea of what the geometry looks like; reduction with
 visual inspection and sections worked better.
@@ -77,7 +77,7 @@ contours and rebuild (extrude, shell, cut), or detach one polygon and build from
 | Change detail per profile | see Q9 | see Q9 |
 | To texture | under 0.07-0.10 m | not geometry |
 
-Proposed (not yet confirmed): the agent never edits the delivery mesh freehand; it only applies operations from
+Agreed: the agent never edits the delivery mesh freehand; it only applies operations from
 this menu, each a tool with invariants checked before and after (closed, no open edges, normals out, no
 non-manifold); a broken invariant rolls back and stops with a question. Each part is built and checked alone;
 assembly takes only checked parts. Plus a decomposition etalon: the user takes one complex object apart once, and
@@ -90,8 +90,22 @@ fences on Ground) cost many polygons; in NPM they become a plane with opacity. S
 removed. Round elements: VPM may have ~30 segments to avoid smoothing trouble, NPM ~9; so columns are modelled with
 9-12 segments around from the start.
 
+## Round 2
+
+The user accepts every recommendation of round 1 (Q2, Q3, Q5, Q8: "proposed" -> "agreed") and comments per question
+so the agent can refine it.
+
+**Q10 What turns a part into an opacity plane in NPM?** — agreed.
+User: repeating vertical or horizontal see-through elements - railings, metal rod / bar ladders, rods - geometry that
+must stay see-through and costs many polygons because it is built from boxes.
+Agreed rule: (a) + (b). The master marks such parts as opacity candidates by type (railing, rod ladder, bar screen /
+grille, AC screen, fence); NPM derivation swaps candidates for opacity planes, largest triangle saving first, until
+the NPM fits its budget; candidates not needed for the budget stay geometry; the report lists every swap and the
+triangles saved. Open: whether VPM ever uses opacity for them (asked, not answered).
+
 ## Open questions (queue)
 
-- Q2, Q3, Q5: user decision pending.
 - Which object for the decomposition etalon: OBJ03 or the Butovskaya school; 1-2 hours of the user's time.
-- Next: what triggers the NPM swap geometry -> opacity plane (Q10).
+- Q10 follow-up: opacity in VPM for the same parts.
+- Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
+- Next: Q11 the build kernel (which DCC executes the operation library).
