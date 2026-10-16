@@ -7,7 +7,7 @@ import os
 
 PIVOT_LIFT_M = 0.10
 GRID_M = 12.0
-LIBRARY_NAME = "flora-library-v001.max"
+LIBRARY_NAME = "flora-library-v002.max"
 
 
 def layout_position(column, row, spacing=GRID_M):
@@ -314,7 +314,8 @@ def assemble(job):
     with open(job["report"], "w", encoding="utf-8") as handle:
         json.dump(report, handle, ensure_ascii=False, indent=1)
         handle.write("\n")
-    print(f"flora-library-v001 passed={str(report['passed']).lower()} objects={len(expected)} failures={len(failures)}")
+    library_stem = os.path.splitext(LIBRARY_NAME)[0]
+    print(f"{library_stem} passed={str(report['passed']).lower()} objects={len(expected)} failures={len(failures)}")
     return report
 
 

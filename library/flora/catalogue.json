@@ -1,6 +1,6 @@
 {
  "schema": "flora-library-v1",
- "library_file": "C:/x/flora-library/v001/flora-library-v001.max",
+ "library_file": "C:/x/flora-library/v002/flora-library-v002.max",
  "id_ranges": {
   "tree": [
    101,
@@ -1720,7 +1720,7 @@
    "note": "",
    "objects": {
     "NPM": "Hydrangea_arborescens_Bounty_NPM",
-    "VPM": "Hydrangea_arborescens_Bounty_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-044",
@@ -1731,29 +1731,21 @@
     "crown_diameter_m": 1.892,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-044",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "SM_gortenzia_drevovidnaya_baunti",
-    "triangles": 88,
-    "height_m": 1.407,
-    "crown_diameter_m": 1.892,
-    "basis": "LP -> HP"
-   },
-   "vpm_status": "available",
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [
     {
      "entry_id": "library-087",
      "scene": "FLORA_Union_v1.max",
      "source_name": "гортензия древовидная баунти_02",
-     "reason": "duplicate: kept library-044 (entry id)"
+     "reason": "duplicate: kept library-044 (same mesh as NPM, not a distinct VPM)"
     }
    ],
    "height_m": 1.407,
    "crown_diameter_m": 1.892,
    "triangles": {
     "NPM": 88,
-    "VPM": 88
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
@@ -1774,7 +1766,7 @@
    "note": "",
    "objects": {
     "NPM": "Hydrangea_paniculata_Limelight_NPM",
-    "VPM": "Hydrangea_paniculata_Limelight_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-045",
@@ -1785,29 +1777,21 @@
     "crown_diameter_m": 1.892,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-045",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "SM_gortenzia_metelchataya_laim_lait",
-    "triangles": 84,
-    "height_m": 1.407,
-    "crown_diameter_m": 1.892,
-    "basis": "LP -> HP"
-   },
-   "vpm_status": "available",
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [
     {
      "entry_id": "library-088",
      "scene": "FLORA_Union_v1.max",
      "source_name": "гортензия метельчатая лайм лайт_02",
-     "reason": "duplicate: kept library-045 (entry id)"
+     "reason": "duplicate: kept library-045 (same mesh as NPM, not a distinct VPM)"
     }
    ],
    "height_m": 1.407,
    "crown_diameter_m": 1.892,
    "triangles": {
     "NPM": 84,
-    "VPM": 84
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
@@ -1883,7 +1867,7 @@
    "note": "",
    "objects": {
     "NPM": "Sorbaria_sorbifolia_Sem_NPM",
-    "VPM": "Sorbaria_sorbifolia_Sem_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-052",
@@ -1894,29 +1878,21 @@
     "crown_diameter_m": 1.889,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-052",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "SM_ryabinnik_ryabinolistniy_sam",
-    "triangles": 112,
-    "height_m": 1.332,
-    "crown_diameter_m": 1.889,
-    "basis": "LP -> HP"
-   },
-   "vpm_status": "available",
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [
     {
      "entry_id": "library-090",
      "scene": "FLORA_Union_v1.max",
      "source_name": "рябинник рябиннолистн сэм_02",
-     "reason": "duplicate: kept library-052 (entry id)"
+     "reason": "duplicate: kept library-052 (same mesh as NPM, not a distinct VPM)"
     }
    ],
    "height_m": 1.332,
    "crown_diameter_m": 1.889,
    "triangles": {
     "NPM": 112,
-    "VPM": 112
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
@@ -3246,7 +3222,7 @@
    "flower": 9,
    "climber": 1
   },
-  "with_vpm": 41,
+  "with_vpm": 38,
   "merged_duplicates": 37,
   "maps": {
    "approved": 7,

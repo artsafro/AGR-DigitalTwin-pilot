@@ -18,7 +18,7 @@ RANGES = {
     "flower": (401, 499),
     "climber": (501, 599),
 }
-LIBRARY_FILE = "C:/x/flora-library/v001/flora-library-v001.max"
+LIBRARY_FILE = "C:/x/flora-library/v002/flora-library-v002.max"
 MAPS_ROOT = "C:/x/flora-library/v001/maps"
 LIBRARY_SCENE = "FLORA_Union_v1.max"
 REVIEW_STATUS = ("approved", "pending_review", "missing")
@@ -62,13 +62,8 @@ def select_sources(entries: list[dict]) -> dict:
     if not npm_candidates:
         raise ValueError("species has no NPM candidate")
     npm_entry = min(npm_candidates, key=_npm_key)
-    vpm_entry = min(vpm_candidates, key=_vpm_key) if vpm_candidates else None
-    if (
-        vpm_entry is not None
-        and len(vpm_candidates) == 1
-        and vpm_entry["id"] == npm_entry["id"]
-    ):
-        vpm_entry = None
+    qualifying = [entry for entry in vpm_candidates if _distinct_vpm(entry, npm_entry)]
+    vpm_entry = min(qualifying, key=_vpm_key) if qualifying else None
     npm = _record(npm_entry, _npm_basis(npm_entry))
     vpm = None if vpm_entry is None else _record(vpm_entry, _vpm_basis(vpm_entry))
     kept = {npm_entry["id"]}
@@ -96,37 +91,24 @@ def select_sources(entries: list[dict]) -> dict:
 def assign_ids(species: list[dict], previous: dict | None = None, gaps: list[dict] | None = None) -> dict:
     """Keep previous material IDs, reserve shared stand-in IDs, and retire IDs that left."""
     gap_rows = list(gaps or [])
-    seen_latin = set()
-    for item in list(species) + gap_rows:
-        if item["latin"] in seen_latin:
-            raise ValueError(f"duplicate latin {item['latin']}")
-        seen_latin.add(item["latin"])
-    retired: list[int] = []
-    previous_by_latin: dict[str, dict] = {}
-    if previous is not None:
-        retired = list(previous.get("retired_ids", []))
-        for item in _previous_id_rows(previous):
-            _require_range(item["type"], item["material_id"], item["latin"])
-            previous_by_latin[item["latin"]] = item
-        current = {item["latin"] for item in species} | {item["latin"] for item in gap_rows}
-        for latin, item in previous_by_latin.items():
-            if latin not in current and item["material_id"] not in retired:
-                retired.append(item["material_id"])
-    used = set(retired)
+    current_rows = list(species) + gap_rows
+    _require_unique_latin(current_rows)
+    history, retired = _history(previous)
     assigned: dict[str, int] = {}
-    for item in list(species) + gap_rows:
+    for item in current_rows:
         latin = item["latin"]
-        if latin not in previous_by_latin:
+        if latin not in history:
             continue
-        if latin in assigned:
-            raise ValueError(f"duplicate latin {latin}")
-        material_id = previous_by_latin[latin]["material_id"]
+        material_id = history[latin]["material_id"]
         _require_range(item["type"], material_id, latin)
-        if material_id in used:
-            raise ValueError(f"material_id {material_id} for {latin} is retired or already used")
         assigned[latin] = material_id
-        used.add(material_id)
-    for item in list(species) + gap_rows:
+    retired = [row for row in retired if not isinstance(row["latin"], str) or row["latin"] not in assigned]
+    current = {item["latin"] for item in current_rows}
+    for latin, item in history.items():
+        if item["origin"] == "active" and latin not in current:
+            retired.append(_retired_object(item["material_id"], latin, item["type"]))
+    used = {row["material_id"] for row in retired} | set(assigned.values())
+    for item in current_rows:
         latin = item["latin"]
         if latin in assigned:
             continue
@@ -136,6 +118,7 @@ def assign_ids(species: list[dict], previous: dict | None = None, gaps: list[dic
             raise ValueError(f"{item['type']} material-id range {low}-{high} is full")
         assigned[latin] = material_id
         used.add(material_id)
+    retired.sort(key=lambda row: row["material_id"])
     return {"by_latin": assigned, "retired_ids": retired}
 
 
@@ -227,7 +210,7 @@ def check(catalogue: dict) -> list[str]:
     if not isinstance(catalogue["species"], list):
         findings.append("species is not a list")
         return findings
-    retired = set(catalogue["retired_ids"]) if isinstance(catalogue["retired_ids"], list) else set()
+    retired = _retired_material_ids(catalogue["retired_ids"])
     seen_ids: dict[int, str] = {}
     seen_latin: dict[str, int] = {}
     seen_names: dict[str, str] = {}
@@ -239,6 +222,7 @@ def check(catalogue: dict) -> list[str]:
         findings.extend(_key_findings(item, _SPECIES_KEYS, where))
         findings.extend(_check_species(item, where, retired, seen_ids, seen_latin, seen_names))
     findings.extend(_check_gaps(catalogue))
+    findings.extend(_check_retired_latins(catalogue))
     findings.extend(_check_counts(catalogue))
     return findings
 
@@ -342,7 +326,21 @@ def _record(entry: dict, basis: str) -> dict:
     }
 
 
+def _distinct_vpm(entry: dict, npm_entry: dict) -> bool:
+    return entry["id"] != npm_entry["id"] and entry["triangles"] != npm_entry["triangles"]
+
+
+def _same_mesh_as_npm(entry: dict, npm_entry: dict) -> bool:
+    return (
+        entry["id"] != npm_entry["id"]
+        and entry["triangles"] == npm_entry["triangles"]
+        and _vpm_basis(entry) is not None
+    )
+
+
 def _merged_reason(entry: dict, npm_entry: dict, vpm_entry: dict | None) -> str:
+    if _same_mesh_as_npm(entry, npm_entry):
+        return f"duplicate: kept {npm_entry['id']} (same mesh as NPM, not a distinct VPM)"
     if _npm_basis(entry) is not None:
         rule = _rule(npm_entry, entry, "NPM")
         return f"duplicate: kept {npm_entry['id']} ({rule})"
@@ -423,6 +421,68 @@ def _maps_for(latin: str, maps: dict) -> dict:
         "review_status": item.get("review_status", "missing"),
         "evidence": item.get("evidence"),
     }
+
+
+def _require_unique_latin(rows: list[dict]) -> None:
+    seen = set()
+    for item in rows:
+        if item["latin"] in seen:
+            raise ValueError(f"duplicate latin {item['latin']}")
+        seen.add(item["latin"])
+
+
+def _retired_object(material_id: int, latin, kind) -> dict:
+    return {"material_id": material_id, "latin": latin, "type": kind}
+
+
+def _coerce_retired(item) -> dict:
+    if _is_int(item):
+        return _retired_object(item, None, None)
+    if isinstance(item, dict) and _is_int(item.get("material_id")):
+        return _retired_object(item["material_id"], item.get("latin"), item.get("type"))
+    raise ValueError("retired_ids entry is not an int or an object with material_id")
+
+
+def _remember_id(seen: dict[int, str], material_id: int) -> None:
+    if not _is_int(material_id):
+        raise ValueError(f"material_id {material_id!r} is not an int")
+    if material_id in seen:
+        raise ValueError(f"duplicate material_id {material_id}")
+    seen[material_id] = ""
+
+
+def _remember_latin(seen: set[str], latin: str) -> None:
+    if latin in seen:
+        raise ValueError(f"duplicate latin {latin}")
+    seen.add(latin)
+
+
+def _history(previous: dict | None) -> tuple[dict[str, dict], list[dict]]:
+    if previous is None:
+        return {}, []
+    seen_ids: dict[int, str] = {}
+    seen_latin: set[str] = set()
+    history: dict[str, dict] = {}
+    retired = [_coerce_retired(item) for item in previous.get("retired_ids", [])]
+    for item in _previous_id_rows(previous):
+        _remember_id(seen_ids, item["material_id"])
+        _remember_latin(seen_latin, item["latin"])
+        _require_range(item["type"], item["material_id"], item["latin"])
+        history[item["latin"]] = {
+            "material_id": item["material_id"],
+            "type": item["type"],
+            "origin": "active",
+        }
+    for row in retired:
+        _remember_id(seen_ids, row["material_id"])
+        if isinstance(row["latin"], str):
+            _remember_latin(seen_latin, row["latin"])
+            history[row["latin"]] = {
+                "material_id": row["material_id"],
+                "type": row["type"],
+                "origin": "retired",
+            }
+    return history, retired
 
 
 def _previous_id_rows(previous: dict) -> list[dict]:
@@ -545,15 +605,87 @@ def _check_ranges(value) -> list[str]:
     return findings
 
 
+def _retired_material_ids(value) -> set[int]:
+    if not isinstance(value, list):
+        return set()
+    found = set()
+    for item in value:
+        if isinstance(item, dict) and _is_int(item.get("material_id")):
+            found.add(item["material_id"])
+    return found
+
+
 def _check_retired(value) -> list[str]:
     if not isinstance(value, list):
         return ["retired_ids is not a list"]
     findings = []
+    seen_ids: set[int] = set()
+    seen_latin: set[str] = set()
     for index, item in enumerate(value):
-        if not _is_int(item):
-            findings.append(f"retired_ids[{index}] is not an int")
-        elif 1 <= item <= 100:
-            findings.append(f"retired_ids contains ID {item} in 1-100")
+        where = f"retired_ids[{index}]"
+        if not isinstance(item, dict):
+            findings.append(f"{where} is not an object")
+            continue
+        findings.extend(_key_findings(item, ("material_id", "latin", "type"), where))
+        material_id = item.get("material_id")
+        latin = item.get("latin")
+        kind = item.get("type")
+        if "material_id" in item and not _is_int(material_id):
+            findings.append(f"{where}.material_id is not an int")
+        elif _is_int(material_id):
+            if 1 <= material_id <= 100:
+                findings.append(f"retired_ids contains ID {material_id} in 1-100")
+            if material_id in seen_ids:
+                findings.append(f"duplicate retired material_id {material_id}")
+            else:
+                seen_ids.add(material_id)
+        if "latin" in item and latin is not None and not isinstance(latin, str):
+            findings.append(f"{where}.latin is not a string")
+        if "type" in item and kind is not None and not isinstance(kind, str):
+            findings.append(f"{where}.type is not a string")
+        elif isinstance(kind, str) and kind not in RANGES:
+            findings.append(f"{where}.type {kind!r} is not a Flora range")
+        latin_set = isinstance(latin, str)
+        type_present = kind is not None
+        if latin_set != type_present:
+            findings.append(f"{where} latin and type must both be set or both be null")
+        if isinstance(kind, str) and kind in RANGES and _is_int(material_id):
+            low, high = RANGES[kind]
+            if not low <= material_id <= high:
+                findings.append(
+                    f"{where}.material_id {material_id} is outside the {kind} range {low}-{high}"
+                )
+        if latin_set:
+            if latin in seen_latin:
+                findings.append(f"duplicate retired latin {latin}")
+            else:
+                seen_latin.add(latin)
+    return findings
+
+
+def _check_retired_latins(catalogue: dict) -> list[str]:
+    retired = catalogue.get("retired_ids")
+    if not isinstance(retired, list):
+        return []
+    active: set[str] = set()
+    for item in catalogue.get("species", []):
+        if isinstance(item, dict) and isinstance(item.get("latin"), str):
+            active.add(item["latin"])
+    gaps = catalogue.get("gaps")
+    stand_in = gaps.get("project_species_shared_stand_in", []) if isinstance(gaps, dict) else []
+    if isinstance(stand_in, list):
+        for item in stand_in:
+            if isinstance(item, dict) and isinstance(item.get("latin"), str):
+                active.add(item["latin"])
+    findings = []
+    reported: set[str] = set()
+    for item in retired:
+        if not isinstance(item, dict) or not isinstance(item.get("latin"), str):
+            continue
+        latin = item["latin"]
+        if latin in active and latin not in reported:
+            findings.append(f"retired latin {latin} is also active")
+            reported.add(latin)
     return findings
 
 
@@ -608,9 +740,22 @@ def _check_species(item: dict, where: str, retired: set, seen_ids: dict, seen_la
     if "maps" in item:
         findings.extend(_check_maps(item.get("maps"), where))
     findings.extend(_check_vpm_status(item, where))
+    findings.extend(_check_distinct_vpm(item, where))
     if item.get("geometry_basis") == "shared_multi_species_stand_in":
         findings.append(f"{where} is a shared stand-in and is not a library species")
     return findings
+
+
+def _check_distinct_vpm(item: dict, where: str) -> list[str]:
+    npm = item.get("npm")
+    vpm = item.get("vpm")
+    if not isinstance(npm, dict) or not isinstance(vpm, dict):
+        return []
+    same_entry = isinstance(npm.get("entry_id"), str) and npm.get("entry_id") == vpm.get("entry_id")
+    same_triangles = "triangles" in npm and npm.get("triangles") == vpm.get("triangles")
+    if same_entry or same_triangles:
+        return [f"{where}.vpm is the NPM mesh, not a distinct VPM"]
+    return []
 
 
 def _check_vpm_status(item: dict, where: str) -> list[str]:
@@ -762,7 +907,7 @@ def _check_gaps(catalogue: dict) -> list[str]:
         if gaps["species_without_approved_maps"] != expected:
             findings.append("gaps.species_without_approved_maps does not match the species")
     if "project_species_shared_stand_in" in gaps:
-        retired = set(catalogue["retired_ids"]) if isinstance(catalogue.get("retired_ids"), list) else set()
+        retired = _retired_material_ids(catalogue.get("retired_ids"))
         seen_ids = {}
         seen_latin = {}
         for item in species:

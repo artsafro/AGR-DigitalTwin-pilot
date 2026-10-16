@@ -135,7 +135,7 @@ def test_assign_ids_keeps_old_ids_and_retires_removed_ones():
         if latin == removed["latin"]:
             continue
         assert new_ids[latin] == material_id
-    assert old_ids[removed["latin"]] in rebuilt["retired_ids"]
+    assert old_ids[removed["latin"]] in _retired_ids(rebuilt)
     assert new_ids[inserted["latin"]] != old_ids[removed["latin"]]
     assert new_ids[inserted["latin"]] == 128
     assert fc.check(rebuilt) == []
@@ -165,6 +165,16 @@ def test_committed_catalogue_has_no_findings_and_matches_rebuild():
 
 def _text(findings: list[str]) -> str:
     return "\n".join(findings)
+
+
+def _retired_ids(catalogue) -> set[int]:
+    found = set()
+    for item in catalogue["retired_ids"]:
+        if isinstance(item, dict):
+            found.add(item["material_id"])
+        else:
+            found.add(item)
+    return found
 
 
 def test_check_reports_duplicate_id():
@@ -220,8 +230,13 @@ def test_check_reports_wrong_object_name():
 
 def test_check_reports_reused_retired_id():
     catalogue = _load("library/flora/catalogue.json")
-    catalogue["retired_ids"].append(catalogue["species"][0]["material_id"])
-    assert "retired" in _text(fc.check(catalogue))
+    holder = catalogue["species"][0]
+    catalogue["retired_ids"].append({
+        "material_id": holder["material_id"],
+        "latin": "Synthetic retired holder",
+        "type": holder["type"],
+    })
+    assert "is retired" in _text(fc.check(catalogue))
 
 
 def test_check_reports_approved_without_opacity():
@@ -313,7 +328,7 @@ def test_shared_stand_in_gap_keeps_a_reserved_id():
         item for item in rebuilt["gaps"]["project_species_shared_stand_in"] if item["latin"] == "Pinus sylvestris"
     )
     assert again["material_id"] == 126
-    assert 126 not in rebuilt["retired_ids"]
+    assert 126 not in _retired_ids(rebuilt)
     synthetic = next(item for item in rebuilt["species"] if item["latin"] == "Syntheticus reservatus")
     assert synthetic["material_id"] != 126
     gap_ids = {item["material_id"] for item in rebuilt["gaps"]["project_species_shared_stand_in"]}
@@ -487,7 +502,7 @@ def test_random_id_sets_keep_reserved_and_retired_ids():
             assert assigned["by_latin"][latin] == material_id
         blocked = set(retired_expected) | set(retired_seed)
         for material_id in blocked:
-            assert material_id in assigned["retired_ids"]
+            assert material_id in _retired_ids(assigned)
             assert material_id not in values
         reserved = {kept[item["latin"]] for item in current_gaps}
         for item in current_species + current_gaps:
@@ -594,7 +609,12 @@ def _apply_fault(catalogue: dict, name: str) -> bool:
         species[0]["objects"]["NPM"] = "Wrong_NPM"
         return True
     if name == "retired":
-        catalogue["retired_ids"].append(species[0]["material_id"])
+        holder = species[0]
+        catalogue["retired_ids"].append({
+            "material_id": holder["material_id"],
+            "latin": "Synthetic retired holder",
+            "type": holder["type"],
+        })
         return True
     if name == "approved_without_opacity":
         species[0]["maps"]["review_status"] = "approved"
@@ -669,9 +689,10 @@ def test_synthetic_probe_keeps_ids_and_reports_one_fault():
         for item in list(second["species"]) + list(second["gaps"]["project_species_shared_stand_in"]):
             low, high = fc.RANGES[item["type"]]
             assert low <= item["material_id"] <= high
+        retired_ids = _retired_ids(second)
         for latin, material_id in first_gap_ids.items():
             if latin in removed:
-                assert material_id in second["retired_ids"]
+                assert material_id in retired_ids
                 assert material_id not in all_ids
             else:
                 assert second_gap_ids[latin] == material_id
@@ -679,11 +700,11 @@ def test_synthetic_probe_keeps_ids_and_reports_one_fault():
         for item in second["species"]:
             if item["latin"] not in old_ids:
                 assert item["material_id"] not in reserved
-                assert item["material_id"] not in second["retired_ids"]
+                assert item["material_id"] not in retired_ids
         for latin, material_id in second_gap_ids.items():
             if latin not in first_gap_ids:
                 assert material_id not in reserved
-                assert material_id not in second["retired_ids"]
+                assert material_id not in retired_ids
         fault = rng.choice(faults)
         broken = deepcopy(second)
         applied = _apply_fault(broken, fault)
@@ -703,3 +724,314 @@ def test_pivot_for_bounds_uses_lowest_z_not_max_y():
     bounds = (-22.25, 7.80, -0.03, -18.03, 12.02)  # min_x, min_y, min_z, max_x, max_y (library-028 Tilia)
     x, y, z = builder.pivot_for_bounds(bounds)
     assert abs(x - (-20.14)) < 1e-9 and abs(y - 9.91) < 1e-9 and abs(z - 0.07) < 1e-9
+
+
+_FLORA_KINDS = ("tree", "bush", "hedge", "flower", "climber")
+_SAME_MESH_PAIRS = (
+    ("Hydrangea arborescens 'Bounty'", "library-087"),
+    ("Hydrangea paniculata 'Limelight'", "library-088"),
+    ("Sorbaria sorbifolia 'Sem'", "library-090"),
+)
+
+
+@pytest.mark.parametrize(("latin", "duplicate"), _SAME_MESH_PAIRS)
+def test_duplicate_lp_hp_rows_are_not_a_distinct_vpm(latin, duplicate):
+    chosen = fc.select_sources(_sources(latin))
+    assert chosen["VPM"] is None
+    assert chosen["vpm_status"] == "unconfirmed"
+    assert chosen["NPM"]["basis"] == "LP -> HP"
+    merged = next(item for item in chosen["merged"] if item["entry_id"] == duplicate)
+    assert "same mesh" in merged["reason"]
+
+
+def test_three_equal_lp_hp_rows_leave_vpm_unconfirmed():
+    """Three synthetic LP -> HP copies of one mesh are not a VPM pair."""
+    chosen = fc.select_sources([
+        _mesh("copy-a", "LP -> HP", 40),
+        _mesh("copy-b", "LP -> HP", 40),
+        _mesh("copy-c", "LP -> HP", 40),
+    ])
+    assert chosen["VPM"] is None
+    assert chosen["vpm_status"] == "unconfirmed"
+    assert chosen["NPM"]["basis"] == "LP -> HP"
+
+
+def test_explicit_hp_with_the_npm_triangle_count_is_not_a_vpm():
+    """Synthetic LP and HP rows that share a triangle count are one mesh."""
+    chosen = fc.select_sources([_mesh("npm", "LP", 12), _mesh("copy", "HP", 12)])
+    assert chosen["VPM"] is None
+    assert chosen["vpm_status"] == "none"
+
+
+def test_explicit_hp_with_a_different_triangle_count_is_a_vpm():
+    """Synthetic control: a different triangle count is distinct VPM geometry."""
+    chosen = fc.select_sources([_mesh("npm", "LP", 12), _mesh("vpm", "HP", 80)])
+    assert chosen["VPM"]["entry_id"] == "vpm"
+    assert chosen["vpm_status"] == "available"
+
+
+@pytest.mark.parametrize(
+    ("latin", "npm_id", "vpm_id"),
+    [
+        ("Tilia cordata", "library-028", "library-001"),
+        ("Cornus alba", "library-011", "library-010"),
+        ("Amelanchier lamarckii", "project-009", "library-020"),
+    ],
+)
+def test_distinct_geometry_keeps_its_vpm(latin, npm_id, vpm_id):
+    chosen = fc.select_sources(_sources(latin))
+    assert chosen["NPM"]["entry_id"] == npm_id
+    assert chosen["VPM"]["entry_id"] == vpm_id
+    assert chosen["vpm_status"] == "available"
+
+
+def test_check_reports_vpm_that_repeats_the_npm_mesh():
+    catalogue = _load("library/flora/catalogue.json")
+    item = next(row for row in catalogue["species"] if row["latin"] == "Tilia cordata")
+    item["vpm"] = deepcopy(item["npm"])
+    item["vpm_status"] = "available"
+    item["objects"]["VPM"] = fc.object_name(item["latin"], "VPM")
+    item["triangles"]["VPM"] = item["npm"]["triangles"]
+    assert "not a distinct VPM" in _text(fc.check(catalogue))
+
+
+def test_committed_catalogue_has_no_same_mesh_vpm():
+    catalogue = _load("library/flora/catalogue.json")
+    by_latin = {item["latin"]: item for item in catalogue["species"]}
+    for latin, _duplicate in _SAME_MESH_PAIRS:
+        item = by_latin[latin]
+        assert item["vpm"] is None
+        assert item["objects"]["VPM"] is None
+        assert item["vpm_status"] == "unconfirmed"
+    assert catalogue["counts"]["with_vpm"] == 38
+
+
+def _id_invariants(assigned, rows):
+    types = {item["latin"]: item["type"] for item in rows}
+    values = list(assigned["by_latin"].values())
+    assert len(values) == len(set(values))
+    assert set(assigned["by_latin"]) == set(types)
+    for latin, material_id in assigned["by_latin"].items():
+        low, high = fc.RANGES[types[latin]]
+        assert low <= material_id <= high
+        assert not 1 <= material_id <= 100
+
+
+def _previous_from(assigned, species, gaps):
+    return {
+        "retired_ids": assigned["retired_ids"],
+        "species": [
+            {"latin": item["latin"], "type": item["type"], "material_id": assigned["by_latin"][item["latin"]]}
+            for item in species
+        ],
+        "gaps": {
+            "project_species_shared_stand_in": [
+                {"latin": item["latin"], "type": item["type"], "material_id": assigned["by_latin"][item["latin"]]}
+                for item in gaps
+            ]
+        },
+    }
+
+
+@pytest.mark.parametrize("kind", _FLORA_KINDS)
+def test_readded_species_recovers_its_material_id(kind):
+    """Synthetic species: remove and re-add must return the same material ID."""
+    latin = "Synthetic reappearing plant"
+    first = fc.assign_ids([{"latin": latin, "type": kind}])
+    old = first["by_latin"][latin]
+    removed = fc.assign_ids(
+        [],
+        {"species": [{"latin": latin, "type": kind, "material_id": old}], "retired_ids": []},
+    )
+    third = fc.assign_ids(
+        [{"latin": latin, "type": kind}],
+        {"species": [], "retired_ids": removed["retired_ids"]},
+    )
+    assert third["by_latin"][latin] == old
+
+
+@pytest.mark.parametrize("kind", _FLORA_KINDS)
+def test_material_id_is_not_reissued_across_generations(kind):
+    """Synthetic species and one stand-in gap: an ID stays with its latin name."""
+    names = {key: f"Synthetic {kind} {key}" for key in ("A", "B", "C", "G", "N", "M")}
+
+    def row(key):
+        return {"latin": names[key], "type": kind}
+
+    gen1_species = [row("A"), row("B"), row("C")]
+    gen1_gaps = [row("G")]
+    gen1 = fc.assign_ids(gen1_species, gaps=gen1_gaps)
+    _id_invariants(gen1, gen1_species + gen1_gaps)
+    id_a = gen1["by_latin"][names["A"]]
+    id_b = gen1["by_latin"][names["B"]]
+    id_c = gen1["by_latin"][names["C"]]
+    id_g = gen1["by_latin"][names["G"]]
+
+    gen2_species = [row("C"), row("B"), row("N")]
+    gen2_gaps = [row("G")]
+    gen2 = fc.assign_ids(gen2_species, _previous_from(gen1, gen1_species, gen1_gaps), gen2_gaps)
+    _id_invariants(gen2, gen2_species + gen2_gaps)
+    assert gen2["by_latin"][names["B"]] == id_b
+    assert gen2["by_latin"][names["C"]] == id_c
+    assert gen2["by_latin"][names["G"]] == id_g
+    assert gen2["by_latin"][names["N"]] != id_a
+    retired_a = next(item for item in gen2["retired_ids"] if item["latin"] == names["A"])
+    assert retired_a == {"material_id": id_a, "latin": names["A"], "type": kind}
+    id_n = gen2["by_latin"][names["N"]]
+
+    gen3_species = [row("A"), row("M"), row("B"), row("C")]
+    gen3_gaps = [row("G")]
+    gen3 = fc.assign_ids(gen3_species, _previous_from(gen2, gen2_species, gen2_gaps), gen3_gaps)
+    _id_invariants(gen3, gen3_species + gen3_gaps)
+    assert gen3["by_latin"][names["A"]] == id_a
+    assert gen3["by_latin"][names["B"]] == id_b
+    assert gen3["by_latin"][names["C"]] == id_c
+    assert gen3["by_latin"][names["G"]] == id_g
+    assert gen3["by_latin"][names["M"]] not in {id_a, id_n}
+
+    gen4_species = [row("N"), row("A"), row("B"), row("C"), row("M")]
+    gen4_gaps = [row("G")]
+    gen4 = fc.assign_ids(gen4_species, _previous_from(gen3, gen3_species, gen3_gaps), gen4_gaps)
+    _id_invariants(gen4, gen4_species + gen4_gaps)
+    assert gen4["by_latin"][names["N"]] == id_n
+    assert gen4["by_latin"][names["A"]] == id_a
+    assert gen4["by_latin"][names["M"]] == gen3["by_latin"][names["M"]]
+
+
+def test_removed_real_species_retires_and_recovers_its_id():
+    committed = _load("library/flora/catalogue.json")
+    bush = next(item for item in committed["species"] if item["type"] == "bush")
+    audit = _load("experiments/flora-library-audit/catalogue.json")
+    maps = _load("library/flora/maps.json")
+    curation = _load("library/flora/species-curation.json")
+    without_curation = deepcopy(curation)
+    index = next(i for i, item in enumerate(without_curation["species"]) if item["latin"] == bush["latin"])
+    without_curation["species"].pop(index)
+    without = fc.build(audit, without_curation, maps, committed)
+    assert fc.check(without) == []
+    retired = next(item for item in without["retired_ids"] if item["material_id"] == bush["material_id"])
+    assert retired["latin"] == bush["latin"]
+    assert retired["type"] == bush["type"]
+    restored = fc.build(audit, curation, maps, without)
+    assert fc.check(restored) == []
+    again = next(item for item in restored["species"] if item["latin"] == bush["latin"])
+    assert again["material_id"] == bush["material_id"]
+    committed_ids = {item["latin"]: item["material_id"] for item in committed["species"]}
+    restored_ids = {item["latin"]: item["material_id"] for item in restored["species"]}
+    assert restored_ids == committed_ids
+    committed_gaps = {
+        item["latin"]: item["material_id"]
+        for item in committed["gaps"]["project_species_shared_stand_in"]
+    }
+    restored_gaps = {
+        item["latin"]: item["material_id"]
+        for item in restored["gaps"]["project_species_shared_stand_in"]
+    }
+    assert len(restored_gaps) == 15
+    assert restored_gaps == committed_gaps
+
+
+def test_legacy_retired_ints_stay_blocked_and_are_normalized():
+    """Bare ints in a previous catalogue stay blocked; they are not a real species."""
+    previous = {"species": [], "retired_ids": [101, 202]}
+    assigned = fc.assign_ids(
+        [
+            {"latin": "Synthetic blocked tree", "type": "tree"},
+            {"latin": "Synthetic blocked bush", "type": "bush"},
+        ],
+        previous,
+    )
+    assert assigned["by_latin"]["Synthetic blocked tree"] == 102
+    assert assigned["by_latin"]["Synthetic blocked bush"] == 201
+    assert assigned["retired_ids"] == [
+        {"material_id": 101, "latin": None, "type": None},
+        {"material_id": 202, "latin": None, "type": None},
+    ]
+
+
+def _free_material_id(catalogue, kind):
+    used = {item["material_id"] for item in catalogue["species"]}
+    used |= {item["material_id"] for item in catalogue["gaps"]["project_species_shared_stand_in"]}
+    low, high = fc.RANGES[kind]
+    return next(number for number in range(low, high + 1) if number not in used)
+
+
+def test_check_reports_retired_latin_that_is_also_active():
+    catalogue = _load("library/flora/catalogue.json")
+    holder = catalogue["species"][0]
+    catalogue["retired_ids"].append({
+        "material_id": _free_material_id(catalogue, holder["type"]),
+        "latin": holder["latin"],
+        "type": holder["type"],
+    })
+    assert "is also active" in _text(fc.check(catalogue))
+
+
+def test_check_reports_retired_id_outside_its_type_range():
+    catalogue = _load("library/flora/catalogue.json")
+    catalogue["retired_ids"].append({
+        "material_id": 250,
+        "latin": "Synthetic retired tree",
+        "type": "tree",
+    })
+    assert "outside the tree range" in _text(fc.check(catalogue))
+
+
+def test_check_reports_duplicate_retired_material_id():
+    catalogue = _load("library/flora/catalogue.json")
+    catalogue["retired_ids"] = [
+        {"material_id": 199, "latin": "Synthetic retired one", "type": "tree"},
+        {"material_id": 199, "latin": "Synthetic retired two", "type": "tree"},
+    ]
+    assert "duplicate retired material_id 199" in _text(fc.check(catalogue))
+
+
+def test_check_reports_bare_int_retired_entry():
+    catalogue = _load("library/flora/catalogue.json")
+    catalogue["retired_ids"].append(180)
+    assert "is not an object" in _text(fc.check(catalogue))
+
+
+def test_check_reports_retired_latin_without_a_type():
+    catalogue = _load("library/flora/catalogue.json")
+    catalogue["retired_ids"].append({
+        "material_id": 180,
+        "latin": "Synthetic retired tree",
+        "type": None,
+    })
+    assert "both be set or both be null" in _text(fc.check(catalogue))
+
+
+def test_random_generations_keep_each_material_id_with_one_species():
+    """Synthetic species: 300 four-generation rebuilds, not a real planting schedule."""
+    rng = random.Random(2161)
+    for run in range(300):
+        pool = {
+            kind: [f"Synthetic {kind} {index} run {run}" for index in range(6)]
+            for kind in _FLORA_KINDS
+        }
+        active = {kind: [] for kind in _FLORA_KINDS}
+        previous = None
+        held_by_latin = {}
+        latin_by_id = {}
+        for _generation in range(4):
+            species = []
+            for kind in _FLORA_KINDS:
+                active[kind] = [latin for latin in active[kind] if rng.random() >= 0.35]
+                absent = [latin for latin in pool[kind] if latin not in active[kind]]
+                rng.shuffle(absent)
+                active[kind].extend(absent[: rng.randint(0, 2)])
+                rng.shuffle(active[kind])
+                species.extend({"latin": latin, "type": kind} for latin in active[kind])
+            assigned = fc.assign_ids(species, previous)
+            _id_invariants(assigned, species)
+            for latin, material_id in assigned["by_latin"].items():
+                if latin in held_by_latin:
+                    assert held_by_latin[latin] == material_id
+                else:
+                    held_by_latin[latin] = material_id
+                if material_id in latin_by_id:
+                    assert latin_by_id[material_id] == latin
+                else:
+                    latin_by_id[material_id] = latin
+            previous = _previous_from(assigned, species, [])
