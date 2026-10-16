@@ -1,7 +1,20 @@
 """Pack a MAF material list into one square atlas and a UV-rect map.
 
-NPM GroundEl uses one texture set no larger than 512x512. Patterned materials
-receive the leftover space; solid colours stay on the requested square.
+Pattern / Scope (docs/agents/REVIEW_CHECKLIST.md Q1):
+Marked explicit new-case: shared NPM GroundEl atlas packing with buddy allocator
+and patterned growth, not a registered/proven pattern (registry docs/domain/patterns/INDEX.md).
+
+Normative References (docs/domain/uv-textures.md):
+- reg p.10 §5.12: GroundEl uses one texture set for all elements, <= 512x512 px.
+- reg p.9 §5.4: Padding >= 8 px between neighbouring islands with unique images.
+- reg p.9 §5.1: Textures delivered as PNG (embedded in FBX).
+- reg p.9 §5.5: Alpha channel forbidden in NPM textures.
+
+Algorithm Choices vs Regulation:
+The regulation defines delivery constraints (PNG up to 512x512, no alpha, >= 8 px padding).
+The quadtree buddy allocator for power-of-two square slots, largest-first placement,
+iterative doubling growth of patterned slots into leftover space, and edge pixel
+clamping in padding gutters are algorithmic implementation choices, not normative rules.
 """
 
 import argparse
