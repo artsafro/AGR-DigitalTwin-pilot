@@ -2,6 +2,14 @@
 from collections import Counter, defaultdict
 import itertools
 import math
+import sys
+from pathlib import Path
+
+try:
+    from twinqa.geometry.winding import same_direction_edges
+except ImportError:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+    from twinqa.geometry.winding import same_direction_edges
 
 
 def _has_proper_crossing(poly):
@@ -80,7 +88,7 @@ def inspect_mesh(vertices, faces, edges=None, material_ids=None, decimals=8, nea
     material_ids = [0]*len(faces) if material_ids is None else material_ids
     if len(material_ids) != len(faces):
         raise ValueError('Material IDs must match face count')
-    zero_area = 0; bowties = 0; winding = defaultdict(list)
+    zero_area = 0; bowties = 0
     for face, material in zip(faces, material_ids):
         face = list(face); used.update(face); canonical[tuple(sorted(face))] += 1
         area = 0.0; origin = vertices[face[0]]
@@ -92,7 +100,7 @@ def inspect_mesh(vertices, faces, edges=None, material_ids=None, decimals=8, nea
         zero_area += area < 1e-12
         bowties += 1 if _has_proper_crossing([vertices[i] for i in face]) else 0
         for a,b in zip(face, face[1:]+face[:1]):
-            edge = tuple(sorted((a,b))); incidence[edge] += 1; winding[edge].append(a)
+            edge = tuple(sorted((a,b))); incidence[edge] += 1
             material_edges.setdefault(edge,set()).add(material); connect(a,b)
     all_edges = set(incidence)
     for a,b in edges or []:
@@ -119,7 +127,7 @@ def inspect_mesh(vertices, faces, edges=None, material_ids=None, decimals=8, nea
       'loose_edges':len(all_edges-set(incidence)),'vertices_unused_by_faces':count-len(used),
       'material_face_counts':dict(Counter(material_ids)),
       'material_interface_edges':sum(len(ids)>1 for ids in material_edges.values()),'extent_m':extent,
-      'inconsistent_winding_edges':sum(len(s)==2 and s[0]==s[1] for s in winding.values()),
+      'inconsistent_winding_edges':same_direction_edges(faces),
       'near_duplicate_vertices':len(near),'near_duplicate_threshold_m':near_m,
       'self_intersecting_polygons':bowties,
       'intersection_test_performed':False,'delivery_passed':False}
