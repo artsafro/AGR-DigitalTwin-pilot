@@ -425,11 +425,39 @@ def _tin_edges(ground):
     return edges
 
 
-def _footprint_strictly_under(seated, face, ground) -> bool:
-    """True only when every gap witness is strictly under the Ground and inside coverage.
+def _tin_boundary_edges(ground):
+    """XY segments of edges that belong to exactly one triangle (border or a hole rim)."""
+    counts: dict[tuple[int, int], int] = {}
+    for i, j, k in ground.triangles:
+        for a, b in ((i, j), (j, k), (k, i)):
+            key = (a, b) if a < b else (b, a)
+            counts[key] = counts.get(key, 0) + 1
+    segments = []
+    for a, b in counts:
+        if counts[(a, b)] != 1:
+            continue
+        pa, pb = ground.points[a], ground.points[b]
+        segments.append(((pa[0], pa[1]), (pb[0], pb[1])))
+    return segments
+
+
+def _boundary_meets_footprint(ground, poly) -> bool:
+    """True when a coverage-boundary edge has an end in the polygon or cuts an outline side."""
+    outline = list(zip(poly, poly[1:] + poly[:1]))
+    for a, b in _tin_boundary_edges(ground):
+        if _point_in_poly(a[0], a[1], poly) or _point_in_poly(b[0], b[1], poly):
+            return True
+        for side in outline:
+            if _segment_hit(a, b, side[0], side[1]) is not None:
+                return True
+    return False
+
+
+def _witnesses_strictly_under(seated, face, ground) -> bool:
+    """Round-2 rule: every gap witness is strictly under the Ground and inside coverage.
 
     Witnesses are the face vertices, TIN vertices on the outline, and TIN-edge crossings
-    with the outline. A witness outside the mesh keeps the face (review).
+    with the outline. A witness outside the mesh fails the check. No coverage precondition.
     """
     poly = [(seated[i][0], seated[i][1]) for i in face]
     candidates = list(poly)
@@ -449,6 +477,25 @@ def _footprint_strictly_under(seated, face, ground) -> bool:
         if not (_plane_z_at(seated, face, x, y) < h - 1e-9):
             return False
     return True
+
+
+def _footprint_strictly_under(seated, face, ground) -> bool:
+    """True only when coverage is proven and every gap witness is strictly under the Ground.
+
+    Coverage is a separate precondition, before the height proof. For interior-disjoint
+    triangles, the boundary of the covered area consists of boundary edges; if the face
+    vertices are covered and no boundary edge meets the convex footprint, the whole
+    footprint is covered. Non-conforming meshes (T-junctions) only make more edges look
+    like boundary, so the rule stays conservative. Only then the witness height loop runs.
+    """
+    poly = [(seated[i][0], seated[i][1]) for i in face]
+    for index in face:
+        x, y, _z = seated[index]
+        if ground.height(x, y) is None:
+            return False
+    if _boundary_meets_footprint(ground, poly):
+        return False
+    return _witnesses_strictly_under(seated, face, ground)
 
 
 def _place(vertices, insert_xy, rotation_deg, ground):
@@ -487,16 +534,30 @@ def seat_maf(vertices, faces, insert_xy, rotation_deg, ground):
     """Pivot to bbox centre XY and zmin+0.10, rotate about it, drop the pivot onto the Ground.
 
     `ground` is a Tin. A face whose unit normal has n_z < -0.5 is a bottom. It is deleted only
-    when its whole footprint is strictly under the Ground: every face vertex, every TIN vertex
-    inside or on the outline, and every TIN-edge crossing with the outline has a TIN height
-    strictly above the face plane (z_face < height - 1e-9). Exactly on the Ground stays.
-    A witness outside coverage keeps the face and lists it as exposed (review).
+    when the Ground covers the whole footprint and that footprint is strictly under the Ground.
+    Coverage comes first: every face vertex has a Ground height, and no boundary edge (an edge
+    of exactly one triangle — the mesh border or a hole) meets the closed outline. For
+    interior-disjoint triangles that proves a convex footprint is covered; T-junctions only add
+    boundary edges, so the test stays conservative. Only then every face vertex, every TIN
+    vertex inside or on the outline, and every TIN-edge crossing with the outline must have a
+    TIN height strictly above the face plane (z_face < height - 1e-9). Exactly on the Ground
+    stays. Missing coverage keeps the face and lists it as exposed (review).
     """
     if not vertices or not faces:
         return [], [], [], []
     seated = _place(vertices, insert_xy, rotation_deg, ground)
     kept, deleted, exposed = _split_bottoms(
         seated, faces, lambda face: _footprint_strictly_under(seated, face, ground))
+    return seated, kept, deleted, exposed
+
+
+def _witness_only_seat(vertices, faces, insert_xy, rotation_deg, ground):
+    """Round-2 rule: witness heights only, with no coverage precondition. Unsafe on holes."""
+    if not vertices or not faces:
+        return [], [], [], []
+    seated = _place(vertices, insert_xy, rotation_deg, ground)
+    kept, deleted, exposed = _split_bottoms(
+        seated, faces, lambda face: _witnesses_strictly_under(seated, face, ground))
     return seated, kept, deleted, exposed
 
 
@@ -854,6 +915,156 @@ def test_seat_bottom_partly_outside_coverage_is_kept():
     )
     _seated, _kept, deleted, exposed = seat_maf(wide, wide_faces, (0.0, 0.0), 0.0, ground)
     assert bottom not in deleted and bottom in exposed
+
+
+def _square_ring_tin(insert, gap_dx, gap_dy, half_w, half_h, a, b, c, half=5.0):
+    """Square ring over insert ± half. Outer corners 0..3, gap corners 4..7.
+
+    Eight triangles follow the internal-gap reproducer. Heights are the plane z = a*x + b*y + c.
+    The inner rectangle sits strictly inside the outer square, so the triangles do not overlap
+    and leave the gap uncovered.
+    """
+    if half_w <= 0 or half_h <= 0:
+        raise ValueError("degenerate gap")
+    ix, iy = insert
+    gx, gy = ix + gap_dx, iy + gap_dy
+    corners = (
+        (ix - half, iy - half),
+        (ix + half, iy - half),
+        (ix + half, iy + half),
+        (ix - half, iy + half),
+        (gx - half_w, gy - half_h),
+        (gx + half_w, gy - half_h),
+        (gx + half_w, gy + half_h),
+        (gx - half_w, gy + half_h),
+    )
+    if not all(ix - half < x < ix + half and iy - half < y < iy + half for x, y in corners[4:]):
+        raise ValueError("gap is not strictly inside the outer square")
+    points = [(x, y, a * x + b * y + c) for x, y in corners]
+    triangles = (
+        (0, 1, 5), (0, 5, 4),
+        (1, 2, 6), (1, 6, 5),
+        (2, 3, 7), (2, 7, 6),
+        (3, 0, 4), (3, 4, 7),
+    )
+    tin = Tin(points, triangles)
+    if tin.height(gx, gy) is not None:
+        raise ValueError("gap centre is covered")
+    for tri in triangles:
+        mx = sum(points[i][0] for i in tri) / 3
+        my = sum(points[i][1] for i in tri) / 3
+        owners = sum(1 for other in triangles if _bary_z(points, other, mx, my) is not None)
+        if owners != 1:
+            raise ValueError(f"triangle {tri} centroid is owned by {owners} triangles")
+        area2 = (
+            (points[tri[1]][0] - points[tri[0]][0]) * (points[tri[2]][1] - points[tri[0]][1])
+            - (points[tri[2]][0] - points[tri[0]][0]) * (points[tri[1]][1] - points[tri[0]][1])
+        )
+        if abs(area2) < 1e-12:
+            raise ValueError(f"triangle {tri} is degenerate")
+    return tin
+
+
+def _ring_slope(rng, case):
+    """Flat in two thirds of cases; a mild slope in the other third. Offset always in [-1, 1]."""
+    c = rng.uniform(-1.0, 1.0)
+    if case % 3 != 0:
+        return 0.0, 0.0, c
+    a = rng.uniform(-0.05, 0.05)
+    b = rng.uniform(-0.05, 0.05)
+    if abs(a) < 1e-6 and abs(b) < 1e-6:
+        a = 0.02
+    return a, b, c
+
+
+def _rect_fully_outside(poly, cx, cy, half_w, half_h) -> bool:
+    rect = [
+        (cx - half_w, cy - half_h),
+        (cx + half_w, cy - half_h),
+        (cx + half_w, cy + half_h),
+        (cx - half_w, cy + half_h),
+    ]
+    if any(_point_in_poly(x, y, poly) for x, y in rect):
+        return False
+    if any(_point_in_poly(x, y, rect) for x, y in poly):
+        return False
+    outline = list(zip(poly, poly[1:] + poly[:1]))
+    sides = list(zip(rect, rect[1:] + rect[:1]))
+    for a, b in outline:
+        for c, d in sides:
+            if _segment_hit(a, b, c, d) is not None:
+                return False
+    return True
+
+
+def test_seat_internal_gap_reproducer():
+    v, f = _bench()
+    g = Tin(
+        [(-5, -5, 0), (5, -5, 0), (5, 5, 0), (-5, 5, 0),
+         (.35, -.1, 0), (.65, -.1, 0), (.65, .1, 0), (.35, .1, 0)],
+        [(0, 1, 5), (0, 5, 4), (1, 2, 6), (1, 6, 5),
+         (2, 3, 7), (2, 7, 6), (3, 0, 4), (3, 4, 7)],
+    )
+    s, _kept, deleted, exposed = seat_maf(v, f, (0, 0), 0, g)
+    assert g.height(.5, 0) is None
+    assert f[0] not in deleted and f[0] in exposed
+    assert _no_visible_hole(s, deleted, g)
+    ws, _wk, w_deleted, _we = _witness_only_seat(v, f, (0, 0), 0, g)
+    assert f[0] in w_deleted
+    assert not _no_visible_hole(ws, w_deleted, g)
+
+
+def test_seat_internal_gaps_generated():
+    rng = random.Random(27702)
+    n = 200
+    unsafe = 0
+    for case in range(n):
+        verts, faces = _bench()
+        bottom = faces[0]
+        insert = (rng.uniform(-3.0, 3.0), rng.uniform(-3.0, 3.0))
+        gap_dx = rng.uniform(0.25, 0.7)
+        gap_dy = rng.uniform(-0.06, 0.06)
+        half_w = rng.uniform(0.08, 0.15)
+        a, b, c = _ring_slope(rng, case)
+        ground = _square_ring_tin(insert, gap_dx, gap_dy, half_w, 0.10, a, b, c)
+        seated, _kept, deleted, exposed = seat_maf(verts, faces, insert, 0.0, ground)
+        assert bottom not in deleted and bottom in exposed, case
+        assert _no_visible_hole(seated, deleted, ground), case
+        assert _pivot_holds(verts, seated, insert, 0.0, ground), case
+        w_seated, _wk, w_deleted, _we = _witness_only_seat(verts, faces, insert, 0.0, ground)
+        if bottom in w_deleted and not _no_visible_hole(w_seated, w_deleted, ground):
+            unsafe += 1
+    assert unsafe == n
+
+    outside_deleted = 0
+    sloped = 0
+    accepted = 0
+    draws = 0
+    while accepted < n:
+        draws += 1
+        assert draws < n * 20
+        verts, faces = _bench()
+        bottom = faces[0]
+        insert = (rng.uniform(-3.0, 3.0), rng.uniform(-3.0, 3.0))
+        gap_dx = rng.uniform(-1.5, 1.5)
+        gap_dy = rng.uniform(-0.5, 0.5)
+        half_w = rng.uniform(0.08, 0.15)
+        if abs(gap_dx) <= half_w and abs(gap_dy) <= 0.10:
+            continue
+        a, b, c = _ring_slope(rng, accepted)
+        if a != 0.0 or b != 0.0:
+            sloped += 1
+        rotation = rng.uniform(0.0, 360.0)
+        ground = _square_ring_tin(insert, gap_dx, gap_dy, half_w, 0.10, a, b, c)
+        seated, _kept, deleted, _exposed = seat_maf(verts, faces, insert, rotation, ground)
+        assert _no_visible_hole(seated, deleted, ground), accepted
+        assert _pivot_holds(verts, seated, insert, rotation, ground), accepted
+        poly = [(seated[i][0], seated[i][1]) for i in bottom]
+        if _rect_fully_outside(poly, insert[0] + gap_dx, insert[1] + gap_dy, half_w, 0.10) and bottom in deleted:
+            outside_deleted += 1
+        accepted += 1
+    assert outside_deleted > 0
+    assert sloped > 0
 
 
 def _prism_side_normals(n: int):

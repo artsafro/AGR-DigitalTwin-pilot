@@ -119,9 +119,13 @@ fewer segments shows facets: pick the threshold inside the band and show the use
 Move the pivot to the horizontal centre of the MAF, down to its lowest point, then up by 10 cm [D095] (MAF-23).
 Place that pivot on the SPOZU insertion point together with its rotation, and project the pivot onto the Ground
 surface from `model-ground`, so the MAF sinks by 10 cm. Delete bottom faces only when the whole footprint is
-proven strictly under the Ground. The Ground from `model-ground` is a triangle mesh, so the gap between the Ground
-and the planar bottom face is piecewise linear and its smallest value lies at one of: a face vertex, a Ground
-vertex inside the face outline, or a crossing of a Ground edge with the face outline. All these points must have
+proven strictly under the Ground. First prove that the Ground covers the whole footprint: every face vertex has a
+Ground height and no boundary edge of the Ground mesh (an edge of only one triangle: the mesh border or a hole
+inside it) touches the face outline or lies inside it. A hole in the Ground under the face is not covered even
+when every point checked below has a height. If coverage is not proven, keep the face and list it as review. The
+Ground from `model-ground` is a triangle mesh, so the gap between the Ground and the planar bottom face is
+piecewise linear and its smallest value lies at one of: a face vertex, a Ground vertex inside the face outline,
+or a crossing of a Ground edge with the face outline. All these points must have
 the Ground strictly above the face. Checking only the face vertices or only the face centre is not enough (a
 depression under the face opens a hole) [D096] (MAF-20). When the Ground triangles under the footprint cannot be
 read (outside the Ground mesh, missing data), keep the face and list it as review for the user. On a slope the
