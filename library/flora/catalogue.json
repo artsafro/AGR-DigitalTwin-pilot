@@ -17,6 +17,10 @@
   "flower": [
    401,
    499
+  ],
+  "climber": [
+   501,
+   599
   ]
  },
  "retired_ids": [],
@@ -50,6 +54,7 @@
     "crown_diameter_m": 2.243,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "library-002",
@@ -68,10 +73,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": "C:/x/t_6c48bc9d/maps/review-batch1-v001/0_d.png",
-    "opacity": "C:/x/t_6c48bc9d/maps/review-batch1-v001/0_o.png",
-    "review_status": "pending_review",
-    "evidence": "batch 1 candidate on C:/x/t_6c48bc9d/maps/review-sheet-batch1-v001.png; not approved"
+    "diffuse": "C:/x/flora-library/v001/maps/tilia-cordata/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/tilia-cordata/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
    }
   },
   {
@@ -83,7 +88,7 @@
    "note": "maps approved in #190",
    "objects": {
     "NPM": "Betula_pendula_NPM",
-    "VPM": "Betula_pendula_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-006",
@@ -94,28 +99,21 @@
     "crown_diameter_m": 3.652,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-006",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "Bereza_LP",
-    "triangles": 446,
-    "height_m": 5.016,
-    "crown_diameter_m": 3.652,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 5.016,
    "crown_diameter_m": 3.652,
    "triangles": {
     "NPM": 446,
-    "VPM": 446
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": "C:/x/flora-textures/betula-pendula/diffuse-v001.png",
-    "opacity": "C:/x/flora-textures/betula-pendula/opacity-v001.png",
+    "diffuse": "C:/x/flora-library/v001/maps/betula-pendula/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/betula-pendula/opacity-v001.png",
     "review_status": "approved",
     "evidence": "Artem 2026-10-15 'Одобряю', review-sheet-v001.png (#190)"
    }
@@ -149,6 +147,7 @@
     "crown_diameter_m": 3.266,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 3.832,
    "crown_diameter_m": 4.676,
@@ -160,10 +159,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/0_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/0_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate b1db952c0014 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -195,6 +194,7 @@
     "crown_diameter_m": 4.465,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 2.804,
    "crown_diameter_m": 2.484,
@@ -206,10 +206,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/14_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/14_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 70053ab9231c on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -241,6 +241,7 @@
     "crown_diameter_m": 4.724,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "library-021",
@@ -272,10 +273,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/28_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/28_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 095bd50fc73b on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -307,6 +308,7 @@
     "crown_diameter_m": 2.243,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "library-079",
@@ -337,10 +339,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/41_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/41_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 853ab2e83bd7 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -372,6 +374,7 @@
     "crown_diameter_m": 4.96,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 4.538,
    "crown_diameter_m": 5.066,
@@ -383,10 +386,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": "C:/x/t_6c48bc9d/maps/review-batch1-v001/1_d.png",
-    "opacity": "C:/x/t_6c48bc9d/maps/review-batch1-v001/1_o.png",
-    "review_status": "pending_review",
-    "evidence": "batch 1 candidate on C:/x/t_6c48bc9d/maps/review-sheet-batch1-v001.png; not approved"
+    "diffuse": "C:/x/flora-library/v001/maps/acer-platanoides/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/acer-platanoides/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
    }
   },
   {
@@ -418,6 +421,7 @@
     "crown_diameter_m": 2.538,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "project-035",
@@ -437,10 +441,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": "C:/x/t_6c48bc9d/maps/review-batch1-v001/2_d.png",
-    "opacity": "C:/x/t_6c48bc9d/maps/review-batch1-v001/2_o.png",
-    "review_status": "pending_review",
-    "evidence": "batch 1 candidate on C:/x/t_6c48bc9d/maps/review-sheet-batch1-v001.png; not approved"
+    "diffuse": "C:/x/flora-library/v001/maps/sorbus-aucuparia/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/sorbus-aucuparia/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
    }
   },
   {
@@ -472,6 +476,7 @@
     "crown_diameter_m": 8.624,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "library-050",
@@ -497,10 +502,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/1_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/1_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate e43147077973 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -512,7 +517,7 @@
    "note": "",
    "objects": {
     "NPM": "Sorbus_commixta_Dodong_NPM",
-    "VPM": "Sorbus_commixta_Dodong_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-051",
@@ -523,30 +528,23 @@
     "crown_diameter_m": 4.133,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-051",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "SM_ryabina_dongdong",
-    "triangles": 339,
-    "height_m": 6.093,
-    "crown_diameter_m": 4.133,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 6.093,
    "crown_diameter_m": 4.133,
    "triangles": {
     "NPM": 339,
-    "VPM": 339
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/15_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/15_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 432584abd8b7 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -558,7 +556,7 @@
    "note": "",
    "objects": {
     "NPM": "Syringa_vulgaris_Krasavitsa_Moskvy_NPM",
-    "VPM": "Syringa_vulgaris_Krasavitsa_Moskvy_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-053",
@@ -569,30 +567,23 @@
     "crown_diameter_m": 2.343,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-053",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "SM_siren_krasavica_moskvy",
-    "triangles": 1266,
-    "height_m": 1.736,
-    "crown_diameter_m": 2.343,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 1.736,
    "crown_diameter_m": 2.343,
    "triangles": {
     "NPM": 1266,
-    "VPM": 1266
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/29_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/29_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate d75fa7e100df on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -604,7 +595,7 @@
    "note": "",
    "objects": {
     "NPM": "Syringa_vulgaris_Andenken_an_Ludwig_Spath_NPM",
-    "VPM": "Syringa_vulgaris_Andenken_an_Ludwig_Spath_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-054",
@@ -615,30 +606,23 @@
     "crown_diameter_m": 2.343,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-054",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "SM_siren_obiknovennaya_shpetta",
-    "triangles": 1266,
-    "height_m": 1.736,
-    "crown_diameter_m": 2.343,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 1.736,
    "crown_diameter_m": 2.343,
    "triangles": {
     "NPM": 1266,
-    "VPM": 1266
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/42_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/42_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 2f497ceaf0a2 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -670,6 +654,7 @@
     "crown_diameter_m": 2.343,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "project-040",
@@ -689,10 +674,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/2_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/2_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 0bd238ef297a on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -724,6 +709,7 @@
     "crown_diameter_m": 2.777,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "library-056",
@@ -748,10 +734,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/16_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/16_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 7a84638525ed on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -783,6 +769,7 @@
     "crown_diameter_m": 4.938,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "project-035",
@@ -802,10 +789,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/30_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/30_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate b03198d4c883 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -837,6 +824,7 @@
     "crown_diameter_m": 3.739,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "project-040",
@@ -856,10 +844,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/43_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/43_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 223cd7260517 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -891,6 +879,7 @@
     "crown_diameter_m": 2.777,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "project-007",
@@ -915,10 +904,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/3_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/3_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 638323ce536d on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -930,7 +919,7 @@
    "note": "",
    "objects": {
     "NPM": "Malus_Evereste_NPM",
-    "VPM": "Malus_Evereste_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-074",
@@ -941,30 +930,23 @@
     "crown_diameter_m": 3.276,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-074",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "Yablonya_Evereste_LP",
-    "triangles": 394,
-    "height_m": 3.807,
-    "crown_diameter_m": 3.276,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 3.807,
    "crown_diameter_m": 3.276,
    "triangles": {
     "NPM": 394,
-    "VPM": 394
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/17_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/17_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate de78d24ac7b0 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -988,6 +970,7 @@
     "basis": "LP"
    },
    "vpm": null,
+   "vpm_status": "none",
    "merged": [],
    "height_m": 4.565,
    "crown_diameter_m": 2.889,
@@ -999,10 +982,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/31_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/31_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 33151cde1913 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -1034,6 +1017,7 @@
     "crown_diameter_m": 3.945,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 4.411,
    "crown_diameter_m": 3.837,
@@ -1045,332 +1029,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
-   }
-  },
-  {
-   "material_id": 121,
-   "latin": "Quercus robur",
-   "russian": "Дуб черешчатый",
-   "type": "tree",
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "",
-   "objects": {
-    "NPM": "Quercus_robur_NPM",
-    "VPM": "Quercus_robur_VPM"
-   },
-   "npm": {
-    "entry_id": "project-006",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "_dub_t1_h500_low",
-    "triangles": 238,
-    "height_m": 5.385,
-    "crown_diameter_m": 4.079,
-    "basis": "LP"
-   },
-   "vpm": {
-    "entry_id": "project-028",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "dub_t1_h500_high",
-    "triangles": 1914,
-    "height_m": 5.675,
-    "crown_diameter_m": 5.007,
-    "basis": "HP"
-   },
-   "merged": [],
-   "height_m": 5.385,
-   "crown_diameter_m": 4.079,
-   "triangles": {
-    "NPM": 238,
-    "VPM": 1914
-   },
-   "source_scenes": [
-    "FLORIO_2BT_2022.max"
-   ],
-   "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
-   }
-  },
-  {
-   "material_id": 122,
-   "latin": "Tilia cordata 'Greenspire'",
-   "russian": "Липа мелколистная Гринспайр",
-   "type": "tree",
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "",
-   "objects": {
-    "NPM": "Tilia_cordata_Greenspire_NPM",
-    "VPM": "Tilia_cordata_Greenspire_VPM"
-   },
-   "npm": {
-    "entry_id": "project-006",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "_dub_t1_h500_low",
-    "triangles": 238,
-    "height_m": 5.385,
-    "crown_diameter_m": 4.079,
-    "basis": "LP"
-   },
-   "vpm": {
-    "entry_id": "project-028",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "dub_t1_h500_high",
-    "triangles": 1914,
-    "height_m": 5.675,
-    "crown_diameter_m": 5.007,
-    "basis": "HP"
-   },
-   "merged": [],
-   "height_m": 5.385,
-   "crown_diameter_m": 4.079,
-   "triangles": {
-    "NPM": 238,
-    "VPM": 1914
-   },
-   "source_scenes": [
-    "FLORIO_2BT_2022.max"
-   ],
-   "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
-   }
-  },
-  {
-   "material_id": 123,
-   "latin": "Alnus incana",
-   "russian": "Ольха серая",
-   "type": "tree",
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "",
-   "objects": {
-    "NPM": "Alnus_incana_NPM",
-    "VPM": "Alnus_incana_VPM"
-   },
-   "npm": {
-    "entry_id": "project-006",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "_dub_t1_h500_low",
-    "triangles": 238,
-    "height_m": 5.385,
-    "crown_diameter_m": 4.079,
-    "basis": "LP"
-   },
-   "vpm": {
-    "entry_id": "project-028",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "dub_t1_h500_high",
-    "triangles": 1914,
-    "height_m": 5.675,
-    "crown_diameter_m": 5.007,
-    "basis": "HP"
-   },
-   "merged": [],
-   "height_m": 5.385,
-   "crown_diameter_m": 4.079,
-   "triangles": {
-    "NPM": 238,
-    "VPM": 1914
-   },
-   "source_scenes": [
-    "FLORIO_2BT_2022.max"
-   ],
-   "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
-   }
-  },
-  {
-   "material_id": 124,
-   "latin": "Picea abies",
-   "russian": "Ель обыкновенная",
-   "type": "tree",
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "",
-   "objects": {
-    "NPM": "Picea_abies_NPM",
-    "VPM": "Picea_abies_VPM"
-   },
-   "npm": {
-    "entry_id": "project-007",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "_elka_t1_h400_low",
-    "triangles": 197,
-    "height_m": 3.927,
-    "crown_diameter_m": 1.389,
-    "basis": "LP"
-   },
-   "vpm": {
-    "entry_id": "project-029",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "elka_t1_h400_high",
-    "triangles": 350,
-    "height_m": 3.928,
-    "crown_diameter_m": 1.391,
-    "basis": "HP"
-   },
-   "merged": [],
-   "height_m": 3.927,
-   "crown_diameter_m": 1.389,
-   "triangles": {
-    "NPM": 197,
-    "VPM": 350
-   },
-   "source_scenes": [
-    "FLORIO_2BT_2022.max"
-   ],
-   "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
-   }
-  },
-  {
-   "material_id": 125,
-   "latin": "Abies koreana",
-   "russian": "Пихта корейская",
-   "type": "tree",
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "",
-   "objects": {
-    "NPM": "Abies_koreana_NPM",
-    "VPM": "Abies_koreana_VPM"
-   },
-   "npm": {
-    "entry_id": "project-007",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "_elka_t1_h400_low",
-    "triangles": 197,
-    "height_m": 3.927,
-    "crown_diameter_m": 1.389,
-    "basis": "LP"
-   },
-   "vpm": {
-    "entry_id": "project-029",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "elka_t1_h400_high",
-    "triangles": 350,
-    "height_m": 3.928,
-    "crown_diameter_m": 1.391,
-    "basis": "HP"
-   },
-   "merged": [],
-   "height_m": 3.927,
-   "crown_diameter_m": 1.389,
-   "triangles": {
-    "NPM": 197,
-    "VPM": 350
-   },
-   "source_scenes": [
-    "FLORIO_2BT_2022.max"
-   ],
-   "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
-   }
-  },
-  {
-   "material_id": 126,
-   "latin": "Pinus sylvestris",
-   "russian": "Сосна обыкновенная",
-   "type": "tree",
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "maps approved in #190",
-   "objects": {
-    "NPM": "Pinus_sylvestris_NPM",
-    "VPM": "Pinus_sylvestris_VPM"
-   },
-   "npm": {
-    "entry_id": "project-007",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "_elka_t1_h400_low",
-    "triangles": 197,
-    "height_m": 3.927,
-    "crown_diameter_m": 1.389,
-    "basis": "LP"
-   },
-   "vpm": {
-    "entry_id": "project-029",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "elka_t1_h400_high",
-    "triangles": 350,
-    "height_m": 3.928,
-    "crown_diameter_m": 1.391,
-    "basis": "HP"
-   },
-   "merged": [],
-   "height_m": 3.927,
-   "crown_diameter_m": 1.389,
-   "triangles": {
-    "NPM": 197,
-    "VPM": 350
-   },
-   "source_scenes": [
-    "FLORIO_2BT_2022.max"
-   ],
-   "maps": {
-    "diffuse": "C:/x/flora-textures/pinus-sylvestris/diffuse-v001.png",
-    "opacity": "C:/x/flora-textures/pinus-sylvestris/opacity-v001.png",
-    "review_status": "approved",
-    "evidence": "Artem 2026-10-15 'Одобряю', review-sheet-v001.png (#190)"
-   }
-  },
-  {
-   "material_id": 127,
-   "latin": "Acer platanoides 'Royal Red'",
-   "russian": "Клён остролистный Роял Ред",
-   "type": "tree",
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "",
-   "objects": {
-    "NPM": "Acer_platanoides_Royal_Red_NPM",
-    "VPM": "Acer_platanoides_Royal_Red_VPM"
-   },
-   "npm": {
-    "entry_id": "project-013",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "_klen_t2_h500_low",
-    "triangles": 125,
-    "height_m": 4.549,
-    "crown_diameter_m": 3.859,
-    "basis": "LP"
-   },
-   "vpm": {
-    "entry_id": "project-035",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "klen_t2_h500_high",
-    "triangles": 1007,
-    "height_m": 5.187,
-    "crown_diameter_m": 4.501,
-    "basis": "HP"
-   },
-   "merged": [],
-   "height_m": 4.549,
-   "crown_diameter_m": 3.859,
-   "triangles": {
-    "NPM": 125,
-    "VPM": 1007
-   },
-   "source_scenes": [
-    "FLORIO_2BT_2022.max"
-   ],
-   "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/44_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/44_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 3a4011cb54e8 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -1382,7 +1044,7 @@
    "note": "",
    "objects": {
     "NPM": "Berberis_ottawensis_NPM",
-    "VPM": "Berberis_ottawensis_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-005",
@@ -1393,30 +1055,23 @@
     "crown_diameter_m": 1.247,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-005",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "BarbarisOttavskiy_HP",
-    "triangles": 64,
-    "height_m": 0.84,
-    "crown_diameter_m": 1.247,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 0.84,
    "crown_diameter_m": 1.247,
    "triangles": {
     "NPM": 64,
-    "VPM": 64
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/4_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/4_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 6ab46cd6244e on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -1428,7 +1083,7 @@
    "note": "",
    "objects": {
     "NPM": "Crataegus_monogyna_NPM",
-    "VPM": "Crataegus_monogyna_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-008",
@@ -1439,30 +1094,23 @@
     "crown_diameter_m": 1.405,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-008",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "Boyaryshnik_odnopestichnyy_LP",
-    "triangles": 72,
-    "height_m": 0.989,
-    "crown_diameter_m": 1.405,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 0.989,
    "crown_diameter_m": 1.405,
    "triangles": {
     "NPM": 72,
-    "VPM": 72
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/18_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/18_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 1835fcfc0c0c on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -1494,6 +1142,7 @@
     "crown_diameter_m": 1.122,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "library-043",
@@ -1512,10 +1161,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": "C:/x/t_6c48bc9d/maps/review-batch1-v001/3_d.png",
-    "opacity": "C:/x/t_6c48bc9d/maps/review-batch1-v001/3_o.png",
-    "review_status": "pending_review",
-    "evidence": "batch 1 candidate on C:/x/t_6c48bc9d/maps/review-sheet-batch1-v001.png; not approved"
+    "diffuse": "C:/x/flora-library/v001/maps/cornus-alba/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/cornus-alba/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
    }
   },
   {
@@ -1527,7 +1176,7 @@
    "note": "",
    "objects": {
     "NPM": "Cornus_sericea_NPM",
-    "VPM": "Cornus_sericea_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-012",
@@ -1538,30 +1187,23 @@
     "crown_diameter_m": 1.194,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-012",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "Deren_otprysk_LP",
-    "triangles": 80,
-    "height_m": 0.972,
-    "crown_diameter_m": 1.194,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 0.972,
    "crown_diameter_m": 1.194,
    "triangles": {
     "NPM": 80,
-    "VPM": 80
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/32_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/32_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 05395f098d96 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -1593,6 +1235,7 @@
     "crown_diameter_m": 1.406,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 0.99,
    "crown_diameter_m": 1.354,
@@ -1604,10 +1247,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/45_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/45_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate a43aa714eef5 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -1619,7 +1262,7 @@
    "note": "",
    "objects": {
     "NPM": "Hydrangea_paniculata_NPM",
-    "VPM": "Hydrangea_paniculata_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-018",
@@ -1630,30 +1273,23 @@
     "crown_diameter_m": 0.557,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-018",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "GortenziyaMetelchataya_LP",
-    "triangles": 36,
-    "height_m": 0.644,
-    "crown_diameter_m": 0.557,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 0.644,
    "crown_diameter_m": 0.557,
    "triangles": {
     "NPM": 36,
-    "VPM": 36
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/5_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/5_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 3c18795989a4 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -1685,6 +1321,7 @@
     "crown_diameter_m": 0.738,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "project-030",
@@ -1704,10 +1341,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": "C:/x/t_6c48bc9d/maps/review-batch1-v001/4_d.png",
-    "opacity": "C:/x/t_6c48bc9d/maps/review-batch1-v001/4_o.png",
-    "review_status": "pending_review",
-    "evidence": "batch 1 candidate on C:/x/t_6c48bc9d/maps/review-sheet-batch1-v001.png; not approved"
+    "diffuse": "C:/x/flora-library/v001/maps/hydrangea-arborescens/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/hydrangea-arborescens/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
    }
   },
   {
@@ -1719,7 +1356,7 @@
    "note": "",
    "objects": {
     "NPM": "Salix_purpurea_Mayak_NPM",
-    "VPM": "Salix_purpurea_Mayak_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-022",
@@ -1730,30 +1367,23 @@
     "crown_diameter_m": 1.405,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-022",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "Iva_purpurnaya_Mayak_LP",
-    "triangles": 72,
-    "height_m": 0.989,
-    "crown_diameter_m": 1.405,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 0.989,
    "crown_diameter_m": 1.405,
    "triangles": {
     "NPM": 72,
-    "VPM": 72
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/19_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/19_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate eaba0b2f92da on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -1785,6 +1415,7 @@
     "crown_diameter_m": 1.889,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "library-023",
@@ -1816,10 +1447,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/33_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/33_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 33b7522dc0c5 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -1831,7 +1462,7 @@
    "note": "",
    "objects": {
     "NPM": "Juniperus_sabina_NPM",
-    "VPM": "Juniperus_sabina_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-030",
@@ -1842,30 +1473,23 @@
     "crown_diameter_m": 1.189,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-030",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "MozhzhevelnikKz_HP",
-    "triangles": 32,
-    "height_m": 0.403,
-    "crown_diameter_m": 1.189,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 0.403,
    "crown_diameter_m": 1.189,
    "triangles": {
     "NPM": 32,
-    "VPM": 32
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/46_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/46_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 70d50dc8ddbc on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -1897,6 +1521,7 @@
     "crown_diameter_m": 0.981,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 0.951,
    "crown_diameter_m": 0.92,
@@ -1908,10 +1533,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/6_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/6_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate cc4559b27640 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -1943,6 +1568,7 @@
     "crown_diameter_m": 0.986,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "project-039",
@@ -1962,10 +1588,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/20_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/20_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 2a7276304fd4 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -1977,7 +1603,7 @@
    "note": "",
    "objects": {
     "NPM": "Dasiphora_fruticosa_Goldfinger_NPM",
-    "VPM": "Dasiphora_fruticosa_Goldfinger_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-038",
@@ -1988,30 +1614,23 @@
     "crown_diameter_m": 1.889,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-038",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "SM_Laptchatka_GoldFinger",
-    "triangles": 112,
-    "height_m": 1.332,
-    "crown_diameter_m": 1.889,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 1.332,
    "crown_diameter_m": 1.889,
    "triangles": {
     "NPM": 112,
-    "VPM": 112
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/34_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/34_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 041c5ee4e8e0 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -2023,7 +1642,7 @@
    "note": "",
    "objects": {
     "NPM": "Euonymus_alatus_NPM",
-    "VPM": "Euonymus_alatus_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-040",
@@ -2034,30 +1653,23 @@
     "crown_diameter_m": 1.686,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-040",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "SM_bresklet_krylaty",
-    "triangles": 1073,
-    "height_m": 1.706,
-    "crown_diameter_m": 1.686,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 1.706,
    "crown_diameter_m": 1.686,
    "triangles": {
     "NPM": 1073,
-    "VPM": 1073
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/47_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/47_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 5e9e3274b5b2 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -2069,7 +1681,7 @@
    "note": "label typo 'Чебушник'",
    "objects": {
     "NPM": "Philadelphus_coronarius_NPM",
-    "VPM": "Philadelphus_coronarius_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-041",
@@ -2080,30 +1692,23 @@
     "crown_diameter_m": 1.664,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-041",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "SM_chbushnyk_vechny",
-    "triangles": 84,
-    "height_m": 1.504,
-    "crown_diameter_m": 1.664,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 1.504,
    "crown_diameter_m": 1.664,
    "triangles": {
     "NPM": 84,
-    "VPM": 84
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/7_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/7_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 96d6e3a79ac6 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -2133,8 +1738,9 @@
     "triangles": 88,
     "height_m": 1.407,
     "crown_diameter_m": 1.892,
-    "basis": "LP -> HP (same mesh as NPM)"
+    "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "library-087",
@@ -2153,10 +1759,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/21_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/21_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 96cc65db83dc on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -2186,8 +1792,9 @@
     "triangles": 84,
     "height_m": 1.407,
     "crown_diameter_m": 1.892,
-    "basis": "LP -> HP (same mesh as NPM)"
+    "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "library-088",
@@ -2206,10 +1813,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/35_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/35_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 1f0b735d457b on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -2241,6 +1848,7 @@
     "crown_diameter_m": 2.262,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "project-032",
@@ -2260,10 +1868,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/48_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/48_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 1d52d993ca8b on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -2293,8 +1901,9 @@
     "triangles": 112,
     "height_m": 1.332,
     "crown_diameter_m": 1.889,
-    "basis": "LP -> HP (same mesh as NPM)"
+    "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "library-090",
@@ -2313,10 +1922,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/8_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/8_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 4351f9e31042 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -2348,6 +1957,7 @@
     "crown_diameter_m": 1.931,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "project-043",
@@ -2367,10 +1977,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/22_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/22_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate c6f378200152 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -2402,6 +2012,7 @@
     "crown_diameter_m": 1.862,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "library-066",
@@ -2427,10 +2038,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/36_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/36_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 282c23ff3ee1 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -2462,6 +2073,7 @@
     "crown_diameter_m": 1.788,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "project-024",
@@ -2481,10 +2093,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/49_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/49_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 8aa149be5ceb on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -2516,6 +2128,7 @@
     "crown_diameter_m": 2.088,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "project-037",
@@ -2535,10 +2148,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/9_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/9_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate f38a2c36bdcd on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -2570,6 +2183,7 @@
     "crown_diameter_m": 0.976,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "library-085",
@@ -2595,10 +2209,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/23_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/23_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate eab5ac5c63f9 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -2630,6 +2244,7 @@
     "crown_diameter_m": 0.739,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 0.553,
    "crown_diameter_m": 0.731,
@@ -2641,8 +2256,8 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": "C:/x/flora-textures/spiraea-japonica/diffuse-v001.png",
-    "opacity": "C:/x/flora-textures/spiraea-japonica/opacity-v001.png",
+    "diffuse": "C:/x/flora-library/v001/maps/spiraea-japonica/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/spiraea-japonica/opacity-v001.png",
     "review_status": "approved",
     "evidence": "Artem 2026-10-15 'Одобряю', review-sheet-v001.png (#190)"
    }
@@ -2676,6 +2291,7 @@
     "crown_diameter_m": 1.484,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [
     {
      "entry_id": "library-075",
@@ -2706,10 +2322,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/37_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/37_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 4a86d5837735 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -2741,6 +2357,7 @@
     "crown_diameter_m": 1.704,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 1.524,
    "crown_diameter_m": 1.704,
@@ -2752,102 +2369,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
-   }
-  },
-  {
-   "material_id": 228,
-   "latin": "Cornus sanguinea 'Anny's Winter Orange'",
-   "russian": "Дёрен кроваво-красный Эннис Винтер Оранж",
-   "type": "bush",
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "",
-   "objects": {
-    "NPM": "Cornus_sanguinea_Annys_Winter_Orange_NPM",
-    "VPM": "Cornus_sanguinea_Annys_Winter_Orange_VPM"
-   },
-   "npm": {
-    "entry_id": "project-004",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "_deren_t2_h125_low",
-    "triangles": 10,
-    "height_m": 1.328,
-    "crown_diameter_m": 1.442,
-    "basis": "LP"
-   },
-   "vpm": {
-    "entry_id": "project-026",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "deren_t2_h125_high",
-    "triangles": 20,
-    "height_m": 1.328,
-    "crown_diameter_m": 1.443,
-    "basis": "HP"
-   },
-   "merged": [],
-   "height_m": 1.328,
-   "crown_diameter_m": 1.442,
-   "triangles": {
-    "NPM": 10,
-    "VPM": 20
-   },
-   "source_scenes": [
-    "FLORIO_2BT_2022.max"
-   ],
-   "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
-   }
-  },
-  {
-   "material_id": 229,
-   "latin": "Cornus alba 'Red Gnome'",
-   "russian": "Дёрен белый Ред Гном",
-   "type": "bush",
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "",
-   "objects": {
-    "NPM": "Cornus_alba_Red_Gnome_NPM",
-    "VPM": "Cornus_alba_Red_Gnome_VPM"
-   },
-   "npm": {
-    "entry_id": "project-004",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "_deren_t2_h125_low",
-    "triangles": 10,
-    "height_m": 1.328,
-    "crown_diameter_m": 1.442,
-    "basis": "LP"
-   },
-   "vpm": {
-    "entry_id": "project-026",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "deren_t2_h125_high",
-    "triangles": 20,
-    "height_m": 1.328,
-    "crown_diameter_m": 1.443,
-    "basis": "HP"
-   },
-   "merged": [],
-   "height_m": 1.328,
-   "crown_diameter_m": 1.442,
-   "triangles": {
-    "NPM": 10,
-    "VPM": 20
-   },
-   "source_scenes": [
-    "FLORIO_2BT_2022.max"
-   ],
-   "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/50_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/50_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate eaf880af89df on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -2879,6 +2404,7 @@
     "crown_diameter_m": 1.134,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 0.835,
    "crown_diameter_m": 1.133,
@@ -2890,148 +2416,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
-   }
-  },
-  {
-   "material_id": 231,
-   "latin": "Salix repens 'Green Carpet'",
-   "russian": "Ива ползучая Грин Карпет",
-   "type": "bush",
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "",
-   "objects": {
-    "NPM": "Salix_repens_Green_Carpet_NPM",
-    "VPM": "Salix_repens_Green_Carpet_VPM"
-   },
-   "npm": {
-    "entry_id": "project-015",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "_mojevelnik_t1_h60_low",
-    "triangles": 10,
-    "height_m": 0.724,
-    "crown_diameter_m": 1.967,
-    "basis": "LP"
-   },
-   "vpm": {
-    "entry_id": "project-037",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "mojevelnik_t1_h60_high",
-    "triangles": 20,
-    "height_m": 0.724,
-    "crown_diameter_m": 1.968,
-    "basis": "HP"
-   },
-   "merged": [],
-   "height_m": 0.724,
-   "crown_diameter_m": 1.967,
-   "triangles": {
-    "NPM": 10,
-    "VPM": 20
-   },
-   "source_scenes": [
-    "FLORIO_2BT_2022.max"
-   ],
-   "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
-   }
-  },
-  {
-   "material_id": 232,
-   "latin": "Juniperus sabina 'Tamariscifolia'",
-   "russian": "Можжевельник казацкий Тамарисцифолия",
-   "type": "bush",
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "",
-   "objects": {
-    "NPM": "Juniperus_sabina_Tamariscifolia_NPM",
-    "VPM": "Juniperus_sabina_Tamariscifolia_VPM"
-   },
-   "npm": {
-    "entry_id": "project-015",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "_mojevelnik_t1_h60_low",
-    "triangles": 10,
-    "height_m": 0.724,
-    "crown_diameter_m": 1.967,
-    "basis": "LP"
-   },
-   "vpm": {
-    "entry_id": "project-037",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "mojevelnik_t1_h60_high",
-    "triangles": 20,
-    "height_m": 0.724,
-    "crown_diameter_m": 1.968,
-    "basis": "HP"
-   },
-   "merged": [],
-   "height_m": 0.724,
-   "crown_diameter_m": 1.967,
-   "triangles": {
-    "NPM": 10,
-    "VPM": 20
-   },
-   "source_scenes": [
-    "FLORIO_2BT_2022.max"
-   ],
-   "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
-   }
-  },
-  {
-   "material_id": 233,
-   "latin": "Juniperus sabina 'Mas'",
-   "russian": "Можжевельник казацкий Мас",
-   "type": "bush",
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "",
-   "objects": {
-    "NPM": "Juniperus_sabina_Mas_NPM",
-    "VPM": "Juniperus_sabina_Mas_VPM"
-   },
-   "npm": {
-    "entry_id": "project-015",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "_mojevelnik_t1_h60_low",
-    "triangles": 10,
-    "height_m": 0.724,
-    "crown_diameter_m": 1.967,
-    "basis": "LP"
-   },
-   "vpm": {
-    "entry_id": "project-037",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "mojevelnik_t1_h60_high",
-    "triangles": 20,
-    "height_m": 0.724,
-    "crown_diameter_m": 1.968,
-    "basis": "HP"
-   },
-   "merged": [],
-   "height_m": 0.724,
-   "crown_diameter_m": 1.967,
-   "triangles": {
-    "NPM": 10,
-    "VPM": 20
-   },
-   "source_scenes": [
-    "FLORIO_2BT_2022.max"
-   ],
-   "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/10_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/10_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 447e4aa00d98 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -3063,6 +2451,7 @@
     "crown_diameter_m": 1.704,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 1.524,
    "crown_diameter_m": 1.704,
@@ -3074,148 +2463,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
-   }
-  },
-  {
-   "material_id": 235,
-   "latin": "Pinus mugo 'Mops'",
-   "russian": "Сосна горная Мопс",
-   "type": "bush",
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "",
-   "objects": {
-    "NPM": "Pinus_mugo_Mops_NPM",
-    "VPM": "Pinus_mugo_Mops_VPM"
-   },
-   "npm": {
-    "entry_id": "project-019",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "_sosna_t1_h60_low",
-    "triangles": 10,
-    "height_m": 0.618,
-    "crown_diameter_m": 1.284,
-    "basis": "LP"
-   },
-   "vpm": {
-    "entry_id": "project-041",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "sosna_t1_h60_high",
-    "triangles": 20,
-    "height_m": 0.618,
-    "crown_diameter_m": 1.285,
-    "basis": "HP"
-   },
-   "merged": [],
-   "height_m": 0.618,
-   "crown_diameter_m": 1.284,
-   "triangles": {
-    "NPM": 10,
-    "VPM": 20
-   },
-   "source_scenes": [
-    "FLORIO_2BT_2022.max"
-   ],
-   "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
-   }
-  },
-  {
-   "material_id": 236,
-   "latin": "Picea abies 'Nidiformis'",
-   "russian": "Ель обыкновенная Нидиформис",
-   "type": "bush",
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "",
-   "objects": {
-    "NPM": "Picea_abies_Nidiformis_NPM",
-    "VPM": "Picea_abies_Nidiformis_VPM"
-   },
-   "npm": {
-    "entry_id": "project-019",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "_sosna_t1_h60_low",
-    "triangles": 10,
-    "height_m": 0.618,
-    "crown_diameter_m": 1.284,
-    "basis": "LP"
-   },
-   "vpm": {
-    "entry_id": "project-041",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "sosna_t1_h60_high",
-    "triangles": 20,
-    "height_m": 0.618,
-    "crown_diameter_m": 1.285,
-    "basis": "HP"
-   },
-   "merged": [],
-   "height_m": 0.618,
-   "crown_diameter_m": 1.284,
-   "triangles": {
-    "NPM": 10,
-    "VPM": 20
-   },
-   "source_scenes": [
-    "FLORIO_2BT_2022.max"
-   ],
-   "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
-   }
-  },
-  {
-   "material_id": 237,
-   "latin": "Pinus mugo var. mughus",
-   "russian": "Сосна горная Мугус",
-   "type": "bush",
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "",
-   "objects": {
-    "NPM": "Pinus_mugo_var_mughus_NPM",
-    "VPM": "Pinus_mugo_var_mughus_VPM"
-   },
-   "npm": {
-    "entry_id": "project-019",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "_sosna_t1_h60_low",
-    "triangles": 10,
-    "height_m": 0.618,
-    "crown_diameter_m": 1.284,
-    "basis": "LP"
-   },
-   "vpm": {
-    "entry_id": "project-041",
-    "scene": "FLORIO_2BT_2022.max",
-    "source_name": "sosna_t1_h60_high",
-    "triangles": 20,
-    "height_m": 0.618,
-    "crown_diameter_m": 1.285,
-    "basis": "HP"
-   },
-   "merged": [],
-   "height_m": 0.618,
-   "crown_diameter_m": 1.284,
-   "triangles": {
-    "NPM": 10,
-    "VPM": 20
-   },
-   "source_scenes": [
-    "FLORIO_2BT_2022.max"
-   ],
-   "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/24_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/24_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 12418310fddc on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -3247,6 +2498,7 @@
     "crown_diameter_m": 0.952,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 0.841,
    "crown_diameter_m": 0.952,
@@ -3258,10 +2510,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/38_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/38_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate cea543a1a0b6 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -3293,6 +2545,7 @@
     "crown_diameter_m": 1.788,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 0.86,
    "crown_diameter_m": 1.788,
@@ -3304,10 +2557,10 @@
     "FLORIO_2BT_2022.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/51_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/51_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 80c4b612043b on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -3339,6 +2592,7 @@
     "crown_diameter_m": 0.976,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 0.639,
    "crown_diameter_m": 0.951,
@@ -3350,10 +2604,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/11_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/11_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate bd734313c876 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -3385,6 +2639,7 @@
     "crown_diameter_m": 0.909,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 0.562,
    "crown_diameter_m": 0.881,
@@ -3396,10 +2651,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/25_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/25_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate fbd98ad55273 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -3411,7 +2666,7 @@
    "note": "genus only in label",
    "objects": {
     "NPM": "Heuchera_NPM",
-    "VPM": "Heuchera_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-017",
@@ -3422,30 +2677,23 @@
     "crown_diameter_m": 0.977,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-017",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "Geikhera_HP",
-    "triangles": 80,
-    "height_m": 0.727,
-    "crown_diameter_m": 0.977,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 0.727,
    "crown_diameter_m": 0.977,
    "triangles": {
     "NPM": 80,
-    "VPM": 80
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/39_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/39_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate c9f154f7fac2 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -3457,7 +2705,7 @@
    "note": "",
    "objects": {
     "NPM": "Actaea_simplex_Atropurpurea_NPM",
-    "VPM": "Actaea_simplex_Atropurpurea_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-026",
@@ -3468,30 +2716,23 @@
     "crown_diameter_m": 0.981,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-026",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "KlopogonAtropurpurea_LP",
-    "triangles": 80,
-    "height_m": 0.951,
-    "crown_diameter_m": 0.981,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 0.951,
    "crown_diameter_m": 0.981,
    "triangles": {
     "NPM": 80,
-    "VPM": 80
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/52_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/52_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 1c2cd7aa9584 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -3503,7 +2744,7 @@
    "note": "label 'Лабазник обычный'",
    "objects": {
     "NPM": "Filipendula_ulmaria_NPM",
-    "VPM": "Filipendula_ulmaria_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-027",
@@ -3514,30 +2755,23 @@
     "crown_diameter_m": 0.976,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-027",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "LabzannikObychnyy_HP",
-    "triangles": 64,
-    "height_m": 0.639,
-    "crown_diameter_m": 0.976,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 0.639,
    "crown_diameter_m": 0.976,
    "triangles": {
     "NPM": 64,
-    "VPM": 64
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/12_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/12_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 978fede1d28d on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -3549,7 +2783,7 @@
    "note": "",
    "objects": {
     "NPM": "Miscanthus_sinensis_NPM",
-    "VPM": "Miscanthus_sinensis_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-029",
@@ -3560,30 +2794,23 @@
     "crown_diameter_m": 0.839,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-029",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "MiskantusKitayskiy_HP",
-    "triangles": 72,
-    "height_m": 1.188,
-    "crown_diameter_m": 0.839,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 1.188,
    "crown_diameter_m": 0.839,
    "triangles": {
     "NPM": 72,
-    "VPM": 72
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/26_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/26_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 7300bd0a06f3 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -3615,6 +2842,7 @@
     "crown_diameter_m": 0.909,
     "basis": "HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 0.562,
    "crown_diameter_m": 0.909,
@@ -3626,10 +2854,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/40_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/40_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate bf863369307b on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -3661,6 +2889,7 @@
     "crown_diameter_m": 0.981,
     "basis": "LP -> HP"
    },
+   "vpm_status": "available",
    "merged": [],
    "height_m": 0.951,
    "crown_diameter_m": 0.92,
@@ -3672,10 +2901,10 @@
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/53_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/53_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate e683fe151178 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   },
   {
@@ -3687,7 +2916,7 @@
    "note": "",
    "objects": {
     "NPM": "Calamagrostis_acutiflora_Karl_Foerster_NPM",
-    "VPM": "Calamagrostis_acutiflora_Karl_Foerster_VPM"
+    "VPM": null
    },
    "npm": {
     "entry_id": "library-073",
@@ -3698,30 +2927,70 @@
     "crown_diameter_m": 0.839,
     "basis": "LP -> HP"
    },
-   "vpm": {
-    "entry_id": "library-073",
-    "scene": "FLORA_Union_v1.max",
-    "source_name": "VeynikKarl_HP",
-    "triangles": 72,
-    "height_m": 1.188,
-    "crown_diameter_m": 0.839,
-    "basis": "LP -> HP (same mesh as NPM)"
-   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
    "merged": [],
    "height_m": 1.188,
    "crown_diameter_m": 0.839,
    "triangles": {
     "NPM": 72,
-    "VPM": 72
+    "VPM": null
    },
    "source_scenes": [
     "FLORA_Union_v1.max"
    ],
    "maps": {
-    "diffuse": null,
-    "opacity": null,
-    "review_status": "missing",
-    "evidence": null
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/13_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/13_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 6998bc62ebe9 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
+   }
+  },
+  {
+   "material_id": 501,
+   "latin": "Parthenocissus quinquefolia",
+   "russian": "Девичий виноград пятилисточковый",
+   "type": "climber",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Parthenocissus_quinquefolia_NPM",
+    "VPM": "Parthenocissus_quinquefolia_VPM"
+   },
+   "npm": {
+    "entry_id": "project-005",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_devichiy_vinograd_t1_h140_low",
+    "triangles": 10,
+    "height_m": 1.519,
+    "crown_diameter_m": 0.355,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "project-027",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "devichiy_vinograd_t1_h140_high",
+    "triangles": 20,
+    "height_m": 1.519,
+    "crown_diameter_m": 0.355,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "merged": [],
+   "height_m": 1.519,
+   "crown_diameter_m": 0.355,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 20
+   },
+   "source_scenes": [
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/27_d.png",
+    "opacity": "C:/x/t_6c48bc9d/maps/batch2/review-batch2-v001/27_o.png",
+    "review_status": "pending_review",
+    "evidence": "batch 2 candidate 033267e4e3c4 on C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png; not approved"
    }
   }
  ],
@@ -3734,26 +3003,21 @@
      "library-082",
      "library-083"
     ],
-    "reason": "unlabelled 'Многоцветник' v1-v4: species unknown (flower-bed mix?)"
-   },
-   {
-    "sources": [
-     "project-005",
-     "project-027"
-    ],
-    "latin": "Parthenocissus quinquefolia",
-    "russian": "Девичий виноград пятилисточковый",
-    "reason": "type climber has no material-ID range in #216"
+    "reason": "unlabelled 'Многоцветник' v1-v4: species unknown (flower-bed mix?)",
+    "status": "unidentified",
+    "source_names": [
+     "Многоцветник_v1",
+     "Многоцветник_v2",
+     "Многоцветник_v3",
+     "Многоцветники_v4"
+    ]
    }
   ],
   "species_without_approved_maps": [
-   "Tilia cordata",
    "Crataegus mollis",
    "Padus maackii",
    "Amelanchier lamarckii",
    "Acer tataricum subsp. ginnala",
-   "Acer platanoides",
-   "Sorbus aucuparia",
    "Acer tataricum",
    "Sorbus commixta 'Dodong'",
    "Syringa vulgaris 'Krasavitsa Moskvy'",
@@ -3766,19 +3030,11 @@
    "Malus 'Evereste'",
    "Thuja occidentalis",
    "Prunus padus",
-   "Quercus robur",
-   "Tilia cordata 'Greenspire'",
-   "Alnus incana",
-   "Picea abies",
-   "Abies koreana",
-   "Acer platanoides 'Royal Red'",
    "Berberis × ottawensis",
    "Crataegus monogyna",
-   "Cornus alba",
    "Cornus sericea",
    "Physocarpus opulifolius 'Diabolo'",
    "Hydrangea paniculata",
-   "Hydrangea arborescens",
    "Salix purpurea 'Mayak'",
    "Cotoneaster lucidus",
    "Juniperus sabina",
@@ -3798,16 +3054,8 @@
    "Pinus mugo",
    "Berberis thunbergii",
    "Cornus alba 'Sibirica Variegata'",
-   "Cornus sanguinea 'Anny's Winter Orange'",
-   "Cornus alba 'Red Gnome'",
    "Dasiphora fruticosa",
-   "Salix repens 'Green Carpet'",
-   "Juniperus sabina 'Tamariscifolia'",
-   "Juniperus sabina 'Mas'",
    "Physocarpus opulifolius 'Luteus'",
-   "Pinus mugo 'Mops'",
-   "Picea abies 'Nidiformis'",
-   "Pinus mugo var. mughus",
    "Spiraea japonica 'Firelight'",
    "Spiraea × bumalda",
    "Symphyotrichum novae-angliae",
@@ -3818,40 +3066,194 @@
    "Miscanthus sinensis",
    "Eutrochium maculatum",
    "Calamagrostis brachytricha",
-   "Calamagrostis × acutiflora 'Karl Foerster'"
+   "Calamagrostis × acutiflora 'Karl Foerster'",
+   "Parthenocissus quinquefolia"
   ],
   "project_species_shared_stand_in": [
-   "Quercus robur",
-   "Tilia cordata 'Greenspire'",
-   "Alnus incana",
-   "Picea abies",
-   "Abies koreana",
-   "Pinus sylvestris",
-   "Acer platanoides 'Royal Red'",
-   "Cornus sanguinea 'Anny's Winter Orange'",
-   "Cornus alba 'Red Gnome'",
-   "Salix repens 'Green Carpet'",
-   "Juniperus sabina 'Tamariscifolia'",
-   "Juniperus sabina 'Mas'",
-   "Pinus mugo 'Mops'",
-   "Picea abies 'Nidiformis'",
-   "Pinus mugo var. mughus"
+   {
+    "latin": "Quercus robur",
+    "russian": "Дуб черешчатый",
+    "type": "tree",
+    "material_id": 121,
+    "sources": [
+     "project-006",
+     "project-028"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Tilia cordata 'Greenspire'",
+    "russian": "Липа мелколистная Гринспайр",
+    "type": "tree",
+    "material_id": 122,
+    "sources": [
+     "project-006",
+     "project-028"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Alnus incana",
+    "russian": "Ольха серая",
+    "type": "tree",
+    "material_id": 123,
+    "sources": [
+     "project-006",
+     "project-028"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Picea abies",
+    "russian": "Ель обыкновенная",
+    "type": "tree",
+    "material_id": 124,
+    "sources": [
+     "project-007",
+     "project-029"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Abies koreana",
+    "russian": "Пихта корейская",
+    "type": "tree",
+    "material_id": 125,
+    "sources": [
+     "project-007",
+     "project-029"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Pinus sylvestris",
+    "russian": "Сосна обыкновенная",
+    "type": "tree",
+    "material_id": 126,
+    "sources": [
+     "project-007",
+     "project-029"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Acer platanoides 'Royal Red'",
+    "russian": "Клён остролистный Роял Ред",
+    "type": "tree",
+    "material_id": 127,
+    "sources": [
+     "project-013",
+     "project-035"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Cornus sanguinea 'Anny's Winter Orange'",
+    "russian": "Дёрен кроваво-красный Эннис Винтер Оранж",
+    "type": "bush",
+    "material_id": 228,
+    "sources": [
+     "project-004",
+     "project-026"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Cornus alba 'Red Gnome'",
+    "russian": "Дёрен белый Ред Гном",
+    "type": "bush",
+    "material_id": 229,
+    "sources": [
+     "project-004",
+     "project-026"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Salix repens 'Green Carpet'",
+    "russian": "Ива ползучая Грин Карпет",
+    "type": "bush",
+    "material_id": 231,
+    "sources": [
+     "project-015",
+     "project-037"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Juniperus sabina 'Tamariscifolia'",
+    "russian": "Можжевельник казацкий Тамарисцифолия",
+    "type": "bush",
+    "material_id": 232,
+    "sources": [
+     "project-015",
+     "project-037"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Juniperus sabina 'Mas'",
+    "russian": "Можжевельник казацкий Мас",
+    "type": "bush",
+    "material_id": 233,
+    "sources": [
+     "project-015",
+     "project-037"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Pinus mugo 'Mops'",
+    "russian": "Сосна горная Мопс",
+    "type": "bush",
+    "material_id": 235,
+    "sources": [
+     "project-019",
+     "project-041"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Picea abies 'Nidiformis'",
+    "russian": "Ель обыкновенная Нидиформис",
+    "type": "bush",
+    "material_id": 236,
+    "sources": [
+     "project-019",
+     "project-041"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Pinus mugo var. mughus",
+    "russian": "Сосна горная Мугус",
+    "type": "bush",
+    "material_id": 237,
+    "sources": [
+     "project-019",
+     "project-041"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   }
   ]
  },
  "counts": {
-  "species": 75,
+  "species": 61,
   "by_type": {
-   "tree": 27,
-   "bush": 39,
+   "tree": 20,
+   "bush": 31,
    "hedge": 0,
-   "flower": 9
+   "flower": 9,
+   "climber": 1
   },
-  "with_vpm": 74,
+  "with_vpm": 41,
   "merged_duplicates": 37,
   "maps": {
-   "approved": 3,
-   "pending_review": 5,
-   "missing": 67
-  }
+   "approved": 7,
+   "pending_review": 54,
+   "missing": 0
+  },
+  "shared_stand_in_gaps": 15,
+  "unresolved": 1
  }
 }

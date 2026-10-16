@@ -2,7 +2,7 @@
  "schema": "flora-curation-v1",
  "status": "draft_pending_user_decisions",
  "audit_catalogue": "experiments/flora-library-audit/catalogue.json",
- "order": "trees, bushes, flowers; inside a type the first appearance in the #189 audit (library before FLORIO)",
+ "order": "trees, bushes, flowers, climbers; inside a type the first appearance in the #189 audit (library before FLORIO). shared_stand_in_gaps are not library species",
  "species": [
   {
    "latin": "Tilia cordata",
@@ -233,83 +233,6 @@
     "project-025"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
-  },
-  {
-   "latin": "Quercus robur",
-   "russian": "Дуб черешчатый",
-   "type": "tree",
-   "sources": [
-    "project-006",
-    "project-028"
-   ],
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": ""
-  },
-  {
-   "latin": "Tilia cordata 'Greenspire'",
-   "russian": "Липа мелколистная Гринспайр",
-   "type": "tree",
-   "sources": [
-    "project-006",
-    "project-028"
-   ],
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": ""
-  },
-  {
-   "latin": "Alnus incana",
-   "russian": "Ольха серая",
-   "type": "tree",
-   "sources": [
-    "project-006",
-    "project-028"
-   ],
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": ""
-  },
-  {
-   "latin": "Picea abies",
-   "russian": "Ель обыкновенная",
-   "type": "tree",
-   "sources": [
-    "project-007",
-    "project-029"
-   ],
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": ""
-  },
-  {
-   "latin": "Abies koreana",
-   "russian": "Пихта корейская",
-   "type": "tree",
-   "sources": [
-    "project-007",
-    "project-029"
-   ],
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": ""
-  },
-  {
-   "latin": "Pinus sylvestris",
-   "russian": "Сосна обыкновенная",
-   "type": "tree",
-   "sources": [
-    "project-007",
-    "project-029"
-   ],
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": "maps approved in #190"
-  },
-  {
-   "latin": "Acer platanoides 'Royal Red'",
-   "russian": "Клён остролистный Роял Ред",
-   "type": "tree",
-   "sources": [
-    "project-013",
-    "project-035"
-   ],
-   "geometry_basis": "shared_multi_species_stand_in",
    "note": ""
   },
   {
@@ -618,28 +541,6 @@
    "note": ""
   },
   {
-   "latin": "Cornus sanguinea 'Anny's Winter Orange'",
-   "russian": "Дёрен кроваво-красный Эннис Винтер Оранж",
-   "type": "bush",
-   "sources": [
-    "project-004",
-    "project-026"
-   ],
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": ""
-  },
-  {
-   "latin": "Cornus alba 'Red Gnome'",
-   "russian": "Дёрен белый Ред Гном",
-   "type": "bush",
-   "sources": [
-    "project-004",
-    "project-026"
-   ],
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": ""
-  },
-  {
    "latin": "Dasiphora fruticosa",
    "russian": "Лапчатка кустарниковая",
    "type": "bush",
@@ -651,39 +552,6 @@
    "note": ""
   },
   {
-   "latin": "Salix repens 'Green Carpet'",
-   "russian": "Ива ползучая Грин Карпет",
-   "type": "bush",
-   "sources": [
-    "project-015",
-    "project-037"
-   ],
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": ""
-  },
-  {
-   "latin": "Juniperus sabina 'Tamariscifolia'",
-   "russian": "Можжевельник казацкий Тамарисцифолия",
-   "type": "bush",
-   "sources": [
-    "project-015",
-    "project-037"
-   ],
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": ""
-  },
-  {
-   "latin": "Juniperus sabina 'Mas'",
-   "russian": "Можжевельник казацкий Мас",
-   "type": "bush",
-   "sources": [
-    "project-015",
-    "project-037"
-   ],
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": ""
-  },
-  {
    "latin": "Physocarpus opulifolius 'Luteus'",
    "russian": "Пузыреплодник калинолистный Лютеус",
    "type": "bush",
@@ -692,39 +560,6 @@
     "project-038"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
-  },
-  {
-   "latin": "Pinus mugo 'Mops'",
-   "russian": "Сосна горная Мопс",
-   "type": "bush",
-   "sources": [
-    "project-019",
-    "project-041"
-   ],
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": ""
-  },
-  {
-   "latin": "Picea abies 'Nidiformis'",
-   "russian": "Ель обыкновенная Нидиформис",
-   "type": "bush",
-   "sources": [
-    "project-019",
-    "project-041"
-   ],
-   "geometry_basis": "shared_multi_species_stand_in",
-   "note": ""
-  },
-  {
-   "latin": "Pinus mugo var. mughus",
-   "russian": "Сосна горная Мугус",
-   "type": "bush",
-   "sources": [
-    "project-019",
-    "project-041"
-   ],
-   "geometry_basis": "shared_multi_species_stand_in",
    "note": ""
   },
   {
@@ -842,6 +677,17 @@
    ],
    "geometry_basis": "own_mesh",
    "note": ""
+  },
+  {
+   "latin": "Parthenocissus quinquefolia",
+   "russian": "Девичий виноград пятилисточковый",
+   "type": "climber",
+   "sources": [
+    "project-005",
+    "project-027"
+   ],
+   "geometry_basis": "own_mesh",
+   "note": ""
   }
  ],
  "unresolved": [
@@ -852,16 +698,160 @@
     "library-082",
     "library-083"
    ],
-   "reason": "unlabelled 'Многоцветник' v1-v4: species unknown (flower-bed mix?)"
+   "reason": "unlabelled 'Многоцветник' v1-v4: species unknown (flower-bed mix?)",
+   "status": "unidentified"
+  }
+ ],
+ "shared_stand_in_gaps": [
+  {
+   "latin": "Quercus robur",
+   "russian": "Дуб черешчатый",
+   "type": "tree",
+   "sources": [
+    "project-006",
+    "project-028"
+   ],
+   "note": ""
   },
   {
+   "latin": "Tilia cordata 'Greenspire'",
+   "russian": "Липа мелколистная Гринспайр",
+   "type": "tree",
    "sources": [
-    "project-005",
-    "project-027"
+    "project-006",
+    "project-028"
    ],
-   "latin": "Parthenocissus quinquefolia",
-   "russian": "Девичий виноград пятилисточковый",
-   "reason": "type climber has no material-ID range in #216"
+   "note": ""
+  },
+  {
+   "latin": "Alnus incana",
+   "russian": "Ольха серая",
+   "type": "tree",
+   "sources": [
+    "project-006",
+    "project-028"
+   ],
+   "note": ""
+  },
+  {
+   "latin": "Picea abies",
+   "russian": "Ель обыкновенная",
+   "type": "tree",
+   "sources": [
+    "project-007",
+    "project-029"
+   ],
+   "note": ""
+  },
+  {
+   "latin": "Abies koreana",
+   "russian": "Пихта корейская",
+   "type": "tree",
+   "sources": [
+    "project-007",
+    "project-029"
+   ],
+   "note": ""
+  },
+  {
+   "latin": "Pinus sylvestris",
+   "russian": "Сосна обыкновенная",
+   "type": "tree",
+   "sources": [
+    "project-007",
+    "project-029"
+   ],
+   "note": "maps approved in #190"
+  },
+  {
+   "latin": "Acer platanoides 'Royal Red'",
+   "russian": "Клён остролистный Роял Ред",
+   "type": "tree",
+   "sources": [
+    "project-013",
+    "project-035"
+   ],
+   "note": ""
+  },
+  {
+   "latin": "Cornus sanguinea 'Anny's Winter Orange'",
+   "russian": "Дёрен кроваво-красный Эннис Винтер Оранж",
+   "type": "bush",
+   "sources": [
+    "project-004",
+    "project-026"
+   ],
+   "note": ""
+  },
+  {
+   "latin": "Cornus alba 'Red Gnome'",
+   "russian": "Дёрен белый Ред Гном",
+   "type": "bush",
+   "sources": [
+    "project-004",
+    "project-026"
+   ],
+   "note": ""
+  },
+  {
+   "latin": "Salix repens 'Green Carpet'",
+   "russian": "Ива ползучая Грин Карпет",
+   "type": "bush",
+   "sources": [
+    "project-015",
+    "project-037"
+   ],
+   "note": ""
+  },
+  {
+   "latin": "Juniperus sabina 'Tamariscifolia'",
+   "russian": "Можжевельник казацкий Тамарисцифолия",
+   "type": "bush",
+   "sources": [
+    "project-015",
+    "project-037"
+   ],
+   "note": ""
+  },
+  {
+   "latin": "Juniperus sabina 'Mas'",
+   "russian": "Можжевельник казацкий Мас",
+   "type": "bush",
+   "sources": [
+    "project-015",
+    "project-037"
+   ],
+   "note": ""
+  },
+  {
+   "latin": "Pinus mugo 'Mops'",
+   "russian": "Сосна горная Мопс",
+   "type": "bush",
+   "sources": [
+    "project-019",
+    "project-041"
+   ],
+   "note": ""
+  },
+  {
+   "latin": "Picea abies 'Nidiformis'",
+   "russian": "Ель обыкновенная Нидиформис",
+   "type": "bush",
+   "sources": [
+    "project-019",
+    "project-041"
+   ],
+   "note": ""
+  },
+  {
+   "latin": "Pinus mugo var. mughus",
+   "russian": "Сосна горная Мугус",
+   "type": "bush",
+   "sources": [
+    "project-019",
+    "project-041"
+   ],
+   "note": ""
   }
  ]
 }

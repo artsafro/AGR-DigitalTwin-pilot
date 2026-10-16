@@ -11,16 +11,26 @@ import re
 import unicodedata
 from pathlib import Path
 
-RANGES = {"tree": (101, 199), "bush": (201, 299), "hedge": (301, 399), "flower": (401, 499)}
+RANGES = {
+    "tree": (101, 199),
+    "bush": (201, 299),
+    "hedge": (301, 399),
+    "flower": (401, 499),
+    "climber": (501, 599),
+}
 LIBRARY_FILE = "C:/x/flora-library/v001/flora-library-v001.max"
+MAPS_ROOT = "C:/x/flora-library/v001/maps"
 LIBRARY_SCENE = "FLORA_Union_v1.max"
 REVIEW_STATUS = ("approved", "pending_review", "missing")
+VPM_STATUS = ("available", "unconfirmed", "none")
+SHARED_STAND_IN_STATUS = "gap: shared multi-species FLORIO mesh, no own mesh"
 REPO = Path(__file__).resolve().parents[3]
 
 _TOP_KEYS = ("schema", "library_file", "id_ranges", "retired_ids", "species", "gaps", "counts")
 _SPECIES_KEYS = (
     "material_id", "latin", "russian", "type", "geometry_basis", "note", "objects",
-    "npm", "vpm", "merged", "height_m", "crown_diameter_m", "triangles", "source_scenes", "maps",
+    "npm", "vpm", "vpm_status", "merged", "height_m", "crown_diameter_m", "triangles",
+    "source_scenes", "maps",
 )
 _SOURCE_KEYS = (
     "entry_id", "scene", "source_name", "triangles", "height_m", "crown_diameter_m", "basis",
@@ -28,7 +38,11 @@ _SOURCE_KEYS = (
 _MERGED_KEYS = ("entry_id", "scene", "source_name", "reason")
 _MAP_KEYS = ("diffuse", "opacity", "review_status", "evidence")
 _GAP_KEYS = ("unresolved", "species_without_approved_maps", "project_species_shared_stand_in")
-_COUNT_KEYS = ("species", "by_type", "with_vpm", "merged_duplicates", "maps")
+_STAND_IN_KEYS = ("latin", "russian", "type", "material_id", "sources", "status")
+_COUNT_KEYS = (
+    "species", "by_type", "with_vpm", "merged_duplicates", "maps",
+    "shared_stand_in_gaps", "unresolved",
+)
 _NPM_PROFILE = {"LP": 0, "LP -> HP": 1, "unlabelled": 2}
 _VPM_PROFILE = {"HP": 0, "LP -> HP": 1}
 
@@ -49,13 +63,14 @@ def select_sources(entries: list[dict]) -> dict:
         raise ValueError("species has no NPM candidate")
     npm_entry = min(npm_candidates, key=_npm_key)
     vpm_entry = min(vpm_candidates, key=_vpm_key) if vpm_candidates else None
+    if (
+        vpm_entry is not None
+        and len(vpm_candidates) == 1
+        and vpm_entry["id"] == npm_entry["id"]
+    ):
+        vpm_entry = None
     npm = _record(npm_entry, _npm_basis(npm_entry))
-    vpm = None
-    if vpm_entry is not None:
-        basis = _vpm_basis(vpm_entry)
-        if vpm_entry["id"] == npm_entry["id"] and basis == "LP -> HP":
-            basis = "LP -> HP (same mesh as NPM)"
-        vpm = _record(vpm_entry, basis)
+    vpm = None if vpm_entry is None else _record(vpm_entry, _vpm_basis(vpm_entry))
     kept = {npm_entry["id"]}
     if vpm_entry is not None:
         kept.add(vpm_entry["id"])
@@ -69,35 +84,49 @@ def select_sources(entries: list[dict]) -> dict:
             "source_name": entry["source_name"],
             "reason": _merged_reason(entry, npm_entry, vpm_entry),
         })
-    return {"NPM": npm, "VPM": vpm, "merged": merged}
+    if vpm is not None:
+        vpm_status = "available"
+    elif _npm_basis(npm_entry) == "LP -> HP":
+        vpm_status = "unconfirmed"
+    else:
+        vpm_status = "none"
+    return {"NPM": npm, "VPM": vpm, "merged": merged, "vpm_status": vpm_status}
 
 
-def assign_ids(species: list[dict], previous: dict | None = None) -> dict:
-    """Keep previous material IDs and retire IDs whose species left the catalogue."""
+def assign_ids(species: list[dict], previous: dict | None = None, gaps: list[dict] | None = None) -> dict:
+    """Keep previous material IDs, reserve shared stand-in IDs, and retire IDs that left."""
+    gap_rows = list(gaps or [])
+    seen_latin = set()
+    for item in list(species) + gap_rows:
+        if item["latin"] in seen_latin:
+            raise ValueError(f"duplicate latin {item['latin']}")
+        seen_latin.add(item["latin"])
     retired: list[int] = []
     previous_by_latin: dict[str, dict] = {}
     if previous is not None:
         retired = list(previous.get("retired_ids", []))
-        for item in previous["species"]:
+        for item in _previous_id_rows(previous):
             _require_range(item["type"], item["material_id"], item["latin"])
             previous_by_latin[item["latin"]] = item
-        current = {item["latin"] for item in species}
+        current = {item["latin"] for item in species} | {item["latin"] for item in gap_rows}
         for latin, item in previous_by_latin.items():
             if latin not in current and item["material_id"] not in retired:
                 retired.append(item["material_id"])
     used = set(retired)
     assigned: dict[str, int] = {}
-    for item in species:
+    for item in list(species) + gap_rows:
         latin = item["latin"]
         if latin not in previous_by_latin:
             continue
+        if latin in assigned:
+            raise ValueError(f"duplicate latin {latin}")
         material_id = previous_by_latin[latin]["material_id"]
         _require_range(item["type"], material_id, latin)
         if material_id in used:
             raise ValueError(f"material_id {material_id} for {latin} is retired or already used")
         assigned[latin] = material_id
         used.add(material_id)
-    for item in species:
+    for item in list(species) + gap_rows:
         latin = item["latin"]
         if latin in assigned:
             continue
@@ -112,8 +141,9 @@ def assign_ids(species: list[dict], previous: dict | None = None) -> dict:
 
 def build(audit: dict, curation: dict, maps: dict, previous: dict | None = None) -> dict:
     indexed = _index_audit(audit)
+    library, gap_items = _split_curation(curation)
     rows = []
-    for item in curation["species"]:
+    for item in library:
         missing = [source for source in item["sources"] if source not in indexed]
         if missing:
             raise ValueError(f"{item['latin']} sources not in the audit: {missing}")
@@ -134,6 +164,7 @@ def build(audit: dict, curation: dict, maps: dict, previous: dict | None = None)
             },
             "npm": chosen["NPM"],
             "vpm": chosen["VPM"],
+            "vpm_status": chosen["vpm_status"],
             "merged": chosen["merged"],
             "height_m": chosen["NPM"]["height_m"],
             "crown_diameter_m": chosen["NPM"]["crown_diameter_m"],
@@ -144,18 +175,38 @@ def build(audit: dict, curation: dict, maps: dict, previous: dict | None = None)
             "source_scenes": sorted(set(scenes)),
             "maps": map_info,
         })
-    ids = assign_ids(rows, previous)
+    gap_rows = [
+        {
+            "latin": item["latin"],
+            "russian": item["russian"],
+            "type": item["type"],
+            "sources": list(item["sources"]),
+        }
+        for item in gap_items
+    ]
+    ids = assign_ids(rows, previous, gap_rows)
     species = []
     for row in rows:
         species.append({"material_id": ids["by_latin"][row["latin"]], **row})
+    stand_in = []
+    for item in gap_rows:
+        stand_in.append({
+            "latin": item["latin"],
+            "russian": item["russian"],
+            "type": item["type"],
+            "material_id": ids["by_latin"][item["latin"]],
+            "sources": item["sources"],
+            "status": SHARED_STAND_IN_STATUS,
+        })
+    unresolved = _unresolved(curation.get("unresolved", []), indexed)
     return {
         "schema": "flora-library-v1",
         "library_file": LIBRARY_FILE,
         "id_ranges": {kind: list(bounds) for kind, bounds in RANGES.items()},
         "retired_ids": ids["retired_ids"],
         "species": species,
-        "gaps": _gaps(species, curation["unresolved"]),
-        "counts": _counts(species),
+        "gaps": _gaps(species, unresolved, stand_in),
+        "counts": _counts(species, stand_in, unresolved),
     }
 
 
@@ -374,19 +425,51 @@ def _maps_for(latin: str, maps: dict) -> dict:
     }
 
 
-def _gaps(species: list[dict], unresolved: list) -> dict:
+def _previous_id_rows(previous: dict) -> list[dict]:
+    rows = [item for item in previous.get("species", []) if isinstance(item, dict)]
+    stand_in = previous.get("gaps", {}).get("project_species_shared_stand_in", [])
+    for item in stand_in:
+        if isinstance(item, dict) and "material_id" in item and "latin" in item:
+            rows.append(item)
+    return rows
+
+
+def _split_curation(curation: dict) -> tuple[list[dict], list[dict]]:
+    library = []
+    gaps = [item for item in curation.get("shared_stand_in_gaps", [])]
+    for item in curation["species"]:
+        if item.get("geometry_basis") == "shared_multi_species_stand_in":
+            gaps.append(item)
+        else:
+            library.append(item)
+    return library, gaps
+
+
+def _unresolved(entries: list, indexed: dict[str, dict]) -> list:
+    rows = []
+    for item in entries:
+        row = copy.deepcopy(item)
+        names = []
+        for source in item.get("sources", []):
+            if source in indexed:
+                names.append(indexed[source]["source_name"])
+        row["source_names"] = names
+        row["status"] = item.get("status", "unidentified")
+        rows.append(row)
+    return rows
+
+
+def _gaps(species: list[dict], unresolved: list, stand_in: list[dict]) -> dict:
     return {
-        "unresolved": copy.deepcopy(unresolved),
+        "unresolved": unresolved,
         "species_without_approved_maps": [
             item["latin"] for item in species if item["maps"]["review_status"] != "approved"
         ],
-        "project_species_shared_stand_in": [
-            item["latin"] for item in species if item["geometry_basis"] == "shared_multi_species_stand_in"
-        ],
+        "project_species_shared_stand_in": stand_in,
     }
 
 
-def _counts(species: list[dict]) -> dict:
+def _counts(species: list[dict], stand_in: list[dict], unresolved: list) -> dict:
     by_type = {kind: 0 for kind in RANGES}
     map_counts = {status: 0 for status in REVIEW_STATUS}
     with_vpm = 0
@@ -406,6 +489,8 @@ def _counts(species: list[dict]) -> dict:
         "with_vpm": with_vpm,
         "merged_duplicates": merged,
         "maps": map_counts,
+        "shared_stand_in_gaps": len(stand_in),
+        "unresolved": len(unresolved),
     }
 
 
@@ -522,7 +607,22 @@ def _check_species(item: dict, where: str, retired: set, seen_ids: dict, seen_la
         findings.extend(_check_scenes(item.get("source_scenes"), where))
     if "maps" in item:
         findings.extend(_check_maps(item.get("maps"), where))
+    findings.extend(_check_vpm_status(item, where))
+    if item.get("geometry_basis") == "shared_multi_species_stand_in":
+        findings.append(f"{where} is a shared stand-in and is not a library species")
     return findings
+
+
+def _check_vpm_status(item: dict, where: str) -> list[str]:
+    if "vpm_status" not in item:
+        return []
+    status = item["vpm_status"]
+    if status not in VPM_STATUS:
+        return [f"{where}.vpm_status {status!r} is not available, unconfirmed or none"]
+    has_vpm = item.get("vpm") is not None
+    if (status == "available") != has_vpm:
+        return [f"{where}.vpm_status {status!r} does not match vpm"]
+    return []
 
 
 def _check_objects(item: dict, where: str, seen_names: dict) -> list[str]:
@@ -648,8 +748,8 @@ def _check_gaps(catalogue: dict) -> list[str]:
     if not isinstance(gaps, dict):
         return ["gaps is not an object"]
     findings = _key_findings(gaps, _GAP_KEYS, "gaps")
-    if "unresolved" in gaps and not isinstance(gaps["unresolved"], list):
-        findings.append("gaps.unresolved is not a list")
+    if "unresolved" in gaps:
+        findings.extend(_check_unresolved(gaps["unresolved"]))
     species = catalogue.get("species")
     if not isinstance(species, list):
         return findings
@@ -662,13 +762,81 @@ def _check_gaps(catalogue: dict) -> list[str]:
         if gaps["species_without_approved_maps"] != expected:
             findings.append("gaps.species_without_approved_maps does not match the species")
     if "project_species_shared_stand_in" in gaps:
-        expected = [
-            item["latin"] for item in species
-            if isinstance(item, dict) and item.get("geometry_basis") == "shared_multi_species_stand_in"
-            and isinstance(item.get("latin"), str)
-        ]
-        if gaps["project_species_shared_stand_in"] != expected:
-            findings.append("gaps.project_species_shared_stand_in does not match the species")
+        retired = set(catalogue["retired_ids"]) if isinstance(catalogue.get("retired_ids"), list) else set()
+        seen_ids = {}
+        seen_latin = {}
+        for item in species:
+            if isinstance(item, dict) and _is_int(item.get("material_id")):
+                seen_ids[item["material_id"]] = "species"
+            if isinstance(item, dict) and isinstance(item.get("latin"), str):
+                seen_latin[item["latin"]] = "species"
+        findings.extend(_check_stand_in(gaps["project_species_shared_stand_in"], retired, seen_ids, seen_latin))
+    return findings
+
+
+def _check_unresolved(value) -> list[str]:
+    if not isinstance(value, list):
+        return ["gaps.unresolved is not a list"]
+    findings = []
+    for index, item in enumerate(value):
+        where = f"gaps.unresolved[{index}]"
+        if not isinstance(item, dict):
+            findings.append(f"{where} is not an object")
+            continue
+        if not isinstance(item.get("status"), str):
+            findings.append(f"{where}.status is not a string")
+        names = item.get("source_names")
+        if not isinstance(names, list) or not all(isinstance(name, str) for name in names):
+            findings.append(f"{where}.source_names is not a list of strings")
+    return findings
+
+
+def _check_stand_in(value, retired: set, seen_ids: dict, seen_latin: dict) -> list[str]:
+    if not isinstance(value, list):
+        return ["gaps.project_species_shared_stand_in is not a list"]
+    findings = []
+    for index, item in enumerate(value):
+        where = f"gaps.project_species_shared_stand_in[{index}]"
+        if not isinstance(item, dict):
+            findings.append(f"{where} is not an object")
+            continue
+        findings.extend(_key_findings(item, _STAND_IN_KEYS, where))
+        latin = item.get("latin")
+        kind = item.get("type")
+        material_id = item.get("material_id")
+        for key in ("latin", "russian", "type"):
+            if key in item and not isinstance(item[key], str):
+                findings.append(f"{where}.{key} is not a string")
+        if "type" in item and isinstance(kind, str) and kind not in RANGES:
+            findings.append(f"{where}.type {kind!r} is not a Flora range")
+        if "status" in item and item["status"] != SHARED_STAND_IN_STATUS:
+            findings.append(f"{where}.status is not the shared stand-in gap status")
+        sources = item.get("sources")
+        if "sources" in item and (
+            not isinstance(sources, list) or not all(isinstance(source, str) for source in sources)
+        ):
+            findings.append(f"{where}.sources is not a list of strings")
+        if isinstance(latin, str):
+            if latin in seen_latin:
+                findings.append(f"duplicate latin {latin}")
+            else:
+                seen_latin[latin] = where
+        if "material_id" in item and not _is_int(material_id):
+            findings.append(f"{where}.material_id is not an int")
+        if not _is_int(material_id):
+            continue
+        if 1 <= material_id <= 100:
+            findings.append(f"{where}.material_id {material_id} is in 1-100")
+        if isinstance(kind, str) and kind in RANGES:
+            low, high = RANGES[kind]
+            if not low <= material_id <= high:
+                findings.append(f"{where}.material_id {material_id} is outside the {kind} range {low}-{high}")
+        if material_id in retired:
+            findings.append(f"{where}.material_id {material_id} is retired")
+        if material_id in seen_ids:
+            findings.append(f"duplicate material_id {material_id}")
+        else:
+            seen_ids[material_id] = where
     return findings
 
 
@@ -710,6 +878,15 @@ def _check_counts(catalogue: dict) -> list[str]:
                 findings.append(f"counts.maps.{status} does not match the species list")
     elif "maps" in counts:
         findings.append("counts.maps is not an object")
+    gaps = catalogue.get("gaps") if isinstance(catalogue.get("gaps"), dict) else {}
+    stand_in = gaps.get("project_species_shared_stand_in")
+    unresolved = gaps.get("unresolved")
+    if "shared_stand_in_gaps" in counts and isinstance(stand_in, list):
+        if counts["shared_stand_in_gaps"] != len(stand_in):
+            findings.append("counts.shared_stand_in_gaps does not match the gap list")
+    if "unresolved" in counts and isinstance(unresolved, list):
+        if counts["unresolved"] != len(unresolved):
+            findings.append("counts.unresolved does not match the gap list")
     return findings
 
 
