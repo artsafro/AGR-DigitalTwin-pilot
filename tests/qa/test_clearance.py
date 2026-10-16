@@ -8,6 +8,7 @@ import time
 
 import numpy as np
 import pytest
+import shapely.errors
 from shapely.geometry import Polygon
 
 import check_clearance
@@ -307,3 +308,48 @@ def test_vectorized_setup_matches_per_face_setup():
     assert np.array_equal(lows, np.array([p.min(0) for p in pts]), equal_nan=True)
     assert np.array_equal(highs, np.array([p.max(0) for p in pts]), equal_nan=True)
     assert np.array_equal(first, np.array([p[0] for p in pts]), equal_nan=True)
+
+
+def _faces_at_separation(xy, separation, shift=0.0):
+    return [{"object": "synthetic", "index": i,
+             "points": [[x + shift, y, z] for x, y in xy]}
+            for i, z in enumerate((0.0, separation))]
+
+
+_BOWTIE = [(0, 0), (2, 2), (0, 2), (1, 0)]
+_SQUARE = [(0, 0), (2, 0), (2, 2), (0, 2)]
+_SEPARATIONS = [0.001, 0.0029998, 0.003, 0.003005, 0.00302]
+
+
+@pytest.mark.parametrize("separation", [0.001, 0.0029998, 0.003, 0.003005])
+def test_invalid_polygon_raises_like_reference(separation):
+    faces = _faces_at_separation(_BOWTIE, separation)
+    with pytest.raises(shapely.errors.GEOSException):
+        near_parallel_overlaps(faces, 0.003)
+    with pytest.raises(shapely.errors.GEOSException):
+        _reference_near_parallel_overlaps(faces, 0.003)
+
+
+def test_invalid_polygon_outside_window_matches_reference():
+    faces = _faces_at_separation(_BOWTIE, 0.00302)
+    got = near_parallel_overlaps(faces, 0.003)
+    ref = _reference_near_parallel_overlaps(faces, 0.003)
+    assert got == [] and got == ref
+
+
+@pytest.mark.parametrize("separation", _SEPARATIONS)
+def test_valid_square_matches_reference_at_boundaries(separation):
+    faces = _faces_at_separation(_SQUARE, separation)
+    got = near_parallel_overlaps(faces, 0.003)
+    assert got == _reference_near_parallel_overlaps(faces, 0.003)
+    if separation == 0.001:
+        assert got
+
+
+def test_invalid_polygon_in_large_mesh_raises():
+    faces = _mesh_faces(*_box(6))
+    faces.extend(_faces_at_separation(_BOWTIE, 0.003005, shift=100.0))
+    with pytest.raises(shapely.errors.GEOSException):
+        near_parallel_overlaps(faces, 0.003)
+    with pytest.raises(shapely.errors.GEOSException):
+        _reference_near_parallel_overlaps(faces, 0.003)

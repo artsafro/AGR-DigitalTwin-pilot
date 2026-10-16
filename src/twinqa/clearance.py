@@ -8,10 +8,12 @@ are closer than the tolerance and whose projections overlap by more than 1e-7 m2
 independent area test, not a pass of any third-party checker; hits still need classifying
 (deliberate embeds vs defects, docs/domain/validation.md "General QA procedure").
 Candidate search (issue #202) is a provable superset of every pair the exact tests can accept.
-The exact per-pair tests (parallel cosine, distance, projected area) are unchanged.
+Shapely runs on every window candidate before the final distance test, so GEOS errors match
+the reference. The exact per-pair tests (parallel cosine, distance, projected area) are unchanged.
 """
 import numpy as np
 import shapely
+from shapely.geometry import Polygon
 
 PARALLEL_COS_MIN = 0.999999
 AREA_MIN_M2 = 1e-7
@@ -177,8 +179,61 @@ def _polygons_by_ring(pts, keys):
     return out
 
 
+def _pairs_after_area(faces, pts, normals, centers, surv_i, surv_j, surv_same, areas, tolerance_m):
+    """Area gate, then the final distance test. NaN area is kept (NaN < x is False)."""
+    pairs = []
+    thr = tolerance_m - 1e-7
+    for t, area in enumerate(areas):
+        if area < AREA_MIN_M2:
+            continue
+        i, j = surv_i[t], surv_j[t]
+        dist = abs(float((centers[j] - pts[i][0]) @ normals[i]))
+        if dist >= thr:
+            continue
+        face = faces[i]
+        pairs.append({"a": [face["object"], face["index"]], "b": [faces[j]["object"], faces[j]["index"]],
+                      "distance_m": dist, "same_direction": surv_same[t],
+                      "projected_area_m2": float(area)})
+    return pairs
+
+
+def _scalar_window_pairs(faces, pts, normals, centers, surv_i, surv_j, surv_same, surv_axes, tolerance_m):
+    """Reference order over window survivors: Polygon per i, then intersection, area, distance."""
+    pairs = []
+    thr = tolerance_m - 1e-7
+    start = 0
+    count = len(surv_i)
+    while start < count:
+        i = surv_i[start]
+        axes = surv_axes[start]
+        end = start + 1
+        while end < count and surv_i[end] == i and surv_axes[end] == axes:
+            end += 1
+        ring_axes = list(axes)
+        a = Polygon(pts[i][:, ring_axes])
+        n, p0 = normals[i], pts[i][0]
+        for t in range(start, end):
+            j = surv_j[t]
+            area = a.intersection(Polygon(pts[j][:, ring_axes])).area
+            if area < AREA_MIN_M2:
+                continue
+            dist = abs(float((centers[j] - p0) @ n))
+            if dist >= thr:
+                continue
+            face = faces[i]
+            pairs.append({"a": [face["object"], face["index"]], "b": [faces[j]["object"], faces[j]["index"]],
+                          "distance_m": dist, "same_direction": surv_same[t],
+                          "projected_area_m2": float(area)})
+        start = end
+    return pairs
+
+
 def near_parallel_overlaps(faces: list[dict], tolerance_m: float) -> list[dict]:
-    """faces: [{object, index, points: [[x,y,z], ...]}] -> overlapping pairs closer than tolerance."""
+    """faces: [{object, index, points: [[x,y,z], ...]}] -> overlapping pairs closer than tolerance.
+
+    Shapely runs on every window candidate (plane gap < tolerance_m + 1e-5) before the final
+    distance test, so GEOS errors match the reference.
+    """
     pts = [np.asarray(f["points"], dtype=float) for f in faces]
     if not pts:
         return []
@@ -190,46 +245,46 @@ def near_parallel_overlaps(faces: list[dict], tolerance_m: float) -> list[dict]:
     ii, jj, dot = ii[keep], jj[keep], dot[keep]
     if ii.size == 0:
         return []
-    thr = tolerance_m - 1e-7
-    surv_i, surv_j, surv_dist, surv_same, surv_axes = [], [], [], [], []
+    surv_i, surv_j, surv_same, surv_axes = [], [], [], []
     cuts = np.flatnonzero(np.diff(ii)) + 1
     for s, e in zip(np.r_[0, cuts], np.r_[cuts, ii.size]):
         i = int(ii[s])
         n, p0 = normals[i], pts[i][0]
         axes = tuple(k for k in range(3) if k != int(np.argmax(np.abs(n))))
-        for t in range(s, e):
-            j = int(jj[t])
-            dist = abs(float((centers[j] - p0) @ n))
-            if dist >= thr:
-                continue
+        J = jj[s:e]
+        diff = centers[J] - p0
+        gap = np.abs(diff @ n)
+        lim = tolerance_m + 1e-5
+        win = gap < lim
+        # A subset product can differ from the reference's full `(centers - p0) @ n` in the last
+        # ulps (numpy takes another path for one row; probe: |delta| <= 1.4e-16 * sum|d|). Near the
+        # window edge the decision is taken from the full product, exactly as the reference does.
+        band = np.abs(gap - lim) <= 1e-12 * (np.abs(diff).sum(1) + abs(lim))
+        if np.any(band):
+            win[band] = (np.abs((centers - p0) @ n) < lim)[J[band]]
+        for off in np.flatnonzero(win):
+            t = s + int(off)
             surv_i.append(i)
-            surv_j.append(j)
-            surv_dist.append(dist)
+            surv_j.append(int(jj[t]))
             surv_same.append(bool(dot[t] > 0))
             surv_axes.append(axes)
     if not surv_i:
         return []
-    needed = {}
-    for i, j, axes in zip(surv_i, surv_j, surv_axes):
-        needed.setdefault((i, axes[0], axes[1]), None)
-        needed.setdefault((j, axes[0], axes[1]), None)
-    polys = _polygons_by_ring(pts, needed)
-    polys_a = np.empty(len(surv_i), dtype=object)
-    polys_b = np.empty(len(surv_i), dtype=object)
-    for t, (i, j, axes) in enumerate(zip(surv_i, surv_j, surv_axes)):
-        polys_a[t] = polys[(i, axes[0], axes[1])]
-        polys_b[t] = polys[(j, axes[0], axes[1])]
-    areas = np.atleast_1d(shapely.area(shapely.intersection(polys_a, polys_b)))
-    pairs = []
-    for t, area in enumerate(areas):
-        if area < AREA_MIN_M2:  # NaN < x is False, so a NaN area is kept, as in the scalar path.
-            continue
-        i, j = surv_i[t], surv_j[t]
-        face = faces[i]
-        pairs.append({"a": [face["object"], face["index"]], "b": [faces[j]["object"], faces[j]["index"]],
-                      "distance_m": surv_dist[t], "same_direction": surv_same[t],
-                      "projected_area_m2": float(area)})
-    return pairs
+    try:
+        needed = {}
+        for i, j, axes in zip(surv_i, surv_j, surv_axes):
+            needed.setdefault((i, axes[0], axes[1]), None)
+            needed.setdefault((j, axes[0], axes[1]), None)
+        polys = _polygons_by_ring(pts, needed)
+        polys_a = np.empty(len(surv_i), dtype=object)
+        polys_b = np.empty(len(surv_i), dtype=object)
+        for t, (i, j, axes) in enumerate(zip(surv_i, surv_j, surv_axes)):
+            polys_a[t] = polys[(i, axes[0], axes[1])]
+            polys_b[t] = polys[(j, axes[0], axes[1])]
+        areas = np.atleast_1d(shapely.area(shapely.intersection(polys_a, polys_b)))
+    except Exception:
+        return _scalar_window_pairs(faces, pts, normals, centers, surv_i, surv_j, surv_same, surv_axes, tolerance_m)
+    return _pairs_after_area(faces, pts, normals, centers, surv_i, surv_j, surv_same, areas, tolerance_m)
 
 
 def summary(pairs: list[dict], tolerance_m: float, face_count: int) -> dict:
