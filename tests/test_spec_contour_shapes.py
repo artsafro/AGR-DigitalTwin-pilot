@@ -789,3 +789,129 @@ def test_a_self_crossing_contour_stops_and_is_never_written():
     from dt_ai.spec.mesh import _contour_points
     with pytest.raises(SpecError, match="crosses itself"):
         _contour_points(Polygon([[0, 0], [10, 0], [10, 10], [4, 10], [4, -3], [3, -3], [3, 10], [0, 10]]))
+
+
+# --- #84: the panel contour is simplified by Douglas-Peucker RELIEF_M; the roof coverage check is not
+
+def _envelope(outline):
+    """The panels' outer line of `panelised(outline)`: the outline 0.1 m out, mitred."""
+    return [list(c) for c in Polygon(outline).buffer(0.1, join_style="mitre").exterior.coords[:-1]]
+
+
+STEPS_84 = {
+    "notch-in": [[0, 0], [6, 0], [6, 0.11], [7, 0.11], [7, 0], [10, 0], [10, 10], [0, 10]],
+    "bump-out": [[0, 0], [6, 0], [6, -0.11], [7, -0.11], [7, 0], [10, 0], [10, 10], [0, 10]],
+    "step-out": [[0, 0], [6, 0], [6, -0.11], [10, -0.11], [10, 10], [0, 10]],
+    "step-in": [[0, 0], [6, 0], [6, 0.11], [10, 0.11], [10, 10], [0, 10]],
+}
+
+
+@pytest.mark.parametrize("name", sorted(STEPS_84))
+def test_a_step_the_panel_contour_simplifies_away_is_no_roof_opening(name):
+    """#84: complete slabs out to the panels' outer face with a 1 m x 0.11 m step on the south edge. The contour
+    (Douglas-Peucker 0.10 m) moves off the slab there; that strip is no roof opening (it stopped as 'not a
+    shaft'), the roof closes the whole envelope."""
+    outline = STEPS_84[name]
+    spec, report = extract_spec(panelised(outlines=(outline, outline), slab=_envelope(outline)), PANEL_OBJECT)
+    assert report["roof"]["closed_share"] >= 0.999
+    assert "holes_ignored" not in report["roof"]
+
+
+def test_a_real_roof_hole_under_a_simplified_panel_contour_still_stops():
+    """#84 control: the coverage check against the unsimplified envelope still sees a 0.2 x 0.8 m slab hole."""
+    outline = STEPS_84["bump-out"]
+    dump = panelised(outlines=(outline, outline), slab=_envelope(outline))
+    roof = Mesh("RoofWithHole")
+    flat(roof, Polygon(_envelope(outline), [[[2, 2], [2.2, 2], [2.2, 2.8], [2, 2.8]]]), 6.6, up=True)   # off the mass
+    slabs = next(m for m in dump["meshes"] if m["name"] == "Slabs")
+    slabs["triangles"] = [tr for tr in slabs["triangles"] if max(slabs["vertices"][i][2] for i in tr) < 6.5]
+    dump["meshes"].append({**roof.dump(), "name": "Slabs2"})
+    with pytest.raises(SpecError, match=r"opening of 0.16 m2 at \(2.10, 2.40\) that is not a shaft"):
+        extract_spec(dump, {**PANEL_OBJECT, "slabs": ["Slabs", "Slabs2"]})
+
+
+def test_probe_steps_within_the_simplification_never_read_as_roof_openings():
+    """#84 probe (seed 84, 12 cases): a rectangular step 0.3-2.0 m wide and 0.02-0.15 m deep, in or out, on a
+    random edge of the 10 m square; the roof slab is the panel envelope. The roof never stops and closes it."""
+    rng = np.random.default_rng(84)
+    for _ in range(12):
+        w, d, x0 = rng.uniform(0.3, 2.0), rng.uniform(0.02, 0.15), rng.uniform(1.0, 7.0)
+        d = d if rng.random() < 0.5 else -d                      # + inward (notch), - outward (bump)
+        south = [[0, 0], [x0, 0], [x0, d], [x0 + w, d], [x0 + w, 0], [10, 0], [10, 10], [0, 10]]
+        k = int(rng.integers(4))                                 # turn the square so the step is on any edge
+        rot = [[[x, y], [10 - y, x], [10 - x, 10 - y], [y, 10 - x]][k] for x, y in south]
+        outline = [[round(a, 4), round(b, 4)] for a, b in rot]
+        _, report = extract_spec(panelised(outlines=(outline, outline), slab=_envelope(outline)), PANEL_OBJECT)
+        assert report["roof"]["closed_share"] >= 0.999, (w, d, x0, k)
+
+
+# --- #95: a real roof opening at the facade line is never left out as contour simplification
+
+def _panel_roof_with_hole(outline, hole):
+    """Panelised storey whose roof slab is the envelope with `hole` cut out (the #84 roof replacement)."""
+    dump = panelised(outlines=(outline, outline), slab=_envelope(outline))
+    roof = Mesh("RoofWithHole")
+    flat(roof, Polygon(_envelope(outline), [hole]), 6.6, up=True)
+    slabs = next(m for m in dump["meshes"] if m["name"] == "Slabs")
+    slabs["triangles"] = [tr for tr in slabs["triangles"] if max(slabs["vertices"][i][2] for i in tr) < 6.5]
+    dump["meshes"].append({**roof.dump(), "name": "Slabs2"})
+    return dump, {**PANEL_OBJECT, "slabs": ["Slabs", "Slabs2"]}
+
+
+def test_a_roof_hole_at_the_facade_line_stops_on_a_plain_storey():
+    """#95: a 2 x 0.08 m roof opening on the south facade line, inside the storey, must ask.
+    It is a real opening, never left out as contour simplification."""
+    b = Mesh("Body")
+    hole = [[3, 0.01], [5, 0.01], [5, 0.09], [3, 0.09]]
+    walls(b, SQUARE10, 0.0, 6.6)
+    flat(b, Polygon(SQUARE10, [hole]), 6.6, up=True)
+    flat(b, Polygon(SQUARE10), 0.0, up=False)
+    with pytest.raises(SpecError, match=r"opening of 0.16 m2 at \(4.00, 0.05\) that is not a shaft"):
+        extract_spec(dump_of(b), OBJECT)
+
+
+@pytest.mark.parametrize("name", sorted(STEPS_84))
+def test_a_roof_hole_at_the_facade_line_stops_under_a_simplified_panel_contour(name):
+    """#95 with #84: a real opening at the facade line, inside the storey, under a panel contour that
+    Douglas-Peucker simplifies, must ask. It is never left out as contour simplification."""
+    outline = STEPS_84[name]
+    hole = [[2, 0.01], [4, 0.01], [4, 0.09], [2, 0.09]]
+    dump, obj = _panel_roof_with_hole(outline, hole)
+    with pytest.raises(SpecError, match="that is not a shaft"):
+        extract_spec(dump, obj)
+
+
+def test_probe_real_roof_holes_within_the_simplification_band_always_stop():
+    """#95 probe (seed 95, 24 cases): a real roof opening inside the storey, wholly within 0.1001 m of the
+    facade line, must ask on a plain storey and under a simplified panel step. Never listed as simplification."""
+    rng = np.random.default_rng(95)
+    names = sorted(STEPS_84)
+    for i in range(24):
+        w = float(rng.uniform(0.8, 3.0))
+        x0 = float(rng.uniform(1.0, 9.0 - w))
+        y0 = float(rng.uniform(0.005, 0.03))
+        y1 = y0 + float(rng.uniform(0.04, 0.07))
+        panel = i % 2 == 1
+        if panel:
+            k = int(rng.integers(1, 4))          # north, east or west: the step stays on the south edge
+            name = names[int(rng.integers(len(names)))]
+        else:
+            k = int(rng.integers(4))
+            name = "plain"
+        south = ((x0, y0), (x0 + w, y0), (x0 + w, y1), (x0, y1))
+        hole = [[[x, y], [10 - y, x], [10 - x, 10 - y], [y, 10 - x]][k] for x, y in south]
+        if panel:
+            dump, obj = _panel_roof_with_hole(STEPS_84[name], hole)
+        else:
+            b = Mesh("Body")
+            walls(b, SQUARE10, 0.0, 6.6)
+            flat(b, Polygon(SQUARE10, [hole]), 6.6, up=True)
+            flat(b, Polygon(SQUARE10), 0.0, up=False)
+            dump, obj = dump_of(b), OBJECT
+        params = (w, x0, y0, y1, k, name)
+        try:
+            extract_spec(dump, obj)
+        except SpecError as e:
+            assert "that is not a shaft" in str(e), (str(e), params)
+        else:
+            pytest.fail(f"no stop for a real roof opening {params}")

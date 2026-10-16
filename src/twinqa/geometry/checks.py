@@ -19,6 +19,7 @@ from twinqa.geometry import measure
 from shapely.ops import polygonize
 
 from twinqa.geometry.mesh import Soup, edge_uses, parts, weld
+from twinqa.geometry.winding import same_direction_edges
 
 RANGES = Path(__file__).resolve().parents[3] / "standards" / "material_id_ranges.yaml"
 
@@ -835,8 +836,8 @@ def winding_bad_edges(model: Soup, weld_m: float) -> np.ndarray:
     """Per render mesh, shared edges whose two triangles traverse them the same way.
 
     Vertices are welded per mesh (meshes never join). A triangle whose welded corners repeat is dropped.
-    An edge used by one triangle or by more than two is not judged (that is check_mesh). Vectorised with
-    np.unique."""
+    An edge used by one triangle or by more than two is not judged (that is check_mesh). The count is
+    the shared rule twinqa.geometry.winding.same_direction_edges (also used by mesh_audit)."""
     names, owner = _orientation_groups(model)
     out = np.zeros(len(names), dtype=int)
     for m in range(len(names)):
@@ -849,14 +850,7 @@ def winding_bad_edges(model: Soup, weld_m: float) -> np.ndarray:
                         & (welded[:, 2] != welded[:, 0])]
         if len(welded) == 0:
             continue
-        directed = np.stack((welded[:, [0, 1]], welded[:, [1, 2]], welded[:, [2, 0]]), axis=1).reshape(-1, 2)
-        undirected = np.sort(directed, axis=1)
-        _, inverse, counts = np.unique(undirected, axis=0, return_inverse=True, return_counts=True)
-        twice = counts[inverse] == 2
-        if not twice.any():
-            continue
-        _, directed_counts = np.unique(directed[twice], axis=0, return_counts=True)
-        out[m] = int((directed_counts == 2).sum())
+        out[m] = same_direction_edges(welded.tolist())
     return out
 
 

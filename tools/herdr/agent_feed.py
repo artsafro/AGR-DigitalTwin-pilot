@@ -23,7 +23,7 @@ HUD_DIR = os.path.join(os.environ.get("LOCALAPPDATA", os.path.expanduser("~")), 
 PROJECTS = os.path.join(os.path.expanduser("~"), ".claude", "projects")
 CODEX_SESSIONS = os.path.join(os.path.expanduser("~"), ".codex", "sessions")
 BACKLOG_BYTES = 400_000          # history shown when a transcript is first opened
-PROJECT_LOGS = ["Unreal/**/Saved/Logs/*.log", "logs/**/*.log", "tools/**/*.log"]
+PROJECT_LOGS = ["logs/**/*.log", "tools/**/*.log"]
 SHELL_KEEP = re.compile(r"\bgit\s+(commit|push|merge|rebase|checkout\s+-b|switch\s+-c)\b"
                         r"|\bherdr\s+worktree\b"
                         # project scripts only: `py -3 tools/x.py`, not a venv's Scripts\python.exe

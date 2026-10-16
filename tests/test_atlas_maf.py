@@ -1,5 +1,6 @@
 """Packer tests for the shared 512 MAF atlas."""
 
+import ast
 import importlib.util
 import json
 import os
@@ -653,3 +654,25 @@ def _slots_overlap(left, right) -> bool:
         min(left.x + left.size, right.x + right.size) > max(left.x, right.x)
         and min(left.y + left.size, right.y + right.size) > max(left.y, right.y)
     )
+
+
+@pytest.mark.parametrize(
+    "reference",
+    [
+        "new-case",
+        "docs/domain/patterns/INDEX.md",
+        "docs/domain/uv-textures.md",
+        "§5.12",
+        "§5.4",
+    ],
+)
+def test_documentation_normative_references(reference: str) -> None:
+    """Verify atlas_maf.py docstring and tools/materials/README.md contain required references (Issue #197)."""
+    module_path = ROOT / "tools" / "materials" / "atlas_maf.py"
+    docstring = ast.get_docstring(ast.parse(module_path.read_text(encoding="utf-8")))
+    readme_text = (ROOT / "tools" / "materials" / "README.md").read_text(encoding="utf-8")
+
+    assert docstring is not None, "atlas_maf.py must have a module docstring"
+    assert reference in docstring, f"atlas_maf.py docstring missing required reference {reference!r}"
+    assert reference in readme_text, f"tools/materials/README.md missing required reference {reference!r}"
+
