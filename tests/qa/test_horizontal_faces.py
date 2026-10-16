@@ -557,6 +557,98 @@ def test_ground_below_open_bench_is_independent(bench, reverse):
     assert _row(result, "ground")["inward_faces"] == (2 if reverse else 0)
 
 
+@pytest.mark.parametrize("dz", [-0.0101, -0.01, -0.0099, 0.0, 0.0099, 0.01, 0.0101])
+@pytest.mark.parametrize("reverse", [False, True])
+def test_cap_join_distance_bound(dz, reverse):
+    cap = _sheet(reverse=not reverse)  # correct cap points down; reversed points up
+    cap["name"] = "cap"
+    cap["vertices"] = (np.asarray(cap["vertices"]) * [0.8, 0.8, 1] + [0.1, 0.1, dz]).tolist()
+    result = _hcheck({"meshes": [_box("owner", drop_bottom=True), cap]})
+    joined = abs(dz) <= 0.01
+    assert result["value"] == (2 if reverse == joined else 0)
+    assert result["details"]["volumes"] == ([["owner", "cap"]] if joined else [["owner"], ["cap"]])
+
+
+def _open_prism(polygon):
+    """SYNTHETIC open-bottom prism, including concave outlines/courtyard holes."""
+    import shapely
+    vertices, triangles = [], []
+    def tri(coords):
+        base = len(vertices)
+        vertices.extend(coords)
+        triangles.append([base, base + 1, base + 2])
+    for face in shapely.get_parts(shapely.constrained_delaunay_triangles(polygon)):
+        coords = np.asarray(face.exterior.coords)[:3, :2]
+        if np.cross(np.append(coords[1]-coords[0], 0), np.append(coords[2]-coords[0], 0))[2] < 0:
+            coords = coords[::-1]
+        tri([[x, y, 1] for x, y in coords])
+    for ring in [polygon.exterior, *polygon.interiors]:
+        xy = list(ring.coords)
+        for (x, y), (xx, yy) in zip(xy, xy[1:]):
+            tri([[x, y, 0], [xx, yy, 0], [xx, yy, 1]])
+            tri([[x, y, 0], [xx, yy, 1], [x, y, 1]])
+    return {"name": "owner", "vertices": vertices, "triangles": triangles,
+            "material_ids": [1] * len(triangles)}
+
+
+@pytest.mark.parametrize("case", ["outside", "concave_bridge", "hole", "inside_annulus"])
+def test_cap_outside_footprint_stays_independent(case):
+    import shapely
+    if case == "concave_bridge":
+        polygon = shapely.Polygon([(0,0), (3,0), (3,3), (2,3), (2,1), (1,1), (1,3), (0,3)])
+        xy = [[0.5,2.5], [1.5,0.5], [2.5,2.5]]  # CCW vertices inside; face crosses notch
+    elif case in ("hole", "inside_annulus"):
+        polygon = shapely.Polygon([(0,0), (4,0), (4,4), (0,4)],
+                                  [[(1,1), (1,3), (3,3), (3,1)]])
+        xy = [[1.2,1.2], [2.8,1.2], [2,2.8]] if case == "hole" else [[0.1,0.1], [0.9,0.1], [0.1,0.9]]
+    else:
+        polygon = shapely.box(0, 0, 1, 1)
+        xy = [[0.2,0.2], [1.2,0.2], [0.2,0.8]]
+    cap = {"name": "cap", "vertices": [[x,y,0] for x,y in xy],
+           "triangles": [[0,2,1]], "material_ids": [1]}
+    result = _hcheck({"meshes": [_open_prism(polygon), cap]})
+    joined = case == "inside_annulus"
+    assert result["value"] == (0 if joined else 1)
+    assert result["details"]["volumes"] == ([["owner", "cap"]] if joined else [["owner"], ["cap"]])
+
+
+@pytest.mark.parametrize("seed", range(20))
+def test_combined_cap_context_probe(seed):
+    """SYNTHETIC generated probe: partitions, transform, independent shells and per-call resets."""
+    rng = np.random.default_rng(seed + 5600)
+    base = _detached_reversed_soffit_dump()
+    stack = _box("stack", drop_bottom=True)
+    stack["vertices"] = (np.asarray(stack["vertices"]) * [10, 2, 1] + [0, 10, 8]).tolist()
+    base["meshes"] += [stack,
+                       _resize(_box("inner", reverse=range(12)), .2, (1, 1, 1)),
+                       _resize(_box("decor", reverse=range(12)), .2, (2, 2, 2)),
+                       _resize(_sheet(), 20, (-5, -5, -1))]
+    angle = rng.uniform(-np.pi, np.pi)
+    c, s = np.cos(angle), np.sin(angle)
+    rotation = np.array([[c,-s,0], [s,c,0], [0,0,1]])
+    offset = rng.uniform(-500, 500, 3)
+    base = _map_vertices(base, lambda v: v @ rotation.T + offset)
+    base = _random_partition(base, seed)
+    rng.shuffle(base["meshes"])
+    # Detached upward soffit 2 + reversed enclosed shell 4 + reversed decor 4.
+    model = from_dump(base)
+    horizontal, _, z = _horiz_axes(model)
+    inverted = np.array([name.startswith(("inner", "decor")) for name in model.mesh_names])
+    expected_wrong = np.flatnonzero(horizontal & (inverted[model.mesh_index] | np.isclose(z, 3 + offset[2], rtol=0, atol=1e-8))).tolist()
+    result = _hcheck(base)
+    assert result["value"] == 10
+    assert result["details"]["inward_triangles"] == expected_wrong
+    one = copy.deepcopy(base)
+    model = from_dump(one)
+    ground_meshes = [i for i, name in enumerate(model.mesh_names) if name.startswith("ground")]
+    index = int(rng.choice(np.flatnonzero(np.isin(model.mesh_index, ground_meshes))))
+    _flip_global(one, [index])
+    assert _hcheck(one)["value"] == 11
+    assert _hcheck(base)["value"] == 10  # no state survives the previous input
+    base["meshes"].reverse()
+    assert _hcheck(base)["value"] == 10
+
+
 def test_open_fragment_does_not_see_decor():
     """SYNTHETIC. A quad moved into decor is judged without the body roof.
 
