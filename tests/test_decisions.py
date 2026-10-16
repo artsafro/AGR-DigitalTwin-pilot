@@ -18,6 +18,7 @@ EXCLUDED = ("docs/agr/", "docs/research/", "jobs/", "technical_library/", "data/
 # Lines that match MENTION but state no decision: (file, text on the line).
 NOT_DECISIONS = [
     ("docs/backlog.md", "AGR_Project-uncommitted-2026-10-06.zip"),  # an archive name next to "the user plans"
+    ("docs/experiments/flora-library-audit.md", "user Flora grilling notes (2026-10-15)"),
 ]
 
 

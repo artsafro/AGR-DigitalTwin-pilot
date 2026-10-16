@@ -225,6 +225,7 @@ def test_windows_timeout_cleanup_nonzero_returncode(tmp_path, monkeypatch):
         return subprocess.CompletedProcess(argv, 128, stdout=b"denied", stderr=b"err")
 
     monkeypatch.setattr(run_record_module.subprocess, "run", fake_run)
+    monkeypatch.setattr(run_record_module, "CLEANUP_GRACE_SECONDS", 1)
     run, _ = fixture_run(tmp_path)
     record = run.run_stage("export", [sys.executable, "-c", "import time; time.sleep(30)"],
                            {"out": tmp_path / "missing"}, timeout=0.5)
@@ -246,6 +247,7 @@ def test_windows_timeout_cleanup_oserror(tmp_path, monkeypatch):
         raise OSError("taskkill missing")
 
     monkeypatch.setattr(run_record_module.subprocess, "run", fake_run)
+    monkeypatch.setattr(run_record_module, "CLEANUP_GRACE_SECONDS", 1)
     run, _ = fixture_run(tmp_path)
     record = run.run_stage("export", [sys.executable, "-c", "import time; time.sleep(30)"],
                            {"out": tmp_path / "missing"}, timeout=0.5)
