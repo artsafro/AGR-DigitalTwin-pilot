@@ -139,11 +139,20 @@ if (ignored !== undefined) throw new Error("out-of-scope tool intercepted");
 
 
 @pytest.mark.parametrize("name", ["guard.py", "pipeline_gate.py"])
-def test_hook_timeout_blocks(sandbox, name):
+def test_hook_timeout_blocks(sandbox, name, monkeypatch):
+    monkeypatch.setenv("PI_GUARD_HOOK_TIMEOUT_SECONDS", "1")
     (sandbox / ".claude/hooks" / name).write_text("import time; time.sleep(30)", encoding="utf-8")
     result = invoke(cwd=sandbox, adapter=sandbox / "tools/hooks/pi_guard_adapter.py")
     assert result["decision"] == "block"
     assert "TimeoutExpired" in result["reason"]
+
+
+def test_production_timeout_defaults(monkeypatch):
+    monkeypatch.delenv("PI_GUARD_HOOK_TIMEOUT_SECONDS", raising=False)
+    import runpy
+    import dt_ai.core.run_record
+    assert runpy.run_path(str(ADAPTER))["HOOK_TIMEOUT_SECONDS"] == 10
+    assert dt_ai.core.run_record.CLEANUP_GRACE_SECONDS == 5
 
 
 @pytest.mark.parametrize("tool,claude,tin,expected", [
