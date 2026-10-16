@@ -229,7 +229,7 @@ def test_a_concave_corner_end_is_an_error():
         build(Spec.model_validate(data), INPUTS)
 
 
-# --- meeting of two decor elements (user 2026-10-12): the subordinate runs 0.02 m into the main one ------
+# --- meeting of two decor elements (user 2026-10-12 [D059]): the subordinate runs 0.02 m into the main one ------
 
 def decor_faces(dump, mid=None):
     m = meshes(dump)["decor"]
@@ -308,7 +308,7 @@ def test_a_run_in_over_the_inset_fails():
 
 
 def test_two_belts_at_a_corner_the_longer_runs_on():
-    """User 2026-10-12: of one rank at a corner the longer continues, the other runs into it."""
+    """User 2026-10-12 [D059]: of one rank at a corner the longer continues, the other runs into it."""
     long_ = dict(BELT, x_m=6.0, w_m=4.0, z_m=1.0, h_m=0.3, projection_m=0.15)                 # wall 0, ends at (10, 0)
     short = dict(BELT, wall=1, x_m=0.0, w_m=2.0, z_m=1.0, h_m=0.3, projection_m=0.12, material_id=27)   # wall 1
     sp = spec(long_, short)
@@ -384,7 +384,7 @@ def test_a_corner_pilaster_passes_every_check():
 
 
 def test_a_corner_end_lies_beyond_the_weld_off_the_body():
-    # #101 (user 2026-10-15): the corner end face starts plate_gap_m off the wall face, not 0.5 mm, so the
+    # #101 (user 2026-10-15 [D093]): the corner end face starts plate_gap_m off the wall face, not 0.5 mm, so the
     # checker's distance weld (weld_m) never joins it to the body's corner edge
     sp = spec(dict(PILASTER, x_m=0.0, h_m=3.3))
     m = meshes(build(sp, INPUTS))
@@ -431,7 +431,7 @@ def test_an_oblique_corner_meeting_is_an_error():
         build(Spec.model_validate(data), INPUTS)
 
 
-# --- corner of different heights (user 2026-10-12): the back is deleted only where it is set into the wall --
+# --- corner of different heights (user 2026-10-12 [D059]): the back is deleted only where it is set into the wall --
 
 @pytest.mark.parametrize("z_m, h_m", [(1.0, 0.3), (1.05, 0.2)])        # equal height, the other lower
 def test_a_corner_with_the_other_of_equal_or_lower_height(z_m, h_m):
@@ -559,7 +559,7 @@ def test_attachments_beside_decor_are_not_flagged():
     assert report["status"] == "pass", problems(report)
 
 
-# --- decor ids by material (user 2026-10-12): metal 16-20 or 26-30, one group per element -----------------
+# --- decor ids by material (user 2026-10-12 [D055]): metal 16-20 or 26-30, one group per element -----------------
 
 @pytest.mark.parametrize("mid, ok", [(17, True), (26, True), (3, False)])
 def test_decor_id_group_by_material(mid, ok):
@@ -633,7 +633,7 @@ L_STRIP = dict(PILASTER, wall=1, x_m=1.5, z_m=1.0, h_m=2.0)
     ((6.5, 3.3, 1.0), (8.0, 4.15, 1.3)),       # on wall 2 by the concave corner, 0.7 m into the body
 ])
 def test_unlisted_decor_at_a_concave_corner_fails(lo, hi):
-    """User 2026-10-12 (#78): the embedded part is judged against the body, not one wall's span."""
+    """User 2026-10-12 [D057] (#78): the embedded part is judged against the body, not one wall's span."""
     sp = l_spec(L_STRIP)
     dump = build(sp, INPUTS)
     extra = Mesh("Extra")

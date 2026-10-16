@@ -8,6 +8,16 @@ Add a decision: next free id, the date the user decided, one sentence, the file 
 source (PR, issue or `chat`). Put `[D<n>]` next to the decision in that file. Superseded decisions stay, with
 "superseded by D<n>". Format and references: `tests/test_decisions.py`.
 
+Where the id goes, by kind of file (#138)
+
+Markdown outside the excluded folders (`docs/agr/`, `docs/research/`, `jobs/`, `technical_library/`, `data/`,
+handoff and project-state files) carries `[D<n>]` on the same line as the mention. Tracked Python does the same
+in comments, docstrings and strings, except under `jobs/`, `technical_library/`, `data/`, `docs/agr/`,
+`tests/fixtures/` and the checker's own examples. `standards/material_id_ranges.yaml` carries the id in its
+comment. Locked standards YAML is not edited: a top-level `conflicts:` entry whose note says "decided" must list
+an `ids` number whose item in `docs/domain/conflicts.md` carries a `[D<n>]` from this log. JSON, `jobs/**` and
+frozen fixtures carry no id.
+
 | ID | Date | Decision | Applies to | Source |
 |---|---|---|---|---|
 | D001 | 2026-10-06 | Roles: Claude leads 3D/DCC production, Codex code and organization, Antigravity supports both | `docs/agents/ROLES.md` | chat |

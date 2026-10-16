@@ -30,7 +30,7 @@ class Level(SpecPart):
 
 
 class Opening(SpecPart):
-    # the hole in the wall with its frame (spec v0.3, user decision 2026-10-08, #36): position along
+    # the hole in the wall with its frame (spec v0.3, user decision 2026-10-08 [D026], #36): position along
     # the wall, sill from the floor's level, width and height of the rough opening
     wall: int = Field(ge=0)
     x_m: NonNegative
@@ -43,8 +43,8 @@ class Opening(SpecPart):
     glass_w: Positive | None = None
     glass_h: Positive | None = None
     window_type: int | None = None
-    # door: a recess from the floor >= 1.9 m high, 0.7-3 m wide (user decision 2026-10-08, #31)
-    # grille: a vent grille, position and size only (user decision 2026-10-09; pattern vent-grille)
+    # door: a recess from the floor >= 1.9 m high, 0.7-3 m wide (user decision 2026-10-08 [D025], #31)
+    # grille: a vent grille, position and size only (user decision 2026-10-09 [D035]; pattern vent-grille)
     kind: Literal["window", "door", "grille"] | None = None
     # panes of one frame (gap <= 0.15 m) grouped into this opening: a curtain wall is one opening (#31)
     panes: int | None = Field(default=None, ge=1)
@@ -52,7 +52,7 @@ class Opening(SpecPart):
     # floor of level_from, sill from that level, height up to level_to's floor and above
     level_from: str | None = None
     level_to: str | None = None
-    # anchor that found it (user decision 2026-10-08, #7): a hole in the body, a glass pane, or both
+    # anchor that found it (user decision 2026-10-08 [D029], #7): a hole in the body, a glass pane, or both
     source: Literal["hole", "glass", "hole+glass"] | None = None
     # material id of an opening plane in it (group `opening`, ADR 0001); not the window type
     material_id: int | None = None
@@ -86,13 +86,13 @@ class Floor(SpecPart):
 
 class Roof(SpecPart):
     parapet_h_m: NonNegative
-    # spec v0.6 (rule 4, user 2026-10-12): measured from the source's closed parapet section, else the object's
+    # spec v0.6 (rule 4, user 2026-10-12 [D061]): measured from the source's closed parapet section, else the object's
     # parapet_thickness_default_m (the extractor report marks it); None = neither, the build input decides
     parapet_thickness_m: Positive | None = None
 
 
 class RoofStructure(SpecPart):
-    """A structure on the roof (spec v0.7, pattern roof-screen-enclosure, user 2026-10-13): kind "screen" - a
+    """A structure on the roof (spec v0.7, pattern roof-screen-enclosure, user 2026-10-13 [D067]): kind "screen" - a
     screen enclosure round roof equipment, its outer outline in plan and its top. npm_min builds it as planes
     (walls on the outline from the roof level to z_top and a top plane, no bottom, no thickness), roof ids; it
     is part of the body's silhouette, not an attachment."""
@@ -113,17 +113,17 @@ class RoofStructure(SpecPart):
 
 class Terrace(SpecPart):
     """A ledge at a floor step used as a terrace, with a parapet (upstand) along its outer edges
-    (spec v0.4, pattern terrace, user decision 2026-10-10). The height is measured from the level."""
+    (spec v0.4, pattern terrace, user decision 2026-10-10 [D041]). The height is measured from the level."""
     level: str
     parapet_h_m: Positive
 
 
-OPENING_DEPTH_DEFAULT_M = 0.4   # OD1 (user 2026-10-11): one opening depth per building unless the source gives one
-DECOR_TEXTURE_M = 0.10   # pattern facade-decor-inset (user 2026-10-11): projection <= this is texture, boundary included
+OPENING_DEPTH_DEFAULT_M = 0.4   # OD1 (user 2026-10-11 [D048]): one opening depth per building unless the source gives one
+DECOR_TEXTURE_M = 0.10   # pattern facade-decor-inset (user 2026-10-11 [D051]): projection <= this is texture, boundary included
 
 
 class Decor(SpecPart):
-    """One facade decor element (spec v0.5, pattern facade-decor-inset, user decisions 2026-10-11/12): a
+    """One facade decor element (spec v0.5, pattern facade-decor-inset, user decisions 2026-10-11/12 [D051, D054]): a
     simple solid, pieces of a split element merged. Wall-bound kinds by shape in the wall plane: band (width
     >= 3 x height), strip (height >= 3 x width: pilaster, lesene), panel (spandrel and the rest); a column
     stands free of the walls. Position from the floor of `level`: along `wall` of its contour (x_m, w_m) and
@@ -140,7 +140,7 @@ class Decor(SpecPart):
     # projection <= DECOR_TEXTURE_M: texture on the wall, nothing built
     texture: bool = False
     # material id from the source when all its faces carry one decor id: metal 16-20 or plaster / stone / tile
-    # 26-30, by the element's material (user 2026-10-12)
+    # 26-30, by the element's material (user 2026-10-12 [D055])
     material_id: int | None = None
     # source pieces merged into it (same cross-section, one axis, seams <= plate_gap_m x 12)
     pieces: int = Field(default=1, ge=1)
@@ -166,10 +166,10 @@ class Spec(SpecPart):
     id: str = Field(pattern=r"^[a-z0-9]+(-[a-z0-9]+)+$")
     # 0.2: openings across levels (level_from / level_to); 0.3: opening = hole with frame, glass_w /
     # glass_h, depth_m only as an exception to opening_depth_default_m (#36)
-    # 0.4: terraces with a parapet at floor steps (pattern terrace, user decision 2026-10-10)
-    # 0.5: facade decor (pattern facade-decor-inset, user decisions 2026-10-11/12)
-    # 0.6: roof.parapet_thickness_m (rule 4, user 2026-10-12)
-    # 0.7: roof_structures (pattern roof-screen-enclosure, user 2026-10-13)
+    # 0.4: terraces with a parapet at floor steps (pattern terrace, user decision 2026-10-10 [D041])
+    # 0.5: facade decor (pattern facade-decor-inset, user decisions 2026-10-11/12 [D051, D054, D055, D056, D057, D058])
+    # 0.6: roof.parapet_thickness_m (rule 4, user 2026-10-12 [D061])
+    # 0.7: roof_structures (pattern roof-screen-enclosure, user 2026-10-13 [D067])
     spec_version: Literal["0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7"] = "0.3"
     profile: Literal["npm_min", "mid"]
     frame: Frame
@@ -181,11 +181,11 @@ class Spec(SpecPart):
     roof_structures: list[RoofStructure] = []
     decor: list[Decor] = []
     opening_depth_default_m: NonNegative = OPENING_DEPTH_DEFAULT_M
-    # pattern roof-inset-plane (user 2026-10-10): every slab is a separate plate plate_gap_m above its level
+    # pattern roof-inset-plane (user 2026-10-10 [D038]): every slab is a separate plate plate_gap_m above its level
     # that overlaps its hole by plate_overlap_m; building parameters, the etalons' 5 mm / 20 mm by default
     plate_gap_m: Positive = 0.005
     plate_overlap_m: Positive = 0.02
-    # the building's weld (user 2026-10-13): vertices and cut lines closer than this (inclusive) are one - in the
+    # the building's weld (user 2026-10-13 [D068]): vertices and cut lines closer than this (inclusive) are one - in the
     # engine's grid, the checkers' readback and the extractor's contour points; how the user welds by hand
     weld_m: Positive = 0.003
 
@@ -193,7 +193,7 @@ class Spec(SpecPart):
     def consistent(self):
         names = [lv.name for lv in self.levels]
         # a gap is never welded: every gap of the spec (the inset plate's, the decor seams' plate_gap_m x 12)
-        # lies beyond weld_m (user 2026-10-13)
+        # lies beyond weld_m (user 2026-10-13 [D068])
         if self.plate_gap_m <= self.weld_m:
             raise ValueError(f"plate_gap_m {self.plate_gap_m} m must be larger than weld_m {self.weld_m} m")
         if self.terraces and self.spec_version not in ("0.4", "0.5", "0.6", "0.7"):

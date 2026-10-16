@@ -181,7 +181,7 @@ def npm_texture_findings(images: dict[str, bytes], profile: dict):
         if status != "pass":
             out.append(_f(status, "atlas file size", f"{name}: {observed}", "<= 3 MiB", [9], name))
         if facts.has_alpha:
-            # reg p.9 §5.5; conflict #21 decided 2026-10-07 as the checker: RGB only, opacity as a separate _o_ map
+            # reg p.9 §5.5; conflict #21 decided 2026-10-07 [D020] as the checker: RGB only, opacity as a separate _o_ map
             out.append(_f("fail", "no alpha", f"{name}: alpha channel present", "RGB only; opacity as a separate _o_ map",
                           [9], name))
         if facts.bit_depth != 8:

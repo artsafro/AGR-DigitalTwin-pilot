@@ -19,7 +19,7 @@ ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
 METRE_UNIT_SCALE_CM = 100.0
 UNIT_REL_TOL = 1e-6
 UNIT_PAGES = [4, 24]
-# Project target (user decision on conflict #1, 2026-10-07): one model serves VPM and NPM, so
+# Project target (user decision on conflict #1, 2026-10-07 [D010]): one model serves VPM and NPM, so
 # VPM OKS aims at the NPM limit; above it, windows go to atlas textures on planes.
 PROJECT_TRIANGLE_TARGET = 150_000
 PIVOT_CENTRE_TOL_PCT, PIVOT_SHARED_TOL_M = 10, 0.001  # SINTEZ AGR Checker 2.9.4a / 2.9.5
@@ -170,7 +170,7 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict) -> dict[str, l
         out["V003"].append(_f(status, "triangle count", f"{src}: {tris}", f"<= {limit}", [7, 28, 29], src, conflicts))
     foreign = [o for o in rb["other_objects"] if not (role == "light" and o["type"] in ("LIGHT", "EMPTY"))]
     if foreign:
-        # Any non-mesh object, lights included, fails (conflict #14 decided 2026-10-07 as the checker)
+        # Any non-mesh object, lights included, fails (conflict #14 decided 2026-10-07 [D017] as the checker)
         out["V003"].append(_f("fail", "object types", f"{src}: {[(o['name'], o['type']) for o in foreign][:5]}",
                               "meshes only (lights only in the _Light FBX)", [4, 24, 33], src))
 
@@ -196,7 +196,7 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict) -> dict[str, l
         out["V008"].append(_f("fail" if mirrored else "pass", "mirrored islands", f"{src}: {mirrored or 'none'}", "no mirrored UV", [31], src))
         if glass:
             out["V008"].append(_f("fail", "glass tile", f"{src}: {glass}", "glass only in UDIM 1001", [31, 32], src))
-        # V013 (reg p.32-33 §9.3-9.5; conflict #19 decided 2026-10-07 as the checker)
+        # V013 (reg p.32-33 §9.3-9.5; conflict #19 decided 2026-10-07 [D018] as the checker)
         out["V013"].extend(_pivot_findings(meshes, ucx, src))
         out["V013"].append(_f("not_run", "MSK-77 point", "GeoJSON point vs survey coordinates and project zero",
                               "reg p.32-33, p.55", [32, 33, 55], src))

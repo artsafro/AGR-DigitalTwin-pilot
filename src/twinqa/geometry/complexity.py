@@ -1,4 +1,4 @@
-"""Check `complexity` of pattern primitive-first (user 2026-10-14), blocking, on the modules delivery (a scene of
+"""Check `complexity` of pattern primitive-first (user 2026-10-14 [D080, D083]), blocking, on the modules delivery (a scene of
 groups, type meshes and the objects that place them):
 
 - triangles per group against the job's budget (and the total against the NPM limit, 150 000 per FBX); a group

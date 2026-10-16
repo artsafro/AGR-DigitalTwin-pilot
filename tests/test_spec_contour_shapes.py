@@ -434,7 +434,7 @@ def test_a_relief_over_a_real_ledge_is_no_ledge_structure():
     assert report["questions"] == [] and report["floors"]["L1"]["relief_parts"] == 1
 
 
-# --- rule 3 (user 2026-10-12): mid-storey section; a change only in the 0.3 m under the next level is the
+# --- rule 3 (user 2026-10-12 [D060]): mid-storey section; a change only in the 0.3 m under the next level is the
 # slab edge, not the contour; contour_at_m only when the section changes in the wall band itself
 
 @pytest.mark.parametrize("z0", [3.0, 3.05])
@@ -493,7 +493,7 @@ def test_open_slab_edge_keeps_the_contour_and_is_asked():
     assert [(x["levels"], x["heights_m"]) for x in q] == [(["L0"], [3.0, 3.3])]
 
 
-# --- rules 1-2 (user 2026-10-13): a panel facade without a shell - contours by the panels' outer faces
+# --- rules 1-2 (user 2026-10-13 [D066]): a panel facade without a shell - contours by the panels' outer faces
 
 def _panel(name, a, b, z0, z1, out=0.1):
     """A panel `out` thick standing outward of the CCW wall a -> b; it covers the outer corner at its start and
@@ -599,7 +599,7 @@ def test_contours_by_panels_need_the_slabs_named():
 
 
 def test_a_small_roof_hole_is_no_opening_and_is_listed():
-    """User 2026-10-13 (pattern roof-inset-plane): a slab opening with both sizes under 0.7 m that is no shaft
+    """User 2026-10-13 [D069] (pattern roof-inset-plane): a slab opening with both sizes under 0.7 m that is no shaft
     is no body opening - left out and listed (OBJ03: 0.04 m2 at 96.55 m); a larger one still asks."""
     def roofed(hole):
         b = Mesh("Body")
@@ -658,7 +658,7 @@ def test_a_parapet_on_the_slab_edge_inside_the_facade_line_is_found():
 
 
 def test_a_fin_welded_to_a_facade_panel_is_cut_off_and_the_panel_stays():
-    """#87 (user 2026-10-13): a part is classified segment by segment - a fin 0.85 m out welded to the south
+    """#87 (user 2026-10-13 [D066]): a part is classified segment by segment - a fin 0.85 m out welded to the south
     panel is an attachment candidate, the panel stays facade (OBJ03 L16-L28 dropped whole facade parts)."""
     dump = panelised()
     south = next(m for m in dump["meshes"] if m["name"] == "Panel_0_0")
@@ -673,7 +673,7 @@ def test_a_fin_welded_to_a_facade_panel_is_cut_off_and_the_panel_stays():
 
 
 def test_a_storey_under_a_terrace_deck_keeps_its_floor_slab_as_reference():
-    """#88 (user 2026-10-13): at a terrace level the slab is the deck (the walkable top); the storey under it
+    """#88 (user 2026-10-13 [D066]): at a terrace level the slab is the deck (the walkable top); the storey under it
     takes its own floor slab too, so a narrow deck does not leave its facade out."""
     levels = (("L0", 0.0), ("L1", 3.3), ("L2", 6.6), ("roof", 9.9))
     upper = [[0, 0], [8, 0], [8, 10], [0, 10]]
@@ -733,7 +733,7 @@ def test_slab_data_follow_the_ceiling_not_the_reference():
 
 
 def test_contour_points_within_the_weld_are_one():
-    """User 2026-10-13: contour points closer than weld_m (3 mm, inclusive) are one point."""
+    """User 2026-10-13 [D068]: contour points closer than weld_m (3 mm, inclusive) are one point."""
     from dt_ai.spec.mesh import _contour_points
     poly = Polygon([[0, 0], [5, 0], [5, 0.002], [10, 0.002], [10, 10], [0, 10]])   # a 2 mm step
     pts = _contour_points(poly, 0.003)

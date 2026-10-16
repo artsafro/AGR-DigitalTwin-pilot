@@ -57,7 +57,7 @@ for obj in bpy.context.scene.objects:
                    # vertex count of every source polygon: n-gon check of the benchmark (twinqa.geometry)
                    "polygon_sizes": [len(p.vertices) for p in mesh.polygons],
                    # UDIM tile of every triangle (its UV centre, active layer): a source whose finishes are
-                   # tiles, not slots, gets its material ids from an object table (K01, user 2026-10-11)
+                   # tiles, not slots, gets its material ids from an object table (K01, user 2026-10-11 [D053])
                    **({"udim_tiles": [udim(t) for t in mesh.loop_triangles]} if uv else {})})
     obj.evaluated_get(depsgraph).to_mesh_clear()
 
