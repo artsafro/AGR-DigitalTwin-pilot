@@ -741,6 +741,104 @@ def test_probe_recesses_are_asked_exactly_when_deeper_than_the_attachment_reach(
         extract_spec(dump, {**PANEL_OBJECT, "panel_niches": {"L0": [mark], "L1": [mark]}})
 
 
+_DEEP_VERTEX = [[0, 0], [3.075396912266968, 0], [3.7335075576212855, 1.0286117553710938],
+                [4.391618202975602, 0], [10, 0], [10, 10], [0, 10]]
+
+
+def _printed_niches(stops):
+    niches = {}
+    for stop in stops:
+        centres = re.findall(r"region \d+ centre \(([-\d.]+), ([-\d.]+)\)", stop["message"])
+        niches[stop["level"]] = [[float(x), float(y)] for x, y in centres]
+    return niches
+
+
+def test_a_deep_vertex_between_offset_samples_stops_and_is_kept_when_answered(monkeypatch):
+    """Synthetic: a vertex between the 0.02 m samples, deeper than 0.8 m, stops and stays when answered (review 1 of #85)."""
+    dump = panelised(outlines=(_DEEP_VERTEX, _DEEP_VERTEX))
+    with pytest.raises(SpecStops) as caught:
+        extract_spec(dump, PANEL_OBJECT, collect_stops=True)
+    assert [(s["stage"], s["level"]) for s in caught.value.stops] == [("contour", "L0"), ("contour", "L1")]
+    niches = _printed_niches(caught.value.stops)
+    assert all(niches[lv] for lv in ("L0", "L1"))
+    _, report = extract_spec(dump, {**PANEL_OBJECT, "panel_niches": niches})
+    monkeypatch.setattr("dt_ai.spec.mesh._apply_panel_niches", lambda *args, **kwargs: None)
+    _, bypass = extract_spec(dump, PANEL_OBJECT)
+    assert report["floors"]["L0"]["area_m2"] == bypass["floors"]["L0"]["area_m2"]
+
+
+def test_a_deep_vertex_combined_with_the_open_facade_case_and_a_shallow_notch():
+    """Synthetic: the open south facade still asks once, a 0.5 m notch does not, and an answered deep vertex passes (review 1 of #85)."""
+    with pytest.raises(SpecStops) as caught:
+        extract_spec(_open_facade_joined_to_inner_ring(), PANEL_OBJECT, collect_stops=True)
+    assert [(s["stage"], s["level"]) for s in caught.value.stops] == [("contour", "L0")]
+    boxes = re.findall(r"bbox \[([-\d.]+), ([-\d.]+), ([-\d.]+), ([-\d.]+)\]", caught.value.stops[0]["message"])
+    assert len(boxes) == 1
+    x0, y0, x1, _y1 = (float(v) for v in boxes[0])
+    assert y0 < 0.1 and x0 < 1.0 and x1 > 9.0
+    shallow = [[0, 0], [3, 0], [3.6, 0.6], [4.2, 0], [10, 0], [10, 10], [0, 10]]
+    extract_spec(panelised(outlines=(shallow, shallow)), PANEL_OBJECT)
+    dump = panelised(outlines=(_DEEP_VERTEX, _DEEP_VERTEX))
+    with pytest.raises(SpecStops) as caught:
+        extract_spec(dump, PANEL_OBJECT, collect_stops=True)
+    extract_spec(dump, {**PANEL_OBJECT, "panel_niches": _printed_niches(caught.value.stops)})
+
+
+def test_probe_slanted_and_narrow_recesses_stop_exactly_when_deeper_than_the_attachment_reach(monkeypatch):
+    """Synthetic: slanted narrow notches stop exactly when the contour is deeper than 0.8 m (review 1 of #85)."""
+    from dt_ai.spec import mesh as mesh_mod
+
+    def depth_inside(env, reference):
+        ring = env.exterior
+        distances = np.arange(0.0, ring.length, 0.001)
+        xy = [np.asarray(ring.coords)[:, :2]]
+        if len(distances):
+            xy.append(shapely.get_coordinates(shapely.line_interpolate_point(ring, distances)))
+        cloud = shapely.points(np.vstack(xy))
+        covered = np.asarray(shapely.covered_by(cloud, reference), dtype=bool)
+        if not covered.any():
+            return 0.0
+        return float(np.max(shapely.distance(cloud[covered], reference.exterior)))
+
+    real = mesh_mod._apply_panel_niches
+    rng = random.Random(8586)
+    checked = saw_stop = saw_clear = 0
+    for i in range(38):
+        a = rng.uniform(1.0, 4.0)
+        w1, w2 = rng.uniform(0.2, 2.5), rng.uniform(0.2, 2.5)
+        if i >= 30:
+            h = rng.uniform(0.3, 0.85)
+        elif rng.randrange(2) == 0:
+            h = rng.uniform(0.85, 0.95)
+        else:
+            h = rng.uniform(0.95, 1.2)
+        outline = [[0, 0], [a, 0], [a + w1, h], [a + w1 + w2, 0], [10, 0], [10, 10], [0, 10]]
+        dump = panelised(outlines=(outline, outline))
+        depths = []
+
+        def bypass(env, reference, *args, sink=depths, **kwargs):
+            sink.append(depth_inside(env, reference))
+
+        monkeypatch.setattr(mesh_mod, "_apply_panel_niches", bypass)
+        extract_spec(dump, PANEL_OBJECT, collect_stops=True)
+        monkeypatch.setattr(mesh_mod, "_apply_panel_niches", real)
+        if not depths or any(abs(d - 0.8) <= 1e-3 for d in depths):
+            continue
+        if any(d > 0.8 for d in depths) and any(d <= 0.8 for d in depths):
+            continue
+        truth = max(depths)
+        checked += 1
+        if truth > 0.8:
+            with pytest.raises(SpecStops) as caught:
+                extract_spec(dump, PANEL_OBJECT, collect_stops=True)
+            assert [(s["stage"], s["level"]) for s in caught.value.stops] == [("contour", "L0"), ("contour", "L1")]
+            saw_stop += 1
+        else:
+            extract_spec(dump, PANEL_OBJECT, collect_stops=True)
+            saw_clear += 1
+    assert checked >= 20 and saw_stop and saw_clear
+
+
 def test_a_parapet_on_the_slab_edge_inside_the_facade_line_is_found():
     """Review 2 of #83: the parapet stands on the walkable slab's edge (x 9.8-10), 0.1 m inside the lower facade's
     outer line."""

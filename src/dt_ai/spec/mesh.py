@@ -802,28 +802,43 @@ def _reference_slab(v, slab_tris, ceiling, lv):
 
 def _panel_recesses(env, reference, pts):
     """The parts of the storey's slab outside the panel contour that the contour runs past deeper than
-    ATTACHMENT_FROM_M; nothing filtered (user 2026-10-16, #85)."""
-    dist = shapely.distance(pts, reference.exterior)
-    deep = shapely.covered_by(pts, reference) & (dist > dc.ATTACHMENT_FROM_M)
-    if not np.any(deep):
+    ATTACHMENT_FROM_M. Detection is geometric (contour ∩ reference eroded by ATTACHMENT_FROM_M); samples
+    are only for reporting (review 1 of #85). Nothing filtered (user 2026-10-16, #85)."""
+    inner = reference.buffer(-dc.ATTACHMENT_FROM_M, quad_segs=64)   # slightly larger than the true inset where
+    if inner.is_empty:                                              # the arcs are chorded, so a touch still stops
+        return []
+    deep_line = env.exterior.intersection(inner)                   # boundary counts: a point on the inset stops
+    if deep_line.is_empty:
         return []
     gap = reference.difference(env).buffer(0)
-    deep_pts = pts[deep]
-    deep_dist = np.asarray(dist, dtype=float)[np.asarray(deep)]
+    deep_xy = shapely.get_coordinates(deep_line)
+    deep_pts = shapely.points(deep_xy) if len(deep_xy) else None
     found = []
     for g in shapely.get_parts(gap):
         if g.geom_type != "Polygon" or g.area <= 0:
             continue
-        on = np.asarray(shapely.dwithin(deep_pts, g, 0.01))
-        if not on.any():
+        if not bool(shapely.dwithin(g, deep_line, 0.01)):
             continue
+        near = []
+        if deep_pts is not None:
+            on = np.asarray(shapely.dwithin(deep_pts, g, 0.01), dtype=bool).reshape(-1)
+            if on.shape == deep_xy.shape[:1] and on.any():
+                near.append(deep_xy[on])
+        on_s = np.asarray(shapely.dwithin(pts, g, 0.01), dtype=bool).reshape(-1)
+        if on_s.shape == np.shape(pts)[:1] and on_s.any():
+            near.append(shapely.get_coordinates(pts[on_s]))
+        if near:
+            xy = np.vstack(near)
+        else:
+            xy = np.atleast_2d(shapely.get_coordinates(shapely.ops.nearest_points(deep_line, g)[0]))
+        depth = float(np.max(shapely.distance(shapely.points(xy), reference.exterior)))
         centre = g.representative_point()
         edge = g.exterior.intersection(reference.exterior.buffer(0.01))
         found.append((g, {
             "centre": [round(float(centre.x), 2), round(float(centre.y), 2)],
             "bbox_m": [round(float(v), 2) for v in g.bounds],
             "area_m2": round(float(g.area), 3),
-            "depth_m": round(float(deep_dist[on].max()), 3),
+            "depth_m": round(depth, 3),
             "slab_edge_m": round(float(edge.length), 2)}))
     return found
 
