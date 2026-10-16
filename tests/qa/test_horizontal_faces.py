@@ -20,6 +20,38 @@ def _row(result, name):
     return next(mesh for mesh in result["details"]["meshes"] if mesh["name"] == name)
 
 
+def _split(dump, upward):
+    """Move horizontal upward (or downward) triangles of every non-UCX mesh into `<name>_roof` / `<name>_soffit`.
+
+    Coordinates and winding are unchanged. SYNTHETIC fixture helper."""
+    out = copy.deepcopy(dump)
+    fresh = []
+    for mesh in out["meshes"]:
+        if mesh["name"].startswith("UCX_"):
+            continue
+        tris = np.asarray(mesh["triangles"], int)
+        if len(tris) == 0:
+            continue
+        corners = np.asarray(mesh["vertices"], float)[tris]
+        normal = np.cross(corners[:, 1] - corners[:, 0], corners[:, 2] - corners[:, 0])
+        length = np.linalg.norm(normal, axis=1)
+        horizontal = np.abs(normal[:, 2]) >= (1.0 - checks.HORIZONTAL_COS_TOL) * length
+        selected = horizontal & ((normal[:, 2] > 0) if upward else (normal[:, 2] < 0))
+        if not np.any(selected):
+            continue
+        other = copy.deepcopy(mesh)
+        other["name"] += "_roof" if upward else "_soffit"
+        for key in ("triangles", "material_ids"):
+            if key not in mesh:
+                continue
+            values = np.asarray(mesh[key])
+            other[key] = values[selected].tolist()
+            mesh[key] = values[~selected].tolist()
+        fresh.append(other)
+    out["meshes"] += fresh
+    return out
+
+
 def _flip_global(dump, indices):
     pending = {int(i) for i in np.atleast_1d(indices)}
     offset = 0
@@ -94,7 +126,7 @@ def _overhang_with_detached_bottom():
     return verts, tris
 
 
-def test_detached_reversed_soffit_passes_orientation_but_fails_here():
+def _detached_reversed_soffit_dump():
     body = _box("body")
     body_v = (np.asarray(body["vertices"], float) * np.array([10.0, 10.0, 6.0])).tolist()
     over_v, over_t = _overhang_with_detached_bottom()
@@ -102,7 +134,11 @@ def test_detached_reversed_soffit_passes_orientation_but_fails_here():
     mesh = {"name": "body", "vertices": body_v + over_v,
             "triangles": body["triangles"] + [[a + base, b + base, c + base] for a, b, c in over_t],
             "material_ids": [1] * (len(body["triangles"]) + len(over_t))}
-    dump = {"meshes": [mesh]}
+    return {"meshes": [mesh]}
+
+
+def test_detached_reversed_soffit_passes_orientation_but_fails_here():
+    dump = _detached_reversed_soffit_dump()
     assert checks.check_orientation(from_dump(dump), _TOL)["status"] == "pass"
     result = _hcheck(dump)
     assert result["status"] == "fail" and result["value"] == 2
@@ -246,3 +282,91 @@ def test_run_lists_horizontal_faces_after_orientation():
     model = from_dump(dump)
     ids = [item["id"] for item in checks.run(model, model, spec, tol)["checks"]]
     assert ids[ids.index("orientation") + 1] == "horizontal_faces"
+
+
+def test_separate_roof_mesh_passes():
+    result = _hcheck(_split({"meshes": [_box()]}, True))
+    assert result["status"] == "pass" and result["value"] == 0
+    assert result["details"]["volumes"] == [["box", "box_roof"]]
+
+
+def test_separate_soffit_mesh_passes():
+    result = _hcheck(_split({"meshes": [_box()]}, False))
+    assert result["status"] == "pass" and result["value"] == 0
+    assert result["details"]["volumes"] == [["box", "box_soffit"]]
+
+
+def test_reversed_separate_soffit_fails():
+    dump = _split({"meshes": [_box()]}, False)
+    soffit = next(mesh for mesh in dump["meshes"] if mesh["name"] == "box_soffit")
+    for index in range(len(soffit["triangles"])):
+        _reverse(soffit["triangles"], index)
+    result = _hcheck(dump)
+    assert result["status"] == "fail" and result["value"] == 2
+    assert _row(result, "box_soffit")["inward_faces"] == 2
+
+
+def test_reversed_separate_roof_fails():
+    dump = _split({"meshes": [_box()]}, True)
+    roof = next(mesh for mesh in dump["meshes"] if mesh["name"] == "box_roof")
+    for index in range(len(roof["triangles"])):
+        _reverse(roof["triangles"], index)
+    result = _hcheck(dump)
+    assert result["status"] == "fail" and result["value"] == 2
+    assert _row(result, "box_roof")["inward_faces"] == 2
+
+
+@pytest.mark.parametrize("bench", _BENCHES)
+@pytest.mark.parametrize("upward", [True, False])
+def test_bench_partition_clean_and_reversed(bench, upward):
+    _spec, dump, tol = _built(bench)
+    split = _split(dump, upward)
+    clean = checks.check_horizontal_faces(from_dump(split), tol)
+    assert clean["status"] == "pass" and clean["value"] == 0
+    suffix = "_roof" if upward else "_soffit"
+    names = [mesh["name"] for mesh in split["meshes"] if mesh["name"].endswith(suffix)]
+    assert len(names) == 1
+    name = names[0]
+    n_tri = len(next(mesh for mesh in split["meshes"] if mesh["name"] == name)["triangles"])
+    assert n_tri > 1
+    flipped = copy.deepcopy(split)
+    target = next(mesh for mesh in flipped["meshes"] if mesh["name"] == name)
+    for index in range(n_tri):
+        _reverse(target["triangles"], index)
+    result = checks.check_horizontal_faces(from_dump(flipped), tol)
+    assert result["status"] == "fail" and result["value"] == n_tri
+    one = copy.deepcopy(split)
+    target = next(mesh for mesh in one["meshes"] if mesh["name"] == name)
+    _reverse(target["triangles"], 0)
+    result = checks.check_horizontal_faces(from_dump(one), tol)
+    assert result["status"] == "fail" and result["value"] == 1
+
+
+def test_decor_mesh_sharing_edge_stays_apart():
+    body = _resize(_box("body"), 10.0)
+    decor = _resize(_box("decor"), 10.0, (0.0, -10.0, 0.0))
+    result = _hcheck({"meshes": [body, decor]})
+    assert result["status"] == "pass" and result["value"] == 0
+    assert result["details"]["volumes"] == [["body"], ["decor"]]
+    decor_in = _resize(_box("decor", reverse=range(12)), 10.0, (0.0, -10.0, 0.0))
+    bad = _hcheck({"meshes": [body, decor_in]})
+    assert _row(bad, "decor")["inward_faces"] > 0
+    assert _row(bad, "body")["inward_faces"] == 0
+    assert bad["details"]["volumes"] == [["body"], ["decor"]]
+
+
+def test_split_combined_with_enclosed_inner_box():
+    body = _resize(_box("body"), 100.0)
+    inner = _resize(_box("inner", reverse=range(12)), 0.2, (49.9, 49.9, 49.9))
+    dump = _split({"meshes": [body]}, True)
+    dump["meshes"].append(inner)
+    result = _hcheck(dump)
+    assert result["status"] == "fail"
+    assert _row(result, "inner")["inward_faces"] == 4
+    assert _row(result, "body")["inward_faces"] == 0
+    assert _row(result, "body_roof")["inward_faces"] == 0
+
+
+def test_split_combined_with_detached_soffit():
+    result = _hcheck(_split(_detached_reversed_soffit_dump(), True))
+    assert result["status"] == "fail" and result["value"] == 2
