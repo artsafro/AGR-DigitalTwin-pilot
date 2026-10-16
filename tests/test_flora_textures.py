@@ -3,6 +3,7 @@ import importlib.util
 from copy import deepcopy
 from itertools import combinations
 from io import BytesIO
+import json
 import shutil
 
 import numpy as np
@@ -272,3 +273,160 @@ def test_generation_metadata_required(review, tmp_path):
         with pytest.raises(ValueError, match="Actual model"):
             flora.prepare(plan, changed, tmp_path / key)
         assert not (tmp_path / key).exists()
+
+
+# Task #221: Issue where load_approved stringifies evidence accepting null/false/0/[]/{}
+# Malformed evidence regression:
+# Evaluates None, False, True, 0, 1, 1.25, [], ["attestation"], {}, {"text": "attestation"},
+# empty string, and whitespace including Unicode across all 3 candidate approval positions.
+# Exact bounds: 17 malformed values * 3 positions = 51 test cases.
+# Each case must reject with ValueError("Explicit Artem approval required: ...") and write nothing.
+@pytest.mark.parametrize("position", range(3))
+@pytest.mark.parametrize("evidence", [
+    None,
+    False,
+    True,
+    0,
+    1,
+    1.25,
+    [],
+    ["attestation"],
+    {},
+    {"text": "attestation"},
+    "",
+    "   ",
+    "\t\n\r",
+    "\u00a0",
+    "\u2003",
+    "\u3000",
+    " \t\r\n\u00a0\u2002\u2003\u3000 ",
+])
+def test_publication_rejects_malformed_evidence(review, tmp_path, position, evidence):
+    directory, _, original, _, _ = review
+    approvals = deepcopy(original)
+    approvals["approvals"][position]["evidence"] = evidence
+    # JSON roundtrip simulates external JSON approvals file format and types
+    approvals = json.loads(json.dumps(approvals))
+    out = tmp_path / f"malformed-evidence-pos{position}"
+    with pytest.raises(ValueError, match=r"Explicit.*approval required"):
+        flora.publish_library(directory, approvals, out)
+    assert not out.exists()
+
+
+def test_publication_preserves_valid_quoted_synthetic_attestation_with_padding(review, tmp_path):
+    # Valid synthetic attestations enclosed in quotes with leading and trailing whitespace padding.
+    # Asserts stored evidence unchanged (not stripped or altered in library-v001.json)
+    # and all diffuse and opacity published bytes exactly equal reviewed bytes.
+    directory, manifest, original, _, _ = review
+    approvals = deepcopy(original)
+    padded_attestations = [
+        '   "SYNTHETIC Artem attestation 0: verified white cut-out and proportions"   \n',
+        '\t\t  "SYNTHETIC Artem attestation 1: approved 2048x2048 botanical texture"  \r\n',
+        ' \u00a0 "SYNTHETIC Artem attestation 2: verified leaf detail and binary mask" \u2003 ',
+    ]
+    for pos, text in enumerate(padded_attestations):
+        approvals["approvals"][pos]["evidence"] = text
+    # JSON roundtrip verifies JSON fidelity for whitespace-padded quoted strings
+    approvals = json.loads(json.dumps(approvals))
+    out = tmp_path / "valid-library-padded-attestation"
+    result = flora.publish_library(directory, approvals, out)
+
+    # 1. Assert stored evidence unchanged both in memory and written manifest on disk
+    for pos, text in enumerate(padded_attestations):
+        assert result["approvals"]["approvals"][pos]["evidence"] == text
+    saved_manifest = flora.read_json(out / "library-v001.json")
+    for pos, text in enumerate(padded_attestations):
+        assert saved_manifest["approvals"]["approvals"][pos]["evidence"] == text
+
+    # 2. Assert all diffuse/opacity published bytes exactly equal reviewed bytes
+    assert len(result["species"]) == len(manifest["entries"])
+    for item, entry in zip(result["species"], manifest["entries"]):
+        for key in ("diffuse", "opacity"):
+            published_bytes = (out / item[key]).read_bytes()
+            reviewed_bytes = (directory / entry[key]).read_bytes()
+            assert published_bytes == reviewed_bytes
+
+
+def test_generated_probe_evidence_validation_and_byte_preservation(review, tmp_path):
+    # Deterministic generated probe bounds and exact counts:
+    # 1. Negative rejection probe:
+    #    - 24 generated JSON nonstring/whitespace evidence values beyond the parameterized test:
+    #      * 6 numbers: -1, -42, -2.718, 0.0, 1e5, 1e-5
+    #      * 9 nested structures: [None], [False], [0], [[]], [{"k": "v"}],
+    #                             {"k": 1}, {"evidence": None}, {"nested": {}}, {"tags": ["flora"]}
+    #      * 9 Unicode whitespace sequences: "\u1680", "\u2000", "\u2002", "\u2004", "\u2006",
+    #                                       "\u2008", "\u200a", "\u2028\u2029", "\u202f\u205f"
+    #    - Evaluated across all 3 positions: 24 values * 3 positions = 72 rejection evaluations.
+    #    - Each rejection evaluation asserts: raises ValueError matching "Explicit.*approval required"
+    #      and destination path does not exist (no writes).
+    # 2. Positive byte-preservation probe:
+    #    - 4 generated suites of valid padded quoted strings with diverse whitespace paddings
+    #      (spaces, tabs, Unicode NBSP/EM spaces, CRLF mixtures).
+    #    - 4 suites * 3 positions = 12 valid attestation strings tested.
+    #    - Each suite asserts: stored evidence unchanged both in-memory and in library-v001.json,
+    #      and published diffuse/opacity bytes exactly equal reviewed bytes for all species.
+    # 3. Total probe evaluations: 72 rejection evaluations + 4 publication suites = 76 evaluations.
+    directory, manifest, original, _, _ = review
+
+    # Generated invalid values beyond parameterized test examples
+    generated_invalid_values = [
+        # Numbers (negative, float, zero float, scientific notation)
+        -1, -42, -2.718, 0.0, 1e5, 1e-5,
+        # Nested structures (lists, nested containers, dicts)
+        [None], [False], [0], [[]], [{"k": "v"}],
+        {"k": 1}, {"evidence": None}, {"nested": {}}, {"tags": ["flora"]},
+        # Unicode whitespace characters and combinations
+        "\u1680", "\u2000", "\u2002", "\u2004", "\u2006",
+        "\u2008", "\u200a", "\u2028\u2029", "\u202f\u205f",
+    ]
+    assert len(generated_invalid_values) == 24
+
+    # Part 1: Negative rejection probe across all 3 positions
+    rejection_count = 0
+    for val_idx, val in enumerate(generated_invalid_values):
+        for pos in range(3):
+            approvals = deepcopy(original)
+            approvals["approvals"][pos]["evidence"] = val
+            approvals = json.loads(json.dumps(approvals))
+            out = tmp_path / f"probe_reject_{val_idx}_{pos}"
+            with pytest.raises(ValueError, match=r"Explicit.*approval required"):
+                flora.publish_library(directory, approvals, out)
+            assert not out.exists()
+            rejection_count += 1
+    assert rejection_count == 72
+
+    # Part 2: Positive byte-preservation probe with generated valid padded quoted strings
+    padding_pairs = [
+        ("   ", "   \n"),
+        ("\t\t", "\t"),
+        (" \u00a0 ", " \u2003 "),
+        ("\r\n\t ", " \t\r\n"),
+    ]
+    assert len(padding_pairs) == 4
+
+    for suite_idx, (left_pad, right_pad) in enumerate(padding_pairs):
+        approvals = deepcopy(original)
+        suite_attestations = []
+        for pos in range(3):
+            attestation = f'{left_pad}"SYNTHETIC probe approval suite {suite_idx} pos {pos}: verified texture"{right_pad}'
+            suite_attestations.append(attestation)
+            approvals["approvals"][pos]["evidence"] = attestation
+        approvals = json.loads(json.dumps(approvals))
+        out = tmp_path / f"probe_valid_{suite_idx}"
+        result = flora.publish_library(directory, approvals, out)
+
+        # Stored evidence unchanged
+        for pos, attestation in enumerate(suite_attestations):
+            assert result["approvals"]["approvals"][pos]["evidence"] == attestation
+        saved_manifest = flora.read_json(out / "library-v001.json")
+        for pos, attestation in enumerate(suite_attestations):
+            assert saved_manifest["approvals"]["approvals"][pos]["evidence"] == attestation
+
+        # All diffuse/opacity bytes exactly equal reviewed bytes
+        assert len(result["species"]) == len(manifest["entries"])
+        for item, entry in zip(result["species"], manifest["entries"]):
+            for key in ("diffuse", "opacity"):
+                published_bytes = (out / item[key]).read_bytes()
+                reviewed_bytes = (directory / entry[key]).read_bytes()
+                assert published_bytes == reviewed_bytes
+
