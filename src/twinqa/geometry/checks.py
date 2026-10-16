@@ -321,7 +321,9 @@ def check_mesh(model: Soup, tol: dict, ranges: dict, slabs=None, plate=None, str
     model at its height is closed by contact ("seated": a wall standing on a slab, user 2026-10-13 [D114]); a
     separate closed part whose top lies at a slab level over the slab's region is that slab (a slab box). These
     three rules and the open enclosure top are the from_source path's (build="from_source"); the from_spec path
-    keeps the strict rules (review 1 of #106)."""
+    keeps the strict rules (review 1 of #106). After OBJ03 was closed as unsuccessful
+    (user 2026-10-14 [D079], #117) these from_source relaxations are experimental only:
+    they do not authorize skipping topology on any mesh of a new passing delivery."""
     fs = build == "from_source"
     if not fs:
         structures = [st[:2] for st in structures]

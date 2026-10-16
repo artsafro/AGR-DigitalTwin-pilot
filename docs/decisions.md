@@ -15,11 +15,11 @@ Where the id goes, by kind of file (#138)
 
 Markdown outside the excluded folders (`docs/agr/`, `docs/research/`, `jobs/`, `technical_library/`, `data/`,
 handoff and project-state files) carries `[D<n>]` on the same line as the mention. Tracked Python does the same
-in comments, docstrings and strings, except under `jobs/`, `technical_library/`, `data/`, `docs/agr/`,
-`tests/fixtures/` and the checker's own examples. `standards/material_id_ranges.yaml` carries the id in its
+in comments, docstrings and strings, except under `jobs/`, `technical_library/`, `data/`, `docs/agr/`
+and the checker's own examples. `standards/material_id_ranges.yaml` carries the id in its
 comment. Locked standards YAML is not edited: a top-level `conflicts:` entry whose note says "decided" must list
 an `ids` number whose item in `docs/domain/conflicts.md` carries a `[D<n>]` from this log. JSON, `jobs/**` and
-frozen fixtures carry no id.
+frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Markdown and Python alike.
 
 | ID | Date | Decision | Applies to | Source |
 |---|---|---|---|---|
@@ -135,7 +135,7 @@ frozen fixtures carry no id.
 | D110 | 2026-10-13 | The build path by source modules sits beside `from_spec`, measures the spec by the same modules, and builds a textured band 0.04 m thick; D079 later closed OBJ03 by this path as unsuccessful | `src/dt_ai/geometry/from_source.py` | backfill #138 (src/dt_ai/geometry/from_source.py) |
 | D111 | 2026-10-13 | The material-id ranges cache follows the file: one parse per path and version | `src/dt_ai/spec/mesh.py` | backfill #138 (src/dt_ai/spec/mesh.py; tests/test_spec_contour_shapes.py) |
 | D112 | 2026-10-13 | A face piece with one side a point on a strip line is a triangle (a pointed corner, PR #100) | pattern `non-90-corner` | backfill #138 (src/dt_ai/geometry/from_spec.py; tests/qa/test_from_spec.py; PR #100) |
-| D113 | 2026-10-13 | On the from_source path a decor mesh is left out of the body topology checks, because the body is never cut (OBJ03 2a) | `src/twinqa/geometry/checks.py` | backfill #138 (src/twinqa/geometry/checks.py; OBJ03 2a) |
-| D114 | 2026-10-13 | An open loop flat on a horizontal face at its height is closed by contact (seated: a wall standing on a slab) | `src/twinqa/geometry/checks.py` | backfill #138 (src/twinqa/geometry/checks.py) |
+| D113 | 2026-10-13 | On the experimental from_source path only (build="from_source"), a decor mesh was left out of the body topology checks, because the body is never cut (OBJ03 2a); rejected for delivery acceptance by D079 (#117): a new passing model needs topology on every mesh incl. decor, and from_spec keeps the strict checks | `src/twinqa/geometry/checks.py` | backfill #138 (src/twinqa/geometry/checks.py; OBJ03 2a) |
+| D114 | 2026-10-13 | On the experimental from_source path only (build="from_source"), an open loop flat on a horizontal face at its height was closed by contact (seated: a wall standing on a slab); from_spec keeps the strict open-edge rule, and after D079 (#117) this does not relax topology acceptance of a new delivery | `src/twinqa/geometry/checks.py` | backfill #138 (src/twinqa/geometry/checks.py) |
 | D115 | 2026-10-14 | An overlap is a crossing deeper than the weld: faces within weld_m are one weld, and a plate plate_gap_m off a face is no overlap | `src/twinqa/geometry/checks.py` | backfill #138 (src/twinqa/geometry/checks.py; tests/qa/test_from_source.py) |
 | D116 | 2026-10-14 | A panelised source is checked with basis spec, because its sections never close | `src/twinqa/geometry/checks.py` | backfill #138 (src/twinqa/geometry/checks.py) |

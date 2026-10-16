@@ -2,11 +2,11 @@
 
 docs/decisions.md is one dated user decision per row. A mention of a dated user decision carries
 `[D<n>]` on the same line, by kind of file: Markdown outside the excluded folders; tracked Python
-except under `jobs/`, `technical_library/`, `data/`, `docs/agr/`, `tests/fixtures/` and this file;
+except under `jobs/`, `technical_library/`, `data/`, `docs/agr/` and this file;
 and `standards/material_id_ranges.yaml`. Locked standards YAML is not edited: a top-level
 `conflicts:` entry whose note says "decided" must list an `ids` number whose item in
 `docs/domain/conflicts.md` carries a `[D<n>]` from the log. JSON, `jobs/**` and frozen fixtures
-are out of scope.
+(`tests/fixtures/` and `evals/*/fixtures/`) are out of scope for Markdown and Python alike.
 """
 import datetime
 import re
@@ -28,6 +28,8 @@ EXCLUDED = ("docs/agr/", "docs/research/", "jobs/", "technical_library/", "data/
             "docs/HANDOFF", "docs/PROJECT_STATE.md", LOG)
 # Python stays out of scope under these prefixes, plus this file (the checker's own examples).
 PY_EXCLUDED = ("jobs/", "technical_library/", "data/", "docs/agr/", "tests/fixtures/")
+# Frozen fixtures carry no id, for Markdown and Python alike.
+FROZEN_FIXTURE = re.compile(r"^evals/[^/]+/fixtures/")
 CONFLICT_ITEM = re.compile(r"^(\d+)\. ")
 # Lines that match MENTION but state no decision: (file, text on the line).
 NOT_DECISIONS = [
@@ -37,9 +39,20 @@ NOT_DECISIONS = [
 ]
 
 
-def in_scope(path: str) -> bool:
-    """One repo-relative path: Markdown as today, Python except the excluded trees, one standards file."""
+def is_frozen_fixture(path: str) -> bool:
+    """True when the normalized path is under tests/fixtures/ or evals/<one segment>/fixtures/."""
     path = path.replace("\\", "/")
+    return path.startswith("tests/fixtures/") or FROZEN_FIXTURE.match(path) is not None
+
+
+def in_scope(path: str) -> bool:
+    """One repo-relative path: Markdown as today, Python except the excluded trees, one standards file.
+
+    Frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) are out of scope for Markdown and Python alike.
+    """
+    path = path.replace("\\", "/")
+    if is_frozen_fixture(path):
+        return False
     if not path:
         return False
     if path.endswith(".md"):
@@ -213,6 +226,47 @@ def test_scope_by_kind():
         "docs/agr/b.py",
         "",
     ]] == [False] * 12
+
+
+def test_frozen_fixtures_out_of_scope(tmp_path, monkeypatch):
+    monkeypatch.setattr(__import__(__name__), "ROOT", tmp_path)
+    fixtures = [
+        "tests/fixtures/rules.md",
+        "evals/example/fixtures/rules.md",
+        "evals/example/fixtures/rules.py",
+        "tests/fixtures/rules.py",
+    ]
+    controls = [
+        "tests/test_x.py",
+        "evals/example/grader.py",
+        "evals/example/README.md",
+        "evals/fixtures_notes.md",
+        "tests/fixturesx/a.py",
+        "docs/fixtures/a.md",
+    ]
+    assert [in_scope(p) for p in fixtures] == [False, False, False, False]
+    assert [in_scope(p) for p in controls] == [True, True, True, True, True, True]
+    line = "# user 2026-10-12: deliberately untagged synthetic fixture\n"
+    for name in fixtures[:3] + ["docs/rules.md"]:
+        path = tmp_path / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(line, encoding="utf-8")
+    filtered = [p for p in [*fixtures, "docs/rules.md"] if in_scope(p)]
+    assert unreferenced(filtered, set()) == ["docs/rules.md:1: dated user decision without [D<n>]"]
+
+
+def test_historical_backfill_rows_keep_scope():
+    rows = {row[0]: row for row in log_rows()}
+    for id_ in ("D113", "D114"):
+        decision = rows[id_][2]
+        assert "from_source" in decision
+        assert "D079" in decision
+        assert "experimental" in decision
+    assert "rejected" in rows["D113"][2]
+    assert "from_spec" in rows["D114"][2]
+    from twinqa.geometry.checks import check_mesh
+    doc = " ".join(check_mesh.__doc__.split())
+    assert "[D079]" in doc and "do not authorize skipping topology" in doc
 
 
 def test_unreferenced_code_mentions_fail(tmp_path, monkeypatch):
