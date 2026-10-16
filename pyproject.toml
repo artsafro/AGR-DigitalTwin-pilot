@@ -21,7 +21,7 @@ pdf-review = ["PyMuPDF==1.28.2"]
 cad = ["ezdxf==1.4.3"]
 
 [dependency-groups]
-dev = ["pytest==9.1.1", "ezdxf==1.4.3"]
+dev = ["pytest==9.1.1", "ezdxf==1.4.3", "pytest-xdist==3.8.0"]
 
 [project.scripts]
 dt = "dt_ai.cli.main:main"

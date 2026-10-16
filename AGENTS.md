@@ -55,6 +55,7 @@ gets a line in `docs/decisions.md` and its `[D<n>]` where it applies.
 - `data/` — local only, git-ignored: heavy sources (`data/sources/`), archives.
 
 Checks: `uv run pytest -q`, `uv run dt profiles check`, `uv run dt schemas --check`.
+Parallel suite, opt-in only (pytest-xdist; the default run stays serial): `uv run pytest -q -n 8`.
 
 ## Rules for every task
 
