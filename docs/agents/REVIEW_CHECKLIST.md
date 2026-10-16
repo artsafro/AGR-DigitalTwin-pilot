@@ -4,29 +4,25 @@ Reviewer: any agent that is not the author (now Codex). The reviewer checks evid
 confidence. Source: `docs/HARNESS_PLAN.md` §8. Post the answer as a PR comment: verdict
 (clean / changes needed), the three answers with numbers, findings by severity (P1/P2/P3).
 
-1. **Pattern / scope.** Does each module refer to a pattern in `docs/domain/patterns/INDEX.md`,
-   or is it honestly marked `new-case`? Does the change stay inside its issue and list what is
-   not done?
+1. **Pattern / scope.** Does each NEW module refer to a pattern in `docs/domain/patterns/INDEX.md`,
+   or is it honestly marked `new-case` in the module docstring and PR body (author receipt verified per
+   [WORKFLOW.md#before-requesting-review-author](WORKFLOW.md#before-requesting-review-author))?
+   Does the change stay inside its issue and list what is not done?
 2. **Invention.** Is there anything in the code or its output that the spec and the inputs do
    not support — guessed levels, made-up geometry, a silent fallback that hides a failure?
 3. **Evidence.** Did the checker or the tests pass **with numbers**, run by the reviewer?
    Every regression test must fail on the commit before the fix and pass after it.
-   The regression evals go with them: before a merge to `main` the author runs `uv run dt evals --suite
-   regression` on the evidence of the branch (`--references` as well after a change to a grader) and names in
-   the PR the report path (`logs/evals/runs/<time>-regression/report.json`) and its passed / failed / not
-   measured counts. The pass criterion is 100 %: a failed check blocks the merge, and a check that is not
-   measured is named with its reason (no transcript, a torn line, an unclassified question), never counted as a
-   pass. The tasks and what fails each: `evals/README.md`, "Regression tasks".
+   Did the author provide a valid regression eval receipt per
+   [WORKFLOW.md#before-requesting-review-author](WORKFLOW.md#before-requesting-review-author)
+   (report path, passed / failed / not measured counts, and reasons)? The pass criterion is
+   100 % for measured checks: a failed check blocks the merge, and a check that is not
+   measured is named with its reason (no transcript, a torn line, an unclassified question),
+   never counted as a pass. The tasks and what fails each: `evals/README.md`, "Regression tasks".
 
-## Author counterexamples
+## Counterexamples
 
-Before requesting review of a change to a stated guarantee ("never dropped", "counted once",
-"within tolerance"), add a generated or brute-force probe beyond the issue's examples. Label invented
-inputs synthetic; record `invariant -> probe -> N/N` in the PR, with the command, seed or exhaustive
-bounds and evidence path so the reviewer can reproduce it. If a probe is not applicable, name the
-reason instead of inventing a count. After review fixes, test the combination of the new case with
-previous fixes, not just each finding in isolation. A required acceptance item belongs in the result
-or an explicit blocked/open item, never in "Out of scope" as a way to declare completion.
+Did the author provide the required counterexample probe receipt (`invariant -> probe -> N/N` or
+`n/a: <reason>`) per [WORKFLOW.md#before-requesting-review-author](WORKFLOW.md#before-requesting-review-author)?
 The reviewer independently attacks the guarantee; the author's probe is input, not a clean verdict.
 
 ## Procedure (user 2026-10-13 [D073])
