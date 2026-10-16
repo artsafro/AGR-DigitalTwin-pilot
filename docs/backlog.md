@@ -104,7 +104,7 @@ Plan: `docs/HARNESS_PLAN.md` §15 (user decision 2026-10-11 [D049]). One PR each
 ## Unreal and IFC
 
 - **U1** Unreal import rules (UE 5.5/5.7): scale, pivots, materials, collisions, LODs.
-- **U2** Interactive experience project in `Unreal/`.
+- **U2** Future Unreal interactive experience lives in separate repository, root placeholder removed per owner decision 2026-10-16 [D103].
 - **U3** IFC export route.
 
 ## Reuse proposals (rule of three, `docs/agents/WORKFLOW.md`; proposals only, nothing created)

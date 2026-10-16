@@ -2,23 +2,12 @@
 import glob
 import importlib.util
 import os
-import shutil
-import tempfile
 from pathlib import Path
 
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 AGENT_FEED_PATH = ROOT / "tools" / "herdr" / "agent_feed.py"
-
-
-@pytest.fixture
-def tmp_path():
-    path = Path(tempfile.mkdtemp(prefix="unreal_boundary_"))
-    try:
-        yield path
-    finally:
-        shutil.rmtree(path, ignore_errors=True)
 
 PROBE_LOG_FILES = [
     "logs/a.log",
