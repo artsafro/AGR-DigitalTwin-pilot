@@ -822,11 +822,11 @@ def test_a_real_roof_hole_under_a_simplified_panel_contour_still_stops():
     outline = STEPS_84["bump-out"]
     dump = panelised(outlines=(outline, outline), slab=_envelope(outline))
     roof = Mesh("RoofWithHole")
-    flat(roof, Polygon(_envelope(outline), [[[5, 5], [5.2, 5], [5.2, 5.8], [5, 5.8]]]), 6.6, up=True)
+    flat(roof, Polygon(_envelope(outline), [[[2, 2], [2.2, 2], [2.2, 2.8], [2, 2.8]]]), 6.6, up=True)   # off the mass
     slabs = next(m for m in dump["meshes"] if m["name"] == "Slabs")
     slabs["triangles"] = [tr for tr in slabs["triangles"] if max(slabs["vertices"][i][2] for i in tr) < 6.5]
     dump["meshes"].append({**roof.dump(), "name": "Slabs2"})
-    with pytest.raises(SpecError, match="that is not a shaft"):
+    with pytest.raises(SpecError, match=r"opening of 0.16 m2 at \(2.10, 2.40\) that is not a shaft"):
         extract_spec(dump, {**PANEL_OBJECT, "slabs": ["Slabs", "Slabs2"]})
 
 
