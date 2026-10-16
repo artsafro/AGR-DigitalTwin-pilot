@@ -1,0 +1,50 @@
+{
+ "Betula pendula": {
+  "diffuse": "C:/x/flora-textures/betula-pendula/diffuse-v001.png",
+  "opacity": "C:/x/flora-textures/betula-pendula/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-15 'Одобряю', review-sheet-v001.png (#190)"
+ },
+ "Pinus sylvestris": {
+  "diffuse": "C:/x/flora-textures/pinus-sylvestris/diffuse-v001.png",
+  "opacity": "C:/x/flora-textures/pinus-sylvestris/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-15 'Одобряю', review-sheet-v001.png (#190)"
+ },
+ "Spiraea japonica": {
+  "diffuse": "C:/x/flora-textures/spiraea-japonica/diffuse-v001.png",
+  "opacity": "C:/x/flora-textures/spiraea-japonica/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-15 'Одобряю', review-sheet-v001.png (#190)"
+ },
+ "Tilia cordata": {
+  "diffuse": "C:/x/t_6c48bc9d/maps/review-batch1-v001/0_d.png",
+  "opacity": "C:/x/t_6c48bc9d/maps/review-batch1-v001/0_o.png",
+  "review_status": "pending_review",
+  "evidence": "batch 1 candidate on C:/x/t_6c48bc9d/maps/review-sheet-batch1-v001.png; not approved"
+ },
+ "Acer platanoides": {
+  "diffuse": "C:/x/t_6c48bc9d/maps/review-batch1-v001/1_d.png",
+  "opacity": "C:/x/t_6c48bc9d/maps/review-batch1-v001/1_o.png",
+  "review_status": "pending_review",
+  "evidence": "batch 1 candidate on C:/x/t_6c48bc9d/maps/review-sheet-batch1-v001.png; not approved"
+ },
+ "Sorbus aucuparia": {
+  "diffuse": "C:/x/t_6c48bc9d/maps/review-batch1-v001/2_d.png",
+  "opacity": "C:/x/t_6c48bc9d/maps/review-batch1-v001/2_o.png",
+  "review_status": "pending_review",
+  "evidence": "batch 1 candidate on C:/x/t_6c48bc9d/maps/review-sheet-batch1-v001.png; not approved"
+ },
+ "Cornus alba": {
+  "diffuse": "C:/x/t_6c48bc9d/maps/review-batch1-v001/3_d.png",
+  "opacity": "C:/x/t_6c48bc9d/maps/review-batch1-v001/3_o.png",
+  "review_status": "pending_review",
+  "evidence": "batch 1 candidate on C:/x/t_6c48bc9d/maps/review-sheet-batch1-v001.png; not approved"
+ },
+ "Hydrangea arborescens": {
+  "diffuse": "C:/x/t_6c48bc9d/maps/review-batch1-v001/4_d.png",
+  "opacity": "C:/x/t_6c48bc9d/maps/review-batch1-v001/4_o.png",
+  "review_status": "pending_review",
+  "evidence": "batch 1 candidate on C:/x/t_6c48bc9d/maps/review-sheet-batch1-v001.png; not approved"
+ }
+}
