@@ -436,6 +436,26 @@ def _grid_box(x0, x1, y0, y1, z0, z1, x_cuts, y_cuts, z_cuts):
     return np.array(verts, dtype=np.float64), faces
 
 
+@pytest.mark.parametrize("cut", [0.399, 0.4, 0.401])
+@pytest.mark.parametrize("seed", range(8))
+def test_edge_on_plane_folded_contact_combined(cut, seed):
+    """A floor edge under a box foot is contact, not a split crossing (round 2)."""
+    rng = np.random.default_rng(seed)
+    base = _grid_box(0, 1, 0, 1, 0, 1, [cut], [], [])
+    resting = _cat(*base, *_grid_box(.1, .4, .1, .4, 1, 1.5, [], [], []))
+    rotation, translation = _rigid_motion(rng)
+    assert count_defects(resting[0] @ rotation.T + translation, resting[1])["self_intersections"] == 0
+    sunk = _cat(*base, *_grid_box(.1, .4, .1, .4, .7, 1.5, [], [], [1]))
+    assert count_defects(sunk[0] @ rotation.T + translation, sunk[1])["self_intersections"] > 0
+    # Preserve both previous reviewer fixes and the shallow tolerance in the same run.
+    shared = np.array([(0, 0, 0), (2, 0, 0), (0, 2, 0), (1, 1, 1), (1, 1, -1)])
+    assert count_defects(shared @ rotation.T + translation, [(0, 1, 2), (0, 3, 4)])["self_intersections"] == 1
+    split = [(0, 1, 2), (3, 6, 7), (6, 4, 5), (6, 5, 7)]
+    for depth, expected in [(0.0015, 0), (0.0025, 1), (0.5, 1)]:
+        moved = _crossing_vertices(depth) @ rotation.T + translation
+        assert count_defects(moved, split)["self_intersections"] == expected
+
+
 @pytest.mark.parametrize("seed", range(30))
 def test_random_grid_boxes(seed):
     rng = np.random.default_rng(seed)
