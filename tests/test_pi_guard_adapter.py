@@ -151,8 +151,8 @@ def test_production_timeout_defaults(monkeypatch):
     monkeypatch.delenv("PI_GUARD_HOOK_TIMEOUT_SECONDS", raising=False)
     import runpy
     import dt_ai.core.run_record
-    assert runpy.run_path(str(ADAPTER))["HOOK_TIMEOUT_SECONDS"] == 10
-    assert dt_ai.core.run_record.CLEANUP_GRACE_SECONDS == 5
+    assert runpy.run_path(str(ADAPTER)).get('HOOK_TIMEOUT_SECONDS') == 10
+    assert getattr(dt_ai.core.run_record, 'CLEANUP_GRACE_SECONDS', None) == 5
 
 
 @pytest.mark.parametrize("tool,claude,tin,expected", [
