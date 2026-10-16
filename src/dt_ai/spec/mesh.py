@@ -846,7 +846,7 @@ def _panel_contour(v, slab_tris, rest_parts, lv, nxt):
            "attachment_pieces_left_out": left_out}
     if slab is None:
         rep["slab"] = f"no ceiling slab at {nxt['elev_m']} m"
-        return poly, rep
+        return poly, rep, env
     rep["slab_area_m2"] = round(slab.area, 3)          # measured surface: shafts and holes are not slab
     rep["slab_inside_facade_share"] = round(env.intersection(ceiling).area / ceiling.area, 3)   # data, the ceiling
     ring = env.exterior
@@ -854,7 +854,7 @@ def _panel_contour(v, slab_tris, rest_parts, lv, nxt):
     off = shapely.distance(pts, ceiling.exterior) * np.where(shapely.covered_by(pts, ceiling), -1.0, 1.0)
     rep["facade_offset_m"] = round(float(np.median(off)), 3)     # panels outside the slab (+), inside (-): data
     rep["facade_offset_range_m"] = [round(float(off.min()), 3), round(float(off.max()), 3)]
-    return poly, rep
+    return poly, rep, env
 
 
 def _facade_ring(pieces, joint):
@@ -1251,12 +1251,13 @@ def _roof_surface_groups(v, tris):
     return list(groups.values())
 
 
-def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None):
+def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, outline=None):
     """The roof level is input, like every level; geometry only confirms it (issues #16, #9).
     Roof: up-facing body surfaces inside the top floor contour with a slope up to ROOF_SLOPE_MAX_DEG
     (drainage slopes are a flat roof) whose surface means lie within ROOF_LEVEL_TOL_M of the top input
     level; the roof height is their area-weighted mean. The roof itself must cover ROOF_OWN of the
     top floor and, with every up-facing surface above it (cap, shaft tops), close ROOF_CLOSED of it.
+    On panels the closing is measured on the unsimplified envelope, not the Douglas-Peucker contour (#84).
     Steeper roof parts, no roof, an open roof or a hole that is not a shaft are questions, never a
     guess. extra: separate roof parts joined to the body for this check (#9, option (a)); above:
     every other separate part, whose near-flat tops above the roof (a parapet cap or shaft top
@@ -1273,10 +1274,11 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None):
     level = top_level["elev_m"]
     where = f"level {top_level['name']} ({level} m)"
     floor_area = top_contour.area
+    ref = top_contour if outline is None else outline   # panels: unsimplified envelope (#84)
 
     def inside(i):
         face = Polygon(p[i, :, :2])
-        return face.area > 0 and face.intersection(top_contour).area >= 0.5 * face.area, face
+        return face.area > 0 and face.intersection(ref).area >= 0.5 * face.area, face
 
     edge = top_contour.exterior
     pts = v[np.unique(tris)]
@@ -1360,18 +1362,18 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None):
         for i in np.flatnonzero((ql > 0) & (qn[:, 2] >= np.cos(np.radians(ROOF_SLOPE_MAX_DEG)) * ql)
                                 & (q[:, :, 2].mean(axis=1) > roof_z)):
             face = Polygon(q[i, :, :2])
-            if face.area > 0 and face.intersection(top_contour).area >= 0.5 * face.area:
+            if face.area > 0 and face.intersection(ref).area >= 0.5 * face.area:
                 lid_faces.append((i, face, float(ql[i]) / 2, float(q[i, :, 2].mean())))
                 lid_vids.append(above[i])
         others += surfaces_of(lid_faces, lid_vids)
     closers = [f for _, f in roof] + [c[2] for c in others
                                       if c[1] > roof_z + 0.01 and lined(c[2], (c[1] + roof_z) / 2)]
-    cover = shapely.unary_union(closers).intersection(top_contour)
-    closed = cover.area / floor_area
+    cover = shapely.unary_union(closers).intersection(ref)
+    closed = cover.area / ref.area
     if closed < ROOF_CLOSED:
         raise SpecError(f"roof at {roof_z:.3f} m and the surfaces above it close only {closed:.0%} of the top "
                         f"floor (< {ROOF_CLOSED:.0%}): roof missing or open; ask the user")
-    holes = [h for h in shapely.get_parts(top_contour.difference(cover)) if h.area >= HOLE_MIN_M2]
+    holes = [h for h in shapely.get_parts(ref.difference(cover)) if h.area >= HOLE_MIN_M2]
     # an opening of the slab with both sizes under the narrowest opening (DOOR_W_M[0]) is no opening of the
     # body: left out and listed (pattern roof-inset-plane, user 2026-10-13; OBJ03's 0.04 m2 at 96.55 m)
     small = [h for h in holes if _sizes(h)[1] < DOOR_W_M[0]]
@@ -1706,18 +1708,20 @@ def _extract(dump, obj_cfg, profile, thresholds, found):
                                 for h in dump.get("helpers", []) if h["name"].startswith(LEVEL_PREFIX)]}
     if found is not None:
         found["report"] = report
-    floors, polys, pieces, mouths, doors = [], [], [], [], []
+    floors, polys, pieces, mouths, doors, outlines = [], [], [], [], [], []
     at_m = obj_cfg.get("contour_at_m", {})
     prev, stopped_below = None, False                    # the storey right below: its contour, or it stopped
     for lv, nxt in zip(levels, levels[1:]):
         try:
             if panelised:
                 rest = tris[np.flatnonzero(~mine)]
-                poly, rep = _panel_contour(v, body, [tris[pt] for pt in parts[1:]] + [plane_tris[:, :3]], lv, nxt)
+                poly, rep, outline = _panel_contour(v, body, [tris[pt] for pt in parts[1:]] + [plane_tris[:, :3]],
+                                                    lv, nxt)
                 dev, ms, dr, parapet, raw = [], [], [], (), poly
                 if prev is not None and (t := _panel_terrace(v, body, rest, lv, nxt, poly, prev)) is not None:
                     rep["terrace"] = t
             else:
+                outline = None
                 poly, rep, dev, ms, dr, parapet, raw = _level_contour(
                     v, body, lv["elev_m"], nxt["elev_m"], lv["name"], at_m.get(lv["name"]), below=prev,
                     extra=np.vstack([tris[pt] for pt in parts[1:]]) if len(parts) > 1 else None)
@@ -1752,6 +1756,7 @@ def _extract(dump, obj_cfg, profile, thresholds, found):
                                           "heights_m": [round(lv["elev_m"], 3), round(float(c[:, 2].max()), 3)],
                                           "at": [round(float(c[:, 0].mean()), 2), round(float(c[:, 1].mean()), 2)]}
         polys.append(poly)
+        outlines.append(outline)                     # unsimplified panel envelope; None otherwise (#84)
         pieces.append(dev)
     if found is not None and found["stops"]:
         raise SpecStops(found["stops"], report)
@@ -1827,7 +1832,8 @@ def _extract(dump, obj_cfg, profile, thresholds, found):
     roof_parts = _roof_parts(v, others, levels[-1], polys[-1], body)
     roof_z, top_z, closed, roof_stats = _roof(v, body, levels[-2], levels[-1], polys[-1],
                                               np.vstack(roof_parts) if roof_parts else None,
-                                              np.vstack(others) if others else None)
+                                              np.vstack(others) if others else None,
+                                              outlines[-1] if panelised else None)
     report["roof_structures"] = structures
     report["roof"] = {"plane_m": round(roof_z, 3), "parapet_top_m": round(top_z, 3), "closed_share": closed,
                       "separate_roof_parts": len(roof_parts), **roof_stats,
