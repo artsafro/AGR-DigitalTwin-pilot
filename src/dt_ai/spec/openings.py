@@ -731,13 +731,15 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
             if not matches:
                 holes.append(g)
         for h in holes:
-            # planes of the floors this opening crosses, measured on this floor's facade (#34)
-            last_h = max(li, max([k for k in range(len(floors))
-                                  if levels[k]["elev_m"] < h["z1"] - LEVEL_JOINT_M] or [0]))
+            # a plane of any floor, measured on this floor's facade (#34, review of PR #241):
+            # the opening's own floor keeps the overlap tolerance; another floor only when the z spans share
+            # more than a frame joint (LEVEL_JOINT_M), so a plane just past a level line stays on its floor
             over = []
             for pl in plane_items:
-                if pl["level"] not in range(li, last_h + 1):
-                    continue
+                if pl["level"] != li:
+                    z0, z1 = float(pl["pts"][:, 2].min()), float(pl["pts"][:, 2].max())
+                    if min(z1, h["z1"]) - max(z0, h["z0"]) <= LEVEL_JOINT_M:
+                        continue
                 measured = _on_floor(pl["pts"], pl["normal"], li, floors, polys, "plane")
                 if measured is not None and _overlap(h, measured):
                     over.append({**measured, "material_id": pl["material_id"]})
