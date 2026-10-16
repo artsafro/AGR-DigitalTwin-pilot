@@ -75,7 +75,11 @@ by grid hashing (cell size ``tol``), neighbour-cell comparisons and union-find.
   triangle on e has the positive apex). A tested triangle with sigma = -1 does
   not add its own polygon; the positive polygon is read from the edge map, so
   one crossing surface contributes one pair even when only the negative side
-  was a candidate.
+  was a candidate. The midpoint of the clipped segment is also classified
+  against t's local surface by the same boundary rules as Pierce, using the
+  two opposing apexes as transversal endpoints. This rejects contact along a
+  folded edge (e.g. a floor edge under a box foot) without dropping crossings
+  through an internal triangulation edge or changing the distance tolerance.
 - isolated_vertices: vertices used by no edge and no polygon.
 - isolated_edges: edges from the given edge list that are not a side of any
   polygon (loose or wire edges). When no edge list is given, this is 0.
@@ -360,7 +364,7 @@ def _self_intersections(vertices, polys, clusters, candidate_pairs, tol: float) 
     pierced = _pierce_pairs(
         vertices, polys, clusters, fans, usable, tol, edge_map, fan_ids, fan_verts, cluster_fans
     )
-    on_plane = _edge_on_plane_pairs(vertices, fans, fan_ids, usable, edge_map, clusters, tol)
+    on_plane = _edge_on_plane_pairs(vertices, fans, fan_ids, usable, edge_map, clusters, tol, fan_verts, cluster_fans)
     return len(pierced | on_plane)
 
 
@@ -508,7 +512,7 @@ def _pierce_pairs(
     return hits
 
 
-def _edge_on_plane_pairs(vertices, fans, fan_ids, usable, edge_map, clusters, tol: float) -> set[tuple[int, int]]:
+def _edge_on_plane_pairs(vertices, fans, fan_ids, usable, edge_map, clusters, tol: float, fan_verts, cluster_fans) -> set[tuple[int, int]]:
     t_rows: list[np.ndarray] = []
     s_rows: list[np.ndarray] = []
     s_fan_rows: list[np.ndarray] = []
@@ -535,7 +539,7 @@ def _edge_on_plane_pairs(vertices, fans, fan_ids, usable, edge_map, clusters, to
         _accept_on_plane_rows(
             hits, np.flatnonzero(mask), vertices, clusters, edge_map, plane_tol, tol,
             t_idx[start:stop], s_idx[start:stop], s_fan[start:stop],
-            plane_poly[start:stop], other_poly[start:stop], unit,
+            plane_poly[start:stop], other_poly[start:stop], unit, fan_ids, fan_verts, cluster_fans,
         )
     return hits
 
@@ -574,7 +578,7 @@ def _exactly_two_on_plane(vertices, t_idx, s_idx, plane_tol: float):
     return mask, unit
 
 
-def _accept_on_plane_rows(hits, rows, vertices, clusters, edge_map, plane_tol, tol, t_idx, s_idx, s_fan, plane_poly, other_poly, unit):
+def _accept_on_plane_rows(hits, rows, vertices, clusters, edge_map, plane_tol, tol, t_idx, s_idx, s_fan, plane_poly, other_poly, unit, fan_ids, fan_verts, cluster_fans):
     for row in rows.tolist():
         tri_s = s_idx[row]
         signed = np.array(
@@ -591,7 +595,7 @@ def _accept_on_plane_rows(hits, rows, vertices, clusters, edge_map, plane_tol, t
         tri_t = [int(t_idx[row, k]) for k in range(3)]
         if key in _triangle_cluster_edges(tri_t, clusters):
             continue
-        length = _segment_inside_triangle_length(vertices[va], vertices[vb], vertices[tri_t])
+        length, point = _segment_inside_triangle_detail(vertices[va], vertices[vb], vertices[tri_t])
         if not length > tol:
             continue
         plane_p = int(plane_poly[row])
@@ -600,13 +604,25 @@ def _accept_on_plane_rows(hits, rows, vertices, clusters, edge_map, plane_tol, t
         positive, negative = _apex_sides(
             edge_map.get(key, ()), plane_p, fan_s, unit[row], origin, vertices, plane_tol
         )
-        if signed[apex_local] > plane_tol:
-            counted = [int(other_poly[row])] if negative else []
-        else:
-            counted = positive
-        for other in counted:
-            if other == plane_p:
+        # Opposite apex signs establish a crossing of the infinite plane only.
+        # Near a folded target boundary, classify the actual local surface too:
+        # a floor diagonal under a box foot must not count as entering its side.
+        neighbours = negative if signed[apex_local] > plane_tol else positive
+        side = np.array([
+            _distance_to_segment(point[None, :], vertices[tri_t[i]][None, :],
+                                 vertices[tri_t[j]][None, :])[0]
+            for i, j in ((0, 1), (1, 2), (2, 0))
+        ])
+        target_fan = next(int(fid) for fid in fan_ids[plane_p]
+                          if tuple(fan_verts[int(fid)]) == tuple(tri_t))
+        for neighbour_poly, neighbour_apex in neighbours:
+            if np.any(side <= plane_tol) and not _boundary_pierce_counts(
+                point, vertices[int(tri_s[apex_local])], vertices[neighbour_apex],
+                tri_t, side, vertices, plane_tol, target_fan, edge_map,
+                fan_verts, clusters, cluster_fans,
+            ):
                 continue
+            other = int(other_poly[row]) if signed[apex_local] > plane_tol else neighbour_poly
             hits.add((plane_p, other) if plane_p < other else (other, plane_p))
 
 
@@ -622,26 +638,26 @@ def _triangle_cluster_edges(tri, clusters) -> set[tuple[int, int]]:
 
 def _apex_sides(entries, plane_poly: int, fan_s: int, unit, origin, vertices, plane_tol: float):
     """Polygons of other fan triangles on this edge whose apex is beyond tol, by sign."""
-    positive: list[int] = []
-    negative = False
+    positive: list[tuple[int, int]] = []
+    negative: list[tuple[int, int]] = []
     for poly_i, fan_i, apex in entries:
         if fan_i == fan_s or poly_i == plane_poly:
             continue
         dist = float(np.dot(unit, vertices[apex] - origin))
         if dist > plane_tol:
-            positive.append(int(poly_i))
+            positive.append((int(poly_i), int(apex)))
         elif dist < -plane_tol:
-            negative = True
+            negative.append((int(poly_i), int(apex)))
     return positive, negative
 
 
-def _segment_inside_triangle_length(a, b, tri) -> float:
-    """Length of the plane-projected segment that lies in the closed triangle."""
+def _segment_inside_triangle_detail(a, b, tri):
+    """Length and midpoint of the projected segment clipped to the closed triangle."""
     v0, v1, v2 = tri[0], tri[1], tri[2]
     normal = np.cross(v1 - v0, v2 - v0)
     nn2 = float(np.dot(normal, normal))
     if nn2 <= 1e-30:
-        return 0.0
+        return 0.0, a
     unit = normal / np.sqrt(nn2)
     a_p = a - unit * float(np.dot(unit, a - v0))
     b_p = b - unit * float(np.dot(unit, b - v0))
@@ -661,7 +677,7 @@ def _segment_inside_triangle_length(a, b, tri) -> float:
         delta = c1 - c0
         if abs(delta) <= 1e-18:
             if c0 < -_PLANE_EPS:
-                return 0.0
+                return 0.0, a_p
             continue
         bound = (-_PLANE_EPS - c0) / delta
         if delta > 0.0:
@@ -669,8 +685,8 @@ def _segment_inside_triangle_length(a, b, tri) -> float:
         else:
             t1 = min(t1, bound)
     if t1 <= t0:
-        return 0.0
-    return float((t1 - t0) * np.linalg.norm(b_p - a_p))
+        return 0.0, a_p
+    return float((t1 - t0) * np.linalg.norm(b_p - a_p)), a_p + (t0 + t1) * 0.5 * (b_p - a_p)
 
 
 def _edges_pierce(
