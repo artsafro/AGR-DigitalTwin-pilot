@@ -1,0 +1,779 @@
+{
+ "schema": "window-sash-source-max/1",
+ "source": {
+  "file": "Win_Typical.max",
+  "method": "Frame extent is the X/Z bbox of every material ID 1 face (sills 2/3 are not in it); local x/z start at its minimum and sizes are rounded to 1 mm. Front faces are the ID 1 triangles whose unit normal has y < -0.99, grouped by depth Y rounded to 1 mm. A level is dropped when its triangles lie outside that extent or behind the frame back (Y greater than the maximum Y of material ID 4). Each kept level is rasterised on a 2 mm grid over the extent (a cell is in when its centre lies in a triangle). The outer frame is the level that covers the most boundary cells. On every other level a 4-connected component is a sash ring when the complement inside its bbox has a 4-connected region of at least 0.01 m2 that does not touch the bbox border (a closed frame; that count is the hole count) or, failing that, a region of that area that touches only one side of the border (a leaf open at the meeting stile, which is modelled on the other leaf). Other components are ignored. Overlap is true when rings on two different levels overlap by more than one grid cell in X and in Z, or meet within one grid cell on one axis while overlapping by more than one cell on the other (the meeting stile of two sliding leaves). The scene has no handle, hinge or opening-direction geometry, so handing is not read."
+ },
+ "objects": [
+  {
+   "object": "New_Балкон_Дверь_V3_H3_000",
+   "width_m": 2.374,
+   "height_m": 2.714,
+   "outer_depth_m": -0.377,
+   "levels": [
+    {
+     "depth_m": -0.377,
+     "area_m2": 2.0098
+    },
+    {
+     "depth_m": -0.367,
+     "area_m2": 0.3241
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.094,
+      0.954,
+      0.65,
+      2.16
+     ],
+     "depth_m": -0.367,
+     "holes": 1
+    },
+    {
+     "rect_m": [
+      1.524,
+      0.154,
+      2.28,
+      2.16
+     ],
+     "depth_m": -0.367,
+     "holes": 2
+    }
+   ],
+   "overlap": false,
+   "reading": "rings"
+  },
+  {
+   "object": "Object007",
+   "width_m": 3.287,
+   "height_m": 2.614,
+   "outer_depth_m": -0.419,
+   "levels": [
+    {
+     "depth_m": -0.419,
+     "area_m2": 1.2688
+    },
+    {
+     "depth_m": -0.397,
+     "area_m2": 0.464
+    },
+    {
+     "depth_m": -0.363,
+     "area_m2": 0.3269
+    },
+    {
+     "depth_m": 0.431,
+     "area_m2": 0.0892
+    },
+    {
+     "depth_m": 0.481,
+     "area_m2": 0.1489
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.056,
+      1.182,
+      0.79,
+      2.558
+     ],
+     "depth_m": -0.363,
+     "holes": 1
+    },
+    {
+     "rect_m": [
+      0.79,
+      1.182,
+      1.572,
+      2.558
+     ],
+     "depth_m": -0.397,
+     "holes": 1
+    },
+    {
+     "rect_m": [
+      1.628,
+      1.182,
+      2.362,
+      2.558
+     ],
+     "depth_m": -0.363,
+     "holes": 1
+    },
+    {
+     "rect_m": [
+      2.362,
+      1.182,
+      3.144,
+      2.558
+     ],
+     "depth_m": -0.397,
+     "holes": 1
+    }
+   ],
+   "overlap": true,
+   "reading": "rings_overlap"
+  },
+  {
+   "object": "New_Окно_Отлив_V2_H1_000",
+   "width_m": 0.974,
+   "height_m": 1.944,
+   "outer_depth_m": -0.377,
+   "levels": [
+    {
+     "depth_m": -0.377,
+     "area_m2": 0.5159
+    }
+   ],
+   "rings": [],
+   "overlap": false,
+   "reading": "no_ring"
+  },
+  {
+   "object": "New_Окно_Отлив_V2_H2_000",
+   "width_m": 1.684,
+   "height_m": 1.944,
+   "outer_depth_m": -0.377,
+   "levels": [
+    {
+     "depth_m": -0.377,
+     "area_m2": 1.1497
+    },
+    {
+     "depth_m": -0.367,
+     "area_m2": 0.2228
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.094,
+      0.574,
+      0.754,
+      1.85
+     ],
+     "depth_m": -0.367,
+     "holes": 1
+    },
+    {
+     "rect_m": [
+      0.928,
+      0.574,
+      1.59,
+      1.85
+     ],
+     "depth_m": -0.367,
+     "holes": 1
+    }
+   ],
+   "overlap": false,
+   "reading": "rings"
+  },
+  {
+   "object": "New_Окно_Отлив_V2_H3_000",
+   "width_m": 2.474,
+   "height_m": 1.944,
+   "outer_depth_m": -0.377,
+   "levels": [
+    {
+     "depth_m": -0.377,
+     "area_m2": 1.5828
+    },
+    {
+     "depth_m": -0.367,
+     "area_m2": 0.2228
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.094,
+      0.574,
+      0.754,
+      1.85
+     ],
+     "depth_m": -0.367,
+     "holes": 1
+    },
+    {
+     "rect_m": [
+      1.718,
+      0.574,
+      2.38,
+      1.85
+     ],
+     "depth_m": -0.367,
+     "holes": 1
+    }
+   ],
+   "overlap": false,
+   "reading": "rings"
+  },
+  {
+   "object": "New_Балкон_Окно_V2_H2_000",
+   "width_m": 2.014,
+   "height_m": 2.614,
+   "outer_depth_m": -0.419,
+   "levels": [
+    {
+     "depth_m": -0.419,
+     "area_m2": 0.6634
+    },
+    {
+     "depth_m": -0.397,
+     "area_m2": 0.2543
+    },
+    {
+     "depth_m": -0.363,
+     "area_m2": 0.1882
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.058,
+      1.182,
+      1.032,
+      2.558
+     ],
+     "depth_m": -0.397,
+     "holes": 1
+    },
+    {
+     "rect_m": [
+      1.032,
+      1.182,
+      1.958,
+      2.558
+     ],
+     "depth_m": -0.363,
+     "holes": 1
+    }
+   ],
+   "overlap": true,
+   "reading": "rings_overlap"
+  },
+  {
+   "object": "New_Балкон_Окно_V2_H3_000",
+   "width_m": 2.514,
+   "height_m": 2.614,
+   "outer_depth_m": -0.419,
+   "levels": [
+    {
+     "depth_m": -0.419,
+     "area_m2": 0.8041
+    },
+    {
+     "depth_m": -0.397,
+     "area_m2": 0.235
+    },
+    {
+     "depth_m": -0.363,
+     "area_m2": 0.4187
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.058,
+      1.182,
+      0.874,
+      2.558
+     ],
+     "depth_m": -0.397,
+     "holes": 1
+    },
+    {
+     "rect_m": [
+      0.874,
+      1.182,
+      2.456,
+      2.558
+     ],
+     "depth_m": -0.363,
+     "holes": 1
+    }
+   ],
+   "overlap": true,
+   "reading": "rings_overlap"
+  },
+  {
+   "object": "New_Балкон_Дверь_V3_H2_000",
+   "width_m": 1.474,
+   "height_m": 2.714,
+   "outer_depth_m": -0.377,
+   "levels": [
+    {
+     "depth_m": -0.377,
+     "area_m2": 1.3734
+    },
+    {
+     "depth_m": -0.367,
+     "area_m2": 0.2912
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.094,
+      0.954,
+      0.65,
+      2.16
+     ],
+     "depth_m": -0.367,
+     "holes": 1
+    },
+    {
+     "rect_m": [
+      0.824,
+      0.154,
+      1.38,
+      2.16
+     ],
+     "depth_m": -0.367,
+     "holes": 2
+    }
+   ],
+   "overlap": false,
+   "reading": "rings"
+  },
+  {
+   "object": "New_Дверь_V2_H2_000",
+   "width_m": 1.474,
+   "height_m": 2.247,
+   "outer_depth_m": -0.377,
+   "levels": [
+    {
+     "depth_m": -0.377,
+     "area_m2": 1.1089
+    },
+    {
+     "depth_m": -0.367,
+     "area_m2": 0.2912
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.094,
+      0.954,
+      0.65,
+      2.16
+     ],
+     "depth_m": -0.367,
+     "holes": 1
+    },
+    {
+     "rect_m": [
+      0.824,
+      0.154,
+      1.38,
+      2.16
+     ],
+     "depth_m": -0.367,
+     "holes": 2
+    }
+   ],
+   "overlap": false,
+   "reading": "rings"
+  },
+  {
+   "object": "New_Окно_Большое_V2_H3_000",
+   "width_m": 2.514,
+   "height_m": 2.614,
+   "outer_depth_m": -0.419,
+   "levels": [
+    {
+     "depth_m": -0.419,
+     "area_m2": 0.9366
+    }
+   ],
+   "rings": [],
+   "overlap": false,
+   "reading": "no_ring"
+  },
+  {
+   "object": "New_Окно_Большое_V2_H2_000",
+   "width_m": 1.695,
+   "height_m": 2.614,
+   "outer_depth_m": -0.419,
+   "levels": [
+    {
+     "depth_m": -0.419,
+     "area_m2": 0.6796
+    }
+   ],
+   "rings": [],
+   "overlap": false,
+   "reading": "no_ring"
+  },
+  {
+   "object": "New_Окно_Большое_V2_H1_000",
+   "width_m": 0.867,
+   "height_m": 2.614,
+   "outer_depth_m": -0.419,
+   "levels": [
+    {
+     "depth_m": -0.419,
+     "area_m2": 0.4217
+    }
+   ],
+   "rings": [],
+   "overlap": false,
+   "reading": "no_ring"
+  },
+  {
+   "object": "New_Дверь_Вход_V2_H2_000",
+   "width_m": 1.474,
+   "height_m": 3.06,
+   "outer_depth_m": -0.377,
+   "levels": [
+    {
+     "depth_m": -0.392,
+     "area_m2": 0.6072
+    },
+    {
+     "depth_m": -0.377,
+     "area_m2": 0.8644
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.068,
+      0.098,
+      0.548,
+      2.186
+     ],
+     "depth_m": -0.392,
+     "holes": 1
+    },
+    {
+     "rect_m": [
+      0.582,
+      0.098,
+      1.406,
+      2.186
+     ],
+     "depth_m": -0.392,
+     "holes": 1
+    }
+   ],
+   "overlap": false,
+   "reading": "rings"
+  },
+  {
+   "object": "New_Дверь_Вход_V2_H1_000",
+   "width_m": 0.949,
+   "height_m": 3.06,
+   "outer_depth_m": -0.377,
+   "levels": [
+    {
+     "depth_m": -0.392,
+     "area_m2": 0.3241
+    },
+    {
+     "depth_m": -0.377,
+     "area_m2": 0.6396
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.068,
+      0.098,
+      0.88,
+      2.186
+     ],
+     "depth_m": -0.392,
+     "holes": 1
+    }
+   ],
+   "overlap": false,
+   "reading": "rings"
+  },
+  {
+   "object": "New_Дверь_Вход_V2_H3_000",
+   "width_m": 2.303,
+   "height_m": 3.06,
+   "outer_depth_m": -0.377,
+   "levels": [
+    {
+     "depth_m": -0.392,
+     "area_m2": 0.6072
+    },
+    {
+     "depth_m": -0.377,
+     "area_m2": 1.1793
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.068,
+      0.098,
+      0.548,
+      2.186
+     ],
+     "depth_m": -0.392,
+     "holes": 1
+    },
+    {
+     "rect_m": [
+      0.582,
+      0.098,
+      1.406,
+      2.186
+     ],
+     "depth_m": -0.392,
+     "holes": 1
+    }
+   ],
+   "overlap": false,
+   "reading": "rings"
+  },
+  {
+   "object": "New_Дверь_Вход_V1_H1_000",
+   "width_m": 0.949,
+   "height_m": 2.247,
+   "outer_depth_m": -0.377,
+   "levels": [
+    {
+     "depth_m": -0.392,
+     "area_m2": 0.3241
+    },
+    {
+     "depth_m": -0.377,
+     "area_m2": 0.4373
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.068,
+      0.098,
+      0.88,
+      2.186
+     ],
+     "depth_m": -0.392,
+     "holes": 1
+    }
+   ],
+   "overlap": false,
+   "reading": "rings"
+  },
+  {
+   "object": "New_Окно_Большое_V1_H1_000",
+   "width_m": 0.867,
+   "height_m": 1.824,
+   "outer_depth_m": -0.419,
+   "levels": [
+    {
+     "depth_m": -0.419,
+     "area_m2": 0.2913
+    }
+   ],
+   "rings": [],
+   "overlap": false,
+   "reading": "no_ring"
+  },
+  {
+   "object": "New_Окно_Большое_V1_H2_000",
+   "width_m": 1.695,
+   "height_m": 1.824,
+   "outer_depth_m": -0.419,
+   "levels": [
+    {
+     "depth_m": -0.419,
+     "area_m2": 0.4613
+    }
+   ],
+   "rings": [],
+   "overlap": false,
+   "reading": "no_ring"
+  },
+  {
+   "object": "New_Окно_Большое_V1_H3_000",
+   "width_m": 2.514,
+   "height_m": 1.824,
+   "outer_depth_m": -0.419,
+   "levels": [
+    {
+     "depth_m": -0.419,
+     "area_m2": 0.6376
+    }
+   ],
+   "rings": [],
+   "overlap": false,
+   "reading": "no_ring"
+  },
+  {
+   "object": "New_Окно_Отлив_V2_H4_000",
+   "width_m": 3.354,
+   "height_m": 1.944,
+   "outer_depth_m": -0.377,
+   "levels": [
+    {
+     "depth_m": -0.377,
+     "area_m2": 2.0488
+    },
+    {
+     "depth_m": -0.367,
+     "area_m2": 0.2154
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.094,
+      0.574,
+      0.754,
+      1.85
+     ],
+     "depth_m": -0.367,
+     "holes": 1
+    },
+    {
+     "rect_m": [
+      2.6,
+      0.574,
+      3.26,
+      1.85
+     ],
+     "depth_m": -0.367,
+     "holes": 1
+    }
+   ],
+   "overlap": false,
+   "reading": "rings"
+  },
+  {
+   "object": "New_Окно_Большое_V2_H4_000",
+   "width_m": 3.33,
+   "height_m": 2.614,
+   "outer_depth_m": -0.419,
+   "levels": [
+    {
+     "depth_m": -0.419,
+     "area_m2": 1.188
+    }
+   ],
+   "rings": [],
+   "overlap": false,
+   "reading": "no_ring"
+  },
+  {
+   "object": "New_Д_Вход_Стекло_V2_H1_000",
+   "width_m": 0.949,
+   "height_m": 3.06,
+   "outer_depth_m": -0.377,
+   "levels": [
+    {
+     "depth_m": -0.392,
+     "area_m2": 0.3241
+    },
+    {
+     "depth_m": -0.377,
+     "area_m2": 0.6396
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.068,
+      0.098,
+      0.88,
+      2.186
+     ],
+     "depth_m": -0.392,
+     "holes": 1
+    }
+   ],
+   "overlap": false,
+   "reading": "rings"
+  },
+  {
+   "object": "New_Д_Вход_Стекло_V2_H2_000",
+   "width_m": 1.474,
+   "height_m": 3.06,
+   "outer_depth_m": -0.377,
+   "levels": [
+    {
+     "depth_m": -0.392,
+     "area_m2": 0.603
+    },
+    {
+     "depth_m": -0.377,
+     "area_m2": 0.8644
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.068,
+      0.098,
+      0.548,
+      2.186
+     ],
+     "depth_m": -0.392,
+     "holes": 1
+    },
+    {
+     "rect_m": [
+      0.582,
+      0.098,
+      1.404,
+      2.186
+     ],
+     "depth_m": -0.392,
+     "holes": 1
+    }
+   ],
+   "overlap": false,
+   "reading": "rings"
+  },
+  {
+   "object": "New_Д_Вход_Стекло_V2_H3_000",
+   "width_m": 2.303,
+   "height_m": 3.06,
+   "outer_depth_m": -0.377,
+   "levels": [
+    {
+     "depth_m": -0.392,
+     "area_m2": 0.603
+    },
+    {
+     "depth_m": -0.377,
+     "area_m2": 1.1793
+    }
+   ],
+   "rings": [
+    {
+     "rect_m": [
+      0.068,
+      0.098,
+      0.548,
+      2.186
+     ],
+     "depth_m": -0.392,
+     "holes": 1
+    },
+    {
+     "rect_m": [
+      0.582,
+      0.098,
+      1.404,
+      2.186
+     ],
+     "depth_m": -0.392,
+     "holes": 1
+    }
+   ],
+   "overlap": false,
+   "reading": "rings"
+  }
+ ]
+}
