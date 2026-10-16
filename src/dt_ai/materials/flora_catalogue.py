@@ -7,6 +7,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import math
 import re
 import unicodedata
 from pathlib import Path
@@ -29,7 +30,8 @@ REPO = Path(__file__).resolve().parents[3]
 _TOP_KEYS = ("schema", "library_file", "id_ranges", "retired_ids", "species", "gaps", "counts")
 _SPECIES_KEYS = (
     "material_id", "latin", "russian", "type", "geometry_basis", "note", "objects",
-    "npm", "vpm", "vpm_status", "merged", "height_m", "crown_diameter_m", "triangles",
+    "npm", "vpm", "vpm_status", "vpm_identity", "vpm_evidence", "merged",
+    "height_m", "crown_diameter_m", "triangles",
     "source_scenes", "maps",
 )
 _SOURCE_KEYS = (
@@ -45,6 +47,19 @@ _COUNT_KEYS = (
 )
 _NPM_PROFILE = {"LP": 0, "LP -> HP": 1, "unlabelled": 2}
 _VPM_PROFILE = {"HP": 0, "LP -> HP": 1}
+_VPM_IDENTITY = ("verified_distinct", "unverified")
+_GEOMETRY_RELATIONS = ("same", "scaled_copy", "distinct")
+_KEPT_VPM_RELATIONS = ("distinct", "unknown")
+_EVIDENCE_KEYS = ("relation", "translation_dev_m", "scaled_dev_rel")
+_IDENTITY_SCHEMA = "flora-geometry-identity-v2"
+_IDENTITY_TOLERANCE = 1e-4
+_IDENTITY_METHOD = (
+    "world vertices from snapshotAsMesh on the source copies, "
+    "translation-normalized symmetric Hausdorff <= 1e-4 m = same, "
+    "scale-normalized <= 1e-4 relative = scaled_copy, else distinct; "
+    "vertex counts must match for same/scaled_copy; triangle counts are never used"
+)
+_PAIR_KEYS = ("a", "b", "relation", "translation_dev_m", "scaled_dev_rel")
 
 
 def object_name(latin: str, profile: str) -> str:
@@ -55,14 +70,179 @@ def slug(latin: str) -> str:
     return _stem(latin).lower().replace("_", "-")
 
 
-def select_sources(entries: list[dict]) -> dict:
+class PairIdentity(dict):
+    """Pair relation map (frozenset of two entry ids -> relation) plus deviation details."""
+
+    def __init__(self, relations: dict[frozenset, str], details: dict[frozenset, dict]):
+        super().__init__(relations)
+        self.details = details
+
+
+def compare_clouds(a_points, b_points, tolerance: float = _IDENTITY_TOLERANCE) -> dict:
+    """Translation- then scale-normalized symmetric Hausdorff. Triangle counts are not an input."""
+    if tolerance <= 0:
+        raise ValueError("tolerance must be positive")
+    left = _as_points(a_points)
+    right = _as_points(b_points)
+    vertices = [len(left), len(right)]
+    if len(left) != len(right):
+        return {
+            "relation": "distinct",
+            "translation_dev_m": None,
+            "scaled_dev_rel": None,
+            "vertices": vertices,
+        }
+    if not left:
+        return {
+            "relation": "same",
+            "translation_dev_m": 0.0,
+            "scaled_dev_rel": None,
+            "vertices": vertices,
+        }
+    normal_a = _translation_normalize(left)
+    normal_b = _translation_normalize(right)
+    translation = _symmetric_hausdorff(normal_a, normal_b, tolerance)
+    if translation is not None and translation <= tolerance:
+        return {
+            "relation": "same",
+            "translation_dev_m": translation,
+            "scaled_dev_rel": None,
+            "vertices": vertices,
+        }
+    scaled = _scale_hausdorff(normal_a, normal_b, tolerance)
+    if scaled is not None and scaled <= tolerance:
+        relation = "scaled_copy"
+    else:
+        relation = "distinct"
+    return {
+        "relation": relation,
+        "translation_dev_m": translation,
+        "scaled_dev_rel": scaled,
+        "vertices": vertices,
+    }
+
+
+def build_identity(points: dict[str, list], curation: dict) -> dict:
+    """Pairwise geometry evidence for every curated species that has its own mesh."""
+    if not isinstance(points, dict) or not isinstance(curation, dict):
+        raise ValueError("points and curation must be objects")
+    used: set[str] = set()
+    pair_keys: set[tuple[str, str]] = set()
+    for item in curation.get("species", []):
+        if not isinstance(item, dict):
+            raise ValueError("curation species row is not an object")
+        if item.get("geometry_basis") == "shared_multi_species_stand_in":
+            continue
+        sources = item.get("sources", [])
+        if not isinstance(sources, list):
+            raise ValueError(f"{item.get('latin')!r} sources is not a list")
+        ids: list[str] = []
+        for source in sources:
+            if not isinstance(source, str):
+                raise ValueError(f"source id {source!r} is not a string")
+            if source not in points:
+                raise ValueError(f"missing points for {source}")
+            ids.append(source)
+            used.add(source)
+        for index, left in enumerate(ids):
+            for right in ids[index + 1:]:
+                if left == right:
+                    continue
+                pair_keys.add((left, right) if left < right else (right, left))
+    entries = {entry_id: {"vertices": len(points[entry_id])} for entry_id in sorted(used)}
+    pairs = []
+    for left, right in sorted(pair_keys):
+        compared = compare_clouds(points[left], points[right], _IDENTITY_TOLERANCE)
+        pairs.append({
+            "a": left,
+            "b": right,
+            "relation": compared["relation"],
+            "translation_dev_m": _round_dev(compared["translation_dev_m"]),
+            "scaled_dev_rel": _round_dev(compared["scaled_dev_rel"]),
+        })
+    return {
+        "schema": _IDENTITY_SCHEMA,
+        "method": _IDENTITY_METHOD,
+        "tolerance": _IDENTITY_TOLERANCE,
+        "entries": entries,
+        "pairs": pairs,
+    }
+
+
+def load_identity(value: dict) -> PairIdentity:
+    """Return frozenset({id_a, id_b}) -> relation from a flora-geometry-identity-v2 document."""
+    if not isinstance(value, dict) or value.get("schema") != _IDENTITY_SCHEMA:
+        raise ValueError(f"schema is not {_IDENTITY_SCHEMA}")
+    if value.get("method") != _IDENTITY_METHOD:
+        raise ValueError("method is not the flora geometry identity method")
+    if value.get("tolerance") != _IDENTITY_TOLERANCE:
+        raise ValueError("tolerance is not 1e-4")
+    entries = value.get("entries")
+    if not isinstance(entries, dict):
+        raise ValueError("entries is not an object")
+    vertices: dict[str, int] = {}
+    for entry_id, row in entries.items():
+        if not isinstance(entry_id, str) or not entry_id or not isinstance(row, dict):
+            raise ValueError(f"invalid identity entry {entry_id!r}")
+        if set(row) != {"vertices"} or not _is_int(row.get("vertices")) or row["vertices"] < 0:
+            raise ValueError(f"invalid vertex count for {entry_id}")
+        vertices[entry_id] = row["vertices"]
+    pairs = value.get("pairs")
+    if not isinstance(pairs, list):
+        raise ValueError("pairs is not a list")
+    relations: dict[frozenset, str] = {}
+    details: dict[frozenset, dict] = {}
+    for index, pair in enumerate(pairs):
+        if not isinstance(pair, dict) or set(pair) != set(_PAIR_KEYS):
+            raise ValueError(f"pairs[{index}] does not match the identity pair schema")
+        left, right = pair["a"], pair["b"]
+        if not isinstance(left, str) or not isinstance(right, str) or not left or not right:
+            raise ValueError(f"pairs[{index}] ids are not strings")
+        if not left < right:
+            raise ValueError(f"pairs[{index}] is not ordered {left!r} < {right!r}")
+        if left not in vertices or right not in vertices:
+            raise ValueError(f"pairs[{index}] ids are not in entries")
+        relation = pair["relation"]
+        if relation not in _GEOMETRY_RELATIONS:
+            raise ValueError(f"pairs[{index}] relation {relation!r} is not a geometry relation")
+        if relation in ("same", "scaled_copy") and vertices[left] != vertices[right]:
+            raise ValueError(f"pairs[{index}] {relation} requires equal vertex counts")
+        for key in ("translation_dev_m", "scaled_dev_rel"):
+            if pair[key] is not None and not _is_number(pair[key]):
+                raise ValueError(f"pairs[{index}].{key} is not a number")
+        key = frozenset((left, right))
+        if key in relations:
+            raise ValueError(f"duplicate pair {left} {right}")
+        relations[key] = relation
+        details[key] = {
+            "translation_dev_m": pair["translation_dev_m"],
+            "scaled_dev_rel": pair["scaled_dev_rel"],
+        }
+    return PairIdentity(relations, details)
+
+
+def geometry_relation(a: dict, b: dict, identity: dict | None) -> str:
+    """same, scaled_copy, distinct, or unknown. Never reads triangle counts."""
+    left = _entry_identity(a)
+    right = _entry_identity(b)
+    if left is not None and left == right:
+        return "same"
+    if not identity or left is None or right is None:
+        return "unknown"
+    relation = identity.get(frozenset((left, right)))
+    if relation in _GEOMETRY_RELATIONS:
+        return relation
+    return "unknown"
+
+
+def select_sources(entries: list[dict], identity: dict | None = None) -> dict:
     """Pick one NPM mesh and one VPM mesh for a single species."""
     npm_candidates = [entry for entry in entries if _npm_basis(entry) is not None]
     vpm_candidates = [entry for entry in entries if _vpm_basis(entry) is not None]
     if not npm_candidates:
         raise ValueError("species has no NPM candidate")
     npm_entry = min(npm_candidates, key=_npm_key)
-    qualifying = [entry for entry in vpm_candidates if _distinct_vpm(entry, npm_entry)]
+    qualifying = [entry for entry in vpm_candidates if _qualifies_as_vpm(entry, npm_entry, identity)]
     vpm_entry = min(qualifying, key=_vpm_key) if qualifying else None
     npm = _record(npm_entry, _npm_basis(npm_entry))
     vpm = None if vpm_entry is None else _record(vpm_entry, _vpm_basis(vpm_entry))
@@ -77,15 +257,37 @@ def select_sources(entries: list[dict]) -> dict:
             "entry_id": entry["id"],
             "scene": entry["scene"],
             "source_name": entry["source_name"],
-            "reason": _merged_reason(entry, npm_entry, vpm_entry),
+            "reason": _merged_reason(entry, npm_entry, vpm_entry, identity),
         })
-    if vpm is not None:
+    unknown_skipped = False
+    for entry in vpm_candidates:
+        if entry["id"] == npm_entry["id"]:
+            continue
+        if vpm_entry is not None and entry["id"] == vpm_entry["id"]:
+            continue
+        if geometry_relation(entry, npm_entry, identity) == "unknown":
+            unknown_skipped = True
+    if vpm_entry is not None:
         vpm_status = "available"
-    elif _npm_basis(npm_entry) == "LP -> HP":
+        relation = geometry_relation(vpm_entry, npm_entry, identity)
+        vpm_identity = "verified_distinct" if relation == "distinct" else "unverified"
+        vpm_evidence = _vpm_evidence(vpm_entry, npm_entry, identity, relation)
+    elif _npm_basis(npm_entry) == "LP -> HP" or unknown_skipped:
         vpm_status = "unconfirmed"
+        vpm_identity = None
+        vpm_evidence = None
     else:
         vpm_status = "none"
-    return {"NPM": npm, "VPM": vpm, "merged": merged, "vpm_status": vpm_status}
+        vpm_identity = None
+        vpm_evidence = None
+    return {
+        "NPM": npm,
+        "VPM": vpm,
+        "merged": merged,
+        "vpm_status": vpm_status,
+        "vpm_identity": vpm_identity,
+        "vpm_evidence": vpm_evidence,
+    }
 
 
 def assign_ids(species: list[dict], previous: dict | None = None, gaps: list[dict] | None = None) -> dict:
@@ -122,7 +324,13 @@ def assign_ids(species: list[dict], previous: dict | None = None, gaps: list[dic
     return {"by_latin": assigned, "retired_ids": retired}
 
 
-def build(audit: dict, curation: dict, maps: dict, previous: dict | None = None) -> dict:
+def build(
+    audit: dict,
+    curation: dict,
+    maps: dict,
+    previous: dict | None = None,
+    identity: dict | None = None,
+) -> dict:
     indexed = _index_audit(audit)
     library, gap_items = _split_curation(curation)
     rows = []
@@ -130,7 +338,7 @@ def build(audit: dict, curation: dict, maps: dict, previous: dict | None = None)
         missing = [source for source in item["sources"] if source not in indexed]
         if missing:
             raise ValueError(f"{item['latin']} sources not in the audit: {missing}")
-        chosen = select_sources([indexed[source] for source in item["sources"]])
+        chosen = select_sources([indexed[source] for source in item["sources"]], identity)
         map_info = _maps_for(item["latin"], maps)
         scenes = [chosen["NPM"]["scene"]]
         if chosen["VPM"] is not None:
@@ -148,6 +356,8 @@ def build(audit: dict, curation: dict, maps: dict, previous: dict | None = None)
             "npm": chosen["NPM"],
             "vpm": chosen["VPM"],
             "vpm_status": chosen["vpm_status"],
+            "vpm_identity": chosen["vpm_identity"],
+            "vpm_evidence": chosen["vpm_evidence"],
             "merged": chosen["merged"],
             "height_m": chosen["NPM"]["height_m"],
             "crown_diameter_m": chosen["NPM"]["crown_diameter_m"],
@@ -236,12 +446,33 @@ def main(argv: list[str] | None = None) -> None:
     build_parser.add_argument("--maps", required=True)
     build_parser.add_argument("--out", required=True)
     build_parser.add_argument("--previous")
+    build_parser.add_argument("--identity")
+    identity_parser = sub.add_parser("identity")
+    identity_parser.add_argument("--points", required=True)
+    identity_parser.add_argument("--curation", required=True)
+    identity_parser.add_argument("--out", required=True)
     check_parser = sub.add_parser("check")
     check_parser.add_argument("--catalogue", required=True)
     args = parser.parse_args(argv)
+    if args.command == "identity":
+        try:
+            points = _points_from_dump(_read_json(args.points))
+            document = build_identity(points, _read_json(args.curation))
+        except ValueError as exc:
+            print(exc)
+            raise SystemExit(1) from exc
+        _write_json(args.out, document)
+        return
     if args.command == "build":
         previous = _read_json(args.previous) if args.previous else None
-        catalogue = build(_read_json(args.audit), _read_json(args.curation), _read_json(args.maps), previous)
+        identity = load_identity(_read_json(args.identity)) if args.identity else None
+        catalogue = build(
+            _read_json(args.audit),
+            _read_json(args.curation),
+            _read_json(args.maps),
+            previous,
+            identity,
+        )
         findings = check(catalogue)
         if findings:
             for line in findings:
@@ -299,7 +530,8 @@ def _npm_key(entry: dict) -> tuple:
 
 def _vpm_key(entry: dict) -> tuple:
     # Library scene outranks an explicit HP label so FLORIO HP does not replace
-    # the library mesh (Acer tataricum subsp. ginnala keeps library-024).
+    # a qualifying library mesh (Acer tataricum subsp. ginnala keeps library-024
+    # once that mesh is a verified distinct VPM).
     return (
         0 if entry["scene"] == LIBRARY_SCENE else 1,
         _VPM_PROFILE[_vpm_basis(entry)],
@@ -326,21 +558,190 @@ def _record(entry: dict, basis: str) -> dict:
     }
 
 
-def _distinct_vpm(entry: dict, npm_entry: dict) -> bool:
-    return entry["id"] != npm_entry["id"] and entry["triangles"] != npm_entry["triangles"]
+def _as_points(points) -> list[tuple[float, float, float]]:
+    cloud = []
+    for point in points:
+        if len(point) != 3:
+            raise ValueError("a vertex does not have three coordinates")
+        cloud.append((float(point[0]), float(point[1]), float(point[2])))
+    return cloud
 
 
-def _same_mesh_as_npm(entry: dict, npm_entry: dict) -> bool:
-    return (
-        entry["id"] != npm_entry["id"]
-        and entry["triangles"] == npm_entry["triangles"]
-        and _vpm_basis(entry) is not None
+def _translation_normalize(points: list[tuple[float, float, float]]) -> list[tuple[float, float, float]]:
+    min_x = min(point[0] for point in points)
+    min_y = min(point[1] for point in points)
+    min_z = min(point[2] for point in points)
+    return [(point[0] - min_x, point[1] - min_y, point[2] - min_z) for point in points]
+
+
+def _largest_extent(points: list[tuple[float, float, float]]) -> float:
+    return max(
+        max(point[0] for point in points),
+        max(point[1] for point in points),
+        max(point[2] for point in points),
     )
 
 
-def _merged_reason(entry: dict, npm_entry: dict, vpm_entry: dict | None) -> str:
-    if _same_mesh_as_npm(entry, npm_entry):
-        return f"duplicate: kept {npm_entry['id']} (same mesh as NPM, not a distinct VPM)"
+def _scale_cloud(points: list[tuple[float, float, float]], extent: float) -> list[tuple[float, float, float]]:
+    return [(point[0] / extent, point[1] / extent, point[2] / extent) for point in points]
+
+
+def _scale_hausdorff(normal_a, normal_b, tolerance: float) -> float | None:
+    extent_a = _largest_extent(normal_a)
+    extent_b = _largest_extent(normal_b)
+    if extent_a == 0.0 or extent_b == 0.0:
+        return None
+    return _symmetric_hausdorff(
+        _scale_cloud(normal_a, extent_a),
+        _scale_cloud(normal_b, extent_b),
+        tolerance,
+    )
+
+
+def _symmetric_hausdorff(left, right, tolerance: float) -> float | None:
+    forward = _directed_hausdorff(left, right, tolerance)
+    if forward is None:
+        return None
+    backward = _directed_hausdorff(right, left, tolerance)
+    if backward is None:
+        return None
+    return forward if forward >= backward else backward
+
+
+def _directed_hausdorff(source, target, tolerance: float) -> float | None:
+    cell = 10.0 * tolerance
+    buckets: dict[tuple[int, int, int], list[tuple[float, float, float]]] = {}
+    for point in target:
+        key = (
+            math.floor(point[0] / cell),
+            math.floor(point[1] / cell),
+            math.floor(point[2] / cell),
+        )
+        bucket = buckets.get(key)
+        if bucket is None:
+            buckets[key] = [point]
+        else:
+            bucket.append(point)
+    worst = 0.0
+    for x, y, z in source:
+        best = _min_dist2(x, y, z, buckets, cell)
+        if best is None:
+            return None
+        if best > worst:
+            worst = best
+    return math.sqrt(worst)
+
+
+def _min_dist2(x: float, y: float, z: float, buckets, cell: float) -> float | None:
+    ix = math.floor(x / cell)
+    iy = math.floor(y / cell)
+    iz = math.floor(z / cell)
+    best = None
+    for dx in (-1, 0, 1):
+        for dy in (-1, 0, 1):
+            bucket_row_x = ix + dx
+            bucket_row_y = iy + dy
+            for dz in (-1, 0, 1):
+                bucket = buckets.get((bucket_row_x, bucket_row_y, iz + dz))
+                if not bucket:
+                    continue
+                for qx, qy, qz in bucket:
+                    ddx = x - qx
+                    ddy = y - qy
+                    ddz = z - qz
+                    dist2 = ddx * ddx + ddy * ddy + ddz * ddz
+                    if dist2 == 0.0:
+                        return 0.0
+                    if best is None or dist2 < best:
+                        best = dist2
+    return best
+
+
+def _round_dev(value: float | None) -> float | None:
+    if value is None:
+        return None
+    rounded = round(float(value), 9)
+    if rounded == 0.0:
+        return 0.0
+    return rounded
+
+
+def _points_from_dump(dump: dict) -> dict[str, list]:
+    if not isinstance(dump, dict):
+        raise ValueError("points dump is not an object")
+    failures = dump.get("failures")
+    if not isinstance(failures, list):
+        raise ValueError("points dump is missing failures")
+    if failures:
+        raise ValueError("points dump has failures")
+    entries = dump.get("entries")
+    if not isinstance(entries, dict):
+        raise ValueError("points dump is missing entries")
+    points: dict[str, list] = {}
+    for entry_id, row in entries.items():
+        if not isinstance(entry_id, str) or not isinstance(row, dict) or not isinstance(row.get("points"), list):
+            raise ValueError(f"invalid points entry {entry_id!r}")
+        points[entry_id] = row["points"]
+    return points
+
+
+def _entry_identity(entry: dict) -> str | None:
+    for key in ("id", "entry_id"):
+        value = entry.get(key)
+        if isinstance(value, str):
+            return value
+    return None
+
+
+def _pair_devs(entry: dict, npm_entry: dict, identity: dict | None) -> dict | None:
+    details = getattr(identity, "details", None)
+    if not details:
+        return None
+    left = _entry_identity(entry)
+    right = _entry_identity(npm_entry)
+    if left is None or right is None or left == right:
+        return None
+    return details.get(frozenset((left, right)))
+
+
+def _vpm_evidence(entry: dict, npm_entry: dict, identity: dict | None, relation: str) -> dict:
+    if relation == "unknown":
+        return {"relation": "unknown", "translation_dev_m": None, "scaled_dev_rel": None}
+    devs = _pair_devs(entry, npm_entry, identity)
+    if devs is None:
+        return {"relation": relation, "translation_dev_m": None, "scaled_dev_rel": None}
+    return {
+        "relation": relation,
+        "translation_dev_m": devs["translation_dev_m"],
+        "scaled_dev_rel": devs["scaled_dev_rel"],
+    }
+
+
+def _qualifies_as_vpm(entry: dict, npm_entry: dict, identity: dict | None) -> bool:
+    relation = geometry_relation(entry, npm_entry, identity)
+    if relation == "distinct":
+        return True
+    return relation == "unknown" and _vpm_basis(entry) == "HP"
+
+
+def _merged_reason(entry: dict, npm_entry: dict, vpm_entry: dict | None, identity: dict | None) -> str:
+    relation = geometry_relation(entry, npm_entry, identity)
+    if relation == "same":
+        return (
+            f"duplicate: kept {npm_entry['id']} "
+            "(verified same geometry as NPM, not a distinct VPM)"
+        )
+    if relation == "scaled_copy":
+        return (
+            f"duplicate: kept {npm_entry['id']} "
+            "(verified uniformly scaled copy of the NPM geometry, not a distinct VPM)"
+        )
+    if (
+        _vpm_basis(entry) is not None
+        and relation == "unknown"
+        and not _qualifies_as_vpm(entry, npm_entry, identity)
+    ):
+        return f"not used as VPM: geometry identity with NPM {npm_entry['id']} unverified"
     if _npm_basis(entry) is not None:
         rule = _rule(npm_entry, entry, "NPM")
         return f"duplicate: kept {npm_entry['id']} ({rule})"
@@ -584,13 +985,19 @@ def _is_number(value) -> bool:
     return isinstance(value, (int, float)) and not isinstance(value, bool)
 
 
-def _key_findings(value: dict, expected: tuple[str, ...], where: str) -> list[str]:
+def _key_findings(
+    value: dict,
+    expected: tuple[str, ...],
+    where: str,
+    optional: tuple[str, ...] = (),
+) -> list[str]:
+    allowed = set(expected) | set(optional)
     findings = []
     for key in expected:
         if key not in value:
             findings.append(f"{where} missing key {key}")
     for key in value:
-        if key not in expected:
+        if key not in allowed:
             findings.append(f"{where} extra key {key}")
     return findings
 
@@ -747,15 +1154,57 @@ def _check_species(item: dict, where: str, retired: set, seen_ids: dict, seen_la
 
 
 def _check_distinct_vpm(item: dict, where: str) -> list[str]:
+    findings: list[str] = []
+    flag = item.get("vpm_identity") if "vpm_identity" in item else None
+    if "vpm_identity" in item:
+        if flag not in _VPM_IDENTITY and flag is not None:
+            findings.append(f"{where}.vpm_identity {flag!r} is not verified_distinct, unverified or null")
+        elif (flag is None) != (item.get("vpm") is None):
+            findings.append(f"{where}.vpm_identity {flag!r} does not match vpm")
     npm = item.get("npm")
     vpm = item.get("vpm")
-    if not isinstance(npm, dict) or not isinstance(vpm, dict):
-        return []
-    same_entry = isinstance(npm.get("entry_id"), str) and npm.get("entry_id") == vpm.get("entry_id")
-    same_triangles = "triangles" in npm and npm.get("triangles") == vpm.get("triangles")
-    if same_entry or same_triangles:
-        return [f"{where}.vpm is the NPM mesh, not a distinct VPM"]
-    return []
+    if isinstance(npm, dict) and isinstance(vpm, dict):
+        same_entry = isinstance(npm.get("entry_id"), str) and npm.get("entry_id") == vpm.get("entry_id")
+        if same_entry:
+            findings.append(f"{where}.vpm is the NPM mesh, not a distinct VPM")
+    if "vpm_evidence" not in item:
+        return findings
+    evidence = item["vpm_evidence"]
+    has_vpm = item.get("vpm") is not None
+    if evidence is None:
+        if has_vpm:
+            findings.append(f"{where}.vpm_evidence does not match vpm")
+        return findings
+    if not has_vpm:
+        findings.append(f"{where}.vpm_evidence does not match vpm")
+        return findings
+    if not isinstance(evidence, dict):
+        findings.append(f"{where}.vpm_evidence is not an object")
+        return findings
+    findings.extend(_key_findings(evidence, _EVIDENCE_KEYS, f"{where}.vpm_evidence"))
+    relation = evidence.get("relation")
+    if relation not in _GEOMETRY_RELATIONS and relation != "unknown":
+        findings.append(f"{where}.vpm_evidence.relation {relation!r} is not a geometry relation")
+    elif relation not in _KEPT_VPM_RELATIONS:
+        findings.append(f"{where}.vpm_evidence.relation {relation!r} is not a distinct VPM")
+    for key in ("translation_dev_m", "scaled_dev_rel"):
+        if key in evidence and evidence[key] is not None and not _is_number(evidence[key]):
+            findings.append(f"{where}.vpm_evidence.{key} is not a number")
+    if relation == "unknown" and (
+        evidence.get("translation_dev_m") is not None or evidence.get("scaled_dev_rel") is not None
+    ):
+        findings.append(f"{where}.vpm_evidence unknown relation stores a deviation")
+    if "vpm_identity" not in item or relation not in _GEOMETRY_RELATIONS + ("unknown",):
+        return findings
+    if flag == "verified_distinct" and relation != "distinct":
+        findings.append(f"{where}.vpm_identity verified_distinct requires vpm_evidence.relation distinct")
+    elif flag == "unverified" and relation != "unknown":
+        findings.append(f"{where}.vpm_identity unverified requires vpm_evidence.relation unknown")
+    elif relation == "distinct" and flag != "verified_distinct":
+        findings.append(f"{where}.vpm_identity {flag!r} does not match relation distinct")
+    elif relation == "unknown" and flag != "unverified":
+        findings.append(f"{where}.vpm_identity {flag!r} does not match relation unknown")
+    return findings
 
 
 def _check_vpm_status(item: dict, where: str) -> list[str]:

@@ -6,6 +6,7 @@ not a real planting schedule, library scene or approved texture.
 import importlib.util
 import json
 import random
+import struct
 from copy import deepcopy
 from pathlib import Path
 
@@ -67,22 +68,32 @@ def test_select_sources_on_the_real_audit():
     assert ginnala["NPM"]["entry_id"] == "library-031"
     assert ginnala["NPM"]["basis"] == "LP"
     assert ginnala["NPM"]["triangles"] == 8
-    assert ginnala["VPM"]["entry_id"] == "library-024"
+    # library-024 is LP -> HP and has no geometry evidence, so it is not a VPM.
+    # project-034 is explicit HP and stays an unverified VPM.
+    assert ginnala["VPM"]["entry_id"] == "project-034"
+    assert ginnala["vpm_status"] == "available"
+    assert ginnala["vpm_identity"] == "unverified"
 
     pinus = fc.select_sources(_sources("Pinus nigra"))
     assert pinus["NPM"]["entry_id"] == "library-084"
     assert pinus["VPM"]["entry_id"] == "library-064"
+    assert pinus["vpm_identity"] == "unverified"
 
     tilia = fc.select_sources(_sources("Tilia cordata"))
     assert tilia["NPM"]["entry_id"] == "library-028"
-    assert tilia["VPM"]["entry_id"] == "library-001"
+    assert tilia["VPM"] is None
+    assert tilia["vpm_status"] == "unconfirmed"
+    assert tilia["vpm_identity"] is None
     assert any(item["entry_id"] == "library-002" for item in tilia["merged"])
+    library_001 = next(item for item in tilia["merged"] if item["entry_id"] == "library-001")
+    assert "unverified" in library_001["reason"]
 
     betula = fc.select_sources(_sources("Betula pendula"))
     assert betula["NPM"]["entry_id"] == "library-006"
     assert betula["NPM"]["basis"] == "LP -> HP"
     assert betula["VPM"] is None
     assert betula["vpm_status"] == "unconfirmed"
+    assert betula["vpm_identity"] is None
 
 
 def _build_real(previous=None):
@@ -157,10 +168,37 @@ def test_assign_ids_full_range_and_previous_id_outside_range():
         fc.assign_ids([{"latin": "Synthetic tree 0", "type": "tree"}], previous)
 
 
-def test_committed_catalogue_has_no_findings_and_matches_rebuild():
+def test_committed_catalogue_has_no_findings_and_matches_rebuild_with_identity():
+    """The committed catalogue is exactly the build from the committed inputs and Max identity evidence."""
     catalogue = _load("library/flora/catalogue.json")
+    identity = fc.load_identity(_load("library/flora/geometry-identity.json"))
+    rebuilt = fc.build(
+        _load("experiments/flora-library-audit/catalogue.json"),
+        _load("library/flora/species-curation.json"),
+        _load("library/flora/maps.json"),
+        catalogue,
+        identity,
+    )
     assert fc.check(catalogue) == []
-    assert _build_real(previous=catalogue) == catalogue
+    assert rebuilt == catalogue
+    assert {item["vpm_identity"] for item in catalogue["species"] if item["vpm"] is not None} == {"verified_distinct"}
+
+
+def test_committed_material_ids_survive_a_rebuild_without_identity():
+    """Without identity evidence the material IDs still do not move."""
+    catalogue = _load("library/flora/catalogue.json")
+    rebuilt = _build_real(previous=catalogue)
+    assert fc.check(rebuilt) == []
+    assert {item["latin"]: item["material_id"] for item in rebuilt["species"]} == {
+        item["latin"]: item["material_id"] for item in catalogue["species"]
+    }
+    assert {
+        item["latin"]: item["material_id"]
+        for item in rebuilt["gaps"]["project_species_shared_stand_in"]
+    } == {
+        item["latin"]: item["material_id"]
+        for item in catalogue["gaps"]["project_species_shared_stand_in"]
+    }
 
 
 def _text(findings: list[str]) -> str:
@@ -285,12 +323,14 @@ def test_lone_lp_hp_is_not_a_vpm():
     assert chosen["vpm_status"] == "unconfirmed"
 
 
-def test_distinct_lp_hp_vpm_stays_available():
+def test_lp_hp_without_a_fingerprint_is_not_a_vpm():
+    """An LP -> HP row is not a VPM until pair evidence shows a distinct mesh."""
     chosen = fc.select_sources([_mesh("npm", "LP", 8), _mesh("vpm", "LP -> HP", 80)])
     assert chosen["NPM"]["entry_id"] == "npm"
-    assert chosen["VPM"]["entry_id"] == "vpm"
-    assert chosen["VPM"]["basis"] == "LP -> HP"
-    assert chosen["vpm_status"] == "available"
+    assert chosen["VPM"] is None
+    assert chosen["vpm_status"] == "unconfirmed"
+    assert chosen["vpm_identity"] is None
+    assert "unverified" in chosen["merged"][0]["reason"]
 
 
 def test_vpm_status_none_without_a_vpm_candidate():
@@ -741,7 +781,8 @@ def test_duplicate_lp_hp_rows_are_not_a_distinct_vpm(latin, duplicate):
     assert chosen["vpm_status"] == "unconfirmed"
     assert chosen["NPM"]["basis"] == "LP -> HP"
     merged = next(item for item in chosen["merged"] if item["entry_id"] == duplicate)
-    assert "same mesh" in merged["reason"]
+    assert "unverified" in merged["reason"]
+    assert chosen["vpm_identity"] is None
 
 
 def test_three_equal_lp_hp_rows_leave_vpm_unconfirmed():
@@ -756,24 +797,17 @@ def test_three_equal_lp_hp_rows_leave_vpm_unconfirmed():
     assert chosen["NPM"]["basis"] == "LP -> HP"
 
 
-def test_explicit_hp_with_the_npm_triangle_count_is_not_a_vpm():
-    """Synthetic LP and HP rows that share a triangle count are one mesh."""
-    chosen = fc.select_sources([_mesh("npm", "LP", 12), _mesh("copy", "HP", 12)])
-    assert chosen["VPM"] is None
-    assert chosen["vpm_status"] == "none"
-
-
 def test_explicit_hp_with_a_different_triangle_count_is_a_vpm():
-    """Synthetic control: a different triangle count is distinct VPM geometry."""
+    """Synthetic control: explicit HP with no pair evidence is an unverified VPM."""
     chosen = fc.select_sources([_mesh("npm", "LP", 12), _mesh("vpm", "HP", 80)])
     assert chosen["VPM"]["entry_id"] == "vpm"
     assert chosen["vpm_status"] == "available"
+    assert chosen["vpm_identity"] == "unverified"
 
 
 @pytest.mark.parametrize(
     ("latin", "npm_id", "vpm_id"),
     [
-        ("Tilia cordata", "library-028", "library-001"),
         ("Cornus alba", "library-011", "library-010"),
         ("Amelanchier lamarckii", "project-009", "library-020"),
     ],
@@ -1035,3 +1069,501 @@ def test_random_generations_keep_each_material_id_with_one_species():
                 else:
                     latin_by_id[material_id] = latin
             previous = _previous_from(assigned, species, [])
+
+
+def _equal_count_pair():
+    """Synthetic 2x2x4 m LP star and HP shell, both 12 triangles. Not a real species."""
+    star = _mesh("synthetic-star", "LP", 12)
+    shell = _mesh("synthetic-shell", "HP", 12)
+    star["source_name"] = "Synthetic_equal_count_star_LP"
+    shell["source_name"] = "Synthetic_equal_count_shell_HP"
+    star["dimensions_m"] = [2.0, 2.0, 4.0]
+    shell["dimensions_m"] = [2.0, 2.0, 4.0]
+    star["scene"] = "Synthetic.max"
+    shell["scene"] = "Synthetic.max"
+    return [star, shell]
+
+
+def _catalogue_for(entries, identity=None):
+    audit = {"scenes": [{"source": {"scene": entries[0]["scene"]}, "entries": entries}]}
+    curation = {
+        "species": [{
+            "latin": "Synthetic witness",
+            "russian": "synthetic",
+            "type": "bush",
+            "sources": [entry["id"] for entry in entries],
+            "geometry_basis": "own_mesh",
+            "note": "synthetic",
+        }],
+        "unresolved": [],
+    }
+    return fc.build(audit, curation, {}, identity=identity)
+
+
+def _signature(chosen):
+    return (
+        chosen["NPM"]["entry_id"],
+        None if chosen["VPM"] is None else chosen["VPM"]["entry_id"],
+        chosen["vpm_status"],
+        chosen["vpm_identity"],
+    )
+
+
+_BASE_CLOUD = (
+    [0.0, 0.0, 0.0],
+    [1.2, 0.1, 0.0],
+    [0.2, 1.4, 0.3],
+    [0.15, 0.2, 2.2],
+    [0.8, 0.9, 1.1],
+)
+
+
+def _box_points():
+    """Closed 2 x 2 x 4 m box, 8 vertices. Synthetic, not a library mesh."""
+    return [[x, y, z] for x in (0.0, 2.0) for y in (0.0, 2.0) for z in (0.0, 4.0)]
+
+
+def _star_planes():
+    """Six unwelded vertical quads inside a 2 x 2 x 4 m volume. Synthetic."""
+    points = []
+    for y in (0.0, 1.0, 2.0):
+        points.extend([[0.0, y, 0.0], [2.0, y, 0.0], [2.0, y, 4.0], [0.0, y, 4.0]])
+    for x in (0.0, 1.0, 2.0):
+        points.extend([[x, 0.0, 0.0], [x, 2.0, 0.0], [x, 2.0, 4.0], [x, 0.0, 4.0]])
+    return points
+
+
+def _other_eight():
+    """Same vertex count as the box, not a translation or a uniform scale of it."""
+    points = _box_points()
+    points[7] = [3.5, 0.4, 2.2]
+    return points
+
+
+def _identity_for(clouds: dict) -> dict:
+    curation = {
+        "species": [{
+            "latin": "Synthetic witness",
+            "russian": "synthetic",
+            "type": "bush",
+            "sources": list(clouds),
+            "geometry_basis": "own_mesh",
+            "note": "synthetic",
+        }],
+        "unresolved": [],
+    }
+    return fc.load_identity(fc.build_identity(clouds, curation))
+
+
+def _translate(points, offset):
+    return [[point[0] + offset[0], point[1] + offset[1], point[2] + offset[2]] for point in points]
+
+
+def _scale_then_translate(points, factor, offset):
+    return _translate(
+        [[point[0] * factor, point[1] * factor, point[2] * factor] for point in points],
+        offset,
+    )
+
+
+def _f32(value: float) -> float:
+    return struct.unpack("<f", struct.pack("<f", float(value)))[0]
+
+
+def _float32_cloud(points, offset, scale=1.0, jitter=1.5e-5):
+    copied = []
+    for index, point in enumerate(points):
+        sign = -1.0 if index % 2 else 1.0
+        copied.append([
+            _f32(point[axis] * scale + offset[axis] + sign * jitter)
+            for axis in range(3)
+        ])
+    return copied
+
+
+def test_star_and_shell_vertex_counts_differ_and_same_count_clouds_are_distinct():
+    """Synthetic 2x2x4 m clouds. Triangle counts are 12/12 and are not the relation."""
+    star = _star_planes()
+    shell = _box_points()
+    assert len(star) != len(shell) == 8
+    counted = fc.compare_clouds(star, shell)
+    assert counted["relation"] == "distinct"
+    assert counted["translation_dev_m"] is None
+    assert counted["scaled_dev_rel"] is None
+    assert counted["vertices"] == [len(star), 8]
+    same_count = fc.compare_clouds(shell, _other_eight())
+    assert same_count["relation"] == "distinct"
+    assert same_count["vertices"] == [8, 8]
+
+
+def test_equal_count_lp_hp_without_evidence_stays_available():
+    entries = _equal_count_pair()
+    chosen = fc.select_sources(entries)
+    assert chosen["VPM"]["entry_id"] == "synthetic-shell"
+    assert chosen["vpm_status"] == "available"
+    assert chosen["vpm_identity"] == "unverified"
+    assert chosen["vpm_evidence"] == {
+        "relation": "unknown",
+        "translation_dev_m": None,
+        "scaled_dev_rel": None,
+    }
+    assert chosen["merged"] == []
+    assert "geometry_fingerprint" not in chosen["NPM"]
+    assert "geometry_fingerprint" not in chosen["VPM"]
+    catalogue = _catalogue_for(entries)
+    assert catalogue["species"][0]["vpm_identity"] == "unverified"
+    assert catalogue["species"][0]["vpm_evidence"]["relation"] == "unknown"
+    assert fc.check(catalogue) == []
+
+
+def test_compare_clouds_evidence_verifies_a_distinct_vpm():
+    entries = _equal_count_pair()
+    clouds = {"synthetic-star": _star_planes(), "synthetic-shell": _box_points()}
+    identity = _identity_for(clouds)
+    chosen = fc.select_sources(entries, identity)
+    assert chosen["VPM"]["entry_id"] == "synthetic-shell"
+    assert chosen["vpm_identity"] == "verified_distinct"
+    assert chosen["vpm_evidence"]["relation"] == "distinct"
+    assert chosen["vpm_evidence"]["translation_dev_m"] is None
+    catalogue = _catalogue_for(entries, identity)
+    assert catalogue["species"][0]["npm"]["triangles"] == catalogue["species"][0]["vpm"]["triangles"] == 12
+    assert fc.check(catalogue) == []
+    same_count_entries = _equal_count_pair()
+    same_count_entries[0]["id"] = "synthetic-box"
+    same_count_entries[1]["id"] = "synthetic-other"
+    same_clouds = {"synthetic-box": _box_points(), "synthetic-other": _other_eight()}
+    same_identity = _identity_for(same_clouds)
+    verified = fc.select_sources(same_count_entries, same_identity)
+    assert verified["vpm_identity"] == "verified_distinct"
+    assert verified["vpm_evidence"]["relation"] == "distinct"
+    assert fc.check(_catalogue_for(same_count_entries, same_identity)) == []
+
+
+def test_translated_copy_is_same_geometry_and_not_a_vpm():
+    box = _box_points()
+    moved = _translate(box, (37.1, -5.2, 3.3))
+    compared = fc.compare_clouds(box, list(reversed(moved)))
+    assert compared["relation"] == "same"
+    assert compared["translation_dev_m"] <= 1e-4
+    assert compared["scaled_dev_rel"] is None
+    entries = _equal_count_pair()
+    identity = _identity_for({"synthetic-star": box, "synthetic-shell": moved})
+    chosen = fc.select_sources(entries, identity)
+    assert chosen["VPM"] is None
+    assert chosen["vpm_status"] == "none"
+    assert chosen["vpm_identity"] is None
+    assert chosen["vpm_evidence"] is None
+    assert "verified same geometry" in chosen["merged"][0]["reason"]
+
+
+def test_uniform_scale_of_lp_hp_rows_is_not_a_vpm():
+    """Bounty shape: an LP -> HP mesh scaled by 0.799 is a scaled copy, not a VPM."""
+    box = _box_points()
+    scaled = _scale_then_translate(box, 0.799, (37.1, -5.2, 3.3))
+    assert fc.compare_clouds(box, scaled)["relation"] == "scaled_copy"
+    entries = [_mesh("library-044", "LP -> HP", 88), _mesh("library-087", "LP -> HP", 88)]
+    identity = _identity_for({"library-044": box, "library-087": scaled})
+    chosen = fc.select_sources(entries, identity)
+    assert fc.geometry_relation(entries[0], entries[1], identity) == "scaled_copy"
+    assert chosen["VPM"] is None
+    assert chosen["vpm_status"] == "unconfirmed"
+    assert chosen["vpm_identity"] is None
+    assert "verified uniformly scaled copy" in chosen["merged"][0]["reason"]
+
+
+def test_lp_hp_without_evidence_stays_unconfirmed():
+    entries = [_mesh("library-044", "LP -> HP", 88), _mesh("library-087", "LP -> HP", 88)]
+    chosen = fc.select_sources(entries)
+    assert chosen["VPM"] is None
+    assert chosen["vpm_status"] == "unconfirmed"
+    assert chosen["vpm_identity"] is None
+    assert "unverified" in chosen["merged"][0]["reason"]
+    assert "no fingerprint" not in chosen["merged"][0]["reason"]
+
+
+def test_triangle_counts_do_not_decide_identity():
+    entries = [_mesh("npm", "LP", 12), _mesh("vpm", "HP", 80)]
+    box = _box_points()
+    unverified = fc.select_sources(entries)
+    assert unverified["vpm_status"] == "available"
+    assert unverified["vpm_identity"] == "unverified"
+    cloned = fc.select_sources(entries, _identity_for({"npm": box, "vpm": box}))
+    assert cloned["VPM"] is None
+    assert "verified same geometry" in cloned["merged"][0]["reason"]
+    distinct = fc.select_sources(entries, _identity_for({"npm": box, "vpm": _other_eight()}))
+    assert distinct["VPM"]["entry_id"] == "vpm"
+    assert distinct["vpm_identity"] == "verified_distinct"
+    assert distinct["NPM"]["triangles"] == 12
+    assert distinct["VPM"]["triangles"] == 80
+
+
+def test_float32_noise_stays_inside_the_hausdorff_tolerance():
+    box = _box_points()
+    offset = (100.0, -40.0, 15.0)
+    copied = _float32_cloud(box, offset)
+    assert fc.compare_clouds(box, copied)["relation"] == "same"
+    scaled = _float32_cloud(box, offset, scale=0.799)
+    assert fc.compare_clouds(box, scaled)["relation"] == "scaled_copy"
+    moved = [list(point) for point in box]
+    moved[3][2] += 1e-3
+    assert fc.compare_clouds(box, moved)["relation"] == "distinct"
+
+
+def test_seeded_clouds_match_the_constructed_relation_and_ignore_triangle_counts():
+    """Synthetic clouds and meshes. Not a real planting schedule."""
+    rng = random.Random(216)
+    profiles = (["LP"], ["HP"], ["LP -> HP"], [])
+    scenes = ("FLORA_Union_v1.max", "FLORIO_2BT_2022.max")
+    factors = (0.5, 0.799, 1.7, 2.2)
+    for case in range(300):
+        cloud = [list(point) for point in _BASE_CLOUD]
+        for _extra in range(rng.randint(0, 3)):
+            cloud.append([rng.uniform(0.0, 1.2), rng.uniform(0.0, 1.4), rng.uniform(0.0, 2.2)])
+        kind = rng.choice(("translate", "scale", "perturb", "count"))
+        if kind == "translate":
+            other = _translate(cloud, (rng.uniform(-80.0, 80.0), rng.uniform(-80.0, 80.0), rng.uniform(-20.0, 20.0)))
+            expected = "same"
+        elif kind == "scale":
+            other = _scale_then_translate(
+                cloud,
+                rng.choice(factors),
+                (rng.uniform(-30.0, 30.0), rng.uniform(-30.0, 30.0), rng.uniform(-5.0, 5.0)),
+            )
+            expected = "scaled_copy"
+        elif kind == "perturb":
+            other = [list(point) for point in cloud]
+            other[rng.randrange(len(other))][rng.randrange(3)] += rng.choice((-1.0, 1.0)) * rng.uniform(0.35, 0.8)
+            expected = "distinct"
+        else:
+            other = [list(point) for point in cloud]
+            other.append([9.0, -4.0, 3.0])
+            expected = "distinct"
+        assert fc.compare_clouds(cloud, other)["relation"] == expected
+        width = rng.randint(2, 4)
+        entries = []
+        for index in range(width):
+            entry = _mesh(f"c{case}-{index}", "LP", rng.randint(1, 5000))
+            entry["profile_raw"] = list(rng.choice(profiles))
+            entry["hidden"] = rng.choice((False, True))
+            entry["scene"] = rng.choice(scenes)
+            entries.append(entry)
+        if not any(fc._npm_basis(entry) is not None for entry in entries):
+            entries[0]["profile_raw"] = ["LP"]
+        before = fc.select_sources(entries)
+        npm_id = before["NPM"]["entry_id"]
+        npm_triangles = next(entry["triangles"] for entry in entries if entry["id"] == npm_id)
+        shifted = deepcopy(entries)
+        for entry in shifted:
+            if entry["profile_raw"] == ["HP"]:
+                entry["triangles"] = entry["triangles"] + 1
+        assert _signature(fc.select_sources(shifted)) == _signature(before)
+        npm_rows = [entry for entry in entries if entry["profile_raw"] != ["HP"]]
+        for hp in [entry for entry in entries if entry["profile_raw"] == ["HP"]]:
+            signatures = []
+            for triangles in (hp["triangles"], npm_triangles, npm_triangles + 997):
+                trial = deepcopy(npm_rows + [hp])
+                trial[-1]["triangles"] = triangles
+                signatures.append(_signature(fc.select_sources(trial)))
+            assert signatures[0] == signatures[1] == signatures[2]
+
+
+def test_id_lifecycle_with_an_equal_count_distinct_pair():
+    """Synthetic species. Material IDs stay put, and a 12/12 distinct LP+HP pair stays available."""
+    for kind in _FLORA_KINDS:
+        test_material_id_is_not_reissued_across_generations(kind)
+    entries = _equal_count_pair()
+    clouds = {"synthetic-star": _box_points(), "synthetic-shell": _other_eight()}
+    identity = _identity_for(clouds)
+    catalogue = _catalogue_for(entries, identity)
+    assert catalogue["species"][0]["vpm_status"] == "available"
+    assert catalogue["species"][0]["vpm"]["entry_id"] == "synthetic-shell"
+    assert catalogue["species"][0]["vpm_identity"] == "verified_distinct"
+    assert catalogue["species"][0]["npm"]["triangles"] == catalogue["species"][0]["vpm"]["triangles"]
+    material_id = catalogue["species"][0]["material_id"]
+    again = fc.build(
+        {"scenes": [{"source": {"scene": entries[0]["scene"]}, "entries": entries}]},
+        {
+            "species": [{
+                "latin": "Synthetic witness",
+                "russian": "synthetic",
+                "type": "bush",
+                "sources": [entry["id"] for entry in entries],
+                "geometry_basis": "own_mesh",
+                "note": "synthetic",
+            }],
+            "unresolved": [],
+        },
+        {},
+        catalogue,
+        identity,
+    )
+    assert again["species"][0]["material_id"] == material_id
+    assert again["species"][0]["vpm_status"] == "available"
+    assert again["species"][0]["vpm_identity"] == "verified_distinct"
+    assert fc.check(again) == []
+
+
+def test_geometry_identity_file_classifies_scaled_copies_and_translations():
+    path = ROOT / "library" / "flora" / "geometry-identity.json"
+    if not path.exists():
+        pytest.skip(
+            "library/flora/geometry-identity.json is not in the repo yet; "
+            "the driver adds it after the Max vertex probe"
+        )
+    identity = fc.load_identity(json.loads(path.read_text(encoding="utf-8")))
+    scaled = (
+        ("Hydrangea arborescens 'Bounty'", "library-044", "library-087"),
+        ("Hydrangea paniculata 'Limelight'", "library-045", "library-088"),
+        ("Sorbaria sorbifolia 'Sem'", "library-052", "library-090"),
+    )
+    for latin, left, right in scaled:
+        assert identity[frozenset((left, right))] == "scaled_copy"
+        chosen = fc.select_sources(_sources(latin), identity)
+        assert chosen["VPM"] is None
+        assert chosen["vpm_status"] == "unconfirmed"
+    assert identity[frozenset(("library-075", "library-076"))] == "same"
+    assert fc.check(_load("library/flora/catalogue.json")) == []
+
+
+def test_checker_vpm_evidence_rules():
+    catalogue = _catalogue_for(_equal_count_pair())
+    item = catalogue["species"][0]
+    del item["vpm_evidence"]
+    assert "vpm_evidence" in _text(fc.check(catalogue))
+    catalogue = _catalogue_for(_equal_count_pair())
+    item = catalogue["species"][0]
+    item["vpm_identity"] = "verified_distinct"
+    assert item["vpm_evidence"]["relation"] == "unknown"
+    assert "verified_distinct requires vpm_evidence.relation distinct" in _text(fc.check(catalogue))
+    catalogue = _catalogue_for(_equal_count_pair())
+    item = catalogue["species"][0]
+    item["vpm_evidence"] = {"relation": "same", "translation_dev_m": 0.0, "scaled_dev_rel": None}
+    assert "same" in _text(fc.check(catalogue))
+    catalogue = _catalogue_for(_equal_count_pair())
+    item = catalogue["species"][0]
+    item["vpm_evidence"] = {"relation": "scaled_copy", "translation_dev_m": None, "scaled_dev_rel": 0.0}
+    assert "scaled_copy" in _text(fc.check(catalogue))
+    entries = _equal_count_pair()
+    evidenced = _catalogue_for(entries, _identity_for({
+        "synthetic-star": _box_points(),
+        "synthetic-shell": _other_eight(),
+    }))
+    assert evidenced["species"][0]["npm"]["triangles"] == evidenced["species"][0]["vpm"]["triangles"] == 12
+    assert evidenced["species"][0]["vpm_evidence"]["relation"] == "distinct"
+    assert fc.check(evidenced) == []
+
+
+def test_build_identity_skips_stand_ins_and_deduplicates_pairs():
+    points = {
+        "library-a": _box_points(),
+        "library-b": _translate(_box_points(), (1.0, 2.0, 3.0)),
+        "library-gap": [[0.0, 0.0, 0.0]],
+    }
+    curation = {
+        "species": [
+            {
+                "latin": "Synthetic own",
+                "sources": ["library-b", "library-a"],
+                "geometry_basis": "own_mesh",
+            },
+            {
+                "latin": "Synthetic own again",
+                "sources": ["library-a", "library-b"],
+                "geometry_basis": "own_mesh",
+            },
+            {
+                "latin": "Synthetic gap",
+                "sources": ["library-gap", "library-a"],
+                "geometry_basis": "shared_multi_species_stand_in",
+            },
+        ]
+    }
+    document = fc.build_identity(points, curation)
+    assert document["schema"] == "flora-geometry-identity-v2"
+    assert document["tolerance"] == 1e-4
+    assert set(document["entries"]) == {"library-a", "library-b"}
+    assert document["pairs"] == [{
+        "a": "library-a",
+        "b": "library-b",
+        "relation": "same",
+        "translation_dev_m": 0.0,
+        "scaled_dev_rel": None,
+    }]
+    with pytest.raises(ValueError, match="flora-geometry-identity-v2"):
+        fc.load_identity({"schema": "flora-geometry-identity-v1", "entries": {}, "pairs": []})
+
+
+def test_compare_clouds_is_fast_for_seven_thousand_points():
+    points = [[(index % 100) * 0.05, (index // 100) * 0.05, (index % 13) * 0.03] for index in range(7000)]
+    shifted = _translate(points, (100.0, -20.0, 3.0))
+    assert fc.compare_clouds(points, shifted)["relation"] == "same"
+
+
+def test_vertex_dump_script_has_no_fingerprint_copy():
+    text = (ROOT / "tools" / "flora" / "dump_flora_source_vertices.py").read_text(encoding="utf-8")
+    assert "Pattern: n/a | new-case: Flora source vertex dump for VPM identity evidence (#216)." in text
+    assert "flora-vertices entries=" in text
+    assert "fingerprint_points" not in text
+    source = (ROOT / "src" / "dt_ai" / "materials" / "flora_catalogue.py").read_text(encoding="utf-8")
+    assert 'if __name__ == "__main__":\n    main()' in source
+
+
+def test_identity_cli_refuses_failures_and_build_reads_pairs(tmp_path):
+    entries = _equal_count_pair()
+    audit = tmp_path / "audit.json"
+    curation_path = tmp_path / "curation.json"
+    maps = tmp_path / "maps.json"
+    points_path = tmp_path / "points.json"
+    identity_path = tmp_path / "geometry-identity.json"
+    out = tmp_path / "catalogue.json"
+    curation = {
+        "species": [{
+            "latin": "Synthetic witness",
+            "russian": "synthetic",
+            "type": "bush",
+            "sources": ["synthetic-star", "synthetic-shell"],
+            "geometry_basis": "own_mesh",
+            "note": "synthetic",
+        }],
+        "unresolved": [],
+    }
+    audit.write_text(json.dumps({
+        "scenes": [{"source": {"scene": "Synthetic.max"}, "entries": entries}],
+    }), encoding="utf-8")
+    curation_path.write_text(json.dumps(curation), encoding="utf-8")
+    maps.write_text("{}", encoding="utf-8")
+    dump = {
+        "entries": {
+            "synthetic-star": {"points": _star_planes()},
+            "synthetic-shell": {"points": _box_points()},
+        },
+        "failures": [{"entry_id": "synthetic-star", "reason": "synthetic failure"}],
+    }
+    points_path.write_text(json.dumps(dump), encoding="utf-8")
+    with pytest.raises(SystemExit):
+        fc.main([
+            "identity",
+            "--points", str(points_path),
+            "--curation", str(curation_path),
+            "--out", str(identity_path),
+        ])
+    dump["failures"] = []
+    points_path.write_text(json.dumps(dump), encoding="utf-8")
+    fc.main([
+        "identity",
+        "--points", str(points_path),
+        "--curation", str(curation_path),
+        "--out", str(identity_path),
+    ])
+    fc.main([
+        "build",
+        "--audit", str(audit),
+        "--curation", str(curation_path),
+        "--maps", str(maps),
+        "--identity", str(identity_path),
+        "--out", str(out),
+    ])
+    catalogue = json.loads(out.read_text(encoding="utf-8"))
+    assert catalogue["species"][0]["vpm_identity"] == "verified_distinct"
+    assert catalogue["species"][0]["vpm_evidence"]["relation"] == "distinct"
+    assert catalogue["species"][0]["vpm"]["entry_id"] == "synthetic-shell"

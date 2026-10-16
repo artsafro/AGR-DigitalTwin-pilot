@@ -1,0 +1,1247 @@
+{
+ "schema": "flora-geometry-identity-v2",
+ "method": "world vertices from snapshotAsMesh on the source copies, translation-normalized symmetric Hausdorff <= 1e-4 m = same, scale-normalized <= 1e-4 relative = scaled_copy, else distinct; vertex counts must match for same/scaled_copy; triangle counts are never used",
+ "tolerance": 0.0001,
+ "entries": {
+  "library-001": {
+   "vertices": 999
+  },
+  "library-002": {
+   "vertices": 1003
+  },
+  "library-003": {
+   "vertices": 162
+  },
+  "library-004": {
+   "vertices": 54
+  },
+  "library-005": {
+   "vertices": 72
+  },
+  "library-006": {
+   "vertices": 428
+  },
+  "library-007": {
+   "vertices": 430
+  },
+  "library-008": {
+   "vertices": 81
+  },
+  "library-009": {
+   "vertices": 306
+  },
+  "library-010": {
+   "vertices": 144
+  },
+  "library-011": {
+   "vertices": 72
+  },
+  "library-012": {
+   "vertices": 90
+  },
+  "library-013": {
+   "vertices": 162
+  },
+  "library-014": {
+   "vertices": 36
+  },
+  "library-015": {
+   "vertices": 144
+  },
+  "library-016": {
+   "vertices": 48
+  },
+  "library-017": {
+   "vertices": 90
+  },
+  "library-018": {
+   "vertices": 54
+  },
+  "library-019": {
+   "vertices": 90
+  },
+  "library-020": {
+   "vertices": 9267
+  },
+  "library-021": {
+   "vertices": 961
+  },
+  "library-022": {
+   "vertices": 81
+  },
+  "library-023": {
+   "vertices": 72
+  },
+  "library-024": {
+   "vertices": 999
+  },
+  "library-025": {
+   "vertices": 1077
+  },
+  "library-026": {
+   "vertices": 90
+  },
+  "library-027": {
+   "vertices": 72
+  },
+  "library-028": {
+   "vertices": 593
+  },
+  "library-029": {
+   "vertices": 81
+  },
+  "library-030": {
+   "vertices": 48
+  },
+  "library-031": {
+   "vertices": 16
+  },
+  "library-032": {
+   "vertices": 144
+  },
+  "library-033": {
+   "vertices": 72
+  },
+  "library-034": {
+   "vertices": 180
+  },
+  "library-035": {
+   "vertices": 40
+  },
+  "library-036": {
+   "vertices": 226
+  },
+  "library-037": {
+   "vertices": 96
+  },
+  "library-038": {
+   "vertices": 132
+  },
+  "library-039": {
+   "vertices": 1018
+  },
+  "library-040": {
+   "vertices": 1861
+  },
+  "library-041": {
+   "vertices": 96
+  },
+  "library-042": {
+   "vertices": 350
+  },
+  "library-043": {
+   "vertices": 90
+  },
+  "library-044": {
+   "vertices": 111
+  },
+  "library-045": {
+   "vertices": 105
+  },
+  "library-046": {
+   "vertices": 1686
+  },
+  "library-047": {
+   "vertices": 2160
+  },
+  "library-048": {
+   "vertices": 132
+  },
+  "library-049": {
+   "vertices": 4954
+  },
+  "library-050": {
+   "vertices": 1902
+  },
+  "library-051": {
+   "vertices": 557
+  },
+  "library-052": {
+   "vertices": 132
+  },
+  "library-053": {
+   "vertices": 2184
+  },
+  "library-054": {
+   "vertices": 2184
+  },
+  "library-055": {
+   "vertices": 2184
+  },
+  "library-056": {
+   "vertices": 5453
+  },
+  "library-057": {
+   "vertices": 135
+  },
+  "library-058": {
+   "vertices": 96
+  },
+  "library-059": {
+   "vertices": 90
+  },
+  "library-060": {
+   "vertices": 118
+  },
+  "library-061": {
+   "vertices": 350
+  },
+  "library-062": {
+   "vertices": 907
+  },
+  "library-063": {
+   "vertices": 72
+  },
+  "library-064": {
+   "vertices": 4784
+  },
+  "library-065": {
+   "vertices": 1538
+  },
+  "library-066": {
+   "vertices": 96
+  },
+  "library-067": {
+   "vertices": 180
+  },
+  "library-068": {
+   "vertices": 40
+  },
+  "library-069": {
+   "vertices": 4784
+  },
+  "library-070": {
+   "vertices": 2312
+  },
+  "library-071": {
+   "vertices": 180
+  },
+  "library-072": {
+   "vertices": 60
+  },
+  "library-073": {
+   "vertices": 81
+  },
+  "library-074": {
+   "vertices": 350
+  },
+  "library-075": {
+   "vertices": 81
+  },
+  "library-076": {
+   "vertices": 81
+  },
+  "library-077": {
+   "vertices": 81
+  },
+  "library-078": {
+   "vertices": 20
+  },
+  "library-079": {
+   "vertices": 20
+  },
+  "library-084": {
+   "vertices": 16
+  },
+  "library-085": {
+   "vertices": 72
+  },
+  "library-086": {
+   "vertices": 16
+  },
+  "library-087": {
+   "vertices": 111
+  },
+  "library-088": {
+   "vertices": 105
+  },
+  "library-089": {
+   "vertices": 132
+  },
+  "library-090": {
+   "vertices": 132
+  },
+  "project-001": {
+   "vertices": 20
+  },
+  "project-002": {
+   "vertices": 40
+  },
+  "project-003": {
+   "vertices": 136
+  },
+  "project-005": {
+   "vertices": 20
+  },
+  "project-007": {
+   "vertices": 443
+  },
+  "project-008": {
+   "vertices": 20
+  },
+  "project-009": {
+   "vertices": 1215
+  },
+  "project-010": {
+   "vertices": 20
+  },
+  "project-011": {
+   "vertices": 20
+  },
+  "project-012": {
+   "vertices": 118
+  },
+  "project-013": {
+   "vertices": 118
+  },
+  "project-014": {
+   "vertices": 20
+  },
+  "project-015": {
+   "vertices": 20
+  },
+  "project-016": {
+   "vertices": 20
+  },
+  "project-017": {
+   "vertices": 20
+  },
+  "project-018": {
+   "vertices": 20
+  },
+  "project-019": {
+   "vertices": 20
+  },
+  "project-020": {
+   "vertices": 20
+  },
+  "project-021": {
+   "vertices": 20
+  },
+  "project-022": {
+   "vertices": 20
+  },
+  "project-023": {
+   "vertices": 20
+  },
+  "project-024": {
+   "vertices": 20
+  },
+  "project-025": {
+   "vertices": 505
+  },
+  "project-027": {
+   "vertices": 40
+  },
+  "project-029": {
+   "vertices": 854
+  },
+  "project-030": {
+   "vertices": 40
+  },
+  "project-031": {
+   "vertices": 9406
+  },
+  "project-032": {
+   "vertices": 40
+  },
+  "project-033": {
+   "vertices": 40
+  },
+  "project-034": {
+   "vertices": 1822
+  },
+  "project-035": {
+   "vertices": 1822
+  },
+  "project-036": {
+   "vertices": 40
+  },
+  "project-037": {
+   "vertices": 40
+  },
+  "project-038": {
+   "vertices": 40
+  },
+  "project-039": {
+   "vertices": 40
+  },
+  "project-040": {
+   "vertices": 40
+  },
+  "project-041": {
+   "vertices": 40
+  },
+  "project-042": {
+   "vertices": 40
+  },
+  "project-043": {
+   "vertices": 40
+  },
+  "project-044": {
+   "vertices": 40
+  },
+  "project-045": {
+   "vertices": 40
+  },
+  "project-046": {
+   "vertices": 40
+  }
+ },
+ "pairs": [
+  {
+   "a": "library-001",
+   "b": "library-002",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-001",
+   "b": "library-028",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-002",
+   "b": "library-028",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-003",
+   "b": "library-004",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-007",
+   "b": "library-039",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-009",
+   "b": "library-042",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-010",
+   "b": "library-011",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-010",
+   "b": "library-043",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-011",
+   "b": "library-043",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-013",
+   "b": "library-014",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-015",
+   "b": "library-016",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-019",
+   "b": "project-008",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-019",
+   "b": "project-030",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-020",
+   "b": "library-021",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-020",
+   "b": "library-046",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-020",
+   "b": "project-009",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-020",
+   "b": "project-031",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-021",
+   "b": "library-046",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-021",
+   "b": "project-009",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-021",
+   "b": "project-031",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-023",
+   "b": "library-048",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-023",
+   "b": "library-089",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-023",
+   "b": "project-011",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-023",
+   "b": "project-033",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-024",
+   "b": "library-031",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-024",
+   "b": "library-079",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-024",
+   "b": "project-012",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-024",
+   "b": "project-034",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-025",
+   "b": "library-078",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-031",
+   "b": "library-079",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-031",
+   "b": "project-012",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-031",
+   "b": "project-034",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-032",
+   "b": "library-033",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-034",
+   "b": "library-035",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-036",
+   "b": "project-013",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-036",
+   "b": "project-035",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-037",
+   "b": "project-017",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-037",
+   "b": "project-039",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-044",
+   "b": "library-087",
+   "relation": "scaled_copy",
+   "translation_dev_m": null,
+   "scaled_dev_rel": 1.044e-06
+  },
+  {
+   "a": "library-045",
+   "b": "library-088",
+   "relation": "scaled_copy",
+   "translation_dev_m": null,
+   "scaled_dev_rel": 1.009e-06
+  },
+  {
+   "a": "library-046",
+   "b": "project-009",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-046",
+   "b": "project-031",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-047",
+   "b": "project-010",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-047",
+   "b": "project-032",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-048",
+   "b": "library-089",
+   "relation": "scaled_copy",
+   "translation_dev_m": null,
+   "scaled_dev_rel": 2.929e-06
+  },
+  {
+   "a": "library-048",
+   "b": "project-011",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-048",
+   "b": "project-033",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-049",
+   "b": "library-050",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-049",
+   "b": "project-012",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-049",
+   "b": "project-034",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-050",
+   "b": "project-012",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-050",
+   "b": "project-034",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-052",
+   "b": "library-090",
+   "relation": "scaled_copy",
+   "translation_dev_m": null,
+   "scaled_dev_rel": 5.757e-06
+  },
+  {
+   "a": "library-055",
+   "b": "project-018",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-055",
+   "b": "project-040",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-056",
+   "b": "library-064",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-056",
+   "b": "library-065",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-056",
+   "b": "library-084",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-057",
+   "b": "project-021",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-057",
+   "b": "project-043",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-058",
+   "b": "library-066",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-058",
+   "b": "project-020",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-058",
+   "b": "project-042",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-059",
+   "b": "project-024",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-059",
+   "b": "project-046",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-060",
+   "b": "project-015",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-060",
+   "b": "project-037",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-061",
+   "b": "project-013",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-061",
+   "b": "project-035",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-062",
+   "b": "project-018",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-062",
+   "b": "project-040",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-063",
+   "b": "library-085",
+   "relation": "scaled_copy",
+   "translation_dev_m": null,
+   "scaled_dev_rel": 3.281e-06
+  },
+  {
+   "a": "library-063",
+   "b": "project-019",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-063",
+   "b": "project-041",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-064",
+   "b": "library-065",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-064",
+   "b": "library-084",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-065",
+   "b": "library-084",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-066",
+   "b": "project-020",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-066",
+   "b": "project-042",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-067",
+   "b": "library-068",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-069",
+   "b": "library-070",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-069",
+   "b": "project-007",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-069",
+   "b": "project-029",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-070",
+   "b": "project-007",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-070",
+   "b": "project-029",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-071",
+   "b": "library-072",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-075",
+   "b": "library-076",
+   "relation": "same",
+   "translation_dev_m": 0.0,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-075",
+   "b": "library-077",
+   "relation": "same",
+   "translation_dev_m": 9.58e-07,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-075",
+   "b": "project-011",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-075",
+   "b": "project-033",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-076",
+   "b": "library-077",
+   "relation": "same",
+   "translation_dev_m": 9.58e-07,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-076",
+   "b": "project-011",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-076",
+   "b": "project-033",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-077",
+   "b": "project-011",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-077",
+   "b": "project-033",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-079",
+   "b": "project-012",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-079",
+   "b": "project-034",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-085",
+   "b": "project-019",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-085",
+   "b": "project-041",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-089",
+   "b": "project-011",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "library-089",
+   "b": "project-033",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-001",
+   "b": "project-002",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-003",
+   "b": "project-025",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-005",
+   "b": "project-027",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-007",
+   "b": "project-029",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-008",
+   "b": "project-030",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-009",
+   "b": "project-031",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-010",
+   "b": "project-032",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-011",
+   "b": "project-033",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-012",
+   "b": "project-034",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-013",
+   "b": "project-035",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-014",
+   "b": "project-036",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-015",
+   "b": "project-037",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-016",
+   "b": "project-038",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-017",
+   "b": "project-039",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-018",
+   "b": "project-040",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-019",
+   "b": "project-041",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-020",
+   "b": "project-042",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-021",
+   "b": "project-043",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-022",
+   "b": "project-044",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-023",
+   "b": "project-045",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  },
+  {
+   "a": "project-024",
+   "b": "project-046",
+   "relation": "distinct",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
+  }
+ ]
+}

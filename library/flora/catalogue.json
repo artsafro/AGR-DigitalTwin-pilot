@@ -55,6 +55,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "library-002",
@@ -101,6 +107,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 5.016,
    "crown_diameter_m": 3.652,
@@ -148,6 +156,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 3.832,
    "crown_diameter_m": 4.676,
@@ -195,6 +209,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 2.804,
    "crown_diameter_m": 2.484,
@@ -242,6 +262,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "library-021",
@@ -309,6 +335,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "library-079",
@@ -375,6 +407,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 4.538,
    "crown_diameter_m": 5.066,
@@ -422,6 +460,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "project-035",
@@ -477,6 +521,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "library-050",
@@ -530,6 +580,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 6.093,
    "crown_diameter_m": 4.133,
@@ -569,6 +621,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 1.736,
    "crown_diameter_m": 2.343,
@@ -608,6 +662,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 1.736,
    "crown_diameter_m": 2.343,
@@ -655,6 +711,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "project-040",
@@ -710,6 +772,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "library-056",
@@ -770,6 +838,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "project-035",
@@ -825,6 +899,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "project-040",
@@ -880,6 +960,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "project-007",
@@ -932,6 +1018,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 3.807,
    "crown_diameter_m": 3.276,
@@ -971,6 +1059,8 @@
    },
    "vpm": null,
    "vpm_status": "none",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 4.565,
    "crown_diameter_m": 2.889,
@@ -1018,6 +1108,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 4.411,
    "crown_diameter_m": 3.837,
@@ -1057,6 +1153,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 0.84,
    "crown_diameter_m": 1.247,
@@ -1096,6 +1194,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 0.989,
    "crown_diameter_m": 1.405,
@@ -1143,6 +1243,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "library-043",
@@ -1189,6 +1295,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 0.972,
    "crown_diameter_m": 1.194,
@@ -1236,6 +1344,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 0.99,
    "crown_diameter_m": 1.354,
@@ -1275,6 +1389,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 0.644,
    "crown_diameter_m": 0.557,
@@ -1322,6 +1438,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "project-030",
@@ -1369,6 +1491,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 0.989,
    "crown_diameter_m": 1.405,
@@ -1416,6 +1540,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "library-023",
@@ -1475,6 +1605,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 0.403,
    "crown_diameter_m": 1.189,
@@ -1522,6 +1654,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 0.951,
    "crown_diameter_m": 0.92,
@@ -1569,6 +1707,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "project-039",
@@ -1616,6 +1760,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 1.332,
    "crown_diameter_m": 1.889,
@@ -1655,6 +1801,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 1.706,
    "crown_diameter_m": 1.686,
@@ -1694,6 +1842,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 1.504,
    "crown_diameter_m": 1.664,
@@ -1733,12 +1883,14 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [
     {
      "entry_id": "library-087",
      "scene": "FLORA_Union_v1.max",
      "source_name": "гортензия древовидная баунти_02",
-     "reason": "duplicate: kept library-044 (same mesh as NPM, not a distinct VPM)"
+     "reason": "duplicate: kept library-044 (verified uniformly scaled copy of the NPM geometry, not a distinct VPM)"
     }
    ],
    "height_m": 1.407,
@@ -1779,12 +1931,14 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [
     {
      "entry_id": "library-088",
      "scene": "FLORA_Union_v1.max",
      "source_name": "гортензия метельчатая лайм лайт_02",
-     "reason": "duplicate: kept library-045 (same mesh as NPM, not a distinct VPM)"
+     "reason": "duplicate: kept library-045 (verified uniformly scaled copy of the NPM geometry, not a distinct VPM)"
     }
    ],
    "height_m": 1.407,
@@ -1833,6 +1987,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "project-032",
@@ -1880,12 +2040,14 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [
     {
      "entry_id": "library-090",
      "scene": "FLORA_Union_v1.max",
      "source_name": "рябинник рябиннолистн сэм_02",
-     "reason": "duplicate: kept library-052 (same mesh as NPM, not a distinct VPM)"
+     "reason": "duplicate: kept library-052 (verified uniformly scaled copy of the NPM geometry, not a distinct VPM)"
     }
    ],
    "height_m": 1.332,
@@ -1934,6 +2096,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "project-043",
@@ -1989,6 +2157,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "library-066",
@@ -2050,6 +2224,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "project-024",
@@ -2105,6 +2285,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "project-037",
@@ -2160,6 +2346,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "library-085",
@@ -2221,6 +2413,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 0.553,
    "crown_diameter_m": 0.731,
@@ -2268,6 +2466,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [
     {
      "entry_id": "library-075",
@@ -2334,6 +2538,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 1.524,
    "crown_diameter_m": 1.704,
@@ -2381,6 +2591,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 0.835,
    "crown_diameter_m": 1.133,
@@ -2428,6 +2644,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 1.524,
    "crown_diameter_m": 1.704,
@@ -2475,6 +2697,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 0.841,
    "crown_diameter_m": 0.952,
@@ -2522,6 +2750,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 0.86,
    "crown_diameter_m": 1.788,
@@ -2569,6 +2803,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 0.639,
    "crown_diameter_m": 0.951,
@@ -2616,6 +2856,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 0.562,
    "crown_diameter_m": 0.881,
@@ -2655,6 +2901,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 0.727,
    "crown_diameter_m": 0.977,
@@ -2694,6 +2942,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 0.951,
    "crown_diameter_m": 0.981,
@@ -2733,6 +2983,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 0.639,
    "crown_diameter_m": 0.976,
@@ -2772,6 +3024,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 1.188,
    "crown_diameter_m": 0.839,
@@ -2819,6 +3073,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 0.562,
    "crown_diameter_m": 0.909,
@@ -2866,6 +3126,12 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 0.951,
    "crown_diameter_m": 0.92,
@@ -2905,6 +3171,8 @@
    },
    "vpm": null,
    "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
    "merged": [],
    "height_m": 1.188,
    "crown_diameter_m": 0.839,
@@ -2952,6 +3220,12 @@
     "basis": "HP"
    },
    "vpm_status": "available",
+   "vpm_identity": "verified_distinct",
+   "vpm_evidence": {
+    "relation": "distinct",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
    "merged": [],
    "height_m": 1.519,
    "crown_diameter_m": 0.355,
