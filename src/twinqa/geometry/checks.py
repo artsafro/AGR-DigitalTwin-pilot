@@ -1069,6 +1069,157 @@ def check_orientation(model: Soup, tol: dict) -> dict:
         "unjudged_meshes": unjudged, "note": note})
 
 
+# |n_z| / |n| at least this close to 1: the face is horizontal. Issue #56.
+HORIZONTAL_COS_TOL = 1e-6
+# a hit this far (m) above the ray is a real crossing; closer is the face itself or a coplanar neighbour
+_HOR_DEPTH = 1e-6
+_HOR_NOTE = (
+    "per render mesh: an upward ray from the centroid of every horizontal face counts crossings of the "
+    "same mesh above it; an odd count means an upward face is inside the volume, an even count means a "
+    "downward face is inside; rays from below are not needed because the body top is closed")
+
+
+def _upward_crossings(tri: np.ndarray, ray: np.ndarray) -> np.ndarray:
+    """Distinct +Z crossings of each ray with ``tri`` (T, 3, 3). ``ray`` is (R, 3).
+
+    Point-in-triangle is barycentric in XY (``_ORI_BARY``), so a shared edge counts twice; heights that
+    round to the same multiple of ``_HOR_DEPTH`` are one crossing. Hits at or below the ray origin plus
+    ``_HOR_DEPTH`` are dropped. Same 2D bin join as ``_first_back_hits``."""
+    n_ray = len(ray)
+    counts = np.zeros(n_ray, dtype=int)
+    if len(tri) == 0 or n_ray == 0:
+        return counts
+    bins = _ORI_BINS
+    s, t, depth = tri[:, :, 0], tri[:, :, 1], tri[:, :, 2]
+    ray_s, ray_t = ray[:, 0], ray[:, 1]
+    s_min, s_max = s.min(1), s.max(1)
+    t_min, t_max = t.min(1), t.max(1)
+    lo_s = min(float(s_min.min()), float(ray_s.min()))
+    hi_s = max(float(s_max.max()), float(ray_s.max()))
+    lo_t = min(float(t_min.min()), float(ray_t.min()))
+    hi_t = max(float(t_max.max()), float(ray_t.max()))
+    pad_s = max(hi_s - lo_s, 1e-9) * 1e-9 + 1e-9
+    pad_t = max(hi_t - lo_t, 1e-9) * 1e-9 + 1e-9
+    origin_s, origin_t = lo_s - pad_s, lo_t - pad_t
+    extent_s, extent_t = (hi_s - lo_s) + 2.0 * pad_s, (hi_t - lo_t) + 2.0 * pad_t
+    grow_s = np.maximum(s_max - s_min, 1e-12) * 1e-8 + 1e-12
+    grow_t = np.maximum(t_max - t_min, 1e-12) * 1e-8 + 1e-12
+    bs_lo = _proj_bins(s_min - grow_s, origin_s, extent_s, bins)
+    bs_hi = _proj_bins(s_max + grow_s, origin_s, extent_s, bins)
+    bt_lo = _proj_bins(t_min - grow_t, origin_t, extent_t, bins)
+    bt_hi = _proj_bins(t_max + grow_t, origin_t, extent_t, bins)
+    cb_s = _proj_bins(s.mean(1), origin_s, extent_s, bins)
+    cb_t = _proj_bins(t.mean(1), origin_t, extent_t, bins)
+    bs_lo, bs_hi = np.minimum(bs_lo, cb_s), np.maximum(bs_hi, cb_s)
+    bt_lo, bt_hi = np.minimum(bt_lo, cb_t), np.maximum(bt_hi, cb_t)
+    bin_s, bin_t, chosen = _enumerate_bins((bs_lo, bt_lo), (bs_hi, bt_hi))
+    if len(chosen) == 0:
+        return counts
+    tri_bin = bin_s * bins + bin_t
+    ray_bin = _proj_bins(ray_s, origin_s, extent_s, bins) * bins + _proj_bins(ray_t, origin_t, extent_t, bins)
+    order = np.argsort(ray_bin)
+    uniq, start, rcount = np.unique(ray_bin[order], return_index=True, return_counts=True)
+    pos = np.searchsorted(uniq, tri_bin)
+    pos_c = np.minimum(pos, len(uniq) - 1)
+    valid = (pos < len(uniq)) & (uniq[pos_c] == tri_bin)
+    if not valid.any():
+        return counts
+    n_hit = rcount[pos[valid]]
+    tri_idx = np.repeat(chosen[valid], n_hit)
+    pair_base = np.repeat(np.cumsum(n_hit) - n_hit, n_hit)
+    ray_idx = order[np.repeat(start[pos[valid]], n_hit) + (np.arange(int(n_hit.sum())) - pair_base)]
+    ps = ray_s[ray_idx] - s[tri_idx, 0]
+    pt = ray_t[ray_idx] - t[tri_idx, 0]
+    e1s, e1t = s[tri_idx, 1] - s[tri_idx, 0], t[tri_idx, 1] - t[tri_idx, 0]
+    e2s, e2t = s[tri_idx, 2] - s[tri_idx, 0], t[tri_idx, 2] - t[tri_idx, 0]
+    dot00 = e1s * e1s + e1t * e1t
+    dot01 = e1s * e2s + e1t * e2t
+    dot11 = e2s * e2s + e2t * e2t
+    dot02 = e1s * ps + e1t * pt
+    dot12 = e2s * ps + e2t * pt
+    den = dot00 * dot11 - dot01 * dot01
+    inv = np.divide(1.0, den, out=np.zeros_like(den), where=np.abs(den) > 1e-20)
+    bu = (dot11 * dot02 - dot01 * dot12) * inv
+    bv = (dot00 * dot12 - dot01 * dot02) * inv
+    inside = (np.abs(den) > 1e-20) & (bu >= _ORI_BARY) & (bv >= _ORI_BARY) & (bu + bv <= 1.0 - _ORI_BARY)
+    if not inside.any():
+        return counts
+    picked = tri_idx[inside]
+    bu_i, bv_i = bu[inside], bv[inside]
+    hit_z = (1.0 - bu_i - bv_i) * depth[picked, 0] + bu_i * depth[picked, 1] + bv_i * depth[picked, 2]
+    hit_ray = ray_idx[inside]
+    above = hit_z > ray[hit_ray, 2] + _HOR_DEPTH
+    if not above.any():
+        return counts
+    hit_z, hit_ray = hit_z[above], hit_ray[above]
+    rounded = np.round(hit_z / _HOR_DEPTH).astype(np.int64)
+    order = np.lexsort((rounded, hit_ray))
+    hit_ray, rounded = hit_ray[order], rounded[order]
+    keep = np.empty(len(hit_ray), dtype=bool)
+    keep[0] = True
+    keep[1:] = (hit_ray[1:] != hit_ray[:-1]) | (rounded[1:] != rounded[:-1])
+    np.add.at(counts, hit_ray[keep], 1)
+    return counts
+
+
+def inward_horizontal_faces(model: Soup) -> tuple[np.ndarray, np.ndarray, list[int]]:
+    """Per render mesh: horizontal triangles, and those whose normal points into the volume.
+
+    Returns ``(inward, horizontal, wrong)``. ``wrong`` is the sorted global triangle indices.
+    A body is open at the bottom and closed at the top, so the parity of an upward ray separates
+    inside from outside. Meshes are judged apart (a decor shell must not flip the body's parity)."""
+    names, owner = _orientation_groups(model)
+    n_mesh = len(names)
+    inward = np.zeros(n_mesh, dtype=int)
+    horizontal = np.zeros(n_mesh, dtype=int)
+    if len(model.triangles) == 0 or len(model.vertices) == 0:
+        return inward, horizontal, []
+    corners = model.corners()
+    normal = np.cross(corners[:, 1] - corners[:, 0], corners[:, 2] - corners[:, 0])
+    length = np.linalg.norm(normal, axis=1)
+    nz = normal[:, 2]
+    horiz = (length > 0) & (np.abs(nz) >= (1.0 - HORIZONTAL_COS_TOL) * length)
+    nonvert = np.abs(nz) > 1e-9 * length
+    wrong = []
+    for mesh in range(n_mesh):
+        here = owner == mesh
+        rays = np.flatnonzero(here & horiz)
+        horizontal[mesh] = int(len(rays))
+        if len(rays) == 0:
+            continue
+        targets = np.flatnonzero(here & nonvert)
+        k = _upward_crossings(corners[targets], corners[rays].mean(1))
+        face_nz = nz[rays]
+        bad = ((face_nz > 0) & (k % 2 == 1)) | ((face_nz < 0) & (k % 2 == 0))
+        inward[mesh] = int(bad.sum())
+        if bad.any():
+            wrong.append(rays[bad])
+    if not wrong:
+        return inward, horizontal, []
+    found = np.sort(np.concatenate(wrong))
+    return inward, horizontal, [int(i) for i in found]
+
+
+def check_horizontal_faces(model: Soup, tol: dict) -> dict:
+    """Horizontal faces face out of the volume (issue #56).
+
+    Covers ledges (up), roofs (up), soffits and window heads (down). Complements ``check_orientation``,
+    whose rays never come from below. ``tol`` is the same geometry block as the other checks; the cutoffs
+    are module constants. No horizontal face at all (or an empty model) is not measured: nothing was judged."""
+    del tol
+    names, _ = _orientation_groups(model)
+    inward, horizontal, wrong = inward_horizontal_faces(model)
+    details = {
+        "meshes": [{"name": name, "horizontal_faces": int(horizontal[i]), "inward_faces": int(inward[i])}
+                   for i, name in enumerate(names)],
+        "inward_triangles": wrong[:50],
+        "note": _HOR_NOTE}
+    if int(horizontal.sum()) == 0:
+        return result("horizontal_faces", False, None, 0, details, measured=False)
+    value = int(inward.sum())
+    return result("horizontal_faces", value == 0, value, 0, details)
+
+
 def run(model: Soup, etalon: Soup, spec: Spec, tol: dict, ranges: dict | None = None,
         source_class: str | None = None, build: str = "from_spec") -> dict:
     """All §5 checks; tol is the `geometry` block of tolerances.json. The weld is the building's (spec weld_m,
@@ -1083,7 +1234,8 @@ def run(model: Soup, etalon: Soup, spec: Spec, tol: dict, ranges: dict | None = 
                          build),
               check_budget(model, tol),
               check_opening_planes(model, spec, tol, ranges), check_material_ids(model, tol, ranges),
-              check_decor(model, spec, tol, ranges), check_orientation(model, tol)]
+              check_decor(model, spec, tol, ranges), check_orientation(model, tol),
+              check_horizontal_faces(model, tol)]
     return {"passed": all(c["status"] == "pass" for c in checks),
             "failed": [c["id"] for c in checks if c["status"] == "fail"],
             "not_measured": [c["id"] for c in checks if c["status"] == "not_measured"],
