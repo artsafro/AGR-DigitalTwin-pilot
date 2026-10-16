@@ -370,3 +370,178 @@ def test_split_combined_with_enclosed_inner_box():
 def test_split_combined_with_detached_soffit():
     result = _hcheck(_split(_detached_reversed_soffit_dump(), True))
     assert result["status"] == "fail" and result["value"] == 2
+
+
+def _canonical_corners(dump):
+    return sorted(tuple(c.ravel()) for c in from_dump(dump).corners())
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize("roof_split", [False, True])
+@pytest.mark.parametrize("offset", [0.0, 13.25, -101.75])
+def test_detached_soffit_own_mesh_keeps_verdict(reverse, roof_split, offset):
+    """SYNTHETIC. Moving the unwelded soffit into its own mesh keeps the joined-dump verdict."""
+    dump = _detached_reversed_soffit_dump()
+    mesh = dump["meshes"][0]
+    picked = [12, 13]
+    if not reverse:
+        for i in picked:
+            a, b, c = mesh["triangles"][i]
+            mesh["triangles"][i] = [a, c, b]
+    for one in dump["meshes"]:
+        one["vertices"] = (np.asarray(one["vertices"]) + [offset, -offset, offset]).tolist()
+    expected = 2 if reverse else 0
+    baseline = checks.check_horizontal_faces(from_dump(dump), _TOL)
+    assert baseline["value"] == expected
+    out = copy.deepcopy(dump)
+    main = out["meshes"][0]
+    bottom = copy.deepcopy(main)
+    bottom["name"] = "soffit"
+    for key in ("triangles", "material_ids"):
+        values = main[key]
+        bottom[key] = [values[i] for i in picked]
+        main[key] = [v for i, v in enumerate(values) if i not in picked]
+    out["meshes"].append(bottom)
+    if roof_split:
+        out = _split(out, True)
+    assert _canonical_corners(dump) == _canonical_corners(out)
+    result = checks.check_horizontal_faces(from_dump(out), _TOL)
+    assert result["value"] == expected
+    assert result["status"] == ("fail" if expected else "pass")
+    if reverse:
+        # An upward soffit is what _split(..., True) moves into soffit_roof.
+        holder = "soffit_roof" if roof_split else "soffit"
+        assert _row(result, holder)["inward_faces"] == 2
+
+
+def _random_partition(dump, seed):
+    """SYNTHETIC. Scatter each non-UCX mesh's triangles across 2–5 meshes; keep ``decor`` whole."""
+    rng = np.random.default_rng(seed)
+    out = copy.deepcopy(dump)
+    meshes = []
+    for mesh in out["meshes"]:
+        name = mesh["name"]
+        if name.startswith("UCX_") or name == "decor" or len(mesh["triangles"]) == 0:
+            meshes.append(mesh)
+            continue
+        n = len(mesh["triangles"])
+        k = int(rng.integers(2, 6))
+        assign = rng.integers(0, k, size=n)
+        verts = mesh["vertices"]
+        for part in range(k):
+            chosen = np.flatnonzero(assign == part)
+            if len(chosen) == 0:
+                continue
+            tris = [mesh["triangles"][int(i)] for i in chosen]
+            used = sorted({int(p) for tri in tris for p in tri})
+            remap = {old: new for new, old in enumerate(used)}
+            piece = {
+                "name": f"{name}_{part}",
+                "vertices": [verts[i] for i in used],
+                "triangles": [[remap[int(a)], remap[int(b)], remap[int(c)]] for a, b, c in tris]}
+            if "material_ids" in mesh:
+                mids = mesh["material_ids"]
+                piece["material_ids"] = [mids[int(i)] for i in chosen]
+            meshes.append(piece)
+    out["meshes"] = meshes
+    return out
+
+
+_PARTITION_CASES = None
+
+
+def _partition_cases():
+    """SYNTHETIC dumps whose horizontal-face value a render-mesh partition must not change."""
+    global _PARTITION_CASES
+    if _PARTITION_CASES is not None:
+        return _PARTITION_CASES
+    reversed_dump = _detached_reversed_soffit_dump()
+    corrected = copy.deepcopy(reversed_dump)
+    corrected_mesh = corrected["meshes"][0]
+    for index in (12, 13):
+        a, b, c = corrected_mesh["triangles"][index]
+        corrected_mesh["triangles"][index] = [a, c, b]
+    cases = [
+        ("detached_reversed", reversed_dump, _TOL),
+        ("detached_corrected", corrected, _TOL)]
+    for bench in _BENCHES:
+        _spec, dump, tol = _built(bench)
+        cases.append((f"{bench}_clean", dump, tol))
+        broken = copy.deepcopy(dump)
+        horiz, _nz, _cz = _horiz_axes(from_dump(broken))
+        _flip_global(broken, [int(np.flatnonzero(horiz)[0])])
+        cases.append((f"{bench}_one", broken, tol))
+    _PARTITION_CASES = cases
+    return cases
+
+
+@pytest.mark.parametrize("seed", range(10))
+def test_random_partition_keeps_verdict(seed):
+    """SYNTHETIC. Random render-mesh partitions keep the unpartitioned horizontal-face value."""
+    for label, dump, tol in _partition_cases():
+        baseline = checks.check_horizontal_faces(from_dump(dump), tol)["value"]
+        parted = checks.check_horizontal_faces(from_dump(_random_partition(dump, seed)), tol)
+        assert parted["value"] == baseline, label
+
+
+def _ground_span(reverse=False):
+    """SYNTHETIC open quad, z=0, x and y from -5 to 15."""
+    tris = [[0, 2, 1], [0, 3, 2]] if reverse else [[0, 1, 2], [0, 2, 3]]
+    return {"name": "ground",
+            "vertices": [[-5, -5, 0], [15, -5, 0], [15, 15, 0], [-5, 15, 0]],
+            "triangles": tris, "material_ids": [1, 1]}
+
+
+def _box_10x10x6():
+    """SYNTHETIC closed outward box, x and y in [0, 10], height 6, own vertices."""
+    box = _box("box")
+    box["vertices"] = (np.asarray(box["vertices"], float) * np.array([10.0, 10.0, 6.0])).tolist()
+    return box
+
+
+def test_open_ground_sheet_under_closed_box():
+    """SYNTHETIC. An open sheet and a closed box are two contexts; the sheet does not see the box."""
+    clean = _hcheck({"meshes": [_ground_span(), _box_10x10x6()]})
+    assert clean["status"] == "pass" and clean["value"] == 0
+    assert clean["details"]["volumes"] == [["ground"], ["box"]]
+    bad = _hcheck({"meshes": [_ground_span(reverse=True), _box_10x10x6()]})
+    assert bad["status"] == "fail" and bad["value"] == 2
+    assert _row(bad, "ground")["inward_faces"] == 2
+    assert _row(bad, "box")["inward_faces"] == 0
+    assert bad["details"]["volumes"] == [["ground"], ["box"]]
+
+
+def _move_picked_to(dump, picked, name):
+    """SYNTHETIC. Move global triangles of the first mesh into a new mesh; coordinates unchanged."""
+    out = copy.deepcopy(dump)
+    main = out["meshes"][0]
+    moved = copy.deepcopy(main)
+    moved["name"] = name
+    for key in ("triangles", "material_ids"):
+        values = main[key]
+        moved[key] = [values[i] for i in picked]
+        main[key] = [v for i, v in enumerate(values) if i not in picked]
+    out["meshes"].append(moved)
+    return out
+
+
+def test_open_fragment_does_not_see_decor():
+    """SYNTHETIC. A quad moved into decor is judged without the body roof.
+
+    Downward and alone, nothing is above it, so it is flagged. The same quad facing up passes.
+    The body stays outward."""
+    picked = [12, 13]
+    corrected = _detached_reversed_soffit_dump()
+    mesh = corrected["meshes"][0]
+    for index in picked:
+        a, b, c = mesh["triangles"][index]
+        mesh["triangles"][index] = [a, c, b]
+    down = _hcheck(_move_picked_to(corrected, picked, "decor"))
+    assert down["status"] == "fail" and down["value"] == 2
+    assert _row(down, "decor")["inward_faces"] == 2
+    assert _row(down, "body")["inward_faces"] == 0
+    assert down["details"]["volumes"] == [["body"], ["decor"]]
+    up = _hcheck(_move_picked_to(_detached_reversed_soffit_dump(), picked, "decor"))
+    assert up["status"] == "pass" and up["value"] == 0
+    assert _row(up, "body")["inward_faces"] == 0
+    assert up["details"]["volumes"] == [["body"], ["decor"]]
