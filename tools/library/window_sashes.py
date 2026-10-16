@@ -26,6 +26,13 @@ _REASONS = {
                      "not confirmed by the user",
     "no_ring": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
 }
+_UNREADABLE = {
+    "empty_mesh": "unreadable from the Max scene: the mesh has no faces (empty_mesh); sash count unknown",
+    "no_frame_material": "unreadable from the Max scene: no face with frame material ID 1 (no_frame_material); "
+                         "sash count unknown",
+    "no_front_frame": "unreadable from the Max scene: no kept front-facing frame level (no_front_frame); "
+                      "sash count unknown",
+}
 _HAND_MAX = "the Max scene has no handle, hinge or opening-direction geometry"
 _HAND_NONE = "the source has no handing data"
 _SASH_NONE = "the source has no sash data"
@@ -44,7 +51,9 @@ _METHOD = (
     "on the other leaf). Other components are ignored. Overlap is true when rings on two different levels "
     "overlap by more than one grid cell in X and in Z, or meet within one grid cell on one axis while "
     "overlapping by more than one cell on the other (the meeting stile of two sliding leaves). The scene has "
-    "no handle, hinge or opening-direction geometry, so handing is not read."
+    "no handle, hinge or opening-direction geometry, so handing is not read. An object with no faces, no "
+    "material ID 1 face, or no kept front level is unreadable (empty_mesh, no_frame_material, or "
+    "no_front_frame); missing frame evidence is not fixed glazing."
 )
 
 
@@ -171,14 +180,19 @@ def _rings(mask, grid, depth):
     return found
 
 
+def _unreadable(name, code, width=0.0, height=0.0):
+    return {"object": name, "width_m": width, "height_m": height, "outer_depth_m": None,
+            "levels": [], "rings": [], "overlap": False, "reading": "unreadable", "unreadable": code}
+
+
 def _object(obj, grid):
     verts = np.asarray(obj["verts"], float)
     faces = np.asarray(obj["faces"], int)
-    empty = {"object": obj["name"], "width_m": 0.0, "height_m": 0.0, "outer_depth_m": None,
-             "levels": [], "rings": [], "overlap": False, "reading": "no_ring"}
+    if verts.ndim != 2 or faces.ndim != 2 or len(verts) == 0 or len(faces) == 0:
+        return _unreadable(obj["name"], "empty_mesh")
     id1 = faces[:, 3] == 1
     if not id1.any():
-        return empty
+        return _unreadable(obj["name"], "no_frame_material")
     pts = verts[faces[id1][:, :3].reshape(-1)]
     minx, maxx = float(pts[:, 0].min()), float(pts[:, 0].max())
     minz, maxz = float(pts[:, 2].min()), float(pts[:, 2].max())
@@ -214,8 +228,7 @@ def _object(obj, grid):
             continue
         levels.append({"depth_m": depth, "area_m2": round(float(mask.sum()) * grid * grid, 4), "mask": mask})
     if not levels:
-        empty["width_m"], empty["height_m"] = round(width, 3), round(height, 3)
-        return empty
+        return _unreadable(obj["name"], "no_front_frame", round(width, 3), round(height, 3))
     boundary = np.zeros((nz, nx), dtype=bool)
     boundary[0, :] = boundary[-1, :] = boundary[:, 0] = boundary[:, -1] = True
     outer = max(levels, key=lambda lv: (int((lv["mask"] & boundary).sum()), lv["area_m2"]))
@@ -256,26 +269,65 @@ def read_sashes(dump, *, grid_m=0.002):
             "objects": [_object(obj, grid_m) for obj in dump["objects"]]}
 
 
+def _scene_file(doc):
+    """Scene file name on a sash-source document, or None when source.file is absent."""
+    source = doc.get("source")
+    if not isinstance(source, dict):
+        return None
+    file = source.get("file")
+    if isinstance(file, str) and file:
+        return file
+    return None
+
+
+def _index_sashes(sources):
+    """(scene, object) -> (path, reading). Errors are returned, not raised, so the caller can
+    report every problem before it changes the type list."""
+    found, errors = {}, []
+    for path, doc in sources:
+        scene = _scene_file(doc)
+        if scene is None:
+            errors.append(f"sash source {path} lacks source.file")
+            continue
+        for obj in doc["objects"]:
+            key = (scene, obj["object"])
+            if key in found:
+                prev, _ = found[key]
+                errors.append(f"duplicate sash object {obj['object']} in scene {scene}: {prev} and {path}")
+                continue
+            found[key] = (path, obj)
+    return found, errors
+
+
 def apply_sashes(types_doc, sources):
     """Write unconfirmed sash and handing candidates onto every type. `sashes` and `handing` stay null.
 
-    `sources` is a list of (repo-relative posix path, sash-source doc). An entry whose Max object is
-    missing from every source is an error. Replacing `unconfirmed` makes a second call a no-op.
+    `sources` is a list of (repo-relative posix path, sash-source doc). A type matches a reading only
+    on the pair (scene, object): the type scene is `source.object` and its object is `source.max_object`;
+    the reading scene is the sash-source document's `source.file`. A target never takes another scene's
+    reading. An entry without `max_object` keeps the "no sash data" behaviour. A source without
+    `source.file`, a repeated (scene, object) inside one document or across documents, or a target pair
+    with no reading is a SystemExit raised before `types_doc` is changed. Replacing `unconfirmed` makes
+    a second call a no-op.
     """
-    by_name = {}
-    for path, doc in sources:
-        for obj in doc["objects"]:
-            by_name[obj["object"]] = (path, obj)
-    missing = [t["source"]["max_object"] for t in types_doc["types"]
-               if t.get("source", {}).get("max_object") and t["source"]["max_object"] not in by_name]
-    if missing:
-        raise SystemExit(f"sash source has no object {missing[0]}")
+    found, errors = _index_sashes(sources)
+    for t in types_doc["types"]:
+        name = t.get("source", {}).get("max_object")
+        if name and (t.get("source", {}).get("object"), name) not in found:
+            errors.append(f"sash source has no object {name}")
+            break
+    if errors:
+        raise SystemExit("; ".join(errors))
     for t in types_doc["types"]:
         name = t.get("source", {}).get("max_object")
         if name:
-            path, obj = by_name[name]
-            sashes = {"candidate": len(obj["rings"]), "rects_m": [r["rect_m"] for r in obj["rings"]],
-                      "reason": _REASONS[obj["reading"]], "source": path}
+            path, obj = found[(t["source"]["object"], name)]
+            if obj["reading"] == "unreadable":
+                code = obj["unreadable"]
+                sashes = {"candidate": None, "rects_m": [], "reason": _UNREADABLE[code], "source": path}
+            else:
+                sashes = {"candidate": len(obj["rings"]), "rects_m": [r["rect_m"] for r in obj["rings"]],
+                          "reason": _REASONS[obj["reading"]], "source": path}
             handing = {"candidate": None, "reason": _HAND_MAX}
         else:
             sashes = {"candidate": None, "reason": _SASH_NONE}
@@ -315,9 +367,11 @@ def main(argv=None):
     if args.cmd == "read":
         doc = read_sashes(json.loads(args.dump.read_text(encoding="utf-8")))
         _write(args.output, doc)
-        counts = {k: sum(o["reading"] == k for o in doc["objects"]) for k in ("no_ring", "rings", "rings_overlap")}
+        counts = {k: sum(o["reading"] == k for o in doc["objects"])
+                  for k in ("no_ring", "rings", "rings_overlap", "unreadable")}
         print(f"sashes: {len(doc['objects'])} objects "
-              f"(no_ring {counts['no_ring']}, rings {counts['rings']}, rings_overlap {counts['rings_overlap']}) "
+              f"(no_ring {counts['no_ring']}, rings {counts['rings']}, rings_overlap {counts['rings_overlap']}, "
+              f"unreadable {counts['unreadable']}) "
               f"-> {args.output}")
         return
     types_doc = json.loads(args.types.read_text(encoding="utf-8"))

@@ -2,6 +2,8 @@
 
 Writes JSON (verts, faces, material ids) to the path in AGR_WINDOW_DUMP, default
 C:/x/windows-library/mesh_dump.json. Never saves the scene.
+
+Pattern: none — library tooling, not a building node (REVIEW_CHECKLIST Q1: new-case).
 """
 import json
 import os

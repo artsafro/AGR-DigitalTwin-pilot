@@ -109,8 +109,9 @@ def _entry(id_, max_object=None, **extra):
     return entry
 
 
-def _source(name, reading, rects):
-    return {"objects": [{"object": name, "reading": reading,
+def _source(name, reading, rects, scene="synthetic"):
+    return {"source": {"file": scene},
+            "objects": [{"object": name, "reading": reading,
                          "rings": [{"rect_m": r, "depth_m": -0.3, "holes": 1} for r in rects]}]}
 
 
@@ -205,3 +206,153 @@ def test_random_rings_come_back_within_2_mm():
         assert len(got["rings"]) == len(rects)
         for ring, rect in zip(got["rings"], rects):
             assert all(abs(a - b) <= 0.002 for a, b in zip(ring["rect_m"], rect)), (ring["rect_m"], rect)
+
+
+_QUAD = [[0, 0, 0], [1, 0, 0], [1, 0, 1], [0, 0, 1]]
+
+
+def _mesh_dump(faces, verts=None):
+    return {"file": r"C:\synthetic\Win.max", "units": "meters",
+            "objects": [{"name": "W", "verts": _QUAD if verts is None else verts, "faces": faces}]}
+
+
+def _apply_reading(doc):
+    scene = doc["source"]["file"]
+    types = {"schema": "window-types/1", "note": "", "types": [
+        {"id": "T", "sashes": None, "handing": None,
+         "source": {"object": scene, "max_object": "W"}}]}
+    return ws.apply_sashes(types, [("p.json", doc)])["types"][0]["unconfirmed"]["sashes"]
+
+
+def test_faces_without_frame_material_are_unreadable():
+    doc = ws.read_sashes(_mesh_dump([[0, 1, 2, 9], [0, 2, 3, 9]]))
+    got = doc["objects"][0]
+    assert got["reading"] == "unreadable" and got["unreadable"] == "no_frame_material"
+    assert got["width_m"] == 0.0 and got["height_m"] == 0.0
+    assert got["outer_depth_m"] is None and got["levels"] == [] and got["rings"] == [] and got["overlap"] is False
+    sash = _apply_reading(doc)
+    assert sash["candidate"] is None and sash["rects_m"] == [] and "no_frame_material" in sash["reason"]
+
+
+def test_back_facing_frame_without_a_front_level_is_unreadable():
+    doc = ws.read_sashes(_mesh_dump([[0, 2, 1, 1], [0, 3, 2, 1]]))
+    got = doc["objects"][0]
+    assert got["reading"] == "unreadable" and got["unreadable"] == "no_front_frame"
+    assert got["width_m"] == 1.0 and got["height_m"] == 1.0
+    assert got["outer_depth_m"] is None and got["levels"] == [] and got["rings"] == []
+    sash = _apply_reading(doc)
+    assert sash["candidate"] is None and sash["rects_m"] == []
+
+
+def test_an_empty_mesh_is_unreadable():
+    doc = ws.read_sashes(_mesh_dump([], verts=[]))
+    got = doc["objects"][0]
+    assert got["reading"] == "unreadable" and got["unreadable"] == "empty_mesh"
+    assert got["width_m"] == 0.0 and got["height_m"] == 0.0
+    sash = _apply_reading(doc)
+    assert sash["candidate"] is None and sash["rects_m"] == []
+
+
+def test_a_real_frame_still_reads_as_fixed_glazing():
+    dump = _dump([_frame()], (0, 0, 1.2, 1.2, 0.2))
+    doc = ws.read_sashes(dump)
+    got = doc["objects"][0]
+    assert got["reading"] == "no_ring" and got["rings"] == [] and "unreadable" not in got
+    sash = _apply_reading(doc)
+    assert sash["candidate"] == 0 and "fixed glazing" in sash["reason"]
+
+
+def _reading(scene, name, reading, rects):
+    return {"source": {"file": scene}, "objects": [{
+        "object": name, "reading": reading,
+        "rings": [{"rect_m": r, "depth_m": -0.3, "holes": 1} for r in rects]}]}
+
+
+def _target(scene, name, id_="T"):
+    return {"schema": "window-types/1", "note": "Base.", "types": [
+        {"id": id_, "sashes": None, "handing": None,
+         "source": {"object": scene, "max_object": name}}]}
+
+
+@pytest.mark.parametrize("order", ["ab", "ba"])
+def test_the_same_object_name_in_another_scene_is_not_used(order):
+    ring = [0.1, 0.2, 0.3, 0.4]
+    a = ("a.json", _reading("Win_Typical.max", "W", "rings", [ring]))
+    b = ("b.json", _reading("Other.max", "W", "no_ring", []))
+    sources = [a, b] if order == "ab" else [b, a]
+    out = ws.apply_sashes(_target("Win_Typical.max", "W"), sources)
+    sash = out["types"][0]["unconfirmed"]["sashes"]
+    assert sash["candidate"] == 1 and sash["source"] == "a.json" and sash["rects_m"] == [ring]
+
+
+def _raises_unchanged(doc, sources):
+    before = copy.deepcopy(doc)
+    with pytest.raises(SystemExit) as caught:
+        ws.apply_sashes(doc, sources)
+    assert doc == before
+    return str(caught.value)
+
+
+def test_a_repeated_scene_object_across_documents_is_an_error():
+    doc = _target("Win_Typical.max", "W")
+    sources = [("a.json", _reading("Win_Typical.max", "W", "rings", [[0, 0, 1, 1]])),
+               ("b.json", _reading("Win_Typical.max", "W", "no_ring", []))]
+    message = _raises_unchanged(doc, sources)
+    assert "a.json" in message and "b.json" in message
+
+
+def test_a_repeated_object_inside_one_document_is_an_error():
+    doc = _target("Win_Typical.max", "W")
+    src = {"source": {"file": "Win_Typical.max"}, "objects": [
+        {"object": "W", "reading": "rings", "rings": [{"rect_m": [0, 0, 1, 1], "depth_m": -0.3, "holes": 1}]},
+        {"object": "W", "reading": "no_ring", "rings": []},
+    ]}
+    message = _raises_unchanged(doc, [("one.json", src)])
+    assert message.count("one.json") >= 2
+
+
+def test_a_target_scene_with_no_source_is_an_error():
+    doc = _target("Win_Typical.max", "W")
+    message = _raises_unchanged(doc, [("b.json", _reading("Other.max", "W", "rings", [[0, 0, 1, 1]]))])
+    assert "W" in message
+
+
+def test_a_source_without_a_scene_file_is_an_error():
+    doc = _target("Win_Typical.max", "W")
+    src = {"objects": [{"object": "W", "reading": "no_ring", "rings": []}]}
+    message = _raises_unchanged(doc, [("p.json", src)])
+    assert "source.file" in message
+
+
+def test_one_source_applies_the_candidate_it_read():
+    doc = _target("synthetic", "W")
+    out = ws.apply_sashes(doc, [("only.json", _source("W", "rings", [[0, 0, 1, 1], [0.2, 0.2, 0.4, 0.4]]))])
+    assert out["types"][0]["unconfirmed"]["sashes"]["candidate"] == 2
+
+
+def test_random_scene_pairs_keep_their_own_ring_count():
+    rng = random.Random(4)
+    scenes = ("A.max", "B.max", "C.max")
+    names = ("W1", "W2", "W3")
+    pairs = [(scene, name) for scene in scenes for name in names]
+    for _ in range(200):
+        pool = pairs[:]
+        rng.shuffle(pool)
+        chosen = pool[:rng.randint(1, 3)]
+        sources, expected = [], {}
+        types = []
+        for i, (scene, name) in enumerate(chosen):
+            count = rng.randint(0, 3)
+            path = f"s{i}.json"
+            reading = "no_ring" if count == 0 else "rings"
+            rects = [[0.1, 0.1, 0.5, 0.5] for _ in range(count)]
+            sources.append((path, _reading(scene, name, reading, rects)))
+            expected[(scene, name)] = count
+            types.append({"id": f"T{i}", "sashes": None, "handing": None,
+                          "source": {"object": scene, "max_object": name}})
+        doc = {"schema": "window-types/1", "note": "", "types": types}
+        for ordered in (sources, list(reversed(sources))):
+            out = ws.apply_sashes(copy.deepcopy(doc), ordered)
+            for t in out["types"]:
+                key = (t["source"]["object"], t["source"]["max_object"])
+                assert t["unconfirmed"]["sashes"]["candidate"] == expected[key]
