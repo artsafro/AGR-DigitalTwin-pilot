@@ -1477,8 +1477,8 @@ def _roof_structures(v, tris, owners, names, top_level):
 
 
 def _off_structures(v, tris, under, level):
-    """Triangles of `tris` outside every enclosure outline, plus the flat roof at the level under them - what is
-    inside (the equipment, the screens, their steep parts) is no roof question."""
+    """Triangles of `tris` outside every enclosure outline, plus under them the flat roof at the level and
+    faces that reach the storey below (shaft walls, #93). What stands on the roof inside is no roof question."""
     if not len(tris):
         return tris
     p = v[tris]
@@ -1490,7 +1490,8 @@ def _off_structures(v, tris, under, level):
     length = np.linalg.norm(n, axis=1)
     flat_roof = (length > 0) & (n[:, 2] > np.cos(np.radians(ROOF_SLOPE_MAX_DEG)) * np.maximum(length, 1e-12)) \
         & (np.abs(p[:, :, 2].mean(axis=1) - level) <= ROOF_LEVEL_TOL_M)
-    return tris[~inside | flat_roof]
+    below = p[:, :, 2].min(axis=1) < level - ROOF_LEVEL_TOL_M
+    return tris[~inside | flat_roof | below]
 
 
 def _parapet_thickness(v, tris, roof_z, top_z, top_contour):
