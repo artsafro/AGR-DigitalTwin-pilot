@@ -475,6 +475,16 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 if variant == 'shared_vertex':
     base = [(0.0, 0.0, 0.0), (2.0, 0.0, 0.0), (0.0, 2.0, 0.0), (1.0, 1.0, 1.0), (1.0, 1.0, -1.0)]
     local = [(0, 1, 2), (0, 3, 4)]
+elif variant == 'folded_contact':
+    # Synthetic boxes: a floor grid edge lies 1 mm under the upper box's foot.
+    base = [(0,0,0), (0,0,1), (0,1,1), (0,1,0), (1,0,0), (1,1,0), (1,1,1), (1,0,1),
+            (.399,0,0), (.399,0,1), (.399,1,1), (.399,1,0),
+            (.1,.1,1), (.1,.1,1.5), (.1,.4,1.5), (.1,.4,1),
+            (.4,.1,1), (.4,.4,1), (.4,.4,1.5), (.4,.1,1.5)]
+    local = [(0,1,2), (0,2,3), (4,5,6), (4,6,7), (0,8,9), (0,9,1), (8,4,7), (8,7,9),
+             (3,2,10), (3,10,11), (11,10,6), (11,6,5), (0,3,11), (0,11,8), (8,11,5), (8,5,4),
+             (1,9,10), (1,10,2), (9,7,6), (9,6,10), (12,13,14), (12,14,15), (16,17,18), (16,18,19),
+             (12,16,19), (12,19,13), (15,14,18), (15,18,17), (12,15,17), (12,17,16), (13,19,18), (13,18,14)]
 else:
     base = [(-1.0, -1.0, 0.0), (1.0, -1.0, 0.0), (0.0, 1.0, 0.0),
             (0.0, -0.3, -0.5), (0.0, -0.1, 0.5), (0.0, -0.5, 0.5),
@@ -522,7 +532,7 @@ bpy.ops.export_scene.fbx(filepath=out, apply_scale_options='FBX_SCALE_UNITS')
 
 @pytest.mark.blender
 @pytest.mark.skipif(BLENDER is None, reason="Blender not installed")
-@pytest.mark.parametrize("variant", ["shared_vertex", "subdivided"])
+@pytest.mark.parametrize("variant", ["shared_vertex", "subdivided", "folded_contact"])
 def test_blender_false_negative_crossings(tmp_path, variant):
     fbx_path = tmp_path / f"false_negative_{variant}.fbx"
     subprocess.run([BLENDER, "--background", "--factory-startup", "--python-exit-code", "1",
@@ -531,8 +541,12 @@ def test_blender_false_negative_crossings(tmp_path, variant):
     report = readback(fbx_path, blender=BLENDER)
     topo = report["meshes"][0]["topology"]
     found = scene_findings(report, "vpm", "oks", PROFILES.vpm)
-    assert topo["self_intersections"] >= 101
-    assert statuses(found, "V004")["topology defects"] == "fail"
+    if variant == "folded_contact":
+        assert topo["self_intersections"] == 0
+        assert statuses(found, "V004")["topology defects"] == "pass"
+    else:
+        assert topo["self_intersections"] >= 101
+        assert statuses(found, "V004")["topology defects"] == "fail"
 
 
 @pytest.mark.blender
