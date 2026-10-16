@@ -118,11 +118,15 @@ fewer segments shows facets: pick the threshold inside the band and show the use
 
 Move the pivot to the horizontal centre of the MAF, down to its lowest point, then up by 10 cm [D095] (MAF-23).
 Place that pivot on the SPOZU insertion point together with its rotation, and project the pivot onto the Ground
-surface from `model-ground`, so the MAF sinks by 10 cm. Delete the bottom faces that lie under the Ground. A face
-is deleted only when all of its vertices are below the Ground at their own XY; a face with any vertex at or above
-the Ground stays — a visible hole is a defect [D096] (MAF-20). On a slope the downhill side sinks less: where a
-bottom vertex ends above the Ground, the open bottom would show — list it for the user (deeper sinking or a skirt
-is the user's call) and never delete it. The placement pivot is temporary and is not the final shared FBX pivot
+surface from `model-ground`, so the MAF sinks by 10 cm. Delete bottom faces only when the whole footprint is
+proven strictly under the Ground. The Ground from `model-ground` is a triangle mesh, so the gap between the Ground
+and the planar bottom face is piecewise linear and its smallest value lies at one of: a face vertex, a Ground
+vertex inside the face outline, or a crossing of a Ground edge with the face outline. All these points must have
+the Ground strictly above the face. Checking only the face vertices or only the face centre is not enough (a
+depression under the face opens a hole) [D096] (MAF-20). When the Ground triangles under the footprint cannot be
+read (outside the Ground mesh, missing data), keep the face and list it as review for the user. On a slope the
+downhill side sinks less: where the open bottom would show, list it for the user (deeper sinking or a skirt is
+the user's call) and never delete it. The placement pivot is temporary and is not the final shared FBX pivot
 (MAF-23).
 
 - Route: 3ds Max batch or Blender headless reading the Step 1 point table; Ground heights by a downward ray onto the Ground from `model-ground`.

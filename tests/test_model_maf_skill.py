@@ -283,38 +283,260 @@ def _unit_normal(verts, face):
     return (nx / length, ny / length, nz / length)
 
 
-def seat_maf(vertices, faces, insert_xy, rotation_deg, ground):
-    """Pivot to bbox centre XY and zmin+0.10, rotate about it, drop the pivot onto the Ground.
+class Tin:
+    """Triangle mesh Ground. `height` is None outside coverage; calling raises ValueError there."""
 
-    A face whose unit normal has n_z < -0.5 is a bottom. It is deleted only when every vertex is
-    strictly below the Ground at its own XY. Any other bottom is kept and listed as exposed.
+    def __init__(self, points, triangles):
+        self.points = tuple((float(x), float(y), float(z)) for x, y, z in points)
+        self.triangles = tuple(tuple(tri) for tri in triangles)
+        xs = [p[0] for p in self.points]
+        ys = [p[1] for p in self.points]
+        self._bounds = (min(xs), max(xs), min(ys), max(ys))
+
+    def height(self, x, y):
+        minx, maxx, miny, maxy = self._bounds
+        if x < minx - 1e-9 or x > maxx + 1e-9 or y < miny - 1e-9 or y > maxy + 1e-9:
+            return None
+        for tri in self.triangles:
+            z = _bary_z(self.points, tri, x, y)
+            if z is not None:
+                return z
+        return None
+
+    def __call__(self, x, y):
+        z = self.height(x, y)
+        if z is None:
+            raise ValueError(f"outside TIN coverage: {(x, y)}")
+        return z
+
+
+def _bary_z(points, tri, x, y, eps=1e-9):
+    (x0, y0, z0), (x1, y1, z1), (x2, y2, z2) = (points[i] for i in tri)
+    den = (y1 - y2) * (x0 - x2) + (x2 - x1) * (y0 - y2)
+    if abs(den) < 1e-18:
+        return None
+    w0 = ((y1 - y2) * (x - x2) + (x2 - x1) * (y - y2)) / den
+    w1 = ((y2 - y0) * (x - x2) + (x0 - x2) * (y - y2)) / den
+    w2 = 1.0 - w0 - w1
+    if w0 >= -eps and w1 >= -eps and w2 >= -eps:
+        return w0 * z0 + w1 * z1 + w2 * z2
+    return None
+
+
+def _plane_tin(a, b, c, half=100.0):
+    """Two triangles over the square [-half, half]^2 on the plane z = a*x + b*y + c."""
+    corners = ((-half, -half), (half, -half), (half, half), (-half, half))
+    points = [(x, y, a * x + b * y + c) for x, y in corners]
+    return Tin(points, ((0, 1, 2), (0, 2, 3)))
+
+
+def _depression_tin(cx, cy, rx, ry, depth, a=0.0, b=0.0, c=0.0, half=100.0):
+    """Plane plus a diamond pit: centre `depth` below the plane, four corners on the plane.
+
+    Four inner triangles plus the eight named links from the diamond to the square:
+    (S0,S1,Sd), (S1,S2,E), (S2,S3,N), (S3,S0,W), (S1,E,Sd), (S2,N,E), (S3,W,N), (S0,Sd,W).
     """
-    if not vertices or not faces:
-        return [], [], [], []
+    def pz(x, y, drop=0.0):
+        return a * x + b * y + c - drop
+
+    s0 = (-half, -half, pz(-half, -half))
+    s1 = (half, -half, pz(half, -half))
+    s2 = (half, half, pz(half, half))
+    s3 = (-half, half, pz(-half, half))
+    sd = (cx, cy - ry, pz(cx, cy - ry))
+    east = (cx + rx, cy, pz(cx + rx, cy))
+    north = (cx, cy + ry, pz(cx, cy + ry))
+    west = (cx - rx, cy, pz(cx - rx, cy))
+    centre = (cx, cy, pz(cx, cy, depth))
+    points = (s0, s1, s2, s3, sd, east, north, west, centre)
+    triangles = (
+        (4, 5, 8), (5, 6, 8), (6, 7, 8), (7, 4, 8),
+        (0, 1, 4), (1, 2, 5), (2, 3, 6), (3, 0, 7),
+        (1, 5, 4), (2, 6, 5), (3, 7, 6), (0, 4, 7),
+    )
+    return Tin(points, triangles)
+
+
+def _point_in_poly(x, y, poly, eps=1e-9):
+    """Even-odd test. Points on the outline count as inside."""
+    n = len(poly)
+    for i in range(n):
+        x1, y1 = poly[i]
+        x2, y2 = poly[(i + 1) % n]
+        if _on_segment(x, y, x1, y1, x2, y2, eps):
+            return True
+    inside = False
+    for i in range(n):
+        x1, y1 = poly[i]
+        x2, y2 = poly[(i + 1) % n]
+        if (y1 > y) != (y2 > y):
+            xinter = x1 + (y - y1) * (x2 - x1) / (y2 - y1)
+            if x < xinter:
+                inside = not inside
+    return inside
+
+
+def _on_segment(px, py, ax, ay, bx, by, eps=1e-9):
+    cross = (px - ax) * (by - ay) - (py - ay) * (bx - ax)
+    if abs(cross) > eps * max(1.0, math.hypot(bx - ax, by - ay)):
+        return False
+    dot = (px - ax) * (bx - ax) + (py - ay) * (by - ay)
+    if dot < -eps:
+        return False
+    length2 = (bx - ax) ** 2 + (by - ay) ** 2
+    return dot <= length2 + eps * max(1.0, math.sqrt(length2))
+
+
+def _segment_hit(p, q, r, s, eps=1e-12):
+    """Intersection of segments pq and rs, or None when parallel or disjoint."""
+    rx, ry = q[0] - p[0], q[1] - p[1]
+    sx, sy = s[0] - r[0], s[1] - r[1]
+    den = rx * sy - ry * sx
+    scale = max(1.0, math.hypot(rx, ry), math.hypot(sx, sy))
+    if abs(den) <= eps * scale:
+        return None
+    qpx, qpy = r[0] - p[0], r[1] - p[1]
+    t = (qpx * sy - qpy * sx) / den
+    u = (qpx * ry - qpy * rx) / den
+    if -eps <= t <= 1.0 + eps and -eps <= u <= 1.0 + eps:
+        return (p[0] + t * rx, p[1] + t * ry)
+    return None
+
+
+def _plane_z_at(verts, face, x, y):
+    p0, p1, p2 = (verts[i] for i in face[:3])
+    ux, uy, uz = p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]
+    vx, vy, vz = p2[0] - p0[0], p2[1] - p0[1], p2[2] - p0[2]
+    nz = ux * vy - uy * vx
+    return p0[2] - ((uy * vz - uz * vy) * (x - p0[0]) + (uz * vx - ux * vz) * (y - p0[1])) / nz
+
+
+def _tin_edges(ground):
+    seen = set()
+    edges = []
+    for i, j, k in ground.triangles:
+        for a, b in ((i, j), (j, k), (k, i)):
+            key = (a, b) if a < b else (b, a)
+            if key in seen:
+                continue
+            seen.add(key)
+            pa, pb = ground.points[key[0]], ground.points[key[1]]
+            edges.append(((pa[0], pa[1]), (pb[0], pb[1])))
+    return edges
+
+
+def _footprint_strictly_under(seated, face, ground) -> bool:
+    """True only when every gap witness is strictly under the Ground and inside coverage.
+
+    Witnesses are the face vertices, TIN vertices on the outline, and TIN-edge crossings
+    with the outline. A witness outside the mesh keeps the face (review).
+    """
+    poly = [(seated[i][0], seated[i][1]) for i in face]
+    candidates = list(poly)
+    for px, py, _pz in ground.points:
+        if _point_in_poly(px, py, poly):
+            candidates.append((px, py))
+    outline = list(zip(poly, poly[1:] + poly[:1]))
+    for edge in _tin_edges(ground):
+        for side in outline:
+            hit = _segment_hit(edge[0], edge[1], side[0], side[1])
+            if hit is not None:
+                candidates.append(hit)
+    for x, y in candidates:
+        h = ground.height(x, y)
+        if h is None:
+            return False
+        if not (_plane_z_at(seated, face, x, y) < h - 1e-9):
+            return False
+    return True
+
+
+def _place(vertices, insert_xy, rotation_deg, ground):
     xs = [v[0] for v in vertices]
     ys = [v[1] for v in vertices]
     zs = [v[2] for v in vertices]
     px, py, pz = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2, min(zs) + 0.10
     theta = math.radians(rotation_deg)
     cos_t, sin_t = math.cos(theta), math.sin(theta)
-    rotated = []
-    for x, y, z in vertices:
-        dx, dy = x - px, y - py
-        rotated.append((px + dx * cos_t - dy * sin_t, py + dx * sin_t + dy * cos_t, z))
     ix, iy = insert_xy
     tx, ty, tz = ix - px, iy - py, ground(ix, iy) - pz
-    seated = [(x + tx, y + ty, z + tz) for x, y, z in rotated]
+    seated = []
+    for x, y, z in vertices:
+        dx, dy = x - px, y - py
+        rx = px + dx * cos_t - dy * sin_t
+        ry = py + dx * sin_t + dy * cos_t
+        seated.append((rx + tx, ry + ty, z + tz))
+    return seated
+
+
+def _split_bottoms(seated, faces, predicate):
     deleted, exposed, kept = [], [], []
     for face in faces:
         if _unit_normal(seated, face)[2] < -0.5:
-            below = all(seated[i][2] < ground(seated[i][0], seated[i][1]) for i in face)
-            if below:
+            if predicate(face):
                 deleted.append(face)
             else:
                 exposed.append(face)
                 kept.append(face)
         else:
             kept.append(face)
+    return kept, deleted, exposed
+
+
+def seat_maf(vertices, faces, insert_xy, rotation_deg, ground):
+    """Pivot to bbox centre XY and zmin+0.10, rotate about it, drop the pivot onto the Ground.
+
+    `ground` is a Tin. A face whose unit normal has n_z < -0.5 is a bottom. It is deleted only
+    when its whole footprint is strictly under the Ground: every face vertex, every TIN vertex
+    inside or on the outline, and every TIN-edge crossing with the outline has a TIN height
+    strictly above the face plane (z_face < height - 1e-9). Exactly on the Ground stays.
+    A witness outside coverage keeps the face and lists it as exposed (review).
+    """
+    if not vertices or not faces:
+        return [], [], [], []
+    seated = _place(vertices, insert_xy, rotation_deg, ground)
+    kept, deleted, exposed = _split_bottoms(
+        seated, faces, lambda face: _footprint_strictly_under(seated, face, ground))
+    return seated, kept, deleted, exposed
+
+
+def _vertex_only_seat(vertices, faces, insert_xy, rotation_deg, ground):
+    """Old rule: delete a bottom when every vertex is strictly below the Ground at its own XY."""
+    if not vertices or not faces:
+        return [], [], [], []
+    seated = _place(vertices, insert_xy, rotation_deg, ground)
+
+    def below(face):
+        for index in face:
+            x, y, z = seated[index]
+            h = ground.height(x, y)
+            if h is None or not (z < h):
+                return False
+        return True
+
+    kept, deleted, exposed = _split_bottoms(seated, faces, below)
+    return seated, kept, deleted, exposed
+
+
+def _centre_only_seat(vertices, faces, insert_xy, rotation_deg, ground):
+    """Negative control: vertices plus the face centroid, nothing in between."""
+    if not vertices or not faces:
+        return [], [], [], []
+    seated = _place(vertices, insert_xy, rotation_deg, ground)
+
+    def below(face):
+        points = [seated[i] for i in face]
+        cx = sum(p[0] for p in points) / len(points)
+        cy = sum(p[1] for p in points) / len(points)
+        cz = sum(p[2] for p in points) / len(points)
+        points.append((cx, cy, cz))
+        for x, y, z in points:
+            h = ground.height(x, y)
+            if h is None or not (z < h):
+                return False
+        return True
+
+    kept, deleted, exposed = _split_bottoms(seated, faces, below)
     return seated, kept, deleted, exposed
 
 
@@ -328,11 +550,29 @@ def _delete_every_bottom(vertices, faces, insert_xy, rotation_deg, ground):
 
 
 def _no_visible_hole(seated, deleted, ground) -> bool:
+    """Sample each deleted face on a barycentric grid. Outside coverage is a hole.
+
+    Independent of the candidate-point deletion rule: fan-triangulate, then a grid of at
+    least 40 subdivisions per triangle, including edges and vertices. Every sample must
+    sit strictly below the TIN.
+    """
+    n = 40
+    inv = 1.0 / n
     for face in deleted:
-        for index in face:
-            x, y, z = seated[index]
-            if z >= ground(x, y):
-                return False
+        count = len(face)
+        for t in range(1, count - 1):
+            a = seated[face[0]]
+            b = seated[face[t]]
+            c = seated[face[t + 1]]
+            for i in range(n + 1):
+                for j in range(n + 1 - i):
+                    k = n - i - j
+                    x = (i * a[0] + j * b[0] + k * c[0]) * inv
+                    y = (i * a[1] + j * b[1] + k * c[1]) * inv
+                    z = (i * a[2] + j * b[2] + k * c[2]) * inv
+                    h = ground.height(x, y)
+                    if h is None or not (z < h):
+                        return False
     return True
 
 
@@ -447,7 +687,7 @@ def test_seat_random_mafs_and_slope_bench():
         slope_x = 0.0 if flat else rng.uniform(-0.3, 0.3)
         slope_y = 0.0 if flat else rng.uniform(-0.3, 0.3)
         offset = rng.uniform(-2.0, 2.0)
-        ground = lambda x, y, a=slope_x, b=slope_y, c=offset: a * x + b * y + c
+        ground = _plane_tin(slope_x, slope_y, offset)
         insert = (rng.uniform(-20.0, 20.0), rng.uniform(-20.0, 20.0))
         rotation = rng.uniform(0.0, 360.0)
         seated, kept, deleted, exposed = seat_maf(verts, faces, insert, rotation, ground)
@@ -464,7 +704,7 @@ def test_seat_random_mafs_and_slope_bench():
     assert flat_cases > 0
 
     def _plane(slope):
-        return lambda x, y, a=slope: a * x
+        return _plane_tin(slope, 0.0, 0.0)
 
     wide, wide_faces = _bench()
     steep, kept_s, deleted_s, exposed_s = seat_maf(wide, wide_faces, (0.0, 0.0), 0.0, _plane(0.15))
@@ -483,9 +723,137 @@ def test_seat_random_mafs_and_slope_bench():
 
 
 def test_seat_empty_mesh():
-    ground = lambda x, y: 1.0
+    ground = _plane_tin(0.0, 0.0, 1.0)
     assert seat_maf([], [], (0.0, 0.0), 0.0, ground) == ([], [], [], [])
     assert seat_maf([(0.0, 0.0, 0.0)], [], (0.0, 0.0), 15.0, ground) == ([], [], [], [])
+
+
+def _reviewer_lambda(x, y):
+    return -0.30 * max(0.0, 1.0 - abs(x - 0.5) / 0.2 - abs(y) / 0.15)
+
+
+def test_depression_tin_matches_reviewer_lambda():
+    tin = _depression_tin(0.5, 0.0, 0.2, 0.15, 0.30)
+    for i in range(-40, 61):
+        for j in range(-20, 21):
+            x, y = i * 0.05, j * 0.05
+            h = tin.height(x, y)
+            assert h is not None, (x, y)
+            assert abs(h - _reviewer_lambda(x, y)) < 1e-9, (x, y, h)
+    assert abs(tin(0.5, 0.0) - (-0.30)) < 1e-12
+    assert tin.height(0.5, 0.0) == tin(0.5, 0.0)
+    assert tin.height(250.0, 0.0) is None
+    with pytest.raises(ValueError):
+        tin(250.0, 0.0)
+    sloped = _depression_tin(0.5, 0.0, 0.2, 0.15, 0.30, a=0.02, b=-0.01, c=1.5)
+    for x, y in ((0.5, 0.0), (0.7, 0.0), (0.0, 0.0), (-3.0, 2.0)):
+        expect = 0.02 * x - 0.01 * y + 1.5 + _reviewer_lambda(x, y)
+        assert abs(sloped(x, y) - expect) < 1e-9
+
+
+def _offcentre_pit(verts, faces, rotation, insert, rng):
+    """World XY of a barycentric sample inside a zmin bottom, away from its centre and vertices."""
+    xs = [v[0] for v in verts]
+    ys = [v[1] for v in verts]
+    px, py = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
+    theta = math.radians(rotation)
+    cos_t, sin_t = math.cos(theta), math.sin(theta)
+    ix, iy = insert
+    xy = []
+    for x, y, _z in verts:
+        dx, dy = x - px, y - py
+        xy.append((px + dx * cos_t - dy * sin_t + ix - px, py + dx * sin_t + dy * cos_t + iy - py))
+    zmin = min(v[2] for v in verts)
+    bottoms = [
+        face for face in faces
+        if _unit_normal(verts, face)[2] < -0.5 and all(abs(verts[i][2] - zmin) < 1e-9 for i in face)
+    ]
+    rng.shuffle(bottoms)
+    n = 40
+    for face in bottoms:
+        centroid = (
+            sum(xy[i][0] for i in face) / len(face),
+            sum(xy[i][1] for i in face) / len(face),
+        )
+        for _ in range(16):
+            i = rng.randint(6, 16)
+            j = rng.randint(6, 16)
+            k = n - i - j
+            if k < 6:
+                continue
+            p0, p1, p2 = xy[face[0]], xy[face[1]], xy[face[2]]
+            x = (i * p0[0] + j * p1[0] + k * p2[0]) / n
+            y = (i * p0[1] + j * p1[1] + k * p2[1]) / n
+            if math.hypot(x - ix, y - iy) < 0.05:
+                continue
+            if math.hypot(x - centroid[0], y - centroid[1]) < 0.01:
+                continue
+            if any(math.hypot(x - xy[v][0], y - xy[v][1]) < 0.01 for v in face):
+                continue
+            return (x, y)
+    return None
+
+
+def test_seat_depression_under_bottom_is_kept():
+    wide, wide_faces = _bench()
+    bottom = wide_faces[0]
+    ground = _depression_tin(0.5, 0.0, 0.2, 0.15, 0.30)
+    seated, _kept, deleted, exposed = seat_maf(wide, wide_faces, (0.0, 0.0), 0.0, ground)
+    assert bottom not in deleted and bottom in exposed
+    assert all(abs(seated[i][2] - (-0.10)) < 1e-9 for i in bottom)
+    assert not _no_visible_hole(seated, [bottom], ground)
+    old_seated, _k, old_deleted, _e = _vertex_only_seat(wide, wide_faces, (0.0, 0.0), 0.0, ground)
+    assert bottom in old_deleted
+    assert not _no_visible_hole(old_seated, old_deleted, ground)
+
+    rng = random.Random(182)
+    unsafe_vertex = 0
+    unsafe_centre = 0
+    deleted_cases = 0
+    for case in range(500):
+        verts, faces = _random_maf(rng)
+        insert = (rng.uniform(-20.0, 20.0), rng.uniform(-20.0, 20.0))
+        rotation = rng.uniform(0.0, 360.0)
+        slope_x = rng.uniform(-0.05, 0.05)
+        slope_y = rng.uniform(-0.05, 0.05)
+        offset = rng.uniform(-1.0, 1.0)
+        kind = case % 3
+        pit = None if kind == 1 else _offcentre_pit(verts, faces, rotation, insert, rng)
+        if pit is None:
+            cx, cy = insert[0] + 30.0, insert[1] + 12.0
+            depth, rx, ry = 0.30, 0.40, 0.30
+        else:
+            cx, cy = pit
+            rx = ry = 0.004
+            depth = 0.30 if kind == 0 else rng.uniform(0.005, 0.02)
+        ground = _depression_tin(cx, cy, rx, ry, depth, slope_x, slope_y, offset)
+        seated, _kept, deleted, _exposed = seat_maf(verts, faces, insert, rotation, ground)
+        assert _pivot_holds(verts, seated, insert, rotation, ground), case
+        assert _no_visible_hole(seated, deleted, ground), case
+        if deleted:
+            deleted_cases += 1
+        if pit is not None and kind == 0:
+            v_seated, _vk, v_deleted, _ve = _vertex_only_seat(verts, faces, insert, rotation, ground)
+            if not _no_visible_hole(v_seated, v_deleted, ground):
+                unsafe_vertex += 1
+            c_seated, _ck, c_deleted, _ce = _centre_only_seat(verts, faces, insert, rotation, ground)
+            if not _no_visible_hole(c_seated, c_deleted, ground):
+                unsafe_centre += 1
+    assert unsafe_vertex > 0
+    assert unsafe_centre > 0
+    assert deleted_cases > 0
+
+
+def test_seat_bottom_partly_outside_coverage_is_kept():
+    wide, wide_faces = _bench()
+    bottom = wide_faces[0]
+    # Insert (0, 0) is covered; the bench's x=-1 edge is not.
+    ground = Tin(
+        ((-0.25, -50.0, 0.0), (50.0, -50.0, 0.0), (50.0, 50.0, 0.0), (-0.25, 50.0, 0.0)),
+        ((0, 1, 2), (0, 2, 3)),
+    )
+    _seated, _kept, deleted, exposed = seat_maf(wide, wide_faces, (0.0, 0.0), 0.0, ground)
+    assert bottom not in deleted and bottom in exposed
 
 
 def _prism_side_normals(n: int):
