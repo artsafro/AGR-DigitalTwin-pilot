@@ -91,6 +91,10 @@ refuses to overwrite an existing output file unless `--overwrite` is passed.
 
 Absent QA is recorded as `not measured`. `preview_blank` stays null unless a preview-check report is
 supplied; it is never written as false without that report. A readback row with `error` is not a pass.
+A readback row whose dimensions are not exactly three finite numbers, or whose triangle count is not
+a non-negative integer, is recorded as `invalid` and is never counted as a pass. Preview repair
+`blank_after` is a number only when every override id was checked; otherwise it stays `not measured`
+and the unchecked override ids are listed.
 
 Merge rule for versioned preview manifests: rows are keyed by `id`. The base manifest defines the entry
 set and order. Each `--override` manifest is applied in the order given; an override row updates the

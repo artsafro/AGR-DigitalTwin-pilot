@@ -4,6 +4,7 @@ import ast
 import hashlib
 import importlib.util
 import json
+import math
 import random
 import re
 from pathlib import Path
@@ -567,25 +568,34 @@ def test_finalize_never_manufactures_pass_random():
                 "preview_style": "source-material",
             })
         files = []
-        measured_names = set()
-        error_names = set()
         for entry in entries:
             if rng.random() >= 0.65:
                 continue
             name = Path(entry["fbx_path"]).name
             if rng.random() < 0.25:
                 files.append({"fbx": f"E:/other/{name}", "error": "boom"})
-                error_names.add(name)
             else:
                 tris = entry["tris"] + rng.choice([-2, 0, 3])
-                files.append({
+                row = {
                     "fbx": f"E:/other/{name}",
                     "meshes": 1,
                     "tris": tris,
                     "referenced_vertices": {"dims_m": [1.0, 2.0, 3.0]},
+                    "all_vertices": {"dims_m": [1.0, 2.0, 3.0]},
                     "objects": [{"loose_vertices": 1}, {"loose_vertices": 4}],
-                })
-                measured_names.add(name)
+                }
+                kind = rng.randrange(6)
+                if kind == 1:
+                    row["referenced_vertices"]["dims_m"] = [1.0]
+                elif kind == 2:
+                    row["all_vertices"]["dims_m"] = [1.0, 2.0, 3.0, 4.0]
+                elif kind == 3:
+                    row["referenced_vertices"]["dims_m"] = [float("nan"), 2.0, 3.0]
+                elif kind == 4:
+                    row["tris"] = True
+                elif kind == 5:
+                    row["all_vertices"]["dims_m"] = [1.0, 2.0]
+                files.append(row)
         readback = None if rng.random() < 0.2 else {"blender": "5.1.2", "seconds": 2.0, "files": files}
         if rng.random() < 0.25:
             preview = None
@@ -603,7 +613,7 @@ def test_finalize_never_manufactures_pass_random():
         for entry in out["entries"]:
             name = Path(entry["fbx_path"]).name
             row = by_name.get(name) if readback is not None else None
-            has_measured = row is not None and not row.get("error")
+            has_measured = row is not None and not row.get("error") and _readback_evidence_valid(row)
             assert (entry["fbx_readback_status"] == "measured") is has_measured
             if has_measured:
                 measured += 1
@@ -612,12 +622,21 @@ def test_finalize_never_manufactures_pass_random():
                 assert entry["fbx_readback_loose_vertices"] == 5
             else:
                 assert entry["fbx_readback_tris"] is None
+                assert entry["fbx_readback_dims_m"] is None
                 assert entry["fbx_readback_triangle_delta"] is None
+                assert entry["fbx_readback_loose_vertices"] is None
             assert (entry["preview_blank"] is None) is (entry["id"] not in checked)
             if entry["preview_blank"] is False:
                 assert entry["id"] in checked
                 assert entry["id"] not in set(preview["blank"])
         assert out["counts"]["fbx_readback_measured"] == measured
+        assert (
+            out["counts"]["fbx_readback_measured"]
+            + out["counts"]["fbx_readback_not_measured"]
+            + out["counts"]["fbx_readback_errors"]
+            + out["counts"]["fbx_readback_invalid"]
+            == len(out["entries"])
+        )
         if preview is None or not checked:
             assert out["counts"]["preview_blank"] is None
 
@@ -633,6 +652,158 @@ def _catalogue_from(entries):
 
 def entries_by_id(entries):
     return {entry["id"]: entry for entry in entries}
+
+
+def _readback_evidence_valid(row) -> bool:
+    tris = row.get("tris")
+    if isinstance(tris, bool) or not isinstance(tris, int) or tris < 0:
+        return False
+    for key in ("referenced_vertices", "all_vertices"):
+        parent = row.get(key)
+        dims = parent.get("dims_m") if isinstance(parent, dict) else None
+        if not isinstance(dims, (list, tuple)) or len(dims) != 3:
+            return False
+        for item in dims:
+            if isinstance(item, bool) or not isinstance(item, (int, float)) or not math.isfinite(item):
+                return False
+    return isinstance(row.get("objects"), list)
+
+
+_BAD_DIMS = [
+    [1],
+    [1, 2, 3, 4],
+    [float("nan"), 2, 3],
+    [float("inf"), 2, 3],
+    ["1", 2, 3],
+    [True, 2, 3],
+    None,
+]
+
+
+def _spoil_dims(row, field, bad):
+    if bad is None:
+        row[field] = {}
+    else:
+        row[field]["dims_m"] = bad
+    return row
+
+
+@pytest.mark.parametrize("report", [
+    {},
+    {"checked": [], "blank": [], "missing": ["A"]},
+    {"checked": ["B"], "blank": [], "missing": ["A"]},
+])
+def test_preview_repair_partial_coverage_is_not_measured(report):
+    overrides = [("o.jsonl", [{"id": "A", "preview_style": "neutral-shape-only"}])]
+    section = audit._preview_repair_section(overrides, ["A"], report, None)
+    assert section["blank_after"] == "not measured"
+    assert section["blank_after_not_measured"] == ["A"]
+    assert section["verified_by"] == f"maf_audit.py preview-check over {len(report.get('checked') or [])} preview paths"
+
+
+def test_preview_repair_mixed_coverage_keeps_measured_blank():
+    overrides = [("o.jsonl", [{"id": "A"}, {"id": "B"}, {"id": "C"}])]
+    report = {"checked": ["A", "B"], "blank": ["B"], "missing": ["C"]}
+    section = audit._preview_repair_section(overrides, ["A", "B", "C"], report, None)
+    assert section["blank_after"] == "not measured"
+    assert section["blank_after_not_measured"] == ["C"]
+    assert section["blank_after_measured_blank"] == ["B"]
+
+
+def test_preview_repair_complete_coverage_measured_zero_and_blank():
+    overrides = [("o.jsonl", [{"id": "A"}, {"id": "B"}])]
+    checked = ["A", "B", "X"]
+    zero = audit._preview_repair_section(overrides, None, {"checked": checked, "blank": []}, None)
+    assert zero["blank_after"] == 0
+    assert "blank_after_not_measured" not in zero
+    assert "blank_after_measured_blank" not in zero
+    assert zero["verified_by"] == "maf_audit.py preview-check over 3 preview paths"
+    one = audit._preview_repair_section(overrides, None, {"checked": checked, "blank": ["B"]}, None)
+    assert one["blank_after"] == 1
+    assert "blank_after_not_measured" not in one
+    absent = audit._preview_repair_section(overrides, None, None, None)
+    assert absent["blank_after"] == "not measured"
+    assert absent["verified_by"] == "not measured"
+
+
+def test_preview_repair_rejects_inconsistent_report():
+    overrides = [("o.jsonl", [{"id": "A"}])]
+    with pytest.raises(ValueError):
+        audit._preview_repair_section(overrides, None, {"checked": ["A"], "blank": ["Z"]}, None)
+    with pytest.raises(ValueError):
+        audit._preview_repair_section(
+            overrides, None, {"checked": ["A"], "blank": [], "missing": ["A"]}, None
+        )
+
+
+@pytest.mark.parametrize("bad", _BAD_DIMS)
+@pytest.mark.parametrize("field", ["referenced_vertices", "all_vertices"])
+def test_audit_readback_invalid_dims_not_counted(bad, field):
+    plan = _plan(["ok", "bad", "miss", "err"])
+    good = _readback_row("ok", 10, dims=[1.0, 1.0, 1.0])
+    broken = _spoil_dims(_readback_row("bad", 11, dims=[1.0, 1.0, 1.0]), field, bad)
+    broken["objects"][0]["non_triangle_faces"] = 99
+    err = _readback_row("err", 13, error="import failed")
+    section = audit._fbx_readback_section(
+        plan, {"blender": "5.1.2", "files": [good, broken, err]}, None
+    )
+    assert section["referenced_dims_within_5mm"] == 1
+    assert section["tris_exact"] == 1
+    assert section["one_mesh"] == 1
+    assert section["files"] == 3
+    assert section["non_triangle_faces"] == 0
+    assert section["invalid"] == [{
+        "id": "bad",
+        "reason": f"{field}.dims_m is not 3 finite numbers",
+    }]
+    assert section["not_measured"] == ["miss"]
+    assert section["errors"] == [{"id": "err", "error": "import failed"}]
+    assert "bad" not in [row["id"] for row in section["dims_differences"]]
+    assert "bad" not in [row["id"] for row in section["loose_vertex_bounds"]]
+
+
+def test_audit_plan_invalid_dims_rejected():
+    plan = _plan(["A"])
+    plan["entries"][0]["dims_m"] = [1, 2]
+    readback = {"files": [_readback_row("A", 10)]}
+    with pytest.raises(ValueError, match="A"):
+        audit._fbx_readback_section(plan, readback, None)
+
+
+@pytest.mark.parametrize("bad", _BAD_DIMS)
+@pytest.mark.parametrize("field", ["referenced_vertices", "all_vertices"])
+def test_finalize_readback_invalid_dims_is_not_a_pass(bad, field):
+    catalogue = _catalogue(
+        _entry("good", tris=10),
+        _entry("bad", tris=20),
+        _entry("gone", tris=30),
+        _entry("err", tris=40),
+    )
+    broken = _spoil_dims(_readback_row("bad", 20, dims=[1.0, 2.0, 3.0]), field, bad)
+    readback = {"files": [
+        _readback_row("good", 10, dims=[1.0, 2.0, 3.0]),
+        broken,
+        _readback_row("err", 40, error="import failed"),
+    ]}
+    out = audit.finalize_catalogue(catalogue, readback)
+    by_id = {entry["id"]: entry for entry in out["entries"]}
+    invalid = by_id["bad"]
+    assert invalid["fbx_readback_status"] == "invalid"
+    assert invalid["fbx_readback_dims_m"] is None
+    assert invalid["fbx_readback_tris"] is None
+    assert invalid["fbx_readback_triangle_delta"] is None
+    assert invalid["fbx_readback_loose_vertices"] is None
+    assert invalid["fbx_readback_error"] == f"{field}.dims_m is not 3 finite numbers"
+    assert by_id["good"]["fbx_readback_status"] == "measured"
+    assert by_id["good"]["fbx_readback_dims_m"] == [1.0, 2.0, 3.0]
+    assert by_id["gone"]["fbx_readback_status"] == "not measured"
+    assert "fbx_readback_error" not in by_id["gone"]
+    assert by_id["err"]["fbx_readback_status"] == "error"
+    assert by_id["err"]["fbx_readback_error"] == "import failed"
+    assert out["counts"]["fbx_readback_measured"] == 1
+    assert out["counts"]["fbx_readback_invalid"] == 1
+    assert out["counts"]["fbx_readback_not_measured"] == 1
+    assert out["counts"]["fbx_readback_errors"] == 1
 
 
 def test_preview_repair_zero_blank_is_measured_zero_not_not_measured():

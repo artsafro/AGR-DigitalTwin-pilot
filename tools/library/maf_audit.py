@@ -18,6 +18,7 @@ import hashlib
 import html
 import importlib.util
 import json
+import math
 from collections import Counter
 from pathlib import Path
 
@@ -187,18 +188,26 @@ def finalize_catalogue(catalogue, readback_doc=None, preview_check=None, contact
             tris = dims = delta = loose = None
             error_text = row["error"]
         else:
-            status = "measured"
-            tris = row["tris"]
-            dims = list(row["referenced_vertices"]["dims_m"])
-            delta = row["tris"] - entry["tris"]
-            loose = sum(obj["loose_vertices"] for obj in row["objects"])
+            reason = _readback_invalid_reason(row)
+            if reason is not None:
+                status = "invalid"
+                tris = dims = delta = loose = None
+                error_text = reason
+            else:
+                if _triangle_count(entry.get("tris")) is None:
+                    raise ValueError(f"catalogue entry {eid!r} tris is not a non-negative integer")
+                status = "measured"
+                tris = row["tris"]
+                dims = list(row["referenced_vertices"]["dims_m"])
+                delta = row["tris"] - entry["tris"]
+                loose = sum(obj["loose_vertices"] for obj in row["objects"])
         rebuilt["preview_blank"] = _blank_flag(eid, preview_check)
         rebuilt["fbx_readback_tris"] = tris
         rebuilt["fbx_readback_dims_m"] = dims
         rebuilt["fbx_readback_triangle_delta"] = delta
         rebuilt["fbx_readback_loose_vertices"] = loose
         rebuilt["fbx_readback_status"] = status
-        if status == "error":
+        if status in {"error", "invalid"}:
             rebuilt["fbx_readback_error"] = error_text
         entries.append(rebuilt)
 
@@ -216,6 +225,7 @@ def finalize_catalogue(catalogue, readback_doc=None, preview_check=None, contact
         entry["fbx_readback_status"] == "not measured" for entry in entries
     )
     counts["fbx_readback_errors"] = sum(entry["fbx_readback_status"] == "error" for entry in entries)
+    counts["fbx_readback_invalid"] = sum(entry["fbx_readback_status"] == "invalid" for entry in entries)
     out["entries"] = entries
     out["counts"] = counts
     out.pop("contact_sheet", None)
@@ -333,8 +343,48 @@ def preview_check(entries, threshold=12, min_fg=8) -> dict:
     }
 
 
+def _dims3(value):
+    """Three finite numbers as floats, or None. Bool is not a number."""
+    if not isinstance(value, (list, tuple)) or len(value) != 3:
+        return None
+    numbers = []
+    for item in value:
+        if isinstance(item, bool) or not isinstance(item, (int, float)) or not math.isfinite(item):
+            return None
+        numbers.append(float(item))
+    return numbers
+
+
+def _triangle_count(value):
+    """Non-negative int triangle count, or None. Bool is not a count."""
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        return None
+    return value
+
+
+def _readback_invalid_reason(row) -> str | None:
+    """Why a non-error readback row is not measurable evidence, or None when it is."""
+    if _triangle_count(row.get("tris")) is None:
+        return "tris is not a non-negative integer"
+    referenced = row.get("referenced_vertices")
+    ref_dims = referenced.get("dims_m") if isinstance(referenced, dict) else None
+    if _dims3(ref_dims) is None:
+        return "referenced_vertices.dims_m is not 3 finite numbers"
+    all_vertices = row.get("all_vertices")
+    all_dims = all_vertices.get("dims_m") if isinstance(all_vertices, dict) else None
+    if _dims3(all_dims) is None:
+        return "all_vertices.dims_m is not 3 finite numbers"
+    if not isinstance(row.get("objects"), list):
+        return "objects is not a list"
+    return None
+
+
 def _max_abs_delta(left, right) -> float:
-    return max(abs(a - b) for a, b in zip(left, right))
+    left3 = _dims3(left)
+    right3 = _dims3(right)
+    if left3 is None or right3 is None:
+        raise ValueError("both arguments must be 3 finite numbers")
+    return max(abs(a - b) for a, b in zip(left3, right3))
 
 
 def _check_plan_and_built(plan, built_rows) -> set[str]:
@@ -369,6 +419,7 @@ def _fbx_readback_section(plan, readback_doc, readback_path):
 
     not_measured = []
     errors = []
+    invalid = []
     not_one_mesh = []
     tri_diff = []
     dims_diff = []
@@ -376,34 +427,43 @@ def _fbx_readback_section(plan, readback_doc, readback_path):
     measured_rows = []
     matched = 0
     for entry in plan["entries"]:
+        eid = _entry_id(entry, "plan entry")
+        if _dims3(entry.get("dims_m")) is None or _triangle_count(entry.get("tris")) is None:
+            raise ValueError(
+                f"plan entry {eid!r} dims_m must be 3 finite numbers and tris a non-negative integer"
+            )
         slug = entry.get("slug")
         row = by_stem.get(slug) if isinstance(slug, str) else None
         if row is None:
-            not_measured.append(entry["id"])
+            not_measured.append(eid)
             continue
         matched += 1
         if row.get("error"):
-            errors.append({"id": entry["id"], "error": row["error"]})
+            errors.append({"id": eid, "error": row["error"]})
+            continue
+        reason = _readback_invalid_reason(row)
+        if reason is not None:
+            invalid.append({"id": eid, "reason": reason})
             continue
         measured_rows.append(row)
         if row.get("meshes") != 1:
-            not_one_mesh.append(entry["id"])
+            not_one_mesh.append(eid)
         delta = row["tris"] - entry["tris"]
         referenced = row["referenced_vertices"]["dims_m"]
         dim_delta = _max_abs_delta(entry["dims_m"], referenced)
         if delta:
             tri_diff.append({
-                "id": entry["id"],
+                "id": eid,
                 "expected_tris": entry["tris"],
                 "readback_tris": row["tris"],
                 "delta": delta,
             })
         if dim_delta > _DIM_TOLERANCE_M:
-            dims_diff.append({"id": entry["id"], "delta_m": dim_delta})
+            dims_diff.append({"id": eid, "delta_m": dim_delta})
         all_delta = _max_abs_delta(entry["dims_m"], row["all_vertices"]["dims_m"])
         if all_delta > _DIM_TOLERANCE_M:
             loose_bounds.append({
-                "id": entry["id"],
+                "id": eid,
                 "all_vertex_delta_m": all_delta,
                 "referenced_vertex_delta_m": dim_delta,
                 "loose_vertices": sum(obj["loose_vertices"] for obj in row["objects"]),
@@ -434,6 +494,8 @@ def _fbx_readback_section(plan, readback_doc, readback_path):
         section["not_measured"] = not_measured
     if errors:
         section["errors"] = errors
+    if invalid:
+        section["invalid"] = invalid
     return section
 
 
@@ -478,15 +540,32 @@ def _preview_repair_section(override_manifests, blank_before, preview_report, pr
         wrapper_seconds = preview_repair_run["seconds"]
     else:
         wrapper_seconds = "not measured"
+    coverage = {}
     if preview_report is None:
         blank_after = "not measured"
         verified_by = "not measured"
     else:
-        blank_ids = preview_report.get("blank") or []
-        blank_after = len(blank_ids)
-        checked = preview_report.get("checked") or []
-        verified_by = f"maf_audit.py preview-check over {len(checked)} preview paths"
-    return {
+        checked_list = preview_report.get("checked") or []
+        checked = set(checked_list)
+        blank = set(preview_report.get("blank") or [])
+        missing = set(preview_report.get("missing") or [])
+        stray_blank = sorted(blank - checked)
+        if stray_blank:
+            raise ValueError(f"preview report blank id not in checked: {stray_blank[0]}")
+        overlap = sorted(checked & missing)
+        if overlap:
+            raise ValueError(f"preview report id in both checked and missing: {overlap[0]}")
+        override_ids = set(ids)
+        verified_by = f"maf_audit.py preview-check over {len(checked_list)} preview paths"
+        if override_ids <= checked:
+            blank_after = len(override_ids & blank)
+        else:
+            blank_after = "not measured"
+            coverage = {
+                "blank_after_not_measured": sorted(override_ids - checked),
+                "blank_after_measured_blank": sorted(override_ids & blank),
+            }
+    section = {
         "count": len(set(ids)),
         "style": style,
         "manifest": manifests[0] if len(manifests) == 1 else manifests,
@@ -495,6 +574,8 @@ def _preview_repair_section(override_manifests, blank_before, preview_report, pr
         "blank_after": blank_after,
         "verified_by": verified_by,
     }
+    section.update(coverage)
+    return section
 
 
 def build_audit(
