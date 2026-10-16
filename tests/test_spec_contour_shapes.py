@@ -912,9 +912,60 @@ def test_a_fin_with_a_crossbar_leaves_no_stub():
     _fin(joined, 4.0, 4.4, -1.2, cross=-0.5)
     dump["meshes"].append(joined.dump())
     spec, report = extract_spec(dump, PANEL_OBJECT)
-    ys = [p[1] for p in spec.expanded_floors()[0].contour]
-    assert min(ys) >= -0.35                        # the 1.2 m fin and its crossbar are gone; a root up to the facade
-    assert report["floors"]["L0"]["attachment_pieces_left_out"] == 1   # band's depth may stay (issue)
+    assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03)  # the fin, its crossbar and its root are gone (#90)
+    assert report["floors"]["L0"]["attachment_pieces_left_out"] == 1
+
+
+def _fin_dump(cross, x0=4.0, x1=4.4, y_out=-1.2):
+    dump = panelised()
+    dump["meshes"] = [m for m in dump["meshes"] if m["name"] != "Panel_0_0"]
+    joined = Mesh("Panel_0_0")
+    walls(joined, [[-0.08, 0], [9.98, 0], [9.98, -0.1], [-0.08, -0.1]], 0.01, 3.29, extra_u={2: [5.58, 5.98]})
+    _fin(joined, x0, x1, y_out, cross=cross)
+    dump["meshes"].append(joined.dump())
+    return dump
+
+
+@pytest.mark.parametrize("cross", [-0.35, -0.4, -0.45, -0.5])
+@pytest.mark.parametrize("width", [0.1, 0.4, 1.0])
+def test_a_fin_root_inside_the_facade_band_leaves_no_stub(cross, width):
+    """#90: a fin 1.2 m out with a crossbar 0.25-0.4 m off the panels - its root (across the facade, from the cut
+    back to the panels' outer face) goes too, so the contour is the panels' line without a stub."""
+    spec, report = extract_spec(_fin_dump(cross, x1=4.0 + width), PANEL_OBJECT)
+    assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03)
+    assert report["floors"]["L0"]["attachment_pieces_left_out"] == 1
+
+
+def test_a_fin_at_a_facade_step_leaves_the_step():
+    """#90: the south facade steps 0.3 m outward. The ceiling slab's south edge sits 0.1 m behind that outer
+    face, so the face is inside the facade band, and the step (across the outline, inside the band) shares its
+    outer corner with the fin's root. The walk stops at that facade node: the step stays and the fin goes.
+    Walking on through the facade node removes the step and the south facade no longer closes. The re-entrant
+    corner (5, -0.1) is rounded by the 0.05 m joint closing, so the vertex that remains is about 0.045 m off it;
+    the convex corner (5, -0.4) comes back within 0.03 m."""
+    slab = [[0, -0.3], [10, -0.3], [10, 10], [0, 10]]
+    dump = panelised(slab=slab)
+    dump["meshes"] = [m for m in dump["meshes"] if m["name"] != "Panel_0_0"]
+    south = Mesh("Panel_0_0")
+    z0, z1 = 0.01, 3.29
+    south.quad((-0.1, 0.02, z0), (-0.1, -0.1, z0), (-0.1, -0.1, z1), (-0.1, 0.02, z1))       # west corner
+    south.quad((-0.1, -0.1, z0), (5, -0.1, z0), (5, -0.1, z1), (-0.1, -0.1, z1))
+    south.quad((5, -0.1, z0), (5, -0.4, z0), (5, -0.4, z1), (5, -0.1, z1))                     # the step
+    south.quad((5, -0.4, z0), (10.1, -0.4, z0), (10.1, -0.4, z1), (5, -0.4, z1))
+    south.quad((10.1, -0.4, z0), (10.1, -0.08, z0), (10.1, -0.08, z1), (10.1, -0.4, z1))       # to the east panel
+    for x in (5.0, 5.4):                                                                        # fin at the step corner
+        for ya, yb in ((-0.4, -0.7), (-0.7, -1.6)):
+            south.quad((x, ya, z0), (x, yb, z0), (x, yb, z1), (x, ya, z1))
+    south.quad((5.0, -1.6, z0), (5.4, -1.6, z0), (5.4, -1.6, z1), (5.0, -1.6, z1))
+    south.quad((5.0, -0.7, z0), (5.4, -0.7, z0), (5.4, -0.7, z1), (5.0, -0.7, z1))
+    dump["meshes"].append(south.dump())
+    spec, _report = extract_spec(dump, PANEL_OBJECT)
+    contour = spec.expanded_floors()[0].contour
+    # (5, -0.4) is the convex corner and comes back within 0.03. (5, -0.1) is re-entrant: the 0.05 m joint
+    # closing rounds it, and simplify keeps the fillet's landing, about 0.045 m west of the corner.
+    assert any(math.dist(p[:2], (5, -0.4)) <= 0.03 for p in contour)
+    assert any(math.dist(p[:2], (5, -0.1)) <= 0.05 for p in contour)
+    assert min(p[1] for p in contour) >= -0.45
 
 
 def test_slab_data_follow_the_ceiling_not_the_reference():
