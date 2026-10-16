@@ -1,4 +1,4 @@
-"""Door recesses, relief and panes of one frame (issue #31, user decisions 2026-10-08).
+"""Door recesses, relief and panes of one frame (issue #31, user decisions 2026-10-08 [D025]).
 Synthetic data; not a real object."""
 import pytest
 from shapely.geometry import Polygon, box
@@ -62,7 +62,7 @@ def test_frame_profile_is_relief_not_a_kink():
     ((0, 2.0, 6.0, 1.125, 1.2, 0.15), False),    # 0.15 m deep
 ])
 def test_band_with_both_section_sizes_small_is_relief_not_a_question(box, relief):
-    # user decision 2026-10-09: the relief rule of #31 also holds in section (depth and height)
+    # user decision 2026-10-09 [D032]: the relief rule of #31 also holds in section (depth and height)
     _, report = extract_spec(building(boxes=[box]), at())
     assert (report["questions"] == []) == relief
     assert report["section_relief_parts"] == (1 if relief else 0)
@@ -88,7 +88,7 @@ def test_panes_further_than_0_15_m_apart_are_two_openings():
 
 
 
-# PR #33 review 1 and user decisions of 2026-10-08 (second round)
+# PR #33 review 1 and user decisions of 2026-10-08 [D025] (second round)
 
 def test_block_in_the_inner_corner_of_an_l_plan_is_no_door():
     # P1: inside the convex hull and lined on two sides, but its mouth is bent: not on a facade line

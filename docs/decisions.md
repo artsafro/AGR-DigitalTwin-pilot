@@ -8,6 +8,19 @@ Add a decision: next free id, the date the user decided, one sentence, the file 
 source (PR, issue or `chat`). Put `[D<n>]` next to the decision in that file. Superseded decisions stay, with
 "superseded by D<n>". Format and references: `tests/test_decisions.py`.
 
+A decision found later than logged (#138) is appended with its own date and Source `backfill #138 (...)`; only such rows break the date order, and new
+decisions follow them as usual.
+
+Where the id goes, by kind of file (#138)
+
+Markdown outside the excluded folders (`docs/agr/`, `docs/research/`, `jobs/`, `technical_library/`, `data/`,
+handoff and project-state files) carries `[D<n>]` on the same line as the mention. Tracked Python does the same
+in comments, docstrings and strings, except under `jobs/`, `technical_library/`, `data/`, `docs/agr/`
+and the checker's own examples. `standards/material_id_ranges.yaml` carries the id in its
+comment. Locked standards YAML is not edited: a top-level `conflicts:` entry whose note says "decided" must list
+an `ids` number whose item in `docs/domain/conflicts.md` carries a `[D<n>]` from this log. JSON, `jobs/**` and
+frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Markdown and Python alike.
+
 | ID | Date | Decision | Applies to | Source |
 |---|---|---|---|---|
 | D001 | 2026-10-06 | Roles: Claude leads 3D/DCC production, Codex code and organization, Antigravity supports both | `docs/agents/ROLES.md` | chat |
@@ -112,3 +125,17 @@ source (PR, issue or `chat`). Put `[D<n>]` next to the decision in that file. Su
 | D100 | 2026-10-15 | Flora placement: SPOZU points have no rotation; authoring pivot on SPOZU point, slightly above lowest point to sink 10 cm into Ground; random Z rotation and scale +-10 % inside +-20 % tolerance; final FBX resets transforms and shares origin | `docs/domain/geometry.md` | #187 (Flora grilling round 1 Q6 and round 2 Q7-Q8; user Artem: "SPOZU points have no rotation; pivot on point, slightly above lowest point to sink into Ground when projected. random Z rotation and scale +-10 % inside +-20 % tolerance. sinking 10 cm as MAF") |
 | D101 | 2026-10-15 | Flower beds: Ground texture when specification just says flower beds / small greenery; 3D models when plants are listed; big bushes always models | `docs/domain/geometry.md` | #187 (Flora grilling round 1 Q5; user Artem: "usually flower beds are Ground texture when specification just says flower beds / small greenery; models when it lists plants; big bushes always models") |
 | D102 | 2026-10-15 | VPM bush: default is shell of NPM star; detailed model only on explicit request; study library VPM bushes and follow their logic (recommendation until then) | `docs/domain/geometry.md` | #187 (Flora grilling round 2 Q10; user Artem: "default VPM bush = shell of NPM star; detailed only on explicit request; study library VPM bushes and follow their logic, until then recommendation") |
+| D103 | 2026-10-08 | An opening across a level is one record in the lower floor, with `level_from` and `level_to` (spec v0.2) | pattern `wall-from-contour` | backfill #138 (src/dt_ai/spec/model.py; src/dt_ai/spec/openings.py; spec v0.2) |
+| D104 | 2026-10-08 | Glass panes of one frame (gap <= 0.15 m, aligned) are one opening (#31) | pattern `wall-from-contour` | backfill #138 (src/dt_ai/spec/openings.py; #31) |
+| D105 | 2026-10-08 | No Rhino verdict; the match / install-Rhino criterion applies only after Revit walls come from location lines (#29) | `src/dt_ai/spec/compare.py` | backfill #138 (src/dt_ai/spec/compare.py; #29) |
+| D106 | 2026-10-08 | One questions file per object is merged from versioned spec reports (#7) | `src/dt_ai/spec/questions_file.py` | backfill #138 (tests/test_spec_questions_file.py; src/dt_ai/spec/questions_file.py; #7) |
+| D107 | 2026-10-09 | The window-type library (#4) reads `Win_Typical.max` only, names types by form and size with no project, treats the same subdivision within 2 cm as one type, counts fields from the row under the fanlight, keeps a balcony door and window as one frame, and leaves every entry unconfirmed until the user names it | `tools/library/build_window_types.py` | backfill #138 (tools/library/build_window_types.py; tests/test_window_types.py; #4) |
+| D108 | 2026-10-09 | An NPM shell open at its reveals has no closed section in a window band, so a height open on both sides is listed and not judged | `src/twinqa/geometry/checks.py` | backfill #138 (src/twinqa/geometry/checks.py) |
+| D109 | 2026-10-12 | Decor set into the body is judged against the body (the storey contour), with no numeric depth bound (#76, #78) | `src/twinqa/geometry/checks.py` | backfill #138 (tests/qa/test_from_spec_decor.py; src/twinqa/geometry/checks.py; #76, #78) |
+| D110 | 2026-10-13 | The build path by source modules sits beside `from_spec`, measures the spec by the same modules, and builds a textured band 0.04 m thick; D079 later closed OBJ03 by this path as unsuccessful | `src/dt_ai/geometry/from_source.py` | backfill #138 (src/dt_ai/geometry/from_source.py) |
+| D111 | 2026-10-13 | The material-id ranges cache follows the file: one parse per path and version | `src/dt_ai/spec/mesh.py` | backfill #138 (src/dt_ai/spec/mesh.py; tests/test_spec_contour_shapes.py) |
+| D112 | 2026-10-13 | A face piece with one side a point on a strip line is a triangle (a pointed corner, PR #100) | pattern `non-90-corner` | backfill #138 (src/dt_ai/geometry/from_spec.py; tests/qa/test_from_spec.py; PR #100) |
+| D113 | 2026-10-13 | On the experimental from_source path only (build="from_source"), a decor mesh was left out of the body topology checks, because the body is never cut (OBJ03 2a); rejected for delivery acceptance by D079 (#117): a new passing model needs topology on every mesh incl. decor, and from_spec keeps the strict checks | `src/twinqa/geometry/checks.py` | backfill #138 (src/twinqa/geometry/checks.py; OBJ03 2a) |
+| D114 | 2026-10-13 | On the experimental from_source path only (build="from_source"), an open loop flat on a horizontal face at its height was closed by contact (seated: a wall standing on a slab); from_spec keeps the strict open-edge rule, and after D079 (#117) this does not relax topology acceptance of a new delivery | `src/twinqa/geometry/checks.py` | backfill #138 (src/twinqa/geometry/checks.py) |
+| D115 | 2026-10-14 | An overlap is a crossing deeper than the weld: faces within weld_m are one weld, and a plate plate_gap_m off a face is no overlap | `src/twinqa/geometry/checks.py` | backfill #138 (src/twinqa/geometry/checks.py; tests/qa/test_from_source.py) |
+| D116 | 2026-10-14 | A panelised source is checked with basis spec, because its sections never close | `src/twinqa/geometry/checks.py` | backfill #138 (src/twinqa/geometry/checks.py) |

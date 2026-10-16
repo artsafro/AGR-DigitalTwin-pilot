@@ -1,4 +1,4 @@
-"""Build path by source modules (user 2026-10-13), beside `from_spec`: the model is rebuilt module by module from
+"""Build path by source modules (user 2026-10-13 [D110]), beside `from_spec`: the model is rebuilt module by module from
 the source, the way a modeller does it by hand, and goes through the same checkers against the spec (the spec stays
 the contract of the checks; this path does not read it).
 
@@ -481,12 +481,12 @@ def band_box(mesh: _Mesh, ring, z0, z1, thick, mid):
         mesh.quad([[*a, z0], [*ia, z0], [*ib, z0], [*b, z0]], mid, [0, 0, -1])
 
 
-RAILING_T_M = 0.02       # pattern terrace (user 2026-10-14): a glass railing is one closed plate per ledge side
+RAILING_T_M = 0.02       # pattern terrace (user 2026-10-14 [D087]): a glass railing is one closed plate per ledge side
 RAILING_LIFT_M = 0.004   # standing on the deck, not welded to it (past weld_m)
 
 
 def terrace_railings(mesh: _Mesh, deck, upper, z, h, mid, thick=RAILING_T_M):
-    """Pattern terrace, glass railings (user 2026-10-14): one closed plate `thick` thick per side of the ledge
+    """Pattern terrace, glass railings (user 2026-10-14 [D087]): one closed plate `thick` thick per side of the ledge
     that does not run along the walls above (`upper`), its outer face on the ledge's edge, from the deck top to
     the railing height; plates of two sides meeting at a corner are trimmed by the thickness (no overlap); frames
     and edge trims are texture. Returns the number of plates."""
@@ -571,8 +571,8 @@ def face_planes(mesh: _Mesh, v, t, mid, min_area=1e-3, thick=None):
 
 # ---------------------------------------------------------------------------------------------- decor by profile
 
-PROFILE_SIMPLIFY_M = 0.01   # a decor section keeps its shape within this (user 2026-10-14: the real section)
-PROFILE_SAME_M = 0.02       # pieces of one run share a section within this (user 2026-10-14: seams are texture,
+PROFILE_SIMPLIFY_M = 0.01   # a decor section keeps its shape within this (user 2026-10-14 [D085]: the real section)
+PROFILE_SAME_M = 0.02       # pieces of one run share a section within this (user 2026-10-14 [D085]: seams are texture,
                             # a run is one mesh; the longest piece's section is kept)
 
 
@@ -612,7 +612,7 @@ def _section_poly(v3, t, at, loose=None):
 
 
 def profile_elements(v, t, centre, odd=None):
-    """Decor elements by their real section (user 2026-10-14): each piece is cut across its main axis - a pier
+    """Decor elements by their real section (user 2026-10-14 [D085]): each piece is cut across its main axis - a pier
     (taller than long) in plan at its mid height, a band or a balcony (longer than tall) across its length at its
     middle - and extruded over its extent; pieces of one element (same section within PROFILE_SAME_M, touching
     along the axis within DECOR_SEAM_M) merged; the back of the section is set DECOR_INSET_M into the wall.
@@ -693,7 +693,7 @@ def _plan(e):
 
 
 def inset_panels(mesh: _Mesh, v, t, stor, mid, gap=0.005, scene=None):
-    """Dark inserts (user 2026-10-14): flat panels in front of the wall, nearer than 2 cm to each other one panel,
+    """Dark inserts (user 2026-10-14 [D085]): flat panels in front of the wall, nearer than 2 cm to each other one panel,
     built as a box - its front at the outermost plane, its back WALL inset past the storey's wall line, no back
     face; its top and bottom kept `gap` off an opening's sill or head on that storey. Returns the panel count."""
     pieces = [v[np.unique(t[pc])] for pc in _pieces(v, t)]
@@ -866,7 +866,7 @@ BELT_SHARE = 0.6            # bands at one height running over this share of the
 BELT_MATCH_M = 0.06
 BELT_SAMPLE_M = 0.1         # a storey band frame is tested every this along the contour
 SILL_ID, HEAD_ID = 7, 8     # thin sills / heads (2 cm plates) are no geometry: the opening's face takes their id
-PF_SILHOUETTE_M = 0.07      # silhouette test: a section within this of its box is built as the box (user 2026-10-14)
+PF_SILHOUETTE_M = 0.07      # silhouette test: a section within this of its box is built as the box (user 2026-10-14 [D082])
 
 
 def _collapse_steps(poly, step=PF_STEP_M):
@@ -1060,7 +1060,7 @@ def _covered(e, tri, w):
 
 
 def decor_primitive_first(mesh: _Mesh, parts, keys, stor, levels, centre, scene=None):
-    """The decor of pattern primitive-first (user 2026-10-14): storey bands as frames on the storey contour (cut
+    """The decor of pattern primitive-first (user 2026-10-14 [D080, D081]): storey bands as frames on the storey contour (cut
     where the source has none and they show), piers through with a cleaned section (steps under 7 cm gone, at most
     12 points), other bands and balconies by their cleaned section, stopping DECOR_INSET_M inside a pier with no
     end there, thin plates (2 cm) not built (their id goes to the openings). Returns the report and the plate
@@ -1271,7 +1271,7 @@ def snap_rows(openings):
 
 
 def spec_of(object_id, levels, stor, decks, railing_h, enclosure, inputs: Inputs) -> dict:
-    """The spec of a building measured by its modules (user 2026-10-13: the spec rebuilt by modules): levels,
+    """The spec of a building measured by its modules (user 2026-10-13 [D110]: the spec rebuilt by modules): levels,
     a contour and openings per storey, no roof parapet (a textured band is no parapet), the terraces where a
     walkable deck lies, the roof screen enclosure. The contract the checkers measure the model against."""
     elev = dict(levels)
@@ -1312,7 +1312,7 @@ BUILD_AS = ("slab_boxes", "deck_boxes", "walls", "openings_glass", "boxes", "pla
             "planes_enclosure", "roof_band", "railings", "skip")
 BALCONY_OFF_M = 0.3      # glass further than this off its storey's wall line is a railing, not a window
 LIFT_M = RAILING_LIFT_M   # a part standing on another (a roof box, a band, a railing) stands this far off it
-BAND_T_M = 0.04          # a textured band's thickness (the roof slat band, user 2026-10-13)
+BAND_T_M = 0.04          # a textured band's thickness (the roof slat band, user 2026-10-13 [D110])
 
 
 def _group(parts, keys):
@@ -1328,7 +1328,7 @@ def _group(parts, keys):
 
 def build_from_modules(dump: dict, modules: dict, object_id: str, inputs: Inputs):
     """The building rebuilt by its source modules (see the module docstring), each module by its `build_as`.
-    Returns (mesh dump, spec, report): the spec is measured by the same modules (user 2026-10-13) and is the
+    Returns (mesh dump, spec, report): the spec is measured by the same modules (user 2026-10-13 [D110]) and is the
     contract the checkers use."""
     parts = module_tris(dump, modules)
     how = {}
@@ -1400,7 +1400,7 @@ def build_from_modules(dump: dict, modules: dict, object_id: str, inputs: Inputs
     m = _Mesh()
     drep, plates, types = decor_primitive_first(m, parts, keys("boxes"), stor, levels, centre, scene)
     panels = 0
-    for k in keys("planes"):                         # dark inserts: boxes set into the wall (user 2026-10-14)
+    for k in keys("planes"):                         # dark inserts: boxes set into the wall (user 2026-10-14 [D085])
         v, t, _ = parts[k]
         panels += inset_panels(m, v, t, stor, pid(k, 5), scene=scene)
     rep["decor"] = {**drep, "inset_panels": panels}
@@ -1433,7 +1433,7 @@ def build_from_modules(dump: dict, modules: dict, object_id: str, inputs: Inputs
         if inner.is_empty or inner.area < 0.1 * ring.area:
             inner = ring                            # a narrow screen has no such band (review 3 of #106)
         share = cover.intersection(inner).area / inner.area if inner.area > 0 else 0.0
-        top = share >= 0.98                        # a top only where the source has one (user 2026-10-14: OBJ03
+        top = share >= 0.98                        # a top only where the source has one (user 2026-10-14 [D086]: OBJ03
         planes_along(m, ring, float(q[:, 2].min()), z1, pid(k, 24), top=top)   # has none; review 1 of #106)
         partial = 0
         if 0.0 < share < 0.98:                     # a partial top: the source's own faces, its shape kept
@@ -1467,7 +1467,7 @@ def build_from_modules(dump: dict, modules: dict, object_id: str, inputs: Inputs
             if railing_h and n in stor:
                 plates += terrace_railings(m, deck, stor[n]["poly"], top, railing_h, pid(k, 12))
     # glass standing off the wall line (a small balcony's railing): the same rule - one closed plate per free
-    # side of its plan, from its foot to its top (pattern terrace, glass railings, user 2026-10-14)
+    # side of its plan, from its foot to its top (pattern terrace, glass railings, user 2026-10-14 [D087])
     gv, gt = parts[glass[0]][:2]
     lines = {n: st["poly"] for n, st in stor.items()}
     groups = []

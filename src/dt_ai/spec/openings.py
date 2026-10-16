@@ -1,4 +1,4 @@
-"""Openings of the spec: a hole in the body or a glass pane at a wall (user decision 2026-10-08, #7).
+"""Openings of the spec: a hole in the body or a glass pane at a wall (user decision 2026-10-08 [D029], #7).
 
 Pattern: none — this is extractor code, not a building node (REVIEW_CHECKLIST Q1: new-case).
 
@@ -34,19 +34,19 @@ ALONG_DEG = 10.0         # a chain runs along the gap within this angle
 BRIDGE_DEG = 3.0         # the mouth-to-mouth bridge runs along the gap within this angle
 MOUTH_KEY_M = 0.005      # bridges at different heights are one opening when each end moves under 5 mm
 ON_WALL_M = 0.05         # an opening mouth lies within this of its contour wall line
-PANE_JOIN_M = 0.15       # glass panes of one frame (gap <= 0.15 m, user decision 2026-10-08, #31) are one opening ...
+PANE_JOIN_M = 0.15       # glass panes of one frame (gap <= 0.15 m, user decision 2026-10-08 [D104], #31) are one opening ...
 PANE_BAND_M = 0.05       # ... when aligned: side by side, one's heights within the other's; stacked, one's width within
 # defaults of the extraction thresholds; a benchmark's tolerances.json (spec_extract) gives the values
-# in use (user decision 2026-10-09)
+# in use (user decision 2026-10-09 [D034])
 DEPTH_EXCEPTION_M = 0.10  # a measured depth further than this from the spec default is written (#36)
 # the depth is the way from the facade to the back polygon of the opening (the opening plane; without one, the
 # reveal), never the glass position; an opening with a plane or glass not deeper than this is flush with the
 # facade: relief or a drawing, not an opening — a question
-# (C24 final, user decision 2026-10-10)
+# (C24 final, user decision 2026-10-10 [D037])
 FLUSH_M = 0.01
 GLASS_FRAME_M = 0.20     # glass fills an opening's height when no stretch without glass is longer (a frame member)
 LEVEL_JOINT_M = 0.15     # an opening reaching less than this past a level line does not cross it (a frame joint)
-# a door opening: from the storey floor, high and wide enough (user decisions 2026-10-08, #31;
+# a door opening: from the storey floor, high and wide enough (user decisions 2026-10-08 [D025], #31;
 # the same numbers as mesh.DOOR_*, for through holes)
 DOOR_FLOOR_M = 0.05
 DOOR_MIN_H_M = 1.9
@@ -346,7 +346,7 @@ def _covered(rects, box):
 
 
 def _merge_panes(items):
-    """Panes of one frame are one opening (user decision 2026-10-08, #31): panes on the same wall
+    """Panes of one frame are one opening (user decision 2026-10-08 [D104], #31): panes on the same wall
     within PANE_JOIN_M of each other and aligned — side by side with one's heights inside the
     other's, or a transom with one's width inside the other's, within PANE_BAND_M. Two groups join
     only when their panes cover the joined rectangle, so staggered or L-shaped sets stay apart
@@ -408,7 +408,7 @@ def _glass_fills(o, frame=GLASS_FRAME_M):
 
 def _kind(o, frame=GLASS_FRAME_M):
     """window when glass fills the height; door for a door recess without glass or with glass over
-    part of its height (user decision 2026-10-08, #31)."""
+    part of its height (user decision 2026-10-08 [D025], #31)."""
     if o.get("glass_z") and _glass_fills(o, frame):
         return "window"
     return "door" if o.get("door") else ("window" if o.get("glass_z") else None)
@@ -438,7 +438,7 @@ def _world(o, contour):
 
 
 def _across_levels(by_level, levels, floors):
-    """One record for an opening that crosses a level (user decision 2026-10-08, spec v0.2): an
+    """One record for an opening that crosses a level (user decision 2026-10-08 [D103], spec v0.2): an
     opening of the floor above on the same facade line and plan span, starting within PANE_JOIN_M
     above the top of one of the floor below (either may reach past the level), joins it when their
     rectangles are covered as one frame; the lower floor keeps it with level_to. Runs top down, so
@@ -740,7 +740,7 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
             no_depth = o.get("kind_fixed") or o["depth"] <= FLUSH_M
             depth = o["depth"]
             if no_depth:
-                # the default, marked in the report, never 0 or a minimum (OD1, user decision 2026-10-11)
+                # the default, marked in the report, never 0 or a minimum (OD1, user decision 2026-10-11 [D048])
                 p0, p1, _ = _world(o, floor["contour"])
                 by_default.append({"level": levels[li]["name"], "wall": wall, "x_m": item["x_m"],
                                    "sill_m": item["sill_m"], "at": [round(float(c), 2) for c in (p0 + p1) / 2]})

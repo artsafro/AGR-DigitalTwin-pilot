@@ -9,12 +9,12 @@ What it builds (patterns wall-from-contour, opening-plane, typical-floor-repeat,
   (wall thickness is open, conflict C23);
 - every window / door / untyped opening as a hole with reveals and a plane closing them, ID by the
   opening's own `material_id`, else its window type, else the object's default opening ID (never
-  under `plane_conflict`). Seating by profile (conflict C24, final user decision 2026-10-10): `npm_min`
+  under `plane_conflict`). Seating by profile (conflict C24, final user decision 2026-10-10 [D037]): `npm_min`
   at the full opening depth (`depth_m` or `opening_depth_default_m`) — the plane is the back polygon
   of the opening's extrusion; `mid` at half of it, where the detailed window is built from the plane. The reveals end at the plane: their part behind an opaque NPM plane is hidden and
   is not built (docs/domain/geometry.md, hidden parts of reveals), and a reveal running past the
   plane would leave an edge of three faces. Grilles stay texture (`vent-grille`);
-- every slab inset (pattern roof-inset-plane, user rule 2026-10-10): the body has a hole at the slab's
+- every slab inset (pattern roof-inset-plane, user rule 2026-10-10 [D038]): the body has a hole at the slab's
   level (the foot of the faces around it) and the slab is a separate plate at level + the spec's
   `plate_gap_m` that overlaps the hole by `plate_overlap_m` (mitred) under the faces around it; slabs are the roof
   inside a parapet and the walkable part of every terrace. A roof without a parapet stays solid (no
@@ -22,15 +22,15 @@ What it builds (patterns wall-from-contour, opening-plane, typical-floor-repeat,
 - parapet inner walls and cap;
 - a contour per floor (pattern floor-step): walls of each floor by its own contour, and at each
   level line a ledge facing up (roof ID) where the floor below reaches out and a soffit facing down
-  (facade ID, user 2026-10-10) where the floor above overhangs;
+  (facade ID, user 2026-10-10 [D043]) where the floor above overhangs;
 - a terrace (pattern terrace, spec v0.4 `terraces`): on a ledge, a parapet along its outer edges -
   outer face (facade ID), inner face and cap (roof ID), thickness `parapet_thickness_m` - and the
   walkable rest of the ledge (roof ID); the wall cells of the floor above behind its ends are hidden.
-- facade decor (pattern facade-decor-inset, spec v0.5 `decor`, user decisions 2026-10-11/12), as a separate
+- facade decor (pattern facade-decor-inset, spec v0.5 `decor`, user decisions 2026-10-11/12 [D051, D054, D055, D056, D057, D058]), as a separate
   mesh `decor`: the body is never cut. A wall element is one box from `DECOR_INSET_M` inside the wall face to
   its projection, its face inside the body deleted; a face that would come closer than `plate_gap_m` to an
   opening's face is moved back to that clearance; an element over an opening is a BuildError. Two elements
-  that meet (user 2026-10-12): the subordinate one runs DECOR_INSET_M into the main one and its hidden end
+  that meet (user 2026-10-12 [D059]): the subordinate one runs DECOR_INSET_M into the main one and its hidden end
   face is deleted, the main one is not cut; horizontal (band, panel) is main over vertical (strip); of one
   rank the longer is main. Meetings the rule does not cover (side by side, crossing, at a building corner,
   equal length) are a BuildError. A free-standing column is a box with its own ID, top
@@ -66,7 +66,7 @@ FEATURE_TOL = 1e-9    # exactly 0.1 mm passes despite floating-point arithmetic 
 BUILT_KINDS = ("window", "door", None)
 SLAB_GAP_M = (0.002, 0.010)    # inset slab plate above its level (pattern roof-inset-plane, checker roof_inset_gap_m)
 SLAB_EMBED_M = (0.010, 0.050)  # its outline beyond the hole (checker roof_inset_embed_m)
-SEAT_SHARE = {"npm_min": 1.0, "mid": 0.5}   # plane seat as a share of the opening depth (C24 final, user 2026-10-10)
+SEAT_SHARE = {"npm_min": 1.0, "mid": 0.5}   # plane seat as a share of the opening depth (C24 final, user 2026-10-10 [D037])
 
 
 class BuildError(ValueError):
@@ -147,7 +147,7 @@ def _cuts(values, lo, hi):
 
 
 class _Weld:
-    """The building's weld along one plan axis (spec weld_m, user 2026-10-13: how the user welds by hand): a
+    """The building's weld along one plan axis (spec weld_m, user 2026-10-13 [D068]: how the user welds by hand): a
     value within the weld (inclusive) of a fixed value is that value; the other values within the weld of a
     group's smallest join that group, at the smallest; a value off every group stays where it is. Fixed values (an earlier
     weld's results) never move."""
@@ -224,7 +224,7 @@ def _contours(spec: Spec):
     for f in spec.floors:
         if f.level in templates and any(o.level_to is not None for o in f.openings):
             raise BuildError(f"floor {f.level} repeats an opening across levels: ask the user before copying it "
-                             "up the run (typical-floor-repeat, user decision 2026-10-09)")
+                             "up the run (typical-floor-repeat, user decision 2026-10-09 [D036])")
     raw = [np.asarray(f.contour, float) for f in floors]
     for f, pts in zip(floors, raw):
         if Polygon(pts).exterior.is_ccw is False:
@@ -377,7 +377,7 @@ def build(spec: Spec, inputs: BuildInputs) -> dict:
     in_pts = np.asarray(inner.exterior.coords)[:-1]
 
     # horizontal faces: roof plane (inside the inset), cap (between contour and inset); at each floor step
-    # (pattern floor-step) a ledge facing up (roof ID) and a soffit facing down (facade ID, user 2026-10-10)
+    # (pattern floor-step) a ledge facing up (roof ID) and a soffit facing down (facade ID, user 2026-10-10 [D043])
     slabs = []                                          # inset slabs: (hole polygon, level z, where)
     faces = []
     if t > 0:
@@ -387,7 +387,7 @@ def build(spec: Spec, inputs: BuildInputs) -> dict:
         faces.append((inner, roof, inputs.roof_id, 1))      # no parapet: nothing to inset the roof into
     names = [lv.name for lv in spec.levels]
     terraces = {names.index(tr.level): tr.parapet_h_m for tr in spec.terraces}
-    # one parapet thickness per building (user 2026-10-13, Q10 a): a terrace parapet takes the spec's roof
+    # one parapet thickness per building (user 2026-10-13 [D065], Q10 a): a terrace parapet takes the spec's roof
     # thickness when it has one, else the build input; measured terrace thicknesses are an issue
     tt = measured if measured is not None else inputs.parapet_thickness_m
     tp_walls, tp_solids, tp_tops = [], [], []
@@ -524,7 +524,7 @@ def build(spec: Spec, inputs: BuildInputs) -> dict:
     _quads(mesh, traps, face_ys, weld)
     joints = [bottom]
     if slabs:
-        gap, embed = spec.plate_gap_m, spec.plate_overlap_m      # building parameters (user 2026-10-10)
+        gap, embed = spec.plate_gap_m, spec.plate_overlap_m      # building parameters (user 2026-10-10 [D039])
         if not (SLAB_GAP_M[0] <= gap <= SLAB_GAP_M[1] and SLAB_EMBED_M[0] <= embed <= SLAB_EMBED_M[1]):
             raise BuildError(f"inset slab gap {gap} m / embed {embed} m outside the pattern's {SLAB_GAP_M} / "
                              f"{SLAB_EMBED_M} m (roof-inset-plane); not built (Codex review 1 of PR #63)")
@@ -549,7 +549,7 @@ def build(spec: Spec, inputs: BuildInputs) -> dict:
 
 
 def _roof_structures(spec: Spec, inputs: BuildInputs, roof: float) -> "_Mesh":
-    """Pattern roof-screen-enclosure (spec v0.7, user 2026-10-13): npm_min builds a screen enclosure as planes -
+    """Pattern roof-screen-enclosure (spec v0.7, user 2026-10-13 [D067]): npm_min builds a screen enclosure as planes -
     walls on its outline from the roof level to its top, facing out, and a top plane; no bottom, no thickness;
     roof ids (an exit to the roof). Part of the silhouette, a mesh of its own. mid / VPM (a shell) is issue #91."""
     out = _Mesh()
@@ -569,7 +569,7 @@ def _roof_structures(spec: Spec, inputs: BuildInputs, roof: float) -> "_Mesh":
     return out
 
 
-DECOR_INSET_M = 0.02   # pattern facade-decor-inset: a wall element runs this far into the body (user 2026-10-11)
+DECOR_INSET_M = 0.02   # pattern facade-decor-inset: a wall element runs this far into the body (user 2026-10-11 [D051])
 
 
 def _decor(spec, floors, contours, openings, inputs, elev, polys, top):
@@ -703,7 +703,7 @@ def _decor(spec, floors, contours, openings, inputs, elev, polys, top):
 
 
 def _corner(A, B):
-    """Two elements meeting at a convex building corner (user 2026-10-12): the main one (horizontal over
+    """Two elements meeting at a convex building corner (user 2026-10-12 [D059]): the main one (horizontal over
     vertical, else the longer) runs on past the corner by the other's projection and keeps its full end face;
     a back face is deleted only where it is set into the wall or closed by another element, so past the corner
     the main one keeps its back above and below the other. The other, of any height within the main one's, starts on that back face without its
@@ -733,7 +733,7 @@ def _corner(A, B):
         main, sub_, im, is_ = (A, B, ia, ib) if la > lb else (B, A, ib, ia)
     if sub_["z0"] < main["z0"] - KEY_M or sub_["z1"] > main["z1"] + KEY_M:
         raise BuildError(f"{sub_['where']} is higher than {main['where']} at the corner: its part beyond the main one "
-                         "is closed by nothing (question decor-corner, user 2026-10-12); not built")
+                         "is closed by nothing (question decor-corner, user 2026-10-12 [D059]); not built")
     if im == 1:                                         # the main one runs on past the corner, end face whole,
         main["s1"], main["e1"] = main["length"] + sub_["d1"], main["d0"]       # back kept outside the wall
         main.setdefault("backs", []).append((main["length"], main["s1"], sub_["z0"], sub_["z1"]))
@@ -748,7 +748,7 @@ def _corner(A, B):
 
 
 def _meet(walls, columns, gap):
-    """Decor elements that meet (pattern facade-decor-inset, user 2026-10-12): the subordinate one runs
+    """Decor elements that meet (pattern facade-decor-inset, user 2026-10-12 [D059]): the subordinate one runs
     DECOR_INSET_M into the main one through its end, which is deleted; the main one is not cut. Ends closer
     than plate_gap_m (+ 1 µm) meet (an end moved off an opening still meets). Anything else that touches is a
     BuildError."""
@@ -878,7 +878,7 @@ def _segments(poly, keep):
 
 
 def _terrace(ledge, upper, z, z_top, t, level):
-    """Pattern terrace (user decision 2026-10-10): the walkable part, the parapet band (its cap) and the
+    """Pattern terrace (user decision 2026-10-10 [D041]): the walkable part, the parapet band (its cap) and the
     parapet's walls on a ledge. The parapet runs along the ledge's outer edges (not along the walls of
     the floor above); its outer face continues the walls below, its inner face is t inside."""
     if ledge.is_empty or ledge.area <= KEY_M:
@@ -935,7 +935,7 @@ def _snap_add(target, values):
 def _trapezoids(faces, xs):
     """Every horizontal face cut into trapezoids by the vertical strips between consecutive xs: two
     vertical sides (x0: a..b, x1: c..d) and two straight edges. One side may be a point (a == b or c == d):
-    a triangle, where two edges meet on the strip line (a pointed corner, user 2026-10-13). Any other piece
+    a triangle, where two edges meet on the strip line (a pointed corner, user 2026-10-13 [D112]). Any other piece
     is a BuildError."""
     out = []
     for poly, z, mid, up in faces:
