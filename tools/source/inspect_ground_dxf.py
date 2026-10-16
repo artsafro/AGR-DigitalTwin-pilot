@@ -10,6 +10,8 @@ Hatch area rules (AutoCAD HATCH semantics):
 * The filled region follows the hatch style: style 0 "normal" fills by odd nesting depth
   (even-odd), style 1 "outer" fills depth 0 minus depth 1 islands, style 2 "ignore" fills only
   depth-0 loops. Path flags EXTERNAL/OUTERMOST do not decide the sign; nesting does.
+* The plot boundary (2D polyline) must be closed; every bulge is sampled on its exact circle with
+  chord-to-arc distance <= ``BOUNDARY_TOL`` (no Bezier step), then OCS -> WCS with the elevation.
 * A loop that is not a valid simple ring (self-intersection, fewer than 3 points, zero area) is
   reported in ``issues`` and the hatch area is ``None``; it is never silently repaired.
 
@@ -22,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -31,6 +34,7 @@ from shapely import union_all
 from shapely.validation import explain_validity
 
 DEFAULT_TOL = 0.001  # m, flattening distance for curved hatch edges
+BOUNDARY_TOL = 0.0001  # m, chord-to-arc distance for the plot boundary (area bias <= 2/3 * tol * arc length)
 GRID = 1e-4  # m, precision grid for cross-hatch overlays (GEOS robustness); per-hatch areas are exact
 
 
@@ -135,13 +139,65 @@ def hatch_area(hatch, boundary: Polygon | None = None, tol: float = DEFAULT_TOL)
     )
 
 
-def boundary_polygon(doc, handle: str) -> Polygon:
-    e = doc.entitydb[handle]
+BOUNDARY_TYPES = ("LWPOLYLINE", "POLYLINE")
+
+
+def arc_points(p1, p2, bulge: float, tol: float) -> list[tuple[float, float]]:
+    """Points strictly between p1 and p2 on the bulge arc, chord-to-arc distance <= tol.
+
+    The points lie exactly on the circle (no Bezier approximation); the segment count is
+    ceil(|sweep| / (2 * acos(1 - tol / r))).
+    """
+    (x1, y1), (x2, y2) = p1, p2
+    c = math.hypot(x2 - x1, y2 - y1)
+    if not bulge or c == 0.0:
+        return []
+    sweep = 4.0 * math.atan(bulge)  # signed, CCW positive
+    r = abs(c / (2.0 * math.sin(sweep / 2.0)))
+    ux, uy = (x2 - x1) / c, (y2 - y1) / c
+    off = (c / 2.0) * (1.0 - bulge * bulge) / (2.0 * bulge)  # midpoint -> centre along the left normal
+    cx, cy = (x1 + x2) / 2.0 - uy * off, (y1 + y2) / 2.0 + ux * off
+    a1 = math.atan2(y1 - cy, x1 - cx)
+    step = 2.0 * math.acos(max(-1.0, 1.0 - tol / r)) if tol < 2.0 * r else math.pi
+    n = max(1, math.ceil(abs(sweep) / step))
+    return [(cx + r * math.cos(a1 + sweep * k / n), cy + r * math.sin(a1 + sweep * k / n)) for k in range(1, n)]
+
+
+def boundary_polygon(doc, handle: str, tol: float = BOUNDARY_TOL) -> Polygon:
+    """Closed plot boundary (2D LWPOLYLINE / POLYLINE) as a WCS polygon, curve-aware.
+
+    Every bulge (including the closing segment's) becomes an arc sampled on the exact circle with
+    chord-to-arc distance <= ``tol`` m; vertices are transformed OCS -> WCS with the elevation.
+    A boundary that is neither flagged closed nor ends at its start raises ValueError.
+    """
+    e = doc.entitydb.get(handle)
+    if e is None:
+        raise ValueError(f"boundary {handle}: no such entity")
+    kind = e.dxftype()
+    if kind == "LWPOLYLINE":
+        verts = [(x, y, b) for x, y, b in e.get_points("xyb")]
+        elevation = e.dxf.elevation
+    elif kind == "POLYLINE" and e.is_2d_polyline:
+        verts = [(v.dxf.location.x, v.dxf.location.y, v.dxf.bulge) for v in e.vertices]
+        elevation = e.dxf.elevation.z
+    else:
+        raise ValueError(f"boundary {handle}: unsupported type {kind}")
+    if len(verts) >= 2 and math.isclose(verts[0][0], verts[-1][0], abs_tol=1e-9) and math.isclose(
+        verts[0][1], verts[-1][1], abs_tol=1e-9
+    ):
+        verts = verts[:-1]  # explicit closing vertex; its bulge is irrelevant
+    elif not e.is_closed:
+        raise ValueError(f"boundary {handle}: not closed (no closed flag, start != end)")
+    ocs_pts: list[tuple[float, float]] = []
+    for i, (x, y, b) in enumerate(verts):
+        ocs_pts.append((x, y))
+        nx, ny, _ = verts[(i + 1) % len(verts)]
+        ocs_pts.extend(arc_points((x, y), (nx, ny), b, tol))
     ocs = e.ocs()
-    pts = [tuple(ocs.to_wcs((x, y, e.dxf.elevation)))[:2] for x, y in e.get_points("xy")]
     from ezdxf.math import Vec2
 
-    poly, err = _ring([Vec2(x, y) for x, y in pts])
+    wcs = [Vec2(ocs.to_wcs((x, y, elevation))) for x, y in ocs_pts]
+    poly, err = _ring(wcs)
     if err:
         raise ValueError(f"boundary {handle}: {err}")
     return poly
@@ -333,13 +389,14 @@ def main(argv=None) -> int:
     ap.add_argument("--boundary", help="handle of the closed boundary LWPOLYLINE")
     ap.add_argument("--label", default=None)
     ap.add_argument("--tol", type=float, default=DEFAULT_TOL)
+    ap.add_argument("--boundary-tol", type=float, default=BOUNDARY_TOL)
     ap.add_argument("--out", help="markdown inventory path")
     ap.add_argument("--json", help="per-hatch JSON path (handle, layer, areas, issues)")
     ap.add_argument("--overlap-layers", nargs="*", default=[], help="layers for pairwise overlap areas")
     ap.add_argument("--overlap-prefix", default=None, help="also every hatch layer starting with this prefix")
     a = ap.parse_args(argv)
     doc = ezdxf.readfile(a.dxf)
-    boundary = boundary_polygon(doc, a.boundary) if a.boundary else None
+    boundary = boundary_polygon(doc, a.boundary, a.boundary_tol) if a.boundary else None
     inv = inventory(doc, boundary, a.tol)
     if a.overlap_prefix:
         a.overlap_layers += sorted({h.layer for h in inv["hatches"] if h.layer.startswith(a.overlap_prefix)})

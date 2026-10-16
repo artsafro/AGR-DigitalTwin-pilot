@@ -10,12 +10,13 @@ no images). Real project data, not synthetic. Grilling context: `docs/domain/are
 - Both DWGs convert cleanly with the AutoCAD 2025 core console (`DXFOUT`, DXF 2018, 16 digits) and read with
   ezdxf 1.4.3. Units are **metres** (`$INSUNITS=6`), local CAD coordinates without geodata.
 - The Ground plot is **one closed LWPOLYLINE** (handle `568BF`) on layer `ПР_ЛГР_предлагаемые`, the layer the
-  legend row «Граница проектирования» uses: 20 vertices, 25 725.1 m², perimeter 639.2 m, about 213 x 199 m,
+  legend row «Граница проектирования» uses: 20 vertices, 4 of them with bulges (arc segments), 25 854.04 m²,
+  perimeter 641.95 m, about 214 x 199 m,
   no self-intersections. The layers named in the grilling (`ГП_ГраницаЗУ`, `ГП_ГраницаРабот`) exist but are **empty**.
 - Coverings are hatches on `!_А101_*` layers, one layer per covering type, which the model-space legend table names
   (9 covering rows -> 18 hatch layers, see the layer map). Most coverings also have closed contours (LWPOLYLINE) on the
   same layer. Measured with island-aware hatch geometry clipped to the plot, the coverings **tile** the plot: their
-  union is 16 381 m² (paving file) of 25 725 m², and no two covering layers overlap by more than 1.05 m². About
+  union is 16 510 m² (paving file) of 25 854 m², and no two covering layers overlap by more than 1.05 m². About
   9 344 m² of the plot has no covering hatch (open question 3). 40 hatches per file have a self-intersecting loop
   and are reported, not measured (22 of them are rolled-lawn strips).
 - Full per-file inventories (all layers with entity counts by type, every inserted block with insert count, count in the
@@ -132,14 +133,15 @@ The other MTEXT in model space: 627 on `...$0$Марки формообразу�
 The legend row -> layer mapping comes from the sample entities in the legend's symbol column (`pass3.py`), not from
 guessing names. **Areas** come from `tools/source/inspect_ground_dxf.py`: each hatch's loops are converted with
 `ezdxf.path.from_hatch` (OCS -> WCS, arcs, ellipses, splines; flattening 0.001 m), filled by nesting depth and hatch
-style (normal = even-odd, outer = depth 0 minus depth 1, ignore = depth 0), then **clipped** to `568BF`. Hatches with a
+style (normal = even-odd, outer = depth 0 minus depth 1, ignore = depth 0), then **clipped** to `568BF` with its four
+arcs (see "Boundary polygon"). Hatches with a
 self-intersecting loop are listed by handle in the per-file inventory and excluded from the sums. Point counts:
 WCS insert point inside `568BF`. File: paving (main in brackets where it differs).
 
 | Ground item | Layer | Kind | In plot | Area in plot, m² | Legend / schedule |
 |---|---|---|---|---|---|
-| **Plot boundary** | `ПР_ЛГР_предлагаемые` | 1 closed LWPOLYLINE `568BF`, DASHED, colour 5, width 0.3 | 1 | 25 725.1 | «Граница проектирования» |
-| Tile, light | `!_А101_плитка_светлая` | HATCH AR-B816 ×37 + SOLID ×6; 220 LWPOLYLINE | 43 hatches | 7 164.4 (7 159.4) | «Покрытие из плитки тротуарной бетонной»; paving types 3/4 |
+| **Plot boundary** | `ПР_ЛГР_предлагаемые` | 1 closed LWPOLYLINE `568BF` (4 arc segments), DASHED, colour 5, width 0.3 | 1 | 25 854.04 | «Граница проектирования» |
+| Tile, light | `!_А101_плитка_светлая` | HATCH AR-B816 ×37 + SOLID ×6; 220 LWPOLYLINE | 43 hatches | 7 283.8 (7 278.7) | «Покрытие из плитки тротуарной бетонной»; paving types 3/4 |
 | Tile, red | `!_А101_плитка_красная` | HATCH AR-B816 ×9 | 9 hatches | 887.8 | same row; paving type 1 |
 | Tile, dark | `!_А101_плитка_темная` | HATCH AR-B816 ×14 | 14 hatches | 130.2 (130.8) | same row; paving type 2 |
 | Stepping slabs 900x300 | `!_А101_плитка_светлая пошаговая` | INSERT `Бет пл пошаговая 300х900` (0.9 x 0.3 m) | 248 | (248 x 0.27 = 67) | «...пошаговой 900х300» |
@@ -148,7 +150,7 @@ WCS insert point inside `568BF`. File: paving (main in brackets where it differs
 | Decking (larch) | `!_А101_покр_декинг` | HATCH ANSI31 ×2 (both outside the plot); 1 LWPOLYLINE in plot | 0 hatch | — | «...деревянного настила» |
 | Mulch | `!_А101_мульча` | HATCH AR-CONC ×67; 21 LWPOLYLINE | 67 hatches | 3 634.5 (3 618.6) | «Покрытие из мульчи»; schedule Поз. 19: 3 646.97 |
 | Reinforced lawn (Ecoraster, fire lanes) | `!_А101_укрепленный газон` | HATCH GRATE ×42 | 42 hatches | **2 460.11** (2 476.65) | schedule Поз. 20: 2 460.11 (paving file matches to 0.01 m²) |
-| Rolled lawn | `!_А101_озел_штрих_газон` | HATCH SOLID ×290 (22 invalid: self-intersecting strips) + 177 LWPOLYLINE | 290 hatches | 861.0 + 22 unmeasured | schedule Поз. 18: 1 326.29 |
+| Rolled lawn | `!_А101_озел_штрих_газон` | HATCH SOLID ×290 (22 invalid: self-intersecting strips) + 177 LWPOLYLINE | 290 hatches | 870.6 + 22 unmeasured | schedule Поз. 18: 1 326.29 |
 | Flower beds (8 species) | `!_А101_укрепленный цветник 0N <species>` N = 01–08; outline `!_А101_укрепленный цветник` | HATCH ZIGZAG (+1 SOLID each for 04–08 in paving, outside the plot; 5 invalid) | 73 hatches | 69.0 | «Цветник»; **not in the planting schedule** |
 | Fire lane outline | `_ГП_ПожПроезд` | 1 closed LWPOLYLINE | 1 | 3 866.3 | — |
 | Shifted parking spaces (frozen) | `ГП_СмещенныеПП` | HATCH SOLID ×6 (1 invalid) | 6 hatches | 358.7 | — |
@@ -164,8 +166,8 @@ WCS insert point inside `568BF`. File: paving (main in brackets where it differs
 | Paving laying (paving file) | `!_А101_плитка_{светлая,темная,красная}_РМ`, `РМ_контур`, `РМ_массивы`, `РМ_штр_*` | INSERT arrays of 100x300 tiles, closed contours | 26 + 34 contours | 785.8 (РМ_контур) | «Типы мощения» |
 | Vertical planning (preliminary, frozen) | `!_А101_предварительная ВП` -> blocks `Д2_ВП_2024.10.10`, `Дороги_ВП_2024.10.11`; inner layers `ГП_Вертикалка_ОпорнаяТочка_New`, `..._ГоризонталиОсновные`, `..._ГоризонталиВспомогательные`, `..._ГоризонталиМетка` | spot heights (MTEXT, Z = value), contour LWPOLYLINE with elevation | 48 spot heights; contours in both blocks: 103 main + 408 auxiliary (the road block's half outside the plot) | — | — |
 
-**Coverage check** (geometry, not sums): the union of all `!_А101_*` hatch layers inside the plot is 16 380.82 m²
-(paving; main 16 377.04 m²); the sum of the per-layer unions is 16 384.71 m², so all pairwise overlaps together are
+**Coverage check** (geometry, not sums): the union of all `!_А101_*` hatch layers inside the plot is 16 509.78 m²
+(paving; main 16 506.00 m²); the sum of the per-layer unions is 16 513.67 m², so all pairwise overlaps together are
 3.9 m². The largest pairwise overlaps are мульча / плитка_светлая 1.05 m² and плитка_светлая / укрепленный газон
 0.87 m² (paving; full table at the end of each per-file inventory). The coverings are drawn edge to edge; there is
 **no** base layer under the others. 9 344 m² of the plot (36 %) is not covered by any covering hatch (open question 3).
@@ -247,7 +249,8 @@ with their counts in the per-file inventories.
 - Header extents (`$EXTMIN` -21 985.5, -48 427.1, -589.2 / `$EXTMAX` 33 081.8, 7 997.7, 438.2) span ~55 x 56 km
   because of stray objects. Do not use them. Real content: model-space layer extents x -8 671 … -6 281, y -15 885 … -13 634
   (the neighbourhood plan plus the tables).
-- **Site extents** (boundary `568BF`): x -7 700.08 … -7 487.29, y -15 387.12 … -15 188.37 (212.8 x 198.8 m), Z = 0.
+- **Site extents** (boundary `568BF` with its arcs): x -7 700.77 … -7 487.29, y -15 387.12 … -15 188.37 (213.5 x 198.8 m),
+  Z = 0. The vertex-only bbox starts at x -7 700.08; one arc bulges 0.69 m further west.
   The tables and legend samples sit east of the plot (x ≈ -7 240 … -6 300, y ≈ -14 905 … -15 130).
 - Z: almost all Ground entities are at Z = 0 (2D plan). Exceptions: 1–2 hatches each on `плитка_светлая`, `плитка_темная`,
   `мульча` at elevation 146–438 m, 4 MAF inserts at Z 147.7, 2 conifers at 147.2, `!_А101_маф_парковые` at
@@ -262,7 +265,14 @@ with their counts in the per-file inventories.
 ## Boundary polygon
 
 Found and closed. `568BF` has the `closed` flag set, 20 vertices, 0 self-intersections (O(n²) segment test),
-segments 0.0–112.4 m. There is **one duplicate vertex** (a zero-length segment), and the first and last vertices are 0.568 m
+segments 0.0–112.4 m. **Four segments are arcs** (bulges -0.0896, -0.1067, -0.4186, -0.3733 at vertices 1, 3, 5, 12).
+The exact area with the arcs is 25 854.049 m² and the perimeter 641.947 m (Green: signed chord shoelace + circular segments); a vertex-only ring gives 25 725.08 m² /
+639.22 m (-129 m², the round-1/2 figure of this report, now replaced). `inspect_ground_dxf.boundary_polygon` samples
+every bulge on its exact circle with chord-to-arc distance ≤ 0.0001 m (no Bezier step; area bias ≤ 2/3 · tol · arc
+length): 25 854.042 m², 641.947 m. The arc slivers (129 m²) hold no INSERT or spot height, so every point count and
+the 48 spot heights are unchanged; only 2 contour labels of the ВП block fall into them. The light tile gains
+119.4 m² in the plot (hatches `FAA4B` +91.0, `FAA81` +18.7, `F983F` +6.7, `FA823` +3.0), rolled lawn +9.6, red tile
++0.04; the uncovered area stays 9 344.3 m² because the coverings fill the slivers. There is **one duplicate vertex** (a zero-length segment), and the first and last vertices are 0.568 m
 apart; the closed flag joins them with a 0.568 m segment. Both must be cleaned (drop duplicate vertices) before
 triangulation. No other polyline repeats this outline (bbox ±2 m: none). The other 26 polylines on
 `ПР_ЛГР_предлагаемые` are open or belong to other plots of the neighbourhood plan.
@@ -286,25 +296,27 @@ triangulation. No other polyline repeats this outline (bbox ±2 m: none). The ot
 | Schedule quantity == INSERTs inside the plot (planting Поз. 1–17 + 24 MAF items) | `probe.py`: 41 block <-> schedule pairs, point-in-polygon on `568BF`, OCS -> WCS for mirrored inserts | main 36/41, paving 37/41. Container TBO: 18 = total (8 in plot). Mismatches: Ольха 8 in plot / 24 total vs 23; Яблоня 21 / 25 vs 24; Сосна горная 106 vs 99; Стефанандра 1 000 vs 1 002 (main only; paving 1 002) |
 | Every legend row maps to ≥ 1 production layer | `pass3.py`, entities in the legend symbol column | 21/21 rows have a sample on a named layer |
 | Boundary is a simple closed ring | closed flag, O(n²) segment intersection, duplicate-vertex scan | closed, 0 crossings, 1 duplicate vertex |
+| Curved boundary area is exact within the stated bias | `probe_bulge.py` (seed 194): 500 random closed LWPOLYLINEs, 2–9 vertices, random bulges in (-1, 1], half of them with extrusion (0,0,-1), offsets up to 20 km; reference = signed chord shoelace + signed circular segments (Green); bound 2/3 · 0.0001 · arc length + 1e-6 · area. Rings made self-intersecting by the bulges are rejected with a ValueError (208), not repaired | 500/500 within bound (worst 0.97 of the bound) |
+| Real boundary keeps its arcs | fixture copy of `568BF` (4/4 bulges) | 25 854.05 ± 0.05 m², 641.947 ± 0.005 m (vertex-only 25 725.08 / 639.216) |
 | Inventory totals equal model space | `inspect_ground_dxf.py` checks: sum of layer x type counts, sum of block insert counts, hatches measured | main 9 880 = 9 880, INSERT 5 904 = 5 904, HATCH 778 = 778, layers 277 (94 used); paving 10 080 = 10 080, INSERT 5 942 = 5 942, HATCH 786 = 786, layers 308 (105 used). 2/2 files |
 | Hatch area respects islands and style | `tests/test_inspect_ground_dxf.py`: hole-free control 200 m², OUTERMOST islands subtracted (9 800, legacy 10 200), nested islands for styles 0/1/2 (7 600 / 7 500 / 10 000), loop order permuted, arc circle π·25 (rel 1e-3), mirrored OCS, bow-tie reported invalid | 9/9 synthetic rows pass |
-| Real islands case | anonymised excerpt `tests/fixtures/spozu/vatutino_hatch_excerpt.dxf` (hatches `150B41`, `181ECB` + boundary, shifted to the boundary bbox min) | `150B41` 2 016.15 m² (legacy 9 665.19), `181ECB` 611.55 m² (legacy 2 506.85), both fully inside the plot, tolerance 0.05 m²: 2/2 |
-| Boundary crossing is clipped | synthetic 20 x 10 hatch half outside a plot; real: decking hatches 265.88 m² full / 0.00 in plot, light tile 8 544.20 / 7 164.41 | 100 of 200 m² in plot |
-| Coverings do not overlap | pairwise intersection of the per-layer unions of all `!_А101_*` hatch layers inside the plot | max pair 1.05 m², all pairs 3.9 m² of 16 384.7 m² (paving); main same order |
-| Covering area vs schedule | in-plot area vs Поз. 18–20 | reinforced lawn 2 460.11 = 2 460.11 (paving); mulch 3 634.47 vs 3 646.97 (−0.3 %); rolled lawn 861.03 + 22 invalid strips vs 1 326.29 |
+| Real islands case | anonymised excerpt `tests/fixtures/spozu/vatutino_hatch_excerpt.dxf` (hatches `150B41`, `181ECB`, `FAA81` + a copy of boundary `568BF` with its 4 bulges, shifted to the vertex bbox min) | `150B41` 2 016.15 m² (legacy 9 665.19), `181ECB` 611.55 m² (legacy 2 506.85), both fully inside the plot, tolerance 0.05 m²: 2/2 |
+| Boundary crossing is clipped | synthetic 20 x 10 hatch half outside a plot; real: decking hatches 265.88 m² full / 0.00 in plot, light tile 8 544.20 / 7 283.77; excerpt hatch `FAA81` crossing an arc of `568BF`: 562.86 / 301.13 (chord-only boundary 282.42) | 100 of 200 m² in plot; `FAA81` 301.13 ± 0.05 |
+| Coverings do not overlap | pairwise intersection of the per-layer unions of all `!_А101_*` hatch layers inside the plot | max pair 1.05 m², all pairs 3.9 m² of 16 513.7 m² (paving); main same order |
+| Covering area vs schedule | in-plot area vs Поз. 18–20 | reinforced lawn 2 460.11 = 2 460.11 (paving); mulch 3 634.47 vs 3 646.97 (−0.3 %); rolled lawn 870.60 + 22 invalid strips vs 1 326.29 |
 | Main and paving files agree on boundary and layer set | same handle/area/bbox; layer set difference | boundary identical; paving = main + 31 layers |
 
 Each schedule "Условное обозначение" column holds one sample per row. This explains why the total is schedule + 1 for most plants (+2 with the legend for Липа and Рябинник).
 
 ## Open questions for the user
 
-1. **Boundary**: is `ПР_ЛГР_предлагаемые` / `568BF` (25 725 m², legend «Граница проектирования») the Ground boundary? The
+1. **Boundary**: is `ПР_ЛГР_предлагаемые` / `568BF` (25 854 m², legend «Граница проектирования») the Ground boundary? The
    layers `ГП_ГраницаЗУ` and `ГП_ГраницаРабот` exist but are empty, and no layer is named «граница проектируемого участка».
 2. **Planting outside the plot**: 15 Ольха and 3 Яблоня from the schedule stand outside `568BF` (all other points
    outside the plot are schedule/legend samples). Is the schedule wider than the Ground boundary (street planting)? Should they go into Flora or be dropped?
    Сосна горная has 106 points but 99 in the schedule. Which count is right?
 3. **Uncovered plot area**: the covering hatches are drawn edge to edge (overlaps ≤ 1.05 m² per pair) and cover
-   16 381 m² of the 25 725 m² plot; about 9 344 m² has no covering hatch (see the free-area note below the layer map).
+   16 510 m² of the 25 854 m² plot; about 9 344 m² has no covering hatch (see the free-area note below the layer map).
    What is the Ground surface there (asphalt driveways, building footprints, a default lawn/soil), and from which layer?
 4. **Tile types**: the paving sheet has 4 tile types, but the model has 3 tile layers (`светлая`, `красная`, `темная`). Type 3
    (white stripes ≤ 0.6 m, Gold №22) and type 4 (white, Profi №8) both look like `светлая`. One Ground material or two?
