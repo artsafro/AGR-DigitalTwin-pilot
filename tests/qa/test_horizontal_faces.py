@@ -525,6 +525,38 @@ def _move_picked_to(dump, picked, name):
     return out
 
 
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize("partition", [False, True])
+@pytest.mark.parametrize("offset", [0.0, 13.25, -101.75])
+def test_stacked_open_boxes_are_independent(reverse, partition, offset):
+    lower = _box("lower", drop_bottom=True)
+    if reverse:
+        for index in (0, 1):
+            _reverse(lower["triangles"], index)
+    upper = _resize(_box("upper", drop_bottom=True), 1.0, (0, 0, 2))
+    dump = _map_vertices({"meshes": [lower, upper]}, lambda v: v + [offset, -offset, offset])
+    if partition:
+        dump = _random_partition(dump, 56)
+    result = _hcheck(dump)
+    assert result["value"] == (2 if reverse else 0)
+
+
+@pytest.mark.parametrize("bench", _BENCHES)
+@pytest.mark.parametrize("reverse", [False, True])
+def test_ground_below_open_bench_is_independent(bench, reverse):
+    _, dump, tol = _built(bench)
+    dump = _split(dump, True)
+    corners = from_dump(dump).corners()
+    lo, hi = corners.min(axis=(0, 1)), corners.max(axis=(0, 1))
+    ground = _sheet(reverse)
+    ground["vertices"] = [[lo[0]-1, lo[1]-1, lo[2]-1], [hi[0]+1, lo[1]-1, lo[2]-1],
+                          [hi[0]+1, hi[1]+1, lo[2]-1], [lo[0]-1, hi[1]+1, lo[2]-1]]
+    dump["meshes"].append(ground)
+    result = checks.check_horizontal_faces(from_dump(dump), tol)
+    assert result["value"] == (2 if reverse else 0)
+    assert _row(result, "ground")["inward_faces"] == (2 if reverse else 0)
+
+
 def test_open_fragment_does_not_see_decor():
     """SYNTHETIC. A quad moved into decor is judged without the body roof.
 
