@@ -50,7 +50,7 @@ fn agrLeafMats nodes = (
 )
 fn agrReadbackMax f = (
     local nodes = #()
-    local merged = mergeMAXFile f #autoRenameDups #neverReparent #useMergedMtlDups #noRedraw quiet:true mergedNodes:&nodes
+    local merged = mergeMAXFile f #autoRenameDups #neverReparent #renameMtlDups #noRedraw quiet:true mergedNodes:&nodes
     if merged == false do return #(false, 0, 0)
     local tris = 0
     local geos = #()
@@ -123,33 +123,12 @@ def set_fbx_preset() -> None:
 
 
 def _truth(value) -> bool:
-    if value is None:
-        return False
-    text = str(value).strip().lower()
-    return text not in ("false", "undefined", "none", "0", "")
+    return plan.truth(value)
 
 
 def _as_triple(value):
-    """Read #(ok, tris, mats). pymxs arrays are 1-based and expose .count."""
-    if isinstance(value, (list, tuple)):
-        seq = list(value)
-    else:
-        count = getattr(value, "count", None)
-        if isinstance(count, int):
-            seq = [value[index] for index in range(1, count + 1)]
-        else:
-            seq = None
-            for start in (1, 0):
-                try:
-                    seq = [value[start + offset] for offset in range(3)]
-                    break
-                except Exception:
-                    seq = None
-            if seq is None:
-                raise TypeError("expected #(ok, tris, mats)")
-    if len(seq) < 3:
-        raise TypeError("expected #(ok, tris, mats)")
-    return _truth(seq[0]), int(seq[1]), int(seq[2])
+    """Read #(ok, tris, mats). pymxs Arrays are 0-based Python sequences."""
+    return plan.parse_triple(value)
 
 
 def _missing(node) -> bool:

@@ -17,6 +17,22 @@ from pathlib import Path
 
 FORMATS = ("max", "fbx")
 
+
+def truth(value) -> bool:
+    """False for None, False, 0, "" and the strings false/undefined/none."""
+    if value is None:
+        return False
+    text = str(value).strip().lower()
+    return text not in ("false", "undefined", "none", "0", "")
+
+
+def parse_triple(value) -> tuple[bool, int, int]:
+    """Read #(ok, tris, mats). Any iterable is taken 0-based, the way pymxs Arrays iterate."""
+    seq = list(value)
+    if len(seq) < 3:
+        raise TypeError("expected #(ok, tris, mats)")
+    return truth(seq[0]), int(seq[1]), int(seq[2])
+
 _FORBIDDEN = set('<>:"/\\|?*')
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _DEFAULT_DCC = "C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py"

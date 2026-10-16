@@ -299,6 +299,41 @@ def test_probe_decide_skip_only_when_file_ok_and_bytes_match(tmp_path):
             assert action != "skip"
 
 
+class FakeMxsArray:
+    """pymxs Array: 0-based sequence, plus a MAXScript ``count`` that is not a valid index."""
+
+    def __init__(self, items):
+        self._items = list(items)
+        self.count = len(self._items)
+
+    def __getitem__(self, index):
+        if not isinstance(index, int) or index < 0 or index >= len(self._items):
+            raise IndexError("Index out of range")
+        return self._items[index]
+
+    def __len__(self):
+        return len(self._items)
+
+    def __iter__(self):
+        return iter(self._items)
+
+
+def test_parse_triple_reads_pymxs_array_zero_based():
+    assert plan.parse_triple(FakeMxsArray([True, 20000, 1])) == (True, 20000, 1)
+    assert plan.parse_triple(FakeMxsArray(["false", 3, 4])) == (False, 3, 4)
+    assert plan.parse_triple(FakeMxsArray(["undefined", 5, 6])) == (False, 5, 6)
+    assert plan.parse_triple((True, 7, 8)) == (True, 7, 8)
+    assert plan.parse_triple([False, 9, 10]) == (False, 9, 10)
+    assert plan.parse_triple(["false", 1, 2]) == (False, 1, 2)
+    assert plan.parse_triple(["undefined", 1, 2]) == (False, 1, 2)
+    with pytest.raises(TypeError):
+        plan.parse_triple(FakeMxsArray([1, 2]))
+    with pytest.raises(TypeError):
+        plan.parse_triple((1, 2))
+    with pytest.raises(IndexError):
+        FakeMxsArray([True, 20000, 1])[3]
+
+
 def test_probe_plan_outputs_unique_inside_dir(tmp_path):
     rng = random.Random(224)
     pool = list("AabB<>:\"/\\|?* \t._-") + ["ё", "Я", "Ω"]
