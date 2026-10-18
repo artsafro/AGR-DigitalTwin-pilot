@@ -305,6 +305,26 @@ Consequences: the kernel (Q8, Q11, Q18) is the critical path. The operation inva
 (no triangles where not needed) and texel readiness (quad size limits per profile, D021). Baseline to record as
 "days per building by stage", approximate; the first number to collect is the time of the next real building.
 
+**Q29 The 13 open PRs.** — agreed (first local card after resume, with live head checks).
+Site line now: #273 (fix its P1 on the same branch), #239, #238 (merge main in, then merge). Checks that become
+kernel invariants: #226 (co-directional clearance = z-fighting), #248 (horizontal face orientation), #228 / #230 /
+#231 (UCX, mesh names) - re-check heads, merge main in, one batch with a local CI receipt. Parked, branches kept:
+#279, #260, #252. Docs: #266 merge if clean; #280 merge as a record or close.
+
+**Q29a (user's addition) The approach depends on how complete the sources are.** — recorded.
+User: with Revit the agent can take the modules and the basic understanding straight away; with only an FBX it is
+harder to tell what is in front of it - which part is decor, whether to detach it. Revit or FBX may hold decor in
+great detail while only its silhouette, as it shapes the facade, is needed. People do not always know either: it is
+analysis of the geometry - taking the dimensions and data needed so the model can then be built from them without
+trouble. Without visual comparison and screenshots that is missing context: by colour and look the agent can tell
+what to embed and what to make one mesh. People also decide visually, per joint, what to embed and what to merge
+into one mesh, and how to make a joint so later edits stay easy.
+Consequences: (1) a source tier sets the route - A: Revit + album; B: structured FBX / SKP + album; C: mesh soup +
+album (split by material id, Q13); (2) an explicit analysis stage before modelling produces a measurement sheet
+(sections, levels, profiles of silhouette-relevant decor, opening sizes) - the spec extractor used as the measuring
+tool (Q5); (3) screenshots are a required input of decomposition, not an extra; (4) every joint in `parts.json`
+carries a decision - one mesh (weld) or embed 10-20 mm - with the reason, shown at gate 1.
+
 ## Remaining grilling map (2026-10-18)
 
 Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
@@ -319,4 +339,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
 - Q17 rest: authors of the deliveries, where the files live.
-- Next: Q29 the 13 open PRs under the new direction.
+- Next: Q30 how to decide weld (one mesh) vs embed per joint.
