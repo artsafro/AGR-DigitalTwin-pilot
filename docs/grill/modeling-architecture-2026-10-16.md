@@ -293,6 +293,18 @@ the user's own `gh` token (merge forbidden by policy only); (e) who besides the 
 Ground / MAF / Flora were grilled on 2026-10-15 (`hermes_kanban/docs/grill/`, D094-D102) and are not repeated;
 Unreal and IFC stay out of scope for now.
 
+**Q28 Baseline: how long people take per building.** — answered (no number), critical path named.
+User: KPP1 was given entirely to Claude before the harness and the geometry logic were finished; Claude still
+produced almost the full model (stairs not quite, some small details missed) and saved several days of work.
+That is why the user builds this: tune the logic, scripts, algorithms and pipeline so an agent in a precise context
+can do any of the tasks - MAF and Flora modelling, SPOZU placement, coordinates, export / import, the checker run and
+fixing its errors, atlas / UDIM / texture / UV edits. The longest part by far is raising clean geometry: closed
+where needed, embedded where needed, no overlaps, no gaps, no triangles where they are not needed, neat, on quads,
+ready for texel density - a finished mid-poly model; atlas or UDIMs are quick after that.
+Consequences: the kernel (Q8, Q11, Q18) is the critical path. The operation invariants also include quad-dominance
+(no triangles where not needed) and texel readiness (quad size limits per profile, D021). Baseline to record as
+"days per building by stage", approximate; the first number to collect is the time of the next real building.
+
 ## Remaining grilling map (2026-10-18)
 
 Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
@@ -307,4 +319,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
 - Q17 rest: authors of the deliveries, where the files live.
-- Next: Q28 baseline time per building.
+- Next: Q29 the 13 open PRs under the new direction.
