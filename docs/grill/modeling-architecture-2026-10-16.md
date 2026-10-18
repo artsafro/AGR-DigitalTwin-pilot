@@ -205,6 +205,13 @@ Orientation renders of every view with the back-face (red) pixel count, model fa
 model vs source FBX overlays with the difference highlighted, a material-id render against the album legend,
 sections at every level mark, a deviation table, the SINTEZ report. The user opens Max only where the sheet flags.
 
+**Q20 Windows: library or remodel?** — agreed.
+Windows are never taken from the source as is: the agent measures each opening (position, size, depth, mullion
+layout) and picks a library type ("replace with own" from the menu; `opening-plane`, `library/windows/window_types.json`).
+Types come from the album (legend items such as PVC / aluminium frames, the layout visible on the facade); a typical
+storey reuses its types as instances. A window not in the library is a question to the user with a picture, never
+a new type invented by the agent.
+
 ## Remaining grilling map (2026-10-18)
 
 Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
@@ -219,4 +226,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
 - Q17 rest: authors of the deliveries, where the files live.
-- Next: Q20 windows - library vs remodel, NPM vs VPM.
+- Next: Q21 textures and atlases - where each material's texture comes from.
