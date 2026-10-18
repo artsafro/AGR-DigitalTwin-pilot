@@ -220,6 +220,18 @@ agent only fills the parameters from the album (RAL, module from the facade grid
 automatically per profile (NPM embedded atlas <= 2048 without normal map [D014]; VPM UDIM 4K Diffuse + ERM + Normal);
 unique finishes (mosaic, panels with artwork, printed facades) are a question to the user.
 
+**Q22 Missing stages: UCX, lights, GeoJSON, MSK-77.** — answered.
+User: UCX is made by hand, covering the model with boxes. MSK-77 coordinates come from the SPOZU: it carries the
+site (GP) boundary and the drawing is in those coordinates. Lights were required: on the facade when the album shows
+them, and street lamps when the site plan (GP) has them.
+Proposed: these stages are code, not agent judgement. UCX: boxes / convex pieces generated per part from
+`parts.json` (gap 2 mm..1 cm [D098], budget by the checker formula [D012]); the agent only confirms which parts get a
+collision. MSK-77: register the model plan outline to the building footprint on the SPOZU (translation + rotation
+fit), height from the album zero mark (+-0.000 = absolute mark); ties to SPOZU inventory #194 and CAD adapter #195.
+Lights: facade lights from the album legend and callouts, street lamps from SPOZU points / blocks (placed like
+MAF); separate light FBX with the regulation names [D017]. GeoJSON: filled from `object.json` and the album, empty
+fields stay empty [D011].
+
 ## Remaining grilling map (2026-10-18)
 
 Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
@@ -234,4 +246,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
 - Q17 rest: authors of the deliveries, where the files live.
-- Next: Q22 missing stages - UCX, lights, GeoJSON, MSK-77 placement.
+- Next: Q23 board size, providers and budget.
