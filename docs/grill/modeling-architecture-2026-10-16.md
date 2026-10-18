@@ -103,9 +103,18 @@ grille, AC screen, fence); NPM derivation swaps candidates for opacity planes, l
 the NPM fits its budget; candidates not needed for the budget stay geometry; the report lists every swap and the
 triangles saved. Open: whether VPM ever uses opacity for them (asked, not answered).
 
+**Q11 Which DCC executes the operation library (the build kernel)?** — agreed (recommendation accepted, 2026-10-18).
+Blender headless (bpy + bmesh) is the kernel: every operation and its before/after invariants run there, and each
+operation is unit-tested on synthetic inputs in the cloud and CI (bpy as a Python package, `docs/research/bpy-wheel-viability.md`:
+conditional GO), so workers can grow the library without the user's PC. 3ds Max stays for what already lives in it:
+reading `.max` sources, the MAF and Flora libraries, and the final xView review where the team needs it. The two
+exchange FBX with the mandatory readback. Open: whether the final delivery must pass through Max or only the FBX/ZIP
+output counts (asked, not answered).
+
 ## Open questions (queue)
 
 - Which object for the decomposition etalon: OBJ03 or the Butovskaya school; 1-2 hours of the user's time.
 - Q10 follow-up: opacity in VPM for the same parts.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
-- Next: Q11 the build kernel (which DCC executes the operation library).
+- Q11 follow-up: must the final delivery pass through Max.
+- Next: Q12 which sources arrive and how decomposition reads them.
