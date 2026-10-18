@@ -155,10 +155,17 @@ Consequence: the agent never resolves such a conflict. It works provisionally fr
 "provisional, by album"), collects every discrepancy above tolerance into a list of questions for the architect
 (value in album, value in model, place, picture), and the user forwards them.
 
+**Q15 Order after the pause: the site slice or the operation kernel?** — agreed.
+Two lines split by where they run: locally on the board after resume, the Ground + MAF + Flora site (handoff chain
+#216 -> #282 -> #195 -> placement -> #217 -> verify); in the cloud, without the user's PC or DCC limits, the kernel
+foundation as small tested PRs (`parts.json` format; first operations "keep", "primitive", "rebuild by contour",
+"to opacity plane" with invariants; vector PDF facade reading: marks, axes, legend). Timing (user): grill every area
+first, then build.
+
 ## Open questions (queue)
 
 - Which object for the decomposition etalon: OBJ03 or the Butovskaya school; 1-2 hours of the user's time.
 - Q10 follow-up: opacity in VPM for the same parts.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
-- Next: Q15 order after resume - the site slice vs the operation kernel.
+- Next: Q16 the decomposition etalon object.
