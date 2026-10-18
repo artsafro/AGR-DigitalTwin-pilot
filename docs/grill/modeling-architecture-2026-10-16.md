@@ -212,6 +212,14 @@ Types come from the album (legend items such as PVC / aluminium frames, the layo
 storey reuses its types as instances. A window not in the library is a question to the user with a picture, never
 a new type invented by the agent.
 
+**Q21 Where each material's texture comes from.** — agreed.
+User: yes - RAL colour plus the panel grid; the panel module is shown by the texture (joints are texture, not
+geometry). Agreed: a material library by finish type (porcelain stoneware panels, plaster, painted metal, glass,
+PVC frame) with procedural recipes (`technical_library/texture_tiles`: colour, panel size and joint in metres); the
+agent only fills the parameters from the album (RAL, module from the facade grid); atlas / UDIM are assembled
+automatically per profile (NPM embedded atlas <= 2048 without normal map [D014]; VPM UDIM 4K Diffuse + ERM + Normal);
+unique finishes (mosaic, panels with artwork, printed facades) are a question to the user.
+
 ## Remaining grilling map (2026-10-18)
 
 Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
@@ -226,4 +234,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
 - Q17 rest: authors of the deliveries, where the files live.
-- Next: Q21 textures and atlases - where each material's texture comes from.
+- Next: Q22 missing stages - UCX, lights, GeoJSON, MSK-77 placement.
