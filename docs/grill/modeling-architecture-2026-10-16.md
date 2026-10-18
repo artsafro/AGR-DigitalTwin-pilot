@@ -275,7 +275,7 @@ reads AGENTS.md + its area file + the card body, the rest by link when needed; P
 script from the board and git, only "next step" written by hand; finished HARNESS_PLAN sections archived, the live
 plan short and in English; target base context per card <= 10k tokens, measured before and after.
 
-**Q27 CI.** — answered: the user does not want to pay for CI.
+**Q27 CI.** — agreed: no paid CI; local CI receipt as the merge gate; workflow switched to manual trigger.
 Facts: GitHub Actions is locked for billing (every `build` on this PR fails before any step); `python-app.yml` is
 broken anyway (pip + missing `requirements.txt`, Python 3.10; the project uses uv and 3.13).
 Proposed: no paid CI. The merge gate is a local CI receipt: one script on the user's PC (uv sync, `uv run pytest -q
@@ -283,6 +283,15 @@ Proposed: no paid CI. The merge gate is a local CI receipt: one script on the us
 commit SHA, commands, counts and duration; the receipt goes into the PR (the board's `local-only` completion
 contract already works this way). The broken workflow is switched to manual trigger (`workflow_dispatch`) so
 PRs stop showing a red check that everyone learns to ignore. No self-hosted runner on a public repository.
+
+## Last round (agent's list of what is still missing, 2026-10-18)
+
+The user asked the agent to name what is left. Still open: (a) the baseline - how long people take per building
+today, so the system's gain can be measured; (b) what happens to the 13 open PRs under the new direction;
+(c) where the benchmark triples live and what the cloud can reach (it cannot reach `C:/x`); (d) workers still use
+the user's own `gh` token (merge forbidden by policy only); (e) who besides the user works with the system.
+Ground / MAF / Flora were grilled on 2026-10-15 (`hermes_kanban/docs/grill/`, D094-D102) and are not repeated;
+Unreal and IFC stay out of scope for now.
 
 ## Remaining grilling map (2026-10-18)
 
@@ -298,4 +307,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
 - Q17 rest: authors of the deliveries, where the files live.
-- Q27 follow-up: accept the local CI receipt and the manual-only workflow.
+- Next: Q28 baseline time per building.
