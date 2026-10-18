@@ -232,6 +232,19 @@ Lights: facade lights from the album legend and callouts, street lamps from SPOZ
 MAF); separate light FBX with the regulation names [D017]. GeoJSON: filled from `object.json` and the album, empty
 fields stay empty [D011].
 
+**Q23 Board size, providers, budget.** — answered; recommendation revised.
+First proposal: shrink to Claude / Codex implementers, Pi cheap lane, Codex reviewer; drop Cursor and Antigravity.
+User: the Cursor and Antigravity subscriptions are paid; Cursor codes well, Antigravity suits documents and
+summaries; not using them would be wasteful; lower the driver models so driving does not burn tokens.
+Revised (agreed direction): keep the CLIs, make their drivers thin. `hermes_kanban/profiles/models.yaml` today:
+Cursor lane driven by `claude-opus-5-5`, Antigravity lane by `gpt-6.1-sol`; the Pi lane already runs a thin driver
+(`gpt-6-luna`, toolsets terminal + file only, project discovery off, base prompt 13.3k -> 5.6k tokens). Apply the
+same pattern to the Cursor and Antigravity lanes (a small model as driver, same thin toolsets and prompt) and
+measure driver vs CLI tokens per card before and after. Routing by the evaluator's per-kind table: Cursor for pure
+code (tools, tests, refactors), Claude for geometry logic, procedures and Blender operations, Antigravity and Pi for
+documents, decisions and summaries, Codex for code and as the reviewer. Experimenter / hypothesizer /
+prompt-engineer / daily evaluator stay off until the benchmark triples exist (Q16). Budget ceiling: not asked yet.
+
 ## Remaining grilling map (2026-10-18)
 
 Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
@@ -246,4 +259,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
 - Q17 rest: authors of the deliveries, where the files live.
-- Next: Q23 board size, providers and budget.
+- Next: Q24 how questions and pictures reach the user.
