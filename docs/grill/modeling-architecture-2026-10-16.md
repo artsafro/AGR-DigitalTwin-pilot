@@ -245,6 +245,12 @@ code (tools, tests, refactors), Claude for geometry logic, procedures and Blende
 documents, decisions and summaries, Codex for code and as the reviewer. Experimenter / hypothesizer /
 prompt-engineer / daily evaluator stay off until the benchmark triples exist (Q16). Budget ceiling: not asked yet.
 
+**Q24 How questions and pictures reach the user.** — agreed: through the board dashboard.
+One entry for every question: a card in "Needs you" with the short question, the options and a link to the HTML
+page with pictures (parts sheet, acceptance sheet); the answer is given on the card, the agent moves it to
+`docs/decisions.md` and continues; Telegram only notifies; questions for the architect are collected in one
+document per object.
+
 ## Remaining grilling map (2026-10-18)
 
 Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
@@ -259,4 +265,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
 - Q17 rest: authors of the deliveries, where the files live.
-- Next: Q24 how questions and pictures reach the user.
+- Next: Q25 autoresearch on the benchmark triples.
