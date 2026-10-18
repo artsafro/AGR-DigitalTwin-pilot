@@ -162,10 +162,19 @@ foundation as small tested PRs (`parts.json` format; first operations "keep", "p
 "to opacity plane" with invariants; vector PDF facade reading: marks, axes, legend). Timing (user): grill every area
 first, then build.
 
+**Q16 Which object for the decomposition etalon?** — answered, changes the plan.
+Candidates: OBJ03, the Butovskaya school, the 16-storey building of the sample sheet. User: all three already have
+human-made deliveries that passed the checkers and were handed over.
+Consequence (proposed): each object is a triple - source (3D, album, RVT where present) + delivered NPM/VPM made by
+people. That is a real benchmark per object (the human delivery is the etalon, D040: never from the engine, the
+README names the author). The decision etalon need not be written from scratch: the agent matches delivered parts
+to source parts and proposes, per part, what the people did (kept, simplified to a primitive, rebuilt by contour,
+opacity plane, texture, dropped); the user only reviews that table. Agent runs are then scored against the
+delivery: silhouette and sections, triangle budget, per-part decision agreement, SINTEZ result.
+
 ## Open questions (queue)
 
-- Which object for the decomposition etalon: OBJ03 or the Butovskaya school; 1-2 hours of the user's time.
 - Q10 follow-up: opacity in VPM for the same parts.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
-- Next: Q16 the decomposition etalon object.
+- Next: Q17 the three benchmark triples - which first, formats, authorship, where they live.
