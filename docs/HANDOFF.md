@@ -1,101 +1,73 @@
-# Worker handoff — pilot main snapshot, 2026-10-16 18:56 +02:00
+# Handoff — 2026-10-18 13:25
 
-Branch: `main` · Commit: `9fec4eae5f07f4349448d79540bb4c5d6e3b116f` · Worktree: `repository main snapshot, not a worker checkout` · Job: `-`
-Transcript: `-`
-Repository: `artsafro/AGR-DigitalTwin-pilot`. All bare issue/PR numbers below refer to THIS pilot unless explicitly qualified.
+Branch: `claude/confident-hopper-4jccys` · Commit: `44123af` · Worktree: `/home/user/AGR-DigitalTwin-pilot (cloud container)` · Job: `-`
+Transcript: `logs/transcripts/claude-confident-hopper-4jccys-prnone-683d409e-5be5-59cc-8945-67febb674e05.jsonl (cloud container only, git-ignored)`
+
+<!-- Written by /handover (.claude/commands/handover.md), read by tools/hooks/session_context.py and /takeover.
+Keep the `Branch:` line as is (the hook parses it). Facts only, no history: git log and the pull requests hold
+that. The whole file stays under 7000 characters so the SessionStart hook passes it in full. Empty section: "-". -->
 
 ## Where we are
 
-This is the SHARED RESULT OF KANBAN WORKERS, not instructions to resume an old task or the old upstream
-harness/evals-runner handoff. A feature/cloud branch may differ from the Branch line: this file describes
-reviewed results on pilot main, not ownership of that branch. Do not infer a task from an inherited
-PROJECT_STATE Next step or restart upstream harness wave 2. The active card's explicit scope remains authoritative.
-
-The separate board/orchestrator checkpoint lives in `artsafro/hermes_kanban`, `docs/HANDOFF.md`; its scripts,
-profiles and local Kanban database do not live here. This pilot handoff records what workers delivered.
-
-**USER FULL PAUSE (2026-10-16): no new production work, card dispatch, automatic repair or cloud tasks until
-explicit resume.** Permission to update this handoff or merge reviewed PRs is not permission to resume.
-
-## Delivered and verified on main
-
-User-approved merge batch (exact reviewed heads; 13 PRs):
-- #225: BODY topology defect counting on FBX readback (#160).
-- #240: Vatutino SPOZU inventory and layer map (#194), NOT the CAD adapter or a built site.
-- #245: window sash/handing catalogue with unconfirmed readings retained (upstream artsafro/AGR-DigitalTwin#4).
-- #255: opt-in pytest-xdist (#201); default suite remains serial.
-- #258: overridable hook/cleanup test timeouts (#200).
-- #261: spatial candidate search for near-parallel overlaps (#202).
-- #263: author receipts consolidated in WORKFLOW (#204).
-- #267: reproducible MAF catalogue finalization/audit tools (#227).
-- #270: resumable per-object MAX/FBX export and synthetic benchmark (#224); library-job adoption is separate.
-- #274: ambiguous facade recess requires the user's drawing review (upstream artsafro/AGR-DigitalTwin#85).
-- #276: reusable test-fixture templates; existing assertions preserved.
-- #277: reviewed model-maf procedure (#182), including full-footprint Ground coverage before bottom deletion.
-- #278: Blender version/pin contract check.
-
-Full non-DCC suite AFTER this batch, on 9fec4ea: **4446 passed, 13 skipped, 33 deselected, 70 warnings,
-346.90 seconds**, exit 0. CI: not run (billing lock). This is not a full DCC run or visual/user acceptance.
-Orchestrator evidence: `hermes_kanban/kpi/manual_merge_20261016_evening.json`; complete pytest log under
-its ignored `logs/manual-evening-suite-20261016.log`. Pilot #160 was explicitly closed after #225 (old Refs wording).
-
-Earlier merged MAF/Flora work remains: MAF inventory #183/#208, shared 512 atlas #184/#196, Flora audit
-#189/#229, model-flora #188/#237, approved-map pipeline #190/#220. MAF inventory has 931 MAX/FBX/preview
-entries; native MAX readback sampled 1/931, so do NOT call all models delivery-ready or fully Max-verified.
+Cloud grilling session (2026-10-16..18) on the system's direction, board paused, no DCC. Done and merged:
+- PR #285 (merge 44123af): `docs/grill/modeling-architecture-2026-10-16.md` (33 questions, answers, card plan),
+  decisions D104-D130 in `docs/decisions.md`, `docs/pipeline.md` stage 16 points at the headless SINTEZ runner,
+  `.claude/settings.json` `disableClaudeAiConnectors: true` + note in `docs/agents/CAPABILITIES.md` (D130).
+- artsafro/AGR-DigitalTwin#149 (merge c2908c5): the same connector setting and CAPABILITIES note in the real repo.
+Verified: `tests/test_decisions.py` 4 passed; docs / settings subsets green on the cloud checkout. Full suite not
+run (docs and settings only). `tests/test_pipeline_gate.py` fails 3 tests in the cloud container on a clean HEAD
+too (`.git/hooks/pre-commit` not executable) - environment.
 
 ## In progress
 
-- #216 / PR #273 at 0e052eb: Flora consolidated library exists locally, but review round 3 still has
-  P1/P2=1/1. Do not merge or claim accepted. Existing branch/PR must be preserved; do not rebuild from scratch.
-  Local v002: `C:/x/flora-library/v002/flora-library-v002.max`, 61 species, 99 objects (61 NPM + 38 VPM),
-  structural readback 99/99; 15 shared stand-in species remain gaps; unidentified source names remain unresolved.
-- #282: published map paths must be rebound in a NEW versioned MAX. 172/198 bindings on 86/99 objects still
-  point into temporary review folders. Files exist and match approved map bytes, but cleanup would break them.
-- #217: one 2048 Flora atlas AFTER the library and NPM placement; blocked by #216, not implemented.
-## Open PRs and issues for this task
-
-- Remaining open PRs (13 before this handoff PR): #280 #279 #273 #266 #260 #252 #248 #239 #238 #231 #230 #228 #226.
-  #279 (#90) has P1; #248 (#56) head changed after its last verdict. Others require live head/conflict checks;
-  historical clean review does not authorize merging changed code. #248/#279 were retargeted to main.
-- Paused board: 198 done, 3 scheduled (#90/#91/#37 upstream), 2 triage (#216 pilot/#56 upstream),
-  2 blocked (#82 upstream and unfinished Pi CLI tests); no running/ready/review/todo. Do not unblock them here.
+- Nothing uncommitted. `/home/user/hermes_kanban` and `/home/user/agr-digitaltwin` are read / feature clones in the
+  cloud container only; nothing pending there.
+- Card plan (cloud line C1-C7, local line L1-L5, triple line) is in the grilling log; no card created, the board
+  stays paused.
 
 ## User decisions not in the code
 
-- All 54 batch-2-v001 diffuse/opacity pairs approved (2026-10-16), in addition to batch-1 approvals.
-  Evidence: pilot #216 comment 6213409019 and PR #273. Map-only consent, NOT mesh/VPM/botanical acceptance,
-  future replacement maps, whole-library acceptance, P1 waiver or merge. Verify actual publication/catalogue
-  records before reporting completion. Original review: `C:/x/t_6c48bc9d/maps/review-sheet-batch2-v001.png`.
-- Stable species IDs/cultivars preserved; 15 multi-species stand-ins are gaps, not cloned species. Flowers/
-  grasses 401-499; climbers 501-599. Equal triangle counts do not prove mesh identity or VPM absence.
-- First production outcome after separate resume: one Ground + MAF + Flora site from SPOZU, not parallel
-  BODY/autoresearch expansion. Sequence: existing inventory -> CAD adapter #195 -> scene/placement -> #217 -> verify.
+- D104-D130 (user 2026-10-16 / 2026-10-18) are recorded in `docs/decisions.md` but not implemented: build by
+  reduction with the spec extractor as measuring tool, menu operations with visibility invariants, headless
+  Blender kernel, weld vs embed by mesh cost, benchmark triples, two human gates, thin drivers, context diet,
+  local CI receipt, open-PR triage.
+- Only the user works with the system; the separate worker token is deferred (2026-10-18).
+- Connectors are to be switched off at claude.ai/customize/connectors for desktop and cloud sessions; the
+  settings key does not reach them (2026-10-18).
 
 ## Waiting for the user
 
-- Explicit resume and budget/driver choice. No current instruction to start #124 or another inherited task.
-- #82 is deliberately deferred until a real unequal-parapet example; D065 unchanged. Do not ask repeatedly.
-- Separate named consent for remaining merges/conflict repairs. Scene acceptance is not code-review approval.
+- `claude mcp list` and `/plugin` output from the local PC: exact Unreal MCP and plugin names for
+  `deniedMcpServers` / `enabledPlugins` in both repositories.
+- Files of the first benchmark triple (16-storey building: source FBX, delivered FBX from the working .max,
+  album PDF) in a private place the cloud can reach - never the public pilot (D114, D128).
+- Explicit board resume; branch rename (NAMING.md, D078) was proposed and never confirmed.
 
 ## Next step
 
-Stay paused. Read this main snapshot as background; reconcile the assigned card and current origin/main only when explicitly asked to resume.
+Cloud card C1: check the `bpy` wheel headless on Linux (separate Python 3.13 venv, FBX round trip) per D110.
 
 ## Rules broken
 
-- The former pilot handoff was an inherited upstream session snapshot and was not refreshed after worker
-  merges. This replaces it; upstream issue numbers and old Codex-review paths are not current instructions.
-- No Claude transcript exists for this orchestrator-authored shared snapshot; Transcript is intentionally absent.
-- Cloud cannot access Windows C:/x, DCC applications or the local board. Do not substitute invented artifacts.
+- Committed on the auto-named branch `claude/confident-hopper-4jccys` without the rename (D078): the stop hook
+  required a commit before the user answered; the user never confirmed a name.
+- First transcript save failed (exit 2): the session's transcript moved to `/root/.claude/projects/-home-user/`
+  after the working directory changed; saved with `--transcript`.
+
+## Open PRs and issues for this task
+
+- artsafro/AGR-DigitalTwin-pilot#285 - merged. artsafro/AGR-DigitalTwin#149 - merged.
+- The 13 older open PRs are untouched; their triage is D123 (local line L1).
+
 ## Agent trace
 
-- Sessions: not measured (no transcript)
+- Sessions: `683d409e-5be5-59cc-8945-67febb674e05`
 - Written by: -
-- Subagents: not measured (no usage log, no transcript)
-- Skills: not measured (no usage log, no transcript)
-- Commands: not measured (no usage log, no transcript)
-- Hook denials: not measured (no transcript)
-- Retries: not measured (no transcript)
-- Context at handover: not measured (no transcript)
-- Duration: not measured (no transcript)
-- Commits: `9fec4ea..9fec4ea` (0 commits)
+- Subagents: none
+- Skills: none
+- Commands: takeover 1
+- Hook denials: none
+- Retries: none
+- Context at handover: 49 % (490k of 1000k tokens)
+- Duration: 43 h 55 min (2026-10-16T17:24:24Z - 2026-10-18T13:20:14Z, UTC)
+- Commits: `44123af..44123af` (0 commits)
