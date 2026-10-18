@@ -172,9 +172,22 @@ to source parts and proposes, per part, what the people did (kept, simplified to
 opacity plane, texture, dropped); the user only reviews that table. Agent runs are then scored against the
 delivery: silhouette and sections, triangle budget, per-part decision agreement, SINTEZ result.
 
+**Q17 The benchmark triples: formats.** — partly answered.
+User: both the delivered ZIPs and the working 3ds Max scenes exist. Open: author of each delivery (D040), where the
+files live. Starting object: the 16-storey building of the sample sheet (proposed), OBJ03 second as the hard test.
+
+## Remaining grilling map (2026-10-18)
+
+Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
+the gate sits); windows (library vs remodel, atlas); textures / UV / atlases per profile; the missing pipeline
+stages (UCX, lights, GeoJSON, MSK-77 placement). System and board: board size and providers, budget; how questions
+and pictures reach the user; autoresearch on the benchmark triples; docs and state sprawl across two repositories;
+CI (unlock or replace). Logistics: the rest of Q17.
+
 ## Open questions (queue)
 
 - Q10 follow-up: opacity in VPM for the same parts.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
-- Next: Q17 the three benchmark triples - which first, formats, authorship, where they live.
+- Q17 rest: authors of the deliveries, where the files live.
+- Next: Q18 per-operation invariants and their allowed exceptions.
