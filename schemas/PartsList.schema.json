@@ -1,0 +1,492 @@
+{
+  "$defs": {
+    "Approval": {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "minLength": 1,
+          "title": "Actor",
+          "type": "string"
+        },
+        "date": {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "title": "Date",
+          "type": "string"
+        },
+        "note": {
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "synthetic_fixture",
+            "project"
+          ],
+          "title": "Scope",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor",
+        "date",
+        "scope",
+        "note"
+      ],
+      "title": "Approval",
+      "type": "object"
+    },
+    "Joint": {
+      "additionalProperties": false,
+      "description": "One decision per pair of neighbouring parts: weld (one mesh) or embed [D124].",
+      "properties": {
+        "decision": {
+          "enum": [
+            "weld",
+            "embed"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "embed_depth_m": {
+          "anyOf": [
+            {
+              "description": "embed depth, metres [D115]",
+              "maximum": 0.02,
+              "minimum": 0.01,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Embed Depth M"
+        },
+        "extra_edges": {
+          "description": "edges that welding would insert into either mesh to match the other",
+          "minimum": 0,
+          "title": "Extra Edges",
+          "type": "integer"
+        },
+        "parts": {
+          "items": {
+            "maxLength": 120,
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*$",
+            "type": "string"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Parts",
+          "type": "array"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "parts",
+        "decision",
+        "reason",
+        "extra_edges"
+      ],
+      "title": "Joint",
+      "type": "object"
+    },
+    "PartEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "build_as": {
+          "anyOf": [
+            {
+              "enum": [
+                "box",
+                "plane",
+                "frame",
+                "shell",
+                "profile_extrude",
+                "instance"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "primitive only",
+          "title": "Build As"
+        },
+        "id": {
+          "maxLength": 120,
+          "pattern": "^[A-Za-z][A-Za-z0-9_]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "legend_item": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "album legend item; null = not found, ask",
+          "title": "Legend Item"
+        },
+        "library_ref": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "library_replace only",
+          "title": "Library Ref"
+        },
+        "mesh": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "relative path of the part's mesh",
+          "title": "Mesh"
+        },
+        "operation": {
+          "enum": [
+            "keep",
+            "primitive",
+            "contour_rebuild",
+            "from_face",
+            "library_replace",
+            "detail_per_profile",
+            "to_texture"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "part_class": {
+          "enum": [
+            "wall",
+            "slab",
+            "parapet",
+            "band",
+            "pilaster",
+            "frame",
+            "glazing",
+            "balcony",
+            "superstructure",
+            "decor",
+            "window",
+            "door",
+            "railing",
+            "rod_ladder",
+            "grille",
+            "ac_screen",
+            "fence",
+            "other"
+          ],
+          "title": "Part Class",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/PartSource"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array"
+        },
+        "triangle_budget": {
+          "$ref": "#/$defs/TriangleBudget"
+        }
+      },
+      "required": [
+        "id",
+        "part_class",
+        "sources",
+        "operation",
+        "triangle_budget"
+      ],
+      "title": "PartEntry",
+      "type": "object"
+    },
+    "PartSource": {
+      "additionalProperties": false,
+      "description": "Where a part is read from in the source file.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "object",
+            "material_id",
+            "layer",
+            "component",
+            "revit_element",
+            "region"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "reference": {
+          "description": "object / layer / component name, material id or Revit id",
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "reference"
+      ],
+      "title": "PartSource",
+      "type": "object"
+    },
+    "Question": {
+      "additionalProperties": false,
+      "properties": {
+        "answer": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Answer"
+        },
+        "audience": {
+          "enum": [
+            "user",
+            "architect"
+          ],
+          "title": "Audience",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "audience",
+        "text"
+      ],
+      "title": "Question",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "synthetic",
+            "pdf",
+            "model",
+            "user"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "reference": {
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 4,
+              "minItems": 4,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        }
+      },
+      "required": [
+        "kind",
+        "reference"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    },
+    "TriangleBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "npm": {
+          "minimum": 0,
+          "title": "Npm",
+          "type": "integer"
+        },
+        "vpm": {
+          "minimum": 0,
+          "title": "Vpm",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "npm",
+        "vpm"
+      ],
+      "title": "TriangleBudget",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "gate1": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Approval"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "joints": {
+      "items": {
+        "$ref": "#/$defs/Joint"
+      },
+      "title": "Joints",
+      "type": "array"
+    },
+    "object_id": {
+      "maxLength": 120,
+      "pattern": "^[A-Za-z][A-Za-z0-9_]*$",
+      "title": "Object Id",
+      "type": "string"
+    },
+    "parts": {
+      "items": {
+        "$ref": "#/$defs/PartEntry"
+      },
+      "minItems": 1,
+      "title": "Parts",
+      "type": "array"
+    },
+    "questions": {
+      "items": {
+        "$ref": "#/$defs/Question"
+      },
+      "title": "Questions",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_tier": {
+      "enum": [
+        "A",
+        "B",
+        "C"
+      ],
+      "title": "Source Tier",
+      "type": "string"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/SourceRef"
+      },
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array"
+    },
+    "status": {
+      "default": "draft",
+      "enum": [
+        "draft",
+        "confirmed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "synthetic": {
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "triangle_budget": {
+      "$ref": "#/$defs/TriangleBudget",
+      "description": "whole delivery; the parts' budgets must fit"
+    }
+  },
+  "required": [
+    "synthetic",
+    "object_id",
+    "source_tier",
+    "sources",
+    "triangle_budget",
+    "parts"
+  ],
+  "title": "PartsList",
+  "type": "object"
+}
