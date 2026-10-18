@@ -127,6 +127,15 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
   from the issue text, `REVIEW_CHECKLIST.md` questions, the diff range and the review class; `codex exec -s read-only`;
   the findings table posted as a PR comment with the fix commit; seen 5 rounds in this session (#137 x1, #139 x1,
   #140 x3); effort M
+- **R5** proposal 2026-10-18, claude/confident-hopper-4jccys - CLI command: append one grilling answer (question,
+  recommendation, answer, status, next queue item) to a grilling log and commit it; seen about 30 times as an
+  inline python edit + commit + push per answer; effort S
+- **R6** proposal 2026-10-18, claude/confident-hopper-4jccys - pattern: a red check with no output and no steps
+  (billing lock) is a known cause, commented once per PR, not re-investigated per push; seen about 20 times;
+  largely removed by D122 (workflow on manual trigger); effort S
+- **R7** proposal 2026-10-18, claude/confident-hopper-4jccys - CLI command: add a decision row (next `D<n>`, date
+  order) together with its `[D<n>]` anchor in the target file and run `tests/test_decisions.py`; seen 2 times
+  (D104-D129 batch, D130); effort S
 
 ## Harness and organization (default owner Codex)
 
