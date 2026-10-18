@@ -195,6 +195,16 @@ these checks. This is also the "gnawed geometry" guard: a face deleted as "hidde
 Embed depth 10-20 mm; usually no joint where hidden faces must stay. The "embed into neighbour" operation takes a
 depth in 10-20 mm and always deletes the faces it hides.
 
+**Q19 Visual acceptance.** — answered (how the user reviews); two-gate proposal not objected to.
+User reviews by: Blender Face Orientation (normals); 3ds Max visual pass; each facade compared with the album;
+when an FBX source exists, model vs FBX by geometry and materials, and both vs the album.
+Proposed, mapped one-to-one onto that routine: gate 1 = the parts list before the build (source facade with
+coloured parts, table part -> album legend item -> operation -> triangle budget, questions incl. for the
+architect); between the gates only automatic checks; gate 2 = one acceptance sheet after the build: Face
+Orientation renders of every view with the back-face (red) pixel count, model facades over the album sheets,
+model vs source FBX overlays with the difference highlighted, a material-id render against the album legend,
+sections at every level mark, a deviation table, the SINTEZ report. The user opens Max only where the sheet flags.
+
 ## Remaining grilling map (2026-10-18)
 
 Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
@@ -209,4 +219,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
 - Q17 rest: authors of the deliveries, where the files live.
-- Next: Q19 visual acceptance - what the user looks at and where the human gates sit.
+- Next: Q20 windows - library vs remodel, NPM vs VPM.
