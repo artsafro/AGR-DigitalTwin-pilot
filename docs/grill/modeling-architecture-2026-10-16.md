@@ -149,10 +149,16 @@ text and marks with coordinates, scaled by a known axis dimension, no AutoCAD an
 dimensions become control points of the mathematical acceptance; (4) parts are labelled by rendering the model
 facade in the sheet's view and scale and matching the callouts, shown to the user for confirmation.
 
+**Q14a Who wins when the album and the 3D model disagree?** — answered.
+User: in such cases the user asks the architect which is the source of truth; most often it is the album.
+Consequence: the agent never resolves such a conflict. It works provisionally from the album (marked
+"provisional, by album"), collects every discrepancy above tolerance into a list of questions for the architect
+(value in album, value in model, place, picture), and the user forwards them.
+
 ## Open questions (queue)
 
 - Which object for the decomposition etalon: OBJ03 or the Butovskaya school; 1-2 hours of the user's time.
 - Q10 follow-up: opacity in VPM for the same parts.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
-- Q14 follow-up: which sheets are always present; who wins when album and 3D model disagree.
+- Next: Q15 order after resume - the site slice vs the operation kernel.
