@@ -122,10 +122,17 @@ connectivity, sections); the agent proposes the split with pictures, the user co
 the agent also reads it directly (TwinPack element meshes with categories), as enrichment of the same parts list,
 even though the team itself does not work in Revit.
 
+**Q13 How much structure does a typical architect FBX / SKP keep?** — answered.
+User: usually (a) objects per element with meaningful names, or (b) objects per material or storey with everything
+merged inside. In case (c) (one or two big meshes) the team detaches by material id / material and looks at the
+drawing album to see what is where.
+Consequence: the structure reader classifies (a)/(b) parts; for (c) its first step is a split by material id and
+material, then the album is the reference for what each piece is.
+
 ## Open questions (queue)
 
 - Which object for the decomposition etalon: OBJ03 or the Butovskaya school; 1-2 hours of the user's time.
 - Q10 follow-up: opacity in VPM for the same parts.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
-- Next: Q13 how much structure a typical architect FBX / SKP keeps.
+- Next: Q14 the drawing album as an input (what it holds, how the agent uses it).
