@@ -191,6 +191,10 @@ background through the model); (3) no coplanar or near-coplanar overlapping face
 "Embed into neighbour" (sink by the depth, delete the faces inside) becomes an operation of the menu with exactly
 these checks. This is also the "gnawed geometry" guard: a face deleted as "hidden" that is not hidden fails at once.
 
+**Q18a Embed depth and exceptions.** — answered.
+Embed depth 10-20 mm; usually no joint where hidden faces must stay. The "embed into neighbour" operation takes a
+depth in 10-20 mm and always deletes the faces it hides.
+
 ## Remaining grilling map (2026-10-18)
 
 Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
@@ -205,4 +209,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
 - Q17 rest: authors of the deliveries, where the files live.
-- Q18 follow-up: typical embed depth range; any joint where hidden faces must stay.
+- Next: Q19 visual acceptance - what the user looks at and where the human gates sit.
