@@ -176,6 +176,21 @@ delivery: silhouette and sections, triangle budget, per-part decision agreement,
 User: both the delivered ZIPs and the working 3ds Max scenes exist. Open: author of each delivery (D040), where the
 files live. Starting object: the 16-storey building of the sample sheet (proposed), OBJ03 second as the hard test.
 
+**Q18 Per-operation invariants: what counts as broken geometry?** — answered, first proposal rejected.
+Proposal was closure classes per part (`closed`, `open_bottom`, `plane`, `two_sided`). User: not a good option.
+When one mesh is embedded into another, the face sunk into the neighbouring mesh is hidden from the viewer and is
+deleted; the embedding itself exists so the border at the joint is never seen and no overlap / z-fighting appears.
+So open borders are normal at every joint. The rules already exist in `docs/domain/geometry.md`: per joint either
+weld (match the boundary, delete inner mating faces) or embed >= 10 mm (embed depth, not a weld tolerance), no
+duplicate or coplanar overlapping faces after attach, co-directional overlapping faces 5 mm..2 cm apart
+(reg p.8 §3.9, p.29 §3.13). They are written but not enforced per operation.
+Revised proposal: the invariant is visibility, not closure. After each operation: (1) every open border edge lies
+inside a neighbouring part (embedded >= 10 mm), below the Ground, or belongs to an opacity / glass plane;
+(2) a deleted face was fully covered by a neighbour (no see-through hole: renders from many directions show no
+background through the model); (3) no coplanar or near-coplanar overlapping faces closer than 5 mm (z-fighting).
+"Embed into neighbour" (sink by the depth, delete the faces inside) becomes an operation of the menu with exactly
+these checks. This is also the "gnawed geometry" guard: a face deleted as "hidden" that is not hidden fails at once.
+
 ## Remaining grilling map (2026-10-18)
 
 Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
@@ -190,4 +205,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
 - Q17 rest: authors of the deliveries, where the files live.
-- Next: Q18 per-operation invariants and their allowed exceptions.
+- Q18 follow-up: typical embed depth range; any joint where hidden faces must stay.
