@@ -24,7 +24,7 @@ object yet) · **missing**.
 | 13 | GeoJSON (VPM) | tool only (validator) | `src/twinqa/geojson.py` | P8 |
 | 14 | FBX export + readback | proven | `tools/blender/fbx_readback.py`, `adapters/blender/bridge.py` | — |
 | 15 | Package ZIP + validator V001–V017 | partial | `tools/qa/validate_package.py`, `src/dt_ai/validate/bundle.py` | Q1–Q4 |
-| 16 | AGR Checker (SINTEZ) pass | missing | — | Q5 |
+| 16 | AGR Checker (SINTEZ) pass | partial (headless run of the Blender extension on KPP1 v005; deferred items open) | `jobs/KPP1/scripts/run_agr_checker.py` | Q5 |
 
 ## Territory and environment
 

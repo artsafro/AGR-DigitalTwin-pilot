@@ -24,17 +24,17 @@ Nothing here is a `D<n>` decision yet: agreed items move to `docs/decisions.md` 
 
 ## Round 1
 
-**Q1 What is "done" for the whole project?** — agreed.
+**Q1 What is "done" for the whole project?** [D104] — agreed.
 User: NPM and VPM fully match the source, pass the SINTEZ AGR Checker, and visually match the source.
 Acceptance order: geometry first, by a human, visual and mathematical; SINTEZ last.
 
-**Q2 How does pilot work reach the real repository?** — agreed (the proposal below).
+**Q2 How does pilot work reach the real repository?** [D105] — agreed (the proposal below).
 User: the pilot is a sandbox so the clean original is not broken; undecided whether the pilot becomes the main
 repository or core functions are carried over later.
 Proposed: decide at a fixed point, not by feel - the pilot becomes main when the first vertical slice
 (Ground + MAF + Flora site) is delivered; until then only `src/`, `standards/`, `docs/domain/` count as portable.
 
-**Q3 What did autoresearch and hypotheses give?** — agreed (the proposal below).
+**Q3 What did autoresearch and hypotheses give?** [D106] — agreed (the proposal below).
 User: unknown yet; needs reading and evaluation. Intent: find more efficient paths for workers and for the system,
 teach agents the math and keep requirements in context.
 Proposed: autoresearch pays only where evaluation is automatic and cheap; geometry is still judged by the user's
@@ -47,7 +47,7 @@ User will start keeping failing projects (archive + report).
 Proposed: read the extension's source, list every automatic check (what, threshold, regulation item), map it to
 V001-V017 (both / SINTEZ only / ours only); a report is useful only together with its archive.
 
-**Q5 Line A (spec -> engine) or line B (reduce the source mesh)?** — agreed (the proposal below); user keeps testing approaches.
+**Q5 Line A (spec -> engine) or line B (reduce the source mesh)?** [D107] — agreed (the proposal below); user keeps testing approaches.
 User: KPP1 and PSU275 (simple architecture) were modelled by Claude almost perfectly. OBJ03 and the school failed
 (complex, multi-part). The engine did not give the agent an idea of what the geometry looks like; reduction with
 visual inspection and sections worked better.
@@ -65,7 +65,7 @@ section (multi-part, multi-segment, many-sided); then either remodel it at the n
 primitives. Pull out the body, decor, windows (remodel with own ones). Per part: keep as is, simplify, take only the
 contours and rebuild (extrude, shell, cut), or detach one polygon and build from it.
 
-**Q8 The operation menu.** — agreed by the user ("I accept"), detail pending.
+**Q8 The operation menu.** [D108] — agreed by the user ("I accept"), detail pending.
 
 | Decision per part | When | How it is built |
 |---|---|---|
@@ -95,7 +95,7 @@ removed. Round elements: VPM may have ~30 segments to avoid smoothing trouble, N
 The user accepts every recommendation of round 1 (Q2, Q3, Q5, Q8: "proposed" -> "agreed") and comments per question
 so the agent can refine it.
 
-**Q10 What turns a part into an opacity plane in NPM?** — agreed.
+**Q10 What turns a part into an opacity plane in NPM?** [D109] — agreed.
 User: repeating vertical or horizontal see-through elements - railings, metal rod / bar ladders, rods - geometry that
 must stay see-through and costs many polygons because it is built from boxes.
 Agreed rule: (a) + (b). The master marks such parts as opacity candidates by type (railing, rod ladder, bar screen /
@@ -103,7 +103,7 @@ grille, AC screen, fence); NPM derivation swaps candidates for opacity planes, l
 the NPM fits its budget; candidates not needed for the budget stay geometry; the report lists every swap and the
 triangles saved. Open: whether VPM ever uses opacity for them (asked, not answered).
 
-**Q11 Which DCC executes the operation library (the build kernel)?** — agreed (recommendation accepted, 2026-10-18).
+**Q11 Which DCC executes the operation library (the build kernel)?** [D110] — agreed (recommendation accepted, 2026-10-18).
 Blender headless (bpy + bmesh) is the kernel: every operation and its before/after invariants run there, and each
 operation is unit-tested on synthetic inputs in the cloud and CI (bpy as a Python package, `docs/research/bpy-wheel-viability.md`:
 conditional GO), so workers can grow the library without the user's PC. 3ds Max stays for what already lives in it:
@@ -111,7 +111,7 @@ reading `.max` sources, the MAF and Flora libraries, and the final xView review 
 exchange FBX with the mandatory readback. Open: whether the final delivery must pass through Max or only the FBX/ZIP
 output counts (asked, not answered).
 
-**Q12 Which sources arrive and how decomposition reads them?** — answered; recommendation revised, pending.
+**Q12 Which sources arrive and how decomposition reads them?** [D111] — answered; recommendation revised, pending.
 User: Revit ~30 %, FBX ~50 %, SketchUp ~20 %. The team does not work in Revit: a Revit model is exported to FBX
 and then to 3ds Max. The Revit model is usually complete, or at least something can be pulled out of it.
 First recommendation (Revit adapter first) is revised: about 80 % of inputs (and, through the team's export, the
@@ -129,7 +129,7 @@ drawing album to see what is where.
 Consequence: the structure reader classifies (a)/(b) parts; for (c) its first step is a split by material id and
 material, then the album is the reference for what each piece is.
 
-**Q14 The drawing album as an input.** — answered (sample sheet), recommendation pending.
+**Q14 The drawing album as an input.** [D127] — answered (sample sheet), recommendation pending.
 User showed a typical facade sheet ("Корпус 1. Фасад в осях 1.2-1.52", sheet 11): storey level marks for every floor,
 parapet and roof-structure marks, axes with dimensions, a numbered legend of finishes with RAL colours and callouts
 on the facade, a key plan. More exact than reading the picture: load the PDF into AutoCAD and take dimensions in CAD.
@@ -149,20 +149,20 @@ text and marks with coordinates, scaled by a known axis dimension, no AutoCAD an
 dimensions become control points of the mathematical acceptance; (4) parts are labelled by rendering the model
 facade in the sheet's view and scale and matching the callouts, shown to the user for confirmation.
 
-**Q14a Who wins when the album and the 3D model disagree?** — answered.
+**Q14a Who wins when the album and the 3D model disagree?** [D112] — answered.
 User: in such cases the user asks the architect which is the source of truth; most often it is the album.
 Consequence: the agent never resolves such a conflict. It works provisionally from the album (marked
 "provisional, by album"), collects every discrepancy above tolerance into a list of questions for the architect
 (value in album, value in model, place, picture), and the user forwards them.
 
-**Q15 Order after the pause: the site slice or the operation kernel?** — agreed.
+**Q15 Order after the pause: the site slice or the operation kernel?** [D113] — agreed.
 Two lines split by where they run: locally on the board after resume, the Ground + MAF + Flora site (handoff chain
 #216 -> #282 -> #195 -> placement -> #217 -> verify); in the cloud, without the user's PC or DCC limits, the kernel
 foundation as small tested PRs (`parts.json` format; first operations "keep", "primitive", "rebuild by contour",
 "to opacity plane" with invariants; vector PDF facade reading: marks, axes, legend). Timing (user): grill every area
 first, then build.
 
-**Q16 Which object for the decomposition etalon?** — answered, changes the plan.
+**Q16 Which object for the decomposition etalon?** [D114] — answered, changes the plan.
 Candidates: OBJ03, the Butovskaya school, the 16-storey building of the sample sheet. User: all three already have
 human-made deliveries that passed the checkers and were handed over.
 Consequence (proposed): each object is a triple - source (3D, album, RVT where present) + delivered NPM/VPM made by
@@ -172,11 +172,11 @@ to source parts and proposes, per part, what the people did (kept, simplified to
 opacity plane, texture, dropped); the user only reviews that table. Agent runs are then scored against the
 delivery: silhouette and sections, triangle budget, per-part decision agreement, SINTEZ result.
 
-**Q17 The benchmark triples: formats.** — partly answered.
+**Q17 The benchmark triples: formats.** [D128] — partly answered.
 User: both the delivered ZIPs and the working 3ds Max scenes exist. Open: author of each delivery (D040), where the
 files live. Starting object: the 16-storey building of the sample sheet (proposed), OBJ03 second as the hard test.
 
-**Q18 Per-operation invariants: what counts as broken geometry?** — answered, first proposal rejected.
+**Q18 Per-operation invariants: what counts as broken geometry?** [D115] — answered, first proposal rejected.
 Proposal was closure classes per part (`closed`, `open_bottom`, `plane`, `two_sided`). User: not a good option.
 When one mesh is embedded into another, the face sunk into the neighbouring mesh is hidden from the viewer and is
 deleted; the embedding itself exists so the border at the joint is never seen and no overlap / z-fighting appears.
@@ -195,7 +195,7 @@ these checks. This is also the "gnawed geometry" guard: a face deleted as "hidde
 Embed depth 10-20 mm; usually no joint where hidden faces must stay. The "embed into neighbour" operation takes a
 depth in 10-20 mm and always deletes the faces it hides.
 
-**Q19 Visual acceptance.** — answered (how the user reviews); two-gate proposal not objected to.
+**Q19 Visual acceptance.** [D125] — answered (how the user reviews); two-gate proposal not objected to.
 User reviews by: Blender Face Orientation (normals); 3ds Max visual pass; each facade compared with the album;
 when an FBX source exists, model vs FBX by geometry and materials, and both vs the album.
 Proposed, mapped one-to-one onto that routine: gate 1 = the parts list before the build (source facade with
@@ -205,14 +205,14 @@ Orientation renders of every view with the back-face (red) pixel count, model fa
 model vs source FBX overlays with the difference highlighted, a material-id render against the album legend,
 sections at every level mark, a deviation table, the SINTEZ report. The user opens Max only where the sheet flags.
 
-**Q20 Windows: library or remodel?** — agreed.
+**Q20 Windows: library or remodel?** [D116] — agreed.
 Windows are never taken from the source as is: the agent measures each opening (position, size, depth, mullion
 layout) and picks a library type ("replace with own" from the menu; `opening-plane`, `library/windows/window_types.json`).
 Types come from the album (legend items such as PVC / aluminium frames, the layout visible on the facade); a typical
 storey reuses its types as instances. A window not in the library is a question to the user with a picture, never
 a new type invented by the agent.
 
-**Q21 Where each material's texture comes from.** — agreed.
+**Q21 Where each material's texture comes from.** [D117] — agreed.
 User: yes - RAL colour plus the panel grid; the panel module is shown by the texture (joints are texture, not
 geometry). Agreed: a material library by finish type (porcelain stoneware panels, plaster, painted metal, glass,
 PVC frame) with procedural recipes (`technical_library/texture_tiles`: colour, panel size and joint in metres); the
@@ -220,7 +220,7 @@ agent only fills the parameters from the album (RAL, module from the facade grid
 automatically per profile (NPM embedded atlas <= 2048 without normal map [D014]; VPM UDIM 4K Diffuse + ERM + Normal);
 unique finishes (mosaic, panels with artwork, printed facades) are a question to the user.
 
-**Q22 Missing stages: UCX, lights, GeoJSON, MSK-77.** — answered.
+**Q22 Missing stages: UCX, lights, GeoJSON, MSK-77.** [D126] — answered.
 User: UCX is made by hand, covering the model with boxes. MSK-77 coordinates come from the SPOZU: it carries the
 site (GP) boundary and the drawing is in those coordinates. Lights were required: on the facade when the album shows
 them, and street lamps when the site plan (GP) has them.
@@ -232,7 +232,7 @@ Lights: facade lights from the album legend and callouts, street lamps from SPOZ
 MAF); separate light FBX with the regulation names [D017]. GeoJSON: filled from `object.json` and the album, empty
 fields stay empty [D011].
 
-**Q23 Board size, providers, budget.** — answered; recommendation revised.
+**Q23 Board size, providers, budget.** [D118] — answered; recommendation revised.
 First proposal: shrink to Claude / Codex implementers, Pi cheap lane, Codex reviewer; drop Cursor and Antigravity.
 User: the Cursor and Antigravity subscriptions are paid; Cursor codes well, Antigravity suits documents and
 summaries; not using them would be wasteful; lower the driver models so driving does not burn tokens.
@@ -245,13 +245,13 @@ code (tools, tests, refactors), Claude for geometry logic, procedures and Blende
 documents, decisions and summaries, Codex for code and as the reviewer. Experimenter / hypothesizer /
 prompt-engineer / daily evaluator stay off until the benchmark triples exist (Q16). Budget ceiling: not asked yet.
 
-**Q24 How questions and pictures reach the user.** — agreed: through the board dashboard.
+**Q24 How questions and pictures reach the user.** [D119] — agreed: through the board dashboard.
 One entry for every question: a card in "Needs you" with the short question, the options and a link to the HTML
 page with pictures (parts sheet, acceptance sheet); the answer is given on the card, the agent moves it to
 `docs/decisions.md` and continues; Telegram only notifies; questions for the architect are collected in one
 document per object.
 
-**Q25 Autoresearch and hypotheses: when and how.** — agreed (filter and 70/30 split accepted).
+**Q25 Autoresearch and hypotheses: when and how.** [D120] — agreed (filter and 70/30 split accepted).
 Agent proposal was an optimisation loop on the benchmark triples (one composite metric with an invariant guard,
 one knob per experiment, fixed budget, no automatic merge, hypotheses only from failures, only after one triple
 passes the chain by hand).
@@ -266,7 +266,7 @@ Antigravity / Pi fit this lane (documents, summaries). Split proposed ~70 % prod
 operations, textures) / ~30 % harness and system.
 (2) Experiments: only a hypothesis the user picked, tested on the benchmark triples with the loop above.
 
-**Q26 Docs and state sprawl; context per card.** — agreed.
+**Q26 Docs and state sprawl; context per card.** [D121] — agreed.
 Measured: `hermes_kanban/profiles/COORDINATION_RULES.md` 27 KB / 40 rules (~7k tokens) read by every worker before
 every card; `docs/agents/WORKFLOW.md` 29 KB, `docs/agents/CAPABILITIES.md` 46 KB, `docs/HARNESS_PLAN.md` 70 KB (Russian,
 against D088); `docs/PROJECT_STATE.md` stale since 2026-10-15; STATE / HANDOFF / decisions duplicated in both repos.
@@ -275,7 +275,7 @@ reads AGENTS.md + its area file + the card body, the rest by link when needed; P
 script from the board and git, only "next step" written by hand; finished HARNESS_PLAN sections archived, the live
 plan short and in English; target base context per card <= 10k tokens, measured before and after.
 
-**Q27 CI.** — agreed: no paid CI; local CI receipt as the merge gate; workflow switched to manual trigger.
+**Q27 CI.** [D122] — agreed: no paid CI; local CI receipt as the merge gate; workflow switched to manual trigger.
 Facts: GitHub Actions is locked for billing (every `build` on this PR fails before any step); `python-app.yml` is
 broken anyway (pip + missing `requirements.txt`, Python 3.10; the project uses uv and 3.13).
 Proposed: no paid CI. The merge gate is a local CI receipt: one script on the user's PC (uv sync, `uv run pytest -q
@@ -293,7 +293,7 @@ the user's own `gh` token (merge forbidden by policy only); (e) who besides the 
 Ground / MAF / Flora were grilled on 2026-10-15 (`hermes_kanban/docs/grill/`, D094-D102) and are not repeated;
 Unreal and IFC stay out of scope for now.
 
-**Q28 Baseline: how long people take per building.** — answered (no number), critical path named.
+**Q28 Baseline: how long people take per building.** [D129] — answered (no number), critical path named.
 User: KPP1 was given entirely to Claude before the harness and the geometry logic were finished; Claude still
 produced almost the full model (stairs not quite, some small details missed) and saved several days of work.
 That is why the user builds this: tune the logic, scripts, algorithms and pipeline so an agent in a precise context
@@ -305,7 +305,7 @@ Consequences: the kernel (Q8, Q11, Q18) is the critical path. The operation inva
 (no triangles where not needed) and texel readiness (quad size limits per profile, D021). Baseline to record as
 "days per building by stage", approximate; the first number to collect is the time of the next real building.
 
-**Q29 The 13 open PRs.** — agreed (first local card after resume, with live head checks).
+**Q29 The 13 open PRs.** [D123] — agreed (first local card after resume, with live head checks).
 Site line now: #273 (fix its P1 on the same branch), #239, #238 (merge main in, then merge). Checks that become
 kernel invariants: #226 (co-directional clearance = z-fighting), #248 (horizontal face orientation), #228 / #230 /
 #231 (UCX, mesh names) - re-check heads, merge main in, one batch with a local CI receipt. Parked, branches kept:
@@ -325,7 +325,7 @@ album (split by material id, Q13); (2) an explicit analysis stage before modelli
 tool (Q5); (3) screenshots are a required input of decomposition, not an extra; (4) every joint in `parts.json`
 carries a decision - one mesh (weld) or embed 10-20 mm - with the reason, shown at gate 1.
 
-**Q30 Weld (one mesh) or embed, per joint.** — answered; the criterion is mesh cost.
+**Q30 Weld (one mesh) or embed, per joint.** [D124] — answered; the criterion is mesh cost.
 User: decided by what welding would cost. Multi-part decor with many loops / rings would have to be stitched to the
 body, cutting the body and adding edges to fit; embedding the decor into the wall avoids cutting either element and
 adds no extra edges. Tile seams in geometry: usually one mesh so it unwraps together - a convenience, not a rule; an
@@ -345,6 +345,44 @@ download from). The cloud has no 3ds Max; Blender runs headless through the `bpy
 venv, `docs/research/bpy-wheel-viability.md`: FBX import / export identical to `blender.exe`, measured on Windows;
 the Linux wheel is to be checked at the start). `.max` scenes cannot be opened in the cloud: they need an FBX export.
 
+**Q32 Worker token and team.** — answered.
+Only the user works with the system (no roles or separate access needed). A separate fine-grained token for the
+workers is deferred.
+
+Grilling closed on 2026-10-18 after Q32. Next: agreed items become `docs/decisions.md` lines and a card plan.
+
+## Proposals confirmed at the end of the grilling
+
+The proposals of Q14, Q17, Q19, Q22 and Q28 that were not explicitly accepted during the rounds were confirmed at
+the end: [D125, D126, D127, D128, D129].
+
+## Card plan (from D104-D129)
+
+Cloud line - no DCC, no user files; each card a small PR with tests:
+1. C1 Check that the `bpy` wheel works headless on Linux in a separate Python 3.13 venv (FBX import / export
+   round trip, as `docs/research/bpy-wheel-viability.md` did on Windows) [D110].
+2. C2 `parts.json` schema in `schemas/` (part id, source refs, class, album legend item, operation, joint
+   decisions with the weld / embed reason and extra-edge count, triangle budget) [D111, D124].
+3. C3 Invariant checks on synthetic meshes: open border hidden in a neighbour / below Ground / opacity plane,
+   no see-through hole, no overlapping faces closer than 5 mm (reuse #226), back-face count [D115].
+4. C4 First operations in bpy with C3 before / after: keep, primitive, rebuild by contour, embed into neighbour,
+   to opacity plane [D108, D109, D115].
+5. C5 Vector PDF facade reader on a synthetic PDF: level marks, axes and dimensions, legend items [D112].
+6. C6 Local CI receipt script; GitHub workflow to manual trigger [D122].
+7. C7 Context diet on the pilot side (AGENTS.md reading list, generated PROJECT_STATE) [D121]; the
+   COORDINATION_RULES cut belongs to `hermes_kanban` and needs push access there.
+
+Local line - after an explicit resume, on the user's PC:
+1. L1 Open PRs by the groups of D123, live head checks, one local CI receipt per batch.
+2. L2 Site chain: #273 P1 fix -> #282 rebind maps -> #195 CAD adapter -> placement -> #217 atlas -> verify [D113].
+3. L3 Thin drivers for the Cursor and Antigravity lanes, tokens per card before / after [D118].
+4. L4 First triple: export the working `.max` to FBX, put source FBX + delivered FBX + album PDF in a private place
+   the cloud can reach (never the public pilot) [D114].
+5. L5 Time the next real building by stage (the baseline, Q28).
+
+Triple line - cloud, once L4 is done: inventory the triple; match delivered parts to source parts and propose the
+per-part decision table; the user reviews it on the dashboard [D114, D119].
+
 ## Remaining grilling map (2026-10-18)
 
 Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
@@ -358,4 +396,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Q10 follow-up: opacity in VPM for the same parts.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
-- Next: Q32 worker token and team; then wrap-up (decisions, cards).
+- Wrap-up: decisions D104+ and the card plan.
