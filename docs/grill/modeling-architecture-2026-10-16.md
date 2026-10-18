@@ -251,6 +251,21 @@ page with pictures (parts sheet, acceptance sheet); the answer is given on the c
 `docs/decisions.md` and continues; Telegram only notifies; questions for the architect are collected in one
 document per object.
 
+**Q25 Autoresearch and hypotheses: when and how.** — answered (intent), filter proposed.
+Agent proposal was an optimisation loop on the benchmark triples (one composite metric with an invariant guard,
+one knob per experiment, fixed budget, no automatic merge, hypotheses only from failures, only after one triple
+passes the chain by hand).
+User: the point is for agents to think and propose hypotheses on how to do a task or a module better, and to
+study the harness and the system as independent outside experts: "what if we come at it from this side, how do
+others do it, how could we apply it here".
+Proposed filter so the expert role does not feed itself (the 160-PR pattern): two separate things.
+(1) Outside-expert research: output is a proposal document, not a PR; capped (e.g. top 3 proposals per area per
+week); each proposal names the product number it should move (a benchmark-triple score, time per delivery, tokens
+per card) and how to test it; external sources cited; the user picks on the dashboard which become cards.
+Antigravity / Pi fit this lane (documents, summaries). Split proposed ~70 % product methods (modelling, decomposition,
+operations, textures) / ~30 % harness and system.
+(2) Experiments: only a hypothesis the user picked, tested on the benchmark triples with the loop above.
+
 ## Remaining grilling map (2026-10-18)
 
 Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
@@ -265,4 +280,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
 - Q17 rest: authors of the deliveries, where the files live.
-- Next: Q25 autoresearch on the benchmark triples.
+- Q25 follow-up: accept the filter (proposals not PRs, capped, tied to a number) and the 70/30 split.
