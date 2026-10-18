@@ -275,6 +275,15 @@ reads AGENTS.md + its area file + the card body, the rest by link when needed; P
 script from the board and git, only "next step" written by hand; finished HARNESS_PLAN sections archived, the live
 plan short and in English; target base context per card <= 10k tokens, measured before and after.
 
+**Q27 CI.** — answered: the user does not want to pay for CI.
+Facts: GitHub Actions is locked for billing (every `build` on this PR fails before any step); `python-app.yml` is
+broken anyway (pip + missing `requirements.txt`, Python 3.10; the project uses uv and 3.13).
+Proposed: no paid CI. The merge gate is a local CI receipt: one script on the user's PC (uv sync, `uv run pytest -q
+-n auto`, `dt profiles check`, `dt schemas --check`, plus the DCC tests when the change touches Max / Blender) writes
+commit SHA, commands, counts and duration; the receipt goes into the PR (the board's `local-only` completion
+contract already works this way). The broken workflow is switched to manual trigger (`workflow_dispatch`) so
+PRs stop showing a red check that everyone learns to ignore. No self-hosted runner on a public repository.
+
 ## Remaining grilling map (2026-10-18)
 
 Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
@@ -289,4 +298,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
 - Q17 rest: authors of the deliveries, where the files live.
-- Next: Q27 CI.
+- Q27 follow-up: accept the local CI receipt and the manual-only workflow.
