@@ -325,6 +325,17 @@ album (split by material id, Q13); (2) an explicit analysis stage before modelli
 tool (Q5); (3) screenshots are a required input of decomposition, not an extra; (4) every joint in `parts.json`
 carries a decision - one mesh (weld) or embed 10-20 mm - with the reason, shown at gate 1.
 
+**Q30 Weld (one mesh) or embed, per joint.** — answered; the criterion is mesh cost.
+User: decided by what welding would cost. Multi-part decor with many loops / rings would have to be stitched to the
+body, cutting the body and adding edges to fit; embedding the decor into the wall avoids cutting either element and
+adds no extra edges. Tile seams in geometry: usually one mesh so it unwraps together - a convenience, not a rule; an
+agent may unwrap each mesh separately. A simple grid that needs no heavy cutting can be one mesh. When one mesh would
+need many extra edges to keep modelling from it, that is the problem: tedious, and the mesh gets dense and hard.
+Rule for the agent (proposed from this): per joint compute the extra vertices / edge loops that welding would insert
+into either mesh to match the other's boundary; zero or a few on a simple grid -> one mesh (weld); more -> embed
+10-20 mm and delete the hidden faces (Q18). Unwrap convenience is not a reason by itself. The count is reported per
+joint at gate 1.
+
 ## Remaining grilling map (2026-10-18)
 
 Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
@@ -339,4 +350,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
 - Q17 rest: authors of the deliveries, where the files live.
-- Next: Q30 how to decide weld (one mesh) vs embed per joint.
+- Next: Q31 benchmark triples logistics (authors, location, what the cloud can reach).
