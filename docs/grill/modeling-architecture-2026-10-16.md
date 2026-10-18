@@ -251,7 +251,7 @@ page with pictures (parts sheet, acceptance sheet); the answer is given on the c
 `docs/decisions.md` and continues; Telegram only notifies; questions for the architect are collected in one
 document per object.
 
-**Q25 Autoresearch and hypotheses: when and how.** — answered (intent), filter proposed.
+**Q25 Autoresearch and hypotheses: when and how.** — agreed (filter and 70/30 split accepted).
 Agent proposal was an optimisation loop on the benchmark triples (one composite metric with an invariant guard,
 one knob per experiment, fixed budget, no automatic merge, hypotheses only from failures, only after one triple
 passes the chain by hand).
@@ -280,4 +280,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
 - Q17 rest: authors of the deliveries, where the files live.
-- Q25 follow-up: accept the filter (proposals not PRs, capped, tied to a number) and the 70/30 split.
+- Next: Q26 docs and state sprawl across the two repositories; context per card.
