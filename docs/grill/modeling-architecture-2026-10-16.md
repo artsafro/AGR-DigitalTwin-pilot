@@ -111,10 +111,21 @@ reading `.max` sources, the MAF and Flora libraries, and the final xView review 
 exchange FBX with the mandatory readback. Open: whether the final delivery must pass through Max or only the FBX/ZIP
 output counts (asked, not answered).
 
+**Q12 Which sources arrive and how decomposition reads them?** — answered; recommendation revised, pending.
+User: Revit ~30 %, FBX ~50 %, SketchUp ~20 %. The team does not work in Revit: a Revit model is exported to FBX
+and then to 3ds Max. The Revit model is usually complete, or at least something can be pulled out of it.
+First recommendation (Revit adapter first) is revised: about 80 % of inputs (and, through the team's export, the
+Revit 30 % as well) reach the team as FBX/SKP mesh with whatever structure the export kept. Proposed: one
+intermediate format (`parts.json` + one mesh per part) fed by a structure reader for FBX/SKP that uses every
+signal the file carries (object names and hierarchy, layers / SketchUp tags, components and instances, materials,
+connectivity, sections); the agent proposes the split with pictures, the user confirms (D080). When the RVT exists
+the agent also reads it directly (TwinPack element meshes with categories), as enrichment of the same parts list,
+even though the team itself does not work in Revit.
+
 ## Open questions (queue)
 
 - Which object for the decomposition etalon: OBJ03 or the Butovskaya school; 1-2 hours of the user's time.
 - Q10 follow-up: opacity in VPM for the same parts.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
-- Next: Q12 which sources arrive and how decomposition reads them.
+- Next: Q13 how much structure a typical architect FBX / SKP keeps.
