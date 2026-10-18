@@ -129,10 +129,30 @@ drawing album to see what is where.
 Consequence: the structure reader classifies (a)/(b) parts; for (c) its first step is a split by material id and
 material, then the album is the reference for what each piece is.
 
+**Q14 The drawing album as an input.** — answered (sample sheet), recommendation pending.
+User showed a typical facade sheet ("Корпус 1. Фасад в осях 1.2-1.52", sheet 11): storey level marks for every floor,
+parapet and roof-structure marks, axes with dimensions, a numbered legend of finishes with RAL colours and callouts
+on the facade, a key plan. More exact than reading the picture: load the PDF into AutoCAD and take dimensions in CAD.
+What this one sheet gives the agent:
+- level marks: +0.000 = 212.63 absolute (zero mark for heights, pipeline stage 12); ground floor 4.5 m, typical
+  storey 3.0 m (+4.500 ... +46.500, floors 2-16); parapet +53.200; roof structures +54.530, +55.200, +56.200;
+- plan length: 122 129 mm between axes 1.2 and 1.52 (26 369 + 23 340 + 240 + 36 090 + 36 090);
+- the legend is a parts-and-materials list: 1-5 porcelain stoneware facade panels (RAL 8022 / 7040 / 7037 / 7024 /
+  8023), 6 PVC window frames, 7 aluminium frames, 8 and 16 AC baskets (16 = KORBAS KDK 3, 900 x 1200 x 610 mm),
+  9 metal roof railing, 10 metal ladder, 11 triplex canopy on hangers, 12 vent grille, 13 painted plaster,
+  14 metal parapet cap, 15 vent hood;
+- the callouts (numbers in diamonds) place each legend item on the facade.
+Proposed: (1) the legend becomes the job's material list and part classes (and Q10 opacity candidates: 9, 10, 8/16,
+12); (2) a vector PDF is read directly with PyMuPDF (already an optional dependency, `pdf-review` extra): lines,
+text and marks with coordinates, scaled by a known axis dimension, no AutoCAD and runs in the cloud; AutoCAD
+(PDFIMPORT through the existing AutoCAD route) is the fallback for scanned or broken PDFs; (3) album marks and
+dimensions become control points of the mathematical acceptance; (4) parts are labelled by rendering the model
+facade in the sheet's view and scale and matching the callouts, shown to the user for confirmation.
+
 ## Open questions (queue)
 
 - Which object for the decomposition etalon: OBJ03 or the Butovskaya school; 1-2 hours of the user's time.
 - Q10 follow-up: opacity in VPM for the same parts.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
-- Next: Q14 the drawing album as an input (what it holds, how the agent uses it).
+- Q14 follow-up: which sheets are always present; who wins when album and 3D model disagree.
