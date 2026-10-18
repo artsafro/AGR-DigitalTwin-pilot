@@ -351,6 +351,14 @@ workers is deferred.
 
 Grilling closed on 2026-10-18 after Q32. Next: agreed items become `docs/decisions.md` lines and a card plan.
 
+**Q33 MCP servers in project sessions.** [D130]
+Measured on the user's screen: MCP tools 19.8k, system tools 22.4k, system prompt 12.2k, skills 6.9k tokens per
+session. Only 3D MCP servers (blender, 3dsmax, revit, autocad, rizomuv, speedtree) belong in project sessions;
+workers do not need the others either. Project `.claude/settings.json` gets `"disableClaudeAiConnectors": true`
+(terminal, VS Code, JetBrains; GitHub keeps working through `gh`). It does not act in desktop-app and cloud
+sessions: there the connectors are switched off at claude.ai/customize/connectors. `/mcp` toggles are stored per
+project path in `~/.claude.json`, so they do not carry over to worker worktrees; the committed setting does.
+
 ## Proposals confirmed at the end of the grilling
 
 The proposals of Q14, Q17, Q19, Q22 and Q28 that were not explicitly accepted during the rounds were confirmed at
