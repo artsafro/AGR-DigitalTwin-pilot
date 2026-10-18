@@ -336,6 +336,15 @@ into either mesh to match the other's boundary; zero or a few on a simple grid -
 10-20 mm and delete the hidden faces (Q18). Unwrap convenience is not a reason by itself. The count is reported per
 joint at gate 1.
 
+**Q31 Benchmark triples logistics.** — partly answered.
+User: the user is the author of all three deliveries (D040 README author). Files will be given later. The user
+offered to start working with the models in a cloud session.
+Notes for that: the pilot repository is public, so deliveries never go into it; a cloud session can take files from
+a private place (a private repository without LFS - files under 100 MB each, or a private storage the session can
+download from). The cloud has no 3ds Max; Blender runs headless through the `bpy` wheel (Python 3.13 only, own
+venv, `docs/research/bpy-wheel-viability.md`: FBX import / export identical to `blender.exe`, measured on Windows;
+the Linux wheel is to be checked at the start). `.max` scenes cannot be opened in the cloud: they need an FBX export.
+
 ## Remaining grilling map (2026-10-18)
 
 Modeling core: per-operation invariants and allowed exceptions; visual acceptance (what the user wants to see, where
@@ -349,5 +358,4 @@ CI (unlock or replace). Logistics: the rest of Q17.
 - Q10 follow-up: opacity in VPM for the same parts.
 - Branch rename `research/grill-modeling-architecture` (NAMING.md, D078): not confirmed.
 - Q11 follow-up: must the final delivery pass through Max.
-- Q17 rest: authors of the deliveries, where the files live.
-- Next: Q31 benchmark triples logistics (authors, location, what the cloud can reach).
+- Next: Q32 worker token and team; then wrap-up (decisions, cards).
