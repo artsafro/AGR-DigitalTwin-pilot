@@ -10,7 +10,7 @@ construction (see [UCX](ucx.md)) and package production.
 **Readiness:** [roadmap §7.12](../../research/capability-roadmap.md#712-flora--l0--same-three-sub-areas-lower-priority)
 records **L0**. This sheet is T-FLO-1, the L1 rule index; the procedure is the
 [`model-flora` skill](../../../.agents/skills/model-flora/SKILL.md) (T-FLO-3); a Flora benchmark (T-FLO-4) is
-a Flora benchmark (T-FLO-4) is missing, so full L1 is not claimed. Flora checks cover FLO-04 (dimensions), FLO-06 (Flora share) and FLO-08
+missing, so full L1 is not claimed. Flora checks cover FLO-04 (dimensions), FLO-06 (Flora share) and FLO-08
 (map list) on the Ground FBX readback ([`twinqa.flora`](../../../src/twinqa/flora.py), #191); the
 other rows have no check, so area L2 is not claimed; no user-accepted Flora case establishes
 L3. **Future etalons:** the user's 3ds Max Flora library (NPM and VPM versions) and the project

@@ -986,4 +986,3 @@ def test_blender_ucx_hull_roundtrip(tmp_path, variant):
     assert other and all("hull" not in m for m in other)
     st = statuses(scene_findings(report, "vpm", "oks", PROFILES.vpm), "V010")
     assert st["UCX intersections"] == ("fail" if variant == "overlap" else "pass")
-
