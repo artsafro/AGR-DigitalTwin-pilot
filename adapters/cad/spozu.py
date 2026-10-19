@@ -92,6 +92,7 @@ class SpozuConfig:
     units: str | None = None
     overlap_tol_m2: float = 0.01
     contour_layers: tuple[str, ...] = ()  # elevation contour polylines (Z = polyline elevation)
+    ground_elements: dict[str, tuple[str, ...]] = field(default_factory=dict)
 
     @classmethod
     def from_dict(cls, d: dict) -> "SpozuConfig":
@@ -130,6 +131,7 @@ class SpozuConfig:
                 units=d.get("units"),
                 overlap_tol_m2=float(d.get("overlap_tol_m2", 0.01)),
                 contour_layers=tuple(el.get("contour_layers") or ()),
+                ground_elements={str(k): tuple(v) for k, v in (d.get("ground_elements") or {}).items()},
             )
         except KeyError as exc:
             raise SpozuConfigError(f"config: missing key {exc}") from exc
@@ -151,6 +153,7 @@ class SpozuConfig:
         roles = [(f"covering:{c.type}", c.layers) for c in self.coverings]
         roles += [("planting", self.planting_layers), ("maf", self.maf_layers), ("elevations", self.elevation_layers),
                   ("elevation_contours", self.contour_layers)]
+        roles += [(f"ground_element:{r}", ls) for r, ls in self.ground_elements.items()]
         for role, layers in roles:
             for lay in layers:
                 if lay in owner:
@@ -163,6 +166,8 @@ class SpozuConfig:
         out |= set(self.elevation_containers) | set(self.maf_layer_blocks)
         for c in self.coverings:
             out |= set(c.layers)
+        for ls in self.ground_elements.values():
+            out |= set(ls)
         return out
 
     def ignored(self, layer: str) -> bool:
@@ -249,6 +254,7 @@ class SpozuResult:
     maf: list[PointItem]
     elevations: list[ElevationPoint]
     findings: list[Finding]
+    ground_elements: list[dict] = field(default_factory=list)
 
     @property
     def base_covering(self) -> str | None:
@@ -298,6 +304,7 @@ class SpozuResult:
             "maf": [p.__dict__ for p in self.maf],
             "elevations": [e.__dict__ for e in self.elevations],
             "findings": [f.to_dict() for f in self.findings],
+            "ground_elements": self.ground_elements,
         }
 
 
@@ -564,6 +571,7 @@ def read_spozu_dxf(source, cfg: SpozuConfig, tol: float = 0.001) -> SpozuResult:
     contour_layers = set(cfg.contour_layers)
     pl_layers, maf_layers = set(cfg.planting_layers), set(cfg.maf_layers)
     layer_type = {lay: c for c in cfg.coverings for lay in c.layers}
+    element_roles = {lay: role for role, lays in cfg.ground_elements.items() for lay in lays}
 
     def is_maf(e, layer):
         return layer in maf_layers or e.dxf.name in cfg.maf_layer_blocks.get(layer, ())
@@ -573,7 +581,7 @@ def read_spozu_dxf(source, cfg: SpozuConfig, tol: float = 0.001) -> SpozuResult:
 
     def relevant(layer):
         return layer in layer_type or layer in pl_layers or layer in maf_layers or layer in elev_layers \
-            or layer in contour_layers \
+            or layer in contour_layers or layer in element_roles \
             or layer == cfg.boundary_layer
 
     skipped: list = []
@@ -764,7 +772,32 @@ def read_spozu_dxf(source, cfg: SpozuConfig, tol: float = 0.001) -> SpozuResult:
             detail += f"; nested e.g. {', '.join(d['nested'][:3])}"
         findings.append(Finding("unmapped_layer", lay, h, detail, ref=r))
 
-    return SpozuResult(cfg.project, s, boundary, bhandle, coverings, planting, maf, elevations, findings)
+    # Keep every configured element, including unsupported primitives and INSERT grouping records.
+    # The existing walker supplies WCS transforms and instance provenance; no second DXF reader.
+    elements = []
+    for it in ents:
+        if it.layer not in element_roles:
+            continue
+        e = it.e
+        kind = e.dxftype()
+        coords, problem = None, None
+        if kind in ("LINE", "LWPOLYLINE", "POLYLINE", "ARC", "SPLINE"):
+            try:
+                coords = [[float(p.x * s), float(p.y * s), float(p.z * s)]
+                          for p in ezpath.make_path(e).flattening(tol / s)]
+                if len(coords) < 2 or not all(math.isfinite(v) for p in coords for v in p):
+                    raise ValueError("fewer than two finite path points")
+            except Exception as exc:
+                coords, problem = None, f"{type(exc).__name__}: {exc}"
+        elif kind != "INSERT":
+            problem = f"unsupported element primitive {kind}"
+        elements.append({"role": element_roles[it.layer], "layer": it.layer, "handle": it.handle,
+                         "ref": it.ref, "container": it.container, "kind": kind,
+                         "label": e.dxf.name if kind == "INSERT" else None,
+                         "geometry": {"type": "LineString", "coordinates": coords} if coords else None,
+                         "source_width_m": float(e.dxf.get("const_width", 0)) * s if kind == "LWPOLYLINE" else None,
+                         "problem": problem})
+    return SpozuResult(cfg.project, s, boundary, bhandle, coverings, planting, maf, elevations, findings, elements)
 
 
 def read_spozu(path: str | Path, cfg: SpozuConfig, workdir: str | Path | None = None) -> SpozuResult:

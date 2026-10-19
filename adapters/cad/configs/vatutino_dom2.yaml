@@ -62,6 +62,14 @@ elevations:
   value: text
   # gate 1 answer 5 (#295, user 2026-10-19): the VP contour lines (block Дороги_ВП_2024.10.11, 0.1 m step) also feed the TIN
   contour_layers: ["ГП_Вертикалка_ГоризонталиОсновные", "ГП_Вертикалка_ГоризонталиВспомогательные"]
+# User approved Step 8 extraction, 2026-10-19 (#295). Dimensions belong to the job, not this reader.
+ground_elements:
+  curb_garden: ["!_А101_борт_садовый_бетонный"]
+  curb_drive: ["!_А101_борт_дорожный"]
+  curb_wood: ["!_А101_борт_деревянный"]
+  curb_buried: ["!_А101_борт_металлический_заглубленный"]
+  curb_unclassified: ["Борт"]
+  stairs: ["!_А101_лестница"]
 overlap_tol_m2: 0.01
 ignore_layers:
   - "0"
