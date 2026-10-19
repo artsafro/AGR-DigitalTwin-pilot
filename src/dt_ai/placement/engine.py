@@ -15,7 +15,8 @@ Rules implemented
   ``delete`` only when the Ground covers the face (every candidate point has a height, no Ground border edge
   touches or lies inside the outline) and the topmost Ground is strictly above the face plane at every point
   where the piecewise-linear gap can be minimal: face vertices, Ground vertices inside the outline, Ground edge /
-  outline crossings and Ground edge / edge crossings between stacked layers. Otherwise ``review`` with reasons.
+  outline crossings, and for stacked layers (triangles overlapping in XY, whatever the mesh connectivity) their
+  edge / edge crossings, switch lines plane_a == plane_b and switch-line crossings. Otherwise ``review``.
   Dimension deviation from ``spec_dims_m`` > 0.10 m [D094] is reported as a warning, not enforced.
 - Fail-closed [D108, D126]: every point gets an instance or a ``failed`` record with a code; any failure makes
   the run status ``fail``; nothing is dropped silently. ``placed + failed == input`` per library id.
@@ -24,7 +25,8 @@ Ground heights: vertical downward ray, topmost hit (stacked plates 6 mm apart: t
 with zero XY area (vertical or degenerate) are not hit by a vertical ray and are skipped (counted in the report).
 
 CLI: ``uv run python -m dt_ai.placement.engine --input in.json --output out.json``; exit 0 pass, 3 review,
-1 fail, 2 bad invocation (unreadable input, output path resolving to the input: nothing is written).
+1 fail, 2 bad invocation (unreadable input, output path or existing output file identity (hard link) equal to
+the input: nothing is written).
 """
 from __future__ import annotations
 
@@ -32,6 +34,7 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -133,20 +136,9 @@ class GroundIndex:
         corner = np.concatenate([self.T[:, [0, 1]], self.T[:, [1, 2]], self.T[:, [2, 0]]])
         segs = self.V[corner][:, :, :2]
         self.border = segs[border]
-        # connected components of triangles (shared welded vertex): edge/edge crossings only between components
-        parent = list(range(int(W.max()) + 1))
-
-        def find(a: int) -> int:
-            while parent[a] != a:
-                parent[a] = parent[parent[a]]
-                a = parent[a]
-            return a
-
-        for a, b, c in W.tolist():
-            ra, rb, rc = find(a), find(b), find(c)
-            parent[rb] = ra
-            parent[find(rc)] = ra
-        self.comp = np.asarray([find(int(a)) for a in W[:, 0]])
+        # welded vertex ids per triangle: same-sheet neighbours (shared welded vertex, no XY overlap) agree where
+        # they touch; connectivity is NOT used as a proof that two sheets do not overlap (review r1, PR #323)
+        self.W = W
         self.edge_tri = tri_of_edge
         self.edge_segs = segs
 
@@ -215,41 +207,77 @@ def _line_cross(a: np.ndarray, b: np.ndarray, c: np.ndarray, S: np.ndarray) -> n
     return pts[ok]
 
 
-def _layer_crossings(g: GroundIndex, tris: np.ndarray, ring: np.ndarray, outline: Polygon) -> list[np.ndarray]:
-    """Where stacked Ground layers (connected components) cross, the topmost surface switches layer along the
-    line plane_a == plane_b; the minimum of the upper envelope can lie on that line, at its crossing with a
-    triangle edge or the outline, or (three or more layers) at the crossing of two such lines."""
-    comps = g.comp[tris]
-    uc = np.unique(comps)
-    if len(uc) < 2:
-        return []
+def _layer_pairs(g: GroundIndex, tris: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Triangle pairs whose XY footprints overlap, i.e. stacked Ground layers, whatever the mesh connectivity:
+    every pair whose closures intersect, except same-sheet neighbours (a shared welded vertex and no XY area
+    overlap), which agree wherever they touch. Two sheets joined outside the footprint are still two layers."""
+    if len(tris) < 2:
+        z = np.zeros(0, dtype=np.int64)
+        return z, z
+    polys = shapely.polygons(g.P[tris][:, :, :2])
+    i, j = shapely.STRtree(polys).query(polys, predicate="intersects")
+    m = i < j
+    i, j = i[m], j[m]
+    Wa, Wb = g.W[tris[i]], g.W[tris[j]]
+    shared = (Wa[:, :, None] == Wb[:, None, :]).any(axis=(1, 2))
+    if shared.any():
+        k = np.nonzero(shared)[0]
+        area = shapely.area(shapely.intersection(polys[i[k]], polys[j[k]]))
+        drop = np.zeros(len(i), dtype=bool)
+        drop[k[area <= XY_AREA_EPS]] = True
+        i, j = i[~drop], j[~drop]
+    return tris[i], tris[j]
+
+
+def _tri_edges(g: GroundIndex, t: np.ndarray) -> np.ndarray:
+    Pt = g.P[t][:, :, :2]
+    return np.stack([Pt, np.roll(Pt, -1, axis=1)], axis=2)  # (n, 3, 2, 2)
+
+
+def _pair_edge_cross(Ea: np.ndarray, Eb: np.ndarray) -> np.ndarray:
+    """Crossing points of the 3 x 3 edge pairs of each triangle pair (Ea, Eb: (n, 3, 2, 2))."""
+    if len(Ea) == 0:
+        return np.zeros((0, 2))
+    A = np.repeat(Ea, 3, axis=1)  # (n, 9, 2, 2)
+    B = np.tile(Eb, (1, 3, 1, 1))
+    p, r = A[..., 0, :], A[..., 1, :] - A[..., 0, :]
+    q, s = B[..., 0, :], B[..., 1, :] - B[..., 0, :]
+    den = r[..., 0] * s[..., 1] - r[..., 1] * s[..., 0]
+    qp = q - p
+    with np.errstate(divide="ignore", invalid="ignore"):
+        t = (qp[..., 0] * s[..., 1] - qp[..., 1] * s[..., 0]) / den
+        u = (qp[..., 0] * r[..., 1] - qp[..., 1] * r[..., 0]) / den
+        ok = (np.abs(den) > 1e-15) & (t >= -BARY_EPS) & (t <= 1 + BARY_EPS) & (u >= -BARY_EPS) & (u <= 1 + BARY_EPS)
+        pts = p + t[..., None] * r
+    return pts[ok]
+
+
+def _layer_crossings(g: GroundIndex, ta: np.ndarray, tb: np.ndarray, ring: np.ndarray,
+                     outline: Polygon) -> list[np.ndarray]:
+    """Where stacked Ground layers overlap, the topmost surface can switch layer at an edge / edge crossing or
+    along the line plane_a == plane_b; the minimum of the upper envelope can lie at such a crossing, on that
+    line where it crosses a triangle edge or the outline, or (three or more layers) where two such lines cross."""
     out: list[np.ndarray] = []
-    lines = []
-    for i, ca in enumerate(uc):
-        for cb in uc[i + 1:]:
-            A, B = tris[comps == ca], tris[comps == cb]
-            ov = ((g.tlo[A][:, None, 0] <= g.thi[B][None, :, 0]) & (g.thi[A][:, None, 0] >= g.tlo[B][None, :, 0])
-                  & (g.tlo[A][:, None, 1] <= g.thi[B][None, :, 1]) & (g.thi[A][:, None, 1] >= g.tlo[B][None, :, 1]))
-            ia, ib = np.nonzero(ov)
-            ta, tb = A[ia], B[ib]
-            a = g.alpha[ta] - g.alpha[tb]
-            b = g.beta[ta] - g.beta[tb]
-            c = g.gamma[ta] - g.gamma[tb]
-            keep = np.hypot(a, b) > 1e-12  # parallel planes (e.g. plates 6 mm apart) never cross
-            if not keep.any():
-                continue
-            ta, tb, a, b, c = ta[keep], tb[keep], a[keep], b[keep], c[keep]
-            n = len(ta)
-            edges = []
-            for t in (ta, tb):
-                Pt = g.P[t][:, :, :2]
-                edges.append(np.stack([Pt, np.roll(Pt, -1, axis=1)], axis=2))  # (n, 3, 2, 2)
-            edges.append(np.broadcast_to(ring, (n,) + ring.shape))
-            X = _line_cross(a, b, c, np.concatenate(edges, axis=1))
-            if len(X):
-                out.append(X[shapely.covers(outline.buffer(1e-9), shapely.points(X))])
-            lines.append(np.stack([a, b, c], axis=1))
-    if len(uc) >= 3 and lines:
+    if len(ta) == 0:
+        return out
+    Ea, Eb = _tri_edges(g, ta), _tri_edges(g, tb)
+    X = _pair_edge_cross(Ea, Eb)
+    if len(X):
+        out.append(X[shapely.covers(outline, shapely.points(X))])
+    a = g.alpha[ta] - g.alpha[tb]
+    b = g.beta[ta] - g.beta[tb]
+    c = g.gamma[ta] - g.gamma[tb]
+    keep = np.hypot(a, b) > 1e-12  # parallel planes (e.g. plates 6 mm apart) never cross
+    if not keep.any():
+        return out
+    a, b, c = a[keep], b[keep], c[keep]
+    n = len(a)
+    S = np.concatenate([Ea[keep], Eb[keep], np.broadcast_to(ring, (n,) + ring.shape)], axis=1)
+    X = _line_cross(a, b, c, S)
+    if len(X):
+        out.append(X[shapely.covers(outline.buffer(1e-9), shapely.points(X))])
+    lines = [np.stack([a, b, c], axis=1)]
+    if n >= 2:
         Lm = np.unique(np.concatenate(lines), axis=0)
         for k in range(0, len(Lm), 512):  # pairwise line crossings (triple points), chunked
             L1 = Lm[k:k + 512, None]
@@ -303,14 +331,8 @@ def bottom_face_verdict(g: GroundIndex, face: np.ndarray) -> dict:
         E = g.edge_segs[sel]
         ring = np.stack([xy, np.roll(xy, -1, axis=0)], axis=1)
         samples.append(_seg_cross(E, ring))
-        comps = g.comp[g.edge_tri[sel]]
-        uc = np.unique(comps)
-        for i, ca in enumerate(uc):  # overlapping layers: their edges cross
-            for cb in uc[i + 1:]:
-                X = _seg_cross(E[comps == ca], E[comps == cb])
-                if len(X):
-                    samples.append(X[shapely.covers(outline, shapely.points(X))])
-        samples.extend(_layer_crossings(g, tris, ring, outline))
+        ta, tb = _layer_pairs(g, tris)
+        samples.extend(_layer_crossings(g, ta, tb, ring, outline))
     S = np.concatenate(samples)
     gaps = []
     missing = False
@@ -704,8 +726,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--output", required=True, help="report JSON (new path, never the input)")
     a = ap.parse_args(argv)
     inp, out = Path(a.input), Path(a.output)
-    if out.resolve() == inp.resolve():
-        print("output path resolves to the input; nothing written", file=sys.stderr)
+    same = out.resolve() == inp.resolve()
+    try:  # an existing output may be a hard link (or other alias) of the input: same file identity
+        same = same or (out.exists() and inp.exists() and os.path.samefile(inp, out))
+    except OSError:
+        same = True  # identity unknown: fail closed
+    if same:
+        print("output path is the input file (same path or same file identity); nothing written", file=sys.stderr)
         return 2
     try:
         data = json.loads(inp.read_text(encoding="utf-8"))
