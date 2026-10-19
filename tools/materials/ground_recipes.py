@@ -13,7 +13,11 @@ Unsourced visual choices are recipe parameters with their own provisional
 flags: visual.blade_cycles, visual.grid_band_divisor, visual.micro_period_px,
 visual.micro_amplitudes and visual.blur_radii. Tile npm_joint_px and
 vpm_joint_px are flagged as the raster of provisional joint_mm, not as a
-second source. Contact labels state the generated physical size.
+second source. Contact labels state the generated physical size. The
+LawnReinforced band is the raster mask width: a centred bar of
+2 * (cell // grid_band_divisor) + 1 texels, saturated at the cell, not the
+divisor quotient. The contact sheet grows its label column and row so every
+complete label fits.
 """
 
 import argparse
@@ -192,22 +196,27 @@ def build_contact_sheet(recipe, rendered: dict) -> Image.Image:
         raise GroundRecipeError("contact sheet is missing a slot")
     crops = [_one_metre(rendered[slot]["vpm"], px_per_m) for slot in slots]
     cell = crops[0].shape[0]
-    label_w = max(360, cell)
-    sheet = Image.new("RGB", (cell * 3 + label_w, cell * len(slots)), (244, 244, 240))
-    draw = ImageDraw.Draw(sheet)
+    if any(crop.shape[0] != cell or crop.shape[1] != cell for crop in crops):
+        raise GroundRecipeError("contact sheet crops differ in size")
+    labels = [contact_label(recipe, slot) for slot in slots]
     font = _font(max(16, min(32, cell // 16)))
+    spacing = 6
+    pad = 16
+    label_w, row_h = _label_panel(labels, font, cell, pad, spacing)
+    sheet = Image.new("RGB", (cell * 3 + label_w, row_h * len(slots)), (244, 244, 240))
+    draw = ImageDraw.Draw(sheet)
     for index, slot in enumerate(slots):
-        y = index * cell
+        y = index * row_h
         sheet.paste(_fit(rendered[slot]["npm"], cell), (0, y))
         tiled = np.tile(np.ascontiguousarray(rendered[slot]["npm"]), (2, 2, 1))
         sheet.paste(_fit(tiled, cell), (cell, y))
         sheet.paste(Image.fromarray(crops[index], "RGB"), (cell * 2, y))
         draw.multiline_text(
-            (cell * 3 + 16, y + 16),
-            contact_label(recipe, slot),
+            (cell * 3 + pad, y + pad),
+            labels[index],
             fill=(24, 24, 24),
             font=font,
-            spacing=6,
+            spacing=spacing,
         )
     return sheet
 
@@ -906,7 +915,7 @@ def _actual_size_text(recipe, slot: str) -> str:
             cell = body[f"{profile}_cell_px"]
             text = f"{profile} actual cell {cell / px_per_m * 1000.0:.2f} mm"
             if family == "ecogrid":
-                band_px = max(1, cell // recipe["visual"]["grid_band_divisor"])
+                band_px = _raster_grid_band_px(cell, recipe["visual"]["grid_band_divisor"])
                 spacing = repeat_m / float(recipe["visual"]["blade_cycles"])
                 text += (
                     f", band {band_px / px_per_m * 1000.0:.2f} mm, "
@@ -917,6 +926,31 @@ def _actual_size_text(recipe, slot: str) -> str:
                 text += f", blade spacing {spacing:.4f} m"
             parts.append(text)
     return "; ".join(parts)
+
+
+def _raster_grid_band_px(cell: int, band_divisor: int) -> int:
+    """Texel width of the ecogrid bar on the first row of one cell.
+
+    The mask is abs(index - cell // 2) <= band, with band = max(1, cell // divisor).
+    That bar is 2 * band + 1 texels and saturates at the cell width.
+    """
+    band = max(1, int(cell) // int(band_divisor))
+    mid = int(cell) // 2
+    if band >= mid:
+        return int(cell)
+    return 2 * band + 1
+
+
+def _label_panel(labels, font, cell: int, pad: int, spacing: int) -> tuple[int, int]:
+    """Label column and row large enough for every complete label."""
+    probe = ImageDraw.Draw(Image.new("RGB", (1, 1)))
+    width = max(360, cell)
+    height = cell
+    for label in labels:
+        box = probe.multiline_textbbox((pad, pad), label, font=font, spacing=spacing)
+        width = max(width, int(box[2]) + pad)
+        height = max(height, int(box[3]) + pad)
+    return width, height
 
 
 def _one_metre(image: np.ndarray, px_per_m) -> np.ndarray:

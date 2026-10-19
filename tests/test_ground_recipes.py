@@ -11,7 +11,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from PIL import Image
+from PIL import Image, ImageDraw
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -789,3 +789,112 @@ def test_scale_error_at_most_one_percent_probe(recipes):
         passed += 1
     assert passed >= 1
     assert failed >= 1
+
+
+def _isolated_grid_band_px(recipes, cell: int, divisor: int) -> int:
+    """Raster width of the plastic bar on the first row of one cell.
+
+    Lawn and noise are flat so the count is the mask, not a colour accident.
+    """
+    old_lawn, old_fbm = recipes._draw_lawn, recipes._fbm
+    recipes._draw_lawn = lambda size, *_args, **_kwargs: np.zeros((size, size, 3), dtype=np.float32)
+    recipes._fbm = lambda size, *_args, **_kwargs: np.ones((size, size), dtype=np.float32)
+    try:
+        image = recipes._draw_ecogrid(
+            cell,
+            cell,
+            [[0, 0, 0], [0, 0, 0]],
+            [255, 255, 255],
+            np.random.default_rng(1),
+            divisor,
+            1,
+        )
+    finally:
+        recipes._draw_lawn, recipes._fbm = old_lawn, old_fbm
+    return int(np.count_nonzero(image[0, :, 0]))
+
+
+@pytest.mark.parametrize(
+    ("profile", "millimetres", "rejected"),
+    [("npm", "366.67", "166.67"), ("vpm", "41.99", "20.51")],
+)
+def test_lawn_reinforced_band_label_matches_raster(recipes, recipe, profile, millimetres, rejected):
+    """Acceptance rows: the label quotes the measured bar, not the divisor quotient."""
+    cell = recipe["slots"]["LawnReinforced"][f"{profile}_cell_px"]
+    divisor = recipe["visual"]["grid_band_divisor"]
+    width_px = _isolated_grid_band_px(recipes, cell, divisor)
+    actual = f"{width_px / recipe['profiles'][profile]['px_per_m'] * 1000:.2f}"
+    assert actual == millimetres
+    label = recipes.contact_label(recipe, "LawnReinforced")
+    assert f"band {actual} mm" in label
+    assert f"band {rejected} mm" not in label
+
+
+def test_grid_band_label_matches_raster_for_every_divisor(recipes, recipe):
+    """Brute force: every divisor, including a bar that fills the cell, matches the mask."""
+    checked = saturated = 0
+    for profile in ("npm", "vpm"):
+        cell = recipe["slots"]["LawnReinforced"][f"{profile}_cell_px"]
+        px_per_m = recipe["profiles"][profile]["px_per_m"]
+        mid = cell // 2
+        for divisor in range(1, cell + 1):
+            mutated = copy.deepcopy(recipe)
+            mutated["visual"]["grid_band_divisor"] = divisor
+            width_px = _isolated_grid_band_px(recipes, cell, divisor)
+            millimetres = f"{width_px / px_per_m * 1000:.2f}"
+            label = recipes.contact_label(mutated, "LawnReinforced")
+            assert f"band {millimetres} mm" in label
+            band = max(1, cell // divisor)
+            if band >= mid:
+                assert width_px == cell
+                saturated += 1
+            else:
+                assert width_px == 2 * band + 1
+                assert width_px < cell
+            checked += 1
+    assert checked == 64 + 256
+    assert saturated >= 1
+
+
+@pytest.mark.parametrize("side", [128, 1024])
+def test_every_contact_label_fits_the_sheet(recipes, recipe, side):
+    """Every complete actual-size label sits inside its row, on both axes."""
+    sheet_recipe = copy.deepcopy(recipe)
+    sheet_recipe["profiles"]["vpm"]["px_per_m"] = side
+    rendered = {}
+    for index, slot in enumerate(SLOTS):
+        rendered[slot] = {
+            "npm": np.full((64, 64, 3), 40 + index, dtype=np.uint8),
+            "vpm": np.full((side, side, 3), (180, 20 + index, 20), dtype=np.uint8),
+        }
+    sheet = recipes.build_contact_sheet(sheet_recipe, rendered)
+    assert sheet.mode == "RGB"
+    assert sheet.size[1] % len(SLOTS) == 0
+    row_h = sheet.size[1] // len(SLOTS)
+    cell = side
+    assert row_h >= cell
+    assert sheet.size[0] >= cell * 3
+    font = recipes._font(max(16, min(32, cell // 16)))
+    pixels = np.asarray(sheet)
+    fitted = 0
+    for index, slot in enumerate(SLOTS):
+        label = recipes.contact_label(sheet_recipe, slot)
+        assert "actual" in label
+        box = ImageDraw.Draw(Image.new("RGB", (1, 1))).multiline_textbbox(
+            (cell * 3 + 16, 16), label, font=font, spacing=6
+        )
+        assert box[0] >= cell * 3
+        assert box[2] <= sheet.size[0]
+        assert box[1] >= 0
+        assert box[3] <= row_h
+        expected = Image.new("RGB", (sheet.size[0] - cell * 3, row_h), (244, 244, 240))
+        ImageDraw.Draw(expected).multiline_text(
+            (16, 16), label, fill=(24, 24, 24), font=font, spacing=6
+        )
+        row = pixels[index * row_h:(index + 1) * row_h, cell * 3:]
+        assert np.array_equal(row, np.asarray(expected)), slot
+        y = index * row_h
+        assert tuple(int(value) for value in pixels[y, 0]) == (40 + index,) * 3
+        assert tuple(int(value) for value in pixels[y, cell * 2]) == (180, 20 + index, 20)
+        fitted += 1
+    assert fitted == len(SLOTS)
