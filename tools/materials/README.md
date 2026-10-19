@@ -1,8 +1,25 @@
 # MAF atlas (512)
 
-Builds one shared texture for NPM GroundEl (МАФ). Regulation: one texture set, at most 512×512 px, and at least 8 px between neighbouring islands that carry different images.
+Builds one shared texture for NPM GroundEl (МАФ).
+
+## Pattern / scope
+
+Per [docs/agents/REVIEW_CHECKLIST.md](../../docs/agents/REVIEW_CHECKLIST.md) Q1, this tool is an explicit new-case: shared NPM GroundEl atlas packing with buddy allocator and patterned growth, not a registered/proven pattern (registry [docs/domain/patterns/INDEX.md](../../docs/domain/patterns/INDEX.md)).
 
 The tool does not assign UVs on a mesh. Ground and Flora atlases are out of scope.
+
+## Normative references vs algorithm choices
+
+Normative requirements from [docs/domain/uv-textures.md](../../docs/domain/uv-textures.md):
+- reg p.10 §5.12: GroundEl uses one texture set for all elements, <= 512×512 px.
+- reg p.9 §5.4: Padding >= 8 px between neighbouring islands with unique images.
+- reg p.9 §5.1: Textures delivered as PNG (embedded in FBX).
+- reg p.9 §5.5: Alpha channel forbidden in NPM textures.
+
+Algorithm choices (implementation design, not regulation):
+- Quadtree buddy allocator for power-of-two square slots (largest slots placed first).
+- Patterned growth strategy: doubling the smallest patterned slot iteratively to utilize leftover atlas area.
+- Content rect insetting by `padding_px / 2` with border pixel duplication to avoid bilinear bleed, and RGB (128, 128, 128) neutral background.
 
 ## Input
 

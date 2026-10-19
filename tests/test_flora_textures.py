@@ -1,8 +1,9 @@
 """Synthetic-only Flora pipeline regressions; no generated botanical evidence."""
 import importlib.util
 from copy import deepcopy
-from itertools import combinations
+from itertools import combinations, product
 from io import BytesIO
+import json
 import shutil
 
 import numpy as np
@@ -272,3 +273,130 @@ def test_generation_metadata_required(review, tmp_path):
         with pytest.raises(ValueError, match="Actual model"):
             flora.prepare(plan, changed, tmp_path / key)
         assert not (tmp_path / key).exists()
+
+
+# Malformed evidence rejection: 17 invalid values x 3 positions = 51 cases without writes.
+@pytest.mark.parametrize("position", range(3))
+@pytest.mark.parametrize("evidence", [
+    None,
+    False,
+    True,
+    0,
+    1,
+    1.25,
+    [],
+    ["attestation"],
+    {},
+    {"text": "attestation"},
+    "",
+    "   ",
+    "\t\n\r",
+    "\u00a0",
+    "\u2003",
+    "\u3000",
+    " \t\r\n\u00a0\u2002\u2003\u3000 ",
+])
+def test_publication_rejects_malformed_evidence(review, tmp_path, position, evidence):
+    directory, _, original, _, _ = review
+    approvals = deepcopy(original)
+    approvals["approvals"][position]["evidence"] = evidence
+    approvals = json.loads(json.dumps(approvals))
+    out = tmp_path / f"malformed-evidence-pos{position}"
+    with pytest.raises(ValueError, match=r"Explicit.*approval required"):
+        flora.publish_library(directory, approvals, out)
+    assert not out.exists()
+
+
+def test_publication_preserves_valid_quoted_synthetic_attestation_with_padding(review, tmp_path):
+    # Valid padded quoted attestations: preserve evidence verbatim and published bytes unchanged.
+    directory, manifest, original, _, _ = review
+    approvals = deepcopy(original)
+    padded_attestations = [
+        '   "SYNTHETIC Artem attestation 0: verified white cut-out and proportions"   \n',
+        '\t\t  "SYNTHETIC Artem attestation 1: approved 2048x2048 botanical texture"  \r\n',
+        ' \u00a0 "SYNTHETIC Artem attestation 2: verified leaf detail and binary mask" \u2003 ',
+    ]
+    for pos, text in enumerate(padded_attestations):
+        approvals["approvals"][pos]["evidence"] = text
+    approvals = json.loads(json.dumps(approvals))
+    out = tmp_path / "valid-library-padded-attestation"
+    result = flora.publish_library(directory, approvals, out)
+
+    for pos, text in enumerate(padded_attestations):
+        assert result["approvals"]["approvals"][pos]["evidence"] == text
+    saved_manifest = flora.read_json(out / "library-v001.json")
+    for pos, text in enumerate(padded_attestations):
+        assert saved_manifest["approvals"]["approvals"][pos]["evidence"] == text
+
+    assert len(result["species"]) == len(manifest["entries"])
+    for item, entry in zip(result["species"], manifest["entries"]):
+        for key in ("diffuse", "opacity"):
+            published_bytes = (out / item[key]).read_bytes()
+            reviewed_bytes = (directory / entry[key]).read_bytes()
+            assert published_bytes == reviewed_bytes
+
+
+def test_generated_probe_evidence_validation_and_byte_preservation(review, tmp_path):
+    # Generated probe: 24 invalid values (numbers/containers/whitespace) x 3 positions
+    # = 72 rejections, plus 4 valid suites verifying byte-for-byte preservation (76 total).
+    directory, manifest, original, _, _ = review
+
+    generated_numbers = [
+        sign * val
+        for sign, val in product((-1, 1), (42, 2.718, 1e5))
+    ]
+    generated_containers = [
+        [val] if kind == "list" else {kind: val}
+        for kind, val in product(("evidence", "meta", "list"), (None, [0], {"id": 1}))
+    ]
+    generated_whitespace = [
+        prefix + suffix
+        for prefix, suffix in product(("\u1680", "\u2000", "\u2028"), ("\u2002", "\u2029", "\u205f"))
+    ]
+    generated_invalid_values = generated_numbers + generated_containers + generated_whitespace
+    assert len(generated_invalid_values) == 24
+
+    rejection_count = 0
+    for val_idx, val in enumerate(generated_invalid_values):
+        for pos in range(3):
+            approvals = deepcopy(original)
+            approvals["approvals"][pos]["evidence"] = val
+            approvals = json.loads(json.dumps(approvals))
+            out = tmp_path / f"probe_reject_{val_idx}_{pos}"
+            with pytest.raises(ValueError, match=r"Explicit.*approval required"):
+                flora.publish_library(directory, approvals, out)
+            assert not out.exists()
+            rejection_count += 1
+    assert rejection_count == 72
+
+    padding_pairs = [
+        ("   ", "   \n"),
+        ("\t\t", "\t"),
+        (" \u00a0 ", " \u2003 "),
+        ("\r\n\t ", " \t\r\n"),
+    ]
+    assert len(padding_pairs) == 4
+
+    for suite_idx, (left_pad, right_pad) in enumerate(padding_pairs):
+        approvals = deepcopy(original)
+        suite_attestations = []
+        for pos in range(3):
+            attestation = f'{left_pad}"SYNTHETIC probe approval suite {suite_idx} pos {pos}: verified texture"{right_pad}'
+            suite_attestations.append(attestation)
+            approvals["approvals"][pos]["evidence"] = attestation
+        approvals = json.loads(json.dumps(approvals))
+        out = tmp_path / f"probe_valid_{suite_idx}"
+        result = flora.publish_library(directory, approvals, out)
+
+        for pos, attestation in enumerate(suite_attestations):
+            assert result["approvals"]["approvals"][pos]["evidence"] == attestation
+        saved_manifest = flora.read_json(out / "library-v001.json")
+        for pos, attestation in enumerate(suite_attestations):
+            assert saved_manifest["approvals"]["approvals"][pos]["evidence"] == attestation
+
+        assert len(result["species"]) == len(manifest["entries"])
+        for item, entry in zip(result["species"], manifest["entries"]):
+            for key in ("diffuse", "opacity"):
+                published_bytes = (out / item[key]).read_bytes()
+                reviewed_bytes = (directory / entry[key]).read_bytes()
+                assert published_bytes == reviewed_bytes

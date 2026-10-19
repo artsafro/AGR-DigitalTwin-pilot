@@ -210,9 +210,10 @@ def load_approved(review, approvals):
         if digest(canonical(candidate)) != candidate_id:
             raise ValueError("Candidate changed")
         approval = approved.get(candidate_id, {})
+        evidence = approval.get("evidence")
         if (approval.get("decision") != "approved" or approval.get("reviewed_by") != "Artem"
                 or approval.get("review_sha256") != review_hash
-                or not str(approval.get("evidence", "")).strip()):
+                or not (isinstance(evidence, str) and evidence.strip())):
             raise ValueError(f"Explicit Artem approval required: {entry['species']}")
         try:
             datetime.fromisoformat(approval["reviewed_at"])

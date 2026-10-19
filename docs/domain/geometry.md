@@ -66,6 +66,7 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N (see npm-vpm
 - Andrew `UCX_Tools.ms` default gap 2 mm (tool default, not norm). local: docs/agr/research/max-workbench/REVIEW.md#3.
 
 ## Project modeling rules (user decisions, not regulation)
+- Operation kernel: pure numpy functions on `dt_ai.ops.invariants` meshes; bmesh only through an adapter for booleans, extrusion and solidify (user 2026-10-19 [D131]); see `src/dt_ai/ops/operations.py`.
 - Editable master: 100% quads; no tris/n-gons, no degenerate/twisted/self-intersecting quads; triangulate only in a derived export copy; keep both and check both. local: docs/agr/GEOMETRY_RULES.md (project decision).
 - Separate meshes per logical group (body/walls, windows, roof, doors...) allowed; Attach/Join does not create clean topology; no artificial bridging faces. local: docs/agr/GEOMETRY_RULES.md (project decision).
 - BODY = exterior shell only from outer contours; do not model Revit interiors/partitions. local: docs/agr/GEOMETRY_RULES.md (project decision).

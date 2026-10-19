@@ -114,6 +114,7 @@ substitute ad-hoc scripting.
   port 9877. Create/edit/material/UV, save/reopen, FBX export/import passed. MCP screenshots
   preceded an NVIDIA driver crash — use Computer Use for visuals. Runs arbitrary Python in the
   open scene: never on an unrelated production scene. Skill: `blender-mcp`.
+- bpy wheel pin rule: a bpy wheel lane, if used, must equal the baseline Blender version 5.1.2 (`BLENDER_VERSION` in `src/dt_ai/core/blender_runner.py`) and is re-verified on each Blender upgrade.
 
 ### SpeedTree Modeler — `speedtree`
 - Status: WORKING for file inspection and CLI FBX batch export (Codex, 2026-10-06, Modeler v10.0.1).
@@ -134,6 +135,10 @@ substitute ad-hoc scripting.
 
 Adapters and evidence log: `tools/mcp/README.md`, `tools/mcp/verification.txt`. All routes are
 registered for Codex and Antigravity; Claude uses only its own user-scope registrations.
+Project sessions load only the DCC servers [D130]: `.claude/settings.json` sets `disableClaudeAiConnectors`
+(claude.ai connectors such as Gmail, Zoom, Drive stay out of terminal, VS Code and JetBrains sessions;
+GitHub works through `gh`); desktop-app and cloud sessions ignore that key, there the connectors are
+switched off at claude.ai/customize/connectors.
 
 ### DCC tool risk classes
 

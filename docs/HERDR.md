@@ -19,7 +19,7 @@ local plugin `artsafro.dev-layout` point there.
 - **AGENT** — the one writing agent of this worktree.
 - **TOOLS** — every tool call of the AGENT pane with ✓ / ✗ (`agent_feed.py --mode tools`).
 - **LOGS** — your prompts, file edits, commits, failed commands, MCP calls, and new lines of
-  project logs (`Unreal/**/Saved/Logs`, `logs/`, `tools/**/*.log`).
+  project logs (`logs/`, `tools/**/*.log`).
 - **CHEAT** — what to create (folder / pane / tab / worktree) — `cheat.py`.
 - **HUD** — agents and their state, usage limits, large-file mode, keys — `hud.py`.
 - Feeds read Claude and Codex session logs; Antigravity's log is binary, so its feeds

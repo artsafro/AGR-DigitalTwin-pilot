@@ -1,8 +1,9 @@
 # Ported from AGR max/AGR_Workbench/check_fbx.py (sha256 e8c032b17279) and
 # tools/profile_snapshot_common.py (sha256 cbb176e2b241) object/image facts on 2026-10-06; changes: one standalone
 # script, no RunRecord/config files, adds triangles, polygon degrees, UV channels, UDIM tiles,
-# mirrored UV triangles, transforms, embedded image facts and regulatory topology counts
-# for the V002-V013 scene stages.
+# mirrored UV triangles, transforms, face geometry, embedded image facts, UCX world-space hulls, regulatory topology counts and GroundEl maf_surface
+# (corner normals for smoothing and flipped faces) for the V002-V013 scene stages.
+# material image maps by BSDF socket (2026-10-16, #191 Flora maps, V005).
 """Structural FBX readback in an isolated factory Blender process.
 
     blender --background --factory-startup --python-exit-code 1 \
@@ -33,11 +34,29 @@ def _topology_module():
         spec.loader.exec_module(module)
         _TOPOLOGY = module
     return _TOPOLOGY
+ROOT = Path(__file__).resolve().parents[2]
+_spec = importlib.util.spec_from_file_location("maf_surface", ROOT / "src/twinqa/geometry/maf_surface.py")
+_maf = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_maf)
+surface_facts = _maf.surface_facts
 
 args = sys.argv[sys.argv.index("--") + 1:]
 if len(args) != 2:
     raise SystemExit("usage: ... -- <model.fbx> <report.json>")
 source, out = Path(args[0]).resolve(), Path(args[1]).resolve()
+
+
+def _loop_normals(mesh):
+    """Per-loop normals: corner_normals on Blender 4.1+, split normals on older builds."""
+    count = len(mesh.loops)
+    try:
+        corners = mesh.corner_normals
+        if len(corners) != count:
+            raise RuntimeError("corner_normals length")
+        return [corners[i].vector.copy() for i in range(count)]
+    except (AttributeError, RuntimeError, TypeError):
+        mesh.calc_normals_split()
+        return [mesh.loops[i].normal.copy() for i in range(count)]
 
 
 def udim(u, v):
@@ -70,6 +89,8 @@ def mesh_facts(obj):
         "materials": [s.material.name if s.material else None for s in obj.material_slots],
         "udim_tiles": [],
         "mirrored_uv_triangles": 0,
+        "face_geometry": {"vertices": [[round(float(point[i]), 6) for i in range(3)] for point in world],
+                          "polygons": [list(poly.vertices) for poly in mesh.polygons]},
     }
     uv = mesh.uv_layers.active
     if uv:
@@ -94,6 +115,26 @@ def mesh_facts(obj):
         facts["topology"] = _topology_module().count_defects(coords, polys, edge_ix, candidate_pairs=pairs)
     except Exception as exc:  # record, never hide, never crash the readback
         facts["topology"] = {"error": f"{type(exc).__name__}: {exc}"}
+    if obj.name.endswith("_GroundEl"):
+        try:
+            xform = obj.matrix_world.to_3x3().inverted_safe().transposed()
+            loops = _loop_normals(mesh)
+            world_loops = []
+            for normal in loops:
+                transformed = xform @ normal
+                length = transformed.length
+                if length:
+                    transformed /= length
+                world_loops.append([transformed.x, transformed.y, transformed.z])
+            coords = [[c for c in p] for p in world]
+            polys = [list(p.vertices) for p in mesh.polygons]
+            corner_normals = [world_loops[p.loop_start:p.loop_start + p.loop_total] for p in mesh.polygons]
+            facts["maf_surface"] = surface_facts(coords, polys, corner_normals)
+        except Exception as exc:
+            facts["maf_surface"] = {"error": f"{type(exc).__name__}: {exc}"}
+    if obj.name.upper().startswith("UCX_"):
+        facts["hull"] = {"verts": [[float(p[i]) for i in range(3)] for p in world],
+                         "tris": [[int(i) for i in tri.vertices] for tri in mesh.loop_triangles]}
     return facts
 
 
@@ -110,6 +151,30 @@ def image_facts():
     return images
 
 
+def material_facts():
+    """Per material: image maps as the BSDF input socket they reach (e.g. Base Color, Alpha, Normal)."""
+    materials = []
+    for mat in bpy.data.materials:
+        maps = []
+        tree = mat.node_tree if mat.use_nodes else None
+        for node in (tree.nodes if tree else []):
+            if node.type != "TEX_IMAGE" or node.image is None:
+                continue
+            todo, seen = [(link, link.from_socket.name) for out in node.outputs for link in out.links], set()
+            while todo:
+                link, output = todo.pop()
+                if link.as_pointer() in seen:
+                    continue
+                seen.add(link.as_pointer())
+                if link.to_node.type.startswith("BSDF_"):
+                    maps.append({"image": node.image.name, "output": output, "socket": link.to_socket.name})
+                else:
+                    todo.extend((nxt, output) for out in link.to_node.outputs for nxt in out.links)
+        unique = {(m["socket"], m["image"], m["output"]): m for m in maps}
+        materials.append({"name": mat.name, "maps": [unique[k] for k in sorted(unique)]})
+    return materials
+
+
 report = {"source": str(source), "readback_ok": False, "blender": bpy.app.version_string,
           "scope": "structural readback only; not a delivery verdict", "meshes": [], "other_objects": []}
 try:
@@ -121,13 +186,14 @@ try:
         else:
             report["other_objects"].append({"name": obj.name, "type": obj.type})
     report["images"] = image_facts()
+    report["materials"] = material_facts()
     report["readback_ok"] = bool(report["meshes"]) and all(m["polygons"] > 0 for m in report["meshes"])
     if not report["readback_ok"]:
         report["error"] = "no non-empty meshes"
 except Exception as exc:  # report, never hide
     report["error"] = f"{type(exc).__name__}: {exc}"
 out.parent.mkdir(parents=True, exist_ok=True)
-out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+out.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
 print("TWINQA_READBACK", report["readback_ok"])
 if not report["readback_ok"]:
     sys.exit(2)

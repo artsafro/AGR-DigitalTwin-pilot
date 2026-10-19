@@ -1,0 +1,374 @@
+{
+ "Betula pendula": {
+  "diffuse": "C:/x/flora-library/v001/maps/betula-pendula/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/betula-pendula/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-15 'Одобряю', review-sheet-v001.png (#190)"
+ },
+ "Pinus sylvestris": {
+  "diffuse": "C:/x/flora-library/v001/maps/pinus-sylvestris/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/pinus-sylvestris/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-15 'Одобряю', review-sheet-v001.png (#190)"
+ },
+ "Spiraea japonica": {
+  "diffuse": "C:/x/flora-library/v001/maps/spiraea-japonica/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/spiraea-japonica/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-15 'Одобряю', review-sheet-v001.png (#190)"
+ },
+ "Tilia cordata": {
+  "diffuse": "C:/x/flora-library/v001/maps/tilia-cordata/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/tilia-cordata/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
+ },
+ "Acer platanoides": {
+  "diffuse": "C:/x/flora-library/v001/maps/acer-platanoides/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/acer-platanoides/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
+ },
+ "Sorbus aucuparia": {
+  "diffuse": "C:/x/flora-library/v001/maps/sorbus-aucuparia/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/sorbus-aucuparia/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
+ },
+ "Cornus alba": {
+  "diffuse": "C:/x/flora-library/v001/maps/cornus-alba/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/cornus-alba/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
+ },
+ "Hydrangea arborescens": {
+  "diffuse": "C:/x/flora-library/v001/maps/hydrangea-arborescens/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/hydrangea-arborescens/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
+ },
+ "Crataegus mollis": {
+  "diffuse": "C:/x/flora-library/v001/maps/crataegus-mollis/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/crataegus-mollis/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate b1db952c0014; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Acer tataricum": {
+  "diffuse": "C:/x/flora-library/v001/maps/acer-tataricum/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/acer-tataricum/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate e43147077973; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Syringa josikaea": {
+  "diffuse": "C:/x/flora-library/v001/maps/syringa-josikaea/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/syringa-josikaea/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 0bd238ef297a; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Picea pungens": {
+  "diffuse": "C:/x/flora-library/v001/maps/picea-pungens/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/picea-pungens/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 638323ce536d; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Berberis × ottawensis": {
+  "diffuse": "C:/x/flora-library/v001/maps/berberis-ottawensis/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/berberis-ottawensis/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 6ab46cd6244e; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Hydrangea paniculata": {
+  "diffuse": "C:/x/flora-library/v001/maps/hydrangea-paniculata/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/hydrangea-paniculata/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 3c18795989a4; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Physocarpus opulifolius": {
+  "diffuse": "C:/x/flora-library/v001/maps/physocarpus-opulifolius/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/physocarpus-opulifolius/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate cc4559b27640; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Philadelphus coronarius": {
+  "diffuse": "C:/x/flora-library/v001/maps/philadelphus-coronarius/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/philadelphus-coronarius/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 96d6e3a79ac6; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Sorbaria sorbifolia 'Sem'": {
+  "diffuse": "C:/x/flora-library/v001/maps/sorbaria-sorbifolia-sem/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/sorbaria-sorbifolia-sem/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 4351f9e31042; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Stephanandra incisa 'Crispa'": {
+  "diffuse": "C:/x/flora-library/v001/maps/stephanandra-incisa-crispa/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/stephanandra-incisa-crispa/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate f38a2c36bdcd; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Dasiphora fruticosa": {
+  "diffuse": "C:/x/flora-library/v001/maps/dasiphora-fruticosa/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/dasiphora-fruticosa/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 447e4aa00d98; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Symphyotrichum novae-angliae": {
+  "diffuse": "C:/x/flora-library/v001/maps/symphyotrichum-novae-angliae/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/symphyotrichum-novae-angliae/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate bd734313c876; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Filipendula ulmaria": {
+  "diffuse": "C:/x/flora-library/v001/maps/filipendula-ulmaria/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/filipendula-ulmaria/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 978fede1d28d; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Calamagrostis × acutiflora 'Karl Foerster'": {
+  "diffuse": "C:/x/flora-library/v001/maps/calamagrostis-acutiflora-karl-foerster/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/calamagrostis-acutiflora-karl-foerster/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 6998bc62ebe9; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Padus maackii": {
+  "diffuse": "C:/x/flora-library/v001/maps/padus-maackii/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/padus-maackii/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 70053ab9231c; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Sorbus commixta 'Dodong'": {
+  "diffuse": "C:/x/flora-library/v001/maps/sorbus-commixta-dodong/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/sorbus-commixta-dodong/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 432584abd8b7; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Pinus nigra": {
+  "diffuse": "C:/x/flora-library/v001/maps/pinus-nigra/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/pinus-nigra/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 7a84638525ed; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Malus 'Evereste'": {
+  "diffuse": "C:/x/flora-library/v001/maps/malus-evereste/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/malus-evereste/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate de78d24ac7b0; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Crataegus monogyna": {
+  "diffuse": "C:/x/flora-library/v001/maps/crataegus-monogyna/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/crataegus-monogyna/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 1835fcfc0c0c; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Salix purpurea 'Mayak'": {
+  "diffuse": "C:/x/flora-library/v001/maps/salix-purpurea-mayak/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/salix-purpurea-mayak/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate eaba0b2f92da; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Sorbaria sorbifolia": {
+  "diffuse": "C:/x/flora-library/v001/maps/sorbaria-sorbifolia/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/sorbaria-sorbifolia/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 2a7276304fd4; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Hydrangea arborescens 'Bounty'": {
+  "diffuse": "C:/x/flora-library/v001/maps/hydrangea-arborescens-bounty/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/hydrangea-arborescens-bounty/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 96cc65db83dc; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Spiraea betulifolia 'Tor'": {
+  "diffuse": "C:/x/flora-library/v001/maps/spiraea-betulifolia-tor/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/spiraea-betulifolia-tor/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate c6f378200152; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Pinus mugo": {
+  "diffuse": "C:/x/flora-library/v001/maps/pinus-mugo/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/pinus-mugo/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate eab5ac5c63f9; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Physocarpus opulifolius 'Luteus'": {
+  "diffuse": "C:/x/flora-library/v001/maps/physocarpus-opulifolius-luteus/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/physocarpus-opulifolius-luteus/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 12418310fddc; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Echinacea purpurea": {
+  "diffuse": "C:/x/flora-library/v001/maps/echinacea-purpurea/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/echinacea-purpurea/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate fbd98ad55273; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Miscanthus sinensis": {
+  "diffuse": "C:/x/flora-library/v001/maps/miscanthus-sinensis/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/miscanthus-sinensis/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 7300bd0a06f3; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Parthenocissus quinquefolia": {
+  "diffuse": "C:/x/flora-library/v001/maps/parthenocissus-quinquefolia/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/parthenocissus-quinquefolia/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 033267e4e3c4; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Amelanchier lamarckii": {
+  "diffuse": "C:/x/flora-library/v001/maps/amelanchier-lamarckii/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/amelanchier-lamarckii/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 095bd50fc73b; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Syringa vulgaris 'Krasavitsa Moskvy'": {
+  "diffuse": "C:/x/flora-library/v001/maps/syringa-vulgaris-krasavitsa-moskvy/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/syringa-vulgaris-krasavitsa-moskvy/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate d75fa7e100df; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Malus niedzwetzkyana": {
+  "diffuse": "C:/x/flora-library/v001/maps/malus-niedzwetzkyana/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/malus-niedzwetzkyana/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate b03198d4c883; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Thuja occidentalis": {
+  "diffuse": "C:/x/flora-library/v001/maps/thuja-occidentalis/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/thuja-occidentalis/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 33151cde1913; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Cornus sericea": {
+  "diffuse": "C:/x/flora-library/v001/maps/cornus-sericea/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/cornus-sericea/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 05395f098d96; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Cotoneaster lucidus": {
+  "diffuse": "C:/x/flora-library/v001/maps/cotoneaster-lucidus/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/cotoneaster-lucidus/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 33b7522dc0c5; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Dasiphora fruticosa 'Goldfinger'": {
+  "diffuse": "C:/x/flora-library/v001/maps/dasiphora-fruticosa-goldfinger/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/dasiphora-fruticosa-goldfinger/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 041c5ee4e8e0; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Hydrangea paniculata 'Limelight'": {
+  "diffuse": "C:/x/flora-library/v001/maps/hydrangea-paniculata-limelight/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/hydrangea-paniculata-limelight/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 1f0b735d457b; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Spiraea × cinerea 'Grefsheim'": {
+  "diffuse": "C:/x/flora-library/v001/maps/spiraea-cinerea-grefsheim/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/spiraea-cinerea-grefsheim/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 282c23ff3ee1; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Berberis thunbergii": {
+  "diffuse": "C:/x/flora-library/v001/maps/berberis-thunbergii/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/berberis-thunbergii/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 4a86d5837735; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Spiraea japonica 'Firelight'": {
+  "diffuse": "C:/x/flora-library/v001/maps/spiraea-japonica-firelight/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/spiraea-japonica-firelight/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate cea543a1a0b6; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Heuchera": {
+  "diffuse": "C:/x/flora-library/v001/maps/heuchera/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/heuchera/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate c9f154f7fac2; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Eutrochium maculatum": {
+  "diffuse": "C:/x/flora-library/v001/maps/eutrochium-maculatum/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/eutrochium-maculatum/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate bf863369307b; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Acer tataricum subsp. ginnala": {
+  "diffuse": "C:/x/flora-library/v001/maps/acer-tataricum-subsp-ginnala/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/acer-tataricum-subsp-ginnala/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 853ab2e83bd7; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Syringa vulgaris 'Andenken an Ludwig Späth'": {
+  "diffuse": "C:/x/flora-library/v001/maps/syringa-vulgaris-andenken-an-ludwig-sp-th/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/syringa-vulgaris-andenken-an-ludwig-sp-th/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 2f497ceaf0a2; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Syringa vulgaris": {
+  "diffuse": "C:/x/flora-library/v001/maps/syringa-vulgaris/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/syringa-vulgaris/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 223cd7260517; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Prunus padus": {
+  "diffuse": "C:/x/flora-library/v001/maps/prunus-padus/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/prunus-padus/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 3a4011cb54e8; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Physocarpus opulifolius 'Diabolo'": {
+  "diffuse": "C:/x/flora-library/v001/maps/physocarpus-opulifolius-diabolo/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/physocarpus-opulifolius-diabolo/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate a43aa714eef5; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Juniperus sabina": {
+  "diffuse": "C:/x/flora-library/v001/maps/juniperus-sabina/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/juniperus-sabina/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 70d50dc8ddbc; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Euonymus alatus": {
+  "diffuse": "C:/x/flora-library/v001/maps/euonymus-alatus/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/euonymus-alatus/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 5e9e3274b5b2; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Viburnum opulus 'Roseum'": {
+  "diffuse": "C:/x/flora-library/v001/maps/viburnum-opulus-roseum/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/viburnum-opulus-roseum/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 1d52d993ca8b; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Spiraea japonica 'Little Princess'": {
+  "diffuse": "C:/x/flora-library/v001/maps/spiraea-japonica-little-princess/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/spiraea-japonica-little-princess/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 8aa149be5ceb; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Cornus alba 'Sibirica Variegata'": {
+  "diffuse": "C:/x/flora-library/v001/maps/cornus-alba-sibirica-variegata/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/cornus-alba-sibirica-variegata/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate eaf880af89df; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Spiraea × bumalda": {
+  "diffuse": "C:/x/flora-library/v001/maps/spiraea-bumalda/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/spiraea-bumalda/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 80c4b612043b; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Actaea simplex 'Atropurpurea'": {
+  "diffuse": "C:/x/flora-library/v001/maps/actaea-simplex-atropurpurea/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/actaea-simplex-atropurpurea/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 1c2cd7aa9584; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Calamagrostis brachytricha": {
+  "diffuse": "C:/x/flora-library/v001/maps/calamagrostis-brachytricha/diffuse-v001.png",
+  "opacity": "C:/x/flora-library/v001/maps/calamagrostis-brachytricha/opacity-v001.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate e683fe151178; published via flora library gate (library-batch2-v001.json)"
+ }
+}
