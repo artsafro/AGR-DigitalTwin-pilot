@@ -1,7 +1,7 @@
 # Ported from AGR max/AGR_Workbench/check_fbx.py (sha256 e8c032b17279) and
 # tools/profile_snapshot_common.py (sha256 cbb176e2b241) object/image facts on 2026-10-06; changes: one standalone
 # script, no RunRecord/config files, adds triangles, polygon degrees, UV channels, UDIM tiles,
-# mirrored UV triangles, transforms, embedded image facts, UCX world-space hulls, regulatory topology counts and GroundEl maf_surface
+# mirrored UV triangles, transforms, face geometry, embedded image facts, UCX world-space hulls, regulatory topology counts and GroundEl maf_surface
 # (corner normals for smoothing and flipped faces) for the V002-V013 scene stages.
 # material image maps by BSDF socket (2026-10-16, #191 Flora maps, V005).
 """Structural FBX readback in an isolated factory Blender process.
@@ -89,6 +89,8 @@ def mesh_facts(obj):
         "materials": [s.material.name if s.material else None for s in obj.material_slots],
         "udim_tiles": [],
         "mirrored_uv_triangles": 0,
+        "face_geometry": {"vertices": [[round(float(point[i]), 6) for i in range(3)] for point in world],
+                          "polygons": [list(poly.vertices) for poly in mesh.polygons]},
     }
     uv = mesh.uv_layers.active
     if uv:
@@ -191,7 +193,7 @@ try:
 except Exception as exc:  # report, never hide
     report["error"] = f"{type(exc).__name__}: {exc}"
 out.parent.mkdir(parents=True, exist_ok=True)
-out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+out.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
 print("TWINQA_READBACK", report["readback_ok"])
 if not report["readback_ok"]:
     sys.exit(2)

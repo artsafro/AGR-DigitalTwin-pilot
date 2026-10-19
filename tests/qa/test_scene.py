@@ -67,7 +67,7 @@ def statuses(found, stage):
 def test_clean_vpm_mesh_passes_scene_stages():
     found = scene_findings(rb(mesh()), "vpm", "oks", PROFILES.vpm)
     assert set(statuses(found, "V003").values()) == {"pass"}
-    assert statuses(found, "V004") == {"applied transforms": "pass", "topology defects": "pass"}
+    assert statuses(found, "V004") == {"applied transforms": "pass", "topology defects": "pass", "co-directional clearance": "not_run"}
     assert set(statuses(found, "V008").values()) == {"pass"}
 
 
