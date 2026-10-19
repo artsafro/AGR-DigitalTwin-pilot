@@ -783,27 +783,80 @@ def _simplify(q, h: float = 0.002) -> np.ndarray:
 _NUDGE = 1e-5 * np.stack([np.cos(np.arange(6) * np.pi / 3), np.sin(np.arange(6) * np.pi / 3)], axis=1)
 
 
+def _concave_top(w) -> list[tuple[int, int, int]]:
+    """Triangulation of the top of a prism whose top vertices `w` (k, 3) stand over a convex CCW plan:
+    Lawson flips from a fan until no interior edge is reflex, i.e. the opposite vertex of every top
+    triangle lies on or below its plane. Over a convex plan with every point a vertex this is the upper
+    hull, so the rounded (float32, not exactly coplanar) top stays convex (#326)."""
+    k = len(w)
+
+    def ccw(a, b, c):
+        return (w[b, 0] - w[a, 0]) * (w[c, 1] - w[a, 1]) - (w[b, 1] - w[a, 1]) * (w[c, 0] - w[a, 0])
+
+    def above(t, d):
+        a, b, c = t
+        n = np.cross(w[b] - w[a], w[c] - w[a])  # CCW in plan: n[2] > 0
+        return float(n @ (w[d] - w[a])) / max(float(np.linalg.norm(n)), 1e-300)
+
+    tri = [(0, i, i + 1) for i in range(1, k - 1)]
+    for _ in range(4 * k * k):
+        flipped = False
+        for i in range(len(tri)):
+            for j in range(i + 1, len(tri)):
+                common = set(tri[i]) & set(tri[j])
+                if len(common) != 2:
+                    continue
+                c = (set(tri[i]) - common).pop()
+                d = (set(tri[j]) - common).pop()
+                if above(tri[i], d) <= 1e-12 and above(tri[j], c) <= 1e-12:
+                    continue
+                a, b = sorted(common)
+                t1, t2 = (c, d, a), (d, c, b)
+                t1 = t1 if ccw(*t1) > 0 else (d, c, a)
+                t2 = t2 if ccw(*t2) > 0 else (c, d, b)
+                if ccw(*t1) <= 0 or ccw(*t2) <= 0:
+                    continue
+                tri[i], tri[j] = t1, t2
+                flipped = True
+        if not flipped:
+            break
+    return tri
+
+
 def _prism(q, plane, base) -> Piece:
-    """Closed convex prism over the convex CCW plan `q` (k vertices): planar top a x + b y + c, flat bottom."""
+    """Closed convex prism over the convex CCW plan `q` (k vertices): planar top a x + b y + c, flat bottom.
+
+    Vertices are rounded to float32 (what Blender and FBX store) and the top is triangulated as the upper
+    hull of the rounded points, so the read-back hull is convex (#326: a fan over a near-coplanar
+    rounded top read back as non-convex)."""
     k = len(q)
-    # fan apex with the largest smallest triangle: a tiny top triangle turns float32 noise into a
-    # non-convex face plane on read-back (#326)
-    def min_area(a):
-        r = np.roll(q, -a, axis=0)
-        e1, e2 = r[1:-1] - r[0], r[2:] - r[0]
-        return float(np.abs(e1[:, 0] * e2[:, 1] - e1[:, 1] * e2[:, 0]).min()) if k > 3 else 1.0
-    a0 = max(range(k), key=min_area)
-    order = [(a0 + i) % k for i in range(k)]
     top = q @ plane[:2] + plane[2]
     verts = np.concatenate([np.column_stack([q, np.full(k, base)]), np.column_stack([q, top])])
-    tr = [(order[0], order[i + 1], order[i]) for i in range(1, k - 1)] + \
-         [(k + order[0], k + order[i], k + order[i + 1]) for i in range(1, k - 1)]
+    verts = verts.astype(np.float32).astype(float)
+    tops = _concave_top(verts[k:])
+    tr = [(k + a, k + b, k + c) for a, b, c in tops] + [(c, b, a) for a, b, c in tops]
     for j in range(k):
         j1 = (j + 1) % k
         tr += [(j, j1, k + j1), (j, k + j1, k + j)]
     pc = Piece(verts, np.array(tr, np.int64))
     pc.plan, pc.plane = q.copy(), (float(plane[0]), float(plane[1]), float(plane[2]))
     return pc
+
+
+CONVEX_READBACK_TOL_M = 1e-4  # twinqa ucx_audit CONVEX_TOL_M: the read-back convexity tolerance
+
+
+def convex_after_float32(verts, tris, tol: float = CONVEX_READBACK_TOL_M) -> bool:
+    """Hull stays convex after the float32 round trip of FBX/Blender coordinates: every vertex on one side
+    (within `tol`) of every triangle plane, planes computed from the rounded coordinates (#326)."""
+    v = np.asarray(verts, np.float32).astype(float)
+    t = np.asarray(tris, np.int64)
+    n = np.cross(v[t[:, 1]] - v[t[:, 0]], v[t[:, 2]] - v[t[:, 0]])
+    ln = np.linalg.norm(n, axis=1)
+    ok = ln > 1e-12
+    n = n[ok] / ln[ok, None]
+    s = v @ n.T - np.einsum("ij,ij->i", n, v[t[ok, 0]])[None]
+    return not bool(((s.max(axis=0) > tol) & (s.min(axis=0) < -tol)).any())
 
 
 def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol: float = 0.08,
@@ -977,6 +1030,9 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
     if not pieces:
         raise UcxBuildError("ground surface has no plan area")
     strips += [_loose_distance(p, q, pieces, gap) + strip for p, q, strip in loose]
+    bad = sum(not convex_after_float32(pc.verts, pc.tris) for pc in pieces)
+    if bad:
+        raise UcxBuildError(f"{bad} ground pieces are not convex after float32 read-back")
     tri_count = sum(len(pc.tris) for pc in pieces)
     if len(pieces) > MAX_PIECES or tri_count > budget:
         raise UcxBuildError(f"{len(pieces)} ground pieces / {tri_count} tris exceed {MAX_PIECES} pieces "
