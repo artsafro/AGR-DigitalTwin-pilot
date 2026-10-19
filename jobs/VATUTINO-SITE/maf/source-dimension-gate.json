@@ -1,0 +1,550 @@
+{
+  "status": "blocked on model identity; not a completed set",
+  "application": "Blender 5.1.2 headless --background --factory-startup",
+  "units": "Catalogue unit_to_m=1.0; imported FBX world bounds measured in metres; no rescale or save.",
+  "command": "AGR_MAF_LIB=C:/x/vatutino-maf/v002-dimension-gate AGR_MAF_READBACK=C:/x/vatutino-maf/v002-dimension-gate/readback.json \"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python tools/library/maf_blender_readback.py",
+  "exit_code": 0,
+  "copied_fbx_count": 13,
+  "import_errors": 0,
+  "source_hashes": [
+    {
+      "id": "MAF_0127",
+      "source": "C:/x/t_3e6ff1b3/library/fbx/MAF_0127_Icosphere_004.fbx",
+      "sha256_before": "ca90be0fde9f53914ddda001d55660f08cfec1f0355a2bd1b7291fbde88b6d8f",
+      "sha256_after": "ca90be0fde9f53914ddda001d55660f08cfec1f0355a2bd1b7291fbde88b6d8f",
+      "sha256_copy": "ca90be0fde9f53914ddda001d55660f08cfec1f0355a2bd1b7291fbde88b6d8f"
+    },
+    {
+      "id": "MAF_0159",
+      "source": "C:/x/t_3e6ff1b3/library/fbx/MAF_0159_C_Veloparkovka_Forrest_C.fbx",
+      "sha256_before": "415d2438cae2ce49522f3696f47cd0e29eef639e9c3d9ae941938da375989021",
+      "sha256_after": "415d2438cae2ce49522f3696f47cd0e29eef639e9c3d9ae941938da375989021",
+      "sha256_copy": "415d2438cae2ce49522f3696f47cd0e29eef639e9c3d9ae941938da375989021"
+    },
+    {
+      "id": "MAF_0219",
+      "source": "C:/x/t_3e6ff1b3/library/fbx/MAF_0219_C_13010_Stol_Landau_komplekt_001.fbx",
+      "sha256_before": "f1a500595327b8c918ee8cd4ec0c845efe42712e1fcde6a83defeefb4f91a2d9",
+      "sha256_after": "f1a500595327b8c918ee8cd4ec0c845efe42712e1fcde6a83defeefb4f91a2d9",
+      "sha256_copy": "f1a500595327b8c918ee8cd4ec0c845efe42712e1fcde6a83defeefb4f91a2d9"
+    },
+    {
+      "id": "MAF_0322",
+      "source": "C:/x/t_3e6ff1b3/library/fbx/MAF_0322_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_001.fbx",
+      "sha256_before": "b4366147fa2de1bfd9da9612d2dd3176fc937d6d99a0f1e3d5428a71cf45a06d",
+      "sha256_after": "b4366147fa2de1bfd9da9612d2dd3176fc937d6d99a0f1e3d5428a71cf45a06d",
+      "sha256_copy": "b4366147fa2de1bfd9da9612d2dd3176fc937d6d99a0f1e3d5428a71cf45a06d"
+    },
+    {
+      "id": "MAF_0326",
+      "source": "C:/x/t_3e6ff1b3/library/fbx/MAF_0326_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_006.fbx",
+      "sha256_before": "f3f9653c4214af14e268093793baf3071dd714a96476cc183bc0d0b4f3f52edc",
+      "sha256_after": "f3f9653c4214af14e268093793baf3071dd714a96476cc183bc0d0b4f3f52edc",
+      "sha256_copy": "f3f9653c4214af14e268093793baf3071dd714a96476cc183bc0d0b4f3f52edc"
+    },
+    {
+      "id": "MAF_0506",
+      "source": "C:/x/t_3e6ff1b3/library/fbx/MAF_0506_M_Chaise_loung_001.fbx",
+      "sha256_before": "03d2e9477c4219015a0298aa2d5a149ee05302b16cbbced30a48330ba4ba33c4",
+      "sha256_after": "03d2e9477c4219015a0298aa2d5a149ee05302b16cbbced30a48330ba4ba33c4",
+      "sha256_copy": "03d2e9477c4219015a0298aa2d5a149ee05302b16cbbced30a48330ba4ba33c4"
+    },
+    {
+      "id": "MAF_0677",
+      "source": "C:/x/t_3e6ff1b3/library/fbx/MAF_0677_M_Tennis_Table_001.fbx",
+      "sha256_before": "a3eacea7bd469aeb613e978d31e39f9c15c96f63a052cc190ff485e52e947afe",
+      "sha256_after": "a3eacea7bd469aeb613e978d31e39f9c15c96f63a052cc190ff485e52e947afe",
+      "sha256_copy": "a3eacea7bd469aeb613e978d31e39f9c15c96f63a052cc190ff485e52e947afe"
+    },
+    {
+      "id": "MAF_0687",
+      "source": "C:/x/t_3e6ff1b3/library/fbx/MAF_0687_M_Trunk_Gate_003.fbx",
+      "sha256_before": "141cec916b902ce576b08ad3df07c22ce23364274b96fea06be243b997fcd5b6",
+      "sha256_after": "141cec916b902ce576b08ad3df07c22ce23364274b96fea06be243b997fcd5b6",
+      "sha256_copy": "141cec916b902ce576b08ad3df07c22ce23364274b96fea06be243b997fcd5b6"
+    },
+    {
+      "id": "MAF_0722",
+      "source": "C:/x/t_3e6ff1b3/library/fbx/MAF_0722_Plane002.fbx",
+      "sha256_before": "f5325755a9bca67652a19723f25799ce9bcbae0510ba27bc72a0cc7f7cb2ef2d",
+      "sha256_after": "f5325755a9bca67652a19723f25799ce9bcbae0510ba27bc72a0cc7f7cb2ef2d",
+      "sha256_copy": "f5325755a9bca67652a19723f25799ce9bcbae0510ba27bc72a0cc7f7cb2ef2d"
+    },
+    {
+      "id": "MAF_0747",
+      "source": "C:/x/t_3e6ff1b3/library/fbx/MAF_0747_12.fbx",
+      "sha256_before": "7236df5219ff00f612fdd2bdfee503e001d8f60a391c3486ba5066b29c386420",
+      "sha256_after": "7236df5219ff00f612fdd2bdfee503e001d8f60a391c3486ba5066b29c386420",
+      "sha256_copy": "7236df5219ff00f612fdd2bdfee503e001d8f60a391c3486ba5066b29c386420"
+    },
+    {
+      "id": "MAF_0794",
+      "source": "C:/x/t_3e6ff1b3/library/fbx/MAF_0794_Object105.fbx",
+      "sha256_before": "2abde7335e13a3603e5860cb69bcd96ac323236acb9906dc30a91a95c7e823bf",
+      "sha256_after": "2abde7335e13a3603e5860cb69bcd96ac323236acb9906dc30a91a95c7e823bf",
+      "sha256_copy": "2abde7335e13a3603e5860cb69bcd96ac323236acb9906dc30a91a95c7e823bf"
+    },
+    {
+      "id": "MAF_0803",
+      "source": "C:/x/t_3e6ff1b3/library/fbx/MAF_0803_Object115.fbx",
+      "sha256_before": "0a5f86e354bc550ad83e37844e294119094b074def31877cbc297e71181f870e",
+      "sha256_after": "0a5f86e354bc550ad83e37844e294119094b074def31877cbc297e71181f870e",
+      "sha256_copy": "0a5f86e354bc550ad83e37844e294119094b074def31877cbc297e71181f870e"
+    },
+    {
+      "id": "MAF_0920",
+      "source": "C:/x/t_3e6ff1b3/library/fbx/MAF_0920_Object090.fbx",
+      "sha256_before": "e85edd36104dd35246127924020d974af1904e722bb09a4e0777ece97c19cff7",
+      "sha256_after": "e85edd36104dd35246127924020d974af1904e722bb09a4e0777ece97c19cff7",
+      "sha256_copy": "e85edd36104dd35246127924020d974af1904e722bb09a4e0777ece97c19cff7"
+    }
+  ],
+  "dimension_counts": {
+    "pass": 11,
+    "review": 1,
+    "fail": 1
+  },
+  "raw_instanced_triangles_selected": 70546,
+  "budget_note": "Raw selected-source subtotal only, excludes no-model gaps and unidentified Turnik. Neither an NPM total nor a whole-site Ground budget verdict. NPM/VPM outputs and MAF-08 area comparison not measured.",
+  "positions": [
+    {
+      "table": "*T3510",
+      "row": 1,
+      "catalogue_id": "MAF_0326",
+      "name": "Скамейка стальная «Андромеда» / Артикул: 14122",
+      "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0326_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_006.fbx",
+      "schedule_size_m": [
+        1.8,
+        0.5,
+        0.72
+      ],
+      "measured_size_m": [
+        1.8018798828125,
+        0.47443389892578125,
+        0.8008270021528006
+      ],
+      "aligned_size_m": [
+        1.8018798828125,
+        0.47443389892578125,
+        0.8008270021528006
+      ],
+      "plan_axes_swapped": false,
+      "deviation_m": [
+        0.0018798828124999556,
+        0.02556610107421875,
+        0.08082700215280059
+      ],
+      "verdict": "pass",
+      "raw_triangles": 240,
+      "instances_in_568BF": 5,
+      "raw_instanced_triangles": 1200,
+      "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+    },
+    {
+      "table": "*T3510",
+      "row": 2,
+      "catalogue_id": "MAF_0794",
+      "name": "Урна стальная «Арго» / Артикул: 19648",
+      "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0794_Object105.fbx",
+      "schedule_size_m": [
+        0.62,
+        0.47,
+        1.05
+      ],
+      "measured_size_m": [
+        0.6435394287109375,
+        0.4748058319091797,
+        1.0639451698666562
+      ],
+      "aligned_size_m": [
+        0.6435394287109375,
+        0.4748058319091797,
+        1.0639451698666562
+      ],
+      "plan_axes_swapped": false,
+      "deviation_m": [
+        0.023539428710937504,
+        0.004805831909179714,
+        0.01394516986665617
+      ],
+      "verdict": "pass",
+      "raw_triangles": 146,
+      "instances_in_568BF": 48,
+      "raw_instanced_triangles": 7008,
+      "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+    },
+    {
+      "table": "*T3510",
+      "row": 7,
+      "catalogue_id": "MAF_0747",
+      "name": "Скамейка «Фестиваль» Модуль 1 / арт. nv 521-01",
+      "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0747_12.fbx",
+      "schedule_size_m": [
+        1.86,
+        1.7,
+        0.79
+      ],
+      "measured_size_m": [
+        1.6981048583984375,
+        1.8467674255371094,
+        0.8020949676683387
+      ],
+      "aligned_size_m": [
+        1.8467674255371094,
+        1.6981048583984375,
+        0.8020949676683387
+      ],
+      "plan_axes_swapped": true,
+      "deviation_m": [
+        0.013232574462890723,
+        0.0018951416015624556,
+        0.012094967668338619
+      ],
+      "verdict": "pass",
+      "raw_triangles": 364,
+      "instances_in_568BF": 4,
+      "raw_instanced_triangles": 1456,
+      "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+    },
+    {
+      "table": "*T3510",
+      "row": 9,
+      "catalogue_id": "MAF_0506",
+      "name": "Лежак «Городской» / 11061",
+      "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0506_M_Chaise_loung_001.fbx",
+      "schedule_size_m": [
+        0.6,
+        1.633,
+        0.93
+      ],
+      "measured_size_m": [
+        0.6106643676757812,
+        1.6297187805175781,
+        0.933576375246048
+      ],
+      "aligned_size_m": [
+        0.6106643676757812,
+        1.6297187805175781,
+        0.933576375246048
+      ],
+      "plan_axes_swapped": false,
+      "deviation_m": [
+        0.010664367675781272,
+        0.003281219482421882,
+        0.0035763752460479248
+      ],
+      "verdict": "pass",
+      "raw_triangles": 1460,
+      "instances_in_568BF": 6,
+      "raw_instanced_triangles": 8760,
+      "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+    },
+    {
+      "table": "*T3510",
+      "row": 11,
+      "catalogue_id": "MAF_0322",
+      "name": "Качалка балансир / Артикул: ИО 0410-2",
+      "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0322_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_001.fbx",
+      "schedule_size_m": [
+        0.9,
+        0.6,
+        0.7
+      ],
+      "measured_size_m": [
+        0.5722503662109375,
+        0.920166015625,
+        0.6865539625287056
+      ],
+      "aligned_size_m": [
+        0.920166015625,
+        0.5722503662109375,
+        0.6865539625287056
+      ],
+      "plan_axes_swapped": true,
+      "deviation_m": [
+        0.020166015624999978,
+        0.027749633789062478,
+        0.013446037471294359
+      ],
+      "verdict": "pass",
+      "raw_triangles": 724,
+      "instances_in_568BF": 2,
+      "raw_instanced_triangles": 1448,
+      "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+    },
+    {
+      "table": "*T3510",
+      "row": 12,
+      "catalogue_id": "MAF_0920",
+      "name": "Качели / Артикул:Качели / ИО 0118Т-1",
+      "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0920_Object090.fbx",
+      "schedule_size_m": [
+        2.2,
+        0.3,
+        1.9
+      ],
+      "measured_size_m": [
+        2.1580810546875,
+        0.2670936584472656,
+        1.8973584353569528
+      ],
+      "aligned_size_m": [
+        2.1580810546875,
+        0.2670936584472656,
+        1.8973584353569528
+      ],
+      "plan_axes_swapped": false,
+      "deviation_m": [
+        0.04191894531250018,
+        0.032906341552734364,
+        0.0026415646430471007
+      ],
+      "verdict": "pass",
+      "raw_triangles": 678,
+      "instances_in_568BF": 2,
+      "raw_instanced_triangles": 1356,
+      "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+    },
+    {
+      "table": "*T3510",
+      "row": 16,
+      "catalogue_id": "MAF_0803",
+      "name": "Детская площадка / Артикул: ДП 090",
+      "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0803_Object115.fbx",
+      "schedule_size_m": [
+        5.5,
+        2.0,
+        2.25
+      ],
+      "measured_size_m": [
+        5.5343170166015625,
+        2.03155517578125,
+        2.319488626812813
+      ],
+      "aligned_size_m": [
+        5.5343170166015625,
+        2.03155517578125,
+        2.319488626812813
+      ],
+      "plan_axes_swapped": false,
+      "deviation_m": [
+        0.0343170166015625,
+        0.03155517578125,
+        0.06948862681281298
+      ],
+      "verdict": "pass",
+      "raw_triangles": 4562,
+      "instances_in_568BF": 1,
+      "raw_instanced_triangles": 4562,
+      "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+    },
+    {
+      "table": "*T3510",
+      "row": 26,
+      "catalogue_id": "MAF_0677",
+      "name": "Теннисный стол Премиум / Артикул: 4-060",
+      "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0677_M_Tennis_Table_001.fbx",
+      "schedule_size_m": [
+        2.74,
+        1.52,
+        0.76
+      ],
+      "measured_size_m": [
+        1.5250091552734375,
+        2.739999771118164,
+        0.9131300300359726
+      ],
+      "aligned_size_m": [
+        2.739999771118164,
+        1.5250091552734375,
+        0.9131300300359726
+      ],
+      "plan_axes_swapped": true,
+      "deviation_m": [
+        2.2888183615066282e-07,
+        0.005009155273437482,
+        0.1531300300359726
+      ],
+      "verdict": "review",
+      "raw_triangles": 8696,
+      "instances_in_568BF": 1,
+      "raw_instanced_triangles": 8696,
+      "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured. Q4 resolves 760 mm as table-top height: overall bbox including net exceeds it by 153 mm; table-top geometry not measured. Not a pass."
+    },
+    {
+      "table": "*T3510",
+      "row": 27,
+      "catalogue_id": "MAF_0219",
+      "name": "Комплект мебели «Ландау» / Артикул: 13994",
+      "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0219_C_13010_Stol_Landau_komplekt_001.fbx",
+      "schedule_size_m": [
+        2.28,
+        2.28,
+        0.75
+      ],
+      "measured_size_m": [
+        2.2821578979492188,
+        2.282154083251953,
+        0.7486557122319937
+      ],
+      "aligned_size_m": [
+        2.2821578979492188,
+        2.282154083251953,
+        0.7486557122319937
+      ],
+      "plan_axes_swapped": false,
+      "deviation_m": [
+        0.0021578979492189454,
+        0.0021540832519533204,
+        0.0013442877680063248
+      ],
+      "verdict": "pass",
+      "raw_triangles": 540,
+      "instances_in_568BF": 3,
+      "raw_instanced_triangles": 1620,
+      "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured. User accepted source article 13010 vs schedule 13994."
+    },
+    {
+      "table": "*T3510",
+      "row": 28,
+      "catalogue_id": "MAF_0127",
+      "name": "Качели-гнездо круг / 189.001",
+      "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0127_Icosphere_004.fbx",
+      "schedule_size_m": [
+        1.09,
+        1.09,
+        null
+      ],
+      "measured_size_m": [
+        1.7081069946289062,
+        1.9991607666015625,
+        2.3873108411207795
+      ],
+      "aligned_size_m": [
+        1.7081069946289062,
+        1.9991607666015625,
+        2.3873108411207795
+      ],
+      "plan_axes_swapped": false,
+      "deviation_m": [
+        0.6181069946289062,
+        0.9091607666015624,
+        null
+      ],
+      "verdict": "fail",
+      "raw_triangles": 2030,
+      "instances_in_568BF": 4,
+      "raw_instanced_triangles": 8120,
+      "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured. FAIL on both known plan axes; missing height does not hide known failure. No rescale/substitution authorized."
+    },
+    {
+      "table": "*T3510",
+      "row": 29,
+      "catalogue_id": "MAF_0159",
+      "name": "Кресло «Парк» / Артикул: 12750",
+      "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0159_C_Veloparkovka_Forrest_C.fbx",
+      "schedule_size_m": [
+        0.765,
+        0.53,
+        1.065
+      ],
+      "measured_size_m": [
+        0.45746612548828125,
+        0.7706375122070312,
+        1.000959394172807
+      ],
+      "aligned_size_m": [
+        0.7706375122070312,
+        0.45746612548828125,
+        1.000959394172807
+      ],
+      "plan_axes_swapped": true,
+      "deviation_m": [
+        0.005637512207031237,
+        0.07253387451171878,
+        0.06404060582719295
+      ],
+      "verdict": "pass",
+      "raw_triangles": 320,
+      "instances_in_568BF": 25,
+      "raw_instanced_triangles": 8000,
+      "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+    },
+    {
+      "table": "*T3510",
+      "row": 31,
+      "catalogue_id": "MAF_0722",
+      "name": "Стол «Лондон» Тип 3 / Артикул: 13032",
+      "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0722_Plane002.fbx",
+      "schedule_size_m": [
+        1.0,
+        1.0,
+        0.6
+      ],
+      "measured_size_m": [
+        1.0,
+        1.0,
+        0.6000000391408431
+      ],
+      "aligned_size_m": [
+        1.0,
+        1.0,
+        0.6000000391408431
+      ],
+      "plan_axes_swapped": false,
+      "deviation_m": [
+        0.0,
+        0.0,
+        3.914084312217625e-08
+      ],
+      "verdict": "pass",
+      "raw_triangles": 212,
+      "instances_in_568BF": 16,
+      "raw_instanced_triangles": 3392,
+      "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+    },
+    {
+      "table": "*T3510",
+      "row": 32,
+      "catalogue_id": "MAF_0687",
+      "name": "Приствольная решетка",
+      "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0687_M_Trunk_Gate_003.fbx",
+      "schedule_size_m": [
+        1.0,
+        1.0,
+        0.044
+      ],
+      "measured_size_m": [
+        1.0,
+        1.0,
+        0.04762384528294206
+      ],
+      "aligned_size_m": [
+        1.0,
+        1.0,
+        0.04762384528294206
+      ],
+      "plan_axes_swapped": false,
+      "deviation_m": [
+        0.0,
+        0.0,
+        0.003623845282942059
+      ],
+      "verdict": "pass",
+      "raw_triangles": 3732,
+      "instances_in_568BF": 4,
+      "raw_instanced_triangles": 14928,
+      "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+    }
+  ],
+  "open_questions": [
+    {
+      "id": "Q8",
+      "question": "Row *T3510/28: MAF_0127 measures 1.708107 x 1.999161 m vs schedule 1.09 x 1.09 m; deviations 0.618107 / 0.909161 m exceed D094. Which catalogue id should be used, or should this position remain no model? No scaling or substitution performed."
+    },
+    {
+      "id": "Q9",
+      "question": "Turnik is included by Q6: provide its selected library ID or manufacturer/reference and L/W/H for identification; alternatively confirm no model pending a later modelling task."
+    }
+  ]
+}

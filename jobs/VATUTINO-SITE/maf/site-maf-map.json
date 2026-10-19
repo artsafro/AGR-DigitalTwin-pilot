@@ -4,10 +4,9 @@
  "tolerance_m": 0.1,
  "tolerance_rule": "[D094] per axis, plan L/W may swap, height not swapped",
  "counts": {
-  "no model": 30,
+  "no model": 35,
   "not a MAF item": 1,
-  "candidates": 17,
-  "proposed": 1
+  "user selected": 13
  },
  "candidates_contact_sheet": "C:/x/vatutino-maf/v001/candidates.html (local)",
  "positions": [
@@ -25,9 +24,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q1"
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -43,9 +43,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q1"
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -61,9 +62,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q1"
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -79,9 +81,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q1"
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -97,9 +100,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q1"
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -115,9 +119,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q1"
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -133,9 +138,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q1"
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -151,9 +157,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q1"
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -169,9 +176,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q1"
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -187,9 +195,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q1"
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -205,7 +214,7 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; one dimension-only candidate MAF_0288 (0.09 m) is not a product match",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; one dimension-only candidate MAF_0288 (0.09 m) is not a product match; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [
     {
      "id": "MAF_0288",
@@ -221,7 +230,8 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0288_SM_PavlaAndreeva_Vld_23_GroundEl_005.png"
     }
    ],
-   "question": "Q1"
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -233,9 +243,10 @@
    "size_mm": null,
    "catalogue_id": null,
    "status": "not a MAF item",
-   "reason": "handrail for МГН, qty '-', no size, no DWG block; belongs to stairs/ramps, not to the MAF set (question)",
+   "reason": "handrail for МГН, qty '-', no size, no DWG block; belongs to stairs/ramps, not to the MAF set (question); excluded by Artem 2026-10-19 (Q7).",
    "candidates": [],
-   "question": "Q7"
+   "resolved_question": "Q7",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -251,9 +262,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule)",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -269,9 +281,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule)",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -287,9 +300,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule)",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -301,9 +315,10 @@
    "size_mm": null,
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis ('14 3700х8020х3080' unreadable first value (143700?) -> review)",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis ('14 3700х8020х3080' unreadable first value (143700?) -> review); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3508",
@@ -315,9 +330,10 @@
    "size_mm": null,
    "catalogue_id": null,
    "status": "no model",
-   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q1"
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -331,9 +347,9 @@
     500,
     720
    ],
-   "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 3 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "catalogue_id": "MAF_0326",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
    "candidates": [
     {
      "id": "MAF_0411",
@@ -379,7 +395,41 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0326_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_006.png"
     }
    ],
-   "question": "Q2"
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 1,
+    "catalogue_id": "MAF_0326",
+    "name": "Скамейка стальная «Андромеда» / Артикул: 14122",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0326_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_006.fbx",
+    "schedule_size_m": [
+     1.8,
+     0.5,
+     0.72
+    ],
+    "measured_size_m": [
+     1.8018798828125,
+     0.47443389892578125,
+     0.8008270021528006
+    ],
+    "aligned_size_m": [
+     1.8018798828125,
+     0.47443389892578125,
+     0.8008270021528006
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.0018798828124999556,
+     0.02556610107421875,
+     0.08082700215280059
+    ],
+    "verdict": "pass",
+    "raw_triangles": 240,
+    "instances_in_568BF": 5,
+    "raw_instanced_triangles": 1200,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -393,9 +443,9 @@
     470,
     1050
    ],
-   "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 3 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "catalogue_id": "MAF_0794",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
    "candidates": [
     {
      "id": "MAF_0794",
@@ -437,7 +487,41 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0378_M_Armchair_001.png"
     }
    ],
-   "question": "Q2"
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 2,
+    "catalogue_id": "MAF_0794",
+    "name": "Урна стальная «Арго» / Артикул: 19648",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0794_Object105.fbx",
+    "schedule_size_m": [
+     0.62,
+     0.47,
+     1.05
+    ],
+    "measured_size_m": [
+     0.6435394287109375,
+     0.4748058319091797,
+     1.0639451698666562
+    ],
+    "aligned_size_m": [
+     0.6435394287109375,
+     0.4748058319091797,
+     1.0639451698666562
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.023539428710937504,
+     0.004805831909179714,
+     0.01394516986665617
+    ],
+    "verdict": "pass",
+    "raw_triangles": 146,
+    "instances_in_568BF": 48,
+    "raw_instanced_triangles": 7008,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -453,9 +537,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -471,9 +556,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -489,9 +575,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule)",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -503,9 +590,10 @@
    "size_mm": null,
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis (volume '1100 л' only, no L/W/H -> review)",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (volume '1100 л' only, no L/W/H -> review); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -519,9 +607,9 @@
     1700,
     790
    ],
-   "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 3 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "catalogue_id": "MAF_0747",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
    "candidates": [
     {
      "id": "MAF_0747",
@@ -567,7 +655,41 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0267_SM_NizhnieMnevniki_ZU_12_B_GroundEl_001.png"
     }
    ],
-   "question": "Q2"
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 7,
+    "catalogue_id": "MAF_0747",
+    "name": "Скамейка «Фестиваль» Модуль 1 / арт. nv 521-01",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0747_12.fbx",
+    "schedule_size_m": [
+     1.86,
+     1.7,
+     0.79
+    ],
+    "measured_size_m": [
+     1.6981048583984375,
+     1.8467674255371094,
+     0.8020949676683387
+    ],
+    "aligned_size_m": [
+     1.8467674255371094,
+     1.6981048583984375,
+     0.8020949676683387
+    ],
+    "plan_axes_swapped": true,
+    "deviation_m": [
+     0.013232574462890723,
+     0.0018951416015624556,
+     0.012094967668338619
+    ],
+    "verdict": "pass",
+    "raw_triangles": 364,
+    "instances_in_568BF": 4,
+    "raw_instanced_triangles": 1456,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -583,9 +705,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis (4th value (seat height) ignored)",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (4th value (seat height) ignored); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -599,9 +722,9 @@
     1633,
     930
    ],
-   "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 5 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "catalogue_id": "MAF_0506",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
    "candidates": [
     {
      "id": "MAF_0174",
@@ -671,7 +794,41 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0818_Brusya.png"
     }
    ],
-   "question": "Q2"
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 9,
+    "catalogue_id": "MAF_0506",
+    "name": "Лежак «Городской» / 11061",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0506_M_Chaise_loung_001.fbx",
+    "schedule_size_m": [
+     0.6,
+     1.633,
+     0.93
+    ],
+    "measured_size_m": [
+     0.6106643676757812,
+     1.6297187805175781,
+     0.933576375246048
+    ],
+    "aligned_size_m": [
+     0.6106643676757812,
+     1.6297187805175781,
+     0.933576375246048
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.010664367675781272,
+     0.003281219482421882,
+     0.0035763752460479248
+    ],
+    "verdict": "pass",
+    "raw_triangles": 1460,
+    "instances_in_568BF": 6,
+    "raw_instanced_triangles": 8760,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -686,8 +843,8 @@
     800
    ],
    "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 11 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "status": "no model",
+   "reason": "no name hit in the catalogue (names are scene object names); 11 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [
     {
      "id": "MAF_0241",
@@ -775,7 +932,8 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0238_Cube_002.png"
     }
    ],
-   "question": "Q2"
+   "resolved_question": "Q2",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -789,9 +947,9 @@
     600,
     700
    ],
-   "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 1 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "catalogue_id": "MAF_0322",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
    "candidates": [
     {
      "id": "MAF_0322",
@@ -807,7 +965,41 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0322_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_001.png"
     }
    ],
-   "question": "Q6"
+   "resolved_question": "Q6",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 11,
+    "catalogue_id": "MAF_0322",
+    "name": "Качалка балансир / Артикул: ИО 0410-2",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0322_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_001.fbx",
+    "schedule_size_m": [
+     0.9,
+     0.6,
+     0.7
+    ],
+    "measured_size_m": [
+     0.5722503662109375,
+     0.920166015625,
+     0.6865539625287056
+    ],
+    "aligned_size_m": [
+     0.920166015625,
+     0.5722503662109375,
+     0.6865539625287056
+    ],
+    "plan_axes_swapped": true,
+    "deviation_m": [
+     0.020166015624999978,
+     0.027749633789062478,
+     0.013446037471294359
+    ],
+    "verdict": "pass",
+    "raw_triangles": 724,
+    "instances_in_568BF": 2,
+    "raw_instanced_triangles": 1448,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -821,9 +1013,9 @@
     300,
     1900
    ],
-   "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 3 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "catalogue_id": "MAF_0920",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
    "candidates": [
     {
      "id": "MAF_0358",
@@ -867,7 +1059,41 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0920_Object090.png"
     }
    ],
-   "question": "Q2"
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 12,
+    "catalogue_id": "MAF_0920",
+    "name": "Качели / Артикул:Качели / ИО 0118Т-1",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0920_Object090.fbx",
+    "schedule_size_m": [
+     2.2,
+     0.3,
+     1.9
+    ],
+    "measured_size_m": [
+     2.1580810546875,
+     0.2670936584472656,
+     1.8973584353569528
+    ],
+    "aligned_size_m": [
+     2.1580810546875,
+     0.2670936584472656,
+     1.8973584353569528
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.04191894531250018,
+     0.032906341552734364,
+     0.0026415646430471007
+    ],
+    "verdict": "pass",
+    "raw_triangles": 678,
+    "instances_in_568BF": 2,
+    "raw_instanced_triangles": 1356,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -882,8 +1108,8 @@
     2400
    ],
    "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 3 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "status": "no model",
+   "reason": "no name hit in the catalogue (names are scene object names); 3 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [
     {
      "id": "MAF_0127",
@@ -927,7 +1153,8 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0716_Shape004.png"
     }
    ],
-   "question": "Q2"
+   "resolved_question": "Q2",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -943,9 +1170,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -960,8 +1188,8 @@
     200
    ],
    "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 2 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "status": "no model",
+   "reason": "no name hit in the catalogue (names are scene object names); 2 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [
     {
      "id": "MAF_0865",
@@ -992,7 +1220,8 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0311_SM_77_08_0014001_7826_GroundEl_004.png"
     }
    ],
-   "question": "Q2"
+   "resolved_question": "Q2",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1006,9 +1235,9 @@
     2000,
     2250
    ],
-   "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 1 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "catalogue_id": "MAF_0803",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
    "candidates": [
     {
      "id": "MAF_0803",
@@ -1024,7 +1253,41 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0803_Object115.png"
     }
    ],
-   "question": "Q2"
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 16,
+    "catalogue_id": "MAF_0803",
+    "name": "Детская площадка / Артикул: ДП 090",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0803_Object115.fbx",
+    "schedule_size_m": [
+     5.5,
+     2.0,
+     2.25
+    ],
+    "measured_size_m": [
+     5.5343170166015625,
+     2.03155517578125,
+     2.319488626812813
+    ],
+    "aligned_size_m": [
+     5.5343170166015625,
+     2.03155517578125,
+     2.319488626812813
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.0343170166015625,
+     0.03155517578125,
+     0.06948862681281298
+    ],
+    "verdict": "pass",
+    "raw_triangles": 4562,
+    "instances_in_568BF": 1,
+    "raw_instanced_triangles": 4562,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1040,9 +1303,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1054,9 +1318,10 @@
    "size_mm": null,
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis (range d 150-230, h 200-400 mm: no single size -> review)",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (range d 150-230, h 200-400 mm: no single size -> review); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1072,9 +1337,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1090,9 +1356,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1107,8 +1374,8 @@
     1500
    ],
    "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 1 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "status": "no model",
+   "reason": "no name hit in the catalogue (names are scene object names); 1 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [
     {
      "id": "MAF_0736",
@@ -1124,7 +1391,8 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0736_Object017.png"
     }
    ],
-   "question": "Q6"
+   "resolved_question": "Q6",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1140,9 +1408,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1158,9 +1427,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1176,9 +1446,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1194,9 +1465,10 @@
    ],
    "catalogue_id": null,
    "status": "no model",
-   "reason": "no catalogue name hit and no entry within 0.1 m per axis",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [],
-   "question": "Q5"
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1210,9 +1482,9 @@
     1520,
     760
    ],
-   "catalogue_id": null,
-   "status": "candidates",
-   "reason": "name hits MAF_0677/0678/0679/0828 «Tennis_Table» fail the height by 0.13-0.15 m (bbox 0.89-0.91 m incl. net; schedule 760 mm is the table-top height); dimension-only MAF_0334 within 0.085 m",
+   "catalogue_id": "MAF_0677",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
    "candidates": [
     {
      "id": "MAF_0677",
@@ -1282,7 +1554,41 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0334_SM_Avtozavodskaya_Vld_23_GroundEl_008.png"
     }
    ],
-   "question": "Q4"
+   "resolved_question": "Q4",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 26,
+    "catalogue_id": "MAF_0677",
+    "name": "Теннисный стол Премиум / Артикул: 4-060",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0677_M_Tennis_Table_001.fbx",
+    "schedule_size_m": [
+     2.74,
+     1.52,
+     0.76
+    ],
+    "measured_size_m": [
+     1.5250091552734375,
+     2.739999771118164,
+     0.9131300300359726
+    ],
+    "aligned_size_m": [
+     2.739999771118164,
+     1.5250091552734375,
+     0.9131300300359726
+    ],
+    "plan_axes_swapped": true,
+    "deviation_m": [
+     2.2888183615066282e-07,
+     0.005009155273437482,
+     0.1531300300359726
+    ],
+    "verdict": "review",
+    "raw_triangles": 8696,
+    "instances_in_568BF": 1,
+    "raw_instanced_triangles": 8696,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured. Q4 resolves 760 mm as table-top height: overall bbox including net exceeds it by 153 mm; table-top geometry not measured. Not a pass."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1297,8 +1603,8 @@
     750
    ],
    "catalogue_id": "MAF_0219",
-   "status": "proposed",
-   "reason": "name: library object `C_13010_Stol Landau komplekt.001` («Ландау» set); dims 2.282×2.282×0.749 m vs d 2280 h 750 mm, max dev 0.002 m [D094] pass; article in the object name 13010 vs schedule 13994 -> user confirms",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
    "candidates": [
     {
      "id": "MAF_0219",
@@ -1368,7 +1674,41 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0043_MAF_003.png"
     }
    ],
-   "question": "Q3"
+   "resolved_question": "Q3",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 27,
+    "catalogue_id": "MAF_0219",
+    "name": "Комплект мебели «Ландау» / Артикул: 13994",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0219_C_13010_Stol_Landau_komplekt_001.fbx",
+    "schedule_size_m": [
+     2.28,
+     2.28,
+     0.75
+    ],
+    "measured_size_m": [
+     2.2821578979492188,
+     2.282154083251953,
+     0.7486557122319937
+    ],
+    "aligned_size_m": [
+     2.2821578979492188,
+     2.282154083251953,
+     0.7486557122319937
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.0021578979492189454,
+     0.0021540832519533204,
+     0.0013442877680063248
+    ],
+    "verdict": "pass",
+    "raw_triangles": 540,
+    "instances_in_568BF": 3,
+    "raw_instanced_triangles": 1620,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured. User accepted source article 13010 vs schedule 13994."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1382,9 +1722,9 @@
     1090,
     null
    ],
-   "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 27 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "catalogue_id": "MAF_0127",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
    "candidates": [
     {
      "id": "MAF_0402",
@@ -1471,7 +1811,41 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0181_C_kadki3_kadki3_10518498_012.png"
     }
    ],
-   "question": "Q2"
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 28,
+    "catalogue_id": "MAF_0127",
+    "name": "Качели-гнездо круг / 189.001",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0127_Icosphere_004.fbx",
+    "schedule_size_m": [
+     1.09,
+     1.09,
+     null
+    ],
+    "measured_size_m": [
+     1.7081069946289062,
+     1.9991607666015625,
+     2.3873108411207795
+    ],
+    "aligned_size_m": [
+     1.7081069946289062,
+     1.9991607666015625,
+     2.3873108411207795
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.6181069946289062,
+     0.9091607666015624,
+     null
+    ],
+    "verdict": "fail",
+    "raw_triangles": 2030,
+    "instances_in_568BF": 4,
+    "raw_instanced_triangles": 8120,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured. FAIL on both known plan axes; missing height does not hide known failure. No rescale/substitution authorized."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1485,9 +1859,9 @@
     530,
     1065
    ],
-   "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 6 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "catalogue_id": "MAF_0159",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
    "candidates": [
     {
      "id": "MAF_0159",
@@ -1568,7 +1942,41 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0459_M_Bysicle_003.png"
     }
    ],
-   "question": "Q2"
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 29,
+    "catalogue_id": "MAF_0159",
+    "name": "Кресло «Парк» / Артикул: 12750",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0159_C_Veloparkovka_Forrest_C.fbx",
+    "schedule_size_m": [
+     0.765,
+     0.53,
+     1.065
+    ],
+    "measured_size_m": [
+     0.45746612548828125,
+     0.7706375122070312,
+     1.000959394172807
+    ],
+    "aligned_size_m": [
+     0.7706375122070312,
+     0.45746612548828125,
+     1.000959394172807
+    ],
+    "plan_axes_swapped": true,
+    "deviation_m": [
+     0.005637512207031237,
+     0.07253387451171878,
+     0.06404060582719295
+    ],
+    "verdict": "pass",
+    "raw_triangles": 320,
+    "instances_in_568BF": 25,
+    "raw_instanced_triangles": 8000,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1583,8 +1991,8 @@
     450
    ],
    "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 2 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "status": "no model",
+   "reason": "no name hit in the catalogue (names are scene object names); 2 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
    "candidates": [
     {
      "id": "MAF_0602",
@@ -1615,7 +2023,8 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0352_SM_MusyDjalilya_6_K_2_GroundEl_010.png"
     }
    ],
-   "question": "Q2"
+   "resolved_question": "Q2",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1629,9 +2038,9 @@
     1000,
     600
    ],
-   "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 13 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "catalogue_id": "MAF_0722",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
    "candidates": [
     {
      "id": "MAF_0722",
@@ -1716,7 +2125,41 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0395_M_Armchair_019.png"
     }
    ],
-   "question": "Q2"
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 31,
+    "catalogue_id": "MAF_0722",
+    "name": "Стол «Лондон» Тип 3 / Артикул: 13032",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0722_Plane002.fbx",
+    "schedule_size_m": [
+     1.0,
+     1.0,
+     0.6
+    ],
+    "measured_size_m": [
+     1.0,
+     1.0,
+     0.6000000391408431
+    ],
+    "aligned_size_m": [
+     1.0,
+     1.0,
+     0.6000000391408431
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.0,
+     0.0,
+     3.914084312217625e-08
+    ],
+    "verdict": "pass",
+    "raw_triangles": 212,
+    "instances_in_568BF": 16,
+    "raw_instanced_triangles": 3392,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   },
   {
    "table": "*T3510",
@@ -1730,9 +2173,9 @@
     1000,
     44
    ],
-   "catalogue_id": null,
-   "status": "candidates",
-   "reason": "no name hit in the catalogue (names are scene object names); 2 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture",
+   "catalogue_id": "MAF_0687",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
    "candidates": [
     {
      "id": "MAF_0687",
@@ -1765,7 +2208,41 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0231_Circle_017.png"
     }
    ],
-   "question": "Q2"
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 32,
+    "catalogue_id": "MAF_0687",
+    "name": "Приствольная решетка",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0687_M_Trunk_Gate_003.fbx",
+    "schedule_size_m": [
+     1.0,
+     1.0,
+     0.044
+    ],
+    "measured_size_m": [
+     1.0,
+     1.0,
+     0.04762384528294206
+    ],
+    "aligned_size_m": [
+     1.0,
+     1.0,
+     0.04762384528294206
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.0,
+     0.0,
+     0.003623845282942059
+    ],
+    "verdict": "pass",
+    "raw_triangles": 3732,
+    "instances_in_568BF": 4,
+    "raw_instanced_triangles": 14928,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
   }
  ],
  "questions": [
@@ -1864,5 +2341,39 @@
    ]
   }
  ],
- "user_answers": null
+ "user_answers": {
+  "source": "Kanban t_147116bf comment 2026-10-19 18:57",
+  "verbatim_acceptance": "Принимаю",
+  "answers_english_transcription": {
+   "Q1": "12 custom items remain no model; modelling follow-up separately later, not in this card.",
+   "Q2": "Picks from candidate sheets: *T3510/1=MAF_0326, *T3510/2=MAF_0794, *T3510/7=MAF_0747, *T3510/9=MAF_0506, *T3510/11=MAF_0322, *T3510/12=MAF_0920, *T3510/16=MAF_0803, *T3510/28=MAF_0127, *T3510/29=MAF_0159, *T3510/31=MAF_0722, *T3510/32=MAF_0687. Rows 10, 13, 15, 21, 30 remain no model. Every pick is checked against the 10 cm tolerance; a failing pick is reported, not swapped.",
+   "Q3": "Landau = MAF_0219; article mismatch 13010/13994 retained.",
+   "Q4": "760 mm is table-top height; use MAF_0677. Overall height including net is not a table-top measurement.",
+   "Q5": "All 18 rows without candidates remain no model; modelling follow-up later, not in this card.",
+   "Q6": "Schedule IO 0410-2 wins; block mismatch goes to architect questions (D112). Workout = 217070. Turnik is included despite no schedule row.",
+   "Q7": "MGN handrail excluded from MAF; belongs to stairs/ramps."
+  }
+ },
+ "additional_plan_positions": [
+  {
+   "block": "Турник",
+   "inserts_in_568BF": 1,
+   "table": null,
+   "row": null,
+   "catalogue_id": null,
+   "status": "needs identification",
+   "reason": "Included by Q6; no schedule dimensions/manufacturer/article or selected library ID supplied. No substitution invented."
+  }
+ ],
+ "open_questions": [
+  {
+   "id": "Q8",
+   "question": "Row *T3510/28: MAF_0127 measures 1.708107 x 1.999161 m vs schedule 1.09 x 1.09 m; deviations 0.618107 / 0.909161 m exceed D094. Which catalogue id should be used, or should this position remain no model? No scaling or substitution performed."
+  },
+  {
+   "id": "Q9",
+   "question": "Turnik is included by Q6: provide its selected library ID or manufacturer/reference and L/W/H for identification; alternatively confirm no model pending a later modelling task."
+  }
+ ],
+ "stage_status": "Steps 1-2 decision record and raw-source dimension gate only; not a placement-ready set. NPM/VPM, atlas, smoothing, L2 checks and final budgets not produced."
 }
