@@ -4,6 +4,8 @@ import re
 import subprocess
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 LOG = "docs/decisions.md"
 ROW = re.compile(r"^\| (D\d{3}) \|")
@@ -55,9 +57,11 @@ def test_log_format():
     rows = log_rows()
     assert rows, "no decisions"
     dates = []
-    for number, row in enumerate(rows, 1):
+    # Backfilled decisions keep the next free id and their original date, not a new date or renumbered ids.
+    assert sorted(row[0] for row in rows) == [f"D{n:03d}" for n in range(1, len(rows) + 1)], \
+        "ids must run D001, D002, ... without gaps or duplicates"
+    for row in rows:
         assert len(row) == 5 and all(row), row
-        assert row[0] == f"D{number:03d}", f"{row[0]}: ids must run D001, D002, ... without gaps"
         dates.append(datetime.date.fromisoformat(row[1]))
     assert dates == sorted(dates), "decisions must be sorted by date"
 
@@ -69,10 +73,41 @@ def test_every_dated_decision_carries_its_id():
 
 def test_every_decision_is_anchored_where_it_applies():
     anchored = set()
-    for name in scope_files() + ["docs/prd/agent-ready-harness.md"]:
+    for name in scope_files() + ["docs/prd/agent-ready-harness.md", "src/dt_ai/spec/mesh.py"]:
         for group in REF.findall((ROOT / name).read_text(encoding="utf-8")):
             anchored.update(group.split(", "))
     assert [row[0] for row in log_rows() if row[0] not in anchored] == []
+
+
+def test_log_rejects_every_missing_or_duplicate_id(monkeypatch):
+    """Exhaustive synthetic mutations: a backfill must not weaken id uniqueness or completeness."""
+    rows = log_rows()
+    module = __import__(__name__)
+    for i in range(len(rows)):
+        # Removing the highest id is indistinguishable from a valid shorter log; probe internal gaps only.
+        mutations = [rows[:i] + [rows[i]] + rows[i:]]
+        if rows[i][0] != max(row[0] for row in rows):
+            mutations.append(rows[:i] + rows[i + 1:])
+        for mutated in mutations:
+            monkeypatch.setattr(module, "log_rows", lambda mutated=mutated: mutated)
+            with pytest.raises(AssertionError):
+                test_log_format()
+    monkeypatch.setattr(module, "log_rows", lambda: [])
+    with pytest.raises(AssertionError, match="no decisions"):
+        test_log_format()
+
+
+def test_drawing_review_decision_is_logged_and_anchored():
+    rows = [row for row in log_rows() if row[0] == "D132"]
+    assert len(rows) == 1, "#85 drawing-review decision must be canonical"
+    row = rows[0]
+    assert row[1] == "2026-10-16"
+    assert "drawings" in row[2] and "missing wall" in row[2]
+    assert row[3] == "`src/dt_ai/spec/mesh.py` `_panel_contour`"
+    assert "/pull/274" in row[4] and "#85" in row[4]
+    source = (ROOT / "src/dt_ai/spec/mesh.py").read_text(encoding="utf-8")
+    rule = source.split("def _panel_contour(", 1)[1].split('"""')[1]
+    assert "[D132]" in rule and "the extractor does not decide it" in rule
 
 
 def test_unreferenced_mentions_fail(tmp_path, monkeypatch):
