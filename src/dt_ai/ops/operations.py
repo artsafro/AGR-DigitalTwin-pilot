@@ -117,3 +117,35 @@ def primitive_box(scene: Scene, part: str, silhouette_max_m: float = SILHOUETTE_
         raise OperationRefused(f"a box would change the silhouette by {worst[1] * 1000:.0f} mm in the {worst[0]} view "
                                f"(limit {silhouette_max_m * 1000:.0f} mm): rebuild it by contour instead")
     return {**scene, part: box}
+
+
+def to_opacity_plane(scene: Scene, part: str) -> Scene:
+    """Replace an NPM repeating see-through part by one PCA mid-plane quad [D109].
+
+    The caller, not this operation, registers `part` in Context.opacity_parts. No texture or UV is generated.
+    A refusal leaves the input unchanged; the existing silhouette test applies in all three object-system views.
+    """
+    mesh = scene[part]
+    if not len(mesh.vertices) or not len(mesh.triangles):
+        raise OperationRefused("the part is empty; which source geometry should become an opacity plane?")
+    if len(mesh.triangles) <= 2:
+        raise OperationRefused("the part already has 2 triangles or fewer; should it stay as geometry?")
+    center = mesh.vertices.mean(axis=0)
+    relative = mesh.vertices - center
+    _, axes = np.linalg.eigh(relative.T @ relative)
+    local = relative @ axes                      # thinnest principal axis first
+    lo, hi = local.min(axis=0), local.max(axis=0)
+    depth = hi[0] - lo[0]
+    if depth > 2 * SILHOUETTE_MAX_M + 1e-12:
+        raise OperationRefused(f"the part is {depth:.3f} m thick (limit {2 * SILHOUETTE_MAX_M:.2f} m); "
+                               "which richer geometry should replace it?")
+    mid = (lo[0] + hi[0]) / 2
+    corners = np.array([(mid, u, v) for u, v in ((lo[1], lo[2]), (hi[1], lo[2]),
+                                                (hi[1], hi[2]), (lo[1], hi[2]))])
+    plane = Mesh(corners @ axes.T + center, np.array([(0, 1, 2), (0, 2, 3)]))
+    # Narrow projected railing gaps need finer sampling than primitive_box; use the same capped checker.
+    worst = max(silhouette_deviations(mesh, plane, SILHOUETTE_MAX_M / 32).items(), key=lambda kv: kv[1])
+    if worst[1] > SILHOUETTE_MAX_M:
+        raise OperationRefused(f"an opacity plane would change the silhouette by {worst[1]:.3f} m in the "
+                               f"{worst[0]} view (limit {SILHOUETTE_MAX_M:.2f} m); rebuild it by contour instead?")
+    return {**scene, part: plane}

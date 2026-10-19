@@ -52,3 +52,12 @@ def test_railing_becomes_one_midplane_quad_without_mutating_input(angle):
     assert max(silhouette_deviations(scene["railing"], plane, .07 / 32).values()) <= .07
     assert ctx.opacity_parts == frozenset({"railing"})
     assert_unchanged(scene, before)
+
+
+def test_planner_selects_largest_savings_only_until_budget_fits():
+    scene = {"small": railing(count=4), "large": railing(count=16), "medium": railing(count=10)}
+    before = snapshot(scene)
+    # 96 + 240 + 168 = 504; save 238 + 166, leaving 100.
+    assert operations.plan_opacity_swaps(scene, ["small", "large", "medium"], 100) == [
+        ("large", 238), ("medium", 166)]
+    assert_unchanged(scene, before)

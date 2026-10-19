@@ -254,14 +254,24 @@ def open_borders_hidden(scene: Scene, part: str, ctx: Context = Context()) -> In
 def no_see_through_hole(before: Scene, after: Scene, ctx: Context = Context()) -> InvariantResult:
     """(2) No ray that hit the scene before the operation misses it after: nothing was deleted that was not covered."""
     name = "no_see_through_hole"
-    _, c0, _ = _stack(before)
+    parts, c0, owner = _stack(before)
     _, c1, _ = _stack(after)
+    # Registration alone does not waive holes in existing opacity parts, or removal of a part.
+    replaced = np.array([
+        p in ctx.opacity_parts and p in after and len(before[p].triangles) > 2
+        and len(after[p].triangles) == 2 and len(after[p].vertices) == 4
+        and np.linalg.matrix_rank(after[p].vertices - after[p].vertices.mean(axis=0), tol=1e-10) == 2
+        for p in parts], dtype=bool)
     center, radius = _frame(before, after)
     lost = []
     total = 0
     for d in _directions():
         origins = _grid(center, radius, d, ctx.resolution)
-        was = _first_hits(origins, d, c0)[0] >= 0
+        first = _first_hits(origins, d, c0)[0]
+        was = first >= 0
+        # Exempt only rays whose BEFORE first hit belongs to the replaced candidate.
+        # Never index -1 (misses), nor exempt a different first-hit part behind/in front of it.
+        was[was] &= ~replaced[owner[first[was]]]
         now = _first_hits(origins, d, c1)[0] >= 0
         n = int((was & ~now).sum())
         total += n
