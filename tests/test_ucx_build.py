@@ -568,3 +568,14 @@ def test_scoped_replace_with_budget_combined(target, order):
         v, t = terrain()
         res = ub.build("Ground", v, t, model_triangles=50200, reserved_triangles=kept_tris)
         ub.check_file_budget(50200, kept_tris + res.triangles)
+
+
+@pytest.mark.parametrize("field", ["max_vertical_dev_m", "uncovered_strip_m", "tol_m"])
+@pytest.mark.parametrize("bad", [None, float("nan"), float("inf"), -float("inf"), -0.01])
+def test_ground_one_sided_missing_nonfinite_measurements_fail_closed(field, bad):
+    """[D133] Removing the reverse gate must not turn missing/invalid forward evidence into a pass."""
+    res = ub.UcxResult("Ground", [], 1.0, 0.004, max_vertical_dev_m=0.0,
+                       uncovered_strip_m=0.0, tol_m=0.08, footprint_overhang_bound_m=10.0)
+    setattr(res, field, bad)
+    assert not res.within_tol
+
