@@ -749,18 +749,21 @@ def covered_corridors(v, t, res, band=(0.01002, 0.1), hole=0.00501):
     return found
 
 
-def slit_site(angle):
-    """SYNTHETIC flat 16 x 16 m Ground with a 15 mm wide, 6 m long void slit entering from the west edge at
-    `angle` deg and ending inside the cell (a thin gap between plots: an outline band narrower than the
-    chord tolerance). Covered by three convex patches at one height, unwelded along the tip line."""
+def slit_site(angle, w=0.015, split_tip=True, centreline=False):
+    """SYNTHETIC flat 16 x 16 m Ground with a `w` (15 mm) wide, 6 m long void slit entering from the west
+    edge at `angle` deg and ending inside the cell (a thin gap between plots: an outline band narrower than
+    the chord tolerance). Covered by three convex patches at one height, unwelded along the tip line.
+    `split_tip=False` leaves the tip patch's long edge unsplit at the slit corners: the tip is then only
+    a partly exposed subsegment of that edge (T-junctions, #326 review round 2)."""
     a = math.radians(angle)
     u, n = np.array([math.cos(a), math.sin(a)]), np.array([-math.sin(a), math.cos(a)])
-    o, w, ln = np.array([0.0, 5.0]), 0.015, 6.0
+    o, ln = np.array([0.0, 5.0]), 6.0
     sq = np.array([(0, 0), (16, 0), (16, 16), (0, 16)], float)
     tip = float(u @ o) + ln
     parts = [ub._clip(ub._clip(sq, -n, -float(n @ o)), -u, -tip),
              ub._clip(ub._clip(sq, n, float(n @ o) + w), -u, -tip), ub._clip(sq, u, tip)]
-    corners = [o + u * ln, o + u * ln + n * w]  # slit tip corners: the tip is a mesh boundary edge of its own
+    # slit tip corners: with split_tip the tip is a mesh boundary edge of its own
+    corners = [o + u * ln, o + u * ln + n * w] if split_tip else []
     vs, ts, off = [], [], 0
     for p in parts:
         ring = []
@@ -776,6 +779,8 @@ def slit_site(angle):
         off += k + 1
     v, t = np.concatenate(vs), np.concatenate(ts)
     v[:, :2] += 500.0
+    if centreline:
+        return v, t, o + 500.0 + np.linspace(0.1, ln - 0.01, 200)[:, None] * u + n * w / 2
     return v, t, o + 500.0 + u * ln / 2 + n * w / 2
 
 
@@ -792,3 +797,53 @@ def test_ground_slit_tip_leaves_no_covered_corridor(angle):
     assert covered_corridors(v, t, res) == []
     assert not any(ub.piece_plan_contains(pc, mid)[0] for pc in res.pieces)  # the slit void stays open
     assert len(footprint_uncovered(v, t, res, n=6)) == 0
+
+
+@pytest.mark.parametrize("split_tip", [False, True])
+@pytest.mark.parametrize("w", [0.015, 0.1, 0.5, 1.0])
+@pytest.mark.parametrize("angle", [12.0, 33.0, 40.0, 57.0])
+def test_ground_partly_exposed_edge_keeps_slit_open(angle, w, split_tip):
+    """#326 review round 2 P1 regression row. Failing input (reviewer probe.py::site(12, 0.5) at bb8b0b2):
+    flat 16 x 16 m Z145, three unwelded patches, 6 m x 0.5 m void slit at 12 deg whose tip lies on the
+    unsplit long edge of the third patch (only a 0.5 m subsegment of that edge is exposed); default build
+    ok with 3 pieces / 36 tris, 200/200 slit centreline points inside a piece. Expected: no piece over the
+    functional slit, same as the split-edge control (split_tip=True); covered gaps stay inside [D098]."""
+    v, t, line = slit_site(angle, w, split_tip, centreline=True)
+    res = ub.build_ground(v, t, model_triangles=len(t))
+    assert_valid_pieces(res)
+    assert res.within_tol
+    hit = np.any([ub.piece_plan_contains(pc, line) for pc in res.pieces], axis=0)
+    assert int(hit.sum()) == 0
+    assert covered_corridors(v, t, res) == []
+    assert len(footprint_uncovered(v, t, res, n=6)) == 0
+
+
+def test_ground_refuses_to_publish_a_filled_void(monkeypatch):
+    """Publication guard (#326 review round 2): if the outline misses an exposed subsegment (here the
+    bb8b0b2 classifier probing whole boundary edges at 1/4, 1/2, 3/4 only), the build raises instead of
+    returning pieces over the void."""
+    def fixed_probes(hf, probe=0.01):
+        s = hf.bseg
+        d = s[:, 1] - s[:, 0]
+        nrm = np.stack([-d[:, 1], d[:, 0]], axis=1) / np.linalg.norm(d, axis=1)[:, None]
+        keep = np.zeros(len(s), bool)
+        for f in (0.25, 0.5, 0.75):
+            m = s[:, 0] + f * d
+            keep |= np.isfinite(hf.z(m + probe * nrm)) != np.isfinite(hf.z(m - probe * nrm))
+        return s[keep], s[~keep]
+
+    v, t, _ = slit_site(12.0, 0.5, split_tip=False)
+    monkeypatch.setattr(ub, "_outline", fixed_probes)
+    with pytest.raises(ub.UcxBuildError, match="uncovered probe points"):
+        ub.build_ground(v, t, model_triangles=len(t))
+
+
+def test_outline_splits_boundary_edges_at_t_junctions():
+    """The outline is the exposed part of each mesh boundary edge: a long edge with a T-junction keeps
+    only its exposed subsegment as outline, the rest is an internal layer edge (#326 review round 2)."""
+    v, t, _ = slit_site(12.0, 0.5, split_tip=False)
+    out, layer = ub._outline(ub.HeightField(v, t))
+    total = np.linalg.norm(out[:, 1] - out[:, 0], axis=1).sum()
+    v2, t2, _ = slit_site(12.0, 0.5, split_tip=True)
+    out2, _ = ub._outline(ub.HeightField(v2, t2))
+    assert total == pytest.approx(np.linalg.norm(out2[:, 1] - out2[:, 0], axis=1).sum(), abs=1e-6)

@@ -627,22 +627,64 @@ class HeightField:
         return out
 
 
-def _outline(hf: HeightField, probe: float = 0.01) -> tuple[np.ndarray, np.ndarray]:
+def _split_at_junctions(seg: np.ndarray, bucket: float, eps: float = 1e-7) -> np.ndarray:
+    """Plan segments (K, 2, 2) cut at every point where another segment ends on them (T-junction,
+    collinear partial overlap) or crosses them. Between two consecutive cuts no other boundary segment
+    touches a piece, so the coverage just beside it is the same along the whole piece."""
+    if not len(seg):
+        return seg
+    lo = seg.reshape(-1, 2).min(axis=0)
+    idx = _SegIndex(seg, lo, bucket)
+    out = []
+    for k, (a, b) in enumerate(seg):
+        d = b - a
+        l2 = float(d @ d)
+        if l2 <= 1e-18:
+            continue
+        ids = idx.ids(np.minimum(a, b) - eps, np.maximum(a, b) + eps)
+        ids = ids[ids != k]
+        cuts = [0.0, 1.0]
+        if len(ids):
+            c = seg[ids]
+            ln = math.sqrt(l2)
+            for e in (c[:, 0], c[:, 1]):  # other segments' ends lying on this one
+                r = e - a
+                off = np.abs(d[0] * r[:, 1] - d[1] * r[:, 0]) / ln
+                tq = (r @ d) / l2
+                cuts += tq[(off <= eps) & (tq > 0) & (tq < 1)].tolist()
+            r = c[:, 1] - c[:, 0]  # proper crossings
+            den = d[0] * r[:, 1] - d[1] * r[:, 0]
+            ok = np.abs(den) > 1e-12
+            q = c[:, 0] - a
+            den = np.where(ok, den, 1.0)
+            tq = (q[:, 0] * r[:, 1] - q[:, 1] * r[:, 0]) / den
+            uq = (q[:, 0] * d[1] - q[:, 1] * d[0]) / den
+            cuts += tq[ok & (tq > 0) & (tq < 1) & (uq >= 0) & (uq <= 1)].tolist()
+        cuts = np.unique(np.round(np.asarray(cuts), 12))
+        cuts = cuts[np.concatenate([[True], np.diff(cuts) * math.sqrt(l2) > eps])]
+        cuts[-1] = 1.0
+        pts = a[None] + cuts[:, None] * d[None]
+        out.append(np.stack([pts[:-1], pts[1:]], axis=1))
+    return np.concatenate(out) if out else np.zeros((0, 2, 2))
+
+
+def _outline(hf: HeightField, probe: float = 0.001) -> tuple[np.ndarray, np.ndarray]:
     """Plan outline of the covered region: the mesh boundary segments (HeightField.bseg) with coverage on
     exactly one side. A layered (method C) Ground has overlapping, unwelded surfacing layers whose own
     edges lie inside the covered region; they bound no void (#326) and are returned separately as
-    (outline, internal layer edges): the upper surface may step there. Probed at 1/4, 1/2 and 3/4 of
-    each segment, `probe` metres to either side."""
-    s = hf.bseg
+    (outline, internal layer edges): the upper surface may step there. A boundary edge may be exposed only
+    in part (a void ends on it at a T-junction, #326 review round 2), so every edge is first cut where
+    other boundary segments end on or cross it, and each piece is classified at its midpoint, `probe`
+    metres (capped at a quarter of the piece) to either side."""
+    s = _split_at_junctions(hf.bseg, hf.bucket)
     if not len(s):
         return s, s
     d = s[:, 1] - s[:, 0]
     ln = np.linalg.norm(d, axis=1)
     nrm = np.stack([-d[:, 1], d[:, 0]], axis=1) / np.maximum(ln, 1e-12)[:, None]
-    keep = np.zeros(len(s), bool)
-    for f in (0.25, 0.5, 0.75):
-        m = s[:, 0] + f * d
-        keep |= np.isfinite(hf.z(m + probe * nrm)) != np.isfinite(hf.z(m - probe * nrm))
+    h = np.minimum(probe, 0.25 * ln)[:, None]
+    m = s[:, 0] + 0.5 * d
+    keep = np.isfinite(hf.z(m + h * nrm)) != np.isfinite(hf.z(m - h * nrm))
     return s[keep & (ln > 1e-9)], s[~keep & (ln > 1e-9)]
 
 
@@ -887,6 +929,34 @@ def _exact_side(p, side, toward, seg, hf: HeightField, probe: float = 0.01) -> n
     return q
 
 
+def _void_probes_filled(hf: HeightField, pieces, probe: float = 0.001) -> int:
+    """Uncovered plan points just beside every boundary subsegment (both sides, at 1/4, 1/2 and 3/4) that
+    lie inside a piece plan: a publication guard, so no exposure the partition missed reaches the
+    export as a filled functional void (#326 review round 2)."""
+    s = _split_at_junctions(hf.bseg, hf.bucket)
+    if not len(s) or not pieces:
+        return 0
+    d = s[:, 1] - s[:, 0]
+    ln = np.linalg.norm(d, axis=1)
+    s, d, ln = s[ln > 1e-9], d[ln > 1e-9], ln[ln > 1e-9]
+    nrm = np.stack([-d[:, 1], d[:, 0]], axis=1) / ln[:, None]
+    h = np.minimum(probe, 0.25 * ln)[:, None]
+    pts = np.concatenate([s[:, 0] + f * d + sg * h * nrm for f in (0.25, 0.5, 0.75) for sg in (1, -1)])
+    pts = pts[~np.isfinite(hf.z(pts))]
+    if not len(pts):
+        return 0
+    plans = [pc.plan for pc in pieces]
+    pidx = _SegIndex(np.stack([[q.min(axis=0), q.max(axis=0)] for q in plans]), hf.lo, hf.bucket)
+    hit = np.zeros(len(pts), bool)
+    cell = np.floor((pts - hf.lo) / hf.bucket).astype(int)
+    for key in np.unique(cell, axis=0):
+        rows = np.flatnonzero((cell == key).all(axis=1))
+        q = pts[rows]
+        for k in pidx.ids(q.min(axis=0), q.max(axis=0)):
+            hit[rows] |= _inside(plans[k], q, -1e-9)
+    return int(hit.sum())
+
+
 def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol: float = 0.08,
                  depth: float = 0.5, gap: float = GAP_M, samples: int = 6,
                  model_triangles: int | None = None, reserved_triangles: int = 0) -> UcxResult:
@@ -1099,6 +1169,9 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
     bad = sum(not convex_after_float32(pc.verts, pc.tris) for pc in pieces)
     if bad:
         raise UcxBuildError(f"{bad} ground pieces are not convex after float32 read-back")
+    filled = _void_probes_filled(hf, pieces)
+    if filled:
+        raise UcxBuildError(f"{filled} uncovered probe points beside the Ground outline lie inside a piece")
     tri_count = sum(len(pc.tris) for pc in pieces)
     if len(pieces) > MAX_PIECES or tri_count > budget:
         raise UcxBuildError(f"{len(pieces)} ground pieces / {tri_count} tris exceed {MAX_PIECES} pieces "
