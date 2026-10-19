@@ -430,7 +430,9 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
   <model.fbx|.blend> <out.fbx> <Main|Ground> [cell= gap= with=<obj,...>]`; exit 0 built / 3 Ground over
   `tol` (vertical, footprint overhang or uncovered strip) / 2 failed (incl. a missing `with=` name, a UCX
   that names no model object) / 4 refused (output aliases input). Replaces only the UCX of the input
-  objects; other targets' UCX are kept. Job scripts: `build_into_scene(...)`.
+  objects; other targets' UCX are kept and their triangles are reserved from the whole-file [D012]
+  budget (kept + new over the limit -> exit 2, no FBX). Job scripts: `build_into_scene(...)`, pass
+  `reserved_triangles=` for UCX already in the file.
 - Facade-oriented 8-vertex boxes (Main) or quadtree hexahedra (Ground), 4 mm gap, [D012] budget; check
   the output with `tools/blender/ucx_audit.py` and the validator scene checks.
 

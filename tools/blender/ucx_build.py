@@ -148,9 +148,23 @@ def main():
         for o in model:
             o.data.calc_loop_triangles()
         model_tris = sum(len(o.data.loop_triangles) for o in model)
+        for o in kept_ucx:
+            o.data.calc_loop_triangles()
+        kept_tris = sum(len(o.data.loop_triangles) for o in kept_ucx)
+        report.update({"kept_ucx": keep, "kept_ucx_triangles": kept_tris,
+                       "file_ucx_limit_D012": ub.ucx_triangle_limit(model_tris)})
+        # [D012] is a whole-file limit: kept UCX are reserved; fail before anything is removed or written
+        ub.file_budget_available(model_tris, kept_tris)
         for o in old_ucx:
             bpy.data.objects.remove(o, do_unlink=True)
-        objs, res = build_into_scene([main_obj] + extra, address, target, model_triangles=model_tris, **opts)
+        objs, res = build_into_scene([main_obj] + extra, address, target, model_triangles=model_tris,
+                                     reserved_triangles=kept_tris, **opts)
+        new_tris = 0
+        for o in objs:
+            o.data.calc_loop_triangles()
+            new_tris += len(o.data.loop_triangles)
+        ub.check_file_budget(model_tris, kept_tris + new_tris)  # scene readback, before export
+        report["file_ucx_triangles"] = kept_tris + new_tris
         report.update({
             "inputs": [o.name for o in [main_obj] + extra], "dropped_ucx": replace, "kept_ucx": keep,
             "model_triangles_excl_ucx": model_tris, "pieces": len(objs), "triangles": res.triangles,

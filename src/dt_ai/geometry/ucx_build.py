@@ -73,7 +73,8 @@ class UcxResult:
     cell_m: float
     gap_m: float
     angle_deg: float = 0.0
-    budget: int | None = None
+    budget: int | None = None  # triangles available to this build = file limit - reserved_triangles
+    reserved_triangles: int = 0  # kept UCX of the same file counted against [D012]
     attempts: list[dict] = field(default_factory=list)
     max_vertical_dev_m: float | None = None  # Ground only: exact max |surface z - piece top|
     tol_m: float | None = None  # Ground only: requested vertical tolerance
@@ -100,6 +101,31 @@ def ucx_triangle_limit(model_triangles: int) -> int:
     if model_triangles < 50000:
         return 15000
     return min(math.ceil(model_triangles * 0.05), 100000)
+
+
+def _reserved(value) -> int:
+    """Triangles of UCX already in the file and kept (other targets/addresses): a non-negative int."""
+    if isinstance(value, bool) or not isinstance(value, (int, np.integer)) or value < 0:
+        raise UcxBuildError(f"reserved_triangles must be a non-negative integer, got {value!r}")
+    return int(value)
+
+
+def file_budget_available(model_triangles: int, kept_triangles: int) -> int:
+    """[D012] is a whole-file limit: triangles left for new UCX after the kept UCX. Fails when no
+    single box (12 tris) fits."""
+    limit = ucx_triangle_limit(int(model_triangles))
+    free = limit - _reserved(kept_triangles)
+    if free < 12:
+        raise UcxBuildError(f"kept UCX {kept_triangles} tris leave {free} of the file budget {limit}; "
+                            "no box fits")
+    return free
+
+
+def check_file_budget(model_triangles: int, ucx_triangles: int) -> None:
+    """All UCX of the file (kept + new) must stay within the [D012] limit; checked before export."""
+    limit = ucx_triangle_limit(int(model_triangles))
+    if _reserved(ucx_triangles) > limit:
+        raise UcxBuildError(f"file UCX {ucx_triangles} tris exceed the budget {limit}")
 
 
 def ucx_names(address: str, target: str, count: int) -> list[str]:
@@ -325,9 +351,9 @@ def _retract(lohi: np.ndarray, pts: np.ndarray, eps: float = 1e-9) -> np.ndarray
 
 def build_main(verts, tris, *, cell: float = 0.25, gap: float = GAP_M, model_triangles: int | None = None,
                angle_deg: float | None = None, grow: float = 1.25, max_attempts: int = 12,
-               retract: bool = True) -> UcxResult:
+               retract: bool = True, reserved_triangles: int = 0) -> UcxResult:
     """UCX for the Main (OKS) target. `model_triangles` = n of [D012] (all non-UCX triangles of the FBX;
-    default: this mesh)."""
+    default: this mesh); `reserved_triangles` = kept UCX of the file, subtracted from the budget."""
     v, t = _check_mesh(verts, tris)
     _positive("cell", cell)
     _positive("gap", gap)
@@ -335,7 +361,8 @@ def build_main(verts, tris, *, cell: float = 0.25, gap: float = GAP_M, model_tri
         raise UcxBuildError(f"gap {gap} m outside the build band 3-6 mm (inside [D098] 2 mm - 1 cm)")
     if gap >= cell / 2:
         raise UcxBuildError("gap must be smaller than half a cell")
-    budget = ucx_triangle_limit(len(t) if model_triangles is None else int(model_triangles))
+    reserved = _reserved(reserved_triangles)
+    budget = file_budget_available(len(t) if model_triangles is None else int(model_triangles), reserved)
     angle = facade_angle(v, t) if angle_deg is None else float(angle_deg)
     r = _rot(-angle)  # world -> facade frame
     vf = v @ r.T
@@ -375,7 +402,7 @@ def build_main(verts, tris, *, cell: float = 0.25, gap: float = GAP_M, model_tri
         corners = np.array([(lo[0], lo[1], lo[2]), (hi[0], lo[1], lo[2]), (hi[0], hi[1], lo[2]), (lo[0], hi[1], lo[2]),
                             (lo[0], lo[1], hi[2]), (hi[0], lo[1], hi[2]), (hi[0], hi[1], hi[2]), (lo[0], hi[1], hi[2])])
         pieces.append(Piece(corners @ back.T, _BOX_TRIS.copy()))
-    return UcxResult("Main", pieces, c, gap, angle, budget, attempts, boxes_frame=lohi)
+    return UcxResult("Main", pieces, c, gap, angle, budget, reserved, attempts, boxes_frame=lohi)
 
 
 def main_deviation(points, result: UcxResult) -> np.ndarray:
@@ -588,7 +615,7 @@ def _ground_top(corners_xy, h, xy):
 
 def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol: float = 0.08,
                  depth: float = 0.5, gap: float = GAP_M, samples: int = 6,
-                 model_triangles: int | None = None) -> UcxResult:
+                 model_triangles: int | None = None, reserved_triangles: int = 0) -> UcxResult:
     """UCX for the Ground target: quadtree hexahedra over the surface heightfield."""
     for name, val in (("cell", cell), ("min_cell", min_cell), ("tol", tol), ("depth", depth), ("gap", gap)):
         _positive(name, val)
@@ -596,8 +623,9 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
         raise UcxBuildError(f"gap {gap} m outside the build band 3-6 mm (inside [D098] 2 mm - 1 cm)")
     if min_cell > cell or gap >= min_cell / 2:
         raise UcxBuildError("need gap < min_cell / 2 and min_cell <= cell")
+    reserved = _reserved(reserved_triangles)
     hf = HeightField(verts, tris)
-    budget = ucx_triangle_limit(len(hf.t) if model_triangles is None else int(model_triangles))
+    budget = file_budget_available(len(hf.t) if model_triangles is None else int(model_triangles), reserved)
     lo, span = hf.lo, hf.hi - hf.lo
     if not (span > 2 * gap).all():
         raise UcxBuildError("ground surface has no plan area")
@@ -681,7 +709,7 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
     if len(pieces) > MAX_PIECES or 12 * len(pieces) > budget:
         raise UcxBuildError(f"{len(pieces)} ground pieces exceed {MAX_PIECES} pieces or budget {budget}")
     pieces.sort(key=lambda p: (round(float(p.verts[0, 1]), 3), round(float(p.verts[0, 0]), 3)))
-    return UcxResult("Ground", pieces, float(cell), gap, 0.0, budget,
+    return UcxResult("Ground", pieces, float(cell), gap, 0.0, budget, reserved,
                      [{"min_cell_m": min_cell, "tol_m": tol, "grid_m": [round(sx, 6), round(sy, 6)]}],
                      max_vertical_dev_m=max(devs), tol_m=tol,
                      footprint_overhang_bound_m=max(overs), uncovered_strip_m=max(strips))
