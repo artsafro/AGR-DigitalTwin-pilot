@@ -207,11 +207,8 @@ def render(merges, opens, next_lines=None):
     lines.extend(["", "## Next step", ""])
     if next_lines:
         lines.extend(f"- {line}" for line in next_lines)
-    elif opens:
-        first = opens[0]
-        lines.append(f"1. #{first['number']} {first['title']} [{first['headRefName']}]")
     else:
-        lines.append("No open pull request.")
+        lines.append("Consult the board and the assigned card for the next action.")
     lines.extend([
         "",
         "## Links",

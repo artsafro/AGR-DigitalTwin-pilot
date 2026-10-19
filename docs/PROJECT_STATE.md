@@ -33,10 +33,12 @@ Open pull requests:
 - #308 VATUTINO-SITE Ground master: layered cake, relief, NPM/VPM FBX (partial) (#295) [improve/issue-295-site-slice-ground-build-for-vatutino-fro]
 - #329 Generate seamless Ground texture recipes (#319) [improve/issue-319-ground-textures-by-recipe-seamless-npm-2]
 - #331 test: isolate Flora rebind controls from published maps (#312) [improve/issue-312-flora-rebind-unit-tests-remove-dependenc]
+- #334 fix(ucx): #326 bounded Ground UCX for layered perforated heightfields [wt/t_d61e1f10]
+- #335 Kernel C7: trim startup context and generate project state (#333) [improve/issue-333-kernel-c7-context-diet-agents-md-reading]
 
 ## Next step
 
-1. #248 Checker: horizontal normals in closed welded volumes (#56) [benchmark/check-horizontal-orientation]
+Consult the board and the assigned card for the next action.
 
 ## Links
 
