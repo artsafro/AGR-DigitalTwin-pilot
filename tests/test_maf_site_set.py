@@ -195,3 +195,51 @@ def test_dominant_up_plane_none_up_raises():
         mss.dominant_up_plane([(0.0, 1.0, -1.0)])
     with pytest.raises(ValueError):
         mss.dominant_up_plane([])
+
+
+# --- outward orientation (mirrors twinqa.geometry.maf_surface) ---------------
+
+CUBE_V = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)]
+CUBE_F = [[0, 3, 2, 1], [4, 5, 6, 7], [0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7]]
+
+
+def _facts(coords, polys):
+    import sys
+    sys.path.insert(0, str(ROOT / "src"))
+    from twinqa.geometry.maf_surface import surface_facts
+    normals = [[[0.0, 0.0, 1.0]] * len(p) for p in polys]
+    return surface_facts([list(c) for c in coords], polys, normals)
+
+
+def _apply(polys, flips):
+    return [list(reversed(p)) if i in flips else list(p) for i, p in enumerate(polys)]
+
+
+def test_orient_outward_cube_ok_needs_no_flip():
+    assert mss.orient_outward(CUBE_V, CUBE_F) == set()
+
+
+def test_orient_outward_fixes_one_flipped_face_and_inverted_cube():
+    bad = _apply(CUBE_F, {2})
+    flips = mss.orient_outward(CUBE_V, bad)
+    fixed = _apply(bad, flips)
+    facts = _facts(CUBE_V, fixed)
+    assert facts["flipped_faces"] == 0 and facts["inconsistent_edges"] == 0
+    inverted = _apply(CUBE_F, set(range(6)))
+    assert mss.orient_outward(CUBE_V, inverted) == set(range(6))
+
+
+def test_orient_outward_probe_random_flips_two_cubes():
+    rng = random.Random(42)
+    coords = CUBE_V + [(x + 3, y, z) for x, y, z in CUBE_V]
+    polys = CUBE_F + [[i + 8 for i in f] for f in CUBE_F]
+    for _ in range(200):
+        bad = _apply(polys, {i for i in range(12) if rng.random() < 0.5})
+        fixed = _apply(bad, mss.orient_outward(coords, bad))
+        facts = _facts(coords, fixed)
+        assert facts["flipped_faces"] == 0 and facts["inconsistent_edges"] == 0
+
+
+def test_orient_outward_flat_component_untouched():
+    coords = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]
+    assert mss.orient_outward(coords, [[0, 1, 2, 3]]) == set()

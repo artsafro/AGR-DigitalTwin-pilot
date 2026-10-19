@@ -1811,7 +1811,7 @@
      "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0181_C_kadki3_kadki3_10518498_012.png"
     }
    ],
-   "resolved_question": "Q2",
+   "resolved_question": "Q2, Q8",
    "source_dimension_check": {
     "table": "*T3510",
     "row": 28,
@@ -1845,7 +1845,8 @@
     "raw_instanced_triangles": 8120,
     "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured. FAIL on both known plan axes; missing height does not hide known failure. No rescale/substitution authorized."
    },
-   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations.",
+   "dimension_exception": "Q8: schedule 1.09 x 1.09 m = seat diameter; model includes the frame (1.71 x 2.00 x 2.39 m); user exception to D094 for this row only; architect question (D112)"
   },
   {
    "table": "*T3510",
@@ -2361,19 +2362,20 @@
    "table": null,
    "row": null,
    "catalogue_id": null,
-   "status": "needs identification",
-   "reason": "Included by Q6; no schedule dimensions/manufacturer/article or selected library ID supplied. No substitution invented."
+   "status": "no model",
+   "reason": "Q9 (Artem 2026-10-19): no schedule row, no dimensions; gap for the later modelling issue",
+   "resolved_question": "Q9"
   }
  ],
- "open_questions": [
-  {
-   "id": "Q8",
-   "question": "Row *T3510/28: MAF_0127 measures 1.708107 x 1.999161 m vs schedule 1.09 x 1.09 m; deviations 0.618107 / 0.909161 m exceed D094. Which catalogue id should be used, or should this position remain no model? No scaling or substitution performed."
-  },
-  {
-   "id": "Q9",
-   "question": "Turnik is included by Q6: provide its selected library ID or manufacturer/reference and L/W/H for identification; alternatively confirm no model pending a later modelling task."
-  }
- ],
- "stage_status": "Steps 1-2 decision record and raw-source dimension gate only; not a placement-ready set. NPM/VPM, atlas, smoothing, L2 checks and final budgets not produced."
+ "open_questions": [],
+ "stage_status": "Steps 1-2 closed (Q1-Q9 answered). The set built from this map: site-maf-set.md/.json.",
+ "user_answers_q8_q9": {
+  "source": "card t_147116bf comment, Artem 2026-10-19 19:16",
+  "verbatim_card_comment": "User answers 2026-10-19 (Artem) to Q8-Q9: Q8 - *T3510/28 nest swing = MAF_0127 by appearance: the schedule 1.09 x 1.09 m is the seat diameter, the library model includes the frame (1.71 x 2.00 x 2.39 m). Accept it as an explicit user exception to the 10 cm dimension check (D094) for this row only, record it in the catalogue and add the discrepancy to the questions-for-the-architect list (D112). Q9 - «Турник»: no model (no schedule row, no dimensions); listed as a gap for the later modelling issue."
+ },
+ "architect_questions_D112": [
+  "*T3510/11: DWG block «Качалка на пружине ИО 0323Т-3» vs schedule row ИО 0410-2 (Q6: schedule row wins)",
+  "*T3510/28: schedule size 1090 x 1090 mm (seat diameter) vs selected MAF_0127 overall 1.71 x 2.00 x 2.39 m with frame (Q8 exception)",
+  "*T3510/27: «Ландау» article 13994 in schedule vs 13010 in library object name (Q3)"
+ ]
 }

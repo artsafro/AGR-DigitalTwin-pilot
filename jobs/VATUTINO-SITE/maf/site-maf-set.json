@@ -1,0 +1,2765 @@
+{
+ "version": "v005-set",
+ "out_dir": "C:/x/vatutino-maf/v005-set",
+ "status": "technical QA: NPM checks 25 pass / 0 fail / 1 not_run listed as review; dimensions 12 pass / 1 review (Q8 exception); visual review of materials and light versions open -> passed=false",
+ "passed": false,
+ "route": "Blender 5.1.2 headless --factory-startup (dcc_batch.py max not used: FBX copies already exist, Blender headless is allowed by the card)",
+ "commands": [
+  {
+   "cmd": "uv run python tools/materials/atlas_maf.py C:/x/vatutino-maf/v003-set/atlas/material-list.json --out-png C:/x/vatutino-maf/v003-set/atlas/vatutino_maf_atlas_512.png --out-json C:/x/vatutino-maf/v003-set/atlas/vatutino_maf_atlas_512.json (copied byte-identical into v005-set/atlas)",
+   "exit_code": 0
+  },
+  {
+   "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python tools/blender/maf_site_set_build.py -- jobs/VATUTINO-SITE/maf/site-maf-set.config.json C:/x/vatutino-maf/v005-set/atlas/vatutino_maf_atlas_512.json C:/x/vatutino-maf/v005-set/atlas/vatutino_maf_atlas_512.png C:/x/vatutino-maf/v005-set",
+   "exit_code": 0
+  },
+  {
+   "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python tools/blender/fbx_readback.py -- C:/x/vatutino-maf/v005-set/<npm|vpm>/<set_id>.fbx C:/x/vatutino-maf/v005-set/readback/<npm|vpm>_<set_id>.json",
+   "exit_code": 0,
+   "runs": 26,
+   "exit_codes": [
+    0
+   ]
+  }
+ ],
+ "atlas": {
+  "path": "C:/x/vatutino-maf/v005-set/atlas/vatutino_maf_atlas_512.png",
+  "size": [
+   512,
+   512
+  ],
+  "mode": "RGB",
+  "sha256": "5aaf8b55d2ed08d74a02b9239bc4d76399c428b16e2c74d537f335f51ca9b87a",
+  "uv_json": "C:/x/vatutino-maf/v005-set/atlas/vatutino_maf_atlas_512.json",
+  "uv_json_sha256": "5099d135fe86d416137bd359f382e670c477665c8b2f6800ca911b67409b82b8",
+  "materials": [
+   {
+    "name": "steel_ral7047",
+    "kind": "solid",
+    "color": "#D0D0D0",
+    "size": 64,
+    "reason": "schedule: steel, powder coat RAL 7047 (Telegrey 4, #D0D0D0; RAL 7047 missing from tools/materials/ral_classic.json)",
+    "slot_px": [
+     0,
+     0,
+     64,
+     64
+    ],
+    "uv": [
+     0.0078125,
+     0.8828125,
+     0.1171875,
+     0.9921875
+    ]
+   },
+   {
+    "name": "larch_light_oak",
+    "kind": "solid",
+    "color": "#C49A6C",
+    "size": 64,
+    "reason": "schedule: larch, oil + lacquer 'light oak'; solid colour (no texture source), visual review",
+    "slot_px": [
+     64,
+     0,
+     64,
+     64
+    ],
+    "uv": [
+     0.1328125,
+     0.8828125,
+     0.2421875,
+     0.9921875
+    ]
+   },
+   {
+    "name": "hpl_satin_wood",
+    "kind": "solid",
+    "color": "#B4825A",
+    "size": 64,
+    "reason": "schedule *T3510/26: HPL 'satin wood'; solid colour, visual review",
+    "slot_px": [
+     0,
+     64,
+     64,
+     64
+    ],
+    "uv": [
+     0.0078125,
+     0.7578125,
+     0.1171875,
+     0.8671875
+    ]
+   },
+   {
+    "name": "rope_pp",
+    "kind": "solid",
+    "color": "#7A7A7A",
+    "size": 64,
+    "reason": "schedule *T3510/28: polypropylene rope, colour not given -> review",
+    "slot_px": [
+     64,
+     64,
+     64,
+     64
+    ],
+    "uv": [
+     0.1328125,
+     0.7578125,
+     0.2421875,
+     0.8671875
+    ]
+   }
+  ]
+ },
+ "budget": {
+  "npm_share_D097": 60000,
+  "raw_total": 70546,
+  "npm_total": 57628,
+  "vpm_total": 70522,
+  "npm_within_share": true,
+  "overrun": [],
+  "rows": [
+   {
+    "set_id": "VAT_MAF_T3510_01",
+    "instances": 5,
+    "tris_raw": 240,
+    "tris_npm": 240,
+    "tris_vpm": 240,
+    "raw_total": 1200,
+    "npm_total": 1200,
+    "vpm_total": 1200
+   },
+   {
+    "set_id": "VAT_MAF_T3510_02",
+    "instances": 48,
+    "tris_raw": 146,
+    "tris_npm": 146,
+    "tris_vpm": 146,
+    "raw_total": 7008,
+    "npm_total": 7008,
+    "vpm_total": 7008
+   },
+   {
+    "set_id": "VAT_MAF_T3510_07",
+    "instances": 4,
+    "tris_raw": 364,
+    "tris_npm": 364,
+    "tris_vpm": 364,
+    "raw_total": 1456,
+    "npm_total": 1456,
+    "vpm_total": 1456
+   },
+   {
+    "set_id": "VAT_MAF_T3510_09",
+    "instances": 6,
+    "tris_raw": 1460,
+    "tris_npm": 730,
+    "tris_vpm": 1460,
+    "raw_total": 8760,
+    "npm_total": 4380,
+    "vpm_total": 8760
+   },
+   {
+    "set_id": "VAT_MAF_T3510_11",
+    "instances": 2,
+    "tris_raw": 724,
+    "tris_npm": 434,
+    "tris_vpm": 724,
+    "raw_total": 1448,
+    "npm_total": 868,
+    "vpm_total": 1448
+   },
+   {
+    "set_id": "VAT_MAF_T3510_12",
+    "instances": 2,
+    "tris_raw": 678,
+    "tris_npm": 678,
+    "tris_vpm": 678,
+    "raw_total": 1356,
+    "npm_total": 1356,
+    "vpm_total": 1356
+   },
+   {
+    "set_id": "VAT_MAF_T3510_16",
+    "instances": 1,
+    "tris_raw": 4562,
+    "tris_npm": 2281,
+    "tris_vpm": 4562,
+    "raw_total": 4562,
+    "npm_total": 2281,
+    "vpm_total": 4562
+   },
+   {
+    "set_id": "VAT_MAF_T3510_26",
+    "instances": 1,
+    "tris_raw": 8696,
+    "tris_npm": 3043,
+    "tris_vpm": 8696,
+    "raw_total": 8696,
+    "npm_total": 3043,
+    "vpm_total": 8696
+   },
+   {
+    "set_id": "VAT_MAF_T3510_27",
+    "instances": 3,
+    "tris_raw": 540,
+    "tris_npm": 540,
+    "tris_vpm": 540,
+    "raw_total": 1620,
+    "npm_total": 1620,
+    "vpm_total": 1620
+   },
+   {
+    "set_id": "VAT_MAF_T3510_28",
+    "instances": 4,
+    "tris_raw": 2030,
+    "tris_npm": 2030,
+    "tris_vpm": 2030,
+    "raw_total": 8120,
+    "npm_total": 8120,
+    "vpm_total": 8120
+   },
+   {
+    "set_id": "VAT_MAF_T3510_29",
+    "instances": 25,
+    "tris_raw": 320,
+    "tris_npm": 320,
+    "tris_vpm": 320,
+    "raw_total": 8000,
+    "npm_total": 8000,
+    "vpm_total": 8000
+   },
+   {
+    "set_id": "VAT_MAF_T3510_31",
+    "instances": 16,
+    "tris_raw": 212,
+    "tris_npm": 212,
+    "tris_vpm": 212,
+    "raw_total": 3392,
+    "npm_total": 3392,
+    "vpm_total": 3392
+   },
+   {
+    "set_id": "VAT_MAF_T3510_32",
+    "instances": 4,
+    "tris_raw": 3732,
+    "tris_npm": 3726,
+    "tris_vpm": 3726,
+    "raw_total": 14928,
+    "npm_total": 14904,
+    "vpm_total": 14904
+   }
+  ],
+  "vpm_MAF_08": "VPM Ground limit is area-dependent (reg p.28-29): plot 568BF = 25 854 m2 = 2.585 ha before subtracting the building footprint (not measured here); if (site - footprint) > 1.5 ha the Ground limit is 4 500 000 and the MAF VPM total is 1.6 % of it. Verdict: review (footprint subtraction is #298 site assembly)."
+ },
+ "checks": {
+  "maf_findings_counts": {
+   "npm": {
+    "pass": 25,
+    "not_run": 1
+   },
+   "vpm": {
+    "pass": 25,
+    "not_run": 1
+   }
+  },
+  "dimension_counts": {
+   "npm": {
+    "pass": 12,
+    "review": 1
+   },
+   "vpm": {
+    "pass": 12,
+    "review": 1
+   }
+  },
+  "uv_faces_outside_total": 0
+ },
+ "positions": [
+  {
+   "set_id": "VAT_MAF_T3510_01",
+   "catalogue_id": "MAF_0326",
+   "schedule": "*T3510/1",
+   "name": "Скамейка стальная «Андромеда» / Артикул: 14122",
+   "spozu_block": "Скамья",
+   "spozu_count_568BF": 5,
+   "npm_route": "existing NPM object (npm_matches: SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl.006) used as is",
+   "material_map": {
+    "1": "larch_light_oak",
+    "2": "steel_ral7047"
+   },
+   "material_reason": "sub-mat 1 = slats z 0.38-0.45 m (larch); 2 = frame/legs (steel)",
+   "smoothing_deg": 40.0,
+   "source": {
+    "fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0326_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_006.fbx",
+    "sha256_before": "f3f9653c4214af14e268093793baf3071dd714a96476cc183bc0d0b4f3f52edc",
+    "sha256_after": "f3f9653c4214af14e268093793baf3071dd714a96476cc183bc0d0b4f3f52edc",
+    "sha256_copy": "f3f9653c4214af14e268093793baf3071dd714a96476cc183bc0d0b4f3f52edc"
+   },
+   "tris_raw": 240,
+   "schedule_size_m": [
+    1.8,
+    0.5,
+    0.72
+   ],
+   "height_rule": "overall",
+   "dimension_exception": null,
+   "npm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/npm/VAT_MAF_T3510_01.fbx",
+    "sha256": "51cdd9ebf9e25d8ba24a8acebb0ddd5dad0a5f6d867d0bdf2b025e4c620e60f1",
+    "triangles": 240,
+    "measured_size_m": [
+     1.8019,
+     0.4744,
+     0.8008
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      1.8019,
+      0.4744,
+      0.8008
+     ],
+     "deviation_m": [
+      0.0019,
+      0.0256,
+      0.0808
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 240,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 180,
+       "outside": 0,
+       "uv_min": [
+        0.01027,
+        0.885
+       ],
+       "uv_max": [
+        0.11478,
+        0.99
+       ]
+      },
+      "larch_light_oak": {
+       "faces": 60,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.24,
+        0.98604
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ],
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 0,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_01.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_01.fbx: outward"
+     }
+    }
+   },
+   "vpm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/vpm/VAT_MAF_T3510_01.fbx",
+    "sha256": "f4fcf71a13d318fe2dcfdceb4724cded586cde7ab169996129547bdbbded1f6f",
+    "triangles": 240,
+    "measured_size_m": [
+     1.8019,
+     0.4744,
+     0.8008
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      1.8019,
+      0.4744,
+      0.8008
+     ],
+     "deviation_m": [
+      0.0019,
+      0.0256,
+      0.0808
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 240,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 180,
+       "outside": 0,
+       "uv_min": [
+        0.01027,
+        0.885
+       ],
+       "uv_max": [
+        0.11478,
+        0.99
+       ]
+      },
+      "larch_light_oak": {
+       "faces": 60,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.24,
+        0.98604
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ],
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 0,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_01.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_01.fbx: outward"
+     }
+    }
+   }
+  },
+  {
+   "set_id": "VAT_MAF_T3510_02",
+   "catalogue_id": "MAF_0794",
+   "schedule": "*T3510/2",
+   "name": "Урна стальная «Арго» / Артикул: 19648",
+   "spozu_block": "Урна",
+   "spozu_count_568BF": 48,
+   "npm_route": "light version not needed: raw model kept (budget fits)",
+   "material_map": {
+    "*": "steel_ral7047"
+   },
+   "material_reason": "single source material; urn body steel RAL 7047",
+   "smoothing_deg": 40.0,
+   "source": {
+    "fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0794_Object105.fbx",
+    "sha256_before": "2abde7335e13a3603e5860cb69bcd96ac323236acb9906dc30a91a95c7e823bf",
+    "sha256_after": "2abde7335e13a3603e5860cb69bcd96ac323236acb9906dc30a91a95c7e823bf",
+    "sha256_copy": "2abde7335e13a3603e5860cb69bcd96ac323236acb9906dc30a91a95c7e823bf"
+   },
+   "tris_raw": 146,
+   "schedule_size_m": [
+    0.62,
+    0.47,
+    1.05
+   ],
+   "height_rule": "overall",
+   "dimension_exception": null,
+   "npm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/npm/VAT_MAF_T3510_02.fbx",
+    "sha256": "3d1633c3b8bff07143056769a7bac362bc75a0d8d3642586f12a889583ca3376",
+    "triangles": 146,
+    "measured_size_m": [
+     0.6435,
+     0.4748,
+     1.0639
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      0.6435,
+      0.4748,
+      1.0639
+     ],
+     "deviation_m": [
+      0.0235,
+      0.0048,
+      0.0139
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 146,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 146,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.885
+       ],
+       "uv_max": [
+        0.115,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 0,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_02.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_02.fbx: outward"
+     }
+    }
+   },
+   "vpm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/vpm/VAT_MAF_T3510_02.fbx",
+    "sha256": "1e94baf0ea41de50fc735247de412e3999e0409278d9674457c31d880733bead",
+    "triangles": 146,
+    "measured_size_m": [
+     0.6435,
+     0.4748,
+     1.0639
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      0.6435,
+      0.4748,
+      1.0639
+     ],
+     "deviation_m": [
+      0.0235,
+      0.0048,
+      0.0139
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 146,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 146,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.885
+       ],
+       "uv_max": [
+        0.115,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 0,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_02.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_02.fbx: outward"
+     }
+    }
+   }
+  },
+  {
+   "set_id": "VAT_MAF_T3510_07",
+   "catalogue_id": "MAF_0747",
+   "schedule": "*T3510/7",
+   "name": "Скамейка «Фестиваль» Модуль 1 / арт. nv 521-01",
+   "spozu_block": "Шезлонг фестиваль модуль 1",
+   "spozu_count_568BF": 4,
+   "npm_route": "existing NPM object (npm_matches: SM_NizhnieMnevniki_ZU_12_B_GroundEl.001) used as is",
+   "material_map": {
+    "*": "larch_light_oak"
+   },
+   "material_reason": "single source material; deck area 9.5 m2 dominates -> larch",
+   "smoothing_deg": 40.0,
+   "source": {
+    "fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0747_12.fbx",
+    "sha256_before": "7236df5219ff00f612fdd2bdfee503e001d8f60a391c3486ba5066b29c386420",
+    "sha256_after": "7236df5219ff00f612fdd2bdfee503e001d8f60a391c3486ba5066b29c386420",
+    "sha256_copy": "7236df5219ff00f612fdd2bdfee503e001d8f60a391c3486ba5066b29c386420"
+   },
+   "tris_raw": 364,
+   "schedule_size_m": [
+    1.86,
+    1.7,
+    0.79
+   ],
+   "height_rule": "overall",
+   "dimension_exception": null,
+   "npm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/npm/VAT_MAF_T3510_07.fbx",
+    "sha256": "e998bce3af146f0c6c17d28c0252f57d809ebd20354a45bf66c0d6dc8a25f45f",
+    "triangles": 364,
+    "measured_size_m": [
+     1.6981,
+     1.8468,
+     0.8021
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      1.8468,
+      1.6981,
+      0.8021
+     ],
+     "deviation_m": [
+      0.0132,
+      0.0019,
+      0.0121
+     ],
+     "plan_axes_swapped": true,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 364,
+     "faces_outside": 0,
+     "per_material": {
+      "larch_light_oak": {
+       "faces": 364,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.24,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 0,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_07.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_07.fbx: outward"
+     }
+    }
+   },
+   "vpm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/vpm/VAT_MAF_T3510_07.fbx",
+    "sha256": "81e4b7b278d7bafbe961902f93fff5d28daf493e39230c1eee083e43bdd509dc",
+    "triangles": 364,
+    "measured_size_m": [
+     1.6981,
+     1.8468,
+     0.8021
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      1.8468,
+      1.6981,
+      0.8021
+     ],
+     "deviation_m": [
+      0.0132,
+      0.0019,
+      0.0121
+     ],
+     "plan_axes_swapped": true,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 364,
+     "faces_outside": 0,
+     "per_material": {
+      "larch_light_oak": {
+       "faces": 364,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.24,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 0,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_07.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_07.fbx: outward"
+     }
+    }
+   }
+  },
+  {
+   "set_id": "VAT_MAF_T3510_09",
+   "catalogue_id": "MAF_0506",
+   "schedule": "*T3510/9",
+   "name": "Лежак «Городской» / 11061",
+   "spozu_block": "лежак2",
+   "spozu_count_568BF": 6,
+   "npm_route": "light version: Decimate collapse ratio 0.5",
+   "material_map": {
+    "Material #2125652641": "steel_ral7047",
+    "Material #2125652648": "larch_light_oak"
+   },
+   "material_reason": "2641 = 1160 small faces, area 1.0 m2 (frame, steel); 2648 = 300 faces, area 2.9 m2 (slats, larch)",
+   "smoothing_deg": 40.0,
+   "source": {
+    "fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0506_M_Chaise_loung_001.fbx",
+    "sha256_before": "03d2e9477c4219015a0298aa2d5a149ee05302b16cbbced30a48330ba4ba33c4",
+    "sha256_after": "03d2e9477c4219015a0298aa2d5a149ee05302b16cbbced30a48330ba4ba33c4",
+    "sha256_copy": "03d2e9477c4219015a0298aa2d5a149ee05302b16cbbced30a48330ba4ba33c4"
+   },
+   "tris_raw": 1460,
+   "schedule_size_m": [
+    0.6,
+    1.633,
+    0.93
+   ],
+   "height_rule": "overall",
+   "dimension_exception": null,
+   "npm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/npm/VAT_MAF_T3510_09.fbx",
+    "sha256": "76676dfccc4c7007485fdb5f481c41661c69ef572ee523766a92587acfa6ee3b",
+    "triangles": 730,
+    "measured_size_m": [
+     0.6112,
+     1.6297,
+     0.9336
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      0.6112,
+      1.6297,
+      0.9336
+     ],
+     "deviation_m": [
+      0.0112,
+      0.0033,
+      0.0036
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 730,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 430,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.885
+       ],
+       "uv_max": [
+        0.115,
+        0.99
+       ]
+      },
+      "larch_light_oak": {
+       "faces": 300,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.23952,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ],
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 6,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_09.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_09.fbx: outward"
+     }
+    }
+   },
+   "vpm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/vpm/VAT_MAF_T3510_09.fbx",
+    "sha256": "6a848d79ea333cee898ff70f11f61ac562915d72f7bc01a57303816a6fa05a2d",
+    "triangles": 1460,
+    "measured_size_m": [
+     0.6107,
+     1.6297,
+     0.9336
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      0.6107,
+      1.6297,
+      0.9336
+     ],
+     "deviation_m": [
+      0.0107,
+      0.0033,
+      0.0036
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 1460,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 1160,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.885
+       ],
+       "uv_max": [
+        0.115,
+        0.99
+       ]
+      },
+      "larch_light_oak": {
+       "faces": 300,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.23952,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ],
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 0,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_09.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_09.fbx: outward"
+     }
+    }
+   }
+  },
+  {
+   "set_id": "VAT_MAF_T3510_11",
+   "catalogue_id": "MAF_0322",
+   "schedule": "*T3510/11",
+   "name": "Качалка балансир / Артикул: ИО 0410-2",
+   "spozu_block": "Качалка на пружине ИО 0323Т-3",
+   "spozu_count_568BF": 2,
+   "npm_route": "light version: Decimate collapse ratio 0.6",
+   "material_map": {
+    "1": "larch_light_oak",
+    "2": "steel_ral7047"
+   },
+   "material_reason": "sub-mat 1 = seat body z 0.26-0.47 (larch); 2 = spring/handles (steel)",
+   "smoothing_deg": 40.0,
+   "source": {
+    "fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0322_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_001.fbx",
+    "sha256_before": "b4366147fa2de1bfd9da9612d2dd3176fc937d6d99a0f1e3d5428a71cf45a06d",
+    "sha256_after": "b4366147fa2de1bfd9da9612d2dd3176fc937d6d99a0f1e3d5428a71cf45a06d",
+    "sha256_copy": "b4366147fa2de1bfd9da9612d2dd3176fc937d6d99a0f1e3d5428a71cf45a06d"
+   },
+   "tris_raw": 724,
+   "schedule_size_m": [
+    0.9,
+    0.6,
+    0.7
+   ],
+   "height_rule": "overall",
+   "dimension_exception": null,
+   "npm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/npm/VAT_MAF_T3510_11.fbx",
+    "sha256": "294dafbc3d49e25b8317784ee4a2c8be713cc5a9d96d63cba2b1d589e5401419",
+    "triangles": 434,
+    "measured_size_m": [
+     0.5796,
+     0.9202,
+     0.6793
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      0.9202,
+      0.5796,
+      0.6793
+     ],
+     "deviation_m": [
+      0.0202,
+      0.0204,
+      0.0207
+     ],
+     "plan_axes_swapped": true,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 434,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 364,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.885
+       ],
+       "uv_max": [
+        0.115,
+        0.99
+       ]
+      },
+      "larch_light_oak": {
+       "faces": 70,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.24,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ],
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 2,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_11.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_11.fbx: outward"
+     }
+    }
+   },
+   "vpm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/vpm/VAT_MAF_T3510_11.fbx",
+    "sha256": "6915cce13b73615997a2f7c202533645b278fff716f2f71e1b4b0ee319c6a0dd",
+    "triangles": 724,
+    "measured_size_m": [
+     0.5723,
+     0.9202,
+     0.6866
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      0.9202,
+      0.5723,
+      0.6866
+     ],
+     "deviation_m": [
+      0.0202,
+      0.0277,
+      0.0134
+     ],
+     "plan_axes_swapped": true,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 724,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 620,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.885
+       ],
+       "uv_max": [
+        0.115,
+        0.99
+       ]
+      },
+      "larch_light_oak": {
+       "faces": 104,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.24,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ],
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 4,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_11.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_11.fbx: outward"
+     }
+    }
+   }
+  },
+  {
+   "set_id": "VAT_MAF_T3510_12",
+   "catalogue_id": "MAF_0920",
+   "schedule": "*T3510/12",
+   "name": "Качели / Артикул:Качели / ИО 0118Т-1",
+   "spozu_block": "ио 0118т-1",
+   "spozu_count_568BF": 2,
+   "npm_route": "light version not needed: raw model kept (budget fits)",
+   "material_map": {
+    "*": "steel_ral7047"
+   },
+   "material_reason": "single source material; swing frame steel RAL 7047",
+   "smoothing_deg": 40.0,
+   "source": {
+    "fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0920_Object090.fbx",
+    "sha256_before": "e85edd36104dd35246127924020d974af1904e722bb09a4e0777ece97c19cff7",
+    "sha256_after": "e85edd36104dd35246127924020d974af1904e722bb09a4e0777ece97c19cff7",
+    "sha256_copy": "e85edd36104dd35246127924020d974af1904e722bb09a4e0777ece97c19cff7"
+   },
+   "tris_raw": 678,
+   "schedule_size_m": [
+    2.2,
+    0.3,
+    1.9
+   ],
+   "height_rule": "overall",
+   "dimension_exception": null,
+   "npm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/npm/VAT_MAF_T3510_12.fbx",
+    "sha256": "f8c81dac007dffc07f27aba822be19ce6d20a42bb891b29e0c9063f7658a0bcc",
+    "triangles": 678,
+    "measured_size_m": [
+     2.1581,
+     0.2671,
+     1.8974
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      2.1581,
+      0.2671,
+      1.8974
+     ],
+     "deviation_m": [
+      0.0419,
+      0.0329,
+      0.0026
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 678,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 678,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.885
+       ],
+       "uv_max": [
+        0.115,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 184,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_12.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_12.fbx: outward"
+     }
+    }
+   },
+   "vpm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/vpm/VAT_MAF_T3510_12.fbx",
+    "sha256": "01807e36072a509ece1b48f52faefb45738e6be66430c096f9731f72e2544a66",
+    "triangles": 678,
+    "measured_size_m": [
+     2.1581,
+     0.2671,
+     1.8974
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      2.1581,
+      0.2671,
+      1.8974
+     ],
+     "deviation_m": [
+      0.0419,
+      0.0329,
+      0.0026
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 678,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 678,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.885
+       ],
+       "uv_max": [
+        0.115,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 184,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_12.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_12.fbx: outward"
+     }
+    }
+   }
+  },
+  {
+   "set_id": "VAT_MAF_T3510_16",
+   "catalogue_id": "MAF_0803",
+   "schedule": "*T3510/16",
+   "name": "Детская площадка / Артикул: ДП 090",
+   "spozu_block": "ДП 090",
+   "spozu_count_568BF": 1,
+   "npm_route": "light version: Decimate collapse ratio 0.5",
+   "material_map": {
+    "*": "larch_light_oak"
+   },
+   "material_reason": "single source material; playground ДП 090 timber dominates -> larch",
+   "smoothing_deg": 40.0,
+   "source": {
+    "fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0803_Object115.fbx",
+    "sha256_before": "0a5f86e354bc550ad83e37844e294119094b074def31877cbc297e71181f870e",
+    "sha256_after": "0a5f86e354bc550ad83e37844e294119094b074def31877cbc297e71181f870e",
+    "sha256_copy": "0a5f86e354bc550ad83e37844e294119094b074def31877cbc297e71181f870e"
+   },
+   "tris_raw": 4562,
+   "schedule_size_m": [
+    5.5,
+    2.0,
+    2.25
+   ],
+   "height_rule": "overall",
+   "dimension_exception": null,
+   "npm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/npm/VAT_MAF_T3510_16.fbx",
+    "sha256": "d8d97d1727f55633b50407747871c145ebb170bd30f576476b0b6397b6cfdead",
+    "triangles": 2281,
+    "measured_size_m": [
+     5.5345,
+     2.0297,
+     2.3177
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      5.5345,
+      2.0297,
+      2.3177
+     ],
+     "deviation_m": [
+      0.0345,
+      0.0297,
+      0.0677
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 2281,
+     "faces_outside": 0,
+     "per_material": {
+      "larch_light_oak": {
+       "faces": 2281,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.24,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 177,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_16.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_16.fbx: outward"
+     }
+    }
+   },
+   "vpm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/vpm/VAT_MAF_T3510_16.fbx",
+    "sha256": "ace54c1e86052140303a13cb75d285c2fb635c1441eb4bbea175c399c0cebbb0",
+    "triangles": 4562,
+    "measured_size_m": [
+     5.5343,
+     2.0316,
+     2.3195
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      5.5343,
+      2.0316,
+      2.3195
+     ],
+     "deviation_m": [
+      0.0343,
+      0.0316,
+      0.0695
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 4562,
+     "faces_outside": 0,
+     "per_material": {
+      "larch_light_oak": {
+       "faces": 4562,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.24,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 381,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_16.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_16.fbx: outward"
+     }
+    }
+   }
+  },
+  {
+   "set_id": "VAT_MAF_T3510_26",
+   "catalogue_id": "MAF_0677",
+   "schedule": "*T3510/26",
+   "name": "Теннисный стол Премиум / Артикул: 4-060",
+   "spozu_block": "Теннисный стол",
+   "spozu_count_568BF": 1,
+   "npm_route": "light version: Decimate collapse ratio 0.35",
+   "material_map": {
+    "Material #2125652643": "hpl_satin_wood",
+    "Material #2125652641": "hpl_satin_wood",
+    "Material #2125652648": "steel_ral7047"
+   },
+   "material_reason": "2643 = table top at z 0.76 (HPL); 2641 = top edge strip z 0.76 (HPL); 2648 = frame/net (steel)",
+   "smoothing_deg": 40.0,
+   "source": {
+    "fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0677_M_Tennis_Table_001.fbx",
+    "sha256_before": "a3eacea7bd469aeb613e978d31e39f9c15c96f63a052cc190ff485e52e947afe",
+    "sha256_after": "a3eacea7bd469aeb613e978d31e39f9c15c96f63a052cc190ff485e52e947afe",
+    "sha256_copy": "a3eacea7bd469aeb613e978d31e39f9c15c96f63a052cc190ff485e52e947afe"
+   },
+   "tris_raw": 8696,
+   "schedule_size_m": [
+    2.74,
+    1.52,
+    0.76
+   ],
+   "height_rule": "table_top",
+   "dimension_exception": null,
+   "npm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/npm/VAT_MAF_T3510_26.fbx",
+    "sha256": "069365a04644cd9c46c874a179ade58c846798e253506852c2d81ff14ccbcff8",
+    "triangles": 3043,
+    "measured_size_m": [
+     1.525,
+     2.7385,
+     0.911
+    ],
+    "table_top_height_m": 0.7606,
+    "dimension": {
+     "aligned_m": [
+      2.7385,
+      1.525,
+      0.7606
+     ],
+     "deviation_m": [
+      0.0015,
+      0.005,
+      0.0006
+     ],
+     "plan_axes_swapped": true,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 3043,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 3031,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.885
+       ],
+       "uv_max": [
+        0.115,
+        0.99
+       ]
+      },
+      "hpl_satin_wood": {
+       "faces": 12,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.76
+       ],
+       "uv_max": [
+        0.115,
+        0.86499
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "hpl_satin_wood": [
+      0,
+      64,
+      64,
+      64
+     ],
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 5,
+    "faces_flat_shaded": 30,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_26.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_26.fbx: outward"
+     }
+    }
+   },
+   "vpm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/vpm/VAT_MAF_T3510_26.fbx",
+    "sha256": "e85303515c3e38de619dbb9e5ce990ef43eb1a9deea67fc8ec1b36e7e8a8b147",
+    "triangles": 8696,
+    "measured_size_m": [
+     1.525,
+     2.74,
+     0.9131
+    ],
+    "table_top_height_m": 0.7606,
+    "dimension": {
+     "aligned_m": [
+      2.74,
+      1.525,
+      0.7606
+     ],
+     "deviation_m": [
+      0.0,
+      0.005,
+      0.0006
+     ],
+     "plan_axes_swapped": true,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 8696,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 8661,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.885
+       ],
+       "uv_max": [
+        0.115,
+        0.99
+       ]
+      },
+      "hpl_satin_wood": {
+       "faces": 35,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.76
+       ],
+       "uv_max": [
+        0.115,
+        0.865
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "hpl_satin_wood": [
+      0,
+      64,
+      64,
+      64
+     ],
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 5,
+    "faces_flat_shaded": 4,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_26.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_26.fbx: outward"
+     }
+    }
+   }
+  },
+  {
+   "set_id": "VAT_MAF_T3510_27",
+   "catalogue_id": "MAF_0219",
+   "schedule": "*T3510/27",
+   "name": "Комплект мебели «Ландау» / Артикул: 13994",
+   "spozu_block": "Стол Ландау",
+   "spozu_count_568BF": 3,
+   "npm_route": "existing NPM object (npm_matches: C_13010_Stol Landau komplekt.001) used as is",
+   "material_map": {
+    "1": "larch_light_oak",
+    "3": "steel_ral7047"
+   },
+   "material_reason": "sub-mat 1 = seats/top z 0.41-0.77, area 7.4 m2 (larch); 3 = frame (steel)",
+   "smoothing_deg": 40.0,
+   "source": {
+    "fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0219_C_13010_Stol_Landau_komplekt_001.fbx",
+    "sha256_before": "f1a500595327b8c918ee8cd4ec0c845efe42712e1fcde6a83defeefb4f91a2d9",
+    "sha256_after": "f1a500595327b8c918ee8cd4ec0c845efe42712e1fcde6a83defeefb4f91a2d9",
+    "sha256_copy": "f1a500595327b8c918ee8cd4ec0c845efe42712e1fcde6a83defeefb4f91a2d9"
+   },
+   "tris_raw": 540,
+   "schedule_size_m": [
+    2.28,
+    2.28,
+    0.75
+   ],
+   "height_rule": "overall",
+   "dimension_exception": null,
+   "npm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/npm/VAT_MAF_T3510_27.fbx",
+    "sha256": "da045d22e456418c30e425a835de2136d24d22e2d0d85181588692035394f913",
+    "triangles": 540,
+    "measured_size_m": [
+     2.2822,
+     2.2822,
+     0.7487
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      2.2822,
+      2.2822,
+      0.7487
+     ],
+     "deviation_m": [
+      0.0022,
+      0.0022,
+      0.0013
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 540,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 176,
+       "outside": 0,
+       "uv_min": [
+        0.0202,
+        0.885
+       ],
+       "uv_max": [
+        0.1049,
+        0.98743
+       ]
+      },
+      "larch_light_oak": {
+       "faces": 364,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.24,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ],
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 0,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_27.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_27.fbx: outward"
+     }
+    }
+   },
+   "vpm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/vpm/VAT_MAF_T3510_27.fbx",
+    "sha256": "61f9d62388c8ff2234fcf889703c22dc3961941a9cc79293cb6ec2fc73790785",
+    "triangles": 540,
+    "measured_size_m": [
+     2.2822,
+     2.2822,
+     0.7487
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      2.2822,
+      2.2822,
+      0.7487
+     ],
+     "deviation_m": [
+      0.0022,
+      0.0022,
+      0.0013
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 540,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 176,
+       "outside": 0,
+       "uv_min": [
+        0.0202,
+        0.885
+       ],
+       "uv_max": [
+        0.1049,
+        0.98743
+       ]
+      },
+      "larch_light_oak": {
+       "faces": 364,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.24,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ],
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 0,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_27.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_27.fbx: outward"
+     }
+    }
+   }
+  },
+  {
+   "set_id": "VAT_MAF_T3510_28",
+   "catalogue_id": "MAF_0127",
+   "schedule": "*T3510/28",
+   "name": "Качели-гнездо круг / 189.001",
+   "spozu_block": "Подвес качели гнездо",
+   "spozu_count_568BF": 4,
+   "npm_route": "existing NPM object (npm_matches: Icosphere.004) used as is",
+   "material_map": {
+    "3": "steel_ral7047",
+    "4": "rope_pp"
+   },
+   "material_reason": "sub-mat 3 = frame 1.71 x 2.00 m, thin tubes (steel); 4 = nest/ropes area 4.8 m2 (PP rope)",
+   "smoothing_deg": 40.0,
+   "source": {
+    "fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0127_Icosphere_004.fbx",
+    "sha256_before": "ca90be0fde9f53914ddda001d55660f08cfec1f0355a2bd1b7291fbde88b6d8f",
+    "sha256_after": "ca90be0fde9f53914ddda001d55660f08cfec1f0355a2bd1b7291fbde88b6d8f",
+    "sha256_copy": "ca90be0fde9f53914ddda001d55660f08cfec1f0355a2bd1b7291fbde88b6d8f"
+   },
+   "tris_raw": 2030,
+   "schedule_size_m": [
+    1.09,
+    1.09,
+    null
+   ],
+   "height_rule": "overall",
+   "dimension_exception": "Q8 (Artem 2026-10-19): schedule 1.09 x 1.09 m is the seat diameter, model includes frame; D112 architect question",
+   "npm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/npm/VAT_MAF_T3510_28.fbx",
+    "sha256": "1b615fb94b8a7840b68da70f3c8e2bb07b10b57c79bb504d6c39ce9b7ba75743",
+    "triangles": 2030,
+    "measured_size_m": [
+     1.7081,
+     1.9992,
+     2.3873
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      1.7081,
+      1.9992,
+      2.3873
+     ],
+     "deviation_m": [
+      0.6181,
+      0.9092,
+      null
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "review",
+     "reason": "user exception: Q8 (Artem 2026-10-19): schedule 1.09 x 1.09 m is the seat diameter, model includes frame; D112 architect question (outside tolerance)"
+    },
+    "uv_slots": {
+     "faces": 2030,
+     "faces_outside": 0,
+     "per_material": {
+      "rope_pp": {
+       "faces": 564,
+       "outside": 0,
+       "uv_min": [
+        0.14913,
+        0.77745
+       ],
+       "uv_max": [
+        0.22507,
+        0.86478
+       ]
+      },
+      "steel_ral7047": {
+       "faces": 1466,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.885
+       ],
+       "uv_max": [
+        0.115,
+        0.9895
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "rope_pp": [
+      64,
+      64,
+      64,
+      64
+     ],
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 4,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_28.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_28.fbx: outward"
+     }
+    }
+   },
+   "vpm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/vpm/VAT_MAF_T3510_28.fbx",
+    "sha256": "68d0528655b227cd6a1af0b9b9696fe912c925900e44ab0cde28eea771a7071b",
+    "triangles": 2030,
+    "measured_size_m": [
+     1.7081,
+     1.9992,
+     2.3873
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      1.7081,
+      1.9992,
+      2.3873
+     ],
+     "deviation_m": [
+      0.6181,
+      0.9092,
+      null
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "review",
+     "reason": "user exception: Q8 (Artem 2026-10-19): schedule 1.09 x 1.09 m is the seat diameter, model includes frame; D112 architect question (outside tolerance)"
+    },
+    "uv_slots": {
+     "faces": 2030,
+     "faces_outside": 0,
+     "per_material": {
+      "rope_pp": {
+       "faces": 564,
+       "outside": 0,
+       "uv_min": [
+        0.14913,
+        0.77745
+       ],
+       "uv_max": [
+        0.22507,
+        0.86478
+       ]
+      },
+      "steel_ral7047": {
+       "faces": 1466,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.885
+       ],
+       "uv_max": [
+        0.115,
+        0.9895
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "rope_pp": [
+      64,
+      64,
+      64,
+      64
+     ],
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 4,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_28.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_28.fbx: outward"
+     }
+    }
+   }
+  },
+  {
+   "set_id": "VAT_MAF_T3510_29",
+   "catalogue_id": "MAF_0159",
+   "schedule": "*T3510/29",
+   "name": "Кресло «Парк» / Артикул: 12750",
+   "spozu_block": "Кресло Парк 12750",
+   "spozu_count_568BF": 25,
+   "npm_route": "light version not needed: raw model kept (budget fits)",
+   "material_map": {
+    "*": "larch_light_oak"
+   },
+   "material_reason": "single source material; chair seat/back slats dominate -> larch",
+   "smoothing_deg": 40.0,
+   "source": {
+    "fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0159_C_Veloparkovka_Forrest_C.fbx",
+    "sha256_before": "415d2438cae2ce49522f3696f47cd0e29eef639e9c3d9ae941938da375989021",
+    "sha256_after": "415d2438cae2ce49522f3696f47cd0e29eef639e9c3d9ae941938da375989021",
+    "sha256_copy": "415d2438cae2ce49522f3696f47cd0e29eef639e9c3d9ae941938da375989021"
+   },
+   "tris_raw": 320,
+   "schedule_size_m": [
+    0.765,
+    0.53,
+    1.065
+   ],
+   "height_rule": "overall",
+   "dimension_exception": null,
+   "npm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/npm/VAT_MAF_T3510_29.fbx",
+    "sha256": "4850474bc24a565c200b945cdfb8fa58167d1cfd40806df5d325519ffc0b4ad0",
+    "triangles": 320,
+    "measured_size_m": [
+     0.4575,
+     0.7706,
+     1.001
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      0.7706,
+      0.4575,
+      1.001
+     ],
+     "deviation_m": [
+      0.0056,
+      0.0725,
+      0.064
+     ],
+     "plan_axes_swapped": true,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 320,
+     "faces_outside": 0,
+     "per_material": {
+      "larch_light_oak": {
+       "faces": 320,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.24,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 0,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_29.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_29.fbx: outward"
+     }
+    }
+   },
+   "vpm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/vpm/VAT_MAF_T3510_29.fbx",
+    "sha256": "8fce0255153b13a803ec86c4a7f9b80b2680255b303d56464383c532e029c96e",
+    "triangles": 320,
+    "measured_size_m": [
+     0.4575,
+     0.7706,
+     1.001
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      0.7706,
+      0.4575,
+      1.001
+     ],
+     "deviation_m": [
+      0.0056,
+      0.0725,
+      0.064
+     ],
+     "plan_axes_swapped": true,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 320,
+     "faces_outside": 0,
+     "per_material": {
+      "larch_light_oak": {
+       "faces": 320,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.24,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 0,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_29.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_29.fbx: outward"
+     }
+    }
+   }
+  },
+  {
+   "set_id": "VAT_MAF_T3510_31",
+   "catalogue_id": "MAF_0722",
+   "schedule": "*T3510/31",
+   "name": "Стол «Лондон» Тип 3 / Артикул: 13032",
+   "spozu_block": "Стол Лондон Тип 3",
+   "spozu_count_568BF": 16,
+   "npm_route": "light version not needed: raw model kept (budget fits)",
+   "material_map": {
+    "*": "larch_light_oak"
+   },
+   "material_reason": "single source material; table top area dominates -> larch",
+   "smoothing_deg": 40.0,
+   "source": {
+    "fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0722_Plane002.fbx",
+    "sha256_before": "f5325755a9bca67652a19723f25799ce9bcbae0510ba27bc72a0cc7f7cb2ef2d",
+    "sha256_after": "f5325755a9bca67652a19723f25799ce9bcbae0510ba27bc72a0cc7f7cb2ef2d",
+    "sha256_copy": "f5325755a9bca67652a19723f25799ce9bcbae0510ba27bc72a0cc7f7cb2ef2d"
+   },
+   "tris_raw": 212,
+   "schedule_size_m": [
+    1.0,
+    1.0,
+    0.6
+   ],
+   "height_rule": "overall",
+   "dimension_exception": null,
+   "npm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/npm/VAT_MAF_T3510_31.fbx",
+    "sha256": "805c25844f1d671e3cbc0facf6c83431bda9cb6b9b9f7ca1dc89b2c23c842bf6",
+    "triangles": 212,
+    "measured_size_m": [
+     1.0,
+     1.0,
+     0.6
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      1.0,
+      1.0,
+      0.6
+     ],
+     "deviation_m": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 212,
+     "faces_outside": 0,
+     "per_material": {
+      "larch_light_oak": {
+       "faces": 212,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.24,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 0,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_31.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_31.fbx: outward"
+     }
+    }
+   },
+   "vpm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/vpm/VAT_MAF_T3510_31.fbx",
+    "sha256": "084480b9e85d827b0c9e1700c9cd858ab139845a7b54b5c65af5c12df4b28761",
+    "triangles": 212,
+    "measured_size_m": [
+     1.0,
+     1.0,
+     0.6
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      1.0,
+      1.0,
+      0.6
+     ],
+     "deviation_m": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 212,
+     "faces_outside": 0,
+     "per_material": {
+      "larch_light_oak": {
+       "faces": 212,
+       "outside": 0,
+       "uv_min": [
+        0.135,
+        0.885
+       ],
+       "uv_max": [
+        0.24,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "larch_light_oak": [
+      64,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 0,
+    "faces_flat_shaded": 0,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_31.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_31.fbx: outward"
+     }
+    }
+   }
+  },
+  {
+   "set_id": "VAT_MAF_T3510_32",
+   "catalogue_id": "MAF_0687",
+   "schedule": "*T3510/32",
+   "name": "Приствольная решетка",
+   "spozu_block": "Приствольная решетка",
+   "spozu_count_568BF": 4,
+   "npm_route": "existing NPM object (npm_matches: crp_stitch_result_stitch all111.002) used as is",
+   "material_map": {
+    "*": "steel_ral7047"
+   },
+   "material_reason": "schedule: steel RAL 7047 only",
+   "smoothing_deg": 40.0,
+   "source": {
+    "fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0687_M_Trunk_Gate_003.fbx",
+    "sha256_before": "141cec916b902ce576b08ad3df07c22ce23364274b96fea06be243b997fcd5b6",
+    "sha256_after": "141cec916b902ce576b08ad3df07c22ce23364274b96fea06be243b997fcd5b6",
+    "sha256_copy": "141cec916b902ce576b08ad3df07c22ce23364274b96fea06be243b997fcd5b6"
+   },
+   "tris_raw": 3732,
+   "schedule_size_m": [
+    1.0,
+    1.0,
+    0.044
+   ],
+   "height_rule": "overall",
+   "dimension_exception": null,
+   "npm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/npm/VAT_MAF_T3510_32.fbx",
+    "sha256": "4529dc5ef08666020ac75b26dfcf484b0a11b8c81aa135c7ec5578e51f6664b2",
+    "triangles": 3726,
+    "measured_size_m": [
+     1.0,
+     1.0,
+     0.0476
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      1.0,
+      1.0,
+      0.0476
+     ],
+     "deviation_m": [
+      0.0,
+      0.0,
+      0.0036
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 3726,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 3726,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.885
+       ],
+       "uv_max": [
+        0.115,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 2,
+    "faces_flat_shaded": 0,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "npm/VAT_MAF_T3510_32.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "not_run",
+      "observed": "npm/VAT_MAF_T3510_32.fbx: VAT_MAF_T3510_32_GroundEl: 5 orientation undetermined",
+      "review_reason": "flat steel grate plates (44 mm, open sheets): 5 flat components have no measurable volume, so outward orientation is undetermined; winding is consistent (0 inconsistent edges, 0 flipped); visual check by the user"
+     }
+    }
+   },
+   "vpm": {
+    "fbx": "C:/x/vatutino-maf/v005-set/vpm/VAT_MAF_T3510_32.fbx",
+    "sha256": "0e51b957e24f873bd38059beb0b8cb470bfc6f62451e30de326c483693acd00c",
+    "triangles": 3726,
+    "measured_size_m": [
+     1.0,
+     1.0,
+     0.0476
+    ],
+    "table_top_height_m": null,
+    "dimension": {
+     "aligned_m": [
+      1.0,
+      1.0,
+      0.0476
+     ],
+     "deviation_m": [
+      0.0,
+      0.0,
+      0.0036
+     ],
+     "plan_axes_swapped": false,
+     "verdict": "pass",
+     "reason": "all axes within 0.1 m"
+    },
+    "uv_slots": {
+     "faces": 3726,
+     "faces_outside": 0,
+     "per_material": {
+      "steel_ral7047": {
+       "faces": 3726,
+       "outside": 0,
+       "uv_min": [
+        0.01,
+        0.885
+       ],
+       "uv_max": [
+        0.115,
+        0.99
+       ]
+      }
+     }
+    },
+    "atlas_slots": {
+     "steel_ral7047": [
+      0,
+      0,
+      64,
+      64
+     ]
+    },
+    "faces_reversed_outward": 2,
+    "faces_flat_shaded": 0,
+    "maf_findings": {
+     "MAF smoothing": {
+      "status": "pass",
+      "observed": "vpm/VAT_MAF_T3510_32.fbx: no soft edges above 40 deg"
+     },
+     "MAF flipped normals": {
+      "status": "not_run",
+      "observed": "vpm/VAT_MAF_T3510_32.fbx: VAT_MAF_T3510_32_GroundEl: 5 orientation undetermined",
+      "review_reason": "flat steel grate plates (44 mm, open sheets): 5 flat components have no measurable volume, so outward orientation is undetermined; winding is consistent (0 inconsistent edges, 0 flipped); visual check by the user"
+     }
+    }
+   }
+  }
+ ],
+ "gaps": [
+  {
+   "schedule": "*T3508/1",
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артик",
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope "
+  },
+  {
+   "schedule": "*T3508/2",
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артик",
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope "
+  },
+  {
+   "schedule": "*T3508/3",
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артик",
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope "
+  },
+  {
+   "schedule": "*T3508/4",
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артик",
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope "
+  },
+  {
+   "schedule": "*T3508/5",
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артик",
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope "
+  },
+  {
+   "schedule": "*T3508/6",
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артик",
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope "
+  },
+  {
+   "schedule": "*T3508/7",
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артик",
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope "
+  },
+  {
+   "schedule": "*T3508/8",
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артик",
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope "
+  },
+  {
+   "schedule": "*T3508/9",
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артик",
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope "
+  },
+  {
+   "schedule": "*T3508/10",
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артик",
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope "
+  },
+  {
+   "schedule": "*T3508/11",
+   "name": "Барная стойка",
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope "
+  },
+  {
+   "schedule": "*T3508/12",
+   "name": "Перучень для МГН",
+   "status": "not a MAF item",
+   "reason": "handrail for МГН, qty '-', no size, no DWG block; belongs to stairs/ramps, not to the MAF set (question); excluded by Artem 2026-10-19 (Q7)."
+  },
+  {
+   "schedule": "*T3508/13",
+   "name": "Навес \"Андромеда\" Тип 1",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule); confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3508/14",
+   "name": "Навес \"Андромеда\" Тип 2",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule); confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3508/15",
+   "name": "Навес \"Андромеда\" Тип 3",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule); confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3508/16",
+   "name": "Навес \"Андромеда\" Тип 4",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis ('14 3700х8020х3080' unreadable first value (143700?) -> review); confirmed by Artem 2026-10-19 (Q1/Q2/"
+  },
+  {
+   "schedule": "*T3508/17",
+   "name": "Песочница с повышением , подпорной стенкой и пандусом / Индивидуального изготовл",
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope "
+  },
+  {
+   "schedule": "*T3510/3",
+   "name": "Качели садово-парковые «Кассиопея» / Артикул: 20895",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3510/4",
+   "name": "Гамак HARDWOOD «Сен-Тропе» / Артикул: 25308",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3510/5",
+   "name": "Площадка для контейнеров ТБО",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule); confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3510/6",
+   "name": "Контейнер пластиковый ТБО",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (volume '1100 л' only, no L/W/H -> review); confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3510/8",
+   "name": "Скамейка «Фестиваль» Модуль 3 / арт. nv 521-03",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (4th value (seat height) ignored); confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3510/10",
+   "name": "Стул на ножке \"Бар\"",
+   "status": "no model",
+   "reason": "no name hit in the catalogue (names are scene object names); 11 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate"
+  },
+  {
+   "schedule": "*T3510/13",
+   "name": "Игра с песком / Артикул: ИО 1005Т-11",
+   "status": "no model",
+   "reason": "no name hit in the catalogue (names are scene object names); 3 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate "
+  },
+  {
+   "schedule": "*T3510/14",
+   "name": "Игровой комплекс / Артикул: ИК 0408Т-23",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3510/15",
+   "name": "Бетонные раскопки / Артикул:  / ИО 0860Т-1-5",
+   "status": "no model",
+   "reason": "no name hit in the catalogue (names are scene object names); 2 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate "
+  },
+  {
+   "schedule": "*T3510/17",
+   "name": "Вертушка / Артикул: ИО 0208Т-1",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3510/18",
+   "name": "Пенёк / ИО 0906Т-7",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (range d 150-230, h 200-400 mm: no single size -> review); confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3510/19",
+   "name": "Пергола «Андромеда» с поликарбонатом и обшивкой / Артикул: 40146-2/1",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3510/20",
+   "name": "Спортивное оборудование / Артикул: 217170",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3510/21",
+   "name": "Спортивное оборудование / Артикул: 217070",
+   "status": "no model",
+   "reason": "no name hit in the catalogue (names are scene object names); 1 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate "
+  },
+  {
+   "schedule": "*T3510/22",
+   "name": "Тренажер Wotkout nature 217100",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3510/23",
+   "name": "Тренажер 'Лыжи'",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3510/24",
+   "name": "Тренажер 'Волна'",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3510/25",
+   "name": "Тренажер 'Мышиная охота'",
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5)."
+  },
+  {
+   "schedule": "*T3510/30",
+   "name": "Скамья тетрис 03 / Артикул: С-Т03",
+   "status": "no model",
+   "reason": "no name hit in the catalogue (names are scene object names); 2 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate "
+  },
+  {
+   "schedule": "plan block «Турник» (no row)",
+   "name": "Турник",
+   "status": "no model",
+   "reason": "Q9: no schedule row, no dimensions"
+  }
+ ],
+ "gap_count": 37,
+ "verify_lines_for_user": [
+  "material layout per sub-material (geometry-based assumption, see material_reason) - visual review",
+  "larch/HPL as solid colours (no wood texture source) - visual review",
+  "light versions (Decimate) rows 09, 11, 16, 26: silhouette - visual review",
+  "row 28 dimension exception Q8 (architect question D112)",
+  "row 32 orientation undetermined on flat plates - visual review"
+ ]
+}

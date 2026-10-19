@@ -1,6 +1,6 @@
 # Vatutino site — schedule position to library map (#313)
 
-Status: **blocked on Q8–Q9; not a placement-ready set**. Steps 1–2 only.
+Status: Steps 1–2 closed (Q1–Q9 answered); set built in `site-maf-set.md`.
 
 Artem accepted the orchestrator recommendations, verbatim: «Принимаю» (Kanban t_147116bf, 2026-10-19 18:57). Answers below are an English transcription of that handoff, not new decisions.
 
@@ -78,9 +78,12 @@ Candidate lists, original matching evidence and resolved-question IDs remain in 
 
 See `source-dimension-gate.md` and `.json`: 13 copied source FBX files independently imported in Blender 5.1.2; hashes before/after/copy all equal. These are raw library assets, not new NPM/VPM exports.
 
-## Open model decisions
+## Q8–Q9 answers (Artem, 2026-10-19, card comment)
 
-- **Q8**: Row *T3510/28: MAF_0127 measures 1.708107 x 1.999161 m vs schedule 1.09 x 1.09 m; deviations 0.618107 / 0.909161 m exceed D094. Which catalogue id should be used, or should this position remain no model? No scaling or substitution performed.
-- **Q9**: Turnik is included by Q6: provide its selected library ID or manufacturer/reference and L/W/H for identification; alternatively confirm no model pending a later modelling task.
+> Q8 - *T3510/28 nest swing = MAF_0127 by appearance: the schedule 1.09 x 1.09 m is the seat diameter, the library model includes the frame (1.71 x 2.00 x 2.39 m). Accept it as an explicit user exception to the 10 cm dimension check (D094) for this row only, record it in the catalogue and add the discrepancy to the questions-for-the-architect list (D112). Q9 - «Турник»: no model (no schedule row, no dimensions); listed as a gap for the later modelling issue.
 
-NPM/VPM generation, simplification, atlas, smoothing, L2 normals checks and final set catalogue remain incomplete. `site-maf-set` is deliberately not published as ready for #296.
+- *T3510/28 -> MAF_0127, dimension verdict `review` (user exception Q8), never `pass`.
+- «Турник» (plan block, 1 insert, no schedule row) -> `no model`, gap.
+- No open questions remain. Questions for the architect (D112): block ИО 0323Т-3 vs row ИО 0410-2 (*T3510/11); row 28 size = seat diameter vs model with frame; «Ландау» article 13994 vs 13010.
+
+Status: Steps 1–2 closed; the set is in `site-maf-set.md` / `.json`.
