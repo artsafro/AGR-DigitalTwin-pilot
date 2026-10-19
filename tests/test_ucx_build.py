@@ -760,11 +760,20 @@ def slit_site(angle):
     tip = float(u @ o) + ln
     parts = [ub._clip(ub._clip(sq, -n, -float(n @ o)), -u, -tip),
              ub._clip(ub._clip(sq, n, float(n @ o) + w), -u, -tip), ub._clip(sq, u, tip)]
+    corners = [o + u * ln, o + u * ln + n * w]  # slit tip corners: the tip is a mesh boundary edge of its own
     vs, ts, off = [], [], 0
     for p in parts:
-        vs.append(np.column_stack([p, np.full(len(p), 145.0)]))
-        ts.append(np.array([(off, off + k, off + k + 1) for k in range(1, len(p) - 1)]))
-        off += len(p)
+        ring = []
+        for a, b in zip(p, np.roll(p, -1, axis=0)):
+            ring.append(a)
+            on = [c for c in corners if abs((b - a)[0] * (c - a)[1] - (b - a)[1] * (c - a)[0]) < 1e-9 * np.hypot(*(b - a))
+                  and 1e-9 < (c - a) @ (b - a) < (b - a) @ (b - a) - 1e-9]
+            ring += sorted(on, key=lambda c: (c - a) @ (b - a))
+        ring = np.array(ring)
+        k = len(ring)
+        vs.append(np.column_stack([np.vstack([ring.mean(axis=0), ring]), np.full(k + 1, 145.0)]))
+        ts.append(np.array([(off, off + 1 + i, off + 1 + (i + 1) % k) for i in range(k)]))
+        off += k + 1
     v, t = np.concatenate(vs), np.concatenate(ts)
     v[:, :2] += 500.0
     return v, t, o + 500.0 + u * ln / 2 + n * w / 2

@@ -893,7 +893,7 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
     """UCX for the Ground target: convex prisms over a binary space partition of the covered plan.
 
     Start cells of `cell` metres are cut (a) along a single chord when the covered-region outline inside
-    the cell lies within tol/4 of one line (the chord is moved to the void side of every outline point,
+    the cell lies within gap/2 of one line (the chord is moved to the void side of every outline point,
     so no piece reaches into a void), (b) along the line of the longest outline segment, (c) along the
     longest kerb/step trace (`_breaklines`) or internal layer edge when the planar top misses the surface by more than `tol`,
     else (d) in half across the longer side down to `min_cell`. Each leaf is shrunk by gap/2 per edge and
@@ -922,7 +922,9 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
     edges3 = hf.v[ue]  # (E, 2, 3) mesh edges for the piece bottoms
     eidx = _SegIndex(edges3[:, :, :2], lo, hf.bucket)
     g = gap / 2
-    chord_tol = tol / 4  # band + corner retreat stay within tol (uncovered_strip_m)
+    # outline band <= gap/2: the covered strip it leaves beside a piece is <= gap, so no corridor wider
+    # than [D098] 1 cm opens between pieces along an outline (#326 review: 2 cm bands left 1-9 cm ones)
+    chord_tol = g
     stack = [(np.array([(x, y), (x + sx, y), (x + sx, y + sy), (x, y + sy)]), 0)
              for x in lo[0] + sx * np.arange(n[0]) for y in lo[1] + sy * np.arange(n[1])]
     pieces, devs, strips, loose = [], [0.0], [0.0], []
@@ -1035,17 +1037,19 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
                 if kids:
                     stack.extend((k, lvl + 1) for k in kids)
                     continue
-            # the band is only as long as the outline in it: where the outline ends inside the cell (a slit
-            # tip) the strip beyond is covered Ground, so the cell is first cut across the band there; a band
-            # spanning the whole cell would open a corridor of its width between the pieces on both sides
-            # (#326 review: 23 mm gaps across covered Ground)
+            # the band is only as long as the outline in it: where the strip of the cell beyond an outline
+            # end (a slit tip, a notch) reaches further than the gap, that strip is covered Ground, so the cell
+            # is first cut across the band there; a band spanning the whole cell would open a corridor of its
+            # width between the pieces on both sides (#326 review: 23 mm gaps across covered Ground)
             u = vt[0]
             tc = pts @ u
+            strip_p = _clip(_clip(p, nn, cmin), -nn, -cmax)
             kids = None
-            for k, sgn in ((int(np.argmin(tc)), -1.0), (int(np.argmax(tc)), 1.0)):
-                if (_half_planes(p)[0] @ pts[k] - _half_planes(p)[1]).min() <= g:
-                    continue  # the outline leaves the cell here
-                kids = cut(p, pts[k], pts[k] + sgn * nn)
+            for tend, sgn in ((float(tc.min()), -1.0), (float(tc.max()), 1.0)):
+                beyond = _clip(strip_p, sgn * u, sgn * tend) if len(strip_p) >= 3 else strip_p
+                if len(beyond) < 3 or float((sgn * (beyond @ u)).max()) - sgn * tend <= g:
+                    continue
+                kids = cut(p, tend * u, tend * u + sgn * nn)
                 if kids:
                     break
             if kids:
