@@ -148,6 +148,57 @@ def test_in_plane_shift_exactly_tolerance_is_not_same():
     assert verdict(square(), shifted, frame="world") != "same"
 
 
+FRAMES_UNDER_TEST = ("pivot", "world")
+
+
+def _anchored(dx=0.0, dz=0.0):
+    """[-2,2]^2 anchor at z=0 (keeps the D100 pivots equal) plus a unit square at z=1 moved by (dx, 0, dz)."""
+    anchor = (np.asarray(square(4.0)) - [2.0, 2.0, 0.0]).tolist()
+    return anchor + (np.asarray(square(z=1.0)) + [dx, 0.0, dz]).tolist()
+
+
+@pytest.mark.parametrize("frame", FRAMES_UNDER_TEST)
+@pytest.mark.parametrize("order", ["base_first", "moved_first"])
+def test_combined_offset_beyond_euclidean_tolerance_is_different(frame, order):
+    """Review round 1 P1-1: offset (80 um, 0, 80 um) is 113 um > 100 um away; a 20 um strip is uncovered."""
+    a, b = _anchored(), _anchored(8e-5, 8e-5)
+    if order == "moved_first":
+        a, b = b, a
+    result = compare_surfaces(a, b, frame=frame)
+    assert result["verdict"] == "different"
+    true_strip = 8e-5 - math.sqrt(TOLERANCE_M**2 - 8e-5**2)  # 2e-5 m wide, 1 m long
+    for side in ("a", "b"):
+        assert result[side]["uncovered_lower_m2"] <= true_strip * 1.0001
+        assert result[side]["uncovered_m2"] >= true_strip * 0.9999
+
+
+@pytest.mark.parametrize("frame", FRAMES_UNDER_TEST)
+@pytest.mark.parametrize("offset", [(0.0, 5e-5), (5e-5, 0.0), (5e-5, 5e-5)], ids=["normal", "planar", "diagonal"])
+def test_offset_well_inside_euclidean_tolerance_is_same(frame, offset):
+    """Controls for P1-1: pure normal, pure planar and diagonal offsets of <= 71 um stay same."""
+    assert verdict(_anchored(), _anchored(*offset), frame=frame) == "same"
+    assert verdict(_anchored(*offset), _anchored(), frame=frame) == "same"
+
+
+@pytest.mark.parametrize("seed", range(40))
+def test_probe_random_combined_offset_respects_euclidean_tolerance(seed):
+    """Invariant: offset distance > 1.05 tol -> never same; < 0.95 tol -> never different; bounds bracket truth."""
+    rng = np.random.default_rng(1000 + seed)
+    angle = rng.uniform(0.0, math.pi / 2)
+    distance = TOLERANCE_M * (rng.uniform(1.05, 1.6) if seed % 2 else rng.uniform(0.0, 0.95))
+    dx, dz = distance * math.cos(angle), distance * math.sin(angle)
+    result = compare_surfaces(_anchored(), _anchored(dx, dz), frame="world")
+    if distance > TOLERANCE_M:
+        assert result["verdict"] != "same"
+        width = dx if dz >= TOLERANCE_M else dx - math.sqrt(TOLERANCE_M**2 - dz**2)
+        truth = 1.0 if dz >= TOLERANCE_M else width * 1.0
+        for side in ("a", "b"):
+            assert result[side]["uncovered_lower_m2"] <= truth * 1.0001 + 1e-12
+            assert result[side]["uncovered_m2"] >= truth * 0.9999 - 1e-12
+    else:
+        assert result["verdict"] != "different"
+
+
 def test_translated_copy_is_same_in_pivot_frame_only():
     moved = (np.asarray(grid(1.0, 5)) + [12.5, -3.0, 0.7]).tolist()
     assert verdict(square(), moved) == "same"
