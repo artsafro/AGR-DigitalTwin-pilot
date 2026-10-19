@@ -48,16 +48,17 @@ _COUNT_KEYS = (
 _NPM_PROFILE = {"LP": 0, "LP -> HP": 1, "unlabelled": 2}
 _VPM_PROFILE = {"HP": 0, "LP -> HP": 1}
 _VPM_IDENTITY = ("verified_distinct", "unverified")
-_GEOMETRY_RELATIONS = ("same", "scaled_copy", "distinct")
+_GEOMETRY_RELATIONS = ("same", "scaled_copy", "distinct", "unknown")
 _KEPT_VPM_RELATIONS = ("distinct", "unknown")
 _EVIDENCE_KEYS = ("relation", "translation_dev_m", "scaled_dev_rel")
-_IDENTITY_SCHEMA = "flora-geometry-identity-v2"
+_IDENTITY_SCHEMA = "flora-geometry-identity-v3"
 _IDENTITY_TOLERANCE = 1e-4
 _IDENTITY_METHOD = (
-    "world vertices from snapshotAsMesh on the source copies, "
-    "translation-normalized symmetric Hausdorff <= 1e-4 m = same, "
-    "scale-normalized <= 1e-4 relative = scaled_copy, else distinct; "
-    "vertex counts must match for same/scaled_copy; triangle counts are never used"
+    "world triangles from snapshotAsMesh on the source copies, "
+    "translation-normalized symmetric surface Hausdorff <= 1e-4 m = same, "
+    "scale-normalized <= 1e-4 relative = scaled_copy, otherwise distinct; "
+    "a pair without finite positive-area triangles on both sides is unknown; "
+    "vertex clouds, vertex counts and triangle counts never decide"
 )
 _PAIR_KEYS = ("a", "b", "relation", "translation_dev_m", "scaled_dev_rel")
 
@@ -122,8 +123,45 @@ def compare_clouds(a_points, b_points, tolerance: float = _IDENTITY_TOLERANCE) -
     }
 
 
+def compare_surfaces(a_faces, b_faces, tolerance: float = _IDENTITY_TOLERANCE) -> dict:
+    """Symmetric surface Hausdorff of two triangle lists. Vertex clouds stay unknown."""
+    if tolerance <= 0:
+        raise ValueError("tolerance must be positive")
+    left = _as_triangles(a_faces)
+    right = _as_triangles(b_faces)
+    counts = [_listed_faces(a_faces), _listed_faces(b_faces)]
+    if left is None or right is None:
+        return {
+            "relation": "unknown",
+            "translation_dev_m": None,
+            "scaled_dev_rel": None,
+            "triangles": counts,
+        }
+    normal_a = _translation_normalize_faces(left)
+    normal_b = _translation_normalize_faces(right)
+    translation = _surface_hausdorff(normal_a, normal_b, tolerance)
+    if _within_tolerance(translation, tolerance):
+        return {
+            "relation": "same",
+            "translation_dev_m": _round_dev(translation),
+            "scaled_dev_rel": None,
+            "triangles": counts,
+        }
+    scaled = _scale_surface_hausdorff(normal_a, normal_b, tolerance)
+    if _within_tolerance(scaled, tolerance):
+        relation = "scaled_copy"
+    else:
+        relation = "distinct"
+    return {
+        "relation": relation,
+        "translation_dev_m": _round_dev(translation),
+        "scaled_dev_rel": _round_dev(scaled),
+        "triangles": counts,
+    }
+
+
 def build_identity(points: dict[str, list], curation: dict) -> dict:
-    """Pairwise geometry evidence for every curated species that has its own mesh."""
+    """Pairwise surface evidence for every curated species that has its own mesh."""
     if not isinstance(points, dict) or not isinstance(curation, dict):
         raise ValueError("points and curation must be objects")
     used: set[str] = set()
@@ -149,16 +187,16 @@ def build_identity(points: dict[str, list], curation: dict) -> dict:
                 if left == right:
                     continue
                 pair_keys.add((left, right) if left < right else (right, left))
-    entries = {entry_id: {"vertices": len(points[entry_id])} for entry_id in sorted(used)}
+    entries = {entry_id: {"triangles": _listed_faces(points[entry_id])} for entry_id in sorted(used)}
     pairs = []
     for left, right in sorted(pair_keys):
-        compared = compare_clouds(points[left], points[right], _IDENTITY_TOLERANCE)
+        compared = compare_surfaces(points[left], points[right], _IDENTITY_TOLERANCE)
         pairs.append({
             "a": left,
             "b": right,
             "relation": compared["relation"],
-            "translation_dev_m": _round_dev(compared["translation_dev_m"]),
-            "scaled_dev_rel": _round_dev(compared["scaled_dev_rel"]),
+            "translation_dev_m": compared["translation_dev_m"],
+            "scaled_dev_rel": compared["scaled_dev_rel"],
         })
     return {
         "schema": _IDENTITY_SCHEMA,
@@ -170,7 +208,7 @@ def build_identity(points: dict[str, list], curation: dict) -> dict:
 
 
 def load_identity(value: dict) -> PairIdentity:
-    """Return frozenset({id_a, id_b}) -> relation from a flora-geometry-identity-v2 document."""
+    """Return frozenset({id_a, id_b}) -> relation from a flora-geometry-identity-v3 document."""
     if not isinstance(value, dict) or value.get("schema") != _IDENTITY_SCHEMA:
         raise ValueError(f"schema is not {_IDENTITY_SCHEMA}")
     if value.get("method") != _IDENTITY_METHOD:
@@ -184,9 +222,9 @@ def load_identity(value: dict) -> PairIdentity:
     for entry_id, row in entries.items():
         if not isinstance(entry_id, str) or not entry_id or not isinstance(row, dict):
             raise ValueError(f"invalid identity entry {entry_id!r}")
-        if set(row) != {"vertices"} or not _is_int(row.get("vertices")) or row["vertices"] < 0:
-            raise ValueError(f"invalid vertex count for {entry_id}")
-        vertices[entry_id] = row["vertices"]
+        if set(row) != {"triangles"} or not _is_int(row.get("triangles")) or row["triangles"] < 0:
+            raise ValueError(f"invalid triangle count for {entry_id}")
+        vertices[entry_id] = row["triangles"]
     pairs = value.get("pairs")
     if not isinstance(pairs, list):
         raise ValueError("pairs is not a list")
@@ -205,11 +243,10 @@ def load_identity(value: dict) -> PairIdentity:
         relation = pair["relation"]
         if relation not in _GEOMETRY_RELATIONS:
             raise ValueError(f"pairs[{index}] relation {relation!r} is not a geometry relation")
-        if relation in ("same", "scaled_copy") and vertices[left] != vertices[right]:
-            raise ValueError(f"pairs[{index}] {relation} requires equal vertex counts")
         for key in ("translation_dev_m", "scaled_dev_rel"):
             if pair[key] is not None and not _is_number(pair[key]):
                 raise ValueError(f"pairs[{index}].{key} is not a number")
+        _require_relation_devs(relation, pair, index)
         key = frozenset((left, right))
         if key in relations:
             raise ValueError(f"duplicate pair {left} {right}")
@@ -666,6 +703,292 @@ def _round_dev(value: float | None) -> float | None:
     return rounded
 
 
+def _within_tolerance(distance: float | None, tolerance: float) -> bool:
+    rounded = _round_dev(distance)
+    return rounded is not None and rounded <= tolerance
+
+
+def _require_relation_devs(relation: str, pair: dict, index: int) -> None:
+    translation = pair["translation_dev_m"]
+    scaled = pair["scaled_dev_rel"]
+    if relation == "unknown":
+        if translation is not None or scaled is not None:
+            raise ValueError(f"pairs[{index}] unknown stores a deviation")
+        return
+    if relation == "same":
+        if not _within_tolerance(translation, _IDENTITY_TOLERANCE) or (
+            _is_number(translation) and translation < 0
+        ):
+            raise ValueError(f"pairs[{index}] same is outside the surface tolerance")
+        if scaled is not None:
+            raise ValueError(f"pairs[{index}] same stores a scale deviation")
+        return
+    if relation == "scaled_copy" and (
+        not _within_tolerance(scaled, _IDENTITY_TOLERANCE) or (_is_number(scaled) and scaled < 0)
+    ):
+        raise ValueError(f"pairs[{index}] scaled_copy is outside the surface tolerance")
+
+
+def _listed_faces(value) -> int:
+    parsed = _as_triangles(value)
+    if parsed is None:
+        return 0
+    return len(parsed)
+
+
+def _as_triangles(value):
+    """Triangle corners, or None when the value is not a finite positive-area surface."""
+    if not isinstance(value, list) or not value:
+        return None
+    triangles = []
+    positive = False
+    for face in value:
+        if not isinstance(face, (list, tuple)) or len(face) != 3:
+            return None
+        corners = []
+        for point in face:
+            if not isinstance(point, (list, tuple)) or len(point) != 3:
+                return None
+            try:
+                coords = (float(point[0]), float(point[1]), float(point[2]))
+            except (TypeError, ValueError):
+                return None
+            if not all(math.isfinite(coord) for coord in coords):
+                return None
+            corners.append(coords)
+        if _triangle_area2(corners[0], corners[1], corners[2]) > 0.0:
+            positive = True
+        triangles.append(tuple(corners))
+    if not positive:
+        return None
+    return triangles
+
+
+def _triangle_area2(a, b, c) -> float:
+    ax, ay, az = b[0] - a[0], b[1] - a[1], b[2] - a[2]
+    bx, by, bz = c[0] - a[0], c[1] - a[1], c[2] - a[2]
+    cx = ay * bz - az * by
+    cy = az * bx - ax * bz
+    cz = ax * by - ay * bx
+    return cx * cx + cy * cy + cz * cz
+
+
+def _translation_normalize_faces(triangles):
+    min_x = min(point[0] for face in triangles for point in face)
+    min_y = min(point[1] for face in triangles for point in face)
+    min_z = min(point[2] for face in triangles for point in face)
+    return [
+        tuple((point[0] - min_x, point[1] - min_y, point[2] - min_z) for point in face)
+        for face in triangles
+    ]
+
+
+def _face_extent(triangles) -> float:
+    return max(point[axis] for face in triangles for point in face for axis in range(3))
+
+
+def _scale_faces_to_extent(triangles, extent: float):
+    return [
+        tuple((point[0] / extent, point[1] / extent, point[2] / extent) for point in face)
+        for face in triangles
+    ]
+
+
+def _scale_surface_hausdorff(normal_a, normal_b, tolerance: float) -> float | None:
+    extent_a = _face_extent(normal_a)
+    extent_b = _face_extent(normal_b)
+    if extent_a == 0.0 or extent_b == 0.0:
+        return None
+    return _surface_hausdorff(
+        _scale_faces_to_extent(normal_a, extent_a),
+        _scale_faces_to_extent(normal_b, extent_b),
+        tolerance,
+    )
+
+
+def _surface_hausdorff(left, right, tolerance: float) -> float:
+    forward = _directed_surface(left, right, tolerance)
+    backward = _directed_surface(right, left, tolerance)
+    return forward if forward >= backward else backward
+
+
+def _directed_surface(source, target, tolerance: float) -> float:
+    samples = list(_surface_samples(source))
+    if not samples:
+        return 0.0
+    if len(target) <= 400:
+        worst = 0.0
+        for sample in samples:
+            distance = _brute_distance(sample, target)
+            if distance > worst:
+                worst = distance
+        return worst
+    distances = _numpy_min_distances(samples, target)
+    worst = 0.0
+    for distance in distances:
+        if distance > worst:
+            worst = distance
+    return worst
+
+
+def _numpy_min_distances(samples, triangles):
+    """Min distance from each sample to the triangle set. Same regions as _dist2_point_triangle."""
+    import numpy as np
+
+    points = np.asarray(samples, dtype=np.float64)
+    faces = np.asarray(triangles, dtype=np.float64)
+    best = np.full(len(points), np.inf)
+    for start in range(0, len(points), 128):
+        pts = points[start:start + 128]
+        block = np.full(len(pts), np.inf)
+        for face_start in range(0, len(faces), 1024):
+            chunk = faces[face_start:face_start + 1024]
+            block = np.minimum(block, _numpy_chunk_dist(pts, chunk))
+        best[start:start + len(pts)] = block
+    return best
+
+
+def _numpy_chunk_dist(pts, chunk):
+    import numpy as np
+
+    a = chunk[:, 0]
+    b = chunk[:, 1]
+    c = chunk[:, 2]
+    ab = b - a
+    ac = c - a
+    ap = pts[:, None, :] - a
+    bp = pts[:, None, :] - b
+    cp = pts[:, None, :] - c
+    d1 = np.einsum("mj,pmj->pm", ab, ap)
+    d2 = np.einsum("mj,pmj->pm", ac, ap)
+    d3 = np.einsum("mj,pmj->pm", ab, bp)
+    d4 = np.einsum("mj,pmj->pm", ac, bp)
+    d5 = np.einsum("mj,pmj->pm", ab, cp)
+    d6 = np.einsum("mj,pmj->pm", ac, cp)
+    result = np.full(d1.shape, np.inf)
+    done = np.zeros(d1.shape, dtype=bool)
+
+    def take(mask, dist2):
+        nonlocal result, done
+        use = mask & ~done
+        result = np.where(use, dist2, result)
+        done = done | use
+
+    take((d1 <= 0.0) & (d2 <= 0.0), np.einsum("pmj,pmj->pm", ap, ap))
+    take((d3 >= 0.0) & (d4 <= d3), np.einsum("pmj,pmj->pm", bp, bp))
+    take((d6 >= 0.0) & (d5 <= d6), np.einsum("pmj,pmj->pm", cp, cp))
+    vc = d1 * d4 - d3 * d2
+    edge_ab = (vc <= 0.0) & (d1 >= 0.0) & (d3 <= 0.0)
+    v_ab = np.divide(d1, d1 - d3, out=np.zeros_like(d1), where=edge_ab)
+    closest = a + v_ab[:, :, None] * ab
+    take(edge_ab, np.einsum("pmj,pmj->pm", pts[:, None, :] - closest, pts[:, None, :] - closest))
+    vb = d5 * d2 - d1 * d6
+    edge_ac = (vb <= 0.0) & (d2 >= 0.0) & (d6 <= 0.0)
+    w_ac = np.divide(d2, d2 - d6, out=np.zeros_like(d2), where=edge_ac)
+    closest = a + w_ac[:, :, None] * ac
+    take(edge_ac, np.einsum("pmj,pmj->pm", pts[:, None, :] - closest, pts[:, None, :] - closest))
+    va = d3 * d6 - d5 * d4
+    edge_bc = (va <= 0.0) & ((d4 - d3) >= 0.0) & ((d5 - d6) >= 0.0)
+    w_bc = np.divide(d4 - d3, (d4 - d3) + (d5 - d6), out=np.zeros_like(d4), where=edge_bc)
+    closest = b + w_bc[:, :, None] * (c - b)
+    take(edge_bc, np.einsum("pmj,pmj->pm", pts[:, None, :] - closest, pts[:, None, :] - closest))
+    denom = va + vb + vc
+    interior = ~done & (denom != 0.0)
+    v_int = np.divide(vb, denom, out=np.zeros_like(vb), where=interior)
+    w_int = np.divide(vc, denom, out=np.zeros_like(vc), where=interior)
+    closest = a + v_int[:, :, None] * ab + w_int[:, :, None] * ac
+    take(interior, np.einsum("pmj,pmj->pm", pts[:, None, :] - closest, pts[:, None, :] - closest))
+    take(~done, np.einsum("pmj,pmj->pm", ap, ap))
+    return np.sqrt(np.maximum(result.min(axis=1), 0.0))
+
+
+def _surface_samples(triangles):
+    seen = set()
+    for face in triangles:
+        a, b, c = face
+        candidates = (
+            a, b, c,
+            ((a[0] + b[0]) * 0.5, (a[1] + b[1]) * 0.5, (a[2] + b[2]) * 0.5),
+            ((b[0] + c[0]) * 0.5, (b[1] + c[1]) * 0.5, (b[2] + c[2]) * 0.5),
+            ((c[0] + a[0]) * 0.5, (c[1] + a[1]) * 0.5, (c[2] + a[2]) * 0.5),
+            (
+                (a[0] + b[0] + c[0]) / 3.0,
+                (a[1] + b[1] + c[1]) / 3.0,
+                (a[2] + b[2] + c[2]) / 3.0,
+            ),
+        )
+        for point in candidates:
+            key = (round(point[0], 9), round(point[1], 9), round(point[2], 9))
+            if key in seen:
+                continue
+            seen.add(key)
+            yield point
+
+
+def _brute_distance(point, triangles) -> float:
+    best = None
+    for face in triangles:
+        dist2 = _dist2_point_triangle(point, face[0], face[1], face[2])
+        if dist2 == 0.0:
+            return 0.0
+        if best is None or dist2 < best:
+            best = dist2
+    if best is None:
+        return float("inf")
+    return math.sqrt(best)
+
+
+def _dist2_point_triangle(point, a, b, c) -> float:
+    ab = (b[0] - a[0], b[1] - a[1], b[2] - a[2])
+    ac = (c[0] - a[0], c[1] - a[1], c[2] - a[2])
+    ap = (point[0] - a[0], point[1] - a[1], point[2] - a[2])
+    d1 = ab[0] * ap[0] + ab[1] * ap[1] + ab[2] * ap[2]
+    d2 = ac[0] * ap[0] + ac[1] * ap[1] + ac[2] * ap[2]
+    if d1 <= 0.0 and d2 <= 0.0:
+        return ap[0] * ap[0] + ap[1] * ap[1] + ap[2] * ap[2]
+    bp = (point[0] - b[0], point[1] - b[1], point[2] - b[2])
+    d3 = ab[0] * bp[0] + ab[1] * bp[1] + ab[2] * bp[2]
+    d4 = ac[0] * bp[0] + ac[1] * bp[1] + ac[2] * bp[2]
+    if d3 >= 0.0 and d4 <= d3:
+        return bp[0] * bp[0] + bp[1] * bp[1] + bp[2] * bp[2]
+    cp = (point[0] - c[0], point[1] - c[1], point[2] - c[2])
+    d5 = ab[0] * cp[0] + ab[1] * cp[1] + ab[2] * cp[2]
+    d6 = ac[0] * cp[0] + ac[1] * cp[1] + ac[2] * cp[2]
+    if d6 >= 0.0 and d5 <= d6:
+        return cp[0] * cp[0] + cp[1] * cp[1] + cp[2] * cp[2]
+    vc = d1 * d4 - d3 * d2
+    if vc <= 0.0 and d1 >= 0.0 and d3 <= 0.0:
+        v = d1 / (d1 - d3)
+        closest = (a[0] + v * ab[0], a[1] + v * ab[1], a[2] + v * ab[2])
+        return _dist2(point, closest)
+    vb = d5 * d2 - d1 * d6
+    if vb <= 0.0 and d2 >= 0.0 and d6 <= 0.0:
+        w = d2 / (d2 - d6)
+        closest = (a[0] + w * ac[0], a[1] + w * ac[1], a[2] + w * ac[2])
+        return _dist2(point, closest)
+    va = d3 * d6 - d5 * d4
+    if va <= 0.0 and (d4 - d3) >= 0.0 and (d5 - d6) >= 0.0:
+        w = (d4 - d3) / ((d4 - d3) + (d5 - d6))
+        closest = (b[0] + w * (c[0] - b[0]), b[1] + w * (c[1] - b[1]), b[2] + w * (c[2] - b[2]))
+        return _dist2(point, closest)
+    denom = va + vb + vc
+    v = vb / denom
+    w = vc / denom
+    closest = (
+        a[0] + ab[0] * v + ac[0] * w,
+        a[1] + ab[1] * v + ac[1] * w,
+        a[2] + ab[2] * v + ac[2] * w,
+    )
+    return _dist2(point, closest)
+
+
+def _dist2(left, right) -> float:
+    dx = left[0] - right[0]
+    dy = left[1] - right[1]
+    dz = left[2] - right[2]
+    return dx * dx + dy * dy + dz * dz
+
+
 def _points_from_dump(dump: dict) -> dict[str, list]:
     if not isinstance(dump, dict):
         raise ValueError("points dump is not an object")
@@ -679,9 +1002,14 @@ def _points_from_dump(dump: dict) -> dict[str, list]:
         raise ValueError("points dump is missing entries")
     points: dict[str, list] = {}
     for entry_id, row in entries.items():
-        if not isinstance(entry_id, str) or not isinstance(row, dict) or not isinstance(row.get("points"), list):
+        if not isinstance(entry_id, str) or not isinstance(row, dict):
             raise ValueError(f"invalid points entry {entry_id!r}")
-        points[entry_id] = row["points"]
+        if isinstance(row.get("triangles"), list):
+            points[entry_id] = row["triangles"]
+        elif isinstance(row.get("points"), list):
+            points[entry_id] = row["points"]
+        else:
+            raise ValueError(f"invalid points entry {entry_id!r}")
     return points
 
 

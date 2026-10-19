@@ -1,9 +1,11 @@
-"""Write world-space vertices for Flora source meshes.
+"""Write world-space triangles for Flora source meshes.
 
-Pattern: n/a | new-case: Flora source vertex dump for VPM identity evidence (#216).
+Pattern: n/a | new-case: Flora source face dump for VPM identity evidence (#216).
 
 The dump is written to the job "out" path, which must be outside this repository.
 Job JSON (FLORA_VERTICES_JOB): audit, scenes, copy_sha256, out.
+Vertices are not hashed and are not the identity evidence. Each entry stores the
+snapshot triangles (world space, no extra node transform).
 """
 import importlib.util
 import json
@@ -38,18 +40,22 @@ def _builder():
     return module
 
 
-def _world_vertices(rt, node):
+def _world_triangles(rt, node):
     mesh = rt.snapshotAsMesh(node)
     try:
         # snapshotAsMesh vertices are already in world space; do not apply a transform again.
-        count = int(mesh.numverts)
-        points = []
+        count = int(rt.getNumFaces(mesh))
+        triangles = []
         for index in range(1, count + 1):
-            point = rt.meshop.getVert(mesh, index)
-            points.append([float(point.x), float(point.y), float(point.z)])
+            face = rt.getFace(mesh, index)
+            corners = []
+            for vertex_id in (int(face.x), int(face.y), int(face.z)):
+                point = rt.getVert(mesh, vertex_id)
+                corners.append([float(point.x), float(point.y), float(point.z)])
+            triangles.append(corners)
     finally:
         rt.delete(mesh)
-    return points
+    return triangles
 
 
 def write_vertices(job):
@@ -106,7 +112,7 @@ def write_vertices(job):
                         "reason": f"{len(matches)} nodes match",
                     })
                     continue
-                found[entry["id"]] = {"points": _world_vertices(rt, matches[0])}
+                found[entry["id"]] = {"triangles": _world_triangles(rt, matches[0])}
             except Exception as exc:
                 failures.append({
                     "entry_id": entry.get("id"),
@@ -129,7 +135,7 @@ def write_vertices(job):
     with open(job["out"], "w", encoding="utf-8") as handle:
         json.dump(document, handle, ensure_ascii=False, indent=1)
         handle.write("\n")
-    print(f"flora-vertices entries={len(found)} failures={len(failures)}")
+    print(f"flora-faces entries={len(found)} failures={len(failures)}")
     return document
 
 

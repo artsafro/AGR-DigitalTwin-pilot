@@ -1218,20 +1218,20 @@ def test_equal_count_lp_hp_without_evidence_stays_available():
 
 def test_compare_clouds_evidence_verifies_a_distinct_vpm():
     entries = _equal_count_pair()
-    clouds = {"synthetic-star": _star_planes(), "synthetic-shell": _box_points()}
+    clouds = {"synthetic-star": _star_plane_faces(), "synthetic-shell": _box_faces()}
     identity = _identity_for(clouds)
     chosen = fc.select_sources(entries, identity)
     assert chosen["VPM"]["entry_id"] == "synthetic-shell"
     assert chosen["vpm_identity"] == "verified_distinct"
     assert chosen["vpm_evidence"]["relation"] == "distinct"
-    assert chosen["vpm_evidence"]["translation_dev_m"] is None
+    assert chosen["vpm_evidence"]["translation_dev_m"] > 1e-4
     catalogue = _catalogue_for(entries, identity)
     assert catalogue["species"][0]["npm"]["triangles"] == catalogue["species"][0]["vpm"]["triangles"] == 12
     assert fc.check(catalogue) == []
     same_count_entries = _equal_count_pair()
     same_count_entries[0]["id"] = "synthetic-box"
     same_count_entries[1]["id"] = "synthetic-other"
-    same_clouds = {"synthetic-box": _box_points(), "synthetic-other": _other_eight()}
+    same_clouds = {"synthetic-box": _box_faces(), "synthetic-other": _faces_on(_other_eight())}
     same_identity = _identity_for(same_clouds)
     verified = fc.select_sources(same_count_entries, same_identity)
     assert verified["vpm_identity"] == "verified_distinct"
@@ -1247,7 +1247,10 @@ def test_translated_copy_is_same_geometry_and_not_a_vpm():
     assert compared["translation_dev_m"] <= 1e-4
     assert compared["scaled_dev_rel"] is None
     entries = _equal_count_pair()
-    identity = _identity_for({"synthetic-star": box, "synthetic-shell": moved})
+    identity = _identity_for({
+        "synthetic-star": _box_faces(),
+        "synthetic-shell": _translate_faces(_box_faces(), (37.1, -5.2, 3.3)),
+    })
     chosen = fc.select_sources(entries, identity)
     assert chosen["VPM"] is None
     assert chosen["vpm_status"] == "none"
@@ -1262,7 +1265,10 @@ def test_uniform_scale_of_lp_hp_rows_is_not_a_vpm():
     scaled = _scale_then_translate(box, 0.799, (37.1, -5.2, 3.3))
     assert fc.compare_clouds(box, scaled)["relation"] == "scaled_copy"
     entries = [_mesh("library-044", "LP -> HP", 88), _mesh("library-087", "LP -> HP", 88)]
-    identity = _identity_for({"library-044": box, "library-087": scaled})
+    identity = _identity_for({
+        "library-044": _box_faces(),
+        "library-087": _scale_faces(_box_faces(), 0.799, (37.1, -5.2, 3.3)),
+    })
     chosen = fc.select_sources(entries, identity)
     assert fc.geometry_relation(entries[0], entries[1], identity) == "scaled_copy"
     assert chosen["VPM"] is None
@@ -1287,10 +1293,13 @@ def test_triangle_counts_do_not_decide_identity():
     unverified = fc.select_sources(entries)
     assert unverified["vpm_status"] == "available"
     assert unverified["vpm_identity"] == "unverified"
-    cloned = fc.select_sources(entries, _identity_for({"npm": box, "vpm": box}))
+    cloned = fc.select_sources(entries, _identity_for({"npm": _box_faces(), "vpm": _box_faces()}))
     assert cloned["VPM"] is None
     assert "verified same geometry" in cloned["merged"][0]["reason"]
-    distinct = fc.select_sources(entries, _identity_for({"npm": box, "vpm": _other_eight()}))
+    distinct = fc.select_sources(entries, _identity_for({
+        "npm": _box_faces(),
+        "vpm": _faces_on(_other_eight()),
+    }))
     assert distinct["VPM"]["entry_id"] == "vpm"
     assert distinct["vpm_identity"] == "verified_distinct"
     assert distinct["NPM"]["triangles"] == 12
@@ -1372,7 +1381,7 @@ def test_id_lifecycle_with_an_equal_count_distinct_pair():
     for kind in _FLORA_KINDS:
         test_material_id_is_not_reissued_across_generations(kind)
     entries = _equal_count_pair()
-    clouds = {"synthetic-star": _box_points(), "synthetic-shell": _other_eight()}
+    clouds = {"synthetic-star": _star_plane_faces(), "synthetic-shell": _faces_on(_other_eight())}
     identity = _identity_for(clouds)
     catalogue = _catalogue_for(entries, identity)
     assert catalogue["species"][0]["vpm_status"] == "available"
@@ -1445,8 +1454,8 @@ def test_checker_vpm_evidence_rules():
     assert "scaled_copy" in _text(fc.check(catalogue))
     entries = _equal_count_pair()
     evidenced = _catalogue_for(entries, _identity_for({
-        "synthetic-star": _box_points(),
-        "synthetic-shell": _other_eight(),
+        "synthetic-star": _star_plane_faces(),
+        "synthetic-shell": _faces_on(_other_eight()),
     }))
     assert evidenced["species"][0]["npm"]["triangles"] == evidenced["species"][0]["vpm"]["triangles"] == 12
     assert evidenced["species"][0]["vpm_evidence"]["relation"] == "distinct"
@@ -1455,8 +1464,8 @@ def test_checker_vpm_evidence_rules():
 
 def test_build_identity_skips_stand_ins_and_deduplicates_pairs():
     points = {
-        "library-a": _box_points(),
-        "library-b": _translate(_box_points(), (1.0, 2.0, 3.0)),
+        "library-a": _box_faces(),
+        "library-b": _translate_faces(_box_faces(), (1.0, 2.0, 3.0)),
         "library-gap": [[0.0, 0.0, 0.0]],
     }
     curation = {
@@ -1479,7 +1488,7 @@ def test_build_identity_skips_stand_ins_and_deduplicates_pairs():
         ]
     }
     document = fc.build_identity(points, curation)
-    assert document["schema"] == "flora-geometry-identity-v2"
+    assert document["schema"] == "flora-geometry-identity-v3"
     assert document["tolerance"] == 1e-4
     assert set(document["entries"]) == {"library-a", "library-b"}
     assert document["pairs"] == [{
@@ -1489,8 +1498,8 @@ def test_build_identity_skips_stand_ins_and_deduplicates_pairs():
         "translation_dev_m": 0.0,
         "scaled_dev_rel": None,
     }]
-    with pytest.raises(ValueError, match="flora-geometry-identity-v2"):
-        fc.load_identity({"schema": "flora-geometry-identity-v1", "entries": {}, "pairs": []})
+    with pytest.raises(ValueError, match="flora-geometry-identity-v3"):
+        fc.load_identity({"schema": "flora-geometry-identity-v2", "entries": {}, "pairs": []})
 
 
 def test_compare_clouds_is_fast_for_seven_thousand_points():
@@ -1501,9 +1510,11 @@ def test_compare_clouds_is_fast_for_seven_thousand_points():
 
 def test_vertex_dump_script_has_no_fingerprint_copy():
     text = (ROOT / "tools" / "flora" / "dump_flora_source_vertices.py").read_text(encoding="utf-8")
-    assert "Pattern: n/a | new-case: Flora source vertex dump for VPM identity evidence (#216)." in text
-    assert "flora-vertices entries=" in text
+    assert "Pattern: n/a | new-case: Flora source face dump for VPM identity evidence (#216)." in text
+    assert "flora-faces entries=" in text
+    assert "getFace" in text
     assert "fingerprint_points" not in text
+    assert "mesh_sha256" not in text
     source = (ROOT / "src" / "dt_ai" / "materials" / "flora_catalogue.py").read_text(encoding="utf-8")
     assert 'if __name__ == "__main__":\n    main()' in source
 
@@ -1534,8 +1545,8 @@ def test_identity_cli_refuses_failures_and_build_reads_pairs(tmp_path):
     maps.write_text("{}", encoding="utf-8")
     dump = {
         "entries": {
-            "synthetic-star": {"points": _star_planes()},
-            "synthetic-shell": {"points": _box_points()},
+            "synthetic-star": {"triangles": _star_plane_faces()},
+            "synthetic-shell": {"triangles": _box_faces()},
         },
         "failures": [{"entry_id": "synthetic-star", "reason": "synthetic failure"}],
     }
@@ -1567,3 +1578,305 @@ def test_identity_cli_refuses_failures_and_build_reads_pairs(tmp_path):
     assert catalogue["species"][0]["vpm_identity"] == "verified_distinct"
     assert catalogue["species"][0]["vpm_evidence"]["relation"] == "distinct"
     assert catalogue["species"][0]["vpm"]["entry_id"] == "synthetic-shell"
+
+
+def _box_faces():
+    """Closed 2 x 2 x 4 m shell, 12 triangles on the 8 box corners. Synthetic."""
+    points = _box_points()
+    quads = (
+        (0, 2, 3, 1),
+        (4, 5, 7, 6),
+        (0, 1, 5, 4),
+        (2, 6, 7, 3),
+        (0, 4, 6, 2),
+        (1, 3, 7, 5),
+    )
+    faces = []
+    for a, b, c, d in quads:
+        faces.append([points[a][:], points[b][:], points[c][:]])
+        faces.append([points[a][:], points[c][:], points[d][:]])
+    return faces
+
+
+def _faces_on(points):
+    """Same 12-triangle shell topology as _box_faces, on an 8-point list."""
+    quads = (
+        (0, 2, 3, 1),
+        (4, 5, 7, 6),
+        (0, 1, 5, 4),
+        (2, 6, 7, 3),
+        (0, 4, 6, 2),
+        (1, 3, 7, 5),
+    )
+    faces = []
+    for a, b, c, d in quads:
+        faces.append([list(points[a]), list(points[b]), list(points[c])])
+        faces.append([list(points[a]), list(points[c]), list(points[d])])
+    return faces
+
+
+def _crossed_star_faces():
+    """Four triangles, two vertical diagonals, the same 8 corners as the shell. Synthetic."""
+    points = _box_points()
+    quads = ((0, 6, 7, 1), (4, 2, 3, 5))
+    faces = []
+    for a, b, c, d in quads:
+        faces.append([points[a][:], points[b][:], points[c][:]])
+        faces.append([points[a][:], points[c][:], points[d][:]])
+    return faces
+
+
+def _fresh_faces(faces):
+    """Unwelded copy: each corner is its own vertex, the triangles are unchanged."""
+    return [[[float(coord) for coord in corner] for corner in face] for face in faces]
+
+
+def _translate_faces(faces, offset):
+    return [
+        [[corner[0] + offset[0], corner[1] + offset[1], corner[2] + offset[2]] for corner in face]
+        for face in faces
+    ]
+
+
+def _scale_faces(faces, factor, offset=(0.0, 0.0, 0.0)):
+    return _translate_faces(
+        [[[corner[0] * factor, corner[1] * factor, corner[2] * factor] for corner in face] for face in faces],
+        offset,
+    )
+
+
+def _face_curation(ids):
+    return {
+        "species": [{
+            "latin": "Synthetic witness",
+            "russian": "synthetic",
+            "type": "bush",
+            "sources": list(ids),
+            "geometry_basis": "own_mesh",
+            "note": "synthetic",
+        }],
+        "unresolved": [],
+    }
+
+
+def _star_plane_faces():
+    """Six vertical quads inside the 2 x 2 x 4 m volume, 12 triangles. Synthetic."""
+    faces = []
+    for y in (0.0, 1.0, 2.0):
+        quad = [[0.0, y, 0.0], [2.0, y, 0.0], [2.0, y, 4.0], [0.0, y, 4.0]]
+        faces.append([quad[0][:], quad[1][:], quad[2][:]])
+        faces.append([quad[0][:], quad[2][:], quad[3][:]])
+    for x in (0.0, 1.0, 2.0):
+        quad = [[x, 0.0, 0.0], [x, 2.0, 0.0], [x, 2.0, 4.0], [x, 0.0, 4.0]]
+        faces.append([quad[0][:], quad[1][:], quad[2][:]])
+        faces.append([quad[0][:], quad[2][:], quad[3][:]])
+    return faces
+
+
+def test_crossed_four_face_star_is_distinct_from_the_closed_shell():
+    """Same 8 corners. Vertex Hausdorff says same; the surfaces are a 4-face star and a 12-face shell."""
+    star = _crossed_star_faces()
+    shell = _box_faces()
+    assert len(star) == 4 and len(shell) == 12
+    star_corners = [tuple(corner) for face in star for corner in face]
+    assert {tuple(point) for point in _box_points()} == set(star_corners)
+    assert fc.compare_clouds(_box_points(), list(set(star_corners)))["relation"] == "same"
+    compared = fc.compare_surfaces(star, shell)
+    assert compared["relation"] == "distinct"
+    assert compared["relation"] != "same"
+    identity = fc.load_identity(fc.build_identity(
+        {"synthetic-star": star, "synthetic-shell": shell},
+        _face_curation(("synthetic-star", "synthetic-shell")),
+    ))
+    entries = _equal_count_pair()
+    entries[0]["triangles"] = 4
+    entries[1]["triangles"] = 12
+    chosen = fc.select_sources(entries, identity)
+    assert chosen["VPM"]["entry_id"] == "synthetic-shell"
+    assert chosen["vpm_identity"] == "verified_distinct"
+    assert chosen["vpm_evidence"]["relation"] == "distinct"
+
+
+def test_unwelded_four_face_star_is_the_same_surface():
+    """Duplicate corners change the vertex count. The four triangles are the same surface."""
+    welded = _crossed_star_faces()
+    unwelded = _fresh_faces(welded)
+    welded_cloud = list({tuple(corner) for face in welded for corner in face})
+    unwelded_cloud = [corner[:] for face in unwelded for corner in face]
+    assert len(welded_cloud) == 8 and len(unwelded_cloud) == 12
+    assert fc.compare_clouds(welded_cloud, unwelded_cloud)["relation"] == "distinct"
+    compared = fc.compare_surfaces(welded, unwelded)
+    assert compared["relation"] == "same"
+    assert compared["translation_dev_m"] <= 1e-4
+    assert compared["scaled_dev_rel"] is None
+    moved = _translate_faces(unwelded, (18.0, -4.0, 2.5))
+    assert fc.compare_surfaces(welded, moved)["relation"] == "same"
+    scaled = _scale_faces(unwelded, 0.799, (18.0, -4.0, 2.5))
+    assert fc.compare_surfaces(welded, scaled)["relation"] == "scaled_copy"
+
+
+def test_equal_triangle_count_surfaces_stay_distinct():
+    """Prior counterexample: 12 vertical-plane triangles and 12 shell triangles are not one mesh."""
+    planes = _star_plane_faces()
+    shell = _box_faces()
+    assert len(planes) == len(shell) == 12
+    assert fc.compare_surfaces(planes, shell)["relation"] == "distinct"
+    perturbed = _faces_on(_other_eight())
+    assert len(perturbed) == 12
+    assert fc.compare_surfaces(shell, perturbed)["relation"] == "distinct"
+    identity = fc.load_identity(fc.build_identity(
+        {"synthetic-star": planes, "synthetic-shell": perturbed},
+        _face_curation(("synthetic-star", "synthetic-shell")),
+    ))
+    chosen = fc.select_sources(_equal_count_pair(), identity)
+    assert chosen["vpm_identity"] == "verified_distinct"
+    assert chosen["NPM"]["triangles"] == chosen["VPM"]["triangles"] == 12
+
+
+def test_vertex_cloud_pair_is_not_classified_same_or_distinct():
+    """A point list is not a surface. Identity must stay unknown."""
+    clouds = {
+        "synthetic-star": _box_points(),
+        "synthetic-shell": _translate(_box_points(), (4.0, -2.0, 1.0)),
+    }
+    document = fc.build_identity(clouds, _face_curation(clouds))
+    assert document["schema"] == "flora-geometry-identity-v3"
+    assert document["pairs"][0]["relation"] == "unknown"
+    assert document["pairs"][0]["translation_dev_m"] is None
+    assert document["pairs"][0]["scaled_dev_rel"] is None
+    identity = fc.load_identity(document)
+    assert fc.geometry_relation({"id": "synthetic-star"}, {"id": "synthetic-shell"}, identity) == "unknown"
+
+
+def test_ambiguous_pair_stays_unverified_and_vpm_unconfirmed():
+    """No finite surface on one side is unknown. An LP -> HP candidate is not a VPM."""
+    entries = [_mesh("library-044", "LP -> HP", 88), _mesh("library-087", "LP -> HP", 88)]
+    document = fc.build_identity(
+        {"library-044": [], "library-087": _box_faces()},
+        _face_curation(("library-044", "library-087")),
+    )
+    assert document["pairs"][0]["relation"] == "unknown"
+    identity = fc.load_identity(document)
+    chosen = fc.select_sources(entries, identity)
+    assert chosen["VPM"] is None
+    assert chosen["vpm_status"] == "unconfirmed"
+    assert chosen["vpm_identity"] is None
+    assert chosen["vpm_evidence"] is None
+    assert "unverified" in chosen["merged"][0]["reason"]
+    assert "verified same" not in chosen["merged"][0]["reason"]
+    explicit = [_mesh("npm", "LP", 12), _mesh("vpm", "HP", 80)]
+    explicit_identity = fc.load_identity(fc.build_identity(
+        {"npm": [[[float("nan"), 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]], "vpm": _box_faces()},
+        _face_curation(("npm", "vpm")),
+    ))
+    held = fc.select_sources(explicit, explicit_identity)
+    assert held["vpm_status"] == "available"
+    assert held["vpm_identity"] == "unverified"
+    assert held["vpm_evidence"]["relation"] == "unknown"
+    assert held["vpm_evidence"]["relation"] not in ("same", "distinct", "scaled_copy")
+
+
+def test_surface_tolerance_and_scale_bounds():
+    """<= 1e-4 m is same; <= 1e-4 relative after normalizing extent is scaled_copy."""
+    base = [[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]]
+    on_limit = [[[0.0, 0.0, 1e-4], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]]
+    past_limit = [[[0.0, 0.0, 2e-4], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]]
+    assert fc.compare_surfaces(base, on_limit)["relation"] == "same"
+    assert fc.compare_surfaces(base, on_limit)["translation_dev_m"] <= 1e-4
+    assert fc.compare_surfaces(base, past_limit)["relation"] == "distinct"
+    scaled = _scale_faces(_box_faces(), 0.799, (37.1, -5.2, 3.3))
+    compared = fc.compare_surfaces(_box_faces(), scaled)
+    assert compared["relation"] == "scaled_copy"
+    assert compared["scaled_dev_rel"] <= 1e-4
+
+
+def test_generated_surfaces_ignore_counts_and_unknown_never_claims_a_relation():
+    """Synthetic meshes. Triangle count, vertex count and a missing surface never decide the relation."""
+    rng = random.Random(216)
+    factors = (0.5, 0.799, 1.7, 2.2)
+    relations = []
+    for case in range(40):
+        faces = []
+        for _triangle in range(rng.randint(1, 4)):
+            faces.append([
+                [rng.uniform(0.0, 1.2), rng.uniform(0.0, 1.4), rng.uniform(0.0, 2.2)]
+                for _corner in range(3)
+            ])
+        offset = (rng.uniform(-80.0, 80.0), rng.uniform(-80.0, 80.0), rng.uniform(-20.0, 20.0))
+        assert fc.compare_surfaces(faces, _translate_faces(faces, offset))["relation"] == "same"
+        factor = rng.choice(factors)
+        scaled = _scale_faces(faces, factor, offset)
+        assert fc.compare_surfaces(faces, scaled)["relation"] == "scaled_copy"
+        duplicated = faces + _fresh_faces(faces)
+        assert len(duplicated) == 2 * len(faces)
+        assert fc.compare_surfaces(faces, duplicated)["relation"] == "same"
+        perturbed = _fresh_faces(faces)
+        perturbed[0][0][rng.randrange(3)] += rng.choice((-1.0, 1.0)) * rng.uniform(0.35, 0.8)
+        assert fc.compare_surfaces(faces, perturbed)["relation"] == "distinct"
+        relations.append(fc.compare_surfaces(faces, duplicated)["relation"])
+    assert relations == ["same"] * 40
+    junk = (
+        [],
+        [[0.0, 0.0, 0.0]],
+        [[[float("nan"), 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]],
+        [[[float("inf"), 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]],
+        _box_points(),
+        [[[0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]],
+    )
+    claims = []
+    for case in range(30):
+        left = junk[case % len(junk)]
+        right = _box_faces() if case % 2 else junk[(case * 3) % len(junk)]
+        relation = fc.compare_surfaces(left, right)["relation"]
+        claims.append(relation)
+        assert relation == "unknown"
+        assert relation not in ("same", "distinct", "scaled_copy")
+    assert claims == ["unknown"] * 30
+
+
+def test_face_distinct_pair_keeps_material_ids():
+    """Synthetic species. A 12/12 distinct surface pair stays a VPM and does not move the material ID."""
+    for kind in _FLORA_KINDS:
+        test_material_id_is_not_reissued_across_generations(kind)
+    entries = _equal_count_pair()
+    identity = fc.load_identity(fc.build_identity(
+        {"synthetic-star": _star_plane_faces(), "synthetic-shell": _faces_on(_other_eight())},
+        _face_curation(("synthetic-star", "synthetic-shell")),
+    ))
+    catalogue = _catalogue_for(entries, identity)
+    assert catalogue["species"][0]["vpm_status"] == "available"
+    assert catalogue["species"][0]["vpm_identity"] == "verified_distinct"
+    material_id = catalogue["species"][0]["material_id"]
+    again = fc.build(
+        {"scenes": [{"source": {"scene": entries[0]["scene"]}, "entries": entries}]},
+        _face_curation(("synthetic-star", "synthetic-shell")),
+        {},
+        catalogue,
+        identity,
+    )
+    assert again["species"][0]["material_id"] == material_id
+    assert again["retired_ids"] == []
+    assert fc.check(again) == []
+
+
+def test_library_keeps_seventy_six_ids_and_scaled_copy_exclusions():
+    """Bounty, Limelight and Sem stay scaled copies. 61 species + 15 stand-in gaps keep their IDs."""
+    catalogue = _load("library/flora/catalogue.json")
+    species_ids = [item["material_id"] for item in catalogue["species"]]
+    gap_ids = [item["material_id"] for item in catalogue["gaps"]["project_species_shared_stand_in"]]
+    assert len(species_ids) == 61
+    assert len(gap_ids) == 15
+    assert len(set(species_ids) | set(gap_ids)) == 76
+    assert catalogue["retired_ids"] == []
+    identity = fc.load_identity(_load("library/flora/geometry-identity.json"))
+    for latin, left, right in (
+        ("Hydrangea arborescens 'Bounty'", "library-044", "library-087"),
+        ("Hydrangea paniculata 'Limelight'", "library-045", "library-088"),
+        ("Sorbaria sorbifolia 'Sem'", "library-052", "library-090"),
+    ):
+        assert identity[frozenset((left, right))] == "scaled_copy"
+        chosen = fc.select_sources(_sources(latin), identity)
+        assert chosen["VPM"] is None
+        assert chosen["vpm_status"] == "unconfirmed"
+        assert chosen["vpm_identity"] is None
+    assert identity[frozenset(("library-075", "library-076"))] == "same"

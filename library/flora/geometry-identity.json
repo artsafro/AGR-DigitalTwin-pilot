@@ -1,391 +1,391 @@
 {
- "schema": "flora-geometry-identity-v2",
- "method": "world vertices from snapshotAsMesh on the source copies, translation-normalized symmetric Hausdorff <= 1e-4 m = same, scale-normalized <= 1e-4 relative = scaled_copy, else distinct; vertex counts must match for same/scaled_copy; triangle counts are never used",
+ "schema": "flora-geometry-identity-v3",
+ "method": "world triangles from snapshotAsMesh on the source copies, translation-normalized symmetric surface Hausdorff <= 1e-4 m = same, scale-normalized <= 1e-4 relative = scaled_copy, otherwise distinct; a pair without finite positive-area triangles on both sides is unknown; vertex clouds, vertex counts and triangle counts never decide",
  "tolerance": 0.0001,
  "entries": {
   "library-001": {
-   "vertices": 999
+   "triangles": 830
   },
   "library-002": {
-   "vertices": 1003
+   "triangles": 832
   },
   "library-003": {
-   "vertices": 162
+   "triangles": 144
   },
   "library-004": {
-   "vertices": 54
+   "triangles": 36
   },
   "library-005": {
-   "vertices": 72
+   "triangles": 64
   },
   "library-006": {
-   "vertices": 428
+   "triangles": 446
   },
   "library-007": {
-   "vertices": 430
+   "triangles": 488
   },
   "library-008": {
-   "vertices": 81
+   "triangles": 72
   },
   "library-009": {
-   "vertices": 306
+   "triangles": 346
   },
   "library-010": {
-   "vertices": 144
+   "triangles": 128
   },
   "library-011": {
-   "vertices": 72
+   "triangles": 64
   },
   "library-012": {
-   "vertices": 90
+   "triangles": 80
   },
   "library-013": {
-   "vertices": 162
+   "triangles": 144
   },
   "library-014": {
-   "vertices": 36
+   "triangles": 18
   },
   "library-015": {
-   "vertices": 144
+   "triangles": 128
   },
   "library-016": {
-   "vertices": 48
+   "triangles": 32
   },
   "library-017": {
-   "vertices": 90
+   "triangles": 80
   },
   "library-018": {
-   "vertices": 54
+   "triangles": 36
   },
   "library-019": {
-   "vertices": 90
+   "triangles": 80
   },
   "library-020": {
-   "vertices": 9267
+   "triangles": 4894
   },
   "library-021": {
-   "vertices": 961
+   "triangles": 742
   },
   "library-022": {
-   "vertices": 81
+   "triangles": 72
   },
   "library-023": {
-   "vertices": 72
+   "triangles": 64
   },
   "library-024": {
-   "vertices": 999
+   "triangles": 830
   },
   "library-025": {
-   "vertices": 1077
+   "triangles": 1070
   },
   "library-026": {
-   "vertices": 90
+   "triangles": 80
   },
   "library-027": {
-   "vertices": 72
+   "triangles": 64
   },
   "library-028": {
-   "vertices": 593
+   "triangles": 357
   },
   "library-029": {
-   "vertices": 81
+   "triangles": 72
   },
   "library-030": {
-   "vertices": 48
+   "triangles": 32
   },
   "library-031": {
-   "vertices": 16
+   "triangles": 8
   },
   "library-032": {
-   "vertices": 144
+   "triangles": 128
   },
   "library-033": {
-   "vertices": 72
+   "triangles": 64
   },
   "library-034": {
-   "vertices": 180
+   "triangles": 160
   },
   "library-035": {
-   "vertices": 40
+   "triangles": 20
   },
   "library-036": {
-   "vertices": 226
+   "triangles": 264
   },
   "library-037": {
-   "vertices": 96
+   "triangles": 84
   },
   "library-038": {
-   "vertices": 132
+   "triangles": 112
   },
   "library-039": {
-   "vertices": 1018
+   "triangles": 574
   },
   "library-040": {
-   "vertices": 1861
+   "triangles": 1073
   },
   "library-041": {
-   "vertices": 96
+   "triangles": 84
   },
   "library-042": {
-   "vertices": 350
+   "triangles": 394
   },
   "library-043": {
-   "vertices": 90
+   "triangles": 80
   },
   "library-044": {
-   "vertices": 111
+   "triangles": 88
   },
   "library-045": {
-   "vertices": 105
+   "triangles": 84
   },
   "library-046": {
-   "vertices": 1686
+   "triangles": 908
   },
   "library-047": {
-   "vertices": 2160
+   "triangles": 1254
   },
   "library-048": {
-   "vertices": 132
+   "triangles": 112
   },
   "library-049": {
-   "vertices": 4954
+   "triangles": 2901
   },
   "library-050": {
-   "vertices": 1902
+   "triangles": 1091
   },
   "library-051": {
-   "vertices": 557
+   "triangles": 339
   },
   "library-052": {
-   "vertices": 132
+   "triangles": 112
   },
   "library-053": {
-   "vertices": 2184
+   "triangles": 1266
   },
   "library-054": {
-   "vertices": 2184
+   "triangles": 1266
   },
   "library-055": {
-   "vertices": 2184
+   "triangles": 1266
   },
   "library-056": {
-   "vertices": 5453
+   "triangles": 3830
   },
   "library-057": {
-   "vertices": 135
+   "triangles": 120
   },
   "library-058": {
-   "vertices": 96
+   "triangles": 84
   },
   "library-059": {
-   "vertices": 90
+   "triangles": 80
   },
   "library-060": {
-   "vertices": 118
+   "triangles": 90
   },
   "library-061": {
-   "vertices": 350
+   "triangles": 394
   },
   "library-062": {
-   "vertices": 907
+   "triangles": 614
   },
   "library-063": {
-   "vertices": 72
+   "triangles": 64
   },
   "library-064": {
-   "vertices": 4784
+   "triangles": 6267
   },
   "library-065": {
-   "vertices": 1538
+   "triangles": 959
   },
   "library-066": {
-   "vertices": 96
+   "triangles": 84
   },
   "library-067": {
-   "vertices": 180
+   "triangles": 160
   },
   "library-068": {
-   "vertices": 40
+   "triangles": 20
   },
   "library-069": {
-   "vertices": 4784
+   "triangles": 6267
   },
   "library-070": {
-   "vertices": 2312
+   "triangles": 3065
   },
   "library-071": {
-   "vertices": 180
+   "triangles": 160
   },
   "library-072": {
-   "vertices": 60
+   "triangles": 40
   },
   "library-073": {
-   "vertices": 81
+   "triangles": 72
   },
   "library-074": {
-   "vertices": 350
+   "triangles": 394
   },
   "library-075": {
-   "vertices": 81
+   "triangles": 72
   },
   "library-076": {
-   "vertices": 81
+   "triangles": 72
   },
   "library-077": {
-   "vertices": 81
+   "triangles": 72
   },
   "library-078": {
-   "vertices": 20
+   "triangles": 10
   },
   "library-079": {
-   "vertices": 20
+   "triangles": 10
   },
   "library-084": {
-   "vertices": 16
+   "triangles": 8
   },
   "library-085": {
-   "vertices": 72
+   "triangles": 64
   },
   "library-086": {
-   "vertices": 16
+   "triangles": 8
   },
   "library-087": {
-   "vertices": 111
+   "triangles": 88
   },
   "library-088": {
-   "vertices": 105
+   "triangles": 84
   },
   "library-089": {
-   "vertices": 132
+   "triangles": 112
   },
   "library-090": {
-   "vertices": 132
+   "triangles": 112
   },
   "project-001": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-002": {
-   "vertices": 40
+   "triangles": 20
   },
   "project-003": {
-   "vertices": 136
+   "triangles": 166
   },
   "project-005": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-007": {
-   "vertices": 443
+   "triangles": 197
   },
   "project-008": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-009": {
-   "vertices": 1215
+   "triangles": 979
   },
   "project-010": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-011": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-012": {
-   "vertices": 118
+   "triangles": 125
   },
   "project-013": {
-   "vertices": 118
+   "triangles": 125
   },
   "project-014": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-015": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-016": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-017": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-018": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-019": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-020": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-021": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-022": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-023": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-024": {
-   "vertices": 20
+   "triangles": 10
   },
   "project-025": {
-   "vertices": 505
+   "triangles": 494
   },
   "project-027": {
-   "vertices": 40
+   "triangles": 20
   },
   "project-029": {
-   "vertices": 854
+   "triangles": 350
   },
   "project-030": {
-   "vertices": 40
+   "triangles": 20
   },
   "project-031": {
-   "vertices": 9406
+   "triangles": 5074
   },
   "project-032": {
-   "vertices": 40
+   "triangles": 20
   },
   "project-033": {
-   "vertices": 40
+   "triangles": 20
   },
   "project-034": {
-   "vertices": 1822
+   "triangles": 1007
   },
   "project-035": {
-   "vertices": 1822
+   "triangles": 1007
   },
   "project-036": {
-   "vertices": 40
+   "triangles": 20
   },
   "project-037": {
-   "vertices": 40
+   "triangles": 20
   },
   "project-038": {
-   "vertices": 40
+   "triangles": 20
   },
   "project-039": {
-   "vertices": 40
+   "triangles": 20
   },
   "project-040": {
-   "vertices": 40
+   "triangles": 20
   },
   "project-041": {
-   "vertices": 40
+   "triangles": 20
   },
   "project-042": {
-   "vertices": 40
+   "triangles": 20
   },
   "project-043": {
-   "vertices": 40
+   "triangles": 20
   },
   "project-044": {
-   "vertices": 40
+   "triangles": 20
   },
   "project-045": {
-   "vertices": 40
+   "triangles": 20
   },
   "project-046": {
-   "vertices": 40
+   "triangles": 20
   }
  },
  "pairs": [
@@ -393,603 +393,603 @@
    "a": "library-001",
    "b": "library-002",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.20123345,
+   "scaled_dev_rel": 0.060480633
   },
   {
    "a": "library-001",
    "b": "library-028",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 3.747187826,
+   "scaled_dev_rel": 0.206138058
   },
   {
    "a": "library-002",
    "b": "library-028",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 3.747190405,
+   "scaled_dev_rel": 0.206138071
   },
   {
    "a": "library-003",
    "b": "library-004",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.084783849,
+   "scaled_dev_rel": 0.074545804
   },
   {
    "a": "library-007",
    "b": "library-039",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.828288396,
+   "scaled_dev_rel": 0.264311179
   },
   {
    "a": "library-009",
    "b": "library-042",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 2.98230568,
+   "scaled_dev_rel": 0.253672645
   },
   {
    "a": "library-010",
    "b": "library-011",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.004657635,
+   "scaled_dev_rel": 0.003356646
   },
   {
    "a": "library-010",
    "b": "library-043",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.096682424,
+   "scaled_dev_rel": 0.275042678
   },
   {
    "a": "library-011",
    "b": "library-043",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.097874507,
+   "scaled_dev_rel": 0.274803718
   },
   {
    "a": "library-013",
    "b": "library-014",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.191580049,
+   "scaled_dev_rel": 0.136549984
   },
   {
    "a": "library-015",
    "b": "library-016",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.078723648,
+   "scaled_dev_rel": 0.067459201
   },
   {
    "a": "library-019",
    "b": "project-008",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.641948605,
+   "scaled_dev_rel": 0.31196882
   },
   {
    "a": "library-019",
    "b": "project-030",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.642849058,
+   "scaled_dev_rel": 0.311214371
   },
   {
    "a": "library-020",
    "b": "library-021",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.049977335,
+   "scaled_dev_rel": 0.225121272
   },
   {
    "a": "library-020",
    "b": "library-046",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.957941454,
+   "scaled_dev_rel": 0.290361186
   },
   {
    "a": "library-020",
    "b": "project-009",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 4.705177479,
+   "scaled_dev_rel": 0.23859399
   },
   {
    "a": "library-020",
    "b": "project-031",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 4.411640263,
+   "scaled_dev_rel": 0.206787116
   },
   {
    "a": "library-021",
    "b": "library-046",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.443424116,
+   "scaled_dev_rel": 0.304294279
   },
   {
    "a": "library-021",
    "b": "project-009",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 3.974200124,
+   "scaled_dev_rel": 0.190415198
   },
   {
    "a": "library-021",
    "b": "project-031",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 3.676293197,
+   "scaled_dev_rel": 0.180328561
   },
   {
    "a": "library-023",
    "b": "library-048",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.251569592,
+   "scaled_dev_rel": 0.243570801
   },
   {
    "a": "library-023",
    "b": "library-089",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.769894139,
+   "scaled_dev_rel": 0.243569976
   },
   {
    "a": "library-023",
    "b": "project-011",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.720033608,
+   "scaled_dev_rel": 0.271702584
   },
   {
    "a": "library-023",
    "b": "project-033",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.721520663,
+   "scaled_dev_rel": 0.271393319
   },
   {
    "a": "library-024",
    "b": "library-031",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 3.924994382,
+   "scaled_dev_rel": 0.588642315
   },
   {
    "a": "library-024",
    "b": "library-079",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 4.619863812,
+   "scaled_dev_rel": 0.647139472
   },
   {
    "a": "library-024",
    "b": "project-012",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.790585802,
+   "scaled_dev_rel": 0.410617132
   },
   {
    "a": "library-024",
    "b": "project-034",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.585568999,
+   "scaled_dev_rel": 0.290568991
   },
   {
    "a": "library-025",
    "b": "library-078",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.77034969,
+   "scaled_dev_rel": 0.410214095
   },
   {
    "a": "library-031",
    "b": "library-079",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.414988481,
+   "scaled_dev_rel": 0.231068257
   },
   {
    "a": "library-031",
    "b": "project-012",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 5.063589215,
+   "scaled_dev_rel": 0.495123044
   },
   {
    "a": "library-031",
    "b": "project-034",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 5.056093287,
+   "scaled_dev_rel": 0.538546309
   },
   {
    "a": "library-032",
    "b": "library-033",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.003002684,
+   "scaled_dev_rel": 0.003303669
   },
   {
    "a": "library-034",
    "b": "library-035",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.120279928,
+   "scaled_dev_rel": 0.110204621
   },
   {
    "a": "library-036",
    "b": "project-013",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 2.570222157,
+   "scaled_dev_rel": 0.374355866
   },
   {
    "a": "library-036",
    "b": "project-035",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 2.678658907,
+   "scaled_dev_rel": 0.314446834
   },
   {
    "a": "library-037",
    "b": "project-017",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.727265939,
+   "scaled_dev_rel": 0.269826352
   },
   {
    "a": "library-037",
    "b": "project-039",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.727266077,
+   "scaled_dev_rel": 0.269959114
   },
   {
    "a": "library-044",
    "b": "library-087",
    "relation": "scaled_copy",
-   "translation_dev_m": null,
-   "scaled_dev_rel": 1.044e-06
+   "translation_dev_m": 0.519160717,
+   "scaled_dev_rel": 1.033e-06
   },
   {
    "a": "library-045",
    "b": "library-088",
    "relation": "scaled_copy",
-   "translation_dev_m": null,
+   "translation_dev_m": 0.519160214,
    "scaled_dev_rel": 1.009e-06
   },
   {
    "a": "library-046",
    "b": "project-009",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 2.74822868,
+   "scaled_dev_rel": 0.335760371
   },
   {
    "a": "library-046",
    "b": "project-031",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 2.472189163,
+   "scaled_dev_rel": 0.305878479
   },
   {
    "a": "library-047",
    "b": "project-010",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.818937946,
+   "scaled_dev_rel": 0.356968234
   },
   {
    "a": "library-047",
    "b": "project-032",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.81913662,
+   "scaled_dev_rel": 0.356834688
   },
   {
    "a": "library-048",
    "b": "library-089",
    "relation": "scaled_copy",
-   "translation_dev_m": null,
+   "translation_dev_m": 0.489266835,
    "scaled_dev_rel": 2.929e-06
   },
   {
    "a": "library-048",
    "b": "project-011",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.671516018,
+   "scaled_dev_rel": 0.1887851
   },
   {
    "a": "library-048",
    "b": "project-033",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.670241806,
+   "scaled_dev_rel": 0.188426796
   },
   {
    "a": "library-049",
    "b": "library-050",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.32566615,
+   "scaled_dev_rel": 0.137831832
   },
   {
    "a": "library-049",
    "b": "project-012",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 9.638209638,
+   "scaled_dev_rel": 0.26859844
   },
   {
    "a": "library-049",
    "b": "project-034",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 9.642195966,
+   "scaled_dev_rel": 0.27373143
   },
   {
    "a": "library-050",
    "b": "project-012",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 9.231816688,
+   "scaled_dev_rel": 0.236590521
   },
   {
    "a": "library-050",
    "b": "project-034",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 9.226032833,
+   "scaled_dev_rel": 0.27859298
   },
   {
    "a": "library-052",
    "b": "library-090",
    "relation": "scaled_copy",
-   "translation_dev_m": null,
-   "scaled_dev_rel": 5.757e-06
+   "translation_dev_m": 0.489265109,
+   "scaled_dev_rel": 5.747e-06
   },
   {
    "a": "library-055",
    "b": "project-018",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.782316225,
+   "scaled_dev_rel": 0.383807217
   },
   {
    "a": "library-055",
    "b": "project-040",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.782947642,
+   "scaled_dev_rel": 0.383908388
   },
   {
    "a": "library-056",
    "b": "library-064",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.09323831,
+   "scaled_dev_rel": 0.240996188
   },
   {
    "a": "library-056",
    "b": "library-065",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 4.934251989,
+   "scaled_dev_rel": 0.132487079
   },
   {
    "a": "library-056",
    "b": "library-084",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.357484345,
+   "scaled_dev_rel": 0.315477941
   },
   {
    "a": "library-057",
    "b": "project-021",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.075296622,
+   "scaled_dev_rel": 0.28311665
   },
   {
    "a": "library-057",
    "b": "project-043",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.074812984,
+   "scaled_dev_rel": 0.282240462
   },
   {
    "a": "library-058",
    "b": "library-066",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.437931482,
+   "scaled_dev_rel": 0.002289056
   },
   {
    "a": "library-058",
    "b": "project-020",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.069304868,
+   "scaled_dev_rel": 0.241247774
   },
   {
    "a": "library-058",
    "b": "project-042",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.068510751,
+   "scaled_dev_rel": 0.241272434
   },
   {
    "a": "library-059",
    "b": "project-024",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.727279142,
+   "scaled_dev_rel": 0.474417227
   },
   {
    "a": "library-059",
    "b": "project-046",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.725439562,
+   "scaled_dev_rel": 0.473562073
   },
   {
    "a": "library-060",
    "b": "project-015",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.425700917,
+   "scaled_dev_rel": 0.20643851
   },
   {
    "a": "library-060",
    "b": "project-037",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.422525955,
+   "scaled_dev_rel": 0.206407497
   },
   {
    "a": "library-061",
    "b": "project-013",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.781328635,
+   "scaled_dev_rel": 0.309139481
   },
   {
    "a": "library-061",
    "b": "project-035",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.746801328,
+   "scaled_dev_rel": 0.263723326
   },
   {
    "a": "library-062",
    "b": "project-018",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 2.543049614,
+   "scaled_dev_rel": 0.479516369
   },
   {
    "a": "library-062",
    "b": "project-040",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 2.542427556,
+   "scaled_dev_rel": 0.479511035
   },
   {
    "a": "library-063",
    "b": "library-085",
    "relation": "scaled_copy",
-   "translation_dev_m": null,
+   "translation_dev_m": 0.481817546,
    "scaled_dev_rel": 3.281e-06
   },
   {
    "a": "library-063",
    "b": "project-019",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.597865344,
+   "scaled_dev_rel": 0.303203345
   },
   {
    "a": "library-063",
    "b": "project-041",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.597865434,
+   "scaled_dev_rel": 0.303195765
   },
   {
    "a": "library-064",
    "b": "library-065",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 4.914270051,
+   "scaled_dev_rel": 0.282069215
   },
   {
    "a": "library-064",
    "b": "library-084",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.118627655,
+   "scaled_dev_rel": 0.25590653
   },
   {
    "a": "library-065",
    "b": "library-084",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 4.792150853,
+   "scaled_dev_rel": 0.369369939
   },
   {
    "a": "library-066",
    "b": "project-020",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.495168996,
+   "scaled_dev_rel": 0.239783517
   },
   {
    "a": "library-066",
    "b": "project-042",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.496328701,
+   "scaled_dev_rel": 0.239811393
   },
   {
    "a": "library-067",
    "b": "library-068",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.065035654,
+   "scaled_dev_rel": 0.090582718
   },
   {
    "a": "library-069",
    "b": "library-070",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.337379179,
+   "scaled_dev_rel": 0.072533959
   },
   {
    "a": "library-069",
    "b": "project-007",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.780806521,
+   "scaled_dev_rel": 0.326720531
   },
   {
    "a": "library-069",
    "b": "project-029",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.78030949,
+   "scaled_dev_rel": 0.326630559
   },
   {
    "a": "library-070",
    "b": "project-007",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.77334774,
+   "scaled_dev_rel": 0.32253194
   },
   {
    "a": "library-070",
    "b": "project-029",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.772685625,
+   "scaled_dev_rel": 0.322416924
   },
   {
    "a": "library-071",
    "b": "library-072",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.096865156,
+   "scaled_dev_rel": 0.083320499
   },
   {
    "a": "library-075",
@@ -1002,246 +1002,246 @@
    "a": "library-075",
    "b": "library-077",
    "relation": "same",
-   "translation_dev_m": 9.58e-07,
+   "translation_dev_m": 9.54e-07,
    "scaled_dev_rel": null
   },
   {
    "a": "library-075",
    "b": "project-011",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.286711364,
+   "scaled_dev_rel": 0.399653545
   },
   {
    "a": "library-075",
    "b": "project-033",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.28812917,
+   "scaled_dev_rel": 0.399812232
   },
   {
    "a": "library-076",
    "b": "library-077",
    "relation": "same",
-   "translation_dev_m": 9.58e-07,
+   "translation_dev_m": 9.54e-07,
    "scaled_dev_rel": null
   },
   {
    "a": "library-076",
    "b": "project-011",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.286711364,
+   "scaled_dev_rel": 0.399653545
   },
   {
    "a": "library-076",
    "b": "project-033",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.28812917,
+   "scaled_dev_rel": 0.399812232
   },
   {
    "a": "library-077",
    "b": "project-011",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.28671137,
+   "scaled_dev_rel": 0.399653505
   },
   {
    "a": "library-077",
    "b": "project-033",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.288129176,
+   "scaled_dev_rel": 0.399812192
   },
   {
    "a": "library-079",
    "b": "project-012",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 5.818801653,
+   "scaled_dev_rel": 0.54798296
   },
   {
    "a": "library-079",
    "b": "project-034",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 5.783437119,
+   "scaled_dev_rel": 0.599134607
   },
   {
    "a": "library-085",
    "b": "project-019",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.985265033,
+   "scaled_dev_rel": 0.303204588
   },
   {
    "a": "library-085",
    "b": "project-041",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.98526517,
+   "scaled_dev_rel": 0.303197011
   },
   {
    "a": "library-089",
    "b": "project-011",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.307764813,
+   "scaled_dev_rel": 0.188785714
   },
   {
    "a": "library-089",
    "b": "project-033",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.30642813,
+   "scaled_dev_rel": 0.18842741
   },
   {
    "a": "project-001",
    "b": "project-002",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.003175061,
+   "scaled_dev_rel": 0.001863018
   },
   {
    "a": "project-003",
    "b": "project-025",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 1.378029315,
+   "scaled_dev_rel": 0.312352288
   },
   {
    "a": "project-005",
    "b": "project-027",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.003907393,
+   "scaled_dev_rel": 0.002566113
   },
   {
    "a": "project-007",
    "b": "project-029",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.004157357,
+   "scaled_dev_rel": 0.001051543
   },
   {
    "a": "project-008",
    "b": "project-030",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.004264193,
+   "scaled_dev_rel": 0.004057818
   },
   {
    "a": "project-009",
    "b": "project-031",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.397266689,
+   "scaled_dev_rel": 0.180884362
   },
   {
    "a": "project-010",
    "b": "project-032",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.00317493,
+   "scaled_dev_rel": 0.001639401
   },
   {
    "a": "project-011",
    "b": "project-033",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.003737052,
+   "scaled_dev_rel": 0.002224921
   },
   {
    "a": "project-012",
    "b": "project-034",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.316604879,
+   "scaled_dev_rel": 0.230916405
   },
   {
    "a": "project-013",
    "b": "project-035",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.926146936,
+   "scaled_dev_rel": 0.230640916
   },
   {
    "a": "project-014",
    "b": "project-036",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.003003795,
+   "scaled_dev_rel": 0.002723869
   },
   {
    "a": "project-015",
    "b": "project-037",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.003176449,
+   "scaled_dev_rel": 0.00159778
   },
   {
    "a": "project-016",
    "b": "project-038",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.003180053,
+   "scaled_dev_rel": 0.001865947
   },
   {
    "a": "project-017",
    "b": "project-039",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.003004321,
+   "scaled_dev_rel": 0.002116663
   },
   {
    "a": "project-018",
    "b": "project-040",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.00317493,
+   "scaled_dev_rel": 0.001639401
   },
   {
    "a": "project-019",
    "b": "project-041",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.003001758,
+   "scaled_dev_rel": 0.002392065
   },
   {
    "a": "project-020",
    "b": "project-042",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.003064217,
+   "scaled_dev_rel": 0.002491217
   },
   {
    "a": "project-021",
    "b": "project-043",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.003003043,
+   "scaled_dev_rel": 0.002392065
   },
   {
    "a": "project-022",
    "b": "project-044",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.003000694,
+   "scaled_dev_rel": 0.003205458
   },
   {
    "a": "project-023",
    "b": "project-045",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.003004903,
+   "scaled_dev_rel": 0.001718807
   },
   {
    "a": "project-024",
    "b": "project-046",
    "relation": "distinct",
-   "translation_dev_m": null,
-   "scaled_dev_rel": null
+   "translation_dev_m": 0.003004903,
+   "scaled_dev_rel": 0.001718807
   }
  ]
 }

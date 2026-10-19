@@ -58,8 +58,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 3.747187826,
+    "scaled_dev_rel": 0.206138058
    },
    "merged": [
     {
@@ -159,8 +159,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 1.828288396,
+    "scaled_dev_rel": 0.264311179
    },
    "merged": [],
    "height_m": 3.832,
@@ -212,8 +212,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 2.98230568,
+    "scaled_dev_rel": 0.253672645
    },
    "merged": [],
    "height_m": 2.804,
@@ -265,8 +265,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 4.705177479,
+    "scaled_dev_rel": 0.23859399
    },
    "merged": [
     {
@@ -338,8 +338,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 3.924994382,
+    "scaled_dev_rel": 0.588642315
    },
    "merged": [
     {
@@ -410,8 +410,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 1.77034969,
+    "scaled_dev_rel": 0.410214095
    },
    "merged": [],
    "height_m": 4.538,
@@ -463,8 +463,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 2.570222157,
+    "scaled_dev_rel": 0.374355866
    },
    "merged": [
     {
@@ -524,8 +524,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 9.638209638,
+    "scaled_dev_rel": 0.26859844
    },
    "merged": [
     {
@@ -714,8 +714,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.782316225,
+    "scaled_dev_rel": 0.383807217
    },
    "merged": [
     {
@@ -775,8 +775,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 1.118627655,
+    "scaled_dev_rel": 0.25590653
    },
    "merged": [
     {
@@ -841,8 +841,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 1.781328635,
+    "scaled_dev_rel": 0.309139481
    },
    "merged": [
     {
@@ -902,8 +902,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 2.543049614,
+    "scaled_dev_rel": 0.479516369
    },
    "merged": [
     {
@@ -963,8 +963,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.337379179,
+    "scaled_dev_rel": 0.072533959
    },
    "merged": [
     {
@@ -1111,8 +1111,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 1.378029315,
+    "scaled_dev_rel": 0.312352288
    },
    "merged": [],
    "height_m": 4.411,
@@ -1246,8 +1246,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.004657635,
+    "scaled_dev_rel": 0.003356646
    },
    "merged": [
     {
@@ -1347,8 +1347,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.191580049,
+    "scaled_dev_rel": 0.136549984
    },
    "merged": [],
    "height_m": 0.99,
@@ -1441,8 +1441,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.641948605,
+    "scaled_dev_rel": 0.31196882
    },
    "merged": [
     {
@@ -1543,8 +1543,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.671516018,
+    "scaled_dev_rel": 0.1887851
    },
    "merged": [
     {
@@ -1657,8 +1657,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.120279928,
+    "scaled_dev_rel": 0.110204621
    },
    "merged": [],
    "height_m": 0.951,
@@ -1710,8 +1710,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.727265939,
+    "scaled_dev_rel": 0.269826352
    },
    "merged": [
     {
@@ -1990,8 +1990,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.818937946,
+    "scaled_dev_rel": 0.356968234
    },
    "merged": [
     {
@@ -2099,8 +2099,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 1.075296622,
+    "scaled_dev_rel": 0.28311665
    },
    "merged": [
     {
@@ -2160,8 +2160,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 1.069304868,
+    "scaled_dev_rel": 0.241247774
    },
    "merged": [
     {
@@ -2227,8 +2227,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.725439562,
+    "scaled_dev_rel": 0.473562073
    },
    "merged": [
     {
@@ -2288,8 +2288,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.425700917,
+    "scaled_dev_rel": 0.20643851
    },
    "merged": [
     {
@@ -2349,8 +2349,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.597865344,
+    "scaled_dev_rel": 0.303203345
    },
    "merged": [
     {
@@ -2416,8 +2416,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.065035654,
+    "scaled_dev_rel": 0.090582718
    },
    "merged": [],
    "height_m": 0.553,
@@ -2469,8 +2469,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.003737052,
+    "scaled_dev_rel": 0.002224921
    },
    "merged": [
     {
@@ -2541,8 +2541,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.003175061,
+    "scaled_dev_rel": 0.001863018
    },
    "merged": [],
    "height_m": 1.524,
@@ -2594,8 +2594,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.003003795,
+    "scaled_dev_rel": 0.002723869
    },
    "merged": [],
    "height_m": 0.835,
@@ -2647,8 +2647,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.003180053,
+    "scaled_dev_rel": 0.001865947
    },
    "merged": [],
    "height_m": 1.524,
@@ -2700,8 +2700,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.003000694,
+    "scaled_dev_rel": 0.003205458
    },
    "merged": [],
    "height_m": 0.841,
@@ -2753,8 +2753,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.003004903,
+    "scaled_dev_rel": 0.001718807
    },
    "merged": [],
    "height_m": 0.86,
@@ -2806,8 +2806,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.084783849,
+    "scaled_dev_rel": 0.074545804
    },
    "merged": [],
    "height_m": 0.639,
@@ -2859,8 +2859,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.078723648,
+    "scaled_dev_rel": 0.067459201
    },
    "merged": [],
    "height_m": 0.562,
@@ -3076,8 +3076,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.003002684,
+    "scaled_dev_rel": 0.003303669
    },
    "merged": [],
    "height_m": 0.562,
@@ -3129,8 +3129,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.096865156,
+    "scaled_dev_rel": 0.083320499
    },
    "merged": [],
    "height_m": 0.951,
@@ -3223,8 +3223,8 @@
    "vpm_identity": "verified_distinct",
    "vpm_evidence": {
     "relation": "distinct",
-    "translation_dev_m": null,
-    "scaled_dev_rel": null
+    "translation_dev_m": 0.003907393,
+    "scaled_dev_rel": 0.002566113
    },
    "merged": [],
    "height_m": 1.519,
