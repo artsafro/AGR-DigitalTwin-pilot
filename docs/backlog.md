@@ -136,6 +136,17 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
 - **R7** proposal 2026-10-18, claude/confident-hopper-4jccys - CLI command: add a decision row (next `D<n>`, date
   order) together with its `[D<n>]` anchor in the target file and run `tests/test_decisions.py`; seen 2 times
   (D104-D129 batch, D130); effort S
+- **R8** proposal 2026-10-19, feature/kernel-op-primitive - CLI command: mutation probe of a module - back up the
+  file, apply one named textual mutation, run its tests, print passed / failed, restore the file, repeat per
+  mutation from a small list; seen 4 times (C3 five mutations, C4a five, a re-run of one that survived, C4b six);
+  effort S
+- **R9** proposal 2026-10-19, feature/kernel-op-primitive - CLI command: compare failing tests with a clean base -
+  detached temporary worktree from `origin/main`, run the named failing tests there, print "same failures / new
+  failures", remove the worktree; seen 4 times (#288, #289, #290, #291, each with the same 5 environment
+  failures); effort S
+- **R10** proposal 2026-10-19, feature/kernel-op-primitive - CLI command: the local CI receipt text for a PR
+  (commit, commands, counts, known environment failures from R9) for the body and for the billing-lock comment
+  of R6; seen 8 times (5 PR bodies, 3 comments, same shape); effort S
 
 ## Harness and organization (default owner Codex)
 

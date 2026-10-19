@@ -6,8 +6,9 @@ scene unchanged with a question for the user, never a half-built result. Each op
 `(scene, part, ...) -> scene` on the numpy meshes of the invariants module, so it runs and is tested without Blender;
 operations that need bmesh (booleans, extrusion) will call it through an adapter, the data stay the same.
 
-Here: `keep` (copy + checks) and `embed_into_neighbour` (sink by 10-20 mm, delete the faces it hides) [Q8, Q18a].
-Pattern: `facade-decor-inset` (docs/domain/patterns/facade-decor-inset.md): embed 0.02 m, inner face deleted.
+Here: `keep` (copy + checks), `embed_into_neighbour` (sink by 10-20 mm, delete the faces it hides) and
+`primitive_box` (replace a part by its bounding box when the silhouette holds within 0.07 m) [Q8, Q18a, D082].
+Patterns: `facade-decor-inset` (embed 0.02 m, inner face deleted), `primitive-first` (silhouette test 0.07 m).
 """
 from dataclasses import dataclass
 from typing import Callable
@@ -15,8 +16,10 @@ from typing import Callable
 import numpy as np
 
 from dt_ai.ops.invariants import Context, InvariantReport, Mesh, Scene, check_operation, winding_number
+from dt_ai.ops.silhouette import SILHOUETTE_MAX_M, silhouette_deviations
 
 EMBED_DEPTH_RANGE_M = (0.010, 0.020)    # Q18a: embed depth 10-20 mm
+_BOX_MIN_EXTENT_M = 1e-4                # thinner than this is a plane, not a box
 
 
 class OperationRefused(Exception):
@@ -84,3 +87,33 @@ def embed_into_neighbour(scene: Scene, part: str, neighbour: str, direction, dep
     kept = mesh.triangles[~hidden]
     used, inverse = np.unique(kept, return_inverse=True)
     return {**scene, part: Mesh(moved[used], inverse.reshape(-1, 3))}
+
+
+def _box_mesh(lo: np.ndarray, hi: np.ndarray) -> Mesh:
+    """Closed axis-aligned box with outward normals."""
+    v = lo + np.array([(x, y, z) for z in (0, 1) for y in (0, 1) for x in (0, 1)], dtype=float) * (hi - lo)
+    quads = ((0, 2, 3, 1), (4, 5, 7, 6), (0, 1, 5, 4), (2, 6, 7, 3), (0, 4, 6, 2), (1, 3, 7, 5))   # all counter-clockwise from outside
+    tris = [t for a, b, c, d in quads for t in ((a, b, c), (a, c, d))]
+    return Mesh(v, np.array(tris))
+
+
+def primitive_box(scene: Scene, part: str, silhouette_max_m: float = SILHOUETTE_MAX_M) -> Scene:
+    """Replace `part` by its axis-aligned bounding box (12 triangles) when the silhouette holds [D082].
+
+    Refuses when the part is empty or flat along an axis (a plane, not a box), or when the box differs from the part by
+    more than `silhouette_max_m` in the top, front or side view: such a part needs a richer operation (rebuild by
+    contour). The box is axis-aligned in the object system; a part turned off the axes will fail the test.
+    """
+    mesh = scene[part]
+    if not len(mesh.triangles):
+        raise OperationRefused("the part has no faces")
+    lo, hi = mesh.vertices.min(axis=0), mesh.vertices.max(axis=0)
+    flat = [axis for axis, size in zip("xyz", hi - lo) if size < _BOX_MIN_EXTENT_M]
+    if flat:
+        raise OperationRefused(f"the part is flat along {','.join(flat)}: it is a plane, not a box")
+    box = _box_mesh(lo, hi)
+    worst = max(silhouette_deviations(mesh, box, silhouette_max_m / 4).items(), key=lambda kv: kv[1])
+    if worst[1] > silhouette_max_m:
+        raise OperationRefused(f"a box would change the silhouette by {worst[1] * 1000:.0f} mm in the {worst[0]} view "
+                               f"(limit {silhouette_max_m * 1000:.0f} mm): rebuild it by contour instead")
+    return {**scene, part: box}
