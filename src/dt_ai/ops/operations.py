@@ -4,10 +4,11 @@ The agent never edits a delivery mesh freehand: it applies one operation to one 
 checks the scene before and after (`check_operation`); a broken invariant, or an operation that refuses, returns the
 scene unchanged with a question for the user, never a half-built result. Each operation is a pure function
 `(scene, part, ...) -> scene` on the numpy meshes of the invariants module, so it runs and is tested without Blender;
-operations that need bmesh (booleans, extrusion) will call it through an adapter, the data stay the same.
+operations that need bmesh (booleans, extrusion, solidify) will call it through an adapter [D131]; the data stay the same.
 
-Here: `keep` (copy + checks), `embed_into_neighbour` (sink by 10-20 mm, delete the faces it hides) and
-`primitive_box` (replace a part by its bounding box when the silhouette holds within 0.07 m) [Q8, Q18a, D082].
+Here: `keep` (copy + checks), `embed_into_neighbour` (sink by 10-20 mm, delete the faces it hides),
+`primitive_box` (bounding box, silhouette within 0.07 m) and `to_opacity_plane` (NPM PCA mid-plane quad).
+`plan_opacity_swaps` reports the largest triangle savings first, stopping at the budget [D109].
 Patterns: `facade-decor-inset` (embed 0.02 m, inner face deleted), `primitive-first` (silhouette test 0.07 m).
 """
 from dataclasses import dataclass
@@ -157,6 +158,8 @@ def plan_opacity_swaps(scene: Scene, candidates, triangle_budget: int) -> list[t
 
     Candidates are already classified by the caller; execution still checks feasibility and invariants.
     Each pair reports the part and its saving (current triangles minus two). The input is not changed.
+    Ties preserve candidate order; duplicates and nonpositive savings are ignored. An unreachable budget emits
+    a UserWarning with the remaining total while returning every useful swap (the return type stays a list).
     """
     if triangle_budget < 0:
         raise ValueError("triangle_budget must be non-negative")

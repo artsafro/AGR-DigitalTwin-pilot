@@ -5,7 +5,8 @@ object system: the top (drop z) and the two facade views (drop y, drop x); the o
 view has the same silhouette, so the four facades and the top are three distinct views. The deviation of two
 silhouettes is the largest distance from a point of one that the other does not cover to the other (the Hausdorff
 distance of the regions), sampled on a grid of `step_m`; it is accurate to about one step.
-Pure numpy + shapely.
+Pure numpy + shapely. Edge-on projections remain line/point geometries and use Hausdorff distance directly;
+polygon-to-polygon behaviour and its sampling policy are unchanged (#292, orchestrator 2026-10-19).
 """
 import numpy as np
 import shapely

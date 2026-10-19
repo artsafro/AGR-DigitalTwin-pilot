@@ -8,6 +8,12 @@ geometry, flipped normals) except on parts that are two-sided on purpose; (4) no
 `overlap_min_m` (5 mm, reg p.8 §3.9; z-fighting). The checks return counts and the first offenders so a broken
 invariant can roll the operation back and stop with a question.
 
+NPM opacity swaps [D109]: the plane counts as cover, so filling an old railing gap is not a failure (the opacity
+map restores that gap). The lost-pixel tolerance remains zero. Only rays whose BEFORE first hit was a registered
+candidate actually replaced by a planar quad (>2 triangles -> 2, four planar vertices) are exempt from lost pixels:
+its thickness vanishes. Registration alone, deleting a part, and holes in any other first-hit part are not exempt.
+This first-hit rule was confirmed by the orchestrator on #292 (2026-10-19); it is not a global opacity hole waiver.
+
 Pure numpy on triangle meshes in metres (the 2-4 checks reuse `twinqa.clearance`); no Blender. Meant for parts and
 synthetic scenes: the ray probe tests every ray against every triangle, so a whole building needs a BVH (the
 bpy kernel, later cards). The probe sees nothing smaller than one pixel (`2 * radius / resolution`).
@@ -252,7 +258,7 @@ def open_borders_hidden(scene: Scene, part: str, ctx: Context = Context()) -> In
 
 
 def no_see_through_hole(before: Scene, after: Scene, ctx: Context = Context()) -> InvariantResult:
-    """(2) No ray that hit the scene before the operation misses it after: nothing was deleted that was not covered."""
+    """(2) Zero newly missing rays, except vanished thickness of a replaced opacity candidate (see module policy)."""
     name = "no_see_through_hole"
     parts, c0, owner = _stack(before)
     _, c1, _ = _stack(after)
