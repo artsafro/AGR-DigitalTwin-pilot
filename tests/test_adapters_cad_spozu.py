@@ -813,7 +813,7 @@ def test_nested_unmapped_layer_is_a_finding(depth):
     f = res.findings[0]
     assert f.ref == ">".join([ins.dxf.handle, *path, h.dxf.handle]) and f.handle == h.dxf.handle
     assert "1 entities" in f.detail and "1 in blocks" in f.detail
-    assert [round(c.area, 6) for c in res.coverings.values()] == [5600, 4000, 0]
+    assert [round(c.area, 6) for c in res.coverings.values()] == [5600, 4400, 0]  # no covering guessed for NEW_COVERING
 
 
 def test_nested_unmapped_layer_repeated_ignored_atomic_and_mixed():

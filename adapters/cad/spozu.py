@@ -434,7 +434,12 @@ class _Ent:
 
 
 def _block_content(insert):
-    """(source entity, WCS copy or None, problem) for the block of ``insert`` (ATTDEF skipped)."""
+    """(source entity, WCS copy or None, problem, cell suffix) for the block of ``insert`` (ATTDEF skipped).
+
+    A MINSERT inside the block is expanded into its cells in the block's own coordinates first, so
+    the parent transform applies to every cell position (row/column spacing included); a transformed
+    MINSERT would keep its spacing in the old scale and direction.
+    """
     m = insert.matrix44()
     blk = insert.block()
     if blk is None:
@@ -442,22 +447,34 @@ def _block_content(insert):
     for be in blk:
         if be.dxftype() == "ATTDEF":
             continue
-        try:
-            c = be.copy()
-            if hasattr(c, "remove_association"):
-                c.remove_association()
-            c.transform(m)
-        except Exception as exc:  # non-copyable, non-transformable, non-uniform scaling of arcs, shear
-            yield be, None, f"{type(exc).__name__}: {exc}"
-            continue
-        yield be, c, None
+        if be.dxftype() == "INSERT" and be.mcount > 1:
+            try:
+                cells = list(be.multi_insert())
+            except Exception as exc:
+                yield be, None, f"{type(exc).__name__}: {exc}", ""
+                continue
+            parts = [(cell, f"#{k}") for k, cell in enumerate(cells)]
+        else:
+            parts = [(be, "")]
+        for src, suffix in parts:
+            try:
+                c = src.copy()
+                if hasattr(c, "remove_association"):
+                    c.remove_association()
+                c.transform(m)
+            except Exception as exc:  # non-copyable, non-transformable, non-uniform scaling of arcs, shear
+                yield be, None, f"{type(exc).__name__}: {exc}", suffix
+                continue
+            yield be, c, None, suffix
 
 
-def _walk(msp, atomic, relevant, findings: list, max_depth: int = MAX_NESTING):
+def _walk(msp, atomic, relevant, findings: list, max_depth: int = MAX_NESTING, skipped: list | None = None):
     """Model-space entities plus expanded block content; ``atomic(e, layer)`` INSERTs are not expanded.
 
     ``relevant(layer)`` decides whether block content that cannot be transformed is a finding
-    (an INSERT that cannot be transformed always is: its content is unknown).
+    (an INSERT that cannot be transformed always is: its content is unknown). Non-relevant content
+    that cannot be transformed goes to ``skipped`` as (effective layer, handle, ref) so the layer
+    check still sees it.
     """
 
     def visit(e, layer, handle, ref, container, depth, chain):
@@ -476,13 +493,15 @@ def _walk(msp, atomic, relevant, findings: list, max_depth: int = MAX_NESTING):
             findings.append(Finding("nesting_too_deep", layer, handle,
                                     f"block {name!r} below {max_depth} insert levels not read", ref=ref))
             return
-        for be, c, problem in _block_content(e):
+        for be, c, problem, suffix in _block_content(e):
             lay = layer if be.dxf.layer == "0" else be.dxf.layer
-            cref = f"{ref}>{be.dxf.handle}"
+            cref = f"{ref}>{be.dxf.handle}{suffix}"
             if c is None:
                 if relevant(lay) or be.dxftype() == "INSERT":
                     findings.append(Finding("nested_unsupported", lay, be.dxf.handle,
                                             f"{be.dxftype()} in block {name!r}: {problem}", ref=cref))
+                elif skipped is not None:
+                    skipped.append((lay, be.dxf.handle, cref))
                 continue
             c.dxf.layer = lay
             yield from visit(c, lay, be.dxf.handle, cref, ref, depth + 1, chain | {name})
@@ -517,7 +536,8 @@ def read_spozu_dxf(source, cfg: SpozuConfig, tol: float = 0.001) -> SpozuResult:
         return layer in layer_type or layer in pl_layers or layer in maf_layers or layer in elev_layers \
             or layer == cfg.boundary_layer
 
-    ents = list(_walk(msp, atomic, relevant, findings))
+    skipped: list = []
+    ents = list(_walk(msp, atomic, relevant, findings, skipped=skipped))
 
     # boundary
     boundary = None
@@ -645,13 +665,30 @@ def read_spozu_dxf(source, cfg: SpozuConfig, tol: float = 0.001) -> SpozuResult:
             findings.append(Finding("point_outside_boundary", it.layer, it.handle,
                                     f"elevation {z} at {x:.3f},{y:.3f} (container {it.container})", ref=it.ref))
 
-    # unmapped layers: model-space layers with entities, neither mapped nor ignored
+    # unmapped layers: effective layers of model-space entities and of expanded (non-atomic) block
+    # content, neither mapped nor ignored; atomic symbols are not expanded, so their graphics never count
     mapped = cfg.mapped_layers()
-    used = sorted({e.dxf.layer for e in msp})
-    for lay in used:
-        if lay not in mapped and not cfg.ignored(lay):
-            n = sum(1 for e in msp if e.dxf.layer == lay)
-            findings.append(Finding("unmapped_layer", lay, None, f"{n} model-space entities"))
+    seen: dict[str, dict] = {}
+    occ = [(x.layer, x.handle, x.ref, x.container is None) for x in ents]
+    occ += [(lay, h, r, False) for lay, h, r in skipped]
+    for lay, h, r, top in occ:
+        if lay in mapped or cfg.ignored(lay):
+            continue
+        d = seen.setdefault(lay, {"top": set(), "nested": [], "first": None})
+        if top:
+            d["top"].add(h)
+        else:
+            d["nested"].append(r)
+            if d["first"] is None:
+                d["first"] = (h, r)
+    for lay in sorted(seen):
+        d = seen[lay]
+        top, nested = len(d["top"]), len(d["nested"])
+        h, r = d["first"] if d["first"] and not top else (None, None)
+        detail = f"{top + nested} entities ({top} model-space, {nested} in blocks)"
+        if nested:
+            detail += f"; nested e.g. {', '.join(d['nested'][:3])}"
+        findings.append(Finding("unmapped_layer", lay, h, detail, ref=r))
 
     return SpozuResult(cfg.project, s, boundary, bhandle, coverings, planting, maf, elevations, findings)
 
