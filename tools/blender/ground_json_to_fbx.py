@@ -126,12 +126,25 @@ def readback(fbx, src, rep, *tex):
         px, lo, hi = float(tex[0]), float(tex[1]), float(tex[2])
         uvl = me.uv_layers.active.data
         dens = []
+        straddle, mirrored, tiles = 0, 0, set()
         for p in me.polygons:
             if me.materials[p.material_index].name.endswith("_Skirt"):
                 continue
             li = list(p.loop_indices)
             w = [o.matrix_world @ me.vertices[me.loops[i].vertex_index].co for i in li]  # local: float32-safe
             u = [uvl[i].uv for i in li]
+            # UDIM containment on the imported UV (float32 tolerance 1e-6) and island winding vs face winding
+            tu = math.floor(min(c[0] for c in u) + 1e-6)
+            tv = math.floor(min(c[1] for c in u) + 1e-6)
+            if max(c[0] for c in u) > tu + 1 + 1e-6 or max(c[1] for c in u) > tv + 1 + 1e-6:
+                straddle += 1
+            else:
+                tiles.add(1001 + tu + 10 * tv)
+            sa = sum((u[k][0] - u[0][0]) * (u[k + 1][1] - u[0][1]) - (u[k][1] - u[0][1]) * (u[k + 1][0] - u[0][0])
+                     for k in range(1, len(u) - 1))
+            fa = sum(((w[k] - w[0]).cross(w[k + 1] - w[0])).dot(p.normal) for k in range(1, len(w) - 1))
+            if sa * fa < 0 and abs(sa) > 1e-14:
+                mirrored += 1
             a3 = sum((w[k] - w[0]).cross(w[k + 1] - w[0]).length
                      for k in range(1, len(w) - 1)) / 2
             a2 = abs(sum((u[k][0] - u[0][0]) * (u[k + 1][1] - u[0][1]) - (u[k][1] - u[0][1]) * (u[k + 1][0] - u[0][0])
@@ -140,6 +153,7 @@ def readback(fbx, src, rep, *tex):
                 dens.append(px * math.sqrt(a2 / a3))
         out["density"] = {"tex_px": px, "band": [lo, hi], "faces": len(dens), "min": min(dens), "max": max(dens),
                           "faces_below": sum(d < lo for d in dens), "faces_above": sum(d > hi for d in dens)}
+        out["uv_tiles"] = {"straddling": straddle, "tiles": sorted(tiles), "mirrored_faces": mirrored}
     json.dump(out, open(rep, "w", encoding="utf-8"), indent=1)
     print(json.dumps(out))
 

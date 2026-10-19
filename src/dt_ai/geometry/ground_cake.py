@@ -264,18 +264,8 @@ def build_flat(plan: Plan, cell: float = 4.0, chord: float = 0.02, origin: tuple
         relief_region = unary_union([relief_region, region])
         cand = tin_lines[tin_tree.query(region, predicate="intersects")]
         lines.append(shapely.intersection(shapely.multilinestrings(list(cand)), region, grid_size=snap))
-    # labels: base + first layer per level whose geometry contains the face's interior point
+    # cell statistics on the partition faces
     rp = shapely.get_coordinates(shapely.point_on_surface(faces)) if faces else np.zeros((0, 2))
-    labels = [[0] for _ in faces]
-    for lev in sorted({l.level for l in plan.layers[1:]}):
-        free = np.ones(len(faces), bool)
-        for li in range(1, len(geoms)):
-            if plan.layers[li].level != lev or geoms[li].is_empty:
-                continue
-            inside = shapely.contains_xy(geoms[li], rp[:, 0], rp[:, 1]) & free
-            for i in np.nonzero(inside)[0]:
-                labels[i].append(li)
-            free &= ~inside
     cix = np.floor((rp[:, 0] - x0) / cell).astype(int) if len(rp) else np.zeros(0, int)
     ciy = np.floor((rp[:, 1] - y0) / cell).astype(int) if len(rp) else np.zeros(0, int)
     cells_total = set(zip(cix.tolist(), ciy.tolist()))
@@ -284,47 +274,245 @@ def build_flat(plan: Plan, cell: float = 4.0, chord: float = 0.02, origin: tuple
         per_cell.setdefault(c, []).append(i)
     cells_extra = {c for c, ids in per_cell.items()
                    if len(ids) > 1 or abs(faces[ids[0]].area - cell * cell) >= 1e-6}
-    xy_relief, refined_edges = set(), []
+    xy_relief = set()
     if not relief_region.is_empty:
         inr = shapely.contains_xy(relief_region.buffer(snap), rp[:, 0], rp[:, 1])
         for i in np.nonzero(inr)[0]:
             xy_relief.add((int(cix[i]), int(ciy[i])))
-            for cs in tris[i]:
-                c = np.array(cs)
-                refined_edges.extend(np.linalg.norm(c - np.roll(c, 1, axis=0), axis=1).tolist())
+    # one shared triangle list (welded on the partition vertices)
+    V: list[tuple[float, float]] = []
+    vkey: dict[tuple[float, float], int] = {}
+    T: list[list[int]] = []
+    for ts in tris:
+        for cs in ts:
+            ids = []
+            for x, y in cs:
+                kk = (round(x, 6), round(y, 6))
+                if kk not in vkey:
+                    vkey[kk] = len(V)
+                    V.append(kk)
+                ids.append(vkey[kk])
+            T.append(ids)
+    refine = {}
+    if sampler is not None:
+        # residual faces (snap moved a vertex across a steep TIN break): insert the point of maximum deviation
+        # (interior split or shared-edge split, no T-junction) until every triangle is within ``tol``; fail closed
+        V, T, refine = _refine_relief(V, T, sampler, tol)
+    V, T, outl = _recover_outlines(V, T, geoms[1:], snap)
+    if sampler is not None and outl["points_inserted"]:  # new points can bend the relief again
+        V, T, ref2 = _refine_relief(V, T, sampler, tol)
+        refine["points_inserted"] += ref2["points_inserted"]
+        refine["max_error_mm"] = ref2["max_error_mm"]
+        refine["tri_ids"] = sorted(set(refine["tri_ids"]) | set(ref2["tri_ids"]))
+    Va = np.array(V, float).reshape(-1, 2)
+    Ta = np.array(T, int).reshape(-1, 3)
+    cen = Va[Ta].mean(axis=1) if len(Ta) else np.zeros((0, 2))
+    # labels per TRIANGLE (convex, never crossed by a partition line): base + first layer per level whose
+    # geometry contains the centroid. A partition face can carry a snap spike into a neighbouring covering, so a
+    # face-level interior point may sit in the spike and mislabel the whole face (Mulch faces 3575-3579, v005).
+    labels = [[0] for _ in range(len(Ta))]
+    for lev in sorted({l.level for l in plan.layers[1:]}):
+        free = np.ones(len(Ta), bool)
+        for li in range(1, len(geoms)):
+            if plan.layers[li].level != lev or geoms[li].is_empty:
+                continue
+            inside = shapely.contains_xy(geoms[li], cen[:, 0], cen[:, 1]) & free
+            for i in np.nonzero(inside)[0]:
+                labels[i].append(li)
+            free &= ~inside
+    tix = np.floor((cen[:, 0] - x0) / cell).astype(int)
+    tiy = np.floor((cen[:, 1] - y0) / cell).astype(int)
+    if refine:
+        for i in refine.pop("tri_ids"):
+            xy_relief.add((int(tix[i]), int(tiy[i])))
+    outline_cells = sorted({(int(tix[i]), int(tiy[i])) for i in outl.pop("tri_ids")})
+    tri_edges = np.linalg.norm(Va[Ta] - Va[np.roll(Ta, 1, axis=1)], axis=2) if len(Ta) else np.zeros((0, 3))
+    refined_edges = []
+    if xy_relief:
+        inr = np.array([(a, b) in xy_relief for a, b in zip(tix.tolist(), tiy.tolist())], bool)
+        refined_edges = tri_edges[inr].ravel().tolist()
     verts: list[tuple[float, float, float]] = []
     fl, slots, levels, uvs = [], [], [], []
-    index: dict[tuple[int, float, float], int] = {}
-    for i in range(len(faces)):
-        cx0, cy0 = x0 + cix[i] * cell, y0 + ciy[i] * cell
+    index: dict[tuple[int, int], int] = {}
+    for i in range(len(Ta)):
+        cx0, cy0 = x0 + tix[i] * cell, y0 + tiy[i] * cell
+        cs = Va[Ta[i]]
         for li in labels[i]:
             lay = plan.layers[li]
             z = lay.level * plan.step
-            for cs in tris[i]:
-                ids = []
-                for x, y in cs:
-                    kk = (lay.level, round(x, 6), round(y, 6))  # same level welded across slots
-                    if kk not in index:
-                        index[kk] = len(verts)
-                        verts.append((kk[1], kk[2], z))
-                    ids.append(index[kk])
-                fl.append(ids)
-                slots.append(lay.slot)
-                levels.append(lay.level)
-                uvs.append([((x - cx0) / cell, (y - cy0) / cell) for x, y in cs])
+            ids = []
+            for v in Ta[i]:
+                kk = (lay.level, int(v))  # same level welded across slots
+                if kk not in index:
+                    index[kk] = len(verts)
+                    verts.append((Va[v, 0], Va[v, 1], z))
+                ids.append(index[kk])
+            fl.append(ids)
+            slots.append(lay.slot)
+            levels.append(lay.level)
+            # stacked tiling UV: one grid cell = [0, 1]^2, clipped to the closed tile (vertices sit on the cell
+            # border at most; the clip only removes float noise)
+            uvs.append(np.clip([((x - cx0) / cell, (y - cy0) / cell) for x, y in cs], 0.0, 1.0).tolist())
     m = Mesh(np.array(verts, float), np.array(fl, int).reshape(-1, 3), slots, np.array(levels, int),
              np.array(uvs, float).reshape(-1, 3, 2), cell)
     m.report = {"triangulation_repairs": len(_TRI_REPAIRS), "xy_cells": len(cells_total),
                 "xy_cells_with_extra_cuts": len(cells_extra), "partition_faces": len(faces),
-                "triangles": len(fl), "origin": list(origin), "chord_m": chord, "cell_m": cell, "snap_m": snap}
+                "triangles": len(fl), "origin": list(origin),
+                "outline_recovery": {**outl, "cells": [list(c) for c in outline_cells]}, "chord_m": chord, "cell_m": cell, "snap_m": snap}
     if sampler is not None:
         m.report.update({"relief_tol_m": tol, "relief_rounds": it, "relief_cut_xy_cells": len(xy_relief),
                          "relief_cut_xy_list": sorted([list(c) for c in xy_relief]),
                          "relief_region_m2": round(relief_region.area, 3),
                          "relief_max_error_before_mm": (max_err_before or 0.0) * 1000,
-                         "relief_residual_faces_over_tol": int((ferr > tol).sum()),
-                         "relief_shortest_edge_m": min(refined_edges) if refined_edges else None})
+                         "relief_residual_partition_faces_over_tol": int((ferr > tol).sum()),
+                         **{f"relief_refine_{k}": v for k, v in refine.items()},
+                         "relief_shortest_edge_m": min(refined_edges) if refined_edges else None,
+                         "shortest_edge_m": float(tri_edges.min()) if len(tri_edges) else None})
     return m
+
+
+def _insert_points(V: list, T: list, evaluate, what: str, max_rounds: int = 60,
+                   eps: float = 1e-6) -> tuple[list, list, dict]:
+    """Insert points into a CCW triangle list until ``evaluate`` reports no bad triangle (fail closed).
+
+    ``evaluate(V, T, ids) -> (score, where)``: score > 0 = bad (larger first), where = (x, y) to insert. A point
+    strictly inside splits its triangle in 3; a point on an edge (within ``eps``) splits that edge in BOTH
+    triangles sharing it (no T-junction). Raises when a round makes no progress or ``max_rounds`` is exceeded.
+    Returns (V, T, report) with report["tri_ids"] = final triangles created by a split.
+    """
+    V = [tuple(v) for v in V]
+    T = [list(t) for t in T]
+    key = {(round(x, 6), round(y, 6)): i for i, (x, y) in enumerate(V)}
+    created = [False] * len(T)
+    sc, w = evaluate(V, T, list(range(len(T))))
+    score, where = list(map(float, sc)), [tuple(p) for p in w]
+    before = int((np.asarray(sc) > 0).sum())
+    inserted = 0
+    for rnd in range(max_rounds + 1):
+        bad = sorted((i for i in range(len(T)) if score[i] > 0), key=lambda i: -score[i])
+        if not bad:
+            return V, T, {"rounds": rnd, "triangles_bad_before": before, "points_inserted": inserted,
+                          "tri_ids": [i for i, c in enumerate(created) if c]}
+        if rnd == max_rounds:
+            raise RuntimeError(f"{what}: {len(bad)} triangles still bad after {max_rounds} rounds")
+        emap: dict[tuple[int, int], list[int]] = {}
+        for ti, (a, b, c) in enumerate(T):
+            for u, v in ((a, b), (b, c), (c, a)):
+                emap.setdefault((min(u, v), max(u, v)), []).append(ti)
+        touched: set[int] = set()
+        changed: list[int] = []
+        for ti in bad:
+            if ti in touched:
+                continue
+            p = np.array(where[ti], float)
+            if not np.isfinite(p).all():
+                continue
+            a, b, c = T[ti]
+            P = np.array([V[a], V[b], V[c]], float)
+            best = None
+            for k, (u, v) in enumerate(((a, b), (b, c), (c, a))):
+                A, B = P[k], P[(k + 1) % 3]
+                d = B - A
+                t = float(np.clip(np.dot(p - A, d) / np.dot(d, d), 0.0, 1.0))
+                dist = float(np.linalg.norm(A + t * d - p))
+                if dist < eps and (best is None or dist < best[0]):
+                    best = (dist, u, v, A + t * d)
+            q = best[3] if best else p
+            kq = (round(float(q[0]), 6), round(float(q[1]), 6))
+            if kq in key:
+                continue  # rounds onto an existing vertex: no progress from this point
+            if best is not None:
+                u, v = best[1], best[2]
+                adj = emap[(min(u, v), max(u, v))]
+                if any(t in touched for t in adj):
+                    continue
+                key[kq] = n = len(V)
+                V.append(kq)
+                for t in adj:
+                    tri = T[t]
+                    j = next(j for j in range(3) if {tri[j], tri[(j + 1) % 3]} == {u, v})
+                    x, y, o = tri[j], tri[(j + 1) % 3], tri[(j + 2) % 3]
+                    T[t] = [x, n, o]
+                    T.append([n, y, o])
+                    created[t] = True
+                    created.append(True)
+                    touched.add(t)
+                    changed += [t, len(T) - 1]
+            else:
+                key[kq] = n = len(V)
+                V.append(kq)
+                T[ti] = [a, b, n]
+                T += [[b, c, n], [c, a, n]]
+                created[ti] = True
+                created += [True, True]
+                touched.add(ti)
+                changed += [ti, len(T) - 2, len(T) - 1]
+            inserted += 1
+        if not changed:
+            raise RuntimeError(f"{what} stuck: {len(bad)} bad triangles, no insertable point")
+        score += [0.0] * (len(T) - len(score))
+        where += [(np.nan, np.nan)] * (len(T) - len(where))
+        sc, w = evaluate(V, T, changed)
+        for i, ev, wv in zip(changed, sc, w):
+            score[i], where[i] = float(ev), tuple(wv)
+    raise AssertionError("unreachable")
+
+
+def _refine_relief(V: list, T: list, sampler: "ReliefSampler", tol: float) -> tuple[list, list, dict]:
+    """Insert the point of maximum relief deviation into every triangle off by more than ``tol`` (exact
+    maximum) until none is; residuals come from the snap moving a vertex across a steep TIN break."""
+    def ev(V, T, ids):
+        if not ids:
+            return np.zeros(0), np.zeros((0, 2))
+        e, w = sampler.max_error(np.array(V, float)[np.array([T[i] for i in ids], int)], return_where=True)
+        return np.where(e > tol, e, 0.0), w
+    V, T, rep = _insert_points(V, T, ev, "relief refinement")
+    xy = np.array(V, float)[np.array(T, int)]
+    rep["max_error_mm"] = float(sampler.max_error(xy).max() * 1000) if len(T) else 0.0
+    return V, T, rep
+
+
+def _recover_outlines(V: list, T: list, regions: list, snap: float) -> tuple[list, list, dict]:
+    """Insert outline crossings into every triangle whose centroid side of a layer outline disagrees with a part
+    of it farther than 2 ``snap`` on the other side (noding can drop a collapsed sliver of a narrow covering as a cut edge, so its outline never
+    reaches the partition); afterwards each triangle is on one side and its centroid label is right."""
+    prepped = []
+    for g in regions:
+        if g.is_empty:
+            continue
+        inner, outer = g.buffer(-2 * snap), g.buffer(2 * snap)
+        shapely.prepare(inner)
+        shapely.prepare(outer)
+        shapely.prepare(g)
+        prepped.append((g, inner, outer, g.boundary))
+
+    def ev(V, T, ids):
+        sc = np.zeros(len(ids))
+        w = np.full((len(ids), 2), np.nan)
+        if not ids:
+            return sc, w
+        tri = shapely.polygons(np.array(V, float)[np.array([T[i] for i in ids], int)])
+        for g, inner, outer, bnd in prepped:
+            c = shapely.centroid(tri)
+            inside = shapely.contains(g, c)
+            cand = np.nonzero(np.where(inside, ~shapely.within(tri, outer), shapely.intersects(tri, inner))
+                              & (sc == 0))[0]
+            for k in cand:
+                corners = shapely.get_coordinates(tri[k])[:3]
+                pts = np.vstack([shapely.get_coordinates(shapely.intersection(tri[k].boundary, bnd)),
+                                 shapely.get_coordinates(shapely.intersection(bnd, tri[k]))])
+                if len(pts):
+                    dmin = np.min(np.linalg.norm(pts[:, None, :] - corners[None], axis=2), axis=1)
+                    pts, dmin = pts[dmin > 1e-5], dmin[dmin > 1e-5]
+                sc[k] = float(tri[k].area) + 1e-12
+                ln = np.linalg.norm(corners - np.roll(corners, -1, axis=0), axis=1)
+                j = int(np.argmax(ln))
+                if len(pts) and 2 * tri[k].area / ln[j] >= 2 * snap:
+                    w[k] = pts[int(np.argmax(dmin))]
+                else:  # sliver along the outline (crossings numerically unstable): bisect its longest edge
+                    w[k] = (corners[j] + corners[(j + 1) % 3]) / 2
+        return sc, w
+    return _insert_points(V, T, ev, "outline recovery")
 
 
 # ---------------------------------------------------------------- relief
@@ -375,7 +563,7 @@ class ReliefSampler:
         A = np.concatenate([P[:, :, :2], np.ones((len(P), 3, 1))], axis=2)
         self.planes = np.linalg.solve(A, P[:, :, 2:3])[:, :, 0]  # z = a x + b y + c per TIN triangle
 
-    def max_error(self, xy: np.ndarray, z: np.ndarray | None = None) -> np.ndarray:
+    def max_error(self, xy: np.ndarray, z: np.ndarray | None = None, return_where: bool = False):
         """Exact max |face plane - relief| per triangle (m, 3, 2); ``z`` (m, 3) defaults to the relief at the
         corners. The relief is piecewise planar, so the maximum lies at a vertex of face ∩ TIN triangle."""
         xy = np.asarray(xy, float).reshape(-1, 3, 2)
@@ -400,7 +588,15 @@ class ReliefSampler:
         err = np.zeros(m)
         np.maximum.at(err, f, d)
         err[~ok] = 0.0
-        return err
+        if not return_where:
+            return err
+        where = np.full((m, 2), np.nan)
+        if len(d):
+            order = np.lexsort((-d, f))
+            first = order[np.r_[True, f[order][1:] != f[order][:-1]]]
+            where[f[first]] = coords[first]
+        where[~ok] = np.nan
+        return err, where
 
     def sample(self, xy: np.ndarray, eps: float = 1e-7) -> tuple[np.ndarray, np.ndarray]:
         """Relief Z straight below every XY; returns (z, hit mask). Misses get NaN."""
@@ -497,7 +693,7 @@ def measure_inside(mesh: Mesh, plan: Plan, tol: float = 0.02) -> dict:
     bad = 0
     total = 0
     for lay in plan.layers:
-        region = lay.geom.buffer(tol)
+        region = lay.geom.buffer(tol, quad_segs=64)  # 8 segments inscribe the arc 0.4 mm inside a 22 mm buffer
         tree_ok = region
         m = np.array([s == lay.slot for s in mesh.slot]) & (mesh.level == lay.level)
         for p in face_polys(mesh, m):
@@ -618,6 +814,50 @@ def fix_density(verts: np.ndarray, faces: np.ndarray, uv: np.ndarray, tex_px: in
     c = uv[bad].mean(axis=1, keepdims=True)
     out[bad] = c + (uv[bad] - c) * (target / d[bad])[:, None, None]
     return out, bad
+
+
+def side_project_uv(verts: np.ndarray, faces: np.ndarray, uv: np.ndarray, tex_px: int, lo: float,
+                    length: float, wrap: bool) -> tuple[np.ndarray, np.ndarray]:
+    """Faces whose top-down texel density is below ``lo`` (steep relief: walls, step risers) get a projection onto
+    the vertical plane of their dominant horizontal normal axis at the same scale (``length`` metres per UV unit), shifted by whole UV units next to the origin:
+    normal mostly along Y -> (x, z), along X -> (y, z); u flipped where needed so no island is mirrored (UV winding
+    = face winding). With ``wrap`` every such triangle is shifted by whole UV units into the tile [0, 1]^2 (an
+    integer shift is the same texel of a tiling texture). Density after >= tex_px / length * 0.68 (dominant axis
+    >= 0.683 of the normal whenever the top-down density failed with lo >= 0.5 * flat). Every other face keeps
+    its UV. Returns (uv, side face ids). Their crease with the top-down neighbours is a texture seam (reported)."""
+    d = texel_density(verts, faces, uv, tex_px)
+    ids = np.nonzero(np.isfinite(d) & (d < lo))[0]
+    out = uv.copy()
+    if not len(ids):
+        return out, ids
+    P = verts[faces[ids]]
+    n = np.cross(P[:, 1] - P[:, 0], P[:, 2] - P[:, 0])
+    alongy = np.abs(n[:, 1]) >= np.abs(n[:, 0])
+    h = np.where(alongy[:, None], P[:, :, 0], P[:, :, 1])
+    q = np.stack([h / length, P[:, :, 2] / length], axis=2)
+    e1, e2 = q[:, 1] - q[:, 0], q[:, 2] - q[:, 0]
+    flip = (e1[:, 0] * e2[:, 1] - e1[:, 1] * e2[:, 0]) < 0
+    q[flip, :, 0] *= -1
+    q -= np.floor(q.min(axis=1, keepdims=True) + 1e-9)  # whole-unit shift: same texel, small float32 UV
+    if wrap:
+        over = np.any(q.max(axis=1) > 1 + 1e-9, axis=1)  # integer shift cannot fit: shift to 0 (own island)
+        q[over] -= q[over].min(axis=1, keepdims=True)
+    out[ids] = q
+    return out, ids
+
+
+def uv_tile_report(uv: np.ndarray, eps: float = 1e-9) -> dict:
+    """UDIM containment of per-corner UV (m, 3, 2): a triangle is tile-contained when all corners lie in one closed
+    tile [i, i+1] x [j, j+1] (corners exactly on a tile border count for that tile). Returns the UDIM numbers used
+    (1001 + i + 10 j, sorted) and the number of straddling triangles; u outside [0, 10) or v < 0 is invalid."""
+    uv = np.asarray(uv, float).reshape(-1, 3, 2)
+    lo = np.floor(uv.min(axis=1) + eps)
+    straddle = np.any(uv.max(axis=1) > lo + 1 + eps, axis=1)
+    bad_range = (lo[:, 0] < 0) | (lo[:, 0] > 9) | (lo[:, 1] < 0)
+    tiles = sorted({int(1001 + i + 10 * j) for i, j in lo[~straddle & ~bad_range].astype(int).tolist()})
+    return {"triangles": int(len(uv)), "straddling": int(straddle.sum()), "outside_udim_range": int(bad_range.sum()),
+            "tiles": tiles, "u_range": [float(uv[..., 0].min()), float(uv[..., 0].max())] if len(uv) else None,
+            "v_range": [float(uv[..., 1].min()), float(uv[..., 1].max())] if len(uv) else None}
 
 
 def uv_scale_for_density(cell: float, tex_px: int, px_per_m: float) -> float:

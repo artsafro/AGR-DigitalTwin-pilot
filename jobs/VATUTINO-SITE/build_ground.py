@@ -14,6 +14,7 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import sys
 import time
 from pathlib import Path
@@ -42,6 +43,19 @@ def gnd06_limit(area_m2: float) -> int:
     raise ValueError(area_m2)
 
 
+def check_aliases(src: Path, out: Path, targets: list[Path]) -> str | None:
+    """Reason string when the input is (or would be overwritten by) an output, else None. Resolves links."""
+    rs = src.resolve()
+    if out.exists() and not out.is_dir():
+        return f"--out {out} exists and is not a directory"
+    if out.resolve() == rs:
+        return f"--out {out} resolves to the input {rs}"
+    for t in targets:
+        if t.resolve() == rs or (t.exists() and src.exists() and os.path.samefile(t, src)):
+            return f"output {t} resolves to the input {rs}"
+    return None
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("adapter_json")
@@ -54,8 +68,11 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     src = Path(a.adapter_json)
     out = Path(a.out)
-    if out.resolve() == src.resolve() or src.resolve().parent == out.resolve() and False:
-        raise SystemExit("output path resolves to the input")
+    targets = [out / f"ground_master_{p}.json" for p in ("vpm", "npm")] + [out / "ground_report.json"]
+    alias = check_aliases(src, out, targets)
+    if alias:
+        print(f"refused before any write: {alias}", file=sys.stderr)
+        return 2
     out.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
     d = json.loads(src.read_text(encoding="utf-8"))
@@ -105,32 +122,84 @@ def main(argv=None) -> int:
                      "S_ter_m2": round(boundary.area, 2), "S_pz_m2": round(s_pz, 2),
                      "gnd06_vpm_limit": gnd06_limit(boundary.area - s_pz)}
     slots_order = sorted({*master.slot})
-    k_npm = gc.uv_scale_for_density(a.cell, NPM_PX, NPM_DENSITY)
     surf = master.level >= 0
-    k_vpm = gc.uv_scale_for_density(a.cell, VPM_PX, VPM_DENSITY)
-    for prof, k, px in (("vpm", k_vpm, VPM_PX), ("npm", k_npm, NPM_PX)):
-        uv = master.uv.copy()
-        uv[surf] *= k
-        m = gc.Mesh(master.verts, master.faces, master.slot, master.level, uv, master.cell, master.report)
+    meshes = {}
+    for prof in ("vpm", "npm"):
+        uv, layout = profile_uv(master, prof)
+        px = VPM_PX if prof == "vpm" else NPM_PX
         lo, hi = (10, 40) if prof == "npm" else (520, 1706)
-        dens0 = gc.texel_density(m.verts, m.faces[surf], uv[surf], px)
-        uv_s, fixed = gc.fix_density(m.verts, m.faces[surf], uv[surf], px, lo, hi,
-                                     NPM_DENSITY if prof == "npm" else VPM_DENSITY)
-        uv[surf] = uv_s
-        dens = gc.texel_density(m.verts, m.faces[surf], uv[surf], px)
-        rep[f"density_{prof}_before_fix"] = {"min": float(np.nanmin(dens0)), "faces_out_of_band": len(fixed),
-                                             "fixed_face_ids_surface": fixed.tolist()}
+        dens = gc.texel_density(master.verts, master.faces[surf], uv[surf], px)
+        tiles = gc.uv_tile_report(uv[surf])
         rep[f"density_{prof}"] = {"min": float(np.nanmin(dens)), "max": float(np.nanmax(dens)), "band": [lo, hi],
                                   "faces_below": int((dens < lo).sum()), "faces_above": int((dens > hi).sum()),
-                                  "nan_faces": int(np.isnan(dens).sum()), "uv_cell_side": k}
-        (out / f"ground_master_{prof}.json").write_text(json.dumps(gc.mesh_to_dict(m, slots_order)), encoding="utf-8")
+                                  "nan_faces": int(np.isnan(dens).sum()), **layout}
+        rep[f"uv_tiles_{prof}"] = tiles
+        meshes[prof] = gc.Mesh(master.verts, master.faces, master.slot, master.level, uv, master.cell, master.report)
+    rep["gates"] = gates = acceptance_gates(rep)
     rep["slots"] = slots_order
     rep["seconds"] = round(time.time() - t0, 1)
+    failed = [k for k, v in gates.items() if not v["pass"]]
+    if not failed:  # fail closed: geometry that misses a gate is never written as a deliverable
+        for prof, m in meshes.items():
+            (out / f"ground_master_{prof}.json").write_text(json.dumps(gc.mesh_to_dict(m, slots_order)),
+                                                            encoding="utf-8")
     (out / "ground_report.json").write_text(json.dumps(rep, indent=1, ensure_ascii=False, default=float),
                                             encoding="utf-8")
-    print(json.dumps({k: rep[k] for k in ("flat", "coverage", "inside", "relief", "steps", "relief_error", "stack_gaps", "open_edges", "budget",
-                                          "density_vpm", "density_npm")}, default=float))
+    print(json.dumps({k: rep[k] for k in ("flat", "coverage", "inside", "relief", "steps", "relief_error", "stack_gaps",
+                                          "open_edges", "budget", "density_vpm", "density_npm", "uv_tiles_vpm",
+                                          "gates")}, default=float))
+    if failed:
+        print(f"FAILED gates {failed}: no mesh written", file=sys.stderr)
+        return 1
     return 0
+
+
+def profile_uv(master: "gc.Mesh", prof: str) -> tuple[np.ndarray, dict]:
+    """Per-profile UV from the one master.
+
+    VPM (GND-09, UDIM): the master's stacked cell UV unchanged, one 4 m cell = exactly one UDIM tile [0, 1]^2
+    (1001), so every triangle is tile-contained and a shared cell border maps u = 1 to u = 0 of the next cell: the
+    same texel of the tiling texture, no added seam. Flat density = 4096 / 4 = 1024 px/m.
+    NPM (GND-08): world-continuous top-down UV, one texture repeat per ``NPM_PX / NPM_DENSITY`` metres (no
+    seam anywhere; NPM is an atlas contract, not UDIM).
+    """
+    surf = master.level >= 0
+    uv = master.uv.copy()
+    if prof == "vpm":
+        px, lo, length, lay = VPM_PX, 520, master.cell, {"layout": "stacked cell = UDIM 1001, side 1.0",
+                                                         "flat_px_per_m": VPM_PX / master.cell}
+    else:
+        length = NPM_PX / NPM_DENSITY
+        px, lo, lay = NPM_PX, 10, {"layout": "world top-down", "repeat_m": length, "flat_px_per_m": NPM_DENSITY}
+        org = np.floor(master.verts[:, :2].min(axis=0))
+        uv[surf] = (master.verts[master.faces[surf], :2] - org) / length
+    us, ids = gc.side_project_uv(master.verts, master.faces[surf], uv[surf], px, lo, length, wrap=prof == "vpm")
+    uv[surf] = us
+    P = master.verts[master.faces[surf][ids]]
+    lay.update({"side_projected_faces": int(len(ids)),
+                "side_projected_area_m2": float(0.5 * np.linalg.norm(np.cross(P[:, 1] - P[:, 0], P[:, 2] - P[:, 0]),
+                                                                    axis=1).sum()) if len(ids) else 0.0})
+    return uv, lay
+
+
+def acceptance_gates(rep: dict) -> dict:
+    """Mandatory geometry gates checked before any deliverable is written (review round 1 of PR #308)."""
+    g = {
+        "relief_within_tol": {"pass": rep["relief_error"]["faces_over_tol"] == 0, "value": rep["relief_error"]},
+        "faces_inside_contour": {"pass": rep["inside"]["outside"] == 0, "value": rep["inside"]},
+        "projection_misses_0": {"pass": rep["relief"]["vertex_misses"] == 0, "value": rep["relief"]["vertex_misses"]},
+        "no_cracks": {"pass": rep["open_edges"]["open_edges_off_outline"] == 0, "value": rep["open_edges"]},
+        "npm_surface_budget": {"pass": rep["budget"]["surface_triangles"] <= 50_000,
+                               "value": rep["budget"]["surface_triangles"]},
+    }
+    for prof in ("vpm", "npm"):
+        d = rep[f"density_{prof}"]
+        g[f"density_{prof}"] = {"pass": d["faces_below"] == 0 and d["faces_above"] == 0 and d["nan_faces"] == 0,
+                                "value": {k: d[k] for k in ("min", "max", "faces_below", "faces_above", "nan_faces")}}
+    t = rep["uv_tiles_vpm"]
+    g["vpm_uv_tile_contained"] = {"pass": t["straddling"] == 0 and t["outside_udim_range"] == 0 and t["tiles"] == list(range(1001, 1001 + len(t["tiles"]))),
+                                  "value": t}
+    return g
 
 
 if __name__ == "__main__":
