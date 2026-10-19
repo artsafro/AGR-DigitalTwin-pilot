@@ -1003,8 +1003,9 @@ def test_an_oblique_fin_root_leaves_no_stub(shear, cross):
     assert report["floors"]["L0"]["attachment_pieces_left_out"] == 1
 
 
-def test_an_oblique_fin_root_in_two_pieces_leaves_no_stub():
-    """#90: the leaning root is split at y = -0.25 (its quads share that line, no crossbar there): both pieces go."""
+@pytest.mark.parametrize("tail_shear", [0.0, 0.05, -0.1, 0.8])
+def test_an_oblique_fin_root_in_two_pieces_leaves_no_stub(tail_shear):
+    """#90: the leaning root is split at y = -0.25 (no crossbar there); a bent tail must not leave either piece."""
     dump = panelised()
     dump["meshes"] = [m for m in dump["meshes"] if m["name"] != "Panel_0_0"]
     joined = Mesh("Panel_0_0")
@@ -1016,7 +1017,7 @@ def test_an_oblique_fin_root_in_two_pieces_leaves_no_stub():
     joined.quad((4.0, -1.2, z0), (4.4, -1.2, z0), (4.4, -1.2, z1), (4.0, -1.2, z1))
     joined.quad((4.0, -0.4, z0), (4.4, -0.4, z0), (4.4, -0.4, z1), (4.0, -0.4, z1))
     dump["meshes"].append(joined.dump())
-    spec, _report = extract_spec(_shear(dump, 1.5), PANEL_OBJECT)
+    spec, _report = extract_spec(_piecewise_fin(dump, 1.5, tail_shear, 0.3), PANEL_OBJECT)
     assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03)
 
 
@@ -1111,6 +1112,57 @@ def test_probe_a_step_and_a_glass_end_stay_at_every_oblique_angle():
             dump["meshes"].append(glass.dump())
             spec, _report = extract_spec(_shear(dump, shear), PANEL_OBJECT)
             assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03), (degrees, sign)
+
+
+def _piecewise_fin(dump, root_shear, tail_shear, hinge, below=-0.1):
+    """Synthetic fin with independently directed root/tail; leave the facade vertices fixed."""
+    for p in dump["meshes"][-1]["vertices"]:
+        depth = below - p[1]
+        if depth > 1e-9:
+            p[0] += root_shear * depth + tail_shear * max(0.0, depth - hinge)
+    return dump
+
+
+def test_probe_piecewise_roots_preserve_the_facade():
+    """Seed 90279, 36 synthetic bent fins: mirror, oblique root, crossbar depth and width together.
+    Bends are at crossbars outside the facade band, as in the review P1; the root crosses into the band.
+    """
+    rng = random.Random(90279)
+    for i in range(36):
+        cross = rng.choice([-0.35, -0.4, -0.5])
+        width = rng.choice([0.1, 0.4, 1.0])
+        root = rng.choice([-1.5, -1.0, 0.0, 1.0, 1.5])
+        tail = rng.choice([-0.8, -0.1, -0.05, 0.05, 0.1, 0.8])
+        dump = _piecewise_fin(_fin_dump(cross, x1=4.0 + width), root, tail, -cross - 0.1)
+        # Section noding/order must not change the answer.
+        if i % 2:
+            dump["meshes"][-1]["triangles"].reverse()
+        spec, report = extract_spec(dump, PANEL_OBJECT)
+        assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03), (i, cross, width, root, tail)
+        assert report["floors"]["L0"]["attachment_pieces_left_out"] == 1
+
+
+def test_probe_piecewise_roots_preserve_step_and_glass_junctions():
+    """24 combinations per safeguard: bent tails plus upright/45-degree/oblique mirrored roots.
+    The real facade junction is inside the band; it must stay even when collinear with the root.
+    """
+    for root in (-4.0, -1.5, -1.0, 0.0, 1.0, 1.5):
+        for tail in (-0.8, -0.05, 0.05, 0.8):
+            dump = _piecewise_fin(_step_dump(5.0, cross=-0.7), root, tail, 0.3, below=-0.4)
+            spec, _ = extract_spec(dump, PANEL_OBJECT)
+            contour = spec.expanded_floors()[0].contour
+            assert any(math.dist(p[:2], (5, -0.4)) <= 0.03 for p in contour), (root, tail)
+            assert any(math.dist(p[:2], (5, -0.1)) <= 0.05 for p in contour), (root, tail)
+            assert min(p[1] for p in contour) >= -0.43, (root, tail)
+            dump = panelised()
+            dump["meshes"] = [m for m in dump["meshes"] if m["name"] != "Panel_0_0"]
+            glass = Mesh("Glass")
+            glass.quad((-0.1, 0.02, 0.01), (-0.1, -0.1, 0.01), (-0.1, -0.1, 3.29), (-0.1, 0.02, 3.29))
+            glass.quad((-0.1, -0.1, 0.01), (10.1, -0.1, 0.01), (10.1, -0.1, 3.29), (-0.1, -0.1, 3.29))
+            _fin(glass, 9.7, 10.1, -0.95, cross=-0.4)
+            dump["meshes"].append(glass.dump())
+            spec, _ = extract_spec(_piecewise_fin(dump, root, tail, 0.3), PANEL_OBJECT)
+            assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03), (root, tail)
 
 
 def test_slab_data_follow_the_ceiling_not_the_reference():

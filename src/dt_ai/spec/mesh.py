@@ -985,12 +985,12 @@ def _facade_ring(pieces, joint):
 
 
 def _prune_spurs(kept, dropped, outline, band):
-    """A protrusion cut at the attachment reach leaves its root: the kept segments that continue the cut line
-    back toward the facade. Walk from the cut nodes along that line and remove it. Stop at a node where another
-    segment inside the facade band meets in another direction, so a glass line or a facade step stays. Continuing
-    the line is collinearity with the cut (a straight fin split by a diagonal), never an angle to the facade or
-    to the outline: a root 45 degrees off the facade, or shallower, still continues its own line.
-    (#87, user 2026-10-13; review 1 of #89; #90; review 1 of #279)."""
+    """Remove cut-connected roots, including bends outside the facade band. Outside the band a root can turn
+    back toward the slab, opposite the cut's outgoing direction; it need not be collinear with a bent tail.
+    Inside the band require straight continuation and stop where another within-band direction meets it:
+    glass lines and facade steps are junctions, not roots. Only nodes reached from an actual cut are visited;
+    an endpoint outside the band alone never classifies a facade segment as a spur.
+    (#87, user 2026-10-13; review 1 of #89; #90; reviews 1-2 of #279)."""
     if not kept:
         return kept
     noded = [LineString(c) for g in shapely.get_parts(shapely.union_all(kept)) for c in
@@ -1001,7 +1001,7 @@ def _prune_spurs(kept, dropped, outline, band):
         adj[key(sg.coords[0])].add(i)
         adj[key(sg.coords[-1])].add(i)
     ring = outline.exterior
-    # same straight line only. Wider (15 or 45 degrees) reads a shallow root as the facade, or the facade as the root.
+    # Inside the band keep the narrow straight-line test: widening it mistakes facade junctions for roots.
     SAME_LINE = float(np.cos(np.deg2rad(2.0)))
 
     def unit(a, b):
@@ -1033,9 +1033,17 @@ def _prune_spurs(kept, dropped, outline, band):
                 todo.append(node)
 
     def continues(j, n):
-        """Segment j leaves n back along the protrusion's line, toward the facade."""
-        u, _, _, _ = outward(j, n)
-        return any(u[0] * p[0] + u[1] * p[1] <= -SAME_LINE for p in dirs[n])
+        """Continue a cut back to the facade, allowing a bend only outside the facade band."""
+        u, other, _, here = outward(j, n)
+        dots = [u[0] * p[0] + u[1] * p[1] for p in dirs[n]]
+        if any(dot <= -SAME_LINE for dot in dots):
+            return True
+        # A cut tail may bend at a crossbar or triangulation seam. Use progress toward the slab,
+        # not a larger angular tolerance. At/inside the band the existing junction stop wins,
+        # including a collinear step and a glass line ending at an oblique fin.
+        distance = ring.distance(shapely.Point(here))
+        return (distance > band and ring.distance(shapely.Point(other)) < distance
+                and any(dot < 0.0 for dot in dots))
 
     def meets_facade(n):
         # another direction, inside the band: the protrusion has met the facade. Beyond-band pieces do not count.
