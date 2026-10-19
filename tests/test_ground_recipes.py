@@ -48,23 +48,32 @@ def recipe(recipes):
     return recipes.load_recipe(RECIPE_PATH)
 
 
-def _seam_ok(image: np.ndarray, limit: float = 1.5) -> tuple[bool, float, float]:
-    """Independent wrap check: seam mean <= limit * median interior step."""
+def _seam_ratios(image: np.ndarray) -> tuple[float, float]:
+    """Wrap mean |RGB| / median interior adjacent step, horizontal then vertical.
+
+    Each adjacent step is averaged along the seam and across RGB. The median
+    drops the first and last of those steps. This is the acceptance definition.
+    """
     data = np.ascontiguousarray(image).astype(np.int16)
 
-    def _axis(seam: np.ndarray, steps: np.ndarray) -> tuple[float, float]:
-        means = np.mean(np.abs(steps), axis=(0, 2))
+    def _axis(seam: np.ndarray, steps: np.ndarray, along: tuple[int, ...]) -> float:
+        means = np.mean(np.abs(steps), axis=along)
         interior = means[1:-1] if means.size >= 3 else means
         median = float(np.median(interior)) if interior.size else 0.0
         seam_mean = float(np.mean(np.abs(seam)))
-        return seam_mean, median
+        if median == 0:
+            return 0.0 if seam_mean == 0 else math.inf
+        return seam_mean / median
 
-    col_seam, col_med = _axis(data[:, 0, :] - data[:, -1, :], data[:, 1:, :] - data[:, :-1, :])
-    row_seam, row_med = _axis(data[0, :, :] - data[-1, :, :], data[1:, :, :] - data[:-1, :, :])
-    ok = col_seam <= limit * col_med and row_seam <= limit * row_med
-    worst = max(col_seam / col_med if col_med else (0.0 if col_seam == 0 else math.inf),
-                row_seam / row_med if row_med else (0.0 if row_seam == 0 else math.inf))
-    return ok, worst, max(col_med, row_med)
+    horizontal = _axis(data[:, 0, :] - data[:, -1, :], data[:, 1:, :] - data[:, :-1, :], (0, 2))
+    vertical = _axis(data[0, :, :] - data[-1, :, :], data[1:, :, :] - data[:-1, :, :], (1, 2))
+    return horizontal, vertical
+
+
+def _seam_ok(image: np.ndarray, limit: float = 1.5) -> tuple[bool, float, float]:
+    """Independent wrap check: both axes <= limit."""
+    horizontal, vertical = _seam_ratios(image)
+    return horizontal <= limit and vertical <= limit, max(horizontal, vertical), 0.0
 
 
 def test_module_source_has_no_network_or_photo_loader():
@@ -245,6 +254,20 @@ def test_grid_periods_divide_delivery_and_reduced_sizes(recipe):
                 assert delivery % delivery == 0
                 checked += 1
     assert checked >= 20
+
+
+@pytest.mark.parametrize("size", [512, 2048])
+def test_npm_tile_row_wrap_on_both_axes(recipes, recipe, size):
+    """NPM tile period x is at least 8 from 512px up, so the bond is active.
+
+    256px scales that period below 8 and hides the row-wrap. The acceptance
+    failure is the last row against the first at full NPM size.
+    """
+    for slot in ("TileLight", "TileRed", "TileDark"):
+        image = recipes.render_map(recipe, slot, "npm", size=size)
+        horizontal, vertical = _seam_ratios(image)
+        assert horizontal <= 1.5, f"{slot} npm {size} horizontal {horizontal:.3f}"
+        assert vertical <= 1.5, f"{slot} npm {size} vertical {vertical:.3f}"
 
 
 def test_reduced_renders_are_deterministic_rgb_and_seamless(recipes, recipe):

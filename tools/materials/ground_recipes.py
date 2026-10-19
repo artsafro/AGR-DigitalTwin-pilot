@@ -405,7 +405,14 @@ def _draw_tile(size, period, joint, base, grout, rng) -> np.ndarray:
     px, py = period
     ys, xs = np.indices((size, size), dtype=np.int32)
     row = ys // py
-    jitter = np.where(px >= 8, (row % 3) - 1, 0)
+    rows = size // py
+    # A 3-row bond shares an offset on the first and last row only when the
+    # row count is 1 mod 3. Otherwise the vertical joint stays on one column
+    # so the period closes across the row wrap.
+    if px >= 8 and rows % 3 == 1:
+        jitter = (row % 3) - 1
+    else:
+        jitter = 0
     lx = xs % px
     ly = ys % py
     jx = (px - joint) // 2 + jitter
@@ -570,17 +577,22 @@ def _micro(size: int, amplitude: float) -> np.ndarray:
 
 
 def _seam_ok(image: np.ndarray, limit: float = 1.5) -> bool:
+    """Wrap mean |RGB| <= limit * median interior adjacent step on both axes.
+
+    Each adjacent step is averaged along the seam and across RGB. The median
+    is taken over those steps, excluding the first and last.
+    """
     data = np.ascontiguousarray(image).astype(np.int16)
 
-    def _axis(seam, steps) -> bool:
-        means = np.mean(np.abs(steps), axis=(0, 2))
+    def _axis(seam, steps, along) -> bool:
+        means = np.mean(np.abs(steps), axis=along)
         interior = means[1:-1] if means.size >= 3 else means
         median = float(np.median(interior)) if interior.size else 0.0
         seam_mean = float(np.mean(np.abs(seam)))
         return seam_mean <= limit * median
 
-    columns = _axis(data[:, 0, :] - data[:, -1, :], data[:, 1:, :] - data[:, :-1, :])
-    rows = _axis(data[0, :, :] - data[-1, :, :], data[1:, :, :] - data[:-1, :, :])
+    columns = _axis(data[:, 0, :] - data[:, -1, :], data[:, 1:, :] - data[:, :-1, :], (0, 2))
+    rows = _axis(data[0, :, :] - data[-1, :, :], data[1:, :, :] - data[:-1, :, :], (1, 2))
     return columns and rows
 
 
