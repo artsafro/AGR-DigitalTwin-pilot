@@ -56,8 +56,8 @@ null VPM choices without asserting that their surfaces are the same. A new unpin
 audit labels and deterministic source priority; an explicit HP entry is kept regardless of historical
 identity claims. A lone `LP -> HP` label alone does not establish a separate VPM.
 
-The user narrowed #216 on 2026-10-19 to the library and maps. Geometric identity and suitability remain
-unverified (#305); bitmap path portability is tracked separately in #282. Maps, approvals, material IDs,
+Scope: #216 supplies the library and maps; geometric identity and suitability remain
+unverified ([#305](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/305)); bitmap path portability is tracked separately in #282. Maps, approvals, material IDs,
 pivots and versioned MAX binaries are unchanged. Map approval does not imply model/library acceptance.
 
 ## How an agent picks a species for placement
