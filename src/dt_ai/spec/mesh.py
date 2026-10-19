@@ -985,11 +985,12 @@ def _facade_ring(pieces, joint):
 
 
 def _prune_spurs(kept, dropped, outline, band):
-    """A protrusion cut at the attachment reach leaves its root on the facade. From every cut point walk through the
-    connected segments and remove those that belong to the protrusion - running across the facade (closer to the
-    outline's normal than to its tangent) or standing beyond the facade band - and stop at facade segments (along
-    the facade, inside the band), which stay with everything behind them: a glass line ending at a fin stays, a
-    crossbar inside the fin goes (#87, user 2026-10-13; review 1 of #89)."""
+    """Remove cut-connected roots, including bends outside the facade band. Outside the band a root can turn
+    back toward the slab, opposite the cut's outgoing direction; it need not be collinear with a bent tail.
+    Inside the band require straight continuation and stop where another within-band direction meets it:
+    glass lines and facade steps are junctions, not roots. Only nodes reached from an actual cut are visited;
+    an endpoint outside the band alone never classifies a facade segment as a spur.
+    (#87, user 2026-10-13; review 1 of #89; #90; reviews 1-2 of #279)."""
     if not kept:
         return kept
     noded = [LineString(c) for g in shapely.get_parts(shapely.union_all(kept)) for c in
@@ -1000,21 +1001,75 @@ def _prune_spurs(kept, dropped, outline, band):
         adj[key(sg.coords[0])].add(i)
         adj[key(sg.coords[-1])].add(i)
     ring = outline.exterior
+    # Inside the band keep the narrow straight-line test: widening it mistakes facade junctions for roots.
+    SAME_LINE = float(np.cos(np.deg2rad(2.0)))
 
-    def protrudes(sg):                               # beyond the facade band: a root up to the band's depth may
-        return ring.distance(sg.interpolate(0.5, normalized=True)) > band    # stay (#90); far-end tests cut real
-    todo = [n for n in adj if n in {key(c) for sg in dropped for c in (sg.coords[0], sg.coords[-1])}]
-    gone, seen = set(), set(todo)
+    def unit(a, b):
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        norm = (dx * dx + dy * dy) ** 0.5
+        return (dx / norm, dy / norm) if norm else (0.0, 0.0)
+
+    def rdir(p):
+        return (round(p[0], 4), round(p[1], 4))
+
+    def beyond(i):
+        return ring.distance(noded[i].interpolate(0.5, normalized=True)) > band
+
+    def outward(i, n):
+        """Unit from n along segment i, the other end, its key, and n's own coordinate."""
+        c0, c1 = noded[i].coords[0], noded[i].coords[-1]
+        if key(c0) == n:
+            return unit(c0, c1), c1, key(c1), c0
+        return unit(c1, c0), c0, key(c0), c1
+
+    dirs = defaultdict(list)
+    todo = []
+    for sg in dropped:
+        a, b = sg.coords[0], sg.coords[-1]
+        for here, there in ((a, b), (b, a)):
+            node = key(here)
+            if node in adj:
+                dirs[node].append(unit(here, there))
+                todo.append(node)
+
+    def continues(j, n):
+        """Continue a cut back to the facade, allowing a bend only outside the facade band."""
+        u, other, _, here = outward(j, n)
+        dots = [u[0] * p[0] + u[1] * p[1] for p in dirs[n]]
+        if any(dot <= -SAME_LINE for dot in dots):
+            return True
+        # A cut tail may bend at a crossbar or triangulation seam. Use progress toward the slab,
+        # not a larger angular tolerance. At/inside the band the existing junction stop wins,
+        # including a collinear step and a glass line ending at an oblique fin.
+        distance = ring.distance(shapely.Point(here))
+        return (distance > band and ring.distance(shapely.Point(other)) < distance
+                and any(dot < 0.0 for dot in dots))
+
+    def meets_facade(n):
+        # another direction, inside the band: the protrusion has met the facade. Beyond-band pieces do not count.
+        return any(not beyond(j) and not continues(j, n) for j in adj[n] - gone)
+
+    def enqueue(j, n):
+        gone.add(j)
+        _, cm, m, cn = outward(j, n)
+        p = unit(cm, cn)                              # from m back toward n: where the protrusion lies
+        dirs[m].append(p)
+        if (m, rdir(p)) not in seen and not meets_facade(m):
+            todo.append(m)
+
+    gone, seen = set(), set()
     while todo:
-        node = todo.pop()
-        for i in adj[node] - gone:
-            if not protrudes(noded[i]):
-                continue
-            gone.add(i)
-            for end in (key(noded[i].coords[0]), key(noded[i].coords[-1])):
-                if end not in seen:
-                    seen.add(end)
-                    todo.append(end)
+        n = todo.pop()
+        pending = [p for p in dirs[n] if (n, rdir(p)) not in seen]
+        if not pending:
+            continue
+        for p in pending:
+            seen.add((n, rdir(p)))
+        if meets_facade(n):                           # once, before any removal at this node
+            continue
+        for j in list(adj[n] - gone):
+            if continues(j, n):
+                enqueue(j, n)
     return [sg for i, sg in enumerate(noded) if i not in gone]
 
 

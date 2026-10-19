@@ -912,9 +912,257 @@ def test_a_fin_with_a_crossbar_leaves_no_stub():
     _fin(joined, 4.0, 4.4, -1.2, cross=-0.5)
     dump["meshes"].append(joined.dump())
     spec, report = extract_spec(dump, PANEL_OBJECT)
-    ys = [p[1] for p in spec.expanded_floors()[0].contour]
-    assert min(ys) >= -0.35                        # the 1.2 m fin and its crossbar are gone; a root up to the facade
-    assert report["floors"]["L0"]["attachment_pieces_left_out"] == 1   # band's depth may stay (issue)
+    assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03)  # the fin, its crossbar and its root are gone (#90)
+    assert report["floors"]["L0"]["attachment_pieces_left_out"] == 1
+
+
+def _fin_dump(cross, x0=4.0, x1=4.4, y_out=-1.2):
+    dump = panelised()
+    dump["meshes"] = [m for m in dump["meshes"] if m["name"] != "Panel_0_0"]
+    joined = Mesh("Panel_0_0")
+    walls(joined, [[-0.08, 0], [9.98, 0], [9.98, -0.1], [-0.08, -0.1]], 0.01, 3.29, extra_u={2: [5.58, 5.98]})
+    _fin(joined, x0, x1, y_out, cross=cross)
+    dump["meshes"].append(joined.dump())
+    return dump
+
+
+@pytest.mark.parametrize("cross", [-0.35, -0.4, -0.45, -0.5])
+@pytest.mark.parametrize("width", [0.1, 0.4, 1.0])
+def test_a_fin_root_inside_the_facade_band_leaves_no_stub(cross, width):
+    """#90: a fin 1.2 m out with a crossbar 0.25-0.4 m off the panels - its root (across the facade, from the cut
+    back to the panels' outer face) goes too, so the contour is the panels' line without a stub."""
+    spec, report = extract_spec(_fin_dump(cross, x1=4.0 + width), PANEL_OBJECT)
+    assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03)
+    assert report["floors"]["L0"]["attachment_pieces_left_out"] == 1
+
+
+def test_a_fin_at_a_facade_step_leaves_the_step():
+    """#90: the south facade steps 0.3 m outward. The ceiling slab's south edge sits 0.1 m behind that outer
+    face, so the face is inside the facade band, and the step (across the outline, inside the band) shares its
+    outer corner with the fin's root. The walk stops at that facade node: the step stays and the fin goes.
+    Walking on through the facade node removes the step and the south facade no longer closes. The re-entrant
+    corner (5, -0.1) is rounded by the 0.05 m joint closing, so the vertex that remains is about 0.045 m off it;
+    the convex corner (5, -0.4) comes back within 0.03 m."""
+    slab = [[0, -0.3], [10, -0.3], [10, 10], [0, 10]]
+    dump = panelised(slab=slab)
+    dump["meshes"] = [m for m in dump["meshes"] if m["name"] != "Panel_0_0"]
+    south = Mesh("Panel_0_0")
+    z0, z1 = 0.01, 3.29
+    south.quad((-0.1, 0.02, z0), (-0.1, -0.1, z0), (-0.1, -0.1, z1), (-0.1, 0.02, z1))       # west corner
+    south.quad((-0.1, -0.1, z0), (5, -0.1, z0), (5, -0.1, z1), (-0.1, -0.1, z1))
+    south.quad((5, -0.1, z0), (5, -0.4, z0), (5, -0.4, z1), (5, -0.1, z1))                     # the step
+    south.quad((5, -0.4, z0), (10.1, -0.4, z0), (10.1, -0.4, z1), (5, -0.4, z1))
+    south.quad((10.1, -0.4, z0), (10.1, -0.08, z0), (10.1, -0.08, z1), (10.1, -0.4, z1))       # to the east panel
+    for x in (5.0, 5.4):                                                                        # fin at the step corner
+        for ya, yb in ((-0.4, -0.7), (-0.7, -1.6)):
+            south.quad((x, ya, z0), (x, yb, z0), (x, yb, z1), (x, ya, z1))
+    south.quad((5.0, -1.6, z0), (5.4, -1.6, z0), (5.4, -1.6, z1), (5.0, -1.6, z1))
+    south.quad((5.0, -0.7, z0), (5.4, -0.7, z0), (5.4, -0.7, z1), (5.0, -0.7, z1))
+    dump["meshes"].append(south.dump())
+    spec, _report = extract_spec(dump, PANEL_OBJECT)
+    contour = spec.expanded_floors()[0].contour
+    # (5, -0.4) is the convex corner and comes back within 0.03. (5, -0.1) is re-entrant: the 0.05 m joint
+    # closing rounds it, and simplify keeps the fillet's landing, about 0.045 m west of the corner.
+    assert any(math.dist(p[:2], (5, -0.4)) <= 0.03 for p in contour)
+    assert any(math.dist(p[:2], (5, -0.1)) <= 0.05 for p in contour)
+    assert min(p[1] for p in contour) >= -0.45
+
+
+@pytest.mark.parametrize("tail_shear", [0.05, 0.1, -0.05, -0.1])
+def test_a_bent_fin_root_leaves_no_stub(tail_shear):
+    """Synthetic review-2 P1: the root is upright, but the cut tail bends at the crossbar.
+    The entire fin must go, not leave a successful contour with a 0.30 m stub at y=-0.4.
+    """
+    dump = _fin_dump(-0.4)
+    for p in dump["meshes"][-1]["vertices"]:
+        if p[1] < -0.1 - 1e-9:
+            p[0] += tail_shear * max(0.0, -p[1] - 0.1 - 0.3)
+    spec, report = extract_spec(dump, PANEL_OBJECT)
+    assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03)
+    assert report["floors"]["L0"]["attachment_pieces_left_out"] == 1
+
+
+def _shear(dump, k, below=-0.1):
+    """Lean a fin: every vertex of the last mesh with y < `below` moves x += k * (below - y); the facade stays."""
+    for p in dump["meshes"][-1]["vertices"]:
+        if p[1] < below - 1e-9:
+            p[0] += k * (below - p[1])
+    return dump
+
+
+@pytest.mark.parametrize("shear", [0.5, 0.9, 1.0, 1.1, 1.5, 2.0, 4.0, 6.0, -1.0, -1.5, -4.0, -6.0])
+@pytest.mark.parametrize("cross", [-0.35, -0.4, -0.5])
+def test_an_oblique_fin_root_leaves_no_stub(shear, cross):
+    """Review 1 of #279 (#90): a fin leaning about 9-63 degrees off the facade (either way, 45 included, and the
+    shallow shears 4 and 6 that sit within 15 degrees of the facade line) with a crossbar 0.25-0.4 m off the panels.
+    Its root goes with it, so the contour is the panels' line. Witness: shear 1.5, crossbar -0.4 left a 0.15 m stub
+    at y = -0.25 when a 45-degree test read the root as facade; shear 4 left the same stub when a 15-degree
+    along-outline test did."""
+    spec, report = extract_spec(_shear(_fin_dump(cross), shear), PANEL_OBJECT)
+    assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03)
+    assert report["floors"]["L0"]["attachment_pieces_left_out"] == 1
+
+
+@pytest.mark.parametrize("tail_shear", [0.0, 0.05, -0.1, 0.8])
+def test_an_oblique_fin_root_in_two_pieces_leaves_no_stub(tail_shear):
+    """#90: the leaning root is split at y = -0.25 (no crossbar there); a bent tail must not leave either piece."""
+    dump = panelised()
+    dump["meshes"] = [m for m in dump["meshes"] if m["name"] != "Panel_0_0"]
+    joined = Mesh("Panel_0_0")
+    walls(joined, [[-0.08, 0], [9.98, 0], [9.98, -0.1], [-0.08, -0.1]], 0.01, 3.29, extra_u={2: [5.58, 5.98]})
+    z0, z1 = 0.01, 3.29
+    for x in (4.0, 4.4):
+        for ya, yb in ((-0.1, -0.25), (-0.25, -0.4), (-0.4, -1.2)):
+            joined.quad((x, ya, z0), (x, yb, z0), (x, yb, z1), (x, ya, z1))
+    joined.quad((4.0, -1.2, z0), (4.4, -1.2, z0), (4.4, -1.2, z1), (4.0, -1.2, z1))
+    joined.quad((4.0, -0.4, z0), (4.4, -0.4, z0), (4.4, -0.4, z1), (4.0, -0.4, z1))
+    dump["meshes"].append(joined.dump())
+    spec, _report = extract_spec(_piecewise_fin(dump, 1.5, tail_shear, 0.3), PANEL_OBJECT)
+    assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03)
+
+
+def _step_dump(fin_from, shear=0.0, cross=-0.7):
+    """The #90 step facade (0.3 m out at x = 5) with a fin 0.4 m wide at x = `fin_from` on the step's outer line
+    (y = -0.4), out to y = -1.6, leaning by `shear`; `cross`: its crossbar's y (None: no crossbar, the fin is cut
+    off whole at the facade)."""
+    slab = [[0, -0.3], [10, -0.3], [10, 10], [0, 10]]
+    dump = panelised(slab=slab)
+    dump["meshes"] = [m for m in dump["meshes"] if m["name"] != "Panel_0_0"]
+    south = Mesh("Panel_0_0")
+    z0, z1 = 0.01, 3.29
+    q = lambda a, b: south.quad((a[0], a[1], z0), (b[0], b[1], z0), (b[0], b[1], z1), (a[0], a[1], z1))  # noqa: E731
+    q((-0.1, 0.02), (-0.1, -0.1))
+    q((-0.1, -0.1), (5, -0.1))
+    q((5, -0.1), (5, -0.4))                                                                  # the step
+    q((5, -0.4), (10.1, -0.4))
+    q((10.1, -0.4), (10.1, -0.08))
+    ys = [-0.4] + ([cross] if cross is not None else []) + [-1.6]
+    for x in (fin_from, fin_from + 0.4):
+        for ya, yb in zip(ys, ys[1:]):
+            q((x, ya), (x, yb))
+    q((fin_from, -1.6), (fin_from + 0.4, -1.6))
+    if cross is not None:
+        q((fin_from, cross), (fin_from + 0.4, cross))
+    dump["meshes"].append(south.dump())
+    return _shear(dump, shear, below=-0.4)
+
+
+@pytest.mark.parametrize("cross", [-0.7, None])
+@pytest.mark.parametrize("shear", [0.0, 1.0, 1.5, 4.0, -1.5, -4.0])
+def test_a_fin_at_a_step_corner_leaves_the_step(shear, cross):
+    """#90 combined with the facade-node stop: a fin (upright or leaning, with a crossbar or cut whole) stands on
+    the step's outer corner (5, -0.4), in line with the step. The fin goes; the step, which continues the fin's
+    line back to the panels, is facade and stays (the re-entrant corner (5, -0.1) is rounded by the joint)."""
+    spec, _report = extract_spec(_step_dump(5.0, shear, cross), PANEL_OBJECT)
+    contour = spec.expanded_floors()[0].contour
+    assert any(math.dist(p[:2], (5, -0.4)) <= 0.03 for p in contour)
+    assert any(math.dist(p[:2], (5, -0.1)) <= 0.05 for p in contour)
+    assert min(p[1] for p in contour) >= -0.43
+
+
+@pytest.mark.parametrize("shear", [0.0, 1.5, 4.0, -1.5, -4.0])
+def test_an_oblique_fin_at_a_glass_line_end_leaves_the_glass(shear):
+    """#90 combined with review 1 of #89: a leaning fin welded at the south glass line's east end goes, the glass
+    stays."""
+    dump = panelised()
+    dump["meshes"] = [m for m in dump["meshes"] if m["name"] != "Panel_0_0"]
+    glass = Mesh("Glass")
+    glass.quad((-0.1, 0.02, 0.01), (-0.1, -0.1, 0.01), (-0.1, -0.1, 3.29), (-0.1, 0.02, 3.29))   # west corner
+    glass.quad((-0.1, -0.1, 0.01), (10.1, -0.1, 0.01), (10.1, -0.1, 3.29), (-0.1, -0.1, 3.29))
+    _fin(glass, 9.7, 10.1, -0.95, cross=-0.4)
+    dump["meshes"].append(glass.dump())
+    spec, _report = extract_spec(_shear(dump, shear), PANEL_OBJECT)
+    assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03)
+
+
+def _shear_for(degrees):
+    """Shear whose fin leaves the facade at `degrees` (positive leans +x). tan(angle) = 1 / shear."""
+    return 1.0 / math.tan(math.radians(degrees))
+
+
+def test_probe_oblique_roots_at_every_angle_leave_no_stub():
+    """#90: a straight fin every 5 degrees from 5 to 85 off the south facade, both ways, crossbar 0.4 m out.
+    45 degrees and the shallow angles (within 45 of the facade line) are in the set. The root continues the
+    fin's own line, so the contour stays the panels' line within 0.03 m; the angle to the facade decides nothing."""
+    for degrees in range(5, 90, 5):
+        for sign in (1.0, -1.0):
+            spec, report = extract_spec(_shear(_fin_dump(-0.4), sign * _shear_for(degrees)), PANEL_OBJECT)
+            assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03), degrees
+            assert report["floors"]["L0"]["attachment_pieces_left_out"] == 1
+
+
+def test_probe_a_step_and_a_glass_end_stay_at_every_oblique_angle():
+    """#90 with the facade-node stop: the same angles, mirrored, on the 0.3 m step and on the glass line's end.
+    The fin's root goes; the step corners and the glass line stay. Deviation from the step's outer corner is
+    at most 0.03 m, from the re-entrant corner at most 0.05 m, and the contour never passes 0.43 m out."""
+    for degrees in (5, 15, 45, 60, 80):
+        for sign in (1.0, -1.0):
+            shear = sign * _shear_for(degrees)
+            spec, _report = extract_spec(_step_dump(5.0, shear, -0.7), PANEL_OBJECT)
+            contour = spec.expanded_floors()[0].contour
+            assert any(math.dist(p[:2], (5, -0.4)) <= 0.03 for p in contour), degrees
+            assert any(math.dist(p[:2], (5, -0.1)) <= 0.05 for p in contour), degrees
+            assert min(p[1] for p in contour) >= -0.43, (degrees, sign)
+            dump = panelised()
+            dump["meshes"] = [m for m in dump["meshes"] if m["name"] != "Panel_0_0"]
+            glass = Mesh("Glass")
+            glass.quad((-0.1, 0.02, 0.01), (-0.1, -0.1, 0.01), (-0.1, -0.1, 3.29), (-0.1, 0.02, 3.29))
+            glass.quad((-0.1, -0.1, 0.01), (10.1, -0.1, 0.01), (10.1, -0.1, 3.29), (-0.1, -0.1, 3.29))
+            _fin(glass, 9.7, 10.1, -0.95, cross=-0.4)
+            dump["meshes"].append(glass.dump())
+            spec, _report = extract_spec(_shear(dump, shear), PANEL_OBJECT)
+            assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03), (degrees, sign)
+
+
+def _piecewise_fin(dump, root_shear, tail_shear, hinge, below=-0.1):
+    """Synthetic fin with independently directed root/tail; leave the facade vertices fixed."""
+    for p in dump["meshes"][-1]["vertices"]:
+        depth = below - p[1]
+        if depth > 1e-9:
+            p[0] += root_shear * depth + tail_shear * max(0.0, depth - hinge)
+    return dump
+
+
+def test_probe_piecewise_roots_preserve_the_facade():
+    """Seed 90279, 36 synthetic bent fins: mirror, oblique root, crossbar depth and width together.
+    Bends are at crossbars outside the facade band, as in the review P1; the root crosses into the band.
+    """
+    rng = random.Random(90279)
+    for i in range(36):
+        cross = rng.choice([-0.35, -0.4, -0.5])
+        width = rng.choice([0.1, 0.4, 1.0])
+        root = rng.choice([-1.5, -1.0, 0.0, 1.0, 1.5])
+        tail = rng.choice([-0.8, -0.1, -0.05, 0.05, 0.1, 0.8])
+        dump = _piecewise_fin(_fin_dump(cross, x1=4.0 + width), root, tail, -cross - 0.1)
+        # Section noding/order must not change the answer.
+        if i % 2:
+            dump["meshes"][-1]["triangles"].reverse()
+        spec, report = extract_spec(dump, PANEL_OBJECT)
+        assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03), (i, cross, width, root, tail)
+        assert report["floors"]["L0"]["attachment_pieces_left_out"] == 1
+
+
+def test_probe_piecewise_roots_preserve_step_and_glass_junctions():
+    """24 combinations per safeguard: bent tails plus upright/45-degree/oblique mirrored roots.
+    The real facade junction is inside the band; it must stay even when collinear with the root.
+    """
+    for root in (-4.0, -1.5, -1.0, 0.0, 1.0, 1.5):
+        for tail in (-0.8, -0.05, 0.05, 0.8):
+            dump = _piecewise_fin(_step_dump(5.0, cross=-0.7), root, tail, 0.3, below=-0.4)
+            spec, _ = extract_spec(dump, PANEL_OBJECT)
+            contour = spec.expanded_floors()[0].contour
+            assert any(math.dist(p[:2], (5, -0.4)) <= 0.03 for p in contour), (root, tail)
+            assert any(math.dist(p[:2], (5, -0.1)) <= 0.05 for p in contour), (root, tail)
+            assert min(p[1] for p in contour) >= -0.43, (root, tail)
+            dump = panelised()
+            dump["meshes"] = [m for m in dump["meshes"] if m["name"] != "Panel_0_0"]
+            glass = Mesh("Glass")
+            glass.quad((-0.1, 0.02, 0.01), (-0.1, -0.1, 0.01), (-0.1, -0.1, 3.29), (-0.1, 0.02, 3.29))
+            glass.quad((-0.1, -0.1, 0.01), (10.1, -0.1, 0.01), (10.1, -0.1, 3.29), (-0.1, -0.1, 3.29))
+            _fin(glass, 9.7, 10.1, -0.95, cross=-0.4)
+            dump["meshes"].append(glass.dump())
+            spec, _ = extract_spec(_piecewise_fin(dump, root, tail, 0.3), PANEL_OBJECT)
+            assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03), (root, tail)
 
 
 def test_slab_data_follow_the_ceiling_not_the_reference():
