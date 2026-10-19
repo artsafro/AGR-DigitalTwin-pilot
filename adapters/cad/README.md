@@ -22,7 +22,9 @@ method C); `to_dict()` gives GeoJSON geometries in metres.
 
 Validation findings (never repaired, never guessed): `open_contour`, `self_intersecting_contour`,
 `degenerate_contour`, `overlapping_coverings` (pairwise area above `overlap_tol_m2`), `point_outside_boundary`,
-`unmapped_layer` (model-space layer neither mapped nor in `ignore_layers`), `boundary_not_found`,
+`unmapped_layer` (effective layer of a model-space entity or of expanded block content, neither mapped nor in
+`ignore_layers`; one finding per layer with model-space/in-block counts and example `ref`s; the graphics inside
+point symbols are not expanded and never count), `boundary_not_found`,
 `boundary_ambiguous`, `elevation_unparsed`, `label_missing` (a label configured as `attrib:<TAG>` is absent or
 empty: the point keeps `label=None`, the block name is never substituted), `nested_cycle`, `nesting_too_deep`
 (more than `MAX_NESTING` insert levels), `nested_unsupported` (block content on a mapped layer, or a nested
@@ -30,7 +32,8 @@ INSERT, that cannot be transformed, e.g. a bulged polyline under non-uniform sca
 `SpozuConfigError`. A hatch polyline path with `is_closed=0` is open unless its last vertex is its first.
 
 Block content: every INSERT that is not a point symbol (planting, MAF, `z`-mode elevation) is expanded with
-its composed transform (rotation, scale, mirror, nesting, MINSERT cells); an entity on layer `0` takes the
+its composed transform (rotation, scale, mirror, nesting, MINSERT cells; a nested MINSERT is split into cells in its block's
+coordinates before the parent transform, so row/column spacing is transformed too); an entity on layer `0` takes the
 insert's layer. Every boundary/covering/point carries `ref`, the provenance path `<insert>>...><entity>`
 (`#k` = MINSERT cell); `handle` is the source entity, `container` the enclosing insert path. A nested
 boundary is selected in the config by its `ref`.
