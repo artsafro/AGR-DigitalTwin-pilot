@@ -1,7 +1,7 @@
 # Flora agent library (#216)
 
 One consolidated Flora library for agents: `catalogue.json` here, binaries outside Git
-(`C:/x/flora-library/v002/` for the .max file; maps under `C:/x/flora-library/v001/maps/<slug>/`;
+(`C:/x/flora-library/v003/flora-library-v003.max` for the .max file; maps under `C:/x/flora-library/v001/maps/<slug>/`;
 no PNG/TGA/TIFF in the repo).
 
 ## Files
@@ -19,8 +19,11 @@ no PNG/TGA/TIFF in the repo).
   with no deviation claims. **VPM identity: unverified, see #305**.
   The historical sampling classifier has been disabled; #305 owns a future surface-coverage check.
   The optional `identity` CLI inventories pairs from a source dump without classifying geometry.
-- `tools/flora/build_flora_library_max.py` - headless 3ds Max assembly of `flora-library-v002.max` from scene copies.
+- `tools/flora/build_flora_library_max.py` - headless 3ds Max assembly of the v002 geometry from scene copies.
   The pivot written there is the one described below.
+- `tools/flora/rebind_flora_library_maps.py` - headless rebind of every diffuse and opacity slot onto
+  `C:/x/flora-library/v001/maps/<slug>/`, saved as the new file `C:/x/flora-library/v003/flora-library-v003.max`.
+  v001, v002 and the source scenes are not overwritten.
 
 ## Gaps
 
@@ -46,7 +49,8 @@ suitability has been verified. Each non-null `vpm` has `vpm_identity: unverified
 Absent VPM records keep null identity/evidence and their existing `unconfirmed` or `none` status.
 
 `species-curation.json` records `library_selection` (`NPM`, `VPM` source entry IDs and `vpm_status`)
-for each built species. This is the source-choice snapshot of the existing v002 binary: 61 NPM + 38 VPM
+for each built species. This is the source-choice snapshot of the v002 geometry (published binary
+`C:/x/flora-library/v003/flora-library-v003.max` rebinds map paths only): 61 NPM + 38 VPM
 objects, not geometric evidence. Rebuilds preserve those records, including the 22 unconfirmed and one
 absent VPM. No retained VPM is dropped and no new geometry is created by this scope change. Source IDs
 must belong to that species and carry the corresponding profile label; invalid selections fail explicitly.
@@ -57,7 +61,7 @@ audit labels and deterministic source priority; an explicit HP entry is kept reg
 identity claims. A lone `LP -> HP` label alone does not establish a separate VPM.
 
 Scope: #216 supplies the library and maps; geometric identity and suitability remain
-unverified ([#305](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/305)); bitmap path portability is tracked separately in #282. Maps, approvals, material IDs,
+unverified ([#305](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/305)); bitmap paths in the published binary are the v003 rebind (#282). Maps, approvals, material IDs,
 pivots and versioned MAX binaries are unchanged. Map approval does not imply model/library acceptance.
 
 ## How an agent picks a species for placement

@@ -19,7 +19,7 @@ RANGES = {
     "flower": (401, 499),
     "climber": (501, 599),
 }
-LIBRARY_FILE = "C:/x/flora-library/v002/flora-library-v002.max"
+LIBRARY_FILE = "C:/x/flora-library/v003/flora-library-v003.max"
 MAPS_ROOT = "C:/x/flora-library/v001/maps"
 LIBRARY_SCENE = "FLORA_Union_v1.max"
 REVIEW_STATUS = ("approved", "pending_review", "missing")
