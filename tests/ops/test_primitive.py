@@ -109,6 +109,21 @@ def test_silhouette_deviation_measures_the_overhang_within_one_step(extra):
     assert silhouette_deviation(a, b, 2) == pytest.approx(extra, abs=0.0176)
 
 
+@pytest.mark.parametrize("axis", [0, 1])
+def test_edge_on_quad_is_a_line_not_an_empty_silhouette(axis):
+    plane = quad(0, size=1)
+    solid = box((0, 0, -0.025), (1, 1, 0.025))
+    assert silhouette_deviation(solid, plane, axis) == pytest.approx(0.025)
+    assert silhouette_deviation(plane, plane, axis) == 0.0
+
+
+def test_point_projection_is_valid_and_measures_distance():
+    a = Mesh(np.array([[0, 0, z] for z in (0, 1, 2)]), np.array([[0, 1, 2]]))
+    b = Mesh(a.vertices + [0.03, 0.04, 0], a.triangles)
+    assert silhouette_deviation(a, b, 2) == pytest.approx(0.05)
+    assert silhouette_deviation(a, a, 2) == 0.0
+
+
 def test_empty_silhouette_is_infinitely_far_from_a_solid_one():
     empty = Mesh(np.zeros((0, 3)), np.zeros((0, 3), int))
     assert silhouette_deviation(empty, box((0, 0, 0), (1, 1, 1)), 2) == float("inf")
