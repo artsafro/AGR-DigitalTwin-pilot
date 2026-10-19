@@ -385,6 +385,116 @@ def test_audit_absent_readback_is_not_measured(tmp_path):
     assert result["blend_matching"] == {"status": "not measured"}
     assert result["native_sample_readback"] == {"status": "not measured"}
     assert result["preview_repair"] == {"count": 0}
+    assert result["source_hashes"] == {"status": "not measured"}
+
+
+def test_audit_source_hashes_omitted_is_explicitly_not_measured(tmp_path):
+    library = _library(tmp_path)
+    plan = _plan(["A"])
+    built_rows = _built(["A"])
+    # 1. build_audit with source_hashes omitted (None)
+    result, _ = audit.build_audit(
+        plan=plan,
+        built_rows=built_rows,
+        library_dir=library,
+    )
+    assert result["source_hashes"] == {"status": "not measured"}
+
+    # 2. CLI audit without --hash-before
+    plan_file = tmp_path / "plan.json"
+    built_file = tmp_path / "built.jsonl"
+    out_file = tmp_path / "audit.json"
+    _write_json(plan_file, plan)
+    built_file.write_text(json.dumps(built_rows[0]) + "\n", encoding="utf-8")
+    audit.main([
+        "audit",
+        "--plan", str(plan_file),
+        "--built", str(built_file),
+        "--library", str(library),
+        "--out", str(out_file),
+    ])
+    cli_audit = json.loads(out_file.read_text(encoding="utf-8"))
+    assert cli_audit["source_hashes"] == {"status": "not measured"}
+
+
+def test_audit_source_hashes_supplied_empty_manifest_is_empty_list(tmp_path):
+    library = _library(tmp_path)
+    plan = _plan(["A"])
+    built_rows = _built(["A"])
+    # 1. build_audit with explicit empty list (measured empty manifest)
+    result, _ = audit.build_audit(
+        plan=plan,
+        built_rows=built_rows,
+        library_dir=library,
+        source_hashes=[],
+    )
+    assert result["source_hashes"] == []
+
+    # 2. CLI audit with --hash-before pointing to an empty manifest file
+    empty_manifest = tmp_path / "empty_hash.txt"
+    empty_manifest.write_text("\n", encoding="utf-8")
+    plan_file = tmp_path / "plan_empty.json"
+    built_file = tmp_path / "built_empty.jsonl"
+    out_file = tmp_path / "audit_empty.json"
+    _write_json(plan_file, plan)
+    built_file.write_text(json.dumps(built_rows[0]) + "\n", encoding="utf-8")
+    audit.main([
+        "audit",
+        "--plan", str(plan_file),
+        "--built", str(built_file),
+        "--library", str(library),
+        "--hash-before", str(empty_manifest),
+        "--out", str(out_file),
+    ])
+    cli_audit = json.loads(out_file.read_text(encoding="utf-8"))
+    assert cli_audit["source_hashes"] == []
+
+
+def test_audit_source_hashes_supplied_manifest_records_measured_hashes(tmp_path):
+    library = _library(tmp_path)
+    plan = _plan(["A"])
+    built_rows = _built(["A"])
+    original = tmp_path / "scene.max"
+    original.write_bytes(b"max-bytes")
+    copy = tmp_path / "src.max"
+    copy.write_bytes(b"max-bytes")
+    manifest = tmp_path / "hash_before.txt"
+    manifest.write_text(f"{_sha(original)} *{original.as_posix()}\n", encoding="utf-8", newline="\n")
+
+    # 1. build_audit with measured hash entries
+    measured_hashes = audit.hash_sources(manifest, [str(copy)])
+    direct_audit, _ = audit.build_audit(
+        plan=plan,
+        built_rows=built_rows,
+        library_dir=library,
+        source_hashes=measured_hashes,
+    )
+    assert direct_audit["source_hashes"] == measured_hashes
+
+    # 2. CLI audit with --hash-before pointing to populated manifest
+    plan_file = tmp_path / "plan_supplied.json"
+    built_file = tmp_path / "built_supplied.jsonl"
+    out_file = tmp_path / "audit_supplied.json"
+    _write_json(plan_file, plan)
+    built_file.write_text(json.dumps(built_rows[0]) + "\n", encoding="utf-8")
+    audit.main([
+        "audit",
+        "--plan", str(plan_file),
+        "--built", str(built_file),
+        "--library", str(library),
+        "--hash-before", str(manifest),
+        "--copy", str(copy),
+        "--out", str(out_file),
+    ])
+    cli_audit = json.loads(out_file.read_text(encoding="utf-8"))
+    assert isinstance(cli_audit["source_hashes"], list)
+    assert len(cli_audit["source_hashes"]) == 1
+    row = cli_audit["source_hashes"][0]
+    assert row["path"] == original.as_posix()
+    assert row["sha256_before"] == _sha(original)
+    assert row["sha256_after"] == _sha(original)
+    assert row["copy_sha256"] == _sha(copy)
+
 
 
 def test_audit_partial_readback_excludes_missing_from_pass_counts(tmp_path):

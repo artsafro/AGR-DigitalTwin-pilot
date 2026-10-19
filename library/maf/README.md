@@ -89,12 +89,15 @@ per-entry `fbx_readback_*` fields from the inputs below. `<EVIDENCE>` is the iss
 reproduction reused it and did not repeat pass B). `<OUT>` is a **new** directory (for example `C:/x/maf-audit-repro`). Every command
 refuses to overwrite an existing output file unless `--overwrite` is passed.
 
-Absent QA is recorded as `not measured`. `preview_blank` stays null unless a preview-check report is
-supplied; it is never written as false without that report. A readback row with `error` is not a pass.
-A readback row whose dimensions are not exactly three finite numbers, or whose triangle count is not
-a non-negative integer, is recorded as `invalid` and is never counted as a pass. Preview repair
-`blank_after` is a number only when every override id was checked; otherwise it stays `not measured`
-and the unchecked override ids are listed.
+Absent QA is recorded as `not measured`. When source integrity is not measured (no `--hash-before`
+manifest supplied), `source_hashes` is recorded as `{"status": "not measured"}` rather than an empty
+list (which is reserved for an explicitly empty measured manifest); source preservation is never inferred
+when not measured. `preview_blank` stays null unless a preview-check report is supplied; it is never
+written as false without that report. A readback row with `error` is not a pass. A readback row whose
+dimensions are not exactly three finite numbers, or whose triangle count is not a non-negative integer,
+is recorded as `invalid` and is never counted as a pass. Preview repair `blank_after` is a number only
+when every override id was checked; otherwise it stays `not measured` and the unchecked override ids
+are listed.
 
 Merge rule for versioned preview manifests: rows are keyed by `id`. The base manifest defines the entry
 set and order. Each `--override` manifest is applied in the order given; an override row updates the
@@ -148,6 +151,7 @@ uv run python tools/library/maf_audit.py finalize \
   --out-html <OUT>/contact_sheet.html
 
 # 9. audit.json. Omit any QA flag to record that input as "not measured".
+#    Omit --hash-before to record source_hashes as {"status": "not measured"}.
 #    --built is the BASE pass-B manifest (build timing of pass B, not of the preview repair).
 #    --blank-before is a JSON list of ids. --copy is matched to hash_before paths by suffix.
 uv run python tools/library/maf_audit.py audit \
