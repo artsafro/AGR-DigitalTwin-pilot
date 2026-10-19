@@ -22,6 +22,8 @@ Ground: quadtree over the surface plan; a cell becomes one hexahedron whose top 
 its four corner heights and whose bottom is `depth` below the lowest sample. A cell splits until the
 vertical deviation between surface samples and the top is <= `tol` (R11: 10 cm) or `min_cell` is reached;
 the achieved maximum is returned, never hidden. Pieces are shrunk by gap/2 in plan.
+R11-R13 use one-sided model -> UCX deviation [D133]; exposed UCX -> model distance and Ground
+footprint overhang are diagnostics only, not tolerance gates. Coverage and functional voids still apply.
 
 Thin-element exclusion (R04), target inventory (R01-R03) and stair shape (R14) are the caller's choice of
 input objects; this module does not classify them.
@@ -90,7 +92,8 @@ class UcxResult:
         if self.target != "Ground":
             return True
         vals = (self.max_vertical_dev_m, self.uncovered_strip_m)
-        return self.tol_m is not None and all(v is not None and v <= self.tol_m for v in vals)
+        return (self.tol_m is not None and math.isfinite(self.tol_m) and self.tol_m > 0
+                and all(v is not None and math.isfinite(v) and 0 <= v <= self.tol_m for v in vals))
 
     @property
     def triangles(self) -> int:

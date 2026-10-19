@@ -12,8 +12,8 @@ build. The source file is never written. The output FBX holds every non-UCX mesh
 UCX and the new pieces named UCX_SM_<Address>_<Target>_NNN (no materials, no UV, identity transforms); a
 JSON report is written next to it (`<out>.ucx_build.json`).
 
-Exit 0 built; 3 built but a Ground deviation (vertical, footprint overhang or uncovered strip) exceeds
-`tol` (report and FBX written, not a pass);
+Exit 0 built; 3 built but a one-sided Ground deviation (vertical or uncovered strip) exceeds
+`tol` (report and FBX written, not a pass); reverse footprint overhang is diagnostic only [D133];
 2 build failed (report written); 4 refused before any write (bad arguments, or an output that aliases the
 input). Job scripts call `build_into_scene(...)` from their own Blender session instead.
 

@@ -579,3 +579,20 @@ def test_ground_one_sided_missing_nonfinite_measurements_fail_closed(field, bad)
     setattr(res, field, bad)
     assert not res.within_tol
 
+
+@pytest.mark.parametrize("scale,offset", [(1.0, 0.0), (1.2, 23.0), (0.8, -19.0),
+                                        (1.1, 100.0), (0.9, -100.0), (1.3, 1.5)])
+def test_one_sided_ground_generated_perimeters_probe(scale, offset):
+    """[D133] SYNTHETIC translated/scaled diagonal sites: forward R11 passes; reverse bound > R11."""
+    v = np.array([(0, 0, 0), (10, 0, 0), (0, 10, 0)], float)
+    v[:, :2] = scale * v[:, :2] + offset
+    t = np.array([(0, 1, 2)])
+    res = ub.build("Ground", v, t, cell=8.0, min_cell=0.5, tol=0.08,
+                   model_triangles=50200, reserved_triangles=12)
+    assert_valid_pieces(res)
+    assert res.footprint_overhang_bound_m > ub.GROUND_TOL_M
+    assert ub.ground_deviation(ub.sample_surface(v, t, 0.15), res).max() < 0.08
+    assert res.within_tol
+    ub.check_file_budget(50200, res.triangles + 12)
+
+
