@@ -23,7 +23,11 @@ Assumptions (Russian album conventions, stated per #317):
   number, ``А1``) for horizontal ones; a break of that convention or a forbidden letter is a finding, not an error.
 - Dimensions: horizontal dimension lines (chains allowed) with slanted ~45 deg ticks; the value is an integer in
   mm (``6000`` or ``26 369``) written above the line between two consecutive ticks; the endpoints are the tick
-  centres. Vertical dimension chains and values written below the line are not read in this version.
+  centres. Every span between two consecutive ticks is a dimension candidate: a span whose value is not read is a
+  finding with its endpoints and text, never a silent omission - ``dimension_text_invalid`` (text above the line
+  is not an integer, e.g. ``NaN``, ``4500.0``), ``dimension_text_unsupported`` (text only below the line, not read
+  in this version), ``dimension_text_missing`` (no text). An unread span is never a scale reference, so an
+  unreadable reference dimension leaves the scale ``unknown``. Vertical dimension chains are not read.
 - Level marks: values in metres with exactly three decimals (``±0.000``, ``+3.000``, ``-0.450``, comma or
   Unicode minus accepted; ``±`` only for zero) next to a triangle symbol; the mark's page Y is the triangle apex.
   Level checks assume one elevation per page (all marks share one vertical scale).
@@ -583,6 +587,7 @@ def _dimensions(
     skip: set[int],
     axes: list[Axis],
     tri_paths: set[int],
+    findings: list[Finding],
 ) -> list[Dimension]:
     ticks = [
         s
@@ -618,34 +623,74 @@ def _dimensions(
         hits = [lab for lab, pos in vertical if abs(pos - x) <= AXIS_SNAP_PT]
         return hits[0] if len(hits) == 1 else None
 
+    # every span between consecutive ticks of a dimension line is a dimension candidate, whatever its text
+    spans = sorted(
+        {(y, a, b) for y, xs in dim_lines for a, b in zip(xs, xs[1:], strict=False)}
+    )
+    usable = [
+        (i, run)
+        for i, run in enumerate(runs)
+        if i not in skip and abs(run.dir[1]) <= 1e-6 and run.dir[0] > 0
+    ]
+
+    def runs_at(y: float, a: float, b: float, above: bool) -> list[tuple[float, int]]:
+        hits = []
+        for i, run in usable:
+            cx, cy = _center(run.bbox)
+            gap = y - cy if above else cy - y
+            if a < cx < b and 0 < gap <= 2.5 * run.size:
+                hits.append((gap, i))
+        return sorted(hits)
+
+    above = {span: runs_at(*span, above=True) for span in spans}
+    claimed = {hits[0][1] for hits in above.values() if hits}
     out: list[Dimension] = []
-    for i, run in enumerate(runs):
-        if i in skip or abs(run.dir[1]) > 1e-6 or run.dir[0] <= 0:
-            continue
-        value = check_dimension_text(run.text)
-        if value is None:
-            continue
-        cx, cy = _center(run.bbox)
-        best = None
-        for y, xs in dim_lines:
-            if not 0 < y - cy <= 2.5 * run.size:
-                continue
-            pair = [(a, b) for a, b in zip(xs, xs[1:], strict=False) if a < cx < b]
-            if pair and (best is None or y - cy < best[0]):
-                best = (y - cy, y, pair[0])
-        if best is None:
-            continue
-        _, y, (a, b) = best
+    for y, a, b in spans:
         la, lb = axis_at(a), axis_at(b)
-        out.append(
-            Dimension(
-                text=run.text,
-                value_mm=value,
-                p0=(a, y),
-                p1=(b, y),
-                measured_pt=b - a,
-                axes=(la, lb) if la and lb else None,
-                text_bbox=run.bbox,
+        span_axes = [la, lb] if la and lb else None
+        data = {"p0": [a, y], "p1": [b, y], "axes": span_axes}
+        hits = above[(y, a, b)]
+        if hits:
+            run = runs[hits[0][1]]
+            value = check_dimension_text(run.text)
+            if value is not None:
+                out.append(
+                    Dimension(
+                        text=run.text,
+                        value_mm=value,
+                        p0=(a, y),
+                        p1=(b, y),
+                        measured_pt=b - a,
+                        axes=(la, lb) if la and lb else None,
+                        text_bbox=run.bbox,
+                    )
+                )
+                continue
+            findings.append(
+                Finding(
+                    "dimension_text_invalid",
+                    f"dimension span {a:.2f}-{b:.2f} at y {y:.2f}: text '{run.text}' is not an integer mm value",
+                    {**data, "text": run.text, "text_bbox": list(run.bbox)},
+                )
+            )
+            continue
+        below = [h for h in runs_at(y, a, b, above=False) if h[1] not in claimed]
+        if below:
+            run = runs[below[0][1]]
+            findings.append(
+                Finding(
+                    "dimension_text_unsupported",
+                    f"dimension span {a:.2f}-{b:.2f} at y {y:.2f}: text '{run.text}' is below the line "
+                    "(not read in this version)",
+                    {**data, "text": run.text, "text_bbox": list(run.bbox)},
+                )
+            )
+            continue
+        findings.append(
+            Finding(
+                "dimension_text_missing",
+                f"dimension span {a:.2f}-{b:.2f} at y {y:.2f}: no value text above or below the line",
+                {**data, "text": None, "text_bbox": None},
             )
         )
     out.sort(key=lambda d: (d.p0[1], d.p0[0], d.text))
@@ -828,7 +873,7 @@ def _read(
     tri_paths = {t[2] for t in triangles}
     level_marks = _level_marks(runs, triangles, findings)
     level_runs = {i for i, r in enumerate(runs) if parse_level_text(r.text) is not None}
-    dims = _dimensions(runs, segs, label_runs | level_runs, axes, tri_paths)
+    dims = _dimensions(runs, segs, label_runs | level_runs, axes, tri_paths, findings)
     dim_runs = {
         i for i, r in enumerate(runs) if any(d.text_bbox == r.bbox for d in dims)
     }

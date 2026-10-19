@@ -382,7 +382,11 @@ def test_level_text_rejects_non_marks(text: str) -> None:
 
 # --- review round 1 (P1): every dimension span is accounted for, independently of its text ---------------------
 
-_COVERAGE_CODES = {"dimension_text_missing", "dimension_text_invalid", "dimension_text_unsupported"}
+_COVERAGE_CODES = {
+    "dimension_text_missing",
+    "dimension_text_invalid",
+    "dimension_text_unsupported",
+}
 
 
 def _move_text_below_line(src: Path, dst: Path, value: str = "4500") -> None:
@@ -431,7 +435,9 @@ def test_unread_dimension_span_is_a_typed_finding_and_keeps_scale(
     assert data["text"] == expected_text
 
 
-def test_clean_page_and_mismatch_control_have_no_coverage_findings(tmp_path: Path) -> None:
+def test_clean_page_and_mismatch_control_have_no_coverage_findings(
+    tmp_path: Path,
+) -> None:
     """Control: a fully read page and a written-but-wrong value give no coverage finding."""
     good, bad = tmp_path / "good.pdf", tmp_path / "bad.pdf"
     make_facade_pdf(good)
