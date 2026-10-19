@@ -84,11 +84,12 @@ class UcxResult:
 
     @property
     def within_tol(self) -> bool:
-        """Ground: the exact vertical deviation, the footprint overhang bound and the uncovered strip are all
-        within `tol_m` (a missing value fails); Main: always True (bounded by construction)."""
+        """Ground: model -> UCX vertical deviation and uncovered strip within `tol_m`.
+        Reverse footprint overhang is diagnostic only [D133]; Main is bounded by construction.
+        """
         if self.target != "Ground":
             return True
-        vals = (self.max_vertical_dev_m, self.footprint_overhang_bound_m, self.uncovered_strip_m)
+        vals = (self.max_vertical_dev_m, self.uncovered_strip_m)
         return self.tol_m is not None and all(v is not None and v <= self.tol_m for v in vals)
 
     @property
