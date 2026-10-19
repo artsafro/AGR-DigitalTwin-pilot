@@ -8,7 +8,7 @@ identification and manufacturer/specification matching (T-MAF-1 awaits the user'
 
 **Readiness:** [roadmap §4 and §7.11](../../research/capability-roadmap.md#4-coverage-matrix-upstream-main-ea7ecce)
 records L0. This sheet adds the L1 rule index, pending calibration-format/user and docs review;
-area patterns and a modelling skill are still missing, so full L1 is not claimed. Generic validator
+area patterns are still missing; the modelling procedure is the [model-maf skill](../../../.agents/skills/model-maf/SKILL.md), so full L1 is not claimed. Generic validator
 subsets do not constitute area L2 (no MAF benchmark/identified etalon); no user-accepted MAF case
 establishes L3. This is not a delivery acceptance.
 

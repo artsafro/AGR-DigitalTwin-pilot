@@ -80,3 +80,95 @@ Keep pytest `--basetemp` in a **child directory**, e.g. `C:/x/t_3e6ff1b3/full-v0
 Never use the evidence root as basetemp: pytest recursively clears that directory.
 Shared Max lock stale-age workaround: use a wrapper timeout at least as long as the current holder's;
 see pilot issue #223. No lock was bypassed or manually removed by this continuation.
+
+## Reproduce the committed outputs (#227)
+
+Tracked tools rebuild `catalogue.json`, `catalogue.md`, `contact_sheet.html`, `audit.json` and the
+per-entry `fbx_readback_*` fields from the inputs below. `<EVIDENCE>` is the issue #208 evidence root
+(`C:/x/t_3e6ff1b3`). `<LIB>` is the pass-B library directory (`<EVIDENCE>/library` in #208; the #227
+reproduction reused it and did not repeat pass B). `<OUT>` is a **new** directory (for example `C:/x/maf-audit-repro`). Every command
+refuses to overwrite an existing output file unless `--overwrite` is passed.
+
+Absent QA is recorded as `not measured`. `preview_blank` stays null unless a preview-check report is
+supplied; it is never written as false without that report. A readback row with `error` is not a pass.
+A readback row whose dimensions are not exactly three finite numbers, or whose triangle count is not
+a non-negative integer, is recorded as `invalid` and is never counted as a pass. Preview repair
+`blank_after` is a number only when every override id was checked; otherwise it stays `not measured`
+and the unchecked override ids are listed.
+
+Merge rule for versioned preview manifests: rows are keyed by `id`. The base manifest defines the entry
+set and order. Each `--override` manifest is applied in the order given; an override row updates the
+matching base row field by field (`{**row, **override}`), and a later manifest wins over an earlier one.
+An override `id` that is not in the base is an error — an override never creates an entry.
+
+```bash
+# 1. Blender inventory of the NPM .blend copy (read-only; does not save the .blend)
+AGR_MAF_BLEND_INVENTORY=<OUT>/blend_inventory.json \
+  blender --background <EVIDENCE>/src.blend --factory-startup \
+  --python tools/library/maf_blender_inventory.py
+
+# 2. plan (unchanged)
+uv run python tools/library/maf_catalogue.py plan \
+  --elements <EVIDENCE>/elements.json --out <OUT>/plan.json --gap 0.5
+
+# 3. pass B (unchanged): per entry .max + FBX + Scanline preview
+AGR_MAF_PLAN=<OUT>/plan.json AGR_MAF_LIB=<LIB> \
+  python C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py max \
+  --file tools/library/maf_max_build_job.py --timeout 3000
+
+# 4. merge the base build manifest with versioned preview overrides
+uv run python tools/library/maf_audit.py merge-manifests \
+  --base <LIB>/built.jsonl \
+  --override <LIB>/preview-v002.jsonl \
+  --out <OUT>/merged.jsonl \
+  --provenance-out <OUT>/merge_provenance.json
+
+# 5. catalogue from the merged manifest
+uv run --with openpyxl python tools/library/maf_catalogue.py catalogue \
+  --plan <OUT>/plan.json --built <OUT>/merged.jsonl \
+  --blend <OUT>/blend_inventory.json --spec <EVIDENCE>/maf_spec_vedomost_3.xlsx \
+  --out-json <OUT>/catalogue_raw.json --out-md <OUT>/catalogue.md \
+  --contact-sheet <OUT>/contact_sheet.png
+
+# 6. blank-preview check. Omit it and preview_blank stays null.
+uv run python tools/library/maf_audit.py preview-check \
+  --catalogue <OUT>/catalogue_raw.json --out <OUT>/preview_check.json
+
+# 7. independent FBX readback (existing script). A missing report stays "not measured".
+AGR_MAF_LIB=<LIB> AGR_MAF_READBACK=<OUT>/fbx_readback.json \
+  blender --background --factory-startup --python tools/library/maf_blender_readback.py
+
+# 8. finalize catalogue JSON, contact_sheet.html and fbx_readback_* fields
+uv run python tools/library/maf_audit.py finalize \
+  --catalogue <OUT>/catalogue_raw.json \
+  --readback <OUT>/fbx_readback.json \
+  --preview-check <OUT>/preview_check.json \
+  --contact-sheet-png <OUT>/contact_sheet.png \
+  --out-json <OUT>/catalogue.json \
+  --out-html <OUT>/contact_sheet.html
+
+# 9. audit.json. Omit any QA flag to record that input as "not measured".
+#    --built is the BASE pass-B manifest (build timing of pass B, not of the preview repair).
+#    --blank-before is a JSON list of ids. --copy is matched to hash_before paths by suffix.
+uv run python tools/library/maf_audit.py audit \
+  --plan <OUT>/plan.json --built <LIB>/built.jsonl --library <LIB> \
+  --readback <OUT>/fbx_readback.json --blend <OUT>/blend_inventory.json \
+  --hash-before <EVIDENCE>/hash_before.txt \
+  --copy <EVIDENCE>/src.max --copy <EVIDENCE>/src.blend \
+  --override <LIB>/preview-v002.jsonl \
+  --blank-before <OUT>/blank_before.json \
+  --preview-check <OUT>/preview_check.json \
+  --native-probe <EVIDENCE>/native_probe.json \
+  --preview-repair-run <EVIDENCE>/preview_repair_run.json \
+  --contact-sheet-png <OUT>/contact_sheet.png \
+  --npm-matches-out <OUT>/npm_matches.json \
+  --out <OUT>/audit.json
+
+# 10. compare against the committed snapshot
+uv run python tools/library/maf_audit.py compare \
+  --old library/maf/catalogue.json --new <OUT>/catalogue.json \
+  --out <OUT>/catalogue_diff.json
+uv run python tools/library/maf_audit.py compare \
+  --old library/maf/audit.json --new <OUT>/audit.json \
+  --out <OUT>/audit_diff.json
+```

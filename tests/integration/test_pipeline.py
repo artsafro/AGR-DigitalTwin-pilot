@@ -1,4 +1,5 @@
 import os
+import shutil
 from io import BytesIO
 from pathlib import Path
 from zipfile import ZipFile
@@ -40,11 +41,30 @@ def test_udim_row_transition_and_mirroring():
         tile_origin(1101)
 
 
+@pytest.fixture(scope="session")
+def _bundle_template(tmp_path_factory):
+    root = Path(__file__).resolve().parents[2]
+    output_dir = tmp_path_factory.mktemp("bundle_template") / "build"
+    path = build(root, root / "jobs/SYNTH-001/project.json", output_dir)
+    return output_dir, path
+
+
 @pytest.fixture
-def bundle(root, tmp_path):
-    output = tmp_path / "build"
-    path = build(root, root / "jobs/SYNTH-001/project.json", output)
-    return path
+def bundle(tmp_path, _bundle_template):
+    output_dir, path = _bundle_template
+    dest = tmp_path / "build"
+    shutil.copytree(output_dir, dest)
+    return dest / path.relative_to(output_dir)
+
+
+def test_bundle_fixture_is_a_per_test_copy(root, bundle, tmp_path, _bundle_template):
+    _output_dir, path = _bundle_template
+    assert Path(__file__).resolve().parents[2] == root
+    assert tmp_path in bundle.parents
+    assert bundle.read_bytes() == path.read_bytes()
+    template_bytes = path.read_bytes()
+    bundle.write_bytes(b"other")
+    assert path.read_bytes() == template_bytes
 
 
 def rewrite(files, path):

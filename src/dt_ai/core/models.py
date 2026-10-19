@@ -192,3 +192,6 @@ from dt_ai.intake.model import SourcesFile, SpecDraft
 SCHEMAS["IntakeSources"] = SourcesFile
 SCHEMAS["IntakeSpecDraft"] = SpecDraft
 
+
+from dt_ai.parts.model import PartsList
+SCHEMAS["PartsList"] = PartsList
