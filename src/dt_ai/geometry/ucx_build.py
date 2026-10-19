@@ -786,9 +786,18 @@ _NUDGE = 1e-5 * np.stack([np.cos(np.arange(6) * np.pi / 3), np.sin(np.arange(6) 
 def _prism(q, plane, base) -> Piece:
     """Closed convex prism over the convex CCW plan `q` (k vertices): planar top a x + b y + c, flat bottom."""
     k = len(q)
+    # fan apex with the largest smallest triangle: a tiny top triangle turns float32 noise into a
+    # non-convex face plane on read-back (#326)
+    def min_area(a):
+        r = np.roll(q, -a, axis=0)
+        e1, e2 = r[1:-1] - r[0], r[2:] - r[0]
+        return float(np.abs(e1[:, 0] * e2[:, 1] - e1[:, 1] * e2[:, 0]).min()) if k > 3 else 1.0
+    a0 = max(range(k), key=min_area)
+    order = [(a0 + i) % k for i in range(k)]
     top = q @ plane[:2] + plane[2]
     verts = np.concatenate([np.column_stack([q, np.full(k, base)]), np.column_stack([q, top])])
-    tr = [(0, i + 1, i) for i in range(1, k - 1)] + [(k, k + i, k + i + 1) for i in range(1, k - 1)]
+    tr = [(order[0], order[i + 1], order[i]) for i in range(1, k - 1)] + \
+         [(k + order[0], k + order[i], k + order[i + 1]) for i in range(1, k - 1)]
     for j in range(k):
         j1 = (j + 1) % k
         tr += [(j, j1, k + j1), (j, k + j1, k + j)]
