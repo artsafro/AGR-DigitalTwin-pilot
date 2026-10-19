@@ -1,7 +1,7 @@
 {
  "schema": "flora-vpm-surface-identity-report-v1",
  "scope": "report only; catalogue.json is not changed - catalogue changes are a user decision (#305)",
- "method": "two-way area coverage per face (shapely clipping), D100 pivot frame, strict tolerance; same only if both uncovered areas and the face-area difference are <= same_area_m2",
+ "method": "two-way area coverage per face (shapely clipping), D100 pivot frame, strict Euclidean tolerance bracketed by lower/upper uncovered-area bounds; same only if both upper bounds and the face-area difference are <= same_area_m2, different only if a lower bound or the area difference is >= different_area_m2, else unverified",
  "tolerance_m": 0.0001,
  "same_area_m2": 1e-12,
  "different_area_m2": 1e-06,
@@ -30,18 +30,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "a_uncovered 193.329 m2 >= 1e-06 m2",
+   "reason": "a_uncovered >= 193.334 m2 >= 1e-06 m2",
    "npm": {
     "faces": 357,
     "degenerate_faces": 0,
     "area_m2": 193.36551579299578,
-    "uncovered_m2": 193.32922163855517
+    "uncovered_m2": 193.337627288544,
+    "uncovered_lower_m2": 193.33444882886386
    },
    "vpm": {
     "faces": 830,
     "degenerate_faces": 0,
     "area_m2": 34.000528382201054,
-    "uncovered_m2": 33.96424249788519
+    "uncovered_m2": 33.97264606347597,
+    "uncovered_lower_m2": 33.96946927457711
    },
    "area_difference_m2": 159.36498741079473
   },
@@ -66,18 +68,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 127.375 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 127.396 m2 >= 1e-06 m2",
    "npm": {
     "faces": 488,
     "degenerate_faces": 0,
     "area_m2": 87.17261142971316,
-    "uncovered_m2": 87.02537636870261
+    "uncovered_m2": 87.05649435305018,
+    "uncovered_lower_m2": 87.04654532685866
    },
    "vpm": {
     "faces": 574,
     "degenerate_faces": 0,
     "area_m2": 127.52236406880571,
-    "uncovered_m2": 127.37501670440352
+    "uncovered_m2": 127.40927995109298,
+    "uncovered_lower_m2": 127.39621586600794
    },
    "area_difference_m2": 40.34975263909256
   },
@@ -89,18 +93,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 83.6362 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 83.6397 m2 >= 1e-06 m2",
    "npm": {
     "faces": 346,
     "degenerate_faces": 0,
     "area_m2": 27.621460290176223,
-    "uncovered_m2": 27.596367839715406
+    "uncovered_m2": 27.602086714495634,
+    "uncovered_lower_m2": 27.599885946015995
    },
    "vpm": {
     "faces": 394,
     "degenerate_faces": 0,
     "area_m2": 83.66131127951903,
-    "uncovered_m2": 83.63621538555921
+    "uncovered_m2": 83.64193572281005,
+    "uncovered_lower_m2": 83.63973435856086
    },
    "area_difference_m2": 56.0398509893428
   },
@@ -112,18 +118,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 723.671 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 723.671 m2 >= 1e-06 m2",
    "npm": {
     "faces": 979,
     "degenerate_faces": 0,
     "area_m2": 10.114716521948093,
-    "uncovered_m2": 10.11363982064106
+    "uncovered_m2": 10.11388475042086,
+    "uncovered_lower_m2": 10.113787484510613
    },
    "vpm": {
     "faces": 4894,
     "degenerate_faces": 0,
     "area_m2": 723.6716176125406,
-    "uncovered_m2": 723.6705392982544
+    "uncovered_m2": 723.670784790118,
+    "uncovered_lower_m2": 723.6706872759434
    },
    "area_difference_m2": 713.5569010905924
   },
@@ -135,18 +143,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "a_uncovered 87.0472 m2 >= 1e-06 m2",
+   "reason": "a_uncovered >= 87.0532 m2 >= 1e-06 m2",
    "npm": {
     "faces": 8,
     "degenerate_faces": 0,
     "area_m2": 87.08798787972952,
-    "uncovered_m2": 87.04722674446369
+    "uncovered_m2": 87.05676688802659,
+    "uncovered_lower_m2": 87.05318450365071
    },
    "vpm": {
     "faces": 830,
     "degenerate_faces": 0,
     "area_m2": 34.000517929002775,
-    "uncovered_m2": 33.95973994687435
+    "uncovered_m2": 33.96928998447789,
+    "uncovered_lower_m2": 33.965705935223696
    },
    "area_difference_m2": 53.08746995072675
   },
@@ -158,18 +168,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 268.674 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 268.694 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 107.59618045414067,
-    "uncovered_m2": 107.45813897324386
+    "uncovered_m2": 107.48987696389827,
+    "uncovered_lower_m2": 107.47747487222371
    },
    "vpm": {
     "faces": 1070,
     "degenerate_faces": 0,
     "area_m2": 268.8125294542374,
-    "uncovered_m2": 268.6743613247207
+    "uncovered_m2": 268.70615231498414,
+    "uncovered_lower_m2": 268.6937321373968
    },
    "area_difference_m2": 161.21634900009673
   },
@@ -181,18 +193,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "a_uncovered 115.601 m2 >= 1e-06 m2",
+   "reason": "a_uncovered >= 115.604 m2 >= 1e-06 m2",
    "npm": {
     "faces": 125,
     "degenerate_faces": 0,
     "area_m2": 115.62378011771295,
-    "uncovered_m2": 115.6006893478918
+    "uncovered_m2": 115.60594691181231,
+    "uncovered_lower_m2": 115.60396387525854
    },
    "vpm": {
     "faces": 264,
     "degenerate_faces": 0,
     "area_m2": 20.311362204246073,
-    "uncovered_m2": 20.288282205586725
+    "uncovered_m2": 20.293536721716958,
+    "uncovered_lower_m2": 20.291555498141516
    },
    "area_difference_m2": 95.31241791346687
   },
@@ -204,18 +218,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 1224.31 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 1224.31 m2 >= 1e-06 m2",
    "npm": {
     "faces": 125,
     "degenerate_faces": 0,
     "area_m2": 13.286266643764124,
-    "uncovered_m2": 13.278359568866138
+    "uncovered_m2": 13.280206842724262,
+    "uncovered_lower_m2": 13.27952296811444
    },
    "vpm": {
     "faces": 2901,
     "degenerate_faces": 0,
     "area_m2": 1224.3140288288073,
-    "uncovered_m2": 1224.3061315855618
+    "uncovered_m2": 1224.3079752259375,
+    "uncovered_lower_m2": 1224.3072927523488
    },
    "area_difference_m2": 1211.0277621850432
   },
@@ -266,18 +282,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 53.8744 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 53.8845 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 14.134332521053175,
-    "uncovered_m2": 14.063552630874511
+    "uncovered_m2": 14.079425957486379,
+    "uncovered_lower_m2": 14.073477379597264
    },
    "vpm": {
     "faces": 1266,
     "degenerate_faces": 0,
     "area_m2": 53.9456350785255,
-    "uncovered_m2": 53.87444687157031
+    "uncovered_m2": 53.89101286715661,
+    "uncovered_lower_m2": 53.8844811582653
    },
    "area_difference_m2": 39.811302557472324
   },
@@ -289,18 +307,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 107.695 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 107.714 m2 >= 1e-06 m2",
    "npm": {
     "faces": 8,
     "degenerate_faces": 0,
     "area_m2": 51.52853392405539,
-    "uncovered_m2": 51.417515456866056
+    "uncovered_m2": 51.44600251360042,
+    "uncovered_lower_m2": 51.43587252857244
    },
    "vpm": {
     "faces": 6267,
     "degenerate_faces": 0,
     "area_m2": 107.80662000235671,
-    "uncovered_m2": 107.69547479609977
+    "uncovered_m2": 107.72402507815575,
+    "uncovered_lower_m2": 107.71387797386048
    },
    "area_difference_m2": 56.27808607830132
   },
@@ -312,18 +332,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "a_uncovered 115.524 m2 >= 1e-06 m2",
+   "reason": "a_uncovered >= 115.538 m2 >= 1e-06 m2",
    "npm": {
     "faces": 125,
     "degenerate_faces": 0,
     "area_m2": 115.62375695694574,
-    "uncovered_m2": 115.52367803786198
+    "uncovered_m2": 115.54654987390968,
+    "uncovered_lower_m2": 115.53787975366369
    },
    "vpm": {
     "faces": 394,
     "degenerate_faces": 0,
     "area_m2": 102.33045247631911,
-    "uncovered_m2": 102.23039405987757
+    "uncovered_m2": 102.25325822748663,
+    "uncovered_lower_m2": 102.24459095921412
    },
    "area_difference_m2": 13.293304480626631
   },
@@ -335,18 +357,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 70.6048 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 70.6053 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 14.134332521053175,
-    "uncovered_m2": 14.129854134339011
+    "uncovered_m2": 14.130730560785793,
+    "uncovered_lower_m2": 14.130381415237832
    },
    "vpm": {
     "faces": 614,
     "degenerate_faces": 0,
     "area_m2": 70.6092447250784,
-    "uncovered_m2": 70.60476817240136
+    "uncovered_m2": 70.60564420500934,
+    "uncovered_lower_m2": 70.60529536901029
    },
    "area_difference_m2": 56.47491220402522
   },
@@ -358,18 +382,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 107.543 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 107.569 m2 >= 1e-06 m2",
    "npm": {
     "faces": 3065,
     "degenerate_faces": 0,
     "area_m2": 52.417586766301355,
-    "uncovered_m2": 52.16404364062756
+    "uncovered_m2": 52.207475217410085,
+    "uncovered_lower_m2": 52.19035574829704
    },
    "vpm": {
     "faces": 6267,
     "degenerate_faces": 0,
     "area_m2": 107.79687786584117,
-    "uncovered_m2": 107.54313892093757
+    "uncovered_m2": 107.58664525088577,
+    "uncovered_lower_m2": 107.56949913332268
    },
    "area_difference_m2": 55.37929109953981
   },
@@ -407,18 +433,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 136.174 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 136.178 m2 >= 1e-06 m2",
    "npm": {
     "faces": 166,
     "degenerate_faces": 0,
     "area_m2": 21.89007966618114,
-    "uncovered_m2": 21.854061619025185
+    "uncovered_m2": 21.861894797858934,
+    "uncovered_lower_m2": 21.858807553888127
    },
    "vpm": {
     "faces": 494,
     "degenerate_faces": 0,
     "area_m2": 136.20962564871394,
-    "uncovered_m2": 136.1735610753479
+    "uncovered_m2": 136.1814116177346,
+    "uncovered_lower_m2": 136.17831797237338
    },
    "area_difference_m2": 114.3195459825328
   },
@@ -456,18 +484,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 9.9513 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 9.95423 m2 >= 1e-06 m2",
    "npm": {
     "faces": 64,
     "degenerate_faces": 0,
     "area_m2": 5.704066764453286,
-    "uncovered_m2": 4.261539362278077
+    "uncovered_m2": 4.265603154242938,
+    "uncovered_lower_m2": 4.2640709407451025
    },
    "vpm": {
     "faces": 128,
     "degenerate_faces": 0,
     "area_m2": 11.396633417803027,
-    "uncovered_m2": 9.951295194544992
+    "uncovered_m2": 9.955996563916981,
+    "uncovered_lower_m2": 9.954231342084757
    },
    "area_difference_m2": 5.692566653349742
   },
@@ -492,18 +522,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 22.6592 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 22.6679 m2 >= 1e-06 m2",
    "npm": {
     "faces": 18,
     "degenerate_faces": 0,
     "area_m2": 11.277768171128177,
-    "uncovered_m2": 11.207868168541735
+    "uncovered_m2": 11.221783428591618,
+    "uncovered_lower_m2": 11.216538941056337
    },
    "vpm": {
     "faces": 144,
     "degenerate_faces": 0,
     "area_m2": 22.72917617390702,
-    "uncovered_m2": 22.659169021442292
+    "uncovered_m2": 22.67312734232296,
+    "uncovered_lower_m2": 22.667869007938474
    },
    "area_difference_m2": 11.451408002778845
   },
@@ -528,18 +560,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "a_uncovered 4.78708 m2 >= 1e-06 m2",
+   "reason": "a_uncovered >= 4.78858 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 4.796706950441741,
-    "uncovered_m2": 4.787079498868857
+    "uncovered_m2": 4.789451602992409,
+    "uncovered_lower_m2": 4.78857929446906
    },
    "vpm": {
     "faces": 80,
     "degenerate_faces": 0,
     "area_m2": 3.739072281784165,
-    "uncovered_m2": 3.729427517356886
+    "uncovered_m2": 3.731807316835831,
+    "uncovered_lower_m2": 3.7309323676778248
    },
    "area_difference_m2": 1.0576346686575757
   },
@@ -564,18 +598,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 25.6199 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 25.6223 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 6.106408135131845,
-    "uncovered_m2": 6.088551038340798
+    "uncovered_m2": 6.092513071119135,
+    "uncovered_lower_m2": 6.090968514672299
    },
    "vpm": {
     "faces": 112,
     "degenerate_faces": 0,
     "area_m2": 25.63776064757664,
-    "uncovered_m2": 25.619886763765457
+    "uncovered_m2": 25.623855288404396,
+    "uncovered_lower_m2": 25.622308221373057
    },
    "area_difference_m2": 19.531352512444798
   },
@@ -600,18 +636,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 17.7039 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 17.7114 m2 >= 1e-06 m2",
    "npm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 8.740349177925399,
-    "uncovered_m2": 8.688984014960955
+    "uncovered_m2": 8.70100225456031,
+    "uncovered_lower_m2": 8.696501163394524
    },
    "vpm": {
     "faces": 160,
     "degenerate_faces": 0,
     "area_m2": 17.755232922143122,
-    "uncovered_m2": 17.703852116086203
+    "uncovered_m2": 17.715872304622344,
+    "uncovered_lower_m2": 17.711370705303068
    },
    "area_difference_m2": 9.014883744217723
   },
@@ -623,18 +661,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "a_uncovered 6.93434 m2 >= 1e-06 m2",
+   "reason": "a_uncovered >= 6.93626 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 6.946883887436821,
-    "uncovered_m2": 6.934338802482219
+    "uncovered_m2": 6.937396861913245,
+    "uncovered_lower_m2": 6.936256818750121
    },
    "vpm": {
     "faces": 84,
     "degenerate_faces": 0,
     "area_m2": 6.451217522996509,
-    "uncovered_m2": 6.438662119829565
+    "uncovered_m2": 6.4417251297643,
+    "uncovered_lower_m2": 6.440583563501207
    },
    "area_difference_m2": 0.49566636444031165
   },
@@ -711,18 +751,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 53.7947 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 53.8046 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 14.134356018886924,
-    "uncovered_m2": 14.06452740773165
+    "uncovered_m2": 14.08075444226962,
+    "uncovered_lower_m2": 14.074346353190931
    },
    "vpm": {
     "faces": 1254,
     "degenerate_faces": 0,
     "area_m2": 53.86491389432541,
-    "uncovered_m2": 53.79466298198068
+    "uncovered_m2": 53.81106559498265,
+    "uncovered_lower_m2": 53.80459540119559
    },
    "area_difference_m2": 39.730557875438485
   },
@@ -747,18 +789,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 22.7587 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 22.7603 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 3.766544237004576,
-    "uncovered_m2": 3.7555010366123818
+    "uncovered_m2": 3.757987557811475,
+    "uncovered_lower_m2": 3.7570152814358533
    },
    "vpm": {
     "faces": 120,
     "degenerate_faces": 0,
     "area_m2": 22.769787008143908,
-    "uncovered_m2": 22.758738332166573
+    "uncovered_m2": 22.761226998691345,
+    "uncovered_lower_m2": 22.76025388910818
    },
    "area_difference_m2": 19.00324277113933
   },
@@ -770,18 +814,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 25.3463 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 25.3488 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 5.7942496089704,
-    "uncovered_m2": 5.7779705979172595
+    "uncovered_m2": 5.781941710692851,
+    "uncovered_lower_m2": 5.780459419937209
    },
    "vpm": {
     "faces": 84,
     "degenerate_faces": 0,
     "area_m2": 25.362583660124223,
-    "uncovered_m2": 25.346289706339896
+    "uncovered_m2": 25.350267330260152,
+    "uncovered_lower_m2": 25.348782795328304
    },
    "area_difference_m2": 19.568334051153823
   },
@@ -793,18 +839,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "a_uncovered 20.1983 m2 >= 1e-06 m2",
+   "reason": "a_uncovered >= 20.2027 m2 >= 1e-06 m2",
    "npm": {
     "faces": 80,
     "degenerate_faces": 0,
     "area_m2": 20.225982543332705,
-    "uncovered_m2": 20.198301121221814
+    "uncovered_m2": 20.205196360795068,
+    "uncovered_lower_m2": 20.202708777769224
    },
    "vpm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 14.596652304146243,
-    "uncovered_m2": 14.568989049659887
+    "uncovered_m2": 14.5758769999022,
+    "uncovered_lower_m2": 14.573391850783299
    },
    "area_difference_m2": 5.629330239186462
   },
@@ -816,18 +864,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 19.8787 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 19.8819 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 7.380534768782538,
-    "uncovered_m2": 7.357691145839732
+    "uncovered_m2": 7.362897540608621,
+    "uncovered_lower_m2": 7.360895604475109
    },
    "vpm": {
     "faces": 90,
     "degenerate_faces": 0,
     "area_m2": 19.901616268127732,
-    "uncovered_m2": 19.878726954412087
+    "uncovered_m2": 19.88395140375802,
+    "uncovered_lower_m2": 19.881942549353276
    },
    "area_difference_m2": 12.521081499345193
   },
@@ -839,18 +889,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 4.60289 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 4.6041 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 3.7665396195308274,
-    "uncovered_m2": 3.7589636680560945
+    "uncovered_m2": 3.760851661958895,
+    "uncovered_lower_m2": 3.760172133358601
    },
    "vpm": {
     "faces": 64,
     "degenerate_faces": 0,
     "area_m2": 4.6104643459125345,
-    "uncovered_m2": 4.602889411632281
+    "uncovered_m2": 4.604776820170277,
+    "uncovered_lower_m2": 4.604097410964175
    },
    "area_difference_m2": 0.8439247263817071
   },
@@ -862,18 +914,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 7.43839 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 7.44268 m2 >= 1e-06 m2",
    "npm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 3.670467123257849,
-    "uncovered_m2": 3.6407510414617734
+    "uncovered_m2": 3.6476242858341728,
+    "uncovered_lower_m2": 3.6450374146025526
    },
    "vpm": {
     "faces": 160,
     "degenerate_faces": 0,
     "area_m2": 7.468106241076822,
-    "uncovered_m2": 7.438389090359639
+    "uncovered_m2": 7.445261856379192,
+    "uncovered_lower_m2": 7.442675061164174
    },
    "area_difference_m2": 3.797639117818973
   },
@@ -885,18 +939,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 12.1998 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 12.2019 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 6.106428898763993,
-    "uncovered_m2": 6.093376452172036
+    "uncovered_m2": 6.096623235034468,
+    "uncovered_lower_m2": 6.095443961935711
    },
    "vpm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 12.212871558286706,
-    "uncovered_m2": 12.199815760993927
+    "uncovered_m2": 12.203063996148718,
+    "uncovered_lower_m2": 12.201884241559236
    },
    "area_difference_m2": 6.106442659522712
   },
@@ -908,18 +964,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 12.9893 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 12.9912 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 10.945544381178571,
-    "uncovered_m2": 2.0516045203026807
+    "uncovered_m2": 2.0526654471210453,
+    "uncovered_lower_m2": 2.0522454863726254
    },
    "vpm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 21.89114535434544,
-    "uncovered_m2": 12.989335699017124
+    "uncovered_m2": 12.99235579711027,
+    "uncovered_lower_m2": 12.991222355852992
    },
    "area_difference_m2": 10.945600973166869
   },
@@ -931,18 +989,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 6.68649 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 6.68778 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 4.193036641245774,
-    "uncovered_m2": 2.495493819436976
+    "uncovered_m2": 2.4971062085235713,
+    "uncovered_lower_m2": 2.49651275294063
    },
    "vpm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 8.386029769109026,
-    "uncovered_m2": 6.686489390455331
+    "uncovered_m2": 6.6885581094858155,
+    "uncovered_lower_m2": 6.687784260847316
    },
    "area_difference_m2": 4.192993127863252
   },
@@ -954,18 +1014,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 12.9893 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 12.9912 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 10.945544381178571,
-    "uncovered_m2": 2.0516045203026803
+    "uncovered_m2": 2.0526654471210453,
+    "uncovered_lower_m2": 2.0522454863726254
    },
    "vpm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 21.89114535434544,
-    "uncovered_m2": 12.989335699017124
+    "uncovered_m2": 12.99235579711027,
+    "uncovered_lower_m2": 12.99122235585299
    },
    "area_difference_m2": 10.945600973166869
   },
@@ -977,18 +1039,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "area_difference 3.54139 m2 >= 1e-06 m2",
+   "reason": "area_difference >= 3.54139 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 3.5411734391790346,
-    "uncovered_m2": 0.0
+    "uncovered_m2": 0.0,
+    "uncovered_lower_m2": 0.0
    },
    "vpm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 7.082561161651925,
-    "uncovered_m2": 3.537942334631943
+    "uncovered_m2": 3.5388111920885885,
+    "uncovered_lower_m2": 3.538462959274648
    },
    "area_difference_m2": 3.5413877224728902
   },
@@ -1000,18 +1064,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 10.2089 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 10.2102 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 7.298284872088184,
-    "uncovered_m2": 2.9141585278043562
+    "uncovered_m2": 2.915532340627622,
+    "uncovered_lower_m2": 2.914988443668747
    },
    "vpm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 14.596536991241122,
-    "uncovered_m2": 10.20890350940325
+    "uncovered_m2": 10.21106241875473,
+    "uncovered_lower_m2": 10.210195602608383
    },
    "area_difference_m2": 7.298252119152938
   },
@@ -1023,18 +1089,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 10.3139 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 10.32 m2 >= 1e-06 m2",
    "npm": {
     "faces": 36,
     "degenerate_faces": 0,
     "area_m2": 5.12398640646307,
-    "uncovered_m2": 5.07442208590961
+    "uncovered_m2": 5.084296132530728,
+    "uncovered_lower_m2": 5.080516722499594
    },
    "vpm": {
     "faces": 144,
     "degenerate_faces": 0,
     "area_m2": 10.363552700410597,
-    "uncovered_m2": 10.313906138719936
+    "uncovered_m2": 10.323811673383386,
+    "uncovered_lower_m2": 10.320020906397415
    },
    "area_difference_m2": 5.239566293947528
   },
@@ -1046,18 +1114,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 8.0802 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 8.08424 m2 >= 1e-06 m2",
    "npm": {
     "faces": 32,
     "degenerate_faces": 0,
     "area_m2": 4.000391432302094,
-    "uncovered_m2": 3.9636538015057843
+    "uncovered_m2": 3.9703539675612816,
+    "uncovered_lower_m2": 3.967672203000909
    },
    "vpm": {
     "faces": 128,
     "degenerate_faces": 0,
     "area_m2": 8.116951243313537,
-    "uncovered_m2": 8.080200655098615
+    "uncovered_m2": 8.086922693883034,
+    "uncovered_lower_m2": 8.084241139074303
    },
    "area_difference_m2": 4.1165598110114425
   },
@@ -1121,18 +1191,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "area_difference 4.0537 m2 >= 1e-06 m2",
+   "reason": "area_difference >= 4.0537 m2 >= 1e-06 m2",
    "npm": {
     "faces": 64,
     "degenerate_faces": 0,
     "area_m2": 4.063167662767251,
-    "uncovered_m2": 1.5265566588595902e-16
+    "uncovered_m2": 1.5265566588595902e-16,
+    "uncovered_lower_m2": 1.5265566588595902e-16
    },
    "vpm": {
     "faces": 128,
     "degenerate_faces": 0,
     "area_m2": 8.116864379543882,
-    "uncovered_m2": 4.045651345021795
+    "uncovered_m2": 4.047460234235585,
+    "uncovered_lower_m2": 4.046798876661072
    },
    "area_difference_m2": 4.053696716776631
   },
@@ -1144,18 +1216,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 17.6679 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 17.678 m2 >= 1e-06 m2",
    "npm": {
     "faces": 40,
     "degenerate_faces": 0,
     "area_m2": 8.791250814854504,
-    "uncovered_m2": 8.704042744599798
+    "uncovered_m2": 8.718954675524794,
+    "uncovered_lower_m2": 8.712229354310256
    },
    "vpm": {
     "faces": 160,
     "degenerate_faces": 0,
     "area_m2": 17.75527842499071,
-    "uncovered_m2": 17.667912985413416
+    "uncovered_m2": 17.684507257848495,
+    "uncovered_lower_m2": 17.677977464320414
    },
    "area_difference_m2": 8.964027610136206
   },
@@ -1180,18 +1254,20 @@
    "vpm_status": "available",
    "catalogue_vpm_identity": "unverified",
    "verdict": "different",
-   "reason": "b_uncovered 4.10544 m2 >= 1e-06 m2",
+   "reason": "b_uncovered >= 4.10812 m2 >= 1e-06 m2",
    "npm": {
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 2.590447610531602,
-    "uncovered_m2": 1.5216223490241392
+    "uncovered_m2": 1.5249800408806589,
+    "uncovered_lower_m2": 1.52370441541492
    },
    "vpm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 5.180849667377733,
-    "uncovered_m2": 4.105438662457951
+    "uncovered_m2": 4.109801943306221,
+    "uncovered_lower_m2": 4.108118754259088
    },
    "area_difference_m2": 2.590402056846131
   }
