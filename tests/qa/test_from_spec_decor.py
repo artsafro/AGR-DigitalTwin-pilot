@@ -589,7 +589,7 @@ def test_unlisted_decor_running_far_past_a_corner_fails():
 
 
 def test_unlisted_box_set_deep_into_the_body_fails():
-    """User 2026-10-12 [D109] (follow-up to #76): no depth bound by number; a box 0.7 m into the body on one wall
+    """User 2026-10-12 [D142] (follow-up to #76): no depth bound by number; a box 0.7 m into the body on one wall
     still lies inside the storey contour behind that wall, so it is unlisted decor."""
     strip = dict(PILASTER, z_m=1.0, h_m=2.0)
     dump = build(spec(strip), INPUTS)
@@ -633,7 +633,7 @@ L_STRIP = dict(PILASTER, wall=1, x_m=1.5, z_m=1.0, h_m=2.0)
     ((6.5, 3.3, 1.0), (8.0, 4.15, 1.3)),       # on wall 2 by the concave corner, 0.7 m into the body
 ])
 def test_unlisted_decor_at_a_concave_corner_fails(lo, hi):
-    """User 2026-10-12 [D109] (#78): the embedded part is judged against the body, not one wall's span."""
+    """User 2026-10-12 [D142] (#78): the embedded part is judged against the body, not one wall's span."""
     sp = l_spec(L_STRIP)
     dump = build(sp, INPUTS)
     extra = Mesh("Extra")

@@ -935,7 +935,7 @@ def _snap_add(target, values):
 def _trapezoids(faces, xs):
     """Every horizontal face cut into trapezoids by the vertical strips between consecutive xs: two
     vertical sides (x0: a..b, x1: c..d) and two straight edges. One side may be a point (a == b or c == d):
-    a triangle, where two edges meet on the strip line (a pointed corner, user 2026-10-13 [D112]). Any other piece
+    a triangle, where two edges meet on the strip line (a pointed corner, user 2026-10-13 [D145]). Any other piece
     is a BuildError."""
     out = []
     for poly, z, mid, up in faces:

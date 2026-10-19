@@ -5,7 +5,7 @@ Pattern: none — benchmark check code (REVIEW_CHECKLIST Q1: new-case).
 Every threshold comes from the benchmark's tolerances.json; nothing is hard-coded here. Each row
 gives both measured values, the difference, the threshold and whether it is within. Which side is
 the reference for a quantity, and whether a match / no-match verdict is given at all, are also
-read from tolerances.json (user decision 2026-10-08 [D105]: no Rhino verdict until Revit walls come from
+read from tolerances.json (user decision 2026-10-08 [D138]: no Rhino verdict until Revit walls come from
 location lines, #29). Regions where the contours differ are listed with their side, area, bounds
 and how far each reaches out of the other contour, so a cause can be named for each. Measured
 values are compared raw and rounded only for display (PR #32 review 1).

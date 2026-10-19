@@ -257,13 +257,13 @@ def test_frozen_fixtures_out_of_scope(tmp_path, monkeypatch):
 
 def test_historical_backfill_rows_keep_scope():
     rows = {row[0]: row for row in log_rows()}
-    for id_ in ("D113", "D114"):
+    for id_ in ("D146", "D147"):
         decision = rows[id_][2]
         assert "from_source" in decision
         assert "D079" in decision
         assert "experimental" in decision
-    assert "rejected" in rows["D113"][2]
-    assert "from_spec" in rows["D114"][2]
+    assert "rejected" in rows["D146"][2]
+    assert "from_spec" in rows["D147"][2]
     from twinqa.geometry.checks import check_mesh
     doc = " ".join(check_mesh.__doc__.split())
     assert "[D079]" in doc and "do not authorize skipping topology" in doc

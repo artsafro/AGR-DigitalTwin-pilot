@@ -614,7 +614,7 @@ def test_a_small_roof_hole_is_no_opening_and_is_listed():
 
 
 def test_the_id_ranges_cache_follows_the_file(tmp_path, monkeypatch):
-    """User 2026-10-13 [D111]: the cache of standards/material_id_ranges.yaml follows the file - another path, or the
+    """User 2026-10-13 [D144]: the cache of standards/material_id_ranges.yaml follows the file - another path, or the
     same path rewritten, is read again (review 2 of #83: the test must fail on a per-group cache)."""
     import os
     from dt_ai.spec import mesh as M

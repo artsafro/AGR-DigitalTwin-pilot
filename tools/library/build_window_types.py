@@ -14,11 +14,11 @@ Sources (read only; the user's .blend is not opened):
 - the window file Win_Typical.max (`library/windows/sources/win-typical-max-v001.json`, read from
   3ds Max without changing it): frame extent, glass and opaque infill per object.
 
-Duplicates (user decision 2026-10-09 [D107]): the same subdivision — fields, transoms, panes and pane
+Duplicates (user decision 2026-10-09 [D140]): the same subdivision — fields, transoms, panes and pane
 layout within SAME_M — and the same size within SAME_M are one type; the later entry keeps its
 row and points to the first with `same_as`. Names are form + size, no project.
 
-User decision 2026-10-09 [D107]: every entry is `unconfirmed` until the user confirms and names it — the
+User decision 2026-10-09 [D140]: every entry is `unconfirmed` until the user confirms and names it — the
 user's decisions are kept in library/windows/confirmations.json and applied here;
 handing is null; CW_021, CW_022 and D04 are kept as rows marked not typed. Sections are the
 vertical fields of a type, transoms the horizontal divisions of its most divided field, both from
@@ -31,7 +31,7 @@ from collections import Counter
 from pathlib import Path
 
 GAP_M = 0.02             # panes closer than this along an axis are in one field / row
-SAME_M = 0.02            # same type: size and pane layout within 2 cm (user decision 2026-10-09 [D107])
+SAME_M = 0.02            # same type: size and pane layout within 2 cm (user decision 2026-10-09 [D140])
 FIELDS = {1: "однопольное", 2: "двухпольное", 3: "трёхпольное", 4: "четырёхпольное", 5: "пятипольное", 6: "шестипольное"}
 
 
@@ -92,7 +92,7 @@ def max_types(source, path):
     out, prefix = [], source["id_prefix"]
     for n, o in enumerate(source["objects"], 1):
         door = "Дверь" in o["object"] or "Д_" in o["object"]
-        balcony = door and "Балкон" in o["object"]       # a balcony door and window in one frame (user 2026-10-09 [D107])
+        balcony = door and "Балкон" in o["object"]       # a balcony door and window in one frame (user 2026-10-09 [D140])
         fields = o["glass_m"] + o["opaque_m"]
         sections, transoms = layout(fields, o["opaque_m"])
         words = FIELDS.get(sections, f"{sections}-польн")
@@ -122,7 +122,7 @@ def _near(u, v):
 
 def _same(a, b):
     """Same subdivision — fields, transoms, glass and opaque infill with their layout — and size, all
-    within SAME_M (user decision 2026-10-09 [D107])."""
+    within SAME_M (user decision 2026-10-09 [D140])."""
     if (a["sections"], a["transoms"], a["panes"]) != (b["sections"], b["transoms"], b["panes"]):
         return False
     if not (_near(a["width_m"], b["width_m"]) and _near(a["height_m"], b["height_m"])):

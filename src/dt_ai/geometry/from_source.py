@@ -1,4 +1,4 @@
-"""Build path by source modules (user 2026-10-13 [D110]), beside `from_spec`: the model is rebuilt module by module from
+"""Build path by source modules (user 2026-10-13 [D143]), beside `from_spec`: the model is rebuilt module by module from
 the source, the way a modeller does it by hand, and goes through the same checkers against the spec (the spec stays
 the contract of the checks; this path does not read it).
 
@@ -1271,7 +1271,7 @@ def snap_rows(openings):
 
 
 def spec_of(object_id, levels, stor, decks, railing_h, enclosure, inputs: Inputs) -> dict:
-    """The spec of a building measured by its modules (user 2026-10-13 [D110]: the spec rebuilt by modules): levels,
+    """The spec of a building measured by its modules (user 2026-10-13 [D143]: the spec rebuilt by modules): levels,
     a contour and openings per storey, no roof parapet (a textured band is no parapet), the terraces where a
     walkable deck lies, the roof screen enclosure. The contract the checkers measure the model against."""
     elev = dict(levels)
@@ -1312,7 +1312,7 @@ BUILD_AS = ("slab_boxes", "deck_boxes", "walls", "openings_glass", "boxes", "pla
             "planes_enclosure", "roof_band", "railings", "skip")
 BALCONY_OFF_M = 0.3      # glass further than this off its storey's wall line is a railing, not a window
 LIFT_M = RAILING_LIFT_M   # a part standing on another (a roof box, a band, a railing) stands this far off it
-BAND_T_M = 0.04          # a textured band's thickness (the roof slat band, user 2026-10-13 [D110])
+BAND_T_M = 0.04          # a textured band's thickness (the roof slat band, user 2026-10-13 [D143])
 
 
 def _group(parts, keys):
@@ -1328,7 +1328,7 @@ def _group(parts, keys):
 
 def build_from_modules(dump: dict, modules: dict, object_id: str, inputs: Inputs):
     """The building rebuilt by its source modules (see the module docstring), each module by its `build_as`.
-    Returns (mesh dump, spec, report): the spec is measured by the same modules (user 2026-10-13 [D110]) and is the
+    Returns (mesh dump, spec, report): the spec is measured by the same modules (user 2026-10-13 [D143]) and is the
     contract the checkers use."""
     parts = module_tris(dump, modules)
     how = {}

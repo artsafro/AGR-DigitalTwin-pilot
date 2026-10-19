@@ -59,8 +59,8 @@ def check_floor_areas(model: Soup, etalon: Soup, spec: Spec, tol: dict, basis: s
     """Outer section area of every storey at the sampled heights. Where both sections close they are
     compared; where only one closes the model differs from the etalon there (a fail, never skipped).
     Where neither closes both agree; the height is listed as open_on_both_sides, not judged, because an
-    NPM shell open at its reveals has no closed section in a window band (user decision 2026-10-09 [D108]).
-    A storey with no compared height at all fails. basis "spec" (a panelised source, user 2026-10-14 [D116]: its
+    NPM shell open at its reveals has no closed section in a window band (user decision 2026-10-09 [D141]).
+    A storey with no compared height at all fails. basis "spec" (a panelised source, user 2026-10-14 [D149]: its
     sections never close): the model's section, decor left out, against the area of the storey's spec contour less
     the recesses of the spec's openings at that height (width x depth; npm_min at the full depth, mid at half)."""
     names = [lv.name for lv in spec.levels]
@@ -316,9 +316,9 @@ def check_mesh(model: Soup, tol: dict, ranges: dict, slabs=None, plate=None, str
     roof-inset-plane allows them (user rule 2026-10-10 [D038]): the bottom ring and, per roof, the joint of an
     inset roof plane (its outline and the foot of the faces it is inset into). Parts made only of
     open_part_groups are left out of the open-edge rule. A mesh named DECOR_MESH is facade decor of its own
-    (pattern facade-decor-inset: the body is never cut; user 2026-10-13 [D113], 2a): it is left out of these checks -
+    (pattern facade-decor-inset: the body is never cut; user 2026-10-13 [D146], 2a): it is left out of these checks -
     its boxes may meet and overlap - and check_decor reads it. An open loop flat on a horizontal face of the
-    model at its height is closed by contact ("seated": a wall standing on a slab, user 2026-10-13 [D114]); a
+    model at its height is closed by contact ("seated": a wall standing on a slab, user 2026-10-13 [D147]); a
     separate closed part whose top lies at a slab level over the slab's region is that slab (a slab box). These
     three rules and the open enclosure top are the from_source path's (build="from_source"); the from_spec path
     keeps the strict rules (review 1 of #106). After OBJ03 was closed as unsuccessful
@@ -401,7 +401,7 @@ def check_mesh(model: Soup, tol: dict, ranges: dict, slabs=None, plate=None, str
     boundary_n = int(boundary.sum())
     corners = model.corners()
     faces = [{"object": "model", "index": i, "points": c.tolist()} for i, c in enumerate(corners)]   # decor left out
-    # an overlap is a crossing deeper than the weld (user 2026-10-14 [D115]): two faces within weld_m are one weld; an
+    # an overlap is a crossing deeper than the weld (user 2026-10-14 [D148]): two faces within weld_m are one weld; an
     # inset 5 mm off a face (plate_gap_m) is no overlap
     overlaps = near_parallel_overlaps(faces, tol["weld_m"])
     if model.polygon_sizes is None:
@@ -737,7 +737,7 @@ def check_decor(model: Soup, spec: Spec, tol: dict, ranges: dict) -> dict:
             # set into the body deeper than decor is, and not through it: in every storey it stands in, the
             # part of its plan outside the body is one piece (in front of the wall, past a corner or into a
             # concave one); a box through the building (a coping ring round the roof) comes out on the far side
-            # too and is an attachment (user 2026-10-12 [D109]: against the body between storey contours, no new number)
+            # too and is an attachment (user 2026-10-12 [D142]: against the body between storey contours, no new number)
             if (dd.min() < -reader.EMBED_MAX_M and 0 < dd.max() <= reader.ATTACHMENT_FROM_M
                     and s.max() > FACE_M and s.min() < length - FACE_M
                     and all(_pieces_outside(plan, polys[i], weld_m) == 1 for i in bands)

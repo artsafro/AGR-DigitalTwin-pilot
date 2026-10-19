@@ -48,7 +48,7 @@ class Opening(SpecPart):
     kind: Literal["window", "door", "grille"] | None = None
     # panes of one frame (gap <= 0.15 m) grouped into this opening: a curtain wall is one opening (#31)
     panes: int | None = Field(default=None, ge=1)
-    # an opening across a level is one record (spec v0.2, user decision 2026-10-08 [D103]): kept by the
+    # an opening across a level is one record (spec v0.2, user decision 2026-10-08 [D136]): kept by the
     # floor of level_from, sill from that level, height up to level_to's floor and above
     level_from: str | None = None
     level_to: str | None = None
