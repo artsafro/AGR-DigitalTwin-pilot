@@ -13,7 +13,7 @@ UCX and the new pieces named UCX_SM_<Address>_<Target>_NNN (no materials, no UV,
 JSON report is written next to it (`<out>.ucx_build.json`).
 
 Exit 0 built; 3 built but a one-sided Ground deviation (vertical or uncovered strip) exceeds
-`tol` (report and FBX written, not a pass); reverse footprint overhang is diagnostic only [D133];
+`tol` (report and FBX written, not a pass); reverse footprint overhang is diagnostic only [D134];
 2 build failed (report written); 4 refused before any write (bad arguments, or an output that aliases the
 input). Job scripts call `build_into_scene(...)` from their own Blender session instead.
 

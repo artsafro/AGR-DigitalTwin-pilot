@@ -391,7 +391,7 @@ def test_ground_l_shaped_site_exact():
 
 
 def test_ground_diagonal_perimeter_one_sided_tolerance():
-    """[D133] SYNTHETIC diagonal perimeter: reverse overhang is diagnostic, not an R11 failure."""
+    """[D134] SYNTHETIC diagonal perimeter: reverse overhang is diagnostic, not an R11 failure."""
     v = np.array([(0, 0, 0), (10, 0, 0), (0, 10, 0)], float)
     t = np.array([(0, 1, 2)])
     res = ub.build_ground(v, t, cell=8.0, min_cell=0.5, tol=0.08)
@@ -573,7 +573,7 @@ def test_scoped_replace_with_budget_combined(target, order):
 @pytest.mark.parametrize("field", ["max_vertical_dev_m", "uncovered_strip_m", "tol_m"])
 @pytest.mark.parametrize("bad", [None, float("nan"), float("inf"), -float("inf"), -0.01])
 def test_ground_one_sided_missing_nonfinite_measurements_fail_closed(field, bad):
-    """[D133] Removing the reverse gate must not turn missing/invalid forward evidence into a pass."""
+    """[D134] Removing the reverse gate must not turn missing/invalid forward evidence into a pass."""
     res = ub.UcxResult("Ground", [], 1.0, 0.004, max_vertical_dev_m=0.0,
                        uncovered_strip_m=0.0, tol_m=0.08, footprint_overhang_bound_m=10.0)
     setattr(res, field, bad)
@@ -583,7 +583,7 @@ def test_ground_one_sided_missing_nonfinite_measurements_fail_closed(field, bad)
 @pytest.mark.parametrize("scale,offset", [(1.0, 0.0), (1.2, 23.0), (0.8, -19.0),
                                         (1.1, 100.0), (0.9, -100.0), (1.3, 1.5)])
 def test_one_sided_ground_generated_perimeters_probe(scale, offset):
-    """[D133] SYNTHETIC translated/scaled diagonal sites: forward R11 passes; reverse bound > R11."""
+    """[D134] SYNTHETIC translated/scaled diagonal sites: forward R11 passes; reverse bound > R11."""
     v = np.array([(0, 0, 0), (10, 0, 0), (0, 10, 0)], float)
     v[:, :2] = scale * v[:, :2] + offset
     t = np.array([(0, 1, 2)])

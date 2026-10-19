@@ -22,7 +22,7 @@ Ground: quadtree over the surface plan; a cell becomes one hexahedron whose top 
 its four corner heights and whose bottom is `depth` below the lowest sample. A cell splits until the
 vertical deviation between surface samples and the top is <= `tol` (R11: 10 cm) or `min_cell` is reached;
 the achieved maximum is returned, never hidden. Pieces are shrunk by gap/2 in plan.
-R11-R13 use one-sided model -> UCX deviation [D133]; exposed UCX -> model distance and Ground
+R11-R13 use one-sided model -> UCX deviation [D134]; exposed UCX -> model distance and Ground
 footprint overhang are diagnostics only, not tolerance gates. Coverage and functional voids still apply.
 
 Thin-element exclusion (R04), target inventory (R01-R03) and stair shape (R14) are the caller's choice of
@@ -87,7 +87,7 @@ class UcxResult:
     @property
     def within_tol(self) -> bool:
         """Ground: model -> UCX vertical deviation and uncovered strip within `tol_m`.
-        Reverse footprint overhang is diagnostic only [D133]; Main is bounded by construction.
+        Reverse footprint overhang is diagnostic only [D134]; Main is bounded by construction.
         """
         if self.target != "Ground":
             return True
