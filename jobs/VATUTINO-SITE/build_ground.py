@@ -87,6 +87,15 @@ def main(argv=None) -> int:
     allp = [(e["x"], e["y"], e["z"]) for e in d["elevations"]]
     tin = gc.build_tin(allp)
     sampler = gc.ReliefSampler(tin)
+    detail, dispositions = gd.build_details(d.get("ground_elements", []), plan.surface, sampler)
+    stair_footprints = [shape(r["footprint"]) for r in dispositions if r.get("footprint")]
+    if stair_footprints:
+        from shapely.ops import unary_union
+        stairs = unary_union(stair_footprints)
+        plan.surface = gc.MultiPolygon(gc._polys(plan.surface.difference(stairs)))
+        for layer in plan.layers:
+            layer.geom = gc.MultiPolygon(gc._polys(layer.geom.difference(stairs)))
+        plan.report["modeled_stairs_replace_surface_m2"] = stairs.area
     flat = gc.build_flat(plan, cell=a.cell, chord=a.chord, sampler=sampler, tol=a.relief_tol, snap=a.snap)
     rep = {"input": str(src), "input_sha256": hashlib.sha256(src.read_bytes()).hexdigest(), "plan": plan.report,
            "layers": [{"slot": l.slot, "covering": l.covering, "level": l.level, "area_m2": round(l.geom.area, 3)}
@@ -120,10 +129,9 @@ def main(argv=None) -> int:
     rep["stack_gaps"] = gc.measure_stack_gaps(proj, STEP)
     rep["open_edges"] = gc.measure_open_edges(proj, plan, eps=0.0022)
     master = gc.add_skirt(proj, depth=1.0)
-    detail, dispositions = gd.build_details(d.get("ground_elements", []), plan.surface, sampler)
     rep["details"] = dispositions
     rep["detail_triangles"] = len(detail.faces)
-    master = gd.combine([master, detail])
+    master = gc.clean_topology(gd.combine([master, detail]))
     surf_tris = int((master.level >= 0).sum())
     s_pz = sum(h.area for h in plan.holes)
     rep["budget"] = {"surface_triangles": surf_tris, "total_triangles": len(master.faces),

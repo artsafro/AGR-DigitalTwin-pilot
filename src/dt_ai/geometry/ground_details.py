@@ -145,9 +145,7 @@ def build_details(elements, boundary, sampler):
         curbs.setdefault(role,[]).append(area)
         row.update(status='modeled',reason='approved section; polyline is the width centreline',width_m=width,height_m=height,
                    length_m=path.length,footprint_m2=area.area,bottom_above_vp_m=DATUM)
-    for role,gs in curbs.items():
-        width,height,slot=SECTIONS[role]
-        meshes.append(_curb_solid(unary_union(gs),sampler,height,slot))
+    stair_footprints=[]
     for root,group in stair_groups.items():
         parent=next((e for e,r in group if e['kind']=='INSERT'),None)
         lines=[shapely.force_2d(shape(e['geometry'])) for e,r in group if e.get('geometry')]
@@ -182,13 +180,18 @@ def build_details(elements, boundary, sampler):
                     if hit.all() and np.ptp(heights)>.001:
                         # Elevations follow VP at tread centres, rather than corrupt symbol-local Z.
                         meshes.append(_stairs_solid(outline,cells,heights+DATUM,sampler))
-                        for e,r in group:r.update(status='modeled',reason='source footprint/tread cuts; heights from VP',treads=len(cells),
+                        stair_footprints.append(outline)
+                        for e,r in group:r.update(status='modeled',reason='source footprint/tread cuts; heights from VP',treads=len(cells),footprint=shapely.geometry.mapping(outline),
                                                    min_vp_z=float(heights.min()),max_vp_z=float(heights.max()))
                         continue
                     reason='VP does not define distinct tread elevations (or projection misses)'
                 else:reason='DWG tread lines do not partition the stair footprint'
             else:reason='stair footprint outside Ground or unsupported holes/multiple parts'
         for e,r in group:r['reason']=reason
+    for role,gs in curbs.items():
+        width,height,slot=SECTIONS[role]
+        footprint=unary_union(gs).difference(unary_union(stair_footprints))
+        if not footprint.is_empty:meshes.append(_curb_solid(footprint,sampler,height,slot))
     mesh=combine(meshes)
     if len(mesh.faces):
         # Detail UV is derived after cleanup. No loose edges or near-duplicate solid vertices are retained.
