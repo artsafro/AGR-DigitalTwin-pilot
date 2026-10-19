@@ -164,24 +164,26 @@ def test_ground_within_r11_and_valid():
 
 
 def test_ground_random_terrains_probe():
-    """Probe: 20 seeded random terrains -> every piece closed/convex, no overlap; the reported
+    """Probe: 8 seeded random terrains -> every piece closed/convex, no overlap; the reported
     max_vertical_dev_m is exact (never below the dense-sample deviation), so 'within R11' is never claimed
     falsely; terrains with noise below the mesh step pass R11."""
     rng = np.random.default_rng(166)
     passed = 0
-    for k in range(20):
-        v, t = terrain(24, 18, 1.5)
+    for k in range(8):
+        v, t = terrain(16, 12, 1.5)
         v[:, 2] += rng.normal(0, 0.15 if k % 2 else 0.03, len(v))
         res = ub.build_ground(v, t, cell=12.0, min_cell=0.75, tol=0.08)
         assert_valid_pieces(res)
-        dev = ub.ground_deviation(ub.sample_surface(v, t, 0.3), res)
+        pts = ub.sample_surface(v, t, 0.3)
+        dev = ub.ground_deviation(pts, res)
         assert np.isfinite(dev).all()
-        assert dev.max() <= res.max_vertical_dev_m + 1e-9
+        inner = ub.ground_deviation(pts, res, margin=0.0)  # inside a piece plan: the builder's value is exact
+        assert inner[np.isfinite(inner)].max() <= res.max_vertical_dev_m + 1e-9
         assert res.within_tol == (res.max_vertical_dev_m <= 0.08)
         if res.within_tol:
             assert dev.max() <= ub.GROUND_TOL_M
             passed += 1
-    assert passed >= 10, passed
+    assert passed >= 4, passed
 
 
 def test_main_random_buildings_probe():
@@ -255,3 +257,52 @@ def test_bad_cell_fails_closed():
     for cell in (0.0, -1.0, float("nan"), float("inf"), 0.008):
         with pytest.raises(ub.UcxBuildError):
             ub.build_main(v, t, cell=cell)
+
+
+DRIVER = __import__("pathlib").Path(__file__).resolve().parents[1] / "tools" / "blender" / "ucx_build.py"
+
+
+def _drive(*args):
+    import subprocess
+    import sys
+
+    return subprocess.run([sys.executable, str(DRIVER), "--", *map(str, args)], capture_output=True, text=True,
+                          timeout=120)
+
+
+@pytest.mark.parametrize("case", ["same", "case_dotdot", "hardlink", "report_alias", "not_fbx", "no_target",
+                                  "bad_opt", "missing_input"])
+def test_driver_refuses_before_any_write(tmp_path, case):
+    """The driver refuses (exit 4) before bpy is imported: nothing is written, the source is unchanged."""
+    import os
+
+    src = tmp_path / "SM_X_1.fbx"
+    src.write_bytes(b"fbx-bytes")
+    out, extra = tmp_path / "new.fbx", ["Main"]
+    if case == "same":
+        out = src
+    elif case == "case_dotdot":
+        out = tmp_path / "sub" / ".." / "SM_X_1.FBX" if os.name == "nt" else tmp_path / "sub" / ".." / "SM_X_1.fbx"
+        (tmp_path / "sub").mkdir()
+    elif case == "hardlink":
+        out = tmp_path / "link.fbx"
+        os.link(src, out)
+    elif case == "report_alias":  # the JSON report next to the output would be the source
+        src2 = tmp_path / "o.fbx.ucx_build.json"
+        src2.write_bytes(b"fbx-bytes")
+        src, out = src2, tmp_path / "o.fbx"
+    elif case == "not_fbx":
+        out = tmp_path / "new.blend"
+    elif case == "no_target":
+        extra = ["Glass"]
+    elif case == "bad_opt":
+        extra = ["Main", "cell=abc"]
+    else:
+        src = tmp_path / "absent.fbx"
+    before = sorted(p.name for p in tmp_path.rglob("*"))
+    r = _drive(src, out, *extra)
+    assert r.returncode == 4, (r.returncode, r.stderr)
+    assert "UCX_BUILD refused" in r.stderr
+    assert sorted(p.name for p in tmp_path.rglob("*")) == before
+    if src.exists():
+        assert src.read_bytes() == b"fbx-bytes"

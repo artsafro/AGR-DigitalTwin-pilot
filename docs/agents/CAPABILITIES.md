@@ -423,6 +423,15 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
 - Status: WORKING (2026-10-06; Blender 4.4 and 5.1 background, cube roundtrip tests)
 - Triangles, polygon degrees, UV channels, UDIM tiles, mirrored UV, transforms, embedded images.
 
+### UCX builder — `src/dt_ai/geometry/ucx_build.py`, `tools/blender/ucx_build.py`
+- Status: TOOL ONLY (2026-10-19, #166): Main measured on 4 etalon meshes (KPP1, PSU275, Skolkovo, Mashi),
+  Ground on synthetic surfaces only (`tests/test_ucx_build.py`); no real-object delivery acceptance.
+- `blender --background --factory-startup --python-exit-code 1 --python tools/blender/ucx_build.py --
+  <model.fbx|.blend> <out.fbx> <Main|Ground> [cell= gap= with=<obj,...>]`; exit 0 built / 3 Ground over
+  `tol` / 2 failed / 4 refused (output aliases input). Job scripts: `build_into_scene(...)`.
+- Facade-oriented 8-vertex boxes (Main) or quadtree hexahedra (Ground), 4 mm gap, [D012] budget; check
+  the output with `tools/blender/ucx_audit.py` and the validator scene checks.
+
 ### Face overlap check — `tools/qa/check_clearance.py`
 - Status: WORKING (2026-10-06; AGR boundary cases + FBX planes 3 mm apart)
 - Near-parallel faces closer than 5 mm (profile), on faces JSON or FBX via

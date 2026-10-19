@@ -36,10 +36,13 @@ shared delivery validation. [Image verification and PR acceptance evidence](ucx-
 
 ## Current limitations
 
-[Pipeline stage #10](../../pipeline.md) says UCX is “missing”, while
-[KPP1](../../../jobs/KPP1/scripts/vpm_ucx.py) and
-[PSU275](../../../jobs/PSU275/scripts/vpm_ucx.py) build it. This is job-local capability,
-not a shared tool; pipeline.md is deliberately unchanged here. PSU275 explicitly omits
+[Pipeline stage #10](../../pipeline.md) is "tool only": the shared builder
+[`ucx_build.py`](../../../src/dt_ai/geometry/ucx_build.py) (Blender driver `tools/blender/ucx_build.py`,
+#166) builds Main and Ground UCX from an accepted mesh; its Main output was measured on four etalon meshes
+(PR evidence), Ground only on synthetic surfaces. The builder's own deviation figures are construction
+self-measurements, not an L2 check of an arbitrary delivery, so R11-R13 coverage above stays `none`.
+[KPP1](../../../jobs/KPP1/scripts/vpm_ucx.py) and [PSU275](../../../jobs/PSU275/scripts/vpm_ucx.py)
+keep their job-local scripts (not re-delivered). PSU275 explicitly omits
 stair collision and fills parapet wells: script existence is not blanket compliance.
 V010 checks UCX presence per non-lighting VPM FBX, material slots, triangle budget and mutual intersections; convexity and coverage stay not_run. No benchmark or Ground UCX case exists in the roadmap snapshot.
 C3 is decided by the user [D012]; C15 is decided by the user [D098]: 2 mm - 1 cm
