@@ -1,0 +1,367 @@
+{
+ "version": "v003-set",
+ "out_dir": "C:/x/vatutino-maf/v003-set",
+ "smoothing_deg": 40.0,
+ "npm_share": 60000,
+ "materials": [
+  {
+   "name": "steel_ral7047",
+   "kind": "solid",
+   "color": "#D0D0D0",
+   "size": 64,
+   "reason": "schedule: steel, powder coat RAL 7047 (Telegrey 4, #D0D0D0; RAL 7047 missing from tools/materials/ral_classic.json)"
+  },
+  {
+   "name": "larch_light_oak",
+   "kind": "solid",
+   "color": "#C49A6C",
+   "size": 64,
+   "reason": "schedule: larch, oil + lacquer 'light oak'; solid colour (no texture source), visual review"
+  },
+  {
+   "name": "hpl_satin_wood",
+   "kind": "solid",
+   "color": "#B4825A",
+   "size": 64,
+   "reason": "schedule *T3510/26: HPL 'satin wood'; solid colour, visual review"
+  },
+  {
+   "name": "rope_pp",
+   "kind": "solid",
+   "color": "#7A7A7A",
+   "size": 64,
+   "reason": "schedule *T3510/28: polypropylene rope, colour not given -> review"
+  }
+ ],
+ "positions": [
+  {
+   "set_id": "VAT_MAF_T3510_01",
+   "table": "*T3510",
+   "row": 1,
+   "catalogue_id": "MAF_0326",
+   "name": "Скамейка стальная «Андромеда» / Артикул: 14122",
+   "source_fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0326_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_006.fbx",
+   "schedule_size_m": [
+    1.8,
+    0.5,
+    0.72
+   ],
+   "instances": 5,
+   "npm_matches": [
+    "SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl.006"
+   ],
+   "npm_route": "existing NPM object (npm_matches: SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl.006) used as is",
+   "decimate_ratio": 1.0,
+   "material_map": {
+    "1": "larch_light_oak",
+    "2": "steel_ral7047"
+   },
+   "material_reason": "sub-mat 1 = slats z 0.38-0.45 m (larch); 2 = frame/legs (steel)",
+   "smoothing_deg": 40.0,
+   "height_rule": "overall",
+   "dimension_exception": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_02",
+   "table": "*T3510",
+   "row": 2,
+   "catalogue_id": "MAF_0794",
+   "name": "Урна стальная «Арго» / Артикул: 19648",
+   "source_fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0794_Object105.fbx",
+   "schedule_size_m": [
+    0.62,
+    0.47,
+    1.05
+   ],
+   "instances": 48,
+   "npm_matches": [],
+   "npm_route": "light version not needed: raw model kept (budget fits)",
+   "decimate_ratio": 1.0,
+   "material_map": {
+    "*": "steel_ral7047"
+   },
+   "material_reason": "single source material; urn body steel RAL 7047",
+   "smoothing_deg": 40.0,
+   "height_rule": "overall",
+   "dimension_exception": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_07",
+   "table": "*T3510",
+   "row": 7,
+   "catalogue_id": "MAF_0747",
+   "name": "Скамейка «Фестиваль» Модуль 1 / арт. nv 521-01",
+   "source_fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0747_12.fbx",
+   "schedule_size_m": [
+    1.86,
+    1.7,
+    0.79
+   ],
+   "instances": 4,
+   "npm_matches": [
+    "SM_NizhnieMnevniki_ZU_12_B_GroundEl.001"
+   ],
+   "npm_route": "existing NPM object (npm_matches: SM_NizhnieMnevniki_ZU_12_B_GroundEl.001) used as is",
+   "decimate_ratio": 1.0,
+   "material_map": {
+    "*": "larch_light_oak"
+   },
+   "material_reason": "single source material; deck area 9.5 m2 dominates -> larch",
+   "smoothing_deg": 40.0,
+   "height_rule": "overall",
+   "dimension_exception": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_09",
+   "table": "*T3510",
+   "row": 9,
+   "catalogue_id": "MAF_0506",
+   "name": "Лежак «Городской» / 11061",
+   "source_fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0506_M_Chaise_loung_001.fbx",
+   "schedule_size_m": [
+    0.6,
+    1.633,
+    0.93
+   ],
+   "instances": 6,
+   "npm_matches": [],
+   "npm_route": "light version: Decimate collapse ratio 0.5",
+   "decimate_ratio": 0.5,
+   "material_map": {
+    "Material #2125652641": "steel_ral7047",
+    "Material #2125652648": "larch_light_oak"
+   },
+   "material_reason": "2641 = 1160 small faces, area 1.0 m2 (frame, steel); 2648 = 300 faces, area 2.9 m2 (slats, larch)",
+   "smoothing_deg": 40.0,
+   "height_rule": "overall",
+   "dimension_exception": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_11",
+   "table": "*T3510",
+   "row": 11,
+   "catalogue_id": "MAF_0322",
+   "name": "Качалка балансир / Артикул: ИО 0410-2",
+   "source_fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0322_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_001.fbx",
+   "schedule_size_m": [
+    0.9,
+    0.6,
+    0.7
+   ],
+   "instances": 2,
+   "npm_matches": [],
+   "npm_route": "light version: Decimate collapse ratio 0.6",
+   "decimate_ratio": 0.6,
+   "material_map": {
+    "1": "larch_light_oak",
+    "2": "steel_ral7047"
+   },
+   "material_reason": "sub-mat 1 = seat body z 0.26-0.47 (larch); 2 = spring/handles (steel)",
+   "smoothing_deg": 40.0,
+   "height_rule": "overall",
+   "dimension_exception": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_12",
+   "table": "*T3510",
+   "row": 12,
+   "catalogue_id": "MAF_0920",
+   "name": "Качели / Артикул:Качели / ИО 0118Т-1",
+   "source_fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0920_Object090.fbx",
+   "schedule_size_m": [
+    2.2,
+    0.3,
+    1.9
+   ],
+   "instances": 2,
+   "npm_matches": [],
+   "npm_route": "light version not needed: raw model kept (budget fits)",
+   "decimate_ratio": 1.0,
+   "material_map": {
+    "*": "steel_ral7047"
+   },
+   "material_reason": "single source material; swing frame steel RAL 7047",
+   "smoothing_deg": 40.0,
+   "height_rule": "overall",
+   "dimension_exception": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_16",
+   "table": "*T3510",
+   "row": 16,
+   "catalogue_id": "MAF_0803",
+   "name": "Детская площадка / Артикул: ДП 090",
+   "source_fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0803_Object115.fbx",
+   "schedule_size_m": [
+    5.5,
+    2.0,
+    2.25
+   ],
+   "instances": 1,
+   "npm_matches": [],
+   "npm_route": "light version: Decimate collapse ratio 0.5",
+   "decimate_ratio": 0.5,
+   "material_map": {
+    "*": "larch_light_oak"
+   },
+   "material_reason": "single source material; playground ДП 090 timber dominates -> larch",
+   "smoothing_deg": 40.0,
+   "height_rule": "overall",
+   "dimension_exception": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_26",
+   "table": "*T3510",
+   "row": 26,
+   "catalogue_id": "MAF_0677",
+   "name": "Теннисный стол Премиум / Артикул: 4-060",
+   "source_fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0677_M_Tennis_Table_001.fbx",
+   "schedule_size_m": [
+    2.74,
+    1.52,
+    0.76
+   ],
+   "instances": 1,
+   "npm_matches": [],
+   "npm_route": "light version: Decimate collapse ratio 0.35",
+   "decimate_ratio": 0.35,
+   "material_map": {
+    "Material #2125652643": "hpl_satin_wood",
+    "Material #2125652641": "hpl_satin_wood",
+    "Material #2125652648": "steel_ral7047"
+   },
+   "material_reason": "2643 = table top at z 0.76 (HPL); 2641 = top edge strip z 0.76 (HPL); 2648 = frame/net (steel)",
+   "smoothing_deg": 40.0,
+   "height_rule": "table_top",
+   "dimension_exception": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_27",
+   "table": "*T3510",
+   "row": 27,
+   "catalogue_id": "MAF_0219",
+   "name": "Комплект мебели «Ландау» / Артикул: 13994",
+   "source_fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0219_C_13010_Stol_Landau_komplekt_001.fbx",
+   "schedule_size_m": [
+    2.28,
+    2.28,
+    0.75
+   ],
+   "instances": 3,
+   "npm_matches": [
+    "C_13010_Stol Landau komplekt.001"
+   ],
+   "npm_route": "existing NPM object (npm_matches: C_13010_Stol Landau komplekt.001) used as is",
+   "decimate_ratio": 1.0,
+   "material_map": {
+    "1": "larch_light_oak",
+    "3": "steel_ral7047"
+   },
+   "material_reason": "sub-mat 1 = seats/top z 0.41-0.77, area 7.4 m2 (larch); 3 = frame (steel)",
+   "smoothing_deg": 40.0,
+   "height_rule": "overall",
+   "dimension_exception": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_28",
+   "table": "*T3510",
+   "row": 28,
+   "catalogue_id": "MAF_0127",
+   "name": "Качели-гнездо круг / 189.001",
+   "source_fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0127_Icosphere_004.fbx",
+   "schedule_size_m": [
+    1.09,
+    1.09,
+    null
+   ],
+   "instances": 4,
+   "npm_matches": [
+    "Icosphere.004"
+   ],
+   "npm_route": "existing NPM object (npm_matches: Icosphere.004) used as is",
+   "decimate_ratio": 1.0,
+   "material_map": {
+    "3": "steel_ral7047",
+    "4": "rope_pp"
+   },
+   "material_reason": "sub-mat 3 = frame 1.71 x 2.00 m, thin tubes (steel); 4 = nest/ropes area 4.8 m2 (PP rope)",
+   "smoothing_deg": 40.0,
+   "height_rule": "overall",
+   "dimension_exception": "Q8 (Artem 2026-10-19): schedule 1.09 x 1.09 m is the seat diameter, model includes frame; D112 architect question"
+  },
+  {
+   "set_id": "VAT_MAF_T3510_29",
+   "table": "*T3510",
+   "row": 29,
+   "catalogue_id": "MAF_0159",
+   "name": "Кресло «Парк» / Артикул: 12750",
+   "source_fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0159_C_Veloparkovka_Forrest_C.fbx",
+   "schedule_size_m": [
+    0.765,
+    0.53,
+    1.065
+   ],
+   "instances": 25,
+   "npm_matches": [],
+   "npm_route": "light version not needed: raw model kept (budget fits)",
+   "decimate_ratio": 1.0,
+   "material_map": {
+    "*": "larch_light_oak"
+   },
+   "material_reason": "single source material; chair seat/back slats dominate -> larch",
+   "smoothing_deg": 40.0,
+   "height_rule": "overall",
+   "dimension_exception": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_31",
+   "table": "*T3510",
+   "row": 31,
+   "catalogue_id": "MAF_0722",
+   "name": "Стол «Лондон» Тип 3 / Артикул: 13032",
+   "source_fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0722_Plane002.fbx",
+   "schedule_size_m": [
+    1.0,
+    1.0,
+    0.6
+   ],
+   "instances": 16,
+   "npm_matches": [],
+   "npm_route": "light version not needed: raw model kept (budget fits)",
+   "decimate_ratio": 1.0,
+   "material_map": {
+    "*": "larch_light_oak"
+   },
+   "material_reason": "single source material; table top area dominates -> larch",
+   "smoothing_deg": 40.0,
+   "height_rule": "overall",
+   "dimension_exception": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_32",
+   "table": "*T3510",
+   "row": 32,
+   "catalogue_id": "MAF_0687",
+   "name": "Приствольная решетка",
+   "source_fbx": "C:/x/t_3e6ff1b3/library/fbx/MAF_0687_M_Trunk_Gate_003.fbx",
+   "schedule_size_m": [
+    1.0,
+    1.0,
+    0.044
+   ],
+   "instances": 4,
+   "npm_matches": [
+    "crp_stitch_result_stitch all111.002"
+   ],
+   "npm_route": "existing NPM object (npm_matches: crp_stitch_result_stitch all111.002) used as is",
+   "decimate_ratio": 1.0,
+   "material_map": {
+    "*": "steel_ral7047"
+   },
+   "material_reason": "schedule: steel RAL 7047 only",
+   "smoothing_deg": 40.0,
+   "height_rule": "overall",
+   "dimension_exception": null
+  }
+ ]
+}

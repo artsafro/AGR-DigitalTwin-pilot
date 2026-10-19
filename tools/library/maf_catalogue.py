@@ -907,7 +907,7 @@ def _cmd_catalogue(args) -> dict:
     _write_json(args.out_json, catalogue)
     md_path = Path(args.out_md)
     md_path.parent.mkdir(parents=True, exist_ok=True)
-    md_path.write_text(render_markdown(catalogue), encoding="utf-8")
+    md_path.write_text(render_markdown(catalogue), encoding="utf-8", newline="\n")
     if args.contact_sheet:
         contact_sheet(catalogue["entries"], args.contact_sheet)
     return catalogue

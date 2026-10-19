@@ -1,5 +1,12 @@
+import math
+
+import random
+
+from twinqa.scene import OVERLAP_EPS_M, find_blender, readback, scene_findings, ucx_triangle_limit
+
 """Scene stages from the Blender readback: rule logic on fixed readbacks, plus a real
 background-Blender roundtrip (skipped when Blender is not installed)."""
+import itertools
 import json
 import subprocess
 import zipfile
@@ -12,16 +19,38 @@ from test_validator import PROFILES, STEM, good_files
 from twinqa.scene import find_blender, readback, scene_findings, ucx_triangle_limit
 
 
+def _clean_topology(**overrides):
+    topo = {
+        "duplicate_vertices": 0,
+        "duplicate_edges": 0,
+        "duplicate_polygons": 0,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 0,
+        "tol_m": 0.002,
+    }
+    topo.update(overrides)
+    return topo
+
+
 def mesh(name="SM_Test_K_1_Main", tris=12, degrees=None, rot=(0, 0, 0), scale=(1, 1, 1), uv=1, mirrored=0,
-         tiles=(1001,), loc=(0, 0, 0), world_scale=None, parent=None):
+         tiles=(1001,), loc=(0, 0, 0), topology=None, omit_topology=False, world_scale=None, parent=None, materials=()):
     facts = {"name": name, "triangles": tris, "polygon_degrees": degrees or {"3": tris}, "rotation_euler_deg": list(rot),
              "scale": list(scale), "uv_channels": uv, "mirrored_uv_triangles": mirrored, "udim_tiles": list(tiles),
-             "location": list(loc)}
+             "location": list(loc), "materials": list(materials)}
+    if not omit_topology:
+        facts["topology"] = _clean_topology(**(topology or {}))
     if world_scale is not None:
         facts["world_scale"] = list(world_scale)
     if parent is not None:
         facts["parent"] = parent
     return facts
+
+
+UCX = "UCX_SM_Test_K_1_Main_001"
 
 
 def rb(*meshes, other=(), units=None):
@@ -38,7 +67,7 @@ def statuses(found, stage):
 def test_clean_vpm_mesh_passes_scene_stages():
     found = scene_findings(rb(mesh()), "vpm", "oks", PROFILES.vpm)
     assert set(statuses(found, "V003").values()) == {"pass"}
-    assert statuses(found, "V004") == {"applied transforms": "pass"}
+    assert statuses(found, "V004") == {"applied transforms": "pass", "topology defects": "pass", "co-directional clearance": "not_run"}
     assert set(statuses(found, "V008").values()) == {"pass"}
 
 
@@ -59,7 +88,78 @@ def test_ucx_excluded_from_model_triangles_and_budget_checked():
     found = scene_findings(rb(mesh(tris=100_000), mesh(name="UCX_SM_Test_K_1_Main_001", tris=5_001)), "vpm", "oks",
                            PROFILES.vpm)
     assert next(f for f in found["V003"] if f.name == "triangle count").observed.endswith(": 100000")
-    assert statuses(found, "V010") == {"UCX triangle budget": "fail", "UCX shape and coverage": "not_run"}
+    assert statuses(found, "V010") == {"UCX present": "pass", "UCX material slots": "pass",
+                                       "UCX triangle budget": "fail", "UCX shape and coverage": "not_run",
+                                       "UCX intersections": "not_run", "UCX intersections coverage": "not_run",
+                                       "UCX piece gap (advisory)": "not_run"}
+
+
+# R05 / R07 (docs/domain/areas/ucx.md; reg p.36 §13.1, §13.3): own UCX in every non-lighting VPM FBX, no slots
+@pytest.mark.parametrize("role", ["oks", "ground"])
+def test_vpm_geometry_fbx_without_ucx_fails_r05(role):
+    found = scene_findings(rb(mesh(materials=["M_Wall"])), "vpm", role, PROFILES.vpm)
+    present = next(f for f in found["V010"] if f.name == "UCX present")
+    assert present.status == "fail" and present.source_pdf_pages == [36]
+    assert "UCX material slots" not in statuses(found, "V010")
+
+
+@pytest.mark.parametrize("role", ["oks", "ground"])
+def test_vpm_geometry_fbx_with_clean_ucx_passes_r05_r07(role):
+    found = scene_findings(rb(mesh(materials=["M_Wall"]), mesh(name=UCX, tris=12)), "vpm", role, PROFILES.vpm)
+    assert statuses(found, "V010")["UCX present"] == "pass"
+    assert statuses(found, "V010")["UCX material slots"] == "pass"
+
+
+def test_light_fbx_and_npm_are_exempt_from_ucx_r03_r05():
+    light = scene_findings(rb(mesh(name="SM_Test_K_1_Light")), "vpm", "light", PROFILES.vpm)
+    npm = scene_findings(rb(mesh()), "npm", "oks", PROFILES.npm)
+    assert light["V010"] == [] and npm["V010"] == []
+
+
+@pytest.mark.parametrize("slots", [["M_Ucx"], [None], [None, "M_Wall"]])  # an empty slot is still a slot
+def test_ucx_with_material_slot_fails_r07(slots):
+    found = scene_findings(rb(mesh(), mesh(name=UCX), mesh(name="UCX_SM_Test_K_1_Main_002", materials=slots)),
+                           "vpm", "oks", PROFILES.vpm)
+    finding = next(f for f in found["V010"] if f.name == "UCX material slots")
+    assert finding.status == "fail" and "UCX_SM_Test_K_1_Main_002" in finding.observed
+    assert UCX + "'" not in finding.observed  # the clean piece is not reported
+
+
+def test_ucx_slots_unknown_without_readback_field_is_not_run_never_pass():
+    ucx = mesh(name=UCX)
+    del ucx["materials"]
+    found = scene_findings(rb(mesh(), ucx), "vpm", "oks", PROFILES.vpm)
+    assert statuses(found, "V010")["UCX material slots"] == "not_run"
+
+
+def test_ucx_presence_and_slots_brute_force_probe():
+    """Invariant probe: every combination of kind, role, UCX count, slot shape and render-mesh slots."""
+    slot_shapes = ["absent", [], [None], ["M_Ucx"]]
+    cases = 0
+    for kind, role, n_ucx, render_slots in itertools.product(("vpm", "npm"), ("oks", "ground", "light"), range(3),
+                                                             ([], ["M_Wall"])):
+        for shapes in itertools.product(slot_shapes, repeat=n_ucx):
+            pieces = []
+            for i, shape in enumerate(shapes, 1):
+                piece = mesh(name=f"UCX_SM_Test_K_1_Main_{i:03d}", materials=[] if shape == "absent" else shape)
+                if shape == "absent":
+                    del piece["materials"]
+                pieces.append(piece)
+            found = statuses(scene_findings(rb(mesh(materials=render_slots), *pieces), kind, role,
+                                            PROFILES.vpm if kind == "vpm" else PROFILES.npm), "V010")
+            cases += 1
+            if kind != "vpm" or role == "light":
+                assert found == {}, (kind, role, shapes)
+                continue
+            assert found["UCX present"] == ("pass" if n_ucx else "fail")
+            if not n_ucx:
+                assert "UCX material slots" not in found
+                continue
+            slotted = any(s not in ("absent", []) for s in shapes)
+            expected = "fail" if slotted else "not_run" if "absent" in shapes else "pass"
+            assert found["UCX material slots"] == expected, (shapes, found)
+    print(f"UCX presence/slots probe: {cases}/{cases} combinations")
+    assert cases == 2 * 3 * 2 * (1 + 4 + 16)
 
 
 def test_npm_oks_over_150k_fails():
@@ -338,7 +438,71 @@ def test_readback_returncode_0_with_valid_report_returns_dictionary(monkeypatch)
     assert result == expected_data
 
 
+@pytest.mark.parametrize("kind", ["npm", "vpm"])
+@pytest.mark.parametrize("count, status", [(100, "pass"), (101, "fail")])
+def test_topology_duplicate_limit(kind, count, status):
+    profile = PROFILES.npm if kind == "npm" else PROFILES.vpm
+    found = scene_findings(rb(mesh(topology={"duplicates_and_self_intersections": count})), kind, "oks", profile)
+    assert statuses(found, "V004")["topology defects"] == status
+
+
+@pytest.mark.parametrize("kind", ["npm", "vpm"])
+@pytest.mark.parametrize("key", ["isolated_vertices", "isolated_edges", "isolated_polygons", "zero_length_edges"])
+def test_topology_isolated_or_zero_length_fails(kind, key):
+    profile = PROFILES.npm if kind == "npm" else PROFILES.vpm
+    found = scene_findings(rb(mesh(topology={key: 1})), kind, "oks", profile)
+    assert statuses(found, "V004")["topology defects"] == "fail"
+
+
+def test_topology_missing_readback_is_not_run():
+    found = scene_findings(rb(mesh(omit_topology=True)), "vpm", "oks", PROFILES.vpm)
+    assert statuses(found, "V004")["topology defects"] == "not_run"
+
+
+def test_topology_error_is_not_run():
+    found = scene_findings(rb(mesh(topology={"error": "RuntimeError: boom"})), "npm", "oks", PROFILES.npm)
+    assert statuses(found, "V004")["topology defects"] == "not_run"
+
+
+def test_topology_tolerance_mismatch_is_not_run():
+    found = scene_findings(rb(mesh(topology={"tol_m": 0.001})), "vpm", "ground", PROFILES.vpm)
+    assert statuses(found, "V004")["topology defects"] == "not_run"
+
+
+def test_ucx_topology_defects_fail():
+    found = scene_findings(rb(mesh(name="UCX_SM_Test_K_1_Main_001", topology={"zero_length_edges": 1})),
+                           "vpm", "oks", PROFILES.vpm)
+    assert statuses(found, "V004")["topology defects"] == "fail"
+
+
 BLENDER = find_blender()
+MAKE_UCX = """
+import bpy, sys
+out, variant = sys.argv[sys.argv.index('--') + 1], sys.argv[-1]
+bpy.ops.wm.read_factory_settings(use_empty=True)
+bpy.ops.mesh.primitive_cube_add(size=2, location=(0, 0, 1))
+bpy.context.object.name = 'SM_Test_K_1_Main'
+bpy.context.object.data.materials.append(bpy.data.materials.new('M_Wall'))
+if variant != 'missing':
+    bpy.ops.mesh.primitive_cube_add(size=2.1, location=(0, 0, 1))
+    bpy.context.object.name = 'UCX_SM_Test_K_1_Main_001'
+    if variant == 'slot':
+        bpy.context.object.data.materials.append(bpy.data.materials.new('M_Ucx'))
+bpy.ops.export_scene.fbx(filepath=out)
+"""
+
+
+@pytest.mark.blender
+@pytest.mark.skipif(BLENDER is None, reason="Blender not installed")
+@pytest.mark.parametrize("variant, present, slots", [("clean", "pass", "pass"), ("slot", "pass", "fail"),
+                                                     ("missing", "fail", None)])
+def test_blender_ucx_presence_and_slots_from_fbx_readback(tmp_path, variant, present, slots):
+    fbx_path = tmp_path / f"{STEM}.fbx"
+    subprocess.run([BLENDER, "--background", "--factory-startup", "--python-exit-code", "1",
+                    "--python-expr", MAKE_UCX, "--", str(fbx_path), variant], check=True, capture_output=True, timeout=300)
+    found = statuses(scene_findings(readback(fbx_path), "vpm", "oks", PROFILES.vpm), "V010")
+    assert found["UCX present"] == present
+    assert found.get("UCX material slots") == slots
 MAKE_CUBE = """
 import bpy, sys
 out, good = sys.argv[sys.argv.index('--') + 1], sys.argv[-1] == 'good'
@@ -381,6 +545,100 @@ def test_blender_roundtrip_through_validator(tmp_path, variant):
         assert report.exit_code == 1
 
 
+MAKE_TOPOLOGY = """
+import bmesh, bpy, sys
+out, variant = sys.argv[sys.argv.index('--') + 1], sys.argv[-1]
+bpy.ops.wm.read_factory_settings(use_empty=True)
+bpy.ops.mesh.primitive_cube_add(size=1, location=(0.5, 0.5, 0.5))
+obj = bpy.context.active_object
+obj.name = 'SM_Test_K_1_Main'
+if variant == 'defect':
+    bpy.ops.mesh.primitive_cube_add(size=1, location=(1.0, 0.75, 0.6))
+    other = bpy.context.active_object
+    bpy.ops.object.select_all(action='DESELECT')
+    obj.select_set(True)
+    other.select_set(True)
+    bpy.context.view_layer.objects.active = obj
+    bpy.ops.object.join()
+    obj = bpy.context.active_object
+    obj.name = 'SM_Test_K_1_Main'
+bpy.context.view_layer.objects.active = obj
+obj.select_set(True)
+bpy.ops.object.modifier_add(type='TRIANGULATE')
+bpy.ops.object.modifier_apply(modifier='Triangulate')
+if variant == 'defect':
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    bm.verts.new((10.0, 10.0, 10.0))
+    bm.to_mesh(obj.data)
+    bm.free()
+    obj.data.update()
+bpy.ops.export_scene.fbx(filepath=out)
+"""
+
+
+@pytest.mark.blender
+@pytest.mark.skipif(BLENDER is None, reason="Blender not installed")
+@pytest.mark.parametrize("variant", ["clean", "defect"])
+def test_blender_topology_counts(tmp_path, variant):
+    fbx_path = tmp_path / f"topology_{variant}.fbx"
+    subprocess.run([BLENDER, "--background", "--factory-startup", "--python-exit-code", "1",
+                    "--python-expr", MAKE_TOPOLOGY, "--", str(fbx_path), variant],
+                   check=True, capture_output=True, timeout=300)
+    report = readback(fbx_path, blender=BLENDER)
+    topo = report["meshes"][0]["topology"]
+    found = scene_findings(report, "vpm", "oks", PROFILES.vpm)
+    if variant == "clean":
+        for key in ("duplicate_vertices", "duplicate_edges", "duplicate_polygons", "self_intersections",
+                    "isolated_vertices", "isolated_edges", "isolated_polygons", "zero_length_edges",
+                    "duplicates_and_self_intersections"):
+            assert topo[key] == 0
+        assert statuses(found, "V004")["topology defects"] == "pass"
+    else:
+        assert topo["isolated_vertices"] >= 1
+        assert topo["self_intersections"] > 0
+        assert statuses(found, "V004")["topology defects"] == "fail"
+
+
+MAKE_FALSE_NEGATIVE = """
+import bpy, sys
+out, variant = sys.argv[sys.argv.index('--') + 1], sys.argv[-1]
+bpy.ops.wm.read_factory_settings(use_empty=True)
+if variant == 'shared_vertex':
+    base = [(0.0, 0.0, 0.0), (2.0, 0.0, 0.0), (0.0, 2.0, 0.0), (1.0, 1.0, 1.0), (1.0, 1.0, -1.0)]
+    local = [(0, 1, 2), (0, 3, 4)]
+elif variant == 'folded_contact':
+    # Synthetic boxes: a floor grid edge lies 1 mm under the upper box's foot.
+    base = [(0,0,0), (0,0,1), (0,1,1), (0,1,0), (1,0,0), (1,1,0), (1,1,1), (1,0,1),
+            (.399,0,0), (.399,0,1), (.399,1,1), (.399,1,0),
+            (.1,.1,1), (.1,.1,1.5), (.1,.4,1.5), (.1,.4,1),
+            (.4,.1,1), (.4,.4,1), (.4,.4,1.5), (.4,.1,1.5)]
+    local = [(0,1,2), (0,2,3), (4,5,6), (4,6,7), (0,8,9), (0,9,1), (8,4,7), (8,7,9),
+             (3,2,10), (3,10,11), (11,10,6), (11,6,5), (0,3,11), (0,11,8), (8,11,5), (8,5,4),
+             (1,9,10), (1,10,2), (9,7,6), (9,6,10), (12,13,14), (12,14,15), (16,17,18), (16,18,19),
+             (12,16,19), (12,19,13), (15,14,18), (15,18,17), (12,15,17), (12,17,16), (13,19,18), (13,18,14)]
+else:
+    base = [(-1.0, -1.0, 0.0), (1.0, -1.0, 0.0), (0.0, 1.0, 0.0),
+            (0.0, -0.3, -0.5), (0.0, -0.1, 0.5), (0.0, -0.5, 0.5),
+            (0.0, -0.2, 0.0), (0.0, -0.4, 0.0), (-2.0, -1.0, 0.0), (-1.0, -2.0, 0.0)]
+    local = [(0, 1, 2), (3, 6, 7), (6, 4, 5), (6, 5, 7), (0, 8, 9)]
+n = len(base)
+verts, faces = [], []
+for k in range(101):
+    ox = 4.0 * k
+    verts.extend([(x + ox, y, z) for x, y, z in base])
+    faces.extend([tuple(i + n * k for i in face) for face in local])
+mesh = bpy.data.meshes.new('SM_Test_K_1_Main')
+obj = bpy.data.objects.new('SM_Test_K_1_Main', mesh)
+bpy.context.scene.collection.objects.link(obj)
+mesh.from_pydata(verts, [], faces)
+mesh.update()
+bpy.context.view_layer.objects.active = obj
+obj.select_set(True)
+bpy.ops.export_scene.fbx(filepath=out)
+"""
+
+
 MAKE_INHERITED_SCALE = """
 import bpy, sys
 out, mode = sys.argv[sys.argv.index('--') + 1:]
@@ -406,6 +664,25 @@ bpy.ops.export_scene.fbx(filepath=out, apply_scale_options='FBX_SCALE_UNITS')
 
 @pytest.mark.blender
 @pytest.mark.skipif(BLENDER is None, reason="Blender not installed")
+@pytest.mark.parametrize("variant", ["shared_vertex", "subdivided", "folded_contact"])
+def test_blender_false_negative_crossings(tmp_path, variant):
+    fbx_path = tmp_path / f"false_negative_{variant}.fbx"
+    subprocess.run([BLENDER, "--background", "--factory-startup", "--python-exit-code", "1",
+                    "--python-expr", MAKE_FALSE_NEGATIVE, "--", str(fbx_path), variant],
+                   check=True, capture_output=True, timeout=300)
+    report = readback(fbx_path, blender=BLENDER)
+    topo = report["meshes"][0]["topology"]
+    found = scene_findings(report, "vpm", "oks", PROFILES.vpm)
+    if variant == "folded_contact":
+        assert topo["self_intersections"] == 0
+        assert statuses(found, "V004")["topology defects"] == "pass"
+    else:
+        assert topo["self_intersections"] >= 101
+        assert statuses(found, "V004")["topology defects"] == "fail"
+
+
+@pytest.mark.blender
+@pytest.mark.skipif(BLENDER is None, reason="Blender not installed")
 @pytest.mark.parametrize("mode", ["unit_parent", "parent_scaled", "direct_scaled"])
 @pytest.mark.parametrize("profile", ["npm", "vpm"])
 def test_blender_v002_inherited_scale_roundtrip(tmp_path, mode, profile):
@@ -424,3 +701,312 @@ def test_blender_v002_inherited_scale_roundtrip(tmp_path, mode, profile):
     else:
         assert finding.status == "fail"
         assert "SM_Test_K_1_Main local" in finding.observed
+
+
+BOX_TRIS = [(0, 1, 3), (0, 3, 2), (4, 6, 7), (4, 7, 5), (0, 4, 5), (0, 5, 1),
+            (2, 3, 7), (2, 7, 6), (0, 2, 6), (0, 6, 4), (1, 5, 7), (1, 7, 3)]
+
+
+def ucx_box(name, lo, hi):
+    """UCX mesh whose hull is an axis-aligned box (8 verts, 12 triangles)."""
+    verts = [[hi[0] if i & 4 else lo[0], hi[1] if i & 2 else lo[1], hi[2] if i & 1 else lo[2]] for i in range(8)]
+    m = mesh(name=name, tris=12)
+    m["hull"] = {"verts": verts, "tris": [list(t) for t in BOX_TRIS]}
+    return m
+
+
+def _pair(a, b, kind="vpm", role="oks"):
+    profile = PROFILES.vpm if kind == "vpm" else PROFILES.npm
+    return statuses(scene_findings(rb(mesh(), a, b), kind, role, profile), "V010")
+
+
+def test_ucx_overlap_5cm_fails_intersections():
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (0.95, 0, 0), (1.95, 1, 1)))
+    assert st["UCX intersections"] == "fail"
+    assert "fail" in st.values()
+
+
+def test_ucx_nested_piece_fails_intersections():
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (4, 4, 4)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (1, 1, 1), (2, 2, 2)))
+    assert st["UCX intersections"] == "fail"
+
+
+@pytest.mark.parametrize("gap_m", [0.002, 0.005, 0.01])
+def test_ucx_gap_inside_band_passes_both(gap_m):
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (1 + gap_m, 0, 0), (2 + gap_m, 1, 1)))
+    assert st["UCX intersections"] == "pass"
+    assert st["UCX piece gap (advisory)"] == "pass"
+
+
+def test_ucx_touching_boxes_pass_intersection_and_review_gap():
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (1, 0, 0), (2, 1, 1)))
+    assert st["UCX intersections"] == "pass"
+    assert st["UCX piece gap (advisory)"] == "review"
+
+
+@pytest.mark.parametrize("gap_m", [0.001, 0.03])
+def test_ucx_gap_outside_band_is_review(gap_m):
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (1 + gap_m, 0, 0), (2 + gap_m, 1, 1)))
+    assert st["UCX intersections"] == "pass"
+    assert st["UCX piece gap (advisory)"] == "review"
+
+
+def test_ucx_one_metre_apart_is_not_a_neighbour():
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (2, 0, 0), (3, 1, 1)))
+    assert st["UCX intersections"] == "pass"
+    assert st["UCX piece gap (advisory)"] == "pass"
+
+
+def test_ucx_overlap_is_not_counted_in_the_gap_finding():
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (0.5, 0, 0), (1.5, 1, 1)))
+    assert st["UCX intersections"] == "fail"
+    assert st["UCX piece gap (advisory)"] == "pass"
+
+
+def test_ucx_without_hull_is_not_run():
+    st = statuses(scene_findings(rb(mesh(), mesh(name="UCX_SM_Test_K_1_Main_001"),
+                                    mesh(name="UCX_SM_Test_K_1_Main_002")), "vpm", "oks", PROFILES.vpm), "V010")
+    assert st["UCX intersections"] == "not_run"
+    assert st["UCX intersections coverage"] == "not_run"
+    assert st["UCX piece gap (advisory)"] == "not_run"
+
+
+def test_single_ucx_piece_passes_both_pair_findings():
+    found = scene_findings(rb(mesh(), ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1))),
+                           "vpm", "oks", PROFILES.vpm)
+    st = statuses(found, "V010")
+    assert st["UCX intersections"] == "pass"
+    assert st["UCX piece gap (advisory)"] == "pass"
+
+
+@pytest.mark.parametrize("kind, role", [("npm", "oks"), ("vpm", "light")])
+def test_ucx_pair_findings_absent_for_npm_or_light(kind, role):
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (0.5, 0, 0), (1.5, 1, 1)), kind, role)
+    assert "UCX intersections" not in st
+    assert "UCX intersections coverage" not in st
+    assert "UCX piece gap (advisory)" not in st
+
+
+@pytest.mark.parametrize("seed", range(200))
+def test_ucx_random_pair_gap_never_fails_and_overlap_matches_signed_gap(seed):
+    rng = random.Random(seed)
+    axis = rng.randrange(3)
+    signed = rng.uniform(-0.05, 0.15)
+    size_a = [rng.uniform(0.4, 2.0) for _ in range(3)]
+    size_b = [rng.uniform(0.4, 2.0) for _ in range(3)]
+    lo_b = [0.0, 0.0, 0.0]
+    hi_b = [0.0, 0.0, 0.0]
+    for i in range(3):
+        if i == axis:
+            lo_b[i] = size_a[i] + signed
+        else:
+            lo_b[i] = rng.uniform(-(size_b[i] - 0.25), size_a[i] - 0.25)
+        hi_b[i] = lo_b[i] + size_b[i]
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), tuple(size_a)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", tuple(lo_b), tuple(hi_b)))
+    assert st["UCX piece gap (advisory)"] != "fail"
+    assert st["UCX intersections coverage"] == "pass"
+    if abs(abs(signed) - OVERLAP_EPS_M) < 1e-6:
+        return
+    assert (st["UCX intersections"] == "fail") is (signed < -OVERLAP_EPS_M)
+
+
+def _v010(*ucx):
+    found = scene_findings(rb(mesh(), *ucx), "vpm", "oks", PROFILES.vpm)["V010"]
+    return {f.name: f for f in found}
+
+
+def _rotate_hull_z(piece, degrees):
+    radians = math.radians(degrees)
+    cosine, sine = math.cos(radians), math.sin(radians)
+    piece["hull"]["verts"] = [[cosine * x - sine * y, sine * x + cosine * y, z]
+                              for x, y, z in piece["hull"]["verts"]]
+    return piece
+
+
+def _two_boxes(name):
+    """One UCX hull: [0,1]^3 and [3,4]x[0,1]x[0,1], tris of the second box offset by 8."""
+    first = ucx_box(name, (0, 0, 0), (1, 1, 1))
+    second = ucx_box(name, (3, 0, 0), (4, 1, 1))
+    piece = mesh(name=name, tris=24)
+    piece["hull"] = {"verts": first["hull"]["verts"] + second["hull"]["verts"],
+                     "tris": first["hull"]["tris"] + [[i + 8 for i in tri] for tri in second["hull"]["tris"]]}
+    return piece
+
+
+def test_missing_hull_does_not_hide_proven_overlap():
+    found = _v010(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+                  ucx_box("UCX_SM_Test_K_1_Main_002", (0.5, 0, 0), (1.5, 1, 1)),
+                  mesh(name="UCX_SM_Test_K_1_Main_003"))
+    assert found["UCX intersections"].status == "fail"
+    coverage = found["UCX intersections coverage"]
+    assert coverage.status == "not_run"
+    assert "UCX_SM_Test_K_1_Main_003" in coverage.observed
+    assert "no hull" in coverage.observed
+
+
+def test_missing_hull_blocks_pass_when_neighbours_are_clear():
+    found = _v010(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+                  ucx_box("UCX_SM_Test_K_1_Main_002", (1.005, 0, 0), (2.005, 1, 1)),
+                  mesh(name="UCX_SM_Test_K_1_Main_003"))
+    assert found["UCX intersections"].status == "not_run"
+    coverage = found["UCX intersections coverage"]
+    assert coverage.status == "not_run"
+    assert "UCX_SM_Test_K_1_Main_003" in coverage.observed
+
+
+@pytest.mark.parametrize("penetration_m", [0.0001, 0.00005, 0.00019])
+def test_penetration_below_former_touch_allowance_fails(penetration_m):
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (1 - penetration_m, 0, 0), (2 - penetration_m, 1, 1)))
+    assert st["UCX intersections"] == "fail"
+
+
+@pytest.mark.parametrize("delta_m, intersections, gap", [(-0.0001, "fail", None), (0.0, "pass", "review"),
+                                                         (0.005, "pass", "pass")])
+def test_shared_z_rotation_keeps_overlap_touch_and_gap(delta_m, intersections, gap):
+    left = _rotate_hull_z(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)), 30)
+    right = _rotate_hull_z(ucx_box("UCX_SM_Test_K_1_Main_002", (1 + delta_m, 0, 0), (2 + delta_m, 1, 1)), 30)
+    st = _pair(left, right)
+    assert st["UCX intersections"] == intersections
+    if gap is not None:
+        assert st["UCX piece gap (advisory)"] == gap
+
+
+def test_nonconvex_hull_between_boxes_is_unresolved_not_fail():
+    found = _v010(_two_boxes("UCX_SM_Test_K_1_Main_001"),
+                  ucx_box("UCX_SM_Test_K_1_Main_002", (1.4, 0.2, 0.2), (2.6, 0.8, 0.8)))
+    assert found["UCX intersections"].status == "not_run"
+    coverage = found["UCX intersections coverage"]
+    assert coverage.status == "not_run"
+    assert "UCX_SM_Test_K_1_Main_001" in coverage.observed
+    assert "non-convex" in coverage.observed
+
+
+def test_nonconvex_pair_does_not_hide_an_independent_overlap():
+    found = _v010(_two_boxes("UCX_SM_Test_K_1_Main_001"),
+                  ucx_box("UCX_SM_Test_K_1_Main_002", (1.4, 0.2, 0.2), (2.6, 0.8, 0.8)),
+                  ucx_box("UCX_SM_Test_K_1_Main_003", (10, 0, 0), (11, 1, 1)),
+                  ucx_box("UCX_SM_Test_K_1_Main_004", (10.5, 0, 0), (11.5, 1, 1)))
+    assert found["UCX intersections"].status == "fail"
+    coverage = found["UCX intersections coverage"]
+    assert coverage.status == "not_run"
+    assert "UCX_SM_Test_K_1_Main_001" in coverage.observed
+
+
+def test_open_piece_bbox_touch_is_not_an_intersection_fail():
+    opened = ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1))
+    opened["hull"]["tris"] = opened["hull"]["tris"][:-2]
+    found = _v010(opened, ucx_box("UCX_SM_Test_K_1_Main_002", (1, 0, 0), (2, 1, 1)))
+    assert found["UCX intersections"].status != "fail"
+    coverage = found["UCX intersections coverage"]
+    assert coverage.status == "not_run"
+    assert "open" in coverage.observed
+
+
+def test_flat_degenerate_piece_coverage_not_run():
+    flat = ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1))
+    for vert in flat["hull"]["verts"]:
+        vert[2] = 0.0
+    found = _v010(flat, ucx_box("UCX_SM_Test_K_1_Main_002", (0, 0, 0), (1, 1, 1)))
+    assert found["UCX intersections"].status != "fail"
+    coverage = found["UCX intersections coverage"]
+    assert coverage.status == "not_run"
+    assert "UCX_SM_Test_K_1_Main_001" in coverage.observed
+    assert "degenerate" in coverage.observed
+
+
+def test_nonconvex_piece_a_metre_away_is_resolved_by_bbox():
+    found = _v010(_two_boxes("UCX_SM_Test_K_1_Main_001"),
+                  ucx_box("UCX_SM_Test_K_1_Main_002", (5, 0, 0), (6, 1, 1)))
+    assert found["UCX intersections"].status == "pass"
+    assert found["UCX intersections coverage"].status == "pass"
+    assert found["UCX piece gap (advisory)"].status == "pass"
+
+
+def test_rotated_pair_with_close_boxes_but_far_surfaces_is_not_a_wide_neighbour():
+    # Diamond |x|+|y| <= 0.707 (unit square turned 45 deg) and a 10 cm box in its bbox corner:
+    # bounding boxes overlap, surfaces are ~349 mm apart (> NEIGHBOUR_M), so no wide-gap review.
+    found = _v010(_rotate_hull_z(ucx_box("UCX_SM_Test_K_1_Main_001", (-0.5, -0.5, 0), (0.5, 0.5, 1)), 45),
+                  ucx_box("UCX_SM_Test_K_1_Main_002", (0.6, 0.6, 0), (0.7, 0.7, 1)))
+    assert found["UCX intersections"].status == "pass"
+    assert found["UCX intersections coverage"].status == "pass"
+    assert found["UCX piece gap (advisory)"].status == "pass"
+    assert "wide=0" in found["UCX piece gap (advisory)"].observed
+
+
+def test_nonconvex_neighbour_5cm_away_resolves_intersection_but_gap_is_unmeasured():
+    found = _v010(_two_boxes("UCX_SM_Test_K_1_Main_001"),
+                  ucx_box("UCX_SM_Test_K_1_Main_002", (4.05, 0, 0), (5.05, 1, 1)))
+    assert found["UCX intersections"].status == "pass"
+    assert found["UCX intersections coverage"].status == "pass"
+    assert found["UCX piece gap (advisory)"].status == "not_run"
+    assert "unmeasured=1" in found["UCX piece gap (advisory)"].observed
+
+
+def _axis_box(name, axis, delta):
+    lo, hi = [0.0, 0.0, 0.0], [1.0, 1.0, 1.0]
+    lo[axis] += delta
+    hi[axis] += delta
+    return ucx_box(name, tuple(lo), tuple(hi))
+
+
+@pytest.mark.parametrize("seed", range(200))
+def test_ucx_rotated_penetration_fails_and_positive_gap_never_fails(seed):
+    rng = random.Random(seed + 10_000)
+    axis = rng.randrange(3)
+    angle = rng.uniform(0.0, 360.0)
+    penetration = rng.uniform(2e-5, 5e-3)
+    left = _rotate_hull_z(_axis_box("UCX_SM_Test_K_1_Main_001", axis, 0.0), angle)
+    right = _rotate_hull_z(_axis_box("UCX_SM_Test_K_1_Main_002", axis, 1.0 - penetration), angle)
+    assert _pair(left, right)["UCX intersections"] == "fail"
+    gap = rng.uniform(2e-5, 0.05)
+    left = _rotate_hull_z(_axis_box("UCX_SM_Test_K_1_Main_001", axis, 0.0), angle)
+    right = _rotate_hull_z(_axis_box("UCX_SM_Test_K_1_Main_002", axis, 1.0 + gap), angle)
+    st = _pair(left, right)
+    assert st["UCX intersections"] != "fail"
+    assert st["UCX piece gap (advisory)"] != "fail"
+
+
+MAKE_UCX_HULL = """
+import bpy, sys
+out, variant = sys.argv[sys.argv.index('--') + 1:]
+bpy.ops.wm.read_factory_settings(use_empty=True)
+
+def cube(name, loc):
+    bpy.ops.mesh.primitive_cube_add(size=1, location=loc)
+    bpy.context.object.name = name
+    bpy.ops.object.modifier_add(type='TRIANGULATE')
+    bpy.ops.object.modifier_apply(modifier='Triangulate')
+
+cube('SM_Test_K_1_Main', (0, 0, 1))
+cube('UCX_SM_Test_K_1_Main_001', (0, 0, 0.5))
+# size 1: half-extent 0.5. overlap shares 0.5 m; gap leaves 2 mm between faces.
+cube('UCX_SM_Test_K_1_Main_002', (0.5, 0, 0.5) if variant == 'overlap' else (1.002, 0, 0.5))
+bpy.ops.export_scene.fbx(filepath=out)
+"""
+
+
+@pytest.mark.blender
+@pytest.mark.skipif(BLENDER is None, reason="Blender not installed")
+@pytest.mark.parametrize("variant", ["overlap", "gap"])
+def test_blender_ucx_hull_roundtrip(tmp_path, variant):
+    fbx_path = tmp_path / f"ucx_{variant}.fbx"
+    subprocess.run([BLENDER, "--background", "--factory-startup", "--python-exit-code", "1",
+                    "--python-expr", MAKE_UCX_HULL, "--", str(fbx_path), variant],
+                   check=True, capture_output=True, timeout=300)
+    report = readback(fbx_path)
+    ucx = [m for m in report["meshes"] if m["name"].upper().startswith("UCX_")]
+    other = [m for m in report["meshes"] if not m["name"].upper().startswith("UCX_")]
+    assert ucx and all("hull" in m and m["hull"]["verts"] and m["hull"]["tris"] for m in ucx)
+    assert other and all("hull" not in m for m in other)
+    st = statuses(scene_findings(report, "vpm", "oks", PROFILES.vpm), "V010")
+    assert st["UCX intersections"] == ("fail" if variant == "overlap" else "pass")

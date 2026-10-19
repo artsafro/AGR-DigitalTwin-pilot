@@ -58,13 +58,17 @@ def layout(panes, opaque=()):
         transoms = max(transoms, len(rows) - 1)
     # fields: the columns of the row under the fanlight, not the columns over the whole height (user rule
     # 2026-10-09: a full-width fanlight never merges the leaves under it, and a fanlight's own division never
-    # adds fields). Bands holding only opaque infill (lower panels) are not rows; of several glazed bands the
-    # top one is the fanlight and the fields are those of the tallest band under it. Limit: a low glazed
-    # band under a tall main row with no fanlight reads as the field row.
+    # adds fields). Drop only opaque-only bands below the lowest glazed band (lower panels), retaining every
+    # band at or above it including an opaque upper fanlight (issue #45). The top remaining band is the fanlight
+    # whatever its infill or height; fields are those of the tallest remaining band under it (or the sole band).
     bands = _clusters([(p[1], p[3]) for p in panes])
-    glazed = [(a, b) for a, b in bands
-              if any(p not in opaque and p[1] >= a - GAP_M and p[3] <= b + GAP_M for p in panes)] or bands
-    a, b = max(glazed[:-1] or glazed, key=lambda band: band[1] - band[0])
+    first_glazed = next(
+        (i for i, (a, b) in enumerate(bands)
+         if any(p not in opaque and p[1] >= a - GAP_M and p[3] <= b + GAP_M for p in panes)),
+        None,
+    )
+    remaining = bands[first_glazed:] if first_glazed is not None else bands
+    a, b = max(remaining[:-1] or remaining, key=lambda band: band[1] - band[0])
     sections = len(_clusters([(p[0], p[2]) for p in panes if p[1] >= a - GAP_M and p[3] <= b + GAP_M]))
     return sections, transoms
 

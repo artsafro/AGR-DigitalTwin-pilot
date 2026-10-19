@@ -86,8 +86,21 @@ def pct(values, q):
 
 
 def dist_stats(d):
-    return {"n": len(d), **{f"le_{b}m": round(sum(x <= b for x in d) / len(d), 4) for b in BANDS},
-            "p50_m": round(pct(d, 0.5), 3), "p95_m": round(pct(d, 0.95), 3), "max_m": round(max(d), 3)} if d else None
+    if not d:
+        return None
+    fin = [x for x in d if isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)]
+    mapped = [x if isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x) else math.inf for x in d]
+
+    def _val(v, r):
+        return round(v, r) if isinstance(v, (int, float)) and math.isfinite(v) else None
+
+    return {
+        "n": len(d),
+        **{f"le_{b}m": round(sum(x <= b for x in fin) / len(d), 4) for b in BANDS},
+        "p50_m": _val(pct(mapped, 0.5), 3),
+        "p95_m": _val(pct(mapped, 0.95), 3),
+        "max_m": _val(max(mapped), 3),
+    }
 
 
 report = {"source": str(source), "blender": bpy.app.version_string, "readback_ok": False,
@@ -180,6 +193,8 @@ try:
             dz["z_lt_0" if q.z < 0 else "z_0_6" if q.z < 6 else "z_ge_6"].append(x)
         cov = {"surface_area_m2": round(area, 1), "inside_ucx": round(sum(x == 0 for x in d) / len(d), 4) if d else None,
                "main_to_ucx": dist_stats(d), "by_height": {k: dist_stats(x) for k, x in dz.items()}}
+        if not pieces:
+            cov["coverage_note"] = "no UCX pieces; distances unavailable/null; no compliance verdict"
         if pieces:
             bvh = BVHTree.FromPolygons(v, t)
             up, _ = sample_surface(all_v, all_t, SAMPLES // 2, rng)
@@ -213,6 +228,6 @@ if _alias:
     print(f"UCX_AUDIT refused: {_alias}; nothing written", file=sys.stderr)
     sys.exit(4)
 out.parent.mkdir(parents=True, exist_ok=True)
-out.write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
+out.write_text(json.dumps(report, ensure_ascii=False, indent=1, allow_nan=False), encoding="utf-8")
 print("UCX_AUDIT", report["readback_ok"], report.get("error", ""))
 sys.exit(0 if report["readback_ok"] else 2)

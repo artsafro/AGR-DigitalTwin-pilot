@@ -104,7 +104,7 @@ Plan: `docs/HARNESS_PLAN.md` §15 (user decision 2026-10-11 [D049]). One PR each
 ## Unreal and IFC
 
 - **U1** Unreal import rules (UE 5.5/5.7): scale, pivots, materials, collisions, LODs.
-- **U2** Interactive experience project in `Unreal/`.
+- **U2** Future Unreal interactive experience lives in separate repository, root placeholder removed per owner decision 2026-10-16 [D103].
 - **U3** IFC export route.
 
 ## Reuse proposals (rule of three, `docs/agents/WORKFLOW.md`; proposals only, nothing created)
@@ -127,6 +127,26 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
   from the issue text, `REVIEW_CHECKLIST.md` questions, the diff range and the review class; `codex exec -s read-only`;
   the findings table posted as a PR comment with the fix commit; seen 5 rounds in this session (#137 x1, #139 x1,
   #140 x3); effort M
+- **R5** proposal 2026-10-18, claude/confident-hopper-4jccys - CLI command: append one grilling answer (question,
+  recommendation, answer, status, next queue item) to a grilling log and commit it; seen about 30 times as an
+  inline python edit + commit + push per answer; effort S
+- **R6** proposal 2026-10-18, claude/confident-hopper-4jccys - pattern: a red check with no output and no steps
+  (billing lock) is a known cause, commented once per PR, not re-investigated per push; seen about 20 times;
+  largely removed by D122 (workflow on manual trigger); effort S
+- **R7** proposal 2026-10-18, claude/confident-hopper-4jccys - CLI command: add a decision row (next `D<n>`, date
+  order) together with its `[D<n>]` anchor in the target file and run `tests/test_decisions.py`; seen 2 times
+  (D104-D129 batch, D130); effort S
+- **R8** proposal 2026-10-19, feature/kernel-op-primitive - CLI command: mutation probe of a module - back up the
+  file, apply one named textual mutation, run its tests, print passed / failed, restore the file, repeat per
+  mutation from a small list; seen 4 times (C3 five mutations, C4a five, a re-run of one that survived, C4b six);
+  effort S
+- **R9** proposal 2026-10-19, feature/kernel-op-primitive - CLI command: compare failing tests with a clean base -
+  detached temporary worktree from `origin/main`, run the named failing tests there, print "same failures / new
+  failures", remove the worktree; seen 4 times (#288, #289, #290, #291, each with the same 5 environment
+  failures); effort S
+- **R10** proposal 2026-10-19, feature/kernel-op-primitive - CLI command: the local CI receipt text for a PR
+  (commit, commands, counts, known environment failures from R9) for the body and for the billing-lock comment
+  of R6; seen 8 times (5 PR bodies, 3 comments, same shape); effort S
 
 ## Harness and organization (default owner Codex)
 

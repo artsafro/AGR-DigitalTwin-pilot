@@ -138,23 +138,23 @@ def test_derivation_decided_rotation_conflict_and_v004_documentation():
         f"docs/domain/conflicts.md must define HTML anchor '{html_anchor}'"
     )
 
-    conflict38_match = re.search(r"(?m)^38\..*?(?=\n\s*\n|\Z)", conflicts_text, re.DOTALL)
-    assert conflict38_match is not None, "Numbered conflict 38 paragraph missing from docs/domain/conflicts.md"
-    conflict38 = conflict38_match.group(0)
-    assert html_anchor in conflict38, f"Conflict 38 paragraph must contain HTML anchor '{html_anchor}'"
+    conflict39_match = re.search(r"(?m)^39\..*?(?=\n\s*\n|\Z)", conflicts_text, re.DOTALL)
+    assert conflict39_match is not None, "Numbered conflict 39 paragraph missing from docs/domain/conflicts.md"
+    conflict39 = conflict39_match.group(0)
+    assert html_anchor in conflict39, f"Conflict 39 paragraph must contain HTML anchor '{html_anchor}'"
 
     for phrase in (
         "Decided 2026-10-16",
-        "[D103]",
+        "[D135]",
         "reg p.10",
         "reg p.32",
         "reg p.10 row 8 item 1",
         "reg p.32 row 9 item 1",
     ):
-        assert phrase in conflict38, f"Conflict 38 paragraph must contain '{phrase}'"
+        assert phrase in conflict39, f"Conflict 39 paragraph must contain '{phrase}'"
 
     for term in ("NPM", "VPM", "vertex positions", "rotation 0"):
-        assert term in conflict38, f"Conflict 38 paragraph must contain '{term}'"
+        assert term in conflict39, f"Conflict 39 paragraph must contain '{term}'"
 
     quote1 = (
         "Мы ставим нпм по двг, но это в конце, сначала мы моделируем в x y мировых "
@@ -164,8 +164,8 @@ def test_derivation_decided_rotation_conflict_and_v004_documentation():
     quote2 = (
         "Поворот 0, это когда ты повернул геометрию а потом скинул трансформации и поворот стал 0"
     )
-    assert quote1 in conflict38, "Conflict 38 paragraph must include exact user quote 1"
-    assert quote2 in conflict38, "Conflict 38 paragraph must include exact user quote 2"
+    assert quote1 in conflict39, "Conflict 39 paragraph must include exact user quote 1"
+    assert quote2 in conflict39, "Conflict 39 paragraph must include exact user quote 2"
 
     rows = contract(sheet_text())
     indexed = {row[0].split()[0]: row for row in rows}
