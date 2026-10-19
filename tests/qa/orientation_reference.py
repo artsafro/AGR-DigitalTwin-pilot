@@ -166,5 +166,3 @@ def _orientation_hits(model: Soup):
     if seen.any():
         np.add.at(judged, owner[seen], 1)
     return backs, judged, ray_total, nondeg
-
-
