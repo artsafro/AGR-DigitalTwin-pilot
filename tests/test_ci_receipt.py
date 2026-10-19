@@ -136,13 +136,14 @@ def make_runner(pytest_out="4 passed, 1 deselected in 0.02s\n", pytest_code=0,
             seen.append((list(argv), dict(env), cwd))
         upper = {key.upper() for key in env}
         assert "PYTHONPATH" not in upper
+        assert "PYTHONHOME" not in upper
         assert "VIRTUAL_ENV" not in upper
         key = " ".join(argv)
         if missing and argv[:1] == ["uv"]:
             raise FileNotFoundError("uv")
         if key == "uv --version":
             return Completed(0, "uv 0.0.0-test\n")
-        if key == PYTEST_CMD:
+        if _pytest_invocation(argv):
             return Completed(pytest_code, pytest_out)
         if key == PROFILES_CMD:
             return Completed(profiles_code, "profiles ok\n")
@@ -191,7 +192,7 @@ def valid_receipt(sha=SHA, failed="0", result="PASS", pytest_block=True, profile
         "os: Windows-test",
         "python: 3.13.0",
         "uv: uv 0.0.0-test",
-        "scrubbed: PYTHONPATH,VIRTUAL_ENV",
+        "scrubbed: PYTHONPATH,PYTHONHOME,VIRTUAL_ENV",
     ]
     if pytest_block:
         lines += [
@@ -293,7 +294,7 @@ def test_pass_receipt_on_clean_repo(tmp_path, monkeypatch):
     assert re.fullmatch(r"\d+\.\d{3}", field(body, "duration_s"))
     assert field(body, "python")
     assert field(body, "uv") == "uv 0.0.0-test"
-    assert field(body, "scrubbed") == "PYTHONPATH,VIRTUAL_ENV"
+    assert field(body, "scrubbed") == "PYTHONPATH,PYTHONHOME,VIRTUAL_ENV"
     assert field(body, "os")
     assert f"command: {PYTEST_CMD}" in body
     assert field(body, "passed") == "4"
@@ -449,6 +450,7 @@ def test_runner_child_env_has_no_parent_secrets(tmp_path, monkeypatch):
     init_repo(repo)
     seen = []
     monkeypatch.setenv("PYTHONPATH", "SECRET-PARENT-PATH")
+    monkeypatch.setenv("PYTHONHOME", "SECRET-PARENT-HOME")
     monkeypatch.setenv("VIRTUAL_ENV", "SECRET-PARENT-VENV")
     code, _text = _capture(mod, repo, [], make_runner(seen=seen), monkeypatch)
     assert code == 0
@@ -456,8 +458,10 @@ def test_runner_child_env_has_no_parent_secrets(tmp_path, monkeypatch):
     for _argv, env, cwd in seen:
         assert cwd == repo
         assert "SECRET-PARENT-PATH" not in env.values()
+        assert "SECRET-PARENT-HOME" not in env.values()
         assert "SECRET-PARENT-VENV" not in env.values()
         assert "PYTHONPATH" not in {key.upper() for key in env}
+        assert "PYTHONHOME" not in {key.upper() for key in env}
         assert "VIRTUAL_ENV" not in {key.upper() for key in env}
 
 
@@ -610,3 +614,253 @@ def test_nonfinite_count_tokens_never_verify(tmp_path):
         assert reason
         hits += 1
     assert hits == len(tokens) == 11
+
+
+def _pytest_invocation(argv):
+    if argv[:5] != ["uv", "run", "-q", "pytest", "-q"]:
+        return False
+    if len(argv) == 5:
+        return True
+    return len(argv) == 7 and argv[5] == "--basetemp" and bool(argv[6])
+
+
+def _pytest_argvs(seen):
+    return [argv for argv, _env, _cwd in seen if _pytest_invocation(argv)]
+
+
+def test_pythonhome_never_reaches_any_child_env(monkeypatch):
+    mod = load()
+    hits = 0
+    for value in ENV_SENTINELS:
+        monkeypatch.setenv("PYTHONHOME", value)
+        monkeypatch.setenv("PYTHONPATH", value)
+        monkeypatch.setenv("VIRTUAL_ENV", value)
+        env = mod.child_env()
+        upper = {key.upper(): item for key, item in env.items()}
+        assert "PYTHONHOME" not in upper
+        assert "PYTHONPATH" not in upper
+        assert "VIRTUAL_ENV" not in upper
+        assert value not in upper.values()
+        hits += 1
+    mixed = mod.child_env({
+        "PythonHome": "SECRET-HOME",
+        "PythonPath": "SECRET-PATH",
+        "Virtual_Env": "SECRET-VENV",
+        "PATH": "C:/Windows",
+    })
+    assert mixed == {"PATH": "C:/Windows"}
+    hits += 1
+    assert hits == len(ENV_SENTINELS) + 1 == 16
+
+
+def test_receipt_scrubbed_lists_pythonhome(tmp_path, monkeypatch):
+    mod = load()
+    repo = tmp_path / "repo"
+    init_repo(repo)
+    code, text = _capture(mod, repo, [], make_runner(), monkeypatch)
+    assert code == 0
+    assert field(text, "scrubbed") == "PYTHONPATH,PYTHONHOME,VIRTUAL_ENV"
+
+
+def test_windows_default_basetemp_is_unique_under_commit(tmp_path, monkeypatch):
+    mod = load()
+    repo = tmp_path / "repo"
+    sha, _branch = init_repo(repo)
+    prefix = f"C:/x/ci-receipt-{sha}/"
+    paths = []
+    for _index in range(2):
+        seen = []
+        code, text = _capture(mod, repo, [], make_runner(seen=seen), monkeypatch)
+        assert code == 0
+        argv = _pytest_argvs(seen)
+        assert len(argv) == 1
+        pytest_argv = argv[0]
+        assert pytest_argv.count("--basetemp") == 1
+        assert pytest_argv[5] == "--basetemp"
+        assert len(pytest_argv) == 7
+        path = pytest_argv[6]
+        assert path.startswith(prefix)
+        assert path.rstrip("/") != prefix.rstrip("/")
+        assert path not in paths
+        paths.append(path)
+        for other, _env, _cwd in seen:
+            if other is not pytest_argv:
+                assert "--basetemp" not in other
+        assert f"command: {PYTEST_CMD} --basetemp {path}" in text
+        verify_code, reason = mod.verify_text(text, sha)
+        assert verify_code == 0, reason
+    assert len(paths) == 2
+
+
+def test_posix_pytest_keeps_default_basetemp(tmp_path, monkeypatch):
+    mod = load()
+    monkeypatch.setattr(mod, "_platform_name", lambda: "posix")
+    repo = tmp_path / "repo"
+    sha, _branch = init_repo(repo)
+    seen = []
+    code, text = _capture(mod, repo, [], make_runner(seen=seen), monkeypatch)
+    assert code == 0
+    argv = _pytest_argvs(seen)
+    assert argv == [["uv", "run", "-q", "pytest", "-q"]]
+    assert "--basetemp" not in text
+    assert mod.verify_text(text, sha)[0] == 0
+
+
+EXPLICIT_BASETEMPS = (
+    "C:/custom/one",
+    "C:/custom/two",
+    "D:/basetemp",
+    "C:/x/not-root/child",
+    "C:/x/nan-directory",
+    "C:/x/infinity-leaf",
+    "C:/custom/base temp",
+    "C:\\custom\\base",
+    "C:/x/ci-receipt-notasha/leaf",
+)
+
+
+def test_explicit_basetemp_passed_to_pytest_once(tmp_path, monkeypatch):
+    mod = load()
+    monkeypatch.setattr(mod, "_platform_name", lambda: "posix")
+    repo = tmp_path / "repo"
+    sha, _branch = init_repo(repo)
+    leaf = f"C:/x/ci-receipt-{sha}/leaf"
+    paths = EXPLICIT_BASETEMPS + (leaf,)
+    hits = 0
+    for path in paths:
+        seen = []
+        code, text = _capture(
+            mod, repo, ["--basetemp", path], make_runner(seen=seen), monkeypatch,
+        )
+        assert code == 0, path
+        found = _pytest_argvs(seen)
+        assert len(found) == 1
+        pytest_argv = found[0]
+        assert pytest_argv.count("--basetemp") == 1
+        assert pytest_argv[-2:] == ["--basetemp", path]
+        for other, _env, _cwd in seen:
+            if other is not pytest_argv:
+                assert "--basetemp" not in other
+        verify_code, reason = mod.verify_text(text, sha)
+        assert verify_code == 0, reason
+        hits += 1
+    assert hits == len(paths) == 10
+
+
+def test_bad_basetemp_fails_closed_writes_nothing(tmp_path, monkeypatch):
+    mod = load()
+    repo = tmp_path / "repo"
+    sha, _branch = init_repo(repo)
+    bad = (
+        "",
+        " ",
+        "   ",
+        "nan",
+        "inf",
+        "-inf",
+        "+inf",
+        "NaN",
+        "INF",
+        "-NAN",
+        "infinity",
+        "-infinity",
+        " C:/x/ok",
+        "C:/x/ok ",
+        ".",
+        "..",
+        "./",
+        "C:/x",
+        "C:/x/",
+        "C:\\x",
+        "c:/X",
+        "C:/x/.",
+        "C:/x/../x",
+        f"C:/x/ci-receipt-{sha}",
+        f"C:/x/ci-receipt-{sha}/",
+        f"c:/x/ci-receipt-{sha}",
+        f"C:\\x\\ci-receipt-{sha}",
+    )
+    seen = []
+    hits = 0
+    for value in bad:
+        out = tmp_path / f"bad-{hits}.txt"
+        code, text = _capture(
+            mod, repo, ["--basetemp", value, "--out", str(out)],
+            make_runner(seen=seen), monkeypatch,
+        )
+        assert code != 0, value
+        assert not out.exists(), value
+        assert "unrecognized" not in text.lower(), value
+        assert field(text, "result") != "PASS"
+        hits += 1
+    assert seen == []
+    assert hits == len(bad) == 27
+
+
+def test_basetemp_resolving_to_output_writes_nothing(tmp_path, monkeypatch):
+    mod = load()
+    repo = tmp_path / "repo"
+    init_repo(repo)
+    out = tmp_path / "receipt.txt"
+    sentinel = "SENTINEL-DO-NOT-TOUCH\n"
+    out.write_text(sentinel, encoding="utf-8")
+    seen = []
+    code, text = _capture(
+        mod, repo, ["--basetemp", str(out), "--out", str(out)],
+        make_runner(seen=seen), monkeypatch,
+    )
+    assert code != 0
+    assert seen == []
+    assert out.read_text(encoding="utf-8") == sentinel
+    assert "output path resolves to input" in text
+    missing = tmp_path / "same-missing.txt"
+    code, text = _capture(
+        mod, repo, ["--basetemp", str(missing), "--out", str(missing)],
+        make_runner(seen=seen), monkeypatch,
+    )
+    assert code != 0
+    assert seen == []
+    assert not missing.exists()
+    assert "output path resolves to input" in text
+
+
+def test_verify_accepts_basetemp_and_rejects_bad_paths(tmp_path):
+    mod = load()
+    good = valid_receipt().replace(
+        f"command: {PYTEST_CMD}\n",
+        f"command: {PYTEST_CMD} --basetemp C:/x/ci-receipt-{SHA}/leaf\n",
+        1,
+    )
+    path = tmp_path / "good.txt"
+    path.write_text(good, encoding="utf-8")
+    code, reason = _verify(mod, path, SHA)
+    assert code == 0, reason
+    rejected = {
+        "nan": f"{PYTEST_CMD} --basetemp nan",
+        "inf": f"{PYTEST_CMD} --basetemp inf",
+        "root": f"{PYTEST_CMD} --basetemp C:/x",
+        "container": f"{PYTEST_CMD} --basetemp C:/x/ci-receipt-{SHA}",
+        "twice": f"{PYTEST_CMD} --basetemp C:/custom/a --basetemp C:/custom/b",
+        "empty-flag": f"{PYTEST_CMD} --basetemp",
+    }
+    hits = 0
+    for name, command in rejected.items():
+        body = valid_receipt().replace(f"command: {PYTEST_CMD}\n", f"command: {command}\n", 1)
+        probe = tmp_path / f"{name}.txt"
+        probe.write_text(body, encoding="utf-8")
+        code, reason = _verify(mod, probe, SHA)
+        assert code != 0, name
+        assert reason, name
+        assert "basetemp" in reason.lower(), reason
+        hits += 1
+    old_scrub = valid_receipt().replace(
+        "scrubbed: PYTHONPATH,PYTHONHOME,VIRTUAL_ENV",
+        "scrubbed: PYTHONPATH,VIRTUAL_ENV",
+    )
+    old_path = tmp_path / "old-scrub.txt"
+    old_path.write_text(old_scrub, encoding="utf-8")
+    code, reason = _verify(mod, old_path, SHA)
+    assert code != 0
+    assert reason
+    hits += 1
+    assert hits == len(rejected) + 1 == 7

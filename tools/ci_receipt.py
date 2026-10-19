@@ -2,16 +2,19 @@
 
 Print a fenced ``CI-RECEIPT v1`` block for the PR body, or check a pasted block:
 
-    uv run python tools/ci_receipt.py [--issue N] [--out PATH]
+    uv run python tools/ci_receipt.py [--issue N] [--basetemp PATH] [--out PATH]
     uv run python tools/ci_receipt.py --verify FILE --sha FULL_SHA [--out PATH]
 
-Agreed commands, each started with PYTHONPATH and VIRTUAL_ENV removed:
+Agreed commands, each started with PYTHONPATH, PYTHONHOME and VIRTUAL_ENV removed:
 ``uv run -q pytest -q``, ``uv run dt profiles check``, ``uv run dt schemas --check``.
-With ``--issue N`` the ready-gate command is also run; without it that command is
-``not_run``. PASS only when every run command exits 0, pytest collected at least
-one test, failed and errors are 0, and ``git status --porcelain`` is empty.
-``--verify`` does not rewrite its input. An ``--out`` path that resolves to that
-input, or whose parent directory is missing, exits nonzero and writes nothing.
+On Windows, pytest receives ``--basetemp`` under ``C:/x/ci-receipt-<sha>/<unique>``
+unless ``--basetemp`` is set. Other platforms keep pytest's own basetemp unless
+``--basetemp`` is set. With ``--issue N`` the ready-gate command is also run;
+without it that command is ``not_run``. PASS only when every run command exits 0,
+pytest collected at least one test, failed and errors are 0, and
+``git status --porcelain`` is empty. ``--verify`` does not rewrite its input.
+An ``--out`` path that resolves to that input or to ``--basetemp``, or whose
+parent directory is missing, exits nonzero and writes nothing.
 """
 import argparse
 import math
@@ -22,6 +25,7 @@ import shlex
 import subprocess
 import sys
 import time
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -35,7 +39,9 @@ COUNT_KEYS = ("passed", "failed", "errors", "skipped", "deselected", "xfailed", 
 HEADER_KEYS = (
     "commit", "branch", "dirty", "started_utc", "duration_s", "os", "python", "uv", "scrubbed",
 )
-SCRUBBED = "PYTHONPATH,VIRTUAL_ENV"
+SCRUB_KEYS = frozenset({"PYTHONPATH", "PYTHONHOME", "VIRTUAL_ENV"})
+SCRUBBED = "PYTHONPATH,PYTHONHOME,VIRTUAL_ENV"
+_NONFINITE_BASETEMP = re.compile(r"(?i)^[+-]?(?:nan|inf|infinity)$")
 UTC_RE = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z")
 SHA_RE = re.compile(r"[0-9a-f]{40}")
 ISSUE_RE = re.compile(r"[1-9][0-9]*")
@@ -50,9 +56,85 @@ _COLLECTED = ("passed", "failed", "errors", "skipped", "xfailed", "xpassed")
 
 
 def child_env(base=None):
-    """Environment for a child process with parent PYTHONPATH and VIRTUAL_ENV removed."""
+    """Environment for a child process with parent PYTHONPATH, PYTHONHOME and VIRTUAL_ENV removed."""
     source = os.environ if base is None else base
-    return {key: value for key, value in source.items() if key.upper() not in {"PYTHONPATH", "VIRTUAL_ENV"}}
+    return {key: value for key, value in source.items() if key.upper() not in SCRUB_KEYS}
+
+
+def _platform_name():
+    return os.name
+
+
+def _normalize_basetemp(value):
+    text = value.replace("\\", "/")
+    drive = ""
+    rest = text
+    if len(text) >= 2 and text[1] == ":":
+        drive = text[:2]
+        rest = text[2:]
+    parts = []
+    for part in rest.split("/"):
+        if part in {"", "."}:
+            continue
+        if part == "..":
+            if parts:
+                parts.pop()
+            continue
+        parts.append(part)
+    tail = "/".join(parts)
+    if drive:
+        return f"{drive}/{tail}" if tail else drive
+    return tail
+
+
+def _basetemp_problem(value, sha=None):
+    """Fail closed for empty, partial, non-finite and shared-root basetemp paths."""
+    if not isinstance(value, str):
+        return "basetemp unsupported"
+    if value.strip() == "":
+        return "basetemp empty"
+    if value != value.strip():
+        return "basetemp partial"
+    if _NONFINITE_BASETEMP.fullmatch(value):
+        return "basetemp non-finite"
+    if "\x00" in value:
+        return "basetemp unsupported"
+    normalized = _normalize_basetemp(value).casefold()
+    if normalized in {"", "c:"}:
+        return "basetemp unsupported"
+    if normalized == "c:/x":
+        return "basetemp at threshold"
+    if sha and SHA_RE.fullmatch(sha):
+        if normalized == f"c:/x/ci-receipt-{sha}".casefold():
+            return "basetemp at threshold"
+    return None
+
+
+def _default_basetemp(sha):
+    token = sha if SHA_RE.fullmatch(sha or "") else "unknown"
+    leaf = f"{os.getpid()}-{time.time_ns()}-{uuid.uuid4().hex}"
+    return f"C:/x/ci-receipt-{token}/{leaf}"
+
+
+def _pytest_command(basetemp):
+    argv = ["uv", "run", "-q", "pytest", "-q"]
+    if basetemp is not None:
+        argv.extend(["--basetemp", basetemp])
+    return shlex.join(argv)
+
+
+def _classify_pytest(command, sha):
+    try:
+        argv = shlex.split(command, posix=True)
+    except ValueError:
+        return "bad-basetemp"
+    if argv[:5] != ["uv", "run", "-q", "pytest", "-q"]:
+        return "not-pytest"
+    if len(argv) == 5:
+        return "ok"
+    if len(argv) == 7 and argv[5] == "--basetemp" and _basetemp_problem(argv[6], sha) is None:
+        return "ok"
+    return "bad-basetemp"
 
 
 def planned_commands(issue):
@@ -257,9 +339,13 @@ def _write_out(path, text):
     return None
 
 
-def produce(issue, runner, cwd):
+def produce(issue, runner, cwd, basetemp=None):
     started_at = time.perf_counter()
     started_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    sha = (_git(["rev-parse", "HEAD"], cwd) or "").strip()
+    effective = basetemp
+    if effective is None and _platform_name() == "nt":
+        effective = _default_basetemp(sha)
     try:
         version = runner(["uv", "--version"], child_env(), cwd)
         uv_text = (version.stdout or version.stderr or "").strip().splitlines()
@@ -273,8 +359,9 @@ def produce(issue, runner, cwd):
                 "command": command, "status": "not_run", "reason": "--issue not given", "pytest": False,
             })
             continue
+        if command == PYTEST_CMD:
+            command = _pytest_command(effective)
         records.append(_run_command(command, runner, cwd))
-    sha = (_git(["rev-parse", "HEAD"], cwd) or "").strip()
     branch = (_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd) or "").strip()
     status = _git(["status", "--porcelain"], cwd)
     git_ok = bool(SHA_RE.fullmatch(sha)) and bool(branch) and status is not None
@@ -355,6 +442,8 @@ def _verify_reason(text, sha):
         command = body.pop(0).split(": ", 1)[1]
         if not command:
             return "missing command"
+        if _classify_pytest(command, header["commit"]) == "bad-basetemp":
+            return "basetemp rejected"
         record = {"command": command}
         if not body:
             return "partial receipt"
@@ -414,13 +503,25 @@ def _verify_reason(text, sha):
         if record["command"] in by_command:
             return "missing command"
         by_command[record["command"]] = record
+    pytest_records = [
+        record for record in commands
+        if _classify_pytest(record["command"], header["commit"]) == "ok"
+    ]
+    if len(pytest_records) != 1:
+        return f"missing command: {PYTEST_CMD}"
+    pytest_record = pytest_records[0]
+    if pytest_record.get("status") == "not_run" or "exit_code" not in pytest_record:
+        return f"missing command: {PYTEST_CMD}"
+    if pytest_record["exit_code"] != 0:
+        return f"command exit {pytest_record['exit_code']}"
     for required in REQUIRED:
+        if required == PYTEST_CMD:
+            continue
         record = by_command.get(required)
         if record is None or record.get("status") == "not_run":
             return f"missing command: {required}"
         if record["exit_code"] != 0:
             return f"command exit {record['exit_code']}"
-    pytest_record = by_command[PYTEST_CMD]
     counts = pytest_record["counts"]
     if counts["failed"] != 0 or counts["errors"] != 0:
         return "result PASS conflicts with failed"
@@ -445,7 +546,7 @@ def _verify_reason(text, sha):
         )
     ):
         return "missing command"
-    known = set(REQUIRED) | {gate["command"]}
+    known = {pytest_record["command"], PROFILES_CMD, SCHEMAS_CMD, gate["command"]}
     if set(by_command) != known:
         return "unexpected command"
     return None
@@ -463,6 +564,7 @@ def _parser():
     parser.add_argument("--issue", default=None)
     parser.add_argument("--verify", default=None)
     parser.add_argument("--sha", default=None)
+    parser.add_argument("--basetemp", default=None)
     parser.add_argument("--out", default=None)
     return parser
 
@@ -494,12 +596,21 @@ def run(argv=None, runner=None):
         if reason:
             print(f"reason: {reason}", file=sys.stderr)
         return code
+    if args.basetemp is not None:
+        head = (_git(["rev-parse", "HEAD"], Path.cwd()) or "").strip()
+        problem = _basetemp_problem(args.basetemp, head)
+        if problem:
+            print(f"reason: {problem}", file=sys.stderr)
+            return 2
+        if args.out is not None and _same_path(args.out, args.basetemp):
+            print("reason: output path resolves to input", file=sys.stderr)
+            return 2
     problem = _out_problem(args.out)
     if problem:
         print(f"reason: {problem}", file=sys.stderr)
         return 2
     issue = int(args.issue) if args.issue is not None else None
-    receipt, reasons = produce(issue, runner, Path.cwd())
+    receipt, reasons = produce(issue, runner, Path.cwd(), basetemp=args.basetemp)
     print(receipt, end="")
     if args.out is not None:
         written = _write_out(args.out, receipt)
