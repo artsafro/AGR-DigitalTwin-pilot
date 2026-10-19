@@ -1,5 +1,6 @@
 """Scene stages from the Blender readback: rule logic on fixed readbacks, plus a real
 background-Blender roundtrip (skipped when Blender is not installed)."""
+import itertools
 import json
 import subprocess
 import zipfile
@@ -30,10 +31,10 @@ def _clean_topology(**overrides):
 
 
 def mesh(name="SM_Test_K_1_Main", tris=12, degrees=None, rot=(0, 0, 0), scale=(1, 1, 1), uv=1, mirrored=0,
-         tiles=(1001,), loc=(0, 0, 0), topology=None, omit_topology=False, world_scale=None, parent=None):
+         tiles=(1001,), loc=(0, 0, 0), topology=None, omit_topology=False, world_scale=None, parent=None, materials=()):
     facts = {"name": name, "triangles": tris, "polygon_degrees": degrees or {"3": tris}, "rotation_euler_deg": list(rot),
              "scale": list(scale), "uv_channels": uv, "mirrored_uv_triangles": mirrored, "udim_tiles": list(tiles),
-             "location": list(loc)}
+             "location": list(loc), "materials": list(materials)}
     if not omit_topology:
         facts["topology"] = _clean_topology(**(topology or {}))
     if world_scale is not None:
@@ -41,6 +42,9 @@ def mesh(name="SM_Test_K_1_Main", tris=12, degrees=None, rot=(0, 0, 0), scale=(1
     if parent is not None:
         facts["parent"] = parent
     return facts
+
+
+UCX = "UCX_SM_Test_K_1_Main_001"
 
 
 def rb(*meshes, other=(), units=None):
@@ -78,7 +82,76 @@ def test_ucx_excluded_from_model_triangles_and_budget_checked():
     found = scene_findings(rb(mesh(tris=100_000), mesh(name="UCX_SM_Test_K_1_Main_001", tris=5_001)), "vpm", "oks",
                            PROFILES.vpm)
     assert next(f for f in found["V003"] if f.name == "triangle count").observed.endswith(": 100000")
-    assert statuses(found, "V010") == {"UCX triangle budget": "fail", "UCX shape and coverage": "not_run"}
+    assert statuses(found, "V010") == {"UCX present": "pass", "UCX material slots": "pass",
+                                       "UCX triangle budget": "fail", "UCX shape and coverage": "not_run"}
+
+
+# R05 / R07 (docs/domain/areas/ucx.md; reg p.36 §13.1, §13.3): own UCX in every non-lighting VPM FBX, no slots
+@pytest.mark.parametrize("role", ["oks", "ground"])
+def test_vpm_geometry_fbx_without_ucx_fails_r05(role):
+    found = scene_findings(rb(mesh(materials=["M_Wall"])), "vpm", role, PROFILES.vpm)
+    present = next(f for f in found["V010"] if f.name == "UCX present")
+    assert present.status == "fail" and present.source_pdf_pages == [36]
+    assert "UCX material slots" not in statuses(found, "V010")
+
+
+@pytest.mark.parametrize("role", ["oks", "ground"])
+def test_vpm_geometry_fbx_with_clean_ucx_passes_r05_r07(role):
+    found = scene_findings(rb(mesh(materials=["M_Wall"]), mesh(name=UCX, tris=12)), "vpm", role, PROFILES.vpm)
+    assert statuses(found, "V010")["UCX present"] == "pass"
+    assert statuses(found, "V010")["UCX material slots"] == "pass"
+
+
+def test_light_fbx_and_npm_are_exempt_from_ucx_r03_r05():
+    light = scene_findings(rb(mesh(name="SM_Test_K_1_Light")), "vpm", "light", PROFILES.vpm)
+    npm = scene_findings(rb(mesh()), "npm", "oks", PROFILES.npm)
+    assert light["V010"] == [] and npm["V010"] == []
+
+
+@pytest.mark.parametrize("slots", [["M_Ucx"], [None], [None, "M_Wall"]])  # an empty slot is still a slot
+def test_ucx_with_material_slot_fails_r07(slots):
+    found = scene_findings(rb(mesh(), mesh(name=UCX), mesh(name="UCX_SM_Test_K_1_Main_002", materials=slots)),
+                           "vpm", "oks", PROFILES.vpm)
+    finding = next(f for f in found["V010"] if f.name == "UCX material slots")
+    assert finding.status == "fail" and "UCX_SM_Test_K_1_Main_002" in finding.observed
+    assert UCX + "'" not in finding.observed  # the clean piece is not reported
+
+
+def test_ucx_slots_unknown_without_readback_field_is_not_run_never_pass():
+    ucx = mesh(name=UCX)
+    del ucx["materials"]
+    found = scene_findings(rb(mesh(), ucx), "vpm", "oks", PROFILES.vpm)
+    assert statuses(found, "V010")["UCX material slots"] == "not_run"
+
+
+def test_ucx_presence_and_slots_brute_force_probe():
+    """Invariant probe: every combination of kind, role, UCX count, slot shape and render-mesh slots."""
+    slot_shapes = ["absent", [], [None], ["M_Ucx"]]
+    cases = 0
+    for kind, role, n_ucx, render_slots in itertools.product(("vpm", "npm"), ("oks", "ground", "light"), range(3),
+                                                             ([], ["M_Wall"])):
+        for shapes in itertools.product(slot_shapes, repeat=n_ucx):
+            pieces = []
+            for i, shape in enumerate(shapes, 1):
+                piece = mesh(name=f"UCX_SM_Test_K_1_Main_{i:03d}", materials=[] if shape == "absent" else shape)
+                if shape == "absent":
+                    del piece["materials"]
+                pieces.append(piece)
+            found = statuses(scene_findings(rb(mesh(materials=render_slots), *pieces), kind, role,
+                                            PROFILES.vpm if kind == "vpm" else PROFILES.npm), "V010")
+            cases += 1
+            if kind != "vpm" or role == "light":
+                assert found == {}, (kind, role, shapes)
+                continue
+            assert found["UCX present"] == ("pass" if n_ucx else "fail")
+            if not n_ucx:
+                assert "UCX material slots" not in found
+                continue
+            slotted = any(s not in ("absent", []) for s in shapes)
+            expected = "fail" if slotted else "not_run" if "absent" in shapes else "pass"
+            assert found["UCX material slots"] == expected, (shapes, found)
+    print(f"UCX presence/slots probe: {cases}/{cases} combinations")
+    assert cases == 2 * 3 * 2 * (1 + 4 + 16)
 
 
 def test_npm_oks_over_150k_fails():
@@ -371,6 +444,33 @@ def test_ucx_topology_defects_fail():
 
 
 BLENDER = find_blender()
+MAKE_UCX = """
+import bpy, sys
+out, variant = sys.argv[sys.argv.index('--') + 1], sys.argv[-1]
+bpy.ops.wm.read_factory_settings(use_empty=True)
+bpy.ops.mesh.primitive_cube_add(size=2, location=(0, 0, 1))
+bpy.context.object.name = 'SM_Test_K_1_Main'
+bpy.context.object.data.materials.append(bpy.data.materials.new('M_Wall'))
+if variant != 'missing':
+    bpy.ops.mesh.primitive_cube_add(size=2.1, location=(0, 0, 1))
+    bpy.context.object.name = 'UCX_SM_Test_K_1_Main_001'
+    if variant == 'slot':
+        bpy.context.object.data.materials.append(bpy.data.materials.new('M_Ucx'))
+bpy.ops.export_scene.fbx(filepath=out)
+"""
+
+
+@pytest.mark.blender
+@pytest.mark.skipif(BLENDER is None, reason="Blender not installed")
+@pytest.mark.parametrize("variant, present, slots", [("clean", "pass", "pass"), ("slot", "pass", "fail"),
+                                                     ("missing", "fail", None)])
+def test_blender_ucx_presence_and_slots_from_fbx_readback(tmp_path, variant, present, slots):
+    fbx_path = tmp_path / f"{STEM}.fbx"
+    subprocess.run([BLENDER, "--background", "--factory-startup", "--python-exit-code", "1",
+                    "--python-expr", MAKE_UCX, "--", str(fbx_path), variant], check=True, capture_output=True, timeout=300)
+    found = statuses(scene_findings(readback(fbx_path), "vpm", "oks", PROFILES.vpm), "V010")
+    assert found["UCX present"] == present
+    assert found.get("UCX material slots") == slots
 MAKE_CUBE = """
 import bpy, sys
 out, good = sys.argv[sys.argv.index('--') + 1], sys.argv[-1] == 'good'

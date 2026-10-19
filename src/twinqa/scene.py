@@ -3,7 +3,7 @@
 Fills the scene stages the header-only validator leaves not_run: V002 (units and scale;
 units come from a pure-Python GlobalSettings read), V003 (triangulation,
 triangle limits, object types), V004 (applied transforms, regulatory topology defect count, MAF smoothing/flipped normals/dimensions (GroundEl)), V006 (NPM embedded images),
-V008 (one UV channel, mirrored islands, glass tile), V010 (UCX triangle budget only),
+V008 (one UV channel, mirrored islands, glass tile), V010 (UCX presence, no material slots, triangle budget; shape and coverage stay not_run),
 V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
 Ground FBX: Flora checks from twinqa.flora (V015 dimensions, V005 maps, V003 Flora share; #191).
 """
@@ -235,8 +235,18 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
     out["V004"].extend(maf_findings(meshes, role, src, smoothing_angle_deg=angle, maf_sizes=maf_sizes))
 
     if kind == "vpm" and role != "light":
-        # V010: UCX triangle budget only; shape, coverage and offsets need other checks (reg p.34-37)
+        # V010: own UCX in each non-lighting geometry FBX (reg p.36 §13.3), no material slots on UCX
+        # (reg p.36 §13.1; an empty slot is still a slot), triangle budget; shape, coverage and offsets
+        # need other checks (reg p.34-37)
+        out["V010"].append(_f("pass" if ucx else "fail", "UCX present", f"{src}: {len(ucx)} UCX mesh(es)",
+                              "own UCX_ collision in each non-lighting geometry FBX", [36], src))
         if ucx:
+            slotted = {m["name"]: m["materials"] for m in ucx if m.get("materials")}
+            unknown = [m["name"] for m in ucx if "materials" not in m]
+            status = "fail" if slotted else "not_run" if unknown else "pass"
+            observed = slotted or (f"slots not in readback: {unknown[:5]}" if unknown else "no slots")
+            out["V010"].append(_f(status, "UCX material slots", f"{src}: {observed}",
+                                  "no material slots on UCX meshes", [36], src))
             ucx_tris, budget = sum(m["triangles"] for m in ucx), ucx_triangle_limit(tris)
             out["V010"].append(_f("fail" if ucx_tris > budget else "pass", "UCX triangle budget",
                                   f"{src}: {ucx_tris} UCX for {tris} model triangles", f"<= {budget}", [36, 37], src))
