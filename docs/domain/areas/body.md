@@ -77,7 +77,7 @@ No new conflict entry was needed; C1 and C23 also remain linked with their exist
 
 ## L2 gaps
 
-Rows with `none` (13):
+Rows with `none` (11):
 
 - **BODY-A** — approved-source architectural comparison (manual V015 today).
 - **BODY-B** — complete semantic exterior/interior inventory.

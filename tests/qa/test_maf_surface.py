@@ -215,11 +215,11 @@ def test_missing_or_failed_surface_is_not_run():
 def test_oks_glass_and_ucx_skip_maf_surface_findings():
     item = groundel(surface_facts(*box_mesh(shading="soft")))
     oks = scene_findings(rb(item), "npm", "oks", PROFILES.npm)
-    assert [f.name for f in oks["V004"]] == ["applied transforms"]
+    assert [f.name for f in oks["V004"]] == ["applied transforms", "topology defects", "co-directional clearance"]
     glass = scene_findings(rb(mesh(name="SM_Test_GroundElGlass")), "npm", "ground", PROFILES.npm)
-    assert [f.name for f in glass["V004"]] == ["applied transforms"]
+    assert [f.name for f in glass["V004"]] == ["applied transforms", "topology defects", "co-directional clearance"]
     ucx = scene_findings(rb(mesh(name="UCX_SM_Test_GroundEl")), "npm", "ground", PROFILES.npm)
-    assert [f.name for f in ucx["V004"]] == ["applied transforms"]
+    assert [f.name for f in ucx["V004"]] == ["applied transforms", "topology defects", "co-directional clearance"]
 
 
 def _dimension(bounds, sizes=SPEC, present=True):
