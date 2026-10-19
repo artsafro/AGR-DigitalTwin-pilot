@@ -10,8 +10,9 @@ construction (see [UCX](ucx.md)) and package production.
 **Readiness:** [roadmap §7.12](../../research/capability-roadmap.md#712-flora--l0--same-three-sub-areas-lower-priority)
 records **L0**. This sheet is T-FLO-1, the L1 rule index; the procedure is the
 [`model-flora` skill](../../../.agents/skills/model-flora/SKILL.md) (T-FLO-3); a Flora benchmark (T-FLO-4) is
-missing, so full L1 is not claimed. No Flora check exists beyond
-generic Ground-scene subsets, so area L2 is not claimed; no user-accepted Flora case establishes
+missing, so full L1 is not claimed. Flora checks cover FLO-04 (dimensions), FLO-06 (Flora share) and FLO-08
+(map list) on the Ground FBX readback ([`twinqa.flora`](../../../src/twinqa/flora.py), #191); the
+other rows have no check, so area L2 is not claimed; no user-accepted Flora case establishes
 L3. **Future etalons:** the user's 3ds Max Flora library (NPM and VPM versions) and the project
 planting schedules (PDF/DWG species lists) are the intended etalons for identification (T-FLO-2)
 and the benchmark (T-FLO-4); none is identified or stored in the repository yet.
@@ -25,7 +26,7 @@ of the Ground file and follows the Ground masks and texture contract. `L2 covera
 implemented checks only, with their limits; `none` means no automatic check for the complete row
 today (a manual gate is not L2). Coverage was checked against
 [the implementation inventory](../validation.md#implementation-status-inventory-static-audit),
-[`scene_findings`](../../../src/twinqa/scene.py) and [`png.py`](../../../src/twinqa/png.py).
+[`scene_findings`](../../../src/twinqa/scene.py), [`flora.py`](../../../src/twinqa/flora.py) and [`png.py`](../../../src/twinqa/png.py).
 Conflicts are pointed to [conflicts.md](../conflicts.md), not decided here.
 
 | Requirement | reg page | NPM | VPM | How it is checked | L2 coverage | Detail in |
@@ -33,11 +34,11 @@ Conflicts are pointed to [conflicts.md](../conflicts.md), not decided here.
 | FLO-01 — Flora definition and membership | reg p.1–2 §2; reg p.21 §2 | Vegetation model = polygonal objects for all greenery roughly 2× or more above lawn level: bushes, trees, tall herbaceous plants, flower beds; lawn-level beds and grass are Ground texture; roof and stylobate greenery belongs to the OKS; plot or stage boundary as for Ground | Greenery (`озеленение`) is a mandatory Ground element when present in the project; roof and stylobate greenery belongs to the OKS; same plot or stage boundary | Manual inventory of the planting plan against the model, with lawn-level / above-lawn and roof / ground classification | none | [Profile terms](../npm-vpm.md#terms) |
 | FLO-02 — Flower beds: texture or models | [D101]; reg p.1–2 §2 | Flower beds / small greenery named only as such in the specification are Ground texture; beds whose plants are listed are 3D models; big bushes always models | Same project rule | Manual comparison of the specification wording with the chosen representation | none | [Flora practice](../geometry.md#flora-project-practice-source-187-grilling-rounds-1-2-with-user-artem), [D101](../../decisions.md) |
 | FLO-03 — Approved design, both profiles complete | reg p.4 §1.3; reg p.24 §1.3 | All greenery of the approved project present, implemented fully and identically in NPM and VPM | Same | Manual V015 against the approved drawings and the planting schedule; paired-profile count of plants, not topology equality | none | [Common profile contract](../npm-vpm.md#common-to-both), [manual QA](../validation.md) |
-| FLO-04 — Species, size and colour match | [D099] | Species as in the planting schedule; height and crown diameter within ±20 %; leaf / flower colour per specification, otherwise per a photo search of the species name | Same | Manual comparison of measured height and crown diameter with the schedule; colour by eye against the specification or reference photo | none | [Flora practice](../geometry.md#flora-project-practice-source-187-grilling-rounds-1-2-with-user-artem), [D099](../../decisions.md) |
+| FLO-04 — Species, size and colour match | [D099] | Species as in the planting schedule; height and crown diameter within ±20 %; leaf / flower colour per specification, otherwise per a photo search of the species name | Same | Manual comparison of measured height and crown diameter with the schedule; colour by eye against the specification or reference photo | V015 — `scene_findings` → `twinqa.flora`, height (bbox minus 10 cm sinking [D100]) and crown (larger horizontal bbox side) within 20 % per placed-plant mesh named in a supplied schedule; species and colour manual | [Flora practice](../geometry.md#flora-project-practice-source-187-grilling-rounds-1-2-with-user-artem), [D099](../../decisions.md) |
 | FLO-05 — Ground FBX composition | reg p.6–7 §1.5; reg p.26 §1.4 | Ground FBX (≤ 22 texture sets) holds a separate vegetation geometry object containing all vegetation of the scene, with 1 texture set | Vegetation is inside the single Ground file with its other elements; no separate vegetation object or file is named | Manual object / material inventory of the exported Ground FBX | none | [NPM structure](../npm-vpm.md#npm-appendix-1), [VPM structure](../npm-vpm.md#vpm-appendix-2) |
-| FLO-06 — NPM shared triangle budget | reg p.7 §3.6; [D097] | Ground + GroundEl + Flora total ≤ 180 000 triangles, not a Flora allowance; project starting split surface 50k / MAF 60k / Flora 70k [D097] | See FLO-07; do not reuse the NPM ceiling | Sum exported triangles of the complete Ground FBX; the split is a planning target, not a regulation limit | V003 — `scene_findings`, NPM `role=ground` total only | [Profile budgets](../npm-vpm.md#npm-appendix-1), [implementation](../../../src/twinqa/scene.py) |
+| FLO-06 — NPM shared triangle budget | reg p.7 §3.6; [D097] | Ground + GroundEl + Flora total ≤ 180 000 triangles, not a Flora allowance; project starting split surface 50k / MAF 60k / Flora 70k [D097] | See FLO-07; do not reuse the NPM ceiling | Sum exported triangles of the complete Ground FBX; the split is a planning target, not a regulation limit | V003 — `scene_findings`, NPM `role=ground` total (fail > 180 000) and "Flora triangle share" (`_Flora` meshes vs 70 000 [D097], `review` above, configurable) | [Profile budgets](../npm-vpm.md#npm-appendix-1), [implementation](../../../src/twinqa/scene.py) |
 | FLO-07 — VPM Ground budget | reg p.28–29 §3.10; [D010] | See FLO-06 | Ground limit by site area (S_ter − S_pz), excluding UCX, from 300 000 (≤ 0.05 ha) to 4 500 000 (> 1.5 ha) triangles; no separate vegetation allowance | Manual site-area calculation and whole-Ground triangle sum; V003 returns `review` for this limit | none | [VPM budget](../npm-vpm.md#vpm-appendix-2), [C1, decided by the user](../conflicts.md#a-inside-the-regulation) |
-| FLO-08 — Vegetation texture set | reg p.10 §5.13; reg p.9 §5.2 | One texture set for all vegetation, ≤ 2048×2048 px; only the diffuse map and, if needed, the opacity map | No Flora-specific set; Ground UDIM texture contract applies | Manual set grouping over all Flora materials, image dimensions and map list; generic NPM size helper does not enforce the Flora set count or map list | none | [NPM textures](../uv-textures.md#npm-textures-app1), [VPM textures](../uv-textures.md#vpm-textures-app2), [C18, open](../conflicts.md#b-regulation-vs-local-yaml--docs) |
+| FLO-08 — Vegetation texture set | reg p.10 §5.13; reg p.9 §5.2 | One texture set for all vegetation, ≤ 2048×2048 px; only the diffuse map and, if needed, the opacity map | No Flora-specific set; Ground UDIM texture contract applies | Manual set grouping over all Flora materials, image dimensions and map list; generic NPM size helper does not enforce the Flora set count or map list | V005 — `scene_findings` → `twinqa.flora`, NPM map list per Flora material: other maps, no diffuse or diffuse alpha wired to Alpha [D020] fail; a missing opacity map is `review` (C18 open); set count and ≤ 2048 px not checked | [NPM textures](../uv-textures.md#npm-textures-app1), [VPM textures](../uv-textures.md#vpm-textures-app2), [C18, open](../conflicts.md#b-regulation-vs-local-yaml--docs) |
 | FLO-09 — Texel density applicability | reg p.10 §6.2; reg p.31–32 §6.1–6.2 | Density requirements do not apply to vegetation geometry | No vegetation exemption stated: density applies to diffuse maps only (ERM, normal and placeholders exempt), 512–1706 px/m; for maps using the alpha channel a higher density from the range is recommended | Manual target classification (NPM) and metric UV inspection (VPM); V009 unimplemented | none | [Density applicability](../uv-textures.md#npm-textures-app1), [VPM density](../uv-textures.md#vpm-uv--udim) |
 | FLO-10 — Geometry technique | reg p.7 §3.1; reg p.29 §3.16; [D102] | Minimum triangles for the silhouette; minor detail as texture on the atlas; project route: a bush is a "star" of textured planes (FLO practice) | Vegetation realistic, no stylization; recommended: model trunk and main large branches, small twigs and leaves as planes with an alpha-channel texture; default VPM bush = shell of the NPM star, a detailed bush only on request [D102] | Manual silhouette and realism review against the reference; triangle counts per plant from the library audit | none | [Geometry rules](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted), [D102](../../decisions.md) |
 | FLO-11 — Opacity and two-sided planes | reg p.9 §5.5, §5.8; reg p.36 §12.1–12.3 | Alpha channel forbidden; a separate opacity map only when transparent elements exist; no duplicated-offset thickness | Cut-outs as a black-and-white map (0–127 invisible, 128–255 visible) baked into the diffuse alpha; planes seen from both sides duplicated with a 0.003–0.01 m offset and flipped normals | Manual map and plane inspection per profile; do not share one export between profiles | none | [Geometry](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted), [C7/C8 and C21](../conflicts.md) |
@@ -108,16 +109,14 @@ alpha planes on p.29 §3.16; FLO-11 alpha forbidden (p.9 §5.5), 0–127 / 128�
 
 ## L2 gaps
 
-The table has **17 rows**: **13** with `none` and **4** with partial coverage (FLO-06, FLO-14,
-FLO-16, FLO-17). Every `none` row is listed; these are L2 ticket candidates, **not filed tickets**:
+The table has **17 rows**: **11** with `none` and **6** with partial coverage (FLO-04, FLO-06,
+FLO-08, FLO-14, FLO-16, FLO-17). Every `none` row is listed; these are L2 ticket candidates, **not filed tickets**:
 
 - **FLO-01:** above-lawn / lawn-level and roof / ground classification of greenery against the planting plan.
 - **FLO-02:** specification-wording rule for flower beds as texture or models [D101].
 - **FLO-03:** completeness against the approved design and paired NPM/VPM plant count.
-- **FLO-04:** species, height / crown ±20 % and colour match against the planting schedule [D099].
 - **FLO-05:** NPM separate vegetation object with one set; VPM vegetation inside the Ground file.
 - **FLO-07:** VPM site-area calculation and hard Ground budget (C1 decided [D010]).
-- **FLO-08:** one Flora set, ≤ 2048 px, diffuse + optional opacity only (C18 open).
 - **FLO-09:** NPM density exemption for vegetation; VPM density on vegetation planes.
 - **FLO-10:** silhouette economy, VPM realism and star / shell technique [D102].
 - **FLO-11:** profile-aware opacity (NPM separate map, VPM diffuse alpha) and two-sided plane offset.
@@ -125,8 +124,11 @@ FLO-16, FLO-17). Every `none` row is listed; these are L2 ticket candidates, **n
 - **FLO-13:** Flora texture / material names and editor-to-PNG correspondence.
 - **FLO-15:** absence of collision on vegetation while the Ground-surface UCX remains.
 
-Partial rows also leave work: FLO-06 checks the Ground total, not the Flora 70k planning split;
-FLO-14 checks embedding flags, not Flora pixels; FLO-17 does not check the 10 cm sinking, the
+Partial rows also leave work: FLO-04 checks height / crown only when a schedule names one mesh
+per placed plant (no species or colour check, merged NPM `_Flora` mesh not measurable per plant,
+crown from the world bbox reads up to ×1.41 on a non-round crown rotated about Z); FLO-06 reports
+the Flora share for meshes with the `Flora` name token only; FLO-08 checks the map list, not the
+single set or the ≤ 2048 px size (C18 open); FLO-14 checks embedding flags, not Flora pixels; FLO-17 does not check the 10 cm sinking, the
 ±10 % clone scale or NPM georeferencing. T-FLO-4 still waits for identified etalons from the
 user's Flora library and planting schedules; no species, dimension or library identity is
 invented here.

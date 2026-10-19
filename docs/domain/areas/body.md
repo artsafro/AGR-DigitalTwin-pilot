@@ -33,7 +33,7 @@ manual gates remain required. Partial coverage is explicitly qualified.
 | BODY-H — Perimeter below terrain | reg p.28 §3.6 | No transferred VPM OKS mandate | OKS perimeter extended down ≥ 1 m | Inspect exported perimeter against Ground; no general automatic extension check | none | [Perimeter rule](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted) |
 | BODY-I — Visible faces and normals | reg p.8 §3.8; reg p.29 §3.15 | Outward, complete visible exterior | Same | Orientation checker plus reachable-view inspection; geometry alone cannot certify all views | `src/twinqa/geometry/checks.py:check_orientation` (partial); `tests/qa/test_orientation.py` | [Visibility](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted), [QA](../validation.md#general-qa-procedure-project) |
 | BODY-J — Topological defect ceiling | reg p.8 §3.7; reg p.29 §3.11 | ≤ 100 duplicates/self-intersections at 0.002 m; no isolated elements or zero edges | Same | Counted per mesh after FBX readback: duplicates/self-intersections at 0.002 m against the profile limit, isolated vertices/edges/polygons and zero-length edges must be 0; definitions in the module docstring | V004 (`src/twinqa/scene.py:scene_findings` via `src/twinqa/geometry/topology.py:count_defects`, requires scene readback); `tests/qa/test_topology.py` | [Topology](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted), [V004 limits](../validation.md#implementation-status-inventory-static-audit) |
-| BODY-K — Co-directional face clearance | reg p.8 §3.9; reg p.29 §3.13 | 5 mm–2 cm | 5 mm–2 cm | Measure overlapping parallel faces; existing project audits are not a complete regulatory band check | none | [Clearance rule](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted), [QA caveats](../validation.md#general-qa-procedure-project) |
+| BODY-K — Co-directional face clearance | reg p.8 §3.9; reg p.29 §3.13 | 5 mm–2 cm | 5 mm–2 cm | FBX readback: co-directional overlapping faces, distance distribution | V004 (`src/twinqa/scene.py:scene_findings`, "co-directional clearance": fail < 5 mm, review > 2 cm, no distance cutoff); `tests/qa/test_scene_clearance.py` | [Clearance rule](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted), [QA caveats](../validation.md#general-qa-procedure-project) |
 | BODY-L — Interior visibility and wall thickness | reg p.8 §3.12; reg p.29 §3.12 | Simplified interior only where seen through translucent parts | Simplified walls/floors; wall thickness ≥ 10 cm | Inspect sightlines and sections; C23 shell-policy disagreement remains for the user, not resolved here | none | [Interior rule](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted), [C23](../conflicts.md#c-between-local-sources-project-decisionslessons) |
 | BODY-M — Smoothing | reg p.8 §3.15; reg p.29 §3.14 | Project-controlled polygon smoothing | Same | Inspect normals/shading against real angles after readback | none | [Smoothing](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted) |
 | BODY-N — Export triangulation | reg p.8 §3.11; reg p.29 §3.17 | Triangulated export | Triangulated export | Read back exported polygon degrees, not editable-master topology | V003 (`src/twinqa/scene.py:scene_findings`) | [Export geometry](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted), [export/import](../export-import.md) |
@@ -77,13 +77,12 @@ No new conflict entry was needed; C1 and C23 also remain linked with their exist
 
 ## L2 gaps
 
-Rows with `none` (13):
+Rows with `none` (11):
 
 - **BODY-A** — approved-source architectural comparison (manual V015 today).
 - **BODY-B** — complete semantic exterior/interior inventory.
 - **BODY-C** — roof/terrace ownership and correct assembly with the OKS.
 - **BODY-H** — OKS perimeter extension measurement.
-- **BODY-K** — complete co-directional overlap clearance band.
 - **BODY-L** — visible-interior scope and minimum wall thickness; retain C23.
 - **BODY-M** — project-correct smoothing and shading.
 - **BODY-P** — object hierarchy and indivisible-unit ownership.
