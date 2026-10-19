@@ -448,49 +448,39 @@ def test_physical_mutation_changes_pixels_or_errors(recipes, recipe, slot, field
     assert not np.array_equal(image, original)
 
 
-def test_nominal_widths_other_than_the_sourced_face_error(recipes, recipe):
-    rejected = 0
-    for width in range(1, 51):
-        broken = copy.deepcopy(recipe)
-        broken["slots"]["TileLight"]["nominal_tile_mm"] = [width, 300]
-        with pytest.raises(recipes.GroundRecipeError):
-            recipes.validate_recipe(broken)
-        rejected += 1
-    assert rejected == 50
-
-
-def test_shipped_tile_face_matches_sourced_millimetres(recipes, recipe):
-    """Gothic 100x300 mm, not the old 800x1866 mm NPM snap or the 109x234 mm VPM snap."""
-    npm = recipes.render_map(recipe, "TileLight", "npm", size=2048)
-    npm_face = _face_px(npm)
-    npm_mm = (npm_face[0] / 30.0 * 1000.0, npm_face[1] / 30.0 * 1000.0)
-    assert npm_mm[0] == pytest.approx(100, abs=5)
-    assert npm_mm[1] == pytest.approx(300, abs=5)
-    vpm = recipes.render_map(recipe, "TileLight", "vpm", size=2048)
-    vpm_face = _face_px(vpm)
-    # 2048 px is half of the 4096 delivery, so this preview is 512 px/m.
-    vpm_mm = (vpm_face[0] / 512.0 * 1000.0, vpm_face[1] / 512.0 * 1000.0)
-    assert vpm_mm[0] == pytest.approx(100, abs=5)
-    assert vpm_mm[1] == pytest.approx(300, abs=5)
+@pytest.mark.parametrize("profile", ["npm", "vpm"])
+def test_physical_supertile_keeps_faces_and_joints_within_one_percent(recipes, recipe, profile):
+    body = recipe["slots"]["TileLight"]
+    assert body["joint_mm"] == 5
+    layout = recipes.tile_facts(body, profile)
+    assert layout["nominal_face_mm"] == [100, 300]
+    for axis in range(2):
+        assert abs(layout["scale_error_percent"][axis]) <= 1
+        assert layout["actual_face_mm"][axis] == pytest.approx(
+            body["nominal_tile_mm"][axis] * layout["scale_factor"][axis])
+        assert layout["actual_joint_mm"][axis] == pytest.approx(5 * layout["scale_factor"][axis])
+        assert layout["period_px"][axis] * layout["count"][axis] == pytest.approx(
+            recipe["profiles"][profile]["size"])
+    image = recipes.render_map(recipe, "TileLight", profile, size=256)
+    entry = recipes.manifest_entry(recipe, "TileLight", profile, image)
+    assert entry["physical_layout"] == layout
 
 
 def test_valid_scale_control_emits_the_nominal_face(recipes, recipe):
-    """A consistent larger paver is measurable, and it is not the shipped 100x300 map."""
     control = copy.deepcopy(recipe)
-    slot = control["slots"]["TileLight"]
-    slot["nominal_tile_mm"] = [800, 1600]
-    slot["npm_period_px"] = [32, 64]
-    slot["npm_joint_px"] = [8, 16]
-    slot["vpm_period_px"] = [1024, 2048]
-    slot["vpm_joint_px"] = [204.8, 409.6]
-    image = recipes.render_map(control, "TileLight", "npm", size=256)
-    shipped = recipes.render_map(recipe, "TileLight", "npm", size=256)
-    assert not np.array_equal(image, shipped)
-    face = _face_px(image)
-    # 256 px covers the same 2048/30 m repeat, i.e. 3.75 px/m.
-    mm = (face[0] / 3.75 * 1000.0, face[1] / 3.75 * 1000.0)
-    assert face == pytest.approx((3, 6), abs=0.25)
-    assert mm == pytest.approx((800, 1600), abs=1)
+    body = control["slots"]["TileLight"]
+    body["nominal_tile_mm"] = [995, 995]
+    body["joint_mm"] = 5
+    image = recipes.render_map(control, "TileLight", "vpm", size=1024)
+    # Four periods across 4m; threshold dark joints on a non-joint row.
+    row = image[64].mean(axis=1)
+    dark = row < 160
+    runs = np.flatnonzero(np.diff(dark.astype(int), prepend=0) == 1)
+    assert len(runs) == 4
+    assert np.diff(runs) == pytest.approx([256, 256, 256], abs=1)
+    facts = recipes.tile_facts(body, "vpm")
+    assert facts["actual_face_mm"] == pytest.approx([995, 995])
+    assert facts["scale_error_percent"] == pytest.approx([0, 0])
 
 
 def test_fraction_pitch_error_of_half_a_texel_is_rejected(recipes, recipe):
@@ -518,14 +508,10 @@ def test_bad_fraction_errors(recipes, recipe, value):
         recipes.validate_recipe(broken)
 
 
-def test_joint_exactly_half_the_period_errors(recipes, recipe):
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), -1, 0, True])
+def test_invalid_joint_mm_errors(recipes, recipe, value):
     broken = copy.deepcopy(recipe)
-    slot = broken["slots"]["TileLight"]
-    slot["nominal_tile_mm"] = [4000.0 / 30.0, 800]
-    slot["npm_period_px"] = [8, 32]
-    slot["npm_joint_px"] = [4, 8]
-    slot["vpm_period_px"] = [256, 1024]
-    slot["vpm_joint_px"] = [119.46666666666667, 204.8]
+    broken["slots"]["TileLight"]["joint_mm"] = value
     with pytest.raises(recipes.GroundRecipeError):
         recipes.validate_recipe(broken)
 
@@ -539,7 +525,7 @@ def test_tile_larger_than_the_repeat_errors(recipes, recipe):
 
 def test_incompatible_recipe_does_not_render_or_write(recipes, recipe, tmp_path, monkeypatch):
     broken = copy.deepcopy(recipe)
-    broken["slots"]["TileLight"]["nominal_tile_mm"] = [200, 600]
+    broken["slots"]["TileLight"]["nominal_tile_mm"] = [900, 1900]
     path = tmp_path / "bad.json"
     path.write_text(json.dumps(broken), encoding="utf-8")
     out = tmp_path / "empty"
@@ -556,3 +542,14 @@ def test_incompatible_recipe_does_not_render_or_write(recipes, recipe, tmp_path,
         recipes.write_delivery(path, out)
     assert calls == []
     assert list(out.iterdir()) == []
+
+
+def test_version_parameter_and_address_are_fail_closed(recipes, recipe, tmp_path, monkeypatch):
+    assert recipes.delivery_directory("v002") == Path("C:/x/vatutino-ground-textures/v002")
+    for version in ("../v002", "v2", "v000", "v002/child", ""):
+        with pytest.raises(recipes.GroundRecipeError):
+            recipes.delivery_directory(version)
+    for address in ("Bad-Name", "", "A" * 255):
+        with pytest.raises(recipes.GroundRecipeError):
+            recipes.write_delivery(RECIPE_PATH, tmp_path, version="v002", address=address)
+    assert list(tmp_path.iterdir()) == []
