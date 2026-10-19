@@ -33,6 +33,24 @@ no PNG/TGA/TIFF in the repo).
   `C:/x/flora-library/v001/maps/<slug>/`, saved as the new file `C:/x/flora-library/v003/flora-library-v003.max`.
   v001, v002 and the source scenes are not overwritten.
 
+## Rebind checks (#312)
+
+The default orchestration unit tests use synthetic 2x2 PNGs under pytest's `tmp_path`,
+mock only DCC/filesystem discovery, and reject reads from the workstation's published
+library. They exercise the real planner, `execute` and CLI guards without installed assets:
+`uv run pytest -q tests/test_flora_library_rebind.py -k production`.
+
+Native published-library readback remains separate from these synthetic controls:
+`DT_FLORA_LIBRARY_INTEGRATION=1 uv run pytest -q -rs -m dcc tests/test_flora_library_rebind.py -k published_library_readback`.
+Prerequisites: Windows, licensed 3ds Max 2026, the configured `dcc_batch.py` runner,
+`C:/x/flora-library/v003/flora-library-v003.max`, and all catalogue diffuse/opacity PNGs
+under `C:/x/flora-library/v001/maps`. Coordinate exclusive Max ownership before selection.
+Without explicit opt-in or required files it skips with a prerequisite message. With them,
+it opens a temporary copy and checks the native snapshot through the existing readback
+measurement/verdict (99 objects, 198 matching bindings, no outside paths); hashes of the
+published MAX/maps must remain unchanged. This is map-binding evidence, not geometry
+identity or whole-library acceptance. Never remove or alter published assets to test isolation.
+
 ## Gaps
 
 `gaps.project_species_shared_stand_in` lists project species that still share one multi-species FLORIO stand-in.
