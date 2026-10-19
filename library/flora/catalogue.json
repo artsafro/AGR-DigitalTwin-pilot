@@ -55,18 +55,18 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 3.747187826,
-    "scaled_dev_rel": 0.206138058
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "library-002",
      "scene": "FLORA_Union_v1.max",
      "source_name": "19_Lipa_LP",
-     "reason": "duplicate: kept library-028 (LP -> HP before unlabelled)"
+     "reason": "alternate source: kept library-028 (LP -> HP before unlabelled); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 6.094,
@@ -156,11 +156,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 1.828288396,
-    "scaled_dev_rel": 0.264311179
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 3.832,
@@ -209,11 +209,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 2.98230568,
-    "scaled_dev_rel": 0.253672645
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 2.804,
@@ -262,30 +262,30 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 4.705177479,
-    "scaled_dev_rel": 0.23859399
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "library-021",
      "scene": "FLORA_Union_v1.max",
      "source_name": "Irga_Lamarka_LP",
-     "reason": "duplicate: kept project-009 (explicit LP before LP -> HP)"
+     "reason": "not selected as separate VPM: kept NPM project-009; VPM identity: unverified, see #305"
     },
     {
      "entry_id": "library-046",
      "scene": "FLORA_Union_v1.max",
      "source_name": "SM_irga_lamarka_kust",
-     "reason": "duplicate: kept project-009 (explicit LP before LP -> HP)"
+     "reason": "not selected as separate VPM: kept NPM project-009; VPM identity: unverified, see #305"
     },
     {
      "entry_id": "project-031",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "irga_lamarka_t1_h150_high",
-     "reason": "duplicate: kept library-020 (library before FLORIO)"
+     "reason": "alternate source: kept library-020 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 1.553,
@@ -335,30 +335,30 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 3.924994382,
-    "scaled_dev_rel": 0.588642315
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "library-079",
      "scene": "FLORA_Union_v1.max",
      "source_name": "КЛЕН_LP001",
-     "reason": "duplicate: kept library-031 (fewer triangles)"
+     "reason": "alternate source: kept library-031 (fewer triangles); VPM identity: unverified, see #305"
     },
     {
      "entry_id": "project-012",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "_klen_t1_h175_low2",
-     "reason": "duplicate: kept library-031 (library before FLORIO)"
+     "reason": "alternate source: kept library-031 (library before FLORIO); VPM identity: unverified, see #305"
     },
     {
      "entry_id": "project-034",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "klen_t1_h175_high",
-     "reason": "duplicate: kept library-024 (library before FLORIO)"
+     "reason": "alternate source: kept library-024 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 4.565,
@@ -407,11 +407,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 1.77034969,
-    "scaled_dev_rel": 0.410214095
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 4.538,
@@ -460,18 +460,18 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 2.570222157,
-    "scaled_dev_rel": 0.374355866
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "project-035",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "klen_t2_h500_high",
-     "reason": "duplicate: kept library-036 (library before FLORIO)"
+     "reason": "alternate source: kept library-036 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 4.549,
@@ -521,24 +521,24 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 9.638209638,
-    "scaled_dev_rel": 0.26859844
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "library-050",
      "scene": "FLORA_Union_v1.max",
      "source_name": "SM_klen_tatarsky001",
-     "reason": "duplicate: kept project-012 (explicit LP before LP -> HP)"
+     "reason": "not selected as separate VPM: kept NPM project-012; VPM identity: unverified, see #305"
     },
     {
      "entry_id": "project-034",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "klen_t1_h175_high",
-     "reason": "duplicate: kept library-049 (library before FLORIO)"
+     "reason": "alternate source: kept library-049 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 1.542,
@@ -711,18 +711,18 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.782316225,
-    "scaled_dev_rel": 0.383807217
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "project-040",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "siren_bush_t1_h150_high",
-     "reason": "duplicate: kept library-055 (library before FLORIO)"
+     "reason": "alternate source: kept library-055 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 1.732,
@@ -772,24 +772,24 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 1.118627655,
-    "scaled_dev_rel": 0.25590653
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "library-056",
      "scene": "FLORA_Union_v1.max",
      "source_name": "SM_sosna",
-     "reason": "duplicate: kept library-084 (explicit LP before LP -> HP)"
+     "reason": "not selected as separate VPM: kept NPM library-084; VPM identity: unverified, see #305"
     },
     {
      "entry_id": "library-065",
      "scene": "FLORA_Union_v1.max",
      "source_name": "Sosna_chyornaya_LP",
-     "reason": "duplicate: kept library-084 (explicit LP before LP -> HP)"
+     "reason": "not selected as separate VPM: kept NPM library-084; VPM identity: unverified, see #305"
     }
    ],
    "height_m": 4.565,
@@ -838,18 +838,18 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 1.781328635,
-    "scaled_dev_rel": 0.309139481
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "project-035",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "klen_t2_h500_high",
-     "reason": "duplicate: kept library-061 (library before FLORIO)"
+     "reason": "alternate source: kept library-061 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 4.549,
@@ -899,18 +899,18 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 2.543049614,
-    "scaled_dev_rel": 0.479516369
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "project-040",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "siren_bush_t1_h150_high",
-     "reason": "duplicate: kept library-062 (library before FLORIO)"
+     "reason": "alternate source: kept library-062 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 1.732,
@@ -960,24 +960,24 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.337379179,
-    "scaled_dev_rel": 0.072533959
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "project-007",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "_elka_t1_h400_low",
-     "reason": "duplicate: kept library-070 (library before FLORIO)"
+     "reason": "alternate source: kept library-070 (library before FLORIO); VPM identity: unverified, see #305"
     },
     {
      "entry_id": "project-029",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "elka_t1_h400_high",
-     "reason": "duplicate: kept library-069 (library before FLORIO)"
+     "reason": "alternate source: kept library-069 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 4.606,
@@ -1108,11 +1108,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 1.378029315,
-    "scaled_dev_rel": 0.312352288
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 4.411,
@@ -1243,18 +1243,18 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.004657635,
-    "scaled_dev_rel": 0.003356646
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "library-043",
      "scene": "FLORA_Union_v1.max",
      "source_name": "SM_deren_belyi",
-     "reason": "duplicate: kept library-011 (explicit LP before LP -> HP)"
+     "reason": "not selected as separate VPM: kept NPM library-011; VPM identity: unverified, see #305"
     }
    ],
    "height_m": 0.723,
@@ -1344,11 +1344,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.191580049,
-    "scaled_dev_rel": 0.136549984
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 0.99,
@@ -1438,18 +1438,18 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.641948605,
-    "scaled_dev_rel": 0.31196882
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "project-030",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "gortenzia_t1_h100_high",
-     "reason": "duplicate: kept library-019 (library before FLORIO)"
+     "reason": "alternate source: kept library-019 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 1.039,
@@ -1540,30 +1540,30 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.671516018,
-    "scaled_dev_rel": 0.1887851
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "library-023",
      "scene": "FLORA_Union_v1.max",
      "source_name": "Kizilnik_blestyashchiy_LP",
-     "reason": "duplicate: kept project-011 (explicit LP before LP -> HP)"
+     "reason": "not selected as separate VPM: kept NPM project-011; VPM identity: unverified, see #305"
     },
     {
      "entry_id": "library-089",
      "scene": "FLORA_Union_v1.max",
      "source_name": "кизильник блестящий_02",
-     "reason": "duplicate: kept project-011 (explicit LP before LP -> HP)"
+     "reason": "not selected as separate VPM: kept NPM project-011; VPM identity: unverified, see #305"
     },
     {
      "entry_id": "project-033",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "kizilnik_t1_h100_high",
-     "reason": "duplicate: kept library-048 (library before FLORIO)"
+     "reason": "alternate source: kept library-048 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 0.972,
@@ -1654,11 +1654,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.120279928,
-    "scaled_dev_rel": 0.110204621
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 0.951,
@@ -1707,18 +1707,18 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.727265939,
-    "scaled_dev_rel": 0.269826352
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "project-039",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "riabinnik_t1_h100_high",
-     "reason": "duplicate: kept library-037 (library before FLORIO)"
+     "reason": "alternate source: kept library-037 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 1.075,
@@ -1890,7 +1890,7 @@
      "entry_id": "library-087",
      "scene": "FLORA_Union_v1.max",
      "source_name": "гортензия древовидная баунти_02",
-     "reason": "duplicate: kept library-044 (verified uniformly scaled copy of the NPM geometry, not a distinct VPM)"
+     "reason": "not selected as separate VPM: kept NPM library-044; VPM identity: unverified, see #305"
     }
    ],
    "height_m": 1.407,
@@ -1938,7 +1938,7 @@
      "entry_id": "library-088",
      "scene": "FLORA_Union_v1.max",
      "source_name": "гортензия метельчатая лайм лайт_02",
-     "reason": "duplicate: kept library-045 (verified uniformly scaled copy of the NPM geometry, not a distinct VPM)"
+     "reason": "not selected as separate VPM: kept NPM library-045; VPM identity: unverified, see #305"
     }
    ],
    "height_m": 1.407,
@@ -1987,18 +1987,18 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.818937946,
-    "scaled_dev_rel": 0.356968234
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "project-032",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "kalina_t1_h150_high",
-     "reason": "duplicate: kept library-047 (library before FLORIO)"
+     "reason": "alternate source: kept library-047 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 1.732,
@@ -2047,7 +2047,7 @@
      "entry_id": "library-090",
      "scene": "FLORA_Union_v1.max",
      "source_name": "рябинник рябиннолистн сэм_02",
-     "reason": "duplicate: kept library-052 (verified uniformly scaled copy of the NPM geometry, not a distinct VPM)"
+     "reason": "not selected as separate VPM: kept NPM library-052; VPM identity: unverified, see #305"
     }
    ],
    "height_m": 1.332,
@@ -2096,18 +2096,18 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 1.075296622,
-    "scaled_dev_rel": 0.28311665
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "project-043",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "spireya_t2_h60_high",
-     "reason": "duplicate: kept library-057 (library before FLORIO)"
+     "reason": "alternate source: kept library-057 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 0.618,
@@ -2157,24 +2157,24 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 1.069304868,
-    "scaled_dev_rel": 0.241247774
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "library-066",
      "scene": "FLORA_Union_v1.max",
      "source_name": "SpireyaSeraya_LP",
-     "reason": "duplicate: kept project-020 (explicit LP before LP -> HP)"
+     "reason": "not selected as separate VPM: kept NPM project-020; VPM identity: unverified, see #305"
     },
     {
      "entry_id": "project-042",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "spireya_t1_h100_high",
-     "reason": "duplicate: kept library-058 (library before FLORIO)"
+     "reason": "alternate source: kept library-058 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 1.056,
@@ -2224,18 +2224,18 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.725439562,
-    "scaled_dev_rel": 0.473562073
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "project-024",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "_spireya_t5_h80_low",
-     "reason": "duplicate: kept library-059 (library before FLORIO)"
+     "reason": "alternate source: kept library-059 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 1.475,
@@ -2285,18 +2285,18 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.425700917,
-    "scaled_dev_rel": 0.20643851
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "project-037",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "mojevelnik_t1_h60_high",
-     "reason": "duplicate: kept library-060 (library before FLORIO)"
+     "reason": "alternate source: kept library-060 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 0.724,
@@ -2346,24 +2346,24 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.597865344,
-    "scaled_dev_rel": 0.303203345
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "library-085",
      "scene": "FLORA_Union_v1.max",
      "source_name": "Сосна_Горная_LP",
-     "reason": "duplicate: kept project-019 (explicit LP before unlabelled)"
+     "reason": "alternate source: kept project-019 (explicit LP before unlabelled); VPM identity: unverified, see #305"
     },
     {
      "entry_id": "project-041",
      "scene": "FLORIO_2BT_2022.max",
      "source_name": "sosna_t1_h60_high",
-     "reason": "duplicate: kept library-063 (library before FLORIO)"
+     "reason": "alternate source: kept library-063 (library before FLORIO); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 0.618,
@@ -2413,11 +2413,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.065035654,
-    "scaled_dev_rel": 0.090582718
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 0.553,
@@ -2466,30 +2466,30 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.003737052,
-    "scaled_dev_rel": 0.002224921
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [
     {
      "entry_id": "library-075",
      "scene": "FLORA_Union_v1.max",
      "source_name": "Барбарис_Тунберг_001",
-     "reason": "duplicate: kept project-011 (explicit LP before unlabelled)"
+     "reason": "alternate source: kept project-011 (explicit LP before unlabelled); VPM identity: unverified, see #305"
     },
     {
      "entry_id": "library-076",
      "scene": "FLORA_Union_v1.max",
      "source_name": "Барбарис_Тунберг_002",
-     "reason": "duplicate: kept project-011 (explicit LP before unlabelled)"
+     "reason": "alternate source: kept project-011 (explicit LP before unlabelled); VPM identity: unverified, see #305"
     },
     {
      "entry_id": "library-077",
      "scene": "FLORA_Union_v1.max",
      "source_name": "Барбарис_Тунберг_003",
-     "reason": "duplicate: kept project-011 (explicit LP before unlabelled)"
+     "reason": "alternate source: kept project-011 (explicit LP before unlabelled); VPM identity: unverified, see #305"
     }
    ],
    "height_m": 0.972,
@@ -2538,11 +2538,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.003175061,
-    "scaled_dev_rel": 0.001863018
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 1.524,
@@ -2591,11 +2591,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.003003795,
-    "scaled_dev_rel": 0.002723869
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 0.835,
@@ -2644,11 +2644,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.003180053,
-    "scaled_dev_rel": 0.001865947
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 1.524,
@@ -2697,11 +2697,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.003000694,
-    "scaled_dev_rel": 0.003205458
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 0.841,
@@ -2750,11 +2750,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.003004903,
-    "scaled_dev_rel": 0.001718807
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 0.86,
@@ -2803,11 +2803,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.084783849,
-    "scaled_dev_rel": 0.074545804
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 0.639,
@@ -2856,11 +2856,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.078723648,
-    "scaled_dev_rel": 0.067459201
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 0.562,
@@ -3073,11 +3073,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.003002684,
-    "scaled_dev_rel": 0.003303669
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 0.562,
@@ -3126,11 +3126,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.096865156,
-    "scaled_dev_rel": 0.083320499
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 0.951,
@@ -3220,11 +3220,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "verified_distinct",
+   "vpm_identity": "unverified",
    "vpm_evidence": {
-    "relation": "distinct",
-    "translation_dev_m": 0.003907393,
-    "scaled_dev_rel": 0.002566113
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
    },
    "merged": [],
    "height_m": 1.519,

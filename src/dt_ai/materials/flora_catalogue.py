@@ -47,19 +47,13 @@ _COUNT_KEYS = (
 )
 _NPM_PROFILE = {"LP": 0, "LP -> HP": 1, "unlabelled": 2}
 _VPM_PROFILE = {"HP": 0, "LP -> HP": 1}
-_VPM_IDENTITY = ("verified_distinct", "unverified")
-_GEOMETRY_RELATIONS = ("same", "scaled_copy", "distinct", "unknown")
-_KEPT_VPM_RELATIONS = ("distinct", "unknown")
+_VPM_IDENTITY = ("unverified",)
+_GEOMETRY_RELATIONS = ("unverified",)
+_KEPT_VPM_RELATIONS = ("unverified",)
 _EVIDENCE_KEYS = ("relation", "translation_dev_m", "scaled_dev_rel")
 _IDENTITY_SCHEMA = "flora-geometry-identity-v3"
 _IDENTITY_TOLERANCE = 1e-4
-_IDENTITY_METHOD = (
-    "world triangles from snapshotAsMesh on the source copies, "
-    "translation-normalized symmetric surface Hausdorff <= 1e-4 m = same, "
-    "scale-normalized <= 1e-4 relative = scaled_copy, otherwise distinct; "
-    "a pair without finite positive-area triangles on both sides is unknown; "
-    "vertex clouds, vertex counts and triangle counts never decide"
-)
+_IDENTITY_METHOD = "VPM identity: unverified, see #305; no geometry classification or identity-based filtering"
 _PAIR_KEYS = ("a", "b", "relation", "translation_dev_m", "scaled_dev_rel")
 
 
@@ -80,88 +74,21 @@ class PairIdentity(dict):
 
 
 def compare_clouds(a_points, b_points, tolerance: float = _IDENTITY_TOLERANCE) -> dict:
-    """Translation- then scale-normalized symmetric Hausdorff. Triangle counts are not an input."""
+    """Identity is deliberately unverified in #216; coverage checking belongs to #305."""
     if tolerance <= 0:
         raise ValueError("tolerance must be positive")
-    left = _as_points(a_points)
-    right = _as_points(b_points)
-    vertices = [len(left), len(right)]
-    if len(left) != len(right):
-        return {
-            "relation": "distinct",
-            "translation_dev_m": None,
-            "scaled_dev_rel": None,
-            "vertices": vertices,
-        }
-    if not left:
-        return {
-            "relation": "same",
-            "translation_dev_m": 0.0,
-            "scaled_dev_rel": None,
-            "vertices": vertices,
-        }
-    normal_a = _translation_normalize(left)
-    normal_b = _translation_normalize(right)
-    translation = _symmetric_hausdorff(normal_a, normal_b, tolerance)
-    if translation is not None and translation <= tolerance:
-        return {
-            "relation": "same",
-            "translation_dev_m": translation,
-            "scaled_dev_rel": None,
-            "vertices": vertices,
-        }
-    scaled = _scale_hausdorff(normal_a, normal_b, tolerance)
-    if scaled is not None and scaled <= tolerance:
-        relation = "scaled_copy"
-    else:
-        relation = "distinct"
-    return {
-        "relation": relation,
-        "translation_dev_m": translation,
-        "scaled_dev_rel": scaled,
-        "vertices": vertices,
-    }
+    return {"relation": "unverified", "translation_dev_m": None, "scaled_dev_rel": None}
 
 
 def compare_surfaces(a_faces, b_faces, tolerance: float = _IDENTITY_TOLERANCE) -> dict:
-    """Symmetric surface Hausdorff of two triangle lists. Vertex clouds stay unknown."""
+    """Identity is deliberately unverified in #216; coverage checking belongs to #305."""
     if tolerance <= 0:
         raise ValueError("tolerance must be positive")
-    left = _as_triangles(a_faces)
-    right = _as_triangles(b_faces)
-    counts = [_listed_faces(a_faces), _listed_faces(b_faces)]
-    if left is None or right is None:
-        return {
-            "relation": "unknown",
-            "translation_dev_m": None,
-            "scaled_dev_rel": None,
-            "triangles": counts,
-        }
-    normal_a = _translation_normalize_faces(left)
-    normal_b = _translation_normalize_faces(right)
-    translation = _surface_hausdorff(normal_a, normal_b, tolerance)
-    if _within_tolerance(translation, tolerance):
-        return {
-            "relation": "same",
-            "translation_dev_m": _round_dev(translation),
-            "scaled_dev_rel": None,
-            "triangles": counts,
-        }
-    scaled = _scale_surface_hausdorff(normal_a, normal_b, tolerance)
-    if _within_tolerance(scaled, tolerance):
-        relation = "scaled_copy"
-    else:
-        relation = "distinct"
-    return {
-        "relation": relation,
-        "translation_dev_m": _round_dev(translation),
-        "scaled_dev_rel": _round_dev(scaled),
-        "triangles": counts,
-    }
+    return {"relation": "unverified", "translation_dev_m": None, "scaled_dev_rel": None}
 
 
 def build_identity(points: dict[str, list], curation: dict) -> dict:
-    """Pairwise surface evidence for every curated species that has its own mesh."""
+    """Inventory unverified source pairs for every curated species with its own mesh."""
     if not isinstance(points, dict) or not isinstance(curation, dict):
         raise ValueError("points and curation must be objects")
     used: set[str] = set()
@@ -259,20 +186,11 @@ def load_identity(value: dict) -> PairIdentity:
 
 
 def geometry_relation(a: dict, b: dict, identity: dict | None) -> str:
-    """same, scaled_copy, distinct, or unknown. Never reads triangle counts."""
-    left = _entry_identity(a)
-    right = _entry_identity(b)
-    if left is not None and left == right:
-        return "same"
-    if not identity or left is None or right is None:
-        return "unknown"
-    relation = identity.get(frozenset((left, right)))
-    if relation in _GEOMETRY_RELATIONS:
-        return relation
-    return "unknown"
+    """Never use historical identity evidence to drop a profile (#305)."""
+    return "unverified"
 
 
-def select_sources(entries: list[dict], identity: dict | None = None) -> dict:
+def select_sources(entries: list[dict], identity: dict | None = None, selection: dict | None = None) -> dict:
     """Pick one NPM mesh and one VPM mesh for a single species."""
     npm_candidates = [entry for entry in entries if _npm_basis(entry) is not None]
     vpm_candidates = [entry for entry in entries if _vpm_basis(entry) is not None]
@@ -281,6 +199,19 @@ def select_sources(entries: list[dict], identity: dict | None = None) -> dict:
     npm_entry = min(npm_candidates, key=_npm_key)
     qualifying = [entry for entry in vpm_candidates if _qualifies_as_vpm(entry, npm_entry, identity)]
     vpm_entry = min(qualifying, key=_vpm_key) if qualifying else None
+    if selection is not None:
+        # Preserve the existing saved library, not an inferred geometry verdict.
+        if not isinstance(selection, dict) or set(selection) != {"NPM", "VPM", "vpm_status"}:
+            raise ValueError("library_selection must contain NPM, VPM and vpm_status")
+        indexed = {entry["id"]: entry for entry in entries}
+        if selection["NPM"] not in indexed or selection["VPM"] is not None and selection["VPM"] not in indexed:
+            raise ValueError("library_selection source is not in the curated species")
+        npm_entry = indexed[selection["NPM"]]
+        vpm_entry = indexed.get(selection["VPM"])
+        if _npm_basis(npm_entry) is None or vpm_entry is not None and _vpm_basis(vpm_entry) is None:
+            raise ValueError("library_selection source has no matching profile label")
+        if selection["vpm_status"] not in VPM_STATUS or (selection["vpm_status"] == "available") != (vpm_entry is not None):
+            raise ValueError("library_selection vpm_status does not match VPM")
     npm = _record(npm_entry, _npm_basis(npm_entry))
     vpm = None if vpm_entry is None else _record(vpm_entry, _vpm_basis(vpm_entry))
     kept = {npm_entry["id"]}
@@ -302,12 +233,12 @@ def select_sources(entries: list[dict], identity: dict | None = None) -> dict:
             continue
         if vpm_entry is not None and entry["id"] == vpm_entry["id"]:
             continue
-        if geometry_relation(entry, npm_entry, identity) == "unknown":
+        if geometry_relation(entry, npm_entry, identity) == "unverified":
             unknown_skipped = True
     if vpm_entry is not None:
         vpm_status = "available"
         relation = geometry_relation(vpm_entry, npm_entry, identity)
-        vpm_identity = "verified_distinct" if relation == "distinct" else "unverified"
+        vpm_identity = "unverified"
         vpm_evidence = _vpm_evidence(vpm_entry, npm_entry, identity, relation)
     elif _npm_basis(npm_entry) == "LP -> HP" or unknown_skipped:
         vpm_status = "unconfirmed"
@@ -317,6 +248,8 @@ def select_sources(entries: list[dict], identity: dict | None = None) -> dict:
         vpm_status = "none"
         vpm_identity = None
         vpm_evidence = None
+    if selection is not None:
+        vpm_status = selection["vpm_status"]
     return {
         "NPM": npm,
         "VPM": vpm,
@@ -375,7 +308,7 @@ def build(
         missing = [source for source in item["sources"] if source not in indexed]
         if missing:
             raise ValueError(f"{item['latin']} sources not in the audit: {missing}")
-        chosen = select_sources([indexed[source] for source in item["sources"]], identity)
+        chosen = select_sources([indexed[source] for source in item["sources"]], identity, item.get("library_selection"))
         map_info = _maps_for(item["latin"], maps)
         scenes = [chosen["NPM"]["scene"]]
         if chosen["VPM"] is not None:
@@ -568,7 +501,7 @@ def _npm_key(entry: dict) -> tuple:
 def _vpm_key(entry: dict) -> tuple:
     # Library scene outranks an explicit HP label so FLORIO HP does not replace
     # a qualifying library mesh (Acer tataricum subsp. ginnala keeps library-024
-    # once that mesh is a verified distinct VPM).
+    # when that source is selected for the built VPM).
     return (
         0 if entry["scene"] == LIBRARY_SCENE else 1,
         _VPM_PROFILE[_vpm_basis(entry)],
@@ -595,398 +528,18 @@ def _record(entry: dict, basis: str) -> dict:
     }
 
 
-def _as_points(points) -> list[tuple[float, float, float]]:
-    cloud = []
-    for point in points:
-        if len(point) != 3:
-            raise ValueError("a vertex does not have three coordinates")
-        cloud.append((float(point[0]), float(point[1]), float(point[2])))
-    return cloud
-
-
-def _translation_normalize(points: list[tuple[float, float, float]]) -> list[tuple[float, float, float]]:
-    min_x = min(point[0] for point in points)
-    min_y = min(point[1] for point in points)
-    min_z = min(point[2] for point in points)
-    return [(point[0] - min_x, point[1] - min_y, point[2] - min_z) for point in points]
-
-
-def _largest_extent(points: list[tuple[float, float, float]]) -> float:
-    return max(
-        max(point[0] for point in points),
-        max(point[1] for point in points),
-        max(point[2] for point in points),
-    )
-
-
-def _scale_cloud(points: list[tuple[float, float, float]], extent: float) -> list[tuple[float, float, float]]:
-    return [(point[0] / extent, point[1] / extent, point[2] / extent) for point in points]
-
-
-def _scale_hausdorff(normal_a, normal_b, tolerance: float) -> float | None:
-    extent_a = _largest_extent(normal_a)
-    extent_b = _largest_extent(normal_b)
-    if extent_a == 0.0 or extent_b == 0.0:
-        return None
-    return _symmetric_hausdorff(
-        _scale_cloud(normal_a, extent_a),
-        _scale_cloud(normal_b, extent_b),
-        tolerance,
-    )
-
-
-def _symmetric_hausdorff(left, right, tolerance: float) -> float | None:
-    forward = _directed_hausdorff(left, right, tolerance)
-    if forward is None:
-        return None
-    backward = _directed_hausdorff(right, left, tolerance)
-    if backward is None:
-        return None
-    return forward if forward >= backward else backward
-
-
-def _directed_hausdorff(source, target, tolerance: float) -> float | None:
-    cell = 10.0 * tolerance
-    buckets: dict[tuple[int, int, int], list[tuple[float, float, float]]] = {}
-    for point in target:
-        key = (
-            math.floor(point[0] / cell),
-            math.floor(point[1] / cell),
-            math.floor(point[2] / cell),
-        )
-        bucket = buckets.get(key)
-        if bucket is None:
-            buckets[key] = [point]
-        else:
-            bucket.append(point)
-    worst = 0.0
-    for x, y, z in source:
-        best = _min_dist2(x, y, z, buckets, cell)
-        if best is None:
-            return None
-        if best > worst:
-            worst = best
-    return math.sqrt(worst)
-
-
-def _min_dist2(x: float, y: float, z: float, buckets, cell: float) -> float | None:
-    ix = math.floor(x / cell)
-    iy = math.floor(y / cell)
-    iz = math.floor(z / cell)
-    best = None
-    for dx in (-1, 0, 1):
-        for dy in (-1, 0, 1):
-            bucket_row_x = ix + dx
-            bucket_row_y = iy + dy
-            for dz in (-1, 0, 1):
-                bucket = buckets.get((bucket_row_x, bucket_row_y, iz + dz))
-                if not bucket:
-                    continue
-                for qx, qy, qz in bucket:
-                    ddx = x - qx
-                    ddy = y - qy
-                    ddz = z - qz
-                    dist2 = ddx * ddx + ddy * ddy + ddz * ddz
-                    if dist2 == 0.0:
-                        return 0.0
-                    if best is None or dist2 < best:
-                        best = dist2
-    return best
-
-
-def _round_dev(value: float | None) -> float | None:
-    if value is None:
-        return None
-    rounded = round(float(value), 9)
-    if rounded == 0.0:
-        return 0.0
-    return rounded
-
-
-def _within_tolerance(distance: float | None, tolerance: float) -> bool:
-    rounded = _round_dev(distance)
-    return rounded is not None and rounded <= tolerance
-
-
 def _require_relation_devs(relation: str, pair: dict, index: int) -> None:
-    translation = pair["translation_dev_m"]
-    scaled = pair["scaled_dev_rel"]
-    if relation == "unknown":
-        if translation is not None or scaled is not None:
-            raise ValueError(f"pairs[{index}] unknown stores a deviation")
-        return
-    if relation == "same":
-        if not _within_tolerance(translation, _IDENTITY_TOLERANCE) or (
-            _is_number(translation) and translation < 0
-        ):
-            raise ValueError(f"pairs[{index}] same is outside the surface tolerance")
-        if scaled is not None:
-            raise ValueError(f"pairs[{index}] same stores a scale deviation")
-        return
-    if relation == "scaled_copy" and (
-        not _within_tolerance(scaled, _IDENTITY_TOLERANCE) or (_is_number(scaled) and scaled < 0)
-    ):
-        raise ValueError(f"pairs[{index}] scaled_copy is outside the surface tolerance")
+    if relation != "unverified" or any(pair[k] is not None for k in ("translation_dev_m", "scaled_dev_rel")):
+        raise ValueError(f"pairs[{index}] must be unverified without deviations; see #305")
 
 
 def _listed_faces(value) -> int:
-    parsed = _as_triangles(value)
-    if parsed is None:
+    """Count listed face records only; this is not surface-validity evidence."""
+    if not isinstance(value, list):
         return 0
-    return len(parsed)
-
-
-def _as_triangles(value):
-    """Triangle corners, or None when the value is not a finite positive-area surface."""
-    if not isinstance(value, list) or not value:
-        return None
-    triangles = []
-    positive = False
-    for face in value:
-        if not isinstance(face, (list, tuple)) or len(face) != 3:
-            return None
-        corners = []
-        for point in face:
-            if not isinstance(point, (list, tuple)) or len(point) != 3:
-                return None
-            try:
-                coords = (float(point[0]), float(point[1]), float(point[2]))
-            except (TypeError, ValueError):
-                return None
-            if not all(math.isfinite(coord) for coord in coords):
-                return None
-            corners.append(coords)
-        if _triangle_area2(corners[0], corners[1], corners[2]) > 0.0:
-            positive = True
-        triangles.append(tuple(corners))
-    if not positive:
-        return None
-    return triangles
-
-
-def _triangle_area2(a, b, c) -> float:
-    ax, ay, az = b[0] - a[0], b[1] - a[1], b[2] - a[2]
-    bx, by, bz = c[0] - a[0], c[1] - a[1], c[2] - a[2]
-    cx = ay * bz - az * by
-    cy = az * bx - ax * bz
-    cz = ax * by - ay * bx
-    return cx * cx + cy * cy + cz * cz
-
-
-def _translation_normalize_faces(triangles):
-    min_x = min(point[0] for face in triangles for point in face)
-    min_y = min(point[1] for face in triangles for point in face)
-    min_z = min(point[2] for face in triangles for point in face)
-    return [
-        tuple((point[0] - min_x, point[1] - min_y, point[2] - min_z) for point in face)
-        for face in triangles
-    ]
-
-
-def _face_extent(triangles) -> float:
-    return max(point[axis] for face in triangles for point in face for axis in range(3))
-
-
-def _scale_faces_to_extent(triangles, extent: float):
-    return [
-        tuple((point[0] / extent, point[1] / extent, point[2] / extent) for point in face)
-        for face in triangles
-    ]
-
-
-def _scale_surface_hausdorff(normal_a, normal_b, tolerance: float) -> float | None:
-    extent_a = _face_extent(normal_a)
-    extent_b = _face_extent(normal_b)
-    if extent_a == 0.0 or extent_b == 0.0:
-        return None
-    return _surface_hausdorff(
-        _scale_faces_to_extent(normal_a, extent_a),
-        _scale_faces_to_extent(normal_b, extent_b),
-        tolerance,
-    )
-
-
-def _surface_hausdorff(left, right, tolerance: float) -> float:
-    forward = _directed_surface(left, right, tolerance)
-    backward = _directed_surface(right, left, tolerance)
-    return forward if forward >= backward else backward
-
-
-def _directed_surface(source, target, tolerance: float) -> float:
-    samples = list(_surface_samples(source))
-    if not samples:
-        return 0.0
-    if len(target) <= 400:
-        worst = 0.0
-        for sample in samples:
-            distance = _brute_distance(sample, target)
-            if distance > worst:
-                worst = distance
-        return worst
-    distances = _numpy_min_distances(samples, target)
-    worst = 0.0
-    for distance in distances:
-        if distance > worst:
-            worst = distance
-    return worst
-
-
-def _numpy_min_distances(samples, triangles):
-    """Min distance from each sample to the triangle set. Same regions as _dist2_point_triangle."""
-    import numpy as np
-
-    points = np.asarray(samples, dtype=np.float64)
-    faces = np.asarray(triangles, dtype=np.float64)
-    best = np.full(len(points), np.inf)
-    for start in range(0, len(points), 128):
-        pts = points[start:start + 128]
-        block = np.full(len(pts), np.inf)
-        for face_start in range(0, len(faces), 1024):
-            chunk = faces[face_start:face_start + 1024]
-            block = np.minimum(block, _numpy_chunk_dist(pts, chunk))
-        best[start:start + len(pts)] = block
-    return best
-
-
-def _numpy_chunk_dist(pts, chunk):
-    import numpy as np
-
-    a = chunk[:, 0]
-    b = chunk[:, 1]
-    c = chunk[:, 2]
-    ab = b - a
-    ac = c - a
-    ap = pts[:, None, :] - a
-    bp = pts[:, None, :] - b
-    cp = pts[:, None, :] - c
-    d1 = np.einsum("mj,pmj->pm", ab, ap)
-    d2 = np.einsum("mj,pmj->pm", ac, ap)
-    d3 = np.einsum("mj,pmj->pm", ab, bp)
-    d4 = np.einsum("mj,pmj->pm", ac, bp)
-    d5 = np.einsum("mj,pmj->pm", ab, cp)
-    d6 = np.einsum("mj,pmj->pm", ac, cp)
-    result = np.full(d1.shape, np.inf)
-    done = np.zeros(d1.shape, dtype=bool)
-
-    def take(mask, dist2):
-        nonlocal result, done
-        use = mask & ~done
-        result = np.where(use, dist2, result)
-        done = done | use
-
-    take((d1 <= 0.0) & (d2 <= 0.0), np.einsum("pmj,pmj->pm", ap, ap))
-    take((d3 >= 0.0) & (d4 <= d3), np.einsum("pmj,pmj->pm", bp, bp))
-    take((d6 >= 0.0) & (d5 <= d6), np.einsum("pmj,pmj->pm", cp, cp))
-    vc = d1 * d4 - d3 * d2
-    edge_ab = (vc <= 0.0) & (d1 >= 0.0) & (d3 <= 0.0)
-    v_ab = np.divide(d1, d1 - d3, out=np.zeros_like(d1), where=edge_ab)
-    closest = a + v_ab[:, :, None] * ab
-    take(edge_ab, np.einsum("pmj,pmj->pm", pts[:, None, :] - closest, pts[:, None, :] - closest))
-    vb = d5 * d2 - d1 * d6
-    edge_ac = (vb <= 0.0) & (d2 >= 0.0) & (d6 <= 0.0)
-    w_ac = np.divide(d2, d2 - d6, out=np.zeros_like(d2), where=edge_ac)
-    closest = a + w_ac[:, :, None] * ac
-    take(edge_ac, np.einsum("pmj,pmj->pm", pts[:, None, :] - closest, pts[:, None, :] - closest))
-    va = d3 * d6 - d5 * d4
-    edge_bc = (va <= 0.0) & ((d4 - d3) >= 0.0) & ((d5 - d6) >= 0.0)
-    w_bc = np.divide(d4 - d3, (d4 - d3) + (d5 - d6), out=np.zeros_like(d4), where=edge_bc)
-    closest = b + w_bc[:, :, None] * (c - b)
-    take(edge_bc, np.einsum("pmj,pmj->pm", pts[:, None, :] - closest, pts[:, None, :] - closest))
-    denom = va + vb + vc
-    interior = ~done & (denom != 0.0)
-    v_int = np.divide(vb, denom, out=np.zeros_like(vb), where=interior)
-    w_int = np.divide(vc, denom, out=np.zeros_like(vc), where=interior)
-    closest = a + v_int[:, :, None] * ab + w_int[:, :, None] * ac
-    take(interior, np.einsum("pmj,pmj->pm", pts[:, None, :] - closest, pts[:, None, :] - closest))
-    take(~done, np.einsum("pmj,pmj->pm", ap, ap))
-    return np.sqrt(np.maximum(result.min(axis=1), 0.0))
-
-
-def _surface_samples(triangles):
-    seen = set()
-    for face in triangles:
-        a, b, c = face
-        candidates = (
-            a, b, c,
-            ((a[0] + b[0]) * 0.5, (a[1] + b[1]) * 0.5, (a[2] + b[2]) * 0.5),
-            ((b[0] + c[0]) * 0.5, (b[1] + c[1]) * 0.5, (b[2] + c[2]) * 0.5),
-            ((c[0] + a[0]) * 0.5, (c[1] + a[1]) * 0.5, (c[2] + a[2]) * 0.5),
-            (
-                (a[0] + b[0] + c[0]) / 3.0,
-                (a[1] + b[1] + c[1]) / 3.0,
-                (a[2] + b[2] + c[2]) / 3.0,
-            ),
-        )
-        for point in candidates:
-            key = (round(point[0], 9), round(point[1], 9), round(point[2], 9))
-            if key in seen:
-                continue
-            seen.add(key)
-            yield point
-
-
-def _brute_distance(point, triangles) -> float:
-    best = None
-    for face in triangles:
-        dist2 = _dist2_point_triangle(point, face[0], face[1], face[2])
-        if dist2 == 0.0:
-            return 0.0
-        if best is None or dist2 < best:
-            best = dist2
-    if best is None:
-        return float("inf")
-    return math.sqrt(best)
-
-
-def _dist2_point_triangle(point, a, b, c) -> float:
-    ab = (b[0] - a[0], b[1] - a[1], b[2] - a[2])
-    ac = (c[0] - a[0], c[1] - a[1], c[2] - a[2])
-    ap = (point[0] - a[0], point[1] - a[1], point[2] - a[2])
-    d1 = ab[0] * ap[0] + ab[1] * ap[1] + ab[2] * ap[2]
-    d2 = ac[0] * ap[0] + ac[1] * ap[1] + ac[2] * ap[2]
-    if d1 <= 0.0 and d2 <= 0.0:
-        return ap[0] * ap[0] + ap[1] * ap[1] + ap[2] * ap[2]
-    bp = (point[0] - b[0], point[1] - b[1], point[2] - b[2])
-    d3 = ab[0] * bp[0] + ab[1] * bp[1] + ab[2] * bp[2]
-    d4 = ac[0] * bp[0] + ac[1] * bp[1] + ac[2] * bp[2]
-    if d3 >= 0.0 and d4 <= d3:
-        return bp[0] * bp[0] + bp[1] * bp[1] + bp[2] * bp[2]
-    cp = (point[0] - c[0], point[1] - c[1], point[2] - c[2])
-    d5 = ab[0] * cp[0] + ab[1] * cp[1] + ab[2] * cp[2]
-    d6 = ac[0] * cp[0] + ac[1] * cp[1] + ac[2] * cp[2]
-    if d6 >= 0.0 and d5 <= d6:
-        return cp[0] * cp[0] + cp[1] * cp[1] + cp[2] * cp[2]
-    vc = d1 * d4 - d3 * d2
-    if vc <= 0.0 and d1 >= 0.0 and d3 <= 0.0:
-        v = d1 / (d1 - d3)
-        closest = (a[0] + v * ab[0], a[1] + v * ab[1], a[2] + v * ab[2])
-        return _dist2(point, closest)
-    vb = d5 * d2 - d1 * d6
-    if vb <= 0.0 and d2 >= 0.0 and d6 <= 0.0:
-        w = d2 / (d2 - d6)
-        closest = (a[0] + w * ac[0], a[1] + w * ac[1], a[2] + w * ac[2])
-        return _dist2(point, closest)
-    va = d3 * d6 - d5 * d4
-    if va <= 0.0 and (d4 - d3) >= 0.0 and (d5 - d6) >= 0.0:
-        w = (d4 - d3) / ((d4 - d3) + (d5 - d6))
-        closest = (b[0] + w * (c[0] - b[0]), b[1] + w * (c[1] - b[1]), b[2] + w * (c[2] - b[2]))
-        return _dist2(point, closest)
-    denom = va + vb + vc
-    v = vb / denom
-    w = vc / denom
-    closest = (
-        a[0] + ab[0] * v + ac[0] * w,
-        a[1] + ab[1] * v + ac[1] * w,
-        a[2] + ab[2] * v + ac[2] * w,
-    )
-    return _dist2(point, closest)
-
-
-def _dist2(left, right) -> float:
-    dx = left[0] - right[0]
-    dy = left[1] - right[1]
-    dz = left[2] - right[2]
-    return dx * dx + dy * dy + dz * dz
+    return sum(isinstance(face, (list, tuple)) and len(face) == 3
+               and all(isinstance(point, (list, tuple)) and len(point) == 3 for point in face)
+               for face in value)
 
 
 def _points_from_dump(dump: dict) -> dict[str, list]:
@@ -1013,70 +566,22 @@ def _points_from_dump(dump: dict) -> dict[str, list]:
     return points
 
 
-def _entry_identity(entry: dict) -> str | None:
-    for key in ("id", "entry_id"):
-        value = entry.get(key)
-        if isinstance(value, str):
-            return value
-    return None
-
-
-def _pair_devs(entry: dict, npm_entry: dict, identity: dict | None) -> dict | None:
-    details = getattr(identity, "details", None)
-    if not details:
-        return None
-    left = _entry_identity(entry)
-    right = _entry_identity(npm_entry)
-    if left is None or right is None or left == right:
-        return None
-    return details.get(frozenset((left, right)))
-
-
 def _vpm_evidence(entry: dict, npm_entry: dict, identity: dict | None, relation: str) -> dict:
-    if relation == "unknown":
-        return {"relation": "unknown", "translation_dev_m": None, "scaled_dev_rel": None}
-    devs = _pair_devs(entry, npm_entry, identity)
-    if devs is None:
-        return {"relation": relation, "translation_dev_m": None, "scaled_dev_rel": None}
-    return {
-        "relation": relation,
-        "translation_dev_m": devs["translation_dev_m"],
-        "scaled_dev_rel": devs["scaled_dev_rel"],
-    }
+    return {"relation": "unverified", "translation_dev_m": None, "scaled_dev_rel": None}
 
 
 def _qualifies_as_vpm(entry: dict, npm_entry: dict, identity: dict | None) -> bool:
-    relation = geometry_relation(entry, npm_entry, identity)
-    if relation == "distinct":
-        return True
-    return relation == "unknown" and _vpm_basis(entry) == "HP"
+    # A lone LP -> HP label does not establish a separate profile. Explicit HP is
+    # retained regardless of old geometry evidence; frozen built choices are below.
+    return entry["id"] != npm_entry["id"] and _vpm_basis(entry) == "HP"
 
 
 def _merged_reason(entry: dict, npm_entry: dict, vpm_entry: dict | None, identity: dict | None) -> str:
-    relation = geometry_relation(entry, npm_entry, identity)
-    if relation == "same":
-        return (
-            f"duplicate: kept {npm_entry['id']} "
-            "(verified same geometry as NPM, not a distinct VPM)"
-        )
-    if relation == "scaled_copy":
-        return (
-            f"duplicate: kept {npm_entry['id']} "
-            "(verified uniformly scaled copy of the NPM geometry, not a distinct VPM)"
-        )
-    if (
-        _vpm_basis(entry) is not None
-        and relation == "unknown"
-        and not _qualifies_as_vpm(entry, npm_entry, identity)
-    ):
-        return f"not used as VPM: geometry identity with NPM {npm_entry['id']} unverified"
-    if _npm_basis(entry) is not None:
-        rule = _rule(npm_entry, entry, "NPM")
-        return f"duplicate: kept {npm_entry['id']} ({rule})"
-    if vpm_entry is not None and _vpm_basis(entry) is not None:
-        rule = _rule(vpm_entry, entry, "VPM")
-        return f"duplicate: kept {vpm_entry['id']} ({rule})"
-    return f"duplicate: kept {npm_entry['id']} (entry id)"
+    if _vpm_basis(entry) is not None and not _qualifies_as_vpm(entry, npm_entry, identity):
+        return f"not selected as separate VPM: kept NPM {npm_entry['id']}; VPM identity: unverified, see #305"
+    winner = vpm_entry if vpm_entry is not None and _npm_basis(entry) is None else npm_entry
+    kind = "VPM" if winner is vpm_entry else "NPM"
+    return f"alternate source: kept {winner['id']} ({_rule(winner, entry, kind)}); VPM identity: unverified, see #305"
 
 
 def _rule(winner: dict, loser: dict, kind: str) -> str:
@@ -1482,56 +987,14 @@ def _check_species(item: dict, where: str, retired: set, seen_ids: dict, seen_la
 
 
 def _check_distinct_vpm(item: dict, where: str) -> list[str]:
-    findings: list[str] = []
-    flag = item.get("vpm_identity") if "vpm_identity" in item else None
-    if "vpm_identity" in item:
-        if flag not in _VPM_IDENTITY and flag is not None:
-            findings.append(f"{where}.vpm_identity {flag!r} is not verified_distinct, unverified or null")
-        elif (flag is None) != (item.get("vpm") is None):
-            findings.append(f"{where}.vpm_identity {flag!r} does not match vpm")
-    npm = item.get("npm")
-    vpm = item.get("vpm")
-    if isinstance(npm, dict) and isinstance(vpm, dict):
-        same_entry = isinstance(npm.get("entry_id"), str) and npm.get("entry_id") == vpm.get("entry_id")
-        if same_entry:
-            findings.append(f"{where}.vpm is the NPM mesh, not a distinct VPM")
-    if "vpm_evidence" not in item:
-        return findings
-    evidence = item["vpm_evidence"]
+    """Check disclosure only, never claim or infer geometric identity (#305)."""
+    findings = []
     has_vpm = item.get("vpm") is not None
-    if evidence is None:
-        if has_vpm:
-            findings.append(f"{where}.vpm_evidence does not match vpm")
-        return findings
-    if not has_vpm:
-        findings.append(f"{where}.vpm_evidence does not match vpm")
-        return findings
-    if not isinstance(evidence, dict):
-        findings.append(f"{where}.vpm_evidence is not an object")
-        return findings
-    findings.extend(_key_findings(evidence, _EVIDENCE_KEYS, f"{where}.vpm_evidence"))
-    relation = evidence.get("relation")
-    if relation not in _GEOMETRY_RELATIONS and relation != "unknown":
-        findings.append(f"{where}.vpm_evidence.relation {relation!r} is not a geometry relation")
-    elif relation not in _KEPT_VPM_RELATIONS:
-        findings.append(f"{where}.vpm_evidence.relation {relation!r} is not a distinct VPM")
-    for key in ("translation_dev_m", "scaled_dev_rel"):
-        if key in evidence and evidence[key] is not None and not _is_number(evidence[key]):
-            findings.append(f"{where}.vpm_evidence.{key} is not a number")
-    if relation == "unknown" and (
-        evidence.get("translation_dev_m") is not None or evidence.get("scaled_dev_rel") is not None
-    ):
-        findings.append(f"{where}.vpm_evidence unknown relation stores a deviation")
-    if "vpm_identity" not in item or relation not in _GEOMETRY_RELATIONS + ("unknown",):
-        return findings
-    if flag == "verified_distinct" and relation != "distinct":
-        findings.append(f"{where}.vpm_identity verified_distinct requires vpm_evidence.relation distinct")
-    elif flag == "unverified" and relation != "unknown":
-        findings.append(f"{where}.vpm_identity unverified requires vpm_evidence.relation unknown")
-    elif relation == "distinct" and flag != "verified_distinct":
-        findings.append(f"{where}.vpm_identity {flag!r} does not match relation distinct")
-    elif relation == "unknown" and flag != "unverified":
-        findings.append(f"{where}.vpm_identity {flag!r} does not match relation unknown")
+    if item.get("vpm_identity") != ("unverified" if has_vpm else None):
+        findings.append(f"{where}.vpm_identity must be unverified for a VPM, otherwise null (see #305)")
+    expected = {"relation": "unverified", "translation_dev_m": None, "scaled_dev_rel": None} if has_vpm else None
+    if item.get("vpm_evidence") != expected:
+        findings.append(f"{where}.vpm_evidence must disclose unverified identity without deviations (see #305)")
     return findings
 
 

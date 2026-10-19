@@ -14,7 +14,12 @@
     "library-028"
    ],
    "geometry_basis": "own_mesh",
-   "note": "library-002 is a hidden near-copy of library-001"
+   "note": "library-002 is a hidden near-copy of library-001",
+   "library_selection": {
+    "NPM": "library-028",
+    "VPM": "library-001",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Betula pendula",
@@ -24,7 +29,12 @@
     "library-006"
    ],
    "geometry_basis": "own_mesh",
-   "note": "maps approved in #190"
+   "note": "maps approved in #190",
+   "library_selection": {
+    "NPM": "library-006",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Crataegus mollis",
@@ -35,7 +45,12 @@
     "library-039"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-007",
+    "VPM": "library-039",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Padus maackii",
@@ -46,7 +61,12 @@
     "library-042"
    ],
    "geometry_basis": "own_mesh",
-   "note": "syn. Prunus maackii"
+   "note": "syn. Prunus maackii",
+   "library_selection": {
+    "NPM": "library-009",
+    "VPM": "library-042",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Amelanchier lamarckii",
@@ -60,7 +80,12 @@
     "project-031"
    ],
    "geometry_basis": "own_mesh",
-   "note": "label typo 'Игра'; FLORIO calls it a bush"
+   "note": "label typo 'Игра'; FLORIO calls it a bush",
+   "library_selection": {
+    "NPM": "project-009",
+    "VPM": "library-020",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Acer tataricum subsp. ginnala",
@@ -74,7 +99,12 @@
     "project-034"
    ],
    "geometry_basis": "own_mesh",
-   "note": "syn. Acer ginnala"
+   "note": "syn. Acer ginnala",
+   "library_selection": {
+    "NPM": "library-031",
+    "VPM": "library-024",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Acer platanoides",
@@ -85,7 +115,12 @@
     "library-078"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-078",
+    "VPM": "library-025",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Sorbus aucuparia",
@@ -97,7 +132,12 @@
     "project-035"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "project-013",
+    "VPM": "library-036",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Acer tataricum",
@@ -110,7 +150,12 @@
     "project-034"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "project-012",
+    "VPM": "library-049",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Sorbus commixta 'Dodong'",
@@ -120,7 +165,12 @@
     "library-051"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-051",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Syringa vulgaris 'Krasavitsa Moskvy'",
@@ -130,7 +180,12 @@
     "library-053"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-053",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Syringa vulgaris 'Andenken an Ludwig Späth'",
@@ -140,7 +195,12 @@
     "library-054"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-054",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Syringa josikaea",
@@ -152,7 +212,12 @@
     "project-040"
    ],
    "geometry_basis": "own_mesh",
-   "note": "FLORIO row is a bush form"
+   "note": "FLORIO row is a bush form",
+   "library_selection": {
+    "NPM": "project-018",
+    "VPM": "library-055",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Pinus nigra",
@@ -165,7 +230,12 @@
     "library-084"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-084",
+    "VPM": "library-064",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Malus niedzwetzkyana",
@@ -177,7 +247,12 @@
     "project-035"
    ],
    "geometry_basis": "own_mesh",
-   "note": "library label 'Яблоня гибрид Недзвецкого'"
+   "note": "library label 'Яблоня гибрид Недзвецкого'",
+   "library_selection": {
+    "NPM": "project-013",
+    "VPM": "library-061",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Syringa vulgaris",
@@ -189,7 +264,12 @@
     "project-040"
    ],
    "geometry_basis": "own_mesh",
-   "note": "FLORIO row is a bush form"
+   "note": "FLORIO row is a bush form",
+   "library_selection": {
+    "NPM": "project-018",
+    "VPM": "library-062",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Picea pungens",
@@ -202,7 +282,12 @@
     "project-029"
    ],
    "geometry_basis": "own_mesh",
-   "note": "library label 'Ель серебристая'"
+   "note": "library label 'Ель серебристая'",
+   "library_selection": {
+    "NPM": "library-070",
+    "VPM": "library-069",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Malus 'Evereste'",
@@ -212,7 +297,12 @@
     "library-074"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-074",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Thuja occidentalis",
@@ -222,7 +312,12 @@
     "library-086"
    ],
    "geometry_basis": "own_mesh",
-   "note": "library label only 'Туя'"
+   "note": "library label only 'Туя'",
+   "library_selection": {
+    "NPM": "library-086",
+    "VPM": null,
+    "vpm_status": "none"
+   }
   },
   {
    "latin": "Prunus padus",
@@ -233,7 +328,12 @@
     "project-025"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "project-003",
+    "VPM": "project-025",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Berberis × ottawensis",
@@ -243,7 +343,12 @@
     "library-005"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-005",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Crataegus monogyna",
@@ -253,7 +358,12 @@
     "library-008"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-008",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Cornus alba",
@@ -265,7 +375,12 @@
     "library-043"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-011",
+    "VPM": "library-010",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Cornus sericea",
@@ -275,7 +390,12 @@
     "library-012"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-012",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Physocarpus opulifolius 'Diabolo'",
@@ -286,7 +406,12 @@
     "library-014"
    ],
    "geometry_basis": "own_mesh",
-   "note": "library label only 'Диабло'"
+   "note": "library label only 'Диабло'",
+   "library_selection": {
+    "NPM": "library-014",
+    "VPM": "library-013",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Hydrangea paniculata",
@@ -296,7 +421,12 @@
     "library-018"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-018",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Hydrangea arborescens",
@@ -308,7 +438,12 @@
     "project-030"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "project-008",
+    "VPM": "library-019",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Salix purpurea 'Mayak'",
@@ -318,7 +453,12 @@
     "library-022"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-022",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Cotoneaster lucidus",
@@ -332,7 +472,12 @@
     "project-033"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "project-011",
+    "VPM": "library-048",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Juniperus sabina",
@@ -342,7 +487,12 @@
     "library-030"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-030",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Physocarpus opulifolius",
@@ -353,7 +503,12 @@
     "library-035"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-035",
+    "VPM": "library-034",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Sorbaria sorbifolia",
@@ -365,7 +520,12 @@
     "project-039"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "project-017",
+    "VPM": "library-037",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Dasiphora fruticosa 'Goldfinger'",
@@ -375,7 +535,12 @@
     "library-038"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-038",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Euonymus alatus",
@@ -385,7 +550,12 @@
     "library-040"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-040",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Philadelphus coronarius",
@@ -395,7 +565,12 @@
     "library-041"
    ],
    "geometry_basis": "own_mesh",
-   "note": "label typo 'Чебушник'"
+   "note": "label typo 'Чебушник'",
+   "library_selection": {
+    "NPM": "library-041",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Hydrangea arborescens 'Bounty'",
@@ -406,7 +581,12 @@
     "library-087"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-044",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Hydrangea paniculata 'Limelight'",
@@ -417,7 +597,12 @@
     "library-088"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-045",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Viburnum opulus 'Roseum'",
@@ -429,7 +614,12 @@
     "project-032"
    ],
    "geometry_basis": "own_mesh",
-   "note": "FLORIO 'Boule de Neige' = 'Roseum'"
+   "note": "FLORIO 'Boule de Neige' = 'Roseum'",
+   "library_selection": {
+    "NPM": "project-010",
+    "VPM": "library-047",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Sorbaria sorbifolia 'Sem'",
@@ -440,7 +630,12 @@
     "library-090"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-052",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Spiraea betulifolia 'Tor'",
@@ -452,7 +647,12 @@
     "project-043"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "project-021",
+    "VPM": "library-057",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Spiraea × cinerea 'Grefsheim'",
@@ -465,7 +665,12 @@
     "project-042"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "project-020",
+    "VPM": "library-058",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Spiraea japonica 'Little Princess'",
@@ -477,7 +682,12 @@
     "project-046"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-059",
+    "VPM": "project-046",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Stephanandra incisa 'Crispa'",
@@ -489,7 +699,12 @@
     "project-037"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "project-015",
+    "VPM": "library-060",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Pinus mugo",
@@ -502,7 +717,12 @@
     "project-041"
    ],
    "geometry_basis": "own_mesh",
-   "note": "library-085 unlabelled 'Сосна_Горная_LP'"
+   "note": "library-085 unlabelled 'Сосна_Горная_LP'",
+   "library_selection": {
+    "NPM": "project-019",
+    "VPM": "library-063",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Spiraea japonica",
@@ -513,7 +733,12 @@
     "library-068"
    ],
    "geometry_basis": "own_mesh",
-   "note": "maps approved in #190"
+   "note": "maps approved in #190",
+   "library_selection": {
+    "NPM": "library-068",
+    "VPM": "library-067",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Berberis thunbergii",
@@ -527,7 +752,12 @@
     "project-033"
    ],
    "geometry_basis": "own_mesh",
-   "note": "library-075..077 unlabelled, name from node"
+   "note": "library-075..077 unlabelled, name from node",
+   "library_selection": {
+    "NPM": "project-011",
+    "VPM": "project-033",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Cornus alba 'Sibirica Variegata'",
@@ -538,7 +768,12 @@
     "project-002"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "project-001",
+    "VPM": "project-002",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Dasiphora fruticosa",
@@ -549,7 +784,12 @@
     "project-036"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "project-014",
+    "VPM": "project-036",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Physocarpus opulifolius 'Luteus'",
@@ -560,7 +800,12 @@
     "project-038"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "project-016",
+    "VPM": "project-038",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Spiraea japonica 'Firelight'",
@@ -571,7 +816,12 @@
     "project-044"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "project-022",
+    "VPM": "project-044",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Spiraea × bumalda",
@@ -582,7 +832,12 @@
     "project-045"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "project-023",
+    "VPM": "project-045",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Symphyotrichum novae-angliae",
@@ -593,7 +848,12 @@
     "library-004"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-004",
+    "VPM": "library-003",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Echinacea purpurea",
@@ -604,7 +864,12 @@
     "library-016"
    ],
    "geometry_basis": "own_mesh",
-   "note": "library label only 'Эхинацея'"
+   "note": "library label only 'Эхинацея'",
+   "library_selection": {
+    "NPM": "library-016",
+    "VPM": "library-015",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Heuchera",
@@ -614,7 +879,12 @@
     "library-017"
    ],
    "geometry_basis": "own_mesh",
-   "note": "genus only in label"
+   "note": "genus only in label",
+   "library_selection": {
+    "NPM": "library-017",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Actaea simplex 'Atropurpurea'",
@@ -624,7 +894,12 @@
     "library-026"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-026",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Filipendula ulmaria",
@@ -634,7 +909,12 @@
     "library-027"
    ],
    "geometry_basis": "own_mesh",
-   "note": "label 'Лабазник обычный'"
+   "note": "label 'Лабазник обычный'",
+   "library_selection": {
+    "NPM": "library-027",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Miscanthus sinensis",
@@ -644,7 +924,12 @@
     "library-029"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-029",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Eutrochium maculatum",
@@ -655,7 +940,12 @@
     "library-033"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-033",
+    "VPM": "library-032",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Calamagrostis brachytricha",
@@ -666,7 +956,12 @@
     "library-072"
    ],
    "geometry_basis": "own_mesh",
-   "note": "Russian label vs Latin needs user check"
+   "note": "Russian label vs Latin needs user check",
+   "library_selection": {
+    "NPM": "library-072",
+    "VPM": "library-071",
+    "vpm_status": "available"
+   }
   },
   {
    "latin": "Calamagrostis × acutiflora 'Karl Foerster'",
@@ -676,7 +971,12 @@
     "library-073"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "library-073",
+    "VPM": null,
+    "vpm_status": "unconfirmed"
+   }
   },
   {
    "latin": "Parthenocissus quinquefolia",
@@ -687,7 +987,12 @@
     "project-027"
    ],
    "geometry_basis": "own_mesh",
-   "note": ""
+   "note": "",
+   "library_selection": {
+    "NPM": "project-005",
+    "VPM": "project-027",
+    "vpm_status": "available"
+   }
   }
  ],
  "unresolved": [

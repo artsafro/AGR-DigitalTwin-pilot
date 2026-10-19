@@ -1,6 +1,6 @@
 {
  "schema": "flora-geometry-identity-v3",
- "method": "world triangles from snapshotAsMesh on the source copies, translation-normalized symmetric surface Hausdorff <= 1e-4 m = same, scale-normalized <= 1e-4 relative = scaled_copy, otherwise distinct; a pair without finite positive-area triangles on both sides is unknown; vertex clouds, vertex counts and triangle counts never decide",
+ "method": "VPM identity: unverified, see #305; no geometry classification or identity-based filtering",
  "tolerance": 0.0001,
  "entries": {
   "library-001": {
@@ -392,856 +392,856 @@
   {
    "a": "library-001",
    "b": "library-002",
-   "relation": "distinct",
-   "translation_dev_m": 0.20123345,
-   "scaled_dev_rel": 0.060480633
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-001",
    "b": "library-028",
-   "relation": "distinct",
-   "translation_dev_m": 3.747187826,
-   "scaled_dev_rel": 0.206138058
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-002",
    "b": "library-028",
-   "relation": "distinct",
-   "translation_dev_m": 3.747190405,
-   "scaled_dev_rel": 0.206138071
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-003",
    "b": "library-004",
-   "relation": "distinct",
-   "translation_dev_m": 0.084783849,
-   "scaled_dev_rel": 0.074545804
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-007",
    "b": "library-039",
-   "relation": "distinct",
-   "translation_dev_m": 1.828288396,
-   "scaled_dev_rel": 0.264311179
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-009",
    "b": "library-042",
-   "relation": "distinct",
-   "translation_dev_m": 2.98230568,
-   "scaled_dev_rel": 0.253672645
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-010",
    "b": "library-011",
-   "relation": "distinct",
-   "translation_dev_m": 0.004657635,
-   "scaled_dev_rel": 0.003356646
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-010",
    "b": "library-043",
-   "relation": "distinct",
-   "translation_dev_m": 1.096682424,
-   "scaled_dev_rel": 0.275042678
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-011",
    "b": "library-043",
-   "relation": "distinct",
-   "translation_dev_m": 1.097874507,
-   "scaled_dev_rel": 0.274803718
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-013",
    "b": "library-014",
-   "relation": "distinct",
-   "translation_dev_m": 0.191580049,
-   "scaled_dev_rel": 0.136549984
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-015",
    "b": "library-016",
-   "relation": "distinct",
-   "translation_dev_m": 0.078723648,
-   "scaled_dev_rel": 0.067459201
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-019",
    "b": "project-008",
-   "relation": "distinct",
-   "translation_dev_m": 0.641948605,
-   "scaled_dev_rel": 0.31196882
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-019",
    "b": "project-030",
-   "relation": "distinct",
-   "translation_dev_m": 0.642849058,
-   "scaled_dev_rel": 0.311214371
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-020",
    "b": "library-021",
-   "relation": "distinct",
-   "translation_dev_m": 1.049977335,
-   "scaled_dev_rel": 0.225121272
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-020",
    "b": "library-046",
-   "relation": "distinct",
-   "translation_dev_m": 1.957941454,
-   "scaled_dev_rel": 0.290361186
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-020",
    "b": "project-009",
-   "relation": "distinct",
-   "translation_dev_m": 4.705177479,
-   "scaled_dev_rel": 0.23859399
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-020",
    "b": "project-031",
-   "relation": "distinct",
-   "translation_dev_m": 4.411640263,
-   "scaled_dev_rel": 0.206787116
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-021",
    "b": "library-046",
-   "relation": "distinct",
-   "translation_dev_m": 1.443424116,
-   "scaled_dev_rel": 0.304294279
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-021",
    "b": "project-009",
-   "relation": "distinct",
-   "translation_dev_m": 3.974200124,
-   "scaled_dev_rel": 0.190415198
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-021",
    "b": "project-031",
-   "relation": "distinct",
-   "translation_dev_m": 3.676293197,
-   "scaled_dev_rel": 0.180328561
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-023",
    "b": "library-048",
-   "relation": "distinct",
-   "translation_dev_m": 1.251569592,
-   "scaled_dev_rel": 0.243570801
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-023",
    "b": "library-089",
-   "relation": "distinct",
-   "translation_dev_m": 0.769894139,
-   "scaled_dev_rel": 0.243569976
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-023",
    "b": "project-011",
-   "relation": "distinct",
-   "translation_dev_m": 0.720033608,
-   "scaled_dev_rel": 0.271702584
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-023",
    "b": "project-033",
-   "relation": "distinct",
-   "translation_dev_m": 0.721520663,
-   "scaled_dev_rel": 0.271393319
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-024",
    "b": "library-031",
-   "relation": "distinct",
-   "translation_dev_m": 3.924994382,
-   "scaled_dev_rel": 0.588642315
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-024",
    "b": "library-079",
-   "relation": "distinct",
-   "translation_dev_m": 4.619863812,
-   "scaled_dev_rel": 0.647139472
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-024",
    "b": "project-012",
-   "relation": "distinct",
-   "translation_dev_m": 1.790585802,
-   "scaled_dev_rel": 0.410617132
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-024",
    "b": "project-034",
-   "relation": "distinct",
-   "translation_dev_m": 1.585568999,
-   "scaled_dev_rel": 0.290568991
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-025",
    "b": "library-078",
-   "relation": "distinct",
-   "translation_dev_m": 1.77034969,
-   "scaled_dev_rel": 0.410214095
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-031",
    "b": "library-079",
-   "relation": "distinct",
-   "translation_dev_m": 1.414988481,
-   "scaled_dev_rel": 0.231068257
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-031",
    "b": "project-012",
-   "relation": "distinct",
-   "translation_dev_m": 5.063589215,
-   "scaled_dev_rel": 0.495123044
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-031",
    "b": "project-034",
-   "relation": "distinct",
-   "translation_dev_m": 5.056093287,
-   "scaled_dev_rel": 0.538546309
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-032",
    "b": "library-033",
-   "relation": "distinct",
-   "translation_dev_m": 0.003002684,
-   "scaled_dev_rel": 0.003303669
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-034",
    "b": "library-035",
-   "relation": "distinct",
-   "translation_dev_m": 0.120279928,
-   "scaled_dev_rel": 0.110204621
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-036",
    "b": "project-013",
-   "relation": "distinct",
-   "translation_dev_m": 2.570222157,
-   "scaled_dev_rel": 0.374355866
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-036",
    "b": "project-035",
-   "relation": "distinct",
-   "translation_dev_m": 2.678658907,
-   "scaled_dev_rel": 0.314446834
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-037",
    "b": "project-017",
-   "relation": "distinct",
-   "translation_dev_m": 0.727265939,
-   "scaled_dev_rel": 0.269826352
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-037",
    "b": "project-039",
-   "relation": "distinct",
-   "translation_dev_m": 0.727266077,
-   "scaled_dev_rel": 0.269959114
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-044",
    "b": "library-087",
-   "relation": "scaled_copy",
-   "translation_dev_m": 0.519160717,
-   "scaled_dev_rel": 1.033e-06
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-045",
    "b": "library-088",
-   "relation": "scaled_copy",
-   "translation_dev_m": 0.519160214,
-   "scaled_dev_rel": 1.009e-06
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-046",
    "b": "project-009",
-   "relation": "distinct",
-   "translation_dev_m": 2.74822868,
-   "scaled_dev_rel": 0.335760371
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-046",
    "b": "project-031",
-   "relation": "distinct",
-   "translation_dev_m": 2.472189163,
-   "scaled_dev_rel": 0.305878479
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-047",
    "b": "project-010",
-   "relation": "distinct",
-   "translation_dev_m": 0.818937946,
-   "scaled_dev_rel": 0.356968234
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-047",
    "b": "project-032",
-   "relation": "distinct",
-   "translation_dev_m": 0.81913662,
-   "scaled_dev_rel": 0.356834688
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-048",
    "b": "library-089",
-   "relation": "scaled_copy",
-   "translation_dev_m": 0.489266835,
-   "scaled_dev_rel": 2.929e-06
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-048",
    "b": "project-011",
-   "relation": "distinct",
-   "translation_dev_m": 0.671516018,
-   "scaled_dev_rel": 0.1887851
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-048",
    "b": "project-033",
-   "relation": "distinct",
-   "translation_dev_m": 0.670241806,
-   "scaled_dev_rel": 0.188426796
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-049",
    "b": "library-050",
-   "relation": "distinct",
-   "translation_dev_m": 1.32566615,
-   "scaled_dev_rel": 0.137831832
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-049",
    "b": "project-012",
-   "relation": "distinct",
-   "translation_dev_m": 9.638209638,
-   "scaled_dev_rel": 0.26859844
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-049",
    "b": "project-034",
-   "relation": "distinct",
-   "translation_dev_m": 9.642195966,
-   "scaled_dev_rel": 0.27373143
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-050",
    "b": "project-012",
-   "relation": "distinct",
-   "translation_dev_m": 9.231816688,
-   "scaled_dev_rel": 0.236590521
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-050",
    "b": "project-034",
-   "relation": "distinct",
-   "translation_dev_m": 9.226032833,
-   "scaled_dev_rel": 0.27859298
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-052",
    "b": "library-090",
-   "relation": "scaled_copy",
-   "translation_dev_m": 0.489265109,
-   "scaled_dev_rel": 5.747e-06
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-055",
    "b": "project-018",
-   "relation": "distinct",
-   "translation_dev_m": 0.782316225,
-   "scaled_dev_rel": 0.383807217
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-055",
    "b": "project-040",
-   "relation": "distinct",
-   "translation_dev_m": 0.782947642,
-   "scaled_dev_rel": 0.383908388
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-056",
    "b": "library-064",
-   "relation": "distinct",
-   "translation_dev_m": 1.09323831,
-   "scaled_dev_rel": 0.240996188
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-056",
    "b": "library-065",
-   "relation": "distinct",
-   "translation_dev_m": 4.934251989,
-   "scaled_dev_rel": 0.132487079
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-056",
    "b": "library-084",
-   "relation": "distinct",
-   "translation_dev_m": 1.357484345,
-   "scaled_dev_rel": 0.315477941
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-057",
    "b": "project-021",
-   "relation": "distinct",
-   "translation_dev_m": 1.075296622,
-   "scaled_dev_rel": 0.28311665
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-057",
    "b": "project-043",
-   "relation": "distinct",
-   "translation_dev_m": 1.074812984,
-   "scaled_dev_rel": 0.282240462
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-058",
    "b": "library-066",
-   "relation": "distinct",
-   "translation_dev_m": 1.437931482,
-   "scaled_dev_rel": 0.002289056
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-058",
    "b": "project-020",
-   "relation": "distinct",
-   "translation_dev_m": 1.069304868,
-   "scaled_dev_rel": 0.241247774
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-058",
    "b": "project-042",
-   "relation": "distinct",
-   "translation_dev_m": 1.068510751,
-   "scaled_dev_rel": 0.241272434
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-059",
    "b": "project-024",
-   "relation": "distinct",
-   "translation_dev_m": 0.727279142,
-   "scaled_dev_rel": 0.474417227
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-059",
    "b": "project-046",
-   "relation": "distinct",
-   "translation_dev_m": 0.725439562,
-   "scaled_dev_rel": 0.473562073
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-060",
    "b": "project-015",
-   "relation": "distinct",
-   "translation_dev_m": 0.425700917,
-   "scaled_dev_rel": 0.20643851
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-060",
    "b": "project-037",
-   "relation": "distinct",
-   "translation_dev_m": 0.422525955,
-   "scaled_dev_rel": 0.206407497
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-061",
    "b": "project-013",
-   "relation": "distinct",
-   "translation_dev_m": 1.781328635,
-   "scaled_dev_rel": 0.309139481
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-061",
    "b": "project-035",
-   "relation": "distinct",
-   "translation_dev_m": 1.746801328,
-   "scaled_dev_rel": 0.263723326
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-062",
    "b": "project-018",
-   "relation": "distinct",
-   "translation_dev_m": 2.543049614,
-   "scaled_dev_rel": 0.479516369
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-062",
    "b": "project-040",
-   "relation": "distinct",
-   "translation_dev_m": 2.542427556,
-   "scaled_dev_rel": 0.479511035
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-063",
    "b": "library-085",
-   "relation": "scaled_copy",
-   "translation_dev_m": 0.481817546,
-   "scaled_dev_rel": 3.281e-06
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-063",
    "b": "project-019",
-   "relation": "distinct",
-   "translation_dev_m": 0.597865344,
-   "scaled_dev_rel": 0.303203345
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-063",
    "b": "project-041",
-   "relation": "distinct",
-   "translation_dev_m": 0.597865434,
-   "scaled_dev_rel": 0.303195765
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-064",
    "b": "library-065",
-   "relation": "distinct",
-   "translation_dev_m": 4.914270051,
-   "scaled_dev_rel": 0.282069215
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-064",
    "b": "library-084",
-   "relation": "distinct",
-   "translation_dev_m": 1.118627655,
-   "scaled_dev_rel": 0.25590653
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-065",
    "b": "library-084",
-   "relation": "distinct",
-   "translation_dev_m": 4.792150853,
-   "scaled_dev_rel": 0.369369939
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-066",
    "b": "project-020",
-   "relation": "distinct",
-   "translation_dev_m": 0.495168996,
-   "scaled_dev_rel": 0.239783517
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-066",
    "b": "project-042",
-   "relation": "distinct",
-   "translation_dev_m": 0.496328701,
-   "scaled_dev_rel": 0.239811393
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-067",
    "b": "library-068",
-   "relation": "distinct",
-   "translation_dev_m": 0.065035654,
-   "scaled_dev_rel": 0.090582718
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-069",
    "b": "library-070",
-   "relation": "distinct",
-   "translation_dev_m": 0.337379179,
-   "scaled_dev_rel": 0.072533959
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-069",
    "b": "project-007",
-   "relation": "distinct",
-   "translation_dev_m": 1.780806521,
-   "scaled_dev_rel": 0.326720531
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-069",
    "b": "project-029",
-   "relation": "distinct",
-   "translation_dev_m": 1.78030949,
-   "scaled_dev_rel": 0.326630559
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-070",
    "b": "project-007",
-   "relation": "distinct",
-   "translation_dev_m": 1.77334774,
-   "scaled_dev_rel": 0.32253194
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-070",
    "b": "project-029",
-   "relation": "distinct",
-   "translation_dev_m": 1.772685625,
-   "scaled_dev_rel": 0.322416924
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-071",
    "b": "library-072",
-   "relation": "distinct",
-   "translation_dev_m": 0.096865156,
-   "scaled_dev_rel": 0.083320499
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-075",
    "b": "library-076",
-   "relation": "same",
-   "translation_dev_m": 0.0,
+   "relation": "unverified",
+   "translation_dev_m": null,
    "scaled_dev_rel": null
   },
   {
    "a": "library-075",
    "b": "library-077",
-   "relation": "same",
-   "translation_dev_m": 9.54e-07,
+   "relation": "unverified",
+   "translation_dev_m": null,
    "scaled_dev_rel": null
   },
   {
    "a": "library-075",
    "b": "project-011",
-   "relation": "distinct",
-   "translation_dev_m": 1.286711364,
-   "scaled_dev_rel": 0.399653545
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-075",
    "b": "project-033",
-   "relation": "distinct",
-   "translation_dev_m": 1.28812917,
-   "scaled_dev_rel": 0.399812232
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-076",
    "b": "library-077",
-   "relation": "same",
-   "translation_dev_m": 9.54e-07,
+   "relation": "unverified",
+   "translation_dev_m": null,
    "scaled_dev_rel": null
   },
   {
    "a": "library-076",
    "b": "project-011",
-   "relation": "distinct",
-   "translation_dev_m": 1.286711364,
-   "scaled_dev_rel": 0.399653545
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-076",
    "b": "project-033",
-   "relation": "distinct",
-   "translation_dev_m": 1.28812917,
-   "scaled_dev_rel": 0.399812232
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-077",
    "b": "project-011",
-   "relation": "distinct",
-   "translation_dev_m": 1.28671137,
-   "scaled_dev_rel": 0.399653505
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-077",
    "b": "project-033",
-   "relation": "distinct",
-   "translation_dev_m": 1.288129176,
-   "scaled_dev_rel": 0.399812192
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-079",
    "b": "project-012",
-   "relation": "distinct",
-   "translation_dev_m": 5.818801653,
-   "scaled_dev_rel": 0.54798296
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-079",
    "b": "project-034",
-   "relation": "distinct",
-   "translation_dev_m": 5.783437119,
-   "scaled_dev_rel": 0.599134607
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-085",
    "b": "project-019",
-   "relation": "distinct",
-   "translation_dev_m": 0.985265033,
-   "scaled_dev_rel": 0.303204588
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-085",
    "b": "project-041",
-   "relation": "distinct",
-   "translation_dev_m": 0.98526517,
-   "scaled_dev_rel": 0.303197011
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-089",
    "b": "project-011",
-   "relation": "distinct",
-   "translation_dev_m": 0.307764813,
-   "scaled_dev_rel": 0.188785714
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "library-089",
    "b": "project-033",
-   "relation": "distinct",
-   "translation_dev_m": 0.30642813,
-   "scaled_dev_rel": 0.18842741
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-001",
    "b": "project-002",
-   "relation": "distinct",
-   "translation_dev_m": 0.003175061,
-   "scaled_dev_rel": 0.001863018
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-003",
    "b": "project-025",
-   "relation": "distinct",
-   "translation_dev_m": 1.378029315,
-   "scaled_dev_rel": 0.312352288
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-005",
    "b": "project-027",
-   "relation": "distinct",
-   "translation_dev_m": 0.003907393,
-   "scaled_dev_rel": 0.002566113
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-007",
    "b": "project-029",
-   "relation": "distinct",
-   "translation_dev_m": 0.004157357,
-   "scaled_dev_rel": 0.001051543
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-008",
    "b": "project-030",
-   "relation": "distinct",
-   "translation_dev_m": 0.004264193,
-   "scaled_dev_rel": 0.004057818
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-009",
    "b": "project-031",
-   "relation": "distinct",
-   "translation_dev_m": 0.397266689,
-   "scaled_dev_rel": 0.180884362
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-010",
    "b": "project-032",
-   "relation": "distinct",
-   "translation_dev_m": 0.00317493,
-   "scaled_dev_rel": 0.001639401
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-011",
    "b": "project-033",
-   "relation": "distinct",
-   "translation_dev_m": 0.003737052,
-   "scaled_dev_rel": 0.002224921
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-012",
    "b": "project-034",
-   "relation": "distinct",
-   "translation_dev_m": 0.316604879,
-   "scaled_dev_rel": 0.230916405
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-013",
    "b": "project-035",
-   "relation": "distinct",
-   "translation_dev_m": 0.926146936,
-   "scaled_dev_rel": 0.230640916
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-014",
    "b": "project-036",
-   "relation": "distinct",
-   "translation_dev_m": 0.003003795,
-   "scaled_dev_rel": 0.002723869
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-015",
    "b": "project-037",
-   "relation": "distinct",
-   "translation_dev_m": 0.003176449,
-   "scaled_dev_rel": 0.00159778
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-016",
    "b": "project-038",
-   "relation": "distinct",
-   "translation_dev_m": 0.003180053,
-   "scaled_dev_rel": 0.001865947
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-017",
    "b": "project-039",
-   "relation": "distinct",
-   "translation_dev_m": 0.003004321,
-   "scaled_dev_rel": 0.002116663
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-018",
    "b": "project-040",
-   "relation": "distinct",
-   "translation_dev_m": 0.00317493,
-   "scaled_dev_rel": 0.001639401
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-019",
    "b": "project-041",
-   "relation": "distinct",
-   "translation_dev_m": 0.003001758,
-   "scaled_dev_rel": 0.002392065
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-020",
    "b": "project-042",
-   "relation": "distinct",
-   "translation_dev_m": 0.003064217,
-   "scaled_dev_rel": 0.002491217
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-021",
    "b": "project-043",
-   "relation": "distinct",
-   "translation_dev_m": 0.003003043,
-   "scaled_dev_rel": 0.002392065
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-022",
    "b": "project-044",
-   "relation": "distinct",
-   "translation_dev_m": 0.003000694,
-   "scaled_dev_rel": 0.003205458
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-023",
    "b": "project-045",
-   "relation": "distinct",
-   "translation_dev_m": 0.003004903,
-   "scaled_dev_rel": 0.001718807
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   },
   {
    "a": "project-024",
    "b": "project-046",
-   "relation": "distinct",
-   "translation_dev_m": 0.003004903,
-   "scaled_dev_rel": 0.001718807
+   "relation": "unverified",
+   "translation_dev_m": null,
+   "scaled_dev_rel": null
   }
  ]
 }
