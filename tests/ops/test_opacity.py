@@ -219,6 +219,36 @@ def test_generated_other_first_hit_hole_is_not_exempt(seed):
     assert not result.passed and result.count > 0
 
 
+@pytest.mark.parametrize("angle", [0, 30])
+@pytest.mark.parametrize("combined", [False, True])
+@pytest.mark.parametrize("kind", ["half_quad", "translated_quad", "tiny_quad"])
+def test_invalid_opacity_replacement_cannot_waive_lost_pixels(kind, combined, angle):
+    """Review P1: invalid swaps never inherit the valid swap's thickness exemption."""
+    scene = {"p": railing(angle)}
+    if combined:
+        control = railing(30)
+        scene["control"] = Mesh(control.vertices + [4, 0, 0], control.triangles)
+    before = snapshot(scene)
+    after = operations.to_opacity_plane(scene, "p")
+    q = after["p"]
+    if kind == "half_quad":
+        invalid = Mesh(q.vertices, np.array([[0, 1, 2], [2, 1, 0]]))
+    elif kind == "translated_quad":
+        invalid = Mesh(q.vertices + [0, 0, 10], q.triangles)
+    else:
+        invalid = Mesh(q.vertices.mean(0) + (q.vertices - q.vertices.mean(0)) * .01, q.triangles)
+    after["p"] = invalid
+    if combined:
+        after = operations.to_opacity_plane(after, "control")
+    ctx = Context(opacity_parts=frozenset(scene), resolution=24)
+    check = no_see_through_hole(scene, after, ctx)
+    assert not check.passed and check.count > 0
+    result = operations.run_operation(scene, "probe_invalid_swap", "p", lambda _: after, ctx)
+    assert not result.applied and result.scene is scene and "rolled back" in result.question
+    assert "no_see_through_hole" in {r.name for r in result.report.broken}
+    assert_unchanged(scene, before)
+
+
 def test_generated_greedy_prefix_probe():
     """Exhaustive independent prefix oracle: 27 candidate-count triples x 8 budgets = 216 plans."""
     import itertools
