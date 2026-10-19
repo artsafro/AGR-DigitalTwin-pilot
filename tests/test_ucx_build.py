@@ -712,3 +712,74 @@ def test_ground_long_perimeter_skirt_inside_ucx_reach():
                 best = min(best, math.hypot(dh[0], dz))  # upper bound of the distance to that piece
             worst = max(worst, best)
     assert worst <= ub.GROUND_TOL_M
+
+
+def covered_corridors(v, t, res, band=(0.01002, 0.1), hole=0.00501):
+    """Neighbour pairs whose plan gap is above the [D098] 1 cm (with 0.02 mm read-back margin) across
+    covered Ground (#326 review): the closest-point connector is model-covered at 101/101 samples, crosses
+    no third piece and has a point more than gap/2 + 3 mm from every piece plan (not a diagonal seam)."""
+    hf = ub.HeightField(v, t)
+    qs = [pc.plan for pc in res.pieces]
+    lo, hi = np.array([q.min(0) for q in qs]), np.array([q.max(0) for q in qs])
+
+    def near(a, b):
+        d = np.roll(b, -1, axis=0) - b
+        s = np.clip(((a[:, None] - b) * d).sum(2) / (d * d).sum(1), 0, 1)
+        p = b + s[:, :, None] * d
+        dist = np.linalg.norm(a[:, None] - p, axis=2)
+        i, j = np.unravel_index(dist.argmin(), dist.shape)
+        return dist[i, j], a[i], p[i, j]
+
+    found = []
+    for i in range(len(qs)):
+        for j in range(i + 1, len(qs)):
+            if np.linalg.norm(np.maximum(np.maximum(lo[i] - hi[j], lo[j] - hi[i]), 0)) > band[1]:
+                continue
+            d, x, y = min([near(qs[i], qs[j]), near(qs[j], qs[i])], key=lambda r: r[0])
+            if not band[0] < d < band[1]:
+                continue
+            pts = x + (y - x) * np.linspace(0.001, 0.999, 101)[:, None]
+            if not np.isfinite(hf.z(pts)).all():
+                continue
+            if any(ub._inside(q, pts, -1e-7).any() for k, q in enumerate(qs) if k not in (i, j)):
+                continue
+            nearest = np.min([ub._poly_dist(pts, q)[0] for q in qs], axis=0)
+            if nearest.max() > hole:
+                found.append((i, j, float(d), pts[int(nearest.argmax())].tolist()))
+    return found
+
+
+def slit_site(angle):
+    """SYNTHETIC flat 16 x 16 m Ground with a 15 mm wide, 6 m long void slit entering from the west edge at
+    `angle` deg and ending inside the cell (a thin gap between plots: an outline band narrower than the
+    chord tolerance). Covered by three convex patches at one height, unwelded along the tip line."""
+    a = math.radians(angle)
+    u, n = np.array([math.cos(a), math.sin(a)]), np.array([-math.sin(a), math.cos(a)])
+    o, w, ln = np.array([0.0, 5.0]), 0.015, 6.0
+    sq = np.array([(0, 0), (16, 0), (16, 16), (0, 16)], float)
+    tip = float(u @ o) + ln
+    parts = [ub._clip(ub._clip(sq, -n, -float(n @ o)), -u, -tip),
+             ub._clip(ub._clip(sq, n, float(n @ o) + w), -u, -tip), ub._clip(sq, u, tip)]
+    vs, ts, off = [], [], 0
+    for p in parts:
+        vs.append(np.column_stack([p, np.full(len(p), 145.0)]))
+        ts.append(np.array([(off, off + k, off + k + 1) for k in range(1, len(p) - 1)]))
+        off += len(p)
+    v, t = np.concatenate(vs), np.concatenate(ts)
+    v[:, :2] += 500.0
+    return v, t, o + 500.0 + u * ln / 2 + n * w / 2
+
+
+@pytest.mark.parametrize("angle", [12.0, 33.0, 40.0, 57.0])
+def test_ground_slit_tip_leaves_no_covered_corridor(angle):
+    """#326 review P1 regression row. Failing input (frozen Vatutino v011, default Ground build at
+    cfc5b45): pieces _629/_645 23.4 mm apart across covered Ground beyond the tip of a thin void slit, the
+    connector model-covered at 101/101 samples with no third piece. Expected: the outline band ends with
+    the outline, neighbour gaps across covered Ground stay inside [D098] 2 mm - 1 cm, the slit stays open."""
+    v, t, mid = slit_site(angle)
+    res = ub.build_ground(v, t, model_triangles=len(t))
+    assert_valid_pieces(res)
+    assert res.within_tol
+    assert covered_corridors(v, t, res) == []
+    assert not any(ub.piece_plan_contains(pc, mid)[0] for pc in res.pieces)  # the slit void stays open
+    assert len(footprint_uncovered(v, t, res, n=6)) == 0

@@ -859,6 +859,34 @@ def convex_after_float32(verts, tris, tol: float = CONVEX_READBACK_TOL_M) -> boo
     return not bool(((s.max(axis=0) > tol) & (s.min(axis=0) < -tol)).any())
 
 
+def _exact_side(p, side, toward, seg, hf: HeightField, probe: float = 0.01) -> np.ndarray:
+    """Covered side of an outline band grown up to the outline itself (#326 review): `p` clipped to the
+    covered half-plane of every outline segment facing `toward`. Kept only when no outline segment passes
+    through its interior and it contains the band-clipped `side` (then it is all covered Ground and no
+    strip is left between the piece and a convex outline); a concave outline keeps the chord `side`."""
+    d = seg[:, 1] - seg[:, 0]
+    ln = np.linalg.norm(d, axis=1)
+    use = ln > 1e-6
+    if not use.any():
+        return side
+    seg, d, ln = seg[use], d[use], ln[use]
+    n = np.stack([-d[:, 1], d[:, 0]], axis=1) / ln[:, None]
+    m = (seg[:, 0] + seg[:, 1]) / 2
+    cov = np.isfinite(hf.z(m + probe * n))
+    n = np.where(cov[:, None], n, -n)  # inward (covered-side) unit normal of each segment
+    face = n @ toward > 0
+    if not face.any():
+        return side
+    q = p
+    for nk, sk in zip(n[face], seg[face]):
+        q = _clip(q, nk, float(nk @ sk[0]))
+        if len(q) < 3:
+            return side
+    if _poly_area(q) <= _poly_area(side) or not _inside(q, side, 1e-9).all() or len(_segs_inside(seg, q)):
+        return side
+    return q
+
+
 def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol: float = 0.08,
                  depth: float = 0.5, gap: float = GAP_M, samples: int = 6,
                  model_triangles: int | None = None, reserved_triangles: int = 0) -> UcxResult:
@@ -1000,23 +1028,34 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
             nn = np.array([-vt[0, 1], vt[0, 0]])
             proj = pts @ nn
             cmin, cmax = float(proj.min()), float(proj.max())
-            if cmax - cmin <= chord_tol or deep:
-                parts, strip = [], cmax - cmin  # outline in a band: keep the outline-free sides only
-                for side in (_clip(p, nn, cmax), _clip(p, -nn, -cmin)):
-                    if len(side) >= 3 and _poly_area(side) > 1e-12 and covered(side):
-                        parts.append(side)
-                strips.append(strip + g)
-            else:
+            band = cmax - cmin <= chord_tol or deep
+            if not band:
                 ln = np.linalg.norm(seg[:, 1] - seg[:, 0], axis=1)
                 kids = cut(p, *seg[int(np.argmax(ln))]) or bisect(p)
                 if kids:
                     stack.extend((k, lvl + 1) for k in kids)
                     continue
-                parts, strip = [], cmax - cmin  # cannot cut: same band rule, reported
-                for side in (_clip(p, nn, cmax), _clip(p, -nn, -cmin)):
-                    if len(side) >= 3 and _poly_area(side) > 1e-12 and covered(side):
-                        parts.append(side)
-                strips.append(strip + g)
+            # the band is only as long as the outline in it: where the outline ends inside the cell (a slit
+            # tip) the strip beyond is covered Ground, so the cell is first cut across the band there; a band
+            # spanning the whole cell would open a corridor of its width between the pieces on both sides
+            # (#326 review: 23 mm gaps across covered Ground)
+            u = vt[0]
+            tc = pts @ u
+            kids = None
+            for k, sgn in ((int(np.argmin(tc)), -1.0), (int(np.argmax(tc)), 1.0)):
+                if (_half_planes(p)[0] @ pts[k] - _half_planes(p)[1]).min() <= g:
+                    continue  # the outline leaves the cell here
+                kids = cut(p, pts[k], pts[k] + sgn * nn)
+                if kids:
+                    break
+            if kids:
+                stack.extend((k, lvl + 1) for k in kids)
+                continue
+            parts, strip = [], cmax - cmin  # outline in a band (or cannot cut): keep the outline-free sides
+            for sgn, side in ((1.0, _clip(p, nn, cmax)), (-1.0, _clip(p, -nn, -cmin))):
+                if len(side) >= 3 and _poly_area(side) > 1e-12 and covered(side):
+                    parts.append(_exact_side(p, side, sgn * nn, seg, hf) if band else side)
+            strips.append(strip + g)
         elif not covered(p):
             continue
         for part in parts:
