@@ -582,6 +582,236 @@ def test_opacity_resized_with_the_same_tile(flora, tmp_path):
     assert math.isclose(result["scale_factor"], 1.0)
 
 
+def test_regression_multispecies_acceptance_rows(flora, tmp_path):
+    """Combined acceptance for three placed species. Inputs and expected outputs are fixed literals.
+
+    Input faces (material_id, source px, uvs):
+    - 101 Tilia cordata tree 256x256 RGB (220, 40, 40), UVs [[0,0],[1,0],[1,1],[0,1]]
+    - 201 Spiraea japonica bush 256x128 RGB (40, 160, 60), UVs [[0,0],[1,0],[0.25,1]]
+    - 401 Lavandula angustifolia flower 128x256 RGB (90, 40, 160), UVs [[0,0],[1,0],[0,1]]
+    Opacity is 255 L at the same size. Padding 8. Min tile 256.
+
+    Expected one 2048 atlas, scale 1, warnings [], fill 3.125%, material M_SYNTH_Flora_1.
+    Tiles (x, y, w, h) and UV (u0, v0, u1, v1), image Y down, UV V up:
+    - 101 [4, 4, 256, 256] UV [4/2048, 1788/2048, 260/2048, 2044/2048]
+    - 201 [404, 4, 256, 128] UV [404/2048, 1916/2048, 660/2048, 2044/2048]
+    - 401 [268, 4, 128, 256] UV [268/2048, 1788/2048, 396/2048, 2044/2048]
+    """
+    expected = [
+        {
+            "material_id": 101,
+            "species": "Tilia cordata",
+            "type": "tree",
+            "color": (220, 40, 40),
+            "size": (256, 256),
+            "uvs": [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]],
+            "tile_px": [4, 4, 256, 256],
+            "uv": [4 / 2048, 1788 / 2048, 260 / 2048, 2044 / 2048],
+            "mapped": [
+                [4 / 2048, 1788 / 2048],
+                [260 / 2048, 1788 / 2048],
+                [260 / 2048, 2044 / 2048],
+                [4 / 2048, 2044 / 2048],
+            ],
+        },
+        {
+            "material_id": 201,
+            "species": "Spiraea japonica",
+            "type": "bush",
+            "color": (40, 160, 60),
+            "size": (256, 128),
+            "uvs": [[0.0, 0.0], [1.0, 0.0], [0.25, 1.0]],
+            "tile_px": [404, 4, 256, 128],
+            "uv": [404 / 2048, 1916 / 2048, 660 / 2048, 2044 / 2048],
+            "mapped": [
+                [404 / 2048, 1916 / 2048],
+                [660 / 2048, 1916 / 2048],
+                [468 / 2048, 2044 / 2048],
+            ],
+        },
+        {
+            "material_id": 401,
+            "species": "Lavandula angustifolia",
+            "type": "flower",
+            "color": (90, 40, 160),
+            "size": (128, 256),
+            "uvs": [[0, 0], [1, 0], [0, 1]],
+            "tile_px": [268, 4, 128, 256],
+            "uv": [268 / 2048, 1788 / 2048, 396 / 2048, 2044 / 2048],
+            "mapped": [
+                [268 / 2048, 1788 / 2048],
+                [396 / 2048, 1788 / 2048],
+                [268 / 2048, 2044 / 2048],
+            ],
+        },
+    ]
+    maps = tmp_path / "maps"
+    species = []
+    objects = []
+    for row in expected:
+        diffuse = _png(maps / str(row["material_id"]) / "diffuse.png", row["size"], row["color"], "RGB")
+        opacity = _png(maps / str(row["material_id"]) / "opacity.png", row["size"], 255, "L")
+        species.append(_species(row["species"], row["type"], row["material_id"], diffuse, opacity))
+        objects.append({"name": row["species"], "faces": [_quad(row["material_id"], row["uvs"])]})
+    catalogue = _catalogue(tmp_path / "catalogue.json", species)
+    scene = _scene(tmp_path / "scene.json", objects)
+    diffuse, opacity, report_path = _outputs(tmp_path)
+    result = flora.build_atlas(
+        scene,
+        catalogue,
+        out_diffuse=diffuse,
+        out_opacity=opacity,
+        out_report=report_path,
+        address="SYNTH",
+    )
+    assert result["atlas_count"] == 1
+    assert result["atlas_size"] == 2048
+    assert result["scale_factor"] == 1
+    assert result["warnings"] == []
+    assert result["fill_percent"] == 3.125
+    assert result["species_count"] == 3
+    assert result["material"]["name"] == "M_SYNTH_Flora_1"
+    assert set(result["material"]) == {"name", "diffuse", "opacity"}
+    assert [row["material_id"] for row in result["ids"]] == [101, 201, 401]
+    tiles = []
+    for row, spec in zip(result["ids"], expected):
+        assert row["species"] == spec["species"]
+        assert row["tile_px"] == spec["tile_px"]
+        assert row["size_px"] == [spec["tile_px"][2], spec["tile_px"][3]]
+        assert row["source_px"] == list(spec["size"])
+        assert row["uv"] == spec["uv"]
+        tiles.append(tuple(row["tile_px"]))
+        for uv, mapped in zip(spec["uvs"], spec["mapped"]):
+            got = flora.remap_uv(uv, row["uv"])
+            assert flora.uv_roundtrip_delta(uv, got, row["uv"]) < 1e-6
+            assert abs(got[0] - mapped[0]) <= 1e-6
+            assert abs(got[1] - mapped[1]) <= 1e-6
+            assert spec["uv"][0] <= got[0] <= spec["uv"][2]
+            assert spec["uv"][1] <= got[1] <= spec["uv"][3]
+    for index, left in enumerate(tiles):
+        for right in tiles[index + 1:]:
+            assert not _overlaps(left, right)
+    written = json.loads(report_path.read_text(encoding="utf-8"))
+    assert written["ids"][0]["tile_px"] == [4, 4, 256, 256]
+    assert written["ids"][1]["size_px"] == [256, 128]
+    assert written["ids"][2]["uv"] == expected[2]["uv"]
+    assert written["scale_factor"] == 1
+    assert written["warnings"] == []
+    color = Image.open(diffuse)
+    mask = Image.open(opacity)
+    assert color.getpixel((5, 5)) == (220, 40, 40)
+    assert color.getpixel((405, 5)) == (40, 160, 60)
+    assert color.getpixel((269, 5)) == (90, 40, 160)
+    assert mask.getpixel((5, 5)) == 255
+    assert color.getpixel((2000, 2000)) == (0, 0, 0)
+    remapped = flora.remap_faces(
+        [face for obj in objects for face in obj["faces"]],
+        {row["material_id"]: row["uv"] for row in result["ids"]},
+    )
+    assert [face["material_id"] for face in remapped] == [101, 201, 401]
+    rng = random.Random(217)
+    rects = {row["material_id"]: row["uv"] for row in result["ids"]}
+    for _ in range(80):
+        material_id = rng.choice([101, 201, 401])
+        uv = (rng.random(), rng.random())
+        mapped = flora.remap_uv(uv, rects[material_id])
+        assert flora.uv_within_tolerance(flora.uv_roundtrip_delta(uv, mapped, rects[material_id]), 1e-6)
+        u0, v0, u1, v1 = rects[material_id]
+        assert u0 <= mapped[0] <= u1
+        assert v0 <= mapped[1] <= v1
+        for other, rect in rects.items():
+            if other == material_id:
+                continue
+            ou0, ov0, ou1, ov1 = rect
+            inside_other = ou0 <= mapped[0] <= ou1 and ov0 <= mapped[1] <= ov1
+            assert not inside_other
+
+
+def test_uv_outside_unit_square_writes_nothing(flora, tmp_path, capsys):
+    """Negative and greater-than-one UVs are refused before any atlas file is created."""
+    catalogue, _rows = _library(tmp_path)
+    scene_bytes_path = tmp_path / "scene.json"
+    examples = (
+        [[0, 0], [2, 0], [0, 1]],
+        [[-1, 0], [1, 0], [0, 1]],
+        [[0, 0], [1, 0], [0, 1]],
+    )
+    # The in-range triangle is the control and must still pack. Out-of-range examples must not.
+    control = examples[2]
+    objects = [{"name": "edge", "faces": [_quad(101, control)]}]
+    result, _diffuse, _opacity, _report = _build(flora, tmp_path / "control", objects)
+    assert [row["material_id"] for row in result["ids"]] == [101]
+    tile = result["ids"][0]["uv"]
+    assert flora.remap_uv((0, 0), tile)[0] == tile[0]
+    assert flora.remap_uv((1, 1), tile) == (tile[2], tile[3])
+
+    catalogue_bytes = catalogue.read_bytes()
+    diffuse_map = Path(json.loads(catalogue.read_text(encoding="utf-8"))["species"][0]["maps"]["diffuse"])
+    map_bytes = diffuse_map.read_bytes()
+    for uvs in examples[:2]:
+        scene_bytes_path.write_text(json.dumps({
+            "schema": "flora-placed-v1",
+            "objects": [{"name": "bad", "faces": [_quad(101, uvs)]}],
+        }), encoding="utf-8")
+        out = tmp_path / "rejected"
+        code = flora.main([
+            "--scene-json", str(scene_bytes_path),
+            "--catalogue", str(catalogue),
+            "--out-dir", str(out),
+            "--address", "SYNTH",
+        ])
+        captured = capsys.readouterr()
+        assert code != 0
+        assert "outside 0..1" in captured.err
+        assert not out.exists()
+        assert catalogue.read_bytes() == catalogue_bytes
+        assert diffuse_map.read_bytes() == map_bytes
+    with pytest.raises(flora.FloraAtlasError, match="outside 0..1"):
+        flora.remap_uv((2, 0), (0.1, 0.2, 0.3, 0.4))
+    with pytest.raises(flora.FloraAtlasError, match="outside 0..1"):
+        flora.remap_uv((-1, 0), (0.1, 0.2, 0.3, 0.4))
+    assert flora.remap_uv((0, 0), (0.1, 0.2, 0.3, 0.4)) == (0.1, 0.2)
+    assert flora.remap_uv((1, 1), (0.1, 0.2, 0.3, 0.4)) == (0.3, 0.4)
+
+
+def test_probe_uv_outside_unit_interval_never_writes(flora, tmp_path, capsys):
+    catalogue, _rows = _library(tmp_path)
+    scene = tmp_path / "scene.json"
+    catalogue_bytes = catalogue.read_bytes()
+    rng = random.Random(2048)
+    for index in range(48):
+        uvs = [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]]
+        slot = rng.randrange(3)
+        axis = rng.randrange(2)
+        uvs[slot][axis] = rng.choice([
+            -1e-15,
+            -1,
+            -100,
+            math.nextafter(0.0, -1.0),
+            math.nextafter(1.0, 2.0),
+            1 + 1e-15,
+            2,
+            40,
+            float("nan") if index % 11 == 0 else 2,
+        ])
+        scene.write_text(json.dumps({
+            "schema": "flora-placed-v1",
+            "objects": [{"name": "probe", "faces": [{"material_id": 101, "uvs": uvs}]}],
+        }), encoding="utf-8")
+        out = tmp_path / f"probe-{index}"
+        code = flora.main([
+            "--scene-json", str(scene),
+            "--catalogue", str(catalogue),
+            "--out-dir", str(out),
+            "--address", "SYNTH",
+        ])
+        captured = capsys.readouterr()
+        assert code != 0
+        assert captured.err.startswith("error:")
+        assert not out.exists()
+        assert catalogue.read_bytes() == catalogue_bytes
+
+
 def test_max_job_source_is_a_pymxs_script():
     job = ROOT / "tools" / "library" / "flora_atlas_max_job.py"
     source = job.read_text(encoding="utf-8")

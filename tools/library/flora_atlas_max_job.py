@@ -20,6 +20,7 @@ AGR_FLORA_MIN_TILE    optional longer-side warning threshold
 
 import hashlib
 import json
+import math
 import os
 import subprocess
 import sys
@@ -37,36 +38,139 @@ def max_path(path):
     return os.path.abspath(path).replace("\\", "/")
 
 
-def same_path(left, right):
-    return os.path.normcase(os.path.abspath(left)) == os.path.normcase(os.path.abspath(right))
+def path_keys(path):
+    text = os.fspath(path)
+    keys = {os.path.normcase(os.path.normpath(os.path.abspath(text)))}
+    try:
+        keys.add(os.path.normcase(os.path.normpath(os.path.realpath(text))))
+    except OSError:
+        pass
+    return keys
 
 
-def require(name):
-    value = os.environ.get(name, "").strip()
+def paths_alias(left, right):
+    if path_keys(left) & path_keys(right):
+        return True
+    if os.path.lexists(left) and os.path.lexists(right):
+        try:
+            return os.path.samefile(left, right)
+        except OSError:
+            return False
+    return False
+
+
+def _require_env(env, name):
+    value = env.get(name, "").strip()
     if not value:
         raise RuntimeError("missing " + name)
     return value
 
 
-def main():
-    from pymxs import runtime as rt
+def preflight_job(env):
+    """Resolve every Max-job path and refuse aliases before any file is created."""
 
-    scene = require("AGR_FLORA_SCENE")
-    catalogue_path = require("AGR_FLORA_CATALOGUE")
-    out_dir = require("AGR_FLORA_OUT_DIR")
-    address = require("AGR_FLORA_ADDRESS")
-    repo = require("AGR_FLORA_REPO")
-    uv = require("AGR_UV")
-    result_path = require("AGR_FLORA_RESULT")
-    scene_out = os.environ.get("AGR_FLORA_SCENE_OUT", "").strip()
+    scene = _require_env(env, "AGR_FLORA_SCENE")
+    catalogue = _require_env(env, "AGR_FLORA_CATALOGUE")
+    out_dir = _require_env(env, "AGR_FLORA_OUT_DIR")
+    address = _require_env(env, "AGR_FLORA_ADDRESS")
+    repo = _require_env(env, "AGR_FLORA_REPO")
+    uv = _require_env(env, "AGR_UV")
+    result = _require_env(env, "AGR_FLORA_RESULT")
+    scene_out = env.get("AGR_FLORA_SCENE_OUT", "").strip()
     if not scene_out:
         stem, _ext = os.path.splitext(scene)
         scene_out = stem + "-flora-atlas.max"
-    if same_path(scene, scene_out):
-        raise RuntimeError("scene output resolves to the scene copy")
-    os.makedirs(out_dir, exist_ok=True)
+    if not address or any(not (ch.isalnum() or ch == "_") for ch in address):
+        raise RuntimeError("refusing to write; address is unsupported")
+    synth = env.get("AGR_FLORA_SYNTH", "").strip() == "1"
+    writes = [
+        scene_out,
+        result,
+        os.path.join(out_dir, "placed-scene.json"),
+        os.path.join(out_dir, "flora-atlas.json"),
+        os.path.join(out_dir, "T_%s_Flora_d_1.png" % address),
+        os.path.join(out_dir, "T_%s_Flora_o_1.png" % address),
+    ]
+    if synth:
+        writes.append(scene)
+    if os.path.lexists(out_dir) and not os.path.isdir(out_dir):
+        raise RuntimeError("refusing to write %s; it resolves to %s" % (out_dir, out_dir))
+    protected = [catalogue, uv]
+    if not synth or os.path.lexists(scene):
+        protected.append(scene)
+    if os.path.lexists(scene_out):
+        protected.append(scene_out)
+    _refuse_aliased_writes(writes, protected)
+    return {
+        "scene": scene,
+        "scene_out": scene_out,
+        "catalogue": catalogue,
+        "out_dir": out_dir,
+        "address": address,
+        "repo": repo,
+        "uv": uv,
+        "result": result,
+        "synth": synth,
+    }
+
+
+def _refuse_aliased_writes(writes, protected):
+    for index, left in enumerate(writes):
+        for right in writes[index + 1:]:
+            if paths_alias(left, right):
+                raise RuntimeError("refusing to write %s; it resolves to %s" % (left, right))
+        for source in protected:
+            if paths_alias(left, source):
+                raise RuntimeError("refusing to write %s; it resolves to %s" % (left, source))
+
+
+def reject_unsupported_uvs(inventory):
+    """Refuse UVs outside 0..1 before the job creates a directory or saves a scene."""
+
+    if not isinstance(inventory, dict):
+        raise RuntimeError("unsupported scene inventory")
+    objects = inventory.get("objects")
+    if not isinstance(objects, list) or not objects:
+        raise RuntimeError("unsupported scene inventory")
+    for obj in objects:
+        if not isinstance(obj, dict):
+            raise RuntimeError("unsupported scene inventory")
+        faces = obj.get("faces")
+        if not isinstance(faces, list) or not faces:
+            raise RuntimeError("unsupported scene inventory")
+        for face in faces:
+            if not isinstance(face, dict):
+                raise RuntimeError("unsupported scene inventory")
+            uvs = face.get("uvs")
+            if not isinstance(uvs, list) or len(uvs) < 3:
+                raise RuntimeError("unsupported UV")
+            for pair in uvs:
+                if not isinstance(pair, (list, tuple)) or len(pair) != 2:
+                    raise RuntimeError("unsupported UV %s" % (pair,))
+                u, v = pair[0], pair[1]
+                if (
+                    isinstance(u, bool) or isinstance(v, bool)
+                    or not isinstance(u, (int, float)) or not isinstance(v, (int, float))
+                    or not math.isfinite(float(u)) or not math.isfinite(float(v))
+                    or u < 0 or u > 1 or v < 0 or v > 1
+                ):
+                    raise RuntimeError("unsupported UV %s" % (pair,))
+
+
+def main():
+    plan = preflight_job(os.environ)
+    from pymxs import runtime as rt
+
+    scene = plan["scene"]
+    catalogue_path = plan["catalogue"]
+    out_dir = plan["out_dir"]
+    address = plan["address"]
+    repo = plan["repo"]
+    uv = plan["uv"]
+    result_path = plan["result"]
+    scene_out = plan["scene_out"]
     catalogue = json.loads(open(catalogue_path, encoding="utf-8").read())
-    if os.environ.get("AGR_FLORA_SYNTH", "") == "1":
+    if plan["synth"]:
         rt.resetMaxFile(rt.Name("noPrompt"))
         nodes = build_synth(rt, catalogue)
         if not rt.saveMaxFile(max_path(scene), quiet=True):
@@ -77,6 +181,8 @@ def main():
         nodes = flora_nodes(rt)
     before = sha256_file(scene)
     inventory = dump_scene(rt, nodes)
+    reject_unsupported_uvs(inventory)
+    os.makedirs(out_dir, exist_ok=True)
     inventory_path = os.path.join(out_dir, "placed-scene.json")
     with open(inventory_path, "w", encoding="utf-8") as handle:
         json.dump(inventory, handle)

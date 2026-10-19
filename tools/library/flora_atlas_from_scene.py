@@ -473,9 +473,20 @@ def _uvs(value, label: str) -> None:
 
 
 def _uv_pair(value) -> tuple[float, float]:
+    """UV coordinates must stay inside the species tile.
+
+    Values below 0 or above 1 are refused. Wrapping them would sample across
+    neighbouring tiles (for example a corner at u=2 or u=-1). Exactly 0 and
+    exactly 1 stay on the tile boundary.
+    """
+
     if not isinstance(value, (list, tuple)) or len(value) != 2:
         raise FloraAtlasError(f"UV {value!r} is not a pair")
-    return (_real(value[0], "u"), _real(value[1], "v"))
+    u = _real(value[0], "u")
+    v = _real(value[1], "v")
+    if u < 0.0 or v < 0.0 or u > 1.0 or v > 1.0:
+        raise FloraAtlasError(f"UV {[u, v]} is outside 0..1")
+    return (u, v)
 
 
 def _tile_rect(tile) -> tuple[float, float, float, float]:
