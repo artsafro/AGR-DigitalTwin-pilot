@@ -7,7 +7,11 @@ id absent from the base is an error: an override never creates an entry.
 
 Independent FBX readback and the blank-preview report are consumed as given.
 Missing QA is recorded as "not measured". preview_blank is never false unless
-that entry id is in a preview-check report.
+that entry id is in a preview-check report. When source integrity is not measured
+(no --hash-before manifest supplied), source_hashes is recorded as
+{"status": "not measured"} rather than an empty list (which is reserved for an
+explicitly empty measured manifest); source preservation is never inferred when
+not measured.
 """
 
 from __future__ import annotations
@@ -596,8 +600,6 @@ def build_audit(
 ):
     """Assemble audit.json from measured inputs. Returns ``(audit, npm_matches)``."""
     _check_plan_and_built(plan, built_rows)
-    if source_hashes is None:
-        source_hashes = []
     if override_manifests is None:
         override_manifests = []
     files = {}
@@ -609,9 +611,15 @@ def build_audit(
             "bytes": sum(path.stat().st_size for path in paths),
         }
     seconds = [row["seconds"] for row in built_rows]
+    if source_hashes is None:
+        hashes_section = {"status": "not measured"}
+    elif isinstance(source_hashes, dict):
+        hashes_section = dict(source_hashes)
+    else:
+        hashes_section = list(source_hashes)
     audit = {
         "scope": _SCOPE,
-        "source_hashes": list(source_hashes),
+        "source_hashes": hashes_section,
         "files": files,
         "build": {
             "entries": len(plan["entries"]),
@@ -860,7 +868,11 @@ def _cmd_audit(args) -> int:
         if not isinstance(blank_before, list):
             raise ValueError("blank-before file must be a JSON list of ids")
     overrides = [(path, read_jsonl_unique(path)) for path in (args.override or [])]
-    source_hashes = hash_sources(args.hash_before, list(args.copy or [])) if args.hash_before else []
+    source_hashes = (
+        hash_sources(args.hash_before, list(args.copy or []))
+        if args.hash_before is not None
+        else None
+    )
     contact = Path(args.contact_sheet_png).as_posix() if args.contact_sheet_png else None
     audit, matches = build_audit(
         plan=plan,
