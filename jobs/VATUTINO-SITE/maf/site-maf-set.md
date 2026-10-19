@@ -58,6 +58,8 @@ NPM MAF total 57628 ≤ 60 000 (MAF share of the shared 180 000 NPM Ground budge
 
 UV-slot measurement on the exported FBX readback: 38442 faces in 26 files, faces outside their material's slot = **0** (per-material UV bounds in the JSON).
 
+Material-map coverage (review round 1): the builder now rejects, before any export (exit 3), a source material that has no mapping and no explicit `"*"`. All 13 maps are covered: 6 positions map every sub-material by name, 7 single-material positions (02, 07, 12, 16, 29, 31, 32) use an explicit `"*"` on purpose. A re-run of the fixed builder on the same copies (`C:/x/vatutino-maf/v006-check`, exit 0) gives the same readback as v005 for all 26 files: triangles, size, faces and UV bounds per material, flips and flat-shaded counts. FBX bytes differ between any two runs, the old builder included (`v006-oldbuilder`), so the published v005 files are kept; their hashes were checked again, 27/27 match.
+
 ## L2 MAF checks (`maf_findings`, smoothing threshold 40°)
 
 NPM: {'pass': 25, 'not_run': 1}; VPM: {'pass': 25, 'not_run': 1}. The one `not_run` per profile is VAT_MAF_T3510_32 «MAF flipped normals»: listed **review** — flat grate plates (44 mm open sheets), 5 flat components without measurable volume; 0 flipped, 0 inconsistent. Faces reversed to outward (copy only) and faces flat-shaded to keep hard edges are counted per position in the JSON.

@@ -7,7 +7,9 @@ Pattern: new-case: site MAF set build - join, optional Decimate light version, m
 512 atlas slots, hard edges by angle, NPM/VPM FBX export and readback. Pure rules live in
 tools/library/maf_site_set.py. Inputs are COPIES under <out_dir>/src (the config's source FBX are copied
 first by the caller); sources are never written. Writes <out_dir>/{npm,vpm}/<set_id>.fbx and
-<out_dir>/build-report.json. Exit 2 when an output exists already (new versioned folder required).
+<out_dir>/build-report.json. Exit 2 when an output exists already (new versioned folder required); exit 3,
+before any export, when a material_map misses a source material without an explicit "*" or names a
+material outside the atlas.
 """
 
 import importlib.util
@@ -121,19 +123,54 @@ def flatten_soft_violations(obj, threshold_deg, split_tol_deg=1.0):
     return flat
 
 
+def slot_names(o):
+    return [s.material.name if s.material else "None" for s in o.material_slots] or ["None"]
+
+
+def preflight(positions):
+    """Before any export: refuse existing outputs (exit 2) and incomplete material maps (exit 3)."""
+    errors = []
+    for pos in positions:
+        for role in ("vpm", "npm"):
+            fbx_out = out_dir / role / (pos["set_id"] + ".fbx")
+            if fbx_out.exists():
+                print("refusing to overwrite", fbx_out, file=sys.stderr)
+                sys.exit(2)
+        reset()
+        bpy.ops.import_scene.fbx(filepath=str(out_dir / "src" / Path(pos["source_fbx"]).name))
+        names = []
+        for o in bpy.data.objects:
+            if o.type == "MESH":
+                used = {p.material_index for p in o.data.polygons}
+                slots = slot_names(o)
+                names += [slots[i] if i < len(slots) else "None" for i in sorted(used)]
+        try:
+            mss.resolve_material_map(names, pos["material_map"], rects)
+        except mss.MaterialMapError as err:
+            errors.append(pos["set_id"] + ": " + str(err))
+    if errors:
+        for line in errors:
+            print("material_map error:", line, file=sys.stderr)
+        sys.exit(3)
+
+
 def build(pos, ratio, fbx_in, fbx_out):
     reset()
     bpy.ops.import_scene.fbx(filepath=str(fbx_in))
     meshes = [o for o in bpy.data.objects if o.type == "MESH"]
     if not meshes:
         raise RuntimeError("no mesh in " + str(fbx_in))
-    # source material name per polygon, before joining
+    # source material name per polygon, before joining; the map must cover every name (no silent fallback)
+    seen = []
     for o in meshes:
-        names = [s.material.name if s.material else "None" for s in o.material_slots] or ["None"]
+        names = slot_names(o)
         attr = o.data.attributes.new("src_mat", "INT", "FACE")
         for p in o.data.polygons:
             n = names[p.material_index] if p.material_index < len(names) else "None"
-            attr.data[p.index].value = list(pos["material_map"]).index(n) if n in pos["material_map"] else -1
+            if n not in seen:
+                seen.append(n)
+            attr.data[p.index].value = seen.index(n)
+    resolved = mss.resolve_material_map(seen, pos["material_map"], rects)
     for o in bpy.data.objects:
         o.select_set(o.type == "MESH")
     bpy.context.view_layer.objects.active = meshes[0]
@@ -165,17 +202,12 @@ def build(pos, ratio, fbx_in, fbx_out):
     mesh.materials.clear()
     for name in order:
         mesh.materials.append(mats[name])
-    keys = list(pos["material_map"])
-    default = pos["material_map"].get("*")
     src = mesh.attributes["src_mat"].data
-    unmapped = 0
+    wildcard = 0
     for p in mesh.polygons:
-        k = src[p.index].value
-        target = pos["material_map"][keys[k]] if k >= 0 else default
-        if target is None:
-            unmapped += 1
-            target = order[0]
-        p.material_index = order.index(target)
+        name = seen[src[p.index].value]
+        wildcard += name not in pos["material_map"]
+        p.material_index = order.index(resolved[name])
     mesh.attributes.remove(mesh.attributes["src_mat"])
     # UV: box projection per face, normalised by the object bounds, mapped inside the slot rect
     while mesh.uv_layers:
@@ -206,7 +238,8 @@ def build(pos, ratio, fbx_in, fbx_out):
     bpy.ops.export_scene.fbx(filepath=str(fbx_out), use_selection=True, object_types={"MESH"},
                              mesh_smooth_type="FACE", use_mesh_modifiers=True, path_mode="COPY",
                              embed_textures=True, bake_anim=False, add_leaf_bones=False)
-    return {"tris_source": tris_before, "unmapped_faces": unmapped, "faces_reversed_outward": flipped,
+    return {"tris_source": tris_before, "source_materials": resolved, "wildcard_faces": wildcard,
+            "faces_reversed_outward": flipped,
             "faces_flat_shaded": flat}
 
 
@@ -244,6 +277,7 @@ def readback(fbx, pos):
     return out
 
 
+preflight(cfg["positions"])
 report = {"blender": bpy.app.version_string, "smoothing_deg": cfg["smoothing_deg"], "positions": []}
 for pos in cfg["positions"]:
     fbx_in = out_dir / "src" / Path(pos["source_fbx"]).name

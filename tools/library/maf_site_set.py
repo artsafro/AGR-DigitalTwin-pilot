@@ -235,3 +235,36 @@ def orient_outward(coords, polygons) -> set[int]:
         outward_is_propagated = volume > 0
         flips.update(f for f in order if flip[f] == outward_is_propagated)
     return flips
+
+
+class MaterialMapError(ValueError):
+    """A position's material_map does not cover its source materials or names a material outside the atlas."""
+
+    def __init__(self, missing, unknown_targets, message):
+        super().__init__(message)
+        self.missing = list(missing)
+        self.unknown_targets = list(unknown_targets)
+
+
+def resolve_material_map(source_names, material_map: dict, atlas_names) -> dict:
+    """Return {source material name: atlas material} for every source name, or raise MaterialMapError.
+
+    A source name absent from the map is covered only by an explicit "*" entry; there is no implicit
+    fallback, so an incomplete map never silently becomes the first atlas colour (#313 review P1).
+    Every target, including "*", must be an atlas material.
+    """
+    names = list(dict.fromkeys(str(n) for n in source_names))
+    if not names:
+        raise MaterialMapError([], [], "no source materials to map")
+    atlas = set(atlas_names)
+    unknown = sorted({str(t) for t in material_map.values()} - atlas)
+    wildcard = material_map.get("*")
+    missing = [n for n in names if n not in material_map and wildcard is None]
+    if missing or unknown:
+        parts = []
+        if missing:
+            parts.append("source materials without a mapping (no '*'): " + ", ".join(missing))
+        if unknown:
+            parts.append("targets not in the atlas: " + ", ".join(unknown))
+        raise MaterialMapError(missing, unknown, "; ".join(parts))
+    return {n: material_map.get(n, wildcard) for n in names}
