@@ -35,13 +35,13 @@
     "faces": 357,
     "degenerate_faces": 0,
     "area_m2": 193.36551579299578,
-    "uncovered_m2": 193.32922163621163
+    "uncovered_m2": 193.32922163855517
    },
    "vpm": {
     "faces": 830,
     "degenerate_faces": 0,
     "area_m2": 34.000528382201054,
-    "uncovered_m2": 33.964242496922346
+    "uncovered_m2": 33.96424249788519
    },
    "area_difference_m2": 159.36498741079473
   },
@@ -71,13 +71,13 @@
     "faces": 488,
     "degenerate_faces": 0,
     "area_m2": 87.17261142971316,
-    "uncovered_m2": 87.02537636841548
+    "uncovered_m2": 87.02537636870261
    },
    "vpm": {
     "faces": 574,
     "degenerate_faces": 0,
     "area_m2": 127.52236406880571,
-    "uncovered_m2": 127.3750166993931
+    "uncovered_m2": 127.37501670440352
    },
    "area_difference_m2": 40.34975263909256
   },
@@ -94,13 +94,13 @@
     "faces": 346,
     "degenerate_faces": 0,
     "area_m2": 27.621460290176223,
-    "uncovered_m2": 27.596367839190698
+    "uncovered_m2": 27.596367839715406
    },
    "vpm": {
     "faces": 394,
     "degenerate_faces": 0,
     "area_m2": 83.66131127951903,
-    "uncovered_m2": 83.63621538489136
+    "uncovered_m2": 83.63621538555921
    },
    "area_difference_m2": 56.0398509893428
   },
@@ -117,13 +117,13 @@
     "faces": 979,
     "degenerate_faces": 0,
     "area_m2": 10.114716521948093,
-    "uncovered_m2": 10.113639820113127
+    "uncovered_m2": 10.11363982064106
    },
    "vpm": {
     "faces": 4894,
     "degenerate_faces": 0,
     "area_m2": 723.6716176125406,
-    "uncovered_m2": 723.67053929818
+    "uncovered_m2": 723.6705392982544
    },
    "area_difference_m2": 713.5569010905924
   },
@@ -140,13 +140,13 @@
     "faces": 8,
     "degenerate_faces": 0,
     "area_m2": 87.08798787972952,
-    "uncovered_m2": 87.04722674193924
+    "uncovered_m2": 87.04722674446369
    },
    "vpm": {
     "faces": 830,
     "degenerate_faces": 0,
     "area_m2": 34.000517929002775,
-    "uncovered_m2": 33.95973994686561
+    "uncovered_m2": 33.95973994687435
    },
    "area_difference_m2": 53.08746995072675
   },
@@ -163,13 +163,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 107.59618045414067,
-    "uncovered_m2": 107.45813897055082
+    "uncovered_m2": 107.45813897324386
    },
    "vpm": {
     "faces": 1070,
     "degenerate_faces": 0,
     "area_m2": 268.8125294542374,
-    "uncovered_m2": 268.67436132471363
+    "uncovered_m2": 268.6743613247207
    },
    "area_difference_m2": 161.21634900009673
   },
@@ -186,13 +186,13 @@
     "faces": 125,
     "degenerate_faces": 0,
     "area_m2": 115.62378011771295,
-    "uncovered_m2": 115.60068934722742
+    "uncovered_m2": 115.6006893478918
    },
    "vpm": {
     "faces": 264,
     "degenerate_faces": 0,
     "area_m2": 20.311362204246073,
-    "uncovered_m2": 20.288282205153738
+    "uncovered_m2": 20.288282205586725
    },
    "area_difference_m2": 95.31241791346687
   },
@@ -209,13 +209,13 @@
     "faces": 125,
     "degenerate_faces": 0,
     "area_m2": 13.286266643764124,
-    "uncovered_m2": 13.278359568111558
+    "uncovered_m2": 13.278359568866138
    },
    "vpm": {
     "faces": 2901,
     "degenerate_faces": 0,
     "area_m2": 1224.3140288288073,
-    "uncovered_m2": 1224.3061315854895
+    "uncovered_m2": 1224.3061315855618
    },
    "area_difference_m2": 1211.0277621850432
   },
@@ -271,13 +271,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 14.134332521053175,
-    "uncovered_m2": 14.063552630436872
+    "uncovered_m2": 14.063552630874511
    },
    "vpm": {
     "faces": 1266,
     "degenerate_faces": 0,
     "area_m2": 53.9456350785255,
-    "uncovered_m2": 53.87444687152026
+    "uncovered_m2": 53.87444687157031
    },
    "area_difference_m2": 39.811302557472324
   },
@@ -294,13 +294,13 @@
     "faces": 8,
     "degenerate_faces": 0,
     "area_m2": 51.52853392405539,
-    "uncovered_m2": 51.417515452697764
+    "uncovered_m2": 51.417515456866056
    },
    "vpm": {
     "faces": 6267,
     "degenerate_faces": 0,
     "area_m2": 107.80662000235671,
-    "uncovered_m2": 107.69547549708837
+    "uncovered_m2": 107.69547479609977
    },
    "area_difference_m2": 56.27808607830132
   },
@@ -317,13 +317,13 @@
     "faces": 125,
     "degenerate_faces": 0,
     "area_m2": 115.62375695694574,
-    "uncovered_m2": 115.52367803606526
+    "uncovered_m2": 115.52367803786198
    },
    "vpm": {
     "faces": 394,
     "degenerate_faces": 0,
     "area_m2": 102.33045247631911,
-    "uncovered_m2": 102.2303940589664
+    "uncovered_m2": 102.23039405987757
    },
    "area_difference_m2": 13.293304480626631
   },
@@ -340,13 +340,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 14.134332521053175,
-    "uncovered_m2": 14.12985413362447
+    "uncovered_m2": 14.129854134339011
    },
    "vpm": {
     "faces": 614,
     "degenerate_faces": 0,
     "area_m2": 70.6092447250784,
-    "uncovered_m2": 70.60476817239565
+    "uncovered_m2": 70.60476817240136
    },
    "area_difference_m2": 56.47491220402522
   },
@@ -363,13 +363,13 @@
     "faces": 3065,
     "degenerate_faces": 0,
     "area_m2": 52.417586766301355,
-    "uncovered_m2": 52.16404363399775
+    "uncovered_m2": 52.16404364062756
    },
    "vpm": {
     "faces": 6267,
     "degenerate_faces": 0,
     "area_m2": 107.79687786584117,
-    "uncovered_m2": 107.54313891220528
+    "uncovered_m2": 107.54313892093757
    },
    "area_difference_m2": 55.37929109953981
   },
@@ -412,13 +412,13 @@
     "faces": 166,
     "degenerate_faces": 0,
     "area_m2": 21.89007966618114,
-    "uncovered_m2": 21.854061618090416
+    "uncovered_m2": 21.854061619025185
    },
    "vpm": {
     "faces": 494,
     "degenerate_faces": 0,
     "area_m2": 136.20962564871394,
-    "uncovered_m2": 136.17356107329908
+    "uncovered_m2": 136.1735610753479
    },
    "area_difference_m2": 114.3195459825328
   },
@@ -461,13 +461,13 @@
     "faces": 64,
     "degenerate_faces": 0,
     "area_m2": 5.704066764453286,
-    "uncovered_m2": 4.261539362137765
+    "uncovered_m2": 4.261539362278077
    },
    "vpm": {
     "faces": 128,
     "degenerate_faces": 0,
     "area_m2": 11.396633417803027,
-    "uncovered_m2": 9.95129519438371
+    "uncovered_m2": 9.951295194544992
    },
    "area_difference_m2": 5.692566653349742
   },
@@ -497,13 +497,13 @@
     "faces": 18,
     "degenerate_faces": 0,
     "area_m2": 11.277768171128177,
-    "uncovered_m2": 11.207868168052604
+    "uncovered_m2": 11.207868168541735
    },
    "vpm": {
     "faces": 144,
     "degenerate_faces": 0,
     "area_m2": 22.72917617390702,
-    "uncovered_m2": 22.659169021438963
+    "uncovered_m2": 22.659169021442292
    },
    "area_difference_m2": 11.451408002778845
   },
@@ -533,13 +533,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 4.796706950441741,
-    "uncovered_m2": 4.787079498752578
+    "uncovered_m2": 4.787079498868857
    },
    "vpm": {
     "faces": 80,
     "degenerate_faces": 0,
     "area_m2": 3.739072281784165,
-    "uncovered_m2": 3.7294275173547873
+    "uncovered_m2": 3.729427517356886
    },
    "area_difference_m2": 1.0576346686575757
   },
@@ -569,13 +569,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 6.106408135131845,
-    "uncovered_m2": 6.088551038079284
+    "uncovered_m2": 6.088551038340798
    },
    "vpm": {
     "faces": 112,
     "degenerate_faces": 0,
     "area_m2": 25.63776064757664,
-    "uncovered_m2": 25.619886763753016
+    "uncovered_m2": 25.619886763765457
    },
    "area_difference_m2": 19.531352512444798
   },
@@ -605,13 +605,13 @@
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 8.740349177925399,
-    "uncovered_m2": 8.688984014287676
+    "uncovered_m2": 8.688984014960955
    },
    "vpm": {
     "faces": 160,
     "degenerate_faces": 0,
     "area_m2": 17.755232922143122,
-    "uncovered_m2": 17.703852116082686
+    "uncovered_m2": 17.703852116086203
    },
    "area_difference_m2": 9.014883744217723
   },
@@ -628,13 +628,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 6.946883887436821,
-    "uncovered_m2": 6.934338802270941
+    "uncovered_m2": 6.934338802482219
    },
    "vpm": {
     "faces": 84,
     "degenerate_faces": 0,
     "area_m2": 6.451217522996509,
-    "uncovered_m2": 6.438662119837428
+    "uncovered_m2": 6.438662119829565
    },
    "area_difference_m2": 0.49566636444031165
   },
@@ -716,13 +716,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 14.134356018886924,
-    "uncovered_m2": 14.064527407527839
+    "uncovered_m2": 14.06452740773165
    },
    "vpm": {
     "faces": 1254,
     "degenerate_faces": 0,
     "area_m2": 53.86491389432541,
-    "uncovered_m2": 53.79466298193661
+    "uncovered_m2": 53.79466298198068
    },
    "area_difference_m2": 39.730557875438485
   },
@@ -752,13 +752,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 3.766544237004576,
-    "uncovered_m2": 3.7555010364542945
+    "uncovered_m2": 3.7555010366123818
    },
    "vpm": {
     "faces": 120,
     "degenerate_faces": 0,
     "area_m2": 22.769787008143908,
-    "uncovered_m2": 22.758738332167336
+    "uncovered_m2": 22.758738332166573
    },
    "area_difference_m2": 19.00324277113933
   },
@@ -775,13 +775,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 5.7942496089704,
-    "uncovered_m2": 5.777970597641226
+    "uncovered_m2": 5.7779705979172595
    },
    "vpm": {
     "faces": 84,
     "degenerate_faces": 0,
     "area_m2": 25.362583660124223,
-    "uncovered_m2": 25.346289706339835
+    "uncovered_m2": 25.346289706339896
    },
    "area_difference_m2": 19.568334051153823
   },
@@ -798,13 +798,13 @@
     "faces": 80,
     "degenerate_faces": 0,
     "area_m2": 20.225982543332705,
-    "uncovered_m2": 20.198301121232124
+    "uncovered_m2": 20.198301121221814
    },
    "vpm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 14.596652304146243,
-    "uncovered_m2": 14.568989049421628
+    "uncovered_m2": 14.568989049659887
    },
    "area_difference_m2": 5.629330239186462
   },
@@ -821,13 +821,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 7.380534768782538,
-    "uncovered_m2": 7.3576911457615335
+    "uncovered_m2": 7.357691145839732
    },
    "vpm": {
     "faces": 90,
     "degenerate_faces": 0,
     "area_m2": 19.901616268127732,
-    "uncovered_m2": 19.878726954406844
+    "uncovered_m2": 19.878726954412087
    },
    "area_difference_m2": 12.521081499345193
   },
@@ -844,13 +844,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 3.7665396195308274,
-    "uncovered_m2": 3.7589636679675245
+    "uncovered_m2": 3.7589636680560945
    },
    "vpm": {
     "faces": 64,
     "degenerate_faces": 0,
     "area_m2": 4.6104643459125345,
-    "uncovered_m2": 4.602889411634717
+    "uncovered_m2": 4.602889411632281
    },
    "area_difference_m2": 0.8439247263817071
   },
@@ -867,13 +867,13 @@
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 3.670467123257849,
-    "uncovered_m2": 3.640751041200308
+    "uncovered_m2": 3.6407510414617734
    },
    "vpm": {
     "faces": 160,
     "degenerate_faces": 0,
     "area_m2": 7.468106241076822,
-    "uncovered_m2": 7.438389090360322
+    "uncovered_m2": 7.438389090359639
    },
    "area_difference_m2": 3.797639117818973
   },
@@ -890,13 +890,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 6.106428898763993,
-    "uncovered_m2": 6.09337645213402
+    "uncovered_m2": 6.093376452172036
    },
    "vpm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 12.212871558286706,
-    "uncovered_m2": 12.199815760965887
+    "uncovered_m2": 12.199815760993927
    },
    "area_difference_m2": 6.106442659522712
   },
@@ -913,13 +913,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 10.945544381178571,
-    "uncovered_m2": 2.0516045202734112
+    "uncovered_m2": 2.0516045203026807
    },
    "vpm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 21.89114535434544,
-    "uncovered_m2": 12.989335698975859
+    "uncovered_m2": 12.989335699017124
    },
    "area_difference_m2": 10.945600973166869
   },
@@ -936,13 +936,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 4.193036641245774,
-    "uncovered_m2": 2.4954938194359295
+    "uncovered_m2": 2.495493819436976
    },
    "vpm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 8.386029769109026,
-    "uncovered_m2": 6.686489390452577
+    "uncovered_m2": 6.686489390455331
    },
    "area_difference_m2": 4.192993127863252
   },
@@ -959,13 +959,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 10.945544381178571,
-    "uncovered_m2": 2.0516045202734112
+    "uncovered_m2": 2.0516045203026803
    },
    "vpm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 21.89114535434544,
-    "uncovered_m2": 12.98933569897586
+    "uncovered_m2": 12.989335699017124
    },
    "area_difference_m2": 10.945600973166869
   },
@@ -988,7 +988,7 @@
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 7.082561161651925,
-    "uncovered_m2": 3.537942334631655
+    "uncovered_m2": 3.537942334631943
    },
    "area_difference_m2": 3.5413877224728902
   },
@@ -1005,13 +1005,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 7.298284872088184,
-    "uncovered_m2": 2.91415852780089
+    "uncovered_m2": 2.9141585278043562
    },
    "vpm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 14.596536991241122,
-    "uncovered_m2": 10.208903509399951
+    "uncovered_m2": 10.20890350940325
    },
    "area_difference_m2": 7.298252119152938
   },
@@ -1028,13 +1028,13 @@
     "faces": 36,
     "degenerate_faces": 0,
     "area_m2": 5.12398640646307,
-    "uncovered_m2": 5.074422085721721
+    "uncovered_m2": 5.07442208590961
    },
    "vpm": {
     "faces": 144,
     "degenerate_faces": 0,
     "area_m2": 10.363552700410597,
-    "uncovered_m2": 10.31390613866384
+    "uncovered_m2": 10.313906138719936
    },
    "area_difference_m2": 5.239566293947528
   },
@@ -1051,13 +1051,13 @@
     "faces": 32,
     "degenerate_faces": 0,
     "area_m2": 4.000391432302094,
-    "uncovered_m2": 3.963653854439197
+    "uncovered_m2": 3.9636538015057843
    },
    "vpm": {
     "faces": 128,
     "degenerate_faces": 0,
     "area_m2": 8.116951243313537,
-    "uncovered_m2": 8.08020065501588
+    "uncovered_m2": 8.080200655098615
    },
    "area_difference_m2": 4.1165598110114425
   },
@@ -1132,7 +1132,7 @@
     "faces": 128,
     "degenerate_faces": 0,
     "area_m2": 8.116864379543882,
-    "uncovered_m2": 4.0456513449756715
+    "uncovered_m2": 4.045651345021795
    },
    "area_difference_m2": 4.053696716776631
   },
@@ -1149,13 +1149,13 @@
     "faces": 40,
     "degenerate_faces": 0,
     "area_m2": 8.791250814854504,
-    "uncovered_m2": 8.704042743895254
+    "uncovered_m2": 8.704042744599798
    },
    "vpm": {
     "faces": 160,
     "degenerate_faces": 0,
     "area_m2": 17.75527842499071,
-    "uncovered_m2": 17.667912985384504
+    "uncovered_m2": 17.667912985413416
    },
    "area_difference_m2": 8.964027610136206
   },
@@ -1185,13 +1185,13 @@
     "faces": 10,
     "degenerate_faces": 0,
     "area_m2": 2.590447610531602,
-    "uncovered_m2": 1.5216223490201182
+    "uncovered_m2": 1.5216223490241392
    },
    "vpm": {
     "faces": 20,
     "degenerate_faces": 0,
     "area_m2": 5.180849667377733,
-    "uncovered_m2": 4.105438662453908
+    "uncovered_m2": 4.105438662457951
    },
    "area_difference_m2": 2.590402056846131
   }

@@ -180,15 +180,17 @@ def _uncovered_face(face: np.ndarray, area: float, candidates: np.ndarray, limit
     target = Polygon((face - origin) @ basis.T)
     if not candidates.size:
         return float(area)
+    heights = (candidates - origin) @ normal
+    candidates = candidates[~((heights > limit).all(axis=1) | (heights < -limit).all(axis=1))]
     pieces = []
     for other in candidates:
         clipped = _clip_slab(other - origin, normal, limit)
         if len(clipped) >= 2:
             flat = np.asarray(clipped) @ basis.T
-            pieces.append(shapely.buffer(_shape(flat), limit))
+            pieces.append(_shape(flat))
     if not pieces:
         return float(area)
-    covered = shapely.intersection(shapely.union_all(pieces), target).area
+    covered = shapely.intersection(shapely.buffer(shapely.union_all(pieces), limit), target).area
     return max(float(target.area) - float(covered), 0.0)
 
 
