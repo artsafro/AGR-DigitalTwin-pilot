@@ -40,7 +40,11 @@ _DEFAULT_DCC = "C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py"
 
 
 def safe_stem(name: str) -> str:
-    """File-system-safe stem: forbidden characters, controls and whitespace runs become '_'."""
+    """File-system-safe stem: forbidden characters, controls and whitespace runs become '_'.
+
+    A Windows device stem (CON, nul.txt, COM1, ...) gets a '_' prefix (#271); the planner's
+    case-insensitive collision suffixes then apply to the remapped stem.
+    """
     text = "" if name is None else str(name)
     parts: list[str] = []
     index = 0
@@ -60,7 +64,25 @@ def safe_stem(name: str) -> str:
     stem = "".join(parts).strip(" .")
     if not stem:
         stem = "node"
-    return stem[:120]
+    stem = stem[:120]
+    if is_reserved_stem(stem):
+        stem = ("_" + stem)[:120]
+    return stem
+
+
+# Windows device names, reserved with any extension and in any case
+# (CON.txt, nul.tar.gz). Superset of ntpath.isreserved: COM0 and LPT0 are added.
+_RESERVED = frozenset(
+    {"CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$"}
+    | {"COM%s" % char for char in "0123456789\u00b9\u00b2\u00b3"}
+    | {"LPT%s" % char for char in "0123456789\u00b9\u00b2\u00b3"}
+)
+
+
+def is_reserved_stem(stem: str) -> bool:
+    """True when the part before the first dot, trailing spaces removed, is a Windows device name."""
+    head = str(stem).partition(".")[0].rstrip(" ")
+    return head.upper() in _RESERVED or head.casefold().upper() in _RESERVED
 
 
 def plan_outputs(nodes: list[str], out_dir: str, fmt: str) -> list[dict]:
