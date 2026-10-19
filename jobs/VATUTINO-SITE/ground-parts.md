@@ -1,7 +1,7 @@
 # VATUTINO-SITE — Ground parts list (gate 1, [D125])
 
 Issue #295, card t_d94665f2. Real project data (Vatutino, Дом 2, detailed concept 2025-06-19), not synthetic.
-Status: **waiting for the user's answers** (section "Questions"). No mesh is built before the answers.
+Status: **gate 1 approved** by the user 2026-10-19 (answers quoted on card t_d94665f2 and in the PR; answer E corrected to one 4 m mesh for both profiles). Build: `build_ground.py` -> `tools/blender/ground_json_to_fbx.py`.
 
 ## Inputs and route
 
