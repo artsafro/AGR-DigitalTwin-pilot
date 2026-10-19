@@ -3,8 +3,8 @@ import numpy as np
 import pytest
 
 from dt_ai.ops.invariants import Context, Mesh, winding_number
-from dt_ai.ops.operations import _box_mesh, primitive_box, run_operation
-from dt_ai.ops.silhouette import silhouette_deviation, silhouette_deviations
+from dt_ai.ops.operations import _box_mesh, primitive_box, run_operation, to_opacity_plane
+from dt_ai.ops.silhouette import SILHOUETTE_MAX_M, silhouette_deviation, silhouette_deviations
 from tests.ops.test_invariants import box, quad
 
 
@@ -128,3 +128,63 @@ def test_empty_silhouette_is_infinitely_far_from_a_solid_one():
     empty = Mesh(np.zeros((0, 3)), np.zeros((0, 3), int))
     assert silhouette_deviation(empty, box((0, 0, 0), (1, 1, 1)), 2) == float("inf")
     assert silhouette_deviation(empty, empty, 2) == 0.0
+
+
+def _rigid(mesh, seed):
+    """The seeded rigid motion from the opacity probe (QR rotation, shift in [-10, 10])."""
+    rng = np.random.default_rng(seed)
+    rotation, _ = np.linalg.qr(rng.normal(size=(3, 3)))
+    shift = rng.uniform(-10, 10, size=3)
+    return Mesh(mesh.vertices @ rotation.T + shift, mesh.triangles)
+
+
+def _flat(x0, y0, x1, y1):
+    v = np.array([(x0, y0, 0), (x1, y0, 0), (x1, y1, 0), (x0, y1, 0)], float)
+    return Mesh(v, np.array([(0, 1, 2), (0, 2, 3)]))
+
+
+def _cover_around_ring(outer, width, margin):
+    """Inner square plus an outer frame, leaving a ring of `width` uncovered."""
+    hole0, hole1 = width, outer - width
+    span0, span1 = -margin, outer + margin
+    return join(
+        _flat(hole0, hole0, hole1, hole1),
+        _flat(span0, span0, span1, 0),
+        _flat(span0, outer, span1, span1),
+        _flat(span0, 0, 0, outer),
+        _flat(outer, 0, span1, outer),
+    )
+
+
+@pytest.mark.parametrize("seed", [0, 1, 2, 3, 4, 5, 6, 7])
+def test_rotated_50mm_slab_stays_within_half_thickness_of_its_midplane(seed):
+    """A 50 mm slab is at most 0.025 m from its PCA mid-plane, in every orthographic view.
+
+    Seed 0 is the published reproducer: the old symmetric fallback reported
+    {'top': 1.0398858997941611, 'front': 0.00858, 'side': 0.02354}.
+    """
+    assert SILHOUETTE_MAX_M == 0.07
+    slab = box((0, -0.025, 0), (2, 0.025, 1.2))
+    moved = _rigid(slab, seed)
+    plane = to_opacity_plane({"p": moved}, "p")["p"]
+    dev = silhouette_deviations(moved, plane, SILHOUETTE_MAX_M / 32)
+    assert max(dev.values()) <= 0.025
+
+
+@pytest.mark.parametrize("seed", range(6))
+def test_holed_ring_missed_by_the_grid_keeps_its_interior_reach(seed):
+    """A ring thinner than the sample step still reports the interior reach, not the reverse leg.
+
+    The cover touches both rings, so a boundary-only distance is 0. The symmetric
+    Hausdorff distance follows a 1 m frame corner and is sqrt(2). The farthest
+    material point sits in the square corner: radius width * sqrt(2) / (1 + sqrt(2)).
+    """
+    rng = np.random.default_rng(1000 + seed)
+    width = float(rng.uniform(0.05, 0.35))
+    outer = 10.0
+    solid = _flat(-1.0, -1.0, outer + 1.0, outer + 1.0)
+    cover = _cover_around_ring(outer, width, margin=1.0)
+    dev = silhouette_deviation(solid, cover, 2, step_m=max(width * 5, 1.0))
+    corner = width * np.sqrt(2) / (1 + np.sqrt(2))
+    assert dev == pytest.approx(corner, abs=1e-6)
+    assert width / 2 < dev < 1.0
