@@ -12,6 +12,7 @@ Patterns: `facade-decor-inset` (embed 0.02 m, inner face deleted), `primitive-fi
 """
 from dataclasses import dataclass
 from typing import Callable
+import warnings
 
 import numpy as np
 
@@ -149,3 +150,29 @@ def to_opacity_plane(scene: Scene, part: str) -> Scene:
         raise OperationRefused(f"an opacity plane would change the silhouette by {worst[1]:.3f} m in the "
                                f"{worst[0]} view (limit {SILHOUETTE_MAX_M:.2f} m); rebuild it by contour instead?")
     return {**scene, part: plane}
+
+
+def plan_opacity_swaps(scene: Scene, candidates, triangle_budget: int) -> list[tuple[str, int]]:
+    """Plan NPM swaps largest saving first; stop immediately when the total fits [D109].
+
+    Candidates are already classified by the caller; execution still checks feasibility and invariants.
+    Each pair reports the part and its saving (current triangles minus two). The input is not changed.
+    """
+    if triangle_budget < 0:
+        raise ValueError("triangle_budget must be non-negative")
+    total = sum(len(mesh.triangles) for mesh in scene.values())
+    if total <= triangle_budget:
+        return []
+    savings = [(part, len(scene[part].triangles) - 2) for part in dict.fromkeys(candidates)]
+    swaps = []
+    for part, saved in sorted(savings, key=lambda item: -item[1]):
+        if saved <= 0:
+            continue
+        swaps.append((part, saved))
+        total -= saved
+        if total <= triangle_budget:
+            break
+    if total > triangle_budget:
+        warnings.warn(f"opacity budget unreachable: {total} triangles remain after all swaps (budget {triangle_budget})",
+                      UserWarning, stacklevel=2)
+    return swaps

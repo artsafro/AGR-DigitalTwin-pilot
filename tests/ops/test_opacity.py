@@ -3,8 +3,9 @@ import numpy as np
 import pytest
 
 from dt_ai.ops import operations
-from dt_ai.ops.invariants import Context, Mesh
-from dt_ai.ops.silhouette import silhouette_deviations
+from dt_ai.ops.invariants import Context, Mesh, no_see_through_hole
+from dt_ai.ops.silhouette import silhouette, silhouette_deviations
+import shapely
 from tests.ops.test_invariants import box
 from tests.ops.test_primitive import join
 
@@ -61,3 +62,9 @@ def test_planner_selects_largest_savings_only_until_budget_fits():
     assert operations.plan_opacity_swaps(scene, ["small", "large", "medium"], 100) == [
         ("large", 238), ("medium", 166)]
     assert_unchanged(scene, before)
+
+
+def test_unreachable_budget_returns_all_swaps_with_a_note():
+    scene = {"a": railing(), "b": railing(count=10), "body": box((5, 0, 0), (6, 1, 1))}
+    with pytest.warns(UserWarning, match="unreachable.*16.*budget 1"):
+        assert operations.plan_opacity_swaps(scene, ["a", "b"], 1) == [("a", 238), ("b", 166)]
