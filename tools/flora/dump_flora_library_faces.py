@@ -4,7 +4,8 @@ Pattern: n/a | new-case: Flora library face dump for the NPM/VPM surface-identit
 
 Runs in headless 3ds Max (``dcc_batch.py max --file``) on a COPY of the library .max; the copy is loaded,
 never saved. Job JSON (env FLORA_FACES_JOB): ``library`` (path of the copy), ``library_sha256`` (of the copy,
-checked before loading), ``objects`` (object names), ``out`` (outside this repository).
+checked before loading), ``objects`` (object names), ``out`` (outside this repository; never the same file as
+the library copy, ``library_source`` or the job file - resolved paths and file identity, so hardlinks count).
 Output: ``{"library_file", "library_sha256", "entries": {name: {"triangles": [...]}}, "failures": [...]}``.
 A name that matches zero or several nodes is a failure, never a guess.
 """
@@ -37,14 +38,33 @@ def file_sha256(path):
     return digest.hexdigest()
 
 
-def check_job(job):
+def _same_file(left, right):
+    """True when both paths name one file: equal resolved paths (symlinks, junctions, case) or one file id
+    (hardlinks, reparse aliases)."""
+    a = os.path.normcase(os.path.realpath(os.path.abspath(left)))
+    b = os.path.normcase(os.path.realpath(os.path.abspath(right)))
+    if a == b:
+        return True
+    try:
+        return os.path.exists(a) and os.path.exists(b) and os.path.samefile(a, b)
+    except OSError:
+        return True  # identity cannot be decided -> treat as the same file (fail closed)
+
+
+def check_job(job, job_path=None):
     for key in ("library", "library_sha256", "objects", "out"):
         if key not in job:
             raise RuntimeError("FLORA_FACES_JOB missing " + key)
-    if _inside(job["out"], _repo_root()):
+    if _inside(os.path.realpath(job["out"]), _repo_root()) or _inside(job["out"], _repo_root()):
         raise RuntimeError("face dump must be written outside the repository")
-    if os.path.normcase(os.path.abspath(job["out"])) == os.path.normcase(os.path.abspath(job["library"])):
-        raise RuntimeError("out resolves to the library copy")
+    inputs = {"library copy": job["library"]}
+    if job.get("library_source"):
+        inputs["library source"] = job["library_source"]
+    if job_path:
+        inputs["job file"] = job_path
+    for name, path in inputs.items():
+        if _same_file(job["out"], path):
+            raise RuntimeError("out resolves to the " + name)
     if not isinstance(job["objects"], list) or not job["objects"]:
         raise RuntimeError("objects must be a non-empty list")
     if file_sha256(job["library"]).lower() != str(job["library_sha256"]).lower():
@@ -66,8 +86,8 @@ def _triangles(rt, node):
     return faces
 
 
-def write_faces(job):
-    check_job(job)
+def write_faces(job, job_path=None):
+    check_job(job, job_path)
     from pymxs import runtime as rt
 
     rt.resetMaxFile(rt.Name("noPrompt"))
@@ -94,6 +114,7 @@ def write_faces(job):
     }
     folder = os.path.dirname(os.path.abspath(job["out"]))
     os.makedirs(folder, exist_ok=True)
+    check_job(job, job_path)  # re-check right before opening: the output must still not alias an input
     with open(job["out"], "w", encoding="utf-8") as handle:
         json.dump(document, handle)
         handle.write("\n")
@@ -105,7 +126,7 @@ def main():
     job_path = os.environ.get("FLORA_FACES_JOB")
     if not job_path:
         raise RuntimeError("FLORA_FACES_JOB is unset")
-    write_faces(_load(job_path))
+    write_faces(_load(job_path), job_path)
 
 
 if __name__ == "__main__":

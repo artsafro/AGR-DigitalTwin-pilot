@@ -6,13 +6,16 @@ Two meshes are the ``same`` surface only when BOTH directions hold: every face a
 closer than ``tolerance_m`` to B, every face area of B lies strictly closer than ``tolerance_m`` to A, and
 the summed face areas agree. Coverage is measured as area (exact 2D polygon clipping per face with shapely),
 not as a vertex cloud, so a hole, a missing face or an extra face is seen even when every vertex of one mesh
-lies on the other.
+lies on the other. "Closer than" is the Euclidean 3D distance: the uncovered area is bracketed by a lower and
+an upper bound (height levels of the other mesh around each face plane, inscribed / circumscribed buffers).
 
 Verdicts:
 
-- ``same``       - uncovered area in both directions and the face-area difference are all ``<= same_area_m2``.
-- ``different``  - any of them is ``>= different_area_m2`` (default 1 mm^2; a 1 cm hole or face is >= 40 mm^2).
-- ``unverified`` - anything in between; never promoted to ``same``.
+- ``same``       - the uncovered-area UPPER bounds of both directions and the face-area difference are all
+                   ``<= same_area_m2``.
+- ``different``  - an uncovered-area LOWER bound or the area difference is ``>= different_area_m2`` (default
+                   1 mm^2; a 1 cm hole or face is >= 40 mm^2).
+- ``unverified`` - anything else (in between, or bounds inconclusive); never promoted to ``same``.
 - ``error``      - unusable input: not a list, empty, malformed face record, NaN/inf, no face with area.
 
 The comparison frame is the Flora library pivot [D100]: each mesh is translated so that the centre of its
@@ -74,13 +77,22 @@ def compare_surfaces(
         b = b - pivot(b)
     a_area = face_areas(a)
     b_area = face_areas(b)
-    a_uncovered = uncovered_area(a, b, tolerance_m)
-    b_uncovered = uncovered_area(b, a, tolerance_m)
     difference = abs(float(a_area.sum()) - float(b_area.sum()))
-    result["a"] = _side(a, a_area, a_uncovered)
-    result["b"] = _side(b, b_area, b_uncovered)
+    for levels in (COARSE_LEVELS, FINE_LEVELS):  # fine levels only when the coarse bounds are inconclusive
+        a_lower, a_uncovered = uncovered_bounds(a, b, tolerance_m, levels)
+        b_lower, b_uncovered = uncovered_bounds(b, a, tolerance_m, levels)
+        verdict, _ = classify(
+            a_uncovered, b_uncovered, difference, same_area_m2, different_area_m2, a_lower=a_lower, b_lower=b_lower
+        )
+        if verdict != "unverified":
+            break
+    result["levels"] = len(levels)
+    result["a"] = _side(a, a_area, a_uncovered, a_lower)
+    result["b"] = _side(b, b_area, b_uncovered, b_lower)
     result["area_difference_m2"] = difference
-    verdict, reason = classify(a_uncovered, b_uncovered, difference, same_area_m2, different_area_m2)
+    verdict, reason = classify(
+        a_uncovered, b_uncovered, difference, same_area_m2, different_area_m2, a_lower=a_lower, b_lower=b_lower
+    )
     result["verdict"] = verdict
     result["reason"] = reason
     return result
@@ -92,19 +104,37 @@ def classify(
     area_difference: float,
     same_area_m2: float = SAME_AREA_M2,
     different_area_m2: float = DIFFERENT_AREA_M2,
+    *,
+    a_lower: float | None = None,
+    b_lower: float | None = None,
 ) -> tuple[str, str]:
-    """Tri-state decision; a value exactly at ``different_area_m2`` is ``different``, NaN is ``error``."""
-    values = {"a_uncovered": a_uncovered, "b_uncovered": b_uncovered, "area_difference": area_difference}
-    for name, value in values.items():
-        if not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
-            return "error", f"{name} is not a finite non-negative number: {value!r}"
-    worst = max(values, key=lambda name: values[name])
-    if values[worst] >= different_area_m2:
-        return "different", f"{worst} {values[worst]:.6g} m2 >= {different_area_m2:g} m2"
-    if values[worst] <= same_area_m2:
-        return "same", f"both directions covered; max deviation {values[worst]:.3g} m2 <= {same_area_m2:g} m2"
+    """Tri-state decision on uncovered-area bounds; NaN or lower > upper is ``error``.
+
+    ``a_uncovered``/``b_uncovered`` are upper bounds, ``a_lower``/``b_lower`` lower bounds (default: equal
+    to the upper bound). ``different`` needs a lower bound (or the area difference) ``>= different_area_m2``;
+    ``same`` needs every upper bound and the area difference ``<= same_area_m2``; else ``unverified``.
+    """
+    upper = {"a_uncovered": a_uncovered, "b_uncovered": b_uncovered, "area_difference": area_difference}
+    lower = {
+        "a_uncovered": a_uncovered if a_lower is None else a_lower,
+        "b_uncovered": b_uncovered if b_lower is None else b_lower,
+        "area_difference": area_difference,
+    }
+    for name in upper:
+        for value in (upper[name], lower[name]):
+            if not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
+                return "error", f"{name} is not a finite non-negative number: {value!r}"
+        if lower[name] > upper[name]:
+            return "error", f"{name} lower bound {lower[name]!r} exceeds upper bound {upper[name]!r}"
+    proven = max(lower, key=lambda name: lower[name])
+    if lower[proven] >= different_area_m2:
+        return "different", f"{proven} >= {lower[proven]:.6g} m2 >= {different_area_m2:g} m2"
+    worst = max(upper, key=lambda name: upper[name])
+    if upper[worst] <= same_area_m2:
+        return "same", f"both directions covered; max deviation <= {upper[worst]:.3g} m2 <= {same_area_m2:g} m2"
     return "unverified", (
-        f"{worst} {values[worst]:.3g} m2 is between {same_area_m2:g} and {different_area_m2:g} m2"
+        f"{worst} in [{lower[worst]:.3g}, {upper[worst]:.3g}] m2; not proven <= {same_area_m2:g} "
+        f"or >= {different_area_m2:g} m2"
     )
 
 
@@ -150,12 +180,28 @@ def face_areas(tris: np.ndarray) -> np.ndarray:
 
 
 def uncovered_area(a: np.ndarray, b: np.ndarray, tolerance_m: float) -> float:
-    """Area of A's faces not strictly closer than ``tolerance_m`` to any face of B (m^2)."""
+    """Upper bound of the area of A's faces not strictly closer than ``tolerance_m`` to B (m^2)."""
+    return uncovered_bounds(a, b, tolerance_m)[1]
+
+
+def uncovered_bounds(
+    a: np.ndarray, b: np.ndarray, tolerance_m: float, levels: tuple = None
+) -> tuple[float, float]:
+    """``(lower, upper)`` bounds of the area of A's faces not strictly closer than ``tolerance_m`` to B (m^2).
+
+    The covered part of a face of A is the plane of that face intersected with the Euclidean
+    ``tolerance_m``-neighbourhood of B. It is bracketed by height levels (see ``_LEVELS``): the part of a
+    face of B within ``|h| <= t`` of the plane, projected and dilated by ``sqrt(r^2 - t^2)``, is surely
+    covered (inner bound, inscribed buffer); dilated by ``sqrt(r^2 - t_prev^2)`` it surely contains the
+    covered region (outer bound, circumscribed buffer). More ``levels`` (fractions of the tolerance, ending
+    at 1) give tighter bounds; any level set gives valid bounds.
+    """
+    levels = FINE_LEVELS if levels is None else levels
     limit = tolerance_m * _STRICT
     areas = face_areas(a)
     a_low, a_high = a.min(axis=1) - limit, a.max(axis=1) + limit
     b_low, b_high = b.min(axis=1), b.max(axis=1)
-    total = 0.0
+    lower = upper = 0.0
     for start in range(0, len(a), _CHUNK):
         stop = min(start + _CHUNK, len(a))
         overlap = (
@@ -165,11 +211,22 @@ def uncovered_area(a: np.ndarray, b: np.ndarray, tolerance_m: float) -> float:
             index = start + offset
             if areas[index] <= DEGENERATE_AREA_M2:
                 continue
-            total += _uncovered_face(a[index], areas[index], b[np.flatnonzero(row)], limit)
-    return total
+            face_lower, face_upper = _uncovered_face(a[index], areas[index], b[np.flatnonzero(row)], limit, levels)
+            lower += face_lower
+            upper += face_upper
+    return lower, upper
 
 
-def _uncovered_face(face: np.ndarray, area: float, candidates: np.ndarray, limit: float) -> float:
+# Height levels t_k / r. Level 0 is (almost) in-plane so coplanar faces keep nearly the full radius.
+COARSE_LEVELS = (1e-3, 0.5, 0.75, 0.9, 1.0)
+FINE_LEVELS = (1e-3,) + tuple(k / 32 for k in range(1, 33))
+_QUAD_SEGS = 8
+_CIRCUMSCRIBE = 1.0 / math.cos(math.pi / (4 * _QUAD_SEGS))  # shapely buffer vertices lie on the arc
+
+
+def _uncovered_face(
+    face: np.ndarray, area: float, candidates: np.ndarray, limit: float, levels: tuple
+) -> tuple[float, float]:
     origin = face[0]
     u = face[1] - origin
     u = u / np.linalg.norm(u)
@@ -179,22 +236,60 @@ def _uncovered_face(face: np.ndarray, area: float, candidates: np.ndarray, limit
     basis = np.stack([u, v])
     target = Polygon((face - origin) @ basis.T)
     if not candidates.size:
-        return float(area)
+        return float(area), float(area)
     heights = (candidates - origin) @ normal
-    candidates = candidates[~((heights > limit).all(axis=1) | (heights < -limit).all(axis=1))]
-    pieces = []
-    for other in candidates:
-        clipped = _clip_slab(other - origin, normal, limit)
-        if len(clipped) >= 2:
-            flat = np.asarray(clipped) @ basis.T
-            pieces.append(_shape(flat))
-    if not pieces:
-        return float(area)
-    covered = shapely.intersection(shapely.buffer(shapely.union_all(pieces), limit), target).area
-    return max(float(target.area) - float(covered), 0.0)
+    keep = ~((heights > limit).all(axis=1) | (heights < -limit).all(axis=1))
+    candidates, heights = candidates[keep], heights[keep]
+    if not len(candidates):
+        return float(area), float(area)
+    # Keep only faces whose slab part comes within the (circumscribed) tolerance of the target in the plane.
+    reach = shapely.buffer(target, limit * _CIRCUMSCRIBE, quad_segs=_QUAD_SEGS)
+    shapely.prepare(reach)
+    full = [_clipped_shape(other, origin, normal, basis, limit) for other in candidates]
+    near = np.array([piece is not None and reach.intersects(piece) for piece in full], dtype=bool)
+    if not near.any():
+        return float(area), float(area)
+    candidates, heights = candidates[near], heights[near]
+    crosses = (heights.min(axis=1) <= 0) & (heights.max(axis=1) >= 0)
+    h_low = np.where(crosses, 0.0, np.abs(heights).min(axis=1))
+    h_high = np.abs(heights).max(axis=1)
+    inner, outer = [], []
+    previous = 0.0
+    for fraction in levels:
+        level = limit * fraction
+        new = (h_low <= level) & (h_high > previous) if previous else (h_low <= level)
+        if new.any():
+            pieces = [
+                piece for piece in (
+                    _clipped_shape(other, origin, normal, basis, level) for other in candidates[h_low <= level]
+                ) if piece is not None
+            ]
+            if pieces:
+                union = shapely.union_all(pieces)
+                inner_radius = math.sqrt(max(limit * limit - level * level, 0.0))
+                outer_radius = math.sqrt(max(limit * limit - previous * previous, 0.0)) * _CIRCUMSCRIBE
+                inner.append(shapely.buffer(union, inner_radius, quad_segs=_QUAD_SEGS) if inner_radius else union)
+                outer.append(shapely.buffer(union, outer_radius, quad_segs=_QUAD_SEGS))
+        previous = level
+    if not outer:
+        return float(area), float(area)
+    surely_covered = shapely.intersection(shapely.union_all(inner), target).area
+    maybe_covered = shapely.intersection(shapely.union_all(outer), target).area
+    total = float(target.area)
+    return max(total - float(maybe_covered), 0.0), max(total - float(surely_covered), 0.0)
+
+
+def _clipped_shape(other: np.ndarray, origin: np.ndarray, normal: np.ndarray, basis: np.ndarray, level: float):
+    """Projection onto the face plane of the part of ``other`` within ``|h| <= level``; None if empty."""
+    clipped = _clip_slab(other - origin, normal, level)
+    if not clipped:
+        return None
+    return _shape(np.asarray(clipped) @ basis.T)
 
 
 def _shape(points: np.ndarray):
+    if len(points) == 1:
+        return shapely.Point(points[0])
     if len(points) >= 3:
         polygon = Polygon(points)
         if polygon.is_valid and polygon.area > 0:
@@ -224,12 +319,13 @@ def _clip_slab(points: np.ndarray, normal: np.ndarray, limit: float) -> list:
     return polygon
 
 
-def _side(tris: np.ndarray, areas: np.ndarray, uncovered: float) -> dict:
+def _side(tris: np.ndarray, areas: np.ndarray, uncovered: float, uncovered_lower: float) -> dict:
     return {
         "faces": int(len(tris)),
         "degenerate_faces": int((areas <= DEGENERATE_AREA_M2).sum()),
         "area_m2": float(areas.sum()),
         "uncovered_m2": float(uncovered),
+        "uncovered_lower_m2": float(uncovered_lower),
     }
 
 

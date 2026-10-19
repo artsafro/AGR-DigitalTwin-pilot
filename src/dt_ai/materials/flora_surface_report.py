@@ -50,8 +50,10 @@ def build_report(catalogue: dict, faces: dict, *, sources: dict | None = None) -
         "schema": SCHEMA,
         "scope": "report only; catalogue.json is not changed - catalogue changes are a user decision (#305)",
         "method": (
-            "two-way area coverage per face (shapely clipping), D100 pivot frame, strict tolerance; "
-            "same only if both uncovered areas and the face-area difference are <= same_area_m2"
+            "two-way area coverage per face (shapely clipping), D100 pivot frame, strict Euclidean tolerance "
+            "bracketed by lower/upper uncovered-area bounds; same only if both upper bounds and the face-area "
+            "difference are <= same_area_m2, different only if a lower bound or the area difference is "
+            ">= different_area_m2, else unverified"
         ),
         "tolerance_m": si.TOLERANCE_M,
         "same_area_m2": si.SAME_AREA_M2,
