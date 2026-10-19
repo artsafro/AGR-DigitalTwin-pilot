@@ -13,7 +13,7 @@ import pytest
 import validate_package as vp
 from test_scene import mesh, statuses
 from test_validator import PROFILES
-from twinqa.naming import address_from_fbx, mesh_name_violation
+from twinqa.naming import address_from_fbx, mesh_name_findings, mesh_name_violation
 from twinqa.scene import find_blender, scene_findings
 
 
@@ -246,6 +246,51 @@ def test_generated_grammar_probe_matches_oracle(kind, role, seeds):
                      != _oracle(n, kind, role, "Ab_1")]
     assert not disagreements, disagreements[:10]
     assert len(names) > 8000
+
+
+# --- GND-11 regression (#315); all readbacks below are synthetic -------------------------------
+
+@pytest.mark.parametrize("kind, source", [
+    ("vpm", "SM_Vatutino_Ground.fbx"), ("npm", "0000_Vatutino_Ground.fbx"),
+])
+@pytest.mark.parametrize("suffix", ["Ground", "GroundGlass"])
+def test_gnd11_vatutino_name_needs_no_main_rename(kind, source, suffix):
+    assert v012_status(source, kind, "ground", f"SM_Vatutino_{suffix}") == {"mesh names": "pass"}
+
+
+@pytest.mark.parametrize("names", [[], [None], [float("nan")], [float("inf")], ["SM_Vatutino_Ground", None]])
+def test_gnd11_missing_or_non_string_inventory_errors(names):
+    with pytest.raises(ValueError):
+        mesh_name_findings(names, "vpm", "ground", "SM_Vatutino_Ground", 254, "synthetic")
+
+
+@pytest.mark.parametrize("limit", [None, 0, -1, True, 254.0, float("nan"), float("inf")])
+def test_gnd11_invalid_limit_errors(limit):
+    with pytest.raises(ValueError):
+        mesh_name_violation("SM_Vatutino_Ground", "vpm", "ground", "Vatutino", limit)
+
+
+@pytest.mark.parametrize("kind, role", [("unsupported", "ground"), ("vpm", "unsupported"), ("", "ground")])
+def test_gnd11_unsupported_grammar_errors(kind, role):
+    with pytest.raises(ValueError):
+        mesh_name_findings(["SM_Vatutino_Ground"], kind, role, "SM_Vatutino_Ground", 254, "synthetic")
+
+
+def test_gnd11_generated_boundaries_and_invalid_names():
+    # Exhaustive lengths around the inclusive regulation ceiling; both Ground suffixes/profiles.
+    count = 0
+    for kind in ("npm", "vpm"):
+        for suffix in ("Ground", "GroundGlass"):
+            for length in range(250, 258):
+                address = "A" * (length - len(f"SM__{suffix}"))
+                name = f"SM_{address}_{suffix}"
+                assert (mesh_name_violation(name, kind, "ground", address, 254) is None) == (length <= 254)
+                count += 1
+            for bad in ("", "SM_", "SM_Vatutino", f"SM_Vatutino_{suffix}_1",
+                        f"SM_Vatutino_{suffix}.001", f"SM_Other_{suffix}", "NaN", "inf"):
+                assert mesh_name_violation(bad, kind, "ground", "Vatutino", 254) is not None
+                count += 1
+    assert count == 64
 
 
 # --- real FBX readback through the validator (Blender) ---------------------------------------
