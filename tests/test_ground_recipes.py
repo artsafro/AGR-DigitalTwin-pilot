@@ -554,3 +554,27 @@ def test_version_parameter_and_address_are_fail_closed(recipes, recipe, tmp_path
         with pytest.raises(recipes.GroundRecipeError):
             recipes.write_delivery(RECIPE_PATH, tmp_path, version="v002", address=address)
     assert list(tmp_path.iterdir()) == []
+
+
+def test_shipped_tile_face_matches_sourced_millimetres(recipes, recipe):
+    # Independent pixel-edge measurement of the actual sourced-size render.
+    image = recipes.render_map(recipe, "TileLight", "vpm", size=4096)
+    measured_mm = [v / 1024 * 1000 for v in _face_px(image)]
+    expected_mm = recipes.tile_facts(recipe["slots"]["TileLight"], "vpm")["actual_face_mm"]
+    assert measured_mm == pytest.approx(expected_mm, abs=1000 / 1024)
+    assert measured_mm == pytest.approx([100, 300], rel=0.01)
+
+
+def test_subpixel_joint_area_is_preserved(recipes, recipe):
+    checked = 0
+    body = recipe["slots"]["TileLight"]
+    for profile in ("npm", "vpm"):
+        for size in (64, 128, 256, 2048):
+            period, joint = recipes._tile_layout(body, profile, size,
+                recipe["profiles"][profile]["size"], recipe["profiles"][profile]["px_per_m"])
+            for axis in (0, 1):
+                observed = recipes._joint_coverage(size, period[axis], joint[axis]).mean()
+                expected = 5 / (body["nominal_tile_mm"][axis] + 5)
+                assert observed == pytest.approx(expected, abs=1e-6)
+                checked += 1
+    assert checked == 16
