@@ -86,8 +86,11 @@ def test_closed_box_passes():
 
 
 def test_open_bottom_box_passes():
+    """Open components are outside #56, not an outward-normal certificate."""
     result = _hcheck({"meshes": [_box(drop_bottom=True)]})
-    assert result["status"] == "pass" and result["value"] == 0
+    assert result["status"] == "not_measured" and result["value"] is None
+    assert result["details"]["not_checked_triangles"] == list(range(10))
+    assert result["details"]["not_checked_reason"] == "not checked (see #314)"
 
 
 def test_reversed_top_fails():
