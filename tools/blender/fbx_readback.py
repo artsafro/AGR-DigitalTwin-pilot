@@ -1,7 +1,7 @@
 # Ported from AGR max/AGR_Workbench/check_fbx.py (sha256 e8c032b17279) and
 # tools/profile_snapshot_common.py (sha256 cbb176e2b241) object/image facts on 2026-10-06; changes: one standalone
 # script, no RunRecord/config files, adds triangles, polygon degrees, UV channels, UDIM tiles,
-# mirrored UV triangles, transforms, embedded image facts, regulatory topology counts and GroundEl maf_surface
+# mirrored UV triangles, transforms, embedded image facts, UCX world-space hulls, regulatory topology counts and GroundEl maf_surface
 # (corner normals for smoothing and flipped faces) for the V002-V013 scene stages.
 # material image maps by BSDF socket (2026-10-16, #191 Flora maps, V005).
 """Structural FBX readback in an isolated factory Blender process.
@@ -130,6 +130,9 @@ def mesh_facts(obj):
             facts["maf_surface"] = surface_facts(coords, polys, corner_normals)
         except Exception as exc:
             facts["maf_surface"] = {"error": f"{type(exc).__name__}: {exc}"}
+    if obj.name.upper().startswith("UCX_"):
+        facts["hull"] = {"verts": [[float(p[i]) for i in range(3)] for p in world],
+                         "tris": [[int(i) for i in tri.vertices] for tri in mesh.loop_triangles]}
     return facts
 
 

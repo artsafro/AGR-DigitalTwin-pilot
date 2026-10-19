@@ -3,10 +3,11 @@
 Fills the scene stages the header-only validator leaves not_run: V002 (units and scale;
 units come from a pure-Python GlobalSettings read), V003 (triangulation,
 triangle limits, object types), V004 (applied transforms, regulatory topology defect count, MAF smoothing/flipped normals/dimensions (GroundEl)), V006 (NPM embedded images),
-V008 (one UV channel, mirrored islands, glass tile), V010 (UCX presence, no material slots, triangle budget; shape and coverage stay not_run),
+V008 (one UV channel, mirrored islands, glass tile), V010 (UCX presence, no material slots, triangle budget, intersections, intersection coverage, advisory gap; shape and coverage stay not_run),
 V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
 Ground FBX: Flora checks from twinqa.flora (V015 dimensions, V005 maps, V003 Flora share; #191).
 """
+import itertools
 import math
 import tempfile
 from pathlib import Path
@@ -15,6 +16,10 @@ from dt_ai.core.blender_runner import blender_executable, run_blender
 from twinqa.fbx_header import fbx_units
 from twinqa.maf_checks import SMOOTHING_ANGLE_DEG, maf_findings
 from twinqa.flora import FLORA_SHARE, flora_findings
+from twinqa.geometry.ucx_audit import (
+    BAND_TOL_M, GAP_BAND_M, NEIGHBOUR_M, bbox_gap, bounds, is_closed, is_convex,
+    sat_separation, surface_distance, weld,
+)
 from twinqa.report import Finding
 from twinqa.naming import mesh_name_findings
 
@@ -28,6 +33,10 @@ UNIT_PAGES = [4, 24]
 PROJECT_TRIANGLE_TARGET = 150_000
 PIVOT_CENTRE_TOL_PCT, PIVOT_SHARED_TOL_M = 10, 0.001  # SINTEZ AGR Checker 2.9.4a / 2.9.5
 UCX_SMALL_MODEL, UCX_SMALL_LIMIT, UCX_SHARE, UCX_CAP = 50_000, 15_000, 0.05, 100_000
+# float32 FBX coordinates near 100 m carry ~1e-5 m noise, same value as ucx_audit.BAND_TOL_M;
+# it is numerical precision, not a permitted overlap.
+OVERLAP_EPS_M = 1e-5
+_DEGENERATE_VOLUME_M3 = 1e-9
 
 
 def ucx_triangle_limit(model_triangles: int) -> int:
@@ -88,6 +97,134 @@ def _pivot_findings(meshes: list[dict], ucx: list[dict], src: str) -> list[Findi
     out.append(_f("fail" if shifted else "pass", "shared pivot", f"{src}: {shifted[:5] or 'all meshes'}",
                   "every mesh shares the Main origin within 1 mm (UCX exempt)", [32, 33], src))
     return out
+
+
+def _enclosed_volume(verts, tris) -> float:
+    """Absolute enclosed volume (m^3) from the signed tetrahedron sum over triangles."""
+    total = 0.0
+    for ia, ib, ic in tris:
+        a, b, c = verts[ia], verts[ib], verts[ic]
+        total += a[0] * (b[1] * c[2] - b[2] * c[1])
+        total -= a[1] * (b[0] * c[2] - b[2] * c[0])
+        total += a[2] * (b[0] * c[1] - b[1] * c[0])
+    return abs(total) / 6.0
+
+
+def _ucx_piece(mesh: dict) -> dict:
+    """One UCX mesh as a welded hull plus an unsupported reason, or reason None when SAT is valid.
+
+    Supported iff the hull has verts and tris and, after weld, is closed, convex and
+    non-degenerate (absolute enclosed volume > 1e-9 m^3). A flat hull that collapses to a
+    convex zero-volume shell is degenerate; an opened box still has a non-zero tetrahedron sum.
+    """
+    hull = mesh.get("hull") or {}
+    verts, tris = hull.get("verts") or (), hull.get("tris") or ()
+    if not verts or not tris:
+        return {"name": mesh["name"], "hull": None, "reason": "no hull"}
+    welded = weld(verts, tris)
+    wv, wt = welded
+    if not wt or not is_closed(wt):
+        collapsed = bool(wt) and is_convex(wv, wt) and _enclosed_volume(wv, wt) <= _DEGENERATE_VOLUME_M3
+        reason = "degenerate" if collapsed else "open"
+    elif not is_convex(wv, wt):
+        reason = "non-convex"
+    elif _enclosed_volume(wv, wt) <= _DEGENERATE_VOLUME_M3:
+        reason = "degenerate"
+    else:
+        reason = None
+    return {"name": mesh["name"], "hull": welded, "reason": reason}
+
+
+def _neighbour_gap_kind(gap_m: float) -> str:
+    """touch / below_band / in_band / wide / apart for a supported pair that does not overlap.
+
+    apart: surface gap > NEIGHBOUR_M although the bounding boxes are within it (e.g. rotated hulls);
+    such a pair is not a neighbour and is not reported."""
+    if gap_m <= OVERLAP_EPS_M:
+        return "touch"
+    if gap_m < GAP_BAND_M[0] - BAND_TOL_M:
+        return "below_band"
+    if gap_m <= GAP_BAND_M[1] + BAND_TOL_M:
+        return "in_band"
+    if gap_m <= NEIGHBOUR_M:
+        return "wide"
+    return "apart"
+
+
+def _unsupported_labels(pairs: list[tuple[dict, dict]]) -> list[str]:
+    labels, seen = [], set()
+    for left, right in pairs:
+        for piece in (left, right):
+            if piece["reason"] and piece["name"] not in seen:
+                seen.add(piece["name"])
+                labels.append(f"{piece['name']} ({piece['reason']})")
+    return labels
+
+
+def _ucx_pair_findings(ucx: list[dict], src: str) -> list[Finding]:
+    """Intersection (fail), coverage of that check, and the advisory neighbour gap (never fail). [D098]
+
+    SAT runs only on closed convex non-degenerate hulls. A pair overlaps iff separation
+    < -OVERLAP_EPS_M. A missing or unsupported hull does not erase a proven overlap.
+    """
+    pieces = [_ucx_piece(mesh) for mesh in ucx]
+    inter_expected = "no two UCX pieces intersect (reg p.36 §13.4)"
+    coverage_expected = ("every neighbour pair evaluated: closed convex non-degenerate hulls (SAT) "
+                         "or bounding boxes apart")
+    gap_expected = "neighbour gap 2 mm - 1 cm inclusive [D098] (advisory, never a failure)"
+    if pieces and all(piece["reason"] == "no hull" for piece in pieces):
+        observed = f"{src}: readback without UCX hull data: {[piece['name'] for piece in pieces]}"
+        return [_f("not_run", "UCX intersections", observed, inter_expected, [36], src),
+                _f("not_run", "UCX intersections coverage", observed, coverage_expected, [36], src),
+                _f("not_run", "UCX piece gap (advisory)", observed, gap_expected, [36], src, [15])]
+    overlaps, unresolved, offending, gap_unmeasured = [], [], [], 0
+    counts = {"touch": 0, "below_band": 0, "in_band": 0, "wide": 0}
+    for left, right in itertools.combinations(pieces, 2):
+        both_hulls = left["hull"] is not None and right["hull"] is not None
+        box_gap = bbox_gap(bounds(left["hull"][0]), bounds(right["hull"][0])) if both_hulls else None
+        if both_hulls and box_gap > NEIGHBOUR_M:
+            continue
+        if left["reason"] or right["reason"]:
+            if not both_hulls or box_gap <= OVERLAP_EPS_M:
+                unresolved.append((left, right))
+            else:
+                gap_unmeasured += 1  # no intersection (boxes apart), but the surface gap is not measured
+            continue
+        separation = sat_separation(left["hull"], right["hull"])
+        if separation < -OVERLAP_EPS_M:
+            overlaps.append((left["name"], right["name"], round(-separation * 1000, 1)))
+            continue
+        gap_m = surface_distance(left["hull"], right["hull"]) if separation > OVERLAP_EPS_M else 0.0
+        kind = _neighbour_gap_kind(gap_m)
+        if kind == "apart":
+            continue
+        counts[kind] += 1
+        if kind != "in_band":
+            offending.append((left["name"], right["name"], round(gap_m * 1000, 2)))
+    n_unresolved = len(unresolved)
+    if overlaps:
+        inter = _f("fail", "UCX intersections",
+                   f"{src}: {len(overlaps)} overlapping pair(s): {overlaps[:5]}; unresolved pairs: {n_unresolved}",
+                   inter_expected, [36], src)
+    elif n_unresolved:
+        inter = _f("not_run", "UCX intersections", f"{src}: {n_unresolved} unresolved pair(s)",
+                   inter_expected, [36], src)
+    else:
+        inter = _f("pass", "UCX intersections", f"{src}: no overlapping pairs among {len(pieces)} pieces",
+                   inter_expected, [36], src)
+    if n_unresolved:
+        coverage = _f("not_run", "UCX intersections coverage",
+                      f"{src}: {n_unresolved} unresolved pair(s); unsupported: {_unsupported_labels(unresolved)[:10]}",
+                      coverage_expected, [36], src)
+    else:
+        coverage = _f("pass", "UCX intersections coverage", f"{src}: every neighbour pair evaluated",
+                      coverage_expected, [36], src)
+    bad = counts["touch"] or counts["below_band"] or counts["wide"]
+    gap_obs = (f"{src}: touch={counts['touch']} below_band={counts['below_band']} "
+               f"in_band={counts['in_band']} wide={counts['wide']} unmeasured={n_unresolved + gap_unmeasured}; "
+               f"{offending[:5]}")
+    gap_status = "review" if bad else "not_run" if n_unresolved or gap_unmeasured else "pass"
+    return [inter, coverage, _f(gap_status, "UCX piece gap (advisory)", gap_obs, gap_expected, [36], src, [15])]
 
 
 def _topology_finding(meshes: list[dict], profile: dict, src: str) -> Finding:
@@ -251,7 +388,8 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
             ucx_tris, budget = sum(m["triangles"] for m in ucx), ucx_triangle_limit(tris)
             out["V010"].append(_f("fail" if ucx_tris > budget else "pass", "UCX triangle budget",
                                   f"{src}: {ucx_tris} UCX for {tris} model triangles", f"<= {budget}", [36, 37], src))
-            out["V010"].append(_f("not_run", "UCX shape and coverage", "convex, closed, no intersections, coverage, offsets",
+            out["V010"].extend(_ucx_pair_findings(ucx, src))
+            out["V010"].append(_f("not_run", "UCX shape and coverage", "convex, closed, coverage, offsets",
                                   "reg p.34-37", [34, 36, 37], src))
         # V008: one UV channel, no mirrored islands, glass only in 1001 (reg p.31-32, 39)
         multi = [m["name"] for m in meshes if m["uv_channels"] != 1]
