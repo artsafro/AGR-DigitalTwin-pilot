@@ -402,6 +402,16 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
 - Status: WORKING per package README (Russian): `glb_atlas`, `uv_continuous` (UV v006),
   `window_atlas`, `texture_tiles`, `mesh_audit`. Scope of each = its accepted case.
 
+### Album page reader — `src/dt_ai/album/` (#317, kernel C5; D127)
+- Status: IN BRANCH `improve/issue-317-kernel-c5-vector-pdf-album-reader-axes-d` (Hermes dt-worker, 2026-10-19),
+  validated on SYNTHETIC PDFs generated at test time only (`dt_ai.album.synthetic`), no real album yet.
+- Use: `uv run --extra pdf-review python -c "from dt_ai.album import read_page, reading_to_json; print(reading_to_json(read_page('sheet.pdf', 1)))"`.
+  One vector page -> paths, segments, text runs, axes, horizontal dimensions, level marks, legend (swatch RGB + label),
+  scale from one axis dimension (`scale_axes=("1","2")` or the left-most), `dimension_mismatch` / `level_mismatch`
+  findings; deterministic JSON with sha256, page number and PyMuPDF version.
+- Limits: fail-closed statuses `not_vector` / `no_text_layer` / `empty`, scale `unknown` without an axis dimension;
+  vertical dimension chains, OCR, PDFIMPORT fallback and multi-page indexing are not covered.
+
 ## Delivery QA (tools/qa, src/twinqa, standards/)
 
 ### Standards layer — `standards/`
