@@ -483,3 +483,86 @@ def test_driver_parse_with_once():
         opts, err = drv._parse(["a.fbx", "b.fbx", "Main", bad, bad]) if bad == "with=A" else \
             drv._parse(["a.fbx", "b.fbx", "Main", bad])
         assert err, bad
+
+
+# --- review round 2: kept UCX triangles count against the whole-file [D012] budget -------------------
+
+def two_cubes():
+    """SYNTHETIC Main: two 1 m cubes 20 m apart -> exactly two boxes (24 tris) at any tried cell."""
+    return union(box_mesh((0, 0, 0), (1, 1, 1)), box_mesh((20, 0, 0), (21, 1, 1)))
+
+
+@pytest.mark.parametrize("reserved,ok", [(2508, False), (2487, False), (2486, True), (2485, True), (0, True)])
+def test_main_reserved_triangles_enforce_file_budget(reserved, ok):
+    """Reviewer input: 50 200 model tris -> limit 2510; kept Ground+Main UCX 2508 leave no room for 24."""
+    v, t = two_cubes()
+    assert ub.ucx_triangle_limit(50200) == 2510
+    if not ok:
+        with pytest.raises(ub.UcxBuildError, match="budget"):
+            ub.build_main(v, t, model_triangles=50200, reserved_triangles=reserved)
+        return
+    res = ub.build_main(v, t, model_triangles=50200, reserved_triangles=reserved)
+    assert res.triangles == 24 and reserved + res.triangles <= 2510
+    assert res.reserved_triangles == reserved and res.budget == 2510 - reserved
+
+
+def test_ground_reserved_triangles_enforce_file_budget():
+    v, t = terrain()
+    free = ub.build_ground(v, t, model_triangles=50200)
+    need = free.triangles
+    at = ub.build_ground(v, t, model_triangles=50200, reserved_triangles=2510 - need)
+    assert at.triangles == need and at.budget == need
+    with pytest.raises(ub.UcxBuildError, match="budget"):
+        ub.build_ground(v, t, model_triangles=50200, reserved_triangles=2510 - need + 1)
+
+
+@pytest.mark.parametrize("bad", [-1, 1.5, float("nan"), float("inf"), True, None, "12"])
+def test_reserved_triangles_bad_values_fail_closed(bad):
+    v, t = two_cubes()
+    with pytest.raises(ub.UcxBuildError):
+        ub.build("Main", v, t, reserved_triangles=bad)
+
+
+@pytest.mark.parametrize("model,kept,avail", [(50200, 0, 2510), (50200, 2498, 12), (100, 14988, 12),
+                                              (2000000, 99988, 12)])
+def test_file_budget_available(model, kept, avail):
+    assert ub.file_budget_available(model, kept) == avail
+
+
+@pytest.mark.parametrize("model,kept", [(50200, 2499), (50200, 2510), (50200, 2511), (100, 15001)])
+def test_file_budget_no_room_fails_closed(model, kept):
+    with pytest.raises(ub.UcxBuildError, match="budget"):
+        ub.file_budget_available(model, kept)
+
+
+@pytest.mark.parametrize("model,total,ok", [(50200, 2510, True), (50200, 2511, False), (100, 15000, True),
+                                            (100, 15001, False), (50200, 0, True)])
+def test_check_file_budget(model, total, ok):
+    if ok:
+        ub.check_file_budget(model, total)
+    else:
+        with pytest.raises(ub.UcxBuildError, match="budget"):
+            ub.check_file_budget(model, total)
+
+
+@pytest.mark.parametrize("target", ["Main", "Ground"])
+@pytest.mark.parametrize("order", [1, -1])
+def test_scoped_replace_with_budget_combined(target, order):
+    """Reviewer scene: 208 kept Ground boxes + 1 Main box; a Main rebuild may not discard Ground UCX
+    and must fail on budget; a Ground rebuild keeps the Main box and reserves its 12 tris."""
+    model = ["SM_X_Main", "SM_X_MainGlass", "SM_X_Ground"][::order]
+    ucx = ([f"UCX_SM_X_Ground_{i:03d}" for i in range(1, 209)] + ["UCX_SM_X_Main_001"])[::order]
+    main, extra, _ = ub.select_inputs(model, target, with_=["SM_X_MainGlass"] if target == "Main" else None)
+    replace, keep = ub.ucx_replace_plan(ucx, [main] + extra, model)
+    kept_tris = 12 * len(keep)
+    if target == "Main":
+        assert len(keep) == 208 and replace == ["UCX_SM_X_Main_001"]
+        v, t = two_cubes()
+        assert ub.file_budget_available(50200, kept_tris) == 14
+        with pytest.raises(ub.UcxBuildError, match="budget"):
+            ub.build("Main", v, t, model_triangles=50200, reserved_triangles=kept_tris)
+    else:
+        assert keep == ["UCX_SM_X_Main_001"] and len(replace) == 208
+        v, t = terrain()
+        res = ub.build("Ground", v, t, model_triangles=50200, reserved_triangles=kept_tris)
+        ub.check_file_budget(50200, kept_tris + res.triangles)
