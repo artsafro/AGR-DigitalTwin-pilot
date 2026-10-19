@@ -14,6 +14,7 @@ import subprocess
 from pathlib import Path
 
 import yaml
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 LOG = "docs/decisions.md"
@@ -33,6 +34,8 @@ FROZEN_FIXTURE = re.compile(r"^evals/[^/]+/fixtures/")
 CONFLICT_ITEM = re.compile(r"^(\d+)\. ")
 # Lines that match MENTION but state no decision: (file, text on the line).
 NOT_DECISIONS = [
+    ("docs/experiments/flora-library-audit.md", "user Flora grilling notes (2026-10-15)"),
+    ("tests/contracts/test_parts_list.py", 'approval = {"actor": "user", "date": "2026-10-18"'),  # synthetic approval fixture, not a decision
     ("docs/backlog.md", "AGR_Project-uncommitted-2026-10-06.zip"),  # an archive name next to "the user plans"
     ("tests/test_ready_gate.py", "(user, 2026-10-14)"),  # a quoted chat fixture line
     ("tests/test_area_requirement_sheet.py", "Decided 2026-10-15 [{record}] (user)"),  # an f-string template asserting the format
@@ -155,9 +158,12 @@ def log_order_problems(rows):
 def test_log_format():
     rows = log_rows()
     assert rows, "no decisions"
-    for number, row in enumerate(rows, 1):
+    previous_id = 0
+    for row in rows:
         assert len(row) == 5 and all(row), row
-        assert row[0] == f"D{number:03d}", f"{row[0]}: ids must run D001, D002, ... without gaps"
+        current_id = int(row[0][1:])
+        assert current_id > previous_id, f"{row[0]}: ids must be unique and increasing (open PRs may reserve gaps)"
+        previous_id = current_id
     assert log_order_problems(rows) == []
 
 
@@ -308,3 +314,46 @@ def test_undecided_standards_fail():
     assert check("d: {ids: [1], note: 'decided'}", set()) == [
         "standards/X.yaml: conflicts.d: decided, but none of conflicts #[1] carries [D<n>]"]
     assert undecided_standards(conflicts, {"standards/X.yaml": "version: 1\n"}, known) == []
+
+
+@pytest.mark.parametrize("ids,valid", [(["D001", "D003"], True),
+                                      (["D001", "D001"], False), (["D003", "D001"], False)])
+def test_log_format_reserved_ids(monkeypatch, ids, valid):
+    """Rule 42: open PR reservations may leave gaps, but duplicate/descending IDs still fail."""
+    rows = [[i, "2026-10-19", "decision", "anchor", "user"] for i in ids]
+    monkeypatch.setitem(globals(), "log_rows", lambda: rows)
+    if valid:
+        test_log_format()
+    else:
+        with pytest.raises(AssertionError):
+            test_log_format()
+
+
+def test_log_rejects_every_duplicate_id(monkeypatch):
+    """Exhaustive synthetic mutations: a backfill must not weaken id uniqueness."""
+    rows = log_rows()
+    module = __import__(__name__)
+    for i in range(len(rows)):
+        # Rule 42 (#166) allows reserved gaps, so a removed id is valid; a duplicated id must still fail.
+        mutations = [rows[:i] + [rows[i]] + rows[i:]]
+        for mutated in mutations:
+            monkeypatch.setattr(module, "log_rows", lambda mutated=mutated: mutated)
+            with pytest.raises(AssertionError):
+                test_log_format()
+    monkeypatch.setattr(module, "log_rows", lambda: [])
+    with pytest.raises(AssertionError, match="no decisions"):
+        test_log_format()
+
+
+def test_drawing_review_decision_is_logged_and_anchored():
+    rows = [row for row in log_rows() if row[0] == "D132"]
+    assert len(rows) == 1, "#85 drawing-review decision must be canonical"
+    row = rows[0]
+    # Recorded 2026-10-19 between D131 and D134 (ids and dates both ascending, rule 42); decided 2026-10-16.
+    assert row[1] == "2026-10-19" and "decided 2026-10-16" in row[2]
+    assert "drawings" in row[2] and "missing wall" in row[2]
+    assert row[3] == "`src/dt_ai/spec/mesh.py` `_panel_contour`"
+    assert "/pull/274" in row[4] and "#85" in row[4]
+    source = (ROOT / "src/dt_ai/spec/mesh.py").read_text(encoding="utf-8")
+    rule = source.split("def _panel_contour(", 1)[1].split('"""')[1]
+    assert "[D132]" in rule and "the extractor does not decide it" in rule

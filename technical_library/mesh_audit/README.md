@@ -27,7 +27,7 @@ Revit, знаках, mesh optimization и продуктовых Blender-кей�
 
 Each mesh object report includes three topology diagnostic counters that leave
 `delivery_passed=false` unchanged:
-- `inconsistent_winding_edges`: manifold edges with exactly two loops winding in the same direction.
+- `inconsistent_winding_edges`: `twinqa.geometry.winding.same_direction_edges`, shared with the twinqa orientation check. Manifold edges with exactly two loop sides winding in the same direction; sides with a repeated vertex (a == b) are skipped.
 - `near_duplicate_vertices`: vertices with an earlier vertex within `--near-m`
   (default 0.001 m, recorded as `near_duplicate_threshold_m`), including exact duplicates.
 - `self_intersecting_polygons`: counts polygons exhibiting bounded nondegenerate

@@ -126,21 +126,52 @@ def git(repo, *args):
     return subprocess.run(["git", *args], cwd=repo, capture_output=True, text=True, check=True)
 
 
-@pytest.fixture
-def repo(tmp_path):
-    git(tmp_path, "init", "-q")
-    git(tmp_path, "config", "user.email", "t@example.com")
-    git(tmp_path, "config", "user.name", "t")
+@pytest.fixture(scope="session")
+def _repo_template(tmp_path_factory):
+    path = tmp_path_factory.mktemp("repo_template")
+    git(path, "init", "-q")
+    git(path, "config", "user.email", "t@example.com")
+    git(path, "config", "user.name", "t")
     # under a long --basetemp the object paths pass MAX_PATH and git fails with "Filename too long"
     # (a Claude scratchpad basetemp, 2026-10-12); the gate itself is not about path length
-    git(tmp_path, "config", "core.longpaths", "true")
-    (tmp_path / "docs").mkdir()
-    (tmp_path / "docs/backlog.md").write_text(BACKLOG, encoding="utf-8")
-    (tmp_path / "jobs/OLD").mkdir(parents=True)
-    (tmp_path / "jobs/OLD/STATE.md").write_text("Status: accepted (before the gate)\n", encoding="utf-8")
-    git(tmp_path, "add", "-A")
-    git(tmp_path, "commit", "-qm", "base")
+    git(path, "config", "core.longpaths", "true")
+    (path / "docs").mkdir()
+    (path / "docs/backlog.md").write_text(BACKLOG, encoding="utf-8")
+    (path / "jobs/OLD").mkdir(parents=True)
+    (path / "jobs/OLD/STATE.md").write_text("Status: accepted (before the gate)\n", encoding="utf-8")
+    git(path, "add", "-A")
+    git(path, "commit", "-qm", "base")
+    return path
+
+
+@pytest.fixture
+def repo(tmp_path, _repo_template):
+    shutil.copytree(_repo_template, tmp_path, dirs_exist_ok=True)
     return tmp_path
+
+
+def test_repo_fixture_copy_is_an_independent_git_repo(repo, _repo_template):
+    top = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"], cwd=repo, capture_output=True, text=True, check=True)
+    assert Path(top.stdout.strip()).resolve() == Path(repo).resolve()
+    status = subprocess.run(
+        ["git", "status", "--porcelain"], cwd=repo, capture_output=True, text=True, check=True)
+    assert status.stdout == ""
+    log = subprocess.run(
+        ["git", "log", "--oneline"], cwd=repo, capture_output=True, text=True, check=True)
+    assert len(log.stdout.splitlines()) == 1
+    config = (repo / ".git" / "config").read_text(encoding="utf-8")
+    assert str(_repo_template) not in config
+    assert _repo_template.as_posix() not in config
+    hooks = subprocess.run(
+        ["git", "config", "--get", "core.hooksPath"], cwd=repo, capture_output=True, text=True)
+    assert hooks.returncode != 0
+    (repo / "independent.txt").write_text("copy only\n", encoding="utf-8")
+    git(repo, "add", "-A")
+    git(repo, "commit", "-qm", "in the copy")
+    template_log = subprocess.run(
+        ["git", "log", "--oneline"], cwd=_repo_template, capture_output=True, text=True, check=True)
+    assert len(template_log.stdout.splitlines()) == 1
 
 
 def write(repo, rel, text):

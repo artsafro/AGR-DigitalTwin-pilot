@@ -35,8 +35,52 @@ code-review (user 2026-10-14 [D091]); production work runs the steps below.
 7. **Hand off.** Compare the result with the Requirement (the user's wording, profile and
    acceptance in the contract), item by item: met, not met, or changed by a later user decision
    (with its date or `D<n>`); report what is done, what was checked (commands, evidence paths)
-   and what is open. On restart, read saved outputs and
+   and what is open. Provide receipts per
+   [Before requesting review (author)](#before-requesting-review-author). On restart, read saved outputs and
    hashes before repeating any mutation (`run-evidence` skill).
+
+## Before requesting review (author)
+
+Before requesting review of a PR, the author provides verifiable receipts in the PR body under
+`## Author receipts`. The reviewer checks evidence, not confidence; the author must supply the
+following three items:
+
+1. **Pattern / new-case marker.** Each NEW module must refer to a pattern in `docs/domain/patterns/INDEX.md` or be honestly marked `new-case` in the module docstring AND in the PR body.
+   In the PR, include `Pattern: <pattern id | new-case | n/a if no new module>`. The change must stay
+   inside its issue and list what is not done.
+2. **Regression evals.** Before requesting review or merging to `main`, the author runs the regression evals:
+   ```bash
+   uv run dt evals --suite regression --output <worktree>/tmp/evals
+   ```
+   Replace `<worktree>` with your own absolute worktree path so outputs remain isolated inside your
+   worktree. In the PR body, report the report path (`<worktree>/tmp/evals/report.json`) and the passed,
+   failed, and not measured counts with their reasons.
+   - An all-not-measured run (`0 passed, 0 failed, N not measured` with `exit 2`, such as when there is
+     `no Claude transcript` on Hermes-driven branches) is a valid receipt, not a pass or waived check.
+   - Preserve `--references` after grader changes (run `--references` as well after a change to a grader).
+   - The pass criterion for measured checks is 100 %: a failed eval blocks merge, and a check that is
+     not measured is named with its reason (no transcript, a torn line, an unclassified question), never
+     counted as a pass. Unmeasured checks never pass. The tasks and what fails each: `evals/README.md`,
+     "Regression tasks".
+3. **Counterexample probes.** Before requesting review of a change to a stated guarantee ("never
+   dropped", "counted once", "within tolerance"), add a generated or brute-force probe beyond the
+   issue's examples.
+   - Label invented inputs synthetic; never present them as real object data.
+   - Record `invariant -> probe -> N/N` in the PR, with the command, seed or exhaustive bounds and
+     evidence path so the reviewer can reproduce it.
+   - If a probe is not applicable, record `n/a: <reason>` instead of inventing a count or omitting the line.
+   - After review fixes, test the combination of the new case with previous fixes, not just each
+     finding in isolation.
+   - A required acceptance item belongs in the result or an explicit blocked/open item, never in
+     "Out of scope" as a way to declare completion.
+   - The reviewer independently attacks the guarantee; the author's probe is input, not a clean verdict.
+
+### Author receipts in PR
+
+Require `## Author receipts` in the PR body with the following lines:
+- `Pattern: <pattern id | new-case | n/a if no new module>`
+- `Regression evals: <report path>; <passed> passed, <failed> failed, <not measured> not measured (<reasons>)`
+- `Probe: <invariant -> probe -> N/N with command/seed/bounds/evidence path | n/a: <reason>>`
 
 ## Questions-only
 

@@ -41,7 +41,7 @@
 **Решено:**
 - `AGR-DigitalTwin` — единственный рабочий репозиторий (harness под Claude/Codex/Antigravity уже есть). `AGR_Project` — архивировать (не удалять), нужное перенести руками.
 - `technical_library/` **не переименовывать** (на неё ссылаются 4 теста и `tools/project_hygiene.py`; по `AGENTS.md` это reviewed operation packages). Вместо этого: в `CLAUDE.md` одна строка — *«`technical_library/` читать только когда задача прямо ссылается на пакет из него»*. Пересмотр состава папки — после зелёного B01, отдельной задачей.
-- `Unreal/` — вынести из корня (отдельная задача после готовности двойника; возможная среда для коллизий — позже).
+- `Unreal/`: root placeholder removed per owner decision; future interactive experience lives in a separate repository [D103].
 - `CLAUDE.md` оставить коротким (сейчас 18 строк — норма).
 
 **Правило — четыре слоя, не смешивать:**
@@ -370,7 +370,7 @@ benchmark/
 
 ## 12. Первая неделя — конкретно
 
-1. Строка в `CLAUDE.md` про `technical_library/` (без переименования). `Unreal/` — вынести только если на него нет ссылок в тестах (проверить `grep -rn Unreal tests/`).
+1. Строка в `CLAUDE.md` про `technical_library/` (без переименования). Root `Unreal/` placeholder removed per owner decision; future interactive experience lives in a separate repository [D103].
 2. Создать `benchmark/`, `docs/domain/patterns/INDEX.md` (6 строк), `standards/material_id_ranges.yaml`, `library/windows/window_types.json` (из твоей библиотеки).
 3. Mesh-экстрактор (`tools/source/measure_spec_blender.py` + `src/dt_ai/spec/`, §4): сечения по уровням, контур уровня, изломы > 5°, классификация этажей, проёмы по дыркам в корпусе. Сначала на синтетических мешах с тестами.
 4. Последовательно, четыре задачи = четыре ветки (один пишущий агент): (а) mesh-экстрактор с синтетическими тестами; (б) прогон на KPP1 FBX v005; (в) Revit-экстрактор данных через `revit-http-2025`; (г) сравнение двух spec по критериям §4.

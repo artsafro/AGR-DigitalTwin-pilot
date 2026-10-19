@@ -1,0 +1,1275 @@
+{
+ "schema": "flora-vpm-surface-identity-report-v1",
+ "scope": "report only; catalogue.json is not changed - catalogue changes are a user decision (#305)",
+ "method": "two-way area coverage per face (shapely clipping), D100 pivot frame, strict Euclidean tolerance bracketed by lower/upper uncovered-area bounds; same only if both upper bounds and the face-area difference are <= same_area_m2, different only if a lower bound or the area difference is >= different_area_m2, else unverified",
+ "tolerance_m": 0.0001,
+ "same_area_m2": 1e-12,
+ "different_area_m2": 1e-06,
+ "sources": {
+  "catalogue": "library/flora/catalogue.json",
+  "catalogue_sha256": "4b788ec3d91e0dc0bb6057cbc969d3fe81ad0f501c685ca0bb728960f67822b6",
+  "faces": "C:/x/ev_t_c268d7c5/flora-library-faces.json",
+  "faces_sha256": "b03c783ae49187576b6bbd8cbff4867122dc978950e627873adaecd23c528208",
+  "library_file": "C:/x/flora-library/v003/flora-library-v003.max",
+  "library_sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74"
+ },
+ "counts": {
+  "species": 61,
+  "same": 0,
+  "different": 38,
+  "unverified": 0,
+  "error": 0,
+  "no_vpm": 23
+ },
+ "pairs": [
+  {
+   "material_id": 101,
+   "latin": "Tilia cordata",
+   "npm_object": "Tilia_cordata_NPM",
+   "vpm_object": "Tilia_cordata_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "a_uncovered >= 193.334 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 357,
+    "degenerate_faces": 0,
+    "area_m2": 193.36551579299578,
+    "uncovered_m2": 193.337627288544,
+    "uncovered_lower_m2": 193.33444882886386
+   },
+   "vpm": {
+    "faces": 830,
+    "degenerate_faces": 0,
+    "area_m2": 34.000528382201054,
+    "uncovered_m2": 33.97264606347597,
+    "uncovered_lower_m2": 33.96946927457711
+   },
+   "area_difference_m2": 159.36498741079473
+  },
+  {
+   "material_id": 102,
+   "latin": "Betula pendula",
+   "npm_object": "Betula_pendula_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 103,
+   "latin": "Crataegus mollis",
+   "npm_object": "Crataegus_mollis_NPM",
+   "vpm_object": "Crataegus_mollis_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 127.396 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 488,
+    "degenerate_faces": 0,
+    "area_m2": 87.17261142971316,
+    "uncovered_m2": 87.05649435305018,
+    "uncovered_lower_m2": 87.04654532685866
+   },
+   "vpm": {
+    "faces": 574,
+    "degenerate_faces": 0,
+    "area_m2": 127.52236406880571,
+    "uncovered_m2": 127.40927995109298,
+    "uncovered_lower_m2": 127.39621586600794
+   },
+   "area_difference_m2": 40.34975263909256
+  },
+  {
+   "material_id": 104,
+   "latin": "Padus maackii",
+   "npm_object": "Padus_maackii_NPM",
+   "vpm_object": "Padus_maackii_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 83.6397 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 346,
+    "degenerate_faces": 0,
+    "area_m2": 27.621460290176223,
+    "uncovered_m2": 27.602086714495634,
+    "uncovered_lower_m2": 27.599885946015995
+   },
+   "vpm": {
+    "faces": 394,
+    "degenerate_faces": 0,
+    "area_m2": 83.66131127951903,
+    "uncovered_m2": 83.64193572281005,
+    "uncovered_lower_m2": 83.63973435856086
+   },
+   "area_difference_m2": 56.0398509893428
+  },
+  {
+   "material_id": 105,
+   "latin": "Amelanchier lamarckii",
+   "npm_object": "Amelanchier_lamarckii_NPM",
+   "vpm_object": "Amelanchier_lamarckii_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 723.671 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 979,
+    "degenerate_faces": 0,
+    "area_m2": 10.114716521948093,
+    "uncovered_m2": 10.11388475042086,
+    "uncovered_lower_m2": 10.113787484510613
+   },
+   "vpm": {
+    "faces": 4894,
+    "degenerate_faces": 0,
+    "area_m2": 723.6716176125406,
+    "uncovered_m2": 723.670784790118,
+    "uncovered_lower_m2": 723.6706872759434
+   },
+   "area_difference_m2": 713.5569010905924
+  },
+  {
+   "material_id": 106,
+   "latin": "Acer tataricum subsp. ginnala",
+   "npm_object": "Acer_tataricum_subsp_ginnala_NPM",
+   "vpm_object": "Acer_tataricum_subsp_ginnala_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "a_uncovered >= 87.0532 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 8,
+    "degenerate_faces": 0,
+    "area_m2": 87.08798787972952,
+    "uncovered_m2": 87.05676688802659,
+    "uncovered_lower_m2": 87.05318450365071
+   },
+   "vpm": {
+    "faces": 830,
+    "degenerate_faces": 0,
+    "area_m2": 34.000517929002775,
+    "uncovered_m2": 33.96928998447789,
+    "uncovered_lower_m2": 33.965705935223696
+   },
+   "area_difference_m2": 53.08746995072675
+  },
+  {
+   "material_id": 107,
+   "latin": "Acer platanoides",
+   "npm_object": "Acer_platanoides_NPM",
+   "vpm_object": "Acer_platanoides_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 268.694 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 107.59618045414067,
+    "uncovered_m2": 107.48987696389827,
+    "uncovered_lower_m2": 107.47747487222371
+   },
+   "vpm": {
+    "faces": 1070,
+    "degenerate_faces": 0,
+    "area_m2": 268.8125294542374,
+    "uncovered_m2": 268.70615231498414,
+    "uncovered_lower_m2": 268.6937321373968
+   },
+   "area_difference_m2": 161.21634900009673
+  },
+  {
+   "material_id": 108,
+   "latin": "Sorbus aucuparia",
+   "npm_object": "Sorbus_aucuparia_NPM",
+   "vpm_object": "Sorbus_aucuparia_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "a_uncovered >= 115.604 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 125,
+    "degenerate_faces": 0,
+    "area_m2": 115.62378011771295,
+    "uncovered_m2": 115.60594691181231,
+    "uncovered_lower_m2": 115.60396387525854
+   },
+   "vpm": {
+    "faces": 264,
+    "degenerate_faces": 0,
+    "area_m2": 20.311362204246073,
+    "uncovered_m2": 20.293536721716958,
+    "uncovered_lower_m2": 20.291555498141516
+   },
+   "area_difference_m2": 95.31241791346687
+  },
+  {
+   "material_id": 109,
+   "latin": "Acer tataricum",
+   "npm_object": "Acer_tataricum_NPM",
+   "vpm_object": "Acer_tataricum_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 1224.31 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 125,
+    "degenerate_faces": 0,
+    "area_m2": 13.286266643764124,
+    "uncovered_m2": 13.280206842724262,
+    "uncovered_lower_m2": 13.27952296811444
+   },
+   "vpm": {
+    "faces": 2901,
+    "degenerate_faces": 0,
+    "area_m2": 1224.3140288288073,
+    "uncovered_m2": 1224.3079752259375,
+    "uncovered_lower_m2": 1224.3072927523488
+   },
+   "area_difference_m2": 1211.0277621850432
+  },
+  {
+   "material_id": 110,
+   "latin": "Sorbus commixta 'Dodong'",
+   "npm_object": "Sorbus_commixta_Dodong_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 111,
+   "latin": "Syringa vulgaris 'Krasavitsa Moskvy'",
+   "npm_object": "Syringa_vulgaris_Krasavitsa_Moskvy_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 112,
+   "latin": "Syringa vulgaris 'Andenken an Ludwig Späth'",
+   "npm_object": "Syringa_vulgaris_Andenken_an_Ludwig_Spath_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 113,
+   "latin": "Syringa josikaea",
+   "npm_object": "Syringa_josikaea_NPM",
+   "vpm_object": "Syringa_josikaea_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 53.8845 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 14.134332521053175,
+    "uncovered_m2": 14.079425957486379,
+    "uncovered_lower_m2": 14.073477379597264
+   },
+   "vpm": {
+    "faces": 1266,
+    "degenerate_faces": 0,
+    "area_m2": 53.9456350785255,
+    "uncovered_m2": 53.89101286715661,
+    "uncovered_lower_m2": 53.8844811582653
+   },
+   "area_difference_m2": 39.811302557472324
+  },
+  {
+   "material_id": 114,
+   "latin": "Pinus nigra",
+   "npm_object": "Pinus_nigra_NPM",
+   "vpm_object": "Pinus_nigra_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 107.714 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 8,
+    "degenerate_faces": 0,
+    "area_m2": 51.52853392405539,
+    "uncovered_m2": 51.44600251360042,
+    "uncovered_lower_m2": 51.43587252857244
+   },
+   "vpm": {
+    "faces": 6267,
+    "degenerate_faces": 0,
+    "area_m2": 107.80662000235671,
+    "uncovered_m2": 107.72402507815575,
+    "uncovered_lower_m2": 107.71387797386048
+   },
+   "area_difference_m2": 56.27808607830132
+  },
+  {
+   "material_id": 115,
+   "latin": "Malus niedzwetzkyana",
+   "npm_object": "Malus_niedzwetzkyana_NPM",
+   "vpm_object": "Malus_niedzwetzkyana_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "a_uncovered >= 115.538 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 125,
+    "degenerate_faces": 0,
+    "area_m2": 115.62375695694574,
+    "uncovered_m2": 115.54654987390968,
+    "uncovered_lower_m2": 115.53787975366369
+   },
+   "vpm": {
+    "faces": 394,
+    "degenerate_faces": 0,
+    "area_m2": 102.33045247631911,
+    "uncovered_m2": 102.25325822748663,
+    "uncovered_lower_m2": 102.24459095921412
+   },
+   "area_difference_m2": 13.293304480626631
+  },
+  {
+   "material_id": 116,
+   "latin": "Syringa vulgaris",
+   "npm_object": "Syringa_vulgaris_NPM",
+   "vpm_object": "Syringa_vulgaris_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 70.6053 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 14.134332521053175,
+    "uncovered_m2": 14.130730560785793,
+    "uncovered_lower_m2": 14.130381415237832
+   },
+   "vpm": {
+    "faces": 614,
+    "degenerate_faces": 0,
+    "area_m2": 70.6092447250784,
+    "uncovered_m2": 70.60564420500934,
+    "uncovered_lower_m2": 70.60529536901029
+   },
+   "area_difference_m2": 56.47491220402522
+  },
+  {
+   "material_id": 117,
+   "latin": "Picea pungens",
+   "npm_object": "Picea_pungens_NPM",
+   "vpm_object": "Picea_pungens_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 107.569 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 3065,
+    "degenerate_faces": 0,
+    "area_m2": 52.417586766301355,
+    "uncovered_m2": 52.207475217410085,
+    "uncovered_lower_m2": 52.19035574829704
+   },
+   "vpm": {
+    "faces": 6267,
+    "degenerate_faces": 0,
+    "area_m2": 107.79687786584117,
+    "uncovered_m2": 107.58664525088577,
+    "uncovered_lower_m2": 107.56949913332268
+   },
+   "area_difference_m2": 55.37929109953981
+  },
+  {
+   "material_id": 118,
+   "latin": "Malus 'Evereste'",
+   "npm_object": "Malus_Evereste_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 119,
+   "latin": "Thuja occidentalis",
+   "npm_object": "Thuja_occidentalis_NPM",
+   "vpm_object": null,
+   "vpm_status": "none",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 120,
+   "latin": "Prunus padus",
+   "npm_object": "Prunus_padus_NPM",
+   "vpm_object": "Prunus_padus_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 136.178 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 166,
+    "degenerate_faces": 0,
+    "area_m2": 21.89007966618114,
+    "uncovered_m2": 21.861894797858934,
+    "uncovered_lower_m2": 21.858807553888127
+   },
+   "vpm": {
+    "faces": 494,
+    "degenerate_faces": 0,
+    "area_m2": 136.20962564871394,
+    "uncovered_m2": 136.1814116177346,
+    "uncovered_lower_m2": 136.17831797237338
+   },
+   "area_difference_m2": 114.3195459825328
+  },
+  {
+   "material_id": 201,
+   "latin": "Berberis × ottawensis",
+   "npm_object": "Berberis_ottawensis_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 202,
+   "latin": "Crataegus monogyna",
+   "npm_object": "Crataegus_monogyna_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 203,
+   "latin": "Cornus alba",
+   "npm_object": "Cornus_alba_NPM",
+   "vpm_object": "Cornus_alba_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 9.95423 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 64,
+    "degenerate_faces": 0,
+    "area_m2": 5.704066764453286,
+    "uncovered_m2": 4.265603154242938,
+    "uncovered_lower_m2": 4.2640709407451025
+   },
+   "vpm": {
+    "faces": 128,
+    "degenerate_faces": 0,
+    "area_m2": 11.396633417803027,
+    "uncovered_m2": 9.955996563916981,
+    "uncovered_lower_m2": 9.954231342084757
+   },
+   "area_difference_m2": 5.692566653349742
+  },
+  {
+   "material_id": 204,
+   "latin": "Cornus sericea",
+   "npm_object": "Cornus_sericea_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 205,
+   "latin": "Physocarpus opulifolius 'Diabolo'",
+   "npm_object": "Physocarpus_opulifolius_Diabolo_NPM",
+   "vpm_object": "Physocarpus_opulifolius_Diabolo_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 22.6679 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 18,
+    "degenerate_faces": 0,
+    "area_m2": 11.277768171128177,
+    "uncovered_m2": 11.221783428591618,
+    "uncovered_lower_m2": 11.216538941056337
+   },
+   "vpm": {
+    "faces": 144,
+    "degenerate_faces": 0,
+    "area_m2": 22.72917617390702,
+    "uncovered_m2": 22.67312734232296,
+    "uncovered_lower_m2": 22.667869007938474
+   },
+   "area_difference_m2": 11.451408002778845
+  },
+  {
+   "material_id": 206,
+   "latin": "Hydrangea paniculata",
+   "npm_object": "Hydrangea_paniculata_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 207,
+   "latin": "Hydrangea arborescens",
+   "npm_object": "Hydrangea_arborescens_NPM",
+   "vpm_object": "Hydrangea_arborescens_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "a_uncovered >= 4.78858 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 4.796706950441741,
+    "uncovered_m2": 4.789451602992409,
+    "uncovered_lower_m2": 4.78857929446906
+   },
+   "vpm": {
+    "faces": 80,
+    "degenerate_faces": 0,
+    "area_m2": 3.739072281784165,
+    "uncovered_m2": 3.731807316835831,
+    "uncovered_lower_m2": 3.7309323676778248
+   },
+   "area_difference_m2": 1.0576346686575757
+  },
+  {
+   "material_id": 208,
+   "latin": "Salix purpurea 'Mayak'",
+   "npm_object": "Salix_purpurea_Mayak_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 209,
+   "latin": "Cotoneaster lucidus",
+   "npm_object": "Cotoneaster_lucidus_NPM",
+   "vpm_object": "Cotoneaster_lucidus_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 25.6223 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 6.106408135131845,
+    "uncovered_m2": 6.092513071119135,
+    "uncovered_lower_m2": 6.090968514672299
+   },
+   "vpm": {
+    "faces": 112,
+    "degenerate_faces": 0,
+    "area_m2": 25.63776064757664,
+    "uncovered_m2": 25.623855288404396,
+    "uncovered_lower_m2": 25.622308221373057
+   },
+   "area_difference_m2": 19.531352512444798
+  },
+  {
+   "material_id": 210,
+   "latin": "Juniperus sabina",
+   "npm_object": "Juniperus_sabina_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 211,
+   "latin": "Physocarpus opulifolius",
+   "npm_object": "Physocarpus_opulifolius_NPM",
+   "vpm_object": "Physocarpus_opulifolius_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 17.7114 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 20,
+    "degenerate_faces": 0,
+    "area_m2": 8.740349177925399,
+    "uncovered_m2": 8.70100225456031,
+    "uncovered_lower_m2": 8.696501163394524
+   },
+   "vpm": {
+    "faces": 160,
+    "degenerate_faces": 0,
+    "area_m2": 17.755232922143122,
+    "uncovered_m2": 17.715872304622344,
+    "uncovered_lower_m2": 17.711370705303068
+   },
+   "area_difference_m2": 9.014883744217723
+  },
+  {
+   "material_id": 212,
+   "latin": "Sorbaria sorbifolia",
+   "npm_object": "Sorbaria_sorbifolia_NPM",
+   "vpm_object": "Sorbaria_sorbifolia_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "a_uncovered >= 6.93626 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 6.946883887436821,
+    "uncovered_m2": 6.937396861913245,
+    "uncovered_lower_m2": 6.936256818750121
+   },
+   "vpm": {
+    "faces": 84,
+    "degenerate_faces": 0,
+    "area_m2": 6.451217522996509,
+    "uncovered_m2": 6.4417251297643,
+    "uncovered_lower_m2": 6.440583563501207
+   },
+   "area_difference_m2": 0.49566636444031165
+  },
+  {
+   "material_id": 213,
+   "latin": "Dasiphora fruticosa 'Goldfinger'",
+   "npm_object": "Dasiphora_fruticosa_Goldfinger_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 214,
+   "latin": "Euonymus alatus",
+   "npm_object": "Euonymus_alatus_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 215,
+   "latin": "Philadelphus coronarius",
+   "npm_object": "Philadelphus_coronarius_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 216,
+   "latin": "Hydrangea arborescens 'Bounty'",
+   "npm_object": "Hydrangea_arborescens_Bounty_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 217,
+   "latin": "Hydrangea paniculata 'Limelight'",
+   "npm_object": "Hydrangea_paniculata_Limelight_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 218,
+   "latin": "Viburnum opulus 'Roseum'",
+   "npm_object": "Viburnum_opulus_Roseum_NPM",
+   "vpm_object": "Viburnum_opulus_Roseum_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 53.8046 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 14.134356018886924,
+    "uncovered_m2": 14.08075444226962,
+    "uncovered_lower_m2": 14.074346353190931
+   },
+   "vpm": {
+    "faces": 1254,
+    "degenerate_faces": 0,
+    "area_m2": 53.86491389432541,
+    "uncovered_m2": 53.81106559498265,
+    "uncovered_lower_m2": 53.80459540119559
+   },
+   "area_difference_m2": 39.730557875438485
+  },
+  {
+   "material_id": 219,
+   "latin": "Sorbaria sorbifolia 'Sem'",
+   "npm_object": "Sorbaria_sorbifolia_Sem_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 220,
+   "latin": "Spiraea betulifolia 'Tor'",
+   "npm_object": "Spiraea_betulifolia_Tor_NPM",
+   "vpm_object": "Spiraea_betulifolia_Tor_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 22.7603 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 3.766544237004576,
+    "uncovered_m2": 3.757987557811475,
+    "uncovered_lower_m2": 3.7570152814358533
+   },
+   "vpm": {
+    "faces": 120,
+    "degenerate_faces": 0,
+    "area_m2": 22.769787008143908,
+    "uncovered_m2": 22.761226998691345,
+    "uncovered_lower_m2": 22.76025388910818
+   },
+   "area_difference_m2": 19.00324277113933
+  },
+  {
+   "material_id": 221,
+   "latin": "Spiraea × cinerea 'Grefsheim'",
+   "npm_object": "Spiraea_cinerea_Grefsheim_NPM",
+   "vpm_object": "Spiraea_cinerea_Grefsheim_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 25.3488 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 5.7942496089704,
+    "uncovered_m2": 5.781941710692851,
+    "uncovered_lower_m2": 5.780459419937209
+   },
+   "vpm": {
+    "faces": 84,
+    "degenerate_faces": 0,
+    "area_m2": 25.362583660124223,
+    "uncovered_m2": 25.350267330260152,
+    "uncovered_lower_m2": 25.348782795328304
+   },
+   "area_difference_m2": 19.568334051153823
+  },
+  {
+   "material_id": 222,
+   "latin": "Spiraea japonica 'Little Princess'",
+   "npm_object": "Spiraea_japonica_Little_Princess_NPM",
+   "vpm_object": "Spiraea_japonica_Little_Princess_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "a_uncovered >= 20.2027 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 80,
+    "degenerate_faces": 0,
+    "area_m2": 20.225982543332705,
+    "uncovered_m2": 20.205196360795068,
+    "uncovered_lower_m2": 20.202708777769224
+   },
+   "vpm": {
+    "faces": 20,
+    "degenerate_faces": 0,
+    "area_m2": 14.596652304146243,
+    "uncovered_m2": 14.5758769999022,
+    "uncovered_lower_m2": 14.573391850783299
+   },
+   "area_difference_m2": 5.629330239186462
+  },
+  {
+   "material_id": 223,
+   "latin": "Stephanandra incisa 'Crispa'",
+   "npm_object": "Stephanandra_incisa_Crispa_NPM",
+   "vpm_object": "Stephanandra_incisa_Crispa_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 19.8819 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 7.380534768782538,
+    "uncovered_m2": 7.362897540608621,
+    "uncovered_lower_m2": 7.360895604475109
+   },
+   "vpm": {
+    "faces": 90,
+    "degenerate_faces": 0,
+    "area_m2": 19.901616268127732,
+    "uncovered_m2": 19.88395140375802,
+    "uncovered_lower_m2": 19.881942549353276
+   },
+   "area_difference_m2": 12.521081499345193
+  },
+  {
+   "material_id": 224,
+   "latin": "Pinus mugo",
+   "npm_object": "Pinus_mugo_NPM",
+   "vpm_object": "Pinus_mugo_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 4.6041 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 3.7665396195308274,
+    "uncovered_m2": 3.760851661958895,
+    "uncovered_lower_m2": 3.760172133358601
+   },
+   "vpm": {
+    "faces": 64,
+    "degenerate_faces": 0,
+    "area_m2": 4.6104643459125345,
+    "uncovered_m2": 4.604776820170277,
+    "uncovered_lower_m2": 4.604097410964175
+   },
+   "area_difference_m2": 0.8439247263817071
+  },
+  {
+   "material_id": 225,
+   "latin": "Spiraea japonica",
+   "npm_object": "Spiraea_japonica_NPM",
+   "vpm_object": "Spiraea_japonica_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 7.44268 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 20,
+    "degenerate_faces": 0,
+    "area_m2": 3.670467123257849,
+    "uncovered_m2": 3.6476242858341728,
+    "uncovered_lower_m2": 3.6450374146025526
+   },
+   "vpm": {
+    "faces": 160,
+    "degenerate_faces": 0,
+    "area_m2": 7.468106241076822,
+    "uncovered_m2": 7.445261856379192,
+    "uncovered_lower_m2": 7.442675061164174
+   },
+   "area_difference_m2": 3.797639117818973
+  },
+  {
+   "material_id": 226,
+   "latin": "Berberis thunbergii",
+   "npm_object": "Berberis_thunbergii_NPM",
+   "vpm_object": "Berberis_thunbergii_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 12.2019 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 6.106428898763993,
+    "uncovered_m2": 6.096623235034468,
+    "uncovered_lower_m2": 6.095443961935711
+   },
+   "vpm": {
+    "faces": 20,
+    "degenerate_faces": 0,
+    "area_m2": 12.212871558286706,
+    "uncovered_m2": 12.203063996148718,
+    "uncovered_lower_m2": 12.201884241559236
+   },
+   "area_difference_m2": 6.106442659522712
+  },
+  {
+   "material_id": 227,
+   "latin": "Cornus alba 'Sibirica Variegata'",
+   "npm_object": "Cornus_alba_Sibirica_Variegata_NPM",
+   "vpm_object": "Cornus_alba_Sibirica_Variegata_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 12.9912 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 10.945544381178571,
+    "uncovered_m2": 2.0526654471210453,
+    "uncovered_lower_m2": 2.0522454863726254
+   },
+   "vpm": {
+    "faces": 20,
+    "degenerate_faces": 0,
+    "area_m2": 21.89114535434544,
+    "uncovered_m2": 12.99235579711027,
+    "uncovered_lower_m2": 12.991222355852992
+   },
+   "area_difference_m2": 10.945600973166869
+  },
+  {
+   "material_id": 230,
+   "latin": "Dasiphora fruticosa",
+   "npm_object": "Dasiphora_fruticosa_NPM",
+   "vpm_object": "Dasiphora_fruticosa_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 6.68778 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 4.193036641245774,
+    "uncovered_m2": 2.4971062085235713,
+    "uncovered_lower_m2": 2.49651275294063
+   },
+   "vpm": {
+    "faces": 20,
+    "degenerate_faces": 0,
+    "area_m2": 8.386029769109026,
+    "uncovered_m2": 6.6885581094858155,
+    "uncovered_lower_m2": 6.687784260847316
+   },
+   "area_difference_m2": 4.192993127863252
+  },
+  {
+   "material_id": 234,
+   "latin": "Physocarpus opulifolius 'Luteus'",
+   "npm_object": "Physocarpus_opulifolius_Luteus_NPM",
+   "vpm_object": "Physocarpus_opulifolius_Luteus_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 12.9912 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 10.945544381178571,
+    "uncovered_m2": 2.0526654471210453,
+    "uncovered_lower_m2": 2.0522454863726254
+   },
+   "vpm": {
+    "faces": 20,
+    "degenerate_faces": 0,
+    "area_m2": 21.89114535434544,
+    "uncovered_m2": 12.99235579711027,
+    "uncovered_lower_m2": 12.99122235585299
+   },
+   "area_difference_m2": 10.945600973166869
+  },
+  {
+   "material_id": 238,
+   "latin": "Spiraea japonica 'Firelight'",
+   "npm_object": "Spiraea_japonica_Firelight_NPM",
+   "vpm_object": "Spiraea_japonica_Firelight_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "area_difference >= 3.54139 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 3.5411734391790346,
+    "uncovered_m2": 0.0,
+    "uncovered_lower_m2": 0.0
+   },
+   "vpm": {
+    "faces": 20,
+    "degenerate_faces": 0,
+    "area_m2": 7.082561161651925,
+    "uncovered_m2": 3.5388111920885885,
+    "uncovered_lower_m2": 3.538462959274648
+   },
+   "area_difference_m2": 3.5413877224728902
+  },
+  {
+   "material_id": 239,
+   "latin": "Spiraea × bumalda",
+   "npm_object": "Spiraea_bumalda_NPM",
+   "vpm_object": "Spiraea_bumalda_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 10.2102 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 7.298284872088184,
+    "uncovered_m2": 2.915532340627622,
+    "uncovered_lower_m2": 2.914988443668747
+   },
+   "vpm": {
+    "faces": 20,
+    "degenerate_faces": 0,
+    "area_m2": 14.596536991241122,
+    "uncovered_m2": 10.21106241875473,
+    "uncovered_lower_m2": 10.210195602608383
+   },
+   "area_difference_m2": 7.298252119152938
+  },
+  {
+   "material_id": 401,
+   "latin": "Symphyotrichum novae-angliae",
+   "npm_object": "Symphyotrichum_novae_angliae_NPM",
+   "vpm_object": "Symphyotrichum_novae_angliae_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 10.32 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 36,
+    "degenerate_faces": 0,
+    "area_m2": 5.12398640646307,
+    "uncovered_m2": 5.084296132530728,
+    "uncovered_lower_m2": 5.080516722499594
+   },
+   "vpm": {
+    "faces": 144,
+    "degenerate_faces": 0,
+    "area_m2": 10.363552700410597,
+    "uncovered_m2": 10.323811673383386,
+    "uncovered_lower_m2": 10.320020906397415
+   },
+   "area_difference_m2": 5.239566293947528
+  },
+  {
+   "material_id": 402,
+   "latin": "Echinacea purpurea",
+   "npm_object": "Echinacea_purpurea_NPM",
+   "vpm_object": "Echinacea_purpurea_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 8.08424 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 32,
+    "degenerate_faces": 0,
+    "area_m2": 4.000391432302094,
+    "uncovered_m2": 3.9703539675612816,
+    "uncovered_lower_m2": 3.967672203000909
+   },
+   "vpm": {
+    "faces": 128,
+    "degenerate_faces": 0,
+    "area_m2": 8.116951243313537,
+    "uncovered_m2": 8.086922693883034,
+    "uncovered_lower_m2": 8.084241139074303
+   },
+   "area_difference_m2": 4.1165598110114425
+  },
+  {
+   "material_id": 403,
+   "latin": "Heuchera",
+   "npm_object": "Heuchera_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 404,
+   "latin": "Actaea simplex 'Atropurpurea'",
+   "npm_object": "Actaea_simplex_Atropurpurea_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 405,
+   "latin": "Filipendula ulmaria",
+   "npm_object": "Filipendula_ulmaria_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 406,
+   "latin": "Miscanthus sinensis",
+   "npm_object": "Miscanthus_sinensis_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 407,
+   "latin": "Eutrochium maculatum",
+   "npm_object": "Eutrochium_maculatum_NPM",
+   "vpm_object": "Eutrochium_maculatum_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "area_difference >= 4.0537 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 64,
+    "degenerate_faces": 0,
+    "area_m2": 4.063167662767251,
+    "uncovered_m2": 1.5265566588595902e-16,
+    "uncovered_lower_m2": 1.5265566588595902e-16
+   },
+   "vpm": {
+    "faces": 128,
+    "degenerate_faces": 0,
+    "area_m2": 8.116864379543882,
+    "uncovered_m2": 4.047460234235585,
+    "uncovered_lower_m2": 4.046798876661072
+   },
+   "area_difference_m2": 4.053696716776631
+  },
+  {
+   "material_id": 408,
+   "latin": "Calamagrostis brachytricha",
+   "npm_object": "Calamagrostis_brachytricha_NPM",
+   "vpm_object": "Calamagrostis_brachytricha_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 17.678 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 40,
+    "degenerate_faces": 0,
+    "area_m2": 8.791250814854504,
+    "uncovered_m2": 8.718954675524794,
+    "uncovered_lower_m2": 8.712229354310256
+   },
+   "vpm": {
+    "faces": 160,
+    "degenerate_faces": 0,
+    "area_m2": 17.75527842499071,
+    "uncovered_m2": 17.684507257848495,
+    "uncovered_lower_m2": 17.677977464320414
+   },
+   "area_difference_m2": 8.964027610136206
+  },
+  {
+   "material_id": 409,
+   "latin": "Calamagrostis × acutiflora 'Karl Foerster'",
+   "npm_object": "Calamagrostis_acutiflora_Karl_Foerster_NPM",
+   "vpm_object": null,
+   "vpm_status": "unconfirmed",
+   "catalogue_vpm_identity": null,
+   "verdict": "no_vpm",
+   "reason": "catalogue species has no VPM object",
+   "npm": null,
+   "vpm": null,
+   "area_difference_m2": null
+  },
+  {
+   "material_id": 501,
+   "latin": "Parthenocissus quinquefolia",
+   "npm_object": "Parthenocissus_quinquefolia_NPM",
+   "vpm_object": "Parthenocissus_quinquefolia_VPM",
+   "vpm_status": "available",
+   "catalogue_vpm_identity": "unverified",
+   "verdict": "different",
+   "reason": "b_uncovered >= 4.10812 m2 >= 1e-06 m2",
+   "npm": {
+    "faces": 10,
+    "degenerate_faces": 0,
+    "area_m2": 2.590447610531602,
+    "uncovered_m2": 1.5249800408806589,
+    "uncovered_lower_m2": 1.52370441541492
+   },
+   "vpm": {
+    "faces": 20,
+    "degenerate_faces": 0,
+    "area_m2": 5.180849667377733,
+    "uncovered_m2": 4.109801943306221,
+    "uncovered_lower_m2": 4.108118754259088
+   },
+   "area_difference_m2": 2.590402056846131
+  }
+ ]
+}

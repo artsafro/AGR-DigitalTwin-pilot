@@ -12,7 +12,10 @@ back from it (a reveal, a chamfer) gives the depth. Bridging the mouths closes t
 level contour (a door from the floor no longer opens the storey end). An opening must sit on a
 contour wall and run along it; a break off the contour (an inner wall, a courtyard) or a break
 whose mouth is not found is a question, never an invented facade opening. Glass panes (meshes
-named *glass*) parallel to a contour wall project onto it. Faces with an opening material id
+named *glass*) parallel to a contour wall project onto it. A pane or an opening plane belongs to the
+floor of its bottom (within LEVEL_JOINT_M) before panes are grouped and materials matched, and is
+measured on that floor's facade; a part off it that another crossed floor would hold is a question
+`glass-off-facade` / `plane-off-facade` (#34). Faces with an opening material id
 (group `opening` of standards/material_id_ranges.yaml, ADR 0001) are opening planes: they are
 left out of the body, so the hole stays the anchor, and the plane gives the opening its
 material id. window_type stays null until the window library (#4). A door recess of the contour
@@ -304,31 +307,50 @@ def vertical_parts(v, tris, parts):
     return out, flat
 
 
+def _on_floor(pts, normal, li, floors, polys, kind):
+    """The part measured on floor li's contour, or None when it is not on that facade (#34)."""
+    centre = pts[:, :2].mean(axis=0)
+    half = float(np.ptp(pts[:, :2], axis=0).max()) / 2
+    w, origin, u, _ = _wall_frame(floors[li]["contour"], centre, half)
+    wall_n = np.array([u[1], -u[0]])                         # outward for a CCW contour
+    along = (pts[:, :2] - origin) @ u
+    if (abs(float(normal @ wall_n)) < np.cos(np.radians(ALONG_DEG)) or float(np.ptp(along)) <= 1e-3
+            or polys[li].exterior.distance(shapely.Point(centre)) > PANE_WALL_M):
+        return None
+    at = max(0.0, -float((centre - origin) @ wall_n))
+    # the glass position is no depth (C24, OD1; review 2 of PR #76): kept as glass_at for the searches only
+    return {"level": li, "wall": w, "x0": float(along.min()), "x1": float(along.max()),
+            "z0": float(pts[:, 2].min()), "z1": float(pts[:, 2].max()),
+            "depth": 0.0 if kind == "glass" else at, "glass_at": at if kind == "glass" else 0.0,
+            "source": kind, "parts": 1}
+
+
 def _project(parts, levels, floors, polys, kind):
-    """Project vertical parts parallel to a contour wall onto it: one item per part."""
-    out, skipped = [], 0
+    """One item per part on the facade of the floor of its bottom (#34). A part off that facade
+    that another floor it crosses would hold is an off record."""
+    out, skipped, off = [], 0, []
+    n_floors = len(floors)
     for pts, normal in parts:
         zc = float(pts[:, 2].mean())
-        li = next((i for i in range(len(floors)) if levels[i]["elev_m"] <= zc < levels[i + 1]["elev_m"]), None)
-        if li is None:
+        if not (levels[0]["elev_m"] <= zc < levels[n_floors]["elev_m"]):
             skipped += 1
             continue
-        centre = pts[:, :2].mean(axis=0)
-        half = float(np.ptp(pts[:, :2], axis=0).max()) / 2
-        w, origin, u, _ = _wall_frame(floors[li]["contour"], centre, half)
-        wall_n = np.array([u[1], -u[0]])                         # outward for a CCW contour
-        along = (pts[:, :2] - origin) @ u
-        if (abs(float(normal @ wall_n)) < np.cos(np.radians(ALONG_DEG)) or float(np.ptp(along)) <= 1e-3
-                or polys[li].exterior.distance(shapely.Point(centre)) > PANE_WALL_M):
-            skipped += 1
+        z0 = float(pts[:, 2].min()) if len(pts) else 0.0
+        z1 = float(pts[:, 2].max()) if len(pts) else 0.0
+        li = max([k for k in range(n_floors) if levels[k]["elev_m"] <= z0 + LEVEL_JOINT_M] or [0])
+        item = _on_floor(pts, normal, li, floors, polys, kind)
+        if item is not None:
+            out.append(item)
             continue
-        at = max(0.0, -float((centre - origin) @ wall_n))
-        # the glass position is no depth (C24, OD1; review 2 of PR #76): kept as glass_at for the searches only
-        out.append({"level": li, "wall": w, "x0": float(along.min()), "x1": float(along.max()),
-                    "z0": float(pts[:, 2].min()), "z1": float(pts[:, 2].max()),
-                    "depth": 0.0 if kind == "glass" else at, "glass_at": at if kind == "glass" else 0.0,
-                    "source": kind, "parts": 1})
-    return out, skipped
+        skipped += 1
+        # a higher floor the part crosses would hold it: a question, not a silent skip (#34)
+        last = max([k for k in range(n_floors) if levels[k]["elev_m"] < z1 - LEVEL_JOINT_M] or [0])
+        if any(_on_floor(pts, normal, k, floors, polys, kind) is not None for k in range(li + 1, last + 1)):
+            direction = np.array([-normal[1], normal[0]])
+            proj = pts[:, :2] @ direction
+            off.append({"kind": f"{kind}-off-facade", "p": pts[int(np.argmin(proj)), :2].copy(),
+                        "q": pts[int(np.argmax(proj)), :2].copy(), "z0": z0, "z1": z1, "level": li})
+    return out, skipped, off
 
 
 def _within(a, b, axis):
@@ -483,7 +505,9 @@ def _across_levels(by_level, levels, floors):
 def _owners(by_level, levels, floors):
     """Every opening belongs to the floor of its bottom and records the highest level it crosses,
     from its whole height: one pane through a level line is one record too (PR #33 review 2).
-    A record moved down is re-measured on the lower floor's contour wall."""
+    Glass and opening planes are already owned by their bottom in `_project` (#34); this moves
+    only holes (door recesses, sources). A record moved down is re-measured on the lower floor's
+    contour wall."""
     top_floor = len(floors) - 1
     for li in range(len(by_level)):
         for o in list(by_level[li]):
@@ -654,7 +678,7 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
     thresholds = thresholds or {}
     frame = thresholds.get("glass_frame_m", GLASS_FRAME_M)
     depth_exception = thresholds.get("depth_exception_m", DEPTH_EXCEPTION_M)
-    glass, glass_skipped = _project(panes, levels, floors, polys, "glass")
+    glass, glass_skipped, glass_off = _project(panes, levels, floors, polys, "glass")
     glass = _merge_panes(glass)
     rough_from_reveal = 0
     for g in glass:
@@ -673,12 +697,14 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
             rough_from_reveal += 1
         else:
             g["no_reveal"] = True                # size unknown: the glass stands in, and a question asks (#36)
-    plane_items, planes_skipped = [], 0
+    plane_items, planes_skipped, plane_off = [], 0, []
     for pts, normal, mid in planes:
-        items, skipped = _project([(pts, normal)], levels, floors, polys, "plane")
-        plane_items.extend({**it, "material_id": mid} for it in items)
+        items, skipped, off = _project([(pts, normal)], levels, floors, polys, "plane")
+        plane_items.extend({"pts": pts, "normal": normal, "material_id": mid, "level": it["level"]} for it in items)
         planes_skipped += skipped
+        plane_off.extend(off)
     by_level, breaks = [], []
+    breaks.extend(glass_off + plane_off)          # off the owner facade, held by a floor it crosses (#34)
     for li, floor in enumerate(floors):
         holes, off = _hole_openings(mouth_spans_by_level[li], floor["contour"], polys[li])
         for h in holes:                          # a through hole of a door's size is a door (#31)
@@ -705,7 +731,18 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
             if not matches:
                 holes.append(g)
         for h in holes:
-            over = [pl for pl in plane_items if pl["level"] == li and _overlap(h, pl)]
+            # a plane of any floor, measured on this floor's facade (#34, review of PR #241):
+            # the opening's own floor keeps the overlap tolerance; another floor only when the z spans share
+            # more than a frame joint (LEVEL_JOINT_M), so a plane just past a level line stays on its floor
+            over = []
+            for pl in plane_items:
+                if pl["level"] != li:
+                    z0, z1 = float(pl["pts"][:, 2].min()), float(pl["pts"][:, 2].max())
+                    if min(z1, h["z1"]) - max(z0, h["z0"]) <= LEVEL_JOINT_M:
+                        continue
+                measured = _on_floor(pl["pts"], pl["normal"], li, floors, polys, "plane")
+                if measured is not None and _overlap(h, measured):
+                    over.append({**measured, "material_id": pl["material_id"]})
             ids = {pl["material_id"] for pl in over}
             if over:                                 # depth = facade -> back polygon, the opening plane (C24 final,
                 h["depth"] = max(pl["depth"] for pl in over)   # 2026-10-10); glass never sets the depth
@@ -759,6 +796,7 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
                 footprints.append({"level": lj, "z0": o["z0"], "z1": o["z1"], "geom": geom})
         per_floor.append(items)
     report = {"glass_openings": len(glass), "glass_parts_skipped": glass_skipped,
+              "parts_off_owner_facade": len(glass_off) + len(plane_off),
               "rough_from_reveal": rough_from_reveal,
               "openings_size_unknown": sum(1 for b in breaks if b["kind"] == "opening-size-unknown"),
               "source_openings": sum(len(x) for x in (sources or [])),

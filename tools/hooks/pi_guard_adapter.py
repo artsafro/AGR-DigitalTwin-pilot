@@ -2,6 +2,8 @@
 
 Empty hook stdout with exit zero is Claude's implicit allow. All adapter,
 process and protocol errors fail closed; no shell or model input is executed.
+PreToolUse hook execution timeout defaults to HOOK_TIMEOUT_SECONDS (10 seconds),
+overridable via the PI_GUARD_HOOK_TIMEOUT_SECONDS environment variable.
 """
 import json
 import os
@@ -13,6 +15,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 TOOLS = {"bash": "Bash", "powershell": "PowerShell", "edit": "Edit", "write": "Write"}
 HOOKS = ("guard.py", "pipeline_gate.py")
+HOOK_TIMEOUT_SECONDS = 10
 
 
 def preview_edit(tin, path):
@@ -98,10 +101,12 @@ def evaluate(call):
     payload = json.dumps({"tool_name": tool, "tool_input": tin,
                           "hook_event_name": "PreToolUse", "cwd": str(cwd)})
     env = {**os.environ, "CLAUDE_PROJECT_DIR": str(ROOT), "PYTHONIOENCODING": "utf-8"}
+    raw_timeout = os.environ.get("PI_GUARD_HOOK_TIMEOUT_SECONDS")
+    timeout = float(raw_timeout) if raw_timeout is not None else HOOK_TIMEOUT_SECONDS
     for name in HOOKS:
         result = subprocess.run([sys.executable, str(ROOT / ".claude/hooks" / name)],
                                 input=payload, text=True, encoding="utf-8", capture_output=True,
-                                cwd=cwd, env=env, timeout=10)
+                                cwd=cwd, env=env, timeout=timeout)
         if result.returncode:
             return {"decision": "block", "reason": f"{name} failed (exit {result.returncode}): {result.stderr.strip()}"}
         if not result.stdout.strip():

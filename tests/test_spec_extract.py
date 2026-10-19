@@ -739,3 +739,23 @@ def test_a_screen_on_the_parapet_does_not_hide_its_thickness():
     dump["meshes"].append(_screens(([(0, 0), (3, 0), (3, 3), (0, 3)], 9.0)).dump())
     spec, report = extract_spec(dump, {**OBJECT, "roof_screens": ["Screens"]})
     assert spec.roof.parapet_thickness_m == 0.2 and report["roof"]["parapet_thickness"]["by"] == "measured"
+
+
+def test_a_shaft_under_a_screen_enclosure_is_still_a_shaft():
+    """Issue #93: shaft walls under a marked screen stay in the roof check."""
+    ring = [[2, 2], [4, 2], [4, 4], [2, 4]]
+    _, bare = ring_building(ring, roof_z=6.4, edge_z=6.6, roof=False, shaft=True)
+    _, d = ring_building(ring, roof_z=6.4, edge_z=6.6, roof=False, shaft=True)
+    d["meshes"].append(_screens(([(1.5, 1.5), (4.5, 1.5), (4.5, 4.5), (1.5, 4.5)], 9.0)).dump())
+    spec, report = extract_spec(d, {**OBJECT, "roof_screens": ["Screens"]})
+    _, bare_report = extract_spec(bare, OBJECT)
+    assert report["roof"]["closed_share"] == bare_report["roof"]["closed_share"]
+    assert report["roof"]["plane_m"] == 6.6 and len(spec.roof_structures) == 1
+
+
+def test_an_unlined_opening_under_a_screen_enclosure_still_asks():
+    """Issue #93: an opening with no shaft walls under the enclosure is still a missing roof."""
+    _, d = ring_building([[2, 2], [4, 2], [4, 4], [2, 4]], roof_z=6.4, edge_z=6.6, roof=False, shaft=False)
+    d["meshes"].append(_screens(([(1.5, 1.5), (4.5, 1.5), (4.5, 4.5), (1.5, 4.5)], 9.0)).dump())
+    with pytest.raises(SpecError, match="not a shaft"):
+        extract_spec(d, {**OBJECT, "roof_screens": ["Screens"]})

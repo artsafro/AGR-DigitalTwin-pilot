@@ -1,0 +1,3454 @@
+{
+ "schema": "flora-library-v1",
+ "library_file": "C:/x/flora-library/v003/flora-library-v003.max",
+ "id_ranges": {
+  "tree": [
+   101,
+   199
+  ],
+  "bush": [
+   201,
+   299
+  ],
+  "hedge": [
+   301,
+   399
+  ],
+  "flower": [
+   401,
+   499
+  ],
+  "climber": [
+   501,
+   599
+  ]
+ },
+ "retired_ids": [],
+ "species": [
+  {
+   "material_id": 101,
+   "latin": "Tilia cordata",
+   "russian": "Липа мелколистная",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "library-002 is a hidden near-copy of library-001",
+   "objects": {
+    "NPM": "Tilia_cordata_NPM",
+    "VPM": "Tilia_cordata_VPM"
+   },
+   "npm": {
+    "entry_id": "library-028",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Lipa_melkolistnaya_HP",
+    "triangles": 357,
+    "height_m": 6.094,
+    "crown_diameter_m": 4.227,
+    "basis": "LP -> HP"
+   },
+   "vpm": {
+    "entry_id": "library-001",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "19_Lipa_HP",
+    "triangles": 830,
+    "height_m": 3.327,
+    "crown_diameter_m": 2.243,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "library-002",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "19_Lipa_LP",
+     "reason": "alternate source: kept library-028 (LP -> HP before unlabelled); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 6.094,
+   "crown_diameter_m": 4.227,
+   "triangles": {
+    "NPM": 357,
+    "VPM": 830
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/tilia-cordata/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/tilia-cordata/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
+   }
+  },
+  {
+   "material_id": 102,
+   "latin": "Betula pendula",
+   "russian": "Берёза повислая",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "maps approved in #190",
+   "objects": {
+    "NPM": "Betula_pendula_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-006",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Bereza_LP",
+    "triangles": 446,
+    "height_m": 5.016,
+    "crown_diameter_m": 3.652,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 5.016,
+   "crown_diameter_m": 3.652,
+   "triangles": {
+    "NPM": 446,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/betula-pendula/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/betula-pendula/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-15 'Одобряю', review-sheet-v001.png (#190)"
+   }
+  },
+  {
+   "material_id": 103,
+   "latin": "Crataegus mollis",
+   "russian": "Боярышник мягкий",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Crataegus_mollis_NPM",
+    "VPM": "Crataegus_mollis_VPM"
+   },
+   "npm": {
+    "entry_id": "library-007",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Boyaryshnik_LP",
+    "triangles": 488,
+    "height_m": 3.832,
+    "crown_diameter_m": 4.676,
+    "basis": "LP -> HP"
+   },
+   "vpm": {
+    "entry_id": "library-039",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_boyaryshnyck_obyknovennyi001",
+    "triangles": 574,
+    "height_m": 3.191,
+    "crown_diameter_m": 3.266,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 3.832,
+   "crown_diameter_m": 4.676,
+   "triangles": {
+    "NPM": 488,
+    "VPM": 574
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/crataegus-mollis/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/crataegus-mollis/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate b1db952c0014; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 104,
+   "latin": "Padus maackii",
+   "russian": "Черёмуха Маака",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "syn. Prunus maackii",
+   "objects": {
+    "NPM": "Padus_maackii_NPM",
+    "VPM": "Padus_maackii_VPM"
+   },
+   "npm": {
+    "entry_id": "library-009",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Cheryomukha_Maaka_LP",
+    "triangles": 346,
+    "height_m": 2.804,
+    "crown_diameter_m": 2.484,
+    "basis": "LP -> HP"
+   },
+   "vpm": {
+    "entry_id": "library-042",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_cheryomuha_maakha",
+    "triangles": 394,
+    "height_m": 5.156,
+    "crown_diameter_m": 4.465,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 2.804,
+   "crown_diameter_m": 2.484,
+   "triangles": {
+    "NPM": 346,
+    "VPM": 394
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/padus-maackii/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/padus-maackii/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 70053ab9231c; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 105,
+   "latin": "Amelanchier lamarckii",
+   "russian": "Ирга Ламарка",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "label typo 'Игра'; FLORIO calls it a bush",
+   "objects": {
+    "NPM": "Amelanchier_lamarckii_NPM",
+    "VPM": "Amelanchier_lamarckii_VPM"
+   },
+   "npm": {
+    "entry_id": "project-009",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_irga_lamarka_t1_h150_low",
+    "triangles": 979,
+    "height_m": 1.553,
+    "crown_diameter_m": 1.502,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-020",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Irga_Lamarka_HP",
+    "triangles": 4894,
+    "height_m": 4.257,
+    "crown_diameter_m": 4.724,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "library-021",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "Irga_Lamarka_LP",
+     "reason": "not selected as separate VPM: kept NPM project-009; VPM identity: unverified, see #305"
+    },
+    {
+     "entry_id": "library-046",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "SM_irga_lamarka_kust",
+     "reason": "not selected as separate VPM: kept NPM project-009; VPM identity: unverified, see #305"
+    },
+    {
+     "entry_id": "project-031",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "irga_lamarka_t1_h150_high",
+     "reason": "alternate source: kept library-020 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 1.553,
+   "crown_diameter_m": 1.502,
+   "triangles": {
+    "NPM": 979,
+    "VPM": 4894
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max",
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/amelanchier-lamarckii/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/amelanchier-lamarckii/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 095bd50fc73b; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 106,
+   "latin": "Acer tataricum subsp. ginnala",
+   "russian": "Клён Гиннала",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "syn. Acer ginnala",
+   "objects": {
+    "NPM": "Acer_tataricum_subsp_ginnala_NPM",
+    "VPM": "Acer_tataricum_subsp_ginnala_VPM"
+   },
+   "npm": {
+    "entry_id": "library-031",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Object002",
+    "triangles": 8,
+    "height_m": 4.565,
+    "crown_diameter_m": 4.767,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-024",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Klen_Ginala_HP",
+    "triangles": 830,
+    "height_m": 3.327,
+    "crown_diameter_m": 2.243,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "library-079",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "КЛЕН_LP001",
+     "reason": "alternate source: kept library-031 (fewer triangles); VPM identity: unverified, see #305"
+    },
+    {
+     "entry_id": "project-012",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "_klen_t1_h175_low2",
+     "reason": "alternate source: kept library-031 (library before FLORIO); VPM identity: unverified, see #305"
+    },
+    {
+     "entry_id": "project-034",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "klen_t1_h175_high",
+     "reason": "alternate source: kept library-024 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 4.565,
+   "crown_diameter_m": 4.767,
+   "triangles": {
+    "NPM": 8,
+    "VPM": 830
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/acer-tataricum-subsp-ginnala/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/acer-tataricum-subsp-ginnala/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 853ab2e83bd7; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 107,
+   "latin": "Acer platanoides",
+   "russian": "Клён остролистный",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Acer_platanoides_NPM",
+    "VPM": "Acer_platanoides_VPM"
+   },
+   "npm": {
+    "entry_id": "library-078",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "КЛЕН_LP",
+    "triangles": 10,
+    "height_m": 4.538,
+    "crown_diameter_m": 5.066,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-025",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Klen_ostrolistniy_LP",
+    "triangles": 1070,
+    "height_m": 5.675,
+    "crown_diameter_m": 4.96,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 4.538,
+   "crown_diameter_m": 5.066,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 1070
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/acer-platanoides/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/acer-platanoides/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
+   }
+  },
+  {
+   "material_id": 108,
+   "latin": "Sorbus aucuparia",
+   "russian": "Рябина обыкновенная",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Sorbus_aucuparia_NPM",
+    "VPM": "Sorbus_aucuparia_VPM"
+   },
+   "npm": {
+    "entry_id": "project-013",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_klen_t2_h500_low",
+    "triangles": 125,
+    "height_m": 4.549,
+    "crown_diameter_m": 3.859,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-036",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Ryabina_obiknovennaya_LP",
+    "triangles": 264,
+    "height_m": 3.605,
+    "crown_diameter_m": 2.538,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "project-035",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "klen_t2_h500_high",
+     "reason": "alternate source: kept library-036 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 4.549,
+   "crown_diameter_m": 3.859,
+   "triangles": {
+    "NPM": 125,
+    "VPM": 264
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max",
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/sorbus-aucuparia/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/sorbus-aucuparia/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
+   }
+  },
+  {
+   "material_id": 109,
+   "latin": "Acer tataricum",
+   "russian": "Клён татарский",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Acer_tataricum_NPM",
+    "VPM": "Acer_tataricum_VPM"
+   },
+   "npm": {
+    "entry_id": "project-012",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_klen_t1_h175_low2",
+    "triangles": 125,
+    "height_m": 1.542,
+    "crown_diameter_m": 1.308,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-049",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_klen_tatarsky",
+    "triangles": 2901,
+    "height_m": 7.732,
+    "crown_diameter_m": 8.624,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "library-050",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "SM_klen_tatarsky001",
+     "reason": "not selected as separate VPM: kept NPM project-012; VPM identity: unverified, see #305"
+    },
+    {
+     "entry_id": "project-034",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "klen_t1_h175_high",
+     "reason": "alternate source: kept library-049 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 1.542,
+   "crown_diameter_m": 1.308,
+   "triangles": {
+    "NPM": 125,
+    "VPM": 2901
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max",
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/acer-tataricum/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/acer-tataricum/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate e43147077973; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 110,
+   "latin": "Sorbus commixta 'Dodong'",
+   "russian": "Рябина Додонг",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Sorbus_commixta_Dodong_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-051",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_ryabina_dongdong",
+    "triangles": 339,
+    "height_m": 6.093,
+    "crown_diameter_m": 4.133,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 6.093,
+   "crown_diameter_m": 4.133,
+   "triangles": {
+    "NPM": 339,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/sorbus-commixta-dodong/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/sorbus-commixta-dodong/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 432584abd8b7; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 111,
+   "latin": "Syringa vulgaris 'Krasavitsa Moskvy'",
+   "russian": "Сирень обыкновенная Красавица Москвы",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Syringa_vulgaris_Krasavitsa_Moskvy_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-053",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_siren_krasavica_moskvy",
+    "triangles": 1266,
+    "height_m": 1.736,
+    "crown_diameter_m": 2.343,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 1.736,
+   "crown_diameter_m": 2.343,
+   "triangles": {
+    "NPM": 1266,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/syringa-vulgaris-krasavitsa-moskvy/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/syringa-vulgaris-krasavitsa-moskvy/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate d75fa7e100df; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 112,
+   "latin": "Syringa vulgaris 'Andenken an Ludwig Späth'",
+   "russian": "Сирень обыкновенная Шпет",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Syringa_vulgaris_Andenken_an_Ludwig_Spath_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-054",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_siren_obiknovennaya_shpetta",
+    "triangles": 1266,
+    "height_m": 1.736,
+    "crown_diameter_m": 2.343,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 1.736,
+   "crown_diameter_m": 2.343,
+   "triangles": {
+    "NPM": 1266,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/syringa-vulgaris-andenken-an-ludwig-sp-th/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/syringa-vulgaris-andenken-an-ludwig-sp-th/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 2f497ceaf0a2; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 113,
+   "latin": "Syringa josikaea",
+   "russian": "Сирень венгерская",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "FLORIO row is a bush form",
+   "objects": {
+    "NPM": "Syringa_josikaea_NPM",
+    "VPM": "Syringa_josikaea_VPM"
+   },
+   "npm": {
+    "entry_id": "project-018",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_siren_bush_t1_h150_low",
+    "triangles": 10,
+    "height_m": 1.732,
+    "crown_diameter_m": 1.937,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-055",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_siren_vengerskaya",
+    "triangles": 1266,
+    "height_m": 1.736,
+    "crown_diameter_m": 2.343,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "project-040",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "siren_bush_t1_h150_high",
+     "reason": "alternate source: kept library-055 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 1.732,
+   "crown_diameter_m": 1.937,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 1266
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max",
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/syringa-josikaea/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/syringa-josikaea/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 0bd238ef297a; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 114,
+   "latin": "Pinus nigra",
+   "russian": "Сосна чёрная",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Pinus_nigra_NPM",
+    "VPM": "Pinus_nigra_VPM"
+   },
+   "npm": {
+    "entry_id": "library-084",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "СОСНА_LPP",
+    "triangles": 8,
+    "height_m": 4.565,
+    "crown_diameter_m": 2.889,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-064",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Sosna_churnaya_HP",
+    "triangles": 6267,
+    "height_m": 4.627,
+    "crown_diameter_m": 2.777,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "library-056",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "SM_sosna",
+     "reason": "not selected as separate VPM: kept NPM library-084; VPM identity: unverified, see #305"
+    },
+    {
+     "entry_id": "library-065",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "Sosna_chyornaya_LP",
+     "reason": "not selected as separate VPM: kept NPM library-084; VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 4.565,
+   "crown_diameter_m": 2.889,
+   "triangles": {
+    "NPM": 8,
+    "VPM": 6267
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/pinus-nigra/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/pinus-nigra/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 7a84638525ed; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 115,
+   "latin": "Malus niedzwetzkyana",
+   "russian": "Яблоня Недзвецкого",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "library label 'Яблоня гибрид Недзвецкого'",
+   "objects": {
+    "NPM": "Malus_niedzwetzkyana_NPM",
+    "VPM": "Malus_niedzwetzkyana_VPM"
+   },
+   "npm": {
+    "entry_id": "project-013",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_klen_t2_h500_low",
+    "triangles": 125,
+    "height_m": 4.549,
+    "crown_diameter_m": 3.859,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-061",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_yablonya_hybrid",
+    "triangles": 394,
+    "height_m": 5.703,
+    "crown_diameter_m": 4.938,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "project-035",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "klen_t2_h500_high",
+     "reason": "alternate source: kept library-061 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 4.549,
+   "crown_diameter_m": 3.859,
+   "triangles": {
+    "NPM": 125,
+    "VPM": 394
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max",
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/malus-niedzwetzkyana/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/malus-niedzwetzkyana/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate b03198d4c883; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 116,
+   "latin": "Syringa vulgaris",
+   "russian": "Сирень обыкновенная",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "FLORIO row is a bush form",
+   "objects": {
+    "NPM": "Syringa_vulgaris_NPM",
+    "VPM": "Syringa_vulgaris_VPM"
+   },
+   "npm": {
+    "entry_id": "project-018",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_siren_bush_t1_h150_low",
+    "triangles": 10,
+    "height_m": 1.732,
+    "crown_diameter_m": 1.937,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-062",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Siren_obiknovennaya_LP",
+    "triangles": 614,
+    "height_m": 3.564,
+    "crown_diameter_m": 3.739,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "project-040",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "siren_bush_t1_h150_high",
+     "reason": "alternate source: kept library-062 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 1.732,
+   "crown_diameter_m": 1.937,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 614
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max",
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/syringa-vulgaris/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/syringa-vulgaris/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 223cd7260517; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 117,
+   "latin": "Picea pungens",
+   "russian": "Ель колючая (серебристая)",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "library label 'Ель серебристая'",
+   "objects": {
+    "NPM": "Picea_pungens_NPM",
+    "VPM": "Picea_pungens_VPM"
+   },
+   "npm": {
+    "entry_id": "library-070",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Tree_LP",
+    "triangles": 3065,
+    "height_m": 4.606,
+    "crown_diameter_m": 2.72,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-069",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Tree_HP",
+    "triangles": 6267,
+    "height_m": 4.627,
+    "crown_diameter_m": 2.777,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "project-007",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "_elka_t1_h400_low",
+     "reason": "alternate source: kept library-070 (library before FLORIO); VPM identity: unverified, see #305"
+    },
+    {
+     "entry_id": "project-029",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "elka_t1_h400_high",
+     "reason": "alternate source: kept library-069 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 4.606,
+   "crown_diameter_m": 2.72,
+   "triangles": {
+    "NPM": 3065,
+    "VPM": 6267
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/picea-pungens/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/picea-pungens/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 638323ce536d; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 118,
+   "latin": "Malus 'Evereste'",
+   "russian": "Яблоня Эверест",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Malus_Evereste_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-074",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Yablonya_Evereste_LP",
+    "triangles": 394,
+    "height_m": 3.807,
+    "crown_diameter_m": 3.276,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 3.807,
+   "crown_diameter_m": 3.276,
+   "triangles": {
+    "NPM": 394,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/malus-evereste/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/malus-evereste/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate de78d24ac7b0; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 119,
+   "latin": "Thuja occidentalis",
+   "russian": "Туя западная",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "library label only 'Туя'",
+   "objects": {
+    "NPM": "Thuja_occidentalis_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-086",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "ТУЯ",
+    "triangles": 8,
+    "height_m": 4.565,
+    "crown_diameter_m": 2.889,
+    "basis": "LP"
+   },
+   "vpm": null,
+   "vpm_status": "none",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 4.565,
+   "crown_diameter_m": 2.889,
+   "triangles": {
+    "NPM": 8,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/thuja-occidentalis/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/thuja-occidentalis/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 33151cde1913; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 120,
+   "latin": "Prunus padus",
+   "russian": "Черёмуха обыкновенная",
+   "type": "tree",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Prunus_padus_NPM",
+    "VPM": "Prunus_padus_VPM"
+   },
+   "npm": {
+    "entry_id": "project-003",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_cheremuxa_t1_h400_low",
+    "triangles": 166,
+    "height_m": 4.411,
+    "crown_diameter_m": 3.837,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "project-025",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "cheremuxa_t1_h400_high",
+    "triangles": 494,
+    "height_m": 4.411,
+    "crown_diameter_m": 3.945,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 4.411,
+   "crown_diameter_m": 3.837,
+   "triangles": {
+    "NPM": 166,
+    "VPM": 494
+   },
+   "source_scenes": [
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/prunus-padus/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/prunus-padus/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 3a4011cb54e8; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 201,
+   "latin": "Berberis × ottawensis",
+   "russian": "Барбарис оттавский",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Berberis_ottawensis_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-005",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "BarbarisOttavskiy_HP",
+    "triangles": 64,
+    "height_m": 0.84,
+    "crown_diameter_m": 1.247,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 0.84,
+   "crown_diameter_m": 1.247,
+   "triangles": {
+    "NPM": 64,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/berberis-ottawensis/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/berberis-ottawensis/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 6ab46cd6244e; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 202,
+   "latin": "Crataegus monogyna",
+   "russian": "Боярышник однопестичный",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Crataegus_monogyna_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-008",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Boyaryshnik_odnopestichnyy_LP",
+    "triangles": 72,
+    "height_m": 0.989,
+    "crown_diameter_m": 1.405,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 0.989,
+   "crown_diameter_m": 1.405,
+   "triangles": {
+    "NPM": 72,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/crataegus-monogyna/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/crataegus-monogyna/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 1835fcfc0c0c; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 203,
+   "latin": "Cornus alba",
+   "russian": "Дёрен белый",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Cornus_alba_NPM",
+    "VPM": "Cornus_alba_VPM"
+   },
+   "npm": {
+    "entry_id": "library-011",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "DerenBelyy_LP",
+    "triangles": 64,
+    "height_m": 0.723,
+    "crown_diameter_m": 1.12,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-010",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "DerenBelyy_HP",
+    "triangles": 128,
+    "height_m": 0.723,
+    "crown_diameter_m": 1.122,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "library-043",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "SM_deren_belyi",
+     "reason": "not selected as separate VPM: kept NPM library-011; VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 0.723,
+   "crown_diameter_m": 1.12,
+   "triangles": {
+    "NPM": 64,
+    "VPM": 128
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/cornus-alba/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/cornus-alba/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
+   }
+  },
+  {
+   "material_id": 204,
+   "latin": "Cornus sericea",
+   "russian": "Дёрен отпрысковый",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Cornus_sericea_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-012",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Deren_otprysk_LP",
+    "triangles": 80,
+    "height_m": 0.972,
+    "crown_diameter_m": 1.194,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 0.972,
+   "crown_diameter_m": 1.194,
+   "triangles": {
+    "NPM": 80,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/cornus-sericea/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/cornus-sericea/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 05395f098d96; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 205,
+   "latin": "Physocarpus opulifolius 'Diabolo'",
+   "russian": "Пузыреплодник калинолистный Диабло",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "library label only 'Диабло'",
+   "objects": {
+    "NPM": "Physocarpus_opulifolius_Diabolo_NPM",
+    "VPM": "Physocarpus_opulifolius_Diabolo_VPM"
+   },
+   "npm": {
+    "entry_id": "library-014",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Dyabolo_LP",
+    "triangles": 18,
+    "height_m": 0.99,
+    "crown_diameter_m": 1.354,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-013",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Dyabolo_HP",
+    "triangles": 144,
+    "height_m": 0.99,
+    "crown_diameter_m": 1.406,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 0.99,
+   "crown_diameter_m": 1.354,
+   "triangles": {
+    "NPM": 18,
+    "VPM": 144
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/physocarpus-opulifolius-diabolo/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/physocarpus-opulifolius-diabolo/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate a43aa714eef5; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 206,
+   "latin": "Hydrangea paniculata",
+   "russian": "Гортензия метельчатая",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Hydrangea_paniculata_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-018",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "GortenziyaMetelchataya_LP",
+    "triangles": 36,
+    "height_m": 0.644,
+    "crown_diameter_m": 0.557,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 0.644,
+   "crown_diameter_m": 0.557,
+   "triangles": {
+    "NPM": 36,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/hydrangea-paniculata/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/hydrangea-paniculata/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 3c18795989a4; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 207,
+   "latin": "Hydrangea arborescens",
+   "russian": "Гортензия древовидная",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Hydrangea_arborescens_NPM",
+    "VPM": "Hydrangea_arborescens_VPM"
+   },
+   "npm": {
+    "entry_id": "project-008",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_gortenzia_t1_h100_low",
+    "triangles": 10,
+    "height_m": 1.039,
+    "crown_diameter_m": 1.076,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-019",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Gortenziya_drevovidnaya_LP",
+    "triangles": 80,
+    "height_m": 0.553,
+    "crown_diameter_m": 0.738,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "project-030",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "gortenzia_t1_h100_high",
+     "reason": "alternate source: kept library-019 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 1.039,
+   "crown_diameter_m": 1.076,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 80
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max",
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/hydrangea-arborescens/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/hydrangea-arborescens/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
+   }
+  },
+  {
+   "material_id": 208,
+   "latin": "Salix purpurea 'Mayak'",
+   "russian": "Ива пурпурная Маяк",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Salix_purpurea_Mayak_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-022",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Iva_purpurnaya_Mayak_LP",
+    "triangles": 72,
+    "height_m": 0.989,
+    "crown_diameter_m": 1.405,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 0.989,
+   "crown_diameter_m": 1.405,
+   "triangles": {
+    "NPM": 72,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/salix-purpurea-mayak/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/salix-purpurea-mayak/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate eaba0b2f92da; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 209,
+   "latin": "Cotoneaster lucidus",
+   "russian": "Кизильник блестящий",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Cotoneaster_lucidus_NPM",
+    "VPM": "Cotoneaster_lucidus_VPM"
+   },
+   "npm": {
+    "entry_id": "project-011",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_kizilnik_t1_h100_low",
+    "triangles": 10,
+    "height_m": 0.972,
+    "crown_diameter_m": 1.483,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-048",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_kizilnyk_blestyashiy",
+    "triangles": 112,
+    "height_m": 1.332,
+    "crown_diameter_m": 1.889,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "library-023",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "Kizilnik_blestyashchiy_LP",
+     "reason": "not selected as separate VPM: kept NPM project-011; VPM identity: unverified, see #305"
+    },
+    {
+     "entry_id": "library-089",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "кизильник блестящий_02",
+     "reason": "not selected as separate VPM: kept NPM project-011; VPM identity: unverified, see #305"
+    },
+    {
+     "entry_id": "project-033",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "kizilnik_t1_h100_high",
+     "reason": "alternate source: kept library-048 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 0.972,
+   "crown_diameter_m": 1.483,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 112
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max",
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/cotoneaster-lucidus/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/cotoneaster-lucidus/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 33b7522dc0c5; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 210,
+   "latin": "Juniperus sabina",
+   "russian": "Можжевельник казацкий",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Juniperus_sabina_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-030",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "MozhzhevelnikKz_HP",
+    "triangles": 32,
+    "height_m": 0.403,
+    "crown_diameter_m": 1.189,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 0.403,
+   "crown_diameter_m": 1.189,
+   "triangles": {
+    "NPM": 32,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/juniperus-sabina/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/juniperus-sabina/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 70d50dc8ddbc; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 211,
+   "latin": "Physocarpus opulifolius",
+   "russian": "Пузыреплодник калинолистный",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Physocarpus_opulifolius_NPM",
+    "VPM": "Physocarpus_opulifolius_VPM"
+   },
+   "npm": {
+    "entry_id": "library-035",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "PuzyreplodnikKalinolistnyy_LP",
+    "triangles": 20,
+    "height_m": 0.951,
+    "crown_diameter_m": 0.92,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-034",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "PuzyreplodnikKalinolistnyy_HP",
+    "triangles": 160,
+    "height_m": 0.951,
+    "crown_diameter_m": 0.981,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 0.951,
+   "crown_diameter_m": 0.92,
+   "triangles": {
+    "NPM": 20,
+    "VPM": 160
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/physocarpus-opulifolius/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/physocarpus-opulifolius/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate cc4559b27640; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 212,
+   "latin": "Sorbaria sorbifolia",
+   "russian": "Рябинник рябинолистный",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Sorbaria_sorbifolia_NPM",
+    "VPM": "Sorbaria_sorbifolia_VPM"
+   },
+   "npm": {
+    "entry_id": "project-017",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_riabinnik_t1_h100_low",
+    "triangles": 10,
+    "height_m": 1.075,
+    "crown_diameter_m": 1.459,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-037",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Ryabinnik_ryabinolistnyy_LP",
+    "triangles": 84,
+    "height_m": 0.824,
+    "crown_diameter_m": 0.986,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "project-039",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "riabinnik_t1_h100_high",
+     "reason": "alternate source: kept library-037 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 1.075,
+   "crown_diameter_m": 1.459,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 84
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max",
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/sorbaria-sorbifolia/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/sorbaria-sorbifolia/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 2a7276304fd4; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 213,
+   "latin": "Dasiphora fruticosa 'Goldfinger'",
+   "russian": "Лапчатка кустарниковая Голдфингер",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Dasiphora_fruticosa_Goldfinger_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-038",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_Laptchatka_GoldFinger",
+    "triangles": 112,
+    "height_m": 1.332,
+    "crown_diameter_m": 1.889,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 1.332,
+   "crown_diameter_m": 1.889,
+   "triangles": {
+    "NPM": 112,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/dasiphora-fruticosa-goldfinger/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/dasiphora-fruticosa-goldfinger/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 041c5ee4e8e0; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 214,
+   "latin": "Euonymus alatus",
+   "russian": "Бересклет крылатый",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Euonymus_alatus_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-040",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_bresklet_krylaty",
+    "triangles": 1073,
+    "height_m": 1.706,
+    "crown_diameter_m": 1.686,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 1.706,
+   "crown_diameter_m": 1.686,
+   "triangles": {
+    "NPM": 1073,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/euonymus-alatus/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/euonymus-alatus/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 5e9e3274b5b2; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 215,
+   "latin": "Philadelphus coronarius",
+   "russian": "Чубушник венечный",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "label typo 'Чебушник'",
+   "objects": {
+    "NPM": "Philadelphus_coronarius_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-041",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_chbushnyk_vechny",
+    "triangles": 84,
+    "height_m": 1.504,
+    "crown_diameter_m": 1.664,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 1.504,
+   "crown_diameter_m": 1.664,
+   "triangles": {
+    "NPM": 84,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/philadelphus-coronarius/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/philadelphus-coronarius/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 96d6e3a79ac6; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 216,
+   "latin": "Hydrangea arborescens 'Bounty'",
+   "russian": "Гортензия древовидная Баунти",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Hydrangea_arborescens_Bounty_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-044",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_gortenzia_drevovidnaya_baunti",
+    "triangles": 88,
+    "height_m": 1.407,
+    "crown_diameter_m": 1.892,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [
+    {
+     "entry_id": "library-087",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "гортензия древовидная баунти_02",
+     "reason": "not selected as separate VPM: kept NPM library-044; VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 1.407,
+   "crown_diameter_m": 1.892,
+   "triangles": {
+    "NPM": 88,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/hydrangea-arborescens-bounty/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/hydrangea-arborescens-bounty/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 96cc65db83dc; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 217,
+   "latin": "Hydrangea paniculata 'Limelight'",
+   "russian": "Гортензия метельчатая Лаймлайт",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Hydrangea_paniculata_Limelight_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-045",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_gortenzia_metelchataya_laim_lait",
+    "triangles": 84,
+    "height_m": 1.407,
+    "crown_diameter_m": 1.892,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [
+    {
+     "entry_id": "library-088",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "гортензия метельчатая лайм лайт_02",
+     "reason": "not selected as separate VPM: kept NPM library-045; VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 1.407,
+   "crown_diameter_m": 1.892,
+   "triangles": {
+    "NPM": 84,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/hydrangea-paniculata-limelight/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/hydrangea-paniculata-limelight/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 1f0b735d457b; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 218,
+   "latin": "Viburnum opulus 'Roseum'",
+   "russian": "Калина обыкновенная Бульдене",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "FLORIO 'Boule de Neige' = 'Roseum'",
+   "objects": {
+    "NPM": "Viburnum_opulus_Roseum_NPM",
+    "VPM": "Viburnum_opulus_Roseum_VPM"
+   },
+   "npm": {
+    "entry_id": "project-010",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_kalina_t1_h150_low",
+    "triangles": 10,
+    "height_m": 1.732,
+    "crown_diameter_m": 1.937,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-047",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_kalina_buldenezh",
+    "triangles": 1254,
+    "height_m": 1.736,
+    "crown_diameter_m": 2.262,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "project-032",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "kalina_t1_h150_high",
+     "reason": "alternate source: kept library-047 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 1.732,
+   "crown_diameter_m": 1.937,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 1254
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max",
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/viburnum-opulus-roseum/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/viburnum-opulus-roseum/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 1d52d993ca8b; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 219,
+   "latin": "Sorbaria sorbifolia 'Sem'",
+   "russian": "Рябинник рябинолистный Сэм",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Sorbaria_sorbifolia_Sem_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-052",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_ryabinnik_ryabinolistniy_sam",
+    "triangles": 112,
+    "height_m": 1.332,
+    "crown_diameter_m": 1.889,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [
+    {
+     "entry_id": "library-090",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "рябинник рябиннолистн сэм_02",
+     "reason": "not selected as separate VPM: kept NPM library-052; VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 1.332,
+   "crown_diameter_m": 1.889,
+   "triangles": {
+    "NPM": 112,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/sorbaria-sorbifolia-sem/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/sorbaria-sorbifolia-sem/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 4351f9e31042; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 220,
+   "latin": "Spiraea betulifolia 'Tor'",
+   "russian": "Спирея берёзолистная Тор",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Spiraea_betulifolia_Tor_NPM",
+    "VPM": "Spiraea_betulifolia_Tor_VPM"
+   },
+   "npm": {
+    "entry_id": "project-021",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_spireya_t2_h60_low",
+    "triangles": 10,
+    "height_m": 0.618,
+    "crown_diameter_m": 1.284,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-057",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_spireya_berezolistnaya_tor",
+    "triangles": 120,
+    "height_m": 1.406,
+    "crown_diameter_m": 1.931,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "project-043",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "spireya_t2_h60_high",
+     "reason": "alternate source: kept library-057 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 0.618,
+   "crown_diameter_m": 1.284,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 120
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max",
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/spiraea-betulifolia-tor/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/spiraea-betulifolia-tor/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate c6f378200152; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 221,
+   "latin": "Spiraea × cinerea 'Grefsheim'",
+   "russian": "Спирея серая Грефсхейм",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Spiraea_cinerea_Grefsheim_NPM",
+    "VPM": "Spiraea_cinerea_Grefsheim_VPM"
+   },
+   "npm": {
+    "entry_id": "project-020",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_spireya_t1_h100_low",
+    "triangles": 10,
+    "height_m": 1.056,
+    "crown_diameter_m": 1.361,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-058",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_spireya_seraya_grefsheym",
+    "triangles": 84,
+    "height_m": 1.635,
+    "crown_diameter_m": 1.862,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "library-066",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "SpireyaSeraya_LP",
+     "reason": "not selected as separate VPM: kept NPM project-020; VPM identity: unverified, see #305"
+    },
+    {
+     "entry_id": "project-042",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "spireya_t1_h100_high",
+     "reason": "alternate source: kept library-058 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 1.056,
+   "crown_diameter_m": 1.361,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 84
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max",
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/spiraea-cinerea-grefsheim/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/spiraea-cinerea-grefsheim/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 282c23ff3ee1; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 222,
+   "latin": "Spiraea japonica 'Little Princess'",
+   "russian": "Спирея японская Литл Принцесс",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Spiraea_japonica_Little_Princess_NPM",
+    "VPM": "Spiraea_japonica_Little_Princess_VPM"
+   },
+   "npm": {
+    "entry_id": "library-059",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_spireya_yaponskaya_little_princess",
+    "triangles": 80,
+    "height_m": 1.475,
+    "crown_diameter_m": 1.664,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "project-046",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "spireya_t5_h80_high",
+    "triangles": 20,
+    "height_m": 0.86,
+    "crown_diameter_m": 1.788,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "project-024",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "_spireya_t5_h80_low",
+     "reason": "alternate source: kept library-059 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 1.475,
+   "crown_diameter_m": 1.664,
+   "triangles": {
+    "NPM": 80,
+    "VPM": 20
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max",
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/spiraea-japonica-little-princess/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/spiraea-japonica-little-princess/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 8aa149be5ceb; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 223,
+   "latin": "Stephanandra incisa 'Crispa'",
+   "russian": "Стефанандра надрезаннолистная Криспа",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Stephanandra_incisa_Crispa_NPM",
+    "VPM": "Stephanandra_incisa_Crispa_VPM"
+   },
+   "npm": {
+    "entry_id": "project-015",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_mojevelnik_t1_h60_low",
+    "triangles": 10,
+    "height_m": 0.724,
+    "crown_diameter_m": 1.967,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-060",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SM_stefandra_nadrezanolistnaya_kripsa",
+    "triangles": 90,
+    "height_m": 0.624,
+    "crown_diameter_m": 2.088,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "project-037",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "mojevelnik_t1_h60_high",
+     "reason": "alternate source: kept library-060 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 0.724,
+   "crown_diameter_m": 1.967,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 90
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max",
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/stephanandra-incisa-crispa/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/stephanandra-incisa-crispa/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate f38a2c36bdcd; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 224,
+   "latin": "Pinus mugo",
+   "russian": "Сосна горная",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "library-085 unlabelled 'Сосна_Горная_LP'",
+   "objects": {
+    "NPM": "Pinus_mugo_NPM",
+    "VPM": "Pinus_mugo_VPM"
+   },
+   "npm": {
+    "entry_id": "project-019",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_sosna_t1_h60_low",
+    "triangles": 10,
+    "height_m": 0.618,
+    "crown_diameter_m": 1.284,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-063",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SosnaGornaya_LP",
+    "triangles": 64,
+    "height_m": 0.639,
+    "crown_diameter_m": 0.976,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "library-085",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "Сосна_Горная_LP",
+     "reason": "alternate source: kept project-019 (explicit LP before unlabelled); VPM identity: unverified, see #305"
+    },
+    {
+     "entry_id": "project-041",
+     "scene": "FLORIO_2BT_2022.max",
+     "source_name": "sosna_t1_h60_high",
+     "reason": "alternate source: kept library-063 (library before FLORIO); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 0.618,
+   "crown_diameter_m": 1.284,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 64
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max",
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/pinus-mugo/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/pinus-mugo/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate eab5ac5c63f9; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 225,
+   "latin": "Spiraea japonica",
+   "russian": "Спирея японская",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "maps approved in #190",
+   "objects": {
+    "NPM": "Spiraea_japonica_NPM",
+    "VPM": "Spiraea_japonica_VPM"
+   },
+   "npm": {
+    "entry_id": "library-068",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SpireyaYaponskya_LP",
+    "triangles": 20,
+    "height_m": 0.553,
+    "crown_diameter_m": 0.731,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-067",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "SpireyaYaponskya_HP",
+    "triangles": 160,
+    "height_m": 0.553,
+    "crown_diameter_m": 0.739,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 0.553,
+   "crown_diameter_m": 0.731,
+   "triangles": {
+    "NPM": 20,
+    "VPM": 160
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/spiraea-japonica/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/spiraea-japonica/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-15 'Одобряю', review-sheet-v001.png (#190)"
+   }
+  },
+  {
+   "material_id": 226,
+   "latin": "Berberis thunbergii",
+   "russian": "Барбарис Тунберга",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "library-075..077 unlabelled, name from node",
+   "objects": {
+    "NPM": "Berberis_thunbergii_NPM",
+    "VPM": "Berberis_thunbergii_VPM"
+   },
+   "npm": {
+    "entry_id": "project-011",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_kizilnik_t1_h100_low",
+    "triangles": 10,
+    "height_m": 0.972,
+    "crown_diameter_m": 1.483,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "project-033",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "kizilnik_t1_h100_high",
+    "triangles": 20,
+    "height_m": 0.972,
+    "crown_diameter_m": 1.484,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [
+    {
+     "entry_id": "library-075",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "Барбарис_Тунберг_001",
+     "reason": "alternate source: kept project-011 (explicit LP before unlabelled); VPM identity: unverified, see #305"
+    },
+    {
+     "entry_id": "library-076",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "Барбарис_Тунберг_002",
+     "reason": "alternate source: kept project-011 (explicit LP before unlabelled); VPM identity: unverified, see #305"
+    },
+    {
+     "entry_id": "library-077",
+     "scene": "FLORA_Union_v1.max",
+     "source_name": "Барбарис_Тунберг_003",
+     "reason": "alternate source: kept project-011 (explicit LP before unlabelled); VPM identity: unverified, see #305"
+    }
+   ],
+   "height_m": 0.972,
+   "crown_diameter_m": 1.483,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 20
+   },
+   "source_scenes": [
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/berberis-thunbergii/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/berberis-thunbergii/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 4a86d5837735; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 227,
+   "latin": "Cornus alba 'Sibirica Variegata'",
+   "russian": "Дёрен белый Сибирика Вариегата",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Cornus_alba_Sibirica_Variegata_NPM",
+    "VPM": "Cornus_alba_Sibirica_Variegata_VPM"
+   },
+   "npm": {
+    "entry_id": "project-001",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": " _deren_t1_h150_low",
+    "triangles": 10,
+    "height_m": 1.524,
+    "crown_diameter_m": 1.704,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "project-002",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": " deren_t1_h150_high",
+    "triangles": 20,
+    "height_m": 1.525,
+    "crown_diameter_m": 1.704,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 1.524,
+   "crown_diameter_m": 1.704,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 20
+   },
+   "source_scenes": [
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/cornus-alba-sibirica-variegata/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/cornus-alba-sibirica-variegata/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate eaf880af89df; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 230,
+   "latin": "Dasiphora fruticosa",
+   "russian": "Лапчатка кустарниковая",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Dasiphora_fruticosa_NPM",
+    "VPM": "Dasiphora_fruticosa_VPM"
+   },
+   "npm": {
+    "entry_id": "project-014",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_lapchatka_t1_h80_low",
+    "triangles": 10,
+    "height_m": 0.835,
+    "crown_diameter_m": 1.133,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "project-036",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "lapchatka_t1_h80_high",
+    "triangles": 20,
+    "height_m": 0.835,
+    "crown_diameter_m": 1.134,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 0.835,
+   "crown_diameter_m": 1.133,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 20
+   },
+   "source_scenes": [
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/dasiphora-fruticosa/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/dasiphora-fruticosa/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 447e4aa00d98; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 234,
+   "latin": "Physocarpus opulifolius 'Luteus'",
+   "russian": "Пузыреплодник калинолистный Лютеус",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Physocarpus_opulifolius_Luteus_NPM",
+    "VPM": "Physocarpus_opulifolius_Luteus_VPM"
+   },
+   "npm": {
+    "entry_id": "project-016",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_puzireplodnik_t1_h150_low",
+    "triangles": 10,
+    "height_m": 1.524,
+    "crown_diameter_m": 1.704,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "project-038",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "puzireplodnik_t1_h150_high",
+    "triangles": 20,
+    "height_m": 1.525,
+    "crown_diameter_m": 1.704,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 1.524,
+   "crown_diameter_m": 1.704,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 20
+   },
+   "source_scenes": [
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/physocarpus-opulifolius-luteus/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/physocarpus-opulifolius-luteus/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 12418310fddc; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 238,
+   "latin": "Spiraea japonica 'Firelight'",
+   "russian": "Спирея японская Файрлайт",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Spiraea_japonica_Firelight_NPM",
+    "VPM": "Spiraea_japonica_Firelight_VPM"
+   },
+   "npm": {
+    "entry_id": "project-022",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_spireya_t3_h80_low",
+    "triangles": 10,
+    "height_m": 0.841,
+    "crown_diameter_m": 0.952,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "project-044",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "spireya_t3_h80_high",
+    "triangles": 20,
+    "height_m": 0.841,
+    "crown_diameter_m": 0.952,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 0.841,
+   "crown_diameter_m": 0.952,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 20
+   },
+   "source_scenes": [
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/spiraea-japonica-firelight/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/spiraea-japonica-firelight/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate cea543a1a0b6; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 239,
+   "latin": "Spiraea × bumalda",
+   "russian": "Спирея Бумальда",
+   "type": "bush",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Spiraea_bumalda_NPM",
+    "VPM": "Spiraea_bumalda_VPM"
+   },
+   "npm": {
+    "entry_id": "project-023",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_spireya_t4_h80_low",
+    "triangles": 10,
+    "height_m": 0.86,
+    "crown_diameter_m": 1.788,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "project-045",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "spireya_t4_h80_high",
+    "triangles": 20,
+    "height_m": 0.86,
+    "crown_diameter_m": 1.788,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 0.86,
+   "crown_diameter_m": 1.788,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 20
+   },
+   "source_scenes": [
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/spiraea-bumalda/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/spiraea-bumalda/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 80c4b612043b; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 401,
+   "latin": "Symphyotrichum novae-angliae",
+   "russian": "Астра новоанглийская",
+   "type": "flower",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Symphyotrichum_novae_angliae_NPM",
+    "VPM": "Symphyotrichum_novae_angliae_VPM"
+   },
+   "npm": {
+    "entry_id": "library-004",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "AstraNewEng_LP",
+    "triangles": 36,
+    "height_m": 0.639,
+    "crown_diameter_m": 0.951,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-003",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "AstraNewEng_HP",
+    "triangles": 144,
+    "height_m": 0.639,
+    "crown_diameter_m": 0.976,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 0.639,
+   "crown_diameter_m": 0.951,
+   "triangles": {
+    "NPM": 36,
+    "VPM": 144
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/symphyotrichum-novae-angliae/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/symphyotrichum-novae-angliae/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate bd734313c876; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 402,
+   "latin": "Echinacea purpurea",
+   "russian": "Эхинацея пурпурная",
+   "type": "flower",
+   "geometry_basis": "own_mesh",
+   "note": "library label only 'Эхинацея'",
+   "objects": {
+    "NPM": "Echinacea_purpurea_NPM",
+    "VPM": "Echinacea_purpurea_VPM"
+   },
+   "npm": {
+    "entry_id": "library-016",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Ekhinatseya_LP",
+    "triangles": 32,
+    "height_m": 0.562,
+    "crown_diameter_m": 0.881,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-015",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Ekhinatseya_HP",
+    "triangles": 128,
+    "height_m": 0.562,
+    "crown_diameter_m": 0.909,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 0.562,
+   "crown_diameter_m": 0.881,
+   "triangles": {
+    "NPM": 32,
+    "VPM": 128
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/echinacea-purpurea/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/echinacea-purpurea/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate fbd98ad55273; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 403,
+   "latin": "Heuchera",
+   "russian": "Гейхера",
+   "type": "flower",
+   "geometry_basis": "own_mesh",
+   "note": "genus only in label",
+   "objects": {
+    "NPM": "Heuchera_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-017",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Geikhera_HP",
+    "triangles": 80,
+    "height_m": 0.727,
+    "crown_diameter_m": 0.977,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 0.727,
+   "crown_diameter_m": 0.977,
+   "triangles": {
+    "NPM": 80,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/heuchera/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/heuchera/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate c9f154f7fac2; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 404,
+   "latin": "Actaea simplex 'Atropurpurea'",
+   "russian": "Клопогон Атропурпуреа",
+   "type": "flower",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Actaea_simplex_Atropurpurea_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-026",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "KlopogonAtropurpurea_LP",
+    "triangles": 80,
+    "height_m": 0.951,
+    "crown_diameter_m": 0.981,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 0.951,
+   "crown_diameter_m": 0.981,
+   "triangles": {
+    "NPM": 80,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/actaea-simplex-atropurpurea/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/actaea-simplex-atropurpurea/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 1c2cd7aa9584; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 405,
+   "latin": "Filipendula ulmaria",
+   "russian": "Лабазник вязолистный",
+   "type": "flower",
+   "geometry_basis": "own_mesh",
+   "note": "label 'Лабазник обычный'",
+   "objects": {
+    "NPM": "Filipendula_ulmaria_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-027",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "LabzannikObychnyy_HP",
+    "triangles": 64,
+    "height_m": 0.639,
+    "crown_diameter_m": 0.976,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 0.639,
+   "crown_diameter_m": 0.976,
+   "triangles": {
+    "NPM": 64,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/filipendula-ulmaria/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/filipendula-ulmaria/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 978fede1d28d; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 406,
+   "latin": "Miscanthus sinensis",
+   "russian": "Мискантус китайский",
+   "type": "flower",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Miscanthus_sinensis_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-029",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "MiskantusKitayskiy_HP",
+    "triangles": 72,
+    "height_m": 1.188,
+    "crown_diameter_m": 0.839,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 1.188,
+   "crown_diameter_m": 0.839,
+   "triangles": {
+    "NPM": 72,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/miscanthus-sinensis/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/miscanthus-sinensis/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 7300bd0a06f3; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 407,
+   "latin": "Eutrochium maculatum",
+   "russian": "Посконник пятнистый",
+   "type": "flower",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Eutrochium_maculatum_NPM",
+    "VPM": "Eutrochium_maculatum_VPM"
+   },
+   "npm": {
+    "entry_id": "library-033",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "PoskonnikPyatnistyy_LP",
+    "triangles": 64,
+    "height_m": 0.562,
+    "crown_diameter_m": 0.909,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-032",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "PoskonnikPyatnistyy_HP",
+    "triangles": 128,
+    "height_m": 0.562,
+    "crown_diameter_m": 0.909,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 0.562,
+   "crown_diameter_m": 0.909,
+   "triangles": {
+    "NPM": 64,
+    "VPM": 128
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/eutrochium-maculatum/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/eutrochium-maculatum/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate bf863369307b; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 408,
+   "latin": "Calamagrostis brachytricha",
+   "russian": "Вейник остроцветковый",
+   "type": "flower",
+   "geometry_basis": "own_mesh",
+   "note": "Russian label vs Latin needs user check",
+   "objects": {
+    "NPM": "Calamagrostis_brachytricha_NPM",
+    "VPM": "Calamagrostis_brachytricha_VPM"
+   },
+   "npm": {
+    "entry_id": "library-072",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Verbeynyk_LP",
+    "triangles": 40,
+    "height_m": 0.951,
+    "crown_diameter_m": 0.92,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "library-071",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "Verbeynyk_HP",
+    "triangles": 160,
+    "height_m": 0.951,
+    "crown_diameter_m": 0.981,
+    "basis": "LP -> HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 0.951,
+   "crown_diameter_m": 0.92,
+   "triangles": {
+    "NPM": 40,
+    "VPM": 160
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/calamagrostis-brachytricha/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/calamagrostis-brachytricha/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate e683fe151178; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 409,
+   "latin": "Calamagrostis × acutiflora 'Karl Foerster'",
+   "russian": "Вейник остроцветковый Карл Форстер",
+   "type": "flower",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Calamagrostis_acutiflora_Karl_Foerster_NPM",
+    "VPM": null
+   },
+   "npm": {
+    "entry_id": "library-073",
+    "scene": "FLORA_Union_v1.max",
+    "source_name": "VeynikKarl_HP",
+    "triangles": 72,
+    "height_m": 1.188,
+    "crown_diameter_m": 0.839,
+    "basis": "LP -> HP"
+   },
+   "vpm": null,
+   "vpm_status": "unconfirmed",
+   "vpm_identity": null,
+   "vpm_evidence": null,
+   "merged": [],
+   "height_m": 1.188,
+   "crown_diameter_m": 0.839,
+   "triangles": {
+    "NPM": 72,
+    "VPM": null
+   },
+   "source_scenes": [
+    "FLORA_Union_v1.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/calamagrostis-acutiflora-karl-foerster/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/calamagrostis-acutiflora-karl-foerster/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 6998bc62ebe9; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "material_id": 501,
+   "latin": "Parthenocissus quinquefolia",
+   "russian": "Девичий виноград пятилисточковый",
+   "type": "climber",
+   "geometry_basis": "own_mesh",
+   "note": "",
+   "objects": {
+    "NPM": "Parthenocissus_quinquefolia_NPM",
+    "VPM": "Parthenocissus_quinquefolia_VPM"
+   },
+   "npm": {
+    "entry_id": "project-005",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "_devichiy_vinograd_t1_h140_low",
+    "triangles": 10,
+    "height_m": 1.519,
+    "crown_diameter_m": 0.355,
+    "basis": "LP"
+   },
+   "vpm": {
+    "entry_id": "project-027",
+    "scene": "FLORIO_2BT_2022.max",
+    "source_name": "devichiy_vinograd_t1_h140_high",
+    "triangles": 20,
+    "height_m": 1.519,
+    "crown_diameter_m": 0.355,
+    "basis": "HP"
+   },
+   "vpm_status": "available",
+   "vpm_identity": "unverified",
+   "vpm_evidence": {
+    "relation": "unverified",
+    "translation_dev_m": null,
+    "scaled_dev_rel": null
+   },
+   "merged": [],
+   "height_m": 1.519,
+   "crown_diameter_m": 0.355,
+   "triangles": {
+    "NPM": 10,
+    "VPM": 20
+   },
+   "source_scenes": [
+    "FLORIO_2BT_2022.max"
+   ],
+   "maps": {
+    "diffuse": "C:/x/flora-library/v001/maps/parthenocissus-quinquefolia/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/parthenocissus-quinquefolia/opacity-v001.png",
+    "review_status": "approved",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 033267e4e3c4; published via flora library gate (library-batch2-v001.json)"
+   }
+  }
+ ],
+ "gaps": {
+  "unresolved": [
+   {
+    "sources": [
+     "library-080",
+     "library-081",
+     "library-082",
+     "library-083"
+    ],
+    "reason": "unlabelled 'Многоцветник' v1-v4: species unknown (flower-bed mix?)",
+    "status": "unidentified",
+    "source_names": [
+     "Многоцветник_v1",
+     "Многоцветник_v2",
+     "Многоцветник_v3",
+     "Многоцветники_v4"
+    ]
+   }
+  ],
+  "species_without_approved_maps": [],
+  "project_species_shared_stand_in": [
+   {
+    "latin": "Quercus robur",
+    "russian": "Дуб черешчатый",
+    "type": "tree",
+    "material_id": 121,
+    "sources": [
+     "project-006",
+     "project-028"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Tilia cordata 'Greenspire'",
+    "russian": "Липа мелколистная Гринспайр",
+    "type": "tree",
+    "material_id": 122,
+    "sources": [
+     "project-006",
+     "project-028"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Alnus incana",
+    "russian": "Ольха серая",
+    "type": "tree",
+    "material_id": 123,
+    "sources": [
+     "project-006",
+     "project-028"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Picea abies",
+    "russian": "Ель обыкновенная",
+    "type": "tree",
+    "material_id": 124,
+    "sources": [
+     "project-007",
+     "project-029"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Abies koreana",
+    "russian": "Пихта корейская",
+    "type": "tree",
+    "material_id": 125,
+    "sources": [
+     "project-007",
+     "project-029"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Pinus sylvestris",
+    "russian": "Сосна обыкновенная",
+    "type": "tree",
+    "material_id": 126,
+    "sources": [
+     "project-007",
+     "project-029"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Acer platanoides 'Royal Red'",
+    "russian": "Клён остролистный Роял Ред",
+    "type": "tree",
+    "material_id": 127,
+    "sources": [
+     "project-013",
+     "project-035"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Cornus sanguinea 'Anny's Winter Orange'",
+    "russian": "Дёрен кроваво-красный Эннис Винтер Оранж",
+    "type": "bush",
+    "material_id": 228,
+    "sources": [
+     "project-004",
+     "project-026"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Cornus alba 'Red Gnome'",
+    "russian": "Дёрен белый Ред Гном",
+    "type": "bush",
+    "material_id": 229,
+    "sources": [
+     "project-004",
+     "project-026"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Salix repens 'Green Carpet'",
+    "russian": "Ива ползучая Грин Карпет",
+    "type": "bush",
+    "material_id": 231,
+    "sources": [
+     "project-015",
+     "project-037"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Juniperus sabina 'Tamariscifolia'",
+    "russian": "Можжевельник казацкий Тамарисцифолия",
+    "type": "bush",
+    "material_id": 232,
+    "sources": [
+     "project-015",
+     "project-037"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Juniperus sabina 'Mas'",
+    "russian": "Можжевельник казацкий Мас",
+    "type": "bush",
+    "material_id": 233,
+    "sources": [
+     "project-015",
+     "project-037"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Pinus mugo 'Mops'",
+    "russian": "Сосна горная Мопс",
+    "type": "bush",
+    "material_id": 235,
+    "sources": [
+     "project-019",
+     "project-041"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Picea abies 'Nidiformis'",
+    "russian": "Ель обыкновенная Нидиформис",
+    "type": "bush",
+    "material_id": 236,
+    "sources": [
+     "project-019",
+     "project-041"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   {
+    "latin": "Pinus mugo var. mughus",
+    "russian": "Сосна горная Мугус",
+    "type": "bush",
+    "material_id": 237,
+    "sources": [
+     "project-019",
+     "project-041"
+    ],
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   }
+  ]
+ },
+ "counts": {
+  "species": 61,
+  "by_type": {
+   "tree": 20,
+   "bush": 31,
+   "hedge": 0,
+   "flower": 9,
+   "climber": 1
+  },
+  "with_vpm": 38,
+  "merged_duplicates": 37,
+  "maps": {
+   "approved": 61,
+   "pending_review": 0,
+   "missing": 0
+  },
+  "shared_stand_in_gaps": 15,
+  "unresolved": 1
+ }
+}
