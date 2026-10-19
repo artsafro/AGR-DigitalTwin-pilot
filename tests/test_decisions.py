@@ -57,9 +57,12 @@ def test_log_format():
     rows = log_rows()
     assert rows, "no decisions"
     dates = []
-    for number, row in enumerate(rows, 1):
+    previous_id = 0
+    for row in rows:
         assert len(row) == 5 and all(row), row
-        assert row[0] == f"D{number:03d}", f"{row[0]}: ids must run D001, D002, ... without gaps"
+        current_id = int(row[0][1:])
+        assert current_id > previous_id, f"{row[0]}: ids must be unique and increasing (open PRs may reserve gaps)"
+        previous_id = current_id
         dates.append(datetime.date.fromisoformat(row[1]))
     assert dates == sorted(dates), "decisions must be sorted by date"
 
