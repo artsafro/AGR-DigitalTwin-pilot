@@ -109,9 +109,20 @@ def by_id(report):
     return {c["id"]: c for c in report["checks"]}
 
 
+def assert_only_horizontal_unchecked(report):
+    """#56 narrowed scope: inset joints stay open; all pre-existing checks still pass."""
+    assert report["passed"] is False
+    assert report["failed"] == []
+    assert report["not_measured"] == ["horizontal_faces"]
+    assert all(c["status"] == "pass" for c in report["checks"] if c["id"] != "horizontal_faces")
+    horizontal = by_id(report)["horizontal_faces"]
+    assert horizontal["value"] is None and horizontal["details"]["not_checked_triangles"]
+    assert horizontal["details"]["not_checked_reason"] == "not checked (see #314)"
+
+
 def test_synthetic_box_is_closed_but_for_the_roof_inset_and_passes_against_itself():
     report = run(box_dump())
-    assert report["passed"], report["failed"] + report["not_measured"]
+    assert_only_horizontal_unchecked(report)
     mesh = by_id(report)["mesh"]["details"]
     assert mesh["non_manifold_edges"] == 0 and mesh["overlap_pairs"] == 0 and mesh["slabs_not_inset"] == []
     assert sorted(lp["kind"] for lp in mesh["open_loops"]) == ["roof-foot", "roof-plane"]
@@ -174,7 +185,7 @@ def test_level_helper_moved_or_missing_fails():
 
 def test_dump_without_polygon_sizes_is_an_open_gate_not_a_pass():
     report = run(box_dump(polygon_sizes=False))
-    assert not report["passed"] and report["not_measured"] == ["mesh"] and report["failed"] == []
+    assert not report["passed"] and report["not_measured"] == ["mesh", "horizontal_faces"] and report["failed"] == []
 
 
 def test_ngon_fails():
@@ -217,8 +228,8 @@ def test_tool_writes_a_new_report_and_refuses_to_overwrite(tmp_path):
     etalon.write_text(json.dumps(box_dump()), encoding="utf-8")
     argv = [str(model), str(etalon), "--spec", str(ROOT / "tests/fixtures/spec-b01-v0.3.json"),
             "--tolerances", str(TOLERANCES), "--output", str(out)]
-    assert check_geometry.main(argv) == 0
-    assert json.loads(out.read_text(encoding="utf-8"))["passed"] is True
+    assert check_geometry.main(argv) == 2  # open horizontal ownership is not certified
+    assert_only_horizontal_unchecked(json.loads(out.read_text(encoding="utf-8")))
     assert check_geometry.main(argv) == 2
 
 
@@ -250,7 +261,8 @@ def test_collision_hulls_are_left_out():
     dump = box_dump()
     dump["meshes"].append({**_mesh("UCX_SM_Box_Main_001", [([[0, 0, 0], [10, 0, 0], [10, 0, 7.2], [0, 0, 7.2]], 0)])})
     report = run(dump)
-    assert report["passed"] and by_id(report)["mesh"]["details"]["collision_meshes_left_out"] == 1
+    assert_only_horizontal_unchecked(report)
+    assert by_id(report)["mesh"]["details"]["collision_meshes_left_out"] == 1
 
 
 def test_polygon_sizes_that_do_not_match_the_triangles_are_not_measured():
@@ -258,7 +270,7 @@ def test_polygon_sizes_that_do_not_match_the_triangles_are_not_measured():
     for m in dump["meshes"]:
         m["polygon_sizes"] = []
     report = run(dump)
-    assert not report["passed"] and report["not_measured"] == ["mesh"]
+    assert not report["passed"] and report["not_measured"] == ["mesh", "horizontal_faces"]
 
 
 def test_section_open_in_both_is_listed_not_judged():

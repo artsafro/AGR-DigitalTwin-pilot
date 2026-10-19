@@ -15,7 +15,7 @@ from shapely.geometry import Polygon
 
 from dt_ai.geometry.from_spec import BuildError, BuildInputs, build
 from dt_ai.spec.model import Spec
-from test_geometry_checks import FACADE, PLANE, REVEAL, ROOF, TOL, box_dump
+from test_geometry_checks import assert_only_horizontal_unchecked, FACADE, PLANE, REVEAL, ROOF, TOL, box_dump
 from twinqa.geometry import checks
 import run_benchmark
 from twinqa.geometry.mesh import edge_uses, from_dump, weld
@@ -56,7 +56,7 @@ def t_junctions(dump):
 def test_b01_spec_builds_a_model_that_passes_every_check_against_the_synthetic_etalon():
     model = from_dump(build(spec(), INPUTS))
     report = checks.run(model, from_dump(box_dump()), spec(), TOL)
-    assert report["passed"], [(c["id"], c["value"]) for c in report["checks"] if c["status"] != "pass"]
+    assert_only_horizontal_unchecked(report)
     assert [o["cover"] for o in by_id(report)["opening_planes"]["details"]["openings"]] == [1.0, 1.0]
     assert by_id(report)["silhouettes"]["value"] == 1.0
 
@@ -99,7 +99,7 @@ def test_windows_on_other_walls_match_the_etalon_built_the_same_way():
     windows = [(0, 2.0, 3.5, 0.9, 2.4), (2, 6.0, 7.0, 0.9, 2.4), (1, 4.0, 5.5, 0.0, 2.1),
                (0, 2.0, 3.5, 4.2, 5.7), (2, 6.0, 7.0, 4.2, 5.7), (1, 4.0, 5.5, 3.3, 5.4)]
     report = checks.run(from_dump(build(s, INPUTS)), from_dump(box_dump(windows=windows)), s, TOL)
-    assert report["passed"], report["failed"] + report["not_measured"]
+    assert_only_horizontal_unchecked(report)
     assert len(by_id(report)["opening_planes"]["details"]["openings"]) == 6
 
 
@@ -194,7 +194,7 @@ def test_step_model_passes_the_checks_against_itself():
     s = stepped([[0, 0], [10, 0], [10, 10], [0, 10]], [[4, 0], [10, 0], [10, 10], [4, 10]])
     soup = from_dump(build(s, INPUTS))
     report = checks.run(soup, soup, s, TOL)
-    assert report["passed"], report["failed"] + report["not_measured"]
+    assert_only_horizontal_unchecked(report)
 
 
 # Codex review 1 of PR #50
@@ -397,7 +397,9 @@ def test_etalon_self_check_runs_even_when_the_engine_cannot_build(tmp_path, monk
             "--output", str(tmp_path / "run"), "--blender", "blender"]
     assert run_benchmark.main(argv) == 2
     summary = json.loads((tmp_path / "run/summary.json").read_text(encoding="utf-8"))
-    assert summary["steps"]["etalon_self"]["passed"] and "not built yet" in summary["stopped"]
+    assert summary["steps"]["etalon_self"] == {
+        "passed": False, "failed": [], "not_measured": ["horizontal_faces"]}
+    assert "not built yet" in summary["stopped"]
     assert (tmp_path / "run/etalon-self.json").is_file() and "model_check" not in summary["steps"]
 
 
@@ -520,7 +522,7 @@ def test_b02_model_passes_the_checks_against_itself():
     s = b02_spec()
     soup = from_dump(build(s, INPUTS))
     report = checks.run(soup, soup, s, TOL)
-    assert report["passed"], report["failed"] + report["not_measured"]
+    assert_only_horizontal_unchecked(report)
 
 
 @pytest.mark.parametrize("contour", [
@@ -700,7 +702,7 @@ def test_terrace_parapet_on_a_ledge():
         & ((c[:, :, 1].mean(1) < 0.3) | (c[:, :, 1].mean(1) > 9.7))
     assert not hidden.any()                                                      # upper wall behind the parapet ends
     report = checks.run(soup, soup, s, TOL)
-    assert report["passed"], report["failed"] + report["not_measured"]
+    assert_only_horizontal_unchecked(report)
 
 
 def test_b02_with_a_terrace_parapet_builds_and_closes():
@@ -924,7 +926,7 @@ def test_a_lower_terrace_cap_at_a_slab_level_is_no_solid_slab():
     s = terraced(west_ledge, h=3.3)
     soup = from_dump(build(s, INPUTS))
     report = checks.run(soup, soup, s, TOL)
-    assert report["passed"], [(c["id"], c["details"].get("solid_slab_m2")) for c in report["checks"] if c["status"] != "pass"]
+    assert_only_horizontal_unchecked(report)
 
 
 def test_the_extractor_wants_the_plate_flat_as_the_checker_welds_it():
@@ -993,7 +995,7 @@ def test_the_extractor_reads_the_plate_parameters_back():
     one = {"plates": [{"gap_m": 0.008, "overlap_m": 0.03}], "problems": []}
     assert report["plates"] == {"roof": one, "L1": one}
     soup = from_dump(build(s, INPUTS))
-    assert checks.run(soup, soup, spec, TOL)["passed"]
+    assert_only_horizontal_unchecked(checks.run(soup, soup, spec, TOL))
 
 
 def test_plates_that_disagree_are_a_question():

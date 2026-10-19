@@ -9,7 +9,7 @@ from dt_ai.geometry.from_spec import BuildError, BuildInputs, build
 from dt_ai.spec import extract_spec
 from dt_ai.spec.model import Spec
 from test_spec_extract import Mesh
-from test_geometry_checks import FACADE, PLANE, REVEAL, ROOF
+from test_geometry_checks import assert_only_horizontal_unchecked, FACADE, PLANE, REVEAL, ROOF
 
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = json.loads((ROOT / "tests/fixtures/spec-b01-v0.3.json").read_text(encoding="utf-8"))
@@ -214,7 +214,7 @@ def test_a_full_width_belt_passes_every_check():
     tol = {**json.loads((ROOT / "benchmark/bench-b01-box/tolerances.json").read_text(encoding="utf-8"))["geometry"],
            **DECOR_TOL, "open_part_groups": ["attachment"]}
     report = checks.run(model, model, sp, tol)
-    assert report["passed"], [(c["id"], c["value"]) for c in report["checks"] if c["status"] != "pass"]
+    assert_only_horizontal_unchecked(report)
 
 
 def test_a_concave_corner_end_is_an_error():
@@ -324,7 +324,7 @@ def test_two_belts_at_a_corner_the_longer_runs_on():
     tol = {**json.loads((ROOT / "benchmark/bench-b01-box/tolerances.json").read_text(encoding="utf-8"))["geometry"],
            **DECOR_TOL, "open_part_groups": ["attachment"]}
     full = checks.run(model, model, sp, tol)
-    assert full["passed"], [(c["id"], c["value"]) for c in full["checks"] if c["status"] != "pass"]
+    assert_only_horizontal_unchecked(full)
 
 
 def test_a_corner_meeting_reads_back_as_the_source():
@@ -380,7 +380,7 @@ def test_a_corner_pilaster_passes_every_check():
     sp = spec(dict(PILASTER, x_m=0.0, h_m=3.3))
     model = from_dump(build(sp, INPUTS))
     report = checks.run(model, model, sp, FULL_TOL)
-    assert report["passed"], [(c["id"], c["value"]) for c in report["checks"] if c["status"] != "pass"]
+    assert_only_horizontal_unchecked(report)
 
 
 def test_a_corner_end_lies_beyond_the_weld_off_the_body():
@@ -444,7 +444,7 @@ def test_a_corner_with_the_other_of_equal_or_lower_height(z_m, h_m):
     assert decor_check(dump, sp)["status"] == "pass", problems(decor_check(dump, sp))
     model = from_dump(dump)
     full = checks.run(model, model, sp, FULL_TOL)
-    assert full["passed"], [(c["id"], c["value"]) for c in full["checks"] if c["status"] != "pass"]
+    assert_only_horizontal_unchecked(full)
     obj = {"id": "bench-synth-box", "frame": {"to_object": [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]}}
     got, rep = extract_spec(dump, obj)
     assert sorted((d.wall, round(d.x_m, 4), round(d.w_m, 4), round(d.z_m, 4), round(d.h_m, 4)) for d in got.decor) ==         [(0, 6.0, 4.0, 1.0, 0.3), (1, 0.0, 2.0, z_m, h_m)]
