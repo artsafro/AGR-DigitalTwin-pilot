@@ -58,7 +58,7 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N (see npm-vpm
 - Collision = array of Mesh objects, each convex, closed, no holes, no material slots, named per mask. reg p.36 §13.1, p.47.
 - Built for: Ground surface (not MAF, lighting, vegetation); existing OKS inside the site; every OKS incl. arches, courtyards ("wells"), large facade projections, volumetric elements. Not for canopies/fences/railings <= 5 cm thick. reg p.36 §13.2.
 - Pieces must not intersect each other; recommended gap 0.02-1 cm (recommendation). reg p.36 §13.4.
-- Shape tolerance: Ground (esp. perimeter) <= 10 cm; OKS lower floors reachable by pedestrian (1st floors, stylobates, 2nd floors next to bridges/platforms) <= 30 cm; rest of OKS <= 1 m. reg p.36 §13.5.
+- Shape tolerance: Ground (esp. perimeter) <= 10 cm; OKS lower floors reachable by pedestrian (1st floors, stylobates, 2nd floors next to bridges/platforms) <= 30 cm; rest of OKS <= 1 m. reg p.36 §13.5. One-sided model surface -> UCX [D134] (user 2026-10-19, #166); exposed UCX -> model distance is diagnostic only, not a tolerance failure.
 - Entrance stairs collision = truncated pyramid. reg p.36 §13.6.
 - Triangle budget: model < 50 000 tris -> 15 000; else ceil(model_tris x 0.05) (e.g. 1 243 374 -> 62 169); model limit does not apply to collision, may add up to 100 000 when model reaches its limit. reg p.36-37 §13.7-13.8. (Ambiguous - conflicts.md.) **Decided 2026-10-07 [D012] (conflict #3):** checker formula min(ceil(5 %), 100 000) above 50 000 model triangles.
 - Do not close arches/courtyards/openings with one hull; split volume by functional voids; verify passages by overlay. local: docs/agr/DIGITAL_TWIN_AI_PROJECT_BRIEF.md#5, #11 (project decision).
@@ -66,6 +66,7 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N (see npm-vpm
 - Andrew `UCX_Tools.ms` default gap 2 mm (tool default, not norm). local: docs/agr/research/max-workbench/REVIEW.md#3.
 
 ## Project modeling rules (user decisions, not regulation)
+- Operation kernel: pure numpy functions on `dt_ai.ops.invariants` meshes; bmesh only through an adapter for booleans, extrusion and solidify (user 2026-10-19 [D131]); see `src/dt_ai/ops/operations.py`.
 - Editable master: 100% quads; no tris/n-gons, no degenerate/twisted/self-intersecting quads; triangulate only in a derived export copy; keep both and check both. local: docs/agr/GEOMETRY_RULES.md (project decision).
 - Separate meshes per logical group (body/walls, windows, roof, doors...) allowed; Attach/Join does not create clean topology; no artificial bridging faces. local: docs/agr/GEOMETRY_RULES.md (project decision).
 - BODY = exterior shell only from outer contours; do not model Revit interiors/partitions. local: docs/agr/GEOMETRY_RULES.md (project decision).

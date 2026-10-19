@@ -18,13 +18,13 @@ object yet) · **missing**.
 | 7 | Materials registry and IDs | partial | `src/dt_ai/materials/registry.py` | — |
 | 8 | NPM atlas (embedded PNG, shared regions by finish) | proven (Obr22 v012, GLB) | `technical_library/glb_atlas/`, `texture_tiles/` | C21 |
 | 9 | VPM UV/UDIM + Diffuse/ERM/Normal maps | proven (Obr22 v011, SOSH1150 v006) | `technical_library/uv_continuous/`, `src/dt_ai/geometry/uv.py` | C27, C29, C33 |
-| 10 | UCX collisions (VPM) | missing | probe `tools/probe_geoagr_ucx.py` | P5 |
+| 10 | UCX collisions (VPM) | tool only (Main measured on 4 etalon meshes, #166; Ground on synthetic surfaces only, no Ground etalon; no real-object delivery acceptance) | builder [`ucx_build`](../src/dt_ai/geometry/ucx_build.py) + `tools/blender/ucx_build.py`; audit `tools/blender/ucx_audit.py`; V010/V012 scene checks; job-local KPP1/PSU275 `vpm_ucx.py` | P5 |
 | 11 | Lights FBX (VPM) | missing | — | P6 |
 | 12 | Coordinates MSK-77, zero mark, pivot | missing | — | P7 |
 | 13 | GeoJSON (VPM) | tool only (validator) | `src/twinqa/geojson.py` | P8 |
 | 14 | FBX export + readback | proven | `tools/blender/fbx_readback.py`, `adapters/blender/bridge.py` | — |
 | 15 | Package ZIP + validator V001–V017 | partial | `tools/qa/validate_package.py`, `src/dt_ai/validate/bundle.py` | Q1–Q4 |
-| 16 | AGR Checker (SINTEZ) pass | missing | — | Q5 |
+| 16 | AGR Checker (SINTEZ) pass | partial (headless run of the Blender extension on KPP1 v005; deferred items open) | `jobs/KPP1/scripts/run_agr_checker.py` | Q5 |
 
 ## Territory and environment
 
