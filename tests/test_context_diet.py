@@ -299,6 +299,48 @@ def test_fixture_repo_generation_is_idempotent_and_declares_itself(tmp_path):
     assert output.read_bytes() == first
 
 
+@pytest.mark.parametrize("draft", [False, True], ids=["ordinary-parked", "draft-parked"])
+@pytest.mark.parametrize("explicit", [False, True], ids=["no-next-source", "explicit-next-source"])
+def test_cli_next_step_requires_explicit_source(tmp_path, draft, explicit):
+    """Synthetic parked PRs are inventory, not an authorized priority source."""
+    import json
+
+    records = [
+        {"number": 248, "title": "Parked work", "headRefName": "task/parked", "isDraft": draft},
+        {"number": 335, "title": "Ready work", "headRefName": "task/ready", "isDraft": False},
+    ]
+    repo = _fixture(tmp_path, "abc1234\tMerge pull request #1\n", json.dumps(records))
+    output = repo / "docs" / "PROJECT_STATE.md"
+    next_source = repo / "docs" / "PROJECT_STATE.next.md"
+    if explicit:
+        next_source.parent.mkdir(parents=True)
+        next_source.write_text("User-selected next action.\n", encoding="utf-8")
+    code, _out, err = _generate(tmp_path, repo, output)
+    assert code == 0, err
+    first = output.read_bytes()
+    text = first.decode("utf-8")
+    assert "#248 Parked work" in text and "#335 Ready work" in text
+    next_section = text.split("## Next step\n", 1)[1].split("## Links", 1)[0].strip()
+    if explicit:
+        assert next_section == "- User-selected next action."
+    else:
+        assert next_section == "Consult the board and the assigned card for the next action."
+        assert "#248" not in next_section and "#335" not in next_section
+    source = tmp_path / "bin" / "open.json"
+    source.write_text(json.dumps(list(reversed(records))), encoding="utf-8")
+    assert _generate(tmp_path, repo, output)[0] == 0
+    assert output.read_bytes() == first
+    source.write_text("{", encoding="utf-8")
+    assert _generate(tmp_path, repo, output)[0] != 0
+    assert output.read_bytes() == first
+    source.write_text(json.dumps(records), encoding="utf-8")
+    assert _generate(tmp_path, repo, output)[0] == 0
+    assert output.read_bytes() == first
+    assert next_source.exists() == explicit
+    if explicit:
+        assert next_source.read_text(encoding="utf-8") == "User-selected next action.\n"
+
+
 def test_open_pr_order_does_not_change_output(tmp_path):
     module = _load()
     merges = [("abc1234", "Merge pull request #1")]
