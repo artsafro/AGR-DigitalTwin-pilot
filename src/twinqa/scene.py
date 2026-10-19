@@ -2,7 +2,7 @@
 
 Fills the scene stages the header-only validator leaves not_run: V002 (units and scale;
 units come from a pure-Python GlobalSettings read), V003 (triangulation,
-triangle limits, object types), V004 (applied transforms, regulatory topology defect count), V006 (NPM embedded images),
+triangle limits, object types), V004 (applied transforms, regulatory topology defect count, MAF smoothing/flipped normals/dimensions (GroundEl)), V006 (NPM embedded images),
 V008 (one UV channel, mirrored islands, glass tile), V010 (UCX triangle budget only),
 V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
 """
@@ -12,6 +12,7 @@ from pathlib import Path
 
 from dt_ai.core.blender_runner import blender_executable, run_blender
 from twinqa.fbx_header import fbx_units
+from twinqa.maf_checks import SMOOTHING_ANGLE_DEG, maf_findings
 from twinqa.report import Finding
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
@@ -184,7 +185,8 @@ def _v002_findings(rb: dict, meshes: list[dict], src: str) -> list[Finding]:
     return [units, scale]
 
 
-def scene_findings(rb: dict, kind: str, role: str, profile: dict) -> dict[str, list[Finding]]:
+def scene_findings(rb: dict, kind: str, role: str, profile: dict, *, maf_sizes=None,
+                   smoothing_angle_deg=None) -> dict[str, list[Finding]]:
     """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}."""
     src = Path(rb["source"]).name
     out = {"V003": [], "V004": [], "V008": [], "V010": [], "V013": [], "V006": [], "V002": []}
@@ -226,6 +228,8 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict) -> dict[str, l
     out["V004"].append(_f("fail" if bad else "pass", "applied transforms", f"{src}: {bad or 'rotation 0, scale 1'}",
                           "rotation 0, scale 1 after reset", [8, 29, 33], src))
     out["V004"].append(_topology_finding(meshes, profile, src))
+    angle = SMOOTHING_ANGLE_DEG if smoothing_angle_deg is None else smoothing_angle_deg
+    out["V004"].extend(maf_findings(meshes, role, src, smoothing_angle_deg=angle, maf_sizes=maf_sizes))
 
     if kind == "vpm" and role != "light":
         # V010: UCX triangle budget only; shape, coverage and offsets need other checks (reg p.34-37)
