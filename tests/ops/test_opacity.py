@@ -244,9 +244,64 @@ def test_invalid_opacity_replacement_cannot_waive_lost_pixels(kind, combined, an
     check = no_see_through_hole(scene, after, ctx)
     assert not check.passed and check.count > 0
     result = operations.run_operation(scene, "probe_invalid_swap", "p", lambda _: after, ctx)
-    assert not result.applied and result.scene is scene and "rolled back" in result.question
+    assert not result.applied and result.scene is scene
+    assert result.question is not None and "rolled back" in result.question
+    assert result.report is not None
     assert "no_see_through_hole" in {r.name for r in result.report.broken}
     assert_unchanged(scene, before)
+
+
+def test_generated_opacity_quad_topology_probe():
+    """Exhaust all 16 ordered pairs of the four possible CCW corner triangles at 0°/30°."""
+    import itertools
+    for angle in (0, 30):
+        scene = {"p": railing(angle)}
+        before = snapshot(scene)
+        quad = operations.to_opacity_plane(scene, "p")["p"]
+        ctx = Context(opacity_parts=frozenset(scene), resolution=24)
+        for pair in itertools.product(itertools.combinations(range(4), 3), repeat=2):
+            # Independent geometric oracle: rectangle area = 2.4; no overlap or missing area.
+            local = quad.vertices[:, [0, 2]] if angle == 0 else np.column_stack((
+                quad.vertices @ [np.cos(np.deg2rad(angle)), np.sin(np.deg2rad(angle)), 0], quad.vertices[:, 2]))
+            polygons = [shapely.Polygon(local[list(face)]) for face in pair]
+            covers_quad = shapely.union_all(polygons).area == pytest.approx(2.4, abs=1e-12)
+            permutation = np.random.default_rng(sum(sum(t) for t in pair)).permutation(4)
+            inverse = np.argsort(permutation)
+            after = {"p": Mesh(quad.vertices[permutation], inverse[np.array(pair)])}
+            check = no_see_through_hole(scene, after, ctx)
+            assert check.passed == covers_quad, (angle, pair, check)
+            result = operations.run_operation(scene, "topology_probe", "p", lambda _: after, ctx)
+            assert result.applied == covers_quad, (angle, pair, result.question)
+            if not covers_quad:
+                assert result.scene is scene and check.count > 0
+            assert_unchanged(scene, before)
+
+
+@pytest.mark.parametrize("seed", range(12))
+def test_generated_opacity_quad_source_correspondence_probe(seed):
+    """Vary source pose and independently corrupt normal, tangent, extent or one corner."""
+    rng = np.random.default_rng(seed)
+    angle = float(rng.uniform(0, 360))
+    source = railing(angle)
+    shift = rng.uniform(-10, 10, 3)
+    scene = {"p": Mesh(source.vertices + shift, source.triangles)}
+    before = snapshot(scene)
+    q = operations.to_opacity_plane(scene, "p")["p"]
+    c, s = np.cos(np.deg2rad(angle)), np.sin(np.deg2rad(angle))
+    normal, tangent = np.array([-s, c, 0]), np.array([c, s, 0])
+    ctx = Context(opacity_parts=frozenset(scene), resolution=24)
+    # Control is valid even with a different diagonal, winding and vertex order.
+    control = Mesh(q.vertices[[2, 0, 3, 1]], np.array([[1, 2, 3], [3, 2, 0]]))
+    assert no_see_through_hole(scene, {"p": control}, ctx).passed
+    for vertices in (q.vertices + normal * .5, q.vertices + tangent * .5,
+                     q.vertices.mean(0) + (q.vertices - q.vertices.mean(0)) * rng.uniform(.01, .3),
+                     q.vertices + np.array([.5, 0, 0, 0])[:, None] * tangent):
+        after = {"p": Mesh(vertices, q.triangles)}
+        check = no_see_through_hole(scene, after, ctx)
+        assert not check.passed and check.count > 0
+        result = operations.run_operation(scene, "source_correspondence_probe", "p", lambda _: after, ctx)
+        assert not result.applied and result.scene is scene
+        assert_unchanged(scene, before)
 
 
 def test_generated_greedy_prefix_probe():
