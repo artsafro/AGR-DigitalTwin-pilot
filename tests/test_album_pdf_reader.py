@@ -16,7 +16,8 @@ from pathlib import Path
 import pytest
 
 pymupdf = pytest.importorskip(
-    "pymupdf", reason="PyMuPDF is the optional extra 'pdf-review': uv run --extra pdf-review pytest ..."
+    "pymupdf",
+    reason="PyMuPDF is the optional extra 'pdf-review': uv run --extra pdf-review pytest ...",
 )
 
 from dt_ai.album import (  # noqa: E402
@@ -57,7 +58,9 @@ def test_axes_labels_orientation_positions(facade) -> None:
     got = {(a.label, a.orientation): a.position for a in axes}
     assert len(axes) == 5
     for want in truth["axes"]:
-        assert got[(want["label"], want["orientation"])] == pytest.approx(want["position"], abs=0.01)
+        assert got[(want["label"], want["orientation"])] == pytest.approx(
+            want["position"], abs=0.01
+        )
     for a in axes:  # the axis line starts on the bubble edge
         start = a.line_p0
         dist = math.dist(start, a.bubble_center)
@@ -110,7 +113,9 @@ def test_scale_from_axis_dimension_1_2(facade) -> None:
     assert not [f for f in reading.findings if f.code == "dimension_mismatch"]
 
 
-def test_wrong_dimension_text_is_mismatch_and_never_changes_scale(tmp_path: Path) -> None:
+def test_wrong_dimension_text_is_mismatch_and_never_changes_scale(
+    tmp_path: Path,
+) -> None:
     good, bad = tmp_path / "good.pdf", tmp_path / "bad.pdf"
     make_facade_pdf(good)
     make_facade_pdf(bad, dim_texts=("6000", "5000"))
@@ -121,7 +126,9 @@ def test_wrong_dimension_text_is_mismatch_and_never_changes_scale(tmp_path: Path
     data = mismatches[0].data
     assert data["axes"] == ["2", "3"] and data["written_mm"] == 5000.0
     assert data["measured_mm"] == pytest.approx(4500.0, abs=1.0)
-    assert {c.axes: c.status for c in probe.dimension_checks}[("2", "3")] == "dimension_mismatch"
+    assert {c.axes: c.status for c in probe.dimension_checks}[
+        ("2", "3")
+    ] == "dimension_mismatch"
 
 
 def test_level_marks_consistency_per_pair(tmp_path: Path) -> None:
@@ -136,7 +143,10 @@ def test_level_marks_consistency_per_pair(tmp_path: Path) -> None:
     for c in checks:
         assert abs(c.measured_m - c.written_m) <= c.tolerance_m
     probe = read_page(bad)
-    assert [c.status for c in probe.level_checks] == ["level_mismatch", "level_mismatch"]
+    assert [c.status for c in probe.level_checks] == [
+        "level_mismatch",
+        "level_mismatch",
+    ]
     pairs = [f.data["pair"] for f in probe.findings if f.code == "level_mismatch"]
     assert pairs == [["±0.000", "+3.300"], ["+3.300", "+6.000"]]
 
@@ -152,7 +162,12 @@ def test_raster_page_is_not_vector(tmp_path: Path, facade) -> None:
     doc.save(raster)
     reading = read_page(raster)
     assert reading.status == "not_vector"
-    assert (reading.axes, reading.dimensions, reading.level_marks, reading.legend) == ([], [], [], [])
+    assert (reading.axes, reading.dimensions, reading.level_marks, reading.legend) == (
+        [],
+        [],
+        [],
+        [],
+    )
     assert reading.scale.status == "unknown" and reading.scale.mm_per_pt is None
     assert "not_vector" in [f.code for f in reading.findings]
 
@@ -163,7 +178,12 @@ def test_text_as_outlines_is_no_text_layer(tmp_path: Path) -> None:
     reading = read_page(path)
     assert reading.status == "no_text_layer"
     assert reading.lines and not reading.spans
-    assert (reading.axes, reading.dimensions, reading.level_marks, reading.legend) == ([], [], [], [])
+    assert (reading.axes, reading.dimensions, reading.level_marks, reading.legend) == (
+        [],
+        [],
+        [],
+        [],
+    )
     assert reading.scale.status == "unknown"
 
 
@@ -180,7 +200,9 @@ def test_no_axis_dimension_scale_unknown_not_guessed(tmp_path: Path) -> None:
     path = tmp_path / "nodim.pdf"
     make_facade_pdf(path, with_dimensions=False)
     reading = read_page(path)
-    assert reading.status == "ok" and len(reading.axes) == 5 and reading.dimensions == []
+    assert (
+        reading.status == "ok" and len(reading.axes) == 5 and reading.dimensions == []
+    )
     assert reading.scale.status == "unknown" and reading.scale.mm_per_pt is None
     assert [c.status for c in reading.level_checks] == ["not_checked", "not_checked"]
     assert all(c.measured_m is None for c in reading.level_checks)
@@ -192,7 +214,10 @@ def test_requested_reference_axes_absent_scale_unknown(facade) -> None:
     reading = read_page(path, scale_axes=("1", "3"))
     assert reading.scale.status == "unknown" and reading.scale.mm_per_pt is None
     assert "1-3" in reading.scale.reason
-    assert [c.status for c in reading.dimension_checks] == ["not_checked", "not_checked"]
+    assert [c.status for c in reading.dimension_checks] == [
+        "not_checked",
+        "not_checked",
+    ]
     ok = read_page(path, scale_axes=("2", "3"))
     assert ok.scale.reference_axes == ("2", "3")
     assert abs(ok.scale.mm_per_pt / SCALE_1_100_MM_PER_PT - 1.0) < 0.001
@@ -228,7 +253,9 @@ def test_encrypted_file_is_error(tmp_path: Path) -> None:
     ("content", "reason"),
     [(b"this is not a pdf at all", "corrupt"), (b"", "corrupt"), (None, "not_found")],
 )
-def test_corrupt_empty_or_missing_file_is_error(tmp_path: Path, content, reason: str) -> None:
+def test_corrupt_empty_or_missing_file_is_error(
+    tmp_path: Path, content, reason: str
+) -> None:
     path = tmp_path / "broken.pdf"
     if content is not None:
         path.write_bytes(content)
@@ -252,7 +279,13 @@ def test_import_dt_ai_album_does_not_need_pymupdf() -> None:
         "try:\n    dt_ai.album.read_page('x.pdf')\n"
         "except dt_ai.album.AlbumExtraMissing as e:\n    print('EXTRA', e)\n"
     )
-    out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, cwd=REPO, check=True)
+    out = subprocess.run(
+        [sys.executable, "-c", code],
+        capture_output=True,
+        text=True,
+        cwd=REPO,
+        check=True,
+    )
     assert "EXTRA" in out.stdout and "--extra pdf-review" in out.stdout
     assert "Traceback" not in out.stderr
 
@@ -262,7 +295,11 @@ def test_json_deterministic_and_provenance(tmp_path: Path) -> None:
     make_facade_pdf(a)
     make_facade_pdf(b)
     assert a.read_bytes() == b.read_bytes()
-    one, two, other = reading_to_json(read_page(a)), reading_to_json(read_page(a)), reading_to_json(read_page(b))
+    one, two, other = (
+        reading_to_json(read_page(a)),
+        reading_to_json(read_page(a)),
+        reading_to_json(read_page(b)),
+    )
     assert one == two == other
     data = json.loads(one)
     import hashlib
@@ -278,8 +315,13 @@ def test_probe_generated_scales_and_spans(tmp_path: Path) -> None:
     """Invariant: scale within 0.1 %, true dimensions pass, a wrong text is flagged and never moves the scale."""
     rng = random.Random(317)
     for i in range(12):
-        mm_per_pt = rng.choice([50.0, 100.0, 200.0]) * 25.4 / 72.0 * rng.uniform(0.9, 1.1)
-        spans = (float(rng.randrange(3000, 7200, 300)), float(rng.randrange(1200, 6000, 300)))
+        mm_per_pt = (
+            rng.choice([50.0, 100.0, 200.0]) * 25.4 / 72.0 * rng.uniform(0.9, 1.1)
+        )
+        spans = (
+            float(rng.randrange(3000, 7200, 300)),
+            float(rng.randrange(1200, 6000, 300)),
+        )
         good = tmp_path / f"g{i}.pdf"
         make_facade_pdf(good, mm_per_pt=mm_per_pt, spans_mm=spans)
         r = read_page(good)
@@ -287,10 +329,18 @@ def test_probe_generated_scales_and_spans(tmp_path: Path) -> None:
         assert [c.status for c in r.dimension_checks] == ["reference", "ok"]
         wrong = spans[1] + rng.choice([-1, 1]) * rng.choice([300.0, 600.0, 1500.0])
         bad = tmp_path / f"b{i}.pdf"
-        make_facade_pdf(bad, mm_per_pt=mm_per_pt, spans_mm=spans, dim_texts=(f"{spans[0]:.0f}", f"{wrong:.0f}"))
+        make_facade_pdf(
+            bad,
+            mm_per_pt=mm_per_pt,
+            spans_mm=spans,
+            dim_texts=(f"{spans[0]:.0f}", f"{wrong:.0f}"),
+        )
         rb = read_page(bad)
         assert rb.scale.mm_per_pt == r.scale.mm_per_pt
-        assert [c.status for c in rb.dimension_checks] == ["reference", "dimension_mismatch"]
+        assert [c.status for c in rb.dimension_checks] == [
+            "reference",
+            "dimension_mismatch",
+        ]
 
 
 def test_threshold_and_non_finite_checks_fail_closed() -> None:
@@ -302,18 +352,29 @@ def test_threshold_and_non_finite_checks_fail_closed() -> None:
         assert check_dimension(bad, 4500.0)[0] == "dimension_mismatch"
         assert check_dimension(4500.0, bad)[0] == "dimension_mismatch"
         assert check_level_pair(bad, 3.0)[0] == "level_mismatch"
-    assert check_level_pair(3.0 + 0.015, 3.0)[0] == "level_mismatch"  # tol = max(0.010, 0.5 %) = 0.015
+    assert (
+        check_level_pair(3.0 + 0.015, 3.0)[0] == "level_mismatch"
+    )  # tol = max(0.010, 0.5 %) = 0.015
     assert check_level_pair(3.0 + 0.014, 3.0)[0] == "ok"
 
 
 @pytest.mark.parametrize(
     ("text", "value"),
-    [("±0.000", 0.0), ("+3.000", 3.0), ("-0.450", -0.45), ("\u22120.450", -0.45), ("+46.500", 46.5), ("+3,000", 3.0)],
+    [
+        ("±0.000", 0.0),
+        ("+3.000", 3.0),
+        ("-0.450", -0.45),
+        ("\u22120.450", -0.45),
+        ("+46.500", 46.5),
+        ("+3,000", 3.0),
+    ],
 )
 def test_level_text_parsing(text: str, value: float) -> None:
     assert parse_level_text(text) == value
 
 
-@pytest.mark.parametrize("text", ["±1.000", "3.0", "6000", "+3.00", "abc", "", "+3.000м"])
+@pytest.mark.parametrize(
+    "text", ["±1.000", "3.0", "6000", "+3.00", "abc", "", "+3.000м"]
+)
 def test_level_text_rejects_non_marks(text: str) -> None:
     assert parse_level_text(text) is None

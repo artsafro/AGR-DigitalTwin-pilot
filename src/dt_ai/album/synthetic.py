@@ -60,12 +60,23 @@ def make_facade_pdf(
         if with_text:
             page.insert_text(point, value, fontsize=size, fontname=font)
         else:  # outlines stand-in: a small stroked box where the glyphs would be
-            shape.draw_rect(pymupdf.Rect(point[0], point[1] - size * 0.7, point[0] + size * 0.6 * len(value), point[1]))
+            shape.draw_rect(
+                pymupdf.Rect(
+                    point[0],
+                    point[1] - size * 0.7,
+                    point[0] + size * 0.6 * len(value),
+                    point[1],
+                )
+            )
             shape.finish(color=_BLACK, width=0.2)
 
     radius = 12.0
     x1 = 200.0
-    xs = [x1, x1 + spans_mm[0] / mm_per_pt, x1 + (spans_mm[0] + spans_mm[1]) / mm_per_pt]
+    xs = [
+        x1,
+        x1 + spans_mm[0] / mm_per_pt,
+        x1 + (spans_mm[0] + spans_mm[1]) / mm_per_pt,
+    ]
     y_ground = 640.0
     level_ys = [y_ground - (v - levels_m[0]) * 1000.0 / mm_per_pt for v in levels_m]
     top = min(level_ys) - 60.0
@@ -106,14 +117,23 @@ def make_facade_pdf(
             mid = (xs[i] + xs[i + 1]) / 2.0
             text((mid - 2.5 * len(value), y_dim - 2.5), value)
             dims.append(
-                {"text": value, "axes": [str(i + 1), str(i + 2)], "p0": (xs[i], y_dim), "p1": (xs[i + 1], y_dim)}
+                {
+                    "text": value,
+                    "axes": [str(i + 1), str(i + 2)],
+                    "p0": (xs[i], y_dim),
+                    "p1": (xs[i + 1], y_dim),
+                }
             )
 
     levels: list[dict[str, Any]] = []
     x_mark = xs[0] - 40.0
-    texts = level_texts or tuple(("±0.000" if v == 0 else f"{v:+.3f}") for v in levels_m)
+    texts = level_texts or tuple(
+        ("±0.000" if v == 0 else f"{v:+.3f}") for v in levels_m
+    )
     for value, y, label in zip(levels_m, level_ys, texts, strict=True):
-        shape.draw_polyline([(x_mark, y), (x_mark - 4.0, y - 7.0), (x_mark + 4.0, y - 7.0)])
+        shape.draw_polyline(
+            [(x_mark, y), (x_mark - 4.0, y - 7.0), (x_mark + 4.0, y - 7.0)]
+        )
         shape.finish(color=_BLACK, width=0.4, closePath=True)
         shape.draw_line((x_mark - 4.0, y), (xs[0], y))  # leader to the facade
         shape.finish(color=_BLACK, width=0.2)
