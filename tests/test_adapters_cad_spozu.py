@@ -15,6 +15,8 @@ from pathlib import Path
 
 import ezdxf
 import pytest
+from shapely import union_all
+from shapely.geometry import Polygon
 
 from adapters.cad import spozu
 from adapters.cad.spozu import SpozuConfig, SpozuConfigError, read_spozu_dxf
@@ -374,3 +376,255 @@ def test_vatutino_copy_counts(tmp_path_factory):
     assert res.boundary is not None and res.boundary.area == pytest.approx(25854.04, abs=0.01)
     assert res.base_covering == "tile_light"
     assert sum(p.inside for p in res.planting) > 4000
+
+
+# ---------------------------------------------------------------- review round 1 regressions (P1-1..3)
+
+
+def test_open_hatch_polyline_path_is_a_finding_not_closed():
+    """P1-1: a polyline path with is_closed=False is open; ezdxf must not add the closing edge."""
+    doc = clean_doc()
+    h = doc.modelspace().add_hatch(dxfattribs={"layer": "COV_DECK"})
+    h.paths.add_polyline_path([(5, 65), (15, 65), (15, 75), (5, 75)], is_closed=False, flags=EXTERNAL)
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    assert [(x.code, x.handle) for x in res.findings] == [("open_contour", h.dxf.handle)]
+    assert res.coverings["deck"].area == 0 and res.coverings["deck"].sources == []
+
+
+@pytest.mark.parametrize("closed_flag", [False, True])
+def test_hatch_polyline_path_closed_controls(closed_flag):
+    """P1-1 controls: is_closed=True, or is_closed=False with last vertex == first vertex, is a closed loop."""
+    doc = clean_doc()
+    h = doc.modelspace().add_hatch(dxfattribs={"layer": "COV_DECK"})
+    pts = rect(5, 5, 15, 15) + ([] if closed_flag else [(5, 5)])
+    h.paths.add_polyline_path(pts, is_closed=closed_flag, flags=EXTERNAL)
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    assert "open_contour" not in codes(res)
+    assert res.coverings["deck"].area == pytest.approx(100)
+
+
+def _attrib_doc():
+    doc = clean_doc()
+    msp = doc.modelspace()
+    oak = next(e for e in msp.query("INSERT") if e.dxf.name == "Oak")
+    bench = next(e for e in msp.query("INSERT") if e.dxf.name == "Bench")
+    return doc, oak, bench
+
+
+@pytest.mark.parametrize("value", [None, "", "   "])
+def test_missing_or_empty_label_attribute_is_a_finding(value):
+    """P1-2: attrib:<TAG> configured, attribute absent or empty -> unresolved label + label_missing."""
+    doc, oak, bench = _attrib_doc()
+    if value is not None:
+        oak.add_attrib("SPECIES", value, (10, 70))
+        bench.add_attrib("PRODUCT", value, (80, 10))
+    pl = {"layers": ["PLANT"], "positions": {"Oak": "1"}, "label": "attrib:SPECIES"}
+    maf = {"layers": ["MAF"], "positions": {"Bench": "M1"}, "label": "attrib:PRODUCT"}
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config(planting=pl, maf=maf)))
+    assert sorted((x.code, x.handle) for x in res.findings) == sorted(
+        [("label_missing", oak.dxf.handle), ("label_missing", bench.dxf.handle)])
+    assert all("SPECIES" in x.detail or "PRODUCT" in x.detail for x in res.findings)
+    assert [p.label for p in res.planting] == [None] and [p.label for p in res.maf] == [None]
+    assert res.planting[0].position == "1"  # the block name still keys the schedule position
+    assert res.summary()["planting"]["species_inside"] == 0
+
+
+def test_present_label_attribute_is_used():
+    doc, oak, _ = _attrib_doc()
+    oak.add_attrib("SPECIES", "Verified oak", (10, 70))
+    pl = {"layers": ["PLANT"], "positions": {"Oak": "1"}, "label": "attrib:SPECIES"}
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config(planting=pl)))
+    assert res.findings == []
+    assert [p.label for p in res.planting] == ["Verified oak"]
+
+
+def _container_block(doc, name="GROUND_CONTAINER"):
+    blk = doc.blocks.new(name)
+    h = blk.add_hatch(dxfattribs={"layer": "COV_DECK"})
+    h.paths.add_polyline_path(rect(0, 0, 2, 2), is_closed=True, flags=EXTERNAL)
+    p = blk.add_blockref("Oak", (2, 2), dxfattribs={"layer": "PLANT"})
+    b = blk.add_blockref("Bench", (3, 3), dxfattribs={"layer": "MAF"})
+    return blk, h, p, b
+
+
+def test_nested_ground_inputs_rotated_container():
+    """P1-3: rotated container on an ignored layer: hatch, plant and MAF in WCS with provenance."""
+    doc = clean_doc()
+    _, h, p, b = _container_block(doc)
+    ins = doc.modelspace().add_blockref("GROUND_CONTAINER", (20, 70), dxfattribs={"layer": "0", "rotation": 90})
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    assert res.coverings["deck"].area == pytest.approx(4)
+    assert res.coverings["deck"].sources == [f"{ins.dxf.handle}>{h.dxf.handle}"]
+    assert len(res.planting) == 2 and len(res.maf) == 2
+    nested = [x for x in res.planting if x.container]
+    assert len(nested) == 1 and (nested[0].x, nested[0].y) == pytest.approx((18, 72))
+    assert nested[0].handle == p.dxf.handle and nested[0].container == ins.dxf.handle
+    assert nested[0].label == "Oak" and nested[0].position == "1" and nested[0].inside
+    m = [x for x in res.maf if x.container][0]
+    assert (m.x, m.y) == pytest.approx((17, 73)) and m.handle == b.dxf.handle
+    # the deck sits on the lawn -> the overlap is reported, nothing else
+    assert codes(res) == ["overlapping_coverings"]
+    assert res.findings[0].area == pytest.approx(4)
+
+
+def test_nested_repeated_and_two_level_inserts():
+    doc = clean_doc()
+    _, h, _, _ = _container_block(doc)
+    msp = doc.modelspace()
+    a = msp.add_blockref("GROUND_CONTAINER", (20, 70), dxfattribs={"layer": "0", "rotation": 90})
+    b = msp.add_blockref("GROUND_CONTAINER", (30, 70), dxfattribs={"layer": "0"})
+    outer = doc.blocks.new("OUTER")
+    inner = outer.add_blockref("GROUND_CONTAINER", (1, 1), dxfattribs={"layer": "0"})
+    c = msp.add_blockref("OUTER", (50, 80), dxfattribs={"layer": "0", "xscale": 2, "yscale": 2})
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    deck = res.coverings["deck"]
+    assert deck.area == pytest.approx(4 + 4 + 16)
+    assert sorted(deck.sources) == sorted([f"{a.dxf.handle}>{h.dxf.handle}", f"{b.dxf.handle}>{h.dxf.handle}",
+                                           f"{c.dxf.handle}>{inner.dxf.handle}>{h.dxf.handle}"])
+    nested = sorted((round(x.x, 6), round(x.y, 6), x.ref) for x in res.planting if x.container)
+    assert [(x, y) for x, y, _ in nested] == [(18, 72), (32, 72), (56, 86)]
+    assert len({r for _, _, r in nested}) == 3  # one provenance path per instance
+    assert len(res.maf) == 4
+
+
+def test_nested_layer_zero_inherits_insert_layer():
+    doc = clean_doc()
+    blk = doc.blocks.new("DECK0")
+    h = blk.add_hatch(dxfattribs={"layer": "0"})
+    h.paths.add_polyline_path(rect(0, 0, 3, 3), is_closed=True, flags=EXTERNAL)
+    doc.modelspace().add_blockref("DECK0", (5, 5), dxfattribs={"layer": "COV_DECK"})
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    assert res.coverings["deck"].area == pytest.approx(9)
+
+
+def test_nested_invalid_outside_and_label_combined():
+    """P1-1 + P1-2 + P1-3 together: open hatch, unlabeled plant and an outside plant inside a container."""
+    doc = clean_doc()
+    blk, _, named, _ = _container_block(doc)
+    bad = blk.add_hatch(dxfattribs={"layer": "COV_DECK"})
+    bad.paths.add_polyline_path(rect(5, 5, 8, 8), is_closed=False, flags=EXTERNAL)
+    far = blk.add_blockref("Oak", (500, 0), dxfattribs={"layer": "PLANT"})
+    named.add_attrib("SPECIES", "Verified oak", (2, 2))
+    far.add_attrib("SPECIES", "Far oak", (500, 0))
+    ins = doc.modelspace().add_blockref("GROUND_CONTAINER", (20, 70), dxfattribs={"layer": "0", "rotation": 90})
+    pl = {"layers": ["PLANT"], "positions": {"Oak": "1"}, "label": "attrib:SPECIES"}
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config(planting=pl)))
+    got = sorted((x.code, x.handle, x.ref) for x in res.findings if x.code != "overlapping_coverings")
+    top_oak = next(e for e in doc.modelspace().query("INSERT") if e.dxf.name == "Oak")
+    H = ins.dxf.handle
+    assert got == sorted([
+        ("open_contour", bad.dxf.handle, f"{H}>{bad.dxf.handle}"),
+        ("label_missing", top_oak.dxf.handle, top_oak.dxf.handle),
+        ("point_outside_boundary", far.dxf.handle, f"{H}>{far.dxf.handle}"),
+    ])
+    assert res.coverings["deck"].area == pytest.approx(4)
+    assert sorted(str(p.label) for p in res.planting) == ["Far oak", "None", "Verified oak"]
+
+
+def test_nested_cycle_and_depth_are_findings():
+    doc = clean_doc()
+    loop = doc.blocks.new("LOOP")
+    loop.add_blockref("Oak", (1, 1), dxfattribs={"layer": "PLANT"})
+    loop.add_blockref("LOOP", (1, 0), dxfattribs={"layer": "0"})
+    doc.modelspace().add_blockref("LOOP", (20, 20), dxfattribs={"layer": "0"})
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    assert codes(res) == ["nested_cycle"]
+    assert len(res.planting) == 2  # the plant of the first level is still read
+    doc2 = clean_doc()
+    prev = None
+    for i in range(spozu.MAX_NESTING + 2):
+        blk = doc2.blocks.new(f"L{i}")
+        if prev is None:
+            blk.add_blockref("Oak", (0, 0), dxfattribs={"layer": "PLANT"})
+        else:
+            blk.add_blockref(prev, (0, 0), dxfattribs={"layer": "0"})
+        prev = f"L{i}"
+    doc2.modelspace().add_blockref(prev, (20, 20), dxfattribs={"layer": "0"})
+    res2 = read_spozu_dxf(doc2, SpozuConfig.from_dict(base_config()))
+    assert codes(res2) == ["nesting_too_deep"] and len(res2.planting) == 1
+
+
+def test_nested_polyline_that_cannot_be_transformed_is_a_finding():
+    """Non-uniform scaling of a bulged covering polyline: reported, never exploded into lines silently."""
+    doc = clean_doc()
+    blk = doc.blocks.new("BULGE")
+    pl = blk.add_lwpolyline([(0, 0, 0), (2, 0, 1), (2, 2, 0), (0, 2, 0)], format="xyb", close=True,
+                            dxfattribs={"layer": "COV_DECK"})
+    ins = doc.modelspace().add_blockref("BULGE", (5, 5), dxfattribs={"layer": "0", "xscale": 1, "yscale": 3})
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    assert [(x.code, x.handle, x.ref) for x in res.findings] == [
+        ("nested_unsupported", pl.dxf.handle, f"{ins.dxf.handle}>{pl.dxf.handle}")]
+    assert res.coverings["deck"].area == 0
+
+
+def test_nested_boundary_is_found_with_provenance():
+    doc = ezdxf.new("R2018")
+    doc.header["$INSUNITS"] = 6
+    blk = doc.blocks.new("PLOT")
+    b = blk.add_lwpolyline(rect(0, 0, 10, 10), close=True, dxfattribs={"layer": "BOUNDARY"})
+    ins = doc.modelspace().add_blockref("PLOT", (100, 0), dxfattribs={"layer": "0", "rotation": 90})
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    assert res.findings == [] and res.boundary.area == pytest.approx(100)
+    assert res.boundary_handle == f"{ins.dxf.handle}>{b.dxf.handle}"
+    assert res.boundary.bounds == pytest.approx((90, 0, 100, 10))
+    cfg = base_config(boundary={"layer": "BOUNDARY", "handle": f"{ins.dxf.handle}>{b.dxf.handle}"})
+    assert read_spozu_dxf(doc, SpozuConfig.from_dict(cfg)).boundary.area == pytest.approx(100)
+
+
+def test_minsert_expands_to_one_point_per_cell():
+    doc = clean_doc()
+    m = doc.modelspace().add_blockref("Oak", (10, 10), dxfattribs={"layer": "PLANT"})
+    m.grid(size=(2, 3), spacing=(5, 4))  # rows x cols, row spacing, col spacing
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    grid = sorted((round(p.x, 6), round(p.y, 6)) for p in res.planting if p.handle == m.dxf.handle)
+    assert grid == sorted((10 + 4 * c, 10 + 5 * r) for r in range(2) for c in range(3))
+    assert len({p.ref for p in res.planting}) == len(res.planting)
+
+
+@pytest.mark.parametrize("seed", range(40))
+def test_probe_nested_instances_match_brute_force(seed):
+    """Generated probe: random instances (rotation, uniform scale, mirror, 1-2 levels) of a container ->
+    deck area = union of the transformed squares inside the plot, one plant per instance at the
+    transformed WCS point, every outside plant flagged exactly once."""
+    from shapely.geometry import box
+
+    rng = random.Random(4100 + seed)
+    doc = ezdxf.new("R2018")
+    doc.header["$INSUNITS"] = 6
+    msp = doc.modelspace()
+    msp.add_lwpolyline(rect(0, 0, 100, 100), close=True, dxfattribs={"layer": "BOUNDARY"})
+    doc.blocks.new("Oak")
+    blk = doc.blocks.new("C")
+    h = blk.add_hatch(dxfattribs={"layer": "COV_DECK"})
+    h.paths.add_polyline_path(rect(0, 0, 1, 1), is_closed=True, flags=EXTERNAL)
+    blk.add_blockref("Oak", (0.5, 0.5), dxfattribs={"layer": "PLANT"})
+    wrap = doc.blocks.new("W")
+    wrap.add_blockref("C", (0, 0), dxfattribs={"layer": "0"})
+    exp_pts, polys = [], []
+    for _ in range(rng.randint(1, 6)):
+        x, y = rng.uniform(-10, 110), rng.uniform(-10, 110)
+        rot, sc = rng.uniform(0, 360), rng.uniform(0.5, 3)
+        mx = rng.choice([1, -1])
+        msp.add_blockref(rng.choice(["C", "W"]), (x, y),
+                         dxfattribs={"layer": "0", "rotation": rot, "xscale": sc * mx, "yscale": sc})
+        a = math.radians(rot)
+
+        def tf(px, py, a=a, sc=sc, mx=mx, x=x, y=y):
+            px, py = px * sc * mx, py * sc
+            return x + px * math.cos(a) - py * math.sin(a), y + px * math.sin(a) + py * math.cos(a)
+
+        exp_pts.append(tf(0.5, 0.5))
+        polys.append(Polygon([tf(*q) for q in rect(0, 0, 1, 1)]))
+    plot = box(0, 0, 100, 100)
+    exp_area = union_all([p.intersection(plot) for p in polys]).area
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    assert res.coverings["deck"].area == pytest.approx(exp_area, abs=1e-6)
+    got = sorted((p.x, p.y) for p in res.planting)
+    exp = sorted(exp_pts)
+    assert len(got) == len(exp)
+    for g, e in zip(got, exp):
+        assert g == pytest.approx(e, abs=1e-6)
+    n_out = sum(not (0 <= px <= 100 and 0 <= py <= 100) for px, py in exp_pts)
+    out = [f for f in res.findings if f.code == "point_outside_boundary"]
+    assert len(out) == n_out and len({f.ref for f in out}) == n_out
+    assert {f.code for f in res.findings} <= {"point_outside_boundary", "overlapping_coverings"}
