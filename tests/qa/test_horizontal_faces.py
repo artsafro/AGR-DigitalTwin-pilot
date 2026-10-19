@@ -518,7 +518,9 @@ def test_combined_cap_context_probe(seed):
     # Repair all closed horizontal normals; open geometry never changes their verdict.
     clean = copy.deepcopy(base)
     _flip_global(clean, expected)
-    assert _hcheck(clean)["value"] == 0
+    clean_result = _hcheck(clean)
+    assert clean_result["status"] == "not_measured" and clean_result["value"] is None
+    assert clean_result["details"]["inward_triangles"] == []
     assert _hcheck(base) == first
     base["meshes"].reverse()
     assert _hcheck(base)["value"] == 8

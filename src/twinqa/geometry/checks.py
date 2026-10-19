@@ -1073,7 +1073,7 @@ _HOR_NOTE = (
     "closed welded components only; decor isolated; render-mesh partition ignored. "
     "Upward-ray parity judges horizontal normals within each closed component. "
     "Open/non-manifold components: not checked (see #314); never joined to a neighbour. "
-    "A pass certifies only checked_triangles, not the skipped geometry.")
+    "Skipped geometry keeps the check not_measured unless a checked face fails.")
 
 
 def _upward_crossings(tri: np.ndarray, ray: np.ndarray, tri_label: np.ndarray | None = None,
@@ -1279,8 +1279,9 @@ def check_horizontal_faces(model: Soup, tol: dict) -> dict:
     component is judged alone by upward-ray parity; decor never joins the body.
     Open parts are not checked (see #314), even coplanar caps within 0.01 m. They
     appear in ``not_checked_triangles``, not in inward or checked-horizontal counts.
-    ``pass`` is scoped to eligible components, with explicit partial coverage when
-    open parts exist. With no eligible horizontal face, return ``not_measured``.
+    Open parts keep the aggregate ``not_measured`` unless an eligible face fails;
+    known defects are never hidden by partial coverage. No eligible horizontal
+    face also returns ``not_measured``.
     This is not architectural/visibility acceptance or a substitute for topology QA.
     """
     weld_m = tol.get("weld_m") or _HOR_WELD_M
@@ -1296,9 +1297,9 @@ def check_horizontal_faces(model: Soup, tol: dict) -> dict:
         "coverage": "partial" if skipped else "complete",
         "inward_triangles": wrong[:50],
         "note": _HOR_NOTE}
-    if int(horizontal.sum()) == 0:
-        return result("horizontal_faces", False, None, 0, details, measured=False)
     value = int(inward.sum())
+    if int(horizontal.sum()) == 0 or (skipped and value == 0):
+        return result("horizontal_faces", False, None, 0, details, measured=False)
     return result("horizontal_faces", value == 0, value, 0, details)
 
 
