@@ -402,7 +402,8 @@ def _box_10x10x6():
 def test_open_ground_sheet_under_closed_box():
     for reverse in (False, True):
         result = _hcheck({"meshes": [_ground_span(reverse), _box_10x10x6()]})
-        assert result["status"] == "pass" and result["value"] == 0
+        assert result["status"] == "not_measured" and result["value"] is None
+        assert result["details"]["inward_triangles"] == []
         assert result["details"]["coverage"] == "partial"
         assert result["details"]["not_checked_triangles"] == [0,1]
         assert result["details"]["checked_triangles"] == list(range(2,14))
