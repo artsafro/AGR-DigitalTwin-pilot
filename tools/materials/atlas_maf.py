@@ -19,6 +19,7 @@ clamping in padding gutters are algorithmic implementation choices, not normativ
 
 import argparse
 import json
+import math
 import os
 import re
 import sys
@@ -46,6 +47,7 @@ __all__ = [
     "build_atlas",
     "load_material_list",
     "main",
+    "pack_uniform_tiles",
     "plan_atlas",
     "render_atlas",
     "uv_map",
@@ -557,6 +559,285 @@ def _content_box(x: int, y: int, size: int, padding_px: int) -> tuple[int, int, 
 
 def _is_pow2(value: int) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value > 0 and value & (value - 1) == 0
+
+
+def pack_uniform_tiles(items, atlas_size, *, padding_px=0, min_long_side=256) -> dict:
+    """Pack every tile into one atlas, scaling all of them by the same factor.
+
+    Extension of the MAF buddy packer for Flora (#217): one bin, never a second
+    atlas. Rectangles keep their aspect ratio. ``scale_factor`` is
+    ``scale_numerator / scale_denominator`` and is at most 1. Pixel sizes are
+    ``source * scale_numerator // scale_denominator``. A tile whose longer side
+    is below ``min_long_side`` is listed in ``warnings`` and still packed.
+    """
+
+    parsed = _parse_uniform_items(items)
+    _validate_uniform_args(atlas_size, padding_px, min_long_side)
+    longest = max(max(item["width"], item["height"]) for item in parsed)
+    low = max(_min_numerator(item["width"], item["height"], longest) for item in parsed)
+    best_mid = None
+    best_placed = None
+    high = longest
+    while low <= high:
+        mid = (low + high) // 2
+        placed = _try_place_uniform(parsed, mid, longest, atlas_size, padding_px)
+        if placed is None:
+            high = mid - 1
+        else:
+            best_mid = mid
+            best_placed = placed
+            low = mid + 1
+    if best_mid is None or best_placed is None:
+        raise AtlasError(
+            "tiles do not fit in one atlas at a shared scale with every tile at least "
+            "1 px; a second atlas is not created"
+        )
+    slots = []
+    warnings: list[str] = []
+    inset = padding_px // 2
+    for item in parsed:
+        slot_x, slot_y = best_placed[item["key"]]
+        content_w = item["width"] * best_mid // longest
+        content_h = item["height"] * best_mid // longest
+        slot = {
+            "key": item["key"],
+            "x": slot_x,
+            "y": slot_y,
+            "w": content_w + padding_px,
+            "h": content_h + padding_px,
+            "content_x": slot_x + inset,
+            "content_y": slot_y + inset,
+            "content_w": content_w,
+            "content_h": content_h,
+            "source_w": item["width"],
+            "source_h": item["height"],
+        }
+        slots.append(slot)
+        longer_side = max(content_w, content_h)
+        if longer_side < min_long_side:
+            warnings.append(
+                f"{item['key']} longer side {longer_side} px is below {min_long_side} px"
+            )
+    return {
+        "atlas_count": 1,
+        "atlas_size": atlas_size,
+        "scale_factor": best_mid / longest,
+        "scale_numerator": best_mid,
+        "scale_denominator": longest,
+        "padding_px": padding_px,
+        "warnings": warnings,
+        "slots": slots,
+    }
+
+
+def _parse_uniform_items(items) -> list[dict]:
+    if isinstance(items, (str, bytes)) or not isinstance(items, (list, tuple)):
+        raise AtlasError("tile list must be a list of {key, width, height}")
+    if not items:
+        raise AtlasError("tile list is empty")
+    parsed = []
+    seen: set[str] = set()
+    for index, item in enumerate(items):
+        if not isinstance(item, dict):
+            raise AtlasError(f"tile at index {index} is not an object")
+        key = item.get("key")
+        if isinstance(key, bool) or key is None or isinstance(key, float):
+            raise AtlasError(f"tile at index {index} has an invalid key")
+        if not isinstance(key, (str, int)):
+            raise AtlasError(f"tile at index {index} has an invalid key")
+        if isinstance(key, str) and not key:
+            raise AtlasError(f"tile at index {index} has an empty key")
+        identity = f"{type(key).__name__}:{key}"
+        if identity in seen:
+            raise AtlasError(f"duplicate tile key {key!r}")
+        seen.add(identity)
+        width = _positive_px(item.get("width"), f"tile {key!r} width")
+        height = _positive_px(item.get("height"), f"tile {key!r} height")
+        parsed.append({"key": key, "width": width, "height": height})
+    return parsed
+
+
+def _positive_px(value, label: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise AtlasError(f"{label} must be a positive integer")
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise AtlasError(f"{label} must be finite")
+        raise AtlasError(f"{label} must be an integer")
+    if value <= 0:
+        raise AtlasError(f"{label} must be a positive integer")
+    return value
+
+
+def _validate_uniform_args(atlas_size, padding_px, min_long_side) -> None:
+    if isinstance(atlas_size, bool) or not isinstance(atlas_size, int) or atlas_size <= 0:
+        raise AtlasError("atlas_size must be a positive integer")
+    if isinstance(padding_px, bool) or not isinstance(padding_px, int) or padding_px < 0:
+        raise AtlasError("padding_px must be an even integer >= 0")
+    if padding_px % 2 != 0:
+        raise AtlasError(f"padding_px must be an even integer >= 0, got {padding_px}")
+    if isinstance(min_long_side, bool) or not isinstance(min_long_side, int) or min_long_side <= 0:
+        raise AtlasError("min_long_side must be a positive integer")
+
+
+def _min_numerator(width: int, height: int, longest: int) -> int:
+    need = 1
+    for dim in (width, height):
+        need = max(need, (longest + dim - 1) // dim)
+    return need
+
+
+def _try_place_uniform(items, mid, longest, atlas_size, padding_px):
+    rects = []
+    for item in items:
+        content_w = item["width"] * mid // longest
+        content_h = item["height"] * mid // longest
+        if content_w < 1 or content_h < 1:
+            return None
+        slot_w = content_w + padding_px
+        slot_h = content_h + padding_px
+        if slot_w > atlas_size or slot_h > atlas_size:
+            return None
+        rects.append((item["key"], slot_w, slot_h))
+    for placer in (_place_equal_grid, _place_shelf, _place_shelf_by_width, _place_maxrects):
+        placed = placer(rects, atlas_size)
+        if placed is not None and _placement_is_valid(placed, rects, atlas_size):
+            return placed
+    return None
+
+
+def _place_equal_grid(rects, atlas_size):
+    width = rects[0][1]
+    height = rects[0][2]
+    if any(rect[1] != width or rect[2] != height for rect in rects):
+        return None
+    count = len(rects)
+    for columns in range(1, count + 1):
+        rows = (count + columns - 1) // columns
+        if columns * width <= atlas_size and rows * height <= atlas_size:
+            placed = {}
+            for index, (key, _width, _height) in enumerate(sorted(rects, key=lambda rect: str(rect[0]))):
+                placed[key] = ((index % columns) * width, (index // columns) * height)
+            return placed
+    return None
+
+
+def _place_shelf(rects, atlas_size):
+    return _place_rows(sorted(rects, key=lambda rect: (-rect[2], -rect[1], str(rect[0]))), atlas_size)
+
+
+def _place_shelf_by_width(rects, atlas_size):
+    return _place_rows(sorted(rects, key=lambda rect: (-rect[1], -rect[2], str(rect[0]))), atlas_size)
+
+
+def _place_rows(order, atlas_size):
+    x = 0
+    y = 0
+    row_h = 0
+    placed = {}
+    for key, width, height in order:
+        if width > atlas_size or height > atlas_size:
+            return None
+        if x > 0 and x + width > atlas_size:
+            y += row_h
+            x = 0
+            row_h = 0
+        if y + height > atlas_size:
+            return None
+        placed[key] = (x, y)
+        x += width
+        row_h = max(row_h, height)
+    return placed
+
+
+def _place_maxrects(rects, atlas_size):
+    free = [(0, 0, atlas_size, atlas_size)]
+    placed = {}
+    for key, width, height in sorted(rects, key=lambda rect: (-max(rect[1], rect[2]), -rect[1] * rect[2], str(rect[0]))):
+        best = None
+        best_score = None
+        for index, (fx, fy, fw, fh) in enumerate(free):
+            if width <= fw and height <= fh:
+                leftover_w = fw - width
+                leftover_h = fh - height
+                score = (min(leftover_w, leftover_h), max(leftover_w, leftover_h), index)
+                if best_score is None or score < best_score:
+                    best_score = score
+                    best = (fx, fy)
+        if best is None:
+            return None
+        x, y = best
+        placed[key] = (x, y)
+        free = _prune_free(_split_free(free, x, y, width, height))
+    return placed
+
+
+def _split_free(free, x, y, width, height):
+    placed = (x, y, width, height)
+    output = []
+    for rect in free:
+        if not _rect_overlaps(rect, placed):
+            output.append(rect)
+            continue
+        fx, fy, fw, fh = rect
+        if x > fx:
+            output.append((fx, fy, x - fx, fh))
+        if x + width < fx + fw:
+            output.append((x + width, fy, fx + fw - (x + width), fh))
+        if y > fy:
+            output.append((fx, fy, fw, y - fy))
+        if y + height < fy + fh:
+            output.append((fx, y + height, fw, fy + fh - (y + height)))
+    return output
+
+
+def _prune_free(free):
+    unique = []
+    for rect in free:
+        if rect[2] <= 0 or rect[3] <= 0 or rect in unique:
+            continue
+        unique.append(rect)
+    kept = []
+    for index, rect in enumerate(unique):
+        if any(index != other and _rect_contains(candidate, rect) for other, candidate in enumerate(unique)):
+            continue
+        kept.append(rect)
+    return kept
+
+
+def _rect_overlaps(left, right) -> bool:
+    return (
+        left[0] < right[0] + right[2]
+        and right[0] < left[0] + left[2]
+        and left[1] < right[1] + right[3]
+        and right[1] < left[1] + left[3]
+    )
+
+
+def _rect_contains(outer, inner) -> bool:
+    return (
+        outer[0] <= inner[0]
+        and outer[1] <= inner[1]
+        and outer[0] + outer[2] >= inner[0] + inner[2]
+        and outer[1] + outer[3] >= inner[1] + inner[3]
+    )
+
+
+def _placement_is_valid(placed, rects, atlas_size) -> bool:
+    if len(placed) != len(rects):
+        return False
+    sizes = {key: (width, height) for key, width, height in rects}
+    boxes = []
+    for key, (x, y) in placed.items():
+        width, height = sizes[key]
+        if x < 0 or y < 0 or x + width > atlas_size or y + height > atlas_size:
+            return False
+        boxes.append((x, y, width, height))
+    for index, left in enumerate(boxes):
+        for right in boxes[index + 1:]:
+            if _rect_overlaps(left, right):
+                return False
+    return True
 
 
 if __name__ == "__main__":

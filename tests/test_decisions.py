@@ -4,6 +4,8 @@ import re
 import subprocess
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 LOG = "docs/decisions.md"
 ROW = re.compile(r"^\| (D\d{3}) \|")
@@ -55,11 +57,27 @@ def test_log_format():
     rows = log_rows()
     assert rows, "no decisions"
     dates = []
-    for number, row in enumerate(rows, 1):
+    previous_id = 0
+    for row in rows:
         assert len(row) == 5 and all(row), row
-        assert row[0] == f"D{number:03d}", f"{row[0]}: ids must run D001, D002, ... without gaps"
+        current_id = int(row[0][1:])
+        assert current_id > previous_id, f"{row[0]}: ids must be unique and increasing (open PRs may reserve gaps)"
+        previous_id = current_id
         dates.append(datetime.date.fromisoformat(row[1]))
     assert dates == sorted(dates), "decisions must be sorted by date"
+
+
+@pytest.mark.parametrize("ids,valid", [(["D001", "D003"], True),
+                                      (["D001", "D001"], False), (["D003", "D001"], False)])
+def test_log_format_reserved_ids(monkeypatch, ids, valid):
+    """Rule 42: open PR reservations may leave gaps, but duplicate/descending IDs still fail."""
+    rows = [[i, "2026-10-19", "decision", "anchor", "user"] for i in ids]
+    monkeypatch.setitem(globals(), "log_rows", lambda: rows)
+    if valid:
+        test_log_format()
+    else:
+        with pytest.raises(AssertionError):
+            test_log_format()
 
 
 def test_every_dated_decision_carries_its_id():
