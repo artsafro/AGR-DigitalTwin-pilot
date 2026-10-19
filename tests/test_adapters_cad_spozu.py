@@ -342,6 +342,6 @@ def test_vatutino_copy_counts(tmp_path_factory):
     out = os.environ.get("DT_SPOZU_VATUTINO_REPORT")
     if out:
         Path(out).write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding="utf-8")
-    assert res.boundary is not None and res.boundary.area == pytest.approx(25854.04, abs=0.1)
+    assert res.boundary is not None and res.boundary.area == pytest.approx(25854.04, abs=0.01)
     assert res.base_covering == "tile_light"
     assert sum(p.inside for p in res.planting) > 4000
