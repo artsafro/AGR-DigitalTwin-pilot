@@ -985,10 +985,12 @@ def _facade_ring(pieces, joint):
 
 
 def _prune_spurs(kept, dropped, outline, band):
-    """A protrusion cut at the attachment reach leaves its root: the kept segment that continues the cut line back to
-    the facade. Walk from the cut nodes and remove the protrusion's segments; stop at a node where a segment inside
-    the band meets in another direction, so a glass line or a facade step stays. The angle to the outline only
-    refuses a root that runs along the outline. (#87, user 2026-10-13; review 1 of #89; #90; review 1 of #279)."""
+    """A protrusion cut at the attachment reach leaves its root: the kept segments that continue the cut line
+    back toward the facade. Walk from the cut nodes along that line and remove it. Stop at a node where another
+    segment inside the facade band meets in another direction, so a glass line or a facade step stays. Continuing
+    the line is collinearity with the cut (a straight fin split by a diagonal), never an angle to the facade or
+    to the outline: a root 45 degrees off the facade, or shallower, still continues its own line.
+    (#87, user 2026-10-13; review 1 of #89; #90; review 1 of #279)."""
     if not kept:
         return kept
     noded = [LineString(c) for g in shapely.get_parts(shapely.union_all(kept)) for c in
@@ -999,7 +1001,8 @@ def _prune_spurs(kept, dropped, outline, band):
         adj[key(sg.coords[0])].add(i)
         adj[key(sg.coords[-1])].add(i)
     ring = outline.exterior
-    COS_LINE = float(np.cos(np.deg2rad(15.0)))       # within 15 degrees counts as the same line
+    # same straight line only. Wider (15 or 45 degrees) reads a shallow root as the facade, or the facade as the root.
+    SAME_LINE = float(np.cos(np.deg2rad(2.0)))
 
     def unit(a, b):
         dx, dy = b[0] - a[0], b[1] - a[1]
@@ -1011,17 +1014,6 @@ def _prune_spurs(kept, dropped, outline, band):
 
     def beyond(i):
         return ring.distance(noded[i].interpolate(0.5, normalized=True)) > band
-
-    def along_outline(i):
-        # refuses a root that runs along the outline; never keeps anything on its own
-        mid = noded[i].interpolate(0.5, normalized=True)
-        d, span = ring.project(mid), ring.length
-        p0, p1 = ring.interpolate((d - 1e-3) % span), ring.interpolate((d + 1e-3) % span)
-        tx, ty = p1.x - p0.x, p1.y - p0.y
-        (x0, y0), (x1, y1) = noded[i].coords[0], noded[i].coords[-1]
-        sx, sy = x1 - x0, y1 - y0
-        tn, sn = (tx * tx + ty * ty) ** 0.5, (sx * sx + sy * sy) ** 0.5
-        return tn > 0.0 and sn > 0.0 and abs(tx * sx + ty * sy) / (tn * sn) >= COS_LINE
 
     def outward(i, n):
         """Unit from n along segment i, the other end, its key, and n's own coordinate."""
@@ -1040,22 +1032,21 @@ def _prune_spurs(kept, dropped, outline, band):
                 dirs[node].append(unit(here, there))
                 todo.append(node)
 
-    def is_root(j, n):
-        if beyond(j) or along_outline(j):
-            return False
+    def continues(j, n):
+        """Segment j leaves n back along the protrusion's line, toward the facade."""
         u, _, _, _ = outward(j, n)
-        return any(u[0] * p[0] + u[1] * p[1] <= -COS_LINE for p in dirs[n])
+        return any(u[0] * p[0] + u[1] * p[1] <= -SAME_LINE for p in dirs[n])
 
-    def facade(n):
-        # inside the band and not the protrusion's own line: the protrusion meets the facade here
-        return any(not beyond(j) and not is_root(j, n) for j in adj[n] - gone)
+    def meets_facade(n):
+        # another direction, inside the band: the protrusion has met the facade. Beyond-band pieces do not count.
+        return any(not beyond(j) and not continues(j, n) for j in adj[n] - gone)
 
     def enqueue(j, n):
         gone.add(j)
         _, cm, m, cn = outward(j, n)
         p = unit(cm, cn)                              # from m back toward n: where the protrusion lies
         dirs[m].append(p)
-        if (m, rdir(p)) not in seen and not facade(m):
+        if (m, rdir(p)) not in seen and not meets_facade(m):
             todo.append(m)
 
     gone, seen = set(), set()
@@ -1066,11 +1057,10 @@ def _prune_spurs(kept, dropped, outline, band):
             continue
         for p in pending:
             seen.add((n, rdir(p)))
-        is_facade = facade(n)                         # once, before any removal; beyond-band segments do not count
+        if meets_facade(n):                           # once, before any removal at this node
+            continue
         for j in list(adj[n] - gone):
-            if beyond(j):
-                enqueue(j, n)
-            elif not is_facade and is_root(j, n):
+            if continues(j, n):
                 enqueue(j, n)
     return [sg for i, sg in enumerate(noded) if i not in gone]
 
