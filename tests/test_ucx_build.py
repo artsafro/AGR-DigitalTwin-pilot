@@ -662,3 +662,53 @@ def test_ground_real_size_layered_perforated_site_fits_999_and_budget():
     for c in centres:  # building voids stay open
         assert not any(ub.piece_plan_contains(pc, c)[0] for pc in res.pieces)
     ub.ucx_names("Vatutino", "Ground", len(res.pieces))
+
+
+def readback_nonconvex(res) -> int:
+    """Pieces whose float32 read-back (what Blender and FBX store) fails the twinqa audit convexity check."""
+    return sum(not ua.is_convex([tuple(map(float, x)) for x in np.float32(pc.verts)],
+                                [tuple(map(int, x)) for x in pc.tris]) for pc in res.pieces)
+
+
+def test_ground_layered_site_reads_back_convex():
+    """#326: every Ground piece of the real-size layered site stays convex after the float32 round trip
+    (a planar top fan over near-collinear vertices read back non-convex on the Vatutino v011 file)."""
+    v, t, _ = layered_site()
+    res = ub.build_ground(v, t, model_triangles=46343)
+    assert readback_nonconvex(res) == 0
+    assert all(ub.convex_after_float32(pc.verts, pc.tris) for pc in res.pieces)
+
+
+def test_ground_long_perimeter_skirt_inside_ucx_reach():
+    """#326 [D134] SYNTHETIC: a 1 m deep perimeter skirt made of 60 m quads (its vertices lie far from
+    most pieces) is model surface too: every skirt point is within R11 of a piece side, so the piece
+    bottoms reach below the skirt even where no skirt vertex is near."""
+    xs = ys = np.arange(0.0, 60.0 + 1e-9, 1.0)
+    z = lambda x, y: 145.0 + 0.01 * x + 0.0 * y  # noqa: E731
+    v, t = plan_mesh(xs, ys, lambda x, y: True, z=z)
+    corners = [(0.0, 0.0), (60.0, 0.0), (60.0, 60.0), (0.0, 60.0)]
+    sv, st = [], []
+    for (x0, y0), (x1, y1) in zip(corners, corners[1:] + corners[:1]):
+        k = len(v) + len(sv)
+        sv += [(x0, y0, z(x0, y0)), (x1, y1, z(x1, y1)), (x1, y1, z(x1, y1) - 1.0), (x0, y0, z(x0, y0) - 1.0)]
+        st += [(k, k + 1, k + 2), (k, k + 2, k + 3)]
+    v, t = np.concatenate([v, np.array(sv)]), np.concatenate([t, np.array(st)])
+    v[:, :2] += 1000.0  # real-size coordinates
+    res = ub.build_ground(v, t, cell=8.0, model_triangles=len(t))
+    rng = np.random.default_rng(326)
+    worst = 0.0
+    for a, b, c in np.array(st):
+        u = rng.random((200, 2))
+        u[u.sum(1) > 1] = 1 - u[u.sum(1) > 1]
+        pts = v[a] + u[:, :1] * (v[b] - v[a]) + u[:, 1:] * (v[c] - v[a])
+        for p in pts:
+            best = math.inf
+            for pc in res.pieces:
+                dh, near = ub._poly_dist(p[None, :2], pc.plan)
+                if dh[0] > ub.GROUND_TOL_M:
+                    continue
+                top = pc.plane[0] * near[0, 0] + pc.plane[1] * near[0, 1] + pc.plane[2]
+                dz = max(float(pc.verts[:, 2].min()) - p[2], p[2] - top, 0.0)
+                best = min(best, math.hypot(dh[0], dz))  # upper bound of the distance to that piece
+            worst = max(worst, best)
+    assert worst <= ub.GROUND_TOL_M

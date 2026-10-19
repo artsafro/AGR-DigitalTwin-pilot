@@ -890,6 +890,9 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
     outline = _SegIndex(out_seg, lo, hf.bucket)
     breaks = _SegIndex(np.concatenate([_breaklines(hf, tol / 2), layer_seg]), lo, hf.bucket)
     vidx = _SegIndex(np.stack([hf.v[:, :2], hf.v[:, :2]], axis=1), lo, hf.bucket)
+    ue = np.unique(np.sort(np.concatenate([hf.t[:, [0, 1]], hf.t[:, [1, 2]], hf.t[:, [2, 0]]]), axis=1), axis=0)
+    edges3 = hf.v[ue]  # (E, 2, 3) mesh edges for the piece bottoms
+    eidx = _SegIndex(edges3[:, :, :2], lo, hf.bucket)
     g = gap / 2
     chord_tol = tol / 4  # band + corner retreat stay within tol (uncovered_strip_m)
     stack = [(np.array([(x, y), (x + sx, y), (x + sx, y + sy), (x, y + sy)]), 0)
@@ -948,12 +951,27 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
         return plane, dev, float(zs[hit].min())
 
     def low(p, reach) -> float:
-        """Lowest model vertex within `reach` of leaf `p` (inf when none)."""
-        k = vidx.ids(p.min(axis=0) - reach, p.max(axis=0) + reach)
+        """Lowest model surface point over leaf `p` grown by `reach` (inf when none): every mesh edge is
+        clipped to the grown plan (edge offsets, mitre corners: never less than `reach`), so a long
+        perimeter skirt or underside edge counts even when its vertices lie far from the leaf (#326)."""
+        k = eidx.ids(p.min(axis=0) - reach, p.max(axis=0) + reach)
         if not len(k):
             return math.inf
-        k = k[_poly_dist(hf.v[k, :2], p)[0] <= reach]
-        return float(hf.v[k, 2].min()) if len(k) else math.inf
+        n, c = _half_planes(p)
+        e = edges3[k]
+        p0, d = e[:, 0, :2], e[:, 1, :2] - e[:, 0, :2]
+        num = p0 @ n.T - (c - reach)[None]
+        den = d @ n.T
+        out = ((np.abs(den) < 1e-15) & (num < 0)).any(axis=1)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            r = -num / den
+        t0 = np.maximum(0.0, np.where(den > 1e-15, r, -np.inf).max(axis=1))
+        t1 = np.minimum(1.0, np.where(den < -1e-15, r, np.inf).min(axis=1))
+        ok = ~out & (t1 >= t0)
+        if not ok.any():
+            return math.inf
+        z0, dz = e[ok, 0, 2], e[ok, 1, 2] - e[ok, 0, 2]
+        return float(np.minimum(z0 + t0[ok] * dz, z0 + t1[ok] * dz).min())
 
     def leaf(p, strip=0.0):
         q = _inset(p, g)
@@ -1017,10 +1035,7 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
                     stack.extend((k, lvl + 1) for k in kids)
                     continue
             top = q @ plane[:2] + plane[2]
-            # bottom below every model vertex of the leaf and its outline band: perimeter skirts and
-            # undersides of a layered (method C) slab are model surface too [D134]
-            reach = strip + g + 1e-6
-            pieces.append(_prism(q, plane, min(float(top.min()) - depth, zmin - depth, low(part, reach))))
+            pieces.append(_prism(q, plane, min(float(top.min()) - depth, zmin - depth)))
             devs.append(dev)
             retreat = float(_poly_dist(part, q)[0].max())  # farthest leaf point from its own piece
             if retreat > gap:  # acute corner or needle: measured against all pieces below
@@ -1030,6 +1045,14 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
     if not pieces:
         raise UcxBuildError("ground surface has no plan area")
     strips += [_loose_distance(p, q, pieces, gap) + strip for p, q, strip in loose]
+    # bottoms below every model surface point within the D134 reach of each piece (gap + uncovered strip,
+    # as in ground_deviation): perimeter skirts and undersides of a layered (method C) slab are model
+    # surface too, and their vertices may lie far from the piece (#326)
+    reach = gap + max(strips) + 1e-6
+    for i, pc in enumerate(pieces):
+        base = min(float(pc.verts[:, 2].min()), low(pc.plan, reach))
+        if base < float(pc.verts[:, 2].min()):
+            pieces[i] = _prism(pc.plan, np.array(pc.plane), base)
     bad = sum(not convex_after_float32(pc.verts, pc.tris) for pc in pieces)
     if bad:
         raise UcxBuildError(f"{bad} ground pieces are not convex after float32 read-back")
