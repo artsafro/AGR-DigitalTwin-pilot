@@ -1,0 +1,170 @@
+{
+  "address": "Vatutino",
+  "seed": 319,
+  "profiles": {
+    "npm": {
+      "size": 2048,
+      "px_per_m": 30,
+      "metres_per_repeat": 68.26666666666667
+    },
+    "vpm": {
+      "size": 4096,
+      "px_per_m": 1024,
+      "metres_per_repeat": 4
+    }
+  },
+  "slots": {
+    "TileLight": {
+      "family": "tile",
+      "source": "SPOZU paving *T3530 and layer !_A101 light tile: Gothic 100x300x60(80), types 3 and 4, Premium Gold colour 22 and Profi colour 8 (docs/research/spozu-vatutino-inventory.md)",
+      "tile_size_label": "100 x 300 mm",
+      "nominal_tile_mm": [100, 300],
+      "base_rgb": [214, 208, 196],
+      "joint_rgb": [158, 150, 138],
+      "npm_period_px": [32, 64],
+      "vpm_period_px": [128, 256],
+      "npm_joint_px": 8,
+      "vpm_joint_px": 16,
+      "provisional": [
+        {"field": "base_rgb", "reason": "Gold colour 22 and Profi colour 8 are product names, not measured sRGB"},
+        {"field": "joint_rgb", "reason": "The SPOZU states the paver, not the joint colour"},
+        {"field": "npm_joint_px", "reason": "Joint width is not in the paving table; 8 px at 30 px/m is a review value"},
+        {"field": "npm_period_px", "reason": "100 by 300 mm is 3 by 9 px at 30 px/m and does not divide 2048; snapped to 32 by 64 px"},
+        {"field": "vpm_period_px", "reason": "100 mm is 102.4 px at 1024 px/m, not an integer divisor of 4096; snapped to 128 by 256 px"}
+      ]
+    },
+    "Mulch": {
+      "family": "particles",
+      "source": "SPOZU layer !_A101 mulch and planting schedule position 19, covering of mulch (docs/research/spozu-vatutino-inventory.md)",
+      "tile_size_label": "mulch chips",
+      "palette": [[96, 62, 36], [72, 46, 28], [124, 84, 48]],
+      "npm_cell_px": 32,
+      "vpm_cell_px": 64,
+      "provisional": [
+        {"field": "palette", "reason": "Mulch colour is not given in the schedule or the legend"},
+        {"field": "npm_cell_px", "reason": "Chip size is not stated; the cell is a review value that divides 2048"},
+        {"field": "vpm_cell_px", "reason": "Chip size is not stated; 64 px at 1024 px/m is 62.5 mm, provisional"}
+      ]
+    },
+    "LawnReinforced": {
+      "family": "ecogrid",
+      "source": "SPOZU layer reinforced lawn and planting schedule position 20, strengthened lawn (docs/research/spozu-vatutino-inventory.md)",
+      "tile_size_label": "reinforced lawn grid",
+      "palette": [[64, 112, 46], [92, 138, 58]],
+      "grid_rgb": [48, 52, 48],
+      "npm_cell_px": 64,
+      "vpm_cell_px": 256,
+      "provisional": [
+        {"field": "palette", "reason": "Lawn colour is not specified in the planting schedule"},
+        {"field": "grid_rgb", "reason": "The grid plastic colour is not in the SPOZU"},
+        {"field": "npm_cell_px", "reason": "No module size is dimensioned; 64 px at 30 px/m is about 2.13 m so the period divides 2048"},
+        {"field": "vpm_cell_px", "reason": "No module size is dimensioned; 256 px at 1024 px/m is 0.25 m, provisional"}
+      ]
+    },
+    "TileRed": {
+      "family": "tile",
+      "source": "SPOZU paving type 1, Gothic 100x300, Premium Silver colour 9 dark ginger, layer red tile (docs/research/spozu-vatutino-inventory.md)",
+      "tile_size_label": "100 x 300 mm",
+      "nominal_tile_mm": [100, 300],
+      "base_rgb": [148, 74, 48],
+      "joint_rgb": [118, 108, 98],
+      "npm_period_px": [32, 64],
+      "vpm_period_px": [128, 256],
+      "npm_joint_px": 8,
+      "vpm_joint_px": 16,
+      "provisional": [
+        {"field": "base_rgb", "reason": "Silver colour 9 dark ginger is a product name, not measured sRGB"},
+        {"field": "joint_rgb", "reason": "The SPOZU states the paver, not the joint colour"},
+        {"field": "npm_period_px", "reason": "100 by 300 mm is 3 by 9 px at 30 px/m and does not divide 2048; snapped to 32 by 64 px"},
+        {"field": "vpm_period_px", "reason": "100 mm is 102.4 px at 1024 px/m and does not divide 4096; snapped to 128 by 256 px"}
+      ]
+    },
+    "Gravel": {
+      "family": "particles",
+      "source": "SPOZU layer gravel screening fraction 2-8 mm, compacted gravel screenings (docs/research/spozu-vatutino-inventory.md)",
+      "tile_size_label": "2-8 mm",
+      "fraction_mm": [2, 8],
+      "palette": [[154, 150, 144], [132, 128, 122], [168, 164, 156]],
+      "npm_cell_px": 16,
+      "vpm_cell_px": 32,
+      "provisional": [
+        {"field": "palette", "reason": "The fraction is sourced; the grey colour is not"},
+        {"field": "npm_cell_px", "reason": "2-8 mm is below one NPM texel at 30 px/m, so the map shows aggregate variation only"},
+        {"field": "vpm_cell_px", "reason": "2 mm is about 2 px at 1024 px/m; the cell is snapped to 32 px so it divides 4096"}
+      ]
+    },
+    "LawnRolled": {
+      "family": "lawn",
+      "source": "Planting schedule position 18, universal rolled lawn (docs/research/spozu-vatutino-inventory.md)",
+      "tile_size_label": "rolled lawn",
+      "palette": [[58, 108, 42], [96, 146, 62]],
+      "provisional": [
+        {"field": "palette", "reason": "Rolled-lawn colour is not given in the planting schedule"}
+      ]
+    },
+    "Pebbles": {
+      "family": "particles",
+      "source": "SPOZU layer pebble covering, legend row for pebble paving (docs/research/spozu-vatutino-inventory.md)",
+      "tile_size_label": "pebbles",
+      "palette": [[176, 174, 168], [140, 138, 132], [104, 112, 108]],
+      "npm_cell_px": 64,
+      "vpm_cell_px": 128,
+      "provisional": [
+        {"field": "palette", "reason": "Pebble colour is not given in the legend"},
+        {"field": "npm_cell_px", "reason": "Pebble diameter is not dimensioned; 64 px at 30 px/m is about 2.13 m"},
+        {"field": "vpm_cell_px", "reason": "Pebble diameter is not dimensioned; 128 px at 1024 px/m is 0.125 m"}
+      ]
+    },
+    "TileDark": {
+      "family": "tile",
+      "source": "SPOZU paving type 2, Gothic 100x300, Premium Bronze colour 25 grey, layer dark tile (docs/research/spozu-vatutino-inventory.md)",
+      "tile_size_label": "100 x 300 mm",
+      "nominal_tile_mm": [100, 300],
+      "base_rgb": [118, 116, 114],
+      "joint_rgb": [86, 84, 82],
+      "npm_period_px": [32, 64],
+      "vpm_period_px": [128, 256],
+      "npm_joint_px": 8,
+      "vpm_joint_px": 16,
+      "provisional": [
+        {"field": "base_rgb", "reason": "Bronze colour 25 grey is a product name, not measured sRGB"},
+        {"field": "joint_rgb", "reason": "The SPOZU states the paver, not the joint colour"},
+        {"field": "npm_period_px", "reason": "100 by 300 mm is 3 by 9 px at 30 px/m and does not divide 2048; snapped to 32 by 64 px"},
+        {"field": "vpm_period_px", "reason": "100 mm is 102.4 px at 1024 px/m and does not divide 4096; snapped to 128 by 256 px"}
+      ]
+    },
+    "FlowerBed": {
+      "family": "foliage",
+      "source": "SPOZU reinforced flower-bed layers 01-08, eight species; the beds are not in the planting schedule (docs/research/spozu-vatutino-inventory.md)",
+      "tile_size_label": "flower bed",
+      "palette": [[54, 96, 40], [78, 120, 48]],
+      "bloom_palette": [[186, 64, 96], [214, 176, 64], [150, 72, 160], [236, 236, 232]],
+      "species": [
+        "Щучка дернистая",
+        "Эхинацея пурпурная",
+        "Очиток видный",
+        "Тысячелистник Терракота",
+        "Шалфей дубравный",
+        "Мордовник гмелина Snow king",
+        "Ясколка войлочная",
+        "Тимьян ползучий"
+      ],
+      "npm_cell_px": 32,
+      "vpm_cell_px": 64,
+      "provisional": [
+        {"field": "palette", "reason": "Foliage colour is not specified for the flower beds"},
+        {"field": "bloom_palette", "reason": "Species names are sourced from the layer titles; bloom sRGB is not"},
+        {"field": "npm_cell_px", "reason": "Flower spacing is not dimensioned; the cell only has to divide the map"}
+      ]
+    },
+    "Skirt": {
+      "family": "soil",
+      "source": "GND-03 perimeter extrusion of the Ground surface, not a SPOZU covering layer (docs/domain/areas/ground-surface.md)",
+      "tile_size_label": "perimeter skirt",
+      "palette": [[142, 138, 132], [116, 104, 88]],
+      "provisional": [
+        {"field": "palette", "reason": "Neutral soil and concrete mix for the skirt; neither colour is in the SPOZU"}
+      ]
+    }
+  }
+}

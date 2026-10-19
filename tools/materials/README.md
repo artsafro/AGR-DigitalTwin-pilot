@@ -84,3 +84,13 @@ Add `--force` to replace an existing output. On success the process prints one s
 - The list must fit by minimum area. The error names the materials to shrink; it does not drop them automatically.
 - Patterned sources are resampled. The tool does not preserve their pixel size or generate mip maps.
 - UV rectangles are written to JSON only. They are not applied to a model.
+
+## Ground recipes (Vatutino)
+
+Procedural diffuse maps for the ten Ground slots, Pillow and numpy only ([D117]). Parameters that the SPOZU or the paving table actually state stay in `ground_recipes.json`; every other number is listed under `provisional` for review.
+
+```text
+uv run python tools/materials/ground_recipes.py deliver --out C:/x/vatutino-ground-textures/v001
+```
+
+NPM is 2048 at 30 px/m (one repeat of 2048/30 m, 68.27 m to two decimals). VPM is 4096 at 1024 px/m (one 4 m cell). The command refuses any other directory, any folder inside this repository, an output path that is the recipe file, and a version folder that already contains a file. A rejected run writes nothing.
