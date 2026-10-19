@@ -905,3 +905,88 @@ def test_probe_preflight_write_targets(tmp_path):
         assert source.read_bytes() == payload
         verdicts[expected] += 1
     assert verdicts[True] >= 100 and verdicts[False] >= 50, verdicts
+
+
+# --- #271: Windows reserved device names -------------------------------------
+
+_DEVICES = (
+    ["CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$"]
+    + ["COM%s" % c for c in "0123456789\u00b9\u00b2\u00b3"]
+    + ["LPT%s" % c for c in "0123456789\u00b9\u00b2\u00b3"]
+)
+
+
+def _reserved_on_windows(filename: str) -> bool:
+    """Independent oracle: ntpath.isreserved (3.13+) or the documented device list (adds COM0 / LPT0)."""
+    import ntpath
+    head = filename.partition(".")[0].rstrip(" ").upper()
+    if head in _DEVICES:
+        return True
+    checker = getattr(ntpath, "isreserved", None)
+    return bool(checker(filename)) if checker else False
+
+
+@pytest.mark.parametrize("fmt", plan.FORMATS)
+@pytest.mark.parametrize("name", ["CON", "NUL", "COM1", "LPT1", "CON.txt", "con", "Nul.tar.gz",
+                                  "cOm9", "LPT\u00b3", "conin$", "COM0", "lpt0.x", "AUX", "PRN.max"])
+def test_reserved_device_stems_are_remapped(name, fmt):
+    stem = plan.safe_stem(name)
+    assert stem == "_" + name
+    assert not _reserved_on_windows(stem + "." + fmt)
+    rows = plan.plan_outputs([name], "C:/out", fmt)
+    assert rows[0]["node"] == name
+    assert rows[0]["output"] == "C:/out/_%s.%s" % (name, fmt)
+    assert not _reserved_on_windows(Path(rows[0]["output"]).name)
+
+
+def test_nonreserved_lookalikes_are_untouched():
+    for name in ["CONX", "COM10", "LPT", "AUX_1", "xCON", "CON_", "NULL", "COM", "con-1.txt"]:
+        assert plan.safe_stem(name) == name
+
+
+@pytest.mark.parametrize("fmt", plan.FORMATS)
+def test_mixed_reserved_and_remapped_collisions(fmt):
+    nodes = ["CON", "_CON", "con", "Box", "NUL.txt", "_nul.TXT", "COM1", "_com1__2", "com1"]
+    rows = plan.plan_outputs(nodes, "D:/lib/", fmt)
+    assert [row["node"] for row in rows] == nodes
+    stems = [row["output"][len("D:/lib/"):-len(fmt) - 1] for row in rows]
+    assert stems == ["_CON", "_CON__2", "_con__3", "Box", "_NUL.txt", "_nul.TXT__2",
+                     "_COM1", "_com1__2", "_com1__3"]
+    assert len({stem.casefold() for stem in stems}) == len(stems)
+    for row in rows:
+        assert row["output"].startswith("D:/lib/") and "/" not in row["output"][len("D:/lib/"):]
+        assert row["format"] == fmt
+        assert not _reserved_on_windows(Path(row["output"]).name)
+
+
+def test_probe_plan_outputs_never_reserved(tmp_path):
+    """Generated: device names with case, extensions, separators, padding; outputs never reserved, unique, contained."""
+    rng = random.Random(271)
+    tails = ["", ".txt", ".tar.gz", ".", " ", " .x", "..", ".max", ".fbx", "_", "1", "$"]
+    heads = ["", " ", ".", "  ", "\t"]
+    out = str(tmp_path / "dest").replace("\\", "/")
+    checked = 0
+    for _ in range(400):
+        names: list[str] = []
+        for _ in range(rng.randint(1, 20)):
+            base = rng.choice(_DEVICES + ["Box", "node", "_CON", "a"])
+            base = "".join(ch.upper() if rng.random() < 0.5 else ch.lower() for ch in base)
+            name = rng.choice(heads) + base + rng.choice(tails)
+            if rng.random() < 0.2:
+                name = "_" + name
+            if name and name not in names:
+                names.append(name)
+        fmt = rng.choice(plan.FORMATS)
+        rows = plan.plan_outputs(names, out, fmt)
+        assert [row["node"] for row in rows] == names
+        files = []
+        for row in rows:
+            filename = row["output"][len(out) + 1:]
+            assert row["output"].startswith(out + "/") and "/" not in filename
+            assert filename.endswith("." + fmt)
+            assert not _reserved_on_windows(filename), (row["node"], filename)
+            files.append(filename.casefold())
+            checked += 1
+        assert len(files) == len(set(files))
+        assert plan.plan_outputs(names, out, fmt) == rows
+    assert checked > 1000
