@@ -138,7 +138,7 @@ def test_flora_sinks_10cm_below_topmost_ground_at_every_instance():
         sinks.append(top_z(inst["pivot_x"], inst["pivot_y"]) - w[:, 2].min())
         assert inst["ground_z"] == pytest.approx(top_z(inst["pivot_x"], inst["pivot_y"]), abs=1e-6)
         assert inst["sink_m"] == pytest.approx(SINK, abs=TOL)
-    print(f"flora sink min={min(sinks):.6f} max={max(sinks):.6f} n={len(sinks)}")
+    print(f"flora sink min={min(sinks):.9f} max={max(sinks):.9f} n={len(sinks)}")
     assert all(abs(s - SINK) <= TOL for s in sinks)
     on_plate = [i for i in rep["instances"] if i["handle"].startswith("P")]
     assert len(on_plate) == 6 and all(
@@ -276,7 +276,7 @@ def test_maf_pivot_rotation_and_sinking():
         centre = w.mean(0)
         assert centre[:2] == pytest.approx([p.x, p.y], abs=1e-9)  # footprint centre on the point
         sinks.append(top_z(p.x, p.y) - w[:, 2].min())
-    print(f"maf sink min={min(sinks):.6f} max={max(sinks):.6f} n={len(sinks)}")
+    print(f"maf sink min={min(sinks):.9f} max={max(sinks):.9f} n={len(sinks)}")
     assert all(abs(s - SINK) <= TOL for s in sinks)
 
 
@@ -364,6 +364,39 @@ def test_bottom_face_stacked_plate_uses_topmost():
     rep = place([Pt(15, 15, 0, "MAF", "M1", "M1", "A", True)], V, T, [maf_entry(half=0.5, cx=0, cy=0)], seed=1)
     inst = rep["instances"][0]
     assert inst["ground_z"] == pytest.approx(plane(15, 15) + 0.006, abs=1e-9)
+    assert inst["bottom_faces"][0]["action"] == "delete"  # parallel plates 6 mm apart: covered, no crossing
+
+
+def layers(*fs):
+    """One big triangle per layer (vertices far outside any footprint), z = f(x, y); separate components."""
+    xy = np.array([[0.0, 0.0], [60.0, 0.0], [30.0, 60.0]])
+    V = np.vstack([np.column_stack([xy, [f(x, y) for x, y in xy]]) for f in fs])
+    return V, np.arange(len(V)).reshape(-1, 3)
+
+
+def test_bottom_face_crossing_layers_exposed_on_switch_line():
+    """Two crossing layers: the topmost surface dips along plane_a == plane_b (x = 25), between the face
+    vertices, the outline crossings of Ground edges and the Ground vertices (all far above the face)."""
+    V, T = layers(lambda x, y: -0.3 * (x - 25) - 0.15, lambda x, y: 1.0 * (x - 25) - 0.15)
+    rep = place([Pt(24, 25, 0, "MAF", "M1", "M1", "X", True)], V, T, [maf_entry(half=1.5, cx=0, cy=0)], seed=1)
+    inst = rep["instances"][0]
+    assert inst["ground_z"] == pytest.approx(0.15)
+    f = faces(rep)[0]
+    assert f["action"] == "review" and f["reasons"] == ["exposed_bottom"]
+    assert f["min_gap_m"] == pytest.approx(-0.15 - 0.05, abs=1e-9)
+
+
+def test_bottom_face_three_layers_exposed_at_triple_point():
+    s3 = math.sqrt(3) / 2
+    x0, y0 = 25.6, 25.3
+    V, T = layers(lambda x, y: (x - x0) - 0.15,
+                  lambda x, y: -(x - x0) / 2 + s3 * (y - y0) - 0.15,
+                  lambda x, y: -(x - x0) / 2 - s3 * (y - y0) - 0.15)
+    rep = place([Pt(25, 25, 0, "MAF", "M1", "M1", "X", True)], V, T, [maf_entry(half=1.5, cx=0, cy=0)], seed=1)
+    f = faces(rep)[0]
+    gz = rep["instances"][0]["ground_z"]
+    assert f["action"] == "review" and f["reasons"] == ["exposed_bottom"]
+    assert f["min_gap_m"] == pytest.approx(-0.15 - (gz - 0.1), abs=1e-9)
 
 
 def test_bottom_face_delete_is_sound_on_random_terrain():
@@ -378,6 +411,10 @@ def test_bottom_face_delete_is_sound_on_random_terrain():
             return H[np.clip(np.rint(x).astype(int), 0, 20), np.clip(np.rint(y).astype(int), 0, 20)]
 
         V, T = grid(n=20, f=f)
+        if t % 2:  # a crossing tilted layer on top of the relief (stacked, separate component)
+            a, b = rng.normal(0, 0.3, 2)
+            LV, LT = layers(lambda x, y, a=a, b=b: a * (x - 10) + b * (y - 10))
+            V, T = np.vstack([V, LV]), np.vstack([T, LT + len(V)])
         pts = [Pt(float(rng.uniform(3, 17)), float(rng.uniform(3, 17)), 0, "MAF", "M1", "M1", f"T{t}_{k}", True,
                   float(rng.uniform(0, 360))) for k in range(25)]
         rep = place(pts, V, T, [maf_entry(half=1.2, cx=0.1, cy=-0.2)], seed=1)
