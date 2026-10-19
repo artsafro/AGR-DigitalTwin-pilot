@@ -25,6 +25,7 @@ from shapely.geometry import MultiPoint, shape
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 from dt_ai.geometry import ground_cake as gc  # noqa: E402
+from dt_ai.geometry import ground_details as gd  # noqa: E402
 
 SLOTS = {"tile_light": "TileLight", "tile_red": "TileRed", "tile_dark": "TileDark", "pebbles": "Pebbles",
          "gravel_screening": "Gravel", "mulch": "Mulch", "lawn_reinforced": "LawnReinforced",
@@ -110,11 +111,19 @@ def main(argv=None) -> int:
     }
     rep["xy_uv_mat_unchanged"] = bool(np.array_equal(proj.verts[:, :2], flat.verts[:, :2])
                                       and np.array_equal(proj.uv, flat.uv) and proj.slot == flat.slot)
+    proj = gc.clean_topology(proj)
+    rep["cleanup"] = proj.report["cleanup"]
+    rep["coverage"] = gc.measure_coverage(proj, plan, tol=0.0022)
+    rep["inside"] = gc.measure_inside(proj, plan, tol=a.chord + a.snap + 1e-3)
     rep["steps"] = gc.measure_steps(proj, sampler, STEP)
     rep["relief_error"] = gc.measure_relief_error(proj, sampler, STEP, tol=a.relief_tol)
     rep["stack_gaps"] = gc.measure_stack_gaps(proj, STEP)
-    rep["open_edges"] = gc.measure_open_edges(flat, plan, eps=a.snap)
+    rep["open_edges"] = gc.measure_open_edges(proj, plan, eps=0.0022)
     master = gc.add_skirt(proj, depth=1.0)
+    detail, dispositions = gd.build_details(d.get("ground_elements", []), plan.surface, sampler)
+    rep["details"] = dispositions
+    rep["detail_triangles"] = len(detail.faces)
+    master = gd.combine([master, detail])
     surf_tris = int((master.level >= 0).sum())
     s_pz = sum(h.area for h in plan.holes)
     rep["budget"] = {"surface_triangles": surf_tris, "total_triangles": len(master.faces),
@@ -166,6 +175,7 @@ def profile_uv(master: "gc.Mesh", prof: str) -> tuple[np.ndarray, dict]:
     surf = master.level >= 0
     uv = master.uv.copy()
     if prof == "vpm":
+        uv[surf] = np.clip(uv[surf], 0., 1.)  # <=2.1 mm weld drift on original cell border
         px, lo, length, lay = VPM_PX, 520, master.cell, {"layout": "stacked cell = UDIM 1001, side 1.0",
                                                          "flat_px_per_m": VPM_PX / master.cell}
     else:
@@ -175,6 +185,9 @@ def profile_uv(master: "gc.Mesh", prof: str) -> tuple[np.ndarray, dict]:
         uv[surf] = (master.verts[master.faces[surf], :2] - org) / length
     us, ids = gc.side_project_uv(master.verts, master.faces[surf], uv[surf], px, lo, length, wrap=prof == "vpm")
     uv[surf] = us
+    detail = master.level == -2
+    if detail.any():
+        uv[detail] = gd.triangle_uv(master.verts, master.faces[detail], 4. if prof == "vpm" else NPM_PX/NPM_DENSITY)
     P = master.verts[master.faces[surf][ids]]
     lay.update({"side_projected_faces": int(len(ids)),
                 "side_projected_area_m2": float(0.5 * np.linalg.norm(np.cross(P[:, 1] - P[:, 0], P[:, 2] - P[:, 0]),

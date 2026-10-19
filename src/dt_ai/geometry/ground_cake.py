@@ -645,6 +645,107 @@ def project_z(mesh: Mesh, sampler: ReliefSampler, step: float) -> tuple[Mesh, li
     return out, misses
 
 
+def clean_topology(mesh: Mesh, weld_m: float = 0.0021) -> Mesh:
+    """Weld regulatory near-duplicates, dissolve collapsed faces, subdivide solitary plates.
+
+    Run on the projected surface before the skirt/profile UV derivation. Welding uses the
+    regulatory connected-cluster definition with 0.1 mm float32 margin. It never merges layers
+    separated by 6 mm. Remaining gates must remeasure coverage, relief and containment; this
+    operation is not itself acceptance. Solitary triangles are split on a long edge (same
+    surface/UV, shared edge), never bridged to another covering or silently deleted.
+    """
+
+    from twinqa.geometry.topology import _cluster_ids
+
+    if not np.isfinite(mesh.verts).all() or not math.isfinite(weld_m) or weld_m <= 0:
+        raise ValueError("cleanup requires finite geometry and positive finite weld_m")
+    clusters = _cluster_ids(mesh.verts, weld_m)
+    first = {}
+    for i, c in enumerate(clusters):
+        first.setdefault(int(c), i)
+    reps = np.array([first[int(c)] for c in clusters], int)
+    mapped = reps[mesh.faces]
+    keep, seen = [], set()
+    for i, f in enumerate(mapped):
+        key = tuple(sorted(f))
+        area_vector = np.cross(mesh.verts[f[1]] - mesh.verts[f[0]], mesh.verts[f[2]] - mesh.verts[f[0]])
+        if len(set(f)) == 3 and key not in seen and np.linalg.norm(area_vector) > 2e-12 \
+                and (mesh.level[i] < 0 or abs(area_vector[2]) > 2e-12):
+            keep.append(i)
+            seen.add(key)
+    f = mapped[keep]
+    uv = mesh.uv[keep].copy()
+    uv += (mesh.verts[f, :2] - mesh.verts[mesh.faces[keep], :2]) / mesh.cell
+
+    # A weld can flatten a sliver into A--M--B. Dissolving it alone leaves the
+    # opposite A--B triangle with a T-junction. Split that neighbour at the EXISTING
+    # middle vertex; do not add geometry or bridge the two stacked layers.
+    fl, ul, source = f.tolist(), uv.tolist(), list(keep)
+    for i, collapsed in enumerate(mapped):
+        if i in keep or len(set(collapsed)) != 3 or mesh.level[i] < 0:
+            continue
+        p = mesh.verts[collapsed, :2]
+        d1,d2=p[1]-p[0],p[2]-p[0]
+        if abs(d1[0]*d2[1]-d1[1]*d2[0]) > 2e-12:
+            continue
+        aa, bb = max(((0,1),(1,2),(2,0)), key=lambda ab: np.linalg.norm(p[ab[0]]-p[ab[1]]))
+        mm = 3-aa-bb
+        a,b,mid = int(collapsed[aa]),int(collapsed[bb]),int(collapsed[mm])
+        for j in range(len(fl)):
+            tri=fl[j]
+            if a not in tri or b not in tri or mid in tri:
+                continue
+            ia,ib=tri.index(a),tri.index(b)
+            if (ia+1)%3 != ib:
+                a,b=b,a;ia,ib=ib,ia
+            c=tri[3-ia-ib]
+            fraction=float(np.linalg.norm(mesh.verts[mid,:2]-mesh.verts[a,:2]) /
+                           np.linalg.norm(mesh.verts[b,:2]-mesh.verts[a,:2]))
+            tex=np.array(ul[j]); mu=(1-fraction)*tex[ia]+fraction*tex[ib]; ic=3-ia-ib
+            fl[j]=[a,mid,c]; fl.append([mid,b,c])
+            ul[j]=[tex[ia].tolist(),mu.tolist(),tex[ic].tolist()]
+            ul.append([mu.tolist(),tex[ib].tolist(),tex[ic].tolist()]);source.append(source[j])
+    f=np.array(fl,int); uv=np.array(ul); keep=source
+    used, counts = np.unique(f, return_counts=True)
+    uses = dict(zip(used.tolist(), counts.tolist()))
+    v = mesh.verts.tolist()
+    faces, uvs, slots, levels = [], [], [], []
+    used_positions = mesh.verts[used]
+    split = 0
+    for j, (fi, t) in enumerate(zip(keep, f)):
+        triangles, tex = [t.tolist()], [uv[j].tolist()]
+        if all(uses[int(k)] == 1 for k in t):
+            # Pick the safest point among edge midpoints; all points lie ON the original plate.
+            options = []
+            for a, b, c in ((0, 1, 2), (1, 2, 0), (2, 0, 1)):
+                p = (mesh.verts[t[a]] + mesh.verts[t[b]]) / 2
+                dist = float(np.linalg.norm(used_positions - p, axis=1).min())
+                options.append((dist, a, b, c, p))
+            dist, a, b, c, p = max(options, key=lambda x: x[0])
+            if dist <= weld_m:
+                raise ValueError(f"solitary face {fi} cannot be subdivided without new near-duplicates")
+            vi = len(v); v.append(p.tolist())
+            puv = ((uv[j, a] + uv[j, b]) / 2).tolist()
+            triangles = [[int(t[a]), vi, int(t[c])], [vi, int(t[b]), int(t[c])]]
+            tex = [[uv[j, a].tolist(), puv, uv[j, c].tolist()], [puv, uv[j, b].tolist(), uv[j, c].tolist()]]
+            split += 1
+        faces.extend(triangles); uvs.extend(tex)
+        slots.extend([mesh.slot[fi]] * len(triangles)); levels.extend([int(mesh.level[fi])] * len(triangles))
+    faces = np.array(faces, int).reshape(-1, 3)
+    tex = np.array(uvs)
+    points = np.array(v)[faces]
+    down = (np.cross(points[:,1]-points[:,0], points[:,2]-points[:,0])[:,2] < 0) & (np.array(levels) >= 0)
+    faces[down] = faces[down, ::-1]
+    tex[down] = tex[down, ::-1]
+    used = np.unique(faces)
+    remap = np.full(len(v), -1); remap[used] = np.arange(len(used))
+    report = dict(mesh.report)
+    report["cleanup"] = {"weld_m": weld_m, "welded_vertices": len(mesh.verts) - len(first),
+                         "collapsed_faces": len(mesh.faces) - len(keep), "solitary_plates_subdivided": split,
+                         "winding_corrected": int(down.sum())}
+    return Mesh(np.array(v)[used], remap[faces], slots, np.array(levels), tex, mesh.cell, report)
+
+
 def add_skirt(mesh: Mesh, depth: float = 1.0, slot: str = "Skirt") -> Mesh:
     """Vertical skirt down ``depth`` m along every open (single-face) edge of the base layer."""
     if not math.isfinite(depth) or depth < 1.0:
@@ -826,7 +927,7 @@ def side_project_uv(verts: np.ndarray, faces: np.ndarray, uv: np.ndarray, tex_px
     >= 0.683 of the normal whenever the top-down density failed with lo >= 0.5 * flat). Every other face keeps
     its UV. Returns (uv, side face ids). Their crease with the top-down neighbours is a texture seam (reported)."""
     d = texel_density(verts, faces, uv, tex_px)
-    ids = np.nonzero(np.isfinite(d) & (d < lo))[0]
+    ids = np.nonzero(~np.isfinite(d) | (d < lo))[0]
     out = uv.copy()
     if not len(ids):
         return out, ids

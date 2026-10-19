@@ -775,9 +775,12 @@ def read_spozu_dxf(source, cfg: SpozuConfig, tol: float = 0.001) -> SpozuResult:
     # Keep every configured element, including unsupported primitives and INSERT grouping records.
     # The existing walker supplies WCS transforms and instance provenance; no second DXF reader.
     elements = []
+    instance_roles = {}
     for it in ents:
-        if it.layer not in element_roles:
+        role = element_roles.get(it.layer) or instance_roles.get(it.container)
+        if role is None:
             continue
+        instance_roles[it.ref] = role
         e = it.e
         kind = e.dxftype()
         coords, problem = None, None
@@ -791,7 +794,7 @@ def read_spozu_dxf(source, cfg: SpozuConfig, tol: float = 0.001) -> SpozuResult:
                 coords, problem = None, f"{type(exc).__name__}: {exc}"
         elif kind != "INSERT":
             problem = f"unsupported element primitive {kind}"
-        elements.append({"role": element_roles[it.layer], "layer": it.layer, "handle": it.handle,
+        elements.append({"role": role, "layer": it.layer, "handle": it.handle,
                          "ref": it.ref, "container": it.container, "kind": kind,
                          "label": e.dxf.name if kind == "INSERT" else None,
                          "geometry": {"type": "LineString", "coordinates": coords} if coords else None,
