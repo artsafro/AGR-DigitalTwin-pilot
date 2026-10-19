@@ -676,13 +676,16 @@ class _SegIndex:
                         self.grid.setdefault((gx, gy), []).append(k)
 
     def query(self, lo, hi) -> np.ndarray:
+        return self.seg[self.ids(lo, hi)]
+
+    def ids(self, lo, hi) -> np.ndarray:
         i0 = np.floor((lo - self.lo) / self.b).astype(int)
         i1 = np.floor((hi - self.lo) / self.b).astype(int)
         cand = set()
         for gx in range(i0[0], i1[0] + 1):
             for gy in range(i0[1], i1[1] + 1):
                 cand.update(self.grid.get((gx, gy), ()))
-        return self.seg[np.fromiter(sorted(cand), int, len(cand))]
+        return np.fromiter(sorted(cand), int, len(cand))
 
 
 def _poly_area(p) -> float:
@@ -758,6 +761,23 @@ def _segs_inside(seg, p, eps=1e-6) -> np.ndarray:
 def _inside(p, xy, eps=0.0) -> np.ndarray:
     n, c = _half_planes(p)
     return (xy @ n.T >= c[None] - eps).all(axis=1)
+
+
+def _simplify(q, h: float = 0.002) -> np.ndarray:
+    """Drop vertices of convex CCW `q` that stand less than `h` above the chord of their neighbours (or
+    close a shorter edge): the polygon only shrinks (stays inside the leaf), and its float32 read-back
+    stays convex (#326: near-collinear BSP vertices read back as non-convex hulls)."""
+    q = np.asarray(q, float)
+    while len(q) > 3:
+        a, b, c = np.roll(q, 1, axis=0), q, np.roll(q, -1, axis=0)
+        ch = c - a
+        ln = np.maximum(np.linalg.norm(ch, axis=1), 1e-15)
+        ht = np.abs(ch[:, 0] * (b - a)[:, 1] - ch[:, 1] * (b - a)[:, 0]) / ln
+        k = int(np.argmin(ht))
+        if ht[k] >= h:
+            break
+        q = np.delete(q, k, axis=0)
+    return q
 
 
 _NUDGE = 1e-5 * np.stack([np.cos(np.arange(6) * np.pi / 3), np.sin(np.arange(6) * np.pi / 3)], axis=1)
@@ -865,8 +885,17 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
         dev = float((r.max() - r.min()) / 2)
         return plane, dev, float(zs[hit].min())
 
+    def low(p, reach) -> float:
+        """Lowest model vertex within `reach` of leaf `p` (inf when none)."""
+        k = vidx.ids(p.min(axis=0) - reach, p.max(axis=0) + reach)
+        if not len(k):
+            return math.inf
+        k = k[_poly_dist(hf.v[k, :2], p)[0] <= reach]
+        return float(hf.v[k, 2].min()) if len(k) else math.inf
+
     def leaf(p, strip=0.0):
         q = _inset(p, g)
+        q = _simplify(q) if len(q) else q
         if not len(q) or _min_width(q) < 1e-4:
             loose.append((p, None, strip))  # covered sliver thinner than the gap: no piece, measured below
             return True
@@ -926,7 +955,10 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
                     stack.extend((k, lvl + 1) for k in kids)
                     continue
             top = q @ plane[:2] + plane[2]
-            pieces.append(_prism(q, plane, min(float(top.min()), zmin) - depth))
+            # bottom below every model vertex of the leaf and its outline band: perimeter skirts and
+            # undersides of a layered (method C) slab are model surface too [D134]
+            reach = strip + g + 1e-6
+            pieces.append(_prism(q, plane, min(float(top.min()) - depth, zmin - depth, low(part, reach))))
             devs.append(dev)
             retreat = float(_poly_dist(part, q)[0].max())  # farthest leaf point from its own piece
             if retreat > gap:  # acute corner or needle: measured against all pieces below
