@@ -5,6 +5,7 @@ units come from a pure-Python GlobalSettings read), V003 (triangulation,
 triangle limits, object types), V004 (applied transforms, regulatory topology defect count, MAF smoothing/flipped normals/dimensions (GroundEl)), V006 (NPM embedded images),
 V008 (one UV channel, mirrored islands, glass tile), V010 (UCX triangle budget only),
 V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
+Ground FBX: Flora checks from twinqa.flora (V015 dimensions, V005 maps, V003 Flora share; #191).
 """
 import math
 import tempfile
@@ -13,6 +14,7 @@ from pathlib import Path
 from dt_ai.core.blender_runner import blender_executable, run_blender
 from twinqa.fbx_header import fbx_units
 from twinqa.maf_checks import SMOOTHING_ANGLE_DEG, maf_findings
+from twinqa.flora import FLORA_SHARE, flora_findings
 from twinqa.report import Finding
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
@@ -185,9 +187,10 @@ def _v002_findings(rb: dict, meshes: list[dict], src: str) -> list[Finding]:
     return [units, scale]
 
 
-def scene_findings(rb: dict, kind: str, role: str, profile: dict, *, maf_sizes=None,
-                   smoothing_angle_deg=None) -> dict[str, list[Finding]]:
-    """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}."""
+def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule: dict | None = None,
+                   flora_share: int = FLORA_SHARE, *, maf_sizes=None, smoothing_angle_deg=None) -> dict[str, list[Finding]]:
+    """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}. Ground FBX: Flora checks
+    (twinqa.flora; flora_schedule = {mesh name: {"height_m", "crown_m"}}, flora_share default 70 000)."""
     src = Path(rb["source"]).name
     out = {"V003": [], "V004": [], "V008": [], "V010": [], "V013": [], "V006": [], "V002": []}
     if not rb.get("readback_ok"):
@@ -257,4 +260,8 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, *, maf_sizes=N
         loose = [i["name"] for i in rb.get("images", []) if not i["packed"]]
         out["V006"].append(_f("fail" if loose else "pass", "embedded textures", f"{src}: {loose or 'all embedded'}",
                               "PNG embedded in FBX", [9], src))
+    if role == "ground":  # Flora checks (#191): dimensions V015, maps V005, Flora share V003
+        geometry = [m for m in meshes if m not in ucx]
+        for stage_id, findings in flora_findings(rb, kind, geometry, tris, profile, flora_schedule, flora_share).items():
+            out.setdefault(stage_id, []).extend(findings)
     return out

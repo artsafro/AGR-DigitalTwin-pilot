@@ -3,6 +3,7 @@
 # script, no RunRecord/config files, adds triangles, polygon degrees, UV channels, UDIM tiles,
 # mirrored UV triangles, transforms, embedded image facts, regulatory topology counts and GroundEl maf_surface
 # (corner normals for smoothing and flipped faces) for the V002-V013 scene stages.
+# material image maps by BSDF socket (2026-10-16, #191 Flora maps, V005).
 """Structural FBX readback in an isolated factory Blender process.
 
     blender --background --factory-startup --python-exit-code 1 \
@@ -145,6 +146,30 @@ def image_facts():
     return images
 
 
+def material_facts():
+    """Per material: image maps as the BSDF input socket they reach (e.g. Base Color, Alpha, Normal)."""
+    materials = []
+    for mat in bpy.data.materials:
+        maps = []
+        tree = mat.node_tree if mat.use_nodes else None
+        for node in (tree.nodes if tree else []):
+            if node.type != "TEX_IMAGE" or node.image is None:
+                continue
+            todo, seen = [(link, link.from_socket.name) for out in node.outputs for link in out.links], set()
+            while todo:
+                link, output = todo.pop()
+                if link.as_pointer() in seen:
+                    continue
+                seen.add(link.as_pointer())
+                if link.to_node.type.startswith("BSDF_"):
+                    maps.append({"image": node.image.name, "output": output, "socket": link.to_socket.name})
+                else:
+                    todo.extend((nxt, output) for out in link.to_node.outputs for nxt in out.links)
+        unique = {(m["socket"], m["image"], m["output"]): m for m in maps}
+        materials.append({"name": mat.name, "maps": [unique[k] for k in sorted(unique)]})
+    return materials
+
+
 report = {"source": str(source), "readback_ok": False, "blender": bpy.app.version_string,
           "scope": "structural readback only; not a delivery verdict", "meshes": [], "other_objects": []}
 try:
@@ -156,6 +181,7 @@ try:
         else:
             report["other_objects"].append({"name": obj.name, "type": obj.type})
     report["images"] = image_facts()
+    report["materials"] = material_facts()
     report["readback_ok"] = bool(report["meshes"]) and all(m["polygons"] > 0 for m in report["meshes"])
     if not report["readback_ok"]:
         report["error"] = "no non-empty meshes"
