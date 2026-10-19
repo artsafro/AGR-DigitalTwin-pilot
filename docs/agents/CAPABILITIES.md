@@ -428,7 +428,7 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
   Ground on synthetic surfaces only (`tests/test_ucx_build.py`); no real-object delivery acceptance.
 - `blender --background --factory-startup --python-exit-code 1 --python tools/blender/ucx_build.py --
   <model.fbx|.blend> <out.fbx> <Main|Ground> [cell= gap= with=<obj,...>]`; exit 0 built / 3 Ground over
-  `tol` (vertical, footprint overhang or uncovered strip) / 2 failed (incl. a missing `with=` name, a UCX
+  `tol` (one-sided vertical deviation or uncovered strip; reverse footprint overhang is diagnostic [D133]) / 2 failed (incl. a missing `with=` name, a UCX
   that names no model object) / 4 refused (output aliases input). Replaces only the UCX of the input
   objects; other targets' UCX are kept and their triangles are reserved from the whole-file [D012]
   budget (kept + new over the limit -> exit 2, no FBX). Job scripts: `build_into_scene(...)`, pass
