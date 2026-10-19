@@ -399,6 +399,46 @@ def test_bottom_face_three_layers_exposed_at_triple_point():
     assert f["min_gap_m"] == pytest.approx(-0.15 - (gz - 0.1), abs=1e-9)
 
 
+def connect(V, T, extra_v, extra_t):
+    """Join separate layers into ONE connected Ground mesh by triangles far outside the footprint."""
+    V2 = np.vstack([V, np.asarray(extra_v, float)])
+    return V2, np.vstack([T, np.asarray(extra_t)])
+
+
+def test_bottom_face_connected_crossing_sheets_exposed():
+    """Reviewer P1 (PR #323): the two crossing layers joined outside the footprint into one connected mesh;
+    the dip on x = 25 (gap -0.20 m) must still be found: review / exposed_bottom, never delete."""
+    V, T = layers(lambda x, y: -0.3 * (x - 25) - 0.15, lambda x, y: 1.0 * (x - 25) - 0.15)
+    V, T = connect(V, T, [[30, -10, 0]], [[0, 4, 6]])
+    rep = place([Pt(24, 25, 0, "MAF", "M1", "M1", "X", True)], V, T, [maf_entry(half=1.5, cx=0, cy=0)], seed=1)
+    f = faces(rep)[0]
+    assert f["action"] == "review" and "exposed_bottom" in f["reasons"]
+    assert f["min_gap_m"] == pytest.approx(-0.20, abs=1e-9)
+    assert rep["status"] != "pass"
+
+
+def test_bottom_face_connected_three_layers_exposed_at_triple_point():
+    s3 = math.sqrt(3) / 2
+    x0, y0 = 25.6, 25.3
+    V, T = layers(lambda x, y: (x - x0) - 0.15,
+                  lambda x, y: -(x - x0) / 2 + s3 * (y - y0) - 0.15,
+                  lambda x, y: -(x - x0) / 2 - s3 * (y - y0) - 0.15)
+    V, T = connect(V, T, [[30, -10, 0], [-10, -10, 0]], [[0, 4, 9], [3, 7, 10]])
+    rep = place([Pt(25, 25, 0, "MAF", "M1", "M1", "X", True)], V, T, [maf_entry(half=1.5, cx=0, cy=0)], seed=1)
+    f = faces(rep)[0]
+    gz = rep["instances"][0]["ground_z"]
+    assert f["action"] == "review" and "exposed_bottom" in f["reasons"]
+    assert f["min_gap_m"] == pytest.approx(-0.15 - (gz - 0.1), abs=1e-9)
+
+
+def test_bottom_face_connected_parallel_plates_still_delete():
+    """Control: two parallel plates 6 mm apart joined into one mesh stay covered -> delete."""
+    V, T = layers(lambda x, y: 0.0, lambda x, y: 0.006)
+    V, T = connect(V, T, [[30, -10, 0]], [[0, 4, 6]])
+    rep = place([Pt(24, 25, 0, "MAF", "M1", "M1", "X", True)], V, T, [maf_entry(half=1.5, cx=0, cy=0)], seed=1)
+    assert faces(rep)[0]["action"] == "delete"
+
+
 def test_bottom_face_delete_is_sound_on_random_terrain():
     """Brute-force probe: a `delete` verdict implies the topmost Ground is strictly above the face on a dense
     sample of the outline interior (and every sample has a height)."""
@@ -610,4 +650,27 @@ def test_cli_pass_fail_and_output_equals_input(tmp_path):
     assert main(["--input", str(inp), "--output", str(out)]) != 0
     before = inp.read_bytes()
     assert main(["--input", str(inp), "--output", str(tmp_path / "." / "in.json")]) != 0
+    assert inp.read_bytes() == before
+
+
+def test_cli_rejects_hardlinked_output_alias(tmp_path):
+    """Reviewer P1 (PR #323): an existing output that is a hard link of the input is the same file."""
+    import os
+    V, T = grid(n=10)
+    ok = [{"x": 5.0, "y": 5.0, "z": 0.0, "label": "B1", "handle": "A", "rotation": 0.0}]
+    inp = tmp_path / "in.json"
+    _write_input(inp, ok, V, T, [flora_entry()], 1)
+    alias = tmp_path / "alias.json"
+    try:
+        os.link(inp, alias)
+    except OSError:
+        pytest.skip("hard links not supported here")
+    before = inp.read_bytes()
+    assert main(["--input", str(inp), "--output", str(alias)]) != 0
+    assert inp.read_bytes() == before and alias.read_bytes() == before
+    # control: a distinct existing output is overwritten normally
+    other = tmp_path / "other.json"
+    other.write_text("{}", encoding="utf-8")
+    assert main(["--input", str(inp), "--output", str(other)]) == 0
+    assert json.loads(other.read_text(encoding="utf-8"))["status"] == "pass"
     assert inp.read_bytes() == before
