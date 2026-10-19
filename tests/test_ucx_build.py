@@ -596,3 +596,67 @@ def test_one_sided_ground_generated_perimeters_probe(scale, offset):
     ub.check_file_budget(50200, res.triangles + 12)
 
 
+
+
+# --- #326: real-size perforated layered-cake (method C) Ground ---
+
+def layered_site(angle=33.0):
+    """SYNTHETIC 200 x 190 m Ground in the shape of the Vatutino v011 failure (#326): a base layer on a
+    1 m grid rotated by `angle`, three building voids and an outer notch, overlapping +6 cm surfacing
+    patches (separate, unwelded meshes: their edges are internal, not the outline) and a +15 cm kerb
+    platform with vertical skirts (a step above R11). Only plan-rectilinear in the rotated frame."""
+    a = math.radians(angle)
+    rot = np.array([[math.cos(a), -math.sin(a)], [math.sin(a), math.cos(a)]])
+    zf = lambda x, y: 145.0 + 0.02 * x + 0.5 * np.sin(y / 23.0)  # noqa: E731
+    holes = [(30, 80, 40, 90), (120, 160, 20, 60), (90, 130, 120, 170), (0, 25, 165, 190)]
+    vs, ts = [], []
+
+    def grid(x0, x1, y0, y1, step, dz, keep=lambda x, y: True):
+        xs, ys = np.arange(x0, x1 + 1e-9, step), np.arange(y0, y1 + 1e-9, step)
+        v, t = plan_mesh(xs, ys, keep, z=lambda x, y: zf(x, y) + dz)
+        vs.append(v)
+        ts.append(t)
+        return xs, ys
+
+    grid(0, 200, 0, 190, 1.0, 0.0, lambda x, y: not any(h[0] < x < h[1] and h[2] < y < h[3] for h in holes))
+    for x0, x1, y0, y1 in [(5, 28, 5, 35), (85, 115, 70, 115), (140, 195, 70, 110), (40, 85, 100, 160)]:
+        grid(x0, x1, y0, y1, 1.0, 0.06)  # surfacing patch over the base: overlapping layer
+    kx, ky = grid(165, 195, 130, 185, 1.0, 0.15)  # kerb platform + 15 cm
+    ring = [(x, 130) for x in kx] + [(195, y) for y in ky[1:]] + [(x, 185) for x in kx[::-1][1:]] + \
+           [(165, y) for y in ky[::-1][1:]]
+    skirt_v, skirt_t = [], []
+    for (x0, y0), (x1, y1) in zip(ring, ring[1:]):
+        k = len(skirt_v)
+        skirt_v += [(x0, y0, zf(x0, y0) + 0.15), (x1, y1, zf(x1, y1) + 0.15), (x1, y1, zf(x1, y1)), (x0, y0, zf(x0, y0))]
+        skirt_t += [(k, k + 1, k + 2), (k, k + 2, k + 3)]
+    vs.append(np.array(skirt_v))
+    ts.append(np.array(skirt_t))
+    v, t, off = [], [], 0
+    for vv, tt in zip(vs, ts):
+        v.append(vv)
+        t.append(tt + off)
+        off += len(vv)
+    v, t = np.concatenate(v), np.concatenate(t)
+    v[:, :2] = v[:, :2] @ rot.T - 100.0
+    centres = np.array([((h[0] + h[1]) / 2, (h[2] + h[3]) / 2) for h in holes[:3]]) @ rot.T - 100.0
+    return v, t, centres
+
+
+def test_ground_real_size_layered_perforated_site_fits_999_and_budget():
+    """#326 regression: the shared builder must give a bounded Ground UCX for a real-size perforated,
+    overlapping layered heightfield: <= 999 names, <= [D012] budget, closed convex pieces with gaps,
+    model -> UCX <= R11 [D134], building voids kept open."""
+    v, t, centres = layered_site()
+    res = ub.build_ground(v, t)
+    assert len(res.pieces) <= ub.MAX_PIECES and res.triangles <= res.budget == 15000
+    assert res.within_tol and res.max_vertical_dev_m <= 0.08 and res.uncovered_strip_m <= ub.GROUND_TOL_M
+    assert_valid_pieces(res)
+    hf = ub.HeightField(v, t)
+    g = np.stack(np.meshgrid(np.arange(-110, 110, 0.37), np.arange(-110, 110, 0.37)), -1).reshape(-1, 2)
+    zz = hf.z(g)
+    top = np.stack([g[np.isfinite(zz)][:, 0], g[np.isfinite(zz)][:, 1], zz[np.isfinite(zz)]], 1)
+    assert ub.ground_deviation(top, res).max() <= ub.GROUND_TOL_M  # upper surface -> UCX, one-sided
+    assert len(footprint_uncovered(v, t, res, n=6)) == 0  # no piece over a void
+    for c in centres:  # building voids stay open
+        assert not any(ub.point_in_piece_plan(pc, c) for pc in res.pieces)
+    ub.ucx_names("Vatutino", "Ground", len(res.pieces))
