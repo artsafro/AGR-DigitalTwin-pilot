@@ -248,10 +248,13 @@ def _inputs(repo):
         if gitdir.is_file():
             pointer = gitdir.read_text(encoding="utf-8").strip()
             if pointer.startswith("gitdir: "):
-                found.append((repo / pointer[8:]).resolve())
-    hand = repo / "docs" / "PROJECT_STATE.next.md"
-    if hand.exists():
-        found.append(hand)
+                metadata = (repo / pointer[8:]).resolve()
+                found.append(metadata)
+                common = metadata / "commondir"
+                if common.is_file():
+                    found.append((metadata / common.read_text(encoding="utf-8").strip()).resolve())
+    found.append(repo / "docs" / "PROJECT_STATE.next.md")
+    found.append(Path(__file__).resolve())
     return found
 
 

@@ -447,6 +447,25 @@ def test_worktree_metadata_and_hardlink_aliases_are_inputs(tmp_path):
     assert hand.read_text(encoding="utf-8") == "KEEP NEXT\n"
 
 
+def test_common_gitdir_and_absent_optional_input_are_protected(tmp_path, monkeypatch):
+    module = _load()
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    common = tmp_path / "common"
+    metadata = common / "worktrees" / "fixture"
+    metadata.mkdir(parents=True)
+    (metadata / "commondir").write_text("../..\n", encoding="utf-8")
+    config = common / "config"
+    config.write_text("KEEP\n", encoding="utf-8")
+    (repo / ".git").write_text(f"gitdir: {metadata.as_posix()}\n", encoding="utf-8")
+    monkeypatch.setattr(module, "_capture", lambda *_: pytest.fail("Must reject before reading git/gh"))
+    for output in (config, repo / "docs" / "PROJECT_STATE.next.md"):
+        with pytest.raises(module.FailClosed, match="output-is-input"):
+            module.generate(repo, output, 12, 12)
+    assert config.read_text(encoding="utf-8") == "KEEP\n"
+    assert not (repo / "docs").exists()
+
+
 def test_output_path_that_resolves_to_an_input_writes_nothing(tmp_path):
     merges = "abc1234\tSubject one\n"
     opens = '[{"number": 3, "title": "Keep", "headRefName": "task/a", "isDraft": false}]\n'
