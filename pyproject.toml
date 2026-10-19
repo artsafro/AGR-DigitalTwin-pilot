@@ -31,9 +31,10 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-m 'not blender and not dcc'"
+addopts = "-m 'not blender and not dcc and not acad'"
 pythonpath = [".", "tools/qa"]
 markers = [
     "dcc: requires an explicitly supplied Blender executable (DT_BLENDER)",
     "blender: opt-in real background Blender process (select with -m blender)",
+    "acad: needs the AutoCAD 2025 core console via dcc_batch.py (select with -m acad)",
 ]
