@@ -618,7 +618,7 @@ def test_probe_nested_instances_match_brute_force(seed):
     plot = box(0, 0, 100, 100)
     exp_area = union_all([p.intersection(plot) for p in polys]).area
     res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
-    assert res.coverings["deck"].area == pytest.approx(exp_area, abs=1e-6)
+    assert res.coverings["deck"].area == pytest.approx(exp_area, abs=1e-4)  # GRID snapping: <= perimeter * 1e-6
     got = sorted((p.x, p.y) for p in res.planting)
     exp = sorted(exp_pts)
     assert len(got) == len(exp)

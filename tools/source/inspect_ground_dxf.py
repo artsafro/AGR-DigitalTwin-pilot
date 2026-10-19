@@ -173,6 +173,12 @@ def boundary_polygon(doc, handle: str, tol: float = BOUNDARY_TOL) -> Polygon:
     e = doc.entitydb.get(handle)
     if e is None:
         raise ValueError(f"boundary {handle}: no such entity")
+    return polyline_polygon(e, tol, handle)
+
+
+def polyline_polygon(e, tol: float = BOUNDARY_TOL, handle: str | None = None) -> Polygon:
+    """``boundary_polygon`` for an entity object (also a virtual WCS copy from a block insert)."""
+    handle = handle or e.dxf.handle
     kind = e.dxftype()
     if kind == "LWPOLYLINE":
         verts = [(x, y, b) for x, y, b in e.get_points("xyb")]
