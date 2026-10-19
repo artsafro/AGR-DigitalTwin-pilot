@@ -69,9 +69,20 @@ def _ucx_mask(role: str, address: str | None) -> re.Pattern:
     return re.compile(rf"UCX_SM_{a}_{'Ground' if role == 'ground' else 'Main'}_{UCX_INDEX}")
 
 
+def _validate_grammar(kind: str, role: str, limit: int) -> None:
+    """Reject unsupported grammar/configuration instead of silently skipping or bypassing the ceiling."""
+    if (kind, role) not in (*GEOMETRY_SUFFIXES, ("npm", "oks")):
+        raise ValueError(f"unsupported mesh-name grammar: {kind}/{role}")
+    if type(limit) is not int or limit <= 0:
+        raise ValueError("mesh-name limit must be a positive integer")
+
+
 def mesh_name_violation(name: str, kind: str, role: str, address: str | None, limit: int) -> str | None:
     """Why ``name`` breaks the grammar of a ``kind``/``role`` FBX with this Address; None if it follows it.
     Address None = not derivable: masks accept any Address."""
+    _validate_grammar(kind, role, limit)
+    if not isinstance(name, str):
+        raise ValueError("mesh name must be a string")
     if len(name) > limit:
         return f"{len(name)} characters > {limit}"
     if not NAME_CHARS.fullmatch(name):
@@ -90,9 +101,12 @@ def mesh_name_violation(name: str, kind: str, role: str, address: str | None, li
 
 def mesh_name_findings(names: list[str], kind: str, role: str, fbx_stem: str, limit: int, src: str) -> list[Finding]:
     """V012 findings for the internal mesh names of one FBX readback: 'mesh names' and, when UCX meshes
-    exist, 'UCX names'. Light FBX: no findings."""
-    if role == "light" or (kind, role) not in (*GEOMETRY_SUFFIXES, ("npm", "oks")):
+    exist, 'UCX names'. Light FBX: no findings. Malformed inventories/configuration raise ValueError."""
+    if role == "light" and kind in PAGES:
         return []
+    _validate_grammar(kind, role, limit)
+    if not isinstance(names, list) or not names or any(not isinstance(n, str) for n in names):
+        raise ValueError("mesh-name inventory must be a nonempty list of strings")
     address = address_from_fbx(kind, role, fbx_stem)
     dup = sorted(n for n, c in Counter(names).items() if c > 1)
     out = []

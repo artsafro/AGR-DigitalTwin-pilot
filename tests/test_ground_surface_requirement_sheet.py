@@ -44,7 +44,7 @@ NUMBER_TOKENS = (
     (10, 3, "2 mm – 1 cm"),
 )
 
-NONE_ROWS = {1, 2, 3, 5, 6, 7, 8, 11}
+NONE_ROWS = {1, 2, 3, 5, 6, 7, 8}
 
 PRACTICE_TOKENS = (
     "not regulation",
@@ -122,6 +122,10 @@ def coverage_contract(text):
         else:
             assert row[5] != "none", number
     assert "review" in rows[5][4]
+    for token in ("V012", "twinqa/naming.py", "tests/qa/test_mesh_names.py", "partial"):
+        assert token in rows[10][5], token
+    for token in ("GroundGlass", "254", "Address", "review"):
+        assert token in rows[10][4], token
 
 
 def _practice_bounds(lines):
@@ -166,6 +170,19 @@ def test_ground_numbers():
 
 def test_ground_coverage():
     coverage_contract(sheet_text())
+
+
+def test_ground_name_coverage_negative_probes():
+    text = sheet_text()
+    coverage_contract(text)
+    count = 0
+    for column, tokens in ((5, ("V012", "twinqa/naming.py", "tests/qa/test_mesh_names.py", "partial")),
+                           (4, ("GroundGlass", "254", "Address", "review"))):
+        for token in tokens:
+            with pytest.raises(AssertionError):
+                coverage_contract(_replace_cell(text, 11, column, token, "UNVERIFIED"))
+            count += 1
+    assert count == 8
 
 
 def test_ground_project_practice():
@@ -222,7 +239,7 @@ def test_ground_gaps_negative_probes():
         with pytest.raises(AssertionError):
             contract(mutated)
         count += 1
-    assert count == 8
+    assert count == 7
 
 
 def test_ground_practice_negative_probes():
