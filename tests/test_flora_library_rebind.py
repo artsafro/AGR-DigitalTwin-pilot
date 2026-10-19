@@ -11,6 +11,7 @@ Acceptance for the production execute/CLI path guard:
 | resolved/case/relative aliases | fail before DCC |
 | distinct valid report | success |
 """
+from functools import partial
 import importlib.util
 import json
 import math
@@ -271,14 +272,50 @@ _PASS_REPORT = {
     "bindings_expected": 4,
     "paths_outside": 0,
 }
-_PUBLISHED_DIFFUSE = Path(r"C:/x/flora-library/v001/maps/tilia-cordata/diffuse-v001.png")
-_PUBLISHED_OPACITY = Path(r"C:/x/flora-library/v001/maps/tilia-cordata/opacity-v001.png")
 
 
-def _production_scene(tmp_path: Path):
+@pytest.fixture
+def no_published_map_reads(monkeypatch):
+    """Simulate a clean checkout without modifying any workstation assets."""
+    read_bytes = Path.read_bytes
+
+    def read_without_published_assets(path):
+        normalized = str(path).replace("\\", "/").lower()
+        if normalized.startswith("c:/x/flora-library/"):
+            raise FileNotFoundError(f"published assets unavailable in unit tests: {path}")
+        return read_bytes(path)
+
+    monkeypatch.setattr(Path, "read_bytes", read_without_published_assets)
+
+
+@pytest.fixture
+def synthetic_library(tmp_path, monkeypatch, no_published_map_reads):
+    """Synthetic PNGs; only filesystem discovery and the external DCC are replaced.
+
+    Relative map paths keep pytest's temporary ancestors out of the production
+    review-folder check. The real planner still validates every slot and folder.
+    """
+    from PIL import Image
+
+    monkeypatch.chdir(tmp_path)
+    maps_root = Path("maps")
+    species_root = maps_root / "tilia-cordata"
+    species_root.mkdir(parents=True)
+    maps = [species_root / f"{slot}-v001.png" for slot in ("diffuse", "opacity")]
+    Image.new("RGB", (2, 2), (40, 100, 20)).save(maps[0])
+    Image.new("L", (2, 2), 255).save(maps[1])
+    rebound = _rebind()
+    monkeypatch.setattr(rebound, "MAPS_ROOT", str(maps_root))
+    # The production function's default is bound at definition time.
+    monkeypatch.setattr(rebound, "plan_bindings", partial(rebound.plan_bindings, maps_root=str(maps_root)))
+    monkeypatch.setattr(rebound, "_preserved_paths", lambda plan, source: [source, *(str(path) for path in maps)])
+    return rebound, *_production_scene(tmp_path, maps), maps
+
+
+def _production_scene(tmp_path: Path, maps):
     tmp_path.mkdir(parents=True, exist_ok=True)
     catalogue = tmp_path / "catalogue.json"
-    catalogue.write_text(json.dumps(_catalogue_of(_species())), encoding="utf-8")
+    catalogue.write_text(json.dumps(_catalogue_of(_species(diffuse=str(maps[0]), opacity=str(maps[1])))), encoding="utf-8")
     source = tmp_path / "source.max"
     source.write_bytes(b"SOURCE-MAX")
     output = tmp_path / "flora-library-v003.max"
@@ -304,9 +341,8 @@ def _argv(catalogue, source, output, report):
 
 
 @pytest.mark.parametrize("alias", ["output", "catalogue", "resolved", "case", "relative"])
-def test_production_execute_and_cli_reject_report_aliases_before_dcc(tmp_path, monkeypatch, alias):
-    rebound = _rebind()
-    catalogue, source, output, report = _production_scene(tmp_path)
+def test_production_execute_and_cli_reject_report_aliases_before_dcc(tmp_path, monkeypatch, synthetic_library, alias):
+    rebound, catalogue, source, output, report, maps = synthetic_library
     if alias == "output":
         report = output
     elif alias == "catalogue":
@@ -324,8 +360,7 @@ def test_production_execute_and_cli_reject_report_aliases_before_dcc(tmp_path, m
     before = {
         catalogue: catalogue.read_bytes(),
         source: source.read_bytes(),
-        _PUBLISHED_DIFFUSE: _PUBLISHED_DIFFUSE.read_bytes(),
-        _PUBLISHED_OPACITY: _PUBLISHED_OPACITY.read_bytes(),
+        **{path: path.read_bytes() for path in maps},
     }
     with pytest.raises(rebound.RebindError):
         rebound.execute(str(catalogue), str(source), str(output), str(report))
@@ -339,33 +374,31 @@ def test_production_execute_and_cli_reject_report_aliases_before_dcc(tmp_path, m
         assert not Path(report).exists()
 
 
-def test_production_existing_unrelated_report_is_not_replaced(tmp_path, monkeypatch):
-    rebound = _rebind()
-    catalogue, source, output, report = _production_scene(tmp_path)
+def test_production_existing_unrelated_report_is_not_replaced(tmp_path, monkeypatch, synthetic_library):
+    rebound, catalogue, source, output, report, maps = synthetic_library
     report.write_bytes(b"KEEP-UNRELATED")
     calls = {"dcc": 0}
     _allow_dcc_to_succeed(monkeypatch, rebound, calls)
-    catalogue_bytes = catalogue.read_bytes()
+    before = {path: path.read_bytes() for path in (catalogue, source, *maps)}
     with pytest.raises(rebound.RebindError):
         rebound.execute(str(catalogue), str(source), str(output), str(report))
     assert calls["dcc"] == 0
     assert rebound.main(_argv(catalogue, source, output, report)) != 0
     assert calls["dcc"] == 0
     assert report.read_bytes() == b"KEEP-UNRELATED"
-    assert catalogue.read_bytes() == catalogue_bytes
+    for path, payload in before.items():
+        assert path.read_bytes() == payload
     assert not output.exists()
 
 
-def test_production_distinct_report_succeeds(tmp_path, monkeypatch):
-    rebound = _rebind()
-    catalogue, source, output, report = _production_scene(tmp_path)
+def test_production_distinct_report_succeeds(tmp_path, monkeypatch, synthetic_library):
+    rebound, catalogue, source, output, report, maps = synthetic_library
     calls = {"dcc": 0}
     _allow_dcc_to_succeed(monkeypatch, rebound, calls)
     before = {
         catalogue: catalogue.read_bytes(),
         source: source.read_bytes(),
-        _PUBLISHED_DIFFUSE: _PUBLISHED_DIFFUSE.read_bytes(),
-        _PUBLISHED_OPACITY: _PUBLISHED_OPACITY.read_bytes(),
+        **{path: path.read_bytes() for path in maps},
     }
     result = rebound.execute(str(catalogue), str(source), str(output), str(report))
     assert result["passed"] is True
@@ -378,8 +411,96 @@ def test_production_distinct_report_succeeds(tmp_path, monkeypatch):
     for path, payload in before.items():
         assert path.read_bytes() == payload
 
-    catalogue2, source2, output2, report2 = _production_scene(tmp_path / "cli")
+    catalogue2, source2, output2, report2 = _production_scene(tmp_path / "cli", maps)
     assert rebound.main(_argv(catalogue2, source2, output2, report2)) == 0
     assert output2.read_bytes() == b"MAX-SCENE"
     assert json.loads(report2.read_text(encoding="utf-8"))["passed"] is True
     assert catalogue2.read_bytes() == before[catalogue]
+    assert source2.read_bytes() == before[source]
+    assert calls["dcc"] == 2
+    for path, payload in before.items():
+        assert path.read_bytes() == payload
+
+
+def test_production_generated_input_aliases_write_nothing(tmp_path, monkeypatch, synthetic_library):
+    rebound, catalogue, source, output, report, maps = synthetic_library
+    calls = {"dcc": 0}
+    _allow_dcc_to_succeed(monkeypatch, rebound, calls)
+    protected = (catalogue, source, *maps)
+    before = {path: path.read_bytes() for path in protected}
+    rng = random.Random(312)
+    for _ in range(48):
+        target = rng.choice(protected)
+        absolute = target.resolve()
+        alias = rng.choice([
+            target,
+            Path(str(absolute).upper()),
+            absolute.parent / "nested" / ".." / absolute.name,
+            Path(os.path.relpath(absolute)),
+        ])
+        with pytest.raises(rebound.RebindError):
+            rebound.execute(str(catalogue), str(source), str(alias), str(report))
+        assert rebound.main(_argv(catalogue, source, alias, report)) != 0
+        assert calls["dcc"] == 0
+        assert not output.exists() and not report.exists()
+        for path, payload in before.items():
+            assert path.read_bytes() == payload
+
+
+@pytest.mark.parametrize("missing", [(0,), (1,), (0, 1)])
+def test_production_missing_synthetic_maps_fail_closed(monkeypatch, synthetic_library, missing):
+    rebound, catalogue, source, output, report, maps = synthetic_library
+    for index in missing:
+        maps[index].unlink()
+    calls = {"dcc": 0}
+    _allow_dcc_to_succeed(monkeypatch, rebound, calls)
+    with pytest.raises(rebound.RebindError, match="published map is missing"):
+        rebound.execute(str(catalogue), str(source), str(output), str(report))
+    assert rebound.main(_argv(catalogue, source, output, report)) != 0
+    assert calls["dcc"] == 0
+    assert not output.exists() and not report.exists()
+
+
+@pytest.mark.dcc
+def test_published_library_readback(tmp_path):
+    """Opt-in native Max readback on a copy; never rebind or save the published scene."""
+    import shutil
+    import sys
+
+    if os.environ.get("DT_FLORA_LIBRARY_INTEGRATION") != "1":
+        pytest.skip("requires DT_FLORA_LIBRARY_INTEGRATION=1, 3ds Max 2026, dcc_batch.py and published Flora v003/maps")
+    rebound = _rebind()
+    plan = rebound.plan_bindings(_catalogue())
+    assets = [Path(LIBRARY_V003), *(Path(row[slot]) for row in plan for slot in ("diffuse", "opacity"))]
+    required = [Path(rebound.DCC_BATCH), Path("C:/Program Files/Autodesk/3ds Max 2026/3dsmaxbatch.exe"), *assets]
+    missing = [str(path) for path in required if not path.is_file()]
+    if missing:
+        pytest.skip("missing integration prerequisites: " + ", ".join(dict.fromkeys(missing)))
+    before = rebound.hash_files(assets)
+    scene_copy = tmp_path / "published-copy.max"
+    shutil.copy2(LIBRARY_V003, scene_copy)
+    script = tmp_path / "readback.py"
+    report = tmp_path / "readback.json"
+    module_path = ROOT / "tools/flora/rebind_flora_library_maps.py"
+    script.write_text(
+        "import importlib.util, json\n"
+        "from pymxs import runtime as rt\n"
+        f"spec = importlib.util.spec_from_file_location('rebind', {str(module_path)!r})\n"
+        "module = importlib.util.module_from_spec(spec)\nspec.loader.exec_module(module)\n"
+        f"plan = {plan!r}\n"
+        "result = module.verdict(module.measure(module._snapshot(rt), plan))\n"
+        f"with open({str(report)!r}, 'w') as handle: json.dump(result, handle)\n",
+        encoding="utf-8",
+    )
+    completed = subprocess.run([
+        sys.executable, rebound.DCC_BATCH, "max", "--file", str(script),
+        "--scene", str(scene_copy), "--version", "2026", "--timeout", "900",
+        "--out", str(tmp_path / "dcc-batch.json"),
+    ], capture_output=True, text=True, timeout=960)
+    rebound.assert_hashes_unchanged(before, rebound.hash_files(assets))
+    assert completed.returncode == 0, completed.stdout + completed.stderr
+    result = json.loads(report.read_text(encoding="utf-8"))
+    assert result["passed"] is True
+    assert result["objects_found"] == result["objects_expected"] == 99
+    assert result["bindings_matched"] == result["bindings_expected"] == 198
+    assert result["paths_outside"] == 0
