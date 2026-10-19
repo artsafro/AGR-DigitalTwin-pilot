@@ -16,6 +16,7 @@ from twinqa.fbx_header import fbx_units
 from twinqa.maf_checks import SMOOTHING_ANGLE_DEG, maf_findings
 from twinqa.flora import FLORA_SHARE, flora_findings
 from twinqa.report import Finding
+from twinqa.naming import mesh_name_findings
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
 ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
@@ -274,4 +275,8 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         geometry = [m for m in meshes if m not in ucx]
         for stage_id, findings in flora_findings(rb, kind, geometry, tris, profile, flora_schedule, flora_share).items():
             out.setdefault(stage_id, []).extend(findings)
+
+    # V012: internal mesh names and UCX index grammar (reg p.11-12 §3.3, p.33-34 §4.2) -> twinqa.naming
+    out["V012"] = mesh_name_findings([m["name"] for m in meshes], kind, role, Path(rb["source"]).stem,
+                                     profile["naming"]["max_characters"], src)
     return out
