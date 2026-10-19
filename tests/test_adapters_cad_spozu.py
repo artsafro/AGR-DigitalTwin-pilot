@@ -309,6 +309,35 @@ def test_probe_units_holes_outside_points(seed):
     assert math.isclose(res.unit_scale * k, 1.0, rel_tol=1e-12)
 
 
+@pytest.mark.parametrize("seed", range(40))
+def test_probe_overlap_finding_matches_brute_force(seed):
+    """Generated probe: an overlap finding exists iff two covering types share > tol m2 inside the plot."""
+    rng = random.Random(7700 + seed)
+    doc = ezdxf.new("R2018")
+    doc.header["$INSUNITS"] = 6
+    msp = doc.modelspace()
+    msp.add_lwpolyline(rect(0, 0, 100, 100), close=True, dxfattribs={"layer": "BOUNDARY"})
+    boxes = {}
+    for lay in ("COV_TILE", "COV_LAWN"):
+        x0, y0 = rng.uniform(-30, 90), rng.uniform(-30, 90)
+        x1, y1 = x0 + rng.uniform(1, 60), y0 + rng.uniform(1, 60)
+        boxes[lay] = (x0, y0, x1, y1)
+        h = msp.add_hatch(dxfattribs={"layer": lay})
+        h.paths.add_polyline_path(rect(x0, y0, x1, y1), is_closed=True, flags=EXTERNAL)
+
+    def clip(b):
+        return max(b[0], 0), max(b[1], 0), min(b[2], 100), min(b[3], 100)
+
+    a, b = clip(boxes["COV_TILE"]), clip(boxes["COV_LAWN"])
+    ov = max(0.0, min(a[2], b[2]) - max(a[0], b[0])) * max(0.0, min(a[3], b[3]) - max(a[1], b[1]))
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    found = [f for f in res.findings if f.code == "overlapping_coverings"]
+    if ov > 0.01 + 1e-6:
+        assert len(found) == 1 and found[0].area == pytest.approx(ov, abs=1e-4)
+    elif ov < 0.01 - 1e-6:
+        assert found == []
+
+
 # ---------------------------------------------------------------- AutoCAD (core console)
 
 
