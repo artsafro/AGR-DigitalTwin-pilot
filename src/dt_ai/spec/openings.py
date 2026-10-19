@@ -4,13 +4,18 @@ Pattern: none — this is extractor code, not a building node (REVIEW_CHECKLIST 
 
 Holes are found in the horizontal sections themselves. Dangling ends of the section are paired
 (mutually nearest, at most OPENING_MAX_M apart, not joined by a nearly direct path of the section
-itself — no longer than the gap plus two reveals — which is a pier between two openings); from each end the chain is
+itself — no longer than the gap plus two reveals and running along the gap line, from each end after its reveal
+towards the other — which is a pier between two openings; an end left unpaired after such a rejection is an
+unresolved break, #21); from each end the chain is
 followed back until it runs along the gap: that point is the mouth on the wall line, and the way
 back from it (a reveal, a chamfer) gives the depth. Bridging the mouths closes the section for the
 level contour (a door from the floor no longer opens the storey end). An opening must sit on a
 contour wall and run along it; a break off the contour (an inner wall, a courtyard) or a break
 whose mouth is not found is a question, never an invented facade opening. Glass panes (meshes
-named *glass*) parallel to a contour wall project onto it. Faces with an opening material id
+named *glass*) parallel to a contour wall project onto it. A pane or an opening plane belongs to the
+floor of its bottom (within LEVEL_JOINT_M) before panes are grouped and materials matched, and is
+measured on that floor's facade; a part off it that another crossed floor would hold is a question
+`glass-off-facade` / `plane-off-facade` (#34). Faces with an opening material id
 (group `opening` of standards/material_id_ranges.yaml, ADR 0001) are opening planes: they are
 left out of the body, so the hole stays the anchor, and the plane gives the opening its
 material id. window_type stays null until the window library (#4). A door recess of the contour
@@ -22,6 +27,8 @@ from collections import defaultdict
 import numpy as np
 import shapely
 from shapely.geometry import LineString, MultiLineString, Polygon
+from shapely.geometry.polygon import orient
+from shapely.ops import substring
 
 SNAP_M = 1e-5            # section points closer than this are one point (real meshes left 1 um gaps at window jambs)
 OPENING_MAX_M = 8.0      # widest gap in a wall that is bridged as an opening
@@ -82,23 +89,61 @@ def _components(adj):
     return comp
 
 
-def _linked_within(adj, p, q, limit):
-    """True when the section itself joins p to q by a path no longer than limit (a pier between
-    two openings, not a gap across one)."""
+def _paths_from(adj, p, limit):
+    """Shortest paths of the section itself from p, no longer than limit: (distances, previous point).
+    One search per dangling end serves every candidate partner (#24)."""
     import heapq
-    best, heap = {p: 0.0}, [(0.0, p)]
+    best, came, heap = {p: 0.0}, {}, [(0.0, p)]
     while heap:
         d, x = heapq.heappop(heap)
-        if x == q:
-            return True
         if d > best.get(x, np.inf):
             continue
         for y in adj[x]:
             nd = d + float(np.hypot(y[0] - x[0], y[1] - x[1]))
             if nd <= limit and nd < best.get(y, np.inf):
-                best[y] = nd
+                best[y], came[y] = nd, x
                 heapq.heappush(heap, (nd, y))
+    return best, came
+
+
+def _path_to(tree, p, q, limit=np.inf):
+    """The path from p to q (a list of points) in the search tree of p when it is no longer than limit,
+    else None."""
+    best, came = tree
+    if best.get(q, np.inf) > limit:
+        return None
+    path = [q]
+    while path[-1] != p:
+        path.append(came[path[-1]])
+    return path[::-1]
+
+
+def _runs_to_other_end(path, gap):
+    """From the first point of path, the first stretch running along the gap (within ALONG_DEG)
+    heads along +gap - towards the other end, as a pier face does - and is reached within a reveal."""
+    cos, length = np.cos(np.radians(ALONG_DEG)), 0.0
+    for a, b in zip(path, path[1:]):
+        step = np.array(b) - np.array(a)
+        along = float(_unit(step) @ gap)
+        if abs(along) >= cos:
+            return along > 0
+        length += float(np.linalg.norm(step))
+        if length > REVEAL_PATH_MAX_M:
+            return False
     return False
+
+
+def _is_pier(tree, p, q, gap_len):
+    """True when the section itself joins p to q as a pier between two openings: a path no longer
+    than the gap plus two reveals whose chain runs along the gap line - from each end, after its
+    reveal, the first stretch along the gap heads to the other end. The way round a small building
+    may be short, but from at least one end it first runs away from the other (the wall beside the
+    hole) or reaches the gap direction only past a reveal (#21)."""
+    path = _path_to(tree, p, q, gap_len + 2 * REVEAL_PATH_MAX_M)
+    if path is None:
+        return False
+    gap = _unit(np.array(q) - np.array(p))
+    return _runs_to_other_end(path, gap) and _runs_to_other_end(path[::-1], -gap)
 
 
 def _mouth(adj, p, gap):
@@ -134,20 +179,29 @@ def close_section(segments):
     if dangles:
         comp = _components(adj)
         pts = np.array(dangles)
-        best = {}
+        best, rejected, trees = {}, {}, {}
+
+        def tree(i):                                    # one bounded search per end, reused (#24)
+            if i not in trees:
+                trees[i] = _paths_from(adj, dangles[i], OPENING_MAX_M + 2 * REVEAL_PATH_MAX_M)
+            return trees[i]
+
         for i, p in enumerate(dangles):
             d = np.linalg.norm(pts - pts[i], axis=1)
             for j in np.argsort(d):
                 if j == i or not 1e-6 < d[j] <= OPENING_MAX_M:
                     continue
-                # a pier joins the two ends nearly directly (its width plus two reveals at most);
-                # the way round the building is long and does not make a pier
-                if comp[dangles[j]] != comp[p] or not _linked_within(adj, p, dangles[j], d[j] + 2 * REVEAL_PATH_MAX_M):
+                # a pier joins the two ends along the gap line (its width plus two reveals at most);
+                # the way round the building leaves the gap line and does not make a pier (#21)
+                if comp[dangles[j]] != comp[p] or not _is_pier(tree(i), p, dangles[j], d[j]):
                     best[i] = int(j)
                     break
+                rejected.setdefault(i, int(j))
         cos = np.cos(np.radians(BRIDGE_DEG))
+        paired = set()
         for i, j in best.items():
             if i < j and best.get(j) == i:
+                paired.update((i, j))
                 p, q = dangles[i], dangles[j]
                 gap = _unit(np.array(q) - np.array(p))
                 mp, mq = _mouth(adj, p, gap), _mouth(adj, q, -gap)
@@ -155,6 +209,20 @@ def close_section(segments):
                     unresolved.append((np.array(p), np.array(q)))
                 else:
                     mouths.append((mp[0], mq[0], max(mp[1], mq[1])))
+        # an end left without a partner after its nearest candidate was taken for a pier is
+        # reported, never dropped silently (#21): a pier's ends are paired with their openings, and a
+        # straight stray piece (a fin across a wall) joins its ends along the gap line itself - no break.
+        # Only the end's own pairing counts: its rejected candidate may have paired elsewhere.
+        seen = set()
+        for i, j in rejected.items():
+            if i in paired or frozenset((i, j)) in seen:
+                continue
+            seen.add(frozenset((i, j)))
+            p, q = np.array(dangles[i]), np.array(dangles[j])
+            path = np.array(_path_to(tree(i), dangles[i], dangles[j]))   # a pier: within the search
+            normal = _unit(q - p)[::-1] * np.array([-1.0, 1.0])
+            if np.abs((path - p) @ normal).max() > ON_WALL_M:
+                unresolved.append((p, q))
     lines = list(shapely.get_parts(noded)) + [LineString([a, b]) for a, b, _ in mouths]
     polys = list(shapely.get_parts(shapely.polygonize(shapely.get_parts(shapely.unary_union(lines)))))
     if not polys:
@@ -239,31 +307,50 @@ def vertical_parts(v, tris, parts):
     return out, flat
 
 
+def _on_floor(pts, normal, li, floors, polys, kind):
+    """The part measured on floor li's contour, or None when it is not on that facade (#34)."""
+    centre = pts[:, :2].mean(axis=0)
+    half = float(np.ptp(pts[:, :2], axis=0).max()) / 2
+    w, origin, u, _ = _wall_frame(floors[li]["contour"], centre, half)
+    wall_n = np.array([u[1], -u[0]])                         # outward for a CCW contour
+    along = (pts[:, :2] - origin) @ u
+    if (abs(float(normal @ wall_n)) < np.cos(np.radians(ALONG_DEG)) or float(np.ptp(along)) <= 1e-3
+            or polys[li].exterior.distance(shapely.Point(centre)) > PANE_WALL_M):
+        return None
+    at = max(0.0, -float((centre - origin) @ wall_n))
+    # the glass position is no depth (C24, OD1; review 2 of PR #76): kept as glass_at for the searches only
+    return {"level": li, "wall": w, "x0": float(along.min()), "x1": float(along.max()),
+            "z0": float(pts[:, 2].min()), "z1": float(pts[:, 2].max()),
+            "depth": 0.0 if kind == "glass" else at, "glass_at": at if kind == "glass" else 0.0,
+            "source": kind, "parts": 1}
+
+
 def _project(parts, levels, floors, polys, kind):
-    """Project vertical parts parallel to a contour wall onto it: one item per part."""
-    out, skipped = [], 0
+    """One item per part on the facade of the floor of its bottom (#34). A part off that facade
+    that another floor it crosses would hold is an off record."""
+    out, skipped, off = [], 0, []
+    n_floors = len(floors)
     for pts, normal in parts:
         zc = float(pts[:, 2].mean())
-        li = next((i for i in range(len(floors)) if levels[i]["elev_m"] <= zc < levels[i + 1]["elev_m"]), None)
-        if li is None:
+        if not (levels[0]["elev_m"] <= zc < levels[n_floors]["elev_m"]):
             skipped += 1
             continue
-        centre = pts[:, :2].mean(axis=0)
-        half = float(np.ptp(pts[:, :2], axis=0).max()) / 2
-        w, origin, u, _ = _wall_frame(floors[li]["contour"], centre, half)
-        wall_n = np.array([u[1], -u[0]])                         # outward for a CCW contour
-        along = (pts[:, :2] - origin) @ u
-        if (abs(float(normal @ wall_n)) < np.cos(np.radians(ALONG_DEG)) or float(np.ptp(along)) <= 1e-3
-                or polys[li].exterior.distance(shapely.Point(centre)) > PANE_WALL_M):
-            skipped += 1
+        z0 = float(pts[:, 2].min()) if len(pts) else 0.0
+        z1 = float(pts[:, 2].max()) if len(pts) else 0.0
+        li = max([k for k in range(n_floors) if levels[k]["elev_m"] <= z0 + LEVEL_JOINT_M] or [0])
+        item = _on_floor(pts, normal, li, floors, polys, kind)
+        if item is not None:
+            out.append(item)
             continue
-        at = max(0.0, -float((centre - origin) @ wall_n))
-        # the glass position is no depth (C24, OD1; review 2 of PR #76): kept as glass_at for the searches only
-        out.append({"level": li, "wall": w, "x0": float(along.min()), "x1": float(along.max()),
-                    "z0": float(pts[:, 2].min()), "z1": float(pts[:, 2].max()),
-                    "depth": 0.0 if kind == "glass" else at, "glass_at": at if kind == "glass" else 0.0,
-                    "source": kind, "parts": 1})
-    return out, skipped
+        skipped += 1
+        # a higher floor the part crosses would hold it: a question, not a silent skip (#34)
+        last = max([k for k in range(n_floors) if levels[k]["elev_m"] < z1 - LEVEL_JOINT_M] or [0])
+        if any(_on_floor(pts, normal, k, floors, polys, kind) is not None for k in range(li + 1, last + 1)):
+            direction = np.array([-normal[1], normal[0]])
+            proj = pts[:, :2] @ direction
+            off.append({"kind": f"{kind}-off-facade", "p": pts[int(np.argmin(proj)), :2].copy(),
+                        "q": pts[int(np.argmax(proj)), :2].copy(), "z0": z0, "z1": z1, "level": li})
+    return out, skipped, off
 
 
 def _within(a, b, axis):
@@ -418,7 +505,9 @@ def _across_levels(by_level, levels, floors):
 def _owners(by_level, levels, floors):
     """Every opening belongs to the floor of its bottom and records the highest level it crosses,
     from its whole height: one pane through a level line is one record too (PR #33 review 2).
-    A record moved down is re-measured on the lower floor's contour wall."""
+    Glass and opening planes are already owned by their bottom in `_project` (#34); this moves
+    only holes (door recesses, sources). A record moved down is re-measured on the lower floor's
+    contour wall."""
     top_floor = len(floors) - 1
     for li in range(len(by_level)):
         for o in list(by_level[li]):
@@ -533,6 +622,50 @@ def _source_items(items, li, contour):
     return out
 
 
+def _measurement_walls(contour, section):
+    """Recover dropped-kink facets for opening calculations, without changing the spec contour.
+
+    Each calculation wall retains (spec wall, arc-length offset from its start). Rounded-corner
+    spans keep their existing representation. Collapse their tessellation with the contour's
+    own arc recognizer, but keep small kinks on the neighbouring straight spans. This recovers
+    virtual radius vertices too, which do not lie on the original section ring.
+    """
+    ring = LineString(orient(section, sign=1.0).exterior.coords)
+    if any(len(p) == 3 for p in contour):
+        # Local import: mesh orchestrates assemble and uses this module for section closure.
+        from .mesh import SIMPLIFY_M, _rounded_corners
+
+        poly = orient(section.simplify(SIMPLIFY_M, preserve_topology=True), sign=1.0)
+        corners = _rounded_corners(np.array(poly.exterior.coords)[:-1])
+        coords = [p.tolist() for p, _ in corners]
+        ring = LineString(coords + coords[:1])
+    points, owners = [], []
+    for w, a in enumerate(contour):
+        b = contour[(w + 1) % len(contour)]
+        chord = LineString([a[:2], b[:2]])
+        path = None
+        if all(ring.distance(shapely.Point(p[:2])) <= 0.003 for p in (a, b)):
+            start, end = (ring.project(shapely.Point(p[:2])) for p in (a, b))
+            if end > start:
+                path = substring(ring, start, end)
+            elif end < start:
+                tail, head = substring(ring, start, ring.length), substring(ring, 0, end)
+                coords = list(tail.coords) + list(head.coords)[1:]
+                path = LineString(coords)
+        if path is None or path.hausdorff_distance(chord) <= 0.001:
+            points.append(a)
+            owners.append((w, 0.0))
+            continue
+        # Triangulation introduces collinear section vertices; they are not supporting facets.
+        coords = list(path.simplify(SNAP_M).coords)
+        offset = 0.0
+        for i, (p, q) in enumerate(zip(coords, coords[1:])):
+            points.append(a if i == 0 and len(a) == 3 else list(p))
+            owners.append((w, offset))
+            offset += float(np.linalg.norm(np.asarray(q) - p))
+    return points, owners
+
+
 def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=None, recesses=None, sources=None,
              depth_default=0.4, thresholds=None):
     """Openings per floor, the plan footprints that clear recess questions, break questions, report.
@@ -540,10 +673,12 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
     doors: door recesses per level (mesh._door_recesses); recesses: recess pieces per level (the
     reveals that give a glass opening its rough size, #36); sources: openings a source gives
     explicitly, per level (Revit)."""
+    measurement = [_measurement_walls(f["contour"], p) for f, p in zip(floors, polys)]
+    floors = [{**f, "contour": points} for f, (points, _) in zip(floors, measurement)]
     thresholds = thresholds or {}
     frame = thresholds.get("glass_frame_m", GLASS_FRAME_M)
     depth_exception = thresholds.get("depth_exception_m", DEPTH_EXCEPTION_M)
-    glass, glass_skipped = _project(panes, levels, floors, polys, "glass")
+    glass, glass_skipped, glass_off = _project(panes, levels, floors, polys, "glass")
     glass = _merge_panes(glass)
     rough_from_reveal = 0
     for g in glass:
@@ -562,12 +697,14 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
             rough_from_reveal += 1
         else:
             g["no_reveal"] = True                # size unknown: the glass stands in, and a question asks (#36)
-    plane_items, planes_skipped = [], 0
+    plane_items, planes_skipped, plane_off = [], 0, []
     for pts, normal, mid in planes:
-        items, skipped = _project([(pts, normal)], levels, floors, polys, "plane")
-        plane_items.extend({**it, "material_id": mid} for it in items)
+        items, skipped, off = _project([(pts, normal)], levels, floors, polys, "plane")
+        plane_items.extend({"pts": pts, "normal": normal, "material_id": mid, "level": it["level"]} for it in items)
         planes_skipped += skipped
+        plane_off.extend(off)
     by_level, breaks = [], []
+    breaks.extend(glass_off + plane_off)          # off the owner facade, held by a floor it crosses (#34)
     for li, floor in enumerate(floors):
         holes, off = _hole_openings(mouth_spans_by_level[li], floor["contour"], polys[li])
         for h in holes:                          # a through hole of a door's size is a door (#31)
@@ -594,7 +731,18 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
             if not matches:
                 holes.append(g)
         for h in holes:
-            over = [pl for pl in plane_items if pl["level"] == li and _overlap(h, pl)]
+            # a plane of any floor, measured on this floor's facade (#34, review of PR #241):
+            # the opening's own floor keeps the overlap tolerance; another floor only when the z spans share
+            # more than a frame joint (LEVEL_JOINT_M), so a plane just past a level line stays on its floor
+            over = []
+            for pl in plane_items:
+                if pl["level"] != li:
+                    z0, z1 = float(pl["pts"][:, 2].min()), float(pl["pts"][:, 2].max())
+                    if min(z1, h["z1"]) - max(z0, h["z0"]) <= LEVEL_JOINT_M:
+                        continue
+                measured = _on_floor(pl["pts"], pl["normal"], li, floors, polys, "plane")
+                if measured is not None and _overlap(h, measured):
+                    over.append({**measured, "material_id": pl["material_id"]})
             ids = {pl["material_id"] for pl in over}
             if over:                                 # depth = facade -> back polygon, the opening plane (C24 final,
                 h["depth"] = max(pl["depth"] for pl in over)   # 2026-10-10); glass never sets the depth
@@ -616,7 +764,8 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
         pts = np.array([q[:2] for q in floor["contour"]], dtype=float)
         items = []
         for o in sorted(holes, key=lambda o: (o["wall"], o["x0"])):
-            item = {"wall": o["wall"], "x_m": round(max(o["x0"], 0.0), 3), "sill_m": round(o["z0"] - elev, 3),
+            wall, offset = measurement[li][1][o["wall"]]
+            item = {"wall": wall, "x_m": round(max(offset + o["x0"], 0.0), 3), "sill_m": round(o["z0"] - elev, 3),
                     "w_m": round(o["x1"] - o["x0"], 3), "h_m": round(o["z1"] - o["z0"], 3),
                     "window_type": None, "source": o["source"],
                     "material_id": o.get("material_id"), "plane_conflict": o.get("plane_conflict", False),
@@ -630,7 +779,7 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
             if no_depth:
                 # the default, marked in the report, never 0 or a minimum (OD1, user decision 2026-10-11)
                 p0, p1, _ = _world(o, floor["contour"])
-                by_default.append({"level": levels[li]["name"], "wall": o["wall"], "x_m": item["x_m"],
+                by_default.append({"level": levels[li]["name"], "wall": wall, "x_m": item["x_m"],
                                    "sill_m": item["sill_m"], "at": [round(float(c), 2) for c in (p0 + p1) / 2]})
             elif abs(depth - depth_default) > depth_exception:
                 item["depth_m"] = round(depth, 3)   # a measured reveal off the default: an exception (#36)
@@ -647,6 +796,7 @@ def assemble(levels, floors, polys, mouth_spans_by_level, panes, planes, doors=N
                 footprints.append({"level": lj, "z0": o["z0"], "z1": o["z1"], "geom": geom})
         per_floor.append(items)
     report = {"glass_openings": len(glass), "glass_parts_skipped": glass_skipped,
+              "parts_off_owner_facade": len(glass_off) + len(plane_off),
               "rough_from_reveal": rough_from_reveal,
               "openings_size_unknown": sum(1 for b in breaks if b["kind"] == "opening-size-unknown"),
               "source_openings": sum(len(x) for x in (sources or [])),

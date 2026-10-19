@@ -1,0 +1,3487 @@
+{
+  "versions": {
+    "python": "3.14.7 (main, Aug  7 2026, 02:26:22) [MSC v.1944 64 bit (AMD64)]",
+    "numpy": "2.5.3"
+  },
+  "input_hashes": {
+    "tests/qa/test_orientation.py": "c84c55f9cadeeb558563e607b4f12dc04f4e7027a76100d524fa1b12dafe82e1",
+    "src/twinqa/geometry/checks.py": "f89313eba22a0dcff59f4582db03fd06e26dcefa7fb25df17c9604a050419d8b",
+    "src/twinqa/geometry/mesh.py": "409353aa5ce5e952857c351b65f47274a93ca5d0024b0a3c5521c66021ecf25d",
+    "experiments/hyp-93/driver.py": "15ba3bd90dc4d622251c38d732ed51635f2530830b2918e56422462e493f4019",
+    "experiments/hyp-93/component_volume.py": "22d8a4d77487b2a21fc492f2219cb0279ed727e798040e51aff80a04132f4477"
+  },
+  "repeat_hashes": [
+    "209f96ce09d3d9966452dda2a9fcf966c7d8517880fd88ab6abfe3afbc407a00",
+    "209f96ce09d3d9966452dda2a9fcf966c7d8517880fd88ab6abfe3afbc407a00",
+    "209f96ce09d3d9966452dda2a9fcf966c7d8517880fd88ab6abfe3afbc407a00"
+  ],
+  "repeats_identical": true,
+  "median_runtimes": [
+    {
+      "variant": "inner_outward",
+      "packing": "two_meshes",
+      "transform": "identity",
+      "baseline_s": 0.07918290000088746,
+      "candidate_s": 0.0015989000021363609
+    },
+    {
+      "variant": "inner_outward",
+      "packing": "two_meshes",
+      "transform": "translate",
+      "baseline_s": 0.07055050000053598,
+      "candidate_s": 0.001299499999731779
+    },
+    {
+      "variant": "inner_outward",
+      "packing": "two_meshes",
+      "transform": "rz37_translate",
+      "baseline_s": 0.048725299995567184,
+      "candidate_s": 0.0013127000056556426
+    },
+    {
+      "variant": "inner_outward",
+      "packing": "one_mesh",
+      "transform": "identity",
+      "baseline_s": 0.060326300001179334,
+      "candidate_s": 0.001284400001168251
+    },
+    {
+      "variant": "inner_outward",
+      "packing": "one_mesh",
+      "transform": "translate",
+      "baseline_s": 0.058695300002000295,
+      "candidate_s": 0.0012642000001505949
+    },
+    {
+      "variant": "inner_outward",
+      "packing": "one_mesh",
+      "transform": "rz37_translate",
+      "baseline_s": 0.039837700001953635,
+      "candidate_s": 0.0013465000010910444
+    },
+    {
+      "variant": "inner_inverted",
+      "packing": "two_meshes",
+      "transform": "identity",
+      "baseline_s": 0.06656669999938458,
+      "candidate_s": 0.0013074000016786158
+    },
+    {
+      "variant": "inner_inverted",
+      "packing": "two_meshes",
+      "transform": "translate",
+      "baseline_s": 0.057456200003798585,
+      "candidate_s": 0.0012707999994745478
+    },
+    {
+      "variant": "inner_inverted",
+      "packing": "two_meshes",
+      "transform": "rz37_translate",
+      "baseline_s": 0.039547200001834426,
+      "candidate_s": 0.0012925999981234781
+    },
+    {
+      "variant": "inner_inverted",
+      "packing": "one_mesh",
+      "transform": "identity",
+      "baseline_s": 0.057216900000639725,
+      "candidate_s": 0.0012672000011662021
+    },
+    {
+      "variant": "inner_inverted",
+      "packing": "one_mesh",
+      "transform": "translate",
+      "baseline_s": 0.06297530000301776,
+      "candidate_s": 0.0013134000037098303
+    },
+    {
+      "variant": "inner_inverted",
+      "packing": "one_mesh",
+      "transform": "rz37_translate",
+      "baseline_s": 0.04647870000189869,
+      "candidate_s": 0.001341600000159815
+    },
+    {
+      "variant": "inner_open",
+      "packing": "two_meshes",
+      "transform": "identity",
+      "baseline_s": 0.06815999999525957,
+      "candidate_s": 0.0010191000037593767
+    },
+    {
+      "variant": "inner_open",
+      "packing": "two_meshes",
+      "transform": "translate",
+      "baseline_s": 0.057792899999185465,
+      "candidate_s": 0.0009737000000313856
+    },
+    {
+      "variant": "inner_open",
+      "packing": "two_meshes",
+      "transform": "rz37_translate",
+      "baseline_s": 0.03925089999393094,
+      "candidate_s": 0.0009522000036668032
+    },
+    {
+      "variant": "inner_open",
+      "packing": "one_mesh",
+      "transform": "identity",
+      "baseline_s": 0.05736120000074152,
+      "candidate_s": 0.0012201999998069368
+    },
+    {
+      "variant": "inner_open",
+      "packing": "one_mesh",
+      "transform": "translate",
+      "baseline_s": 0.05892830000084359,
+      "candidate_s": 0.0009472000019741245
+    },
+    {
+      "variant": "inner_open",
+      "packing": "one_mesh",
+      "transform": "rz37_translate",
+      "baseline_s": 0.038470899999083485,
+      "candidate_s": 0.0009839999984251335
+    },
+    {
+      "variant": "inner_inconsistent",
+      "packing": "two_meshes",
+      "transform": "identity",
+      "baseline_s": 0.07564460000139661,
+      "candidate_s": 0.0010803000041050836
+    },
+    {
+      "variant": "inner_inconsistent",
+      "packing": "two_meshes",
+      "transform": "translate",
+      "baseline_s": 0.07858760000090115,
+      "candidate_s": 0.0015702000018791296
+    },
+    {
+      "variant": "inner_inconsistent",
+      "packing": "two_meshes",
+      "transform": "rz37_translate",
+      "baseline_s": 0.04320049999660114,
+      "candidate_s": 0.0010101999941980466
+    },
+    {
+      "variant": "inner_inconsistent",
+      "packing": "one_mesh",
+      "transform": "identity",
+      "baseline_s": 0.06109629999991739,
+      "candidate_s": 0.0010825999997905456
+    },
+    {
+      "variant": "inner_inconsistent",
+      "packing": "one_mesh",
+      "transform": "translate",
+      "baseline_s": 0.06805790000362322,
+      "candidate_s": 0.0015526999995927326
+    },
+    {
+      "variant": "inner_inconsistent",
+      "packing": "one_mesh",
+      "transform": "rz37_translate",
+      "baseline_s": 0.05645270000240998,
+      "candidate_s": 0.0014558999973814934
+    }
+  ],
+  "cases": [
+    {
+      "variant": "inner_outward",
+      "packing": "two_meshes",
+      "transform": "identity",
+      "label": 1,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [
+          "inner"
+        ],
+        "meshes": [
+          {
+            "name": "outer",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          },
+          {
+            "name": "inner",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 0
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.008,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.008,
+      "components": [
+        {
+          "mesh": "outer",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "inner",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 0.008000000000000342,
+          "sign": 1
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 0.008000000000000342,
+        "abs_err": 3.400058012914542e-16,
+        "rel_err": 4.250072516143176e-14,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "baseline_s": 0.08908510000037495,
+      "candidate_s": 0.0026034999973489903,
+      "checks": {
+        "closed_two_components": true,
+        "closed_membership_exact": true,
+        "closed_outer_sign_rel": true,
+        "closed_inner_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_outward",
+      "packing": "two_meshes",
+      "transform": "translate",
+      "label": 1,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [
+          "inner"
+        ],
+        "meshes": [
+          {
+            "name": "outer",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          },
+          {
+            "name": "inner",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 0
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0079999999,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0079999999,
+      "components": [
+        {
+          "mesh": "outer",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "inner",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 0.007999999968334576,
+          "sign": 1
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 0.007999999968334576,
+        "abs_err": 3.166542549004614e-11,
+        "rel_err": 3.958178186255767e-09,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "baseline_s": 0.07055050000053598,
+      "candidate_s": 0.001299499999731779,
+      "checks": {
+        "closed_two_components": true,
+        "closed_membership_exact": true,
+        "closed_outer_sign_rel": true,
+        "closed_inner_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_outward",
+      "packing": "two_meshes",
+      "transform": "rz37_translate",
+      "label": 1,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [
+          "inner"
+        ],
+        "meshes": [
+          {
+            "name": "outer",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          },
+          {
+            "name": "inner",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 0
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0080002826,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0080002827,
+      "components": [
+        {
+          "mesh": "outer",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0000002827,
+          "sign": 1
+        },
+        {
+          "mesh": "inner",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 0.008000000001770858,
+          "sign": 1
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0000002827,
+        "abs_err": 2.8265640139579773e-07,
+        "rel_err": 2.8265640139579773e-13,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 0.008000000001770858,
+        "abs_err": 1.770856031257928e-12,
+        "rel_err": 2.2135700390724095e-10,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "baseline_s": 0.048725299995567184,
+      "candidate_s": 0.0013127000056556426,
+      "checks": {
+        "closed_two_components": true,
+        "closed_membership_exact": true,
+        "closed_outer_sign_rel": true,
+        "closed_inner_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_outward",
+      "packing": "one_mesh",
+      "transform": "identity",
+      "label": 1,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [],
+        "meshes": [
+          {
+            "name": "scene",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.008,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.008,
+      "components": [
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 0.008000000000000342,
+          "sign": 1
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 0.008000000000000342,
+        "abs_err": 3.400058012914542e-16,
+        "rel_err": 4.250072516143176e-14,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ]
+      },
+      "baseline_s": 0.060326300001179334,
+      "candidate_s": 0.0012754999988828786,
+      "checks": {
+        "closed_two_components": true,
+        "closed_membership_exact": true,
+        "closed_outer_sign_rel": true,
+        "closed_inner_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_outward",
+      "packing": "one_mesh",
+      "transform": "translate",
+      "label": 1,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [],
+        "meshes": [
+          {
+            "name": "scene",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0079999999,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0079999999,
+      "components": [
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 0.007999999968334576,
+          "sign": 1
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 0.007999999968334576,
+        "abs_err": 3.166542549004614e-11,
+        "rel_err": 3.958178186255767e-09,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ]
+      },
+      "baseline_s": 0.058695300002000295,
+      "candidate_s": 0.0012642000001505949,
+      "checks": {
+        "closed_two_components": true,
+        "closed_membership_exact": true,
+        "closed_outer_sign_rel": true,
+        "closed_inner_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_outward",
+      "packing": "one_mesh",
+      "transform": "rz37_translate",
+      "label": 1,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [],
+        "meshes": [
+          {
+            "name": "scene",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0080002826,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0080002827,
+      "components": [
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0000002827,
+          "sign": 1
+        },
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 0.008000000001770858,
+          "sign": 1
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0000002827,
+        "abs_err": 2.8265640139579773e-07,
+        "rel_err": 2.8265640139579773e-13,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 0.008000000001770858,
+        "abs_err": 1.770856031257928e-12,
+        "rel_err": 2.2135700390724095e-10,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ]
+      },
+      "baseline_s": 0.039837700001953635,
+      "candidate_s": 0.0012523999976110645,
+      "checks": {
+        "closed_two_components": true,
+        "closed_membership_exact": true,
+        "closed_outer_sign_rel": true,
+        "closed_inner_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_inverted",
+      "packing": "two_meshes",
+      "transform": "identity",
+      "label": -1,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [
+          "inner"
+        ],
+        "meshes": [
+          {
+            "name": "outer",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          },
+          {
+            "name": "inner",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 0
+          }
+        ]
+      },
+      "scene_signed_volume": 999999.992,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 999999.992,
+      "components": [
+        {
+          "mesh": "outer",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "inner",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": -0.008000000000000342,
+          "sign": -1
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "measured",
+        "sign": -1,
+        "signed_volume": -0.008000000000000342,
+        "abs_err": 3.400058012914542e-16,
+        "rel_err": 4.250072516143176e-14,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "baseline_s": 0.05730469999980414,
+      "candidate_s": 0.0012476999982027337,
+      "checks": {
+        "inverted_baseline_pass_value0": true,
+        "inverted_inner_judged_faces_0": true,
+        "inverted_scene_volume_positive": true,
+        "closed_two_components": true,
+        "closed_membership_exact": true,
+        "closed_outer_sign_rel": true,
+        "closed_inner_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_inverted",
+      "packing": "two_meshes",
+      "transform": "translate",
+      "label": -1,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [
+          "inner"
+        ],
+        "meshes": [
+          {
+            "name": "outer",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          },
+          {
+            "name": "inner",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 0
+          }
+        ]
+      },
+      "scene_signed_volume": 999999.9920000001,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 999999.9920000001,
+      "components": [
+        {
+          "mesh": "outer",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "inner",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": -0.007999999968334576,
+          "sign": -1
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "measured",
+        "sign": -1,
+        "signed_volume": -0.007999999968334576,
+        "abs_err": 3.166542549004614e-11,
+        "rel_err": 3.958178186255767e-09,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "baseline_s": 0.057456200003798585,
+      "candidate_s": 0.0012707999994745478,
+      "checks": {
+        "inverted_baseline_pass_value0": true,
+        "inverted_inner_judged_faces_0": true,
+        "inverted_scene_volume_positive": true,
+        "closed_two_components": true,
+        "closed_membership_exact": true,
+        "closed_outer_sign_rel": true,
+        "closed_inner_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_inverted",
+      "packing": "two_meshes",
+      "transform": "rz37_translate",
+      "label": -1,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [
+          "inner"
+        ],
+        "meshes": [
+          {
+            "name": "outer",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          },
+          {
+            "name": "inner",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 0
+          }
+        ]
+      },
+      "scene_signed_volume": 999999.9920002826,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 999999.9920002826,
+      "components": [
+        {
+          "mesh": "outer",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0000002827,
+          "sign": 1
+        },
+        {
+          "mesh": "inner",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": -0.008000000001770858,
+          "sign": -1
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0000002827,
+        "abs_err": 2.8265640139579773e-07,
+        "rel_err": 2.8265640139579773e-13,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "measured",
+        "sign": -1,
+        "signed_volume": -0.008000000001770858,
+        "abs_err": 1.770856031257928e-12,
+        "rel_err": 2.2135700390724095e-10,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "baseline_s": 0.036951100002625026,
+      "candidate_s": 0.0012663999950746074,
+      "checks": {
+        "inverted_baseline_pass_value0": true,
+        "inverted_inner_judged_faces_0": true,
+        "inverted_scene_volume_positive": true,
+        "closed_two_components": true,
+        "closed_membership_exact": true,
+        "closed_outer_sign_rel": true,
+        "closed_inner_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_inverted",
+      "packing": "one_mesh",
+      "transform": "identity",
+      "label": -1,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [],
+        "meshes": [
+          {
+            "name": "scene",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          }
+        ]
+      },
+      "scene_signed_volume": 999999.992,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 999999.992,
+      "components": [
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": -0.008000000000000342,
+          "sign": -1
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "measured",
+        "sign": -1,
+        "signed_volume": -0.008000000000000342,
+        "abs_err": 3.400058012914542e-16,
+        "rel_err": 4.250072516143176e-14,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ]
+      },
+      "baseline_s": 0.057216900000639725,
+      "candidate_s": 0.0012672000011662021,
+      "checks": {
+        "inverted_baseline_pass_value0": true,
+        "inverted_scene_volume_positive": true,
+        "closed_two_components": true,
+        "closed_membership_exact": true,
+        "closed_outer_sign_rel": true,
+        "closed_inner_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_inverted",
+      "packing": "one_mesh",
+      "transform": "translate",
+      "label": -1,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [],
+        "meshes": [
+          {
+            "name": "scene",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          }
+        ]
+      },
+      "scene_signed_volume": 999999.9920000001,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 999999.9920000001,
+      "components": [
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": -0.007999999968334576,
+          "sign": -1
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "measured",
+        "sign": -1,
+        "signed_volume": -0.007999999968334576,
+        "abs_err": 3.166542549004614e-11,
+        "rel_err": 3.958178186255767e-09,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ]
+      },
+      "baseline_s": 0.06297530000301776,
+      "candidate_s": 0.0012711999952443875,
+      "checks": {
+        "inverted_baseline_pass_value0": true,
+        "inverted_scene_volume_positive": true,
+        "closed_two_components": true,
+        "closed_membership_exact": true,
+        "closed_outer_sign_rel": true,
+        "closed_inner_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_inverted",
+      "packing": "one_mesh",
+      "transform": "rz37_translate",
+      "label": -1,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [],
+        "meshes": [
+          {
+            "name": "scene",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          }
+        ]
+      },
+      "scene_signed_volume": 999999.9920002826,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 999999.9920002826,
+      "components": [
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0000002827,
+          "sign": 1
+        },
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": -0.008000000001770858,
+          "sign": -1
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0000002827,
+        "abs_err": 2.8265640139579773e-07,
+        "rel_err": 2.8265640139579773e-13,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "measured",
+        "sign": -1,
+        "signed_volume": -0.008000000001770858,
+        "abs_err": 1.770856031257928e-12,
+        "rel_err": 2.2135700390724095e-10,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ]
+      },
+      "baseline_s": 0.03782490000594407,
+      "candidate_s": 0.0012839999981224537,
+      "checks": {
+        "inverted_baseline_pass_value0": true,
+        "inverted_scene_volume_positive": true,
+        "closed_two_components": true,
+        "closed_membership_exact": true,
+        "closed_outer_sign_rel": true,
+        "closed_inner_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_open",
+      "packing": "two_meshes",
+      "transform": "identity",
+      "label": null,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [
+          "inner"
+        ],
+        "meshes": [
+          {
+            "name": "outer",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          },
+          {
+            "name": "inner",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 0
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0066666667,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0,
+      "components": [
+        {
+          "mesh": "outer",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "inner",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "n_triangles": 10,
+          "eligible": false,
+          "reasons": [
+            "open_or_nonmanifold_edge",
+            "inconsistent_winding"
+          ],
+          "status": "not_measured",
+          "signed_volume": null,
+          "sign": null
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "not_measured",
+        "sign": null,
+        "signed_volume": null,
+        "abs_err": null,
+        "rel_err": null,
+        "reasons": [
+          "open_or_nonmanifold_edge",
+          "inconsistent_winding"
+        ],
+        "n_triangles": 10,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "baseline_s": 0.06200369999714894,
+      "candidate_s": 0.0010191000037593767,
+      "checks": {
+        "defect_two_components": true,
+        "defect_membership_exact": true,
+        "defect_inner_not_measured": true,
+        "defect_outer_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_open",
+      "packing": "two_meshes",
+      "transform": "translate",
+      "label": null,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [
+          "inner"
+        ],
+        "meshes": [
+          {
+            "name": "outer",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          },
+          {
+            "name": "inner",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 0
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0066666667,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0,
+      "components": [
+        {
+          "mesh": "outer",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "inner",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "n_triangles": 10,
+          "eligible": false,
+          "reasons": [
+            "open_or_nonmanifold_edge",
+            "inconsistent_winding"
+          ],
+          "status": "not_measured",
+          "signed_volume": null,
+          "sign": null
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "not_measured",
+        "sign": null,
+        "signed_volume": null,
+        "abs_err": null,
+        "rel_err": null,
+        "reasons": [
+          "open_or_nonmanifold_edge",
+          "inconsistent_winding"
+        ],
+        "n_triangles": 10,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "baseline_s": 0.057792899999185465,
+      "candidate_s": 0.0009737000000313856,
+      "checks": {
+        "defect_two_components": true,
+        "defect_membership_exact": true,
+        "defect_inner_not_measured": true,
+        "defect_outer_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_open",
+      "packing": "two_meshes",
+      "transform": "rz37_translate",
+      "label": null,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [
+          "inner"
+        ],
+        "meshes": [
+          {
+            "name": "outer",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          },
+          {
+            "name": "inner",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 0
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0066669491,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0000002827,
+      "components": [
+        {
+          "mesh": "outer",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0000002827,
+          "sign": 1
+        },
+        {
+          "mesh": "inner",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "n_triangles": 10,
+          "eligible": false,
+          "reasons": [
+            "open_or_nonmanifold_edge",
+            "inconsistent_winding"
+          ],
+          "status": "not_measured",
+          "signed_volume": null,
+          "sign": null
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0000002827,
+        "abs_err": 2.8265640139579773e-07,
+        "rel_err": 2.8265640139579773e-13,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "not_measured",
+        "sign": null,
+        "signed_volume": null,
+        "abs_err": null,
+        "rel_err": null,
+        "reasons": [
+          "open_or_nonmanifold_edge",
+          "inconsistent_winding"
+        ],
+        "n_triangles": 10,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "baseline_s": 0.03925089999393094,
+      "candidate_s": 0.0009401000061188824,
+      "checks": {
+        "defect_two_components": true,
+        "defect_membership_exact": true,
+        "defect_inner_not_measured": true,
+        "defect_outer_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_open",
+      "packing": "one_mesh",
+      "transform": "identity",
+      "label": null,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [],
+        "meshes": [
+          {
+            "name": "scene",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0066666667,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0,
+      "components": [
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21
+          ],
+          "n_triangles": 10,
+          "eligible": false,
+          "reasons": [
+            "open_or_nonmanifold_edge",
+            "inconsistent_winding"
+          ],
+          "status": "not_measured",
+          "signed_volume": null,
+          "sign": null
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "not_measured",
+        "sign": null,
+        "signed_volume": null,
+        "abs_err": null,
+        "rel_err": null,
+        "reasons": [
+          "open_or_nonmanifold_edge",
+          "inconsistent_winding"
+        ],
+        "n_triangles": 10,
+        "triangle_ids": [
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21
+        ]
+      },
+      "baseline_s": 0.05736120000074152,
+      "candidate_s": 0.0009403000003658235,
+      "checks": {
+        "defect_two_components": true,
+        "defect_membership_exact": true,
+        "defect_inner_not_measured": true,
+        "defect_outer_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_open",
+      "packing": "one_mesh",
+      "transform": "translate",
+      "label": null,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [],
+        "meshes": [
+          {
+            "name": "scene",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0066666667,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0,
+      "components": [
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21
+          ],
+          "n_triangles": 10,
+          "eligible": false,
+          "reasons": [
+            "open_or_nonmanifold_edge",
+            "inconsistent_winding"
+          ],
+          "status": "not_measured",
+          "signed_volume": null,
+          "sign": null
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "not_measured",
+        "sign": null,
+        "signed_volume": null,
+        "abs_err": null,
+        "rel_err": null,
+        "reasons": [
+          "open_or_nonmanifold_edge",
+          "inconsistent_winding"
+        ],
+        "n_triangles": 10,
+        "triangle_ids": [
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21
+        ]
+      },
+      "baseline_s": 0.05892830000084359,
+      "candidate_s": 0.0009472000019741245,
+      "checks": {
+        "defect_two_components": true,
+        "defect_membership_exact": true,
+        "defect_inner_not_measured": true,
+        "defect_outer_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_open",
+      "packing": "one_mesh",
+      "transform": "rz37_translate",
+      "label": null,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "pass",
+        "value": 0,
+        "unjudged_meshes": [],
+        "meshes": [
+          {
+            "name": "scene",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0066669491,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0000002827,
+      "components": [
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0000002827,
+          "sign": 1
+        },
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21
+          ],
+          "n_triangles": 10,
+          "eligible": false,
+          "reasons": [
+            "open_or_nonmanifold_edge",
+            "inconsistent_winding"
+          ],
+          "status": "not_measured",
+          "signed_volume": null,
+          "sign": null
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0000002827,
+        "abs_err": 2.8265640139579773e-07,
+        "rel_err": 2.8265640139579773e-13,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "not_measured",
+        "sign": null,
+        "signed_volume": null,
+        "abs_err": null,
+        "rel_err": null,
+        "reasons": [
+          "open_or_nonmanifold_edge",
+          "inconsistent_winding"
+        ],
+        "n_triangles": 10,
+        "triangle_ids": [
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21
+        ]
+      },
+      "baseline_s": 0.036859400002867915,
+      "candidate_s": 0.0009839999984251335,
+      "checks": {
+        "defect_two_components": true,
+        "defect_membership_exact": true,
+        "defect_inner_not_measured": true,
+        "defect_outer_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_inconsistent",
+      "packing": "two_meshes",
+      "transform": "identity",
+      "label": null,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "fail",
+        "value": 3,
+        "unjudged_meshes": [
+          "inner"
+        ],
+        "meshes": [
+          {
+            "name": "outer",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          },
+          {
+            "name": "inner",
+            "winding_bad_edges": 3,
+            "outside_back_faces": 0,
+            "judged_faces": 0
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0066666667,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0,
+      "components": [
+        {
+          "mesh": "outer",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "inner",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": false,
+          "reasons": [
+            "inconsistent_winding"
+          ],
+          "status": "not_measured",
+          "signed_volume": null,
+          "sign": null
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "not_measured",
+        "sign": null,
+        "signed_volume": null,
+        "abs_err": null,
+        "rel_err": null,
+        "reasons": [
+          "inconsistent_winding"
+        ],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "baseline_s": 0.07564460000139661,
+      "candidate_s": 0.0010803000041050836,
+      "checks": {
+        "defect_two_components": true,
+        "defect_membership_exact": true,
+        "defect_inner_not_measured": true,
+        "defect_outer_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_inconsistent",
+      "packing": "two_meshes",
+      "transform": "translate",
+      "label": null,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "fail",
+        "value": 3,
+        "unjudged_meshes": [
+          "inner"
+        ],
+        "meshes": [
+          {
+            "name": "outer",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          },
+          {
+            "name": "inner",
+            "winding_bad_edges": 3,
+            "outside_back_faces": 0,
+            "judged_faces": 0
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0066666667,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0,
+      "components": [
+        {
+          "mesh": "outer",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "inner",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": false,
+          "reasons": [
+            "inconsistent_winding"
+          ],
+          "status": "not_measured",
+          "signed_volume": null,
+          "sign": null
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "not_measured",
+        "sign": null,
+        "signed_volume": null,
+        "abs_err": null,
+        "rel_err": null,
+        "reasons": [
+          "inconsistent_winding"
+        ],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "baseline_s": 0.08428249999997206,
+      "candidate_s": 0.0028088000035495497,
+      "checks": {
+        "defect_two_components": true,
+        "defect_membership_exact": true,
+        "defect_inner_not_measured": true,
+        "defect_outer_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_inconsistent",
+      "packing": "two_meshes",
+      "transform": "rz37_translate",
+      "label": null,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "fail",
+        "value": 3,
+        "unjudged_meshes": [
+          "inner"
+        ],
+        "meshes": [
+          {
+            "name": "outer",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          },
+          {
+            "name": "inner",
+            "winding_bad_edges": 3,
+            "outside_back_faces": 0,
+            "judged_faces": 0
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0066669491,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0000002827,
+      "components": [
+        {
+          "mesh": "outer",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0000002827,
+          "sign": 1
+        },
+        {
+          "mesh": "inner",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": false,
+          "reasons": [
+            "inconsistent_winding"
+          ],
+          "status": "not_measured",
+          "signed_volume": null,
+          "sign": null
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0000002827,
+        "abs_err": 2.8265640139579773e-07,
+        "rel_err": 2.8265640139579773e-13,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "not_measured",
+        "sign": null,
+        "signed_volume": null,
+        "abs_err": null,
+        "rel_err": null,
+        "reasons": [
+          "inconsistent_winding"
+        ],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "baseline_s": 0.04320049999660114,
+      "candidate_s": 0.001004300000204239,
+      "checks": {
+        "defect_two_components": true,
+        "defect_membership_exact": true,
+        "defect_inner_not_measured": true,
+        "defect_outer_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_inconsistent",
+      "packing": "one_mesh",
+      "transform": "identity",
+      "label": null,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "fail",
+        "value": 3,
+        "unjudged_meshes": [],
+        "meshes": [
+          {
+            "name": "scene",
+            "winding_bad_edges": 3,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0066666667,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0,
+      "components": [
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "n_triangles": 12,
+          "eligible": false,
+          "reasons": [
+            "inconsistent_winding"
+          ],
+          "status": "not_measured",
+          "signed_volume": null,
+          "sign": null
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "not_measured",
+        "sign": null,
+        "signed_volume": null,
+        "abs_err": null,
+        "rel_err": null,
+        "reasons": [
+          "inconsistent_winding"
+        ],
+        "n_triangles": 12,
+        "triangle_ids": [
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ]
+      },
+      "baseline_s": 0.06109629999991739,
+      "candidate_s": 0.0010825999997905456,
+      "checks": {
+        "defect_two_components": true,
+        "defect_membership_exact": true,
+        "defect_inner_not_measured": true,
+        "defect_outer_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_inconsistent",
+      "packing": "one_mesh",
+      "transform": "translate",
+      "label": null,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "fail",
+        "value": 3,
+        "unjudged_meshes": [],
+        "meshes": [
+          {
+            "name": "scene",
+            "winding_bad_edges": 3,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0066666667,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0,
+      "components": [
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0,
+          "sign": 1
+        },
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "n_triangles": 12,
+          "eligible": false,
+          "reasons": [
+            "inconsistent_winding"
+          ],
+          "status": "not_measured",
+          "signed_volume": null,
+          "sign": null
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0,
+        "abs_err": 0.0,
+        "rel_err": 0.0,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "not_measured",
+        "sign": null,
+        "signed_volume": null,
+        "abs_err": null,
+        "rel_err": null,
+        "reasons": [
+          "inconsistent_winding"
+        ],
+        "n_triangles": 12,
+        "triangle_ids": [
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ]
+      },
+      "baseline_s": 0.05736669999896549,
+      "candidate_s": 0.0010231000051135197,
+      "checks": {
+        "defect_two_components": true,
+        "defect_membership_exact": true,
+        "defect_inner_not_measured": true,
+        "defect_outer_sign_rel": true
+      },
+      "case_ok": true
+    },
+    {
+      "variant": "inner_inconsistent",
+      "packing": "one_mesh",
+      "transform": "rz37_translate",
+      "label": null,
+      "analytic_outer": 1000000.0,
+      "analytic_inner": 0.008000000000000002,
+      "baseline": {
+        "status": "fail",
+        "value": 3,
+        "unjudged_meshes": [],
+        "meshes": [
+          {
+            "name": "scene",
+            "winding_bad_edges": 3,
+            "outside_back_faces": 0,
+            "judged_faces": 10
+          }
+        ]
+      },
+      "scene_signed_volume": 1000000.0066669491,
+      "scene_sign": 1,
+      "n_components": 2,
+      "membership_ok": true,
+      "positive_sum": 1000000.0000002827,
+      "components": [
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "n_triangles": 12,
+          "eligible": true,
+          "reasons": [],
+          "status": "measured",
+          "signed_volume": 1000000.0000002827,
+          "sign": 1
+        },
+        {
+          "mesh": "scene",
+          "triangle_ids": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "n_triangles": 12,
+          "eligible": false,
+          "reasons": [
+            "inconsistent_winding"
+          ],
+          "status": "not_measured",
+          "signed_volume": null,
+          "sign": null
+        }
+      ],
+      "outer": {
+        "status": "measured",
+        "sign": 1,
+        "signed_volume": 1000000.0000002827,
+        "abs_err": 2.8265640139579773e-07,
+        "rel_err": 2.8265640139579773e-13,
+        "reasons": [],
+        "n_triangles": 12,
+        "triangle_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "inner": {
+        "status": "not_measured",
+        "sign": null,
+        "signed_volume": null,
+        "abs_err": null,
+        "rel_err": null,
+        "reasons": [
+          "inconsistent_winding"
+        ],
+        "n_triangles": 12,
+        "triangle_ids": [
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ]
+      },
+      "baseline_s": 0.04012700000021141,
+      "candidate_s": 0.0014558999973814934,
+      "checks": {
+        "defect_two_components": true,
+        "defect_membership_exact": true,
+        "defect_inner_not_measured": true,
+        "defect_outer_sign_rel": true
+      },
+      "case_ok": true
+    }
+  ],
+  "summary": {
+    "requirements": {
+      "closed_inner_sign_rel": {
+        "passed": 12,
+        "applicable": 12
+      },
+      "closed_membership_exact": {
+        "passed": 12,
+        "applicable": 12
+      },
+      "closed_outer_sign_rel": {
+        "passed": 12,
+        "applicable": 12
+      },
+      "closed_two_components": {
+        "passed": 12,
+        "applicable": 12
+      },
+      "defect_inner_not_measured": {
+        "passed": 12,
+        "applicable": 12
+      },
+      "defect_membership_exact": {
+        "passed": 12,
+        "applicable": 12
+      },
+      "defect_outer_sign_rel": {
+        "passed": 12,
+        "applicable": 12
+      },
+      "defect_two_components": {
+        "passed": 12,
+        "applicable": 12
+      },
+      "inverted_baseline_pass_value0": {
+        "passed": 6,
+        "applicable": 6
+      },
+      "inverted_inner_judged_faces_0": {
+        "passed": 3,
+        "applicable": 3
+      },
+      "inverted_scene_volume_positive": {
+        "passed": 6,
+        "applicable": 6
+      }
+    },
+    "cases_ok": 24,
+    "cases_total": 24,
+    "repeats_identical": true,
+    "failing_cases": [],
+    "verdict": "CONFIRMED"
+  }
+}

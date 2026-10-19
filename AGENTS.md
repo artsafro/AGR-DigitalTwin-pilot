@@ -21,7 +21,7 @@ collisions, plus the interactive Unreal experience. Priorities, in order:
 | Which kind of fact lives in which file | `docs/agents/WORKFLOW.md`, "Memory map" |
 | Who owns what (Claude / Codex / Antigravity) | `docs/agents/ROLES.md` |
 | Task loop, handoff, experience capture | `docs/agents/WORKFLOW.md` |
-| Review questions and how to run a Codex review | `docs/agents/REVIEW_CHECKLIST.md` |
+| Review questions, author receipts and how to run a Codex review | `docs/agents/REVIEW_CHECKLIST.md`, `docs/agents/WORKFLOW.md#before-requesting-review-author` |
 | Tools, MCP routes and their verified status | `docs/agents/CAPABILITIES.md` |
 | Production rules with citations (NPM/VPM, geometry, UV, materials, export, validation) | `docs/domain/` |
 | Open conflicts between sources | `docs/domain/conflicts.md` |
@@ -55,6 +55,7 @@ gets a line in `docs/decisions.md` and its `[D<n>]` where it applies.
 - `data/` — local only, git-ignored: heavy sources (`data/sources/`), archives.
 
 Checks: `uv run pytest -q`, `uv run dt profiles check`, `uv run dt schemas --check`.
+Parallel suite, opt-in only (pytest-xdist; the default run stays serial): `uv run pytest -q -n 8`.
 
 ## Rules for every task
 
@@ -72,8 +73,8 @@ Checks: `uv run pytest -q`, `uv run dt profiles check`, `uv run dt schemas --che
 - `passed=true` is forbidden while any mandatory check or manual gate is open.
   Technical QA, user acceptance and publication are separate statuses.
 - Mark synthetic data as synthetic. Never present it as data of a real object.
-- Never push, rewrite history, delete source/production assets or change machine
-  settings without the user's explicit approval (the guard hook asks).
+- Apply the [Permission matrix](docs/agents/WORKFLOW.md#permission-matrix) for action
+  permissions and its named guard rules/gates; it is the single policy for all agents.
 - Update `docs/PROJECT_STATE.md` only on `main` after a merge, by replacing a section (≤ 80 lines, fixed
   sections; `docs/agents/WORKFLOW.md`); in task branches report
   state changes in the final summary.

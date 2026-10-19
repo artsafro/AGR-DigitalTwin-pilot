@@ -41,7 +41,7 @@
 **Решено:**
 - `AGR-DigitalTwin` — единственный рабочий репозиторий (harness под Claude/Codex/Antigravity уже есть). `AGR_Project` — архивировать (не удалять), нужное перенести руками.
 - `technical_library/` **не переименовывать** (на неё ссылаются 4 теста и `tools/project_hygiene.py`; по `AGENTS.md` это reviewed operation packages). Вместо этого: в `CLAUDE.md` одна строка — *«`technical_library/` читать только когда задача прямо ссылается на пакет из него»*. Пересмотр состава папки — после зелёного B01, отдельной задачей.
-- `Unreal/` — вынести из корня (отдельная задача после готовности двойника; возможная среда для коллизий — позже).
+- `Unreal/`: root placeholder removed per owner decision; future interactive experience lives in a separate repository [D103].
 - `CLAUDE.md` оставить коротким (сейчас 18 строк — норма).
 
 **Правило — четыре слоя, не смешивать:**
@@ -308,6 +308,22 @@ benchmark/
 
 **Эскалация после 3 fail на модуле**, агент сам, без тебя: (1) сменить паттерн, если в каталоге есть второй способ; (2) разрезать модуль по излому; (3) один раунд с ревьюером (Codex предлагает правку). После — **стоп**: модуль `blocked`, отчёт файлом (spec модуля, что пробовал, числа чекера, скриншот), остальные модули продолжаются.
 
+Лимит попыток ведётся в `jobs/<JOB>/pipeline/state.json` и проверяется pipeline gate (#128; `tools/git-hooks/pipeline_gate.py` — pre-commit и `--job`, `.claude/hooks/pipeline_gate.py` — deny):
+
+```json
+{
+  "failures": [{"item": "module:M01", "kind": "checker", "cause": "code", "detail": "bbox off by 0.12 m"}],
+  "stops": [{"item": "module:M01", "after": 3, "tried": "pattern A, split at kink",
+             "numbers": "bbox 0.12 m, 0.08 m, 0.11 m", "next_step": "review round with Codex"}]
+}
+```
+
+- `failures` — по порядку; `item` — `module:<id>` или `check:<id>`; `kind` — `checker` / `test` / `review`; `cause` — класс отказа из `docs/agents/WORKFLOW.md` (`source` / `tool` / `code` / `test` / `contract`); `detail` — необязательно.
+- `stops` — запись остановки закрывает первые `after` отказов своего `item` (1 ≤ `after` ≤ их число); `tried`, `numbers`, `next_step` непустые. Оба списка необязательны; файл не той формы блокирует.
+- Открытые отказы — после наибольшего `after`. Пункт **заблокирован**, когда среди открытых два с одной `cause` или их три и больше. Записать сам блокирующий отказ можно; дальше нельзя записать новый отказ этого пункта, переписать `pipeline/check.json` или сменить `Pipeline status` в `STATE.md`, пока нет записи остановки (её можно добавить в том же изменении). Дописанные отказы проверяются по одному, по порядку: каждый судится по своему префиксу с теми `stops`, чей `after` в него попадает, — поэтому и одним коммитом нельзя провести пункт за предел, нужна запись остановки, чей `after` покрывает точку блокировки. `--job` блокирует при любом заблокированном пункте.
+- Запуск тоже запрещён: хук Claude отклоняет команду Bash/PowerShell с запуском (`dt build|validate|from-source|spec`, `python`/`py`/`blender`/`pytest`), которая называет `jobs/<JOB>` заблокированного задания (эвристика `command_jobs`; чтение — `cat`, `git diff` — не запуск), а `dt build|validate|from-source|spec extract` сам выходит с кодом 2 до запуска, когда его путь лежит в заблокированном `jobs/<JOB>/`. Правило одно — `run_errors` в `tools/git-hooks/pipeline_gate.py`. Перехват запусков частичный (известные обходы: входы заблокированного задания при `--output` вне него, относительные пути от `cwd` внутри `jobs/<JOB>`, разделители оболочки) — artsafro/AGR-DigitalTwin#144; гарантия #128 — запись, статус и коммит.
+- Запись только дописывается: корректный `state.json` нельзя удалить, прежние `failures` остаются в начале списка без изменений, ни одна прежняя запись из `stops` не пропадает. Pre-commit сверяет HEAD с индексом, хук — диск с новым текстом; `pipeline/state.json` и `pipeline/check.json` в другом регистре pre-commit блокирует.
+
 **Ревью (Codex, `docs/agents/REVIEW_CHECKLIST.md`), три вопроса:**
 1. Ссылается ли модуль на паттерн из каталога или честно помечен `new-case`?
 2. Есть ли в коде то, чего нет в spec (выдумка)?
@@ -354,7 +370,7 @@ benchmark/
 
 ## 12. Первая неделя — конкретно
 
-1. Строка в `CLAUDE.md` про `technical_library/` (без переименования). `Unreal/` — вынести только если на него нет ссылок в тестах (проверить `grep -rn Unreal tests/`).
+1. Строка в `CLAUDE.md` про `technical_library/` (без переименования). Root `Unreal/` placeholder removed per owner decision; future interactive experience lives in a separate repository [D103].
 2. Создать `benchmark/`, `docs/domain/patterns/INDEX.md` (6 строк), `standards/material_id_ranges.yaml`, `library/windows/window_types.json` (из твоей библиотеки).
 3. Mesh-экстрактор (`tools/source/measure_spec_blender.py` + `src/dt_ai/spec/`, §4): сечения по уровням, контур уровня, изломы > 5°, классификация этажей, проёмы по дыркам в корпусе. Сначала на синтетических мешах с тестами.
 4. Последовательно, четыре задачи = четыре ветки (один пишущий агент): (а) mesh-экстрактор с синтетическими тестами; (б) прогон на KPP1 FBX v005; (в) Revit-экстрактор данных через `revit-http-2025`; (г) сравнение двух spec по критериям §4.

@@ -1,11 +1,13 @@
 """`dt evals` and its first grader, no hook denial (#122): verdicts from evidence files, exit codes 0 / 1 / 2."""
 import json
+import re
 import shutil
 from pathlib import Path
 
 import pytest
 
 from dt_ai.cli.main import main
+from twinqa.evals import runner
 from twinqa.evals.graders import EvidenceError, hook_denials, no_hook_denial, read_jsonl
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -168,7 +170,7 @@ def test_the_branch_glob_skips_a_branch_whose_name_extends_the_slug(tmp_path):
     write(folder / f"harness-task-x-pr7-{S1}.jsonl", CLEAN.read_text(encoding="utf-8"))
     write(folder / f"harness-task-x-pr7-other-pr8-{S2}.jsonl", DENIED.read_text(encoding="utf-8"))  # task-x-pr7-other
     write(folder / "harness-task-x-pr7-notes.jsonl", DENIED.read_text(encoding="utf-8"))            # not a session id
-    code, report = dt(tmp_path, "--suite", "regression")
+    code, report = dt(tmp_path, "--task", "no-hook-denial")   # one task: the glob is the same rule for every task
     assert code == 0
     assert [Path(p).name for p in report["checks"][0]["evidence"]] == [f"harness-task-x-pr7-{S1}.jsonl"]
 
@@ -280,3 +282,64 @@ def test_a_tool_result_without_its_payload_is_not_evidence(tmp_path, block):
     assert no_hook_denial({"transcript": [path]})["passed"] is None
     code, _ = dt(tmp_path, "--task", "no-hook-denial", "--evidence", f"transcript={path}")
     assert code == 2
+
+
+# Issue #143: branch-independent evidence on detached HEAD
+
+
+def test_branch_independent_evidence_with_literal_match_succeeds_on_detached_head(tmp_path, monkeypatch):
+    main_dir = tmp_path / "main"
+    evidence_file = write(main_dir / "logs/transcripts/clean-1.jsonl", CLEAN.read_text(encoding="utf-8"))
+    evals_dir = tmp_path / "evals"
+    spec = {
+        "id": "detached-task",
+        "suite": "regression",
+        "grader": "no_hook_denial",
+        "evidence": {
+            "transcript": {
+                "root": "main",
+                "glob": "logs/transcripts/*.jsonl",
+                "match": r"clean-[0-9]+\.jsonl",
+            }
+        },
+    }
+    write(evals_dir / "detached-task/task.json", json.dumps(spec))
+    monkeypatch.setattr(runner, "git_context", lambda _cwd: (main_dir, None))
+
+    code, report, _ = runner.run(evals_dir, task="detached-task", output=tmp_path / "run")
+
+    assert code == 0
+    assert report["branch"] is None
+    assert report["passed"] == 1
+    (check,) = report["checks"]
+    assert (check["task"], check["expected"], check["measured"], check["passed"]) == ("detached-task", 0, 0, True)
+    assert check["evidence"] == [str(evidence_file.resolve())]
+
+
+def test_fill_literal_text_allows_none_branch():
+    assert runner._fill("logs/transcripts/clean.jsonl", None, regex=False) == "logs/transcripts/clean.jsonl"
+    assert runner._fill(r"clean-[0-9]+\.jsonl", None, regex=True) == r"clean-[0-9]+\.jsonl"
+
+
+def test_fill_branch_only_does_not_invoke_branch_slug(monkeypatch):
+    def boom(_branch):
+        raise AssertionError("branch_slug should not be called")
+
+    monkeypatch.setattr(runner, "branch_slug", boom)
+    assert runner._fill("logs/{branch}/run.jsonl", "feat/test", regex=False) == "logs/feat/test/run.jsonl"
+    assert runner._fill(r"run-{branch}\.jsonl", "feat+test", regex=True) == r"run-feat\+test\.jsonl"
+
+
+def test_fill_branch_slug_escapes_regex():
+    branch = "feat/test+1.0"
+    assert runner._fill(r"logs/{branch_slug}\.jsonl", branch, regex=True) == f"logs/{re.escape(runner.branch_slug(branch))}\\.jsonl"
+
+
+def test_resolve_missing_branch_raises_evidence_error(tmp_path):
+    rule_glob = {"root": "main", "glob": "logs/{branch}/*.jsonl"}
+    with pytest.raises(EvidenceError, match="needs the branch"):
+        runner.resolve(rule_glob, folder=tmp_path, main=tmp_path, branch=None)
+
+    rule_match = {"root": "main", "glob": "logs/*.jsonl", "match": r"{branch_slug}-[0-9]+\.jsonl"}
+    with pytest.raises(EvidenceError, match="needs the branch"):
+        runner.resolve(rule_match, folder=tmp_path, main=tmp_path, branch=None)

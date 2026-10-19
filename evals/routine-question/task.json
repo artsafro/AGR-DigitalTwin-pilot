@@ -1,0 +1,21 @@
+{
+  "id": "routine-question",
+  "suite": "regression",
+  "grader": "routine_question",
+  "evidence": {
+    "transcript": {"root": "main", "glob": "logs/transcripts/{branch_slug}-pr*-*.jsonl",
+                   "match": "{branch_slug}-pr([0-9]+|none)-[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[.]jsonl"},
+    "decisions": {"root": "main", "path": "docs/decisions.md"},
+    "patterns": {"root": "main", "path": "docs/domain/patterns/INDEX.md"}
+  },
+  "references": [
+    {"name": "algorithm-question", "verdict": "fail",
+     "evidence": {"transcript": {"root": "task", "path": "fixtures/algorithm-question.synthetic.jsonl"},
+                  "decisions": {"root": "task", "path": "fixtures/decisions.excerpt.md"},
+                  "patterns": {"root": "task", "path": "fixtures/patterns.excerpt.md"}}},
+    {"name": "decided", "verdict": "pass",
+     "evidence": {"transcript": {"root": "task", "path": "fixtures/decided.synthetic.jsonl"},
+                  "decisions": {"root": "task", "path": "fixtures/decisions.excerpt.md"},
+                  "patterns": {"root": "task", "path": "fixtures/patterns.excerpt.md"}}}
+  ]
+}

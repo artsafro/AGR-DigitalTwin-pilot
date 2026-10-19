@@ -1,0 +1,2 @@
+# LFS budget exhausted (docs/agents/CAPABILITIES.md, backlog H9): these small renders are plain blobs.
+*.png -filter binary

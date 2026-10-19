@@ -53,8 +53,27 @@ def test_subagent_hooks_are_wired():
     assert any("deny-geometry" in h["command"] for e in checker for h in e["hooks"])
 
 
-def test_start_gives_the_read_only_reminder():
-    out = run("start", {"agent_type": "bench-runner", "agent_id": "t-start"})
+@pytest.fixture(autouse=True)
+def isolated_snapshots(tmp_path, monkeypatch):
+    # Agent IDs are fixed; parallel worktrees must not share their status files.
+    for name in ("TMPDIR", "TEMP", "TMP"):
+        monkeypatch.setenv(name, str(tmp_path))
+
+
+@pytest.fixture
+def repo(tmp_path):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    for args in (["init", "-q"], ["config", "user.email", "t@x"], ["config", "user.name", "t"]):
+        subprocess.run(["git", *args], cwd=repo, check=True)
+    (repo / "a.txt").write_text("a\n", encoding="utf-8")
+    subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
+    subprocess.run(["git", "commit", "-qm", "a"], cwd=repo, check=True)
+    return repo
+
+
+def test_start_gives_the_read_only_reminder(repo):
+    out = run("start", {"agent_type": "bench-runner", "agent_id": "t-start"}, root=repo)
     assert out["hookSpecificOutput"]["hookEventName"] == "SubagentStart"
     assert "Read-only" in out["hookSpecificOutput"]["additionalContext"]
 
@@ -69,26 +88,20 @@ def test_start_gives_the_read_only_reminder():
     ("bbox | 10 | 10 | pass", False),                                          # review 2 of #86: no table
     ("| check | expected | measured | pass/fail |\n|---|---|---|---|\n| bbox | 10 | 10 | pass-through |", False),
 ])
-def test_stop_wants_a_verdict_table_from_the_checker(message, ok):
-    run("start", {"agent_id": "t-stop"})
-    out = run("stop", {"agent_type": "independent-checker", "agent_id": "t-stop", "last_assistant_message": message})
+def test_stop_wants_a_verdict_table_from_the_checker(message, ok, repo):
+    run("start", {"agent_id": "t-stop"}, root=repo)
+    out = run("stop", {"agent_type": "independent-checker", "agent_id": "t-stop", "last_assistant_message": message},
+              root=repo)
     assert (out == {}) is ok, out
     if not ok:                                                                # a retry must comply too (review 2)
-        run("start", {"agent_id": "t-stop"})
+        run("start", {"agent_id": "t-stop"}, root=repo)
         assert run("stop", {"agent_type": "independent-checker", "agent_id": "t-stop", "stop_hook_active": True,
-                            "last_assistant_message": message})["decision"] == "block"
+                            "last_assistant_message": message}, root=repo)["decision"] == "block"
     if not ok:
         assert out["decision"] == "block" and "report the table" in out["reason"]
 
 
-def test_stop_names_tracked_files_a_subagent_changed(tmp_path):
-    repo = tmp_path / "repo"
-    repo.mkdir()
-    for args in (["init", "-q"], ["config", "user.email", "t@x"], ["config", "user.name", "t"]):
-        subprocess.run(["git", *args], cwd=repo, check=True)
-    (repo / "a.txt").write_text("a\n", encoding="utf-8")
-    subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
-    subprocess.run(["git", "commit", "-qm", "a"], cwd=repo, check=True)
+def test_stop_names_tracked_files_a_subagent_changed(repo):
     run("start", {"agent_id": "t-changed"}, root=repo)
     (repo / "a.txt").write_text("changed\n", encoding="utf-8")
     out = run("stop", {"agent_type": "bench-runner", "agent_id": "t-changed", "last_assistant_message": "done"},

@@ -1,0 +1,158 @@
+{
+  "scope": "internal library audit, not NPM/VPM delivery or user acceptance",
+  "source_hashes": [
+    {
+      "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/МАФы_Union_ALLin.max",
+      "sha256_before": "beeef9d418e81045bbc4933cc74077acd3d9f7a265319ceb9bf0ff0253050109",
+      "sha256_after": "beeef9d418e81045bbc4933cc74077acd3d9f7a265319ceb9bf0ff0253050109",
+      "copy": "C:/x/t_3e6ff1b3/src.max",
+      "copy_sha256": "beeef9d418e81045bbc4933cc74077acd3d9f7a265319ceb9bf0ff0253050109"
+    },
+    {
+      "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/МАФЫ_НПМ.blend",
+      "sha256_before": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "sha256_after": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "copy": "C:/x/t_3e6ff1b3/src.blend",
+      "copy_sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd"
+    }
+  ],
+  "files": {
+    "max": {
+      "count": 931,
+      "bytes": 605827072
+    },
+    "fbx": {
+      "count": 931,
+      "bytes": 224612080
+    }
+  },
+  "build": {
+    "entries": 931,
+    "ok": 931,
+    "sum_entry_seconds": 3863.41,
+    "slowest_entry_seconds": 28.24
+  },
+  "fbx_readback": {
+    "blender": "5.1.2",
+    "seconds": 86.31,
+    "files": 931,
+    "one_mesh": 931,
+    "tris_exact": 927,
+    "tris_differences": [
+      {
+        "id": "MAF_0142",
+        "expected_tris": 281,
+        "readback_tris": 279,
+        "delta": -2
+      },
+      {
+        "id": "MAF_0146",
+        "expected_tris": 1981,
+        "readback_tris": 1979,
+        "delta": -2
+      },
+      {
+        "id": "MAF_0166",
+        "expected_tris": 1417,
+        "readback_tris": 1415,
+        "delta": -2
+      },
+      {
+        "id": "MAF_0637",
+        "expected_tris": 45069,
+        "readback_tris": 45068,
+        "delta": -1
+      }
+    ],
+    "referenced_dims_within_5mm": 931,
+    "dims_differences": [],
+    "loose_vertex_bounds": [
+      {
+        "id": "MAF_0445",
+        "all_vertex_delta_m": 0.2887227783203121,
+        "referenced_vertex_delta_m": 0.00045333862304630657,
+        "loose_vertices": 3
+      },
+      {
+        "id": "MAF_0614",
+        "all_vertex_delta_m": 0.015752685177808923,
+        "referenced_vertex_delta_m": 0.00025866699218757283,
+        "loose_vertices": 2
+      },
+      {
+        "id": "MAF_0615",
+        "all_vertex_delta_m": 0.00921932983398438,
+        "referenced_vertex_delta_m": 0.0004635993025634555,
+        "loose_vertices": 2
+      }
+    ],
+    "non_triangle_faces": 255569,
+    "zero_area_triangles": 99,
+    "meshes_without_uv": 14,
+    "meshes_without_materials": 42,
+    "unassigned_faces": 43885,
+    "details_path": "C:/x/t_3e6ff1b3/fbx_readback_v003.json"
+  },
+  "blend_matching": {
+    "all": {
+      "rows": 368,
+      "methods": {
+        "name+dims": 215,
+        "dims": 60,
+        "none": 93
+      },
+      "lower_triangle_candidates": 21
+    },
+    "НПМ": {
+      "rows": 289,
+      "methods": {
+        "name+dims": 190,
+        "dims": 27,
+        "none": 72
+      },
+      "lower_triangle_candidates": 16
+    },
+    "ВПМ": {
+      "rows": 26,
+      "methods": {
+        "name+dims": 7,
+        "dims": 17,
+        "none": 2
+      },
+      "lower_triangle_candidates": 1
+    }
+  },
+  "preview_repair": {
+    "count": 24,
+    "style": "neutral-shape-only",
+    "manifest": "C:/x/t_3e6ff1b3/library/preview-v002.jsonl",
+    "wrapper_seconds": 125.7,
+    "blank_before": 24,
+    "blank_after": 0,
+    "verified_by": "test_real_maf_library_artifacts over 931 final preview paths"
+  },
+  "native_sample_readback": {
+    "entries": [
+      {
+        "id": "MAF_0001",
+        "meshes": 1,
+        "renderable": true,
+        "max_path": "C:/x/t_3e6ff1b3/library/max/MAF_0001_TS_001.max"
+      }
+    ],
+    "units": "meters",
+    "max_version": [
+      28000,
+      68,
+      0,
+      28,
+      3,
+      0,
+      30732,
+      2026,
+      ".3"
+    ],
+    "coverage": "1/931 files; not an all-file native Max readback"
+  },
+  "contact_sheet": "C:/x/t_3e6ff1b3/library/contact_sheet-v002.png"
+}

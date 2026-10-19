@@ -10,21 +10,21 @@ object yet) · **missing**.
 | # | Stage | Status | Where | Backlog |
 |---|---|---|---|---|
 | 1 | Register and analyze the source (Revit / FBX / SKP / DWG / PDF album) | tool only | skill `analyze-architectural-source`, Revit/AutoCAD/SketchUp MCP | P1 |
-| 2 | Master building layer (elements, floors, openings, materials, sources) | missing | concept in `docs/agr/DIGITAL_TWIN_AI_PROJECT_BRIEF.md` | P2 |
+| 2 | Master building layer (elements, floors, openings, materials, sources) | tool only | [`Spec`](../src/dt_ai/spec/model.py#L165), [`Floor`](../src/dt_ai/spec/model.py#L63), [`Opening`](../src/dt_ai/spec/model.py#L32), [`Roof`](../src/dt_ai/spec/model.py#L87), [`Decor`](../src/dt_ai/spec/model.py#L125), [`RoofStructure`](../src/dt_ai/spec/model.py#L94) in `src/dt_ai/spec/model.py`; extractor [`extract_spec`](../src/dt_ai/spec/mesh.py#L1627); engine [`build`](../src/dt_ai/geometry/from_spec.py#L355) (structured spec models, extractor and geometry builder active in test suites; master building workflow/intake across arbitrary sources incomplete; no real-object delivery acceptance) | P2 |
 | 3 | BODY: exterior-only quad surface, cuts at corners/openings | proven (Obr22) | `src/dt_ai/geometry/exterior.py`, `connect.py`, `tools/build_exterior_surface.py` | — |
 | 4 | Shell 0.4 m inward | proven (Obr22) | `src/dt_ai/geometry/shell.py`, `tools/run_body_shell.py` | C23 |
 | 5 | Windows, stained glass, doors | partial | `tools/build_shell_windows.py`, `technical_library/window_atlas/`, REVIT-OPENINGS | P3 |
-| 6 | Roof, decor, exterior equipment | missing | — | P4 |
+| 6 | Roof, decor, exterior equipment | tool only | [`extract_spec`](../src/dt_ai/spec/mesh.py#L1627) (roof/parapet/structures), [`extract`](../src/dt_ai/spec/decor.py#L375) (facade decor), [`build`](../src/dt_ai/geometry/from_spec.py#L355) (parapet cap, inset plates, decor solids, roof structures), [`check_decor`](../src/twinqa/geometry/checks.py#L632); roof structures `npm_min` screen planes only; mid/VPM shell and full exterior equipment coverage incomplete; no real-object delivery acceptance | P4 |
 | 7 | Materials registry and IDs | partial | `src/dt_ai/materials/registry.py` | — |
 | 8 | NPM atlas (embedded PNG, shared regions by finish) | proven (Obr22 v012, GLB) | `technical_library/glb_atlas/`, `texture_tiles/` | C21 |
 | 9 | VPM UV/UDIM + Diffuse/ERM/Normal maps | proven (Obr22 v011, SOSH1150 v006) | `technical_library/uv_continuous/`, `src/dt_ai/geometry/uv.py` | C27, C29, C33 |
-| 10 | UCX collisions (VPM) | missing | probe `tools/probe_geoagr_ucx.py` | P5 |
+| 10 | UCX collisions (VPM) | tool only (Main measured on 4 etalon meshes, #166; Ground on synthetic surfaces only, no Ground etalon; no real-object delivery acceptance) | builder [`ucx_build`](../src/dt_ai/geometry/ucx_build.py) + `tools/blender/ucx_build.py`; audit `tools/blender/ucx_audit.py`; V010/V012 scene checks; job-local KPP1/PSU275 `vpm_ucx.py` | P5 |
 | 11 | Lights FBX (VPM) | missing | — | P6 |
 | 12 | Coordinates MSK-77, zero mark, pivot | missing | — | P7 |
 | 13 | GeoJSON (VPM) | tool only (validator) | `src/twinqa/geojson.py` | P8 |
 | 14 | FBX export + readback | proven | `tools/blender/fbx_readback.py`, `adapters/blender/bridge.py` | — |
 | 15 | Package ZIP + validator V001–V017 | partial | `tools/qa/validate_package.py`, `src/dt_ai/validate/bundle.py` | Q1–Q4 |
-| 16 | AGR Checker (SINTEZ) pass | missing | — | Q5 |
+| 16 | AGR Checker (SINTEZ) pass | partial (headless run of the Blender extension on KPP1 v005; deferred items open) | `jobs/KPP1/scripts/run_agr_checker.py` | Q5 |
 
 ## Territory and environment
 

@@ -18,9 +18,10 @@ dependencies = [
 
 [project.optional-dependencies]
 pdf-review = ["PyMuPDF==1.28.2"]
+cad = ["ezdxf==1.4.3"]
 
 [dependency-groups]
-dev = ["pytest==9.1.1"]
+dev = ["pytest==9.1.1", "ezdxf==1.4.3", "pytest-xdist==3.8.0"]
 
 [project.scripts]
 dt = "dt_ai.cli.main:main"
@@ -30,8 +31,10 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "-m 'not blender and not dcc and not acad'"
 pythonpath = [".", "tools/qa"]
 markers = [
     "dcc: requires an explicitly supplied Blender executable (DT_BLENDER)",
-    "blender: runs a real background Blender process (skipped when Blender is not found)",
+    "blender: opt-in real background Blender process (select with -m blender)",
+    "acad: needs the AutoCAD 2025 core console via dcc_batch.py (select with -m acad)",
 ]

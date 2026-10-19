@@ -1,0 +1,620 @@
+{
+ "blender": "4.4.0",
+ "rows": {
+  "bench-b01-box__bowtie": {
+   "core": {
+    "vertices": 160,
+    "faces": 142,
+    "connected_components": 3,
+    "duplicate_vertices_rounded": 0,
+    "zero_area_faces_fan": 0,
+    "boundary_edges": 32,
+    "multi_face_edges": 0,
+    "loose_edges": 0,
+    "vertices_unused_by_faces": 0
+   },
+   "live_core_equal": true,
+   "exported_core_equal": true,
+   "extent_dev_mm": 0.000191,
+   "bmesh": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 32,
+    "boundary_edges": 32,
+    "zero_area_faces": 0,
+    "loose_verts": 0,
+    "near_dup_verts_1mm": 0,
+    "bowtie_faces": 1
+   },
+   "py_port": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 32,
+    "near_dup_verts_1mm": 0,
+    "loose_verts": 0,
+    "bowtie_faces": 1
+   },
+   "py_port_equal_bmesh": true,
+   "ms": {
+    "live_core": 2.43,
+    "bmesh": 0.51,
+    "export": 0.38,
+    "off_core": 1.35,
+    "py_port": 1.7,
+    "weld": 0.11
+   }
+  },
+  "bench-b01-box__clean": {
+   "core": {
+    "vertices": 156,
+    "faces": 141,
+    "connected_components": 2,
+    "duplicate_vertices_rounded": 0,
+    "zero_area_faces_fan": 0,
+    "boundary_edges": 28,
+    "multi_face_edges": 0,
+    "loose_edges": 0,
+    "vertices_unused_by_faces": 0
+   },
+   "live_core_equal": true,
+   "exported_core_equal": true,
+   "extent_dev_mm": 0.000191,
+   "bmesh": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 28,
+    "boundary_edges": 28,
+    "zero_area_faces": 0,
+    "loose_verts": 0,
+    "near_dup_verts_1mm": 0,
+    "bowtie_faces": 0
+   },
+   "py_port": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 28,
+    "near_dup_verts_1mm": 0,
+    "loose_verts": 0,
+    "bowtie_faces": 0
+   },
+   "py_port_equal_bmesh": true,
+   "ms": {
+    "live_core": 2.25,
+    "bmesh": 0.5,
+    "export": 0.34,
+    "off_core": 1.32,
+    "py_port": 1.67,
+    "weld": 0.11
+   }
+  },
+  "bench-b01-box__del1": {
+   "core": {
+    "vertices": 156,
+    "faces": 140,
+    "connected_components": 2,
+    "duplicate_vertices_rounded": 0,
+    "zero_area_faces_fan": 0,
+    "boundary_edges": 32,
+    "multi_face_edges": 0,
+    "loose_edges": 0,
+    "vertices_unused_by_faces": 0
+   },
+   "live_core_equal": true,
+   "exported_core_equal": true,
+   "extent_dev_mm": 0.000191,
+   "bmesh": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 32,
+    "boundary_edges": 32,
+    "zero_area_faces": 0,
+    "loose_verts": 0,
+    "near_dup_verts_1mm": 0,
+    "bowtie_faces": 0
+   },
+   "py_port": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 32,
+    "near_dup_verts_1mm": 0,
+    "loose_verts": 0,
+    "bowtie_faces": 0
+   },
+   "py_port_equal_bmesh": true,
+   "ms": {
+    "live_core": 2.35,
+    "bmesh": 0.55,
+    "export": 0.35,
+    "off_core": 1.32,
+    "py_port": 1.66,
+    "weld": 0.11
+   }
+  },
+  "bench-b01-box__dup05": {
+   "core": {
+    "vertices": 157,
+    "faces": 141,
+    "connected_components": 2,
+    "duplicate_vertices_rounded": 0,
+    "zero_area_faces_fan": 0,
+    "boundary_edges": 32,
+    "multi_face_edges": 0,
+    "loose_edges": 0,
+    "vertices_unused_by_faces": 0
+   },
+   "live_core_equal": true,
+   "exported_core_equal": true,
+   "extent_dev_mm": 0.000275,
+   "bmesh": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 32,
+    "boundary_edges": 32,
+    "zero_area_faces": 0,
+    "loose_verts": 0,
+    "near_dup_verts_1mm": 1,
+    "bowtie_faces": 0
+   },
+   "py_port": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 32,
+    "near_dup_verts_1mm": 1,
+    "loose_verts": 0,
+    "bowtie_faces": 0
+   },
+   "py_port_equal_bmesh": true,
+   "ms": {
+    "live_core": 2.49,
+    "bmesh": 0.52,
+    "export": 0.35,
+    "off_core": 1.34,
+    "py_port": 1.69,
+    "weld": 0.11
+   }
+  },
+  "bench-b01-box__flip1": {
+   "core": {
+    "vertices": 156,
+    "faces": 141,
+    "connected_components": 2,
+    "duplicate_vertices_rounded": 0,
+    "zero_area_faces_fan": 0,
+    "boundary_edges": 28,
+    "multi_face_edges": 0,
+    "loose_edges": 0,
+    "vertices_unused_by_faces": 0
+   },
+   "live_core_equal": true,
+   "exported_core_equal": true,
+   "extent_dev_mm": 0.000191,
+   "bmesh": {
+    "inconsistent_edges": 4,
+    "non_manifold_edges": 28,
+    "boundary_edges": 28,
+    "zero_area_faces": 0,
+    "loose_verts": 0,
+    "near_dup_verts_1mm": 0,
+    "bowtie_faces": 0
+   },
+   "py_port": {
+    "inconsistent_edges": 4,
+    "non_manifold_edges": 28,
+    "near_dup_verts_1mm": 0,
+    "loose_verts": 0,
+    "bowtie_faces": 0
+   },
+   "py_port_equal_bmesh": true,
+   "ms": {
+    "live_core": 3.0,
+    "bmesh": 0.54,
+    "export": 0.54,
+    "off_core": 1.31,
+    "py_port": 1.66,
+    "weld": 0.11
+   }
+  },
+  "bench-b02-corner-niche__bowtie": {
+   "core": {
+    "vertices": 267,
+    "faces": 237,
+    "connected_components": 3,
+    "duplicate_vertices_rounded": 0,
+    "zero_area_faces_fan": 0,
+    "boundary_edges": 56,
+    "multi_face_edges": 0,
+    "loose_edges": 0,
+    "vertices_unused_by_faces": 0
+   },
+   "live_core_equal": true,
+   "exported_core_equal": true,
+   "extent_dev_mm": 0.000191,
+   "bmesh": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 56,
+    "boundary_edges": 56,
+    "zero_area_faces": 0,
+    "loose_verts": 0,
+    "near_dup_verts_1mm": 0,
+    "bowtie_faces": 1
+   },
+   "py_port": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 56,
+    "near_dup_verts_1mm": 0,
+    "loose_verts": 0,
+    "bowtie_faces": 1
+   },
+   "py_port_equal_bmesh": true,
+   "ms": {
+    "live_core": 4.39,
+    "bmesh": 0.86,
+    "export": 0.59,
+    "off_core": 2.25,
+    "py_port": 2.84,
+    "weld": 0.19
+   }
+  },
+  "bench-b02-corner-niche__clean": {
+   "core": {
+    "vertices": 263,
+    "faces": 236,
+    "connected_components": 2,
+    "duplicate_vertices_rounded": 0,
+    "zero_area_faces_fan": 0,
+    "boundary_edges": 52,
+    "multi_face_edges": 0,
+    "loose_edges": 0,
+    "vertices_unused_by_faces": 0
+   },
+   "live_core_equal": true,
+   "exported_core_equal": true,
+   "extent_dev_mm": 0.000191,
+   "bmesh": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 52,
+    "boundary_edges": 52,
+    "zero_area_faces": 0,
+    "loose_verts": 0,
+    "near_dup_verts_1mm": 0,
+    "bowtie_faces": 0
+   },
+   "py_port": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 52,
+    "near_dup_verts_1mm": 0,
+    "loose_verts": 0,
+    "bowtie_faces": 0
+   },
+   "py_port_equal_bmesh": true,
+   "ms": {
+    "live_core": 4.49,
+    "bmesh": 0.81,
+    "export": 0.64,
+    "off_core": 2.23,
+    "py_port": 2.81,
+    "weld": 0.19
+   }
+  },
+  "bench-b02-corner-niche__del1": {
+   "core": {
+    "vertices": 263,
+    "faces": 235,
+    "connected_components": 2,
+    "duplicate_vertices_rounded": 0,
+    "zero_area_faces_fan": 0,
+    "boundary_edges": 56,
+    "multi_face_edges": 0,
+    "loose_edges": 0,
+    "vertices_unused_by_faces": 0
+   },
+   "live_core_equal": true,
+   "exported_core_equal": true,
+   "extent_dev_mm": 0.000191,
+   "bmesh": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 56,
+    "boundary_edges": 56,
+    "zero_area_faces": 0,
+    "loose_verts": 0,
+    "near_dup_verts_1mm": 0,
+    "bowtie_faces": 0
+   },
+   "py_port": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 56,
+    "near_dup_verts_1mm": 0,
+    "loose_verts": 0,
+    "bowtie_faces": 0
+   },
+   "py_port_equal_bmesh": true,
+   "ms": {
+    "live_core": 3.88,
+    "bmesh": 0.82,
+    "export": 0.6,
+    "off_core": 2.24,
+    "py_port": 2.81,
+    "weld": 0.18
+   }
+  },
+  "bench-b02-corner-niche__dup05": {
+   "core": {
+    "vertices": 264,
+    "faces": 236,
+    "connected_components": 2,
+    "duplicate_vertices_rounded": 0,
+    "zero_area_faces_fan": 0,
+    "boundary_edges": 56,
+    "multi_face_edges": 0,
+    "loose_edges": 0,
+    "vertices_unused_by_faces": 0
+   },
+   "live_core_equal": true,
+   "exported_core_equal": true,
+   "extent_dev_mm": 0.000191,
+   "bmesh": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 56,
+    "boundary_edges": 56,
+    "zero_area_faces": 0,
+    "loose_verts": 0,
+    "near_dup_verts_1mm": 1,
+    "bowtie_faces": 0
+   },
+   "py_port": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 56,
+    "near_dup_verts_1mm": 1,
+    "loose_verts": 0,
+    "bowtie_faces": 0
+   },
+   "py_port_equal_bmesh": true,
+   "ms": {
+    "live_core": 4.9,
+    "bmesh": 0.84,
+    "export": 0.59,
+    "off_core": 2.24,
+    "py_port": 2.81,
+    "weld": 0.19
+   }
+  },
+  "bench-b02-corner-niche__flip1": {
+   "core": {
+    "vertices": 263,
+    "faces": 236,
+    "connected_components": 2,
+    "duplicate_vertices_rounded": 0,
+    "zero_area_faces_fan": 0,
+    "boundary_edges": 52,
+    "multi_face_edges": 0,
+    "loose_edges": 0,
+    "vertices_unused_by_faces": 0
+   },
+   "live_core_equal": true,
+   "exported_core_equal": true,
+   "extent_dev_mm": 0.000191,
+   "bmesh": {
+    "inconsistent_edges": 4,
+    "non_manifold_edges": 52,
+    "boundary_edges": 52,
+    "zero_area_faces": 0,
+    "loose_verts": 0,
+    "near_dup_verts_1mm": 0,
+    "bowtie_faces": 0
+   },
+   "py_port": {
+    "inconsistent_edges": 4,
+    "non_manifold_edges": 52,
+    "near_dup_verts_1mm": 0,
+    "loose_verts": 0,
+    "bowtie_faces": 0
+   },
+   "py_port_equal_bmesh": true,
+   "ms": {
+    "live_core": 4.15,
+    "bmesh": 0.82,
+    "export": 0.59,
+    "off_core": 2.25,
+    "py_port": 2.8,
+    "weld": 0.19
+   }
+  },
+  "bench-b02t-terrace__bowtie": {
+   "core": {
+    "vertices": 374,
+    "faces": 325,
+    "connected_components": 4,
+    "duplicate_vertices_rounded": 0,
+    "zero_area_faces_fan": 0,
+    "boundary_edges": 94,
+    "multi_face_edges": 0,
+    "loose_edges": 0,
+    "vertices_unused_by_faces": 0
+   },
+   "live_core_equal": true,
+   "exported_core_equal": true,
+   "extent_dev_mm": 0.000191,
+   "bmesh": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 94,
+    "boundary_edges": 94,
+    "zero_area_faces": 0,
+    "loose_verts": 0,
+    "near_dup_verts_1mm": 0,
+    "bowtie_faces": 1
+   },
+   "py_port": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 94,
+    "near_dup_verts_1mm": 0,
+    "loose_verts": 0,
+    "bowtie_faces": 1
+   },
+   "py_port_equal_bmesh": true,
+   "ms": {
+    "live_core": 5.68,
+    "bmesh": 1.13,
+    "export": 0.85,
+    "off_core": 3.17,
+    "py_port": 3.96,
+    "weld": 0.27
+   }
+  },
+  "bench-b02t-terrace__clean": {
+   "core": {
+    "vertices": 370,
+    "faces": 324,
+    "connected_components": 3,
+    "duplicate_vertices_rounded": 0,
+    "zero_area_faces_fan": 0,
+    "boundary_edges": 90,
+    "multi_face_edges": 0,
+    "loose_edges": 0,
+    "vertices_unused_by_faces": 0
+   },
+   "live_core_equal": true,
+   "exported_core_equal": true,
+   "extent_dev_mm": 0.000191,
+   "bmesh": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 90,
+    "boundary_edges": 90,
+    "zero_area_faces": 0,
+    "loose_verts": 0,
+    "near_dup_verts_1mm": 0,
+    "bowtie_faces": 0
+   },
+   "py_port": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 90,
+    "near_dup_verts_1mm": 0,
+    "loose_verts": 0,
+    "bowtie_faces": 0
+   },
+   "py_port_equal_bmesh": true,
+   "ms": {
+    "live_core": 5.49,
+    "bmesh": 1.09,
+    "export": 0.85,
+    "off_core": 3.12,
+    "py_port": 3.88,
+    "weld": 0.26
+   }
+  },
+  "bench-b02t-terrace__del1": {
+   "core": {
+    "vertices": 370,
+    "faces": 323,
+    "connected_components": 3,
+    "duplicate_vertices_rounded": 0,
+    "zero_area_faces_fan": 0,
+    "boundary_edges": 94,
+    "multi_face_edges": 0,
+    "loose_edges": 0,
+    "vertices_unused_by_faces": 0
+   },
+   "live_core_equal": true,
+   "exported_core_equal": true,
+   "extent_dev_mm": 0.000191,
+   "bmesh": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 94,
+    "boundary_edges": 94,
+    "zero_area_faces": 0,
+    "loose_verts": 0,
+    "near_dup_verts_1mm": 0,
+    "bowtie_faces": 0
+   },
+   "py_port": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 94,
+    "near_dup_verts_1mm": 0,
+    "loose_verts": 0,
+    "bowtie_faces": 0
+   },
+   "py_port_equal_bmesh": true,
+   "ms": {
+    "live_core": 5.66,
+    "bmesh": 1.1,
+    "export": 0.82,
+    "off_core": 3.15,
+    "py_port": 3.92,
+    "weld": 0.26
+   }
+  },
+  "bench-b02t-terrace__dup05": {
+   "core": {
+    "vertices": 371,
+    "faces": 324,
+    "connected_components": 3,
+    "duplicate_vertices_rounded": 0,
+    "zero_area_faces_fan": 0,
+    "boundary_edges": 94,
+    "multi_face_edges": 0,
+    "loose_edges": 0,
+    "vertices_unused_by_faces": 0
+   },
+   "live_core_equal": true,
+   "exported_core_equal": true,
+   "extent_dev_mm": 0.000191,
+   "bmesh": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 94,
+    "boundary_edges": 94,
+    "zero_area_faces": 0,
+    "loose_verts": 0,
+    "near_dup_verts_1mm": 1,
+    "bowtie_faces": 0
+   },
+   "py_port": {
+    "inconsistent_edges": 0,
+    "non_manifold_edges": 94,
+    "near_dup_verts_1mm": 1,
+    "loose_verts": 0,
+    "bowtie_faces": 0
+   },
+   "py_port_equal_bmesh": true,
+   "ms": {
+    "live_core": 5.44,
+    "bmesh": 1.12,
+    "export": 0.81,
+    "off_core": 3.14,
+    "py_port": 3.87,
+    "weld": 0.26
+   }
+  },
+  "bench-b02t-terrace__flip1": {
+   "core": {
+    "vertices": 370,
+    "faces": 324,
+    "connected_components": 3,
+    "duplicate_vertices_rounded": 0,
+    "zero_area_faces_fan": 0,
+    "boundary_edges": 90,
+    "multi_face_edges": 0,
+    "loose_edges": 0,
+    "vertices_unused_by_faces": 0
+   },
+   "live_core_equal": true,
+   "exported_core_equal": true,
+   "extent_dev_mm": 0.000191,
+   "bmesh": {
+    "inconsistent_edges": 4,
+    "non_manifold_edges": 90,
+    "boundary_edges": 90,
+    "zero_area_faces": 0,
+    "loose_verts": 0,
+    "near_dup_verts_1mm": 0,
+    "bowtie_faces": 0
+   },
+   "py_port": {
+    "inconsistent_edges": 4,
+    "non_manifold_edges": 90,
+    "near_dup_verts_1mm": 0,
+    "loose_verts": 0,
+    "bowtie_faces": 0
+   },
+   "py_port_equal_bmesh": true,
+   "ms": {
+    "live_core": 5.52,
+    "bmesh": 1.1,
+    "export": 0.85,
+    "off_core": 3.13,
+    "py_port": 3.88,
+    "weld": 0.26
+   }
+  }
+ }
+}

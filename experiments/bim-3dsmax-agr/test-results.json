@@ -1,0 +1,11 @@
+{
+  "ordinary_suite_command": "env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q -p no:cacheprovider --basetemp=C:/x/t_8da65809-{baseline|final}",
+  "baseline": {"exit_code": 1, "passed": 2013, "failed": 1, "skipped": 9, "deselected": 12, "warnings": 1, "seconds": 252.83},
+  "final": {"exit_code": 1, "passed": 2013, "failed": 1, "skipped": 9, "deselected": 12, "warnings": 1, "seconds": 242.96},
+  "unchanged_failure": {"test": "tests/qa/test_from_spec_decor.py::test_a_corner_pilaster_passes_every_check", "check": "orientation", "value": 1},
+  "experiment_controls": {"command": "uv run pytest -q experiments/bim-3dsmax-agr/test_experiment.py -p no:cacheprovider --basetemp=C:/x/t_8da65809-controls", "exit_code": 0, "passed": 8, "seconds": 0.21},
+  "profiles_check": {"exit_code": 0, "profiles": 3},
+  "schemas_check": {"exit_code": 0, "schemas": 11},
+  "delivery_passed": false,
+  "ci": "not run (billing lock)"
+}

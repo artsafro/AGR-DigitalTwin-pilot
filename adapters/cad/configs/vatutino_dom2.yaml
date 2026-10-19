@@ -1,0 +1,93 @@
+# SPOZU layer map: Vatutino, Дом 2, detailed concept (2025-06-19), main and paving DWG.
+# Source: docs/research/spozu-vatutino-inventory.md (issue #194), section "Layer map for Ground".
+# Real project data (not synthetic). Open questions of the inventory that this map does NOT decide:
+#   OQ1 boundary 568BF is the inventory's proposal (legend row «Граница проектирования»), pending user confirmation;
+#   OQ3 ~9 344 m2 of the plot has no covering hatch (no layer for it here);
+#   OQ4 tile types 3/4 both on `плитка_светлая` (one covering type here);
+#   OQ8 flower beds kept as covering types (D101: Ground texture when the spec only says flower beds);
+#   OQ9 hatches are the covering source; the partial closed contours on the same layers are not used.
+project: vatutino-dom2
+units: null            # null = from $INSUNITS (6 = metres in both files)
+boundary:
+  layer: ПР_ЛГР_предлагаемые
+  handle: 568BF        # 26 other polylines on the layer belong to neighbouring plots
+coverings:
+  - {type: tile_light, label: Покрытие из плитки тротуарной бетонной (светлая), layers: ["!_А101_плитка_светлая"]}
+  - {type: tile_red, label: Покрытие из плитки тротуарной бетонной (красная), layers: ["!_А101_плитка_красная"]}
+  - {type: tile_dark, label: Покрытие из плитки тротуарной бетонной (темная), layers: ["!_А101_плитка_темная"]}
+  - {type: pebbles, label: Покрытие из гальки, layers: ["!_А101_покр_галька"]}
+  - {type: gravel_screening, label: Покрытие из гравийного трамбованного отсева фр. 2-8, layers: ["!_А101_покр_гравийный отсев фр 2-8"]}
+  - {type: decking, label: Покрытие из деревянного настила, layers: ["!_А101_покр_декинг"]}
+  - {type: mulch, label: Покрытие из мульчи, layers: ["!_А101_мульча"]}
+  - {type: lawn_reinforced, label: Газон укрепленный, layers: ["!_А101_укрепленный газон"]}
+  - {type: lawn_rolled, label: Газон универсальный рулонный, layers: ["!_А101_озел_штрих_газон"]}
+  - {type: flower_bed_01, label: Цветник 01 Щучка дернистая, layers: ["!_А101_укрепленный цветник 01 Щучка дернистая"]}
+  - {type: flower_bed_02, label: Цветник 02 Эхинацея пурпурная, layers: ["!_А101_укрепленный цветник 02 Эхинацея пурпурная"]}
+  - {type: flower_bed_03, label: Цветник 03 Очиток видный, layers: ["!_А101_укрепленный цветник 03 Очиток видный"]}
+  - {type: flower_bed_04, label: Цветник 04 Тысячелистник Терракота, layers: ["!_А101_укрепленный цветник 04 Тысячелистник Терракота"]}
+  - {type: flower_bed_05, label: Цветник 05 Шалфей дубравный, layers: ["!_А101_укрепленный цветник 05 Шалфей дубравный"]}
+  - {type: flower_bed_06, label: Цветник 06 Мордовник гмелина Snow king, layers: ["!_А101_укрепленный цветник 06 Мордовник гмелина Snow king"]}
+  - {type: flower_bed_07, label: Цветник 07 Ясколка войлочная, layers: ["!_А101_укрепленный цветник 07 Ясколка войлочная"]}
+  - {type: flower_bed_08, label: Цветник 08 Тимьян ползучий, layers: ["!_А101_укрепленный цветник 08 Тимьян ползучий"]}
+planting:
+  layers: ["!_А101_деревья", "!_А101_кустарники", "!_А101_Лиственные кустарники", "!_А101_Хвойные кустарники"]
+  label: block_name    # the block name is the species; schedule names differ slightly (see positions)
+  positions:           # block -> «Ведомость озеленения» Поз. (table *T3509)
+    "Липа мелколистная 'Greenspire'": "1"
+    "Ольха серая 'Laciniata'": "2"
+    "Черемуха обыкновенная 'Watereri'": "3"
+    "Яблоня 'Makowieckiana'": "4"
+    "Лиственница обыкновенная 'Pendula'": "5"
+    "Ирга колосистая": "6"
+    "Боярышник средний  'Paul's Scarlet'": "7"
+    "Лох узколистный": "8"
+    "Пузыреплодник калинолистный (Physocarpus opulifolius) ‘Lady in red’": "9"
+    "Дерен кроваво-красный (Cornus sanguinea) ‘Anny’s Winter Orange’": "10"
+    "Рябинник рябинолистный": "11"
+    "Дерен белый 'Red Gnome'": "12"
+    "Облепиха крушиновидная ‘Hikul’": "13"
+    "Лапчатка кустарниковая (Dasiphora fruticosa) К": "14"
+    "Стефанандра надрезаннолистная Crispa (Stephanandra incisa Crispa)": "15"
+    "Ель нидиформис": "16"
+    "Сосна горная ф. Мугус": "17"
+maf:
+  layers: ["!_А101_маф", "!_А101_маф_парковые", "__ТБО"]
+  layer_blocks:        # MAF inserted on layer 0 (the rest of layer 0 is tables, dimensions, bound xref blocks)
+    "0": ["Контейнер 1100л ТБО", "Качалка на пружине ИО 0323Т-3", "ио 0118т-1"]
+  label: block_name    # MAF schedules *T3508/*T3510 carry no position numbers: the label is the product block
+  positions: {}
+elevations:
+  containers: ["!_А101_предварительная ВП"]   # preliminary vertical planning blocks (frozen layer), OQ5
+  layers: ["ГП_Вертикалка_ОпорнаяТочка_New"]
+  value: text
+overlap_tol_m2: 0.01
+ignore_layers:
+  - "0"
+  - "Defpoints"
+  - "ППТ8-1_1 очередь от Вовы$0$*"     # bound neighbourhood plan (0.00 m2 in the plot)
+  - "!_А101_плитка_светлая пошаговая"   # stepping slabs: INSERTs, not a hatch covering
+  - "!_А101_плитка_*_РМ"                 # paving laying arrays (paving file)
+  - "РМ_*"
+  - "!_А101_укрепленный цветник"         # flower-bed outlines (open/closed polylines)
+  - "!_А101_борт_*"                      # curbs: Step 8, not coverings
+  - "Борт"
+  - "!_А101_лестница"
+  - "!_А101_ограждение"
+  - "!_А101_освещение"
+  - "!_А101_входы"
+  - "!_А101_кнопка СОВ"
+  - "!_А101_ТЭТ"
+  - "!_А101_движение пешеходов_*"
+  - "!_А101_контуры концепции"
+  - "!_А101_площадки_развороты"
+  - "!ГИП_НО_опоры"
+  - "НО_*"
+  - "ГП_*"
+  - "_ГП_ПожПроезд"
+  - "ПР_Подземный_Паркинг"
+  - "ПП_маркировка мощения_500 А1"
+  - "Разметка"
+  - "00"
+  - "00.Оформление"
+  - "A-GLAS"
+  - "Обобщенные модели"

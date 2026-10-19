@@ -15,7 +15,15 @@ from pathlib import Path
 PRODUCTION_EXT = r"\.(fbx|blend|max|uasset|umap|obj|abc|usd[az]?|glb|gltf|rvt|skp|dwg|psd|exr|tiff?|png|tga)\b"
 
 # (regex, reason) checked against shell commands (Bash and PowerShell / cmd).
+# Policy: docs/agents/WORKFLOW.md#permission-matrix; DCC risk classes and
+# authorization gates: docs/agents/CAPABILITIES.md#dcc-tool-risk-classes.
+# Conservative lexical checks, not a shell sandbox (aliases/arbitrary code need review).
+# Global gh options may precede the subcommand; never cross a shell command boundary.
+GH_PREFIX = r"\bgh(?:\.exe)?\b[^|;&\n]*?"
 SHELL_RULES = [
+    (GH_PREFIX + r"\bpr\s+merge\b", "gh pr merge requires the user's merge command"),
+    (GH_PREFIX + r"\bdelete\b", "gh delete changes remote data"),
+    (GH_PREFIX + r"\brepo\b", "gh repo operations require explicit authorization"),
     (r"\bgit\b[^|;&]*\bpush\b", "git push publishes to a remote"),
     (r"\bgit\b[^|;&]*\breset\b[^|;&]*--hard", "git reset --hard discards work"),
     (r"\bgit\b[^|;&]*\bclean\b", "git clean deletes untracked files"),
@@ -35,6 +43,7 @@ SHELL_RULES = [
 HOME = Path.home()
 ALLOWED_WRITE_ROOTS = [
     HOME / ".claude" / "projects",
+    HOME / ".claude" / "plans",  # plan-mode plan files (#111)
     HOME / ".claude" / "skills",
     HOME / ".gemini",
     Path(os.environ.get("TEMP", HOME / "AppData/Local/Temp")) / "claude",

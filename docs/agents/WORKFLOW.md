@@ -8,17 +8,19 @@ task: a one-line fix skips most steps; a multi-stage delivery uses all of them.
 Harness work (issues labelled `harness`) runs grilling -> to-spec -> to-tickets -> implement ->
 code-review (user 2026-10-14 [D091]); production work runs the steps below.
 
-0. **Card.** A task with an issue moves on the board (`docs/agents/KANBAN.md`): In progress
-   when taken, Needs you when it waits on the user.
+0. **Card and recitation.** A task with an issue moves on the board (`docs/agents/KANBAN.md`): In progress
+   when taken, Needs you when it waits on the user. Then recite the ticket ("Recitation" below)
+   before any file is changed.
 1. **Goal and discovery.** Read `docs/PROJECT_STATE.md`, the relevant `docs/domain/` file,
    the matching accepted case (`docs/cases.md`) and the real inputs. A script or MCP that
    exists is not working until there is current evidence (`CAPABILITIES.md` status).
-2. **Questions.** Ask only what changes the result, inputs, architecture, acceptance,
-   destructive actions or publication. Decide routine details yourself.
+2. **Questions.** Apply [Questions-only](#questions-only) and [Escalation](#escalation-131)
+   before asking. Decide routine details yourself; a quoted applicable decision is already answered.
 3. **Contract.** For multi-stage work write in `jobs/<JOB>/STATE.md` (or the PR): goal and
    acceptance, exact inputs/versions, profile (NPM-OKS, VPM-OKS, NPM-territory…), owner of
    each scene/port/export, outputs, mandatory checks, stop conditions, next step. "Model"
-   alone does not define the profile — ask when it matters.
+   alone does not define the profile — ask when it matters. A job contract starts with the
+   Requirement section and the Context line (template below, "Job contract").
 4. **Plan.** Stages, dependencies, reused tools, checks. An open decision blocks only the
    stages that depend on it.
 5. **Execute** in narrow stages. Pure computation in `src/`, DCC calls in adapters/tools,
@@ -28,10 +30,157 @@ code-review (user 2026-10-14 [D091]); production work runs the steps below.
    not evidence. Read the actual files back. Classify a failure (source / tool / code /
    test / contract), fix the cause, rerun the affected checks. A failed mandatory check is
    never turned into a pass by rewording. After two failures with the same cause, stop that
-   path, save the state and propose the next step.
-7. **Hand off.** Compare the result with the original goal; report what is done, what was
-   checked (commands, evidence paths) and what is open. On restart, read saved outputs and
+   path, save the state and propose the next step. The limit is recorded in
+   `jobs/<JOB>/pipeline/state.json` and enforced by the pipeline gate, see `docs/HARNESS_PLAN.md` §8.
+7. **Hand off.** Compare the result with the Requirement (the user's wording, profile and
+   acceptance in the contract), item by item: met, not met, or changed by a later user decision
+   (with its date or `D<n>`); report what is done, what was checked (commands, evidence paths)
+   and what is open. Provide receipts per
+   [Before requesting review (author)](#before-requesting-review-author). On restart, read saved outputs and
    hashes before repeating any mutation (`run-evidence` skill).
+
+## Before requesting review (author)
+
+Before requesting review of a PR, the author provides verifiable receipts in the PR body under
+`## Author receipts`. The reviewer checks evidence, not confidence; the author must supply the
+following three items:
+
+1. **Pattern / new-case marker.** Each NEW module must refer to a pattern in `docs/domain/patterns/INDEX.md` or be honestly marked `new-case` in the module docstring AND in the PR body.
+   In the PR, include `Pattern: <pattern id | new-case | n/a if no new module>`. The change must stay
+   inside its issue and list what is not done.
+2. **Regression evals.** Before requesting review or merging to `main`, the author runs the regression evals:
+   ```bash
+   uv run dt evals --suite regression --output <worktree>/tmp/evals
+   ```
+   Replace `<worktree>` with your own absolute worktree path so outputs remain isolated inside your
+   worktree. In the PR body, report the report path (`<worktree>/tmp/evals/report.json`) and the passed,
+   failed, and not measured counts with their reasons.
+   - An all-not-measured run (`0 passed, 0 failed, N not measured` with `exit 2`, such as when there is
+     `no Claude transcript` on Hermes-driven branches) is a valid receipt, not a pass or waived check.
+   - Preserve `--references` after grader changes (run `--references` as well after a change to a grader).
+   - The pass criterion for measured checks is 100 %: a failed eval blocks merge, and a check that is
+     not measured is named with its reason (no transcript, a torn line, an unclassified question), never
+     counted as a pass. Unmeasured checks never pass. The tasks and what fails each: `evals/README.md`,
+     "Regression tasks".
+3. **Counterexample probes.** Before requesting review of a change to a stated guarantee ("never
+   dropped", "counted once", "within tolerance"), add a generated or brute-force probe beyond the
+   issue's examples.
+   - Label invented inputs synthetic; never present them as real object data.
+   - Record `invariant -> probe -> N/N` in the PR, with the command, seed or exhaustive bounds and
+     evidence path so the reviewer can reproduce it.
+   - If a probe is not applicable, record `n/a: <reason>` instead of inventing a count or omitting the line.
+   - After review fixes, test the combination of the new case with previous fixes, not just each
+     finding in isolation.
+   - A required acceptance item belongs in the result or an explicit blocked/open item, never in
+     "Out of scope" as a way to declare completion.
+   - The reviewer independently attacks the guarantee; the author's probe is input, not a clean verdict.
+
+### Author receipts in PR
+
+Require `## Author receipts` in the PR body with the following lines:
+- `Pattern: <pattern id | new-case | n/a if no new module>`
+- `Regression evals: <report path>; <passed> passed, <failed> failed, <not measured> not measured (<reasons>)`
+- `Probe: <invariant -> probe -> N/N with command/seed/bounds/evidence path | n/a: <reason>>`
+
+## Questions-only
+
+Ask only unresolved questions that change the model, object, data, inputs or result. Decide routine
+implementation details yourself. For a rule already found by `pattern-librarian`, use
+[Escalation](#escalation-131) instead of asking again. Keep mandatory confirmations for
+architecture, acceptance, destructive actions and publication; an existing modelling decision does not
+supply authorization for a new destructive action or a merge.
+
+Permission matrix row for question escalation (all agents; complements the action permissions of #127):
+
+| Action class | Claude Code | Codex | Antigravity | Condition |
+|---|---|---|---|---|
+| Question to the user | ask if unresolved | ask if unresolved | ask if unresolved | Apply [Escalation](#escalation-131) first; keep mandatory confirmations |
+
+## Escalation (#131)
+
+Source: `docs/prd/agent-ready-harness.md`, Process, stories 33–34 (approved [D088–D092]);
+review routing also follows [D073].
+
+### (a) Apply a found rule
+
+When `pattern-librarian` returns rule, quote and decision id, the main agent reads the cited source,
+checks that it applies to the current profile, inputs and object, and applies it without asking the user again.
+List the applied rule, exact quote, source path/section and `D<n>` in the PR. This reuses a user decision;
+it does not turn the librarian into a decision maker. Keep all mandatory confirmations.
+
+If the answer is `no rule`, or the quote/id is missing or inconsistent, do not invent a rule or an id.
+Inspect the cited material; ask the user only if the unresolved choice changes the result. An open
+conflict in `docs/domain/conflicts.md` still needs the user's decision; show both sides and stop the
+stage that depends on it. Do not apply an unrelated or superseded decision to avoid a question.
+
+**Worked example: quoted rule.** A source has a flush opening with no measured reveal depth. The
+librarian returns the applicable OD1 rule in `docs/domain/conflicts.md`, C.24, [D048]:
+
+> a source with no depth (no reveal, a flush back polygon) takes the default, listed in the extractor report as "depth by default"
+
+Read C.24 and verify the source/profile; apply its 0.4 m default (`npm_min` plane 0.4 m, `mid` plane
+0.2 m). Mark the report "depth by default" and include this quote, C.24 and D048 in the PR. Do not ask
+whether to use zero depth. This example grants neither source overwrite nor delivery acceptance.
+
+### (b) P2 findings to issues
+
+Turn P2 review findings into issues without asking the user ([D073], spec story 34). Search the task's
+issue tracker for a duplicate first; link an existing issue or create one with the finding, impact,
+reproduction/evidence, suggested acceptance and a link to the PR review round. Post the issue number
+and URL back in the PR/review. Keep the fix out of the current PR unless its scope explicitly includes it.
+P1 (wrong result, silent skip, data loss or hook bypass) stays a fix in the PR, not a deferred P2.
+If tracker access or an explicit task policy prevents issue creation, record the finding under the PR's
+"Out of scope" with the reason and pending issue action; do not claim it was filed. That constraint does
+not require asking whether the finding deserves an issue.
+
+**Worked example: P2 finding (synthetic).** Round 1 spots a missing optional CLI usage example; the
+command and its mandatory checks already work. Search for a duplicate, then create an issue titled
+"Docs: add CLI usage example", with the missing example, expected documentation and the review round
+URL. Read the created issue back, and add its actual number/URL to the round. Do not ask "Should I open
+an issue?" and do not add the unrelated docs fix to this PR. Tracking a P2 does not block the merge,
+but does not authorize a merge either.
+
+Merges stay on the user's command only; neither applying a rule nor routing a finding authorizes a merge.
+
+## Recitation (#130)
+
+The first step on a ticket, before any file is changed. Restate in the plan, one line per field, in the
+agent's own words:
+
+- **Requirement** - what the user asked, quoted, and the profile if a model is involved;
+- **Specification** - each Acceptance item, Inputs and versions, Out of scope, Evidence the PR must bring;
+- **Context** - the files and rules named, which are then read first.
+
+A field that is empty or missing, or two fields that contradict each other, stop the task before any work:
+name the field, move the card to Needs you and give the issue `needs-info` (`docs/agents/issue-tracker.md`,
+"Ready gate"). Do not fill a field from a guess. A ticket written before the template (no Specification
+section) is recited from what it has, the missing fields are named as missing, and the agent stops on them
+like on an empty field.
+
+## Job contract (#130)
+
+`jobs/<ID>/STATE.md` opens with the contract. The Requirement section is copied once from the user and not
+edited afterwards; a later decision is added below it with its date or `D<n>`, never written over it. The
+handover (step 7, `/handover`) compares the result with this section item by item.
+
+```markdown
+# <ID> (<object name>) - <profile>, <date>
+
+Status: <draft | built | accepted by the user (<date>) | ...>
+Context: <files and rules read first: docs/domain/<file>, patterns/<id>, [D<n>], cases.md#<case>>
+
+## Requirement
+
+> <the user's wording, verbatim, in its language> (user, <date>)
+
+- Profile: <NPM-OKS | VPM-OKS | NPM-territory | ...>
+- Acceptance:
+  - [ ] <checkable item>
+- Later decisions: <date or D<n>: what changed> (none yet)
+
+## Sources
+...
+```
 
 ## Subagents (Claude Code, user 2026-10-13 [D071])
 
@@ -50,8 +199,9 @@ Rules:
 - Only the main agent writes code, commits and decides. No subagent may write to `src/`, `docs/` or `jobs/`,
   and none is created with write tools. Agent Teams are not enabled.
 - After every engine run the main agent calls `independent-checker` before it reports "done".
-- A subagent's result is data, not a decision. The main agent weighs it, and it asks the user only about the
-  model or the object (`questions-only` rule).
+- A subagent's result is data, not a decision. The main agent verifies applicability and follows
+  [Questions-only](#questions-only): reuse a quoted decision by [Escalation](#escalation-131), and ask only
+  unresolved result-changing questions while preserving mandatory confirmations.
 - Disputed geometry: look first, then classify (user 2026-10-13 [D072]) - every group of a classifier's verdict, every
   question and every stop is shown isolated on the body (renders, three views, sizes) before a rule or a question.
 
@@ -73,7 +223,7 @@ An event makes a skill or subagent mandatory, not optional:
 Hooks (Claude Code): `tools/hooks/skill_gate.py` (PreToolUse) denies a DCC MCP call in the main session until its
 skill is loaded; `tools/hooks/usage_log.py` writes every subagent call, skill load and /command to
 `logs/agent-usage.jsonl` (local, main checkout). `/takeover` ends with the 7-day counts, so what is never called
-shows up.
+shows up. `py -3 tools/hooks/usage_log.py backfill --days N` fills the log from past transcripts (#109).
 
 ## Rule of three (user 2026-10-14 [D075])
 
@@ -110,6 +260,10 @@ A long session loses detail when it is compacted. Rotate instead, in the same wo
    a proposal; it waits for «да». The names avoid the built-ins `/checkpoint` (alias of `/rewind`) and
    `/resume` (session picker), and the `handoff` skills.
 
+Agent trace (#124): `/handover` generates the `## Agent trace` block with `tools/hooks/agent_trace.py` from the
+usage log and the transcript, and writes it into the handoff and the PR body. Fixed fields: Sessions, Written by,
+Subagents, Skills, Commands, Hook denials, Retries, Context at handover, Duration, Commits. Never written by hand.
+
 Compaction: a manual `/compact` with a stale handoff is blocked (`/compact force` passes). An automatic one is
 never blocked (that can fail the request); after it the hook tells the agent to run the handover procedure
 first. Each compaction is logged to `<git dir>/agr-compactions.log`.
@@ -137,6 +291,22 @@ Each kind of fact lives in one place; the others point to it.
 
 A rule question is looked up in the order of `AGENTS.md` ("Where things are"): decision log first.
 
+## Harness inventory (#129)
+
+`docs/agents/CAPABILITIES.md`, "Harness inventory", lists every hook, permission list, guard rule set, command,
+subagent and git hook with the failure it prevents, the evidence that the failure happened, the date it was last
+verified and the eval that covers it (`tests/test_harness_inventory.py`).
+
+- Re-examine the whole inventory at a model change (a new model or a new major version of the agent app), and the
+  new row when a component is added: its row lands in the same PR as the component. Not on a calendar; the weekly
+  run belongs to the capability evals.
+- At a re-examination: refresh "Last verified" from a live run or the component's tests, and check whether the
+  failure still happens with the new model (the covering eval, the usage log).
+- A component with no evidence and no eval is proposed to the user for removal in the PR or the handoff; it is
+  removed only on the user's word.
+- Re-measure the rule-layer size (`CAPABILITIES.md`, "Rule-layer size", same command) at a model change. Retrieval
+  tooling (an index, a vector store) is reconsidered only when the size passes the 200k-token threshold.
+
 ## Project state (#119)
 
 `docs/PROJECT_STATE.md` is state, not history: at most 80 lines, exactly the sections Goal, In production
@@ -159,10 +329,105 @@ hashes, code used, checks actually run, failures and fixes, reuse candidates. Ad
 `docs/cases.md`. Praise does not replace QA. A procedure becomes a general tool or skill
 only after it works on a second representative object.
 
+## Permission matrix
+
+Single permission policy for all three agents (#127). `free` means read/inspect or local code
+work within the task's own worktree; `versioned write` requires task authorization and a new
+versioned output; `ask` requires the user's explicit authorization (a task may grant the exact
+operation); `never` prohibits the action as described, even if a hook offers an override.
+Roles in `ROLES.md` assign work, not extra permissions. More restrictive task policies win.
+
+| Action class | Claude Code | Codex | Antigravity | Enforcement |
+|---|---|---|---|---|
+| Read files, inspect DCC, local tests, gh pr view / gh issue list | free | free | free | Read-only tools; confirm application/document before DCC calls |
+| Edit task code/docs and commit in own worktree | free | free | free | Task scope and NAMING.md; pre-commit checks |
+| Authorized DCC saves/exports to new versioned paths | versioned write | versioned write | versioned write | CAPABILITIES.md risk classes; DCC skill and output readback |
+| Publish branch (git push) | ask | ask | ask | guard: `git push origin task/example` |
+| Merge after review on the user's explicit command | ask | ask | ask | guard: `gh pr merge 127`; gate: [Merge authorization](WORKFLOW.md#gate-merge-authorization) |
+| gh delete operations (issue, release, etc.) | ask | ask | ask | guard: `gh issue delete 127`; guard: `gh release delete v1` |
+| All gh repo operations (including reads) | ask | ask | ask | guard: `gh repo view owner/repo`; guard: `gh repo delete owner/repo` |
+| Destructive DCC tools or arbitrary DCC code | ask | ask | ask | gate: [DCC authorization](WORKFLOW.md#gate-dcc-authorization) |
+| Install software or change machine settings | ask | ask | ask | guard: `winget install example`; guard: `setx EXAMPLE value` |
+| Discard local work / recursive cleanup / rewrite history | ask | ask | ask | guard: `git reset --hard`; guard: `git clean -fd`; guard: `git rebase main` |
+| Delete sources or accepted versions | never | never | never | gate: [Asset preservation](WORKFLOW.md#gate-asset-preservation) |
+| Write over data/sources | never | never | never | gate: [Asset preservation](WORKFLOW.md#gate-asset-preservation) |
+| Merge without the user's command (git or gh) | never | never | never | gate: [Merge authorization](WORKFLOW.md#gate-merge-authorization) |
+| Change standards/ outside its procedure | never | never | never | gate: [Standards procedure](WORKFLOW.md#gate-standards-procedure) |
+| Force push | never | never | never | guard: `git push --force origin task/example`; gate: [Publication review](WORKFLOW.md#gate-publication-review) |
+| Write into another agent's worktree | never | never | never | gate: [Worktree ownership](WORKFLOW.md#gate-worktree-ownership) |
+| Manual /compact over a stale handoff without force | never | never | never | gate: [PreCompact](../../tools/hooks/session_context.py#precompact) |
+| Retry after the failure limit (two failures with the same cause, or three of one item) without a stop record (#128) | never | never | never | gate: [pipeline gate](../../.claude/hooks/pipeline_gate.py#main) (deny: writes, and Bash/PowerShell runner commands on a locked job); also `tools/git-hooks/pipeline_gate.py` (pre-commit, `--job`) and `dt build/validate/from-source/spec extract` (exit 2 before the run; run interception is partial, gaps tracked in #144) |
+
+The guard (`.claude/hooks/guard.py`) asks; it is not a deny sandbox or an authorization
+ledger. Its lexical shell rules can over-ask and do not interpret aliases, `gh api`, embedded
+scripts or arbitrary MCP code. A guard confirmation cannot waive a `never` row. Named manual
+gates below cover these semantic cases before execution and at review; do not claim they are
+automatic enforcement. Claude Code hooks are working; Codex/Antigravity runtime enforcement
+remains unvalidated (H1 in `CAPABILITIES.md`). The same policy applies even without hooks.
+The PreCompact gate is Claude Code only; elsewhere follow the context-rotation procedure.
+Automatic compaction and `/compact force` retain the exceptions in Context rotation.
+`tests/test_guard_permissions.py` parses this table, exercises named shell probes and checks
+that every restricted row resolves to a guard rule or an existing gate.
+
+### Gate asset preservation
+
+Manual pre-write gate, owned by the executing agent and checked by the reviewer: resolve
+all target paths and sidecars; compare them with sources and user-accepted versions in the
+job state. Reject deletion of either, and any write into `data/sources/`. Work from copies
+and choose a new versioned destination; a save permission does not authorize an overwrite.
+The guard's production-extension/delete checks only supplement this gate.
+
+### Gate merge authorization
+
+Manual pre-execution gate: require review and the user's command naming the merge. A task
+approval to code, push or open a PR is not a merge command. Applies equally to `git merge`,
+`gh pr merge`, UI and API routes. Without it stop; the gh guard prompt is not evidence that
+the command was granted. Record the command in the handoff/PR when a merge is authorized.
+
+### Gate standards procedure
+
+Manual review gate: apply `standards/README.md`, "Changing a rule" (rule and traceability,
+domain rationale/user conflict decision, updated hash lock). The profiles loader verifies
+hashes, but a new hash alone does not prove that the procedure was followed. Reject a PR
+that changes standards without this evidence.
+
+### Gate publication review
+
+Manual pre-push gate: inspect the exact destination/refspec and flags. Reject force pushes
+(including `-f`, `--force-with-lease` and `+refspec`) regardless of the guard's confirmation.
+For allowed publication record the user's task authorization and use a normal branch push.
+
+### Gate worktree ownership
+
+Manual pre-write gate: inspect `git worktree list`, current branch/status, resolved targets
+and task ownership. Only the task's owner writes its worktree. Another agent may inspect it
+read-only; never edit there via an absolute path, shell, script, MCP or symlink. The guard's
+file boundary check is a supplementary ask, not proof of ownership.
+
+### Gate DCC authorization
+
+Before any mutation name the exact tool/operation and its risk class from
+`CAPABILITIES.md#dcc-tool-risk-classes`. Require the user's task authorization for a
+`versioned-write`; for `destructive` require explicit authorization for that exact mutation,
+confirmed document/units/version and a preserved source copy. Apply Asset preservation and
+Worktree ownership first; reject prohibited operations even with authorization. Save/export
+to new versioned paths and read back geometry, UV, materials and transforms. Unknown or
+arbitrary-code operations are destructive until their behavior is inspected. This is a
+manual DCC skill/reviewer gate, not a generic MCP sandbox.
+
 ## Git
 
 - Start independent work from fresh `main` in a new worktree; continue a task in its own
   worktree. Check existing worktrees, branch, base/head and dirty state before choosing.
 - Commit successes and useful failed attempts with an honest status message.
-- Merge only after review and the user's approval; remove a worktree only after its
-  ignored outputs that matter are saved.
+- **RED before fix (authors and reviewers).** Prefer a tests-first run/commit: run the same regression
+  on the pre-fix code (RED, an assertion failure for the expected cause), then on the fix (GREEN).
+  Record both commands, revisions, counts and environment in the PR. For a later replay use a private
+  per-card scratch path: `git worktree add --detach <private-dir>/prev <pre-fix-sha>`; copy only the
+  regression there and run it against that revision, without modifying another card's worktree.
+  Keep useful evidence before removing only your throwaway worktree. Never use `git stash` for this:
+  `refs/stash` is shared by worktrees, so a pop can apply another card's changes. An import/setup error
+  is not RED evidence. This recipe isolates source revisions; it does not replace independent review.
+- Permissions for publication, merge, deletion and history are defined only in the
+  [Permission matrix](#permission-matrix); apply its named gates before executing.
+- Remove a worktree only after its ignored outputs that matter are saved.

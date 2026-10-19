@@ -1,6 +1,8 @@
 """pipeline_gate: a job status above draft needs spec + extractor report + checker report (HARNESS_PLAN §16)."""
 import importlib.util
 import json
+import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -124,21 +126,52 @@ def git(repo, *args):
     return subprocess.run(["git", *args], cwd=repo, capture_output=True, text=True, check=True)
 
 
-@pytest.fixture
-def repo(tmp_path):
-    git(tmp_path, "init", "-q")
-    git(tmp_path, "config", "user.email", "t@example.com")
-    git(tmp_path, "config", "user.name", "t")
+@pytest.fixture(scope="session")
+def _repo_template(tmp_path_factory):
+    path = tmp_path_factory.mktemp("repo_template")
+    git(path, "init", "-q")
+    git(path, "config", "user.email", "t@example.com")
+    git(path, "config", "user.name", "t")
     # under a long --basetemp the object paths pass MAX_PATH and git fails with "Filename too long"
     # (a Claude scratchpad basetemp, 2026-10-12); the gate itself is not about path length
-    git(tmp_path, "config", "core.longpaths", "true")
-    (tmp_path / "docs").mkdir()
-    (tmp_path / "docs/backlog.md").write_text(BACKLOG, encoding="utf-8")
-    (tmp_path / "jobs/OLD").mkdir(parents=True)
-    (tmp_path / "jobs/OLD/STATE.md").write_text("Status: accepted (before the gate)\n", encoding="utf-8")
-    git(tmp_path, "add", "-A")
-    git(tmp_path, "commit", "-qm", "base")
+    git(path, "config", "core.longpaths", "true")
+    (path / "docs").mkdir()
+    (path / "docs/backlog.md").write_text(BACKLOG, encoding="utf-8")
+    (path / "jobs/OLD").mkdir(parents=True)
+    (path / "jobs/OLD/STATE.md").write_text("Status: accepted (before the gate)\n", encoding="utf-8")
+    git(path, "add", "-A")
+    git(path, "commit", "-qm", "base")
+    return path
+
+
+@pytest.fixture
+def repo(tmp_path, _repo_template):
+    shutil.copytree(_repo_template, tmp_path, dirs_exist_ok=True)
     return tmp_path
+
+
+def test_repo_fixture_copy_is_an_independent_git_repo(repo, _repo_template):
+    top = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"], cwd=repo, capture_output=True, text=True, check=True)
+    assert Path(top.stdout.strip()).resolve() == Path(repo).resolve()
+    status = subprocess.run(
+        ["git", "status", "--porcelain"], cwd=repo, capture_output=True, text=True, check=True)
+    assert status.stdout == ""
+    log = subprocess.run(
+        ["git", "log", "--oneline"], cwd=repo, capture_output=True, text=True, check=True)
+    assert len(log.stdout.splitlines()) == 1
+    config = (repo / ".git" / "config").read_text(encoding="utf-8")
+    assert str(_repo_template) not in config
+    assert _repo_template.as_posix() not in config
+    hooks = subprocess.run(
+        ["git", "config", "--get", "core.hooksPath"], cwd=repo, capture_output=True, text=True)
+    assert hooks.returncode != 0
+    (repo / "independent.txt").write_text("copy only\n", encoding="utf-8")
+    git(repo, "add", "-A")
+    git(repo, "commit", "-qm", "in the copy")
+    template_log = subprocess.run(
+        ["git", "log", "--oneline"], cwd=_repo_template, capture_output=True, text=True, check=True)
+    assert len(template_log.stdout.splitlines()) == 1
 
 
 def write(repo, rel, text):
@@ -296,7 +329,10 @@ def test_pre_commit_blocks_when_root_lookup_fails_with_output(tmp_path):
 # --- Claude Code PreToolUse hook ------------------------------------------------------------------------
 
 def hook(payload):
-    result = subprocess.run([sys.executable, str(HOOK)], input=json.dumps(payload), capture_output=True, text=True)
+    # without CLAUDE_PROJECT_DIR the payload's cwd names the repository the call runs in (#128)
+    env = {k: v for k, v in os.environ.items() if k != "CLAUDE_PROJECT_DIR"}
+    result = subprocess.run([sys.executable, str(HOOK)], input=json.dumps(payload), env=env,
+                            capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
     return json.loads(result.stdout)["hookSpecificOutput"]["permissionDecision"] if result.stdout.strip() else "allow"
 
@@ -544,3 +580,381 @@ def test_hook_malformed_script_content_passes_silently(tmp_path):
     raw = json.dumps({"tool_name": "Write", "tool_input": {"file_path": target, "content": None}})
     result = subprocess.run([sys.executable, str(HOOK)], input=raw, capture_output=True, text=True)
     assert result.returncode == 0 and not result.stdout.strip()
+
+
+# --- #128: attempts limit (pipeline/state.json) ----------------------------------------------------------
+
+STATE_PATH = "jobs/J/pipeline/state.json"
+STOP = {"item": "module:M01", "tried": "pattern A, split at kink", "numbers": "bbox 0.12 m, 0.08 m",
+        "next_step": "review round with Codex"}
+
+
+def fail(cause, item="module:M01", kind="checker"):
+    return {"item": item, "kind": kind, "cause": cause, "detail": "bbox off"}
+
+
+def attempts(*failures, stops=()):
+    return json.dumps({"failures": list(failures), "stops": list(stops)})
+
+
+def test_two_failures_with_different_causes_are_not_locked():
+    assert gate.locked_items(json.loads(attempts(fail("code"), fail("tool")))) == {}
+
+
+def test_second_failure_with_the_same_cause_locks():
+    assert gate.locked_items(json.loads(attempts(fail("code"), fail("code")))) == \
+        {"module:M01": "2 open failures with cause 'code'"}
+
+
+def test_third_failure_of_one_item_locks():
+    doc = json.loads(attempts(fail("code"), fail("tool"), fail("test", kind="test")))
+    assert gate.locked_items(doc) == {"module:M01": "3 open failures"}
+    other = json.loads(attempts(fail("code"), fail("tool"), fail("test", item="check:bbox")))
+    assert gate.locked_items(other) == {}
+
+
+def test_a_stop_record_lifts_the_lock():
+    doc = json.loads(attempts(fail("code"), fail("code"), stops=[{**STOP, "after": 2}]))
+    assert gate.locked_items(doc) == {}
+    doc = json.loads(attempts(fail("code"), fail("code"), fail("code"), stops=[{**STOP, "after": 1}]))
+    assert "module:M01" in gate.locked_items(doc)
+
+
+@pytest.mark.parametrize("doc, needle", [
+    ([], "is not a JSON object"),
+    ({"failures": {}}, "failures is not a list"),
+    ({"failures": [{"item": "M01", "kind": "checker", "cause": "code"}]}, "failures[0].item"),
+    ({"failures": [{"item": "module:M01", "kind": "lint", "cause": "code"}]}, "failures[0].kind"),
+    ({"failures": [{"item": "module:M01", "kind": "checker", "cause": "luck"}]}, "failures[0].cause"),
+    ({"failures": [fail("code")], "stops": [{**STOP, "after": 2}]}, "stops[0].after"),
+    ({"failures": [fail("code")], "stops": [{**STOP, "after": 1, "numbers": " "}]}, "stops[0].numbers"),
+])
+def test_state_shape_errors_name_the_path(doc, needle):
+    errors = gate.state_shape_errors(doc, STATE_PATH)
+    assert any(needle in e and STATE_PATH in e for e in errors), errors
+
+
+def test_state_shape_of_a_valid_or_empty_state():
+    assert gate.state_shape_errors({}, STATE_PATH) == []
+    assert gate.state_shape_errors(json.loads(attempts(fail("code"), stops=[{**STOP, "after": 1}])), STATE_PATH) == []
+
+
+def test_attempt_errors_recording_the_locking_failure_is_allowed():
+    old = reader({STATE_PATH: attempts(fail("code"))})
+    new = reader({STATE_PATH: attempts(fail("code"), fail("code"))})
+    assert gate.attempt_errors("J", old, new) == []
+
+
+def test_attempt_errors_a_further_failure_of_a_locked_item_is_denied():
+    old = reader({STATE_PATH: attempts(fail("code"), fail("code"))})
+    new = reader({STATE_PATH: attempts(fail("code"), fail("code"), fail("tool"))})
+    errors = gate.attempt_errors("J", old, new)
+    assert errors and "module:M01 failure #3 appended while locked" in errors[0] and gate.ESCALATION in errors[0]
+    stopped = reader({STATE_PATH: attempts(fail("code"), fail("code"), fail("tool"),
+                                           stops=[{**STOP, "after": 2}])})
+    assert gate.attempt_errors("J", old, stopped) == []
+
+
+def test_attempt_errors_check_and_status_writes_while_locked():
+    locked = attempts(fail("code"), fail("tool"), fail("test"))
+    old = reader(job({STATE_PATH: locked}, "draft", check_json=CHECK_FAIL))
+    rerun = reader(job({STATE_PATH: locked}, "draft", check_json=CHECK_PASS))
+    assert any("check.json rewritten while module:M01 is locked (3 open failures)" in e
+               for e in gate.attempt_errors("J", old, rerun))
+    status = reader(job({STATE_PATH: locked}, "built", check_json=CHECK_FAIL))
+    assert any("status write while module:M01 is locked" in e for e in gate.attempt_errors("J", old, status))
+    unlocked = attempts(fail("code"), fail("tool"), fail("test"), stops=[{**STOP, "after": 3}])
+    assert gate.attempt_errors("J", old, reader(job({STATE_PATH: unlocked}, "built", check_json=CHECK_PASS))) == []
+
+
+def test_attempt_errors_malformed_state_blocks():
+    errors = gate.attempt_errors("J", reader({}), reader({STATE_PATH: "{not json"}))
+    assert errors and "is not JSON" in errors[0]
+
+
+def hook_repo(tmp_path, files):
+    (tmp_path / ".git").mkdir()
+    for rel, text in files.items():
+        p = tmp_path / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text, encoding="utf-8")
+    return tmp_path
+
+
+def test_hook_attempts_limit_on_state_json(tmp_path):
+    root = hook_repo(tmp_path, {STATE_PATH: attempts(fail("code"))})
+    target = str(root / STATE_PATH)
+    write_state = lambda text: hook({"tool_name": "Write", "tool_input": {"file_path": target, "content": text}})
+    assert write_state(attempts(fail("code"), fail("tool"))) == "allow"        # two causes
+    assert write_state(attempts(fail("code"), fail("code"))) == "allow"        # the locking failure itself
+    (root / STATE_PATH).write_text(attempts(fail("code"), fail("code")), encoding="utf-8")
+    assert write_state(attempts(fail("code"), fail("code"), fail("tool"))) == "deny"
+    assert write_state(attempts(fail("code"), fail("code"), fail("tool"), stops=[{**STOP, "after": 2}])) == "allow"
+    assert write_state("{broken") == "deny"
+
+
+def test_hook_third_failure_then_check_and_status_writes(tmp_path):
+    locked = attempts(fail("code"), fail("tool"), fail("test"))
+    root = hook_repo(tmp_path, {STATE_PATH: locked, "jobs/J/STATE.md": state("draft"),
+                                "jobs/J/pipeline/check.json": CHECK_FAIL})
+    check = {"tool_name": "Write", "tool_input": {"file_path": str(root / "jobs/J/pipeline/Check.json"),
+                                                  "content": CHECK_PASS}}
+    assert hook(check) == "deny"
+    status = {"tool_name": "Edit", "tool_input": {"file_path": str(root / "jobs/J/STATE.md"),
+                                                  "old_string": "draft", "new_string": "built"}}
+    for name, text in (("spec.json", SPEC), ("spec.report.json", REPORT)):
+        (root / "jobs/J/pipeline" / name).write_text(text, encoding="utf-8")
+    assert hook(status) == "deny"
+    (root / STATE_PATH).write_text(attempts(fail("code"), fail("tool"), fail("test"), stops=[{**STOP, "after": 3}]),
+                                   encoding="utf-8")
+    assert hook(check) == "allow"
+    assert hook(status) == "allow"
+
+
+def test_staged_attempts_limit(repo):
+    write(repo, "jobs/J/STATE.md", state("draft"))
+    git(repo, "commit", "-qm", "draft")
+    write(repo, STATE_PATH, attempts(fail("code")))
+    assert gate.staged(repo) == []                                   # HEAD has no state.json yet
+    write(repo, STATE_PATH, attempts(fail("code"), fail("tool")))
+    assert gate.staged(repo) == []
+    write(repo, STATE_PATH, attempts(fail("code"), fail("tool"), fail("code")))
+    assert gate.staged(repo) == []                                   # the locking failure itself
+    git(repo, "commit", "-qm", "locked")
+    write(repo, STATE_PATH, attempts(fail("code"), fail("tool"), fail("code"), fail("test")))
+    errors = gate.staged(repo)
+    assert any("module:M01 failure #4 appended while locked (2 open failures with cause 'code')" in e
+               for e in errors), errors
+    write(repo, "jobs/J/pipeline/check.json", CHECK_PASS)
+    write(repo, STATE_PATH, attempts(fail("code"), fail("tool"), fail("code")))
+    assert any("check.json rewritten" in e for e in gate.staged(repo))
+    write(repo, STATE_PATH, attempts(fail("code"), fail("tool"), fail("code"), fail("test"),
+                                     stops=[{**STOP, "after": 3}]))
+    assert gate.staged(repo) == []
+
+
+def test_staged_malformed_state_blocks(repo):
+    write(repo, STATE_PATH, json.dumps({"failures": [{"item": "module:M01", "kind": "checker", "cause": "x"}]}))
+    assert any("failures[0].cause" in e for e in gate.staged(repo))
+
+
+def test_staged_initial_commit_without_head(tmp_path):
+    git(tmp_path, "init", "-q")
+    git(tmp_path, "config", "core.longpaths", "true")
+    write(tmp_path, STATE_PATH, attempts(fail("code"), fail("code")))
+    assert gate.staged(tmp_path) == []
+    write(tmp_path, "jobs/J/STATE.md", state("draft"))               # a status write while locked
+    assert any("status write while module:M01 is locked" in e for e in gate.staged(tmp_path))
+
+
+def test_attempt_errors_deleting_a_valid_state_is_denied():
+    old = reader({STATE_PATH: attempts(fail("code"), fail("code"))})
+    errors = gate.attempt_errors("J", old, reader({}))
+    assert errors == [f"{STATE_PATH} deleted; the failure record is append-only (#128)"]
+
+
+def test_attempt_errors_removing_an_earlier_failure_is_denied():
+    old = reader({STATE_PATH: attempts(fail("code"), fail("code"))})
+    errors = gate.attempt_errors("J", old, reader({STATE_PATH: attempts(fail("code"))}))
+    assert any("failures[1] changed or removed" in e for e in errors), errors
+    errors = gate.attempt_errors("J", old, reader({STATE_PATH: attempts(fail("code"), fail("tool"))}))
+    assert any("failures[1] changed or removed" in e for e in errors), errors
+
+
+def test_attempt_errors_rewriting_an_earlier_cause_is_denied():
+    old = reader({STATE_PATH: attempts(fail("code"), fail("code"))})
+    errors = gate.attempt_errors("J", old, reader({STATE_PATH: attempts(fail("tool"), fail("code"))}))
+    assert any("failures[0] changed or removed" in e for e in errors), errors
+
+
+def test_attempt_errors_removing_a_stop_is_denied():
+    old = reader({STATE_PATH: attempts(fail("code"), fail("code"), stops=[{**STOP, "after": 2}])})
+    errors = gate.attempt_errors("J", old, reader({STATE_PATH: attempts(fail("code"), fail("code"))}))
+    assert any("stops[0] changed or removed" in e for e in errors), errors
+
+
+def test_attempt_errors_appending_to_an_unlocked_item_passes():
+    old = reader({STATE_PATH: attempts(fail("code"))})
+    new = reader({STATE_PATH: attempts(fail("code"), fail("tool", item="check:bbox"))})
+    assert gate.attempt_errors("J", old, new) == []
+
+
+def test_staged_deleting_the_state_is_blocked(repo):
+    write(repo, STATE_PATH, attempts(fail("code"), fail("code")))
+    git(repo, "commit", "-qm", "locked")
+    git(repo, "rm", "-q", STATE_PATH)
+    assert any("state.json deleted; the failure record is append-only" in e for e in gate.staged(repo))
+
+
+@pytest.mark.parametrize("path, needle", [("jobs/J/Pipeline/State.json", "name it pipeline/state.json"),
+                                          ("jobs/J/pipeline/CHECK.json", "name it pipeline/check.json")])
+def test_staged_case_variant_of_pipeline_files_is_blocked(repo, path, needle):
+    git(repo, "config", "core.ignorecase", "false")
+    write(repo, path, attempts(fail("code")) if "tate" in path else CHECK_PASS)
+    assert any(needle in e for e in gate.staged(repo))
+
+
+def test_delivery_blocks_a_locked_item(repo):
+    write(repo, "jobs/J/STATE.md", state("draft"))
+    write(repo, STATE_PATH, attempts(fail("code"), fail("code")))
+    git(repo, "commit", "-qm", "j")
+    errors = gate.delivery(repo, "jobs/J")
+    assert any("module:M01 is locked" in e and gate.ESCALATION in e for e in errors), errors
+    (repo / STATE_PATH).write_text(attempts(fail("code"), fail("code"), stops=[{**STOP, "after": 2}]), encoding="utf-8")
+    assert gate.delivery(repo, "jobs/J") == []
+
+
+# --- #128 fix 1: every appended failure is judged on its own prefix -------------------------------------
+
+def appended(old_causes, new_causes, stops=()):
+    """attempt_errors for a batch that appends failures; old_causes None means there was no state.json."""
+    old = reader({} if old_causes is None else {STATE_PATH: attempts(*[fail(c) for c in old_causes])})
+    new = reader({STATE_PATH: attempts(*[fail(c) for c in new_causes], stops=stops)})
+    return gate.attempt_errors("J", old, new)
+
+
+@pytest.mark.parametrize("old, new, locking", [
+    (None, ["code", "code"], None),                           # the locking failure itself is allowed
+    (None, ["code", "tool"], None),                           # two different causes
+    (None, ["code", "code", "tool"], 3),
+    (None, ["code", "code", "tool", "test"], 3),              # one batch cannot walk past the limit
+    (["code"], ["code", "code"], None),
+    (["code"], ["code", "code", "tool", "test"], 3),
+    (["code", "tool"], ["code", "tool", "test"], None),       # the third failure is the exact threshold
+    (["code", "tool"], ["code", "tool", "test", "source"], 4),
+])
+def test_each_appended_failure_is_checked(old, new, locking):
+    errors = appended(old, new)
+    if locking is None:
+        assert errors == []
+    else:
+        assert len(errors) == 1 and gate.ESCALATION in errors[0], errors
+        assert f"module:M01 failure #{locking} appended while locked" in errors[0]
+
+
+def test_a_stop_must_cover_the_position_where_the_item_locked():
+    assert appended(["code"], ["code", "code", "tool", "test"], stops=[{**STOP, "after": 2}]) == []
+    late = appended(["code"], ["code", "code", "tool", "test"], stops=[{**STOP, "after": 4}])
+    assert len(late) == 1 and "failure #3 appended while locked" in late[0], late
+
+
+def test_hook_denies_a_batch_appended_past_the_locking_point(tmp_path):
+    root = hook_repo(tmp_path, {STATE_PATH: attempts(fail("code"))})
+    target = str(root / STATE_PATH)
+    write_state = lambda text: hook({"tool_name": "Write", "tool_input": {"file_path": target, "content": text}})
+    four = [fail("code"), fail("code"), fail("tool"), fail("test")]
+    assert write_state(attempts(*four)) == "deny"
+    assert write_state(attempts(*four, stops=[{**STOP, "after": 2}])) == "allow"
+
+
+def test_hook_denies_four_failures_written_without_an_old_state(tmp_path):
+    root = hook_repo(tmp_path, {})
+    target = str(root / STATE_PATH)
+    write_state = lambda text: hook({"tool_name": "Write", "tool_input": {"file_path": target, "content": text}})
+    four = [fail("code"), fail("code"), fail("tool"), fail("test")]
+    assert write_state(attempts(*four)) == "deny"
+    assert write_state(attempts(*four, stops=[{**STOP, "after": 2}])) == "allow"
+
+
+def test_staged_denies_a_batch_appended_past_the_locking_point(repo):
+    write(repo, STATE_PATH, attempts(fail("code")))
+    git(repo, "commit", "-qm", "one failure")
+    four = [fail("code"), fail("code"), fail("tool"), fail("test")]
+    write(repo, STATE_PATH, attempts(*four))
+    assert any("module:M01 failure #3 appended while locked" in e for e in gate.staged(repo))
+    write(repo, STATE_PATH, attempts(*four, stops=[{**STOP, "after": 2}]))
+    assert gate.staged(repo) == []
+
+
+def test_staged_denies_four_failures_in_the_first_commit_of_the_state(repo):
+    four = [fail("code"), fail("code"), fail("tool"), fail("test")]
+    write(repo, STATE_PATH, attempts(*four))
+    assert any("module:M01 failure #3 appended while locked" in e for e in gate.staged(repo))
+    write(repo, STATE_PATH, attempts(*four, stops=[{**STOP, "after": 2}]))
+    assert gate.staged(repo) == []
+
+
+# --- #128 fix 2: the run itself is gated, not only the writes --------------------------------------------
+
+@pytest.mark.parametrize("command, jobs", [
+    ("uv run dt build --job jobs/J", {"J"}),
+    ('dt build --job "jobs\\J"', {"J"}),
+    ("py -3 jobs/J/scripts/run.py", {"J"}),
+    ("python -m dt_ai.cli.main validate --archive C:/r/jobs/J/outputs/npm.zip", {"J"}),
+    ("uv run dt from-source --output ./jobs/J/pipeline/v002", {"J"}),
+    ("cat jobs/J/pipeline/state.json", set()),
+    ("git diff jobs/J", set()),
+    ("uv run dt profiles check", set()),
+    ("Get-Content jobs/J/STATE.md", set()),
+    ("cat jobs/J/scripts/run.py", set()),                       # a script name is not a python run
+    ("C:/Python314/python.exe jobs/J/scripts/run.py", {"J"}),
+    ("cd x && blender -b -P jobs/J/scripts/m01.py", {"J"}),
+])
+def test_command_jobs(command, jobs):
+    assert gate.command_jobs(command) == jobs
+
+
+def test_run_errors_reads_the_working_tree(tmp_path):
+    (tmp_path / "jobs/J/pipeline").mkdir(parents=True)
+    (tmp_path / STATE_PATH).write_text(attempts(fail("code"), fail("code")), encoding="utf-8")
+    errors = gate.run_errors(tmp_path, "J")
+    assert len(errors) == 1 and "a run of jobs/J while module:M01 is locked" in errors[0]
+    assert gate.ESCALATION in errors[0]
+    (tmp_path / STATE_PATH).write_text("{broken", encoding="utf-8")
+    assert any("is not JSON" in e for e in gate.run_errors(tmp_path, "J"))
+    (tmp_path / STATE_PATH).write_text(attempts(fail("code")), encoding="utf-8")
+    assert gate.run_errors(tmp_path, "J") == []
+
+
+def test_hook_denies_a_run_of_a_locked_job(tmp_path):
+    root = hook_repo(tmp_path, {STATE_PATH: attempts(fail("code"), fail("code")),
+                                "jobs/J/STATE.md": state("draft")})
+    run = lambda tool, command: hook({"tool_name": tool, "tool_input": {"command": command}, "cwd": str(root)})
+    assert run("Bash", "uv run dt build --job jobs/J") == "deny"
+    assert run("PowerShell", "uv run dt build --job jobs/J") == "deny"
+    assert run("Bash", "cat jobs/J/pipeline/state.json") == "allow"      # a read is not a run
+    (root / STATE_PATH).write_text(attempts(fail("code"), fail("code"), stops=[{**STOP, "after": 2}]),
+                                   encoding="utf-8")
+    assert run("Bash", "uv run dt build --job jobs/J") == "allow"
+    (root / STATE_PATH).write_text(attempts(fail("code")), encoding="utf-8")
+    assert run("Bash", "uv run dt build --job jobs/J") == "allow"        # one failure: not locked
+
+
+class _Report:
+    development_checks_passed = True
+    checks = []
+
+
+def cli_repo(tmp_path):
+    """A root `dt` runs in: standards/ for repo_root(), the real gate beside it and a job folder."""
+    (tmp_path / "standards").mkdir()
+    (tmp_path / "standards/DELIVERY_VALIDATOR.yaml").write_text("", encoding="utf-8")
+    (tmp_path / "tools/git-hooks").mkdir(parents=True)
+    for name in ("pipeline_gate.py", "branch_names.py"):
+        shutil.copy(ROOT / "tools/git-hooks" / name, tmp_path / "tools/git-hooks" / name)
+    (tmp_path / "jobs/J/pipeline").mkdir(parents=True)
+    return tmp_path
+
+
+def test_dt_build_refuses_to_start_inside_a_locked_job(tmp_path, monkeypatch):
+    from dt_ai.cli import main as cli
+    root = cli_repo(tmp_path)
+    monkeypatch.chdir(root)
+    built = []
+    monkeypatch.setattr(cli, "build", lambda *a: built.append(a) or root / "outputs/npm.zip")
+    monkeypatch.setattr(cli, "validate", lambda *a: _Report())
+    argv = ["build", "--job", "jobs/J", "--output", str(tmp_path / "out")]
+    (root / STATE_PATH).write_text(attempts(fail("code"), fail("code")), encoding="utf-8")
+    assert cli.main(argv) == 2 and built == []
+    (root / STATE_PATH).write_text(attempts(fail("code"), fail("code"), stops=[{**STOP, "after": 2}]),
+                                   encoding="utf-8")
+    assert cli.main(argv) == 0 and len(built) == 1
+    (root / STATE_PATH).write_text(attempts(fail("code")), encoding="utf-8")
+    assert cli.main(argv) == 0 and len(built) == 2
+
+
+def test_settings_register_the_gate_for_runs_and_writes():
+    entries = json.loads((ROOT / ".claude/settings.json").read_text(encoding="utf-8"))["hooks"]["PreToolUse"]
+    matchers = [e["matcher"] for e in entries if any("pipeline_gate.py" in h["command"] for h in e["hooks"])]
+    assert len(matchers) == 1, matchers
+    assert {"Bash", "PowerShell", "Write", "Edit"} <= set(matchers[0].split("|"))

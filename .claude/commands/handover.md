@@ -28,17 +28,27 @@ Do these steps in order. Talk to the user in Russian; files stay in English.
    characters. `Commit:` is HEAD after step 1. Put in it what the next session cannot get from git: user
    decisions not yet in code (with dates), questions waiting for the user, rules broken this session, local
    state outside git, the next step in one line. Do not copy history; point to commits and PRs.
-5. **Job.** If the task is a job (`jobs/<ID>/`), update `jobs/<ID>/STATE.md` (status, next step, evidence paths).
-6. **Repeats.** List the procedures done two or more times in this session (the same command chain, the same
+5. **Trace.** Generate the `## Agent trace` section; never write the block by hand, and leave a field that says
+   `not measured` as printed. Run
+   `py -3 tools/hooks/agent_trace.py --transcript <path from step 3> --into docs/HANDOFF.md`
+   (transcript `-`: the same command without `--transcript`). When step 2 opened a PR, put the same block in the
+   PR body: `gh pr view --json body -q .body > <tmp>`, run the script with `--into <tmp>`, then
+   `gh pr edit --body-file <tmp>`.
+6. **Job.** If the task is a job (`jobs/<ID>/`), update `jobs/<ID>/STATE.md` (status, next step, evidence paths).
+   **Compare with the Requirement** (`docs/agents/WORKFLOW.md`, "Job contract"; for a ticket, its Specification):
+   for each Acceptance item of the user's Requirement write met / not met / changed by a later decision (date or
+   `D<n>`), with the evidence path. Never edit the Requirement to fit the result. A contract with no Requirement
+   section: say so in the handoff ("Waiting for the user") instead of inventing one.
+7. **Repeats.** List the procedures done two or more times in this session (the same command chain, the same
    manual check, the same chain of judgement, the same question resolved). For each, add one line to
    `docs/backlog.md`, section "Reuse proposals", by the rule of three (`docs/agents/WORKFLOW.md`): kind
    (CLI command / skill / pattern), what it is, how many times, this branch, marked `proposal`. Do not create
    the command, skill or pattern. None: skip the step.
-7. **Project state.** `docs/PROJECT_STATE.md` changes only on `main` after a merge, by replacing a section
+8. **Project state.** `docs/PROJECT_STATE.md` changes only on `main` after a merge, by replacing a section
    (`docs/agents/WORKFLOW.md`, "Project state"). In a task branch do not touch it; state changes go into the handoff.
-8. **Commit the handoff**: `Handoff: <next step in a few words>` with the handoff, STATE and backlog files. Then
+9. **Commit the handoff**: `Handoff: <next step in a few words>` with the handoff, STATE and backlog files. Then
    `git status --short` must show nothing of this task.
-9. **Report** in Russian, short: branch, HEAD commit, PR (if any), next step, reuse proposals added (count), then exactly
+10. **Report** in Russian, short: branch, HEAD commit, PR (if any), next step, reuse proposals added (count), then exactly
    «Чекпоинт готов, можно /clear».
 
 If a step cannot be done (a failing hook, a push the user declined), do not hide it: write it into the handoff

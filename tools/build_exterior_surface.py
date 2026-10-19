@@ -14,17 +14,7 @@ import shapely
 from shapely.geometry import Polygon, Point
 from shapely.geometry.polygon import orient
 
-from compact_floor_body import rectangles
-
-
-def clustered(values, span=.001):
-    groups=[]
-    for value in sorted(set(map(float,values))):
-        if not groups or value-groups[-1][0]>span:
-            groups.append([value])
-        else:
-            groups[-1].append(value)
-    return {v:(g[0]+g[-1])/2 for g in groups for v in g}
+from dt_ai.geometry.grid_patches import clustered, rectangles
 
 
 def clean_ring(coords):

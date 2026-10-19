@@ -12,6 +12,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
+from dt_ai.core import blender_runner
 from dt_ai.core.run_record import RunRecord, atomic_json, file_evidence
 from dt_ai.publish.bundle import read_bundle
 
@@ -129,6 +130,7 @@ def main():
     inputs = {'reference': reference, 'fbx': fbx, 'blend': blend, 'zip': archive,
               'pilot_ledger':pilot_ledger_path,'package_readback':package_path,**extracted,
               'approved_manifest': approved_path, 'runner': Path(__file__).resolve(),
+              'blender_runner': Path(blender_runner.__file__).resolve(),
               **{'approved:' + key: value for key, value in sources.items()}}
     scripts = ['render_profile_comparison.py', 'check_npm_vpm_scale.py', 'profile_snapshot_common.py']
     if args.agr_addon:
@@ -183,12 +185,18 @@ def main():
                                'delivery_passed': False, 'interactive_scene_mutations': False})
     report = {'scope': 'OBR22 snapshot component review', 'review': str(review), 'delivery_passed': False,
               'pilot_accepted': False, 'findings': [], 'stages': {}}
-    def blender(script, cfg):
-        return [str(args.blender.resolve()), '--background', '--factory-startup', '--disable-autoexec',
-                '--python-exit-code', '1', '--python', str(script), '--', str(cfg)]
+    def blender(script, cfg, evidence):
+        # RunRecord still owns stage locks, input fingerprints and artifact verification.
+        # Its child is the shared runner CLI, not a second Blender launch policy.
+        return [sys.executable, str(Path(blender_runner.__file__).resolve()),
+                '--executable', str(args.blender.resolve()), '--script', str(script),
+                '--output-json', str(evidence), '--log', str(evidence.with_suffix('.blender.log')),
+                '--timeout', str(args.timeout), '--', str(cfg)]
     def stage(name, argv, outputs, directory, predicate):
         try:
-            result = record.run_stage(name, argv, outputs, cwd=ROOT, timeout=args.timeout, resources=[directory])
+            result = record.run_stage(name, argv, outputs, cwd=ROOT,
+                                      timeout=args.timeout + 15 if argv[0] == sys.executable else args.timeout,
+                                      resources=[directory])
             report['stages'][name] = {'status': result['status'], 'stdout': result['stdout'], 'stderr': result['stderr']}
             if result['status'] not in ('produced', 'verified'):
                 raise RuntimeError('Stage process did not produce evidence; see saved logs')
@@ -202,16 +210,16 @@ def main():
         except Exception as exc:
             report['findings'].append({'id': name, 'status': 'fail', 'reason': type(exc).__name__ + ': ' + str(exc)})
             return False
-    stage('renders', blender(ROOT / 'tools/render_profile_comparison.py', configs['renders']),
+    stage('renders', blender(ROOT / 'tools/render_profile_comparison.py', configs['renders'], render / 'render-evidence.json'),
           {'evidence': render / 'render-evidence.json', **{label: render / (label + '.png') for label in ('source-front', 'source-oblique', 'reimport-front', 'reimport-oblique')}},
           render, lambda value: len(value.get('renders', [])) == 4
           and value.get('mesh_names') == render_mesh_names
           and all(item.get('mesh_names') == render_mesh_names for item in value['renders']))
-    stage('scale', blender(ROOT / 'tools/check_npm_vpm_scale.py', scale),
+    stage('scale', blender(ROOT / 'tools/check_npm_vpm_scale.py', scale, scale / 'npm_v012/npm-vpm-scale-qa.json'),
           {'evidence': scale / 'npm_v012/npm-vpm-scale-qa.json'}, scale,
           lambda value: value.get('compared_faces', 0) > 0 and value.get('approved_vpm_and_four_maps_unchanged') is True)
     if args.agr_addon:
-        stage('agr_diagnostic', blender(ROOT / 'tools/check_profile_agr.py', configs['agr']),
+        stage('agr_diagnostic', blender(ROOT / 'tools/check_profile_agr.py', configs['agr'], agr / 'agr-diagnostic.json'),
               {'evidence': agr / 'agr-diagnostic.json'}, agr,
               lambda value: value.get('execution') == 'completed' and value.get('input_fbx_unchanged') is True
               and bool(value.get('checks')) and value.get('native_internal_errors', 0) == 0)
@@ -228,7 +236,7 @@ def main():
                        {'evidence': max_dir / 'max-native.json', 'fbx': max_dir / 'max-roundtrip.fbx'}, max_dir,
                        lambda value: value.get('operation_completed') is True)
         if max_ok:
-            stage('max_reverse_readback', blender(reverse_script, configs['reverse']),
+            stage('max_reverse_readback', blender(reverse_script, configs['reverse'], max_dir / 'blender-reverse-readback.json'),
                   {'evidence': max_dir / 'blender-reverse-readback.json'}, max_dir,
                   lambda value: value.get('transfer_technical_checks_passed') is True)
         else:

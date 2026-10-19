@@ -1,4 +1,5 @@
 """Triggers: tools/hooks/usage_log.py, tools/hooks/skill_gate.py, their wiring, /reuse-scan and agent descriptions."""
+import datetime
 import glob
 import json
 import os
@@ -122,6 +123,137 @@ def test_stats_counts_and_names_the_unused(tmp_path):
     assert "handover 0" in out and "validate-delivery 0" in out
 
 
+def _slug(path):
+    return re.sub(r"[^A-Za-z0-9]", "-", str(path))
+
+
+def _at(e, t, sid="s1", **kw):
+    return {**e, "timestamp": t, "sessionId": sid, "gitBranch": "harness/x", **kw}
+
+
+def _agent(sub, call_id="a"):
+    return {"type": "assistant", "message": {"content": [
+        {"type": "tool_use", "id": call_id, "name": "Agent", "input": {"subagent_type": sub} if sub else {}}]}}
+
+
+def _agent_done(call_id):
+    return {"type": "user", "message": {"content": [{"type": "tool_result", "tool_use_id": call_id, "content": "ok"}]}}
+
+
+def _write(path, *entries):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("".join(json.dumps(e, ensure_ascii=False) + "\n" for e in entries), encoding="utf-8")
+
+
+def _backfill(env):
+    r = subprocess.run([sys.executable, str(LOG_HOOK), "backfill", "--days", "3"], capture_output=True, text=True,
+                       encoding="utf-8", env=env)
+    assert r.returncode == 0, r.stderr
+    return r.stdout
+
+
+def _stamp(t):
+    return t.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+
+
+def _env(tmp_path, repo, projects, log, git=False):
+    env = {**os.environ, "AGR_USAGE_LOG": str(log), "AGR_CLAUDE_PROJECTS": str(projects), "CLAUDE_PROJECT_DIR": str(repo)}
+    if not git:
+        env["GIT_DIR"] = str(tmp_path / "no-repo")
+    return env
+
+
+def test_backfill_from_past_transcripts(tmp_path):                # #109
+    repo, projects, log = tmp_path / "repo", tmp_path / "projects", tmp_path / "logs/u.jsonl"
+    repo.mkdir()
+    now = datetime.datetime.now(datetime.timezone.utc)
+    ts = [(now - datetime.timedelta(hours=h)).strftime("%Y-%m-%dT%H:%M:%S.123Z") for h in (5, 4, 3, 2, 1)]
+    old = "2020-01-01T00:00:00.000Z"
+    main = projects / _slug(repo)
+    wt = projects / (_slug(repo) + "--claude-worktrees-wt-1")
+    other = projects / (_slug(repo) + "-other")                         # another repo with the same prefix
+    _write(main / "s1.jsonl",
+           _at(command("takeover"), ts[0]),
+           _at(_agent("bench-runner"), ts[1]),
+           _at(quoted("<command-name>/handover</command-name>"), ts[1]),      # quoted: not a command
+           _at(skill_call("blender-mcp"), ts[2]),
+           _at(skill_call("revit-mcp", success=False), ts[2]),               # failed load: not logged
+           _at(_agent("source-inspector"), ts[3], isSidechain=True),          # a subagent's own call
+           _at(_agent("mesh-reader"), old))                                   # outside --days
+    with open(main / "s1.jsonl", "a", encoding="utf-8") as f:
+        f.write("not json\n")
+    _write(wt / "s2.jsonl", _at(_agent(None), ts[4], sid="s2"))
+    _write(other / "s3.jsonl", _at(_agent("bench-runner"), ts[4], sid="s3"))
+    env = _env(tmp_path, repo, projects, log)
+
+    out = _backfill(env)
+    got = [(r["session_id"], r["kind"], r["name"], r["command"], r["branch"]) for r in lines(log)]
+    assert got == [("s1", "command", "takeover", None, "harness/x"),
+                   ("s1", "agent", "bench-runner", "takeover", "harness/x"),
+                   ("s1", "skill", "blender-mcp", "takeover", "harness/x"),
+                   ("s2", "agent", "general-purpose", None, "harness/x")]
+    assert lines(log)[1]["time"] == ts[1][:19] + ".123000+00:00" and all(r["source"] == "backfill" for r in lines(log))
+    assert "4 new" in out
+    assert "0 new" in _backfill(env) and len(lines(log)) == 4               # idempotent
+
+
+def test_backfill_keeps_same_second_calls_apart(tmp_path):          # #109 review 1: time keeps its fractions
+    repo, projects, log = tmp_path / "repo", tmp_path / "projects", tmp_path / "u.jsonl"
+    repo.mkdir()
+    t = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=1)).replace(microsecond=0)
+    _write(projects / _slug(repo) / "s.jsonl",
+           _at(_agent("bench-runner", "a1"), _stamp(t.replace(microsecond=123000)), sid="s"),
+           _at(_agent("bench-runner", "a2"), _stamp(t.replace(microsecond=789000)), sid="s"))
+    env = _env(tmp_path, repo, projects, log)
+    assert "2 new" in _backfill(env)
+    assert sorted(r["time"][-13:] for r in lines(log)) == [".123000+00:00", ".789000+00:00"]
+    assert "0 new" in _backfill(env) and len(lines(log)) == 2
+
+
+def test_backfill_reconciles_live_lines_per_call(tmp_path):         # #109 review 1: no session-wide skip
+    repo, projects, log = tmp_path / "repo", tmp_path / "projects", tmp_path / "u.jsonl"
+    repo.mkdir()
+    now = datetime.datetime.now(datetime.timezone.utc)
+    h = [now - datetime.timedelta(hours=x) for x in (3, 2, 1)]
+    done = h[1] + datetime.timedelta(minutes=20)                       # a long subagent run
+    # before the hooks: a historical agent call; then the hooks log a /takeover and a bench-runner call live
+    _write(projects / _slug(repo) / "s.jsonl",
+           _at(_agent("historical-agent", "a0"), _stamp(h[0]), sid="s"),
+           _at(_agent_done("a0"), _stamp(h[0] + datetime.timedelta(minutes=1)), sid="s"),
+           _at(command("takeover"), _stamp(h[1]), sid="s"),
+           _at(_agent("bench-runner", "a1"), _stamp(h[1] + datetime.timedelta(seconds=5)), sid="s"),
+           _at(_agent_done("a1"), _stamp(done), sid="s"),
+           _at(_agent("bench-runner", "a2"), _stamp(h[2]), sid="s"))   # a second call the hook missed
+    live = [{"time": h[1].isoformat(timespec="seconds"), "session_id": "s", "kind": "command", "name": "takeover"},
+            {"time": (done + datetime.timedelta(seconds=1)).isoformat(timespec="seconds"), "session_id": "s",
+             "kind": "agent", "name": "bench-runner", "command": "takeover"}]
+    _write(log, *live)
+    env = _env(tmp_path, repo, projects, log)
+    assert "2 new, 2 already logged" in _backfill(env)
+    added = [(r["name"], r["command"]) for r in lines(log)[2:]]
+    assert added == [("historical-agent", None), ("bench-runner", "takeover")]
+    assert all(r["source"] == "backfill" for r in lines(log)[2:])
+    assert "0 new" in _backfill(env) and len(lines(log)) == 4
+
+
+def test_backfill_reads_registered_external_worktrees(tmp_path):    # #109 review 1: worktrees outside the checkout
+    repo, projects, log = tmp_path / "repo", tmp_path / "projects", tmp_path / "u.jsonl"
+    external, stranger = tmp_path / "elsewhere" / "wt1", tmp_path / "elsewhere" / "other-repo"
+    repo.mkdir()
+    git = ["git", "-c", "user.email=t@t", "-c", "user.name=t", "-c", "init.defaultBranch=main"]
+    subprocess.run([*git, "init", "-q", str(repo)], check=True)
+    subprocess.run([*git, "-C", str(repo), "commit", "-q", "--allow-empty", "-m", "x"], check=True)
+    subprocess.run([*git, "-C", str(repo), "worktree", "add", "-q", "-b", "wt1", str(external)], check=True)
+    t = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=1)
+    _write(projects / _slug(external) / "e.jsonl", _at(_agent("source-inspector"), _stamp(t), sid="e"))
+    _write(projects / _slug(stranger) / "x.jsonl", _at(_agent("bench-runner"), _stamp(t), sid="x"))
+    env = {k: v for k, v in _env(tmp_path, repo, projects, log, git=True).items() if not k.startswith("GIT_")}
+    out = _backfill(env)
+    assert [(r["session_id"], r["name"]) for r in lines(log)] == [("e", "source-inspector")], out
+    assert "1 transcripts" in out
+    assert "0 new" in _backfill(env)
+
+
 @pytest.mark.parametrize("tool, loaded_by, denied", [
     ("mcp__blender__get_objects_summary", None, True),
     ("mcp__blender__get_objects_summary", skill_call("blender-mcp"), False),
@@ -182,3 +314,29 @@ def test_descriptions_have_use_when_examples(path):
     meta = yaml.safe_load(Path(path).read_text(encoding="utf-8").split("---\n")[1])
     tail = meta["description"].split("Use when:")[-1]
     assert "Use when:" in meta["description"] and 2 <= tail.count("«") <= 3, meta["description"]
+
+
+def _duplicate_with_live(tmp_path, across_files):                   # #109 review 2
+    repo, projects, log = tmp_path / "repo", tmp_path / "projects", tmp_path / "u.jsonl"
+    repo.mkdir()
+    t = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=1)
+    call = _at(_agent("bench-runner", "a1"), _stamp(t), sid="s")
+    done = _at(_agent_done("a1"), _stamp(t + datetime.timedelta(seconds=30)), sid="s")
+    if across_files:                                                    # a resumed session copied into a worktree folder
+        _write(projects / _slug(repo) / "s.jsonl", call, done)
+        _write(projects / (_slug(repo) + "--claude-worktrees-wt") / "s.jsonl", call, done)
+    else:                                                               # the same record written twice
+        _write(projects / _slug(repo) / "s.jsonl", call, call, done)
+    _write(log, {"time": (t + datetime.timedelta(seconds=31)).isoformat(timespec="seconds"), "session_id": "s",
+                 "kind": "agent", "name": "bench-runner"})
+    env = _env(tmp_path, repo, projects, log)
+    assert "0 new" in _backfill(env) and len(lines(log)) == 1
+    assert "0 new" in _backfill(env) and len(lines(log)) == 1
+
+
+def test_backfill_duplicate_call_in_one_transcript_counts_once(tmp_path):
+    _duplicate_with_live(tmp_path, across_files=False)
+
+
+def test_backfill_duplicate_call_across_transcripts_counts_once(tmp_path):
+    _duplicate_with_live(tmp_path, across_files=True)

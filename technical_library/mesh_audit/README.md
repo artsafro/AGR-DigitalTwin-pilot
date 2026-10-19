@@ -25,6 +25,43 @@ Revit, знаках, mesh optimization и продуктовых Blender-кей�
 растяжение UV, texel density, сохранение исходного контура, shaders, BVH/визуальный вид.
 `delivery_passed=false` всегда: basic inventory не сдача модели.
 
+Each mesh object report includes three topology diagnostic counters that leave
+`delivery_passed=false` unchanged:
+- `inconsistent_winding_edges`: `twinqa.geometry.winding.same_direction_edges`, shared with the twinqa orientation check. Manifold edges with exactly two loop sides winding in the same direction; sides with a repeated vertex (a == b) are skipped.
+- `near_duplicate_vertices`: vertices with an earlier vertex within `--near-m`
+  (default 0.001 m, recorded as `near_duplicate_threshold_m`), including exact duplicates.
+- `self_intersecting_polygons`: counts polygons exhibiting bounded nondegenerate
+  planar proper-crossing semantics (triangles return False directly).
+
+For each face, the classifier uses maximal-triple projection: it enumerates all
+unordered vertex triples with `itertools.combinations`, selects the nonzero
+cross product of maximum squared magnitude, drops the coordinate with the
+largest absolute cross component, and projects the remaining axes to 2D. This
+avoids Newell normal cancellation on bowtie polygons and first-triple collinearity.
+
+For each unordered pair of boundary edges, adjacent pairs sharing endpoints
+(including wraparound) are excluded. A proper crossing is registered when
+segment endpoints have strictly opposite orientations beyond a +/-1e-10 m² strict
+tolerance in square metres for both segments. The polygon count is incremented
+at the first proper crossing found (counting each self-intersecting polygon once
+rather than counting intersection pairs).
+
+Collinear-only compatibility: collinear-only faces return False (no projection
+performed) and do not raise new exceptions; the companion `zero_area_faces_fan`
+diagnostic is preserved and this zero return is not a clean-certification claim.
+
+Planarity is NOT validated, and zero diagnostic flags do NOT certify a mesh as
+valid, clean, or delivery-ready.
+
+Unsupported scope: collinear overlap, nonadjacent touch, repeated vertices,
+nonplanar faces, mesh-to-mesh intersections, and general 3D intersections are
+not supported.
+
+The report retains report-only flags (`intersection_test_performed=false`,
+`delivery_passed=false`) with explicit no delivery certification and no
+production speedup claim. For background hypothesis and validation rationale,
+see [docs/experiments/hyp-91.md](../../docs/experiments/hyp-91.md).
+
 [REPLAY.json](REPLAY.json): 9 запусков Blender4.4 на фактических сохранённых
 blend/FBX, SHA всех входов неизменны. Ground blend и FBX: 33103 vertices /
 32392 quads / 18 slots; ранее допустимые исходные overlaps сохранены. MASHI:

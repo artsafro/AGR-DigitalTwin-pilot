@@ -1,5 +1,6 @@
 """Synthetic checks of KPP1 safeguards; these do not establish DCC acceptance."""
 import importlib.util
+import itertools
 import json
 import os
 from pathlib import Path
@@ -94,6 +95,27 @@ def test_duplicate_atlas_udim_is_refused():
                               {"finishes": {"a": {"udim": 1001}}})
 
 
+MSYS_CONVERSION_OPT_OUTS = ("MSYS_NO_PATHCONV", "MSYS2_ARG_CONV_EXCL")
+
+
+def _shell_env(base, fake_bin):
+    # The shell launchers pass /c/... paths to native Python via Git Bash.
+    # Terminal-level conversion opt-outs must not leak into this subprocess.
+    blocked = {"KEEP_QUADS"} | {name.upper() for name in MSYS_CONVERSION_OPT_OUTS}
+    path = None
+    env = {}
+    for key, value in base.items():
+        folded = key.upper()
+        if folded in blocked or folded == "PATH":
+            if folded == "PATH" and (path is None or key == "PATH"):
+                path = value
+            continue
+        env[key] = value
+    env["KPP_TEST_PYTHON"] = sys.executable.replace("\\", "/")
+    env["PATH"] = str(fake_bin) + os.pathsep + ("" if path is None else path)
+    return env
+
+
 @pytest.fixture
 def shell_run(tmp_path):
     """Run the real shell pipeline against synthetic local process doubles."""
@@ -149,15 +171,44 @@ def shell_run(tmp_path):
                        encoding="utf-8")
     for path in (blender, fake_bin / "py", scripts / "run_stage.sh"):
         path.chmod(0o755)
-    env = os.environ.copy()
-    env.pop("KEEP_QUADS", None)
-    env["KPP_TEST_PYTHON"] = sys.executable.replace("\\", "/")
-    env["PATH"] = str(fake_bin) + os.pathsep + env["PATH"]
+    env = _shell_env(os.environ, fake_bin)
 
     def run(version="v002", **overrides):
         return subprocess.run([bash, str(scripts / "run_all.sh"), version],
                               env=env | overrides, capture_output=True, text=True, timeout=30)
     return job / "outputs", run
+
+
+@pytest.mark.parametrize(
+    "names",
+    [combo for size in range(1, len(MSYS_CONVERSION_OPT_OUTS) + 1)
+     for combo in itertools.combinations(MSYS_CONVERSION_OPT_OUTS, size)],
+)
+@pytest.mark.parametrize("value", ["1", "*", ""])
+@pytest.mark.parametrize("fold", [str.upper, str.lower])
+def test_shell_env_drops_msys_conversion_opt_outs(names, value, fold):
+    # Issue #146: MSYS conversion opt-outs must be dropped even when the ambient env lacks them.
+    base = {"PATH": "x", "OTHER": "kept", **{fold(name): value for name in names}}
+    original = dict(base)
+    env = _shell_env(base, Path("fb"))
+    assert not any(key.upper() in MSYS_CONVERSION_OPT_OUTS for key in env)
+    assert env["OTHER"] == "kept"
+    assert env["PATH"].startswith("fb" + os.pathsep)
+    assert base == original
+
+
+def test_shell_subprocess_does_not_inherit_msys_conversion_opt_outs(monkeypatch, tmp_path):
+    # Issue #146: the bash subprocess must not inherit MSYS conversion opt-outs.
+    git_bash = Path("C:/Program Files/Git/bin/bash.exe")
+    bash = str(git_bash) if git_bash.exists() else shutil.which("bash")
+    if not bash:
+        pytest.skip("Bash unavailable")
+    monkeypatch.setenv("MSYS_NO_PATHCONV", "1")
+    monkeypatch.setenv("MSYS2_ARG_CONV_EXCL", "*")
+    result = subprocess.run(
+        [bash, "-c", 'printf "%s|%s" "${MSYS_NO_PATHCONV-unset}" "${MSYS2_ARG_CONV_EXCL-unset}"'],
+        env=_shell_env(os.environ, tmp_path), capture_output=True, text=True, timeout=30)
+    assert result.stdout == "unset|unset"
 
 
 def test_pipeline_preserves_old_build_and_atlas_uses_fresh_version(shell_run):

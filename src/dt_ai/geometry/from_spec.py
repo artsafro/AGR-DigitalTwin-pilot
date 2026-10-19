@@ -58,6 +58,7 @@ from shapely.geometry import Point, Polygon
 from shapely.geometry.polygon import orient
 
 from dt_ai.spec.model import Spec
+from twinqa.geometry.mesh import weld as _checker_weld   # the checkers' distance weld (issue #101)
 
 KEY_M = 1e-6          # vertices on one 1 µm grid are one vertex
 MIN_FEATURE_M = 1e-4  # no decor edge shorter than 0.1 mm is built
@@ -181,9 +182,26 @@ class _Weld:
         return [*self.fixed, *(g[0] for g in self.groups)]
 
 
+def _weld_plan(points, wx, wy):
+    """Apply the axis groups only if every point's full 2D move fits weld_m.
+
+    Keep the common axis lines (and fixed values) rather than partially snapping a
+    corner and bending its walls. Like a collapsed contour, an excessive move is
+    a BuildError, not a silently changed model. FEATURE_TOL covers rounding only.
+    """
+    points = np.asarray(points, float).reshape(-1, 2)
+    welded = np.column_stack(([wx(x) for x in points[:, 0]], [wy(y) for y in points[:, 1]]))
+    distances = np.linalg.norm(welded - points, axis=1)
+    if np.any(distances > wx.w + FEATURE_TOL):
+        i = int(np.argmax(distances))
+        raise BuildError(f"2D plan weld moves {points[i].tolist()} by {distances[i]:.9f} m, "
+                         f"beyond weld_m {wx.w} m; not built")
+    return welded
+
+
 def _welded(g, wx, wy):
     """A plan geometry with every coordinate welded; polygons only, empty pieces dropped."""
-    out = shapely.transform(g, lambda c: np.column_stack([[wx(x) for x in c[:, 0]], [wy(y) for y in c[:, 1]]]))
+    out = shapely.transform(g, lambda c: _weld_plan(c, wx, wy))
     out = shapely.make_valid(out)
     return shapely.union_all([p for p in shapely.get_parts(out) if p.geom_type == "Polygon" and p.area > KEY_M]
                              or [Polygon()])
@@ -222,7 +240,7 @@ def _contours(spec: Spec):
     wx, wy = _Weld(every[:, 0], w), _Weld(every[:, 1], w)
     contours = []
     for f, pts in zip(floors, raw):
-        pts = np.asarray([[wx(x), wy(y)] for x, y in pts], float)
+        pts = _weld_plan(pts, wx, wy)
         for i in range(len(pts)):
             if np.linalg.norm(pts[(i + 1) % len(pts)] - pts[i]) <= KEY_M:
                 raise BuildError(f"floor {f.level} wall {i} collapses under the {w} m weld (weld_m); not built")
@@ -258,8 +276,23 @@ def _openings(spec, floors, contours, inputs, raw, welds):
             u = (b - a) / length
             ra, rb = raw[k][o.wall], raw[k][(o.wall + 1) % len(pts)]
             ru = (rb - ra) / float(np.linalg.norm(rb - ra))
-            s0, s1 = (round(float((np.array([welds[0](q[0]), welds[1](q[1])]) - a) @ u), 9)
-                      for q in (ra + ru * o.x_m, ra + ru * (o.x_m + o.w_m)))   # its ends welded as the contour
+            raw_ends = np.array([ra + ru * o.x_m, ra + ru * (o.x_m + o.w_m)])
+            ends = _weld_plan(raw_ends, *welds)
+            # Use the same welded strip line as along_cuts: x for oblique walls,
+            # y for walls along y. A dot projection mixes both welded coordinates
+            # and can put the hole boundary between strip cuts, losing a jamb.
+            axis = 1 if abs(b[0] - a[0]) <= KEY_M else 0
+            s0, s1 = (round(float((q[axis] - a[axis]) / u[axis]), 9) for q in ends)
+            # Intersecting the welded strip line with a steep wall can amplify
+            # an otherwise bounded axis snap. Bound the final points, not only
+            # the intermediate weld, against the original source endpoints.
+            canonical_ends = a + np.outer([s0, s1], u)
+            distances = np.linalg.norm(canonical_ends - raw_ends, axis=1)
+            if np.any(distances > spec.weld_m + FEATURE_TOL):
+                i = int(np.argmax(distances))
+                raise BuildError(f"floor {f.level} wall {o.wall} x {o.x_m}: canonical opening boundary "
+                                 f"moves {raw_ends[i].tolist()} by {distances[i]:.9f} m, "
+                                 f"beyond weld_m {spec.weld_m} m; not built")
             out.append({"wall": o.wall, "level": f.level, "a": a, "u": u, "length": length,
                         "s0": s0, "s1": s1, "z0": z0, "z1": z0 + o.h_m, "id": mid,
                         "depth": depth, "where": f"floor {f.level} wall {o.wall} x {o.x_m}"})
@@ -387,8 +420,8 @@ def build(spec: Spec, inputs: BuildInputs) -> dict:
     wy = _Weld(made[:, 1], weld, fixed=wy0.values())
     faces = [(g, z, mid, up) for poly, z, mid, up in faces for g in shapely.get_parts(_welded(poly, wx, wy))
              if g.geom_type == "Polygon" and g.area > KEY_M]
-    in_pts = np.asarray([[wx(x), wy(y)] for x, y in in_pts], float)
-    tp_walls = [(kind, np.array([wx(a[0]), wy(a[1])]), np.array([wx(b[0]), wy(b[1])]), *rest)
+    in_pts = _weld_plan(in_pts, wx, wy)
+    tp_walls = [(kind, *_weld_plan([a, b], wx, wy), *rest)
                 for kind, a, b, *rest in tp_walls]
     tp_solids = [(_welded(band, wx, wy), z0, z1) for band, z0, z1 in tp_solids]
     slabs = [(_welded(hole, wx, wy), z, where, enclosure) for hole, z, where, enclosure in slabs]
@@ -537,7 +570,6 @@ def _roof_structures(spec: Spec, inputs: BuildInputs, roof: float) -> "_Mesh":
 
 
 DECOR_INSET_M = 0.02   # pattern facade-decor-inset: a wall element runs this far into the body (user 2026-10-11)
-CORNER_END_M = 0.0005  # at a building corner its end face starts this far off the wall face (no shared point)
 
 
 def _decor(spec, floors, contours, openings, inputs, elev, polys, top):
@@ -640,10 +672,12 @@ def _decor(spec, floors, contours, openings, inputs, elev, polys, top):
                 continue
             if turn < 0:                                # a right turn of a counter-clockwise contour: concave
                 raise BuildError(f"{where}: it ends at a concave corner, into the next wall; not built")
-            if which == 0:                              # 0.5 mm off the wall face: no point shared with the
-                e0 = CORNER_END_M                        # body's corner edge (review 2 of PR #75)
+            # plate_gap_m off the wall face: no point within weld_m of the body's corner edge (review 2 of
+            # PR #75; user 2026-10-15 [D093], #101: 0.5 mm lay inside the 3 mm weld and welded to the corner)
+            if which == 0:
+                e0 = gap
             else:
-                e1 = CORNER_END_M
+                e1 = gap
         walls.append({"a": a, "u": u, "n": n, "c": float(a @ n), "o": float(a @ u), "s0": s0, "s1": s1, "z0": z0,
                       "z1": z1, "d0": d0, "d1": d1, "e0": e0, "e1": e1, "mid": mid, "where": where, "skip": set(),
                       "rank": 0 if e.kind == "strip" else 1, "length": length,
@@ -807,9 +841,7 @@ def _hold(mesh, joints, w):
     slab joints (flat at a joint height). Else BuildError: an input at the weld limit is refused rather
     than returned broken."""
     v = np.asarray(mesh.vertices)
-    keys = np.round(v / w).astype(np.int64)
-    _, cell = np.unique(keys, axis=0, return_inverse=True)
-    cell = cell.reshape(-1)
+    cell = _checker_weld(v, w)
     uses = {}
     for ids, _ in mesh.faces:
         c = [int(cell[i]) for i in ids]

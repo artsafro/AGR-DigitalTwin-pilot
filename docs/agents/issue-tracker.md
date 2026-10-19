@@ -13,6 +13,24 @@ Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all o
 
 Infer the repo from `git remote -v`; `gh` does this automatically when run inside a clone.
 
+## Ready gate (#130)
+
+A task issue is written from `.github/ISSUE_TEMPLATE/task.md`: Requirement (the user's wording verbatim),
+Specification (Acceptance as checkable items, Inputs and versions, Out of scope, Evidence the PR must bring)
+and Context (files and rules to read first). Triage applies `ready-for-agent` only when the gate passes:
+
+```
+py -3 tools/check_ready_gate.py --issue <N>                  # one issue, before adding the label
+py -3 tools/check_ready_gate.py --label ready-for-agent      # every open ready issue, at a triage pass
+```
+
+The gate passes when Requirement, Context and every Specification field hold text once the template's
+comments are removed ("None" counts), and Acceptance has at least one non-empty `- [ ]` item. A failing
+issue gets `needs-info` instead of `ready-for-agent` (or loses `ready-for-agent` at a triage pass), with a
+comment naming the failing fields as the gate prints them. Bodies written by `/to-tickets` or `/ticket` go
+through the same gate. An agent that finds an empty field at its recitation step stops the same way
+(`docs/agents/WORKFLOW.md`, "Recitation").
+
 ## Pull requests as a triage surface
 
 **PRs as a request surface: no.** _(Set to `yes` if this repo treats external PRs as feature requests; `/triage` reads this flag.)_

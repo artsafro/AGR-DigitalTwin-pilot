@@ -16,7 +16,7 @@ from twinqa.evals.graders import GRADERS, EvidenceError
 SUITES = ("regression", "capability")
 VERDICTS = ("pass", "fail")
 ROOTS = ("main", "task")
-RULE_KEYS = {"root", "path", "glob", "match"}
+RULE_KEYS = {"root", "path", "glob", "match", "gh"}
 
 
 class EvalInputError(Exception):
@@ -71,6 +71,10 @@ def _check_rule(rule, where):
             re.compile(_fill(rule["match"], "branch", regex=True))
         except re.error as exc:
             raise TaskError(f"{where}: match is not a regular expression: {exc}") from exc
+    if "gh" in rule:
+        gh = rule["gh"]
+        if not isinstance(gh, str) or not gh.startswith("gh pr "):
+            raise TaskError(f"{where}: gh must be a non-empty command starting with 'gh pr '")
 
 
 def _check_evidence(evidence, names, where):
@@ -138,9 +142,11 @@ def load_tasks(evals_dir, suite=None, task=None):
 
 
 def _fill(text, branch, regex=False):
-    values = {"{branch_slug}": branch_slug(branch), "{branch}": branch}
-    for key, value in values.items():
-        text = text.replace(key, re.escape(value) if regex else value)
+    if "{branch_slug}" in text:
+        slug = branch_slug(branch)
+        text = text.replace("{branch_slug}", re.escape(slug) if regex else slug)
+    if "{branch}" in text:
+        text = text.replace("{branch}", re.escape(branch) if regex else branch)
     return text
 
 
@@ -167,7 +173,10 @@ def resolve(rule, folder, main, branch):
     if outside:
         raise EvidenceError(f"evidence outside its root {base}: {[str(p) for p in outside]}")
     if not files:
-        raise EvidenceError(f"no evidence: {root / pattern}" + (f" matching {rule['match']}" if "match" in rule else ""))
+        message = f"no evidence: {root / pattern}" + (f" matching {rule['match']}" if "match" in rule else "")
+        if rule.get("gh"):
+            message += f"; produce it with: {_fill(rule['gh'], branch) if branch else rule['gh']}"
+        raise EvidenceError(message)
     return files
 
 

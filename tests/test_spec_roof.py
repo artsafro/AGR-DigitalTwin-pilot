@@ -35,6 +35,54 @@ def test_drainage_slope_is_a_flat_roof_at_its_area_weighted_height():
     assert spec.roof.parapet_h_m == pytest.approx(0.6, abs=0.01)
 
 
+@pytest.mark.parametrize("seam", [0.0, 0.0002])
+def test_split_drainage_plane_is_judged_as_one_surface(seam):
+    # Issue #28 / R2-4: T-junction tessellation with an optional 0.2 mm seam.
+    # The three pieces have means 6.425 / 6.775 / 6.775; only their union is at LEVEL_roof.
+    d = dump_of(walls_only())
+    seam /= 2
+    d["meshes"] += [
+        roof_part(6.25, 6.6 - 0.07 * seam, y1=5 - seam, name="Low").dump(),
+        roof_part(6.6 + 0.07 * seam, 6.95, x0=0.0003, x1=4, y0=5 + seam, name="HighLeft").dump(),
+        roof_part(6.6 + 0.07 * seam, 6.95, x0=4, x1=9.9997, y0=5 + seam, name="HighRight").dump(),
+    ]
+    _, report = extract_spec(d, OBJECT)
+    assert report["roof"]["plane_m"] == pytest.approx(6.6, abs=0.001)
+    assert report["roof"]["separate_roof_parts"] == 2
+    assert report["roof"]["closed_share"] >= 0.999
+    assert (report["roof"]["surface_z_min_m"], report["roof"]["surface_z_max_m"]) == (6.25, 6.95)
+
+
+@pytest.mark.parametrize("gap, offset", [(0.01, 0.0), (0.0, 0.01)])
+def test_disconnected_or_offset_drainage_planes_are_not_averaged_together(gap, offset):
+    d = dump_of(walls_only())
+    d["meshes"] += [
+        roof_part(6.25, 6.6 - 0.07 * gap, y1=5 - gap, name="Low").dump(),
+        roof_part(6.6 + offset, 6.95 + offset, x0=0.0003, x1=9.9997, y0=5, name="High").dump(),
+    ]
+    with pytest.raises(SpecError, match="no up-facing roof surface"):
+        extract_spec(d, OBJECT)
+
+
+def test_drainage_plane_keeps_faces_more_than_two_metres_below_level():
+    # Issue #28 / R2-5: 6.6 m rise over 40 m = 9.37 degrees, mean at LEVEL_roof.
+    outline = [[0, 0], [10, 0], [10, 40], [0, 40]]
+    b = Mesh("Body")
+    walls(b, outline, 0, 10.5)
+    flat(b, Polygon(outline), 0, up=False)
+    r = Mesh("LongRoof")
+    for y in (0, 10, 20, 30):
+        r.quad((0, y, 3.3 + 0.165 * y), (10, y, 3.3 + 0.165 * y),
+               (10, y + 10, 3.3 + 0.165 * (y + 10)), (0, y + 10, 3.3 + 0.165 * (y + 10)))
+    d = dump_of(b)
+    d["meshes"].append(r.dump())
+    _, report = extract_spec(d, OBJECT)
+    assert report["roof"]["plane_m"] == pytest.approx(6.6, abs=0.001)
+    assert report["roof"]["closed_share"] == 1.0
+    assert (report["roof"]["surface_z_min_m"], report["roof"]["surface_z_max_m"]) == (3.3, 9.9)
+    assert report["roof"]["slope_max_deg"] == pytest.approx(9.37, abs=0.01)
+
+
 def test_input_level_within_10_cm_of_the_mean_is_accepted():
     d = dump_of(walls_only())
     d["meshes"].append(roof_part(6.62, 6.72).dump())          # mean 6.67, level 6.6

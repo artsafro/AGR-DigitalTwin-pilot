@@ -23,13 +23,17 @@ evals/<task id>/
 | `evidence` | `{name: rule}` the grader reads in a real run |
 | `references` | `[{name, evidence, verdict: pass|fail}]`: evidence with a known answer; the reference verdict |
 
-An evidence rule is `{"root": "main"|"task", "path"|"glob": ..., "match": optional}`. `main` is the main
+An evidence rule is `{"root": "main"|"task", "path"|"glob": ..., "match": optional, "gh": optional}`. `main` is the main
 checkout (parent of `git rev-parse --git-common-dir`, where every worktree's `logs/` goes); `task` is the task
 folder. `{branch}` and `{branch_slug}` (every character outside `A-Za-z0-9._-` as `-`, the file-name rule of
 `tools/hooks/save_transcript.py`) are replaced by the graded branch. A glob takes every match; `match` is a regular
 expression the whole file name must match (placeholders inserted escaped), so that a glob prefix cannot take
 another branch's files (`harness-x-pr*` would also catch branch `harness/x-pr7-y`). No file = the check is not
 measured (exit 2), never a pass.
+
+`gh`, when present, is a non-empty string starting with `gh pr ` (any other value stops the task). It documents
+the command that produces the file; the runner never runs it. `{branch}` in the command is filled the same way
+as in a path. When the file is missing, the error ends with `; produce it with: <command>`.
 
 A `path` / `glob` is relative and stays inside its root: an absolute path or `..` stops the task, and a file
 reached through a link out of the root is not measured. The `--evidence name=path` override is explicit user input
@@ -41,6 +45,26 @@ its folder - a suite run reads every folder, so a typo in `suite` cannot drop a 
 
 Evidence by convention: transcripts `logs/transcripts/<branch slug>-pr<N|none>-<session>.jsonl` (written at
 `/handover`), the usage log `logs/agent-usage.jsonl`, benchmark runs `data/benchmark/<bench>/runs/`.
+Pull-request evidence, saved before a real run (the runner does not call `gh`):
+`logs/pr/<branch slug>/view.json` from `gh pr view <branch> --json body,comments`, and
+`logs/pr/<branch slug>/diff.patch` from `gh pr diff <branch>`.
+
+## Regression tasks
+
+Procedural graders over the Claude Code transcripts of the branch (`#123`): the main session only
+(`isSidechain: true` records are a subagent's), the record structure only, no LLM. 100 % before every merge.
+
+| Task id | Grader | Evidence | What fails it |
+|---|---|---|---|
+| `no-hook-denial` | `no_hook_denial` | `transcript` | a tool call a PreToolUse hook refused |
+| `dcc-skill-loaded` | `dcc_skill_loaded` | `transcript` | a DCC MCP call before its skill was loaded in that session |
+| `engine-checked` | `engine_checked` | `transcript` | an engine run with no `independent-checker` before the "done" claim |
+| `source-inspected` | `source_inspected` | `transcript` | a source file (`.max`, `.rvt`, `.fbx`, ...) no `source-inspector` read |
+| `failure-stop` | `failure_stop` | `transcript` | a check run again after two failures with the same cause, or three |
+| `branch-name` | `branch_name` | `transcript` | a commit on an auto-generated worktree branch, or off `<type>/<area>-<what>` |
+| `routine-question` | `routine_question` | `transcript`, `decisions`, `patterns` | a question about the agent's own implementation, or one `docs/decisions.md` / `patterns/INDEX.md` already answers |
+
+Each task's `task.md` states the exact transcript fields its grader reads and what its two references are.
 
 ## Running
 
@@ -62,4 +86,9 @@ A grader is registered in `GRADERS` with the evidence names it reads; it takes `
 `{"check", "expected", "measured", "passed", "details"}`, raises `EvidenceError` when the evidence is absent and
 returns `passed: None` with an `error` when it is incomplete (a definite failure found in the readable part stays a
 failure). Each regression grader has a reference that fails and one that
-passes, and a pytest over both (`tests/test_evals.py`).
+passes, and a pytest over both (`tests/test_evals.py`, `tests/test_evals_pr.py`).
+
+Graders: `no_hook_denial` (transcript); `pr_agent_trace` (pr) — the Agent trace block;
+`pr_numeric_literals` (pr, diff) — a new numeric literal in `src/dt_ai/` or `src/twinqa/`
+(`src/twinqa/evals/` excluded) without a decision-log id or a tolerances reference;
+`pr_review_rounds` (pr) — review-round markers, ceiling 3.
