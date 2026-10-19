@@ -244,11 +244,15 @@ def test_grid_periods_divide_delivery_and_reduced_sizes(recipe):
             if periods is not None:
                 for period in periods:
                     assert delivery % period == 0
-                    assert 256 % (period // (delivery // 256)) == 0
+                    scaled = period * 256 / delivery
+                    assert scaled > 0
+                    assert math.isclose(256 / scaled, delivery // period, rel_tol=0, abs_tol=1e-6)
                     checked += 1
             if cell is not None:
                 assert delivery % cell == 0
-                assert 256 % (cell // (delivery // 256)) == 0
+                scaled = cell * 256 / delivery
+                assert scaled > 0
+                assert math.isclose(256 / scaled, delivery // cell, rel_tol=0, abs_tol=1e-6)
                 checked += 1
             if periods is None and cell is None:
                 assert delivery % delivery == 0
@@ -398,3 +402,157 @@ def test_cli_aliases_recipe_path(recipes, capsys):
     assert code == 2
     assert "error:" in captured.err
     assert RECIPE_PATH.is_file()
+
+
+def _face_px(image: np.ndarray) -> tuple[float, float]:
+    """Paver face in pixels from the spacing of the dark joint's edges."""
+
+    def _axis(profile: np.ndarray) -> float:
+        values = np.asarray(profile, dtype=np.float64)
+        delta = np.diff(values, append=values[:1])
+        limit = max(8.0, 0.4 * float(np.max(np.abs(delta))))
+        falls = np.flatnonzero(delta <= -limit)
+        rises = np.flatnonzero(delta >= limit)
+        if falls.size < 2 or rises.size < 2:
+            raise AssertionError("joint edges are missing")
+        period = float(np.median(np.diff(falls)))
+        widths = []
+        for fall in falls:
+            later = rises[rises >= fall]
+            rise = int(later[0]) if later.size else int(rises[0]) + values.size
+            widths.append(rise - int(fall))
+        return period - float(np.median(widths))
+
+    return _axis(image.mean(axis=(0, 2))), _axis(image.mean(axis=(1, 2)))
+
+
+@pytest.mark.parametrize(
+    ("slot", "field", "value", "profile"),
+    [
+        ("TileLight", "nominal_tile_mm", [200, 600], "npm"),
+        ("TileLight", "nominal_tile_mm", [200, 600], "vpm"),
+        ("Gravel", "fraction_mm", [20, 80], "npm"),
+        ("Gravel", "fraction_mm", [20, 80], "vpm"),
+    ],
+)
+def test_physical_mutation_changes_pixels_or_errors(recipes, recipe, slot, field, value, profile):
+    """Sourced millimetres are not metadata. Ignoring them leaves the map identical."""
+    original = recipes.render_map(recipe, slot, profile, size=256)
+    mutated = copy.deepcopy(recipe)
+    mutated["slots"][slot][field] = value
+    try:
+        image = recipes.render_map(mutated, slot, profile, size=256)
+    except recipes.GroundRecipeError:
+        return
+    assert image.shape == original.shape
+    assert not np.array_equal(image, original)
+
+
+def test_nominal_widths_other_than_the_sourced_face_error(recipes, recipe):
+    rejected = 0
+    for width in range(1, 51):
+        broken = copy.deepcopy(recipe)
+        broken["slots"]["TileLight"]["nominal_tile_mm"] = [width, 300]
+        with pytest.raises(recipes.GroundRecipeError):
+            recipes.validate_recipe(broken)
+        rejected += 1
+    assert rejected == 50
+
+
+def test_shipped_tile_face_matches_sourced_millimetres(recipes, recipe):
+    """Gothic 100x300 mm, not the old 800x1866 mm NPM snap or the 109x234 mm VPM snap."""
+    npm = recipes.render_map(recipe, "TileLight", "npm", size=2048)
+    npm_face = _face_px(npm)
+    npm_mm = (npm_face[0] / 30.0 * 1000.0, npm_face[1] / 30.0 * 1000.0)
+    assert npm_mm[0] == pytest.approx(100, abs=5)
+    assert npm_mm[1] == pytest.approx(300, abs=5)
+    vpm = recipes.render_map(recipe, "TileLight", "vpm", size=2048)
+    vpm_face = _face_px(vpm)
+    # 2048 px is half of the 4096 delivery, so this preview is 512 px/m.
+    vpm_mm = (vpm_face[0] / 512.0 * 1000.0, vpm_face[1] / 512.0 * 1000.0)
+    assert vpm_mm[0] == pytest.approx(100, abs=5)
+    assert vpm_mm[1] == pytest.approx(300, abs=5)
+
+
+def test_valid_scale_control_emits_the_nominal_face(recipes, recipe):
+    """A consistent larger paver is measurable, and it is not the shipped 100x300 map."""
+    control = copy.deepcopy(recipe)
+    slot = control["slots"]["TileLight"]
+    slot["nominal_tile_mm"] = [800, 1600]
+    slot["npm_period_px"] = [32, 64]
+    slot["npm_joint_px"] = [8, 16]
+    slot["vpm_period_px"] = [1024, 2048]
+    slot["vpm_joint_px"] = [204.8, 409.6]
+    image = recipes.render_map(control, "TileLight", "npm", size=256)
+    shipped = recipes.render_map(recipe, "TileLight", "npm", size=256)
+    assert not np.array_equal(image, shipped)
+    face = _face_px(image)
+    # 256 px covers the same 2048/30 m repeat, i.e. 3.75 px/m.
+    mm = (face[0] / 3.75 * 1000.0, face[1] / 3.75 * 1000.0)
+    assert face == pytest.approx((3, 6), abs=0.25)
+    assert mm == pytest.approx((800, 1600), abs=1)
+
+
+def test_fraction_pitch_error_of_half_a_texel_is_rejected(recipes, recipe):
+    """Exactly 0.5 px of pitch error is incompatible. Just under it is still a grain size."""
+    broken = copy.deepcopy(recipe)
+    pitch_m = 4.0 / 3.0
+    target_m = pitch_m + 0.5 / 1024.0
+    broken["slots"]["Gravel"]["fraction_mm"] = [target_m * 1000.0, target_m * 1000.0]
+    with pytest.raises(recipes.GroundRecipeError):
+        recipes.validate_recipe(broken)
+    allowed = copy.deepcopy(recipe)
+    under_m = pitch_m + 0.49 / 1024.0
+    allowed["slots"]["Gravel"]["fraction_mm"] = [under_m * 1000.0, under_m * 1000.0]
+    recipes.validate_recipe(allowed)
+
+
+@pytest.mark.parametrize(
+    "value",
+    [float("nan"), float("inf"), float("-inf"), -2, 0, [8, 2]],
+)
+def test_bad_fraction_errors(recipes, recipe, value):
+    broken = copy.deepcopy(recipe)
+    broken["slots"]["Gravel"]["fraction_mm"] = value
+    with pytest.raises(recipes.GroundRecipeError):
+        recipes.validate_recipe(broken)
+
+
+def test_joint_exactly_half_the_period_errors(recipes, recipe):
+    broken = copy.deepcopy(recipe)
+    slot = broken["slots"]["TileLight"]
+    slot["nominal_tile_mm"] = [4000.0 / 30.0, 800]
+    slot["npm_period_px"] = [8, 32]
+    slot["npm_joint_px"] = [4, 8]
+    slot["vpm_period_px"] = [256, 1024]
+    slot["vpm_joint_px"] = [119.46666666666667, 204.8]
+    with pytest.raises(recipes.GroundRecipeError):
+        recipes.validate_recipe(broken)
+
+
+def test_tile_larger_than_the_repeat_errors(recipes, recipe):
+    broken = copy.deepcopy(recipe)
+    broken["slots"]["TileLight"]["nominal_tile_mm"] = [100000, 300000]
+    with pytest.raises(recipes.GroundRecipeError):
+        recipes.validate_recipe(broken)
+
+
+def test_incompatible_recipe_does_not_render_or_write(recipes, recipe, tmp_path, monkeypatch):
+    broken = copy.deepcopy(recipe)
+    broken["slots"]["TileLight"]["nominal_tile_mm"] = [200, 600]
+    path = tmp_path / "bad.json"
+    path.write_text(json.dumps(broken), encoding="utf-8")
+    out = tmp_path / "empty"
+    out.mkdir()
+    monkeypatch.setattr(recipes, "DELIVERY_DIR", out)
+    calls = []
+
+    def _render(*_args, **_kwargs):
+        calls.append(1)
+        raise AssertionError("render started")
+
+    monkeypatch.setattr(recipes, "render_map", _render)
+    with pytest.raises(recipes.GroundRecipeError):
+        recipes.write_delivery(path, out)
+    assert calls == []
+    assert list(out.iterdir()) == []
