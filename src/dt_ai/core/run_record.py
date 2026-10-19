@@ -3,6 +3,8 @@
 Callers include relevant code, tool versions, parameters and profile hashes in
 ``context``. Verification callbacks must inspect the saved outputs themselves.
 Locks fail closed after a crash: remove an orphan only after checking its owner.
+Stage timeout cleanup grace wait uses CLEANUP_GRACE_SECONDS (default 5s),
+which can be overridden via monkeypatch on the module attribute.
 """
 
 from contextlib import ExitStack, contextmanager
@@ -13,6 +15,8 @@ import subprocess
 import tempfile
 
 from dt_ai.core.io import digest, json_bytes, read_json
+
+CLEANUP_GRACE_SECONDS = 5
 
 
 class OwnershipConflict(RuntimeError):
@@ -204,10 +208,10 @@ class RunRecord:
                         else:
                             child.kill()
                         try:
-                            child.wait(timeout=5)
+                            child.wait(timeout=CLEANUP_GRACE_SECONDS)
                         except subprocess.TimeoutExpired:
                             child.kill()
-                            child.wait(timeout=5)
+                            child.wait(timeout=CLEANUP_GRACE_SECONDS)
                             record["timeout_cleanup_error"] = "Tree cleanup did not terminate root promptly; direct root killed"
                         if record.get("timeout_cleanup_error"):
                             ledger.update(stopped=True, stop_reason="timeout_cleanup_failed")

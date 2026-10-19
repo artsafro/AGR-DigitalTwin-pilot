@@ -114,6 +114,7 @@ substitute ad-hoc scripting.
   port 9877. Create/edit/material/UV, save/reopen, FBX export/import passed. MCP screenshots
   preceded an NVIDIA driver crash — use Computer Use for visuals. Runs arbitrary Python in the
   open scene: never on an unrelated production scene. Skill: `blender-mcp`.
+- bpy wheel pin rule: a bpy wheel lane, if used, must equal the baseline Blender version 5.1.2 (`BLENDER_VERSION` in `src/dt_ai/core/blender_runner.py`) and is re-verified on each Blender upgrade.
 
 ### SpeedTree Modeler — `speedtree`
 - Status: WORKING for file inspection and CLI FBX batch export (Codex, 2026-10-06, Modeler v10.0.1).
@@ -134,6 +135,10 @@ substitute ad-hoc scripting.
 
 Adapters and evidence log: `tools/mcp/README.md`, `tools/mcp/verification.txt`. All routes are
 registered for Codex and Antigravity; Claude uses only its own user-scope registrations.
+Project sessions load only the DCC servers [D130]: `.claude/settings.json` sets `disableClaudeAiConnectors`
+(claude.ai connectors such as Gmail, Zoom, Drive stay out of terminal, VS Code and JetBrains sessions;
+GitHub works through `gh`); desktop-app and cloud sessions ignore that key, there the connectors are
+switched off at claude.ai/customize/connectors.
 
 ### DCC tool risk classes
 
@@ -397,6 +402,16 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
 - Status: WORKING per package README (Russian): `glb_atlas`, `uv_continuous` (UV v006),
   `window_atlas`, `texture_tiles`, `mesh_audit`. Scope of each = its accepted case.
 
+### Album page reader — `src/dt_ai/album/` (#317, kernel C5; D127)
+- Status: IN BRANCH `improve/issue-317-kernel-c5-vector-pdf-album-reader-axes-d` (Hermes dt-worker, 2026-10-19),
+  validated on SYNTHETIC PDFs generated at test time only (`dt_ai.album.synthetic`), no real album yet.
+- Use: `uv run --extra pdf-review python -c "from dt_ai.album import read_page, reading_to_json; print(reading_to_json(read_page('sheet.pdf', 1)))"`.
+  One vector page -> paths, segments, text runs, axes, horizontal dimensions, level marks, legend (swatch RGB + label),
+  scale from one axis dimension (`scale_axes=("1","2")` or the left-most), `dimension_mismatch` / `level_mismatch`
+  findings; deterministic JSON with sha256, page number and PyMuPDF version.
+- Limits: fail-closed statuses `not_vector` / `no_text_layer` / `empty`, scale `unknown` without an axis dimension;
+  vertical dimension chains, OCR, PDFIMPORT fallback and multi-page indexing are not covered.
+
 ## Delivery QA (tools/qa, src/twinqa, standards/)
 
 ### Standards layer — `standards/`
@@ -417,6 +432,19 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
 ### FBX readback — `tools/blender/fbx_readback.py`
 - Status: WORKING (2026-10-06; Blender 4.4 and 5.1 background, cube roundtrip tests)
 - Triangles, polygon degrees, UV channels, UDIM tiles, mirrored UV, transforms, embedded images.
+
+### UCX builder — `src/dt_ai/geometry/ucx_build.py`, `tools/blender/ucx_build.py`
+- Status: TOOL ONLY (2026-10-19, #166): Main measured on 4 etalon meshes (KPP1, PSU275, Skolkovo, Mashi),
+  Ground on synthetic surfaces only (`tests/test_ucx_build.py`); no real-object delivery acceptance.
+- `blender --background --factory-startup --python-exit-code 1 --python tools/blender/ucx_build.py --
+  <model.fbx|.blend> <out.fbx> <Main|Ground> [cell= gap= with=<obj,...>]`; exit 0 built / 3 Ground over
+  `tol` (one-sided vertical deviation or uncovered strip; reverse footprint overhang is diagnostic [D134]) / 2 failed (incl. a missing `with=` name, a UCX
+  that names no model object) / 4 refused (output aliases input). Replaces only the UCX of the input
+  objects; other targets' UCX are kept and their triangles are reserved from the whole-file [D012]
+  budget (kept + new over the limit -> exit 2, no FBX). Job scripts: `build_into_scene(...)`, pass
+  `reserved_triangles=` for UCX already in the file.
+- Facade-oriented 8-vertex boxes (Main) or quadtree hexahedra (Ground), 4 mm gap, [D012] budget; check
+  the output with `tools/blender/ucx_audit.py` and the validator scene checks.
 
 ### Face overlap check — `tools/qa/check_clearance.py`
 - Status: WORKING (2026-10-06; AGR boundary cases + FBX planes 3 mm apart)
@@ -477,3 +505,14 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
 
 ### `analyze-architectural-source`, `validate-delivery` (project skills)
 - Status: CONFIGURED (written against `docs/domain/`; not yet run on a real source)
+
+### Placement engine — `src/dt_ai/placement/engine.py` (#316)
+- Status: IN BRANCH `improve/issue-316-placement-engine-pure-flora-maf-placemen` (Hermes dt-worker, 2026-10-19);
+  synthetic tests only (`tests/test_placement_engine.py`), not yet run on a real Ground or SPOZU table (#296).
+- Use: `place(points, ground_vertices, ground_triangles, library, seed=<int>, label_map=None)` -> report dict;
+  `report_json(report)` for byte-stable JSON; CLI `uv run python -m dt_ai.placement.engine --input in.json
+  --output out.json` (exit 0 pass / 3 review / 1 fail / 2 bad invocation).
+- Does: Flora [D100] and MAF [D095] seating 0.10 m below the topmost Ground, seeded rotation/scale (Flora),
+  DXF INSERT rotation (MAF), bottom-face delete/review [D096], fail-closed findings per point [D108].
+- Limits: pure numpy/shapely, no DCC instancing; MAF dimensions [D094] only reported; nested-block rotation is
+  whatever `PointItem.rotation` carries.

@@ -510,7 +510,8 @@ DECIDED_RECORDS = {
         "2 mm - 1 cm", "project rule", "reg p.36 §13.4", "reports gaps outside the band",
     )),
     "R10": ("docs/domain/areas/ucx.md", "| R10 ", (
-        "[D098]", "2 mm - 1 cm", "project rule", "Report gaps outside the band", "| none |",
+        "[D098]", "2 mm - 1 cm", "project rule",
+        'V010 advisory "UCX piece gap (advisory)"', "never fail",
     )),
 }
 

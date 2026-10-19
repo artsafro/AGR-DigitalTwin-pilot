@@ -782,7 +782,105 @@ def _panel_hint(v, tris, parts, owners, levels):
                         f"slabs: [mesh names] (contours by panels, rules 1-2); slab candidates: {candidates}")
 
 
-def _panel_contour(v, slab_tris, rest_parts, lv, nxt):
+def _reference_slab(v, slab_tris, ceiling, lv):
+    """The storey's reference: the ceiling intersected with the floor slab's filled outline when that floor
+    exists, the ceiling alone when it does not (the ground storey). A loggia or a missing wall has slab above
+    and below; a cantilever or a canopy above the storey only has the ceiling (that stays data, as today)
+    (user 2026-10-16, #85)."""
+    if ceiling is None:
+        return None
+    floor_faces = _up_faces_at(v, slab_tris, lv["elev_m"]) if slab_tris is not None and len(slab_tris) else []
+    if not floor_faces:
+        return ceiling
+    floor = shapely.union_all(floor_faces).buffer(0)
+    floor = Polygon(max(shapely.get_parts(floor), key=lambda g: g.area).exterior)
+    both = ceiling.intersection(floor).buffer(0)
+    if both.is_empty:
+        return None
+    return orient(Polygon(max(shapely.get_parts(both), key=lambda g: g.area).exterior), sign=1.0)
+
+
+def _panel_recesses(env, reference, pts):
+    """The parts of the storey's slab outside the panel contour that the contour runs past deeper than
+    ATTACHMENT_FROM_M. Detection is geometric (contour ∩ reference eroded by ATTACHMENT_FROM_M); samples
+    are only for reporting (review 1 of #85). Nothing filtered (user 2026-10-16, #85)."""
+    inner = reference.buffer(-dc.ATTACHMENT_FROM_M, quad_segs=64)   # slightly larger than the true inset where
+    if inner.is_empty:                                              # the arcs are chorded, so a touch still stops
+        return []
+    deep_line = env.exterior.intersection(inner)                   # boundary counts: a point on the inset stops
+    if deep_line.is_empty:
+        return []
+    gap = reference.difference(env).buffer(0)
+    deep_xy = shapely.get_coordinates(deep_line)
+    deep_pts = shapely.points(deep_xy) if len(deep_xy) else None
+    found = []
+    for g in shapely.get_parts(gap):
+        if g.geom_type != "Polygon" or g.area <= 0:
+            continue
+        if not bool(shapely.dwithin(g, deep_line, 0.01)):
+            continue
+        near = []
+        if deep_pts is not None:
+            on = np.asarray(shapely.dwithin(deep_pts, g, 0.01), dtype=bool).reshape(-1)
+            if on.shape == deep_xy.shape[:1] and on.any():
+                near.append(deep_xy[on])
+        on_s = np.asarray(shapely.dwithin(pts, g, 0.01), dtype=bool).reshape(-1)
+        if on_s.shape == np.shape(pts)[:1] and on_s.any():
+            near.append(shapely.get_coordinates(pts[on_s]))
+        if near:
+            xy = np.vstack(near)
+        else:
+            xy = np.atleast_2d(shapely.get_coordinates(shapely.ops.nearest_points(deep_line, g)[0]))
+        depth = float(np.max(shapely.distance(shapely.points(xy), reference.exterior)))
+        centre = g.representative_point()
+        edge = g.exterior.intersection(reference.exterior.buffer(0.01))
+        found.append((g, {
+            "centre": [round(float(centre.x), 2), round(float(centre.y), 2)],
+            "bbox_m": [round(float(v), 2) for v in g.bounds],
+            "area_m2": round(float(g.area), 3),
+            "depth_m": round(depth, 3),
+            "slab_edge_m": round(float(edge.length), 2)}))
+    return found
+
+
+def _apply_panel_niches(env, reference, pts, niches, lv, poly, rep):
+    """Unconfirmed deep pockets stop the contour; confirmed ones are data. The extractor never classifies a
+    pocket as a niche or a missing wall (user 2026-10-16, #85)."""
+    found = _panel_recesses(env, reference, pts)
+    given = [[float(p[0]), float(p[1])] for p in (niches or [])]
+    if not found:
+        if given:
+            rep["panel_niches_unused"] = given
+        return
+    geoms = [g for g, _ in found]
+    confirmed, open_regs = [], []
+    for geom, facts in found:
+        if any(geom.buffer(0.01).covers(shapely.Point(p[0], p[1])) for p in given):
+            confirmed.append(facts)
+        else:
+            open_regs.append(facts)
+    unused = [p for p in given if not any(g.buffer(0.01).covers(shapely.Point(p[0], p[1])) for g in geoms)]
+    if unused:
+        rep["panel_niches_unused"] = unused
+    if not open_regs:
+        if confirmed:
+            rep["panel_niches"] = confirmed
+        return
+    depth = max(r["depth_m"] for r in open_regs)
+    where = "; ".join(
+        f"region {i} centre ({r['centre'][0]}, {r['centre'][1]}), bbox {r['bbox_m']}, {r['area_m2']} m2, "
+        f"{r['slab_edge_m']} m along the slab edge, {r['depth_m']} m deep" for i, r in enumerate(open_regs, 1))
+    centres = ", ".join(str(r["centre"]) for r in open_regs)
+    raise SpecError(
+        f"level {lv['name']}: the panel contour runs up to {depth} m inside the storey's slabs "
+        f"(deeper than {dc.ATTACHMENT_FROM_M} m off the slab edge) - a niche/loggia or a missing facade wall; "
+        f"the extractor does not decide it (user 2026-10-16, #85). Check the drawings at: {where}. "
+        f"Contour {poly.area:.3f} m2, facade_offset_range_m {rep.get('facade_offset_range_m')}, "
+        f"slab_inside_facade_share {rep.get('slab_inside_facade_share')}. "
+        f"A niche: object.json panel_niches: {{\"{lv['name']}\": [{centres}]}}; a missing wall: fix the source.")
+
+
+def _panel_contour(v, slab_tris, rest_parts, lv, nxt, niches=None):
     """Rule 2 (user 2026-10-13): on a panel facade the storey's contour is the envelope of the panels' outer faces
     at mid storey - the section of every part but the slabs, a protrusion further than ATTACHMENT_FROM_M off the
     storey's own slabs (floor and ceiling; the deck at a terrace level) cut off whole, root included, segment by
@@ -790,7 +888,9 @@ def _panel_contour(v, slab_tris, rest_parts, lv, nxt):
     deviations within RELIEF_M collapsed (Douglas-Peucker). The ceiling slab (the next level) is the check:
     the panels stand outside it by facade_offset_m (data, no question). Over a ledge to the storey below, the
     walkable part is the slab there and a parapet is the parts standing on the ledge's outer edge: a terrace
-    (the level is the walkable top, user 2026-10-13)."""
+    (the level is the walkable top, user 2026-10-13). A run of the contour deeper than ATTACHMENT_FROM_M inside
+    the storey's slabs stops and asks whether it is a niche or a missing wall; the extractor does not decide it
+    (user 2026-10-16 [D132], #85): the user checks the drawings to clarify which it is."""
     zmid = (lv["elev_m"] + nxt["elev_m"]) / 2
     faces = _up_faces_at(v, slab_tris, nxt["elev_m"])
     slab = shapely.union_all(faces).buffer(0) if faces else None
@@ -854,6 +954,9 @@ def _panel_contour(v, slab_tris, rest_parts, lv, nxt):
     off = shapely.distance(pts, ceiling.exterior) * np.where(shapely.covered_by(pts, ceiling), -1.0, 1.0)
     rep["facade_offset_m"] = round(float(np.median(off)), 3)     # panels outside the slab (+), inside (-): data
     rep["facade_offset_range_m"] = [round(float(off.min()), 3), round(float(off.max()), 3)]
+    reference = _reference_slab(v, slab_tris, ceiling, lv)
+    if reference is not None:
+        _apply_panel_niches(env, reference, pts, niches, lv, poly, rep)
     return poly, rep, env
 
 
@@ -882,11 +985,12 @@ def _facade_ring(pieces, joint):
 
 
 def _prune_spurs(kept, dropped, outline, band):
-    """A protrusion cut at the attachment reach leaves its root on the facade. From every cut point walk through the
-    connected segments and remove those that belong to the protrusion - running across the facade (closer to the
-    outline's normal than to its tangent) or standing beyond the facade band - and stop at facade segments (along
-    the facade, inside the band), which stay with everything behind them: a glass line ending at a fin stays, a
-    crossbar inside the fin goes (#87, user 2026-10-13; review 1 of #89)."""
+    """Remove cut-connected roots, including bends outside the facade band. Outside the band a root can turn
+    back toward the slab, opposite the cut's outgoing direction; it need not be collinear with a bent tail.
+    Inside the band require straight continuation and stop where another within-band direction meets it:
+    glass lines and facade steps are junctions, not roots. Only nodes reached from an actual cut are visited;
+    an endpoint outside the band alone never classifies a facade segment as a spur.
+    (#87, user 2026-10-13; review 1 of #89; #90; reviews 1-2 of #279)."""
     if not kept:
         return kept
     noded = [LineString(c) for g in shapely.get_parts(shapely.union_all(kept)) for c in
@@ -897,21 +1001,75 @@ def _prune_spurs(kept, dropped, outline, band):
         adj[key(sg.coords[0])].add(i)
         adj[key(sg.coords[-1])].add(i)
     ring = outline.exterior
+    # Inside the band keep the narrow straight-line test: widening it mistakes facade junctions for roots.
+    SAME_LINE = float(np.cos(np.deg2rad(2.0)))
 
-    def protrudes(sg):                               # beyond the facade band: a root up to the band's depth may
-        return ring.distance(sg.interpolate(0.5, normalized=True)) > band    # stay (#90); far-end tests cut real
-    todo = [n for n in adj if n in {key(c) for sg in dropped for c in (sg.coords[0], sg.coords[-1])}]
-    gone, seen = set(), set(todo)
+    def unit(a, b):
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        norm = (dx * dx + dy * dy) ** 0.5
+        return (dx / norm, dy / norm) if norm else (0.0, 0.0)
+
+    def rdir(p):
+        return (round(p[0], 4), round(p[1], 4))
+
+    def beyond(i):
+        return ring.distance(noded[i].interpolate(0.5, normalized=True)) > band
+
+    def outward(i, n):
+        """Unit from n along segment i, the other end, its key, and n's own coordinate."""
+        c0, c1 = noded[i].coords[0], noded[i].coords[-1]
+        if key(c0) == n:
+            return unit(c0, c1), c1, key(c1), c0
+        return unit(c1, c0), c0, key(c0), c1
+
+    dirs = defaultdict(list)
+    todo = []
+    for sg in dropped:
+        a, b = sg.coords[0], sg.coords[-1]
+        for here, there in ((a, b), (b, a)):
+            node = key(here)
+            if node in adj:
+                dirs[node].append(unit(here, there))
+                todo.append(node)
+
+    def continues(j, n):
+        """Continue a cut back to the facade, allowing a bend only outside the facade band."""
+        u, other, _, here = outward(j, n)
+        dots = [u[0] * p[0] + u[1] * p[1] for p in dirs[n]]
+        if any(dot <= -SAME_LINE for dot in dots):
+            return True
+        # A cut tail may bend at a crossbar or triangulation seam. Use progress toward the slab,
+        # not a larger angular tolerance. At/inside the band the existing junction stop wins,
+        # including a collinear step and a glass line ending at an oblique fin.
+        distance = ring.distance(shapely.Point(here))
+        return (distance > band and ring.distance(shapely.Point(other)) < distance
+                and any(dot < 0.0 for dot in dots))
+
+    def meets_facade(n):
+        # another direction, inside the band: the protrusion has met the facade. Beyond-band pieces do not count.
+        return any(not beyond(j) and not continues(j, n) for j in adj[n] - gone)
+
+    def enqueue(j, n):
+        gone.add(j)
+        _, cm, m, cn = outward(j, n)
+        p = unit(cm, cn)                              # from m back toward n: where the protrusion lies
+        dirs[m].append(p)
+        if (m, rdir(p)) not in seen and not meets_facade(m):
+            todo.append(m)
+
+    gone, seen = set(), set()
     while todo:
-        node = todo.pop()
-        for i in adj[node] - gone:
-            if not protrudes(noded[i]):
-                continue
-            gone.add(i)
-            for end in (key(noded[i].coords[0]), key(noded[i].coords[-1])):
-                if end not in seen:
-                    seen.add(end)
-                    todo.append(end)
+        n = todo.pop()
+        pending = [p for p in dirs[n] if (n, rdir(p)) not in seen]
+        if not pending:
+            continue
+        for p in pending:
+            seen.add((n, rdir(p)))
+        if meets_facade(n):                           # once, before any removal at this node
+            continue
+        for j in list(adj[n] - gone):
+            if continues(j, n):
+                enqueue(j, n)
     return [sg for i, sg in enumerate(noded) if i not in gone]
 
 
@@ -1717,7 +1875,7 @@ def _extract(dump, obj_cfg, profile, thresholds, found):
             if panelised:
                 rest = tris[np.flatnonzero(~mine)]
                 poly, rep, outline = _panel_contour(v, body, [tris[pt] for pt in parts[1:]] + [plane_tris[:, :3]],
-                                                    lv, nxt)
+                                                    lv, nxt, niches=(obj_cfg.get("panel_niches") or {}).get(lv["name"]))
                 dev, ms, dr, parapet, raw = [], [], [], (), poly
                 if prev is not None and (t := _panel_terrace(v, body, rest, lv, nxt, poly, prev)) is not None:
                     rep["terrace"] = t

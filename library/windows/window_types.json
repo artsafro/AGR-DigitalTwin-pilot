@@ -1,6 +1,6 @@
 {
  "schema": "window-types/1",
- "note": "Machine-readable window type list (HARNESS_PLAN §6, issue #4). An entry is unconfirmed until the user confirms and names it (library/windows/confirmations.json); handing is null; sashes are not in the sources. Sizes are the rough opening with its frame (spec v0.3); panes_m are glass rectangles [x0, z0, x1, z1] from the bottom left of the opening. Built by tools/library/build_window_types.py.",
+ "note": "Machine-readable window type list (HARNESS_PLAN §6, issue #4). An entry is unconfirmed until the user confirms and names it (library/windows/confirmations.json); handing is null; sashes are not in the sources. Sizes are the rough opening with its frame (spec v0.3); panes_m are glass rectangles [x0, z0, x1, z1] from the bottom left of the opening. Built by tools/library/build_window_types.py. Unconfirmed sash and handing readings with their reasons are in each entry's `unconfirmed` field (tools/library/window_sashes.py).",
  "types": [
   {
    "id": "W01",
@@ -72,6 +72,16 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
    }
   },
   {
@@ -136,6 +146,16 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
    }
   },
   {
@@ -193,6 +213,16 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
    }
   },
   {
@@ -258,6 +288,16 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
    }
   },
   {
@@ -369,6 +409,16 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
    }
   },
   {
@@ -420,6 +470,16 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
    }
   },
   {
@@ -495,6 +555,16 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
    }
   },
   {
@@ -540,6 +610,16 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
    }
   },
   {
@@ -591,6 +671,16 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
    }
   },
   {
@@ -666,6 +756,16 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
    }
   },
   {
@@ -710,6 +810,16 @@
     "by": "user",
     "date": "2026-10-09",
     "note": "не тип: в исходнике нет места на фасаде"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
    }
   },
   {
@@ -778,7 +888,17 @@
    },
    "infill": "glass",
    "frame_finish": "F11 / RAL 7016",
-   "same_as": null
+   "same_as": null,
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
+   }
   },
   {
    "id": "W02_H",
@@ -839,7 +959,17 @@
    },
    "infill": "glass",
    "frame_finish": "F11 / RAL 7016",
-   "same_as": null
+   "same_as": null,
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
+   }
   },
   {
    "id": "W03_H",
@@ -892,7 +1022,17 @@
    },
    "infill": "glass",
    "frame_finish": "F11 / RAL 7016",
-   "same_as": null
+   "same_as": null,
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
+   }
   },
   {
    "id": "W01_N",
@@ -958,7 +1098,17 @@
    },
    "infill": "glass",
    "frame_finish": "F11 / RAL 7016",
-   "same_as": null
+   "same_as": null,
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
+   }
   },
   {
    "id": "W04_N",
@@ -1017,7 +1167,17 @@
    },
    "infill": "glass",
    "frame_finish": "F11 / RAL 7016",
-   "same_as": null
+   "same_as": null,
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
+   }
   },
   {
    "id": "D03_W",
@@ -1094,7 +1254,17 @@
    },
    "infill": "glass",
    "frame_finish": "F11 / RAL 7016",
-   "same_as": null
+   "same_as": null,
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
+   }
   },
   {
    "id": "CW_021",
@@ -1129,7 +1299,17 @@
     }
    },
    "note": "не типизирован: особое членение (3 панели, 15 импостов, 1 окно)",
-   "same_as": null
+   "same_as": null,
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
+   }
   },
   {
    "id": "CW_022",
@@ -1164,7 +1344,17 @@
     }
    },
    "note": "не типизирован: неоднозначные наложения панелей в исходнике; габарит по bbox, не проверен",
-   "same_as": null
+   "same_as": null,
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
+   }
   },
   {
    "id": "KPP1-W01",
@@ -1204,6 +1394,16 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
    }
   },
   {
@@ -1262,6 +1462,16 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
    }
   },
   {
@@ -1308,6 +1518,16 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": null,
+     "reason": "the source has no sash data"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the source has no handing data"
+    }
    }
   },
   {
@@ -1392,6 +1612,31 @@
     "by": "user",
     "date": "2026-10-09",
     "note": "kind balcony_block (user)"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 2,
+     "rects_m": [
+      [
+       0.094,
+       0.954,
+       0.65,
+       2.16
+      ],
+      [
+       1.524,
+       0.154,
+       2.28,
+       2.16
+      ]
+     ],
+     "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -1469,6 +1714,43 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 4,
+     "rects_m": [
+      [
+       0.056,
+       1.182,
+       0.79,
+       2.558
+      ],
+      [
+       0.79,
+       1.182,
+       1.572,
+       2.558
+      ],
+      [
+       1.628,
+       1.182,
+       2.362,
+       2.558
+      ],
+      [
+       2.362,
+       1.182,
+       3.144,
+       2.558
+      ]
+     ],
+     "reason": "two sash depth levels overlap at the meeting stile (sliding or not is unknown); not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -1510,6 +1792,18 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 0,
+     "rects_m": [],
+     "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -1563,6 +1857,31 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 2,
+     "rects_m": [
+      [
+       0.094,
+       0.574,
+       0.754,
+       1.85
+      ],
+      [
+       0.928,
+       0.574,
+       1.59,
+       1.85
+      ]
+     ],
+     "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -1628,6 +1947,31 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 2,
+     "rects_m": [
+      [
+       0.094,
+       0.574,
+       0.754,
+       1.85
+      ],
+      [
+       1.718,
+       0.574,
+       2.38,
+       1.85
+      ]
+     ],
+     "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -1681,6 +2025,31 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 2,
+     "rects_m": [
+      [
+       0.058,
+       1.182,
+       1.032,
+       2.558
+      ],
+      [
+       1.032,
+       1.182,
+       1.958,
+       2.558
+      ]
+     ],
+     "reason": "two sash depth levels overlap at the meeting stile (sliding or not is unknown); not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -1746,6 +2115,31 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 2,
+     "rects_m": [
+      [
+       0.058,
+       1.182,
+       0.874,
+       2.558
+      ],
+      [
+       0.874,
+       1.182,
+       2.456,
+       2.558
+      ]
+     ],
+     "reason": "two sash depth levels overlap at the meeting stile (sliding or not is unknown); not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -1812,6 +2206,31 @@
     "by": "user",
     "date": "2026-10-09",
     "note": "kind balcony_block (user)"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 2,
+     "rects_m": [
+      [
+       0.094,
+       0.954,
+       0.65,
+       2.16
+      ],
+      [
+       0.824,
+       0.154,
+       1.38,
+       2.16
+      ]
+     ],
+     "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -1865,6 +2284,31 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 2,
+     "rects_m": [
+      [
+       0.094,
+       0.954,
+       0.65,
+       2.16
+      ],
+      [
+       0.824,
+       0.154,
+       1.38,
+       2.16
+      ]
+     ],
+     "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -1930,6 +2374,18 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 0,
+     "rects_m": [],
+     "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -1983,6 +2439,18 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 0,
+     "rects_m": [],
+     "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -2024,6 +2492,18 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 0,
+     "rects_m": [],
+     "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -2072,6 +2552,31 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 2,
+     "rects_m": [
+      [
+       0.068,
+       0.098,
+       0.548,
+       2.186
+      ],
+      [
+       0.582,
+       0.098,
+       1.406,
+       2.186
+      ]
+     ],
+     "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -2114,6 +2619,25 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 1,
+     "rects_m": [
+      [
+       0.068,
+       0.098,
+       0.88,
+       2.186
+      ]
+     ],
+     "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -2174,6 +2698,31 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 2,
+     "rects_m": [
+      [
+       0.068,
+       0.098,
+       0.548,
+       2.186
+      ],
+      [
+       0.582,
+       0.098,
+       1.406,
+       2.186
+      ]
+     ],
+     "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -2209,6 +2758,25 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 1,
+     "rects_m": [
+      [
+       0.068,
+       0.098,
+       0.88,
+       2.186
+      ]
+     ],
+     "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -2244,6 +2812,18 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 0,
+     "rects_m": [],
+     "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -2285,6 +2865,18 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 0,
+     "rects_m": [],
+     "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -2332,6 +2924,18 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 0,
+     "rects_m": [],
+     "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -2409,6 +3013,31 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 2,
+     "rects_m": [
+      [
+       0.094,
+       0.574,
+       0.754,
+       1.85
+      ],
+      [
+       2.6,
+       0.574,
+       3.26,
+       1.85
+      ]
+     ],
+     "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -2486,6 +3115,18 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 0,
+     "rects_m": [],
+     "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -2527,6 +3168,25 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 1,
+     "rects_m": [
+      [
+       0.068,
+       0.098,
+       0.88,
+       2.186
+      ]
+     ],
+     "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -2574,6 +3234,31 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 2,
+     "rects_m": [
+      [
+       0.068,
+       0.098,
+       0.548,
+       2.186
+      ],
+      [
+       0.582,
+       0.098,
+       1.404,
+       2.186
+      ]
+     ],
+     "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   },
   {
@@ -2633,6 +3318,31 @@
    "decision": {
     "by": "user",
     "date": "2026-10-09"
+   },
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 2,
+     "rects_m": [
+      [
+       0.068,
+       0.098,
+       0.548,
+       2.186
+      ],
+      [
+       0.582,
+       0.098,
+       1.404,
+       2.186
+      ]
+     ],
+     "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+     "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+    }
    }
   }
  ]
