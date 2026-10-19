@@ -271,6 +271,20 @@ _PASS_REPORT = {
     "bindings_expected": 4,
     "paths_outside": 0,
 }
+@pytest.fixture(autouse=True)
+def no_published_map_reads(monkeypatch):
+    """Simulate a clean checkout without modifying any workstation assets."""
+    read_bytes = Path.read_bytes
+
+    def read_without_published_assets(path):
+        normalized = str(path).replace("\\", "/").lower()
+        if normalized.startswith("c:/x/flora-library/"):
+            raise FileNotFoundError(f"published assets unavailable in unit tests: {path}")
+        return read_bytes(path)
+
+    monkeypatch.setattr(Path, "read_bytes", read_without_published_assets)
+
+
 _PUBLISHED_DIFFUSE = Path(r"C:/x/flora-library/v001/maps/tilia-cordata/diffuse-v001.png")
 _PUBLISHED_OPACITY = Path(r"C:/x/flora-library/v001/maps/tilia-cordata/opacity-v001.png")
 
