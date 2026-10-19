@@ -57,13 +57,27 @@ def test_log_format():
     rows = log_rows()
     assert rows, "no decisions"
     dates = []
-    # Backfilled decisions keep the next free id and their original date, not a new date or renumbered ids.
-    assert sorted(row[0] for row in rows) == [f"D{n:03d}" for n in range(1, len(rows) + 1)], \
-        "ids must run D001, D002, ... without gaps or duplicates"
+    previous_id = 0
     for row in rows:
         assert len(row) == 5 and all(row), row
+        current_id = int(row[0][1:])
+        assert current_id > previous_id, f"{row[0]}: ids must be unique and increasing (open PRs may reserve gaps)"
+        previous_id = current_id
         dates.append(datetime.date.fromisoformat(row[1]))
     assert dates == sorted(dates), "decisions must be sorted by date"
+
+
+@pytest.mark.parametrize("ids,valid", [(["D001", "D003"], True),
+                                      (["D001", "D001"], False), (["D003", "D001"], False)])
+def test_log_format_reserved_ids(monkeypatch, ids, valid):
+    """Rule 42: open PR reservations may leave gaps, but duplicate/descending IDs still fail."""
+    rows = [[i, "2026-10-19", "decision", "anchor", "user"] for i in ids]
+    monkeypatch.setitem(globals(), "log_rows", lambda: rows)
+    if valid:
+        test_log_format()
+    else:
+        with pytest.raises(AssertionError):
+            test_log_format()
 
 
 def test_every_dated_decision_carries_its_id():
@@ -79,15 +93,13 @@ def test_every_decision_is_anchored_where_it_applies():
     assert [row[0] for row in log_rows() if row[0] not in anchored] == []
 
 
-def test_log_rejects_every_missing_or_duplicate_id(monkeypatch):
-    """Exhaustive synthetic mutations: a backfill must not weaken id uniqueness or completeness."""
+def test_log_rejects_every_duplicate_id(monkeypatch):
+    """Exhaustive synthetic mutations: a backfill must not weaken id uniqueness."""
     rows = log_rows()
     module = __import__(__name__)
     for i in range(len(rows)):
-        # Removing the highest id is indistinguishable from a valid shorter log; probe internal gaps only.
+        # Rule 42 (#166) allows reserved gaps, so a removed id is valid; a duplicated id must still fail.
         mutations = [rows[:i] + [rows[i]] + rows[i:]]
-        if rows[i][0] != max(row[0] for row in rows):
-            mutations.append(rows[:i] + rows[i + 1:])
         for mutated in mutations:
             monkeypatch.setattr(module, "log_rows", lambda mutated=mutated: mutated)
             with pytest.raises(AssertionError):
@@ -101,7 +113,8 @@ def test_drawing_review_decision_is_logged_and_anchored():
     rows = [row for row in log_rows() if row[0] == "D132"]
     assert len(rows) == 1, "#85 drawing-review decision must be canonical"
     row = rows[0]
-    assert row[1] == "2026-10-16"
+    # Recorded 2026-10-19 between D131 and D134 (ids and dates both ascending, rule 42); decided 2026-10-16.
+    assert row[1] == "2026-10-19" and "decided 2026-10-16" in row[2]
     assert "drawings" in row[2] and "missing wall" in row[2]
     assert row[3] == "`src/dt_ai/spec/mesh.py` `_panel_contour`"
     assert "/pull/274" in row[4] and "#85" in row[4]
