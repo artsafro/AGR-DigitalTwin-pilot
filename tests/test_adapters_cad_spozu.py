@@ -628,3 +628,235 @@ def test_probe_nested_instances_match_brute_force(seed):
     out = [f for f in res.findings if f.code == "point_outside_boundary"]
     assert len(out) == n_out and len({f.ref for f in out}) == n_out
     assert {f.code for f in res.findings} <= {"point_outside_boundary", "overlapping_coverings"}
+
+
+# ---------------------------------------------------------------- review round 2 regressions (P1-1, P1-2)
+
+
+def _affine(x, y, rot=0.0, sx=1.0, sy=1.0):
+    """2D affine of an INSERT (scale, then rotate, then move) as (a, b, c, d, e, f): X = a*u + b*v + c."""
+    r = math.radians(rot)
+    co, si = math.cos(r), math.sin(r)
+    return (co * sx, -si * sy, x, si * sx, co * sy, y)
+
+
+def _compose(p, q):
+    """p after q."""
+    a, b, c, d, e, f = p
+    A, B, C, D, E, F = q
+    return (a * A + b * D, a * B + b * E, a * C + b * F + c, d * A + e * D, d * B + e * E, d * C + e * F + f)
+
+
+def _apply(m, u, v):
+    a, b, c, d, e, f = m
+    return a * u + b * v + c, d * u + e * v + f
+
+
+def _grid_cells(rows, cols, rsp, csp):
+    return [(c * csp, r * rsp) for r in range(rows) for c in range(cols)]
+
+
+def test_nested_minsert_cells_follow_parent_transform():
+    """Round 2 P1-1 (reviewer input): a 2x3 Oak MINSERT inside a container scaled 2 and rotated 90."""
+    doc = clean_doc()
+    blk = doc.blocks.new("ARRAY_CONTAINER")
+    m = blk.add_blockref("Oak", (1, 1), dxfattribs={"layer": "PLANT"})
+    m.grid(size=(2, 3), spacing=(5, 4))
+    ins = doc.modelspace().add_blockref("ARRAY_CONTAINER", (20, 20),
+                                        dxfattribs={"layer": "0", "xscale": 2, "yscale": 2, "rotation": 90})
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    got = sorted((p.x, p.y) for p in res.planting if p.container)
+    exp = [(8, 22), (8, 30), (8, 38), (18, 22), (18, 30), (18, 38)]
+    assert len(got) == 6
+    for g, e in zip(got, exp):
+        assert g == pytest.approx(e, abs=1e-6)
+    refs = [p.ref for p in res.planting if p.container]
+    assert len(set(refs)) == 6 and all(r.startswith(f"{ins.dxf.handle}>{m.dxf.handle}") for r in refs)
+    assert res.findings == []
+
+
+@pytest.mark.parametrize("parent", [(-2, 2, 35), (2, 3, 0), (-1, 1, 0), (2, 2, 90)])
+def test_nested_minsert_controls_mirror_nonuniform(parent):
+    """Reviewer controls: (xscale, yscale, rotation) of the parent; brute-force expected cells."""
+    sx, sy, rot = parent
+    doc = clean_doc()
+    blk = doc.blocks.new("ARRAY_CONTAINER")
+    m = blk.add_blockref("Oak", (1, 1), dxfattribs={"layer": "PLANT"})
+    m.grid(size=(2, 3), spacing=(5, 4))
+    doc.modelspace().add_blockref("ARRAY_CONTAINER", (20, 20),
+                                  dxfattribs={"layer": "0", "xscale": sx, "yscale": sy, "rotation": rot})
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    M = _affine(20, 20, rot, sx, sy)
+    exp = sorted(_apply(M, 1 + u, 1 + v) for u, v in _grid_cells(2, 3, 5, 4))
+    got = sorted((p.x, p.y) for p in res.planting if p.container)
+    assert len(got) == 6
+    for g, e in zip(got, exp):
+        assert g == pytest.approx(e, abs=1e-6)
+    n_out = sum(not (0 <= x <= 100 and 0 <= y <= 100) for x, y in exp)
+    assert len([f for f in res.findings if f.code == "point_outside_boundary"]) == n_out
+    assert {f.code for f in res.findings} <= {"point_outside_boundary"}
+
+
+def test_nested_minsert_of_hatch_container_mirrored_outside_and_label():
+    """Combined: mirrored parent holding a MINSERT of a hatch+plant container; one cell outside the
+    plot, plants without the configured SPECIES attribute -> per-cell findings with unique refs."""
+    doc = clean_doc()
+    c = doc.blocks.new("CELL")
+    h = c.add_hatch(dxfattribs={"layer": "COV_DECK"})
+    h.paths.add_polyline_path(rect(0, 0, 1, 1), is_closed=True, flags=EXTERNAL)
+    c.add_blockref("Oak", (0.5, 0.5), dxfattribs={"layer": "PLANT"})
+    arr = doc.blocks.new("ARR")
+    g = arr.add_blockref("CELL", (0, 0), dxfattribs={"layer": "0"})
+    g.grid(size=(1, 3), spacing=(3, 3))  # columns at u = 0, 3, 6
+    ins = doc.modelspace().add_blockref("ARR", (5, 30), dxfattribs={"layer": "0", "xscale": -1, "yscale": 1})
+    pl = {"layers": ["PLANT"], "positions": {"Oak": "1"}, "label": "attrib:SPECIES"}
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config(planting=pl)))
+    nested = sorted((round(p.x, 6), round(p.y, 6)) for p in res.planting if p.container)
+    assert nested == [(-1.5, 30.5), (1.5, 30.5), (4.5, 30.5)]
+    out = [f for f in res.findings if f.code == "point_outside_boundary"]
+    assert len(out) == 1 and out[0].ref.startswith(f"{ins.dxf.handle}>{g.dxf.handle}")
+    lm = [f for f in res.findings if f.code == "label_missing"]
+    assert len(lm) == 4 and len({f.ref for f in lm}) == 4  # 3 cells + the top-level Oak
+    # mirrored cells cover x in [4,5], [1,2], [-2,-1]; the last one is outside the plot
+    assert res.coverings["deck"].area == pytest.approx(2)
+    assert len(res.coverings["deck"].sources) == 2
+
+
+@pytest.mark.parametrize("seed", range(40))
+def test_probe_nested_minsert_match_brute_force(seed):
+    """Generated probe: point-symbol or hatch-container MINSERTs, 1 or 2 block levels below a parent
+    with rotation, mirror and (one level) non-uniform scale -> every cell at the composed WCS point,
+    deck area = union of composed cell squares in the plot, every outside cell flagged once."""
+    from shapely.geometry import box
+
+    rng = random.Random(9500 + seed)
+    doc = ezdxf.new("R2018")
+    doc.header["$INSUNITS"] = 6
+    msp = doc.modelspace()
+    msp.add_lwpolyline(rect(0, 0, 100, 100), close=True, dxfattribs={"layer": "BOUNDARY"})
+    doc.blocks.new("Oak")
+    cell = doc.blocks.new("CELL")
+    h = cell.add_hatch(dxfattribs={"layer": "COV_DECK"})
+    h.paths.add_polyline_path(rect(0, 0, 1, 1), is_closed=True, flags=EXTERNAL)
+    cell.add_blockref("Oak", (0.5, 0.5), dxfattribs={"layer": "PLANT"})
+    exp_pts, polys = [], []
+    for i in range(rng.randint(1, 4)):
+        what = rng.choice(["Oak", "CELL"])
+        rows, cols = rng.randint(1, 3), rng.randint(1, 3)
+        rsp, csp = rng.uniform(1.5, 4), rng.uniform(1.5, 4)
+        ox, oy = rng.uniform(-3, 3), rng.uniform(-3, 3)
+        two = rng.random() < 0.5
+        child_rot = rng.uniform(0, 360) if two else 0.0
+        arr = doc.blocks.new(f"A{i}")
+        mi = arr.add_blockref(what, (ox, oy), dxfattribs={"layer": "PLANT" if what == "Oak" else "0",
+                                                          "rotation": child_rot})
+        if rows * cols > 1:
+            mi.grid(size=(rows, cols), spacing=(rsp, csp))
+        top_name, inner = f"A{i}", _affine(ox, oy, child_rot)
+        if two:
+            wx, wy, wr, ws = rng.uniform(-2, 2), rng.uniform(-2, 2), rng.uniform(0, 360), rng.uniform(0.5, 2)
+            w = doc.blocks.new(f"W{i}")
+            w.add_blockref(f"A{i}", (wx, wy), dxfattribs={"layer": "0", "rotation": wr, "xscale": ws, "yscale": ws})
+            top_name, inner = f"W{i}", _compose(_affine(wx, wy, wr, ws, ws), inner)
+        x, y, rot = rng.uniform(-10, 110), rng.uniform(-10, 110), rng.uniform(0, 360)
+        mx = rng.choice([1, -1])
+        if two:  # a rotated child below a non-uniform parent is a shear: uniform parent only
+            sx = sy = rng.uniform(0.5, 2.5)
+        else:
+            sx, sy = rng.uniform(0.5, 2.5), rng.uniform(0.5, 2.5)
+            rot = rng.choice([rot, 0.0])
+        msp.add_blockref(top_name, (x, y), dxfattribs={"layer": "0", "rotation": rot, "xscale": sx * mx, "yscale": sy})
+        M = _compose(_affine(x, y, rot, sx * mx, sy), inner)
+        for u, v in _grid_cells(rows, cols, rsp, csp):
+            if what == "Oak":
+                exp_pts.append(_apply(M, u, v))
+            else:
+                exp_pts.append(_apply(M, u + 0.5, v + 0.5))
+                polys.append(Polygon([_apply(M, u + p, v + q) for p, q in rect(0, 0, 1, 1)]))
+    plot = box(0, 0, 100, 100)
+    exp_area = union_all([p.intersection(plot) for p in polys]).area if polys else 0.0
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    assert res.coverings["deck"].area == pytest.approx(exp_area, abs=1e-4)
+    got = sorted((p.x, p.y) for p in res.planting)
+    exp = sorted(exp_pts)
+    assert len(got) == len(exp)
+    for g, e in zip(got, exp):
+        assert g == pytest.approx(e, abs=1e-6)
+    assert len({p.ref for p in res.planting}) == len(res.planting)
+    n_out = sum(not (0 <= px <= 100 and 0 <= py <= 100) for px, py in exp_pts)
+    out = [f for f in res.findings if f.code == "point_outside_boundary"]
+    assert len(out) == n_out and len({f.ref for f in out}) == n_out
+    assert {f.code for f in res.findings} <= {"point_outside_boundary", "overlapping_coverings"}
+
+
+def _unknown_block(doc, name="UNKNOWN_CONTENT", layer="NEW_COVERING"):
+    blk = doc.blocks.new(name)
+    h = blk.add_hatch(dxfattribs={"layer": layer})
+    h.paths.add_polyline_path(rect(0, 0, 2, 2), is_closed=True, flags=EXTERNAL)
+    return blk, h
+
+
+@pytest.mark.parametrize("depth", [1, 2])
+def test_nested_unmapped_layer_is_a_finding(depth):
+    """Round 2 P1-2 (reviewer input): NEW_COVERING hatch in a block inserted on ignored layer 0."""
+    doc = clean_doc()
+    _, h = _unknown_block(doc)
+    name = "UNKNOWN_CONTENT"
+    path = []
+    if depth == 2:
+        w = doc.blocks.new("WRAP")
+        path.append(w.add_blockref(name, (0, 0), dxfattribs={"layer": "0"}).dxf.handle)
+        name = "WRAP"
+    ins = doc.modelspace().add_blockref(name, (10, 10), dxfattribs={"layer": "0"})
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    assert [(f.code, f.layer) for f in res.findings] == [("unmapped_layer", "NEW_COVERING")]
+    f = res.findings[0]
+    assert f.ref == ">".join([ins.dxf.handle, *path, h.dxf.handle]) and f.handle == h.dxf.handle
+    assert "1 entities" in f.detail and "1 in blocks" in f.detail
+    assert [round(c.area, 6) for c in res.coverings.values()] == [5600, 4000, 0]
+
+
+def test_nested_unmapped_layer_repeated_ignored_atomic_and_mixed():
+    """Repeated instances -> one finding with the count; ignored-layer and atomic-symbol content is not
+    reported; a mixed container keeps its valid covering and reports only the unknown layer."""
+    doc = clean_doc()
+    msp = doc.modelspace()
+    blk, h = _unknown_block(doc)
+    d = blk.add_hatch(dxfattribs={"layer": "COV_DECK"})
+    d.paths.add_polyline_path(rect(0, 0, 1, 1), is_closed=True, flags=EXTERNAL)
+    blk.add_line((0, 0), (1, 1), dxfattribs={"layer": "Defpoints"})  # ignored layer
+    doc.blocks.get("Oak").add_circle((0, 0), 0.2, dxfattribs={"layer": "SYMBOL_GRAPHICS"})  # atomic symbol
+    blk.add_blockref("Oak", (1.5, 1.5), dxfattribs={"layer": "PLANT"})
+    for x in (10, 20, 30):
+        msp.add_blockref("UNKNOWN_CONTENT", (x, 10), dxfattribs={"layer": "0"})
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    un = [f for f in res.findings if f.code == "unmapped_layer"]
+    assert [(f.layer, f.handle) for f in un] == [("NEW_COVERING", h.dxf.handle)]
+    assert "3 entities" in un[0].detail and "3 in blocks" in un[0].detail
+    assert res.coverings["deck"].area == pytest.approx(3)
+    assert len(res.planting) == 4
+    assert {f.code for f in res.findings} == {"unmapped_layer", "overlapping_coverings"}
+
+
+def test_nested_layer_zero_content_inherits_unmapped_insert_layer():
+    """Layer-0 block content on an unmapped insert layer counts under that layer (model space + nested)."""
+    doc = clean_doc()
+    blk = doc.blocks.new("ZERO")
+    blk.add_line((0, 0), (1, 1), dxfattribs={"layer": "0"})
+    w = doc.blocks.new("ZWRAP")
+    w.add_blockref("ZERO", (0, 0), dxfattribs={"layer": "0"})
+    doc.modelspace().add_blockref("ZWRAP", (5, 5), dxfattribs={"layer": "MYSTERY"})
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    assert [(f.code, f.layer) for f in res.findings] == [("unmapped_layer", "MYSTERY")]
+    assert "3 entities (1 model-space, 2 in blocks)" in res.findings[0].detail
+
+
+def test_nested_untransformable_content_on_unknown_layer_is_unmapped():
+    doc = clean_doc()
+    blk = doc.blocks.new("BULGE_UNKNOWN")
+    pl = blk.add_lwpolyline([(0, 0, 0), (2, 0, 1), (2, 2, 0), (0, 2, 0)], format="xyb", close=True,
+                            dxfattribs={"layer": "NEW_COVERING"})
+    ins = doc.modelspace().add_blockref("BULGE_UNKNOWN", (5, 5), dxfattribs={"layer": "0", "yscale": 3})
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    assert [(f.code, f.layer, f.ref) for f in res.findings] == [
+        ("unmapped_layer", "NEW_COVERING", f"{ins.dxf.handle}>{pl.dxf.handle}")]
