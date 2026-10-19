@@ -243,3 +243,128 @@ def test_orient_outward_probe_random_flips_two_cubes():
 def test_orient_outward_flat_component_untouched():
     coords = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]
     assert mss.orient_outward(coords, [[0, 1, 2, 3]]) == set()
+
+
+# --- material-map coverage (review round 1, P1) ---------------------------------
+
+ATLAS_NAMES = ["steel", "wood"]
+
+
+def test_material_map_complete_resolves_every_source():
+    got = mss.resolve_material_map(["1", "2"], {"1": "wood", "2": "steel"}, ATLAS_NAMES)
+    assert got == {"1": "wood", "2": "steel"}
+
+
+def test_material_map_missing_source_without_wildcard_raises_and_names_it():
+    with pytest.raises(mss.MaterialMapError) as err:
+        mss.resolve_material_map(["1", "2"], {"not_present_in_source": "wood"}, ATLAS_NAMES)
+    assert err.value.missing == ["1", "2"]
+    assert "1" in str(err.value) and "2" in str(err.value)
+
+
+def test_material_map_explicit_wildcard_covers_the_rest():
+    got = mss.resolve_material_map(["1", "2", "None"], {"1": "wood", "*": "steel"}, ATLAS_NAMES)
+    assert got == {"1": "wood", "2": "steel", "None": "steel"}
+
+
+def test_material_map_unknown_target_raises():
+    with pytest.raises(mss.MaterialMapError) as err:
+        mss.resolve_material_map(["1"], {"1": "gold"}, ATLAS_NAMES)
+    assert err.value.unknown_targets == ["gold"]
+    with pytest.raises(mss.MaterialMapError):
+        mss.resolve_material_map(["1"], {"1": "wood", "*": "gold"}, ATLAS_NAMES)
+
+
+def test_material_map_empty_sources_raises():
+    with pytest.raises(mss.MaterialMapError):
+        mss.resolve_material_map([], {"*": "wood"}, ATLAS_NAMES)
+
+
+# --- real builder, synthetic two-material cube (Blender, opt-in) ---------------
+
+import json  # noqa: E402
+import subprocess  # noqa: E402
+
+from twinqa.scene import find_blender  # noqa: E402
+
+BLENDER = find_blender()
+BUILDER = ROOT / "tools" / "blender" / "maf_site_set_build.py"
+_SYNTH = """
+import bpy, sys
+fbx, png = sys.argv[sys.argv.index('--') + 1:]
+bpy.ops.wm.read_factory_settings(use_empty=True)
+bpy.ops.mesh.primitive_cube_add(size=1)
+o = bpy.context.active_object
+for n in ('src_wood', 'src_steel'):
+    o.data.materials.append(bpy.data.materials.new(n))
+for p in o.data.polygons:
+    p.material_index = 0 if p.normal.z > 0.5 else 1
+bpy.ops.export_scene.fbx(filepath=fbx, use_selection=True)
+img = bpy.data.images.new('atlas', 8, 8)
+img.filepath_raw = png
+img.file_format = 'PNG'
+img.save()
+"""
+
+
+def _synthetic(tmp_path):
+    src = tmp_path / "out" / "src"
+    src.mkdir(parents=True)
+    png = tmp_path / "atlas.png"
+    subprocess.run([BLENDER, "--background", "--factory-startup", "--python-exit-code", "1",
+                    "--python-expr", _SYNTH, "--", str(src / "synth.fbx"), str(png)],
+                   check=True, capture_output=True, timeout=300)
+    atlas = {"materials": {"steel": {"uv": [0.0, 0.0, 0.5, 0.5]}, "wood": {"uv": [0.5, 0.5, 1.0, 1.0]}}}
+    (tmp_path / "atlas.json").write_text(json.dumps(atlas), encoding="utf-8")
+    return png
+
+
+def _run_builder(tmp_path, png, material_map):
+    pos = {"set_id": "SYN_01", "catalogue_id": "MAF_9999", "source_fbx": "C:/nowhere/synth.fbx",
+           "decimate_ratio": 1.0, "material_map": material_map, "smoothing_deg": 40.0, "height_rule": "max"}
+    (tmp_path / "cfg.json").write_text(json.dumps({"smoothing_deg": 40.0, "positions": [pos]}), encoding="utf-8")
+    out = tmp_path / "out"
+    proc = subprocess.run([BLENDER, "--background", "--factory-startup", "--python-exit-code", "1",
+                           "--python", str(BUILDER), "--", str(tmp_path / "cfg.json"), str(tmp_path / "atlas.json"),
+                           str(png), str(out)], capture_output=True, text=True, timeout=600)
+    return proc, out
+
+
+def _materials(report, role):
+    return {k: v["faces"] for k, v in report["positions"][0][role]["readback"]["uv_slots"]["materials"].items()}
+
+
+@pytest.mark.blender
+@pytest.mark.skipif(BLENDER is None, reason="Blender not installed")
+def test_builder_rejects_missing_material_map_before_export(tmp_path):
+    png = _synthetic(tmp_path)
+    proc, out = _run_builder(tmp_path, png, {"not_present_in_source": "wood"})
+    assert proc.returncode != 0
+    assert "src_wood" in proc.stderr and "src_steel" in proc.stderr
+    assert not (out / "npm").exists() and not (out / "vpm").exists()
+    assert not (out / "build-report.json").exists()
+
+
+@pytest.mark.blender
+@pytest.mark.skipif(BLENDER is None, reason="Blender not installed")
+def test_builder_complete_map_keeps_identities_and_slots(tmp_path):
+    png = _synthetic(tmp_path)
+    proc, out = _run_builder(tmp_path, png, {"src_wood": "wood", "src_steel": "steel"})
+    assert proc.returncode == 0, proc.stderr[-2000:]
+    report = json.loads((out / "build-report.json").read_text(encoding="utf-8"))
+    for role in ("npm", "vpm"):
+        assert _materials(report, role) == {"wood": 2, "steel": 10}  # top quad = 2 tris, rest steel
+        assert report["positions"][0][role]["readback"]["uv_slots"]["faces_outside"] == 0
+        assert report["positions"][0][role]["wildcard_faces"] == 0
+
+
+@pytest.mark.blender
+@pytest.mark.skipif(BLENDER is None, reason="Blender not installed")
+def test_builder_explicit_wildcard_maps_the_rest_on_purpose(tmp_path):
+    png = _synthetic(tmp_path)
+    proc, out = _run_builder(tmp_path, png, {"src_wood": "wood", "*": "wood"})
+    assert proc.returncode == 0, proc.stderr[-2000:]
+    report = json.loads((out / "build-report.json").read_text(encoding="utf-8"))
+    for role in ("npm", "vpm"):
+        assert _materials(report, role) == {"wood": 12}
+        assert report["positions"][0][role]["wildcard_faces"] == 10
