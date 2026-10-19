@@ -223,10 +223,15 @@ def acceptance_gates(rep: dict) -> dict:
         g[f"density_{prof}"] = {"pass": d["faces_below"] == 0 and d["faces_above"] == 0 and d["nan_faces"] == 0,
                                 "value": {k: d[k] for k in ("min", "max", "faces_below", "faces_above", "nan_faces")}}
     sg = rep["stack_gaps"]
-    # gap below 5 mm is a V004 fail: gate. Above 20 mm is a V004 review; with continuous Z-only plates it cannot be
-    # avoided where a vertex joins an ~80 deg face and a flatter one (steep_raise.over_gap_max_vertices): reported.
+    # User decision 2026-10-19: the normal gap of a locally raised layer is 5-20 mm. Both bounds are mandatory gates
+    # (review round 2 of PR #308): a V004 "review" above 20 mm is not a waiver, so over-band geometry is never
+    # written as a deliverable; the report lists it (normal_gap_faces_above, steep_raise.over_gap_max_vertices).
+    gap_value = {k: sg[k] for k in sg if k.startswith("normal_gap")}
     g["normal_gap_min_5mm"] = {"pass": sg["normal_gap_centroids_below"] == 0 and sg["normal_gap_vertices_below"] == 0,
-                               "value": {k: sg[k] for k in sg if k.startswith("normal_gap")}}
+                               "value": gap_value}
+    g["normal_gap_max_20mm"] = {"pass": sg["normal_gap_centroids_above"] == 0 and sg["normal_gap_vertices_above"] == 0,
+                                "value": {**gap_value,
+                                          "over_gap_max_vertices": rep.get("steep_raise", {}).get("over_gap_max_vertices")}}
     g["v004_codirectional_below_5mm_0"] = {"pass": rep["codirectional"]["pairs_below"] == 0,
                                            "value": rep["codirectional"]}
     t = rep["uv_tiles_vpm"]
