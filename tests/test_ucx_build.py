@@ -390,9 +390,8 @@ def test_ground_l_shaped_site_exact():
     assert len(footprint_uncovered(v, t, res)) == 0 and res.within_tol
 
 
-def test_ground_diagonal_perimeter_overhang_reported_not_passed():
-    """Triangular site (diagonal perimeter): axis-aligned pieces must overhang; the overhang bound is
-    reported, is never below the measured overhang, and blocks within_tol when above tol."""
+def test_ground_diagonal_perimeter_one_sided_tolerance():
+    """[D133] SYNTHETIC diagonal perimeter: reverse overhang is diagnostic, not an R11 failure."""
     v = np.array([(0, 0, 0), (10, 0, 0), (0, 10, 0)], float)
     t = np.array([(0, 1, 2)])
     res = ub.build_ground(v, t, cell=8.0, min_cell=0.5, tol=0.08)
@@ -401,7 +400,10 @@ def test_ground_diagonal_perimeter_overhang_reported_not_passed():
     assert len(unc) > 0
     measured = float(((unc[:, 0] + unc[:, 1] - 10) / math.sqrt(2)).max())  # plan distance to the hypotenuse
     assert res.footprint_overhang_bound_m >= measured - 1e-9
-    assert res.footprint_overhang_bound_m > 0.08 and not res.within_tol
+    assert res.footprint_overhang_bound_m > 0.08
+    pts = ub.sample_surface(v, t, 0.1)
+    assert ub.ground_deviation(pts, res).max() <= 0.08
+    assert res.within_tol  # model -> UCX passes even though the reverse bound exceeds R11
 
 
 def test_ground_random_rectilinear_holes_probe():
