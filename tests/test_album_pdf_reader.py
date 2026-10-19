@@ -378,3 +378,75 @@ def test_level_text_parsing(text: str, value: float) -> None:
 )
 def test_level_text_rejects_non_marks(text: str) -> None:
     assert parse_level_text(text) is None
+
+
+# --- review round 1 (P1): every dimension span is accounted for, independently of its text ---------------------
+
+_COVERAGE_CODES = {"dimension_text_missing", "dimension_text_invalid", "dimension_text_unsupported"}
+
+
+def _move_text_below_line(src: Path, dst: Path, value: str = "4500") -> None:
+    doc = pymupdf.open(src)
+    page = doc[0]
+    box = page.search_for(value)[0]
+    page.add_redact_annot(box)
+    page.apply_redactions(graphics=0)  # remove the text only, keep the line work
+    page.insert_text((box.x0, 735), value)  # dimension line at y = 715: text below it
+    doc.save(dst)
+    doc.close()
+
+
+@pytest.mark.parametrize(
+    ("text", "code"),
+    [
+        ("NaN", "dimension_text_invalid"),
+        ("4500.0", "dimension_text_invalid"),
+        ("", "dimension_text_missing"),
+        ("below", "dimension_text_unsupported"),
+    ],
+)
+def test_unread_dimension_span_is_a_typed_finding_and_keeps_scale(
+    tmp_path: Path, text: str, code: str
+) -> None:
+    """Invariant: a dimension span (line + 2 ticks) whose value is not read is a finding with its endpoints."""
+    good = tmp_path / "good.pdf"
+    truth = make_facade_pdf(good)
+    ref = read_page(good)
+    probe = tmp_path / "probe.pdf"
+    if text == "below":
+        _move_text_below_line(good, probe)
+    else:
+        make_facade_pdf(probe, dim_texts=("6000", text))
+    r = read_page(probe, scale_axes=("1", "2"))
+    assert r.scale.status == "derived" and r.scale.mm_per_pt == ref.scale.mm_per_pt
+    assert [d.axes for d in r.dimensions] == [("1", "2")]
+    found = [f for f in r.findings if f.code in _COVERAGE_CODES]
+    assert [f.code for f in found] == [code], r.findings
+    data = found[0].data
+    span = truth["dimensions"][1]
+    assert _xy(data["p0"]) == pytest.approx(span["p0"], abs=0.01)
+    assert _xy(data["p1"]) == pytest.approx(span["p1"], abs=0.01)
+    assert data["axes"] == ["2", "3"]
+    expected_text = {"": None, "below": "4500"}.get(text, text)
+    assert data["text"] == expected_text
+
+
+def test_clean_page_and_mismatch_control_have_no_coverage_findings(tmp_path: Path) -> None:
+    """Control: a fully read page and a written-but-wrong value give no coverage finding."""
+    good, bad = tmp_path / "good.pdf", tmp_path / "bad.pdf"
+    make_facade_pdf(good)
+    make_facade_pdf(bad, dim_texts=("6000", "5000"))
+    r, rb = read_page(good), read_page(bad)
+    assert len(r.dimensions) == 2 and r.findings == []
+    assert [f.code for f in rb.findings] == ["dimension_mismatch"]
+    assert rb.scale.mm_per_pt == r.scale.mm_per_pt
+
+
+def test_unread_reference_span_leaves_scale_unknown(tmp_path: Path) -> None:
+    """Invariant: when the reference span's value is unreadable the scale is unknown, not taken from another span."""
+    path = tmp_path / "p.pdf"
+    make_facade_pdf(path, dim_texts=("6000.0", "4500"))
+    r = read_page(path, scale_axes=("1", "2"))
+    assert r.scale.status == "unknown" and r.scale.mm_per_pt is None
+    codes = [f.code for f in r.findings]
+    assert "dimension_text_invalid" in codes and "scale_unknown" in codes
