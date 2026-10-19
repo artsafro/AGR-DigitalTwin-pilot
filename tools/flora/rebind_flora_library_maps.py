@@ -481,7 +481,21 @@ def _preserved_paths(plan: list[dict], source: str) -> list[str]:
     return unique
 
 
+def _reject_report_target(catalogue_path: str, source: str, output: str, report: str) -> None:
+    """Refuse a report that aliases an input, the MAX output, or an existing file.
+
+    Comparison is the resolved path, so case, relative and ``..`` aliases match.
+    This runs before any DCC launch or filesystem write.
+    """
+    inputs = [catalogue_path, source]
+    if conflicts(output, inputs) or os.path.exists(os.fspath(output)):
+        raise RebindError("refusing to write over an input or an existing file")
+    if conflicts(report, inputs + [output]) or os.path.exists(os.fspath(report)):
+        raise RebindError("report path is an input")
+
+
 def execute(catalogue_path: str, source: str, output: str, report: str) -> dict:
+    _reject_report_target(catalogue_path, source, output, report)
     catalogue = _load_json(catalogue_path)
     plan = plan_bindings(catalogue)
     for item in plan:
@@ -491,9 +505,10 @@ def execute(catalogue_path: str, source: str, output: str, report: str) -> dict:
     preserved = _preserved_paths(plan, source)
     before = hash_files(preserved)
     protected = list(preserved)
+    protected.append(catalogue_path)
     if conflicts(output, protected) or os.path.exists(output):
         raise RebindError("refusing to write over an input or an existing file")
-    if conflicts(report, protected):
+    if conflicts(report, protected + [output]) or os.path.exists(report):
         raise RebindError("report path is an input")
     work = tempfile.mkdtemp(prefix="agr-flora-rebind-")
     copy_path = os.path.join(work, "flora-library-source-copy.max")

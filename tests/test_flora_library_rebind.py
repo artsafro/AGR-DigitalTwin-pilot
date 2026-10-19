@@ -1,12 +1,22 @@
 """Rebind Flora library bitmap slots onto published maps (#282).
 
 Synthetic probes below are not a planting schedule, a Max scene or an approval.
+
+Acceptance for the production execute/CLI path guard:
+
+| Probe | Result |
+| --- | --- |
+| report aliases output MAX | fail/nonzero, neither file written |
+| report alias input catalogue | fail/nonzero, catalogue unchanged |
+| resolved/case/relative aliases | fail before DCC |
+| distinct valid report | success |
 """
 import importlib.util
 import json
 import math
 import os
 import random
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -250,3 +260,126 @@ def test_asset_hash_guard_rejects_a_changed_byte(tmp_path):
         rebound.assert_hashes_unchanged(before, rebound.hash_files([asset]))
     asset.write_bytes(b"approved-bytes")
     rebound.assert_hashes_unchanged(before, rebound.hash_files([asset]))
+
+
+_PASS_REPORT = {
+    "status": "pass",
+    "passed": True,
+    "objects_found": 2,
+    "objects_expected": 2,
+    "bindings_matched": 4,
+    "bindings_expected": 4,
+    "paths_outside": 0,
+}
+_PUBLISHED_DIFFUSE = Path(r"C:/x/flora-library/v001/maps/tilia-cordata/diffuse-v001.png")
+_PUBLISHED_OPACITY = Path(r"C:/x/flora-library/v001/maps/tilia-cordata/opacity-v001.png")
+
+
+def _production_scene(tmp_path: Path):
+    tmp_path.mkdir(parents=True, exist_ok=True)
+    catalogue = tmp_path / "catalogue.json"
+    catalogue.write_text(json.dumps(_catalogue_of(_species())), encoding="utf-8")
+    source = tmp_path / "source.max"
+    source.write_bytes(b"SOURCE-MAX")
+    output = tmp_path / "flora-library-v003.max"
+    report = tmp_path / "rebind-report.json"
+    return catalogue, source, output, report
+
+
+def _allow_dcc_to_succeed(monkeypatch, rebound, calls):
+    def fake_run(command, **kwargs):
+        calls["dcc"] += 1
+        job = json.loads(Path(kwargs["env"]["FLORA_REBIND_JOB"]).read_text(encoding="utf-8"))
+        Path(job["output"]).write_bytes(b"MAX-SCENE")
+        report = Path(job["report"])
+        report.parent.mkdir(parents=True, exist_ok=True)
+        report.write_text(json.dumps(_PASS_REPORT), encoding="utf-8")
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    monkeypatch.setattr(rebound.subprocess, "run", fake_run)
+
+
+def _argv(catalogue, source, output, report):
+    return ["--catalogue", str(catalogue), "--source", str(source), "--output", str(output), "--report", str(report)]
+
+
+@pytest.mark.parametrize("alias", ["output", "catalogue", "resolved", "case", "relative"])
+def test_production_execute_and_cli_reject_report_aliases_before_dcc(tmp_path, monkeypatch, alias):
+    rebound = _rebind()
+    catalogue, source, output, report = _production_scene(tmp_path)
+    if alias == "output":
+        report = output
+    elif alias == "catalogue":
+        report = catalogue
+    elif alias == "resolved":
+        (tmp_path / "nest").mkdir()
+        report = tmp_path / "nest" / ".." / output.name
+    elif alias == "case":
+        report = tmp_path / "FLORA-LIBRARY-V003.MAX"
+    else:
+        monkeypatch.chdir(tmp_path)
+        report = Path(output.name)
+    calls = {"dcc": 0}
+    _allow_dcc_to_succeed(monkeypatch, rebound, calls)
+    before = {
+        catalogue: catalogue.read_bytes(),
+        source: source.read_bytes(),
+        _PUBLISHED_DIFFUSE: _PUBLISHED_DIFFUSE.read_bytes(),
+        _PUBLISHED_OPACITY: _PUBLISHED_OPACITY.read_bytes(),
+    }
+    with pytest.raises(rebound.RebindError):
+        rebound.execute(str(catalogue), str(source), str(output), str(report))
+    assert calls["dcc"] == 0
+    assert rebound.main(_argv(catalogue, source, output, report)) != 0
+    assert calls["dcc"] == 0
+    for path, payload in before.items():
+        assert path.read_bytes() == payload
+    assert not output.exists()
+    if alias != "catalogue":
+        assert not Path(report).exists()
+
+
+def test_production_existing_unrelated_report_is_not_replaced(tmp_path, monkeypatch):
+    rebound = _rebind()
+    catalogue, source, output, report = _production_scene(tmp_path)
+    report.write_bytes(b"KEEP-UNRELATED")
+    calls = {"dcc": 0}
+    _allow_dcc_to_succeed(monkeypatch, rebound, calls)
+    catalogue_bytes = catalogue.read_bytes()
+    with pytest.raises(rebound.RebindError):
+        rebound.execute(str(catalogue), str(source), str(output), str(report))
+    assert calls["dcc"] == 0
+    assert rebound.main(_argv(catalogue, source, output, report)) != 0
+    assert calls["dcc"] == 0
+    assert report.read_bytes() == b"KEEP-UNRELATED"
+    assert catalogue.read_bytes() == catalogue_bytes
+    assert not output.exists()
+
+
+def test_production_distinct_report_succeeds(tmp_path, monkeypatch):
+    rebound = _rebind()
+    catalogue, source, output, report = _production_scene(tmp_path)
+    calls = {"dcc": 0}
+    _allow_dcc_to_succeed(monkeypatch, rebound, calls)
+    before = {
+        catalogue: catalogue.read_bytes(),
+        source: source.read_bytes(),
+        _PUBLISHED_DIFFUSE: _PUBLISHED_DIFFUSE.read_bytes(),
+        _PUBLISHED_OPACITY: _PUBLISHED_OPACITY.read_bytes(),
+    }
+    result = rebound.execute(str(catalogue), str(source), str(output), str(report))
+    assert result["passed"] is True
+    assert result["status"] == "pass"
+    assert calls["dcc"] == 1
+    assert output.read_bytes() == b"MAX-SCENE"
+    written = json.loads(report.read_text(encoding="utf-8"))
+    assert written["passed"] is True
+    assert written["status"] == "pass"
+    for path, payload in before.items():
+        assert path.read_bytes() == payload
+
+    catalogue2, source2, output2, report2 = _production_scene(tmp_path / "cli")
+    assert rebound.main(_argv(catalogue2, source2, output2, report2)) == 0
+    assert output2.read_bytes() == b"MAX-SCENE"
+    assert json.loads(report2.read_text(encoding="utf-8"))["passed"] is True
+    assert catalogue2.read_bytes() == before[catalogue]
