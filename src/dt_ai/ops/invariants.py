@@ -8,6 +8,14 @@ geometry, flipped normals) except on parts that are two-sided on purpose; (4) no
 `overlap_min_m` (5 mm, reg p.8 §3.9; z-fighting). The checks return counts and the first offenders so a broken
 invariant can roll the operation back and stop with a question.
 
+NPM opacity swaps [D109]: the plane counts as cover, so filling an old railing gap is not a failure (the opacity
+map restores that gap). The lost-pixel tolerance remains zero. Only rays whose BEFORE first hit was a registered
+candidate actually replaced by a verified quad (>2 triangles -> 2) are exempt from lost pixels: its thickness
+vanishes. The triangles must cover all four source PCA rectangle corners on its mid-plane with unchanged tangent
+extents; duplicate/degenerate triangles, shifted planes and shrunken planes get no exemption. Registration alone,
+deleting a part, and holes in any other first-hit part are not exempt.
+This first-hit rule was confirmed by the orchestrator on #292 (2026-10-19); it is not a global opacity hole waiver.
+
 Pure numpy on triangle meshes in metres (the 2-4 checks reuse `twinqa.clearance`); no Blender. Meant for parts and
 synthetic scenes: the ray probe tests every ray against every triangle, so a whole building needs a BVH (the
 bpy kernel, later cards). The probe sees nothing smaller than one pixel (`2 * radius / resolution`).
@@ -251,17 +259,59 @@ def open_borders_hidden(scene: Scene, part: str, ctx: Context = Context()) -> In
                           for i in bad])
 
 
+def _is_source_opacity_quad(source: Mesh, plane: Mesh) -> bool:
+    """Verify coverage and source PCA mid-plane/extents, independently of vertex order or diagonal.
+
+    Counts/rank alone admit duplicate triangles and moved/shrunken quads. Match all four corners with
+    absolute numerical precision (not a relative tolerance that grows with world coordinates), then
+    require two nondegenerate, consistently wound triangles sharing a rectangle diagonal.
+    """
+    if len(source.triangles) <= 2 or len(plane.vertices) != 4 or len(plane.triangles) != 2:
+        return False
+    center = source.vertices.mean(axis=0)
+    relative = source.vertices - center
+    _, axes = np.linalg.eigh(relative.T @ relative)
+    local = relative @ axes
+    lo, hi = local.min(axis=0), local.max(axis=0)
+    if np.any(hi[1:] - lo[1:] <= _EPS):
+        return False
+    mid = (lo[0] + hi[0]) / 2
+    expected = np.array([(mid, u, v) for u, v in ((lo[1], lo[2]), (hi[1], lo[2]),
+                                               (hi[1], hi[2]), (lo[1], hi[2]))])
+    actual = (plane.vertices - center) @ axes
+    distances = np.linalg.norm(actual[:, None] - expected[None], axis=2)
+    corners = distances.argmin(axis=1)
+    if len(set(corners)) != 4 or np.any(distances[np.arange(4), corners] > _EPS):
+        return False
+    faces = corners[plane.triangles]
+    a, b = (set(face) for face in faces)
+    shared = sorted(a & b)
+    if len(a) != 3 or len(b) != 3 or len(shared) != 2 or shared[1] - shared[0] != 2:
+        return False
+    tri = actual[plane.triangles]
+    normals = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
+    return bool(normals[0] @ normals[1] > 0)
+
+
 def no_see_through_hole(before: Scene, after: Scene, ctx: Context = Context()) -> InvariantResult:
-    """(2) No ray that hit the scene before the operation misses it after: nothing was deleted that was not covered."""
+    """(2) Zero newly missing rays, except vanished thickness of a replaced opacity candidate (see module policy)."""
     name = "no_see_through_hole"
-    _, c0, _ = _stack(before)
+    parts, c0, owner = _stack(before)
     _, c1, _ = _stack(after)
+    # Registration alone does not waive holes in existing opacity parts, or removal of a part.
+    replaced = np.array([
+        p in ctx.opacity_parts and p in after and _is_source_opacity_quad(before[p], after[p])
+        for p in parts], dtype=bool)
     center, radius = _frame(before, after)
     lost = []
     total = 0
     for d in _directions():
         origins = _grid(center, radius, d, ctx.resolution)
-        was = _first_hits(origins, d, c0)[0] >= 0
+        first = _first_hits(origins, d, c0)[0]
+        was = first >= 0
+        # Exempt only rays whose BEFORE first hit belongs to the replaced candidate.
+        # Never index -1 (misses), nor exempt a different first-hit part behind/in front of it.
+        was[was] &= ~replaced[owner[first[was]]]
         now = _first_hits(origins, d, c1)[0] >= 0
         n = int((was & ~now).sum())
         total += n

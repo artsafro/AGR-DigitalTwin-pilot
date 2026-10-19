@@ -5,7 +5,8 @@ object system: the top (drop z) and the two facade views (drop y, drop x); the o
 view has the same silhouette, so the four facades and the top are three distinct views. The deviation of two
 silhouettes is the largest distance from a point of one that the other does not cover to the other (the Hausdorff
 distance of the regions), sampled on a grid of `step_m`; it is accurate to about one step.
-Pure numpy + shapely.
+Pure numpy + shapely. Edge-on projections remain line/point geometries and use Hausdorff distance directly;
+polygon-to-polygon behaviour and its sampling policy are unchanged (#292, orchestrator 2026-10-19).
 """
 import numpy as np
 import shapely
@@ -25,10 +26,11 @@ def silhouette(mesh: Mesh, axis: int):
         return shapely.Polygon()
     e1, e2 = tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0]
     area2 = e1[:, 0] * e2[:, 1] - e1[:, 1] * e2[:, 0]                     # twice the signed area (no 2-D np.cross)
-    tri = tri[np.abs(area2) > 1e-12]                                      # edge-on triangles project to a line
-    if not len(tri):
-        return shapely.Polygon()
-    rings = np.concatenate([tri, tri[:, :1]], axis=1)
+    polygons = tri[np.abs(area2) > 1e-12]
+    if not len(polygons):
+        # Preserve edge-on triangles as line segments (or points), not empty polygons.
+        return shapely.union_all([shapely.MultiPoint(t).convex_hull for t in tri])
+    rings = np.concatenate([polygons, polygons[:, :1]], axis=1)
     return shapely.union_all(shapely.make_valid(shapely.polygons(rings)))
 
 
@@ -54,6 +56,8 @@ def silhouette_deviation(a: Mesh, b: Mesh, axis: int, step_m: float = SILHOUETTE
     sa, sb = silhouette(a, axis), silhouette(b, axis)
     if sa.is_empty or sb.is_empty:
         return 0.0 if sa.is_empty and sb.is_empty else float("inf")
+    if sa.area == 0 or sb.area == 0:
+        return float(shapely.hausdorff_distance(sa, sb))
     return max(_uncovered_reach(sa, sb, step_m), _uncovered_reach(sb, sa, step_m))
 
 
