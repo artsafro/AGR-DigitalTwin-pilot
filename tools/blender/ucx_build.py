@@ -5,12 +5,15 @@
 
 Keys: cell, gap, min_cell, tol, depth (metres), object=<target object name> (default: the one
 `SM_<Address>_Main` / `SM_<Address>_Ground` mesh), with=<extra object names, comma separated, merged into
-the Main input, e.g. the MainGlass>. Existing UCX pieces of the scene are dropped from the output; the
-source file is never written. The output FBX holds every non-UCX mesh of the input plus the new pieces
-named UCX_SM_<Address>_<Target>_NNN (no materials, no UV, identity transforms); a JSON report is written
-next to it (`<out>.ucx_build.json`).
+the Main input, e.g. the MainGlass; every name must exist, else the build fails before any export>.
+Existing UCX of the input objects (`UCX_<input object>_NNN`) are replaced; UCX of other model objects (e.g.
+the Ground collision during a Main rebuild) are kept unchanged; a UCX that names no model object fails the
+build. The source file is never written. The output FBX holds every non-UCX mesh of the input, the kept
+UCX and the new pieces named UCX_SM_<Address>_<Target>_NNN (no materials, no UV, identity transforms); a
+JSON report is written next to it (`<out>.ucx_build.json`).
 
-Exit 0 built; 3 built but the Ground deviation exceeds `tol` (report and FBX written, not a pass);
+Exit 0 built; 3 built but a Ground deviation (vertical, footprint overhang or uncovered strip) exceeds
+`tol` (report and FBX written, not a pass);
 2 build failed (report written); 4 refused before any write (bad arguments, or an output that aliases the
 input). Job scripts call `build_into_scene(...)` from their own Blender session instead.
 
@@ -79,12 +82,23 @@ def _parse(argv):
             return None, f"bad option {a!r}"
         k, val = a.split("=", 1)
         if k in ("cell", "gap", "min_cell", "tol", "depth"):
+            if k in opts:
+                return None, f"option {k!r} given twice"
             try:
                 opts[k] = float(val)
             except ValueError:
                 return None, f"{k} must be a number"
-        elif k in ("object", "with"):
+        elif k in opts:
+            return None, f"option {k!r} given twice"
+        elif k == "object":
+            if not val:
+                return None, "object= needs a name"
             opts[k] = val
+        elif k == "with":
+            names = val.split(",")
+            if not all(names):
+                return None, "with= needs comma-separated object names"
+            opts[k] = names
         else:
             return None, f"unknown option {k!r}"
     if not argv[1].lower().endswith(".fbx"):
@@ -121,15 +135,16 @@ def main():
             bpy.ops.wm.read_factory_settings(use_empty=True)
             bpy.ops.import_scene.fbx(filepath=str(src))
         meshes = [o for o in bpy.context.scene.objects if o.type == "MESH"]
-        old_ucx = [o for o in meshes if o.name.upper().startswith("UCX")]
-        model = [o for o in meshes if o not in old_ucx]
-        name = opts.pop("object", None)
-        cand = [o for o in model if (o.name == name if name else o.name.startswith("SM_") and o.name.endswith("_" + target))]
-        if len(cand) != 1:
-            raise ub.UcxBuildError(f"need exactly one {target} object, found {[o.name for o in cand]}")
-        main_obj = cand[0]
-        extra = [o for o in model if o.name in set(filter(None, opts.pop("with", "").split(",")))]
-        address = main_obj.name[3:-(len(target) + 1)] if main_obj.name.endswith("_" + target) else main_obj.name
+        all_ucx = [o for o in meshes if o.name.upper().startswith("UCX")]
+        model = [o for o in meshes if o not in all_ucx]
+        by_name = {o.name: o for o in model}
+        # resolve every requested name once, independent of scene order; refuse before anything is removed
+        main_name, extra_names, address = ub.select_inputs(list(by_name), target, opts.pop("object", None),
+                                                           opts.pop("with", None))
+        main_obj, extra = by_name[main_name], [by_name[n] for n in extra_names]
+        replace, keep = ub.ucx_replace_plan([o.name for o in all_ucx], [main_name] + extra_names, list(by_name))
+        old_ucx = [o for o in all_ucx if o.name in set(replace)]
+        kept_ucx = [o for o in all_ucx if o.name in set(keep)]
         for o in model:
             o.data.calc_loop_triangles()
         model_tris = sum(len(o.data.loop_triangles) for o in model)
@@ -137,17 +152,19 @@ def main():
             bpy.data.objects.remove(o, do_unlink=True)
         objs, res = build_into_scene([main_obj] + extra, address, target, model_triangles=model_tris, **opts)
         report.update({
-            "inputs": [o.name for o in [main_obj] + extra], "dropped_ucx": len(old_ucx),
+            "inputs": [o.name for o in [main_obj] + extra], "dropped_ucx": replace, "kept_ucx": keep,
             "model_triangles_excl_ucx": model_tris, "pieces": len(objs), "triangles": res.triangles,
             "budget_D012": res.budget, "cell_m": res.cell_m, "gap_m": res.gap_m, "facade_angle_deg": round(res.angle_deg, 3),
-            "attempts": res.attempts, "max_vertical_dev_m": res.max_vertical_dev_m, "within_tol": res.within_tol,
+            "attempts": res.attempts, "max_vertical_dev_m": res.max_vertical_dev_m,
+            "footprint_overhang_bound_m": res.footprint_overhang_bound_m, "uncovered_strip_m": res.uncovered_strip_m,
+            "within_tol": res.within_tol,
         })
         if target == "Main":
             pts = ub.sample_surface(*world_arrays([main_obj] + extra), max(res.cell_m / 2, 0.1))
             dev = ub.main_deviation(pts, res)
             report["main_to_ucx_max_m"] = round(float(dev.max()), 4)
         bpy.ops.object.select_all(action="DESELECT")
-        for o in model + objs:
+        for o in model + kept_ucx + objs:
             o.select_set(True)
         out.parent.mkdir(parents=True, exist_ok=True)
         bpy.ops.export_scene.fbx(filepath=str(out), use_selection=True, object_types={"MESH"},

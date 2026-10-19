@@ -78,13 +78,17 @@ class UcxResult:
     max_vertical_dev_m: float | None = None  # Ground only: exact max |surface z - piece top|
     tol_m: float | None = None  # Ground only: requested vertical tolerance
     boxes_frame: np.ndarray | None = None  # Main only: (K, 2, 3) lo/hi in the facade frame
+    footprint_overhang_bound_m: float | None = None  # Ground only: plan bound of a piece top over no surface
+    uncovered_strip_m: float | None = None  # Ground only: widest covered strip left without a piece
 
     @property
     def within_tol(self) -> bool:
-        """Ground: the exact deviation is within `tol_m`; Main: always True (bounded by construction)."""
+        """Ground: the exact vertical deviation, the footprint overhang bound and the uncovered strip are all
+        within `tol_m` (a missing value fails); Main: always True (bounded by construction)."""
         if self.target != "Ground":
             return True
-        return self.max_vertical_dev_m is not None and self.tol_m is not None and self.max_vertical_dev_m <= self.tol_m
+        vals = (self.max_vertical_dev_m, self.footprint_overhang_bound_m, self.uncovered_strip_m)
+        return self.tol_m is not None and all(v is not None and v <= self.tol_m for v in vals)
 
     @property
     def triangles(self) -> int:
@@ -107,6 +111,50 @@ def ucx_names(address: str, target: str, count: int) -> list[str]:
     if not 1 <= count <= MAX_PIECES:
         raise UcxBuildError(f"piece count {count} outside 1..{MAX_PIECES}")
     return [f"UCX_SM_{address}_{target}_{k:03d}" for k in range(1, count + 1)]
+
+
+def select_inputs(names, target: str, object: str | None = None, with_=None) -> tuple[str, list[str], str]:
+    """Resolve the build inputs among the scene's non-UCX mesh names, independent of their order.
+
+    Returns (target object, extra objects in the requested order, address). The target object is `object`
+    or the single `SM_<Address>_<Target>`; every requested extra must exist exactly once, differ from the
+    target object and not be a UCX; anything else raises before a build or a write."""
+    if target not in TARGETS:
+        raise UcxBuildError(f"target must be one of {TARGETS}, got {target!r}")
+    names = list(names)
+    if object is not None:
+        cand = [n for n in names if n == object]
+    else:
+        cand = [n for n in names if n.startswith("SM_") and n.endswith("_" + target)]
+    if len(cand) != 1:
+        raise UcxBuildError(f"need exactly one {target} object{f' named {object!r}' if object else ''}, found {cand}")
+    main = cand[0]
+    extra = list(with_ or [])
+    bad = [n for n in extra if not n or n.upper().startswith("UCX") or n == main]
+    missing = [n for n in extra if n not in names]
+    if bad or missing or len(set(extra)) != len(extra):
+        raise UcxBuildError(f"bad extra objects {extra}: invalid {bad}, missing {missing}")
+    sfx = "_" + target
+    address = main[3:-len(sfx)] if main.startswith("SM_") and main.endswith(sfx) else main
+    return main, extra, address
+
+
+_UCX_OWNED = re.compile(r"^UCX_(.+)_(\d{3})(\.\d+)?$", re.IGNORECASE)
+
+
+def ucx_replace_plan(ucx_names, input_names, model_names) -> tuple[list[str], list[str]]:
+    """Split the scene's UCX into (replaced, kept): a UCX named `UCX_<object>_NNN` is replaced when <object>
+    is one of the build inputs and kept when it is another model object (e.g. the Ground collision during a
+    Main rebuild). A UCX that names no model object cannot be attributed to a target and is refused."""
+    inputs, model = set(input_names), set(model_names)
+    replace, keep, orphan = [], [], []
+    for n in ucx_names:
+        m = _UCX_OWNED.match(n)
+        owner = m.group(1) if m and n[:4] == "UCX_" else None
+        (replace if owner in inputs else keep if owner in model else orphan).append(n)
+    if orphan:
+        raise UcxBuildError(f"UCX not attributable to a model object (UCX_<object>_NNN): {orphan}")
+    return replace, keep
 
 
 def _check_mesh(verts, tris) -> tuple[np.ndarray, np.ndarray]:
@@ -367,6 +415,106 @@ class HeightField:
             for gx in range(i0[k, 0], i1[k, 0] + 1):
                 for gy in range(i0[k, 1], i1[k, 1] + 1):
                     self._grid.setdefault((gx, gy), []).append(k)
+        self._boundary()
+
+    def _boundary(self):
+        """Plan boundary of the covered region: an edge (vertices welded in plan, so a vertical cliff joins
+        its top and bottom) is interior only when non-vertical triangles lie on both of its sides; every
+        other edge is boundary. The covered region's boundary lies on these segments, so a rectangle that no
+        boundary segment enters is either fully covered or fully uncovered (it is connected)."""
+        v, t = self.v, self.t[self._ok]
+        _, first, pid = np.unique(np.round(v[:, :2] / 1e-6).astype(np.int64), axis=0, return_index=True,
+                                  return_inverse=True)
+        pid = pid.reshape(-1)
+        rows = []
+        for i, j, k in ((0, 1, 2), (1, 2, 0), (2, 0, 1)):
+            a, b, c = v[t[:, i], :2], v[t[:, j], :2], v[t[:, k], :2]
+            side = np.sign((b[:, 0] - a[:, 0]) * (c[:, 1] - a[:, 1]) - (b[:, 1] - a[:, 1]) * (c[:, 0] - a[:, 0]))
+            pa, pb = pid[t[:, i]], pid[t[:, j]]
+            side = np.where(pa < pb, side, -side).astype(np.int64)
+            rows.append(np.stack([np.minimum(pa, pb), np.maximum(pa, pb), side], axis=1))
+        e = np.concatenate(rows) if rows else np.zeros((0, 3), np.int64)
+        e = e[e[:, 0] != e[:, 1]]
+        seg = np.zeros((0, 2, 2))
+        if len(e):
+            key, inv = np.unique(e[:, :2], axis=0, return_inverse=True)
+            inv = inv.reshape(-1)
+            pos = np.bincount(inv, weights=(e[:, 2] > 0), minlength=len(key)) > 0
+            neg = np.bincount(inv, weights=(e[:, 2] < 0), minlength=len(key)) > 0
+            bk = key[~(pos & neg)]
+            pxy = v[first, :2]
+            seg = np.stack([pxy[bk[:, 0]], pxy[bk[:, 1]]], axis=1)
+        self.bseg = seg
+        self._bgrid: dict[tuple[int, int], list[int]] = {}
+        if len(seg):
+            i0 = np.floor((seg.min(axis=1) - self.lo) / self.bucket).astype(int)
+            i1 = np.floor((seg.max(axis=1) - self.lo) / self.bucket).astype(int)
+            for k in range(len(seg)):
+                for gx in range(i0[k, 0], i1[k, 0] + 1):
+                    for gy in range(i0[k, 1], i1[k, 1] + 1):
+                        self._bgrid.setdefault((gx, gy), []).append(k)
+
+    def _cands(self, grid, rect):
+        x0, y0, x1, y1 = rect
+        i0 = np.floor((np.array([x0, y0]) - self.lo) / self.bucket).astype(int)
+        i1 = np.floor((np.array([x1, y1]) - self.lo) / self.bucket).astype(int)
+        cand = set()
+        for gx in range(i0[0], i1[0] + 1):
+            for gy in range(i0[1], i1[1] + 1):
+                cand.update(grid.get((gx, gy), ()))
+        return np.fromiter(sorted(cand), int, len(cand))
+
+    def boundary_in(self, rect, eps: float = 1e-9) -> np.ndarray:
+        """Boundary segments that enter the open rectangle (x0, y0, x1, y1) (Liang-Barsky clip)."""
+        k = self._cands(self._bgrid, rect)
+        if not len(k):
+            return np.zeros((0, 2, 2))
+        seg = self.bseg[k]
+        p0, d = seg[:, 0], seg[:, 1] - seg[:, 0]
+        t0, t1 = np.zeros(len(seg)), np.ones(len(seg))
+        out = np.zeros(len(seg), bool)
+        x0, y0, x1, y1 = rect
+        for ax, lo, hi in ((0, x0 + eps, x1 - eps), (1, y0 + eps, y1 - eps)):
+            for pp, qq in ((-d[:, ax], p0[:, ax] - lo), (d[:, ax], hi - p0[:, ax])):
+                par = np.abs(pp) < 1e-15
+                out |= par & (qq <= 0)
+                r = np.where(par, 0.0, qq / np.where(par, 1.0, pp))
+                t0 = np.where(~par & (pp < 0), np.maximum(t0, r), t0)
+                t1 = np.where(~par & (pp > 0), np.minimum(t1, r), t1)
+        return seg[~out & (t0 < t1)]
+
+    def covered_bbox(self, rect):
+        """Exact bounding box of the covered plan region inside `rect` (triangles clipped to the rectangle,
+        Sutherland-Hodgman); None when nothing of positive area is covered."""
+        k = self._cands(self._grid, rect)
+        x0, y0, x1, y1 = rect
+        pts = []
+        for tri in self.t[k]:
+            poly = [tuple(self.v[i, :2]) for i in tri]
+            for ax, lim, keep_lo in ((0, x0, True), (0, x1, False), (1, y0, True), (1, y1, False)):
+                nxt = []
+                for m in range(len(poly)):
+                    p, q = poly[m], poly[(m + 1) % len(poly)]
+                    pin = p[ax] >= lim if keep_lo else p[ax] <= lim
+                    qin = q[ax] >= lim if keep_lo else q[ax] <= lim
+                    if pin:
+                        nxt.append(p)
+                    if pin != qin:
+                        f = (lim - p[ax]) / (q[ax] - p[ax])
+                        nxt.append((p[0] + f * (q[0] - p[0]), p[1] + f * (q[1] - p[1])))
+                poly = nxt
+                if not poly:
+                    break
+            if len(poly) >= 3:
+                a = np.array(poly)
+                area = 0.5 * abs(np.dot(a[:, 0], np.roll(a[:, 1], -1)) - np.dot(a[:, 1], np.roll(a[:, 0], -1)))
+                if area > 1e-12:
+                    pts.append(a)
+        if not pts:
+            return None
+        a = np.concatenate(pts)
+        lo, hi = a.min(axis=0), a.max(axis=0)
+        return (float(lo[0]), float(lo[1]), float(hi[0]), float(hi[1]))
 
     def crossings(self, segments) -> np.ndarray:
         """Plan points where mesh edges cross the given segments ((K, 2, 2) xy); with the surface vertices
@@ -450,53 +598,93 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
         raise UcxBuildError("need gap < min_cell / 2 and min_cell <= cell")
     hf = HeightField(verts, tris)
     budget = ucx_triangle_limit(len(hf.t) if model_triangles is None else int(model_triangles))
-    vx = hf.v
-    lo, hi = hf.lo, hf.hi
-    nx, ny = max(1, math.ceil((hi[0] - lo[0]) / cell)), max(1, math.ceil((hi[1] - lo[1]) / cell))
-    stack = [(lo[0] + i * cell, lo[1] + j * cell, cell) for i in range(nx) for j in range(ny)]
+    lo, span = hf.lo, hf.hi - hf.lo
+    if not (span > 2 * gap).all():
+        raise UcxBuildError("ground surface has no plan area")
+    n = np.maximum(1, np.ceil(span / cell)).astype(int)
+    sx, sy = float(span[0] / n[0]), float(span[1] / n[1])  # grid fitted to the plan bbox: no cell sticks out
+    stack = [(lo[0] + i * sx, lo[1] + j * sy, sx, sy, False) for i in range(n[0]) for j in range(n[1])]
     g = gap / 2
-    pieces, devs = [], []
+    pieces, devs, overs, strips = [], [], [], [0.0]
     lin = (np.arange(samples) + 0.5) / samples
+
+    def split4(x, y, wx, wy):
+        hx, hy = wx / 2, wy / 2
+        stack.extend([(x, y, hx, hy, False), (x + hx, y, hx, hy, False), (x, y + hy, hx, hy, False),
+                      (x + hx, y + hy, hx, hy, False)])
+
     while stack:
-        x, y, s = stack.pop()
-        x0, y0, x1, y1 = x + g, y + g, x + s - g, y + s - g
+        x, y, wx, wy, final = stack.pop()
+        can_split = not final and min(wx, wy) / 2 >= min_cell
+        rect = (x + g, y + g, x + wx - g, y + wy - g)
+        if rect[2] - rect[0] < gap or rect[3] - rect[1] < gap:  # a split strip too thin for a piece
+            if hf.covered_bbox((x, y, x + wx, y + wy)) is not None:
+                strips.append(min(wx, wy))
+            continue
+        bnd = hf.boundary_in(rect)
+        overhang = 0.0
+        if not len(bnd):  # fully covered or fully empty (exact, see HeightField._boundary)
+            if not np.isfinite(hf.z(np.array([[(rect[0] + rect[2]) / 2, (rect[1] + rect[3]) / 2]]))[0]):
+                continue
+        else:
+            if can_split:
+                split4(x, y, wx, wy)
+                continue
+            if not final:  # split at the boundary vertices: rectilinear coverage becomes exact
+                e = 1e-7
+                cx = sorted({round(float(q), 9) for q in bnd[:, :, 0].ravel() if x + e < q < x + wx - e})
+                cy = sorted({round(float(q), 9) for q in bnd[:, :, 1].ravel() if y + e < q < y + wy - e})
+                if cx or cy:
+                    bx, by = [x, *cx, x + wx], [y, *cy, y + wy]
+                    stack.extend((bx[a], by[b], bx[a + 1] - bx[a], by[b + 1] - by[b], True)
+                                 for a in range(len(bx) - 1) for b in range(len(by) - 1))
+                    continue
+            bb = hf.covered_bbox(rect)
+            if bb is None:
+                continue
+            if bb[2] - bb[0] < gap or bb[3] - bb[1] < gap:
+                strips.append(min(wx, wy))
+                continue
+            rect = bb
+            if len(hf.boundary_in(rect)):  # still partly uncovered: any top point is within the diagonal
+                overhang = math.hypot(rect[2] - rect[0], rect[3] - rect[1])
+        x0, y0, x1, y1 = rect
         corners = np.array([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
         h = hf.z(corners)
         gx, gy = np.meshgrid(x0 + lin * (x1 - x0), y0 + lin * (y1 - y0))
         grid = np.stack([gx.ravel(), gy.ravel()], axis=1)
+        vx = hf.v
         inner = vx[(vx[:, 0] > x0) & (vx[:, 0] < x1) & (vx[:, 1] > y0) & (vx[:, 1] < y1)]
         edges = np.array([[corners[k], corners[(k + 1) % 4]] for k in range(4)] + [[corners[0], corners[2]],
                                                                                    [corners[1], corners[3]]])
         pts = np.concatenate([grid, corners, inner[:, :2], hf.crossings(edges)])
         zs = hf.z(pts)
         hit = np.isfinite(zs)
-        if not hit.any() and not np.isfinite(h).any():
-            continue  # no surface here
-        if np.isnan(h).any():
-            if s / 2 >= min_cell:
-                stack += [(x, y, s / 2), (x + s / 2, y, s / 2), (x, y + s / 2, s / 2), (x + s / 2, y + s / 2, s / 2)]
-                continue
-            if not hit.any():
-                continue
-            h = np.where(np.isfinite(h), h, float(np.nanmean(zs)))
-        top, diag02 = _ground_top(corners, h, pts[hit])
-        dev = float(np.max(np.abs(zs[hit] - top))) if hit.any() else 0.0
-        if dev > tol and s / 2 >= min_cell:
-            stack += [(x, y, s / 2), (x + s / 2, y, s / 2), (x, y + s / 2, s / 2), (x + s / 2, y + s / 2, s / 2)]
+        if not hit.any():
             continue
-        base = min(float(h.min()), float(np.min(zs[hit])) if hit.any() else float(h.min())) - depth
+        if np.isnan(h).any():  # only a partly covered (reported) piece has an uncovered corner
+            h = np.where(np.isfinite(h), h, float(np.mean(zs[hit])))
+        top, diag02 = _ground_top(corners, h, pts[hit])
+        dev = float(np.max(np.abs(zs[hit] - top)))
+        if dev > tol and can_split:
+            split4(x, y, wx, wy)
+            continue
+        base = min(float(h.min()), float(np.min(zs[hit]))) - depth
         vv = np.array([(*corners[k], base) for k in range(4)] + [(*corners[k], h[k]) for k in range(4)])
         tr = _BOX_TRIS.copy()
         tr[2:4] = [(4, 5, 6), (4, 6, 7)] if diag02 else [(4, 5, 7), (5, 6, 7)]
         pieces.append(Piece(vv, tr))
         devs.append(dev)
+        overs.append(overhang)
     if not pieces:
         raise UcxBuildError("ground surface has no plan area")
     if len(pieces) > MAX_PIECES or 12 * len(pieces) > budget:
         raise UcxBuildError(f"{len(pieces)} ground pieces exceed {MAX_PIECES} pieces or budget {budget}")
     pieces.sort(key=lambda p: (round(float(p.verts[0, 1]), 3), round(float(p.verts[0, 0]), 3)))
-    return UcxResult("Ground", pieces, float(cell), gap, 0.0, budget, [{"min_cell_m": min_cell, "tol_m": tol}],
-                     max_vertical_dev_m=max(devs), tol_m=tol)
+    return UcxResult("Ground", pieces, float(cell), gap, 0.0, budget,
+                     [{"min_cell_m": min_cell, "tol_m": tol, "grid_m": [round(sx, 6), round(sy, 6)]}],
+                     max_vertical_dev_m=max(devs), tol_m=tol,
+                     footprint_overhang_bound_m=max(overs), uncovered_strip_m=max(strips))
 
 
 def ground_deviation(points, result: UcxResult, margin: float | None = None) -> np.ndarray:
