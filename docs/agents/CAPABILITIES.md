@@ -428,7 +428,9 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
   Ground on synthetic surfaces only (`tests/test_ucx_build.py`); no real-object delivery acceptance.
 - `blender --background --factory-startup --python-exit-code 1 --python tools/blender/ucx_build.py --
   <model.fbx|.blend> <out.fbx> <Main|Ground> [cell= gap= with=<obj,...>]`; exit 0 built / 3 Ground over
-  `tol` / 2 failed / 4 refused (output aliases input). Job scripts: `build_into_scene(...)`.
+  `tol` (vertical, footprint overhang or uncovered strip) / 2 failed (incl. a missing `with=` name, a UCX
+  that names no model object) / 4 refused (output aliases input). Replaces only the UCX of the input
+  objects; other targets' UCX are kept. Job scripts: `build_into_scene(...)`.
 - Facade-oriented 8-vertex boxes (Main) or quadtree hexahedra (Ground), 4 mm gap, [D012] budget; check
   the output with `tools/blender/ucx_audit.py` and the validator scene checks.
 
