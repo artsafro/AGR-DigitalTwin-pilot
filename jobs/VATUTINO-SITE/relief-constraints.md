@@ -1,7 +1,8 @@
 # Relief cut-spacing decision — issue #295
 
 2026-10-19, continuation of PR #308 at `e127106`.
-Status: **needs user decision**, not a completed build. No mesh or source drawing changed.
+Status: **resolved** — orchestrator 2026-10-19 14:57: TIN edges closer than 1 m are allowed inside cells that need
+relief correction; implemented in v005, see `ground-build-v005.md`. The analysis below is kept as the record.
 
 ## Constraints being checked
 

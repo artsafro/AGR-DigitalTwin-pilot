@@ -29,7 +29,7 @@ SLOTS = {"tile_light": "TileLight", "tile_red": "TileRed", "tile_dark": "TileDar
          "gravel_screening": "Gravel", "mulch": "Mulch", "lawn_reinforced": "LawnReinforced",
          "lawn_rolled": "LawnRolled", "decking": "Decking", **{f"flower_bed_0{i}": "FlowerBed" for i in range(1, 9)}}
 NPM_PX, NPM_DENSITY = 2048, 30.0  # D097 band 10-40 px/m at 2K; 30 keeps steep faces above 10
-VPM_PX = 4096  # one 4 m cell = one UDIM tile 1001 square -> 1024 px/m (band 520-1706)
+VPM_PX, VPM_DENSITY = 4096, 1280.0  # band 520-1706; 1280 flat keeps faces up to ~2.4x slope stretch above 520
 STEP = 0.006
 GND06 = [(500, 300_000), (1000, 705_000), (2500, 1_125_000), (5000, 1_650_000), (7500, 1_950_000),
          (10000, 2_625_000), (15000, 3_150_000), (math.inf, 4_500_000)]
@@ -49,6 +49,8 @@ def main(argv=None) -> int:
     ap.add_argument("--cell", type=float, default=4.0)
     ap.add_argument("--chord", type=float, default=0.02)
     ap.add_argument("--footprint-min", type=float, default=1000.0)
+    ap.add_argument("--relief-tol", type=float, default=0.01)
+    ap.add_argument("--snap", type=float, default=0.001)
     a = ap.parse_args(argv)
     src = Path(a.adapter_json)
     out = Path(a.out)
@@ -61,21 +63,23 @@ def main(argv=None) -> int:
     cov = {t: list(getattr(shape(c["geometry"]), "geoms", [])) for t, c in d["coverings"].items()}
     base = d["base_covering"]
     plan = gc.plan_layers(boundary, cov, base, SLOTS, footprint_min_area=a.footprint_min, step=STEP)
-    flat = gc.build_flat(plan, cell=a.cell, chord=a.chord)
+    # relief first: the TIN drives the selective cuts (user decision 2026-10-19: cut along TIN edges only in
+    # cells deviating > 10 mm, all other cells stay 4 x 4 m)
+    spots = [(e["x"], e["y"], e["z"]) for e in d["elevations"] if e.get("source", "point") == "point"]
+    allp = [(e["x"], e["y"], e["z"]) for e in d["elevations"]]
+    tin = gc.build_tin(allp)
+    sampler = gc.ReliefSampler(tin)
+    flat = gc.build_flat(plan, cell=a.cell, chord=a.chord, sampler=sampler, tol=a.relief_tol, snap=a.snap)
     rep = {"input": str(src), "input_sha256": hashlib.sha256(src.read_bytes()).hexdigest(), "plan": plan.report,
            "layers": [{"slot": l.slot, "covering": l.covering, "level": l.level, "area_m2": round(l.geom.area, 3)}
                       for l in plan.layers],
            "flat": dict(flat.report)}
-    rep["coverage"] = gc.measure_coverage(flat, plan)
-    rep["inside"] = gc.measure_inside(flat, plan, tol=a.chord + 1e-3)
+    rep["coverage"] = gc.measure_coverage(flat, plan, tol=a.snap)
+    rep["inside"] = gc.measure_inside(flat, plan, tol=a.chord + a.snap + 1e-3)  # chord + snap grid
     # relief
-    spots = [(e["x"], e["y"], e["z"]) for e in d["elevations"] if e.get("source", "point") == "point"]
-    allp = [(e["x"], e["y"], e["z"]) for e in d["elevations"]]
     hull_s = MultiPoint([p[:2] for p in spots]).convex_hull
     tin_s = gc.build_tin(spots)
     _, hit_s = gc.ReliefSampler(tin_s).sample(flat.verts[:, :2])
-    tin = gc.build_tin(allp)
-    sampler = gc.ReliefSampler(tin)
     proj, misses = gc.project_z(flat, sampler, STEP)
     zt, hitt = sampler.sample(tin.pts[:, :2])
     rep["relief"] = {
@@ -90,6 +94,9 @@ def main(argv=None) -> int:
     rep["xy_uv_mat_unchanged"] = bool(np.array_equal(proj.verts[:, :2], flat.verts[:, :2])
                                       and np.array_equal(proj.uv, flat.uv) and proj.slot == flat.slot)
     rep["steps"] = gc.measure_steps(proj, sampler, STEP)
+    rep["relief_error"] = gc.measure_relief_error(proj, sampler, STEP, tol=a.relief_tol)
+    rep["stack_gaps"] = gc.measure_stack_gaps(proj, STEP)
+    rep["open_edges"] = gc.measure_open_edges(flat, plan, eps=a.snap)
     master = gc.add_skirt(proj, depth=1.0)
     surf_tris = int((master.level >= 0).sum())
     s_pz = sum(h.area for h in plan.holes)
@@ -100,12 +107,19 @@ def main(argv=None) -> int:
     slots_order = sorted({*master.slot})
     k_npm = gc.uv_scale_for_density(a.cell, NPM_PX, NPM_DENSITY)
     surf = master.level >= 0
-    for prof, k, px in (("vpm", 1.0, VPM_PX), ("npm", k_npm, NPM_PX)):
+    k_vpm = gc.uv_scale_for_density(a.cell, VPM_PX, VPM_DENSITY)
+    for prof, k, px in (("vpm", k_vpm, VPM_PX), ("npm", k_npm, NPM_PX)):
         uv = master.uv.copy()
         uv[surf] *= k
         m = gc.Mesh(master.verts, master.faces, master.slot, master.level, uv, master.cell, master.report)
-        dens = gc.texel_density(m.verts, m.faces[surf], uv[surf], px)
         lo, hi = (10, 40) if prof == "npm" else (520, 1706)
+        dens0 = gc.texel_density(m.verts, m.faces[surf], uv[surf], px)
+        uv_s, fixed = gc.fix_density(m.verts, m.faces[surf], uv[surf], px, lo, hi,
+                                     NPM_DENSITY if prof == "npm" else VPM_DENSITY)
+        uv[surf] = uv_s
+        dens = gc.texel_density(m.verts, m.faces[surf], uv[surf], px)
+        rep[f"density_{prof}_before_fix"] = {"min": float(np.nanmin(dens0)), "faces_out_of_band": len(fixed),
+                                             "fixed_face_ids_surface": fixed.tolist()}
         rep[f"density_{prof}"] = {"min": float(np.nanmin(dens)), "max": float(np.nanmax(dens)), "band": [lo, hi],
                                   "faces_below": int((dens < lo).sum()), "faces_above": int((dens > hi).sum()),
                                   "nan_faces": int(np.isnan(dens).sum()), "uv_cell_side": k}
@@ -114,7 +128,7 @@ def main(argv=None) -> int:
     rep["seconds"] = round(time.time() - t0, 1)
     (out / "ground_report.json").write_text(json.dumps(rep, indent=1, ensure_ascii=False, default=float),
                                             encoding="utf-8")
-    print(json.dumps({k: rep[k] for k in ("flat", "coverage", "inside", "relief", "steps", "budget",
+    print(json.dumps({k: rep[k] for k in ("flat", "coverage", "inside", "relief", "steps", "relief_error", "stack_gaps", "open_edges", "budget",
                                           "density_vpm", "density_npm")}, default=float))
     return 0
 

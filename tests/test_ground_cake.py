@@ -163,3 +163,115 @@ def test_texel_density_matches_uv_scale():
     assert gc.texel_density(verts, faces, uv / k, 4096)[0] == pytest.approx(1024.0)
     deg = np.array([[[0, 0], [0, 0], [0, 0]]], float)
     assert math.isnan(gc.texel_density(verts, faces, deg, 2048)[0])
+
+
+# ---------------------------------------------------------------- relief refinement (user decision 2026-10-19)
+
+
+def ridge_tin():
+    """Planar everywhere except a sharp ridge band 18 <= x <= 22 (0.5 m spacing, 0.4 m high): only cells over the
+    ridge need TIN cuts."""
+    pts = [(x, y, 100.0) for x in (-5.0, 15.0, 25.0, 45.0) for y in (-5.0, 35.0)]
+    xs = [18 + 0.5 * i for i in range(9)]
+    for i, x in enumerate(xs):
+        for y in [-5.0 + 2.5 * j for j in range(17)]:
+            pts.append((x, y, 100.0 + (0.4 if i % 2 else 0.0)))
+    return gc.build_tin(pts)
+
+
+def test_max_error_exact_on_ridge():
+    s = gc.ReliefSampler(ridge_tin())
+    # one face spanning x 17..19 at constant relief corners 100: the ridge vertex at x = 18.5 is 0.4 m above
+    tri = np.array([[[17.0, 1.0], [19.0, 1.0], [17.0, 3.0]]])
+    assert s.max_error(tri)[0] == pytest.approx(0.4, abs=1e-9)
+    flat = np.array([[[0.0, 0.0], [4.0, 0.0], [0.0, 4.0]]])
+    assert s.max_error(flat)[0] == pytest.approx(0.0, abs=1e-12)
+
+
+def test_relief_refinement_only_where_needed_and_watertight():
+    b, cov = site()
+    plan = gc.plan_layers(b, cov, "tile", SLOTS, footprint_min_area=100)
+    s = gc.ReliefSampler(ridge_tin())
+    coarse = gc.build_flat(plan, cell=4.0)
+    proj0, _ = gc.project_z(coarse, s, 0.006)
+    assert gc.measure_relief_error(proj0, s, 0.006)["max_mm"] > 100  # RED without refinement
+    flat = gc.build_flat(plan, cell=4.0, sampler=s, tol=0.01)
+    proj, misses = gc.project_z(flat, s, 0.006)
+    assert misses == []
+    er = gc.measure_relief_error(proj, s, 0.006)
+    assert er["max_mm"] <= 10.0 and er["faces_over_tol"] == 0
+    rep = flat.report
+    assert rep["relief_cut_xy_cells"] > 0 and rep["relief_max_error_before_mm"] > 100
+    # cut cells all touch the ridge band (x 16..24 with the 4 m grid anchored at 0)
+    assert {ix for ix, _ in rep["relief_cut_xy_list"]} == {4, 5}
+    # no crack: every open base edge lies on the outline; Z steps still exact at vertices
+    oe = gc.measure_open_edges(flat, plan)
+    assert oe["open_edges_off_outline"] == 0 and oe["non_manifold"] == 0
+    assert gc.measure_steps(proj, s, 0.006)["vertex_max_mm"] < 1e-6
+    cv = gc.measure_coverage(flat, plan)
+    assert cv["uncovered_m2"] < 1e-4
+    assert gc.measure_inside(flat, plan, tol=0.021)["outside"] == 0
+
+
+def test_relief_refinement_noop_on_planar_relief():
+    b, cov = site()
+    plan = gc.plan_layers(b, cov, "tile", SLOTS, footprint_min_area=100)
+    a = gc.build_flat(plan, cell=4.0)
+    r = gc.build_flat(plan, cell=4.0, sampler=gc.ReliefSampler(plane_tin()), tol=0.01)
+    assert r.report["relief_cut_xy_cells"] == 0 and len(r.faces) == len(a.faces)
+
+
+def test_relief_refinement_fail_closed():
+    b, cov = site()
+    plan = gc.plan_layers(b, cov, "tile", SLOTS, footprint_min_area=100)
+    for bad in (0.0, -1.0, float("nan")):
+        with pytest.raises(ValueError):
+            gc.build_flat(plan, sampler=gc.ReliefSampler(plane_tin()), tol=bad)
+
+
+def test_fix_density_only_out_of_band_faces():
+    verts = np.array([[0, 0, 0], [4, 0, 0], [0, 4, 0], [4, 0, 12.0], [4, 4, 0], [8, 0, 0]], float)
+    faces = np.array([[0, 1, 2], [1, 5, 4]])
+    verts[5, 2] = 40.0  # second face: steep, density stretched far below the band
+    uv = np.array([[[0, 0], [1, 0], [0, 1]], [[1, 0], [2, 0], [2, 1]]], float) * 1.25
+    d0 = gc.texel_density(verts, faces, uv, 4096)
+    assert d0[0] == pytest.approx(1280) and d0[1] < 520  # RED: steep face below the VPM band
+    out, fixed = gc.fix_density(verts, faces, uv, 4096, 520, 1706, 1280)
+    assert list(fixed) == [1] and np.array_equal(out[0], uv[0])
+    assert gc.texel_density(verts, faces, out, 4096)[1] == pytest.approx(1280)
+    with pytest.raises(ValueError):
+        gc.fix_density(verts, faces, uv, 4096, 520, 1706, 2000)
+
+
+def test_snap_removes_sliver_edges_and_keeps_coverage_within_tol():
+    # boundary with a vertex 0.2 mm off a cell line -> sub-millimetre sliver edges without snapping
+    b = Polygon([(0, 0), (8.0002, 0), (8.0002, 4.0001), (12, 4.0001), (12, 8), (0, 8)])
+    plan = gc.plan_layers(b, {"tile": [b]}, "tile", SLOTS, footprint_min_area=100)
+    s = gc.ReliefSampler(plane_tin(extent=(-5, -5, 20, 20)))
+
+    def shortest(m):
+        P = m.verts[m.faces]
+        return np.linalg.norm(P - np.roll(P, 1, axis=1), axis=2).min()
+    assert shortest(gc.build_flat(plan, sampler=s, snap=1e-6)) < 1e-3  # RED: sliver edge
+    m = gc.build_flat(plan, sampler=s, snap=1e-3)
+    assert shortest(m) >= 1e-3 - 1e-9
+    cv = gc.measure_coverage(m, plan, tol=1e-3)
+    assert cv["uncovered_beyond_tol_m2"] < 1e-9 and cv["outside_surface_beyond_tol_m2"] < 1e-9
+    assert gc.measure_open_edges(m, plan, eps=1e-3)["open_edges_off_outline"] == 0
+    for bad in (0.0, 0.02, float("nan")):
+        with pytest.raises(ValueError):
+            gc.build_flat(plan, snap=bad)
+
+
+@pytest.mark.parametrize("tol", [0.01, 0.5])
+def test_layers_share_triangulation_gap_exact_over_bent_relief(tol):
+    """With a 10 mm relief tolerance a base face may bend away from the plate above it; stacked layers must share
+    one triangulation so the gap is exactly level * step everywhere (no poke-through, no z-fighting)."""
+    b, cov = site()
+    cov["bed1"] = [Point(20.3, 21.1).buffer(2.7)]  # a curved plate across the ridge, off the grid lines
+    plan = gc.plan_layers(b, cov, "tile", SLOTS, footprint_min_area=100)
+    s = gc.ReliefSampler(ridge_tin())
+    proj, _ = gc.project_z(gc.build_flat(plan, cell=4.0, chord=0.02, sampler=s, tol=tol), s, 0.006)
+    g = gc.measure_stack_gaps(proj, 0.006)
+    assert g["checked"] > 0
+    assert g["max_gap_error_mm"] < 1e-6 and g["same_level_overlap_m2"] < 1e-6
