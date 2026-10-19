@@ -1,8 +1,13 @@
 """Procedural Ground diffuse maps for Vatutino (issue 319, [D117], [D097], GND-11).
 
-Pillow and numpy only. Colours and snapped grid periods that are not in the
-SPOZU are marked provisional on each slot. Delivery writes only the version
-folder C:/x/vatutino-ground-textures/v001.
+Pillow and numpy only. Sourced paver faces (`nominal_tile_mm`) and gravel
+fractions (`fraction_mm`) set the pattern scale. Pixel periods and joints must
+match those sizes at the profile px/m; a mismatch raises GroundRecipeError
+before any pixel is written. The periodic supertile closes with at most 1% scale error per axis;
+physical joint width is provisional, never widened to force integer periods.
+Delivery writes only new version folders below C:/x/vatutino-ground-textures.
+
+new-case: seeded procedural Ground diffuse recipes with physical supertile rasterization.
 """
 
 import argparse
@@ -16,7 +21,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, PngImagePlugin
 
 CANONICAL_SLOTS = (
     "TileLight",
@@ -145,7 +150,15 @@ def render_map(recipe, slot: str, profile: str, size: int | None = None, deliver
             raise GroundRecipeError(f"size {size} does not divide the map size {delivery_size}")
     body = recipe["slots"][slot]
     rng = _rng(recipe["seed"], slot, profile, size)
-    image = _draw(body, slot, profile, size, delivery_size, rng)
+    image = _draw(
+        body,
+        slot,
+        profile,
+        size,
+        delivery_size,
+        recipe["profiles"][profile]["px_per_m"],
+        rng,
+    )
     return _finish(image)
 
 
@@ -153,7 +166,9 @@ def png_bytes(image: np.ndarray) -> bytes:
     if image.ndim != 3 or image.shape[2] != 3 or image.dtype != np.uint8:
         raise GroundRecipeError("map must be 8-bit RGB without alpha")
     buffer = io.BytesIO()
-    Image.fromarray(np.ascontiguousarray(image), "RGB").save(buffer, format="PNG")
+    info = PngImagePlugin.PngInfo()
+    info.add(b"sRGB", b"\x00")
+    Image.fromarray(np.ascontiguousarray(image), "RGB").save(buffer, format="PNG", pnginfo=info)
     return buffer.getvalue()
 
 
@@ -208,26 +223,39 @@ def manifest_entry(recipe, slot: str, profile: str, image: np.ndarray, delivery_
         "metres_per_repeat": spec["metres_per_repeat"],
         "px_per_m": spec["px_per_m"],
         "recipe_parameters": body,
+        "physical_layout": tile_facts(body, profile) if body["family"] == "tile" else None,
         "provisional": body["provisional"],
         "seed": recipe["seed"],
         "sha256": hashlib.sha256(png_bytes(np.ascontiguousarray(image).astype(np.uint8))).hexdigest(),
     }
 
 
-def write_delivery(recipe_path, out_dir) -> dict:
+def delivery_directory(version: str) -> Path:
+    if not isinstance(version, str) or not re.fullmatch(r"v[0-9]{3}", version) or version == "v000":
+        raise GroundRecipeError("invalid output version; expected v001..v999")
+    return DELIVERY_DIR.parent / version
+
+
+def write_delivery(recipe_path, out_dir, *, version=None, address=None) -> dict:
     recipe_path = Path(recipe_path)
     out_dir = Path(out_dir)
     if _resolves_to_input(out_dir, recipe_path):
         raise GroundRecipeError("output path resolves to an input")
     if _inside_repo(out_dir):
         raise GroundRecipeError("output directory is inside the repository")
-    if not _same(out_dir, DELIVERY_DIR):
+    allowed = DELIVERY_DIR if version is None else delivery_directory(version)
+    if not _same(out_dir, allowed):
         raise GroundRecipeError(
-            "output directory is not the version folder C:/x/vatutino-ground-textures/v001"
+            f"output directory is not the version folder {allowed}"
         )
     if out_dir.exists() and any(out_dir.iterdir()):
         raise GroundRecipeError("version folder already contains files")
     recipe = load_recipe(recipe_path)
+    if address is not None:
+        recipe["address"] = address
+    for slot in CANONICAL_SLOTS:
+        for profile in _PROFILE_SIZE:
+            texture_filename(recipe["address"], slot, profile)
     if _resolves_to_input(out_dir, recipe_path):
         raise GroundRecipeError("output path resolves to an input")
     rendered = {}
@@ -247,7 +275,7 @@ def write_delivery(recipe_path, out_dir) -> dict:
     sheet = build_contact_sheet(recipe, rendered)
     sheet_buffer = io.BytesIO()
     sheet.save(sheet_buffer, format="JPEG", quality=90, subsampling=0)
-    manifest = {"address": recipe["address"], "seed": recipe["seed"], "maps": entries}
+    manifest = {"address": recipe["address"], "seed": recipe["seed"], "source_versions": recipe.get("source_versions", {}), "maps": entries}
     manifest_bytes = json.dumps(manifest, indent=2).encode("utf-8")
     if out_dir.exists() and any(out_dir.iterdir()):
         raise GroundRecipeError("version folder already contains files")
@@ -255,7 +283,8 @@ def write_delivery(recipe_path, out_dir) -> dict:
     if any(out_dir.iterdir()):
         raise GroundRecipeError("version folder already contains files")
     for name, payload in files:
-        (out_dir / name).write_bytes(payload)
+        with (out_dir / name).open("xb") as stream:
+            stream.write(payload)
     (out_dir / "contact_sheet.jpg").write_bytes(sheet_buffer.getvalue())
     (out_dir / "manifest.json").write_bytes(manifest_bytes)
     return manifest
@@ -267,12 +296,14 @@ def main(argv=None) -> int:
     deliver = sub.add_parser("deliver")
     deliver.add_argument("--recipe", default=str(_DEFAULT_RECIPE))
     deliver.add_argument("--out", required=True)
+    deliver.add_argument("--version", default="v001")
+    deliver.add_argument("--address")
     try:
         args = parser.parse_args(list(argv) if argv is not None else None)
     except SystemExit as exc:
         return int(exc.code) if exc.code else 0
     try:
-        write_delivery(args.recipe, args.out)
+        write_delivery(args.recipe, args.out, version=args.version, address=args.address)
     except GroundRecipeError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
@@ -309,17 +340,29 @@ def _validate_slot(name: str, body) -> None:
         _positive_pair(body["nominal_tile_mm"], "nominal_tile_mm")
         _rgb(body.get("base_rgb"), "base_rgb")
         _rgb(body.get("joint_rgb"), "joint_rgb")
-        _period_pair(body, "npm")
-        _period_pair(body, "vpm")
-        _joint(body, "npm")
-        _joint(body, "vpm")
+        _require_key(body, "joint_mm")
+        _positive_pair([body["joint_mm"], body["joint_mm"]], "joint_mm")
+        for profile in _PROFILE_SIZE:
+            if f"{profile}_period_px" in body:
+                _period_pair(body, profile)
+                raise GroundRecipeError("pixel periods cannot override physical nominal_tile_mm")
+            if f"{profile}_joint_px" in body:
+                raise GroundRecipeError("pixel joints cannot override physical joint_mm")
+            tile_facts(body, profile)
     elif family == "particles":
         _palette(body)
-        _cell(body, "npm")
-        _cell(body, "vpm")
         if name == "Gravel":
             _require_key(body, "fraction_mm")
-            _positive_pair(body["fraction_mm"], "fraction_mm")
+            _fraction_pair(body["fraction_mm"])
+            for profile in ("npm", "vpm"):
+                if f"{profile}_cell_px" in body:
+                    raise GroundRecipeError(f"{profile}_cell_px cannot override fraction_mm")
+                _grain_count(body["fraction_mm"], profile)
+        else:
+            if "fraction_mm" in body:
+                raise GroundRecipeError("fraction_mm is only valid for Gravel")
+            _cell(body, "npm")
+            _cell(body, "vpm")
     elif family == "lawn":
         _palette(body)
     elif family == "ecogrid":
@@ -360,13 +403,63 @@ def _period_pair(body, profile: str) -> None:
             raise GroundRecipeError(f"{key} {value} does not divide the map size {size}")
 
 
-def _joint(body, profile: str) -> None:
-    key = f"{profile}_joint_px"
-    _require_key(body, key)
-    joint = _positive_int(body[key], key)
-    period = body[f"{profile}_period_px"]
-    if joint >= min(period) / 2:
-        raise GroundRecipeError(f"{key} leaves no tile face")
+def tile_facts(body, profile: str) -> dict:
+    """Fit an integer number of physical tiles into a periodic supertile, <=1% error."""
+    size = _PROFILE_SIZE[profile]
+    density = _PROFILE_DENSITY[profile]
+    repeat_mm = size / density * 1000
+    nominal = body["nominal_tile_mm"]
+    gap = body["joint_mm"]
+    counts, factors = [], []
+    for face in nominal:
+        pitch = face + gap
+        count = int(round(repeat_mm / pitch))
+        if count < 1 or face >= repeat_mm:
+            raise GroundRecipeError("nominal_tile_mm does not fit the repeat")
+        factor = repeat_mm / (count * pitch)
+        if abs(factor - 1) > 0.01 + 1e-12:
+            raise GroundRecipeError("physical tile grid cannot close within 1% scale error")
+        counts.append(count)
+        factors.append(factor)
+    return {
+        "nominal_face_mm": list(nominal), "nominal_joint_mm": gap,
+        "count": counts, "period_px": [size / n for n in counts],
+        "scale_factor": factors, "scale_error_percent": [(s - 1) * 100 for s in factors],
+        "actual_face_mm": [v * s for v, s in zip(nominal, factors)],
+        "actual_joint_mm": [gap * s for s in factors],
+        "rasterization": "analytic pixel-area joint coverage; subpixel details averaged",
+    }
+
+
+def _fraction_pair(value) -> tuple[float, float]:
+    if not isinstance(value, (list, tuple)) or len(value) != 2:
+        raise GroundRecipeError("fraction_mm must be a pair")
+    numbers = []
+    for item in value:
+        if isinstance(item, bool) or not isinstance(item, (int, float)) or not math.isfinite(item) or item <= 0:
+            raise GroundRecipeError("fraction_mm must be finite and positive")
+        numbers.append(float(item))
+    if numbers[0] > numbers[1]:
+        raise GroundRecipeError("fraction_mm minimum is greater than its maximum")
+    return numbers[0], numbers[1]
+
+
+def _grain_count(fraction_mm, profile: str) -> int:
+    """Cells across one repeat. Pitch may move by less than half a texel, never more."""
+    lo, hi = _fraction_pair(fraction_mm)
+    px_per_m = _PROFILE_DENSITY[profile]
+    repeat_m = _PROFILE_SIZE[profile] / px_per_m
+    target = (lo + hi) / 2.0 / 1000.0
+    if target >= repeat_m:
+        raise GroundRecipeError("fraction_mm is larger than the repeat")
+    count = int(round(repeat_m / target))
+    if count < 1:
+        raise GroundRecipeError("fraction_mm is not representable")
+    pitch = repeat_m / count
+    err_px = abs(pitch - target) * px_per_m
+    if err_px >= 0.5:
+        raise GroundRecipeError("fraction_mm cannot be represented at this px/m without changing scale")
+    return count
 
 
 def _cell(body, profile: str) -> None:
@@ -378,12 +471,14 @@ def _cell(body, profile: str) -> None:
         raise GroundRecipeError(f"{key} {value} does not divide the map size {size}")
 
 
-def _draw(body, slot: str, profile: str, size: int, delivery_size: int, rng) -> np.ndarray:
+def _draw(body, slot: str, profile: str, size: int, delivery_size: int, px_per_m, rng) -> np.ndarray:
     family = body["family"]
     if family == "tile":
-        period = _scale_pair(body[f"{profile}_period_px"], delivery_size, size, f"{profile}_period_px")
-        joint = _scale_int(body[f"{profile}_joint_px"], delivery_size, size, f"{profile}_joint_px")
+        period, joint = _tile_layout(body, profile, size, delivery_size, px_per_m)
         image = _draw_tile(size, period, joint, body["base_rgb"], body["joint_rgb"], rng)
+    elif family == "particles" and slot == "Gravel":
+        count = _grain_count(body["fraction_mm"], profile)
+        image = _draw_grains(size, count, body["palette"], rng, body["fraction_mm"])
     elif family in {"particles", "foliage", "ecogrid"}:
         cell = _scale_int(body[f"{profile}_cell_px"], delivery_size, size, f"{profile}_cell_px")
         if family == "particles":
@@ -401,27 +496,104 @@ def _draw(body, slot: str, profile: str, size: int, delivery_size: int, rng) -> 
     return image * (0.90 + 0.10 * carrier[..., None])
 
 
+def _tile_layout(body, profile: str, size: int, delivery_size: int, px_per_m):
+    facts = tile_facts(body, profile)
+    period = tuple(size / n for n in facts["count"])
+    joint = tuple(p * body["joint_mm"] / (face + body["joint_mm"])
+                  for p, face in zip(period, body["nominal_tile_mm"]))
+    return period, joint
+
+
+def _joint_coverage(size, period, width):
+    """Exact area coverage of centred joint intervals, including subpixel NPM joints."""
+    start = (period - width) / 2
+    def primitive(x):
+        cycles = np.floor((x - start) / period)
+        local = x - start - cycles * period
+        return cycles * width + np.clip(local, 0, width)
+    edges = np.arange(size + 1, dtype=np.float64)
+    return np.clip(np.diff(primitive(edges)), 0, 1).astype(np.float32)
+
+
 def _draw_tile(size, period, joint, base, grout, rng) -> np.ndarray:
     px, py = period
-    ys, xs = np.indices((size, size), dtype=np.int32)
-    row = ys // py
-    rows = size // py
-    # A 3-row bond shares an offset on the first and last row only when the
-    # row count is 1 mod 3. Otherwise the vertical joint stays on one column
-    # so the period closes across the row wrap.
-    if px >= 8 and rows % 3 == 1:
-        jitter = (row % 3) - 1
-    else:
-        jitter = 0
-    lx = xs % px
-    ly = ys % py
-    jx = (px - joint) // 2 + jitter
-    jy = (py - joint) // 2
-    mask = ((lx >= jx) & (lx < jx + joint)) | ((ly >= jy) & (ly < jy + joint))
+    if any(not math.isclose(size / p, round(size / p), abs_tol=1e-6) for p in period):
+        raise GroundRecipeError("tile period does not divide the map size")
+    x = _joint_coverage(size, px, joint[0])
+    y = _joint_coverage(size, py, joint[1])
+    coverage = 1 - (1 - x[None, :]) * (1 - y[:, None])
+    # Stack bond; per-tile colour jitter closes with the supertile.
+    rows, cols = int(round(size / py)), int(round(size / px))
+    # Avoid huge tile grids for heavily reduced NPM previews: hash tile identities.
+    salt = int(rng.integers(0, 2**20))
+    ix = np.floor((np.arange(size) + 0.5 + px / 2) / px).astype(np.int64) % cols
+    iy = np.floor((np.arange(size) + 0.5 + py / 2) / py).astype(np.int64) % rows
+    shade = ((iy[:, None] * 73856093 + ix[None, :] * 19349663 + salt) % 997) / 996
     noise = _fbm(size, rng)
-    face = np.array(base, dtype=np.float32) * (0.86 + 0.14 * noise[..., None])
-    seam = np.array(grout, dtype=np.float32) * (0.78 + 0.22 * _fbm(size, rng)[..., None])
-    return np.where(mask[..., None], seam, face)
+    face = np.array(base, dtype=np.float32) * (0.88 + 0.06 * noise[..., None] + 0.06 * shade[..., None])
+    seam = np.array(grout, dtype=np.float32) * (0.88 + 0.12 * noise[..., None])
+    return face * (1 - coverage[..., None]) + seam * coverage[..., None]
+
+
+def _draw_grains(size, count, palette, rng, fraction_mm) -> np.ndarray:
+    """Grain pitch follows fraction_mm. Below two pixels the texel is an aggregate."""
+    lo, hi = fraction_mm
+    colours = np.array(palette, dtype=np.float32)
+    cell = size / float(count)
+    if cell >= 2.0:
+        shade, choice = _worley_count(size, count, len(palette), rng)
+        image = colours[choice]
+        grain = 0.82 + 0.18 * (1.0 - np.clip(shade / max(cell, 1.0), 0.0, 1.0))
+        fleck = 0.94 + 0.06 * _fbm(size, rng)
+        return image * grain[..., None] * fleck[..., None]
+    return _aggregate_grains(size, count, colours, rng, float(lo), float(hi))
+
+
+def _aggregate_grains(size, count, colours, rng, lo: float, hi: float) -> np.ndarray:
+    """Mean of a periodic grain hash. The wavelength is one repeat divided by count."""
+    samples = 4
+    salt = int(rng.integers(0, 2**31 - 1))
+    lo_q = int(round(lo * 1000.0))
+    hi_q = int(round(hi * 1000.0))
+    total = np.zeros((size, size, 3), dtype=np.float32)
+    axis_y = np.arange(size, dtype=np.float64)[:, None]
+    axis_x = np.arange(size, dtype=np.float64)[None, :]
+    kinds = int(colours.shape[0])
+    for sy in range(samples):
+        for sx in range(samples):
+            along = (axis_y + (sy + 0.5) / samples) / size
+            across = (axis_x + (sx + 0.5) / samples) / size
+            iy = np.mod(np.floor(along * count), count).astype(np.int64)
+            ix = np.mod(np.floor(across * count), count).astype(np.int64)
+            mixed = (iy * 73856093 + ix * 19349663 + salt + lo_q * 17 + hi_q * 131) & np.int64(0x7FFFFFFF)
+            choice = (mixed % kinds).astype(np.int32)
+            total += colours[choice]
+    return total / float(samples * samples)
+
+
+def _worley_count(size, count, colours, rng):
+    cell = size / float(count)
+    span = cell - 1.0 if cell > 1.0 else cell * 0.5
+    jitter_y = rng.random((count, count))
+    jitter_x = rng.random((count, count))
+    choice_grid = rng.integers(0, colours, size=(count, count))
+    ys = np.arange(size, dtype=np.float32)[:, None]
+    xs = np.arange(size, dtype=np.float32)[None, :]
+    cy0 = np.floor(np.arange(size, dtype=np.float64) / cell + 1e-9).astype(np.int32)[:, None]
+    cx0 = np.floor(np.arange(size, dtype=np.float64) / cell + 1e-9).astype(np.int32)[None, :]
+    best = np.full((size, size), np.inf, dtype=np.float32)
+    choice = np.zeros((size, size), dtype=np.int32)
+    for oy in (-1, 0, 1):
+        for ox in (-1, 0, 1):
+            cy = (cy0 + oy) % count
+            cx = (cx0 + ox) % count
+            py = (cy0 + oy) * cell + jitter_y[cy, cx] * span
+            px = (cx0 + ox) * cell + jitter_x[cy, cx] * span
+            dist = (ys - py) ** 2 + (xs - px) ** 2
+            nearer = dist < best
+            best = np.where(nearer, dist, best)
+            choice = np.where(nearer, choice_grid[cy, cx], choice)
+    return np.sqrt(best).astype(np.float32), choice
 
 
 def _draw_particles(size, cell, palette, rng) -> np.ndarray:
@@ -551,16 +723,14 @@ def _finish(image: np.ndarray) -> np.ndarray:
     current = _u8(base)
     if _seam_ok(current):
         return current
+    # A periodic 4px lift raises the interior step without moving the paver edges.
+    # Blur is only a fallback: it widens a 1px joint and changes the face size.
+    for amplitude in (1, 2, 4, 6):
+        current = _u8(base + _micro(base.shape[0], amplitude))
+        if _seam_ok(current):
+            return current
     for radius in (1, 2, 4):
         current = _u8(_box_blur(base, radius))
-        if _seam_ok(current):
-            return current
-    for amplitude in (6, 12, 18):
-        lifted = base + _micro(base.shape[0], amplitude)
-        current = _u8(lifted)
-        if _seam_ok(current):
-            return current
-        current = _u8(_box_blur(lifted, 1))
         if _seam_ok(current):
             return current
     raise GroundRecipeError("wrap seam exceeds 1.5 times the interior median")

@@ -471,6 +471,7 @@ def test_valid_scale_control_emits_the_nominal_face(recipes, recipe):
     body = control["slots"]["TileLight"]
     body["nominal_tile_mm"] = [995, 995]
     body["joint_mm"] = 5
+    body["joint_rgb"] = [0, 0, 0]  # Synthetic high-contrast scale measurement.
     image = recipes.render_map(control, "TileLight", "vpm", size=1024)
     # Four periods across 4m; threshold dark joints on a non-joint row.
     row = image[64].mean(axis=1)
