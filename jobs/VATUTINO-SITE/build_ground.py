@@ -66,6 +66,8 @@ def main(argv=None) -> int:
     ap.add_argument("--footprint-min", type=float, default=1000.0)
     ap.add_argument("--relief-tol", type=float, default=0.01)
     ap.add_argument("--snap", type=float, default=0.001)
+    ap.add_argument("--gap-min", type=float, default=0.0055, help="steep-raise target normal gap, m (V004 >= 5 mm)")
+    ap.add_argument("--gap-max", type=float, default=0.02, help="steep-raise normal gap bound, m (V004 <= 20 mm)")
     a = ap.parse_args(argv)
     src = Path(a.adapter_json)
     out = Path(a.out)
@@ -122,16 +124,19 @@ def main(argv=None) -> int:
                                       and np.array_equal(proj.uv, flat.uv) and proj.slot == flat.slot)
     proj = gc.clean_topology(proj)
     rep["cleanup"] = proj.report["cleanup"]
+    # user decision 2026-10-19: on steep relief raise a layer locally so its gap along the face normal is 5-20 mm
+    proj, offsets, rep["steep_raise"] = gc.raise_steep_layers(proj, STEP, gap_min=a.gap_min, gap_max=a.gap_max)
     rep["coverage"] = gc.measure_coverage(proj, plan, tol=0.0022)
     rep["inside"] = gc.measure_inside(proj, plan, tol=a.chord + a.snap + 1e-3)
-    rep["steps"] = gc.measure_steps(proj, sampler, STEP)
-    rep["relief_error"] = gc.measure_relief_error(proj, sampler, STEP, tol=a.relief_tol)
-    rep["stack_gaps"] = gc.measure_stack_gaps(proj, STEP)
+    rep["steps"] = gc.measure_steps(proj, sampler, STEP, offsets=offsets)
+    rep["relief_error"] = gc.measure_relief_error(proj, sampler, STEP, tol=a.relief_tol, offsets=offsets)
+    rep["stack_gaps"] = gc.measure_stack_gaps(proj, STEP, offsets=offsets)
     rep["open_edges"] = gc.measure_open_edges(proj, plan, eps=0.0022)
     master = gc.add_skirt(proj, depth=1.0)
     rep["details"] = dispositions
     rep["detail_triangles"] = len(detail.faces)
     master = gc.clean_topology(gd.combine([master, detail]))
+    rep["codirectional"] = gc.measure_codirectional(master, band_min=0.005)
     surf_tris = int((master.level >= 0).sum())
     s_pz = sum(h.area for h in plan.holes)
     rep["budget"] = {"surface_triangles": surf_tris, "total_triangles": len(master.faces),
@@ -163,7 +168,7 @@ def main(argv=None) -> int:
     (out / "ground_report.json").write_text(json.dumps(rep, indent=1, ensure_ascii=False, default=float),
                                             encoding="utf-8")
     print(json.dumps({k: rep[k] for k in ("flat", "coverage", "inside", "relief", "steps", "relief_error", "stack_gaps",
-                                          "open_edges", "budget", "density_vpm", "density_npm", "uv_tiles_vpm",
+                                          "open_edges", "steep_raise", "codirectional", "budget", "density_vpm", "density_npm", "uv_tiles_vpm",
                                           "gates")}, default=float))
     if failed:
         print(f"FAILED gates {failed}: no mesh written", file=sys.stderr)
@@ -217,6 +222,13 @@ def acceptance_gates(rep: dict) -> dict:
         d = rep[f"density_{prof}"]
         g[f"density_{prof}"] = {"pass": d["faces_below"] == 0 and d["faces_above"] == 0 and d["nan_faces"] == 0,
                                 "value": {k: d[k] for k in ("min", "max", "faces_below", "faces_above", "nan_faces")}}
+    sg = rep["stack_gaps"]
+    # gap below 5 mm is a V004 fail: gate. Above 20 mm is a V004 review; with continuous Z-only plates it cannot be
+    # avoided where a vertex joins an ~80 deg face and a flatter one (steep_raise.over_gap_max_vertices): reported.
+    g["normal_gap_min_5mm"] = {"pass": sg["normal_gap_centroids_below"] == 0 and sg["normal_gap_vertices_below"] == 0,
+                               "value": {k: sg[k] for k in sg if k.startswith("normal_gap")}}
+    g["v004_codirectional_below_5mm_0"] = {"pass": rep["codirectional"]["pairs_below"] == 0,
+                                           "value": rep["codirectional"]}
     t = rep["uv_tiles_vpm"]
     g["vpm_uv_tile_contained"] = {"pass": t["straddling"] == 0 and t["outside_udim_range"] == 0 and t["tiles"] == list(range(1001, 1001 + len(t["tiles"]))),
                                   "value": t}

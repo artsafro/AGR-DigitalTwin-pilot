@@ -15,6 +15,7 @@ Pure Python (shapely + numpy); the DCC side only turns the returned arrays into 
 from __future__ import annotations
 
 import math
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -645,6 +646,173 @@ def project_z(mesh: Mesh, sampler: ReliefSampler, step: float) -> tuple[Mesh, li
     return out, misses
 
 
+def _vertex_levels(mesh: Mesh) -> np.ndarray:
+    """Level per vertex of the surface faces (level >= 0); -1 for vertices of no surface face."""
+    lev_v = np.full(len(mesh.verts), -1, int)
+    surf = mesh.level >= 0
+    for f, lv in zip(mesh.faces[surf], mesh.level[surf]):
+        lev_v[f] = lv
+    return lev_v
+
+
+# The validator's parallel test (cos > 0.999999, about 0.08 deg) flips for faces a few hundredths of a degree off
+# parallel once the FBX is read back in float32; the Ground checks use 0.999998 (0.115 deg, still inside the
+# validator's 2e-3 normal-cell neighbourhood) so a pair the readback may count is cleared on the master already.
+PARALLEL_COS_MARGIN = 0.999998
+
+
+@contextmanager
+def _parallel_cos(value: float):
+    import twinqa.clearance as clearance
+    old = clearance.PARALLEL_COS_MIN
+    clearance.PARALLEL_COS_MIN = min(old, value)
+    try:
+        yield
+    finally:
+        clearance.PARALLEL_COS_MIN = old
+
+
+def readback_f32(verts: np.ndarray) -> np.ndarray:
+    """Vertices as an FBX readback sees them: shifted to the XY bounding-box centre (GND-12 pivot of
+    tools/blender/ground_json_to_fbx.py) and stored in float32 by Blender. Sliver faces change their normal by
+    ~1e-3 rad under this rounding, enough to move a co-directional distance by more than 1 mm. The validator's
+    face geometry (tools/blender/fbx_readback.py) is then rounded to 1e-6 m, reproduced here as well, after the
+    1e-6 m rounding of the mesh JSON itself (``mesh_to_dict``)."""
+    v = np.round(np.asarray(verts, float), 6)
+    piv = np.array([(v[:, 0].min() + v[:, 0].max()) / 2, (v[:, 1].min() + v[:, 1].max()) / 2, 0.0])
+    return np.round((v - piv).astype(np.float32).astype(float), 6)
+
+
+def _point_gaps(verts: np.ndarray, faces: np.ndarray, level: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Gap along the normal of the lower-level face below a point next to every corner of every upper face (the
+    corner pulled 0.1 % toward the centroid, so it lies inside the face). Returns (vertex id, gap m, lower nz)."""
+    surf = np.nonzero(level >= 0)[0]
+    P = verts[faces[surf]]
+    A = np.concatenate([P[:, :, :2], np.ones((len(P), 3, 1))], axis=2)
+    ok = np.abs(np.linalg.det(A)) > 1e-14
+    pl = np.zeros((len(P), 3))
+    pl[ok] = np.linalg.solve(A[ok], P[ok][:, :, 2:3])[:, :, 0]
+    lev = level[surf]
+    up = np.nonzero((lev > 0) & ok)[0]
+    pv = (0.999 * P[up] + 0.001 * P[up].mean(axis=1)[:, None, :]).reshape(-1, 3)
+    owner, vid = np.repeat(up, 3), faces[surf][up].reshape(-1)
+    vi, vb = STRtree(shapely.polygons(P[:, :, :2])).query(shapely.points(pv[:, :2]), predicate="intersects")
+    k = (lev[vb] < lev[owner[vi]]) & ok[vb]
+    vi, vb = vi[k], vb[k]
+    nzb = 1.0 / np.sqrt(pl[vb, 0] ** 2 + pl[vb, 1] ** 2 + 1.0)
+    gap = (pv[vi, 2] - (pl[vb, 0] * pv[vi, 0] + pl[vb, 1] * pv[vi, 1] + pl[vb, 2])) * nzb
+    return vid[vi], gap, nzb
+
+
+def raise_steep_layers(mesh: Mesh, step: float, gap_min: float = 0.0055, gap_max: float = 0.02,
+                       max_rounds: int = 10) -> tuple[Mesh, np.ndarray, dict]:
+    """Raise upper-layer vertices locally (Z only) so the gap to the base along the face normal is in
+    [gap_min, gap_max] (user decision 2026-10-19: V004 band 5-20 mm on steep relief; nominal step on flat ground).
+
+    A vertical step ``s`` over a face with unit-normal z component ``nz`` gives a normal gap ``s * nz``; at
+    ``nz < gap_min / step`` the nominal step is too small. Per vertex ``s_v = max(step, gap_min / nz_f)`` over its
+    upper faces (offset = level * s_v). Where a vertex joins faces so different in slope that ``s_v`` also exceeds
+    ``gap_max / (level_f * nz_f)`` of a flatter face, no continuous vertical offset fits both: gap_min wins (below
+    5 mm is a V004 fail, above 20 mm a review) and the vertex is listed in ``over_gap_max_vertices``.
+    Phase 2 runs the validator's co-directional test (twinqa.clearance) on the surface and raises the upper face of
+    every pair of different levels closer than 5 mm by the deficit to ``gap_min`` (plate borders next to slightly
+    tilted base faces), and every upper corner whose pointwise normal gap to the lower face below it is under 5 mm
+    (the lower face bends within the relief tolerance), up to ``max_rounds``; a raised vertex lifts the higher
+    levels of its XY stack by the same amount. Base vertices, XY, UV, slots and faces are unchanged.
+    Returns (mesh, per-vertex offset above the relief in metres, report).
+    """
+    for name, v in (("step", step), ("gap_min", gap_min), ("gap_max", gap_max)):
+        if not (isinstance(v, (int, float)) and math.isfinite(v) and v > 0):
+            raise ValueError(f"{name} must be a finite positive number, got {v!r}")
+    if gap_min >= gap_max:
+        raise ValueError(f"gap_min {gap_min} must be below gap_max {gap_max}")
+    lev_v = _vertex_levels(mesh)
+    up = np.nonzero(mesh.level >= 1)[0]
+    P = mesh.verts[mesh.faces[up]]
+    n = np.cross(P[:, 1] - P[:, 0], P[:, 2] - P[:, 0])
+    nz = np.abs(n[:, 2]) / np.maximum(np.linalg.norm(n, axis=1), 1e-300)
+    if (nz <= 0).any():
+        raise ValueError(f"{int((nz <= 0).sum())} vertical upper-layer faces: no vertical offset gives a normal gap")
+    lo = np.full(len(mesh.verts), float(step))
+    hi = np.full(len(mesh.verts), np.inf)
+    lv_f = mesh.level[up].astype(float)
+    for k in range(3):
+        np.maximum.at(lo, mesh.faces[up][:, k], gap_min / nz)
+        np.minimum.at(hi, mesh.faces[up][:, k], gap_max / (lv_f * nz))
+    # one step per XY stack (layers share XY vertices): a level-2 vertex never drops below the level-1 one, and a
+    # vertex raised later lifts the vertices of the higher levels at the same XY too (the stack keeps its gaps)
+    by_xy: dict[tuple[float, float], list[int]] = {}
+    for v in np.nonzero(lev_v >= 0)[0]:
+        by_xy.setdefault((round(float(mesh.verts[v, 0]), 4), round(float(mesh.verts[v, 1]), 4)), []).append(int(v))
+    above = {v: [w for w in grp if lev_v[w] > lev_v[v]] for grp in by_xy.values() for v in grp}
+    for grp in by_xy.values():
+        up_g = [v for v in grp if lev_v[v] >= 1]
+        if len(up_g) > 1:
+            lo[up_g] = lo[up_g].max()
+            hi[up_g] = hi[up_g].min()
+    upper_v = np.nonzero(lev_v >= 1)[0]
+    over = upper_v[lo[upper_v] > hi[upper_v] + 1e-12]  # gap_min wins: a fail below 5 mm, a review above 20 mm
+    nominal = np.where(lev_v >= 1, lev_v * float(step), 0.0)
+    offsets = np.where(lev_v >= 1, lev_v * lo, 0.0)
+    verts = mesh.verts.copy()
+    verts[upper_v, 2] += offsets[upper_v] - nominal[upper_v]
+    steep_v = upper_v[lo[upper_v] > step + 1e-12]
+    # phase 2: the validator's own co-directional test (V004). A plate border next to a slightly tilted base face
+    # can sit closer than 5 mm to that face's plane; raise the upper face of every such pair by the deficit.
+    from twinqa.clearance import BAND_EDGE_TOL_M, co_directional_pairs
+    surf = np.nonzero(mesh.level >= 0)[0]
+    band = 0.005
+    rounds, pair_raised, point_raised, left = 0, set(), set(), []
+    for rounds in range(1, max_rounds + 1):
+        low = []
+        for rep_v in (verts, readback_f32(verts)):  # the master and its float32 readback representation
+            faces = [{"object": "g", "index": int(f), "points": rep_v[mesh.faces[f]].tolist()} for f in surf]
+            with _parallel_cos(PARALLEL_COS_MARGIN):
+                low += [q for q in co_directional_pairs(faces, window_m=band) if q["distance_m"] < band - BAND_EDGE_TOL_M]
+        left = [q for q in low if mesh.level[q["a"][1]] == mesh.level[q["b"][1]]]
+        fix = [q for q in low if mesh.level[q["a"][1]] != mesh.level[q["b"][1]]]
+        pvid, pgap, pnz = _point_gaps(verts, mesh.faces, mesh.level)
+        thin = pgap < band - BAND_EDGE_TOL_M
+        if not fix and not thin.any():
+            break
+        dz = np.zeros(len(verts))
+        for v, g, nzb in zip(pvid[thin], pgap[thin], pnz[thin]):  # pointwise: lower face bent within relief tol
+            for w in [int(v), *above.get(int(v), [])]:
+                dz[w] = max(dz[w], (gap_min - g) / nzb)
+            point_raised.add(int(v))
+        for q in fix:
+            a, b = q["a"][1], q["b"][1]
+            u = a if mesh.level[a] > mesh.level[b] else b
+            p3 = verts[mesh.faces[a]]
+            nrm = np.cross(p3[1] - p3[0], p3[2] - p3[0])
+            nzi = abs(nrm[2]) / np.linalg.norm(nrm)
+            need = (gap_min - q["distance_m"]) / nzi
+            for v in mesh.faces[u]:
+                for w in [int(v), *above.get(int(v), [])]:
+                    dz[w] = max(dz[w], need)
+            pair_raised.add(int(u))
+        verts[:, 2] += dz
+        offsets += dz
+    else:
+        left = left + fix
+    raised_v = upper_v[offsets[upper_v] > nominal[upper_v] + 1e-12]
+    raised_f = np.isin(mesh.faces[up], raised_v).any(axis=1)
+    out = Mesh(verts, mesh.faces.copy(), list(mesh.slot), mesh.level.copy(), mesh.uv.copy(), mesh.cell,
+               dict(mesh.report))
+    rep = {"gap_min_mm": gap_min * 1000, "gap_max_mm": gap_max * 1000, "nominal_step_mm": step * 1000,
+           "upper_faces": int(len(up)), "steep_vertices": int(len(steep_v)), "raised_vertices": int(len(raised_v)),
+           "raised_faces": int(raised_f.sum()), "codirectional_rounds": rounds,
+           "codirectional_raised_faces": len(pair_raised), "codirectional_left": len(left),
+           "pointwise_raised_vertices": len(point_raised),
+           "max_raise_mm": float((offsets - nominal)[upper_v].max() * 1000) if len(upper_v) else 0.0,
+           "max_offset_mm": float(offsets.max() * 1000) if len(offsets) else 0.0,
+           "min_upper_face_nz": float(nz.min()) if len(nz) else None,
+           "over_gap_max_vertices": [int(v) for v in over],
+           "over_gap_max_bounds_mm": [[round(lo[v] * 1000, 3), round(hi[v] * 1000, 3)] for v in over]}
+    out.report["steep_raise"] = rep
+    return out, offsets, rep
+
+
 def clean_topology(mesh: Mesh, weld_m: float = 0.0021) -> Mesh:
     """Weld regulatory near-duplicates, dissolve collapsed faces, subdivide solitary plates.
 
@@ -818,37 +986,47 @@ def measure_coverage(mesh: Mesh, plan: Plan, tol: float = 0.0) -> dict:
     return out
 
 
-def measure_steps(mesh: Mesh, sampler: ReliefSampler, step: float) -> dict:
-    """Layer gap against the relief at vertices and face centres: |z - relief - level*step| in metres."""
+def _offsets(mesh: Mesh, step: float, offsets) -> np.ndarray:
+    """Per-vertex layer offset above the relief: the given array, else level * step."""
+    if offsets is not None:
+        off = np.asarray(offsets, float)
+        if off.shape != (len(mesh.verts),) or not np.isfinite(off).all():
+            raise ValueError(f"offsets must be {len(mesh.verts)} finite values, got shape {off.shape}")
+        return off
+    return np.maximum(_vertex_levels(mesh), 0) * step
+
+
+def measure_steps(mesh: Mesh, sampler: ReliefSampler, step: float, offsets=None) -> dict:
+    """Layer gap against the relief at vertices and face centres: |z - relief - offset| in metres (offset =
+    level * step, or the per-vertex ``offsets`` of ``raise_steep_layers``)."""
     surf = mesh.level >= 0
     vids = np.unique(mesh.faces[surf])
-    lev_v = np.zeros(len(mesh.verts), int)
-    for f, lv in zip(mesh.faces[surf], mesh.level[surf]):
-        lev_v[f] = lv
+    off = _offsets(mesh, step, offsets)
     zr, hit = sampler.sample(mesh.verts[vids, :2])
-    dv = np.abs(mesh.verts[vids, 2] - zr - lev_v[vids] * step)
+    dv = np.abs(mesh.verts[vids, 2] - zr - off[vids])
     cent = mesh.verts[mesh.faces[surf]].mean(axis=1)
     zc, hitc = sampler.sample(cent[:, :2])
-    dc = np.abs(cent[:, 2] - zc - mesh.level[surf] * step)
+    dc = np.abs(cent[:, 2] - zc - off[mesh.faces[surf]].mean(axis=1))
     return {"vertex_max_mm": float(np.nanmax(dv) * 1000) if len(dv) else 0.0,
             "centre_max_mm": float(np.nanmax(dc) * 1000) if len(dc) else 0.0,
             "centres_over_1mm": int(np.sum(dc > 0.001)), "centres": int(len(dc)),
             "misses": int(np.sum(~hit) + np.sum(~hitc))}
 
 
-def measure_relief_error(mesh: Mesh, sampler: ReliefSampler, step: float, tol: float = 0.01) -> dict:
-    """Exact max deviation of every surface face from relief + level*step (whole face, not only centres)."""
+def measure_relief_error(mesh: Mesh, sampler: ReliefSampler, step: float, tol: float = 0.01, offsets=None) -> dict:
+    """Exact max deviation of every surface face from relief + offset (whole face, not only centres)."""
     surf = mesh.level >= 0
     f = mesh.faces[surf]
     p = mesh.verts[f]
-    err = sampler.max_error(p[:, :, :2], p[:, :, 2] - mesh.level[surf][:, None] * step)
+    err = sampler.max_error(p[:, :, :2], p[:, :, 2] - _offsets(mesh, step, offsets)[f])
     return {"faces": int(len(err)), "max_mm": float(err.max() * 1000) if len(err) else 0.0,
             "faces_over_tol": int((err > tol).sum()), "tol_mm": tol * 1000}
 
 
-def measure_stack_gaps(mesh: Mesh, step: float) -> dict:
-    """At the centroid of every upper-layer face: Z gap to the face below it of every lower level against
-    (level difference) * step; and the area where two faces of the same level overlap top-down."""
+def measure_stack_gaps(mesh: Mesh, step: float, offsets=None, band: tuple[float, float] = (0.005, 0.02)) -> dict:
+    """At the centroid of every upper-layer face: Z gap to the face below it of every lower level against the
+    expected offset difference (level difference * step, or the per-vertex ``offsets``); the same-level top-down
+    overlap area; and the gap along the lower face's normal at the upper face's centroid and at its vertices."""
     surf = np.nonzero(mesh.level >= 0)[0]
     polys = shapely.polygons(mesh.verts[mesh.faces[surf], :2])
     P = mesh.verts[mesh.faces[surf]]
@@ -856,22 +1034,59 @@ def measure_stack_gaps(mesh: Mesh, step: float) -> dict:
     ok = np.abs(np.linalg.det(A)) > 1e-14
     pl = np.zeros((len(P), 3))
     pl[ok] = np.linalg.solve(A[ok], P[ok][:, :, 2:3])[:, :, 0]
+    off = _offsets(mesh, step, offsets)
+    po = np.zeros((len(P), 3))
+    po[ok] = np.linalg.solve(A[ok], off[mesh.faces[surf]][ok][:, :, None])[:, :, 0]
     lev = mesh.level[surf]
     up = np.nonzero((lev > 0) & ok)[0]
     cen = P[up].mean(axis=1)
     tree = STRtree(polys)
     qi, ti = tree.query(shapely.points(cen[:, :2]), predicate="intersects")
     a, b = up[qi], ti
-    k = (lev[b] < lev[a]) & ok[b]
-    a, b, c = a[k], b[k], cen[qi[k]]
+    k0 = (lev[b] < lev[a]) & ok[b]
+    a, b, c = a[k0], b[k0], cen[qi[k0]]
     zb = pl[b, 0] * c[:, 0] + pl[b, 1] * c[:, 1] + pl[b, 2]
-    err = np.abs(c[:, 2] - zb - (lev[a] - lev[b]) * step)
+    ob = po[b, 0] * c[:, 0] + po[b, 1] * c[:, 1] + po[b, 2]
+    err = np.abs(c[:, 2] - zb - (off[mesh.faces[surf][a]].mean(axis=1) - ob))
+    nzb = 1.0 / np.sqrt(pl[b, 0] ** 2 + pl[b, 1] ** 2 + 1.0)
+    gc_ = (c[:, 2] - zb) * nzb
+    _, gv, _ = _point_gaps(mesh.verts, mesh.faces, mesh.level)  # pointwise next to every upper corner
     i, j = tree.query(polys, predicate="intersects")
     k = (i < j) & (lev[i] == lev[j])
     inter = shapely.area(shapely.intersection(polys[i[k]], polys[j[k]])) if k.any() else np.zeros(0)
+    mm = (lambda x, f: float(f(x) * 1000) if len(x) else None)
     return {"checked": int(len(err)), "max_gap_error_mm": float(err.max() * 1000) if len(err) else 0.0,
             "min_gap_mm": float((c[:, 2] - zb).min() * 1000) if len(err) else None,
+            "normal_gap_centroid_min_mm": mm(gc_, np.min), "normal_gap_centroid_max_mm": mm(gc_, np.max),
+            "normal_gap_vertex_min_mm": mm(gv, np.min), "normal_gap_vertex_max_mm": mm(gv, np.max),
+            "normal_gap_band_mm": [band[0] * 1000, band[1] * 1000],
+            "normal_gap_centroids_below": int((gc_ < band[0] - 1e-5).sum()),
+            "normal_gap_centroids_above": int((gc_ > band[1] + 1e-5).sum()),
+            "normal_gap_vertices_below": int((gv < band[0] - 1e-5).sum()),
+            "normal_gap_vertices_above": int((gv > band[1] + 1e-5).sum()),
+            "normal_gap_faces_above": sorted({int(surf[x]) for x in up[qi[k0]][gc_ > band[1] + 1e-5]})[:50],
             "same_level_overlap_m2": float(inter.sum())}
+
+
+def measure_codirectional(mesh: Mesh, band_min: float = 0.005, parallel_cos: float = PARALLEL_COS_MARGIN) -> dict:
+    """V004 co-directional clearance on the master with the validator's own pair test (twinqa.clearance): pairs
+    of parallel, overlapping faces closer than ``band_min`` (all faces: surface, skirt, details), on the float64
+    master and on its float32 readback representation; the parallel test is widened to ``parallel_cos`` (never
+    narrower than the validator's)."""
+    from twinqa.clearance import BAND_EDGE_TOL_M, co_directional_pairs
+    low, per_rep = [], {}
+    for name, rep_v in (("master_f64", mesh.verts), ("readback_f32", readback_f32(mesh.verts))):
+        faces = [{"object": "ground", "index": i, "points": p} for i, p in enumerate(rep_v[mesh.faces].tolist())]
+        with _parallel_cos(parallel_cos):
+            pairs = co_directional_pairs(faces, window_m=band_min)
+        lo_ = [p for p in pairs if p["distance_m"] < band_min - BAND_EDGE_TOL_M]
+        per_rep[name] = len(lo_)
+        low += lo_
+    return {"band_min_mm": band_min * 1000, "parallel_cos_min": parallel_cos, "pairs_below": len(low),
+            "pairs_below_by_representation": per_rep,
+            "min_mm": float(min(p["distance_m"] for p in low) * 1000) if low else None,
+            "levels_below": sorted({(int(mesh.level[p["a"][1]]), int(mesh.level[p["b"][1]])) for p in low})[:20],
+            "worst": [[p["a"][1], p["b"][1], round(p["distance_m"] * 1000, 4)] for p in low[:10]]}
 
 
 def measure_open_edges(mesh: Mesh, plan: Plan, eps: float = 1e-5) -> dict:

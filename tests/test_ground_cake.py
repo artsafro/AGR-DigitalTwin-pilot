@@ -275,3 +275,70 @@ def test_layers_share_triangulation_gap_exact_over_bent_relief(tol):
     g = gc.measure_stack_gaps(proj, 0.006)
     assert g["checked"] > 0
     assert g["max_gap_error_mm"] < 1e-6 and g["same_level_overlap_m2"] < 1e-6
+
+
+def steep_site():
+    """Flat for x <= 20, then a 6:1 slope (|n_z| = 0.164, about 80 deg): a +6 mm vertical step gives ~1 mm normal gap.
+    Lawn and beds on the slope (level 1), mulch on the sloped lawn (level 2), lawn + mulch also on the flat part."""
+    b, cov = site()
+    cov["lawn"] = [Point(10, 10).buffer(5), box(24, 16, 36, 24)]
+    cov["mulch"] = [box(8, 8, 22, 12), box(28, 18, 32, 22)]
+    pts = [(x, y, 0.0 if x <= 20 else 6.0 * (x - 20)) for x in (-5, 20, 50) for y in (-5, 40)]
+    s = gc.ReliefSampler(gc.build_tin(pts))
+    plan = gc.plan_layers(b, cov, "tile", SLOTS, footprint_min_area=100)
+    proj, _ = gc.project_z(gc.build_flat(plan, cell=4.0, chord=0.02, sampler=s, tol=0.01), s, 0.006)
+    return proj, s
+
+
+def test_raise_steep_layers_clears_v004_and_keeps_flat_nominal():
+    """User decision 2026-10-19: on steep relief raise a layer locally so the normal gap is >= 5 mm (V004 band
+    5-20 mm); flat ground keeps +6 / +12 mm. Failing input: the nominal stack on the 6:1 slope (pairs < 5 mm)."""
+    proj, s = steep_site()
+    assert gc.measure_codirectional(proj)["pairs_below"] > 0  # the defect exists on the nominal stack
+    out, off, rep = gc.raise_steep_layers(proj, 0.006)
+    assert gc.measure_codirectional(out)["pairs_below"] == 0
+    g = gc.measure_stack_gaps(out, 0.006, offsets=off)
+    assert g["normal_gap_vertices_below"] == 0 and g["normal_gap_centroids_below"] == 0
+    assert g["normal_gap_vertex_min_mm"] >= 5.0 and g["max_gap_error_mm"] < 1e-6 and g["same_level_overlap_m2"] < 1e-9
+    # Z only: XY, UV, slots, faces unchanged; base vertices unchanged
+    assert np.array_equal(out.verts[:, :2], proj.verts[:, :2]) and np.array_equal(out.uv, proj.uv)
+    assert out.slot == proj.slot and np.array_equal(out.faces, proj.faces)
+    lev_v = gc._vertex_levels(proj)
+    assert np.array_equal(out.verts[lev_v == 0], proj.verts[lev_v == 0])
+    # flat ground (away from the slope) keeps the nominal offset exactly
+    flat = (lev_v >= 1) & (proj.verts[:, 0] < 19.0)
+    assert flat.any() and np.allclose(off[flat], lev_v[flat] * 0.006, atol=1e-12)
+    assert rep["steep_vertices"] > 0 and rep["max_raise_mm"] > 20.0
+    # the relief and offset bookkeeping stays exact
+    assert gc.measure_steps(out, s, 0.006, offsets=off)["vertex_max_mm"] < 1e-6
+    assert gc.measure_relief_error(out, s, 0.006, tol=0.01, offsets=off)["faces_over_tol"] == 0
+    # level 2 never drops onto level 1 at a shared XY
+    st = {}
+    for v in np.nonzero(lev_v >= 1)[0]:
+        st.setdefault((round(out.verts[v, 0], 4), round(out.verts[v, 1], 4)), {})[lev_v[v]] = off[v]
+    assert all(d[2] - d[1] >= 0.0055 * 0.164 for d in st.values() if 1 in d and 2 in d)
+
+
+def test_raise_steep_layers_reports_vertices_where_20mm_is_infeasible():
+    """Where a vertex joins the 80 deg slope and the flat part, no continuous vertical offset gives <= 20 mm on the
+    flat face and >= 5 mm on the slope: gap_min wins and the vertex is listed, never silently passed."""
+    proj, _ = steep_site()
+    out, off, rep = gc.raise_steep_layers(proj, 0.006)
+    over = rep["over_gap_max_vertices"]
+    assert over and all(abs(out.verts[v, 0] - 20.0) < 1e-6 for v in over)
+    assert gc.measure_stack_gaps(out, 0.006, offsets=off)["normal_gap_vertices_above"] > 0
+
+
+@pytest.mark.parametrize("kw", [{"gap_min": 0.0}, {"gap_min": float("nan")}, {"gap_max": -1.0},
+                                {"gap_min": 0.02, "gap_max": 0.01}, {"step": float("inf")}])
+def test_raise_steep_layers_fail_closed(kw):
+    proj, s = steep_site()
+    args = {"step": 0.006, **kw}
+    with pytest.raises(ValueError):
+        gc.raise_steep_layers(proj, args.pop("step"), **args)
+
+
+def test_offsets_shape_checked():
+    proj, s = steep_site()
+    with pytest.raises(ValueError):
+        gc.measure_steps(proj, s, 0.006, offsets=np.zeros(3))
