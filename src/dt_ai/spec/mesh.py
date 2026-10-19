@@ -890,7 +890,7 @@ def _panel_contour(v, slab_tris, rest_parts, lv, nxt, niches=None):
     walkable part is the slab there and a parapet is the parts standing on the ledge's outer edge: a terrace
     (the level is the walkable top, user 2026-10-13). A run of the contour deeper than ATTACHMENT_FROM_M inside
     the storey's slabs stops and asks whether it is a niche or a missing wall; the extractor does not decide it
-    (user 2026-10-16, #85)."""
+    (user 2026-10-16 [D132], #85): the user checks the drawings to clarify which it is."""
     zmid = (lv["elev_m"] + nxt["elev_m"]) / 2
     faces = _up_faces_at(v, slab_tris, nxt["elev_m"])
     slab = shapely.union_all(faces).buffer(0) if faces else None
