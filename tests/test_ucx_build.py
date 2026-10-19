@@ -62,7 +62,10 @@ def assert_valid_pieces(res):
     assert res.pieces
     for p in res.pieces:
         v, t = hull(p)
-        assert len(v) == 8 and len(t) == 12
+        if res.target == "Main":
+            assert len(v) == 8 and len(t) == 12
+        else:  # #326: Ground prism over a convex k-gon, k >= 3: 2k vertices, 4k - 4 triangles
+            assert len(v) >= 6 and len(v) % 2 == 0 and len(t) == 2 * len(v) - 4
         assert ua.is_closed(t)
         assert ua.is_convex(v, t)
         assert ua.classify(v, t)["kind"] != "custom"
@@ -338,6 +341,7 @@ def footprint_uncovered(v, t, res, n=24):
         g = (np.arange(n) + 0.5) / n
         gx, gy = np.meshgrid(lo[0] + g * (hi[0] - lo[0]), lo[1] + g * (hi[1] - lo[1]))
         q = np.stack([gx.ravel(), gy.ravel()], axis=1)
+        q = q[ub.piece_plan_contains(pc, q)]  # #326: Ground pieces are prisms over convex k-gons
         out.append(q[~np.isfinite(hf.z(q))])
     return np.concatenate(out) if out else np.zeros((0, 2))
 
@@ -391,19 +395,17 @@ def test_ground_l_shaped_site_exact():
 
 
 def test_ground_diagonal_perimeter_one_sided_tolerance():
-    """[D134] SYNTHETIC diagonal perimeter: reverse overhang is diagnostic, not an R11 failure."""
+    """[D134] SYNTHETIC diagonal perimeter: model -> UCX within R11. Since #326 the perimeter is cut along
+    the outline chord, so no piece overhangs it (the reverse bound stays a diagnostic)."""
     v = np.array([(0, 0, 0), (10, 0, 0), (0, 10, 0)], float)
     t = np.array([(0, 1, 2)])
     res = ub.build_ground(v, t, cell=8.0, min_cell=0.5, tol=0.08)
     assert_valid_pieces(res)
-    unc = footprint_uncovered(v, t, res)
-    assert len(unc) > 0
-    measured = float(((unc[:, 0] + unc[:, 1] - 10) / math.sqrt(2)).max())  # plan distance to the hypotenuse
-    assert res.footprint_overhang_bound_m >= measured - 1e-9
-    assert res.footprint_overhang_bound_m > 0.08
+    assert len(footprint_uncovered(v, t, res)) == 0
+    assert res.footprint_overhang_bound_m == 0.0
     pts = ub.sample_surface(v, t, 0.1)
     assert ub.ground_deviation(pts, res).max() <= 0.08
-    assert res.within_tol  # model -> UCX passes even though the reverse bound exceeds R11
+    assert res.within_tol
 
 
 def test_ground_random_rectilinear_holes_probe():
@@ -583,14 +585,14 @@ def test_ground_one_sided_missing_nonfinite_measurements_fail_closed(field, bad)
 @pytest.mark.parametrize("scale,offset", [(1.0, 0.0), (1.2, 23.0), (0.8, -19.0),
                                         (1.1, 100.0), (0.9, -100.0), (1.3, 1.5)])
 def test_one_sided_ground_generated_perimeters_probe(scale, offset):
-    """[D134] SYNTHETIC translated/scaled diagonal sites: forward R11 passes; reverse bound > R11."""
+    """[D134] SYNTHETIC translated/scaled diagonal sites: forward R11 passes; no overhang (#326 chord cut)."""
     v = np.array([(0, 0, 0), (10, 0, 0), (0, 10, 0)], float)
     v[:, :2] = scale * v[:, :2] + offset
     t = np.array([(0, 1, 2)])
     res = ub.build("Ground", v, t, cell=8.0, min_cell=0.5, tol=0.08,
                    model_triangles=50200, reserved_triangles=12)
     assert_valid_pieces(res)
-    assert res.footprint_overhang_bound_m > ub.GROUND_TOL_M
+    assert res.footprint_overhang_bound_m == 0.0 and len(footprint_uncovered(v, t, res)) == 0
     assert ub.ground_deviation(ub.sample_surface(v, t, 0.15), res).max() < 0.08
     assert res.within_tol
     ub.check_file_budget(50200, res.triangles + 12)
@@ -647,7 +649,7 @@ def test_ground_real_size_layered_perforated_site_fits_999_and_budget():
     overlapping layered heightfield: <= 999 names, <= [D012] budget, closed convex pieces with gaps,
     model -> UCX <= R11 [D134], building voids kept open."""
     v, t, centres = layered_site()
-    res = ub.build_ground(v, t)
+    res = ub.build_ground(v, t, model_triangles=46343)  # n of the real v011 file -> [D012] 15 000
     assert len(res.pieces) <= ub.MAX_PIECES and res.triangles <= res.budget == 15000
     assert res.within_tol and res.max_vertical_dev_m <= 0.08 and res.uncovered_strip_m <= ub.GROUND_TOL_M
     assert_valid_pieces(res)
@@ -658,5 +660,5 @@ def test_ground_real_size_layered_perforated_site_fits_999_and_budget():
     assert ub.ground_deviation(top, res).max() <= ub.GROUND_TOL_M  # upper surface -> UCX, one-sided
     assert len(footprint_uncovered(v, t, res, n=6)) == 0  # no piece over a void
     for c in centres:  # building voids stay open
-        assert not any(ub.point_in_piece_plan(pc, c) for pc in res.pieces)
+        assert not any(ub.piece_plan_contains(pc, c)[0] for pc in res.pieces)
     ub.ucx_names("Vatutino", "Ground", len(res.pieces))
