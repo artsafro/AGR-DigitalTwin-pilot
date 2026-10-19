@@ -968,6 +968,20 @@ def test_a_fin_at_a_facade_step_leaves_the_step():
     assert min(p[1] for p in contour) >= -0.45
 
 
+@pytest.mark.parametrize("tail_shear", [0.05, 0.1, -0.05, -0.1])
+def test_a_bent_fin_root_leaves_no_stub(tail_shear):
+    """Synthetic review-2 P1: the root is upright, but the cut tail bends at the crossbar.
+    The entire fin must go, not leave a successful contour with a 0.30 m stub at y=-0.4.
+    """
+    dump = _fin_dump(-0.4)
+    for p in dump["meshes"][-1]["vertices"]:
+        if p[1] < -0.1 - 1e-9:
+            p[0] += tail_shear * max(0.0, -p[1] - 0.1 - 0.3)
+    spec, report = extract_spec(dump, PANEL_OBJECT)
+    assert close(spec.expanded_floors()[0].contour, OUTER10, tol=0.03)
+    assert report["floors"]["L0"]["attachment_pieces_left_out"] == 1
+
+
 def _shear(dump, k, below=-0.1):
     """Lean a fin: every vertex of the last mesh with y < `below` moves x += k * (below - y); the facade stays."""
     for p in dump["meshes"][-1]["vertices"]:
