@@ -2,11 +2,13 @@
 
 import hashlib
 import importlib.util
+import itertools
 import json
 import os
 import random
 import subprocess
 import sys
+import types
 from pathlib import Path
 
 import pytest
@@ -279,12 +281,276 @@ def test_preflight_distinct_paths_write_nothing(tmp_path):
     assert not scene.exists()
 
 
+# Retained acceptance rows (three placed species, one atlas). Previous cases stay in
+# tests/test_flora_atlas_from_scene.py::test_regression_multispecies_acceptance_rows.
+# - 101 Tilia cordata, UVs [[0,0],[1,0],[1,1],[0,1]], material id kept
+# - 201 Spiraea japonica, UVs [[0,0],[1,0],[0.25,1]], material id kept
+# - 401 Lavandula angustifolia, UVs [[0,0],[1,0],[0,1]], material id kept
+# Boundary 0 and 1 are accepted. UV u=2 is rejected. One material, ids survive.
+# Review round 2 rows (private synthetic files; refuse before any write):
+# - AGR_FLORA_RESULT = catalogue.species[0].maps.diffuse
+# - AGR_FLORA_RESULT = catalogue.species[0].maps.opacity
+# - catalogue.species[0].maps.diffuse = <AGR_FLORA_OUT_DIR>/placed-scene.json
+_ACCEPTANCE_FACES = (
+    (101, "Tilia cordata", "tree", (220, 40, 40), [[0, 0], [1, 0], [1, 1], [0, 1]]),
+    (201, "Spiraea japonica", "bush", (40, 160, 60), [[0, 0], [1, 0], [0.25, 1]]),
+    (401, "Lavandula angustifolia", "flower", (90, 40, 160), [[0, 0], [1, 0], [0, 1]]),
+)
+
+
+def _placed_library(root: Path):
+    """Three-species catalogue with diffuse, opacity and a library binary."""
+
+    library = root / "flora-library.max"
+    library.parent.mkdir(parents=True, exist_ok=True)
+    library.write_bytes(b"LIBRARY-MAX")
+    species = []
+    objects = []
+    for material_id, latin, kind, color, uvs in _ACCEPTANCE_FACES:
+        slug = latin.split()[0].lower()
+        diffuse = root / "maps" / slug / "diffuse.png"
+        opacity = root / "maps" / slug / "opacity.png"
+        _png(diffuse, color)
+        _png(opacity, 255)
+        species.append({
+            "material_id": material_id,
+            "latin": latin,
+            "type": kind,
+            "maps": {
+                "diffuse": str(diffuse),
+                "opacity": str(opacity),
+                "review_status": "approved",
+            },
+        })
+        objects.append({"name": latin, "faces": [{"material_id": material_id, "uvs": uvs}]})
+    catalogue = root / "catalogue.json"
+    catalogue.write_text(json.dumps({
+        "schema": "flora-library-v1",
+        "library_file": str(library),
+        "species": species,
+    }), encoding="utf-8")
+    inventory = {"schema": "flora-placed-v1", "objects": objects}
+    paths = {
+        "diffuse": Path(species[0]["maps"]["diffuse"]),
+        "opacity": Path(species[0]["maps"]["opacity"]),
+        "library": library,
+        "catalogue": catalogue,
+    }
+    return catalogue, paths, inventory
+
+
+def _call_main(job, env, inventory):
+    runtime = types.SimpleNamespace(
+        Name=staticmethod(lambda value: value),
+        objects=[],
+        loadMaxFile=staticmethod(lambda *args, **kwargs: True),
+        saveMaxFile=staticmethod(lambda path, quiet=True: Path(path).write_bytes(b"NEW-MAX") or True),
+        resetMaxFile=staticmethod(lambda *args, **kwargs: None),
+    )
+    saved = dict(os.environ)
+    sys.modules["pymxs"] = types.SimpleNamespace(runtime=runtime)
+    job.flora_nodes = lambda rt: ["flora-node"]
+    job.dump_scene = lambda rt, nodes: inventory
+    job.pack = lambda *args, **kwargs: {
+        "species_count": 3,
+        "fill_percent": 0.1724,
+        "scale_factor": 1,
+        "atlas_count": 1,
+        "atlas_size": 2048,
+        "warnings": [],
+        "material": {"name": "M_SYNTH_Flora_1", "diffuse": "d", "opacity": "o"},
+        "ids": [{"material_id": row[0], "uv": [0, 0, 1, 1]} for row in _ACCEPTANCE_FACES],
+    }
+    job.apply_atlas = lambda *args, **kwargs: None
+    job.read_back = lambda *args, **kwargs: {
+        "material_ids": [101, 201, 401],
+        "uv_ok": True,
+        "one_material": True,
+    }
+    os.environ.clear()
+    os.environ.update(env)
+    try:
+        job.main()
+    finally:
+        os.environ.clear()
+        os.environ.update(saved)
+        sys.modules.pop("pymxs", None)
+
+
+def _assert_ids_and_uvs(job, inventory):
+    assert [face["material_id"] for obj in inventory["objects"] for face in obj["faces"]] == [101, 201, 401]
+    job.reject_unsupported_uvs(inventory)
+    outside = {
+        "schema": "flora-placed-v1",
+        "objects": [{"name": "bad", "faces": [{"material_id": 101, "uvs": [[0, 0], [2, 0], [0, 1]]}]}],
+    }
+    with pytest.raises(RuntimeError, match="unsupported UV"):
+        job.reject_unsupported_uvs(outside)
+
+
+def test_regression_catalogue_maps_survive_every_job_write(tmp_path):
+    """Receipt, inventory and scene outputs must not replace catalogue maps or the library file."""
+
+    job = _job_module()
+    cases = ("result_diffuse", "result_opacity", "inventory_diffuse")
+    for mode in cases:
+        root = tmp_path / mode
+        catalogue, paths, inventory = _placed_library(root)
+        _assert_ids_and_uvs(job, inventory)
+        env = _job_env(root / "job")
+        env["AGR_FLORA_CATALOGUE"] = str(catalogue)
+        source = paths["opacity" if mode == "result_opacity" else "diffuse"]
+        if mode == "inventory_diffuse":
+            out = Path(env["AGR_FLORA_OUT_DIR"])
+            out.mkdir(parents=True, exist_ok=True)
+            alias = out / "placed-scene.json"
+            alias.write_bytes(source.read_bytes())
+            data = json.loads(catalogue.read_text(encoding="utf-8"))
+            data["species"][0]["maps"]["diffuse"] = str(alias)
+            catalogue.write_text(json.dumps(data), encoding="utf-8")
+            source = alias
+        else:
+            env["AGR_FLORA_RESULT"] = str(source)
+        protected = {
+            paths["diffuse"]: paths["diffuse"].read_bytes(),
+            paths["opacity"]: paths["opacity"].read_bytes(),
+            paths["library"]: paths["library"].read_bytes(),
+            catalogue: catalogue.read_bytes(),
+            Path(env["AGR_FLORA_SCENE"]): Path(env["AGR_FLORA_SCENE"]).read_bytes(),
+            source: source.read_bytes(),
+        }
+        absent = [
+            Path(env["AGR_FLORA_SCENE_OUT"]),
+            Path(env["AGR_FLORA_OUT_DIR"]) / "flora-atlas.json",
+            Path(env["AGR_FLORA_OUT_DIR"]) / "T_SYNTH_Flora_d_1.png",
+            Path(env["AGR_FLORA_OUT_DIR"]) / "T_SYNTH_Flora_o_1.png",
+        ]
+        if mode != "inventory_diffuse":
+            absent.append(Path(env["AGR_FLORA_OUT_DIR"]) / "placed-scene.json")
+        result = Path(env["AGR_FLORA_RESULT"])
+        if result.resolve() != source.resolve():
+            absent.append(result)
+        with pytest.raises(RuntimeError, match="refusing to write"):
+            _call_main(job, env, inventory)
+        for path, payload in protected.items():
+            assert path.read_bytes() == payload
+        for path in absent:
+            assert not path.exists()
+        assert [face["material_id"] for obj in inventory["objects"] for face in obj["faces"]] == [101, 201, 401]
+
+
+def test_probe_catalogue_inputs_never_alias_planned_writes(tmp_path):
+    """Every catalogue map and the library file stays clear of every planned write, including spellings."""
+
+    job = _job_module()
+    kinds = ("diffuse", "opacity", "library")
+    slots = (
+        "result",
+        "scene_out",
+        "placed-scene.json",
+        "flora-atlas.json",
+        "T_SYNTH_Flora_d_1.png",
+        "T_SYNTH_Flora_o_1.png",
+    )
+    seen = 0
+    for index, (kind, slot) in enumerate(itertools.product(kinds, slots)):
+        seen += 1
+        root = tmp_path / f"alias-{index}"
+        catalogue, paths, _inventory = _placed_library(root)
+        env = _job_env(root / "job")
+        env["AGR_FLORA_CATALOGUE"] = str(catalogue)
+        target = paths[kind]
+        payload = target.read_bytes()
+        rng = random.Random(1000 + index)
+        if slot in ("result", "scene_out"):
+            env["AGR_FLORA_RESULT" if slot == "result" else "AGR_FLORA_SCENE_OUT"] = str(_spellings(target, rng))
+            watched = target
+        else:
+            planned = Path(env["AGR_FLORA_OUT_DIR"]) / slot
+            planned.parent.mkdir(parents=True, exist_ok=True)
+            planned.write_bytes(payload)
+            data = json.loads(catalogue.read_text(encoding="utf-8"))
+            spelled = str(_spellings(planned, rng))
+            if kind == "library":
+                data["library_file"] = spelled
+            else:
+                data["species"][0]["maps"][kind] = spelled
+            catalogue.write_text(json.dumps(data), encoding="utf-8")
+            watched = planned
+        before = watched.read_bytes()
+        library_before = paths["library"].read_bytes()
+        with pytest.raises(RuntimeError, match="refusing to write"):
+            job.preflight_job(env)
+        assert watched.read_bytes() == before
+        assert paths["library"].read_bytes() == library_before
+        assert catalogue.read_bytes()
+        if slot in ("result", "scene_out"):
+            assert not Path(env["AGR_FLORA_OUT_DIR"]).exists()
+    assert seen == 18
+
+
+def test_probe_hardlinked_catalogue_inputs_never_write(tmp_path):
+    """A hard link of a diffuse, opacity or library file is still an input."""
+
+    job = _job_module()
+    seen = 0
+    for index, (kind, slot) in enumerate(itertools.product(("diffuse", "opacity", "library"), ("result", "inventory"))):
+        root = tmp_path / f"link-{index}"
+        catalogue, paths, _inventory = _placed_library(root)
+        env = _job_env(root / "job")
+        env["AGR_FLORA_CATALOGUE"] = str(catalogue)
+        source = paths[kind]
+        try:
+            if slot == "result":
+                link = root / f"{kind}-result-link"
+                os.link(source, link)
+                env["AGR_FLORA_RESULT"] = str(link)
+                watched = source
+            else:
+                link = Path(env["AGR_FLORA_OUT_DIR"]) / "placed-scene.json"
+                link.parent.mkdir(parents=True, exist_ok=True)
+                os.link(source, link)
+                watched = source
+        except OSError as exc:
+            pytest.skip(f"hard links are not available: {exc}")
+        before = watched.read_bytes()
+        with pytest.raises(RuntimeError, match="refusing to write"):
+            job.preflight_job(env)
+        assert watched.read_bytes() == before
+        assert link.read_bytes() == before
+        assert not Path(env["AGR_FLORA_SCENE_OUT"]).exists()
+        seen += 1
+    assert seen == 6
+
+
+def test_unsupported_catalogue_map_refuses_before_write(tmp_path):
+    """A non-path catalogue map is not a successful preflight and creates nothing."""
+
+    job = _job_module()
+    env = _job_env(tmp_path)
+    catalogue = Path(env["AGR_FLORA_CATALOGUE"])
+    catalogue.write_text(json.dumps({
+        "schema": "flora-library-v1",
+        "library_file": 1,
+        "species": [{"maps": {"diffuse": "", "opacity": None}}],
+    }), encoding="utf-8")
+    payload = catalogue.read_bytes()
+    with pytest.raises(RuntimeError, match="refusing to write"):
+        job.preflight_job(env)
+    assert catalogue.read_bytes() == payload
+    assert not Path(env["AGR_FLORA_OUT_DIR"]).exists()
+    assert not Path(env["AGR_FLORA_RESULT"]).exists()
+    assert not Path(env["AGR_FLORA_SCENE_OUT"]).exists()
+
+
 def test_job_guards_run_before_pymxs_and_writes():
     source = JOB.read_text(encoding="utf-8")
     main = source.split("def main(", 1)[1].split("\ndef ", 1)[0]
     assert main.index("preflight_job") < main.index("pymxs")
     assert main.index("preflight_job") < main.index("makedirs")
     assert main.index("preflight_job") < main.index("saveMaxFile")
+    preflight = source.split("def preflight_job(", 1)[1].split("\ndef ", 1)[0]
+    assert preflight.index("catalogue_library_inputs") < preflight.index("_refuse_aliased_writes")
     assert main.index("reject_unsupported_uvs") < main.index("makedirs")
     assert main.index("reject_unsupported_uvs") < main.rindex("saveMaxFile")
 

@@ -66,8 +66,54 @@ def _require_env(env, name):
     return value
 
 
+def catalogue_library_inputs(catalogue_path):
+    """Diffuse, opacity and library paths named by the catalogue.
+
+    The catalogue is only read. A missing file, invalid JSON, or a map/library
+    value that is not a path refuses the job before any planned write.
+    """
+
+    try:
+        with open(catalogue_path, encoding="utf-8") as handle:
+            catalogue = json.load(handle)
+    except (OSError, ValueError, UnicodeError) as exc:
+        raise RuntimeError("refusing to write; catalogue library inputs cannot be read: %s" % exc)
+    if not isinstance(catalogue, dict):
+        raise RuntimeError("refusing to write; catalogue is unsupported")
+    protected = []
+    if "library_file" in catalogue:
+        protected.append(_catalogue_path(catalogue.get("library_file"), "library_file"))
+    species = catalogue.get("species", [])
+    if not isinstance(species, list):
+        raise RuntimeError("refusing to write; catalogue species is unsupported")
+    for index, item in enumerate(species):
+        if not isinstance(item, dict):
+            raise RuntimeError("refusing to write; catalogue species %s is unsupported" % index)
+        if "maps" not in item:
+            continue
+        maps = item.get("maps")
+        if not isinstance(maps, dict):
+            raise RuntimeError("refusing to write; catalogue species %s maps are unsupported" % index)
+        for key in ("diffuse", "opacity"):
+            if key not in maps:
+                continue
+            protected.append(_catalogue_path(maps.get(key), "species %s %s map" % (index, key)))
+    return protected
+
+
+def _catalogue_path(value, label):
+    if not isinstance(value, str) or not value.strip():
+        raise RuntimeError("refusing to write; catalogue %s is unsupported" % label)
+    return value
+
+
 def preflight_job(env):
-    """Resolve every Max-job path and refuse aliases before any file is created."""
+    """Resolve every Max-job path and refuse aliases before any file is created.
+
+    Planned writes are checked against the scene, the catalogue, the uv executable,
+    an existing scene output, and every catalogue map and library file. Path
+    spellings and hard links count as the same file.
+    """
 
     scene = _require_env(env, "AGR_FLORA_SCENE")
     catalogue = _require_env(env, "AGR_FLORA_CATALOGUE")
@@ -100,6 +146,7 @@ def preflight_job(env):
         protected.append(scene)
     if os.path.lexists(scene_out):
         protected.append(scene_out)
+    protected.extend(catalogue_library_inputs(catalogue))
     _refuse_aliased_writes(writes, protected)
     return {
         "scene": scene,
