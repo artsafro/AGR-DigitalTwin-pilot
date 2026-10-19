@@ -76,7 +76,8 @@ def measure_files(paths):
         path = Path(raw)
         if not path.is_file():
             raise FailClosed("partial")
-        text = path.open(encoding="utf-8", newline="").read()
+        with path.open(encoding="utf-8", newline="") as source:
+            text = source.read()
         if text.strip() == "":
             raise FailClosed("empty")
         total += len(text)
@@ -155,7 +156,7 @@ def _next_lines(repo):
     path = repo / "docs" / "PROJECT_STATE.next.md"
     if not path.exists():
         return []
-    text = path.open(encoding="utf-8", newline="").read()
+    text = path.read_text(encoding="utf-8")
     if text.strip() == "":
         raise FailClosed("empty")
     rows = []
@@ -189,7 +190,7 @@ def render(merges, opens, next_lines=None):
         "",
         "## In production",
         "",
-        "No official delivery has passed yet. Per-object gates stay in `jobs/<ID>/STATE.md`. "
+        "PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/STATE.md`. "
         "Merged pull requests, newest first:",
     ]
     if merges:
@@ -324,10 +325,14 @@ def generate(repo, output, max_merges, max_open):
     inputs = _inputs(repo)
     _refuse_output(output, inputs)
     merges_raw = _capture(
-        ["git", "log", "--first-parent", "--merges", "--grep=^Merge pull request #",
+        ["git", "log", "--merges", "--grep=^Merge pull request #",
          "-n", str(max_merges), "--format=%H%x09%s"], repo)
+    remote = _capture(["git", "remote", "get-url", "origin"], repo).strip()
+    match = re.fullmatch(r"(?:https://github\.com/|git@github\.com:)([\w.-]+/[\w.-]+?)(?:\.git)?/?", remote)
+    if match is None:
+        raise FailClosed("unsupported origin")
     opens_raw = _capture(
-        ["gh", "pr", "list", "--state", "open", "--limit", str(max_open),
+        ["gh", "pr", "list", "--repo", match[1], "--state", "open", "--limit", str(max_open),
          "--json", "number,title,headRefName,isDraft"],
         repo)
     merges = normalize_merges(merges_raw)[:max_merges]

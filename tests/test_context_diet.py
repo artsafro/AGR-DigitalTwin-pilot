@@ -1,4 +1,7 @@
-"""Kernel C7 context diet: per-card reading list, generated project state, base context < 10k tokens."""
+"""Kernel C7 startup context and generated state.
+
+new-case: startup-rule preservation and synthetic state-generator regressions.
+"""
 import importlib.util
 import math
 import os
@@ -26,7 +29,8 @@ def _load():
 
 
 def _raw(path):
-    return path.open(encoding="utf-8", newline="").read()
+    with path.open(encoding="utf-8", newline="") as source:
+        return source.read()
 
 
 def _headings(text):
@@ -103,8 +107,12 @@ def _write_stubs(bin_dir, merges, opens, git_code=0, gh_code=0):
             program = ("import sys; from pathlib import Path; "
                        f"sys.stdout.buffer.write(Path({str(bin_dir / filename)!r}).read_bytes()); "
                        f"sys.exit({code})")
+            if name == "git":
+                program = ("import sys; "
+                           "sys.stdout.write('https://github.com/fixture/context-diet.git\\n') if sys.argv[1] == 'remote' else None; "
+                           "sys.exit(0) if sys.argv[1] == 'remote' else None; " + program)
             stub = bin_dir / name
-            stub.write_text("#!/bin/sh\nexec " + shlex.quote(sys.executable) + " -c " + shlex.quote(program) + "\n", encoding="utf-8")
+            stub.write_text("#!/bin/sh\nexec " + shlex.quote(sys.executable) + " -c " + shlex.quote(program) + ' "$@"\n', encoding="utf-8")
             stub.chmod(0o755)
     (bin_dir / "merges.txt").write_bytes(merges.encode("utf-8"))
     (bin_dir / "open.json").write_bytes(opens.encode("utf-8"))
@@ -113,6 +121,10 @@ def _write_stubs(bin_dir, merges, opens, git_code=0, gh_code=0):
         "if /I \"%~1\"==\"log\" (\r\n"
         "  type \"%~dp0merges.txt\"\r\n"
         f"  exit /b {git_code}\r\n"
+        ")\r\n"
+        "if /I \"%~1\"==\"remote\" (\r\n"
+        "  echo https://github.com/fixture/context-diet.git\r\n"
+        "  exit /b 0\r\n"
         ")\r\n"
         "echo unsupported 1>&2\r\n"
         "exit /b 2\r\n",
@@ -167,6 +179,11 @@ def test_rule_headings_and_bullets_survive_in_the_file_or_a_linked_doc():
     state_rule = next(item for item in required_bullets if item.startswith("- Update `docs/PROJECT_STATE.md`"))
     required_bullets.remove(state_rule)
     flat = " ".join(text.split())
+    prose = [" ".join(paragraph.split())
+             for source in (before_agents, before_claude)
+             for paragraph in source.split("\n\n")
+             if paragraph.strip() and not paragraph.startswith(("#", "|", "-", "@"))]
+    assert all(paragraph in flat for paragraph in prose), "A baseline prose rule was lost"
     for qualifier in ("only on `main` after a merge", "≤ 80 lines, fixed sections",
                       "in task branches report state changes in the final summary"):
         assert qualifier in flat
@@ -306,6 +323,25 @@ def test_source_failure_then_recovery(tmp_path):
     assert output.read_bytes() == before
 
 
+def test_gh_uses_origin_not_fork_parent(tmp_path, monkeypatch):
+    module = _load()
+    calls = []
+
+    def capture(argv, cwd):
+        calls.append(argv)
+        if argv[:3] == ["git", "remote", "get-url"]:
+            return "https://github.com/fixture/context-diet.git\n"
+        if argv[0] == "git":
+            return "abc1234\tMerge pull request #1\n"
+        return "[]\n"
+
+    monkeypatch.setattr(module, "_capture", capture)
+    module.generate(tmp_path, tmp_path / "PROJECT_STATE.md", 12, 12)
+    gh_call = next(argv for argv in calls if argv[0] == "gh")
+    assert "--repo" in gh_call
+    assert gh_call[gh_call.index("--repo") + 1] == "fixture/context-diet"
+
+
 def test_real_git_fixture_repo_generation(tmp_path):
     repo = tmp_path / "real-repo"
     repo.mkdir()
@@ -316,6 +352,7 @@ def test_real_git_fixture_repo_generation(tmp_path):
         return completed.stdout.strip()
 
     git("init", "-b", "main")
+    git("remote", "add", "origin", "https://github.com/fixture/context-diet.git")
     git("config", "user.name", "Synthetic fixture")
     git("config", "user.email", "fixture@example.invalid")
     git("commit", "--allow-empty", "-m", "Synthetic root")
@@ -386,6 +423,30 @@ def test_git_metadata_descendant_output_is_refused(tmp_path):
     assert config.read_bytes() == before
 
 
+def test_worktree_metadata_and_hardlink_aliases_are_inputs(tmp_path):
+    module = _load()
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    metadata = tmp_path / "metadata"
+    metadata.mkdir()
+    config = metadata / "config"
+    config.write_text("KEEP\n", encoding="utf-8")
+    (repo / ".git").write_text(f"gitdir: {metadata.as_posix()}\n", encoding="utf-8")
+    for output in (config, metadata / "new-file"):
+        with pytest.raises(module.FailClosed, match="output-is-input"):
+            module.generate(repo, output, 12, 12)
+    assert config.read_text(encoding="utf-8") == "KEEP\n"
+    assert not (metadata / "new-file").exists()
+    hand = repo / "docs" / "PROJECT_STATE.next.md"
+    hand.parent.mkdir()
+    hand.write_text("KEEP NEXT\n", encoding="utf-8")
+    alias = repo / "PROJECT_STATE.md"
+    os.link(hand, alias)
+    with pytest.raises(module.FailClosed, match="output-is-input"):
+        module.generate(repo, alias, 12, 12)
+    assert hand.read_text(encoding="utf-8") == "KEEP NEXT\n"
+
+
 def test_output_path_that_resolves_to_an_input_writes_nothing(tmp_path):
     merges = "abc1234\tSubject one\n"
     opens = '[{"number": 3, "title": "Keep", "headRefName": "task/a", "isDraft": false}]\n'
@@ -430,6 +491,7 @@ def test_line_limit_fails_exactly_at_80_and_passes_under_it():
     assert boundary is not None
     assert previous == "pass"
     merges = [(f"{index + 1:07x}", f"Subject {index}") for index in range(boundary)]
+    assert len(module.render(merges, []).splitlines()) == 80
     with pytest.raises(module.FailClosed) as raised:
         module.finalize(module.render(merges, []))
     assert raised.value.reason == "threshold"

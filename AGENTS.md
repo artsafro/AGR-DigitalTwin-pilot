@@ -9,7 +9,9 @@ Long form of the sections below: `docs/agents/agents-reference.md`.
 
 ## Goal
 
-Delivery models from architectural sources — NPM and VPM per the Moscow regulation, later IFC — for buildings (OKS), Ground, MAF (GroundEl), Flora and UCX collisions, plus the interactive Unreal experience. Priorities, in order:
+Produce delivery models from architectural sources — NPM and VPM per the Moscow
+regulation, later IFC — for buildings (OKS), Ground, MAF (GroundEl), Flora and UCX
+collisions, plus the interactive Unreal experience. Priorities, in order:
 1. Architectural accuracy 2. Correct scale and transforms 3. Material correctness
 4. Performance 5. Visual fidelity.
 
