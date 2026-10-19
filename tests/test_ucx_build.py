@@ -306,3 +306,180 @@ def test_driver_refuses_before_any_write(tmp_path, case):
     assert sorted(p.name for p in tmp_path.rglob("*")) == before
     if src.exists():
         assert src.read_bytes() == b"fbx-bytes"
+
+
+# --- review round 1 (PR #307): Ground footprint coverage, driver selection, target-scoped replacement ---
+
+def plan_mesh(xs, ys, keep, z=lambda x, y: 0.0 * x):
+    """Flat/heightfield mesh on the rectilinear grid xs x ys; cell (i, j) kept when keep(cx, cy).
+    Only referenced vertices are returned (no stray vertex inside a hole)."""
+    vid, v, t = {}, [], []
+
+    def idx(i, j):
+        if (i, j) not in vid:
+            vid[(i, j)] = len(v)
+            v.append((xs[i], ys[j], float(z(xs[i], ys[j]))))
+        return vid[(i, j)]
+
+    for i in range(len(xs) - 1):
+        for j in range(len(ys) - 1):
+            if keep((xs[i] + xs[i + 1]) / 2, (ys[j] + ys[j + 1]) / 2):
+                a, b, c, d = idx(i, j), idx(i + 1, j), idx(i + 1, j + 1), idx(i, j + 1)
+                t += [(a, b, c), (a, c, d)]
+    return np.array(v, float), np.array(t)
+
+
+def footprint_uncovered(v, t, res, n=24):
+    """Dense plan grid over every piece top -> points the surface does not cover (diagnostic witness)."""
+    hf = ub.HeightField(v, t)
+    out = []
+    for pc in res.pieces:
+        lo, hi = pc.verts[:, :2].min(axis=0), pc.verts[:, :2].max(axis=0)
+        g = (np.arange(n) + 0.5) / n
+        gx, gy = np.meshgrid(lo[0] + g * (hi[0] - lo[0]), lo[1] + g * (hi[1] - lo[1]))
+        q = np.stack([gx.ravel(), gy.ravel()], axis=1)
+        out.append(q[~np.isfinite(hf.z(q))])
+    return np.concatenate(out) if out else np.zeros((0, 2))
+
+
+@pytest.mark.parametrize("w", [2.0, 4.0, 6.0])
+@pytest.mark.parametrize("cell", [8.0, 3.0])
+def test_ground_ring_hole_never_filled(w, cell):
+    """Reviewer witness: 8 x 8 m ring with a central w x w hole, cell=8 -> no piece over the hole."""
+    a, b = 4 - w / 2, 4 + w / 2
+    xs = sorted({0.0, 8.0, a, b} | {float(k) for k in range(9)})
+    v, t = plan_mesh(xs, xs, lambda x, y: not (a < x < b and a < y < b))
+    res = ub.build_ground(v, t, cell=cell)
+    assert_valid_pieces(res)
+    assert len(footprint_uncovered(v, t, res)) == 0
+    for pc in res.pieces:  # hole centre lies under no piece
+        lo, hi = pc.verts[:, :2].min(axis=0), pc.verts[:, :2].max(axis=0)
+        assert not (lo[0] < 4 < hi[0] and lo[1] < 4 < hi[1])
+    assert res.footprint_overhang_bound_m == 0.0 and res.within_tol
+
+
+def test_ground_unaligned_rectilinear_hole_exact():
+    """Hole edges and corners off the quadtree grid: split at the boundary vertices -> exact footprint."""
+    xs = [0.0, 1.0, 2.3, 5.7, 7.0, 8.0]
+    v, t = plan_mesh(xs, xs, lambda x, y: not (2.3 < x < 5.7 and 2.3 < y < 5.7))
+    res = ub.build_ground(v, t, cell=8.0)
+    assert_valid_pieces(res)
+    assert len(footprint_uncovered(v, t, res)) == 0
+    assert res.footprint_overhang_bound_m == 0.0 and res.within_tol
+    pts = ub.sample_surface(v, t, 0.25)
+    assert np.isfinite(ub.ground_deviation(pts, res)).all(), "every surface point lies over a piece"
+
+
+def test_ground_rectangle_control_exact():
+    """Rectangle 7.3 x 5.1 m (not a multiple of the cell): fitted grid, no overhang, within tol."""
+    v, t = plan_mesh(np.linspace(0, 7.3, 8), np.linspace(0, 5.1, 6), lambda x, y: True,
+                     z=lambda x, y: 0.05 * x)
+    res = ub.build_ground(v, t, cell=4.0)
+    assert_valid_pieces(res)
+    assert len(footprint_uncovered(v, t, res)) == 0
+    assert res.footprint_overhang_bound_m == 0.0 and res.within_tol
+    area = sum(float(np.prod(p.verts[:, :2].max(axis=0) - p.verts[:, :2].min(axis=0))) for p in res.pieces)
+    assert 7.3 * 5.1 * 0.97 < area <= 7.3 * 5.1
+
+
+def test_ground_l_shaped_site_exact():
+    xs = [0.0, 3.1, 6.2, 9.0]
+    v, t = plan_mesh(xs, xs, lambda x, y: not (x > 3.1 and y > 3.1))
+    res = ub.build_ground(v, t, cell=16.0)
+    assert_valid_pieces(res)
+    assert len(footprint_uncovered(v, t, res)) == 0 and res.within_tol
+
+
+def test_ground_diagonal_perimeter_overhang_reported_not_passed():
+    """Triangular site (diagonal perimeter): axis-aligned pieces must overhang; the overhang bound is
+    reported, is never below the measured overhang, and blocks within_tol when above tol."""
+    v = np.array([(0, 0, 0), (10, 0, 0), (0, 10, 0)], float)
+    t = np.array([(0, 1, 2)])
+    res = ub.build_ground(v, t, cell=8.0, min_cell=0.5, tol=0.08)
+    assert_valid_pieces(res)
+    unc = footprint_uncovered(v, t, res)
+    assert len(unc) > 0
+    measured = float(((unc[:, 0] + unc[:, 1] - 10) / math.sqrt(2)).max())  # plan distance to the hypotenuse
+    assert res.footprint_overhang_bound_m >= measured - 1e-9
+    assert res.footprint_overhang_bound_m > 0.08 and not res.within_tol
+
+
+def test_ground_random_rectilinear_holes_probe():
+    """Probe: 12 seeded random rectilinear sites with two holes each (edges off the grid) -> pieces valid,
+    no piece point over a hole, no overhang, every surface point under a piece."""
+    rng = np.random.default_rng(1661)
+    for _ in range(12):
+        holes = [tuple(sorted(np.round(rng.uniform(0.5, 11.5, 2), 2))) + tuple(sorted(np.round(rng.uniform(0.5, 11.5, 2), 2)))
+                 for _ in range(2)]
+        xs = sorted({0.0, 12.0, *(h[k] for h in holes for k in (0, 1))} | {float(k) for k in range(0, 13, 3)})
+        ys = sorted({0.0, 12.0, *(h[k] for h in holes for k in (2, 3))} | {float(k) for k in range(0, 13, 3)})
+        keep = lambda x, y, hs=holes: not any(h[0] < x < h[1] and h[2] < y < h[3] for h in hs)  # noqa: E731
+        v, t = plan_mesh(xs, ys, keep, z=lambda x, y: 0.02 * x + 0.01 * y)
+        res = ub.build_ground(v, t, cell=6.0, min_cell=0.5)
+        assert_valid_pieces(res)
+        assert len(footprint_uncovered(v, t, res)) == 0
+        assert res.footprint_overhang_bound_m == 0.0 and res.within_tol
+        pts = ub.sample_surface(v, t, 0.3)
+        assert np.isfinite(ub.ground_deviation(pts, res)).all()
+
+
+def test_select_inputs_with_any_order():
+    names = ["SM_X_Glass2", "SM_X_MainGlass", "SM_X_Main", "SM_X_Ground"]
+    for perm in (names, names[::-1], names[1:] + names[:1]):
+        main, extra, addr = ub.select_inputs(perm, "Main", with_=["SM_X_MainGlass"])
+        assert (main, extra, addr) == ("SM_X_Main", ["SM_X_MainGlass"], "X")
+        main, extra, _ = ub.select_inputs(perm, "Main", with_=["SM_X_Glass2", "SM_X_MainGlass"])
+        assert extra == ["SM_X_Glass2", "SM_X_MainGlass"]
+
+
+@pytest.mark.parametrize("with_", [["SM_X_MainGlas"], ["SM_X_MainGlass", "Nope"], ["SM_X_Main"],
+                                   ["SM_X_MainGlass", "SM_X_MainGlass"], [""], ["UCX_SM_X_Main_001"]])
+def test_select_inputs_bad_extra_fails(with_):
+    with pytest.raises(ub.UcxBuildError):
+        ub.select_inputs(["SM_X_Main", "SM_X_MainGlass"], "Main", with_=with_)
+
+
+def test_select_inputs_target_object_rules():
+    with pytest.raises(ub.UcxBuildError):
+        ub.select_inputs(["SM_X_Glass"], "Main")
+    with pytest.raises(ub.UcxBuildError):
+        ub.select_inputs(["SM_X_Main", "SM_Y_Main"], "Main")
+    with pytest.raises(ub.UcxBuildError):
+        ub.select_inputs(["SM_X_Main"], "Main", object="SM_Z_Main")
+    assert ub.select_inputs(["SM_X_Main", "SM_X_Ground"], "Ground")[:2] == ("SM_X_Ground", [])
+
+
+@pytest.mark.parametrize("target,with_", [("Main", []), ("Main", ["SM_X_MainGlass"]), ("Ground", [])])
+def test_ucx_replace_plan_scoped_to_inputs(target, with_):
+    model = ["SM_X_Main", "SM_X_MainGlass", "SM_X_Ground"]
+    ucx = ["UCX_SM_X_Main_001", "UCX_SM_X_Main_002", "UCX_SM_X_Ground_001", "UCX_SM_X_MainGlass_001"]
+    for perm in (ucx, ucx[::-1]):
+        main, extra, _ = ub.select_inputs(model, target, with_=with_)
+        replace, keep = ub.ucx_replace_plan(perm, [main] + extra, model)
+        owners = {main, *extra}
+        assert sorted(replace) == sorted(u for u in ucx if u[4:-4] in owners)
+        assert sorted(keep) == sorted(u for u in ucx if u[4:-4] not in owners)
+    if target == "Main":
+        assert "UCX_SM_X_Ground_001" in keep
+    else:
+        assert keep and "UCX_SM_X_Ground_001" not in keep
+
+
+@pytest.mark.parametrize("bad", ["UCX_box", "UCX_SM_Y_Main_001", "UCX_SM_X_Main_01", "ucx_SM_X_Main_001x"])
+def test_ucx_replace_plan_refuses_orphans(bad):
+    with pytest.raises(ub.UcxBuildError):
+        ub.ucx_replace_plan(["UCX_SM_X_Main_001", bad], ["SM_X_Main"], ["SM_X_Main", "SM_X_Ground"])
+
+
+def test_driver_parse_with_once():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("ucx_build_driver", DRIVER)
+    drv = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(drv)
+    opts, err = drv._parse(["a.fbx", "b.fbx", "Main", "with=SM_X_MainGlass,SM_X_G2", "cell=0.5"])
+    assert err is None and opts["with"] == ["SM_X_MainGlass", "SM_X_G2"] and opts["cell"] == 0.5
+    for bad in ("with=", "with=A,,B", "with=A", "object="):
+        opts, err = drv._parse(["a.fbx", "b.fbx", "Main", bad, bad]) if bad == "with=A" else \
+            drv._parse(["a.fbx", "b.fbx", "Main", bad])
+        assert err, bad
