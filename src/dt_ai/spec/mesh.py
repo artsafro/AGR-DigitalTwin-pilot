@@ -1408,7 +1408,7 @@ def _roof_surface_groups(v, tris):
     return list(groups.values())
 
 
-def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, outline=None):
+def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, outline=None, lining=None):
     """The roof level is input, like every level; geometry only confirms it (issues #16, #9).
     Roof: up-facing body surfaces inside the top floor contour with a slope up to ROOF_SLOPE_MAX_DEG
     (drainage slopes are a flat roof) whose surface means lie within ROOF_LEVEL_TOL_M of the top input
@@ -1419,6 +1419,8 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, 
     guess. extra: separate roof parts joined to the body for this check (#9, option (a)); above:
     every other separate part, whose near-flat tops above the roof (a parapet cap or shaft top
     modelled apart) count only for closing the floor from above, never for the roof height.
+    lining: separate structural slab meshes (vertices, triangles), used only for
+    occupied shaft-lining sections, never roof height or coverage.
     Parapet top: highest body point on the outer wall line of the top floor."""
     every = tris if extra is None or not len(extra) else np.vstack([tris, extra])
     p = v[every]
@@ -1542,14 +1544,23 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, 
         # storey cuts: disconnected strips can line both cuts (#37). Include the roof
         # structure's inner reveal, so lining may end at its underside (KPP1).
         bottom = below_level["elev_m"] + 0.5 * (roof_z - below_level["elev_m"])
-        zs = v[np.unique(every), 2]
+        lining = lining or []
+        zs = np.concatenate([v[np.unique(every), 2]] + [lv[np.unique(lt), 2] for lv, lt in lining])
         heights = np.unique(np.r_[bottom, zs[(zs > bottom) & (zs < roof_z)], roof_z])
         cuts = [lo + (hi - lo) * share for lo, hi in zip(heights[:-1], heights[1:])
                 for share in (1e-4, 0.5, 1 - 1e-4)]
         sections = [shapely.unary_union(_section(v, every, z) or [LineString()]) for z in cuts]
+        # The structural opening can be narrower than the roof covering opening
+        # (KPP1: 125 mm insulation return). Its occupied section, with voids kept,
+        # supports the roof-hole edge even when its inner face is farther inward.
+        solids = [shapely.unary_union([shapely.build_area(shapely.unary_union(
+                    _section(lv, lt, z) or [LineString()])) for lv, lt in lining]) for z in cuts]
         for hole in holes:
-            lined = min(w.intersection(hole.buffer(PARAPET_EDGE_M)).length for w in sections) / hole.exterior.length
-            z_mid = cuts[0]
+            lengths = [shapely.unary_union([w.intersection(hole.buffer(PARAPET_EDGE_M)),
+                       hole.boundary.intersection(s)]).length for w, s in zip(sections, solids)]
+            worst = int(np.argmin(lengths))
+            lined = lengths[worst] / hole.exterior.length
+            z_mid = cuts[worst]
             if lined < SHAFT_WALL_SHARE:
                 c = hole.centroid
                 raise SpecError(f"roof at {roof_z:.3f} m has an opening of {hole.area:.2f} m2 at ({c.x:.2f}, {c.y:.2f}) "
@@ -1995,7 +2006,9 @@ def _extract(dump, obj_cfg, profile, thresholds, found):
     roof_z, top_z, closed, roof_stats = _roof(v, body, levels[-2], levels[-1], polys[-1],
                                               np.vstack(roof_parts) if roof_parts else None,
                                               np.vstack(others) if others else None,
-                                              outlines[-1] if panelised else None)
+                                              outlines[-1] if panelised else None,
+                                              [_mesh({"meshes": [slab]}, m)
+                                               for slab in dump.get("shaft_lining", [])])
     report["roof_structures"] = structures
     report["roof"] = {"plane_m": round(roof_z, 3), "parapet_top_m": round(top_z, 3), "closed_share": closed,
                       "separate_roof_parts": len(roof_parts), **roof_stats,

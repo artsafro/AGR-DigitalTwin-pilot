@@ -268,7 +268,7 @@ def to_dump(bands, objs, document=None):
         raise TwinDataError(f"{len(missing)} curved walls without geometry in reference.obj (ids {missing[:10]}); ask the user")
     occupied = {i: _occupied(parts) for i, parts in native.items()}
     attached = set(attachments(bands, occupied))
-    meshes, body = [], []
+    meshes, body, shaft_lining = [], [], []
     outer = [(occupied[i] if i in occupied else _footprint(w, "square")).buffer(0.01)
              for i, w in walls.items() if w.get("function") != "curtain"]
     plans = {i: _footprint(w) for i, w in walls.items() if w.get("function") != "curtain" and i not in curved}
@@ -301,6 +301,11 @@ def to_dump(bands, objs, document=None):
         top = b["band"]["top"]
         for name, (verts, tris) in obj.items():
             kind, _, rid = name.partition("_")
+            if kind == "floor":
+                # Structural slab reveals can connect shaft walls to the roof. They
+                # are evidence only, not BODY or roof-height/closure candidates.
+                shaft_lining.append({"name": f"{name}_b{b['band']['band']}",
+                                     "vertices": verts, "triangles": tris})
             if kind != "roof":
                 continue                         # walls are prisms; glass and openings come from the records
             for v in verts:                      # close the 1 mm band gap
@@ -341,6 +346,7 @@ def to_dump(bands, objs, document=None):
                           "heights_m": [round(min(w["bboxMin"][2] for w in ws), 3), round(max(w["bboxMax"][2] for w in ws), 3)],
                           "at": [round(c.x, 2), round(c.y, 2)], "revit_ids": sorted(g["ids"])})
     return {"source": "revit", "document": document, "units": "m", "meshes": meshes, "helpers": [], "body": body,
+            "shaft_lining": shaft_lining,
             "openings": openings,
             "windows_glass_unknown": sum(1 for o in openings if o.get("glazed")), "questions": questions}
 

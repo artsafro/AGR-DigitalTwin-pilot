@@ -257,25 +257,37 @@ def test_kpp1_style_lining_joins_roof_reveal_without_reaching_cover_top():
     assert report["roof"]["closed_share"] == 0.99
 
 
+@pytest.mark.parametrize("inset", [0.0, 0.125])
 @pytest.mark.parametrize("bottom", [7.5, 7.51])
-def test_kpp1_separate_floor_reveal_is_lining_not_roof_or_body(bottom):
+def test_kpp1_separate_floor_reveal_is_lining_not_roof_or_body(bottom, inset):
     obj = {**OBJ, "levels": [{"name": "L0", "elev_m": 0.0},
                              {"name": "L1", "elev_m": 3.9}, {"name": "roof", "elev_m": 7.7}]}
     continuous = shaft_dump([(3.8, 7.5), (7.7, 9.5)], bottom, 7.7)
-    # Real TwinPack puts the structural slab under floor_, not roof_. Keep only
-    # its inner reveal here, independently of the roof covering and wall prisms.
+    # Real TwinPack puts the structural slab under floor_, not roof_. Its
+    # opening can be narrower than the roof covering (insulation return).
     roof = continuous["meshes"][-1]
-    reveal = {"name": "floor_21", "vertices": roof["vertices"], "triangles": roof["triangles"][8:]}
-    # OBJ quads have already been triangulated by to_dump.
-    text = "o floor_21\n" + "".join(f"v {x} {y} {z}\n" for x, y, z in reveal["vertices"])
-    text += "".join("f " + " ".join(str(i + 1) for i in tri) + "\n" for tri in reveal["triangles"])
+    # TwinPack structural slabs are closed solids, not just inner reveal faces.
+    vertices = roof["vertices"][:8] + [[x, y, bottom] for x, y, _ in roof["vertices"][:8]]
+    for i in [*range(4, 8), *range(12, 16)]:
+        x, y, z = vertices[i]
+        vertices[i] = [x + (inset if x < 5 else -inset),
+                       y + (inset if y < 5 else -inset), z]
+    faces = list(roof["triangles"][:8])
+    faces += [[i + 8 for i in reversed(tri)] for tri in roof["triangles"][:8]]
+    for start in (0, 4):
+        for k in range(4):
+            a, b = start + k, start + (k + 1) % 4
+            faces += [[a, b, b + 8], [a, b + 8, a + 8]]
+    text = "o floor_21\n" + "".join(f"v {x} {y} {z}\n" for x, y, z in vertices)
+    text += "".join("f " + " ".join(str(i + 1) for i in tri) + "\n" for tri in faces)
     walls, _ = ring(z1=8.3)
     square = [(4.45, 4.45), (5.55, 4.45), (5.55, 5.55), (4.45, 5.55)]
     for j, (lo, hi) in enumerate([(3.8, 7.5), (7.7, 9.5)]):
         walls += [wall(70 + 4*j + k, a, b, t=0.1, z0=lo, z1=hi)
                   for k, (a, b) in enumerate(zip(square, square[1:] + square[:1]))]
     cover = {**roof, "triangles": roof["triangles"][:8]}
-    text += "o roof_20\n" + "".join("f " + " ".join(str(i + 1) for i in tri) + "\n" for tri in cover["triangles"])
+    text += "o roof_20\n" + "".join(f"v {x} {y} {z}\n" for x, y, z in roof["vertices"][:8])
+    text += "".join("f " + " ".join(str(i + 17) for i in tri) + "\n" for tri in cover["triangles"])
     dump = to_dump([band(walls)], [text])
     assert not any(n.startswith("floor_") for n in dump["body"])
     if bottom > 7.5:
