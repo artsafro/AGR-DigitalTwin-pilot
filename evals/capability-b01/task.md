@@ -68,7 +68,7 @@ instructions. v004 was stopped by terminating only its owned CLI process tree af
 turn completion; cleanup removed its worktree, private home and temporary credentials.
 No benchmark report or green result was fabricated. Source inputs were unchanged.
 
-## Prepared-home attempts (2026-10-20, user-approved no OS sandbox)
+## Prepared-home attempts (2026-10-20, user-approved no OS sandbox) [D158]
 
 The operator supplied `C:/x/codex-eval-home` with authentication and minimal config.
 `--codex-home` uses that directory without copying/deleting it; stdin is DEVNULL.
@@ -146,7 +146,7 @@ recorded limitation, or provide a separate Windows account/VM.
 
 ## Accepted reference: v007 (2026-10-20)
 
-The user accepted host skill discovery as a recorded limitation on this card.
+The user accepted host skill discovery as a recorded limitation on this card [D158].
 This reference measures **repository + user skills**, NOT repository-only.
 It uses prepared `CODEX_HOME=C:/x/codex-eval-home`, `danger-full-access`,
 **no OS sandbox**, stdin DEVNULL. A separate Windows account/VM for a genuinely
@@ -155,7 +155,7 @@ repository-only reference remains follow-up work; do not set it up as part of #3
 Exact invocation (the full expanded argv is also in `reference.json`):
 
 ```text
-uv run python tools/qa/capability_b01.py --agent codex --model gpt-6.1-sol --ref origin/main --etalon C:/Users/artsafro/AGR-DigitalTwin/data/benchmark/bench-b01-box/etalon.fbx --run-dir C:/x/capability-evals/t_fd239f23-reference-v007 --codex-home C:/x/codex-eval-home --isolation "repository + user skills; no OS sandbox; user-approved 2026-10-20" --command-json '["codex","--no-daemon","exec","--ephemeral","--json","--enable","skip_host_skill_discovery","--disable","memories","--disable","plugins","--model","gpt-6.1-sol","{prompt}"]'
+uv run python tools/qa/capability_b01.py --agent codex --model gpt-6.1-sol --ref origin/main --etalon C:/Users/artsafro/AGR-DigitalTwin/data/benchmark/bench-b01-box/etalon.fbx --run-dir C:/x/capability-evals/t_fd239f23-reference-v007 --codex-home C:/x/codex-eval-home --isolation "repository + user skills; no OS sandbox; user-approved 2026-10-20" --command-json '["codex","--no-daemon","exec","--ephemeral","--json","--enable","skip_host_skill_discovery","--disable","memories","--disable","plugins","--model","gpt-6.1-sol","{prompt}"]' # [D158]
 ```
 
 - Input: origin/main `8d5c8987dbd46343176ca5af9d1791c864a86217`;
