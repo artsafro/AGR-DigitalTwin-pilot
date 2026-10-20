@@ -14,16 +14,17 @@ are also accepted through `--fbx`, for the Flora library. The command does not
 apply a verdict automatically. `verdict` updates all publications of that task;
 use a distinct task number when separate asset verdicts are required.
 
-`pending.json` uses UTF-8 JSON and atomic replace. Read-modify-write operations
-serialize through `.pending-lock`; a stale lock times out rather than stealing
-another publisher's ownership. Inspect a stale lock manually before removing it.
+`pending.json` uses UTF-8 JSON and atomic replace. All queue reads and
+read-modify-write operations serialize through `.pending-lock`; a stale lock
+times out rather than stealing another publisher's ownership. Inspect a stale lock manually before removing it.
 Malformed JSON, duplicate keys and non-finite values are rejected unchanged.
 
 Cleanup defaults to dry-run. `--apply` is destructive: inspect the listing first.
 Only immediate `ci-receipt-*` and `t_*` directories older than the threshold are
 eligible. Review/Flora stores and directories containing manifest-referenced
 assets are protected; manifests are discovered recursively under `library/`.
-Relative asset paths resolve from the manifest directory. Reparse candidates
+Relative asset paths resolve from the manifest directory; absolute and relative
+directory aliases resolve to the physical library before protection. Reparse candidates
 are excluded. Files that merely have a scratch-directory name are ignored.
 
 ## Decision proposal
@@ -48,11 +49,12 @@ were committed and run RED before the corresponding repairs.
 | Symlink date folder escapes root | error, no external writes | `test_symlink_escape_writes_nothing` (skips without symlink privilege) |
 | Adapter or atomic replace fails | no committed folder or queue update | `test_adapter_failure_leaves_no_folder`, `test_atomic_replace_failure_restores_pending_and_folder` |
 | Repeat same publication | reject, first publication preserved | `test_second_publish_same_slug_keeps_one_entry` |
-| 24 concurrent appends / 8 threads | all 24 rows retained | `test_parallel_append_preserves_all_entries` |
+| 24 concurrent appends / 8 threads, including slow native readers | all 24 rows retained | `test_parallel_append_preserves_all_entries`, `test_parallel_publish_preserves_rows_with_slow_queue_readers` |
 | Known/unknown task verdict | update known, unknown error without writes | `test_verdict_updates_one_entry_and_rejects_unknown` |
 | Old scratch, exact age threshold, nonfinite days | dry-run/default, strictly old only, invalid days error | `test_cleanup_dry_run_is_default_and_apply_deletes_only_old_scratch`, `test_exact_threshold_nan_and_empty_days_do_not_delete` |
 | Review/Flora/ground manifest/relative manifest/file | protected paths and files retained | `test_cleanup_never_touches_review_flora_or_manifest_ground`, `test_cleanup_ignores_files_and_resolves_relative_manifest_paths` |
 | Generated invalid slugs + protected scratch mix (seed 348) | unchanged store, excluded paths retained | `test_brute_force_escapes_and_protected_names` |
+| Absolute/relative library paths through a Windows junction; dry-run, apply, repeat | physical library untouched; unrelated old scratch removed once | `test_cleanup_protects_manifest_library_through_directory_alias` |
 | Renderer unavailable | error, never generate a synthetic preview | `test_render_failure_never_fabricates_preview` |
 | Installed Max | FBX materials, framed camera, saved scene readback, actual preview | `test_max_dependent_merge_skips_when_max_absent` |
 
