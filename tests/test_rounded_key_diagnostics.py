@@ -99,36 +99,79 @@ def _input_boundary_edge_owners(faces):
     return owners
 
 
-def assert_shell_provenance(result, submitted_faces, submitted_refs):
+def _rounded_key(v):
+    """The kernel's vertex identity key: coordinates rounded to 9 decimals
+    (``shell_body`` ``Mesh.face`` uses ``np.round(v, 9)``)."""
+    return tuple(np.round(np.asarray(v, dtype=float), 9))
+
+
+def _input_boundary_edges_in_emission_order(faces):
+    """Ordered ``(i, j, owner)`` input boundary edges in kernel emission order.
+
+    Matches ``shell_body`` exactly: an edge used once across the submitted index
+    cycles is a boundary edge, and the emission order is faces in submitted order,
+    then within each face the winding order ``0->1, 1->2, 2->3, 3->0``. Derived
+    purely from submitted index adjacency, independent of output coordinates.
+    """
+    edges = {}
+    for fi, face in enumerate(faces):
+        for i, j in zip(face, np.roll(face, -1)):
+            edges.setdefault(tuple(sorted((int(i), int(j)))), []).append(
+                (int(i), int(j), fi))
+    return [tuple(uses[0]) for uses in edges.values() if len(uses) == 1]
+
+
+def assert_shell_provenance(result, submitted_vertices, submitted_faces, submitted_refs):
     """Independent provenance oracle for ``shell_body`` output.
 
-    Raises ``AssertionError`` when any exterior/rim face's ``source_face`` /
-    ``source_ref`` / ``source_edge`` disagrees with the *submitted* input index
-    adjacency -- not merely with the output's own (potentially swapped) bookkeeping.
+    Validates against the *submitted* input (vertices, faces, refs) and the emitted
+    geometry, not the output's own (potentially swapped/permuted) bookkeeping:
 
-    * Exterior faces are emitted in submitted order: ``source_face`` is the
-      submitted position and ``source_ref`` is the submitted ref, in order.
-    * Every rim ``source_edge`` is a real input boundary edge and its
-      ``source_face``/``source_ref`` name the face that actually owns that edge.
+    * Exterior faces are emitted in submitted order with submitted refs, and each
+      exterior face's rounded vertex-key set equals its submitted face's.
+    * The complete ordered rim ``(source_edge, source_face)`` sequence equals the
+      independent input boundary-edge emission order (positional association).
+    * Each rim face's two outer corners -- emitted winding positions 0 and 3 of the
+      ``[v[i], inner[i], inner[j], v[j]]`` rim quad, never reversed by the kernel --
+      match, by rounded-key identity, the input coordinates of its claimed
+      ``source_edge`` endpoints, tying the record to the emitted geometry.
     """
+    v = np.asarray(submitted_vertices, dtype=float)
     sources = result["face_sources"]
     exteriors = [s for s in sources if s["role"] == "exterior"]
     rims = [s for s in sources if s["role"] == "rim"]
+    out_f = np.asarray(result["mesh"]["faces"])
+    out_v = np.asarray(result["mesh"]["vertices"], dtype=float)
 
     assert [s["source_face"] for s in exteriors] == list(range(len(submitted_faces)))
     assert [s["source_ref"] for s in exteriors] == list(submitted_refs)
 
-    owners = _input_boundary_edge_owners(submitted_faces)
-    assert len(rims) == boundary_edge_count(submitted_faces)
-    for s in rims:
-        edge = (int(s["source_edge"][0]), int(s["source_edge"][1]))
-        assert edge in owners, f"rim edge {edge} is not an input boundary edge"
-        assert owners[edge] == s["source_face"], (
-            f"rim edge {edge} claims source_face {s['source_face']}, "
-            f"owned by input face {owners[edge]}")
-        assert s["source_ref"] == submitted_refs[owners[edge]], (
-            f"rim edge {edge} source_ref {s['source_ref']!r} != "
-            f"{submitted_refs[owners[edge]]!r} of its owning input face")
+    for k, s in enumerate(exteriors):
+        expected = {_rounded_key(v[idx]) for idx in submitted_faces[k]}
+        actual = {_rounded_key(out_v[idx]) for idx in out_f[k]}
+        assert expected == actual, (
+            f"exterior face {k} rounded keys {sorted(map(list, actual))} != "
+            f"submitted face {k} keys {sorted(map(list, expected))}")
+
+    expected_edges = _input_boundary_edges_in_emission_order(submitted_faces)
+    assert len(rims) == len(expected_edges) == boundary_edge_count(submitted_faces)
+    actual_seq = [(int(s["source_edge"][0]), int(s["source_edge"][1]), s["source_face"])
+                  for s in rims]
+    assert actual_seq == expected_edges, (
+        f"rim source sequence {actual_seq} != input boundary emission order "
+        f"{expected_edges}")
+
+    n_exterior = len(submitted_faces)
+    for k, s in enumerate(rims):
+        i, j = int(s["source_edge"][0]), int(s["source_edge"][1])
+        assert s["source_ref"] == submitted_refs[s["source_face"]]
+        face = out_f[n_exterior + k]
+        expected = {_rounded_key(v[i]), _rounded_key(v[j])}
+        actual = {_rounded_key(out_v[face[0]]), _rounded_key(out_v[face[3]])}
+        assert expected == actual, (
+            f"rim at position {k} (source_edge {[i, j]}) outer corners "
+            f"{sorted(map(list, actual))} != rounded input endpoints "
+            f"{sorted(map(list, expected))}")
 
 
 # ---------------------------------------------------------------------------
@@ -345,7 +388,7 @@ def test_shell_alignment_materials_and_json_roundtrip():
 
     sources = result["face_sources"]
     assert len(sources) == len(out_f) == len(mesh["materials"])
-    assert_shell_provenance(result, f, refs)  # independent provenance (not self-referential)
+    assert_shell_provenance(result, v, f, refs)  # independent provenance (not self-referential)
     assert mesh["materials"] == [0] * len(out_f)
 
     # float.hex identity after JSON round-trip of all output coordinates and indices
@@ -381,7 +424,7 @@ def test_shell_exterior_provenance_normal_order_distinct_refs():
     refs = ["front", "back"]
     result = shell_run(v, f, thickness_m=0.4, refs=refs)
     # exterior source_face order [0, 1] with the submitted refs
-    assert_shell_provenance(result, f, refs)
+    assert_shell_provenance(result, v, f, refs)
 
 
 def test_shell_exterior_provenance_reversed_order_distinct_refs():
@@ -389,14 +432,14 @@ def test_shell_exterior_provenance_reversed_order_distinct_refs():
     refs = ["front", "back"]
     # submit faces and their refs in reverse order: refs follow their faces
     result = shell_run(v, f[::-1], thickness_m=0.4, refs=refs[::-1])
-    assert_shell_provenance(result, f[::-1], refs[::-1])
+    assert_shell_provenance(result, v, f[::-1], refs[::-1])
 
 
 def test_shell_provenance_rejects_source_face_swap_mutation():
     v, f = narrow_fixture(SHELL_H)
     refs = ["front", "back"]
     result = shell_run(v, f, thickness_m=0.4, refs=refs)
-    assert_shell_provenance(result, f, refs)  # intact provenance passes
+    assert_shell_provenance(result, v, f, refs)  # intact provenance passes
 
     out_v = np.array(result["mesh"]["vertices"])
     out_f = np.array(result["mesh"]["faces"])
@@ -407,7 +450,82 @@ def test_shell_provenance_rejects_source_face_swap_mutation():
     assert all(s["source_ref"] == refs[s["source_face"]]
                for s in mutated["face_sources"])
     with pytest.raises(AssertionError):
-        assert_shell_provenance(mutated, f, refs)
+        assert_shell_provenance(mutated, v, f, refs)
+
+
+def _rotate_rim_source_records(result):
+    """Review round-2 mutation: rotate only rim ``face_sources`` records one
+    position, preserving all mesh vertices/faces/materials, exterior records and
+    every individual source record (each triple stays internally consistent)."""
+    mutated = {
+        "mesh": result["mesh"],
+        "face_sources": [dict(s) for s in result["face_sources"]],
+        "thickness_m": result["thickness_m"],
+        "inner_faces": result["inner_faces"],
+    }
+    positions = [i for i, s in enumerate(mutated["face_sources"]) if s["role"] == "rim"]
+    rows = [mutated["face_sources"][i] for i in positions]
+    for i, s in zip(positions, rows[1:] + rows[:1]):
+        mutated["face_sources"][i] = s
+    return mutated
+
+
+def test_shell_rim_source_sequence_matches_input_boundary_order():
+    v, f = narrow_fixture(SHELL_H)
+    refs = ["front", "back"]
+    result = shell_run(v, f, thickness_m=0.4, refs=refs)
+    rims = [s for s in result["face_sources"] if s["role"] == "rim"]
+    # concrete acceptance row: the complete ordered rim source sequence, derived
+    # purely from submitted index adjacency, equals the kernel emission order exactly
+    expected = [(0, 1, 0), (1, 2, 0), (2, 3, 0), (3, 0, 0),
+                (4, 5, 1), (5, 6, 1), (6, 7, 1), (7, 4, 1)]
+    assert _input_boundary_edges_in_emission_order(f) == expected
+    assert [(int(s["source_edge"][0]), int(s["source_edge"][1]), s["source_face"])
+            for s in rims] == expected
+
+
+def test_shell_provenance_rejects_rim_record_rotation_mutation():
+    v, f = narrow_fixture(SHELL_H)
+    refs = ["front", "back"]
+    result = shell_run(v, f, thickness_m=0.4, refs=refs)
+    assert_shell_provenance(result, v, f, refs)  # intact provenance passes
+
+    out_v = np.array(result["mesh"]["vertices"])
+    out_f = np.array(result["mesh"]["faces"])
+    assert signature(out_v, out_f) == (8, 10, 6, 6)  # frozen geometry retained
+
+    mutated = _rotate_rim_source_records(result)
+    assert mutated["mesh"] == result["mesh"]  # geometry untouched
+
+    # per-record internal consistency (owner/ref) survives the rotation, so the
+    # round-1 oracle would still pass; the positional+geometry oracle must not
+    owners = _input_boundary_edge_owners(f)
+    for s in mutated["face_sources"]:
+        if s["role"] == "rim":
+            edge = (int(s["source_edge"][0]), int(s["source_edge"][1]))
+            assert owners[edge] == s["source_face"]
+            assert s["source_ref"] == refs[s["source_face"]]
+
+    with pytest.raises(AssertionError):
+        assert_shell_provenance(mutated, v, f, refs)
+
+
+def test_shell_provenance_rejects_rim_rotation_via_process_local_wrapper(monkeypatch):
+    import dt_ai.geometry.shell as shell_mod
+
+    v, f = narrow_fixture(SHELL_H)
+    refs = ["front", "back"]
+
+    def wrapped_shell_body(*args, **kwargs):
+        return _rotate_rim_source_records(shell_mod.shell_body(*args, **kwargs))
+
+    # process-local wrapper: shell_run resolves the module-global shell_body, so the
+    # rotated result flows into the oracle exactly as the reviewer's reproducer does
+    monkeypatch.setattr(sys.modules[__name__], "shell_body", wrapped_shell_body)
+    result = shell_run(v, f, thickness_m=0.4, refs=refs)
+
+    with pytest.raises(AssertionError):
+        assert_shell_provenance(result, v, f, refs)
 
 
 # ---------------------------------------------------------------------------
