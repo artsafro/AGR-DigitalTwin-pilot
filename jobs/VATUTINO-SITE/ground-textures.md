@@ -149,7 +149,27 @@ outer commands and exit codes; `generate.log` records 24 generated maps.
   2104 rejected), invoking the same regression functions with call counters;
   `tmp/issue340/probes.json`. Thresholds stay inclusive; adjacent out-of-band
   floats fail. Invalid zero/non-finite inputs are independently regressed.
-- Full-suite result is recorded in the PR after completion through suite_slot.py.
+- Full suite attempt 1 through `suite_slot.py`, `pytest -q -n 8 -p no:cacheprovider --basetemp=C:/x/t_b979c32d-4`:
+  **7052 passed / 3 failed / 14 skipped**, 437.84 s, exit 1. Failures were the
+  two orientation wall-clock budgets (box 19.61 s >= 10; slivers 15.24 s >= 5)
+  and the KPP1 shell launcher exceeding its 30 s timeout, not binding tests.
+- Process-local BLAS/OMP thread limits and serial focused recheck: **2 passed /
+  1 failed**, 21.66 s. Shell launcher and box pass; slivers 5.49 s >= 5.
+  Detached `origin/main` `8e539b9`, with the baseline module path explicitly printed,
+  reproduces slivers **1 failed**, 7.04 s >= 5. The baseline worktree was removed.
+  Existing owner [#361](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/361)
+  covers these load-sensitive wall-clock budgets; no orientation code, thresholds
+  or test selection changed in this branch (COORDINATION rule 11).
+- A second unchanged-selection full run (`-n 2`, process-local BLAS/OMP limits)
+  remained queued for more than 14 minutes and never acquired a slot. It was
+  cancelled before handoff; its waiter/pytest process inventory was verified empty.
+  `tmp/issue340/full-suite-final.log` is a queue log, **not a second test result**.
+- Verification uses the completed full run plus the focused self-repair recheck:
+  shell and box cases pass on recheck; the remaining sliver timing failure is
+  reproduced on origin/main and owned by #361. Per rule 11 this known baseline
+  failure is reported, not repaired in #340 or disguised as a literal exit-0 suite.
+  Full-run log: `tmp/issue340/full-suite-parallel.log`; recheck:
+  `tmp/issue340/timing-recheck.log`; baseline: `tmp/issue340/baseline-timing.log`.
   Regression eval receipt: `tmp/evals/report.json`, 0 passed /
   0 failed / 10 not measured (no Claude transcript / expected PR evidence), exit 2.
 - Automated binding/geometry/density checks above are measured. User appearance
