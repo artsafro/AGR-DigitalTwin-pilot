@@ -196,7 +196,10 @@ def _capability_lines(repo):
     except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
         raise FailClosed('invalid capability reference') from exc
     status = 'ready' if data['passed'] else 'not ready'
-    return [f"Capability A (`capability-b01`, {data['agent']}): {'; '.join(parts)}; {status}. "
+    context = data.get('context', 'unspecified context')
+    if context not in ('repository-only', 'repository + user skills', 'unspecified context'):
+        raise FailClosed('invalid capability context')
+    return [f"Capability A (`capability-b01`, {data['agent']}): {'; '.join(parts)}; {status}; {context}. "
             'Reference: `evals/capability-b01/reference.json`.']
 
 
