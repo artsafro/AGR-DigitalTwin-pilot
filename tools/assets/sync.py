@@ -119,7 +119,7 @@ def validate_document(document: object) -> list[str]:
         if set(entry) - allowed_entry:
             errors.append(f"{label}: unsupported_field")
         for field in ("licence", "source"):
-            if field not in entry or (entry[field] is not None and not isinstance(entry[field], str)):
+            if field in entry and entry[field] is not None and not isinstance(entry[field], str):
                 errors.append(f"{label}: partial: {field}")
         identifier = entry.get("id")
         if isinstance(identifier, str) and ID_RE.fullmatch(identifier):

@@ -58,9 +58,7 @@
           "local_path",
           "sha256",
           "size",
-          "drive_link",
-          "licence",
-          "source"
+          "drive_link"
         ],
         "properties": {
           "id": {
@@ -133,7 +131,10 @@
                 "type": "string",
                 "pattern": "\\S"
               }
-            }
+            },
+            "required": [
+              "licence"
+            ]
           },
           {
             "properties": {
@@ -141,7 +142,10 @@
                 "type": "string",
                 "pattern": "\\S"
               }
-            }
+            },
+            "required": [
+              "source"
+            ]
           }
         ]
       }
