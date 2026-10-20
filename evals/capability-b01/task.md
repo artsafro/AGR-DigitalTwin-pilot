@@ -100,6 +100,26 @@ Its standard runner extracted spec v0.6 from the etalon, exported/read back FBX
 with Blender 5.1.2; it did not edit tracked specs/checkers/tolerances.
 The geometry success is real, but cannot satisfy the repository-only acceptance.
 
+## Private-profile probe (2026-10-20)
+
+One additional operator-authorized cheap probe used a detached origin/main checkout
+and the prepared CODEX_HOME, with HOME and USERPROFILE redirected to the empty
+`C:/x/codex-eval-home/userprofile`, HOMEDRIVE/HOMEPATH redirected consistently,
+and APPDATA/LOCALAPPDATA under that profile. No user files were copied or moved.
+The command retained `skip_host_skill_discovery`, memories/plugins disabled and
+stdin DEVNULL. Prompt: `list the skills you have`.
+
+The session exited 0 but its native agent message still listed `codex-work-route`,
+`codex-work-engineering`, `codex-work-loop` and `codex-work-review`, alongside other
+non-repository skills. This proves context contamination remains; the probe does
+not establish which Windows home-resolution mechanism caused it or that skill
+files were read in this particular session. No full reference v007 was launched.
+Its disposable worktree was removed and registration cleanup succeeded.
+Evidence: `C:/x/capability-evals/t_fd239f23-profile-probe-v007/`
+(`transcript.jsonl`, `stderr.log`, `probe.json`, including exact argv/environment).
+No further environment variants are authorized: accept external user skills as a
+recorded limitation, or provide a separate Windows account/VM.
+
 ## Resume checklist
 
 1. Operator: provide a runtime that excludes host `.agents/skills` discovery/reads
