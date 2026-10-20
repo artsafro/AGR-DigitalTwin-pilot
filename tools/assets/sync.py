@@ -139,7 +139,7 @@ def validate_document(document: object) -> list[str]:
         sha = entry.get("sha256", None)
         if "sha256" not in entry:
             errors.append(f"{label}: partial: sha256")
-        elif sha is not None and not (isinstance(sha, str) and SHA256_RE.fullmatch(sha) and len(sha) == SHA256_HEX_LENGTH):
+        elif not (isinstance(sha, str) and SHA256_RE.fullmatch(sha) and len(sha) == SHA256_HEX_LENGTH):
             errors.append(f"{label}: sha256_length")
         if "size" not in entry:
             errors.append(f"{label}: partial: size")
@@ -155,7 +155,7 @@ def validate_document(document: object) -> list[str]:
 
 def _size_errors(label: str, size: object) -> list[str]:
     if size is None:
-        return []
+        return [f"{label}: missing_size"]
     if isinstance(size, bool) or isinstance(size, str):
         return [f"{label}: size_not_finite"]
     if isinstance(size, float):
@@ -283,10 +283,8 @@ def execute(
                     row_errors.append(f"{label}: size_at_threshold")
                 elif not row_errors:
                     status = "match"
-            elif isinstance(declared, str) or (isinstance(declared_size, int) and not isinstance(declared_size, bool)):
+            else:
                 row_errors.append(f"{label}: missing_file")
-            elif not row_errors:
-                status = "absent"
         if any(item.endswith("sha256_mismatch") for item in row_errors) and not any(
             not item.endswith("sha256_mismatch") for item in row_errors
         ):

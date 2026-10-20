@@ -83,26 +83,12 @@
             "minLength": 1
           },
           "sha256": {
-            "anyOf": [
-              {
-                "type": "null"
-              },
-              {
-                "type": "string",
-                "pattern": "^[0-9a-f]{64}$"
-              }
-            ]
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
           },
           "size": {
-            "anyOf": [
-              {
-                "type": "null"
-              },
-              {
-                "type": "integer",
-                "minimum": 1
-              }
-            ]
+            "type": "integer",
+            "minimum": 1
           },
           "drive_link": {
             "type": "string",
