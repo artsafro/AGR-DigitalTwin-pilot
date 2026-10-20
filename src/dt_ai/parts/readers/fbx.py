@@ -14,7 +14,6 @@ import argparse
 import hashlib
 import json
 import math
-import os
 import re
 import sys
 from pathlib import Path
@@ -23,6 +22,7 @@ from dt_ai.core.io import json_bytes, read_json
 from dt_ai.core.models import SourceRef
 from dt_ai.parts.model import PartEntry, PartSource, PartsList, Question, TriangleBudget
 from dt_ai.parts.readers.geometry import contacts
+from dt_ai.parts.readers.publish import publish
 
 FORMAT = "fbx_structure/1"
 CONTACT_TOLERANCE_M = 0.002
@@ -385,10 +385,7 @@ def run(structure: Path, output: Path, *, fbx: Path | None, object_id: str | Non
     errors = schema_errors(data, json.loads(SCHEMA_PATH.read_text(encoding="utf-8")))
     if errors:
         raise StructureError("PartsList.schema.json: " + "; ".join(errors[:5]))
-    output.parent.mkdir(parents=True, exist_ok=True)
-    tmp = output.with_name(output.name + ".partial")
-    tmp.write_bytes(json_bytes(data))
-    os.replace(tmp, output)
+    publish(output, json_bytes(data))
     return parts
 
 

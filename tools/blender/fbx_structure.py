@@ -15,7 +15,6 @@ import hashlib
 import importlib.util
 import json
 import math
-import os
 import sys
 from pathlib import Path
 
@@ -34,6 +33,7 @@ def _load(name, rel):
 
 _geometry = _load("parts_geometry", "src/dt_ai/parts/readers/geometry.py")
 _header = _load("fbx_header", "src/twinqa/fbx_header.py")
+_publish = _load("parts_publish", "src/dt_ai/parts/readers/publish.py")
 
 
 def fail(code, message):
@@ -131,10 +131,7 @@ def main():
         "components": [{"mesh": m, "objects": sorted(n)} for m, n in sorted(users.items()) if len(n) > 1],
         "contacts": _geometry.contacts(boxes, TOLERANCE_M),
     }
-    out.parent.mkdir(parents=True, exist_ok=True)
-    tmp = out.with_name(out.name + ".partial")
-    tmp.write_text(json.dumps(facts, ensure_ascii=False, indent=2, allow_nan=False), encoding="utf-8")
-    os.replace(tmp, out)
+    _publish.publish(out, json.dumps(facts, ensure_ascii=False, indent=2, allow_nan=False).encode("utf-8"))
     print("FBX_STRUCTURE_OK", len(meshes), "meshes", len(facts["components"]), "components",
           len(facts["contacts"]), "contacts")
 
