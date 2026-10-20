@@ -363,7 +363,7 @@ def stage_source_copy(src, dest) -> None:
 
 
 def default_dcc(profile, source_fbx, texture_root, bindings, out_fbx):
-    with tempfile.TemporaryDirectory(prefix="ground-bind-") as folder:
+    with tempfile.TemporaryDirectory(prefix=".ground-bind-", dir=out_fbx.parent) as folder:
         work = Path(folder)
         copy = work / "source.fbx"
         stage_source_copy(source_fbx, copy)

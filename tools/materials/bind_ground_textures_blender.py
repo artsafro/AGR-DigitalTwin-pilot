@@ -59,6 +59,8 @@ def raw_material_layers(fbx):
 
 
 def fingerprint(fbx, out_json):
+    if Path(out_json).exists():
+        raise ValueError("refuse overwrite of existing fingerprint output")
     clean()
     bpy.ops.import_scene.fbx(filepath=str(fbx))
     meshes = sorted((obj for obj in bpy.context.scene.objects if obj.type == "MESH"), key=lambda obj: obj.name)
@@ -133,6 +135,8 @@ def attach(material, image_path, profile):
 
 
 def bind(fbx, spec_path, out_fbx):
+    if Path(out_fbx).exists():
+        raise ValueError("refuse overwrite of existing FBX output")
     spec = json.loads(Path(spec_path).read_text(encoding="utf-8"))
     clean()
     bpy.ops.import_scene.fbx(filepath=str(fbx))

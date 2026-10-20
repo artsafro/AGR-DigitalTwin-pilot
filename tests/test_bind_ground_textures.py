@@ -341,6 +341,47 @@ def test_output_that_resolves_to_an_input_writes_nothing(tmp_path, monkeypatch):
     assert scene["npm_fbx"].read_bytes() == b"npm-source"
 
 
+@pytest.mark.parametrize("alias", [True, False])
+def test_blender_entrypoint_refuses_input_alias_and_existing_output(tmp_path, monkeypatch, alias):
+    import runpy
+    import sys
+    from types import SimpleNamespace
+
+    source = tmp_path / "source.fbx"
+    source.write_bytes(b"source")
+    output = source if alias else tmp_path / "existing.fbx"
+    if not alias:
+        output.write_bytes(b"existing")
+    spec = tmp_path / "spec.json"
+    spec.write_text("{}", encoding="utf-8")
+    monkeypatch.setitem(sys.modules, "bpy", SimpleNamespace())
+    script = ROOT / "tools/materials/bind_ground_textures_blender.py"
+    monkeypatch.setattr(sys, "argv", [str(script), "--", "bind", str(source), str(spec), str(output)])
+    with pytest.raises(ValueError, match="overwrite|existing"):
+        runpy.run_path(str(script), run_name="__main__")
+    assert source.read_bytes() == b"source"
+    assert output.read_bytes() == (b"source" if alias else b"existing")
+
+
+def test_default_dcc_stages_copies_only_inside_output_root(tmp_path, monkeypatch):
+    source = tmp_path / "source.fbx"
+    source.write_bytes(b"source")
+    destination = tmp_path / "delivery" / "bound.fbx"
+    destination.parent.mkdir()
+    calls = []
+
+    def run(script, args):
+        calls.append(args)
+        Path(args[-1]).write_text("{}", encoding="utf-8")
+
+    monkeypatch.setattr(bind, "_run_blender", run)
+    bind.default_dcc("npm", source, tmp_path, [], destination)
+    staged_source = Path(calls[0][1])
+    assert staged_source.is_relative_to(destination.parent)
+    assert not staged_source.exists()
+    assert source.read_bytes() == b"source"
+
+
 def test_case_alias_of_an_input_is_refused(tmp_path):
     source = tmp_path / "SM_Vatutino_Ground.fbx"
     source.write_bytes(b"fbx")
