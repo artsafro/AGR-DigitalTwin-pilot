@@ -1,0 +1,119 @@
+{
+  "schema": "flora-npm-light-v1",
+  "variants": [
+    {
+      "material_id": 103,
+      "object": "Crataegus_mollis_NPM_light",
+      "file": "C:/x/flora-light/v001/flora-npm-light-v001.max",
+      "sha256": "8d50f1f2d1e35530b93fbd588591b5f4c0e76bc8b73275603a189070286c441a",
+      "fbx": "C:/x/flora-light/v001/fbx/Crataegus_mollis_NPM_light.fbx",
+      "fbx_sha256": "c8280a9cad74b36ac8321abcb888311e5e9c8b84fc3e0c7f017ba2ced99e038e",
+      "triangles": 96,
+      "height_m": 3.8318928256630898,
+      "crown_diameter_m": 4.676170349121094,
+      "method": "alpha-aware source triangle subset",
+      "maps": {
+        "diffuse": "C:/x/flora-library/v001/maps/crataegus-mollis/diffuse-v001.png",
+        "opacity": "C:/x/flora-library/v001/maps/crataegus-mollis/opacity-v001.png"
+      },
+      "silhouettes": {
+        "top": {
+          "iou": 0.9508107360915139,
+          "hausdorff_upper_m": 0.2587150334625439
+        },
+        "front": {
+          "iou": 0.920108119730315,
+          "hausdorff_upper_m": 0.18985390273464936
+        },
+        "side": {
+          "iou": 0.9150390772512091,
+          "hausdorff_upper_m": 0.2339453376230392
+        },
+        "front45": {
+          "iou": 0.9057937722581344,
+          "hausdorff_upper_m": 0.21979157435250396
+        },
+        "side45": {
+          "iou": 0.9047761353011492,
+          "hausdorff_upper_m": 0.21503697949180878
+        }
+      }
+    },
+    {
+      "material_id": 105,
+      "object": "Amelanchier_lamarckii_NPM_light",
+      "file": "C:/x/flora-light/v001/flora-npm-light-v001.max",
+      "sha256": "8d50f1f2d1e35530b93fbd588591b5f4c0e76bc8b73275603a189070286c441a",
+      "fbx": "C:/x/flora-light/v001/fbx/Amelanchier_lamarckii_NPM_light.fbx",
+      "fbx_sha256": "f6bb342300ce436d1a8a5c10f7aa1c2e1ff38c17a5507b9f2459186df36015d2",
+      "triangles": 225,
+      "height_m": 1.5525681748986244,
+      "crown_diameter_m": 1.5021706819534302,
+      "method": "alpha-aware source triangle subset",
+      "maps": {
+        "diffuse": "C:/x/flora-library/v001/maps/amelanchier-lamarckii/diffuse-v001.png",
+        "opacity": "C:/x/flora-library/v001/maps/amelanchier-lamarckii/opacity-v001.png"
+      },
+      "silhouettes": {
+        "top": {
+          "iou": 0.8910040995934785,
+          "hausdorff_upper_m": 0.045494248074030394
+        },
+        "front": {
+          "iou": 0.9138814016172506,
+          "hausdorff_upper_m": 0.04206926721658592
+        },
+        "side": {
+          "iou": 0.9037919573963576,
+          "hausdorff_upper_m": 0.04876091523785091
+        },
+        "front45": {
+          "iou": 0.8980898876404494,
+          "hausdorff_upper_m": 0.04120527141625016
+        },
+        "side45": {
+          "iou": 0.9006128486897718,
+          "hausdorff_upper_m": 0.04755898143519902
+        }
+      }
+    },
+    {
+      "material_id": 204,
+      "object": "Cornus_sericea_NPM_light",
+      "file": "C:/x/flora-light/v001/flora-npm-light-v001.max",
+      "sha256": "8d50f1f2d1e35530b93fbd588591b5f4c0e76bc8b73275603a189070286c441a",
+      "fbx": "C:/x/flora-light/v001/fbx/Cornus_sericea_NPM_light.fbx",
+      "fbx_sha256": "955100a3c758e519d214c6a4ff2f8962c588b04ec00581859b0fb81968ec02ca",
+      "triangles": 36,
+      "height_m": 0.9724646657705307,
+      "crown_diameter_m": 1.1942874193191528,
+      "method": "alpha-aware source triangle subset",
+      "maps": {
+        "diffuse": "C:/x/flora-library/v001/maps/cornus-sericea/diffuse-v001.png",
+        "opacity": "C:/x/flora-library/v001/maps/cornus-sericea/opacity-v001.png"
+      },
+      "silhouettes": {
+        "top": {
+          "iou": 0.9135430247718384,
+          "hausdorff_upper_m": 0.06020175943146379
+        },
+        "front": {
+          "iou": 0.9806608470934045,
+          "hausdorff_upper_m": 0.049876747606154875
+        },
+        "side": {
+          "iou": 0.9672975877394305,
+          "hausdorff_upper_m": 0.06581364657626443
+        },
+        "front45": {
+          "iou": 0.959092158561063,
+          "hausdorff_upper_m": 0.04885183400733185
+        },
+        "side45": {
+          "iou": 0.9806445985043096,
+          "hausdorff_upper_m": 0.022603633942831977
+        }
+      }
+    }
+  ]
+}

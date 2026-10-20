@@ -1,0 +1,42 @@
+....................................................................     [100%]
+============================== warnings summary ===============================
+.venv\Lib\site-packages\ezdxf\queryparser.py:50
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:50: PyparsingDeprecationWarning: 'addParseAction' deprecated - use 'add_parse_action'
+    number.addParseAction(lambda t: float(t[0]))  # convert to float
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:51
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:51: PyparsingDeprecationWarning: 'addParseAction' deprecated - use 'add_parse_action'
+    string_ = quotedString.addParseAction(lambda t: t[0][1:-1])  # remove quotes
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:57
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:57: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    Relation = oneOf(["==", "!=", "<", "<=", ">", ">=", "?", "!?"])
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:63
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:63: PyparsingDeprecationWarning: 'setResultsName' deprecated - use 'set_results_name'
+    ).setResultsName("EntityQuery")
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:65
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:65: PyparsingDeprecationWarning: 'infixNotation' deprecated - use 'infix_notation'
+    InfixBoolQuery = infixNotation(
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:72
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:72: PyparsingDeprecationWarning: 'setResultsName' deprecated - use 'set_results_name'
+    ).setResultsName("AttribQuery")
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:74
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:74: PyparsingDeprecationWarning: 'setResultsName' deprecated - use 'set_results_name'
+    AttribQueryOptions = Literal("i").setResultsName("AttribQueryOptions")
+
+tests/test_inspect_ground_dxf.py: 11 warnings
+experiments/hyp-358/test_experiment.py: 28 warnings
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\query.py:444: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    query_args = EntityQueryParser.parseString(query, parseAll=True)
+
+tests/test_inspect_ground_dxf.py: 11 warnings
+experiments/hyp-358/test_experiment.py: 28 warnings
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\pyparsing\util.py:466: PyparsingDeprecationWarning: 'parseAll' argument is deprecated, use 'parse_all'
+    return fn(self, *args, **kwargs)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+68 passed, 85 warnings in 11.09s

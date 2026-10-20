@@ -1,7 +1,7 @@
-# Handoff — 2026-10-20 15:40
+# Handoff — 2026-10-20 15:00
 
-Branch: `job/vyatskaya-tow02-midpoly` · Commit: `6983bba` · Worktree: `C:\Users\artsafro\.AGR-DigitalTwin_pilot` · Job: `vyatskaya-tow02`
-Transcript: `C:\Users\artsafro\.AGR-DigitalTwin_pilot\logs\transcripts\job-vyatskaya-tow02-midpoly-pr392-d614e212-20e5-4614-ba51-2f51c9bb7026.jsonl`
+Branch: `main` · Commit: `2fd3b2e` · Worktree: `C:\Users\artsafro\agr-pilot\AGR-DigitalTwin (local; shared main snapshot)` · Job: `VATUTINO-SITE`
+Transcript: `-`
 
 <!-- Written by /handover (.claude/commands/handover.md), read by tools/hooks/session_context.py and /takeover.
 Keep the `Branch:` line as is (the hook parses it). Facts only, no history: git log and the pull requests hold
@@ -9,64 +9,74 @@ that. The whole file stays under 7000 characters so the SessionStart hook passes
 
 ## Where we are
 
-Goal: tower TOW02 (ул. Вятская вл. 47–49) as a mid-poly master, then texturing and NPM. The mid-poly master is
-done and reviewed by the user ("по моделингу мы закончили", 4+, 2026-10-20): commits `2f07939`, `6983bba`,
-PR #392. Master: `jobs/vyatskaya-tow02/outputs/build-v013/tow02_master.blend` (local). Checks with numbers and
-the acceptance comparison: `jobs/vyatskaya-tow02/STATE.md` (Requirement, Build log, Lessons). Engine findings:
-`docs/backlog.md` P13 and EG6.
+Goal: a repository from which any agent (Claude Code, ChatGPT, Codex) can model a digital-twin task by the rules.
+The local Kanban board (orchestrator repo `hermes_kanban`, not this one) runs the work; this file records results.
+Merged into main since the 09:10 handoff: site placement #344 (#296), Flora NPM light variants #362 (#347),
+Ground v003 map binding #368 (#340), kernel invariants quad_dominance #354 (#345), texel_ready #356 (#346),
+xview_overlaps #380 (#370, D152), procedure playbook #363 (#351), asset store #372 (#350, D151 source-only),
+eval receipt check `dt evals --check-receipt` #375 (#302), local CI receipt #376 (#318), #283 adoption #374,
+research #280 #367 #379 #383, improves #364 #366 #382, hypothesis reports #357 #360 #378 #381.
+Verified: full non-DCC suite on `c2c9007`: 7676 passed, 2 failed, 15 skipped - both failures are
+`tests/qa/test_orientation_scaling.py::test_orientation_real_size_budget[box-10.0|slivers-5.0]`, the known
+load-sensitive wall-clock budgets of #361 (they fail on main without these changes too).
+**Main is red** on `98eead4` (batch #382 #364 #380 #372 #363 #381 #378): 7995 passed, 1 failed -
+`tests/test_task_to_model.py::test_repository_walks`: #363 pins sha256 of live source files (`invariants.py`,
+`build_ground.py`) as gate evidence, #380 / #368 changed them. Repair issue #387 (card running); merges paused.
+CI is not run (billing lock, D122); local receipts only. Visual acceptance of #344 / #362 is still Artem's.
 
 ## In progress
 
-- Texturing not started. Local state outside git (keep): `jobs/vyatskaya-tow02/outputs/` — build-v002..v013 scenes,
-  measurement data the scripts read (`measure-v001/typical/*.json`, `measure-v002/bend_rings/bend_rings.json`,
-  `measure-v002/top_parts/top_parts.json`) with their scripts, test runs `build-v005/v006/v010/v011` and fin OBJs
-  `build-v003-fins`, `build-v012-fins`; `pipeline/dump-*.json` (150 MB, ignored).
-- Open Blender 5.1 windows: the MCP one holds build-v013 (saved); the user opened build-v008 and build-v009 in two
-  more windows. build-v009 on disk was saved by the user with helper empties 01–04 (their review marks).
-- Helper empties 01–04 are still in build-v013; remove before NPM.
+- #371 Ground v015: quad-dominant, one material ID per texture (Multi/Sub), xView 0.002 / 0.005 = 0 (D152).
+- #369 Flora texture diagnosis (PR #377, NOT accepted by Artem): per-island UV-vs-atlas-pixel check. Rule (user
+  2026-10-20): a UV island on a sprite covers 80-95 % of it; NPM whole-plant planes cover most of the image or
+  slightly more (opacity edges not cut); continuous bark strips are checked by containment (>= 95 % of the island
+  on bark pixels), not coverage. Calibrate on the originals, then route per species: rebind original atlas /
+  regenerate atlas under the UV / re-unwrap; the fix goes into a follow-up issue.
+- #361 perf lane: wall-clock budgets move to a `perf` marker out of the default suite (DeepSeek lane card).
+- #337 refresh of PR #252: two dated backfills for the 2026-10-19 Ground decisions (relief TIN cuts only where
+  > 1 cm, issue #295 comment 6265799957; steep-layer local raise 5-20 mm, comment 6274902891).
+- #348 visual review loop (PR #373, review round 1 changes needed).
+- Outputs outside git under `C:/x/` (Ground v014 `C:/x/t_d94665f2/ground_v014/`, Flora `C:/x/flora-library/v003/`,
+  light variants `C:/x/flora-light/v001/`, review scenes `C:/x/review/2026-10-20/` + `pending.json`).
 
 ## User decisions not in the code
 
-- Route: no engine for this panelised source; direct build from measurements, scripts under EG6 (user 2026-10-20).
-- Tolerance: anything within 1 cm is skipped (user 2026-10-20) — weld/snap/column merge.
-- Review edits applied in build-v013 (user 2026-10-20): AC basket floors; fin tops +8 mm over the roof; copings
-  one mesh with one rectangular section; louvre as geometry.
-- Stylobate is out of scope (another file); colonnade 0–6.9 modelled (user 2026-10-20).
+- Deliverables (user 2026-10-20, D152 on main): quads, MatID per texture, xView-clean - Ground v015 must meet it.
+- #298 site assembly waits for #371 and #369; then re-placement with the #347 light Flora (~166 200 tris), not
+  the #296 scene (220 520 > 180 000).
+- #82 terrace parapets: card archived, D065 stays (one parapet thickness per building).
+- #248 / #56 / #314: parked by Artem.
 
 ## Waiting for the user
 
-- OKS number of TOW02 for NPM names (one of 012–015 with atlases already prepared next to the source, or a new
-  one); prefix/address likely `0200_Vyatskaya_Vl_47_49`.
-- Atlas: reuse an existing `atlas_2048_*_facades` set or make a new 2048 atlas for TOW02's finishes.
-- Detailed visual review of build-v013 by the user; merge command for PR #392.
+- #353 L4: paths of the first real building (source, delivered FBX, album PDF).
+- #352 roof-equipment library: project paths to pull meshes from.
+- #350: one-time Google Drive login on this PC.
+- Visual acceptance: Ground v014 and Flora v003 review scenes in `C:/x/review/2026-10-20/`, #344 placement, #362.
 
 ## Next step
 
-Texturing of build-v013 after the two answers above (UV regions per finish, one 2048 atlas, EG4).
+Repair red main (#387), then Ground v015 (#371) and the Flora UV verdict (#369), then #298 assembly with light Flora, then L4 (#353).
 
 ## Rules broken
 
-- The first recommendation of the hybrid engine route was made without checking the source class; ~1.5 h lost
-  (extractor 20 min + stuck build 64 min). Recorded in STATE Lessons and in memory.
-- Pre-commit hooks are not installed in this clone (`core.hooksPath` unset); the project pre-commit was run by
-  hand before each commit (exit 0). Git identity not configured here: commits use `-c user.name/email` from the
-  repository history (artsafro).
-- Subagents could not write report `.md` files (harness); their reports exist only in the transcript.
+- Merge batch #363 + #380 / #368 together without an integration run between them turned main red (#387).
 
 ## Open PRs and issues for this task
 
-- #392 Job vyatskaya-tow02: mid-poly master of tower TOW02 — open, waiting for review (independent-checker) and
-  the user's merge command.
+- PR #377 (#369) rework after Artem's review; PR #373 (#348) changes needed; PR #252 (#138) refresh by #337,
+  needs a new review on its new head; PR #248 parked.
+- Issues waiting: #353, #352 (`waits-artem`); #246 parked with #45.
 
 ## Agent trace
 
-- Sessions: `d614e212-20e5-4614-ba51-2f51c9bb7026`
-- Written by: -
-- Subagents: general-purpose 8, Explore 1
-- Skills: blender-mcp 1
-- Commands: handover 1
-- Hook denials: 1: mcp__blender__get_objects_summary - Load the `blender-mcp` skill first (Skill tool), follow it, then repeat this cal
-- Retries: none
-- Context at handover: 49 % (494k of 1000k tokens)
-- Duration: 5 h 57 min (2026-10-20T07:23:01Z - 2026-10-20T13:20:33Z, UTC)
-- Commits: `a3e091b..6983bba` (2 commits)
+- Sessions: not measured (no transcript)
+- Written by: Hermes orchestrator (Telegram session 20261020_091940_f745c6a8, claude-opus-5-5)
+- Subagents: not measured (no usage log, no transcript)
+- Skills: not measured (no usage log, no transcript)
+- Commands: not measured (no usage log, no transcript)
+- Hook denials: not measured (no transcript)
+- Retries: not measured (no transcript)
+- Context at handover: not measured (no transcript)
+- Duration: not measured (no transcript)
+- Commits: `eed5074..2fd3b2e` (119 commits)

@@ -26,6 +26,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 from dt_ai.geometry import ground_cake as gc  # noqa: E402
 from dt_ai.geometry import ground_details as gd  # noqa: E402
+from dt_ai.ops.inv_xview import mesh_report  # noqa: E402  (#370 report-only)
 
 SLOTS = {"tile_light": "TileLight", "tile_red": "TileRed", "tile_dark": "TileDark", "pebbles": "Pebbles",
          "gravel_screening": "Gravel", "mulch": "Mulch", "lawn_reinforced": "LawnReinforced",
@@ -141,6 +142,8 @@ def main(argv=None) -> int:
     rep["detail_triangles"] = len(detail.faces)
     master = gc.clean_topology(gd.combine([master, detail]))
     rep["codirectional"] = gc.measure_codirectional(master, band_min=0.005)
+    # #370: xView overlapping vertices 2 mm / faces 5 mm, report-only (not in `gates`) until v014 parity is accepted
+    rep["xview_overlaps"] = mesh_report(master.verts, master.faces, profile="NPM-GROUND", part="ground_master")
     surf_tris = int((master.level >= 0).sum())
     s_pz = sum(h.area for h in plan.holes)
     rep["budget"] = {"surface_triangles": surf_tris, "total_triangles": len(master.faces),

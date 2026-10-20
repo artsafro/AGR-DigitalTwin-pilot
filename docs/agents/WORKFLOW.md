@@ -55,6 +55,14 @@ following three items:
    Replace `<worktree>` with your own absolute worktree path so outputs remain isolated inside your
    worktree. In the PR body, report the report path (`<worktree>/tmp/evals/report.json`) and the passed,
    failed, and not measured counts with their reasons.
+   Before `review_requested`, verify the exact PR receipt line against that report:
+   ```bash
+   uv run dt evals --check-receipt "Regression evals: <worktree>/tmp/evals/report.json; P passed / F failed / N not measured (<reasons>)" --output <worktree>/tmp/evals
+   ```
+   Replace P/F/N with the report counts. The read-only check exits 0 only for a nonempty regression
+   report with matching path, counts and rows; otherwise it exits 1 with a one-line reason.
+   Comma-separated counts (the receipt template below) are also accepted. Exit 0 verifies the
+   receipt, not an eval pass: an all-not-measured report remains unmeasured, and failures still block merge.
    - An all-not-measured run (`0 passed, 0 failed, N not measured` with `exit 2`, such as when there is
      `no Claude transcript` on Hermes-driven branches) is a valid receipt, not a pass or waived check.
    - Preserve `--references` after grader changes (run `--references` as well after a change to a grader).
@@ -81,6 +89,7 @@ Require `## Author receipts` in the PR body with the following lines:
 - `Pattern: <pattern id | new-case | n/a if no new module>`
 - `Regression evals: <report path>; <passed> passed, <failed> failed, <not measured> not measured (<reasons>)`
 - `Probe: <invariant -> probe -> N/N with command/seed/bounds/evidence path | n/a: <reason>>`
+- `Local CI: CI-RECEIPT v1 pasted in the PR body; python tools/ci_receipt.py --verify <file> --sha <full HEAD sha> exits 0`
 
 ## Questions-only
 
@@ -417,6 +426,12 @@ Worktree ownership first; reject prohibited operations even with authorization. 
 to new versioned paths and read back geometry, UV, materials and transforms. Unknown or
 arbitrary-code operations are destructive until their behavior is inspected. This is a
 manual DCC skill/reviewer gate, not a generic MCP sandbox.
+
+## Performance lane (#361)
+
+Wall-clock / CPU-time budgets are opt-in: marked `perf` and excluded from the default `addopts`.
+Run the lane through the suite-slot limiter — `uv run pytest -m perf -p no:cacheprovider` (via
+`scripts/suite_slot.py`) — it is not part of a card's full-suite receipt.
 
 ## Git
 

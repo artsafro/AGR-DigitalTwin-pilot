@@ -1,0 +1,27 @@
+{
+  "issue": 281,
+  "frozen_before_native_runs": true,
+  "units": "m",
+  "gaps_m": [0.003, 0.004, 0.006],
+  "box_A": "[0,2] x [4k,4k+1] x [0,3]",
+  "box_B": "[2+g,4+g] x [4k,4k+1] x [0,3]",
+  "transform": "Rz(angle) about world origin, then translation; same for all six boxes",
+  "angles_deg": [0, 37, 89],
+  "translations_m": [[0, 0, 0], [100, 100, 0], [-1170, -14200, 0]],
+  "repetitions": 2,
+  "thresholds": {
+    "baseline_abs_error_m_max": 1e-7,
+    "baseline_class": "in_band",
+    "imported_abs_error_m_max": 0.0005,
+    "imported_class": "in_band",
+    "penetration_m": 0.0,
+    "objects_per_scene": 6,
+    "unique_corners_per_box": 8,
+    "triangles_per_box": 12,
+    "closed": true,
+    "convex": true,
+    "repeat_gap_diff_m_max": 1e-6
+  },
+  "verdict_rule": "any violation on an executed case -> REJECTED; missing environment / incomplete matrix -> INCONCLUSIVE; else CONFIRMED",
+  "delivery_passed": false
+}

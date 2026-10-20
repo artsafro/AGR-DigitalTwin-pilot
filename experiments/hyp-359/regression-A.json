@@ -1,0 +1,31 @@
+{
+  "nodes": [
+    "experiments/hyp-359/test_projection_work.py::test_linear_normal_selection_work[4]",
+    "experiments/hyp-359/test_projection_work.py::test_linear_normal_selection_work[8]",
+    "experiments/hyp-359/test_projection_work.py::test_linear_normal_selection_work[16]",
+    "experiments/hyp-359/test_projection_work.py::test_linear_normal_selection_work[32]"
+  ],
+  "outcomes": [
+    [
+      "experiments/hyp-359/test_projection_work.py::test_linear_normal_selection_work[4]",
+      "call",
+      "passed"
+    ],
+    [
+      "experiments/hyp-359/test_projection_work.py::test_linear_normal_selection_work[8]",
+      "call",
+      "failed"
+    ],
+    [
+      "experiments/hyp-359/test_projection_work.py::test_linear_normal_selection_work[16]",
+      "call",
+      "failed"
+    ],
+    [
+      "experiments/hyp-359/test_projection_work.py::test_linear_normal_selection_work[32]",
+      "call",
+      "failed"
+    ]
+  ],
+  "exitstatus": 1
+}

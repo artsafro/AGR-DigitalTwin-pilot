@@ -51,6 +51,42 @@ measurement/verdict (99 objects, 198 matching bindings, no outside paths); hashe
 published MAX/maps must remain unchanged. This is map-binding evidence, not geometry
 identity or whole-library acceptance. Never remove or alter published assets to test isolation.
 
+## Light NPM variants (#347)
+
+`npm-light.json` is the optional, generated input for the three Vatutino light variants
+(105 / 204 / 103). It appends `npm_light` to those species; it does not replace their
+existing NPM/VPM records, IDs, maps or library file. Rebuild with the command above plus
+`--npm-light library/flora/npm-light.json`. Regeneration without that option retains
+previous light records. The generator refuses any pre-existing key/value change when
+appending light evidence.
+
+The native build is `uv run python tools/flora/build_flora_npm_light.py --work tmp/light-build-<fresh-version>
+--source-scene "<original FLORA_Union_v1.max>" --source-scene "<original FLORIO_2BT_2022.max>"`
+(one shell command). It copies v003, selects a deterministic subset of **unchanged** source
+triangles/UVs using the existing separate opacity map, and keeps all coordinate extrema.
+It optimizes five alpha-masked orthographic views, not unmasked triangle unions; a reach
+constraint also retains thin stems that area IoU alone could omit. No texture is created,
+no VPM or other species is edited, and original species face material IDs stay in Max.
+FBX renumbers a single material to slot 0: the stable species ID remains in its material
+name (`<Latin>_ID<id>`), checked together with the exact resolved original map paths.
+
+Max runs through `dcc_batch.py`; Blender 5.1.2 independently imports the three FBX files
+for triangle counts, triangulation, bounds, UVs and material bindings. QA uses two-sided
+binary opacity (128 cutout), nearest-neighbour texture sampling, and common world-frame
+1024px masks in top/front/side/front45/side45. The reported Hausdorff value is a conservative
+**raster** upper bound (square dilation times pixel diagonal, plus one diagonal for sampling),
+not an exact continuous-texture Hausdorff distance. IoU >= 0.85, reach <= 10% crown and
+height/crown within 5% are mandatory. Synthetic controls: `uv run pytest -q tests/test_flora_npm_light.py`.
+
+All files stay in private staging until the complete budget, silhouette and source-hash
+checks pass. Publication refuses an existing `C:/x/flora-light/v001` or an input alias;
+rerunning requires a new implementation/version rather than overwriting v001. The source
+library and both original scenes are hashed before and after. Binary outputs, readback JSON,
+silhouette PNG pairs and `evidence.json` live under `C:/x/flora-light/v001/`, not Git.
+The arithmetic uses #347's explicitly allowed #296 fallback counts until its placement
+report is merged. Light variants are **not placed** by this card. Geometry still requires
+human acceptance [D104]; passing these measurements is not whole-delivery acceptance.
+
 ## Gaps
 
 `gaps.project_species_shared_stand_in` lists project species that still share one multi-species FLORIO stand-in.
