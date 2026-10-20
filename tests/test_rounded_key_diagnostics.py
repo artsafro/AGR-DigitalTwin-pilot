@@ -19,7 +19,7 @@ behavior fixes may replace these witnesses only after an explicit policy decisio
 
 import json
 import sys
-from collections import Counter
+from collections import Counter, defaultdict
 
 import numpy as np
 import pytest
@@ -78,6 +78,57 @@ def signature(vertices, faces):
     v = np.asarray(vertices)
     f = np.asarray(faces)
     return (len(v), len(f), repeated_index_count(f), zero_area_count(v, f))
+
+
+def _input_boundary_edge_owners(faces):
+    """Map each directed boundary edge ``(a, b)`` to the input face index owning it.
+
+    Independent of any output: a boundary edge is one used exactly once across the
+    submitted face index cycles; the direction ``a -> b`` follows the submitted
+    winding, which is the same convention ``shell_body`` stores in ``source_edge``.
+    """
+    uses = defaultdict(list)
+    for fi, face in enumerate(faces):
+        for a, b in zip(face, np.roll(face, -1)):
+            uses[tuple(sorted((int(a), int(b))))].append((fi, int(a), int(b)))
+    owners = {}
+    for entries in uses.values():
+        if len(entries) == 1:
+            fi, a, b = entries[0]
+            owners[(a, b)] = fi
+    return owners
+
+
+def assert_shell_provenance(result, submitted_faces, submitted_refs):
+    """Independent provenance oracle for ``shell_body`` output.
+
+    Raises ``AssertionError`` when any exterior/rim face's ``source_face`` /
+    ``source_ref`` / ``source_edge`` disagrees with the *submitted* input index
+    adjacency -- not merely with the output's own (potentially swapped) bookkeeping.
+
+    * Exterior faces are emitted in submitted order: ``source_face`` is the
+      submitted position and ``source_ref`` is the submitted ref, in order.
+    * Every rim ``source_edge`` is a real input boundary edge and its
+      ``source_face``/``source_ref`` name the face that actually owns that edge.
+    """
+    sources = result["face_sources"]
+    exteriors = [s for s in sources if s["role"] == "exterior"]
+    rims = [s for s in sources if s["role"] == "rim"]
+
+    assert [s["source_face"] for s in exteriors] == list(range(len(submitted_faces)))
+    assert [s["source_ref"] for s in exteriors] == list(submitted_refs)
+
+    owners = _input_boundary_edge_owners(submitted_faces)
+    assert len(rims) == boundary_edge_count(submitted_faces)
+    for s in rims:
+        edge = (int(s["source_edge"][0]), int(s["source_edge"][1]))
+        assert edge in owners, f"rim edge {edge} is not an input boundary edge"
+        assert owners[edge] == s["source_face"], (
+            f"rim edge {edge} claims source_face {s['source_face']}, "
+            f"owned by input face {owners[edge]}")
+        assert s["source_ref"] == submitted_refs[owners[edge]], (
+            f"rim edge {edge} source_ref {s['source_ref']!r} != "
+            f"{submitted_refs[owners[edge]]!r} of its owning input face")
 
 
 # ---------------------------------------------------------------------------
@@ -294,7 +345,7 @@ def test_shell_alignment_materials_and_json_roundtrip():
 
     sources = result["face_sources"]
     assert len(sources) == len(out_f) == len(mesh["materials"])
-    assert all(s["source_ref"] == refs[s["source_face"]] for s in sources)
+    assert_shell_provenance(result, f, refs)  # independent provenance (not self-referential)
     assert mesh["materials"] == [0] * len(out_f)
 
     # float.hex identity after JSON round-trip of all output coordinates and indices
@@ -303,6 +354,60 @@ def test_shell_alignment_materials_and_json_roundtrip():
     assert [float(x).hex() for x in out_v.flat] == \
         [float(x).hex() for x in np.array(serial["v"]).flat]
     assert serial["f"] == out_f.tolist()
+
+
+# ---------------------------------------------------------------------------
+# Independent provenance oracle (review P1: source-order alignment)
+# ---------------------------------------------------------------------------
+
+def _swap_source_provenance(result, refs):
+    """Review P1 mutation: swap each ``source_face`` 0<->1 and re-point ``source_ref``
+    to the swapped face's ref, leaving geometry/source_edge/role/materials intact."""
+    mutated = {
+        "mesh": result["mesh"],
+        "face_sources": [dict(s) for s in result["face_sources"]],
+        "thickness_m": result["thickness_m"],
+        "inner_faces": result["inner_faces"],
+    }
+    for s in mutated["face_sources"]:
+        new = 1 - s["source_face"]
+        s["source_face"] = new
+        s["source_ref"] = refs[new]
+    return mutated
+
+
+def test_shell_exterior_provenance_normal_order_distinct_refs():
+    v, f = narrow_fixture(SHELL_H)
+    refs = ["front", "back"]
+    result = shell_run(v, f, thickness_m=0.4, refs=refs)
+    # exterior source_face order [0, 1] with the submitted refs
+    assert_shell_provenance(result, f, refs)
+
+
+def test_shell_exterior_provenance_reversed_order_distinct_refs():
+    v, f = narrow_fixture(SHELL_H)
+    refs = ["front", "back"]
+    # submit faces and their refs in reverse order: refs follow their faces
+    result = shell_run(v, f[::-1], thickness_m=0.4, refs=refs[::-1])
+    assert_shell_provenance(result, f[::-1], refs[::-1])
+
+
+def test_shell_provenance_rejects_source_face_swap_mutation():
+    v, f = narrow_fixture(SHELL_H)
+    refs = ["front", "back"]
+    result = shell_run(v, f, thickness_m=0.4, refs=refs)
+    assert_shell_provenance(result, f, refs)  # intact provenance passes
+
+    out_v = np.array(result["mesh"]["vertices"])
+    out_f = np.array(result["mesh"]["faces"])
+    assert signature(out_v, out_f) == (8, 10, 6, 6)  # frozen geometry retained
+
+    mutated = _swap_source_provenance(result, refs)
+    # the internal consistency tautology survives, but the independent oracle fails
+    assert all(s["source_ref"] == refs[s["source_face"]]
+               for s in mutated["face_sources"])
+    with pytest.raises(AssertionError):
+        assert_shell_provenance(mutated, f, refs)
 
 
 # ---------------------------------------------------------------------------
