@@ -56,6 +56,15 @@ def test_fixed_anchors_are_unchanged_even_when_closer_than_the_weld():
     assert weld.values()[:2] == [0.0, 0.004]
 
 
+def test_close_fixed_anchors_are_not_collapsed():
+    # 0 and 0.002 are within the 3 mm weld of each other, but both are fixed anchors:
+    # neither may be collapsed into the other.
+    weld = _Weld([], w=0.003, fixed=[0.0, 0.002])
+    assert weld(0.0) == 0.0
+    assert weld(0.002) == 0.002
+    assert weld.values() == [0.0, 0.002]
+
+
 def test_free_group_retains_its_smallest_coordinate():
     weld = _Weld([0.020, 0.022], w=0.003)
     assert weld(0.020) == 0.020
@@ -73,6 +82,12 @@ def test_values_returns_fixed_entries_then_free_group_minima():
     weld = _Weld([0.001, 0.003, 0.020, 0.022], w=0.003, fixed=[0.0, 0.004])
     # 0.001 snaps to 0 and 0.003 to 0.004, so the only free group is [0.020 .. 0.022]
     assert weld.values() == [0.0, 0.004, 0.020]
+
+
+def test_values_is_fixed_then_free_group_minima_not_globally_sorted():
+    # Fixed entries stay first, in fixed order, even when free group minima are smaller.
+    weld = _Weld([0.020, 0.022], w=0.003, fixed=[0.100, 0.104])
+    assert weld.values() == [0.100, 0.104, 0.020]
 
 
 def test_caller_owned_input_lists_are_unchanged():
