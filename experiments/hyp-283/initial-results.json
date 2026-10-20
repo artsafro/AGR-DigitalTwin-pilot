@@ -1,0 +1,5070 @@
+{
+  "delivery_passed": false,
+  "verdict": "SUPPORTED",
+  "versions": {
+    "python": "3.14.7 (main, Aug  7 2026, 02:26:22) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "numpy": "2.5.3",
+    "pytest": "9.1.1"
+  },
+  "hashes": {
+    "src/twinqa/geometry/complexity.py": "cf14b2204d720fe193aa47b2f9d2564cd26aff01a3756883e9f5c0f485a4de20",
+    "tests/qa/test_from_source.py": "c40b9ca1983db84d6a9f2dacd6a31dcc67c777a0d8afffbd18b10245eb5d5691",
+    "uv.lock": "25726b1f3c4a6e3bcdc367b06d6531d57d44d2473ec8f237012bbf480320cd9a",
+    "experiments/hyp-283/driver.py": "4f221559e8edf79e5d1ab6b5c81684c55c83280443ebfaec9247ed9b14f34459"
+  },
+  "experimental_source_sha256": "28140f358bf9fe086bcd7b59b6d381ecefb6d9b30a33cddb4900fe4549d057ba",
+  "rows": [
+    {
+      "k": 32,
+      "layout": "grouped",
+      "phase": "primary",
+      "pairs": [
+        [
+          0.0200033,
+          0.0160718
+        ],
+        [
+          0.0165135,
+          0.0065819
+        ],
+        [
+          0.0166608,
+          0.0047712
+        ],
+        [
+          0.014401,
+          0.0049949
+        ],
+        [
+          0.0141565,
+          0.0045528
+        ],
+        [
+          0.0143458,
+          0.0046601
+        ],
+        [
+          0.0150908,
+          0.0044788
+        ]
+      ],
+      "orders": [
+        "AB",
+        "BA",
+        "AB",
+        "BA",
+        "AB",
+        "BA",
+        "AB"
+      ],
+      "gain": 0.6838338590399449,
+      "parity": true,
+      "input_sha256": "9070715f4540630f28c2d46fc8d5f2991d0e6ca07c9313455bbb9dfa569c9dab",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 10000,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 10000
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 10000
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 32
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "k": 32,
+      "layout": "interleaved",
+      "phase": "primary",
+      "pairs": [
+        [
+          0.0040391,
+          0.0044733
+        ],
+        [
+          0.0046304,
+          0.0074826
+        ],
+        [
+          0.0059626,
+          0.0050911
+        ],
+        [
+          0.004277,
+          0.0051083
+        ],
+        [
+          0.0046429,
+          0.0051604
+        ],
+        [
+          0.0043786,
+          0.0050387
+        ],
+        [
+          0.005235,
+          0.0049342
+        ]
+      ],
+      "orders": [
+        "AB",
+        "BA",
+        "AB",
+        "BA",
+        "AB",
+        "BA",
+        "AB"
+      ],
+      "gain": -0.09949464409122344,
+      "parity": true,
+      "input_sha256": "66354bde31b3bcb2bac1204749cf9b8fa4bc23764bdabc4236292826f33cb89b",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 10000,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 10000
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 10000
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 32
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "k": 256,
+      "layout": "grouped",
+      "phase": "primary",
+      "pairs": [
+        [
+          0.1452939,
+          0.0156574
+        ],
+        [
+          0.1451218,
+          0.0101857
+        ],
+        [
+          0.1598067,
+          0.0121833
+        ],
+        [
+          0.1589195,
+          0.0153326
+        ],
+        [
+          0.1558545,
+          0.0143644
+        ],
+        [
+          0.1446347,
+          0.015247
+        ],
+        [
+          0.1526086,
+          0.0156173
+        ]
+      ],
+      "orders": [
+        "AB",
+        "BA",
+        "AB",
+        "BA",
+        "AB",
+        "BA",
+        "AB"
+      ],
+      "gain": 0.9000908205697451,
+      "parity": true,
+      "input_sha256": "2b2c2eca9d48f243a53ea2ca70373243650aa2331ea5e6f5673841d49e53d2a1",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 10000,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 10000
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 10000
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 256
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "k": 256,
+      "layout": "interleaved",
+      "phase": "primary",
+      "pairs": [
+        [
+          0.0166528,
+          0.0151415
+        ],
+        [
+          0.0179065,
+          0.0159237
+        ],
+        [
+          0.0123967,
+          0.0109224
+        ],
+        [
+          0.0182729,
+          0.0135036
+        ],
+        [
+          0.015886,
+          0.0126999
+        ],
+        [
+          0.0172916,
+          0.0146637
+        ],
+        [
+          0.0141355,
+          0.0098419
+        ]
+      ],
+      "orders": [
+        "AB",
+        "BA",
+        "AB",
+        "BA",
+        "AB",
+        "BA",
+        "AB"
+      ],
+      "gain": 0.18910933897002302,
+      "parity": true,
+      "input_sha256": "5d1ca6f92672deee6f312acf1e1fc5b40581dcba02cc3bd0a3dc5fe384bb6a3a",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 10000,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 10000
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 10000
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 256
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "k": 1024,
+      "layout": "grouped",
+      "phase": "primary",
+      "pairs": [
+        [
+          0.5907295,
+          0.0466933
+        ],
+        [
+          0.6242492,
+          0.0412232
+        ],
+        [
+          0.5994268,
+          0.0419815
+        ],
+        [
+          0.6090463,
+          0.0598324
+        ],
+        [
+          0.5967061,
+          0.058114
+        ],
+        [
+          0.6216681,
+          0.0501479
+        ],
+        [
+          0.5447708,
+          0.0378739
+        ]
+      ],
+      "orders": [
+        "AB",
+        "BA",
+        "AB",
+        "BA",
+        "AB",
+        "BA",
+        "AB"
+      ],
+      "gain": 0.9221034161302097,
+      "parity": true,
+      "input_sha256": "1a0a3652233022df25a11d6bdb389ac9f3a8139c6232b2a26d8fdb4e7860de5c",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 10000,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 10000
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 10000
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1024
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "k": 1024,
+      "layout": "interleaved",
+      "phase": "primary",
+      "pairs": [
+        [
+          0.1022942,
+          0.0485727
+        ],
+        [
+          0.1030915,
+          0.0403217
+        ],
+        [
+          0.0790303,
+          0.0329246
+        ],
+        [
+          0.0987349,
+          0.039674
+        ],
+        [
+          0.081925,
+          0.0317001
+        ],
+        [
+          0.1036952,
+          0.0436506
+        ],
+        [
+          0.0945332,
+          0.0422124
+        ]
+      ],
+      "orders": [
+        "AB",
+        "BA",
+        "AB",
+        "BA",
+        "AB",
+        "BA",
+        "AB"
+      ],
+      "gain": 0.5916165408583995,
+      "parity": true,
+      "input_sha256": "cca3d003d3d8bbf245bc9db167e5527eef8a50c4e4ef580621442ec49de6e906",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 10000,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 10000
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 10000
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1024
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "k": 1024,
+      "layout": "grouped",
+      "phase": "confirmation",
+      "pairs": [
+        [
+          0.62532,
+          0.0289179
+        ],
+        [
+          0.5993836,
+          0.041139
+        ],
+        [
+          0.6067872,
+          0.0384937
+        ]
+      ],
+      "orders": [
+        "AB",
+        "BA",
+        "AB"
+      ],
+      "gain": 0.936561450208574,
+      "parity": true,
+      "input_sha256": "1a0a3652233022df25a11d6bdb389ac9f3a8139c6232b2a26d8fdb4e7860de5c",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 10000,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 10000
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 10000
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1024
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "k": 1024,
+      "layout": "interleaved",
+      "phase": "confirmation",
+      "pairs": [
+        [
+          0.1030616,
+          0.0622923
+        ],
+        [
+          0.0857563,
+          0.0476129
+        ],
+        [
+          0.0818122,
+          0.0375003
+        ]
+      ],
+      "orders": [
+        "AB",
+        "BA",
+        "AB"
+      ],
+      "gain": 0.44478831292861276,
+      "parity": true,
+      "input_sha256": "cca3d003d3d8bbf245bc9db167e5527eef8a50c4e4ef580621442ec49de6e906",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 10000,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 10000
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 10000
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1024
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    }
+  ],
+  "semantic": [
+    {
+      "input_sha256": "dc320d08cafbffaeebf5e40d75ac0d9584fe4142ddf4f5703a34cb817462678e",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "472277382b101bb57c08aa05c5ad1ba6ccf350b95fb39bf1fe8ec082722982cc",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": [
+              [
+                "m0",
+                0.07
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "74e8d9c18cdb69621c3fc202de80cdd911654cfe69de2b2a74be8e8ae2b12f68",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [
+              [
+                "m0",
+                13
+              ]
+            ],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "eb70923a7a4afc5d1458070841ea5a9c475c1903d99304ebc82a9bc7070999c8",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [
+              "m0"
+            ],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "2dd0cc9f11f6a7c2038ff6368b422ab55a87e2486b2ef2dacb21bf84788d4130",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [
+              "m0"
+            ],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "32895f4e819e6d019bfd981bb9157f7f4145f170ecc53b741f0392c1a851863c",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "97587462aca840214af17a4a1b9d256c4940a33f01dbbc785074da9724672e47",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "cf2625cba56157b54f2216e9e01e134c89eba088a625d64a54d6cb425851893b",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "ae5134ab1891bc75a8777d4d4656900013303e8e2d6199d82e92e97906515d8f",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "c5813a798487a2810f563bbcf4d10983840057052c2735ed1ed89b14b0e66893",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": [
+              [
+                "m0",
+                0.07
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "0f09c618fe47c56088cd7b8bbfd593ce1fa75f41af2ccf0d50fcdac3887ba031",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [
+              [
+                "m0",
+                13
+              ]
+            ],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "9d2df5395ad4105e00f4a4df1bcd541a2a4fae4adf089faebaa41db876ae4644",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [
+              "m0"
+            ],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "bd99e980c974bf99e711b0f443ad0e28ebd88a92e5a450d3c52ebc859a80aaee",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [
+              "m0"
+            ],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "4657fced88eb8ecd6bf4180c32339e08353b905e243de086c7e75b71f55f5f9c",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "8884f40d4788b407851bdcd6c45c9650d8ca9ea0acb06d0c51ff2fbc20c7369f",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "296f3e540fa168f9b22ce0845fff16a040d98120cb99ebbf641a635b37d2c672",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "652c33455b1a82e935cb59a7a2847362d789dcf5a0f8d08c74d848cee2b1f0f7",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "9db02b7f57487c2981e562b33071bd5b13c07c7800e72b991277b6e6a56e7779",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": [
+              [
+                "m0",
+                0.07
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "1907c006fd3a51790a2dd134af9f6e1deb1280b2e59cfacf17aaea427bc00b4e",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [
+              [
+                "m0",
+                13
+              ]
+            ],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "529094a1468a24ded3184afca3dc0a33cbd6d4de6773c6299700b233c20fab95",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [
+              "m0"
+            ],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "f7fcf260e6d294bc1a4e0365a017ae5376bbd8251ca6a430773dd0399b7f655e",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [
+              "m0"
+            ],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "aceabcdcd5e8668e49405d51bf17dcc70153f3d28f555565280dea654b582317",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "309083f15b9988b238d1bacd4f6e4cbb37d8d5e1ad61f1fa35c1759b8d93ec14",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "a011f923992b90b1efabfc043547c06cda9346f46313a7061bd645ea6cf443c9",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "dd85c933a41fa0bf2e7d4c66735c7abb6661ae3d0fb67c1a623da0113c0a11a3",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "4003a5d396636770e68f897895b6e4a737853b1eda271357bbc8d40a407f4220",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": [
+              [
+                "m0",
+                0.07
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "d93045548cc74656d811da554829a9c96584203762173f608e420940cdcd6ceb",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [
+              [
+                "m0",
+                13
+              ]
+            ],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "5941585003a20f8fd971796c2f5d3d6bc0fdd56a725dc11cd301d1c7008a8ce2",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [
+              "m0"
+            ],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "d432923dbd3ef474aa0ef848a3a8ec1a1fa9d21326410871c4fd3db04299a6ff",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [
+              "m0"
+            ],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "0de001a85734edb23f31a2d8bccb50a57d36bcc6a0128d29a7097640fce1f0ab",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "ed93fd58dc29d1908f3e6f7ce6bee15f3b303ee3dc83f355ba7453a801380e54",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "b616cf2675b2c28b82434146b375def33e2bb358f08504489224ab355c36aa46",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "49ac6abc2f94a0ed83ffb1208d4d23bd4b03c441b5044d92ab3801a3c8d010c2",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "ba32c398ad5ec6a4bdf20470a6d9d8a675fd78caf755b0f6824568b8ec4b47ec",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "b859ba93f4f9e5a5b405b4db3c87a52d63d3235bff7005a06df52546cb4581c8",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "d202e2c498a0d2ce63a82b1ce5eb36869f20e426617d08cf70b5558d6917ea6b",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "a3dff7a5714750b886c3ee57186e204ca429fb978aaafb18e3e952a467ebfdb3",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "cc51a16071602c8281e059f9218fdd571b568e5a063e0fabe4ffab4838dad71f",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "a7f1d1eda3faf48f8d7170eab0a0a2936838397a7951c1d4828d74d1aa36576c",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "e0bb0cb0948aa0cacc60c60f6d7d4b41fabaf85df5175f6513a3bea6d5536f2e",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "43804471de9374277531356ab65dc7ce47a158b3437bbfb7f9dc5a4e647b0bf5",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "16f3d8bb7e271f780d8b226505ff63fa9fe827215c1d85480f5f429ad3cc31bc",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "521ecdf96ad1933bc535a28baa91c0ee28be6d2ff3a1dd3612c24c75a5d6ae94",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "23d4a18da15849cd725cf1a574b57d9402570ed94de43bb2965ab6fdde792622",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "7582abd70c913a95a760982aa0c6939e1198326a95fad7baf3a9558d9d32606c",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "355840dd989ce70767d228202df1b75f84f7c4add458947ae6d83b8994a1500b",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "0c835e9632f73f94bad659368c9a87e96f9e059bf73819fff3fa06dc372aebec",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "ed1da071f9495a603f3789f99247bb0f1d35a658b317e59279742f409ed6dfde",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "273dfbcd78c635fa15dfe6d113d894df806118fe5dc31908aaca521810db7ea4",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "f05a9598ce03dbddf06f3dd480941047b522b4b4a77a1736a520805ebc365dbf",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "464a232e3bcbace6bfedd0c5f20520b970ad78345348b97a09c006e31a4e2c95",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "f83d7cb4dbafb60c866a696bd05e8cfbd99dc4f3ab046ae0fca7133bef17a0df",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "a8f8b09c5aa04cc6638f26c963d88f8a70546ec5cc2d7dd5c0c01c0f596b8a35",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "e3efeba7f9f764acdc956b8453b640008dbd0df0139493b7680f1fdf51e5926c",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "c90287d8c66f9b59af1f040b9ad06170a9d32acae6efb2eeae9b67f782556c0c",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "742283d83d209b70e23756b03a44eebd324f87c072fec4dc9747b48b65b61a88",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "b35a84decee6472d079cb5227584339c0e480e42a9be8347a859f5ff7dd108fc",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "e4fb7c3a7370146b814eb23f41d85c01c80e3466efb417f5bd81073b5e33b1af",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "7fa67577f86bad97311224f77c8100120c82f1635e8fd8374b14e91587e50061",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "bb674306ac9c3e19b14001825b77840d406c1de7b229a815c081851fdcb1f0e1",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "d700a871e750886b8629d9dc6d45ff9452d5099933319f7bc40541f0ef37b8f6",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "861bf3e2d9d575a17e582d3fc1c0f047b4ed5dd1855454b0bd2bb6b20b254b99",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "10f6385ebb7d1d91d56d813513fc52fdcc1bbb7d481ba6e52a567f7dd832882a",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "f2d6b6992990fab907f976abe1f508d0fd315ec622e82cc219c1a92a47cce7aa",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "walls": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "e0167e286bff465d1ab092161284978b2f92113edbd0345d2061bb842e308dfe",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "434f05f650386883087307fcd56ed4c002182a7a77df6c1e8c25adef43fec099",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "dfec29faa0c81f445a3233e60a95ad721092c706b4d9033f364282f15abcaecc",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "2973466d7f71a41e439312ce5731ed3da1f1819b7d67c1d54d656398781191e3",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "b87d995bea68aae881c399959d63d6e1fb3a61e78fb2e909fbbb10a2b3ed340e",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "57c2e75e868daa1b3b3c191058ff40de26cbf4bbbd9fdffd53ec79c0edfe7563",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "cee9dc31bd67ccc82a006913c29142c76f88948b09c47cf0417e67e4a3bcd93b",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "e7a50a99a2edd6f7c39a18f5a6603891862e6a7deafd75de85dda32b8e3462be",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "74192a05edb64436aee181ebed41c18c3deb6c19e96b04d5da26d135600238ce",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "7965ec3f0ff6544747c0cd1749067ff7389c9edba567018c9f1eaef74c93b1e0",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "2110fb8c7939fe20297166837ad4987cbbd64e8bac3eff363b40d067b09c2f96",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "30721732b5a5345ecb1b3f0b0d80cefd37791a4ed2aa1438243b1a98e5e5f86b",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "4e1078dfb29cd80d00de54ac2fd0ea786c940fc67d43d87db959a1f331c9edf6",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "2669fa3e2257c6137f418b1f371c797f2b4c05bb6cde9f35511367e19fb1d71d",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "84d972f1b90c66918e9d129c8209779339f389063266471d27999a2b49e400df",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "3f5a23cb35cf963b424f613941d118eabec2a58001a1c0dd43eb418f97f5cd1e",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "dd7e2ad13b7b2be9cb06f049eae0043a75db64717c94b291f47356f35b6bb226",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 2,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "c351859a40e9a399b2123076701a8e58f9e54374ddb5072f20c324cad3f4f844",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 2,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "0f26a695c264a5ab66e31daf7fbb9208378fd7153d31d3b45cd6e639174fa43f",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 2,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "6f398ac2eee881eb40e94dbe9bae5c093402a73119b13ad1d641b60056c7fb2f",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 2,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "d728e4c1fe7f8dca47b40c3bb891d58873838f513aa6d63896389fb79fda05a6",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 2,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "fa5e4594fcbe23d3aa1f211a26d010308a0ff6e71b89a86ccf10ef43c98c6c5f",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 2,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "85b8627f1892c40f6ca7179ed9cc3517c7656b49f15b1fd0d2d6393203f163a3",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 2,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "ba9b2d8c19a70d085f8783fe2a11014f71ab64e6c94d0718c36f480f6a9efc19",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 2,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "42e4f1e4cc2690056885213bd7916fd370f0ca6cd621e15ca926dbde97de59c4",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "e32b4a2c3d4639f469ae5aa9c19772e8fcb9e05eaec1667e0104f64e6e4f8b66",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "262d1ad671eba74c77651a07f953e6b2e73fba07d85e353134c462d2300a9d08",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "092532de06344f1a6a0ed058b6192b21c1a83f2df727b4704a53fbc67f197460",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "850288a0655b3a5e29c080b62d40dd544746e4d35fa4faceca61b5fb3290a038",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "4d3d9f0dc6ef3cd38cdc1f44a7b998966cd922e265c8695d685d53322e142b47",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "9d9accf22e592e196b610a8c497309a24ccc5c22629e5100d3698471abf78722",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "2d7e0aa738acb5fde498efbde2efb7da8974b8d91001ec48f493a4808b7b2be0",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "storey_bands": 1,
+              "null": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "b4246960de84a3360489041326871724afcd3de13f64150e37d6fada9a0b54f4",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "f643bc3d563d4f3498513426410cba993670a7a1e65ca616df42a638cb44be02",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "e7368192aabebc028069edf95f157420e71e589ed3fa05c15ca8a487f5fbd4b9",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "a214a2210367eb8603d0b5d651604aadab2f910ef5f1c30fa2507b878c003d53",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "fa69b15c427f7d30a6f55ee10c16dcedd536fffdddb5b325459d523322aa07d9",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "9453462910ca0b519aaec8baacaf64aa28764265afe9e67b0e2d9560db9c66ea",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "f08366b34df66dcf1e8799225464bfba8f6ef01dcda31d5a77903ec0adaaef3a",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "02d15c9028b31471204171f54702407fd964a33084f8db921d2d9cedb624ce41",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "piers": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 1
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "e2cc9ec6d1dde907c57a457813b175fecb6aa2ce4546c874fa0ac9e9fbe03bdc",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "3234f08902d1cc66d4c3bce24f2468aaa31550eecb99d41565d34a25e4c9885b",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "413da8dd4fc18918d6affc02084544288796d5551d0d0199f4e3a70c74b565ea",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "179a30dfc949f2e40cd0a75e80787a30d49e073163cecb82702cf50458881cf8",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "95a0657f2c6834de1e272f40217465c642f8597e6424a4bd10c52c07c523ac72",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "f20681499d2e48a4d09a91765ef86efb0cd7915419a986ae354615329a2d1dc4",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "0494fbbd456b2c5c2f6d071c797a8dc6317b587935cb3e4b0559f76a35fdf976",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "31047dcb638a80ce784640b5635cf83b8ad8cf32003b1e5e8eb0bdfef828a7cb",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "walls": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "c3e4d06bff9d38beffdf905f1129035a003aef90ad0ab04ae98bdc1f42489285",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "32166b259eca3f6e81338f6892f6589d6a99af83a54bb60b9e9494a45a818a32",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "8aa5bb2096f59fc6a0a32aec6444c4ce48c20a95a7a0214acf1213f4c8f2f4de",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "cc502c08f959ee6da9e9ffcb49638559695347c396db432aff3723e24cbbf86f",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "513e79eb14ec7b54963ba7556555a80b21e0556565000118658a68413292f1da",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "9f912fd277215410042b3e23d241d976266500d0709d7cdc9aac6a0ad1828c29",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "a56b7c6fa898b7f54dea903da166c1b1875967086d6faaf38f1e7a313d8b86bd",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "97d25a1d4377e8c3a40202f9aa004f2c65eb0f7de2f775402dba59291306ffa2",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 1,
+              "storey_bands": 1
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 1,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "aafa34457813b37abcd9bedde13e801458b2158cf7bd3ec62c8d2f31c3440e6c",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "c7c4bc485360c945a1f4bee24e60d781351c9ece1dc112aaa4eed8bc00247da7",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "b9b1c3f4ec337989ca2f5c71d54f119d211f9774d8602014addf0034f6d72422",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "66da75585e375cf5f0dc09ba3b540c042caab29f18253b85ade6457e16c2a919",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "5a60f43c3e71951dcd3637534c6e53ae7fe60e44a06c88108e32cd79e9d4afed",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "3823f43c0009c3b9ace8d4d20234c88425fdbb20f9408a1cf1de829f0576a948",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "81ec6d78a26031132f9838fddfddf2348e24dc7b080d05194187c72e07110106",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "45791cd63a7d0a1af87602a1c4892390f18246a8e9d5b11f87889eced712e5ef",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "null": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [
+              null
+            ],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "d5d8c3ae4016bb97f1c8eece423b8ed35775d1ee3c7dfd3031f71bc5f0ef9636",
+      "outcome": [
+        "exception",
+        "builtins",
+        "KeyError",
+        [
+          "meshes"
+        ],
+        "'meshes'"
+      ]
+    },
+    {
+      "input_sha256": "e405bdfeb8dc643c553f87d661f9d5891c1ba839cde548d4cbab141800598a90",
+      "outcome": [
+        "exception",
+        "builtins",
+        "KeyError",
+        [
+          "objects"
+        ],
+        "'objects'"
+      ]
+    },
+    {
+      "input_sha256": "d827049039f82a8b65a9b0f52e637cf3bc5d1e0dec7d6198edf901a5e3dcae7d",
+      "outcome": [
+        "exception",
+        "builtins",
+        "KeyError",
+        [
+          "meshes"
+        ],
+        "'meshes'"
+      ]
+    },
+    {
+      "input_sha256": "5de0b91963f0753a3435524b2d0b897d8c0800e86eb7a082e018e1f9bdebccea",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 0,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {},
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 0
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "38d8f219636dc59520f84165e64b4fccb8cc19f1248ceb21295570163ee735c4",
+      "outcome": [
+        "exception",
+        "builtins",
+        "KeyError",
+        [
+          "mesh"
+        ],
+        "'mesh'"
+      ]
+    },
+    {
+      "input_sha256": "bb62fa8eae9f5b96725b2ed9d95ed32333c6096a51137c43c543ea37cf478213",
+      "outcome": [
+        "exception",
+        "builtins",
+        "KeyError",
+        [
+          "group"
+        ],
+        "'group'"
+      ]
+    },
+    {
+      "input_sha256": "177f11b33f4b536699819d301a2a9418ff588491174c807994a37ddffa62d439",
+      "outcome": [
+        "exception",
+        "builtins",
+        "KeyError",
+        [
+          "absent"
+        ],
+        "'absent'"
+      ]
+    },
+    {
+      "input_sha256": "5b8e989b053536d0ab32a96498761c167130d253f4c2725657100065c94f14b0",
+      "outcome": [
+        "exception",
+        "builtins",
+        "TypeError",
+        [
+          "cannot use 'list' as a dict key (unhashable type: 'list')"
+        ],
+        "cannot use 'list' as a dict key (unhashable type: 'list')"
+      ]
+    },
+    {
+      "input_sha256": "4729e91cd863812ca4af6a3b18240e57f20c5b7d6ec4aef9bb91eb7d746ca24a",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [
+              [
+                "m0",
+                "m1"
+              ]
+            ],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "f83d8819594372cda2f666f5ea041f2b2be01fa3b5028a961a35a1c7ad2fa4a5",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "1bf24100ab49c3226640f569773ac11df9b2a448a6fff73ebac5503233eb13a4",
+      "outcome": [
+        "exception",
+        "builtins",
+        "TypeError",
+        [
+          "len() of unsized object"
+        ],
+        "len() of unsized object"
+      ]
+    },
+    {
+      "input_sha256": "5a5e670cf5d32a3bfd3d4ba0cf44d54e353e87104cc44d64902d7f7983bdb035",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "fail",
+          "value": 2,
+          "limit": 100000,
+          "details": {
+            "triangles_by_group": {
+              "piers": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [
+              "m0"
+            ],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    },
+    {
+      "input_sha256": "852d3f82c0bc0f47e6fdd86cd064f4844bde12656eaab342252d241b9d5c1c94",
+      "outcome": [
+        "output",
+        {
+          "id": "complexity",
+          "status": "pass",
+          "value": 2,
+          "limit": 2,
+          "details": {
+            "triangles_by_group": {
+              "piers": 2
+            },
+            "over_budget": {},
+            "unbudgeted_groups": [],
+            "metrics_missing": [],
+            "elements_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "types_by_group": {
+              "storey_bands": 0,
+              "piers": 2
+            },
+            "section_points_over": [],
+            "copies_not_instanced": [],
+            "profile_without_silhouette": []
+          }
+        }
+      ]
+    }
+  ],
+  "affected_parity": true
+}

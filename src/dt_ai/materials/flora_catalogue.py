@@ -300,6 +300,7 @@ def build(
     maps: dict,
     previous: dict | None = None,
     identity: dict | None = None,
+    npm_light: dict | None = None,
 ) -> dict:
     indexed = _index_audit(audit)
     library, gap_items = _split_curation(curation)
@@ -362,7 +363,7 @@ def build(
             "status": SHARED_STAND_IN_STATUS,
         })
     unresolved = _unresolved(curation.get("unresolved", []), indexed)
-    return {
+    catalogue = {
         "schema": "flora-library-v1",
         "library_file": LIBRARY_FILE,
         "id_ranges": {kind: list(bounds) for kind, bounds in RANGES.items()},
@@ -371,6 +372,17 @@ def build(
         "gaps": _gaps(species, unresolved, stand_in),
         "counts": _counts(species, stand_in, unresolved),
     }
+    adding_light = npm_light is not None
+    if npm_light is None and previous is not None:
+        kept = [s["npm_light"] for s in previous.get("species", []) if "npm_light" in s]
+        if kept:
+            npm_light = {"schema": "flora-npm-light-v1", "variants": kept}
+    if npm_light is not None:
+        from dt_ai.materials.flora_light import append_light
+        if previous is None:
+            raise ValueError("npm_light requires previous catalogue")
+        catalogue = append_light(catalogue, npm_light, previous if adding_light else catalogue)
+    return catalogue
 
 
 def check(catalogue: dict) -> list[str]:
@@ -399,11 +411,21 @@ def check(catalogue: dict) -> list[str]:
         if not isinstance(item, dict):
             findings.append(f"{where} is not an object")
             continue
-        findings.extend(_key_findings(item, _SPECIES_KEYS, where))
+        if "npm_light" in item and (not isinstance(item["npm_light"], dict) or item["npm_light"].get("material_id") != item.get("material_id")):
+            findings.append(where + " npm_light belongs to another species")
+        allowed = (*_SPECIES_KEYS, "npm_light") if "npm_light" in item else _SPECIES_KEYS
+        findings.extend(_key_findings(item, allowed, where))
         findings.extend(_check_species(item, where, retired, seen_ids, seen_latin, seen_names))
     findings.extend(_check_gaps(catalogue))
     findings.extend(_check_retired_latins(catalogue))
     findings.extend(_check_counts(catalogue))
+    light = [s["npm_light"] for s in catalogue["species"] if isinstance(s, dict) and "npm_light" in s]
+    if light:
+        from dt_ai.materials.flora_light import validate_records
+        try:
+            validate_records(catalogue, {"schema": "flora-npm-light-v1", "variants": light})
+        except (ValueError, TypeError, KeyError) as exc:
+            findings.append("npm_light: " + str(exc))
     return findings
 
 
@@ -417,6 +439,7 @@ def main(argv: list[str] | None = None) -> None:
     build_parser.add_argument("--out", required=True)
     build_parser.add_argument("--previous")
     build_parser.add_argument("--identity")
+    build_parser.add_argument("--npm-light")
     identity_parser = sub.add_parser("identity")
     identity_parser.add_argument("--points", required=True)
     identity_parser.add_argument("--curation", required=True)
@@ -442,6 +465,7 @@ def main(argv: list[str] | None = None) -> None:
             _read_json(args.maps),
             previous,
             identity,
+            _read_json(args.npm_light) if args.npm_light else None,
         )
         findings = check(catalogue)
         if findings:

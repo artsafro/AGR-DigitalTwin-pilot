@@ -1,0 +1,949 @@
+{
+ "version": "site-parts-v001",
+ "issue": 296,
+ "status": "gate1_open",
+ "passed": false,
+ "sources": {
+  "adapter": {
+   "path": "C:/x/t_d94665f2/paving_ground_inputs_v4.json",
+   "sha256": "3b6b433d718c0292f472293849f3363fd2ae90d4892e598efca52be44cd9d502",
+   "boundary": "568BF"
+  },
+  "schedule": {
+   "table": "*T3509",
+   "dump": "C:/x/vatutino-maf/v001/src/dump.json",
+   "sha256": "1af8f3cd6f226781107288a0bb2f563f754abdb58f0f3bbbc28c6b51dee4054e"
+  },
+  "flora_catalogue": {
+   "path": "library/flora/catalogue.json",
+   "schema": "flora-library-v1",
+   "library_file": "C:/x/flora-library/v003/flora-library-v003.max"
+  },
+  "maf_set": "jobs/VATUTINO-SITE/maf/site-maf-set.json",
+  "ground": {
+   "version": "v014",
+   "npm_triangles": 46343,
+   "surface_triangles": 32821
+  }
+ },
+ "maf": [
+  {
+   "set_id": "VAT_MAF_T3510_01",
+   "schedule": "*T3510/1",
+   "block": "Скамья",
+   "catalogue_id": "MAF_0326",
+   "points_in": 5,
+   "npm_tris": 240
+  },
+  {
+   "set_id": "VAT_MAF_T3510_02",
+   "schedule": "*T3510/2",
+   "block": "Урна",
+   "catalogue_id": "MAF_0794",
+   "points_in": 48,
+   "npm_tris": 146
+  },
+  {
+   "set_id": "VAT_MAF_T3510_07",
+   "schedule": "*T3510/7",
+   "block": "Шезлонг фестиваль модуль 1",
+   "catalogue_id": "MAF_0747",
+   "points_in": 4,
+   "npm_tris": 364
+  },
+  {
+   "set_id": "VAT_MAF_T3510_09",
+   "schedule": "*T3510/9",
+   "block": "лежак2",
+   "catalogue_id": "MAF_0506",
+   "points_in": 6,
+   "npm_tris": 730
+  },
+  {
+   "set_id": "VAT_MAF_T3510_11",
+   "schedule": "*T3510/11",
+   "block": "Качалка на пружине ИО 0323Т-3",
+   "catalogue_id": "MAF_0322",
+   "points_in": 2,
+   "npm_tris": 434
+  },
+  {
+   "set_id": "VAT_MAF_T3510_12",
+   "schedule": "*T3510/12",
+   "block": "ио 0118т-1",
+   "catalogue_id": "MAF_0920",
+   "points_in": 2,
+   "npm_tris": 678
+  },
+  {
+   "set_id": "VAT_MAF_T3510_16",
+   "schedule": "*T3510/16",
+   "block": "ДП 090",
+   "catalogue_id": "MAF_0803",
+   "points_in": 1,
+   "npm_tris": 2281
+  },
+  {
+   "set_id": "VAT_MAF_T3510_26",
+   "schedule": "*T3510/26",
+   "block": "Теннисный стол",
+   "catalogue_id": "MAF_0677",
+   "points_in": 1,
+   "npm_tris": 3043
+  },
+  {
+   "set_id": "VAT_MAF_T3510_27",
+   "schedule": "*T3510/27",
+   "block": "Стол Ландау",
+   "catalogue_id": "MAF_0219",
+   "points_in": 3,
+   "npm_tris": 540
+  },
+  {
+   "set_id": "VAT_MAF_T3510_28",
+   "schedule": "*T3510/28",
+   "block": "Подвес качели гнездо",
+   "catalogue_id": "MAF_0127",
+   "points_in": 4,
+   "npm_tris": 2030
+  },
+  {
+   "set_id": "VAT_MAF_T3510_29",
+   "schedule": "*T3510/29",
+   "block": "Кресло Парк 12750",
+   "catalogue_id": "MAF_0159",
+   "points_in": 25,
+   "npm_tris": 320
+  },
+  {
+   "set_id": "VAT_MAF_T3510_31",
+   "schedule": "*T3510/31",
+   "block": "Стол Лондон Тип 3",
+   "catalogue_id": "MAF_0722",
+   "points_in": 16,
+   "npm_tris": 212
+  },
+  {
+   "set_id": "VAT_MAF_T3510_32",
+   "schedule": "*T3510/32",
+   "block": "Приствольная решетка",
+   "catalogue_id": "MAF_0687",
+   "points_in": 4,
+   "npm_tris": 3726
+  }
+ ],
+ "maf_no_model": {
+  "Андромеда Металл Крыша поликарбонат": 2,
+  "Барная стойка": 1,
+  "Бетонные раскопки": 8,
+  "Воркаут": 1,
+  "Воркаут 217100": 1,
+  "Воркаут 217170": 1,
+  "Гамак": 3,
+  "Игровой комплекс Кубики": 1,
+  "Карусель": 2,
+  "Качели парковые": 11,
+  "Контейнер 1100л ТБО": 8,
+  "Навес 1": 1,
+  "Навес 2": 1,
+  "Навес 3": 1,
+  "Навес 4": 1,
+  "Пенек": 9,
+  "Песочница индивидуальный МАФ": 1,
+  "Площадка для контейнеров БТО 2": 1,
+  "Скамья верона": 1,
+  "Скамья верона 2": 1,
+  "Скамья индивид лестн 1": 2,
+  "Скамья индивид общ отд 1": 1,
+  "Скамья индивид общ отд 2": 1,
+  "Скамья индивид пл. дети1-3лет": 1,
+  "Скамья тетрис 03": 4,
+  "Стул бар": 4,
+  "Тренажер волна": 1,
+  "Тренажер лыжи": 1,
+  "Тренажер мышиная охота": 1,
+  "Турник": 1,
+  "Шезлонг фестиваль модуль 3": 1,
+  "ио 1005т-11": 1,
+  "скамья индивид под андромедой": 1
+ },
+ "flora": [
+  {
+   "pos": 1,
+   "ru": "Липа мелколистная Rancho",
+   "latin": "Tilia cordata Greenspire",
+   "block": "Липа мелколистная 'Greenspire'",
+   "band_m": [
+    4.0,
+    6.6
+   ],
+   "h_cm": [
+    500,
+    550
+   ],
+   "qty": 23,
+   "note": "ствол 18-20 см, ком 0,7*0,7*0,6",
+   "spozu_total": 25,
+   "spozu_in": 23,
+   "cands": [
+    {
+     "id": 101,
+     "latin": "Tilia cordata",
+     "ru": "Липа мелколистная",
+     "obj": {
+      "NPM": "Tilia_cordata_NPM",
+      "VPM": "Tilia_cordata_VPM"
+     },
+     "h": 6.094,
+     "crown": 4.227,
+     "tris": {
+      "NPM": 357,
+      "VPM": 830
+     },
+     "vpm": "available",
+     "v": "pass",
+     "scale_to_band": null
+    }
+   ],
+   "gap": {
+    "id": 122,
+    "latin": "Tilia cordata 'Greenspire'",
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   "proposed": 101,
+   "npm_total": 8211
+  },
+  {
+   "pos": 2,
+   "ru": "Ольха серая",
+   "latin": "Alnus glutinosa Laciniata",
+   "block": "Ольха серая 'Laciniata'",
+   "band_m": [
+    4.0,
+    6.6
+   ],
+   "h_cm": [
+    500,
+    550
+   ],
+   "qty": 23,
+   "note": "ствол 18-20 см, ком 0,7*0,7*0,6",
+   "spozu_total": 24,
+   "spozu_in": 8,
+   "cands": [],
+   "gap": {
+    "id": 123,
+    "latin": "Alnus incana",
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   "proposed": null,
+   "npm_total": 0
+  },
+  {
+   "pos": 3,
+   "ru": "Черемуха обыкновенная",
+   "latin": "Prunus padus Watereri",
+   "block": "Черемуха обыкновенная 'Watereri'",
+   "band_m": [
+    2.4,
+    6.6
+   ],
+   "h_cm": [
+    300,
+    550
+   ],
+   "qty": 11,
+   "note": "ствол 18-20 см, ком 0,5-0,7",
+   "spozu_total": 12,
+   "spozu_in": 11,
+   "cands": [
+    {
+     "id": 120,
+     "latin": "Prunus padus",
+     "ru": "Черёмуха обыкновенная",
+     "obj": {
+      "NPM": "Prunus_padus_NPM",
+      "VPM": "Prunus_padus_VPM"
+     },
+     "h": 4.411,
+     "crown": 3.837,
+     "tris": {
+      "NPM": 166,
+      "VPM": 494
+     },
+     "vpm": "available",
+     "v": "pass",
+     "scale_to_band": null
+    }
+   ],
+   "gap": null,
+   "proposed": 120,
+   "npm_total": 1826
+  },
+  {
+   "pos": 4,
+   "ru": "Яблоня Маковецкого",
+   "latin": "Malus Makowieckiana",
+   "block": "Яблоня 'Makowieckiana'",
+   "band_m": [
+    2.4,
+    6.6
+   ],
+   "h_cm": [
+    300,
+    550
+   ],
+   "qty": 24,
+   "note": "ствол 18-20 см, ком 0,5-0,7",
+   "spozu_total": 25,
+   "spozu_in": 21,
+   "cands": [
+    {
+     "id": 115,
+     "latin": "Malus niedzwetzkyana",
+     "ru": "Яблоня Недзвецкого",
+     "obj": {
+      "NPM": "Malus_niedzwetzkyana_NPM",
+      "VPM": "Malus_niedzwetzkyana_VPM"
+     },
+     "h": 4.549,
+     "crown": 3.859,
+     "tris": {
+      "NPM": 125,
+      "VPM": 394
+     },
+     "vpm": "available",
+     "v": "pass",
+     "scale_to_band": null
+    },
+    {
+     "id": 118,
+     "latin": "Malus 'Evereste'",
+     "ru": "Яблоня Эверест",
+     "obj": {
+      "NPM": "Malus_Evereste_NPM",
+      "VPM": null
+     },
+     "h": 3.807,
+     "crown": 3.276,
+     "tris": {
+      "NPM": 394,
+      "VPM": null
+     },
+     "vpm": "unconfirmed",
+     "v": "pass",
+     "scale_to_band": null
+    }
+   ],
+   "gap": null,
+   "proposed": 115,
+   "npm_total": 2625
+  },
+  {
+   "pos": 5,
+   "ru": "Лиственница обыкновенная",
+   "latin": "Larix decidua Pendula",
+   "block": "Лиственница обыкновенная 'Pendula'",
+   "band_m": [
+    1.2,
+    6.0
+   ],
+   "h_cm": [
+    150,
+    500
+   ],
+   "qty": 13,
+   "note": "ком 0,9*0,9*1,1",
+   "spozu_total": 14,
+   "spozu_in": 13,
+   "cands": [],
+   "gap": null,
+   "proposed": null,
+   "npm_total": 0
+  },
+  {
+   "pos": 6,
+   "ru": "Ирга колосистая",
+   "latin": "Amelanchier spicata",
+   "block": "Ирга колосистая",
+   "band_m": [
+    1.0,
+    4.2
+   ],
+   "h_cm": [
+    125,
+    350
+   ],
+   "qty": 38,
+   "note": "С10, ≥7 скелетных ветвей",
+   "spozu_total": 39,
+   "spozu_in": 38,
+   "cands": [
+    {
+     "id": 105,
+     "latin": "Amelanchier lamarckii",
+     "ru": "Ирга Ламарка",
+     "obj": {
+      "NPM": "Amelanchier_lamarckii_NPM",
+      "VPM": "Amelanchier_lamarckii_VPM"
+     },
+     "h": 1.553,
+     "crown": 1.502,
+     "tris": {
+      "NPM": 979,
+      "VPM": 4894
+     },
+     "vpm": "available",
+     "v": "pass",
+     "scale_to_band": null
+    }
+   ],
+   "gap": null,
+   "proposed": 105,
+   "npm_total": 37202
+  },
+  {
+   "pos": 7,
+   "ru": "Боярышник обыкновенный",
+   "latin": "Crataegus laevigata Paul`s Scarlet",
+   "block": "Боярышник средний  'Paul's Scarlet'",
+   "band_m": [
+    1.0,
+    4.2
+   ],
+   "h_cm": [
+    125,
+    350
+   ],
+   "qty": 29,
+   "note": "С10, ≥7 скелетных ветвей",
+   "spozu_total": 30,
+   "spozu_in": 29,
+   "cands": [
+    {
+     "id": 103,
+     "latin": "Crataegus mollis",
+     "ru": "Боярышник мягкий",
+     "obj": {
+      "NPM": "Crataegus_mollis_NPM",
+      "VPM": "Crataegus_mollis_VPM"
+     },
+     "h": 3.832,
+     "crown": 4.676,
+     "tris": {
+      "NPM": 488,
+      "VPM": 574
+     },
+     "vpm": "available",
+     "v": "pass",
+     "scale_to_band": null
+    },
+    {
+     "id": 202,
+     "latin": "Crataegus monogyna",
+     "ru": "Боярышник однопестичный",
+     "obj": {
+      "NPM": "Crataegus_monogyna_NPM",
+      "VPM": null
+     },
+     "h": 0.989,
+     "crown": 1.405,
+     "tris": {
+      "NPM": 72,
+      "VPM": null
+     },
+     "vpm": "unconfirmed",
+     "v": "fail",
+     "scale_to_band": 1.011
+    }
+   ],
+   "gap": null,
+   "proposed": 103,
+   "npm_total": 14152
+  },
+  {
+   "pos": 8,
+   "ru": "Лох узколистный",
+   "latin": "Elaeagnus angustifolia",
+   "block": "Лох узколистный",
+   "band_m": [
+    1.0,
+    4.2
+   ],
+   "h_cm": [
+    125,
+    350
+   ],
+   "qty": 25,
+   "note": "С10, ≥7 скелетных ветвей",
+   "spozu_total": 26,
+   "spozu_in": 25,
+   "cands": [],
+   "gap": null,
+   "proposed": null,
+   "npm_total": 0
+  },
+  {
+   "pos": 9,
+   "ru": "Пузыреплодник калинолистный ‘Lady in red’",
+   "latin": "Physocarpus opulifolius ‘Lady in red’",
+   "block": "Пузыреплодник калинолистный (Physocarpus opulifolius) ‘Lady in red’",
+   "band_m": [
+    1.0,
+    2.4
+   ],
+   "h_cm": [
+    125,
+    200
+   ],
+   "qty": 191,
+   "note": "С7,5",
+   "spozu_total": 192,
+   "spozu_in": 191,
+   "cands": [
+    {
+     "id": 205,
+     "latin": "Physocarpus opulifolius 'Diabolo'",
+     "ru": "Пузыреплодник калинолистный Диабло",
+     "obj": {
+      "NPM": "Physocarpus_opulifolius_Diabolo_NPM",
+      "VPM": "Physocarpus_opulifolius_Diabolo_VPM"
+     },
+     "h": 0.99,
+     "crown": 1.354,
+     "tris": {
+      "NPM": 18,
+      "VPM": 144
+     },
+     "vpm": "available",
+     "v": "fail",
+     "scale_to_band": 1.01
+    },
+    {
+     "id": 211,
+     "latin": "Physocarpus opulifolius",
+     "ru": "Пузыреплодник калинолистный",
+     "obj": {
+      "NPM": "Physocarpus_opulifolius_NPM",
+      "VPM": "Physocarpus_opulifolius_VPM"
+     },
+     "h": 0.951,
+     "crown": 0.92,
+     "tris": {
+      "NPM": 20,
+      "VPM": 160
+     },
+     "vpm": "available",
+     "v": "fail",
+     "scale_to_band": 1.052
+    },
+    {
+     "id": 234,
+     "latin": "Physocarpus opulifolius 'Luteus'",
+     "ru": "Пузыреплодник калинолистный Лютеус",
+     "obj": {
+      "NPM": "Physocarpus_opulifolius_Luteus_NPM",
+      "VPM": "Physocarpus_opulifolius_Luteus_VPM"
+     },
+     "h": 1.524,
+     "crown": 1.704,
+     "tris": {
+      "NPM": 10,
+      "VPM": 20
+     },
+     "vpm": "available",
+     "v": "pass",
+     "scale_to_band": null
+    }
+   ],
+   "gap": null,
+   "proposed": 205,
+   "npm_total": 3438
+  },
+  {
+   "pos": 10,
+   "ru": "Дерен кроваво-красный",
+   "latin": "Cornus sanguinea Anny Winter Orange",
+   "block": "Дерен кроваво-красный (Cornus sanguinea) ‘Anny’s Winter Orange’",
+   "band_m": [
+    1.0,
+    2.4
+   ],
+   "h_cm": [
+    125,
+    200
+   ],
+   "qty": 439,
+   "note": "С7,5",
+   "spozu_total": 440,
+   "spozu_in": 439,
+   "cands": [],
+   "gap": {
+    "id": 228,
+    "latin": "Cornus sanguinea 'Anny's Winter Orange'",
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   "proposed": null,
+   "npm_total": 0
+  },
+  {
+   "pos": 11,
+   "ru": "Рябинник рябинолистный",
+   "latin": "Sorbaria sorbifolia",
+   "block": "Рябинник рябинолистный",
+   "band_m": [
+    1.0,
+    2.4
+   ],
+   "h_cm": [
+    125,
+    200
+   ],
+   "qty": 866,
+   "note": "С5",
+   "spozu_total": 876,
+   "spozu_in": 866,
+   "cands": [
+    {
+     "id": 212,
+     "latin": "Sorbaria sorbifolia",
+     "ru": "Рябинник рябинолистный",
+     "obj": {
+      "NPM": "Sorbaria_sorbifolia_NPM",
+      "VPM": "Sorbaria_sorbifolia_VPM"
+     },
+     "h": 1.075,
+     "crown": 1.459,
+     "tris": {
+      "NPM": 10,
+      "VPM": 84
+     },
+     "vpm": "available",
+     "v": "pass",
+     "scale_to_band": null
+    },
+    {
+     "id": 219,
+     "latin": "Sorbaria sorbifolia 'Sem'",
+     "ru": "Рябинник рябинолистный Сэм",
+     "obj": {
+      "NPM": "Sorbaria_sorbifolia_Sem_NPM",
+      "VPM": null
+     },
+     "h": 1.332,
+     "crown": 1.889,
+     "tris": {
+      "NPM": 112,
+      "VPM": null
+     },
+     "vpm": "unconfirmed",
+     "v": "pass",
+     "scale_to_band": null
+    }
+   ],
+   "gap": null,
+   "proposed": 212,
+   "npm_total": 8660
+  },
+  {
+   "pos": 12,
+   "ru": "Дерен отпрысковыи 'Red Gnome'",
+   "latin": "Cornus sericea 'Red Gnome'",
+   "block": "Дерен белый 'Red Gnome'",
+   "band_m": [
+    1.0,
+    2.4
+   ],
+   "h_cm": [
+    125,
+    200
+   ],
+   "qty": 325,
+   "note": "С5",
+   "spozu_total": 326,
+   "spozu_in": 325,
+   "cands": [
+    {
+     "id": 204,
+     "latin": "Cornus sericea",
+     "ru": "Дёрен отпрысковый",
+     "obj": {
+      "NPM": "Cornus_sericea_NPM",
+      "VPM": null
+     },
+     "h": 0.972,
+     "crown": 1.194,
+     "tris": {
+      "NPM": 80,
+      "VPM": null
+     },
+     "vpm": "unconfirmed",
+     "v": "fail",
+     "scale_to_band": 1.029
+    },
+    {
+     "id": 203,
+     "latin": "Cornus alba",
+     "ru": "Дёрен белый",
+     "obj": {
+      "NPM": "Cornus_alba_NPM",
+      "VPM": "Cornus_alba_VPM"
+     },
+     "h": 0.723,
+     "crown": 1.12,
+     "tris": {
+      "NPM": 64,
+      "VPM": 128
+     },
+     "vpm": "available",
+     "v": "fail",
+     "scale_to_band": 1.383
+    }
+   ],
+   "gap": {
+    "id": 229,
+    "latin": "Cornus alba 'Red Gnome'",
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   "proposed": 204,
+   "npm_total": 26000
+  },
+  {
+   "pos": 13,
+   "ru": "Облепиха крушиновидная",
+   "latin": "Hippophae rhamnoides hikul",
+   "block": "Облепиха крушиновидная ‘Hikul’",
+   "band_m": [
+    1.0,
+    2.4
+   ],
+   "h_cm": [
+    125,
+    200
+   ],
+   "qty": 1059,
+   "note": "С5",
+   "spozu_total": 1060,
+   "spozu_in": 1059,
+   "cands": [],
+   "gap": null,
+   "proposed": null,
+   "npm_total": 0
+  },
+  {
+   "pos": 14,
+   "ru": "Лапчатка кустарниковая",
+   "latin": "Potentila fruticosa",
+   "block": "Лапчатка кустарниковая (Dasiphora fruticosa) К",
+   "band_m": [
+    0.64,
+    1.2
+   ],
+   "h_cm": [
+    80,
+    100
+   ],
+   "qty": 558,
+   "note": "С5",
+   "spozu_total": 559,
+   "spozu_in": 558,
+   "cands": [
+    {
+     "id": 230,
+     "latin": "Dasiphora fruticosa",
+     "ru": "Лапчатка кустарниковая",
+     "obj": {
+      "NPM": "Dasiphora_fruticosa_NPM",
+      "VPM": "Dasiphora_fruticosa_VPM"
+     },
+     "h": 0.835,
+     "crown": 1.133,
+     "tris": {
+      "NPM": 10,
+      "VPM": 20
+     },
+     "vpm": "available",
+     "v": "pass",
+     "scale_to_band": null
+    },
+    {
+     "id": 213,
+     "latin": "Dasiphora fruticosa 'Goldfinger'",
+     "ru": "Лапчатка кустарниковая Голдфингер",
+     "obj": {
+      "NPM": "Dasiphora_fruticosa_Goldfinger_NPM",
+      "VPM": null
+     },
+     "h": 1.332,
+     "crown": 1.889,
+     "tris": {
+      "NPM": 112,
+      "VPM": null
+     },
+     "vpm": "unconfirmed",
+     "v": "fail",
+     "scale_to_band": 0.901
+    }
+   ],
+   "gap": null,
+   "proposed": 230,
+   "npm_total": 5580
+  },
+  {
+   "pos": 15,
+   "ru": "Стефанандры надрезаннолистная",
+   "latin": "Stephanandra incisa",
+   "block": "Стефанандра надрезаннолистная Crispa (Stephanandra incisa Crispa)",
+   "band_m": [
+    0.16,
+    0.72
+   ],
+   "h_cm": [
+    20,
+    60
+   ],
+   "qty": 1002,
+   "note": "С5",
+   "spozu_total": 1003,
+   "spozu_in": 1002,
+   "cands": [
+    {
+     "id": 223,
+     "latin": "Stephanandra incisa 'Crispa'",
+     "ru": "Стефанандра надрезаннолистная Криспа",
+     "obj": {
+      "NPM": "Stephanandra_incisa_Crispa_NPM",
+      "VPM": "Stephanandra_incisa_Crispa_VPM"
+     },
+     "h": 0.724,
+     "crown": 1.967,
+     "tris": {
+      "NPM": 10,
+      "VPM": 90
+     },
+     "vpm": "available",
+     "v": "fail",
+     "scale_to_band": 0.994
+    }
+   ],
+   "gap": null,
+   "proposed": 223,
+   "npm_total": 10020
+  },
+  {
+   "pos": 16,
+   "ru": "Ель нидиформис",
+   "latin": "Picea abies Nidiformis",
+   "block": "Ель нидиформис",
+   "band_m": [
+    0.48,
+    1.2
+   ],
+   "h_cm": [
+    60,
+    100
+   ],
+   "qty": 70,
+   "note": "С7,5",
+   "spozu_total": 71,
+   "spozu_in": 70,
+   "cands": [],
+   "gap": {
+    "id": 236,
+    "latin": "Picea abies 'Nidiformis'",
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   "proposed": null,
+   "npm_total": 0
+  },
+  {
+   "pos": 17,
+   "ru": "Сосна горная ф. Мугус",
+   "latin": "Pinus mugo var. Mughus",
+   "block": "Сосна горная ф. Мугус",
+   "band_m": [
+    0.48,
+    1.2
+   ],
+   "h_cm": [
+    60,
+    100
+   ],
+   "qty": 99,
+   "note": "С5",
+   "spozu_total": 107,
+   "spozu_in": 106,
+   "cands": [
+    {
+     "id": 224,
+     "latin": "Pinus mugo",
+     "ru": "Сосна горная",
+     "obj": {
+      "NPM": "Pinus_mugo_NPM",
+      "VPM": "Pinus_mugo_VPM"
+     },
+     "h": 0.618,
+     "crown": 1.284,
+     "tris": {
+      "NPM": 10,
+      "VPM": 64
+     },
+     "vpm": "available",
+     "v": "pass",
+     "scale_to_band": null
+    }
+   ],
+   "gap": {
+    "id": 237,
+    "latin": "Pinus mugo var. mughus",
+    "status": "gap: shared multi-species FLORIO mesh, no own mesh"
+   },
+   "proposed": 224,
+   "npm_total": 1060
+  }
+ ],
+ "flora_unscheduled": {
+  "Ива швейцарская (Salix helvetica) К": {
+   "points_in": 131,
+   "library": null
+  }
+ },
+ "budget": {
+  "ground": 46343,
+  "maf": 57628,
+  "flora_proposed": 118774,
+  "total": 222745,
+  "limit": 180000,
+  "shares": {
+   "ground": 50000,
+   "maf": 60000,
+   "flora": 70000
+  }
+ },
+ "questions": [
+  {
+   "id": "Q2a",
+   "text": "Planting outside the plot (inventory Q2): 15 Ольха (Поз. 2) and 3 Яблоня (Поз. 4) stand outside 568BF, where there is no Ground. Proposal: do not place them, list them in the report (the engine would fail them as `point_outside_ground`)."
+  },
+  {
+   "id": "Q2b",
+   "text": "Сосна горная (Поз. 17): 106 points in the plot vs 99 in the schedule. Proposal: one plant per point (106), the +7 listed."
+  },
+  {
+   "id": "F1",
+   "text": "Positions with no library object — 2 Ольха (8), 5 Лиственница (13), 8 Лох (25), 10 Дерен кроваво-красный (439), 13 Облепиха (1059), 16 Ель нидиформис (70) = 1614 plants, plus 131 `Ива швейцарская` (block not in the schedule). The catalogue has only shared FLORIO stand-in gaps for 2/10/16 and nothing for 5/8/13/Ива. Proposal: leave them unplaced and listed as questions (modelling is model-flora step 5-7, a separate card). Or should a named stand-in be used?"
+  },
+  {
+   "id": "F2",
+   "text": "Proxy picks (species or cultivar differs from the schedule): 1→101 Tilia cordata; 3→120 Prunus padus; 4→115 Malus niedzwetzkyana (or 118 'Evereste', VPM unconfirmed); 6→105 Amelanchier lamarckii; 7→103 Crataegus mollis (tree 3.8 m; 202 monogyna 0.99 m fails the band); 9→205 'Diabolo' (red leaves, scale 1.01; 234 'Luteus' is yellow); 11→212 Sorbaria sorbifolia (exact); 12→204 Cornus sericea (scale 1.03, VPM unconfirmed; 203 Cornus alba needs scale 1.38); 14→230 Dasiphora fruticosa (exact); 15→223 Stephanandra incisa 'Crispa' (scale 0.994); 17→224 Pinus mugo. Accept, or name another id per position?"
+  },
+  {
+   "id": "F3",
+   "text": "The schedule has no crown diameter: check height only ±20 % and record crown as `review`?"
+  },
+  {
+   "id": "F4",
+   "text": "Budget [D097]: with these picks Flora NPM = 118774 > 70 000 (Ground 46 343 + MAF 57628 leave 76029). Main load: 105 Ирга 979 tris × 38 = 37 202, 204 Дерен 80 × 325 = 26 000, 103 Боярышник 488 × 29 = 14 152. Options: (a) place as is and report the overrun for this slice, (b) lighter library variants (name them), (c) a lighter NPM for these species later (out of this card)."
+  }
+ ]
+}

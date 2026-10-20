@@ -1,0 +1,2678 @@
+{
+ "rows": [
+  {
+   "rep": 1,
+   "angle": 0,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0030000000000001137,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1362438767648086e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.003000020980834961,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.098083496087505e-08
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.00300002098083496,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.0980834960007688e-08
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 0,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0040000000000000036,
+    "penetration_m": 0.0,
+    "abs_err_m": 3.469446951953614e-18
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.003999948501586914,
+    "penetration_m": 0.0,
+    "abs_err_m": 5.149841308602077e-08
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.003999948501586914,
+    "penetration_m": 0.0,
+    "abs_err_m": 5.149841308602077e-08
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 0,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.005999999999999783,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.1684043449710089e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.006000041961669922,
+    "penetration_m": 0.0,
+    "abs_err_m": 4.19616699217501e-08
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.00600004196166992,
+    "penetration_m": 0.0,
+    "abs_err_m": 4.1961669920015376e-08
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 0,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0030000000000001137,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1362438767648086e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.00299835205078125,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.6479492187500625e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.0029983520507812496,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.6479492187504961e-06
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 0,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0040000000000048885,
+    "penetration_m": 0.0,
+    "abs_err_m": 4.888450755302642e-15
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.003997802734375,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.1972656250000833e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.003997802734375,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.1972656250000833e-06
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 0,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.006000000000000227,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.2724877535296173e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0059967041015625,
+    "penetration_m": 0.0,
+    "abs_err_m": 3.295898437500125e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.005996704101562499,
+    "penetration_m": 0.0,
+    "abs_err_m": 3.2958984375009923e-06
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 0,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0029999999999290594,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.094064918833354e-14
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0030517578125,
+    "penetration_m": 0.0,
+    "abs_err_m": 5.175781249999994e-05
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.0030517578124999996,
+    "penetration_m": 0.0,
+    "abs_err_m": 5.1757812499999504e-05
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 0,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0039999999999054126,
+    "penetration_m": 0.0,
+    "abs_err_m": 9.458753225111138e-14
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0040283203125,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.8320312499999917e-05
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.0040283203125,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.8320312499999917e-05
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 0,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0060000000000854925,
+    "penetration_m": 0.0,
+    "abs_err_m": 8.549237706656498e-14
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0059814453125,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.8554687500000125e-05
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.005981445312499999,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.8554687500000992e-05
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 37,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0029999999999999203,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.979727989493313e-17
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0030000524094174787,
+    "penetration_m": 0.0,
+    "abs_err_m": 5.240941747860356e-08
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.003000052409417493,
+    "penetration_m": 0.0,
+    "abs_err_m": 5.240941749291503e-08
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 37,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.00399999999999948,
+    "penetration_m": 0.0,
+    "abs_err_m": 5.204170427930421e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.004000197721219199,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.9772121919933716e-07
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.004000197721218918,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.9772121891831196e-07
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 37,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.005999999999999309,
+    "penetration_m": 0.0,
+    "abs_err_m": 6.912873051767576e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.005999770925415846,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.2907458415398485e-07
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.005999770925415244,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.290745847559339e-07
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 37,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0029999999999950227,
+    "penetration_m": 0.0,
+    "abs_err_m": 4.977355333446454e-15
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.003001416869926183,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.4168699261829162e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.0030014168699261977,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.4168699261976614e-06
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 37,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.003999999999982955,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.7045392874948107e-14
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.00399932870501904,
+    "penetration_m": 0.0,
+    "abs_err_m": 6.712949809604962e-07
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.003999328705019059,
+    "penetration_m": 0.0,
+    "abs_err_m": 6.712949809414143e-07
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 37,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.005999999999998557,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.4432899320127035e-15
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0059982422377019735,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.7577622980265856e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.005998242237702003,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.7577622979970953e-06
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 37,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.002999999999024476,
+    "penetration_m": 0.0,
+    "abs_err_m": 9.755239151199024e-13
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.002440089510065381,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.0005599104899346192
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.002440089510065392,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.0005599104899346079
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 37,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.003999999999245788,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.542117971826023e-13
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.003710194717703452,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.00028980528229654787
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.00371019471770347,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.0002898052822965301
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 37,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0059999999996884126,
+    "penetration_m": 0.0,
+    "abs_err_m": 3.1158756130800214e-13
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0055652920771772545,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.0004347079228227456
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.005565292077177209,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.00043470792282279073
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 89,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0030000000000002837,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.8362728832220796e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.002999881897207556,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1810279244416771e-07
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.002999881897207596,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1810279240426907e-07
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 89,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.003999999999999932,
+    "penetration_m": 0.0,
+    "abs_err_m": 6.765421556309548e-17
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.004000077531068058,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.7531068057822e-08
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.004000077531068064,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.753106806389354e-08
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 89,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.005999999999999673,
+    "penetration_m": 0.0,
+    "abs_err_m": 3.2699537522162814e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.005999988783487958,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1216512042083737e-08
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.005999988783488037,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1216511963153819e-08
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 89,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.002999999999996137,
+    "penetration_m": 0.0,
+    "abs_err_m": 3.8632291810003494e-15
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0029988274501859605,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1725498140395876e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.002998827450186,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1725498140001227e-06
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 89,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.00400000000000914,
+    "penetration_m": 0.0,
+    "abs_err_m": 9.140257994921797e-15
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.003998392207189836,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.6077928101636968e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.003998392207189889,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.6077928101107877e-06
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 89,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.005999999999992519,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.48099499014998e-15
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.005997521763085354,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.4782369146460898e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.005997521763085434,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.4782369145662925e-06
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 89,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.002999999999556908,
+    "penetration_m": 0.0,
+    "abs_err_m": 4.4309217753224495e-13
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0029292348711127338,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.076512888726629e-05
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.002929234871112773,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.076512888722726e-05
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 89,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.00399999999880165,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1983504466517303e-12
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0039077921931179,
+    "penetration_m": 0.0,
+    "abs_err_m": 9.220780688209973e-05
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.00390779219311795,
+    "penetration_m": 0.0,
+    "abs_err_m": 9.220780688205029e-05
+   }
+  },
+  {
+   "rep": 1,
+   "angle": 89,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.005999999999109848,
+    "penetration_m": 0.0,
+    "abs_err_m": 8.901525350157868e-13
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.005860615440766782,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.0001393845592332181
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.00586061544076686,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.00013938455923314004
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 0,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0030000000000001137,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1362438767648086e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.003000020980834961,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.098083496087505e-08
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.00300002098083496,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.0980834960007688e-08
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 0,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0040000000000000036,
+    "penetration_m": 0.0,
+    "abs_err_m": 3.469446951953614e-18
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.003999948501586914,
+    "penetration_m": 0.0,
+    "abs_err_m": 5.149841308602077e-08
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.003999948501586914,
+    "penetration_m": 0.0,
+    "abs_err_m": 5.149841308602077e-08
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 0,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.005999999999999783,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.1684043449710089e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.006000041961669922,
+    "penetration_m": 0.0,
+    "abs_err_m": 4.19616699217501e-08
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.00600004196166992,
+    "penetration_m": 0.0,
+    "abs_err_m": 4.1961669920015376e-08
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 0,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0030000000000001137,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1362438767648086e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.00299835205078125,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.6479492187500625e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.0029983520507812496,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.6479492187504961e-06
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 0,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0040000000000048885,
+    "penetration_m": 0.0,
+    "abs_err_m": 4.888450755302642e-15
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.003997802734375,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.1972656250000833e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.003997802734375,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.1972656250000833e-06
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 0,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.006000000000000227,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.2724877535296173e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0059967041015625,
+    "penetration_m": 0.0,
+    "abs_err_m": 3.295898437500125e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.005996704101562499,
+    "penetration_m": 0.0,
+    "abs_err_m": 3.2958984375009923e-06
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 0,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0029999999999290594,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.094064918833354e-14
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0030517578125,
+    "penetration_m": 0.0,
+    "abs_err_m": 5.175781249999994e-05
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.0030517578124999996,
+    "penetration_m": 0.0,
+    "abs_err_m": 5.1757812499999504e-05
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 0,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0039999999999054126,
+    "penetration_m": 0.0,
+    "abs_err_m": 9.458753225111138e-14
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0040283203125,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.8320312499999917e-05
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.0040283203125,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.8320312499999917e-05
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 0,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0060000000000854925,
+    "penetration_m": 0.0,
+    "abs_err_m": 8.549237706656498e-14
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0059814453125,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.8554687500000125e-05
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.005981445312499999,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.8554687500000992e-05
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 37,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0029999999999999203,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.979727989493313e-17
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0030000524094174787,
+    "penetration_m": 0.0,
+    "abs_err_m": 5.240941747860356e-08
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.003000052409417493,
+    "penetration_m": 0.0,
+    "abs_err_m": 5.240941749291503e-08
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 37,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.00399999999999948,
+    "penetration_m": 0.0,
+    "abs_err_m": 5.204170427930421e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.004000197721219199,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.9772121919933716e-07
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.004000197721218918,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.9772121891831196e-07
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 37,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.005999999999999309,
+    "penetration_m": 0.0,
+    "abs_err_m": 6.912873051767576e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.005999770925415846,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.2907458415398485e-07
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.005999770925415244,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.290745847559339e-07
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 37,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0029999999999950227,
+    "penetration_m": 0.0,
+    "abs_err_m": 4.977355333446454e-15
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.003001416869926183,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.4168699261829162e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.0030014168699261977,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.4168699261976614e-06
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 37,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.003999999999982955,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.7045392874948107e-14
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.00399932870501904,
+    "penetration_m": 0.0,
+    "abs_err_m": 6.712949809604962e-07
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.003999328705019059,
+    "penetration_m": 0.0,
+    "abs_err_m": 6.712949809414143e-07
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 37,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.005999999999998557,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.4432899320127035e-15
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0059982422377019735,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.7577622980265856e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.005998242237702003,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.7577622979970953e-06
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 37,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.002999999999024476,
+    "penetration_m": 0.0,
+    "abs_err_m": 9.755239151199024e-13
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.002440089510065381,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.0005599104899346192
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.002440089510065392,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.0005599104899346079
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 37,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.003999999999245788,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.542117971826023e-13
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.003710194717703452,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.00028980528229654787
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.00371019471770347,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.0002898052822965301
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 37,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0059999999996884126,
+    "penetration_m": 0.0,
+    "abs_err_m": 3.1158756130800214e-13
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0055652920771772545,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.0004347079228227456
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.005565292077177209,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.00043470792282279073
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 89,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.0030000000000002837,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.8362728832220796e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.002999881897207556,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1810279244416771e-07
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.002999881897207596,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1810279240426907e-07
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 89,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.003999999999999932,
+    "penetration_m": 0.0,
+    "abs_err_m": 6.765421556309548e-17
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.004000077531068058,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.7531068057822e-08
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.004000077531068064,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.753106806389354e-08
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 89,
+   "t": [
+    0,
+    0,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.005999999999999673,
+    "penetration_m": 0.0,
+    "abs_err_m": 3.2699537522162814e-16
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.005999988783487958,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1216512042083737e-08
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.005999988783488037,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1216511963153819e-08
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 89,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.002999999999996137,
+    "penetration_m": 0.0,
+    "abs_err_m": 3.8632291810003494e-15
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0029988274501859605,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1725498140395876e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.002998827450186,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1725498140001227e-06
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 89,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.00400000000000914,
+    "penetration_m": 0.0,
+    "abs_err_m": 9.140257994921797e-15
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.003998392207189836,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.6077928101636968e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.003998392207189889,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.6077928101107877e-06
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 89,
+   "t": [
+    100,
+    100,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.005999999999992519,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.48099499014998e-15
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.005997521763085354,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.4782369146460898e-06
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.005997521763085434,
+    "penetration_m": 0.0,
+    "abs_err_m": 2.4782369145662925e-06
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 89,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.003,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.002999999999556908,
+    "penetration_m": 0.0,
+    "abs_err_m": 4.4309217753224495e-13
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0029292348711127338,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.076512888726629e-05
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.002929234871112773,
+    "penetration_m": 0.0,
+    "abs_err_m": 7.076512888722726e-05
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 89,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.004,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.00399999999880165,
+    "penetration_m": 0.0,
+    "abs_err_m": 1.1983504466517303e-12
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.0039077921931179,
+    "penetration_m": 0.0,
+    "abs_err_m": 9.220780688209973e-05
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.00390779219311795,
+    "penetration_m": 0.0,
+    "abs_err_m": 9.220780688205029e-05
+   }
+  },
+  {
+   "rep": 2,
+   "angle": 89,
+   "t": [
+    -1170,
+    -14200,
+    0
+   ],
+   "gap_nominal_m": 0.006,
+   "baseline": {
+    "class": "in_band",
+    "gap_m": 0.005999999999109848,
+    "penetration_m": 0.0,
+    "abs_err_m": 8.901525350157868e-13
+   },
+   "f32_diag": {
+    "class": "in_band",
+    "gap_m": 0.005860615440766782,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.0001393845592332181
+   },
+   "export_rc": 0,
+   "import_rc": 0,
+   "imported": {
+    "class": "in_band",
+    "gap_m": 0.00586061544076686,
+    "penetration_m": 0.0,
+    "abs_err_m": 0.00013938455923314004
+   },
+   "scene_meta": {
+    "P0_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P0_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P1_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_A": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    },
+    "P2_B": {
+     "raw_verts": 8,
+     "corners": 8,
+     "tris": 12,
+     "closed": true,
+     "convex": true,
+     "degenerate": 0,
+     "matrix_identity_dev": 1.6292067073209182e-07
+    }
+   }
+  }
+ ],
+ "fails": [
+  "r1_a37_t-1170_-14200 P0 imported in_band gap=0.0024401 err=5.60e-04",
+  "r2_a37_t-1170_-14200 P0 imported in_band gap=0.0024401 err=5.60e-04"
+ ],
+ "timings": {
+  "export_s": [
+   2.4347583999624476,
+   7.1315907999523915,
+   5.564704500022344,
+   4.088156000012532,
+   2.2366413000272587,
+   2.3339565999922343,
+   2.5316252000047825,
+   2.6106049999943934,
+   1.8950266999891028,
+   1.7917154000024311,
+   2.002015400037635,
+   2.5591341000399552,
+   1.7569228000356816,
+   1.9081942000193521,
+   2.3022484999964945,
+   2.3528570999624208,
+   2.092387700045947,
+   3.642849900003057
+  ],
+  "import_s": [
+   3.544024500006344,
+   3.727568499976769,
+   12.132199999992736,
+   2.8345469999476336,
+   3.317794699978549,
+   1.847077700018417,
+   3.283815799979493,
+   2.4973731000209227,
+   1.777961799991317,
+   1.6316939999815077,
+   1.8303937999880873,
+   2.1943401000462472,
+   3.374972399964463,
+   1.9261468999902718,
+   1.5200372000108473,
+   1.9998137999791652,
+   1.9990493999794126,
+   2.11214529996505
+  ]
+ }
+}
