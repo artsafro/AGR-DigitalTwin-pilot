@@ -1,0 +1,57 @@
+schema_version: 1.0.0
+job_id: KERNEL-SYNTHETIC
+run_id: issue-351-inventory-v001
+synthetic: true
+path: standard
+inputs: &id001
+- path: tests/ops/test_invariants.py
+  sha256: 448b9d6bbe19dffaee0bca12cf0cef655bf72e9c0519e967d232a98951104ebb
+- path: tests/ops/test_operations.py
+  sha256: fda403fac1ade558d5f99d46c7e1a53c2a6d351b4e9856219c26d5c0ba449114
+- path: tests/contracts/test_parts_list.py
+  sha256: 98abd68fd5916e090401c355bc6a01329ed907a50537a847072b5b171dcae203
+artifacts: []
+deviations: []
+gates:
+  inputs:
+    status: pass
+    note: Synthetic test source inventory
+    evidence: *id001
+  parts:
+    status: review
+    note: PartsList contract tests exist; no confirmed job-specific parts.json
+    evidence:
+    - path: tests/contracts/test_parts_list.py
+      sha256: 98abd68fd5916e090401c355bc6a01329ed907a50537a847072b5b171dcae203
+  operations:
+    status: review
+    note: 220 kernel/parts tests passed; not a per-export before/after receipt
+    evidence:
+    - path: src/dt_ai/ops/invariants.py
+      sha256: d0c5285071690d0c1d2b6f9555f9f05a2ee0ce51aa21ba834ca3a1f72007e00a
+    - path: src/dt_ai/ops/operations.py
+      sha256: 89ff014898b13ed022f70582762879d000c95b62aeec4b2cbf9ce5608e3b9c1f
+    - path: jobs/KERNEL-SYNTHETIC/evidence.md
+      sha256: 1db6983ceaa10a60989af412a25400c2eda59cc46718a0c0ed3f27bf42556de5
+  budgets:
+    status: missing
+    note: No job-specific execution evidence available
+    evidence: []
+  export_readback:
+    status: missing
+    note: No job-specific execution evidence available
+    evidence: []
+  report:
+    status: pass
+    note: Synthetic capability evidence and unmeasured delivery gates recorded
+    evidence:
+    - path: jobs/KERNEL-SYNTHETIC/evidence.md
+      sha256: 1db6983ceaa10a60989af412a25400c2eda59cc46718a0c0ed3f27bf42556de5
+  visual:
+    status: missing
+    note: No job-specific execution evidence available
+    evidence: []
+  checker:
+    status: missing
+    note: No job-specific execution evidence available
+    evidence: []
