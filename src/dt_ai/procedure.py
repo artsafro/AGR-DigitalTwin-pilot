@@ -16,7 +16,8 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 GATES = ("inputs", "parts", "operations", "budgets", "export_readback", "report", "visual", "checker")
-INVARIANTS = ("open_borders_hidden", "no_see_through_hole", "no_visible_back_faces", "no_close_overlap")
+INVARIANTS = ("open_borders_hidden", "no_see_through_hole", "no_visible_back_faces", "no_close_overlap",
+              "quad_dominance", "texel_ready")
 Text = Annotated[str, Field(min_length=1, pattern=r"\S")]
 Digest = Annotated[str, Field(pattern=r"^[a-f0-9]{64}$")]
 

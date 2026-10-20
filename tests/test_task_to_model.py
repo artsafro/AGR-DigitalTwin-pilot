@@ -214,6 +214,18 @@ def test_malformed_operation_receipt(bundle, tmp_path, field, bad):
     assert not load().inspect_job(bundle, tmp_path)["passed"]
 
 
+def test_mandatory_d129_checks(bundle, tmp_path):
+    # D129 remains mandatory even while its producers are being implemented.
+    for name in ("quad_dominance", "texel_ready"):
+        for phase in ("before", "after"):
+            candidate = copy.deepcopy(bundle)
+            ref = candidate["gates"]["operations"]["evidence"][0]
+            receipt = json.loads((tmp_path / ref["path"]).read_text())
+            receipt["checks"].pop(f"{phase}.{name}", None)
+            candidate["gates"]["operations"]["evidence"] = [store(tmp_path, "d129-bad.json", receipt)]
+            assert not load().inspect_job(candidate, tmp_path)["passed"]
+
+
 def test_generated_gate_subsets(bundle, tmp_path):
     # Exhaust every presence subset, not just the eight one-at-a-time omissions.
     p = load()

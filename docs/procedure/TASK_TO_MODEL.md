@@ -33,6 +33,7 @@ Never synthesize a receipt to fill a missing check or a human decision.
 The implementation route is free: try another adapter/algorithm, a bounded experiment,
 or write a tool. Source authority, permissions and GATES stay fixed. A workaround
 cannot waive an invariant, a budget, either human gate or exported-file readback.
+A successful deviation proposes a playbook extension; it does not change policy automatically.
 A new tool needs tests and the same before/after checks; it becomes shared only through
 the capability registration policy in AGENTS.md. No new kernel operations are supplied here.
 
@@ -70,8 +71,10 @@ For pass claims, inputs must equal the full inventory; parts must be confirmed.
 Machine receipts (operations/budgets/readback/visual/checker) are JSON or YAML maps
 with `gate`, `run_id`, `artifact_sha256` (ordered list). `checks` is a nonempty map
 of check IDs to `pass`/`fail`/`review`/`not_run`; all applicable checks must pass.
-Operations require `before.<invariant>` and `after.<invariant>` for the four base
-kernel invariants and a nonempty `operations` list. Budgets use `measurements` rows
+Operations require `before.<invariant>` and `after.<invariant>` for all six mandatory
+invariants (open_borders_hidden, no_see_through_hole, no_visible_back_faces,
+no_close_overlap, quad_dominance, texel_ready) and a nonempty `operations` list.
+Missing producers for D129 leave the gate incomplete, not waived. Budgets use `measurements` rows
 with `value`, `limit`, `comparison`, `rule`. Readback requires `clean_process: true`
 and topology/uv/materials/transforms checks. Visual requires face_orientation,
 album_overlay, source_overlay, material_legend, sections checks; `actor_role: user`,
