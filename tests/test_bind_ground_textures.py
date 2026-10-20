@@ -602,7 +602,7 @@ def test_readback_mismatches_are_zero_only_for_an_exact_table():
         with pytest.raises(bind.BindError, match="mismatches"):
             bind.accept_readback(bindings, broken)
     extra = copy.deepcopy(observed)
-    extra["materials"].append({"name": "M_Vatutino_Ground_Stairs", "maps": []})
+    extra["materials"].append({"name": "M_Vatutino_Ground_Unmapped", "maps": []})
     assert bind.mismatch_count(bindings, extra) == 1
     doubled = copy.deepcopy(observed)
     doubled["materials"][0]["maps"].append(dict(doubled["materials"][0]["maps"][0]))
