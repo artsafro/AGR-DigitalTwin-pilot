@@ -35,7 +35,11 @@ def load_report(path):
     finite(value)
     if not isinstance(value, dict) or type(value.get('passed')) is not bool:
         raise ValueError('missing boolean passed')
-    unknown = set(value) - {'passed', 'failed', 'not_measured', 'checks'}
+    metadata = {'model', 'etalon', 'spec', 'tolerances'}
+    unknown = set(value) - {'passed', 'failed', 'not_measured', 'checks'} - metadata
+    for key in metadata & set(value):
+        if not isinstance(value[key], str) or not value[key].strip():
+            raise ValueError(f'invalid provenance: {key}')
     if unknown:
         raise ValueError(f'unmapped keys: {sorted(unknown)}')
     rows = value.get('checks')
