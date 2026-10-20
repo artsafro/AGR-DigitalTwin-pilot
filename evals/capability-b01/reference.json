@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "commit": "8d5c8987dbd46343176ca5af9d1791c864a86217",
+  "ref": "origin/main",
+  "agent_version": "codex-cli 0.160.1",
+  "command": [
+    "codex",
+    "--no-daemon",
+    "exec",
+    "--ephemeral",
+    "--json",
+    "--enable",
+    "skip_host_skill_discovery",
+    "--disable",
+    "memories",
+    "--disable",
+    "plugins",
+    "--model",
+    "gpt-6.1-sol",
+    "Build bench-b01-box green from this repository alone. Start with the root files and follow repository instructions; no prior chat context is available. The read-only local etalon FBX is C:/Users/artsafro/AGR-DigitalTwin/data/benchmark/bench-b01-box/etalon.fbx. Write the benchmark runner outputs to C:/x/capability-evals/t_fd239f23-reference-v007/benchmark. Do not modify benchmark/ or jobs/, commit, push, open a PR or run the full test suite. Do not edit checkers, tolerances or specs to make a check pass. Report failures honestly."
+  ],
+  "etalon_sha256": "a109aa9a9f25c72e8d4869ee43b0b33aee009f5c248caf62388c4dcb0c7816d9",
+  "passed": false,
+  "cleanup": true,
+  "isolation": "repository + user skills; no OS sandbox; user-approved 2026-10-20",
+  "session_exit": 0,
+  "protected_inputs_unchanged": true,
+  "head_unchanged": true,
+  "benchmark": {
+    "passed": 1,
+    "failed": 0,
+    "not_measured": 0
+  },
+  "procedural": {
+    "passed": 0,
+    "failed": 0,
+    "not_measured": 10
+  },
+  "procedural_reason": "no Claude transcript; native CLI stdout retained, unsupported by procedural graders",
+  "elapsed_seconds": 141.573,
+  "initial_launcher_grading": {
+    "passed": 0,
+    "failed": 0,
+    "not_measured": 1
+  },
+  "context": "repository + user skills",
+  "reference_run": "t_fd239f23-reference-v007",
+  "date": "2026-10-20",
+  "grading_note": "Retained v007 artifacts regraded with versioned-run discovery and supplementary-report support; no session rerun or evidence edits. Original launcher reference.json retained unchanged.",
+  "regrade_report": "C:\\x\\capability-evals\\t_fd239f23-reference-v007\\evals-capability-v003\\report.json",
+  "external_skills": {
+    "loaded": [
+      "codex-work-loop",
+      "codex-work-review",
+      "codex-work-route"
+    ],
+    "named_only": [
+      "codex-work-engineering"
+    ],
+    "evidence_events": {
+      "item_4": [
+        "codex-work-route",
+        "codex-work-loop"
+      ],
+      "item_19": [
+        "codex-work-review"
+      ]
+    },
+    "audit_scope": "All native JSONL events; subagent internals not separately captured."
+  },
+  "threshold": {
+    "set_after_run": true,
+    "benchmark_checks": 20,
+    "supplementary_checks": "all present checks must pass",
+    "session_exit": 0,
+    "readiness_not_measured": 0,
+    "readiness_failed": 0,
+    "policy": "Full readiness also requires unchanged protected inputs/HEAD and successful cleanup; unsupported procedural evidence is not measured, never pass."
+  },
+  "committed_evidence": {
+    "reference/model-report.json": "afc5b9df18fbff953f2351d01008b804eff39db226968b4b512c6b6bc438cbd6",
+    "reference/etalon-self.json": "2e6e2e4c42f47f4b8d15ec070247d5e2c1751b7143a7e761cb5c3cadaf0a2a68",
+    "reference/independent-report.json": "ce42af565e509adbf51837bd2c540d358019906e18ba5ba37a1239da401a7f13",
+    "reference/capability-evals.json": "bd75a758f9b68b7c88f2f890c2aa005164815a983ac0461b29397ff262844e60",
+    "reference/procedural-evals.json": "21d262808971e76b16e29fb4c493aa366dfe8efaa0b400eca35288e78773848c"
+  },
+  "external_evidence": {
+    "transcript.jsonl": "ea0279325df2f358f24f2f7081eaf71ad40824ae5e3d58d4c2068adf77fe2f6d",
+    "stderr.log": "35cbe0a2ac093335b6025c87e277b606c2a1e3124974f716eebfa54b72b4a9ff",
+    "prompt.txt": "63e80f5f07b5225dadb4b51c1c9201644ccf7834557b72f9844b693c1b4aeb47",
+    "benchmark/run-v001/model.fbx": "7707fe3f9c82baf0135ef7cc52f1d3b60f27c9efa8eb18db5b938272731c0825",
+    "benchmark/run-v001/spec.json": "34d57a75bc76ed223989a57ebdfc0fdb392b2539db3a898c5340d8f73df9e845",
+    "benchmark/run-v001/verification-receipt.json": "830469f9107efd09a9c2f796b2fa398c741c7f04e2ab15f49d57d8df461c5937"
+  }
+}

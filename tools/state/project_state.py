@@ -173,7 +173,37 @@ def _next_lines(repo):
     return rows
 
 
-def render(merges, opens, next_lines=None):
+def _capability_lines(repo):
+    path = repo / 'evals/capability-b01/reference.json'
+    if not path.exists():
+        return []
+    try:
+        data = json.loads(path.read_text(encoding='utf-8'))
+        if (data.get('schema') != 1 or data.get('agent') not in ('codex', 'claude', 'deepseek')
+                or type(data.get('passed')) is not bool):
+            raise ValueError('unsupported capability reference')
+        parts = []
+        for name in ('benchmark', 'procedural'):
+            counts = data[name]
+            if any(type(counts[k]) is not int or counts[k] < 0
+                   for k in ('passed', 'failed', 'not_measured')):
+                raise ValueError('invalid capability counts')
+            parts.append(f"{name} {counts['passed']} passed / {counts['failed']} failed / "
+                         f"{counts['not_measured']} not measured")
+        if data['passed'] and any(data[n]['failed'] or data[n]['not_measured']
+                                  or not data[n]['passed'] for n in ('benchmark', 'procedural')):
+            raise ValueError('inconsistent capability readiness')
+    except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
+        raise FailClosed('invalid capability reference') from exc
+    status = 'ready' if data['passed'] else 'not ready'
+    context = data.get('context', 'unspecified context')
+    if context not in ('repository-only', 'repository + user skills', 'unspecified context'):
+        raise FailClosed('invalid capability context')
+    return [f"Capability A (`capability-b01`, {data['agent']}): {'; '.join(parts)}; {status}; {context}. "
+            'Reference: `evals/capability-b01/reference.json`.']
+
+
+def render(merges, opens, next_lines=None, capability_lines=None):
     require_sources(merges, opens)
     opens = sorted(opens, key=lambda pr: pr["number"])
     next_lines = list(next_lines or [])
@@ -197,7 +227,10 @@ def render(merges, opens, next_lines=None):
         lines.extend(f"- `{sha[:7]}` {subject}" for sha, subject in merges)
     else:
         lines.append("- (none)")
-    lines.extend(["", "## Harness", "", "Open pull requests:"])
+    lines.extend(["", "## Harness", ""])
+    if capability_lines:
+        lines.extend([*capability_lines, ""])
+    lines.append("Open pull requests:")
     if opens:
         for pr in opens:
             draft = " draft" if pr["isDraft"] else ""
@@ -251,6 +284,7 @@ def _inputs(repo):
                 if common.is_file():
                     found.append((metadata / common.read_text(encoding="utf-8").strip()).resolve())
     found.append(repo / "docs" / "PROJECT_STATE.next.md")
+    found.append(repo / "evals/capability-b01/reference.json")
     found.append(Path(__file__).resolve())
     return found
 
@@ -338,7 +372,7 @@ def generate(repo, output, max_merges, max_open):
     merges = normalize_merges(merges_raw)[:max_merges]
     opens = _load_opens(opens_raw)[:max_open]
     require_sources(merges, opens)
-    text = finalize(render(merges, opens, _next_lines(repo)))
+    text = finalize(render(merges, opens, _next_lines(repo), _capability_lines(repo)))
     _publish(output, text)
     return text
 
