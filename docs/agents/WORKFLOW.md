@@ -55,6 +55,14 @@ following three items:
    Replace `<worktree>` with your own absolute worktree path so outputs remain isolated inside your
    worktree. In the PR body, report the report path (`<worktree>/tmp/evals/report.json`) and the passed,
    failed, and not measured counts with their reasons.
+   Before `review_requested`, verify the exact PR receipt line against that report:
+   ```bash
+   uv run dt evals --check-receipt "Regression evals: <worktree>/tmp/evals/report.json; P passed / F failed / N not measured (<reasons>)" --output <worktree>/tmp/evals
+   ```
+   Replace P/F/N with the report counts. The read-only check exits 0 only for a nonempty regression
+   report with matching path, counts and rows; otherwise it exits 1 with a one-line reason.
+   Comma-separated counts (the receipt template below) are also accepted. Exit 0 verifies the
+   receipt, not an eval pass: an all-not-measured report remains unmeasured, and failures still block merge.
    - An all-not-measured run (`0 passed, 0 failed, N not measured` with `exit 2`, such as when there is
      `no Claude transcript` on Hermes-driven branches) is a valid receipt, not a pass or waived check.
    - Preserve `--references` after grader changes (run `--references` as well after a change to a grader).
