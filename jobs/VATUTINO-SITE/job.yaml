@@ -33,6 +33,7 @@ gates:
     evidence:
     - path: jobs/VATUTINO-SITE/build_ground.py
       sha256: e2f661593edebba91a64426afb818cb799005ef40485845742308341953d1cc4
+      commit: 55b5d3e58e5746660301158ed115ef18724edcbd
     - path: jobs/VATUTINO-SITE/ground-build-v014.md
       sha256: b4197ef9ec2d0ec9f7600eb6207ae6c09ee12f1663179b0ed76864790f1ea4e5
   budgets:
