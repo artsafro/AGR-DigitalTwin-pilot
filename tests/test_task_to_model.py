@@ -275,7 +275,8 @@ def test_budget_declared_checks(bundle, tmp_path, checks):
     ref = bundle["gates"]["budgets"]["evidence"][0]
     receipt = json.loads((tmp_path / ref["path"]).read_text())
     receipt["checks"] = checks
-    bundle["gates"]["budgets"]["evidence"] = [store(tmp_path, ref["path"], receipt)]
+    # YAML preserves integer keys; JSON would coerce them into valid string IDs.
+    bundle["gates"]["budgets"]["evidence"] = [store(tmp_path, ref["path"], yaml.safe_dump(receipt))]
     completed = run_cli(bundle, tmp_path)
     assert completed.returncode == 1, completed.stdout
     result = json.loads(completed.stdout)

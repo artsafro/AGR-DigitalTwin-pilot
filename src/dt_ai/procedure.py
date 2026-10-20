@@ -125,6 +125,8 @@ def _checks(receipt, required=()):
     checks = receipt.get("checks")
     if not isinstance(checks, dict) or not checks or not set(required) <= checks.keys():
         raise ValueError("missing required checks")
+    if any(not isinstance(key, str) or not key.strip() for key in checks):
+        raise ValueError("check IDs must be nonempty strings")
     if any(value != "pass" for value in checks.values()):
         raise ValueError("failed, review or unmeasured check")
 
@@ -172,6 +174,9 @@ def _gate(root, gate, entry, job):
                     isinstance(x, str) and x.strip() for x in operations):
                 raise ValueError("record operations from src/dt_ai/ops or deviation tool")
         elif gate == "budgets":
+            # Measurements are mandatory; additional declared checks cannot be ignored.
+            if "checks" in receipt:
+                _checks(receipt)
             measurements = receipt.get("measurements")
             if not isinstance(measurements, list) or not measurements:
                 raise ValueError("missing budget measurements")
