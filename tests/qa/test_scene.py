@@ -64,6 +64,16 @@ def statuses(found, stage):
     return {f.name: f.status for f in found[stage]}
 
 
+@pytest.mark.parametrize("uv, expected", [(1, "pass"), (0, "fail"), (2, "fail")])
+def test_v008_uv_contract_excludes_collision_only(uv, expected):
+    """Ground UCX has no UV by design; render meshes still require exactly one channel."""
+    found = scene_findings(rb(mesh(name="SM_Test_Ground", uv=uv),
+                              mesh(name="UCX_SM_Test_Ground_001", uv=0)), "vpm", "ground", PROFILES.vpm)
+    assert statuses(found, "V008")["one UV channel"] == expected
+    assert statuses(found, "V010")["UCX present"] == "pass"
+    assert statuses(found, "V010")["UCX triangle budget"] == "pass"
+
+
 def test_clean_vpm_mesh_passes_scene_stages():
     found = scene_findings(rb(mesh()), "vpm", "oks", PROFILES.vpm)
     assert set(statuses(found, "V003").values()) == {"pass"}
@@ -176,6 +186,30 @@ def test_npm_oks_over_150k_fails():
 def test_scene_defects_fail(bad, stage, name):
     found = scene_findings(rb(mesh(**bad)), "vpm", "oks", PROFILES.vpm)
     assert statuses(found, stage)[name] == "fail"
+
+
+@pytest.mark.parametrize("kind", ["npm", "vpm"])
+@pytest.mark.parametrize("rot, expected", [((0, 0, 0), "pass"), ((0, 0, 30), "fail")])
+def test_v004_reset_rotation_both_profiles(kind, rot, expected):
+    profile = PROFILES.npm if kind == "npm" else PROFILES.vpm
+    found = scene_findings(rb(mesh(rot=rot)), kind, "oks", profile)
+    assert statuses(found, "V004")["applied transforms"] == expected
+
+
+def test_v004_generated_rotation_probe():
+    angles = [-180, -30, -0.002, 0, 0.0005, 0.001, 0.002, 30, 180]
+    total = 0
+    for kind in ("npm", "vpm"):
+        profile = PROFILES.npm if kind == "npm" else PROFILES.vpm
+        for axis in range(3):
+            for angle in angles:
+                rot = [0.0, 0.0, 0.0]
+                rot[axis] = angle
+                expected = "pass" if abs(angle) <= 0.001 else "fail"
+                found = scene_findings(rb(mesh(rot=rot, scale=(1, 1, 1))), kind, "oks", profile)
+                assert statuses(found, "V004")["applied transforms"] == expected
+                total += 1
+    print(f"{total}/{total} checked")
 
 
 def test_glass_outside_1001_and_split_pivot_fail():

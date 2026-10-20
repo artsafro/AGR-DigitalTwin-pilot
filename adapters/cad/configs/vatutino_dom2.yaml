@@ -20,7 +20,7 @@ coverings:
   - {type: decking, label: Покрытие из деревянного настила, layers: ["!_А101_покр_декинг"]}
   - {type: mulch, label: Покрытие из мульчи, layers: ["!_А101_мульча"]}
   - {type: lawn_reinforced, label: Газон укрепленный, layers: ["!_А101_укрепленный газон"]}
-  - {type: lawn_rolled, label: Газон универсальный рулонный, layers: ["!_А101_озел_штрих_газон"]}
+  - {type: lawn_rolled, label: Газон универсальный рулонный, layers: ["!_А101_озел_штрих_газон"], repair: make_valid}  # gate 1 F (#295): 22 self-intersecting strips
   - {type: flower_bed_01, label: Цветник 01 Щучка дернистая, layers: ["!_А101_укрепленный цветник 01 Щучка дернистая"]}
   - {type: flower_bed_02, label: Цветник 02 Эхинацея пурпурная, layers: ["!_А101_укрепленный цветник 02 Эхинацея пурпурная"]}
   - {type: flower_bed_03, label: Цветник 03 Очиток видный, layers: ["!_А101_укрепленный цветник 03 Очиток видный"]}
@@ -60,6 +60,16 @@ elevations:
   containers: ["!_А101_предварительная ВП"]   # preliminary vertical planning blocks (frozen layer), OQ5
   layers: ["ГП_Вертикалка_ОпорнаяТочка_New"]
   value: text
+  # gate 1 answer 5 (#295, user 2026-10-19): the VP contour lines (block Дороги_ВП_2024.10.11, 0.1 m step) also feed the TIN
+  contour_layers: ["ГП_Вертикалка_ГоризонталиОсновные", "ГП_Вертикалка_ГоризонталиВспомогательные"]
+# User approved Step 8 extraction, 2026-10-19 (#295). Dimensions belong to the job, not this reader.
+ground_elements:
+  curb_garden: ["!_А101_борт_садовый_бетонный"]
+  curb_drive: ["!_А101_борт_дорожный"]
+  curb_wood: ["!_А101_борт_деревянный"]
+  curb_buried: ["!_А101_борт_металлический_заглубленный"]
+  curb_unclassified: ["Борт"]
+  stairs: ["!_А101_лестница"]
 overlap_tol_m2: 0.01
 ignore_layers:
   - "0"

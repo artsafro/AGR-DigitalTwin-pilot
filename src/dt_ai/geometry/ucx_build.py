@@ -5,8 +5,9 @@ Pattern: none - generalises the job-local KPP1 / PSU275 `vpm_ucx.py` hand-placed
 
 numpy only (no bpy), so the same code runs inside Blender (`tools/blender/ucx_build.py`) and under pytest.
 Input is a triangle mesh in world metres (`verts` (N, 3), `tris` (M, 3)); output is a list of convex,
-closed, triangulated pieces with 8 vertices / 12 triangles each (the primitive of 350 of 354 delivered
-pieces, docs/research/ucx-etalon-analysis.md), no UV and no material slots by construction.
+closed, triangulated pieces (Main: boxes with 8 vertices / 12 triangles, the
+primitive of 350 of 354 delivered pieces, docs/research/ucx-etalon-analysis.md; Ground: prisms over convex
+polygons), no UV and no material slots by construction.
 
 Main (OKS): the mesh is rotated into its dominant facade frame (pieces follow the facade, analysis rule 2),
 its surface is voxelised conservatively (`cell` metres), the exterior is flood-filled from the padded grid
@@ -18,10 +19,12 @@ the sampling spacing; an exposed UCX face belongs to a cell crossed by the surfa
 most one cell diagonal. When the boxes exceed the [D012] triangle budget the cell grows and the build
 repeats; a build that still exceeds it raises (fail closed).
 
-Ground: quadtree over the surface plan; a cell becomes one hexahedron whose top is the upper envelope of
-its four corner heights and whose bottom is `depth` below the lowest sample. A cell splits until the
-vertical deviation between surface samples and the top is <= `tol` (R11: 10 cm) or `min_cell` is reached;
-the achieved maximum is returned, never hidden. Pieces are shrunk by gap/2 in plan.
+Ground (#326): binary space partition of the covered plan into convex prisms (2k vertices, 4k - 4
+triangles over a convex k-gon) with planar tops. The covered-region outline (overlapping layer edges of a
+method-C layered surface are not outline), steep-face traces and layer edges serve as cut lines; a leaf is
+cut until its top is within `tol` of the surface envelope (R11: 10 cm) or `min_cell` is reached; the
+achieved maximum is exact over the leaf and returned, never hidden. Pieces stay inside the covered plan
+(voids stay open) and are shrunk by gap/2 per edge.
 R11-R13 use one-sided model -> UCX deviation [D134]; exposed UCX -> model distance and Ground
 footprint overhang are diagnostics only, not tolerance gates. Coverage and functional voids still apply.
 
@@ -63,9 +66,11 @@ class UcxBuildError(ValueError):
 
 @dataclass
 class Piece:
-    verts: np.ndarray  # (8, 3) world metres
-    tris: np.ndarray  # (12, 3)
+    verts: np.ndarray  # (V, 3) world metres; Main: 8 (box), Ground: 2k (prism over a convex k-gon)
+    tris: np.ndarray  # (2V - 4, 3)
     label: str = ""
+    plan: np.ndarray | None = None  # Ground: convex CCW plan polygon (k, 2)
+    plane: tuple | None = None  # Ground: planar top z = a x + b y + c
 
 
 @dataclass
@@ -476,14 +481,6 @@ class HeightField:
             pxy = v[first, :2]
             seg = np.stack([pxy[bk[:, 0]], pxy[bk[:, 1]]], axis=1)
         self.bseg = seg
-        self._bgrid: dict[tuple[int, int], list[int]] = {}
-        if len(seg):
-            i0 = np.floor((seg.min(axis=1) - self.lo) / self.bucket).astype(int)
-            i1 = np.floor((seg.max(axis=1) - self.lo) / self.bucket).astype(int)
-            for k in range(len(seg)):
-                for gx in range(i0[k, 0], i1[k, 0] + 1):
-                    for gy in range(i0[k, 1], i1[k, 1] + 1):
-                        self._bgrid.setdefault((gx, gy), []).append(k)
 
     def _cands(self, grid, rect):
         x0, y0, x1, y1 = rect
@@ -494,58 +491,6 @@ class HeightField:
             for gy in range(i0[1], i1[1] + 1):
                 cand.update(grid.get((gx, gy), ()))
         return np.fromiter(sorted(cand), int, len(cand))
-
-    def boundary_in(self, rect, eps: float = 1e-9) -> np.ndarray:
-        """Boundary segments that enter the open rectangle (x0, y0, x1, y1) (Liang-Barsky clip)."""
-        k = self._cands(self._bgrid, rect)
-        if not len(k):
-            return np.zeros((0, 2, 2))
-        seg = self.bseg[k]
-        p0, d = seg[:, 0], seg[:, 1] - seg[:, 0]
-        t0, t1 = np.zeros(len(seg)), np.ones(len(seg))
-        out = np.zeros(len(seg), bool)
-        x0, y0, x1, y1 = rect
-        for ax, lo, hi in ((0, x0 + eps, x1 - eps), (1, y0 + eps, y1 - eps)):
-            for pp, qq in ((-d[:, ax], p0[:, ax] - lo), (d[:, ax], hi - p0[:, ax])):
-                par = np.abs(pp) < 1e-15
-                out |= par & (qq <= 0)
-                r = np.where(par, 0.0, qq / np.where(par, 1.0, pp))
-                t0 = np.where(~par & (pp < 0), np.maximum(t0, r), t0)
-                t1 = np.where(~par & (pp > 0), np.minimum(t1, r), t1)
-        return seg[~out & (t0 < t1)]
-
-    def covered_bbox(self, rect):
-        """Exact bounding box of the covered plan region inside `rect` (triangles clipped to the rectangle,
-        Sutherland-Hodgman); None when nothing of positive area is covered."""
-        k = self._cands(self._grid, rect)
-        x0, y0, x1, y1 = rect
-        pts = []
-        for tri in self.t[k]:
-            poly = [tuple(self.v[i, :2]) for i in tri]
-            for ax, lim, keep_lo in ((0, x0, True), (0, x1, False), (1, y0, True), (1, y1, False)):
-                nxt = []
-                for m in range(len(poly)):
-                    p, q = poly[m], poly[(m + 1) % len(poly)]
-                    pin = p[ax] >= lim if keep_lo else p[ax] <= lim
-                    qin = q[ax] >= lim if keep_lo else q[ax] <= lim
-                    if pin:
-                        nxt.append(p)
-                    if pin != qin:
-                        f = (lim - p[ax]) / (q[ax] - p[ax])
-                        nxt.append((p[0] + f * (q[0] - p[0]), p[1] + f * (q[1] - p[1])))
-                poly = nxt
-                if not poly:
-                    break
-            if len(poly) >= 3:
-                a = np.array(poly)
-                area = 0.5 * abs(np.dot(a[:, 0], np.roll(a[:, 1], -1)) - np.dot(a[:, 1], np.roll(a[:, 0], -1)))
-                if area > 1e-12:
-                    pts.append(a)
-        if not pts:
-            return None
-        a = np.concatenate(pts)
-        lo, hi = a.min(axis=0), a.max(axis=0)
-        return (float(lo[0]), float(lo[1]), float(hi[0]), float(hi[1]))
 
     def crossings(self, segments) -> np.ndarray:
         """Plan points where mesh edges cross the given segments ((K, 2, 2) xy); with the surface vertices
@@ -577,6 +522,85 @@ class HeightField:
             out.append(p[m] + r[m] * tq[m, None])
         return np.concatenate(out) if out else np.zeros((0, 2))
 
+    def kinks(self, lo, hi) -> np.ndarray:
+        """Plan points inside the box [lo, hi] where the upper envelope of a layered (overlapping, unwelded)
+        surface can bend between mesh vertices: crossings of two triangle edges in plan and points where
+        an edge pierces another triangle's plane inside that triangle. With the vertices and the boundary
+        crossings they are the vertices of the envelope's arrangement, so the max of |envelope - plane| over
+        a leaf is attained among them. Pairs sharing a vertex (one welded layer) bend nowhere new."""
+        k = self._cands(self._grid, (lo[0], lo[1], hi[0], hi[1]))
+        if len(k) < 2:
+            return np.zeros((0, 2))
+        tt = self.t[k]
+        e = np.unique(np.sort(np.concatenate([tt[:, [0, 1]], tt[:, [1, 2]], tt[:, [2, 0]]]), axis=1), axis=0)
+        p0, p1 = self.v[e[:, 0]], self.v[e[:, 1]]
+        out = []
+        r = p1[:, :2] - p0[:, :2]
+        for s0 in range(0, len(e), 256):  # edge x edge crossings
+            a, ra, ea = p0[s0:s0 + 256, None, :2], r[s0:s0 + 256, None], e[s0:s0 + 256, None]
+            den = ra[..., 0] * r[None, :, 1] - ra[..., 1] * r[None, :, 0]
+            d = p0[None, :, :2] - a
+            ok = (np.abs(den) > 1e-12) & (ea[..., 0] != e[None, :, 0]) & (ea[..., 0] != e[None, :, 1]) \
+                & (ea[..., 1] != e[None, :, 0]) & (ea[..., 1] != e[None, :, 1])
+            dd = np.where(ok, den, 1.0)
+            tq = (d[..., 0] * r[None, :, 1] - d[..., 1] * r[None, :, 0]) / dd
+            uq = (d[..., 0] * ra[..., 1] - d[..., 1] * ra[..., 0]) / dd
+            m = ok & (tq > 0) & (tq < 1) & (uq > 0) & (uq < 1)
+            i, _ = np.nonzero(m)
+            out.append((a[i, 0] + ra[i, 0] * tq[m][:, None]))
+        a0, e1, e2, det, okt = self._a[k], self._e1[k], self._e2[k], self._det[k], self._ok[k]
+        nrm = np.cross(e1, e2)
+        for s0 in range(0, len(e), 256):  # edge x foreign triangle plane
+            q0, q1, ee = p0[s0:s0 + 256, None], p1[s0:s0 + 256, None], e[s0:s0 + 256, None]
+            f0 = ((q0 - a0[None]) * nrm[None]).sum(-1)
+            f1 = ((q1 - a0[None]) * nrm[None]).sum(-1)
+            den = f0 - f1
+            ok = okt[None] & (np.abs(nrm[None, :, 2]) > 1e-12) & (np.abs(den) > 1e-15)
+            s = np.where(ok, f0 / np.where(ok, den, 1.0), -1.0)
+            pt = q0[..., :2] + s[..., None] * (q1[..., :2] - q0[..., :2])
+            d = pt - a0[None, :, :2]
+            u = (d[..., 0] * e2[None, :, 1] - d[..., 1] * e2[None, :, 0]) / det[None]
+            w = (e1[None, :, 0] * d[..., 1] - e1[None, :, 1] * d[..., 0]) / det[None]
+            shared = (tt[None, :, :] == ee[..., 0:1]).any(-1) | (tt[None, :, :] == ee[..., 1:2]).any(-1)
+            m = ok & ~shared & (s > 0) & (s < 1) & (u > 0) & (w > 0) & (u + w < 1)
+            out.append(pt[m])
+        pts = np.concatenate(out) if out else np.zeros((0, 2))
+        return pts[((pts >= np.asarray(lo)) & (pts <= np.asarray(hi))).all(axis=1)]
+
+    def layer_crossings(self, segments) -> np.ndarray:
+        """Plan points on the given segments where two triangles covering the point have equal height: the
+        envelope of crossing layers bends there, also between mesh edges (completes `kinks` on a leaf
+        boundary)."""
+        out = []
+        for a, b in np.asarray(segments, float).reshape(-1, 2, 2):
+            k = self._cands(self._grid, (min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1])))
+            k = k[self._ok[k]]
+            if len(k) < 2:
+                continue
+            d0, d1 = a - self._a[k, :2], b - self._a[k, :2]
+            e1, e2, det = self._e1[k], self._e2[k], self._det[k]
+
+            def bary(d):
+                return ((d[:, 0] * e2[:, 1] - d[:, 1] * e2[:, 0]) / det, (e1[:, 0] * d[:, 1] - e1[:, 1] * d[:, 0]) / det)
+
+            (u0, w0), (u1, w1) = bary(d0), bary(d1)
+            z0 = self._a[k, 2] + u0 * e1[:, 2] + w0 * e2[:, 2]
+            z1 = self._a[k, 2] + u1 * e1[:, 2] + w1 * e2[:, 2]
+            dz = z1 - z0
+            den = dz[None, :] - dz[:, None]
+            ok = np.abs(den) > 1e-12
+            s = np.where(ok, (z0[:, None] - z0[None, :]) / np.where(ok, den, 1.0), -1.0)
+            i, j = np.nonzero(ok & (s > 0) & (s < 1))
+            if not len(i):
+                continue
+            ss = s[i, j]
+            ui, wi = u0[i] + ss * (u1[i] - u0[i]), w0[i] + ss * (w1[i] - w0[i])
+            uj, wj = u0[j] + ss * (u1[j] - u0[j]), w0[j] + ss * (w1[j] - w0[j])
+            e = -1e-9
+            m = (ui >= e) & (wi >= e) & (ui + wi <= 1 - e) & (uj >= e) & (wj >= e) & (uj + wj <= 1 - e)
+            out.append(a[None] + ss[m, None] * (b - a)[None])
+        return np.concatenate(out) if out else np.zeros((0, 2))
+
     def z(self, xy) -> np.ndarray:
         q = np.asarray(xy, float).reshape(-1, 2)
         out = np.full(len(q), np.nan)
@@ -603,24 +627,349 @@ class HeightField:
         return out
 
 
-def _ground_top(corners_xy, h, xy):
-    """Upper envelope of the 4 corner heights (convex top) evaluated at plan points `xy`."""
-    (x0, y0), (x1, y1) = corners_xy[0], corners_xy[2]
-    s = (xy[:, 0] - x0) / (x1 - x0)
-    r = (xy[:, 1] - y0) / (y1 - y0)
-    h0, h1, h2, h3 = h
-    # diagonal 0-2: triangles (0,1,2) where s >= r, (0,2,3) where s < r
-    d02 = np.where(s >= r, h0 + s * (h1 - h0) + r * (h2 - h1), h0 + r * (h3 - h0) + s * (h2 - h3))
-    # diagonal 1-3: triangles (0,1,3) where s + r <= 1, (1,2,3) otherwise
-    d13 = np.where(s + r <= 1, h0 + s * (h1 - h0) + r * (h3 - h0),
-                   h2 + (1 - s) * (h3 - h2) + (1 - r) * (h1 - h2))
-    return np.maximum(d02, d13), bool((h0 + h2) >= (h1 + h3))
+def _split_at_junctions(seg: np.ndarray, bucket: float, eps: float = 1e-7) -> np.ndarray:
+    """Plan segments (K, 2, 2) cut at every point where another segment ends on them (T-junction,
+    collinear partial overlap) or crosses them. Between two consecutive cuts no other boundary segment
+    touches a piece, so the coverage just beside it is the same along the whole piece."""
+    if not len(seg):
+        return seg
+    lo = seg.reshape(-1, 2).min(axis=0)
+    idx = _SegIndex(seg, lo, bucket)
+    out = []
+    for k, (a, b) in enumerate(seg):
+        d = b - a
+        l2 = float(d @ d)
+        if l2 <= 1e-18:
+            continue
+        ids = idx.ids(np.minimum(a, b) - eps, np.maximum(a, b) + eps)
+        ids = ids[ids != k]
+        cuts = [0.0, 1.0]
+        if len(ids):
+            c = seg[ids]
+            ln = math.sqrt(l2)
+            for e in (c[:, 0], c[:, 1]):  # other segments' ends lying on this one
+                r = e - a
+                off = np.abs(d[0] * r[:, 1] - d[1] * r[:, 0]) / ln
+                tq = (r @ d) / l2
+                cuts += tq[(off <= eps) & (tq > 0) & (tq < 1)].tolist()
+            r = c[:, 1] - c[:, 0]  # proper crossings
+            den = d[0] * r[:, 1] - d[1] * r[:, 0]
+            ok = np.abs(den) > 1e-12
+            q = c[:, 0] - a
+            den = np.where(ok, den, 1.0)
+            tq = (q[:, 0] * r[:, 1] - q[:, 1] * r[:, 0]) / den
+            uq = (q[:, 0] * d[1] - q[:, 1] * d[0]) / den
+            cuts += tq[ok & (tq > 0) & (tq < 1) & (uq >= 0) & (uq <= 1)].tolist()
+        cuts = np.unique(np.round(np.asarray(cuts), 12))
+        cuts = cuts[np.concatenate([[True], np.diff(cuts) * math.sqrt(l2) > eps])]
+        cuts[-1] = 1.0
+        pts = a[None] + cuts[:, None] * d[None]
+        out.append(np.stack([pts[:-1], pts[1:]], axis=1))
+    return np.concatenate(out) if out else np.zeros((0, 2, 2))
+
+
+def _outline(hf: HeightField, probe: float = 0.001) -> tuple[np.ndarray, np.ndarray]:
+    """Plan outline of the covered region: the mesh boundary segments (HeightField.bseg) with coverage on
+    exactly one side. A layered (method C) Ground has overlapping, unwelded surfacing layers whose own
+    edges lie inside the covered region; they bound no void (#326) and are returned separately as
+    (outline, internal layer edges): the upper surface may step there. A boundary edge may be exposed only
+    in part (a void ends on it at a T-junction, #326 review round 2), so every edge is first cut where
+    other boundary segments end on or cross it, and each piece is classified at its midpoint, `probe`
+    metres (capped at a quarter of the piece) to either side."""
+    s = _split_at_junctions(hf.bseg, hf.bucket)
+    if not len(s):
+        return s, s
+    d = s[:, 1] - s[:, 0]
+    ln = np.linalg.norm(d, axis=1)
+    nrm = np.stack([-d[:, 1], d[:, 0]], axis=1) / np.maximum(ln, 1e-12)[:, None]
+    h = np.minimum(probe, 0.25 * ln)[:, None]
+    m = s[:, 0] + 0.5 * d
+    keep = np.isfinite(hf.z(m + h * nrm)) != np.isfinite(hf.z(m - h * nrm))
+    return s[keep & (ln > 1e-9)], s[~keep & (ln > 1e-9)]
+
+
+def _breaklines(hf: HeightField, rise: float, max_nz: float = 0.9) -> np.ndarray:
+    """Plan traces of steep faces (kerbs, steps, embankments steeper than ~26 deg): every plan edge of a
+    triangle with |n_z| < `max_nz` that rises more than `rise`. A Ground leaf whose planar top misses the
+    surface is split along them, so creases and steps fall on piece borders instead of forcing tiny cells."""
+    v, t = hf.v, hf.t
+    n = np.cross(v[t[:, 1]] - v[t[:, 0]], v[t[:, 2]] - v[t[:, 0]])
+    a = np.linalg.norm(n, axis=1)
+    zs = v[t][:, :, 2]
+    steep = (a > 1e-12) & (np.abs(n[:, 2]) < max_nz * np.maximum(a, 1e-12)) & (zs.max(1) - zs.min(1) > rise)
+    tt = t[steep]
+    e = np.unique(np.sort(np.concatenate([tt[:, [0, 1]], tt[:, [1, 2]], tt[:, [2, 0]]]), axis=1), axis=0)
+    seg = np.stack([v[e[:, 0], :2], v[e[:, 1], :2]], axis=1) if len(e) else np.zeros((0, 2, 2))
+    return seg[np.linalg.norm(seg[:, 1] - seg[:, 0], axis=1) > 1e-6]
+
+
+class _SegIndex:
+    """Bucket index of plan segments (K, 2, 2) for bbox queries."""
+
+    def __init__(self, seg, lo, bucket):
+        self.seg, self.lo, self.b = seg, lo, bucket
+        self.grid: dict[tuple[int, int], list[int]] = {}
+        if len(seg):
+            i0 = np.floor((seg.min(axis=1) - lo) / bucket).astype(int)
+            i1 = np.floor((seg.max(axis=1) - lo) / bucket).astype(int)
+            for k in range(len(seg)):
+                for gx in range(i0[k, 0], i1[k, 0] + 1):
+                    for gy in range(i0[k, 1], i1[k, 1] + 1):
+                        self.grid.setdefault((gx, gy), []).append(k)
+
+    def query(self, lo, hi) -> np.ndarray:
+        return self.seg[self.ids(lo, hi)]
+
+    def ids(self, lo, hi) -> np.ndarray:
+        i0 = np.floor((lo - self.lo) / self.b).astype(int)
+        i1 = np.floor((hi - self.lo) / self.b).astype(int)
+        cand = set()
+        for gx in range(i0[0], i1[0] + 1):
+            for gy in range(i0[1], i1[1] + 1):
+                cand.update(self.grid.get((gx, gy), ()))
+        return np.fromiter(sorted(cand), int, len(cand))
+
+
+def _poly_area(p) -> float:
+    if len(p) < 3:
+        return 0.0
+    return 0.5 * float(np.dot(p[:, 0], np.roll(p[:, 1], -1)) - np.dot(p[:, 1], np.roll(p[:, 0], -1)))
+
+
+def _clip(p, n, c) -> np.ndarray:
+    """Convex polygon `p` (CCW) cut to the half-plane n . x >= c."""
+    out = []
+    k = len(p)
+    s = p @ n - c
+    for i in range(k):
+        j = (i + 1) % k
+        if s[i] >= 0:
+            out.append(p[i])
+        if (s[i] >= 0) != (s[j] >= 0):
+            f = s[i] / (s[i] - s[j])
+            out.append(p[i] + f * (p[j] - p[i]))
+    q = np.array(out, float).reshape(-1, 2)
+    if len(q):  # drop repeated points (a cut through a vertex)
+        keep = np.linalg.norm(q - np.roll(q, -1, axis=0), axis=1) > 1e-10
+        q = q[keep]
+    return q
+
+
+def _half_planes(p):
+    """Inward unit normals and offsets of a CCW convex polygon: inside <=> n . x >= c for every edge."""
+    e = np.roll(p, -1, axis=0) - p
+    ln = np.maximum(np.linalg.norm(e, axis=1), 1e-15)
+    n = np.stack([-e[:, 1], e[:, 0]], axis=1) / ln[:, None]
+    return n, np.einsum("ij,ij->i", n, p)
+
+
+def _inset(p, d) -> np.ndarray:
+    """Convex polygon shrunk by `d` on every edge (empty when nothing is left)."""
+    n, c = _half_planes(p)
+    q = p
+    for k in range(len(p)):
+        q = _clip(q, n[k], c[k] + d)
+        if len(q) < 3:
+            return np.zeros((0, 2))
+    return q if _poly_area(q) > 1e-12 else np.zeros((0, 2))
+
+
+def _min_width(p) -> float:
+    """Minimum width of a convex polygon (smallest extent over its edge normals)."""
+    n, _ = _half_planes(p)
+    proj = p @ n.T
+    return float((proj.max(axis=0) - proj.min(axis=0)).min())
+
+
+def _segs_inside(seg, p, eps=1e-6) -> np.ndarray:
+    """Parts of plan segments strictly inside convex polygon `p` (Cyrus-Beck, `eps` inset): a segment
+    lying on the polygon boundary is not inside."""
+    if not len(seg):
+        return seg
+    n, c = _half_planes(p)
+    p0, d = seg[:, 0], seg[:, 1] - seg[:, 0]
+    num = p0 @ n.T - (c + eps)[None]  # (S, E)
+    den = d @ n.T
+    t0, t1 = np.zeros(len(seg)), np.ones(len(seg))
+    out = ((np.abs(den) < 1e-15) & (num < 0)).any(axis=1)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        r = -num / den
+    t0 = np.maximum(t0, np.where(den > 1e-15, r, -np.inf).max(axis=1))
+    t1 = np.minimum(t1, np.where(den < -1e-15, r, np.inf).min(axis=1))
+    ok = ~out & (t1 - t0 > 1e-9)
+    return np.stack([p0[ok] + t0[ok, None] * d[ok], p0[ok] + t1[ok, None] * d[ok]], axis=1)
+
+
+def _inside(p, xy, eps=0.0) -> np.ndarray:
+    n, c = _half_planes(p)
+    return (xy @ n.T >= c[None] - eps).all(axis=1)
+
+
+def _simplify(q, h: float = 0.002) -> np.ndarray:
+    """Drop vertices of convex CCW `q` that stand less than `h` above the chord of their neighbours (or
+    close a shorter edge): the polygon only shrinks (stays inside the leaf), and its float32 read-back
+    stays convex (#326: near-collinear BSP vertices read back as non-convex hulls)."""
+    q = np.asarray(q, float)
+    while len(q) > 3:
+        a, b, c = np.roll(q, 1, axis=0), q, np.roll(q, -1, axis=0)
+        ch = c - a
+        ln = np.maximum(np.linalg.norm(ch, axis=1), 1e-15)
+        ht = np.abs(ch[:, 0] * (b - a)[:, 1] - ch[:, 1] * (b - a)[:, 0]) / ln
+        k = int(np.argmin(ht))
+        if ht[k] >= h:
+            break
+        q = np.delete(q, k, axis=0)
+    return q
+
+
+_NUDGE = 1e-5 * np.stack([np.cos(np.arange(6) * np.pi / 3), np.sin(np.arange(6) * np.pi / 3)], axis=1)
+
+
+def _concave_top(w) -> list[tuple[int, int, int]]:
+    """Triangulation of the top of a prism whose top vertices `w` (k, 3) stand over a convex CCW plan:
+    Lawson flips from a fan until no interior edge is reflex, i.e. the opposite vertex of every top
+    triangle lies on or below its plane. Over a convex plan with every point a vertex this is the upper
+    hull, so the rounded (float32, not exactly coplanar) top stays convex (#326)."""
+    k = len(w)
+
+    def ccw(a, b, c):
+        return (w[b, 0] - w[a, 0]) * (w[c, 1] - w[a, 1]) - (w[b, 1] - w[a, 1]) * (w[c, 0] - w[a, 0])
+
+    def above(t, d):
+        a, b, c = t
+        n = np.cross(w[b] - w[a], w[c] - w[a])  # CCW in plan: n[2] > 0
+        return float(n @ (w[d] - w[a])) / max(float(np.linalg.norm(n)), 1e-300)
+
+    tri = [(0, i, i + 1) for i in range(1, k - 1)]
+    for _ in range(4 * k * k):
+        flipped = False
+        for i in range(len(tri)):
+            for j in range(i + 1, len(tri)):
+                common = set(tri[i]) & set(tri[j])
+                if len(common) != 2:
+                    continue
+                c = (set(tri[i]) - common).pop()
+                d = (set(tri[j]) - common).pop()
+                if above(tri[i], d) <= 1e-12 and above(tri[j], c) <= 1e-12:
+                    continue
+                a, b = sorted(common)
+                t1, t2 = (c, d, a), (d, c, b)
+                t1 = t1 if ccw(*t1) > 0 else (d, c, a)
+                t2 = t2 if ccw(*t2) > 0 else (c, d, b)
+                if ccw(*t1) <= 0 or ccw(*t2) <= 0:
+                    continue
+                tri[i], tri[j] = t1, t2
+                flipped = True
+        if not flipped:
+            break
+    return tri
+
+
+def _prism(q, plane, base) -> Piece:
+    """Closed convex prism over the convex CCW plan `q` (k vertices): planar top a x + b y + c, flat bottom.
+
+    Vertices are rounded to float32 (what Blender and FBX store) and the top is triangulated as the upper
+    hull of the rounded points, so the read-back hull is convex (#326: a fan over a near-coplanar
+    rounded top read back as non-convex)."""
+    k = len(q)
+    top = q @ plane[:2] + plane[2]
+    verts = np.concatenate([np.column_stack([q, np.full(k, base)]), np.column_stack([q, top])])
+    verts = verts.astype(np.float32).astype(float)
+    tops = _concave_top(verts[k:])
+    tr = [(k + a, k + b, k + c) for a, b, c in tops] + [(c, b, a) for a, b, c in tops]
+    for j in range(k):
+        j1 = (j + 1) % k
+        tr += [(j, j1, k + j1), (j, k + j1, k + j)]
+    pc = Piece(verts, np.array(tr, np.int64))
+    pc.plan, pc.plane = q.copy(), (float(plane[0]), float(plane[1]), float(plane[2]))
+    return pc
+
+
+CONVEX_READBACK_TOL_M = 1e-4  # twinqa ucx_audit CONVEX_TOL_M: the read-back convexity tolerance
+
+
+def convex_after_float32(verts, tris, tol: float = CONVEX_READBACK_TOL_M) -> bool:
+    """Hull stays convex after the float32 round trip of FBX/Blender coordinates: every vertex on one side
+    (within `tol`) of every triangle plane, planes computed from the rounded coordinates (#326)."""
+    v = np.asarray(verts, np.float32).astype(float)
+    t = np.asarray(tris, np.int64)
+    n = np.cross(v[t[:, 1]] - v[t[:, 0]], v[t[:, 2]] - v[t[:, 0]])
+    ln = np.linalg.norm(n, axis=1)
+    ok = ln > 1e-12
+    n = n[ok] / ln[ok, None]
+    s = v @ n.T - np.einsum("ij,ij->i", n, v[t[ok, 0]])[None]
+    return not bool(((s.max(axis=0) > tol) & (s.min(axis=0) < -tol)).any())
+
+
+def _exact_side(p, side, toward, seg, hf: HeightField, probe: float = 0.01) -> np.ndarray:
+    """Covered side of an outline band grown up to the outline itself (#326 review): `p` clipped to the
+    covered half-plane of every outline segment facing `toward`. Kept only when no outline segment passes
+    through its interior and it contains the band-clipped `side` (then it is all covered Ground and no
+    strip is left between the piece and a convex outline); a concave outline keeps the chord `side`."""
+    d = seg[:, 1] - seg[:, 0]
+    ln = np.linalg.norm(d, axis=1)
+    use = ln > 1e-6
+    if not use.any():
+        return side
+    seg, d, ln = seg[use], d[use], ln[use]
+    n = np.stack([-d[:, 1], d[:, 0]], axis=1) / ln[:, None]
+    m = (seg[:, 0] + seg[:, 1]) / 2
+    cov = np.isfinite(hf.z(m + probe * n))
+    n = np.where(cov[:, None], n, -n)  # inward (covered-side) unit normal of each segment
+    face = n @ toward > 0
+    if not face.any():
+        return side
+    q = p
+    for nk, sk in zip(n[face], seg[face]):
+        q = _clip(q, nk, float(nk @ sk[0]))
+        if len(q) < 3:
+            return side
+    if _poly_area(q) <= _poly_area(side) or not _inside(q, side, 1e-9).all() or len(_segs_inside(seg, q)):
+        return side
+    return q
+
+
+def _void_probes_filled(hf: HeightField, pieces, probe: float = 0.001) -> int:
+    """Uncovered plan points just beside every boundary subsegment (both sides, at 1/4, 1/2 and 3/4) that
+    lie inside a piece plan: a publication guard, so no exposure the partition missed reaches the
+    export as a filled functional void (#326 review round 2)."""
+    s = _split_at_junctions(hf.bseg, hf.bucket)
+    if not len(s) or not pieces:
+        return 0
+    d = s[:, 1] - s[:, 0]
+    ln = np.linalg.norm(d, axis=1)
+    s, d, ln = s[ln > 1e-9], d[ln > 1e-9], ln[ln > 1e-9]
+    nrm = np.stack([-d[:, 1], d[:, 0]], axis=1) / ln[:, None]
+    h = np.minimum(probe, 0.25 * ln)[:, None]
+    pts = np.concatenate([s[:, 0] + f * d + sg * h * nrm for f in (0.25, 0.5, 0.75) for sg in (1, -1)])
+    pts = pts[~np.isfinite(hf.z(pts))]
+    if not len(pts):
+        return 0
+    plans = [pc.plan for pc in pieces]
+    pidx = _SegIndex(np.stack([[q.min(axis=0), q.max(axis=0)] for q in plans]), hf.lo, hf.bucket)
+    hit = np.zeros(len(pts), bool)
+    cell = np.floor((pts - hf.lo) / hf.bucket).astype(int)
+    for key in np.unique(cell, axis=0):
+        rows = np.flatnonzero((cell == key).all(axis=1))
+        q = pts[rows]
+        for k in pidx.ids(q.min(axis=0), q.max(axis=0)):
+            hit[rows] |= _inside(plans[k], q, -1e-9)
+    return int(hit.sum())
 
 
 def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol: float = 0.08,
                  depth: float = 0.5, gap: float = GAP_M, samples: int = 6,
                  model_triangles: int | None = None, reserved_triangles: int = 0) -> UcxResult:
-    """UCX for the Ground target: quadtree hexahedra over the surface heightfield."""
+    """UCX for the Ground target: convex prisms over a binary space partition of the covered plan.
+
+    Start cells of `cell` metres are cut (a) along a single chord when the covered-region outline inside
+    the cell lies within gap/2 of one line (the chord is moved to the void side of every outline point,
+    so no piece reaches into a void), (b) along the line of the longest outline segment, (c) along the
+    longest kerb/step trace (`_breaklines`) or internal layer edge when the planar top misses the surface by more than `tol`,
+    else (d) in half across the longer side down to `min_cell`. Each leaf is shrunk by gap/2 per edge and
+    gets a minimax-shifted least-squares planar top; its deviation is exact over the leaf (surface vertices,
+    mesh-edge crossings of the leaf boundary and leaf corners, see HeightField.crossings). Covered strips
+    left without a piece (chord band, slivers thinner than the gap) are reported in `uncovered_strip_m`."""
     for name, val in (("cell", cell), ("min_cell", min_cell), ("tol", tol), ("depth", depth), ("gap", gap)):
         _positive(name, val)
     if not GAP_BUILD_M[0] <= gap <= GAP_BUILD_M[1]:
@@ -635,105 +984,280 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
         raise UcxBuildError("ground surface has no plan area")
     n = np.maximum(1, np.ceil(span / cell)).astype(int)
     sx, sy = float(span[0] / n[0]), float(span[1] / n[1])  # grid fitted to the plan bbox: no cell sticks out
-    stack = [(lo[0] + i * sx, lo[1] + j * sy, sx, sy, False) for i in range(n[0]) for j in range(n[1])]
+    out_seg, layer_seg = _outline(hf)
+    outline = _SegIndex(out_seg, lo, hf.bucket)
+    breaks = _SegIndex(np.concatenate([_breaklines(hf, tol / 2), layer_seg]), lo, hf.bucket)
+    vidx = _SegIndex(np.stack([hf.v[:, :2], hf.v[:, :2]], axis=1), lo, hf.bucket)
+    ue = np.unique(np.sort(np.concatenate([hf.t[:, [0, 1]], hf.t[:, [1, 2]], hf.t[:, [2, 0]]]), axis=1), axis=0)
+    edges3 = hf.v[ue]  # (E, 2, 3) mesh edges for the piece bottoms
+    eidx = _SegIndex(edges3[:, :, :2], lo, hf.bucket)
     g = gap / 2
-    pieces, devs, overs, strips = [], [], [], [0.0]
+    # outline band <= gap/2: the covered strip it leaves beside a piece is <= gap, so no corridor wider
+    # than [D098] 1 cm opens between pieces along an outline (#326 review: 2 cm bands left 1-9 cm ones)
+    chord_tol = g
+    stack = [(np.array([(x, y), (x + sx, y), (x + sx, y + sy), (x, y + sy)]), 0)
+             for x in lo[0] + sx * np.arange(n[0]) for y in lo[1] + sy * np.arange(n[1])]
+    pieces, devs, strips, loose = [], [0.0], [0.0], []
     lin = (np.arange(samples) + 0.5) / samples
 
-    def split4(x, y, wx, wy):
-        hx, hy = wx / 2, wy / 2
-        stack.extend([(x, y, hx, hy, False), (x + hx, y, hx, hy, False), (x, y + hy, hx, hy, False),
-                      (x + hx, y + hy, hx, hy, False)])
+    def covered(p) -> bool:
+        q = _inset(p, min(g, 0.25 * _min_width(p)))
+        c = (q if len(q) else p).mean(axis=0)
+        return bool(np.isfinite(hf.z(c[None])[0]))
 
-    while stack:
-        x, y, wx, wy, final = stack.pop()
-        can_split = not final and min(wx, wy) / 2 >= min_cell
-        rect = (x + g, y + g, x + wx - g, y + wy - g)
-        if rect[2] - rect[0] < gap or rect[3] - rect[1] < gap:  # a split strip too thin for a piece
-            if hf.covered_bbox((x, y, x + wx, y + wy)) is not None:
-                strips.append(min(wx, wy))
-            continue
-        bnd = hf.boundary_in(rect)
-        overhang = 0.0
-        if not len(bnd):  # fully covered or fully empty (exact, see HeightField._boundary)
-            if not np.isfinite(hf.z(np.array([[(rect[0] + rect[2]) / 2, (rect[1] + rect[3]) / 2]]))[0]):
-                continue
-        else:
-            if can_split:
-                split4(x, y, wx, wy)
-                continue
-            if not final:  # split at the boundary vertices: rectilinear coverage becomes exact
-                e = 1e-7
-                cx = sorted({round(float(q), 9) for q in bnd[:, :, 0].ravel() if x + e < q < x + wx - e})
-                cy = sorted({round(float(q), 9) for q in bnd[:, :, 1].ravel() if y + e < q < y + wy - e})
-                if cx or cy:
-                    bx, by = [x, *cx, x + wx], [y, *cy, y + wy]
-                    stack.extend((bx[a], by[b], bx[a + 1] - bx[a], by[b + 1] - by[b], True)
-                                 for a in range(len(bx) - 1) for b in range(len(by) - 1))
-                    continue
-            bb = hf.covered_bbox(rect)
-            if bb is None:
-                continue
-            if bb[2] - bb[0] < gap or bb[3] - bb[1] < gap:
-                strips.append(min(wx, wy))
-                continue
-            rect = bb
-            if len(hf.boundary_in(rect)):  # still partly uncovered: any top point is within the diagonal
-                overhang = math.hypot(rect[2] - rect[0], rect[3] - rect[1])
-        x0, y0, x1, y1 = rect
-        corners = np.array([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
-        h = hf.z(corners)
-        gx, gy = np.meshgrid(x0 + lin * (x1 - x0), y0 + lin * (y1 - y0))
+    def cut(p, a, b):
+        d = b - a
+        nn = np.array([-d[1], d[0]]) / max(float(np.hypot(*d)), 1e-15)
+        c = float(nn @ a)
+        p1, p2 = _clip(p, nn, c), _clip(p, -nn, -c)
+        area = _poly_area(p)
+        if len(p1) >= 3 and len(p2) >= 3 and min(_poly_area(p1), _poly_area(p2)) > 1e-9 * max(area, 1.0) \
+                and max(_poly_area(p1), _poly_area(p2)) < area - 1e-12:
+            return [p1, p2]
+        return None
+
+    def bisect(p):
+        bmin, bmax = p.min(axis=0), p.max(axis=0)
+        ax = int(np.argmax(bmax - bmin))
+        if (bmax - bmin)[ax] < 2 * min_cell:
+            return None
+        m = (bmin[ax] + bmax[ax]) / 2
+        nn = np.zeros(2)
+        nn[ax] = 1.0
+        return [_clip(p, nn, m), _clip(p, -nn, -m)]
+
+    def fit(q):
+        """Planar top for the shrunk leaf `q`: exact max |surface - top| over it."""
+        bmin, bmax = q.min(axis=0), q.max(axis=0)
+        gx, gy = np.meshgrid(bmin[0] + lin * (bmax[0] - bmin[0]), bmin[1] + lin * (bmax[1] - bmin[1]))
         grid = np.stack([gx.ravel(), gy.ravel()], axis=1)
-        vx = hf.v
-        inner = vx[(vx[:, 0] > x0) & (vx[:, 0] < x1) & (vx[:, 1] > y0) & (vx[:, 1] < y1)]
-        edges = np.array([[corners[k], corners[(k + 1) % 4]] for k in range(4)] + [[corners[0], corners[2]],
-                                                                                   [corners[1], corners[3]]])
-        pts = np.concatenate([grid, corners, inner[:, :2], hf.crossings(edges)])
+        vin = vidx.query(bmin, bmax)[:, 0]
+        edges = np.stack([q, np.roll(q, -1, axis=0)], axis=1)
+        pts = np.concatenate([q, grid[_inside(q, grid)], vin[_inside(q, vin)], hf.crossings(edges),
+                              hf.kinks(bmin, bmax), hf.layer_crossings(edges)])
+        # the envelope of unwelded layers jumps across layer edges: its one-sided limits at a vertex of the
+        # arrangement are read just beside it (6 directions, 10 um: slope x 1e-5 m below any tolerance)
+        pts = np.concatenate([pts, (pts[:, None, :] + _NUDGE[None]).reshape(-1, 2)])
+        pts = pts[_inside(q, pts, 1e-9)]
         zs = hf.z(pts)
         hit = np.isfinite(zs)
         if not hit.any():
+            return None
+        a = np.column_stack([pts[hit], np.ones(int(hit.sum()))])
+        plane = np.linalg.lstsq(a, zs[hit], rcond=None)[0]
+        r = zs[hit] - a @ plane
+        plane[2] += (r.max() + r.min()) / 2  # minimax shift: max |r| becomes (max - min) / 2
+        dev = float((r.max() - r.min()) / 2)
+        return plane, dev, float(zs[hit].min())
+
+    def low(p, reach) -> float:
+        """Lowest model surface point over leaf `p` grown by `reach` (inf when none): every mesh edge is
+        clipped to the grown plan (edge offsets, mitre corners: never less than `reach`), so a long
+        perimeter skirt or underside edge counts even when its vertices lie far from the leaf (#326)."""
+        k = eidx.ids(p.min(axis=0) - reach, p.max(axis=0) + reach)
+        if not len(k):
+            return math.inf
+        n, c = _half_planes(p)
+        e = edges3[k]
+        p0, d = e[:, 0, :2], e[:, 1, :2] - e[:, 0, :2]
+        num = p0 @ n.T - (c - reach)[None]
+        den = d @ n.T
+        out = ((np.abs(den) < 1e-15) & (num < 0)).any(axis=1)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            r = -num / den
+        t0 = np.maximum(0.0, np.where(den > 1e-15, r, -np.inf).max(axis=1))
+        t1 = np.minimum(1.0, np.where(den < -1e-15, r, np.inf).min(axis=1))
+        ok = ~out & (t1 >= t0)
+        if not ok.any():
+            return math.inf
+        z0, dz = e[ok, 0, 2], e[ok, 1, 2] - e[ok, 0, 2]
+        return float(np.minimum(z0 + t0[ok] * dz, z0 + t1[ok] * dz).min())
+
+    def leaf(p, strip=0.0):
+        q = _inset(p, g)
+        q = _simplify(q) if len(q) else q
+        if not len(q) or _min_width(q) < 1e-4:
+            loose.append((p, None, strip))  # covered sliver thinner than the gap: no piece, measured below
+            return True
+        got = fit(q)
+        if got is None:
+            return True
+        plane, dev, zmin = got
+        return plane, dev, zmin, q
+
+    while stack:
+        p, lvl = stack.pop()
+        if len(p) < 3 or _poly_area(p) <= 1e-12:
             continue
-        if np.isnan(h).any():  # only a partly covered (reported) piece has an uncovered corner
-            h = np.where(np.isfinite(h), h, float(np.mean(zs[hit])))
-        top, diag02 = _ground_top(corners, h, pts[hit])
-        dev = float(np.max(np.abs(zs[hit] - top)))
-        if dev > tol and can_split:
-            split4(x, y, wx, wy)
+        pmin, pmax = p.min(axis=0), p.max(axis=0)
+        seg = _segs_inside(outline.query(pmin, pmax), p)
+        deep = lvl >= 80
+        parts, strip = [p], 0.0
+        if len(seg):
+            pts = seg.reshape(-1, 2)
+            ctr = pts.mean(axis=0)
+            _, _, vt = np.linalg.svd(pts - ctr)
+            nn = np.array([-vt[0, 1], vt[0, 0]])
+            proj = pts @ nn
+            cmin, cmax = float(proj.min()), float(proj.max())
+            band = cmax - cmin <= chord_tol or deep
+            if not band:
+                ln = np.linalg.norm(seg[:, 1] - seg[:, 0], axis=1)
+                kids = cut(p, *seg[int(np.argmax(ln))]) or bisect(p)
+                if kids:
+                    stack.extend((k, lvl + 1) for k in kids)
+                    continue
+            # the band is only as long as the outline in it: where the strip of the cell beyond an outline
+            # end (a slit tip, a notch) reaches further than the gap, that strip is covered Ground, so the cell
+            # is first cut across the band there; a band spanning the whole cell would open a corridor of its
+            # width between the pieces on both sides (#326 review: 23 mm gaps across covered Ground)
+            u = vt[0]
+            tc = pts @ u
+            strip_p = _clip(_clip(p, nn, cmin), -nn, -cmax)
+            kids = None
+            for tend, sgn in ((float(tc.min()), -1.0), (float(tc.max()), 1.0)):
+                beyond = _clip(strip_p, sgn * u, sgn * tend) if len(strip_p) >= 3 else strip_p
+                if len(beyond) < 3 or float((sgn * (beyond @ u)).max()) - sgn * tend <= g:
+                    continue
+                kids = cut(p, tend * u, tend * u + sgn * nn)
+                if kids:
+                    break
+            if kids:
+                stack.extend((k, lvl + 1) for k in kids)
+                continue
+            parts, strip = [], cmax - cmin  # outline in a band (or cannot cut): keep the outline-free sides
+            for sgn, side in ((1.0, _clip(p, nn, cmax)), (-1.0, _clip(p, -nn, -cmin))):
+                if len(side) >= 3 and _poly_area(side) > 1e-12 and covered(side):
+                    parts.append(_exact_side(p, side, sgn * nn, seg, hf) if band else side)
+            strips.append(strip + g)
+        elif not covered(p):
             continue
-        base = min(float(h.min()), float(np.min(zs[hit]))) - depth
-        vv = np.array([(*corners[k], base) for k in range(4)] + [(*corners[k], h[k]) for k in range(4)])
-        tr = _BOX_TRIS.copy()
-        tr[2:4] = [(4, 5, 6), (4, 6, 7)] if diag02 else [(4, 5, 7), (5, 6, 7)]
-        pieces.append(Piece(vv, tr))
-        devs.append(dev)
-        overs.append(overhang)
+        for part in parts:
+            got = leaf(part, strip)
+            if got is True:
+                continue
+            plane, dev, zmin, q = got
+            if dev > tol and not deep:
+                br = _segs_inside(breaks.query(pmin, pmax), part)
+                kids = None
+                if len(br):
+                    ln = np.linalg.norm(br[:, 1] - br[:, 0], axis=1)
+                    kids = cut(part, *br[int(np.argmax(ln))])
+                kids = kids or bisect(part)
+                if kids:
+                    stack.extend((k, lvl + 1) for k in kids)
+                    continue
+            top = q @ plane[:2] + plane[2]
+            pieces.append(_prism(q, plane, min(float(top.min()) - depth, zmin - depth)))
+            devs.append(dev)
+            retreat = float(_poly_dist(part, q)[0].max())  # farthest leaf point from its own piece
+            if retreat > gap:  # acute corner or needle: measured against all pieces below
+                loose.append((part, q, strip))
+            else:
+                strips.append(retreat + strip)
     if not pieces:
         raise UcxBuildError("ground surface has no plan area")
-    if len(pieces) > MAX_PIECES or 12 * len(pieces) > budget:
-        raise UcxBuildError(f"{len(pieces)} ground pieces exceed {MAX_PIECES} pieces or budget {budget}")
-    pieces.sort(key=lambda p: (round(float(p.verts[0, 1]), 3), round(float(p.verts[0, 0]), 3)))
+    strips += [_loose_distance(p, q, pieces, gap) + strip for p, q, strip in loose]
+    # bottoms below every model surface point within the D134 reach of each piece (gap + uncovered strip,
+    # as in ground_deviation): perimeter skirts and undersides of a layered (method C) slab are model
+    # surface too, and their vertices may lie far from the piece (#326)
+    reach = gap + max(strips) + 1e-6
+    for i, pc in enumerate(pieces):
+        base = min(float(pc.verts[:, 2].min()), low(pc.plan, reach))
+        if base < float(pc.verts[:, 2].min()):
+            pieces[i] = _prism(pc.plan, np.array(pc.plane), base)
+    bad = sum(not convex_after_float32(pc.verts, pc.tris) for pc in pieces)
+    if bad:
+        raise UcxBuildError(f"{bad} ground pieces are not convex after float32 read-back")
+    filled = _void_probes_filled(hf, pieces)
+    if filled:
+        raise UcxBuildError(f"{filled} uncovered probe points beside the Ground outline lie inside a piece")
+    tri_count = sum(len(pc.tris) for pc in pieces)
+    if len(pieces) > MAX_PIECES or tri_count > budget:
+        raise UcxBuildError(f"{len(pieces)} ground pieces / {tri_count} tris exceed {MAX_PIECES} pieces "
+                            f"or budget {budget}")
+    pieces.sort(key=lambda pc: tuple(np.round(pc.plan.mean(axis=0)[::-1], 3)))
     return UcxResult("Ground", pieces, float(cell), gap, 0.0, budget, reserved,
-                     [{"min_cell_m": min_cell, "tol_m": tol, "grid_m": [round(sx, 6), round(sy, 6)]}],
+                     [{"min_cell_m": min_cell, "tol_m": tol, "grid_m": [round(sx, 6), round(sy, 6)],
+                       "outline_segments": len(outline.seg), "internal_layer_edges":
+                           len(layer_seg), "breaklines": len(breaks.seg)}],
                      max_vertical_dev_m=max(devs), tol_m=tol,
-                     footprint_overhang_bound_m=max(overs), uncovered_strip_m=max(strips))
+                     footprint_overhang_bound_m=0.0, uncovered_strip_m=max(strips))
+
+
+def _region_distance(p, pieces, step: float = 0.01) -> float:
+    """Upper bound of the plan distance from any point of convex region `p` to the nearest piece: the
+    maximum over boundary samples `step` apart, plus step / 2, plus half the minimum width of `p` (every
+    point of a convex polygon lies within its inradius of the boundary; distance is 1-Lipschitz)."""
+    pts = [p]
+    for a, d in zip(p, np.roll(p, -1, axis=0) - p):
+        k = max(1, int(math.ceil(float(np.hypot(*d)) / step)))
+        pts.append(a + np.outer(np.arange(1, k) / k, d))
+    pts = np.concatenate(pts)
+    lo, hi = p.min(axis=0) - 1.0, p.max(axis=0) + 1.0
+    best = np.full(len(pts), np.inf)
+    for pc in pieces:
+        if (pc.plan.min(axis=0) > hi).any() or (pc.plan.max(axis=0) < lo).any():
+            continue
+        best = np.minimum(best, _poly_dist(pts, pc.plan)[0])
+    return float(best.max()) + step / 2 + _min_width(p) / 2
+
+
+def _loose_distance(p, q, pieces, gap: float) -> float:
+    """Farthest point of the covered leaf `p` from all pieces, where its own piece `q` (p shrunk by gap/2,
+    or None for a dropped sliver) leaves more than `gap`: the distance to the convex `q` is convex, so it
+    peaks at a vertex of `p`; a vertex that retreats R > gap (acute corner, needle tip) is re-measured
+    against every piece over p clipped to the square of half-size R around it."""
+    if q is None:
+        return _region_distance(p, pieces)
+    r = _poly_dist(p, q)[0]
+    out = [float(r[r <= gap].max()) if (r <= gap).any() else 0.0]
+    for k in np.flatnonzero(r > gap):
+        reg = p
+        for nn, c in ((np.array([1.0, 0.0]), p[k, 0] - r[k]), (np.array([-1.0, 0.0]), -p[k, 0] - r[k]),
+                      (np.array([0.0, 1.0]), p[k, 1] - r[k]), (np.array([0.0, -1.0]), -p[k, 1] - r[k])):
+            reg = _clip(reg, nn, c)
+        if len(reg) >= 3:
+            out.append(min(float(r[k]), _region_distance(reg, pieces)))
+    return max(out)
+
+
+def piece_plan_contains(piece: Piece, xy, eps: float = 0.0) -> np.ndarray:
+    """Which plan points (N, 2) lie on or inside the plan of a Ground piece (its convex bottom)."""
+    return _inside(piece.plan, np.asarray(xy, float).reshape(-1, 2), eps)
+
+
+def _poly_dist(xy, q):
+    """Plan distance of points (N, 2) to convex polygon `q` (0 inside) and the nearest polygon points."""
+    ins = _inside(q, xy, 1e-12)
+    e0, ev = q, np.roll(q, -1, axis=0) - q
+    tt = np.clip(((xy[:, None, :] - e0[None]) * ev[None]).sum(-1) / np.maximum((ev ** 2).sum(-1), 1e-15)[None], 0, 1)
+    near = e0[None] + tt[..., None] * ev[None]
+    dh = np.linalg.norm(xy[:, None, :] - near, axis=2)
+    k = np.argmin(dh, axis=1)
+    r = np.arange(len(xy))
+    return np.where(ins, 0.0, dh[r, k]), np.where(ins[:, None], xy, near[r, k])
 
 
 def ground_deviation(points, result: UcxResult, margin: float | None = None) -> np.ndarray:
-    """Vertical distance (an upper bound of the true distance) from each surface point to the top of the
-    Ground piece below it; inf where no piece covers the point in plan. A point in the gap strip between
-    pieces (within `margin`, default the gap) is compared with the nearest piece edge."""
-    p = np.asarray(points, float)
+    """One-sided model -> UCX distance [D134] of each surface point (an upper bound of the true distance):
+    over a piece plan, the vertical distance to its top; within `margin` (default: gap + the reported
+    uncovered strip) outside every plan, the distance to the nearest point of the nearest top edge;
+    inf where no piece is that close."""
+    p = np.asarray(points, float).reshape(-1, 3)
     out = np.full(len(p), np.inf)
+    if margin is None:
+        margin = result.gap_m + (result.uncovered_strip_m or 0.0) + 1e-9
     for pc in result.pieces:
-        lo, hi = pc.verts[:, :2].min(axis=0), pc.verts[:, :2].max(axis=0)
-        e = result.gap_m if margin is None else margin
-        sel = (p[:, 0] >= lo[0] - e) & (p[:, 0] <= hi[0] + e) & (p[:, 1] >= lo[1] - e) & (p[:, 1] <= hi[1] + e)
-        if not sel.any():
+        q, (a, b, c) = pc.plan, pc.plane
+        lo, hi = q.min(axis=0) - margin, q.max(axis=0) + margin
+        sel = np.flatnonzero((p[:, 0] >= lo[0]) & (p[:, 0] <= hi[0]) & (p[:, 1] >= lo[1]) & (p[:, 1] <= hi[1]))
+        if not len(sel):
             continue
-        xy = np.clip(p[sel, :2], lo, hi)
-        top, _ = _ground_top(pc.verts[:4, :2], pc.verts[4:, 2], xy)
-        out[sel] = np.minimum(out[sel], np.abs(p[sel, 2] - top))
+        dh, nq = _poly_dist(p[sel, :2], q)
+        dz = p[sel, 2] - (a * nq[:, 0] + b * nq[:, 1] + c)
+        d = np.where(dh <= margin, np.hypot(dh, dz), np.inf)
+        out[sel] = np.minimum(out[sel], d)
     return out
 
 

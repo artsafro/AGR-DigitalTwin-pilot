@@ -625,6 +625,39 @@ def test_address_override_propagates_and_leaves_published_untouched(
     assert _published_names() == before
 
 
+def test_v002_address_override_keeps_supertile_and_provenance(recipes, tmp_path, monkeypatch):
+    """Merge regression: version + address must keep physical layouts and visual receipts."""
+    out = _allow_version(recipes, tmp_path, "v002")
+    source_before = RECIPE_PATH.read_bytes()
+    monkeypatch.setattr(recipes, "render_map", _quiet_render)
+    labels = []
+
+    def contact_sheet(delivered_recipe, rendered):
+        assert set(rendered) == set(SLOTS)
+        labels.extend(recipes.contact_label(delivered_recipe, slot) for slot in SLOTS)
+        return Image.new("RGB", (8, 8))
+
+    monkeypatch.setattr(recipes, "build_contact_sheet", contact_sheet)
+    assert recipes.main([
+        "deliver", "--address", "Other_330", "--version", "v002",
+        "--out", str(out), "--recipe", str(RECIPE_PATH),
+    ]) == 0
+    manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["address"] == "Other_330"
+    assert "blade_cycles" in manifest["visual"]
+    assert len(manifest["maps"]) == 20
+    for entry in manifest["maps"]:
+        assert entry["file"].startswith("T_Other_330_Ground_Diffuse_")
+        assert (out / entry["file"]).is_file()
+        if entry["slot"].startswith("Tile"):
+            facts = entry["physical_layout"]
+            assert max(abs(value) for value in facts["scale_error_percent"]) <= 1
+            assert "vpm_joint_px" in {flag["field"] for flag in entry["provisional"]}
+    assert len(labels) == 10
+    assert all("actual" in label for label in labels)
+    assert RECIPE_PATH.read_bytes() == source_before
+
+
 def test_invalid_address_tokens_exit_nonzero_and_write_nothing(recipes, tmp_path, monkeypatch, capsys):
     published_before = _published_names()
     renders = []
