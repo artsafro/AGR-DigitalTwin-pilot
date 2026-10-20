@@ -309,11 +309,14 @@ verified and the eval that covers it (`tests/test_harness_inventory.py`).
 
 ## Project state (#119)
 
-`docs/PROJECT_STATE.md` is state, not history: at most 80 lines, exactly the sections Goal, In production
-(object -> version -> status -> open gates), Harness (what is green), Next step, Links
-(`tests/test_project_state.py`). Edit it only on `main` after a merge, by replacing the sections the merge
-changed; never append. The only history it keeps is the last PR number and the date on the `Last updated`
-line; `git log --merges` and the PRs hold the rest. In a task branch state changes go into the handoff.
+`docs/PROJECT_STATE.md` is generated state, not history. Regenerate it with
+`python tools/state/project_state.py` from `git log --merges` and open pull requests (`gh pr list`).
+The header names that command. Regeneration is idempotent; do not edit the file by hand. At most 80 lines,
+and a file of exactly 80 lines is refused. Exactly the sections Goal, In production, Harness, Next step, Links
+(`tests/test_project_state.py`). Regenerate it only on `main` after a merge. Per-object gates stay in
+`jobs/<ID>/STATE.md`. In a task branch state changes go into the handoff. An optional hand-written next step
+lives in `docs/PROJECT_STATE.next.md` (plain lines, no headings); the generator refuses to write its output
+onto that file, onto `.git`, or onto any other input.
 
 ## Reports
 
