@@ -60,6 +60,7 @@ def check_aliases(src: Path, out: Path, targets: list[Path]) -> str | None:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("adapter_json")
+    ap.add_argument("--gap-exceptions", type=Path, help="explicit source/geometry-pinned user decision manifest")
     ap.add_argument("--out", required=True)
     ap.add_argument("--cell", type=float, default=4.0)
     ap.add_argument("--chord", type=float, default=0.02)
@@ -73,6 +74,8 @@ def main(argv=None) -> int:
     out = Path(a.out)
     targets = [out / f"ground_master_{p}.json" for p in ("vpm", "npm")] + [out / "ground_report.json"]
     alias = check_aliases(src, out, targets)
+    if not alias and a.gap_exceptions:
+        alias = check_aliases(a.gap_exceptions, out, targets)
     if alias:
         print(f"refused before any write: {alias}", file=sys.stderr)
         return 2
@@ -131,6 +134,7 @@ def main(argv=None) -> int:
     rep["steps"] = gc.measure_steps(proj, sampler, STEP, offsets=offsets)
     rep["relief_error"] = gc.measure_relief_error(proj, sampler, STEP, tol=a.relief_tol, offsets=offsets)
     rep["stack_gaps"] = gc.measure_stack_gaps(proj, STEP, offsets=offsets)
+    rep["surface_sha256"] = surface_fingerprint(proj.verts, proj.faces)
     rep["open_edges"] = gc.measure_open_edges(proj, plan, eps=0.0022)
     master = gc.add_skirt(proj, depth=1.0)
     rep["details"] = dispositions
@@ -157,7 +161,8 @@ def main(argv=None) -> int:
                                   "nan_faces": int(np.isnan(dens).sum()), **layout}
         rep[f"uv_tiles_{prof}"] = tiles
         meshes[prof] = gc.Mesh(master.verts, master.faces, master.slot, master.level, uv, master.cell, master.report)
-    rep["gates"] = gates = acceptance_gates(rep)
+    exceptions = json.loads(a.gap_exceptions.read_text(encoding="utf-8")) if a.gap_exceptions else None
+    rep["gates"] = gates = acceptance_gates(rep, exceptions)
     rep["slots"] = slots_order
     rep["seconds"] = round(time.time() - t0, 1)
     failed = [k for k, v in gates.items() if not v["pass"]]
@@ -208,7 +213,48 @@ def profile_uv(master: "gc.Mesh", prof: str) -> tuple[np.ndarray, dict]:
     return uv, lay
 
 
-def acceptance_gates(rep: dict) -> dict:
+def surface_fingerprint(verts, faces) -> str:
+    """Bind source-local vertex/face IDs to exact geometry and ordering, independent of JSON formatting."""
+    h = hashlib.sha256()
+    for arr, dtype in ((verts, "<f8"), (faces, "<i8")):
+        a = np.asarray(arr, dtype=dtype)
+        h.update(str(a.shape).encode("ascii"))
+        h.update(a.tobytes())
+    return h.hexdigest()
+
+
+def accepted_gap_samples(rep: dict, policy: dict | None) -> list:
+    """Only an exact frozen sample set may waive the upper bound; malformed/partial evidence fails closed."""
+    try:
+        sg = rep["stack_gaps"]
+        actual = sg["normal_gap_over_band_samples"]
+        if not policy or not policy["decision"] or not actual:
+            return []
+        if any(policy[k] != rep[k] for k in ("input_sha256", "surface_sha256")):
+            return []
+        def indexed(rows):
+            result = {}
+            for s in rows:
+                key = (s["kind"], s["upper_face"], s["lower_face"], s["vertex"])
+                if (s["kind"] not in ("corner", "centroid") or key in result
+                        or not math.isfinite(s["gap_mm"]) or s["gap_mm"] <= 20):
+                    raise ValueError("invalid exception sample")
+                result[key] = s["gap_mm"]
+            return result
+        frozen, measured = indexed(policy["samples"]), indexed(actual)
+        if frozen.keys() != measured.keys():
+            return []
+        if any(measured[k] > frozen[k] + 1e-6 for k in measured):
+            return []
+        if (sum(s["kind"] == "corner" for s in actual) != sg["normal_gap_vertices_above"]
+                or sum(s["kind"] == "centroid" for s in actual) != sg["normal_gap_centroids_above"]):
+            return []
+        return actual
+    except (KeyError, TypeError, ValueError):
+        return []
+
+
+def acceptance_gates(rep: dict, exceptions: dict | None = None) -> dict:
     """Mandatory geometry gates checked before any deliverable is written (review round 1 of PR #308)."""
     g = {
         "relief_within_tol": {"pass": rep["relief_error"]["faces_over_tol"] == 0, "value": rep["relief_error"]},
@@ -225,12 +271,16 @@ def acceptance_gates(rep: dict) -> dict:
     sg = rep["stack_gaps"]
     # User decision 2026-10-19: the normal gap of a locally raised layer is 5-20 mm. Both bounds are mandatory gates
     # (review round 2 of PR #308): a V004 "review" above 20 mm is not a waiver, so over-band geometry is never
-    # written as a deliverable; the report lists it (normal_gap_faces_above, steep_raise.over_gap_max_vertices).
+    # written as a deliverable unless each over-band sample matches an explicit frozen user exception.
+    # User 2026-10-20 option a accepts only the source/geometry-pinned 12 junction vertices and 6 face centres.
     gap_value = {k: sg[k] for k in sg if k.startswith("normal_gap")}
     g["normal_gap_min_5mm"] = {"pass": sg["normal_gap_centroids_below"] == 0 and sg["normal_gap_vertices_below"] == 0,
                                "value": gap_value}
-    g["normal_gap_max_20mm"] = {"pass": sg["normal_gap_centroids_above"] == 0 and sg["normal_gap_vertices_above"] == 0,
-                                "value": {**gap_value,
+    accepted = accepted_gap_samples(rep, exceptions)
+    upper_ok = bool(accepted) or (sg["normal_gap_centroids_above"] == 0 and sg["normal_gap_vertices_above"] == 0)
+    g["normal_gap_max_20mm"] = {"pass": upper_ok,
+                                "value": {**gap_value, "accepted_samples": accepted,
+                                          "decision": (exceptions or {}).get("decision") if accepted else None,
                                           "over_gap_max_vertices": rep.get("steep_raise", {}).get("over_gap_max_vertices")}}
     g["v004_codirectional_below_5mm_0"] = {"pass": rep["codirectional"]["pairs_below"] == 0,
                                            "value": rep["codirectional"]}

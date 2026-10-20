@@ -683,9 +683,10 @@ def readback_f32(verts: np.ndarray) -> np.ndarray:
     return np.round((v - piv).astype(np.float32).astype(float), 6)
 
 
-def _point_gaps(verts: np.ndarray, faces: np.ndarray, level: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def _point_gaps(verts: np.ndarray, faces: np.ndarray, level: np.ndarray, *, identities=False) -> tuple:
     """Gap along the normal of the lower-level face below a point next to every corner of every upper face (the
-    corner pulled 0.1 % toward the centroid, so it lies inside the face). Returns (vertex id, gap m, lower nz)."""
+    corner pulled 0.1 % toward the centroid, so it lies inside the face). Returns (vertex id, gap m, lower nz);
+    with identities=True also returns upper/lower face IDs in the supplied mesh."""
     surf = np.nonzero(level >= 0)[0]
     P = verts[faces[surf]]
     A = np.concatenate([P[:, :, :2], np.ones((len(P), 3, 1))], axis=2)
@@ -701,6 +702,8 @@ def _point_gaps(verts: np.ndarray, faces: np.ndarray, level: np.ndarray) -> tupl
     vi, vb = vi[k], vb[k]
     nzb = 1.0 / np.sqrt(pl[vb, 0] ** 2 + pl[vb, 1] ** 2 + 1.0)
     gap = (pv[vi, 2] - (pl[vb, 0] * pv[vi, 0] + pl[vb, 1] * pv[vi, 1] + pl[vb, 2])) * nzb
+    if identities:
+        return vid[vi], gap, nzb, surf[owner[vi]], surf[vb]
     return vid[vi], gap, nzb
 
 
@@ -1050,7 +1053,17 @@ def measure_stack_gaps(mesh: Mesh, step: float, offsets=None, band: tuple[float,
     err = np.abs(c[:, 2] - zb - (off[mesh.faces[surf][a]].mean(axis=1) - ob))
     nzb = 1.0 / np.sqrt(pl[b, 0] ** 2 + pl[b, 1] ** 2 + 1.0)
     gc_ = (c[:, 2] - zb) * nzb
-    _, gv, _ = _point_gaps(mesh.verts, mesh.faces, mesh.level)  # pointwise next to every upper corner
+    vids, gv, _, upper_faces, lower_faces = _point_gaps(mesh.verts, mesh.faces, mesh.level, identities=True)
+    # Preserve every sample identity (no truncation): an exception is a finite list, never a global threshold.
+    over_samples = [
+        {"kind": "centroid", "upper_face": int(surf[x]), "lower_face": int(surf[y]), "vertex": None,
+         "gap_mm": float(gap * 1000)}
+        for x, y, gap in zip(a, b, gc_) if gap > band[1] + 1e-5]
+    over_samples += [
+        {"kind": "corner", "upper_face": int(x), "lower_face": int(y), "vertex": int(v),
+         "gap_mm": float(gap * 1000)}
+        for x, y, v, gap in zip(upper_faces, lower_faces, vids, gv) if gap > band[1] + 1e-5]
+    over_samples.sort(key=lambda s: (s["kind"], s["upper_face"], s["lower_face"], s["vertex"] or -1))
     i, j = tree.query(polys, predicate="intersects")
     k = (i < j) & (lev[i] == lev[j])
     inter = shapely.area(shapely.intersection(polys[i[k]], polys[j[k]])) if k.any() else np.zeros(0)
@@ -1065,6 +1078,7 @@ def measure_stack_gaps(mesh: Mesh, step: float, offsets=None, band: tuple[float,
             "normal_gap_vertices_below": int((gv < band[0] - 1e-5).sum()),
             "normal_gap_vertices_above": int((gv > band[1] + 1e-5).sum()),
             "normal_gap_faces_above": sorted({int(surf[x]) for x in up[qi[k0]][gc_ > band[1] + 1e-5]})[:50],
+            "normal_gap_over_band_samples": over_samples,
             "same_level_overlap_m2": float(inter.sum())}
 
 

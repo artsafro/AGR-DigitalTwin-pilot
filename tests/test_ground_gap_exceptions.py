@@ -1,6 +1,5 @@
 """new-case: #295 explicit, geometry-pinned user exception; all other samples stay <=20 mm."""
 import copy
-import hashlib
 import json
 
 import numpy as np
@@ -73,3 +72,30 @@ def test_surface_fingerprint_binds_geometry_and_order():
         moved[0, axis] += 1e-6
         assert original != bg.surface_fingerprint(moved, f)
     assert original != bg.surface_fingerprint(v, f[:, ::-1])
+
+
+@pytest.mark.parametrize("field", ["relief_error", "inside", "projection", "uv", "density"])
+def test_exception_does_not_waive_other_gates(tmp_path, field):
+    _, _, rep = _run(tmp_path, steep=True)
+    policy = _policy(rep)
+    section, key = {"relief_error": ("relief_error", "faces_over_tol"),
+                    "inside": ("inside", "outside"), "projection": ("relief", "vertex_misses"),
+                    "uv": ("uv_tiles_vpm", "straddling"), "density": ("density_vpm", "faces_below")}[field]
+    rep[section][key] = 1
+    gates = _bg().acceptance_gates(rep, policy)
+    assert gates["normal_gap_max_20mm"]["pass"]
+    assert not all(g["pass"] for g in gates.values())
+
+
+def test_exception_input_output_alias_is_rejected(tmp_path):
+    from test_ground_review_r2 import _adapter
+    src = tmp_path / "a.json"
+    src.write_text(json.dumps(_adapter(False)))
+    out = tmp_path / "out"
+    out.mkdir()
+    policy = out / "ground_report.json"
+    policy.write_text("{}")
+    before = policy.read_bytes()
+    assert _bg().main([str(src), "--out", str(out), "--gap-exceptions", str(policy)]) == 2
+    assert policy.read_bytes() == before
+    assert not list(out.glob("ground_master_*.json"))
