@@ -406,11 +406,11 @@ def _move_text_below_line(src: Path, dst: Path, value: str = "4500") -> None:
         ("NaN", "dimension_text_invalid"),
         ("4500.0", "dimension_text_invalid"),
         ("", "dimension_text_missing"),
-        ("below", "dimension_text_unsupported"),
+        ("below", None),
     ],
 )
 def test_unread_dimension_span_is_a_typed_finding_and_keeps_scale(
-    tmp_path: Path, text: str, code: str
+    tmp_path: Path, text: str, code: str | None
 ) -> None:
     """Invariant: a dimension span (line + 2 ticks) whose value is not read is a finding with its endpoints."""
     good = tmp_path / "good.pdf"
@@ -423,8 +423,13 @@ def test_unread_dimension_span_is_a_typed_finding_and_keeps_scale(
         make_facade_pdf(probe, dim_texts=("6000", text))
     r = read_page(probe, scale_axes=("1", "2"))
     assert r.scale.status == "derived" and r.scale.mm_per_pt == ref.scale.mm_per_pt
-    assert [d.axes for d in r.dimensions] == [("1", "2")]
     found = [f for f in r.findings if f.code in _COVERAGE_CODES]
+    if text == "below":
+        assert [d.axes for d in r.dimensions] == [("1", "2"), ("2", "3")]
+        assert [d.value_mm for d in r.dimensions] == [6000.0, 4500.0]
+        assert found == []
+        return
+    assert [d.axes for d in r.dimensions] == [("1", "2")]
     assert [f.code for f in found] == [code], r.findings
     data = found[0].data
     span = truth["dimensions"][1]

@@ -50,6 +50,7 @@ Each material:
 | `size` | no | Solid: 64 (default) or 128. Patterned: minimum slot, power of two, at least 128 (default 128). |
 
 RAL Classic values in `ral_classic.json` are screen approximations, not measured paint matches.
+`7047` is `#D0D0D0`. This reuses the project's recorded display approximation from #320, not an official or spectrophotometric RAL match or new visual approval.
 
 ## Packing
 
