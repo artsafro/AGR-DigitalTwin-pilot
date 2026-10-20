@@ -26,9 +26,13 @@ Every face of a part gets one label. Faces with more than 4 sides are `ngon` off
 
 Thresholds (no number exists in the decisions; orchestrator default, user may change): `unneeded + mergeable +
 ngon + degenerate` = 0 for every profile; per part the needed-triangle share (needed triangles / faces) <= 10 % for
-NPM and <= 5 % for VPM, exactly at the limit passes. Parts in the allowance set are exempt from the share cap
-(their triangles are allowed). `count` of the result = offending faces plus one per part over the share cap or
-without faces. Fail-closed: no part to check, a part without faces or an unknown profile never pass; malformed
+NPM and <= 5 % for VPM, exactly at the limit passes. The cap applies to every part, also to parts in the
+allowance set (rule 4 only classifies their triangles as needed; it does not lift the cap). `count` of the result =
+offending faces plus one per part over the share cap or without faces.
+
+Geometry is computed in a local frame (vertex coordinates minus the face's first vertex), so a translated mesh keeps
+its areas and angles exactly where the subtraction is exact; a face whose derived area vector is not finite (finite
+input that overflows) is a `nonfinite` offender, never a pass. Fail-closed: no part to check, a part without faces or an unknown profile never pass; malformed
 input (NaN / inf, an index out of range, a repeated index in a face, < 3 sides) raises `ValueError`.
 
 Pure numpy, no Blender; checks the parts an operation changed, after the operation.
@@ -52,7 +56,7 @@ NAME = "quad_dominance"
 SHARE_MAX = {"NPM": NPM_SHARE_MAX, "VPM": VPM_SHARE_MAX}
 _PROFILE_SUFFIXES = ("", "-OKS", "-GROUND")
 ALLOW_CLASSES = frozenset({"railing", "rod_ladder", "grille", "ac_screen", "fence"})   # [D109] opacity classes
-OFFENDING = ("mergeable", "unneeded", "ngon", "degenerate")
+OFFENDING = ("mergeable", "unneeded", "ngon", "degenerate", "nonfinite")
 
 
 @dataclass(frozen=True)
@@ -96,7 +100,7 @@ class PartQuadReport:
     ngons: int
     triangle_share: float                         # triangles / faces
     needed_share: float                           # needed triangles / faces
-    share_max: float | None                       # None: part in the allowance set, no cap
+    share_max: float                              # the profile cap, applied to every part
     needed: dict = field(default_factory=dict)    # reason -> count ("odd_boundary", "pole_fan", "parts_list")
     offenders: tuple = ()                         # every offender, "part#face: reason"
 
@@ -133,9 +137,13 @@ def _angle_deg(a, b) -> float:
 
 
 def _newell(points: np.ndarray) -> np.ndarray:
-    """Twice the vector area of a polygon (Newell); its length / 2 is the area of a planar polygon."""
-    nxt = np.roll(points, -1, axis=0)
-    return np.cross(points, nxt).sum(axis=0)
+    """Twice the vector area of a polygon (Newell) in the local frame of its first vertex; length / 2 = area.
+
+    Absolute coordinates would cancel catastrophically far from the origin (a valid small square at 1e6 m reads as
+    zero area, an exactly collinear face at 1e8 m reads as non-zero); local differences avoid both."""
+    with np.errstate(over="ignore", invalid="ignore"):
+        local = points - points[0]
+        return np.cross(local[1:-1], local[2:]).sum(axis=0)
 
 
 def _mergeable(vx, tri_t, tri_u, edge, planar_deg) -> bool:
@@ -148,6 +156,8 @@ def _mergeable(vx, tri_t, tri_u, edge, planar_deg) -> bool:
     pa, pb, pc, pd = vx[a], vx[b], vx[c], vx[d]
     n1 = np.cross(pb - pa, pc - pa)              # triangle (a, b, c)
     n2 = np.cross(pa - pb, pd - pb)              # triangle (b, a, d): same orientation as the quad a-d-b-c
+    if not (np.isfinite(n1).all() and np.isfinite(n2).all()):
+        return False
     if np.linalg.norm(n1) / 2 <= AREA_EPS_M2 or np.linalg.norm(n2) / 2 <= AREA_EPS_M2:
         return False
     if _angle_deg(n1, n2) > planar_deg:
@@ -220,9 +230,12 @@ def classify_faces(mesh: PolyMesh, allowed: bool = False, planar_deg: float = PL
     vx, faces = mesh.vertices, mesh.faces
     m = len(faces)
     vec = [_newell(vx[list(f)]) for f in faces]
-    area = np.array([np.linalg.norm(n) / 2 for n in vec])
-    unit = [_unit(n) for n in vec]
-    good = area > AREA_EPS_M2
+    finite = np.array([bool(np.isfinite(n).all()) for n in vec], dtype=bool)
+    with np.errstate(over="ignore", invalid="ignore"):
+        area = np.array([np.linalg.norm(n) / 2 if ok else np.inf for n, ok in zip(vec, finite)])
+    finite &= np.isfinite(area)
+    unit = [_unit(n) if ok else n for n, ok in zip(vec, finite)]
+    good = finite & (area > AREA_EPS_M2)
 
     edges: dict[tuple, list[int]] = {}
     for f, face in enumerate(faces):
@@ -261,6 +274,9 @@ def classify_faces(mesh: PolyMesh, allowed: bool = False, planar_deg: float = PL
     labels = []
     budget = {r: n % 2 for r, n in outline.items()}
     for f, face in enumerate(faces):
+        if not finite[f]:
+            labels.append("nonfinite")
+            continue
         if not good[f]:
             labels.append("degenerate")
             continue
@@ -303,6 +319,8 @@ def _offender_text(part, f, label, mesh):
         return f"{part}#{f}: ngon ({len(mesh.faces[f])} sides)"
     if label == "degenerate":
         return f"{part}#{f}: degenerate (zero area)"
+    if label == "nonfinite":
+        return f"{part}#{f}: nonfinite (derived geometry overflows)"
     return f"{part}#{f}: {label}"
 
 
@@ -322,17 +340,17 @@ def part_report(part: str, mesh: PolyMesh, profile: str, allowed: bool = False,
     needed_share = sum(needed.values()) / n if n else 0.0
     if not n:
         offenders.append(f"{part}: no faces")
-    elif not allowed and needed_share > cap + 1e-12:
+    elif needed_share > cap + 1e-12:
         offenders.append(f"{part}: needed-triangle share {needed_share:.1%} > {cap:.1%} ({profile})")
     return PartQuadReport(part, n, tris, sum(len(f) == 4 for f in mesh.faces), sum(len(f) > 4 for f in mesh.faces),
-                          tris / n if n else 0.0, needed_share, None if allowed else cap, needed, tuple(offenders))
+                          tris / n if n else 0.0, needed_share, cap, needed, tuple(offenders))
 
 
 def quad_report(scene: PolyScene, profile: str, parts: Iterable[str] | None = None,
                 allow_triangles: Iterable[str] = frozenset(), planar_deg: float = PLANAR_DEG) -> dict:
     """part id -> PartQuadReport for `parts` (None = every part of the scene)."""
     share_max(profile)
-    names = list(scene if parts is None else parts)
+    names = list(dict.fromkeys(scene if parts is None else parts))   # a repeated part id is checked once
     missing = [p for p in names if p not in scene]
     if missing:
         raise ValueError(f"parts not in the scene: {missing}")

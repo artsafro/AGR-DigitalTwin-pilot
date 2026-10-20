@@ -160,14 +160,14 @@ def test_d_ngon_caps_closed_by_fans_pass_as_needed(n, expected):
 
 
 def test_e_triangle_needed_by_no_rule_is_unneeded():
-    v, f, (t1, t2) = grid_with_unneeded_pair(6)
+    v, f, (t1, t2) = grid_with_unneeded_pair(8)
     r = quad_dominance({"wall_a": poly(v, f)}, "NPM")
     assert not r.passed and r.count == 2
     assert sorted(r.offenders) == sorted([f"wall_a#{t1}: unneeded", f"wall_a#{t2}: unneeded"])
 
 
 def test_f_same_triangles_pass_when_the_part_is_a_library_replacement():
-    v, f, _ = grid_with_unneeded_pair(6)
+    v, f, _ = grid_with_unneeded_pair(8)        # 2 parts_list triangles / 65 faces = 3.1 %, under the VPM cap
     allow = allow_triangles_from_parts(parts_list("tree_a"))
     assert allow == frozenset({"tree_a"})
     r = quad_dominance({"tree_a": poly(v, f)}, "VPM", allow_triangles=allow)
@@ -469,3 +469,102 @@ def test_wrapper_rejects_a_second_quad_dominance():
 
 def test_closed_quad_box_is_all_quads():
     assert set(classify_faces(poly(BOX_V, BOX_Q))) == {"quad"}
+
+
+# ---- review round 1 regressions (PR #354) ----------------------------------------------------------------------
+
+def test_allowance_does_not_lift_the_vpm_share_cap():
+    p = share_part(47)                             # 94 quads + 6 pole_fan triangles = 6 %
+    r = quad_dominance({"p": p}, "VPM", allow_triangles={"p"})
+    assert not r.passed and r.count == 1 and r.offenders == ("p: needed-triangle share 6.0% > 5.0% (VPM)",)
+    assert quad_report({"p": p}, "VPM", allow_triangles={"p"})["p"].share_max == VPM_SHARE_MAX
+    assert quad_dominance({"p": p}, "NPM", allow_triangles={"p"}).passed
+
+
+@pytest.mark.parametrize("quads_y, profile, passed", [
+    (57, "VPM", True), (56, "VPM", False), (27, "NPM", True), (26, "NPM", False),
+])
+def test_share_threshold_is_the_same_for_allowed_parts(quads_y, profile, passed):
+    r = quad_dominance({"p": share_part(quads_y)}, profile, allow_triangles={"p"})
+    assert r.passed is passed
+
+
+@pytest.mark.parametrize("n, profile, passed", [
+    (6, "VPM", False),                             # 2 / 37 = 5.4 % > 5 %
+    (6, "NPM", True),
+    (8, "VPM", True),                              # 2 / 65 = 3.1 %
+])
+def test_parts_list_triangles_count_towards_the_share_cap(n, profile, passed):
+    v, f, _ = grid_with_unneeded_pair(n)
+    allow = allow_triangles_from_parts(parts_list("tree_a"))
+    rep = quad_report({"tree_a": poly(v, f)}, profile, allow_triangles=allow)["tree_a"]
+    assert rep.needed == {"parts_list": 2}
+    assert rep.passed is passed
+    if not passed:
+        assert rep.offenders == (f"tree_a: needed-triangle share {2 / len(f):.1%} > 5.0% ({profile})",)
+
+
+def square(side, offset):
+    o = float(offset)
+    return poly([(o, o, o), (o + side, o, o), (o + side, o + side, o), (o, o + side, o)], [(0, 1, 2, 3)])
+
+
+def test_reviewer_witness_a_small_square_far_from_the_origin_passes():
+    r = quad_dominance({"p": square(1 / 1024, 1e6)}, "NPM")
+    assert r.passed and r.count == 0, r.offenders
+
+
+@pytest.mark.parametrize("offset", [0.0, 1e3, 1e6, 1e8])
+@pytest.mark.parametrize("side", [1 / 1024, 1e-3, 1.0, 100.0])
+def test_translated_valid_square_passes_scale_sweep(side, offset):
+    assert quad_dominance({"p": square(side, offset)}, "VPM").passed
+
+
+@pytest.mark.parametrize("o", [0.0, 1e4, 1e6, 1e8])
+def test_reviewer_witness_b_exactly_collinear_face_fails_at_any_offset(o):
+    v = [(o + i / 1024, o + 2 * i / 1024, o) for i in range(4)]
+    r = quad_dominance({"p": poly(v, [(0, 1, 2, 3)])}, "NPM")
+    assert not r.passed and r.offenders == ("p#0: degenerate (zero area)",)
+
+
+def test_split_quad_far_from_the_origin_is_still_mergeable():
+    v, f = grid(4, 4, origin=(1e6, 1e6, 1e6))
+    f = split_quad(f, 5)
+    r = quad_dominance({"p": poly(v, f)}, "NPM")
+    assert not r.passed and r.count == 2 and all(o.endswith("mergeable") for o in r.offenders)
+
+
+@pytest.mark.parametrize("vertices", [
+    [(0, 0, 0), (1e200, 0, 0), (1e200, 1e200, 0), (0, 1e200, 0)],                # cross product overflows
+    [(-1e308, 0, 0), (1e308, 0, 0), (1e308, 1e308, 0), (-1e308, 1e308, 0)],      # a difference overflows
+])
+def test_finite_input_with_overflowing_geometry_fails_closed(vertices):
+    r = quad_dominance({"p": poly(vertices, [(0, 1, 2, 3)])}, "NPM")
+    assert not r.passed and r.offenders == ("p#0: nonfinite (derived geometry overflows)",)
+
+
+def _box_reports(changed, polys):
+    after = {k: to_tri_mesh(BOX_V, BOX_Q) for k in ("a", "b")}
+    plain = check_operation(None, after, changed)
+    return plain, check_operation_quads(plain, polys, changed, "NPM")
+
+
+def test_wrapper_with_no_changed_parts_fails_closed():
+    plain, rep = _box_reports([], {"a": poly(BOX_V, BOX_Q)})
+    assert rep.results[:-1] == plain.results
+    assert not rep.passed and rep.results[-1].offenders == ("no parts to check",)
+
+
+def test_wrapper_checks_only_the_changed_parts():
+    polys = {"a": poly(BOX_V, BOX_Q), "b": poly(BOX_V, split_quad(BOX_Q, 1))}   # b offends but is unchanged
+    plain, rep = _box_reports(["a"], polys)
+    assert rep.results[:-1] == plain.results and rep.results[-1].passed
+    plain, rep = _box_reports(["a", "b"], polys)
+    assert not rep.results[-1].passed and all(o.startswith("b#") for o in rep.results[-1].offenders)
+
+
+def test_wrapper_repeated_changed_part_is_counted_once():
+    polys = {"a": poly(BOX_V, split_quad(BOX_Q, 1))}
+    _, once = _box_reports(["a"], polys)
+    _, twice = _box_reports(["a", "a"], polys)
+    assert once.results[-1] == twice.results[-1] and twice.results[-1].count == 2
