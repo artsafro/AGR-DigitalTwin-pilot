@@ -269,17 +269,24 @@ def to_dump(bands, objs, document=None):
     occupied = {i: _occupied(parts) for i, parts in native.items()}
     attached = set(attachments(bands, occupied))
     meshes, body = [], []
-    outer = [_footprint(w, "square").buffer(0.01) for w in walls.values() if w.get("function") != "curtain"]
+    outer = [(occupied[i] if i in occupied else _footprint(w, "square")).buffer(0.01)
+             for i, w in walls.items() if w.get("function") != "curtain"]
     plans = {i: _footprint(w) for i, w in walls.items() if w.get("function") != "curtain" and i not in curved}
     plans.update(occupied)                        # a curved wall's occupied plan for the joins of its neighbours
     for i, w in walls.items():
         if w.get("function") == "curtain":       # glazing: its panels are glass; its host carries the facade
             if i in attached:
                 continue
-            line = LineString([p[:2] for p in w["locationLine"]])
-            if not any(f.intersection(line).length >= EMBED_SHARE * line.length for f in outer):
-                meshes.append(_prism(f"curtain_{i}", w))     # a free curtain wall stands in the facade line
-                body.append(f"curtain_{i}")
+            if i in curved:
+                plan = occupied[i]
+                if not any(f.intersection(plan).area >= EMBED_SHARE * plan.area for f in outer):
+                    meshes.extend(native[i])
+                    body.extend(m["name"] for m in native[i])
+            else:
+                line = LineString([p[:2] for p in w["locationLine"]])
+                if not any(f.intersection(line).length >= EMBED_SHARE * line.length for f in outer):
+                    meshes.append(_prism(f"curtain_{i}", w))
+                    body.append(f"curtain_{i}")
             continue
         if i in curved:
             meshes.extend(native[i])
