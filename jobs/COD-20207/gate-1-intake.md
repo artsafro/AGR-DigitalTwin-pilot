@@ -278,6 +278,21 @@ The confirmed PartsList remains incomplete; do not build until the authorized et
 fallback establishes footprint/material facts. No new production module or pipeline
 change was made, only project source-map data and its regression. No PR opened.
 
+## Final Gate 1 closure (Artem, card comment 2026-10-21 00:25)
+
+Artem answered "да" to the orange **1670.085519 m2** largest unhatched
+component as the building hole. **All other unhatched regions are lawn**.
+The 373.983881 m2 of mapped coverings beneath Main roofs/canopies remain
+coverings, not holes. The earlier footprint question below is historical and closed.
+`parts.json` records the approved decomposition and default budgets; `build-settings.json`
+contains flat datum zero, site covering slots and explicit lawn remainder. The unchanged
+1000 m2 footprint threshold selects exactly the approved component (next largest 16.6 m2).
+Type 6 uses the authorized type-2 fallback: atlas evidence shows the paved apron,
+not a separately identified material. Slot labels describe semantic coverings, **not**
+assertions that the atlas is a seamless material or that textures have been transferred.
+No D150 exception is used. Relief steps skipped: flat by user decision; method-C
+6/12 mm levels retained. Curbs retain approved 150/50 mm exposed sections.
+
 ## Resumed intake 4 — authorized importer repair, footprint decision
 
 The orchestrator authorized a comparison-only import without custom normals and,

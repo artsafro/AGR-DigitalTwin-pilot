@@ -70,6 +70,16 @@ def settings():
             'uncovered_covering': 'lawn', 'flat_datum_m': 0.0}
 
 
+@pytest.mark.skipif(not Path('C:/x/ground-cod-22/intake-v001/cod_ground_inputs.json').exists(), reason='local copied COD intake required')
+def test_real_cod_touching_lawn_overlay():
+    d = json.loads(Path('C:/x/ground-cod-22/intake-v001/cod_ground_inputs.json').read_text(encoding='utf-8'))
+    s = json.loads((Path(__file__).parents[1] / 'jobs/COD-20207/build-settings.json').read_text())
+    plan, _ = builder.site_plan(d, s, footprint_min=1000)
+    assert len(plan.holes) == 1
+    assert plan.holes[0].area == pytest.approx(1670.085519, abs=.03)
+    assert any(l.covering == 'lawn' for l in plan.layers)
+
+
 def test_second_site_flat_plan_uses_config_not_vatutino_slots():
     d = fixture()
     # Separate the unhatched hole (16 m2) from the small lawn region (4 m2).
