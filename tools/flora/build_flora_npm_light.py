@@ -34,18 +34,23 @@ def sha(path):
         return hashlib.file_digest(f, 'sha256').hexdigest()
 
 
+def require(condition, message):
+    if not condition:
+        raise ValueError(message)
+
+
 def max_stage(job):
     from pymxs import runtime as rt
     def xyz(p):
         return [float(p.x),float(p.y),float(p.z)]
     rt.resetMaxFile(rt.Name('noPrompt'))
-    assert rt.loadMaxFile(job['copy'], quiet=True), 'loadMaxFile failed'
-    assert str(rt.units.SystemType).lower() == 'meters', 'library units not metres'
-    assert float(rt.units.SystemScale) == 1, 'unexpected system unit scale'
+    require(rt.loadMaxFile(job['copy'], quiet=True), 'loadMaxFile failed')
+    require(str(rt.units.SystemType).lower() == 'meters', 'library units not metres')
+    require(float(rt.units.SystemScale) == 1, 'unexpected system unit scale')
     nodes = {}
     for row in job['species']:
         matches = [n for n in rt.objects if str(n.name) == row['objects']['NPM']]
-        assert len(matches) == 1, 'ambiguous library object'
+        require(len(matches) == 1, 'ambiguous library object')
         nodes[row['material_id']] = matches[0]
     if job['action'] == 'extract':
         meshes = {}
@@ -56,11 +61,11 @@ def max_stage(job):
                 vertices = [[c-pivot[i] for i,c in enumerate(xyz(rt.getVert(mesh,j)))] for j in range(1,int(mesh.numverts)+1)]
                 faces = [[int(c)-1 for c in xyz(rt.getFace(mesh,j))] for j in range(1,int(mesh.numfaces)+1)]
                 uv = [[xyz(rt.getTVert(mesh,int(c)))[:2] for c in xyz(rt.getTVFace(mesh,j))] for j in range(1,int(mesh.numfaces)+1)]
-                assert len(faces) == next(s['triangles']['NPM'] for s in job['species'] if s['material_id']==mid)
-                assert {int(rt.getFaceMatID(mesh,j)) for j in range(1,int(mesh.numfaces)+1)} == {mid}
+                require(len(faces) == next(s['triangles']['NPM'] for s in job['species'] if s['material_id']==mid), 'source triangle mismatch')
+                require({int(rt.getFaceMatID(mesh,j)) for j in range(1,int(mesh.numfaces)+1)} == {mid}, 'source material ID mismatch')
                 row = next(s for s in job['species'] if s['material_id']==mid)
                 for slot in ('diffuse','opacity'):
-                    assert Path(str(getattr(n.material,slot+'Map').filename)).resolve() == Path(row['maps'][slot]).resolve(), 'map mismatch'
+                    require(Path(str(getattr(n.material,slot+'Map').filename)).resolve() == Path(row['maps'][slot]).resolve(), 'map mismatch')
                 meshes[str(mid)] = {'vertices': vertices, 'faces': faces, 'uv': uv}
             finally:
                 rt.delete(mesh)
@@ -77,14 +82,14 @@ def max_stage(job):
             bits = rt.execute('#{'+','.join(str(i) for i in drop)+'}')
             rt.meshop.deleteFaces(clone,bits,delIsoVerts=True); rt.update(clone)
             clone.name = row['objects']['NPM']+'_light'; clone.pos = rt.point3(0,0,0)
-            assert int(rt.getNumFaces(clone)) == len(keep)
+            require(int(rt.getNumFaces(clone)) == len(keep), 'subset triangle mismatch')
             rt.select(clone)
             path = str(Path(job['stage'])/'fbx'/(str(clone.name)+'.fbx')).replace('\\','/')
-            assert rt.exportFile(path,rt.Name('noPrompt'),selectedOnly=True,using=rt.FBXEXP), 'FBX export failed'
+            require(rt.exportFile(path,rt.Name('noPrompt'),selectedOnly=True,using=rt.FBXEXP), 'FBX export failed')
             ids = sorted({int(rt.getFaceMatID(clone,i)) for i in range(1,int(rt.getNumFaces(clone))+1)})
-            assert ids == [mid], 'Max face material IDs changed'
+            require(ids == [mid], 'Max face material IDs changed')
             facts.append({'object':str(clone.name),'triangles':int(rt.getNumFaces(clone)), 'pivot':xyz(clone.pivot),'face_material_ids':ids})
-        assert rt.saveMaxFile(str(Path(job['stage'])/'flora-npm-light-v001.max').replace('\\','/'), quiet=True)
+        require(rt.saveMaxFile(str(Path(job['stage'])/'flora-npm-light-v001.max').replace('\\','/'), quiet=True), 'saveMaxFile failed')
         save(job['result'], {'objects':facts})
     print('FLORA_LIGHT_STAGE_COMPLETE',job['action'])
 
@@ -96,9 +101,9 @@ def blender_stage(job):
         bpy.ops.wm.read_factory_settings(use_empty=True)
         bpy.ops.import_scene.fbx(filepath=str(fbx),use_custom_normals=True)
         objects = [o for o in bpy.context.scene.objects if o.type=='MESH']
-        assert len(objects)==1, 'FBX must hold one mesh'
+        require(len(objects)==1, 'FBX must hold one mesh')
         obj = objects[0]; m = obj.data; m.calc_loop_triangles()
-        assert len(m.loop_triangles)>0 and all(len(p.vertices)==3 for p in m.polygons)
+        require(len(m.loop_triangles)>0 and all(len(p.vertices)==3 for p in m.polygons), 'FBX is empty or not triangulated')
         vertices = [list(obj.matrix_world@v.co) for v in m.vertices]
         uv = [[list(m.uv_layers.active.data[i].uv) for i in t.loops] for t in m.loop_triangles]
         result[fbx.stem] = {'vertices':vertices,'faces':[list(t.vertices) for t in m.loop_triangles], 'uv':uv,
@@ -163,9 +168,9 @@ def execute(work, sources):
         structural=stage/'fbx'/(name+'-readback.json')
         run([BLENDER,'--background','--factory-startup','--python-exit-code','1','--python',str(ROOT/'tools/blender/fbx_readback.py'),'--',str(fbx),str(structural)],work,name+'-readback')
         report=load(structural)
-        assert report['readback_ok'] and len(report['meshes'])==1, 'structural FBX readback failed'
+        require(report['readback_ok'] and len(report['meshes'])==1, 'structural FBX readback failed')
         facts=report['meshes'][0]; mesh=readback[name]
-        assert facts['triangles']==len(mesh['faces']) and facts['polygon_degrees']=={'3':facts['triangles']}
+        require(facts['triangles']==len(mesh['faces']) and facts['polygon_degrees']=={'3':facts['triangles']}, 'inconsistent triangle readbacks')
         validate_binding(row,mesh)
         bounds=np.ptp(np.asarray(mesh['vertices']),axis=0)
         opacity=np.asarray(Image.open(row['maps']['opacity']).convert('L'))
