@@ -137,6 +137,7 @@ class FaceMetrics:
     area_m2: float
     aspect: float          # inf when degenerate
     degenerate: bool
+    nonfinite: bool = False  # a derived metric overflowed to inf / NaN; the face fails in every profile
 
 
 @dataclass(frozen=True)
@@ -158,13 +159,20 @@ class TexelPartReport:
 def face_metrics(corners: np.ndarray) -> FaceMetrics:
     p = np.asarray(corners, dtype=float)
     n = len(p)
-    edges = np.linalg.norm(np.roll(p, -1, axis=0) - p, axis=1)
-    newell = np.cross(p, np.roll(p, -1, axis=0)).sum(axis=0)
-    area = float(np.linalg.norm(newell) / 2)
-    if n > 4:
-        size = float(np.linalg.norm(p[:, None] - p[None], axis=2).max())
-    else:
-        size = float(edges.max())
+    # Local frame: subtract the first corner so the Newell cross products do not cancel catastrophically for
+    # faces far from the origin (a 1 cm sliver at 1e6 m would otherwise lose its area; PR #356 review r1).
+    with np.errstate(over="ignore", invalid="ignore"):
+        q = p - p[0]
+        edges = np.linalg.norm(np.roll(q, -1, axis=0) - q, axis=1)
+        newell = np.cross(q, np.roll(q, -1, axis=0)).sum(axis=0)
+        area = float(np.linalg.norm(newell) / 2)
+        if n > 4:
+            size = float(np.linalg.norm(q[:, None] - q[None], axis=2).max())
+        else:
+            size = float(edges.max())
+    if not (np.isfinite(edges).all() and isfinite(area) and isfinite(size)):
+        # Overflow (e.g. 1e200 m coordinates) -> inf / NaN metrics: fail closed in every profile.
+        return FaceMetrics(n, size, area, float("nan"), True, nonfinite=True)
     degenerate = bool(edges.min() <= 0 or area <= _DEGENERATE_REL * size * size)
     if degenerate:
         return FaceMetrics(n, size, area, float("inf"), True)
@@ -207,8 +215,14 @@ def _part_report(part: str, mesh, p: TexelParams) -> TexelPartReport:
     for i, f in enumerate(faces):
         count += 1
         m = face_metrics(v[list(f)])
-        max_edge, max_area, max_aspect = max(max_edge, m.max_edge_m), max(max_area, m.area_m2), max(max_aspect, m.aspect)
         tag = f"{part}#{i}"
+        if m.nonfinite:
+            max_edge = max_area = max_aspect = float("nan")
+            offenders.append(f"{tag}: non-finite metrics (edge {m.max_edge_m:.3g} m, area {m.area_m2:.3g} m^2)")
+            continue
+        if not np.isnan(max_edge):
+            max_edge, max_area = max(max_edge, m.max_edge_m), max(max_area, m.area_m2)
+            max_aspect = max(max_aspect, m.aspect)
         if m.degenerate:
             offenders.append(f"{tag}: degenerate face (edge {m.max_edge_m:.2f} m, area {m.area_m2:.3g} m^2)")
             continue
