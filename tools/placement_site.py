@@ -12,7 +12,9 @@ Pure Python. The engine computes every instance; this module only
   instance; deleted polygons and triangles) and measures the sinking at every pivot from the scene;
 - gates the run on that scene check (``qa_gate``) and counts the placed (post-deletion) triangles;
 - applies user-approved Ground exceptions only while the Ground fingerprint they were approved for is the
-  one being placed on (``apply_ground_exceptions``); a repaired Ground sends the points to the engine again.
+  one being placed on and the point equals the approved snapshot (``apply_ground_exceptions``); a repaired
+  Ground sends the points to the engine again, a changed point stops the run; non-finite points stop first
+  (``validate_points``).
 """
 from __future__ import annotations
 
@@ -60,23 +62,74 @@ def select_points(points: list[dict], assign: dict[str, str | None]) -> tuple[li
     return keep, excl
 
 
+EXCEPTION_POINT_KEYS = ("handle", "label", "x", "y", "z", "rotation")
+_ID_TOL = 1e-9  # snapshot coordinates are JSON round-trips of the adapter values: exact up to float noise
+
+
+def validate_points(points: list[dict]) -> None:
+    """Every incoming point must have finite numeric x, y (and z / rotation when present) and a handle,
+    before any exclusion: a NaN point is never excluded, filtered or placed, it stops the run."""
+    bad = []
+    for k, p in enumerate(points):
+        h = p.get("handle") or f"#{k}"
+        for key in ("x", "y"):
+            if not _finite(p.get(key)):
+                bad.append(f"point {h}: non-finite {key}={p.get(key)!r}")
+        for key in ("z", "rotation"):
+            if p.get(key) is not None and not _finite(p.get(key)):
+                bad.append(f"point {h}: non-finite {key}={p.get(key)!r}")
+        if not p.get("handle"):
+            bad.append(f"point #{k}: no handle")
+    if bad:
+        raise PlacementStopped(bad)
+
+
+def _identity_diff(snap: dict, p: dict, lib_id: str | None) -> list[str]:
+    diff = []
+    for k in EXCEPTION_POINT_KEYS:
+        a, b = snap.get(k), p.get(k)
+        if k in ("x", "y", "z", "rotation") and _finite(a) and _finite(b):
+            if abs(a - b) > _ID_TOL:
+                diff.append(f"{k} {a!r}->{b!r}")
+        elif a != b:
+            diff.append(f"{k} {a!r}->{b!r}")
+    if snap.get("library_id") != lib_id:
+        diff.append(f"library_id {snap.get('library_id')!r}->{lib_id!r}")
+    return diff
+
+
 def apply_ground_exceptions(points: list[dict], exceptions: list[dict], variant: str, ground_sha256: str,
                             assign: dict[str, str | None]) -> tuple[list[dict], list[dict], list[str]]:
     """-> (engine points, excluded, stale handles). An exception excludes its point only when it is
-    user-approved (``approved`` with ``by``, ``date``, ``quote``) AND bound to this variant's Ground master
-    sha256; bound to another Ground it is stale and the point goes to the engine (which places it, or stops
-    on it). An unapproved or malformed exception stops the run."""
+    user-approved (``approved`` with ``by``, ``date``, ``quote``), bound to this variant's Ground master
+    sha256 AND the incoming point equals the approved snapshot ``point`` (handle, label, x, y, z, rotation,
+    library id). Bound to another Ground it is stale and the point goes to the engine (which places it, or
+    stops on it). Unapproved / malformed exceptions, a changed point identity or an approved point that is
+    not among the incoming points stop the run: nothing is excluded silently."""
+    validate_points(points)
     bad, active, stale = [], {}, []
     for e in exceptions:
         ap = e.get("approved") or {}
-        if not (e.get("handle") and isinstance(e.get("ground_master_sha256"), dict)):
-            bad.append(f"ground exception malformed: {e!r}")
+        snap = e.get("point")
+        if not (e.get("handle") and isinstance(e.get("ground_master_sha256"), dict) and isinstance(snap, dict)
+                and snap.get("handle") == e.get("handle")
+                and all(k in snap for k in (*EXCEPTION_POINT_KEYS, "library_id"))):
+            bad.append(f"ground exception malformed (needs handle, ground_master_sha256, point snapshot): {e!r}")
         elif not all(ap.get(k) for k in ("by", "date", "quote")):
             bad.append(f"ground exception {e.get('handle')} not user-approved")
         elif e["ground_master_sha256"].get(variant) == ground_sha256:
             active[e["handle"]] = e
         else:
             stale.append(e["handle"])
+    by_handle = {p.get("handle"): p for p in points}
+    for h, e in active.items():
+        p = by_handle.get(h)
+        if p is None:
+            bad.append(f"ground exception {h}: approved point not among the incoming points")
+            continue
+        diff = _identity_diff(e["point"], p, assign.get(p.get("label")))
+        if diff:
+            bad.append(f"ground exception {h}: point identity changed since approval ({'; '.join(diff)})")
     if bad:
         raise PlacementStopped(bad)
     keep, excl = [], []
@@ -87,7 +140,7 @@ def apply_ground_exceptions(points: list[dict], exceptions: list[dict], variant:
             continue
         excl.append({"handle": p["handle"], "label": p.get("label"), "library_id": assign.get(p.get("label")),
                      "reason": "ground_exception", "detail": e.get("reason"), "approved": e["approved"],
-                     "ground_master_sha256": ground_sha256})
+                     "point": e["point"], "ground_master_sha256": ground_sha256})
     return keep, excl, sorted(stale)
 
 

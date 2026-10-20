@@ -39,7 +39,7 @@
   "ground_exceptions": {
    "entries": 2,
    "path": "jobs/VATUTINO-SITE/ground-exceptions.json",
-   "sha256": "c65d2863315c60b08c041f24f53407f1601ee19c30c2cee9321d6d88c5fb4046"
+   "sha256": "7eb17a7173e78a2853b6f2921b68d2c6992b41149cc4a96342c71dbb903b296b"
   },
   "ground_npm": {
    "fbx": "C:\\x\\t_d94665f2\\ground_v014\\npm\\SM_Vatutino_Ground.fbx",
@@ -140,19 +140,19 @@
     "review": 7
    },
    "blend": {
-    "path": "C:\\x\\t_5e4ea2be\\run_v004\\npm\\VATUTINO-SITE_placement_npm_v001.blend",
-    "sha256": "b5fb73a359b1f5618b5ee81bc932ff1df74c5d9972e61919a328eac22e94fe41"
+    "path": "C:\\x\\t_5e4ea2be\\run_v005\\npm\\VATUTINO-SITE_placement_npm_v001.blend",
+    "sha256": "d4104d1d3f7e638c6e0aa24376eb9d109d766cc2bc36634f5873c32a25a0b687"
    },
    "commands": [
     {
-     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- facts C:\\x\\t_5e4ea2be\\run_v004\\npm\\spec.json C:\\x\\t_5e4ea2be\\run_v004\\npm\\facts.json",
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- facts C:\\x\\t_5e4ea2be\\run_v005\\npm\\spec.json C:\\x\\t_5e4ea2be\\run_v005\\npm\\facts.json",
      "exit_code": 0,
-     "seconds": 2.3
+     "seconds": 2.8
     },
     {
-     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- instance C:\\x\\t_5e4ea2be\\run_v004\\npm\\spec.json C:\\x\\t_5e4ea2be\\run_v004\\npm\\plan.json C:\\x\\t_5e4ea2be\\run_v004\\npm\\VATUTINO-SITE_placement_npm_v001.blend C:\\x\\t_5e4ea2be\\run_v004\\npm\\readback.json",
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- instance C:\\x\\t_5e4ea2be\\run_v005\\npm\\spec.json C:\\x\\t_5e4ea2be\\run_v005\\npm\\plan.json C:\\x\\t_5e4ea2be\\run_v005\\npm\\VATUTINO-SITE_placement_npm_v001.blend C:\\x\\t_5e4ea2be\\run_v005\\npm\\readback.json",
      "exit_code": 0,
-     "seconds": 3.3
+     "seconds": 4.3
     }
    ],
    "findings": {
@@ -1210,6 +1210,15 @@
      "label": "Урна",
      "library_id": "VAT_MAF_T3510_02",
      "detail": "Урна inside 568BF but ~1 cm outside the edge of a Ground v014 cut-out (border bbox x -7680.43..-7675.91, y -15352..-15336); engine finding point_outside_ground (run_v003). Ground defect reported to #295.",
+     "point": {
+      "handle": "15E288",
+      "label": "Урна",
+      "library_id": "VAT_MAF_T3510_02",
+      "rotation": 269.6311338790634,
+      "x": -7675.904729374311,
+      "y": -15341.19687206188,
+      "z": 0.0
+     },
      "ground_master_sha256": "f1a03db9d7b2293db50817f8cb7c0c021d25737ff0c2f9ea984e47192b1979bb",
      "approved": {
       "by": "Artem",
@@ -1222,6 +1231,15 @@
      "label": "Урна",
      "library_id": "VAT_MAF_T3510_02",
      "detail": "Урна inside 568BF but ~1 cm outside the edge of a Ground v014 cut-out (border bbox x -7680.43..-7675.91, y -15352..-15336); engine finding point_outside_ground (run_v003). Ground defect reported to #295.",
+     "point": {
+      "handle": "15E289",
+      "label": "Урна",
+      "library_id": "VAT_MAF_T3510_02",
+      "rotation": 269.6311338790634,
+      "x": -7675.886786038562,
+      "y": -15346.55449148379,
+      "z": 0.0
+     },
      "ground_master_sha256": "f1a03db9d7b2293db50817f8cb7c0c021d25737ff0c2f9ea984e47192b1979bb",
      "approved": {
       "by": "Artem",
@@ -1281,19 +1299,19 @@
     "review": 7
    },
    "blend": {
-    "path": "C:\\x\\t_5e4ea2be\\run_v004\\vpm\\VATUTINO-SITE_placement_vpm_v001.blend",
-    "sha256": "231ec14a19a39040d75a84ca2856f63ef6a87c56f5d98d634114b489426de24b"
+    "path": "C:\\x\\t_5e4ea2be\\run_v005\\vpm\\VATUTINO-SITE_placement_vpm_v001.blend",
+    "sha256": "7c689149b4a58d2ed13c92081e21cd918416421af29849687c5f96595b8d2368"
    },
    "commands": [
     {
-     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- facts C:\\x\\t_5e4ea2be\\run_v004\\vpm\\spec.json C:\\x\\t_5e4ea2be\\run_v004\\vpm\\facts.json",
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- facts C:\\x\\t_5e4ea2be\\run_v005\\vpm\\spec.json C:\\x\\t_5e4ea2be\\run_v005\\vpm\\facts.json",
      "exit_code": 0,
-     "seconds": 2.5
+     "seconds": 2.7
     },
     {
-     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- instance C:\\x\\t_5e4ea2be\\run_v004\\vpm\\spec.json C:\\x\\t_5e4ea2be\\run_v004\\vpm\\plan.json C:\\x\\t_5e4ea2be\\run_v004\\vpm\\VATUTINO-SITE_placement_vpm_v001.blend C:\\x\\t_5e4ea2be\\run_v004\\vpm\\readback.json",
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- instance C:\\x\\t_5e4ea2be\\run_v005\\vpm\\spec.json C:\\x\\t_5e4ea2be\\run_v005\\vpm\\plan.json C:\\x\\t_5e4ea2be\\run_v005\\vpm\\VATUTINO-SITE_placement_vpm_v001.blend C:\\x\\t_5e4ea2be\\run_v005\\vpm\\readback.json",
      "exit_code": 0,
-     "seconds": 3.5
+     "seconds": 4.2
     }
    ],
    "findings": {
@@ -2328,6 +2346,15 @@
      "label": "Урна",
      "library_id": "VAT_MAF_T3510_02",
      "detail": "Урна inside 568BF but ~1 cm outside the edge of a Ground v014 cut-out (border bbox x -7680.43..-7675.91, y -15352..-15336); engine finding point_outside_ground (run_v003). Ground defect reported to #295.",
+     "point": {
+      "handle": "15E288",
+      "label": "Урна",
+      "library_id": "VAT_MAF_T3510_02",
+      "rotation": 269.6311338790634,
+      "x": -7675.904729374311,
+      "y": -15341.19687206188,
+      "z": 0.0
+     },
      "ground_master_sha256": "82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5",
      "approved": {
       "by": "Artem",
@@ -2340,6 +2367,15 @@
      "label": "Урна",
      "library_id": "VAT_MAF_T3510_02",
      "detail": "Урна inside 568BF but ~1 cm outside the edge of a Ground v014 cut-out (border bbox x -7680.43..-7675.91, y -15352..-15336); engine finding point_outside_ground (run_v003). Ground defect reported to #295.",
+     "point": {
+      "handle": "15E289",
+      "label": "Урна",
+      "library_id": "VAT_MAF_T3510_02",
+      "rotation": 269.6311338790634,
+      "x": -7675.886786038562,
+      "y": -15346.55449148379,
+      "z": 0.0
+     },
      "ground_master_sha256": "82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5",
      "approved": {
       "by": "Artem",

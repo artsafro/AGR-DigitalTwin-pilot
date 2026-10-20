@@ -66,7 +66,7 @@ def build(res: dict, parts: dict) -> tuple[dict, str]:
             "flora": sorted(rows_flora, key=lambda r: r["pos"]),
             "not_placed": [{"label": k[0], "reason": k[1], "points": n} for k, n in sorted(not_placed.items())],
             "missing_vpm": v["missing_vpm"],
-            "ground_exceptions": [{k: x.get(k) for k in ("handle", "label", "library_id", "detail",
+            "ground_exceptions": [{k: x.get(k) for k in ("handle", "label", "library_id", "detail", "point",
                                                          "ground_master_sha256", "approved")}
                                   for x in v["excluded"] if x["reason"] == "ground_exception"],
             "ground_exceptions_stale": v.get("ground_exceptions_stale", []),

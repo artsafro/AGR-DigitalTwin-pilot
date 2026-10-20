@@ -4,7 +4,7 @@ Job script (not a shared tool). Inputs are COPIES / outputs outside git; the gat
 (Artem 2026-10-20) are encoded in FLORA_PICKS / the exclusion reasons. Points over missing Ground are never
 removed by handle here: the engine stops on them unless ``ground-exceptions.json`` holds a user-approved
 exception bound to the sha256 of the Ground master being placed on (a repaired Ground re-places them).
-Exit codes: 0 pass; 1 engine stop / invalid exception (nothing instanced); 3 scene technical QA failed
+Exit codes: 0 pass; 1 non-finite input point / engine stop / invalid or identity-changed exception (nothing instanced); 3 scene technical QA failed
 (scene equality or sinking): diagnostics kept in results.json, the scene renamed ``*.QA_FAILED.blend``. Nothing here computes placement:
 ``dt_ai.placement.engine.place`` does, ``tools/placement_site.py`` wraps it, ``tools/blender/
 placement_instance.py`` instances it.
@@ -97,6 +97,13 @@ def run(cfg: dict, out: Path, seed: int, dcc=blender) -> int:
                                   "match": "exact" if f["pos"] in EXACT else ("substitute" if c else "no_model")}
     export = json.loads((FLORA_FBX / "export.json").read_text(encoding="utf-8"))["objects"]
     results = {"seed": a_seed, "inputs": inputs, "status": "running", "variants": {}}
+    try:
+        ps.validate_points(adapter["planting"] + adapter["maf"])
+    except ps.PlacementStopped as exc:
+        results["status"], results["stopped"] = "stopped", exc.reasons
+        (out / "results.json").write_text(ps.dumps(results), encoding="utf-8")
+        print(f"STOPPED (input points) {exc.reasons[:5]}")
+        return 1
     qa_failed = False
     for var in ("npm", "vpm"):
         V = var.upper()

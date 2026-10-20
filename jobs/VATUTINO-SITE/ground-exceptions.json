@@ -1,5 +1,5 @@
 {
-  "purpose": "User-approved placement exceptions bound to one Ground master (#296). A repaired Ground (other sha256) makes the entry stale and the point is placed again.",
+  "purpose": "User-approved placement exceptions bound to one Ground master (#296) AND to the exact adapter point (handle, label, x, y, z, rotation, library id). A repaired Ground (other sha256) makes the entry stale and the point is placed again; a changed point (coordinates, label, library id) or a non-finite point stops the run.",
   "exceptions": [
     {
       "handle": "15E288",
@@ -13,6 +13,15 @@
         "by": "Artem",
         "date": "2026-10-20",
         "quote": "option a: the 2 urns 15E288/15E289 (VAT_MAF_T3510_02), ~1 cm outside the Ground v014 cut-out edge, are NOT placed for this run; list them in the placement report with the reason and the Ground v014 sha256. The exclusion is bound to Ground v014 only: a corrected Ground places them again."
+      },
+      "point": {
+        "handle": "15E288",
+        "label": "Урна",
+        "x": -7675.904729374311,
+        "y": -15341.19687206188,
+        "z": 0.0,
+        "rotation": 269.6311338790634,
+        "library_id": "VAT_MAF_T3510_02"
       }
     },
     {
@@ -27,6 +36,15 @@
         "by": "Artem",
         "date": "2026-10-20",
         "quote": "option a: the 2 urns 15E288/15E289 (VAT_MAF_T3510_02), ~1 cm outside the Ground v014 cut-out edge, are NOT placed for this run; list them in the placement report with the reason and the Ground v014 sha256. The exclusion is bound to Ground v014 only: a corrected Ground places them again."
+      },
+      "point": {
+        "handle": "15E289",
+        "label": "Урна",
+        "x": -7675.886786038562,
+        "y": -15346.55449148379,
+        "z": 0.0,
+        "rotation": 269.6311338790634,
+        "library_id": "VAT_MAF_T3510_02"
       }
     }
   ]

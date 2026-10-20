@@ -291,7 +291,7 @@ def test_ground_exceptions_bind_to_fingerprint():
         ps.apply_ground_exceptions(pts, exc, "npm", "A", ASSIGN)
 
 
-@pytest.mark.parametrize("field,value", [("x", 1.0), ("y", -3.0), ("label", "Липа"), ("rotation", 7.0)])
+@pytest.mark.parametrize("field,value", [("x", 1.0), ("y", -3.0), ("label", "Скамья"), ("rotation", 7.0)])
 def test_ground_exception_stops_on_changed_point_identity(field, value):
     pts = points(4)
     snap = {k: pts[1][k] for k in ps.EXCEPTION_POINT_KEYS}
