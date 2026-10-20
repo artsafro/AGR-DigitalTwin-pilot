@@ -1,56 +1,109 @@
 # Flora texture diagnosis (#369)
 
-- Отчёт предварительный: Артём запросил роли островов и классы пикселей; PR пока не принят.
-- VPM нужно проверять по соответствию foliage/trunk атласу, NPM-звёзды — отдельно; цельное растение на NPM-карте допустимо.
-- Проверка 99 объектов доказывает сохранение UV и замену карт, но ещё не даёт маршруты исправления по всем объектам.
-- На оригинале VPM-липы непрозрачная часть одного UV-острова занимает 13,56%; порог 95% от всей площади не калибруется.
-- Нужно подтвердить знаменатель метрики; ассеты не изменены, семантические оценки и окончательные маршруты пока не выданы.
+- Диагностика НЕ принята: нужна область применения геометрического правила к непрерывной текстуре коры.
+- Полные вершины, UV, грани и material IDs извлечены для 99/99 пар и трёх light FBX; новых изменений ассетов нет.
+- По решению Артёма считаем покрытие bbox, не плотность opacity: исходная карточка листвы липы проходит с 100%.
+- Но исходный bark-island покрывает лишь 0,244472% цельной полосы коры, хотя UV корректно лежит на коре; это новый случай калибровки.
+- Сохранены картинка, 19 исходных объектов / 11 889 островов и полный native-инвентарь; заменам новые оценки и итоговые маршруты не выданы.
 
-## Rework gate: original calibration and pending metric definition
+## Geometric recalibration [D155]
 
-Artem requested role-labelled UV islands, pixel semantic masks, separate NPM-star checks,
-per-object repair routes over all 99 objects, and a decision/domain rule (Kanban task #369,
-operator review delivered 2026-10-20; calibration question in task comment 1518).
-**Those added acceptance points are not delivered by the initial report below. PR #377 remains draft.**
+Artem's voice decision recorded on Kanban `t_49156f66`, comment **1542** (2026-10-20),
+now coordination rule 48, supersedes both interim 95% density/class-support proposals.
+The decision is recorded without changing its threshold in the
+[Flora sheet](../domain/areas/flora.md#geometric-sprite-coverage-d155) and decision log [D155].
+The previous opaque-area calibration is historical evidence, **not the current metric**.
 
-Before scoring the replacements, the proposed literal denominator was tested on an original:
-`Tilia_cordata_VPM` / `19_Lipa_HP`, connected UV component 0 (source faces 0 and 30), original
-`T_77_07_0004008_95_K_6_Ground_Diffuse_1.1035.png`. This is the catalogue's VPM source; the
-larger `Lipa_melkolistnaya_HP` with the `.1030` atlas is currently its NPM source. No catalogue
-profile assignments were silently exchanged to match the review example.
+- VPM: `area(island intersect sprite opaque bbox) / area(sprite opaque bbox)`;
+  target 0.80–0.95. Above 0.95 only when no neighbouring sprite opaque pixel lies in the island.
+- NPM whole-plant plane: `area(plant opaque bbox) / area(island)`; target 0.80–0.95,
+  zero clipped opaque pixels with 1 native-pixel tolerance.
+- Opacity threshold is >=128. Geometric area is exact polygon union/intersection (Shapely 2.1.2),
+  not opaque pixel counts. Opacity sampling/clipping uses the actual 2048/4096 images.
+- Original project atlases use an independently alpha-segmented **candidate cell** for their plant region;
+  a replacement per-species map is a whole texture. Candidate cells are separated by >=1.5%-image empty
+  gutters without using UVs. Touching sprites may remain ambiguous: this is not an authored cell manifest.
 
-| Raster resolution | Whole UV-island area, pixels | Original opacity >=128, pixels | Upper bound on foliage-class / whole-island area |
-|---|---:|---:|---:|
-| 1024 | 24,492 | 3,325 | 13.5759% |
-| 2048 | 97,969 | 13,282 | 13.5573% |
+### A new original-only failure: continuous bark, not foliage density
 
-Every matching foliage pixel is necessarily opaque under the requested class definition, so its
-share cannot exceed this bound. Thus a literal 95% of **whole island area** cannot pass this original
-alpha card, even with perfect semantic segmentation. The original `.1030` NPM component cards
-likewise have only 38.15–38.56% opaque area; bark components are 100% opaque. These are measured
-upper bounds, not completed role classifications or semantic scores.
+Inspected picture:
+`C:/x/review/2026-10-20/flora-texture-diagnosis/tilia-original-bark-geometric-v001.png`.
+The green leaf-card outline surrounds its branch sprite; the red narrow triangle lies entirely within
+bark, far from the foliage sprites. Cyan rectangles show independently measured alpha bboxes.
+The picture was opened with `vision_analyze` after generation.
 
-Decision requested: does 95% apply to correspondence on the **intended opaque support**, with
-opacity/silhouette completeness checked separately, or must the whole-island denominator remain?
-The two cannot be substituted silently: a per-pixel foreground test and a sprite-rectangle containment
-test are different metrics. No threshold decision row/domain guarantee or per-object route issue is
-recorded until this definition is resolved. The operator's new authorization to open one follow-up
-issue is retained for when the routes have actually been measured.
+Original `Tilia_cordata_VPM` / `19_Lipa_HP`, original `.1035` atlas, 4096 x 4096:
 
-Reproducer (real original input, no new Max call needed):
+| Original component | Geometry role | Island polygon area, px² | Target bbox area, px² | Geometric coverage | Neighbour opaque pixels | Result |
+|---|---|---:|---:|---:|---:|---|
+| Island 0, faces 0/30 | foliage card | 388,986.097656 | 227,700 | 100.000000% | 0 | Pass (>95% exception explicitly allowed) |
+| Island 166, face 332 | trunk | 7,930.757195 | 3,244,032 | 0.244472% | 0 | Fail if every bark island must cover >=80% of the full strip |
+
+Exact measured receipt: `experiments/flora-texture-diagnosis/bark-calibration-v001.json` (includes native inventory SHA-256).
+
+The bark target is `[3304,0,4096,4096]` in native pixels. Its island samples opaque bark at
+99.5347% raster density; that density is recorded only as supporting evidence, **not substituted
+for the geometric score**. The foliage card formerly reported at ~13.56% density now passes correctly.
+
+This is not just duplicated UV indices hiding an adjacent continuous island. Face 332's neighbouring
+geometry faces 339, 775 and 794 differ at their shared vertices in UV by 0.009893–0.195873 UV units;
+these are real seams. Role classification is inherited from the connected 3D element: the trunk
+is non-planar, vertically elongated and >=20% of object height. Planar cards use an SVD ratio <=0.001;
+NPM full-height plane candidates additionally span >=75% of object height. Unknowns stay unknown.
+These diagnostic shape rules are not botanical truth or a certified star-arrangement detector.
+
+**Decision needed:** does 80–95% sprite coverage apply to every island sampling a continuous bark
+strip too, knowingly rejecting this original, or does continuous bark use role/region containment
+while the geometric coverage target applies to discrete foliage/whole-plant sprites?
+No exemption, new threshold, UV welding or atlas crop was invented to force the original to pass.
+
+### Checkpoint and deliberately uncompleted acceptance
+
+Published checkpoint:
+`C:/x/review/2026-10-20/flora-texture-diagnosis/geometric-calibration-v001/index.html`.
+It links the exact full native inventory, per-island partial metrics, partial distributions and
+candidate class-mask overlays. Source roles, unknown lists and every face index are retained.
+
+| Evidence | Actual result |
+|---|---|
+| Detailed source arrays | Union 68/68 + FLORIO 31/31; all 99 named source pairs |
+| Detailed v003 arrays | 99/99, including per-face IDs and explicit MultiMaterial ID lists |
+| Light FBX native readback | 3/3 with detailed arrays and direct opacity-slot settings |
+| Original-only geometric checkpoint | 19 objects, 11,889 islands; complete face accounting per measured object |
+| New replacement/light geometric scores | 0; stopped at the original-calibration gate |
+| Final repair routes / follow-up issue | Not issued; original calibration is unresolved |
+| Candidate pixel classes | RGB green/brown hypotheses plus explicit unknown opaque pixels; NOT semantic ground truth |
+| Focused tests at checkpoint | 69 passed, including native-ROI geometry, exact bark-triangle regression and fail-closed original gate |
+
+The former missing 89 detailed pairs no longer require native extraction. Do **not** rerun it merely
+because the initial inventory stored details only for the selected six. Reuse hash-verified
+`inventory-all.json` in the published checkpoint (`inventory-all-v005.json` in private scratch).
+
+Remaining after the bark-policy answer: validate the atlas-cell/role annotation, complete original
+calibration and separate NPM plane/star arrangement checks, then score all 99 replacements and 3 FBX,
+finish the six semantic pass/fail sheets, issue final per-object repair-route counts, and propose the
+single fix follow-up. The existing six render sheets below remain qualitative evidence, not a substitute.
+No final semantic masks or 99-object acceptance distribution are claimed here.
+
+Reproduction (fresh output paths required):
 
 ```bash
-uv run python experiments/flora-texture-diagnosis/calibrate_uv_area.py \
-  --inventory "<private inventory-v002.json>" --object Tilia_cordata_VPM \
-  --bitmap "<copied original maps/T_77_07_0004008_95_K_6_Ground_Diffuse_1.1035.png>" \
-  --output "<fresh calibration.json>"
-uv run pytest tests/test_flora_texture_diagnosis.py experiments/flora-texture-diagnosis/test_calibration.py \
-  -q -o addopts='' --basetemp=C:/x/t_49156f66-calibration
+# all-job-v005.json selects all material IDs and sets inventory-all-v005.json
+export FLORA_DIAG_JOB="<worktree>/tmp/all-job-v005.json"
+python C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py max --ping --card t_49156f66
+python C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py max --file tools/flora/diagnose_texture_max.py --card t_49156f66
+uv run python tools/flora/measure_sprite_coverage.py --job <all-job.json> --output <fresh metrics.json> --pictures <fresh folder>
+# The source-only run was intentionally stopped after the calibration witness; .partial.json is NOT complete.
+uv run python experiments/flora-texture-diagnosis/bark_calibration.py --job <all-job.json> --metrics <partial.json> --output <fresh witness.png>
+uv run python tools/flora/sheet_sprite_coverage.py --job <all-job.json> --metrics <partial.json> --pictures <folder> --witness <witness.png> --output <fresh checkpoint>
 ```
 
-Result: 34 focused tests passed, including UV connectivity without merging stacked cards and the
-127/128 opacity boundary. The calibration JSON explicitly sets `acceptance_metric_approved=false`
-and `semantic_roles_classified=false`. It does not pretend the expanded acceptance is complete.
+Native extraction completed under Max 2026.3 with zero unmatched objects; no MAX save or asset export.
+The existing startup warning still makes the native exit nonzero although current completion markers
+and complete per-object arrays are present; wrapper status alone was not used as success evidence.
+The original-only measurement was stopped and no owned analysis/native process remains at handoff.
+Full-suite receipt remains the earlier 7,122 passed / 2 known #361 timing failures; this docs/tools
+rework uses focused tests and does not claim a new full-suite pass.
 
 ## Evidence and scope
 

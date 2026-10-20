@@ -30,10 +30,12 @@ def material_info(mat):
     result = {'name': str(mat.name), 'class': str(rt.classOf(mat)), 'properties': {}, 'textures': []}
     result['bindings'] = {k: prop(mat,k) for k in ('diffuseMap','opacityMap','diffuseMapEnable','opacityMapEnable','diffuseMapAmount','opacityMapAmount')}
     result['slot_paths']={}
+    result['slot_settings']={}
     for slot in ('diffuseMap','opacityMap'):
         try:
             texture=getattr(mat,slot)
             result['slot_paths'][slot]=str(texture.filename)
+            result['slot_settings'][slot]={k:prop(texture,k) for k in ('monoOutput','rgbOutput','alphaSource')}
         except (AttributeError,RuntimeError):
             result['slot_paths'][slot]=None
     for key in rt.getPropNames(mat):
@@ -45,6 +47,8 @@ def material_info(mat):
         result['textures'].append({'name': str(tex.name), 'filename': str(tex.filename),
             'settings': {k: prop(tex,k) for k in ('monoOutput','rgbOutput','alphaSource','premultAlpha','filtering','gamma')},
             'coords': {k: prop(coords,k) for k in ('mapChannel','U_Tiling','V_Tiling','U_Offset','V_Offset','U_Angle','V_Angle','W_Angle','U_Mirror','V_Mirror','U_Tile','V_Tile')}})
+    if str(rt.classOf(mat)) == 'Multimaterial':
+        result['submaterial_ids'] = [int(v) for v in mat.materialIDList]
     for i in range(1, int(rt.getNumSubMtls(mat))+1):
         result.setdefault('submaterials',[]).append(material_info(rt.getSubMtl(mat,i)))
     return result
@@ -66,7 +70,8 @@ def inspect(node, detail):
         if detail:
             result.update(vertices=[xyz(rt.getVert(mesh,i)) for i in range(1,int(mesh.numverts)+1)],
                           faces=[[int(c)-1 for c in xyz(rt.getFace(mesh,i))] for i in range(1,nf+1)],
-                          uv=uv,uvfaces=uvfaces)
+                          uv=uv,uvfaces=uvfaces,
+                          face_material_ids=[int(rt.getFaceMatID(mesh,i)) for i in range(1,nf+1)])
         return result
     finally:
         rt.delete(mesh)
