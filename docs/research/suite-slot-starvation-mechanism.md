@@ -27,48 +27,70 @@
 
 ### 2. Deterministic discrete-event reproduction (unqueued algorithm only)
 
-This small model freezes the older waiter's polls at times 0, 15, 30, 45; each younger waiter polls exactly at a release instant, before the older waiter's next poll. Two slots are initially held. Each younger suite holds its acquired slot for five model-time units. The model treats acquisition as an atomic exclusive-create winner and tracks occupancy; it uses no real lock files, sleeps, subprocesses, or pytest. The control has no younger arrivals and releases the initial holders at t=5.
+This model illustrates the reported historical **unqueued** poll-first mechanism, not the checked ticket-queue implementation. A starts waiting at t=0 and polls every 15 model-time units through t=60. H0 remains active throughout that observation window; H1 releases at t=5. Younger arrivals B, C, D and E immediately claim successive vacancies at t=5, 20, 35 and 50. Each younger holder's scheduled duration is 15 units (E's release at t=65 is outside the window). Releases precede admissions at equal timestamps, so event times are nondecreasing. Exclusive acquisition is atomic in this model; there are no real lock files, sleeps or subprocesses.
 
 ```python
-# Deterministic toy model of poll-first admission, NOT suite_slot.py.
-slots = 2
-active = {"H0", "H1"}
-max_active = len(active)
-old_waiter = "A"
-old_polls = [0, 15, 30, 45]
-releases = [5, 20, 35, 50]
-newcomers = ["B", "C", "D", "E"]
-log = []
+# Explanatory unqueued historical-mechanism model, NOT suite_slot.py.
+# Embedded for inspection only; not executed during this review.
+def simulate(events):
+    capacity = 2
+    active = {"H0", "H1"}
+    peak = len(active)
+    admissions = []
+    log = []
+    previous_time = -1
+    for time, action, card in events:
+        assert time >= previous_time
+        previous_time = time
+        if action == "release":
+            active.remove(card)
+        elif action == "poll":
+            if len(active) < capacity:
+                assert card not in active
+                active.add(card)
+                admissions.append(card)
+                action = "admit"
+            else:
+                action = "blocked"
+        else:
+            raise ValueError(action)
+        assert len(active) <= capacity
+        peak = max(peak, len(active))
+        log.append((time, action, card, len(active)))
+    return admissions, peak, active, log
 
-for poll, release, newcomer in zip(old_polls, releases, newcomers):
-    # One initial/younger holder releases at the specified instant.
-    released = sorted(active)[0]
-    active.remove(released)
-    log.append((release, "release", released, len(active)))
+contended = [
+    (0, "poll", "A"),
+    (5, "release", "H1"), (5, "poll", "B"),
+    (15, "poll", "A"),
+    (20, "release", "B"), (20, "poll", "C"),
+    (30, "poll", "A"),
+    (35, "release", "C"), (35, "poll", "D"),
+    (45, "poll", "A"),
+    (50, "release", "D"), (50, "poll", "E"),
+    (60, "poll", "A"),
+]
+admissions, peak, _, log = simulate(contended)
+assert admissions == ["B", "C", "D", "E"]
+assert "A" not in admissions and peak == 2
+print("overtaking admissions:", admissions)
+print("A acquired:", "A" in admissions)
+print("maximum active:", peak, "capacity:", 2)
 
-    # Frozen polling phase: younger process claims the vacancy before A polls.
-    active.add(newcomer)
-    max_active = max(max_active, len(active))
-    log.append((release, "admit", newcomer, len(active)))
-
-    # A's next poll is later, after the younger holder has finished and
-    # a further younger arrival takes the released vacancy (next iteration).
-    # Thus every modeled admission goes to a younger waiter, never A.
-    log.append((poll, "A-poll", "still blocked", len(active)))
-
-print("overtaking admissions:", [e[2] for e in log if e[1] == "admit"])
-print("A acquired:", any(e[1] == "admit" and e[2] == old_waiter for e in log))
-print("maximum active:", max_active, "capacity:", slots)
-
-# No-contention control: holders finish, then A polls an available slot.
-control_active = {"H0", "H1"}
-control_active.remove("H0")  # release at t=5
-control_active.remove("H1")  # release at t=6
-control_active.add("A")      # A's poll at t=15
-print("control A admitted:", "A" in control_active, "active:", len(control_active))
+# No younger arrivals: initial holders release, then A's next poll succeeds.
+control = [
+    (0, "poll", "A"),
+    (5, "release", "H0"),
+    (6, "release", "H1"),
+    (15, "poll", "A"),
+]
+control_admissions, _, control_active, _ = simulate(control)
+assert control_admissions == ["A"] and control_active == {"A"}
+print("control A admitted:", "A" in control_admissions,
+      "active:", len(control_active))
 ```
 
-Expected deterministic output: overtaking admissions `['B', 'C', 'D', 'E']`; `A acquired: False`; maximum active `2 capacity: 2`; control `A admitted: True active: 1`. This is a constructive illustration of the old algorithm's lack of a fairness bound, not historical evidence. The script is deliberately not run: this is an embedded explanatory model, and no tests or suite runner are in scope.
+Expected by inspection, not execution: overtaking admissions `['B', 'C', 'D', 'E']`; `A acquired: False`; maximum active `2 capacity: 2`; control `A admitted: True active: 1`. Every A poll in the contended trace encounters two live holders; four younger admissions occur without exceeding capacity. Repeating the same release/younger-poll phase and extending H0's lifetime constructs arbitrarily long waits: this is a possibility argument, not a claim about likelihood, the current queue, or historical events. The embedded model has not been executed.
 
 ### 3. What the historical evidence establishes—and does not
 
@@ -99,7 +121,9 @@ Expected deterministic output: overtaking admissions `['B', 'C', 'D', 'E']`; `A 
 
 ## Sources
 
-- **Inspected directly:** `C:/Users/artsafro/hermes_kanban/scripts/suite_slot.py`, SHA-256 `390da67fe650aeae1d0bef197c3577edf5758d4473b6dff38b39b7979b6a339e`; cited line ranges refer to this exact inspected file.
-- [Issue #361](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/361) — claim and original context, verified with `gh issue view`.
-- [PR #362](https://github.com/artsafro/AGR-DigitalTwin-pilot/pull/362) — comments and review report, verified with `gh pr view`.
+Review scope: this revision checks the report's internal consistency against its already-collected evidence descriptions. The external script, issue, PR and Kanban history were not reopened or independently revalidated in this revision; the hash and source-verification statements below are retained provenance from the initial research, not new verification claims.
+
+- **Inspected directly during initial research:** `C:/Users/artsafro/hermes_kanban/scripts/suite_slot.py`, SHA-256 `390da67fe650aeae1d0bef197c3577edf5758d4473b6dff38b39b7979b6a339e`; cited line ranges refer to this exact inspected file.
+- [Issue #361](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/361) — claim and original context; initial research records verification with `gh issue view`.
+- [PR #362](https://github.com/artsafro/AGR-DigitalTwin-pilot/pull/362) — comments and review report; initial research records verification with `gh pr view`.
 - **Read-only Kanban card history:** `t_8e0361be` — reported 3,300-second wait / newer admissions and later coordination note. These are authored reports, not independent lock telemetry.
