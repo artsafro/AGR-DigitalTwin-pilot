@@ -1,5 +1,10 @@
 # Experiment: Flora texture diagnosis
 
+**Preliminary / rework requested.** The expanded island-role/pixel-class acceptance is not complete.
+Original VPM Tilia calibrates at only 13.5573% opaque / whole UV area, incompatible with a literal
+95% whole-area foreground-class threshold. See the main report rework gate and the tested
+`experiments/flora-texture-diagnosis/calibrate_uv_area.py` before extending the scorer.
+
 Main deliverable: [diagnosis report](../research/flora-texture-diagnosis.md), #369.
 Question: are the review-scene defects caused by paths, UV correspondence, opacity or native rendering?
 No production fix, generated map, catalogue change or published-asset edit is part of this experiment.

@@ -1,10 +1,56 @@
 # Flora texture diagnosis (#369)
 
-Артём: карты заменили, а UV оставили от старых атласов — это основная причина неправильного вида.
-У липы, берёзы и боярышника пропадают стволы; дёрен становится квадратной вырезкой, ирга — россыпью листьев, спирея исчезает.
-Одинаковый механизм найден скриптом у 99/99 объектов; внешний дефект проверен изображениями для всех шести выбранных видов.
-NPM light не исправляет текстурирование: он унаследовал неверное соответствие карт и UV.
-Подготовлены шесть сравнительных листов и HTML; исходники, опубликованные библиотеки, карты и каталог не изменены.
+- Отчёт предварительный: Артём запросил роли островов и классы пикселей; PR пока не принят.
+- VPM нужно проверять по соответствию foliage/trunk атласу, NPM-звёзды — отдельно; цельное растение на NPM-карте допустимо.
+- Проверка 99 объектов доказывает сохранение UV и замену карт, но ещё не даёт маршруты исправления по всем объектам.
+- На оригинале VPM-липы непрозрачная часть одного UV-острова занимает 13,56%; порог 95% от всей площади не калибруется.
+- Нужно подтвердить знаменатель метрики; ассеты не изменены, семантические оценки и окончательные маршруты пока не выданы.
+
+## Rework gate: original calibration and pending metric definition
+
+Artem requested role-labelled UV islands, pixel semantic masks, separate NPM-star checks,
+per-object repair routes over all 99 objects, and a decision/domain rule (Kanban task #369,
+operator review delivered 2026-10-20; calibration question in task comment 1518).
+**Those added acceptance points are not delivered by the initial report below. PR #377 remains draft.**
+
+Before scoring the replacements, the proposed literal denominator was tested on an original:
+`Tilia_cordata_VPM` / `19_Lipa_HP`, connected UV component 0 (source faces 0 and 30), original
+`T_77_07_0004008_95_K_6_Ground_Diffuse_1.1035.png`. This is the catalogue's VPM source; the
+larger `Lipa_melkolistnaya_HP` with the `.1030` atlas is currently its NPM source. No catalogue
+profile assignments were silently exchanged to match the review example.
+
+| Raster resolution | Whole UV-island area, pixels | Original opacity >=128, pixels | Upper bound on foliage-class / whole-island area |
+|---|---:|---:|---:|
+| 1024 | 24,492 | 3,325 | 13.5759% |
+| 2048 | 97,969 | 13,282 | 13.5573% |
+
+Every matching foliage pixel is necessarily opaque under the requested class definition, so its
+share cannot exceed this bound. Thus a literal 95% of **whole island area** cannot pass this original
+alpha card, even with perfect semantic segmentation. The original `.1030` NPM component cards
+likewise have only 38.15–38.56% opaque area; bark components are 100% opaque. These are measured
+upper bounds, not completed role classifications or semantic scores.
+
+Decision requested: does 95% apply to correspondence on the **intended opaque support**, with
+opacity/silhouette completeness checked separately, or must the whole-island denominator remain?
+The two cannot be substituted silently: a per-pixel foreground test and a sprite-rectangle containment
+test are different metrics. No threshold decision row/domain guarantee or per-object route issue is
+recorded until this definition is resolved. The operator's new authorization to open one follow-up
+issue is retained for when the routes have actually been measured.
+
+Reproducer (real original input, no new Max call needed):
+
+```bash
+uv run python experiments/flora-texture-diagnosis/calibrate_uv_area.py \
+  --inventory "<private inventory-v002.json>" --object Tilia_cordata_VPM \
+  --bitmap "<copied original maps/T_77_07_0004008_95_K_6_Ground_Diffuse_1.1035.png>" \
+  --output "<fresh calibration.json>"
+uv run pytest tests/test_flora_texture_diagnosis.py experiments/flora-texture-diagnosis/test_calibration.py \
+  -q -o addopts='' --basetemp=C:/x/t_49156f66-calibration
+```
+
+Result: 34 focused tests passed, including UV connectivity without merging stacked cards and the
+127/128 opacity boundary. The calibration JSON explicitly sets `acceptance_metric_approved=false`
+and `semantic_roles_classified=false`. It does not pretend the expanded acceptance is complete.
 
 ## Evidence and scope
 
@@ -162,7 +208,12 @@ Native scripts never save MAX scenes or export assets. No binaries are committed
 logs; wrapper status alone was not accepted as proof. Completion markers, JSON records, image counts,
 pixels, visual inspection and source hashes were checked independently.
 
-Pure-Python RED: 13 assertion/probe failures with intentional no-op helpers; GREEN: 28 tests.
+Pure-Python RED: 13 assertion/probe failures with intentional no-op helpers; initial GREEN: 28 tests.
+After adding the calibration-only probe: 34 focused tests passed. The full suite on `94dc00a`
+completed with 7,122 passed / 2 failed / 14 skipped / 63 deselected in 1,688.16 s. Both failures are
+load-sensitive orientation wall-clock budgets, tracked by pilot issue #361. Both reproduce on a
+`27daa64` baseline source copy: box 11.2246 s versus 10 s, slivers 8.0641 s versus 5 s. No orientation
+code or budget was changed here. This receipt is not a globally green suite.
 Additional probes include 99-key generated accounting, empty/partial/unsupported/non-finite evidence,
 UV boundaries, invalid topology/no output, duplicate bitmap display names, hardlink/input-output alias
 rejection and AST checks excluding scene-save/export calls. Full suite receipt is recorded in the PR.
