@@ -171,4 +171,3 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 | D147 | 2026-10-13 | On the experimental from_source path only (build="from_source"), an open loop flat on a horizontal face at its height was closed by contact (seated: a wall standing on a slab); from_spec keeps the strict open-edge rule, and after D079 (#117) this does not relax topology acceptance of a new delivery | `src/twinqa/geometry/checks.py` | backfill #138 (src/twinqa/geometry/checks.py) |
 | D148 | 2026-10-14 | An overlap is a crossing deeper than the weld: faces within weld_m are one weld, and a plate plate_gap_m off a face is no overlap | `src/twinqa/geometry/checks.py` | backfill #138 (src/twinqa/geometry/checks.py; tests/qa/test_from_source.py) |
 | D149 | 2026-10-14 | A panelised source is checked with basis spec, because its sections never close | `src/twinqa/geometry/checks.py` | backfill #138 (src/twinqa/geometry/checks.py) |
-
