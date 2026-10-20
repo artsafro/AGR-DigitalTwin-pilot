@@ -11,6 +11,8 @@ compared with a Python sin/cos analytic oracle. Synthetic geometry; delivery_pas
 """
 import json
 import math
+import os
+import re
 import shutil
 import subprocess
 import sys
@@ -18,10 +20,11 @@ import time
 from pathlib import Path
 
 from twinqa.geometry import ucx_audit as ua
+from compatibility import inventory, validate_results
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-BLENDER = "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe"
+BLENDER = os.environ.get('DT_BLENDER', 'C:/Program Files/Blender Foundation/Blender 5.1/blender.exe')
 EXPORTERS = {"A_baked": REPO / "tools/export/export_mesh_blender.py", "B_local": HERE / "export_local.py"}
 READBACK = HERE / "readback.py"
 FLAGS = ["--background", "--factory-startup", "--disable-autoexec", "--python-exit-code", "1", "--python"]
@@ -75,6 +78,11 @@ def corner_dist(a, b):
 def structure(objs, oracle, fails, tag):
     """Weld, structural checks, corner distance vs oracle. Returns ({name: (verts, tris)}, meta)."""
     out, meta = {}, {}
+    try:
+        inventory(objs, oracle)
+    except ValueError as exc:
+        fails.append(f'{tag}: {exc}')
+        return out, meta
     for o in objs:
         wv, wt = ua.weld(o["world"], o["tris"])
         closed, convex = ua.is_closed(wt), ua.is_convex(wv, wt)
@@ -90,13 +98,18 @@ def structure(objs, oracle, fails, tag):
 
 
 def main(work, out):
-    work.mkdir(parents=True, exist_ok=True)
-    raw_dir = HERE / "raw"
-    raw_dir.mkdir(exist_ok=True)
+    work, out = work.resolve(), out.resolve()
+    if not work.is_relative_to(REPO) or work.is_relative_to(REPO / 'data') or work.exists():
+        raise ValueError('work must be a new directory inside this worktree, outside data/')
+    if out != work / 'results.json':
+        raise ValueError('report must be <new-work-directory>/results.json')
+    work.mkdir(parents=True)
+    raw_dir = work / 'raw'
+    raw_dir.mkdir()
     v = subprocess.run([BLENDER, "--version"], capture_output=True, text=True)
     rc_v = v.returncode
     env = {"blender_version": v.stdout.strip().splitlines()[0] if rc_v == 0 else None, "rc": rc_v}
-    if rc_v != 0 or "5.1.2" not in (env["blender_version"] or ""):
+    if rc_v != 0 or not re.match(r'^Blender 5\.1\.\d+\b', env['blender_version'] or ''):
         raise SystemExit(f"preflight failed: {env}")
     local = local_scene()
     rows = []
@@ -229,11 +242,20 @@ def main(work, out):
         verdict = "CONFIRMED"
     res = {"env": env, "verdict": verdict, "complete": complete, "control_mm": ctrl, "repeat_max_diff_m": rep_diff,
            "fails": fails, "timings": timings, "rows": rows, "delivery_passed": False}
-    out.write_text(json.dumps(res, indent=1), encoding="utf-8")
-    print(f"VERDICT {verdict} complete={complete} control={ctrl} repeat={rep_diff}")
+    try:
+        validate_results(res, P)
+    except (ValueError, KeyError, TypeError, IndexError) as exc:
+        res['verdict'] = 'REJECTED'
+        res['fails']['native'].append(f'strict compatibility validation: {exc}')
+    out.write_text(json.dumps(res, indent=1, allow_nan=False), encoding="utf-8")
+    print(f"VERDICT {res['verdict']} complete={complete} control={ctrl} repeat={rep_diff}")
     for k, v in fails.items():
         print(f" {k}: {len(v)}", *v[:12], sep="\n   ")
+    if res['verdict'] != 'CONFIRMED':
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        raise SystemExit('usage: driver.py <new-work-dir> <new-work-dir/results.json>')
     main(Path(sys.argv[1]), Path(sys.argv[2]))
