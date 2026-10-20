@@ -254,6 +254,49 @@ def test_linked_worktree_output_guard(repository, tmp_path):
         subprocess.run(['git', 'worktree', 'remove', str(linked)], cwd=repository, check=True, capture_output=True)
 
 
+@pytest.mark.parametrize('change', ['protected', 'etalon', 'head'])
+def test_changing_inputs_fail_closed(repository, tmp_path, change):
+    from tools.qa.capability_b01 import launch
+    import hashlib
+    etalon = tmp_path / 'input/etalon.fbx'
+    etalon.parent.mkdir()
+    etalon.write_bytes(b'synthetic')
+    actions = {
+        'protected': "pathlib.Path('jobs/sentinel').write_text('changed')",
+        'etalon': "pathlib.Path(sys.argv[1]).write_bytes(b'changed')",
+        'head': "subprocess.run(['git','-c','user.email=a@example.invalid','-c','user.name=Synthetic','commit','--allow-empty','-m','change'],check=True)",
+    }
+    result = launch(repository, tmp_path / 'runs/change', etalon,
+                    expected_sha=hashlib.sha256(etalon.read_bytes()).hexdigest(),
+                    command=[sys.executable, '-c', 'import pathlib,sys,subprocess; ' + actions[change], str(etalon)])
+    assert result['passed'] is False
+    assert result['cleanup'] is True
+    assert result['head_unchanged' if change == 'head' else 'protected_inputs_unchanged'] is False
+    assert (repository / 'jobs/sentinel').read_text() == 'source'
+
+
+@pytest.mark.parametrize('timeout', [0, -1, float('nan'), float('inf'), True])
+def test_invalid_timeout_writes_nothing(repository, tmp_path, timeout):
+    from tools.qa.capability_b01 import launch
+    out = tmp_path / 'new'
+    with pytest.raises(ValueError, match='timeout'):
+        launch(repository, out, tmp_path / 'absent.fbx', timeout=timeout)
+    assert not out.exists()
+
+
+def test_prepared_home_cannot_overlap_run(repository, tmp_path):
+    from tools.qa.capability_b01 import launch
+    import hashlib
+    etalon = tmp_path / 'inputs/etalon.fbx'
+    etalon.parent.mkdir()
+    etalon.write_bytes(b'synthetic')
+    out = tmp_path / 'new'
+    with pytest.raises(ValueError, match='home'):
+        launch(repository, out, etalon, codex_home=out / 'agent-home',
+               command=[sys.executable, '-V'], expected_sha=hashlib.sha256(etalon.read_bytes()).hexdigest())
+    assert not out.exists()
+
+
 def test_prepared_home_and_closed_stdin(repository, tmp_path):
     from tools.qa.capability_b01 import launch
     import hashlib
@@ -274,6 +317,38 @@ def test_prepared_home_and_closed_stdin(repository, tmp_path):
     assert result['isolation'] == 'context-only; no OS sandbox'
     assert result['cleanup'] is True
     assert (home / 'config.toml').read_text() == 'synthetic operator configuration'
+
+
+def test_codex_default_excludes_host_skills():
+    from tools.qa.capability_b01 import agent_command
+    argv = agent_command('codex')
+    assert argv[argv.index('--enable') + 1] == 'skip_host_skill_discovery'
+    assert 'memories' in argv and 'plugins' in argv
+
+
+def test_fresh_cli_rejects_input_alias(repository, tmp_path):
+    root = Path(__file__).resolve().parents[1]
+    result = subprocess.run([sys.executable, str(root / 'tools/qa/capability_b01.py'),
+                             '--repo', str(repository), '--run-dir', str(repository / 'jobs/new'),
+                             '--etalon', str(tmp_path / 'missing.fbx')],
+                            capture_output=True, text=True)
+    assert result.returncode == 2
+    assert 'overlaps input' in result.stderr
+    assert not (repository / 'jobs/new').exists()
+
+
+@pytest.mark.skipif(sys.platform != 'win32', reason='Windows directory junction probe')
+def test_junction_output_alias(repository, tmp_path):
+    from tools.qa.capability_b01 import launch
+    junction = tmp_path / 'alias'
+    subprocess.run(['cmd.exe', '/d', '/c', 'mklink', '/J', str(junction), str(repository)],
+                   capture_output=True, check=True)
+    try:
+        with pytest.raises(ValueError, match='overlaps input'):
+            launch(repository, junction / 'jobs/new', tmp_path / 'missing.fbx')
+        assert not (repository / 'jobs/new').exists()
+    finally:
+        junction.rmdir()
 
 
 def test_native_transcript_not_measured(tmp_path):

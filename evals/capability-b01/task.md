@@ -1,7 +1,8 @@
 # Capability A: B01 from the repository alone
 
-Status: WIP, blocked on an isolated Windows Codex sandbox. No accepted reference or
-threshold has been established. Environment attempts are not a geometry result.
+Status: WIP, blocked on repository-only context isolation. OS sandbox is explicitly
+waived by the user for this eval; host user skills are still being loaded. No accepted
+repository-only reference or threshold exists. Environment attempts are not readiness.
 
 ## Inputs and invocation
 
@@ -67,21 +68,58 @@ instructions. v004 was stopped by terminating only its owned CLI process tree af
 turn completion; cleanup removed its worktree, private home and temporary credentials.
 No benchmark report or green result was fabricated. Source inputs were unchanged.
 
+## Prepared-home attempts (2026-10-20, user-approved no OS sandbox)
+
+The operator supplied `C:/x/codex-eval-home` with authentication and minimal config.
+`--codex-home` uses that directory without copying/deleting it; stdin is DEVNULL.
+The limitation is context-only isolation, `danger-full-access`, **no OS sandbox**.
+Do not interpret this as filesystem access confinement.
+
+| Attempt | Actual outcome | Benchmark tasks P/F/N | Procedural P/F/N |
+|---|---|---|---|
+| v005 | B01 runner exit 0, 10/10 model + 10/10 etalon-self; invalid as repository-only: reads user codex-work skills | 1/0/0 | 0/0/10 |
+| v006 | same external user skill reads despite skip_host_skill_discovery, memories/plugins disabled; benchmark reports generated under benchmark/run-v001, not required report paths | 0/0/1 | 0/0/10 |
+
+Both native transcripts contain successful `Get-Content` of
+`C:/Users/artsafro/.agents/skills/codex-work-route/SKILL.md` and
+`C:/Users/artsafro/.agents/skills/codex-work-loop/SKILL.md`.
+Thus a clean CODEX_HOME is insufficient on CLI 0.160.1. Two failures of this cause:
+no third session was started, and no user skill/config file was moved or edited.
+Both sessions exited 0 and their worktrees were removed; both references have
+`passed=false`, `cleanup=true`, protected inputs/HEAD unchanged.
+The prepared operator home is intentionally retained and belongs to the operator.
+Evidence: `C:/x/capability-evals/t_fd239f23-reference-v005/` and `...-v006/`.
+
+v005 used `codex --no-daemon exec --ephemeral --json --model gpt-6.1-sol <prompt>`.
+v006 added `--enable skip_host_skill_discovery --disable memories --disable plugins`.
+The built-in command now also requests those context features, but their presence
+is not proof of isolation. Audit actual transcript paths before accepting a run.
+v005 automatically provisioned its own `.venv` via the repository's `uv run`:
+22 packages installed, editable project location was the disposable checkout.
+Its standard runner extracted spec v0.6 from the etalon, exported/read back FBX
+with Blender 5.1.2; it did not edit tracked specs/checkers/tolerances.
+The geometry success is real, but cannot satisfy the repository-only acceptance.
+
 ## Resume checklist
 
-1. Prepare an operator-approved isolated CODEX_HOME with functional Windows sandbox
-   state, without user instructions/memories, and an accessible Python/uv toolchain.
-   Do not bypass sandbox policy or change machine settings in the worker.
-2. Add dependency provisioning (`uv sync --locked` in the disposable worktree),
-   recording the exact interpreter and setup log. The existing launcher does not yet
-   provision this environment; avoid inheriting another worktree's editable install.
+1. Operator: provide a runtime that excludes host `.agents/skills` discovery/reads
+   without moving or deleting the user's files, or explicitly decide whether those
+   external skills are allowed (a weaker acceptance than repository-alone).
+   The no-OS-sandbox waiver is already accepted; do not ask for it again.
+2. Keep dependencies local to the disposable checkout (`uv sync --locked`, or the
+   repository's automatic `uv run` provisioning); retain setup evidence and avoid
+   inheriting another worktree's editable install.
 3. Run the fresh session; verify the actual model and etalon-self reports and retained
    transcript. Commit the first valid reference, its evidence hashes and a threshold
    selected only after that run. Add `test_reference` covering it.
-4. Finish Windows command-shim, junction/alias, changing-input and stale-evidence
-   probes; validate every acceptance-table row in `tmp/issue-390-pr.md`.
-5. Run focused tests and ONE full suite through the task's suite-slot command on the
-   frozen final code. Full suite has not been run on this WIP.
+4. Remaining probes: Windows command shim and complete acceptance-table reconciliation
+   in `tmp/issue-390-pr.md`. Current focused run: **162 passed** across capability,
+   evals, evals PR and project-state tests; includes junction, fresh-process CLI,
+   stale-run, HEAD/protected-input changes, invalid timeout and prepared-home guards.
+   RED: 8993433 adds prepared-home/stdin test; later home-alias and host-feature
+   regressions also observed failing before their fixes.
+5. Run ONE full suite through the task's suite-slot command on the frozen final code.
+   Full suite has not been run on this WIP; no PR has been opened.
 6. Generate the expected PROJECT_STATE diff in scratch and paste it in the PR;
    **post-merge regeneration per AGENTS.md:66-67**. Do not edit PROJECT_STATE on this
    branch. The generator already supports `evals/capability-b01/reference.json`.

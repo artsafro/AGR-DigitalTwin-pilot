@@ -46,6 +46,7 @@ def executable(argv):
 def agent_command(agent, model=None):
     if agent == 'codex':
         return ['codex', '--no-daemon', 'exec', '--ephemeral', '--ignore-user-config', '--json',
+                '--enable', 'skip_host_skill_discovery', '--disable', 'memories', '--disable', 'plugins',
                 *(['-c', 'windows.sandbox="elevated"'] if os.name == 'nt' else []),
                 '--sandbox', 'workspace-write', '--add-dir', '{run}',
                 *(['--model', model] if model else []), '{prompt}']
@@ -66,7 +67,8 @@ def stop(process):
 
 
 def launch(repo, run_dir, etalon, *, agent='codex', command=None, model=None,
-           expected_sha=None, ref='main', timeout=1800):
+           expected_sha=None, ref='main', timeout=1800, codex_home=None,
+           isolation='private context; OS sandbox'):
     repo, run_dir, etalon = (Path(p).resolve() for p in (repo, run_dir, etalon))
     if agent not in ('codex', 'claude', 'deepseek'):
         raise ValueError(f'unsupported agent: {agent}')
@@ -79,6 +81,11 @@ def launch(repo, run_dir, etalon, *, agent='codex', command=None, model=None,
     if (run_dir.is_relative_to(repo) or repo.is_relative_to(run_dir)
             or run_dir.is_relative_to(etalon.parent) or etalon.is_relative_to(run_dir)):
         raise ValueError('run directory overlaps input')
+    if codex_home is not None:
+        codex_home = Path(codex_home).resolve()
+        if (codex_home.is_relative_to(run_dir) or run_dir.is_relative_to(codex_home)
+                or not codex_home.is_dir()):
+            raise ValueError('prepared Codex home must exist and not overlap the run directory')
     if not etalon.is_file():
         raise ValueError(f'missing local B01 etalon: {etalon}')
     expected_sha = expected_sha or json.loads(
@@ -113,7 +120,8 @@ def launch(repo, run_dir, etalon, *, agent='codex', command=None, model=None,
                              text=True, encoding='utf-8', errors='replace', timeout=30, check=False)
     result = {'schema': 1, 'agent': agent, 'model': model, 'commit': commit, 'ref': ref,
               'agent_version': version.stdout.strip() or version.stderr.strip(),
-              'command': argv, 'etalon_sha256': expected_sha, 'passed': False, 'cleanup': False}
+              'command': argv, 'etalon_sha256': expected_sha, 'passed': False, 'cleanup': False,
+              'isolation': isolation}
     (run_dir / 'prompt.txt').write_text(prompt, encoding='utf-8')
     started = time.monotonic()
     created = False
@@ -130,7 +138,9 @@ def launch(repo, run_dir, etalon, *, agent='codex', command=None, model=None,
         if inherited_venv:
             env['PATH'] = os.pathsep.join(p for p in env.get('PATH', '').split(os.pathsep)
                                          if not Path(p).resolve().is_relative_to(Path(inherited_venv).resolve()))
-        if agent == 'codex':
+        if agent == 'codex' and codex_home is not None:
+            env['CODEX_HOME'] = str(Path(codex_home).resolve())
+        elif agent == 'codex':
             # Only authentication is inherited, never user AGENTS.md, plugins,
             # sessions, memory or config. Credentials are removed in finally.
             home = run_dir / 'agent-home'
@@ -142,7 +152,7 @@ def launch(repo, run_dir, etalon, *, agent='codex', command=None, model=None,
             env['CODEX_HOME'] = str(home)
         with (run_dir / 'transcript.jsonl').open('wb') as stdout, (run_dir / 'stderr.log').open('wb') as stderr:
             process = subprocess.Popen(executable(argv), cwd=worktree, env=env, stdout=stdout, stderr=stderr,
-                                       start_new_session=(os.name != 'nt'))
+                                       stdin=subprocess.DEVNULL, start_new_session=(os.name != 'nt'))
             try:
                 result['session_exit'] = process.wait(timeout=timeout)
             except subprocess.TimeoutExpired:
@@ -201,6 +211,8 @@ def main(argv=None):
     parser.add_argument('--etalon', type=Path, required=True)
     parser.add_argument('--agent', choices=('codex', 'claude', 'deepseek'), default='codex')
     parser.add_argument('--model')
+    parser.add_argument('--codex-home', type=Path, help='Operator-prepared context; never copied or deleted')
+    parser.add_argument('--isolation', default='private context; OS sandbox')
     parser.add_argument('--command-json', help='Explicit argv array; placeholders: {prompt}, {output}, {run}, {worktree}, {etalon}')
     parser.add_argument('--ref', default='main')
     parser.add_argument('--timeout', type=float, default=1800)
@@ -208,7 +220,8 @@ def main(argv=None):
     try:
         result = launch(args.repo, args.run_dir, args.etalon, agent=args.agent, model=args.model,
                         command=json.loads(args.command_json) if args.command_json else None,
-                        ref=args.ref, timeout=args.timeout)
+                        ref=args.ref, timeout=args.timeout, codex_home=args.codex_home,
+                        isolation=args.isolation)
     except (OSError, ValueError, subprocess.SubprocessError) as exc:
         print(f'capability-b01: {exc}', file=sys.stderr)
         return 2
