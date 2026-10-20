@@ -459,6 +459,27 @@ def test_desktop_generated_repeat_and_conflict_preserve_bytes(tmp_path):
         assert (drive / entry["local_path"]).read_bytes() == body
 
 
+@pytest.mark.parametrize("present,missing", [(False, "both"), (True, "size"), (True, "sha256")])
+@pytest.mark.parametrize("backend", ["local", "drive-desktop", "rclone"])
+def test_incomplete_evidence_blocks_entire_batch(tmp_path, monkeypatch, present, missing, backend):
+    good, payload = _entry()
+    bad, _ = _entry(id="incomplete", local_path="bad.bin")
+    for field in (["sha256", "size"] if missing == "both" else [missing]):
+        bad[field] = None
+    manifest, root = _write_manifest(tmp_path, [good, bad], [payload, payload if present else None])
+    drive = tmp_path / "drive"
+    drive.mkdir()
+    monkeypatch.setattr(sync, "which_rclone", lambda: "rclone")
+    monkeypatch.setenv("AGR_RCLONE_REMOTE", "gdrive:assets")
+    monkeypatch.setattr(sync.subprocess, "run", lambda *a, **k: pytest.fail("invalid batch invoked backend"))
+    before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    code, report = sync.execute(manifest, root=root, backend=backend, drive_root=drive,
+                                apply=True, out=tmp_path / "report.json")
+    assert code != 0
+    assert report["assets"][1]["status"] == "error"
+    assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
+
+
 def test_truncated_manifest_file_fails(tmp_path):
     manifest = tmp_path / "manifest.json"
     manifest.write_text("{", encoding="utf-8")
