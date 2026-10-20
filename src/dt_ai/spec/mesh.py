@@ -1539,11 +1539,15 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, 
     ignored = [{"area_m2": round(h.area, 3), "at": [round(h.centroid.x, 2), round(h.centroid.y, 2)],
                 "sizes_m": [round(x, 3) for x in _sizes(h)]} for h in small]
     if holes:
-        # lined at mid storey and in the storey's upper part: walls that stop well below the roof
-        # line nothing (PR #35 review 2, P1)
-        cuts = [_clear_height(v, tris, below_level["elev_m"] + share * (roof_z - below_level["elev_m"]))
-                for share in (0.5, SHAFT_UPPER)]
-        sections = [shapely.unary_union(_section(v, tris, z) or [LineString()]) for z in cuts]
+        # Check every vertical mesh interval from mid storey to the roof, not just two
+        # storey cuts: disconnected strips can line both cuts (#37). Include the roof
+        # structure's inner reveal, so lining may end at its underside (KPP1).
+        bottom = below_level["elev_m"] + 0.5 * (roof_z - below_level["elev_m"])
+        zs = v[np.unique(every), 2]
+        heights = np.unique(np.r_[bottom, zs[(zs > bottom) & (zs < roof_z)], roof_z])
+        cuts = [lo + (hi - lo) * share for lo, hi in zip(heights[:-1], heights[1:])
+                for share in (1e-4, 0.5, 1 - 1e-4)]
+        sections = [shapely.unary_union(_section(v, every, z) or [LineString()]) for z in cuts]
         for hole in holes:
             lined = min(w.intersection(hole.buffer(PARAPET_EDGE_M)).length for w in sections) / hole.exterior.length
             z_mid = cuts[0]
