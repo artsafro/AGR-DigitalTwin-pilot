@@ -1,109 +1,138 @@
 # Flora texture diagnosis (#369)
 
-- Диагностика НЕ принята: нужна область применения геометрического правила к непрерывной текстуре коры.
-- Полные вершины, UV, грани и material IDs извлечены для 99/99 пар и трёх light FBX; новых изменений ассетов нет.
-- По решению Артёма считаем покрытие bbox, не плотность opacity: исходная карточка листвы липы проходит с 100%.
-- Но исходный bark-island покрывает лишь 0,244472% цельной полосы коры, хотя UV корректно лежит на коре; это новый случай калибровки.
-- Сохранены картинка, 19 исходных объектов / 11 889 островов и полный native-инвентарь; заменам новые оценки и итоговые маршруты не выданы.
+- Причина: сохранённые UV привязали к картам с другой компоновкой; механизм подтверждён для 99/99 объектов, визуально — для шести видов.
+- Уточнение по коре выполнено: исходный узкий остров липы проходит containment 99,5347%; покрытие всей полосы к нему неприменимо.
+- Выполнен сырой расчёт 201 записи: 99 оригиналов + 99 v003 + 3 light; шесть расширенных листов просмотрены лично.
+- Калибровка пока НЕ пройдена: у 16 323 исходных UV-компонент роль неизвестна; это ограничение классификатора, не доказательство дефекта оригиналов.
+- Итоговые маршруты не выданы: 7 rebind и 1 star только предварительные, 91 требуют проверки источника; PR #377 draft, ассеты не изменены.
 
 ## Geometric recalibration [D155]
 
-Artem's voice decision recorded on Kanban `t_49156f66`, comment **1542** (2026-10-20),
-now coordination rule 48, supersedes both interim 95% density/class-support proposals.
-The decision is recorded without changing its threshold in the
-[Flora sheet](../domain/areas/flora.md#geometric-sprite-coverage-d155) and decision log [D155].
-The previous opaque-area calibration is historical evidence, **not the current metric**.
+The previous bark-policy question is **answered**, not an open threshold decision.
+Artem's voice decision (Kanban `t_49156f66`, comment 1542, coordination rule 48) and the
+orchestrator's **2026-10-20 14:42 scope clarification** are recorded in the
+[Flora sheet](../domain/areas/flora.md#geometric-sprite-coverage-d155) and [D155].
 
-- VPM: `area(island intersect sprite opaque bbox) / area(sprite opaque bbox)`;
-  target 0.80–0.95. Above 0.95 only when no neighbouring sprite opaque pixel lies in the island.
-- NPM whole-plant plane: `area(plant opaque bbox) / area(island)`; target 0.80–0.95,
-  zero clipped opaque pixels with 1 native-pixel tolerance.
-- Opacity threshold is >=128. Geometric area is exact polygon union/intersection (Shapely 2.1.2),
-  not opaque pixel counts. Opacity sampling/clipping uses the actual 2048/4096 images.
-- Original project atlases use an independently alpha-segmented **candidate cell** for their plant region;
-  a replacement per-species map is a whole texture. Candidate cells are separated by >=1.5%-image empty
-  gutters without using UVs. Touching sprites may remain ambiguous: this is not an authored cell manifest.
+- Discrete VPM sprites: `area(island intersect sprite opaque bbox) / area(sprite opaque bbox)`,
+  target 0.80–0.95; >0.95 only without neighbouring opaque sprites inside the island.
+- Continuous bark: **>=95% of island area on bark pixels**, not coverage of an entire bark strip.
+  V tiling along the strip is allowed by the rule. The current implementation reports islands crossing
+  a repeated tile as unsupported; it does not silently accept them.
+- NPM whole-plant planes: cover >=80% of the image region, with allowed extra transparent margin
+  and no clipped opaque plant pixels (1 pixel tolerance). Both bbox/island ratio and
+  `island_intersection_over_sprite_bbox` are stored. The prototype still reports the original
+  0.80–0.95 bbox/island target separately; its raw `pass` is **not** a certified implementation of
+  every clarified NPM case.
+- Threshold opacity is >=128. Discrete sprite area is polygon union/intersection (Shapely 2.1.2).
+  Bark containment uses a native-pixel raster on a reviewed region, consistently in numerator and denominator.
 
-### A new original-only failure: continuous bark, not foliage density
+### Narrow bark witness: resolved and measured
 
-Inspected picture:
-`C:/x/review/2026-10-20/flora-texture-diagnosis/tilia-original-bark-geometric-v001.png`.
-The green leaf-card outline surrounds its branch sprite; the red narrow triangle lies entirely within
-bark, far from the foliage sprites. Cyan rectangles show independently measured alpha bboxes.
-The picture was opened with `vision_analyze` after generation.
+The original-only image `tilia-original-bark-geometric-v001.png` remains a **historical baseline**:
+its red/fail annotation describes the superseded whole-strip applicability, not the current bark verdict.
+The image was personally viewed again. The narrow triangle lies on the continuous bark strip, separate
+from the two foliage sprites. Current exact receipt:
+`experiments/flora-texture-diagnosis/bark-containment-v002.json`.
 
-Original `Tilia_cordata_VPM` / `19_Lipa_HP`, original `.1035` atlas, 4096 x 4096:
+Original `Tilia_cordata_VPM` / `19_Lipa_HP`, island 166 / face 332, 4096×4096 atlas:
 
-| Original component | Geometry role | Island polygon area, px² | Target bbox area, px² | Geometric coverage | Neighbour opaque pixels | Result |
-|---|---|---:|---:|---:|---:|---|
-| Island 0, faces 0/30 | foliage card | 388,986.097656 | 227,700 | 100.000000% | 0 | Pass (>95% exception explicitly allowed) |
-| Island 166, face 332 | trunk | 7,930.757195 | 3,244,032 | 0.244472% | 0 | Fail if every bark island must cover >=80% of the full strip |
+| Method | Measurement | Result | Median seconds, same input ×3 |
+|---|---:|---|---:|
+| Historical generic sprite-bbox coverage | 7,930.757195 / 3,244,032 px² = 0.2444722245% | Wrong applicability to a continuous strip | 0.011435 |
+| Reviewed opaque-bark containment | 8,557 / 8,597 raster pixels = 99.5347214144% | Pass (>=95%) | 0.013396 |
+| Original discrete leaf card, control | 100% sprite-bbox coverage; 0 neighbouring opaque pixels | Pass under >95% exception | Not repeated for speed |
 
-Exact measured receipt: `experiments/flora-texture-diagnosis/bark-calibration-v001.json` (includes native inventory SHA-256).
+No speedup is claimed. The difference between polygon area and raster pixel counts is explicit.
+Code footprint: `measure_sprite_coverage.py` grows from 212 to 406 lines; the raw comparison and
+atlas-review helpers add 476 and 143 lines respectively. These remain diagnostic tools, not a
+replacement for production checkers. Their geometry/classification heuristics are not simplified
+into an unsupported universal acceptance flag.
+See [the small experiment report](../experiments/flora-bark-containment.md).
 
-The bark target is `[3304,0,4096,4096]` in native pixels. Its island samples opaque bark at
-99.5347% raster density; that density is recorded only as supporting evidence, **not substituted
-for the geometric score**. The foliage card formerly reported at ~13.56% density now passes correctly.
+### Full raw sweep and evidence
 
-This is not just duplicated UV indices hiding an adjacent continuous island. Face 332's neighbouring
-geometry faces 339, 775 and 794 differ at their shared vertices in UV by 0.009893–0.195873 UV units;
-these are real seams. Role classification is inherited from the connected 3D element: the trunk
-is non-planar, vertically elongated and >=20% of object height. Planar cards use an SVD ratio <=0.001;
-NPM full-height plane candidates additionally span >=75% of object height. Unknowns stay unknown.
-These diagnostic shape rules are not botanical truth or a certified star-arrangement detector.
+Current review bundle:
+`C:/x/review/2026-10-20/flora-texture-diagnosis/raw-diagnostics-v004/index.html`.
+All six `101/102/103/105/204/225.png` sheets append original/library/light candidate masks,
+coloured UV edges and raw role/score summaries to the existing controlled renders. I opened all six
+v003 sheets with `vision_analyze`; the v004 copies are **6/6 SHA-256-identical**. The only v004
+re-seal corrects star metadata to permit independent geometry and UV vertex counts, without
+changing any island metric, mask, render or sheet. `provenance.json` identifies the exact input hashes.
 
-**Decision needed:** does 80–95% sprite coverage apply to every island sampling a continuous bark
-strip too, knowingly rejecting this original, or does continuous bark use role/region containment
-while the geometric coverage target applies to discrete foliage/whole-plant sprites?
-No exemption, new threshold, UV welding or atlas crop was invented to force the original to pass.
+| Tag | Objects | UV components | Scored components | Raw applicable pass | Unknown geometry role | Unscored |
+|---|---:|---:|---:|---:|---:|---:|
+| Original Union | 68 | 26,504 | 25,752 | 4,289 | 16,042 | 752 |
+| Original FLORIO | 31 | 1,443 | 1,443 | 839 | 281 | 0 |
+| v003 | 99 | 27,947 | 22,856 | 0 | 16,323 | 5,091 |
+| NPM light FBX | 3 | 326 | 325 | 0 | 113 | 1 |
 
-### Checkpoint and deliberately uncompleted acceptance
+These are **diagnostic flags**, not counts of defective plants or calibrated replacement failures.
+Unknown/not-applicable islands also have `pass=false`; the categories must not be added as disjoint sets.
+All faces are accounted for per object, with exact face lists and unknown/error reasons in `metrics.json`.
+`distribution.json` reports min/q25/median/q75/max by tag and role. `routes.json` has 99 unique named
+pairs and preserves source/library/light per-island ledgers. All 201 records have `accepted=false`
+at the report boundary; no production assets were changed.
 
-Published checkpoint:
-`C:/x/review/2026-10-20/flora-texture-diagnosis/geometric-calibration-v001/index.html`.
-It links the exact full native inventory, per-island partial metrics, partial distributions and
-candidate class-mask overlays. Source roles, unknown lists and every face index are retained.
+The source-only baseline before reviewed bark annotations also completed: 99 objects / 27,947
+components, 8 objects with every component passing, 16,323 unknown geometry roles.
+Its compact receipt is `experiments/flora-texture-diagnosis/source-calibration-baseline-v002.json`.
+23 source bark regions (24 rectangles, including an L-shaped FLORIO region excluding grass)
+were visually reviewed across nine atlas sheets. Exact basenames, bitmap hashes and rectangles:
+`experiments/flora-texture-diagnosis/reviewed-bark-regions-v002.json`.
 
-| Evidence | Actual result |
-|---|---|
-| Detailed source arrays | Union 68/68 + FLORIO 31/31; all 99 named source pairs |
-| Detailed v003 arrays | 99/99, including per-face IDs and explicit MultiMaterial ID lists |
-| Light FBX native readback | 3/3 with detailed arrays and direct opacity-slot settings |
-| Original-only geometric checkpoint | 19 objects, 11,889 islands; complete face accounting per measured object |
-| New replacement/light geometric scores | 0; stopped at the original-calibration gate |
-| Final repair routes / follow-up issue | Not issued; original calibration is unresolved |
-| Candidate pixel classes | RGB green/brown hypotheses plus explicit unknown opaque pixels; NOT semantic ground truth |
-| Focused tests at checkpoint | 69 passed, including native-ROI geometry, exact bark-triangle regression and fail-closed original gate |
+### Why calibration still fails — implementation limits, not another bark-policy question
 
-The former missing 89 detailed pairs no longer require native extraction. Do **not** rerun it merely
-because the initial inventory stored details only for the selected six. Reuse hash-verified
-`inventory-all.json` in the published checkpoint (`inventory-all-v005.json` in private scratch).
+The gate is deliberately still **failed**: first witness `Tilia_cordata_NPM`, island 3.
+The current method groups UV faces by shared map indices and inherits shape roles from connected
+3D elements. It does not resolve every duplicate-coordinate seam, curved card, joined star or
+non-elongated branch assembly into authored semantic parts. For example, visible Cornus crossed
+cards produce 65 UV components from 80 triangles, all with unknown roles under this classifier.
+Calling these foliage or whole-plant planes solely because their UVs hit a convenient region would
+be circular. A catalogue NPM label is not proof of whole-plant star geometry.
 
-Remaining after the bark-policy answer: validate the atlas-cell/role annotation, complete original
-calibration and separate NPM plane/star arrangement checks, then score all 99 replacements and 3 FBX,
-finish the six semantic pass/fail sheets, issue final per-object repair-route counts, and propose the
-single fix follow-up. The existing six render sheets below remain qualitative evidence, not a substitute.
-No final semantic masks or 99-object acceptance distribution are claimed here.
+Independent plane checks record counts, absolute normal Z, global UV extent, opacity binding and
+per-island UV extents. The source Spiraea NPM has 10 vertical planes and passes this candidate check;
+source Tilia/Betula/Crataegus/Amelanchier contain complex multi-plane meshes, not a confirmed simple star.
+The 12-plane cap and normal-Z tolerance 0.02 are diagnostic heuristics, **not user thresholds or a
+certified star-arrangement gate**. The helper does not prove common-centre crossing or botanical identity.
 
-Reproduction (fresh output paths required):
+RGB green/brown classification is only a **candidate display**, with purple unknown opaque pixels;
+it is not an independent semantic ground truth. Reviewed bark containment is stored separately.
+Touching atlas sprites remain ambiguous under alpha-only gutter segmentation. Unverified replacement
+bark is never promoted to semantic pass. Thus the tool cannot yet deliver calibrated semantic masks
+and final map/UV repair choices for every object.
+
+| Provisional route | Count | Status |
+|---|---:|---|
+| `rebind_original_atlas` | 7 | Source VPM geometric rows pass; still provisional because the global gate fails |
+| `keep_or_rebuild_star` | 1 | Source Spiraea NPM star; replacement tile is empty, so rebuilding correspondence is necessary |
+| `source_validation_required` | 91 | Failed, unknown or not-applicable source role/cell/plane checks; no repair route invented |
+| Definitive routes issued | 0 | Withheld, not an out-of-scope acceptance point |
+
+Remaining acceptance: improve/annotate geometry-role and authored sprite-cell correspondence, calibrate
+originals (or explicitly resolve their genuine non-applicability), then issue final per-object routes.
+**No further full native extraction is required**; the arrays already contain all 99 pairs and 3 FBX.
+Three Cursor rounds were used in this continuation. It needs an implementation handoff for the remaining
+role/cell analysis, not another threshold clarification or an asset repair. Do not mark this diagnosis accepted.
+
+Reproduction, using copied job/maps and fresh output directories:
 
 ```bash
-# all-job-v005.json selects all material IDs and sets inventory-all-v005.json
-export FLORA_DIAG_JOB="<worktree>/tmp/all-job-v005.json"
-python C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py max --ping --card t_49156f66
-python C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py max --file tools/flora/diagnose_texture_max.py --card t_49156f66
-uv run python tools/flora/measure_sprite_coverage.py --job <all-job.json> --output <fresh metrics.json> --pictures <fresh folder>
-# The source-only run was intentionally stopped after the calibration witness; .partial.json is NOT complete.
-uv run python experiments/flora-texture-diagnosis/bark_calibration.py --job <all-job.json> --metrics <partial.json> --output <fresh witness.png>
-uv run python tools/flora/sheet_sprite_coverage.py --job <all-job.json> --metrics <partial.json> --pictures <folder> --witness <witness.png> --output <fresh checkpoint>
+uv run python tools/flora/review_atlas_regions.py --job tmp/all-job-v005.json --output <fresh review subdirectory>
+uv run python tools/flora/measure_sprite_coverage.py --job tmp/all-job-v005.json --output <fresh source.json> --sources-only
+# annotated-job-v006.json adds reviewed-bark-regions-v002.json using resolved copied bitmap paths
+uv run python tools/flora/compare_sprite_diagnostics.py --job tmp/annotated-job-v006.json --output <fresh review subdirectory>
 ```
 
-Native extraction completed under Max 2026.3 with zero unmatched objects; no MAX save or asset export.
-The existing startup warning still makes the native exit nonzero although current completion markers
-and complete per-object arrays are present; wrapper status alone was not used as success evidence.
-The original-only measurement was stopped and no owned analysis/native process remains at handoff.
-Full-suite receipt remains the earlier 7,122 passed / 2 known #361 timing failures; this docs/tools
-rework uses focused tests and does not claim a new full-suite pass.
+Current affected tests: **96 passed** (including decision-log checks), including explicit/missing/displaced bark masks, exact 95% boundary,
+multiple reviewed rectangles, unknown/fail status rejection, independent UV indexing, raw 201-record /
+99-route accounting, source gate failure preservation, path aliases, and empty/partial CLI subprocesses.
+New tests fail against the copied `4def676` baseline (missing new API at collection); no fabricated no-op
+baseline was used in this continuation. Source integrity: **236/236 unchanged SHA-256**, exact receipt
+`experiments/flora-texture-diagnosis/source-integrity-v002.json`.
+Full suite is the earlier receipt below, not rerun; current evals: 0 passed / 0 failed / 10 not measured,
+exit 2, `tmp/evals/flora-texture-diagnosis-v002/report.json` (no Claude transcript/PR evidence).
+Code was written by Cursor (grok-4.7-medium), with small driver verification fixes; no DCC ran in this continuation.
 
 ## Evidence and scope
 

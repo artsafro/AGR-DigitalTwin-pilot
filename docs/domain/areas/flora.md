@@ -93,9 +93,15 @@ VPM foliage/trunk roles must still match the atlas content; a geometric score al
   pixels (opacity >=128) inside its authored atlas cell. Score =
   `area(UV island intersect sprite bbox) / area(sprite bbox)`. The target is 0.80–0.95;
   >0.95 is tolerated only when no neighbouring sprite's opaque pixel is inside the island.
-- For an NPM whole-plant star plane, score = `area(plant opaque bbox) / area(UV island)`;
-  target 0.80–0.95, with no opaque plant pixel outside the island (1 pixel tolerance).
-  The plane is slightly larger than the plant so its opacity boundary is not clipped.
+- Continuous bark/trunk strips are tiling regions, not discrete sprites: require >=95% of
+  the island area to lie on bark pixels; V wrapping/tiling along that strip is allowed.
+  Do not require an individual bark island to cover 80% of the full strip.
+- For an NPM whole-plant star plane, the island covers >=80% of the plant-image region and
+  may extend beyond the plant bbox; require no clipped opaque plant pixels (1 pixel tolerance).
+  Record both bbox/island area ratio and clipping, rather than treating excess transparent
+  plane margin as proof of clipping. The plane should be slightly larger than the plant.
+  This scope follows the orchestrator's 2026-10-20 14:42 clarification on the same card;
+  the original 0.80–0.95 bbox/island target remains reported for comparison.
 - Calibrate on originals before judging replacements. Do not substitute opaque-pixel density,
   silently change the denominator, call an unclassified island a pass, or assume a catalogue
   NPM label proves whole-plant star topology. Report original failures, unknown roles/cells
