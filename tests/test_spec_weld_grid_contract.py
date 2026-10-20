@@ -1,5 +1,8 @@
 """Contract tests for dt_ai.spec.mesh._weld (half-shifted grids and wide-cluster fallback).
 
+Pattern: n/a | new-case: extractor weld half-shift grid + wide-cluster fallback contract
+characterization (tests only, no kernel change, no checker parity claim).
+
 Acceptance criteria:
 1. Inputs and assertions in units of W = WELD_M (0.1 mm).
 2. Boundary crossing close-pair controls: for each sign and axis combination,
