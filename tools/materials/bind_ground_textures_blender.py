@@ -68,7 +68,21 @@ def fingerprint(fbx, out_json):
     payload = {"triangles": 0, "material_ids": [], "vertices": [], "uvs": [], "faces": []}
     payload["raw_material_layers"] = raw_material_layers(fbx)
     payload["polygons"] = []
+    payload["collision_geometry"] = []
     for obj in meshes:
+        if obj.name.startswith("UCX_"):
+            mesh = obj.data
+            mesh.calc_loop_triangles()
+            payload["collision_geometry"].append({
+                "name": obj.name,
+                "vertices": [list(obj.matrix_world @ vertex.co) for vertex in mesh.vertices],
+                "polygons": [list(poly.vertices) for poly in mesh.polygons],
+                "material_ids": [poly.material_index for poly in mesh.polygons],
+                "materials": [slot.material.name if slot.material else None for slot in obj.material_slots],
+                "uv_layers": [[list(item.uv) for item in layer.data] for layer in mesh.uv_layers],
+                "triangles": len(mesh.loop_triangles),
+            })
+            continue
         mesh = obj.data
         mesh.calc_loop_triangles()
         payload["triangles"] += len(mesh.loop_triangles)

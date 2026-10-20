@@ -82,6 +82,8 @@ def material_names(readback) -> list[str]:
         for mesh in meshes:
             if not isinstance(mesh, dict) or not isinstance(mesh.get("materials"), list):
                 raise BindError("mesh material slots are missing")
+            if re.fullmatch(r"UCX_SM_Vatutino_Ground_[0-9]{3}", mesh.get("name", "")) and not mesh["materials"]:
+                continue
             if not mesh["materials"]:
                 raise BindError("mesh material slots are empty")
             for slot in mesh["materials"]:
@@ -205,6 +207,8 @@ def geometry_deltas(before, after) -> dict:
         if key in before or key in after:
             if not before.get(key) or before.get(key) != after.get(key):
                 raise BindError(f"{label} differ or are missing")
+    if before.get("collision_geometry") != after.get("collision_geometry"):
+        raise BindError("collision geometry differs")
     if left["triangles"] != right["triangles"]:
         raise BindError(f"triangle count {left['triangles']} != {right['triangles']}")
     if left["material_ids"] != right["material_ids"]:

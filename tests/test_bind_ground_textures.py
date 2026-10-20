@@ -406,6 +406,26 @@ def test_empty_or_unsupported_readback_errors(tmp_path, readback):
         bind.build_plan(readback, scene["vpm_readback"], scene["manifest"], scene["root"])
 
 
+def test_final_ground_readback_keeps_materialless_ucx_out_of_binding_table():
+    readback = {"meshes": [
+        {"name": "SM_Vatutino_Ground", "materials": V014_MATERIALS},
+        {"name": "UCX_SM_Vatutino_Ground_001", "materials": []},
+    ]}
+    assert bind.material_names(readback) == V014_MATERIALS
+    readback["meshes"][1]["name"] = "SM_Unknown"
+    with pytest.raises(bind.BindError, match="empty"):
+        bind.material_names(readback)
+
+
+def test_collision_geometry_change_fails_identity():
+    base = _geometry()
+    base["collision_geometry"] = [{"name": "UCX_SM_Vatutino_Ground_001", "vertices": [[0, 0, 0]]}]
+    changed = copy.deepcopy(base)
+    changed["collision_geometry"][0]["vertices"][0][0] = 1
+    with pytest.raises(bind.BindError, match="collision"):
+        bind.geometry_deltas(base, changed)
+
+
 def test_raw_material_layer_and_topology_changes_are_rejected():
     base = _geometry()
     base["raw_material_layers"] = [{"mapping": "ByPolygon", "reference": "IndexToDirect", "ids": [0]}]
