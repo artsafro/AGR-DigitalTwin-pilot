@@ -71,12 +71,8 @@ class LiveAdapter(BatchAdapter):
 
 
 def default_adapter():
-    # A reachable user scene must only be accessed through max_exec's session lock.
-    probe = _call([SCRIPTS / "max_exec.py", "--ping"])
-    if probe.returncode == 0:
-        payload = json.loads(probe.stdout)
-        if payload.get("status") == "success" and payload.get("result", {}).get("success"):
-            return LiveAdapter()
+    # COORDINATION_RULES 27: the user's bridge is safe-mode only; review jobs
+    # write reports and run on copies through the authorized headless lock.
     if max_batch_path() is not None:
         return BatchAdapter()
     raise RuntimeError("3ds Max is not available")

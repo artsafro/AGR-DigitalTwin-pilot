@@ -1,4 +1,4 @@
-# Visual review publisher (#348) — work in progress
+# Visual review publisher (#348)
 
 ## Interface
 
@@ -56,27 +56,43 @@ were committed and run RED before the corresponding repairs.
 | Renderer unavailable | error, never generate a synthetic preview | `test_render_failure_never_fabricates_preview` |
 | Installed Max | FBX materials, framed camera, saved scene readback, actual preview | `test_max_dependent_merge_skips_when_max_absent` |
 
-## Current blocker / recovery
+## DCC execution and verified publications
 
-2026-10-20: Max 2024 is reachable through `max_exec.py --ping`, native bridge
-`safeMode=true`. The live adapter's self-contained MAXScript was refused before
-execution with `SAFE_MODE` because the machine-report writer uses `createFile`.
-The bridge source confirms `createfile` is an explicit blocked command. Do not
-obfuscate it, switch to another file-writing API, change bridge configuration,
-or start headless Max alongside the GUI without user authorization. Live jobs
-use hold/fetch to preserve the user's document; batch jobs use `dcc_batch.py`.
+Publication defaults to **headless 3dsmaxbatch 2026** (2024 only when 2026 is
+absent), through `dcc_batch.py` and its shared session lock. It never probes or
+changes the user's live document or bridge configuration. COORDINATION_RULES 27
+allows copy-based headless audits beside the safe-mode GUI. The live adapter is
+not selected: the report writer is forbidden by live SAFE_MODE.
 
-Focused result after safety fixes: 35 passed, 1 skipped, 1 DCC failure (SAFE_MODE).
-The Max script itself has NOT executed successfully; camera/readback/unit-rescale
-and rendered-preview changes still require real Max verification. The full suite
-has not been rerun in this recovery attempt. Use `suite_slot.py --card t_5bc043c7`
-for the required full run after DCC access is resolved.
+The Max job imports FBX materials, normalizes system units to metres, frames a
+review-only camera, saves and reloads the scene, compares mesh/UV/material/
+transform inventory, and renders a real PNG when none was supplied. Rendering
+failure aborts publication; there is no synthetic preview fallback.
 
-Prior Cursor publications exist in `pending.json` under task #348:
+Verified 2026-10-20 with headless 3ds Max 2026.3 (build 28000):
 
-- `C:/x/review/2026-10-20/348-ground-v014/348-ground-v014.max`
-- `C:/x/review/2026-10-20/348-flora-library-v003/348-flora-library-v003.max`
+- Ground v014, **final VPM with UCX**, source
+  `C:/x/t_d94665f2/ground_v014/vpm_ucx/SM_Vatutino_Ground.fbx`:
+  `C:/x/review/2026-10-20/348-ground-v014-review-v002/348-ground-v014-review-v002.max`.
+  Final-path readback: 716 geometry nodes, 55,131 faces, 65,759 UV vertices;
+  source uses placeholder materials (zero bitmap maps).
+- Flora v003, source `C:/x/flora-library/v003/flora-library-v003.max`:
+  `C:/x/review/2026-10-20/348-flora-library-v003-review-v002/348-flora-library-v003-review-v002.max`.
+  Final-path readback: 99 geometry nodes, 42,601 faces, 97,375 UV vertices;
+  all 122 bitmap paths exist.
 
-Existence and file sizes were observed, not accepted as proof of visual correctness.
-Do not overwrite them. Publish corrected copies with new slugs after readback.
-No visual acceptance, final delivery QA or user verdict is claimed.
+Both final scenes reload with metre system units, scale 1.0, `Review_Camera`,
+640x360 rendered previews, and README. Both were appended to pending.json;
+prior Cursor publications were preserved without overwrite or acceptance.
+Native startup emits an existing PolyUnwrapper autoload error (handled by the
+shared wrapper), and Flora reports a legacy mental-ray custom-attribute DLL
+warning; the job report and independent final-path readback completed.
+
+These are internal review copies, not approved delivery packages. No visual
+acceptance, botanical confirmation, final delivery QA or user verdict is claimed.
+Ground's upstream limitations and Flora catalogue stand-ins/unverified identities
+remain unchanged. The user must inspect the scenes before recording a verdict.
+
+Cleanup `--days 7` dry-run found zero eligible directories on 2026-10-20; nothing
+was deleted. Local machine evidence: `tmp/review-readback-v002.json`,
+`tmp/review-readback-dcc-v002.json`, `tmp/review-cleanup-dry-run-v002.txt`.
