@@ -397,6 +397,66 @@ def test_changing_inputs_fail_closed(repository, tmp_path, change):
     assert (repository / 'jobs/sentinel').read_text() == 'source'
 
 
+@pytest.mark.parametrize('changed', [None, 'src/checker.py', 'specs/b01.json',
+                                      'standards/tolerances.json'])
+@pytest.mark.parametrize('operation', ['rewrite', 'delete', 'untrack-rewrite', 'hardlink-rewrite'])
+def test_green_reports_cannot_hide_evaluation_input_mutation(repository, tmp_path, changed, operation):
+    from tools.qa.capability_b01 import launch
+    import hashlib
+
+    inputs = ('src/checker.py', 'specs/b01.json', 'standards/tolerances.json')
+    for name in inputs:
+        path = repository / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text('synthetic original input', encoding='utf-8')
+    subprocess.run(['git', 'add', '.'], cwd=repository, check=True, capture_output=True)
+    subprocess.run(['git', '-c', 'user.email=a@example.invalid', '-c', 'user.name=Synthetic',
+                    'commit', '-m', 'synthetic evaluation inputs'],
+                   cwd=repository, check=True, capture_output=True)
+    etalon = tmp_path / 'input/etalon.fbx'
+    etalon.parent.mkdir()
+    etalon.write_bytes(b'synthetic')
+    action = ''
+    if changed:
+        target = f"pathlib.Path({changed!r})"
+        action = {
+            'rewrite': f"{target}.write_text('tampered'); ",
+            'delete': f"{target}.unlink(); ",
+            'untrack-rewrite': f"subprocess.run(['git','rm','--cached',{changed!r}],check=True); "
+                               f"{target}.write_text('tampered'); ",
+            'hardlink-rewrite': f"os.link({target}, 'checker-alias'); "
+                                "pathlib.Path('checker-alias').write_text('tampered'); ",
+        }[operation]
+    # Combine the new tamper controls with the earlier versioned/supplementary
+    # report fix; both reports and independent readback are synthetically green.
+    code = ("import pathlib,json,sys,os,subprocess; " + action
+            + "out=pathlib.Path(sys.argv[1]); out.mkdir(); data=" + repr(report()) + "; "
+            "pair=out/'run-v001'; pair.mkdir(); "
+            "[(pair/n).write_text(json.dumps(data)) for n in ('report.json','etalon-self.json')]; "
+            "extra=out/'check-v001'; extra.mkdir(); (extra/'report.json').write_text(json.dumps(data))")
+    out = tmp_path / 'runs/green'
+    result = launch(repository, out, etalon,
+                    expected_sha=hashlib.sha256(etalon.read_bytes()).hexdigest(),
+                    command=[sys.executable, '-c', code, '{output}'])
+    assert result['session_exit'] == 0 and result['cleanup'] and result['head_unchanged']
+    for name in inputs:
+        assert (repository / name).read_text() == 'synthetic original input'
+    assert all(json.loads((out / 'benchmark/run-v001' / name).read_text())['passed']
+               for name in ('report.json', 'etalon-self.json'))
+    if changed is None:
+        assert result['protected_inputs_unchanged'] is True
+        assert result['benchmark'] == {'passed': 1, 'failed': 0, 'not_measured': 0}
+    else:
+        assert result['protected_inputs_unchanged'] is False
+        assert result['benchmark'] == {'passed': 0, 'failed': 1, 'not_measured': 0}
+        assert result['benchmark_reported'] == {'passed': 1, 'failed': 0, 'not_measured': 0}
+        assert changed in result['changed_evaluation_inputs']
+        assert 'evaluation inputs changed' in result['error']
+        assert changed in result['error']
+        assert result['passed'] is False
+        assert json.loads((out / 'reference.json').read_text()) == result
+
+
 @pytest.mark.parametrize('timeout', [0, -1, float('nan'), float('inf'), True])
 def test_invalid_timeout_writes_nothing(repository, tmp_path, timeout):
     from tools.qa.capability_b01 import launch

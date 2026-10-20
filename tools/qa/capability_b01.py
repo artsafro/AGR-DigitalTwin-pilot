@@ -34,6 +34,14 @@ def inventory(repo):
             for p in (repo / folder).rglob('*') if p.is_file()}
 
 
+def evaluation_inventory(repo, paths=()):
+    # Snapshot every tracked input, not just today's known checker filenames.
+    # Retain the original paths even if the child removes them from the index.
+    tracked = set(git(repo, 'ls-files', '-z').split('\0')) - {''}
+    return {name: sha(repo / name) if (repo / name).is_file() else None
+            for name in tracked.union(paths)}
+
+
 def executable(argv):
     found = shutil.which(argv[0])
     if not found:
@@ -129,6 +137,7 @@ def launch(repo, run_dir, etalon, *, agent='codex', command=None, model=None,
         git(repo, 'worktree', 'add', '--detach', str(worktree), commit)
         created = True
         before = inventory(worktree)
+        evaluation_before = evaluation_inventory(worktree)
         env = {k: v for k, v in os.environ.items()
                if not k.startswith(('HERMES_', 'CLAUDE', 'CODEX_THREAD', 'CODEX_SESSION'))}
         # No inherited editable installation or task workspace location.
@@ -158,7 +167,12 @@ def launch(repo, run_dir, etalon, *, agent='codex', command=None, model=None,
             except subprocess.TimeoutExpired:
                 stop(process)
                 result.update(session_exit=124, error='session timeout')
-        result['protected_inputs_unchanged'] = inventory(worktree) == before and sha(etalon) == expected_sha
+        evaluation_after = evaluation_inventory(worktree, evaluation_before)
+        changed = sorted(name for name in evaluation_before.keys() | evaluation_after.keys()
+                         if evaluation_before.get(name) != evaluation_after.get(name))
+        result['changed_evaluation_inputs'] = changed
+        result['protected_inputs_unchanged'] = (not changed and inventory(worktree) == before
+                                                and sha(etalon) == expected_sha)
         result['head_unchanged'] = git(worktree, 'rev-parse', 'HEAD') == commit
         _, bench, _ = eval_run(ROOT / 'evals', suite='capability', main=run_dir,
                                 branch='capability', output=run_dir / 'evals-capability', cwd=repo)
@@ -177,6 +191,12 @@ def launch(repo, run_dir, etalon, *, agent='codex', command=None, model=None,
         result.update(benchmark={k: bench[k] for k in ('passed', 'failed', 'not_measured')},
                       procedural={k: procedural[k] for k in ('passed', 'failed', 'not_measured')},
                       procedural_reason='no Claude transcript; native CLI stdout retained, unsupported by procedural graders')
+        if changed:
+            # Raw reports remain available for diagnosis, never accepted as evidence
+            # after their evaluation inputs changed (even with unchanged HEAD).
+            result['benchmark_reported'] = result['benchmark']
+            result['benchmark'] = {'passed': 0, 'failed': 1, 'not_measured': 0}
+            result['error'] = 'evaluation inputs changed: ' + ', '.join(changed)
         result['passed'] = (result['session_exit'] == 0 and bench['exit_code'] == 0
                             and procedural['exit_code'] == 0 and result['protected_inputs_unchanged']
                             and result['head_unchanged'])

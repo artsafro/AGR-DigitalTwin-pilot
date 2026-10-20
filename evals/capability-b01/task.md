@@ -198,5 +198,16 @@ Committed `reference.json` retains exact argv, versions, limitations, counts,
 post-run threshold and SHA256s. `reference/` retains the actual machine reports;
 raw transcripts, FBX and etalon stay outside git under the run/input paths above.
 `test_reference` verifies the committed evidence hashes and all report counts.
+
+Review hardening: new launches snapshot every tracked checkout input, including
+checker code, specs and tolerances, before the session and compare bytes afterward
+using the original path set even if the child changes the index. A mutation records
+`changed_evaluation_inputs` and a named diagnostic, sets
+`protected_inputs_unchanged=false`, and invalidates benchmark acceptance (0/1/0).
+Raw report counts remain diagnostic-only in `benchmark_reported`; green reports do
+not override the mutation. This is a before/after integrity check, not OS sandboxing
+or detection of a transient edit restored before the final snapshot. The historical
+v007 reference has not been rerun with this new guard; its earlier integrity claim
+covers benchmark/jobs/etalon and HEAD only, not a retroactive checker snapshot.
 `PROJECT_STATE.md`: **post-merge regeneration per AGENTS.md:66-67**; this branch
 changes the generator and supplies only an expected scratch diff in the PR.
