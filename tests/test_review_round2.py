@@ -115,3 +115,37 @@ def test_real_max_keeps_fbx_mesh_named_review_camera(review, tmp_path):
     back = json.loads(Path(report).read_text(encoding='utf-8-sig'))
     assert back['geometry'] == ['Control_Box', 'Review_Camera', 'Review_Target']
     assert back['cameras'] == 1
+
+
+@pytest.mark.parametrize('failures, ok', [(0, True), (3, True), (10_000, False)])
+def test_pending_replace_retries_transient_windows_sharing_denial(review, tmp_path, monkeypatch, failures, ok):
+    """A reader/scanner briefly holding pending.json (WinError 5 under load) must not fail a
+    publication; a persistent denial still fails closed with the queue bytes untouched."""
+    from test_review_publish import FakeAdapter, _publish
+    root = tmp_path / 'review'
+    root.mkdir()
+    pending = root / 'pending.json'
+    original = '[{"task": "#2", "path": "C:/x/review/keep.max", "what": "keep"}]'
+    pending.write_text(original, encoding='utf-8')
+    real = os.replace
+    calls = {'n': 0}
+
+    def flaky(src, dst):
+        if str(dst).endswith('pending.json') and calls['n'] < failures:
+            calls['n'] += 1
+            raise PermissionError(5, 'Access is denied', str(dst))
+        return real(src, dst)
+
+    monkeypatch.setattr(review.os, 'replace', flaky)
+    monkeypatch.setattr(review.time, 'sleep', lambda s: None)
+    if ok:
+        assert _publish(review, tmp_path, FakeAdapter(), review_root=root) == 0
+        rows = json.loads(pending.read_text(encoding='utf-8'))
+        assert [r['task'] for r in rows] == ['#2', '#348']
+    else:
+        with pytest.raises(review.ReviewError):
+            _publish(review, tmp_path, FakeAdapter(), review_root=root)
+        assert pending.read_text(encoding='utf-8') == original
+        assert not (root / '2026-10-20').exists()
+        assert 0 < calls['n'] < 1000, 'retry must be bounded'
+    assert [p.name for p in root.iterdir() if p.suffix == '.tmp'] == []
