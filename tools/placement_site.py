@@ -80,6 +80,17 @@ def validate_points(points: list[dict]) -> None:
                 bad.append(f"point {h}: non-finite {key}={p.get(key)!r}")
         if not p.get("handle"):
             bad.append(f"point #{k}: no handle")
+    # A handle is the point identity (exceptions, report, scene names): it must be unique across the whole
+    # input (planting + MAF), checked before any selection or exception, independent of record order.
+    seen: dict[Any, list[int]] = {}
+    for k, p in enumerate(points):
+        if p.get("handle"):
+            seen.setdefault(p["handle"], []).append(k)
+    for h, idx in seen.items():
+        if len(idx) > 1:
+            recs = "; ".join(f"#{k} label={points[k].get('label')!r} x={points[k].get('x')!r} "
+                             f"y={points[k].get('y')!r}" for k in idx)
+            bad.append(f"point {h}: duplicate handle, {len(idx)} records ({recs})")
     if bad:
         raise PlacementStopped(bad)
 
@@ -107,7 +118,7 @@ def apply_ground_exceptions(points: list[dict], exceptions: list[dict], variant:
     stops on it). Unapproved / malformed exceptions, a changed point identity or an approved point that is
     not among the incoming points stop the run: nothing is excluded silently."""
     validate_points(points)
-    bad, active, stale = [], {}, []
+    bad, active, stale, seen_exc = [], {}, [], set()
     for e in exceptions:
         ap = e.get("approved") or {}
         snap = e.get("point")
@@ -117,10 +128,13 @@ def apply_ground_exceptions(points: list[dict], exceptions: list[dict], variant:
             bad.append(f"ground exception malformed (needs handle, ground_master_sha256, point snapshot): {e!r}")
         elif not all(ap.get(k) for k in ("by", "date", "quote")):
             bad.append(f"ground exception {e.get('handle')} not user-approved")
+        elif e["handle"] in seen_exc:
+            bad.append(f"duplicate ground exception {e['handle']}: one approval per point")
         elif e["ground_master_sha256"].get(variant) == ground_sha256:
             active[e["handle"]] = e
         else:
             stale.append(e["handle"])
+        seen_exc.add(e.get("handle"))
     by_handle = {p.get("handle"): p for p in points}
     for h, e in active.items():
         p = by_handle.get(h)

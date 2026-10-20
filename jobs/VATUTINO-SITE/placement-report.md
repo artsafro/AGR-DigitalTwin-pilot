@@ -1,7 +1,7 @@
 # Vatutino site slice: MAF + Flora placement report (#296)
 
 Status: **technical QA; user geometry acceptance open**, `passed=false` [D104]. Seed **296**. Engine `dt_ai.placement` (#316) computed every instance; Blender instancing equals it (`scene_mismatches` = 0 per variant).
-Machine-readable: `placement-report.json`. Scenes (not in git): `C:\x\t_5e4ea2be\run_v005\npm\VATUTINO-SITE_placement_npm_v001.blend` sha256 `d4104d1d3f7e638c…`, `C:\x\t_5e4ea2be\run_v005\vpm\VATUTINO-SITE_placement_vpm_v001.blend` sha256 `7c689149b4a58d2e…`
+Machine-readable: `placement-report.json`. Scenes (not in git): `C:\x\t_5e4ea2be\run_v006\npm\VATUTINO-SITE_placement_npm_v001.blend` sha256 `dc58adfed566a617…`, `C:\x\t_5e4ea2be\run_v006\vpm\VATUTINO-SITE_placement_vpm_v001.blend` sha256 `338ad640974a5ce6…`
 
 ## NPM
 

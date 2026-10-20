@@ -140,19 +140,19 @@
     "review": 7
    },
    "blend": {
-    "path": "C:\\x\\t_5e4ea2be\\run_v005\\npm\\VATUTINO-SITE_placement_npm_v001.blend",
-    "sha256": "d4104d1d3f7e638c6e0aa24376eb9d109d766cc2bc36634f5873c32a25a0b687"
+    "path": "C:\\x\\t_5e4ea2be\\run_v006\\npm\\VATUTINO-SITE_placement_npm_v001.blend",
+    "sha256": "dc58adfed566a617ee27a36fcc330c25f6d5b6dbaf2d164d66367a755a750c77"
    },
    "commands": [
     {
-     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- facts C:\\x\\t_5e4ea2be\\run_v005\\npm\\spec.json C:\\x\\t_5e4ea2be\\run_v005\\npm\\facts.json",
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- facts C:\\x\\t_5e4ea2be\\run_v006\\npm\\spec.json C:\\x\\t_5e4ea2be\\run_v006\\npm\\facts.json",
      "exit_code": 0,
-     "seconds": 2.8
+     "seconds": 2.6
     },
     {
-     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- instance C:\\x\\t_5e4ea2be\\run_v005\\npm\\spec.json C:\\x\\t_5e4ea2be\\run_v005\\npm\\plan.json C:\\x\\t_5e4ea2be\\run_v005\\npm\\VATUTINO-SITE_placement_npm_v001.blend C:\\x\\t_5e4ea2be\\run_v005\\npm\\readback.json",
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- instance C:\\x\\t_5e4ea2be\\run_v006\\npm\\spec.json C:\\x\\t_5e4ea2be\\run_v006\\npm\\plan.json C:\\x\\t_5e4ea2be\\run_v006\\npm\\VATUTINO-SITE_placement_npm_v001.blend C:\\x\\t_5e4ea2be\\run_v006\\npm\\readback.json",
      "exit_code": 0,
-     "seconds": 4.3
+     "seconds": 4.1
     }
    ],
    "findings": {
@@ -1299,19 +1299,19 @@
     "review": 7
    },
    "blend": {
-    "path": "C:\\x\\t_5e4ea2be\\run_v005\\vpm\\VATUTINO-SITE_placement_vpm_v001.blend",
-    "sha256": "7c689149b4a58d2ed13c92081e21cd918416421af29849687c5f96595b8d2368"
+    "path": "C:\\x\\t_5e4ea2be\\run_v006\\vpm\\VATUTINO-SITE_placement_vpm_v001.blend",
+    "sha256": "338ad640974a5ce6a3a2da9dcd151a82cdc68fff4a0abff4e5fc6431843b5739"
    },
    "commands": [
     {
-     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- facts C:\\x\\t_5e4ea2be\\run_v005\\vpm\\spec.json C:\\x\\t_5e4ea2be\\run_v005\\vpm\\facts.json",
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- facts C:\\x\\t_5e4ea2be\\run_v006\\vpm\\spec.json C:\\x\\t_5e4ea2be\\run_v006\\vpm\\facts.json",
      "exit_code": 0,
      "seconds": 2.7
     },
     {
-     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- instance C:\\x\\t_5e4ea2be\\run_v005\\vpm\\spec.json C:\\x\\t_5e4ea2be\\run_v005\\vpm\\plan.json C:\\x\\t_5e4ea2be\\run_v005\\vpm\\VATUTINO-SITE_placement_vpm_v001.blend C:\\x\\t_5e4ea2be\\run_v005\\vpm\\readback.json",
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- instance C:\\x\\t_5e4ea2be\\run_v006\\vpm\\spec.json C:\\x\\t_5e4ea2be\\run_v006\\vpm\\plan.json C:\\x\\t_5e4ea2be\\run_v006\\vpm\\VATUTINO-SITE_placement_vpm_v001.blend C:\\x\\t_5e4ea2be\\run_v006\\vpm\\readback.json",
      "exit_code": 0,
-     "seconds": 4.2
+     "seconds": 4.9
     }
    ],
    "findings": {
