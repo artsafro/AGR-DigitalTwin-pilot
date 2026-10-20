@@ -9,5 +9,6 @@
     "lawn": "Lawn"
   },
   "flat_datum_m": 0.0,
-  "uncovered_covering": "lawn"
+  "uncovered_covering": "lawn",
+  "separate_curbs": true
 }
