@@ -105,7 +105,9 @@ def test_report_matrix(tmp_path, mutation):
         raw = raw.replace('"passed": true', '"passed": false, "passed": true')
     path = tmp_path / 'report.json'
     path.write_text(raw, encoding='utf-8')
-    row = GRADERS['capability_b01'][0]({'benchmark': [path], 'self_check': [path]})
+    other = tmp_path / 'etalon-self.json'
+    other.write_text(json.dumps(report()))
+    row = GRADERS['capability_b01'][0]({'benchmark': [path], 'self_check': [other]})
     assert row['passed'] is False
 
 
@@ -115,7 +117,9 @@ def test_all_check_subsets(tmp_path):
         data = report()
         data['checks'] = [r for i, r in enumerate(data['checks']) if mask & (1 << i)]
         path.write_text(json.dumps(data), encoding='utf-8')
-        row = GRADERS['capability_b01'][0]({'benchmark': [path], 'self_check': [path]})
+        other = tmp_path / 'etalon-self.json'
+        other.write_text(json.dumps(data), encoding='utf-8')
+        row = GRADERS['capability_b01'][0]({'benchmark': [path], 'self_check': [other]})
         assert row['passed'] is (mask == (1 << len(IDS)) - 1), mask
 
 
@@ -124,7 +128,9 @@ def test_reordered_checks(tmp_path):
     data['checks'].reverse()
     path = tmp_path / 'report.json'
     path.write_text(json.dumps(data), encoding='utf-8')
-    assert GRADERS['capability_b01'][0]({'benchmark': [path], 'self_check': [path]})['passed'] is True
+    other = tmp_path / 'etalon-self.json'
+    other.write_text(json.dumps(data))
+    assert GRADERS['capability_b01'][0]({'benchmark': [path], 'self_check': [other]})['passed'] is True
 
 
 @pytest.mark.parametrize('layout', ['', 'run-v001'])
@@ -206,6 +212,27 @@ def test_windows_command_shim_preserves_prompt(tmp_path):
     prompt = 'Build B01 from root files; local etalon C:/x/input with spaces/etalon.fbx'
     result = subprocess.run(executable([str(shim), prompt]), capture_output=True, text=True, check=True)
     assert json.loads(result.stdout) == [prompt]
+
+
+def test_reference():
+    import hashlib
+    from twinqa.evals.capability import load_report
+    root = Path(__file__).resolve().parents[1] / 'evals/capability-b01'
+    data = json.loads((root / 'reference.json').read_text(encoding='utf-8'))
+    assert data['context'] == 'repository + user skills'
+    assert data['passed'] is False
+    assert data['benchmark'] == {'passed': 1, 'failed': 0, 'not_measured': 0}
+    assert data['procedural'] == {'passed': 0, 'failed': 0, 'not_measured': 10}
+    assert data['threshold']['benchmark_checks'] == 20
+    assert data['threshold']['readiness_not_measured'] == 0
+    assert data['session_exit'] == 0 and data['cleanup'] and data['protected_inputs_unchanged'] and data['head_unchanged']
+    assert data['external_skills']['loaded'] == ['codex-work-loop', 'codex-work-review', 'codex-work-route']
+    assert data['external_skills']['named_only'] == ['codex-work-engineering']
+    for name, digest in data['committed_evidence'].items():
+        assert hashlib.sha256((root / name).read_bytes()).hexdigest() == digest
+    assert load_report(root / 'reference/model-report.json') == 10
+    assert load_report(root / 'reference/etalon-self.json') == 10
+    assert load_report(root / 'reference/independent-report.json') == 10
 
 
 def test_task_registered():
@@ -315,7 +342,9 @@ def test_incomplete_report_fields(tmp_path, mutation):
         raw = raw.replace('"status": "pass"', '"status": "fail", "status": "pass"', 1)
     path = tmp_path / 'bad.json'
     path.write_text(raw)
-    assert GRADERS['capability_b01'][0]({'benchmark': [path], 'self_check': [path]})['passed'] is False
+    other = tmp_path / 'etalon-self.json'
+    other.write_text(json.dumps(report()))
+    assert GRADERS['capability_b01'][0]({'benchmark': [path], 'self_check': [other]})['passed'] is False
 
 
 def test_linked_worktree_output_guard(repository, tmp_path):

@@ -75,6 +75,8 @@ def capability_b01(evidence):
         paired = [p for p in models if p.resolve().parent == etalons[0].resolve().parent]
         if len(paired) != 1:
             problems.append('benchmark: expected one report beside etalon-self')
+        elif paired[0].samefile(etalons[0]):
+            problems.append('benchmark and etalon-self alias the same input')
         for name, paths in (('benchmark', paired), ('self_check', etalons)):
             for path in paths:
                 try:
