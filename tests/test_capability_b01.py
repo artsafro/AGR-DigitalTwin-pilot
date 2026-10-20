@@ -204,7 +204,8 @@ def test_state_reference(tmp_path):
     reference.parent.mkdir(parents=True)
     reference.write_text(json.dumps({'schema': 1, 'agent': 'codex', 'passed': False,
                                     'benchmark': {'passed': 1, 'failed': 0, 'not_measured': 0},
-                                    'procedural': {'passed': 0, 'failed': 0, 'not_measured': 10}}))
+                                    'procedural': {'passed': 0, 'failed': 0, 'not_measured': 10},
+                                    'context': 'repository + user skills'}))
     from unittest.mock import patch
     def capture(argv, cwd):
         if argv[:2] == ['git', 'log']:
@@ -218,6 +219,7 @@ def test_state_reference(tmp_path):
     assert 'benchmark 1 passed / 0 failed / 0 not measured' in text
     assert 'procedural 0 passed / 0 failed / 10 not measured' in text
     assert 'not ready' in text
+    assert 'repository + user skills' in text
 
 
 @pytest.mark.parametrize('mutation', ['duplicate', 'missing_value', 'extra_key'])
