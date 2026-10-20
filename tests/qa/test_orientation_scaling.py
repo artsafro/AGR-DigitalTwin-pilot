@@ -2,8 +2,6 @@
 
 Pattern: n/a | new-case: issue-203 synthetic orientation acceleration probes.
 """
-import time
-
 import numpy as np
 import pytest
 
@@ -101,13 +99,59 @@ def test_exact_randomized_corpus(seed, monkeypatch):
         assert_equivalent(model, monkeypatch)
 
 
-@pytest.mark.parametrize("shape,limit", [("box", 10.0), ("slivers", 5.0)])
-def test_orientation_real_size_budget(shape, limit):
+def _assert_clean_orientation_result(result):
+    assert result["status"] == "pass"
+    assert result["value"] == 0
+    for mesh in result["details"]["meshes"]:
+        assert mesh["outside_back_faces"] == 0
+        assert mesh["winding_bad_edges"] == 0
+
+
+@pytest.mark.parametrize("shape", ["box", "slivers"])
+def test_orientation_real_size_exact(shape):
+    """Real-size inputs return the exact clean-model result; no wall-clock budget (see the perf test)."""
     model = box(65) if shape == "box" else bipyramid(5000)
-    start = time.perf_counter()
-    checks.check_orientation(model, {"weld_m": 0.003})
-    elapsed = time.perf_counter() - start
-    assert elapsed < limit, f"{len(model.triangles)} triangles: {elapsed:.4f}s >= {limit}s"
+    _assert_clean_orientation_result(checks.check_orientation(model, {"weld_m": 0.003}))
+
+
+@pytest.mark.perf
+@pytest.mark.parametrize("shape,limit", [("box", 10.0), ("slivers", 5.0)])
+def test_orientation_real_size_budget(shape, limit, measure_process_time):
+    """Opt-in CPU-time budget: warm-up then median of 5 runs; wall time reported only."""
+    model = box(65) if shape == "box" else bipyramid(5000)
+    median, wall = measure_process_time(lambda: checks.check_orientation(model, {"weld_m": 0.003}))
+    print(f"[perf] {shape} ({len(model.triangles)} tris): median CPU {median:.4f}s, "
+          f"wall {wall:.4f}s, budget {limit}s")
+    assert median < limit, f"{len(model.triangles)} triangles: {median:.4f}s >= {limit}s"
+
+
+def test_orientation_real_size_exact_guard_rejects_wrong_result(monkeypatch):
+    """Synthetic guard: the protected default exact-result test rejects a wrong orientation result.
+
+    Invokes ``test_orientation_real_size_exact`` itself (the exact assertion path) on a
+    deliberately wrong result and requires ``AssertionError``, with a correct-result
+    control on the clean model. Bypassing the protected assertion (e.g. replacing the
+    test body with ``pass``) makes this guard fail.
+    """
+    real = checks._orientation_hits
+
+    def wrong(model_):
+        backs, judged, rays, nondeg = real(model_)
+        backs = backs.copy()
+        backs[0] = 1
+        return backs, judged, rays, nondeg
+
+    # correct-result control: the protected exact-result test passes on a clean model
+    test_orientation_real_size_exact("box")
+
+    monkeypatch.setattr(checks, "_orientation_hits", wrong)
+    # check_orientation itself reports the spurious back face ...
+    result = checks.check_orientation(box(2), {"weld_m": 0.003})
+    assert result["status"] == "fail"
+    assert result["value"] >= 1
+    # ... and the protected exact-result test path rejects it
+    with pytest.raises(AssertionError):
+        test_orientation_real_size_exact("box")
 
 
 @pytest.mark.parametrize("case", ["box", "inverted", "tiny", "decor", "nested", "open", "mirrored",
