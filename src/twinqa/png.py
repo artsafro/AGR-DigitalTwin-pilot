@@ -40,6 +40,8 @@ class PngFacts:
 def png_facts(name: str, data: bytes) -> PngFacts:
     if not data.startswith(SIGNATURE) or data[12:16] != b"IHDR":
         raise ValueError("not a PNG")
+    if len(data) < 26:
+        raise ValueError("truncated IHDR fields: need 10 bytes at offset 16")
     width, height, bit_depth, color_type = struct.unpack(">IIBB", data[16:26])
     pos, has_trns = 8, False
     while pos + 8 <= len(data):
@@ -48,6 +50,8 @@ def png_facts(name: str, data: bytes) -> PngFacts:
             has_trns = True
         if kind == b"IEND":
             break
+        if pos + 12 + length > len(data):
+            raise ValueError(f"truncated {kind.decode('latin-1')} chunk body/CRC at offset {pos}")
         chunk = data[pos + 4:pos + 8 + length]
         if zlib.crc32(chunk) != struct.unpack(">I", data[pos + 8 + length:pos + 12 + length])[0]:
             raise ValueError(f"CRC error in {kind.decode('latin-1')} chunk")
