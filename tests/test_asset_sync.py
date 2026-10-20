@@ -480,6 +480,49 @@ def test_incomplete_evidence_blocks_entire_batch(tmp_path, monkeypatch, present,
     assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
 
 
+@pytest.mark.parametrize("alias", ["exact", "normalized", "hardlink", "distinct", "source"])
+def test_real_rclone_local_report_aliases_preflight(tmp_path, monkeypatch, alias):
+    import os
+    import shutil
+
+    executable = os.environ.get("AGR_TEST_RCLONE") or shutil.which("rclone")
+    if not executable:
+        pytest.skip("set AGR_TEST_RCLONE to exercise real rclone LOCAL backend")
+    monkeypatch.setattr(sync, "which_rclone", lambda: executable)
+    config = tmp_path / "rclone.conf"
+    config.write_text("[assettest]\ntype = local\n", encoding="utf-8")
+    monkeypatch.setenv("RCLONE_CONFIG", str(config))
+    drive = tmp_path / "mirror"
+    drive.mkdir()
+    monkeypatch.setenv("AGR_RCLONE_REMOTE", f"assettest:{drive.as_posix()}")
+    entry, payload = _entry()
+    manifest, root = _write_manifest(tmp_path, [entry], [payload])
+    target = drive / entry["local_path"]
+    out = target
+    if alias == "normalized":
+        out = target.parent / "unused" / ".." / target.name
+    elif alias == "hardlink":
+        target.parent.mkdir(parents=True)
+        target.write_bytes(payload)
+        out = tmp_path / "alias.json"
+        out.hardlink_to(target)
+    elif alias == "distinct":
+        out = tmp_path / "report.json"
+    elif alias == "source":
+        # The remote itself resolves to a protected input, with distinct report.
+        monkeypatch.setenv("AGR_RCLONE_REMOTE", f"assettest:{root.as_posix()}")
+        out = tmp_path / "report.json"
+    before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    code, report = sync.execute(manifest, root=root, backend="rclone", apply=True, out=out)
+    if alias == "distinct":
+        assert code == 0, report
+        assert target.read_bytes() == payload
+        assert json.loads(out.read_text())["assets"][0]["synced"] is True
+    else:
+        assert code != 0, report
+        assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
+
+
 def test_truncated_manifest_file_fails(tmp_path):
     manifest = tmp_path / "manifest.json"
     manifest.write_text("{", encoding="utf-8")
