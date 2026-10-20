@@ -144,7 +144,7 @@ def test_derivation_decided_rotation_conflict_and_v004_documentation():
     assert html_anchor in conflict39, f"Conflict 39 paragraph must contain HTML anchor '{html_anchor}'"
 
     for phrase in (
-        "Decided 2026-10-16",
+        "Decided 2026-10-16",  # [D135]
         "[D135]",
         "reg p.10",
         "reg p.32",
