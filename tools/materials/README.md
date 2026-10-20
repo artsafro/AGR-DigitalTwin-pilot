@@ -95,7 +95,8 @@ uv run python tools/materials/ground_recipes.py deliver --version v003 --address
 ```
 
 NPM: 2048 at 30 px/m, repeat 68.266667 m; VPM: 4096 at 1024 px/m, repeat 4 m.
-Density source: PR #308 `ground-build-v006.md`, still unmerged; recheck after #295 merges.
+Density source: #295 / merged PR #308 (`5eb945a`), v014 FBX; the binding tool measures
+exported per-face density again rather than trusting the recipe's nominal value.
 `nominal_tile_mm` is the sourced 100x300 mm face, `joint_mm` is a **provisional, user review**
 5 mm physical joint, shared by both profiles. No artificial widened joints or pixel-scale overrides.
 An integer tile count closes a periodic supertile with <=1% per-axis physical scale error, as authorized
@@ -111,3 +112,24 @@ input aliases, malformed versions, incompatible physical scales and pixel-period
 Maps and the contact sheet are computed/validated before output creation. Use a new version, never overwrite.
 PNG bytes are RGB uint8 with an sRGB chunk. Diffuse recipes are not a complete material/FBX delivery;
 manual colour/appearance review and subsequent Ground binding remain separate gates.
+
+## Ground binding (#340)
+
+`bind_ground_textures.py plan` reads `--npm-readback`, `--vpm-readback`, `--manifest`,
+`--textures` and writes `--out` JSON. `bind` additionally requires `--npm-fbx` and
+`--vpm-fbx`; its output root is `C:/x/vatutino-ground-textured/v001` and must be empty.
+The v003 manifest supplies the filename/hash table; no map is selected by judgement.
+Wrong names, missing/hash-mismatched maps, wrong dimensions/UDIM tiles, duplicate or
+incomplete inventories and input/output aliases fail before export. Existing output
+versions and v001/v002 source textures are never overwritten.
+
+The companion Blender 5.1.2 headless script works on copies. Separate clean imports
+compare ordered vertices, UVs, topology, imported face material IDs and raw FBX
+`LayerElementMaterial`, then read every Base Color socket with `fbx_readback.py`.
+Materialless UCX in the final #295 VPM is preserved and checked separately, not bound
+or included in relief density. Skirt density is reported but exempt from the relief
+band (GND-03/08). A failed export/readback removes its partial FBX.
+
+Actual commands, source/output hashes, all-slot tables and pending delivery gates:
+[`ground-textures.md`](../../jobs/VATUTINO-SITE/ground-textures.md). Technical binding
+verification is not visual acceptance, SINTEZ acceptance or delivery-package approval.

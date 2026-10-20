@@ -1,45 +1,83 @@
-# Vatutino Ground texture binding (issue #340)
+# Vatutino Ground texture binding (#340)
 
-Status: **FBX written**. v003 diffuse maps are bound to every Ground slot of the #295 v014 NPM and VPM FBX. Geometry fingerprints match the source import byte for byte. `passed=true` is not claimed: `validate_package.py` without `--scene` leaves scene stages `not_run`, and those are not counted as pass.
+Status: **technical binding verified; delivery acceptance not claimed**. The authorized
+2026-10-20 card/issue comment extends scope to CurbGarden and Stairs and changes the
+texture source from v002 to **v003**. Maps remain provisional; no texture appearance,
+whole-site, SINTEZ or package acceptance is inferred [D104].
 
-## #295 inputs
+## Versions and source preservation
 
-`docs/PROJECT_STATE.md` lists #295 as open PR #308, not a merged commit. Git was not run, so no merge SHA was read from the repository. The v014 note records a local merge of `origin/main` (`433e4eb`) into that ground branch; that is not a merge of #295 into `main`. The FBX below are the v014 exports named in `jobs/VATUTINO-SITE/ground-build-v014.md` (no UCX). Their SHA-256 still matches that note after this bind.
+- #295 / PR #308 merged at `5eb945a`; Blender route, no MAX required.
+- #330 / PR #336 merged at `eed5074a3fad597fce5608ea832dccbd0edaf527`;
+  incorporated through `origin/main` `8e539b9`. Its address override, physical layout,
+  visual parameters, provenance and full contact labels are retained.
+- Recipe seed 319. v003 contains 24 maps (12 slots x two profiles), including
+  provisional concrete recipes for CurbGarden and Stairs. The historical density
+  source text in manifest.source_versions is supplemented by the merged #295 evidence here.
+- v002 manifest SHA-256: `64c48ca70a24f5d74f5b9eefef632db727bad50420abb4b644612cf9bcf70d2a`; **20/20 v002 map bytes unchanged** in v003;
+  v002 itself remains untouched. v001 textures were not used.
+- v003 manifest SHA-256: `4255185a307935bddc46f9564f12dce88091f4b3d1cdd2d74ea4ce158a8b222a`; visual parameter provenance is present.
+- Incomplete, unapproved outputs from the previous Cursor attempt were archived
+  under `C:/x/vatutino-ground-textured/cursor-attempt-714/` before regeneration with
+  merged #330. A first Codex bind was also preserved there when moving all DCC staging
+  inside the output tree. No #295 FBX or published v001/v002 source textures were overwritten.
+- The final #295 VPM **with UCX** is used, not its intermediate no-UCX FBX.
+  Its 715 collision meshes / 8,788 triangles remain exactly unchanged. They are not textured.
 
-| Input | Path | SHA-256 |
-|---|---|---|
-| NPM FBX | `C:/x/t_d94665f2/ground_v014/npm/SM_Vatutino_Ground.fbx` | `94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef` |
-| VPM FBX | `C:/x/t_d94665f2/ground_v014/vpm/SM_Vatutino_Ground.fbx` | `a41266757fe39958cae7a40a765b628aa7cbfeb74de48d3c82efc297b9cf75f1` |
-| NPM readback | `C:/x/t_d94665f2/ground_v014/readback_npm.json` | 12 material slots, 46 343 triangles |
-| VPM readback | `C:/x/t_d94665f2/ground_v014/readback_vpm.json` | same slot names |
-| v002 manifest | `C:/x/vatutino-ground-textures/v002/manifest.json` | `64c48ca70a24f5d74f5b9eefef632db727bad50420abb4b644612cf9bcf70d2a` |
-| v003 manifest | `C:/x/vatutino-ground-textures/v003/manifest.json` | `448f6462f79862bf25b6949e9e8b98b49ecda87b6316090cc46a4e207456abd8` |
+## Input/output FBX and exact geometry identity
 
-v001 textures were not read. v002 files were not modified (manifest SHA-256 unchanged). The ten v002 map files are byte-identical inside v003. v003 adds `CurbGarden` and `Stairs` only. The final UCX VPM was not an input. No 3ds Max file was produced.
+| Profile | Kind | Path | SHA-256 |
+|---|---|---|---|
+| npm | input | `C:/x/t_d94665f2/ground_v014/npm/SM_Vatutino_Ground.fbx` | `94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef` |
+| npm | output | `C:/x/vatutino-ground-textured/v001/npm/SM_Vatutino_Ground.fbx` | `1259cb925fa1275c22445b572e493c97e5370908be3a36dc8e8b7e17e22397b5` |
+| vpm | input | `C:/x/t_d94665f2/ground_v014/vpm_ucx/SM_Vatutino_Ground.fbx` | `a5f7d3963ffbe3003f4dd7d706395a84f30a3548c5281f3402b1c1694cfa3b6c` |
+| vpm | output | `C:/x/vatutino-ground-textured/v001/vpm/SM_Vatutino_Ground.fbx` | `a7d5bdd547a499fe73228d5319bf1304643a01e3727f52d97433c6f742a43bb7` |
 
-## Plan
+Both profiles: 46,343 render triangles; every ordered world vertex and UV is identical
+(max XYZ delta **0**, max UV delta **0**). All 46,343 imported face material IDs and
+raw FBX `LayerElementMaterial` entries, mapping/reference modes and ordered topology
+match. Collision vertices, polygons, material IDs, UV-layer inventories, names and
+triangle counts also match exactly (NPM 0; VPM 715 pieces / 8,788 triangles).
 
-`C:/x/vatutino-ground-textured/v001/plan.json`. Each of the twelve manifest slots has one verified map on both profiles (NPM 2048, VPM `.1001` 4096, file SHA-256 equal to the manifest). Ground slots with no map: none. Manifest slots with no Ground material: none.
+Evidence root: `C:/x/vatutino-ground-textured/v001/`. It contains `plan.json`,
+`density.json`, `receipt.json`, and per-profile `SM_Vatutino_Ground.{source-fingerprint,fingerprint,readback}.json`
+plus `validate.json`. No FBX, PNG, render or large JSON evidence is committed.
 
-| Slot | NPM SHA-256 | VPM SHA-256 |
-|---|---|---|
-| CurbGarden | `39faaa40637b3cfc7ed6d7bf08027dd8d276284f55f4a561a92122300bd0f5a5` | `7818f75ca0bdb51ded2db6bbd01e4e6f9bddd683ec86263b5c726768e7feadcd` |
-| Stairs | `412239404901fdedf3eb7ad96773db5db8a320c3bb0addfdf8c2b3fa3d3e710c` | `69e0890dcfb3bfc5f7934e8f9da38fa2636f1f5d42e5509535c1d7075f0865da` |
+## Binding table and clean-process readback
 
-The other ten SHA-256 values are the v002 maps recorded in the previous note.
+Texture root: `C:/x/vatutino-ground-textures/v003/`. Every row has exactly one Base Color map;
+NPM packed PNG hash and VPM resolved external PNG hash also match the manifest.
 
-## Bind
+| Slot | Profile | File | Planned / readback px | SHA-256 | Mismatches |
+|---|---|---|---|---|---:|
+| CurbGarden | npm | `T_Vatutino_Ground_Diffuse_CurbGarden.png` | 2048 / 2048 x 2048 | `39faaa40637b3cfc7ed6d7bf08027dd8d276284f55f4a561a92122300bd0f5a5` | 0 |
+| FlowerBed | npm | `T_Vatutino_Ground_Diffuse_FlowerBed.png` | 2048 / 2048 x 2048 | `60b70163597159e9d6662409a89c2a0e57e255e2cf9b9900ec7f303b36b6841f` | 0 |
+| Gravel | npm | `T_Vatutino_Ground_Diffuse_Gravel.png` | 2048 / 2048 x 2048 | `c62a627d8bb3daec14753b3ee3186d7f57ccae44f66180370137a92876da33ac` | 0 |
+| LawnReinforced | npm | `T_Vatutino_Ground_Diffuse_LawnReinforced.png` | 2048 / 2048 x 2048 | `b9eedbf63636d0d72c950daed1789bd51226aece2e5faa4360d88622d46d8dd5` | 0 |
+| LawnRolled | npm | `T_Vatutino_Ground_Diffuse_LawnRolled.png` | 2048 / 2048 x 2048 | `6a9e20e4e44ea7d87fa77a842642a96712ac49928b8a5c87aa860f6a7f9be6b7` | 0 |
+| Mulch | npm | `T_Vatutino_Ground_Diffuse_Mulch.png` | 2048 / 2048 x 2048 | `d5fa15c0f60502616adef2fc133ee46bea94ddb580f667382c27318edd48e166` | 0 |
+| Pebbles | npm | `T_Vatutino_Ground_Diffuse_Pebbles.png` | 2048 / 2048 x 2048 | `22dce49d3de18cf19e1af19c5d4fe0c61d97c31dcaf1b4b69741767b336cadda` | 0 |
+| Skirt | npm | `T_Vatutino_Ground_Diffuse_Skirt.png` | 2048 / 2048 x 2048 | `74c17663ff4b5eaa415abcdbae0166b7bdc0ec8ea7a9d44d11caae07030427a5` | 0 |
+| Stairs | npm | `T_Vatutino_Ground_Diffuse_Stairs.png` | 2048 / 2048 x 2048 | `412239404901fdedf3eb7ad96773db5db8a320c3bb0addfdf8c2b3fa3d3e710c` | 0 |
+| TileDark | npm | `T_Vatutino_Ground_Diffuse_TileDark.png` | 2048 / 2048 x 2048 | `51a8966ed321584abf8eb7f068fdaa71f94ed1226f2f65dc2a22645eec626700` | 0 |
+| TileLight | npm | `T_Vatutino_Ground_Diffuse_TileLight.png` | 2048 / 2048 x 2048 | `79ad9d6696ac150a1177015affba6db697d7ead32a3f75b85e7de422a699b2b9` | 0 |
+| TileRed | npm | `T_Vatutino_Ground_Diffuse_TileRed.png` | 2048 / 2048 x 2048 | `77a7333263e97448035e605522bcd7f3cabbc4e4f45e1bd1ff883db138acf586` | 0 |
+| CurbGarden | vpm | `T_Vatutino_Ground_Diffuse_CurbGarden.1001.png` | 4096 / 4096 x 4096 | `7818f75ca0bdb51ded2db6bbd01e4e6f9bddd683ec86263b5c726768e7feadcd` | 0 |
+| FlowerBed | vpm | `T_Vatutino_Ground_Diffuse_FlowerBed.1001.png` | 4096 / 4096 x 4096 | `f26e99c56915241d805155ca5fb4205ae6c443a68fd7d7f44f5614d9fa44f187` | 0 |
+| Gravel | vpm | `T_Vatutino_Ground_Diffuse_Gravel.1001.png` | 4096 / 4096 x 4096 | `6d7a968ccc3bc9e2edef0fcc4d391688538e853162d755adfe4d7c8be1adb035` | 0 |
+| LawnReinforced | vpm | `T_Vatutino_Ground_Diffuse_LawnReinforced.1001.png` | 4096 / 4096 x 4096 | `f40eb62cf14d71c8a29d2f7b4ef4b9fa9b93280e31d7d0df7c8ad51173fdad11` | 0 |
+| LawnRolled | vpm | `T_Vatutino_Ground_Diffuse_LawnRolled.1001.png` | 4096 / 4096 x 4096 | `a2d170045b83693d17be399c9ad309df76dac89ca67225f22c4f722e138c8247` | 0 |
+| Mulch | vpm | `T_Vatutino_Ground_Diffuse_Mulch.1001.png` | 4096 / 4096 x 4096 | `b50968f8492ba54b33c170d9fa39e543a13867b43732c31da0c8c69e5fadd209` | 0 |
+| Pebbles | vpm | `T_Vatutino_Ground_Diffuse_Pebbles.1001.png` | 4096 / 4096 x 4096 | `aa67a76555d0b4b9312e8e65f05b059691abf72f586ebff1ac006281ca6b2521` | 0 |
+| Skirt | vpm | `T_Vatutino_Ground_Diffuse_Skirt.1001.png` | 4096 / 4096 x 4096 | `b151bae59b31e98b87592606f7e2973407f81d4272dc281c8ac86f114f243b85` | 0 |
+| Stairs | vpm | `T_Vatutino_Ground_Diffuse_Stairs.1001.png` | 4096 / 4096 x 4096 | `69e0890dcfb3bfc5f7934e8f9da38fa2636f1f5d42e5509535c1d7075f0865da` | 0 |
+| TileDark | vpm | `T_Vatutino_Ground_Diffuse_TileDark.1001.png` | 4096 / 4096 x 4096 | `94caa2a50d5edaba399656148f0d23ab4681266583e34fe8dbac284aa765f6b0` | 0 |
+| TileLight | vpm | `T_Vatutino_Ground_Diffuse_TileLight.1001.png` | 4096 / 4096 x 4096 | `721a7f641a0b029db835fc3e8c222ecfd3bc21b4d06444fc8875af6f4b37bc2b` | 0 |
+| TileRed | vpm | `T_Vatutino_Ground_Diffuse_TileRed.1001.png` | 4096 / 4096 x 4096 | `d5d88b93c066b39149a65f8adfbfabaf683ef1f43698c8089b4841e4d5b63244` | 0 |
 
-Blender 5.1.2 headless, on copies only. Output:
+## Exported texel density (px/m)
 
-| Profile | FBX | SHA-256 | Triangles | Binding mismatches | Vertex/UV delta |
-|---|---|---|---:|---:|---:|
-| NPM | `C:/x/vatutino-ground-textured/v001/npm/SM_Vatutino_Ground.fbx` | `327b984cf077837c0812c2ca1389a9942ee3d8e8e85d7e07058d175f6ff201ed` | 46 343 | 0 | 0 |
-| VPM | `C:/x/vatutino-ground-textured/v001/vpm/SM_Vatutino_Ground.fbx` | `b659dca3f9958224202405b387345b15f9e5a035b9888ab6c24053172fc7511f` | 46 343 | 0 | 0 |
-
-Readback is `tools/blender/fbx_readback.py` (Base Color image name and size versus the plan). Source and bound fingerprints are byte-identical, so per-face material ids, UVs and vertex positions match.
-
-Texel density is `texture_px * sqrt(uv_area / world_area)`. Skirt UV area is 0 on every skirt face (3 578 faces, min = max = 0). [D097] / TEX-17 applies the band to the relief surface and excludes the perimeter skirt, which is how v014 published its density. Every other slot is inside the band.
+Per triangle: `texture_px * sqrt(uv_area / world_area_m2)`. Perimeter Skirt is excluded from the relief band (GND-03/08); its zero UV density is reported, not concealed.
 
 | Slot | NPM min | NPM max | VPM min | VPM max |
 |---|---:|---:|---:|---:|
@@ -50,19 +88,70 @@ Texel density is `texture_px * sqrt(uv_area / world_area)`. Skirt UV area is 0 o
 | LawnRolled | 20.665561 | 30.213726 | 705.031403 | 1036.947013 |
 | Mulch | 21.839868 | 30.114369 | 589.626414 | 1030.739818 |
 | Pebbles | 25.342105 | 30.213726 | 865.225986 | 1025.196066 |
-| Skirt | 0 | 0 | 0 | 0 |
+| Skirt | 0.000000 | 0.000000 | 0.000000 | 0.000000 |
 | Stairs | 29.999406 | 30.001440 | 1023.987277 | 1024.039782 |
 | TileDark | 28.558727 | 30.008454 | 966.748058 | 1024.325283 |
 | TileLight | 11.572790 | 30.211414 | 590.908618 | 1442.061823 |
 | TileRed | 11.555525 | 30.121883 | 590.982802 | 1024.505753 |
 
-## validate_package.py
+## Validator outputs (not delivery approval)
 
-`uv run python tools/qa/validate_package.py <fbx> --profile <npm|vpm> --json`. No `--scene`, so scene stages stay `not_run` and `passed` is false. Exit code 2. Failures: 0. `not_run` is not counted as pass.
+`uv run python tools/qa/validate_package.py <fbx> --profile <npm|vpm> --json`
+returned **exit 2** for both. Raw outputs: `<evidence root>/<profile>/validate.json`.
+An attempted literal `py -3` used the machine interpreter without shapely (exit 1);
+self-repaired with the synced project interpreter above, no global installation.
 
-| Profile | exit | passed | machine counts | manual pending |
-|---|---:|---|---|---|
-| NPM | 2 | false | pass 0, fail 0, review 0, not_run 8 | V015, V017 |
-| VPM | 2 | false | pass 0, fail 0, review 0, not_run 12 | V015, V016, V017 |
+- **npm**: `passed=false`; machine stage counts `{"pass": 0, "fail": 0, "review": 0, "not_run": 8}`.
+  All `not_run` stage IDs (including manual): V001, V002, V003, V004, V005, V006, V012, V014, V015, V017.
+  Manual pending: V015, V017.
+- **vpm**: `passed=false`; machine stage counts `{"pass": 0, "fail": 0, "review": 0, "not_run": 12}`.
+  All `not_run` stage IDs (including manual): V001, V002, V003, V004, V005, V007, V008, V009, V010, V011, V012, V013, V015, V016, V017.
+  Manual pending: V015, V016, V017.
 
-V002 records one FBX header pass and one `not_run` for units and scale. The stage is counted in `not_run`, not in `pass`.
+V002 has a header finding pass but units/scale finding not_run; its aggregate stage
+is not_run, not pass. Machine counts exclude the separate manual gates. No not_run
+stage is counted as passing. Normal/roughness maps, GeoJSON and delivery packaging
+are outside #340; no checker or visual verdict is substituted.
+
+## Actual commands and exit codes
+
+```text
+uv sync                                                   -> 0
+uv run python tools/materials/ground_recipes.py deliver --version v003 --address Vatutino --out C:/x/vatutino-ground-textures/v003 -> 0 (24 maps)
+blender.exe --background --factory-startup --python-exit-code 1 --python tools/blender/fbx_readback.py -- C:/x/t_d94665f2/ground_v014/vpm_ucx/SM_Vatutino_Ground.fbx <worktree>/tmp/issue340/source-vpm-final-readback.json -> 0
+uv run python tools/materials/bind_ground_textures.py bind --npm-readback C:/x/t_d94665f2/ground_v014/readback_npm.json --vpm-readback <worktree>/tmp/issue340/source-vpm-final-readback.json --manifest C:/x/vatutino-ground-textures/v003/manifest.json --textures C:/x/vatutino-ground-textures/v003 --npm-fbx C:/x/t_d94665f2/ground_v014/npm/SM_Vatutino_Ground.fbx --vpm-fbx C:/x/t_d94665f2/ground_v014/vpm_ucx/SM_Vatutino_Ground.fbx --out C:/x/vatutino-ground-textured/v001 -> 0
+```
+
+`<worktree>` = `C:/Users/artsafro/agr-pilot/AGR-DigitalTwin/.worktrees/t_b979c32d`.
+Blender = `C:/Program Files/Blender Foundation/Blender 5.1/blender.exe`, version **5.1.2**,
+factory scene, metre-space source imports. The source-readback call precedes writes.
+The bind logs every complete Blender command plus its return code in `bind.log`:
+for **each profile**, source-copy fingerprint / bind+export / exported fingerprint /
+clean `tools/blender/fbx_readback.py` = **0 / 0 / 0 / 0** (8/8). Temporary copies and
+binding specs are inside the profile output tree and removed afterwards. Replaying
+against this nonempty version is deliberately refused. `delivery.log` records the
+outer commands and exit codes; `generate.log` records 24 generated maps.
+
+## Regression evidence and remaining gates
+
+- Pre-fix detached worktree at `5eb945a` loaded its own ground_recipes.py:
+  `test_regression_curb_garden_and_stairs_are_provisional_recipes` **1 failed**
+  because CurbGarden was missing (exit 1), not an environment error.
+- Additional witnessed RED cases: fractional manifest dimensions (3), duplicate
+  readback material (1), hardlink alias (1), raw layer/topology identity (1),
+  partial DCC rollback into an existing empty folder (1), final materialless UCX
+  inventory/collision identity (2), local staging (1), direct DCC overwrite (2).
+  Focused follow-up GREEN groups: 9, 2 and 3 passed respectively.
+- Final focused command: `env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest tests/test_bind_ground_textures.py tests/test_ground_recipes.py -q -p no:cacheprovider --basetemp=C:/x/t_b979c32d-targeted-green`
+  -> **205 passed**, exit 0, 259.24 s (`tmp/issue340/targeted-green.log`).
+- Generated expected-verdict probes: exact geometry **206/206** (2 accepted,
+  204 rejected mutations); density/endpoints **4009/4009** (1905 accepted,
+  2104 rejected), invoking the same regression functions with call counters;
+  `tmp/issue340/probes.json`. Thresholds stay inclusive; adjacent out-of-band
+  floats fail. Invalid zero/non-finite inputs are independently regressed.
+- Full-suite result is recorded in the PR after completion through suite_slot.py.
+  Regression eval receipt: `tmp/evals/report.json`, 0 passed /
+  0 failed / 10 not measured (no Claude transcript / expected PR evidence), exit 2.
+- Automated binding/geometry/density checks above are measured. User appearance
+  approval of provisional maps, #295's existing geometry/visual findings,
+  SINTEZ and whole-site/package approval remain separate gates, not pass.
