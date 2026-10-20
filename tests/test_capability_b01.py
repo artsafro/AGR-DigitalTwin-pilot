@@ -159,6 +159,8 @@ def test_supplementary_readback_report(tmp_path, status):
         path = tmp_path / 'benchmark' / name
         path.parent.mkdir(parents=True, exist_ok=True)
         data = report()
+        if name.startswith('check-'):
+            data.update(model='model.fbx', etalon='etalon.fbx', spec='spec.json', tolerances='tolerances.json')
         if name.startswith('check-') and status == 'fail':
             data['checks'][0]['status'] = 'fail'
             data['failed'] = ['bbox']
