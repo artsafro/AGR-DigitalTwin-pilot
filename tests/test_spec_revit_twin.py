@@ -249,6 +249,26 @@ def curved(i, cx, cy, r, t, a0, a1, z1):
     return w
 
 
+@pytest.mark.parametrize("host", ["none", "chord", "arc"])
+def test_curved_curtain_uses_occupied_geometry_for_embedding_and_body(host):
+    walls, _ = ring()
+    arc = curved(90, 5.0, 4.0, 1.0, 0.14, 180, 360, 7.2)
+    arc["function"] = "curtain"
+    obj = arc_obj("wall_90", 5.0, 4.0, 1.0, 0.14, 0.0, 7.2, 180, 360)
+    if host == "chord":
+        walls.append(wall(91, (3.5, 4.0), (6.5, 4.0)))
+    elif host == "arc":
+        walls.append(curved(91, 5.0, 4.0, 1.0, 0.3, 180, 360, 7.2))
+        obj += arc_obj("wall_91", 5.0, 4.0, 1.0, 0.3, 0.0, 7.2, 180, 360, offset=132)
+    dump = to_dump([band(walls + [arc])], [obj])
+    assert ("wall_90_b1" in dump["body"]) is (host != "arc")
+    assert "curtain_90" not in dump["body"]
+    if host != "arc":
+        mesh = next(m for m in dump["meshes"] if m["name"] == "wall_90_b1")
+        assert min(v[1] for v in mesh["vertices"]) == pytest.approx(2.93)
+        assert len(mesh["vertices"]) == 132
+
+
 def test_curved_attachment_outside_the_building_is_a_question():
     # a semicircular 0.14 m wall, 2.7 m high, in front of the south facade (PR #35 review 2)
     walls, t = ring()
