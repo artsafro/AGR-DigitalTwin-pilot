@@ -29,6 +29,31 @@ def cli(tmp_path, text=None, out=None):
     return run, target
 
 
+def test_approved_curb_joint_config_reaches_builder(tmp_path):
+    from shapely.geometry import LineString
+    d = fixture()
+    d['coverings']['asphalt']['geometry'] = mapping(box(0, 0, 10, 4))
+    d['ground_elements'] = [
+        dict(ref='drive', role='curb_drive', geometry=mapping(LineString([(1, 2), (9, 2)]))),
+        dict(ref='garden', role='curb_garden', geometry=mapping(LineString([(5, .5), (5, 3.5)]))),
+    ]
+    s = settings()
+    s['separate_curbs'] = True
+    src, config, out = tmp_path/'curbs.json', tmp_path/'site.json', tmp_path/'output'
+    src.write_text(json.dumps(d))
+    config.write_text(json.dumps(s))
+    run = subprocess.run([sys.executable, str(spec.origin), str(src), '--site-settings', str(config),
+                          '--out', str(out), '--chord', '0', '--snap', '.003'], capture_output=True, text=True)
+    assert run.returncode == 0, run.stderr + run.stdout
+    rep = json.loads((out/'ground_report.json').read_text())
+    assert all(g['pass'] for g in rep['gates'].values())
+    rows = {r['ref']: r for r in rep['details']}
+    assert rows['garden']['joint_gap_m'] == .006
+    assert rows['garden']['joint_trim_m2'] > 0
+    assert rows['drive']['joint_trim_m2'] == 0
+    assert rep['codirectional']['pairs_below'] == 0
+
+
 def test_site_cli_fresh_process(tmp_path):
     run, out = cli(tmp_path)
     assert run.returncode == 0, run.stderr + run.stdout
