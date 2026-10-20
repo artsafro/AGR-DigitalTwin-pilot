@@ -4,7 +4,6 @@
 import json
 import random
 import subprocess
-import time
 
 import numpy as np
 import pytest
@@ -249,15 +248,20 @@ def test_equivalence_on_scaled_box_and_bipyramid():
     assert near_parallel_overlaps(both, 0.003) == _reference_near_parallel_overlaps(both, 0.003)
 
 
-def test_50k_box_is_subquadratic():
+def test_50k_box_has_no_near_parallel_overlaps():
     verts, tris = _box(65)
     faces = _mesh_faces(verts, tris)
     assert len(faces) == 12 * 65 * 65
-    started = time.perf_counter()
-    result = near_parallel_overlaps(faces, 0.003)
-    elapsed = time.perf_counter() - started
-    print(elapsed)
-    assert result == [] and elapsed < 30.0
+    assert near_parallel_overlaps(faces, 0.003) == []
+
+
+@pytest.mark.perf
+def test_50k_box_is_subquadratic(measure_process_time):
+    verts, tris = _box(65)
+    faces = _mesh_faces(verts, tris)
+    median, wall = measure_process_time(lambda: near_parallel_overlaps(faces, 0.003))
+    print(f"[perf] 50k box: median CPU {median:.4f}s, wall {wall:.4f}s, budget 30s")
+    assert median < 30.0
 
 
 def test_edge_cases_match_reference():
