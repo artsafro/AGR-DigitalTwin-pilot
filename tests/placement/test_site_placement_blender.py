@@ -78,7 +78,7 @@ def test_blender_scene_equals_engine_output(tmp_path):
     lib = [ps.flora_entry("TREE", facts["TREE"], (4.5, 5.5)), ps.flora_entry("BUSH", facts["BUSH"], (1.0, 1.5)),
            ps.maf_entry("BENCH", facts["BENCH"], [1.8, 0.5, 0.8]),
            ps.maf_entry("STOOL", facts["STOOL"], [0.6, 0.52, 0.45])]
-    pts = [{"x": 90.0 + 3 * k, "y": 190.0 + 2 * (k % 5), "z": 0.0, "label": ["T", "B", "M", "S"][k % 4],
+    pts = [{"x": 88.0 + 2.5 * k, "y": 190.0 + 2 * (k % 5), "z": 0.0, "label": ["T", "B", "M", "S"][k % 4],
             "handle": f"P{k:02d}", "inside": True, "rotation": 17.0 * k, "position": None} for k in range(12)]
     assign = {"T": "TREE", "B": "BUSH", "M": "BENCH", "S": "STOOL"}
     keep, excl = ps.select_points(pts, assign)

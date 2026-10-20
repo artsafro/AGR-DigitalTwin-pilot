@@ -1,7 +1,11 @@
 """Vatutino site slice: MAF + Flora placement through the #316 engine and Blender instancing (#296).
 
 Job script (not a shared tool). Inputs are COPIES / outputs outside git; the gate-1 answers of the user
-(Artem 2026-10-20) are encoded in FLORA_PICKS / the exclusion reasons. Nothing here computes placement:
+(Artem 2026-10-20) are encoded in FLORA_PICKS / the exclusion reasons. Points over missing Ground are never
+removed by handle here: the engine stops on them unless ``ground-exceptions.json`` holds a user-approved
+exception bound to the sha256 of the Ground master being placed on (a repaired Ground re-places them).
+Exit codes: 0 pass; 1 engine stop / invalid exception (nothing instanced); 3 scene technical QA failed
+(scene equality or sinking): diagnostics kept in results.json, the scene renamed ``*.QA_FAILED.blend``. Nothing here computes placement:
 ``dt_ai.placement.engine.place`` does, ``tools/placement_site.py`` wraps it, ``tools/blender/
 placement_instance.py`` instances it.
 
@@ -24,19 +28,17 @@ from dt_ai.placement import engine  # noqa: E402
 from tools import placement_site as ps  # noqa: E402
 from twinqa.scene import find_blender  # noqa: E402
 
-ADAPTER = Path("C:/x/t_d94665f2/paving_ground_inputs_v4.json")
-GROUND = Path("C:/x/t_d94665f2/ground_v014")
-FLORA_FBX = Path("C:/x/t_5e4ea2be/flora_fbx")
-SITE_PARTS = ROOT / "jobs/VATUTINO-SITE/site-parts.json"
-MAF_SET = ROOT / "jobs/VATUTINO-SITE/maf/site-maf-set.json"
+CFG = {"adapter": Path("C:/x/t_d94665f2/paving_ground_inputs_v4.json"),
+       "ground": Path("C:/x/t_d94665f2/ground_v014"),
+       "flora_fbx": Path("C:/x/t_5e4ea2be/flora_fbx"),
+       "site_parts": ROOT / "jobs/VATUTINO-SITE/site-parts.json",
+       "maf_set": ROOT / "jobs/VATUTINO-SITE/maf/site-maf-set.json",
+       "exceptions": ROOT / "jobs/VATUTINO-SITE/ground-exceptions.json",
+       "flora_library": "C:/x/flora-library/v003/flora-library-v003.max"}
 SCRIPT = ROOT / "tools/blender/placement_instance.py"
 # gate-1 F2 (accepted 2026-10-20): schedule position -> library catalogue id
 FLORA_PICKS = {1: 101, 3: 120, 4: 115, 6: 105, 7: 103, 9: 205, 11: 212, 12: 204, 14: 230, 15: 223, 17: 224}
 EXACT = {11, 14, 15}
-# run v001 stopped on these engine findings (point_over_ground_hole: inside 568BF but no Ground triangle under
-# the point). Same rule as gate-1 Q2a (no Ground -> not placed, listed); the Ground hole goes to #295.
-NO_GROUND = {"15E288": "point_over_ground_hole (run v001 engine finding)",
-             "15E289": "point_over_ground_hole (run v001 engine finding)"}
 
 
 def spec_dims(v):
@@ -60,23 +62,31 @@ def blender(*args) -> dict:
     return rec
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--out", required=True)
-    ap.add_argument("--seed", type=int, default=296)
-    a = ap.parse_args()
-    out = Path(a.out)
+def _rel(p: Path) -> str:
+    try:
+        return Path(p).resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(p)
+
+
+def run(cfg: dict, out: Path, seed: int, dcc=blender) -> int:
+    out = Path(out)
     if out.exists():
         raise SystemExit(f"{out} exists: new versioned output dirs only")
     out.mkdir(parents=True)
-    adapter = json.loads(ADAPTER.read_text(encoding="utf-8"))
-    parts = json.loads(SITE_PARTS.read_text(encoding="utf-8"))
-    mafset = json.loads(MAF_SET.read_text(encoding="utf-8"))["positions"]
-    inputs = {"adapter": {"path": str(ADAPTER), "sha256": sha(ADAPTER)},
-              "site_parts": {"path": "jobs/VATUTINO-SITE/site-parts.json", "sha256": sha(SITE_PARTS)},
-              "maf_set": {"path": "jobs/VATUTINO-SITE/maf/site-maf-set.json", "sha256": sha(MAF_SET)},
-              "flora_library": {"path": "C:/x/flora-library/v003/flora-library-v003.max",
-                                "export_dir": str(FLORA_FBX)}}
+    a_seed = seed
+    adapter = json.loads(cfg["adapter"].read_text(encoding="utf-8"))
+    parts = json.loads(cfg["site_parts"].read_text(encoding="utf-8"))
+    mafset = json.loads(cfg["maf_set"].read_text(encoding="utf-8"))["positions"]
+    exc_path = Path(cfg["exceptions"])
+    exceptions = json.loads(exc_path.read_text(encoding="utf-8"))["exceptions"] if exc_path.is_file() else []
+    FLORA_FBX, GROUND = Path(cfg["flora_fbx"]), Path(cfg["ground"])
+    inputs = {"adapter": {"path": str(cfg["adapter"]), "sha256": sha(cfg["adapter"])},
+              "site_parts": {"path": _rel(cfg["site_parts"]), "sha256": sha(cfg["site_parts"])},
+              "maf_set": {"path": _rel(cfg["maf_set"]), "sha256": sha(cfg["maf_set"])},
+              "ground_exceptions": {"path": _rel(exc_path), "sha256": sha(exc_path) if exc_path.is_file() else None,
+                                    "entries": len(exceptions)},
+              "flora_library": {"path": str(cfg["flora_library"]), "export_dir": str(FLORA_FBX)}}
     flora_rows = {}
     for f in parts["flora"]:
         pick = FLORA_PICKS.get(f["pos"])
@@ -86,7 +96,8 @@ def main() -> int:
                                   "spozu_in": f["spozu_in"], "spozu_total": f["spozu_total"],
                                   "match": "exact" if f["pos"] in EXACT else ("substitute" if c else "no_model")}
     export = json.loads((FLORA_FBX / "export.json").read_text(encoding="utf-8"))["objects"]
-    results = {"seed": a.seed, "inputs": inputs, "variants": {}}
+    results = {"seed": a_seed, "inputs": inputs, "status": "running", "variants": {}}
+    qa_failed = False
     for var in ("npm", "vpm"):
         V = var.upper()
         vdir = out / var
@@ -126,7 +137,7 @@ def main() -> int:
                                  "spec_raw": p["schedule_size_m"]}
         spec = {"libraries": libs, "ground": {"fbx": str(g_fbx)}}
         (vdir / "spec.json").write_text(json.dumps(spec, indent=1), encoding="utf-8")
-        cmds = [blender("facts", vdir / "spec.json", vdir / "facts.json")]
+        cmds = [dcc("facts", vdir / "spec.json", vdir / "facts.json")]
         facts = json.loads((vdir / "facts.json").read_text(encoding="utf-8"))
         lib = []
         for lid, m in meta.items():
@@ -136,27 +147,36 @@ def main() -> int:
                 lib.append(ps.maf_entry(lid, facts[lid], m["spec"]))
         pts = adapter["planting"] + adapter["maf"]
         keep, excl = ps.select_points(pts, assign)
-        excl += [{"handle": q["handle"], "label": q["label"], "library_id": assign.get(q["label"]),
-                  "reason": NO_GROUND[q["handle"]]} for q in keep if q["handle"] in NO_GROUND]
-        keep = [q for q in keep if q["handle"] not in NO_GROUND]
+        try:
+            keep, gx, stale = ps.apply_ground_exceptions(keep, exceptions, var, inputs[f"ground_{var}"]["master_sha256"],
+                                                         assign)
+        except ps.PlacementStopped as exc:
+            results["variants"][var] = {"stopped": exc.reasons}
+            results["status"] = "stopped"
+            (out / "results.json").write_text(ps.dumps(results), encoding="utf-8")
+            print(f"{var}: STOPPED {exc.reasons}")
+            return 1
+        excl += gx
         assert len(keep) + len(excl) == len(pts)
         for x in excl:
             if x["reason"] == "no_library_model" and var == "vpm" and any(
                     m["block"] == x["label"] for m in missing_vpm):
                 x["reason"] = "no_confirmed_vpm"
         t = time.time()
-        rep = engine.place(keep, gm["verts"], gm["faces"], lib, a.seed, label_map=assign)
+        rep = engine.place(keep, gm["verts"], gm["faces"], lib, a_seed, label_map=assign)
         eng_s = round(time.time() - t, 1)
         (vdir / "engine_report.json").write_text(engine.report_json(rep), encoding="utf-8")
         vr = {"engine_status": rep["status"], "engine_seconds": eng_s, "totals": rep["totals"],
               "engine_sinking": rep["sinking"], "findings": Counter(f["code"] for f in rep["findings"]),
               "excluded": excl, "missing_vpm": missing_vpm, "facts": facts, "meta": meta,
-              "counts": rep["counts"], "commands": cmds, "library_summary": rep["library"]}
+              "counts": rep["counts"], "commands": cmds, "library_summary": rep["library"],
+              "ground_exceptions_stale": stale}
         results["variants"][var] = vr
         try:
             plan = ps.make_plan(rep, facts, offset)
         except ps.PlacementStopped as exc:
             vr["stopped"] = exc.reasons
+            results["status"] = "stopped"
             (out / "results.json").write_text(ps.dumps(results), encoding="utf-8")
             print(f"{var}: STOPPED {len(exc.reasons)} reasons, first: {exc.reasons[:5]}")
             return 1
@@ -166,19 +186,39 @@ def main() -> int:
                               "totals": rep["totals"], "issue": 296, "variant": var}
         (vdir / "spec.json").write_text(json.dumps(spec, indent=1), encoding="utf-8")
         blend = vdir / f"VATUTINO-SITE_placement_{var}_v001.blend"
-        cmds.append(blender("instance", vdir / "spec.json", vdir / "plan.json", blend, vdir / "readback.json"))
+        cmds.append(dcc("instance", vdir / "spec.json", vdir / "plan.json", blend, vdir / "readback.json"))
         rb = json.loads((vdir / "readback.json").read_text(encoding="utf-8"))
         vr["scene_mismatches"] = ps.compare_scene(rep, rb, facts, offset)
         vr["sinking_scene"] = ps.sinking(rb, kind_of=kind_of)
+        try:
+            vr["scene_triangles"] = ps.scene_triangles(rb)
+            tri_bad = []
+        except ps.PlacementStopped as exc:
+            vr["scene_triangles"], tri_bad = None, exc.reasons
+        vr["qa_failed"] = ps.qa_gate(vr["scene_mismatches"], vr["sinking_scene"]) + tri_bad
+        if vr["qa_failed"]:
+            qa_failed = True
+            bad = blend.with_name(blend.stem + ".QA_FAILED.blend")
+            blend.rename(bad)               # quarantine: never a deliverable scene name
+            blend = bad
         vr["blend"] = {"path": str(blend), "sha256": sha(blend)}
         vr["bottom_faces"] = {
             "deleted": sum(i.get("bottom_faces_deleted", 0) for i in rep["instances"]),
             "review": sum(v["action"] == "review" for i in rep["instances"] for v in i.get("bottom_faces", [])),
             "exposed": rep["exposed_bottoms"]}
         print(f"{var}: engine {rep['status']} {rep['totals']} mismatches {len(vr['scene_mismatches'])} "
-              f"sink {vr['sinking_scene']['per_kind']} ok={vr['sinking_scene']['ok']}")
+              f"sink {vr['sinking_scene']['per_kind']} ok={vr['sinking_scene']['ok']} qa_failed={len(vr['qa_failed'])}")
+    results["status"] = "qa_failed" if qa_failed else "pass"
     (out / "results.json").write_text(ps.dumps(results), encoding="utf-8")
-    return 0
+    return 3 if qa_failed else 0
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", required=True)
+    ap.add_argument("--seed", type=int, default=296)
+    a = ap.parse_args()
+    return run(CFG, Path(a.out), a.seed)
 
 
 if __name__ == "__main__":

@@ -9,7 +9,10 @@ Pure Python. The engine computes every instance; this module only
 - turns the engine report into a scene plan (matrix shifted by the scene origin offset, polygon indices of the
   bottom faces the engine marked ``delete``) and STOPS on any engine failure or error finding;
 - compares the scene readback with the engine report (count per library id; pivot, rot_z, scale, matrix per
-  instance; deleted polygons) and measures the sinking at every pivot from the scene.
+  instance; deleted polygons and triangles) and measures the sinking at every pivot from the scene;
+- gates the run on that scene check (``qa_gate``) and counts the placed (post-deletion) triangles;
+- applies user-approved Ground exceptions only while the Ground fingerprint they were approved for is the
+  one being placed on (``apply_ground_exceptions``); a repaired Ground sends the points to the engine again.
 """
 from __future__ import annotations
 
@@ -55,6 +58,37 @@ def select_points(points: list[dict], assign: dict[str, str | None]) -> tuple[li
             keep.append(dict(p))
     assert len(keep) + len(excl) == len(points)
     return keep, excl
+
+
+def apply_ground_exceptions(points: list[dict], exceptions: list[dict], variant: str, ground_sha256: str,
+                            assign: dict[str, str | None]) -> tuple[list[dict], list[dict], list[str]]:
+    """-> (engine points, excluded, stale handles). An exception excludes its point only when it is
+    user-approved (``approved`` with ``by``, ``date``, ``quote``) AND bound to this variant's Ground master
+    sha256; bound to another Ground it is stale and the point goes to the engine (which places it, or stops
+    on it). An unapproved or malformed exception stops the run."""
+    bad, active, stale = [], {}, []
+    for e in exceptions:
+        ap = e.get("approved") or {}
+        if not (e.get("handle") and isinstance(e.get("ground_master_sha256"), dict)):
+            bad.append(f"ground exception malformed: {e!r}")
+        elif not all(ap.get(k) for k in ("by", "date", "quote")):
+            bad.append(f"ground exception {e.get('handle')} not user-approved")
+        elif e["ground_master_sha256"].get(variant) == ground_sha256:
+            active[e["handle"]] = e
+        else:
+            stale.append(e["handle"])
+    if bad:
+        raise PlacementStopped(bad)
+    keep, excl = [], []
+    for p in points:
+        e = active.get(p.get("handle"))
+        if e is None:
+            keep.append(p)
+            continue
+        excl.append({"handle": p["handle"], "label": p.get("label"), "library_id": assign.get(p.get("label")),
+                     "reason": "ground_exception", "detail": e.get("reason"), "approved": e["approved"],
+                     "ground_master_sha256": ground_sha256})
+    return keep, excl, sorted(stale)
 
 
 # ----------------------------------------------------------------------------- library entries
@@ -194,6 +228,13 @@ def compare_scene(report: dict, readback: dict, facts: dict[str, dict], offset: 
         W = _shift(e["matrix"], offset)
         if max(abs(M[i][j] - W[i][j]) for i in range(4) for j in range(4)) > tol:
             bad.append(f"{h}: matrix differs")
+        lib_tris = readback.get("library_triangles", {}).get(e["library_id"])
+        if lib_tris is not None:
+            bf = facts.get(e["library_id"], {}).get("bottom_faces", [])
+            want_t = lib_tris - sum(len(bf[v["face"]]["points"]) - 2 for v in e.get("bottom_faces", [])
+                                    if v["action"] == "delete")
+            if r.get("triangles") != want_t:
+                bad.append(f"{h}: triangles {r.get('triangles')} vs {want_t} after deletion")
         lib_polys = readback.get("library_polygons", {}).get(e["library_id"])
         n_del = sum(v["action"] == "delete" for v in e.get("bottom_faces", []))
         if lib_polys is not None and r.get("polygons") != lib_polys - n_del:
@@ -221,6 +262,32 @@ def sinking(readback: dict, target: float = engine.SINK_M, tol: float = SINK_TOL
     return {"n": n, "measured": sum(len(v) for v in per.values()),
             "per_kind": {k: {"n": len(v), "min_m": min(v), "max_m": max(v)} for k, v in sorted(per.items())},
             "out_of_tol": bad, "ok": n > 0 and not bad}
+
+
+def scene_triangles(readback: dict) -> dict[str, dict]:
+    """Placed triangles per library id measured in the scene (after the bottom-face deletion):
+    {lid: {instances, total, min, max}}. A missing / non-integer count stops (fail-closed)."""
+    per: dict[str, list[int]] = {}
+    bad = []
+    for r in readback.get("instances", []):
+        t = r.get("triangles")
+        if not (isinstance(t, int) and not isinstance(t, bool) and t >= 0):
+            bad.append(f"{r.get('handle')}: no scene triangle count ({t!r})")
+            continue
+        per.setdefault(r["library_id"], []).append(t)
+    if bad:
+        raise PlacementStopped(bad)
+    return {k: {"instances": len(v), "total": sum(v), "min": min(v), "max": max(v)} for k, v in sorted(per.items())}
+
+
+def qa_gate(mismatches: list[str], sinking_result: dict) -> list[str]:
+    """Reasons the saved scene fails technical QA; [] only when the scene equals the engine output and every
+    pivot is sunk 10 cm +- 1 cm."""
+    out = [f"scene mismatch: {m}" for m in mismatches]
+    if not sinking_result.get("ok"):
+        out.append(f"sinking out of tolerance / unmeasured at {len(sinking_result.get('out_of_tol', []))} "
+                   f"instances: {sinking_result.get('out_of_tol', [])[:5]}")
+    return out
 
 
 def dumps(obj: Any) -> str:

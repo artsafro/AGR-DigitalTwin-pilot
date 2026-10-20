@@ -14,9 +14,12 @@ SHARES = {"ground": 50000, "maf": 60000, "flora": 70000}
 LIMIT = 180000
 
 
-def main(path: str) -> int:
-    res = json.loads(Path(path).read_text(encoding="utf-8"))
-    parts = json.loads((ROOT / "jobs/VATUTINO-SITE/site-parts.json").read_text(encoding="utf-8"))
+def build(res: dict, parts: dict) -> tuple[dict, str]:
+    """results.json of a PASSED place_site run + site-parts -> (report json, markdown). Triangles are the
+    placed scene triangles after the bottom-face deletion (``scene_triangles``); the library (pre-deletion)
+    counts are kept as ``tris_library`` / ``tris_total_library``. A stopped or QA-failed run has no report."""
+    if res.get("status") != "pass" or any(v.get("stopped") or v.get("qa_failed") for v in res["variants"].values()):
+        raise SystemExit(f"no report for a run with status {res.get('status')!r}: see its results.json")
     ground_tris = parts["sources"]["ground"]["npm_triangles"]
     out = {"version": "placement-report-v001", "issue": 296, "status": "technical QA; user geometry acceptance open",
            "passed": False, "seed": res["seed"], "inputs": res["inputs"], "variants": {}}
@@ -27,7 +30,12 @@ def main(path: str) -> int:
         for lid, m in v["meta"].items():
             tri = v["facts"][lid]["triangles"]
             n = placed.get(lid, 0)
-            row = {"library_id": lid, "block": m["block"], "placed": n, "tris_instance": tri, "tris_total": n * tri,
+            st = v["scene_triangles"].get(lid, {"instances": 0, "total": 0, "min": None, "max": None})
+            if st["instances"] != n:
+                raise SystemExit(f"{var} {lid}: scene instances {st['instances']} != placed {n}")
+            row = {"library_id": lid, "block": m["block"], "placed": n,
+                   "tris_instance": {"min": st["min"], "max": st["max"]}, "tris_total": st["total"],
+                   "tris_library": tri, "tris_total_library": n * tri,
                    "excluded": {r: c for (lab, r), c in excl.items() if lab == m["block"]}}
             if m["kind"] == "maf":
                 p = next(p for p in parts["maf"] if p["set_id"] == lid)
@@ -60,8 +68,6 @@ def main(path: str) -> int:
             "missing_vpm": v["missing_vpm"],
             "triangles": {"maf": tm, "flora": tf, "ground_npm": ground_tris, "total": tm + tf + ground_tris,
                           "limit": LIMIT, "shares": SHARES} if var == "npm" else {"maf": tm, "flora": tf}}
-    jp = ROOT / "jobs/VATUTINO-SITE/placement-report.json"
-    jp.write_text(json.dumps(out, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
     n = out["variants"]["npm"]
     L = ["# Vatutino site slice: MAF + Flora placement report (#296)", "",
          f"Status: **{out['status']}**, `passed=false` [D104]. Seed **{out['seed']}**. Engine `dt_ai.placement` "
@@ -76,17 +82,17 @@ def main(path: str) -> int:
               + f" (10 cm ± 1 cm: {'ok' if v['sinking_scene']['ok'] else 'FAIL'}).",
               f"Bottom faces: deleted {v['bottom_faces']['deleted']}, kept as `review` {v['bottom_faces']['review']}, "
               f"exposed on slopes {len(v['bottom_faces']['exposed'])}.", "",
-              "### MAF", "", "| schedule | block | library | catalogue | SPOZU in 568BF | placed | tris/inst | tris total |",
+              "### MAF", "", "| schedule | block | library | catalogue | SPOZU in 568BF | placed | tris/inst placed (library) | tris total placed |",
               "|---|---|---|---|---|---|---|---|"]
         for r in v["maf"]:
             L.append(f"| {r['schedule']} | {r['block']} | {r['library_id']} | {r['catalogue_id']} | {r['spozu_in']} | "
-                     f"{r['placed']} | {r['tris_instance']} | {r['tris_total']} |")
-        L += ["", "### Flora", "", "| pos | schedule (ru / latin) | library object | match | scheduled | SPOZU all / in | placed | base scale | tris/inst | tris total |",
+                     f"{r['placed']} | {_tri(r)} | {r['tris_total']} |")
+        L += ["", "### Flora", "", "| pos | schedule (ru / latin) | library object | match | scheduled | SPOZU all / in | placed | base scale | tris/inst placed (library) | tris total placed |",
               "|---|---|---|---|---|---|---|---|---|---|"]
         for r in v["flora"]:
             L.append(f"| {r['pos']} | {r['ru']} / *{r['latin']}* | {r['catalogue_id']} {r['library_id']} | {r['match']} | "
                      f"{r['scheduled']} | {r['spozu_total']} / {r['spozu_in']} | {r['placed']} | {r['base_scale']:.4f} | "
-                     f"{r['tris_instance']} | {r['tris_total']} |")
+                     f"{_tri(r)} | {r['tris_total']} |")
         L += ["", "Crown diameter: `review` for every species (not in the schedule, gate-1 F3).", "",
               "### Not placed (points, reason)", "", "| label | reason | points |", "|---|---|---|"]
         for r in v["not_placed"]:
@@ -107,11 +113,26 @@ def main(path: str) -> int:
           "- Flora without a library object (gate-1 F1): pos 2 Ольха, 5 Лиственница, 8 Лох, 10 Дерен кроваво-красный, "
           "13 Облепиха, 16 Ель нидиформис; unscheduled Ива швейцарская (131 points).",
           "- MAF without a library model (#313 Q1/Q5): see `not_placed` rows `no_library_model`.",
-          "- Two Урна points 15E288 / 15E289 lie inside 568BF over a hole of the Ground v014 (engine "
-          "`point_over_ground_hole`, run v001 stopped): not placed; Ground hole to #295.",
+          "- Points excluded by a user-approved Ground exception bound to the Ground master sha256: "
+          "`ground_exception` rows (a repaired Ground places them again).",
           "- Out-of-plot planting (gate-1 Q2a): `outside_boundary` rows. Pinus mugo placed by 106 plan points, "
           "schedule 99 (+7, gate-1 Q2b).", ""]
-    (ROOT / "jobs/VATUTINO-SITE/placement-report.md").write_text("\n".join(L), encoding="utf-8")
+    return out, "\n".join(L)
+
+
+def _tri(r: dict) -> str:
+    a, b = r["tris_instance"]["min"], r["tris_instance"]["max"]
+    return f"{a if a == b else f'{a}–{b}'} ({r['tris_library']})"
+
+
+def main(path: str) -> int:
+    res = json.loads(Path(path).read_text(encoding="utf-8"))
+    parts = json.loads((ROOT / "jobs/VATUTINO-SITE/site-parts.json").read_text(encoding="utf-8"))
+    out, md = build(res, parts)
+    (ROOT / "jobs/VATUTINO-SITE/placement-report.json").write_text(
+        json.dumps(out, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    (ROOT / "jobs/VATUTINO-SITE/placement-report.md").write_text(md, encoding="utf-8")
+    t = out["variants"]["npm"]["triangles"]
     print(f"npm maf {t['maf']} flora {t['flora']} total {t['total']}")
     return 0
 

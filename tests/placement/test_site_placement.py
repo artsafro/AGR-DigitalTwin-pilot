@@ -269,7 +269,7 @@ def test_compare_scene_detects_wrong_triangles_after_deletion():
 
 
 @pytest.mark.parametrize("mism,sink_ok,n", [([], True, 0), (["x: pivot"], True, 1), ([], False, 1),
-                                            (["a", "b"], False, 2)])
+                                            (["a", "b"], False, 3)])
 def test_qa_gate(mism, sink_ok, n):
     s = {"ok": sink_ok, "out_of_tol": [] if sink_ok else [{"handle": "H", "sink_m": 1.1}]}
     assert len(ps.qa_gate(mism, s)) == n

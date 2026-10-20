@@ -12,7 +12,8 @@ plan written by ``tools/placement_site.py`` out of ``dt_ai.placement.engine.plac
   instance with ``matrix_world`` = plan matrix (already shifted by the scene origin offset), deletes the
   bottom faces the plan marks ``delete`` (single-user mesh copy), stores the seed and the run record in the
   scene (Text ``placement_run.json`` + scene custom properties), saves a NEW .blend and writes a readback:
-  per instance the matrix, polygon count, lowest world z and the Ground height under the pivot (ray cast).
+  per instance the matrix, polygon and triangle count (after the deletion), lowest world z and the Ground
+  height under the pivot (ray cast); per library the polygon and triangle count before deletion.
 
 Usage:
   blender --background --factory-startup --python-exit-code 1 --python tools/blender/placement_instance.py --
@@ -163,6 +164,7 @@ def cmd_instance(spec_path, plan_path, blend_path, readback_path):
         zs = [(M @ v.co).z for v in ob.data.vertices]
         rows.append({"name": ob.name, "handle": ob["handle"], "library_id": ob["library_id"],
                      "matrix": [list(r) for r in M], "polygons": len(ob.data.polygons),
+                     "triangles": sum(len(p.vertices) - 2 for p in ob.data.polygons),
                      "lowest_z": min(zs) if zs else None})
     by_name = {it["name"]: it for it in plan["instances"]}
     for r in rows:
@@ -173,6 +175,7 @@ def cmd_instance(spec_path, plan_path, blend_path, readback_path):
     Path(readback_path).write_text(json.dumps({
         "blend": str(out), "seed": int(sc["placement_seed"]), "run_record": stored,
         "library_polygons": {k: len(v.data.polygons) for k, v in libs.items()},
+        "library_triangles": {k: sum(len(p.vertices) - 2 for p in v.data.polygons) for k, v in libs.items()},
         "instances": rows}, indent=1), encoding="utf-8")
     print(f"instance: {len(rows)} objects -> {out}")
 
