@@ -139,6 +139,11 @@ def _receipt(root, ref, gate, job):
     expected = [a.sha256 for a in job.artifacts]
     if not expected or subjects != expected:
         raise ValueError("receipt must bind the current exported artifacts in order")
+    if value.get("input_evidence") != [ref.model_dump() for ref in job.inputs]:
+        raise ValueError("receipt must bind the exact current input inventory in order")
+    parts = job.gates.parts.evidence
+    if not parts or value.get("parts_sha256") != parts[0].sha256:
+        raise ValueError("receipt must bind the current confirmed parts identity")
     return value
 
 
