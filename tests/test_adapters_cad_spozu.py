@@ -860,3 +860,67 @@ def test_nested_untransformable_content_on_unknown_layer_is_unmapped():
     res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
     assert [(f.code, f.layer, f.ref) for f in res.findings] == [
         ("unmapped_layer", "NEW_COVERING", f"{ins.dxf.handle}>{pl.dxf.handle}")]
+
+
+# ---------------------------------------------------------------- #295: contours and make_valid repair
+
+
+def test_elevation_contours_give_vertices_with_polyline_z():
+    doc = clean_doc()
+    vp = doc.blocks.new("VPC")
+    c = vp.add_lwpolyline([(10, 10), (50, 10), (90, 30)], dxfattribs={"layer": "CONTOUR", "elevation": 145.3})
+    msp = doc.modelspace()
+    msp.add_blockref("VPC", (0, 0), dxfattribs={"layer": "VP_CONTAINER"})
+    cfg = base_config(elevations={"layers": ["SPOT"], "containers": ["VP_CONTAINER"], "value": "text",
+                                  "contour_layers": ["CONTOUR"]})
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(cfg))
+    cont = [e for e in res.elevations if e.source == "contour"]
+    assert sorted((e.x, e.y) for e in cont) == [(10, 10), (50, 10), (90, 30)]
+    assert {e.z for e in cont} == {145.3}
+    assert all(e.handle == c.dxf.handle for e in cont)
+    assert res.summary()["elevations"]["contours"] == 1
+    assert [e.source for e in res.elevations].count("point") == 2
+    assert "unmapped_layer" not in codes(res)
+
+
+def test_contours_not_read_without_config():
+    doc = clean_doc()
+    doc.modelspace().add_lwpolyline([(10, 10), (50, 10)], dxfattribs={"layer": "CONTOUR", "elevation": 145.3})
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(base_config()))
+    assert all(e.source == "point" for e in res.elevations)
+
+
+def test_contour_layer_mapped_twice_is_config_error():
+    cfg = base_config(elevations={"layers": ["SPOT"], "contour_layers": ["SPOT"]})
+    with pytest.raises(SpozuConfigError):
+        SpozuConfig.from_dict(cfg)
+
+
+def test_3d_polyline_contour_with_varying_z_is_a_finding():
+    doc = clean_doc()
+    doc.modelspace().add_polyline3d([(10, 10, 1), (20, 10, 2)], dxfattribs={"layer": "CONTOUR"})
+    cfg = base_config(elevations={"layers": ["SPOT"], "containers": ["VP_CONTAINER"], "contour_layers": ["CONTOUR"]})
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(cfg))
+    assert "elevation_unparsed" in codes(res)
+    assert all(e.source == "point" for e in res.elevations)
+
+
+def test_self_intersecting_hatch_repaired_with_make_valid_when_configured():
+    doc = clean_doc()
+    h = doc.modelspace().add_hatch(dxfattribs={"layer": "COV_DECK"})
+    h.paths.add_polyline_path([(5, 65), (15, 75), (15, 65), (5, 75)], is_closed=True, flags=EXTERNAL)
+    cfg = base_config()
+    cfg["coverings"][2]["repair"] = "make_valid"
+    res = read_spozu_dxf(doc, SpozuConfig.from_dict(cfg))
+    rep = [x for x in res.findings if x.code == "repaired_contour"]
+    assert [x.handle for x in rep] == [h.dxf.handle]
+    assert "self_intersecting_contour" not in codes(res)  # the deck lies on the lawn: overlap stays a finding
+    assert res.coverings["deck"].area == pytest.approx(50.0)  # bow-tie: two triangles of 25 m2
+    assert rep[0].area == pytest.approx(50.0)
+
+
+def test_unknown_repair_mode_is_config_error():
+    cfg = base_config()
+    cfg["coverings"][2]["repair"] = "buffer0"
+    with pytest.raises(SpozuConfigError):
+        SpozuConfig.from_dict(cfg)

@@ -1,0 +1,1231 @@
+{
+ "paving": {
+  "project": "vatutino-dom2",
+  "units": "m",
+  "boundary": {
+   "handle": "568BF",
+   "area_m2": 25854.04,
+   "perimeter_m": 641.947,
+   "vertices": 589,
+   "bbox": [
+    -7700.77,
+    -15387.12,
+    -7487.29,
+    -15188.37
+   ],
+   "size_m": [
+    213.48,
+    198.76
+   ]
+  },
+  "base_covering": "tile_light",
+  "covering_ranking": [
+   "tile_light",
+   "mulch",
+   "lawn_reinforced",
+   "tile_red",
+   "gravel_screening",
+   "lawn_rolled",
+   "pebbles",
+   "tile_dark",
+   "flower_bed_02",
+   "flower_bed_01",
+   "flower_bed_04",
+   "flower_bed_07",
+   "flower_bed_03",
+   "flower_bed_06",
+   "flower_bed_05",
+   "flower_bed_08",
+   "decking"
+  ],
+  "coverings": {
+   "tile_light": {
+    "label": "Покрытие из плитки тротуарной бетонной (светлая)",
+    "layers": [
+     "!_А101_плитка_светлая"
+    ],
+    "area_m2": 7348.6,
+    "sources": 294,
+    "parts": 268,
+    "holes": 28,
+    "outside_boundary_m2": 0.0
+   },
+   "tile_red": {
+    "label": "Покрытие из плитки тротуарной бетонной (красная)",
+    "layers": [
+     "!_А101_плитка_красная"
+    ],
+    "area_m2": 887.81,
+    "sources": 8,
+    "parts": 7,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "tile_dark": {
+    "label": "Покрытие из плитки тротуарной бетонной (темная)",
+    "layers": [
+     "!_А101_плитка_темная"
+    ],
+    "area_m2": 130.2,
+    "sources": 13,
+    "parts": 11,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "pebbles": {
+    "label": "Покрытие из гальки",
+    "layers": [
+     "!_А101_покр_галька"
+    ],
+    "area_m2": 298.51,
+    "sources": 3,
+    "parts": 3,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "gravel_screening": {
+    "label": "Покрытие из гравийного трамбованного отсева фр. 2-8",
+    "layers": [
+     "!_А101_покр_гравийный отсев фр 2-8"
+    ],
+    "area_m2": 882.42,
+    "sources": 16,
+    "parts": 13,
+    "holes": 4,
+    "outside_boundary_m2": 0.0
+   },
+   "decking": {
+    "label": "Покрытие из деревянного настила",
+    "layers": [
+     "!_А101_покр_декинг"
+    ],
+    "area_m2": 0,
+    "sources": 0,
+    "parts": 0,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "mulch": {
+    "label": "Покрытие из мульчи",
+    "layers": [
+     "!_А101_мульча"
+    ],
+    "area_m2": 3634.47,
+    "sources": 65,
+    "parts": 63,
+    "holes": 2,
+    "outside_boundary_m2": 0.0
+   },
+   "lawn_reinforced": {
+    "label": "Газон укрепленный",
+    "layers": [
+     "!_А101_укрепленный газон"
+    ],
+    "area_m2": 2460.11,
+    "sources": 40,
+    "parts": 33,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "lawn_rolled": {
+    "label": "Газон универсальный рулонный",
+    "layers": [
+     "!_А101_озел_штрих_газон"
+    ],
+    "area_m2": 871.48,
+    "sources": 265,
+    "parts": 194,
+    "holes": 26,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_01": {
+    "label": "Цветник 01 Щучка дернистая",
+    "layers": [
+     "!_А101_укрепленный цветник 01 Щучка дернистая"
+    ],
+    "area_m2": 13.29,
+    "sources": 2,
+    "parts": 2,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_02": {
+    "label": "Цветник 02 Эхинацея пурпурная",
+    "layers": [
+     "!_А101_укрепленный цветник 02 Эхинацея пурпурная"
+    ],
+    "area_m2": 19.66,
+    "sources": 2,
+    "parts": 2,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_03": {
+    "label": "Цветник 03 Очиток видный",
+    "layers": [
+     "!_А101_укрепленный цветник 03 Очиток видный"
+    ],
+    "area_m2": 6.31,
+    "sources": 4,
+    "parts": 4,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_04": {
+    "label": "Цветник 04 Тысячелистник Терракота",
+    "layers": [
+     "!_А101_укрепленный цветник 04 Тысячелистник Терракота"
+    ],
+    "area_m2": 6.6,
+    "sources": 5,
+    "parts": 5,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_05": {
+    "label": "Цветник 05 Шалфей дубравный",
+    "layers": [
+     "!_А101_укрепленный цветник 05 Шалфей дубравный"
+    ],
+    "area_m2": 5.54,
+    "sources": 2,
+    "parts": 2,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_06": {
+    "label": "Цветник 06 Мордовник гмелина Snow king",
+    "layers": [
+     "!_А101_укрепленный цветник 06 Мордовник гмелина Snow king"
+    ],
+    "area_m2": 5.9,
+    "sources": 4,
+    "parts": 3,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_07": {
+    "label": "Цветник 07 Ясколка войлочная",
+    "layers": [
+     "!_А101_укрепленный цветник 07 Ясколка войлочная"
+    ],
+    "area_m2": 6.39,
+    "sources": 6,
+    "parts": 6,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_08": {
+    "label": "Цветник 08 Тимьян ползучий",
+    "layers": [
+     "!_А101_укрепленный цветник 08 Тимьян ползучий"
+    ],
+    "area_m2": 5.34,
+    "sources": 5,
+    "parts": 5,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   }
+  },
+  "covered_union_m2": 16578.84,
+  "uncovered_m2": 9275.2,
+  "uncovered_parts": 699,
+  "uncovered_largest_m2": [
+   3345.8,
+   2515.6,
+   1801.6,
+   1447.1,
+   85.7,
+   33.4
+  ],
+  "uncovered_largest_bbox": [
+   [
+    -7691.5,
+    -15296.7,
+    -7579.0,
+    -15197.6
+   ],
+   [
+    -7591.1,
+    -15341.4,
+    -7502.6,
+    -15250.1
+   ],
+   [
+    -7672.2,
+    -15387.1,
+    -7548.0,
+    -15329.2
+   ],
+   [
+    -7675.9,
+    -15377.3,
+    -7634.8,
+    -15316.7
+   ]
+  ],
+  "elevations": {
+   "total": 48,
+   "inside": 48,
+   "outside": 0,
+   "distinct_xy_inside": 48,
+   "duplicates_same_z": [],
+   "contradictory_z": [],
+   "collinear": false,
+   "z_min": 141.83,
+   "z_max": 154.4,
+   "layers": [
+    "ГП_Вертикалка_ОпорнаяТочка_New"
+   ],
+   "containers": [
+    "107E50"
+   ]
+  },
+  "planting": {
+   "total": 4960,
+   "inside": 4915
+  },
+  "maf": {
+   "total": 229,
+   "inside": 197
+  },
+  "findings_total": 1863,
+  "findings_by_code": {
+   "point_outside_boundary": [
+    {
+     "layer": "!_А101_Лиственные кустарники",
+     "count": 16
+    },
+    {
+     "layer": "!_А101_Хвойные кустарники",
+     "count": 2
+    },
+    {
+     "layer": "!_А101_деревья",
+     "count": 24
+    },
+    {
+     "layer": "!_А101_кустарники",
+     "count": 3
+    },
+    {
+     "layer": "!_А101_маф",
+     "count": 21
+    },
+    {
+     "layer": "0",
+     "count": 10
+    },
+    {
+     "layer": "__ТБО",
+     "count": 1
+    }
+   ],
+   "self_intersecting_contour": [
+    {
+     "layer": "!_А101_озел_штрих_газон",
+     "count": 22
+    },
+    {
+     "layer": "!_А101_плитка_светлая",
+     "count": 1700
+    },
+    {
+     "layer": "!_А101_укрепленный цветник 03 Очиток видный",
+     "count": 1
+    },
+    {
+     "layer": "!_А101_укрепленный цветник 07 Ясколка войлочная",
+     "count": 2
+    },
+    {
+     "layer": "!_А101_укрепленный цветник 08 Тимьян ползучий",
+     "count": 2
+    }
+   ],
+   "unmapped_layer": [
+    {
+     "layer": "!_А101_укрепленные кустарники",
+     "count": 1
+    },
+    {
+     "layer": "_ Окна",
+     "count": 1
+    },
+    {
+     "layer": "_Вне пределов_",
+     "count": 1
+    },
+    {
+     "layer": "Антураж",
+     "count": 1
+    },
+    {
+     "layer": "Балясины",
+     "count": 1
+    },
+    {
+     "layer": "Витраж",
+     "count": 1
+    },
+    {
+     "layer": "Вспомогательный_слой_в_блоках",
+     "count": 1
+    },
+    {
+     "layer": "Высотные отметки",
+     "count": 1
+    },
+    {
+     "layer": "Двери",
+     "count": 1
+    },
+    {
+     "layer": "Импосты витража",
+     "count": 1
+    },
+    {
+     "layer": "Каркас несущий",
+     "count": 1
+    },
+    {
+     "layer": "Каркас_Импост",
+     "count": 1
+    },
+    {
+     "layer": "Колонны",
+     "count": 1
+    },
+    {
+     "layer": "Лестницы",
+     "count": 1
+    },
+    {
+     "layer": "Линии",
+     "count": 1
+    },
+    {
+     "layer": "Линии разделители",
+     "count": 1
+    },
+    {
+     "layer": "Мебель",
+     "count": 1
+    },
+    {
+     "layer": "Несущие колонны",
+     "count": 1
+    },
+    {
+     "layer": "Оборудование",
+     "count": 1
+    },
+    {
+     "layer": "Ограждение",
+     "count": 1
+    },
+    {
+     "layer": "Окна",
+     "count": 1
+    },
+    {
+     "layer": "Оси",
+     "count": 1
+    },
+    {
+     "layer": "Панели витража",
+     "count": 1
+    },
+    {
+     "layer": "Панель",
+     "count": 1
+    },
+    {
+     "layer": "Парковка",
+     "count": 1
+    },
+    {
+     "layer": "Перекрытия",
+     "count": 1
+    },
+    {
+     "layer": "Пометочные облака",
+     "count": 1
+    },
+    {
+     "layer": "Помещения",
+     "count": 1
+    },
+    {
+     "layer": "Поручни",
+     "count": 1
+    },
+    {
+     "layer": "Сантехника",
+     "count": 1
+    },
+    {
+     "layer": "Сантехнические приборы",
+     "count": 1
+    },
+    {
+     "layer": "Стены",
+     "count": 1
+    },
+    {
+     "layer": "Стены внутренние",
+     "count": 1
+    },
+    {
+     "layer": "Стены наружные",
+     "count": 1
+    },
+    {
+     "layer": "Стены несущие",
+     "count": 1
+    },
+    {
+     "layer": "Стены отделка",
+     "count": 1
+    },
+    {
+     "layer": "Стены перегородки",
+     "count": 1
+    },
+    {
+     "layer": "Стены разрез",
+     "count": 1
+    },
+    {
+     "layer": "Стены штриховка",
+     "count": 1
+    },
+    {
+     "layer": "Стрелки вверх",
+     "count": 1
+    },
+    {
+     "layer": "Трубопровод",
+     "count": 1
+    },
+    {
+     "layer": "Узлы",
+     "count": 1
+    },
+    {
+     "layer": "Уклоны в точках",
+     "count": 1
+    },
+    {
+     "layer": "Элементы узлов",
+     "count": 1
+    }
+   ]
+  },
+  "self_intersecting_by_side": [
+   {
+    "layer": "!_А101_озел_штрих_газон",
+    "side": "in_bbox",
+    "count": 22
+   },
+   {
+    "layer": "!_А101_плитка_светлая",
+    "side": "outside_bbox",
+    "count": 1700
+   },
+   {
+    "layer": "!_А101_укрепленный цветник 03 Очиток видный",
+    "side": "outside_bbox",
+    "count": 1
+   },
+   {
+    "layer": "!_А101_укрепленный цветник 07 Ясколка войлочная",
+    "side": "outside_bbox",
+    "count": 2
+   },
+   {
+    "layer": "!_А101_укрепленный цветник 08 Тимьян ползучий",
+    "side": "outside_bbox",
+    "count": 2
+   }
+  ],
+  "overlaps": [
+   {
+    "pair": "tile_light / tile_red",
+    "area_m2": 0.0234
+   },
+   {
+    "pair": "tile_light / tile_dark",
+    "area_m2": 0.052
+   },
+   {
+    "pair": "tile_light / gravel_screening",
+    "area_m2": 0.0545
+   },
+   {
+    "pair": "tile_light / mulch",
+    "area_m2": 1.0974
+   },
+   {
+    "pair": "tile_light / lawn_reinforced",
+    "area_m2": 0.8793
+   },
+   {
+    "pair": "tile_light / lawn_rolled",
+    "area_m2": 0.4268
+   },
+   {
+    "pair": "gravel_screening / mulch",
+    "area_m2": 0.0586
+   },
+   {
+    "pair": "gravel_screening / lawn_rolled",
+    "area_m2": 0.0394
+   },
+   {
+    "pair": "mulch / lawn_reinforced",
+    "area_m2": 0.4888
+   },
+   {
+    "pair": "mulch / lawn_rolled",
+    "area_m2": 0.2054
+   },
+   {
+    "pair": "mulch / flower_bed_01",
+    "area_m2": 0.0541
+   },
+   {
+    "pair": "mulch / flower_bed_02",
+    "area_m2": 0.137
+   },
+   {
+    "pair": "lawn_reinforced / lawn_rolled",
+    "area_m2": 0.1912
+   },
+   {
+    "pair": "lawn_reinforced / flower_bed_07",
+    "area_m2": 0.028
+   },
+   {
+    "pair": "lawn_reinforced / flower_bed_08",
+    "area_m2": 0.0194
+   }
+  ],
+  "gnd06": {
+   "s_ter_m2": 25854.04,
+   "limit_if_s_pz_0": 4500000,
+   "limit_if_s_pz_eq_uncovered": 4500000,
+   "s_pz_m2_at_which_limit_drops": 10854.04
+  }
+ },
+ "main": {
+  "project": "vatutino-dom2",
+  "units": "m",
+  "boundary": {
+   "handle": "568BF",
+   "area_m2": 25854.04,
+   "perimeter_m": 641.947,
+   "vertices": 589,
+   "bbox": [
+    -7700.77,
+    -15387.12,
+    -7487.29,
+    -15188.37
+   ],
+   "size_m": [
+    213.48,
+    198.76
+   ]
+  },
+  "base_covering": "tile_light",
+  "covering_ranking": [
+   "tile_light",
+   "mulch",
+   "lawn_reinforced",
+   "tile_red",
+   "gravel_screening",
+   "lawn_rolled",
+   "pebbles",
+   "tile_dark",
+   "flower_bed_02",
+   "flower_bed_01",
+   "flower_bed_04",
+   "flower_bed_07",
+   "flower_bed_03",
+   "flower_bed_06",
+   "flower_bed_05",
+   "flower_bed_08",
+   "decking"
+  ],
+  "coverings": {
+   "tile_light": {
+    "label": "Покрытие из плитки тротуарной бетонной (светлая)",
+    "layers": [
+     "!_А101_плитка_светлая"
+    ],
+    "area_m2": 7343.55,
+    "sources": 294,
+    "parts": 268,
+    "holes": 28,
+    "outside_boundary_m2": 0.0
+   },
+   "tile_red": {
+    "label": "Покрытие из плитки тротуарной бетонной (красная)",
+    "layers": [
+     "!_А101_плитка_красная"
+    ],
+    "area_m2": 887.81,
+    "sources": 8,
+    "parts": 7,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "tile_dark": {
+    "label": "Покрытие из плитки тротуарной бетонной (темная)",
+    "layers": [
+     "!_А101_плитка_темная"
+    ],
+    "area_m2": 130.75,
+    "sources": 13,
+    "parts": 12,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "pebbles": {
+    "label": "Покрытие из гальки",
+    "layers": [
+     "!_А101_покр_галька"
+    ],
+    "area_m2": 298.51,
+    "sources": 3,
+    "parts": 3,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "gravel_screening": {
+    "label": "Покрытие из гравийного трамбованного отсева фр. 2-8",
+    "layers": [
+     "!_А101_покр_гравийный отсев фр 2-8"
+    ],
+    "area_m2": 882.42,
+    "sources": 16,
+    "parts": 13,
+    "holes": 4,
+    "outside_boundary_m2": 0.0
+   },
+   "decking": {
+    "label": "Покрытие из деревянного настила",
+    "layers": [
+     "!_А101_покр_декинг"
+    ],
+    "area_m2": 0,
+    "sources": 0,
+    "parts": 0,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "mulch": {
+    "label": "Покрытие из мульчи",
+    "layers": [
+     "!_А101_мульча"
+    ],
+    "area_m2": 3618.6,
+    "sources": 65,
+    "parts": 63,
+    "holes": 2,
+    "outside_boundary_m2": 0.0
+   },
+   "lawn_reinforced": {
+    "label": "Газон укрепленный",
+    "layers": [
+     "!_А101_укрепленный газон"
+    ],
+    "area_m2": 2476.65,
+    "sources": 40,
+    "parts": 33,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "lawn_rolled": {
+    "label": "Газон универсальный рулонный",
+    "layers": [
+     "!_А101_озел_штрих_газон"
+    ],
+    "area_m2": 871.48,
+    "sources": 265,
+    "parts": 194,
+    "holes": 26,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_01": {
+    "label": "Цветник 01 Щучка дернистая",
+    "layers": [
+     "!_А101_укрепленный цветник 01 Щучка дернистая"
+    ],
+    "area_m2": 13.29,
+    "sources": 2,
+    "parts": 2,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_02": {
+    "label": "Цветник 02 Эхинацея пурпурная",
+    "layers": [
+     "!_А101_укрепленный цветник 02 Эхинацея пурпурная"
+    ],
+    "area_m2": 19.66,
+    "sources": 2,
+    "parts": 2,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_03": {
+    "label": "Цветник 03 Очиток видный",
+    "layers": [
+     "!_А101_укрепленный цветник 03 Очиток видный"
+    ],
+    "area_m2": 6.31,
+    "sources": 4,
+    "parts": 4,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_04": {
+    "label": "Цветник 04 Тысячелистник Терракота",
+    "layers": [
+     "!_А101_укрепленный цветник 04 Тысячелистник Терракота"
+    ],
+    "area_m2": 6.6,
+    "sources": 5,
+    "parts": 5,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_05": {
+    "label": "Цветник 05 Шалфей дубравный",
+    "layers": [
+     "!_А101_укрепленный цветник 05 Шалфей дубравный"
+    ],
+    "area_m2": 5.54,
+    "sources": 2,
+    "parts": 2,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_06": {
+    "label": "Цветник 06 Мордовник гмелина Snow king",
+    "layers": [
+     "!_А101_укрепленный цветник 06 Мордовник гмелина Snow king"
+    ],
+    "area_m2": 5.9,
+    "sources": 4,
+    "parts": 3,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_07": {
+    "label": "Цветник 07 Ясколка войлочная",
+    "layers": [
+     "!_А101_укрепленный цветник 07 Ясколка войлочная"
+    ],
+    "area_m2": 6.39,
+    "sources": 6,
+    "parts": 6,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   },
+   "flower_bed_08": {
+    "label": "Цветник 08 Тимьян ползучий",
+    "layers": [
+     "!_А101_укрепленный цветник 08 Тимьян ползучий"
+    ],
+    "area_m2": 5.34,
+    "sources": 5,
+    "parts": 5,
+    "holes": 0,
+    "outside_boundary_m2": 0.0
+   }
+  },
+  "covered_union_m2": 16575.06,
+  "uncovered_m2": 9278.98,
+  "uncovered_parts": 698,
+  "uncovered_largest_m2": [
+   3345.8,
+   2515.6,
+   1801.6,
+   1447.1,
+   85.7,
+   33.4
+  ],
+  "uncovered_largest_bbox": [
+   [
+    -7691.5,
+    -15296.7,
+    -7579.0,
+    -15197.6
+   ],
+   [
+    -7591.1,
+    -15341.4,
+    -7502.6,
+    -15250.1
+   ],
+   [
+    -7672.2,
+    -15387.1,
+    -7548.0,
+    -15329.2
+   ],
+   [
+    -7675.9,
+    -15377.3,
+    -7634.8,
+    -15316.7
+   ]
+  ],
+  "elevations": {
+   "total": 48,
+   "inside": 48,
+   "outside": 0,
+   "distinct_xy_inside": 48,
+   "duplicates_same_z": [],
+   "contradictory_z": [],
+   "collinear": false,
+   "z_min": 141.83,
+   "z_max": 154.4,
+   "layers": [
+    "ГП_Вертикалка_ОпорнаяТочка_New"
+   ],
+   "containers": [
+    "107E50"
+   ]
+  },
+  "planting": {
+   "total": 4958,
+   "inside": 4913
+  },
+  "maf": {
+   "total": 232,
+   "inside": 199
+  },
+  "findings_total": 164,
+  "findings_by_code": {
+   "point_outside_boundary": [
+    {
+     "layer": "!_А101_Лиственные кустарники",
+     "count": 16
+    },
+    {
+     "layer": "!_А101_Хвойные кустарники",
+     "count": 2
+    },
+    {
+     "layer": "!_А101_деревья",
+     "count": 24
+    },
+    {
+     "layer": "!_А101_кустарники",
+     "count": 3
+    },
+    {
+     "layer": "!_А101_маф",
+     "count": 22
+    },
+    {
+     "layer": "0",
+     "count": 10
+    },
+    {
+     "layer": "__ТБО",
+     "count": 1
+    }
+   ],
+   "self_intersecting_contour": [
+    {
+     "layer": "!_А101_озел_штрих_газон",
+     "count": 22
+    },
+    {
+     "layer": "!_А101_укрепленный цветник 03 Очиток видный",
+     "count": 1
+    },
+    {
+     "layer": "!_А101_укрепленный цветник 07 Ясколка войлочная",
+     "count": 2
+    },
+    {
+     "layer": "!_А101_укрепленный цветник 08 Тимьян ползучий",
+     "count": 2
+    }
+   ],
+   "unmapped_layer": [
+    {
+     "layer": "!_А101_укрепленные кустарники",
+     "count": 1
+    },
+    {
+     "layer": "_ Окна",
+     "count": 1
+    },
+    {
+     "layer": "_Вне пределов_",
+     "count": 1
+    },
+    {
+     "layer": "Антураж",
+     "count": 1
+    },
+    {
+     "layer": "Балясины",
+     "count": 1
+    },
+    {
+     "layer": "Витраж",
+     "count": 1
+    },
+    {
+     "layer": "Вспомогательный_слой_в_блоках",
+     "count": 1
+    },
+    {
+     "layer": "Высотные отметки",
+     "count": 1
+    },
+    {
+     "layer": "Двери",
+     "count": 1
+    },
+    {
+     "layer": "Импосты витража",
+     "count": 1
+    },
+    {
+     "layer": "Каркас несущий",
+     "count": 1
+    },
+    {
+     "layer": "Каркас_Импост",
+     "count": 1
+    },
+    {
+     "layer": "Колонны",
+     "count": 1
+    },
+    {
+     "layer": "Лестницы",
+     "count": 1
+    },
+    {
+     "layer": "Линии",
+     "count": 1
+    },
+    {
+     "layer": "Линии разделители",
+     "count": 1
+    },
+    {
+     "layer": "Мебель",
+     "count": 1
+    },
+    {
+     "layer": "Несущие колонны",
+     "count": 1
+    },
+    {
+     "layer": "Оборудование",
+     "count": 1
+    },
+    {
+     "layer": "Ограждение",
+     "count": 1
+    },
+    {
+     "layer": "Окна",
+     "count": 1
+    },
+    {
+     "layer": "Оси",
+     "count": 1
+    },
+    {
+     "layer": "Панели витража",
+     "count": 1
+    },
+    {
+     "layer": "Панель",
+     "count": 1
+    },
+    {
+     "layer": "Парковка",
+     "count": 1
+    },
+    {
+     "layer": "Перекрытия",
+     "count": 1
+    },
+    {
+     "layer": "Пометочные облака",
+     "count": 1
+    },
+    {
+     "layer": "Помещения",
+     "count": 1
+    },
+    {
+     "layer": "Поручни",
+     "count": 1
+    },
+    {
+     "layer": "Сантехника",
+     "count": 1
+    },
+    {
+     "layer": "Сантехнические приборы",
+     "count": 1
+    },
+    {
+     "layer": "Стены",
+     "count": 1
+    },
+    {
+     "layer": "Стены внутренние",
+     "count": 1
+    },
+    {
+     "layer": "Стены наружные",
+     "count": 1
+    },
+    {
+     "layer": "Стены несущие",
+     "count": 1
+    },
+    {
+     "layer": "Стены отделка",
+     "count": 1
+    },
+    {
+     "layer": "Стены перегородки",
+     "count": 1
+    },
+    {
+     "layer": "Стены разрез",
+     "count": 1
+    },
+    {
+     "layer": "Стены штриховка",
+     "count": 1
+    },
+    {
+     "layer": "Стрелки вверх",
+     "count": 1
+    },
+    {
+     "layer": "Трубопровод",
+     "count": 1
+    },
+    {
+     "layer": "Узлы",
+     "count": 1
+    },
+    {
+     "layer": "Уклоны в точках",
+     "count": 1
+    },
+    {
+     "layer": "Элементы узлов",
+     "count": 1
+    }
+   ]
+  },
+  "self_intersecting_by_side": [
+   {
+    "layer": "!_А101_озел_штрих_газон",
+    "side": "in_bbox",
+    "count": 22
+   },
+   {
+    "layer": "!_А101_укрепленный цветник 03 Очиток видный",
+    "side": "outside_bbox",
+    "count": 1
+   },
+   {
+    "layer": "!_А101_укрепленный цветник 07 Ясколка войлочная",
+    "side": "outside_bbox",
+    "count": 2
+   },
+   {
+    "layer": "!_А101_укрепленный цветник 08 Тимьян ползучий",
+    "side": "outside_bbox",
+    "count": 2
+   }
+  ],
+  "overlaps": [
+   {
+    "pair": "tile_light / tile_red",
+    "area_m2": 0.0234
+   },
+   {
+    "pair": "tile_light / tile_dark",
+    "area_m2": 0.052
+   },
+   {
+    "pair": "tile_light / gravel_screening",
+    "area_m2": 0.0545
+   },
+   {
+    "pair": "tile_light / mulch",
+    "area_m2": 1.0966
+   },
+   {
+    "pair": "tile_light / lawn_reinforced",
+    "area_m2": 0.8205
+   },
+   {
+    "pair": "tile_light / lawn_rolled",
+    "area_m2": 0.4268
+   },
+   {
+    "pair": "gravel_screening / mulch",
+    "area_m2": 0.0586
+   },
+   {
+    "pair": "gravel_screening / lawn_rolled",
+    "area_m2": 0.0394
+   },
+   {
+    "pair": "mulch / lawn_reinforced",
+    "area_m2": 0.4888
+   },
+   {
+    "pair": "mulch / lawn_rolled",
+    "area_m2": 0.2054
+   },
+   {
+    "pair": "mulch / flower_bed_01",
+    "area_m2": 0.0541
+   },
+   {
+    "pair": "mulch / flower_bed_02",
+    "area_m2": 0.137
+   },
+   {
+    "pair": "lawn_reinforced / lawn_rolled",
+    "area_m2": 0.1912
+   },
+   {
+    "pair": "lawn_reinforced / flower_bed_07",
+    "area_m2": 0.028
+   },
+   {
+    "pair": "lawn_reinforced / flower_bed_08",
+    "area_m2": 0.0194
+   }
+  ],
+  "gnd06": {
+   "s_ter_m2": 25854.04,
+   "limit_if_s_pz_0": 4500000,
+   "limit_if_s_pz_eq_uncovered": 4500000,
+   "s_pz_m2_at_which_limit_drops": 10854.04
+  }
+ }
+}
