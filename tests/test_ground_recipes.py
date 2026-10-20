@@ -29,6 +29,8 @@ SLOTS = (
     "TileDark",
     "FlowerBed",
     "Skirt",
+    "CurbGarden",
+    "Stairs",
 )
 _NAME = re.compile(
     r"^T_[A-Za-z0-9_]+_Ground_Diffuse_[A-Za-z0-9_]+(?:\.1001)?\.png$"
@@ -91,7 +93,7 @@ def test_module_source_has_no_network_or_photo_loader():
         assert banned not in lowered
 
 
-def test_shipped_recipe_covers_the_ten_vatutino_slots(recipe):
+def test_shipped_recipe_covers_the_vatutino_slots(recipe):
     assert recipe["address"] == "Vatutino"
     assert recipe["seed"] == 319
     assert list(recipe["slots"]) == list(SLOTS)
@@ -112,6 +114,22 @@ def test_shipped_recipe_covers_the_ten_vatutino_slots(recipe):
     assert len(recipe["slots"]["FlowerBed"]["species"]) == 8
 
 
+def test_regression_curb_garden_and_stairs_are_provisional_recipes(recipes, recipe):
+    """The two Ground slots missing from v002 use the same provisional provenance rules."""
+    for slot in ("CurbGarden", "Stairs"):
+        assert slot in recipes.CANONICAL_SLOTS
+        assert list(recipes.CANONICAL_SLOTS).count(slot) == 1
+        body = recipe["slots"][slot]
+        assert body["family"] in recipes.FAMILIES
+        assert isinstance(body["source"], str) and len(body["source"].strip()) >= 8
+        flags = body["provisional"]
+        assert isinstance(flags, list) and flags
+        for flag in flags:
+            assert isinstance(flag["field"], str) and flag["field"].strip()
+            assert isinstance(flag["reason"], str) and len(flag["reason"].strip()) >= 8
+            assert flag["field"] in body
+
+
 def test_every_slot_documents_provisional_values(recipe):
     for slot in SLOTS:
         flags = recipe["slots"][slot]["provisional"]
@@ -130,7 +148,7 @@ def test_filename_grammar_and_length_ceiling(recipes):
             assert len(name) <= 254
             assert "." not in name.replace(".1001", "").replace(".png", "")
             seen.add(name)
-    assert len(seen) == 20
+    assert len(seen) == len(SLOTS) * 2 == 24
     suffix = "_Ground_Diffuse_TileLight.png"
     room = 254 - len("T_") - len(suffix)
     exact = recipes.texture_filename("A" * room, "TileLight", "npm")
@@ -291,7 +309,7 @@ def test_reduced_renders_are_deterministic_rgb_and_seamless(recipes, recipe):
             ok, worst, _median = _seam_ok(image)
             assert ok, f"{slot} {profile} seam ratio {worst}"
             hashes[(slot, profile)] = digest
-    assert len(set(hashes.values())) == 20
+    assert len(set(hashes.values())) == len(SLOTS) * 2 == 24
 
 
 def test_delivery_size_other_than_2048_or_4096_errors(recipes, recipe):
