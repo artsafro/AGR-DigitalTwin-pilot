@@ -917,3 +917,248 @@ def test_verify_accepts_basetemp_and_rejects_bad_paths(tmp_path):
     assert reason
     hits += 1
     assert hits == len(rejected) + 1 == 7
+
+
+def failure_lines(text):
+    return re.findall(r"(?m)^failure: (.*)$", text)
+
+
+def _short_summary(lines, summary):
+    body = [
+        "================================== FAILURES ===================================",
+        "E       assert 0",
+        "FAILED tests/decoy.py::test_decoy - not the short summary",
+        "=========================== short test summary info ===========================",
+        *lines,
+        summary,
+    ]
+    return "\n".join(body) + "\n"
+
+
+def test_failed_pytest_records_short_summary_lines(tmp_path, monkeypatch):
+    """Capture pytest -rf short-summary lines once; a clean pass records none."""
+    mod = load()
+    repo = tmp_path / "repo"
+    sha, _branch = init_repo(repo)
+    output = _short_summary(
+        [
+            "FAILED tests/test_sample.py::test_alpha - assert 0",
+            "ERROR tests/test_sample.py::test_beta - OSError: boom",
+        ],
+        "1 failed, 1 passed, 1 error in 0.04s",
+    )
+    code, text = _capture(
+        mod, repo, [], make_runner(pytest_out=output, pytest_code=1), monkeypatch,
+    )
+    assert code != 0
+    assert field(text, "result") == "FAIL"
+    assert field(text, "failed") == "1"
+    assert field(text, "errors") == "1"
+    assert field(text, "passed") == "1"
+    assert failure_lines(text) == [
+        "FAILED tests/test_sample.py::test_alpha - assert 0",
+        "ERROR tests/test_sample.py::test_beta - OSError: boom",
+    ]
+    assert "tests/decoy.py::test_decoy" not in text
+    verify_code, reason = mod.verify_text(text, sha)
+    assert verify_code != 0
+    assert "not PASS" in reason
+
+    stderr_runner_seen = []
+
+    def stderr_runner(argv, env, cwd):
+        if _pytest_invocation(argv):
+            stderr_runner_seen.append(argv)
+            return Completed(1, "", output)
+        return make_runner()(argv, env, cwd)
+
+    code, text = _capture(mod, repo, [], stderr_runner, monkeypatch)
+    assert code != 0
+    assert failure_lines(text) == [
+        "FAILED tests/test_sample.py::test_alpha - assert 0",
+        "ERROR tests/test_sample.py::test_beta - OSError: boom",
+    ]
+    assert stderr_runner_seen
+
+    ansi = _short_summary(
+        ["\x1b[31mFAILED\x1b[0m tests/test_sample.py::test_alpha\x1b[1m - assert 0\x1b[0m"],
+        "1 failed, 1 passed in 0.02s",
+    )
+    code, text = _capture(
+        mod, repo, [], make_runner(pytest_out=ansi, pytest_code=1), monkeypatch,
+    )
+    assert code != 0
+    assert failure_lines(text) == ["FAILED tests/test_sample.py::test_alpha - assert 0"]
+
+    code, text = _capture(mod, repo, [], make_runner(), monkeypatch)
+    assert code == 0
+    assert field(text, "result") == "PASS"
+    assert failure_lines(text) == []
+    verify_code, reason = mod.verify_text(text, sha)
+    assert verify_code == 0, reason
+
+    xfail = _short_summary(
+        ["XFAIL tests/t.py::test_a - reason"],
+        "1 xfailed, 1 passed in 0.02s",
+    )
+    code, text = _capture(mod, repo, [], make_runner(pytest_out=xfail), monkeypatch)
+    assert code == 0
+    assert field(text, "result") == "PASS"
+    assert failure_lines(text) == []
+    assert mod.verify_text(text, sha)[0] == 0
+
+
+def test_failure_ids_fail_closed_when_missing_partial_or_nonfinite(tmp_path, monkeypatch):
+    """Missing, partial, extra, empty and non-finite failure ids never pass."""
+    mod = load()
+    repo = tmp_path / "repo"
+    sha, _branch = init_repo(repo)
+    hits = 0
+    for count in range(1, 9):
+        lines = [f"FAILED tests/t.py::test_{index} - assert {index}" for index in range(count)]
+        output = _short_summary(lines, f"{count} failed, 1 passed in 0.02s")
+        code, text = _capture(
+            mod, repo, [], make_runner(pytest_out=output, pytest_code=1), monkeypatch,
+        )
+        assert code != 0
+        assert field(text, "result") == "FAIL"
+        assert failure_lines(text) == lines
+        assert "failure ids unknown" not in text
+        assert "failure ids incomplete" not in text
+        assert mod.verify_text(text, sha)[0] != 0
+        hits += 1
+    assert hits == 8
+
+    code, text = _capture(
+        mod, repo, [],
+        make_runner(
+            pytest_out=_short_summary(
+                ["ERROR tests/t.py::test_setup - OSError: boom"],
+                "1 error, 1 passed in 0.02s",
+            ),
+            pytest_code=1,
+        ),
+        monkeypatch,
+    )
+    assert code != 0
+    assert failure_lines(text) == ["ERROR tests/t.py::test_setup - OSError: boom"]
+    hits += 1
+
+    incomplete = 0
+    for count in range(1, 9):
+        for kept in range(count):
+            lines = [f"FAILED tests/t.py::test_{index} - assert {index}" for index in range(kept)]
+            output = _short_summary(lines, f"{count} failed, 1 passed in 0.02s")
+            code, text = _capture(
+                mod, repo, [], make_runner(pytest_out=output, pytest_code=1), monkeypatch,
+            )
+            assert code != 0
+            assert field(text, "result") == "FAIL"
+            recorded = failure_lines(text)
+            if kept == 0:
+                assert recorded == ["unknown"]
+                assert "failure ids unknown" in text
+            else:
+                assert recorded == lines
+                assert "failure ids incomplete" in text
+            assert "unknown" == recorded or "unknown" not in recorded or recorded == ["unknown"]
+            incomplete += 1
+    assert incomplete == 36
+
+    extra = _short_summary(
+        [
+            "FAILED tests/t.py::test_0 - assert 0",
+            "FAILED tests/t.py::test_1 - assert 1",
+        ],
+        "1 failed, 1 passed in 0.02s",
+    )
+    code, text = _capture(
+        mod, repo, [], make_runner(pytest_out=extra, pytest_code=1), monkeypatch,
+    )
+    assert code != 0
+    assert failure_lines(text) == [
+        "FAILED tests/t.py::test_0 - assert 0",
+        "FAILED tests/t.py::test_1 - assert 1",
+    ]
+    assert "failure ids incomplete" in text
+    hits += 1
+
+    blanks = (
+        "",
+        "FAILED",
+        "FAILED ",
+        "ERROR",
+        "ERROR ",
+        "FAILED nan - inf",
+        "ERROR inf",
+        "FAILED NaN",
+        "ERROR +infinity - boom",
+        "FAILED -inf - assert 0",
+        "SKIPPED tests/t.py::test_a - reason",
+        "PASSED tests/t.py::test_a",
+        "   ",
+    )
+    blank_hits = 0
+    for line in blanks:
+        output = _short_summary([line] if line else [], "1 failed, 1 passed in 0.02s")
+        code, text = _capture(
+            mod, repo, [], make_runner(pytest_out=output, pytest_code=1), monkeypatch,
+        )
+        assert code != 0, line
+        assert field(text, "result") == "FAIL"
+        assert failure_lines(text) == ["unknown"], line
+        assert "failure ids unknown" in text
+        blank_hits += 1
+    assert blank_hits == len(blanks) == 13
+
+    named = _short_summary(
+        ["FAILED tests/t.py::test_nan - nan"],
+        "1 failed, 1 passed in 0.02s",
+    )
+    code, text = _capture(
+        mod, repo, [], make_runner(pytest_out=named, pytest_code=1), monkeypatch,
+    )
+    assert code != 0
+    assert failure_lines(text) == ["FAILED tests/t.py::test_nan - nan"]
+    hits += 1
+
+    stray = "FAILED tests/t.py::test_a - assert 0\n1 passed in 0.01s\n"
+    code, text = _capture(mod, repo, [], make_runner(pytest_out=stray), monkeypatch)
+    assert code != 0
+    assert field(text, "result") == "FAIL"
+    assert "failure lines conflict with counts" in text
+    assert failure_lines(text) == ["FAILED tests/t.py::test_a - assert 0"]
+    hits += 1
+
+    pasted = valid_receipt()
+    needle = "xpassed: 0\n"
+    assert needle in pasted
+    pasted = pasted.replace(
+        needle,
+        needle + "failure: FAILED tests/t.py::test_a - assert 0\n",
+        1,
+    )
+    path = tmp_path / "pass-with-failure.txt"
+    path.write_text(pasted, encoding="utf-8")
+    code, reason = _verify(mod, path, SHA)
+    assert code != 0
+    assert "failure" in reason.lower()
+    hits += 1
+
+    unknown_pass = valid_receipt().replace(needle, needle + "failure: unknown\n", 1)
+    path = tmp_path / "pass-with-unknown.txt"
+    path.write_text(unknown_pass, encoding="utf-8")
+    code, reason = _verify(mod, path, SHA)
+    assert code != 0
+    assert reason
+    hits += 1
+
+    empty_failure = valid_receipt().replace(needle, needle + "failure:\n", 1)
+    path = tmp_path / "empty-failure.txt"
+    path.write_text(empty_failure, encoding="utf-8")
+    code, reason = _verify(mod, path, SHA)
+    assert code != 0
+    assert reason
+    hits += 1
+
+    assert hits == 15

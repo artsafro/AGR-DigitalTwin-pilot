@@ -12,7 +12,12 @@ unless ``--basetemp`` is set. Missing ancestors of that default path are created
 before pytest; the leaf itself is left for pytest. Other platforms keep pytest's
 own basetemp unless ``--basetemp`` is set. With ``--issue N`` the ready-gate
 command is also run;
-without it that command is ``not_run``. PASS only when every run command exits 0,
+without it that command is ``not_run``. When pytest fails, the receipt repeats
+each pytest ``-rf`` short-summary line (``FAILED`` or ``ERROR`` plus node id) as
+``failure:``. Lines are taken once, from the short-summary section. A missing or
+non-finite id is ``failure: unknown``. A partial or extra list is printed and
+marked incomplete. Both are FAIL, never a silent omission. PASS only when every
+run command exits 0,
 pytest collected at least one test, failed and errors are 0, and
 ``git status --porcelain`` is empty. ``--verify`` does not rewrite its input.
 An ``--out`` path that resolves to that input or to ``--basetemp``, or whose
@@ -55,6 +60,8 @@ SUMMARY_RE = re.compile(
 )
 _WORD_RE = re.compile(rf"(\d+) ({_WORD})")
 _COLLECTED = ("passed", "failed", "errors", "skipped", "xfailed", "xpassed")
+_ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+_FAILURE_HEAD = re.compile(r"(FAILED|ERROR) (\S.*)")
 
 
 def child_env(base=None):
@@ -210,6 +217,51 @@ def parse_pytest_summary(text):
     return counts, raw
 
 
+def _failure_text(line):
+    """True for one pytest -rf short-summary FAILED or ERROR line."""
+    match = _FAILURE_HEAD.fullmatch(line or "")
+    if not match:
+        return False
+    nodeid = match.group(2).partition(" - ")[0].strip()
+    if not nodeid or nodeid in {".", ".."}:
+        return False
+    if _NONFINITE_BASETEMP.fullmatch(nodeid):
+        return False
+    return True
+
+
+def parse_pytest_failures(text):
+    """Pytest -rf short-summary lines, in order, from the last summary section.
+
+    Lines outside that section are ignored so a traceback cannot duplicate an id.
+    Without a short-summary header, matching lines anywhere in the output are used.
+    Non-finite node ids are dropped. The result is empty when nothing qualifies,
+    never a fabricated id.
+    """
+    lines = [_ANSI.sub("", line).strip() for line in (text or "").splitlines()]
+    start = None
+    for index, line in enumerate(lines):
+        if "short test summary info" in line.lower():
+            start = index + 1
+    if start is None:
+        region = lines
+        stop_at_summary = False
+    else:
+        region = lines[start:]
+        stop_at_summary = True
+    found = []
+    for line in region:
+        if not line:
+            continue
+        if SUMMARY_RE.match(line):
+            if stop_at_summary:
+                break
+            continue
+        if _failure_text(line):
+            found.append(line)
+    return found
+
+
 def _collected(counts):
     return sum(counts[key] for key in _COLLECTED)
 
@@ -242,9 +294,11 @@ def _run_command(command, runner, cwd):
         "duration_s": _duration(started), "pytest": _is_pytest(command),
     }
     if record["pytest"]:
-        counts, summary = parse_pytest_summary(stdout + "\n" + stderr)
+        blob = stdout + "\n" + stderr
+        counts, summary = parse_pytest_summary(blob)
         record["counts"] = counts
         record["summary"] = summary
+        record["failures"] = parse_pytest_failures(blob)
     return record
 
 
@@ -269,8 +323,11 @@ def _evaluate(records, dirty, git_ok, uv_known):
             continue
         saw_pytest = True
         counts = record.get("counts")
+        captured = list(record.get("failures") or [])
         if counts is None:
             reasons.append("pytest summary unparseable")
+            if not captured and record["exit_code"] != 0:
+                reasons.append("failure ids unknown")
             continue
         if counts["failed"] != 0:
             reasons.append(f"pytest failed {counts['failed']}")
@@ -278,6 +335,16 @@ def _evaluate(records, dirty, git_ok, uv_known):
             reasons.append(f"pytest errors {counts['errors']}")
         if _collected(counts) <= 0:
             reasons.append("pytest collected 0")
+        expected = counts["failed"] + counts["errors"]
+        if len(captured) != expected:
+            if not captured:
+                reasons.append("failure ids unknown")
+            elif expected == 0:
+                reasons.append("failure lines conflict with counts")
+            else:
+                reasons.append("failure ids incomplete")
+        elif expected == 0 and record["exit_code"] != 0:
+            reasons.append("failure ids unknown")
     if not saw_pytest:
         reasons.append("pytest did not run")
     return reasons
@@ -305,11 +372,36 @@ def format_receipt(header, records, reasons):
             lines.append(f"summary: {record.get('summary', 'unknown')}")
             for key in COUNT_KEYS:
                 lines.append(f"{key}: {counts[key] if counts is not None else 'unknown'}")
+            for item in _shown_failures(record):
+                lines.append(f"failure: {item}")
     for reason in reasons:
         lines.append(f"reason: {reason}")
     lines.append(f"result: {result}")
     lines.append("```")
     return "\n".join(lines) + "\n"
+
+
+def _shown_failures(record):
+    """Failure lines to print. ``unknown`` only when pytest failed and no id was captured."""
+    if not record.get("pytest") or not record.get("found", True):
+        return []
+    captured = list(record.get("failures") or [])
+    counts = record.get("counts")
+    exit_code = record.get("exit_code", 0)
+    if counts is None:
+        if captured:
+            return captured
+        if exit_code != 0:
+            return ["unknown"]
+        return []
+    expected = counts["failed"] + counts["errors"]
+    if expected == len(captured):
+        if expected == 0 and exit_code != 0:
+            return ["unknown"]
+        return captured
+    if captured:
+        return captured
+    return ["unknown"]
 
 
 def _same_path(left, right):
@@ -514,6 +606,19 @@ def _verify_reason(text, sha):
             if parsed != counts:
                 return "counts inconsistent with summary"
             record["counts"] = counts
+            failures = []
+            while body and body[0].startswith("failure: "):
+                token, problem = _take(body, "failure")
+                if problem:
+                    return problem
+                if token is None or token == "" or token != token.strip():
+                    return "partial receipt"
+                if token != "unknown" and not _failure_text(token):
+                    return "invalid failure line"
+                failures.append(token)
+            if "unknown" in failures and failures != ["unknown"]:
+                return "invalid failure line"
+            record["failures"] = failures
         commands.append(record)
     while body and body[0].startswith("reason: "):
         body.pop(0)
@@ -522,6 +627,8 @@ def _verify_reason(text, sha):
     result = body[0].split(": ", 1)[1]
     if result != "PASS":
         return "result is not PASS"
+    if any(record.get("failures") for record in commands):
+        return "failure lines on PASS"
     if header["dirty"] != "no":
         return "dirty worktree"
     by_command = {}
