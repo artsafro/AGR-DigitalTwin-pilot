@@ -226,6 +226,21 @@ def test_ignored_inputs_combined_with_policy_edit(repository, tmp_path):
     assert result['passed'] is False and result['cleanup'] is True
 
 
+@pytest.mark.parametrize('name', ['evals/hidden.py', 'evals/__pycache__/hidden.py',
+                                  '.agents/__pycache__/SKILL.md'])
+def test_cache_name_cannot_hide_source(repository, tmp_path, name):
+    from tools.qa.capability_b01 import launch
+    code = ("import pathlib; p=pathlib.Path(" + repr(name) + "); "
+            "p.parent.mkdir(parents=True,exist_ok=True); p.write_text('synthetic source'); "
+            "pathlib.Path('.gitignore').write_text('*\\n')")
+    result = launch(repository, tmp_path / 'runs/hidden', ticket=ticket(),
+                    command=[sys.executable, '-c', code])
+    assert result['session_exit'] == 0
+    assert result['changed_evaluation_inputs'] == [name]
+    assert result['protected_inputs_unchanged'] is False
+    assert result['passed'] is False and result['cleanup'] is True
+
+
 def test_docs_and_cache_remain_allowed(repository, tmp_path):
     from tools.qa.capability_b01 import launch
     code = ("import pathlib; pathlib.Path('docs').mkdir(); "
