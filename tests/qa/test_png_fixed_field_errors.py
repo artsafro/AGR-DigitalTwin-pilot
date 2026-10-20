@@ -1,4 +1,4 @@
-"""Synthetic PNG fixed-field regressions; metadata is not integrity approval."""
+"""Synthetic PNG fixed-field new-case regressions; metadata is not integrity approval."""
 import hashlib
 import json
 import struct
