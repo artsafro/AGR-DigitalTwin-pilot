@@ -61,6 +61,7 @@ def parser():
     intake.add_argument("action", choices=["check"])
     intake.add_argument("--dir", type=Path, required=True, help="jobs/<JOB>/intake")
     evals = sub.add_parser("evals", help="Run agent-behaviour eval tasks (evals/<task>/task.json); report in a new run folder")
+    evals.add_argument("--check-receipt", help="verify a regression receipt against --output/report.json (read-only)")
     evals.add_argument("--suite", choices=["regression", "capability"])
     evals.add_argument("--task", help="one task id (its folder under evals/)")
     evals.add_argument("--references", action="store_true",
@@ -141,6 +142,18 @@ def main(argv=None):
             write_json(args.output / "modules-scene.json", scene)
             print(f"from-source: {args.output}; {report['triangles']} triangles; spec {len(spec_doc['floors'])} floors")
         elif args.command == "evals":
+            if args.check_receipt is not None:
+                from twinqa.evals.receipt import check_receipt
+                try:
+                    if (args.suite or args.task or args.references or args.evidence or args.branch
+                            or args.main or args.evals_dir):
+                        raise ValueError("--check-receipt accepts only --output, not run options")
+                    check_receipt(args.check_receipt, args.output)
+                except (ValueError, OSError) as exc:
+                    print("ERROR: " + " ".join(str(exc).splitlines()), file=sys.stderr)
+                    return 1
+                print("OK: regression evals receipt matches report")
+                return 0
             from twinqa.evals import runner
             try:
                 overrides = dict(item.split("=", 1) for item in args.evidence)
