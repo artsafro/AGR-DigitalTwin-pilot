@@ -421,8 +421,9 @@ def _copy(entry: dict, root: Path, backend: str, desktop: Path | None) -> str:
             if _sha256(target) != entry["sha256"]:
                 target.unlink()
                 raise ValueError("destination sha256_mismatch")
-        # Desktop does not expose a trustworthy file-id API. No fabricated link.
-        return PENDING
+        # Preserve known metadata; desktop has no API for discovering new file IDs.
+        link = entry.get("drive_link")
+        return link if isinstance(link, str) and DRIVE_LINK_RE.fullmatch(link) else PENDING
     remote = os.environ["AGR_RCLONE_REMOTE"].rstrip("/")
     if not re.fullmatch(r"[A-Za-z0-9_-]+:[^\n\r]*", remote):
         raise ValueError("AGR_RCLONE_REMOTE must name a configured remote:path")

@@ -545,6 +545,49 @@ def test_desktop_recorded_link_survives_repeat_and_conflict(tmp_path, link):
     assert manifest.read_text() == json.dumps(_document([entry]))
 
 
+@pytest.mark.parametrize("features", [None, {}, {"IsLocal": None}, {"IsLocal": "false"},
+                                              {"IsLocal": True}, {"IsLocal": False, "WrapFs": True},
+                                              {"IsLocal": False, "Overlay": True}])
+def test_rclone_unknown_or_wrapped_filesystem_fails_before_writes(tmp_path, monkeypatch, features):
+    import subprocess
+
+    entry, payload = _entry()
+    manifest, root = _write_manifest(tmp_path, [entry], [payload])
+    monkeypatch.setattr(sync, "which_rclone", lambda: "rclone")
+    monkeypatch.setenv("AGR_RCLONE_REMOTE", "gdrive:assets")
+    calls = []
+    def run(args, **kwargs):
+        calls.append(args[1])
+        assert args[1] == "backend", "copy must not follow invalid filesystem identity"
+        return subprocess.CompletedProcess(args, 0, json.dumps({"Features": features}), "")
+    monkeypatch.setattr(subprocess, "run", run)
+    before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    code, report = sync.execute(manifest, root=root, backend="rclone", apply=True, out=tmp_path / "out.json")
+    assert code != 0 and calls == ["backend"]
+    assert report["errors"]
+    assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
+
+
+def test_generated_preflight_combines_review_guards(tmp_path):
+    # Exhaust null evidence, missing files, known links and report aliases together.
+    for index in range(16):
+        case = tmp_path / str(index)
+        good, payload = _entry(drive_link="https://drive.google.com/file/d/known/view")
+        bad, _ = _entry(id="bad", local_path="bad.bin", size=None,
+                        sha256=None if index & 1 else _sha(payload))
+        manifest, root = _write_manifest(case, [good, bad], [payload, None if index & 2 else payload])
+        drive = case / "drive"
+        drive.mkdir()
+        out = (drive / good["local_path"]) if index & 4 else case / "report.json"
+        if index & 8:
+            (root / good["local_path"]).write_bytes(payload + b"mismatch")
+        before = {p: p.read_bytes() for p in case.rglob("*") if p.is_file()}
+        code, report = sync.execute(manifest, root=root, backend="drive-desktop", drive_root=drive,
+                                    apply=True, out=out)
+        assert code != 0 and report["errors"]
+        assert {p: p.read_bytes() for p in case.rglob("*") if p.is_file()} == before
+
+
 def test_truncated_manifest_file_fails(tmp_path):
     manifest = tmp_path / "manifest.json"
     manifest.write_text("{", encoding="utf-8")

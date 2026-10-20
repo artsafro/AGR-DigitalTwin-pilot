@@ -18,9 +18,10 @@ name a release. Do not invent one or interpret the inventory as delivery accepta
 Copy the recorded source files, read-only, into the corresponding `local_path` beneath
 the store before syncing. This tool does not move/delete sources or automatically import
 arbitrary `recorded_path` values. Missing files or a different hash exit nonzero before
-any backend writes; it will not silently repair a bad local copy. Null checksum/size
-fields may describe incomplete inventory, but a present file without a checksum cannot
-sync. The checked-in initial inventory has all eight checksums and sizes populated.
+any backend writes; it will not silently repair a bad local copy. Checksum and positive
+integer byte size are mandatory, non-null verification evidence in both schema and runtime.
+A partial entry rejects the entire batch before backend/report writes, even alongside valid
+entries. The checked-in initial inventory has all eight checksums and sizes populated.
 
 ## Offline first
 
@@ -52,6 +53,12 @@ export AGR_RCLONE_REMOTE='gdrive:AGR-assets'
 uv run python tools/assets/sync.py --backend rclone
 uv run python tools/assets/sync.py --backend rclone --apply --out tmp/assets-rclone.json
 ```
+
+Apply first queries `rclone backend features` (read-only). Local backend roots participate
+in the same alias/containment preflight as desktop folders, including missing targets and
+hardlinks. Opaque wrapped/overlay backends or unavailable filesystem identity fail before
+copying; use a direct Google Drive remote or a direct LOCAL remote for synthetic tests.
+Dry-run does not query backend features or invoke rclone.
 
 Apply uses `rclone copyto --ignore-existing --checksum` for each verified local file,
 then verifies remote size and MD5 via `rclone lsjson --stat --hash --hash-type MD5`.
