@@ -214,6 +214,16 @@ def test_windows_command_shim_preserves_prompt(tmp_path):
     assert json.loads(result.stdout) == [prompt]
 
 
+def test_accepted_context_decision_is_logged():
+    root = Path(__file__).resolve().parents[1]
+    log = (root / 'docs/decisions.md').read_text(encoding='utf-8')
+    rows = [line for line in log.splitlines() if line.startswith('| D158 |')]
+    assert len(rows) == 1
+    assert 'repository + user skills' in rows[0] and 'no OS sandbox' in rows[0]
+    task = (root / 'evals/capability-b01/task.md').read_text(encoding='utf-8')
+    assert '[D158]' in task
+
+
 def test_reference():
     import hashlib
     from twinqa.evals.capability import load_report
