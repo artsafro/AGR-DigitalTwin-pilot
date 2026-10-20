@@ -127,6 +127,20 @@ def test_reordered_checks(tmp_path):
     assert GRADERS['capability_b01'][0]({'benchmark': [path], 'self_check': [path]})['passed'] is True
 
 
+@pytest.mark.parametrize('layout', ['', 'run-v001'])
+def test_task_grades_versioned_runner_output(tmp_path, layout):
+    from twinqa.evals.runner import run
+    root = Path(__file__).resolve().parents[1]
+    output = tmp_path / 'benchmark' / layout
+    output.mkdir(parents=True)
+    for name in ('report.json', 'etalon-self.json'):
+        (output / name).write_text(json.dumps(report()))
+    _, result, _ = run(root / 'evals', suite='capability', main=tmp_path,
+                       branch='synthetic', output=tmp_path / 'evals', cwd=root)
+    assert result['passed'] == 1
+    assert result['not_measured'] == 0
+
+
 def test_task_registered():
     from twinqa.evals.runner import load_tasks
     root = Path(__file__).resolve().parents[1]
