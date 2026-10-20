@@ -9,6 +9,7 @@ source. The exhaustive value is the property (all 512 binary 3x3 masks and all
 new-case: exhaustive small-mask coverage + label-conservation oracle
 """
 
+import inspect
 import itertools
 
 import numpy as np
@@ -56,14 +57,24 @@ def _assert_covers(mask, rects):
     assert total_area == int(nz.sum()), "total rectangle area != nonzero source count"
 
 
-def _verify(mask):
-    """Full contract for one mask: coverage, labels, determinism, input unchanged."""
-    before = mask.copy()
-    first = _rects(mask)
-    second = _rects(mask)
-    _assert_covers(mask, first)
+def _verify(mask, extractor=grid_patches.rectangles):
+    """Full contract for one mask: coverage, labels, determinism, input unchanged.
+
+    ``extractor`` is injectable so oracle mutations and in-memory production
+    mutations exercise the same verification path as the real function. The
+    source is snapshotted before the call, and dtype/shape/values are asserted
+    against that snapshot after the call (not against the possibly-mutated mask).
+    """
+    shape_before = mask.shape
+    dtype_before = mask.dtype
+    source = mask.copy()
+    first = list(extractor(mask))
+    second = list(extractor(mask))
+    _assert_covers(source, first)
     assert first == second, "repeated call changed the decomposition"
-    np.testing.assert_array_equal(mask, before)
+    assert mask.shape == shape_before, "input shape changed"
+    assert mask.dtype == dtype_before, "input dtype changed"
+    np.testing.assert_array_equal(mask, source)
     return first
 
 
@@ -153,29 +164,41 @@ def test_oracle_rejects_changed_label():
         _assert_covers(mask, relabeled)
 
 
-def _greedy_grow_across_label(mask):
-    """In-memory mutant of the production greedy: the horizontal run keeps
-    growing across any nonzero cell, so it mixes adjacent unequal labels."""
-    remaining = mask.copy()
-    for i in range(mask.shape[0]):
-        j = 0
-        while j < mask.shape[1]:
-            value = remaining[i, j]
-            if not value:
-                j += 1
-                continue
-            j1 = j + 1
-            while j1 < mask.shape[1] and remaining[i, j1] != 0:
-                j1 += 1
-            i1 = i + 1
-            while i1 < mask.shape[0] and (remaining[i1, j:j1] == value).all():
-                i1 += 1
-            remaining[i:i1, j:j1] = 0
-            yield i, i1, j, j1, int(value)
-            j = j1
-
-
-def test_oracle_rejects_grow_across_label_mutant():
+@pytest.mark.filterwarnings("ignore:Setting the dtype on a NumPy array has been deprecated:DeprecationWarning")
+def test_verify_rejects_input_dtype_mutation():
     mask = np.array([[1, 2], [1, 0]], dtype=np.int8)
+
+    def mutate_dtype(m):
+        m.dtype = np.uint8  # in-place reinterpretation changes the input dtype
+        yield from grid_patches.rectangles(m)
+
+    with pytest.raises(AssertionError, match="dtype"):
+        _verify(mask, extractor=mutate_dtype)
+
+
+_GROW_PREDICATE = "remaining[i, j1] == value"
+
+
+def _mutated_rectangles_grow_across_label():
+    """In-memory mutation of the production ``rectangles`` predicate: the
+    horizontal run grows across any nonzero cell instead of only equal-valued
+    cells, so adjacent unequal labels are mixed into one rectangle. The mutant
+    is built from the production source at runtime (single token swap) and is
+    never committed; the test restores the real function after the assertion.
+    """
+    source = inspect.getsource(grid_patches.rectangles)
+    assert _GROW_PREDICATE in source, "production grow predicate token changed"
+    mutated = source.replace(_GROW_PREDICATE, "remaining[i, j1] != 0")
+    namespace = {}
+    exec(mutated, namespace)
+    return namespace["rectangles"]
+
+
+def test_oracle_rejects_in_memory_production_predicate_mutation(monkeypatch):
+    mask = np.array([[1, 2], [1, 0]], dtype=np.int8)
+    baseline = _verify(mask)  # baseline GREEN before the mutation
+    monkeypatch.setattr(grid_patches, "rectangles", _mutated_rectangles_grow_across_label())
     with pytest.raises(AssertionError, match="label-conservation"):
-        _assert_covers(mask, list(_greedy_grow_across_label(mask)))
+        _assert_covers(mask, list(grid_patches.rectangles(mask)))
+    monkeypatch.undo()
+    assert _verify(mask) == baseline  # baseline restored GREEN
