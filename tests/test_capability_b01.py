@@ -254,6 +254,28 @@ def test_linked_worktree_output_guard(repository, tmp_path):
         subprocess.run(['git', 'worktree', 'remove', str(linked)], cwd=repository, check=True, capture_output=True)
 
 
+def test_prepared_home_and_closed_stdin(repository, tmp_path):
+    from tools.qa.capability_b01 import launch
+    import hashlib
+    home = tmp_path / 'operator-home'
+    home.mkdir()
+    (home / 'config.toml').write_text('synthetic operator configuration')
+    etalon = tmp_path / 'input/etalon.fbx'
+    etalon.parent.mkdir()
+    etalon.write_bytes(b'synthetic')
+    code = ("import os,sys,pathlib; assert sys.stdin.read() == ''; "
+            "assert pathlib.Path(os.environ['CODEX_HOME']) == pathlib.Path(sys.argv[1]); "
+            "print('prepared context')")
+    result = launch(repository, tmp_path / 'runs/prepared', etalon,
+                    expected_sha=hashlib.sha256(etalon.read_bytes()).hexdigest(),
+                    command=[sys.executable, '-c', code, str(home)], codex_home=home,
+                    isolation='context-only; no OS sandbox', timeout=10)
+    assert result['session_exit'] == 0
+    assert result['isolation'] == 'context-only; no OS sandbox'
+    assert result['cleanup'] is True
+    assert (home / 'config.toml').read_text() == 'synthetic operator configuration'
+
+
 def test_native_transcript_not_measured(tmp_path):
     from twinqa.evals.graders import no_hook_denial
     path = tmp_path / 'native.jsonl'
