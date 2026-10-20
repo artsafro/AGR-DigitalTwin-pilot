@@ -57,7 +57,8 @@ class Plan:
 
 
 def plan_layers(boundary: Polygon, coverings: dict[str, list[Polygon]], base: str, slots: dict[str, str],
-                footprint_min_area: float = 1000.0, step: float = 0.006) -> Plan:
+                footprint_min_area: float = 1000.0, step: float = 0.006,
+                normalize_clips: bool = False) -> Plan:
     """Layer plan of method C. ``slots`` maps covering type -> material slot (several types may share one).
 
     Footprints: parts of the boundary not covered by any covering with area >= ``footprint_min_area`` become
@@ -69,7 +70,36 @@ def plan_layers(boundary: Polygon, coverings: dict[str, list[Polygon]], base: st
         raise ValueError(f"base covering {base!r} not in coverings")
     if not math.isfinite(step) or step <= 0:
         raise ValueError("step must be a positive finite number")
-    unions = {t: unary_union([p.intersection(boundary) for p in ps]) for t, ps in coverings.items() if ps}
+    dispositions = []
+
+    def polygonal(g, covering, stage):
+        # Opt-in preserves the accepted legacy plan/mesh bytes, including ring order.
+        if not normalize_clips:
+            return g
+        kept = []
+
+        def collect(part):
+            if part.is_empty:
+                dispositions.append(dict(covering=covering, stage=stage, reason="empty", area_m2=0.0))
+            elif part.geom_type == "Polygon":
+                if part.area < 1e-6:
+                    dispositions.append(dict(covering=covering, stage=stage, reason="below_area_threshold",
+                                             area_m2=float(part.area)))
+                else:
+                    kept.append(part)
+            elif hasattr(part, "geoms"):
+                for child in part.geoms:
+                    collect(child)
+            else:
+                dispositions.append(dict(covering=covering, stage=stage, reason="non_polygonal",
+                                         geometry_type=part.geom_type, area_m2=0.0))
+
+        collect(shapely.make_valid(g))
+        snapped = shapely.set_precision(unary_union(kept), GRID) if kept else Polygon()
+        return MultiPolygon([p for p in _polys(snapped) if p.area >= 1e-6])
+
+    unions = {t: polygonal(unary_union([polygonal(p.intersection(boundary), t, "clip") for p in ps]),
+                           t, "union") for t, ps in coverings.items() if ps}
     allcov = unary_union(list(unions.values())) if unions else Polygon()
     uncovered = _polys(boundary.difference(allcov))
     holes = sorted((p for p in uncovered if p.area >= footprint_min_area), key=lambda p: -p.area)
@@ -81,7 +111,8 @@ def plan_layers(boundary: Polygon, coverings: dict[str, list[Polygon]], base: st
     for t in unions:
         if t != base:
             by_slot.setdefault(slots[t], []).append(t)
-    slot_geom = {s: unary_union([unions[t] for t in ts]).intersection(surface) for s, ts in by_slot.items()}
+    slot_geom = {s: polygonal(unary_union([unions[t] for t in ts]).intersection(surface),
+                               "+".join(sorted(ts)), "surface_clip") for s, ts in by_slot.items()}
     order = sorted((s for s in slot_geom if not slot_geom[s].is_empty), key=lambda s: -slot_geom[s].area)
     below = Polygon()
     overlaps = {}
@@ -100,6 +131,8 @@ def plan_layers(boundary: Polygon, coverings: dict[str, list[Polygon]], base: st
            "slivers_on_base": len(uncovered) - len(holes),
            "slivers_m2": round(sum(p.area for p in uncovered) - sum(h.area for h in holes), 3),
            "level2_m2": overlaps}
+    if normalize_clips:
+        rep["clip_dispositions"] = dispositions
     return Plan(surface, holes, layers, step, rep)
 
 

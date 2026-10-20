@@ -96,7 +96,7 @@ def site_plan(data: dict, settings: dict, footprint_min: float):
     free = gc._polys(boundary.difference(unary_union([p for ps in cov.values() for p in ps])))
     cov[uncovered] = [p for p in free if p.area < footprint_min]
     plan = gc.plan_layers(boundary, cov, data["base_covering"], slots,
-                          footprint_min_area=footprint_min, step=STEP)
+                          footprint_min_area=footprint_min, step=STEP, normalize_clips=True)
     x0, y0, x1, y1 = boundary.bounds
     points = [(x, y, datum) for x, y in list(box(x0 - 1, y0 - 1, x1 + 1, y1 + 1).exterior.coords)[:4]]
     return plan, points
