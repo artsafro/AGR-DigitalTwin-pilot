@@ -65,8 +65,19 @@ Exit 0 means all declared gates complete; exit 1 means malformed, missing, faile
 unverified or review evidence. Output must be a **new** file, never an input/alias.
 Use repository-relative POSIX evidence paths; copy external receipts/assets into a
 versioned job evidence directory when a reproducible walk is needed. References are
-SHA-256 verified even for incomplete gates. `evidence_exists` inventories files;
-`status` is the checked gate claim; `ready` additionally requires preceding gates.
+SHA-256 verified even for incomplete gates. Source-code evidence (`.py`, `.cs`,
+`.ps1`, `.ms`, `.js`, `.ts`) is pinned to an immutable revision with a full-object-id
+`commit` (#387): its `sha256` is checked against the blob at that commit, so later
+working-tree edits never invalidate the recorded evidence. The pin is honored only for source
+evidence: the `inputs` inventory (any path), or a supplementary source-suffixed reference in the
+`parts`/`operations` roles. The primary parsed contract of a `pass` `parts` gate (the PartsList)
+and the primary receipt of a `pass` `operations` gate are generated semantic roles and always
+reject `commit`, regardless of suffix. Generated artifacts, receipts, parts,
+reports and visual sheets always keep their working-tree `sha256` and reject a `commit`
+(by role as well as by suffix, so a generated file cannot evade the check with a
+source-like name); editing any of them still errors. `evidence_exists`
+inventories files; `status` is the checked gate claim; `ready` additionally requires
+preceding gates.
 
 For pass claims, inputs must equal the full inventory; parts must be confirmed.
 Machine receipts (operations/budgets/readback/visual/checker) are JSON or YAML maps
