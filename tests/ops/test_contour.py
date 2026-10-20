@@ -94,6 +94,7 @@ def test_default_backend_satisfies_the_adapter_protocol():
 def test_generated_star_polygons_with_holes_extrude_closed():
     """Probe: 60 random star-shaped polygons (some with a hole) in all three views stay closed with exact volume."""
     rng = np.random.default_rng(338)
+    done = 0
     for k in range(60):
         n = int(rng.integers(3, 14))
         ang = np.sort(rng.uniform(0, 2 * np.pi, n))
@@ -109,6 +110,31 @@ def test_generated_star_polygons_with_holes_extrude_closed():
         polygon = shapely.Polygon(outer.exterior.coords, holes)
         axis = k % 3
         assert_closed_outward(extrude_polygon(polygon, axis, 0.0, 1.7), polygon.area * 1.7)
+        done += 1
+    assert done >= 40
+
+
+def test_generated_box_unions_are_rebuilt_within_the_silhouette_limit():
+    """Probe: 25 random unions of 2-3 overlapping boxes (one footprint, common height): applied, closed, within 0.07 m."""
+    rng = np.random.default_rng(1338)
+    applied = 0
+    for _ in range(25):
+        h = float(rng.uniform(0.5, 4.0))
+        boxes, prints = [], []
+        x, y = 0.0, 0.0
+        for _ in range(int(rng.integers(2, 4))):
+            sx, sy = rng.uniform(0.3, 3.0, 2)
+            boxes.append(box((x, y, 0), (x + sx, y + sy, h)))
+            prints.append(shapely.box(x, y, x + sx, y + sy))
+            x, y = x + sx * rng.uniform(0.2, 0.8), y + sy * rng.uniform(0.2, 0.8)       # overlap the next box
+        source = join(*boxes)
+        r = rebuild_by_contour({"p": source}, "p")
+        assert r.applied, r.question
+        area = shapely.union_all(prints).area
+        assert_closed_outward(r.scene["p"], area * h)
+        assert max(r.notes["deviations_m"].values()) <= SILHOUETTE_MAX_M
+        applied += 1
+    assert applied == 25
 
 
 def test_extrusion_rejects_bad_input():
