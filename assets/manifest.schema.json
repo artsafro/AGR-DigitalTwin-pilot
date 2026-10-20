@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asset-store/1",
+  "title": "Local asset store manifest",
+  "description": "Local disk and Google Drive inventory. Source is required and nonblank [D151]; licence is optional. Missing checksums cannot sync.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "local_root",
+    "login",
+    "drive",
+    "rejected_backends",
+    "assets"
+  ],
+  "properties": {
+    "schema": {
+      "const": "asset-store/1"
+    },
+    "local_root": {
+      "const": "C:/x/assets",
+      "description": "Fixed local asset root for this store."
+    },
+    "login": {
+      "enum": [
+        "pending",
+        "rclone",
+        "drive-desktop"
+      ]
+    },
+    "drive": {
+      "const": "google-drive"
+    },
+    "rejected_backends": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "const": "dropbox"
+      }
+    },
+    "provenance_gaps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "assets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "version",
+          "local_path",
+          "sha256",
+          "size",
+          "drive_link",
+          "source"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string",
+                "pattern": "^v[0-9]{3}$"
+              }
+            ]
+          },
+          "local_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "drive_link": {
+            "type": "string",
+            "pattern": "^(pending|https://(drive|docs)\\.google\\.com/\\S+)$"
+          },
+          "licence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "recorded_path": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}
