@@ -1,0 +1,105 @@
+{
+  "schema": "asset-store/1",
+  "local_root": "C:/x/assets",
+  "login": "pending",
+  "drive": "google-drive",
+  "rejected_backends": [
+    "dropbox"
+  ],
+  "provenance_gaps": [
+    "Licences are unknown: licence=null; documented source satisfies provenance validation, not permission to redistribute.",
+    "MAF source records contain no vNNN token; version=null means unversioned, not a fabricated release.",
+    "Google login is not performed. All drive_link values remain pending.",
+    "SHA-256 and sizes measured from recorded_path files on 2026-10-20; pre-existing repository digests matched. Sources read only."
+  ],
+  "assets": [
+    {
+      "id": "maf-union-max",
+      "version": null,
+      "local_path": "maf/maf-union-allin.max",
+      "sha256": "beeef9d418e81045bbc4933cc74077acd3d9f7a265319ceb9bf0ff0253050109",
+      "size": 319541248,
+      "drive_link": "pending",
+      "licence": null,
+      "source": "library/maf/audit.json source_hashes[0]; library/maf/README.md",
+      "recorded_path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/МАФы_Union_ALLin.max"
+    },
+    {
+      "id": "maf-npm-blend",
+      "version": null,
+      "local_path": "maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "size": 54782841,
+      "drive_link": "pending",
+      "licence": null,
+      "source": "library/maf/audit.json source_hashes[1]; library/maf/README.md",
+      "recorded_path": "C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/МАФЫ_НПМ.blend"
+    },
+    {
+      "id": "maf-spec-xlsx",
+      "version": null,
+      "local_path": "maf/maf_spec_vedomost_3.xlsx",
+      "sha256": "9b4302c16501636fe4a522f54ff16091244ba0b6f20378763b2706d51f1eb2b3",
+      "size": 609621,
+      "drive_link": "pending",
+      "licence": null,
+      "source": "library/maf/README.md sha256 of maf_spec_vedomost_3.xlsx; holding directory is not recorded",
+      "recorded_path": "C:/x/maf-spec/maf_spec_vedomost_3.xlsx"
+    },
+    {
+      "id": "flora-library",
+      "version": "v003",
+      "local_path": "flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "size": 2561364,
+      "drive_link": "pending",
+      "licence": null,
+      "source": "library/flora/catalogue.json library_file; library/flora/README.md",
+      "recorded_path": "C:/x/flora-library/v003/flora-library-v003.max"
+    },
+    {
+      "id": "windows-win-typical",
+      "version": "v001",
+      "local_path": "windows/v001/Win_Typical.max",
+      "sha256": "59a44f670b392caffd4a09a7082376afe94322da3c2939de77eabda27987a777",
+      "size": 2564096,
+      "drive_link": "pending",
+      "licence": null,
+      "source": "library/windows/sources/win-typical-max-v001.json source.file and source.file_meta.size_bytes",
+      "recorded_path": "C:/Users/artsafro/Desktop/!3D viz/!А101/windows/Win_Typical.max"
+    },
+    {
+      "id": "ground-vatutino-npm",
+      "version": "v014",
+      "local_path": "ground/v014/npm/SM_Vatutino_Ground.fbx",
+      "sha256": "94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef",
+      "size": 1582268,
+      "drive_link": "pending",
+      "licence": null,
+      "source": "jobs/VATUTINO-SITE/ground-build-v014.md NPM SHA-256",
+      "recorded_path": "C:/x/t_d94665f2/ground_v014/npm/SM_Vatutino_Ground.fbx"
+    },
+    {
+      "id": "ground-vatutino-vpm",
+      "version": "v014",
+      "local_path": "ground/v014/vpm/SM_Vatutino_Ground.fbx",
+      "sha256": "a41266757fe39958cae7a40a765b628aa7cbfeb74de48d3c82efc297b9cf75f1",
+      "size": 1619596,
+      "drive_link": "pending",
+      "licence": null,
+      "source": "jobs/VATUTINO-SITE/ground-build-v014.md VPM SHA-256 before UCX; retained there as an intermediate source",
+      "recorded_path": "C:/x/t_d94665f2/ground_v014/vpm/SM_Vatutino_Ground.fbx"
+    },
+    {
+      "id": "ground-vatutino-vpm-ucx",
+      "version": "v014",
+      "local_path": "ground/v014/vpm_ucx/SM_Vatutino_Ground.fbx",
+      "sha256": "a5f7d3963ffbe3003f4dd7d706395a84f30a3548c5281f3402b1c1694cfa3b6c",
+      "size": 3044668,
+      "drive_link": "pending",
+      "licence": null,
+      "source": "jobs/VATUTINO-SITE/ground-build-v014.md final VPM with UCX SHA-256",
+      "recorded_path": "C:/x/t_d94665f2/ground_v014/vpm_ucx/SM_Vatutino_Ground.fbx"
+    }
+  ]
+}

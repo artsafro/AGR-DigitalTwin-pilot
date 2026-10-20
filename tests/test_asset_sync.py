@@ -114,11 +114,11 @@ def test_shipped_manifest_covers_required_families_without_invented_links():
         assert by_id[asset_id]["drive_link"] == "pending"
         assert by_id[asset_id]["licence"] is None
     assert by_id["flora-library"]["version"] == "v003"
-    assert by_id["flora-library"]["sha256"] is None
-    assert by_id["flora-library"]["size"] is None
+    assert by_id["flora-library"]["sha256"] == "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74"
+    assert by_id["flora-library"]["size"] == 2561364
     assert by_id["windows-win-typical"]["version"] == "v001"
     assert by_id["windows-win-typical"]["size"] == 2564096
-    assert by_id["windows-win-typical"]["sha256"] is None
+    assert by_id["windows-win-typical"]["sha256"] == "59a44f670b392caffd4a09a7082376afe94322da3c2939de77eabda27987a777"
     assert by_id["ground-vatutino-npm"]["version"] == "v014"
     assert by_id["maf-union-max"]["version"] is None
     covered = " ".join(by_id)
@@ -323,8 +323,8 @@ def test_rclone_copy_and_private_link(tmp_path, monkeypatch):
 
     def run(args, **kwargs):
         calls.append(args)
-        if args[1] == "link":
-            return subprocess.CompletedProcess(args, 0, "https://drive.google.com/file/d/test/view\n", "")
+        if args[1] == "lsjson":
+            return subprocess.CompletedProcess(args, 0, json.dumps({"ID": "test"}), "")
         return subprocess.CompletedProcess(args, 0, "", "")
 
     monkeypatch.setattr(subprocess, "run", run)
@@ -332,9 +332,9 @@ def test_rclone_copy_and_private_link(tmp_path, monkeypatch):
     assert code == 0 and calls == []
     code, report = sync.execute(manifest, root=root, backend="rclone", apply=True)
     assert code == 0
-    assert [call[1] for call in calls] == ["copyto", "link"]
+    assert [call[1] for call in calls] == ["copyto", "lsjson"]
     assert calls[0][-1] == "gdrive:AGR-assets/sample/asset.bin"
-    assert calls[1][-1] == "--no-create"
+    assert calls[1][-1] == "--stat"
     assert report["assets"][0]["drive_link"] == "https://drive.google.com/file/d/test/view"
 
 
@@ -378,6 +378,28 @@ def test_drive_root_aliases_local_store_rejected(tmp_path):
     code, report = sync.execute(manifest, root=root, backend="drive-desktop", drive_root=root, apply=True)
     assert code != 0
     assert (root / entry["local_path"]).read_bytes() == payload
+
+
+@pytest.mark.parametrize("mutation", ["missing-login", "wrong-drive", "unknown-field", "bad-licence-type", "duplicate-path", "backslash-traversal"])
+def test_malformed_inventory_is_rejected(tmp_path, mutation):
+    entry, payload = _entry()
+    manifest, root = _write_manifest(tmp_path, [entry], [payload])
+    document = json.loads(manifest.read_text())
+    if mutation == "missing-login":
+        del document["login"]
+    elif mutation == "wrong-drive":
+        document["drive"] = "dropbox"
+    elif mutation == "unknown-field":
+        document["typo"] = True
+    elif mutation == "bad-licence-type":
+        document["assets"][0]["licence"] = 123
+    elif mutation == "duplicate-path":
+        document["assets"].append(dict(entry, id="other-id"))
+    else:
+        document["assets"][0]["local_path"] = "..\\\\escape.bin"
+    manifest.write_text(json.dumps(document))
+    code, report = sync.execute(manifest, root=root)
+    assert code != 0
 
 
 def test_truncated_manifest_file_fails(tmp_path):
