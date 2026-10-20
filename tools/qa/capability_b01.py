@@ -41,10 +41,23 @@ def inventory(repo):
             for p in (repo / folder).rglob('*') if p.is_file()}
 
 
+TICKET_PROTECTED_ROOTS = ('benchmark', 'jobs', 'standards', 'evals', 'tools/hooks',
+                          'tools/git-hooks', 'src/twinqa/evals', 'docs/agents',
+                          '.agents', '.claude', '.cursor')
+TICKET_PROTECTED_FILES = ('AGENTS.md', 'CLAUDE.md', 'GEMINI.md', 'docs/decisions.md',
+                          'tools/qa/capability_b01.py')
+
+
 def evaluation_inventory(repo, paths=(), *, untracked=False):
-    # Snapshot every tracked input, not just today's known checker filenames.
-    # Retain the original paths even if the child removes them from the index.
-    tracked = set(git(repo, 'ls-files', '-z', *(['--cached', '--others', '--exclude-standard'] if untracked else [])).split('\0')) - {''}
+    # Retain tracked/original paths even if the child removes them from the index.
+    tracked = set(git(repo, 'ls-files', '-z').split('\0')) - {''}
+    if untracked:
+        # Ignore rules are child-controlled, not an integrity boundary. Restrict
+        # discovery to protected roots so unrelated venvs/outputs are not hashed.
+        others = git(repo, 'ls-files', '-z', '--others', '--',
+                     *TICKET_PROTECTED_ROOTS, *TICKET_PROTECTED_FILES).split('\0')
+        tracked.update(name for name in others if name and not
+                       ('__pycache__' in Path(name).parts and Path(name).suffix in {'.pyc', '.pyo'}))
     return {name: sha(repo / name) if (repo / name).is_file() else None
             for name in tracked.union(paths)}
 
@@ -82,9 +95,8 @@ def stop(process):
 
 
 def protected_ticket_path(name):
-    return (name.startswith(('benchmark/', 'jobs/', 'standards/', 'evals/', 'tools/hooks/',
-                             'tools/git-hooks/', 'src/twinqa/evals/'))
-            or name in ('AGENTS.md', 'CLAUDE.md', 'docs/decisions.md'))
+    return (name.startswith(tuple(root + '/' for root in TICKET_PROTECTED_ROOTS))
+            or name in TICKET_PROTECTED_FILES)
 
 
 def validate_ticket(ticket):
