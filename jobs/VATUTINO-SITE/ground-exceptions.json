@@ -1,0 +1,33 @@
+{
+  "purpose": "User-approved placement exceptions bound to one Ground master (#296). A repaired Ground (other sha256) makes the entry stale and the point is placed again.",
+  "exceptions": [
+    {
+      "handle": "15E288",
+      "label": "VAT_MAF_T3510_02",
+      "reason": "Урна inside 568BF but ~1 cm outside the edge of a Ground v014 cut-out (border bbox x -7680.43..-7675.91, y -15352..-15336); engine finding point_outside_ground (run_v003). Ground defect reported to #295.",
+      "ground_master_sha256": {
+        "npm": "f1a03db9d7b2293db50817f8cb7c0c021d25737ff0c2f9ea984e47192b1979bb",
+        "vpm": "82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5"
+      },
+      "approved": {
+        "by": "Artem",
+        "date": "2026-10-20",
+        "quote": "option a: the 2 urns 15E288/15E289 (VAT_MAF_T3510_02), ~1 cm outside the Ground v014 cut-out edge, are NOT placed for this run; list them in the placement report with the reason and the Ground v014 sha256. The exclusion is bound to Ground v014 only: a corrected Ground places them again."
+      }
+    },
+    {
+      "handle": "15E289",
+      "label": "VAT_MAF_T3510_02",
+      "reason": "Урна inside 568BF but ~1 cm outside the edge of a Ground v014 cut-out (border bbox x -7680.43..-7675.91, y -15352..-15336); engine finding point_outside_ground (run_v003). Ground defect reported to #295.",
+      "ground_master_sha256": {
+        "npm": "f1a03db9d7b2293db50817f8cb7c0c021d25737ff0c2f9ea984e47192b1979bb",
+        "vpm": "82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5"
+      },
+      "approved": {
+        "by": "Artem",
+        "date": "2026-10-20",
+        "quote": "option a: the 2 urns 15E288/15E289 (VAT_MAF_T3510_02), ~1 cm outside the Ground v014 cut-out edge, are NOT placed for this run; list them in the placement report with the reason and the Ground v014 sha256. The exclusion is bound to Ground v014 only: a corrected Ground places them again."
+      }
+    }
+  ]
+}

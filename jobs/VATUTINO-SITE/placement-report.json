@@ -36,6 +36,11 @@
    "export_dir": "C:\\x\\t_5e4ea2be\\flora_fbx",
    "path": "C:/x/flora-library/v003/flora-library-v003.max"
   },
+  "ground_exceptions": {
+   "entries": 2,
+   "path": "jobs/VATUTINO-SITE/ground-exceptions.json",
+   "sha256": "c65d2863315c60b08c041f24f53407f1601ee19c30c2cee9321d6d88c5fb4046"
+  },
   "ground_npm": {
    "fbx": "C:\\x\\t_d94665f2\\ground_v014\\npm\\SM_Vatutino_Ground.fbx",
    "fbx_sha256": "94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef",
@@ -135,19 +140,19 @@
     "review": 7
    },
    "blend": {
-    "path": "C:\\x\\t_5e4ea2be\\run_v002\\npm\\VATUTINO-SITE_placement_npm_v001.blend",
-    "sha256": "fdb9ca7f8ba0c9cb317d5e9437983da4d5ddd0552171a14bbd9f5a6512115ec2"
+    "path": "C:\\x\\t_5e4ea2be\\run_v004\\npm\\VATUTINO-SITE_placement_npm_v001.blend",
+    "sha256": "b5fb73a359b1f5618b5ee81bc932ff1df74c5d9972e61919a328eac22e94fe41"
    },
    "commands": [
     {
-     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- facts C:\\x\\t_5e4ea2be\\run_v002\\npm\\spec.json C:\\x\\t_5e4ea2be\\run_v002\\npm\\facts.json",
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- facts C:\\x\\t_5e4ea2be\\run_v004\\npm\\spec.json C:\\x\\t_5e4ea2be\\run_v004\\npm\\facts.json",
      "exit_code": 0,
-     "seconds": 2.1
+     "seconds": 2.3
     },
     {
-     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- instance C:\\x\\t_5e4ea2be\\run_v002\\npm\\spec.json C:\\x\\t_5e4ea2be\\run_v002\\npm\\plan.json C:\\x\\t_5e4ea2be\\run_v002\\npm\\VATUTINO-SITE_placement_npm_v001.blend C:\\x\\t_5e4ea2be\\run_v002\\npm\\readback.json",
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- instance C:\\x\\t_5e4ea2be\\run_v004\\npm\\spec.json C:\\x\\t_5e4ea2be\\run_v004\\npm\\plan.json C:\\x\\t_5e4ea2be\\run_v004\\npm\\VATUTINO-SITE_placement_npm_v001.blend C:\\x\\t_5e4ea2be\\run_v004\\npm\\readback.json",
      "exit_code": 0,
-     "seconds": 3.0
+     "seconds": 3.3
     }
    ],
    "findings": {
@@ -161,8 +166,13 @@
      "library_id": "VAT_MAF_T3510_01",
      "block": "Скамья",
      "placed": 5,
-     "tris_instance": 240,
-     "tris_total": 1200,
+     "tris_instance": {
+      "min": 232,
+      "max": 232
+     },
+     "tris_total": 1160,
+     "tris_library": 240,
+     "tris_total_library": 1200,
      "excluded": {},
      "schedule": "*T3510/1",
      "catalogue_id": "MAF_0326",
@@ -177,11 +187,16 @@
      "library_id": "VAT_MAF_T3510_02",
      "block": "Урна",
      "placed": 46,
-     "tris_instance": 146,
+     "tris_instance": {
+      "min": 146,
+      "max": 146
+     },
      "tris_total": 6716,
+     "tris_library": 146,
+     "tris_total_library": 6716,
      "excluded": {
       "outside_boundary": 1,
-      "point_over_ground_hole (run v001 engine finding)": 2
+      "ground_exception": 2
      },
      "schedule": "*T3510/2",
      "catalogue_id": "MAF_0794",
@@ -196,8 +211,13 @@
      "library_id": "VAT_MAF_T3510_07",
      "block": "Шезлонг фестиваль модуль 1",
      "placed": 4,
-     "tris_instance": 364,
+     "tris_instance": {
+      "min": 364,
+      "max": 364
+     },
      "tris_total": 1456,
+     "tris_library": 364,
+     "tris_total_library": 1456,
      "excluded": {},
      "schedule": "*T3510/7",
      "catalogue_id": "MAF_0747",
@@ -212,8 +232,13 @@
      "library_id": "VAT_MAF_T3510_09",
      "block": "лежак2",
      "placed": 6,
-     "tris_instance": 730,
-     "tris_total": 4380,
+     "tris_instance": {
+      "min": 692,
+      "max": 692
+     },
+     "tris_total": 4152,
+     "tris_library": 730,
+     "tris_total_library": 4380,
      "excluded": {},
      "schedule": "*T3510/9",
      "catalogue_id": "MAF_0506",
@@ -228,8 +253,13 @@
      "library_id": "VAT_MAF_T3510_11",
      "block": "Качалка на пружине ИО 0323Т-3",
      "placed": 2,
-     "tris_instance": 434,
+     "tris_instance": {
+      "min": 434,
+      "max": 434
+     },
      "tris_total": 868,
+     "tris_library": 434,
+     "tris_total_library": 868,
      "excluded": {},
      "schedule": "*T3510/11",
      "catalogue_id": "MAF_0322",
@@ -244,8 +274,13 @@
      "library_id": "VAT_MAF_T3510_12",
      "block": "ио 0118т-1",
      "placed": 2,
-     "tris_instance": 678,
+     "tris_instance": {
+      "min": 678,
+      "max": 678
+     },
      "tris_total": 1356,
+     "tris_library": 678,
+     "tris_total_library": 1356,
      "excluded": {},
      "schedule": "*T3510/12",
      "catalogue_id": "MAF_0920",
@@ -260,8 +295,13 @@
      "library_id": "VAT_MAF_T3510_16",
      "block": "ДП 090",
      "placed": 1,
-     "tris_instance": 2281,
+     "tris_instance": {
+      "min": 2281,
+      "max": 2281
+     },
      "tris_total": 2281,
+     "tris_library": 2281,
+     "tris_total_library": 2281,
      "excluded": {
       "outside_boundary": 1
      },
@@ -278,8 +318,13 @@
      "library_id": "VAT_MAF_T3510_26",
      "block": "Теннисный стол",
      "placed": 1,
-     "tris_instance": 3043,
-     "tris_total": 3043,
+     "tris_instance": {
+      "min": 3037,
+      "max": 3037
+     },
+     "tris_total": 3037,
+     "tris_library": 3043,
+     "tris_total_library": 3043,
      "excluded": {},
      "schedule": "*T3510/26",
      "catalogue_id": "MAF_0677",
@@ -294,8 +339,13 @@
      "library_id": "VAT_MAF_T3510_27",
      "block": "Стол Ландау",
      "placed": 3,
-     "tris_instance": 540,
-     "tris_total": 1620,
+     "tris_instance": {
+      "min": 524,
+      "max": 524
+     },
+     "tris_total": 1572,
+     "tris_library": 540,
+     "tris_total_library": 1620,
      "excluded": {},
      "schedule": "*T3510/27",
      "catalogue_id": "MAF_0219",
@@ -310,8 +360,13 @@
      "library_id": "VAT_MAF_T3510_28",
      "block": "Подвес качели гнездо",
      "placed": 4,
-     "tris_instance": 2030,
+     "tris_instance": {
+      "min": 2030,
+      "max": 2030
+     },
      "tris_total": 8120,
+     "tris_library": 2030,
+     "tris_total_library": 8120,
      "excluded": {},
      "schedule": "*T3510/28",
      "catalogue_id": "MAF_0127",
@@ -326,8 +381,13 @@
      "library_id": "VAT_MAF_T3510_29",
      "block": "Кресло Парк 12750",
      "placed": 25,
-     "tris_instance": 320,
-     "tris_total": 8000,
+     "tris_instance": {
+      "min": 318,
+      "max": 318
+     },
+     "tris_total": 7950,
+     "tris_library": 320,
+     "tris_total_library": 8000,
      "excluded": {
       "outside_boundary": 2
      },
@@ -344,8 +404,13 @@
      "library_id": "VAT_MAF_T3510_31",
      "block": "Стол Лондон Тип 3",
      "placed": 16,
-     "tris_instance": 212,
-     "tris_total": 3392,
+     "tris_instance": {
+      "min": 208,
+      "max": 212
+     },
+     "tris_total": 3335,
+     "tris_library": 212,
+     "tris_total_library": 3392,
      "excluded": {
       "outside_boundary": 1
      },
@@ -362,8 +427,13 @@
      "library_id": "VAT_MAF_T3510_32",
      "block": "Приствольная решетка",
      "placed": 4,
-     "tris_instance": 3726,
-     "tris_total": 14904,
+     "tris_instance": {
+      "min": 3350,
+      "max": 3350
+     },
+     "tris_total": 13400,
+     "tris_library": 3726,
+     "tris_total_library": 14904,
      "excluded": {},
      "schedule": "*T3510/32",
      "catalogue_id": "MAF_0687",
@@ -380,8 +450,13 @@
      "library_id": "Tilia_cordata_NPM",
      "block": "Липа мелколистная 'Greenspire'",
      "placed": 23,
-     "tris_instance": 357,
+     "tris_instance": {
+      "min": 357,
+      "max": 357
+     },
      "tris_total": 8211,
+     "tris_library": 357,
+     "tris_total_library": 8211,
      "excluded": {
       "outside_boundary": 2
      },
@@ -409,8 +484,13 @@
      "library_id": "Prunus_padus_NPM",
      "block": "Черемуха обыкновенная 'Watereri'",
      "placed": 11,
-     "tris_instance": 166,
+     "tris_instance": {
+      "min": 166,
+      "max": 166
+     },
      "tris_total": 1826,
+     "tris_library": 166,
+     "tris_total_library": 1826,
      "excluded": {
       "outside_boundary": 1
      },
@@ -438,8 +518,13 @@
      "library_id": "Malus_niedzwetzkyana_NPM",
      "block": "Яблоня 'Makowieckiana'",
      "placed": 21,
-     "tris_instance": 125,
+     "tris_instance": {
+      "min": 125,
+      "max": 125
+     },
      "tris_total": 2625,
+     "tris_library": 125,
+     "tris_total_library": 2625,
      "excluded": {
       "outside_boundary": 4
      },
@@ -467,8 +552,13 @@
      "library_id": "Amelanchier_lamarckii_NPM",
      "block": "Ирга колосистая",
      "placed": 38,
-     "tris_instance": 979,
+     "tris_instance": {
+      "min": 979,
+      "max": 979
+     },
      "tris_total": 37202,
+     "tris_library": 979,
+     "tris_total_library": 37202,
      "excluded": {
       "outside_boundary": 1
      },
@@ -496,8 +586,13 @@
      "library_id": "Crataegus_mollis_NPM",
      "block": "Боярышник средний  'Paul's Scarlet'",
      "placed": 29,
-     "tris_instance": 488,
+     "tris_instance": {
+      "min": 488,
+      "max": 488
+     },
      "tris_total": 14152,
+     "tris_library": 488,
+     "tris_total_library": 14152,
      "excluded": {
       "outside_boundary": 1
      },
@@ -525,8 +620,13 @@
      "library_id": "Physocarpus_opulifolius_Diabolo_NPM",
      "block": "Пузыреплодник калинолистный (Physocarpus opulifolius) ‘Lady in red’",
      "placed": 191,
-     "tris_instance": 18,
+     "tris_instance": {
+      "min": 18,
+      "max": 18
+     },
      "tris_total": 3438,
+     "tris_library": 18,
+     "tris_total_library": 3438,
      "excluded": {
       "outside_boundary": 1
      },
@@ -554,8 +654,13 @@
      "library_id": "Sorbaria_sorbifolia_NPM",
      "block": "Рябинник рябинолистный",
      "placed": 866,
-     "tris_instance": 10,
+     "tris_instance": {
+      "min": 10,
+      "max": 10
+     },
      "tris_total": 8660,
+     "tris_library": 10,
+     "tris_total_library": 8660,
      "excluded": {
       "outside_boundary": 10
      },
@@ -583,8 +688,13 @@
      "library_id": "Cornus_sericea_NPM",
      "block": "Дерен белый 'Red Gnome'",
      "placed": 325,
-     "tris_instance": 80,
+     "tris_instance": {
+      "min": 80,
+      "max": 80
+     },
      "tris_total": 26000,
+     "tris_library": 80,
+     "tris_total_library": 26000,
      "excluded": {
       "outside_boundary": 1
      },
@@ -612,8 +722,13 @@
      "library_id": "Dasiphora_fruticosa_NPM",
      "block": "Лапчатка кустарниковая (Dasiphora fruticosa) К",
      "placed": 558,
-     "tris_instance": 10,
+     "tris_instance": {
+      "min": 10,
+      "max": 10
+     },
      "tris_total": 5580,
+     "tris_library": 10,
+     "tris_total_library": 5580,
      "excluded": {
       "outside_boundary": 1
      },
@@ -641,8 +756,13 @@
      "library_id": "Stephanandra_incisa_Crispa_NPM",
      "block": "Стефанандра надрезаннолистная Crispa (Stephanandra incisa Crispa)",
      "placed": 1002,
-     "tris_instance": 10,
+     "tris_instance": {
+      "min": 10,
+      "max": 10
+     },
      "tris_total": 10020,
+     "tris_library": 10,
+     "tris_total_library": 10020,
      "excluded": {
       "outside_boundary": 1
      },
@@ -670,8 +790,13 @@
      "library_id": "Pinus_mugo_NPM",
      "block": "Сосна горная ф. Мугус",
      "placed": 106,
-     "tris_instance": 10,
+     "tris_instance": {
+      "min": 10,
+      "max": 10
+     },
      "tris_total": 1060,
+     "tris_library": 10,
+     "tris_total_library": 1060,
      "excluded": {
       "outside_boundary": 1
      },
@@ -1039,13 +1164,13 @@
     },
     {
      "label": "Урна",
-     "reason": "outside_boundary",
-     "points": 1
+     "reason": "ground_exception",
+     "points": 2
     },
     {
      "label": "Урна",
-     "reason": "point_over_ground_hole (run v001 engine finding)",
-     "points": 2
+     "reason": "outside_boundary",
+     "points": 1
     },
     {
      "label": "Черемуха обыкновенная 'Watereri'",
@@ -1079,11 +1204,38 @@
     }
    ],
    "missing_vpm": [],
+   "ground_exceptions": [
+    {
+     "handle": "15E288",
+     "label": "Урна",
+     "library_id": "VAT_MAF_T3510_02",
+     "detail": "Урна inside 568BF but ~1 cm outside the edge of a Ground v014 cut-out (border bbox x -7680.43..-7675.91, y -15352..-15336); engine finding point_outside_ground (run_v003). Ground defect reported to #295.",
+     "ground_master_sha256": "f1a03db9d7b2293db50817f8cb7c0c021d25737ff0c2f9ea984e47192b1979bb",
+     "approved": {
+      "by": "Artem",
+      "date": "2026-10-20",
+      "quote": "option a: the 2 urns 15E288/15E289 (VAT_MAF_T3510_02), ~1 cm outside the Ground v014 cut-out edge, are NOT placed for this run; list them in the placement report with the reason and the Ground v014 sha256. The exclusion is bound to Ground v014 only: a corrected Ground places them again."
+     }
+    },
+    {
+     "handle": "15E289",
+     "label": "Урна",
+     "library_id": "VAT_MAF_T3510_02",
+     "detail": "Урна inside 568BF but ~1 cm outside the edge of a Ground v014 cut-out (border bbox x -7680.43..-7675.91, y -15352..-15336); engine finding point_outside_ground (run_v003). Ground defect reported to #295.",
+     "ground_master_sha256": "f1a03db9d7b2293db50817f8cb7c0c021d25737ff0c2f9ea984e47192b1979bb",
+     "approved": {
+      "by": "Artem",
+      "date": "2026-10-20",
+      "quote": "option a: the 2 urns 15E288/15E289 (VAT_MAF_T3510_02), ~1 cm outside the Ground v014 cut-out edge, are NOT placed for this run; list them in the placement report with the reason and the Ground v014 sha256. The exclusion is bound to Ground v014 only: a corrected Ground places them again."
+     }
+    }
+   ],
+   "ground_exceptions_stale": [],
    "triangles": {
-    "maf": 57336,
+    "maf": 55403,
     "flora": 118774,
     "ground_npm": 46343,
-    "total": 222453,
+    "total": 220520,
     "limit": 180000,
     "shares": {
      "ground": 50000,
@@ -1129,19 +1281,19 @@
     "review": 7
    },
    "blend": {
-    "path": "C:\\x\\t_5e4ea2be\\run_v002\\vpm\\VATUTINO-SITE_placement_vpm_v001.blend",
-    "sha256": "1a98b21f2ba77bb431dc8e4ce0bd1c15a25ffd9ad45ae6991a378019bade7542"
+    "path": "C:\\x\\t_5e4ea2be\\run_v004\\vpm\\VATUTINO-SITE_placement_vpm_v001.blend",
+    "sha256": "231ec14a19a39040d75a84ca2856f63ef6a87c56f5d98d634114b489426de24b"
    },
    "commands": [
     {
-     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- facts C:\\x\\t_5e4ea2be\\run_v002\\vpm\\spec.json C:\\x\\t_5e4ea2be\\run_v002\\vpm\\facts.json",
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- facts C:\\x\\t_5e4ea2be\\run_v004\\vpm\\spec.json C:\\x\\t_5e4ea2be\\run_v004\\vpm\\facts.json",
      "exit_code": 0,
-     "seconds": 2.3
+     "seconds": 2.5
     },
     {
-     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- instance C:\\x\\t_5e4ea2be\\run_v002\\vpm\\spec.json C:\\x\\t_5e4ea2be\\run_v002\\vpm\\plan.json C:\\x\\t_5e4ea2be\\run_v002\\vpm\\VATUTINO-SITE_placement_vpm_v001.blend C:\\x\\t_5e4ea2be\\run_v002\\vpm\\readback.json",
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- instance C:\\x\\t_5e4ea2be\\run_v004\\vpm\\spec.json C:\\x\\t_5e4ea2be\\run_v004\\vpm\\plan.json C:\\x\\t_5e4ea2be\\run_v004\\vpm\\VATUTINO-SITE_placement_vpm_v001.blend C:\\x\\t_5e4ea2be\\run_v004\\vpm\\readback.json",
      "exit_code": 0,
-     "seconds": 3.3
+     "seconds": 3.5
     }
    ],
    "findings": {
@@ -1155,8 +1307,13 @@
      "library_id": "VAT_MAF_T3510_01",
      "block": "Скамья",
      "placed": 5,
-     "tris_instance": 240,
-     "tris_total": 1200,
+     "tris_instance": {
+      "min": 232,
+      "max": 232
+     },
+     "tris_total": 1160,
+     "tris_library": 240,
+     "tris_total_library": 1200,
      "excluded": {},
      "schedule": "*T3510/1",
      "catalogue_id": "MAF_0326",
@@ -1171,11 +1328,16 @@
      "library_id": "VAT_MAF_T3510_02",
      "block": "Урна",
      "placed": 46,
-     "tris_instance": 146,
+     "tris_instance": {
+      "min": 146,
+      "max": 146
+     },
      "tris_total": 6716,
+     "tris_library": 146,
+     "tris_total_library": 6716,
      "excluded": {
       "outside_boundary": 1,
-      "point_over_ground_hole (run v001 engine finding)": 2
+      "ground_exception": 2
      },
      "schedule": "*T3510/2",
      "catalogue_id": "MAF_0794",
@@ -1190,8 +1352,13 @@
      "library_id": "VAT_MAF_T3510_07",
      "block": "Шезлонг фестиваль модуль 1",
      "placed": 4,
-     "tris_instance": 364,
+     "tris_instance": {
+      "min": 364,
+      "max": 364
+     },
      "tris_total": 1456,
+     "tris_library": 364,
+     "tris_total_library": 1456,
      "excluded": {},
      "schedule": "*T3510/7",
      "catalogue_id": "MAF_0747",
@@ -1206,8 +1373,13 @@
      "library_id": "VAT_MAF_T3510_09",
      "block": "лежак2",
      "placed": 6,
-     "tris_instance": 1460,
-     "tris_total": 8760,
+     "tris_instance": {
+      "min": 1340,
+      "max": 1340
+     },
+     "tris_total": 8040,
+     "tris_library": 1460,
+     "tris_total_library": 8760,
      "excluded": {},
      "schedule": "*T3510/9",
      "catalogue_id": "MAF_0506",
@@ -1222,8 +1394,13 @@
      "library_id": "VAT_MAF_T3510_11",
      "block": "Качалка на пружине ИО 0323Т-3",
      "placed": 2,
-     "tris_instance": 724,
-     "tris_total": 1448,
+     "tris_instance": {
+      "min": 722,
+      "max": 722
+     },
+     "tris_total": 1444,
+     "tris_library": 724,
+     "tris_total_library": 1448,
      "excluded": {},
      "schedule": "*T3510/11",
      "catalogue_id": "MAF_0322",
@@ -1238,8 +1415,13 @@
      "library_id": "VAT_MAF_T3510_12",
      "block": "ио 0118т-1",
      "placed": 2,
-     "tris_instance": 678,
+     "tris_instance": {
+      "min": 678,
+      "max": 678
+     },
      "tris_total": 1356,
+     "tris_library": 678,
+     "tris_total_library": 1356,
      "excluded": {},
      "schedule": "*T3510/12",
      "catalogue_id": "MAF_0920",
@@ -1254,8 +1436,13 @@
      "library_id": "VAT_MAF_T3510_16",
      "block": "ДП 090",
      "placed": 1,
-     "tris_instance": 4562,
+     "tris_instance": {
+      "min": 4562,
+      "max": 4562
+     },
      "tris_total": 4562,
+     "tris_library": 4562,
+     "tris_total_library": 4562,
      "excluded": {
       "outside_boundary": 1
      },
@@ -1272,8 +1459,13 @@
      "library_id": "VAT_MAF_T3510_26",
      "block": "Теннисный стол",
      "placed": 1,
-     "tris_instance": 8696,
-     "tris_total": 8696,
+     "tris_instance": {
+      "min": 8620,
+      "max": 8620
+     },
+     "tris_total": 8620,
+     "tris_library": 8696,
+     "tris_total_library": 8696,
      "excluded": {},
      "schedule": "*T3510/26",
      "catalogue_id": "MAF_0677",
@@ -1288,8 +1480,13 @@
      "library_id": "VAT_MAF_T3510_27",
      "block": "Стол Ландау",
      "placed": 3,
-     "tris_instance": 540,
-     "tris_total": 1620,
+     "tris_instance": {
+      "min": 524,
+      "max": 524
+     },
+     "tris_total": 1572,
+     "tris_library": 540,
+     "tris_total_library": 1620,
      "excluded": {},
      "schedule": "*T3510/27",
      "catalogue_id": "MAF_0219",
@@ -1304,8 +1501,13 @@
      "library_id": "VAT_MAF_T3510_28",
      "block": "Подвес качели гнездо",
      "placed": 4,
-     "tris_instance": 2030,
+     "tris_instance": {
+      "min": 2030,
+      "max": 2030
+     },
      "tris_total": 8120,
+     "tris_library": 2030,
+     "tris_total_library": 8120,
      "excluded": {},
      "schedule": "*T3510/28",
      "catalogue_id": "MAF_0127",
@@ -1320,8 +1522,13 @@
      "library_id": "VAT_MAF_T3510_29",
      "block": "Кресло Парк 12750",
      "placed": 25,
-     "tris_instance": 320,
-     "tris_total": 8000,
+     "tris_instance": {
+      "min": 318,
+      "max": 318
+     },
+     "tris_total": 7950,
+     "tris_library": 320,
+     "tris_total_library": 8000,
      "excluded": {
       "outside_boundary": 2
      },
@@ -1338,8 +1545,13 @@
      "library_id": "VAT_MAF_T3510_31",
      "block": "Стол Лондон Тип 3",
      "placed": 16,
-     "tris_instance": 212,
-     "tris_total": 3392,
+     "tris_instance": {
+      "min": 208,
+      "max": 212
+     },
+     "tris_total": 3335,
+     "tris_library": 212,
+     "tris_total_library": 3392,
      "excluded": {
       "outside_boundary": 1
      },
@@ -1356,8 +1568,13 @@
      "library_id": "VAT_MAF_T3510_32",
      "block": "Приствольная решетка",
      "placed": 4,
-     "tris_instance": 3726,
-     "tris_total": 14904,
+     "tris_instance": {
+      "min": 3350,
+      "max": 3350
+     },
+     "tris_total": 13400,
+     "tris_library": 3726,
+     "tris_total_library": 14904,
      "excluded": {},
      "schedule": "*T3510/32",
      "catalogue_id": "MAF_0687",
@@ -1374,8 +1591,13 @@
      "library_id": "Tilia_cordata_VPM",
      "block": "Липа мелколистная 'Greenspire'",
      "placed": 23,
-     "tris_instance": 830,
+     "tris_instance": {
+      "min": 830,
+      "max": 830
+     },
      "tris_total": 19090,
+     "tris_library": 830,
+     "tris_total_library": 19090,
      "excluded": {
       "outside_boundary": 2
      },
@@ -1403,8 +1625,13 @@
      "library_id": "Prunus_padus_VPM",
      "block": "Черемуха обыкновенная 'Watereri'",
      "placed": 11,
-     "tris_instance": 494,
+     "tris_instance": {
+      "min": 494,
+      "max": 494
+     },
      "tris_total": 5434,
+     "tris_library": 494,
+     "tris_total_library": 5434,
      "excluded": {
       "outside_boundary": 1
      },
@@ -1432,8 +1659,13 @@
      "library_id": "Malus_niedzwetzkyana_VPM",
      "block": "Яблоня 'Makowieckiana'",
      "placed": 21,
-     "tris_instance": 394,
+     "tris_instance": {
+      "min": 394,
+      "max": 394
+     },
      "tris_total": 8274,
+     "tris_library": 394,
+     "tris_total_library": 8274,
      "excluded": {
       "outside_boundary": 4
      },
@@ -1461,8 +1693,13 @@
      "library_id": "Amelanchier_lamarckii_VPM",
      "block": "Ирга колосистая",
      "placed": 38,
-     "tris_instance": 4894,
+     "tris_instance": {
+      "min": 4894,
+      "max": 4894
+     },
      "tris_total": 185972,
+     "tris_library": 4894,
+     "tris_total_library": 185972,
      "excluded": {
       "outside_boundary": 1
      },
@@ -1490,8 +1727,13 @@
      "library_id": "Crataegus_mollis_VPM",
      "block": "Боярышник средний  'Paul's Scarlet'",
      "placed": 29,
-     "tris_instance": 574,
+     "tris_instance": {
+      "min": 574,
+      "max": 574
+     },
      "tris_total": 16646,
+     "tris_library": 574,
+     "tris_total_library": 16646,
      "excluded": {
       "outside_boundary": 1
      },
@@ -1519,8 +1761,13 @@
      "library_id": "Physocarpus_opulifolius_Diabolo_VPM",
      "block": "Пузыреплодник калинолистный (Physocarpus opulifolius) ‘Lady in red’",
      "placed": 191,
-     "tris_instance": 144,
+     "tris_instance": {
+      "min": 144,
+      "max": 144
+     },
      "tris_total": 27504,
+     "tris_library": 144,
+     "tris_total_library": 27504,
      "excluded": {
       "outside_boundary": 1
      },
@@ -1548,8 +1795,13 @@
      "library_id": "Sorbaria_sorbifolia_VPM",
      "block": "Рябинник рябинолистный",
      "placed": 866,
-     "tris_instance": 84,
+     "tris_instance": {
+      "min": 84,
+      "max": 84
+     },
      "tris_total": 72744,
+     "tris_library": 84,
+     "tris_total_library": 72744,
      "excluded": {
       "outside_boundary": 10
      },
@@ -1577,8 +1829,13 @@
      "library_id": "Dasiphora_fruticosa_VPM",
      "block": "Лапчатка кустарниковая (Dasiphora fruticosa) К",
      "placed": 558,
-     "tris_instance": 20,
+     "tris_instance": {
+      "min": 20,
+      "max": 20
+     },
      "tris_total": 11160,
+     "tris_library": 20,
+     "tris_total_library": 11160,
      "excluded": {
       "outside_boundary": 1
      },
@@ -1606,8 +1863,13 @@
      "library_id": "Stephanandra_incisa_Crispa_VPM",
      "block": "Стефанандра надрезаннолистная Crispa (Stephanandra incisa Crispa)",
      "placed": 1002,
-     "tris_instance": 90,
+     "tris_instance": {
+      "min": 90,
+      "max": 90
+     },
      "tris_total": 90180,
+     "tris_library": 90,
+     "tris_total_library": 90180,
      "excluded": {
       "outside_boundary": 1
      },
@@ -1635,8 +1897,13 @@
      "library_id": "Pinus_mugo_VPM",
      "block": "Сосна горная ф. Мугус",
      "placed": 106,
-     "tris_instance": 64,
+     "tris_instance": {
+      "min": 64,
+      "max": 64
+     },
      "tris_total": 6784,
+     "tris_library": 64,
+     "tris_total_library": 6784,
      "excluded": {
       "outside_boundary": 1
      },
@@ -2009,13 +2276,13 @@
     },
     {
      "label": "Урна",
-     "reason": "outside_boundary",
-     "points": 1
+     "reason": "ground_exception",
+     "points": 2
     },
     {
      "label": "Урна",
-     "reason": "point_over_ground_hole (run v001 engine finding)",
-     "points": 2
+     "reason": "outside_boundary",
+     "points": 1
     },
     {
      "label": "Черемуха обыкновенная 'Watereri'",
@@ -2055,8 +2322,35 @@
      "pos": 12
     }
    ],
+   "ground_exceptions": [
+    {
+     "handle": "15E288",
+     "label": "Урна",
+     "library_id": "VAT_MAF_T3510_02",
+     "detail": "Урна inside 568BF but ~1 cm outside the edge of a Ground v014 cut-out (border bbox x -7680.43..-7675.91, y -15352..-15336); engine finding point_outside_ground (run_v003). Ground defect reported to #295.",
+     "ground_master_sha256": "82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5",
+     "approved": {
+      "by": "Artem",
+      "date": "2026-10-20",
+      "quote": "option a: the 2 urns 15E288/15E289 (VAT_MAF_T3510_02), ~1 cm outside the Ground v014 cut-out edge, are NOT placed for this run; list them in the placement report with the reason and the Ground v014 sha256. The exclusion is bound to Ground v014 only: a corrected Ground places them again."
+     }
+    },
+    {
+     "handle": "15E289",
+     "label": "Урна",
+     "library_id": "VAT_MAF_T3510_02",
+     "detail": "Урна inside 568BF but ~1 cm outside the edge of a Ground v014 cut-out (border bbox x -7680.43..-7675.91, y -15352..-15336); engine finding point_outside_ground (run_v003). Ground defect reported to #295.",
+     "ground_master_sha256": "82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5",
+     "approved": {
+      "by": "Artem",
+      "date": "2026-10-20",
+      "quote": "option a: the 2 urns 15E288/15E289 (VAT_MAF_T3510_02), ~1 cm outside the Ground v014 cut-out edge, are NOT placed for this run; list them in the placement report with the reason and the Ground v014 sha256. The exclusion is bound to Ground v014 only: a corrected Ground places them again."
+     }
+    }
+   ],
+   "ground_exceptions_stale": [],
    "triangles": {
-    "maf": 70230,
+    "maf": 67731,
     "flora": 443788
    }
   }

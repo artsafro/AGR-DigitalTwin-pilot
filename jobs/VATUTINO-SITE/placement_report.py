@@ -66,6 +66,10 @@ def build(res: dict, parts: dict) -> tuple[dict, str]:
             "flora": sorted(rows_flora, key=lambda r: r["pos"]),
             "not_placed": [{"label": k[0], "reason": k[1], "points": n} for k, n in sorted(not_placed.items())],
             "missing_vpm": v["missing_vpm"],
+            "ground_exceptions": [{k: x.get(k) for k in ("handle", "label", "library_id", "detail",
+                                                         "ground_master_sha256", "approved")}
+                                  for x in v["excluded"] if x["reason"] == "ground_exception"],
+            "ground_exceptions_stale": v.get("ground_exceptions_stale", []),
             "triangles": {"maf": tm, "flora": tf, "ground_npm": ground_tris, "total": tm + tf + ground_tris,
                           "limit": LIMIT, "shares": SHARES} if var == "npm" else {"maf": tm, "flora": tf}}
     n = out["variants"]["npm"]
@@ -97,6 +101,17 @@ def build(res: dict, parts: dict) -> tuple[dict, str]:
               "### Not placed (points, reason)", "", "| label | reason | points |", "|---|---|---|"]
         for r in v["not_placed"]:
             L.append(f"| {r['label']} | {r['reason']} | {r['points']} |")
+        if v["ground_exceptions"]:
+            L += ["", "Excluded by a user-approved Ground exception (bound to this Ground master; a repaired Ground "
+                  "places them again):", "", "| handle | label | library | reason | Ground master sha256 | approved |",
+                  "|---|---|---|---|---|---|"]
+            for x in v["ground_exceptions"]:
+                ap = x["approved"]
+                L.append(f"| {x['handle']} | {x['label']} | {x['library_id']} | {x['detail']} | "
+                         f"`{x['ground_master_sha256']}` | {ap['by']} {ap['date']}: \"{ap['quote']}\" |")
+        if v["ground_exceptions_stale"]:
+            L += ["", "Stale Ground exceptions (bound to another Ground, points sent to the engine): "
+                  + ", ".join(v["ground_exceptions_stale"])]
         if v["missing_vpm"]:
             L += ["", "No confirmed VPM version (not cloned, not placed in VPM): "
                   + ", ".join(f"pos {m['pos']} {m['object']}" for m in v["missing_vpm"])]
