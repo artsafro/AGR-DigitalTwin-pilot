@@ -7,8 +7,8 @@ M="$1"; OUT="$2"; mkdir -p "$OUT"
 SRC_GROUPS="walls_ext,curtain,openings,floors,roofs,generic,stairs_rails_equip"
 while read -r name focus views; do
   [ -z "$name" ] && continue
-  FOCUS="$focus" VIEWS="$views" ZOOM=1.0 "$BL" --background --factory-startup --python "$J/scripts/render_preview.py" -- "$OUT/${name}_revit" "$J/outputs/source-v001" "$SRC_GROUPS" > /dev/null 2>&1
-  TEX=1 FOCUS="$focus" VIEWS="$views" ZOOM=1.0 "$BL" --background --factory-startup --python "$J/scripts/render_preview.py" -- "$OUT/${name}_model" "$M" > /dev/null 2>&1
+  FOCUS="$focus" VIEWS="$views" ZOOM=1.0 "$BL" --background --factory-startup --python-exit-code 1 --python "$J/scripts/render_preview.py" -- "$OUT/${name}_revit" "$J/outputs/source-v001" "$SRC_GROUPS" > /dev/null 2>&1
+  TEX=1 FOCUS="$focus" VIEWS="$views" ZOOM=1.0 "$BL" --background --factory-startup --python-exit-code 1 --python "$J/scripts/render_preview.py" -- "$OUT/${name}_model" "$M" > /dev/null 2>&1
   echo "$name done"
 done <<'LIST'
 canopy_small 1.1,-1.0,3.0,3.5 SW

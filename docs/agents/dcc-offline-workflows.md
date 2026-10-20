@@ -79,6 +79,7 @@ Reject stale evidence; reopen/export-readback independently. Exit 0 alone is not
 ### Blender
 
 The approved baseline is 5.1.2, not the older version mentioned in some domain/history files.
+`--python-exit-code 1` is mandatory on every headless Blender call: without it a Python exception inside Blender exits 0 and a checker reads success.
 An isolated FBX readback candidate (input is an already exported FBX, not `working.blend`):
 
 ```bash
