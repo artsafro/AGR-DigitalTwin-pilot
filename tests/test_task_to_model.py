@@ -4,6 +4,8 @@ import hashlib
 import importlib.util
 import json
 import os
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -78,6 +80,24 @@ def bundle(tmp_path):
     job = {"schema_version": "1.0.0", "job_id": "SYNTHETIC", "run_id": "r1", "synthetic": True,
            "inputs": [source], "artifacts": [artifact], "path": "standard", "deviations": [], "gates": gates}
     return job
+
+
+def run_cli(bundle, root, *extra):
+    path = root / "job.yaml"
+    path.write_text(yaml.safe_dump(bundle), encoding="utf-8")
+    return subprocess.run(
+        [sys.executable, "-m", "dt_ai.procedure", str(path), "--root", str(root), *extra],
+        cwd=ROOT, capture_output=True, text=True, timeout=30,
+    )
+
+
+def test_fresh_process_cli(bundle, tmp_path):
+    completed = run_cli(bundle, tmp_path)
+    assert completed.returncode == 0, completed.stderr or completed.stdout
+    result = json.loads(completed.stdout)
+    assert result["passed"] is True
+    assert len(result["gates"]) == 8
+    assert all(row["ready"] for row in result["gates"])
 
 
 def test_complete_synthetic_walk(bundle, tmp_path):
