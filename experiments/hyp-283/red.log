@@ -1,0 +1,14 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+________________________ test_single_index_regression _________________________
+
+    def test_single_index_regression():
+        fn = BASELINE if os.getenv('HYP283_BASELINE') else INDEXED
+>       assert scan_probe(fn, 8) == 7
+E       assert 22 == 7
+E        +  where 22 = scan_probe(<function check_complexity at 0x000001F2D048CE00>, 8)
+
+experiments\hyp-283\driver.py:127: AssertionError
+=========================== short test summary info ===========================
+FAILED experiments/hyp-283/driver.py::test_single_index_regression - assert 2...
+1 failed in 0.43s
