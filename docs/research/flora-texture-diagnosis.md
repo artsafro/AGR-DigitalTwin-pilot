@@ -2,9 +2,75 @@
 
 - Причина: сохранённые UV привязали к картам с другой компоновкой; механизм подтверждён для 99/99 объектов, визуально — для шести видов.
 - Уточнение по коре выполнено: исходный узкий остров липы проходит containment 99,5347%; покрытие всей полосы к нему неприменимо.
-- Выполнен сырой расчёт 201 записи: 99 оригиналов + 99 v003 + 3 light; шесть расширенных листов просмотрены лично.
-- Калибровка пока НЕ пройдена: у 16 323 исходных UV-компонент роль неизвестна; это ограничение классификатора, не доказательство дефекта оригиналов.
-- Итоговые маршруты не выданы: 7 rebind и 1 star только предварительные, 91 требуют проверки источника; PR #377 draft, ассеты не изменены.
+- Выполнен новый расчёт 201 записи: 99 оригиналов + 99 v003 + 3 light; шесть обновлённых листов просмотрены лично.
+- Геометрический разбор снял 16 323 неизвестных роли: теперь 0; но цельный исходный спрайт черёмухи покрыт лишь на 67,59%, часть ветки обрезана.
+- Калибровка НЕ пройдена: 24 rebind и 1 star предварительные, 74 требуют проверки исходников; PR #377 draft, ассеты не изменены.
+
+## Current geometry-aware continuation (v005)
+
+The unknown-role implementation handoff below is **resolved for geometric candidates**, not
+replaced by a semantic-accuracy claim. See the reproducible
+[geometry experiment](../experiments/flora-geometry-decomposition.md) for methods, commands,
+three-run timings, synthetic invariants and the unchanged acceptance gate.
+
+| Same 99 originals | Legacy | Geometry-aware prototype |
+|---|---:|---:|
+| UV index components / edge-continuous charts | 27,947 | 17,332 |
+| Unknown geometry roles | 16,323 | 0 |
+| Exact source face accounting | 99/99 | 99/99 |
+| Median topology/role enumeration, 3 runs, seconds | 1.086303 | 2.372741 |
+| Original calibration | Failed | **Still failed** |
+
+The fair comparison is 2.18424x slower; no speed or semantic-accuracy gain is claimed.
+Roles derive from manifold boundaries and 3D face normals only, never from UV/pixel labels.
+Exact matching geometry-edge endpoints join duplicate map indices; real coordinate seams remain.
+The helper is 155 lines and the measurement change is flag-only (`geometry_parts: true`);
+default code and all assets are unchanged. Diagnostic chart enumeration: **adopt**; geometric
+role candidates: **maybe**, not a production acceptance checker.
+
+| v005 raw tag | Objects | Charts | Unknown roles | Raw applicable passing charts |
+|---|---:|---:|---:|---:|
+| Original Union | 68 | 15,889 | 0 | 7,631 |
+| Original FLORIO | 31 | 1,443 | 0 | 1,090 |
+| v003 | 99 | 17,332 | 0 | 0 |
+| NPM light | 3 | 271 | 0 | 0 |
+
+All 201 exact face ledgers and 99 unique route entries were independently checked. Only 25/99
+sources have all raw rows passing. Provisional routes: 24 rebind / 1 star / 74 source validation;
+**0 definitive routes**. Source NPM branch-card assemblies still are not certified whole-plant
+stars; 2,617 source charts explicitly have policy_applicable=false. RGB masks remain hypotheses.
+
+Selected sources, passing/all raw charts: Tilia NPM 9/141, VPM 664/664; Betula NPM 15/57;
+Crataegus NPM 4/38, VPM 264/264; Amelanchier FLORIO NPM 487/701, Union VPM 1,854/2,964;
+Cornus NPM 0/11; Spiraea NPM 10/10, VPM 20/20. These are diagnostic distributions, not accepted
+model scores. Tilia/Crataegus VPM and the Spiraea star remain useful passing controls.
+
+**New original-only counterexample, not bark:** `Padus_maackii_VPM`, one intact 8-triangle
+foliage chart (faces 182–185, 298–301), covers **67.5942243645%** of the bottom-left sprite bbox
+`[488,2403,1803,3845]` in `T_cheryomuha_maakha_d_1.png`. There are **29,353** opaque pixels
+outside the chart at 1px tolerance; 0 neighbouring sprite pixels. I personally opened the
+original atlas and the witness: the bbox encloses ONE branch sprite, and leaves visibly extend
+past the red UV outline. This is neither a missing-role failure nor a bark-strip/density metric.
+
+Evidence: `C:/x/review/2026-10-20/flora-texture-diagnosis/geometry-diagnostics-v005/index.html`,
+plus `padus-original-sprite-crop-v002.png/json`. All six new sheets were viewed with the image
+tool; the viewed witness hash matches v002. Compact ZIP: `review-geometry-v005-compact.zip`
+(16,237,384 bytes; 15 members; CRC checked). Receipts:
+`experiments/flora-texture-diagnosis/geometry-diagnostics-v005-summary.json`,
+`geometry-benchmark-v003.json`, `source-integrity-v003.json`.
+
+**126 affected tests passed**; RED tests-first commit `20bfb85` and additional RED/GREEN
+integration witnesses. Evals: 0/0/10 not measured, exit 2, no Claude transcript,
+`tmp/evals/flora-geometry-v003/report.json`. Protected source hashes: **236/236 unchanged**.
+No DCC process ran; no owned analysis process remains after the completed full 201-record sweep.
+
+**Decision needed before final routes:** the blanket requirement that every original must pass
+calibration conflicts with the measured intact source sprite above. May source crops/non-star
+NPM constructions be explicit source limitations/defects with their own repair routes, calibrating
+on independent valid controls, or must an approved exception/change of applicability be provided?
+The 0.80 threshold and bark policy were NOT changed. Independent semantic masks and final repair
+routes remain required, not out of scope; no fix issue was created. The older v004 sections below
+are preserved as historical evidence, not current unknown-role counts.
 
 ## Geometric recalibration [D155]
 

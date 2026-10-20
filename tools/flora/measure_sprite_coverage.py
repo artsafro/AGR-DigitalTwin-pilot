@@ -273,6 +273,8 @@ MEASURE_CACHE={}
 
 
 def analyze(record,key,tag,job,pictures=None):
+    if 'geometry_parts' in job and type(job['geometry_parts']) is not bool:
+        raise ValueError('geometry_parts must be bool')
     profile=key.split('_')[-1];vertices=np.asarray(record['vertices']);faces=np.asarray(record['faces'])
     metric_record={**record,'uv':np.asarray(record['uv']),'uvfaces':np.asarray(record['uvfaces'])}
     height=float(np.ptp(vertices[:,2]));groups=uv_components(record['uvfaces'],len(record['uv']));rows=[];panels={}
@@ -280,13 +282,27 @@ def analyze(record,key,tag,job,pictures=None):
     for element,element_faces in enumerate(elements):
         element_roles[element]=island_role(vertices[np.unique(faces[element_faces])],height,profile)
         for face in element_faces:face_elements[face]=element
+    part_charts=None;parts=[]
+    if job.get('geometry_parts') is True:
+        from geometry_parts import parts_and_charts
+        parts,part_charts=parts_and_charts(record)
+        groups=[chart['faces'] for chart in part_charts]
     source=tag in ('original','florio');annotations=[];seen=set()
     for number,indices in enumerate(groups):
         ids=sorted({record['face_material_ids'][i] for i in indices})
         owners=sorted({face_elements[i] for i in indices})
         roles={element_roles[e] for e in owners}
         role,reason=roles.pop() if len(roles)==1 else ('unknown','UV component spans elements with different geometric roles')
+        if part_charts is not None:
+            role,reason=part_charts[number]['role'],part_charts[number]['reason']
+            part_ids=part_charts[number]['geometry_parts']
+            if profile=='NPM' and role=='foliage' and all(
+                    parts[i]['kind']=='flat_card' and float(np.ptp(vertices[np.unique(faces[parts[i]['faces']]),2]))>=.75*height
+                    for i in part_ids):
+                role='star_plane'
+                reason+='; full-height flat-card candidate, star arrangement checked separately'
         row={'island':number,'faces':indices,'role':role,'role_reason':reason,'material_ids':ids,'geometry_elements':owners}
+        if part_charts is not None:row['geometry_parts']=part_charts[number]['geometry_parts']
         try:
             mat=slot_material(record,ids);paths=bound_images(mat,tag,job);rgb,alpha,cells=images(*paths)
             if source:
@@ -359,6 +375,9 @@ def analyze(record,key,tag,job,pictures=None):
             'scored_islands':sum('score' in r for r in rows),
             'passing_islands':sum(r['pass'] for r in rows),
             'class_masks':[{'diffuse':k[0],'opacity':k[1],'classes':v['classes'],'islands':v['islands']} for k,v in panels.items()]}
+    if part_charts is not None:
+        result['role_method']='geometry_parts'
+        result['geometry_parts']=parts
     if source:result['bark_strip_annotations']=annotations
     return result
 

@@ -64,6 +64,31 @@ def _bare_record():
             'material':{'class':'Standardmaterial','name':'M','bindings':{}}}
 
 
+@pytest.mark.parametrize('flag',[None,1,'true',[],{},float('nan')])
+def test_geometry_parts_flag_rejects_unsupported_values(flag):
+    with pytest.raises(ValueError,match='geometry_parts must be bool'):
+        analyze(_foliage_record(),'Card_VPM','original',{'geometry_parts':flag})
+
+
+def test_geometry_parts_flag_joins_duplicate_map_indices(tmp_path):
+    folder=tmp_path/'maps'
+    opaque=np.zeros((100,100),np.uint8);opaque[50:90,10:40]=255
+    diffuse=np.zeros((100,100,3),np.uint8);diffuse[...,1]=180
+    _save_maps(folder,diffuse,opaque)
+    record=_foliage_record()
+    record['uv']=[[.1,.1],[.4,.1],[.4,.5],[.1,.1],[.4,.5],[.1,.5]]
+    record['uvfaces']=[[0,1,2],[3,4,5]]
+    job={'scenes':[{'tag':'original','maps':str(folder)}],'bitmap_copies':{},'species':[],
+         'geometry_parts':True}
+    result=analyze(record,'Card_VPM','original',job)
+    assert len(result['islands'])==1
+    assert result['islands'][0]['faces']==[0,1]
+    assert result['islands'][0]['role']=='foliage'
+    assert result['role_method']=='geometry_parts'
+    star=analyze(record,'Card_NPM','original',job)['islands'][0]
+    assert star['role']=='star_plane'
+
+
 def test_real_narrow_bark_triangle_passes_with_explicit_solid_strip():
     record=bark_triangle();alpha=np.zeros((4096,4096),bool);alpha[:,3304:4096]=True
     result,_,_=compact_measure(record,[0],alpha,[(3304,0,4096,4096)],'VPM',role='trunk',bark_mask=alpha.copy())
