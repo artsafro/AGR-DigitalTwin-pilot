@@ -770,3 +770,6 @@ GRADERS = {"no_hook_denial": (no_hook_denial, ("transcript",)),
 
 from twinqa.evals.pr_graders import PR_GRADERS  # noqa: E402  (#125; pr_graders imports EvidenceError from here)
 GRADERS.update(PR_GRADERS)
+
+from twinqa.evals.capability import capability_b01  # noqa: E402
+GRADERS['capability_b01'] = (capability_b01, ('benchmark', 'self_check'))

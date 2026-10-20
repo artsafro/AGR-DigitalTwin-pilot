@@ -1,0 +1,10 @@
+{
+  "id": "capability-b01",
+  "suite": "capability",
+  "grader": "capability_b01",
+  "evidence": {
+    "benchmark": {"root": "main", "path": "benchmark/report.json"},
+    "self_check": {"root": "main", "path": "benchmark/etalon-self.json"}
+  },
+  "references": []
+}
