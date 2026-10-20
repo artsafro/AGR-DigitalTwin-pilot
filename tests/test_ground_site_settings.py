@@ -125,6 +125,58 @@ def test_second_site_flat_plan_uses_config_not_vatutino_slots():
     assert set(np.round(projected.verts[:, 2], 6)) == {0., .006}
 
 
+@pytest.mark.parametrize('value', [None, 1, 'true', [], float('nan')])
+def test_joint_policy_is_boolean_only(value):
+    s = settings()
+    s['separate_curbs'] = value
+    with pytest.raises(ValueError, match='separate_curbs'):
+        builder.site_plan(fixture(), s, 10)
+
+
+@pytest.mark.parametrize('which', ['source', 'settings'])
+@pytest.mark.parametrize('target', ['ground_master_npm.json', 'ground_master_vpm.json', 'ground_report.json'])
+def test_site_cli_rejects_hardlink_output_alias(tmp_path, which, target):
+    import os
+    d = fixture()
+    src, config, out = tmp_path/'input.json', tmp_path/'site.json', tmp_path/'out'
+    src.write_text(json.dumps(d))
+    config.write_text(json.dumps(settings()))
+    out.mkdir()
+    protected = src if which == 'source' else config
+    before = protected.read_bytes()
+    os.link(protected, out/target)
+    result = builder.main([str(src), '--site-settings', str(config), '--out', str(out)])
+    assert result == 2
+    assert protected.read_bytes() == before
+    assert [p.name for p in out.iterdir()] == [target]
+
+
+def test_inputs_changing_during_build_leave_no_deliverable(tmp_path, monkeypatch):
+    d = fixture()
+    d['coverings']['asphalt']['geometry'] = mapping(box(1, 0, 6, 4))
+    src, config, out = tmp_path/'input.json', tmp_path/'site.json', tmp_path/'out'
+    src.write_text(json.dumps(d))
+    config.write_text(json.dumps(settings()))
+    original = builder.gc.build_flat
+    def changed(*args, **kwargs):
+        result = original(*args, **kwargs)
+        config.write_text(config.read_text() + '\n')
+        return result
+    monkeypatch.setattr(builder.gc, 'build_flat', changed)
+    with pytest.raises(ValueError, match='inputs changed'):
+        builder.main([str(src), '--site-settings', str(config), '--out', str(out), '--footprint-min', '10'])
+    assert not list(out.iterdir())
+
+
+def test_duplicate_source_key_fails_without_output(tmp_path):
+    src, config, out = tmp_path/'input.json', tmp_path/'site.json', tmp_path/'out'
+    src.write_text('{"boundary":null,"boundary":null}')
+    config.write_text(json.dumps(settings()))
+    with pytest.raises(ValueError, match='duplicate JSON key'):
+        builder.main([str(src), '--site-settings', str(config), '--out', str(out)])
+    assert not out.exists()
+
+
 @pytest.mark.parametrize('mutate,match', [
     (lambda s: s.update(flat_datum_m=float('nan')), 'flat_datum_m'),
     (lambda s: s.update(flat_datum_m=float('inf')), 'flat_datum_m'),

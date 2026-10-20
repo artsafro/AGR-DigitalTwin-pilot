@@ -95,8 +95,20 @@ def plan_layers(boundary: Polygon, coverings: dict[str, list[Polygon]], base: st
                                          geometry_type=part.geom_type, area_m2=0.0))
 
         collect(shapely.make_valid(g))
-        snapped = shapely.set_precision(unary_union(kept), GRID) if kept else Polygon()
-        return MultiPolygon([p for p in _polys(snapped) if p.area >= 1e-6])
+        snapped_parts = []
+        for part in kept:
+            snapped = shapely.set_precision(part, GRID)
+            polygons = _polys(snapped)
+            if not polygons:
+                dispositions.append(dict(covering=covering, stage=stage, reason="precision_collapse",
+                                         area_m2=float(part.area)))
+            for polygon in polygons:
+                if polygon.area < 1e-6:
+                    dispositions.append(dict(covering=covering, stage=stage, reason="snapped_below_area_threshold",
+                                             area_m2=float(polygon.area)))
+                else:
+                    snapped_parts.append(polygon)
+        return MultiPolygon(_polys(unary_union(snapped_parts)))
 
     unions = {t: polygonal(unary_union([polygonal(p.intersection(boundary), t, "clip") for p in ps]),
                            t, "union") for t, ps in coverings.items() if ps}
