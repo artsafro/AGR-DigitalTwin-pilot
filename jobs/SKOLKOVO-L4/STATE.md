@@ -7,7 +7,27 @@ Base: pilot `48e2a55`; #348 and #351 are closed. No building output is approved.
 
 ## Status
 
-**Blocked after two Blender startup crashes; build has not started.** `passed=false`.
+**Intake resumed; waiting for an explicit model-policy decision before production.**
+`passed=false`. See [resumed evidence and exact question](RESUME-v002.md).
+
+Retry run 974 completed the hash-verified v1 PartsList (17,710 draft parts,
+73,110 questions; source budget 6,644,287 triangles, so **budget fail**) and
+read both September revision FBXs plus delivered NPM/VPM through headless
+3ds Max 2026.3. Source coverage is 17,710/17,710 with no duplicate references.
+The draft remains all-keep, legend-unmapped, joint-undecided and unapproved;
+it is not a buildable final decision table. Exact per-part triage and raw
+measurements are in the local 4.3 MB evidence ZIP hashed by
+`resume-evidence-v002.json`; no FBX is embedded in that archive.
+
+Factory-startup/private-TEMP Blender still crashed; the authorized Max route
+worked (known native PolyUnwrapper startup error recorded, not hidden).
+Production now needs the BODY-L / C23 interior/thickness policy decision in
+`RESUME-v002.md`, then a reduced PartsList and user Gate 1 approval of its
+exact hash. No kernel/build, final export, visual publication or SINTEZ ran.
+
+### Previous attempt (historical; superseded where the resume report says so)
+
+Attempt 965 stopped after two Blender startup crashes; build had not started.
 
 The v1 structure read completed (exit 0): 17,710 mesh objects, 6,644,287
 triangles, 73,110 bbox contacts, 709 shared components; every mesh has zero

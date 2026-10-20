@@ -1,0 +1,26 @@
+{
+  "evidence_hashes_verified": 21,
+  "archive_crc": "pass",
+  "input_hashes_unchanged": 104,
+  "new_files_in_input_copy": [
+    "C:\\x\\l4-skolkovo\\03_LP\\0809_BolshoyBulvar_64_01.fbm\\T_BolshoyBulvar_64_001_Main_d_1.png",
+    "C:\\x\\l4-skolkovo\\03_LP\\0809_BolshoyBulvar_64_01.fbm\\T_BolshoyBulvar_64_001_Main_m_1.png",
+    "C:\\x\\l4-skolkovo\\03_LP\\0809_BolshoyBulvar_64_01.fbm\\T_BolshoyBulvar_64_001_Main_n_1.png",
+    "C:\\x\\l4-skolkovo\\03_LP\\0809_BolshoyBulvar_64_01.fbm\\T_BolshoyBulvar_64_001_Main_r_1.png"
+  ],
+  "alias_probes": [
+    {
+      "name": "fresh_process_input_output_alias",
+      "output": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_b205c8e1\\tmp\\skolkovo-l4-v001\\structure-00.json",
+      "exit_code": 1,
+      "input_unchanged": true
+    },
+    {
+      "name": "fresh_process_input_output_alias",
+      "output": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_b205c8e1\\tmp\\skolkovo-l4-v001\\..\\skolkovo-l4-v001\\structure-00.json",
+      "exit_code": 1,
+      "input_unchanged": true
+    }
+  ],
+  "delivery_passed": false
+}

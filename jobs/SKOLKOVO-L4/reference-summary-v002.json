@@ -1,0 +1,138 @@
+[
+  {
+    "source": "C:\\x\\l4-skolkovo\\01_source\\02_pravki_2026-09-15\\fbx\\СК_ИЦ_ЦОД02_молниеотводы.fbx",
+    "source_sha256": "f2167c8f48537cfaeaeab3bdad6a81ca1822b86029a1da4c473ec643312ac23e",
+    "mode": "headless",
+    "reader": "3ds Max FBXIMP",
+    "max_version": "#(28000, 68, 0, 28, 3, 0, 30732, 2026, \".3\")",
+    "system_units": "meters",
+    "units_per_m": 1.0,
+    "total_scene_nodes": 3745,
+    "geometry_nodes": 3741,
+    "triangles": 1030375,
+    "seconds": 13.77016299997922,
+    "limitations": [
+      "Import/snapshot census only; not clean-process export readback or geometry invariants",
+      "Material slot names are importer evidence, not approved mapping"
+    ],
+    "bbox_m": {
+      "min": [
+        -47.08601379394531,
+        32.41421127319336,
+        -3.299999952316284
+      ],
+      "max": [
+        9.30898666381836,
+        73.71321105957031,
+        26.96500015258789
+      ]
+    },
+    "ucx_nodes": 0,
+    "ucx_triangles": 0,
+    "non_ucx_triangles": 1030375,
+    "census_sha256": "fabc99979d3dcd7f679ca0b3f1802f6b8d44f36321807dcd6154e2643d461d51",
+    "named_material_slots": 84
+  },
+  {
+    "source": "C:\\x\\l4-skolkovo\\01_source\\02_pravki_2026-09-15\\fbx\\СК_ИЦ_ЦОД02_П_АР_Ф-3DView.fbx",
+    "source_sha256": "9d079ffe7bbcfe035bdb3e13e660444cfb7f831d14c046ba1047572f9c5c52cb",
+    "mode": "headless",
+    "reader": "3ds Max FBXIMP",
+    "max_version": "#(28000, 68, 0, 28, 3, 0, 30732, 2026, \".3\")",
+    "system_units": "meters",
+    "units_per_m": 1.0,
+    "total_scene_nodes": 11515,
+    "geometry_nodes": 11510,
+    "triangles": 1146519,
+    "seconds": 38.03839580004569,
+    "limitations": [
+      "Import/snapshot census only; not clean-process export readback or geometry invariants",
+      "Material slot names are importer evidence, not approved mapping"
+    ],
+    "bbox_m": {
+      "min": [
+        -4.819999694824219,
+        -2.332305908203125,
+        -2.299999952316284
+      ],
+      "max": [
+        51.70000076293945,
+        38.084503173828125,
+        17.5
+      ]
+    },
+    "ucx_nodes": 0,
+    "ucx_triangles": 0,
+    "non_ucx_triangles": 1146519,
+    "census_sha256": "0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01",
+    "named_material_slots": 97
+  },
+  {
+    "source": "C:\\x\\l4-skolkovo\\03_LP\\0809_BolshoyBulvar_64_01.fbx",
+    "source_sha256": "1493b06f1bce777c85f36dbed904c16b1fe4d9346ba0532dc92fa0d0649e6d65",
+    "mode": "headless",
+    "reader": "3ds Max FBXIMP",
+    "max_version": "#(28000, 68, 0, 28, 3, 0, 30732, 2026, \".3\")",
+    "system_units": "meters",
+    "units_per_m": 1.0,
+    "total_scene_nodes": 1,
+    "geometry_nodes": 1,
+    "triangles": 49657,
+    "seconds": 0.5368009000085294,
+    "limitations": [
+      "Import/snapshot census only; not clean-process export readback or geometry invariants",
+      "Material slot names are importer evidence, not approved mapping"
+    ],
+    "bbox_m": {
+      "min": [
+        -10144.806640625,
+        2437.407470703125,
+        184.3171844482422
+      ],
+      "max": [
+        -10088.6484375,
+        2498.45068359375,
+        213.17945861816406
+      ]
+    },
+    "ucx_nodes": 0,
+    "ucx_triangles": 0,
+    "non_ucx_triangles": 49657,
+    "census_sha256": "3a1eb13a4585db65a6c150ed703e15b2e52638306095ca6326ef1ff3d13d2ea0",
+    "named_material_slots": 1
+  },
+  {
+    "source": "C:\\x\\l4-skolkovo\\04_HP\\okc\\SM_BolshoyBulvar_64.fbx",
+    "source_sha256": "fc52d0e231846b5fdce07cba30464da08fe5c3993f60a64df7dd16053ed8f455",
+    "mode": "headless",
+    "reader": "3ds Max FBXIMP",
+    "max_version": "#(28000, 68, 0, 28, 3, 0, 30732, 2026, \".3\")",
+    "system_units": "meters",
+    "units_per_m": 1.0,
+    "total_scene_nodes": 225,
+    "geometry_nodes": 225,
+    "triangles": 59116,
+    "seconds": 0.4709275000495836,
+    "limitations": [
+      "Import/snapshot census only; not clean-process export readback or geometry invariants",
+      "Material slot names are importer evidence, not approved mapping"
+    ],
+    "bbox_m": {
+      "min": [
+        -28.116453170776367,
+        -30.521512985229492,
+        -2.483340263366699
+      ],
+      "max": [
+        28.11699104309082,
+        30.52167320251465,
+        26.379051208496094
+      ]
+    },
+    "ucx_nodes": 223,
+    "ucx_triangles": 2676,
+    "non_ucx_triangles": 56440,
+    "census_sha256": "dace87bb8adc66bc7717e2dec86c5a0ac8bb060e7700b83b69b6b893801d313a",
+    "named_material_slots": 3
+  }
+]

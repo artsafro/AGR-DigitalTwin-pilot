@@ -1,0 +1,101 @@
+[
+  {
+    "census": "census-00.json",
+    "unique_shared_element_ids": 1203,
+    "translation_hypotheses": [
+      {
+        "offset_m": [
+          0.0,
+          -0.0,
+          -0.0
+        ],
+        "rounded_offset_votes": 1202,
+        "centers_within_2mm": 1202,
+        "centers_within_1cm": 1202,
+        "max_residual_m": 40.89506929066289
+      },
+      {
+        "offset_m": [
+          -39.42,
+          7.012,
+          8.325
+        ],
+        "rounded_offset_votes": 1,
+        "centers_within_2mm": 1,
+        "centers_within_1cm": 1,
+        "max_residual_m": 40.8951161539768
+      }
+    ],
+    "limitations": [
+      "Same element ID alone does not authorize replacing geometry",
+      "BBox centres only, no architectural or topology approval",
+      "Outlier geometry may be revised; no nearest-neighbour default"
+    ]
+  },
+  {
+    "census": "census-01.json",
+    "unique_shared_element_ids": 2938,
+    "translation_hypotheses": [
+      {
+        "offset_m": [
+          42.266,
+          -35.629,
+          0.0
+        ],
+        "rounded_offset_votes": 2623,
+        "centers_within_2mm": 2633,
+        "centers_within_1cm": 2663,
+        "max_residual_m": 40.8951057861793
+      },
+      {
+        "offset_m": [
+          42.266,
+          -38.149,
+          -0.0
+        ],
+        "rounded_offset_votes": 48,
+        "centers_within_2mm": 48,
+        "centers_within_1cm": 48,
+        "max_residual_m": 41.40170003548451
+      },
+      {
+        "offset_m": [
+          42.266,
+          -35.629,
+          -0.013
+        ],
+        "rounded_offset_votes": 32,
+        "centers_within_2mm": 32,
+        "centers_within_1cm": 35,
+        "max_residual_m": 40.897754171482504
+      },
+      {
+        "offset_m": [
+          42.266,
+          -36.499,
+          -0.0
+        ],
+        "rounded_offset_votes": 24,
+        "centers_within_2mm": 24,
+        "centers_within_1cm": 24,
+        "max_residual_m": 41.0532280005791
+      },
+      {
+        "offset_m": [
+          42.216,
+          -35.629,
+          -0.0
+        ],
+        "rounded_offset_votes": 17,
+        "centers_within_2mm": 17,
+        "centers_within_1cm": 17,
+        "max_residual_m": 40.84691149437482
+      }
+    ],
+    "limitations": [
+      "Same element ID alone does not authorize replacing geometry",
+      "BBox centres only, no architectural or topology approval",
+      "Outlier geometry may be revised; no nearest-neighbour default"
+    ]
+  }
+]

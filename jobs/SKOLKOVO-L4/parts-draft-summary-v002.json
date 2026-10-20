@@ -1,0 +1,30 @@
+{
+  "parts": 17710,
+  "source_meshes": 17710,
+  "coverage_unique": 17710,
+  "coverage_missing": [],
+  "coverage_duplicates": [],
+  "source_triangles": 6644287,
+  "reader_budget": {
+    "npm": 6644287,
+    "vpm": 6644287
+  },
+  "master_limit": 150000,
+  "master_budget_check": "fail",
+  "status": "draft",
+  "gate1": null,
+  "questions": 73110,
+  "joints": 0,
+  "legend_items_mapped": 0,
+  "triage_counts": {
+    "exterior_scope_and_legend_review": 10295,
+    "structural_visibility_review": 2194,
+    "interior_visibility_review": 91,
+    "fastener_visibility_review": 5130
+  },
+  "limitations": [
+    "Reader all-keep budget is source census, not approved target allocation",
+    "Name-based triage is not visibility or source material mapping",
+    "Do not confirm this draft or run kernel operations without resolving scope, budget, joints and legend"
+  ]
+}

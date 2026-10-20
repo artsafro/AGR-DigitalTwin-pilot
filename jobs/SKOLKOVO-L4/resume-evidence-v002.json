@@ -1,0 +1,119 @@
+{
+  "archive": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_b205c8e1\\tmp\\skolkovo-l4-v002\\skolkovo-l4-intake-v002.zip",
+  "bytes": 4291594,
+  "sha256": "848858080d97d95d474f61eab652a2eff2096714bc80d1e1be3306b1492cd077",
+  "evidence": [
+    {
+      "path": "tmp/skolkovo-l4-v001/structure-00.json",
+      "bytes": 26008630,
+      "sha256": "452d0df007527c82700f0b7e104ed53e881e7754cc193870be7cdb70fb98eafe"
+    },
+    {
+      "path": "tmp/skolkovo-l4-v001/parts-draft-v001.json",
+      "bytes": 34162260,
+      "sha256": "8c41a84a4e35bcf3c35ebde7ba1cb77cb1f52cdf249be4c4d33a6382dd5ac7ea"
+    },
+    {
+      "path": "tmp/skolkovo-l4-v002/per-part-triage-v001.csv",
+      "bytes": 2492858,
+      "sha256": "e5871c3b28859c1f4edb2db15b52da12048c5c811bbe9b62f639a08a5f0684ac"
+    },
+    {
+      "path": "tmp/skolkovo-l4-v002/frame-probe.json",
+      "bytes": 2553,
+      "sha256": "263a15433c6c0716bd92df029018f988c8c0bf77886d8c32eeaeb96bd0201044"
+    },
+    {
+      "path": "tmp/skolkovo-l4-v002/runs.json",
+      "bytes": 999,
+      "sha256": "315629c10421d3445957f222a3010c415b4fdecafa46a01c90737fc135456320"
+    },
+    {
+      "path": "tmp/skolkovo-l4-v002/max-reference-run-v003.json",
+      "bytes": 3901,
+      "sha256": "f112672ab143548979e91aad928edee0d1dc8caf7971db58cb17f978683620f5"
+    },
+    {
+      "path": "tmp/skolkovo-l4-v002/partial-export-inventory.json",
+      "bytes": 174568,
+      "sha256": "ddee88c7246f0fb5eea8ca096aafe9cd1100ae112a7b2dcb12bc323c5bec0d10"
+    },
+    {
+      "path": "tmp/skolkovo-l4-v002/temp/blender.crash.txt",
+      "bytes": 12762,
+      "sha256": "f8b95071057805155d4ed8d7aadd33a550a2cc0a6db7ba7fb981e0326bc04eae"
+    },
+    {
+      "path": "tmp/skolkovo-l4-v002/delivered-embedded-preview.jpg",
+      "bytes": 44941,
+      "sha256": "526744b559118f05e07e7d7c80947db62b91e550aa5c66956da031e2517eba9c"
+    },
+    {
+      "path": "tmp/l4_resume_v002.py",
+      "bytes": 1760,
+      "sha256": "b397dc19e2b7f9fd172683aea47a969e2c6a137704ce30956ffbb138198a1ff6"
+    },
+    {
+      "path": "tmp/l4_max_rods_v002.py",
+      "bytes": 2342,
+      "sha256": "2a89b33af5da38dad0870c2981d1bb4a7a6b99cdd8c934515108eb4c448bef69"
+    },
+    {
+      "path": "tmp/l4_max_compare_v002.py",
+      "bytes": 2933,
+      "sha256": "4e0fb9096496a655f8b72348217ff93efa5f19ebdb51d17cf10feb059b954890"
+    },
+    {
+      "path": "tmp/l4_alignment_probe.py",
+      "bytes": 2303,
+      "sha256": "fe2119c6710f10493560f431999fa39df324e40fb8188a6ba3c429c73a108265"
+    },
+    {
+      "path": "tmp/l4_package_resume.py",
+      "bytes": 5761,
+      "sha256": "90eb73f1005c0285be05bff629927743033363ec97b521f988ea62ae9c28edb3"
+    },
+    {
+      "path": "tmp/skolkovo-l4-v002/max-reference-v003/census-00.json",
+      "bytes": 1997668,
+      "sha256": "fabc99979d3dcd7f679ca0b3f1802f6b8d44f36321807dcd6154e2643d461d51"
+    },
+    {
+      "path": "tmp/skolkovo-l4-v002/max-reference-v003/census-01.json",
+      "bytes": 6765268,
+      "sha256": "0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01"
+    },
+    {
+      "path": "tmp/skolkovo-l4-v002/max-reference-v003/census-02.json",
+      "bytes": 1129,
+      "sha256": "3a1eb13a4585db65a6c150ed703e15b2e52638306095ca6326ef1ff3d13d2ea0"
+    },
+    {
+      "path": "tmp/skolkovo-l4-v002/max-reference-v003/census-03.json",
+      "bytes": 97604,
+      "sha256": "dace87bb8adc66bc7717e2dec86c5a0ac8bb060e7700b83b69b6b893801d313a"
+    },
+    {
+      "path": "tmp/skolkovo-l4-v001/revision-p001.png",
+      "bytes": 518084,
+      "sha256": "638761b2e40d0a51e4e9d3c75d05b48b055fbaabac780896c379f300936cfcfc"
+    },
+    {
+      "path": "tmp/skolkovo-l4-v001/revision-p003.png",
+      "bytes": 604700,
+      "sha256": "8e9193ba6e688021f8e7bbf31e5bfb30423beab3f932ce248026f21fc19de33e"
+    },
+    {
+      "path": "tmp/skolkovo-l4-v001/album-p015.png",
+      "bytes": 336402,
+      "sha256": "325aa31f87d571ffe24774e35381889f28df58eb35bbf71a4a31c93afa55d9d8"
+    }
+  ],
+  "checks": {
+    "unique_source_coverage": "17710/17710",
+    "triangle_conservation": "6644287/6644287",
+    "draft_not_confirmed": "pass",
+    "master_budget": "fail_6644287_gt_150000"
+  },
+  "passed": false
+}
