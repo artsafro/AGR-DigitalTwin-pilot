@@ -58,6 +58,50 @@ def check_aliases(src: Path, out: Path, targets: list[Path]) -> str | None:
     return None
 
 
+def site_plan(data: dict, settings: dict, footprint_min: float):
+    """Apply explicit site data to the SAME method-C planner; no inferred design elevations.
+
+    Flat computational TIN corners describe the user-authorized datum, not survey points.
+    Large uncovered components remain the existing planner's footprint rule; smaller ones
+    can receive an explicitly named covering instead of inheriting this job's base material.
+    """
+    from shapely.geometry import box
+    from shapely.ops import unary_union
+    required = {"slots", "flat_datum_m", "uncovered_covering"}
+    if not isinstance(settings, dict) or set(settings) != required:
+        raise ValueError(f"site settings require exactly {sorted(required)}; got {settings!r}")
+    datum = settings["flat_datum_m"]
+    if isinstance(datum, bool) or not isinstance(datum, (float, int)) or not math.isfinite(datum):
+        raise ValueError("flat_datum_m must be finite numeric metres")
+    if not math.isfinite(footprint_min) or footprint_min <= 0:
+        raise ValueError("footprint_min must be positive finite")
+    boundary = shape(data["boundary"])
+    if boundary.is_empty or not boundary.is_valid or boundary.geom_type != "Polygon":
+        raise ValueError("valid nonempty Polygon boundary required")
+    slots, uncovered = settings["slots"], settings["uncovered_covering"]
+    if not isinstance(uncovered, str) or not uncovered or uncovered in data["coverings"]:
+        raise ValueError("uncovered_covering must name a new covering")
+    expected = set(data["coverings"]) | {uncovered}
+    if not isinstance(slots, dict) or set(slots) != expected:
+        raise ValueError(f"unmapped or unknown covering slots: {sorted(expected.symmetric_difference(slots))}")
+    for key, slot in slots.items():
+        if not isinstance(slot, str) or not slot or not slot.isascii() or not slot.replace('_', '').isalnum():
+            raise ValueError(f"invalid material slot for {key!r}: {slot!r}")
+    cov = {}
+    for key, entry in data["coverings"].items():
+        geom = shape(entry["geometry"])
+        if geom.is_empty or not geom.is_valid or geom.geom_type not in {"Polygon", "MultiPolygon"}:
+            raise ValueError(f"invalid or empty covering {key!r}")
+        cov[key] = gc._polys(geom)
+    free = gc._polys(boundary.difference(unary_union([p for ps in cov.values() for p in ps])))
+    cov[uncovered] = [p for p in free if p.area < footprint_min]
+    plan = gc.plan_layers(boundary, cov, data["base_covering"], slots,
+                          footprint_min_area=footprint_min, step=STEP)
+    x0, y0, x1, y1 = boundary.bounds
+    points = [(x, y, datum) for x, y in list(box(x0 - 1, y0 - 1, x1 + 1, y1 + 1).exterior.coords)[:4]]
+    return plan, points
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("adapter_json")

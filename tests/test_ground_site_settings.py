@@ -1,6 +1,9 @@
 """new-case: reusable Ground site data; flat datum retains method-C spacing."""
 import copy
 import importlib.util
+import json
+import subprocess
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -10,6 +13,49 @@ from shapely.geometry import box, mapping
 spec = importlib.util.spec_from_file_location('ground_site_builder', Path(__file__).parents[1] / 'jobs/VATUTINO-SITE/build_ground.py')
 builder = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(builder)
+
+
+def cli(tmp_path, text=None, out=None):
+    d = fixture()
+    d['coverings']['asphalt']['geometry'] = mapping(box(1, 0, 6, 4))
+    src = tmp_path / 'input.json'
+    src.write_text(json.dumps(d), encoding='utf-8')
+    config = tmp_path / 'site.json'
+    config.write_text(text if text is not None else json.dumps(settings()), encoding='utf-8')
+    target = out or tmp_path / 'output'
+    run = subprocess.run([sys.executable, str(spec.origin), str(src), '--site-settings', str(config),
+                          '--out', str(target), '--footprint-min', '10', '--chord', '0'],
+                         capture_output=True, text=True)
+    return run, target
+
+
+def test_site_cli_fresh_process(tmp_path):
+    run, out = cli(tmp_path)
+    assert run.returncode == 0, run.stderr + run.stdout
+    rep = json.loads((out / 'ground_report.json').read_text())
+    assert rep['relief']['mode'] == 'flat by user decision'
+    assert rep['relief']['spot_points'] == 0
+    assert rep['relief']['flat_datum_m'] == 0
+    assert all(g['pass'] for g in rep['gates'].values())
+    assert len(json.loads((out / 'ground_master_npm.json').read_text())['faces']) > 0
+
+
+@pytest.mark.parametrize('text', ['{}', 'null', '{"slots":{},"slots":{}}'])
+def test_invalid_site_cli_does_not_write(tmp_path, text):
+    run, out = cli(tmp_path, text)
+    assert run.returncode != 0
+    assert not out.exists()
+
+
+def test_site_cli_rejects_nonempty_output(tmp_path):
+    out = tmp_path / 'old'
+    out.mkdir()
+    sentinel = out / 'ground_master_npm.json'
+    sentinel.write_text('old export')
+    run, _ = cli(tmp_path, out=out)
+    assert run.returncode != 0
+    assert list(out.iterdir()) == [sentinel]
+    assert sentinel.read_text() == 'old export'
 
 
 def fixture():
