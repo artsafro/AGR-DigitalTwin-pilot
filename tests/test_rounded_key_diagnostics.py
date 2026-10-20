@@ -99,12 +99,6 @@ def _input_boundary_edge_owners(faces):
     return owners
 
 
-def _rounded_key(v):
-    """The kernel's vertex identity key: coordinates rounded to 9 decimals
-    (``shell_body`` ``Mesh.face`` uses ``np.round(v, 9)``)."""
-    return tuple(np.round(np.asarray(v, dtype=float), 9))
-
-
 def _input_boundary_edges_in_emission_order(faces):
     """Ordered ``(i, j, owner)`` input boundary edges in kernel emission order.
 
@@ -122,19 +116,28 @@ def _input_boundary_edges_in_emission_order(faces):
 
 
 def assert_shell_provenance(result, submitted_vertices, submitted_faces, submitted_refs):
-    """Independent provenance oracle for ``shell_body`` output.
+    """Independent provenance + exact-geometry oracle for ``shell_body`` output.
 
     Validates against the *submitted* input (vertices, faces, refs) and the emitted
-    geometry, not the output's own (potentially swapped/permuted) bookkeeping:
+    geometry, never the output's own (potentially swapped/permuted) bookkeeping:
 
     * Exterior faces are emitted in submitted order with submitted refs, and each
-      exterior face's rounded vertex-key set equals its submitted face's.
+      exterior face's first corner keeps the exact input coordinate (winding not
+      reversed).
     * The complete ordered rim ``(source_edge, source_face)`` sequence equals the
-      independent input boundary-edge emission order (positional association).
-    * Each rim face's two outer corners -- emitted winding positions 0 and 3 of the
-      ``[v[i], inner[i], inner[j], v[j]]`` rim quad, never reversed by the kernel --
-      match, by rounded-key identity, the input coordinates of its claimed
-      ``source_edge`` endpoints, tying the record to the emitted geometry.
+      independent input boundary-edge emission order (positional association), and
+      each rim record's ``source_ref`` matches its owner face.
+    * The emitted vertex coordinates equal, with exact float identity, the retained
+      input corners and their exact inward offsets. The kernel stores coordinates
+      exactly -- ``np.round(v, 9)`` is only its *identity* key -- so a rounded key
+      must never judge whether a retained coordinate survived: it collapses the
+      narrow strip's right edge ``X = 0.2*h`` (hex ``0x1.b7cdfd9d7bdbcp-33``) to
+      zero and would miss a corruption of exactly that coordinate.
+
+    The exact-geometry half is a frozen witness for the two-strip synthetic fixtures
+    (each quad's even corners ``0`` and ``2`` are the first-wins retained corners
+    because the strip width lies below the kernel's 9-decimal rounding resolution);
+    the provenance half is general.
     """
     v = np.asarray(submitted_vertices, dtype=float)
     sources = result["face_sources"]
@@ -142,16 +145,11 @@ def assert_shell_provenance(result, submitted_vertices, submitted_faces, submitt
     rims = [s for s in sources if s["role"] == "rim"]
     out_f = np.asarray(result["mesh"]["faces"])
     out_v = np.asarray(result["mesh"]["vertices"], dtype=float)
+    thickness = result["thickness_m"]
 
+    # Ordered provenance (integer/string comparisons; no rounding).
     assert [s["source_face"] for s in exteriors] == list(range(len(submitted_faces)))
     assert [s["source_ref"] for s in exteriors] == list(submitted_refs)
-
-    for k, s in enumerate(exteriors):
-        expected = {_rounded_key(v[idx]) for idx in submitted_faces[k]}
-        actual = {_rounded_key(out_v[idx]) for idx in out_f[k]}
-        assert expected == actual, (
-            f"exterior face {k} rounded keys {sorted(map(list, actual))} != "
-            f"submitted face {k} keys {sorted(map(list, expected))}")
 
     expected_edges = _input_boundary_edges_in_emission_order(submitted_faces)
     assert len(rims) == len(expected_edges) == boundary_edge_count(submitted_faces)
@@ -160,18 +158,23 @@ def assert_shell_provenance(result, submitted_vertices, submitted_faces, submitt
     assert actual_seq == expected_edges, (
         f"rim source sequence {actual_seq} != input boundary emission order "
         f"{expected_edges}")
-
-    n_exterior = len(submitted_faces)
-    for k, s in enumerate(rims):
-        i, j = int(s["source_edge"][0]), int(s["source_edge"][1])
+    for s in rims:
         assert s["source_ref"] == submitted_refs[s["source_face"]]
-        face = out_f[n_exterior + k]
-        expected = {_rounded_key(v[i]), _rounded_key(v[j])}
-        actual = {_rounded_key(out_v[face[0]]), _rounded_key(out_v[face[3]])}
-        assert expected == actual, (
-            f"rim at position {k} (source_edge {[i, j]}) outer corners "
-            f"{sorted(map(list, actual))} != rounded input endpoints "
-            f"{sorted(map(list, expected))}")
+
+    # Exact retained geometry (frozen narrow-strip witness; no rounding).
+    for k in range(len(exteriors)):
+        assert np.array_equal(out_v[out_f[k][0]], v[submitted_faces[k][0]]), (
+            f"exterior face {k} first corner lost its exact input coordinate or "
+            f"the winding was reversed")
+
+    retained_idx = sorted({int(i) for face in submitted_faces for i in face[0::2]})
+    delta = np.array([0.0, thickness, 0.0])
+    expected = {tuple(float(x) for x in v[i]) for i in retained_idx}
+    expected |= {tuple(float(x) for x in v[i] + delta) for i in retained_idx}
+    actual = {tuple(float(x) for x in row) for row in out_v}
+    assert actual == expected, (
+        f"exact retained coordinates differ: output {sorted(actual)} != "
+        f"expected {sorted(expected)}")
 
 
 # ---------------------------------------------------------------------------
@@ -521,6 +524,64 @@ def test_shell_provenance_rejects_rim_rotation_via_process_local_wrapper(monkeyp
 
     # process-local wrapper: shell_run resolves the module-global shell_body, so the
     # rotated result flows into the oracle exactly as the reviewer's reproducer does
+    monkeypatch.setattr(sys.modules[__name__], "shell_body", wrapped_shell_body)
+    result = shell_run(v, f, thickness_m=0.4, refs=refs)
+
+    with pytest.raises(AssertionError):
+        assert_shell_provenance(result, v, f, refs)
+
+
+def _corrupt_retained_x(result, h):
+    """Review round-3 mutation: zero any emitted X strictly between 0 and ``h``.
+
+    The narrow strip's retained right edge has ``X = 0.2*h`` (hex
+    ``0x1.b7cdfd9d7bdbcp-33``), which lies strictly below ``h``. A rounded-key oracle
+    collapses that X to zero and therefore cannot distinguish the corruption; the
+    exact-geometry oracle must reject it. Only the ``mesh`` coordinates are changed;
+    provenance, faces and materials are left intact.
+    """
+    mesh = dict(result["mesh"])
+    out_v = np.array(mesh["vertices"], dtype=float)
+    mask = (out_v[:, 0] > 0.0) & (out_v[:, 0] < h)
+    out_v[mask, 0] = 0.0
+    mesh["vertices"] = out_v.tolist()
+    return {"mesh": mesh, "face_sources": result["face_sources"],
+            "thickness_m": result["thickness_m"], "inner_faces": result["inner_faces"]}
+
+
+def test_shell_provenance_rejects_retained_x_corruption_mutation():
+    v, f = narrow_fixture(SHELL_H)
+    refs = ["front", "back"]
+    result = shell_run(v, f, thickness_m=0.4, refs=refs)
+    assert_shell_provenance(result, v, f, refs)  # intact provenance passes
+
+    out_v = np.array(result["mesh"]["vertices"])
+    out_f = np.array(result["mesh"]["faces"])
+    assert signature(out_v, out_f) == (8, 10, 6, 6)  # frozen geometry retained
+
+    # the retained right-edge corners keep their exact X = 0.2*h before corruption
+    g = 0.2 * SHELL_H
+    exact = {tuple(map(float, row)) for row in out_v}
+    assert (g, 0.0, 1.0) in exact
+    assert (g, 0.4, 1.0) in exact
+
+    mutated = _corrupt_retained_x(result, SHELL_H)
+    with pytest.raises(AssertionError):
+        assert_shell_provenance(mutated, v, f, refs)
+
+
+def test_shell_provenance_rejects_retained_x_corruption_via_process_local_wrapper(
+        monkeypatch):
+    import dt_ai.geometry.shell as shell_mod
+
+    v, f = narrow_fixture(SHELL_H)
+    refs = ["front", "back"]
+
+    def wrapped_shell_body(*args, **kwargs):
+        return _corrupt_retained_x(shell_mod.shell_body(*args, **kwargs), SHELL_H)
+
+    # process-local wrapper: shell_run resolves the module-global shell_body, so the
+    # corrupted result flows into the oracle exactly as the reviewer's reproducer does
     monkeypatch.setattr(sys.modules[__name__], "shell_body", wrapped_shell_body)
     result = shell_run(v, f, thickness_m=0.4, refs=refs)
 
