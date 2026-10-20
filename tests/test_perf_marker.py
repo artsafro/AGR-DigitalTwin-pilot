@@ -13,3 +13,16 @@ def test_perf_marker_registered(pytestconfig):
 def test_default_addopts_exclude_perf(pytestconfig):
     addopts = " ".join(pytestconfig.getini("addopts"))
     assert "not perf" in addopts
+
+
+def test_measure_process_time_warmup_then_five_repeats(measure_process_time):
+    """The perf gate runs the warm-up call first, then exactly `repeats` timed calls."""
+    calls = []
+
+    def fn():
+        calls.append(len(calls))
+
+    median, wall = measure_process_time(fn, warmup=2, repeats=5)
+    assert calls == list(range(7))  # 2 warm-up calls, then 5 timed calls, in order
+    assert isinstance(median, float) and median >= 0.0
+    assert isinstance(wall, float) and wall >= 0.0
