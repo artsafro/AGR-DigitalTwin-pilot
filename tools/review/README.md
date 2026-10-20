@@ -29,7 +29,7 @@ are excluded. Files that merely have a scratch-directory name are ignored.
 
 ## Decision proposal
 
-Proposed **D151**, not an approved new user decision: record the issue's review
+Proposed **D152**, not an approved new user decision: record the issue's review
 folder layout and pending/verdict convention. Recheck the ID against main and
 all open PR reservations before adding it to `docs/decisions.md`. No decision-log
 or shared workflow edit is included while the proposal is unconfirmed.
