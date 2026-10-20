@@ -178,6 +178,30 @@ def test_scene_defects_fail(bad, stage, name):
     assert statuses(found, stage)[name] == "fail"
 
 
+@pytest.mark.parametrize("kind", ["npm", "vpm"])
+@pytest.mark.parametrize("rot, expected", [((0, 0, 0), "pass"), ((0, 0, 30), "fail")])
+def test_v004_reset_rotation_both_profiles(kind, rot, expected):
+    profile = PROFILES.npm if kind == "npm" else PROFILES.vpm
+    found = scene_findings(rb(mesh(rot=rot)), kind, "oks", profile)
+    assert statuses(found, "V004")["applied transforms"] == expected
+
+
+def test_v004_generated_rotation_probe():
+    angles = [-180, -30, -0.002, 0, 0.0005, 0.001, 0.002, 30, 180]
+    total = 0
+    for kind in ("npm", "vpm"):
+        profile = PROFILES.npm if kind == "npm" else PROFILES.vpm
+        for axis in range(3):
+            for angle in angles:
+                rot = [0.0, 0.0, 0.0]
+                rot[axis] = angle
+                expected = "pass" if abs(angle) <= 0.001 else "fail"
+                found = scene_findings(rb(mesh(rot=rot, scale=(1, 1, 1))), kind, "oks", profile)
+                assert statuses(found, "V004")["applied transforms"] == expected
+                total += 1
+    print(f"{total}/{total} checked")
+
+
 def test_glass_outside_1001_and_split_pivot_fail():
     found = scene_findings(rb(mesh(), mesh("SM_Test_K_1_MainGlass", tiles=(1002,), loc=(1, 0, 0))), "vpm", "oks", PROFILES.vpm)
     assert statuses(found, "V008")["glass tile"] == "fail"

@@ -62,7 +62,10 @@ def assert_valid_pieces(res):
     assert res.pieces
     for p in res.pieces:
         v, t = hull(p)
-        assert len(v) == 8 and len(t) == 12
+        if res.target == "Main":
+            assert len(v) == 8 and len(t) == 12
+        else:  # #326: Ground prism over a convex k-gon, k >= 3: 2k vertices, 4k - 4 triangles
+            assert len(v) >= 6 and len(v) % 2 == 0 and len(t) == 2 * len(v) - 4
         assert ua.is_closed(t)
         assert ua.is_convex(v, t)
         assert ua.classify(v, t)["kind"] != "custom"
@@ -338,6 +341,7 @@ def footprint_uncovered(v, t, res, n=24):
         g = (np.arange(n) + 0.5) / n
         gx, gy = np.meshgrid(lo[0] + g * (hi[0] - lo[0]), lo[1] + g * (hi[1] - lo[1]))
         q = np.stack([gx.ravel(), gy.ravel()], axis=1)
+        q = q[ub.piece_plan_contains(pc, q)]  # #326: Ground pieces are prisms over convex k-gons
         out.append(q[~np.isfinite(hf.z(q))])
     return np.concatenate(out) if out else np.zeros((0, 2))
 
@@ -391,19 +395,17 @@ def test_ground_l_shaped_site_exact():
 
 
 def test_ground_diagonal_perimeter_one_sided_tolerance():
-    """[D134] SYNTHETIC diagonal perimeter: reverse overhang is diagnostic, not an R11 failure."""
+    """[D134] SYNTHETIC diagonal perimeter: model -> UCX within R11. Since #326 the perimeter is cut along
+    the outline chord, so no piece overhangs it (the reverse bound stays a diagnostic)."""
     v = np.array([(0, 0, 0), (10, 0, 0), (0, 10, 0)], float)
     t = np.array([(0, 1, 2)])
     res = ub.build_ground(v, t, cell=8.0, min_cell=0.5, tol=0.08)
     assert_valid_pieces(res)
-    unc = footprint_uncovered(v, t, res)
-    assert len(unc) > 0
-    measured = float(((unc[:, 0] + unc[:, 1] - 10) / math.sqrt(2)).max())  # plan distance to the hypotenuse
-    assert res.footprint_overhang_bound_m >= measured - 1e-9
-    assert res.footprint_overhang_bound_m > 0.08
+    assert len(footprint_uncovered(v, t, res)) == 0
+    assert res.footprint_overhang_bound_m == 0.0
     pts = ub.sample_surface(v, t, 0.1)
     assert ub.ground_deviation(pts, res).max() <= 0.08
-    assert res.within_tol  # model -> UCX passes even though the reverse bound exceeds R11
+    assert res.within_tol
 
 
 def test_ground_random_rectilinear_holes_probe():
@@ -583,16 +585,265 @@ def test_ground_one_sided_missing_nonfinite_measurements_fail_closed(field, bad)
 @pytest.mark.parametrize("scale,offset", [(1.0, 0.0), (1.2, 23.0), (0.8, -19.0),
                                         (1.1, 100.0), (0.9, -100.0), (1.3, 1.5)])
 def test_one_sided_ground_generated_perimeters_probe(scale, offset):
-    """[D134] SYNTHETIC translated/scaled diagonal sites: forward R11 passes; reverse bound > R11."""
+    """[D134] SYNTHETIC translated/scaled diagonal sites: forward R11 passes; no overhang (#326 chord cut)."""
     v = np.array([(0, 0, 0), (10, 0, 0), (0, 10, 0)], float)
     v[:, :2] = scale * v[:, :2] + offset
     t = np.array([(0, 1, 2)])
     res = ub.build("Ground", v, t, cell=8.0, min_cell=0.5, tol=0.08,
                    model_triangles=50200, reserved_triangles=12)
     assert_valid_pieces(res)
-    assert res.footprint_overhang_bound_m > ub.GROUND_TOL_M
+    assert res.footprint_overhang_bound_m == 0.0 and len(footprint_uncovered(v, t, res)) == 0
     assert ub.ground_deviation(ub.sample_surface(v, t, 0.15), res).max() < 0.08
     assert res.within_tol
     ub.check_file_budget(50200, res.triangles + 12)
 
 
+
+
+# --- #326: real-size perforated layered-cake (method C) Ground ---
+
+def layered_site(angle=33.0):
+    """SYNTHETIC 200 x 190 m Ground in the shape of the Vatutino v011 failure (#326): a base layer on a
+    1 m grid rotated by `angle`, three building voids and an outer notch, overlapping +6 cm surfacing
+    patches (separate, unwelded meshes: their edges are internal, not the outline) and a +15 cm kerb
+    platform with vertical skirts (a step above R11). Only plan-rectilinear in the rotated frame."""
+    a = math.radians(angle)
+    rot = np.array([[math.cos(a), -math.sin(a)], [math.sin(a), math.cos(a)]])
+    zf = lambda x, y: 145.0 + 0.02 * x + 0.5 * np.sin(y / 23.0)  # noqa: E731
+    holes = [(30, 80, 40, 90), (120, 160, 20, 60), (90, 130, 120, 170), (0, 25, 165, 190)]
+    vs, ts = [], []
+
+    def grid(x0, x1, y0, y1, step, dz, keep=lambda x, y: True):
+        xs, ys = np.arange(x0, x1 + 1e-9, step), np.arange(y0, y1 + 1e-9, step)
+        v, t = plan_mesh(xs, ys, keep, z=lambda x, y: zf(x, y) + dz)
+        vs.append(v)
+        ts.append(t)
+        return xs, ys
+
+    grid(0, 200, 0, 190, 1.0, 0.0, lambda x, y: not any(h[0] < x < h[1] and h[2] < y < h[3] for h in holes))
+    for x0, x1, y0, y1 in [(5, 28, 5, 35), (85, 115, 70, 115), (140, 195, 70, 110), (40, 85, 100, 160)]:
+        grid(x0, x1, y0, y1, 1.0, 0.06)  # surfacing patch over the base: overlapping layer
+    kx, ky = grid(165, 195, 130, 185, 1.0, 0.15)  # kerb platform + 15 cm
+    ring = [(x, 130) for x in kx] + [(195, y) for y in ky[1:]] + [(x, 185) for x in kx[::-1][1:]] + \
+           [(165, y) for y in ky[::-1][1:]]
+    skirt_v, skirt_t = [], []
+    for (x0, y0), (x1, y1) in zip(ring, ring[1:]):
+        k = len(skirt_v)
+        skirt_v += [(x0, y0, zf(x0, y0) + 0.15), (x1, y1, zf(x1, y1) + 0.15), (x1, y1, zf(x1, y1)), (x0, y0, zf(x0, y0))]
+        skirt_t += [(k, k + 1, k + 2), (k, k + 2, k + 3)]
+    vs.append(np.array(skirt_v))
+    ts.append(np.array(skirt_t))
+    v, t, off = [], [], 0
+    for vv, tt in zip(vs, ts):
+        v.append(vv)
+        t.append(tt + off)
+        off += len(vv)
+    v, t = np.concatenate(v), np.concatenate(t)
+    v[:, :2] = v[:, :2] @ rot.T - 100.0
+    centres = np.array([((h[0] + h[1]) / 2, (h[2] + h[3]) / 2) for h in holes[:3]]) @ rot.T - 100.0
+    return v, t, centres
+
+
+def test_ground_real_size_layered_perforated_site_fits_999_and_budget():
+    """#326 regression: the shared builder must give a bounded Ground UCX for a real-size perforated,
+    overlapping layered heightfield: <= 999 names, <= [D012] budget, closed convex pieces with gaps,
+    model -> UCX <= R11 [D134], building voids kept open."""
+    v, t, centres = layered_site()
+    res = ub.build_ground(v, t, model_triangles=46343)  # n of the real v011 file -> [D012] 15 000
+    assert len(res.pieces) <= ub.MAX_PIECES and res.triangles <= res.budget == 15000
+    assert res.within_tol and res.max_vertical_dev_m <= 0.08 and res.uncovered_strip_m <= ub.GROUND_TOL_M
+    assert_valid_pieces(res)
+    hf = ub.HeightField(v, t)
+    g = np.stack(np.meshgrid(np.arange(-110, 110, 0.37), np.arange(-110, 110, 0.37)), -1).reshape(-1, 2)
+    zz = hf.z(g)
+    top = np.stack([g[np.isfinite(zz)][:, 0], g[np.isfinite(zz)][:, 1], zz[np.isfinite(zz)]], 1)
+    assert ub.ground_deviation(top, res).max() <= ub.GROUND_TOL_M  # upper surface -> UCX, one-sided
+    assert len(footprint_uncovered(v, t, res, n=6)) == 0  # no piece over a void
+    for c in centres:  # building voids stay open
+        assert not any(ub.piece_plan_contains(pc, c)[0] for pc in res.pieces)
+    ub.ucx_names("Vatutino", "Ground", len(res.pieces))
+
+
+def readback_nonconvex(res) -> int:
+    """Pieces whose float32 read-back (what Blender and FBX store) fails the twinqa audit convexity check."""
+    return sum(not ua.is_convex([tuple(map(float, x)) for x in np.float32(pc.verts)],
+                                [tuple(map(int, x)) for x in pc.tris]) for pc in res.pieces)
+
+
+def test_ground_layered_site_reads_back_convex():
+    """#326: every Ground piece of the real-size layered site stays convex after the float32 round trip
+    (a planar top fan over near-collinear vertices read back non-convex on the Vatutino v011 file)."""
+    v, t, _ = layered_site()
+    res = ub.build_ground(v, t, model_triangles=46343)
+    assert readback_nonconvex(res) == 0
+    assert all(ub.convex_after_float32(pc.verts, pc.tris) for pc in res.pieces)
+
+
+def test_ground_long_perimeter_skirt_inside_ucx_reach():
+    """#326 [D134] SYNTHETIC: a 1 m deep perimeter skirt made of 60 m quads (its vertices lie far from
+    most pieces) is model surface too: every skirt point is within R11 of a piece side, so the piece
+    bottoms reach below the skirt even where no skirt vertex is near."""
+    xs = ys = np.arange(0.0, 60.0 + 1e-9, 1.0)
+    z = lambda x, y: 145.0 + 0.01 * x + 0.0 * y  # noqa: E731
+    v, t = plan_mesh(xs, ys, lambda x, y: True, z=z)
+    corners = [(0.0, 0.0), (60.0, 0.0), (60.0, 60.0), (0.0, 60.0)]
+    sv, st = [], []
+    for (x0, y0), (x1, y1) in zip(corners, corners[1:] + corners[:1]):
+        k = len(v) + len(sv)
+        sv += [(x0, y0, z(x0, y0)), (x1, y1, z(x1, y1)), (x1, y1, z(x1, y1) - 1.0), (x0, y0, z(x0, y0) - 1.0)]
+        st += [(k, k + 1, k + 2), (k, k + 2, k + 3)]
+    v, t = np.concatenate([v, np.array(sv)]), np.concatenate([t, np.array(st)])
+    v[:, :2] += 1000.0  # real-size coordinates
+    res = ub.build_ground(v, t, cell=8.0, model_triangles=len(t))
+    rng = np.random.default_rng(326)
+    worst = 0.0
+    for a, b, c in np.array(st):
+        u = rng.random((200, 2))
+        u[u.sum(1) > 1] = 1 - u[u.sum(1) > 1]
+        pts = v[a] + u[:, :1] * (v[b] - v[a]) + u[:, 1:] * (v[c] - v[a])
+        for p in pts:
+            best = math.inf
+            for pc in res.pieces:
+                dh, near = ub._poly_dist(p[None, :2], pc.plan)
+                if dh[0] > ub.GROUND_TOL_M:
+                    continue
+                top = pc.plane[0] * near[0, 0] + pc.plane[1] * near[0, 1] + pc.plane[2]
+                dz = max(float(pc.verts[:, 2].min()) - p[2], p[2] - top, 0.0)
+                best = min(best, math.hypot(dh[0], dz))  # upper bound of the distance to that piece
+            worst = max(worst, best)
+    assert worst <= ub.GROUND_TOL_M
+
+
+def covered_corridors(v, t, res, band=(0.01002, 0.1), hole=0.00501):
+    """Neighbour pairs whose plan gap is above the [D098] 1 cm (with 0.02 mm read-back margin) across
+    covered Ground (#326 review): the closest-point connector is model-covered at 101/101 samples, crosses
+    no third piece and has a point more than gap/2 + 3 mm from every piece plan (not a diagonal seam)."""
+    hf = ub.HeightField(v, t)
+    qs = [pc.plan for pc in res.pieces]
+    lo, hi = np.array([q.min(0) for q in qs]), np.array([q.max(0) for q in qs])
+
+    def near(a, b):
+        d = np.roll(b, -1, axis=0) - b
+        s = np.clip(((a[:, None] - b) * d).sum(2) / (d * d).sum(1), 0, 1)
+        p = b + s[:, :, None] * d
+        dist = np.linalg.norm(a[:, None] - p, axis=2)
+        i, j = np.unravel_index(dist.argmin(), dist.shape)
+        return dist[i, j], a[i], p[i, j]
+
+    found = []
+    for i in range(len(qs)):
+        for j in range(i + 1, len(qs)):
+            if np.linalg.norm(np.maximum(np.maximum(lo[i] - hi[j], lo[j] - hi[i]), 0)) > band[1]:
+                continue
+            d, x, y = min([near(qs[i], qs[j]), near(qs[j], qs[i])], key=lambda r: r[0])
+            if not band[0] < d < band[1]:
+                continue
+            pts = x + (y - x) * np.linspace(0.001, 0.999, 101)[:, None]
+            if not np.isfinite(hf.z(pts)).all():
+                continue
+            if any(ub._inside(q, pts, -1e-7).any() for k, q in enumerate(qs) if k not in (i, j)):
+                continue
+            nearest = np.min([ub._poly_dist(pts, q)[0] for q in qs], axis=0)
+            if nearest.max() > hole:
+                found.append((i, j, float(d), pts[int(nearest.argmax())].tolist()))
+    return found
+
+
+def slit_site(angle, w=0.015, split_tip=True, centreline=False):
+    """SYNTHETIC flat 16 x 16 m Ground with a `w` (15 mm) wide, 6 m long void slit entering from the west
+    edge at `angle` deg and ending inside the cell (a thin gap between plots: an outline band narrower than
+    the chord tolerance). Covered by three convex patches at one height, unwelded along the tip line.
+    `split_tip=False` leaves the tip patch's long edge unsplit at the slit corners: the tip is then only
+    a partly exposed subsegment of that edge (T-junctions, #326 review round 2)."""
+    a = math.radians(angle)
+    u, n = np.array([math.cos(a), math.sin(a)]), np.array([-math.sin(a), math.cos(a)])
+    o, ln = np.array([0.0, 5.0]), 6.0
+    sq = np.array([(0, 0), (16, 0), (16, 16), (0, 16)], float)
+    tip = float(u @ o) + ln
+    parts = [ub._clip(ub._clip(sq, -n, -float(n @ o)), -u, -tip),
+             ub._clip(ub._clip(sq, n, float(n @ o) + w), -u, -tip), ub._clip(sq, u, tip)]
+    # slit tip corners: with split_tip the tip is a mesh boundary edge of its own
+    corners = [o + u * ln, o + u * ln + n * w] if split_tip else []
+    vs, ts, off = [], [], 0
+    for p in parts:
+        ring = []
+        for a, b in zip(p, np.roll(p, -1, axis=0)):
+            ring.append(a)
+            on = [c for c in corners if abs((b - a)[0] * (c - a)[1] - (b - a)[1] * (c - a)[0]) < 1e-9 * np.hypot(*(b - a))
+                  and 1e-9 < (c - a) @ (b - a) < (b - a) @ (b - a) - 1e-9]
+            ring += sorted(on, key=lambda c: (c - a) @ (b - a))
+        ring = np.array(ring)
+        k = len(ring)
+        vs.append(np.column_stack([np.vstack([ring.mean(axis=0), ring]), np.full(k + 1, 145.0)]))
+        ts.append(np.array([(off, off + 1 + i, off + 1 + (i + 1) % k) for i in range(k)]))
+        off += k + 1
+    v, t = np.concatenate(vs), np.concatenate(ts)
+    v[:, :2] += 500.0
+    if centreline:
+        return v, t, o + 500.0 + np.linspace(0.1, ln - 0.01, 200)[:, None] * u + n * w / 2
+    return v, t, o + 500.0 + u * ln / 2 + n * w / 2
+
+
+@pytest.mark.parametrize("angle", [12.0, 33.0, 40.0, 57.0])
+def test_ground_slit_tip_leaves_no_covered_corridor(angle):
+    """#326 review P1 regression row. Failing input (frozen Vatutino v011, default Ground build at
+    cfc5b45): pieces _629/_645 23.4 mm apart across covered Ground beyond the tip of a thin void slit, the
+    connector model-covered at 101/101 samples with no third piece. Expected: the outline band ends with
+    the outline, neighbour gaps across covered Ground stay inside [D098] 2 mm - 1 cm, the slit stays open."""
+    v, t, mid = slit_site(angle)
+    res = ub.build_ground(v, t, model_triangles=len(t))
+    assert_valid_pieces(res)
+    assert res.within_tol
+    assert covered_corridors(v, t, res) == []
+    assert not any(ub.piece_plan_contains(pc, mid)[0] for pc in res.pieces)  # the slit void stays open
+    assert len(footprint_uncovered(v, t, res, n=6)) == 0
+
+
+@pytest.mark.parametrize("split_tip", [False, True])
+@pytest.mark.parametrize("w", [0.015, 0.1, 0.5, 1.0])
+@pytest.mark.parametrize("angle", [12.0, 33.0, 40.0, 57.0])
+def test_ground_partly_exposed_edge_keeps_slit_open(angle, w, split_tip):
+    """#326 review round 2 P1 regression row. Failing input (reviewer probe.py::site(12, 0.5) at bb8b0b2):
+    flat 16 x 16 m Z145, three unwelded patches, 6 m x 0.5 m void slit at 12 deg whose tip lies on the
+    unsplit long edge of the third patch (only a 0.5 m subsegment of that edge is exposed); default build
+    ok with 3 pieces / 36 tris, 200/200 slit centreline points inside a piece. Expected: no piece over the
+    functional slit, same as the split-edge control (split_tip=True); covered gaps stay inside [D098]."""
+    v, t, line = slit_site(angle, w, split_tip, centreline=True)
+    res = ub.build_ground(v, t, model_triangles=len(t))
+    assert_valid_pieces(res)
+    assert res.within_tol
+    hit = np.any([ub.piece_plan_contains(pc, line) for pc in res.pieces], axis=0)
+    assert int(hit.sum()) == 0
+    assert covered_corridors(v, t, res) == []
+    assert len(footprint_uncovered(v, t, res, n=6)) == 0
+
+
+def test_ground_refuses_to_publish_a_filled_void(monkeypatch):
+    """Publication guard (#326 review round 2): if the outline misses an exposed subsegment (here the
+    bb8b0b2 classifier probing whole boundary edges at 1/4, 1/2, 3/4 only), the build raises instead of
+    returning pieces over the void."""
+    def fixed_probes(hf, probe=0.01):
+        s = hf.bseg
+        d = s[:, 1] - s[:, 0]
+        nrm = np.stack([-d[:, 1], d[:, 0]], axis=1) / np.linalg.norm(d, axis=1)[:, None]
+        keep = np.zeros(len(s), bool)
+        for f in (0.25, 0.5, 0.75):
+            m = s[:, 0] + f * d
+            keep |= np.isfinite(hf.z(m + probe * nrm)) != np.isfinite(hf.z(m - probe * nrm))
+        return s[keep], s[~keep]
+
+    v, t, _ = slit_site(12.0, 0.5, split_tip=False)
+    monkeypatch.setattr(ub, "_outline", fixed_probes)
+    with pytest.raises(ub.UcxBuildError, match="uncovered probe points"):
+        ub.build_ground(v, t, model_triangles=len(t))
+
+
+def test_outline_splits_boundary_edges_at_t_junctions():
+    """The outline is the exposed part of each mesh boundary edge: a long edge with a T-junction keeps
+    only its exposed subsegment as outline, the rest is an internal layer edge (#326 review round 2)."""
+    v, t, _ = slit_site(12.0, 0.5, split_tip=False)
+    out, layer = ub._outline(ub.HeightField(v, t))
+    total = np.linalg.norm(out[:, 1] - out[:, 0], axis=1).sum()
+    v2, t2, _ = slit_site(12.0, 0.5, split_tip=True)
+    out2, _ = ub._outline(ub.HeightField(v2, t2))
+    assert total == pytest.approx(np.linalg.norm(out2[:, 1] - out2[:, 0], axis=1).sum(), abs=1e-6)

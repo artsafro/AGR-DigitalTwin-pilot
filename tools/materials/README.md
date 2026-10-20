@@ -84,3 +84,29 @@ Add `--force` to replace an existing output. On success the process prints one s
 - The list must fit by minimum area. The error names the materials to shrink; it does not drop them automatically.
 - Patterned sources are resampled. The tool does not preserve their pixel size or generate mip maps.
 - UV rectangles are written to JSON only. They are not applied to a model.
+
+## Ground recipes (Vatutino)
+
+Seeded Pillow/numpy diffuse maps for the ten Ground slots ([D117]), no external image inputs.
+
+```text
+uv run python tools/materials/ground_recipes.py deliver --version v002 --address Vatutino --out C:/x/vatutino-ground-textures/v002
+```
+
+NPM: 2048 at 30 px/m, repeat 68.266667 m; VPM: 4096 at 1024 px/m, repeat 4 m.
+Density source: PR #308 `ground-build-v006.md`, still unmerged; recheck after #295 merges.
+`nominal_tile_mm` is the sourced 100x300 mm face, `joint_mm` is a **provisional, user review**
+5 mm physical joint, shared by both profiles. No artificial widened joints or pixel-scale overrides.
+An integer tile count closes a periodic supertile with <=1% per-axis physical scale error, as authorized
+by Artem on card t_47240e52 (2026-10-19). Manifest `physical_layout` records the nominal and actual face,
+joint, counts, floating pixel periods and signed scale errors for each tile slot/profile. Pixel-area
+integration averages subpixel joints; NPM cannot resolve every grain or joint independently.
+`fraction_mm` drives Gravel pitch; subpixel grains become a periodic aggregate. Other unsourced
+colours/cells remain explicit provisional review defaults in JSON and on the contact sheet.
+
+Only `C:/x/vatutino-ground-textures/vNNN` (001..999), matching `--version`, is permitted. v002 is the
+corrected delivery authorized on the card; v001 remains untouched. Nonempty folders, repository paths,
+input aliases, malformed versions, incompatible physical scales and pixel-period overrides are refused.
+Maps and the contact sheet are computed/validated before output creation. Use a new version, never overwrite.
+PNG bytes are RGB uint8 with an sRGB chunk. Diffuse recipes are not a complete material/FBX delivery;
+manual colour/appearance review and subsequent Ground binding remain separate gates.
