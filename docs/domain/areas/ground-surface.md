@@ -32,7 +32,7 @@ and [`scene_findings`](../../../src/twinqa/scene.py).
 | GND-08 — NPM relief texel density | reg p.10 §6.1–6.2; [D097] | Applies only to the relief surface within the plot: 10–40 px per linear metre (the text says «на кв.метр»; the user decided the linear unit [D097]); example 2048×2048 ↔ 204×204 m square; not applied to the perimeter extrusion, Flora, OKS, GroundEl; project textures 2K | See GND-09 | Manual metric UV measurement on the export; no implemented NPM density check | none | [NPM density](../uv-textures.md#npm-textures-app1), [C4, decided by the user](../conflicts.md#a-inside-the-regulation) |
 | GND-09 — VPM UV and density | reg p.31 §2.1.1–2.1.6; reg p.32 §6.2; [D097] | NPM atlas contract, see GND-08 | `*_Ground`: UDIM only, one UV set on one channel; split geometry larger than one tile at the required density; tiles from 1001 strictly sequential; no mirrored islands; no visible seams; Diffuse 512–1706 px/m (project band 520–1706 px/m with 4K textures [D097]) | Exported UV readback plus archive tile sequence; density and seams manual | V008 — `scene_findings` UV channel/mirroring; `uv.sequential_tiles` filename sequence; density (V009) unimplemented | [VPM UV](../uv-textures.md#vpm-uv--udim), [UV implementation](../../../src/twinqa/uv.py) |
 | GND-10 — Ground surface collision | reg p.36 §13.1–13.5; [D098] | n/a — no UCX in NPM | Collision built for the Ground surface (MAF, lighting and vegetation excluded); pieces convex and closed; shape tolerance ≤ 10 cm, especially on the perimeter; gap between pieces 2 mm – 1 cm [D098] | UCX triangle budget by readback; shape, coverage and gaps manual | V010 — `scene_findings` UCX triangle budget only | [UCX sheet](ucx.md), [C15, decided by the user](../conflicts.md#a-inside-the-regulation) |
-| GND-11 — Ground names | reg p.11 §3.2; reg p.12 §3.3–3.4; reg p.33 §4.1–4.2; reg p.34 §4.2–4.4 | FBX `prefix_Address_Ground`; objects `SM_Address_Ground`, `SM_Address_GroundGlass`; textures `T_Address_Ground_{map}_{Slot}.png`; ≤ 254 characters, Latin/digits/underscore | FBX/GeoJSON/ZIP `SM_Address_Ground`; objects `SM_Address_Ground`, `SM_Address_GroundGlass`; collision `UCX_SM_Address_Ground_001..999`; textures `T_Address_Ground_{Type}_{Slot}.{UDIM}.png`; materials `M_Address_Ground_{Slot}`, `M_Address_GroundGlass_{Slot}` | Manual internal-name inventory; package-level name checks do not cover mesh masks | none | [NPM names](../geometry.md#naming---npm-reg-p10-13), [VPM names](../geometry.md#naming---vpm-reg-p33-36) |
+| GND-11 — Ground names | reg p.11 §3.2; reg p.12 §3.3–3.4; reg p.33 §4.1–4.2; reg p.34 §4.2–4.4 | FBX `prefix_Address_Ground`; objects `SM_Address_Ground`, `SM_Address_GroundGlass`; textures `T_Address_Ground_{map}_{Slot}.png`; ≤ 254 characters, Latin/digits/underscore | FBX/GeoJSON/ZIP `SM_Address_Ground`; objects `SM_Address_Ground`, `SM_Address_GroundGlass`; collision `UCX_SM_Address_Ground_001..999`; textures `T_Address_Ground_{Type}_{Slot}.{UDIM}.png`; materials `M_Address_Ground_{Slot}`, `M_Address_GroundGlass_{Slot}` | V012 scene readback checks Ground/GroundGlass masks with the Address from the FBX stem, <= 254 characters and A-Z a-z 0-9 _; Address not derivable -> review; VPM UCX Ground indices 001..999; material/texture names and VPM capitalization remain manual | V012 — partial: `scene_findings` via `twinqa/naming.py`; `tests/qa/test_mesh_names.py` (#315); package names checked separately | [NPM names](../geometry.md#naming---npm-reg-p10-13), [VPM names](../geometry.md#naming---vpm-reg-p33-36) |
 | GND-12 — Placement and pivot | reg p.10 §8.1–8.2; reg p.32–33 §9.1–9.5; [D018] | Moscow coordinate system and heights, rotation as in the plan | Origin at world 0; Ground pivot at the geometric centre in X/Y, Z = project zero; all meshes in the FBX share the pivot (GroundGlass = Ground); rotation 0 after reset | Readback of origin, shared pivot and rotation; survey/project-zero truth manual | V013 — `_pivot_findings`, local/shared/centre subset only; V014 unimplemented | [Placement](../geometry.md#units-coordinates-pivots), [C19, decided by the user](../conflicts.md#b-regulation-vs-local-yaml--docs) |
 
 ## Project practice
@@ -78,7 +78,7 @@ Conflicts are only pointed to via [the conflict register](../conflicts.md) (C1/[
 
 ## L2 gaps
 
-The table contains **12 requirement rows**: **8** with `none` and **4** with partial coverage.
+The table contains **12 requirement rows**: **7** with `none` and **5** with partial coverage.
 
 - **GND-01:** boundary-layer overlay and stage membership.
 - **GND-02:** surface texture-set count.
@@ -87,7 +87,8 @@ The table contains **12 requirement rows**: **8** with `none` and **4** with par
 - **GND-06:** site-area minus footprint and hard table limit.
 - **GND-07:** curb/step/ramp/wall presence and silhouette economy.
 - **GND-08:** NPM linear density on the relief.
-- **GND-11:** internal Ground name masks.
+Partial row GND-11 checks internal Ground/GroundGlass and VPM UCX names; material/texture masks
+and VPM capitalization remain manual. No geometry or unrelated delivery finding is waived.
 
 Partial rows GND-04/09/10/12 still leave work (surface-only share of the 180k, V009 density and seams, UCX shape/gap band, V014 and survey alignment). Candidates, not filed tickets; T-GND-3/4 remain.
 
@@ -102,3 +103,15 @@ negative probes rejected **104/104** column mutations, **24/24** source-cell mut
 mutations (generic contract), plus **14/14** required-source, **19/19** number/unit, **8/8** gap-bullet and
 **10/10** practice-token/heading-order mutations (Ground test). These are documentation checks, not
 geometry validators or delivery acceptance.
+
+### GND-11 validator regression (#315)
+
+The current shared grammar already accepts `SM_Vatutino_Ground` and
+`SM_Vatutino_GroundGlass` for both profiles; the historical v005 name failure is not
+reproducible on this baseline. The issue-specific synthetic readbacks pin those names without
+renaming them to Main. Existing Main/GroundEl/UCX controls and the independent generated
+oracle remain in `tests/qa/test_mesh_names.py`. Additional probes cover malformed inventories,
+unsupported grammar, invalid/non-finite limits and Ground name lengths 250..257. The
+regulation ceiling is inclusive: a valid name of exactly 254 characters passes, 255 fails;
+this is not a numeric geometry tolerance. The original FBX and v005 findings are unchanged.
+The coverage contract additionally rejects 8/8 mutations of the GND-11 L2 claims.

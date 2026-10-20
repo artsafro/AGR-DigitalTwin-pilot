@@ -402,6 +402,16 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
 - Status: WORKING per package README (Russian): `glb_atlas`, `uv_continuous` (UV v006),
   `window_atlas`, `texture_tiles`, `mesh_audit`. Scope of each = its accepted case.
 
+### Album page reader — `src/dt_ai/album/` (#317, kernel C5; D127)
+- Status: IN BRANCH `improve/issue-317-kernel-c5-vector-pdf-album-reader-axes-d` (Hermes dt-worker, 2026-10-19),
+  validated on SYNTHETIC PDFs generated at test time only (`dt_ai.album.synthetic`), no real album yet.
+- Use: `uv run --extra pdf-review python -c "from dt_ai.album import read_page, reading_to_json; print(reading_to_json(read_page('sheet.pdf', 1)))"`.
+  One vector page -> paths, segments, text runs, axes, horizontal dimensions, level marks, legend (swatch RGB + label),
+  scale from one axis dimension (`scale_axes=("1","2")` or the left-most), `dimension_mismatch` / `level_mismatch`
+  findings; deterministic JSON with sha256, page number and PyMuPDF version.
+- Limits: fail-closed statuses `not_vector` / `no_text_layer` / `empty`, scale `unknown` without an axis dimension;
+  vertical dimension chains, OCR, PDFIMPORT fallback and multi-page indexing are not covered.
+
 ## Delivery QA (tools/qa, src/twinqa, standards/)
 
 ### Standards layer — `standards/`
@@ -495,3 +505,14 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
 
 ### `analyze-architectural-source`, `validate-delivery` (project skills)
 - Status: CONFIGURED (written against `docs/domain/`; not yet run on a real source)
+
+### Placement engine — `src/dt_ai/placement/engine.py` (#316)
+- Status: IN BRANCH `improve/issue-316-placement-engine-pure-flora-maf-placemen` (Hermes dt-worker, 2026-10-19);
+  synthetic tests only (`tests/test_placement_engine.py`), not yet run on a real Ground or SPOZU table (#296).
+- Use: `place(points, ground_vertices, ground_triangles, library, seed=<int>, label_map=None)` -> report dict;
+  `report_json(report)` for byte-stable JSON; CLI `uv run python -m dt_ai.placement.engine --input in.json
+  --output out.json` (exit 0 pass / 3 review / 1 fail / 2 bad invocation).
+- Does: Flora [D100] and MAF [D095] seating 0.10 m below the topmost Ground, seeded rotation/scale (Flora),
+  DXF INSERT rotation (MAF), bottom-face delete/review [D096], fail-closed findings per point [D108].
+- Limits: pure numpy/shapely, no DCC instancing; MAF dimensions [D094] only reported; nested-block rotation is
+  whatever `PointItem.rotation` carries.

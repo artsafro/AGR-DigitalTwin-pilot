@@ -19,11 +19,37 @@ no PNG/TGA/TIFF in the repo).
   with no deviation claims. **VPM identity: unverified, see #305**.
   The historical sampling classifier has been disabled; #305 owns a future surface-coverage check.
   The optional `identity` CLI inventories pairs from a source dump without classifying geometry.
+- `vpm-surface-identity.json` - NPM/VPM surface-identity report (#305), report only: `catalogue.json` and its
+  `vpm_identity: unverified` stay unchanged until the user decides. One row per catalogue species with
+  `same` / `different` / `unverified` / `error` / `no_vpm`. `same` needs two-way area coverage (every NPM face
+  area strictly within 0.1 mm of the VPM and vice versa) and equal summed face area, in the D100 pivot frame;
+  any uncovered or extra area >= 1 mm^2 is `different`, anything between is `unverified`.
+  Faces: `tools/flora/dump_flora_library_faces.py` (headless 3ds Max via `dcc_batch.py max`, on a copy of the
+  v003 .max, dump outside the repo); report: `uv run python -m dt_ai.materials.flora_surface_report
+  --catalogue library/flora/catalogue.json --faces <dump> --out library/flora/vpm-surface-identity.json`.
 - `tools/flora/build_flora_library_max.py` - headless 3ds Max assembly of the v002 geometry from scene copies.
   The pivot written there is the one described below.
 - `tools/flora/rebind_flora_library_maps.py` - headless rebind of every diffuse and opacity slot onto
   `C:/x/flora-library/v001/maps/<slug>/`, saved as the new file `C:/x/flora-library/v003/flora-library-v003.max`.
   v001, v002 and the source scenes are not overwritten.
+
+## Rebind checks (#312)
+
+The default orchestration unit tests use synthetic 2x2 PNGs under pytest's `tmp_path`,
+mock only DCC/filesystem discovery, and reject reads from the workstation's published
+library. They exercise the real planner, `execute` and CLI guards without installed assets:
+`uv run pytest -q tests/test_flora_library_rebind.py -k production`.
+
+Native published-library readback remains separate from these synthetic controls:
+`DT_FLORA_LIBRARY_INTEGRATION=1 uv run pytest -q -rs -m dcc tests/test_flora_library_rebind.py -k published_library_readback`.
+Prerequisites: Windows, licensed 3ds Max 2026, the configured `dcc_batch.py` runner,
+`C:/x/flora-library/v003/flora-library-v003.max`, and all catalogue diffuse/opacity PNGs
+under `C:/x/flora-library/v001/maps`. Coordinate exclusive Max ownership before selection.
+Without explicit opt-in or required files it skips with a prerequisite message. With them,
+it opens a temporary copy and checks the native snapshot through the existing readback
+measurement/verdict (99 objects, 198 matching bindings, no outside paths); hashes of the
+published MAX/maps must remain unchanged. This is map-binding evidence, not geometry
+identity or whole-library acceptance. Never remove or alter published assets to test isolation.
 
 ## Gaps
 

@@ -1,0 +1,2381 @@
+{
+ "schedule": "site-schedule.json",
+ "catalogue": "library/maf/catalogue.json (#183, 931 entries)",
+ "tolerance_m": 0.1,
+ "tolerance_rule": "[D094] per axis, plan L/W may swap, height not swapped",
+ "counts": {
+  "no model": 35,
+  "not a MAF item": 1,
+  "user selected": 13
+ },
+ "candidates_contact_sheet": "C:/x/vatutino-maf/v001/candidates.html (local)",
+ "positions": [
+  {
+   "table": "*T3508",
+   "row": 1,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 1",
+   "article": "18694",
+   "block": null,
+   "inserts_in_568BF": null,
+   "size_mm": [
+    2500,
+    3900,
+    600
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 2,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 2",
+   "article": "18694",
+   "block": null,
+   "inserts_in_568BF": null,
+   "size_mm": [
+    2500,
+    6700,
+    600
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 3,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 3",
+   "article": "18694",
+   "block": null,
+   "inserts_in_568BF": null,
+   "size_mm": [
+    6250,
+    600,
+    null
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 4,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 4",
+   "article": "18694",
+   "block": null,
+   "inserts_in_568BF": null,
+   "size_mm": [
+    5800,
+    2900,
+    600
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 5,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 5",
+   "article": "18694",
+   "block": null,
+   "inserts_in_568BF": null,
+   "size_mm": [
+    6080,
+    600,
+    null
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 6,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 6",
+   "article": "18694",
+   "block": null,
+   "inserts_in_568BF": null,
+   "size_mm": [
+    4960,
+    5530,
+    600
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 7,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 7",
+   "article": "18694",
+   "block": null,
+   "inserts_in_568BF": null,
+   "size_mm": [
+    4960,
+    5530,
+    600
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 8,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 8",
+   "article": "18694",
+   "block": null,
+   "inserts_in_568BF": null,
+   "size_mm": [
+    4960,
+    5530,
+    600
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 9,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 9",
+   "article": "18694",
+   "block": null,
+   "inserts_in_568BF": null,
+   "size_mm": [
+    4960,
+    5530,
+    600
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 10,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 9",
+   "article": "18694",
+   "block": null,
+   "inserts_in_568BF": null,
+   "size_mm": [
+    4960,
+    5530,
+    600
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 11,
+   "name": "Барная стойка",
+   "article": "",
+   "block": "Барная стойка",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    3140,
+    1650,
+    600
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; one dimension-only candidate MAF_0288 (0.09 m) is not a product match; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [
+    {
+     "id": "MAF_0288",
+     "source_object": "SM_PavlaAndreeva_Vld_23_GroundEl.005",
+     "dims_m": [
+      3.2,
+      1.683,
+      0.51
+     ],
+     "max_dev_m": 0.09,
+     "tris": 1956,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0288_SM_PavlaAndreeva_Vld_23_GroundEl_005.png"
+    }
+   ],
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 12,
+   "name": "Перучень для МГН",
+   "article": "",
+   "block": null,
+   "inserts_in_568BF": null,
+   "size_mm": null,
+   "catalogue_id": null,
+   "status": "not a MAF item",
+   "reason": "handrail for МГН, qty '-', no size, no DWG block; belongs to stairs/ramps, not to the MAF set (question); excluded by Artem 2026-10-19 (Q7).",
+   "candidates": [],
+   "resolved_question": "Q7",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 13,
+   "name": "Навес \"Андромеда\" Тип 1",
+   "article": "",
+   "block": "Навес 1",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    6250,
+    8930,
+    null
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 14,
+   "name": "Навес \"Андромеда\" Тип 2",
+   "article": "",
+   "block": "Навес 2",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    9150,
+    9150,
+    null
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 15,
+   "name": "Навес \"Андромеда\" Тип 3",
+   "article": "",
+   "block": "Навес 3",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    6070,
+    9150,
+    null
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 16,
+   "name": "Навес \"Андромеда\" Тип 4",
+   "article": "",
+   "block": "Навес 4",
+   "inserts_in_568BF": 1,
+   "size_mm": null,
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis ('14 3700х8020х3080' unreadable first value (143700?) -> review); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3508",
+   "row": 17,
+   "name": "Песочница с повышением , подпорной стенкой и пандусом / Индивидуального изготовления",
+   "article": "Индивидуального изготовления",
+   "block": "Песочница индивидуальный МАФ",
+   "inserts_in_568BF": 1,
+   "size_mm": null,
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "individually made («Индивидуальное изготовление» / «индивидуального изготовления»): no library entry by definition; modelling is model-maf step 3, out of scope of #313; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q1",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 1,
+   "name": "Скамейка стальная «Андромеда» / Артикул: 14122",
+   "article": "14122",
+   "block": "Скамья",
+   "inserts_in_568BF": 5,
+   "size_mm": [
+    1800,
+    500,
+    720
+   ],
+   "catalogue_id": "MAF_0326",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
+   "candidates": [
+    {
+     "id": "MAF_0411",
+     "source_object": "M_Bench_001",
+     "dims_m": [
+      1.798,
+      0.501,
+      0.765
+     ],
+     "max_dev_m": 0.045,
+     "tris": 392,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0411_M_Bench_001.png"
+    },
+    {
+     "id": "MAF_0129",
+     "source_object": "C_10657_Skameika Bagdad 2000 s nastilom i spinkoy.002",
+     "dims_m": [
+      1.797,
+      0.508,
+      0.783
+     ],
+     "max_dev_m": 0.063,
+     "tris": 284,
+     "npm_matches": [
+      "C_10657_Skameika Bagdad 2000 s nastilom i spinkoy.002"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0129_C_10657_Skameika_Bagdad_2000_s_nastilom_i_spinkoy_0.png"
+    },
+    {
+     "id": "MAF_0326",
+     "source_object": "SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl.006",
+     "dims_m": [
+      1.802,
+      0.475,
+      0.801
+     ],
+     "max_dev_m": 0.081,
+     "tris": 240,
+     "npm_matches": [
+      "SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl.006"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0326_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_006.png"
+    }
+   ],
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 1,
+    "catalogue_id": "MAF_0326",
+    "name": "Скамейка стальная «Андромеда» / Артикул: 14122",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0326_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_006.fbx",
+    "schedule_size_m": [
+     1.8,
+     0.5,
+     0.72
+    ],
+    "measured_size_m": [
+     1.8018798828125,
+     0.47443389892578125,
+     0.8008270021528006
+    ],
+    "aligned_size_m": [
+     1.8018798828125,
+     0.47443389892578125,
+     0.8008270021528006
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.0018798828124999556,
+     0.02556610107421875,
+     0.08082700215280059
+    ],
+    "verdict": "pass",
+    "raw_triangles": 240,
+    "instances_in_568BF": 5,
+    "raw_instanced_triangles": 1200,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 2,
+   "name": "Урна стальная «Арго» / Артикул: 19648",
+   "article": "19648",
+   "block": "Урна",
+   "inserts_in_568BF": 48,
+   "size_mm": [
+    620,
+    470,
+    1050
+   ],
+   "catalogue_id": "MAF_0794",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
+   "candidates": [
+    {
+     "id": "MAF_0794",
+     "source_object": "Object105",
+     "dims_m": [
+      0.644,
+      0.475,
+      1.064
+     ],
+     "max_dev_m": 0.024,
+     "tris": 146,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0794_Object105.png"
+    },
+    {
+     "id": "MAF_0119",
+     "source_object": "C_0_Stul visokiy ulichniy stacionarniy.001",
+     "dims_m": [
+      0.515,
+      0.586,
+      1.035
+     ],
+     "max_dev_m": 0.045,
+     "tris": 390,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0119_C_0_Stul_visokiy_ulichniy_stacionarniy_001.png"
+    },
+    {
+     "id": "MAF_0378",
+     "source_object": "M_Armchair_001",
+     "dims_m": [
+      0.515,
+      0.586,
+      1.035
+     ],
+     "max_dev_m": 0.045,
+     "tris": 1143,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0378_M_Armchair_001.png"
+    }
+   ],
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 2,
+    "catalogue_id": "MAF_0794",
+    "name": "Урна стальная «Арго» / Артикул: 19648",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0794_Object105.fbx",
+    "schedule_size_m": [
+     0.62,
+     0.47,
+     1.05
+    ],
+    "measured_size_m": [
+     0.6435394287109375,
+     0.4748058319091797,
+     1.0639451698666562
+    ],
+    "aligned_size_m": [
+     0.6435394287109375,
+     0.4748058319091797,
+     1.0639451698666562
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.023539428710937504,
+     0.004805831909179714,
+     0.01394516986665617
+    ],
+    "verdict": "pass",
+    "raw_triangles": 146,
+    "instances_in_568BF": 48,
+    "raw_instanced_triangles": 7008,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 3,
+   "name": "Качели садово-парковые «Кассиопея» / Артикул: 20895",
+   "article": "20895",
+   "block": "Качели парковые",
+   "inserts_in_568BF": 11,
+   "size_mm": [
+    3000,
+    700,
+    2500
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 4,
+   "name": "Гамак HARDWOOD «Сен-Тропе» / Артикул: 25308",
+   "article": "25308",
+   "block": "Гамак",
+   "inserts_in_568BF": 3,
+   "size_mm": [
+    4150,
+    1060,
+    1770
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 5,
+   "name": "Площадка для контейнеров ТБО",
+   "article": "",
+   "block": "Площадка для контейнеров БТО 2",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    12540,
+    3240,
+    null
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (no height in schedule); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 6,
+   "name": "Контейнер пластиковый ТБО",
+   "article": "",
+   "block": "Контейнер 1100л ТБО",
+   "inserts_in_568BF": 8,
+   "size_mm": null,
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (volume '1100 л' only, no L/W/H -> review); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 7,
+   "name": "Скамейка «Фестиваль» Модуль 1 / арт. nv 521-01",
+   "article": "nv 521-01",
+   "block": "Шезлонг фестиваль модуль 1",
+   "inserts_in_568BF": 4,
+   "size_mm": [
+    1860,
+    1700,
+    790
+   ],
+   "catalogue_id": "MAF_0747",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
+   "candidates": [
+    {
+     "id": "MAF_0747",
+     "source_object": "12",
+     "dims_m": [
+      1.698,
+      1.847,
+      0.802
+     ],
+     "max_dev_m": 0.013,
+     "tris": 364,
+     "npm_matches": [
+      "SM_NizhnieMnevniki_ZU_12_B_GroundEl.001"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0747_12.png"
+    },
+    {
+     "id": "MAF_0031",
+     "source_object": "СМ123",
+     "dims_m": [
+      1.779,
+      1.752,
+      0.71
+     ],
+     "max_dev_m": 0.081,
+     "tris": 196,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0031_SM123.png"
+    },
+    {
+     "id": "MAF_0267",
+     "source_object": "SM_NizhnieMnevniki_ZU_12_B_GroundEl.001",
+     "dims_m": [
+      1.621,
+      1.85,
+      0.88
+     ],
+     "max_dev_m": 0.09,
+     "tris": 1891,
+     "npm_matches": [
+      "SM_PavlaAndreeva_Vld_23_GroundEl.015"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0267_SM_NizhnieMnevniki_ZU_12_B_GroundEl_001.png"
+    }
+   ],
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 7,
+    "catalogue_id": "MAF_0747",
+    "name": "Скамейка «Фестиваль» Модуль 1 / арт. nv 521-01",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0747_12.fbx",
+    "schedule_size_m": [
+     1.86,
+     1.7,
+     0.79
+    ],
+    "measured_size_m": [
+     1.6981048583984375,
+     1.8467674255371094,
+     0.8020949676683387
+    ],
+    "aligned_size_m": [
+     1.8467674255371094,
+     1.6981048583984375,
+     0.8020949676683387
+    ],
+    "plan_axes_swapped": true,
+    "deviation_m": [
+     0.013232574462890723,
+     0.0018951416015624556,
+     0.012094967668338619
+    ],
+    "verdict": "pass",
+    "raw_triangles": 364,
+    "instances_in_568BF": 4,
+    "raw_instanced_triangles": 1456,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 8,
+   "name": "Скамейка «Фестиваль» Модуль 3 / арт. nv 521-03",
+   "article": "nv 521-03",
+   "block": "Шезлонг фестиваль модуль 3",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    18500,
+    1700,
+    790
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (4th value (seat height) ignored); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 9,
+   "name": "Лежак «Городской» / 11061",
+   "article": "11061",
+   "block": "лежак2",
+   "inserts_in_568BF": 6,
+   "size_mm": [
+    600,
+    1633,
+    930
+   ],
+   "catalogue_id": "MAF_0506",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
+   "candidates": [
+    {
+     "id": "MAF_0174",
+     "source_object": "C_RVA150_Rivage skamia dlya otdiha shezlong",
+     "dims_m": [
+      0.61,
+      1.63,
+      0.933
+     ],
+     "max_dev_m": 0.01,
+     "tris": 696,
+     "npm_matches": [
+      "C_RVA150_Rivage skamia dlya otdiha shezlong"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0174_C_RVA150_Rivage_skamia_dlya_otdiha_shezlong.png"
+    },
+    {
+     "id": "MAF_0506",
+     "source_object": "M_Chaise_loung_001",
+     "dims_m": [
+      0.611,
+      1.63,
+      0.933
+     ],
+     "max_dev_m": 0.011,
+     "tris": 1460,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0506_M_Chaise_loung_001.png"
+    },
+    {
+     "id": "MAF_0144",
+     "source_object": "C_DP.015_Divan parkoviy Smart DP.002",
+     "dims_m": [
+      1.544,
+      0.692,
+      0.846
+     ],
+     "max_dev_m": 0.092,
+     "tris": 268,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0144_C_DP_015_Divan_parkoviy_Smart_DP_002.png"
+    },
+    {
+     "id": "MAF_0415",
+     "source_object": "M_Bench_005",
+     "dims_m": [
+      1.546,
+      0.695,
+      0.847
+     ],
+     "max_dev_m": 0.095,
+     "tris": 1156,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0415_M_Bench_005.png"
+    },
+    {
+     "id": "MAF_0818",
+     "source_object": "Brusya",
+     "dims_m": [
+      1.627,
+      0.664,
+      1.027
+     ],
+     "max_dev_m": 0.097,
+     "tris": 288,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0818_Brusya.png"
+    }
+   ],
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 9,
+    "catalogue_id": "MAF_0506",
+    "name": "Лежак «Городской» / 11061",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0506_M_Chaise_loung_001.fbx",
+    "schedule_size_m": [
+     0.6,
+     1.633,
+     0.93
+    ],
+    "measured_size_m": [
+     0.6106643676757812,
+     1.6297187805175781,
+     0.933576375246048
+    ],
+    "aligned_size_m": [
+     0.6106643676757812,
+     1.6297187805175781,
+     0.933576375246048
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.010664367675781272,
+     0.003281219482421882,
+     0.0035763752460479248
+    ],
+    "verdict": "pass",
+    "raw_triangles": 1460,
+    "instances_in_568BF": 6,
+    "raw_instanced_triangles": 8760,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 10,
+   "name": "Стул на ножке \"Бар\"",
+   "article": "",
+   "block": "Стул бар",
+   "inserts_in_568BF": 4,
+   "size_mm": [
+    400,
+    400,
+    800
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no name hit in the catalogue (names are scene object names); 11 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [
+    {
+     "id": "MAF_0241",
+     "source_object": "Circle.021",
+     "dims_m": [
+      0.405,
+      0.405,
+      0.801
+     ],
+     "max_dev_m": 0.005,
+     "tris": 476,
+     "npm_matches": [
+      "Circle.021"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0241_Circle_021.png"
+    },
+    {
+     "id": "MAF_0690",
+     "source_object": "M_Urn_002",
+     "dims_m": [
+      0.405,
+      0.405,
+      0.801
+     ],
+     "max_dev_m": 0.005,
+     "tris": 668,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0690_M_Urn_002.png"
+    },
+    {
+     "id": "MAF_0239",
+     "source_object": "Circle.025",
+     "dims_m": [
+      0.373,
+      0.373,
+      0.83
+     ],
+     "max_dev_m": 0.03,
+     "tris": 350,
+     "npm_matches": [
+      "Circle.019",
+      "Circle.025"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0239_Circle_025.png"
+    },
+    {
+     "id": "MAF_0701",
+     "source_object": "M_Urn_013",
+     "dims_m": [
+      0.395,
+      0.395,
+      0.83
+     ],
+     "max_dev_m": 0.03,
+     "tris": 1724,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0701_M_Urn_013.png"
+    },
+    {
+     "id": "MAF_0779",
+     "source_object": "32",
+     "dims_m": [
+      0.431,
+      0.43,
+      0.796
+     ],
+     "max_dev_m": 0.031,
+     "tris": 992,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0779_32.png"
+    },
+    {
+     "id": "MAF_0238",
+     "source_object": "Cube.002",
+     "dims_m": [
+      0.402,
+      0.307,
+      0.844
+     ],
+     "max_dev_m": 0.093,
+     "tris": 152,
+     "npm_matches": [
+      "Cube.002"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0238_Cube_002.png"
+    }
+   ],
+   "resolved_question": "Q2",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 11,
+   "name": "Качалка балансир / Артикул: ИО 0410-2",
+   "article": "ИО 0410-2",
+   "block": "Качалка на пружине ИО 0323Т-3",
+   "inserts_in_568BF": 2,
+   "size_mm": [
+    900,
+    600,
+    700
+   ],
+   "catalogue_id": "MAF_0322",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
+   "candidates": [
+    {
+     "id": "MAF_0322",
+     "source_object": "SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl.001",
+     "dims_m": [
+      0.572,
+      0.92,
+      0.687
+     ],
+     "max_dev_m": 0.028,
+     "tris": 724,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0322_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_001.png"
+    }
+   ],
+   "resolved_question": "Q6",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 11,
+    "catalogue_id": "MAF_0322",
+    "name": "Качалка балансир / Артикул: ИО 0410-2",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0322_SM_Zolotorozhskiy_Val_Vl_11_Str_46_GroundEl_001.fbx",
+    "schedule_size_m": [
+     0.9,
+     0.6,
+     0.7
+    ],
+    "measured_size_m": [
+     0.5722503662109375,
+     0.920166015625,
+     0.6865539625287056
+    ],
+    "aligned_size_m": [
+     0.920166015625,
+     0.5722503662109375,
+     0.6865539625287056
+    ],
+    "plan_axes_swapped": true,
+    "deviation_m": [
+     0.020166015624999978,
+     0.027749633789062478,
+     0.013446037471294359
+    ],
+    "verdict": "pass",
+    "raw_triangles": 724,
+    "instances_in_568BF": 2,
+    "raw_instanced_triangles": 1448,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 12,
+   "name": "Качели / Артикул:Качели / ИО 0118Т-1",
+   "article": "Качели ИО 0118Т-1",
+   "block": "ио 0118т-1",
+   "inserts_in_568BF": 2,
+   "size_mm": [
+    2200,
+    300,
+    1900
+   ],
+   "catalogue_id": "MAF_0920",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
+   "candidates": [
+    {
+     "id": "MAF_0358",
+     "source_object": "SM_PavlaAndreeva_Vld_23_GroundEl.025",
+     "dims_m": [
+      2.216,
+      0.342,
+      1.907
+     ],
+     "max_dev_m": 0.042,
+     "tris": 1654,
+     "npm_matches": [
+      "SM_PavlaAndreeva_Vld_23_GroundEl.025"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0358_SM_PavlaAndreeva_Vld_23_GroundEl_025.png"
+    },
+    {
+     "id": "MAF_0645",
+     "source_object": "M_Swing_003",
+     "dims_m": [
+      2.184,
+      0.342,
+      1.9
+     ],
+     "max_dev_m": 0.042,
+     "tris": 6258,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0645_M_Swing_003.png"
+    },
+    {
+     "id": "MAF_0920",
+     "source_object": "Object090",
+     "dims_m": [
+      2.158,
+      0.267,
+      1.897
+     ],
+     "max_dev_m": 0.042,
+     "tris": 678,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0920_Object090.png"
+    }
+   ],
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 12,
+    "catalogue_id": "MAF_0920",
+    "name": "Качели / Артикул:Качели / ИО 0118Т-1",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0920_Object090.fbx",
+    "schedule_size_m": [
+     2.2,
+     0.3,
+     1.9
+    ],
+    "measured_size_m": [
+     2.1580810546875,
+     0.2670936584472656,
+     1.8973584353569528
+    ],
+    "aligned_size_m": [
+     2.1580810546875,
+     0.2670936584472656,
+     1.8973584353569528
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.04191894531250018,
+     0.032906341552734364,
+     0.0026415646430471007
+    ],
+    "verdict": "pass",
+    "raw_triangles": 678,
+    "instances_in_568BF": 2,
+    "raw_instanced_triangles": 1356,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 13,
+   "name": "Игра с песком / Артикул: ИО 1005Т-11",
+   "article": "ИО 1005Т-11",
+   "block": "ио 1005т-11",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    2000,
+    1800,
+    2400
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no name hit in the catalogue (names are scene object names); 3 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [
+    {
+     "id": "MAF_0127",
+     "source_object": "Icosphere.004",
+     "dims_m": [
+      1.708,
+      1.999,
+      2.387
+     ],
+     "max_dev_m": 0.092,
+     "tris": 2030,
+     "npm_matches": [
+      "Icosphere.004"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0127_Icosphere_004.png"
+    },
+    {
+     "id": "MAF_0392",
+     "source_object": "M_Armchair_016",
+     "dims_m": [
+      1.708,
+      2.076,
+      2.399
+     ],
+     "max_dev_m": 0.092,
+     "tris": 7996,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0392_M_Armchair_016.png"
+    },
+    {
+     "id": "MAF_0716",
+     "source_object": "Shape004",
+     "dims_m": [
+      2.016,
+      1.702,
+      2.434
+     ],
+     "max_dev_m": 0.098,
+     "tris": 1238,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0716_Shape004.png"
+    }
+   ],
+   "resolved_question": "Q2",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 14,
+   "name": "Игровой комплекс / Артикул: ИК 0408Т-23",
+   "article": "ИК 0408Т-23",
+   "block": "Игровой комплекс Кубики",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    6200,
+    7400,
+    2400
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 15,
+   "name": "Бетонные раскопки / Артикул:  / ИО 0860Т-1-5",
+   "article": "ИО 0860Т-1-5",
+   "block": "Бетонные раскопки",
+   "inserts_in_568BF": 8,
+   "size_mm": [
+    500,
+    500,
+    200
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no name hit in the catalogue (names are scene object names); 2 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [
+    {
+     "id": "MAF_0865",
+     "source_object": "Object043",
+     "dims_m": [
+      0.5,
+      0.5,
+      0.25
+     ],
+     "max_dev_m": 0.05,
+     "tris": 144,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0865_Object043.png"
+    },
+    {
+     "id": "MAF_0311",
+     "source_object": "SM_77_08_0014001_7826_GroundEl.004",
+     "dims_m": [
+      0.598,
+      0.6,
+      0.298
+     ],
+     "max_dev_m": 0.1,
+     "tris": 91,
+     "npm_matches": [
+      "SM_77_08_0014001_7826_GroundEl.004"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0311_SM_77_08_0014001_7826_GroundEl_004.png"
+    }
+   ],
+   "resolved_question": "Q2",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 16,
+   "name": "Детская площадка / Артикул: ДП 090",
+   "article": "ДП 090",
+   "block": "ДП 090",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    5500,
+    2000,
+    2250
+   ],
+   "catalogue_id": "MAF_0803",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
+   "candidates": [
+    {
+     "id": "MAF_0803",
+     "source_object": "Object115",
+     "dims_m": [
+      5.534,
+      2.032,
+      2.32
+     ],
+     "max_dev_m": 0.07,
+     "tris": 4562,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0803_Object115.png"
+    }
+   ],
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 16,
+    "catalogue_id": "MAF_0803",
+    "name": "Детская площадка / Артикул: ДП 090",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0803_Object115.fbx",
+    "schedule_size_m": [
+     5.5,
+     2.0,
+     2.25
+    ],
+    "measured_size_m": [
+     5.5343170166015625,
+     2.03155517578125,
+     2.319488626812813
+    ],
+    "aligned_size_m": [
+     5.5343170166015625,
+     2.03155517578125,
+     2.319488626812813
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.0343170166015625,
+     0.03155517578125,
+     0.06948862681281298
+    ],
+    "verdict": "pass",
+    "raw_triangles": 4562,
+    "instances_in_568BF": 1,
+    "raw_instanced_triangles": 4562,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 17,
+   "name": "Вертушка / Артикул: ИО 0208Т-1",
+   "article": "ИО 0208Т-1",
+   "block": "Карусель",
+   "inserts_in_568BF": 2,
+   "size_mm": [
+    1100,
+    1050,
+    545
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 18,
+   "name": "Пенёк / ИО 0906Т-7",
+   "article": "ИО 0906Т-7",
+   "block": "Пенек",
+   "inserts_in_568BF": 9,
+   "size_mm": null,
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis (range d 150-230, h 200-400 mm: no single size -> review); confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 19,
+   "name": "Пергола «Андромеда» с поликарбонатом и обшивкой / Артикул: 40146-2/1",
+   "article": "40146-2/1",
+   "block": "Андромеда Металл Крыша поликарбонат",
+   "inserts_in_568BF": 2,
+   "size_mm": [
+    2900,
+    2900,
+    3900
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 20,
+   "name": "Спортивное оборудование / Артикул: 217170",
+   "article": "217170",
+   "block": "Воркаут 217170",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    2100,
+    1500,
+    2500
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 21,
+   "name": "Спортивное оборудование / Артикул: 217070",
+   "article": "217070",
+   "block": "Воркаут",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    8000,
+    500,
+    1500
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no name hit in the catalogue (names are scene object names); 1 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [
+    {
+     "id": "MAF_0736",
+     "source_object": "Object017",
+     "dims_m": [
+      8.004,
+      0.569,
+      1.523
+     ],
+     "max_dev_m": 0.069,
+     "tris": 504,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0736_Object017.png"
+    }
+   ],
+   "resolved_question": "Q6",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 22,
+   "name": "Тренажер Wotkout nature 217100",
+   "article": "",
+   "block": "Воркаут 217100",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    4500,
+    2000,
+    400
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 23,
+   "name": "Тренажер 'Лыжи'",
+   "article": "",
+   "block": "Тренажер лыжи",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    1500,
+    800,
+    110
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 24,
+   "name": "Тренажер 'Волна'",
+   "article": "",
+   "block": "Тренажер волна",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    500,
+    250,
+    2100
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 25,
+   "name": "Тренажер 'Мышиная охота'",
+   "article": "",
+   "block": "Тренажер мышиная охота",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    1500,
+    800,
+    110
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no catalogue name hit and no entry within 0.1 m per axis; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [],
+   "resolved_question": "Q5",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 26,
+   "name": "Теннисный стол Премиум / Артикул: 4-060",
+   "article": "4-060",
+   "block": "Теннисный стол",
+   "inserts_in_568BF": 1,
+   "size_mm": [
+    2740,
+    1520,
+    760
+   ],
+   "catalogue_id": "MAF_0677",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
+   "candidates": [
+    {
+     "id": "MAF_0677",
+     "source_object": "M_Tennis_Table_001",
+     "dims_m": [
+      1.525,
+      2.74,
+      0.913
+     ],
+     "max_dev_m": 0.153,
+     "tris": 8696,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0677_M_Tennis_Table_001.png"
+    },
+    {
+     "id": "MAF_0678",
+     "source_object": "M_Tennis_Table_002",
+     "dims_m": [
+      1.591,
+      2.739,
+      0.912
+     ],
+     "max_dev_m": 0.152,
+     "tris": 872,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0678_M_Tennis_Table_002.png"
+    },
+    {
+     "id": "MAF_0679",
+     "source_object": "M_Tennis_Table_003",
+     "dims_m": [
+      1.537,
+      2.74,
+      0.912
+     ],
+     "max_dev_m": 0.152,
+     "tris": 4558,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0679_M_Tennis_Table_003.png"
+    },
+    {
+     "id": "MAF_0828",
+     "source_object": "Table_tennis",
+     "dims_m": [
+      2.729,
+      1.49,
+      0.89
+     ],
+     "max_dev_m": 0.13,
+     "tris": 3050,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0828_Table_tennis.png"
+    },
+    {
+     "id": "MAF_0334",
+     "source_object": "SM_Avtozavodskaya_Vld_23_GroundEl.008",
+     "dims_m": [
+      2.655,
+      1.445,
+      0.783
+     ],
+     "max_dev_m": 0.085,
+     "tris": 970,
+     "npm_matches": [
+      "SM_Avtozavodskaya_Vld_23_GroundEl.008"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0334_SM_Avtozavodskaya_Vld_23_GroundEl_008.png"
+    }
+   ],
+   "resolved_question": "Q4",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 26,
+    "catalogue_id": "MAF_0677",
+    "name": "Теннисный стол Премиум / Артикул: 4-060",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0677_M_Tennis_Table_001.fbx",
+    "schedule_size_m": [
+     2.74,
+     1.52,
+     0.76
+    ],
+    "measured_size_m": [
+     1.5250091552734375,
+     2.739999771118164,
+     0.9131300300359726
+    ],
+    "aligned_size_m": [
+     2.739999771118164,
+     1.5250091552734375,
+     0.9131300300359726
+    ],
+    "plan_axes_swapped": true,
+    "deviation_m": [
+     2.2888183615066282e-07,
+     0.005009155273437482,
+     0.1531300300359726
+    ],
+    "verdict": "review",
+    "raw_triangles": 8696,
+    "instances_in_568BF": 1,
+    "raw_instanced_triangles": 8696,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured. Q4 resolves 760 mm as table-top height: overall bbox including net exceeds it by 153 mm; table-top geometry not measured. Not a pass."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 27,
+   "name": "Комплект мебели «Ландау» / Артикул: 13994",
+   "article": "13994",
+   "block": "Стол Ландау",
+   "inserts_in_568BF": 3,
+   "size_mm": [
+    2280,
+    2280,
+    750
+   ],
+   "catalogue_id": "MAF_0219",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
+   "candidates": [
+    {
+     "id": "MAF_0219",
+     "source_object": "C_13010_Stol Landau komplekt.001",
+     "dims_m": [
+      2.282,
+      2.282,
+      0.749
+     ],
+     "max_dev_m": 0.002,
+     "tris": 540,
+     "npm_matches": [
+      "C_13010_Stol Landau komplekt.001"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0219_C_13010_Stol_Landau_komplekt_001.png"
+    },
+    {
+     "id": "MAF_0676",
+     "source_object": "M_Table_016",
+     "dims_m": [
+      2.274,
+      2.274,
+      0.749
+     ],
+     "max_dev_m": 0.006,
+     "tris": 6180,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0676_M_Table_016.png"
+    },
+    {
+     "id": "MAF_0726",
+     "source_object": "Object013",
+     "dims_m": [
+      2.298,
+      2.299,
+      0.765
+     ],
+     "max_dev_m": 0.019,
+     "tris": 1880,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0726_Object013.png"
+    },
+    {
+     "id": "MAF_0003",
+     "source_object": "157010",
+     "dims_m": [
+      2.324,
+      2.323,
+      0.808
+     ],
+     "max_dev_m": 0.058,
+     "tris": 816,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0003_157010.png"
+    },
+    {
+     "id": "MAF_0043",
+     "source_object": "МАФ_003",
+     "dims_m": [
+      2.344,
+      2.344,
+      0.771
+     ],
+     "max_dev_m": 0.064,
+     "tris": 2218,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0043_MAF_003.png"
+    }
+   ],
+   "resolved_question": "Q3",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 27,
+    "catalogue_id": "MAF_0219",
+    "name": "Комплект мебели «Ландау» / Артикул: 13994",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0219_C_13010_Stol_Landau_komplekt_001.fbx",
+    "schedule_size_m": [
+     2.28,
+     2.28,
+     0.75
+    ],
+    "measured_size_m": [
+     2.2821578979492188,
+     2.282154083251953,
+     0.7486557122319937
+    ],
+    "aligned_size_m": [
+     2.2821578979492188,
+     2.282154083251953,
+     0.7486557122319937
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.0021578979492189454,
+     0.0021540832519533204,
+     0.0013442877680063248
+    ],
+    "verdict": "pass",
+    "raw_triangles": 540,
+    "instances_in_568BF": 3,
+    "raw_instanced_triangles": 1620,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured. User accepted source article 13010 vs schedule 13994."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 28,
+   "name": "Качели-гнездо круг / 189.001",
+   "article": "189.001",
+   "block": "Подвес качели гнездо",
+   "inserts_in_568BF": 4,
+   "size_mm": [
+    1090,
+    1090,
+    null
+   ],
+   "catalogue_id": "MAF_0127",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
+   "candidates": [
+    {
+     "id": "MAF_0402",
+     "source_object": "M_Armchair_026",
+     "dims_m": [
+      1.094,
+      1.096,
+      0.684
+     ],
+     "max_dev_m": 0.006,
+     "tris": 836,
+     "npm_matches": [
+      "Retopo_crp_ChamferCyl026.001"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0402_M_Armchair_026.png"
+    },
+    {
+     "id": "MAF_0111",
+     "source_object": "Cylinder.004",
+     "dims_m": [
+      1.099,
+      1.099,
+      0.676
+     ],
+     "max_dev_m": 0.009,
+     "tris": 60,
+     "npm_matches": [
+      "Cylinder.004"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0111_Cylinder_004.png"
+    },
+    {
+     "id": "MAF_0816",
+     "source_object": "Kachalka",
+     "dims_m": [
+      1.101,
+      1.101,
+      0.318
+     ],
+     "max_dev_m": 0.011,
+     "tris": 6312,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0816_Kachalka.png"
+    },
+    {
+     "id": "MAF_0923",
+     "source_object": "Object093",
+     "dims_m": [
+      1.101,
+      1.101,
+      0.815
+     ],
+     "max_dev_m": 0.011,
+     "tris": 1397,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0923_Object093.png"
+    },
+    {
+     "id": "MAF_0032",
+     "source_object": "СМ73",
+     "dims_m": [
+      1.109,
+      1.092,
+      1.039
+     ],
+     "max_dev_m": 0.019,
+     "tris": 196,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0032_SM73.png"
+    },
+    {
+     "id": "MAF_0181",
+     "source_object": "C_кадки3 кадки3 [10518498]012",
+     "dims_m": [
+      1.062,
+      1.061,
+      0.75
+     ],
+     "max_dev_m": 0.029,
+     "tris": 367,
+     "npm_matches": [
+      "C_кадки3 кадки3 [10518498]012"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0181_C_kadki3_kadki3_10518498_012.png"
+    }
+   ],
+   "resolved_question": "Q2, Q8",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 28,
+    "catalogue_id": "MAF_0127",
+    "name": "Качели-гнездо круг / 189.001",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0127_Icosphere_004.fbx",
+    "schedule_size_m": [
+     1.09,
+     1.09,
+     null
+    ],
+    "measured_size_m": [
+     1.7081069946289062,
+     1.9991607666015625,
+     2.3873108411207795
+    ],
+    "aligned_size_m": [
+     1.7081069946289062,
+     1.9991607666015625,
+     2.3873108411207795
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.6181069946289062,
+     0.9091607666015624,
+     null
+    ],
+    "verdict": "fail",
+    "raw_triangles": 2030,
+    "instances_in_568BF": 4,
+    "raw_instanced_triangles": 8120,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured. FAIL on both known plan axes; missing height does not hide known failure. No rescale/substitution authorized."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations.",
+   "dimension_exception": "Q8: schedule 1.09 x 1.09 m = seat diameter; model includes the frame (1.71 x 2.00 x 2.39 m); user exception to D094 for this row only; architect question (D112)"
+  },
+  {
+   "table": "*T3510",
+   "row": 29,
+   "name": "Кресло «Парк» / Артикул: 12750",
+   "article": "12750",
+   "block": "Кресло Парк 12750",
+   "inserts_in_568BF": 25,
+   "size_mm": [
+    765,
+    530,
+    1065
+   ],
+   "catalogue_id": "MAF_0159",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
+   "candidates": [
+    {
+     "id": "MAF_0159",
+     "source_object": "C_Veloparkovka Forrest C",
+     "dims_m": [
+      0.457,
+      0.771,
+      1.001
+     ],
+     "max_dev_m": 0.073,
+     "tris": 320,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0159_C_Veloparkovka_Forrest_C.png"
+    },
+    {
+     "id": "MAF_0160",
+     "source_object": "C_Veloparkovka Forrest C",
+     "dims_m": [
+      0.457,
+      0.771,
+      1.001
+     ],
+     "max_dev_m": 0.073,
+     "tris": 312,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0160_C_Veloparkovka_Forrest_C.png"
+    },
+    {
+     "id": "MAF_0161",
+     "source_object": "C_Veloparkovka Forrest C",
+     "dims_m": [
+      0.457,
+      0.771,
+      1.001
+     ],
+     "max_dev_m": 0.073,
+     "tris": 320,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0161_C_Veloparkovka_Forrest_C.png"
+    },
+    {
+     "id": "MAF_0457",
+     "source_object": "M_Bysicle_003",
+     "dims_m": [
+      0.457,
+      0.771,
+      1.001
+     ],
+     "max_dev_m": 0.073,
+     "tris": 320,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0457_M_Bysicle_003.png"
+    },
+    {
+     "id": "MAF_0458",
+     "source_object": "M_Bysicle_003",
+     "dims_m": [
+      0.457,
+      0.771,
+      1.001
+     ],
+     "max_dev_m": 0.073,
+     "tris": 320,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0458_M_Bysicle_003.png"
+    },
+    {
+     "id": "MAF_0459",
+     "source_object": "M_Bysicle_003",
+     "dims_m": [
+      0.457,
+      0.771,
+      1.001
+     ],
+     "max_dev_m": 0.073,
+     "tris": 320,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0459_M_Bysicle_003.png"
+    }
+   ],
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 29,
+    "catalogue_id": "MAF_0159",
+    "name": "Кресло «Парк» / Артикул: 12750",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0159_C_Veloparkovka_Forrest_C.fbx",
+    "schedule_size_m": [
+     0.765,
+     0.53,
+     1.065
+    ],
+    "measured_size_m": [
+     0.45746612548828125,
+     0.7706375122070312,
+     1.000959394172807
+    ],
+    "aligned_size_m": [
+     0.7706375122070312,
+     0.45746612548828125,
+     1.000959394172807
+    ],
+    "plan_axes_swapped": true,
+    "deviation_m": [
+     0.005637512207031237,
+     0.07253387451171878,
+     0.06404060582719295
+    ],
+    "verdict": "pass",
+    "raw_triangles": 320,
+    "instances_in_568BF": 25,
+    "raw_instanced_triangles": 8000,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 30,
+   "name": "Скамья тетрис 03 / Артикул: С-Т03",
+   "article": "С-Т03",
+   "block": "Скамья тетрис 03",
+   "inserts_in_568BF": 4,
+   "size_mm": [
+    900,
+    900,
+    450
+   ],
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "no name hit in the catalogue (names are scene object names); 2 dimension-only candidate(s) within 0.1 m per axis (plan L/W swap allowed); a dimension candidate is not a match until the preview is compared with the product picture; confirmed by Artem 2026-10-19 (Q1/Q2/Q5).",
+   "candidates": [
+    {
+     "id": "MAF_0602",
+     "source_object": "M_Other_018",
+     "dims_m": [
+      0.838,
+      0.894,
+      0.394
+     ],
+     "max_dev_m": 0.062,
+     "tris": 324,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0602_M_Other_018.png"
+    },
+    {
+     "id": "MAF_0352",
+     "source_object": "SM_MusyDjalilya_6_K_2_GroundEl.010",
+     "dims_m": [
+      0.998,
+      0.94,
+      0.504
+     ],
+     "max_dev_m": 0.098,
+     "tris": 874,
+     "npm_matches": [
+      "SM_MusyDjalilya_6_K_2_GroundEl.010"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0352_SM_MusyDjalilya_6_K_2_GroundEl_010.png"
+    }
+   ],
+   "resolved_question": "Q2",
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 31,
+   "name": "Стол «Лондон» Тип 3 / Артикул: 13032",
+   "article": "13032",
+   "block": "Стол Лондон Тип 3",
+   "inserts_in_568BF": 16,
+   "size_mm": [
+    1000,
+    1000,
+    600
+   ],
+   "catalogue_id": "MAF_0722",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
+   "candidates": [
+    {
+     "id": "MAF_0722",
+     "source_object": "Plane002",
+     "dims_m": [
+      1.0,
+      1.0,
+      0.6
+     ],
+     "max_dev_m": 0.0,
+     "tris": 212,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0722_Plane002.png"
+    },
+    {
+     "id": "MAF_0664",
+     "source_object": "M_Table_004",
+     "dims_m": [
+      1.0,
+      0.997,
+      0.6
+     ],
+     "max_dev_m": 0.003,
+     "tris": 500,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0664_M_Table_004.png"
+    },
+    {
+     "id": "MAF_0223",
+     "source_object": "C_MEB2050_Parkoviy stol Monako.002",
+     "dims_m": [
+      0.994,
+      0.997,
+      0.6
+     ],
+     "max_dev_m": 0.006,
+     "tris": 248,
+     "npm_matches": [
+      "C_MEB2050_Parkoviy stol Monako.002"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0223_C_MEB2050_Parkoviy_stol_Monako_002.png"
+    },
+    {
+     "id": "MAF_0858",
+     "source_object": "Object035",
+     "dims_m": [
+      0.956,
+      0.954,
+      0.554
+     ],
+     "max_dev_m": 0.046,
+     "tris": 513,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0858_Object035.png"
+    },
+    {
+     "id": "MAF_0115",
+     "source_object": "Plane.005",
+     "dims_m": [
+      0.994,
+      0.994,
+      0.647
+     ],
+     "max_dev_m": 0.047,
+     "tris": 892,
+     "npm_matches": [
+      "Plane.005"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0115_Plane_005.png"
+    },
+    {
+     "id": "MAF_0395",
+     "source_object": "M_Armchair_019",
+     "dims_m": [
+      0.994,
+      0.994,
+      0.647
+     ],
+     "max_dev_m": 0.047,
+     "tris": 892,
+     "npm_matches": [],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0395_M_Armchair_019.png"
+    }
+   ],
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 31,
+    "catalogue_id": "MAF_0722",
+    "name": "Стол «Лондон» Тип 3 / Артикул: 13032",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0722_Plane002.fbx",
+    "schedule_size_m": [
+     1.0,
+     1.0,
+     0.6
+    ],
+    "measured_size_m": [
+     1.0,
+     1.0,
+     0.6000000391408431
+    ],
+    "aligned_size_m": [
+     1.0,
+     1.0,
+     0.6000000391408431
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.0,
+     0.0,
+     3.914084312217625e-08
+    ],
+    "verdict": "pass",
+    "raw_triangles": 212,
+    "instances_in_568BF": 16,
+    "raw_instanced_triangles": 3392,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  },
+  {
+   "table": "*T3510",
+   "row": 32,
+   "name": "Приствольная решетка",
+   "article": "",
+   "block": "Приствольная решетка",
+   "inserts_in_568BF": 4,
+   "size_mm": [
+    1000,
+    1000,
+    44
+   ],
+   "catalogue_id": "MAF_0687",
+   "status": "user selected",
+   "reason": "Artem accepted orchestrator recommendations (card comment 2026-10-19 18:57); picked from candidate sheets, not an automatic dimension match.",
+   "candidates": [
+    {
+     "id": "MAF_0687",
+     "source_object": "M_Trunk_Gate_003",
+     "dims_m": [
+      1.0,
+      1.0,
+      0.048
+     ],
+     "max_dev_m": 0.004,
+     "tris": 3732,
+     "npm_matches": [
+      "crp_stitch_result_stitch all111.002"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0687_M_Trunk_Gate_003.png"
+    },
+    {
+     "id": "MAF_0231",
+     "source_object": "Circle.017",
+     "dims_m": [
+      1.016,
+      1.016,
+      0.04
+     ],
+     "max_dev_m": 0.016,
+     "tris": 256,
+     "npm_matches": [
+      "Circle.017"
+     ],
+     "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0231_Circle_017.png"
+    }
+   ],
+   "resolved_question": "Q2",
+   "source_dimension_check": {
+    "table": "*T3510",
+    "row": 32,
+    "catalogue_id": "MAF_0687",
+    "name": "Приствольная решетка",
+    "source_fbx_copy": "C:/x/vatutino-maf/v002-dimension-gate/fbx/MAF_0687_M_Trunk_Gate_003.fbx",
+    "schedule_size_m": [
+     1.0,
+     1.0,
+     0.044
+    ],
+    "measured_size_m": [
+     1.0,
+     1.0,
+     0.04762384528294206
+    ],
+    "aligned_size_m": [
+     1.0,
+     1.0,
+     0.04762384528294206
+    ],
+    "plan_axes_swapped": false,
+    "deviation_m": [
+     0.0,
+     0.0,
+     0.003623845282942059
+    ],
+    "verdict": "pass",
+    "raw_triangles": 3732,
+    "instances_in_568BF": 4,
+    "raw_instanced_triangles": 14928,
+    "note": "Raw source FBX bounds only; final NPM/VPM dimensions still unmeasured."
+   },
+   "decision_source": "Kanban t_147116bf comment 2026-10-19 18:57: Artem, «Принимаю» to orchestrator recommendations."
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q1",
+   "text": "Individually made items have no library entry: «Верона» custom benches types 1-9 (`*T3508` rows 1-10, two rows labelled «Тип 9»), bar counter (row 11), sandbox with ramp (row 17). Confirm they stay `no model` in #313 (model-maf step 3 is out of scope), and say whether a follow-up modelling issue is wanted.",
+   "rows": [
+    "*T3508 1",
+    "*T3508 2",
+    "*T3508 3",
+    "*T3508 4",
+    "*T3508 5",
+    "*T3508 6",
+    "*T3508 7",
+    "*T3508 8",
+    "*T3508 9",
+    "*T3508 10",
+    "*T3508 11",
+    "*T3508 17"
+   ]
+  },
+  {
+   "id": "Q2",
+   "text": "Dimension-only candidates (no catalogue name hit): for each row pick one catalogue id from the contact sheet C:/x/vatutino-maf/v001/candidates.html, or answer `no model`. Rows: `*T3510` 1 Скамейка стальная «Андромеда» (MAF_0411, MAF_0129, MAF_0326); `*T3510` 2 Урна стальная «Арго» (MAF_0794, MAF_0119, MAF_0378); `*T3510` 7 Скамейка «Фестиваль» Модуль 1 (MAF_0747, MAF_0031, MAF_0267); `*T3510` 9 Лежак «Городской» (MAF_0174, MAF_0506, MAF_0144, MAF_0415, MAF_0818); `*T3510` 10 Стул на ножке \"Бар\" (MAF_0241, MAF_0690, MAF_0239, MAF_0701, MAF_0779, MAF_0238); `*T3510` 11 Качалка балансир (MAF_0322); `*T3510` 12 Качели (MAF_0358, MAF_0645, MAF_0920); `*T3510` 13 Игра с песком (MAF_0127, MAF_0392, MAF_0716); `*T3510` 15 Бетонные раскопки (MAF_0865, MAF_0311); `*T3510` 16 Детская площадка (MAF_0803); `*T3510` 21 Спортивное оборудование (MAF_0736); `*T3510` 26 Теннисный стол Премиум (MAF_0677, MAF_0678, MAF_0679, MAF_0828, MAF_0334); `*T3510` 28 Качели-гнездо круг (MAF_0402, MAF_0111, MAF_0816, MAF_0923, MAF_0032, MAF_0181); `*T3510` 29 Кресло «Парк» (MAF_0159, MAF_0160, MAF_0161, MAF_0457, MAF_0458, MAF_0459); `*T3510` 30 Скамья тетрис 03 (MAF_0602, MAF_0352); `*T3510` 31 Стол «Лондон» Тип 3 (MAF_0722, MAF_0664, MAF_0223, MAF_0858, MAF_0115, MAF_0395); `*T3510` 32 Приствольная решетка (MAF_0687, MAF_0231)",
+   "rows": [
+    "*T3510 1",
+    "*T3510 2",
+    "*T3510 7",
+    "*T3510 9",
+    "*T3510 10",
+    "*T3510 11",
+    "*T3510 12",
+    "*T3510 13",
+    "*T3510 15",
+    "*T3510 16",
+    "*T3510 21",
+    "*T3510 26",
+    "*T3510 28",
+    "*T3510 29",
+    "*T3510 30",
+    "*T3510 31",
+    "*T3510 32"
+   ]
+  },
+  {
+   "id": "Q3",
+   "text": "«Ландау» (`*T3510` 27): proposed MAF_0219 `C_13010_Stol Landau komplekt.001`, 2.282×2.282×0.749 m vs d 2280 h 750 (dev 2 mm); the object name carries article 13010, the schedule 13994. Accept MAF_0219?",
+   "rows": [
+    "*T3510 27"
+   ]
+  },
+  {
+   "id": "Q4",
+   "text": "Tennis table (`*T3510` 26, 2740×1520×760): the «Tennis_Table» entries MAF_0677/0678/0679/0828 are 0.89-0.91 m high (net included), 0.13-0.15 m over the 760 mm table-top height. Is the 760 mm a table-top height (then accept one of them by name), or pick MAF_0334 (dims-only, 0.085 m) / `no model`?",
+   "rows": [
+    "*T3510 26"
+   ]
+  },
+  {
+   "id": "Q5",
+   "text": "No catalogue entry by name or by size (0.1 m per axis): `*T3508` 13 Навес \"Андромеда\" Тип 1; `*T3508` 14 Навес \"Андромеда\" Тип 2; `*T3508` 15 Навес \"Андромеда\" Тип 3; `*T3508` 16 Навес \"Андромеда\" Тип 4; `*T3510` 3 Качели садово-парковые «Кассиопея»; `*T3510` 4 Гамак HARDWOOD «Сен-Тропе»; `*T3510` 5 Площадка для контейнеров ТБО; `*T3510` 6 Контейнер пластиковый ТБО; `*T3510` 8 Скамейка «Фестиваль» Модуль 3; `*T3510` 14 Игровой комплекс; `*T3510` 17 Вертушка; `*T3510` 18 Пенёк; `*T3510` 19 Пергола «Андромеда» с поликарбонатом и обшивкой; `*T3510` 20 Спортивное оборудование; `*T3510` 22 Тренажер Wotkout nature 217100; `*T3510` 23 Тренажер 'Лыжи'; `*T3510` 24 Тренажер 'Волна'; `*T3510` 25 Тренажер 'Мышиная охота'. Confirm `no model` for each (or name a library object / another source), and say whether a follow-up modelling issue is wanted.",
+   "rows": [
+    "*T3508 13",
+    "*T3508 14",
+    "*T3508 15",
+    "*T3508 16",
+    "*T3510 3",
+    "*T3510 4",
+    "*T3510 5",
+    "*T3510 6",
+    "*T3510 8",
+    "*T3510 14",
+    "*T3510 17",
+    "*T3510 18",
+    "*T3510 19",
+    "*T3510 20",
+    "*T3510 22",
+    "*T3510 23",
+    "*T3510 24",
+    "*T3510 25"
+   ]
+  },
+  {
+   "id": "Q6",
+   "text": "Block <-> row conflicts: the springer block is `Качалка на пружине ИО 0323Т-3` (2 in plot) but the schedule row 11 is «Качалка балансир ИО 0410-2» — which product is it? Block `Воркаут` (no article) was assigned to 217070 by elimination, and block `Турник` (1 in plot) has no schedule row — include it in the set or not?",
+   "rows": [
+    "*T3510 11",
+    "*T3510 21"
+   ]
+  },
+  {
+   "id": "Q7",
+   "text": "«Перучень для МГН» (`*T3508` 12): qty '-', no size, no block. Exclude it from the MAF set (it belongs to stairs/ramps)?",
+   "rows": [
+    "*T3508 12"
+   ]
+  }
+ ],
+ "user_answers": {
+  "source": "Kanban t_147116bf comment 2026-10-19 18:57",
+  "verbatim_acceptance": "Принимаю",
+  "answers_english_transcription": {
+   "Q1": "12 custom items remain no model; modelling follow-up separately later, not in this card.",
+   "Q2": "Picks from candidate sheets: *T3510/1=MAF_0326, *T3510/2=MAF_0794, *T3510/7=MAF_0747, *T3510/9=MAF_0506, *T3510/11=MAF_0322, *T3510/12=MAF_0920, *T3510/16=MAF_0803, *T3510/28=MAF_0127, *T3510/29=MAF_0159, *T3510/31=MAF_0722, *T3510/32=MAF_0687. Rows 10, 13, 15, 21, 30 remain no model. Every pick is checked against the 10 cm tolerance; a failing pick is reported, not swapped.",
+   "Q3": "Landau = MAF_0219; article mismatch 13010/13994 retained.",
+   "Q4": "760 mm is table-top height; use MAF_0677. Overall height including net is not a table-top measurement.",
+   "Q5": "All 18 rows without candidates remain no model; modelling follow-up later, not in this card.",
+   "Q6": "Schedule IO 0410-2 wins; block mismatch goes to architect questions (D112). Workout = 217070. Turnik is included despite no schedule row.",
+   "Q7": "MGN handrail excluded from MAF; belongs to stairs/ramps."
+  }
+ },
+ "additional_plan_positions": [
+  {
+   "block": "Турник",
+   "inserts_in_568BF": 1,
+   "table": null,
+   "row": null,
+   "catalogue_id": null,
+   "status": "no model",
+   "reason": "Q9 (Artem 2026-10-19): no schedule row, no dimensions; gap for the later modelling issue",
+   "resolved_question": "Q9"
+  }
+ ],
+ "open_questions": [],
+ "stage_status": "Steps 1-2 closed (Q1-Q9 answered). The set built from this map: site-maf-set.md/.json.",
+ "user_answers_q8_q9": {
+  "source": "card t_147116bf comment, Artem 2026-10-19 19:16",
+  "verbatim_card_comment": "User answers 2026-10-19 (Artem) to Q8-Q9: Q8 - *T3510/28 nest swing = MAF_0127 by appearance: the schedule 1.09 x 1.09 m is the seat diameter, the library model includes the frame (1.71 x 2.00 x 2.39 m). Accept it as an explicit user exception to the 10 cm dimension check (D094) for this row only, record it in the catalogue and add the discrepancy to the questions-for-the-architect list (D112). Q9 - «Турник»: no model (no schedule row, no dimensions); listed as a gap for the later modelling issue."
+ },
+ "architect_questions_D112": [
+  "*T3510/11: DWG block «Качалка на пружине ИО 0323Т-3» vs schedule row ИО 0410-2 (Q6: schedule row wins)",
+  "*T3510/28: schedule size 1090 x 1090 mm (seat diameter) vs selected MAF_0127 overall 1.71 x 2.00 x 2.39 m with frame (Q8 exception)",
+  "*T3510/27: «Ландау» article 13994 in schedule vs 13010 in library object name (Q3)"
+ ]
+}

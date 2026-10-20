@@ -6,7 +6,9 @@ view has the same silhouette, so the four facades and the top are three distinct
 silhouettes is the largest distance from a point of one that the other does not cover to the other (the Hausdorff
 distance of the regions), sampled on a grid of `step_m`; it is accurate to about one step.
 Pure numpy + shapely. Edge-on projections remain line/point geometries and use Hausdorff distance directly;
-polygon-to-polygon behaviour and its sampling policy are unchanged (#292, orchestrator 2026-10-19).
+polygon-to-polygon sampling is unchanged (#292, orchestrator 2026-10-19). A difference the grid misses uses the
+directed distance from that sliver to the other region. A polygon with holes also contributes an interior point:
+both rings can lie on the other region while the material between them does not.
 """
 import numpy as np
 import shapely
@@ -34,6 +36,51 @@ def silhouette(mesh: Mesh, axis: int):
     return shapely.union_all(shapely.make_valid(shapely.polygons(rings)))
 
 
+def _pieces(geom):
+    """Polygons, lines and points inside a (multi)geometry, skipping empties."""
+    if geom.is_empty:
+        return
+    kind = geom.geom_type
+    if kind == "GeometryCollection" or kind.startswith("Multi"):
+        for part in geom.geoms:
+            yield from _pieces(part)
+        return
+    yield geom
+
+
+def _max_distance(other, points) -> float:
+    """Directed distance from `points` to `other`; non-finite results refuse as infinite."""
+    dist = np.asarray(shapely.distance(other, points), dtype=float)
+    if dist.size == 0:
+        return 0.0
+    reached = float(np.max(dist))
+    return reached if np.isfinite(reached) else float("inf")
+
+
+def _directed_reach(region, other, step_m: float) -> float:
+    """Largest distance from a point of `region` to `other`.
+
+    Symmetric Hausdorff is not used: its reverse leg measures far points of `other` against a sliver.
+    Boundary vertices alone are not used for a polygon with holes — the rings can lie on `other` while an
+    interior point of the material does not. The inscribed-circle centre is that interior point.
+    """
+    best = 0.0
+    for geom in _pieces(region):
+        outline = geom
+        if step_m > 0 and geom.geom_type in {"LineString", "LinearRing", "Polygon"} and geom.length > 0:
+            outline = shapely.segmentize(geom, step_m)
+        coords = shapely.get_coordinates(outline)
+        if len(coords):
+            best = max(best, _max_distance(other, shapely.points(coords[:, 0], coords[:, 1])))
+        if geom.geom_type != "Polygon" or geom.area <= 0:
+            continue
+        best = max(best, _max_distance(other, geom.representative_point()))
+        if len(geom.interiors):
+            centre = shapely.get_point(shapely.maximum_inscribed_circle(geom, tolerance=1e-9), 0)
+            best = max(best, _max_distance(other, centre))
+    return best
+
+
 def _uncovered_reach(region, other, step_m: float) -> float:
     """Largest distance from a point of `region` that `other` does not cover to `other`."""
     left = region.difference(other)
@@ -45,10 +92,11 @@ def _uncovered_reach(region, other, step_m: float) -> float:
     xs, ys = xs.ravel(), ys.ravel()
     inside = shapely.contains_xy(left, xs, ys)
     if not inside.any():
-        # a sliver thinner than one step: its far corner is the farthest point
-        return float(shapely.hausdorff_distance(left, other))
+        # thinner than one step: directed distance from the sliver, not symmetric Hausdorff
+        return _directed_reach(left, other, step)
     pts = shapely.points(xs[inside], ys[inside])
-    return float(shapely.distance(other, pts).max())
+    reached = float(shapely.distance(other, pts).max())
+    return reached if np.isfinite(reached) else float("inf")
 
 
 def silhouette_deviation(a: Mesh, b: Mesh, axis: int, step_m: float = SILHOUETTE_MAX_M / 4) -> float:
