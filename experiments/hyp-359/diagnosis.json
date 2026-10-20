@@ -1,0 +1,3921 @@
+{
+  "counts": {
+    "all_cases": 16328,
+    "full_dictionary_parity": 16328,
+    "no_mutation": 16328,
+    "report_only_both": 16328,
+    "original_oracle_pass": 9920,
+    "derivative_oracle_pass": 6352,
+    "long_oracle_pass": 8
+  },
+  "all_48_inherited_label_failures": [
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "XY",
+        false,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "XY",
+        false,
+        5
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "XY",
+        true,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "XY",
+        true,
+        5
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "XZ",
+        false,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "XZ",
+        false,
+        5
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "XZ",
+        true,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "XZ",
+        true,
+        5
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "YZ",
+        false,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "YZ",
+        false,
+        5
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "YZ",
+        true,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "YZ",
+        true,
+        5
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "oblique",
+        false,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "oblique",
+        false,
+        5
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "oblique",
+        true,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        2,
+        "oblique",
+        true,
+        5
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 10,
+        "faces": 1,
+        "polygon_sizes": {
+          "10": 1
+        },
+        "triangles": 8,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 10,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "XY",
+        false,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "XY",
+        false,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "XY",
+        true,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "XY",
+        true,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "XZ",
+        false,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          0.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          0.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "XZ",
+        false,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          0.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          0.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "XZ",
+        true,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          0.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          0.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "XZ",
+        true,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          0.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          0.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "YZ",
+        false,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          15.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          15.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "YZ",
+        false,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          15.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          15.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "YZ",
+        true,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          15.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          15.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "YZ",
+        true,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          15.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          15.0,
+          25.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "oblique",
+        false,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          60.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          60.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "oblique",
+        false,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          60.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          60.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "oblique",
+        true,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          60.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          60.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        79,
+        4,
+        "oblique",
+        true,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          60.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          15.0,
+          25.0,
+          60.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "XY",
+        false,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "XY",
+        false,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "XY",
+        true,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "XY",
+        true,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          0.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "XZ",
+        false,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "XZ",
+        false,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "XZ",
+        true,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "XZ",
+        true,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          0.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "YZ",
+        false,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "YZ",
+        false,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "YZ",
+        true,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "YZ",
+        true,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          0.0,
+          26.0,
+          11.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "oblique",
+        false,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "oblique",
+        false,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "oblique",
+        true,
+        0
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    },
+    {
+      "key": [
+        "derivative",
+        133,
+        4,
+        "oblique",
+        true,
+        10
+      ],
+      "expected": 1,
+      "A": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      },
+      "B": {
+        "vertices": 20,
+        "faces": 1,
+        "polygon_sizes": {
+          "20": 1
+        },
+        "triangles": 18,
+        "connected_components": 1,
+        "duplicate_vertices_rounded": 0,
+        "duplicate_vertex_decimals": 8,
+        "duplicate_faces_by_vertex_set": 0,
+        "zero_area_faces_fan": 0,
+        "boundary_edges": 20,
+        "multi_face_edges": 0,
+        "loose_edges": 0,
+        "vertices_unused_by_faces": 0,
+        "material_face_counts": {
+          "0": 1
+        },
+        "material_interface_edges": 0,
+        "extent_m": [
+          26.0,
+          11.0,
+          40.0
+        ],
+        "inconsistent_winding_edges": 0,
+        "near_duplicate_vertices": 0,
+        "near_duplicate_threshold_m": 0.001,
+        "self_intersecting_polygons": 0,
+        "intersection_test_performed": false,
+        "delivery_passed": false
+      }
+    }
+  ],
+  "exact_derivative_label_changes": [
+    {
+      "polygon": 133,
+      "factor": 2,
+      "original_pairs": 1,
+      "derivative_proper_pairs": 0,
+      "original": [
+        [
+          13,
+          2
+        ],
+        [
+          9,
+          -3
+        ],
+        [
+          -1,
+          1
+        ],
+        [
+          13,
+          8
+        ],
+        [
+          -13,
+          1
+        ]
+      ],
+      "derivative": [
+        [
+          13.0,
+          2.0
+        ],
+        [
+          11.0,
+          -0.5
+        ],
+        [
+          9.0,
+          -3.0
+        ],
+        [
+          4.0,
+          -1.0
+        ],
+        [
+          -1.0,
+          1.0
+        ],
+        [
+          6.0,
+          4.5
+        ],
+        [
+          13.0,
+          8.0
+        ],
+        [
+          0.0,
+          4.5
+        ],
+        [
+          -13.0,
+          1.0
+        ],
+        [
+          0.0,
+          1.5
+        ]
+      ]
+    },
+    {
+      "polygon": 79,
+      "factor": 4,
+      "original_pairs": 1,
+      "derivative_proper_pairs": 0,
+      "original": [
+        [
+          4,
+          14
+        ],
+        [
+          9,
+          10
+        ],
+        [
+          -4,
+          -9
+        ],
+        [
+          -2,
+          0
+        ],
+        [
+          -6,
+          -11
+        ]
+      ],
+      "derivative": [
+        [
+          4.0,
+          14.0
+        ],
+        [
+          5.25,
+          13.0
+        ],
+        [
+          6.5,
+          12.0
+        ],
+        [
+          7.75,
+          11.0
+        ],
+        [
+          9.0,
+          10.0
+        ],
+        [
+          5.75,
+          5.25
+        ],
+        [
+          2.5,
+          0.5
+        ],
+        [
+          -0.75,
+          -4.25
+        ],
+        [
+          -4.0,
+          -9.0
+        ],
+        [
+          -3.5,
+          -6.75
+        ],
+        [
+          -3.0,
+          -4.5
+        ],
+        [
+          -2.5,
+          -2.25
+        ],
+        [
+          -2.0,
+          0.0
+        ],
+        [
+          -3.0,
+          -2.75
+        ],
+        [
+          -4.0,
+          -5.5
+        ],
+        [
+          -5.0,
+          -8.25
+        ],
+        [
+          -6.0,
+          -11.0
+        ],
+        [
+          -3.5,
+          -4.75
+        ],
+        [
+          -1.0,
+          1.5
+        ],
+        [
+          1.5,
+          7.75
+        ]
+      ]
+    },
+    {
+      "polygon": 133,
+      "factor": 4,
+      "original_pairs": 1,
+      "derivative_proper_pairs": 0,
+      "original": [
+        [
+          13,
+          2
+        ],
+        [
+          9,
+          -3
+        ],
+        [
+          -1,
+          1
+        ],
+        [
+          13,
+          8
+        ],
+        [
+          -13,
+          1
+        ]
+      ],
+      "derivative": [
+        [
+          13.0,
+          2.0
+        ],
+        [
+          12.0,
+          0.75
+        ],
+        [
+          11.0,
+          -0.5
+        ],
+        [
+          10.0,
+          -1.75
+        ],
+        [
+          9.0,
+          -3.0
+        ],
+        [
+          6.5,
+          -2.0
+        ],
+        [
+          4.0,
+          -1.0
+        ],
+        [
+          1.5,
+          0.0
+        ],
+        [
+          -1.0,
+          1.0
+        ],
+        [
+          2.5,
+          2.75
+        ],
+        [
+          6.0,
+          4.5
+        ],
+        [
+          9.5,
+          6.25
+        ],
+        [
+          13.0,
+          8.0
+        ],
+        [
+          6.5,
+          6.25
+        ],
+        [
+          0.0,
+          4.5
+        ],
+        [
+          -6.5,
+          2.75
+        ],
+        [
+          -13.0,
+          1.0
+        ],
+        [
+          -6.5,
+          1.25
+        ],
+        [
+          0.0,
+          1.5
+        ],
+        [
+          6.5,
+          1.75
+        ]
+      ]
+    }
+  ],
+  "first_original_intersections": [
+    {
+      "edges": [
+        2,
+        4
+      ],
+      "t": "1/14",
+      "u": "1/2",
+      "point": [
+        "0",
+        "3/2"
+      ]
+    }
+  ],
+  "note": "Post-measurement explanation, not a replacement oracle or retuning.",
+  "delivery_passed": false
+}

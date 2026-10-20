@@ -1,0 +1,88 @@
+{
+  "url": "https://api.github.com/repos/artsafro/AGR-DigitalTwin-pilot/issues/359",
+  "repository_url": "https://api.github.com/repos/artsafro/AGR-DigitalTwin-pilot",
+  "labels_url": "https://api.github.com/repos/artsafro/AGR-DigitalTwin-pilot/issues/359/labels{/name}",
+  "comments_url": "https://api.github.com/repos/artsafro/AGR-DigitalTwin-pilot/issues/359/comments",
+  "events_url": "https://api.github.com/repos/artsafro/AGR-DigitalTwin-pilot/issues/359/events",
+  "html_url": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/359",
+  "id": 5937858791,
+  "node_id": "I_kwDOVKLpt88AAAABYeyI5w",
+  "number": 359,
+  "title": "Hypothesis: farthest-anchor projection cuts long-polygon mesh audit time by 40% with exact classification parity",
+  "user": {
+    "login": "artsafro",
+    "id": 214958529,
+    "node_id": "U_kgDODNABwQ",
+    "avatar_url": "https://avatars.githubusercontent.com/u/214958529?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/artsafro",
+    "html_url": "https://github.com/artsafro",
+    "followers_url": "https://api.github.com/users/artsafro/followers",
+    "following_url": "https://api.github.com/users/artsafro/following{/other_user}",
+    "gists_url": "https://api.github.com/users/artsafro/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/artsafro/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/artsafro/subscriptions",
+    "organizations_url": "https://api.github.com/users/artsafro/orgs",
+    "repos_url": "https://api.github.com/users/artsafro/repos",
+    "events_url": "https://api.github.com/users/artsafro/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/artsafro/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+    {
+      "id": 12701888747,
+      "node_id": "LA_kwDOVKLpt88AAAAC9Rdw6w",
+      "url": "https://api.github.com/repos/artsafro/AGR-DigitalTwin-pilot/labels/hypothesis",
+      "name": "hypothesis",
+      "color": "5319e7",
+      "default": false,
+      "description": "Falsifiable hypothesis from a research report",
+      "archived_at": null,
+      "archived_by": null
+    }
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2026-10-20T07:39:40Z",
+  "updated_at": "2026-10-20T07:39:40Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "OWNER",
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "## Source\n\n`docs/experiments/issue-105-author-receipts.md` — **2. Synthetic Generator & Invariant Verification** and **3. Test Executions & Actual Log Counts**. The report establishes zero proper-crossing mismatches on 200 integer polygons with 4–9 vertices under cyclic shifts, reversals and four planar embeddings. It explicitly does not certify tolerance-boundary cases. It reports no performance experiment on longer polygons.\n\nPilot `origin/main` inspected at `8e539b9a2a020fcf045eb9445e5940a3d87977c7`: `technical_library/mesh_audit/core.py:_has_proper_crossing` still selects the projection normal by enumerating every vertex triple before testing edge pairs. `tests/test_mesh_audit_generated_crossings.py` contains the reproducible generator and independent integer crossing oracle.\n\nKind: performance/generalization hypothesis, not a known-defect regression. The hypothesizer has not run the experiment. This is not a repeat of #91's concave-versus-crossed classification claim or #110's component-volume vertex-incidence optimization.\n\n## Claim\n\nReplacing only exhaustive normal selection in `_has_proper_crossing` with a deterministic farthest-anchor normal reduces whole `inspect_mesh` median time by at least 40% on the fixed long planar outlines below, while preserving crossing classifications on the original generated population, edge-subdivided derivatives and existing mesh-audit tests. The original short-polygon population slows by no more than 10% in aggregate.\n\n## Prediction and rejection threshold\n\nFreeze all inputs, their hashes, the prediction table and collected test inventory BEFORE measuring A or B. A is unchanged main. B differs only in projection-normal selection; do not change determinant tolerance, edge comparisons, early returns after projection, other mesh counters or policies.\n\n| Measurement | Required result; REJECT otherwise |\n|---|---|\n| Whole `inspect_mesh` median, for each of the two selected polygons subdivided into 16 segments per edge, in each of the four report embeddings | `median(B) / median(A) <= 0.60` for EVERY polygon/embedding combination |\n| Independent confirmation timing | The same <=0.60 ratio in a separate three-pair confirmation block for EVERY mandatory long-polygon case |\n| Whole-call time over the original 200 polygons in original order, XY embedding, original winding/starting vertex | Aggregate batch median ratio <=1.10 |\n| Original generator's complete cyclic-shift/reversal/four-embedding matrix | Zero differences between A, B and the independent integer crossing label; both report-only flags remain False |\n| Subdivided population described below | Zero A/B full-result differences; crossing count exactly `int(original_pair_count > 0)`; no input mutation or exceptions |\n| Existing focused tests, run separately under A and B | No new failures or changed collected/pass/skip inventory; no changed test files or assertions |\n| Repeated semantic runs | Three identical classifications and full result dictionaries per frozen subdivided case |\n\nFor each timed workload: one untimed warmup per implementation, seven paired samples alternating AB/BA; each sample times exactly three whole calls (or three complete batches for the short-polygon batch) and divides elapsed time by three. Use `perf_counter`; exclude dataset creation/imports/JSON serialization, include normal selection and every other `inspect_mesh` counter. Keep all raw times. No projection-only surrogate or timing assertion in default tests. Do not round before verdicts or average away an individual long-case failure.\n\nBudget at most 15 minutes of timing within the 45-minute task. A missing input, invalid oracle construction or incomplete mandatory timing matrix is INCONCLUSIVE. An executed valid case with a metric/parity violation is REJECTED, even if other cases pass. Do not change subdivision, select a different polygon, retune tolerances or rescue the threshold after observing results.\n\n## Method\n\n1. Work in an isolated pilot worktree; record main SHA, Python version, input/test/source hashes and predictions. Regenerate exactly the report's population using `random.Random(105)`, integer grid `[-15,15]^2`, vertex counts 4..9, rejecting any original collinear triple, stopping at 200 accepted polygons. Reuse the tracked exact-integer oracle functions, not production projection code, for labels. Assert the report's population counts (27 clean, 173 crossed, 117 multiple-crossing); mismatch is INCONCLUSIVE, not permission to change the generator.\n2. Create only an experiment-local candidate. Let p0 be vertex zero. Choose p1 farthest from p0 by squared Euclidean distance, first index on ties. Among all vertices choose p2 maximizing squared magnitude of `(p1-p0) x (p2-p0)`, first index on ties. Use that cross product and the baseline's dominant-axis/tie rule; retain its existing no-usable-normal fallback. Leave all edge-pair testing, +/-1e-10 m2 threshold and public `inspect_mesh` behavior unchanged. This is a linear scan normal selector, not a replacement crossing algorithm. No NumPy/new dependency or coordinate rounding.\n3. Before execution select the first clean polygon and first polygon with at least two crossing pairs in deterministic accepted-population order. Timed long cases replace EVERY original edge by 16 equal subsegments, retaining boundary order and omitting each edge's final endpoint so no duplicate closing vertex is added. Use the report's unchanged XY, XZ, YZ and `(x,y,x+2*y)` embeddings. Factors are powers of two so interpolation of the integer coordinates is exactly binary-representable. Do not reject derivatives merely because subdivision intentionally introduces adjacent collinear vertices.\n4. Semantic extension: for ALL 200 polygons use subdivision factors 2 and 4, all four embeddings, both windings and starting shifts 0 and floor(N/2) of each expanded ring. Oracle labels are inherited from the exact original topology: splitting straight edges introduces no new proper crossings. Compare the entire A/B `inspect_mesh` dictionary, plus original-label crossing count and report-only flags. Also compare A/B/oracle over the original complete generator matrix and the timed long cases. Preserve diagnostic fields whose values may change between original and subdivided geometry; compare each derivative against its own baseline, not against its original polygon's other counters.\n5. Substitute only the private helper in memory in separate task-local test invocations. Run unchanged `tests/test_mesh_audit_generated_crossings.py`, `tests/test_mesh_audit_planar_polygons.py` and `tests/test_shared_library.py` under A and B. Do not edit/import historical scratch artifacts or alter production files. Freeze node inventories and verify source/test/input hashes afterward.\n6. Write `docs/experiments/hyp-<issue>.md` and a reproducible driver/raw evidence under `experiments/hyp-<issue>/`, with CONFIRMED / REJECTED / INCONCLUSIVE, prediction table, per-case ratios/parity, first counterexample on rejection, versions/commands/hashes and `delivery_passed=false`. Experiment only; no full suite during this task.\n\n## Inputs\n\n- `technical_library/mesh_audit/core.py`: actual baseline `inspect_mesh` and `_has_proper_crossing`.\n- `tests/test_mesh_audit_generated_crossings.py`: exact deterministic generator, embeddings and independent integer oracle.\n- `tests/test_mesh_audit_planar_polygons.py`, `tests/test_shared_library.py`: unchanged compatibility tests.\n- Synthetic edge-subdivided derivatives defined above, not customer geometry or an independent architectural etalon.\n\nNo `data/`, source repository, unmerged branches, benchmark changes, DCC, CI, guards/hooks, shared wrappers, dependency changes or user decisions required.\n\n## Program\n\nnone (pure Python; queue `tool` is the empty string).\n\n## Cost S/M\n\nS. One private helper prototype, deterministic small polygons and three existing focused test files; 45-minute experiment with a 15-minute timing cap.\n\n## Risk\n\nMedium prior chance of REJECTED. The report proves only classification on short polygons and never measures this optimization. Whole-call near-duplicate/topology work can dominate, so eliminating the cubic normal search may miss the 40% threshold. Farthest-anchor selection can choose a different projection/tie than exhaustive search, and subdivided collinear triples extend beyond the report's original population; those can expose semantic or tolerance differences. Short-input overhead and the independent confirmation block can also reject it. A rejection is useful evidence to retain the simpler baseline, not a reason to weaken tolerances or redesign the dataset.\n\n## If confirmed\n\nSeparate adoption limited to:\n\n- Replace only normal selection inside `technical_library/mesh_audit/core.py:_has_proper_crossing` with the tested farthest-anchor selector.\n- Add `tests/test_mesh_audit_projection_selection.py` for the frozen semantic matrix, including original report population and subdivided collinear-edge derivatives. Keep existing tests and all assertions unchanged.\n- Add the opt-in performance reproduction under `experiments/mesh-audit-projection-selection/`; no default-suite wall-time assertions.\n- Clarify bounded planar proper-crossing semantics and link the experiment in `technical_library/mesh_audit/README.md`.\n\nKeep all APIs, determinant tolerances, output dictionaries, other counters, report-only flags and delivery policies unchanged. No automatic geometry repair or general 3D/self-intersection certification. Adoption must supply the acceptance table and author receipts, run the focused files plus the full offline suite through `suite_slot.py` on current main, and open a pilot PR with `Closes #<issue>`. No scope on component volume, `twinqa` checks, Ground builder, kernel operations, instruction files or CI.\n",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/artsafro/AGR-DigitalTwin-pilot/issues/359/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/artsafro/AGR-DigitalTwin-pilot/issues/359/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}
