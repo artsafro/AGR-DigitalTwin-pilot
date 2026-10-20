@@ -208,4 +208,3 @@ def test_timing_gate():
             bad = copy.deepcopy(good)
             bad[i]["pairs"] = [[1., ratio] for _ in good[i]["pairs"]]
             assert gate(bad) == "REJECTED"
-
