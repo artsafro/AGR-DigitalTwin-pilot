@@ -1,6 +1,6 @@
-# Handoff — 2026-10-20 09:10
+# Handoff — 2026-10-20 15:00
 
-Branch: `main` · Commit: `eed5074` · Worktree: `C:\Users\artsafro\agr-pilot\AGR-DigitalTwin (local; shared main snapshot)` · Job: `VATUTINO-SITE`
+Branch: `main` · Commit: `2fd3b2e` · Worktree: `C:\Users\artsafro\agr-pilot\AGR-DigitalTwin (local; shared main snapshot)` · Job: `VATUTINO-SITE`
 Transcript: `-`
 
 <!-- Written by /handover (.claude/commands/handover.md), read by tools/hooks/session_context.py and /takeover.
@@ -11,66 +11,67 @@ that. The whole file stays under 7000 characters so the SessionStart hook passes
 
 Goal: a repository from which any agent (Claude Code, ChatGPT, Codex) can model a digital-twin task by the rules.
 The local Kanban board (orchestrator repo `hermes_kanban`, not this one) runs the work; this file records results.
-Kernel plan C1-C7 of `docs/grill/modeling-architecture-2026-10-16.md` is on main: bpy headless probe, PartsList
-schema, invariants, operations keep / embed / primitive_box / to_opacity_plane / rebuild_by_contour (#341), C5 album
-PDF reader (#317), C7 context diet (#335, AGENTS.md reading list + generated `docs/PROJECT_STATE.md`), FBX structure
-reader -> PartsList (#342). Site slice Vatutino: Ground (#295/PR #308, v014 NPM/VPM/UCX), UCX for Ground (#326/#334),
-ground recipe textures (#319/#329, v002) + CLI fix (#330/#336), MAF selection (#313), placement engine (#316), Flora
-VPM identity (#305/#328), map rebind tests (#312/#331), dt CLI tests (#343). Old PRs #266, #260 merged.
-Verified: full non-DCC suite on main `eed5074`: 6936 passed, 15 skipped, 60 deselected, 0 failed (`kpi/manual_merge_20261020e.json` in hermes_kanban); the previous
-batch on `3c7c54a`: 6794 passed. CI is not run (billing lock, D122); local receipts only.
+Merged into main since the 09:10 handoff: site placement #344 (#296), Flora NPM light variants #362 (#347),
+Ground v003 map binding #368 (#340), kernel invariants quad_dominance #354 (#345), texel_ready #356 (#346),
+xview_overlaps #380 (#370, D152), procedure playbook #363 (#351), asset store #372 (#350, D151 source-only),
+eval receipt check `dt evals --check-receipt` #375 (#302), local CI receipt #376 (#318), #283 adoption #374,
+research #280 #367 #379 #383, improves #364 #366 #382, hypothesis reports #357 #360 #378 #381.
+Verified: full non-DCC suite on `c2c9007`: 7676 passed, 2 failed, 15 skipped - both failures are
+`tests/qa/test_orientation_scaling.py::test_orientation_real_size_budget[box-10.0|slivers-5.0]`, the known
+load-sensitive wall-clock budgets of #361 (they fail on main without these changes too).
+**Main is red** on `98eead4` (batch #382 #364 #380 #372 #363 #381 #378): 7995 passed, 1 failed -
+`tests/test_task_to_model.py::test_repository_walks`: #363 pins sha256 of live source files (`invariants.py`,
+`build_ground.py`) as gate evidence, #380 / #368 changed them. Repair issue #387 (card running); merges paused.
+CI is not run (billing lock, D122); local receipts only. Visual acceptance of #344 / #362 is still Artem's.
 
 ## In progress
 
-- Board cards (local PC): #296 MAF + Flora placement (PR #344, review round 2 changes needed), #340 Ground
-  texture binding (v003 with CurbGarden / Stairs recipes), #345 quad_dominance invariant, #346 texel_ready
-  invariant, #347 Flora NPM light variants, #348 visual review loop in 3ds Max (C:/x/review + pending.json),
-  #350 asset store disk + Google Drive, #116 suite wall time round 2, #318 C6 CI receipt (4 tests in
-  `tests/test_agent_trace.py` fail only inside the full receipt run, pass alone), #337 refresh of PR #252.
-- Outputs live outside git under `C:/x/` (Ground `C:/x/t_d94665f2/ground_v014/`, textures
-  `C:/x/vatutino-ground-textures/v002/`, Flora library `C:/x/flora-library/v003/flora-library-v003.max`).
+- #371 Ground v015: quad-dominant, one material ID per texture (Multi/Sub), xView 0.002 / 0.005 = 0 (D152).
+- #369 Flora texture diagnosis (PR #377, NOT accepted by Artem): per-island UV-vs-atlas-pixel check. Rule (user
+  2026-10-20): a UV island on a sprite covers 80-95 % of it; NPM whole-plant planes cover most of the image or
+  slightly more (opacity edges not cut); continuous bark strips are checked by containment (>= 95 % of the island
+  on bark pixels), not coverage. Calibrate on the originals, then route per species: rebind original atlas /
+  regenerate atlas under the UV / re-unwrap; the fix goes into a follow-up issue.
+- #361 perf lane: wall-clock budgets move to a `perf` marker out of the default suite (DeepSeek lane card).
+- #337 refresh of PR #252: two dated backfills for the 2026-10-19 Ground decisions (relief TIN cuts only where
+  > 1 cm, issue #295 comment 6265799957; steep-layer local raise 5-20 mm, comment 6274902891).
+- #348 visual review loop (PR #373, review round 1 changes needed).
+- Outputs outside git under `C:/x/` (Ground v014 `C:/x/t_d94665f2/ground_v014/`, Flora `C:/x/flora-library/v003/`,
+  light variants `C:/x/flora-light/v001/`, review scenes `C:/x/review/2026-10-20/` + `pending.json`).
 
 ## User decisions not in the code
 
-- Gate 1 of #296 (user 2026-10-20): out-of-site Alnus/Malus not placed; Pinus mugo by plan points (106); six
-  species without a model + Salix not placed; substitutions 1->101, 3->120, 4->115, 6->105, 7->103, 9->205,
-  12->204, 17->224 accepted; height-only check +/-20 %; Flora NPM overrun 118 774 / 70 000 recorded (light NPM is
-  #347); 2 urns 1 cm outside the Ground v014 cut-out not placed (bound to v014 only).
-- #295 (user 2026-10-20): 12 vertices on ~81 deg faces with normal gap up to 36.9 mm accepted as an explicit
-  exception list; the 20 mm gate stays for the rest.
-- #319 (user 2026-10-19): tile scale error up to 1 % allowed; corrected output in a new version folder.
-- Procedure principle (user 2026-10-20): gates strict, path free - an agent may deviate (workaround, new tool) if
-  it logs the deviation and passes the same gates (#351).
-- Visual review in 3ds Max; assets on local disk + Google Drive links (user 2026-10-20, #348, #350).
-- MAF modelling of items without a model is deferred (user 2026-10-19).
+- Deliverables (user 2026-10-20, D152 on main): quads, MatID per texture, xView-clean - Ground v015 must meet it.
+- #298 site assembly waits for #371 and #369; then re-placement with the #347 light Flora (~166 200 tris), not
+  the #296 scene (220 520 > 180 000).
+- #82 terrace parapets: card archived, D065 stays (one parapet thickness per building).
+- #248 / #56 / #314: parked by Artem.
 
 ## Waiting for the user
 
 - #353 L4: paths of the first real building (source, delivered FBX, album PDF).
-- #352 roof-equipment library: paths of the projects to pull meshes from.
-- #350: one-time Google Drive login on this PC (Drive for desktop or rclone).
-- #82 terrace parapets: a real object with different parapet thicknesses.
+- #352 roof-equipment library: project paths to pull meshes from.
+- #350: one-time Google Drive login on this PC.
+- Visual acceptance: Ground v014 and Flora v003 review scenes in `C:/x/review/2026-10-20/`, #344 placement, #362.
 
 ## Next step
 
-Finish the site chain (#340 -> #296 -> #298) and the L4 preparation cards (#345-#351), then L4 (#353).
+Repair red main (#387), then Ground v015 (#371) and the Flora UV verdict (#369), then #298 assembly with light Flora, then L4 (#353).
 
 ## Rules broken
 
-- -
+- Merge batch #363 + #380 / #368 together without an integration run between them turned main red (#387).
 
 ## Open PRs and issues for this task
 
-- PR #344 (#296 placement) — review round 2, changes needed.
-- PR #252 (#138 decision ids) — conflicting with main again, refresh card running (#337).
-- PR #280 (research on #229) — no review; archive decision pending.
-- PR #248 (#56 checker) — parked by the user with #314.
-- Issues waiting: #353, #352, #350 (`waits-artem`); #302, #246 `needs-info`; hypotheses #281, #283.
+- PR #377 (#369) rework after Artem's review; PR #373 (#348) changes needed; PR #252 (#138) refresh by #337,
+  needs a new review on its new head; PR #248 parked.
+- Issues waiting: #353, #352 (`waits-artem`); #246 parked with #45.
 
 ## Agent trace
 
 - Sessions: not measured (no transcript)
-- Written by: Hermes orchestrator (Telegram session 20261019_095056_2dd1dd02, claude-opus-5-5)
+- Written by: Hermes orchestrator (Telegram session 20261020_091940_f745c6a8, claude-opus-5-5)
 - Subagents: not measured (no usage log, no transcript)
 - Skills: not measured (no usage log, no transcript)
 - Commands: not measured (no usage log, no transcript)
@@ -78,4 +79,4 @@ Finish the site chain (#340 -> #296 -> #298) and the L4 preparation cards (#345-
 - Retries: not measured (no transcript)
 - Context at handover: not measured (no transcript)
 - Duration: not measured (no transcript)
-- Commits: `eed5074..eed5074` (0 commits)
+- Commits: `eed5074..2fd3b2e` (119 commits)
