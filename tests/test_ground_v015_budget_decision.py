@@ -16,3 +16,16 @@ def test_v015_surface_exception_does_not_raise_npm_triangle_budget():
     assert '[D156]' in sheet
     assert 'Ground surface ≤ 50 000 polygons' in sheet, 'the general surface cap must remain'
     assert 'Ground + GroundEl + Flora ≤ 180 000 triangles' in sheet
+
+
+def test_pairing_decision_supersedes_90k_without_relaxing_other_gates():
+    text = (ROOT / 'docs/decisions.md').read_text(encoding='utf-8')
+    rows = [line for line in text.splitlines() if line.startswith('| D157 |')]
+    assert len(rows) == 1
+    for token in ('supersedes D156', '35 %', 'Ground NPM', '50,000', '180,000', '10 mm', 'D150', 'xView', 'VPM'):
+        assert token in rows[0], token
+    historical = next(line for line in text.splitlines() if line.startswith('| D156 |'))
+    assert 'superseded by D157' in historical
+    sheet = (ROOT / 'docs/domain/areas/ground-surface.md').read_text(encoding='utf-8')
+    assert '[D157]' in sheet
+    assert 'D156 is superseded' in sheet
