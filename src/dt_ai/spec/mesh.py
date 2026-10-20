@@ -55,7 +55,6 @@ ROOF_PART_SLIVER_M2 = 0.05  # a separate roof part with more than this both insi
 ROOF_SEARCH_M = 0.3       # only to name nearby surfaces in the error message
 ROOF_OWN = 0.25           # share of the top floor the roof plane itself must cover (else roof or cap?)
 HOLE_MIN_M2 = 0.01        # uncovered pieces of the top floor smaller than this are numeric slivers
-SHAFT_UPPER = 0.85        # ... and again at this share of the top storey's height
 SHAFT_WALL_SHARE = 0.9    # a roof hole is a shaft when body walls line this share of its edge at mid top storey
 ROOF_CLOSED = 0.9         # share of the top floor the roof and surfaces above it must close
 PARAPET_EDGE_M = 0.05     # parapet top is read only on the outer wall line of the top floor

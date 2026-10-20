@@ -42,7 +42,7 @@ TOP_TOL_M = 0.05          # a stack ends below the band top by more than this; w
 STACK_SHARE = 0.5         # a wall stands on another when it covers this share of the other's footprint
 BAND_GAP_M = 0.001        # twin_export_floor: band top = next band bottom - 1 mm
 JOIN_TOL_M = 0.01         # another wall's plan within this of a wall end is a join
-EMBED_SHARE = 0.9         # a curtain wall is embedded when this share of its line lies in an exterior wall
+EMBED_SHARE = 0.9         # embedded share of a straight line or curved occupied plan in an exterior wall
 OUTSIDE_SHARE = 0.5       # an attachment has more than this share of its plan outside the main walls' hull
 
 
@@ -322,11 +322,14 @@ def to_dump(bands, objs, document=None):
     questions = []
     groups = []                                  # touching attachment elements are one attachment
     for i in sorted(attached):
-        f = _footprint(walls[i]).buffer(0.01)
-        hit = [g for g in groups if g["geom"].intersects(f)]
+        # Native geometry supplies the measurement, not its chord or contact buffer.
+        f = occupied[i] if i in occupied else _footprint(walls[i]).buffer(0.01)
+        contact = (occupied[i] if i in occupied else _footprint(walls[i])).buffer(0.01)
+        hit = [g for g in groups if g["contact"].intersects(contact)]
         for g in hit:
             groups.remove(g)
         groups.append({"geom": unary_union([f] + [g["geom"] for g in hit]),
+                       "contact": unary_union([contact] + [g["contact"] for g in hit]),
                        "ids": [i] + [j for g in hit for j in g["ids"]]})
     for g in groups:
         ws = [walls[i] for i in sorted(g["ids"])]
