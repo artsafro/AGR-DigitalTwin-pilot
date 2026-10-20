@@ -61,7 +61,8 @@ def bundle(tmp_path):
     gates["parts"]["evidence"] = [parts]
     gates["report"]["evidence"] = [report]
     for gate in ("operations", "budgets", "export_readback", "visual", "checker"):
-        receipt = {"gate": gate, "run_id": "r1", "artifact_sha256": [artifact["sha256"]]}
+        receipt = {"gate": gate, "run_id": "r1", "artifact_sha256": [artifact["sha256"]],
+                   "input_evidence": [source], "parts_sha256": parts["sha256"]}
         if gate == "operations":
             receipt.update(operations=["keep"], checks={f"{phase}.{name}": "pass"
                            for phase in ("before", "after") for name in p.INVARIANTS})
@@ -266,6 +267,76 @@ def test_generated_required_checks(bundle, tmp_path):
             del bad["checks"][check]
             candidate["gates"][gate]["evidence"] = [store(tmp_path, "bad.json", bad)]
             assert not p.inspect_job(candidate, tmp_path)["passed"]
+
+
+RECEIPT_GATES = ("operations", "budgets", "export_readback", "visual", "checker")
+
+
+def rebind_receipts(bundle, root):
+    """Synthetic test producer only; real producers must rerun their actual checks."""
+    for gate in RECEIPT_GATES:
+        ref = bundle["gates"][gate]["evidence"][0]
+        receipt = json.loads((root / ref["path"]).read_text())
+        receipt.update(input_evidence=bundle["inputs"],
+                       parts_sha256=bundle["gates"]["parts"]["evidence"][0]["sha256"])
+        bundle["gates"][gate]["evidence"] = [store(root, ref["path"], receipt)]
+
+
+def test_source_identity_binding(bundle, tmp_path):
+    # Unchanged bytes, even when rewritten, keep the same identity and still pass.
+    bundle["inputs"] = [store(tmp_path, "source.txt", "SYNTHETIC test source")]
+    bundle["gates"]["inputs"]["evidence"] = copy.deepcopy(bundle["inputs"])
+    assert run_cli(bundle, tmp_path).returncode == 0
+    bundle["inputs"] = [store(tmp_path, "source.txt", "SYNTHETIC changed source")]
+    bundle["gates"]["inputs"]["evidence"] = copy.deepcopy(bundle["inputs"])
+    completed = run_cli(bundle, tmp_path)
+    assert completed.returncode == 1, completed.stdout
+    result = json.loads(completed.stdout)
+    assert result["passed"] is False
+    for row in result["gates"]:
+        if row["gate"] in RECEIPT_GATES:
+            assert row["status"] == "fail" and any("input" in e for e in row["errors"])
+    rebind_receipts(bundle, tmp_path)
+    assert run_cli(bundle, tmp_path).returncode == 0
+
+
+def test_parts_identity_binding(bundle, tmp_path):
+    assert run_cli(bundle, tmp_path).returncode == 0
+    ref = bundle["gates"]["parts"]["evidence"][0]
+    parts = json.loads((tmp_path / ref["path"]).read_text())
+    parts["gate1"]["note"] = "SYNTHETIC new confirmed version"
+    bundle["gates"]["parts"]["evidence"] = [store(tmp_path, ref["path"], parts)]
+    completed = run_cli(bundle, tmp_path)
+    assert completed.returncode == 1, completed.stdout
+    result = json.loads(completed.stdout)
+    for row in result["gates"]:
+        if row["gate"] in RECEIPT_GATES:
+            assert row["status"] == "fail" and any("parts" in e for e in row["errors"])
+    rebind_receipts(bundle, tmp_path)
+    assert run_cli(bundle, tmp_path).returncode == 0
+
+
+def test_generated_receipt_identity_fields(bundle, tmp_path):
+    # 5 gates x 2 identity fields x 5 invalid shapes, plus renamed source paths.
+    for gate in RECEIPT_GATES:
+        ref = bundle["gates"][gate]["evidence"][0]
+        original = json.loads((tmp_path / ref["path"]).read_text())
+        for field in ("input_evidence", "parts_sha256"):
+            for bad_value in ("missing", None, [], {}, "0" * 64):
+                candidate = copy.deepcopy(bundle)
+                bad = copy.deepcopy(original)
+                if bad_value == "missing":
+                    del bad[field]
+                else:
+                    bad[field] = bad_value
+                candidate["gates"][gate]["evidence"] = [store(tmp_path, "bad-binding.json", bad)]
+                result = load().inspect_job(candidate, tmp_path)
+                assert not result["passed"]
+                assert next(r for r in result["gates"] if r["gate"] == gate)["status"] == "fail"
+    # Exact inventory includes the path, not just the bytes or the run ID.
+    bundle["inputs"][0] = store(tmp_path, "renamed.txt", "SYNTHETIC test source")
+    bundle["gates"]["inputs"]["evidence"] = copy.deepcopy(bundle["inputs"])
+    assert run_cli(bundle, tmp_path).returncode == 1
 
 
 @pytest.mark.parametrize("checks", [
