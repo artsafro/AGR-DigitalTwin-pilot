@@ -268,6 +268,29 @@ def test_generated_required_checks(bundle, tmp_path):
             assert not p.inspect_job(candidate, tmp_path)["passed"]
 
 
+@pytest.mark.parametrize("checks", [
+    {"mandatory_texture_budget": status} for status in ("fail", "review", "not_run", "unsupported")
+] + [{}, None, [], "pass", {"": "pass"}, {"   ": "pass"}, {1: "pass"}])
+def test_budget_declared_checks(bundle, tmp_path, checks):
+    ref = bundle["gates"]["budgets"]["evidence"][0]
+    receipt = json.loads((tmp_path / ref["path"]).read_text())
+    receipt["checks"] = checks
+    bundle["gates"]["budgets"]["evidence"] = [store(tmp_path, ref["path"], receipt)]
+    completed = run_cli(bundle, tmp_path)
+    assert completed.returncode == 1, completed.stdout
+    result = json.loads(completed.stdout)
+    assert result["passed"] is False
+    assert next(row for row in result["gates"] if row["gate"] == "budgets")["status"] == "fail"
+
+
+def test_budget_declared_pass_control(bundle, tmp_path):
+    ref = bundle["gates"]["budgets"]["evidence"][0]
+    receipt = json.loads((tmp_path / ref["path"]).read_text())
+    receipt["checks"] = {"mandatory_texture_budget": "pass"}
+    bundle["gates"]["budgets"]["evidence"] = [store(tmp_path, ref["path"], receipt)]
+    assert run_cli(bundle, tmp_path).returncode == 0
+
+
 @pytest.mark.parametrize("status", ("fail", "review", "not_run"))
 def test_checker_not_measured_never_passes(bundle, tmp_path, status):
     ref = bundle["gates"]["checker"]["evidence"][0]
