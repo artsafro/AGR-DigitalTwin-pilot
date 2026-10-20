@@ -141,6 +141,40 @@ def test_task_grades_versioned_runner_output(tmp_path, layout):
     assert result['not_measured'] == 0
 
 
+def test_cross_run_reports_rejected(tmp_path):
+    paths = []
+    for name in ('one', 'two'):
+        path = tmp_path / name / 'report.json'
+        path.parent.mkdir()
+        path.write_text(json.dumps(report()))
+        paths.append(path)
+    assert GRADERS['capability_b01'][0]({'benchmark': paths[:1], 'self_check': paths[1:]})['passed'] is False
+
+
+def test_multiple_runner_outputs_rejected(tmp_path):
+    from twinqa.evals.runner import run
+    root = Path(__file__).resolve().parents[1]
+    for name in ('run-v001', 'run-v002'):
+        output = tmp_path / 'benchmark' / name
+        output.mkdir(parents=True)
+        for filename in ('report.json', 'etalon-self.json'):
+            (output / filename).write_text(json.dumps(report()))
+    _, result, _ = run(root / 'evals', suite='capability', main=tmp_path,
+                       branch='synthetic', output=tmp_path / 'evals', cwd=root)
+    assert result['failed'] == 1
+    assert result['passed'] == 0
+
+
+@pytest.mark.skipif(sys.platform != 'win32', reason='Windows npm command shim')
+def test_windows_command_shim_preserves_prompt(tmp_path):
+    from tools.qa.capability_b01 import executable
+    shim = tmp_path / 'agent.cmd'
+    shim.write_text('@echo off\n"' + sys.executable + '" -c "import sys,json;print(json.dumps(sys.argv[1:]))" %*\n')
+    prompt = 'Build B01 from root files; local etalon C:/x/input with spaces/etalon.fbx'
+    result = subprocess.run(executable([str(shim), prompt]), capture_output=True, text=True, check=True)
+    assert json.loads(result.stdout) == [prompt]
+
+
 def test_task_registered():
     from twinqa.evals.runner import load_tasks
     root = Path(__file__).resolve().parents[1]
