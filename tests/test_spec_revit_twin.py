@@ -205,6 +205,28 @@ def test_detached_lining_never_makes_a_roof_hole_a_shaft():
     assert report["roof"]["closed_share"] >= 0.99
 
 
+def shaft_dump(spans, roof_bottom=6.6, roof_top=6.6):
+    """Synthetic 1 m2 roof hole; lining can join the roof slab's inner reveal."""
+    walls, _ = ring(z1=roof_top + 0.6)
+    square = [(4.45, 4.45), (5.55, 4.45), (5.55, 5.55), (4.45, 5.55)]
+    for j, (lo, hi) in enumerate(spans):
+        walls += [wall(70 + 4 * j + k, a, b, t=0.1, z0=lo, z1=hi)
+                  for k, (a, b) in enumerate(zip(square, square[1:] + square[:1]))]
+    outer = [(0, 0), (10, 0), (10, 10), (0, 10)]
+    hole = [(4.5, 4.5), (5.5, 4.5), (5.5, 5.5), (4.5, 5.5)]
+    lines = ["o roof_20"] + [f"v {x} {y} {roof_top}" for x, y in outer + hole]
+    lines += [f"f {a + 1} {(a + 1) % 4 + 1} {(a + 1) % 4 + 5} {a + 5}" for a in range(4)]
+    if roof_bottom < roof_top:
+        lines += [f"v {x} {y} {roof_bottom}" for x, y in hole]
+        lines += [f"f {5 + a} {5 + (a + 1) % 4} {9 + (a + 1) % 4} {9 + a}" for a in range(4)]
+    return to_dump([band(walls)], ["\n".join(lines) + "\n"])
+
+
+def test_disconnected_lining_at_both_old_cuts_is_not_a_shaft():
+    with pytest.raises(SpecError, match="not a shaft"):
+        extract_spec(shaft_dump([(4.85, 5.05), (6.0, 6.2)]), OBJ)
+
+
 def arc_obj(name, cx, cy, r, t, z0, z1, a0, a1, n=32, offset=0):
     """A curved wall: a closed ring sector between radii r -+ t/2 from angle a0 to a1 (degrees)."""
     ang = [math.radians(a0 + (a1 - a0) * k / n) for k in range(n + 1)]
