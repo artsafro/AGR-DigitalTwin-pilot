@@ -1,0 +1,2476 @@
+{
+  "rows": [
+    {
+      "id": "npm-128-ihdr-only",
+      "kind": "npm",
+      "name": "probe.png",
+      "sha256": "054ff920fec3ecf09335d5feb07ea584381ee4bcc7f4b061aaa83c000b4f06d9",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "probe.png",
+          "width": 128,
+          "height": 128,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 33,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "PIL.UnidentifiedImageError",
+        "message": "cannot identify image file <_io.BytesIO object at <addr>>"
+      },
+      "A": {
+        "ok": false,
+        "exception": "PIL.UnidentifiedImageError",
+        "message": "cannot identify image file <_io.BytesIO object at <addr>>"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "probe.png: cannot identify image file <_io.BytesIO object at 0x000001D35F6BF8D0>",
+              "expected": "PNG atlas",
+              "source_pdf_pages": [
+                9
+              ],
+              "evidence": "probe.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-256-Diffuse-ihdr-only",
+      "kind": "vpm",
+      "name": "T_Probe_Diffuse_1.1001.png",
+      "sha256": "3d3cbea50ab29e90573c966884a19791768f79b8ecf9e6eb40a8c34471b5966f",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "T_Probe_Diffuse_1.1001.png",
+          "width": 256,
+          "height": 256,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 33,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "PIL.UnidentifiedImageError",
+        "message": "cannot identify image file <_io.BytesIO object at <addr>>"
+      },
+      "A": {
+        "ok": false,
+        "exception": "PIL.UnidentifiedImageError",
+        "message": "cannot identify image file <_io.BytesIO object at <addr>>"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_Diffuse_1.1001.png: cannot identify image file <_io.BytesIO object at 0x000001D35F922A70>",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_Diffuse_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-256-ERM-ihdr-only",
+      "kind": "vpm",
+      "name": "T_Probe_ERM_1.1001.png",
+      "sha256": "3d3cbea50ab29e90573c966884a19791768f79b8ecf9e6eb40a8c34471b5966f",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "T_Probe_ERM_1.1001.png",
+          "width": 256,
+          "height": 256,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 33,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "PIL.UnidentifiedImageError",
+        "message": "cannot identify image file <_io.BytesIO object at <addr>>"
+      },
+      "A": {
+        "ok": false,
+        "exception": "PIL.UnidentifiedImageError",
+        "message": "cannot identify image file <_io.BytesIO object at <addr>>"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_ERM_1.1001.png: cannot identify image file <_io.BytesIO object at 0x000001D35F922A70>",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_ERM_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-256-Normal-ihdr-only",
+      "kind": "vpm",
+      "name": "T_Probe_Normal_1.1001.png",
+      "sha256": "3d3cbea50ab29e90573c966884a19791768f79b8ecf9e6eb40a8c34471b5966f",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "T_Probe_Normal_1.1001.png",
+          "width": 256,
+          "height": 256,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 33,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "PIL.UnidentifiedImageError",
+        "message": "cannot identify image file <_io.BytesIO object at <addr>>"
+      },
+      "A": {
+        "ok": false,
+        "exception": "PIL.UnidentifiedImageError",
+        "message": "cannot identify image file <_io.BytesIO object at <addr>>"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_Normal_1.1001.png: cannot identify image file <_io.BytesIO object at 0x000001D35F922A70>",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_Normal_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-2048-ERM-ihdr-only",
+      "kind": "vpm",
+      "name": "T_Probe_ERM_1.1001.png",
+      "sha256": "37a999fde808a350dc2789b632c7866030a02c0cfb1530e5bf596c9e1380e77f",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "T_Probe_ERM_1.1001.png",
+          "width": 2048,
+          "height": 2048,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 33,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "PIL.UnidentifiedImageError",
+        "message": "cannot identify image file <_io.BytesIO object at <addr>>"
+      },
+      "A": {
+        "ok": false,
+        "exception": "PIL.UnidentifiedImageError",
+        "message": "cannot identify image file <_io.BytesIO object at <addr>>"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_ERM_1.1001.png: cannot identify image file <_io.BytesIO object at 0x000001D35F922A70>",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_ERM_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-2048-Normal-ihdr-only",
+      "kind": "vpm",
+      "name": "T_Probe_Normal_1.1001.png",
+      "sha256": "37a999fde808a350dc2789b632c7866030a02c0cfb1530e5bf596c9e1380e77f",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "T_Probe_Normal_1.1001.png",
+          "width": 2048,
+          "height": 2048,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 33,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "PIL.UnidentifiedImageError",
+        "message": "cannot identify image file <_io.BytesIO object at <addr>>"
+      },
+      "A": {
+        "ok": false,
+        "exception": "PIL.UnidentifiedImageError",
+        "message": "cannot identify image file <_io.BytesIO object at <addr>>"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_Normal_1.1001.png: cannot identify image file <_io.BytesIO object at 0x000001D35F922A70>",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_Normal_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "npm-128-no-idat",
+      "kind": "npm",
+      "name": "probe.png",
+      "sha256": "fe5d616c23a284468c483230c50da07298af93078db84dcb411c27b2e96f106b",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "probe.png",
+          "width": 128,
+          "height": 128,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 45,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "cannot load this image"
+      },
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "cannot load this image"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "probe.png: cannot load this image",
+              "expected": "PNG atlas",
+              "source_pdf_pages": [
+                9
+              ],
+              "evidence": "probe.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-256-Diffuse-no-idat",
+      "kind": "vpm",
+      "name": "T_Probe_Diffuse_1.1001.png",
+      "sha256": "141178093941a2035fa516eaa7ec8a23fde235c28f4065701fbbb4c5fa31d631",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "T_Probe_Diffuse_1.1001.png",
+          "width": 256,
+          "height": 256,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 45,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "cannot load this image"
+      },
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "cannot load this image"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_Diffuse_1.1001.png: cannot load this image",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_Diffuse_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-256-ERM-no-idat",
+      "kind": "vpm",
+      "name": "T_Probe_ERM_1.1001.png",
+      "sha256": "141178093941a2035fa516eaa7ec8a23fde235c28f4065701fbbb4c5fa31d631",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "T_Probe_ERM_1.1001.png",
+          "width": 256,
+          "height": 256,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 45,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "cannot load this image"
+      },
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "cannot load this image"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_ERM_1.1001.png: cannot load this image",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_ERM_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-256-Normal-no-idat",
+      "kind": "vpm",
+      "name": "T_Probe_Normal_1.1001.png",
+      "sha256": "141178093941a2035fa516eaa7ec8a23fde235c28f4065701fbbb4c5fa31d631",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "T_Probe_Normal_1.1001.png",
+          "width": 256,
+          "height": 256,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 45,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "cannot load this image"
+      },
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "cannot load this image"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_Normal_1.1001.png: cannot load this image",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_Normal_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-2048-ERM-no-idat",
+      "kind": "vpm",
+      "name": "T_Probe_ERM_1.1001.png",
+      "sha256": "b16f9daaa809cfbadb8b8444d772df1d7484d2c81cd225963ccbee3890661b79",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "T_Probe_ERM_1.1001.png",
+          "width": 2048,
+          "height": 2048,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 45,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "cannot load this image"
+      },
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "cannot load this image"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_ERM_1.1001.png: cannot load this image",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_ERM_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-2048-Normal-no-idat",
+      "kind": "vpm",
+      "name": "T_Probe_Normal_1.1001.png",
+      "sha256": "b16f9daaa809cfbadb8b8444d772df1d7484d2c81cd225963ccbee3890661b79",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "T_Probe_Normal_1.1001.png",
+          "width": 2048,
+          "height": 2048,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 45,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "cannot load this image"
+      },
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "cannot load this image"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_Normal_1.1001.png: cannot load this image",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_Normal_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "npm-128-bad-zlib",
+      "kind": "npm",
+      "name": "probe.png",
+      "sha256": "f402f572b83bbc167ea6c4b8fa22498ce50f4f47e7b345a348999594c193dcbd",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "probe.png",
+          "width": 128,
+          "height": 128,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 65,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "probe.png: broken data stream when reading image file",
+              "expected": "PNG atlas",
+              "source_pdf_pages": [
+                9
+              ],
+              "evidence": "probe.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-256-Diffuse-bad-zlib",
+      "kind": "vpm",
+      "name": "T_Probe_Diffuse_1.1001.png",
+      "sha256": "e28cff8941ae1467f8354da40b80d4b208fbd868ce5858a8e483b226de0e25b6",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "T_Probe_Diffuse_1.1001.png",
+          "width": 256,
+          "height": 256,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 65,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_Diffuse_1.1001.png: broken data stream when reading image file",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_Diffuse_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-256-ERM-bad-zlib",
+      "kind": "vpm",
+      "name": "T_Probe_ERM_1.1001.png",
+      "sha256": "e28cff8941ae1467f8354da40b80d4b208fbd868ce5858a8e483b226de0e25b6",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "T_Probe_ERM_1.1001.png",
+          "width": 256,
+          "height": 256,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 65,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_ERM_1.1001.png: broken data stream when reading image file",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_ERM_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-256-Normal-bad-zlib",
+      "kind": "vpm",
+      "name": "T_Probe_Normal_1.1001.png",
+      "sha256": "e28cff8941ae1467f8354da40b80d4b208fbd868ce5858a8e483b226de0e25b6",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "T_Probe_Normal_1.1001.png",
+          "width": 256,
+          "height": 256,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 65,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_Normal_1.1001.png: broken data stream when reading image file",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_Normal_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-2048-ERM-bad-zlib",
+      "kind": "vpm",
+      "name": "T_Probe_ERM_1.1001.png",
+      "sha256": "168afab19972998472fdd082d1e3a9be7fe0487d122cd4b9f7fe4a8b8a96e4aa",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "T_Probe_ERM_1.1001.png",
+          "width": 2048,
+          "height": 2048,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 65,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_ERM_1.1001.png: broken data stream when reading image file",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_ERM_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-2048-Normal-bad-zlib",
+      "kind": "vpm",
+      "name": "T_Probe_Normal_1.1001.png",
+      "sha256": "168afab19972998472fdd082d1e3a9be7fe0487d122cd4b9f7fe4a8b8a96e4aa",
+      "facts": {
+        "ok": true,
+        "value": {
+          "name": "T_Probe_Normal_1.1001.png",
+          "width": 2048,
+          "height": 2048,
+          "bit_depth": 8,
+          "color_type": 2,
+          "has_trns": false,
+          "size_bytes": 65,
+          "has_alpha": false
+        }
+      },
+      "pillow": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_Normal_1.1001.png: broken data stream when reading image file",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_Normal_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "npm-256-valid",
+      "kind": "npm",
+      "name": "probe.png",
+      "sha256": "58f2582a5bae559ed83d2c9604289a105107eb5c4a9c848aa6fe38135ce8c1c9",
+      "A": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "NPM atlases",
+              "status": "pass",
+              "observed": "1 images: sizes, <= 3 MB, no alpha, 8-bit",
+              "expected": "reg p.9",
+              "source_pdf_pages": [
+                9
+              ],
+              "evidence": "embedded",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "NPM atlases",
+              "status": "pass",
+              "observed": "1 images: sizes, <= 3 MB, no alpha, 8-bit",
+              "expected": "reg p.9",
+              "source_pdf_pages": [
+                9
+              ],
+              "evidence": "embedded",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "A_equals_B": true,
+      "bytes_unchanged": true
+    },
+    {
+      "id": "npm-2048-valid",
+      "kind": "npm",
+      "name": "probe.png",
+      "sha256": "e28ca357d019a80cb06a53df254bc7704dce26766bd8d9976eeba2b79ce8fa42",
+      "A": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "NPM atlases",
+              "status": "pass",
+              "observed": "1 images: sizes, <= 3 MB, no alpha, 8-bit",
+              "expected": "reg p.9",
+              "source_pdf_pages": [
+                9
+              ],
+              "evidence": "embedded",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "NPM atlases",
+              "status": "pass",
+              "observed": "1 images: sizes, <= 3 MB, no alpha, 8-bit",
+              "expected": "reg p.9",
+              "source_pdf_pages": [
+                9
+              ],
+              "evidence": "embedded",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "A_equals_B": true,
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-diffuse-2048-valid",
+      "kind": "vpm",
+      "name": "T_Probe_Diffuse_1.1001.png",
+      "sha256": "e28ca357d019a80cb06a53df254bc7704dce26766bd8d9976eeba2b79ce8fa42",
+      "A": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "map set",
+              "status": "fail",
+              "observed": "slot 1 UDIM 1001: missing ['ERM', 'Normal']",
+              "expected": "Diffuse + ERM + Normal for every used UDIM",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "slot 1",
+              "conflicts": []
+            }
+          ],
+          "sets": {
+            "1/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_1.1001.png",
+                "width": 2048,
+                "height": 2048,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 16949,
+                "has_alpha": false
+              }
+            }
+          }
+        }
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "map set",
+              "status": "fail",
+              "observed": "slot 1 UDIM 1001: missing ['ERM', 'Normal']",
+              "expected": "Diffuse + ERM + Normal for every used UDIM",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "slot 1",
+              "conflicts": []
+            }
+          ],
+          "sets": {
+            "1/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_1.1001.png",
+                "width": 2048,
+                "height": 2048,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 16949,
+                "has_alpha": false
+              }
+            }
+          }
+        }
+      },
+      "A_equals_B": true,
+      "bytes_unchanged": true
+    },
+    {
+      "id": "npm-128-valid-placeholder",
+      "kind": "npm",
+      "A": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "NPM atlases",
+              "status": "pass",
+              "observed": "1 images: sizes, <= 3 MB, no alpha, 8-bit",
+              "expected": "reg p.9",
+              "source_pdf_pages": [
+                9
+              ],
+              "evidence": "embedded",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "NPM atlases",
+              "status": "pass",
+              "observed": "1 images: sizes, <= 3 MB, no alpha, 8-bit",
+              "expected": "reg p.9",
+              "source_pdf_pages": [
+                9
+              ],
+              "evidence": "embedded",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "A_equals_B": true,
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-256-valid-triplet",
+      "kind": "vpm",
+      "A": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "VPM maps",
+              "status": "pass",
+              "observed": "3 PNG: names, 8-bit, sizes, alpha rules, sets, ERM order, DirectX green",
+              "expected": "reg p.30-31",
+              "source_pdf_pages": [
+                23,
+                30,
+                31
+              ],
+              "evidence": "ZIP root",
+              "conflicts": []
+            }
+          ],
+          "sets": {
+            "1/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "ERM": {
+                "name": "T_Probe_ERM_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "Normal": {
+                "name": "T_Probe_Normal_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              }
+            }
+          }
+        }
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "VPM maps",
+              "status": "pass",
+              "observed": "3 PNG: names, 8-bit, sizes, alpha rules, sets, ERM order, DirectX green",
+              "expected": "reg p.30-31",
+              "source_pdf_pages": [
+                23,
+                30,
+                31
+              ],
+              "evidence": "ZIP root",
+              "conflicts": []
+            }
+          ],
+          "sets": {
+            "1/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "ERM": {
+                "name": "T_Probe_ERM_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "Normal": {
+                "name": "T_Probe_Normal_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              }
+            }
+          }
+        }
+      },
+      "A_equals_B": true,
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-2048-valid-triplet",
+      "kind": "vpm",
+      "A": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "ERM channel order",
+              "status": "review",
+              "observed": "T_Probe_ERM_1.1001.png: R (emissive) non-zero on 100% of pixels",
+              "expected": "R=Emissive (black where nothing glows), G=Roughness, B=Metallic",
+              "source_pdf_pages": [
+                23,
+                37
+              ],
+              "evidence": "T_Probe_ERM_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {
+            "1/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_1.1001.png",
+                "width": 2048,
+                "height": 2048,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 16949,
+                "has_alpha": false
+              },
+              "ERM": {
+                "name": "T_Probe_ERM_1.1001.png",
+                "width": 2048,
+                "height": 2048,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 16949,
+                "has_alpha": false
+              },
+              "Normal": {
+                "name": "T_Probe_Normal_1.1001.png",
+                "width": 2048,
+                "height": 2048,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 16949,
+                "has_alpha": false
+              }
+            }
+          }
+        }
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "ERM channel order",
+              "status": "review",
+              "observed": "T_Probe_ERM_1.1001.png: R (emissive) non-zero on 100% of pixels",
+              "expected": "R=Emissive (black where nothing glows), G=Roughness, B=Metallic",
+              "source_pdf_pages": [
+                23,
+                37
+              ],
+              "evidence": "T_Probe_ERM_1.1001.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {
+            "1/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_1.1001.png",
+                "width": 2048,
+                "height": 2048,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 16949,
+                "has_alpha": false
+              },
+              "ERM": {
+                "name": "T_Probe_ERM_1.1001.png",
+                "width": 2048,
+                "height": 2048,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 16949,
+                "has_alpha": false
+              },
+              "Normal": {
+                "name": "T_Probe_Normal_1.1001.png",
+                "width": 2048,
+                "height": 2048,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 16949,
+                "has_alpha": false
+              }
+            }
+          }
+        }
+      },
+      "A_equals_B": true,
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-mixed-Diffuse-order1",
+      "kind": "vpm",
+      "broken": "T_Probe_Diffuse_1.1001.png",
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_Diffuse_1.1001.png: broken data stream when reading image file",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_Diffuse_1.1001.png",
+              "conflicts": []
+            },
+            {
+              "name": "no alpha in ERM/Normal",
+              "status": "fail",
+              "observed": "T_Probe_ERM_2.1001.png: alpha present",
+              "expected": "RGB without alpha",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_ERM_2.1001.png",
+              "conflicts": []
+            },
+            {
+              "name": "flat placeholder",
+              "status": "fail",
+              "observed": "T_Probe_ERM_2.1001.png: alpha or more than one colour",
+              "expected": "256x256, one colour, no alpha",
+              "source_pdf_pages": [
+                22,
+                31
+              ],
+              "evidence": "T_Probe_ERM_2.1001.png",
+              "conflicts": [
+                5
+              ]
+            },
+            {
+              "name": "map set",
+              "status": "fail",
+              "observed": "slot 1 UDIM 1001: missing ['Diffuse']",
+              "expected": "Diffuse + ERM + Normal for every used UDIM",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "slot 1",
+              "conflicts": []
+            }
+          ],
+          "sets": {
+            "1/1001": {
+              "ERM": {
+                "name": "T_Probe_ERM_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "Normal": {
+                "name": "T_Probe_Normal_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              }
+            },
+            "2/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "ERM": {
+                "name": "T_Probe_ERM_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 6,
+                "has_trns": false,
+                "size_bytes": 858,
+                "has_alpha": true
+              },
+              "Normal": {
+                "name": "T_Probe_Normal_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              }
+            }
+          }
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-mixed-Diffuse-order2",
+      "kind": "vpm",
+      "broken": "T_Probe_Diffuse_1.1001.png",
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_Diffuse_1.1001.png: broken data stream when reading image file",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_Diffuse_1.1001.png",
+              "conflicts": []
+            },
+            {
+              "name": "no alpha in ERM/Normal",
+              "status": "fail",
+              "observed": "T_Probe_ERM_2.1001.png: alpha present",
+              "expected": "RGB without alpha",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_ERM_2.1001.png",
+              "conflicts": []
+            },
+            {
+              "name": "flat placeholder",
+              "status": "fail",
+              "observed": "T_Probe_ERM_2.1001.png: alpha or more than one colour",
+              "expected": "256x256, one colour, no alpha",
+              "source_pdf_pages": [
+                22,
+                31
+              ],
+              "evidence": "T_Probe_ERM_2.1001.png",
+              "conflicts": [
+                5
+              ]
+            },
+            {
+              "name": "map set",
+              "status": "fail",
+              "observed": "slot 1 UDIM 1001: missing ['Diffuse']",
+              "expected": "Diffuse + ERM + Normal for every used UDIM",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "slot 1",
+              "conflicts": []
+            }
+          ],
+          "sets": {
+            "1/1001": {
+              "ERM": {
+                "name": "T_Probe_ERM_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "Normal": {
+                "name": "T_Probe_Normal_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              }
+            },
+            "2/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "ERM": {
+                "name": "T_Probe_ERM_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 6,
+                "has_trns": false,
+                "size_bytes": 858,
+                "has_alpha": true
+              },
+              "Normal": {
+                "name": "T_Probe_Normal_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              }
+            }
+          }
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-mixed-ERM-order1",
+      "kind": "vpm",
+      "broken": "T_Probe_ERM_1.1001.png",
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_ERM_1.1001.png: broken data stream when reading image file",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_ERM_1.1001.png",
+              "conflicts": []
+            },
+            {
+              "name": "no alpha in ERM/Normal",
+              "status": "fail",
+              "observed": "T_Probe_ERM_2.1001.png: alpha present",
+              "expected": "RGB without alpha",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_ERM_2.1001.png",
+              "conflicts": []
+            },
+            {
+              "name": "flat placeholder",
+              "status": "fail",
+              "observed": "T_Probe_ERM_2.1001.png: alpha or more than one colour",
+              "expected": "256x256, one colour, no alpha",
+              "source_pdf_pages": [
+                22,
+                31
+              ],
+              "evidence": "T_Probe_ERM_2.1001.png",
+              "conflicts": [
+                5
+              ]
+            },
+            {
+              "name": "map set",
+              "status": "fail",
+              "observed": "slot 1 UDIM 1001: missing ['ERM']",
+              "expected": "Diffuse + ERM + Normal for every used UDIM",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "slot 1",
+              "conflicts": []
+            }
+          ],
+          "sets": {
+            "1/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "Normal": {
+                "name": "T_Probe_Normal_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              }
+            },
+            "2/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "ERM": {
+                "name": "T_Probe_ERM_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 6,
+                "has_trns": false,
+                "size_bytes": 858,
+                "has_alpha": true
+              },
+              "Normal": {
+                "name": "T_Probe_Normal_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              }
+            }
+          }
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-mixed-ERM-order2",
+      "kind": "vpm",
+      "broken": "T_Probe_ERM_1.1001.png",
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_ERM_1.1001.png: broken data stream when reading image file",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_ERM_1.1001.png",
+              "conflicts": []
+            },
+            {
+              "name": "no alpha in ERM/Normal",
+              "status": "fail",
+              "observed": "T_Probe_ERM_2.1001.png: alpha present",
+              "expected": "RGB without alpha",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_ERM_2.1001.png",
+              "conflicts": []
+            },
+            {
+              "name": "flat placeholder",
+              "status": "fail",
+              "observed": "T_Probe_ERM_2.1001.png: alpha or more than one colour",
+              "expected": "256x256, one colour, no alpha",
+              "source_pdf_pages": [
+                22,
+                31
+              ],
+              "evidence": "T_Probe_ERM_2.1001.png",
+              "conflicts": [
+                5
+              ]
+            },
+            {
+              "name": "map set",
+              "status": "fail",
+              "observed": "slot 1 UDIM 1001: missing ['ERM']",
+              "expected": "Diffuse + ERM + Normal for every used UDIM",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "slot 1",
+              "conflicts": []
+            }
+          ],
+          "sets": {
+            "1/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "Normal": {
+                "name": "T_Probe_Normal_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              }
+            },
+            "2/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "ERM": {
+                "name": "T_Probe_ERM_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 6,
+                "has_trns": false,
+                "size_bytes": 858,
+                "has_alpha": true
+              },
+              "Normal": {
+                "name": "T_Probe_Normal_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              }
+            }
+          }
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-mixed-Normal-order1",
+      "kind": "vpm",
+      "broken": "T_Probe_Normal_1.1001.png",
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "no alpha in ERM/Normal",
+              "status": "fail",
+              "observed": "T_Probe_ERM_2.1001.png: alpha present",
+              "expected": "RGB without alpha",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_ERM_2.1001.png",
+              "conflicts": []
+            },
+            {
+              "name": "flat placeholder",
+              "status": "fail",
+              "observed": "T_Probe_ERM_2.1001.png: alpha or more than one colour",
+              "expected": "256x256, one colour, no alpha",
+              "source_pdf_pages": [
+                22,
+                31
+              ],
+              "evidence": "T_Probe_ERM_2.1001.png",
+              "conflicts": [
+                5
+              ]
+            },
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_Normal_1.1001.png: broken data stream when reading image file",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_Normal_1.1001.png",
+              "conflicts": []
+            },
+            {
+              "name": "map set",
+              "status": "fail",
+              "observed": "slot 1 UDIM 1001: missing ['Normal']",
+              "expected": "Diffuse + ERM + Normal for every used UDIM",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "slot 1",
+              "conflicts": []
+            }
+          ],
+          "sets": {
+            "1/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "ERM": {
+                "name": "T_Probe_ERM_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              }
+            },
+            "2/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "ERM": {
+                "name": "T_Probe_ERM_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 6,
+                "has_trns": false,
+                "size_bytes": 858,
+                "has_alpha": true
+              },
+              "Normal": {
+                "name": "T_Probe_Normal_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              }
+            }
+          }
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "vpm-mixed-Normal-order2",
+      "kind": "vpm",
+      "broken": "T_Probe_Normal_1.1001.png",
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "no alpha in ERM/Normal",
+              "status": "fail",
+              "observed": "T_Probe_ERM_2.1001.png: alpha present",
+              "expected": "RGB without alpha",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_ERM_2.1001.png",
+              "conflicts": []
+            },
+            {
+              "name": "flat placeholder",
+              "status": "fail",
+              "observed": "T_Probe_ERM_2.1001.png: alpha or more than one colour",
+              "expected": "256x256, one colour, no alpha",
+              "source_pdf_pages": [
+                22,
+                31
+              ],
+              "evidence": "T_Probe_ERM_2.1001.png",
+              "conflicts": [
+                5
+              ]
+            },
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "T_Probe_Normal_1.1001.png: broken data stream when reading image file",
+              "expected": "valid PNG",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "T_Probe_Normal_1.1001.png",
+              "conflicts": []
+            },
+            {
+              "name": "map set",
+              "status": "fail",
+              "observed": "slot 1 UDIM 1001: missing ['Normal']",
+              "expected": "Diffuse + ERM + Normal for every used UDIM",
+              "source_pdf_pages": [
+                30
+              ],
+              "evidence": "slot 1",
+              "conflicts": []
+            }
+          ],
+          "sets": {
+            "1/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "ERM": {
+                "name": "T_Probe_ERM_1.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              }
+            },
+            "2/1001": {
+              "Diffuse": {
+                "name": "T_Probe_Diffuse_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              },
+              "ERM": {
+                "name": "T_Probe_ERM_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 6,
+                "has_trns": false,
+                "size_bytes": 858,
+                "has_alpha": true
+              },
+              "Normal": {
+                "name": "T_Probe_Normal_2.1001.png",
+                "width": 256,
+                "height": 256,
+                "bit_depth": 8,
+                "color_type": 2,
+                "has_trns": false,
+                "size_bytes": 763,
+                "has_alpha": false
+              }
+            }
+          }
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "npm-mixed-order1",
+      "kind": "npm",
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "a_broken.png: broken data stream when reading image file",
+              "expected": "PNG atlas",
+              "source_pdf_pages": [
+                9
+              ],
+              "evidence": "a_broken.png",
+              "conflicts": []
+            },
+            {
+              "name": "no alpha",
+              "status": "fail",
+              "observed": "z_good.png: alpha channel present",
+              "expected": "RGB only; opacity as a separate _o_ map",
+              "source_pdf_pages": [
+                9
+              ],
+              "evidence": "z_good.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "npm-mixed-order2",
+      "kind": "npm",
+      "A": {
+        "ok": false,
+        "exception": "builtins.OSError",
+        "message": "broken data stream when reading image file"
+      },
+      "B": {
+        "ok": true,
+        "value": {
+          "findings": [
+            {
+              "name": "PNG readable",
+              "status": "fail",
+              "observed": "a_broken.png: broken data stream when reading image file",
+              "expected": "PNG atlas",
+              "source_pdf_pages": [
+                9
+              ],
+              "evidence": "a_broken.png",
+              "conflicts": []
+            },
+            {
+              "name": "no alpha",
+              "status": "fail",
+              "observed": "z_good.png: alpha channel present",
+              "expected": "RGB only; opacity as a separate _o_ map",
+              "source_pdf_pages": [
+                9
+              ],
+              "evidence": "z_good.png",
+              "conflicts": []
+            }
+          ],
+          "sets": {}
+        }
+      },
+      "bytes_unchanged": true
+    },
+    {
+      "id": "exc-A-npm-MemoryError",
+      "arm": "A",
+      "kind": "npm",
+      "exception": "MemoryError",
+      "propagated": true,
+      "outcome": {
+        "ok": false,
+        "exception": "builtins.MemoryError",
+        "message": "boom"
+      }
+    },
+    {
+      "id": "exc-A-vpm-MemoryError",
+      "arm": "A",
+      "kind": "vpm",
+      "exception": "MemoryError",
+      "propagated": true,
+      "outcome": {
+        "ok": false,
+        "exception": "builtins.MemoryError",
+        "message": "boom"
+      }
+    },
+    {
+      "id": "exc-B-npm-MemoryError",
+      "arm": "B",
+      "kind": "npm",
+      "exception": "MemoryError",
+      "propagated": true,
+      "outcome": {
+        "ok": false,
+        "exception": "builtins.MemoryError",
+        "message": "boom"
+      }
+    },
+    {
+      "id": "exc-B-vpm-MemoryError",
+      "arm": "B",
+      "kind": "vpm",
+      "exception": "MemoryError",
+      "propagated": true,
+      "outcome": {
+        "ok": false,
+        "exception": "builtins.MemoryError",
+        "message": "boom"
+      }
+    },
+    {
+      "id": "exc-A-npm-RuntimeError",
+      "arm": "A",
+      "kind": "npm",
+      "exception": "RuntimeError",
+      "propagated": true,
+      "outcome": {
+        "ok": false,
+        "exception": "builtins.RuntimeError",
+        "message": "boom"
+      }
+    },
+    {
+      "id": "exc-A-vpm-RuntimeError",
+      "arm": "A",
+      "kind": "vpm",
+      "exception": "RuntimeError",
+      "propagated": true,
+      "outcome": {
+        "ok": false,
+        "exception": "builtins.RuntimeError",
+        "message": "boom"
+      }
+    },
+    {
+      "id": "exc-B-npm-RuntimeError",
+      "arm": "B",
+      "kind": "npm",
+      "exception": "RuntimeError",
+      "propagated": true,
+      "outcome": {
+        "ok": false,
+        "exception": "builtins.RuntimeError",
+        "message": "boom"
+      }
+    },
+    {
+      "id": "exc-B-vpm-RuntimeError",
+      "arm": "B",
+      "kind": "vpm",
+      "exception": "RuntimeError",
+      "propagated": true,
+      "outcome": {
+        "ok": false,
+        "exception": "builtins.RuntimeError",
+        "message": "boom"
+      }
+    },
+    {
+      "id": "exc-A-npm-TypeError",
+      "arm": "A",
+      "kind": "npm",
+      "exception": "TypeError",
+      "propagated": true,
+      "outcome": {
+        "ok": false,
+        "exception": "builtins.TypeError",
+        "message": "boom"
+      }
+    },
+    {
+      "id": "exc-A-vpm-TypeError",
+      "arm": "A",
+      "kind": "vpm",
+      "exception": "TypeError",
+      "propagated": true,
+      "outcome": {
+        "ok": false,
+        "exception": "builtins.TypeError",
+        "message": "boom"
+      }
+    },
+    {
+      "id": "exc-B-npm-TypeError",
+      "arm": "B",
+      "kind": "npm",
+      "exception": "TypeError",
+      "propagated": true,
+      "outcome": {
+        "ok": false,
+        "exception": "builtins.TypeError",
+        "message": "boom"
+      }
+    },
+    {
+      "id": "exc-B-vpm-TypeError",
+      "arm": "B",
+      "kind": "vpm",
+      "exception": "TypeError",
+      "propagated": true,
+      "outcome": {
+        "ok": false,
+        "exception": "builtins.TypeError",
+        "message": "boom"
+      }
+    },
+    {
+      "id": "outer-npm-A-rep1",
+      "kind": "npm",
+      "arm": "A",
+      "rep": 1,
+      "report_returned": false,
+      "exception": "builtins.OSError",
+      "message": "broken data stream when reading image file"
+    },
+    {
+      "id": "outer-vpm-A-rep1",
+      "kind": "vpm",
+      "arm": "A",
+      "rep": 1,
+      "report_returned": false,
+      "exception": "builtins.OSError",
+      "message": "broken data stream when reading image file"
+    },
+    {
+      "id": "outer-npm-B-rep1",
+      "kind": "npm",
+      "arm": "B",
+      "rep": 1,
+      "report_returned": true,
+      "passed": false,
+      "exit_code": 1,
+      "stage_status": "fail",
+      "stage_findings": [
+        {
+          "name": "PNG readable",
+          "status": "fail",
+          "observed": "probe.png: broken data stream when reading image file",
+          "expected": "PNG atlas",
+          "source_pdf_pages": [
+            9
+          ],
+          "evidence": "probe.png",
+          "conflicts": []
+        }
+      ],
+      "json_serializable_strict": true
+    },
+    {
+      "id": "outer-vpm-B-rep1",
+      "kind": "vpm",
+      "arm": "B",
+      "rep": 1,
+      "report_returned": true,
+      "passed": false,
+      "exit_code": 1,
+      "stage_status": "fail",
+      "stage_findings": [
+        {
+          "name": "PNG readable",
+          "status": "fail",
+          "observed": "T_Probe_Diffuse_1.1001.png: broken data stream when reading image file",
+          "expected": "valid PNG",
+          "source_pdf_pages": [
+            30
+          ],
+          "evidence": "T_Probe_Diffuse_1.1001.png",
+          "conflicts": []
+        },
+        {
+          "name": "no alpha in ERM/Normal",
+          "status": "fail",
+          "observed": "T_Probe_ERM_2.1001.png: alpha present",
+          "expected": "RGB without alpha",
+          "source_pdf_pages": [
+            30
+          ],
+          "evidence": "T_Probe_ERM_2.1001.png",
+          "conflicts": []
+        },
+        {
+          "name": "flat placeholder",
+          "status": "fail",
+          "observed": "T_Probe_ERM_2.1001.png: alpha or more than one colour",
+          "expected": "256x256, one colour, no alpha",
+          "source_pdf_pages": [
+            22,
+            31
+          ],
+          "evidence": "T_Probe_ERM_2.1001.png",
+          "conflicts": [
+            5
+          ]
+        },
+        {
+          "name": "map set",
+          "status": "fail",
+          "observed": "slot 1 UDIM 1001: missing ['Diffuse']",
+          "expected": "Diffuse + ERM + Normal for every used UDIM",
+          "source_pdf_pages": [
+            30
+          ],
+          "evidence": "slot 1",
+          "conflicts": []
+        }
+      ],
+      "json_serializable_strict": true
+    },
+    {
+      "id": "outer-npm-A-rep2",
+      "kind": "npm",
+      "arm": "A",
+      "rep": 2,
+      "report_returned": false,
+      "exception": "builtins.OSError",
+      "message": "broken data stream when reading image file"
+    },
+    {
+      "id": "outer-vpm-A-rep2",
+      "kind": "vpm",
+      "arm": "A",
+      "rep": 2,
+      "report_returned": false,
+      "exception": "builtins.OSError",
+      "message": "broken data stream when reading image file"
+    },
+    {
+      "id": "outer-npm-B-rep2",
+      "kind": "npm",
+      "arm": "B",
+      "rep": 2,
+      "report_returned": true,
+      "passed": false,
+      "exit_code": 1,
+      "stage_status": "fail",
+      "stage_findings": [
+        {
+          "name": "PNG readable",
+          "status": "fail",
+          "observed": "probe.png: broken data stream when reading image file",
+          "expected": "PNG atlas",
+          "source_pdf_pages": [
+            9
+          ],
+          "evidence": "probe.png",
+          "conflicts": []
+        }
+      ],
+      "json_serializable_strict": true
+    },
+    {
+      "id": "outer-vpm-B-rep2",
+      "kind": "vpm",
+      "arm": "B",
+      "rep": 2,
+      "report_returned": true,
+      "passed": false,
+      "exit_code": 1,
+      "stage_status": "fail",
+      "stage_findings": [
+        {
+          "name": "PNG readable",
+          "status": "fail",
+          "observed": "T_Probe_Diffuse_1.1001.png: broken data stream when reading image file",
+          "expected": "valid PNG",
+          "source_pdf_pages": [
+            30
+          ],
+          "evidence": "T_Probe_Diffuse_1.1001.png",
+          "conflicts": []
+        },
+        {
+          "name": "no alpha in ERM/Normal",
+          "status": "fail",
+          "observed": "T_Probe_ERM_2.1001.png: alpha present",
+          "expected": "RGB without alpha",
+          "source_pdf_pages": [
+            30
+          ],
+          "evidence": "T_Probe_ERM_2.1001.png",
+          "conflicts": []
+        },
+        {
+          "name": "flat placeholder",
+          "status": "fail",
+          "observed": "T_Probe_ERM_2.1001.png: alpha or more than one colour",
+          "expected": "256x256, one colour, no alpha",
+          "source_pdf_pages": [
+            22,
+            31
+          ],
+          "evidence": "T_Probe_ERM_2.1001.png",
+          "conflicts": [
+            5
+          ]
+        },
+        {
+          "name": "map set",
+          "status": "fail",
+          "observed": "slot 1 UDIM 1001: missing ['Diffuse']",
+          "expected": "Diffuse + ERM + Normal for every used UDIM",
+          "source_pdf_pages": [
+            30
+          ],
+          "evidence": "slot 1",
+          "conflicts": []
+        }
+      ],
+      "json_serializable_strict": true
+    }
+  ],
+  "count": 52,
+  "delivery_passed": false
+}
