@@ -120,7 +120,7 @@ Evidence: `C:/x/capability-evals/t_fd239f23-profile-probe-v007/`
 No further environment variants are authorized: accept external user skills as a
 recorded limitation, or provide a separate Windows account/VM.
 
-## Resume checklist
+## Historical resume checklist (superseded by the accepted reference below)
 
 1. Operator: provide a runtime that excludes host `.agents/skills` discovery/reads
    without moving or deleting the user's files, or explicitly decide whether those
@@ -143,3 +143,60 @@ recorded limitation, or provide a separate Windows account/VM.
 6. Generate the expected PROJECT_STATE diff in scratch and paste it in the PR;
    **post-merge regeneration per AGENTS.md:66-67**. Do not edit PROJECT_STATE on this
    branch. The generator already supports `evals/capability-b01/reference.json`.
+
+## Accepted reference: v007 (2026-10-20)
+
+The user accepted host skill discovery as a recorded limitation on this card.
+This reference measures **repository + user skills**, NOT repository-only.
+It uses prepared `CODEX_HOME=C:/x/codex-eval-home`, `danger-full-access`,
+**no OS sandbox**, stdin DEVNULL. A separate Windows account/VM for a genuinely
+repository-only reference remains follow-up work; do not set it up as part of #390.
+
+Exact invocation (the full expanded argv is also in `reference.json`):
+
+```text
+uv run python tools/qa/capability_b01.py --agent codex --model gpt-6.1-sol --ref origin/main --etalon C:/Users/artsafro/AGR-DigitalTwin/data/benchmark/bench-b01-box/etalon.fbx --run-dir C:/x/capability-evals/t_fd239f23-reference-v007 --codex-home C:/x/codex-eval-home --isolation "repository + user skills; no OS sandbox; user-approved 2026-10-20" --command-json '["codex","--no-daemon","exec","--ephemeral","--json","--enable","skip_host_skill_discovery","--disable","memories","--disable","plugins","--model","gpt-6.1-sol","{prompt}"]'
+```
+
+- Input: origin/main `8d5c8987dbd46343176ca5af9d1791c864a86217`;
+  Codex CLI 0.160.1; model gpt-6.1-sol; Blender 5.1.2.
+- Session exit 0; measured duration 141.573 seconds; detached worktree removed,
+  protected benchmark/jobs/etalon and HEAD unchanged.
+- Model: **10/10**; etalon-self: **10/10**; additional independent FBX readback:
+  **10/10**. Extractor questions: 0; model triangles: 282.
+- External skills actually read successfully: `codex-work-route`,
+  `codex-work-loop` (item_4), `codex-work-review` (item_19).
+  `codex-work-engineering` is named in the retained stream but has no observed read.
+  These are every external skill named/loaded in the native parent transcript;
+  subagent internal context is not separately captured.
+- Procedural graders: **0 passed / 0 failed / 10 not measured**: native Codex
+  events are unsupported by the existing Claude-only graders. **Readiness=false**;
+  this is neither procedural success nor NPM/VPM delivery acceptance.
+
+The session chose versioned `benchmark/run-v001/` plus `benchmark/check-v001/`.
+The initial launcher expected root-level reports and recorded 0/0/1; that record
+remains untouched. After RED/GREEN regressions for native layout and CLI metadata,
+`dt evals --suite capability` regraded the SAME retained artifacts (no new session,
+no edits to reports/checkers/specs): **1 passed / 0 failed / 0 not measured** in
+`evals-capability-v003/report.json`. Earlier regrades remain preserved.
+The task now discovers versioned reports, requires one model/etalon pair in the
+same directory, rejects duplicate pairs/aliased inputs, and validates every
+supplementary report too; supplementary failures cannot disappear behind 20/20.
+
+### Threshold selected after the reference
+
+Benchmark success requires **20/20** mandatory model + etalon-self checks and
+all checks in any supplementary report; no failed/unmeasured checks, partial,
+nonfinite, duplicate or unsupported evidence. Individual numeric equality limits
+are the benchmark runner's existing semantics, not a new geometry tolerance.
+Full capability readiness additionally requires procedural **0 failed / 0 not
+measured**, session exit 0, unchanged protected inputs/HEAD and successful cleanup.
+The reference passes the benchmark threshold but NOT full readiness. There is no
+latency/token threshold: one sample does not establish a distribution.
+
+Committed `reference.json` retains exact argv, versions, limitations, counts,
+post-run threshold and SHA256s. `reference/` retains the actual machine reports;
+raw transcripts, FBX and etalon stay outside git under the run/input paths above.
+`test_reference` verifies the committed evidence hashes and all report counts.
+`PROJECT_STATE.md`: **post-merge regeneration per AGENTS.md:66-67**; this branch
+changes the generator and supplies only an expected scratch diff in the PR.
