@@ -1,18 +1,17 @@
 """EXPERIMENT COPY for hypothesis #386 (not production; tools/export/export_mesh_blender.py is unchanged).
 
-Only intervention: a dump mesh may carry `matrix_world` (4x4 rows); the local vertices go to
+Representation intervention: each dump mesh carries `matrix_world` (4x4 rows); local vertices go to
 from_pydata unchanged and that matrix is assigned as the object's matrix_world. A 4th argument
 receives a pre-FBX receipt (raw float32 local coords and stored matrix as Python floats, binary64
-world reconstruction). Everything else (names, topology, materials, units, validation, FBX options)
-is the production code verbatim.
+world reconstruction). Names, topology, materials, units and FBX options retain the experiment
+baseline; adoption additionally validates this synthetic payload and refuses path aliases.
 
     blender --background --factory-startup --disable-autoexec --python-exit-code 1 \
         --python experiments/hyp-386/export_local.py -- <dump.json> <out.blend> <out.fbx> <prefbx.json>
 
-One mesh object per dump mesh, its polygons as given (`polygons`, else rebuilt from `polygon_sizes`
-over triangles in fan order, else triangles); material slot index + 1 = material id
-(docs/domain/materials.md), slots named ID_<n>; every LEVEL_<name> helper as an empty at its
-location. Both outputs are new files: an existing path is refused. Units: metres, scale 1.
+The adopted interface accepts exactly six named triangle boxes with material ID_01 and a shared
+matrix payload, no polygon alternatives or helpers. Both outputs are new files: an existing path
+is refused. Units: metres, scale 1.
 Pattern: none — export tooling, not a building node (REVIEW_CHECKLIST Q1: new-case).
 """
 import json
@@ -21,14 +20,16 @@ from pathlib import Path
 
 import bpy
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from compatibility import paths, synthetic_dump
+
 args = sys.argv[sys.argv.index("--") + 1:]
 if len(args) != 4:
     raise SystemExit("usage: ... -- <dump.json> <out.blend> <out.fbx> <prefbx.json>")
 source, blend, fbx, prefbx = (Path(a).resolve() for a in args)
-for out in (blend, fbx, prefbx):
-    if out.exists():
-        raise SystemExit(f"{out} exists; write a new versioned output")
+paths(source, blend, fbx, prefbx)
 dump = json.loads(source.read_text(encoding="utf-8"))
+synthetic_dump(dump)
 
 
 def polygons(mesh):
