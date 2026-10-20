@@ -34,6 +34,8 @@ CANONICAL_SLOTS = (
     "TileDark",
     "FlowerBed",
     "Skirt",
+    "CurbGarden",
+    "Stairs",
 )
 FAMILIES = frozenset({"tile", "particles", "lawn", "ecogrid", "foliage", "soil"})
 DELIVERY_DIR = Path("C:/x/vatutino-ground-textures/v001")
@@ -303,11 +305,11 @@ def main(argv=None) -> int:
     except SystemExit as exc:
         return int(exc.code) if exc.code else 0
     try:
-        write_delivery(args.recipe, args.out, version=args.version, address=args.address)
+        manifest = write_delivery(args.recipe, args.out, version=args.version, address=args.address)
     except GroundRecipeError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
-    print("wrote 20 ground diffuse maps")
+    print(f"wrote {len(manifest['maps'])} ground diffuse maps")
     return 0
 
 

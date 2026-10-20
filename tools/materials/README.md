@@ -87,10 +87,11 @@ Add `--force` to replace an existing output. On success the process prints one s
 
 ## Ground recipes (Vatutino)
 
-Seeded Pillow/numpy diffuse maps for the ten Ground slots ([D117]), no external image inputs.
+Seeded Pillow/numpy diffuse maps for the twelve Ground slots ([D117]), no external image inputs.
+CurbGarden and Stairs use the same provisional provenance rules as the other slots.
 
 ```text
-uv run python tools/materials/ground_recipes.py deliver --version v002 --address Vatutino --out C:/x/vatutino-ground-textures/v002
+uv run python tools/materials/ground_recipes.py deliver --version v003 --address Vatutino --out C:/x/vatutino-ground-textures/v003
 ```
 
 NPM: 2048 at 30 px/m, repeat 68.266667 m; VPM: 4096 at 1024 px/m, repeat 4 m.
@@ -104,8 +105,8 @@ integration averages subpixel joints; NPM cannot resolve every grain or joint in
 `fraction_mm` drives Gravel pitch; subpixel grains become a periodic aggregate. Other unsourced
 colours/cells remain explicit provisional review defaults in JSON and on the contact sheet.
 
-Only `C:/x/vatutino-ground-textures/vNNN` (001..999), matching `--version`, is permitted. v002 is the
-corrected delivery authorized on the card; v001 remains untouched. Nonempty folders, repository paths,
+Only `C:/x/vatutino-ground-textures/vNNN` (001..999), matching `--version`, is permitted. v003 is the
+delivery that adds CurbGarden and Stairs; v001 and v002 remain untouched. Nonempty folders, repository paths,
 input aliases, malformed versions, incompatible physical scales and pixel-period overrides are refused.
 Maps and the contact sheet are computed/validated before output creation. Use a new version, never overwrite.
 PNG bytes are RGB uint8 with an sRGB chunk. Diffuse recipes are not a complete material/FBX delivery;
