@@ -151,6 +151,25 @@ def test_cross_run_reports_rejected(tmp_path):
     assert GRADERS['capability_b01'][0]({'benchmark': paths[:1], 'self_check': paths[1:]})['passed'] is False
 
 
+@pytest.mark.parametrize('status', ['pass', 'fail'])
+def test_supplementary_readback_report(tmp_path, status):
+    from twinqa.evals.runner import run
+    root = Path(__file__).resolve().parents[1]
+    for name in ('run-v001/report.json', 'run-v001/etalon-self.json', 'check-v001/report.json'):
+        path = tmp_path / 'benchmark' / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        data = report()
+        if name.startswith('check-') and status == 'fail':
+            data['checks'][0]['status'] = 'fail'
+            data['failed'] = ['bbox']
+            data['passed'] = False
+        path.write_text(json.dumps(data))
+    _, result, _ = run(root / 'evals', suite='capability', main=tmp_path,
+                       branch='synthetic', output=tmp_path / 'evals', cwd=root)
+    assert result['passed'] == (1 if status == 'pass' else 0)
+    assert result['failed'] == (0 if status == 'pass' else 1)
+
+
 def test_multiple_runner_outputs_rejected(tmp_path):
     from twinqa.evals.runner import run
     root = Path(__file__).resolve().parents[1]
