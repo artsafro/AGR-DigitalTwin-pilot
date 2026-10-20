@@ -141,6 +141,18 @@ def test_task_grades_versioned_runner_output(tmp_path, layout):
     assert result['not_measured'] == 0
 
 
+@pytest.mark.parametrize('alias', ['same', 'hardlink'])
+def test_model_and_etalon_reports_must_be_distinct(tmp_path, alias):
+    import os
+    path = tmp_path / 'report.json'
+    path.write_text(json.dumps(report()))
+    other = path
+    if alias == 'hardlink':
+        other = tmp_path / 'etalon-self.json'
+        os.link(path, other)
+    assert GRADERS['capability_b01'][0]({'benchmark': [path], 'self_check': [other]})['passed'] is False
+
+
 def test_cross_run_reports_rejected(tmp_path):
     paths = []
     for name in ('one', 'two'):
