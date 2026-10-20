@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "asset-store/1",
   "title": "Local asset store manifest",
-  "description": "Local disk and Google Drive inventory. Unknown release versions and licences are null; provenance requires a nonblank licence OR source. Missing checksums cannot sync.",
+  "description": "Local disk and Google Drive inventory. Source is required and nonblank [D151]; licence is optional. Missing checksums cannot sync.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -58,7 +58,8 @@
           "local_path",
           "sha256",
           "size",
-          "drive_link"
+          "drive_link",
+          "source"
         ],
         "properties": {
           "id": {
@@ -114,40 +115,14 @@
             ]
           },
           "source": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string",
+            "pattern": "\\S"
           },
           "recorded_path": {
             "type": "string",
             "minLength": 1
           }
-        },
-        "anyOf": [
-          {
-            "properties": {
-              "licence": {
-                "type": "string",
-                "pattern": "\\S"
-              }
-            },
-            "required": [
-              "licence"
-            ]
-          },
-          {
-            "properties": {
-              "source": {
-                "type": "string",
-                "pattern": "\\S"
-              }
-            },
-            "required": [
-              "source"
-            ]
-          }
-        ]
+        }
       }
     }
   }

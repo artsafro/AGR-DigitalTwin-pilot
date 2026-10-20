@@ -7,7 +7,7 @@
     "dropbox"
   ],
   "provenance_gaps": [
-    "Licences are unknown: licence=null; documented source satisfies provenance validation, not permission to redistribute.",
+    "Source is required and nonblank [D151]. Licence is optional and unknown (null); provenance is not permission to redistribute.",
     "MAF source records contain no vNNN token; version=null means unversioned, not a fabricated release.",
     "Google login is not performed. All drive_link values remain pending.",
     "SHA-256 and sizes measured from recorded_path files on 2026-10-20; pre-existing repository digests matched. Sources read only."

@@ -11,8 +11,7 @@ other name fail. With no rclone remote and no Drive-for-desktop folder the
 run stays on the local root and leaves ``drive_link`` as ``pending``. This
 tool never prompts for the one-time Google login.
 
-A declared sha256 that does not match the local file, missing both licence and
-source, an empty or partial manifest, a non-finite size, or size exactly 0
+A declared sha256 that does not match the local file, a missing or blank source [D151], an empty or partial manifest, a non-finite size, or size exactly 0
 (the minimum-size threshold) fails closed. Status is never ``pass`` or
 ``not_run``.
 """
@@ -149,8 +148,8 @@ def validate_document(document: object) -> list[str]:
         link = entry.get("drive_link", None)
         if link != PENDING and not (isinstance(link, str) and DRIVE_LINK_RE.fullmatch(link)):
             errors.append(f"{label}: partial: drive_link")
-        if not (_text(entry.get("licence")) or _text(entry.get("source"))):
-            errors.append(f"{label}: missing_licence_or_source")
+        if not _text(entry.get("source")):
+            errors.append(f"{label}: missing_source")
     return errors
 
 

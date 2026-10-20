@@ -97,6 +97,7 @@ def test_schema_requires_acceptance_fields():
         "sha256",
         "size",
         "drive_link",
+        "source",
     }
     assert schema["properties"]["local_root"]["const"] == "C:/x/assets"
     assert schema["properties"]["rejected_backends"]["items"]["const"] == "dropbox"
@@ -157,19 +158,21 @@ def test_sha256_mismatch_exits_nonzero_and_writes_nothing(tmp_path):
     assert not out.exists()
 
 
-def test_provenance_requires_at_least_one_nonblank_field():
+def test_provenance_requires_nonblank_source_regardless_of_licence():
     for licence in (None, "", "   ", "known-rights"):
         for source in (None, "", "   ", "verified-origin"):
             entry, _ = _entry(licence=licence, source=source)
             errors = sync.validate_document(_document([entry]))
-            assert bool(errors) == (not str(licence or "").strip() and not str(source or "").strip())
+            assert bool(errors) == (not str(source or "").strip())
 
 
-@pytest.mark.parametrize("missing_field", ["licence", "source"])
-def test_one_provenance_field_suffices_even_if_other_key_absent(missing_field):
+def test_licence_optional_but_source_required():
     entry, _ = _entry()
-    del entry[missing_field]
+    del entry["licence"]
     assert sync.validate_document(_document([entry])) == []
+    entry, _ = _entry()
+    del entry["source"]
+    assert sync.validate_document(_document([entry]))
 
 
 def test_absent_credentials_keep_links_pending(tmp_path, monkeypatch):

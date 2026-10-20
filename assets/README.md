@@ -10,8 +10,8 @@ Only JSON, schema, documentation and code go into Git. Never add binaries to Git
 **v001**, and Vatutino Ground **v014** (NPM, intermediate VPM and final VPM+UCX).
 Every SHA-256 and byte size was measured from the existing `recorded_path` on 2026-10-20;
 the six previously published digests matched. `recorded_path` is provenance, NOT an
-automatically trusted copy source. `source` cites repository metadata; a nonblank `source`
-OR `licence` is mandatory. All licences are unknown (`null`); a documented source does
+automatically trusted copy source. `source` cites repository metadata and is required and nonblank [D151].
+`licence` is optional. All licences are unknown (`null`); a documented source does
 not grant redistribution rights. MAF versions remain `null`: upstream records do not
 name a release. Do not invent one or interpret the inventory as delivery acceptance.
 
