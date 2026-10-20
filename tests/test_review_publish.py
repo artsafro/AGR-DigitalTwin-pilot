@@ -529,7 +529,7 @@ def test_max_dependent_merge_skips_when_max_absent(review, tmp_path):
         pytest.skip("3ds Max is not installed")
     out = tmp_path / "scene.max"
     preview = tmp_path / "preview.png"
-    result = adapter_mod.BatchAdapter().selftest(tmp_path / "work", out, preview)
+    result = adapter_mod.default_adapter().selftest(tmp_path / "work", out, preview)
     assert result["cameras"] >= 1
     assert result["materials"] >= 1
     assert out.is_file() and out.stat().st_size > 0
