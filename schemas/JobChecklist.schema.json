@@ -54,6 +54,7 @@
     },
     "Evidence": {
       "additionalProperties": false,
+      "description": "A hashed reference. Source code is pinned to ``commit`` (#387): its sha256 is checked\nagainst the blob at that commit, so later edits of the live file do not invalidate it.\nWithout ``commit`` the working-tree file is hashed (generated artifacts, receipts).",
       "properties": {
         "path": {
           "minLength": 1,
@@ -65,6 +66,19 @@
           "pattern": "^[a-f0-9]{64}$",
           "title": "Sha256",
           "type": "string"
+        },
+        "commit": {
+          "anyOf": [
+            {
+              "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Commit"
         }
       },
       "required": [

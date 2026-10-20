@@ -516,8 +516,7 @@ def test_pinned_source_wrong_revision_fails(bundle, tmp_path, case):
         ref["commit"] = side
         ref["sha256"] = hashlib.sha256(b"side branch").hexdigest()
     else:
-        import shutil
-        shutil.rmtree(tmp_path / ".git")
+        (tmp_path / ".git").rename(tmp_path / "moved-git-dir")  # rmtree trips on read-only objects on Windows
     result = load().inspect_job(bundle, tmp_path)
     assert not result["passed"]
     assert result["gates"][0]["status"] == "fail" and result["gates"][0]["errors"], result["gates"][0]

@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import json
 import math
+import subprocess
 from pathlib import Path
 from typing import Annotated, Literal
 
@@ -20,6 +21,8 @@ INVARIANTS = ("open_borders_hidden", "no_see_through_hole", "no_visible_back_fac
               "quad_dominance", "texel_ready")
 Text = Annotated[str, Field(min_length=1, pattern=r"\S")]
 Digest = Annotated[str, Field(pattern=r"^[a-f0-9]{64}$")]
+# Full object id only (SHA-1 or SHA-256 repositories): refs and abbreviations are mutable/ambiguous.
+ObjectId = Annotated[str, Field(pattern=r"^(?:[a-f0-9]{40}|[a-f0-9]{64})$")]
 
 
 class Strict(BaseModel):
@@ -27,8 +30,12 @@ class Strict(BaseModel):
 
 
 class Evidence(Strict):
+    """A hashed reference. Source code is pinned to ``commit`` (#387): its sha256 is checked
+    against the blob at that commit, so later edits of the live file do not invalidate it.
+    Without ``commit`` the working-tree file is hashed (generated artifacts, receipts)."""
     path: Text
     sha256: Digest
+    commit: ObjectId | None = None
 
 
 class Gate(Strict):
@@ -90,11 +97,29 @@ def _resolve(root, name):
     return path
 
 
+def _git(root, *args):
+    return subprocess.run(["git", "-C", str(root), *args], capture_output=True, timeout=60)
+
+
+def _pinned_blob(root, ref):
+    """Bytes of ``ref.path`` at ``ref.commit``; the commit must be in the history of HEAD."""
+    if _git(root, "cat-file", "-e", f"{ref.commit}^{{commit}}").returncode != 0:
+        raise ValueError(f"pinned commit not found: {ref.path}@{ref.commit}")
+    if _git(root, "merge-base", "--is-ancestor", ref.commit, "HEAD").returncode != 0:
+        raise ValueError(f"pinned commit is not in the history of HEAD: {ref.path}@{ref.commit}")
+    blob = _git(root, "cat-file", "blob", f"{ref.commit}:./{ref.path}")
+    if blob.returncode != 0:
+        raise ValueError(f"path absent at pinned commit: {ref.path}@{ref.commit}")
+    return blob.stdout
+
+
 def _verify(root, ref):
+    """Return the verified bytes; callers parse these, never a second read of the path."""
     path = _resolve(root, ref.path)
-    if hashlib.sha256(path.read_bytes()).hexdigest() != ref.sha256:
+    data = _pinned_blob(root, ref) if ref.commit else path.read_bytes()
+    if hashlib.sha256(data).hexdigest() != ref.sha256:
         raise ValueError(f"hash mismatch: {ref.path}")
-    return path
+    return data
 
 
 class UniqueLoader(yaml.SafeLoader):
@@ -114,8 +139,9 @@ def _mapping(loader, node):
 UniqueLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _mapping)
 
 
-def _read(path):
-    value = yaml.load(path.read_text(encoding="utf-8"), Loader=UniqueLoader)
+def _read(source):
+    text = source.decode("utf-8") if isinstance(source, bytes) else source.read_text(encoding="utf-8")
+    value = yaml.load(text, Loader=UniqueLoader)
     # YAML admits NaN/inf; no evidence object may silently carry them.
     json.dumps(value, allow_nan=False)
     return value
@@ -139,7 +165,7 @@ def _receipt(root, ref, gate, job):
     expected = [a.sha256 for a in job.artifacts]
     if not expected or subjects != expected:
         raise ValueError("receipt must bind the current exported artifacts in order")
-    if value.get("input_evidence") != [ref.model_dump() for ref in job.inputs]:
+    if value.get("input_evidence") != [ref.model_dump(exclude_none=True) for ref in job.inputs]:
         raise ValueError("receipt must bind the exact current input inventory in order")
     parts = job.gates.parts.evidence
     if not parts or value.get("parts_sha256") != parts[0].sha256:
@@ -165,7 +191,7 @@ def _gate(root, gate, entry, job):
         if any(q.answer is None for q in parts.questions):
             raise ValueError("unanswered parts question")
     elif gate == "report":
-        if not _verify(root, entry.evidence[0]).read_text(encoding="utf-8").strip():
+        if not _verify(root, entry.evidence[0]).decode("utf-8").strip():
             raise ValueError("empty report")
     else:
         for artifact in job.artifacts:
