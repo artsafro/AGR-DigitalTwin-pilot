@@ -149,7 +149,9 @@ def _gate(root, gate, entry, job):
         if entry.evidence != job.inputs:
             raise ValueError("inputs gate must record the full input inventory")
     elif gate == "parts":
-        from dt_ai.parts.model import PartsList
+        # Use the public contract facade; importing parts first hits its legacy
+        # cycle through core.models in a fresh CLI process (owned separately by #354).
+        from dt_ai.core.models import PartsList
         parts = PartsList.model_validate(_read(_verify(root, entry.evidence[0])))
         if parts.synthetic != job.synthetic or parts.status != "confirmed":
             raise ValueError("parts require matching scope and Gate 1 confirmation")
