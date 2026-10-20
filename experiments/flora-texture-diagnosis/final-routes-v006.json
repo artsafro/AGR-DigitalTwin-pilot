@@ -1,0 +1,1387 @@
+{
+  "decision": "Artem, t_49156f66, 2026-10-20 20:27",
+  "control_calibration": "passed",
+  "controls": [
+    {
+      "object": "Tilia_cordata_VPM",
+      "charts": 664,
+      "passed": true
+    },
+    {
+      "object": "Crataegus_mollis_VPM",
+      "charts": 264,
+      "passed": true
+    },
+    {
+      "object": "Spiraea_japonica_NPM",
+      "charts": 10,
+      "passed": true
+    }
+  ],
+  "raw_all_originals_gate": "failed",
+  "source_limited_objects": 74,
+  "route_count": 99,
+  "route_counts": {
+    "remap_star_to_whole_plant_image": 7,
+    "repair_source_uv_then_restore_or_bake_atlas": 12,
+    "rebuild_whole_plant_star_and_uv": 54,
+    "restore_or_bake_original_atlas": 24,
+    "resolve_source_atlas_region_then_restore_or_bake": 2
+  },
+  "asset_accepted": false,
+  "semantic_masks_certified": false,
+  "scope": "final diagnostic repair recommendations, not validated fixes or asset passes",
+  "provenance": {
+    "C:\\x\\review\\2026-10-20\\flora-texture-diagnosis\\geometry-diagnostics-v005\\metrics.json": "f4155cdd475f5975bcc722c7a3190aa3f08e5cf5fc935ef0be024f65f1208152",
+    "C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-3dsmax-t_49156f66\\inventory-all-v005.json": "843a464ce16c432815a48a0a5c84f9bf8aa4bbb09b3a0fae343527863a653112",
+    "C:\\x\\review\\2026-10-20\\flora-texture-diagnosis\\geometry-diagnostics-v005\\provenance.json": "3e41b7715b82971f35fe6fdd0cfcf0cbe49e70bc4fb35498d927ad84fe1c7d29"
+  },
+  "source_integrity": {
+    "protected_files": 236,
+    "unchanged": 236,
+    "changed": []
+  },
+  "routes": [
+    {
+      "object": "Acer_platanoides_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "remap_star_to_whole_plant_image",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Acer_platanoides_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "repair_source_uv_then_restore_or_bake_atlas",
+      "source_raw_clean": false,
+      "source_chart_count": 330,
+      "library_failed_charts": 330,
+      "light_failed_charts": null,
+      "source_issue_count": 4,
+      "source_issue_kinds": {
+        "source_geometric_defect": 4
+      }
+    },
+    {
+      "object": "Acer_tataricum_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 110,
+      "library_failed_charts": 110,
+      "light_failed_charts": null,
+      "source_issue_count": 15,
+      "source_issue_kinds": {
+        "measurement_limitation": 15
+      }
+    },
+    {
+      "object": "Acer_tataricum_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "repair_source_uv_then_restore_or_bake_atlas",
+      "source_raw_clean": false,
+      "source_chart_count": 1488,
+      "library_failed_charts": 1488,
+      "light_failed_charts": null,
+      "source_issue_count": 1,
+      "source_issue_kinds": {
+        "source_geometric_defect": 1
+      }
+    },
+    {
+      "object": "Acer_tataricum_subsp_ginnala_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "remap_star_to_whole_plant_image",
+      "source_raw_clean": false,
+      "source_chart_count": 4,
+      "library_failed_charts": 4,
+      "light_failed_charts": null,
+      "source_issue_count": 4,
+      "source_issue_kinds": {
+        "source_geometric_defect": 4
+      }
+    },
+    {
+      "object": "Acer_tataricum_subsp_ginnala_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 664,
+      "library_failed_charts": 664,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Actaea_simplex_Atropurpurea_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 10,
+      "library_failed_charts": 10,
+      "light_failed_charts": null,
+      "source_issue_count": 10,
+      "source_issue_kinds": {
+        "measurement_limitation": 10
+      }
+    },
+    {
+      "object": "Amelanchier_lamarckii_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 701,
+      "library_failed_charts": 701,
+      "light_failed_charts": 200,
+      "source_issue_count": 214,
+      "source_issue_kinds": {
+        "measurement_limitation": 214
+      }
+    },
+    {
+      "object": "Amelanchier_lamarckii_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "repair_source_uv_then_restore_or_bake_atlas",
+      "source_raw_clean": false,
+      "source_chart_count": 2964,
+      "library_failed_charts": 2964,
+      "light_failed_charts": null,
+      "source_issue_count": 1110,
+      "source_issue_kinds": {
+        "source_geometric_defect": 1110
+      }
+    },
+    {
+      "object": "Berberis_ottawensis_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 8,
+      "library_failed_charts": 8,
+      "light_failed_charts": null,
+      "source_issue_count": 8,
+      "source_issue_kinds": {
+        "measurement_limitation": 8
+      }
+    },
+    {
+      "object": "Berberis_thunbergii_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Berberis_thunbergii_VPM",
+      "profile": "VPM",
+      "source_tag": "florio",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 10,
+      "library_failed_charts": 10,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Betula_pendula_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 57,
+      "library_failed_charts": 57,
+      "light_failed_charts": null,
+      "source_issue_count": 42,
+      "source_issue_kinds": {
+        "measurement_limitation": 42
+      }
+    },
+    {
+      "object": "Calamagrostis_acutiflora_Karl_Foerster_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 9,
+      "library_failed_charts": 9,
+      "light_failed_charts": null,
+      "source_issue_count": 9,
+      "source_issue_kinds": {
+        "measurement_limitation": 9
+      }
+    },
+    {
+      "object": "Calamagrostis_brachytricha_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 10,
+      "library_failed_charts": 10,
+      "light_failed_charts": null,
+      "source_issue_count": 10,
+      "source_issue_kinds": {
+        "measurement_limitation": 10
+      }
+    },
+    {
+      "object": "Calamagrostis_brachytricha_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 20,
+      "library_failed_charts": 20,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Cornus_alba_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 8,
+      "library_failed_charts": 8,
+      "light_failed_charts": null,
+      "source_issue_count": 8,
+      "source_issue_kinds": {
+        "measurement_limitation": 8
+      }
+    },
+    {
+      "object": "Cornus_alba_Sibirica_Variegata_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Cornus_alba_Sibirica_Variegata_VPM",
+      "profile": "VPM",
+      "source_tag": "florio",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 10,
+      "library_failed_charts": 10,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Cornus_alba_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 16,
+      "library_failed_charts": 16,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Cornus_sericea_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 11,
+      "library_failed_charts": 11,
+      "light_failed_charts": 19,
+      "source_issue_count": 11,
+      "source_issue_kinds": {
+        "measurement_limitation": 11
+      }
+    },
+    {
+      "object": "Cotoneaster_lucidus_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Cotoneaster_lucidus_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "repair_source_uv_then_restore_or_bake_atlas",
+      "source_raw_clean": false,
+      "source_chart_count": 16,
+      "library_failed_charts": 16,
+      "light_failed_charts": null,
+      "source_issue_count": 4,
+      "source_issue_kinds": {
+        "source_geometric_defect": 4
+      }
+    },
+    {
+      "object": "Crataegus_mollis_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 38,
+      "library_failed_charts": 38,
+      "light_failed_charts": 52,
+      "source_issue_count": 34,
+      "source_issue_kinds": {
+        "measurement_limitation": 34
+      }
+    },
+    {
+      "object": "Crataegus_mollis_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 264,
+      "library_failed_charts": 264,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Crataegus_monogyna_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 9,
+      "library_failed_charts": 9,
+      "light_failed_charts": null,
+      "source_issue_count": 9,
+      "source_issue_kinds": {
+        "measurement_limitation": 9
+      }
+    },
+    {
+      "object": "Dasiphora_fruticosa_Goldfinger_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 16,
+      "library_failed_charts": 16,
+      "light_failed_charts": null,
+      "source_issue_count": 16,
+      "source_issue_kinds": {
+        "measurement_limitation": 16
+      }
+    },
+    {
+      "object": "Dasiphora_fruticosa_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Dasiphora_fruticosa_VPM",
+      "profile": "VPM",
+      "source_tag": "florio",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 10,
+      "library_failed_charts": 10,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Echinacea_purpurea_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 8,
+      "library_failed_charts": 8,
+      "light_failed_charts": null,
+      "source_issue_count": 8,
+      "source_issue_kinds": {
+        "measurement_limitation": 8
+      }
+    },
+    {
+      "object": "Echinacea_purpurea_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 16,
+      "library_failed_charts": 16,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Euonymus_alatus_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 436,
+      "library_failed_charts": 436,
+      "light_failed_charts": null,
+      "source_issue_count": 430,
+      "source_issue_kinds": {
+        "measurement_limitation": 430
+      }
+    },
+    {
+      "object": "Eutrochium_maculatum_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 8,
+      "library_failed_charts": 8,
+      "light_failed_charts": null,
+      "source_issue_count": 8,
+      "source_issue_kinds": {
+        "measurement_limitation": 8
+      }
+    },
+    {
+      "object": "Eutrochium_maculatum_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 16,
+      "library_failed_charts": 16,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Filipendula_ulmaria_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 8,
+      "library_failed_charts": 8,
+      "light_failed_charts": null,
+      "source_issue_count": 8,
+      "source_issue_kinds": {
+        "measurement_limitation": 8
+      }
+    },
+    {
+      "object": "Heuchera_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 10,
+      "library_failed_charts": 10,
+      "light_failed_charts": null,
+      "source_issue_count": 10,
+      "source_issue_kinds": {
+        "measurement_limitation": 10
+      }
+    },
+    {
+      "object": "Hydrangea_arborescens_Bounty_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 15,
+      "library_failed_charts": 15,
+      "light_failed_charts": null,
+      "source_issue_count": 15,
+      "source_issue_kinds": {
+        "measurement_limitation": 15
+      }
+    },
+    {
+      "object": "Hydrangea_arborescens_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 1,
+        "measurement_limitation": 4
+      }
+    },
+    {
+      "object": "Hydrangea_arborescens_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 10,
+      "library_failed_charts": 10,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Hydrangea_paniculata_Limelight_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 14,
+      "library_failed_charts": 14,
+      "light_failed_charts": null,
+      "source_issue_count": 14,
+      "source_issue_kinds": {
+        "measurement_limitation": 14
+      }
+    },
+    {
+      "object": "Hydrangea_paniculata_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 9,
+      "library_failed_charts": 9,
+      "light_failed_charts": null,
+      "source_issue_count": 9,
+      "source_issue_kinds": {
+        "measurement_limitation": 9
+      }
+    },
+    {
+      "object": "Juniperus_sabina_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 8,
+      "library_failed_charts": 8,
+      "light_failed_charts": null,
+      "source_issue_count": 8,
+      "source_issue_kinds": {
+        "measurement_limitation": 8
+      }
+    },
+    {
+      "object": "Malus_Evereste_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 73,
+      "library_failed_charts": 73,
+      "light_failed_charts": null,
+      "source_issue_count": 53,
+      "source_issue_kinds": {
+        "measurement_limitation": 53
+      }
+    },
+    {
+      "object": "Malus_niedzwetzkyana_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 110,
+      "library_failed_charts": 110,
+      "light_failed_charts": null,
+      "source_issue_count": 15,
+      "source_issue_kinds": {
+        "measurement_limitation": 15
+      }
+    },
+    {
+      "object": "Malus_niedzwetzkyana_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 45,
+      "library_failed_charts": 45,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Miscanthus_sinensis_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 9,
+      "library_failed_charts": 9,
+      "light_failed_charts": null,
+      "source_issue_count": 9,
+      "source_issue_kinds": {
+        "measurement_limitation": 9
+      }
+    },
+    {
+      "object": "Padus_maackii_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 72,
+      "library_failed_charts": 72,
+      "light_failed_charts": null,
+      "source_issue_count": 25,
+      "source_issue_kinds": {
+        "measurement_limitation": 25
+      }
+    },
+    {
+      "object": "Padus_maackii_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "repair_source_uv_then_restore_or_bake_atlas",
+      "source_raw_clean": false,
+      "source_chart_count": 45,
+      "library_failed_charts": 45,
+      "light_failed_charts": null,
+      "source_issue_count": 4,
+      "source_issue_kinds": {
+        "source_geometric_defect": 4
+      }
+    },
+    {
+      "object": "Parthenocissus_quinquefolia_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Parthenocissus_quinquefolia_VPM",
+      "profile": "VPM",
+      "source_tag": "florio",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 10,
+      "library_failed_charts": 10,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Philadelphus_coronarius_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 11,
+      "library_failed_charts": 11,
+      "light_failed_charts": null,
+      "source_issue_count": 11,
+      "source_issue_kinds": {
+        "measurement_limitation": 11
+      }
+    },
+    {
+      "object": "Physocarpus_opulifolius_Diabolo_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "remap_star_to_whole_plant_image",
+      "source_raw_clean": false,
+      "source_chart_count": 9,
+      "library_failed_charts": 9,
+      "light_failed_charts": null,
+      "source_issue_count": 9,
+      "source_issue_kinds": {
+        "source_geometric_defect": 9
+      }
+    },
+    {
+      "object": "Physocarpus_opulifolius_Diabolo_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 18,
+      "library_failed_charts": 18,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Physocarpus_opulifolius_Luteus_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Physocarpus_opulifolius_Luteus_VPM",
+      "profile": "VPM",
+      "source_tag": "florio",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 10,
+      "library_failed_charts": 10,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Physocarpus_opulifolius_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "remap_star_to_whole_plant_image",
+      "source_raw_clean": false,
+      "source_chart_count": 10,
+      "library_failed_charts": 10,
+      "light_failed_charts": null,
+      "source_issue_count": 10,
+      "source_issue_kinds": {
+        "source_geometric_defect": 10
+      }
+    },
+    {
+      "object": "Physocarpus_opulifolius_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 20,
+      "library_failed_charts": 20,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Picea_pungens_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 486,
+      "library_failed_charts": 486,
+      "light_failed_charts": null,
+      "source_issue_count": 486,
+      "source_issue_kinds": {
+        "measurement_limitation": 486
+      }
+    },
+    {
+      "object": "Picea_pungens_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "resolve_source_atlas_region_then_restore_or_bake",
+      "source_raw_clean": false,
+      "source_chart_count": 2586,
+      "library_failed_charts": 2586,
+      "light_failed_charts": null,
+      "source_issue_count": 2122,
+      "source_issue_kinds": {
+        "source_geometric_defect": 2058,
+        "measurement_limitation": 64
+      }
+    },
+    {
+      "object": "Pinus_mugo_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Pinus_mugo_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "repair_source_uv_then_restore_or_bake_atlas",
+      "source_raw_clean": false,
+      "source_chart_count": 8,
+      "library_failed_charts": 8,
+      "light_failed_charts": null,
+      "source_issue_count": 8,
+      "source_issue_kinds": {
+        "source_geometric_defect": 8
+      }
+    },
+    {
+      "object": "Pinus_nigra_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "remap_star_to_whole_plant_image",
+      "source_raw_clean": false,
+      "source_chart_count": 4,
+      "library_failed_charts": 4,
+      "light_failed_charts": null,
+      "source_issue_count": 4,
+      "source_issue_kinds": {
+        "source_geometric_defect": 4
+      }
+    },
+    {
+      "object": "Pinus_nigra_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "resolve_source_atlas_region_then_restore_or_bake",
+      "source_raw_clean": false,
+      "source_chart_count": 2586,
+      "library_failed_charts": 2586,
+      "light_failed_charts": null,
+      "source_issue_count": 2120,
+      "source_issue_kinds": {
+        "source_geometric_defect": 1948,
+        "measurement_limitation": 172
+      }
+    },
+    {
+      "object": "Prunus_padus_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 103,
+      "library_failed_charts": 103,
+      "light_failed_charts": null,
+      "source_issue_count": 9,
+      "source_issue_kinds": {
+        "measurement_limitation": 9
+      }
+    },
+    {
+      "object": "Prunus_padus_VPM",
+      "profile": "VPM",
+      "source_tag": "florio",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 144,
+      "library_failed_charts": 144,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Salix_purpurea_Mayak_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 9,
+      "library_failed_charts": 9,
+      "light_failed_charts": null,
+      "source_issue_count": 9,
+      "source_issue_kinds": {
+        "measurement_limitation": 9
+      }
+    },
+    {
+      "object": "Sorbaria_sorbifolia_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Sorbaria_sorbifolia_Sem_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 16,
+      "library_failed_charts": 16,
+      "light_failed_charts": null,
+      "source_issue_count": 16,
+      "source_issue_kinds": {
+        "measurement_limitation": 16
+      }
+    },
+    {
+      "object": "Sorbaria_sorbifolia_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "repair_source_uv_then_restore_or_bake_atlas",
+      "source_raw_clean": false,
+      "source_chart_count": 14,
+      "library_failed_charts": 14,
+      "light_failed_charts": null,
+      "source_issue_count": 4,
+      "source_issue_kinds": {
+        "source_geometric_defect": 4
+      }
+    },
+    {
+      "object": "Sorbus_aucuparia_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 110,
+      "library_failed_charts": 110,
+      "light_failed_charts": null,
+      "source_issue_count": 15,
+      "source_issue_kinds": {
+        "measurement_limitation": 15
+      }
+    },
+    {
+      "object": "Sorbus_aucuparia_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "repair_source_uv_then_restore_or_bake_atlas",
+      "source_raw_clean": false,
+      "source_chart_count": 28,
+      "library_failed_charts": 28,
+      "light_failed_charts": null,
+      "source_issue_count": 3,
+      "source_issue_kinds": {
+        "source_geometric_defect": 3
+      }
+    },
+    {
+      "object": "Sorbus_commixta_Dodong_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 130,
+      "library_failed_charts": 130,
+      "light_failed_charts": null,
+      "source_issue_count": 123,
+      "source_issue_kinds": {
+        "measurement_limitation": 123
+      }
+    },
+    {
+      "object": "Spiraea_betulifolia_Tor_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Spiraea_betulifolia_Tor_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 15,
+      "library_failed_charts": 15,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Spiraea_bumalda_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Spiraea_bumalda_VPM",
+      "profile": "VPM",
+      "source_tag": "florio",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 10,
+      "library_failed_charts": 10,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Spiraea_cinerea_Grefsheim_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Spiraea_cinerea_Grefsheim_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "repair_source_uv_then_restore_or_bake_atlas",
+      "source_raw_clean": false,
+      "source_chart_count": 11,
+      "library_failed_charts": 11,
+      "light_failed_charts": null,
+      "source_issue_count": 1,
+      "source_issue_kinds": {
+        "source_geometric_defect": 1
+      }
+    },
+    {
+      "object": "Spiraea_japonica_Firelight_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "measurement_limitation": 2,
+        "source_geometric_defect": 3
+      }
+    },
+    {
+      "object": "Spiraea_japonica_Firelight_VPM",
+      "profile": "VPM",
+      "source_tag": "florio",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 10,
+      "library_failed_charts": 10,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Spiraea_japonica_Little_Princess_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 10,
+      "library_failed_charts": 10,
+      "light_failed_charts": null,
+      "source_issue_count": 10,
+      "source_issue_kinds": {
+        "measurement_limitation": 10
+      }
+    },
+    {
+      "object": "Spiraea_japonica_Little_Princess_VPM",
+      "profile": "VPM",
+      "source_tag": "florio",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 10,
+      "library_failed_charts": 10,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Spiraea_japonica_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "remap_star_to_whole_plant_image",
+      "source_raw_clean": true,
+      "source_chart_count": 10,
+      "library_failed_charts": 10,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Spiraea_japonica_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 20,
+      "library_failed_charts": 20,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Stephanandra_incisa_Crispa_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Stephanandra_incisa_Crispa_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 18,
+      "library_failed_charts": 18,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Symphyotrichum_novae_angliae_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 9,
+      "library_failed_charts": 9,
+      "light_failed_charts": null,
+      "source_issue_count": 9,
+      "source_issue_kinds": {
+        "measurement_limitation": 9
+      }
+    },
+    {
+      "object": "Symphyotrichum_novae_angliae_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 18,
+      "library_failed_charts": 18,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Syringa_josikaea_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Syringa_josikaea_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "repair_source_uv_then_restore_or_bake_atlas",
+      "source_raw_clean": false,
+      "source_chart_count": 511,
+      "library_failed_charts": 511,
+      "light_failed_charts": null,
+      "source_issue_count": 205,
+      "source_issue_kinds": {
+        "source_geometric_defect": 205
+      }
+    },
+    {
+      "object": "Syringa_vulgaris_Andenken_an_Ludwig_Spath_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 511,
+      "library_failed_charts": 511,
+      "light_failed_charts": null,
+      "source_issue_count": 507,
+      "source_issue_kinds": {
+        "measurement_limitation": 507
+      }
+    },
+    {
+      "object": "Syringa_vulgaris_Krasavitsa_Moskvy_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 511,
+      "library_failed_charts": 511,
+      "light_failed_charts": null,
+      "source_issue_count": 507,
+      "source_issue_kinds": {
+        "measurement_limitation": 507
+      }
+    },
+    {
+      "object": "Syringa_vulgaris_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Syringa_vulgaris_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "repair_source_uv_then_restore_or_bake_atlas",
+      "source_raw_clean": false,
+      "source_chart_count": 247,
+      "library_failed_charts": 247,
+      "light_failed_charts": null,
+      "source_issue_count": 11,
+      "source_issue_kinds": {
+        "source_geometric_defect": 11
+      }
+    },
+    {
+      "object": "Thuja_occidentalis_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "remap_star_to_whole_plant_image",
+      "source_raw_clean": false,
+      "source_chart_count": 4,
+      "library_failed_charts": 4,
+      "light_failed_charts": null,
+      "source_issue_count": 4,
+      "source_issue_kinds": {
+        "source_geometric_defect": 4
+      }
+    },
+    {
+      "object": "Tilia_cordata_NPM",
+      "profile": "NPM",
+      "source_tag": "original",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 141,
+      "library_failed_charts": 141,
+      "light_failed_charts": null,
+      "source_issue_count": 132,
+      "source_issue_kinds": {
+        "measurement_limitation": 132
+      }
+    },
+    {
+      "object": "Tilia_cordata_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "restore_or_bake_original_atlas",
+      "source_raw_clean": true,
+      "source_chart_count": 664,
+      "library_failed_charts": 664,
+      "light_failed_charts": null,
+      "source_issue_count": 0,
+      "source_issue_kinds": {}
+    },
+    {
+      "object": "Viburnum_opulus_Roseum_NPM",
+      "profile": "NPM",
+      "source_tag": "florio",
+      "route": "rebuild_whole_plant_star_and_uv",
+      "source_raw_clean": false,
+      "source_chart_count": 5,
+      "library_failed_charts": 5,
+      "light_failed_charts": null,
+      "source_issue_count": 5,
+      "source_issue_kinds": {
+        "source_geometric_defect": 5
+      }
+    },
+    {
+      "object": "Viburnum_opulus_Roseum_VPM",
+      "profile": "VPM",
+      "source_tag": "original",
+      "route": "repair_source_uv_then_restore_or_bake_atlas",
+      "source_raw_clean": false,
+      "source_chart_count": 505,
+      "library_failed_charts": 505,
+      "light_failed_charts": null,
+      "source_issue_count": 61,
+      "source_issue_kinds": {
+        "source_geometric_defect": 61
+      }
+    }
+  ],
+  "full_issue_ledger": "C:/x/review/2026-10-20/flora-texture-diagnosis/final-routes-v006/routes.json"
+}

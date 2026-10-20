@@ -102,7 +102,11 @@ VPM foliage/trunk roles must still match the atlas content; a geometric score al
   plane margin as proof of clipping. The plane should be slightly larger than the plant.
   This scope follows the orchestrator's 2026-10-20 14:42 clarification on the same card;
   the original 0.80–0.95 bbox/island target remains reported for comparison.
-- Calibrate on originals before judging replacements. Do not substitute opaque-pixel density,
+- Calibrate on valid original controls (Tilia/Crataegus VPM, Spiraea NPM star) before judging replacements.
+  Artem accepted this scope on 2026-10-20 (Kanban t_49156f66, 20:27): originals failing D155
+  are retained as source defects/limitations, each with a listed, unexecuted repair route.
+  Do not lower the 80% rule, turn these failures into passes, or edit originals in the diagnosis.
+  Do not substitute opaque-pixel density,
   silently change the denominator, call an unclassified island a pass, or assume a catalogue
   NPM label proves whole-plant star topology. Report original failures, unknown roles/cells
   and the score distribution. The diagnostic implementation is not an L2 delivery gate;

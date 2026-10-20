@@ -1,204 +1,152 @@
 # Flora texture diagnosis (#369)
 
-- Причина: сохранённые UV привязали к картам с другой компоновкой; механизм подтверждён для 99/99 объектов, визуально — для шести видов.
-- Уточнение по коре выполнено: исходный узкий остров липы проходит containment 99,5347%; покрытие всей полосы к нему неприменимо.
-- Выполнен новый расчёт 201 записи: 99 оригиналов + 99 v003 + 3 light; шесть обновлённых листов просмотрены лично.
-- Геометрический разбор снял 16 323 неизвестных роли: теперь 0; но цельный исходный спрайт черёмухи покрыт лишь на 67,59%, часть ветки обрезана.
-- Калибровка НЕ пройдена: 24 rebind и 1 star предварительные, 74 требуют проверки исходников; PR #377 draft, ассеты не изменены.
+- Причина: UV всех 99 объектов сохранили, но назначили карты с другой компоновкой; дефект виден на шести видах, light его наследует.
+- Решение Артёма 20:27 применено: исходные дефекты/ограничения перечислены отдельно, порог 80% не снижен, исходники не правились.
+- Контроли проходят: липа ВПМ 664/664, боярышник ВПМ 264/264, спирея NPM 10/10 островов; у 74/99 исходников есть отдельные замечания.
+- Для 99/99 выданы рекомендации: 24 восстановить атлас, 12 сначала исправить исходные UV, 2 уточнить области, 7 развернуть звезду, 54 перестроить NPM.
+- Диагностика готова к ревью, не приёмка ассетов: шесть листов и все маршруты в HTML; отдельное исправление — #411, опубликованные файлы неизменны.
 
-## Current geometry-aware continuation (v005)
+## Final decision and calibration (v006)
 
-The unknown-role implementation handoff below is **resolved for geometric candidates**, not
-replaced by a semantic-accuracy claim. See the reproducible
-[geometry experiment](../experiments/flora-geometry-decomposition.md) for methods, commands,
-three-run timings, synthetic invariants and the unchanged acceptance gate.
+Artem accepted the source-limitation recommendation on **2026-10-20**, recorded in
+Kanban `t_49156f66` at **20:27**, handed to this worker at 20:46. This resolves the
+blanket-all-originals calibration blocker, not the source defects themselves.
+[D155](../decisions.md) and the [Flora sheet](../domain/areas/flora.md#geometric-sprite-coverage-d155)
+record the scope: **calibrate on valid originals; list and route failing originals as
+source defects/limitations; do not lower 80% or modify any original**.
 
-| Same 99 originals | Legacy | Geometry-aware prototype |
-|---|---:|---:|
-| UV index components / edge-continuous charts | 27,947 | 17,332 |
-| Unknown geometry roles | 16,323 | 0 |
-| Exact source face accounting | 99/99 | 99/99 |
-| Median topology/role enumeration, 3 runs, seconds | 1.086303 | 2.372741 |
-| Original calibration | Failed | **Still failed** |
+The new offline finalizer consumes the existing v005 metrics and native inventory.
+It verifies their SHA-256 against the saved measurement provenance, 201 exact face
+ledgers and 99 unique source/library pairs plus 3 light records. It does not recompute
+or relabel raw scores, masks, roles or `pass` fields. The historical all-originals
+raw gate remains **failed**; the independent control-calibration gate is **passed**:
 
-The fair comparison is 2.18424x slower; no speed or semantic-accuracy gain is claimed.
-Roles derive from manifold boundaries and 3D face normals only, never from UV/pixel labels.
-Exact matching geometry-edge endpoints join duplicate map indices; real coordinate seams remain.
-The helper is 155 lines and the measurement change is flag-only (`geometry_parts: true`);
-default code and all assets are unchanged. Diagnostic chart enumeration: **adopt**; geometric
-role candidates: **maybe**, not a production acceptance checker.
+| Original control | Passing / total charts | Result |
+|---|---:|---|
+| `Tilia_cordata_VPM` | 664/664 | Pass, including reviewed bark containment |
+| `Crataegus_mollis_VPM` | 264/264 | Pass |
+| `Spiraea_japonica_NPM` | 10/10 | Pass, whole-plant-plane control |
+| Total | 938/938 | Control calibration only, not asset acceptance |
 
-| v005 raw tag | Objects | Charts | Unknown roles | Raw applicable passing charts |
-|---|---:|---:|---:|---:|
-| Original Union | 68 | 15,889 | 0 | 7,631 |
-| Original FLORIO | 31 | 1,443 | 0 | 1,090 |
-| v003 | 99 | 17,332 | 0 | 0 |
-| NPM light | 3 | 271 | 0 | 0 |
+The Padus counterexample remains a **source geometric failure**, not an exception:
+`Padus_maackii_VPM`, intact 8-triangle chart (faces 182–185, 298–301), covers
+**67.5942243645%** of the single branch-sprite bbox `[488,2403,1803,3845]` in
+`T_cheryomuha_maakha_d_1.png`, with **29,353 opaque pixels outside** at 1px tolerance,
+and no neighbouring opaque sprites. The atlas/witness was visually inspected in the
+preceding run; the red outline visibly excludes the right-hand leaves. See
+`padus-original-sprite-crop-v002.png/json` beside the review index. No new DCC run.
 
-All 201 exact face ledgers and 99 unique route entries were independently checked. Only 25/99
-sources have all raw rows passing. Provisional routes: 24 rebind / 1 star / 74 source validation;
-**0 definitive routes**. Source NPM branch-card assemblies still are not certified whole-plant
-stars; 2,617 source charts explicitly have policy_applicable=false. RGB masks remain hypotheses.
+## All 99 repair recommendations
 
-Selected sources, passing/all raw charts: Tilia NPM 9/141, VPM 664/664; Betula NPM 15/57;
-Crataegus NPM 4/38, VPM 264/264; Amelanchier FLORIO NPM 487/701, Union VPM 1,854/2,964;
-Cornus NPM 0/11; Spiraea NPM 10/10, VPM 20/20. These are diagnostic distributions, not accepted
-model scores. Tilia/Crataegus VPM and the Spiraea star remain useful passing controls.
+Final here means **a named diagnostic recommendation for every object**, not a
+validated repair or source-quality certification. The manifest is generated from
+measured per-chart evidence and independent NPM plane checks, never by eye:
+[`final-routes-v006.json`](../../experiments/flora-texture-diagnosis/final-routes-v006.json).
+Full per-island source issue lists, exact faces, scores, clipping and reasons are in
+`C:/x/review/2026-10-20/flora-texture-diagnosis/final-routes-v006/routes.json`.
+Each route still requires post-repair visual validation. No repair was executed.
 
-**New original-only counterexample, not bark:** `Padus_maackii_VPM`, one intact 8-triangle
-foliage chart (faces 182–185, 298–301), covers **67.5942243645%** of the bottom-left sprite bbox
-`[488,2403,1803,3845]` in `T_cheryomuha_maakha_d_1.png`. There are **29,353** opaque pixels
-outside the chart at 1px tolerance; 0 neighbouring sprite pixels. I personally opened the
-original atlas and the witness: the bbox encloses ONE branch sprite, and leaves visibly extend
-past the red UV outline. This is neither a missing-role failure nor a bark-strip/density metric.
+| Recommendation | Objects | Why / chosen follow-up |
+|---|---:|---|
+| `restore_or_bake_original_atlas` | 24 | VPM raw source rows clean: restore original component atlas correspondence; if packaging requires species maps, bake equivalent component maps under retained UVs, not whole-plant photos |
+| `repair_source_uv_then_restore_or_bake_atlas` | 12 | VPM measured sprite/containment failures: explicitly repair source correspondence on a new copy before restoring/baking; Padus belongs here |
+| `resolve_source_atlas_region_then_restore_or_bake` | 2 | VPM missing/ambiguous region measurement: resolve the named limitation first; do not invent a map or certify a physical defect |
+| `remap_star_to_whole_plant_image` | 7 | NPM candidate stars: map each plane to the whole-plant diffuse/opacity image, then validate crossing geometry and silhouette |
+| `rebuild_whole_plant_star_and_uv` | 54 | NPM construction not certified as a whole-plant star: rebuild/verify star geometry and UVs for the approved image rather than merely rebind component-card UVs |
+| Total | **99** | Disjoint, unique named objects; **no source_validation_required catch-all** |
 
-Evidence: `C:/x/review/2026-10-20/flora-texture-diagnosis/geometry-diagnostics-v005/index.html`,
-plus `padus-original-sprite-crop-v002.png/json`. All six new sheets were viewed with the image
-tool; the viewed witness hash matches v002. Compact ZIP: `review-geometry-v005-compact.zip`
-(16,237,384 bytes; 15 members; CRC checked). Receipts:
-`experiments/flora-texture-diagnosis/geometry-diagnostics-v005-summary.json`,
-`geometry-benchmark-v003.json`, `source-integrity-v003.json`.
+The 99 comprise **38 VPM / 61 NPM** objects. 25 originals have all raw chart rows
+passing; **74** contain a failure or limitation. Their issue ledger distinguishes
+**5,537 measured geometric failures** from **3,074 applicability/measurement
+limitations** (8,611 rows total; categories describe chart diagnostics, not 8,611
+independently confirmed bad plants). Non-star NPM parts, unclassified atlas regions,
+missing metric support and non-finite scores remain limitations, never forced passes.
+A failed candidate cell is not proof of bad authoring: touching sprites and inferred
+cells require source review in #411. The 457 unscored source charts remain recorded;
+**zero unknown geometry roles does not mean zero unmeasured metrics**.
 
-**126 affected tests passed**; RED tests-first commit `20bfb85` and additional RED/GREEN
-integration witnesses. Evals: 0/0/10 not measured, exit 2, no Claude transcript,
-`tmp/evals/flora-geometry-v003/report.json`. Protected source hashes: **236/236 unchanged**.
-No DCC process ran; no owned analysis process remains after the completed full 201-record sweep.
+### Selected species routes
 
-**Decision needed before final routes:** the blanket requirement that every original must pass
-calibration conflicts with the measured intact source sprite above. May source crops/non-star
-NPM constructions be explicit source limitations/defects with their own repair routes, calibrating
-on independent valid controls, or must an approved exception/change of applicability be provided?
-The 0.80 threshold and bark policy were NOT changed. Independent semantic masks and final repair
-routes remain required, not out of scope; no fix issue was created. The older v004 sections below
-are preserved as historical evidence, not current unknown-role counts.
+| Species / ID | NPM recommendation (source issues / charts) | VPM recommendation (source issues / charts) |
+|---|---|---|
+| Tilia / 101 | Rebuild whole-plant star + UV (132/141) | Restore/bake component atlas (0/664) |
+| Betula / 102 | Rebuild whole-plant star + UV (42/57) | No catalogue VPM counterpart in this measured pair set |
+| Crataegus mollis / 103 | Rebuild whole-plant star + UV (34/38); light inherits incompatibility | Restore/bake component atlas (0/264) |
+| Amelanchier / 105 | Rebuild whole-plant star + UV (214/701), FLORIO source; light inherits it | Repair source UV failures, then restore/bake (1110/2964), Union source |
+| Cornus sericea / 204 | Rebuild/verify whole-plant star + UV (11/11); bent authored cards are not full-height flat planes under this diagnostic; light inherits crop | No catalogue VPM counterpart in this measured pair set |
+| Spiraea japonica / 225 | Remap star to whole-plant image (0/10 original; replacement 10/10 failed) | Restore/bake component atlas (0/20) |
+
+NPM plane checks retain candidate count, normal-Z, opacity enable and UV extent.
+The 12-plane cap / normal-Z tolerance 0.02 are diagnostic heuristics, not user
+thresholds; common-centre crossing is **not certified**. A conservative rebuild
+recommendation means verify/rebuild in the follow-up, not that every authored NPM
+is physically invalid. No global affine UV transform repairs all component atlases.
 
 ## Geometric recalibration [D155]
 
-The previous bark-policy question is **answered**, not an open threshold decision.
-Artem's voice decision (Kanban `t_49156f66`, comment 1542, coordination rule 48) and the
-orchestrator's **2026-10-20 14:42 scope clarification** are recorded in the
-[Flora sheet](../domain/areas/flora.md#geometric-sprite-coverage-d155) and [D155].
+- VPM discrete sprite: polygon-union intersection / independent opaque-sprite bbox,
+  0.80–0.95; >0.95 allowed only without neighbouring opaque pixels inside the island.
+- Continuous bark: >=95% island raster area on reviewed bark pixels, not coverage of
+  the whole strip. Tilia island 166 passes **8,557/8,597 = 99.5347214144%**; the
+  superseded whole-strip score was **0.2444722245%**. V wrapping is permitted by
+  policy, but multi-tile unsupported measurements remain limitations in the ledger.
+- NPM whole-image planes: >=80% plant-region coverage, transparent margin allowed,
+  no clipped opaque pixels (1px tolerance). Raw bbox/island ratio and intersection
+  ratio remain visible. The prototype raw 0.80–0.95 target is not certified for all
+  margin cases; the finalizer never turns those rows into passes.
+- Alpha threshold >=128; native bitmap dimensions; geometric polygon area is not
+  opaque density. Scores and distributions are beside `geometry-diagnostics-v005/index.html`.
 
-- Discrete VPM sprites: `area(island intersect sprite opaque bbox) / area(sprite opaque bbox)`,
-  target 0.80–0.95; >0.95 only without neighbouring opaque sprites inside the island.
-- Continuous bark: **>=95% of island area on bark pixels**, not coverage of an entire bark strip.
-  V tiling along the strip is allowed by the rule. The current implementation reports islands crossing
-  a repeated tile as unsupported; it does not silently accept them.
-- NPM whole-plant planes: cover >=80% of the image region, with allowed extra transparent margin
-  and no clipped opaque plant pixels (1 pixel tolerance). Both bbox/island ratio and
-  `island_intersection_over_sprite_bbox` are stored. The prototype still reports the original
-  0.80–0.95 bbox/island target separately; its raw `pass` is **not** a certified implementation of
-  every clarified NPM case.
-- Threshold opacity is >=128. Discrete sprite area is polygon union/intersection (Shapely 2.1.2).
-  Bark containment uses a native-pixel raster on a reviewed region, consistently in numerator and denominator.
+### Masks and evidence boundary
 
-### Narrow bark witness: resolved and measured
+The six coloured sheets include original / library / light masks and UV overlays.
+Empty is opacity <128; foliage/bark RGB classes are **candidate displays**, with
+purple unknown opaque pixels, not independently validated semantic ground truth.
+The 23 reviewed source bark-region annotations (24 rectangles) are stored separately
+in `reviewed-bark-regions-v002.json`; containment uses those reviewed regions, not a
+brown-colour fallback. Generated whole-plant replacement maps have no reviewed
+component-bark layout; their trunk scores are not certified semantic passes.
 
-The original-only image `tilia-original-bark-geometric-v001.png` remains a **historical baseline**:
-its red/fail annotation describes the superseded whole-strip applicability, not the current bark verdict.
-The image was personally viewed again. The narrow triangle lies on the continuous bark strip, separate
-from the two foliage sprites. Current exact receipt:
-`experiments/flora-texture-diagnosis/bark-containment-v002.json`.
+Accordingly **asset_accepted=false**, **semantic_masks_certified=false**. This is a
+completed diagnostic with explicit source/measurement limitations and repair routes,
+not an L2 semantic acceptance checker. Independent semantic certification of all
+atlas cells and corrected assets belongs to the proposed repair's acceptance, not
+a claim made by these heuristic diagnostic masks. The user decision permits reporting
+source limitations rather than requiring every original to pass; it does not approve
+bad texturing, candidate masks or repaired assets.
 
-Original `Tilia_cordata_VPM` / `19_Lipa_HP`, island 166 / face 332, 4096×4096 atlas:
-
-| Method | Measurement | Result | Median seconds, same input ×3 |
-|---|---:|---|---:|
-| Historical generic sprite-bbox coverage | 7,930.757195 / 3,244,032 px² = 0.2444722245% | Wrong applicability to a continuous strip | 0.011435 |
-| Reviewed opaque-bark containment | 8,557 / 8,597 raster pixels = 99.5347214144% | Pass (>=95%) | 0.013396 |
-| Original discrete leaf card, control | 100% sprite-bbox coverage; 0 neighbouring opaque pixels | Pass under >95% exception | Not repeated for speed |
-
-No speedup is claimed. The difference between polygon area and raster pixel counts is explicit.
-Code footprint: `measure_sprite_coverage.py` grows from 212 to 406 lines; the raw comparison and
-atlas-review helpers add 476 and 143 lines respectively. These remain diagnostic tools, not a
-replacement for production checkers. Their geometry/classification heuristics are not simplified
-into an unsupported universal acceptance flag.
-See [the small experiment report](../experiments/flora-bark-containment.md).
-
-### Full raw sweep and evidence
-
-Current review bundle:
-`C:/x/review/2026-10-20/flora-texture-diagnosis/raw-diagnostics-v004/index.html`.
-All six `101/102/103/105/204/225.png` sheets append original/library/light candidate masks,
-coloured UV edges and raw role/score summaries to the existing controlled renders. I opened all six
-v003 sheets with `vision_analyze`; the v004 copies are **6/6 SHA-256-identical**. The only v004
-re-seal corrects star metadata to permit independent geometry and UV vertex counts, without
-changing any island metric, mask, render or sheet. `provenance.json` identifies the exact input hashes.
-
-| Tag | Objects | UV components | Scored components | Raw applicable pass | Unknown geometry role | Unscored |
-|---|---:|---:|---:|---:|---:|---:|
-| Original Union | 68 | 26,504 | 25,752 | 4,289 | 16,042 | 752 |
-| Original FLORIO | 31 | 1,443 | 1,443 | 839 | 281 | 0 |
-| v003 | 99 | 27,947 | 22,856 | 0 | 16,323 | 5,091 |
-| NPM light FBX | 3 | 326 | 325 | 0 | 113 | 1 |
-
-These are **diagnostic flags**, not counts of defective plants or calibrated replacement failures.
-Unknown/not-applicable islands also have `pass=false`; the categories must not be added as disjoint sets.
-All faces are accounted for per object, with exact face lists and unknown/error reasons in `metrics.json`.
-`distribution.json` reports min/q25/median/q75/max by tag and role. `routes.json` has 99 unique named
-pairs and preserves source/library/light per-island ledgers. All 201 records have `accepted=false`
-at the report boundary; no production assets were changed.
-
-The source-only baseline before reviewed bark annotations also completed: 99 objects / 27,947
-components, 8 objects with every component passing, 16,323 unknown geometry roles.
-Its compact receipt is `experiments/flora-texture-diagnosis/source-calibration-baseline-v002.json`.
-23 source bark regions (24 rectangles, including an L-shaped FLORIO region excluding grass)
-were visually reviewed across nine atlas sheets. Exact basenames, bitmap hashes and rectangles:
-`experiments/flora-texture-diagnosis/reviewed-bark-regions-v002.json`.
-
-### Why calibration still fails — implementation limits, not another bark-policy question
-
-The gate is deliberately still **failed**: first witness `Tilia_cordata_NPM`, island 3.
-The current method groups UV faces by shared map indices and inherits shape roles from connected
-3D elements. It does not resolve every duplicate-coordinate seam, curved card, joined star or
-non-elongated branch assembly into authored semantic parts. For example, visible Cornus crossed
-cards produce 65 UV components from 80 triangles, all with unknown roles under this classifier.
-Calling these foliage or whole-plant planes solely because their UVs hit a convenient region would
-be circular. A catalogue NPM label is not proof of whole-plant star geometry.
-
-Independent plane checks record counts, absolute normal Z, global UV extent, opacity binding and
-per-island UV extents. The source Spiraea NPM has 10 vertical planes and passes this candidate check;
-source Tilia/Betula/Crataegus/Amelanchier contain complex multi-plane meshes, not a confirmed simple star.
-The 12-plane cap and normal-Z tolerance 0.02 are diagnostic heuristics, **not user thresholds or a
-certified star-arrangement gate**. The helper does not prove common-centre crossing or botanical identity.
-
-RGB green/brown classification is only a **candidate display**, with purple unknown opaque pixels;
-it is not an independent semantic ground truth. Reviewed bark containment is stored separately.
-Touching atlas sprites remain ambiguous under alpha-only gutter segmentation. Unverified replacement
-bark is never promoted to semantic pass. Thus the tool cannot yet deliver calibrated semantic masks
-and final map/UV repair choices for every object.
-
-| Provisional route | Count | Status |
-|---|---:|---|
-| `rebind_original_atlas` | 7 | Source VPM geometric rows pass; still provisional because the global gate fails |
-| `keep_or_rebuild_star` | 1 | Source Spiraea NPM star; replacement tile is empty, so rebuilding correspondence is necessary |
-| `source_validation_required` | 91 | Failed, unknown or not-applicable source role/cell/plane checks; no repair route invented |
-| Definitive routes issued | 0 | Withheld, not an out-of-scope acceptance point |
-
-Remaining acceptance: improve/annotate geometry-role and authored sprite-cell correspondence, calibrate
-originals (or explicitly resolve their genuine non-applicability), then issue final per-object routes.
-**No further full native extraction is required**; the arrays already contain all 99 pairs and 3 FBX.
-Three Cursor rounds were used in this continuation. It needs an implementation handoff for the remaining
-role/cell analysis, not another threshold clarification or an asset repair. Do not mark this diagnosis accepted.
-
-Reproduction, using copied job/maps and fresh output directories:
+## Reproduction and final checks
 
 ```bash
-uv run python tools/flora/review_atlas_regions.py --job tmp/all-job-v005.json --output <fresh review subdirectory>
-uv run python tools/flora/measure_sprite_coverage.py --job tmp/all-job-v005.json --output <fresh source.json> --sources-only
-# annotated-job-v006.json adds reviewed-bark-regions-v002.json using resolved copied bitmap paths
-uv run python tools/flora/compare_sprite_diagnostics.py --job tmp/annotated-job-v006.json --output <fresh review subdirectory>
+uv run python tools/flora/finalize_texture_diagnosis.py \
+  --metrics C:/x/review/2026-10-20/flora-texture-diagnosis/geometry-diagnostics-v005/metrics.json \
+  --inventory C:/Users/artsafro/AppData/Local/Temp/agr-3dsmax-t_49156f66/inventory-all-v005.json \
+  --provenance C:/x/review/2026-10-20/flora-texture-diagnosis/geometry-diagnostics-v005/provenance.json \
+  --output <fresh versioned review subdirectory>
 ```
 
-Current affected tests: **96 passed** (including decision-log checks), including explicit/missing/displaced bark masks, exact 95% boundary,
-multiple reviewed rectangles, unknown/fail status rejection, independent UV indexing, raw 201-record /
-99-route accounting, source gate failure preservation, path aliases, and empty/partial CLI subprocesses.
-New tests fail against the copied `4def676` baseline (missing new API at collection); no fabricated no-op
-baseline was used in this continuation. Source integrity: **236/236 unchanged SHA-256**, exact receipt
-`experiments/flora-texture-diagnosis/source-integrity-v002.json`.
-Full suite is the earlier receipt below, not rerun; current evals: 0 passed / 0 failed / 10 not measured,
-exit 2, `tmp/evals/flora-texture-diagnosis-v002/report.json` (no Claude transcript/PR evidence).
-Code was written by Cursor (grok-4.7-medium), with small driver verification fixes; no DCC ran in this continuation.
+`final-routes-v006/index.html` links the six previously viewed v005 sheets; root
+`index.html` and the exactly-one `#369` queue entry point to the final routes.
+No render/map pixels were changed. The 51 controlled renders / 14 overlays, native
+slot/gamma controls and 201 measured records are retained. Source integrity was
+rechecked this continuation: **236/236 protected hashes unchanged**.
+
+New regression RED: **17 failed**, tests-first commit `f3072e5` (finalizer absent).
+GREEN: **29 finalizer tests passed**; **155 affected tests passed** in the final combined run,
+including independent control-score/boundary checks and fresh-process positive CLI, changed/stale inputs,
+duplicate JSON keys, failed/unknown/review/non-finite controls, incomplete/duplicate
+records and face ledgers, direct/relative/hardlink aliases. No failed original is
+mutated into a pass. Focused suite/eval receipts are recorded in the PR.
+The earlier full suite below is retained per rule 49; it was not rerun.
+
+Historical iteration details, not current blockers:
+[geometry decomposition](../experiments/flora-geometry-decomposition.md),
+[bark containment](../experiments/flora-bark-containment.md),
+`raw-diagnostics-v004-summary.json` and `geometry-diagnostics-v005-summary.json`.
+Geometry decomposition reduced 27,947 UV-index components to 17,332 edge-continuous
+charts, 16,323 unknown geometry roles to zero, preserving 201/201 face ledgers.
+Three-run median legacy 1.086303s / prototype 2.372741s: **2.18424x slower**, not a speedup.
+Roles derive from 3D normals/manifold boundaries, never convenient UV/pixel labels.
 
 ## Evidence and scope
 
@@ -375,11 +323,10 @@ silhouette test as proof of correct texturing. **Adopt:** direct slot-path/UV-ov
 comparison as an appearance prerequisite. **Maybe:** scratch-only lossless PNG decoder control;
 retain the native defect receipt and avoid generalizing it to other builds.
 
-Proposed follow-up issue title: **Flora: rebuild map-to-UV correspondence before republishing the library**.
+Separate proposed repair: [#411 — Flora: rebuild map-to-UV correspondence before republishing the library](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/411).
 Scope: preserve all stable IDs and identity gaps; classify the 99 original bindings into project-atlas
 crops, component leaf/bark layouts and multi-submaterial cases. Select a reviewed route per object:
 retain/bake the original appearance, or rebuild UV/geometry for the approved full-plant map. A global
 V flip or one affine UV rescale is not a general fix for component atlases. Validate original-vs-new
 front/45/top cutouts, explicit opacity/color policy and bark/leaf correspondence; only then rebuild
-NPM light and rerun readback/checkers. Publish to new versions only after visual review. No follow-up
-issue was created and no fix was implemented in this diagnosis card.
+NPM light and rerun readback/checkers. Publish to new versions only after visual review. Issue #411 was created as the explicitly requested single follow-up after duplicate search; it is not labelled ready for dispatch. No fix was implemented in this diagnosis card.
