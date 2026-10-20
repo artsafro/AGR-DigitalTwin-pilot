@@ -53,6 +53,19 @@ def test_npm_band_and_invalid_profiles_unchanged():
     with pytest.raises(bind.BindError): bind.density_report([], "other")
 
 
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), -float("inf")])
+def test_detail_nonfinite_geometry_is_not_ready(bad):
+    verts = np.array([[0.,0.,0.],[8.,0.,0.],[0.,8.,0.]])
+    verts[1, 0] = bad
+    with pytest.raises(ValueError, match="finite"):
+        gd.triangle_uv(verts, np.array([[0,1,2]]))
+
+
+def test_detail_empty_geometry_is_not_ready():
+    with pytest.raises(ValueError, match="nonempty"):
+        gd.triangle_uv(np.empty((0,3)), np.empty((0,3), dtype=int))
+
+
 def test_detail_below_lower_bound_rejected():
     with pytest.raises(ValueError, match="512 px/m"):
         gd.triangle_uv(np.array([[0.,0.,0.],[8.001,0.,0.],[0.,8.001,0.]]), np.array([[0,1,2]]))
