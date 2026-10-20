@@ -290,6 +290,54 @@ def test_prism_breaking_an_invariant_is_rolled_back():
     print(f"rollback: {r.question}")
 
 
+def edge_uses(mesh: Mesh) -> np.ndarray:
+    """Use count of every undirected edge after the 0.1 mm weld of the invariants."""
+    from twinqa.geometry.mesh import weld
+    t = weld(mesh.vertices, 1e-4)[mesh.triangles]
+    e = np.sort(np.concatenate([t[:, [0, 1]], t[:, [1, 2]], t[:, [2, 0]]]), axis=1)
+    return np.unique(e, axis=0, return_counts=True)[1]
+
+
+@pytest.mark.parametrize("gap", [0.0, 1e-5])
+def test_corner_touching_pieces_are_refused_as_non_manifold(gap):
+    """Review P1 (#341): plan squares touching at a corner (or 10 um apart, welded) share a vertical edge 4 times."""
+    scene = {"p": join(box((0, 0, 0), (1, 1, 1)), box((1 + gap, 1 + gap, 0), (2, 2, 1)))}
+    r = refused(scene, allow_multi=True)
+    assert "manifold" in r.question and r.report is None
+
+
+@pytest.mark.parametrize("multi", [False, True])
+def test_single_and_separated_pieces_stay_two_manifold(multi):
+    mesh = box((0, 0, 0), (1, 1, 1))
+    if multi:
+        mesh = join(mesh, box((2, 2, 0), (3, 3, 1)))
+    r = rebuild_by_contour({"p": mesh}, "p", allow_multi=multi)
+    assert r.applied, r.question
+    assert (edge_uses(r.scene["p"]) == 2).all()
+
+
+class _FlippedSide(NumpyExtrude):
+    def __call__(self, polygon, axis, base_m, height_m):
+        m = super().__call__(polygon, axis, base_m, height_m)
+        tris = m.triangles.copy()
+        tris[-1] = tris[-1][::-1]                         # one side triangle wound inward: closed but not oriented
+        return Mesh(m.vertices, tris)
+
+
+class _CollapsedTop(NumpyExtrude):
+    def __call__(self, polygon, axis, base_m, height_m):
+        m = super().__call__(polygon, axis, base_m, height_m)
+        v = m.vertices.copy()
+        v[len(v) // 2:, axis] = base_m + 5e-5               # the top welds onto the bottom: degenerate triangles
+        return Mesh(v, m.triangles)
+
+
+@pytest.mark.parametrize("backend, word", [(_FlippedSide(), "orient"), (_CollapsedTop(), "degenerate")])
+def test_backend_output_that_is_not_an_oriented_two_manifold_is_refused(backend, word):
+    r = refused({"p": box((0, 0, 0), (1, 1, 1))}, backend=backend)
+    assert word in r.question
+
+
 def test_unknown_part_raises_like_run_operation():
     with pytest.raises(ValueError):
         rebuild_by_contour({"p": box((0, 0, 0), (1, 1, 1))}, "q")
