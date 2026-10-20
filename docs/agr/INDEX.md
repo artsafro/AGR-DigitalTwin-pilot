@@ -20,6 +20,7 @@ find the line for your question, then read that file. One line per tracked file.
 | `EXPERIENCE_CAPTURE.md` | Rule for recording a user-accepted result as a case study | User praises/accepts a result and a case must be written |
 | `READINESS_REPORT.md` | Readiness audit 2026-09-26: NPM vs VPM, norm conflicts, app readiness, skills registry | Checking historical readiness, NPM/VPM differences or source contradictions |
 | `traceability.html` | HTML table rule → PDF page → verification method (single-line file) | Tracing a profile rule to its regulation PDF page |
+| `sintez_checks_1.6.1.json` | SINTEZ AGR Checker 1.6.1 dissection (#429): 36 checks, 10 fixers, thresholds, 2026 VPM/NPM req_nums vs our checkers | Comparing our checks or thresholds with the SINTEZ AGR Checker |
 
 ## decisions
 
