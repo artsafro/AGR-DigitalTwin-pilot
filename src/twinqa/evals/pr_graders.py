@@ -1,4 +1,4 @@
-"""Pull-request graders (#125). Evidence is a recorded `gh` result, never a live call.
+"""Pull-request graders (#125). Evidence is recorded `gh` data or local body/diff files; no live calls.
 
 `pr_agent_trace` — the PR body has an `## Agent trace` span (the same span as
 `tools/hooks/agent_trace.py`) with all ten fields filled. A value `not measured (...)` counts;
@@ -58,7 +58,7 @@ def _raise(message):
 
 
 def read_view(path, *, body_file=False):
-    """One `gh pr view --json body,comments` file. Raises EvidenceError when it is not a JSON object."""
+    """Read recorded gh JSON or explicit Markdown; body files never imply review comments."""
     path = Path(path)
     if not path.is_file():
         _raise(f"{path} does not exist")

@@ -1,4 +1,4 @@
-"""new-case: isolated fresh-agent B01 capability session lifecycle.
+"""new-case: shared fresh-agent B01 and closed-ticket capability session lifecycle.
 
 The launcher writes only a new external run directory and git worktree metadata.
 It never edits benchmark/ or jobs/. Child writes there are detected and fail the run.
@@ -15,7 +15,6 @@ import subprocess
 import sys
 import time
 import uuid
-import re
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'src'))
@@ -27,6 +26,12 @@ def git(repo, *args):
                           encoding='utf-8', check=True, timeout=60).stdout.strip()
 
 
+def write_new(path, text):
+    # Child-controlled output names must never redirect launcher writes to inputs.
+    with path.open('x', encoding='utf-8', newline='\n') as stream:
+        stream.write(text)
+
+
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -36,10 +41,10 @@ def inventory(repo):
             for p in (repo / folder).rglob('*') if p.is_file()}
 
 
-def evaluation_inventory(repo, paths=()):
+def evaluation_inventory(repo, paths=(), *, untracked=False):
     # Snapshot every tracked input, not just today's known checker filenames.
     # Retain the original paths even if the child removes them from the index.
-    tracked = set(git(repo, 'ls-files', '-z').split('\0')) - {''}
+    tracked = set(git(repo, 'ls-files', '-z', *(['--cached', '--others', '--exclude-standard'] if untracked else [])).split('\0')) - {''}
     return {name: sha(repo / name) if (repo / name).is_file() else None
             for name in tracked.union(paths)}
 
@@ -74,6 +79,12 @@ def stop(process):
         import signal
         os.killpg(process.pid, signal.SIGKILL)
     process.wait(timeout=30)
+
+
+def protected_ticket_path(name):
+    return (name.startswith(('benchmark/', 'jobs/', 'standards/', 'evals/', 'tools/hooks/',
+                             'tools/git-hooks/', 'src/twinqa/evals/'))
+            or name in ('AGENTS.md', 'CLAUDE.md', 'docs/decisions.md'))
 
 
 def validate_ticket(ticket):
@@ -191,11 +202,9 @@ def launch(repo, run_dir, etalon=None, *, ticket=None, agent='codex', command=No
         if ticket:
             git(worktree, 'checkout', '-b', branch)
         before = inventory(worktree)
-        evaluation_before = evaluation_inventory(worktree)
+        evaluation_before = evaluation_inventory(worktree, untracked=bool(ticket))
         if ticket:
-            evaluation_before = {k: v for k, v in evaluation_before.items()
-                                 if k.startswith(('benchmark/', 'jobs/', 'standards/', 'evals/', 'tools/hooks/', 'tools/git-hooks/', 'src/twinqa/evals/'))
-                                 or k in ('AGENTS.md', 'CLAUDE.md', 'docs/decisions.md')}
+            evaluation_before = {k: v for k, v in evaluation_before.items() if protected_ticket_path(k)}
         env = {k: v for k, v in os.environ.items()
                if not k.startswith(('HERMES_', 'CLAUDE', 'CODEX_THREAD', 'CODEX_SESSION'))}
         # No inherited editable installation or task workspace location.
@@ -231,9 +240,9 @@ def launch(repo, run_dir, etalon=None, *, ticket=None, agent='codex', command=No
             except subprocess.TimeoutExpired:
                 stop(process)
                 result.update(session_exit=124, error='session timeout')
-        evaluation_after = evaluation_inventory(worktree, evaluation_before)
+        evaluation_after = evaluation_inventory(worktree, evaluation_before, untracked=bool(ticket))
         if ticket:
-            evaluation_after = {k: evaluation_after.get(k) for k in evaluation_before}
+            evaluation_after = {k: v for k, v in evaluation_after.items() if protected_ticket_path(k)}
         changed = sorted(name for name in evaluation_before.keys() | evaluation_after.keys()
                          if evaluation_before.get(name) != evaluation_after.get(name))
         result['changed_evaluation_inputs'] = changed
@@ -242,8 +251,8 @@ def launch(repo, run_dir, etalon=None, *, ticket=None, agent='codex', command=No
         result['head_unchanged'] = git(worktree, 'rev-parse', 'HEAD') == commit
         if ticket:
             actual_branch = git(worktree, 'branch', '--show-current')
-            (run_dir / 'branch.txt').write_text(actual_branch, encoding='utf-8')
-            (run_dir / 'local.diff').write_text(git(worktree, 'diff', '--binary', commit), encoding='utf-8')
+            write_new(run_dir / 'branch.txt', actual_branch)
+            write_new(run_dir / 'local.diff', git(worktree, 'diff', '--binary', commit))
             result.update(branch=actual_branch, ticket=ticket['number'],
                           solution_commit=git(worktree, 'rev-parse', 'HEAD'),
                           committed=not git(worktree, 'status', '--porcelain', '--untracked-files=all'))
@@ -300,7 +309,7 @@ def launch(repo, run_dir, etalon=None, *, ticket=None, agent='codex', command=No
         if not result['cleanup']:
             result.update(passed=False, cleanup_errors=cleanup_errors)
         result['elapsed_seconds'] = round(time.monotonic() - started, 3)
-        (run_dir / 'reference.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
+        write_new(run_dir / 'reference.json', json.dumps(result, indent=2))
     return result
 
 

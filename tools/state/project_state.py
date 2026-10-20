@@ -174,7 +174,13 @@ def _next_lines(repo):
 
 
 def _capability_lines(repo):
-    path = repo / 'evals/capability-b01/reference.json'
+    return [line for slug, label, group in (('capability-b01', 'A', 'benchmark'),
+                                           ('capability-ticket', 'B', 'local_pr'))
+            for line in _capability_line(repo, slug, label, group)]
+
+
+def _capability_line(repo, slug, label, group):
+    path = repo / f'evals/{slug}/reference.json'
     if not path.exists():
         return []
     try:
@@ -183,7 +189,7 @@ def _capability_lines(repo):
                 or type(data.get('passed')) is not bool):
             raise ValueError('unsupported capability reference')
         parts = []
-        for name in ('benchmark', 'procedural'):
+        for name in (group, 'procedural'):
             counts = data[name]
             if any(type(counts[k]) is not int or counts[k] < 0
                    for k in ('passed', 'failed', 'not_measured')):
@@ -191,7 +197,7 @@ def _capability_lines(repo):
             parts.append(f"{name} {counts['passed']} passed / {counts['failed']} failed / "
                          f"{counts['not_measured']} not measured")
         if data['passed'] and any(data[n]['failed'] or data[n]['not_measured']
-                                  or not data[n]['passed'] for n in ('benchmark', 'procedural')):
+                                  or not data[n]['passed'] for n in (group, 'procedural')):
             raise ValueError('inconsistent capability readiness')
     except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
         raise FailClosed('invalid capability reference') from exc
@@ -199,8 +205,8 @@ def _capability_lines(repo):
     context = data.get('context', 'unspecified context')
     if context not in ('repository-only', 'repository + user skills', 'unspecified context'):
         raise FailClosed('invalid capability context')
-    return [f"Capability A (`capability-b01`, {data['agent']}): {'; '.join(parts)}; {status}; {context}. "
-            'Reference: `evals/capability-b01/reference.json`.']
+    return [f"Capability {label} (`{slug}`, {data['agent']}): {'; '.join(parts)}; {status}; {context}. "
+            f'Reference: `evals/{slug}/reference.json`.']
 
 
 def render(merges, opens, next_lines=None, capability_lines=None):
@@ -285,6 +291,7 @@ def _inputs(repo):
                     found.append((metadata / common.read_text(encoding="utf-8").strip()).resolve())
     found.append(repo / "docs" / "PROJECT_STATE.next.md")
     found.append(repo / "evals/capability-b01/reference.json")
+    found.append(repo / "evals/capability-ticket/reference.json")
     found.append(Path(__file__).resolve())
     return found
 
