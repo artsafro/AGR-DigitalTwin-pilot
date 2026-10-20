@@ -19,6 +19,8 @@ from pathlib import Path
 
 import pytest
 
+from tools import placement_site as ps
+
 ROOT = Path(__file__).resolve().parents[2]
 OFFSET = [100.0, 200.0, 0.0]
 
@@ -106,7 +108,11 @@ def ground_sha(cfg, var):
 
 
 def write_exception(cfg, approved=True, bind_to=None):
-    e = {"handle": HOLE[0], "reason": "Ground hole under the point (synthetic)",
+    a = json.loads(cfg["adapter"].read_text(encoding="utf-8"))
+    p = next(x for x in a["maf"] if x["handle"] == HOLE[0])
+    snap = {k: p[k] for k in ps.EXCEPTION_POINT_KEYS}
+    snap["library_id"] = "M01"
+    e = {"handle": HOLE[0], "reason": "Ground hole under the point (synthetic)", "point": snap,
          "ground_master_sha256": bind_to or {v: ground_sha(cfg, v) for v in ("npm", "vpm")}}
     if approved:
         e["approved"] = {"by": "user (synthetic)", "date": "2026-10-20", "quote": "do not place (synthetic)"}
@@ -250,6 +256,61 @@ def test_unapproved_exception_stops_the_run(tmp_path):
     out = tmp_path / "run"
     assert job.run(cfg, out, 296, dcc=FakeDCC()) == 1
     assert any("not user-approved" in r for r in results(out)["variants"]["npm"]["stopped"])
+
+
+# ---------------------------------------------------------------- round 2 P1: exception bound to the point identity
+def _mutate_hole(cfg, mode):
+    a = json.loads(cfg["adapter"].read_text(encoding="utf-8"))
+    p = next(x for x in a["maf"] if x["handle"] == HOLE[0])
+    if mode == "move_to_covered_ground":
+        p["x"], p["y"] = 98.0, 199.0
+    elif mode == "changed_label":
+        p["label"] = "Рябинник"
+    elif mode == "nan_coordinate":
+        p["x"] = float("nan")
+    cfg["adapter"].write_text(json.dumps(a), encoding="utf-8")
+
+
+# mode -> (exit code, status, text in the stop reasons)
+EXCEPTION_ROWS = [("control", 0, "pass", None),
+                  ("move_to_covered_ground", 1, "stopped", "point identity changed"),
+                  ("changed_label", 1, "stopped", "point identity changed"),
+                  ("nan_coordinate", 1, "stopped", "non-finite")]
+
+
+@pytest.mark.parametrize("mode,rc,status,why", EXCEPTION_ROWS)
+def test_exception_binds_to_the_exact_point_snapshot(tmp_path, mode, rc, status, why):
+    cfg = make_inputs(tmp_path / "in", hole=True)
+    write_exception(cfg)
+    _mutate_hole(cfg, mode)
+    out = tmp_path / "run"
+    dcc = FakeDCC()
+    assert job.run(cfg, out, 296, dcc=dcc) == rc
+    r = results(out)
+    assert r["status"] == status
+    if rc == 0:
+        ex = [x for x in r["variants"]["npm"]["excluded"] if x["handle"] == HOLE[0]]
+        assert len(ex) == 1 and ex[0]["reason"] == "ground_exception"
+        return
+    assert "instance" not in dcc.calls and blends(out, "npm") == [] and blends(out, "vpm") == []
+    stopped = r["stopped"] if "stopped" in r else r["variants"]["npm"]["stopped"]
+    assert any(HOLE[0] in s and why in s for s in stopped), stopped
+    for v in r.get("variants", {}).values():
+        assert not any(x.get("handle") == HOLE[0] and x["reason"] == "ground_exception"
+                       for x in v.get("excluded", []))
+
+
+def test_nan_on_a_point_without_exception_stops_before_any_dcc(tmp_path):
+    cfg = make_inputs(tmp_path / "in", hole=False)
+    a = json.loads(cfg["adapter"].read_text(encoding="utf-8"))
+    a["planting"][0]["y"] = float("inf")
+    cfg["adapter"].write_text(json.dumps(a), encoding="utf-8")
+    out = tmp_path / "run"
+    dcc = FakeDCC()
+    assert job.run(cfg, out, 296, dcc=dcc) == 1
+    assert dcc.calls == []
+    r = results(out)
+    assert r["status"] == "stopped" and any("F0" in s and "non-finite" in s for s in r["stopped"])
 
 
 # ---------------------------------------------------------------- P1-3: report triangles = placed scene

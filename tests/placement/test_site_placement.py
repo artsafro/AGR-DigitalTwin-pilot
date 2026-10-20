@@ -277,7 +277,9 @@ def test_qa_gate(mism, sink_ok, n):
 
 def test_ground_exceptions_bind_to_fingerprint():
     pts = points(4)
-    exc = [{"handle": "H001", "reason": "hole", "ground_master_sha256": {"npm": "A"},
+    snap = {k: pts[1][k] for k in ps.EXCEPTION_POINT_KEYS}
+    snap["library_id"] = ASSIGN[pts[1]["label"]]
+    exc = [{"handle": "H001", "reason": "hole", "ground_master_sha256": {"npm": "A"}, "point": snap,
             "approved": {"by": "user", "date": "2026-10-20", "quote": "q"}}]
     keep, excl, stale = ps.apply_ground_exceptions(pts, exc, "npm", "A", ASSIGN)
     assert [p["handle"] for p in keep] == ["H000", "H002", "H003"] and stale == []
@@ -287,3 +289,36 @@ def test_ground_exceptions_bind_to_fingerprint():
     exc[0].pop("approved")
     with pytest.raises(ps.PlacementStopped):
         ps.apply_ground_exceptions(pts, exc, "npm", "A", ASSIGN)
+
+
+@pytest.mark.parametrize("field,value", [("x", 1.0), ("y", -3.0), ("label", "Липа"), ("rotation", 7.0)])
+def test_ground_exception_stops_on_changed_point_identity(field, value):
+    pts = points(4)
+    snap = {k: pts[1][k] for k in ps.EXCEPTION_POINT_KEYS}
+    snap["library_id"] = ASSIGN[pts[1]["label"]]
+    exc = [{"handle": "H001", "reason": "hole", "ground_master_sha256": {"npm": "A"}, "point": snap,
+            "approved": {"by": "user", "date": "2026-10-20", "quote": "q"}}]
+    pts[1][field] = value if field != "x" else pts[1]["x"] + value
+    with pytest.raises(ps.PlacementStopped, match="point identity changed"):
+        ps.apply_ground_exceptions(pts, exc, "npm", "A", ASSIGN)
+    exc[0].pop("point")
+    with pytest.raises(ps.PlacementStopped, match="malformed"):
+        ps.apply_ground_exceptions(points(4), exc, "npm", "A", ASSIGN)
+
+
+def test_ground_exception_for_absent_point_stops():
+    exc = [{"handle": "NOPE", "reason": "hole", "ground_master_sha256": {"npm": "A"},
+            "point": {"handle": "NOPE", "label": "Скамья", "x": 0.0, "y": 0.0, "z": 0.0, "rotation": 0.0,
+                      "library_id": ASSIGN["Скамья"]},
+            "approved": {"by": "user", "date": "2026-10-20", "quote": "q"}}]
+    with pytest.raises(ps.PlacementStopped, match="not among"):
+        ps.apply_ground_exceptions(points(4), exc, "npm", "A", ASSIGN)
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), None, "1.0", True])
+def test_validate_points_rejects_non_finite(bad):
+    pts = points(3)
+    pts[2]["x"] = bad
+    with pytest.raises(ps.PlacementStopped, match="H002.*non-finite"):
+        ps.validate_points(pts)
+    ps.validate_points(points(3))
