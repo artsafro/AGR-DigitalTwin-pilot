@@ -10,7 +10,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from dt_ai.core.models import Approval, Name, SourceRef
+from dt_ai.core.provenance import Approval, Name, SourceRef
 
 Embed = Annotated[float, Field(ge=0.010, le=0.020, allow_inf_nan=False, description="embed depth, metres [D115]")]
 
