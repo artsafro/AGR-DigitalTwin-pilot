@@ -303,7 +303,7 @@ def test_corner_touching_pieces_are_refused_as_non_manifold(gap):
     """Review P1 (#341): plan squares touching at a corner (or 10 um apart, welded) share a vertical edge 4 times."""
     scene = {"p": join(box((0, 0, 0), (1, 1, 1)), box((1 + gap, 1 + gap, 0), (2, 2, 1)))}
     r = refused(scene, allow_multi=True)
-    assert "manifold" in r.question and r.report is None
+    assert "non-manifold edges" in r.question and r.report is None
 
 
 @pytest.mark.parametrize("multi", [False, True])
@@ -332,7 +332,8 @@ class _CollapsedTop(NumpyExtrude):
         return Mesh(v, m.triangles)
 
 
-@pytest.mark.parametrize("backend, word", [(_FlippedSide(), "orient"), (_CollapsedTop(), "degenerate")])
+@pytest.mark.parametrize("backend, word", [(_FlippedSide(), "inconsistently oriented"),
+                                           (_CollapsedTop(), "degenerate triangles")])
 def test_backend_output_that_is_not_an_oriented_two_manifold_is_refused(backend, word):
     r = refused({"p": box((0, 0, 0), (1, 1, 1))}, backend=backend)
     assert word in r.question

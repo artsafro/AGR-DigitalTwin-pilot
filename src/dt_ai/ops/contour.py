@@ -20,7 +20,9 @@ import numpy as np
 import shapely
 from shapely.geometry.polygon import orient
 
-from dt_ai.ops.invariants import Context, Mesh, Scene, border_edges
+from twinqa.geometry.mesh import weld
+
+from dt_ai.ops.invariants import WELD_M, Context, Mesh, Scene
 from dt_ai.ops.operations import OperationRefused, OperationResult, run_operation
 from dt_ai.ops.silhouette import SILHOUETTE_MAX_M, VIEWS, silhouette, silhouette_deviations
 
@@ -99,6 +101,29 @@ def extrude_polygon(polygon, axis: int, base_m: float, height_m: float, backend:
     return (backend or NumpyExtrude())(polygon, axis, float(base_m), float(height_m))
 
 
+def topology_problem(mesh: Mesh) -> str | None:
+    """Why `mesh` is not a closed, consistently oriented 2-manifold after the 0.1 mm weld of the invariants, or None.
+
+    `border_edges` alone counts only edges used once; this also rejects collapsed (degenerate) triangles, edges used
+    by more than two triangles (pieces touching along an edge) and a pair of triangles that run an edge the same way.
+    """
+    tris = weld(mesh.vertices, WELD_M)[mesh.triangles]
+    a, b, c = tris.T
+    collapsed = int(((a == b) | (b == c) | (c == a)).sum())
+    if collapsed:
+        return f"{collapsed} degenerate triangles collapse under the 0.1 mm weld"
+    directed = np.concatenate([tris[:, [0, 1]], tris[:, [1, 2]], tris[:, [2, 0]]])
+    _, uses = np.unique(np.sort(directed, axis=1), axis=0, return_counts=True)
+    if (uses == 1).any():
+        return f"{int((uses == 1).sum())} open edges"
+    if (uses > 2).any():
+        return f"{int((uses > 2).sum())} non-manifold edges (used by up to {int(uses.max())} triangles)"
+    _, runs = np.unique(directed, axis=0, return_counts=True)
+    if (runs > 1).any():
+        return f"{int((runs > 1).sum())} edges with inconsistently oriented triangles"
+    return None
+
+
 def _polygons(geom):
     """Polygons of a (multi)geometry, dropping lines, points and numerical dust."""
     out = []
@@ -165,10 +190,12 @@ def _rebuild(scene: Scene, part: str, view: str, height_m, base_m, contour, allo
     offsets = np.cumsum([0] + [len(m.vertices) for m in meshes[:-1]])
     prism = Mesh(np.concatenate([m.vertices for m in meshes]),
                  np.concatenate([m.triangles + o for m, o in zip(meshes, offsets)]))
-    open_edges = len(border_edges(prism))
-    if open_edges:
-        raise OperationRefused(f"the prism has {open_edges} open edges after the 0.1 mm weld (contour vertices too "
-                               "close); which simplified contour should be used?")
+    problem = topology_problem(prism)
+    notes["topology"] = problem or "closed oriented 2-manifold"
+    if problem:
+        raise OperationRefused(f"the prism is not a closed oriented 2-manifold after the 0.1 mm weld: {problem} "
+                               "(contour pieces touching or vertices too close); which simplified contour or which "
+                               "separate parts should be used?")
     deviations = silhouette_deviations(mesh, prism, silhouette_max_m / 4)
     notes["deviations_m"] = deviations
     worst = max(deviations.items(), key=lambda kv: kv[1])
