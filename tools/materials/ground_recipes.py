@@ -8,6 +8,16 @@ physical joint width is provisional, never widened to force integer periods.
 Delivery writes only new version folders below C:/x/vatutino-ground-textures.
 
 new-case: seeded procedural Ground diffuse recipes with physical supertile rasterization.
+
+Unsourced visual choices are recipe parameters with their own provisional
+flags: visual.blade_cycles, visual.grid_band_divisor, visual.micro_period_px,
+visual.micro_amplitudes and visual.blur_radii. Tile npm_joint_px and
+vpm_joint_px are flagged as the raster of provisional joint_mm, not as a
+second source. Contact labels state the generated physical size. The
+LawnReinforced band is the raster mask width: a centred bar of
+2 * (cell // grid_band_divisor) + 1 texels, saturated at the cell, not the
+divisor quotient. The contact sheet grows its label column and row so every
+complete label fits.
 """
 
 import argparse
@@ -127,6 +137,7 @@ def validate_recipe(recipe) -> dict:
             raise GroundRecipeError(f"missing slot {name}")
     for name in CANONICAL_SLOTS:
         _validate_slot(name, slots[name])
+    _validate_visual(recipe)
     return recipe
 
 
@@ -158,8 +169,9 @@ def render_map(recipe, slot: str, profile: str, size: int | None = None, deliver
         delivery_size,
         recipe["profiles"][profile]["px_per_m"],
         rng,
+        recipe["visual"],
     )
-    return _finish(image)
+    return _finish(image, recipe["visual"])
 
 
 def png_bytes(image: np.ndarray) -> bytes:
@@ -174,7 +186,7 @@ def png_bytes(image: np.ndarray) -> bytes:
 
 def contact_label(recipe, slot: str) -> str:
     body = recipe["slots"][slot]
-    return f"{slot}  {body['tile_size_label']}  PROVISIONAL"
+    return f"{slot}  {body['tile_size_label']}  PROVISIONAL\n{_actual_size_text(recipe, slot)}"
 
 
 def build_contact_sheet(recipe, rendered: dict) -> Image.Image:
@@ -184,22 +196,27 @@ def build_contact_sheet(recipe, rendered: dict) -> Image.Image:
         raise GroundRecipeError("contact sheet is missing a slot")
     crops = [_one_metre(rendered[slot]["vpm"], px_per_m) for slot in slots]
     cell = crops[0].shape[0]
-    label_w = max(360, cell)
-    sheet = Image.new("RGB", (cell * 3 + label_w, cell * len(slots)), (244, 244, 240))
-    draw = ImageDraw.Draw(sheet)
+    if any(crop.shape[0] != cell or crop.shape[1] != cell for crop in crops):
+        raise GroundRecipeError("contact sheet crops differ in size")
+    labels = [contact_label(recipe, slot) for slot in slots]
     font = _font(max(16, min(32, cell // 16)))
+    spacing = 6
+    pad = 16
+    label_w, row_h = _label_panel(labels, font, cell, pad, spacing)
+    sheet = Image.new("RGB", (cell * 3 + label_w, row_h * len(slots)), (244, 244, 240))
+    draw = ImageDraw.Draw(sheet)
     for index, slot in enumerate(slots):
-        y = index * cell
+        y = index * row_h
         sheet.paste(_fit(rendered[slot]["npm"], cell), (0, y))
         tiled = np.tile(np.ascontiguousarray(rendered[slot]["npm"]), (2, 2, 1))
         sheet.paste(_fit(tiled, cell), (cell, y))
         sheet.paste(Image.fromarray(crops[index], "RGB"), (cell * 2, y))
         draw.multiline_text(
-            (cell * 3 + 16, y + 16),
-            contact_label(recipe, slot),
+            (cell * 3 + pad, y + pad),
+            labels[index],
             fill=(24, 24, 24),
             font=font,
-            spacing=6,
+            spacing=spacing,
         )
     return sheet
 
@@ -275,7 +292,13 @@ def write_delivery(recipe_path, out_dir, *, version=None, address=None) -> dict:
     sheet = build_contact_sheet(recipe, rendered)
     sheet_buffer = io.BytesIO()
     sheet.save(sheet_buffer, format="JPEG", quality=90, subsampling=0)
-    manifest = {"address": recipe["address"], "seed": recipe["seed"], "source_versions": recipe.get("source_versions", {}), "maps": entries}
+    manifest = {
+        "address": recipe["address"],
+        "seed": recipe["seed"],
+        "source_versions": recipe.get("source_versions", {}),
+        "visual": recipe["visual"],
+        "maps": entries,
+    }
     manifest_bytes = json.dumps(manifest, indent=2).encode("utf-8")
     if out_dir.exists() and any(out_dir.iterdir()):
         raise GroundRecipeError("version folder already contains files")
@@ -311,6 +334,59 @@ def main(argv=None) -> int:
     return 0
 
 
+def _validate_visual(recipe) -> None:
+    _require_key(recipe, "visual")
+    visual = recipe["visual"]
+    if not isinstance(visual, dict):
+        raise GroundRecipeError("visual must be an object")
+    for key in (
+        "blade_cycles",
+        "grid_band_divisor",
+        "micro_period_px",
+        "micro_amplitudes",
+        "blur_radii",
+        "provisional",
+    ):
+        _require_key(visual, key)
+    cycles = visual["blade_cycles"]
+    if isinstance(cycles, bool) or not isinstance(cycles, (int, float)) or not math.isfinite(cycles) or cycles <= 0:
+        raise GroundRecipeError("blade_cycles must be finite and positive")
+    _positive_int(visual["grid_band_divisor"], "grid_band_divisor")
+    _positive_int(visual["micro_period_px"], "micro_period_px")
+    amplitudes = visual["micro_amplitudes"]
+    if not isinstance(amplitudes, list) or not amplitudes:
+        raise GroundRecipeError("micro_amplitudes are missing")
+    for item in amplitudes:
+        if isinstance(item, bool) or not isinstance(item, (int, float)) or not math.isfinite(item) or item <= 0:
+            raise GroundRecipeError("micro_amplitudes must be finite and positive")
+    radii = visual["blur_radii"]
+    if not isinstance(radii, list) or not radii:
+        raise GroundRecipeError("blur_radii are missing")
+    for item in radii:
+        _positive_int(item, "blur_radii")
+    fields = _provisional_fields(visual["provisional"], "visual")
+    for key in ("blade_cycles", "grid_band_divisor", "micro_period_px", "micro_amplitudes", "blur_radii"):
+        if key not in fields:
+            raise GroundRecipeError(f"visual {key} has no provisional flag")
+
+
+def _provisional_fields(flags, name: str) -> set[str]:
+    if not isinstance(flags, list) or not flags:
+        raise GroundRecipeError(f"{name} provisional flags are missing")
+    fields: set[str] = set()
+    for flag in flags:
+        if not isinstance(flag, dict):
+            raise GroundRecipeError(f"{name} provisional flag must be an object")
+        _require_key(flag, "field")
+        _require_key(flag, "reason")
+        if not isinstance(flag["field"], str) or not flag["field"].strip():
+            raise GroundRecipeError(f"{name} provisional field is empty")
+        if not isinstance(flag["reason"], str) or len(flag["reason"].strip()) < 8:
+            raise GroundRecipeError(f"{name} provisional reason is empty")
+        fields.add(flag["field"])
+    return fields
+
+
 def _validate_slot(name: str, body) -> None:
     if not isinstance(body, dict):
         raise GroundRecipeError(f"{name} must be an object")
@@ -323,18 +399,7 @@ def _validate_slot(name: str, body) -> None:
         raise GroundRecipeError(f"{name} source is missing")
     if not isinstance(body["tile_size_label"], str) or not body["tile_size_label"].strip():
         raise GroundRecipeError(f"{name} tile_size_label is missing")
-    flags = body["provisional"]
-    if not isinstance(flags, list) or not flags:
-        raise GroundRecipeError(f"{name} provisional flags are missing")
-    for flag in flags:
-        if not isinstance(flag, dict):
-            raise GroundRecipeError(f"{name} provisional flag must be an object")
-        _require_key(flag, "field")
-        _require_key(flag, "reason")
-        if not isinstance(flag["field"], str) or not flag["field"].strip():
-            raise GroundRecipeError(f"{name} provisional field is empty")
-        if not isinstance(flag["reason"], str) or len(flag["reason"].strip()) < 8:
-            raise GroundRecipeError(f"{name} provisional reason is empty")
+    fields = _provisional_fields(body["provisional"], name)
     if family == "tile":
         _require_key(body, "nominal_tile_mm")
         _positive_pair(body["nominal_tile_mm"], "nominal_tile_mm")
@@ -388,6 +453,13 @@ def _validate_slot(name: str, body) -> None:
         _cell(body, "vpm")
     elif family == "soil":
         _palette(body)
+    if family == "tile":
+        for key in ("npm_joint_px", "vpm_joint_px"):
+            if key not in fields:
+                raise GroundRecipeError(f"{name} {key} has no provisional flag")
+    for key in body:
+        if isinstance(key, str) and key.endswith("_cell_px") and key not in fields:
+            raise GroundRecipeError(f"{name} {key} has no provisional flag")
 
 
 def _period_pair(body, profile: str) -> None:
@@ -471,7 +543,7 @@ def _cell(body, profile: str) -> None:
         raise GroundRecipeError(f"{key} {value} does not divide the map size {size}")
 
 
-def _draw(body, slot: str, profile: str, size: int, delivery_size: int, px_per_m, rng) -> np.ndarray:
+def _draw(body, slot: str, profile: str, size: int, delivery_size: int, px_per_m, rng, visual) -> np.ndarray:
     family = body["family"]
     if family == "tile":
         period, joint = _tile_layout(body, profile, size, delivery_size, px_per_m)
@@ -484,11 +556,14 @@ def _draw(body, slot: str, profile: str, size: int, delivery_size: int, px_per_m
         if family == "particles":
             image = _draw_particles(size, cell, body["palette"], rng)
         elif family == "foliage":
-            image = _draw_foliage(size, cell, body["palette"], body["bloom_palette"], rng)
+            image = _draw_foliage(size, cell, body["palette"], body["bloom_palette"], rng, visual["blade_cycles"])
         else:
-            image = _draw_ecogrid(size, cell, body["palette"], body["grid_rgb"], rng)
+            image = _draw_ecogrid(
+                size, cell, body["palette"], body["grid_rgb"], rng,
+                visual["grid_band_divisor"], visual["blade_cycles"],
+            )
     elif family == "lawn":
-        image = _draw_lawn(size, body["palette"], rng)
+        image = _draw_lawn(size, body["palette"], rng, visual["blade_cycles"])
     else:
         image = _draw_soil(size, body["palette"], rng)
     cycles = 11 + CANONICAL_SLOTS.index(slot) + (0 if profile == "npm" else 3)
@@ -605,11 +680,11 @@ def _draw_particles(size, cell, palette, rng) -> np.ndarray:
     return image * grain[..., None] * fleck[..., None]
 
 
-def _draw_lawn(size, palette, rng) -> np.ndarray:
+def _draw_lawn(size, palette, rng, blade_cycles) -> np.ndarray:
     noise = _fbm(size, rng)
     warp = _fbm(size, rng)
     xs = np.arange(size, dtype=np.float32)
-    blades = 0.5 + 0.5 * np.sin((xs[None, :] / size + warp * 0.01) * (2 * np.pi * 37))
+    blades = 0.5 + 0.5 * np.sin((xs[None, :] / size + warp * 0.01) * (2 * np.pi * float(blade_cycles)))
     colours = np.array(palette, dtype=np.float32)
     low = colours[0]
     high = colours[min(1, len(colours) - 1)]
@@ -617,10 +692,10 @@ def _draw_lawn(size, palette, rng) -> np.ndarray:
     return low + (high - low) * mix[..., None]
 
 
-def _draw_ecogrid(size, cell, palette, grid_rgb, rng) -> np.ndarray:
-    grass = _draw_lawn(size, palette, rng)
+def _draw_ecogrid(size, cell, palette, grid_rgb, rng, band_divisor, blade_cycles) -> np.ndarray:
+    grass = _draw_lawn(size, palette, rng, blade_cycles)
     ys, xs = np.indices((size, size), dtype=np.int32)
-    band = max(1, cell // 12)
+    band = max(1, cell // int(band_divisor))
     mid_x = cell // 2
     mid_y = cell // 2
     lx = xs % cell
@@ -630,8 +705,8 @@ def _draw_ecogrid(size, cell, palette, grid_rgb, rng) -> np.ndarray:
     return np.where(grid[..., None], plastic, grass)
 
 
-def _draw_foliage(size, cell, palette, blooms, rng) -> np.ndarray:
-    bed = _draw_lawn(size, palette, rng)
+def _draw_foliage(size, cell, palette, blooms, rng, blade_cycles) -> np.ndarray:
+    bed = _draw_lawn(size, palette, rng, blade_cycles)
     shade, choice = _worley(size, cell, len(blooms), rng)
     colours = np.array(blooms, dtype=np.float32)
     spot = shade < cell * 0.28
@@ -718,27 +793,28 @@ def _carrier(size, cycles) -> np.ndarray:
     return (0.5 + 0.5 * (0.65 * sx[None, :] + 0.35 * sy[:, None])).astype(np.float32)
 
 
-def _finish(image: np.ndarray) -> np.ndarray:
+def _finish(image: np.ndarray, visual) -> np.ndarray:
     base = image.astype(np.float32)
     current = _u8(base)
     if _seam_ok(current):
         return current
-    # A periodic 4px lift raises the interior step without moving the paver edges.
-    # Blur is only a fallback: it widens a 1px joint and changes the face size.
-    for amplitude in (1, 2, 4, 6):
-        current = _u8(base + _micro(base.shape[0], amplitude))
+    # Periodic lift and blur are recipe fallbacks. Blur widens a 1px joint.
+    period = _positive_int(visual["micro_period_px"], "micro_period_px")
+    if base.shape[0] % period != 0:
+        raise GroundRecipeError("micro_period_px does not divide the map size")
+    for amplitude in visual["micro_amplitudes"]:
+        current = _u8(base + _micro(base.shape[0], float(amplitude), period))
         if _seam_ok(current):
             return current
-    for radius in (1, 2, 4):
-        current = _u8(_box_blur(base, radius))
+    for radius in visual["blur_radii"]:
+        current = _u8(_box_blur(base, _positive_int(radius, "blur_radii")))
         if _seam_ok(current):
             return current
     raise GroundRecipeError("wrap seam exceeds 1.5 times the interior median")
 
 
-def _micro(size: int, amplitude: float) -> np.ndarray:
-    """Periodic 4px triangle. Same step on every column and row, including the wrap."""
-    period = 4
+def _micro(size: int, amplitude: float, period: int) -> np.ndarray:
+    """Periodic triangle. Same step on every column and row, including the wrap."""
     position = np.arange(size, dtype=np.float32) % period
     wave = np.where(position <= period / 2.0, position, period - position)
     wave = wave * (amplitude / (period / 2.0))
@@ -808,6 +884,73 @@ def _scale_pair(value, delivery: int, size: int, label: str):
     if not isinstance(value, (list, tuple)) or len(value) != 2:
         raise GroundRecipeError(f"{label} must be a pair")
     return tuple(_scale_int(item, delivery, size, label) for item in value)
+
+
+def _actual_size_text(recipe, slot: str) -> str:
+    """Physical size the generator emits, per profile, after scale fitting."""
+    body = recipe["slots"][slot]
+    family = body["family"]
+    parts = []
+    for profile in ("npm", "vpm"):
+        spec = recipe["profiles"][profile]
+        px_per_m = spec["px_per_m"]
+        repeat_m = spec["metres_per_repeat"]
+        if family == "tile":
+            facts = tile_facts(body, profile)
+            face = facts["actual_face_mm"]
+            joint = facts["actual_joint_mm"]
+            parts.append(
+                f"{profile} actual {face[0]:.2f} x {face[1]:.2f} mm face, "
+                f"joint {joint[0]:.2f} x {joint[1]:.2f} mm"
+            )
+        elif family == "particles" and slot == "Gravel":
+            count = _grain_count(body["fraction_mm"], profile)
+            parts.append(f"{profile} actual pitch {repeat_m / count * 1000.0:.2f} mm")
+        elif family == "lawn":
+            spacing = repeat_m / float(recipe["visual"]["blade_cycles"])
+            parts.append(f"{profile} actual blade spacing {spacing:.4f} m")
+        elif family == "soil":
+            parts.append(f"{profile} actual repeat {repeat_m:.4f} m")
+        else:
+            cell = body[f"{profile}_cell_px"]
+            text = f"{profile} actual cell {cell / px_per_m * 1000.0:.2f} mm"
+            if family == "ecogrid":
+                band_px = _raster_grid_band_px(cell, recipe["visual"]["grid_band_divisor"])
+                spacing = repeat_m / float(recipe["visual"]["blade_cycles"])
+                text += (
+                    f", band {band_px / px_per_m * 1000.0:.2f} mm, "
+                    f"blade spacing {spacing:.4f} m"
+                )
+            elif family == "foliage":
+                spacing = repeat_m / float(recipe["visual"]["blade_cycles"])
+                text += f", blade spacing {spacing:.4f} m"
+            parts.append(text)
+    return "; ".join(parts)
+
+
+def _raster_grid_band_px(cell: int, band_divisor: int) -> int:
+    """Texel width of the ecogrid bar on the first row of one cell.
+
+    The mask is abs(index - cell // 2) <= band, with band = max(1, cell // divisor).
+    That bar is 2 * band + 1 texels and saturates at the cell width.
+    """
+    band = max(1, int(cell) // int(band_divisor))
+    mid = int(cell) // 2
+    if band >= mid:
+        return int(cell)
+    return 2 * band + 1
+
+
+def _label_panel(labels, font, cell: int, pad: int, spacing: int) -> tuple[int, int]:
+    """Label column and row large enough for every complete label."""
+    probe = ImageDraw.Draw(Image.new("RGB", (1, 1)))
+    width = max(360, cell)
+    height = cell
+    for label in labels:
+        box = probe.multiline_textbbox((pad, pad), label, font=font, spacing=spacing)
+        width = max(width, int(box[2]) + pad)
+        height = max(height, int(box[3]) + pad)
+    return width, height
 
 
 def _one_metre(image: np.ndarray, px_per_m) -> np.ndarray:
