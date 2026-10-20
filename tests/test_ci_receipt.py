@@ -1376,3 +1376,17 @@ def test_pytest_log_saves_streams_and_requests_long_tracebacks(tmp_path, monkeyp
         hits += 1
     assert hits == 24 + 6 + len(flagged_bad) == 36
     assert len(rejected) == 24
+
+
+def test_windows_default_basetemp_is_short_enough_for_path_bearing_messages():
+    """Regression: the long default leaf (pid-ns-uuid, 116 chars) pushed tool reasons that
+    embed tmp_path past agent_trace's 160-char cut, so 4 test_agent_trace tests failed only
+    inside the receipt run. The default path stays <= 72 chars and unique per call."""
+    mod = load()
+    sha = "f" * 40
+    paths = {mod._default_basetemp(sha) for _ in range(200)}
+    assert len(paths) == 200
+    for path in paths:
+        assert path.startswith(f"C:/x/ci-receipt-{sha}/")
+        assert len(path) <= 72, (len(path), path)
+        assert re.fullmatch(r"[0-9a-f]{12}", path.rsplit("/", 1)[1])

@@ -10,7 +10,7 @@ Agreed commands, each started with PYTHONPATH, PYTHONHOME and VIRTUAL_ENV remove
 ``uv run dt schemas --check``. Pytest always receives ``-rf --tb=long``.
 ``--pytest-log PATH`` writes that command's full stdout and stderr once; the
 path is not a receipt field. On Windows, pytest receives ``--basetemp`` under
-``C:/x/ci-receipt-<sha>/<unique>``
+``C:/x/ci-receipt-<sha>/<12 hex>`` (kept short: tests embed tmp paths in capped messages)
 unless ``--basetemp`` is set. Missing ancestors of that default path are created
 before pytest; the leaf itself is left for pytest. Other platforms keep pytest's
 own basetemp unless ``--basetemp`` is set. With ``--issue N`` the ready-gate
@@ -124,7 +124,8 @@ def _basetemp_problem(value, sha=None):
 
 def _default_basetemp(sha):
     token = sha if SHA_RE.fullmatch(sha or "") else "unknown"
-    leaf = f"{os.getpid()}-{time.time_ns()}-{uuid.uuid4().hex}"
+    # Short leaf: paths under it end up in tool messages that are cut at 160 chars.
+    leaf = uuid.uuid4().hex[:12]
     return f"C:/x/ci-receipt-{token}/{leaf}"
 
 
