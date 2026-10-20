@@ -141,14 +141,16 @@ def test_unrelated_receipts(bundle, tmp_path, gate):
     assert not load().inspect_job(bundle, tmp_path)["passed"]
 
 
-@pytest.mark.parametrize("mode", ("job", "source", "receipt", "hardlink", "resolved", "missing_input"))
+@pytest.mark.parametrize("mode", ("job", "source", "receipt", "hardlink", "resolved", "missing_input", "missing_sheet"))
 def test_output_alias(bundle, tmp_path, mode):
     path = tmp_path / "job.yaml"
     if mode == "missing_input":
         (tmp_path / "source.txt").unlink()
+    if mode == "missing_sheet":
+        (tmp_path / "sheet.html").unlink()
     path.write_text(yaml.safe_dump(bundle), encoding="utf-8")
     output = {"job": path, "source": tmp_path / "source.txt", "receipt": tmp_path / "checker.json",
-              "resolved": tmp_path / "." / "source.txt", "missing_input": tmp_path / "source.txt"}.get(mode)
+              "resolved": tmp_path / "." / "source.txt", "missing_input": tmp_path / "source.txt", "missing_sheet": tmp_path / "sheet.html"}.get(mode)
     if mode == "hardlink":
         output = tmp_path / "alias.yaml"
         os.link(path, output)

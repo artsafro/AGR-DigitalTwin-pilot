@@ -47,6 +47,7 @@ Use new output paths on repeats; the validator refuses overwrites.
 
 - `tests/ops` + `tests/contracts/test_parts_list.py`: **220 passed**, 165.61 s; synthetic capability evidence only.
 - Procedure plus C7 tests: **79 passed**, 27.20 s.
+- Final procedure probes after the nested missing-sheet alias regression: **58 passed**, 1.55 s.
 - C7 `--budget-files AGENTS.md CLAUDE.md docs/domain/areas/groundel-maf.md`: **31284 characters < 40000**, exit 0.
 - Actual card context `--budget-files AGENTS.md docs/domain/areas/groundel-maf.md tmp/card.txt`: **37075 characters < 40000**, exit 0. Card text is copied read-only from the board.
 - Initial regression at tests-first commit `3d17dc4`: **1 failed** (`Missing task-to-model validator`) before implementation.

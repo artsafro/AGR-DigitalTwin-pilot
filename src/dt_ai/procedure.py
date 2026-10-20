@@ -256,6 +256,13 @@ def main(argv=None):
                 for gate in (data.get("gates") or {}).values():
                     refs.extend(gate.get("evidence", []))
                 protected.extend(_resolve(args.root, r["path"]) for r in refs)
+                # A visual receipt names another input: its review sheet. Protect
+                # that path even when the sheet is absent (not only existing files).
+                visual = (data.get("gates") or {}).get("visual", {})
+                for ref in visual.get("evidence", [])[:1]:
+                    receipt = _read(_resolve(args.root, ref["path"]))
+                    if isinstance(receipt, dict) and isinstance(receipt.get("sheet"), dict):
+                        protected.append(_resolve(args.root, receipt["sheet"]["path"]))
             output = args.output.resolve()
             if args.output.exists() or args.output.is_symlink() or output in protected:
                 raise ValueError("output aliases an input/evidence or already exists")
