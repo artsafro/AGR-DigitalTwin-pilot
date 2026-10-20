@@ -282,3 +282,45 @@ def test_result_type():
     r = verdict({"w": rect(1, 1)}, "NPM-Ground")
     assert isinstance(r, InvariantResult) and r == InvariantResult("texel_ready", True, 0, ())
     assert isinstance(TexelParams(None, None, None), TexelParams)
+
+
+# ---- review round 1 (PR #356): far-from-origin precision and non-finite derived metrics ---------------------------
+
+_SMALL_TRI = np.array([[0, 0, 0], [0.01, 0, 0], [0.005, 0.001, 0]], float)
+
+
+@pytest.mark.parametrize("profile", sorted(PROFILES))
+@pytest.mark.parametrize("offset", [(0, 0, 0), (1e6, 1e6, 0)])
+def test_sliver_triangle_aspect_survives_translation(profile, offset):
+    """Reviewer case: aspect 0.01 / (2 * 5e-6 / 0.01) = 10 must not collapse far from the origin."""
+    v = _SMALL_TRI + np.array(offset, float)
+    m = face_metrics(v)
+    assert m.aspect == pytest.approx(10.0, rel=1e-6) and m.area_m2 == pytest.approx(5e-6, rel=1e-6)
+    r = verdict({"t": PolyMesh(v, [(0, 1, 2)])}, profile)
+    assert not r.passed and r.offenders == ("t#0: aspect 10.0 > 8",)
+
+
+@pytest.mark.parametrize("profile", sorted(PROFILES))
+def test_translated_normal_faces_pass(profile):
+    """Controls: a good triangle and a 3.9 m quad far from the origin keep exact metrics and pass."""
+    off = np.array([1e6, 1e6, 0.0])
+    t = np.array([[0, 0, 0], [2, 0, 0], [1, 1.5, 0]], float) + off
+    m = face_metrics(t)
+    assert m.area_m2 == pytest.approx(1.5, rel=1e-9) and m.aspect == pytest.approx(2 / 1.5, rel=1e-9)
+    q = rect(3.9, 3.9, 1e6, 1e6)
+    assert face_metrics(q.vertices).area_m2 == pytest.approx(3.9 * 3.9, rel=1e-9)
+    assert verdict({"t": PolyMesh(t, [(0, 1, 2)]), "q": q}, profile).passed
+
+
+@pytest.mark.parametrize("profile", sorted(PROFILES))
+def test_nonfinite_derived_metrics_fail_closed(profile):
+    """Reviewer case: finite 1e200 coordinates overflow area to inf/NaN; must fail in every profile, NPM-OKS too."""
+    v = np.array([[1e200, 1e200, 0], [2e200, 1e200, 0], [2e200, 2e200, 0], [1e200, 2e200, 0]], float)
+    r = verdict({"q": PolyMesh(v, [(0, 1, 2, 3)])}, profile)
+    assert not r.passed and r.count == 1 and "non-finite" in r.offenders[0]
+    rep = texel_report({"q": PolyMesh(v, [(0, 1, 2, 3)])}, profile)["q"]
+    assert not rep.passed
+
+
+def test_npm_oks_300m_control_still_passes():
+    assert verdict({"b": rect(300, 300, 1e6, 1e6)}, "NPM-OKS").passed
