@@ -527,6 +527,24 @@ def test_real_rclone_local_report_aliases_preflight(tmp_path, monkeypatch, alias
         assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
 
 
+@pytest.mark.parametrize("link", ["pending", "https://drive.google.com/file/d/recorded-id/view"])
+def test_desktop_recorded_link_survives_repeat_and_conflict(tmp_path, link):
+    entry, payload = _entry(drive_link=link)
+    manifest, root = _write_manifest(tmp_path, [entry], [payload])
+    drive = tmp_path / "drive"
+    drive.mkdir()
+    for apply in (False, True, True):
+        code, report = sync.execute(manifest, root=root, backend="drive-desktop", drive_root=drive, apply=apply)
+        assert code == 0
+        assert report["assets"][0]["drive_link"] == link
+    target = drive / entry["local_path"]
+    target.write_bytes(b"conflict")
+    code, report = sync.execute(manifest, root=root, backend="drive-desktop", drive_root=drive, apply=True)
+    assert code != 0
+    assert target.read_bytes() == b"conflict"
+    assert manifest.read_text() == json.dumps(_document([entry]))
+
+
 def test_truncated_manifest_file_fails(tmp_path):
     manifest = tmp_path / "manifest.json"
     manifest.write_text("{", encoding="utf-8")
