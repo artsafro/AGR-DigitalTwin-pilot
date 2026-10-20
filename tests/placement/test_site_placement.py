@@ -237,3 +237,53 @@ def test_generated_probe_scene_equals_engine(tmp_path):
         rep, _ = run(seed=k, pts=points(n=8, seed=k))
         plan = ps.make_plan(rep, FACTS, OFFSET)
         assert ps.compare_scene(rep, fake_readback(rep, plan), FACTS, OFFSET) == []
+
+
+# ---------------------------------------------------------------- PR #344 round 1 regressions (helpers)
+def test_scene_triangles_counts_placed_geometry_with_mixed_deletion():
+    """Quad bottom deleted on one bench (12 -> 10), kept on the other; an n-gon instance counts n - 2."""
+    rb = {"instances": [{"handle": "A", "library_id": "BENCH", "triangles": 10},
+                        {"handle": "B", "library_id": "BENCH", "triangles": 12},
+                        {"handle": "C", "library_id": "HEX", "triangles": 4}]}
+    assert ps.scene_triangles(rb) == {"BENCH": {"instances": 2, "total": 22, "min": 10, "max": 12},
+                                      "HEX": {"instances": 1, "total": 4, "min": 4, "max": 4}}
+
+
+@pytest.mark.parametrize("bad", [None, -1, 1.5, float("nan")])
+def test_scene_triangles_missing_readback_fails_closed(bad):
+    with pytest.raises(ps.PlacementStopped):
+        ps.scene_triangles({"instances": [{"handle": "A", "library_id": "BENCH", "triangles": bad}]})
+
+
+def test_compare_scene_detects_wrong_triangles_after_deletion():
+    rep, _ = run()
+    plan = ps.make_plan(rep, FACTS, OFFSET)
+    rb = fake_readback(rep, plan)
+    rb["library_triangles"] = {k: v["triangles"] for k, v in FACTS.items()}
+    for r, it in zip(rb["instances"], plan["instances"]):
+        r["triangles"] = 12 - 2 * len(it["delete_polygons"])
+    assert ps.compare_scene(rep, rb, FACTS, OFFSET) == []
+    k = next(i for i, it in enumerate(plan["instances"]) if it["delete_polygons"])
+    rb["instances"][k]["triangles"] = 12                  # bottom reported deleted but triangles not reduced
+    assert any("triangles" in m for m in ps.compare_scene(rep, rb, FACTS, OFFSET))
+
+
+@pytest.mark.parametrize("mism,sink_ok,n", [([], True, 0), (["x: pivot"], True, 1), ([], False, 1),
+                                            (["a", "b"], False, 2)])
+def test_qa_gate(mism, sink_ok, n):
+    s = {"ok": sink_ok, "out_of_tol": [] if sink_ok else [{"handle": "H", "sink_m": 1.1}]}
+    assert len(ps.qa_gate(mism, s)) == n
+
+
+def test_ground_exceptions_bind_to_fingerprint():
+    pts = points(4)
+    exc = [{"handle": "H001", "reason": "hole", "ground_master_sha256": {"npm": "A"},
+            "approved": {"by": "user", "date": "2026-10-20", "quote": "q"}}]
+    keep, excl, stale = ps.apply_ground_exceptions(pts, exc, "npm", "A", ASSIGN)
+    assert [p["handle"] for p in keep] == ["H000", "H002", "H003"] and stale == []
+    assert excl[0]["handle"] == "H001" and excl[0]["reason"] == "ground_exception"
+    keep, excl, stale = ps.apply_ground_exceptions(pts, exc, "npm", "B", ASSIGN)
+    assert len(keep) == 4 and excl == [] and stale == ["H001"]
+    exc[0].pop("approved")
+    with pytest.raises(ps.PlacementStopped):
+        ps.apply_ground_exceptions(pts, exc, "npm", "A", ASSIGN)

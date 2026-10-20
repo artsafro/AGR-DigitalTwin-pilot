@@ -39,6 +39,15 @@ def box(lo, hi):
     return {"vertices": v, "faces": f}
 
 
+def hex_prism(r=0.3, h=0.45):
+    """n-gon bottom and top (6 vertices each): the deleted bottom removes 4 triangles."""
+    import math
+    ring = [[r * math.cos(math.radians(60 * k)), r * math.sin(math.radians(60 * k))] for k in range(6)]
+    v = [[x, y, 0.0] for x, y in ring] + [[x, y, h] for x, y in ring]
+    f = [list(range(5, -1, -1)), list(range(6, 12))] + [[k, (k + 1) % 6, 6 + (k + 1) % 6, 6 + k] for k in range(6)]
+    return {"vertices": v, "faces": f}
+
+
 def ground_mesh(n=8, size=40.0, z0=10.0, slope=0.02):
     vs, fs = [], []
     for j in range(n + 1):
@@ -56,7 +65,8 @@ def test_blender_scene_equals_engine_output(tmp_path):
     vs, fs = ground_mesh()
     libs = [{"id": "TREE", "mesh": box([-1, -1, 0.5], [1, 1, 5.5]), "base_scale": 1.0},
             {"id": "BUSH", "mesh": box([-0.5, -0.5, 0], [0.5, 0.5, 0.9]), "base_scale": 1.12},
-            {"id": "BENCH", "mesh": box([-0.9, -0.25, 0], [0.9, 0.25, 0.8])}]
+            {"id": "BENCH", "mesh": box([-0.9, -0.25, 0], [0.9, 0.25, 0.8])},
+            {"id": "STOOL", "mesh": hex_prism()}]
     spec = {"libraries": libs,
             "ground": {"mesh": {"vertices": [[x - OFFSET[0], y - OFFSET[1], z - OFFSET[2]] for x, y, z in vs],
                                 "faces": fs}}}
@@ -66,10 +76,11 @@ def test_blender_scene_equals_engine_output(tmp_path):
     assert facts["BUSH"]["bbox_max"][2] == pytest.approx(0.9 * 1.12, abs=1e-5)
     assert [f["index"] for f in facts["BENCH"]["bottom_faces"]] == [0]
     lib = [ps.flora_entry("TREE", facts["TREE"], (4.5, 5.5)), ps.flora_entry("BUSH", facts["BUSH"], (1.0, 1.5)),
-           ps.maf_entry("BENCH", facts["BENCH"], [1.8, 0.5, 0.8])]
-    pts = [{"x": 90.0 + 3 * k, "y": 190.0 + 2 * (k % 5), "z": 0.0, "label": ["T", "B", "M"][k % 3],
-            "handle": f"P{k:02d}", "inside": True, "rotation": 17.0 * k, "position": None} for k in range(9)]
-    assign = {"T": "TREE", "B": "BUSH", "M": "BENCH"}
+           ps.maf_entry("BENCH", facts["BENCH"], [1.8, 0.5, 0.8]),
+           ps.maf_entry("STOOL", facts["STOOL"], [0.6, 0.52, 0.45])]
+    pts = [{"x": 90.0 + 3 * k, "y": 190.0 + 2 * (k % 5), "z": 0.0, "label": ["T", "B", "M", "S"][k % 4],
+            "handle": f"P{k:02d}", "inside": True, "rotation": 17.0 * k, "position": None} for k in range(12)]
+    assign = {"T": "TREE", "B": "BUSH", "M": "BENCH", "S": "STOOL"}
     keep, excl = ps.select_points(pts, assign)
     rep = engine.place(keep, vs, fs, lib, 4242, label_map=assign)
     plan = ps.make_plan(rep, facts, OFFSET)
@@ -84,9 +95,19 @@ def test_blender_scene_equals_engine_output(tmp_path):
     assert blend.is_file()
     assert ps.compare_scene(rep, rb, facts, OFFSET, tol=1e-4) == []
     assert rb["seed"] == 4242 and rb["run_record"]["engine_report_sha256"] == ps.report_sha256(rep)
-    s = ps.sinking(rb, kind_of={"TREE": "flora", "BUSH": "flora", "BENCH": "maf"})
+    s = ps.sinking(rb, kind_of={"TREE": "flora", "BUSH": "flora", "BENCH": "maf", "STOOL": "maf"})
     assert s["ok"], s
-    assert s["measured"] == 9
+    assert s["measured"] == 12
+    # placed triangles after the proven bottom deletion: box 12 -> 10 (quad), hex prism 20 -> 16 (n-gon)
+    assert rb["library_triangles"] == {"TREE": 12, "BUSH": 12, "BENCH": 12, "STOOL": 20}
+    by = {r["handle"]: r for r in rb["instances"]}
+    want = {"BENCH": 10, "STOOL": 16, "TREE": 12, "BUSH": 12}
+    for it in plan["instances"]:
+        lid = it["library_id"]
+        assert by[it["handle"]]["triangles"] == (want[lid] if it["delete_polygons"] else rb["library_triangles"][lid])
+    assert {it["library_id"] for it in plan["instances"] if it["delete_polygons"]} == {"BENCH", "STOOL"}
+    tri = ps.scene_triangles(rb)
+    assert tri["STOOL"]["total"] == 16 * 3 and tri["BENCH"]["total"] == 10 * 3
     # a second save onto the same path is refused (new versioned paths only)
     r = subprocess.run([find_blender(), "--background", "--factory-startup", "--python-exit-code", "1",
                         "--python", str(SCRIPT), "--", "instance", str(tmp_path / "spec.json"),
