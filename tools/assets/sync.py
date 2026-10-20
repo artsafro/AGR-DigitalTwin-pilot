@@ -391,19 +391,22 @@ def _copy(entry: dict, root: Path, backend: str, desktop: Path | None) -> str:
     executable = which_rclone()
     if executable is None:
         raise ValueError("rclone unavailable")
-    result = subprocess.run([executable, "copyto", "--immutable", "--checksum", str(source), target],
+    result = subprocess.run([executable, "copyto", "--ignore-existing", "--checksum", str(source), target],
                             capture_output=True, text=True, timeout=1800, check=False)
     if result.returncode:
         raise ValueError("rclone copyto failed")
-    metadata = subprocess.run([executable, "lsjson", target, "--stat"],
+    metadata = subprocess.run([executable, "lsjson", target, "--stat", "--hash", "--hash-type", "MD5"],
                               capture_output=True, text=True, timeout=60, check=False)
-    # Derive the authenticated Drive URL from file ID; never invoke `rclone link`,
-    # which creates a public share. Lookup failure does not undo a verified copy.
-    try:
-        info = json.loads(metadata.stdout) if metadata.returncode == 0 else {}
-        file_id = info.get("ID") if isinstance(info, dict) else None
-    except json.JSONDecodeError:
-        file_id = None
+    # Drive supports MD5 for uploaded binaries. Fail closed if verification is
+    # unavailable, including an existing different file skipped by copyto.
+    info = json.loads(metadata.stdout) if metadata.returncode == 0 else {}
+    with source.open("rb") as handle:
+        md5 = hashlib.file_digest(handle, "md5").hexdigest()
+    hashes = info.get("Hashes") if isinstance(info, dict) else None
+    if not isinstance(info, dict) or not isinstance(hashes, dict) or info.get("Size") != source.stat().st_size or hashes.get("md5") != md5:
+        raise ValueError("remote size/md5 mismatch or unavailable")
+    # Never invoke `rclone link`: file-ID URLs retain existing access controls.
+    file_id = info.get("ID")
     return f"https://drive.google.com/file/d/{file_id}/view" if isinstance(file_id, str) and re.fullmatch(r"[A-Za-z0-9_-]+", file_id) else PENDING
 
 

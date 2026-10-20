@@ -324,7 +324,7 @@ def test_rclone_copy_and_private_link(tmp_path, monkeypatch):
     def run(args, **kwargs):
         calls.append(args)
         if args[1] == "lsjson":
-            return subprocess.CompletedProcess(args, 0, json.dumps({"ID": "test"}), "")
+            return subprocess.CompletedProcess(args, 0, json.dumps({"ID": "test", "Size": len(payload), "Hashes": {"md5": hashlib.md5(payload).hexdigest()}}), "")
         return subprocess.CompletedProcess(args, 0, "", "")
 
     monkeypatch.setattr(subprocess, "run", run)
@@ -334,7 +334,8 @@ def test_rclone_copy_and_private_link(tmp_path, monkeypatch):
     assert code == 0
     assert [call[1] for call in calls] == ["copyto", "lsjson"]
     assert calls[0][-1] == "gdrive:AGR-assets/sample/asset.bin"
-    assert calls[1][-1] == "--stat"
+    assert "--ignore-existing" in calls[0]
+    assert "--stat" in calls[1] and "--hash" in calls[1]
     assert report["assets"][0]["drive_link"] == "https://drive.google.com/file/d/test/view"
 
 
@@ -400,6 +401,52 @@ def test_malformed_inventory_is_rejected(tmp_path, mutation):
     manifest.write_text(json.dumps(document))
     code, report = sync.execute(manifest, root=root)
     assert code != 0
+
+
+@pytest.mark.parametrize("metadata", [{}, [], {"Hashes": None}, {"Size": 10, "Hashes": {}},
+                                         {"Size": 10, "Hashes": {"md5": "0" * 32}},
+                                         {"Size": float("nan"), "Hashes": {}},
+                                         {"Size": float("inf"), "Hashes": {}},
+                                         {"Size": 0, "Hashes": {}}, "truncated"])
+def test_rclone_invalid_remote_evidence_fails(tmp_path, monkeypatch, metadata):
+    import subprocess
+
+    entry, payload = _entry()
+    manifest, root = _write_manifest(tmp_path, [entry], [payload])
+    monkeypatch.setattr(sync, "which_rclone", lambda: "rclone")
+    monkeypatch.setenv("AGR_RCLONE_REMOTE", "gdrive:assets")
+    def run(args, **kwargs):
+        output = "{" if metadata == "truncated" else json.dumps(metadata)
+        return subprocess.CompletedProcess(args, 0, output if args[1] == "lsjson" else "", "")
+    monkeypatch.setattr(subprocess, "run", run)
+    out = tmp_path / "report.json"
+    code, report = sync.execute(manifest, root=root, backend="rclone", apply=True, out=out)
+    assert code != 0
+    assert report["assets"][0]["status"] == "error"
+    assert not out.exists()
+
+
+def test_desktop_generated_repeat_and_conflict_preserve_bytes(tmp_path):
+    rng = random.Random(352)
+    for index in range(12):
+        entry, _ = _entry()
+        body = rng.randbytes(32)
+        entry.update(sha256=_sha(body), size=len(body))
+        case = tmp_path / str(index)
+        manifest, root = _write_manifest(case, [entry], [body])
+        drive = case / "drive"
+        drive.mkdir()
+        for _ in range(2):
+            code, report = sync.execute(manifest, root=root, backend="drive-desktop", drive_root=drive, apply=True)
+            assert code == 0
+            assert (drive / entry["local_path"]).read_bytes() == body
+        changed = body + b"changed"
+        (root / entry["local_path"]).write_bytes(changed)
+        entry.update(sha256=_sha(changed), size=len(changed))
+        manifest.write_text(json.dumps(_document([entry])))
+        code, report = sync.execute(manifest, root=root, backend="drive-desktop", drive_root=drive, apply=True)
+        assert code != 0
+        assert (drive / entry["local_path"]).read_bytes() == body
 
 
 def test_truncated_manifest_file_fails(tmp_path):

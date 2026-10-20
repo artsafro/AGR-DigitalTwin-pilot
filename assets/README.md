@@ -53,9 +53,10 @@ uv run python tools/assets/sync.py --backend rclone
 uv run python tools/assets/sync.py --backend rclone --apply --out tmp/assets-rclone.json
 ```
 
-Apply uses `rclone copyto --immutable --checksum` for each verified local file: a different
-remote version is rejected rather than overwritten; nothing is deleted. An existing
-file ID is queried with `rclone lsjson --stat` and used for an authenticated Drive URL;
+Apply uses `rclone copyto --ignore-existing --checksum` for each verified local file,
+then verifies remote size and MD5 via `rclone lsjson --stat --hash --hash-type MD5`.
+A different existing remote file is left unchanged and reported as an error; nothing is
+deleted. Its file ID is used for an authenticated Drive URL;
 the tool never invokes `rclone link` or changes sharing permissions. Missing IDs stay
 `pending`. Copy errors are nonzero;
 a batch is not transactional (earlier successful uploads can remain). Re-run safely.
