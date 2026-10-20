@@ -406,6 +406,20 @@ def test_empty_or_unsupported_readback_errors(tmp_path, readback):
         bind.build_plan(readback, scene["vpm_readback"], scene["manifest"], scene["root"])
 
 
+def test_raw_material_layer_and_topology_changes_are_rejected():
+    base = _geometry()
+    base["raw_material_layers"] = [{"mapping": "ByPolygon", "reference": "IndexToDirect", "ids": [0]}]
+    base["polygons"] = [[0, 1, 2]]
+    changed = copy.deepcopy(base)
+    changed["raw_material_layers"][0]["ids"] = [1]
+    with pytest.raises(bind.BindError, match="raw material"):
+        bind.geometry_deltas(base, changed)
+    changed = copy.deepcopy(base)
+    changed["polygons"] = [[0, 2, 1]]
+    with pytest.raises(bind.BindError, match="topology"):
+        bind.geometry_deltas(base, changed)
+
+
 def test_geometry_accepts_only_exact_zero_delta():
     base = _geometry()
     assert bind.geometry_deltas(base, copy.deepcopy(base)) == {"vertex": 0.0, "uv": 0.0, "triangles": 1}
@@ -464,9 +478,9 @@ def test_density_grid_keeps_endpoints_and_rejects_the_outside():
             face = {"slot": "CurbGarden", "world_area_m2": 1.0, "uv_area": (value / 2048) ** 2}
             if value in (10.0, 40.0):
                 assert bind.density_report([face], "npm")["CurbGarden"]["min"] == value
-        else:
-            with pytest.raises(bind.BindError, match="outside"):
-                bind.density_report([face], "npm")
+            else:
+                with pytest.raises(bind.BindError, match="outside"):
+                    bind.density_report([face], "npm")
     for value in (520.0, 1706.0, math.nextafter(520.0, 0.0), math.nextafter(1706.0, 2000.0)):
         face = {"slot": "LawnRolled", "world_area_m2": 1.0, "uv_area": (value / 4096) ** 2}
         if value in (520.0, 1706.0):
@@ -546,6 +560,34 @@ def test_empty_readback_is_an_error_not_zero_mismatches(readback):
         bind.mismatch_count([], readback)
 
 
+@pytest.mark.parametrize("fraction", [0.01, 0.5, 0.99])
+def test_fractional_manifest_dimensions_are_rejected(fraction):
+    entry = {"slot": "TileLight", "profile": "npm",
+             "file": bind.texture_filename("TileLight", "npm"),
+             "sha256": "ab" * 32, "size": [2048 + fraction, 2048]}
+    with pytest.raises(bind.BindError, match="size|integer"):
+        bind._manifest_maps({"maps": [entry]})
+
+
+def test_duplicate_readback_material_cannot_hide_a_wrong_binding():
+    bindings, observed = _observed()
+    duplicate = copy.deepcopy(observed["materials"][0])
+    observed["materials"][0]["maps"][0]["image"] = "wrong.png"
+    observed["materials"].append(duplicate)
+    with pytest.raises(bind.BindError, match="duplicate"):
+        bind.accept_readback(bindings, observed)
+
+
+def test_hardlink_input_alias_is_detected(tmp_path):
+    source = tmp_path / "source.fbx"
+    alias = tmp_path / "alias.fbx"
+    source.write_bytes(b"source")
+    os.link(source, alias)
+    assert bind._same(source, alias)
+    assert bind.output_conflicts(alias, [source])
+    assert source.read_bytes() == b"source"
+
+
 def test_nonfinite_image_size_errors():
     bindings, observed = _observed()
     observed["images"][0]["size"] = [float("nan"), 2048]
@@ -608,6 +650,26 @@ def test_successful_bind_keeps_matching_geometry_and_a_zero_mismatch_readback(tm
     assert plan["density"]["vpm"]["Skirt"]["max"] == 1024.0
     assert scene["npm_fbx"].read_bytes() == b"npm-source"
     assert scene["root"].is_dir()
+
+
+@pytest.mark.parametrize("preexisting", [False, True])
+def test_dcc_failure_never_leaves_a_partial_fbx(tmp_path, monkeypatch, preexisting):
+    scene = _scene(tmp_path)
+    out = _use(tmp_path, monkeypatch, scene)
+    if preexisting:
+        out.mkdir()
+
+    def dcc(profile, source, root, bindings, out_fbx):
+        out_fbx.write_bytes(b"partial")
+        raise bind.BindError("incomplete DCC export")
+
+    with pytest.raises(bind.BindError, match="incomplete"):
+        bind.bind_delivery(
+            scene["npm_readback"], scene["vpm_readback"], scene["manifest"], scene["root"],
+            scene["npm_fbx"], scene["vpm_fbx"], out, dcc=dcc,
+        )
+    assert not list(out.rglob("*.fbx"))
+    assert scene["npm_fbx"].read_bytes() == b"npm-source"
 
 
 def test_geometry_mismatch_after_dcc_removes_the_fbx(tmp_path, monkeypatch):

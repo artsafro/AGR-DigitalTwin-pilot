@@ -663,7 +663,7 @@ def test_v002_address_override_keeps_supertile_and_provenance(recipes, tmp_path,
     manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["address"] == "Other_330"
     assert "blade_cycles" in manifest["visual"]
-    assert len(manifest["maps"]) == 20
+    assert len(manifest["maps"]) == len(SLOTS) * 2 == 24
     for entry in manifest["maps"]:
         assert entry["file"].startswith("T_Other_330_Ground_Diffuse_")
         assert (out / entry["file"]).is_file()
@@ -671,7 +671,7 @@ def test_v002_address_override_keeps_supertile_and_provenance(recipes, tmp_path,
             facts = entry["physical_layout"]
             assert max(abs(value) for value in facts["scale_error_percent"]) <= 1
             assert "vpm_joint_px" in {flag["field"] for flag in entry["provisional"]}
-    assert len(labels) == 10
+    assert len(labels) == len(SLOTS) == 12
     assert all("actual" in label for label in labels)
     assert RECIPE_PATH.read_bytes() == source_before
 

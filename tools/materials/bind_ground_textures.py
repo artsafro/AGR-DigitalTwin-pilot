@@ -201,6 +201,10 @@ def output_conflicts(output_dir, inputs, texture_root=None) -> str | None:
 
 def geometry_deltas(before, after) -> dict:
     left, right = _geometry(before), _geometry(after)
+    for key, label in (("raw_material_layers", "raw material layers"), ("polygons", "topology")):
+        if key in before or key in after:
+            if not before.get(key) or before.get(key) != after.get(key):
+                raise BindError(f"{label} differ or are missing")
     if left["triangles"] != right["triangles"]:
         raise BindError(f"triangle count {left['triangles']} != {right['triangles']}")
     if left["material_ids"] != right["material_ids"]:
@@ -265,6 +269,8 @@ def mismatch_count(bindings, readback) -> int:
     for mat in readback["materials"]:
         if not isinstance(mat, dict) or not isinstance(mat.get("name"), str):
             raise BindError("unsupported readback material")
+        if mat["name"] in observed:
+            raise BindError("duplicate readback material")
         observed[mat["name"]] = mat
     mismatches = 0
     for binding in bindings:
@@ -321,8 +327,8 @@ def bind_delivery(npm_readback, vpm_readback, manifest, texture_root, npm_fbx, v
         for profile, src in (("npm", npm_fbx), ("vpm", vpm_fbx)):
             destination = output / profile / FBX_NAME
             destination.parent.mkdir(parents=True, exist_ok=True)
-            result = runner(profile, Path(src), Path(texture_root), plan["bindings"][profile], destination)
             written.append(destination)
+            result = runner(profile, Path(src), Path(texture_root), plan["bindings"][profile], destination)
             geometry_deltas(_load_json(result["before"]), _load_json(result["after"]))
             faces = _load_json(result["after"])["faces"]
             reports[profile] = density_report(faces, profile, [item["slot"] for item in plan["bindings"][profile]])
@@ -452,7 +458,7 @@ def _manifest_maps(manifest) -> list[dict]:
             raise BindError("manifest size is unsupported")
         if any(isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) for value in size):
             raise BindError("non-finite manifest size")
-        if [int(size[0]), int(size[1])] != [PROFILE_SIZE[profile], PROFILE_SIZE[profile]]:
+        if [_exact_int(size[0]), _exact_int(size[1])] != [PROFILE_SIZE[profile], PROFILE_SIZE[profile]]:
             raise BindError(f"{profile} map size must be {PROFILE_SIZE[profile]}")
         key = (profile, slot)
         if key in seen:
@@ -594,6 +600,7 @@ def _run_blender(script: Path, args) -> None:
     command = [exe, "--background", "--factory-startup", "--python-exit-code", "1",
                "--python", str(script), "--", *map(str, args)]
     completed = subprocess.run(command, capture_output=True, text=True)
+    print(json.dumps({"command": command, "exit_code": completed.returncode}), flush=True)
     if completed.returncode != 0:
         detail = (completed.stderr or completed.stdout or "").strip().splitlines()
         tail = detail[-1] if detail else f"exit {completed.returncode}"
@@ -601,7 +608,12 @@ def _run_blender(script: Path, args) -> None:
 
 
 def _same(left, right) -> bool:
-    return _key(left) == _key(right)
+    if _key(left) == _key(right):
+        return True
+    try:
+        return os.path.samefile(left, right)
+    except OSError:
+        return False
 
 
 def _within(path, parent) -> bool:
@@ -613,7 +625,7 @@ def _within(path, parent) -> bool:
 
 
 def _key(path) -> str:
-    return os.path.normcase(os.path.abspath(os.fspath(Path(path))))
+    return os.path.normcase(os.fspath(Path(path).resolve()))
 
 
 if __name__ == "__main__":

@@ -7,6 +7,8 @@
         --python tools/materials/bind_ground_textures_blender.py -- \
         bind <in.fbx> <plan.json> <out.fbx>
 
+new-case: headless Ground binding and exact imported/raw FBX geometry evidence.
+
 The mesh is not edited. fingerprint records triangle count, the raw material_index
 layer, world vertex positions and the UV layer. bind only adds a Base Color image.
 """
@@ -33,6 +35,29 @@ def area2(points):
     return abs((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y)) * 0.5
 
 
+def raw_material_layers(fbx):
+    from io_scene_fbx import parse_fbx
+
+    root, _version = parse_fbx.parse(str(fbx))
+    layers = []
+    objects = next(item for item in root.elems if item.id == b"Objects")
+    for geometry in objects.elems:
+        if geometry.id != b"Geometry":
+            continue
+        for layer in geometry.elems:
+            if layer.id != b"LayerElementMaterial":
+                continue
+            fields = {item.id: item for item in layer.elems}
+            layers.append({
+                "mapping": fields[b"MappingInformationType"].props[0].decode(),
+                "reference": fields[b"ReferenceInformationType"].props[0].decode(),
+                "ids": list(fields[b"Materials"].props[0]),
+            })
+    if not layers:
+        raise ValueError("raw FBX material layers missing")
+    return layers
+
+
 def fingerprint(fbx, out_json):
     clean()
     bpy.ops.import_scene.fbx(filepath=str(fbx))
@@ -41,6 +66,8 @@ def fingerprint(fbx, out_json):
         print("no mesh", file=sys.stderr)
         sys.exit(2)
     payload = {"triangles": 0, "material_ids": [], "vertices": [], "uvs": [], "faces": []}
+    payload["raw_material_layers"] = raw_material_layers(fbx)
+    payload["polygons"] = []
     for obj in meshes:
         mesh = obj.data
         mesh.calc_loop_triangles()
@@ -56,6 +83,7 @@ def fingerprint(fbx, out_json):
         for item in layer:
             payload["uvs"].append([item.uv.x, item.uv.y])
         for poly in mesh.polygons:
+            payload["polygons"].append(list(poly.vertices))
             if len(poly.vertices) != 3:
                 print("non-triangle face", file=sys.stderr)
                 sys.exit(2)
