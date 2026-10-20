@@ -34,6 +34,8 @@ FROZEN_FIXTURE = re.compile(r"^evals/[^/]+/fixtures/")
 CONFLICT_ITEM = re.compile(r"^(\d+)\. ")
 # Lines that match MENTION but state no decision: (file, text on the line).
 NOT_DECISIONS = [
+    ("tests/placement/test_site_job.py", 'e["approved"] = {"by": "user (synthetic)", "date": "2026-10-20"'),
+    ("tests/placement/test_site_placement.py", '"approved": {"by": "user", "date": "2026-10-20", "quote": "q"}'),
     ("docs/experiments/flora-library-audit.md", "user Flora grilling notes (2026-10-15)"),
     ("tests/contracts/test_parts_list.py", 'approval = {"actor": "user", "date": "2026-10-18"'),  # synthetic approval fixture, not a decision
     ("docs/backlog.md", "AGR_Project-uncommitted-2026-10-06.zip"),  # an archive name next to "the user plans"
@@ -343,6 +345,43 @@ def test_log_rejects_every_duplicate_id(monkeypatch):
     monkeypatch.setattr(module, "log_rows", lambda: [])
     with pytest.raises(AssertionError, match="no decisions"):
         test_log_format()
+
+
+def test_live_main_ground_mentions_resolve_to_distinct_sources():
+    """#337: real integration input, not a synthetic replacement of the four mentions."""
+    rows = {row[0]: row for row in log_rows()}
+    paths = ["src/dt_ai/geometry/ground_cake.py", "tests/test_ground_cake.py"]
+    assert unreferenced(paths, set(rows)) == []
+    for path in paths:
+        mentions = [line for line in (ROOT / path).read_text(encoding="utf-8").splitlines()
+                    if MENTION.search(line)]
+        assert len(mentions) == 2
+        assert "[D153]" in mentions[0] and "[D154]" in mentions[1]
+    for id_, source in (("D153", "6265799957"), ("D154", "6274902891")):
+        assert rows[id_][1] == "2026-10-19"
+        assert "(decided 2026-10-19, recorded 2026-10-20)" in rows[id_][2]
+        assert rows[id_][4].startswith("backfill #337") and source in rows[id_][4]
+    assert "6267750172" in rows["D153"][4]  # removes the orchestrator's own 1 m threshold
+    assert "1 cm" in rows["D153"][2] and "4 x 4 m" in rows["D153"][2]
+    assert "5-20 mm" in rows["D154"][2] and "+6 / +12 mm" in rows["D154"][2]
+    assert "12 steep/flatter-junction vertices" in rows["D150"][2]
+    assert "not a general spacing-rule relaxation" in rows["D150"][2]
+
+
+def test_placement_approval_fixtures_do_not_hide_real_mentions(tmp_path, monkeypatch):
+    """Synthetic approval literals are not decisions; adjacent real prose stays in scope."""
+    paths = ["tests/placement/test_site_job.py", "tests/placement/test_site_placement.py"]
+    known = {row[0] for row in log_rows()}
+    assert unreferenced(paths, known) == []
+    monkeypatch.setitem(globals(), "ROOT", tmp_path)
+    for name in paths:
+        path = tmp_path / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("# user 2026-10-20: real untagged rule\n"
+                        "# user 2026-10-20 [D999]: unknown rule\n", encoding="utf-8")
+        assert in_scope(name)
+        assert unreferenced([name], known) == [
+            f"{name}:1: dated user decision without [D<n>]", f"{name}:2: unknown D999"]
 
 
 def test_drawing_review_decision_is_logged_and_anchored():

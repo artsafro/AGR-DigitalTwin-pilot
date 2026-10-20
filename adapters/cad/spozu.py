@@ -69,6 +69,7 @@ class CoveringSpec:
     layers: tuple[str, ...]
     label: str = ""
     sources: tuple[str, ...] = ("hatch",)
+    repair: bool = False  # True: a self-intersecting hatch loop is repaired by make_valid (finding repaired_contour)
 
 
 @dataclass(frozen=True)
@@ -90,6 +91,8 @@ class SpozuConfig:
     ignore_layers: tuple[str, ...]
     units: str | None = None
     overlap_tol_m2: float = 0.01
+    contour_layers: tuple[str, ...] = ()  # elevation contour polylines (Z = polyline elevation)
+    ground_elements: dict[str, tuple[str, ...]] = field(default_factory=dict)
 
     @classmethod
     def from_dict(cls, d: dict) -> "SpozuConfig":
@@ -101,7 +104,11 @@ class SpozuConfig:
                 bad = set(src) - {"hatch", "polyline"}
                 if bad:
                     raise SpozuConfigError(f"covering {c['type']}: unknown sources {sorted(bad)}")
-                covs.append(CoveringSpec(str(c["type"]), tuple(c["layers"]), str(c.get("label") or ""), src))
+                rep = c.get("repair") or None
+                if rep not in (None, "make_valid"):
+                    raise SpozuConfigError(f"covering {c['type']}: repair must be 'make_valid' or absent")
+                covs.append(CoveringSpec(str(c["type"]), tuple(c["layers"]), str(c.get("label") or ""), src,
+                                         rep == "make_valid"))
             pl = d.get("planting") or {}
             maf = d.get("maf") or {}
             el = d.get("elevations") or {}
@@ -123,6 +130,8 @@ class SpozuConfig:
                 ignore_layers=tuple(str(x) for x in d.get("ignore_layers") or ()),
                 units=d.get("units"),
                 overlap_tol_m2=float(d.get("overlap_tol_m2", 0.01)),
+                contour_layers=tuple(el.get("contour_layers") or ()),
+                ground_elements={str(k): tuple(v) for k, v in (d.get("ground_elements") or {}).items()},
             )
         except KeyError as exc:
             raise SpozuConfigError(f"config: missing key {exc}") from exc
@@ -142,7 +151,9 @@ class SpozuConfig:
             raise SpozuConfigError("covering types must be unique")
         owner: dict[str, str] = {}
         roles = [(f"covering:{c.type}", c.layers) for c in self.coverings]
-        roles += [("planting", self.planting_layers), ("maf", self.maf_layers), ("elevations", self.elevation_layers)]
+        roles += [("planting", self.planting_layers), ("maf", self.maf_layers), ("elevations", self.elevation_layers),
+                  ("elevation_contours", self.contour_layers)]
+        roles += [(f"ground_element:{r}", ls) for r, ls in self.ground_elements.items()]
         for role, layers in roles:
             for lay in layers:
                 if lay in owner:
@@ -150,10 +161,13 @@ class SpozuConfig:
                 owner[lay] = role
 
     def mapped_layers(self) -> set[str]:
-        out = {self.boundary_layer, *self.planting_layers, *self.maf_layers, *self.elevation_layers}
+        out = {self.boundary_layer, *self.planting_layers, *self.maf_layers, *self.elevation_layers,
+               *self.contour_layers}
         out |= set(self.elevation_containers) | set(self.maf_layer_blocks)
         for c in self.coverings:
             out |= set(c.layers)
+        for ls in self.ground_elements.values():
+            out |= set(ls)
         return out
 
     def ignored(self, layer: str) -> bool:
@@ -172,7 +186,8 @@ def load_config(path: str | Path) -> SpozuConfig:
 class Finding:
     code: str  # open_contour | self_intersecting_contour | degenerate_contour | overlapping_coverings |
     #            point_outside_boundary | unmapped_layer | boundary_not_found | boundary_ambiguous |
-    #            elevation_unparsed | label_missing | nested_cycle | nesting_too_deep | nested_unsupported
+    #            elevation_unparsed | label_missing | nested_cycle | nesting_too_deep | nested_unsupported |
+    #            repaired_contour (a self-intersecting hatch loop repaired by make_valid; area = after)
     layer: str
     handle: str | None = None  # the source entity (inside the block definition for block content)
     detail: str = ""
@@ -225,6 +240,7 @@ class ElevationPoint:
     inside: bool | None
     container: str | None = None  # provenance path of the enclosing insert, if any
     ref: str = ""
+    source: str = "point"  # point (spot height) | contour (a vertex of an elevation contour polyline)
 
 
 @dataclass
@@ -238,6 +254,7 @@ class SpozuResult:
     maf: list[PointItem]
     elevations: list[ElevationPoint]
     findings: list[Finding]
+    ground_elements: list[dict] = field(default_factory=list)
 
     @property
     def base_covering(self) -> str | None:
@@ -264,6 +281,8 @@ class SpozuResult:
             "maf": {"total": len(self.maf), "inside": sum(bool(p.inside) for p in self.maf),
                     "unlabeled": sum(p.label is None for p in self.maf)},
             "elevations": {"total": len(self.elevations), "inside": sum(bool(e.inside) for e in self.elevations),
+                           "contour_vertices": sum(e.source == "contour" for e in self.elevations),
+                           "contours": len({e.ref for e in self.elevations if e.source == "contour"}),
                            "z_min": min((e.z for e in self.elevations if e.inside), default=None),
                            "z_max": max((e.z for e in self.elevations if e.inside), default=None)},
             "findings": dict(Counter(f.code for f in self.findings)),
@@ -285,6 +304,7 @@ class SpozuResult:
             "maf": [p.__dict__ for p in self.maf],
             "elevations": [e.__dict__ for e in self.elevations],
             "findings": [f.to_dict() for f in self.findings],
+            "ground_elements": self.ground_elements,
         }
 
 
@@ -385,6 +405,31 @@ def _hatch_polygons(hatch, tol: float, close_tol: float) -> tuple[object | None,
     if region is None:
         return None, [(_classify(x), x) for x in issues] or [("degenerate_contour", "no loops")]
     return region, []
+
+
+def _repair_hatch(hatch, tol: float):
+    """make_valid repair of a hatch whose loops self-intersect: loops combined even-odd.
+
+    Returns (region | None, raw ring area sum in drawing units^2).
+    """
+    from ezdxf import path as ezpath
+    from shapely import make_valid
+
+    region, before = None, 0.0
+    for p in ezpath.from_hatch(hatch):
+        pts = [(v.x, v.y) for v in p.flattening(tol)]
+        if len(pts) < 3:
+            continue
+        raw = Polygon(pts)
+        before += abs(raw.area)
+        polys = _polys(make_valid(raw))
+        if not polys:
+            continue
+        fixed = MultiPolygon(polys)
+        region = fixed if region is None else region.symmetric_difference(fixed)
+    if region is None or region.is_empty:
+        return None, before
+    return region, before
 
 
 def _polyline_polygon(e, m, tol: float | None = None) -> tuple[Polygon | None, tuple[str, str] | None]:
@@ -523,8 +568,10 @@ def read_spozu_dxf(source, cfg: SpozuConfig, tol: float = 0.001) -> SpozuResult:
     msp = doc.modelspace()
     findings: list[Finding] = []
     elev_layers = set(cfg.elevation_layers)
+    contour_layers = set(cfg.contour_layers)
     pl_layers, maf_layers = set(cfg.planting_layers), set(cfg.maf_layers)
     layer_type = {lay: c for c in cfg.coverings for lay in c.layers}
+    element_roles = {lay: role for role, lays in cfg.ground_elements.items() for lay in lays}
 
     def is_maf(e, layer):
         return layer in maf_layers or e.dxf.name in cfg.maf_layer_blocks.get(layer, ())
@@ -534,6 +581,7 @@ def read_spozu_dxf(source, cfg: SpozuConfig, tol: float = 0.001) -> SpozuResult:
 
     def relevant(layer):
         return layer in layer_type or layer in pl_layers or layer in maf_layers or layer in elev_layers \
+            or layer in contour_layers or layer in element_roles \
             or layer == cfg.boundary_layer
 
     skipped: list = []
@@ -574,6 +622,15 @@ def read_spozu_dxf(source, cfg: SpozuConfig, tol: float = 0.001) -> SpozuResult:
         kind = e.dxftype()
         if kind == "HATCH" and "hatch" in spec.sources:
             region, problems = _hatch_polygons(e, tol, CLOSE_TOL_M / s)
+            if region is None and spec.repair and problems and \
+                    all(c == "self_intersecting_contour" for c, _ in problems):
+                region, before = _repair_hatch(e, tol)
+                if region is not None:
+                    findings.append(Finding("repaired_contour", x.layer, x.handle,
+                                            f"make_valid: raw ring area {before * s * s:.3f} m2 -> "
+                                            f"{region.area * s * s:.3f} m2 (before boundary clip)",
+                                            region.area * s * s, ref=x.ref))
+                    problems = []
             for code, detail in problems:
                 findings.append(Finding(code, x.layer, x.handle, detail, ref=x.ref))
         elif kind in ("LWPOLYLINE", "POLYLINE") and "polyline" in spec.sources:
@@ -665,6 +722,31 @@ def read_spozu_dxf(source, cfg: SpozuConfig, tol: float = 0.001) -> SpozuResult:
             findings.append(Finding("point_outside_boundary", it.layer, it.handle,
                                     f"elevation {z} at {x:.3f},{y:.3f} (container {it.container})", ref=it.ref))
 
+    # elevation contours: every flattened vertex of a contour polyline, Z = the polyline elevation
+    from ezdxf import path as ezpath
+
+    for it in ents:
+        if it.layer not in contour_layers or it.e.dxftype() not in ("LWPOLYLINE", "POLYLINE"):
+            continue
+        e = it.e
+        if e.dxftype() == "LWPOLYLINE":
+            zs = {float(e.dxf.get("elevation", 0.0))}
+        else:
+            zs = {round(float(v.dxf.location.z), 6) for v in e.vertices}
+        if len(zs) != 1 or not all(math.isfinite(z) for z in zs):
+            findings.append(Finding("elevation_unparsed", it.layer, it.handle,
+                                    f"contour with Z values {sorted(zs)[:4]} (one constant Z required)", ref=it.ref))
+            continue
+        z = zs.pop() * s
+        seen_xy = set()
+        for p in ezpath.make_path(e).flattening(tol):
+            key = (round(p.x * s, 6), round(p.y * s, 6))
+            if key in seen_xy:
+                continue
+            seen_xy.add(key)
+            elevations.append(ElevationPoint(key[0], key[1], z, it.layer, it.handle, inside(*key), it.container,
+                                             it.ref, "contour"))
+
     # unmapped layers: effective layers of model-space entities and of expanded (non-atomic) block
     # content, neither mapped nor ignored; atomic symbols are not expanded, so their graphics never count
     mapped = cfg.mapped_layers()
@@ -690,7 +772,35 @@ def read_spozu_dxf(source, cfg: SpozuConfig, tol: float = 0.001) -> SpozuResult:
             detail += f"; nested e.g. {', '.join(d['nested'][:3])}"
         findings.append(Finding("unmapped_layer", lay, h, detail, ref=r))
 
-    return SpozuResult(cfg.project, s, boundary, bhandle, coverings, planting, maf, elevations, findings)
+    # Keep every configured element, including unsupported primitives and INSERT grouping records.
+    # The existing walker supplies WCS transforms and instance provenance; no second DXF reader.
+    elements = []
+    instance_roles = {}
+    for it in ents:
+        role = element_roles.get(it.layer) or instance_roles.get(it.container)
+        if role is None:
+            continue
+        instance_roles[it.ref] = role
+        e = it.e
+        kind = e.dxftype()
+        coords, problem = None, None
+        if kind in ("LINE", "LWPOLYLINE", "POLYLINE", "ARC", "SPLINE"):
+            try:
+                coords = [[float(p.x * s), float(p.y * s), float(p.z * s)]
+                          for p in ezpath.make_path(e).flattening(tol / s)]
+                if len(coords) < 2 or not all(math.isfinite(v) for p in coords for v in p):
+                    raise ValueError("fewer than two finite path points")
+            except Exception as exc:
+                coords, problem = None, f"{type(exc).__name__}: {exc}"
+        elif kind != "INSERT":
+            problem = f"unsupported element primitive {kind}"
+        elements.append({"role": role, "layer": it.layer, "handle": it.handle,
+                         "ref": it.ref, "container": it.container, "kind": kind,
+                         "label": e.dxf.name if kind == "INSERT" else None,
+                         "geometry": {"type": "LineString", "coordinates": coords} if coords else None,
+                         "source_width_m": float(e.dxf.get("const_width", 0)) * s if kind == "LWPOLYLINE" else None,
+                         "problem": problem})
+    return SpozuResult(cfg.project, s, boundary, bhandle, coverings, planting, maf, elevations, findings, elements)
 
 
 def read_spozu(path: str | Path, cfg: SpozuConfig, workdir: str | Path | None = None) -> SpozuResult:

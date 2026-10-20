@@ -11,7 +11,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from PIL import Image
+from PIL import Image, ImageDraw
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,6 +29,8 @@ SLOTS = (
     "TileDark",
     "FlowerBed",
     "Skirt",
+    "CurbGarden",
+    "Stairs",
 )
 _NAME = re.compile(
     r"^T_[A-Za-z0-9_]+_Ground_Diffuse_[A-Za-z0-9_]+(?:\.1001)?\.png$"
@@ -91,7 +93,7 @@ def test_module_source_has_no_network_or_photo_loader():
         assert banned not in lowered
 
 
-def test_shipped_recipe_covers_the_ten_vatutino_slots(recipe):
+def test_shipped_recipe_covers_the_vatutino_slots(recipe):
     assert recipe["address"] == "Vatutino"
     assert recipe["seed"] == 319
     assert list(recipe["slots"]) == list(SLOTS)
@@ -112,6 +114,22 @@ def test_shipped_recipe_covers_the_ten_vatutino_slots(recipe):
     assert len(recipe["slots"]["FlowerBed"]["species"]) == 8
 
 
+def test_regression_curb_garden_and_stairs_are_provisional_recipes(recipes, recipe):
+    """The two Ground slots missing from v002 use the same provisional provenance rules."""
+    for slot in ("CurbGarden", "Stairs"):
+        assert slot in recipes.CANONICAL_SLOTS
+        assert list(recipes.CANONICAL_SLOTS).count(slot) == 1
+        body = recipe["slots"][slot]
+        assert body["family"] in recipes.FAMILIES
+        assert isinstance(body["source"], str) and len(body["source"].strip()) >= 8
+        flags = body["provisional"]
+        assert isinstance(flags, list) and flags
+        for flag in flags:
+            assert isinstance(flag["field"], str) and flag["field"].strip()
+            assert isinstance(flag["reason"], str) and len(flag["reason"].strip()) >= 8
+            assert flag["field"] in body
+
+
 def test_every_slot_documents_provisional_values(recipe):
     for slot in SLOTS:
         flags = recipe["slots"][slot]["provisional"]
@@ -130,7 +148,7 @@ def test_filename_grammar_and_length_ceiling(recipes):
             assert len(name) <= 254
             assert "." not in name.replace(".1001", "").replace(".png", "")
             seen.add(name)
-    assert len(seen) == 20
+    assert len(seen) == len(SLOTS) * 2 == 24
     suffix = "_Ground_Diffuse_TileLight.png"
     room = 254 - len("T_") - len(suffix)
     exact = recipes.texture_filename("A" * room, "TileLight", "npm")
@@ -291,7 +309,7 @@ def test_reduced_renders_are_deterministic_rgb_and_seamless(recipes, recipe):
             ok, worst, _median = _seam_ok(image)
             assert ok, f"{slot} {profile} seam ratio {worst}"
             hashes[(slot, profile)] = digest
-    assert len(set(hashes.values())) == 20
+    assert len(set(hashes.values())) == len(SLOTS) * 2 == 24
 
 
 def test_delivery_size_other_than_2048_or_4096_errors(recipes, recipe):
@@ -578,3 +596,356 @@ def test_subpixel_joint_area_is_preserved(recipes, recipe):
                 assert observed == pytest.approx(expected, abs=1e-6)
                 checked += 1
     assert checked == 16
+
+
+def _published_names() -> set[str]:
+    published = Path("C:/x/vatutino-ground-textures/v001")
+    if not published.is_dir():
+        return set()
+    return {path.name for path in published.iterdir()}
+
+
+def _allow_version(recipes, tmp_path, version: str) -> Path:
+    recipes.DELIVERY_DIR = tmp_path / "v001"
+    out = tmp_path / version
+    out.mkdir()
+    return out
+
+
+def _quiet_render(recipe, slot, profile, size=None, delivery=False):
+    side = {"npm": 2048, "vpm": 4096}[profile]
+    return np.zeros((side, side, 3), dtype=np.uint8)
+
+
+def test_module_docstring_contains_new_case(recipes):
+    assert recipes.__doc__ and "new-case" in recipes.__doc__
+
+
+def test_address_override_propagates_and_leaves_published_untouched(
+    recipes, tmp_path, monkeypatch
+):
+    """Valid --address changes filenames and the manifest; v001 is not a write target."""
+    before = _published_names()
+    out = _allow_version(recipes, tmp_path, "v009")
+    monkeypatch.setattr(recipes, "render_map", _quiet_render)
+    monkeypatch.setattr(recipes, "build_contact_sheet", lambda *_args, **_kwargs: Image.new("RGB", (8, 8)))
+    code = recipes.main(
+        ["deliver", "--address", "Other", "--version", "v009", "--out", str(out), "--recipe", str(RECIPE_PATH)]
+    )
+    assert code == 0
+    names = {path.name for path in out.iterdir()}
+    assert "T_Other_Ground_Diffuse_TileLight.png" in names
+    assert "T_Other_Ground_Diffuse_TileLight.1001.png" in names
+    assert not any(name.startswith("T_Vatutino_") for name in names)
+    manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["address"] == "Other"
+    assert {entry["file"] for entry in manifest["maps"]} == names - {"contact_sheet.jpg", "manifest.json"}
+    assert _published_names() == before
+
+
+def test_v002_address_override_keeps_supertile_and_provenance(recipes, tmp_path, monkeypatch):
+    """Merge regression: version + address must keep physical layouts and visual receipts."""
+    out = _allow_version(recipes, tmp_path, "v002")
+    source_before = RECIPE_PATH.read_bytes()
+    monkeypatch.setattr(recipes, "render_map", _quiet_render)
+    labels = []
+
+    def contact_sheet(delivered_recipe, rendered):
+        assert set(rendered) == set(SLOTS)
+        labels.extend(recipes.contact_label(delivered_recipe, slot) for slot in SLOTS)
+        return Image.new("RGB", (8, 8))
+
+    monkeypatch.setattr(recipes, "build_contact_sheet", contact_sheet)
+    assert recipes.main([
+        "deliver", "--address", "Other_330", "--version", "v002",
+        "--out", str(out), "--recipe", str(RECIPE_PATH),
+    ]) == 0
+    manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["address"] == "Other_330"
+    assert "blade_cycles" in manifest["visual"]
+    assert len(manifest["maps"]) == len(SLOTS) * 2 == 24
+    for entry in manifest["maps"]:
+        assert entry["file"].startswith("T_Other_330_Ground_Diffuse_")
+        assert (out / entry["file"]).is_file()
+        if entry["slot"].startswith("Tile"):
+            facts = entry["physical_layout"]
+            assert max(abs(value) for value in facts["scale_error_percent"]) <= 1
+            assert "vpm_joint_px" in {flag["field"] for flag in entry["provisional"]}
+    assert len(labels) == len(SLOTS) == 12
+    assert all("actual" in label for label in labels)
+    assert RECIPE_PATH.read_bytes() == source_before
+
+
+def test_invalid_address_tokens_exit_nonzero_and_write_nothing(recipes, tmp_path, monkeypatch, capsys):
+    published_before = _published_names()
+    renders = []
+    monkeypatch.setattr(recipes, "render_map", lambda *_a, **_k: renders.append(1))
+    invalid = ("", "Bad-Name", "a.b", "Ватутино", "Other/x", "A" * 300, "Bad Name")
+    for token in invalid:
+        out = _allow_version(recipes, tmp_path, "v008")
+        code = recipes.main(
+            ["deliver", "--address", token, "--version", "v008", "--out", str(out), "--recipe", str(RECIPE_PATH)]
+        )
+        captured = capsys.readouterr()
+        assert code == 2, token
+        assert "unrecognized arguments" not in captured.err
+        assert list(out.iterdir()) == []
+        out.rmdir()
+    assert renders == []
+    assert _published_names() == published_before
+
+
+def test_address_filename_ceiling_writes_only_the_exact_fit(recipes, tmp_path, monkeypatch):
+    """254 characters is the last accepted name; one more character writes nothing."""
+    monkeypatch.setattr(recipes, "render_map", _quiet_render)
+    monkeypatch.setattr(recipes, "build_contact_sheet", lambda *_args, **_kwargs: Image.new("RGB", (8, 8)))
+    longest = max(SLOTS, key=len)
+    suffix = f"_Ground_Diffuse_{longest}.1001.png"
+    room = 254 - len("T_") - len(suffix)
+    assert len(f"T_{'A' * room}{suffix}") == 254
+    out = _allow_version(recipes, tmp_path, "v007")
+    manifest = recipes.write_delivery(RECIPE_PATH, out, version="v007", address="A" * room)
+    assert max(len(entry["file"]) for entry in manifest["maps"]) == 254
+    assert (out / manifest["maps"][0]["file"]).is_file()
+    rejected = tmp_path / "v006"
+    rejected.mkdir()
+    recipes.DELIVERY_DIR = tmp_path / "v001"
+    with pytest.raises(recipes.GroundRecipeError):
+        recipes.write_delivery(RECIPE_PATH, rejected, version="v006", address="A" * (room + 1))
+    assert list(rejected.iterdir()) == []
+
+
+def test_output_alias_with_address_override_writes_nothing(recipes, tmp_path, monkeypatch):
+    empty = tmp_path / "v005"
+    empty.mkdir()
+    monkeypatch.setattr(recipes, "DELIVERY_DIR", empty)
+    alias = empty / "manifest.json"
+    alias.write_text(RECIPE_PATH.read_text(encoding="utf-8"), encoding="utf-8")
+    with pytest.raises(recipes.GroundRecipeError, match="input"):
+        recipes.write_delivery(alias, empty, version="v005", address="Other")
+    assert list(empty.iterdir()) == [alias]
+
+
+def test_unsourced_visual_choices_are_flagged_recipe_parameters(recipes, recipe):
+    visual = recipe["visual"]
+    fields = {flag["field"] for flag in visual["provisional"]}
+    for key in ("blade_cycles", "grid_band_divisor", "micro_period_px", "micro_amplitudes", "blur_radii"):
+        assert key in visual
+        assert key in fields
+        assert any(len(flag["reason"].strip()) >= 8 for flag in visual["provisional"] if flag["field"] == key)
+    for slot in ("TileLight", "TileRed", "TileDark"):
+        flagged = {flag["field"] for flag in recipe["slots"][slot]["provisional"]}
+        assert "vpm_joint_px" in flagged
+    for slot in ("TileRed", "TileDark"):
+        flagged = {flag["field"] for flag in recipe["slots"][slot]["provisional"]}
+        assert "npm_joint_px" in flagged
+    flower = {flag["field"] for flag in recipe["slots"]["FlowerBed"]["provisional"]}
+    assert "vpm_cell_px" in flower
+    stripped = copy.deepcopy(recipe)
+    stripped["slots"]["FlowerBed"]["provisional"] = [
+        flag for flag in stripped["slots"]["FlowerBed"]["provisional"] if flag["field"] != "vpm_cell_px"
+    ]
+    with pytest.raises(recipes.GroundRecipeError, match="vpm_cell_px"):
+        recipes.validate_recipe(stripped)
+    for slot in ("TileRed", "TileDark"):
+        broken = copy.deepcopy(recipe)
+        broken["slots"][slot]["provisional"] = [
+            flag for flag in broken["slots"][slot]["provisional"] if flag["field"] != "npm_joint_px"
+        ]
+        with pytest.raises(recipes.GroundRecipeError, match="npm_joint_px"):
+            recipes.validate_recipe(broken)
+
+
+def test_blade_and_grid_parameters_change_pixels(recipes, recipe):
+    lawn = recipes.render_map(recipe, "LawnRolled", "npm", size=256)
+    mutated = copy.deepcopy(recipe)
+    mutated["visual"]["blade_cycles"] = 11
+    other = recipes.render_map(mutated, "LawnRolled", "npm", size=256)
+    assert not np.array_equal(lawn, other)
+    grid = recipes.render_map(recipe, "LawnReinforced", "npm", size=256)
+    mutated["visual"]["grid_band_divisor"] = 3
+    wider = recipes.render_map(mutated, "LawnReinforced", "npm", size=256)
+    assert not np.array_equal(grid, wider)
+
+
+def test_micro_and_blur_parameters_drive_the_seam_fallback(recipes, recipe, monkeypatch):
+    calls = {"n": 0}
+
+    def _seam(_image, limit=1.5):
+        calls["n"] += 1
+        return calls["n"] > 1
+
+    monkeypatch.setattr(recipes, "_seam_ok", _seam)
+    first = recipes.render_map(recipe, "Skirt", "npm", size=64)
+    calls["n"] = 0
+    mutated = copy.deepcopy(recipe)
+    mutated["visual"]["micro_amplitudes"] = [30]
+    second = recipes.render_map(mutated, "Skirt", "npm", size=64)
+    assert not np.array_equal(first, second)
+
+
+@pytest.mark.parametrize(
+    "patch",
+    [
+        {"blade_cycles": 0},
+        {"blade_cycles": float("nan")},
+        {"blade_cycles": float("inf")},
+        {"grid_band_divisor": 0},
+        {"micro_period_px": 0},
+        {"micro_amplitudes": []},
+        {"micro_amplitudes": [float("nan")]},
+        {"blur_radii": []},
+        {"blur_radii": [0]},
+    ],
+)
+def test_visual_parameters_fail_closed(recipes, recipe, patch):
+    broken = copy.deepcopy(recipe)
+    broken["visual"].update(patch)
+    with pytest.raises(recipes.GroundRecipeError):
+        recipes.validate_recipe(broken)
+
+
+def test_contact_label_states_actual_generated_size(recipes, recipe):
+    def _face(face_mm, gap_mm, repeat_mm):
+        pitch = face_mm + gap_mm
+        count = int(round(repeat_mm / pitch))
+        factor = repeat_mm / (count * pitch)
+        return face_mm * factor, gap_mm * factor
+
+    label = recipes.contact_label(recipe, "TileLight")
+    assert recipe["slots"]["TileLight"]["tile_size_label"] in label
+    face, joint = _face(100, 5, 4096 / 1024 * 1000)
+    assert f"{face:.2f}" in label
+    assert f"{joint:.2f}" in label
+    long_face, _long_joint = _face(300, 5, 4096 / 1024 * 1000)
+    assert f"{long_face:.2f}" in label
+    flower = recipes.contact_label(recipe, "FlowerBed")
+    assert "62.50" in flower
+    lawn = recipes.contact_label(recipe, "LawnRolled")
+    spacing = recipe["profiles"]["vpm"]["metres_per_repeat"] / recipe["visual"]["blade_cycles"]
+    assert f"{spacing:.4f}" in lawn
+
+
+def test_scale_error_at_most_one_percent_probe(recipes):
+    """Brute force: every closed grid stays <= 1% and every miss is an error."""
+    passed = failed = 0
+    for face in range(40, 1800, 29):
+        body = {"nominal_tile_mm": [face, face], "joint_mm": 5}
+        try:
+            facts = recipes.tile_facts(body, "vpm")
+        except recipes.GroundRecipeError:
+            failed += 1
+            continue
+        assert max(abs(value) for value in facts["scale_error_percent"]) <= 1
+        passed += 1
+    assert passed >= 1
+    assert failed >= 1
+
+
+def _isolated_grid_band_px(recipes, cell: int, divisor: int) -> int:
+    """Raster width of the plastic bar on the first row of one cell.
+
+    Lawn and noise are flat so the count is the mask, not a colour accident.
+    """
+    old_lawn, old_fbm = recipes._draw_lawn, recipes._fbm
+    recipes._draw_lawn = lambda size, *_args, **_kwargs: np.zeros((size, size, 3), dtype=np.float32)
+    recipes._fbm = lambda size, *_args, **_kwargs: np.ones((size, size), dtype=np.float32)
+    try:
+        image = recipes._draw_ecogrid(
+            cell,
+            cell,
+            [[0, 0, 0], [0, 0, 0]],
+            [255, 255, 255],
+            np.random.default_rng(1),
+            divisor,
+            1,
+        )
+    finally:
+        recipes._draw_lawn, recipes._fbm = old_lawn, old_fbm
+    return int(np.count_nonzero(image[0, :, 0]))
+
+
+@pytest.mark.parametrize(
+    ("profile", "millimetres", "rejected"),
+    [("npm", "366.67", "166.67"), ("vpm", "41.99", "20.51")],
+)
+def test_lawn_reinforced_band_label_matches_raster(recipes, recipe, profile, millimetres, rejected):
+    """Acceptance rows: the label quotes the measured bar, not the divisor quotient."""
+    cell = recipe["slots"]["LawnReinforced"][f"{profile}_cell_px"]
+    divisor = recipe["visual"]["grid_band_divisor"]
+    width_px = _isolated_grid_band_px(recipes, cell, divisor)
+    actual = f"{width_px / recipe['profiles'][profile]['px_per_m'] * 1000:.2f}"
+    assert actual == millimetres
+    label = recipes.contact_label(recipe, "LawnReinforced")
+    assert f"band {actual} mm" in label
+    assert f"band {rejected} mm" not in label
+
+
+def test_grid_band_label_matches_raster_for_every_divisor(recipes, recipe):
+    """Brute force: every divisor, including a bar that fills the cell, matches the mask."""
+    checked = saturated = 0
+    for profile in ("npm", "vpm"):
+        cell = recipe["slots"]["LawnReinforced"][f"{profile}_cell_px"]
+        px_per_m = recipe["profiles"][profile]["px_per_m"]
+        mid = cell // 2
+        for divisor in range(1, cell + 1):
+            mutated = copy.deepcopy(recipe)
+            mutated["visual"]["grid_band_divisor"] = divisor
+            width_px = _isolated_grid_band_px(recipes, cell, divisor)
+            millimetres = f"{width_px / px_per_m * 1000:.2f}"
+            label = recipes.contact_label(mutated, "LawnReinforced")
+            assert f"band {millimetres} mm" in label
+            band = max(1, cell // divisor)
+            if band >= mid:
+                assert width_px == cell
+                saturated += 1
+            else:
+                assert width_px == 2 * band + 1
+                assert width_px < cell
+            checked += 1
+    assert checked == 64 + 256
+    assert saturated >= 1
+
+
+@pytest.mark.parametrize("side", [128, 1024])
+def test_every_contact_label_fits_the_sheet(recipes, recipe, side):
+    """Every complete actual-size label sits inside its row, on both axes."""
+    sheet_recipe = copy.deepcopy(recipe)
+    sheet_recipe["profiles"]["vpm"]["px_per_m"] = side
+    rendered = {}
+    for index, slot in enumerate(SLOTS):
+        rendered[slot] = {
+            "npm": np.full((64, 64, 3), 40 + index, dtype=np.uint8),
+            "vpm": np.full((side, side, 3), (180, 20 + index, 20), dtype=np.uint8),
+        }
+    sheet = recipes.build_contact_sheet(sheet_recipe, rendered)
+    assert sheet.mode == "RGB"
+    assert sheet.size[1] % len(SLOTS) == 0
+    row_h = sheet.size[1] // len(SLOTS)
+    cell = side
+    assert row_h >= cell
+    assert sheet.size[0] >= cell * 3
+    font = recipes._font(max(16, min(32, cell // 16)))
+    pixels = np.asarray(sheet)
+    fitted = 0
+    for index, slot in enumerate(SLOTS):
+        label = recipes.contact_label(sheet_recipe, slot)
+        assert "actual" in label
+        box = ImageDraw.Draw(Image.new("RGB", (1, 1))).multiline_textbbox(
+            (cell * 3 + 16, 16), label, font=font, spacing=6
+        )
+        assert box[0] >= cell * 3
+        assert box[2] <= sheet.size[0]
+        assert box[1] >= 0
+        assert box[3] <= row_h
+        expected = Image.new("RGB", (sheet.size[0] - cell * 3, row_h), (244, 244, 240))
+        ImageDraw.Draw(expected).multiline_text(
+            (16, 16), label, fill=(24, 24, 24), font=font, spacing=6
+        )
+        row = pixels[index * row_h:(index + 1) * row_h, cell * 3:]
+        assert np.array_equal(row, np.asarray(expected)), slot
+        y = index * row_h
+        assert tuple(int(value) for value in pixels[y, 0]) == (40 + index,) * 3
+        assert tuple(int(value) for value in pixels[y, cell * 2]) == (180, 20 + index, 20)
+        fitted += 1
+    assert fitted == len(SLOTS)

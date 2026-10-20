@@ -446,7 +446,7 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
             out["V010"].append(_f("not_run", "UCX shape and coverage", "convex, closed, coverage, offsets",
                                   "reg p.34-37", [34, 36, 37], src))
         # V008: one UV channel, no mirrored islands, glass only in 1001 (reg p.31-32, 39)
-        multi = [m["name"] for m in meshes if m["uv_channels"] != 1]
+        multi = [m["name"] for m in meshes if m not in ucx and m["uv_channels"] != 1]
         mirrored = {m["name"]: m["mirrored_uv_triangles"] for m in meshes if m["mirrored_uv_triangles"]}
         glass = {m["name"]: m["udim_tiles"] for m in meshes if m["name"].endswith("MainGlass") and m["udim_tiles"] != [1001]}
         out["V008"].append(_f("fail" if multi else "pass", "one UV channel", f"{src}: {multi or 'all meshes'}", "1 UV channel", [31], src))

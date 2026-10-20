@@ -44,6 +44,14 @@
         {
           "field": "joint_mm",
           "reason": "provisional, user review: no joint width in SPOZU; default 5 mm, same physical grid in both profiles"
+        },
+        {
+          "field": "npm_joint_px",
+          "reason": "No sourced NPM pixel joint. The width is provisional joint_mm rasterized at 30 px/m, not an independent measurement"
+        },
+        {
+          "field": "vpm_joint_px",
+          "reason": "No sourced VPM pixel joint. The width is provisional joint_mm rasterized at 1024 px/m, not an independent measurement"
         }
       ],
       "joint_mm": 5
@@ -158,6 +166,14 @@
         {
           "field": "joint_mm",
           "reason": "provisional, user review: no joint width in SPOZU; default 5 mm, same physical grid in both profiles"
+        },
+        {
+          "field": "npm_joint_px",
+          "reason": "No sourced NPM pixel joint for TileRed. The width is provisional joint_mm rasterized at 30 px/m"
+        },
+        {
+          "field": "vpm_joint_px",
+          "reason": "No sourced VPM pixel joint for TileRed. The width is provisional joint_mm rasterized at 1024 px/m"
         }
       ],
       "joint_mm": 5
@@ -289,6 +305,14 @@
         {
           "field": "joint_mm",
           "reason": "provisional, user review: no joint width in SPOZU; default 5 mm, same physical grid in both profiles"
+        },
+        {
+          "field": "npm_joint_px",
+          "reason": "No sourced NPM pixel joint for TileDark. The width is provisional joint_mm rasterized at 30 px/m"
+        },
+        {
+          "field": "vpm_joint_px",
+          "reason": "No sourced VPM pixel joint for TileDark. The width is provisional joint_mm rasterized at 1024 px/m"
         }
       ],
       "joint_mm": 5
@@ -355,6 +379,10 @@
         {
           "field": "npm_cell_px",
           "reason": "Flower spacing is not dimensioned; the cell only has to divide the map"
+        },
+        {
+          "field": "vpm_cell_px",
+          "reason": "Flower spacing is not dimensioned; 64 px at 1024 px/m is 62.5 mm, provisional"
         }
       ]
     },
@@ -380,11 +408,86 @@
           "reason": "Neutral soil and concrete mix for the skirt; neither colour is in the SPOZU"
         }
       ]
+    },
+    "CurbGarden": {
+      "family": "soil",
+      "source": "SPOZU layer !_А101_борт_садовый_бетонный; the 80 x 50 mm section is the prescribed curb solid, and the legend gives no colour (docs/research/spozu-vatutino-inventory.md)",
+      "tile_size_label": "80 x 50 mm concrete curb",
+      "palette": [
+        [
+          168,
+          166,
+          160
+        ],
+        [
+          142,
+          140,
+          134
+        ]
+      ],
+      "provisional": [
+        {
+          "field": "palette",
+          "reason": "Garden-curb concrete colour is not given in the SPOZU legend"
+        }
+      ]
+    },
+    "Stairs": {
+      "family": "soil",
+      "source": "SPOZU layer !_А101_лестница, INSERT лестница 1..8; tread size is not dimensioned (docs/research/spozu-vatutino-inventory.md)",
+      "tile_size_label": "landscape stairs",
+      "palette": [
+        [
+          186,
+          182,
+          174
+        ],
+        [
+          154,
+          148,
+          138
+        ]
+      ],
+      "provisional": [
+        {
+          "field": "palette",
+          "reason": "Stair concrete colour is not given; tread size is not dimensioned in the SPOZU"
+        }
+      ]
     }
+  },
+  "visual": {
+    "blade_cycles": 37,
+    "grid_band_divisor": 12,
+    "micro_period_px": 4,
+    "micro_amplitudes": [1, 2, 4, 6],
+    "blur_radii": [1, 2, 4],
+    "provisional": [
+      {
+        "field": "blade_cycles",
+        "reason": "Blade count across one repeat is an unsourced visual choice, not a measured lawn spacing"
+      },
+      {
+        "field": "grid_band_divisor",
+        "reason": "Eco-grid bar width is the cell divided by this unsourced divisor, not a SPOZU module"
+      },
+      {
+        "field": "micro_period_px",
+        "reason": "The periodic seam lift is an unsourced fallback, not a material feature of the surface"
+      },
+      {
+        "field": "micro_amplitudes",
+        "reason": "Seam-fallback amplitudes are unsourced and apply only when the wrap step is too large"
+      },
+      {
+        "field": "blur_radii",
+        "reason": "Box-blur radii are an unsourced last resort; blur widens joints and is not a sourced finish"
+      }
+    ]
   },
   "source_versions": {
     "density": "PR #308 ground-build-v006.md (unmerged; recheck upon #295 merge); NPM 30 px/m, VPM 4m cell at 1024 px/m",
     "rasterization": "Artem decision on card t_47240e52, 2026-10-19: periodic supertile, scale error <=1% per axis; no widened joints",
-    "output": "Orchestrator authorization on card, 2026-10-19: v002; v001 untouched"
+    "output": "v003 adds CurbGarden and Stairs under the same provisional rules; v001 and v002 untouched"
   }
 }

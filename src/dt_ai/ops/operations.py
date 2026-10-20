@@ -8,6 +8,7 @@ operations that need bmesh (booleans, extrusion, solidify) will call it through 
 
 Here: `keep` (copy + checks), `embed_into_neighbour` (sink by 10-20 mm, delete the faces it hides),
 `primitive_box` (bounding box, silhouette within 0.07 m) and `to_opacity_plane` (NPM PCA mid-plane quad).
+`rebuild_by_contour` (prism of a view contour, operation `contour_rebuild`) lives in `dt_ai.ops.contour` [#338].
 `plan_opacity_swaps` reports the largest triangle savings first, stopping at the budget [D109].
 Patterns: `facade-decor-inset` (embed 0.02 m, inner face deleted), `primitive-first` (silhouette test 0.07 m).
 """

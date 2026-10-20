@@ -1,7 +1,7 @@
-# Handoff — 2026-10-19 06:50
+# Handoff — 2026-10-20 09:10
 
-Branch: `feature/kernel-op-primitive` · Commit: `79d428b` · Worktree: `/home/user/AGR-DigitalTwin-pilot (cloud container)` · Job: `-`
-Transcript: `logs/transcripts/feature-kernel-op-primitive-prnone-e29841e3-114f-5603-814f-96cdb3ac3d4a.jsonl (cloud container only, git-ignored)`
+Branch: `main` · Commit: `eed5074` · Worktree: `C:\Users\artsafro\agr-pilot\AGR-DigitalTwin (local; shared main snapshot)` · Job: `VATUTINO-SITE`
+Transcript: `-`
 
 <!-- Written by /handover (.claude/commands/handover.md), read by tools/hooks/session_context.py and /takeover.
 Keep the `Branch:` line as is (the hook parses it). Facts only, no history: git log and the pull requests hold
@@ -9,72 +9,73 @@ that. The whole file stays under 7000 characters so the SessionStart hook passes
 
 ## Where we are
 
-Cloud kernel cards of the grilling plan (`docs/grill/modeling-architecture-2026-10-16.md`, D110), no DCC, board
-paused. Five open draft PRs, none reviewed or merged:
-- #287 C1 `bpy` 5.1.2 wheel headless on Linux works (note `docs/research/bpy-linux-headless-probe.md`), base `main`.
-- #288 C2 `PartsList` contract + `schemas/PartsList.schema.json` (`src/dt_ai/parts/`), base `main`.
-- #289 C3 visibility invariants `src/dt_ai/ops/invariants.py` (open borders hidden, no see-through hole, no
-  visible back face, no co-directional overlap < 5 mm), base `main`.
-- #290 C4a `run_operation` + `keep` + `embed_into_neighbour` (`src/dt_ai/ops/operations.py`), base = #289 branch.
-- #291 C4b `primitive_box` + silhouette test 0.07 m (`src/dt_ai/ops/silhouette.py`), base = #290 branch.
-Verified on the cloud checkout: `tests/ops` 62 passed, `tests/contracts/test_parts_list.py` 24 passed, mutation
-probes catch every deliberate break, full suite `uv run pytest -q -n 8 --deselect tests/test_pipeline_gate.py` ->
-4355 passed, 5 failed. The same 5 fail on a clean `origin/main` (`test_batch_export_plan.py` x3,
-`test_clearance.py::test_vectorized_setup_matches_per_face_setup`, `test_butovskaya_twin_snapshot.py::test_twin_export_refuses_existing_folder`):
-environment. `test_pipeline_gate.py` is deselected (`.git/hooks/pre-commit` not executable in the container).
+Goal: a repository from which any agent (Claude Code, ChatGPT, Codex) can model a digital-twin task by the rules.
+The local Kanban board (orchestrator repo `hermes_kanban`, not this one) runs the work; this file records results.
+Kernel plan C1-C7 of `docs/grill/modeling-architecture-2026-10-16.md` is on main: bpy headless probe, PartsList
+schema, invariants, operations keep / embed / primitive_box / to_opacity_plane / rebuild_by_contour (#341), C5 album
+PDF reader (#317), C7 context diet (#335, AGENTS.md reading list + generated `docs/PROJECT_STATE.md`), FBX structure
+reader -> PartsList (#342). Site slice Vatutino: Ground (#295/PR #308, v014 NPM/VPM/UCX), UCX for Ground (#326/#334),
+ground recipe textures (#319/#329, v002) + CLI fix (#330/#336), MAF selection (#313), placement engine (#316), Flora
+VPM identity (#305/#328), map rebind tests (#312/#331), dt CLI tests (#343). Old PRs #266, #260 merged.
+Verified: full non-DCC suite on main `eed5074`: 6936 passed, 15 skipped, 60 deselected, 0 failed (`kpi/manual_merge_20261020e.json` in hermes_kanban); the previous
+batch on `3c7c54a`: 6794 passed. CI is not run (billing lock, D122); local receipts only.
 
 ## In progress
 
-- Nothing uncommitted on this branch. The `bpy` venv and fixtures of C1 lived in the session scratchpad
-  (cloud only, gone with the container); the commands are in the C1 note.
-- Stack order: #289 -> #290 -> #291 (each base is the previous branch). CI does not start on #290 / #291 (base is
-  not `main`); #287-#289 show a red `build`, the billing lock (D122), commented once each.
-- The old remote branch `claude/exciting-maxwell-7k6oko` is still on `origin` (not deleted).
+- Board cards (local PC): #296 MAF + Flora placement (PR #344, review round 2 changes needed), #340 Ground
+  texture binding (v003 with CurbGarden / Stairs recipes), #345 quad_dominance invariant, #346 texel_ready
+  invariant, #347 Flora NPM light variants, #348 visual review loop in 3ds Max (C:/x/review + pending.json),
+  #350 asset store disk + Google Drive, #116 suite wall time round 2, #318 C6 CI receipt (4 tests in
+  `tests/test_agent_trace.py` fail only inside the full receipt run, pass alone), #337 refresh of PR #252.
+- Outputs live outside git under `C:/x/` (Ground `C:/x/t_d94665f2/ground_v014/`, textures
+  `C:/x/vatutino-ground-textures/v002/`, Flora library `C:/x/flora-library/v003/flora-library-v003.max`).
 
 ## User decisions not in the code
 
-- Branch name `research/bpy-linux-headless-probe` confirmed (user 2026-10-18) - D078 rename done before the first commit.
-- User asked to go on with C2, C3, C4 in turn ("давай далее", "продолжай", 2026-10-18); C4 is split into one PR
-  per operation.
-- D104-D130 are still recorded but not implemented (build by reduction, menu operations, headless kernel, weld vs
-  embed by mesh cost, benchmark triples, two human gates, thin drivers, context diet, local CI receipt, PR triage).
+- Gate 1 of #296 (user 2026-10-20): out-of-site Alnus/Malus not placed; Pinus mugo by plan points (106); six
+  species without a model + Salix not placed; substitutions 1->101, 3->120, 4->115, 6->105, 7->103, 9->205,
+  12->204, 17->224 accepted; height-only check +/-20 %; Flora NPM overrun 118 774 / 70 000 recorded (light NPM is
+  #347); 2 urns 1 cm outside the Ground v014 cut-out not placed (bound to v014 only).
+- #295 (user 2026-10-20): 12 vertices on ~81 deg faces with normal gap up to 36.9 mm accepted as an explicit
+  exception list; the 20 mm gate stays for the rest.
+- #319 (user 2026-10-19): tile scale error up to 1 % allowed; corrected output in a new version folder.
+- Procedure principle (user 2026-10-20): gates strict, path free - an agent may deviate (workaround, new tool) if
+  it logs the deviation and passes the same gates (#351).
+- Visual review in 3ds Max; assets on local disk + Google Drive links (user 2026-10-20, #348, #350).
+- MAF modelling of items without a model is deferred (user 2026-10-19).
 
 ## Waiting for the user
 
-- Review of #287-#291 and the merge command naming the PRs and the order (`WORKFLOW.md`, Gate merge authorization).
-- Operations as numpy functions on the invariants' meshes, not `bmesh` code (PR #290 "Decision to confirm"); `bmesh`
-  only through an adapter for booleans and extrusion. Not answered.
-- The numeric rule "few extra edges -> weld, more -> embed" [D124]: not encoded, the threshold is not decided.
-- From the earlier handoff, still open: `claude mcp list` and `/plugin` output from the local PC (Unreal MCP and
-  plugin names for `deniedMcpServers` / `enabledPlugins`); the files of the first benchmark triple (16-storey
-  building: source FBX, delivered FBX, album PDF) in a private place the cloud can reach (D114, D128); explicit board
-  resume; connectors to switch off at claude.ai/customize/connectors.
+- #353 L4: paths of the first real building (source, delivered FBX, album PDF).
+- #352 roof-equipment library: paths of the projects to pull meshes from.
+- #350: one-time Google Drive login on this PC (Drive for desktop or rclone).
+- #82 terrace parapets: a real object with different parapet thicknesses.
 
 ## Next step
 
-After the merge command: C4c `to_opacity_plane` (D109): replace a see-through repeating part by one plane with
-opacity; needs a rule for the lost-pixel tolerance of the hole check and for `Context.opacity_parts`.
+Finish the site chain (#340 -> #296 -> #298) and the L4 preparation cards (#345-#351), then L4 (#353).
 
 ## Rules broken
 
-- None broken. Notes: `gh` is not available in the cloud container, GitHub work went through the MCP tools; the bases of
-  #290 and #291 are not `main`, so no CI runs on them.
+- -
 
 ## Open PRs and issues for this task
 
-- #287 C1, #288 C2, #289 C3: open, draft, waiting for review and the merge command.
-- #290 C4a, #291 C4b: open, draft, stacked on #289 / #290.
-- The 13 older open PRs (#226-#280) are untouched; their triage is D123 (local line L1).
+- PR #344 (#296 placement) — review round 2, changes needed.
+- PR #252 (#138 decision ids) — conflicting with main again, refresh card running (#337).
+- PR #280 (research on #229) — no review; archive decision pending.
+- PR #248 (#56 checker) — parked by the user with #314.
+- Issues waiting: #353, #352, #350 (`waits-artem`); #302, #246 `needs-info`; hypotheses #281, #283.
 
 ## Agent trace
 
-- Sessions: `e29841e3-114f-5603-814f-96cdb3ac3d4a`
-- Written by: -
-- Subagents: none
-- Skills: none
-- Commands: takeover 1
-- Hook denials: none
-- Retries: none
-- Context at handover: 35 % (347k of 1000k tokens)
-- Duration: 17 h 22 min (2026-10-18T13:25:22Z - 2026-10-19T06:48:20Z, UTC)
-- Commits: `013d30b..79d428b` (3 commits)
+- Sessions: not measured (no transcript)
+- Written by: Hermes orchestrator (Telegram session 20261019_095056_2dd1dd02, claude-opus-5-5)
+- Subagents: not measured (no usage log, no transcript)
+- Skills: not measured (no usage log, no transcript)
+- Commands: not measured (no usage log, no transcript)
+- Hook denials: not measured (no transcript)
+- Retries: not measured (no transcript)
+- Context at handover: not measured (no transcript)
+- Duration: not measured (no transcript)
+- Commits: `eed5074..eed5074` (0 commits)
