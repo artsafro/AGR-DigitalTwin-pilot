@@ -6,10 +6,13 @@ path: standard
 inputs: &id001
 - path: tests/ops/test_invariants.py
   sha256: 448b9d6bbe19dffaee0bca12cf0cef655bf72e9c0519e967d232a98951104ebb
+  commit: 4526ae994377e6ac618094c84d8d9c11554632e5
 - path: tests/ops/test_operations.py
   sha256: fda403fac1ade558d5f99d46c7e1a53c2a6d351b4e9856219c26d5c0ba449114
+  commit: 4526ae994377e6ac618094c84d8d9c11554632e5
 - path: tests/contracts/test_parts_list.py
   sha256: 98abd68fd5916e090401c355bc6a01329ed907a50537a847072b5b171dcae203
+  commit: 4526ae994377e6ac618094c84d8d9c11554632e5
 artifacts: []
 deviations: []
 gates:
@@ -23,14 +26,17 @@ gates:
     evidence:
     - path: tests/contracts/test_parts_list.py
       sha256: 98abd68fd5916e090401c355bc6a01329ed907a50537a847072b5b171dcae203
+      commit: 4526ae994377e6ac618094c84d8d9c11554632e5
   operations:
     status: review
     note: 220 kernel/parts tests passed; not a per-export before/after receipt
     evidence:
     - path: src/dt_ai/ops/invariants.py
       sha256: d0c5285071690d0c1d2b6f9555f9f05a2ee0ce51aa21ba834ca3a1f72007e00a
+      commit: 4526ae994377e6ac618094c84d8d9c11554632e5
     - path: src/dt_ai/ops/operations.py
       sha256: 89ff014898b13ed022f70582762879d000c95b62aeec4b2cbf9ce5608e3b9c1f
+      commit: 4526ae994377e6ac618094c84d8d9c11554632e5
     - path: jobs/KERNEL-SYNTHETIC/evidence.md
       sha256: 1db6983ceaa10a60989af412a25400c2eda59cc46718a0c0ed3f27bf42556de5
   budgets:

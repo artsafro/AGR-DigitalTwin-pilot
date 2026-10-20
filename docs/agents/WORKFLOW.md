@@ -427,6 +427,12 @@ to new versioned paths and read back geometry, UV, materials and transforms. Unk
 arbitrary-code operations are destructive until their behavior is inspected. This is a
 manual DCC skill/reviewer gate, not a generic MCP sandbox.
 
+## Performance lane (#361)
+
+Wall-clock / CPU-time budgets are opt-in: marked `perf` and excluded from the default `addopts`.
+Run the lane through the suite-slot limiter — `uv run pytest -m perf -p no:cacheprovider` (via
+`scripts/suite_slot.py`) — it is not part of a card's full-suite receipt.
+
 ## Git
 
 - Start independent work from fresh `main` in a new worktree; continue a task in its own

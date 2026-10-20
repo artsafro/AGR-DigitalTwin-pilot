@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import json
 import math
+import subprocess
 from pathlib import Path
 from typing import Annotated, Literal
 
@@ -18,8 +19,14 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_valida
 GATES = ("inputs", "parts", "operations", "budgets", "export_readback", "report", "visual", "checker")
 INVARIANTS = ("open_borders_hidden", "no_see_through_hole", "no_visible_back_faces", "no_close_overlap",
               "quad_dominance", "texel_ready")
+# Source files are the only evidence eligible for a pinned ``commit`` (immutable revision).
+SOURCE_SUFFIXES = (".py", ".cs", ".ps1", ".ms", ".js", ".ts")
+# Gate roles that may legitimately carry source code; a ``commit`` is rejected anywhere else.
+SOURCE_ROLES = ("inputs", "parts", "operations")
 Text = Annotated[str, Field(min_length=1, pattern=r"\S")]
 Digest = Annotated[str, Field(pattern=r"^[a-f0-9]{64}$")]
+# Full object id only (SHA-1 or SHA-256 repositories): refs and abbreviations are mutable/ambiguous.
+ObjectId = Annotated[str, Field(pattern=r"^(?:[a-f0-9]{40}|[a-f0-9]{64})$")]
 
 
 class Strict(BaseModel):
@@ -27,8 +34,17 @@ class Strict(BaseModel):
 
 
 class Evidence(Strict):
+    """A hashed reference. ``commit`` pins source evidence to an immutable revision (#387):
+    the ``inputs`` inventory (any path), or a supplementary source-suffixed reference in the
+    ``parts``/``operations`` roles; its sha256 is checked against the blob at that commit, so
+    later edits of the live file do not invalidate it. The primary parsed contract of a
+    ``pass`` ``parts`` gate (the PartsList) and the primary receipt of a ``pass`` ``operations``
+    gate are generated semantic roles and always reject ``commit``, regardless of suffix.
+    Generated artifacts, receipts, reports and visual sheets are always hashed from the working
+    tree and reject ``commit``."""
     path: Text
     sha256: Digest
+    commit: ObjectId | None = None
 
 
 class Gate(Strict):
@@ -90,11 +106,46 @@ def _resolve(root, name):
     return path
 
 
-def _verify(root, ref):
+def _git(root, *args):
+    return subprocess.run(["git", "-C", str(root), *args], capture_output=True, timeout=60)
+
+
+def _pinned_blob(root, ref):
+    """Bytes of ``ref.path`` at ``ref.commit``; the commit must be in the history of HEAD."""
+    if _git(root, "cat-file", "-e", f"{ref.commit}^{{commit}}").returncode != 0:
+        raise ValueError(f"pinned commit not found: {ref.path}@{ref.commit}")
+    if _git(root, "merge-base", "--is-ancestor", ref.commit, "HEAD").returncode != 0:
+        raise ValueError(f"pinned commit is not in the history of HEAD: {ref.path}@{ref.commit}")
+    blob = _git(root, "cat-file", "blob", f"{ref.commit}:./{ref.path}")
+    if blob.returncode != 0:
+        raise ValueError(f"path absent at pinned commit: {ref.path}@{ref.commit}")
+    return blob.stdout
+
+
+def _verify(root, ref, role, *, generated=False):
+    """Return the verified bytes; callers parse these, never a second read of the path.
+
+    ``commit`` (pinned historical lookup) is honored only for source evidence: the
+    ``inputs`` role is source inventory (any path), while ``parts`` and ``operations``
+    honor it only for a supplementary source-suffixed reference. ``generated=True`` marks
+    the primary parsed contract of a ``pass`` ``parts`` gate or the primary receipt of a
+    ``pass`` ``operations`` gate; those reject ``commit`` regardless of suffix, so current
+    bytes stay mandatory. Generated artifacts, receipts, reports and visual sheets are
+    always hashed from the working tree and reject ``commit``."""
     path = _resolve(root, ref.path)
-    if hashlib.sha256(path.read_bytes()).hexdigest() != ref.sha256:
+    if ref.commit:
+        if generated:
+            raise ValueError(f"pinned commit not allowed for generated {role} evidence: {ref.path}")
+        if role not in SOURCE_ROLES:
+            raise ValueError(f"pinned commit not allowed for {role} evidence: {ref.path}")
+        if role != "inputs" and Path(ref.path).suffix.lower() not in SOURCE_SUFFIXES:
+            raise ValueError(f"pinned commit not allowed for non-source evidence: {ref.path}")
+        data = _pinned_blob(root, ref)
+    else:
+        data = path.read_bytes()
+    if hashlib.sha256(data).hexdigest() != ref.sha256:
         raise ValueError(f"hash mismatch: {ref.path}")
-    return path
+    return data
 
 
 class UniqueLoader(yaml.SafeLoader):
@@ -114,8 +165,9 @@ def _mapping(loader, node):
 UniqueLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _mapping)
 
 
-def _read(path):
-    value = yaml.load(path.read_text(encoding="utf-8"), Loader=UniqueLoader)
+def _read(source):
+    text = source.decode("utf-8") if isinstance(source, bytes) else source.read_text(encoding="utf-8")
+    value = yaml.load(text, Loader=UniqueLoader)
     # YAML admits NaN/inf; no evidence object may silently carry them.
     json.dumps(value, allow_nan=False)
     return value
@@ -132,14 +184,14 @@ def _checks(receipt, required=()):
 
 
 def _receipt(root, ref, gate, job):
-    value = _read(_verify(root, ref))
+    value = _read(_verify(root, ref, gate, generated=(gate == "operations")))
     if not isinstance(value, dict) or value.get("gate") != gate or value.get("run_id") != job.run_id:
         raise ValueError("wrong gate/run receipt")
     subjects = value.get("artifact_sha256")
     expected = [a.sha256 for a in job.artifacts]
     if not expected or subjects != expected:
         raise ValueError("receipt must bind the current exported artifacts in order")
-    if value.get("input_evidence") != [ref.model_dump() for ref in job.inputs]:
+    if value.get("input_evidence") != [ref.model_dump(exclude_none=True) for ref in job.inputs]:
         raise ValueError("receipt must bind the exact current input inventory in order")
     parts = job.gates.parts.evidence
     if not parts or value.get("parts_sha256") != parts[0].sha256:
@@ -149,27 +201,27 @@ def _receipt(root, ref, gate, job):
 
 def _gate(root, gate, entry, job):
     for ref in entry.evidence:
-        _verify(root, ref)
+        _verify(root, ref, gate)
     if gate == "inputs":
         for ref in job.inputs:
-            _verify(root, ref)
+            _verify(root, ref, "inputs")
         if entry.evidence != job.inputs:
             raise ValueError("inputs gate must record the full input inventory")
     elif gate == "parts":
         # Use the public contract facade; importing parts first hits its legacy
         # cycle through core.models in a fresh CLI process (owned separately by #354).
         from dt_ai.core.models import PartsList
-        parts = PartsList.model_validate(_read(_verify(root, entry.evidence[0])))
+        parts = PartsList.model_validate(_read(_verify(root, entry.evidence[0], "parts", generated=True)))
         if parts.synthetic != job.synthetic or parts.status != "confirmed":
             raise ValueError("parts require matching scope and Gate 1 confirmation")
         if any(q.answer is None for q in parts.questions):
             raise ValueError("unanswered parts question")
     elif gate == "report":
-        if not _verify(root, entry.evidence[0]).read_text(encoding="utf-8").strip():
+        if not _verify(root, entry.evidence[0], "report").decode("utf-8").strip():
             raise ValueError("empty report")
     else:
         for artifact in job.artifacts:
-            _verify(root, artifact)
+            _verify(root, artifact, "artifact")
         receipt = _receipt(root, entry.evidence[0], gate, job)
         if gate == "operations":
             required = [f"{phase}.{name}" for phase in ("before", "after") for name in INVARIANTS]
@@ -208,7 +260,7 @@ def _gate(root, gate, entry, job):
             scope = "synthetic_fixture" if job.synthetic else "project"
             if receipt.get("scope") != scope:
                 raise ValueError("wrong visual approval scope")
-            _verify(root, Evidence.model_validate(receipt["sheet"]))
+            _verify(root, Evidence.model_validate(receipt["sheet"]), "sheet")
         elif gate == "checker":
             _checks(receipt)
             if receipt.get("tool") != "SINTEZ AGR Checker" or receipt.get("complete") is not True:
@@ -231,10 +283,11 @@ def inspect_job(data, root):
         name = row["gate"]
         entry = getattr(job.gates, name)
         row.update(status=entry.status, note=entry.note)
-        for ref in entry.evidence:
+        primary_generated = name in ("parts", "operations") and entry.status == "pass"
+        for i, ref in enumerate(entry.evidence):
             exists = False
             try:
-                _verify(root, ref)
+                _verify(root, ref, name, generated=(primary_generated and i == 0))
                 exists = True
             except (OSError, ValueError) as exc:
                 row["errors"].append(str(exc))
