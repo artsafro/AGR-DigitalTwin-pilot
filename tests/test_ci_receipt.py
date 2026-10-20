@@ -1,4 +1,16 @@
-"""Local CI receipt (D122): injected commands and a temporary git repo, never the real suite."""
+"""Local CI receipt (D122): injected commands and a temporary git repo, never the real suite.
+
+P1 acceptance rows (review round 1):
+
+| adversarial input | expected output |
+| --- | --- |
+| existing file ``<out>.ci-receipt-tmp`` | sentinel bytes unchanged; ``<out>`` is the full receipt; sentinel not truncated or deleted |
+| new ``--pytest-log=<out>.ci-receipt-tmp`` | log keeps pytest stdout/stderr once; receipt is only in ``<out>``; log path still exists |
+| existing ``--pytest-log`` path ending ``.ci-receipt-tmp`` | sentinel bytes unchanged; receipt FAIL; path not truncated or replaced |
+| ``4 passed, 1 failed, 0 failed, 1 deselected in 1.00s`` | counts ``unknown``, ``result: FAIL``; ``--verify`` exits nonzero |
+| repeated category or alias (``error``/``errors``, ``warning``/``warnings``, any count key twice) | same: unknown/FAIL, verify nonzero, never PASS |
+| clean tree, HEAD A then B during uv, pytest, profiles or schemas | ``dirty: no``, ``commit`` stays A, ``result: FAIL``, reason ``HEAD changed during checks``; verify against A or B exits nonzero |
+"""
 import importlib.util
 import os
 import re
@@ -1376,6 +1388,384 @@ def test_pytest_log_saves_streams_and_requests_long_tracebacks(tmp_path, monkeyp
         hits += 1
     assert hits == 24 + 6 + len(flagged_bad) == 36
     assert len(rejected) == 24
+
+
+def _last_write_counts(summary):
+    """Buggy last-write reading, used only to build a hand-edited PASS receipt."""
+    counts = {key: 0 for key in COUNT_KEYS}
+    body = summary.split(" in ", 1)[0]
+    for number, word in re.findall(
+        r"(\d+) (passed|failed|errors|error|skipped|deselected|xfailed|xpassed|warnings|warning)",
+        body,
+    ):
+        key = {"error": "errors"}.get(word, word)
+        if key in {"warning", "warnings"}:
+            continue
+        counts[key] = int(number)
+    return counts
+
+
+def _receipt_from_counts(summary, counts, result="PASS"):
+    count_lines = "\n".join(f"{key}: {counts[key]}" for key in COUNT_KEYS)
+    return (
+        "```ci-receipt\n"
+        "CI-RECEIPT v1\n"
+        f"commit: {SHA}\n"
+        "branch: feature/ci\n"
+        "dirty: no\n"
+        "started_utc: 2026-10-19T17:00:00Z\n"
+        "duration_s: 1.500\n"
+        "os: Windows-test\n"
+        "python: 3.13.0\n"
+        "uv: uv 0.0.0-test\n"
+        "scrubbed: PYTHONPATH,PYTHONHOME,VIRTUAL_ENV\n"
+        f"command: {PYTEST_CMD}\n"
+        "exit_code: 0\n"
+        "duration_s: 1.000\n"
+        f"summary: {summary}\n"
+        f"{count_lines}\n"
+        f"command: {PROFILES_CMD}\n"
+        "exit_code: 0\n"
+        "duration_s: 0.250\n"
+        f"command: {SCHEMAS_CMD}\n"
+        "exit_code: 0\n"
+        "duration_s: 0.250\n"
+        f"command: {GATE_NOT_RUN}\n"
+        "status: not_run\n"
+        "reason: --issue not given\n"
+        f"result: {result}\n"
+        "```\n"
+    )
+
+
+def _duplicate_summaries():
+    """Generated repeats: same word twice, plus cross-alias pairs. Reviewer literal included."""
+    words = (
+        "passed", "failed", "error", "errors", "skipped", "deselected",
+        "xfailed", "xpassed", "warning", "warnings",
+    )
+    rows = ["4 passed, 1 failed, 0 failed, 1 deselected in 1.00s"]
+    for word in words:
+        rows.append(f"4 passed, 1 {word}, 0 {word}, 1 deselected in 1.00s")
+    rows.extend((
+        "4 passed, 1 error, 0 errors, 1 deselected in 1.00s",
+        "4 passed, 1 errors, 0 error, 1 deselected in 1.00s",
+        "4 passed, 1 warning, 0 warnings, 1 deselected in 1.00s",
+        "4 passed, 1 warnings, 0 warning, 1 deselected in 1.00s",
+        "0 passed, 0 passed in 0.01s",
+        "0 failed, 0 failed in 0.01s",
+    ))
+    unique = list(dict.fromkeys(rows))
+    assert "4 passed, 1 failed, 0 failed, 1 deselected in 1.00s" in unique
+    return unique
+
+
+def _collected_counts(counts):
+    return sum(counts[key] for key in ("passed", "failed", "errors", "skipped", "xfailed", "xpassed"))
+
+
+def _existing_log_sentinels():
+    """Generated payloads already sitting on a ``.ci-receipt-tmp`` pytest-log path."""
+    rows = [
+        "",
+        " ",
+        "\n",
+        "nan",
+        "inf",
+        "-inf",
+        "NaN",
+        "4 passed, 1 deselected in 0.02s\n",
+        "SENTINEL-DO-NOT-TOUCH\n",
+    ]
+    rows.extend(f"SENTINEL-{index}-DO-NOT-TOUCH\n" for index in range(11))
+    assert len(rows) == 20
+    return rows
+
+
+def test_unique_temp_preserves_sentinel_and_pytest_log(tmp_path, monkeypatch):
+    """Predictable ``.ci-receipt-tmp`` must not be truncated or deleted. Brute-force 20 writes."""
+    mod = load()
+    repo = tmp_path / "repo"
+    init_repo(repo)
+    hits = 0
+    for index in range(20):
+        out = tmp_path / f"out-{index}.txt"
+        sentinel = tmp_path / f"{out.name}.ci-receipt-tmp"
+        payload = f"SENTINEL-{index}-DO-NOT-TOUCH\n"
+        sentinel.write_text(payload, encoding="utf-8")
+        code, text = _capture(mod, repo, ["--out", str(out)], make_runner(), monkeypatch)
+        assert code == 0, text
+        assert sentinel.read_text(encoding="utf-8") == payload
+        assert sentinel.exists()
+        written = out.read_text(encoding="utf-8")
+        assert written == text
+        assert written.startswith("```ci-receipt\nCI-RECEIPT v1\n")
+        assert "result: PASS\n" in written
+        assert written.rstrip().endswith("```")
+        leftovers = [
+            path for path in tmp_path.glob("*ci-receipt-tmp")
+            if path != sentinel and out.name in path.name
+        ]
+        assert leftovers == []
+        hits += 1
+    for index in range(20):
+        out = tmp_path / f"log-out-{index}.txt"
+        log = tmp_path / f"{out.name}.ci-receipt-tmp"
+        code, text = _capture(
+            mod, repo, ["--out", str(out), "--pytest-log", str(log)],
+            make_runner(), monkeypatch,
+        )
+        assert code == 0, text
+        assert log.exists()
+        saved = log.read_text(encoding="utf-8")
+        assert saved == "4 passed, 1 deselected in 0.02s\n"
+        assert saved.count("4 passed, 1 deselected in 0.02s") == 1
+        assert "CI-RECEIPT" not in saved
+        written = out.read_text(encoding="utf-8")
+        assert written == text
+        assert "CI-RECEIPT v1" in written
+        assert "result: PASS\n" in written
+        hits += 1
+    for index, payload in enumerate(_existing_log_sentinels()):
+        out = tmp_path / f"collide-out-{index}.txt"
+        log = tmp_path / f"{out.name}.ci-receipt-tmp"
+        log.write_text(payload, encoding="utf-8")
+        code, text = _capture(
+            mod, repo, ["--out", str(out), "--pytest-log", str(log)],
+            make_runner(), monkeypatch,
+        )
+        assert log.read_text(encoding="utf-8") == payload
+        assert log.exists()
+        assert code == 1
+        assert text == out.read_text(encoding="utf-8")
+        assert field(text, "result") == "FAIL"
+        assert "result: PASS" not in text
+        assert "reason: output path not written" in text
+        assert text.startswith("```ci-receipt\nCI-RECEIPT v1\n")
+        hits += 1
+    assert hits == 60
+
+
+def test_duplicate_pytest_categories_never_pass(tmp_path, monkeypatch):
+    """A repeated count category or alias is unknown/FAIL and verify never accepts PASS."""
+    mod = load()
+    repo = tmp_path / "repo"
+    init_repo(repo)
+    control_counts, control_raw = mod.parse_pytest_summary("4 passed, 1 deselected in 1.00s")
+    assert control_counts == {
+        "passed": 4, "failed": 0, "errors": 0, "skipped": 0,
+        "deselected": 1, "xfailed": 0, "xpassed": 0,
+    }
+    assert control_raw == "4 passed, 1 deselected in 1.00s"
+    alias_counts, alias_raw = mod.parse_pytest_summary("1 error, 1 passed in 0.02s")
+    assert alias_counts["errors"] == 1 and alias_counts["passed"] == 1
+    assert alias_raw == "1 error, 1 passed in 0.02s"
+    warning_counts, _warning_raw = mod.parse_pytest_summary("1 warning in 0.01s")
+    assert warning_counts is not None and warning_counts["passed"] == 0
+    code, text = _capture(
+        mod, repo, [], make_runner(pytest_out="4 passed, 1 deselected in 0.02s\n"), monkeypatch,
+    )
+    assert code == 0 and field(text, "result") == "PASS"
+
+    summaries = _duplicate_summaries()
+    hits = 0
+    verify_would_have_passed = 0
+    for summary in summaries:
+        parsed, raw = mod.parse_pytest_summary(summary)
+        assert parsed is None, summary
+        assert raw == "unknown"
+        counts = _last_write_counts(summary)
+        path = tmp_path / f"dup-{hits}.txt"
+        path.write_text(_receipt_from_counts(summary, counts), encoding="utf-8")
+        verify_code, reason = _verify(mod, path, SHA)
+        assert verify_code != 0, summary
+        assert reason, summary
+        if counts["failed"] == 0 and counts["errors"] == 0 and _collected_counts(counts) > 0:
+            verify_would_have_passed += 1
+        code, text = _capture(
+            mod, repo, [], make_runner(pytest_out=summary + "\n"), monkeypatch,
+        )
+        assert code != 0, summary
+        assert field(text, "result") == "FAIL"
+        for key in COUNT_KEYS:
+            assert field(text, key) == "unknown", (summary, key, text)
+        assert "result: PASS" not in text
+        hits += 1
+    assert hits == len(summaries) == 16
+    assert verify_would_have_passed >= 8
+
+
+def _move_head(repo):
+    git(repo, "commit", "--allow-empty", "-m", "head-moves")
+
+
+def test_head_change_during_checks_never_passes(tmp_path, monkeypatch):
+    """Clean initial HEAD A that becomes B during checks is FAIL and never a PASS for A."""
+    mod = load()
+    phases = ("uv", "pytest", "profiles", "schemas")
+    hits = 0
+    for phase in phases:
+        repo = tmp_path / phase / "repo"
+        sha_a, _branch = init_repo(repo)
+        porcelain = subprocess.run(
+            ["git", "status", "--porcelain"], cwd=repo, env=git_env(),
+            check=True, capture_output=True, text=True,
+        )
+        assert porcelain.stdout == ""
+        commits = 5 if phase == "pytest" else 1
+
+        def runner(argv, env, cwd, phase=phase, commits=commits):
+            upper = {key.upper() for key in env}
+            assert "PYTHONPATH" not in upper
+            assert "PYTHONHOME" not in upper
+            assert "VIRTUAL_ENV" not in upper
+            key = " ".join(argv)
+            matched = (
+                (phase == "uv" and key == "uv --version")
+                or (phase == "pytest" and _pytest_invocation(argv))
+                or (phase == "profiles" and key == PROFILES_CMD)
+                or (phase == "schemas" and key == SCHEMAS_CMD)
+            )
+            if matched:
+                for _ in range(commits):
+                    _move_head(cwd)
+            if key == "uv --version":
+                return Completed(0, "uv 0.0.0-test\n")
+            if _pytest_invocation(argv):
+                return Completed(0, "4 passed, 1 deselected in 0.02s\n")
+            if key == PROFILES_CMD:
+                return Completed(0, "profiles ok\n")
+            if key == SCHEMAS_CMD:
+                return Completed(0, "schemas ok\n")
+            raise AssertionError(f"unexpected command {argv}")
+
+        code, text = _capture(mod, repo, [], runner, monkeypatch)
+        sha_b = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=repo, env=git_env(),
+            check=True, capture_output=True, text=True,
+        ).stdout.strip()
+        assert sha_b != sha_a
+        assert code != 0
+        assert field(text, "dirty") == "no"
+        assert field(text, "commit") == sha_a
+        assert field(text, "result") == "FAIL"
+        assert text.count("HEAD changed during checks") == 1
+        assert "result: PASS" not in text
+        assert mod.verify_text(text, sha_a)[0] != 0
+        assert mod.verify_text(text, sha_b)[0] != 0
+        hits += 1
+    assert hits == len(phases) == 4
+
+    control = tmp_path / "control" / "repo"
+    sha_control, _branch = init_repo(control)
+    code, text = _capture(mod, control, [], make_runner(), monkeypatch)
+    assert code == 0, text
+    assert field(text, "commit") == sha_control
+    assert field(text, "result") == "PASS"
+    assert "HEAD changed during checks" not in text
+
+
+@pytest.mark.parametrize("untracked", [False, True])
+def test_initial_dirty_state_cannot_be_cleaned_into_pass(tmp_path, monkeypatch, untracked):
+    mod = load()
+    repo = tmp_path / "repo"
+    sha, _ = init_repo(repo)
+    target = repo / ("untracked.txt" if untracked else "tracked.txt")
+    target.write_text("dirty\n", encoding="utf-8")
+
+    def runner(argv, env, cwd):
+        if untracked:
+            target.unlink(missing_ok=True)
+        else:
+            target.write_text("seed\n", encoding="utf-8")
+        return make_runner()(argv, env, cwd)
+
+    code, text = _capture(mod, repo, [], runner, monkeypatch)
+    assert code != 0
+    assert field(text, "dirty") == "yes"
+    assert "initial worktree dirty" in text
+    assert mod.verify_text(text, sha)[0] != 0
+
+
+def test_verify_rejects_failure_reason_on_pass():
+    mod = load()
+    for reason in ("HEAD changed during checks", "initial worktree dirty", "command exit 1"):
+        edited = valid_receipt().replace("result: PASS", f"reason: {reason}\nresult: PASS")
+        code, message = mod.verify_text(edited, SHA)
+        assert code != 0
+        assert "reason" in message
+    assert mod.verify_text(valid_receipt(), SHA) == (0, "")
+
+
+def test_exclusive_temp_retries_collision_and_cleans_only_owned_file(tmp_path, monkeypatch):
+    mod = load()
+    destination = tmp_path / "receipt.txt"
+    destination.write_text("OLD", encoding="utf-8")
+    token = "a" * 32
+    sentinel = tmp_path / f".receipt.txt.{token}.ci-receipt-tmp"
+    sentinel.write_text("UNRELATED", encoding="utf-8")
+    real_uuid = mod.uuid.uuid4
+    tokens = iter([type("Token", (), {"hex": token})(), real_uuid()])
+    monkeypatch.setattr(mod.uuid, "uuid4", lambda: next(tokens))
+    assert mod._write_out(destination, "NEW") is None
+    assert destination.read_text() == "NEW"
+    assert sentinel.read_text() == "UNRELATED"
+    monkeypatch.setattr(mod.uuid, "uuid4", real_uuid)
+
+    def deny_replace(*args):
+        raise OSError("synthetic publication failure")
+
+    monkeypatch.setattr(mod.os, "replace", deny_replace)
+    assert mod._write_out(destination, "LOST") == "output path not written"
+    assert destination.read_text() == "NEW"
+    assert sentinel.read_text() == "UNRELATED"
+    assert set(tmp_path.iterdir()) == {destination, sentinel}
+
+
+def test_fresh_verify_cli_statuses_and_hardlink_alias(tmp_path):
+    import sys
+
+    mod = load()
+    receipt = tmp_path / "receipt.txt"
+    receipt.write_text(valid_receipt(), encoding="utf-8")
+    command = [sys.executable, str(ROOT / "tools/ci_receipt.py"),
+               "--verify", str(receipt), "--sha", SHA]
+    env = mod.child_env()
+    control = subprocess.run(command, env=env, capture_output=True, text=True)
+    assert control.returncode == 0, control.stderr
+    for status in ("FAIL", "review", "not_run", "unknown"):
+        receipt.write_text(valid_receipt().replace("result: PASS", f"result: {status}"))
+        probe = subprocess.run(command, env=env, capture_output=True, text=True)
+        assert probe.returncode != 0
+        assert "not PASS" in probe.stderr
+    receipt.write_text(valid_receipt())
+    alias = tmp_path / "alias.txt"
+    os.link(receipt, alias)
+    before = receipt.read_bytes()
+    probe = subprocess.run(command + ["--out", str(alias)], env=env, capture_output=True, text=True)
+    assert probe.returncode != 0
+    assert "resolves to input" in probe.stderr
+    assert receipt.read_bytes() == alias.read_bytes() == before
+
+
+def test_head_returning_to_start_between_checks_still_fails(tmp_path, monkeypatch):
+    mod = load()
+    repo = tmp_path / "repo"
+    sha, _ = init_repo(repo)
+
+    def runner(argv, env, cwd):
+        if _pytest_invocation(argv):
+            _move_head(repo)
+        elif " ".join(argv) == PROFILES_CMD:
+            # Synthetic clean A -> B -> A without rewriting real branch history.
+            git(repo, "checkout", "--detach", sha)
+        return make_runner()(argv, env, cwd)
+
+    code, text = _capture(mod, repo, [], runner, monkeypatch)
+    assert code != 0
+    assert field(text, "commit") == sha
+    assert "HEAD changed during checks" in text
+    assert mod.verify_text(text, sha)[0] != 0
 
 
 def test_windows_default_basetemp_is_short_enough_for_path_bearing_messages():

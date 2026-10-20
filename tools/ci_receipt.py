@@ -1,5 +1,7 @@
 """Local CI receipt (D122). Stdlib only.
 
+new-case: exact-revision local CI evidence producer and fail-closed verifier.
+
 Print a fenced ``CI-RECEIPT v1`` block for the PR body, or check a pasted block:
 
     uv run python tools/ci_receipt.py [--issue N] [--basetemp PATH] [--pytest-log PATH] [--out PATH]
@@ -24,7 +26,12 @@ run command exits 0,
 pytest collected at least one test, failed and errors are 0, and
 ``git status --porcelain`` is empty. ``--verify`` does not rewrite its input.
 An ``--out`` path that resolves to that input or to ``--basetemp``, or whose
-parent directory is missing, exits nonzero and writes nothing.
+parent directory is missing, exits nonzero and writes nothing. Receipt and
+pytest-log writes use an exclusive unique temporary file and never truncate or
+delete an existing ``.ci-receipt-tmp`` sentinel, including when that path is
+``--pytest-log``. A winning pytest summary that repeats a count category or an
+alias (``error``/``errors``, ``warning``/``warnings``) is unparseable. If HEAD
+changes while the checks run, the receipt is FAIL for the starting commit.
 """
 import argparse
 import math
@@ -62,6 +69,7 @@ SUMMARY_RE = re.compile(
     rf" in [\d.]+s(?: \([^)]*\))?\s*(?:={3,})?\s*$"
 )
 _WORD_RE = re.compile(rf"(\d+) ({_WORD})")
+_COUNT_ALIAS = {"error": "errors", "warning": "warnings"}
 _COLLECTED = ("passed", "failed", "errors", "skipped", "xfailed", "xpassed")
 _ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 _FAILURE_HEAD = re.compile(r"(FAILED|ERROR) (\S.*)")
@@ -244,9 +252,13 @@ def parse_pytest_summary(text):
         return None, "unknown"
     counts = {key: 0 for key in COUNT_KEYS}
     if matched.group("counts"):
+        seen = set()
         for number, word in _WORD_RE.findall(matched.group("counts")):
-            key = {"error": "errors"}.get(word, word)
-            if key in {"warning", "warnings"}:
+            key = _COUNT_ALIAS.get(word, word)
+            if key in seen:
+                return None, "unknown"
+            seen.add(key)
+            if key == "warnings":
                 continue
             counts[key] = int(number)
     return counts, raw
@@ -469,28 +481,97 @@ def _out_problem(path):
     return None
 
 
-def _write_out(path, text):
-    problem = _out_problem(path)
-    if problem:
-        return problem
-    destination = Path(path)
-    temporary = destination.with_name(destination.name + ".ci-receipt-tmp")
+def _exclusive_temp(destination):
+    """Create a new temp next to ``destination``. Never open an existing path."""
+    parent = destination.parent
+    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
+    if hasattr(os, "O_BINARY"):
+        flags |= os.O_BINARY
+    for _ in range(32):
+        candidate = parent / f".{destination.name}.{uuid.uuid4().hex}.ci-receipt-tmp"
+        if candidate.name == destination.name + ".ci-receipt-tmp":
+            continue
+        try:
+            if candidate.resolve() == destination.resolve():
+                continue
+        except OSError:
+            return None, None
+        try:
+            fd = os.open(candidate, flags)
+        except FileExistsError:
+            continue
+        return candidate, fd
+    return None, None
+
+
+def _write_exclusive_new(destination, text):
+    """Create ``destination`` only when it is absent. Never replace an existing file."""
+    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
+    if hasattr(os, "O_BINARY"):
+        flags |= os.O_BINARY
     try:
-        temporary.write_text(text, encoding="utf-8", newline="\n")
-        os.replace(temporary, destination)
+        fd = os.open(destination, flags)
+    except FileExistsError:
+        return "output path not written"
+    except OSError:
+        return "output path not written"
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as handle:
+            handle.write(text)
     except OSError:
         try:
-            temporary.unlink()
+            destination.unlink()
         except OSError:
             pass
         return "output path not written"
     return None
 
 
+def _write_out(path, text):
+    problem = _out_problem(path)
+    if problem:
+        return problem
+    destination = Path(path)
+    if destination.name.endswith(".ci-receipt-tmp"):
+        return _write_exclusive_new(destination, text)
+    fd = None
+    temporary = None
+    try:
+        temporary, fd = _exclusive_temp(destination)
+        if temporary is None or fd is None:
+            return "output path not written"
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as handle:
+            fd = None
+            handle.write(text)
+        os.replace(temporary, destination)
+        temporary = None
+    except OSError:
+        if fd is not None:
+            try:
+                os.close(fd)
+            except OSError:
+                pass
+        if temporary is not None:
+            try:
+                temporary.unlink()
+            except OSError:
+                pass
+        return "output path not written"
+    return None
+
+
+def _head_sha(cwd):
+    return (_git(["rev-parse", "HEAD"], cwd) or "").strip()
+
+
 def produce(issue, runner, cwd, basetemp=None, pytest_log=None):
     started_at = time.perf_counter()
     started_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    sha = (_git(["rev-parse", "HEAD"], cwd) or "").strip()
+    sha = _head_sha(cwd)
+    branch = (_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd) or "").strip()
+    initial_status = _git(["status", "--porcelain"], cwd)
+    initial_dirty = initial_status is None or bool(initial_status.strip())
+    seen_heads = [sha, _head_sha(cwd)]
     effective = basetemp
     parent_problem = None
     if effective is None and _platform_name() == "nt":
@@ -507,12 +588,14 @@ def produce(issue, runner, cwd, basetemp=None, pytest_log=None):
             uv_value = uv_text[0] if version.returncode == 0 and uv_text else "unknown"
         except FileNotFoundError:
             uv_value = "unknown"
+        seen_heads.append(_head_sha(cwd))
         records = []
         for command, mode in planned_commands(issue):
             if mode == "not_run":
                 records.append({
                     "command": command, "status": "not_run", "reason": "--issue not given", "pytest": False,
                 })
+                seen_heads.append(_head_sha(cwd))
                 continue
             is_pytest_cmd = command == PYTEST_CMD
             if is_pytest_cmd:
@@ -520,10 +603,12 @@ def produce(issue, runner, cwd, basetemp=None, pytest_log=None):
             records.append(_run_command(
                 command, runner, cwd, pytest_log=pytest_log if is_pytest_cmd else None,
             ))
-    branch = (_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd) or "").strip()
+            seen_heads.append(_head_sha(cwd))
     status = _git(["status", "--porcelain"], cwd)
-    git_ok = bool(SHA_RE.fullmatch(sha)) and bool(branch) and status is not None
-    dirty = (not git_ok) or any(line.strip() for line in status.splitlines())
+    seen_heads.append(_head_sha(cwd))
+    git_ok = (bool(SHA_RE.fullmatch(sha)) and bool(branch)
+              and initial_status is not None and status is not None)
+    dirty = initial_dirty or (not git_ok) or bool((status or "").strip())
     header = {
         "commit": sha if git_ok else "unknown",
         "branch": branch if branch else "unknown",
@@ -536,6 +621,10 @@ def produce(issue, runner, cwd, basetemp=None, pytest_log=None):
         "scrubbed": SCRUBBED,
     }
     reasons = _evaluate(records, dirty, git_ok, uv_value != "unknown")
+    if initial_dirty:
+        reasons.append("initial worktree dirty or unavailable")
+    if any(item != sha for item in seen_heads):
+        reasons.append("HEAD changed during checks")
     if parent_problem:
         reasons.insert(0, parent_problem)
     return format_receipt(header, records, reasons), reasons
@@ -662,13 +751,16 @@ def _verify_reason(text, sha):
                 return "invalid failure line"
             record["failures"] = failures
         commands.append(record)
+    failure_reasons = []
     while body and body[0].startswith("reason: "):
-        body.pop(0)
+        failure_reasons.append(body.pop(0))
     if len(body) != 1 or not body[0].startswith("result: "):
         return "partial receipt"
     result = body[0].split(": ", 1)[1]
     if result != "PASS":
         return "result is not PASS"
+    if failure_reasons:
+        return "failure reason on receipt"
     if any(record.get("failures") for record in commands):
         return "failure lines on PASS"
     if header["dirty"] != "no":
