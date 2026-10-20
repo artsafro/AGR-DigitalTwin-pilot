@@ -1,6 +1,6 @@
 # COD 20207 Ground — Gate 1 intake (issue #420)
 
-Status: **Gate 1 answers received; blocked on flat-datum versus layer-offset clarification before build**. Real project data, not synthetic.
+Status: **Gate 1 flatness clarification resolved; source-map extraction complete; stopped after two copied-etalon FBX importer crashes**. Real project data, not synthetic.
 No Ground mesh, export, comparison pass or visual-review publication is claimed.
 The draft below preserves the original intake. The approved answers and follow-up evidence are recorded in the appended resumed-intake section; original open questions are historical, not unanswered again.
 
@@ -187,3 +187,94 @@ portability regressions, and produce both FBX plus independent readback/UCX/xVie
 flatness, comparison tables and review publication. Actual end-to-end budgets,
 full suite and regression-eval receipts are not claimed. No PR is opened and
 `pending.json` is untouched: there is no built review scene yet.
+
+## Resumed intake 3 — decision closed, extraction and importer stop
+
+The card's final Artem answer (2026-10-20 23:5x) supersedes the literal-all-planes-zero
+wording above: **common project datum zero, no relief, method-C +6/+12 mm offsets retained**.
+No model decision is outstanding on that question. Other approved Gate 1 answers stand.
+
+`adapters/cad/configs/cod_20207.yaml` now maps the six types, boundary `69002`,
+make-valid for reinforced tile, and the two curb roles. Type 6 deliberately remains
+separate pending spatial etalon identification (authorized fallback: type-2 tile).
+Civil relief, Flora and MAF are not selected. Unmapped source content remains in adapter
+findings rather than an ignore-all rule. This is a source map, not a confirmed executable
+PartsList: footprint/material interpretation still has to finish before build.
+
+### Executed commands and evidence
+
+- `uv sync --extra cad`: exit 0.
+- `env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q tests/test_cod_ground_config.py -p no:cacheprovider --basetemp=C:/x/t_3e9518e5-config-red`:
+  exit 1, **1 failed**, missing config; tests-first commit `59faf1a`.
+- Same focused test with `--basetemp=C:/x/t_3e9518e5-config-green`: exit 0,
+  **1 passed** after adding config. No full suite yet; no review requested.
+- `uv run python -m adapters.cad.spozu C:/x/ground-cod-22/intake-v001/spozu.dxf --config adapters/cad/configs/cod_20207.yaml --json C:/x/ground-cod-22/intake-v001/cod_ground_inputs.json`:
+  exit 0. Raw console: `tmp/cod-adapter-console.txt`.
+- `PYTHONPATH=. uv run python tmp/cod_regions.py`: exit 0 (read-only diagnostic).
+  A correction to prior intake geometry was necessary: `snapshotAsMesh` already yielded
+  world coordinates, and the earlier diagnostic applied `objectTransform` again.
+  Subtracting LP node translation restores the native world bounding box within 5 mm;
+  this correction is diagnostic only, **not** a verified general transform adapter.
+  LP upward-face XY union: **5112.039331 m2**; approved boundary minus that union:
+  **7.512981 m2**, predominantly two perimeter strips (4.630304 and 2.881004 m2).
+  This does not establish building-footprint holes: LP Ground appears to extend beneath
+  the building. Both top-level and nested closed footprint-DWG polyline probes found
+  **0 intersecting candidates >10 m2 in the approved WCS boundary**. This is not proof
+  the drawing contains no building; check its coordinate frame rather than invent holes.
+
+Extracted covering unions (m2): asphalt **2430.264599**, tile **361.511088**,
+reinforced tile **126.512169**, geogrid **491.897606**, reinforced geogrid **9.025632**,
+type 6 **2.490864**. These are adapter unions, not final nonoverlapping surface totals.
+Repair `4C5784`: adapter reports raw ring **0.908 m2 -> 0.908 m2** before boundary clip;
+full repaired area **0.908375821539 m2**. Keep the raw adapter detail and remeasure
+unrounded before/after if the final report needs a delta below its displayed precision.
+
+### Environment repair attempted twice; no successful etalon FBX readback
+
+Blender live bridge was unreachable; installed baseline reports **5.1.2 / ec6e62d40fa9**.
+The copied reference FBX remains the card-authorized input, not an original scene.
+The Max ping was reachable, but no live document was changed; its prior headless inventory
+remains partial because of the recorded plugin errors/nonzero native exit.
+
+Read-only Blender diagnostic `tmp/cod_fbx_intake.py` imports the copied reference and
+would save mesh/UV/material inventories to a new `etalon/fbx-inventory-v001.json`.
+Both actual attempts failed **before that output existed**:
+
+1. `"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe" --background --factory-startup --python-exit-code 1 --python tmp/cod_fbx_intake.py > tmp/cod-fbx-intake.log 2>&1`
+   -> **exit 11**, `EXCEPTION_ACCESS_VIOLATION`.
+2. Same command with `--threads 1`, private `TMPDIR/TEMP/TMP=.../tmp/blender-process`
+   -> **exit 11**, same fault address `0x00007FF6FCE4257F`.
+
+Crash backtrace: `mesh_set_custom_normals` -> `mesh_normals_corner_custom_set` ->
+`normals_calc_corners`; exception **0xc0000005**. This is FBX custom-normal import,
+not an inferred suite concurrency/startup failure. No machine/plugin settings changed.
+The two-failure rule stops further DCC attempts in this run. All commands were foreground;
+no owned background CLI/DCC process remains running from these calls.
+
+Next repair direction (NOT executed or claimed successful): in a fresh allowed attempt,
+use an explicitly reported **diagnostic** `use_custom_normals=False` import of the COPY,
+if appropriate, or obtain a clean Max-exported diagnostic copy. Preserve original normals
+and the original failed receipts; disabling their import must not become normals-QA pass.
+Do not change Blender version or global plugins without authorization.
+
+### Hash inventory for this attempt
+
+| File | SHA-256 |
+|---|---|
+| `C:/x/ground-cod-22/intake-v001/cod_ground_inputs.json` | `5438c651b30a3b1f91a8f8f0d35d0acc9942cd1c9eccc313fc2b2f7201fc3700` |
+| `C:/x/ground-cod-22/intake-v001/footprint-candidates.json` | `4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945` |
+| `C:/x/ground-cod-22/intake-v001/etalon-lp-projected.json` | `78f5ca6fdca967fc09bd98684f82d8ec307a68304156d62d35f3320cf6afc94f` |
+| `tmp/cod_fbx_intake.py` | `05e0be9aa62282f81999c1ad370323dc516686e3002026e42e0b7faa9aac65ec` |
+| `tmp/cod-fbx-intake.log` | `36eda926096dbb972d2da7688d2b69a69a7ca40d391465c3439a0002494a8df5` |
+| `tmp/cod-fbx-intake-retry.log` | `a2a53573bdeb329b4c4af36e3831ab633e92c7bce7e5dd41acff264b8db06ac7` |
+| `tmp/blender-process/blender.crash.txt` | `34105309fd0a1c4d37bbf105674caac18a073846ef9d4dda9d20381a56e3460a` |
+| `adapters/cad/configs/cod_20207.yaml` | `1c429cd235c627b552fc82bc2712f6ae4920496252f3cd381b95ffbbb9be35ed` |
+
+### Remaining acceptance
+
+No Ground build, mesh budget, xView/UCX/readback pass, texture-set interpretation,
+Vatutino comparison, or `C:/x/review/pending.json` publication has been delivered.
+The confirmed PartsList remains incomplete; do not build until the authorized etalon
+fallback establishes footprint/material facts. No new production module or pipeline
+change was made, only project source-map data and its regression. No PR opened.
+
