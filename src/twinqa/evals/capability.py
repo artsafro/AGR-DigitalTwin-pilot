@@ -63,21 +63,31 @@ def load_report(path):
 
 
 def capability_b01(evidence):
-    counts, problems = [], []
-    model, etalon = evidence.get('benchmark', []), evidence.get('self_check', [])
-    if len(model) == len(etalon) == 1:
-        if model[0].resolve().parent != etalon[0].resolve().parent:
-            problems.append('reports belong to different benchmark runs')
-    for name in ('benchmark', 'self_check'):
-        paths = evidence.get(name, [])
-        if len(paths) != 1:
-            problems.append(f'{name}: expected one report')
-            continue
-        try:
-            counts.append(load_report(paths[0]))
-        except (OSError, ValueError, TypeError) as exc:
-            problems.append(f'{name}: {exc}')
+    counts, problems, supplementary = [], [], []
+    models, etalons = evidence.get('benchmark', []), evidence.get('self_check', [])
+    if len(etalons) != 1:
+        problems.append('self_check: expected one report')
+    else:
+        paired = [p for p in models if p.resolve().parent == etalons[0].resolve().parent]
+        if len(paired) != 1:
+            problems.append('benchmark: expected one report beside etalon-self')
+        for name, paths in (('benchmark', paired), ('self_check', etalons)):
+            for path in paths:
+                try:
+                    counts.append(load_report(path))
+                except (OSError, ValueError, TypeError) as exc:
+                    problems.append(f'{name}: {exc}')
+        for path in models:
+            if path in paired:
+                continue
+            try:
+                count = load_report(path)
+                supplementary.append({'path': str(path), 'measured': f'{count}/10'})
+                if count != 10:
+                    problems.append(f'supplementary report failed: {path}')
+            except (OSError, ValueError, TypeError) as exc:
+                problems.append(f'supplementary report {path}: {exc}')
     total = sum(counts)
     return {'check': 'B01 all benchmark and etalon-self checks', 'expected': '20/20',
             'measured': f'{total}/20', 'passed': not problems and total == 20,
-            'details': problems}
+            'details': problems, 'supplementary': supplementary}
