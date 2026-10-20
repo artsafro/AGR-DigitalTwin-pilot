@@ -303,13 +303,26 @@ def _atomic_write_json(path: Path, data) -> None:
             handle.write(text)
             handle.flush()
             os.fsync(handle.fileno())
-        os.replace(tmp, path)
+        _replace_with_retry(tmp, path)
     except Exception:
         try:
             os.unlink(tmp)
         except OSError:
             pass
         raise
+
+
+def _replace_with_retry(src, dst, attempts: int = 40, delay: float = 0.025) -> None:
+    """Windows denies MoveFileEx while any reader or scanner holds ``dst`` open
+    (WinError 5/32). Retry a bounded number of times (~1 s), then fail closed."""
+    for attempt in range(attempts):
+        try:
+            os.replace(src, dst)
+            return
+        except PermissionError:
+            if attempt == attempts - 1:
+                raise
+            time.sleep(delay)
 
 
 def _invalid_constant(value):
