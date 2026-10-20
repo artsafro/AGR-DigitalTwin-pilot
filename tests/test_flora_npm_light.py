@@ -199,6 +199,9 @@ def test_generated_duplicate_triangle_union_invariant(seed):
     opacity = np.full((4,4),255,np.uint8)
     indices = select_faces(mesh, opacity, resolution=32)
     light = dict(mesh, faces=[mesh['faces'][i] for i in indices], uv=[mesh['uv'][i] for i in indices])
+    used = np.asarray(mesh['vertices'])[np.unique(np.asarray(light['faces']))]
+    np.testing.assert_array_equal(used.min(axis=0),np.asarray(mesh['vertices']).min(axis=0))
+    np.testing.assert_array_equal(used.max(axis=0),np.asarray(mesh['vertices']).max(axis=0))
     assert all(m['iou'] == 1 for m in measure(mesh,light,opacity,resolution=32).values())
 
 
@@ -254,6 +257,23 @@ def test_generator_retains_light_records_without_optional_input():
     rows = [s for s in result['species'] if 'npm_light' in s]
     rows[0]['npm_light'],rows[1]['npm_light'] = rows[1]['npm_light'],rows[0]['npm_light']
     assert any('another species' in finding for finding in check(result))
+
+
+def test_native_preflight_cannot_be_disabled_by_python_optimization(tmp_path):
+    receipt = tmp_path/'must-not-exist.json'
+    code = '''
+import sys,types
+from tools.flora import build_flora_npm_light as driver
+rt = types.SimpleNamespace(Name=lambda s:s, resetMaxFile=lambda *a:None,
+    loadMaxFile=lambda *a,**kw:True, units=types.SimpleNamespace(SystemType='centimeters',SystemScale=1),
+    objects=[],maxVersion=lambda:'synthetic')
+sys.modules['pymxs'] = types.SimpleNamespace(runtime=rt)
+driver.max_stage({'copy':'synthetic.max','species':[],'action':'extract','result':sys.argv[1]})
+'''
+    result = subprocess.run([sys.executable,'-O','-c',code,str(receipt)],capture_output=True,text=True)
+    assert result.returncode != 0
+    assert 'units' in result.stderr
+    assert not receipt.exists()
 
 
 def test_transparent_empty_geometry_cannot_pass():
