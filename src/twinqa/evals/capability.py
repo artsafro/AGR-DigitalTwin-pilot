@@ -64,6 +64,10 @@ def load_report(path):
 
 def capability_b01(evidence):
     counts, problems = [], []
+    model, etalon = evidence.get('benchmark', []), evidence.get('self_check', [])
+    if len(model) == len(etalon) == 1:
+        if model[0].resolve().parent != etalon[0].resolve().parent:
+            problems.append('reports belong to different benchmark runs')
     for name in ('benchmark', 'self_check'):
         paths = evidence.get(name, [])
         if len(paths) != 1:
