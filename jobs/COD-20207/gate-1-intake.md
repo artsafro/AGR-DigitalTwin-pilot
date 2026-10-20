@@ -1,8 +1,8 @@
 # COD 20207 Ground — Gate 1 intake (issue #420)
 
-Status: **blocked on user Gate 1 confirmation; not buildable**. Real project data, not synthetic.
+Status: **Gate 1 answers received; blocked on flat-datum versus layer-offset clarification before build**. Real project data, not synthetic.
 No Ground mesh, export, comparison pass or visual-review publication is claimed.
-The site choice and etalon authority are supplied by Artem in #420; they do not approve the mappings below.
+The draft below preserves the original intake. The approved answers and follow-up evidence are recorded in the appended resumed-intake section; original open questions are historical, not unanswered again.
 
 ## Sources and executed route
 
@@ -90,3 +90,100 @@ After answers: write/validate the actual parts list and `adapters/cad/configs/co
 - No scene is published to `C:/x/review/pending.json`: publishing an unbuilt/unapproved scene would be misleading.
 
 Next worker: resume from these receipts and answers, keep all assets under `C:/x/ground-cod-22/`, use only copied etalons, and publish one PR only after the full acceptance is delivered. No PR opened for this partial intake.
+
+## Resumed intake — Gate 1 answers and flatness conflict
+
+Artem's approval is recorded in the card comment (2026-10-20, supplied by the orchestrator):
+"этот граунд делаем плоским без рельефа, а так все рекомендации принимаю".
+The orchestrator specifies **every covering plane at Z = 0.000**, DWG WCS metres,
+no CRS transform, and simultaneously the same Vatutino pipeline/default joints.
+
+Approved without reopening the original questions:
+- Boundary `69002`; `5968B0` context only; `5_Благоустройство` legend authority.
+- Coverings 1–5 as above. Identify type 6 against the etalon; if absent, tile (type 2),
+  explicitly listed as an assumption. Unhatched region is lawn unless contradicted by the etalon.
+- Footprints from copied `ЦОД_Обводки.dwg`, falling back to the copied etalon.
+- `make_valid` authorized for hatch `4C5784`; before/after area remains to be measured.
+- Flat by decision; Civil relief proxies excluded, relief comparison replaced by flatness.
+- Drive/garden curb exposure 150/50 mm; no stairs or ramps. Vatutino default budgets/grid;
+  no D150 exception. Material identities from this site's etalon, not Vatutino.
+
+### Executed copied-reference intake (not production build)
+
+`uv sync --extra cad`: exit 0. Copies hashed against read-only sources; manifest
+`tmp/cod-etalon-manifest.json`. Original scenes were not opened in a DCC or saved.
+
+- `C:\x\ground-cod-22\etalon\scene.max`: 2154496 bytes, SHA-256 `d81f0223365886cd72489fced66af12562257afc49d42584604eb9786093c8e6`.
+- `C:\x\ground-cod-22\etalon\LP.max`: 4206592 bytes, SHA-256 `ced934b5164b00bf7e43335fe5061331b3380672d2f527971a553ba88abbdfbc`.
+- `C:\x\ground-cod-22\etalon\hp.max`: 2656472 bytes, SHA-256 `63408e95d9aa0b16adc2d7aa3631772b00b6443601f9ab0909f300c2c461d2fe`.
+- `C:\x\ground-cod-22\etalon\20207_АГР_ВПМ-НПМ.fbx`: 80472336 bytes, SHA-256 `fa1fe26051d639efd7d0bc1ed9ed5e40add28709b471b477de42ce7643f9d929`.
+- `C:\x\ground-cod-22\footprints.dwg`: 6646821 bytes, SHA-256 `b37c85489c2b270e889723bd5089e8f2c8b8101b821ddc71ca5ba37deec7daa3`.
+
+AutoCAD existing `dwg_to_dxf` route on `footprints.dwg` -> exit 0, 5.4 s;
+`C:/x/ground-cod-22/footprint-intake-v001/footprints.dxf`, with native receipt
+`footprints.acad.json`. Top-level inventory: 193 `spp2` and 117 `s3` polylines,
+30 `АР_подложка`, 7 `s3`, 7 `spp2` hatches; building-outline authority is not
+inferred from these layer names. The copied etalon remains the authorized fallback.
+
+Headless 3ds Max 2026, metres, system scale 1, one process through `dcc_batch.py max`:
+read `scene.max`, `LP.max`, `hp.max` sequentially, never saved. Initial diagnostic
+failed on `LinkComposite` returning no snapshot mesh; diagnostic repaired to report
+these unsupported nodes explicitly, not silently drop them. Second diagnostic wrote
+`C:/x/ground-cod-22/etalon/native-inventory-v001.json` (317/4/25 geometry nodes).
+Wrapper exit 0/status `ok`, but **native process exit 4294967166**, startup
+`polyunwrapper` CLR error and missing Corona 2024 plugins remain in the raw receipt
+`native-run-v002.json`. This is partial native inspection, NOT successful complete QA.
+
+| Native named object | Render triangles | UCX pieces / triangles | Caveat |
+|---|---:|---:|---|
+| LP.max `SM_Tup_Skladochnyj_ZU_5_1_Ground` | 2817 | 0 / 0 | World bounds Z 158.727219–161.326645 m; not flat at zero |
+| hp.max same Ground name | 48765 | 23 / 296 | Local bounds Z -2.675156–5.503055 m; GroundGlass separate, 4 tris |
+
+These are named-object measurements, **not** final Ground-only surface/profile budgets:
+hp Ground may contain merged details; do not compare these with surface-only triangles.
+LP material names the site's `Ground_1` with relative `_d_1.png`/`_n_1.png` paths.
+`scene.max` HP uses six `UDIM_1001..1006` physical-material slots and the site's maps.
+The inventory does not yet establish the type-6 location/material or reusable material recipes.
+No maps were replaced with Vatutino identities.
+
+### New exact decision required: flat datum versus stacked planes
+
+The approved comment says *every covering plane* Z=0.000, whereas the requested
+unchanged method-C route intentionally overlaps a base plane with coverings at
++6/+12 mm. This is not a relief difference. `ground_cake.plan_layers` rejects
+`step=0`; its default flat plan puts a tile on an asphalt base at +0.006 m.
+The existing builder also gates co-directional overlapping planes at >=5 mm.
+Making all of them coplanar would cause z-fighting and violate the retained gate;
+cutting disjoint regions would change the approved layered-cake method.
+
+Executed synthetic capability probe (not project data), exit **1**, expected rejection:
+
+```python
+from shapely.geometry import box
+from dt_ai.geometry.ground_cake import plan_layers
+b = box(0, 0, 10, 10)
+cov = {"asphalt": [b], "tile": [box(1, 1, 2, 2)]}
+slots = {"asphalt": "Asphalt", "tile": "Tile"}
+p = plan_layers(b, cov, "asphalt", slots)
+print([(l.covering, l.level, l.level * p.step) for l in p.layers])
+# [('asphalt', 0, 0.0), ('tile', 1, 0.006)]
+plan_layers(b, cov, "asphalt", slots, step=0)
+# ValueError: step must be a positive finite number
+```
+
+**Question:** does "flat Z=0" mean the common project datum/relief is zero,
+while method-C +6/+12 mm covering offsets are preserved (recommended for the same
+pipeline), or must every visible covering surface be exactly Z=0, authorizing
+nonoverlapping cut-out regions instead of the stacked method?
+No guess, zero-spacing bypass, alternative mesher or production build was made.
+No native startup/plugin settings changed; no pipeline code changed.
+
+### Remaining acceptance / next worker
+
+Resolve the single question above before building. Then complete etalon/map and
+footprint interpretation, write the site config and validated confirmed PartsList,
+parameterize only genuinely site-specific data in the existing route with tests-first
+portability regressions, and produce both FBX plus independent readback/UCX/xView,
+flatness, comparison tables and review publication. Actual end-to-end budgets,
+full suite and regression-eval receipts are not claimed. No PR is opened and
+`pending.json` is untouched: there is no built review scene yet.
