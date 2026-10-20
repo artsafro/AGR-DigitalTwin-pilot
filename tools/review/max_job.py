@@ -2,14 +2,17 @@
 
 Reload the saved scene and compare mesh, UV, materials and transforms.
 Review cameras are not added to any delivery FBX.
+Source nodes are never deleted or renamed: the review camera and target take the
+first free name (Review_Camera, Review_Camera_001, ...), and the saved scene must
+reproduce the geometry inventory taken before the camera was added.
 """
 import json
 from pathlib import Path
 
 
-def render_preview(rt, path):
+def render_preview(rt, path, camera="Review_Camera"):
     """Never substitute synthetic previews for a failed renderer."""
-    rt.execute('render camera:(getNodeByName "Review_Camera") vfb:false outputfile:'
+    rt.execute('render camera:(getNodeByName ' + json.dumps(camera) + ') vfb:false outputfile:'
                + json.dumps(str(path).replace(chr(92), '/')))
     if not Path(path).is_file():
         raise RuntimeError("renderer wrote no preview")
@@ -21,7 +24,7 @@ def script(config):
     render = ''
     if config.get('preview_png'):
         path = json.dumps(Path(config['preview_png']).resolve().as_posix())
-        render = ('local bmp = render camera:(getNodeByName "Review_Camera") '
+        render = ('local bmp = render camera:reviewCam '
                   'outputSize:[640,360] vfb:false outputfile:' + path
                   + '; if bmp == undefined do throw "no rendered bitmap"; close bmp')
     selftest = ''
@@ -75,6 +78,8 @@ try (
     )
     if geometry.count == 0 do throw "empty geometry"
     meshCount = geometry.count
+    local sourceInventory = reviewInventory()
+    local sourceNodes = objects.count
     for obj in geometry where obj.material != undefined do materialCount += 1
     if materialCount == 0 do throw "no materials"
     local lo = [1e30,1e30,1e30]
@@ -85,16 +90,29 @@ try (
     )
     local center = (lo + hi) / 2
     local radius = amax 1.0 ((distance lo hi) / 2)
-    local old = getNodeByName "Review_Camera"
-    if old != undefined do delete old
-    local cam = Targetcamera name:"Review_Camera" fov:45
-    cam.target = Targetobject name:"Review_Target" pos:center
+    local camName = "Review_Camera"
+    local targetName = "Review_Target"
+    local n = 0
+    while (getNodeByName camName) != undefined or (getNodeByName targetName) != undefined do (
+        n += 1
+        local suffix = "_" + (formattedPrint n format:"03d")
+        camName = "Review_Camera" + suffix
+        targetName = "Review_Target" + suffix
+    )
+    local cam = Targetcamera name:camName fov:45
+    cam.target = Targetobject name:targetName pos:center
     cam.pos = center + radius * [1.6,-2.2,1.8]
     cameraCount = cameras.count
+    if objects.count != sourceNodes + 2 do throw "review camera changed the source node set"
     inventory = reviewInventory()
+    if inventory != sourceInventory do throw "review camera changed source geometry"
     if not (saveMaxFile output quiet:true) do throw "Max save failed"
     if not (loadMaxFile output quiet:true useFileUnits:true) do throw "Max readback failed"
-    if (reviewInventory()) != inventory do throw "mesh/UV/material/transform readback mismatch"
+    if geometry.count != meshCount do throw "geometry count readback mismatch"
+    if objects.count != sourceNodes + 2 do throw "node count readback mismatch"
+    if (reviewInventory()) != sourceInventory do throw "mesh/UV/material/transform readback mismatch"
+    local reviewCam = getNodeByName camName
+    if reviewCam == undefined or (classOf reviewCam) != Targetcamera do throw "review camera lost on readback"
     @RENDER@
     success = true
 ) catch (problem = getCurrentException())

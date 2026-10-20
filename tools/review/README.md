@@ -23,7 +23,7 @@ Cleanup defaults to dry-run. `--apply` is destructive: inspect the listing first
 Only immediate `ci-receipt-*` and `t_*` directories older than the threshold are
 eligible. Review/Flora stores and directories containing manifest-referenced
 assets are protected; manifests are discovered recursively under `library/`.
-Relative asset paths resolve from the manifest directory; absolute and relative
+Relative asset paths, including bare names such as `model.max` or `textures`, resolve from the manifest directory; absolute and relative
 directory aliases resolve to the physical library before protection. Reparse candidates
 are excluded. Files that merely have a scratch-directory name are ignored.
 
@@ -57,6 +57,8 @@ were committed and run RED before the corresponding repairs.
 | Absolute/relative library paths through a Windows junction; dry-run, apply, repeat | physical library untouched; unrelated old scratch removed once | `test_cleanup_protects_manifest_library_through_directory_alias` |
 | Renderer unavailable | error, never generate a synthetic preview | `test_render_failure_never_fabricates_preview` |
 | Installed Max | FBX materials, framed camera, saved scene readback, actual preview | `test_max_dependent_merge_skips_when_max_absent` |
+| Manifest `{"scene": "model.max"}` / `./model.max` / bare dir / absolute + relative junction; dry-run, apply, repeat | library kept in every form; only `ci-receipt-delete` listed then removed once | `test_cleanup_protects_bare_and_aliased_manifest_assets` |
+| FBX with meshes named `Review_Camera`, `Review_Target` + `Control_Box` (real headless Max) | all 3 meshes in saved scene, 1 camera with a free name, render by that camera | `test_real_max_keeps_fbx_mesh_named_review_camera`, `test_max_job_never_deletes_source_nodes_named_like_review_camera` |
 
 ## DCC execution and verified publications
 

@@ -397,8 +397,14 @@ def _manifest_dirs(manifest: Path, scratch: Path) -> list[Path]:
     for text in _strings(data):
         if not isinstance(text, str):
             continue
-        if "/" not in text and "\\" not in text and not (len(text) > 2 and text[1] == ":"):
-            continue
+        bare = "/" not in text and "\\" not in text and not (len(text) > 1 and text[1] == ":")
+        if bare:
+            # A bare asset name ("model.max", "textures") is relative to the
+            # manifest directory, even when the file is already gone (fail-safe:
+            # a suffix marks it as a file name); other bare words are not paths.
+            candidate = manifest.parent / text
+            if not text.strip() or text in (".", "..") or not (candidate.exists() or Path(text).suffix):
+                continue
         path = Path(text)
         if not path.is_absolute():
             path = manifest.parent / path
