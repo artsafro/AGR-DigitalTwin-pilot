@@ -1,0 +1,67 @@
+{
+  "status": "fixed_id_specification_only_not_readback",
+  "source_sha256": "82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5",
+  "index_base": 1,
+  "slots": [
+    {
+      "slot": "CurbGarden",
+      "material_id": 1,
+      "material_name": "M_Vatutino_Ground_CurbGarden"
+    },
+    {
+      "slot": "FlowerBed",
+      "material_id": 2,
+      "material_name": "M_Vatutino_Ground_FlowerBed"
+    },
+    {
+      "slot": "Gravel",
+      "material_id": 3,
+      "material_name": "M_Vatutino_Ground_Gravel"
+    },
+    {
+      "slot": "LawnReinforced",
+      "material_id": 4,
+      "material_name": "M_Vatutino_Ground_LawnReinforced"
+    },
+    {
+      "slot": "LawnRolled",
+      "material_id": 5,
+      "material_name": "M_Vatutino_Ground_LawnRolled"
+    },
+    {
+      "slot": "Mulch",
+      "material_id": 6,
+      "material_name": "M_Vatutino_Ground_Mulch"
+    },
+    {
+      "slot": "Pebbles",
+      "material_id": 7,
+      "material_name": "M_Vatutino_Ground_Pebbles"
+    },
+    {
+      "slot": "Skirt",
+      "material_id": 8,
+      "material_name": "M_Vatutino_Ground_Skirt"
+    },
+    {
+      "slot": "Stairs",
+      "material_id": 9,
+      "material_name": "M_Vatutino_Ground_Stairs"
+    },
+    {
+      "slot": "TileDark",
+      "material_id": 10,
+      "material_name": "M_Vatutino_Ground_TileDark"
+    },
+    {
+      "slot": "TileLight",
+      "material_id": 11,
+      "material_name": "M_Vatutino_Ground_TileLight"
+    },
+    {
+      "slot": "TileRed",
+      "material_id": 12,
+      "material_name": "M_Vatutino_Ground_TileRed"
+    }
+  ]
+}

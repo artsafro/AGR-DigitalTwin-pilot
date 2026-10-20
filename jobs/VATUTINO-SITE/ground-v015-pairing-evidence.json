@@ -1,0 +1,5048 @@
+{
+ "decision": "D157",
+ "delivery_status": "incomplete_rejected_candidates",
+ "passed": false,
+ "source_files": {
+  "C:\\x\\ev_t_eb1c51ca\\v014_rebuild\\ground_master_vpm.json": {
+   "sha256": "82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5"
+  },
+  "C:\\x\\t_d94665f2\\paving_ground_inputs_v4.json": {
+   "sha256": "3b6b433d718c0292f472293849f3363fd2ae90d4892e598efca52be44cd9d502"
+  },
+  "jobs\\VATUTINO-SITE\\ground-gap-exceptions.json": {
+   "sha256": "c33ac55c21b834fff77b194d20ca08d0b7c331497f2bc115bb4298ba3178724d"
+  },
+  "C:\\x\\ev_t_eb1c51ca\\v014_rebuild\\ground_master_npm.json": {
+   "sha256": "f1a03db9d7b2293db50817f8cb7c0c021d25737ff0c2f9ea984e47192b1979bb"
+  }
+ },
+ "paired_v014": {
+  "source": "C:\\x\\ev_t_eb1c51ca\\v014_rebuild\\ground_master_vpm.json",
+  "sha256": "82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5",
+  "faces": 27825,
+  "quads": 18518,
+  "triangles": 9307,
+  "triangle_equivalent": 46343,
+  "surface_polygons": 20851,
+  "npm_uv_pairs_split": 0,
+  "fixed_diagonal_surface_deviation_mm": 0.0,
+  "source_inventory_exact": true,
+  "per_slot": {
+   "CurbGarden": {
+    "quads": 4713,
+    "triangles": 418,
+    "raw_d129_labels": {
+     "quad": 4713,
+     "unneeded": 304,
+     "needed:odd_boundary": 114
+    }
+   },
+   "FlowerBed": {
+    "quads": 45,
+    "triangles": 44,
+    "raw_d129_labels": {
+     "unneeded": 32,
+     "quad": 45,
+     "needed:odd_boundary": 8,
+     "mergeable": 4
+    }
+   },
+   "Gravel": {
+    "quads": 204,
+    "triangles": 210,
+    "raw_d129_labels": {
+     "quad": 204,
+     "needed:odd_boundary": 16,
+     "unneeded": 180,
+     "mergeable": 14
+    }
+   },
+   "LawnReinforced": {
+    "quads": 459,
+    "triangles": 393,
+    "raw_d129_labels": {
+     "quad": 459,
+     "unneeded": 328,
+     "needed:odd_boundary": 33,
+     "mergeable": 32
+    }
+   },
+   "LawnRolled": {
+    "quads": 650,
+    "triangles": 788,
+    "raw_d129_labels": {
+     "needed:odd_boundary": 132,
+     "unneeded": 640,
+     "quad": 650,
+     "mergeable": 16
+    }
+   },
+   "Mulch": {
+    "quads": 1083,
+    "triangles": 1097,
+    "raw_d129_labels": {
+     "quad": 1083,
+     "needed:odd_boundary": 84,
+     "unneeded": 942,
+     "mergeable": 54,
+     "needed:pole_fan": 17
+    }
+   },
+   "Pebbles": {
+    "quads": 71,
+    "triangles": 149,
+    "raw_d129_labels": {
+     "quad": 71,
+     "unneeded": 132,
+     "needed:odd_boundary": 11,
+     "mergeable": 6
+    }
+   },
+   "Skirt": {
+    "quads": 1789,
+    "triangles": 0,
+    "raw_d129_labels": {
+     "quad": 1789
+    }
+   },
+   "Stairs": {
+    "quads": 46,
+    "triangles": 8,
+    "raw_d129_labels": {
+     "quad": 46,
+     "needed:odd_boundary": 4,
+     "unneeded": 4
+    }
+   },
+   "TileDark": {
+    "quads": 218,
+    "triangles": 73,
+    "raw_d129_labels": {
+     "quad": 218,
+     "needed:odd_boundary": 23,
+     "unneeded": 50
+    }
+   },
+   "TileLight": {
+    "quads": 8047,
+    "triangles": 5509,
+    "raw_d129_labels": {
+     "mergeable": 296,
+     "quad": 8047,
+     "unneeded": 4885,
+     "needed:odd_boundary": 313,
+     "needed:pole_fan": 15
+    }
+   },
+   "TileRed": {
+    "quads": 1193,
+    "triangles": 618,
+    "raw_d129_labels": {
+     "quad": 1193,
+     "needed:odd_boundary": 130,
+     "unneeded": 468,
+     "mergeable": 18,
+     "needed:pole_fan": 2
+    }
+   }
+  },
+  "xview": {
+   "part": "paired_v014",
+   "vertex_pairs": 0,
+   "face_pairs": 76,
+   "face_pairs_by_kind": {
+    "contact": 11,
+    "area": 5,
+    "area+contact": 60
+   },
+   "vertices": [],
+   "faces": [
+    1777,
+    2806,
+    2808,
+    11826,
+    11830,
+    11836,
+    21310,
+    21313,
+    21450,
+    21451,
+    21454,
+    22477,
+    22479,
+    22480,
+    22481,
+    22600,
+    22601,
+    22602,
+    22603,
+    22604,
+    22605,
+    22606,
+    22607,
+    22608,
+    22609,
+    22610,
+    22611,
+    22612,
+    22613,
+    22614,
+    22615,
+    22616,
+    22617,
+    22618,
+    22619,
+    22620,
+    22621,
+    22623,
+    22624,
+    22625,
+    22626,
+    22627,
+    22629,
+    22630,
+    22631,
+    22632,
+    22653,
+    22654,
+    22656,
+    22657,
+    22658,
+    22660,
+    22661,
+    22662,
+    22663,
+    22664,
+    22665,
+    22674,
+    22675,
+    22677,
+    22678,
+    22679,
+    22680,
+    22681,
+    22682,
+    22683,
+    22688,
+    22689,
+    22691,
+    22692,
+    22693,
+    22694,
+    24357,
+    24684,
+    25103,
+    25439,
+    25448,
+    25453,
+    25508,
+    25521,
+    25523,
+    26622,
+    26626,
+    26683,
+    26716,
+    26722
+   ],
+   "xview_faces": [
+    1777,
+    2806,
+    2808,
+    11826,
+    11830,
+    11836,
+    21310,
+    21313,
+    21450,
+    21451,
+    21454,
+    22477,
+    22479,
+    22480,
+    22481,
+    22600,
+    22601,
+    22602,
+    22603,
+    22604,
+    22605,
+    22607,
+    22608,
+    22609,
+    22610,
+    22611,
+    22612,
+    22613,
+    22614,
+    22616,
+    22619,
+    22621,
+    22623,
+    22624,
+    22625,
+    22626,
+    22627,
+    22629,
+    22630,
+    22631,
+    22632,
+    22653,
+    22654,
+    22656,
+    22657,
+    22658,
+    22660,
+    22661,
+    22662,
+    22663,
+    22664,
+    22665,
+    22674,
+    22675,
+    22677,
+    22678,
+    22679,
+    22680,
+    22681,
+    22682,
+    22683,
+    22688,
+    22689,
+    22691,
+    22692,
+    22693,
+    22694,
+    24357,
+    24684,
+    25103,
+    25439,
+    25448,
+    25453,
+    25508,
+    25521,
+    25523,
+    26622,
+    26626,
+    26683,
+    26716,
+    26722
+   ],
+   "offenders": [
+    "paired_v014 f1777/f24684: area+contact, 3.99 mm",
+    "paired_v014 f2806/f24357: area+contact, 4.00 mm",
+    "paired_v014 f2808/f24357: area+contact, 4.00 mm",
+    "paired_v014 f11826/f25103: area+contact, 4.84 mm",
+    "paired_v014 f11830/f25103: area+contact, 3.06 mm",
+    "paired_v014 f11836/f25103: area+contact, 3.06 mm",
+    "paired_v014 f21310/f21313: area+contact, 2.73 mm",
+    "paired_v014 f21450/f21451: contact",
+    "paired_v014 f21451/f21454: contact",
+    "paired_v014 f22477/f22481: area+contact, 2.85 mm",
+    "paired_v014 f22479/f22480: area+contact, 0.00 mm",
+    "paired_v014 f22479/f22481: contact",
+    "paired_v014 f22600/f22675: area+contact, 0.67 mm",
+    "paired_v014 f22600/f22678: area+contact, 0.00 mm",
+    "paired_v014 f22600/f22679: area+contact, 0.67 mm",
+    "paired_v014 f22601/f22679: area+contact, 1.42 mm",
+    "paired_v014 f22601/f22680: area+contact, 1.37 mm",
+    "paired_v014 f22602/f22681: area+contact, 0.39 mm",
+    "paired_v014 f22603/f22681: area+contact, 0.39 mm",
+    "paired_v014 f22604/f22682: area+contact, 0.59 mm"
+   ]
+  },
+  "offender_slot_pairs": {
+   "(('CurbGarden', -2), ('Mulch', 1))": 3,
+   "(('CurbGarden', -2), ('LawnReinforced', 1))": 3,
+   "(('Skirt', -1), ('Skirt', -1))": 6,
+   "(('Skirt', -1), ('Stairs', -2))": 45,
+   "(('Stairs', -2), ('Stairs', -2))": 8,
+   "(('CurbGarden', -2), ('Stairs', -2))": 11
+  },
+  "face_witnesses": [
+   {
+    "face_a": 1777,
+    "face_b": 24684,
+    "source_a": [
+     2634,
+     2636
+    ],
+    "source_b": [
+     40161,
+     40162
+    ],
+    "slot_a": "Mulch",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.00399182396468345
+   },
+   {
+    "face_a": 2806,
+    "face_b": 24357,
+    "source_a": [
+     4238,
+     4242
+    ],
+    "source_b": [
+     39559,
+     39560
+    ],
+    "slot_a": "Mulch",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.003996216552526235
+   },
+   {
+    "face_a": 2808,
+    "face_b": 24357,
+    "source_a": [
+     4240
+    ],
+    "source_b": [
+     39559,
+     39560
+    ],
+    "slot_a": "Mulch",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.00399624857600949
+   },
+   {
+    "face_a": 11826,
+    "face_b": 25103,
+    "source_a": [
+     18183,
+     18195
+    ],
+    "source_b": [
+     40938,
+     40940
+    ],
+    "slot_a": "LawnReinforced",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.004842017607835784
+   },
+   {
+    "face_a": 11830,
+    "face_b": 25103,
+    "source_a": [
+     18187,
+     18189
+    ],
+    "source_b": [
+     40938,
+     40940
+    ],
+    "slot_a": "LawnReinforced",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.0030585155751022474
+   },
+   {
+    "face_a": 11836,
+    "face_b": 25103,
+    "source_a": [
+     18197,
+     18203
+    ],
+    "source_b": [
+     40938,
+     40940
+    ],
+    "slot_a": "LawnReinforced",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.0030585155751022474
+   },
+   {
+    "face_a": 21310,
+    "face_b": 21313,
+    "source_a": [
+     33737,
+     33738
+    ],
+    "source_b": [
+     33743,
+     33744
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Skirt",
+    "kind": "area+contact",
+    "gap": 0.002731099431684217
+   },
+   {
+    "face_a": 21450,
+    "face_b": 21451,
+    "source_a": [
+     34017,
+     34018
+    ],
+    "source_b": [
+     34019,
+     34020
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Skirt",
+    "kind": "contact",
+    "gap": null
+   },
+   {
+    "face_a": 21451,
+    "face_b": 21454,
+    "source_a": [
+     34019,
+     34020
+    ],
+    "source_b": [
+     34025,
+     34026
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Skirt",
+    "kind": "contact",
+    "gap": null
+   },
+   {
+    "face_a": 22477,
+    "face_b": 22481,
+    "source_a": [
+     36071,
+     36072
+    ],
+    "source_b": [
+     36079,
+     36080
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Skirt",
+    "kind": "area+contact",
+    "gap": 0.0028546555191987233
+   },
+   {
+    "face_a": 22479,
+    "face_b": 22480,
+    "source_a": [
+     36075,
+     36076
+    ],
+    "source_b": [
+     36077,
+     36078
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Skirt",
+    "kind": "area+contact",
+    "gap": 0.0
+   },
+   {
+    "face_a": 22479,
+    "face_b": 22481,
+    "source_a": [
+     36075,
+     36076
+    ],
+    "source_b": [
+     36079,
+     36080
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Skirt",
+    "kind": "contact",
+    "gap": null
+   },
+   {
+    "face_a": 22600,
+    "face_b": 22675,
+    "source_a": [
+     36317,
+     36318
+    ],
+    "source_b": [
+     36459,
+     36460
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0006662470881470875
+   },
+   {
+    "face_a": 22600,
+    "face_b": 22678,
+    "source_a": [
+     36317,
+     36318
+    ],
+    "source_b": [
+     36465,
+     36466
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0
+   },
+   {
+    "face_a": 22600,
+    "face_b": 22679,
+    "source_a": [
+     36317,
+     36318
+    ],
+    "source_b": [
+     36467,
+     36468
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0006711017391473337
+   },
+   {
+    "face_a": 22601,
+    "face_b": 22679,
+    "source_a": [
+     36319,
+     36320
+    ],
+    "source_b": [
+     36467,
+     36468
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0014230000006136834
+   },
+   {
+    "face_a": 22601,
+    "face_b": 22680,
+    "source_a": [
+     36319,
+     36320
+    ],
+    "source_b": [
+     36469,
+     36470
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0013650477294504526
+   },
+   {
+    "face_a": 22602,
+    "face_b": 22681,
+    "source_a": [
+     36321,
+     36322
+    ],
+    "source_b": [
+     36471,
+     36472
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0003936209704988869
+   },
+   {
+    "face_a": 22603,
+    "face_b": 22681,
+    "source_a": [
+     36323,
+     36324
+    ],
+    "source_b": [
+     36471,
+     36472
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0003880000003846362
+   },
+   {
+    "face_a": 22604,
+    "face_b": 22682,
+    "source_a": [
+     36325,
+     36326
+    ],
+    "source_b": [
+     36473,
+     36474
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0005870536178917973
+   },
+   {
+    "face_a": 22605,
+    "face_b": 22677,
+    "source_a": [
+     36327,
+     36328
+    ],
+    "source_b": [
+     36463,
+     36464
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0005850048009961029
+   },
+   {
+    "face_a": 22605,
+    "face_b": 22682,
+    "source_a": [
+     36327,
+     36328
+    ],
+    "source_b": [
+     36473,
+     36474
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.000586999999541149
+   },
+   {
+    "face_a": 22605,
+    "face_b": 22683,
+    "source_a": [
+     36327,
+     36328
+    ],
+    "source_b": [
+     36475,
+     36476
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.000586000000112108
+   },
+   {
+    "face_a": 22606,
+    "face_b": 22674,
+    "source_a": [
+     36329,
+     36330
+    ],
+    "source_b": [
+     36457,
+     36458
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area",
+    "gap": 0.0013208892123657279
+   },
+   {
+    "face_a": 22607,
+    "face_b": 22674,
+    "source_a": [
+     36331,
+     36332
+    ],
+    "source_b": [
+     36457,
+     36458
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0013190000008762581
+   },
+   {
+    "face_a": 22608,
+    "face_b": 22674,
+    "source_a": [
+     36333,
+     36334
+    ],
+    "source_b": [
+     36457,
+     36458
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0013214087610959456
+   },
+   {
+    "face_a": 22609,
+    "face_b": 22653,
+    "source_a": [
+     36335,
+     36336
+    ],
+    "source_b": [
+     36417,
+     36418
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0011795750488090562
+   },
+   {
+    "face_a": 22610,
+    "face_b": 22653,
+    "source_a": [
+     36337,
+     36338
+    ],
+    "source_b": [
+     36417,
+     36418
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0011499999973795052
+   },
+   {
+    "face_a": 22611,
+    "face_b": 22654,
+    "source_a": [
+     36339,
+     36340
+    ],
+    "source_b": [
+     36419,
+     36420
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.001220105352481409
+   },
+   {
+    "face_a": 22611,
+    "face_b": 22658,
+    "source_a": [
+     36339,
+     36340
+    ],
+    "source_b": [
+     36427,
+     36428
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.001265999995099475
+   },
+   {
+    "face_a": 22611,
+    "face_b": 22663,
+    "source_a": [
+     36339,
+     36340
+    ],
+    "source_b": [
+     36437,
+     36438
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.001327999994749676
+   },
+   {
+    "face_a": 22612,
+    "face_b": 22664,
+    "source_a": [
+     36341,
+     36342
+    ],
+    "source_b": [
+     36439,
+     36440
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0013195711690059397
+   },
+   {
+    "face_a": 22613,
+    "face_b": 22664,
+    "source_a": [
+     36343,
+     36344
+    ],
+    "source_b": [
+     36439,
+     36440
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0013190000005492675
+   },
+   {
+    "face_a": 22614,
+    "face_b": 22664,
+    "source_a": [
+     36345,
+     36346
+    ],
+    "source_b": [
+     36439,
+     36440
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0013286560752021614
+   },
+   {
+    "face_a": 22615,
+    "face_b": 22657,
+    "source_a": [
+     36347,
+     36348
+    ],
+    "source_b": [
+     36425,
+     36426
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area",
+    "gap": 0.0007127255057639559
+   },
+   {
+    "face_a": 22616,
+    "face_b": 22656,
+    "source_a": [
+     36349,
+     36350
+    ],
+    "source_b": [
+     36423,
+     36424
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0004909999997835257
+   },
+   {
+    "face_a": 22616,
+    "face_b": 22660,
+    "source_a": [
+     36349,
+     36350
+    ],
+    "source_b": [
+     36431,
+     36432
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0001809999994293321
+   },
+   {
+    "face_a": 22616,
+    "face_b": 22661,
+    "source_a": [
+     36349,
+     36350
+    ],
+    "source_b": [
+     36433,
+     36434
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0002839999997377163
+   },
+   {
+    "face_a": 22616,
+    "face_b": 22662,
+    "source_a": [
+     36349,
+     36350
+    ],
+    "source_b": [
+     36435,
+     36436
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.00038700000004610047
+   },
+   {
+    "face_a": 22616,
+    "face_b": 22665,
+    "source_a": [
+     36349,
+     36350
+    ],
+    "source_b": [
+     36441,
+     36442
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 7.80000000304426e-05
+   },
+   {
+    "face_a": 22617,
+    "face_b": 22657,
+    "source_a": [
+     36351,
+     36352
+    ],
+    "source_b": [
+     36425,
+     36426
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area",
+    "gap": 0.0006898489082232118
+   },
+   {
+    "face_a": 22618,
+    "face_b": 22657,
+    "source_a": [
+     36353,
+     36354
+    ],
+    "source_b": [
+     36425,
+     36426
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area",
+    "gap": 0.0006602438988920767
+   },
+   {
+    "face_a": 22619,
+    "face_b": 22656,
+    "source_a": [
+     36355,
+     36356
+    ],
+    "source_b": [
+     36423,
+     36424
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0004962310558767058
+   },
+   {
+    "face_a": 22620,
+    "face_b": 22657,
+    "source_a": [
+     36357,
+     36358
+    ],
+    "source_b": [
+     36425,
+     36426
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area",
+    "gap": 0.0006535154880111804
+   },
+   {
+    "face_a": 22621,
+    "face_b": 22656,
+    "source_a": [
+     36359,
+     36360
+    ],
+    "source_b": [
+     36423,
+     36424
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0005190701867832104
+   },
+   {
+    "face_a": 22621,
+    "face_b": 22657,
+    "source_a": [
+     36359,
+     36360
+    ],
+    "source_b": [
+     36425,
+     36426
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0005940000000919099
+   },
+   {
+    "face_a": 22623,
+    "face_b": 22689,
+    "source_a": [
+     36363,
+     36364
+    ],
+    "source_b": [
+     36487,
+     36488
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.00035717398824100814
+   },
+   {
+    "face_a": 22623,
+    "face_b": 22692,
+    "source_a": [
+     36363,
+     36364
+    ],
+    "source_b": [
+     36493,
+     36494
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0003728370963291206
+   },
+   {
+    "face_a": 22624,
+    "face_b": 22693,
+    "source_a": [
+     36365,
+     36366
+    ],
+    "source_b": [
+     36495,
+     36496
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.00013712430722251367
+   },
+   {
+    "face_a": 22625,
+    "face_b": 22693,
+    "source_a": [
+     36367,
+     36368
+    ],
+    "source_b": [
+     36495,
+     36496
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0007858552000943839
+   },
+   {
+    "face_a": 22626,
+    "face_b": 22693,
+    "source_a": [
+     36369,
+     36370
+    ],
+    "source_b": [
+     36495,
+     36496
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0
+   },
+   {
+    "face_a": 22627,
+    "face_b": 22693,
+    "source_a": [
+     36371,
+     36372
+    ],
+    "source_b": [
+     36495,
+     36496
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0005389491339044435
+   },
+   {
+    "face_a": 22629,
+    "face_b": 22694,
+    "source_a": [
+     36375,
+     36376
+    ],
+    "source_b": [
+     36497,
+     36498
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.00021425900957385002
+   },
+   {
+    "face_a": 22630,
+    "face_b": 22691,
+    "source_a": [
+     36377,
+     36378
+    ],
+    "source_b": [
+     36491,
+     36492
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.00011129837939426425
+   },
+   {
+    "face_a": 22630,
+    "face_b": 22694,
+    "source_a": [
+     36377,
+     36378
+    ],
+    "source_b": [
+     36497,
+     36498
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0
+   },
+   {
+    "face_a": 22631,
+    "face_b": 22688,
+    "source_a": [
+     36379,
+     36380
+    ],
+    "source_b": [
+     36485,
+     36486
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.00018463263911693676
+   },
+   {
+    "face_a": 22632,
+    "face_b": 22688,
+    "source_a": [
+     36381,
+     36382
+    ],
+    "source_b": [
+     36485,
+     36486
+    ],
+    "slot_a": "Skirt",
+    "slot_b": "Stairs",
+    "kind": "area+contact",
+    "gap": 0.0001945353054588761
+   },
+   {
+    "face_a": 22654,
+    "face_b": 22658,
+    "source_a": [
+     36419,
+     36420
+    ],
+    "source_b": [
+     36427,
+     36428
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap": null
+   },
+   {
+    "face_a": 22656,
+    "face_b": 22662,
+    "source_a": [
+     36423,
+     36424
+    ],
+    "source_b": [
+     36435,
+     36436
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap": null
+   },
+   {
+    "face_a": 22658,
+    "face_b": 22663,
+    "source_a": [
+     36427,
+     36428
+    ],
+    "source_b": [
+     36437,
+     36438
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap": null
+   },
+   {
+    "face_a": 22660,
+    "face_b": 22665,
+    "source_a": [
+     36431,
+     36432
+    ],
+    "source_b": [
+     36441,
+     36442
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap": null
+   },
+   {
+    "face_a": 22664,
+    "face_b": 25508,
+    "source_a": [
+     36439,
+     36440
+    ],
+    "source_b": [
+     41707,
+     41708
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.00031900000059344863
+   },
+   {
+    "face_a": 22664,
+    "face_b": 25523,
+    "source_a": [
+     36439,
+     36440
+    ],
+    "source_b": [
+     41737,
+     41738
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.00032865607499843463
+   },
+   {
+    "face_a": 22665,
+    "face_b": 25521,
+    "source_a": [
+     36441,
+     36442
+    ],
+    "source_b": [
+     41733,
+     41734
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 7.80000000304426e-05
+   },
+   {
+    "face_a": 22675,
+    "face_b": 22678,
+    "source_a": [
+     36459,
+     36460
+    ],
+    "source_b": [
+     36465,
+     36466
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap": null
+   },
+   {
+    "face_a": 22677,
+    "face_b": 22683,
+    "source_a": [
+     36463,
+     36464
+    ],
+    "source_b": [
+     36475,
+     36476
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap": null
+   },
+   {
+    "face_a": 22680,
+    "face_b": 25448,
+    "source_a": [
+     36469,
+     36470
+    ],
+    "source_b": [
+     41587,
+     41588
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.0003650477292467258
+   },
+   {
+    "face_a": 22681,
+    "face_b": 25439,
+    "source_a": [
+     36471,
+     36472
+    ],
+    "source_b": [
+     41569,
+     41570
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.0003880013118759962
+   },
+   {
+    "face_a": 22681,
+    "face_b": 25453,
+    "source_a": [
+     36471,
+     36472
+    ],
+    "source_b": [
+     41597,
+     41598
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.0003936209704988869
+   },
+   {
+    "face_a": 22688,
+    "face_b": 26626,
+    "source_a": [
+     36485,
+     36486
+    ],
+    "source_b": [
+     43943,
+     43944
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.00010802135539261792
+   },
+   {
+    "face_a": 22689,
+    "face_b": 22692,
+    "source_a": [
+     36487,
+     36488
+    ],
+    "source_b": [
+     36493,
+     36494
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap": null
+   },
+   {
+    "face_a": 22691,
+    "face_b": 22694,
+    "source_a": [
+     36491,
+     36492
+    ],
+    "source_b": [
+     36497,
+     36498
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap": null
+   },
+   {
+    "face_a": 22691,
+    "face_b": 26622,
+    "source_a": [
+     36491,
+     36492
+    ],
+    "source_b": [
+     43935,
+     43936
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.0
+   },
+   {
+    "face_a": 22693,
+    "face_b": 26683,
+    "source_a": [
+     36495,
+     36496
+    ],
+    "source_b": [
+     44057,
+     44058
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.00013699503231046073
+   },
+   {
+    "face_a": 22693,
+    "face_b": 26722,
+    "source_a": [
+     36495,
+     36496
+    ],
+    "source_b": [
+     44135,
+     44136
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.0
+   },
+   {
+    "face_a": 22694,
+    "face_b": 26716,
+    "source_a": [
+     36497,
+     36498
+    ],
+    "source_b": [
+     44123,
+     44124
+    ],
+    "slot_a": "Stairs",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap": 0.0001475717691393124
+   }
+  ],
+  "seconds": 50.510932207107544
+ },
+ "construction_probe": {
+  "not_deliverable": true,
+  "skirt_triangles_clipped": 66,
+  "skirt_replaced_source_faces": [],
+  "surface_geometry_unchanged_before_clean_topology": true,
+  "quads": 19224,
+  "triangles": 7996,
+  "triangle_equivalent": 46444,
+  "surface_polygons": 20152,
+  "xview": {
+   "part": "construction_probe",
+   "vertex_pairs": 0,
+   "face_pairs": 24,
+   "face_pairs_by_kind": {
+    "contact": 11,
+    "area": 2,
+    "area+contact": 11
+   },
+   "vertices": [],
+   "faces": [
+    1769,
+    2783,
+    2785,
+    11501,
+    11505,
+    11511,
+    20611,
+    20614,
+    20751,
+    20752,
+    20755,
+    21778,
+    21780,
+    21781,
+    21782,
+    22052,
+    22054,
+    22056,
+    22058,
+    22060,
+    22061,
+    22062,
+    22063,
+    22073,
+    22075,
+    22076,
+    22079,
+    22081,
+    22086,
+    22087,
+    22089,
+    22090,
+    22091,
+    22092,
+    23753,
+    24229,
+    24614,
+    24856,
+    25051,
+    26052,
+    26109
+   ],
+   "xview_faces": [
+    1769,
+    2783,
+    2785,
+    11501,
+    11505,
+    11511,
+    20611,
+    20614,
+    20751,
+    20752,
+    20755,
+    21778,
+    21780,
+    21781,
+    21782,
+    22052,
+    22054,
+    22056,
+    22058,
+    22060,
+    22061,
+    22062,
+    22063,
+    22073,
+    22075,
+    22076,
+    22081,
+    22086,
+    22087,
+    22089,
+    22090,
+    22092,
+    23753,
+    24229,
+    24614,
+    24856,
+    26052
+   ],
+   "offenders": [
+    "construction_probe f1769/f24229: area+contact, 3.99 mm",
+    "construction_probe f2783/f23753: area+contact, 4.00 mm",
+    "construction_probe f2785/f23753: area+contact, 4.00 mm",
+    "construction_probe f11501/f24614: area+contact, 4.84 mm",
+    "construction_probe f11505/f24614: area+contact, 3.06 mm",
+    "construction_probe f11511/f24614: area+contact, 3.06 mm",
+    "construction_probe f20611/f20614: area+contact, 2.73 mm",
+    "construction_probe f20751/f20752: contact",
+    "construction_probe f20752/f20755: contact",
+    "construction_probe f21778/f21782: area+contact, 2.85 mm",
+    "construction_probe f21780/f21781: area+contact, 0.00 mm",
+    "construction_probe f21780/f21782: contact",
+    "construction_probe f22052/f22056: contact",
+    "construction_probe f22054/f22060: contact",
+    "construction_probe f22056/f22061: contact",
+    "construction_probe f22058/f22063: contact",
+    "construction_probe f22062/f24856: area+contact, 0.41 mm",
+    "construction_probe f22073/f22076: contact",
+    "construction_probe f22075/f22081: contact",
+    "construction_probe f22079/f25051: area, 0.00 mm"
+   ]
+  },
+  "offender_slot_pairs": {
+   "(('CurbGarden', -2), (np.str_('Mulch'), 1))": 3,
+   "(('CurbGarden', -2), (np.str_('LawnReinforced'), 1))": 3,
+   "((np.str_('Skirt'), -1), (np.str_('Skirt'), -1))": 6,
+   "(('Stairs', -2), ('Stairs', -2))": 8,
+   "(('CurbGarden', -2), ('Stairs', -2))": 4
+  },
+  "face_witnesses": [
+   {
+    "a": 1769,
+    "b": 24229,
+    "slot_a": "Mulch",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap_m": 0.003991652101021481,
+    "xyz_a": [
+     [
+      -7520.652,
+      -15340.398,
+      145.728777
+     ],
+     [
+      -7521.873,
+      -15342.306,
+      147.221144
+     ],
+     [
+      -7521.447,
+      -15342.105,
+      147.322883
+     ],
+     [
+      -7520.001,
+      -15341.19,
+      147.359174
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7521.832,
+      -15342.243,
+      147.1799866760765
+     ],
+     [
+      -7521.177,
+      -15341.933,
+      147.33660774286903
+     ],
+     [
+      -7521.73,
+      -15342.283,
+      147.32294541041017
+     ],
+     [
+      -7521.914,
+      -15342.37,
+      147.27888790589785
+     ]
+    ]
+   },
+   {
+    "a": 2783,
+    "b": 23753,
+    "slot_a": "Mulch",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap_m": 0.00399624726170468,
+    "xyz_a": [
+     [
+      -7644.0,
+      -15335.295,
+      149.709961
+     ],
+     [
+      -7644.0,
+      -15332.28,
+      149.73675
+     ],
+     [
+      -7647.426,
+      -15334.347,
+      149.719247
+     ],
+     [
+      -7647.207,
+      -15335.292,
+      149.70999
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7647.848,
+      -15332.356,
+      149.72617223582088
+     ],
+     [
+      -7647.177,
+      -15335.251,
+      149.7223921568625
+     ],
+     [
+      -7647.24,
+      -15335.331,
+      149.72160784313698
+     ],
+     [
+      -7647.949,
+      -15332.276,
+      149.72547305164144
+     ]
+    ]
+   },
+   {
+    "a": 2785,
+    "b": 23753,
+    "slot_a": "Mulch",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap_m": 0.0039962791463452494,
+    "xyz_a": [
+     [
+      -7647.426,
+      -15334.347,
+      149.719247
+     ],
+     [
+      -7644.0,
+      -15332.28,
+      149.73675
+     ],
+     [
+      -7647.906,
+      -15332.277,
+      149.713728
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7647.848,
+      -15332.356,
+      149.72617223582088
+     ],
+     [
+      -7647.177,
+      -15335.251,
+      149.7223921568625
+     ],
+     [
+      -7647.24,
+      -15335.331,
+      149.72160784313698
+     ],
+     [
+      -7647.949,
+      -15332.276,
+      149.72547305164144
+     ]
+    ]
+   },
+   {
+    "a": 11501,
+    "b": 24614,
+    "slot_a": "LawnReinforced",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap_m": 0.004842162209439555,
+    "xyz_a": [
+     [
+      -7574.757,
+      -15299.1,
+      150.481687
+     ],
+     [
+      -7573.815,
+      -15298.326,
+      150.481681
+     ],
+     [
+      -7573.956,
+      -15297.99,
+      150.486787
+     ],
+     [
+      -7573.959,
+      -15297.984,
+      150.486883
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7575.789,
+      -15300.0,
+      150.47833205620313
+     ],
+     [
+      -7575.915,
+      -15300.0,
+      150.47797791304856
+     ],
+     [
+      -7573.789,
+      -15298.254,
+      150.49425322347565
+     ],
+     [
+      -7573.677,
+      -15298.265,
+      150.49308847705768
+     ]
+    ]
+   },
+   {
+    "a": 11505,
+    "b": 24614,
+    "slot_a": "LawnReinforced",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap_m": 0.003058565628665572,
+    "xyz_a": [
+     [
+      -7575.999,
+      -15298.143,
+      150.498246
+     ],
+     [
+      -7575.999,
+      -15300.0,
+      150.465742
+     ],
+     [
+      -7575.852,
+      -15300.0,
+      150.466155
+     ],
+     [
+      -7574.949,
+      -15299.259,
+      150.481663
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7575.789,
+      -15300.0,
+      150.47833205620313
+     ],
+     [
+      -7575.915,
+      -15300.0,
+      150.47797791304856
+     ],
+     [
+      -7573.789,
+      -15298.254,
+      150.49425322347565
+     ],
+     [
+      -7573.677,
+      -15298.265,
+      150.49308847705768
+     ]
+    ]
+   },
+   {
+    "a": 11511,
+    "b": 24614,
+    "slot_a": "LawnReinforced",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap_m": 0.003058565628665572,
+    "xyz_a": [
+     [
+      -7574.757,
+      -15299.1,
+      150.481687
+     ],
+     [
+      -7573.959,
+      -15297.984,
+      150.486883
+     ],
+     [
+      -7575.999,
+      -15298.143,
+      150.498246
+     ],
+     [
+      -7574.949,
+      -15299.259,
+      150.481663
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7575.789,
+      -15300.0,
+      150.47833205620313
+     ],
+     [
+      -7575.915,
+      -15300.0,
+      150.47797791304856
+     ],
+     [
+      -7573.789,
+      -15298.254,
+      150.49425322347565
+     ],
+     [
+      -7573.677,
+      -15298.265,
+      150.49308847705768
+     ]
+    ]
+   },
+   {
+    "a": 20611,
+    "b": 20614,
+    "slot_a": "Skirt",
+    "slot_b": "Skirt",
+    "kind": "area+contact",
+    "gap_m": 0.002731099431684217,
+    "xyz_a": [
+     [
+      -7548.159,
+      -15354.741,
+      146.718607
+     ],
+     [
+      -7548.174,
+      -15354.708,
+      146.71923
+     ],
+     [
+      -7548.174,
+      -15354.708,
+      145.71923
+     ],
+     [
+      -7548.159,
+      -15354.741,
+      145.718607
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7548.171,
+      -15354.708,
+      146.719259
+     ],
+     [
+      -7548.156,
+      -15354.741,
+      146.718641
+     ],
+     [
+      -7548.156,
+      -15354.741,
+      145.718641
+     ],
+     [
+      -7548.171,
+      -15354.708,
+      145.719259
+     ]
+    ]
+   },
+   {
+    "a": 20751,
+    "b": 20752,
+    "slot_a": "Skirt",
+    "slot_b": "Skirt",
+    "kind": "contact",
+    "gap_m": null,
+    "xyz_a": [
+     [
+      -7634.559,
+      -15378.462,
+      145.775234
+     ],
+     [
+      -7634.559,
+      -15378.861,
+      145.767164
+     ],
+     [
+      -7634.559,
+      -15378.861,
+      144.767164
+     ],
+     [
+      -7634.559,
+      -15378.462,
+      144.775234
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7634.556,
+      -15378.861,
+      145.767136
+     ],
+     [
+      -7634.556,
+      -15379.26,
+      145.759066
+     ],
+     [
+      -7634.556,
+      -15379.26,
+      144.759066
+     ],
+     [
+      -7634.556,
+      -15378.861,
+      144.767136
+     ]
+    ]
+   },
+   {
+    "a": 20752,
+    "b": 20755,
+    "slot_a": "Skirt",
+    "slot_b": "Skirt",
+    "kind": "contact",
+    "gap_m": null,
+    "xyz_a": [
+     [
+      -7634.556,
+      -15378.861,
+      145.767136
+     ],
+     [
+      -7634.556,
+      -15379.26,
+      145.759066
+     ],
+     [
+      -7634.556,
+      -15379.26,
+      144.759066
+     ],
+     [
+      -7634.556,
+      -15378.861,
+      144.767136
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7634.559,
+      -15379.26,
+      145.759093
+     ],
+     [
+      -7634.559,
+      -15379.662,
+      145.750963
+     ],
+     [
+      -7634.559,
+      -15379.662,
+      144.750963
+     ],
+     [
+      -7634.559,
+      -15379.26,
+      144.759093
+     ]
+    ]
+   },
+   {
+    "a": 21778,
+    "b": 21782,
+    "slot_a": "Skirt",
+    "slot_b": "Skirt",
+    "kind": "area+contact",
+    "gap_m": 0.0028546555191987233,
+    "xyz_a": [
+     [
+      -7691.007,
+      -15248.688,
+      152.017682
+     ],
+     [
+      -7691.229,
+      -15248.001,
+      151.996884
+     ],
+     [
+      -7691.229,
+      -15248.001,
+      150.996884
+     ],
+     [
+      -7691.007,
+      -15248.688,
+      151.017682
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7691.232,
+      -15248.001,
+      151.996688
+     ],
+     [
+      -7691.016,
+      -15248.688,
+      152.017123
+     ],
+     [
+      -7691.016,
+      -15248.688,
+      151.017123
+     ],
+     [
+      -7691.232,
+      -15248.001,
+      150.996688
+     ]
+    ]
+   },
+   {
+    "a": 21780,
+    "b": 21781,
+    "slot_a": "Skirt",
+    "slot_b": "Skirt",
+    "kind": "area+contact",
+    "gap_m": 0.0,
+    "xyz_a": [
+     [
+      -7691.229,
+      -15248.001,
+      151.996884
+     ],
+     [
+      -7691.427,
+      -15247.386,
+      151.978288
+     ],
+     [
+      -7691.427,
+      -15247.386,
+      150.978288
+     ],
+     [
+      -7691.229,
+      -15248.001,
+      150.996884
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7691.427,
+      -15247.386,
+      151.978288
+     ],
+     [
+      -7691.232,
+      -15248.001,
+      151.996688
+     ],
+     [
+      -7691.232,
+      -15248.001,
+      150.996688
+     ],
+     [
+      -7691.427,
+      -15247.386,
+      150.978288
+     ]
+    ]
+   },
+   {
+    "a": 21780,
+    "b": 21782,
+    "slot_a": "Skirt",
+    "slot_b": "Skirt",
+    "kind": "contact",
+    "gap_m": null,
+    "xyz_a": [
+     [
+      -7691.229,
+      -15248.001,
+      151.996884
+     ],
+     [
+      -7691.427,
+      -15247.386,
+      151.978288
+     ],
+     [
+      -7691.427,
+      -15247.386,
+      150.978288
+     ],
+     [
+      -7691.229,
+      -15248.001,
+      150.996884
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7691.232,
+      -15248.001,
+      151.996688
+     ],
+     [
+      -7691.016,
+      -15248.688,
+      152.017123
+     ],
+     [
+      -7691.016,
+      -15248.688,
+      151.017123
+     ],
+     [
+      -7691.232,
+      -15248.001,
+      150.996688
+     ]
+    ]
+   },
+   {
+    "a": 22052,
+    "b": 22056,
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap_m": null,
+    "xyz_a": [
+     [
+      -7644.43378,
+      -15368.34485,
+      147.842454
+     ],
+     [
+      -7644.433734,
+      -15368.84695,
+      147.842454
+     ],
+     [
+      -7644.433734,
+      -15368.84695,
+      148.232702
+     ],
+     [
+      -7644.43378,
+      -15368.34485,
+      148.232702
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7644.433734,
+      -15368.84695,
+      147.842454
+     ],
+     [
+      -7644.433672,
+      -15369.536681,
+      147.842454
+     ],
+     [
+      -7644.433672,
+      -15369.536681,
+      148.072036
+     ],
+     [
+      -7644.433734,
+      -15368.84695,
+      148.072036
+     ]
+    ]
+   },
+   {
+    "a": 22054,
+    "b": 22060,
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap_m": null,
+    "xyz_a": [
+     [
+      -7642.233491,
+      -15368.846681,
+      147.842454
+     ],
+     [
+      -7642.233594,
+      -15368.616681,
+      147.842454
+     ],
+     [
+      -7642.233594,
+      -15368.616681,
+      148.232702
+     ],
+     [
+      -7642.233491,
+      -15368.846681,
+      148.232702
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7642.233387,
+      -15369.076413,
+      147.842454
+     ],
+     [
+      -7642.233491,
+      -15368.846681,
+      147.842454
+     ],
+     [
+      -7642.233491,
+      -15368.846681,
+      148.072036
+     ],
+     [
+      -7642.233387,
+      -15369.076413,
+      148.072036
+     ]
+    ]
+   },
+   {
+    "a": 22056,
+    "b": 22061,
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap_m": null,
+    "xyz_a": [
+     [
+      -7644.433734,
+      -15368.84695,
+      147.842454
+     ],
+     [
+      -7644.433672,
+      -15369.536681,
+      147.842454
+     ],
+     [
+      -7644.433672,
+      -15369.536681,
+      148.072036
+     ],
+     [
+      -7644.433734,
+      -15368.84695,
+      148.072036
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7644.433672,
+      -15369.536681,
+      147.842454
+     ],
+     [
+      -7644.433651,
+      -15369.766681,
+      147.842454
+     ],
+     [
+      -7644.433651,
+      -15369.766681,
+      147.948031
+     ],
+     [
+      -7644.433672,
+      -15369.536681,
+      147.948031
+     ]
+    ]
+   },
+   {
+    "a": 22058,
+    "b": 22063,
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap_m": null,
+    "xyz_a": [
+     [
+      -7642.233181,
+      -15369.536413,
+      147.842454
+     ],
+     [
+      -7642.233284,
+      -15369.306413,
+      147.842454
+     ],
+     [
+      -7642.233284,
+      -15369.306413,
+      148.072036
+     ],
+     [
+      -7642.233181,
+      -15369.536413,
+      148.072036
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7642.233078,
+      -15369.766632,
+      147.842454
+     ],
+     [
+      -7642.233181,
+      -15369.536413,
+      147.842454
+     ],
+     [
+      -7642.233181,
+      -15369.536413,
+      147.948031
+     ],
+     [
+      -7642.233078,
+      -15369.766632,
+      147.948031
+     ]
+    ]
+   },
+   {
+    "a": 22062,
+    "b": 24856,
+    "slot_a": "Stairs",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap_m": 0.0004055772732403499,
+    "xyz_a": [
+     [
+      -7644.433651,
+      -15369.766681,
+      147.842454
+     ],
+     [
+      -7642.233078,
+      -15369.766632,
+      147.842454
+     ],
+     [
+      -7642.233078,
+      -15369.766632,
+      147.948031
+     ],
+     [
+      -7644.433651,
+      -15369.766681,
+      147.948031
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7644.44,
+      -15369.767,
+      147.97351890466516
+     ],
+     [
+      -7644.0,
+      -15369.773,
+      147.9692766743593
+     ],
+     [
+      -7644.0,
+      -15369.773,
+      147.91927667435928
+     ],
+     [
+      -7644.44,
+      -15369.767,
+      147.92351890466514
+     ]
+    ]
+   },
+   {
+    "a": 22073,
+    "b": 22076,
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap_m": null,
+    "xyz_a": [
+     [
+      -7644.433573,
+      -15370.966678,
+      147.056574
+     ],
+     [
+      -7644.433539,
+      -15371.241395,
+      147.056574
+     ],
+     [
+      -7644.433539,
+      -15371.241395,
+      147.556424
+     ],
+     [
+      -7644.433573,
+      -15370.966678,
+      147.556424
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7644.433539,
+      -15371.241395,
+      147.056574
+     ],
+     [
+      -7644.433481,
+      -15371.721395,
+      147.056574
+     ],
+     [
+      -7644.433481,
+      -15371.721395,
+      147.325264
+     ],
+     [
+      -7644.433539,
+      -15371.241395,
+      147.325264
+     ]
+    ]
+   },
+   {
+    "a": 22075,
+    "b": 22081,
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap_m": null,
+    "xyz_a": [
+     [
+      -7642.233586,
+      -15371.241395,
+      147.056574
+     ],
+     [
+      -7642.233585,
+      -15370.966681,
+      147.056574
+     ],
+     [
+      -7642.233585,
+      -15370.966681,
+      147.556424
+     ],
+     [
+      -7642.233586,
+      -15371.241395,
+      147.556424
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7642.233587,
+      -15371.961395,
+      147.056574
+     ],
+     [
+      -7642.233586,
+      -15371.241395,
+      147.056574
+     ],
+     [
+      -7642.233586,
+      -15371.241395,
+      147.325264
+     ],
+     [
+      -7642.233587,
+      -15371.961395,
+      147.325264
+     ]
+    ]
+   },
+   {
+    "a": 22079,
+    "b": 25051,
+    "slot_a": "Stairs",
+    "slot_b": "CurbGarden",
+    "kind": "area",
+    "gap_m": 0.0,
+    "xyz_a": [
+     [
+      -7644.433365,
+      -15372.681395,
+      147.056574
+     ],
+     [
+      -7642.233588,
+      -15372.681388,
+      147.056574
+     ],
+     [
+      -7642.233588,
+      -15372.681388,
+      147.325264
+     ],
+     [
+      -7644.433365,
+      -15372.681395,
+      147.325264
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7644.439,
+      -15372.681,
+      147.1878336216581
+     ],
+     [
+      -7644.0,
+      -15372.687,
+      147.1835973561173
+     ],
+     [
+      -7644.0,
+      -15372.687,
+      147.1335973561173
+     ],
+     [
+      -7644.439,
+      -15372.681,
+      147.13783362165807
+     ]
+    ]
+   },
+   {
+    "a": 22086,
+    "b": 26052,
+    "slot_a": "Stairs",
+    "slot_b": "CurbGarden",
+    "kind": "area+contact",
+    "gap_m": 0.0,
+    "xyz_a": [
+     [
+      -7540.675896,
+      -15335.165682,
+      148.867272
+     ],
+     [
+      -7543.568594,
+      -15336.534023,
+      148.867272
+     ],
+     [
+      -7543.568594,
+      -15336.534023,
+      149.133506
+     ],
+     [
+      -7540.675896,
+      -15335.165682,
+      149.133506
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7540.67,
+      -15335.163,
+      149.1371230379418
+     ],
+     [
+      -7542.454,
+      -15336.0,
+      149.2717665088273
+     ],
+     [
+      -7542.454,
+      -15336.0,
+      149.2217665088273
+     ],
+     [
+      -7540.67,
+      -15335.163,
+      149.08712303794178
+     ]
+    ]
+   },
+   {
+    "a": 22087,
+    "b": 22090,
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap_m": null,
+    "xyz_a": [
+     [
+      -7543.568594,
+      -15336.534023,
+      148.867272
+     ],
+     [
+      -7543.269265,
+      -15337.166796,
+      148.867272
+     ],
+     [
+      -7543.269265,
+      -15337.166796,
+      149.133506
+     ],
+     [
+      -7543.568594,
+      -15336.534023,
+      149.133506
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7543.269265,
+      -15337.166796,
+      148.867272
+     ],
+     [
+      -7543.119612,
+      -15337.483159,
+      148.867272
+     ],
+     [
+      -7543.119612,
+      -15337.483159,
+      149.039764
+     ],
+     [
+      -7543.269265,
+      -15337.166796,
+      149.039764
+     ]
+    ]
+   },
+   {
+    "a": 22089,
+    "b": 22092,
+    "slot_a": "Stairs",
+    "slot_b": "Stairs",
+    "kind": "contact",
+    "gap_m": null,
+    "xyz_a": [
+     [
+      -7540.376584,
+      -15335.798435,
+      148.867272
+     ],
+     [
+      -7540.675896,
+      -15335.165682,
+      148.867272
+     ],
+     [
+      -7540.675896,
+      -15335.165682,
+      149.133506
+     ],
+     [
+      -7540.376584,
+      -15335.798435,
+      149.133506
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7540.226922,
+      -15336.114823,
+      148.867272
+     ],
+     [
+      -7540.376584,
+      -15335.798435,
+      148.867272
+     ],
+     [
+      -7540.376584,
+      -15335.798435,
+      149.039764
+     ],
+     [
+      -7540.226922,
+      -15336.114823,
+      149.039764
+     ]
+    ]
+   },
+   {
+    "a": 22091,
+    "b": 26109,
+    "slot_a": "Stairs",
+    "slot_b": "CurbGarden",
+    "kind": "area",
+    "gap_m": 0.0026687129261169784,
+    "xyz_a": [
+     [
+      -7543.119612,
+      -15337.483159,
+      148.867272
+     ],
+     [
+      -7540.226922,
+      -15336.114823,
+      148.867272
+     ],
+     [
+      -7540.226922,
+      -15336.114823,
+      149.039764
+     ],
+     [
+      -7543.119612,
+      -15337.483159,
+      149.039764
+     ]
+    ],
+    "xyz_b": [
+     [
+      -7543.125,
+      -15337.486,
+      149.16730426229267
+     ],
+     [
+      -7540.587,
+      -15336.292,
+      148.9761841174363
+     ],
+     [
+      -7540.587,
+      -15336.292,
+      148.9261841174363
+     ],
+     [
+      -7543.125,
+      -15337.486,
+      149.11730426229266
+     ]
+    ]
+   }
+  ]
+ },
+ "fan_conversion_risk": {
+  "paired": {
+   "fan_split_risk_vertices": 59,
+   "fan_split_risks": [
+    {
+     "vertex": 3511,
+     "xyz": [
+      -7644.432,
+      -15376.461,
+      146.110447
+     ],
+     "fan_faces": [
+      [
+       2315
+      ],
+      [
+       19318,
+       19320
+      ]
+     ]
+    },
+    {
+     "vertex": 5862,
+     "xyz": [
+      -7611.159,
+      -15311.223,
+      150.219983
+     ],
+     "fan_faces": [
+      [
+       4521
+      ],
+      [
+       4627,
+       4645
+      ]
+     ]
+    },
+    {
+     "vertex": 5881,
+     "xyz": [
+      -7609.89,
+      -15312.768,
+      150.192977
+     ],
+     "fan_faces": [
+      [
+       4548
+      ],
+      [
+       4620,
+       4624
+      ]
+     ]
+    },
+    {
+     "vertex": 6008,
+     "xyz": [
+      -7602.474,
+      -15307.755,
+      150.324738
+     ],
+     "fan_faces": [
+      [
+       4724,
+       4730
+      ],
+      [
+       4738
+      ]
+     ]
+    },
+    {
+     "vertex": 6041,
+     "xyz": [
+      -7603.788,
+      -15308.835,
+      150.297437
+     ],
+     "fan_faces": [
+      [
+       4748
+      ],
+      [
+       8560
+      ]
+     ]
+    },
+    {
+     "vertex": 6341,
+     "xyz": [
+      -7618.992,
+      -15301.695,
+      150.386501
+     ],
+     "fan_faces": [
+      [
+       4997
+      ],
+      [
+       8976,
+       8994,
+       8996
+      ]
+     ]
+    },
+    {
+     "vertex": 6884,
+     "xyz": [
+      -7622.571,
+      -15277.755,
+      150.7372
+     ],
+     "fan_faces": [
+      [
+       5562,
+       5584
+      ],
+      [
+       5564
+      ]
+     ]
+    },
+    {
+     "vertex": 6959,
+     "xyz": [
+      -7628.856,
+      -15268.686,
+      150.834241
+     ],
+     "fan_faces": [
+      [
+       5632,
+       5634
+      ],
+      [
+       17941
+      ]
+     ]
+    },
+    {
+     "vertex": 7110,
+     "xyz": [
+      -7603.974,
+      -15269.232,
+      151.098668
+     ],
+     "fan_faces": [
+      [
+       5797
+      ],
+      [
+       6398
+      ]
+     ]
+    },
+    {
+     "vertex": 7114,
+     "xyz": [
+      -7603.572,
+      -15269.721,
+      151.095035
+     ],
+     "fan_faces": [
+      [
+       5797
+      ],
+      [
+       6394
+      ]
+     ]
+    },
+    {
+     "vertex": 7294,
+     "xyz": [
+      -7605.369,
+      -15267.531,
+      151.111355
+     ],
+     "fan_faces": [
+      [
+       5972,
+       5974
+      ],
+      [
+       6473,
+       6475
+      ]
+     ]
+    },
+    {
+     "vertex": 7291,
+     "xyz": [
+      -7605.876,
+      -15266.913,
+      151.115962
+     ],
+     "fan_faces": [
+      [
+       5972
+      ],
+      [
+       6487
+      ]
+     ]
+    },
+    {
+     "vertex": 7302,
+     "xyz": [
+      -7606.194,
+      -15266.526,
+      151.118839
+     ],
+     "fan_faces": [
+      [
+       5976,
+       5980
+      ],
+      [
+       6490
+      ]
+     ]
+    },
+    {
+     "vertex": 7296,
+     "xyz": [
+      -7607.145,
+      -15265.365,
+      151.127515
+     ],
+     "fan_faces": [
+      [
+       5976,
+       5982
+      ],
+      [
+       6514
+      ]
+     ]
+    },
+    {
+     "vertex": 7299,
+     "xyz": [
+      -7607.589,
+      -15264.825,
+      151.131554
+     ],
+     "fan_faces": [
+      [
+       5978,
+       5982
+      ],
+      [
+       6519
+      ]
+     ]
+    },
+    {
+     "vertex": 7360,
+     "xyz": [
+      -7629.174,
+      -15267.999,
+      150.843309
+     ],
+     "fan_faces": [
+      [
+       6032
+      ],
+      [
+       6033,
+       17943
+      ]
+     ]
+    },
+    {
+     "vertex": 8116,
+     "xyz": [
+      -7615.644,
+      -15253.584,
+      151.245448
+     ],
+     "fan_faces": [
+      [
+       6758,
+       6770
+      ],
+      [
+       6823
+      ]
+     ]
+    },
+    {
+     "vertex": 8127,
+     "xyz": [
+      -7615.77,
+      -15253.428,
+      151.247057
+     ],
+     "fan_faces": [
+      [
+       6770,
+       6772
+      ],
+      [
+       6825
+      ]
+     ]
+    },
+    {
+     "vertex": 8160,
+     "xyz": [
+      -7615.833,
+      -15254.772,
+      151.221402
+     ],
+     "fan_faces": [
+      [
+       6812,
+       6816
+      ],
+      [
+       17963
+      ]
+     ]
+    },
+    {
+     "vertex": 8207,
+     "xyz": [
+      -7617.291,
+      -15252.996,
+      151.237258
+     ],
+     "fan_faces": [
+      [
+       6859
+      ],
+      [
+       7012,
+       7020
+      ]
+     ]
+    },
+    {
+     "vertex": 8213,
+     "xyz": [
+      -7617.609,
+      -15252.609,
+      151.24071
+     ],
+     "fan_faces": [
+      [
+       6866
+      ],
+      [
+       7008,
+       7018,
+       7020
+      ]
+     ]
+    },
+    {
+     "vertex": 8284,
+     "xyz": [
+      -7618.497,
+      -15250.104,
+      151.280653
+     ],
+     "fan_faces": [
+      [
+       6915,
+       6920
+      ],
+      [
+       6947
+      ]
+     ]
+    },
+    {
+     "vertex": 8309,
+     "xyz": [
+      -7619.511,
+      -15250.29,
+      151.261434
+     ],
+     "fan_faces": [
+      [
+       6952
+      ],
+      [
+       7137,
+       7141
+      ]
+     ]
+    },
+    {
+     "vertex": 8894,
+     "xyz": [
+      -7539.999,
+      -15344.082,
+      147.837527
+     ],
+     "fan_faces": [
+      [
+       7550
+      ],
+      [
+       7564
+      ]
+     ]
+    },
+    {
+     "vertex": 9488,
+     "xyz": [
+      -7603.221,
+      -15320.877,
+      150.052065
+     ],
+     "fan_faces": [
+      [
+       8094
+      ],
+      [
+       8628,
+       8630
+      ]
+     ]
+    },
+    {
+     "vertex": 9885,
+     "xyz": [
+      -7578.561,
+      -15322.734,
+      150.084454
+     ],
+     "fan_faces": [
+      [
+       8448,
+       8450,
+       8452
+      ],
+      [
+       18282
+      ]
+     ]
+    },
+    {
+     "vertex": 9907,
+     "xyz": [
+      -7608.303,
+      -15314.697,
+      150.159269
+     ],
+     "fan_faces": [
+      [
+       8474
+      ],
+      [
+       18722
+      ]
+     ]
+    },
+    {
+     "vertex": 9912,
+     "xyz": [
+      -7607.985,
+      -15315.084,
+      150.152505
+     ],
+     "fan_faces": [
+      [
+       8479,
+       8481
+      ],
+      [
+       18719
+      ]
+     ]
+    },
+    {
+     "vertex": 9916,
+     "xyz": [
+      -7605.444,
+      -15318.174,
+      150.098505
+     ],
+     "fan_faces": [
+      [
+       8483,
+       8485
+      ],
+      [
+       19025
+      ]
+     ]
+    },
+    {
+     "vertex": 9920,
+     "xyz": [
+      -7605.762,
+      -15317.787,
+      150.105269
+     ],
+     "fan_faces": [
+      [
+       8485,
+       8489
+      ],
+      [
+       19027
+      ]
+     ]
+    },
+    {
+     "vertex": 9922,
+     "xyz": [
+      -7607.031,
+      -15316.242,
+      150.132275
+     ],
+     "fan_faces": [
+      [
+       8487,
+       8489
+      ],
+      [
+       19035
+      ]
+     ]
+    },
+    {
+     "vertex": 10112,
+     "xyz": [
+      -7592.127,
+      -15305.64,
+      150.408127
+     ],
+     "fan_faces": [
+      [
+       8699,
+       8708
+      ],
+      [
+       19229
+      ]
+     ]
+    },
+    {
+     "vertex": 10122,
+     "xyz": [
+      -7597.887,
+      -15305.151,
+      150.395992
+     ],
+     "fan_faces": [
+      [
+       8713
+      ],
+      [
+       9218
+      ]
+     ]
+    },
+    {
+     "vertex": 10521,
+     "xyz": [
+      -7596.276,
+      -15300.9,
+      150.497441
+     ],
+     "fan_faces": [
+      [
+       9088,
+       9096,
+       9119,
+       9121
+      ],
+      [
+       19231
+      ]
+     ]
+    },
+    {
+     "vertex": 10663,
+     "xyz": [
+      -7565.652,
+      -15291.999,
+      150.483321
+     ],
+     "fan_faces": [
+      [
+       9251
+      ],
+      [
+       9254
+      ]
+     ]
+    },
+    {
+     "vertex": 10720,
+     "xyz": [
+      -7559.748,
+      -15296.001,
+      150.423622
+     ],
+     "fan_faces": [
+      [
+       9311
+      ],
+      [
+       9392
+      ]
+     ]
+    },
+    {
+     "vertex": 10805,
+     "xyz": [
+      -7559.076,
+      -15296.841,
+      150.412794
+     ],
+     "fan_faces": [
+      [
+       9385
+      ],
+      [
+       9392
+      ]
+     ]
+    },
+    {
+     "vertex": 10882,
+     "xyz": [
+      -7592.001,
+      -15295.113,
+      150.645479
+     ],
+     "fan_faces": [
+      [
+       9457,
+       9459,
+       9580
+      ],
+      [
+       18337,
+       18341
+      ]
+     ]
+    },
+    {
+     "vertex": 11208,
+     "xyz": [
+      -7575.747,
+      -15255.999,
+      151.662951
+     ],
+     "fan_faces": [
+      [
+       9832,
+       9835,
+       9840
+      ],
+      [
+       9989,
+       18415
+      ]
+     ]
+    },
+    {
+     "vertex": 11814,
+     "xyz": [
+      -7650.282,
+      -15303.999,
+      149.921381
+     ],
+     "fan_faces": [
+      [
+       10483
+      ],
+      [
+       10486
+      ]
+     ]
+    },
+    {
+     "vertex": 11885,
+     "xyz": [
+      -7653.462,
+      -15264.312,
+      150.652643
+     ],
+     "fan_faces": [
+      [
+       10582
+      ],
+      [
+       18615,
+       18616
+      ]
+     ]
+    },
+    {
+     "vertex": 11926,
+     "xyz": [
+      -7653.147,
+      -15262.767,
+      150.684161
+     ],
+     "fan_faces": [
+      [
+       10655
+      ],
+      [
+       10665
+      ]
+     ]
+    },
+    {
+     "vertex": 12064,
+     "xyz": [
+      -7593.57,
+      -15334.11,
+      149.898873
+     ],
+     "fan_faces": [
+      [
+       10825,
+       10842
+      ],
+      [
+       10907
+      ]
+     ]
+    },
+    {
+     "vertex": 12087,
+     "xyz": [
+      -7592.544,
+      -15335.358,
+      149.884866
+     ],
+     "fan_faces": [
+      [
+       10834,
+       10848
+      ],
+      [
+       10927,
+       10929
+      ]
+     ]
+    },
+    {
+     "vertex": 12094,
+     "xyz": [
+      -7592.49,
+      -15335.424,
+      149.884126
+     ],
+     "fan_faces": [
+      [
+       10836
+      ],
+      [
+       10929
+      ]
+     ]
+    },
+    {
+     "vertex": 12097,
+     "xyz": [
+      -7592.175,
+      -15335.811,
+      149.879782
+     ],
+     "fan_faces": [
+      [
+       10838,
+       10850
+      ],
+      [
+       19111
+      ]
+     ]
+    },
+    {
+     "vertex": 12150,
+     "xyz": [
+      -7593.453,
+      -15332.838,
+      149.912423
+     ],
+     "fan_faces": [
+      [
+       10872,
+       10880
+      ],
+      [
+       11248,
+       11257
+      ]
+     ]
+    },
+    {
+     "vertex": 12156,
+     "xyz": [
+      -7593.144,
+      -15333.216,
+      149.908612
+     ],
+     "fan_faces": [
+      [
+       10892,
+       10894,
+       10896
+      ],
+      [
+       11275
+      ]
+     ]
+    },
+    {
+     "vertex": 12157,
+     "xyz": [
+      -7593.195,
+      -15333.153,
+      149.909247
+     ],
+     "fan_faces": [
+      [
+       10892
+      ],
+      [
+       11248
+      ]
+     ]
+    },
+    {
+     "vertex": 12223,
+     "xyz": [
+      -7591.437,
+      -15336.705,
+      149.875418
+     ],
+     "fan_faces": [
+      [
+       10945
+      ],
+      [
+       11180
+      ]
+     ]
+    },
+    {
+     "vertex": 12572,
+     "xyz": [
+      -7595.1,
+      -15330.834,
+      149.929805
+     ],
+     "fan_faces": [
+      [
+       11298,
+       11341
+      ],
+      [
+       19115
+      ]
+     ]
+    },
+    {
+     "vertex": 12577,
+     "xyz": [
+      -7595.694,
+      -15330.114,
+      149.935182
+     ],
+     "fan_faces": [
+      [
+       11300,
+       11303,
+       11311
+      ],
+      [
+       11349,
+       11351
+      ]
+     ]
+    },
+    {
+     "vertex": 12578,
+     "xyz": [
+      -7595.418,
+      -15330.45,
+      149.931608
+     ],
+     "fan_faces": [
+      [
+       11300
+      ],
+      [
+       19122
+      ]
+     ]
+    },
+    {
+     "vertex": 12585,
+     "xyz": [
+      -7594.656,
+      -15331.377,
+      149.927156
+     ],
+     "fan_faces": [
+      [
+       11305,
+       11318,
+       11325
+      ],
+      [
+       11327
+      ]
+     ]
+    },
+    {
+     "vertex": 12672,
+     "xyz": [
+      -7597.065,
+      -15329.862,
+      149.929088
+     ],
+     "fan_faces": [
+      [
+       11393
+      ],
+      [
+       19143,
+       19165
+      ]
+     ]
+    },
+    {
+     "vertex": 12723,
+     "xyz": [
+      -7598.277,
+      -15326.973,
+      149.949485
+     ],
+     "fan_faces": [
+      [
+       11430
+      ],
+      [
+       11479
+      ]
+     ]
+    },
+    {
+     "vertex": 12819,
+     "xyz": [
+      -7600.5,
+      -15324.27,
+      149.980734
+     ],
+     "fan_faces": [
+      [
+       11518,
+       11520,
+       11524
+      ],
+      [
+       18999,
+       19001
+      ]
+     ]
+    },
+    {
+     "vertex": 12874,
+     "xyz": [
+      -7587.639,
+      -15313.305,
+      150.242405
+     ],
+     "fan_faces": [
+      [
+       11573,
+       11575
+      ],
+      [
+       11581
+      ]
+     ]
+    },
+    {
+     "vertex": 19772,
+     "xyz": [
+      -7608.096,
+      -15264.207,
+      151.137075
+     ],
+     "fan_faces": [
+      [
+       18745,
+       18747
+      ],
+      [
+       18812
+      ]
+     ]
+    }
+   ],
+   "simulated_after_fan_split_vertex_pairs": 59,
+   "simulated_after_fan_split_affected_vertices": 118,
+   "not_native_max": true
+  },
+  "construction": {
+   "fan_split_risk_vertices": 59,
+   "fan_split_risks": [
+    {
+     "vertex": 3509,
+     "xyz": [
+      -7644.432,
+      -15376.461,
+      146.110447
+     ],
+     "fan_faces": [
+      [
+       3460
+      ],
+      [
+       30561,
+       30565
+      ]
+     ]
+    },
+    {
+     "vertex": 5865,
+     "xyz": [
+      -7611.159,
+      -15311.223,
+      150.219983
+     ],
+     "fan_faces": [
+      [
+       6989,
+       6995
+      ],
+      [
+       7150,
+       7176,
+       7178
+      ]
+     ]
+    },
+    {
+     "vertex": 5884,
+     "xyz": [
+      -7609.89,
+      -15312.768,
+      150.192977
+     ],
+     "fan_faces": [
+      [
+       7033,
+       7037
+      ],
+      [
+       7136,
+       7140,
+       7146
+      ]
+     ]
+    },
+    {
+     "vertex": 6013,
+     "xyz": [
+      -7602.474,
+      -15307.755,
+      150.324738
+     ],
+     "fan_faces": [
+      [
+       7307,
+       7314
+      ],
+      [
+       7329
+      ]
+     ]
+    },
+    {
+     "vertex": 6047,
+     "xyz": [
+      -7603.788,
+      -15308.835,
+      150.297437
+     ],
+     "fan_faces": [
+      [
+       7344,
+       7346
+      ],
+      [
+       13080
+      ]
+     ]
+    },
+    {
+     "vertex": 6348,
+     "xyz": [
+      -7618.992,
+      -15301.695,
+      150.386501
+     ],
+     "fan_faces": [
+      [
+       7727
+      ],
+      [
+       13716,
+       13736,
+       13746,
+       13752
+      ]
+     ]
+    },
+    {
+     "vertex": 6892,
+     "xyz": [
+      -7622.571,
+      -15277.755,
+      150.7372
+     ],
+     "fan_faces": [
+      [
+       8552,
+       8586,
+       8606
+      ],
+      [
+       8554
+      ]
+     ]
+    },
+    {
+     "vertex": 6967,
+     "xyz": [
+      -7628.856,
+      -15268.686,
+      150.834241
+     ],
+     "fan_faces": [
+      [
+       8653,
+       8655
+      ],
+      [
+       28470,
+       28474
+      ]
+     ]
+    },
+    {
+     "vertex": 7121,
+     "xyz": [
+      -7603.974,
+      -15269.232,
+      151.098668
+     ],
+     "fan_faces": [
+      [
+       8888,
+       8890
+      ],
+      [
+       9788,
+       9790
+      ]
+     ]
+    },
+    {
+     "vertex": 7125,
+     "xyz": [
+      -7603.572,
+      -15269.721,
+      151.095035
+     ],
+     "fan_faces": [
+      [
+       8890
+      ],
+      [
+       9782,
+       9786
+      ]
+     ]
+    },
+    {
+     "vertex": 7302,
+     "xyz": [
+      -7605.876,
+      -15266.913,
+      151.115962
+     ],
+     "fan_faces": [
+      [
+       9133,
+       9137
+      ],
+      [
+       9924
+      ]
+     ]
+    },
+    {
+     "vertex": 7305,
+     "xyz": [
+      -7605.369,
+      -15267.531,
+      151.111355
+     ],
+     "fan_faces": [
+      [
+       9135,
+       9137
+      ],
+      [
+       9904,
+       9908
+      ]
+     ]
+    },
+    {
+     "vertex": 7307,
+     "xyz": [
+      -7607.145,
+      -15265.365,
+      151.127515
+     ],
+     "fan_faces": [
+      [
+       9139,
+       9143,
+       9147
+      ],
+      [
+       9963
+      ]
+     ]
+    },
+    {
+     "vertex": 7310,
+     "xyz": [
+      -7607.589,
+      -15264.825,
+      151.131554
+     ],
+     "fan_faces": [
+      [
+       9141,
+       9147
+      ],
+      [
+       9973
+      ]
+     ]
+    },
+    {
+     "vertex": 7313,
+     "xyz": [
+      -7606.194,
+      -15266.526,
+      151.118839
+     ],
+     "fan_faces": [
+      [
+       9143,
+       9145
+      ],
+      [
+       9928
+      ]
+     ]
+    },
+    {
+     "vertex": 7371,
+     "xyz": [
+      -7629.174,
+      -15267.999,
+      150.843309
+     ],
+     "fan_faces": [
+      [
+       9219
+      ],
+      [
+       9222,
+       28472
+      ]
+     ]
+    },
+    {
+     "vertex": 8151,
+     "xyz": [
+      -7615.644,
+      -15253.584,
+      151.245448
+     ],
+     "fan_faces": [
+      [
+       10318,
+       10337,
+       10345
+      ],
+      [
+       10427,
+       10431
+      ]
+     ]
+    },
+    {
+     "vertex": 8162,
+     "xyz": [
+      -7615.77,
+      -15253.428,
+      151.247057
+     ],
+     "fan_faces": [
+      [
+       10337,
+       10339
+      ],
+      [
+       10429
+      ]
+     ]
+    },
+    {
+     "vertex": 8195,
+     "xyz": [
+      -7615.833,
+      -15254.772,
+      151.221402
+     ],
+     "fan_faces": [
+      [
+       10406,
+       10412,
+       10414
+      ],
+      [
+       28502,
+       28516
+      ]
+     ]
+    },
+    {
+     "vertex": 8242,
+     "xyz": [
+      -7617.291,
+      -15252.996,
+      151.237258
+     ],
+     "fan_faces": [
+      [
+       10482,
+       10486
+      ],
+      [
+       10721,
+       10729
+      ]
+     ]
+    },
+    {
+     "vertex": 8248,
+     "xyz": [
+      -7617.609,
+      -15252.609,
+      151.24071
+     ],
+     "fan_faces": [
+      [
+       10493,
+       10495
+      ],
+      [
+       10729,
+       10731,
+       10733
+      ]
+     ]
+    },
+    {
+     "vertex": 8319,
+     "xyz": [
+      -7618.497,
+      -15250.104,
+      151.280653
+     ],
+     "fan_faces": [
+      [
+       10554,
+       10570
+      ],
+      [
+       10620
+      ]
+     ]
+    },
+    {
+     "vertex": 8344,
+     "xyz": [
+      -7619.511,
+      -15250.29,
+      151.261434
+     ],
+     "fan_faces": [
+      [
+       10630,
+       10634
+      ],
+      [
+       10899,
+       10903
+      ]
+     ]
+    },
+    {
+     "vertex": 8930,
+     "xyz": [
+      -7539.999,
+      -15344.082,
+      147.837527
+     ],
+     "fan_faces": [
+      [
+       11537
+      ],
+      [
+       11555
+      ]
+     ]
+    },
+    {
+     "vertex": 9525,
+     "xyz": [
+      -7603.221,
+      -15320.877,
+      150.052065
+     ],
+     "fan_faces": [
+      [
+       12385,
+       12389
+      ],
+      [
+       13193,
+       13195
+      ]
+     ]
+    },
+    {
+     "vertex": 9925,
+     "xyz": [
+      -7578.561,
+      -15322.734,
+      150.084454
+     ],
+     "fan_faces": [
+      [
+       12914,
+       12916,
+       12920,
+       12922
+      ],
+      [
+       28983,
+       28987
+      ]
+     ]
+    },
+    {
+     "vertex": 9947,
+     "xyz": [
+      -7608.303,
+      -15314.697,
+      150.159269
+     ],
+     "fan_faces": [
+      [
+       12956,
+       12958
+      ],
+      [
+       29659
+      ]
+     ]
+    },
+    {
+     "vertex": 9952,
+     "xyz": [
+      -7607.985,
+      -15315.084,
+      150.152505
+     ],
+     "fan_faces": [
+      [
+       12964,
+       12966,
+       12970
+      ],
+      [
+       29651
+      ]
+     ]
+    },
+    {
+     "vertex": 9956,
+     "xyz": [
+      -7605.444,
+      -15318.174,
+      150.098505
+     ],
+     "fan_faces": [
+      [
+       12972,
+       12974
+      ],
+      [
+       30115
+      ]
+     ]
+    },
+    {
+     "vertex": 9960,
+     "xyz": [
+      -7605.762,
+      -15317.787,
+      150.105269
+     ],
+     "fan_faces": [
+      [
+       12974,
+       12978,
+       12980
+      ],
+      [
+       30119
+      ]
+     ]
+    },
+    {
+     "vertex": 9962,
+     "xyz": [
+      -7607.031,
+      -15316.242,
+      150.132275
+     ],
+     "fan_faces": [
+      [
+       12976,
+       12980
+      ],
+      [
+       30135
+      ]
+     ]
+    },
+    {
+     "vertex": 10153,
+     "xyz": [
+      -7592.127,
+      -15305.64,
+      150.408127
+     ],
+     "fan_faces": [
+      [
+       13284,
+       13294
+      ],
+      [
+       30426
+      ]
+     ]
+    },
+    {
+     "vertex": 10163,
+     "xyz": [
+      -7597.887,
+      -15305.151,
+      150.395992
+     ],
+     "fan_faces": [
+      [
+       13307
+      ],
+      [
+       14111
+      ]
+     ]
+    },
+    {
+     "vertex": 10567,
+     "xyz": [
+      -7596.276,
+      -15300.9,
+      150.497441
+     ],
+     "fan_faces": [
+      [
+       13905,
+       13913,
+       13933,
+       13945,
+       13947,
+       13953
+      ],
+      [
+       30430
+      ]
+     ]
+    },
+    {
+     "vertex": 10714,
+     "xyz": [
+      -7565.652,
+      -15291.999,
+      150.483321
+     ],
+     "fan_faces": [
+      [
+       14163
+      ],
+      [
+       14171
+      ]
+     ]
+    },
+    {
+     "vertex": 10771,
+     "xyz": [
+      -7559.748,
+      -15296.001,
+      150.423622
+     ],
+     "fan_faces": [
+      [
+       14256,
+       14394
+      ],
+      [
+       14385
+      ]
+     ]
+    },
+    {
+     "vertex": 10856,
+     "xyz": [
+      -7559.076,
+      -15296.841,
+      150.412794
+     ],
+     "fan_faces": [
+      [
+       14376
+      ],
+      [
+       14385
+      ]
+     ]
+    },
+    {
+     "vertex": 10933,
+     "xyz": [
+      -7592.001,
+      -15295.113,
+      150.645479
+     ],
+     "fan_faces": [
+      [
+       14487,
+       14489,
+       14491,
+       14677
+      ],
+      [
+       29065,
+       29069,
+       29071
+      ]
+     ]
+    },
+    {
+     "vertex": 11259,
+     "xyz": [
+      -7575.747,
+      -15255.999,
+      151.662951
+     ],
+     "fan_faces": [
+      [
+       15060,
+       15071,
+       15073
+      ],
+      [
+       15308,
+       29182,
+       29184
+      ]
+     ]
+    },
+    {
+     "vertex": 11865,
+     "xyz": [
+      -7650.282,
+      -15303.999,
+      149.921381
+     ],
+     "fan_faces": [
+      [
+       16095
+      ],
+      [
+       16098
+      ]
+     ]
+    },
+    {
+     "vertex": 11936,
+     "xyz": [
+      -7653.462,
+      -15264.312,
+      150.652643
+     ],
+     "fan_faces": [
+      [
+       16246
+      ],
+      [
+       29484,
+       29486,
+       29488
+      ]
+     ]
+    },
+    {
+     "vertex": 11977,
+     "xyz": [
+      -7653.147,
+      -15262.767,
+      150.684161
+     ],
+     "fan_faces": [
+      [
+       16365
+      ],
+      [
+       16383
+      ]
+     ]
+    },
+    {
+     "vertex": 12115,
+     "xyz": [
+      -7593.57,
+      -15334.11,
+      149.898873
+     ],
+     "fan_faces": [
+      [
+       16633,
+       16652,
+       16662
+      ],
+      [
+       16758,
+       16762
+      ]
+     ]
+    },
+    {
+     "vertex": 12138,
+     "xyz": [
+      -7592.544,
+      -15335.358,
+      149.884866
+     ],
+     "fan_faces": [
+      [
+       16642,
+       16658,
+       16672
+      ],
+      [
+       16803,
+       16806
+      ]
+     ]
+    },
+    {
+     "vertex": 12145,
+     "xyz": [
+      -7592.49,
+      -15335.424,
+      149.884126
+     ],
+     "fan_faces": [
+      [
+       16644
+      ],
+      [
+       16803
+      ]
+     ]
+    },
+    {
+     "vertex": 12148,
+     "xyz": [
+      -7592.175,
+      -15335.811,
+      149.879782
+     ],
+     "fan_faces": [
+      [
+       16646,
+       16660
+      ],
+      [
+       30256
+      ]
+     ]
+    },
+    {
+     "vertex": 12201,
+     "xyz": [
+      -7593.453,
+      -15332.838,
+      149.912423
+     ],
+     "fan_faces": [
+      [
+       16693,
+       16707,
+       16715
+      ],
+      [
+       17288,
+       17301,
+       17317
+      ]
+     ]
+    },
+    {
+     "vertex": 12207,
+     "xyz": [
+      -7593.144,
+      -15333.216,
+      149.908612
+     ],
+     "fan_faces": [
+      [
+       16733,
+       16735,
+       16739,
+       16741
+      ],
+      [
+       17336
+      ]
+     ]
+    },
+    {
+     "vertex": 12208,
+     "xyz": [
+      -7593.195,
+      -15333.153,
+      149.909247
+     ],
+     "fan_faces": [
+      [
+       16733
+      ],
+      [
+       17288
+      ]
+     ]
+    },
+    {
+     "vertex": 12277,
+     "xyz": [
+      -7591.437,
+      -15336.705,
+      149.875418
+     ],
+     "fan_faces": [
+      [
+       16827
+      ],
+      [
+       17186,
+       17188
+      ]
+     ]
+    },
+    {
+     "vertex": 12633,
+     "xyz": [
+      -7595.1,
+      -15330.834,
+      149.929805
+     ],
+     "fan_faces": [
+      [
+       17367,
+       17439
+      ],
+      [
+       30262,
+       30264
+      ]
+     ]
+    },
+    {
+     "vertex": 12638,
+     "xyz": [
+      -7595.694,
+      -15330.114,
+      149.935182
+     ],
+     "fan_faces": [
+      [
+       17369,
+       17372,
+       17385,
+       17399
+      ],
+      [
+       17454,
+       17457
+      ]
+     ]
+    },
+    {
+     "vertex": 12639,
+     "xyz": [
+      -7595.418,
+      -15330.45,
+      149.931608
+     ],
+     "fan_faces": [
+      [
+       17369,
+       17445
+      ],
+      [
+       30273
+      ]
+     ]
+    },
+    {
+     "vertex": 12646,
+     "xyz": [
+      -7594.656,
+      -15331.377,
+      149.927156
+     ],
+     "fan_faces": [
+      [
+       17379,
+       17397,
+       17401,
+       17415
+      ],
+      [
+       17418,
+       17424
+      ]
+     ]
+    },
+    {
+     "vertex": 12737,
+     "xyz": [
+      -7597.065,
+      -15329.862,
+      149.929088
+     ],
+     "fan_faces": [
+      [
+       17512,
+       17516
+      ],
+      [
+       30302,
+       30326,
+       30350
+      ]
+     ]
+    },
+    {
+     "vertex": 12789,
+     "xyz": [
+      -7598.277,
+      -15326.973,
+      149.949485
+     ],
+     "fan_faces": [
+      [
+       17573
+      ],
+      [
+       17652
+      ]
+     ]
+    },
+    {
+     "vertex": 12886,
+     "xyz": [
+      -7600.5,
+      -15324.27,
+      149.980734
+     ],
+     "fan_faces": [
+      [
+       17716,
+       17724,
+       17726
+      ],
+      [
+       30070,
+       30072
+      ]
+     ]
+    },
+    {
+     "vertex": 12941,
+     "xyz": [
+      -7587.639,
+      -15313.305,
+      150.242405
+     ],
+     "fan_faces": [
+      [
+       17804,
+       17806
+      ],
+      [
+       17814
+      ]
+     ]
+    },
+    {
+     "vertex": 19847,
+     "xyz": [
+      -7608.096,
+      -15264.207,
+      151.137075
+     ],
+     "fan_faces": [
+      [
+       29693,
+       29701
+      ],
+      [
+       29791,
+       29795
+      ]
+     ]
+    }
+   ],
+   "simulated_after_fan_split_vertex_pairs": 59,
+   "simulated_after_fan_split_affected_vertices": 118,
+   "not_native_max": true
+  }
+ },
+ "native_max_xview": "not_run",
+ "blender_export_readback": "not_run",
+ "full_suite": "not_run_incomplete_candidate",
+ "programs": {
+  "paired-xview-probe.py": {
+   "sha256": "b4f988590d72e011728cfe9f6d2f5adcfd9043dbd48d6d4189cecc0804c08741",
+   "utf8": "\"\"\"Read-only real v014 pairing measurement, not a v015 delivery.\"\"\"\nimport json, hashlib, time\nfrom pathlib import Path\nfrom collections import Counter\nimport numpy as np\nfrom dt_ai.geometry.ground_cake import Mesh\nfrom dt_ai.geometry.ground_quads import pair_triangles\nfrom dt_ai.ops.inv_quads import PolyMesh, classify_faces\nfrom dt_ai.ops.inv_xview import part_report, XviewTolerance\n\nroot=Path('C:/x/ev_t_eb1c51ca/v014_rebuild')\nsource=root/'ground_master_vpm.json'\nb=source.read_bytes(); d=json.loads(b)\nm=Mesh(np.array(d['verts']),np.array(d['faces']),[d['slots'][i] for i in d['mat']],np.array(d['level']),np.array(d['uv']),4.)\n# Details previously had one unrelated local UV frame per triangle. Test a\n# shared metric plane projection for pairing; final tile layout is NOT certified.\nfor i in np.flatnonzero(m.level == -2):\n    points=m.verts[m.faces[i]]\n    normal=np.cross(points[1]-points[0],points[2]-points[0])\n    axis=int(abs(normal).argmax()); axes=[j for j in range(3) if j!=axis]\n    if np.dot(np.cross(np.eye(3)[axes[0]],np.eye(3)[axes[1]]),normal)<0: axes.reverse()\n    m.uv[i]=points[:,axes]/4\n\nt=time.time(); q=pair_triangles(m)\n# Preserve the UVs of BOTH profiles: UV-discontinuous pairs in NPM are split again.\nnpm=json.loads((root/'ground_master_npm.json').read_bytes())\nuv=np.array(npm['uv']); out=[]; split=0\nfor face,parents in zip(q.faces,q.source_faces):\n    maps=[dict(zip(m.faces[p],uv[p])) for p in parents]\n    seam=m.level[parents[0]] != -2 and len(parents)==2 and any(not np.allclose(maps[0][v],maps[1][v],atol=1e-6,rtol=0) for v in set(m.faces[parents[0]]) & set(m.faces[parents[1]]))\n    if seam:\n        split+=1\n        out.extend((tuple(m.faces[p]),(p,)) for p in parents)\n    else: out.append((face,parents))\nfaces=tuple(f for f,p in out); parents=[p for f,p in out]\nslots=[m.slot[p[0]] for p in parents]; levels=[int(m.level[p[0]]) for p in parents]\ntriangles=[(f[0],f[i],f[i+1]) for f in faces for i in range(1,len(f)-1)]\nassert Counter(tuple(sorted(f)) for f in triangles)==Counter(tuple(sorted(f)) for f in m.faces)\nassert sorted(p for ids in parents for p in ids)==list(range(len(m.faces)))\nrep={'source':str(source),'sha256':hashlib.sha256(b).hexdigest(),'faces':len(faces),'quads':sum(len(f)==4 for f in faces),'triangles':sum(len(f)==3 for f in faces),'triangle_equivalent':len(triangles),'surface_polygons':sum(l>=0 for l in levels),'npm_uv_pairs_split':split,'fixed_diagonal_surface_deviation_mm':0.,'source_inventory_exact':True,'per_slot':{}}\nfor slot in sorted(set(slots)):\n    ids=[i for i,s in enumerate(slots) if s==slot]\n    pm=PolyMesh(q.verts,tuple(faces[i] for i in ids))\n    labels=classify_faces(pm)\n    rep['per_slot'][slot]={'quads':sum(len(f)==4 for f in pm.faces),'triangles':sum(len(f)==3 for f in pm.faces),'raw_d129_labels':dict(Counter(labels))}\nprint(json.dumps(rep),flush=True)\nx=part_report('paired_v014',PolyMesh(q.verts,faces),XviewTolerance())\nrep['xview']=x.to_dict()\nrep['offender_slot_pairs']={str(k):v for k,v in Counter(tuple(sorted(((slots[a-1],levels[a-1]),(slots[b-1],levels[b-1])))) for a,b,kind,gap in x.face_pairs).items()}\nrep['face_witnesses']=[{'face_a':a,'face_b':b,'source_a':parents[a-1],'source_b':parents[b-1],'slot_a':slots[a-1],'slot_b':slots[b-1],'kind':kind,'gap':gap} for a,b,kind,gap in x.face_pairs]\nrep['seconds']=time.time()-t\nPath('tmp/paired-xview-probe.json').write_text(json.dumps(rep,indent=2))\nPath('tmp/paired-v014.json').write_text(json.dumps({'verts':q.verts.tolist(),'faces':faces,'source_faces':parents,'slots_per_face':slots,'levels':levels},default=int))\nprint('xview',len(x.vertex_pairs),len(x.face_pairs),rep['offender_slot_pairs'],flush=True)\nassert source.read_bytes()==b\n"
+  },
+  "construction-probe.py": {
+   "sha256": "c87e8ed0bc61be9c3380608513c9bd891c90be1678d9b4138560c799ff1c8590",
+   "utf8": "\"\"\"Bounded geometry-only construction probe; NOT a deliverable or gate receipt.\n\nOriginal cake is immutable. Rebuild curbs around a 6 mm stair clearance;\nclip skirt curtain against near-coplanar stair faces in its own plane.\nNo source element is silently dropped: skirt fragments carry source-face IDs.\n\"\"\"\nimport json,time,importlib.util\nfrom pathlib import Path\nfrom collections import Counter\nimport numpy as np\nfrom shapely.geometry import Polygon, shape, MultiPolygon\nfrom shapely.ops import unary_union\nfrom dt_ai.geometry import ground_cake as gc, ground_details as gd\nfrom dt_ai.geometry.ground_quads import pair_triangles\nfrom dt_ai.ops.inv_quads import PolyMesh\nfrom dt_ai.ops.inv_xview import part_report,XviewTolerance\n\nroot=Path('C:/x/ev_t_eb1c51ca/v014_rebuild')\nraw=json.loads((root/'ground_master_vpm.json').read_text())\nv=np.array(raw['verts']); f=np.array(raw['faces']); lev=np.array(raw['level']); slots=np.array([raw['slots'][i] for i in raw['mat']])\nsource=Path('C:/x/t_d94665f2/paving_ground_inputs_v4.json')\nd=json.loads(source.read_text(encoding='utf-8'))\nrep0=json.loads((root/'ground_report.json').read_text(encoding='utf-8'))\nfoot=unary_union([shape(r['footprint']) for r in rep0['details'] if r.get('footprint')])\noriginal_curb=gd._curb_solid\nsampler=gc.ReliefSampler(gc.build_tin([(e['x'],e['y'],e['z']) for e in d['elevations']]))\ndef curb(geom,sampler,height,slot):\n    geom=geom.difference(foot.buffer(.006))\n    return original_curb(geom,sampler,height,slot)\ngd._curb_solid=curb\nspec=importlib.util.spec_from_file_location('builder','jobs/VATUTINO-SITE/build_ground.py'); builder=importlib.util.module_from_spec(spec); spec.loader.exec_module(builder)\nplan=gc.plan_layers(shape(d['boundary']),{t:list(getattr(shape(c['geometry']),'geoms',[])) for t,c in d['coverings'].items()},d['base_covering'],builder.SLOTS,footprint_min_area=1000.,step=.006)\nnew_detail,dispositions=gd.build_details(d.get('ground_elements',[]),plan.surface,sampler)\n# Clip each vertical skirt triangle only against stair polygons lying inside\n# a 5.1 mm slab around its plane. Crossing faces reduce to buffered lines.\nstairs=new_detail.verts[new_detail.faces[np.array(new_detail.slot)=='Stairs']]\nV=[]; F=[]; S=[]; L=[]; origin_ids=[]; deleted=[]; index={}\ndef append(points,slot,level,source_id):\n    ids=[]\n    for p in points:\n        key=tuple(np.round(p,9))\n        if key not in index: index[key]=len(V);V.append(p)\n        ids.append(index[key])\n    if len(set(ids))<3: return\n    F.append(ids);S.append(slot);L.append(level);origin_ids.append(source_id)\ndef clip_slab(points,normal,origin):\n    points=list(points)\n    for sign in (1,-1):\n        out=[]\n        for a,b in zip(points,points[1:]+points[:1]):\n            da=sign*np.dot(a-origin,normal)-.0051; db=sign*np.dot(b-origin,normal)-.0051\n            if da<=0: out.append(a)\n            if (da<0 and db>0) or (da>0 and db<0): out.append(a+(b-a)*(da/(da-db)))\n        points=out\n        if not points:break\n    return np.array(points)\nchanged=0\nfor i,(face,slot,level) in enumerate(zip(f,slots,lev)):\n    if level==-2: continue\n    points=v[face]\n    if slot!='Skirt': append(points,slot,int(level),i);continue\n    origin=points[0]; e=points[1]-origin\n    # horizontal coordinate along the curtain; z is second coordinate\n    horizontal=next((p-origin for p in points[1:] if np.linalg.norm((p-origin)[:2])>1e-8),None)\n    if horizontal is None: raise ValueError('invalid skirt')\n    ex=np.array([*horizontal[:2],0.]);ex/=np.linalg.norm(ex);ey=np.array([0.,0.,1.]);normal=np.cross(ex,ey)\n    xy=np.column_stack([(points-origin)@ex,(points-origin)@ey]); poly=Polygon(xy)\n    nearby=[]\n    for tri in stairs:\n        if np.all((tri-origin)@normal>.0051) or np.all((tri-origin)@normal<-.0051): continue\n        clipped=clip_slab(tri,normal,origin)\n        if len(clipped)<2:continue\n        coords=np.column_stack([(clipped-origin)@ex,(clipped-origin)@ey])\n        from shapely.geometry import MultiPoint\n        nearby.append(MultiPoint(coords).convex_hull.buffer(.0051))\n    cut=poly.difference(unary_union(nearby)) if nearby else poly\n    if cut.equals(poly): append(points,slot,int(level),i);continue\n    changed+=1\n    fragments=[]\n    for part in gc._polys(cut):\n        for tri in gc._tri_piece(part):\n            q=np.array(tri); pts=origin+q[:,0,None]*ex+q[:,1,None]*ey\n            if np.dot(np.cross(pts[1]-pts[0],pts[2]-pts[0]),np.cross(points[1]-points[0],points[2]-points[0]))<0:pts=pts[::-1]\n            append(pts,slot,int(level),i);fragments.append(1)\n    if not fragments:deleted.append({'source_face':i,'reason':'curtain replaced at stair wall; must certify perimeter depth before acceptance'})\nfor tri,slot in zip(new_detail.verts[new_detail.faces],new_detail.slot): append(tri,slot,-2,None)\nV=np.array(V);F=np.array(F);L=np.array(L)\nm=gc.Mesh(V,F,S,L,np.zeros((len(F),3,2)),4.)\n# Metric common-axis UV is a pairing probe only, not final UDIM layout.\nfor i,tri in enumerate(V[F]):\n    n=np.cross(tri[1]-tri[0],tri[2]-tri[0]);axis=int(abs(n).argmax()); axes=[a for a in range(3) if a!=axis]\n    m.uv[i]=tri[:,axes]/4\nm=gc.clean_topology(m)\nq=pair_triangles(m)\nprint('candidate',len(q.faces),sum(len(f)==4 for f in q.faces),'skirt changed',changed,flush=True)\nx=part_report('construction_probe',PolyMesh(q.verts,q.faces),XviewTolerance())\nrep={'not_deliverable':True,'skirt_triangles_clipped':changed,'skirt_replaced_source_faces':deleted,'surface_geometry_unchanged_before_clean_topology':True,'quads':sum(len(f)==4 for f in q.faces),'triangles':sum(len(f)==3 for f in q.faces),'triangle_equivalent':sum(len(f)-2 for f in q.faces),'surface_polygons':int((q.level>=0).sum()),'xview':x.to_dict(),'offender_slot_pairs':{str(k):n for k,n in Counter(tuple(sorted(((q.slot[a-1],int(q.level[a-1])),(q.slot[b-1],int(q.level[b-1]))))) for a,b,kind,gap in x.face_pairs).items()},'face_witnesses':[{'a':a,'b':b,'slot_a':q.slot[a-1],'slot_b':q.slot[b-1],'kind':kind,'gap_m':gap,'xyz_a':q.verts[list(q.faces[a-1])].tolist(),'xyz_b':q.verts[list(q.faces[b-1])].tolist()} for a,b,kind,gap in x.face_pairs]}\nPath('tmp/construction-probe.json').write_text(json.dumps(rep,indent=2,default=int))\nnp.savez('tmp/construction-probe.npz',verts=m.verts,faces=m.faces,slot=m.slot,level=m.level,uv=m.uv)\nprint('remaining',len(x.vertex_pairs),len(x.face_pairs),rep['offender_slot_pairs'],flush=True)\n"
+  },
+  "bowtie-conversion-risk.py": {
+   "sha256": "e2cbbdb43a748e7049ddd4962eb71358ba7610c85481a6b745ed1a2edaff229d",
+   "utf8": "\"\"\"Record polygon-fan conversion risks, without claiming a native Max run.\"\"\"\nimport json\nfrom pathlib import Path\nfrom collections import defaultdict,Counter\nimport numpy as np\nfrom dt_ai.ops.inv_xview import vertex_pairs\n\n\ndef inspect(v,faces):\n    inc=defaultdict(list)\n    for i,f in enumerate(faces):\n        for a in f:inc[int(a)].append(i)\n    out=[]; vv=list(v)\n    for a,ids in inc.items():\n        parents={i:i for i in ids}\n        def find(i):\n            while parents[i]!=i:\n                parents[i]=parents[parents[i]];i=parents[i]\n            return i\n        edges=defaultdict(list)\n        for i in ids:\n            f=faces[i];pos=list(f).index(a)\n            for b in (f[pos-1],f[(pos+1)%len(f)]):edges[int(b)].append(i)\n        for uses in edges.values():\n            for i in uses[1:]: parents[find(i)]=find(uses[0])\n        groups=defaultdict(list)\n        for i in ids:groups[find(i)].append(i)\n        if len(groups)>1:\n            out.append({'vertex':a,'xyz':v[a].tolist(),'fan_faces':list(groups.values())})\n            for _ in range(len(groups)-1):vv.append(v[a].copy())\n    pa,pb,dist=vertex_pairs(np.array(vv),.002)\n    return {'fan_split_risk_vertices':len(out),'fan_split_risks':out,'simulated_after_fan_split_vertex_pairs':len(pa),'simulated_after_fan_split_affected_vertices':len(set(pa)|set(pb)),'not_native_max':True}\n\np=json.loads(Path('tmp/paired-v014.json').read_text())\nn=np.load('tmp/construction-probe.npz')\nresult={'paired':inspect(np.array(p['verts']),p['faces']),'construction':inspect(n['verts'],n['faces'])}\nPath('tmp/bowtie-conversion-risk.json').write_text(json.dumps(result,indent=2))\nfor k,v in result.items(): print(k,{a:b for a,b in v.items() if a!='fan_split_risks'})\n"
+  }
+ }
+}

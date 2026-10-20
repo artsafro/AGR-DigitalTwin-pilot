@@ -1,6 +1,6 @@
 """Conforming editable Ground patches from constrained triangle seeds.
 
-Pattern: n/a | new-case: Steiner quad patches on a shared Ground contour partition (#371).
+Pattern: n/a | new-case: Steiner quad patches and source-preserving triangle pairs (#371).
 
 Unpaired triangles become three quads. Coplanar, convex, same-slot/level seed
 pairs become quad patches; parity propagation adds local two/four-quad
@@ -17,7 +17,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 import heapq
 
-from dt_ai.ops.inv_quads import PolyMesh, _mergeable
+from dt_ai.ops.inv_quads import PLANAR_DEG, PolyMesh, _mergeable
 
 import numpy as np
 
@@ -30,7 +30,7 @@ class QuadMesh:
     faces: tuple[tuple[int, ...], ...]
     slot: list[str]
     level: np.ndarray
-    uv: np.ndarray
+    uv: np.ndarray | tuple[np.ndarray, ...]
     source_faces: tuple[tuple[int, ...], ...]
     cell: float
 
@@ -79,7 +79,7 @@ def _pair(mesh, a, b, edge):
     return tuple(ring), actual
 
 
-def _patches(mesh):
+def _patches(mesh, pairer=_pair):
     incidence = defaultdict(list)
     for k, face in enumerate(mesh.faces):
         for e in _edges(face):
@@ -91,7 +91,7 @@ def _patches(mesh):
         if len(ids) != 2:
             continue
         a, b = ids
-        merged = _pair(mesh, a, b, edge)
+        merged = pairer(mesh, a, b, edge)
         if merged is not None:
             candidates[a, b] = merged
             adjacent[a].add(b)
@@ -158,8 +158,56 @@ def _transition(points):
     return None
 
 
-def remesh(mesh: Mesh) -> QuadMesh:
-    """Conforming all-quad remesh; shared vertices and per-corner UV seams persist."""
+def pair_triangles(mesh: Mesh) -> QuadMesh:
+    """Option (a): D129-compatible pairing, no new points or changed tessellation.
+
+    Every output face carries its exact source triangle IDs. The quad's 0--2
+    diagonal is the original shared edge, so its fixed-fan tessellation is exactly
+    the source surface (including nonplanar pairs within D129's one degree).
+    UV discontinuities, material/level boundaries and inconsistent winding are
+    not crossed. This primitive neither relaxes D129 nor claims xView acceptance.
+    """
+    _validate_seed(mesh)
+
+    def pair(m, a, b, edge):
+        f, g = tuple(m.faces[a]), tuple(m.faces[b])
+        if m.slot[a] != m.slot[b] or m.level[a] != m.level[b]:
+            return None
+        if not _mergeable(m.verts, f, g, edge, PLANAR_DEG):
+            return None
+        # Start at the shared diagonal: the exporter must keep this tessellation.
+        start = edge[0]
+        successor = {}
+        for tri in (f, g):
+            for x, y in zip(tri, (*tri[1:], tri[0])):
+                if tuple(sorted((x, y))) != edge:
+                    if x in successor:
+                        return None
+                    successor[x] = y
+        ring = [start]
+        for _ in range(3):
+            if ring[-1] not in successor:
+                return None
+            ring.append(successor[ring[-1]])
+        if len(set(ring)) != 4 or successor.get(ring[-1]) != start:
+            return None
+        uv = dict(zip(f, m.uv[a]))
+        for v, value in zip(g, m.uv[b]):
+            if v in uv and not np.allclose(uv[v], value, atol=1e-6, rtol=0):
+                return None
+            uv[v] = value
+        return tuple(ring), np.asarray([uv[v] for v in ring])
+
+    patches = _patches(mesh, pair)
+    return QuadMesh(mesh.verts.copy(), tuple(f for f, _, _ in patches),
+                    [mesh.slot[ids[0]] for _, _, ids in patches],
+                    np.array([mesh.level[ids[0]] for _, _, ids in patches]),
+                    tuple(uv.copy() for _, uv, _ in patches),
+                    tuple(ids for _, _, ids in patches), mesh.cell)
+
+
+def _validate_seed(mesh: Mesh):
+    """Reject malformed or ambiguous triangle seeds before either conversion."""
     checked = PolyMesh(mesh.verts, tuple(map(tuple, mesh.faces)))
     if not checked.faces or any(len(f) != 3 for f in checked.faces):
         raise ValueError('nonempty triangle seed required')
@@ -182,6 +230,11 @@ def remesh(mesh: Mesh) -> QuadMesh:
         if key in seen:
             raise ValueError(f'seed face {k}: duplicate face {key}')
         seen.add(key)
+
+
+def remesh(mesh: Mesh) -> QuadMesh:
+    """Conforming all-quad remesh; shared vertices and per-corner UV seams persist."""
+    _validate_seed(mesh)
     patches = _patches(mesh)
     vertices = mesh.verts.tolist()
     midpoints = {}
