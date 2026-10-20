@@ -91,6 +91,13 @@ box("BoxA", (0, 0, 0))
 box("BoxB", (1, 0, 0))
 export("c_contact.fbx")
 
+# (d) review round 1: BoxB 2 mm off BoxA on every axis (3.46 mm diagonal, no contact); BoxC 1 mm off on x only
+reset()
+box("BoxA", (0, 0, 0))
+box("BoxB", (1.002, 1.002, 1.002))
+box("BoxC", (-1.001, 0, 0))
+export("d_diagonal.fbx")
+
 # no mesh: one empty only
 reset()
 bpy.context.scene.collection.objects.link(bpy.data.objects.new("Lonely", None))
@@ -188,3 +195,32 @@ def test_output_equal_to_input_is_refused(blender, fbx_dir):
     before = fbx.read_bytes()
     run = extract(blender, fbx, fbx)
     assert run.returncode == 1 and fbx.read_bytes() == before
+
+
+def test_diagonal_gap_is_euclidean_extractor_to_converter(blender, fbx_dir, tmp_path):
+    """3.46 mm diagonal separation is no contact; the 1 mm axial one is the only question."""
+    facts, parts = parts_for(blender, fbx_dir, "d_diagonal.fbx", tmp_path)
+    assert [(c["a"], c["b"]) for c in facts["contacts"]] == [("BoxA", "BoxC")]
+    assert facts["contacts"][0]["gap_m"] == pytest.approx(0.001, abs=1e-5)
+    assert len(parts.questions) == 1 and parts.joints == []
+    assert "BoxC" in parts.questions[0].text and "BoxB" not in parts.questions[0].text
+
+
+def test_input_named_like_output_partial_is_preserved(blender, fbx_dir, tmp_path):
+    src, out = tmp_path / "alias.fbx.partial", tmp_path / "alias.fbx"
+    src.write_bytes((fbx_dir / "c_contact.fbx").read_bytes())
+    before = src.read_bytes()
+    run = extract(blender, src, out)
+    assert run.returncode == 0, run.stdout[-2000:] + run.stderr[-2000:]
+    assert src.read_bytes() == before
+    assert json.loads(out.read_text(encoding="utf-8"))["source"]["name"] == "alias.fbx.partial"
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["alias.fbx", "alias.fbx.partial"]
+
+
+def test_unrelated_partial_sentinel_is_preserved(blender, fbx_dir, tmp_path):
+    out, sentinel = tmp_path / "structure.json", tmp_path / "structure.json.partial"
+    sentinel.write_bytes(b"sentinel")
+    run = extract(blender, fbx_dir / "c_contact.fbx", out)
+    assert run.returncode == 0, run.stdout[-2000:] + run.stderr[-2000:]
+    assert sentinel.read_bytes() == b"sentinel"
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["structure.json", "structure.json.partial"]

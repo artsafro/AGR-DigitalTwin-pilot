@@ -5,6 +5,7 @@ All facts are synthetic dicts generated here; no FBX, no Blender.
 import hashlib
 import itertools
 import json
+import math
 import random
 from pathlib import Path
 from typing import get_args
@@ -294,11 +295,77 @@ def test_probe_contacts_within_2mm_brute_force():
         got = {(c["a"], c["b"]) for c in contacts(boxes, 0.002)}
         for a, b in itertools.combinations(sorted(boxes), 2):
             (amin, amax), (bmin, bmax) = boxes[a], boxes[b]
-            gap = max(max(0.0, bmin[k] - amax[k], amin[k] - bmax[k]) for k in range(3))
-            assert ((a, b) in got) == (gap <= 0.002 + 1e-12), (a, b, gap)
+            gap = math.sqrt(sum(max(0.0, bmin[k] - amax[k], amin[k] - bmax[k]) ** 2 for k in range(3)))
+            assert ((a, b) in got) == (gap <= 0.002 + 1e-9), (a, b, gap)
             n += 1
     assert n == 5000
     assert bbox_gap(([0, 0, 0], [1, 1, 1]), ([1.002, 0, 0], [2, 1, 1])) == pytest.approx(0.002)
+
+
+UNIT = ([0, 0, 0], [1, 1, 1])
+
+
+@pytest.mark.parametrize("offset,gap,touch", [
+    ((0, 0, 0), 0.0, True),                        # face-touching
+    ((0.002, 0, 0), 0.002, True),                  # axial, exactly the tolerance
+    ((0.0021, 0, 0), 0.0021, False),               # axial, just over
+    ((0.0012, 0.0016, 0), 0.002, True),            # 2-axis, Euclidean exactly the tolerance
+    ((0.0015, 0.0015, 0), 0.0015 * math.sqrt(2), False),   # 2-axis, each axis < 2 mm, diagonal > 2 mm
+    ((0.001, 0.001, 0.001), 0.001 * math.sqrt(3), True),   # 3-axis, 1.73 mm
+    ((0.002, 0.002, 0.002), 0.002 * math.sqrt(3), False),  # 3-axis, 3.46 mm (review round 1)
+    ((-0.5, 0.0019, 0), 0.0019, True),             # overlap on x, gap on y only
+])
+def test_bbox_gap_is_euclidean_norm_of_axis_gaps(offset, gap, touch):
+    other = ([1 + o if o >= 0 else o for o in offset], [2 + o if o >= 0 else 1 + o for o in offset])
+    assert bbox_gap(UNIT, other) == pytest.approx(gap, abs=1e-12)
+    assert bool(contacts({"A": UNIT, "B": other}, 0.002)) is touch
+
+
+def test_diagonal_boxes_3_46mm_apart_give_no_contact_and_no_question():
+    """Review round 1: [0,0,0]..[1,1,1] and [1.002]*3..[2]*3 are 3.4641 mm apart -> 0 contacts, 0 questions."""
+    f = facts([obj("BoxA", bbox=UNIT), obj("BoxB", bbox=((1.002, 1.002, 1.002), (2, 2, 2)))])
+    parts = reader.convert(f, synthetic=True)
+    assert parts.questions == [] and parts.joints == []
+    with pytest.raises(reader.StructureError):  # an extractor claiming the contact disagrees with the boxes
+        reader.convert(facts(f["objects"], contact_pairs=[("BoxA", "BoxB", 0.002)]), synthetic=True)
+
+
+# ---- publication never touches the input or unrelated files (review round 1) ----
+
+def test_input_named_like_output_partial_is_preserved(tmp_path):
+    src, out = tmp_path / "parts.json.partial", tmp_path / "parts.json"
+    src.write_text(json.dumps(scene_a()), encoding="utf-8")
+    before = src.read_bytes()
+    assert reader.main([str(src), str(out), "--synthetic"]) == 0
+    assert src.read_bytes() == before
+    assert PartsList.model_validate_json(out.read_text(encoding="utf-8")).parts
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["parts.json", "parts.json.partial"]
+
+
+def test_unrelated_partial_sentinel_is_preserved(tmp_path):
+    src, out = tmp_path / "structure.json", tmp_path / "parts.json"
+    src.write_text(json.dumps(scene_a()), encoding="utf-8")
+    sentinel = tmp_path / "parts.json.partial"
+    sentinel.write_bytes(b"sentinel")
+    assert reader.main([str(src), str(out), "--synthetic"]) == 0
+    assert sentinel.read_bytes() == b"sentinel"
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["parts.json", "parts.json.partial", "structure.json"]
+
+
+def test_normal_publication_leaves_no_temporary_files(tmp_path):
+    src, out = tmp_path / "structure.json", tmp_path / "parts.json"
+    src.write_text(json.dumps(scene_a()), encoding="utf-8")
+    out.write_bytes(b"old")
+    assert reader.main([str(src), str(out), "--synthetic"]) == 0
+    assert json.loads(out.read_text(encoding="utf-8"))["status"] == "draft"
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["parts.json", "structure.json"]
+
+
+def test_failed_conversion_leaves_no_temporary_files(tmp_path):
+    src, out = tmp_path / "structure.json", tmp_path / "parts.json"
+    src.write_text(json.dumps(facts([])), encoding="utf-8")
+    assert reader.main([str(src), str(out)]) != 0
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["structure.json"]
 
 
 def test_probe_every_conversion_is_valid_and_budget_adds_up():
