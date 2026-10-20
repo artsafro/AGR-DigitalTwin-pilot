@@ -1,0 +1,2064 @@
+{
+ "version": "placement-report-v001",
+ "issue": 296,
+ "status": "technical QA; user geometry acceptance open",
+ "passed": false,
+ "seed": 296,
+ "inputs": {
+  "adapter": {
+   "path": "C:\\x\\t_d94665f2\\paving_ground_inputs_v4.json",
+   "sha256": "3b6b433d718c0292f472293849f3363fd2ae90d4892e598efca52be44cd9d502"
+  },
+  "flora_fbx": {
+   "Amelanchier_lamarckii_NPM": "344249a9519e5b7d558bd7e971de75350bf7b1774fc9635ab6c88f1513f81122",
+   "Amelanchier_lamarckii_VPM": "4ce4b50a236d30860d20c06a8e2be6076f74109d91b40430be8739c7379363f0",
+   "Cornus_sericea_NPM": "892899eb49cc01b787f62b959cacac0107b90eb02c8347ee749c46c976dfa003",
+   "Crataegus_mollis_NPM": "82c07d5c8c91e6f124ce264f65ec2ea7987da0c7e89b01a378a6c391caa79323",
+   "Crataegus_mollis_VPM": "5e471fe86dd0a8618111578114b56a77ace794297da44f63c3f73d0dd75a7d86",
+   "Dasiphora_fruticosa_NPM": "396fb4e4822931c06ff3ad4a424ec5f65df970688440df08e9908853d378bb7c",
+   "Dasiphora_fruticosa_VPM": "b89d753d4ba12eece25daf1f932ba85b8f0d87d94589ba9d9f4cc1951a9d149e",
+   "Malus_niedzwetzkyana_NPM": "1e325ae5b573f70bf0f97f8babcfafc0bbcd39fdac7647744a2d31132462527d",
+   "Malus_niedzwetzkyana_VPM": "133c548389c4a8dab3be8b11284c0d143862a5a5c1e0745860d0a0f23d1fb198",
+   "Physocarpus_opulifolius_Diabolo_NPM": "5791755c50a7615bbcebc353c7be47619926ef819deea258ca06cba0bb51f6bb",
+   "Physocarpus_opulifolius_Diabolo_VPM": "740fef0525a92b43609d19a4484162517c3c52332f72d71b42c104d067107d18",
+   "Pinus_mugo_NPM": "09530fc626ad231b56c83f56a02a02193f1ac1d95e691a3f8e8eebf83b471f73",
+   "Pinus_mugo_VPM": "c643c6c2a1a8ee89747b984091be848cde2071f5a78fc8a02163609f29c4195f",
+   "Prunus_padus_NPM": "1fcc02dd061a10f97fc4238dca397b3aaf1556771993ace3a6307191404f51f3",
+   "Prunus_padus_VPM": "4b33eb462abeae50b2ecb1c8373cfcca67fcc3b614bd49063beaf61da32c695d",
+   "Sorbaria_sorbifolia_NPM": "2342a0db6cb752de7087ac2d3eb9c31fd69c3165ede915118b47dfc0dbcb5321",
+   "Sorbaria_sorbifolia_VPM": "07d2e49cb70dde43d79869c1f5540ebc0e08a2720e805bc2ead39322d9cbe5d9",
+   "Stephanandra_incisa_Crispa_NPM": "a7ff3cc9e04d5ec1c28f8e66e9ab9034457e8401c5dc623eb3154b28ebf74192",
+   "Stephanandra_incisa_Crispa_VPM": "a26dfc7b612d4ae30b18e63f8291163b7c4475bf00b35a2bb3fcfbda66dd3084",
+   "Tilia_cordata_NPM": "ecd0fa4f14fb845cd86aa8593827617b04cd237723aa729dfa67eabd1270d31d",
+   "Tilia_cordata_VPM": "a772f59e08be96a96cb49a804a587aea29b620643fb3efe7e91aadcb5654d729"
+  },
+  "flora_library": {
+   "export_dir": "C:\\x\\t_5e4ea2be\\flora_fbx",
+   "path": "C:/x/flora-library/v003/flora-library-v003.max"
+  },
+  "ground_npm": {
+   "fbx": "C:\\x\\t_d94665f2\\ground_v014\\npm\\SM_Vatutino_Ground.fbx",
+   "fbx_sha256": "94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef",
+   "master": "C:\\x\\t_d94665f2\\ground_v014\\ground_master_npm.json",
+   "master_sha256": "f1a03db9d7b2293db50817f8cb7c0c021d25737ff0c2f9ea984e47192b1979bb",
+   "offset": [
+    -7594.03369140625,
+    -15287.7451171875,
+    0.0
+   ]
+  },
+  "ground_vpm": {
+   "fbx": "C:\\x\\t_d94665f2\\ground_v014\\vpm\\SM_Vatutino_Ground.fbx",
+   "fbx_sha256": "a41266757fe39958cae7a40a765b628aa7cbfeb74de48d3c82efc297b9cf75f1",
+   "master": "C:\\x\\t_d94665f2\\ground_v014\\ground_master_vpm.json",
+   "master_sha256": "82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5",
+   "offset": [
+    -7594.03369140625,
+    -15287.7451171875,
+    0.0
+   ]
+  },
+  "maf_fbx_npm": {
+   "VAT_MAF_T3510_01": "51cdd9ebf9e25d8ba24a8acebb0ddd5dad0a5f6d867d0bdf2b025e4c620e60f1",
+   "VAT_MAF_T3510_02": "3d1633c3b8bff07143056769a7bac362bc75a0d8d3642586f12a889583ca3376",
+   "VAT_MAF_T3510_07": "e998bce3af146f0c6c17d28c0252f57d809ebd20354a45bf66c0d6dc8a25f45f",
+   "VAT_MAF_T3510_09": "76676dfccc4c7007485fdb5f481c41661c69ef572ee523766a92587acfa6ee3b",
+   "VAT_MAF_T3510_11": "294dafbc3d49e25b8317784ee4a2c8be713cc5a9d96d63cba2b1d589e5401419",
+   "VAT_MAF_T3510_12": "f8c81dac007dffc07f27aba822be19ce6d20a42bb891b29e0c9063f7658a0bcc",
+   "VAT_MAF_T3510_16": "d8d97d1727f55633b50407747871c145ebb170bd30f576476b0b6397b6cfdead",
+   "VAT_MAF_T3510_26": "069365a04644cd9c46c874a179ade58c846798e253506852c2d81ff14ccbcff8",
+   "VAT_MAF_T3510_27": "da045d22e456418c30e425a835de2136d24d22e2d0d85181588692035394f913",
+   "VAT_MAF_T3510_28": "1b615fb94b8a7840b68da70f3c8e2bb07b10b57c79bb504d6c39ce9b7ba75743",
+   "VAT_MAF_T3510_29": "4850474bc24a565c200b945cdfb8fa58167d1cfd40806df5d325519ffc0b4ad0",
+   "VAT_MAF_T3510_31": "805c25844f1d671e3cbc0facf6c83431bda9cb6b9b9f7ca1dc89b2c23c842bf6",
+   "VAT_MAF_T3510_32": "4529dc5ef08666020ac75b26dfcf484b0a11b8c81aa135c7ec5578e51f6664b2"
+  },
+  "maf_fbx_vpm": {
+   "VAT_MAF_T3510_01": "f4fcf71a13d318fe2dcfdceb4724cded586cde7ab169996129547bdbbded1f6f",
+   "VAT_MAF_T3510_02": "1e94baf0ea41de50fc735247de412e3999e0409278d9674457c31d880733bead",
+   "VAT_MAF_T3510_07": "81e4b7b278d7bafbe961902f93fff5d28daf493e39230c1eee083e43bdd509dc",
+   "VAT_MAF_T3510_09": "6a848d79ea333cee898ff70f11f61ac562915d72f7bc01a57303816a6fa05a2d",
+   "VAT_MAF_T3510_11": "6915cce13b73615997a2f7c202533645b278fff716f2f71e1b4b0ee319c6a0dd",
+   "VAT_MAF_T3510_12": "01807e36072a509ece1b48f52faefb45738e6be66430c096f9731f72e2544a66",
+   "VAT_MAF_T3510_16": "ace54c1e86052140303a13cb75d285c2fb635c1441eb4bbea175c399c0cebbb0",
+   "VAT_MAF_T3510_26": "e85303515c3e38de619dbb9e5ce990ef43eb1a9deea67fc8ec1b36e7e8a8b147",
+   "VAT_MAF_T3510_27": "61f9d62388c8ff2234fcf889703c22dc3961941a9cc79293cb6ec2fc73790785",
+   "VAT_MAF_T3510_28": "68d0528655b227cd6a1af0b9b9696fe912c925900e44ab0cde28eea771a7071b",
+   "VAT_MAF_T3510_29": "8fce0255153b13a803ec86c4a7f9b80b2680255b303d56464383c532e029c96e",
+   "VAT_MAF_T3510_31": "084480b9e85d827b0c9e1700c9cd858ab139845a7b54b5c65af5c12df4b28761",
+   "VAT_MAF_T3510_32": "0e51b957e24f873bd38059beb0b8cb470bfc6f62451e30de326c483693acd00c"
+  },
+  "maf_set": {
+   "path": "jobs/VATUTINO-SITE/maf/site-maf-set.json",
+   "sha256": "72e3ab7f72ba43ec0c1f882dd73397e2193d604da5736ecf18b2c3c3a4ceae64"
+  },
+  "site_parts": {
+   "path": "jobs/VATUTINO-SITE/site-parts.json",
+   "sha256": "9d2d6cc93cc50726002df8c66f4aab09f2aa17adbfa2ed093200bf1202d79ff7"
+  }
+ },
+ "variants": {
+  "npm": {
+   "engine_status": "review",
+   "totals": {
+    "failed": 0,
+    "input": 3289,
+    "placed": 3289
+   },
+   "scene_mismatches": [],
+   "sinking_scene": {
+    "n": 3289,
+    "measured": 3289,
+    "per_kind": {
+     "flora": {
+      "max_m": 0.100067138671875,
+      "min_m": 0.099761962890625,
+      "n": 3170
+     },
+     "maf": {
+      "max_m": 0.1000213623046875,
+      "min_m": 0.0999755859375,
+      "n": 119
+     }
+    },
+    "ok": true
+   },
+   "sinking_out_of_tol": [],
+   "engine_sinking": {
+    "max_m": 0.10000000000002274,
+    "min_m": 0.09999999999999432,
+    "n": 3289
+   },
+   "bottom_faces": {
+    "deleted": 1933,
+    "exposed": [],
+    "review": 7
+   },
+   "blend": {
+    "path": "C:\\x\\t_5e4ea2be\\run_v002\\npm\\VATUTINO-SITE_placement_npm_v001.blend",
+    "sha256": "fdb9ca7f8ba0c9cb317d5e9437983da4d5ddd0552171a14bbd9f5a6512115ec2"
+   },
+   "commands": [
+    {
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- facts C:\\x\\t_5e4ea2be\\run_v002\\npm\\spec.json C:\\x\\t_5e4ea2be\\run_v002\\npm\\facts.json",
+     "exit_code": 0,
+     "seconds": 2.1
+    },
+    {
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- instance C:\\x\\t_5e4ea2be\\run_v002\\npm\\spec.json C:\\x\\t_5e4ea2be\\run_v002\\npm\\plan.json C:\\x\\t_5e4ea2be\\run_v002\\npm\\VATUTINO-SITE_placement_npm_v001.blend C:\\x\\t_5e4ea2be\\run_v002\\npm\\readback.json",
+     "exit_code": 0,
+     "seconds": 3.0
+    }
+   ],
+   "findings": {
+    "bottom_face_review": 7,
+    "flora_scale_narrowed": 6,
+    "ground_triangles_skipped": 1,
+    "maf_dims_off_spec": 1
+   },
+   "maf": [
+    {
+     "library_id": "VAT_MAF_T3510_01",
+     "block": "Скамья",
+     "placed": 5,
+     "tris_instance": 240,
+     "tris_total": 1200,
+     "excluded": {},
+     "schedule": "*T3510/1",
+     "catalogue_id": "MAF_0326",
+     "spozu_in": 5,
+     "spec_dims_m": [
+      1.8,
+      0.5,
+      0.72
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_02",
+     "block": "Урна",
+     "placed": 46,
+     "tris_instance": 146,
+     "tris_total": 6716,
+     "excluded": {
+      "outside_boundary": 1,
+      "point_over_ground_hole (run v001 engine finding)": 2
+     },
+     "schedule": "*T3510/2",
+     "catalogue_id": "MAF_0794",
+     "spozu_in": 48,
+     "spec_dims_m": [
+      0.62,
+      0.47,
+      1.05
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_07",
+     "block": "Шезлонг фестиваль модуль 1",
+     "placed": 4,
+     "tris_instance": 364,
+     "tris_total": 1456,
+     "excluded": {},
+     "schedule": "*T3510/7",
+     "catalogue_id": "MAF_0747",
+     "spozu_in": 4,
+     "spec_dims_m": [
+      1.86,
+      1.7,
+      0.79
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_09",
+     "block": "лежак2",
+     "placed": 6,
+     "tris_instance": 730,
+     "tris_total": 4380,
+     "excluded": {},
+     "schedule": "*T3510/9",
+     "catalogue_id": "MAF_0506",
+     "spozu_in": 6,
+     "spec_dims_m": [
+      0.6,
+      1.633,
+      0.93
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_11",
+     "block": "Качалка на пружине ИО 0323Т-3",
+     "placed": 2,
+     "tris_instance": 434,
+     "tris_total": 868,
+     "excluded": {},
+     "schedule": "*T3510/11",
+     "catalogue_id": "MAF_0322",
+     "spozu_in": 2,
+     "spec_dims_m": [
+      0.9,
+      0.6,
+      0.7
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_12",
+     "block": "ио 0118т-1",
+     "placed": 2,
+     "tris_instance": 678,
+     "tris_total": 1356,
+     "excluded": {},
+     "schedule": "*T3510/12",
+     "catalogue_id": "MAF_0920",
+     "spozu_in": 2,
+     "spec_dims_m": [
+      2.2,
+      0.3,
+      1.9
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_16",
+     "block": "ДП 090",
+     "placed": 1,
+     "tris_instance": 2281,
+     "tris_total": 2281,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "schedule": "*T3510/16",
+     "catalogue_id": "MAF_0803",
+     "spozu_in": 1,
+     "spec_dims_m": [
+      5.5,
+      2.0,
+      2.25
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_26",
+     "block": "Теннисный стол",
+     "placed": 1,
+     "tris_instance": 3043,
+     "tris_total": 3043,
+     "excluded": {},
+     "schedule": "*T3510/26",
+     "catalogue_id": "MAF_0677",
+     "spozu_in": 1,
+     "spec_dims_m": [
+      2.74,
+      1.52,
+      0.76
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_27",
+     "block": "Стол Ландау",
+     "placed": 3,
+     "tris_instance": 540,
+     "tris_total": 1620,
+     "excluded": {},
+     "schedule": "*T3510/27",
+     "catalogue_id": "MAF_0219",
+     "spozu_in": 3,
+     "spec_dims_m": [
+      2.28,
+      2.28,
+      0.75
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_28",
+     "block": "Подвес качели гнездо",
+     "placed": 4,
+     "tris_instance": 2030,
+     "tris_total": 8120,
+     "excluded": {},
+     "schedule": "*T3510/28",
+     "catalogue_id": "MAF_0127",
+     "spozu_in": 4,
+     "spec_dims_m": [
+      1.09,
+      1.09,
+      null
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_29",
+     "block": "Кресло Парк 12750",
+     "placed": 25,
+     "tris_instance": 320,
+     "tris_total": 8000,
+     "excluded": {
+      "outside_boundary": 2
+     },
+     "schedule": "*T3510/29",
+     "catalogue_id": "MAF_0159",
+     "spozu_in": 25,
+     "spec_dims_m": [
+      0.765,
+      0.53,
+      1.065
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_31",
+     "block": "Стол Лондон Тип 3",
+     "placed": 16,
+     "tris_instance": 212,
+     "tris_total": 3392,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "schedule": "*T3510/31",
+     "catalogue_id": "MAF_0722",
+     "spozu_in": 16,
+     "spec_dims_m": [
+      1.0,
+      1.0,
+      0.6
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_32",
+     "block": "Приствольная решетка",
+     "placed": 4,
+     "tris_instance": 3726,
+     "tris_total": 14904,
+     "excluded": {},
+     "schedule": "*T3510/32",
+     "catalogue_id": "MAF_0687",
+     "spozu_in": 4,
+     "spec_dims_m": [
+      1.0,
+      1.0,
+      0.044
+     ]
+    }
+   ],
+   "flora": [
+    {
+     "library_id": "Tilia_cordata_NPM",
+     "block": "Липа мелколистная 'Greenspire'",
+     "placed": 23,
+     "tris_instance": 357,
+     "tris_total": 8211,
+     "excluded": {
+      "outside_boundary": 2
+     },
+     "pos": 1,
+     "ru": "Липа мелколистная Rancho",
+     "latin": "Tilia cordata Greenspire",
+     "catalogue_id": 101,
+     "library_latin": "Tilia cordata",
+     "scheduled": 23,
+     "spozu_total": 25,
+     "spozu_in": 23,
+     "match": "substitute",
+     "base_scale": 1.0,
+     "height_band_m": [
+      4.0,
+      6.6
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9,
+      1.0830095502340904
+     ]
+    },
+    {
+     "library_id": "Prunus_padus_NPM",
+     "block": "Черемуха обыкновенная 'Watereri'",
+     "placed": 11,
+     "tris_instance": 166,
+     "tris_total": 1826,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "pos": 3,
+     "ru": "Черемуха обыкновенная",
+     "latin": "Prunus padus Watereri",
+     "catalogue_id": 120,
+     "library_latin": "Prunus padus",
+     "scheduled": 11,
+     "spozu_total": 12,
+     "spozu_in": 11,
+     "match": "substitute",
+     "base_scale": 1.0,
+     "height_band_m": [
+      2.4000000000000004,
+      6.6
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9,
+      1.1
+     ]
+    },
+    {
+     "library_id": "Malus_niedzwetzkyana_NPM",
+     "block": "Яблоня 'Makowieckiana'",
+     "placed": 21,
+     "tris_instance": 125,
+     "tris_total": 2625,
+     "excluded": {
+      "outside_boundary": 4
+     },
+     "pos": 4,
+     "ru": "Яблоня Маковецкого",
+     "latin": "Malus Makowieckiana",
+     "catalogue_id": 115,
+     "library_latin": "Malus niedzwetzkyana",
+     "scheduled": 24,
+     "spozu_total": 25,
+     "spozu_in": 21,
+     "match": "substitute",
+     "base_scale": 1.0,
+     "height_band_m": [
+      2.4000000000000004,
+      6.6
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9,
+      1.1
+     ]
+    },
+    {
+     "library_id": "Amelanchier_lamarckii_NPM",
+     "block": "Ирга колосистая",
+     "placed": 38,
+     "tris_instance": 979,
+     "tris_total": 37202,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "pos": 6,
+     "ru": "Ирга колосистая",
+     "latin": "Amelanchier spicata",
+     "catalogue_id": 105,
+     "library_latin": "Amelanchier lamarckii",
+     "scheduled": 38,
+     "spozu_total": 39,
+     "spozu_in": 38,
+     "match": "substitute",
+     "base_scale": 1.0,
+     "height_band_m": [
+      1.0,
+      4.2
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9,
+      1.1
+     ]
+    },
+    {
+     "library_id": "Crataegus_mollis_NPM",
+     "block": "Боярышник средний  'Paul's Scarlet'",
+     "placed": 29,
+     "tris_instance": 488,
+     "tris_total": 14152,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "pos": 7,
+     "ru": "Боярышник обыкновенный",
+     "latin": "Crataegus laevigata Paul`s Scarlet",
+     "catalogue_id": 103,
+     "library_latin": "Crataegus mollis",
+     "scheduled": 29,
+     "spozu_total": 30,
+     "spozu_in": 29,
+     "match": "substitute",
+     "base_scale": 1.0,
+     "height_band_m": [
+      1.0,
+      4.2
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9,
+      1.096064049392602
+     ]
+    },
+    {
+     "library_id": "Physocarpus_opulifolius_Diabolo_NPM",
+     "block": "Пузыреплодник калинолистный (Physocarpus opulifolius) ‘Lady in red’",
+     "placed": 191,
+     "tris_instance": 18,
+     "tris_total": 3438,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "pos": 9,
+     "ru": "Пузыреплодник калинолистный ‘Lady in red’",
+     "latin": "Physocarpus opulifolius ‘Lady in red’",
+     "catalogue_id": 205,
+     "library_latin": "Physocarpus opulifolius 'Diabolo'",
+     "scheduled": 191,
+     "spozu_total": 192,
+     "spozu_in": 191,
+     "match": "substitute",
+     "base_scale": 1.010645224573188,
+     "height_band_m": [
+      1.0,
+      2.4
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9998999785102048,
+      1.1
+     ]
+    },
+    {
+     "library_id": "Sorbaria_sorbifolia_NPM",
+     "block": "Рябинник рябинолистный",
+     "placed": 866,
+     "tris_instance": 10,
+     "tris_total": 8660,
+     "excluded": {
+      "outside_boundary": 10
+     },
+     "pos": 11,
+     "ru": "Рябинник рябинолистный",
+     "latin": "Sorbaria sorbifolia",
+     "catalogue_id": 212,
+     "library_latin": "Sorbaria sorbifolia",
+     "scheduled": 866,
+     "spozu_total": 876,
+     "spozu_in": 866,
+     "match": "exact",
+     "base_scale": 1.0,
+     "height_band_m": [
+      1.0,
+      2.4
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.930594069707973,
+      1.1
+     ]
+    },
+    {
+     "library_id": "Cornus_sericea_NPM",
+     "block": "Дерен белый 'Red Gnome'",
+     "placed": 325,
+     "tris_instance": 80,
+     "tris_total": 26000,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "pos": 12,
+     "ru": "Дерен отпрысковыи 'Red Gnome'",
+     "latin": "Cornus sericea 'Red Gnome'",
+     "catalogue_id": 204,
+     "library_latin": "Cornus sericea",
+     "scheduled": 325,
+     "spozu_total": 326,
+     "spozu_in": 325,
+     "match": "substitute",
+     "base_scale": 1.0284171431432465,
+     "height_band_m": [
+      1.0,
+      2.4
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9999006638269763,
+      1.1
+     ]
+    },
+    {
+     "library_id": "Dasiphora_fruticosa_NPM",
+     "block": "Лапчатка кустарниковая (Dasiphora fruticosa) К",
+     "placed": 558,
+     "tris_instance": 10,
+     "tris_total": 5580,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "pos": 14,
+     "ru": "Лапчатка кустарниковая",
+     "latin": "Potentila fruticosa",
+     "catalogue_id": 230,
+     "library_latin": "Dasiphora fruticosa",
+     "scheduled": 558,
+     "spozu_total": 559,
+     "spozu_in": 558,
+     "match": "exact",
+     "base_scale": 1.0,
+     "height_band_m": [
+      0.6400000000000001,
+      1.2
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9,
+      1.1
+     ]
+    },
+    {
+     "library_id": "Stephanandra_incisa_Crispa_NPM",
+     "block": "Стефанандра надрезаннолистная Crispa (Stephanandra incisa Crispa)",
+     "placed": 1002,
+     "tris_instance": 10,
+     "tris_total": 10020,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "pos": 15,
+     "ru": "Стефанандры надрезаннолистная",
+     "latin": "Stephanandra incisa",
+     "catalogue_id": 223,
+     "library_latin": "Stephanandra incisa 'Crispa'",
+     "scheduled": 1002,
+     "spozu_total": 1003,
+     "spozu_in": 1002,
+     "match": "exact",
+     "base_scale": 0.9947069203504912,
+     "height_band_m": [
+      0.16000000000000003,
+      0.72
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9,
+      1.0001000098310928
+     ]
+    },
+    {
+     "library_id": "Pinus_mugo_NPM",
+     "block": "Сосна горная ф. Мугус",
+     "placed": 106,
+     "tris_instance": 10,
+     "tris_total": 1060,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "pos": 17,
+     "ru": "Сосна горная ф. Мугус",
+     "latin": "Pinus mugo var. Mughus",
+     "catalogue_id": 224,
+     "library_latin": "Pinus mugo",
+     "scheduled": 99,
+     "spozu_total": 107,
+     "spozu_in": 106,
+     "match": "substitute",
+     "base_scale": 1.0,
+     "height_band_m": [
+      0.48,
+      1.2
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9,
+      1.1
+     ]
+    }
+   ],
+   "not_placed": [
+    {
+     "label": "Андромеда Металл Крыша поликарбонат",
+     "reason": "no_library_model",
+     "points": 2
+    },
+    {
+     "label": "Барная стойка",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Бетонные раскопки",
+     "reason": "no_library_model",
+     "points": 8
+    },
+    {
+     "label": "Боярышник средний  'Paul's Scarlet'",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Воркаут",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Воркаут 217100",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Воркаут 217170",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Гамак",
+     "reason": "no_library_model",
+     "points": 3
+    },
+    {
+     "label": "ДП 090",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Дерен белый 'Red Gnome'",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Дерен кроваво-красный (Cornus sanguinea) ‘Anny’s Winter Orange’",
+     "reason": "no_library_model",
+     "points": 439
+    },
+    {
+     "label": "Дерен кроваво-красный (Cornus sanguinea) ‘Anny’s Winter Orange’",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Ель нидиформис",
+     "reason": "no_library_model",
+     "points": 70
+    },
+    {
+     "label": "Ель нидиформис",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Ива швейцарская (Salix helvetica) К",
+     "reason": "no_library_model",
+     "points": 131
+    },
+    {
+     "label": "Игровой комплекс Кубики",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Ирга колосистая",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Карусель",
+     "reason": "no_library_model",
+     "points": 2
+    },
+    {
+     "label": "Качели парковые",
+     "reason": "no_library_model",
+     "points": 11
+    },
+    {
+     "label": "Контейнер 1100л ТБО",
+     "reason": "no_library_model",
+     "points": 8
+    },
+    {
+     "label": "Контейнер 1100л ТБО",
+     "reason": "outside_boundary",
+     "points": 10
+    },
+    {
+     "label": "Кресло Парк 12750",
+     "reason": "outside_boundary",
+     "points": 2
+    },
+    {
+     "label": "Лапчатка кустарниковая (Dasiphora fruticosa) К",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Липа мелколистная 'Greenspire'",
+     "reason": "outside_boundary",
+     "points": 2
+    },
+    {
+     "label": "Лиственница обыкновенная 'Pendula'",
+     "reason": "no_library_model",
+     "points": 13
+    },
+    {
+     "label": "Лиственница обыкновенная 'Pendula'",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Лох узколистный",
+     "reason": "no_library_model",
+     "points": 25
+    },
+    {
+     "label": "Лох узколистный",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Навес 1",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Навес 1",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Навес 2",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Навес 2",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Навес 3",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Навес 3",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Навес 4",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Навес 4",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Облепиха крушиновидная ‘Hikul’",
+     "reason": "no_library_model",
+     "points": 1059
+    },
+    {
+     "label": "Облепиха крушиновидная ‘Hikul’",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Ольха серая 'Laciniata'",
+     "reason": "no_library_model",
+     "points": 8
+    },
+    {
+     "label": "Ольха серая 'Laciniata'",
+     "reason": "outside_boundary",
+     "points": 16
+    },
+    {
+     "label": "Пенек",
+     "reason": "no_library_model",
+     "points": 9
+    },
+    {
+     "label": "Пенек",
+     "reason": "outside_boundary",
+     "points": 3
+    },
+    {
+     "label": "Песочница индивидуальный МАФ",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Площадка для контейнеров БТО 2",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Площадка для контейнеров ТБО",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Пузыреплодник калинолистный (Physocarpus opulifolius) ‘Lady in red’",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Рябинник рябинолистный",
+     "reason": "outside_boundary",
+     "points": 10
+    },
+    {
+     "label": "Скамья верона",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Скамья верона",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Скамья верона 2",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Скамья верона 2",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Скамья индивид лестн 1",
+     "reason": "no_library_model",
+     "points": 2
+    },
+    {
+     "label": "Скамья индивид лестн 1",
+     "reason": "outside_boundary",
+     "points": 3
+    },
+    {
+     "label": "Скамья индивид общ отд 1",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Скамья индивид общ отд 1",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Скамья индивид общ отд 2",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Скамья индивид общ отд 2",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Скамья индивид пл. дети1-3лет",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Скамья индивид пл. дети1-3лет",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Скамья тетрис 03",
+     "reason": "no_library_model",
+     "points": 4
+    },
+    {
+     "label": "Сосна горная ф. Мугус",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Стефанандра надрезаннолистная Crispa (Stephanandra incisa Crispa)",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Стол Лондон Тип 3",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Стул бар",
+     "reason": "no_library_model",
+     "points": 4
+    },
+    {
+     "label": "Тренажер волна",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Тренажер лыжи",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Тренажер мышиная охота",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Турник",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Урна",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Урна",
+     "reason": "point_over_ground_hole (run v001 engine finding)",
+     "points": 2
+    },
+    {
+     "label": "Черемуха обыкновенная 'Watereri'",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Шезлонг фестиваль модуль 3",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Яблоня 'Makowieckiana'",
+     "reason": "outside_boundary",
+     "points": 4
+    },
+    {
+     "label": "ио 1005т-11",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "скамья индивид под андромедой",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "скамья индивид под андромедой",
+     "reason": "outside_boundary",
+     "points": 1
+    }
+   ],
+   "missing_vpm": [],
+   "triangles": {
+    "maf": 57336,
+    "flora": 118774,
+    "ground_npm": 46343,
+    "total": 222453,
+    "limit": 180000,
+    "shares": {
+     "ground": 50000,
+     "maf": 60000,
+     "flora": 70000
+    }
+   }
+  },
+  "vpm": {
+   "engine_status": "review",
+   "totals": {
+    "failed": 0,
+    "input": 2964,
+    "placed": 2964
+   },
+   "scene_mismatches": [],
+   "sinking_scene": {
+    "n": 2964,
+    "measured": 2964,
+    "per_kind": {
+     "flora": {
+      "max_m": 0.1000518798828125,
+      "min_m": 0.099761962890625,
+      "n": 2845
+     },
+     "maf": {
+      "max_m": 0.1000213623046875,
+      "min_m": 0.0999755859375,
+      "n": 119
+     }
+    },
+    "ok": true
+   },
+   "sinking_out_of_tol": [],
+   "engine_sinking": {
+    "max_m": 0.10000000000002274,
+    "min_m": 0.09999999999999432,
+    "n": 2964
+   },
+   "bottom_faces": {
+    "deleted": 2499,
+    "exposed": [],
+    "review": 7
+   },
+   "blend": {
+    "path": "C:\\x\\t_5e4ea2be\\run_v002\\vpm\\VATUTINO-SITE_placement_vpm_v001.blend",
+    "sha256": "1a98b21f2ba77bb431dc8e4ce0bd1c15a25ffd9ad45ae6991a378019bade7542"
+   },
+   "commands": [
+    {
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- facts C:\\x\\t_5e4ea2be\\run_v002\\vpm\\spec.json C:\\x\\t_5e4ea2be\\run_v002\\vpm\\facts.json",
+     "exit_code": 0,
+     "seconds": 2.3
+    },
+    {
+     "cmd": "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --factory-startup --python-exit-code 1 --python C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_5e4ea2be\\tools\\blender\\placement_instance.py -- instance C:\\x\\t_5e4ea2be\\run_v002\\vpm\\spec.json C:\\x\\t_5e4ea2be\\run_v002\\vpm\\plan.json C:\\x\\t_5e4ea2be\\run_v002\\vpm\\VATUTINO-SITE_placement_vpm_v001.blend C:\\x\\t_5e4ea2be\\run_v002\\vpm\\readback.json",
+     "exit_code": 0,
+     "seconds": 3.3
+    }
+   ],
+   "findings": {
+    "bottom_face_review": 7,
+    "flora_scale_narrowed": 4,
+    "ground_triangles_skipped": 1,
+    "maf_dims_off_spec": 1
+   },
+   "maf": [
+    {
+     "library_id": "VAT_MAF_T3510_01",
+     "block": "Скамья",
+     "placed": 5,
+     "tris_instance": 240,
+     "tris_total": 1200,
+     "excluded": {},
+     "schedule": "*T3510/1",
+     "catalogue_id": "MAF_0326",
+     "spozu_in": 5,
+     "spec_dims_m": [
+      1.8,
+      0.5,
+      0.72
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_02",
+     "block": "Урна",
+     "placed": 46,
+     "tris_instance": 146,
+     "tris_total": 6716,
+     "excluded": {
+      "outside_boundary": 1,
+      "point_over_ground_hole (run v001 engine finding)": 2
+     },
+     "schedule": "*T3510/2",
+     "catalogue_id": "MAF_0794",
+     "spozu_in": 48,
+     "spec_dims_m": [
+      0.62,
+      0.47,
+      1.05
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_07",
+     "block": "Шезлонг фестиваль модуль 1",
+     "placed": 4,
+     "tris_instance": 364,
+     "tris_total": 1456,
+     "excluded": {},
+     "schedule": "*T3510/7",
+     "catalogue_id": "MAF_0747",
+     "spozu_in": 4,
+     "spec_dims_m": [
+      1.86,
+      1.7,
+      0.79
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_09",
+     "block": "лежак2",
+     "placed": 6,
+     "tris_instance": 1460,
+     "tris_total": 8760,
+     "excluded": {},
+     "schedule": "*T3510/9",
+     "catalogue_id": "MAF_0506",
+     "spozu_in": 6,
+     "spec_dims_m": [
+      0.6,
+      1.633,
+      0.93
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_11",
+     "block": "Качалка на пружине ИО 0323Т-3",
+     "placed": 2,
+     "tris_instance": 724,
+     "tris_total": 1448,
+     "excluded": {},
+     "schedule": "*T3510/11",
+     "catalogue_id": "MAF_0322",
+     "spozu_in": 2,
+     "spec_dims_m": [
+      0.9,
+      0.6,
+      0.7
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_12",
+     "block": "ио 0118т-1",
+     "placed": 2,
+     "tris_instance": 678,
+     "tris_total": 1356,
+     "excluded": {},
+     "schedule": "*T3510/12",
+     "catalogue_id": "MAF_0920",
+     "spozu_in": 2,
+     "spec_dims_m": [
+      2.2,
+      0.3,
+      1.9
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_16",
+     "block": "ДП 090",
+     "placed": 1,
+     "tris_instance": 4562,
+     "tris_total": 4562,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "schedule": "*T3510/16",
+     "catalogue_id": "MAF_0803",
+     "spozu_in": 1,
+     "spec_dims_m": [
+      5.5,
+      2.0,
+      2.25
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_26",
+     "block": "Теннисный стол",
+     "placed": 1,
+     "tris_instance": 8696,
+     "tris_total": 8696,
+     "excluded": {},
+     "schedule": "*T3510/26",
+     "catalogue_id": "MAF_0677",
+     "spozu_in": 1,
+     "spec_dims_m": [
+      2.74,
+      1.52,
+      0.76
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_27",
+     "block": "Стол Ландау",
+     "placed": 3,
+     "tris_instance": 540,
+     "tris_total": 1620,
+     "excluded": {},
+     "schedule": "*T3510/27",
+     "catalogue_id": "MAF_0219",
+     "spozu_in": 3,
+     "spec_dims_m": [
+      2.28,
+      2.28,
+      0.75
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_28",
+     "block": "Подвес качели гнездо",
+     "placed": 4,
+     "tris_instance": 2030,
+     "tris_total": 8120,
+     "excluded": {},
+     "schedule": "*T3510/28",
+     "catalogue_id": "MAF_0127",
+     "spozu_in": 4,
+     "spec_dims_m": [
+      1.09,
+      1.09,
+      null
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_29",
+     "block": "Кресло Парк 12750",
+     "placed": 25,
+     "tris_instance": 320,
+     "tris_total": 8000,
+     "excluded": {
+      "outside_boundary": 2
+     },
+     "schedule": "*T3510/29",
+     "catalogue_id": "MAF_0159",
+     "spozu_in": 25,
+     "spec_dims_m": [
+      0.765,
+      0.53,
+      1.065
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_31",
+     "block": "Стол Лондон Тип 3",
+     "placed": 16,
+     "tris_instance": 212,
+     "tris_total": 3392,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "schedule": "*T3510/31",
+     "catalogue_id": "MAF_0722",
+     "spozu_in": 16,
+     "spec_dims_m": [
+      1.0,
+      1.0,
+      0.6
+     ]
+    },
+    {
+     "library_id": "VAT_MAF_T3510_32",
+     "block": "Приствольная решетка",
+     "placed": 4,
+     "tris_instance": 3726,
+     "tris_total": 14904,
+     "excluded": {},
+     "schedule": "*T3510/32",
+     "catalogue_id": "MAF_0687",
+     "spozu_in": 4,
+     "spec_dims_m": [
+      1.0,
+      1.0,
+      0.044
+     ]
+    }
+   ],
+   "flora": [
+    {
+     "library_id": "Tilia_cordata_VPM",
+     "block": "Липа мелколистная 'Greenspire'",
+     "placed": 23,
+     "tris_instance": 830,
+     "tris_total": 19090,
+     "excluded": {
+      "outside_boundary": 2
+     },
+     "pos": 1,
+     "ru": "Липа мелколистная Rancho",
+     "latin": "Tilia cordata Greenspire",
+     "catalogue_id": 101,
+     "library_latin": "Tilia cordata",
+     "scheduled": 23,
+     "spozu_total": 25,
+     "spozu_in": 23,
+     "match": "substitute",
+     "base_scale": 1.202318012842864,
+     "height_band_m": [
+      4.0,
+      6.6
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9998999338156656,
+      1.1
+     ]
+    },
+    {
+     "library_id": "Prunus_padus_VPM",
+     "block": "Черемуха обыкновенная 'Watereri'",
+     "placed": 11,
+     "tris_instance": 494,
+     "tris_total": 5434,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "pos": 3,
+     "ru": "Черемуха обыкновенная",
+     "latin": "Prunus padus Watereri",
+     "catalogue_id": 120,
+     "library_latin": "Prunus padus",
+     "scheduled": 11,
+     "spozu_total": 12,
+     "spozu_in": 11,
+     "match": "substitute",
+     "base_scale": 1.0,
+     "height_band_m": [
+      2.4000000000000004,
+      6.6
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9,
+      1.1
+     ]
+    },
+    {
+     "library_id": "Malus_niedzwetzkyana_VPM",
+     "block": "Яблоня 'Makowieckiana'",
+     "placed": 21,
+     "tris_instance": 394,
+     "tris_total": 8274,
+     "excluded": {
+      "outside_boundary": 4
+     },
+     "pos": 4,
+     "ru": "Яблоня Маковецкого",
+     "latin": "Malus Makowieckiana",
+     "catalogue_id": 115,
+     "library_latin": "Malus niedzwetzkyana",
+     "scheduled": 24,
+     "spozu_total": 25,
+     "spozu_in": 21,
+     "match": "substitute",
+     "base_scale": 1.0,
+     "height_band_m": [
+      2.4000000000000004,
+      6.6
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9,
+      1.1
+     ]
+    },
+    {
+     "library_id": "Amelanchier_lamarckii_VPM",
+     "block": "Ирга колосистая",
+     "placed": 38,
+     "tris_instance": 4894,
+     "tris_total": 185972,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "pos": 6,
+     "ru": "Ирга колосистая",
+     "latin": "Amelanchier spicata",
+     "catalogue_id": 105,
+     "library_latin": "Amelanchier lamarckii",
+     "scheduled": 38,
+     "spozu_total": 39,
+     "spozu_in": 38,
+     "match": "substitute",
+     "base_scale": 0.9865922853108973,
+     "height_band_m": [
+      1.0,
+      4.2
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9,
+      1.0000999286567553
+     ]
+    },
+    {
+     "library_id": "Crataegus_mollis_VPM",
+     "block": "Боярышник средний  'Paul's Scarlet'",
+     "placed": 29,
+     "tris_instance": 574,
+     "tris_total": 16646,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "pos": 7,
+     "ru": "Боярышник обыкновенный",
+     "latin": "Crataegus laevigata Paul`s Scarlet",
+     "catalogue_id": 103,
+     "library_latin": "Crataegus mollis",
+     "scheduled": 29,
+     "spozu_total": 30,
+     "spozu_in": 29,
+     "match": "substitute",
+     "base_scale": 1.0,
+     "height_band_m": [
+      1.0,
+      4.2
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9,
+      1.1
+     ]
+    },
+    {
+     "library_id": "Physocarpus_opulifolius_Diabolo_VPM",
+     "block": "Пузыреплодник калинолистный (Physocarpus opulifolius) ‘Lady in red’",
+     "placed": 191,
+     "tris_instance": 144,
+     "tris_total": 27504,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "pos": 9,
+     "ru": "Пузыреплодник калинолистный ‘Lady in red’",
+     "latin": "Physocarpus opulifolius ‘Lady in red’",
+     "catalogue_id": 205,
+     "library_latin": "Physocarpus opulifolius 'Diabolo'",
+     "scheduled": 191,
+     "spozu_total": 192,
+     "spozu_in": 191,
+     "match": "substitute",
+     "base_scale": 1.0106451256524254,
+     "height_band_m": [
+      1.0,
+      2.4
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9998999654742973,
+      1.1
+     ]
+    },
+    {
+     "library_id": "Sorbaria_sorbifolia_VPM",
+     "block": "Рябинник рябинолистный",
+     "placed": 866,
+     "tris_instance": 84,
+     "tris_total": 72744,
+     "excluded": {
+      "outside_boundary": 10
+     },
+     "pos": 11,
+     "ru": "Рябинник рябинолистный",
+     "latin": "Sorbaria sorbifolia",
+     "catalogue_id": 212,
+     "library_latin": "Sorbaria sorbifolia",
+     "scheduled": 866,
+     "spozu_total": 876,
+     "spozu_in": 866,
+     "match": "exact",
+     "base_scale": 1.2135504350359776,
+     "height_band_m": [
+      1.0,
+      2.4
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9998990399257164,
+      1.1
+     ]
+    },
+    {
+     "library_id": "Dasiphora_fruticosa_VPM",
+     "block": "Лапчатка кустарниковая (Dasiphora fruticosa) К",
+     "placed": 558,
+     "tris_instance": 20,
+     "tris_total": 11160,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "pos": 14,
+     "ru": "Лапчатка кустарниковая",
+     "latin": "Potentila fruticosa",
+     "catalogue_id": 230,
+     "library_latin": "Dasiphora fruticosa",
+     "scheduled": 558,
+     "spozu_total": 559,
+     "spozu_in": 558,
+     "match": "exact",
+     "base_scale": 1.0,
+     "height_band_m": [
+      0.6400000000000001,
+      1.2
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9,
+      1.1
+     ]
+    },
+    {
+     "library_id": "Stephanandra_incisa_Crispa_VPM",
+     "block": "Стефанандра надрезаннолистная Crispa (Stephanandra incisa Crispa)",
+     "placed": 1002,
+     "tris_instance": 90,
+     "tris_total": 90180,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "pos": 15,
+     "ru": "Стефанандры надрезаннолистная",
+     "latin": "Stephanandra incisa",
+     "catalogue_id": 223,
+     "library_latin": "Stephanandra incisa 'Crispa'",
+     "scheduled": 1002,
+     "spozu_total": 1003,
+     "spozu_in": 1002,
+     "match": "exact",
+     "base_scale": 1.0,
+     "height_band_m": [
+      0.16000000000000003,
+      0.72
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9,
+      1.1
+     ]
+    },
+    {
+     "library_id": "Pinus_mugo_VPM",
+     "block": "Сосна горная ф. Мугус",
+     "placed": 106,
+     "tris_instance": 64,
+     "tris_total": 6784,
+     "excluded": {
+      "outside_boundary": 1
+     },
+     "pos": 17,
+     "ru": "Сосна горная ф. Мугус",
+     "latin": "Pinus mugo var. Mughus",
+     "catalogue_id": 224,
+     "library_latin": "Pinus mugo",
+     "scheduled": 99,
+     "spozu_total": 107,
+     "spozu_in": 106,
+     "match": "substitute",
+     "base_scale": 1.0,
+     "height_band_m": [
+      0.48,
+      1.2
+     ],
+     "crown": "review (not in schedule, gate-1 F3)",
+     "scale_range": [
+      0.9,
+      1.1
+     ]
+    }
+   ],
+   "not_placed": [
+    {
+     "label": "Андромеда Металл Крыша поликарбонат",
+     "reason": "no_library_model",
+     "points": 2
+    },
+    {
+     "label": "Барная стойка",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Бетонные раскопки",
+     "reason": "no_library_model",
+     "points": 8
+    },
+    {
+     "label": "Боярышник средний  'Paul's Scarlet'",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Воркаут",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Воркаут 217100",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Воркаут 217170",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Гамак",
+     "reason": "no_library_model",
+     "points": 3
+    },
+    {
+     "label": "ДП 090",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Дерен белый 'Red Gnome'",
+     "reason": "no_confirmed_vpm",
+     "points": 325
+    },
+    {
+     "label": "Дерен белый 'Red Gnome'",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Дерен кроваво-красный (Cornus sanguinea) ‘Anny’s Winter Orange’",
+     "reason": "no_library_model",
+     "points": 439
+    },
+    {
+     "label": "Дерен кроваво-красный (Cornus sanguinea) ‘Anny’s Winter Orange’",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Ель нидиформис",
+     "reason": "no_library_model",
+     "points": 70
+    },
+    {
+     "label": "Ель нидиформис",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Ива швейцарская (Salix helvetica) К",
+     "reason": "no_library_model",
+     "points": 131
+    },
+    {
+     "label": "Игровой комплекс Кубики",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Ирга колосистая",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Карусель",
+     "reason": "no_library_model",
+     "points": 2
+    },
+    {
+     "label": "Качели парковые",
+     "reason": "no_library_model",
+     "points": 11
+    },
+    {
+     "label": "Контейнер 1100л ТБО",
+     "reason": "no_library_model",
+     "points": 8
+    },
+    {
+     "label": "Контейнер 1100л ТБО",
+     "reason": "outside_boundary",
+     "points": 10
+    },
+    {
+     "label": "Кресло Парк 12750",
+     "reason": "outside_boundary",
+     "points": 2
+    },
+    {
+     "label": "Лапчатка кустарниковая (Dasiphora fruticosa) К",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Липа мелколистная 'Greenspire'",
+     "reason": "outside_boundary",
+     "points": 2
+    },
+    {
+     "label": "Лиственница обыкновенная 'Pendula'",
+     "reason": "no_library_model",
+     "points": 13
+    },
+    {
+     "label": "Лиственница обыкновенная 'Pendula'",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Лох узколистный",
+     "reason": "no_library_model",
+     "points": 25
+    },
+    {
+     "label": "Лох узколистный",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Навес 1",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Навес 1",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Навес 2",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Навес 2",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Навес 3",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Навес 3",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Навес 4",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Навес 4",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Облепиха крушиновидная ‘Hikul’",
+     "reason": "no_library_model",
+     "points": 1059
+    },
+    {
+     "label": "Облепиха крушиновидная ‘Hikul’",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Ольха серая 'Laciniata'",
+     "reason": "no_library_model",
+     "points": 8
+    },
+    {
+     "label": "Ольха серая 'Laciniata'",
+     "reason": "outside_boundary",
+     "points": 16
+    },
+    {
+     "label": "Пенек",
+     "reason": "no_library_model",
+     "points": 9
+    },
+    {
+     "label": "Пенек",
+     "reason": "outside_boundary",
+     "points": 3
+    },
+    {
+     "label": "Песочница индивидуальный МАФ",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Площадка для контейнеров БТО 2",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Площадка для контейнеров ТБО",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Пузыреплодник калинолистный (Physocarpus opulifolius) ‘Lady in red’",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Рябинник рябинолистный",
+     "reason": "outside_boundary",
+     "points": 10
+    },
+    {
+     "label": "Скамья верона",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Скамья верона",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Скамья верона 2",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Скамья верона 2",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Скамья индивид лестн 1",
+     "reason": "no_library_model",
+     "points": 2
+    },
+    {
+     "label": "Скамья индивид лестн 1",
+     "reason": "outside_boundary",
+     "points": 3
+    },
+    {
+     "label": "Скамья индивид общ отд 1",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Скамья индивид общ отд 1",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Скамья индивид общ отд 2",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Скамья индивид общ отд 2",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Скамья индивид пл. дети1-3лет",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Скамья индивид пл. дети1-3лет",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Скамья тетрис 03",
+     "reason": "no_library_model",
+     "points": 4
+    },
+    {
+     "label": "Сосна горная ф. Мугус",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Стефанандра надрезаннолистная Crispa (Stephanandra incisa Crispa)",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Стол Лондон Тип 3",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Стул бар",
+     "reason": "no_library_model",
+     "points": 4
+    },
+    {
+     "label": "Тренажер волна",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Тренажер лыжи",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Тренажер мышиная охота",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Турник",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Урна",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Урна",
+     "reason": "point_over_ground_hole (run v001 engine finding)",
+     "points": 2
+    },
+    {
+     "label": "Черемуха обыкновенная 'Watereri'",
+     "reason": "outside_boundary",
+     "points": 1
+    },
+    {
+     "label": "Шезлонг фестиваль модуль 3",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "Яблоня 'Makowieckiana'",
+     "reason": "outside_boundary",
+     "points": 4
+    },
+    {
+     "label": "ио 1005т-11",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "скамья индивид под андромедой",
+     "reason": "no_library_model",
+     "points": 1
+    },
+    {
+     "label": "скамья индивид под андромедой",
+     "reason": "outside_boundary",
+     "points": 1
+    }
+   ],
+   "missing_vpm": [
+    {
+     "block": "Дерен белый 'Red Gnome'",
+     "object": "Cornus_sericea_NPM",
+     "pos": 12
+    }
+   ],
+   "triangles": {
+    "maf": 70230,
+    "flora": 443788
+   }
+  }
+ }
+}
