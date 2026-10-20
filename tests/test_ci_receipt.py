@@ -617,11 +617,12 @@ def test_nonfinite_count_tokens_never_verify(tmp_path):
 
 
 def _pytest_invocation(argv):
-    if argv[:5] != ["uv", "run", "-q", "pytest", "-q"]:
+    if argv[:7] != ["uv", "run", "-q", "pytest", "-q", "-rf", "--tb=long"]:
         return False
-    if len(argv) == 5:
+    rest = argv[7:]
+    if not rest:
         return True
-    return len(argv) == 7 and argv[5] == "--basetemp" and bool(argv[6])
+    return len(rest) == 2 and rest[0] == "--basetemp" and bool(rest[1])
 
 
 def _pytest_argvs(seen):
@@ -676,9 +677,12 @@ def test_windows_default_basetemp_is_unique_under_commit(tmp_path, monkeypatch):
         assert len(argv) == 1
         pytest_argv = argv[0]
         assert pytest_argv.count("--basetemp") == 1
-        assert pytest_argv[5] == "--basetemp"
-        assert len(pytest_argv) == 7
-        path = pytest_argv[6]
+        assert pytest_argv.count("-rf") == 1
+        assert pytest_argv.count("--tb=long") == 1
+        assert pytest_argv[5:7] == ["-rf", "--tb=long"]
+        assert pytest_argv[7] == "--basetemp"
+        assert len(pytest_argv) == 9
+        path = pytest_argv[8]
         assert path.startswith(prefix)
         assert path.rstrip("/") != prefix.rstrip("/")
         assert path not in paths
@@ -686,7 +690,7 @@ def test_windows_default_basetemp_is_unique_under_commit(tmp_path, monkeypatch):
         for other, _env, _cwd in seen:
             if other is not pytest_argv:
                 assert "--basetemp" not in other
-        assert f"command: {PYTEST_CMD} --basetemp {path}" in text
+        assert f"command: {PYTEST_CMD} -rf --tb=long --basetemp {path}" in text
         verify_code, reason = mod.verify_text(text, sha)
         assert verify_code == 0, reason
     assert len(paths) == 2
@@ -714,8 +718,8 @@ def test_windows_default_basetemp_creates_nested_parents(tmp_path, monkeypatch):
         seen = []
 
         def runner(argv, env, cwd):
-            if len(argv) >= 7 and argv[5] == "--basetemp":
-                target = Path(argv[6])
+            if "--basetemp" in argv:
+                target = Path(argv[argv.index("--basetemp") + 1])
                 assert target.parent.is_dir()
                 assert not target.exists()
             return make_runner(seen=seen)(argv, env, cwd)
@@ -754,7 +758,7 @@ def test_posix_pytest_keeps_default_basetemp(tmp_path, monkeypatch):
     code, text = _capture(mod, repo, [], make_runner(seen=seen), monkeypatch)
     assert code == 0
     argv = _pytest_argvs(seen)
-    assert argv == [["uv", "run", "-q", "pytest", "-q"]]
+    assert argv == [["uv", "run", "-q", "pytest", "-q", "-rf", "--tb=long"]]
     assert "--basetemp" not in text
     assert mod.verify_text(text, sha)[0] == 0
 
@@ -1162,3 +1166,213 @@ def test_failure_ids_fail_closed_when_missing_partial_or_nonfinite(tmp_path, mon
     hits += 1
 
     assert hits == 15
+
+
+def test_pytest_log_saves_streams_and_requests_long_tracebacks(tmp_path, monkeypatch):
+    """--pytest-log stores full pytest stdout and stderr once; pytest gets -rf --tb=long once."""
+    mod = load()
+    repo = tmp_path / "repo"
+    sha, _branch = init_repo(repo)
+    stdout = _short_summary(
+        ["FAILED tests/test_agent_trace.py::test_torn_tail - assert 0"],
+        "1 failed, 1 passed in 0.02s",
+    )
+    stderr = (
+        "=================================== FAILURES ===================================\n"
+        "______________________________ test_torn_tail _________________________________\n"
+        "E       AssertionError: TRACEBACK-SENTINEL-torn-tail\n"
+        "tests/test_agent_trace.py:196: AssertionError\n"
+    )
+    seen = []
+
+    def runner(argv, env, cwd):
+        upper = {key.upper() for key in env}
+        assert "PYTHONPATH" not in upper
+        assert "PYTHONHOME" not in upper
+        assert "VIRTUAL_ENV" not in upper
+        if argv[:5] == ["uv", "run", "-q", "pytest", "-q"]:
+            seen.append(list(argv))
+            return Completed(1, stdout, stderr)
+        return make_runner()(argv, env, cwd)
+
+    log_path = tmp_path / "logs" / "pytest.txt"
+    log_path.parent.mkdir()
+    code, text = _capture(mod, repo, ["--pytest-log", str(log_path)], runner, monkeypatch)
+    assert code != 0
+    assert field(text, "result") == "FAIL"
+    assert "unrecognized" not in text.lower()
+    saved = log_path.read_text(encoding="utf-8")
+    assert saved == stdout + stderr
+    assert saved.count("TRACEBACK-SENTINEL-torn-tail") == 1
+    assert "TRACEBACK-SENTINEL-torn-tail" not in text
+    assert failure_lines(text) == [
+        "FAILED tests/test_agent_trace.py::test_torn_tail - assert 0",
+    ]
+    assert len(seen) == 1
+    assert seen[0].count("-rf") == 1
+    assert seen[0].count("--tb=long") == 1
+    assert seen[0][5:7] == ["-rf", "--tb=long"]
+    assert "command: uv run -q pytest -q -rf --tb=long" in text
+
+    seen.clear()
+    pass_log = tmp_path / "logs" / "pass.txt"
+    code, text = _capture(mod, repo, ["--pytest-log", str(pass_log)], make_runner(seen=seen), monkeypatch)
+    assert code == 0, text
+    assert field(text, "result") == "PASS"
+    assert pass_log.read_text(encoding="utf-8").count("4 passed, 1 deselected in 0.02s") == 1
+    assert len(seen) == 1 or any(argv[:7] == ["uv", "run", "-q", "pytest", "-q", "-rf", "--tb=long"] for argv, _env, _cwd in seen)
+    pytest_argv = _pytest_argvs(seen)
+    assert len(pytest_argv) == 1
+    assert pytest_argv[0].count("-rf") == 1
+    assert pytest_argv[0].count("--tb=long") == 1
+    verify_code, reason = mod.verify_text(text, sha)
+    assert verify_code == 0, reason
+
+    bad = (
+        "",
+        " ",
+        "   ",
+        "nan",
+        "inf",
+        "-inf",
+        "+inf",
+        "NaN",
+        "INF",
+        "-NAN",
+        "infinity",
+        "-infinity",
+        " C:/x/pytest.log",
+        "C:/x/pytest.log ",
+        ".",
+        "..",
+        "C:/",
+        "C:/x",
+        "C:/x/",
+        "C:\\x\\",
+        "c:/X",
+        "C:/x/leaf/..",
+        "C:/x/../x",
+        "\x00",
+    )
+    hits = 0
+    rejected = []
+    for value in bad:
+        out = tmp_path / f"rejected-{hits}.txt"
+        probe_seen = []
+        code, text = _capture(
+            mod, repo, ["--pytest-log", value, "--out", str(out)],
+            make_runner(seen=probe_seen), monkeypatch,
+        )
+        assert code != 0, repr(value)
+        assert not out.exists(), repr(value)
+        assert "unrecognized" not in text.lower(), text
+        assert field(text, "result") != "PASS"
+        assert "pytest-log" in text.lower(), text
+        assert probe_seen == []
+        rejected.append(value)
+        hits += 1
+    assert hits == len(bad) == 24
+
+    sentinel = "SENTINEL-DO-NOT-TOUCH\n"
+    shared = tmp_path / "shared-out.txt"
+    shared.write_text(sentinel, encoding="utf-8")
+    probe_seen = []
+    code, text = _capture(
+        mod, repo, ["--pytest-log", str(shared), "--out", str(shared)],
+        make_runner(seen=probe_seen), monkeypatch,
+    )
+    assert code != 0
+    assert probe_seen == []
+    assert shared.read_text(encoding="utf-8") == sentinel
+    assert "output path resolves to input" in text
+    hits += 1
+
+    missing_same = tmp_path / "missing-same.txt"
+    code, text = _capture(
+        mod, repo, ["--pytest-log", str(missing_same), "--out", str(missing_same)],
+        make_runner(seen=probe_seen), monkeypatch,
+    )
+    assert code != 0
+    assert probe_seen == []
+    assert not missing_same.exists()
+    assert "output path resolves to input" in text
+    hits += 1
+
+    orphan = tmp_path / "no-parent" / "pytest.log"
+    out = tmp_path / "orphan-out.txt"
+    code, text = _capture(
+        mod, repo, ["--pytest-log", str(orphan), "--out", str(out)],
+        make_runner(seen=probe_seen), monkeypatch,
+    )
+    assert code != 0
+    assert probe_seen == []
+    assert not orphan.exists()
+    assert not out.exists()
+    assert "pytest-log" in text.lower()
+    hits += 1
+
+    code, text = _capture(
+        mod, repo, ["--pytest-log", str(tmp_path), "--out", str(out)],
+        make_runner(seen=probe_seen), monkeypatch,
+    )
+    assert code != 0
+    assert probe_seen == []
+    assert not out.exists()
+    assert tmp_path.is_dir()
+    assert "pytest-log" in text.lower()
+    hits += 1
+
+    leaf = tmp_path / "basetemp-leaf"
+    code, text = _capture(
+        mod, repo,
+        ["--basetemp", str(leaf), "--pytest-log", str(leaf), "--out", str(out)],
+        make_runner(seen=probe_seen), monkeypatch,
+    )
+    assert code != 0
+    assert probe_seen == []
+    assert not leaf.exists()
+    assert not out.exists()
+    assert "output path resolves to input" in text
+    hits += 1
+
+    missing_log = tmp_path / "logs" / "not-found.txt"
+    code, text = _capture(
+        mod, repo, ["--pytest-log", str(missing_log)],
+        make_runner(missing=True), monkeypatch,
+    )
+    assert code != 0
+    assert not missing_log.exists()
+    assert "command not found" in text
+    hits += 1
+
+    receipt = valid_receipt().replace(
+        f"command: {PYTEST_CMD}\n",
+        f"command: {PYTEST_CMD} -rf --tb=long --basetemp C:/x/ci-receipt-{SHA}/leaf\n",
+        1,
+    )
+    path = tmp_path / "flagged.txt"
+    path.write_text(receipt, encoding="utf-8")
+    verify_code, reason = _verify(mod, path, SHA)
+    assert verify_code == 0, reason
+    plain = tmp_path / "plain.txt"
+    plain.write_text(valid_receipt(), encoding="utf-8")
+    verify_code, reason = _verify(mod, plain, SHA)
+    assert verify_code == 0, reason
+    flagged_bad = (
+        f"{PYTEST_CMD} --tb=long -rf",
+        f"{PYTEST_CMD} -rf --tb=short",
+        f"{PYTEST_CMD} -rf --tb=long -rf --tb=long",
+        f"{PYTEST_CMD} -rf --tb=long --basetemp nan",
+        f"{PYTEST_CMD} -rf --tb=long --basetemp C:/x",
+        f"{PYTEST_CMD} --basetemp C:/custom/leaf -rf --tb=long",
+    )
+    for command in flagged_bad:
+        body = valid_receipt().replace(f"command: {PYTEST_CMD}\n", f"command: {command}\n", 1)
+        probe = tmp_path / f"bad-flags-{hits}.txt"
+        probe.write_text(body, encoding="utf-8")
+        verify_code, reason = _verify(mod, probe, SHA)
+        assert verify_code != 0, command
+        assert reason, command
+        hits += 1
+    assert hits == 24 + 6 + len(flagged_bad) == 36
+    assert len(rejected) == 24

@@ -2,12 +2,15 @@
 
 Print a fenced ``CI-RECEIPT v1`` block for the PR body, or check a pasted block:
 
-    uv run python tools/ci_receipt.py [--issue N] [--basetemp PATH] [--out PATH]
+    uv run python tools/ci_receipt.py [--issue N] [--basetemp PATH] [--pytest-log PATH] [--out PATH]
     uv run python tools/ci_receipt.py --verify FILE --sha FULL_SHA [--out PATH]
 
 Agreed commands, each started with PYTHONPATH, PYTHONHOME and VIRTUAL_ENV removed:
-``uv run -q pytest -q``, ``uv run dt profiles check``, ``uv run dt schemas --check``.
-On Windows, pytest receives ``--basetemp`` under ``C:/x/ci-receipt-<sha>/<unique>``
+``uv run -q pytest -q -rf --tb=long``, ``uv run dt profiles check``,
+``uv run dt schemas --check``. Pytest always receives ``-rf --tb=long``.
+``--pytest-log PATH`` writes that command's full stdout and stderr once; the
+path is not a receipt field. On Windows, pytest receives ``--basetemp`` under
+``C:/x/ci-receipt-<sha>/<unique>``
 unless ``--basetemp`` is set. Missing ancestors of that default path are created
 before pytest; the leaf itself is left for pytest. Other platforms keep pytest's
 own basetemp unless ``--basetemp`` is set. With ``--issue N`` the ready-gate
@@ -141,7 +144,7 @@ def _ensure_default_basetemp_parent(basetemp):
 
 
 def _pytest_command(basetemp):
-    argv = ["uv", "run", "-q", "pytest", "-q"]
+    argv = ["uv", "run", "-q", "pytest", "-q", "-rf", "--tb=long"]
     if basetemp is not None:
         argv.extend(["--basetemp", basetemp])
     return shlex.join(argv)
@@ -154,11 +157,42 @@ def _classify_pytest(command, sha):
         return "bad-basetemp"
     if argv[:5] != ["uv", "run", "-q", "pytest", "-q"]:
         return "not-pytest"
-    if len(argv) == 5:
+    rest = argv[5:]
+    if rest[:2] == ["-rf", "--tb=long"]:
+        rest = rest[2:]
+    if not rest:
         return "ok"
-    if len(argv) == 7 and argv[5] == "--basetemp" and _basetemp_problem(argv[6], sha) is None:
-        return "ok"
-    return "bad-basetemp"
+    if rest[0] == "--basetemp":
+        if len(rest) == 2 and _basetemp_problem(rest[1], sha) is None:
+            return "ok"
+        return "bad-basetemp"
+    return "bad-pytest"
+
+
+def _pytest_log_problem(value):
+    """Fail closed for empty, partial, non-finite and directory-level log paths."""
+    if not isinstance(value, str):
+        return "pytest-log unsupported"
+    if value.strip() == "":
+        return "pytest-log empty"
+    if value != value.strip():
+        return "pytest-log partial"
+    if _NONFINITE_BASETEMP.fullmatch(value):
+        return "pytest-log non-finite"
+    if "\x00" in value:
+        return "pytest-log unsupported"
+    if value.endswith(("/", "\\")):
+        return "pytest-log at threshold"
+    normalized = _normalize_basetemp(value).casefold()
+    if normalized in {"", ".", "..", "c:", "c:/", "c:/x"}:
+        return "pytest-log at threshold"
+    path = Path(value)
+    if path.exists() and path.is_dir():
+        return "pytest-log at threshold"
+    parent = path.parent
+    if not parent.exists() or not parent.is_dir():
+        return "pytest-log directory missing"
+    return None
 
 
 def planned_commands(issue):
@@ -277,7 +311,7 @@ def _duration(started):
     return f"{elapsed:.3f}"
 
 
-def _run_command(command, runner, cwd):
+def _run_command(command, runner, cwd, pytest_log=None):
     argv = shlex.split(command, posix=True)
     started = time.perf_counter()
     try:
@@ -299,6 +333,8 @@ def _run_command(command, runner, cwd):
         record["counts"] = counts
         record["summary"] = summary
         record["failures"] = parse_pytest_failures(blob)
+        if pytest_log is not None:
+            record["log_problem"] = _write_out(pytest_log, f"{stdout}{stderr}")
     return record
 
 
@@ -317,6 +353,8 @@ def _evaluate(records, dirty, git_ok, uv_known):
         if not record.get("found", True):
             reasons.append("command not found")
             continue
+        if record.get("log_problem"):
+            reasons.append(record["log_problem"])
         if record["exit_code"] != 0:
             reasons.append(f"command exit {record['exit_code']}")
         if not record.get("pytest"):
@@ -448,7 +486,7 @@ def _write_out(path, text):
     return None
 
 
-def produce(issue, runner, cwd, basetemp=None):
+def produce(issue, runner, cwd, basetemp=None, pytest_log=None):
     started_at = time.perf_counter()
     started_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     sha = (_git(["rev-parse", "HEAD"], cwd) or "").strip()
@@ -475,9 +513,12 @@ def produce(issue, runner, cwd, basetemp=None):
                     "command": command, "status": "not_run", "reason": "--issue not given", "pytest": False,
                 })
                 continue
-            if command == PYTEST_CMD:
+            is_pytest_cmd = command == PYTEST_CMD
+            if is_pytest_cmd:
                 command = _pytest_command(effective)
-            records.append(_run_command(command, runner, cwd))
+            records.append(_run_command(
+                command, runner, cwd, pytest_log=pytest_log if is_pytest_cmd else None,
+            ))
     branch = (_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd) or "").strip()
     status = _git(["status", "--porcelain"], cwd)
     git_ok = bool(SHA_RE.fullmatch(sha)) and bool(branch) and status is not None
@@ -698,6 +739,7 @@ def _parser():
     parser.add_argument("--verify", default=None)
     parser.add_argument("--sha", default=None)
     parser.add_argument("--basetemp", default=None)
+    parser.add_argument("--pytest-log", default=None)
     parser.add_argument("--out", default=None)
     return parser
 
@@ -738,12 +780,25 @@ def run(argv=None, runner=None):
         if args.out is not None and _same_path(args.out, args.basetemp):
             print("reason: output path resolves to input", file=sys.stderr)
             return 2
+    if args.pytest_log is not None:
+        if args.out is not None and _same_path(args.out, args.pytest_log):
+            print("reason: output path resolves to input", file=sys.stderr)
+            return 2
+        if args.basetemp is not None and _same_path(args.basetemp, args.pytest_log):
+            print("reason: output path resolves to input", file=sys.stderr)
+            return 2
+        problem = _pytest_log_problem(args.pytest_log)
+        if problem:
+            print(f"reason: {problem}", file=sys.stderr)
+            return 2
     problem = _out_problem(args.out)
     if problem:
         print(f"reason: {problem}", file=sys.stderr)
         return 2
     issue = int(args.issue) if args.issue is not None else None
-    receipt, reasons = produce(issue, runner, Path.cwd(), basetemp=args.basetemp)
+    receipt, reasons = produce(
+        issue, runner, Path.cwd(), basetemp=args.basetemp, pytest_log=args.pytest_log,
+    )
     print(receipt, end="")
     if args.out is not None:
         written = _write_out(args.out, receipt)
