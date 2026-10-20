@@ -19,6 +19,7 @@ find the line for your question, then read that file. One line per tracked file.
 | `BODY_SHELL_ADAPTER.md` | BODY/Shell adapter: exterior quads → inward Shell with reveals, no inner faces; Obr22 only | Building a shelled BODY from an exterior surface |
 | `EXPERIENCE_CAPTURE.md` | Rule for recording a user-accepted result as a case study | User praises/accepts a result and a case must be written |
 | `READINESS_REPORT.md` | Readiness audit 2026-09-26: NPM vs VPM, norm conflicts, app readiness, skills registry | Checking historical readiness, NPM/VPM differences or source contradictions |
+| `sintez_checks_1.6.1.json` | Read-only SINTEZ 1.6.1 check-group inventory from PR #429 | Mapping the 36 vendor groups to our modules or tracing 2026 requirement thresholds |
 | `traceability.html` | HTML table rule → PDF page → verification method (single-line file) | Tracing a profile rule to its regulation PDF page |
 
 ## decisions
