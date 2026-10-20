@@ -28,7 +28,7 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N (see npm-vpm
 
 ## Units, coordinates, pivots
 - 1 unit = 1 m, scale 1:1. reg p.4, 24.
-- NPM: geometry in MSK Moscow coordinates + project heights; no arbitrary coords; rotations after reset = plan rotation of OKS. reg p.10 §8.
+- NPM: geometry in MSK Moscow coordinates + project heights; no arbitrary coords; rotation 0 after reset (plan rotation of OKS is baked into geometry vertices during placement, transform rotation is 0; decided 2026-10-16 [D135], [conflict #39](conflicts.md#npm-vpm-plan-rotation-after-reset)). reg p.10 §8.
 - VPM: origin 0,0,0 per FBX; pivot at geometric center X/Y, Z = project zero; same pivot for all meshes in FBX; rotation 0 after reset; insertion point MSK-77 in GeoJSON (3 decimals, <= 0.5 m from SPOZU plan position). reg p.32-33 §9, p.55.
 - Keep work placement near local zero; store transform + source georef; apply profile-specific placement at publish; never mix Moscow coords with local FBX units. local: docs/agr/DIGITAL_TWIN_AI_PROJECT_BRIEF.md#4 (project decision).
 - Local frame for orthogonal facades: `p_local = R^T (p_world - origin)`; contour noise merged within 1 mm, checked by Hausdorff distance (source-specific budget, not construction tolerance). local: docs/agr/case_studies/OBR22_ACCEPTED_WORKFLOW.md#math (lesson).
