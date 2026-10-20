@@ -110,8 +110,13 @@ def _stairs_solid(outline, cells, heights, sampler):
             if abs(h-h2)<1e-6:continue
             if h<h2:a,b,h=uses[1]
             low=min(h,uses[0][2],uses[1][2])
-        ai,bi,al,bl=vid(*a,h),vid(*b,h),vid(*a,low),vid(*b,low)
-        f.extend([[bi,ai,al],[bi,al,bl]])
+        # Every wall uses the same horizontal cuts. Adjacent treads otherwise
+        # terminate midway along the taller side wall's vertical edge (a T-junction
+        # which Editable Poly/xView reports as overlapping faces).
+        cuts=sorted({float(low),float(h),*(float(z) for z in heights if low<z<h)})
+        for lo,hi in zip(cuts,cuts[1:]):
+            ai,bi,al,bl=vid(*a,hi),vid(*b,hi),vid(*a,lo),vid(*b,lo)
+            f.extend([[bi,ai,al],[bi,al,bl]])
 
     f=np.array(f,int)
     return gc.Mesh(np.array(v),f,['Stairs']*len(f),np.full(len(f),-2),np.zeros((len(f),3,2)),4.)

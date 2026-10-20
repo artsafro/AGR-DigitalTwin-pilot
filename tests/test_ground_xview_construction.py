@@ -1,15 +1,21 @@
 """Synthetic construction witnesses for #371; not delivery acceptance."""
 import numpy as np
+import pytest
 from shapely.geometry import box
+from shapely.affinity import rotate, translate
 from dt_ai.geometry import ground_cake as gc, ground_details as gd
 from dt_ai.geometry.ground_quads import pair_triangles
 from dt_ai.ops.inv_quads import PolyMesh
 from dt_ai.ops.inv_xview import part_report, XviewTolerance
 
 
-def test_stair_side_walls_share_every_riser_endpoint():
-    sampler = gc.ReliefSampler(gc.build_tin([(x,y,100+.2*y) for x in (-10,20) for y in (-10,20)]))
-    m = gd._stairs_solid(box(0,0,2,3), [box(0,i,2,i+1) for i in range(3)], [100.2,100.4,100.6], sampler)
+@pytest.mark.parametrize('angle,offset', [(0,0), (27,0), (0,-7600), (27,-7600)])
+@pytest.mark.parametrize('heights', [[100.2,100.4,100.6], [100.6,100.4,100.2], [100.4,100.2,100.6], [100.2,100.2,100.6]])
+def test_stair_side_walls_share_every_riser_endpoint(angle, offset, heights):
+    def place(poly):
+        return translate(rotate(poly, angle, origin=(0,0)), offset, offset)
+    sampler = gc.ReliefSampler(gc.build_tin([(x+offset,y+offset,100+.2*y) for x in (-10,20) for y in (-10,20)]))
+    m = gd._stairs_solid(place(box(0,0,2,3)), [place(box(0,i,2,i+1)) for i in range(3)], heights, sampler)
     edges = {}
     for f in m.faces:
         for a,b in zip(f,np.roll(f,-1)):
