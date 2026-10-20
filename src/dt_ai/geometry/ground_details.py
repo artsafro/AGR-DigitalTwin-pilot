@@ -52,8 +52,9 @@ def triangle_uv(verts, faces, repeat=4.):
     local=candidates[choice,np.arange(len(p))]
     extent=local.max(axis=(1,2))
     scale=np.maximum(repeat,extent)
-    if repeat==4. and np.any(4096/scale<520):
-        raise ValueError('detail triangle exceeds a tile at 520 px/m; subdivide the source contour')
+    # [D160]: inclusive VPM lower bound supersedes D097.
+    if repeat==4. and np.any(4096/scale<512):
+        raise ValueError('detail triangle exceeds a tile at 512 px/m; subdivide the source contour')
     return local/scale[:,None,None]
 
 

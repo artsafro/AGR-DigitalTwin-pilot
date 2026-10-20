@@ -36,8 +36,8 @@ REQUIRED_SLOTS = (
 )
 PROFILES = ("npm", "vpm")
 PROFILE_SIZE = {"npm": 2048, "vpm": 4096}
-DENSITY_BAND = {"npm": (10.0, 40.0), "vpm": (520.0, 1706.0)}
-# TEX-17 / [D097]: the band is the relief surface. The perimeter skirt is excluded;
+DENSITY_BAND = {"npm": (10.0, 40.0), "vpm": (512.0, 1706.0)}
+# TEX-17 / [D097, D160]: the band is the relief surface. The perimeter skirt is excluded;
 # v014 records Skirt UV area 0 and measures density on every other face.
 DENSITY_EXEMPT = frozenset({"Skirt"})
 MATERIAL_NAME = re.compile(r"^M_Vatutino_Ground_([A-Za-z0-9_]+)$")
