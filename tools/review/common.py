@@ -72,7 +72,11 @@ def publish(*, task, slug, source, what, pngs, review_root, adapter, today) -> i
     inputs = [source_p, *png_paths]
     if any(_same(output, item) for output in outputs + [pending] for item in inputs):
         raise ReviewError("output path resolves to an input")
-    entries = _read_pending(pending)
+    # Windows readers can deny atomic replacement while their handle is open.
+    # Serialize preflight reads as well as read-modify-write transactions.
+    if pending.exists():
+        with _store_lock(root):
+            _read_pending(pending)
     if folder.exists() or any(path.exists() for path in outputs):
         raise ReviewError("review folder already exists")
 
@@ -132,12 +136,13 @@ def verdict(*, task, status, note, review_root) -> int:
     note_s = _parse_note(note)
     pending = Path(review_root) / "pending.json"
     _check_ancestors(pending)
-    entries = _read_pending(pending)
     key = f"#{task_n}"
-    if not any(row.get("task") == key for row in entries):
+    if not pending.exists():
         raise ReviewError(f"unknown task {key}")
     with _store_lock(pending.parent):
         entries = _read_pending(pending)
+        if not any(row.get("task") == key for row in entries):
+            raise ReviewError(f"unknown task {key}")
         for row in entries:
             if row.get("task") == key:
                 row["status"] = status_s
@@ -396,7 +401,10 @@ def _manifest_dirs(manifest: Path, scratch: Path) -> list[Path]:
             continue
         path = Path(text)
         if not path.is_absolute():
-            path = (manifest.parent / path).resolve()
+            path = manifest.parent / path
+        # Resolve absolute aliases too: a library may be reached via a Windows
+        # directory junction while its physical directory has a scratch name.
+        path = path.resolve()
         acc: list[str] = []
         for part in path.parts:
             acc.append(part)
