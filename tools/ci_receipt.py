@@ -8,8 +8,10 @@ Print a fenced ``CI-RECEIPT v1`` block for the PR body, or check a pasted block:
 Agreed commands, each started with PYTHONPATH, PYTHONHOME and VIRTUAL_ENV removed:
 ``uv run -q pytest -q``, ``uv run dt profiles check``, ``uv run dt schemas --check``.
 On Windows, pytest receives ``--basetemp`` under ``C:/x/ci-receipt-<sha>/<unique>``
-unless ``--basetemp`` is set. Other platforms keep pytest's own basetemp unless
-``--basetemp`` is set. With ``--issue N`` the ready-gate command is also run;
+unless ``--basetemp`` is set. Missing ancestors of that default path are created
+before pytest; the leaf itself is left for pytest. Other platforms keep pytest's
+own basetemp unless ``--basetemp`` is set. With ``--issue N`` the ready-gate
+command is also run;
 without it that command is ``not_run``. PASS only when every run command exits 0,
 pytest collected at least one test, failed and errors are 0, and
 ``git status --porcelain`` is empty. ``--verify`` does not rewrite its input.
@@ -114,6 +116,21 @@ def _default_basetemp(sha):
     token = sha if SHA_RE.fullmatch(sha or "") else "unknown"
     leaf = f"{os.getpid()}-{time.time_ns()}-{uuid.uuid4().hex}"
     return f"C:/x/ci-receipt-{token}/{leaf}"
+
+
+def _ensure_default_basetemp_parent(basetemp):
+    """Create missing ancestors of the default basetemp. Leave the leaf for pytest."""
+    leaf = Path(basetemp)
+    parent = leaf.parent
+    if parent == leaf:
+        return "basetemp parent not created"
+    try:
+        parent.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        return "basetemp parent not created"
+    if not parent.is_dir():
+        return "basetemp parent not created"
+    return None
 
 
 def _pytest_command(basetemp):
@@ -344,24 +361,31 @@ def produce(issue, runner, cwd, basetemp=None):
     started_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     sha = (_git(["rev-parse", "HEAD"], cwd) or "").strip()
     effective = basetemp
+    parent_problem = None
     if effective is None and _platform_name() == "nt":
         effective = _default_basetemp(sha)
-    try:
-        version = runner(["uv", "--version"], child_env(), cwd)
-        uv_text = (version.stdout or version.stderr or "").strip().splitlines()
-        uv_value = uv_text[0] if version.returncode == 0 and uv_text else "unknown"
-    except FileNotFoundError:
+        parent_problem = _ensure_default_basetemp_parent(effective)
+
+    if parent_problem:
         uv_value = "unknown"
-    records = []
-    for command, mode in planned_commands(issue):
-        if mode == "not_run":
-            records.append({
-                "command": command, "status": "not_run", "reason": "--issue not given", "pytest": False,
-            })
-            continue
-        if command == PYTEST_CMD:
-            command = _pytest_command(effective)
-        records.append(_run_command(command, runner, cwd))
+        records = []
+    else:
+        try:
+            version = runner(["uv", "--version"], child_env(), cwd)
+            uv_text = (version.stdout or version.stderr or "").strip().splitlines()
+            uv_value = uv_text[0] if version.returncode == 0 and uv_text else "unknown"
+        except FileNotFoundError:
+            uv_value = "unknown"
+        records = []
+        for command, mode in planned_commands(issue):
+            if mode == "not_run":
+                records.append({
+                    "command": command, "status": "not_run", "reason": "--issue not given", "pytest": False,
+                })
+                continue
+            if command == PYTEST_CMD:
+                command = _pytest_command(effective)
+            records.append(_run_command(command, runner, cwd))
     branch = (_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd) or "").strip()
     status = _git(["status", "--porcelain"], cwd)
     git_ok = bool(SHA_RE.fullmatch(sha)) and bool(branch) and status is not None
@@ -378,6 +402,8 @@ def produce(issue, runner, cwd, basetemp=None):
         "scrubbed": SCRUBBED,
     }
     reasons = _evaluate(records, dirty, git_ok, uv_value != "unknown")
+    if parent_problem:
+        reasons.insert(0, parent_problem)
     return format_receipt(header, records, reasons), reasons
 
 

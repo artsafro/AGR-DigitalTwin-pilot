@@ -692,6 +692,59 @@ def test_windows_default_basetemp_is_unique_under_commit(tmp_path, monkeypatch):
     assert len(paths) == 2
 
 
+def test_windows_default_basetemp_creates_nested_parents(tmp_path, monkeypatch):
+    """Missing ancestors of the Windows default basetemp exist before pytest; the leaf does not."""
+    mod = load()
+    monkeypatch.setattr(mod, "_platform_name", lambda: "nt")
+    repo = tmp_path / "repo"
+    sha, _branch = init_repo(repo)
+    hits = 0
+    for depth in (1, 2, 3, 4):
+        parent = tmp_path / f"nest-{depth}"
+        for level in range(depth):
+            parent = parent / f"level{level}"
+        leaf = parent / "pytest-leaf"
+        assert not parent.exists()
+
+        def fake_default(got, leaf_text=leaf.as_posix()):
+            assert got == sha
+            return leaf_text
+
+        monkeypatch.setattr(mod, "_default_basetemp", fake_default)
+        seen = []
+
+        def runner(argv, env, cwd):
+            if len(argv) >= 7 and argv[5] == "--basetemp":
+                target = Path(argv[6])
+                assert target.parent.is_dir()
+                assert not target.exists()
+            return make_runner(seen=seen)(argv, env, cwd)
+
+        code, text = _capture(mod, repo, [], runner, monkeypatch)
+        assert code == 0, text
+        assert parent.is_dir()
+        assert not leaf.exists()
+        hits += 1
+
+    blocker = tmp_path / "not-a-directory"
+    blocker.write_text("x", encoding="utf-8")
+    blocked_leaf = blocker / "ci-receipt" / "leaf"
+
+    def blocked_default(_got, leaf_text=blocked_leaf.as_posix()):
+        return leaf_text
+
+    monkeypatch.setattr(mod, "_default_basetemp", blocked_default)
+    seen = []
+    code, text = _capture(mod, repo, [], make_runner(seen=seen), monkeypatch)
+    assert code != 0
+    assert field(text, "result") == "FAIL"
+    assert not any(
+        argv[:5] == ["uv", "run", "-q", "pytest", "-q"] for argv, _env, _cwd in seen
+    )
+    hits += 1
+    assert hits == 5
+
+
 def test_posix_pytest_keeps_default_basetemp(tmp_path, monkeypatch):
     mod = load()
     monkeypatch.setattr(mod, "_platform_name", lambda: "posix")
