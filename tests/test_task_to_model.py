@@ -554,3 +554,71 @@ def test_repository_source_evidence_is_pinned():
         assert all(ref.get("commit") for ref in sources), [r["path"] for r in sources if not r.get("commit")]
         generated = [ref for ref in refs if not ref["path"].endswith(SOURCE_SUFFIXES)]
         assert generated and not any(ref.get("commit") for ref in generated), name
+
+
+def pin_generated(bundle, root, witness, commit):
+    """Add ``commit`` to one generated artifact/receipt/part/report reference and return its path."""
+    if witness == "export":
+        ref = bundle["artifacts"][0]
+    elif witness == "report":
+        ref = bundle["gates"]["report"]["evidence"][0]
+    elif witness == "operations":
+        ref = bundle["gates"]["operations"]["evidence"][0]
+    else:  # parts
+        ref = bundle["gates"]["parts"]["evidence"][0]
+    ref["commit"] = commit
+    return root / ref["path"]
+
+
+@pytest.mark.parametrize("witness", ("export", "report", "operations", "parts"))
+def test_generated_evidence_rejects_pinned_commit(bundle, tmp_path, witness):
+    # P1 regression: a valid ancestor commit on a generated artifact/receipt/part/report must not
+    # substitute historical bytes for current delivery evidence; current bytes stay mandatory.
+    commit = commit_all(tmp_path)
+    path = pin_generated(bundle, tmp_path, witness, commit)
+    path.write_bytes(b"CORRUPTED GENERATED ARTIFACT")
+    result = load().inspect_job(bundle, tmp_path)
+    assert not result["passed"]
+    assert any("pinned commit not allowed" in e for e in errors(result)), errors(result)
+    completed = run_cli(bundle, tmp_path)
+    assert completed.returncode == 1, completed.stdout
+    assert "pinned commit not allowed" in completed.stdout
+
+
+@pytest.mark.parametrize("witness", ("export", "report", "operations", "parts"))
+def test_generated_evidence_clean_controls(bundle, tmp_path, witness):
+    # Clean control: without commit the generated evidence passes on its current bytes; adding
+    # commit (even without corrupting) is itself rejected fail-closed.
+    commit = commit_all(tmp_path)
+    assert load().inspect_job(bundle, tmp_path)["passed"] is True
+    pin_generated(bundle, tmp_path, witness, commit)
+    result = load().inspect_job(bundle, tmp_path)
+    assert not result["passed"]
+    assert any("pinned commit not allowed" in e for e in errors(result))
+    assert commit
+
+
+def test_generated_report_role_rejects_source_like_suffix(bundle, tmp_path):
+    # Role beats suffix: a generated report renamed to a source suffix still rejects commit.
+    commit = commit_all(tmp_path)
+    ref = bundle["gates"]["report"]["evidence"][0]
+    data = (tmp_path / ref["path"]).read_bytes()
+    (tmp_path / ref["path"]).unlink()
+    ref.update(path="report.py", sha256=hashlib.sha256(data).hexdigest(), commit=commit)
+    (tmp_path / "report.py").write_bytes(data)
+    result = load().inspect_job(bundle, tmp_path)
+    assert not result["passed"]
+    assert any("pinned commit not allowed for report evidence" in e for e in errors(result))
+
+
+def test_generated_artifact_role_rejects_source_like_suffix(bundle, tmp_path):
+    # An exported artifact named like source must still be working-tree verified (role rule).
+    commit = commit_all(tmp_path)
+    artifact = bundle["artifacts"][0]
+    data = (tmp_path / artifact["path"]).read_bytes()
+    (tmp_path / artifact["path"]).unlink()
+    (tmp_path / "export.py").write_bytes(data)
+    artifact.update(path="export.py", commit=commit)  # sha256 unchanged: same bytes
+    result = load().inspect_job(bundle, tmp_path)
+    assert not result["passed"]
+    assert any("pinned commit not allowed for artifact evidence" in e for e in errors(result))

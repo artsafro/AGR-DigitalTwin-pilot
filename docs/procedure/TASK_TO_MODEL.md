@@ -68,8 +68,12 @@ versioned job evidence directory when a reproducible walk is needed. References 
 SHA-256 verified even for incomplete gates. Source-code evidence (`.py`, `.cs`,
 `.ps1`, `.ms`, `.js`, `.ts`) is pinned to an immutable revision with a full-object-id
 `commit` (#387): its `sha256` is checked against the blob at that commit, so later
-working-tree edits never invalidate the recorded evidence. Generated artifacts and
-receipts keep their working-tree `sha256` and carry no `commit`. `evidence_exists`
+working-tree edits never invalidate the recorded evidence. The pin is honored only in the
+`inputs`, `parts` and `operations` roles: the `inputs` inventory (any path), and in
+`parts`/`operations` only source-suffixed paths. Generated artifacts, receipts, parts,
+reports and visual sheets always keep their working-tree `sha256` and reject a `commit`
+(by role as well as by suffix, so a generated file cannot evade the check with a
+source-like name); editing any of them still errors. `evidence_exists`
 inventories files; `status` is the checked gate claim; `ready` additionally requires
 preceding gates.
 
