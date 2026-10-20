@@ -15,7 +15,7 @@ Fixed dependency order below follows D104/D125: human geometry acceptance preced
 | ID | Completion evidence |
 |---|---|
 | inputs | Full source inventory with paths and SHA-256; requirement/profile/version, source units, coordinate system and source authority recorded in the job report. Mark synthetic sources. |
-| parts | `parts.json` validates against [PartsList](../../schemas/PartsList.schema.json), via `dt_ai.parts.model.PartsList`; source coverage, operation and triangle budget per part, joints and questions; **user Gate 1 confirmation before build** (D111/D124/D125). |
+| parts | `parts.json` validates against [PartsList](../../schemas/PartsList.schema.json), via the public `dt_ai.core.models.PartsList` facade; source coverage, operation and triangle budget per part, joints and questions; **user Gate 1 confirmation before build** (D111/D124/D125). |
 | operations | Apply [kernel operations](../../src/dt_ai/ops/) to [parts](../../src/dt_ai/parts/); log operation names and before/after invariant results (D108/D131). Broken invariants roll back; stop and ask. Include additional applicable invariants, including D129, when supported; never silently omit a mandatory check. |
 | budgets | Measured budgets vs cited profile/area/decision limits: master, NPM/VPM, UCX, materials, textures, density. Each measurement names its rule and comparison (`le` inclusive, `lt` exclusive); no inferred limit. |
 | export_readback | New versioned export, SHA-256; clean-process readback of **exported file**, checking topology, UV, materials, units/transforms. Working-scene checks alone do not complete this gate. |
@@ -51,7 +51,8 @@ deviations:
 `path: standard` requires an empty log. Repeated attempts append records; they do
 not erase earlier failures. A changed source/export/run invalidates old receipts:
 use a new `run_id`, recompute evidence, and re-run downstream gates. Receipt gate
-and run IDs, ordered artifact hashes, and file hashes must match the checklist.
+and run IDs, ordered input paths/hashes, confirmed PartsList hash, ordered artifact
+hashes, and file hashes must match the checklist, even if `run_id` was not changed.
 Map key order has no meaning; the dependency order above determines readiness.
 
 ## Machine walk (read-only, no DCC execution)
@@ -69,13 +70,21 @@ SHA-256 verified even for incomplete gates. `evidence_exists` inventories files;
 
 For pass claims, inputs must equal the full inventory; parts must be confirmed.
 Machine receipts (operations/budgets/readback/visual/checker) are JSON or YAML maps
-with `gate`, `run_id`, `artifact_sha256` (ordered list). `checks` is a nonempty map
+with `gate`, `run_id`, `artifact_sha256` (ordered list), `input_evidence` (the exact
+ordered `inputs` list of `{path, sha256}`), and `parts_sha256` (the SHA-256 of the
+first parts evidence file, validated as the confirmed PartsList at the parts gate).
+Changing input bytes, inventory paths/order or confirmed parts invalidates every
+machine receipt; real producers must rerun checks and obtain fresh approvals, not
+just rewrite receipt hashes. `checks` is a nonempty map
 of check IDs to `pass`/`fail`/`review`/`not_run`; all applicable checks must pass.
 Operations require `before.<invariant>` and `after.<invariant>` for all six mandatory
 invariants (open_borders_hidden, no_see_through_hole, no_visible_back_faces,
 no_close_overlap, quad_dominance, texel_ready) and a nonempty `operations` list.
 Missing producers for D129 leave the gate incomplete, not waived. Budgets use `measurements` rows
-with `value`, `limit`, `comparison`, `rule`. Readback requires `clean_process: true`
+with `value`, `limit`, `comparison`, `rule`. Budgets may omit `checks` when only
+measurements apply; if declared, it must be a nonempty map of nonblank string IDs
+to `pass` (no ignored failed, review, not_run or malformed checks).
+Readback requires `clean_process: true`
 and topology/uv/materials/transforms checks. Visual requires face_orientation,
 album_overlay, source_overlay, material_legend, sections checks; `actor_role: user`,
 actor/date/review_tool/decision_reference, `decision: approved`, scope `project` or

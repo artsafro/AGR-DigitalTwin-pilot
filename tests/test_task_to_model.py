@@ -339,6 +339,68 @@ def test_generated_receipt_identity_fields(bundle, tmp_path):
     assert run_cli(bundle, tmp_path).returncode == 1
 
 
+@pytest.mark.parametrize("identity", ("source", "parts"))
+@pytest.mark.parametrize("status", ("fail", "review", "not_run"))
+def test_combined_receipt_regressions(bundle, tmp_path, identity, status):
+    assert run_cli(bundle, tmp_path).returncode == 0
+    if identity == "source":
+        bundle["inputs"] = [store(tmp_path, "source.txt", "SYNTHETIC revised source")]
+        bundle["gates"]["inputs"]["evidence"] = copy.deepcopy(bundle["inputs"])
+    else:
+        ref = bundle["gates"]["parts"]["evidence"][0]
+        parts = json.loads((tmp_path / ref["path"]).read_text())
+        parts["gate1"]["note"] += " revised"
+        bundle["gates"]["parts"]["evidence"] = [store(tmp_path, ref["path"], parts)]
+    assert run_cli(bundle, tmp_path).returncode == 1
+    rebind_receipts(bundle, tmp_path)
+    assert run_cli(bundle, tmp_path).returncode == 0
+
+    ref = bundle["gates"]["budgets"]["evidence"][0]
+    receipt = json.loads((tmp_path / ref["path"]).read_text())
+    receipt["checks"] = {"mandatory_texture_budget": status}
+    bundle["gates"]["budgets"]["evidence"] = [store(tmp_path, ref["path"], receipt)]
+    completed = run_cli(bundle, tmp_path)
+    assert completed.returncode == 1
+    assert next(row for row in json.loads(completed.stdout)["gates"]
+                if row["gate"] == "budgets")["status"] == "fail"
+
+    receipt["checks"]["mandatory_texture_budget"] = "pass"
+    receipt["measurements"][0].update(value=10, limit=10, comparison="lt")
+    bundle["gates"]["budgets"]["evidence"] = [store(tmp_path, ref["path"], receipt)]
+    assert run_cli(bundle, tmp_path).returncode == 1
+    receipt["measurements"][0]["comparison"] = "le"
+    bundle["gates"]["budgets"]["evidence"] = [store(tmp_path, ref["path"], receipt)]
+    assert run_cli(bundle, tmp_path).returncode == 0
+
+    ref = bundle["gates"]["operations"]["evidence"][0]
+    receipt = json.loads((tmp_path / ref["path"]).read_text())
+    del receipt["checks"]["after.texel_ready"]
+    bundle["gates"]["operations"]["evidence"] = [store(tmp_path, ref["path"], receipt)]
+    assert run_cli(bundle, tmp_path).returncode == 1
+    # The previous output guard must also survive the newly bound receipt format.
+    before = {p: p.read_bytes() for p in tmp_path.iterdir()}
+    assert run_cli(bundle, tmp_path, "--output", str(tmp_path / "source.txt")).returncode == 1
+    assert before == {p: p.read_bytes() for p in tmp_path.iterdir()}
+
+
+@pytest.mark.parametrize("mutation", ("add", "remove", "reorder", "path"))
+def test_inventory_identity_changes(bundle, tmp_path, mutation):
+    bundle["inputs"].append(store(tmp_path, "second-source.txt", "SYNTHETIC second source"))
+    bundle["gates"]["inputs"]["evidence"] = copy.deepcopy(bundle["inputs"])
+    rebind_receipts(bundle, tmp_path)
+    assert run_cli(bundle, tmp_path).returncode == 0
+    if mutation == "add":
+        bundle["inputs"].append(store(tmp_path, "third-source.txt", "SYNTHETIC third source"))
+    elif mutation == "remove":
+        bundle["inputs"].pop()
+    elif mutation == "reorder":
+        bundle["inputs"].reverse()
+    else:
+        bundle["inputs"][0] = store(tmp_path, "alias-source.txt", "SYNTHETIC test source")
+    bundle["gates"]["inputs"]["evidence"] = copy.deepcopy(bundle["inputs"])
+    assert run_cli(bundle, tmp_path).returncode == 1
+
+
 @pytest.mark.parametrize("checks", [
     {"mandatory_texture_budget": status} for status in ("fail", "review", "not_run", "unsupported")
 ] + [{}, None, [], "pass", {"": "pass"}, {"   ": "pass"}, {1: "pass"}])
