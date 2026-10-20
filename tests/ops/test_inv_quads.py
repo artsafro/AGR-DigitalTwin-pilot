@@ -389,6 +389,45 @@ def test_probe_random_planar_quad_grids_pass_and_random_ngons_fail():
         assert not r.passed and f"p#{k}: ngon (5 sides)" in r.offenders
 
 
+def _cross2(u, w):
+    return u[0] * w[1] - u[1] * w[0]
+
+
+def _segments_cross(p, q, r, s):
+    d = lambda a, b, c: (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])   # noqa: E731
+    return d(p, q, r) * d(p, q, s) < 0 and d(r, s, p) * d(r, s, q) < 0
+
+
+def test_probe_mergeable_matches_an_independent_oracle():
+    """Generated: random triangle pairs on a shared edge, tilted 0-3 deg. Oracle: the pair is mergeable iff the
+    quad diagonals ab and cd cross (convex), the tilt is <= 1 deg and no interior angle is within 1 deg of 180."""
+    rng = np.random.default_rng(1290)
+    checked = merged = 0
+    for _ in range(2000):
+        a, b, c, d = (rng.uniform(-1, 1, 2) for _ in range(4))
+        tilt = float(rng.uniform(0, 3))
+        if abs(tilt - 1.0) < 0.01:
+            continue
+        loop = [a, d, b, c]
+        angles = [math.degrees(math.acos(np.clip(np.dot(u, w) / (np.linalg.norm(u) * np.linalg.norm(w)), -1, 1)))
+                  for u, w in ((loop[i - 1] - loop[i], loop[(i + 1) % 4] - loop[i]) for i in range(4))]
+        if any(abs(x - 179.0) < 0.5 or x < 0.5 for x in angles) or abs(_cross2(b - a, c - a)) < 1e-3 \
+                or abs(_cross2(b - a, d - a)) < 1e-3:
+            continue
+        # tilt d about the shared edge ab
+        axis = np.append(b - a, 0.0) / np.linalg.norm(b - a)
+        rel = np.append(d - a, 0.0)
+        t = math.radians(tilt)
+        rot = rel * math.cos(t) + np.cross(axis, rel) * math.sin(t) + axis * np.dot(axis, rel) * (1 - math.cos(t))
+        v = [(*a, 0.0), (*b, 0.0), (*c, 0.0), tuple(np.append(a, 0.0) + rot)]
+        expected = bool(_segments_cross(a, b, c, d) and tilt <= 1.0 and max(angles) < 179.0)
+        got = classify_faces(poly(v, [(0, 1, 2), (1, 0, 3)])) == ["mergeable", "mergeable"]
+        assert got is expected, (a, b, c, d, tilt)
+        checked += 1
+        merged += got
+    assert checked > 1500 and merged > 100
+
+
 # ---- wrapper ----------------------------------------------------------------------------------------------------
 
 BOX_V = [(i & 1, (i >> 1) & 1, (i >> 2) & 1) for i in range(8)]
