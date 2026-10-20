@@ -1,5 +1,7 @@
 """Asset store manifest and local/Drive sync (issue #350).
 
+new-case: fail-closed asset inventory and offline/Drive contract probes.
+
 Public seam: tools/assets/sync.py — validate a manifest, dry-run by default,
 optional rclone or Drive-for-desktop backend. Checksums and licences are never
 invented; a bad entry fails closed.
