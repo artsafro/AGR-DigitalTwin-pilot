@@ -64,6 +64,16 @@ def statuses(found, stage):
     return {f.name: f.status for f in found[stage]}
 
 
+@pytest.mark.parametrize("uv, expected", [(1, "pass"), (0, "fail"), (2, "fail")])
+def test_v008_uv_contract_excludes_collision_only(uv, expected):
+    """Ground UCX has no UV by design; render meshes still require exactly one channel."""
+    found = scene_findings(rb(mesh(name="SM_Test_Ground", uv=uv),
+                              mesh(name="UCX_SM_Test_Ground_001", uv=0)), "vpm", "ground", PROFILES.vpm)
+    assert statuses(found, "V008")["one UV channel"] == expected
+    assert statuses(found, "V010")["UCX present"] == "pass"
+    assert statuses(found, "V010")["UCX triangle budget"] == "pass"
+
+
 def test_clean_vpm_mesh_passes_scene_stages():
     found = scene_findings(rb(mesh()), "vpm", "oks", PROFILES.vpm)
     assert set(statuses(found, "V003").values()) == {"pass"}
