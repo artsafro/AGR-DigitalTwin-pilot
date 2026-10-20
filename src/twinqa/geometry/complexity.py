@@ -59,9 +59,12 @@ def check_complexity(scene: dict, tol: dict) -> dict:
     over = {g: [n, tol["budget"][g]] for g, n in tris.items() if g in tol["budget"] and n > tol["budget"][g]}
     unbudgeted = sorted(g for g in tris if g not in tol["budget"])
     decor = set(tol["decor_groups"])
+    first_group = {}
+    for ob in objects:
+        first_group.setdefault(ob["mesh"], ob["group"])
     too_many, not_silhouette, missing = [], [], []
     for name, m in meshes.items():
-        group = next((ob["group"] for ob in objects if ob["mesh"] == name), None)
+        group = first_group.get(name)
         if group not in decor or group in FRAME_GROUPS:
             continue
         meta = m.get("meta", {})
@@ -75,7 +78,7 @@ def check_complexity(scene: dict, tol: dict) -> dict:
             not_silhouette.append([name, dev])
     by_hash = defaultdict(list)
     for name, m in meshes.items():
-        group = next((ob["group"] for ob in objects if ob["mesh"] == name), None)
+        group = first_group.get(name)
         if group in decor:
             by_hash[_hash(m)].append(name)
     not_instanced = [names for names in by_hash.values() if len(names) > 1]
