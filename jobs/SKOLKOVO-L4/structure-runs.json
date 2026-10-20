@@ -1,0 +1,14 @@
+[
+  {
+    "source": "C:\\x\\l4-skolkovo\\01_source\\01_initial_2026-05-26\\СК_ИЦ_ЦОД02_П_АР_3DView(Navisworks)forAGR(fbx).fbx",
+    "facts": "structure-00.json",
+    "exit_code": 0,
+    "seconds": 1388.938925799972
+  },
+  {
+    "source": "C:\\x\\l4-skolkovo\\01_source\\02_pravki_2026-09-15\\fbx\\генплан - забор и ограждение.fbx",
+    "facts": "structure-01.json",
+    "exit_code": 1,
+    "seconds": 1.3139488000888377
+  }
+]

@@ -1,0 +1,37 @@
+{
+  "status": "intake_only_not_approved",
+  "source": {
+    "name": "СК_ИЦ_ЦОД02_П_АР_3DView(Navisworks)forAGR(fbx).fbx",
+    "path": "C:\\x\\l4-skolkovo\\01_source\\01_initial_2026-05-26\\СК_ИЦ_ЦОД02_П_АР_3DView(Navisworks)forAGR(fbx).fbx",
+    "sha256": "caa89dc0b1ca4effa269dbd7b26f5cd10acbcc00fe5c2c0942d251b1dbb57203",
+    "bytes": 155102912
+  },
+  "blender": "5.1.2",
+  "units": {
+    "system": "METRIC",
+    "scale_length": 1.0,
+    "length_unit": "METERS",
+    "bbox_unit": "m",
+    "fbx": {
+      "unit_scale_factor": 30.48,
+      "original_unit_scale_factor": 1.0,
+      "error": null
+    }
+  },
+  "object_types": {
+    "MESH": 17710,
+    "CAMERA": 1,
+    "EMPTY": 3
+  },
+  "mesh_count": 17710,
+  "triangles": 6644287,
+  "contacts": 73110,
+  "components": 709,
+  "material_slot_counts": {
+    "0": 17710
+  },
+  "source_extraction_seconds": 1388.938925799972,
+  "parts_status": "not_produced_reader_cancelled_after_second_Blender_startup_crash",
+  "artifact_status": "no_kernel_build_no_exports_no_visual_approval",
+  "raw_facts_local": "tmp/skolkovo-l4-v001/structure-00.json"
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "stage": "full_copy_inventory_sha256",
+    "seconds": 0.441646600025706,
+    "hours": 0.00012267961111825167
+  },
+  {
+    "stage": "fbx_structure_readers",
+    "seconds": 1390.257451100042,
+    "hours": 0.38618262530556724
+  }
+]
