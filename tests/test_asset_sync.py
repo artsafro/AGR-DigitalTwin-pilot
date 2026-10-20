@@ -333,6 +333,8 @@ def test_rclone_copy_and_private_link(tmp_path, monkeypatch):
 
     def run(args, **kwargs):
         calls.append(args)
+        if args[1] == "backend":
+            return subprocess.CompletedProcess(args, 0, json.dumps({"Features": {"IsLocal": False}}), "")
         if args[1] == "lsjson":
             return subprocess.CompletedProcess(args, 0, json.dumps({"ID": "test", "Size": len(payload), "Hashes": {"md5": hashlib.md5(payload).hexdigest()}}), "")
         return subprocess.CompletedProcess(args, 0, "", "")
@@ -342,10 +344,10 @@ def test_rclone_copy_and_private_link(tmp_path, monkeypatch):
     assert code == 0 and calls == []
     code, report = sync.execute(manifest, root=root, backend="rclone", apply=True)
     assert code == 0
-    assert [call[1] for call in calls] == ["copyto", "lsjson"]
-    assert calls[0][-1] == "gdrive:AGR-assets/sample/asset.bin"
-    assert "--ignore-existing" in calls[0]
-    assert "--stat" in calls[1] and "--hash" in calls[1]
+    assert [call[1] for call in calls] == ["backend", "copyto", "lsjson"]
+    assert calls[1][-1] == "gdrive:AGR-assets/sample/asset.bin"
+    assert "--ignore-existing" in calls[1]
+    assert "--stat" in calls[2] and "--hash" in calls[2]
     assert report["assets"][0]["drive_link"] == "https://drive.google.com/file/d/test/view"
 
 
@@ -426,6 +428,8 @@ def test_rclone_invalid_remote_evidence_fails(tmp_path, monkeypatch, metadata):
     monkeypatch.setattr(sync, "which_rclone", lambda: "rclone")
     monkeypatch.setenv("AGR_RCLONE_REMOTE", "gdrive:assets")
     def run(args, **kwargs):
+        if args[1] == "backend":
+            return subprocess.CompletedProcess(args, 0, json.dumps({"Features": {"IsLocal": False}}), "")
         output = "{" if metadata == "truncated" else json.dumps(metadata)
         return subprocess.CompletedProcess(args, 0, output if args[1] == "lsjson" else "", "")
     monkeypatch.setattr(subprocess, "run", run)

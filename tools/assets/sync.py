@@ -306,11 +306,20 @@ def execute(
     desktop = drive_desktop_root(drive_root) if backend == "drive-desktop" else None
     targets = [desktop / e["local_path"] for e in assets_in
                if isinstance(e, dict) and isinstance(e.get("local_path"), str)] if desktop else []
+    # Query only during apply; dry-run must never invoke a remote client.
+    if not errors and apply and backend == "rclone" and _credentials(backend, drive_root) == "present":
+        try:
+            remote_root = _rclone_local_root()
+            if remote_root is not None:
+                targets = [remote_root / e["local_path"] for e in assets_in]
+                desktop = remote_root  # shared filesystem destination safety checks
+        except (OSError, ValueError, subprocess.SubprocessError) as exc:
+            errors.append(f"rclone_preflight_failed: {exc}")
     protected = [manifest, *local_paths, *targets]
     if out is not None and any(_same(Path(out), p) for p in protected):
         errors.append("output_aliases_input")
     for target in targets:
-        if not _contained(desktop, target) or any(_same(target, p) for p in [manifest, *local_paths]):
+        if desktop is None or not _contained(desktop, target) or any(_same(target, p) for p in [manifest, *local_paths]):
             errors.append("destination_aliases_input_or_escapes_root")
     if len({str(p.resolve()) for p in local_paths}) != len(local_paths):
         errors.append("duplicate_local_path")
@@ -359,6 +368,39 @@ def _report(apply: bool, backend: str, root: Path, drive_root: Path | None, rows
         "assets": rows,
         "errors": list(errors),
     }
+
+
+def _rclone_local_root() -> Path | None:
+    """Resolve local backend roots before writes; reject opaque filesystem wrappers."""
+    remote = os.environ["AGR_RCLONE_REMOTE"].rstrip("/")
+    if not re.fullmatch(r"[A-Za-z0-9_-]+:[^\n\r]*", remote):
+        raise ValueError("AGR_RCLONE_REMOTE must name a configured remote:path")
+    executable = which_rclone()
+    if executable is None:
+        raise ValueError("rclone unavailable")
+    result = subprocess.run([executable, "backend", "features", remote],
+                            capture_output=True, text=True, timeout=60, check=False)
+    info = json.loads(result.stdout) if result.returncode == 0 else {}
+    features = info.get("Features") if isinstance(info, dict) else None
+    if not isinstance(features, dict) or type(features.get("IsLocal")) is not bool:
+        raise ValueError("remote filesystem identity unavailable")
+    if features.get("Overlay") or features.get("WrapFs"):
+        raise ValueError("wrapped remote filesystems are unsupported")
+    if not features["IsLocal"]:
+        return None
+    root = info.get("Root")
+    if not isinstance(root, str) or not root:
+        raise ValueError("local remote root unavailable")
+    # rclone on Windows emits extended-length paths; normalize even absent targets.
+    root = root.replace("\\", "/")
+    if root.startswith("//?/UNC/"):
+        root = "//" + root[8:]
+    elif root.startswith("//?/"):
+        root = root[4:]
+    path = Path(root)
+    if not path.is_absolute():
+        raise ValueError("local remote root must be absolute")
+    return path
 
 
 def _copy(entry: dict, root: Path, backend: str, desktop: Path | None) -> str:
