@@ -47,6 +47,7 @@ Project practice from Artem's Ground grilling, rounds 1-3 (notes: hermes_kanban 
 - Coverings: no fixed catalogue; usually ~18 materials (tile in different RAL/shades, water, asphalt, rubber, mulch, gravel, grass, wood decks/bridges, concrete); the 18 of GROUND-PROJECTION are a reasonable starting set.
 - Textures and density: VPM 4K, NPM 2K; texel density in pixels per linear metre: NPM 10–40, VPM 520–1706 [D097].
 - Budget split: one Ground master derived to both profiles; NPM 180 000 is met by NPM plants (single-sided polygons) and NPM MAF; starting split surface ≤ 50k / MAF ≤ 60k / Flora ≤ 70k, corrected per project [D097]; VPM usually fits, plants are replaced by VPM plants and MAF may be more detailed.
+- Vatutino-only exception [D150]: the 12 steep/flatter-junction vertices and 6 face centres listed in `jobs/VATUTINO-SITE/ground-gap-exceptions.json` may exceed 20 mm; every other sample keeps the bound. This source/geometry-pinned acceptance does not change the general spacing rule.
 - Typical rejections (Ground-related): texture seams after unwrap (tiling broken); Ground collisions not convex, missing spacing between pieces or wrong Ground–collision distance; gaps; open polygons in VPM; flipped normals in VPM. MAF and Flora rejections are in their sheets.
 
 ## Source-image evidence

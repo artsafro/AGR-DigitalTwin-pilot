@@ -272,7 +272,7 @@ def acceptance_gates(rep: dict, exceptions: dict | None = None) -> dict:
     # User decision 2026-10-19: the normal gap of a locally raised layer is 5-20 mm. Both bounds are mandatory gates
     # (review round 2 of PR #308): a V004 "review" above 20 mm is not a waiver, so over-band geometry is never
     # written as a deliverable unless each over-band sample matches an explicit frozen user exception.
-    # User 2026-10-20 option a accepts only the source/geometry-pinned 12 junction vertices and 6 face centres.
+    # [D150] User 2026-10-20 option a: only the pinned 12 junction vertices and 6 face centres.
     gap_value = {k: sg[k] for k in sg if k.startswith("normal_gap")}
     g["normal_gap_min_5mm"] = {"pass": sg["normal_gap_centroids_below"] == 0 and sg["normal_gap_vertices_below"] == 0,
                                "value": gap_value}
