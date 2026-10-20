@@ -191,6 +191,17 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
 - **R10** proposal 2026-10-19, feature/kernel-op-primitive - CLI command: the local CI receipt text for a PR
   (commit, commands, counts, known environment failures from R9) for the body and for the billing-lock comment
   of R6; seen 8 times (5 PR bodies, 3 comments, same shape); effort S
+- **R11** proposal 2026-10-20, job/vyatskaya-tow02-midpoly - CLI command: orthographic elevations (4 sides, local
+  frame) of source vs built objects from numpy triangle dumps, stacked into one PNG — a screenshot-free visual
+  check; seen 6 times; effort S
+- **R12** proposal 2026-10-20, job/vyatskaya-tow02-midpoly - src/ module (checker): BVH nearest distance of built
+  faces to source faces filtered by material and z range (median / p95 / max, faces over a limit by z); seen 4
+  times; effort S
+- **R13** proposal 2026-10-20, job/vyatskaya-tow02-midpoly - src/ module (checker): classify open edges (expected:
+  stack seam rows, reveal backs, glass borders; unexpected listed with coordinates) and find T-junction vertices;
+  seen 3 times; effort S
+- **R14** proposal 2026-10-20, job/vyatskaya-tow02-midpoly - skill step: save the open Blender scene as the next
+  `outputs/build-vNNN/` version (new folder, never over an existing one) and log it in STATE; seen 6 times; effort S
 
 ## Harness and organization (default owner Codex)
 

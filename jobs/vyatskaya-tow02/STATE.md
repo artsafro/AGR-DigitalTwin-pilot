@@ -1,7 +1,7 @@
 # vyatskaya-tow02 (Башня TOW02, ул. Вятская вл. 47–49) - mid-poly master → NPM-OKS, 2026-10-20
 
 Pipeline status: draft
-Status: draft
+Status: mid-poly master accepted by the user as "4+" (2026-10-20), detailed review pending; texturing next
 Context: GLOSSARY.md (Body, NPM, Level contour), docs/domain/geometry.md (project modeling rules),
 docs/HARNESS_PLAN.md §3–4, §14–16, docs/backlog.md EG1, EG2, EG4, EG6, docs/domain/patterns/wall-from-contour.md,
 terrace.md, facade-decor-inset.md.
@@ -16,12 +16,17 @@ terrace.md, facade-decor-inset.md.
 > «бадик» = body)
 
 - Profile: mid-poly master (`mid`), then NPM-OKS.
-- Acceptance:
-  - [ ] Body, decor (bands, fins), glass and openings separated as logical groups.
-  - [ ] Every level from the user's helpers built: colonnade, bend, typical, top storey, superstructures 1 and 2.
-  - [ ] Openings as planes (or windows where simpler), chosen per facade.
-  - [ ] Mid-poly rules of docs/domain/geometry.md (quads, < 3.8 m, no doubles/T-junctions, normals).
-  - [ ] NPM derived from the master.
+- Acceptance (compared 2026-10-20 at handover; master = `outputs/build-v013/tow02_master.blend`):
+  - [x] Body, decor (bands, fins), glass and openings separated as logical groups — met: TOW02_body, *_glass,
+    fins F01–F26, ac_baskets, louvre, coping, top, soffit (Build log build-v013).
+  - [x] Every level from the user's helpers built: colonnade, bend, typical, top storey, superstructures 1 and 2 —
+    met (`cmp_all` elevation vs source, Build log build-v009/v013).
+  - [x] Openings as planes (or windows where simpler), chosen per facade — met: ribbon planes at mid reveal,
+    glass faces on the outline above 64.7 (decision 2026-10-20).
+  - [ ] Mid-poly rules of docs/domain/geometry.md (quads, < 3.8 m, no doubles/T-junctions, normals) — mostly met,
+    not fully: 64 triangles (soffit slab 57, top 6, body 1) and 44 faces with a side < 2 cm kept as listed
+    exceptions; no independent-checker run yet; user verdict "4+", detailed look pending.
+  - [ ] NPM derived from the master — not met: next stage (texturing → NPM).
 - Later decisions:
   - 2026-10-20: levels (helpers `Empty`…`Empty.007`, z 0.04 / 6.906 / 31.367 / 65.405 / 69.456 / 72.201 / 76.25 /
     79.237): 0.04–6.9 colonnade (model it), 6.9–31.37 bend, 31.37–65.4 typical, 65.4–69.46 parapet storey,
