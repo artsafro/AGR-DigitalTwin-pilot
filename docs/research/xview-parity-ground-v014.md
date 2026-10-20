@@ -14,6 +14,12 @@ Technical evidence only; no Ground output file was changed. Acceptance of the ga
   0.002 / 0.005. Max returns 1-based vertex / face ids.
 - `tools/qa/xview_dump.ms` writes the Max ids plus the node's vertices (metres, 7 decimals) and faces;
   `uv run python tools/qa/xview_parity.py <dump.json>` runs our invariant on exactly that mesh and compares ids.
+  It exits 2 and writes nothing on an empty, partial or failed dump (no nodes, no vertices/faces, counts that differ
+  from the lists, a checker result other than `#vertices` / `#faces`, ids out of range or not integers) and when
+  `--out` is the input (same path, link or hardlink); exit 1 = measured but not equal, 0 = every node equal.
+- Triangulation (review round 1): convex polygons are fanned from the first vertex, concave ones ear-clipped, and
+  self-intersecting ones raise. The four dumps were re-compared after this change, and the ids are unchanged
+  (146/146, 351/351, 0/0, 118/118).
 - Two node states: the FBX as imported (`Editable_mesh`, 27 281 vertices, 46 343 triangles) and after
   `convertToPoly` (`Editable_Poly`, 27 340 vertices, 46 343 faces) - the state Artem works in.
 - NPM and VPM have identical geometry (they differ in materials / UV), so their results are identical.

@@ -20,13 +20,15 @@ rules holds. Both need near-parallel planes, |cos| >= `parallel_cos_min`.
 Thresholds (one block below, overridable per profile or per call): `<=` at the threshold (fail-closed; xView itself
 passes vertices at exactly 2.000 mm and flags faces at 5.000 mm, measured).
 
-Polygons are fan-triangulated from their first vertex (a concave n-gon fan may cover area outside the polygon -
-quad_dominance already flags n-gons); triangles with zero area (<= `AREA_EPS_M2`) take part in the vertex check only.
-Fail-closed: no part to check or a part without faces never passes; NaN / inf, bad indices or bad thresholds raise
-`ValueError`. Report-only first [#370]: `check_operation_xview` appends a non-gating result until a person accepts the
+Polygons are triangulated on their Newell plane: a convex one as a fan from its first vertex (the triangulation the
+v014 parity was measured with), a concave one by ear clipping, so a triangle never covers area outside its polygon
+whatever the first vertex or the winding; a self-intersecting polygon raises `ValueError` (unsupported, never a
+guessed cover). Triangles with zero area (<= `AREA_EPS_M2`) take part in the vertex check only.
+Fail-closed: no part to check or a part without faces never passes; NaN / inf, bad indices (out of range, bool,
+fractional) or bad thresholds raise `ValueError`. Report-only first [#370]: `check_operation_xview` appends a non-gating result until a person accepts the
 v014 parity; `gating=True` makes it a gate.
 
-Pure numpy (+ shapely for the projected overlap area, as `twinqa.clearance`); no Blender.
+numpy + shapely (projected overlap area, as `twinqa.clearance`); not pure numpy; no Blender.
 Pattern: none | new-case: xView overlapping vertices / faces kernel invariant with measured Max parity (#370).
 """
 from dataclasses import dataclass
@@ -98,7 +100,7 @@ def _as_poly(mesh) -> PolyMesh:
     if isinstance(mesh, PolyMesh):
         return mesh
     if isinstance(mesh, Mesh):
-        return PolyMesh(mesh.vertices, tuple(tuple(int(i) for i in t) for t in mesh.triangles))
+        return PolyMesh(mesh.vertices, tuple(tuple(t) for t in mesh.triangles))   # PolyMesh checks every index
     raise ValueError(f"expected PolyMesh or Mesh, got {type(mesh).__name__}")
 
 
@@ -143,11 +145,96 @@ def vertex_pairs(v: np.ndarray, r: float) -> tuple:
     return a[s], b[s], d[s]
 
 
+def _simple(q: np.ndarray, eps: float) -> bool:
+    """No two non-adjacent edges of the closed 2D polygon `q` touch or cross."""
+    n = len(q)
+
+    def orient(a, b, c):
+        d = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+        return 0 if abs(d) <= eps else (1 if d > 0 else -1)
+
+    def on(a, b, c):
+        return min(a[0], b[0]) - 1e-15 <= c[0] <= max(a[0], b[0]) + 1e-15 and \
+            min(a[1], b[1]) - 1e-15 <= c[1] <= max(a[1], b[1]) + 1e-15
+
+    for i in range(n):
+        p1, p2 = q[i], q[(i + 1) % n]
+        for j in range(i + 2, n):
+            if i == 0 and j == n - 1:
+                continue
+            p3, p4 = q[j], q[(j + 1) % n]
+            o1, o2, o3, o4 = orient(p1, p2, p3), orient(p1, p2, p4), orient(p3, p4, p1), orient(p3, p4, p2)
+            if o1 != o2 and o3 != o4 and 0 not in (o1, o2, o3, o4):
+                return False
+            if (o1 == 0 and on(p1, p2, p3)) or (o2 == 0 and on(p1, p2, p4)) or \
+                    (o3 == 0 and on(p3, p4, p1)) or (o4 == 0 and on(p3, p4, p2)):
+                return False
+    return True
+
+
+def _polygon_triangles(k: int, f: tuple, v: np.ndarray) -> list:
+    """Triangles covering exactly polygon `f` (projected on its Newell plane).
+
+    Convex polygon: fan from the first vertex (the triangulation the v014 Max parity was measured with). Concave:
+    ear clipping, so no triangle covers area outside the polygon whatever the first vertex or the winding.
+    Self-intersecting polygon: ValueError (unsupported, never a guessed cover). Zero-area polygon: fan (all its
+    triangles have no area and take part in the vertex check only).
+    """
+    if len(f) == 3:
+        return [f]
+    fan = [(f[0], f[m], f[m + 1]) for m in range(1, len(f) - 1)]
+    p = v[list(f)]
+    nrm = np.cross(p, np.roll(p, -1, axis=0)).sum(0)            # Newell, 2 x area vector
+    ax = int(np.argmax(np.abs(nrm)))
+    fan_area = sum(np.linalg.norm(np.cross(v[b] - v[a], v[c] - v[a])) / 2 for a, b, c in fan)
+    if abs(nrm[ax]) / 2 <= AREA_EPS_M2:
+        if fan_area > AREA_EPS_M2:
+            raise ValueError(f"face {k}: self-intersecting polygon (no plane area) is not supported")
+        return fan
+    q = p[:, [i for i in range(3) if i != ax]]
+    if (q[:, 0] * np.roll(q[:, 1], -1) - np.roll(q[:, 0], -1) * q[:, 1]).sum() < 0:
+        q = q[:, ::-1]                                            # counter-clockwise in 2D
+    q = q - q.mean(0)
+    scale = max(float(np.abs(q).max()), 1e-12)
+    eps = 1e-12 * scale * scale
+
+    def cross(o, a, b):
+        return (q[a, 0] - q[o, 0]) * (q[b, 1] - q[o, 1]) - (q[a, 1] - q[o, 1]) * (q[b, 0] - q[o, 0])
+
+    n = len(f)
+    if not _simple(q, eps):
+        raise ValueError(f"face {k}: self-intersecting polygon is not supported")
+    if all(cross(i, (i + 1) % n, (i + 2) % n) >= -eps for i in range(n)):
+        return fan
+    idx, out = list(range(n)), []
+    while len(idx) > 3:
+        m = len(idx)
+        ear = None
+        for e in range(m):
+            a, b, c = idx[e - 1], idx[e], idx[(e + 1) % m]
+            if cross(a, b, c) <= eps:
+                continue
+            if not any(cross(a, b, x) >= -eps and cross(b, c, x) >= -eps and cross(c, a, x) >= -eps
+                       for x in idx if x not in (a, b, c) and not any((q[x] == q[y]).all() for y in (a, b, c))):
+                ear = e
+                break
+        if ear is None:                                           # collinear corner: drop it, area unchanged
+            ear = next((e for e in range(m) if abs(cross(idx[e - 1], idx[e], idx[(e + 1) % m])) <= eps), None)
+            if ear is None:
+                raise ValueError(f"face {k}: polygon could not be triangulated")
+        out.append((idx[ear - 1], idx[ear], idx[(ear + 1) % m]))
+        idx.pop(ear)
+    out.append(tuple(idx))
+    if any(cross(a, b, c) < -eps for a, b, c in out):
+        raise ValueError(f"face {k}: polygon could not be triangulated")
+    return [tuple(f[i] for i in t) for t in out]
+
+
 def _triangulate(mesh: PolyMesh):
     tris, owner = [], []
     for k, f in enumerate(mesh.faces):
-        for m in range(1, len(f) - 1):
-            tris.append((f[0], f[m], f[m + 1]))
+        for t in _polygon_triangles(k, f, mesh.vertices):
+            tris.append(t)
             owner.append(k)
     return np.asarray(tris, dtype=np.int64).reshape(-1, 3), np.asarray(owner, dtype=np.int64)
 
@@ -318,7 +405,11 @@ def mesh_report(vertices, faces, profile: str = "NPM", tol: XviewTolerance | Non
     tol = (tol or tolerance_for(profile)).validate()
     if not np.isfinite(np.asarray(vertices, dtype=float)).all():
         raise ValueError("vertices must be finite")
-    mesh = PolyMesh(np.asarray(vertices, dtype=float), tuple(tuple(int(i) for i in f) for f in np.asarray(faces)))
+    faces = faces.tolist() if isinstance(faces, np.ndarray) and faces.dtype.kind in "iu" else faces
+    if isinstance(faces, np.ndarray):
+        raise ValueError(f"face indices are not an integer array (dtype {faces.dtype})")
+    # no int() / np.asarray coercion here: PolyMesh rejects bool and fractional indices by name
+    mesh = PolyMesh(np.asarray(vertices, dtype=float), tuple(tuple(f) for f in faces))
     r = part_report(part, mesh, tol)
     return {"name": NAME, "gating": False, "passed": not r.offenders, "count": len(r.offenders),
             "thresholds": {"vertex_m": tol.vertex_m, "face_m": tol.face_m, "parallel_cos_min": tol.parallel_cos_min},

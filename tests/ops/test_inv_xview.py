@@ -287,3 +287,70 @@ def test_mesh_report_rejects_non_integer_indices(faces):
 def test_mesh_report_integer_indices_control(faces):
     r = mesh_report([[0, 0, 0], [1, 0, 0], [0, 1, 0]], faces)
     assert r["passed"] and r["count"] == 0
+
+
+def test_probe_triangulation_covers_exactly_the_polygon():
+    """Probe (seed 370, 300 random simple star polygons, 4-9 sides, random winding / start / 3D tilt):
+    triangles lie inside the polygon and their areas sum to its area."""
+    import shapely
+    from dt_ai.ops.inv_xview import _polygon_triangles
+    rng = np.random.default_rng(370)
+    checked = 0
+    for _ in range(300):
+        n = int(rng.integers(4, 10))
+        ang = np.sort(rng.uniform(0, 2 * np.pi, n))
+        gaps = np.diff(np.r_[ang, ang[0] + 2 * np.pi])
+        rad = rng.uniform(0.2, 1.0, n)
+        p2 = np.c_[rad * np.cos(ang), rad * np.sin(ang)]
+        if gaps.min() < 0.05 or not shapely.Polygon(p2).is_valid:    # keep simple polygons only
+            continue
+        checked += 1
+        if rng.random() < 0.5:
+            p2 = p2[::-1]
+        p2 = np.roll(p2, int(rng.integers(n)), axis=0)
+        q, _ = np.linalg.qr(rng.normal(size=(3, 3)))
+        v = np.c_[p2, np.zeros(n)] @ q.T + rng.uniform(-50, 50, 3)
+        tris = _polygon_triangles(0, tuple(range(n)), v)
+        target = shapely.Polygon(p2)
+        assert len(tris) == n - 2
+        total = 0.0
+        for t in tris:
+            tri = shapely.Polygon(p2[list(t)])
+            total += tri.area
+            assert target.buffer(1e-9).contains(tri)
+        assert abs(total - target.area) <= 1e-9 * max(1.0, target.area)
+    assert checked >= 150
+
+
+@pytest.mark.parametrize("seed", range(3))
+def test_probe_face_pairs_independent_of_polygon_start_and_winding(seed):
+    """Probe: random concave quads with random triangles; the face-pair set is the same for all 8 orders."""
+    rng = np.random.default_rng(seed)
+    for _ in range(40):
+        base = np.array(CONCAVE, dtype=float)[:, :2] * rng.uniform(0.5, 2) + rng.uniform(-1, 1, 2)
+        tri = rng.uniform(-1, 3, (3, 2))
+        v = np.c_[np.r_[base, tri], np.zeros(7)]
+        results = set()
+        for k in range(4):
+            for rev in (False, True):
+                f = [0, 1, 2, 3][::-1] if rev else [0, 1, 2, 3]
+                r = xview_report({"p": poly(v, [_rot(f, k), (4, 5, 6)])}, "NPM")["p"]
+                results.add(tuple(p[:3] for p in r.face_pairs))
+        assert len(results) == 1
+
+
+def test_probe_invalid_star_polygons_raise_never_guess():
+    """Probe (seed 371): random 4-9 vertex polygons that shapely calls invalid (self-intersecting) raise."""
+    import shapely
+    from dt_ai.ops.inv_xview import _polygon_triangles
+    rng = np.random.default_rng(371)
+    bad = 0
+    for _ in range(300):
+        n = int(rng.integers(4, 10))
+        p2 = rng.uniform(-1, 1, (n, 2))
+        if shapely.Polygon(p2).is_valid:
+            continue
+        bad += 1
+        with pytest.raises(ValueError):
+            _polygon_triangles(0, tuple(range(n)), np.c_[p2, np.zeros(n)])
+    assert bad >= 100
