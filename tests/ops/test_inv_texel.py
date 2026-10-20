@@ -258,9 +258,9 @@ def test_probe_rectangles_against_brute_force():
         [3.9375, 4.0, 4.0 + 1e-9, 0.5, 0.5 - 1e-9, 3.9375 + 1e-9], repeat=2)]
     for w, h in sizes:
         rep = texel_report({"p": rect(w, h)}, "VPM-OKS")["p"]
-        ok = max(w, h) <= 4.0 and max(w, h) / min(w, h) <= 8.0 and w * h <= 16.0
+        ok = bool(max(w, h) <= 4.0) and bool(max(w, h) / min(w, h) <= 8.0 and w * h <= 16.0)
         assert (rep.offenders == ()) is ok, (w, h, rep.offenders)
-        in_band = ok and max(w, h) > 3.9375
+        in_band = ok and bool(max(w, h) > 3.9375)
         assert (len(rep.review) == 1) is in_band, (w, h)
 
 
