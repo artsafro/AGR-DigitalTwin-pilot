@@ -24,5 +24,8 @@ Flatness means the approved common WCS zero datum, retained method-C covering
 steps, +18 mm curb bases with 150/50 mm exposed sections, and 1 m skirt. This is
 not a survey or relief validation. Copied-reference relief is diagnostic only.
 
-FBX, texture, UCX, exported-file QA, comparison tables and review publication are
-not yet claimed by this initial receipt.
+FBX, texture, UCX, exported-file QA, comparison tables and review publication were
+not claimed by this initial receipt. Subsequent actual exports/comparisons and a
+new source-material junction question are recorded in
+[native-xview-review-v001.md](native-xview-review-v001.md). Native Max xView is
+NOT clean; these exports are diagnostic candidates, not approved delivery.
