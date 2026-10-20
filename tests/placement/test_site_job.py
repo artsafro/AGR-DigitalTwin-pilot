@@ -300,6 +300,54 @@ def test_exception_binds_to_the_exact_point_snapshot(tmp_path, mode, rc, status,
                        for x in v.get("excluded", []))
 
 
+# ---------------------------------------------------------------- round 3 P1: duplicate point identities
+def _duplicate(cfg, mode):
+    a = json.loads(cfg["adapter"].read_text(encoding="utf-8"))
+    hole = next(x for x in a["maf"] if x["handle"] == HOLE[0])
+    if mode == "changed_first":
+        a["maf"].insert(0, dict(hole, x=98.0, y=199.0))
+    elif mode == "changed_last":
+        a["maf"].append(dict(hole, x=98.0, y=199.0))
+    elif mode == "identical":
+        a["maf"].append(dict(hole))
+    elif mode == "cross_category":
+        a["planting"].append(dict(hole, label="Рябинник", x=98.0, y=193.0))
+    elif mode == "cross_category_no_exception":
+        a["planting"].append(dict(a["maf"][0], label="Рябинник", x=98.0, y=193.0))
+    cfg["adapter"].write_text(json.dumps(a, ensure_ascii=False), encoding="utf-8")
+
+
+DUPLICATE_ROWS = ["changed_first", "changed_last", "identical", "cross_category", "cross_category_no_exception"]
+
+
+@pytest.mark.parametrize("mode", DUPLICATE_ROWS)
+def test_duplicate_handles_stop_before_any_exception_or_dcc(tmp_path, mode):
+    cfg = make_inputs(tmp_path / "in", hole=True)
+    write_exception(cfg)
+    _duplicate(cfg, mode)
+    out = tmp_path / "run"
+    dcc = FakeDCC()
+    assert job.run(cfg, out, 296, dcc=dcc) == 1
+    assert dcc.calls == [] and blends(out, "npm") == [] and blends(out, "vpm") == []
+    r = results(out)
+    assert r["status"] == "stopped" and not r.get("variants")
+    assert any("duplicate handle" in s for s in r["stopped"]), r["stopped"]
+
+
+def test_apply_ground_exceptions_rejects_duplicates_itself():
+    p = {"handle": "H", "label": "Скамья", "x": 1.0, "y": 2.0, "z": 0.0, "rotation": 0.0}
+    with pytest.raises(ps.PlacementStopped, match="duplicate handle"):
+        ps.apply_ground_exceptions([dict(p, x=5.0), p], [], "npm", "sha", {"Скамья": "M"})
+
+
+def test_duplicate_exception_entries_stop():
+    p = {"handle": "H", "label": "Скамья", "x": 1.0, "y": 2.0, "z": 0.0, "rotation": 0.0}
+    e = {"handle": "H", "ground_master_sha256": {"npm": "sha"}, "point": dict(p, library_id="M"),
+         "approved": {"by": "u", "date": "d", "quote": "q"}}
+    with pytest.raises(ps.PlacementStopped, match="duplicate ground exception"):
+        ps.apply_ground_exceptions([p], [e, dict(e)], "npm", "sha", {"Скамья": "M"})
+
+
 def test_nan_on_a_point_without_exception_stops_before_any_dcc(tmp_path):
     cfg = make_inputs(tmp_path / "in", hole=False)
     a = json.loads(cfg["adapter"].read_text(encoding="utf-8"))
