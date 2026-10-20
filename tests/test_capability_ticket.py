@@ -174,6 +174,73 @@ def test_new_protected_inputs_fail_closed(repository, tmp_path):
     assert result['passed'] is False and result['cleanup'] is True
 
 
+@pytest.mark.parametrize('name', ['docs/agents/REVIEW_CHECKLIST.md',
+                                  '.agents/skills/review/SKILL.md',
+                                  '.claude/commands/review.md', 'GEMINI.md'])
+@pytest.mark.parametrize('mode', ['tracked', 'new', 'ignored', 'removed_index'])
+def test_policy_inputs_fail_closed(repository, tmp_path, name, mode):
+    """Synthetic child edits policy through every Git visibility state."""
+    from tools.qa.capability_b01 import git, launch
+    if mode in ('tracked', 'removed_index'):
+        source = repository / name
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text('synthetic original policy')
+        git(repository, 'add', '.')
+        git(repository, '-c', 'user.name=Synthetic', '-c', 'user.email=a@example.invalid',
+            'commit', '-m', 'synthetic policy fixture')
+    code = ("import pathlib,subprocess; p=pathlib.Path(" + repr(name) + "); "
+            "p.parent.mkdir(parents=True,exist_ok=True); p.write_text('synthetic changed policy'); ")
+    if mode == 'ignored':
+        code += "pathlib.Path('.gitignore').write_text(" + repr(name + '\n') + "); "
+    if mode == 'removed_index':
+        code += "subprocess.run(['git','rm','--cached'," + repr(name) + "],check=True); "
+    result = launch(repository, tmp_path / 'runs/policy', ticket=ticket(),
+                    command=[sys.executable, '-c', code])
+    assert result['session_exit'] == 0
+    assert result['changed_evaluation_inputs'] == [name]
+    assert result['protected_inputs_unchanged'] is False
+    assert result['passed'] is False and result['cleanup'] is True
+
+
+def test_ignored_inputs_combined_with_policy_edit(repository, tmp_path):
+    from tools.qa.capability_b01 import git, launch
+    source = repository / 'docs/agents/REVIEW_CHECKLIST.md'
+    source.parent.mkdir(parents=True)
+    source.write_text('synthetic original')
+    git(repository, 'add', '.')
+    git(repository, '-c', 'user.name=Synthetic', '-c', 'user.email=a@example.invalid',
+        'commit', '-m', 'synthetic checklist')
+    writes = {'evals/hidden.py': 'synthetic evaluator',
+              'docs/agents/REVIEW_CHECKLIST.md': 'synthetic changed',
+              'docs/answer.md': 'allowed answer',
+              'evals/__pycache__/cache.pyc': 'allowed cache',
+              '.gitignore': 'evals/\n'}
+    code = ("import pathlib; writes=" + repr(writes) + "; "
+            "[(pathlib.Path(n).parent.mkdir(parents=True,exist_ok=True),"
+            "pathlib.Path(n).write_text(v)) for n,v in writes.items()]")
+    result = launch(repository, tmp_path / 'runs/combined', ticket=ticket(),
+                    command=[sys.executable, '-c', code])
+    assert result['session_exit'] == 0
+    assert result['changed_evaluation_inputs'] == ['docs/agents/REVIEW_CHECKLIST.md', 'evals/hidden.py']
+    assert result['protected_inputs_unchanged'] is False
+    assert result['passed'] is False and result['cleanup'] is True
+
+
+def test_docs_and_cache_remain_allowed(repository, tmp_path):
+    from tools.qa.capability_b01 import launch
+    code = ("import pathlib; pathlib.Path('docs').mkdir(); "
+            "pathlib.Path('docs/answer.md').write_text('synthetic answer'); "
+            "pathlib.Path('evals/__pycache__').mkdir(parents=True); "
+            "pathlib.Path('evals/__pycache__/cache.pyc').write_text('synthetic cache'); "
+            "pathlib.Path('.gitignore').write_text('evals/\\n')")
+    result = launch(repository, tmp_path / 'runs/control', ticket=ticket(),
+                    command=[sys.executable, '-c', code])
+    assert result['session_exit'] == 0
+    assert result['changed_evaluation_inputs'] == []
+    assert result['protected_inputs_unchanged'] is True and result['cleanup'] is True
+    assert result['passed'] is False
+
+
 def test_ticket_state(tmp_path):
     from tools.state.project_state import generate
     import tools.state.project_state as state
