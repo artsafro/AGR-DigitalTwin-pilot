@@ -1,6 +1,6 @@
 # COD 20207 Ground — Gate 1 intake (issue #420)
 
-Status: **Gate 1 flatness clarification resolved; source-map extraction complete; stopped after two copied-etalon FBX importer crashes**. Real project data, not synthetic.
+Status: **Etalon importer repaired through copied-Max diagnostic export; footprint source authority needs a decision before build**. Real project data, not synthetic.
 No Ground mesh, export, comparison pass or visual-review publication is claimed.
 The draft below preserves the original intake. The approved answers and follow-up evidence are recorded in the appended resumed-intake section; original open questions are historical, not unanswered again.
 
@@ -277,4 +277,95 @@ Vatutino comparison, or `C:/x/review/pending.json` publication has been delivere
 The confirmed PartsList remains incomplete; do not build until the authorized etalon
 fallback establishes footprint/material facts. No new production module or pipeline
 change was made, only project source-map data and its regression. No PR opened.
+
+## Resumed intake 4 — authorized importer repair, footprint decision
+
+The orchestrator authorized a comparison-only import without custom normals and,
+if that failed, a diagnostic export from the copied Max scenes. No authorization
+was extended to changing originals or relaxing checks on our own eventual output.
+
+### Actual repair commands / results
+
+- Blender 5.1.2 / `ec6e62d40fa9`, empty factory scene, copied FBX in metres:
+  `"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe" --background --factory-startup --threads 1 --python-exit-code 1 --python tmp/cod_fbx_intake.py`
+  with `use_custom_normals=False` -> **exit 139 / access violation**, not a successful
+  readback. Receipt: `tmp/cod-fbx-no-custom-normals.log`.
+- Live Max ping: reachable 2024 / safe mode. Its user document was **not** modified.
+  The card's explicit copied-scene headless fallback was used instead.
+- `python C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py max --file tmp/cod_etalon_clean.py --card t_3e9518e5 --out C:/x/ground-cod-22/etalon/clean-export-run-v001.json`
+  -> wrapper **exit 1**: diagnostic expected `#meters`, actual pymxs name string
+  was `meters`; corrected the string normalization, no unit conversion.
+- Same command with `clean-export-run-v002.json` -> wrapper **exit 0 / status ok**;
+  all three copied scenes exported to new `LP`, `hp`, `scene` diagnostic-clean-v001
+  FBX paths. Max 2026.3 / 28.3.0.30732, system metres, scale 1. Native **exit
+  4294967166**, existing polyunwrapper startup CLR error and missing Corona plugins
+  remain recorded. Wrapper success is **not** native clean-exit or complete-QA proof.
+- Clean export reconstructs snapshot positions/faces/material IDs as diagnostic mesh;
+  it does **not** preserve UVs/custom normals. Those files are not substitute etalons.
+- `"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe" --background --factory-startup --threads 1 --python-exit-code 1 --python tmp/cod_clean_readback.py`
+  -> **exit 0**, three clean diagnostic FBX imported. `tmp/cod-clean-readback.log`.
+  Native/clean Ground triangles: **LP 2817 / 2801; hp 48765 / 47677**. The differences
+  mean these clean counts must never replace original etalon budgets. All **23 UCX /
+  296 triangles** survived hp readback; scene.max selection had only GroundEl, no
+  Ground/Main, so that export is not additional Ground evidence.
+- Native UV diagnostic on copied LP (`tmp/cod_native_uv.py`, `dcc_batch.py max`,
+  `native-uv-run-v001.json`) -> wrapper **exit 0**, native **4294967166** with the
+  recorded startup error; wrote `LP-native-uv-v001.json`. Native positions agree with
+  node world bounds; no second objectTransform applied. This diagnostic, not the
+  UV-less clean exports, supplies the original geometry/atlas sampling below.
+- `uv run python tmp/cod_reference_summary.py`, `tmp/cod_atlas_probe.py`,
+  `tmp/cod_section.py`, `tmp/cod_footprint_overlay.py` -> each **exit 0**. Copies of
+  both root Ground PNGs hashed against the sources; manifest
+  `etalon/texture-manifest-v001.json`. `LP-atlas-plan-v001.png` samples the exact
+  copied diffuse atlas at original triangle UV barycentres; it is **not a full
+  textured render**. Type-6 positions appear on the light paved apron, but no named
+  type-6 material identity is established; the approved type-2 fallback stays available.
+
+Etalon normals comparison: **not measured (Blender custom-normals import crash)**.
+Original receipts remain intact. No normals requirement on our output was waived.
+
+### New source-authority question, not an environment blocker
+
+The approved boundary is **5101.588000 m2**. The copied footprint drawing still has
+no established intersecting authoritative WCS contour (previous probes recorded
+zero candidates); the authorized copied-etalon fallback does not directly supply a
+labelled ground-floor footprint either:
+
+| Real-source measurement | m2 |
+|---|---:|
+| Largest SPOZU unhatched component (candidate building hole) | 1670.085519 |
+| LP Main upward-face XY union (roofs/overhangs included, not a ground-floor footprint) | 2044.031217 |
+| Candidate supported by Main projection | 1667.479134 (99.843937%) |
+| Candidate outside Main projection | 2.606385 |
+| Main projection over mapped SPOZU coverings | 373.983881 |
+
+The Main mesh includes roofs, overhangs and other merged building details. Simply
+using its projection as the footprint would remove **373.983881 m2 of explicitly
+mapped coverings**. Using the hatch complement instead is the Vatutino-style
+inference, but that is not the approved instruction to obtain a footprint from
+this drawing/etalon. Neither option has silently become source truth.
+Horizontal mesh sections at native Z=161.5/162/163/164 m polygonized only
+1011.97–1016.35 m2 of fragmented wall/room regions; no closed authoritative outer
+footprint was recovered by that diagnostic. No convex hull or guessed fill used.
+
+**Decision requested:** approve the orange **1670.085519 m2 SPOZU unhatched
+component** as the building hole (recommended, with the 2.606385 m2 etalon mismatch
+reported), leaving other unhatched components as lawn; or supply/name the exact
+authoritative ground-floor contour and its coordinate transform. Do **not** use
+2044.031217 m2 of roof projection as a footprint by default.
+
+Overlay: `C:/x/ground-cod-22/etalon/footprint-authority-v001.png`, SHA-256
+`985ce65740ca7b670a16bb32f87cbbc68a4c1f22bded6485dacfbbf8737c4f0b`.
+Machine summary with individual input/diagnostic-output hashes:
+`C:/x/ground-cod-22/etalon/repair-and-footprint-v001.json`, SHA-256
+`249b72a49c2ebb7c780540caba62dcce088680f785642021871f769a4888b459`.
+LP/hp diagnostic FBX SHA-256 respectively
+`fc8b89d887b206bdbceddca887e125078939a67a4af071e8d3419d62d5a4ad36` /
+`d9653191e70336a5449434139c8bc3dfa6be9043fee512826efc7d493c862f6a`.
+All large assets/diagnostics remain under the card-authorized external output root.
+
+The importer obstacle is repaired for **diagnostic comparison**, not a new model
+acceptance. Parts/build, true material transfer, own-output readback, flatness,
+UCX/xView/budget comparison and review publication remain incomplete. No full suite,
+PR or pending.json publication: stopping for this source/model decision before build.
 
