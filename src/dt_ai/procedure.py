@@ -35,10 +35,13 @@ class Strict(BaseModel):
 
 class Evidence(Strict):
     """A hashed reference. ``commit`` pins source evidence to an immutable revision (#387):
-    the ``inputs`` inventory, or a source-suffixed path in the ``parts``/``operations`` role;
-    its sha256 is checked against the blob at that commit, so later edits of the live file do
-    not invalidate it. Generated artifacts, receipts, reports and visual sheets are always
-    hashed from the working tree and reject ``commit``."""
+    the ``inputs`` inventory (any path), or a supplementary source-suffixed reference in the
+    ``parts``/``operations`` roles; its sha256 is checked against the blob at that commit, so
+    later edits of the live file do not invalidate it. The primary parsed contract of a
+    ``pass`` ``parts`` gate (the PartsList) and the primary receipt of a ``pass`` ``operations``
+    gate are generated semantic roles and always reject ``commit``, regardless of suffix.
+    Generated artifacts, receipts, reports and visual sheets are always hashed from the working
+    tree and reject ``commit``."""
     path: Text
     sha256: Digest
     commit: ObjectId | None = None
@@ -119,15 +122,20 @@ def _pinned_blob(root, ref):
     return blob.stdout
 
 
-def _verify(root, ref, role):
+def _verify(root, ref, role, *, generated=False):
     """Return the verified bytes; callers parse these, never a second read of the path.
 
     ``commit`` (pinned historical lookup) is honored only for source evidence: the
     ``inputs`` role is source inventory (any path), while ``parts`` and ``operations``
-    require a source suffix. Generated artifacts, receipts, reports and visual sheets are
-    always hashed from the working tree and reject ``commit``, so a later edit still errors."""
+    honor it only for a supplementary source-suffixed reference. ``generated=True`` marks
+    the primary parsed contract of a ``pass`` ``parts`` gate or the primary receipt of a
+    ``pass`` ``operations`` gate; those reject ``commit`` regardless of suffix, so current
+    bytes stay mandatory. Generated artifacts, receipts, reports and visual sheets are
+    always hashed from the working tree and reject ``commit``."""
     path = _resolve(root, ref.path)
     if ref.commit:
+        if generated:
+            raise ValueError(f"pinned commit not allowed for generated {role} evidence: {ref.path}")
         if role not in SOURCE_ROLES:
             raise ValueError(f"pinned commit not allowed for {role} evidence: {ref.path}")
         if role != "inputs" and Path(ref.path).suffix.lower() not in SOURCE_SUFFIXES:
@@ -176,7 +184,7 @@ def _checks(receipt, required=()):
 
 
 def _receipt(root, ref, gate, job):
-    value = _read(_verify(root, ref, gate))
+    value = _read(_verify(root, ref, gate, generated=(gate == "operations")))
     if not isinstance(value, dict) or value.get("gate") != gate or value.get("run_id") != job.run_id:
         raise ValueError("wrong gate/run receipt")
     subjects = value.get("artifact_sha256")
@@ -203,7 +211,7 @@ def _gate(root, gate, entry, job):
         # Use the public contract facade; importing parts first hits its legacy
         # cycle through core.models in a fresh CLI process (owned separately by #354).
         from dt_ai.core.models import PartsList
-        parts = PartsList.model_validate(_read(_verify(root, entry.evidence[0], "parts")))
+        parts = PartsList.model_validate(_read(_verify(root, entry.evidence[0], "parts", generated=True)))
         if parts.synthetic != job.synthetic or parts.status != "confirmed":
             raise ValueError("parts require matching scope and Gate 1 confirmation")
         if any(q.answer is None for q in parts.questions):
@@ -275,10 +283,11 @@ def inspect_job(data, root):
         name = row["gate"]
         entry = getattr(job.gates, name)
         row.update(status=entry.status, note=entry.note)
-        for ref in entry.evidence:
+        primary_generated = name in ("parts", "operations") and entry.status == "pass"
+        for i, ref in enumerate(entry.evidence):
             exists = False
             try:
-                _verify(root, ref, name)
+                _verify(root, ref, name, generated=(primary_generated and i == 0))
                 exists = True
             except (OSError, ValueError) as exc:
                 row["errors"].append(str(exc))

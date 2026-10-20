@@ -622,3 +622,52 @@ def test_generated_artifact_role_rejects_source_like_suffix(bundle, tmp_path):
     result = load().inspect_job(bundle, tmp_path)
     assert not result["passed"]
     assert any("pinned commit not allowed for artifact evidence" in e for e in errors(result))
+
+
+@pytest.mark.parametrize("role", ("operations", "parts"))
+@pytest.mark.parametrize("suffix", SOURCE_SUFFIXES)
+def test_generated_primary_rejects_pinned_commit_any_suffix(bundle, tmp_path, role, suffix):
+    # Round-2 P1: the primary parsed contract/receipt is a generated semantic role. Renaming it
+    # to a source-like suffix and pinning it must not substitute historical bytes for current
+    # evidence; the corrupted working-tree file must still be reported and fail the walk.
+    ref = bundle["gates"][role]["evidence"][0]
+    (tmp_path / ref["path"]).rename(tmp_path / (role + suffix))
+    ref["path"] = role + suffix
+    assert load().inspect_job(bundle, tmp_path)["passed"] is True  # clean unpinned control
+    ref["commit"] = commit_all(tmp_path)
+    (tmp_path / (role + suffix)).write_bytes(b"CORRUPTED GENERATED EVIDENCE")
+    result = load().inspect_job(bundle, tmp_path)
+    assert not result["passed"]
+    assert any("pinned commit not allowed for generated" in e for e in errors(result)), errors(result)
+    completed = run_cli(bundle, tmp_path)
+    assert completed.returncode == 1, completed.stdout
+    assert "pinned commit not allowed" in completed.stdout
+
+
+@pytest.mark.parametrize("role", ("operations", "parts"))
+@pytest.mark.parametrize("suffix", SOURCE_SUFFIXES)
+def test_generated_primary_clean_unpinned_control(bundle, tmp_path, role, suffix):
+    # Clean control: renaming the generated primary to a source suffix WITHOUT a commit still
+    # passes on its current bytes; eligibility is decided by semantic role, not by suffix.
+    ref = bundle["gates"][role]["evidence"][0]
+    (tmp_path / ref["path"]).rename(tmp_path / (role + suffix))
+    ref["path"] = role + suffix
+    result = load().inspect_job(bundle, tmp_path)
+    assert result["passed"] is True, errors(result)
+
+
+def test_combined_pinned_source_with_generated_primary(bundle, tmp_path):
+    # Combined control: a pinned source input and a generated primary renamed to a source
+    # suffix coexist; the source pin stays green while only the generated primary fails.
+    pin_source(bundle, tmp_path)
+    ref = bundle["gates"]["operations"]["evidence"][0]
+    (tmp_path / ref["path"]).rename(tmp_path / "operations.py")
+    ref["path"] = "operations.py"
+    commit = commit_all(tmp_path)
+    ref["commit"] = commit
+    (tmp_path / "operations.py").write_bytes(b"CORRUPTED GENERATED EVIDENCE")
+    result = load().inspect_job(bundle, tmp_path)
+    assert not result["passed"]
+    assert any("pinned commit not allowed for generated operations" in e for e in errors(result))
+    inputs_row = next(r for r in result["gates"] if r["gate"] == "inputs")
+    assert inputs_row["status"] == "pass" and not inputs_row["errors"]

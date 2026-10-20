@@ -54,7 +54,7 @@
     },
     "Evidence": {
       "additionalProperties": false,
-      "description": "A hashed reference. ``commit`` pins source evidence to an immutable revision (#387):\nthe ``inputs`` inventory, or a source-suffixed path in the ``parts``/``operations`` role;\nits sha256 is checked against the blob at that commit, so later edits of the live file do\nnot invalidate it. Generated artifacts, receipts, reports and visual sheets are always\nhashed from the working tree and reject ``commit``.",
+      "description": "A hashed reference. ``commit`` pins source evidence to an immutable revision (#387):\nthe ``inputs`` inventory (any path), or a supplementary source-suffixed reference in the\n``parts``/``operations`` roles; its sha256 is checked against the blob at that commit, so\nlater edits of the live file do not invalidate it. The primary parsed contract of a\n``pass`` ``parts`` gate (the PartsList) and the primary receipt of a ``pass`` ``operations``\ngate are generated semantic roles and always reject ``commit``, regardless of suffix.\nGenerated artifacts, receipts, reports and visual sheets are always hashed from the working\ntree and reject ``commit``.",
       "properties": {
         "path": {
           "minLength": 1,
