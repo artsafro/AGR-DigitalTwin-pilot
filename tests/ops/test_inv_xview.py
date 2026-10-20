@@ -241,3 +241,49 @@ def test_probe_translation_invariant_far_from_origin():
     a, b = rep(m), rep(far)
     assert len(a.vertex_pairs) == len(b.vertex_pairs) == 2
     assert [p[:3] for p in a.face_pairs] == [p[:3] for p in b.face_pairs]
+
+
+# ---- review round 1 (PR #380) -------------------------------------------------------------------------------------
+
+CONCAVE = [(2, 0, 0), (.5, .5, 0), (0, 2, 0), (0, 0, 0)]     # reflex corner at (.5, .5)
+
+
+def _rot(f, k):
+    return tuple(f[k:] + f[:k])
+
+
+@pytest.mark.parametrize("k", range(4))
+@pytest.mark.parametrize("rev", [False, True])
+def test_concave_quad_never_invents_area_any_rotation_or_winding(k, rev):
+    """Triangle (.8,.8)-(.9,.8)-(.8,.9) lies outside the concave quad (real intersection area 0)."""
+    f = [0, 1, 2, 3][::-1] if rev else [0, 1, 2, 3]
+    m = poly(CONCAVE + [(.8, .8, 0), (.9, .8, 0), (.8, .9, 0)], [_rot(f, k), (4, 5, 6)])
+    r = xview_report({"p": m}, "NPM")["p"]
+    assert r.face_pairs == () and r.vertex_pairs == ()
+
+
+@pytest.mark.parametrize("k", range(4))
+@pytest.mark.parametrize("rev", [False, True])
+def test_concave_quad_contained_triangle_control_still_flags(k, rev):
+    f = [0, 1, 2, 3][::-1] if rev else [0, 1, 2, 3]
+    m = poly(CONCAVE + [(.2, .1, 0), (.4, .1, 0), (.2, .3, 0)], [_rot(f, k), (4, 5, 6)])
+    r = xview_report({"p": m}, "NPM")["p"]
+    assert [p[:2] for p in r.face_pairs] == [(1, 2)]
+
+
+def test_self_intersecting_polygon_is_rejected_not_guessed():
+    bowtie = poly([(0, 0, 0), (1, 1, 0), (1, 0, 0), (0, 1, 0)], [(0, 1, 2, 3)])
+    with pytest.raises(ValueError, match="self-intersecting"):
+        xview_report({"p": bowtie}, "NPM")
+
+
+@pytest.mark.parametrize("faces", [[[.1, 1.9, 2.9]], [[False, True, 2]], np.asarray([[0.0, 1.0, 2.0]])])
+def test_mesh_report_rejects_non_integer_indices(faces):
+    with pytest.raises(ValueError, match="not an integer"):
+        mesh_report([[0, 0, 0], [1, 0, 0], [0, 1, 0]], faces)
+
+
+@pytest.mark.parametrize("faces", [[[0, 1, 2]], np.asarray([[0, 1, 2]]), ((0, 1, 2),)])
+def test_mesh_report_integer_indices_control(faces):
+    r = mesh_report([[0, 0, 0], [1, 0, 0], [0, 1, 0]], faces)
+    assert r["passed"] and r["count"] == 0
