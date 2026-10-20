@@ -278,6 +278,27 @@ def test_curved_attachment_outside_the_building_is_a_question():
     assert "wall_80_b1" not in dump["body"] and [q["revit_ids"] for q in dump["questions"]] == [[80]]
 
 
+def test_curved_attachment_question_measures_occupied_plan():
+    walls, _ = ring()
+    arc = curved(80, 5.0, 0.0, 1.0, 0.14, 180, 360, 2.7)
+    dump = to_dump([band(walls + [arc])],
+                   [arc_obj("wall_80", 5.0, 0.0, 1.0, 0.14, 0.0, 2.7, 180, 360)])
+    q, = dump["questions"]
+    assert q["depth_m"] == pytest.approx(1.07, abs=0.001)
+    assert q["length_m"] == pytest.approx(2.14, abs=0.001)
+    assert q["at"] == pytest.approx([5.0, -0.64], abs=0.01)
+
+
+@pytest.mark.parametrize("y,expected", [(-1.05, [[80, 81]]), (-0.3, [[80], [81]])])
+def test_curved_attachment_grouping_uses_occupied_plan(y, expected):
+    walls, _ = ring()
+    arc = curved(80, 5.0, 0.0, 1.0, 0.14, 180, 360, 2.7)
+    stub = wall(81, (5.0, y), (5.0, y - 0.2), t=0.14, z1=2.7)
+    dump = to_dump([band(walls + [arc, stub])],
+                   [arc_obj("wall_80", 5.0, 0.0, 1.0, 0.14, 0.0, 2.7, 180, 360)])
+    assert sorted(q["revit_ids"] for q in dump["questions"]) == expected
+
+
 def test_wall_end_near_a_curved_wall_is_not_extended_by_its_hull():
     # a stub ending inside the hull of a semicircle but 0.75 m from its strip (PR #35 review 2)
     walls, t = ring()
