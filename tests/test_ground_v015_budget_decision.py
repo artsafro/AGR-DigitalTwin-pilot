@@ -29,3 +29,13 @@ def test_pairing_decision_supersedes_90k_without_relaxing_other_gates():
     sheet = (ROOT / 'docs/domain/areas/ground-surface.md').read_text(encoding='utf-8')
     assert '[D157]' in sheet
     assert 'D156 is superseded' in sheet
+
+
+def test_d157_extension_explicitly_covers_vpm_without_waiving_export_checks():
+    text = (ROOT / 'docs/decisions.md').read_text(encoding='utf-8')
+    row = next(line for line in text.splitlines() if line.startswith('| D157 |'))
+    for token in ('2026-10-21', 'принимаю рекомендации', 'Ground v015 NPM and VPM',
+                  'per-slot reasons', '35 %', 'export', '10 mm', '0.002/0.005 m'):
+        assert token in row, token
+    sheet = (ROOT / 'docs/domain/areas/ground-surface.md').read_text(encoding='utf-8')
+    assert 'Ground v015 NPM and VPM pairing [D157]' in sheet
