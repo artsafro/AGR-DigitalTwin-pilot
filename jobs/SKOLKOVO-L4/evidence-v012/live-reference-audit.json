@@ -1,0 +1,1002 @@
+{
+  "passed": false,
+  "scope": "Live reference audit only; target families not identified; no production geometry acceptance",
+  "responses": [
+    {
+      "exit_code": 0,
+      "command": "get_document_info",
+      "params": {},
+      "response": {
+        "status": "success",
+        "http": 200,
+        "dry_run": false,
+        "result": {
+          "ok": true,
+          "data": {
+            "title": "СК_ИЦ_ЦОД02_П_АР",
+            "pathName": "C:\\x\\l4-skolkovo\\01_source\\02_pravki_2026-09-15\\rvt\\СК_ИЦ_ЦОД02_П_АР.rvt",
+            "isWorkshared": true,
+            "isModified": true,
+            "projectName": "Инженерный центр ПАО Сбербанк, расположенный по адресу: г. Москва, ИЦ Сколково, Большой бульвар 64",
+            "projectNumber": "ЦОД02-00-АР__-03.00.01-П",
+            "projectAddress": "Инженерный центр ПАО Сбербанк, расположенный по адресу: г. Москва, ИЦ\r\nСколково, Большой бульвар 64",
+            "projectStatus": "П",
+            "organizationName": "Смарт Констракшн",
+            "buildingName": "Инженерный центр ПАО Сбербанк на территории инновационного центра Сколково",
+            "author": "",
+            "activeViewName": "{3D - artsafro}",
+            "activeViewType": "ThreeD",
+            "displayUnitSystem": "METRIC"
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 0,
+      "command": "get_document_info",
+      "params": {},
+      "response": {
+        "status": "success",
+        "http": 200,
+        "dry_run": false,
+        "result": {
+          "ok": true,
+          "data": {
+            "title": "СК_ИЦ_ЦОД02_П_АР",
+            "pathName": "C:\\x\\l4-skolkovo\\01_source\\02_pravki_2026-09-15\\rvt\\СК_ИЦ_ЦОД02_П_АР.rvt",
+            "isWorkshared": true,
+            "isModified": true,
+            "projectName": "Инженерный центр ПАО Сбербанк, расположенный по адресу: г. Москва, ИЦ Сколково, Большой бульвар 64",
+            "projectNumber": "ЦОД02-00-АР__-03.00.01-П",
+            "projectAddress": "Инженерный центр ПАО Сбербанк, расположенный по адресу: г. Москва, ИЦ\r\nСколково, Большой бульвар 64",
+            "projectStatus": "П",
+            "organizationName": "Смарт Констракшн",
+            "buildingName": "Инженерный центр ПАО Сбербанк на территории инновационного центра Сколково",
+            "author": "",
+            "activeViewName": "{3D - artsafro}",
+            "activeViewType": "ThreeD",
+            "displayUnitSystem": "METRIC"
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 1,
+      "command": "get_element_info",
+      "params": {
+        "id": 6631253
+      },
+      "response": {
+        "status": "error",
+        "http": 404,
+        "dry_run": false,
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "not_found",
+            "message": "No element with id 6631253."
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 1,
+      "command": "get_element_info",
+      "params": {
+        "id": 6640426
+      },
+      "response": {
+        "status": "error",
+        "http": 404,
+        "dry_run": false,
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "not_found",
+            "message": "No element with id 6640426."
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 1,
+      "command": "get_element_info",
+      "params": {
+        "id": 6640949
+      },
+      "response": {
+        "status": "error",
+        "http": 404,
+        "dry_run": false,
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "not_found",
+            "message": "No element with id 6640949."
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 1,
+      "command": "get_element_info",
+      "params": {
+        "id": 6641475
+      },
+      "response": {
+        "status": "error",
+        "http": 404,
+        "dry_run": false,
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "not_found",
+            "message": "No element with id 6641475."
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 1,
+      "command": "get_element_info",
+      "params": {
+        "id": 6677027
+      },
+      "response": {
+        "status": "error",
+        "http": 404,
+        "dry_run": false,
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "not_found",
+            "message": "No element with id 6677027."
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 0,
+      "command": "get_linked_files",
+      "params": {},
+      "response": {
+        "status": "success",
+        "http": 200,
+        "dry_run": false,
+        "result": {
+          "ok": true,
+          "data": {
+            "count": 7,
+            "links": [
+              {
+                "id": 5292962,
+                "name": "СК_ИЦ_ЦОД02_П_АР_Фасад.rvt : позиция <Не общедоступное>",
+                "linkedDocTitle": null,
+                "linkedDocPath": null,
+                "isLoaded": false
+              },
+              {
+                "id": 5396478,
+                "name": "СК_ИЦ_ЦОД02_П_КМ.rvt : позиция <Не общедоступное>",
+                "linkedDocTitle": null,
+                "linkedDocPath": null,
+                "isLoaded": false
+              },
+              {
+                "id": 5547150,
+                "name": "СК_ИЦ_ЦОД02_П_ОВ.rvt : позиция <Не общедоступное>",
+                "linkedDocTitle": null,
+                "linkedDocPath": null,
+                "isLoaded": false
+              },
+              {
+                "id": 5787109,
+                "name": "СК_ИЦ_ЦОД02_П_КЖ.rvt : позиция <Не общедоступное>",
+                "linkedDocTitle": null,
+                "linkedDocPath": null,
+                "isLoaded": false
+              },
+              {
+                "id": 5787113,
+                "name": "СК_ИЦ_ЦОД02_П_ВК.rvt : позиция <Не общедоступное>",
+                "linkedDocTitle": null,
+                "linkedDocPath": null,
+                "isLoaded": false
+              },
+              {
+                "id": 5788076,
+                "name": "СК_ИЦ_ЦОД02_П_ЭОМ.rvt : позиция <Не общедоступное>",
+                "linkedDocTitle": null,
+                "linkedDocPath": null,
+                "isLoaded": false
+              },
+              {
+                "id": 5921640,
+                "name": "СК_ИЦ_ЦОД02_П_АР_Ф.rvt : позиция <Не общедоступное>",
+                "linkedDocTitle": null,
+                "linkedDocPath": null,
+                "isLoaded": false
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 0,
+      "command": "list_families",
+      "params": {
+        "category": "OST_ElectricalEquipment",
+        "limit": 100
+      },
+      "response": {
+        "status": "success",
+        "http": 200,
+        "dry_run": false,
+        "result": {
+          "ok": true,
+          "data": {
+            "count": 0,
+            "families": []
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 0,
+      "command": "list_families",
+      "params": {
+        "category": "OST_ElectricalFixtures",
+        "limit": 100
+      },
+      "response": {
+        "status": "success",
+        "http": 200,
+        "dry_run": false,
+        "result": {
+          "ok": true,
+          "data": {
+            "count": 0,
+            "families": []
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 0,
+      "command": "list_families",
+      "params": {
+        "category": "OST_GenericModel",
+        "limit": 100
+      },
+      "response": {
+        "status": "success",
+        "http": 200,
+        "dry_run": false,
+        "result": {
+          "ok": true,
+          "data": {
+            "count": 26,
+            "families": [
+              {
+                "id": 4370183,
+                "name": "(ФП)_Перфорированная плита",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 4413884,
+                "name": "(ФП)_Плита",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 4370134,
+                "name": "(ФП)_Плита_Усеченная",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 3
+              },
+              {
+                "id": 6048872,
+                "name": "АР_ОБМ_Подоконник",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 15
+              },
+              {
+                "id": 4136807,
+                "name": "АР_Откос",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 4
+              },
+              {
+                "id": 1944903,
+                "name": "Вент.решетка1",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 4
+              },
+              {
+                "id": 3130239,
+                "name": "решетка металлическая",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 4
+              },
+              {
+                "id": 3973509,
+                "name": "MCY_АР_МГН_Знак_Санузел доступный",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 3976009,
+                "name": "MCY_АР_МГН_ПлиткаСтупень",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 3938968,
+                "name": "MCY_АР_МГН_Плитки тактильные",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 3
+              },
+              {
+                "id": 3939400,
+                "name": "MCY_АР_МГН_Таблички ОДИ",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 2
+              },
+              {
+                "id": 3940614,
+                "name": "MCY_АР_Отделка Проема",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 3
+              },
+              {
+                "id": 3940606,
+                "name": "MCY_АР_Перемычка_2Стержня",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 3940602,
+                "name": "MCY_АР_Перемычка_2Уголка",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 3940612,
+                "name": "MCY_АР_Пластина стальная",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 3940610,
+                "name": "MCY_АР_Порог",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 3940604,
+                "name": "MCY_АР_Стержнь арматурный",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 3940608,
+                "name": "MCY_АР_Уголок стальной",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 2
+              },
+              {
+                "id": 3981834,
+                "name": "MCY_АР_ЭУ_МГН_Крючок для костылей_1",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 3982091,
+                "name": "MCY_АР_ЭУ_МГН_Ручки_поручни на дверь",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 5650082,
+                "name": "SF_Декоративная крышка ригеля",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 5650100,
+                "name": "SF_Декоративная крышка стойки",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 5650118,
+                "name": "SF_Прижимная планка",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 5650064,
+                "name": "SF_Ригель",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 5650046,
+                "name": "SF_Стойка",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 2724719,
+                "name": "Watford",
+                "category": "Обобщенные модели",
+                "categoryEnum": "OST_GenericModel",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 0,
+      "command": "list_families",
+      "params": {
+        "category": "OST_SpecialityEquipment",
+        "limit": 100
+      },
+      "response": {
+        "status": "success",
+        "http": 200,
+        "dry_run": false,
+        "result": {
+          "ok": true,
+          "data": {
+            "count": 8,
+            "families": [
+              {
+                "id": 5822605,
+                "name": "АР_СПО_Люк_в_полу",
+                "category": "Специальное оборудование",
+                "categoryEnum": "OST_SpecialityEquipment",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 3
+              },
+              {
+                "id": 5828519,
+                "name": "АР_СПО_Люк_пола",
+                "category": "Специальное оборудование",
+                "categoryEnum": "OST_SpecialityEquipment",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 16
+              },
+              {
+                "id": 2344253,
+                "name": "Подъемник",
+                "category": "Специальное оборудование",
+                "categoryEnum": "OST_SpecialityEquipment",
+                "isInPlace": true,
+                "isEditable": false,
+                "typeCount": 1
+              },
+              {
+                "id": 5055815,
+                "name": "Construction_Lifts_TK-Elevator-Elevators_Escalators_EnduraA_1-Stage-Hydraulic",
+                "category": "Специальное оборудование",
+                "categoryEnum": "OST_SpecialityEquipment",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 2459016,
+                "name": "Ladder-Precision_Ladders-Tubular_Ladder_With_Parapet_Platform_and_Roof-Side",
+                "category": "Специальное оборудование",
+                "categoryEnum": "OST_SpecialityEquipment",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 3982068,
+                "name": "MCY_АР_Сушилка для рук автоматическая",
+                "category": "Специальное оборудование",
+                "categoryEnum": "OST_SpecialityEquipment",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 4264180,
+                "name": "MCY_АР_ТехноНИКОЛЬ_Воронка_парапетная_квадратная",
+                "category": "Специальное оборудование",
+                "categoryEnum": "OST_SpecialityEquipment",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 4656133,
+                "name": "TN_Аэратор кровельный ТехноНИКОЛЬ",
+                "category": "Специальное оборудование",
+                "categoryEnum": "OST_SpecialityEquipment",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 0,
+      "command": "list_families",
+      "params": {
+        "category": "OST_StructuralFraming",
+        "limit": 100
+      },
+      "response": {
+        "status": "success",
+        "http": 200,
+        "dry_run": false,
+        "result": {
+          "ok": true,
+          "data": {
+            "count": 19,
+            "families": [
+              {
+                "id": 4380229,
+                "name": "(ФП)_Кронштейн стойки",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 4
+              },
+              {
+                "id": 4380212,
+                "name": "(ФП)_Крышка стойки",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 3
+              },
+              {
+                "id": 4380246,
+                "name": "(ФП)_Основание стойки",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 3
+              },
+              {
+                "id": 4380263,
+                "name": "(ФП)_Стойка",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 4380454,
+                "name": "Гайка М16",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 4380456,
+                "name": "КР80",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 4389923,
+                "name": "КС120",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 2
+              },
+              {
+                "id": 4389935,
+                "name": "КС80",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 4
+              },
+              {
+                "id": 4380452,
+                "name": "Пластина опорная Ст3",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 4389921,
+                "name": "Пластина опорная Ст3_(125х45)",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 3
+              },
+              {
+                "id": 4389933,
+                "name": "Пластина опорная Ст3_(85х45)",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 4
+              },
+              {
+                "id": 4380450,
+                "name": "Пластина опорная Ст3_(85х85)",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 4389645,
+                "name": "Профиль Несущий- Прямоугольное пустотелое сечение- Каркас несущий",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 3
+              },
+              {
+                "id": 4380292,
+                "name": "Стойка системы фальшпола",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 4389929,
+                "name": "Фиксирующая скоба Ст3_(113х24)_НИЗ",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 4380446,
+                "name": "Фиксирующая скоба Ст3_(72х72)_НИЗ",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 4389925,
+                "name": "Фиксирующая скоба Ст3_(74х24)",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 4389927,
+                "name": "Фиксирующая скоба Ст3_(74х24)_НИЗ",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              },
+              {
+                "id": 4380195,
+                "name": "Шпилька М16",
+                "category": "Каркас несущий",
+                "categoryEnum": "OST_StructuralFraming",
+                "isInPlace": false,
+                "isEditable": true,
+                "typeCount": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 0,
+      "command": "query_where",
+      "params": {
+        "category": "OST_ElectricalEquipment",
+        "where": [
+          {
+            "parameter": "Family",
+            "operator": "regex",
+            "value": "(?i)(молн|мачт|кнс|mast)"
+          }
+        ],
+        "limit": 20
+      },
+      "response": {
+        "status": "success",
+        "http": 200,
+        "dry_run": false,
+        "result": {
+          "ok": true,
+          "data": {
+            "category": "OST_ElectricalEquipment",
+            "count": 0,
+            "returned": 0,
+            "truncated": false,
+            "rows": []
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 0,
+      "command": "query_where",
+      "params": {
+        "category": "OST_ElectricalFixtures",
+        "where": [
+          {
+            "parameter": "Family",
+            "operator": "regex",
+            "value": "(?i)(молн|мачт|кнс|mast)"
+          }
+        ],
+        "limit": 20
+      },
+      "response": {
+        "status": "success",
+        "http": 200,
+        "dry_run": false,
+        "result": {
+          "ok": true,
+          "data": {
+            "category": "OST_ElectricalFixtures",
+            "count": 0,
+            "returned": 0,
+            "truncated": false,
+            "rows": []
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 0,
+      "command": "query_where",
+      "params": {
+        "category": "OST_GenericModel",
+        "where": [
+          {
+            "parameter": "Family",
+            "operator": "regex",
+            "value": "(?i)(молн|мачт|кнс|mast)"
+          }
+        ],
+        "limit": 20
+      },
+      "response": {
+        "status": "success",
+        "http": 200,
+        "dry_run": false,
+        "result": {
+          "ok": true,
+          "data": {
+            "category": "OST_GenericModel",
+            "count": 0,
+            "returned": 0,
+            "truncated": false,
+            "rows": []
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 0,
+      "command": "query_where",
+      "params": {
+        "category": "OST_SpecialityEquipment",
+        "where": [
+          {
+            "parameter": "Family",
+            "operator": "regex",
+            "value": "(?i)(молн|мачт|кнс|mast)"
+          }
+        ],
+        "limit": 20
+      },
+      "response": {
+        "status": "success",
+        "http": 200,
+        "dry_run": false,
+        "result": {
+          "ok": true,
+          "data": {
+            "category": "OST_SpecialityEquipment",
+            "count": 0,
+            "returned": 0,
+            "truncated": false,
+            "rows": []
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 0,
+      "command": "query_where",
+      "params": {
+        "category": "OST_StructuralFraming",
+        "where": [
+          {
+            "parameter": "Family",
+            "operator": "regex",
+            "value": "(?i)(молн|мачт|кнс|mast)"
+          }
+        ],
+        "limit": 20
+      },
+      "response": {
+        "status": "success",
+        "http": 200,
+        "dry_run": false,
+        "result": {
+          "ok": true,
+          "data": {
+            "category": "OST_StructuralFraming",
+            "count": 0,
+            "returned": 0,
+            "truncated": false,
+            "rows": []
+          }
+        }
+      }
+    },
+    {
+      "exit_code": 0,
+      "command": "get_revit_version",
+      "params": {},
+      "response": {
+        "status": "success",
+        "http": 200,
+        "dry_run": false,
+        "result": {
+          "ok": true,
+          "data": {
+            "versionName": "Autodesk Revit 2025",
+            "versionNumber": "2025",
+            "versionBuild": "25.2.0.38",
+            "subVersionNumber": "2025.2",
+            "language": "Russian",
+            "username": "artsafro"
+          }
+        }
+      }
+    }
+  ],
+  "checks": {
+    "all_commands_read_only": true,
+    "no_dry_run_mutations": true,
+    "five_native_ids_not_found": true,
+    "seven_links_unloaded": true,
+    "two_document_snapshots_same": true,
+    "five_queries_zero_not_truncated": true,
+    "explicit_errors_not_pass": true
+  },
+  "tests": {
+    "command": "env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q -p no:cacheprovider tests/test_task_to_model.py --basetemp=C:/x/t_b205c8e1/pt-v012",
+    "passed": 136,
+    "seconds": 64.34,
+    "exit_code": 0
+  },
+  "errors_retained": [
+    "Broad list_families limit5000 response truncated by wrapper at20000chars; JSONDecodeError at19999.",
+    "Broad list_categories response truncated by wrapper at20000chars; JSONDecodeError at19998. Narrow category calls used instead; wrapper unchanged."
+  ],
+  "limits": [
+    "English Family query parameter not independently validated in localized model; zero matches is not a global absence proof.",
+    "FBX label IDs are not established Revit ElementIds. Native not_found is not proof of FBX discrepancy.",
+    "isModified was already true at first inspection; unchanged boolean cannot certify all document contents unchanged. No write commands were issued.",
+    "Target face/ring audit not obtained; get_element_geometry not invoked on missing elements."
+  ]
+}
