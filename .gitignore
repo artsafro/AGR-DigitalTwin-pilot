@@ -11,6 +11,9 @@
 !/jobs/**/*.yaml
 !/jobs/**/*.ms
 !/jobs/**/*.rb
+# Small hash-pinned Skolkovo source-diagnostic receipts (not delivery outputs).
+!/jobs/SKOLKOVO-L4/.gitattributes
+!/jobs/SKOLKOVO-L4/evidence-v004/.gitignore
 /jobs/*/outputs/
 /jobs/*/runs/
 /jobs/*/cli-runs/

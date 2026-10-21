@@ -1,0 +1,3 @@
+# This job's versioned source diagnostics, not production exports.
+!*.gz
+*.png

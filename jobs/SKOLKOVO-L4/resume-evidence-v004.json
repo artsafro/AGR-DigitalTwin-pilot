@@ -1,0 +1,80 @@
+{
+  "delivery_passed": false,
+  "archive": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_b205c8e1\\tmp\\skolkovo-l4-v004\\skolkovo-l4-diagnostics-v004-portable.zip",
+  "archive_sha256": "05096e0af154b5c7fceea23a05a9d86a45c3da428d4dfbd8ffb19f891dd7cd52",
+  "archive_bytes": 1468016,
+  "evidence": [
+    {
+      "path": "jobs/SKOLKOVO-L4/evidence-v004/diagnostic-probes-v004.json",
+      "sha256": "9ea899e2e49483b901589c72ffaab79f1fd6945d3490faefdf8ab37eb567059e",
+      "bytes": 11043
+    },
+    {
+      "path": "jobs/SKOLKOVO-L4/evidence-v004/mast-geometry.json.gz",
+      "sha256": "ab5ecfefdbd9e7c3520ab0254d05e3d13f1de255a968b78b94acb70bd0840f5a",
+      "bytes": 471349
+    },
+    {
+      "path": "jobs/SKOLKOVO-L4/evidence-v004/object-decisions-v004.csv.gz",
+      "sha256": "f7001c9761c9eea5a89013590599b4e263e9d62ea552e9f0b33a7f9be0d65aa2",
+      "bytes": 387941
+    },
+    {
+      "path": "jobs/SKOLKOVO-L4/evidence-v004/parts-subset-v004.json.gz",
+      "sha256": "1b16b8fb715a8a3ba309927320d7f17ca888fc6eabe260d71ba2ab311cb9aafd",
+      "bytes": 19767
+    },
+    {
+      "path": "jobs/SKOLKOVO-L4/evidence-v004/reference-probes-v004.json",
+      "sha256": "53f4d74c7b2a1f57c7eceae8529d16035e8b45a6a427af43c96c6c56a9e99ede",
+      "bytes": 458
+    },
+    {
+      "path": "jobs/SKOLKOVO-L4/evidence-v004/scope-summary-v003.json",
+      "sha256": "af5ec601d3312a24ee8409e65738fc43e9bcfb4d05cd6b18cc4012cce52afd24",
+      "bytes": 7810
+    },
+    {
+      "path": "jobs/SKOLKOVO-L4/evidence-v004/source-manifest-v002.json.gz",
+      "sha256": "a7d93cd6f5ff16a5506933223043cc0e16ef1b0fcf24615b8648cdc5845cd41d",
+      "bytes": 314153
+    },
+    {
+      "path": "jobs/SKOLKOVO-L4/evidence-v004/source-question-v004.png",
+      "sha256": "4247850f7dd5eba8d8bbad19c6ce2913270b086878a6b3fca07235e07e725f29",
+      "bytes": 171565
+    },
+    {
+      "path": "jobs/SKOLKOVO-L4/evidence-v004/source-xy-max.png",
+      "sha256": "29ce1316c79de8bad3b8779f619f9a07fe98cd863232cbd2558289fa314b228f",
+      "bytes": 21919
+    },
+    {
+      "path": "jobs/SKOLKOVO-L4/evidence-v004/source-xz-max.png",
+      "sha256": "cf22b8d73dd30fc08f70bd02793dfa3d9dac9a8611d11c9d7f014f0147d476ac",
+      "bytes": 10729
+    },
+    {
+      "path": "jobs/SKOLKOVO-L4/evidence-v004/source-xz-min.png",
+      "sha256": "215e8389f313cf6c9f4395a92a26e03e517596c1e18690ea7b7e9d72753e27ad",
+      "bytes": 8505
+    },
+    {
+      "path": "jobs/SKOLKOVO-L4/evidence-v004/source-yz-max.png",
+      "sha256": "055bbede30d6fee4e8973563927173ea593aa58af9cfc35047f65a0ff396a0f5",
+      "bytes": 6747
+    },
+    {
+      "path": "jobs/SKOLKOVO-L4/evidence-v004/source-yz-min.png",
+      "sha256": "92b28f717e42ae9bb9a1ef1c27dfd1bde3c00ad485b05538306ffbd22a3be5e3",
+      "bytes": 5173
+    },
+    {
+      "path": "jobs/SKOLKOVO-L4/evidence-v004/visibility-v002.json.gz",
+      "sha256": "120eb19f18a599437aeefa4e15bf3f7a3d0118800f325fd0c82a2810c9db2c70",
+      "bytes": 95252
+    }
+  ],
+  "local_raw_geometry": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_b205c8e1\\tmp\\skolkovo-l4-v003\\source-geometry-v002",
+  "local_raw_fbx_staging_not_committed": true
+}

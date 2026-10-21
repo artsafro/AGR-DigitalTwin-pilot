@@ -7,23 +7,32 @@ Base: pilot `48e2a55`; #348 and #351 are closed. No building output is approved.
 
 ## Status
 
-**Intake resumed; waiting for an explicit model-policy decision before production.**
-`passed=false`. See [resumed evidence and exact question](RESUME-v002.md).
+**Interior policy answered; new roof-mast source-choice question before production.**
+`passed=false`. See [current diagnostics](RESUME-v004.md) and
+[the exact source question/sheet](SOURCE-QUESTION-v004.md).
 
-Retry run 974 completed the hash-verified v1 PartsList (17,710 draft parts,
-73,110 questions; source budget 6,644,287 triangles, so **budget fail**) and
-read both September revision FBXs plus delivered NPM/VPM through headless
-3ds Max 2026.3. Source coverage is 17,710/17,710 with no duplicate references.
-The draft remains all-keep, legend-unmapped, joint-undecided and unapproved;
-it is not a buildable final decision table. Exact per-part triage and raw
-measurements are in the local 4.3 MB evidence ZIP hashed by
-`resume-evidence-v002.json`; no FBX is embedded in that archive.
+Artem's job decision: **exterior shell ONLY; drop the whole interior with a
+per-object drop-list; glazing OPAQUE**. Full authority and boundaries are in
+[DECISION-2026-10-21.md](DECISION-2026-10-21.md). The historical question in
+`RESUME-v002.md` must not be asked again.
 
-Factory-startup/private-TEMP Blender still crashed; the authorized Max route
-worked (known native PolyUnwrapper startup error recorded, not hidden).
-Production now needs the BODY-L / C23 interior/thickness policy decision in
-`RESUME-v002.md`, then a reduced PartsList and user Gate 1 approval of its
-exact hash. No kernel/build, final export, visual publication or SINTEZ ran.
+Runs 981/988 prepared 32,961 source-row proposals and an explicitly incomplete
+20-group PartsList subset (81,496 allocated triangles, not measured output).
+1,695 facade rows, v1 supersession, legend and joint reconciliation remain open.
+Corrected source-only Max dump: 11,510/11,510 bbox checks pass; the rejected
+second-transform dump fails 11,510/11,510. Duplicate-name draft references were
+replaced by hash-pinned census-row locators: 5,267/5,267 unique. 133 focused reader
+tests pass (5.02 s), 104/104 original inventory hashes unchanged.
+
+The revision PDF labels M4 h=8 m / M5 h=12 m; two similarly positioned FBX families
+are named 10.4 m. Actual vertex extents and provisional registration are recorded,
+not equated with pole heights or silently rescaled. A source-authority decision
+is needed; no final PartsList is ready for Gate 1 yet. No kernel/build, final
+export, post-build visual publication or SINTEZ ran. Full suite is reserved for
+the first complete review head; no PR is open. Raw diagnostic buffers/drivers
+remain local; hashed data and question PNG are committed locally under evidence-v004/.
+Push is externally blocked: repository LFS budget exceeded, 0/6 PNG objects uploaded.
+See RESUME-v004.md publication blocker. Do not claim the new commits are remote.
 
 ### Previous attempt (historical; superseded where the resume report says so)
 

@@ -1,0 +1,4 @@
+# Preserve exact hash-pinned evidence bytes across Windows/Linux checkouts.
+evidence-v004/* -text
+evidence-v004/*.json whitespace=cr-at-eol
+resume-evidence-v004.json -text whitespace=cr-at-eol

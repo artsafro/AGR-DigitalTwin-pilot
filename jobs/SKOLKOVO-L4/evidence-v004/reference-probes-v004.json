@@ -1,0 +1,15 @@
+{
+  "scope": "draft identity repair, not source-coverage or model acceptance",
+  "old_name_references": 5267,
+  "old_unique_name_references": 4987,
+  "old_name_only_identity": "fail",
+  "new_hash_pinned_row_references": 5267,
+  "new_unique_hash_pinned_row_references": 5267,
+  "new_identity": "pass",
+  "all_source_rows": 32961,
+  "unique_source_rows": 32961,
+  "pydantic": "pass",
+  "draft": true,
+  "gate1": null,
+  "delivery_passed": false
+}
