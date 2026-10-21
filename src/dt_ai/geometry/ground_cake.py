@@ -1051,6 +1051,78 @@ def weld_base_boundary(mesh: Mesh, weld_m: float = .0041,
     return result
 
 
+def close_base_notch(mesh: Mesh, triangle_xy, *, approval_reference: str) -> Mesh:
+    """Add one explicitly approved boundary triangle without moving existing geometry.
+
+    This construction primitive is not an approval validator: the job must bind the
+    exact coordinates and source hash to the user's decision. Two sides must already
+    be oppositely oriented open base edges with one unambiguous material. No generic
+    tolerance waiver, fan displacement or automatic hole filling is performed.
+    """
+    from dt_ai.ops.inv_quads import PolyMesh
+
+    PolyMesh(mesh.verts, tuple(map(tuple, mesh.faces)))
+    n = len(mesh.faces)
+    if not n or np.shape(mesh.faces) != (n, 3):
+        raise ValueError("notch closure requires nonempty triangles")
+    if np.shape(mesh.level) != (n,) or not np.isfinite(mesh.level).all() or np.any(mesh.level < 0):
+        raise ValueError("notch closure requires finite surface-only levels")
+    if len(mesh.slot) != n or any(not isinstance(s, str) or not s.strip() for s in mesh.slot):
+        raise ValueError("complete nonblank slots required")
+    if np.shape(mesh.uv) != (n, 3, 2) or not np.isfinite(mesh.uv).all() or not math.isfinite(mesh.cell) or mesh.cell <= 0:
+        raise ValueError("finite UV and positive cell required")
+    if not isinstance(approval_reference, str) or not approval_reference.strip():
+        raise ValueError("explicit approval_reference required")
+    xy = np.asarray(triangle_xy, dtype=float)
+    if xy.shape != (3, 2) or not np.isfinite(xy).all():
+        raise ValueError("three finite approved XY coordinates required")
+    patch = Polygon(xy)
+    if not patch.is_valid or patch.area <= 0:
+        raise ValueError("approved triangle must have positive area")
+    ids = []
+    base = np.flatnonzero(mesh.level == 0)
+    used = np.unique(mesh.faces[base])
+    for point in xy:
+        found = used[np.all(mesh.verts[used, :2] == point, axis=1)]
+        if len(found) != 1:
+            raise ValueError(f"approved point {point.tolist()} needs exactly one base vertex")
+        ids.append(int(found[0]))
+    p = mesh.verts[ids]
+    if np.cross(p[1]-p[0], p[2]-p[0])[2] < 0:
+        ids.reverse()
+    edges = {}
+    for fi in base:
+        for a, b in zip(mesh.faces[fi], np.roll(mesh.faces[fi], -1)):
+            edges.setdefault(tuple(sorted((int(a), int(b)))), []).append((int(a), int(b), int(fi)))
+    owners = []
+    for a, b in zip(ids, ids[1:]+ids[:1]):
+        uses = edges.get(tuple(sorted((a, b))), [])
+        if uses:
+            if len(uses) != 1 or uses[0][:2] != (b, a):
+                raise ValueError("approved triangle must oppose open boundary edges")
+            owners.append(uses[0][2])
+    if len(owners) != 2:
+        raise ValueError("exactly two existing boundary sides required")
+    slots = {mesh.slot[i] for i in owners}
+    if len(slots) != 1:
+        raise ValueError(f"ambiguous notch material slots: {sorted(slots)}")
+    # Reject another base triangle occupying any positive patch area. Upper layers
+    # stay separate by method C; the job must remeasure their normal gaps.
+    triangles = shapely.polygons(mesh.verts[mesh.faces[base], :2])
+    tree = STRtree(triangles)
+    for i in tree.query(patch):
+        if triangles[i].intersection(patch).area > 0:
+            raise ValueError(f"approved notch overlaps base face {int(base[i])}")
+    report = dict(mesh.report)
+    report['approved_notch'] = dict(approval_reference=approval_reference,
+        triangle_xy=xy.tolist(), area_m2=float(patch.area), added_face=n,
+        boundary_owner_faces=owners, slot=next(iter(slots)))
+    return Mesh(mesh.verts.copy(), np.vstack([mesh.faces, ids]),
+                list(mesh.slot)+[next(iter(slots))], np.append(mesh.level, 0),
+                np.concatenate([mesh.uv, mesh.verts[ids, :2][None, :, :]/mesh.cell]),
+                mesh.cell, report)
+
+
 def add_skirt(mesh: Mesh, depth: float = 1.0, slot: str = "Skirt") -> Mesh:
     """Vertical skirt down ``depth`` m along every open (single-face) edge of the base layer."""
     if not math.isfinite(depth) or depth < 1.0:
