@@ -197,6 +197,35 @@ algorithm/threshold/source changed. A direct-neighbour review, not another guess
 parameter, is needed to establish whether these planar junction witnesses are
 actual 3D spacing defects. Testing exposes this limitation; no generality claim.
 
+## Recovery and final verification
+
+The previous gateway-disconnected run left only a waiting-slot log, not a test
+execution. A read-only process inventory confirmed its suite wrapper/pytest were
+gone before restarting. No production code or tests changed during this recovery.
+
+- `python C:/Users/artsafro/hermes_kanban/scripts/suite_slot.py --card t_3e9518e5 -- env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q -p no:cacheprovider --basetemp=C:/x/t_3e9518e5`
+  exit **0**: **10062 passed, 21 skipped, 71 deselected, 90 warnings in
+  1174.51 s**. Log: `tmp/full-suite-resumed.log`. Slot acquired immediately.
+  Tested code/tests at `44d9ea5`; subsequent commit only records these receipts.
+- Read-only `uv run python tmp/resume_receipts.py`: **12/12** recorded input,
+  output, native-report and review-scene hashes still match; **5/5** new test
+  module docstrings have `new-case`; #420 `pending.json` row remains exact.
+- Generated `uv run python tmp/resume_generated_probes.py`: seed **420**, **40/40**
+  priority/conservation/immutable-input cases pass. Synthetic 10 x 10 m boundary,
+  base covers it, Tile `[1,1,edge,9]`, Geogrid `[edge-overlap,1,9,9]`, edge selected
+  from integer millimetres 3000..6000 and overlap 1..100 mm. Every case preserves
+  Tile geometry at level 1, removes exactly the hidden intersection from Geogrid,
+  reports that removed area, and leaves input data unchanged. A further **1/1**
+  exact 40 m2 footprint threshold control becomes a hole (`>=`, not silent lawn).
+  These are synthetic planner probes, not UCX gap or real-site equivalence proofs.
+- Existing exact regression-eval receipt rechecked: exit **0** for
+  `Regression evals: tmp/evals-final/report.json; 0 passed / 0 failed / 10 not measured (no Claude transcript)`.
+- Reopened final VPM oblique PNG visually: central rectangular building void,
+  dark roadway, narrow green edge bands and pale curb/paving strips visible;
+  no painted parking layout visible. This observation is not human acceptance.
+- CI: not run (billing lock). All delivery/manual/UCX limits above remain open;
+  green software tests do not promote them to pass.
+
 ## Hashes
 
 | Exact path | SHA-256 |
