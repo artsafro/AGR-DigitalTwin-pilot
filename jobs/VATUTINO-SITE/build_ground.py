@@ -69,8 +69,8 @@ def site_plan(data: dict, settings: dict, footprint_min: float):
     from shapely.ops import unary_union
     required = {"slots", "flat_datum_m", "uncovered_covering"}
     if (not isinstance(settings, dict) or not required.issubset(settings)
-            or set(settings) - required - {"separate_curbs"}):
-        raise ValueError(f"site settings require {sorted(required)}, optional separate_curbs; got {settings!r}")
+            or set(settings) - required - {"separate_curbs", "covering_priority"}):
+        raise ValueError(f"site settings require {sorted(required)}, optional separate_curbs/covering_priority; got {settings!r}")
     if type(settings.get("separate_curbs", False)) is not bool:
         raise ValueError("separate_curbs must be a boolean approved joint policy")
     datum = settings["flat_datum_m"]
@@ -96,10 +96,39 @@ def site_plan(data: dict, settings: dict, footprint_min: float):
         if geom.is_empty or not geom.is_valid or geom.geom_type not in {"Polygon", "MultiPolygon"}:
             raise ValueError(f"invalid or empty covering {key!r}")
         cov[key] = gc._polys(geom)
+    priority = settings.get("covering_priority", [])
+    known = set(slots.values()) - {slots[data['base_covering']], slots[uncovered]}
+    if not isinstance(priority, list):
+        raise ValueError("covering_priority must be a list of visible/hidden slot pairs")
+    used = set()
+    for pair in priority:
+        if (not isinstance(pair, list) or len(pair) != 2
+                or any(not isinstance(s, str) or s not in known for s in pair)
+                or pair[0] == pair[1] or any(s in used for s in pair)):
+            raise ValueError(f"invalid, unknown, duplicate or conflicting covering_priority: {pair!r}")
+        used.update(pair)
+    drops = []
+    if priority:
+        import shapely
+        # Same polygon-only precision as the planner, before overlay of mixed-dimensional clips.
+        cov = {k: gc._polys(shapely.set_precision(shapely.make_valid(unary_union(ps)), gc.GRID))
+               for k, ps in cov.items()}
+        for visible, hidden in priority:
+            mask = unary_union([p for k, ps in cov.items() if slots[k] == visible for p in ps])
+            for key in cov:
+                if slots[key] != hidden:
+                    continue
+                original = unary_union(cov[key])
+                removed = original.intersection(mask)
+                cov[key] = gc._polys(original.difference(mask))
+                drops.append(dict(visible_slot=visible, hidden_covering=key,
+                                  removed_m2=float(removed.area), reason='hidden_by_visible_covering'))
     free = gc._polys(boundary.difference(unary_union([p for ps in cov.values() for p in ps])))
     cov[uncovered] = [p for p in free if p.area < footprint_min]
     plan = gc.plan_layers(boundary, cov, data["base_covering"], slots,
                           footprint_min_area=footprint_min, step=STEP, normalize_clips=True)
+    if priority:
+        plan.report['covering_priority_dispositions'] = drops
     x0, y0, x1, y1 = boundary.bounds
     points = [(x, y, datum) for x, y in list(box(x0 - 1, y0 - 1, x1 + 1, y1 + 1).exterior.coords)[:4]]
     return plan, points

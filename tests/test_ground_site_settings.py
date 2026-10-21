@@ -75,6 +75,16 @@ def test_visible_covering_priority_preserves_tile_and_reports_hidden_drop():
     assert d == before
 
 
+@pytest.mark.parametrize('priority', [None, 'Tile', [['Tile']], [['Unknown', 'Geogrid']],
+    [['Tile', 'Tile']], [['Tile', 'Geogrid'], ['Geogrid', 'Tile']], [[float('nan'), 'Geogrid']]])
+def test_covering_priority_rejects_ambiguous_policy(priority):
+    d = fixture()
+    s = settings()
+    s['covering_priority'] = priority
+    with pytest.raises(ValueError, match='covering_priority'):
+        builder.site_plan(d, s, 1000)
+
+
 def test_site_cli_fresh_process(tmp_path):
     run, out = cli(tmp_path)
     assert run.returncode == 0, run.stderr + run.stdout

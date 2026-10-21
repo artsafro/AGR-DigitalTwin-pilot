@@ -10,5 +10,6 @@
   },
   "flat_datum_m": 0.0,
   "uncovered_covering": "lawn",
-  "separate_curbs": true
+  "separate_curbs": true,
+  "covering_priority": [["Tile", "Geogrid"]]
 }
