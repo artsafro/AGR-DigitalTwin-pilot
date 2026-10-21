@@ -1,5 +1,7 @@
 import json
+import os
 from pathlib import Path
+import subprocess
 import sys
 
 import pytest
@@ -44,7 +46,7 @@ def test_scoped_states_do_not_mean_delivery(tmp_path, state, action):
     run, manifest, _, _ = fixture_run(tmp_path, state)
     result = inspect_run(run.directory, manifest)
     assert result["next_action"] == action
-    assert result["stages"][0]["state"] == ("uncertain" if state == "running" else state)
+    assert result["stages"][0]["state"] == ("still_unknown" if state == "running" else state)
     if state in {"running", "interrupted"}:
         assert result["evidence_integrity"] == "incomplete"
     assert result["delivery_passed"] is False
@@ -484,3 +486,97 @@ def test_zero_attempts_plans_authorized_stage(tmp_path):
     result = inspect_run(run.directory, manifest)
     assert result["next_action"] == "plan_authorized_stage"
     assert result["evidence_integrity"] == "incomplete"
+
+
+def _running_stages_fixture(tmp_path, specs):
+    source = tmp_path / "source.txt"
+    source.write_text("original")
+    inputs = {"source": source}
+    context = {"profile": "NPM", "scope": "fixture-only", "tool": "fixture-v1"}
+    run = RunRecord.create(tmp_path / "runs", "fixture-running", inputs, context)
+    attempt = run.new_attempt()
+    ledger = run.read()
+    for spec in specs:
+        declared = {}
+        for key, content in spec.get("declared_outputs", {}).items():
+            path = attempt / key
+            if content is not None:
+                path.write_bytes(content if isinstance(content, bytes) else content.encode())
+            declared[key] = str(path)
+        record = {"status": "running", "outputs": {}, "declared_outputs": declared}
+        if "spawned_pid" in spec:
+            record["spawned_pid"] = spec["spawned_pid"]
+        ledger["attempts"][0]["stages"][spec["name"]] = record
+    atomic_json(run.path, ledger)
+    manifest = attempt / "input-manifest.json"
+    atomic_json(manifest, {"inputs": file_evidence(inputs), "context": context})
+    return run, manifest
+
+
+def test_running_stages_classified_from_pid_and_outputs(tmp_path, monkeypatch):
+    from dt_ai.core import run_inspection
+    run, manifest = _running_stages_fixture(tmp_path, [
+        {"name": "late", "spawned_pid": 111, "declared_outputs": {"out": "done"}},
+        {"name": "failed", "spawned_pid": 222},
+        {"name": "unknown", "spawned_pid": 333},
+    ])
+    monkeypatch.setattr(run_inspection, "_pid_alive", lambda pid: pid == 333)
+    before = digest(run.path.read_bytes())
+    result = inspect_run(run.directory, manifest)
+    assert digest(run.path.read_bytes()) == before
+    states = {s["stage"]: s for s in result["stages"]}
+    assert states["late"]["state"] == "late_confirmed"
+    assert states["failed"]["state"] == "confirmed_failed"
+    assert states["unknown"]["state"] == "still_unknown"
+    assert {s["recorded_state"] for s in result["stages"]} == {"running"}
+    assert result["running_classification"] == {"late_confirmed": 1, "confirmed_failed": 1, "still_unknown": 1}
+
+
+def test_running_without_spawned_pid_is_still_unknown(tmp_path):
+    run, manifest = _running_stages_fixture(tmp_path, [
+        {"name": "orphan", "declared_outputs": {"out": "done"}},
+    ])
+    result = inspect_run(run.directory, manifest)
+    assert result["stages"][0]["state"] == "still_unknown"
+    assert result["running_classification"] == {"late_confirmed": 0, "confirmed_failed": 0, "still_unknown": 1}
+
+
+def test_pid_alive_probe_real_processes():
+    from dt_ai.core.run_inspection import _pid_alive
+    child = subprocess.Popen([sys.executable, "-c", "pass"])
+    child.wait()
+    assert _pid_alive(child.pid) is False
+    assert _pid_alive(os.getpid()) is True
+    assert _pid_alive(0) is None
+    assert _pid_alive(-1) is None
+    assert _pid_alive("not-a-pid") is None
+
+
+def test_dead_pid_with_empty_or_missing_outputs_confirmed_failed(tmp_path, monkeypatch):
+    from dt_ai.core import run_inspection
+    monkeypatch.setattr(run_inspection, "_pid_alive", lambda pid: False)
+    run, manifest = _running_stages_fixture(tmp_path, [
+        {"name": "empty", "spawned_pid": 111, "declared_outputs": {"out": ""}},
+        {"name": "missing", "spawned_pid": 222, "declared_outputs": {"out": None}},
+    ])
+    result = inspect_run(run.directory, manifest)
+    states = {s["stage"]: s["state"] for s in result["stages"]}
+    assert states == {"empty": "confirmed_failed", "missing": "confirmed_failed"}
+    assert result["running_classification"] == {"late_confirmed": 0, "confirmed_failed": 2, "still_unknown": 0}
+
+
+def test_running_declared_output_outside_run_rejected(tmp_path):
+    outside = tmp_path / "outside.txt"
+    outside.write_text("x")
+    run, manifest = _running_stages_fixture(tmp_path, [{"name": "bad", "spawned_pid": 111}])
+    ledger = run.read()
+    ledger["attempts"][0]["stages"]["bad"]["declared_outputs"] = {"out": str(outside)}
+    atomic_json(run.path, ledger)
+    with pytest.raises(ValueError, match="outside"):
+        inspect_run(run.directory, manifest)
+
+
+def test_running_classification_counts_zero_without_running_stages(tmp_path):
+    run, manifest, _, _ = fixture_run(tmp_path, "produced")
+    result = inspect_run(run.directory, manifest)
+    assert result["running_classification"] == {"late_confirmed": 0, "confirmed_failed": 0, "still_unknown": 0}

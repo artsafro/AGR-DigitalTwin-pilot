@@ -177,6 +177,16 @@ def test_stage_pid_records_exact_spawned_process(tmp_path):
     assert run.read()["attempts"][0]["stages"]["pid"]["spawned_pid"] == int(output.read_text())
 
 
+def test_running_record_declares_intended_output_paths(tmp_path):
+    run, _ = fixture_run(tmp_path)
+    output = tmp_path / "out.txt"
+    record = run.run_stage("export", writer(output, tmp_path / "counter"), {"out": output})
+    assert record["status"] == "produced"
+    saved = run.read()["attempts"][0]["stages"]["export"]
+    assert saved["declared_outputs"] == {"out": str(output.resolve())}
+    assert record["declared_outputs"] == {"out": str(output.resolve())}
+
+
 def test_cached_earlier_stage_verifies_exact_returned_evidence(tmp_path):
     run, _ = fixture_run(tmp_path)
     first, second = tmp_path / "a", tmp_path / "b"
