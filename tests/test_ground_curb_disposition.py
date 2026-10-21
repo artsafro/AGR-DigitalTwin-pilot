@@ -329,3 +329,24 @@ def _legacy_digest():
 def test_legacy_output_byte_identical_to_pre_512():
     # Golden digest recorded on origin/main ed4d774 before #512.
     assert _legacy_digest() == LEGACY_DIGEST
+
+
+
+def test_random_approval_records_fail_closed():
+    rng = random.Random(512)
+    blanks = ['', ' ', '\t', '\n  ', None, 0, 1.5, float('nan'), float('inf'), [], {}]
+    for _ in range(200):
+        rec = dict(APPROVAL)
+        bad = rng.sample(gd.APPROVAL_KEYS, rng.randint(0, 3))
+        for k in bad:
+            if rng.random() < .3:
+                rec.pop(k)
+            else:
+                rec[k] = rng.choice(blanks)
+        if bad:
+            with pytest.raises(gd.CurbJointApprovalError):
+                gd.build_details(_mixed(), box(0, 0, 10, 10), sampler(), separate_curbs=True, approval=rec)
+        else:
+            _, _, joints = gd.build_details(_mixed(), box(0, 0, 10, 10), sampler(),
+                                            separate_curbs=True, approval=rec)
+            assert joints and all(j['decision_id'] == 'D-test' for j in joints)
