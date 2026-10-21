@@ -1,0 +1,16 @@
+{
+  "probe": "source mast membership, not building invariants",
+  "checks": {
+    "complete_rows_32961": true,
+    "unique_identity_32961": true,
+    "mast_membership_113_of_113": true,
+    "every_mast_member_keep": true,
+    "mast_actual_budget_145398": true,
+    "all_source_mast_rows_named": true,
+    "no_unresolved_disposition": true,
+    "nonmast_package_not_duplicated": true
+  },
+  "passed_checks": 8,
+  "total_checks": 8,
+  "missing_source_rows": []
+}

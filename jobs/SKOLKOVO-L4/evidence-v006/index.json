@@ -1,0 +1,148 @@
+{
+  "passed": false,
+  "buildable": false,
+  "gate1": null,
+  "drive_directory": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v006",
+  "drive_manifest_sha256": "0e15bc2bf4f1a686d95edb88ce9b89d3f5764398df1df45cf91b993864f253f2",
+  "artifacts": [
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v006\\source-diagnostics-v006.zip",
+      "sha256": "63feb47f0f88f2d0c13ee8c572632c60b9a459472133f1dcd589c9d17a9d5925",
+      "bytes": 30799389,
+      "archive_members_verified": 11991
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v006\\mast-system-question-v006.png",
+      "sha256": "1342bca7b33bd7845bb4417680ae37e3f0f06d738653efd24d4828bb72fba2b9",
+      "bytes": 73218
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v006\\vpm-appearance-top-v006.png",
+      "sha256": "3f2c66b749520e3b2fade5ba98937ab9b69816218417d735cdd7e2e26ce4c664",
+      "bytes": 7894
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v006\\appearance-associations-v006.json",
+      "sha256": "b80635f3fccde422e8d4c85aa80784bd974774c5a84c36767485609ab22fa0db",
+      "bytes": 3778516
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v006\\appearance-registration-v006.json",
+      "sha256": "fddec588208fb0a6c9e455ffc6b8121d8c59b44ceeb581baa8deff55bca1b917",
+      "bytes": 2424
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v006\\object-decisions-v006.csv.gz",
+      "sha256": "b120a930dc107d87edcf02653f4a97fd88e450b756c73dea09d0de22bc402050",
+      "bytes": 449785
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v006\\parts-budget-rejected-v006.json",
+      "sha256": "5624c7a0248437216ff88cf4f53096e2fe358eb29637022b17c90c40d00d48f2",
+      "bytes": 1189493
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v006\\scope-proposal-v006.json",
+      "sha256": "9bac0fb748a0db2dacb4e4eab8fc31a95f583ac8095e858269ab94d9267f1931",
+      "bytes": 6114
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v006\\mast-system-duplicate-probes-v006.json",
+      "sha256": "0b144970ea7b70f80bdfb706d44bc96b0a043d1cbd2315620980a93b7e5b3424",
+      "bytes": 1396
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v006\\mast-system-planar-bound-v006.json",
+      "sha256": "90c755a144765e313dad0e728e4e4e409af0ea12c16b68d9b3a91ddf52c580dc",
+      "bytes": 45963
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v006\\integrity-v006.json",
+      "sha256": "c552a2d3091af4e60fd0bdd2867d2b2c8a2b9b9763f9406e6717c2a3c685e072",
+      "bytes": 3365
+    }
+  ],
+  "drive_artifacts_rehashed": 11,
+  "archive_members_verified": 11991,
+  "original_inputs_verified": 104,
+  "selected_baseline_bbox_checks": 11834,
+  "packaging_seconds": 14.891384200000175,
+  "checks": {
+    "passed": false,
+    "buildable": false,
+    "original_input_hashes_verified": 104,
+    "source_facts": [
+      {
+        "path": "tmp\\skolkovo-l4-v006\\v1-exterior\\manifest.json",
+        "sha256": "dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec"
+      },
+      {
+        "path": "tmp\\skolkovo-l4-v006\\mast-system\\manifest.json",
+        "sha256": "02eb1f80f1fe73bc58735c3a48784cb2bad93f4adba4c11433526e5352182d9b"
+      },
+      {
+        "path": "tmp\\skolkovo-l4-v006\\vpm-appearance\\manifest.json",
+        "sha256": "e2743275b9f8e063e498af3f0e1b268114b74cfd197179cea275ec66b43a3e54"
+      }
+    ],
+    "selected_baseline_bbox_checks": 11834,
+    "baseline_native_meshes": 17710,
+    "baseline_native_triangles": 6645503,
+    "baseline_blender_triangles": 6644287,
+    "baseline_importer_triangle_difference": 1216,
+    "reader_warning": "Native Max and Blender triangulation counts differ by 1216; do not call them identical geometry or approval",
+    "runs": [
+      {
+        "file": "max-appearance-run.json",
+        "wrapper_status": "ok",
+        "native_exit": 4294967166,
+        "seconds": 45.4,
+        "hours": 0.012611111111111111,
+        "completion_marker": "L4_APPEARANCE_COMPLETE 2 56440",
+        "warnings": [
+          "21.10.2026 10:55:55;  MAXScript Auto-load Script Error Exception: -- Runtime error: .NET runtime exception: Common Language Runtime detected an invalid program.; Error occurred in anonymous codeblock; filename: C:\\Users\\artsafro\\AppData\\Local\\Autodesk\\3dsMax\\2026 - 64bit\\ENU\\scripts\\startup\\polyunwr"
+        ]
+      },
+      {
+        "file": "max-baseline-run.json",
+        "wrapper_status": "ok",
+        "native_exit": 4294967166,
+        "seconds": 161.7,
+        "hours": 0.04491666666666666,
+        "completion_marker": "L4_BASELINE_COMPLETE 17710 6645503 11834",
+        "warnings": [
+          "21.10.2026 11:04:31;  MAXScript Auto-load Script Error Exception: -- Runtime error: .NET runtime exception: Common Language Runtime detected an invalid program.; Error occurred in anonymous codeblock; filename: C:\\Users\\artsafro\\AppData\\Local\\Autodesk\\3dsMax\\2026 - 64bit\\ENU\\scripts\\startup\\polyunwr"
+        ]
+      },
+      {
+        "file": "max-mast-system-run.json",
+        "wrapper_status": "ok",
+        "native_exit": 4294967166,
+        "seconds": 53.1,
+        "hours": 0.014750000000000001,
+        "completion_marker": "L4_MAST_SYSTEM_COMPLETE 113 145398",
+        "warnings": [
+          "21.10.2026 11:27:00;  MAXScript Auto-load Script Error Exception: -- Runtime error: .NET runtime exception: Common Language Runtime detected an invalid program.; Error occurred in anonymous codeblock; filename: C:\\Users\\artsafro\\AppData\\Local\\Autodesk\\3dsMax\\2026 - 64bit\\ENU\\scripts\\startup\\polyunwr"
+        ]
+      }
+    ],
+    "input_rehash_seconds": 0.39861500000188244,
+    "input_rehash_hours": 0.00011072638888941179,
+    "focused_tests": {
+      "command": "env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run --extra pdf-review pytest -q -p no:cacheprovider tests/test_album_pdf_reader.py tests/test_album_below_line.py tests/parts/test_fbx_reader.py --basetemp=C:/x/t_b205c8e1-resume-v006",
+      "passed": 133,
+      "seconds": 3.82,
+      "hours": 0.001061111111111111
+    },
+    "full_suite": "not_run: incomplete intake, reserved for first review head through suite_slot.py",
+    "gate1": null
+  },
+  "open_model_question": "jobs/SKOLKOVO-L4/MAST-MEMBERSHIP-QUESTION-v006.md",
+  "remaining_work": [
+    "Approve full mast membership/extra-component simplification policy; no rescale/PDF rebuilding",
+    "Audit proposed face selections, source scope, explicit legend bindings and actual joints before final PartsList",
+    "Gate1 exact hash before kernel operations",
+    "Export readback, report, board-tool visual/user decision, final SINTEZ, full suite, PR/review"
+  ],
+  "packaging_hours": 0.0041364956111111595
+}

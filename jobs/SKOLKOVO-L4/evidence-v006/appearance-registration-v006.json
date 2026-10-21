@@ -1,0 +1,86 @@
+{
+  "scope": "Comparison/appearance registration only, not authorization to replace source geometry",
+  "candidate_yaw_deg": 61.41247498983469,
+  "xy_correction_matrix": [
+    [
+      0.999999999823247,
+      -1.880174541248868e-05
+    ],
+    [
+      1.880174541240286e-05,
+      0.9999999998232472
+    ]
+  ],
+  "xy_translation_m": [
+    23.37714821339598,
+    18.248467792633082
+  ],
+  "vpm_z_to_source_subtract_m": 0.08676862716674805,
+  "xy_pair_residuals_m": [
+    9.358714580726073e-07,
+    2.0711864195827364e-06,
+    1.569994404863858e-06
+  ],
+  "pairs": [
+    {
+      "source_row": 7822,
+      "source_name": "Floor Профнастил [2972773]",
+      "source_center_m": [
+        39.20816442108154,
+        14.34200639343262,
+        14.975000858306885
+      ],
+      "vpm_triangle_ids": [
+        10620,
+        10621
+      ],
+      "vpm_candidate_frame_center_m": [
+        15.83109054453374,
+        -3.9061640329823817,
+        15.186767101287842
+      ],
+      "reference_source_top_difference_m": 0.18676598866780658
+    },
+    {
+      "source_row": 7837,
+      "source_name": "Floor Профнастил [3030329]",
+      "source_center_m": [
+        13.543440071105955,
+        8.763131805419924,
+        14.975000858306885
+      ],
+      "vpm_triangle_ids": [
+        10576,
+        10577
+      ],
+      "vpm_candidate_frame_center_m": [
+        -9.833531626786545,
+        -9.48552185185861,
+        15.086770057678223
+      ],
+      "reference_source_top_difference_m": 0.08676910400390625
+    },
+    {
+      "source_row": 7889,
+      "source_name": "Floor Профнастил [3100735]",
+      "source_center_m": [
+        37.66741153335571,
+        28.125219055175783,
+        14.675000667572021
+      ],
+      "vpm_triangle_ids": [
+        10532,
+        10533
+      ],
+      "vpm_candidate_frame_center_m": [
+        14.290078553024536,
+        9.877021203343588,
+        14.786768913269043
+      ],
+      "reference_source_top_difference_m": 0.08676815032958984
+    }
+  ],
+  "source_census_sha256": "dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec",
+  "vpm_source_sha256": "fc52d0e231846b5fdce07cba30464da08fe5c3993f60a64df7dd16053ed8f455",
+  "known_discrepancy": "First cap delivered top is 0.100 m higher than source after common registration; appearance only, source geometry not changed"
+}

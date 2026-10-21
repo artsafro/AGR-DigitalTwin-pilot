@@ -5,7 +5,42 @@ Input copies: `C:/x/l4-skolkovo/`; originals are read-only and were not opened f
 Profiles: both NPM and VPM from one <=150,000-triangle master (D010).
 Base: pilot `48e2a55`; #348 and #351 are closed. No building output is approved.
 
-## Current status — v005 (supersedes historical sections below)
+## Current status — v006 (supersedes historical sections below)
+
+**Material authority answered; full mast-system membership/cleanup decision needed.**
+`passed=false`, `buildable=false`; no Gate 1, kernel/export or PR.
+Current report: [RESUME-v006.md](RESUME-v006.md).
+Exact new question: [MAST-MEMBERSHIP-QUESTION-v006.md](MAST-MEMBERSHIP-QUESTION-v006.md).
+
+The old mast budget counted only five parent-like meshes (55,230 triangles).
+Audit found 108 separately exported КНС_* components, adding 90,168 triangles:
+113 meshes / 145,398 triangles for conservative full keep. The corrected source
+proposal allocates 226,918 and is rejected by PartsList's 150,000 limit. Exact
+duplicate counting and strict planar-retessellation feasibility do not validate
+that plan. No extra components are silently dropped or rescaled.
+
+Recommendation needing approval: keep the five parent-like meshes unchanged;
+allow bounded simplification of the 108 extra components (source placement,
+silhouette <=0.02 m, proposed 10,000-triangle allocation). Only proven coincident
+surfaces may be deduplicated; shifted base receptor heads are not automatically
+mistakes. This is NOT Gate 1 or a measured output budget.
+
+VPM appearance-only authority is recorded, with explicit SHA-pinned swatch
+proposals and original finish names retained, no geometry copying or defaults.
+Baseline roof decks/caps/access omitted by the facade-only revision are now
+inventoried; native baseline selected geometry bbox checks passed 11,834/11,834.
+The 32,961-row scope table and 45 homogeneous candidate parts remain unapproved;
+face/legend/joint reconciliation is not a completed gate.
+
+Evidence on Drive `G:/Мой диск/AGR-evidence/353-skolkovo-l4/evidence-v006/`, index
+`evidence-v006/index.json`: source-only question sheet, 30,799,389-byte archive,
+11,991 verified archive members and 11/11 Drive rehashes. Original inputs 104/104
+unchanged. Focused tests 133 passed; membership regression v005 3/8 fail -> v006
+8/8 pass; over-budget PartsList correctly rejected. No full suite before the
+first complete review head. All three serial headless Max runs completed;
+the user's live Max 2024 scene was not changed.
+
+## Historical v005 status — superseded by v006
 
 **Partial intake; needs explicit material authority for unmapped exterior finishes.**
 `passed=false`, `buildable=false`; no Gate 1, kernel/export or PR.

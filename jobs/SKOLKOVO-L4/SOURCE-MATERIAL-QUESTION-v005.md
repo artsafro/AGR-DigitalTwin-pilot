@@ -1,8 +1,8 @@
 # Skolkovo: exterior finish authority before final PartsList
 
-Status: **needs user input**, not Gate 1, not a request to approve the current
-subset. Interior/opaque-glazing and roof-mast decisions are already answered and
-are NOT reopened. No kernel build or automatic material fallback has run.
+Status: **answered; historical question below**, not Gate 1. Artem's VPM
+appearance-only decision is recorded below. No kernel build or automatic
+material fallback has run; source association proposals are not validation.
 
 ## Exact question
 
@@ -39,6 +39,14 @@ The twelve exact names, SHA-pinned census-row locators, bboxes and per-view
 samples are in `evidence-v005/source-material-witness-v005.json`: **12 objects,
 924 positive samples**. No absent-sample inference is used for a drop.
 The diagnostic is geometrical source visibility, not a delivery render.
+
+**Answered — Artem, 2026-10-21, task comment 10:52:** «материалы из VPM».
+The delivered final VPM is appearance/material authority for exterior surfaces
+not mapped to the album/revision legend. Geometry remains source/revision-derived;
+all associations must be explicit and hash-pinned, never first-slot defaults.
+These material comparisons are reference-derived, not independent validation;
+real source finish names remain recorded. See `RESUME-v006.md` for the first
+UV/UDIM swatch proposal and its limitations. This answer is not Gate 1.
 
 Investigated: all 26 extracted album texts and all 4 revision texts; album
 pages 15/16 define the facade legend; album page 21 identifies roof levels and

@@ -1,0 +1,14 @@
+{
+  "passed": false,
+  "buildable": false,
+  "gate1": null,
+  "expected_budget_rejection": true,
+  "allocation": 226918,
+  "limit": 150000,
+  "validator": "dt_ai.core.models.PartsList.model_validate",
+  "error": "1 validation error for PartsList\n  Value error, npm: part budgets add up to 226918, over the total 150000 [type=value_error, input_value={'schema_version': '1.0.0... 'draft', 'gate1': None}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+  "limitations": [
+    "Not a final PartsList; intentionally invalid budget diagnostic",
+    "joints empty and face/source mapping proposals not approved"
+  ]
+}
