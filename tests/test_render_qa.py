@@ -1,12 +1,19 @@
 """new-case: public render-QA configuration and numerical verdict contracts."""
 import importlib.util
 from pathlib import Path
+import itertools
+import types
+import json
+import subprocess
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def load_checker():
     spec = importlib.util.spec_from_file_location("render_qa", ROOT / "tools/qa/render_qa.py")
+    assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -29,3 +36,160 @@ def test_numeric_verdicts():
         failures = qa.verdicts("Cube", "Camera", {**good, key: value}, config["thresholds"])
         assert [f["code"] for f in failures] == [expected]
         assert all(f["object"] == "Cube" and f["frame"] == "Camera" for f in failures)
+
+
+@pytest.mark.parametrize("bad", [
+    {}, {"targets": []}, {"targets": ["A", "A"], "cameras": ["C"]},
+    {"targets": ["A"], "cameras": ["C", "C"]},
+    {"targets": ["A"], "cameras": ["C"], "unknown": 1},
+    {"targets": ["A"], "cameras": ["C"], "ground_resting": ["B"]},
+    {"targets": ["A"], "cameras": ["C"], "ground_resting": ["A"]},
+    *[{"targets": ["A"], "cameras": ["C"], "thresholds": {key: value}}
+      for key, value in [("crop_margin", float("nan")), ("floating_m", float("inf")),
+                         ("minimum_coverage", 0), ("crop_margin", True),
+                         ("background_rgb", [0, 0]), ("unmapped", 2)]]])
+def test_config_rejects_invalid(bad):
+    with pytest.raises(ValueError):
+        load_checker().validate_config(bad)
+
+
+def test_wholly_offscreen_positive_depth_is_cropped_and_empty():
+    qa = load_checker()
+    facts = {"bbox": [2, 0.2, 3, 0.8], "depth": [1, 3],
+             "coverage": 0, "visible_faces": 0, "ground_gap_m": 0}
+    assert [f["code"] for f in qa.verdicts("A", "C", facts, qa.DEFAULTS)] == ["cropped", "empty"]
+
+
+def test_threshold_boundaries():
+    qa = load_checker()
+    good = {"bbox": [0.2, 0.2, 0.8, 0.8], "depth": [1, 3],
+            "coverage": 0.36, "visible_faces": 2, "ground_gap_m": 0}
+    for key, value, code in [("bbox", [-0.02, 0.2, 0.8, 0.8], "crop_boundary"),
+                             ("coverage", 0.05, "coverage_boundary"),
+                             ("ground_gap_m", 0.01, "floating_boundary")]:
+        assert [f["code"] for f in qa.verdicts("A", "C", {**good, key: value}, qa.DEFAULTS)] == [code]
+
+
+def test_output_isolation(tmp_path):
+    qa = load_checker()
+    scene = tmp_path / "input.blend"
+    config = tmp_path / "config.json"
+    scene.write_bytes(b"source")
+    config.write_text('{"targets":["A"],"cameras":["C"]}')
+    alias = tmp_path / "alias.json"
+    alias.hardlink_to(config)
+    aliases = [config, scene, alias, tmp_path / "nested" / ".." / "config.json"]
+    import os
+    if os.name == "nt":
+        aliases += [Path(str(config).upper()), Path(str(config).replace("/", "\\"))]
+        junction = tmp_path / "junction"
+        linked = subprocess.run(["cmd", "/c", "mklink", "/J", str(junction), str(tmp_path)],
+                                capture_output=True)
+        assert linked.returncode == 0, linked.stdout + linked.stderr
+        aliases.append(junction / "config.json")
+    for output in aliases:
+        with pytest.raises((ValueError, FileExistsError)):
+            qa.validate_paths(scene, config, output, tmp_path / "renders")
+        assert scene.read_bytes() == b"source"
+        assert json.loads(config.read_text())["targets"] == ["A"]
+        assert not (tmp_path / "renders").exists()
+    with pytest.raises(ValueError):
+        qa.validate_paths(scene, scene, tmp_path / "out.json", tmp_path / "renders")
+    with pytest.raises(ValueError):
+        qa.validate_paths(scene, config, tmp_path / "renders" / "out.json", tmp_path / "renders")
+
+
+def test_duplicate_json_keys(tmp_path):
+    path = tmp_path / "bad.json"
+    path.write_text('{"targets":["A"],"targets":["B"],"cameras":["C"]}')
+    with pytest.raises(ValueError, match="targets"):
+        load_checker().read_config(path)
+
+
+def test_input_mutation_cannot_publish_pass(tmp_path, monkeypatch):
+    import sys
+    qa = load_checker()
+    scene, config = tmp_path / "scene.blend", tmp_path / "config.json"
+    scene.write_bytes(b"scene")
+    config.write_text('{"targets":["A"],"cameras":["C"]}')
+    fake = types.SimpleNamespace(app=types.SimpleNamespace(version=(5, 1, 2)),
+        ops=types.SimpleNamespace(wm=types.SimpleNamespace(open_mainfile=lambda **kw: None)),
+        data=types.SimpleNamespace(images=[], libraries=[]), context=types.SimpleNamespace(scene=None))
+    monkeypatch.setitem(sys.modules, "bpy", fake)
+    def mutate(*args):
+        config.write_text("changed during run")
+        return {"status": "pass"}
+    monkeypatch.setattr(qa, "check_scene", mutate)
+    with pytest.raises(ValueError, match="Input changed"):
+        qa.main(["--scene", str(scene), "--config", str(config),
+                 "--report", str(tmp_path / "report.json"), "--renders", str(tmp_path / "renders")])
+    assert not (tmp_path / "report.json").exists()
+
+
+@pytest.mark.parametrize("key,value", [("visible_faces", float("nan")), ("visible_faces", -1),
+    ("visible_faces", 1.5), ("coverage", -0.1), ("coverage", 1.1), ("bbox", [0.8, 0.2, 0.1, 0.8])])
+def test_invalid_measurement(key, value):
+    qa = load_checker()
+    facts = {"bbox": [0.2, 0.2, 0.8, 0.8], "depth": [1, 3],
+             "coverage": 0.36, "visible_faces": 2, "ground_gap_m": 0}
+    facts[key] = value
+    with pytest.raises(ValueError):
+        qa.verdicts("A", "C", facts, qa.DEFAULTS)
+
+
+@pytest.mark.blender
+def test_blender_fixtures(tmp_path):
+    blender = Path("C:/Program Files/Blender Foundation/Blender 5.1/blender.exe")
+    if not blender.exists():
+        pytest.skip("Blender 5.1.2 not installed")
+    output = tmp_path / "fixtures"
+    result = subprocess.run([str(blender), "--background", "--factory-startup", "--python-exit-code", "1",
+                             "--python", str(ROOT / "tests/fixtures/render_qa_blender.py"), "--", str(output)],
+                            capture_output=True, text=True, timeout=180)
+    assert result.returncode == 0, result.stdout + result.stderr
+    reports = json.loads((output / "fixtures.json").read_text())
+    assert {name: report["status"] for name, report in reports.items()} == {
+        "good": "pass", "cropped": "fail", "empty": "fail", "floating": "fail", "occluded": "fail"}
+    command = [str(blender), "--background", "--factory-startup", "--python-exit-code", "1",
+               "--python", str(ROOT / "tools/qa/render_qa.py"), "--",
+               "--scene", str(output / "good.blend"), "--config", str(output / "config.json"),
+               "--report", str(output / "cli.json"), "--renders", str(output / "cli-renders")]
+    first = subprocess.run(command, capture_output=True, text=True, timeout=180)
+    assert first.returncode == 0, first.stdout + first.stderr
+    receipt = (output / "cli.json").read_bytes()
+    assert json.loads(receipt)["status"] == "pass"
+    repeat = subprocess.run(command, capture_output=True, text=True, timeout=180)
+    assert repeat.returncode != 0
+    assert (output / "cli.json").read_bytes() == receipt
+    bad = json.loads((output / "config.json").read_text())
+    bad["thresholds"] = {"minimum_coverage": 0.99}
+    (output / "config.json").write_text(json.dumps(bad))
+    command[command.index("--report") + 1] = str(output / "bad-cli.json")
+    command[command.index("--renders") + 1] = str(output / "bad-cli-renders")
+    failed = subprocess.run(command, capture_output=True, text=True, timeout=180)
+    assert failed.returncode == 1, failed.stdout + failed.stderr
+    assert json.loads((output / "bad-cli.json").read_text())["status"] == "fail"
+
+
+def test_generated_verdict_grid():
+    qa = load_checker()
+    # Independent literal oracle over 3 x 3 x 3 x 2 = 54 measurements.
+    for outside, coverage, gap, visible in itertools.product(
+            (0, 0.019, 0.021), (0.049, 0.051, 0.8), (0, 0.009, 0.011), (0, 2)):
+        facts = {"bbox": [-outside, 0.2, 0.8, 0.8], "depth": [1, 3],
+                 "coverage": coverage, "ground_gap_m": gap, "visible_faces": visible}
+        expected = (["cropped"] if outside == 0.021 else [])
+        expected += ["empty"] if coverage == 0.049 or visible == 0 else []
+        expected += ["floating"] if gap == 0.011 else []
+        assert [f["code"] for f in qa.verdicts("A", "C", facts, qa.DEFAULTS)] == expected
+
+
+@pytest.mark.parametrize("key", ["bbox", "depth", "coverage", "ground_gap_m"])
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), -float("inf")])
+def test_nonfinite_measurement(key, value):
+    facts = {"bbox": [0.2, 0.2, 0.8, 0.8], "depth": [1, 3],
+             "coverage": 0.36, "visible_faces": 2, "ground_gap_m": 0}
+    facts[key] = [value, 0.2, 0.8, 0.8] if key == "bbox" else [value, 3] if key == "depth" else value
+    qa = load_checker()
+    with pytest.raises(ValueError, match="Nonfinite"):
+        qa.verdicts("A", "C", facts, qa.DEFAULTS)
