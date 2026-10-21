@@ -257,6 +257,13 @@ def detail_polygon_uv(mesh: QuadMesh, profile: str) -> QuadMesh:
         u = u-normal*np.dot(u,normal);u /= np.linalg.norm(u)
         v = np.cross(normal,u)
         uv = np.column_stack((p@u,p@v));uv -= uv.min(axis=0)
+        if profile == 'vpm' and uv.max() >= 8.:
+            # A long narrow curb can fit a square tile on its diagonal; this is
+            # a chart rotation, not geometry reduction or a density waiver.
+            rotated = uv @ (np.array([[1.,-1.],[1.,1.]])/np.sqrt(2.))
+            rotated -= rotated.min(axis=0)
+            if rotated.max() < uv.max():
+                uv = rotated
         scale = 2048/30 if profile == 'npm' else max(4.,float(uv.max()))
         uv /= scale
         px = 2048 if profile == 'npm' else 4096

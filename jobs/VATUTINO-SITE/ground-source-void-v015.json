@@ -1,0 +1,32 @@
+{
+  "source_adapter_sha256": "3b6b433d718c0292f472293849f3363fd2ae90d4892e598efca52be44cd9d502",
+  "reason": "Retain the original footprint remainder outside the exact D169 patch; engineering approximation must be certified within 2.2 mm, not a new contour exception.",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          -7691.226387121202,
+          -15247.997875868654
+        ],
+        [
+          -7691.234502995236,
+          -15247.972929088066
+        ],
+        [
+          -7691.242110535057,
+          -15247.97540403006
+        ],
+        [
+          -7691.233994661023,
+          -15248.000350810647
+        ],
+        [
+          -7691.226387121202,
+          -15247.997875868654
+        ]
+      ]
+    ]
+  },
+  "outline_tolerance_m": 0.0022
+}
