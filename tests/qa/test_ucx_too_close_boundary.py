@@ -5,10 +5,13 @@ independently specified outward unit box hulls whose nearest X faces sit at exac
 g (left X in [-1, 0], right X in [g, 1+g]). The nearest-face gap is g by construction and
 is never derived by subtracting `1 + g` from `1`.
 
-The measured gap and the boundary are characterised, not re-tuned. The exact 0.2 mm
-boundary is not reachable through the surface measurement: for g = 0.0002 the measurement
-lands 1 ulp below `TOUCH_M` (see ``WITNESS_0002``), so the strict `<` rule classifies it
-`touch`, not the `below_band` an exact `TOUCH_M` reading would give.
+The measured gap and the boundary are characterised, not re-tuned. For this particular
+hull construction and measurement, the exact 0.2 mm boundary is not reachable through the
+surface measurement: for g = 0.0002 the measurement lands 813 ulps below `TOUCH_M`
+(`(0.0002 - WITNESS_0002) / math.ulp(0.0002) == 813.0`, an absolute difference of
+`2.2036409155767878e-17`), so the strict `<` rule classifies it `touch`, not the
+`below_band` an exact `TOUCH_M` reading would give. This single witness does not prove
+global unreachability of the boundary for arbitrary hull constructions.
 
 Scratch mutation check (#503): run the following in a fresh ``uv run python`` process.
 It recompiles the actual production function in memory, writes no source files, and
@@ -28,6 +31,8 @@ must report one failed strict-boundary test (the normal unmutated run must pass)
     assert result == pytest.ExitCode.TESTS_FAILED
 """
 
+import math
+
 import pytest
 
 from twinqa.geometry import ucx_audit as ua
@@ -38,10 +43,13 @@ BOX_TRIS = [(0, 1, 3), (0, 3, 2), (4, 6, 7), (4, 7, 5), (0, 4, 5), (0, 5, 1),
 REQ = ua.REQ_COLLISION  # "2.13.4"
 
 # Arithmetic witness for the exact 0.2 mm boundary. With the nearest X faces specified at
-# exactly 0 and 0.0002, ``surface_distance`` still measures 1 ulp BELOW ``TOUCH_M``: the
-# vertex-triangle fallback clamps a diagonal bottom-face edge to t=1 and rebuilds its near
-# endpoint as ``(1.0 + 0.0002) - 1.0``, which rounds below 0.0002 in float64. The exact
-# boundary is therefore not reachable: ``measured == TOUCH_M`` does not hold for g = 0.0002.
+# exactly 0 and 0.0002, ``surface_distance`` still measures 813 ulps BELOW ``TOUCH_M``
+# (``(0.0002 - WITNESS_0002) / math.ulp(0.0002) == 813.0``; absolute difference
+# ``2.2036409155767878e-17``): the vertex-triangle fallback clamps a diagonal bottom-face
+# edge to t=1 and rebuilds its near endpoint as ``(1.0 + 0.0002) - 1.0``, which rounds
+# below 0.0002 in float64. For this hull construction the exact boundary is therefore not
+# reachable: ``measured == TOUCH_M`` does not hold for g = 0.0002. This witness does not
+# prove global unreachability.
 WITNESS_0002 = 0.00019999999999997797  # == 1.0 + 0.0002 - 1.0
 
 
@@ -69,7 +77,7 @@ def _reverse_winding(hull):
 
 # Frozen Acceptance table for the existing strict `< 0.2 mm` rule. Expected measured gaps
 # are the specified face positions (0 and g), not a copy of the production thresholds;
-# g=0.0002 is the single witness exception (1 ulp below TOUCH_M, still `touch`).
+# g=0.0002 is the single witness exception (813 ulps below TOUCH_M, still `touch`).
 ACCEPTANCE = [
     # g         measured gap       class         finding types
     (0.000199,  0.000199,          "touch",      ("too_close", "gap_out_of_band")),
@@ -94,11 +102,13 @@ def test_acceptance_table_measured_gap_class_findings(g, expected_gap, expected_
 
 
 def test_exact_boundary_precondition_fails_and_witness_reported():
-    """The exact 0.2 mm boundary is not reachable: g=0.0002 measures 1 ulp below TOUCH_M.
+    """For this hull construction the exact 0.2 mm boundary is not reachable: g=0.0002
+    measures 813 ulps below TOUCH_M, not a single ulp.
 
     This reports the arithmetic witness instead of weakening it with ``approx`` or
     inventing a production bug. The strict `<` rule therefore classifies the specified
-    0.2 mm face gap as `touch`, not `below_band`.
+    0.2 mm face gap as `touch`, not `below_band`. This witness is specific to this hull
+    construction and measurement and does not prove global unreachability.
     """
     a, b = boundary_pair(0.0002)
     measured = ua.pair_relation(a, b)[1]
@@ -107,9 +117,23 @@ def test_exact_boundary_precondition_fails_and_witness_reported():
     # The actual arithmetic witness, named and pinned:
     assert measured == WITNESS_0002
     assert WITNESS_0002 == 1.0 + 0.0002 - 1.0  # provenance: diagonal-edge closest-point
-    assert measured < ua.TOUCH_M  # 1 ulp below the boundary -> strict `<` says touch
+    # Corrected quantitative claim: 813 ulps below TOUCH_M, not 1 ulp.
+    assert (ua.TOUCH_M - WITNESS_0002) / math.ulp(ua.TOUCH_M) == 813.0
+    assert measured < ua.TOUCH_M  # 813 ulps below the boundary -> strict `<` says touch
     assert ua.pair_relation(a, b)[0] == "touch"
     assert [f["type"] for f in ua.pair_findings(a, b)] == ["too_close", "gap_out_of_band"]
+
+
+def test_witness_is_exactly_813_ulps_below_touch_m():
+    """Brute-force ulp count: 813 ``math.nextafter`` steps down from TOUCH_M land on the
+    witness exactly and 814 overshoot — an independent check of the 813-ulp claim that does
+    not divide by ``math.ulp``.
+    """
+    probe = ua.TOUCH_M
+    for _ in range(813):
+        probe = math.nextafter(probe, -math.inf)
+    assert probe == WITNESS_0002  # exactly 813 ulps below TOUCH_M
+    assert math.nextafter(probe, -math.inf) != WITNESS_0002  # 814 ulps would overshoot
 
 
 @pytest.mark.parametrize("g,expected_gap,expected_class,expected_types", ACCEPTANCE)
@@ -154,8 +178,8 @@ def test_findings_carry_req_2134_names_and_do_not_mutate_hulls():
 def test_pair_relation_strict_boundary(monkeypatch):
     """Strict `<` places gap == TOUCH_M in `below_band`.
 
-    The box construction measures 1 ulp below TOUCH_M (see the witness test), so the gap is
-    pinned to exactly TOUCH_M here to make the strict-vs-loose boundary observable.
+    The box construction measures 813 ulps below TOUCH_M (see the witness test), so the gap
+    is pinned to exactly TOUCH_M here to make the strict-vs-loose boundary observable.
     """
     a, b = boundary_pair(0.0002)
     monkeypatch.setattr(ua, "sat_separation", lambda x, y: 0.001)
