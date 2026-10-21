@@ -1,5 +1,6 @@
 """Contour-first remeshing must remove only artificial planar seed edges."""
 import numpy as np
+import pytest
 from shapely.geometry import Polygon
 from shapely.ops import unary_union
 
@@ -29,3 +30,57 @@ def test_planar_patch_removes_interior_grid_without_source_loss():
     expected = unary_union([Polygon(seed.verts[f, :2]) for f in seed.faces])
     assert actual.symmetric_difference(expected).area < 1e-12
     assert np.array_equal(seed.verts, snapshot)
+
+
+def test_unmapped_slot_is_named():
+    from dt_ai.geometry.ground_planar import planar_patches
+    with pytest.raises(ValueError, match='TileLight'):
+        planar_patches(grid(), allowed_slots={'Mulch'})
+
+
+@pytest.mark.parametrize('slots', [None, [], {' '}, {'TileLight', 4}])
+def test_invalid_slot_inventory_is_rejected(slots):
+    from dt_ai.geometry.ground_planar import planar_patches
+    with pytest.raises(ValueError, match='slots'):
+        planar_patches(grid(), allowed_slots=slots)
+
+
+@pytest.mark.parametrize('level', [0.5, np.nan, np.inf])
+def test_nonintegral_or_nonfinite_level_cannot_be_truncated(level):
+    from dt_ai.geometry.ground_planar import planar_patches
+    seed = grid()
+    seed.level = np.full(len(seed.faces), level)
+    with pytest.raises(ValueError, match='level'):
+        planar_patches(seed, allowed_slots={'TileLight'})
+
+
+def test_protected_sample_faces_keep_exact_source_membership():
+    from dt_ai.geometry.ground_planar import planar_patches
+    patches = planar_patches(grid(), allowed_slots={'TileLight'}, protected_faces={0, 1})
+    assert (0,) in [p.source_faces for p in patches]
+    assert (1,) in [p.source_faces for p in patches]
+    assert sorted(i for p in patches for i in p.source_faces) == list(range(8))
+
+
+@pytest.mark.parametrize('protected', [{-1}, {8}, {True}, {0.5}, [0, 0]])
+def test_invalid_protected_faces_fail_closed(protected):
+    from dt_ai.geometry.ground_planar import planar_patches
+    with pytest.raises(ValueError, match='protected'):
+        planar_patches(grid(), allowed_slots={'TileLight'}, protected_faces=protected)
+
+
+def test_semantic_seam_is_not_dissolved():
+    from dt_ai.geometry.ground_planar import planar_patches
+    seed = grid()
+    seed.slot[:2] = ['Mulch']*2
+    patches = planar_patches(seed, allowed_slots={'Mulch', 'TileLight'})
+    assert [(p.slot, len(p.source_faces)) for p in patches] == [('Mulch', 2), ('TileLight', 6)]
+
+
+def test_inconsistent_winding_is_not_hidden_as_separate_patch():
+    from dt_ai.geometry.ground_planar import planar_patches
+    seed = grid()
+    seed.faces[0] = seed.faces[0][::-1]
+    with pytest.raises(ValueError, match='winding'):
+        planar_patches(seed, allowed_slots={'TileLight'})
+
