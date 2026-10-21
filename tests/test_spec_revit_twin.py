@@ -222,6 +222,37 @@ def shaft_dump(spans, roof_bottom=6.6, roof_top=6.6):
     return to_dump([band(walls)], ["\n".join(lines) + "\n"])
 
 
+def sheared_shaft_dump(shear):
+    """Reviewer witness: three drifting rings fool all old interval samples."""
+    import copy
+
+    dump = shaft_dump([(3.3, 6.6)])
+    names = {f"wall_{i}" for i in range(70, 74)}
+    liners = [m for m in dump["meshes"] if m["name"] in names]
+    assert len(liners) == 4
+    dump["meshes"] = [m for m in dump["meshes"] if m["name"] not in names]
+    dump["body"] = [n for n in dump["body"] if n not in names]
+    dump["shaft_lining"] = []
+    for j, anchor in enumerate((4.95, 5.775, 6.6)):
+        for original in liners:
+            mesh = copy.deepcopy(original)
+            mesh["name"] += f"_sheared_{j}"
+            mesh["vertices"] = [[5 + (x - 5) * 0.96 + shear * (z - anchor),
+                                 5 + (y - 5) * 0.96, z] for x, y, z in mesh["vertices"]]
+            dump["shaft_lining"].append(mesh)
+    return dump
+
+
+def test_sheared_structural_lining_cannot_prove_continuous_shaft():
+    with pytest.raises(SpecError, match="not a shaft|unsupported.*lining"):
+        extract_spec(sheared_shaft_dump(3.0), OBJ)
+
+
+def test_zero_shear_structural_lining_is_continuous():
+    _, report = extract_spec(sheared_shaft_dump(0.0), OBJ)
+    assert report["roof"]["closed_share"] == 0.99
+
+
 def test_disconnected_lining_at_both_old_cuts_is_not_a_shaft():
     with pytest.raises(SpecError, match="not a shaft"):
         extract_spec(shaft_dump([(4.85, 5.05), (6.0, 6.2)]), OBJ)
