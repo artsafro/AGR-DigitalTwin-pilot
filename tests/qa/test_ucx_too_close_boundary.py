@@ -9,8 +9,24 @@ The measured gap and the boundary are characterised, not re-tuned. The exact 0.2
 boundary is not reachable through the surface measurement: for g = 0.0002 the measurement
 lands 1 ulp below `TOUCH_M` (see ``WITNESS_0002``), so the strict `<` rule classifies it
 `touch`, not the `below_band` an exact `TOUCH_M` reading would give.
+
+Scratch mutation check (#503): run the following in a fresh ``uv run python`` process.
+It recompiles the actual production function in memory, writes no source files, and
+must report one failed strict-boundary test (the normal unmutated run must pass)::
+
+    import inspect
+    import pytest
+    from twinqa.geometry import ucx_audit as ua
+    source = inspect.getsource(ua.pair_relation)
+    gate = "if gap < TOUCH_M:"
+    assert source.count(gate) == 1
+    exec(source.replace(gate, "if gap <= TOUCH_M:"), ua.__dict__)
+    result = pytest.main([
+        "-q", "-p", "no:cacheprovider", "--basetemp=C:/x/pi-t_a4722540",
+        "tests/qa/test_ucx_too_close_boundary.py", "-k", "strict_boundary",
+    ])
+    assert result == pytest.ExitCode.TESTS_FAILED
 """
-import math
 
 import pytest
 
@@ -48,7 +64,7 @@ def boundary_pair(g):
 def _reverse_winding(hull):
     """Reverse the triangle winding/order of a hull, keeping vertices and indices intact."""
     verts, tris = hull
-    return list(verts), [(c, b, a) for a, b, c in tris]
+    return list(verts), [(c, b, a) for a, b, c in reversed(tris)]
 
 
 # Frozen Acceptance table for the existing strict `< 0.2 mm` rule. Expected measured gaps
@@ -96,6 +112,22 @@ def test_exact_boundary_precondition_fails_and_witness_reported():
     assert [f["type"] for f in ua.pair_findings(a, b)] == ["too_close", "gap_out_of_band"]
 
 
+@pytest.mark.parametrize("g,expected_gap,expected_class,expected_types", ACCEPTANCE)
+def test_reverse_control_reverses_triangle_order_and_winding(
+    g, expected_gap, expected_class, expected_types,
+):
+    """Probe every triangle of both synthetic hulls; preserve all input elements."""
+    for hull in boundary_pair(g):
+        verts, tris = hull
+        before = (list(verts), list(tris))
+        reversed_verts, reversed_tris = _reverse_winding(hull)
+        assert reversed_verts == verts
+        assert reversed_tris == [tuple(reversed(tri)) for tri in reversed(tris)]
+        assert len(reversed_tris) == len(tris)
+        assert _reverse_winding((reversed_verts, reversed_tris)) == before
+        assert hull == before
+
+
 def test_reverse_winding_preserves_measured_gap():
     """Reversing triangle winding/order is an invariance control, not a sub-ulp guarantee."""
     for g in (0.000199, 0.0002, 0.000201, 0.0):
@@ -119,29 +151,8 @@ def test_findings_carry_req_2134_names_and_do_not_mutate_hulls():
     assert b[0] == [tuple(v) for v in vb] and b[1] == tb
 
 
-def _pair_relation_loose_touch(a, b):
-    """Process-local copy of ``pair_relation`` with `<` mutated to `<=` at the TOUCH_M gate.
-
-    Never committed: exists only to characterise what a too-loose boundary would do
-    (baseline-GREEN characterization, not historical RED).
-    """
-    sep = ua.sat_separation(a, b)
-    if sep < -ua.OVERLAP_EPS_M:
-        return "overlap", 0.0, -sep
-    gap = ua.surface_distance(a, b) if sep > ua.OVERLAP_EPS_M else 0.0
-    if gap <= ua.TOUCH_M:  # mutated: `<` -> `<=`
-        return "touch", gap, max(0.0, -sep)
-    if gap < ua.GAP_BAND_M[0] - ua.BAND_TOL_M:
-        return "below_band", gap, 0.0
-    if gap <= ua.GAP_BAND_M[1] + ua.BAND_TOL_M:
-        return "in_band", gap, 0.0
-    if gap <= ua.NEIGHBOUR_M:
-        return "wide", gap, 0.0
-    return "apart", gap, 0.0
-
-
-def test_pair_relation_strict_lt_vs_mutated_le(monkeypatch):
-    """Strict `<` places gap == TOUCH_M in `below_band`; a `<=` mutation flips it to `touch`.
+def test_pair_relation_strict_boundary(monkeypatch):
+    """Strict `<` places gap == TOUCH_M in `below_band`.
 
     The box construction measures 1 ulp below TOUCH_M (see the witness test), so the gap is
     pinned to exactly TOUCH_M here to make the strict-vs-loose boundary observable.
@@ -153,9 +164,4 @@ def test_pair_relation_strict_lt_vs_mutated_le(monkeypatch):
     cls, gap, pen = ua.pair_relation(a, b)
     assert gap == ua.TOUCH_M  # exact boundary
     assert cls == "below_band"  # ordinary strict `<`: the equality assertion holds
-
-    monkeypatch.setattr(ua, "pair_relation", _pair_relation_loose_touch)
-    mutated_cls, mutated_gap, _ = ua.pair_relation(a, b)
-    assert mutated_gap == ua.TOUCH_M
-    assert mutated_cls == "touch"  # `<=` flips the boundary
-    assert mutated_cls != "below_band"  # the strict-boundary equality assertion now fails
+    assert pen == 0.0
