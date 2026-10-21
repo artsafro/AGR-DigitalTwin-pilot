@@ -93,7 +93,7 @@ Rows with `none` (11):
 
 These are L2 ticket candidates, not filed tickets. Partial checks in BODY-E/I/Q/R and the
 bounded B01/B02/B02t coverage do not close their manual/generalisation gaps or K01's open checks.
-BODY-Z has only partial NPM coverage; its VPM shell route is still blocked by the existing issue #91.
+BODY-Z has only partial NPM coverage; its VPM roof screen shell is built from spec v0.7 `thickness_m` (issue #91).
 A source-level tool inventory is not a new benchmark run or an official validation pass.
 
 ## Documentation regression check
