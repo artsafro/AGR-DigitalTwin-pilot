@@ -205,9 +205,10 @@ def _edit_uv(args, fn):
     (lambda uv: uv['files'].pop(1), 'no row for MAF_0002'),
     (lambda uv: uv['files'][0]['materials']['Red'].update(uv_layer=None, faces=[]), 'no UV layer'),
     (lambda uv: uv['files'][0].pop('materials'), 'MAF_0001_A.fbx: no materials'),
-    (lambda uv: uv['files'][1]['materials'].clear(), 'MAF_0002_B.fbx: no faces'),
+    (lambda uv: uv['files'][1]['materials'].clear(), 'MAF_0002_B.fbx: no materials'),
     (lambda uv: uv.__setitem__('files', []), 'no files'),
-    (lambda uv: uv['files'].append({'fbx': 'MAF_0001_A.fbx', 'materials': {}}), 'twice'),
+    (lambda uv: uv['files'].append({'fbx': 'MAF_0001_A.fbx', 'materials': {
+        'X': {'images': [], 'uv_layer': 'UVMap', 'faces': []}}}), 'twice'),
 ])
 def test_failed_or_incomplete_uv_dump_fails_closed_and_publishes_nothing(tmp_path, capsys, edit, msg):
     args = _setup(tmp_path)
@@ -216,6 +217,25 @@ def test_failed_or_incomplete_uv_dump_fails_closed_and_publishes_nothing(tmp_pat
     assert ids_mod.main(args + _outs(tmp_path) + ['--evidence-dir', str(ev)]) == 2
     assert msg in capsys.readouterr().err
     assert not (tmp_path / 'out.json').exists() and not (tmp_path / 'out.md').exists() and not ev.exists()
+
+
+def test_maf_whose_atlas_material_is_on_no_face_is_listed_unmeasured_not_zero(tmp_path):
+    args = _setup(tmp_path)
+    # MAF_0002 keeps a row, but no polygon uses its atlas-bound material (unused slot in the FBX)
+    _edit_uv(args, lambda uv: uv['files'][1].__setitem__('materials', {
+        '<none>': {'images': [], 'uv_layer': 'UVMap', 'faces': [[0.1, 0.1, 0.2, 0.1, 0.2, 0.2]]}}))
+    assert ids_mod.main(args + _outs(tmp_path)) == 0
+    uvr = json.loads((tmp_path / 'out.json').read_text(encoding='utf-8'))['atlases'][0]['uv']
+    assert [(u['maf'], u['fbx']) for u in uvr['unmeasured']] == [('MAF_0002', 'MAF_0002_B.fbx')]
+    assert 'not measured' in uvr['unmeasured'][0]['reason']
+    assert all('MAF_0002' not in c['mafs'] for c in uvr['cells'].values())
+    assert 'no UV face read back (not measured, not 0): 1 - MAF_0002' in \
+        (tmp_path / 'out.md').read_text(encoding='utf-8')
+
+
+def test_complete_uv_dump_control_has_no_unmeasured_maf(tmp_path):
+    assert ids_mod.main(_setup(tmp_path) + _outs(tmp_path)) == 0
+    assert json.loads((tmp_path / 'out.json').read_text(encoding='utf-8'))['atlases'][0]['uv']['unmeasured'] == []
 
 
 def test_uv_error_row_of_a_maf_without_atlas_textures_is_still_a_failure(tmp_path, capsys):

@@ -115,6 +115,9 @@ slots; then map the UVs of each MAF into its slot. Embedding in the Ground FBX c
 - ID number rule (Artem 2026-10-21): the ID number is drawn small in the BOTTOM-RIGHT corner of every atlas
   cell (`id_corner_px`); UV islands stay inside the cell content and never cover that corner. Swatch tiles
   carry no number inside the texture; a layout example is never a colour/texture source.
+  Read back with `maf_atlas_ids.py --require-keepout`: exit 1 names every cell whose `id_corner_px` square a
+  UV face polygon overlaps (an edge or the interior counts, not only a vertex); a UV dump with an `error` row,
+  a missing MAF row or a material without a UV layer exits 2 and publishes nothing.
 - Needs: headless for packing; no tool yet for the UV remap; human for the visual check.
 - Done when: one 512 RGB atlas, the UV JSON, and every face of every MAF inside its material's slot.
 

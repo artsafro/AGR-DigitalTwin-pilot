@@ -6,7 +6,7 @@
  "inputs": {
   "ids": {
    "path": "library/maf/material_ids_v005.json",
-   "sha256": "bad41e6c100bf3bdaf329c717685b339e0c149accbb178d2c20165add9950dc2"
+   "sha256": "d286d3da48596d7dda927921835b58077a45a20b891ae7dc7a85a010b02f95b2"
   },
   "spec": {
    "path": "library/maf/atlas_layout_v005_spec.json",

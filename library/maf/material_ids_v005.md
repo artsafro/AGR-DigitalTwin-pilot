@@ -93,6 +93,7 @@ Concept (Artem 2026-10-21): MAFs are textured through atlases for both profiles 
 ### 1_Diffuse_1.1001_e5pokwfjvgc7.png (4096x4096, atlas, MAFs: 1)
 - cells: 11; solid area 44%, patterned area 56%; mixed regions 0
 - UV faces outside every cell: 0 (MAFs 0)
+- MAFs binding this image with no UV face read back (not measured, not 0): 0
 
 | cell | x,y | w x h px | kind | colour | id | MAFs on it (UV) | faces | min margin px | faces in ID corner |
 |---|---|---|---|---|---|---|---|---|---|
@@ -111,14 +112,16 @@ Concept (Artem 2026-10-21): MAFs are textured through atlases for both profiles 
 ### ID_1_RAL 9005.png (256x256, single-material map, MAFs: 8)
 - cells: 1; solid area 100%, patterned area 0%; mixed regions 0
 - UV faces outside every cell: 0 (MAFs 0)
+- MAFs binding this image with no UV face read back (not measured, not 0): 0
 
 | cell | x,y | w x h px | kind | colour | id | MAFs on it (UV) | faces | min margin px | faces in ID corner |
 |---|---|---|---|---|---|---|---|---|---|
-| 0 | 0,0 | 256x256 | solid | #030305 | 1 | 8 | 7069 | -9 | 394 |
+| 0 | 0,0 | 256x256 | solid | #030305 | 1 | 8 | 7069 | -9 | 272 |
 
 ### ID_2_Лиственница_Черная_f.png (4096x4096, atlas, MAFs: 7)
 - cells: 4; solid area 34%, patterned area 32%; mixed regions 1
 - UV faces outside every cell: 0 (MAFs 0)
+- MAFs binding this image with no UV face read back (not measured, not 0): 6 - MAF_0057, MAF_0058, MAF_0059, MAF_0060, MAF_0061, MAF_0065
 
 | cell | x,y | w x h px | kind | colour | id | MAFs on it (UV) | faces | min margin px | faces in ID corner |
 |---|---|---|---|---|---|---|---|---|---|
@@ -126,11 +129,12 @@ Concept (Artem 2026-10-21): MAFs are textured through atlases for both profiles 
 | 1 | 2056,0 | 2040x4096 | mixed | #806E5A | - (mixed region around flat blocks (non-rectangular content: decal/pattern)) | 0 | 0 | - | 0 |
 | 2 | 3432,0 | 632x4088 | solid | #414141 | 2 | 0 | 0 | - | 0 |
 | 3 | 2064,1392 | 1400x64 | solid | #BC9272 | - (flat colour matches no id within tolerance) | 0 | 0 | - | 0 |
-| 4 | 0,1512 | 2056x2584 | patterned | #553025 | 16 | 1 | 80 | 74 | 0 |
+| 4 | 0,1512 | 2056x2584 | patterned | #553025 | 16 | 1 | 80 | 74 | 2 |
 
 ### ID_5_Сетка_D.png (3712x4608, single-material map, MAFs: 7)
 - cells: 1; solid area 0%, patterned area 100%; mixed regions 0
 - UV faces outside every cell: 0 (MAFs 0)
+- MAFs binding this image with no UV face read back (not measured, not 0): 6 - MAF_0056, MAF_0057, MAF_0058, MAF_0059, MAF_0060, MAF_0061
 
 | cell | x,y | w x h px | kind | colour | id | MAFs on it (UV) | faces | min margin px | faces in ID corner |
 |---|---|---|---|---|---|---|---|---|---|
@@ -139,6 +143,7 @@ Concept (Artem 2026-10-21): MAFs are textured through atlases for both profiles 
 ### ID_5_Сетка_O.png (3712x4608, opacity mask, MAFs: 7)
 - cells: 1; solid area 0%, patterned area 100%; mixed regions 0
 - UV faces outside every cell: 0 (MAFs 0)
+- MAFs binding this image with no UV face read back (not measured, not 0): 6 - MAF_0056, MAF_0057, MAF_0058, MAF_0059, MAF_0060, MAF_0061
 
 | cell | x,y | w x h px | kind | colour | id | MAFs on it (UV) | faces | min margin px | faces in ID corner |
 |---|---|---|---|---|---|---|---|---|---|
@@ -147,6 +152,7 @@ Concept (Artem 2026-10-21): MAFs are textured through atlases for both profiles 
 ### MAF_Atlas_001_Diffuse.png (4096x4096, atlas, MAFs: 5)
 - cells: 11; solid area 38%, patterned area 62%; mixed regions 0
 - UV faces outside every cell: 0 (MAFs 0)
+- MAFs binding this image with no UV face read back (not measured, not 0): 0
 
 | cell | x,y | w x h px | kind | colour | id | MAFs on it (UV) | faces | min margin px | faces in ID corner |
 |---|---|---|---|---|---|---|---|---|---|
@@ -165,22 +171,24 @@ Concept (Artem 2026-10-21): MAFs are textured through atlases for both profiles 
 ### T_Atlas_MAF.png (4096x4096, atlas, MAFs: 25)
 - cells: 8; solid area 48%, patterned area 26%; mixed regions 1
 - UV faces outside every cell: 0 (MAFs 0)
+- MAFs binding this image with no UV face read back (not measured, not 0): 0
 
 | cell | x,y | w x h px | kind | colour | id | MAFs on it (UV) | faces | min margin px | faces in ID corner |
 |---|---|---|---|---|---|---|---|---|---|
 | 0 | 0,0 | 1080x4096 | patterned | #BEA581 | 14 | 9 | 2076 | 12 | 0 |
 | 1 | 1080,0 | 1224x1072 | solid | #373737 | 2 | 4 | 4539 | 99 | 0 |
-| 2 | 1080,0 | 3016x4096 | mixed | #86866A | - (mixed region around flat blocks (non-rectangular content: decal/pattern)) | 12 | 7543 | 73 | 30 |
+| 2 | 1080,0 | 3016x4096 | mixed | #86866A | - (mixed region around flat blocks (non-rectangular content: decal/pattern)) | 12 | 7543 | 73 | 60 |
 | 3 | 2312,0 | 704x1072 | solid | #B9BDC0 | 20 | 2 | 110 | 103 | 0 |
 | 4 | 3024,0 | 512x2792 | solid | #EC8E4F | 6 | 1 | 440 | 129 | 0 |
 | 5 | 1080,1080 | 1224x664 | solid | #868686 | 3 | 8 | 2431 | 118 | 0 |
 | 6 | 2312,1080 | 704x1296 | solid | #919EA2 | 3 | 6 | 1672 | 11 | 0 |
 | 7 | 1080,2800 | 1128x1296 | solid | #526267 | 12 | 1 | 564 | 22 | 0 |
-| 8 | 2216,2800 | 1016x1296 | solid | #567F56 | 9 | 1 | 510 | 8 | 0 |
+| 8 | 2216,2800 | 1016x1296 | solid | #567F56 | 9 | 1 | 510 | 8 | 5 |
 
 ### Untitled_Diffuse_1.1001.png (4096x4096, atlas, MAFs: 2)
 - cells: 6; solid area 67%, patterned area 0%; mixed regions 1
 - UV faces outside every cell: 0 (MAFs 0)
+- MAFs binding this image with no UV face read back (not measured, not 0): 0
 
 | cell | x,y | w x h px | kind | colour | id | MAFs on it (UV) | faces | min margin px | faces in ID corner |
 |---|---|---|---|---|---|---|---|---|---|
@@ -189,12 +197,13 @@ Concept (Artem 2026-10-21): MAFs are textured through atlases for both profiles 
 | 2 | 3024,0 | 1072x1384 | solid | #072502 | 1 | 1 | 11 | -40987 | 11 |
 | 3 | 2048,1384 | 2048x504 | solid | #2B3034 | 22 | 1 | 1 | -40536 | 1 |
 | 4 | 0,1392 | 2048x2704 | mixed | #A8825B | - (mixed region around flat blocks (non-rectangular content: decal/pattern)) | 2 | 230 | -8192 | 14 |
-| 5 | 2048,1888 | 2048x2208 | solid | #CCDAE3 | 4 | 1 | 63 | -40987 | 63 |
+| 5 | 2048,1888 | 2048x2208 | solid | #CCDAE3 | 4 | 1 | 63 | -40987 | 39 |
 | 6 | 0,4008 | 88x88 | solid | #A68158 | - (fragment below 1/1024 of the atlas (gutter/detail)) | 1 | 24 | 0 | 0 |
 
 ### Untitled_Diffuse_1.1001_ngosp2lcps3p.png (4096x4096, atlas, MAFs: 2)
 - cells: 5; solid area 34%, patterned area 0%; mixed regions 2
 - UV faces outside every cell: 0 (MAFs 0)
+- MAFs binding this image with no UV face read back (not measured, not 0): 0
 
 | cell | x,y | w x h px | kind | colour | id | MAFs on it (UV) | faces | min margin px | faces in ID corner |
 |---|---|---|---|---|---|---|---|---|---|

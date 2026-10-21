@@ -28,12 +28,14 @@ from __future__ import annotations
 import argparse
 import collections
 import hashlib
+import io
 import json
 import math
 import ntpath
 import os
 import re
 import sys
+import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -93,6 +95,71 @@ def _maf(fbx: str) -> str:
     if not m:
         raise InputError(f'FBX name without MAF id: {fbx}')
     return m.group(1)
+
+
+CORNER_SHARE = 0.15  # side of the bottom-right ID zone, share of the cell content side (layout contract)
+CORNER_MIN_PX = 16
+
+
+def id_corner(content: list[int]) -> list[int]:
+    """Bottom-right keep-out square [x, y, w, h] inside a content box: the ID number lives here."""
+    x, y, w, h = content
+    s = min(max(CORNER_MIN_PX, math.ceil(CORNER_SHARE * min(w, h))), min(w, h))
+    return [x + w - s, y + h - s, s, s]
+
+
+def clip_area(pts: list[tuple[float, float]], rect: list[float]) -> float:
+    """Area of a polygon clipped to an axis-aligned rect [x, y, w, h] (Sutherland-Hodgman, any simple polygon).
+
+    Positive area = the face really overlaps the rect; touching an edge or a corner point gives 0.
+    """
+    x0, y0 = rect[0], rect[1]
+    x1, y1 = x0 + rect[2], y0 + rect[3]
+    planes = ((0, x0, True), (0, x1, False), (1, y0, True), (1, y1, False))
+    poly = list(pts)
+    for axis, val, keep_ge in planes:
+        if not poly:
+            break
+        inside = (lambda p: p[axis] >= val) if keep_ge else (lambda p: p[axis] <= val)
+        out = []
+        for i, cur in enumerate(poly):
+            prev = poly[i - 1]
+            if inside(cur):
+                if not inside(prev):
+                    out.append(_cut(prev, cur, axis, val))
+                out.append(cur)
+            elif inside(prev):
+                out.append(_cut(prev, cur, axis, val))
+        poly = out
+    if len(poly) < 3:
+        return 0.0
+    return abs(sum(poly[i - 1][0] * p[1] - p[0] * poly[i - 1][1] for i, p in enumerate(poly))) / 2.0
+
+
+def _cut(a, b, axis, val):
+    t = (val - a[axis]) / (b[axis] - a[axis])
+    return (a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]))
+
+
+def write_atomic(path: str, data: bytes) -> None:
+    """Write via an exclusively created, uniquely named temp next to ``path`` (never clobbers another file)."""
+    d = os.path.dirname(os.path.abspath(path))
+    os.makedirs(d, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(prefix='.' + os.path.basename(path) + '.', suffix='.tmp', dir=d)
+    try:
+        with os.fdopen(fd, 'wb') as f:
+            f.write(data)
+        os.replace(tmp, path)
+    except BaseException:
+        if os.path.exists(tmp):
+            os.unlink(tmp)
+        raise
+
+
+def save_png(img, path: str) -> None:
+    buf = io.BytesIO()
+    img.save(buf, format='PNG')
+    write_atomic(path, buf.getvalue())
 
 
 def load_seed(seed: dict, ral: dict) -> list[dict]:
@@ -217,9 +284,11 @@ def uv_cells(uv_dump: dict, image_name: str, atlas: dict) -> dict:
     uncovered = {'faces': 0, 'mafs': set()}
     for fi in uv_dump['files']:
         maf = _maf(fi['fbx'])
-        for mat in fi.get('materials', {}).values():
+        for mname, mat in fi['materials'].items():
             if not any(ntpath.basename(im.get('filepath') or '') == image_name for im in mat.get('images', [])):
                 continue
+            if not mat.get('uv_layer'):
+                raise InputError(f"{fi['fbx']}: material {mname} uses {image_name} but has no UV layer")
             for face in mat.get('faces', []):
                 n = len(face) // 2
                 if n < 3 or len(face) % 2 or not all(math.isfinite(v) for v in face):
@@ -248,10 +317,13 @@ def uv_cells(uv_dump: dict, image_name: str, atlas: dict) -> dict:
                 u['mafs'].add(maf)
                 m = min(min(p[0] - c['x'], c['x'] + c['w'] - p[0], p[1] - c['y'], c['y'] + c['h'] - p[1]) for p in pts)
                 u['min_margin_px'] = round(m) if u['min_margin_px'] is None else min(u['min_margin_px'], round(m))
-                z = 0.12 * min(c['w'], c['h'])  # bottom-right ID-number zone (Artem 2026-10-21)
-                if any(p[0] > c['x'] + c['w'] - z and p[1] > c['y'] + c['h'] - z for p in pts):
+                # bottom-right ID-number keep-out (Artem 2026-10-21): the same id_corner contract as the
+                # layouts; a face counts when its polygon overlaps the zone, not only when a vertex is in it
+                if clip_area(pts, id_corner([c['x'], c['y'], c['w'], c['h']])) > 1e-9:
                     u['corner_faces'] += 1
-    return {'cells': {k: dict(v, mafs=sorted(v['mafs'])) for k, v in use.items()},
+                    u.setdefault('corner_mafs', set()).add(maf)
+    return {'cells': {k: dict(v, mafs=sorted(v['mafs']), corner_mafs=sorted(v.get('corner_mafs', ())))
+                      for k, v in use.items()},
             'uncovered': dict(uncovered, mafs=sorted(uncovered['mafs']))}
 
 
@@ -342,6 +414,48 @@ def spec_requirements(schedule: dict, ids: list[dict]) -> list[dict]:
     return out
 
 
+def check_uv_dump(uv_dump: dict, required: dict) -> dict:
+    """Fail closed on a failed or incomplete UV readback before any analysis.
+
+    ``required``: image name -> MAFs whose FBX binds it. Every dump row must be a successful import with
+    materials; every required MAF must have exactly one row; a material bound to the image without a UV
+    layer is an error. A required (MAF, image) pair with no face is not counted as zero measured faces: it is
+    returned as ``{image: [{maf, fbx, reason}]}`` (the FBX lists the material but no polygon uses it - the
+    dump only holds materials that polygons use - or Blender did not read the binding back).
+    """
+    files = uv_dump.get('files') if isinstance(uv_dump, dict) else None
+    if not isinstance(files, list) or not files:
+        raise InputError('uv dump: no files')
+    rows = {}
+    for fi in files:
+        if not isinstance(fi, dict) or not fi.get('fbx'):
+            raise InputError(f'uv dump: row without fbx: {str(fi)[:80]}')
+        if 'error' in fi:
+            raise InputError(f"uv dump: {fi['fbx']}: {fi['error']}")
+        if not isinstance(fi.get('materials'), dict) or not fi['materials']:
+            raise InputError(f"uv dump: {fi['fbx']}: no materials")
+        maf = _maf(fi['fbx'])
+        if maf in rows:
+            raise InputError(f'uv dump: {maf} given twice ({rows[maf]["fbx"]}, {fi["fbx"]})')
+        rows[maf] = fi
+    unmeasured = collections.defaultdict(list)
+    for image, mafs in sorted(required.items()):
+        for maf in sorted(mafs):
+            fi = rows.get(maf)
+            if fi is None:
+                raise InputError(f'uv dump: no row for {maf} (its FBX uses {image})')
+            bound = {k: m for k, m in fi['materials'].items()
+                     if any(ntpath.basename(im.get('filepath') or '') == image for im in m.get('images', []))}
+            for k, m in bound.items():
+                if not m.get('uv_layer'):
+                    raise InputError(f"uv dump: {fi['fbx']}: material {k} uses {image} but has no UV layer")
+            if not sum(len(m.get('faces') or []) for m in bound.values()):
+                unmeasured[image].append({'maf': maf, 'fbx': fi['fbx'], 'reason': (
+                    f'no polygon of the imported FBX uses a material bound to {image} (unused material slot, '
+                    'or the binding was not read back): not measured, not counted as 0 faces')})
+    return dict(unmeasured)
+
+
 def check_paths(inputs: list[str], outputs: list[str]) -> None:
     norm = lambda p: os.path.normcase(os.path.realpath(p))  # noqa: E731
     ins = {norm(p) for p in inputs}
@@ -350,6 +464,8 @@ def check_paths(inputs: list[str], outputs: list[str]) -> None:
         n = norm(o)
         if n in ins:
             raise InputError(f'output resolves to an input: {o}')
+        if os.path.isdir(o):
+            raise InputError(f'output is a directory: {o}')
         if n in seen:
             raise InputError(f'two outputs resolve to the same file: {o}')
         seen.add(n)
@@ -407,9 +523,12 @@ def build(args) -> dict:
         seg['role'] = 'layout example' if it['name'] in example_names else \
             'opacity mask' if OPACITY_RE.search(it['name']) else 'atlas' if len([c for c in seg['cells'] if c['kind'] != 'mixed']) >= 3 else 'single-material map'
         atlases.append(seg)
+    unmeasured = check_uv_dump(uvd, {at['name']: at['mafs'] for at in atlases if at['mafs']})
     match_cells(atlases, ids)
     for at in atlases:
         at['uv'] = uv_cells(uvd, at['name'], at) if at['mafs'] else None
+        if at['uv'] is not None:
+            at['uv']['unmeasured'] = unmeasured.get(at['name'], [])
 
     # library materials -> ids / excluded / unmapped
     lib = collections.defaultdict(set)
@@ -542,11 +661,27 @@ def swatch(result: dict, e: dict, size: int, cache: dict):
     return Image.new('RGB', (size, size), _rgb(e['target'])), 'GAP: target colour %s%s' % (e['target'], why)
 
 
+def _tile_path(out_dir: str, e: dict) -> str:
+    return os.path.join(out_dir, 'tiles', 'ID_%02d_%s.png' % (e['id'], e['key']))
+
+
+def _sheet_path(out_dir: str, result: dict) -> str:
+    return os.path.join(out_dir, 'material_ids_%s_contact_sheet.png' % result['version'])
+
+
+def _overlay_path(out_dir: str, at: dict) -> str:
+    return os.path.join(out_dir, 'overlay_%s.png' % re.sub(r'[^A-Za-z0-9_.-]', '_', os.path.splitext(at['name'])[0]))
+
+
+def evidence_targets(result: dict, out_dir: str) -> list[str]:
+    """Every file ``render_png`` writes (preflighted against all inputs before anything is written)."""
+    return [_sheet_path(out_dir, result)] + [_tile_path(out_dir, e) for e in result['ids']] + \
+        [_overlay_path(out_dir, at) for at in result['atlases'] if at['role'] in ('atlas', 'layout example')]
+
+
 def render_png(result: dict, out_dir: str) -> dict:
     from PIL import Image, ImageDraw
     Image.MAX_IMAGE_PIXELS = None
-    os.makedirs(out_dir, exist_ok=True)
-    os.makedirs(os.path.join(out_dir, 'tiles'), exist_ok=True)
     written, tiles = {}, []
     tile, cols = 220, 6
     n = len(result['ids'])
@@ -559,16 +694,16 @@ def render_png(result: dict, out_dir: str) -> dict:
         box = (x + 6, y + 6, x + tile - 6, y + tile - 6)
         img, src = swatch(result, e, 512, cache)
         sheet.paste(img.resize((box[2] - box[0], box[3] - box[1]), Image.LANCZOS), box[:2])
-        tp = os.path.join(out_dir, 'tiles', 'ID_%02d_%s.png' % (e['id'], e['key']))
-        img.save(tp)  # clean tile: no number baked in (the number is drawn by the layout, bottom-right)
+        tp = _tile_path(out_dir, e)
+        save_png(img, tp)  # clean tile: no number baked in (the number is drawn by the layout, bottom-right)
         tiles.append({'id': e['id'], 'key': e['key'], 'file': 'tiles/' + os.path.basename(tp),
                       'sha256': sha256_file(tp), 'source': src})
         draw_id(d, box, str(e['id']), f_id)
         d.text((x + 6, y + tile - 2), e['key'], fill=(0, 0, 0), font=f_lbl)
         d.text((x + 6, y + tile + 16), src, fill=(200, 0, 0) if src.startswith('GAP') else (90, 90, 90),
                font=f_lbl)
-    p = os.path.join(out_dir, 'material_ids_%s_contact_sheet.png' % result['version'])
-    sheet.save(p)
+    p = _sheet_path(out_dir, result)
+    save_png(sheet, p)
     written['contact_sheet'] = p
     for at in result['atlases']:
         if at['role'] not in ('atlas', 'layout example'):
@@ -583,8 +718,8 @@ def render_png(result: dict, out_dir: str) -> dict:
             od.rectangle(b, outline=col, width=2)
             if c.get('id') and c['w'] * sc > 24 and c['h'] * sc > 18:
                 draw_id(od, tuple(round(v) for v in b), str(c['id']), _font(13))
-        q = os.path.join(out_dir, 'overlay_%s.png' % re.sub(r'[^A-Za-z0-9_.-]', '_', os.path.splitext(at['name'])[0]))
-        ov.save(q)
+        q = _overlay_path(out_dir, at)
+        save_png(ov, q)
         written['overlay ' + at['name']] = q
     out = {k: {'path': v.replace('\\', '/'), 'sha256': sha256_file(v)} for k, v in written.items()}
     out['tiles'] = tiles
@@ -655,6 +790,9 @@ def render_md(r: dict) -> str:
         if uv:
             L.append(f"- UV faces outside every cell: {uv['uncovered']['faces']} "
                      f"(MAFs {len(uv['uncovered']['mafs'])})")
+            um = uv.get('unmeasured') or []
+            L.append(f"- MAFs binding this image with no UV face read back (not measured, not 0): {len(um)}"
+                     + (' - ' + ', '.join(u['maf'] for u in um) if um else ''))
         L.append('')
         L.append('| cell | x,y | w x h px | kind | colour | id | MAFs on it (UV) | faces | min margin px | faces in ID corner |')
         L.append('|---|---|---|---|---|---|---|---|---|---|')
@@ -682,6 +820,17 @@ def render_md(r: dict) -> str:
     return '\n'.join(L) + '\n'
 
 
+def keepout_violations(result: dict) -> list[str]:
+    """'<atlas> cell <n>: <faces> faces (<MAFs>)' for every cell whose ID corner a UV face overlaps."""
+    out = []
+    for at in result['atlases']:
+        for k, u in sorted(((at.get('uv') or {}).get('cells') or {}).items(), key=lambda kv: int(kv[0])):
+            if u.get('corner_faces'):
+                out.append(f"{at['name']} cell {k}: {u['corner_faces']} faces "
+                           f"({', '.join(u.get('corner_mafs') or u['mafs'])})")
+    return out
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     for a in ('materials', 'uv-dump', 'max-maps', 'schedule', 'seed', 'ral', 'out-json', 'out-md'):
@@ -691,6 +840,8 @@ def main(argv=None) -> int:
     ap.add_argument('--layout-example', action='append', default=[])
     ap.add_argument('--prev-seed')
     ap.add_argument('--evidence-dir')
+    ap.add_argument('--require-keepout', action='store_true',
+                    help='exit 1 (nothing written) when any UV face overlaps the bottom-right ID corner of a cell')
     args = ap.parse_args(argv)
     inputs = [args.materials, args.uv_dump, args.max_maps, args.schedule, args.seed, args.ral, *args.extra_atlas,
               *args.layout_example] + ([args.prev_seed] if args.prev_seed else [])
@@ -701,17 +852,24 @@ def main(argv=None) -> int:
             if any(os.path.normcase(os.path.realpath(d)) == ev for d in args.maps_dir):
                 raise InputError('evidence dir is a maps dir')
         result = build(args)
+        # preflight every actual target against every actual source (CLI inputs + found images) and each other
+        found = [c['path'] for it in result['inventory']['found'] for c in it['copies']]
+        targets = [args.out_json, args.out_md] + (evidence_targets(result, args.evidence_dir)
+                                                  if args.evidence_dir else [])
+        check_paths(inputs + found, targets)
     except (InputError, OSError, KeyError, json.JSONDecodeError) as exc:
         print(f'error: {exc}', file=sys.stderr)
         return 2
+    if args.require_keepout:
+        bad = keepout_violations(result)
+        if bad:
+            print('error: UV faces in the ID-number keep-out corner: ' + '; '.join(bad), file=sys.stderr)
+            return 1
     if args.evidence_dir:
         result['evidence'] = render_png(result, args.evidence_dir)
     for path, text in ((args.out_json, json.dumps(result, ensure_ascii=False, indent=1) + '\n'),
                        (args.out_md, render_md(result))):
-        tmp = path + '.partial'
-        with open(tmp, 'w', encoding='utf-8', newline='\n') as f:
-            f.write(text)
-        os.replace(tmp, path)
+        write_atomic(path, text.encode('utf-8'))
     print(f"ids {len(result['ids'])}; atlases {len(result['atlases'])}; found {len(result['inventory']['found'])}; "
           f"missing {len(result['inventory']['missing'])}; gaps "
           f"{sum(1 for e in result['ids'] if not e['cells'])}")

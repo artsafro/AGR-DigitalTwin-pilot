@@ -75,4 +75,4 @@ Not in the atlas: 31 `polycarbonate` (proposed, not in the atlas: polycarbonate 
 2. Map every slot to one v005 ID (`material_ids_v005.json`: `library` / `spec` patterns, merges). An unmapped slot is an error naming it - never a default; a new ID needs Artem.
 3. Pick the layout: VPM = the 4K UDIM tile, NPM = the same layout at 2K (GroundEl naming), a site set = 512 px built from only the IDs the site uses (`maf_atlas_layout.py --site-set`).
 4. Lay the UV islands of each slot inside its ID cell's `content_px` (UV safe rect), scaled to fit; flat cells may take islands of any scale; keep the bottom-right `id_corner_px` free.
-5. Read back: every face inside its cell, none in a corner (`maf_atlas_ids.py` UV->cell pass: `faces in ID corner` must be 0), then the regular MAF checks (`validate-delivery`).
+5. Read back: every face inside its cell, none overlapping a corner (`maf_atlas_ids.py --require-keepout`: polygon/`id_corner_px` overlap, exit 1 names the cells; a failed or incomplete UV dump exits 2), then the regular MAF checks (`validate-delivery`).

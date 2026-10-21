@@ -3240,7 +3240,8 @@
        "MAF_0001"
       ],
       "min_margin_px": -336,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "8": {
       "faces": 515,
@@ -3248,7 +3249,8 @@
        "MAF_0001"
       ],
       "min_margin_px": -181,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "7": {
       "faces": 4,
@@ -3256,13 +3258,17 @@
        "MAF_0001"
       ],
       "min_margin_px": -341,
-      "corner_faces": 4
+      "corner_faces": 4,
+      "corner_mafs": [
+       "MAF_0001"
+      ]
      }
     },
     "uncovered": {
      "faces": 0,
      "mafs": []
-    }
+    },
+    "unmeasured": []
    },
    "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps/1_Diffuse_1.1001_e5pokwfjvgc7.png"
   },
@@ -3315,13 +3321,19 @@
        "MAF_0065"
       ],
       "min_margin_px": -9,
-      "corner_faces": 394
+      "corner_faces": 272,
+      "corner_mafs": [
+       "MAF_0058",
+       "MAF_0059",
+       "MAF_0060"
+      ]
      }
     },
     "uncovered": {
      "faces": 0,
      "mafs": []
-    }
+    },
+    "unmeasured": []
    },
    "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/ID_1_RAL 9005.png"
   },
@@ -3420,13 +3432,48 @@
        "MAF_0056"
       ],
       "min_margin_px": 74,
-      "corner_faces": 0
+      "corner_faces": 2,
+      "corner_mafs": [
+       "MAF_0056"
+      ]
      }
     },
     "uncovered": {
      "faces": 0,
      "mafs": []
-    }
+    },
+    "unmeasured": [
+     {
+      "maf": "MAF_0057",
+      "fbx": "MAF_0057_Konteyner.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_2_Лиственница_Черная_f.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     },
+     {
+      "maf": "MAF_0058",
+      "fbx": "MAF_0058_Stol_opornyy.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_2_Лиственница_Черная_f.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     },
+     {
+      "maf": "MAF_0059",
+      "fbx": "MAF_0059_Stul_izognutyy.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_2_Лиственница_Черная_f.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     },
+     {
+      "maf": "MAF_0060",
+      "fbx": "MAF_0060_Stol_4_nozhki.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_2_Лиственница_Черная_f.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     },
+     {
+      "maf": "MAF_0061",
+      "fbx": "MAF_0061_Musorka.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_2_Лиственница_Черная_f.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     },
+     {
+      "maf": "MAF_0065",
+      "fbx": "MAF_0065_Ograzhdenie_ven_shakht.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_2_Лиственница_Черная_f.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     }
+    ]
    },
    "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/ID_2_Лиственница_Черная_f.png"
   },
@@ -3471,13 +3518,46 @@
        "MAF_0065"
       ],
       "min_margin_px": 1232,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      }
     },
     "uncovered": {
      "faces": 0,
      "mafs": []
-    }
+    },
+    "unmeasured": [
+     {
+      "maf": "MAF_0056",
+      "fbx": "MAF_0056_Stul_Opornyy.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_5_Сетка_D.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     },
+     {
+      "maf": "MAF_0057",
+      "fbx": "MAF_0057_Konteyner.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_5_Сетка_D.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     },
+     {
+      "maf": "MAF_0058",
+      "fbx": "MAF_0058_Stol_opornyy.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_5_Сетка_D.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     },
+     {
+      "maf": "MAF_0059",
+      "fbx": "MAF_0059_Stul_izognutyy.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_5_Сетка_D.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     },
+     {
+      "maf": "MAF_0060",
+      "fbx": "MAF_0060_Stol_4_nozhki.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_5_Сетка_D.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     },
+     {
+      "maf": "MAF_0061",
+      "fbx": "MAF_0061_Musorka.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_5_Сетка_D.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     }
+    ]
    },
    "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/ID_5_Сетка_D.png"
   },
@@ -3521,13 +3601,46 @@
        "MAF_0065"
       ],
       "min_margin_px": 1232,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      }
     },
     "uncovered": {
      "faces": 0,
      "mafs": []
-    }
+    },
+    "unmeasured": [
+     {
+      "maf": "MAF_0056",
+      "fbx": "MAF_0056_Stul_Opornyy.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_5_Сетка_O.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     },
+     {
+      "maf": "MAF_0057",
+      "fbx": "MAF_0057_Konteyner.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_5_Сетка_O.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     },
+     {
+      "maf": "MAF_0058",
+      "fbx": "MAF_0058_Stol_opornyy.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_5_Сетка_O.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     },
+     {
+      "maf": "MAF_0059",
+      "fbx": "MAF_0059_Stul_izognutyy.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_5_Сетка_O.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     },
+     {
+      "maf": "MAF_0060",
+      "fbx": "MAF_0060_Stol_4_nozhki.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_5_Сетка_O.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     },
+     {
+      "maf": "MAF_0061",
+      "fbx": "MAF_0061_Musorka.fbx",
+      "reason": "no polygon of the imported FBX uses a material bound to ID_5_Сетка_O.png (unused material slot, or the binding was not read back): not measured, not counted as 0 faces"
+     }
+    ]
    },
    "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/ID_5_Сетка_O.png"
   },
@@ -3714,7 +3827,8 @@
        "MAF_0016"
       ],
       "min_margin_px": 156,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "2": {
       "faces": 156,
@@ -3723,7 +3837,8 @@
        "MAF_0014"
       ],
       "min_margin_px": 115,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "6": {
       "faces": 88,
@@ -3732,7 +3847,8 @@
        "MAF_0015"
       ],
       "min_margin_px": -439,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "5": {
       "faces": 41,
@@ -3740,7 +3856,8 @@
        "MAF_0014"
       ],
       "min_margin_px": 44,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "9": {
       "faces": 2,
@@ -3748,7 +3865,10 @@
        "MAF_0015"
       ],
       "min_margin_px": -1223,
-      "corner_faces": 1
+      "corner_faces": 1,
+      "corner_mafs": [
+       "MAF_0015"
+      ]
      },
      "10": {
       "faces": 2,
@@ -3756,7 +3876,10 @@
        "MAF_0015"
       ],
       "min_margin_px": -1455,
-      "corner_faces": 1
+      "corner_faces": 1,
+      "corner_mafs": [
+       "MAF_0015"
+      ]
      },
      "4": {
       "faces": 1,
@@ -3764,7 +3887,8 @@
        "MAF_0015"
       ],
       "min_margin_px": 0,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "0": {
       "faces": 1,
@@ -3772,7 +3896,8 @@
        "MAF_0015"
       ],
       "min_margin_px": 0,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "1": {
       "faces": 1,
@@ -3780,13 +3905,17 @@
        "MAF_0015"
       ],
       "min_margin_px": -1455,
-      "corner_faces": 1
+      "corner_faces": 1,
+      "corner_mafs": [
+       "MAF_0015"
+      ]
      }
     },
     "uncovered": {
      "faces": 0,
      "mafs": []
-    }
+    },
+    "unmeasured": []
    },
    "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/MAF_Atlas_001_Diffuse.png"
   },
@@ -3971,7 +4100,10 @@
        "MAF_0093"
       ],
       "min_margin_px": 73,
-      "corner_faces": 30
+      "corner_faces": 60,
+      "corner_mafs": [
+       "MAF_0068"
+      ]
      },
      "6": {
       "faces": 1672,
@@ -3984,7 +4116,8 @@
        "MAF_0081"
       ],
       "min_margin_px": 11,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "1": {
       "faces": 4539,
@@ -3995,7 +4128,8 @@
        "MAF_0091"
       ],
       "min_margin_px": 99,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "3": {
       "faces": 110,
@@ -4004,7 +4138,8 @@
        "MAF_0089"
       ],
       "min_margin_px": 103,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "0": {
       "faces": 2076,
@@ -4020,7 +4155,8 @@
        "MAF_0090"
       ],
       "min_margin_px": 12,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "5": {
       "faces": 2431,
@@ -4035,7 +4171,8 @@
        "MAF_0093"
       ],
       "min_margin_px": 118,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "7": {
       "faces": 564,
@@ -4043,7 +4180,8 @@
        "MAF_0078"
       ],
       "min_margin_px": 22,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "8": {
       "faces": 510,
@@ -4051,7 +4189,10 @@
        "MAF_0088"
       ],
       "min_margin_px": 8,
-      "corner_faces": 0
+      "corner_faces": 5,
+      "corner_mafs": [
+       "MAF_0088"
+      ]
      },
      "4": {
       "faces": 440,
@@ -4059,13 +4200,15 @@
        "MAF_0091"
       ],
       "min_margin_px": 129,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      }
     },
     "uncovered": {
      "faces": 0,
      "mafs": []
-    }
+    },
+    "unmeasured": []
    },
    "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/T_Atlas_MAF.png"
   },
@@ -4188,7 +4331,8 @@
        "MAF_0009"
       ],
       "min_margin_px": 229,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "1": {
       "faces": 80,
@@ -4197,7 +4341,8 @@
        "MAF_0009"
       ],
       "min_margin_px": 193,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "2": {
       "faces": 11,
@@ -4205,7 +4350,10 @@
        "MAF_0008"
       ],
       "min_margin_px": -40987,
-      "corner_faces": 11
+      "corner_faces": 11,
+      "corner_mafs": [
+       "MAF_0008"
+      ]
      },
      "5": {
       "faces": 63,
@@ -4213,7 +4361,10 @@
        "MAF_0008"
       ],
       "min_margin_px": -40987,
-      "corner_faces": 63
+      "corner_faces": 39,
+      "corner_mafs": [
+       "MAF_0008"
+      ]
      },
      "3": {
       "faces": 1,
@@ -4221,7 +4372,10 @@
        "MAF_0008"
       ],
       "min_margin_px": -40536,
-      "corner_faces": 1
+      "corner_faces": 1,
+      "corner_mafs": [
+       "MAF_0008"
+      ]
      },
      "4": {
       "faces": 230,
@@ -4230,7 +4384,10 @@
        "MAF_0009"
       ],
       "min_margin_px": -8192,
-      "corner_faces": 14
+      "corner_faces": 14,
+      "corner_mafs": [
+       "MAF_0008"
+      ]
      },
      "6": {
       "faces": 24,
@@ -4238,13 +4395,15 @@
        "MAF_0008"
       ],
       "min_margin_px": 0,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      }
     },
     "uncovered": {
      "faces": 0,
      "mafs": []
-    }
+    },
+    "unmeasured": []
    },
    "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps/Untitled_Diffuse_1.1001.png"
   },
@@ -4365,7 +4524,8 @@
        "MAF_0009"
       ],
       "min_margin_px": 151,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      },
      "0": {
       "faces": 20,
@@ -4373,13 +4533,15 @@
        "MAF_0008"
       ],
       "min_margin_px": 59,
-      "corner_faces": 0
+      "corner_faces": 0,
+      "corner_mafs": []
      }
     },
     "uncovered": {
      "faces": 0,
      "mafs": []
-    }
+    },
+    "unmeasured": []
    },
    "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps/Untitled_Diffuse_1.1001_ngosp2lcps3p.png"
   },

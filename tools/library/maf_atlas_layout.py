@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import os
 import sys
 from pathlib import Path
@@ -29,17 +28,8 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent / 'materials'))
 import atlas_maf  # noqa: E402
-from maf_atlas_ids import InputError, _font, _load, check_paths, draw_id, sha256_file  # noqa: E402
-
-CORNER_SHARE = 0.15  # side of the bottom-right ID zone, share of the cell content side
-CORNER_MIN_PX = 16
-
-
-def id_corner(content: list[int]) -> list[int]:
-    """Bottom-right keep-out square [x, y, w, h] inside a content box: the ID number lives here."""
-    x, y, w, h = content
-    s = min(max(CORNER_MIN_PX, math.ceil(CORNER_SHARE * min(w, h))), min(w, h))
-    return [x + w - s, y + h - s, s, s]
+from maf_atlas_ids import (CORNER_MIN_PX, CORNER_SHARE, InputError, _font, _load, check_paths,  # noqa: E402,F401
+                           draw_id, id_corner, save_png, sha256_file, write_atomic)
 
 
 def fit_font(text: str, side: int):
@@ -200,7 +190,7 @@ def render(layout: dict, tiles: dict, path: str) -> dict:
     for c in layout['cells']:
         zx, zy, zs, _ = c['id_corner_px']
         draw_id(d, (zx, zy, zx + zs - 1, zy + zs - 1), str(c['id']), fit_font(str(c['id']), zs))
-    im.save(path)
+    save_png(im, path)
     return {'path': path.replace('\\', '/'), 'sha256': sha256_file(path), 'size': [size, size]}
 
 
@@ -306,8 +296,9 @@ def render_md(r: dict) -> str:
           'set = 512 px built from only the IDs the site uses (`maf_atlas_layout.py --site-set`).',
           "4. Lay the UV islands of each slot inside its ID cell's `content_px` (UV safe rect), scaled to fit; "
           'flat cells may take islands of any scale; keep the bottom-right `id_corner_px` free.',
-          '5. Read back: every face inside its cell, none in a corner (`maf_atlas_ids.py` UV->cell pass: '
-          '`faces in ID corner` must be 0), then the regular MAF checks (`validate-delivery`).', '']
+          '5. Read back: every face inside its cell, none overlapping a corner (`maf_atlas_ids.py '
+          '--require-keepout`: polygon/`id_corner_px` overlap, exit 1 names the cells; a failed or incomplete '
+          'UV dump exits 2), then the regular MAF checks (`validate-delivery`).', '']
     return '\n'.join(L)
 
 
@@ -326,10 +317,18 @@ def main(argv=None) -> int:
                 os.path.normcase(os.path.realpath(args.tiles_dir)):
             raise InputError('evidence dir is the tiles dir')
         r = build(args)
-        if args.evidence_dir:
-            os.makedirs(args.evidence_dir, exist_ok=True)
-            for lay in [*r['profiles'].values(), *r['site_sets'].values()]:
-                lay['png'] = render(lay, r['_tiles'], os.path.join(args.evidence_dir, lay['file']))
+        layouts = [*r['profiles'].values(), *r['site_sets'].values()]
+        for lay in layouts:
+            f = lay['file']
+            if not isinstance(f, str) or not f or f != os.path.basename(f) or f in ('.', '..') or '/' in f:
+                raise InputError(f'layout file name must be a plain file name, got {f!r}')
+        # preflight every actual target (JSON, MD, each layout PNG) against every actual source (ids, spec,
+        # site sets, tiles) and against each other, before anything is written
+        pngs = [os.path.join(args.evidence_dir, lay['file']) for lay in layouts] if args.evidence_dir else []
+        check_paths(inputs + list(r['_tiles'].values()),
+                    [args.out_json] + ([args.out_md] if args.out_md else []) + pngs)
+        for lay, p in zip(layouts, pngs):
+            lay['png'] = render(lay, r['_tiles'], p)
     except (InputError, OSError, KeyError, json.JSONDecodeError) as exc:
         print(f'error: {exc}', file=sys.stderr)
         return 2
@@ -341,10 +340,7 @@ def main(argv=None) -> int:
     if args.out_md:
         outs.append((args.out_md, render_md(r)))
     for path, text in outs:
-        tmp = path + '.partial'
-        with open(tmp, 'w', encoding='utf-8', newline='\n') as f:
-            f.write(text)
-        os.replace(tmp, path)
+        write_atomic(path, text.encode('utf-8'))
     print('; '.join(f"{n}: {len(v['cells'])} cells {v['size']}px" for n, v in
                     [*r['profiles'].items(), *r['site_sets'].items()]))
     return 0
