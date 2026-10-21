@@ -662,6 +662,63 @@ def test_running_declared_output_aliases_source_copy_rejected(tmp_path):
         inspect_run(run.directory, manifest)
 
 
+@pytest.mark.parametrize("target", ["ledger", "manifest", "input", "source_copy"])
+def test_running_declared_output_hardlink_to_protected_rejected(tmp_path, monkeypatch, target):
+    from dt_ai.core import run_inspection
+    monkeypatch.setattr(run_inspection, "_pid_alive", lambda pid: False)
+    run, manifest = _running_stages_fixture(tmp_path, [{"name": "alias", "spawned_pid": 111}])
+    protected_path = {
+        "ledger": run.path,
+        "manifest": manifest,
+        "input": tmp_path / "source.txt",
+        "source_copy": manifest.parent / "copied-source",
+    }[target]
+    if target == "source_copy":
+        protected_path.write_text("original")
+        data = json.loads(manifest.read_text())
+        data["source_copy"] = file_evidence({"copy": protected_path})
+        atomic_json(manifest, data)
+    alias = manifest.parent / f"hardlink-{target}.json"
+    ledger = run.read()
+    ledger["attempts"][0]["stages"]["alias"]["declared_outputs"] = {"out": str(alias)}
+    atomic_json(run.path, ledger)
+    os.link(protected_path, alias)
+    assert Path(alias).samefile(protected_path)
+    before = digest(run.path.read_bytes())
+    with pytest.raises(ValueError, match="aliases"):
+        inspect_run(run.directory, manifest)
+    assert digest(run.path.read_bytes()) == before
+
+
+def test_running_declared_output_hardlink_to_distinct_file_late_confirms(tmp_path, monkeypatch):
+    from dt_ai.core import run_inspection
+    monkeypatch.setattr(run_inspection, "_pid_alive", lambda pid: False)
+    run, manifest = _running_stages_fixture(tmp_path, [{"name": "ok", "spawned_pid": 111}])
+    real = manifest.parent / "real-output.txt"
+    real.write_text("done")
+    alias = manifest.parent / "hardlink-output.json"
+    os.link(real, alias)
+    ledger = run.read()
+    ledger["attempts"][0]["stages"]["ok"]["declared_outputs"] = {"out": str(alias)}
+    atomic_json(run.path, ledger)
+    before = digest(run.path.read_bytes())
+    result = inspect_run(run.directory, manifest)
+    assert digest(run.path.read_bytes()) == before
+    assert result["stages"][0]["state"] == "late_confirmed"
+    assert result["running_classification"] == {"late_confirmed": 1, "confirmed_failed": 0, "still_unknown": 0}
+
+
+def test_running_missing_declared_output_is_not_alias_rejection(tmp_path, monkeypatch):
+    from dt_ai.core import run_inspection
+    monkeypatch.setattr(run_inspection, "_pid_alive", lambda pid: False)
+    run, manifest = _running_stages_fixture(tmp_path, [
+        {"name": "miss", "spawned_pid": 111, "declared_outputs": {"out": None}},
+    ])
+    result = inspect_run(run.directory, manifest)
+    assert result["stages"][0]["state"] == "confirmed_failed"
+    assert result["running_classification"] == {"late_confirmed": 0, "confirmed_failed": 1, "still_unknown": 0}
+
+
 def test_oversize_pid_yields_unknown_liveness_still_unknown(tmp_path):
     run, manifest = _running_stages_fixture(tmp_path, [
         {"name": "oversize", "spawned_pid": 2 ** 32, "declared_outputs": {"out": "done"}},
