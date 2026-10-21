@@ -1,0 +1,846 @@
+{
+ "schema": "library-maf-material-ids",
+ "version": "v001",
+ "scope": "proposal for Artem's one-time approval; nothing reassigned in the library",
+ "generated_by": "tools/library/maf_material_ids.py",
+ "extraction": {
+  "command": "blender --background --factory-startup --python-exit-code 1 --python tools/library/maf_material_extract.py -- <FBX_DIR> <fbx_materials.json>",
+  "command_then": "uv run python tools/library/maf_material_ids.py --materials <fbx_materials.json> --catalogue library/maf/catalogue.json --seed jobs/VATUTINO-SITE/maf/site-maf-set.json --ral tools/materials/ral_classic.json --out-json library/maf/material_ids.json --out-md library/maf/material_ids.md --out-html library/maf/material_contact_sheet.html",
+  "input_hashes": {
+   "library/maf/catalogue.json": "242281e6b76a3019ad7be5f697c99440722e4955ef4dfe470c3dce57a4047003",
+   "jobs/VATUTINO-SITE/maf/site-maf-set.json": "72e3ab7f72ba43ec0c1f882dd73397e2193d604da5736ecf18b2c3c3a4ceae64",
+   "tools/materials/ral_classic.json": "750bc0bc5b294b7f15166659131bce8f19c819f667ce0cc2dcbb09066051349e",
+   "C:/x/t_1c395193/fbx_materials.json": "226be9bef4fe07a95c9c1471a0d55ccb96a6c049107643e9cb6d4dbd66d90439",
+   "source_max (audit.json)": "beeef9d418e81045bbc4933cc74077acd3d9f7a265319ceb9bf0ff0253050109",
+   "source_blend (audit.json)": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd"
+  }
+ },
+ "counts": {
+  "library_maf_entries": 931,
+  "candidate_ids": 35,
+  "solid_ids": 20,
+  "patterned_ids": 15,
+  "placeholder_groups": 23,
+  "placeholder_maf_uses": 1258,
+  "seed_ids_from_site_set": 4
+ },
+ "materials": [
+  {
+   "id": "cap_black",
+   "name": "cap_black",
+   "kind": "solid",
+   "color": "#0A0A0A",
+   "color_source": "seed",
+   "textures": [
+    "id_1_ral 9005"
+   ],
+   "maf_count": 81,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "ID_1_RAL 9005",
+    "Kolpak",
+    "Material #115 Slot #1",
+    "Material #115 Slot #11",
+    "Material #115 Slot #12",
+    "Material #115 Slot #14",
+    "Material #115 Slot #15",
+    "Material #115 Slot #16",
+    "Material #115 Slot #19",
+    "Material #115 Slot #2",
+    "Material #115 Slot #20",
+    "Material #115 Slot #25",
+    "Material #115 Slot #26",
+    "Material #115 Slot #28",
+    "Material #115 Slot #3",
+    "Material #115 Slot #4",
+    "Material #115 Slot #5",
+    "Material #115 Slot #6",
+    "Material #115 Slot #7",
+    "Material #115 Slot #8",
+    "Material #115 Slot #9",
+    "Material #2125652673",
+    "Material #2125652674",
+    "Material #2125652675",
+    "Material #2125652676",
+    "Material #2125652677",
+    "Material #2125652678",
+    "Material #2125652679",
+    "Material #229",
+    "Material #394 Slot #10",
+    "Material #394 Slot #7",
+    "Material #394 Slot #8",
+    "Material #394 Slot #9",
+    "Material #48 Slot #10",
+    "Material #48 Slot #3",
+    "Material #48 Slot #4",
+    "Material #48 Slot #5",
+    "Material #48 Slot #6",
+    "Material #48 Slot #7",
+    "Material #48 Slot #8",
+    "Material #48 Slot #9",
+    "Material #82",
+    "Me",
+    "Osn",
+    "_auto_1",
+    "Стул_Опорный Slot #3",
+    "Стул_Опорный Slot #4",
+    "черный мат"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "wood_dark",
+   "name": "wood_dark",
+   "kind": "solid",
+   "color": "#1D1108",
+   "color_source": "seed",
+   "textures": [],
+   "maf_count": 64,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "Material #2125652664"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "grey_light",
+   "name": "grey_light",
+   "kind": "solid",
+   "color": "#969696",
+   "color_source": "fbx-default",
+   "textures": [],
+   "maf_count": 25,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "Light"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "steel_stainless",
+   "name": "steel_stainless",
+   "kind": "solid",
+   "color": "#808080",
+   "color_source": "fbx-default",
+   "textures": [],
+   "maf_count": 8,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "нержа"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "plastic_black_matte",
+   "name": "plastic_black_matte",
+   "kind": "solid",
+   "color": "#808080",
+   "color_source": "fbx-default",
+   "textures": [],
+   "maf_count": 5,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "Plastic_Black_Matte"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "wood_nature",
+   "name": "wood_nature",
+   "kind": "solid",
+   "color": "#808080",
+   "color_source": "fbx-default",
+   "textures": [],
+   "maf_count": 4,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "NATURE ДЕРЕВО"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "wood_plywood",
+   "name": "wood_plywood",
+   "kind": "solid",
+   "color": "#808080",
+   "color_source": "fbx-default",
+   "textures": [],
+   "maf_count": 4,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "фанера"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "solid:#969696",
+   "name": "solid:#969696",
+   "kind": "solid",
+   "color": "#969696",
+   "color_source": "fbx-default",
+   "textures": [],
+   "maf_count": 3,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "M_77_17_0120114_5803_Ground_1",
+    "M_PereulokSivtsevVrazhek_Vl_35_Ground_1"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "steel_embed_grey",
+   "name": "steel_embed_grey",
+   "kind": "solid",
+   "color": "#808080",
+   "color_source": "fbx-default",
+   "textures": [],
+   "maf_count": 3,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "СЕРЫЕ ЗАКЛАДНЫЕ"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "cap_clamp",
+   "name": "cap_clamp",
+   "kind": "solid",
+   "color": "#023E45",
+   "color_source": "fbx-probe",
+   "textures": [],
+   "maf_count": 2,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "Hamut"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "metal_bronze",
+   "name": "metal_bronze",
+   "kind": "solid",
+   "color": "#808080",
+   "color_source": "fbx-default",
+   "textures": [],
+   "maf_count": 2,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "Bronze_Brushed"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "wood_oak_matt",
+   "name": "wood_oak_matt",
+   "kind": "solid",
+   "color": "#808080",
+   "color_source": "fbx-default",
+   "textures": [],
+   "maf_count": 2,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "Oak Matt Brightuk"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "wood_balki",
+   "name": "wood_balki",
+   "kind": "solid",
+   "color": "#808080",
+   "color_source": "fbx-default",
+   "textures": [],
+   "maf_count": 1,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "Balki-wood"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "grey",
+   "name": "grey",
+   "kind": "solid",
+   "color": "#808080",
+   "color_source": "fbx-default",
+   "textures": [],
+   "maf_count": 1,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "серый"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "solid:#2B3A44",
+   "name": "solid:#2B3A44",
+   "kind": "solid",
+   "color": "#2B3A44",
+   "color_source": "fbx-probe",
+   "textures": [],
+   "maf_count": 1,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "Material #157"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "solid:#7F3333",
+   "name": "solid:#7F3333",
+   "kind": "solid",
+   "color": "#7F3333",
+   "color_source": "fbx-probe",
+   "textures": [],
+   "maf_count": 1,
+   "atlas_cell": 64,
+   "merged_sources": [
+    "M_77_17_0120114_5803_D_7_1_Ground_1"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "pattern:unresolved",
+   "name": "pattern:unresolved",
+   "kind": "patterned",
+   "color": "#969696",
+   "color_source": "fbx-default",
+   "textures": [],
+   "maf_count": 119,
+   "atlas_cell": 128,
+   "merged_sources": [
+    "02 - Default",
+    "02 - Default.001",
+    "07 - Default",
+    "08 - Default",
+    "M_77_17_0150309_6155_D_2_GroundEl_1",
+    "M_Pos_Desenovskoe_Kv_23_D_7_GroundEl_1",
+    "M_Pos_Desenovskoe_Kv_23_D_7_GroundEl_1.001",
+    "Material #1150",
+    "Material #1272",
+    "Material #2125652669",
+    "Material #2125652671",
+    "Material #2125652672",
+    "Material #43",
+    "Material #43.001",
+    "Material #56",
+    "Material #57",
+    "Material #58",
+    "Material #66",
+    "Untitled_Diffuse_1.001",
+    "lab"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "pattern:untitled_diffuse_1.1001_ngosp2lcps3p",
+   "name": "pattern:untitled_diffuse_1.1001_ngosp2lcps3p",
+   "kind": "patterned",
+   "color": "#969696",
+   "color_source": "fbx-default",
+   "textures": [
+    "untitled_diffuse_1.1001_ngosp2lcps3p"
+   ],
+   "maf_count": 33,
+   "atlas_cell": 128,
+   "merged_sources": [
+    "Untitled_Diffuse_1.1001"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "pattern:untitled_diffuse_1",
+   "name": "pattern:untitled_diffuse_1",
+   "kind": "patterned",
+   "color": "#969696",
+   "color_source": "fbx-default",
+   "textures": [
+    "untitled_diffuse_1"
+   ],
+   "maf_count": 29,
+   "atlas_cell": 128,
+   "merged_sources": [
+    "Material #53"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "pattern:t_atlas_maf",
+   "name": "pattern:t_atlas_maf",
+   "kind": "patterned",
+   "color": "#969696",
+   "color_source": "fbx-default",
+   "textures": [
+    "t_atlas_maf"
+   ],
+   "maf_count": 25,
+   "atlas_cell": 128,
+   "merged_sources": [
+    "MAF"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "pattern:t_letnaya_zu_71_6_ground_diffuse_1",
+   "name": "pattern:t_letnaya_zu_71_6_ground_diffuse_1",
+   "kind": "patterned",
+   "color": "#969696",
+   "color_source": "fbx-default",
+   "textures": [
+    "t_letnaya_zu_71_6_ground_diffuse_1"
+   ],
+   "maf_count": 14,
+   "atlas_cell": 128,
+   "merged_sources": [
+    "ID_10",
+    "ID_13",
+    "ID_17",
+    "ID_18",
+    "ID_21",
+    "ID_24",
+    "ID_27",
+    "ID_29",
+    "Material #116",
+    "Material #117"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "wood_larch_dark",
+   "name": "wood_larch_dark",
+   "kind": "patterned",
+   "color": "#969696",
+   "color_source": "fbx-default",
+   "textures": [
+    "id_2_лиственница_черная_f"
+   ],
+   "maf_count": 7,
+   "atlas_cell": 128,
+   "merged_sources": [
+    "ID_2 Лиственница (Тёмная)"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "steel_mesh",
+   "name": "steel_mesh",
+   "kind": "patterned",
+   "color": "#969696",
+   "color_source": "fbx-default",
+   "textures": [
+    "id_5_сетка_d",
+    "id_5_сетка_o"
+   ],
+   "maf_count": 7,
+   "atlas_cell": 128,
+   "merged_sources": [
+    "ID_5_Сетка"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "pattern:maf_atlas_001_diffuse",
+   "name": "pattern:maf_atlas_001_diffuse",
+   "kind": "patterned",
+   "color": "#969696",
+   "color_source": "fbx-default",
+   "textures": [
+    "maf_atlas_001_diffuse"
+   ],
+   "maf_count": 5,
+   "atlas_cell": 128,
+   "merged_sources": [
+    "Material #1167"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "pattern:77_17_0120316_33510_d_26_ground_d_1",
+   "name": "pattern:77_17_0120316_33510_d_26_ground_d_1",
+   "kind": "patterned",
+   "color": "#969696",
+   "color_source": "fbx-default",
+   "textures": [
+    "77_17_0120316_33510_d_26_ground_d_1"
+   ],
+   "maf_count": 2,
+   "atlas_cell": 128,
+   "merged_sources": [
+    "M_77_17_0120316_33510_D_26_Ground_1"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "pattern:77_17_0120316_33510_d_26_ground_d_2",
+   "name": "pattern:77_17_0120316_33510_d_26_ground_d_2",
+   "kind": "patterned",
+   "color": "#969696",
+   "color_source": "fbx-default",
+   "textures": [
+    "77_17_0120316_33510_d_26_ground_d_2"
+   ],
+   "maf_count": 2,
+   "atlas_cell": 128,
+   "merged_sources": [
+    "M_77_17_0120316_33510_D_26_Ground_2"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "pattern:77_17_0120316_33510_d_26_ground_d_3",
+   "name": "pattern:77_17_0120316_33510_d_26_ground_d_3",
+   "kind": "patterned",
+   "color": "#969696",
+   "color_source": "fbx-default",
+   "textures": [
+    "77_17_0120316_33510_d_26_ground_d_3"
+   ],
+   "maf_count": 2,
+   "atlas_cell": 128,
+   "merged_sources": [
+    "M_77_17_0120316_33510_D_26_Ground_3"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "pattern:1_diffuse_1.1001_e5pokwfjvgc7",
+   "name": "pattern:1_diffuse_1.1001_e5pokwfjvgc7",
+   "kind": "patterned",
+   "color": "#808080",
+   "color_source": "fbx-default",
+   "textures": [
+    "1_diffuse_1.1001_e5pokwfjvgc7"
+   ],
+   "maf_count": 1,
+   "atlas_cell": 128,
+   "merged_sources": [
+    "Material #1255"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "pattern:maps",
+   "name": "pattern:maps",
+   "kind": "patterned",
+   "color": "#969696",
+   "color_source": "fbx-default",
+   "textures": [
+    "maps"
+   ],
+   "maf_count": 1,
+   "atlas_cell": 128,
+   "merged_sources": [
+    "Diffuse"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "pattern:рп012_diffuse_low,рп012_opacity_low",
+   "name": "pattern:рп012_diffuse_low,рп012_opacity_low",
+   "kind": "patterned",
+   "color": "#969696",
+   "color_source": "fbx-default",
+   "textures": [
+    "рп012_diffuse_low",
+    "рп012_opacity_low"
+   ],
+   "maf_count": 1,
+   "atlas_cell": 128,
+   "merged_sources": [
+    "Mst_001"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "pattern:t_pervyjgrajvoronovskijproezd_vl_3_ground_diffuse_1",
+   "name": "pattern:t_pervyjgrajvoronovskijproezd_vl_3_ground_diffuse_1",
+   "kind": "patterned",
+   "color": "#952626",
+   "color_source": "fbx-probe",
+   "textures": [
+    "t_pervyjgrajvoronovskijproezd_vl_3_ground_diffuse_1"
+   ],
+   "maf_count": 1,
+   "atlas_cell": 128,
+   "merged_sources": [
+    "ID_01"
+   ],
+   "status": "proposed",
+   "note": null
+  },
+  {
+   "id": "steel_ral7047",
+   "name": "steel_ral7047",
+   "kind": "solid",
+   "color": "#D0D0D0",
+   "note": "site atlas (PR #414): schedule steel, powder coat RAL 7047",
+   "textures": [],
+   "maf_count": 0,
+   "atlas_cell": 64,
+   "merged_sources": [],
+   "status": "proposed",
+   "color_source": "seed"
+  },
+  {
+   "id": "larch_light_oak",
+   "name": "larch_light_oak",
+   "kind": "solid",
+   "color": "#C49A6C",
+   "note": "site atlas (PR #414): schedule larch, oil + lacquer 'light oak'",
+   "textures": [],
+   "maf_count": 0,
+   "atlas_cell": 64,
+   "merged_sources": [],
+   "status": "proposed",
+   "color_source": "seed"
+  },
+  {
+   "id": "hpl_satin_wood",
+   "name": "hpl_satin_wood",
+   "kind": "solid",
+   "color": "#B4825A",
+   "note": "site atlas (PR #414): schedule *T3510/26 HPL 'satin wood'",
+   "textures": [],
+   "maf_count": 0,
+   "atlas_cell": 64,
+   "merged_sources": [],
+   "status": "proposed",
+   "color_source": "seed"
+  },
+  {
+   "id": "rope_pp",
+   "name": "rope_pp",
+   "kind": "solid",
+   "color": "#7A7A7A",
+   "note": "site atlas (PR #414): schedule *T3510/28 polypropylene rope",
+   "textures": [],
+   "maf_count": 0,
+   "atlas_cell": 64,
+   "merged_sources": [],
+   "status": "proposed",
+   "color_source": "seed"
+  }
+ ],
+ "placeholders": [
+  {
+   "hex": "#CCCCCC",
+   "maf_count": 200,
+   "sources": [
+    "Material #2125652648"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#31CC22",
+   "maf_count": 176,
+   "sources": [
+    "Material #2125652641"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#CC149C",
+   "maf_count": 168,
+   "sources": [
+    "3"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#CC2006",
+   "maf_count": 166,
+   "sources": [
+    "1"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#CCA5A5",
+   "maf_count": 156,
+   "sources": [
+    "2"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#B2CC4A",
+   "maf_count": 112,
+   "sources": [
+    "Material #2125652643"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#CC2B1D",
+   "maf_count": 47,
+   "sources": [
+    "Material #2125652639"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#CC0203",
+   "maf_count": 45,
+   "sources": [
+    "4"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#CC8103",
+   "maf_count": 31,
+   "sources": [
+    "7"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#CC0001",
+   "maf_count": 25,
+   "sources": [
+    "17"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#CC1E46",
+   "maf_count": 21,
+   "sources": [
+    "18"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#CC286D",
+   "maf_count": 18,
+   "sources": [
+    "15"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#080808",
+   "maf_count": 15,
+   "sources": [
+    "10"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#4CCCB6",
+   "maf_count": 14,
+   "sources": [
+    "16"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#0BCC00",
+   "maf_count": 13,
+   "sources": [
+    "5"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#CC3EB5",
+   "maf_count": 11,
+   "sources": [
+    "6"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#808080",
+   "maf_count": 9,
+   "sources": [
+    "Material #2125647033",
+    "Material #2125647034",
+    "Material #2125647034.001",
+    "Material #2125652632",
+    "Material #2125652634",
+    "Material #2125652635",
+    "Material #27"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#CC3714",
+   "maf_count": 9,
+   "sources": [
+    "8"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#1608CC",
+   "maf_count": 8,
+   "sources": [
+    "9"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#6ECC3A",
+   "maf_count": 5,
+   "sources": [
+    "11"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#CCA441",
+   "maf_count": 4,
+   "sources": [
+    "19"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#140C38",
+   "maf_count": 3,
+   "sources": [
+    "14"
+   ],
+   "status": "placeholder"
+  },
+  {
+   "hex": "#3B26CC",
+   "maf_count": 2,
+   "sources": [
+    "13"
+   ],
+   "status": "placeholder"
+  }
+ ]
+}
