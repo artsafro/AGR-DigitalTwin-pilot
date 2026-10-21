@@ -773,3 +773,5 @@ GRADERS.update(PR_GRADERS)
 
 from twinqa.evals.capability import capability_b01  # noqa: E402
 GRADERS['capability_b01'] = (capability_b01, ('benchmark', 'self_check'))
+from twinqa.evals.capability import capability_ticket  # noqa: E402
+GRADERS['capability_ticket'] = (capability_ticket, ('body', 'diff', 'branch'))

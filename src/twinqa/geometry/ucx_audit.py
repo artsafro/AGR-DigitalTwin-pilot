@@ -69,20 +69,26 @@ def weld(verts, tris, tol=1e-5):
 
 
 def degenerate_triangles(verts, tris, area_tol=DEGENERATE_AREA_M2):
-    """Indices of degenerate triangles: a repeated vertex index or area <= area_tol (m^2).
+    """Indices of degenerate triangles: a repeated vertex index, area <= area_tol (m^2), or a
+    non-finite area (NaN / +inf) that cannot be measured.
 
     A zero-area / sliver triangle fools `is_closed` (its edges, each used twice, "close" a
     hole) and is silently skipped by `is_convex` (`if plane is None: continue`). Report these
     up front so the caller can return an undetermined verdict instead of a false pass. The raw
     input is measured before `weld`, because weld drops repeated-index triangles silently.
+
+    Finite collinear vertices at large scale (e.g. 1e160 m) overflow the cross product to
+    NaN (inf - inf), which compares false against `area_tol` and would slip through as a pass;
+    a non-finite area is therefore degenerate too (fail closed), never a measurable triangle.
     """
     out = []
     for i, (a, b, c) in enumerate(tris):
         if a == b or b == c or a == c:
             out.append(i)
             continue
-        area = _norm(_cross(_sub(verts[b], verts[a]), _sub(verts[c], verts[a]))) / 2.0
-        if area <= area_tol:
+        cross = _cross(_sub(verts[b], verts[a]), _sub(verts[c], verts[a]))
+        area = _norm(cross) / 2.0
+        if not math.isfinite(area) or area <= area_tol:
             out.append(i)
     return out
 
