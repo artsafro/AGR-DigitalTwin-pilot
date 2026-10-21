@@ -54,6 +54,28 @@ def test_nondefective_short_corner_is_not_a_weld_candidate():
     assert fixed.report['boundary_weld']['max_displacement_m']==0
 
 
+@pytest.mark.parametrize('offset', [0., -7600.])
+def test_boundary_cleanup_retains_a_long_three_mm_surface_tongue(offset):
+    # Synthetic: a 40 mm projection cannot disappear just because its end edge
+    # is only 3 mm wide. Vertex-motion bounds alone miss this surface loss.
+    poly = Polygon([(0,0),(2,0),(2,.4985),(2.04,.4985),(2.04,.5015),(2,.5015),(2,1),(0,1)])
+    from shapely.affinity import translate
+    from shapely.ops import unary_union
+    poly = translate(poly, xoff=offset, yoff=offset)
+    plan = gc.Plan(MultiPolygon([poly]), [], [gc.Layer('TileGrey','tile',0,MultiPolygon([poly]))], .006)
+    mesh = gc.build_flat(plan, cell=4, chord=0, snap=.0001)
+    fixed = gc.weld_base_boundary(mesh)
+    surface = unary_union([Polygon(fixed.verts[f,:2]) for f in fixed.faces])
+    from shapely.geometry import Point
+    assert max(surface.distance(Point(x,y)) for x,y in poly.exterior.coords) < .0021
+    assert fixed.report['boundary_weld']['max_displacement_m'] < .0021
+    curtain = gc.add_skirt(fixed)
+    walls = curtain.faces[len(fixed.faces):]
+    quads = tuple((int(a[0]),int(a[1]),int(a[2]),int(b[2])) for a,b in zip(walls[::2],walls[1::2]))
+    report = part_report('retained_tongue', PolyMesh(curtain.verts,quads), XviewTolerance())
+    assert not report.vertex_pairs and not report.face_pairs
+
+
 def simple_base():
     v=np.array([[0,0,100],[2,0,100],[2,2,100],[0,2,100]],float)
     return gc.Mesh(v,np.array([[0,1,2],[0,2,3]]),['TileGrey']*2,np.zeros(2,int),np.zeros((2,3,2)),4.)
