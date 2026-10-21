@@ -1,7 +1,7 @@
-"""Build the v004 MAF material ID list from the atlases the library MAFs use (issue #524).
+"""Build the MAF material ID list (v004, v005, ...) from the atlases the library MAFs use (issue #524).
 
 Pattern: verify actual artifacts, not exporter return codes (docs/domain/patterns/INDEX.md).
-new-case: material ID list derived from atlas cells + MAF specification rows (#524, first deliverable).
+new-case: material ID list derived from atlas cells + MAF specification rows (#524).
 
 Inputs (all read-only):
   --materials   library/maf/fbx_materials.json   (Blender readback of the library FBX: material -> images)
@@ -9,6 +9,9 @@ Inputs (all read-only):
   --max-maps    <max_maps.json>                  (tools/library/maf_max_maps_job.py: scene bitmap files)
   --maps-dir    <dir> (repeatable)               (where the referenced images are looked up, by file name)
   --extra-atlas <png> (repeatable)               (Artem's concept atlases; no library MAF binds them)
+  --layout-example <png> (repeatable)            (layout examples: inventoried and segmented, never a
+                                                  colour/texture source - Artem 2026-10-21)
+  --prev-seed   <seed.json>                      (previous version: every old id must be kept or merged)
   --schedule    jobs/VATUTINO-SITE/maf/site-schedule.json (MAF specification rows, material column)
   --seed        library/maf/material_ids_v004_seed.json   (the proposed ID list: id, key, kind, target)
   --ral         tools/materials/ral_classic.json
@@ -41,6 +44,8 @@ KIND_CELLS = {  # which cell kinds an id kind may take
     'translucent': {'solid'}, 'metal': {'solid', 'patterned'}, 'wood': {'patterned'},
     'mineral': {'patterned'}, 'opacity': {'patterned'}, 'sheet': {'patterned', 'solid'},
 }
+SIZES = ('S', 'M', 'L')  # layout class: S flat cell, M patterned cell, L dominant wood
+PATCH_TOL = 24.0  # picked clean patch for a gap id: mean |dRGB| to the target
 MATCH_TOL = {'solid': 18.0, 'patterned': 12.0}  # mean |dRGB| to the id target
 MIN_CELL_SHARE = 1.0 / 1024  # cells below this share of the atlas are fragments
 JUNK_RE = re.compile(r'^(Material(\.\d+)?|Material #\d+(\.\d+)?|\d\d - Default(\.\d+)?|Untitled_Diffuse.*'
@@ -109,15 +114,55 @@ def load_seed(seed: dict, ral: dict) -> list[dict]:
             if not target:
                 raise InputError(f'seed id {i}: RAL {e["ral"]} not in the RAL table and no hex given')
         targets = [target] + list(e.get('also', []))
+        own_n = len(targets)  # own tones; merged_also = tones of ids merged into this one
+        targets += list(e.get('merged_also', []))
         for t in targets:
             _rgb(t)
         cells = set(e.get('cells') or KIND_CELLS[kind])
         if not cells <= {'solid', 'patterned'}:
             raise InputError(f'seed id {i}: bad cells {sorted(cells)}')
+        size = e.get('size', 'S' if cells & {'solid'} else 'M')
+        if size not in SIZES:
+            raise InputError(f'seed id {i}: bad size {size!r} (one of {SIZES})')
+        if not isinstance(e.get('atlas', True), bool):
+            raise InputError(f'seed id {i}: atlas must be true/false')
         seen_id.add(i)
         seen_key.add(key)
-        out.append(dict(e, target=target.upper(), targets=[t.upper() for t in targets], cell_kinds=sorted(cells)))
+        out.append(dict(e, target=target.upper(), targets=[t.upper() for t in targets],
+                        own_targets=[t.upper() for t in targets[:own_n]], cell_kinds=sorted(cells),
+                        size=size, atlas=e.get('atlas', True), review=list(e.get('review', []))))
     return out
+
+
+def check_merges(seed: dict, ids: list[dict], prev: dict | None) -> list[dict]:
+    """Every merge names a previous id and a kept id; every previous id is kept or merged (never lost)."""
+    keys = {e['key'] for e in ids}
+    merges = seed.get('merges', [])
+    if not isinstance(merges, list):
+        raise InputError('seed merges must be a list')
+    seen = set()
+    for m in merges:
+        f, into = m.get('from_key'), m.get('into')
+        if not f or f in seen:
+            raise InputError(f'merge from_key missing or duplicated: {f!r}')
+        if f in keys:
+            raise InputError(f'merge {f!r}: merged key is still an id')
+        if into not in keys:
+            raise InputError(f'merge {f!r}: into {into!r} is not an id of this seed')
+        if not m.get('reason'):
+            raise InputError(f'merge {f!r}: no reason')
+        seen.add(f)
+    if prev is not None:
+        old = {e['key'] for e in prev.get('ids', [])}
+        if not old:
+            raise InputError('prev seed has no ids')
+        lost = sorted(old - keys - seen)
+        if lost:
+            raise InputError(f'previous ids neither kept nor merged: {lost}')
+        ghost = sorted(seen - old)
+        if ghost:
+            raise InputError(f'merges name keys that are not in the previous seed: {ghost}')
+    return merges
 
 
 def texture_refs(materials: dict) -> tuple[dict, dict]:
@@ -215,6 +260,9 @@ def match_cells(atlases: list[dict], ids: list[dict]) -> None:
     for at in atlases:
         area = at['size'][0] * at['size'][1]
         for ci, c in enumerate(at['cells']):
+            if at['role'] == 'layout example':
+                c['id'], c['reason'] = None, 'layout example only (Artem 2026-10-21): not a colour/texture source'
+                continue
             if at['role'] == 'opacity mask':
                 c['id'], c['reason'] = None, 'opacity mask (alpha of its diffuse map), not a colour cell'
                 continue
@@ -238,6 +286,50 @@ def match_cells(atlases: list[dict], ids: list[dict]) -> None:
                 c['id'], c['reason'] = None, ('patterned cell matches no id tone: decal or a material '
                                               'not in the list' if c['kind'] == 'patterned'
                                               else 'flat colour matches no id within tolerance')
+
+
+_ARR: dict = {}  # atlas path -> float pixel array (one decode per run)
+
+
+def pick_patch(atlases: list[dict], e: dict, block: int = 32, k: int = 4) -> dict | None:
+    """Clean textured patch for a gap id: a k x k window of blocks inside one non-mixed real-atlas cell...
+
+    ...whose mean is nearest the id target (<= PATCH_TOL), homogeneous (block means vary little - no decal
+    edge) and textured (pixel std > 4). Returns None when nothing qualifies; never a default.
+    """
+    import numpy as np
+    from PIL import Image
+    Image.MAX_IMAGE_PIXELS = None
+    best = None
+    for at in atlases:
+        if at['role'] != 'atlas':
+            continue
+        im = _ARR.get(at['path'])
+        for c in at['cells']:
+            if c['kind'] != 'patterned' or c.get('id') is not None and c['id'] != e['id']:
+                continue
+            if im is None:
+                im = _ARR[at['path']] = np.asarray(Image.open(at['path']).convert('RGB'), dtype=np.float32)
+            sub = im[c['y']:c['y'] + c['h'], c['x']:c['x'] + c['w']]
+            ny, nx = sub.shape[0] // block, sub.shape[1] // block
+            if ny < k + 2 or nx < k + 2:
+                continue
+            g = sub[:ny * block, :nx * block].reshape(ny, block, nx, block, 3)
+            means, stds = g.mean((1, 3)), g.std((1, 3)).mean(-1)
+            for by in range(1, ny - k):  # skip the border ring of blocks (gutters, cut lines)
+                for bx in range(1, nx - k):
+                    m = means[by:by + k, bx:bx + k].reshape(-1, 3)
+                    mu = m.mean(0)
+                    if m.std(0).mean() > 6 or stds[by:by + k, bx:bx + k].mean() <= 4:
+                        continue
+                    hexc = '#%02X%02X%02X' % tuple(int(round(v)) for v in mu)
+                    d = min(_dist(hexc, t) for t in e['targets'])
+                    if d <= PATCH_TOL and (best is None or d < best['dist']):
+                        best = {'atlas': at['name'], 'x': c['x'] + bx * block, 'y': c['y'] + by * block,
+                                'w': k * block, 'h': k * block, 'mean': hexc, 'dist': round(d, 1),
+                                'note': 'picked clean patch by colour search inside an unassigned patterned '
+                                        'cell - на проверку'}
+    return best
 
 
 def spec_requirements(schedule: dict, ids: list[dict]) -> list[dict]:
@@ -271,6 +363,10 @@ def build(args) -> dict:
     ral = _load(args.ral)['colors']
     seed = _load(args.seed)
     ids = load_seed(seed, ral)
+    version = seed.get('version')
+    if not isinstance(version, str) or not re.fullmatch(r'v\d{3}', version):
+        raise InputError(f'seed version must look like v005, got {version!r}')
+    merges = check_merges(seed, ids, _load(args.prev_seed) if getattr(args, 'prev_seed', None) else None)
     refs, empty = texture_refs(mats)
     if not refs and not empty:
         raise InputError('no texture references in --materials')
@@ -289,13 +385,18 @@ def build(args) -> dict:
         inventory.append({'name': name, 'copies': copies, 'mafs': users, 'materials': sorted(r['materials']),
                           'ground_other_site': bool(IMG_GROUND_RE.search(name)),
                           'copies_identical': len({c['sha256'] for c in copies}) == 1})
-    for p in args.extra_atlas:
+    examples = list(getattr(args, 'layout_example', None) or [])
+    for p, src in [(p, 'extra atlas, not bound by a library MAF FBX') for p in args.extra_atlas] + \
+            [(p, 'layout example only, never a colour/texture source') for p in examples]:
         if not os.path.isfile(p):
             raise InputError(f'extra atlas not found: {p}')
+        if any(it['name'] == os.path.basename(p) for it in inventory):
+            raise InputError(f'image name given twice: {os.path.basename(p)}')
         inventory.append({'name': os.path.basename(p), 'copies': [{'path': p.replace('\\', '/'),
                           'bytes': os.path.getsize(p), 'sha256': sha256_file(p)}], 'mafs': [],
                           'materials': [], 'ground_other_site': False, 'copies_identical': True,
-                          'source': 'extra atlas, not bound by a library MAF FBX'})
+                          'source': src})
+    example_names = {os.path.basename(p) for p in examples}
     for it in inventory:
         if it['ground_other_site']:
             continue
@@ -303,7 +404,8 @@ def build(args) -> dict:
         it['size_px'] = seg['size']
         seg['name'] = it['name']
         seg['mafs'] = it['mafs']
-        seg['role'] = 'opacity mask' if OPACITY_RE.search(it['name']) else 'atlas' if len([c for c in seg['cells'] if c['kind'] != 'mixed']) >= 3 else 'single-material map'
+        seg['role'] = 'layout example' if it['name'] in example_names else \
+            'opacity mask' if OPACITY_RE.search(it['name']) else 'atlas' if len([c for c in seg['cells'] if c['kind'] != 'mixed']) >= 3 else 'single-material map'
         atlases.append(seg)
     match_cells(atlases, ids)
     for at in atlases:
@@ -342,21 +444,30 @@ def build(args) -> dict:
                     u = (at['uv'] or {}).get('cells', {}).get(ci) if at['uv'] else None
                     cells.append({'atlas': at['name'], 'cell': ci, 'x': c['x'], 'y': c['y'], 'w': c['w'],
                                   'h': c['h'], 'kind': c['kind'], 'color': c['color'], 'dist': c['dist'],
+                                  'dist_own': round(min(_dist(c['color'] if c['kind'] == 'solid' else c['mean'],
+                                                                  t) for t in e['own_targets']), 1),
                                   'uv_mafs': (u or {}).get('mafs', []), 'uv_faces': (u or {}).get('faces', 0)})
         spec_rows = [f"{q['table']}#{q['row']}" for q in reqs if e['id'] in q['ids']]
         status = 'proposed'
-        if e.get('match') is False:
+        patch_ = None
+        if not cells and e['atlas'] and 'patterned' in e['cell_kinds']:
+            patch_ = pick_patch(atlases, e)
+        if not e['atlas']:
+            status = 'proposed, not in the atlas: ' + str((seed.get('kinds') or {}).get(e['kind'], e['kind']))
+        elif e.get('match') is False:
             status = 'proposed, spec-only: colour/appearance not given by any atlas or spec - needs Artem'
         elif not cells:
             status = 'proposed, gap: no atlas cell' + (' (spec asks for it)' if spec_rows else '')
+        elif not any(c['dist_own'] <= MATCH_TOL[c['kind']] for c in cells):
+            status = 'proposed, gap: atlas cells only of merged shades, none of the own tones'
         rows.append({'id': e['id'], 'key': e['key'], 'name_ru': e['name_ru'], 'kind': e['kind'],
                      'ral': e.get('ral'), 'target': e['target'], 'cells': cells,
                      'library_materials': lib_hits.get(e['id'], []), 'spec_rows': spec_rows,
-                     'status': status})
+                     'size': e['size'], 'atlas': e['atlas'], 'review': e['review'],
+                     'prev_id': e.get('v004_id'), 'picked_patch': patch_, 'status': status})
     return {
-        'schema': 'library-maf-material-ids', 'version': 'v004', 'status': 'proposed',
-        'scope': "first deliverable of #524: ID list for Artem's review; layouts and the assembly "
-                 'procedure follow his approval; nothing reassigned in the library',
+        'schema': 'library-maf-material-ids', 'version': version, 'status': 'proposed',
+        'scope': seed.get('scope') or ("ID list of #524 for Artem's review; nothing reassigned in the library"),
         'match_method': 'atlas cell -> id by colour distance to the id targets (mean |dRGB| <= %s); the agent '
                         'did not inspect the images visually - Artem verifies on the contact sheet' % MATCH_TOL,
         'generated_by': 'tools/library/maf_atlas_ids.py',
@@ -373,6 +484,8 @@ def build(args) -> dict:
         'atlases': [{k: v for k, v in at.items() if k != 'path'} | {'path': at['path']} for at in atlases],
         'library_materials': {'excluded': excluded, 'unmapped': unmapped},
         'spec_requirements': reqs,
+        'merges': merges,
+        'decals': seed.get('decals'),
     }
 
 
@@ -395,12 +508,46 @@ def draw_id(draw, box, text, font):
     draw.text((rx0 + pad - tb[0], ry0 + pad - tb[1]), text, fill=(255, 255, 255), font=font)
 
 
+def swatch(result: dict, e: dict, size: int, cache: dict):
+    """(image, source label) for an id: real crop of its largest atlas cell (patterned), the measured cell
+    colour (solid), a picked clean patch, or the target colour for a gap. Never a layout example."""
+    from PIL import Image
+    Image.MAX_IMAGE_PIXELS = None
+    paths = {at['name']: at['path'] for at in result['atlases']}
+    roles = {at['name']: at['role'] for at in result['atlases']}
+
+    def crop(name, x, y, w, h):
+        if roles.get(name) == 'layout example':
+            raise InputError(f"id {e['id']}: swatch from a layout example {name}")
+        if name not in cache:
+            cache[name] = Image.open(paths[name]).convert('RGB')
+        ins = round(0.06 * min(w, h))  # stay clear of cell borders, gutters and corner numbers
+        s = min(w, h) - 2 * ins
+        cx, cy = x + w // 2, y + h // 2
+        return cache[name].crop((cx - s // 2, cy - s // 2, cx - s // 2 + s, cy - s // 2 + s)).resize(
+            (size, size), Image.LANCZOS)
+    own = [c for c in e['cells'] if c['dist_own'] <= MATCH_TOL[c['kind']]]  # not only merged-in shades
+    if own:
+        best = min(c['dist_own'] for c in own)
+        near = [c for c in own if c['dist_own'] <= best + 4]  # nearest tone; largest of those
+        c = max(near, key=lambda c: c['w'] * c['h'])
+        if c['kind'] == 'solid':
+            return Image.new('RGB', (size, size), _rgb(c['color'])), '%s cell %d (flat %s)' % (
+                c['atlas'][:18], c['cell'], c['color'])
+        return crop(c['atlas'], c['x'], c['y'], c['w'], c['h']), '%s cell %d' % (c['atlas'][:18], c['cell'])
+    p = e.get('picked_patch')
+    if p:
+        return crop(p['atlas'], p['x'], p['y'], p['w'], p['h']), 'GAP: patch %s (на проверку)' % p['atlas'][:14]
+    why = ' (cells only of merged shades)' if e['cells'] else ''
+    return Image.new('RGB', (size, size), _rgb(e['target'])), 'GAP: target colour %s%s' % (e['target'], why)
+
+
 def render_png(result: dict, out_dir: str) -> dict:
     from PIL import Image, ImageDraw
     Image.MAX_IMAGE_PIXELS = None
     os.makedirs(out_dir, exist_ok=True)
-    written = {}
-    paths = {at['name']: at['path'] for at in result['atlases']}
+    os.makedirs(os.path.join(out_dir, 'tiles'), exist_ok=True)
+    written, tiles = {}, []
     tile, cols = 220, 6
     n = len(result['ids'])
     sheet = Image.new('RGB', (cols * tile, ((n + cols - 1) // cols) * (tile + 44)), (255, 255, 255))
@@ -410,27 +557,21 @@ def render_png(result: dict, out_dir: str) -> dict:
     for k, e in enumerate(result['ids']):
         x, y = (k % cols) * tile, (k // cols) * (tile + 44)
         box = (x + 6, y + 6, x + tile - 6, y + tile - 6)
-        if e['cells']:
-            c = max(e['cells'], key=lambda c: c['w'] * c['h'])
-            if c['atlas'] not in cache:
-                cache[c['atlas']] = Image.open(paths[c['atlas']]).convert('RGB')
-            s = min(c['w'], c['h'], 1024)
-            cx, cy = c['x'] + c['w'] // 2, c['y'] + c['h'] // 2
-            crop = cache[c['atlas']].crop((cx - s // 2, cy - s // 2, cx - s // 2 + s, cy - s // 2 + s))
-            sheet.paste(crop.resize((box[2] - box[0], box[3] - box[1]), Image.LANCZOS), box[:2])
-            src = '%s cell %d' % (c['atlas'][:18], c['cell'])
-        else:
-            d.rectangle(box, fill=_rgb(e['target']))
-            d.line((box[0], box[1], box[2], box[3]), fill=(255, 0, 0), width=3)
-            src = 'GAP: no atlas cell (target colour)'
+        img, src = swatch(result, e, 512, cache)
+        sheet.paste(img.resize((box[2] - box[0], box[3] - box[1]), Image.LANCZOS), box[:2])
+        tp = os.path.join(out_dir, 'tiles', 'ID_%02d_%s.png' % (e['id'], e['key']))
+        img.save(tp)  # clean tile: no number baked in (the number is drawn by the layout, bottom-right)
+        tiles.append({'id': e['id'], 'key': e['key'], 'file': 'tiles/' + os.path.basename(tp),
+                      'sha256': sha256_file(tp), 'source': src})
         draw_id(d, box, str(e['id']), f_id)
         d.text((x + 6, y + tile - 2), e['key'], fill=(0, 0, 0), font=f_lbl)
-        d.text((x + 6, y + tile + 16), src, fill=(90, 90, 90), font=f_lbl)
-    p = os.path.join(out_dir, 'material_ids_v004_contact_sheet.png')
+        d.text((x + 6, y + tile + 16), src, fill=(200, 0, 0) if src.startswith('GAP') else (90, 90, 90),
+               font=f_lbl)
+    p = os.path.join(out_dir, 'material_ids_%s_contact_sheet.png' % result['version'])
     sheet.save(p)
     written['contact_sheet'] = p
     for at in result['atlases']:
-        if at['role'] != 'atlas':
+        if at['role'] not in ('atlas', 'layout example'):
             continue
         im = cache.get(at['name']) or Image.open(at['path']).convert('RGB')
         sc = 1024 / max(im.size)
@@ -445,24 +586,41 @@ def render_png(result: dict, out_dir: str) -> dict:
         q = os.path.join(out_dir, 'overlay_%s.png' % re.sub(r'[^A-Za-z0-9_.-]', '_', os.path.splitext(at['name'])[0]))
         ov.save(q)
         written['overlay ' + at['name']] = q
-    return {k: {'path': v.replace('\\', '/'), 'sha256': sha256_file(v)} for k, v in written.items()}
+    out = {k: {'path': v.replace('\\', '/'), 'sha256': sha256_file(v)} for k, v in written.items()}
+    out['tiles'] = tiles
+    return out
 
 
 def render_md(r: dict) -> str:
-    L = ['# MAF material IDs v004 - proposal (#524)', '',
+    v = r['version']
+    L = [f'# MAF material IDs {v} - proposal (#524)', '',
          f"Status: **{r['status']}**. {r['scope']}. Generated by `{r['generated_by']}`; machine-readable twin "
-         '`material_ids_v004.json`. ID number on every tile/cell: small, bottom-right corner (Artem 2026-10-21).', '',
+         f'`material_ids_{v}.json`. ID number on every tile/cell: small, bottom-right corner (Artem 2026-10-21); '
+         'swatch tiles carry no number inside the texture.', '',
          '## ID list', '',
-         '| ID | key | name | kind | target | atlas cells (atlas: cell, px) | spec rows | library materials | status |',
-         '|---|---|---|---|---|---|---|---|---|']
+         '| ID | prev | key | name | kind | size | target | atlas cells (atlas: cell, px) | spec rows | '
+         'library materials | status |',
+         '|---|---|---|---|---|---|---|---|---|---|---|']
     for e in r['ids']:
         cells = '; '.join(f"{c['atlas']}: {c['cell']} ({c['w']}x{c['h']}, {c['color']})" for c in e['cells'][:4])
         if len(e['cells']) > 4:
             cells += f"; +{len(e['cells']) - 4}"
         libm = ', '.join(f"{m['material']} ({m['mafs']})" for m in e['library_materials'])
-        L.append(f"| {e['id']} | `{e['key']}` | {e['name_ru']} | {e['kind']} | "
-                 f"{('RAL ' + e['ral'] + ' ') if e['ral'] else ''}{e['target']} | {cells or '-'} | "
-                 f"{len(e['spec_rows'])} | {libm or '-'} | {e['status']} |")
+        pp = e.get('picked_patch')
+        if not cells and pp:
+            cells = f"GAP; picked patch {pp['atlas']} {pp['x']},{pp['y']} {pp['w']}x{pp['h']} {pp['mean']} (на проверку)"
+        st = e['status'] + ''.join('; на проверку: ' + x for x in e.get('review', []))
+        L.append(f"| {e['id']} | {e.get('prev_id') or '-'} | `{e['key']}` | {e['name_ru']} | {e['kind']} | "
+                 f"{e.get('size', '-')} | {('RAL ' + e['ral'] + ' ') if e['ral'] else ''}{e['target']} | "
+                 f"{cells or '-'} | {len(e['spec_rows'])} | {libm or '-'} | {st} |")
+    if r.get('merges'):
+        keyid = {e['key']: e['id'] for e in r['ids']}
+        L += ['', '## Merged (previous id -> kept id)', '', '| previous | into | reason |', '|---|---|---|']
+        L += [f"| {m.get('from_v004_id', '-')} `{m['from_key']}` | {keyid[m['into']]} `{m['into']}` | "
+              f"{m['reason']} |" for m in r['merges']]
+    if r.get('decals'):
+        L += ['', '## Per-MAF decals (not material IDs)', '', r['decals']['rule'] + ':', '']
+        L += [f'- {x}' for x in r['decals'].get('examples', [])]
     L += ['', '## Specification rows without an id (gaps)', '']
     gaps = [q for q in r['spec_requirements'] if q['gap']]
     L += [f"- {q['table']}#{q['row']}: {q['name']}" for q in gaps] or ['- none']
@@ -530,9 +688,12 @@ def main(argv=None) -> int:
         ap.add_argument('--' + a, required=True)
     ap.add_argument('--maps-dir', action='append', required=True)
     ap.add_argument('--extra-atlas', action='append', default=[])
+    ap.add_argument('--layout-example', action='append', default=[])
+    ap.add_argument('--prev-seed')
     ap.add_argument('--evidence-dir')
     args = ap.parse_args(argv)
-    inputs = [args.materials, args.uv_dump, args.max_maps, args.schedule, args.seed, args.ral, *args.extra_atlas]
+    inputs = [args.materials, args.uv_dump, args.max_maps, args.schedule, args.seed, args.ral, *args.extra_atlas,
+              *args.layout_example] + ([args.prev_seed] if args.prev_seed else [])
     try:
         check_paths(inputs, [args.out_json, args.out_md])
         if args.evidence_dir:

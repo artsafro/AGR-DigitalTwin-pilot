@@ -1,4 +1,4 @@
-"""Tests for the v004 MAF material ID list from atlas cells (issue #524)."""
+"""Tests for the v004/v005 MAF material ID list from atlas cells (issue #524)."""
 from __future__ import annotations
 
 import json
@@ -93,8 +93,8 @@ def _write(p: Path, obj) -> str:
     return str(p)
 
 
-def _seed(ids=None):
-    return {'ids': ids if ids is not None else [
+def _seed(ids=None, **kw):
+    return {'version': 'v005', **kw, 'ids': ids if ids is not None else [
         {'id': 1, 'key': 'paint_red', 'name_ru': 'красная', 'kind': 'paint', 'hex': '#C81E1E', 'spec': 'красн',
          'library': '^Red$'},
         {'id': 2, 'key': 'paint_blue', 'name_ru': 'голубая', 'kind': 'paint', 'hex': '#28A0D2', 'spec': None,
@@ -173,17 +173,94 @@ def test_end_to_end_every_input_element_is_accounted_for(tmp_path):
     ev = r['evidence']
     assert Path(ev['contact_sheet']['path']).is_file() and 'overlay T_Atlas.png' in ev
     md = (tmp_path / 'out.md').read_text(encoding='utf-8')
-    assert '| 1 | `paint_red`' in md and 'missing.png' in md and 'T1#3' in md
+    assert '| 1 | - | `paint_red`' in md and 'missing.png' in md and 'T1#3' in md
 
 
 def test_contact_sheet_uses_the_real_crop_not_a_placeholder(tmp_path):
     assert ids_mod.main(_setup(tmp_path) + _outs(tmp_path) + ['--evidence-dir', str(tmp_path / 'ev')]) == 0
     r = json.loads((tmp_path / 'out.json').read_text(encoding='utf-8'))
     sheet = np.asarray(Image.open(r['evidence']['contact_sheet']['path']).convert('RGB')).astype(int)
-    # tile 1 (paint_red) centre = crop of the red cell; tile 4 (concrete, gap) = target swatch + red cross
+    # tile 1 (paint_red) centre = crop of the red cell; tile 4 (concrete, gap) = target swatch, no cross
     assert np.abs(sheet[110, 110] - np.array(RED)).max() <= 2
     wood = sheet[60:160, 60 + 2 * 220:160 + 2 * 220].reshape(-1, 3)
     assert wood.std(0).mean() > 5  # textured crop, not a flat placeholder
+
+
+def test_gap_tile_is_the_target_colour_without_a_diagonal_and_tiles_carry_no_number(tmp_path):
+    assert ids_mod.main(_setup(tmp_path) + _outs(tmp_path) + ['--evidence-dir', str(tmp_path / 'ev')]) == 0
+    r = json.loads((tmp_path / 'out.json').read_text(encoding='utf-8'))
+    sheet = np.asarray(Image.open(r['evidence']['contact_sheet']['path']).convert('RGB')).astype(int)
+    x0 = 3 * 220 + 6  # tile 4 = concrete (gap): whole box except the bottom-right ID corner = #A0A0A0
+    box = sheet[6:6 + 150, x0:x0 + 150].reshape(-1, 3)
+    assert (np.abs(box - 160) <= 1).all(), 'gap tile must be the plain target colour (no red diagonal)'
+    tiles = {t['key']: t for t in r['evidence']['tiles']}
+    assert set(tiles) == {e['key'] for e in r['ids']} and tiles['concrete']['source'].startswith('GAP')
+    red = np.asarray(Image.open(tmp_path / 'ev' / tiles['paint_red']['file']).convert('RGB')).astype(int)
+    assert (np.abs(red - np.array(RED)) <= 2).all()  # clean tile: no number baked into it
+
+
+def test_layout_example_is_never_a_colour_or_texture_source(tmp_path):
+    ex = tmp_path / 'example_id_layout.png'
+    a = np.zeros((256, 256, 3), np.uint8)
+    a[:, :128] = (160, 160, 160)  # would match concrete and blue-ish if it were a source
+    a[:, 128:] = (40, 160, 210)
+    Image.fromarray(a).save(ex)
+    args = _setup(tmp_path) + _outs(tmp_path) + ['--layout-example', str(ex), '--evidence-dir', str(tmp_path / 'ev')]
+    assert ids_mod.main(args) == 0
+    r = json.loads((tmp_path / 'out.json').read_text(encoding='utf-8'))
+    at = [a for a in r['atlases'] if a['name'] == 'example_id_layout.png'][0]
+    assert at['role'] == 'layout example' and all(c['id'] is None and 'layout example' in c['reason']
+                                                   for c in at['cells'])
+    assert all(c['atlas'] != 'example_id_layout.png' for e in r['ids'] for c in e['cells'])
+    by = {e['key']: e for e in r['ids']}
+    assert by['concrete']['cells'] == [] and by['concrete']['status'].startswith('proposed, gap')
+    assert all('example_id' not in t['source'] for t in r['evidence']['tiles'])
+
+
+@pytest.mark.parametrize('merges, prev, msg', [
+    ([], ['paint_red', 'paint_blue', 'wood_medium', 'concrete', 'paint_wine'], "neither kept nor merged: ['paint_wine']"),
+    ([{'from_key': 'paint_wine', 'into': 'paint_rose', 'reason': 'x'}], None, "into 'paint_rose' is not an id"),
+    ([{'from_key': 'paint_blue', 'into': 'paint_red', 'reason': 'x'}], None, 'still an id'),
+    ([{'from_key': 'paint_wine', 'into': 'paint_red'}], None, 'no reason'),
+    ([{'from_key': 'paint_wine', 'into': 'paint_red', 'reason': 'x'}] * 2, None, 'duplicated'),
+    ([{'from_key': 'paint_gold', 'into': 'paint_red', 'reason': 'x'}], ['paint_red', 'paint_blue', 'wood_medium',
+                                                                        'concrete'], 'not in the previous seed'),
+    ([], [], 'prev seed has no ids'),
+])
+def test_merges_fail_closed_and_no_previous_id_is_lost(tmp_path, capsys, merges, prev, msg):
+    args = _setup(tmp_path, seed=_seed(merges=merges)) + _outs(tmp_path)
+    if prev is not None:
+        args += ['--prev-seed', _write(tmp_path / 'prev.json', {'ids': [{'key': k} for k in prev]})]
+    assert ids_mod.main(args) == 2
+    assert msg in capsys.readouterr().err
+    assert not (tmp_path / 'out.json').exists()
+
+
+def test_merge_rows_reach_the_report(tmp_path):
+    m = [{'from_key': 'paint_wine', 'from_v004_id': 11, 'into': 'paint_red', 'reason': 'one red'}]
+    args = _setup(tmp_path, seed=_seed(merges=m)) + _outs(tmp_path) + [
+        '--prev-seed', _write(tmp_path / 'prev.json', {'ids': [{'key': k} for k in (
+            'paint_red', 'paint_blue', 'wood_medium', 'concrete', 'paint_wine')]})]
+    assert ids_mod.main(args) == 0
+    md = (tmp_path / 'out.md').read_text(encoding='utf-8')
+    assert '| 11 `paint_wine` | 1 `paint_red` | one red |' in md
+
+
+def test_pick_patch_takes_a_clean_matching_patch_or_nothing(tmp_path):
+    p = tmp_path / 'c.png'
+    a = np.full((512, 512, 3), 30, np.uint8)
+    rng = np.random.default_rng(5)
+    a[:, 256:] = np.clip(160 + rng.normal(0, 10, (512, 256, 3)), 0, 255).astype(np.uint8)  # concrete-like noise
+    Image.fromarray(a).save(p)
+    at = {'name': 'c.png', 'path': str(p), 'role': 'atlas',
+          'cells': [{'x': 256, 'y': 0, 'w': 256, 'h': 512, 'kind': 'patterned', 'id': None}]}
+    concrete = ids_mod.load_seed(_seed([{'id': 4, 'key': 'concrete', 'name_ru': 'b', 'kind': 'mineral',
+                                         'hex': '#A0A0A0'}]), {})[0]
+    got = ids_mod.pick_patch([at], concrete)
+    assert got and got['atlas'] == 'c.png' and got['x'] >= 256 + 32 and got['dist'] <= ids_mod.PATCH_TOL
+    wood = dict(concrete, targets=['#967356'])
+    assert ids_mod.pick_patch([at], wood) is None  # nothing near the target -> no patch, never a default
+    assert ids_mod.pick_patch([dict(at, role='layout example')], concrete) is None
 
 
 @pytest.mark.parametrize('bad_seed, msg', [
@@ -235,6 +312,22 @@ def test_cell_to_id_tolerance_is_inclusive_at_the_threshold_and_exclusive_above(
         return at['cells'][0]['id']
     assert one('#767676') == 1  # |dRGB| = 18 = tolerance
     assert one('#777777') is None  # 19 > tolerance -> unmapped with a reason, never the nearest anyway
+
+
+def test_real_v005_artifact_keeps_or_merges_every_v004_id_and_never_uses_the_example():
+    lib = ROOT / 'library' / 'maf'
+    r = json.loads((lib / 'material_ids_v005.json').read_text(encoding='utf-8'))
+    v4 = json.loads((lib / 'material_ids_v004_seed.json').read_text(encoding='utf-8'))
+    assert r['status'] == 'proposed' and [e['id'] for e in r['ids']] == list(range(1, len(r['ids']) + 1))
+    kept = {e['key'] for e in r['ids']}
+    merged = {m['from_key']: m['into'] for m in r['merges']}
+    assert {e['key'] for e in v4['ids']} == kept | set(merged) and not kept & set(merged)
+    assert set(merged.values()) <= kept
+    assert all(c['atlas'] != 'example_id_layout.png' for e in r['ids'] for c in e['cells'])
+    ex = [a for a in r['atlases'] if a['name'] == 'example_id_layout.png']
+    assert ex and all(c['id'] is None for c in ex[0]['cells'])
+    assert {t['key'] for t in r['evidence']['tiles']} == kept
+    assert not any('example_id' in t['source'] for t in r['evidence']['tiles'])
 
 
 def test_real_v004_artifact_is_consistent():

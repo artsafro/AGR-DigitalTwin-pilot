@@ -1,0 +1,7625 @@
+{
+ "schema": "library-maf-material-ids",
+ "version": "v005",
+ "status": "proposed",
+ "scope": "ID list of #524 for Artem's review; nothing reassigned in the library",
+ "match_method": "atlas cell -> id by colour distance to the id targets (mean |dRGB| <= {'solid': 18.0, 'patterned': 12.0}); the agent did not inspect the images visually - Artem verifies on the contact sheet",
+ "generated_by": "tools/library/maf_atlas_ids.py",
+ "inputs": {
+  "materials": {
+   "path": "library/maf/fbx_materials.json",
+   "sha256": "0c0589315836d80568aa1eae0a6198200f04314e1f6333a25e7081e92b5dc758"
+  },
+  "uv_dump": {
+   "path": "C:/x/ev_t_e12b5c0c/uv_dump.json",
+   "sha256": "0e10c2ca524dcd7d3082d69630d1921eec2f9d3c6e6840d926f4a9aab4aacde6"
+  },
+  "max_maps": {
+   "path": "C:/x/ev_t_e12b5c0c/max_maps.json",
+   "sha256": "425402cd254125173f8641b95aa4c71ccb9b054f98e427fd3f9878000bcacd75"
+  },
+  "schedule": {
+   "path": "jobs/VATUTINO-SITE/maf/site-schedule.json",
+   "sha256": "8cc5d97dca429a30387fbe7730257489956db3ed848bdbac12118c66fea17614"
+  },
+  "seed": {
+   "path": "library/maf/material_ids_v005_seed.json",
+   "sha256": "3f504396053f1286970998c162512e67249a4bbfa075553a049d9072eb8c6294"
+  },
+  "ral": {
+   "path": "tools/materials/ral_classic.json",
+   "sha256": "750bc0bc5b294b7f15166659131bce8f19c819f667ce0cc2dcbb09066051349e"
+  }
+ },
+ "maps_dirs": [
+  "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps",
+  "C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps"
+ ],
+ "ids": [
+  {
+   "id": 1,
+   "key": "paint_ral9005",
+   "name_ru": "краска RAL 9005 чёрная",
+   "kind": "paint",
+   "ral": "9005",
+   "target": "#0A0A0A",
+   "cells": [
+    {
+     "atlas": "1_Diffuse_1.1001_e5pokwfjvgc7.png",
+     "cell": 4,
+     "x": 2048,
+     "y": 0,
+     "w": 512,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#000000",
+     "dist": 10.0,
+     "dist_own": 10.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "ID_1_RAL 9005.png",
+     "cell": 0,
+     "x": 0,
+     "y": 0,
+     "w": 256,
+     "h": 256,
+     "kind": "solid",
+     "color": "#030305",
+     "dist": 6.3,
+     "dist_own": 6.3,
+     "uv_mafs": [
+      "MAF_0055",
+      "MAF_0056",
+      "MAF_0057",
+      "MAF_0058",
+      "MAF_0059",
+      "MAF_0060",
+      "MAF_0061",
+      "MAF_0065"
+     ],
+     "uv_faces": 7069
+    },
+    {
+     "atlas": "ID_2_Лиственница_Черная_f.png",
+     "cell": 0,
+     "x": 0,
+     "y": 0,
+     "w": 2056,
+     "h": 1512,
+     "kind": "solid",
+     "color": "#030305",
+     "dist": 6.3,
+     "dist_own": 6.3,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "MAF_Atlas_001_Diffuse.png",
+     "cell": 2,
+     "x": 2056,
+     "y": 0,
+     "w": 504,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#000000",
+     "dist": 10.0,
+     "dist_own": 10.0,
+     "uv_mafs": [
+      "MAF_0007",
+      "MAF_0014"
+     ],
+     "uv_faces": 156
+    },
+    {
+     "atlas": "Untitled_Diffuse_1.1001.png",
+     "cell": 0,
+     "x": 0,
+     "y": 0,
+     "w": 2048,
+     "h": 1392,
+     "kind": "solid",
+     "color": "#0D0D0D",
+     "dist": 3.0,
+     "dist_own": 3.0,
+     "uv_mafs": [
+      "MAF_0008",
+      "MAF_0009"
+     ],
+     "uv_faces": 344
+    },
+    {
+     "atlas": "Untitled_Diffuse_1.1001.png",
+     "cell": 2,
+     "x": 3024,
+     "y": 0,
+     "w": 1072,
+     "h": 1384,
+     "kind": "solid",
+     "color": "#072502",
+     "dist": 12.7,
+     "dist_own": 12.7,
+     "uv_mafs": [
+      "MAF_0008"
+     ],
+     "uv_faces": 11
+    },
+    {
+     "atlas": "Untitled_Diffuse_1.1001_ngosp2lcps3p.png",
+     "cell": 0,
+     "x": 0,
+     "y": 0,
+     "w": 2048,
+     "h": 1392,
+     "kind": "solid",
+     "color": "#0D0D0D",
+     "dist": 3.0,
+     "dist_own": 3.0,
+     "uv_mafs": [
+      "MAF_0008"
+     ],
+     "uv_faces": 20
+    },
+    {
+     "atlas": "atlas_04.png",
+     "cell": 4,
+     "x": 256,
+     "y": 0,
+     "w": 63,
+     "h": 127,
+     "kind": "solid",
+     "color": "#000000",
+     "dist": 10.0,
+     "dist_own": 10.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png",
+     "cell": 4,
+     "x": 256,
+     "y": 0,
+     "w": 64,
+     "h": 127,
+     "kind": "solid",
+     "color": "#000000",
+     "dist": 10.0,
+     "dist_own": 10.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [
+    {
+     "material": "ID_1_RAL 9005",
+     "mafs": 8
+    },
+    {
+     "material": "Osn",
+     "mafs": 2
+    },
+    {
+     "material": "_auto_1",
+     "mafs": 1
+    }
+   ],
+   "spec_rows": [],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 2,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 2,
+   "key": "paint_ral7016",
+   "name_ru": "краска RAL 7016 антрацит",
+   "kind": "paint",
+   "ral": "7016",
+   "target": "#383E42",
+   "cells": [
+    {
+     "atlas": "ID_2_Лиственница_Черная_f.png",
+     "cell": 2,
+     "x": 3432,
+     "y": 0,
+     "w": 632,
+     "h": 4088,
+     "kind": "solid",
+     "color": "#414141",
+     "dist": 3.0,
+     "dist_own": 3.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "T_Atlas_MAF.png",
+     "cell": 1,
+     "x": 1080,
+     "y": 0,
+     "w": 1224,
+     "h": 1072,
+     "kind": "solid",
+     "color": "#373737",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [
+      "MAF_0072",
+      "MAF_0077",
+      "MAF_0087",
+      "MAF_0091"
+     ],
+     "uv_faces": 4539
+    },
+    {
+     "atlas": "atlas_02.png",
+     "cell": 8,
+     "x": 0,
+     "y": 744,
+     "w": 1808,
+     "h": 280,
+     "kind": "solid",
+     "color": "#444444",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 3,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 3,
+   "key": "paint_ral7040",
+   "name_ru": "краска серая RAL 7040 / 7004",
+   "kind": "paint",
+   "ral": "7040",
+   "target": "#989EA1",
+   "cells": [
+    {
+     "atlas": "MAF_Atlas_001_Diffuse.png",
+     "cell": 5,
+     "x": 1024,
+     "y": 512,
+     "w": 1032,
+     "h": 512,
+     "kind": "solid",
+     "color": "#A5ABB2",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [
+      "MAF_0014"
+     ],
+     "uv_faces": 41
+    },
+    {
+     "atlas": "T_Atlas_MAF.png",
+     "cell": 5,
+     "x": 1080,
+     "y": 1080,
+     "w": 1224,
+     "h": 664,
+     "kind": "solid",
+     "color": "#868686",
+     "dist": 0.0,
+     "dist_own": 21.0,
+     "uv_mafs": [
+      "MAF_0075",
+      "MAF_0079",
+      "MAF_0080",
+      "MAF_0081",
+      "MAF_0082",
+      "MAF_0083",
+      "MAF_0087",
+      "MAF_0093"
+     ],
+     "uv_faces": 2431
+    },
+    {
+     "atlas": "T_Atlas_MAF.png",
+     "cell": 6,
+     "x": 2312,
+     "y": 1080,
+     "w": 704,
+     "h": 1296,
+     "kind": "solid",
+     "color": "#919EA2",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [
+      "MAF_0069",
+      "MAF_0070",
+      "MAF_0071",
+      "MAF_0077",
+      "MAF_0080",
+      "MAF_0081"
+     ],
+     "uv_faces": 1672
+    },
+    {
+     "atlas": "atlas_02.png",
+     "cell": 5,
+     "x": 3448,
+     "y": 0,
+     "w": 648,
+     "h": 512,
+     "kind": "solid",
+     "color": "#959595",
+     "dist": 0.0,
+     "dist_own": 8.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_03.png",
+     "cell": 3,
+     "x": 3448,
+     "y": 0,
+     "w": 648,
+     "h": 512,
+     "kind": "solid",
+     "color": "#959595",
+     "dist": 0.0,
+     "dist_own": 8.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 5,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 4,
+   "key": "paint_ral7047",
+   "name_ru": "краска RAL 7047 телегрей",
+   "kind": "paint",
+   "ral": "7047",
+   "target": "#D0D0D0",
+   "cells": [
+    {
+     "atlas": "1_Diffuse_1.1001_e5pokwfjvgc7.png",
+     "cell": 7,
+     "x": 512,
+     "y": 512,
+     "w": 512,
+     "h": 512,
+     "kind": "solid",
+     "color": "#DCDCDC",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [
+      "MAF_0001"
+     ],
+     "uv_faces": 4
+    },
+    {
+     "atlas": "Untitled_Diffuse_1.1001.png",
+     "cell": 5,
+     "x": 2048,
+     "y": 1888,
+     "w": 2048,
+     "h": 2208,
+     "kind": "solid",
+     "color": "#CCDAE3",
+     "dist": 8.3,
+     "dist_own": 8.3,
+     "uv_mafs": [
+      "MAF_0008"
+     ],
+     "uv_faces": 63
+    },
+    {
+     "atlas": "atlas_02.png",
+     "cell": 6,
+     "x": 2808,
+     "y": 512,
+     "w": 640,
+     "h": 512,
+     "kind": "solid",
+     "color": "#DCDCDC",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_02.png",
+     "cell": 9,
+     "x": 1816,
+     "y": 744,
+     "w": 232,
+     "h": 280,
+     "kind": "solid",
+     "color": "#D5D5D5",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_03.png",
+     "cell": 4,
+     "x": 2808,
+     "y": 512,
+     "w": 640,
+     "h": 512,
+     "kind": "solid",
+     "color": "#DCDCDC",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_04.png",
+     "cell": 6,
+     "x": 67,
+     "y": 67,
+     "w": 60,
+     "h": 60,
+     "kind": "solid",
+     "color": "#DDDDDD",
+     "dist": 1.0,
+     "dist_own": 1.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png",
+     "cell": 7,
+     "x": 62,
+     "y": 64,
+     "w": 66,
+     "h": 64,
+     "kind": "solid",
+     "color": "#DCDCDC",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [
+    {
+     "material": "СЕРЫЕ ЗАКЛАДНЫЕ ",
+     "mafs": 3
+    },
+    {
+     "material": "серый",
+     "mafs": 1
+    }
+   ],
+   "spec_rows": [
+    "*T3508#1",
+    "*T3508#2",
+    "*T3508#3",
+    "*T3508#4",
+    "*T3508#5",
+    "*T3508#6",
+    "*T3508#7",
+    "*T3508#8",
+    "*T3508#9",
+    "*T3508#10",
+    "*T3508#11",
+    "*T3508#12",
+    "*T3508#13",
+    "*T3508#14",
+    "*T3508#15",
+    "*T3508#16",
+    "*T3508#17",
+    "*T3510#1",
+    "*T3510#2",
+    "*T3510#3",
+    "*T3510#4",
+    "*T3510#5",
+    "*T3510#7",
+    "*T3510#8",
+    "*T3510#9",
+    "*T3510#10",
+    "*T3510#11",
+    "*T3510#12",
+    "*T3510#13",
+    "*T3510#14",
+    "*T3510#16",
+    "*T3510#17",
+    "*T3510#18",
+    "*T3510#19",
+    "*T3510#20",
+    "*T3510#21",
+    "*T3510#22",
+    "*T3510#23",
+    "*T3510#24",
+    "*T3510#25",
+    "*T3510#27",
+    "*T3510#28",
+    "*T3510#29",
+    "*T3510#30",
+    "*T3510#31",
+    "*T3510#32"
+   ],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 1,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 5,
+   "key": "paint_ral9003",
+   "name_ru": "краска белая RAL 9003/9002 (+ бежевая А101)",
+   "kind": "paint",
+   "ral": "9003",
+   "target": "#F4F4F4",
+   "cells": [
+    {
+     "atlas": "MAF_Atlas_001_Diffuse.png",
+     "cell": 0,
+     "x": 0,
+     "y": 0,
+     "w": 1024,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#CBBCA7",
+     "dist": 0.0,
+     "dist_own": 58.0,
+     "uv_mafs": [
+      "MAF_0015"
+     ],
+     "uv_faces": 1
+    }
+   ],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 6,
+   "picked_patch": null,
+   "status": "proposed, gap: atlas cells only of merged shades, none of the own tones"
+  },
+  {
+   "id": 6,
+   "key": "paint_orange",
+   "name_ru": "краска оранжевая RAL 2004 (+ жёлтая А101)",
+   "kind": "paint",
+   "ral": "2004",
+   "target": "#E25303",
+   "cells": [
+    {
+     "atlas": "1_Diffuse_1.1001_e5pokwfjvgc7.png",
+     "cell": 6,
+     "x": 0,
+     "y": 512,
+     "w": 512,
+     "h": 512,
+     "kind": "solid",
+     "color": "#F9CF2B",
+     "dist": 0.0,
+     "dist_own": 38.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "T_Atlas_MAF.png",
+     "cell": 4,
+     "x": 3024,
+     "y": 0,
+     "w": 512,
+     "h": 2792,
+     "kind": "solid",
+     "color": "#EC8E4F",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [
+      "MAF_0091"
+     ],
+     "uv_faces": 440
+    },
+    {
+     "atlas": "atlas_02.png",
+     "cell": 0,
+     "x": 0,
+     "y": 0,
+     "w": 1080,
+     "h": 744,
+     "kind": "solid",
+     "color": "#CE8F3E",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 9,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 7,
+   "key": "paint_red",
+   "name_ru": "краска красная RAL 3020 (+ винная А101)",
+   "kind": "paint",
+   "ral": "3020",
+   "target": "#CC0605",
+   "cells": [
+    {
+     "atlas": "1_Diffuse_1.1001_e5pokwfjvgc7.png",
+     "cell": 1,
+     "x": 512,
+     "y": 0,
+     "w": 512,
+     "h": 512,
+     "kind": "solid",
+     "color": "#CB2525",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "MAF_Atlas_001_Diffuse.png",
+     "cell": 4,
+     "x": 3288,
+     "y": 0,
+     "w": 808,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#622022",
+     "dist": 0.0,
+     "dist_own": 30.7,
+     "uv_mafs": [
+      "MAF_0015"
+     ],
+     "uv_faces": 1
+    },
+    {
+     "atlas": "Untitled_Diffuse_1.1001_ngosp2lcps3p.png",
+     "cell": 2,
+     "x": 3024,
+     "y": 0,
+     "w": 1072,
+     "h": 1392,
+     "kind": "solid",
+     "color": "#B70000",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_02.png",
+     "cell": 12,
+     "x": 2048,
+     "y": 1024,
+     "w": 1112,
+     "h": 784,
+     "kind": "solid",
+     "color": "#A43B26",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_03.png",
+     "cell": 13,
+     "x": 2048,
+     "y": 2968,
+     "w": 384,
+     "h": 384,
+     "kind": "solid",
+     "color": "#B32B2B",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_04.png",
+     "cell": 3,
+     "x": 192,
+     "y": 0,
+     "w": 64,
+     "h": 64,
+     "kind": "solid",
+     "color": "#FF0000",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 10,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 8,
+   "key": "paint_green_light",
+   "name_ru": "краска салатовая / оливковая (RAL 6018 ближ.)",
+   "kind": "paint",
+   "ral": "6018",
+   "target": "#57A639",
+   "cells": [
+    {
+     "atlas": "atlas_02.png",
+     "cell": 16,
+     "x": 2440,
+     "y": 2568,
+     "w": 288,
+     "h": 392,
+     "kind": "solid",
+     "color": "#A6CE23",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_02.png",
+     "cell": 17,
+     "x": 2728,
+     "y": 2568,
+     "w": 344,
+     "h": 392,
+     "kind": "solid",
+     "color": "#ADA124",
+     "dist": 0.0,
+     "dist_own": 17.7,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_03.png",
+     "cell": 10,
+     "x": 2440,
+     "y": 2568,
+     "w": 280,
+     "h": 392,
+     "kind": "solid",
+     "color": "#A6CE23",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_03.png",
+     "cell": 11,
+     "x": 2728,
+     "y": 2568,
+     "w": 344,
+     "h": 392,
+     "kind": "solid",
+     "color": "#ADA124",
+     "dist": 0.0,
+     "dist_own": 17.7,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 12,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 9,
+   "key": "paint_green",
+   "name_ru": "краска зелёная RAL 6029 / резеда 6011",
+   "kind": "paint",
+   "ral": "6029",
+   "target": "#006F3D",
+   "cells": [
+    {
+     "atlas": "T_Atlas_MAF.png",
+     "cell": 8,
+     "x": 2216,
+     "y": 2800,
+     "w": 1016,
+     "h": 1296,
+     "kind": "solid",
+     "color": "#567F56",
+     "dist": 0.0,
+     "dist_own": 39.0,
+     "uv_mafs": [
+      "MAF_0088"
+     ],
+     "uv_faces": 510
+    },
+    {
+     "atlas": "atlas_02.png",
+     "cell": 15,
+     "x": 2048,
+     "y": 2568,
+     "w": 392,
+     "h": 392,
+     "kind": "solid",
+     "color": "#008C44",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_02.png",
+     "cell": 20,
+     "x": 2048,
+     "y": 2968,
+     "w": 448,
+     "h": 392,
+     "kind": "solid",
+     "color": "#1BB563",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_03.png",
+     "cell": 8,
+     "x": 3072,
+     "y": 1024,
+     "w": 1024,
+     "h": 1544,
+     "kind": "solid",
+     "color": "#618656",
+     "dist": 0.0,
+     "dist_own": 40.3,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_03.png",
+     "cell": 9,
+     "x": 2048,
+     "y": 2568,
+     "w": 384,
+     "h": 384,
+     "kind": "solid",
+     "color": "#008C44",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 14,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 10,
+   "key": "paint_green_dark",
+   "name_ru": "краска тёмно-зелёная RAL 6009/6005 (+ HDPE контейнер, на проверку)",
+   "kind": "paint",
+   "ral": "6009",
+   "target": "#31372B",
+   "cells": [
+    {
+     "atlas": "atlas_04.png",
+     "cell": 1,
+     "x": 69,
+     "y": 0,
+     "w": 58,
+     "h": 63,
+     "kind": "solid",
+     "color": "#2E3D2A",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png",
+     "cell": 1,
+     "x": 66,
+     "y": 0,
+     "w": 62,
+     "h": 64,
+     "kind": "solid",
+     "color": "#363F2F",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [
+    {
+     "material": "Hamut",
+     "mafs": 2
+    }
+   ],
+   "spec_rows": [
+    "*T3510#6"
+   ],
+   "size": "S",
+   "atlas": true,
+   "review": [
+    "HDPE waste container (T3510#6): no colour in the spec; Moscow MSW containers are usually dark green - flat dark green cell, на проверку"
+   ],
+   "prev_id": 16,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 11,
+   "key": "paint_blue",
+   "name_ru": "краска голубая / синяя (RAL 5015 ближ.)",
+   "kind": "paint",
+   "ral": "5015",
+   "target": "#2271B3",
+   "cells": [
+    {
+     "atlas": "1_Diffuse_1.1001_e5pokwfjvgc7.png",
+     "cell": 2,
+     "x": 1024,
+     "y": 0,
+     "w": 512,
+     "h": 512,
+     "kind": "solid",
+     "color": "#63A2D0",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "Untitled_Diffuse_1.1001_ngosp2lcps3p.png",
+     "cell": 1,
+     "x": 2048,
+     "y": 0,
+     "w": 976,
+     "h": 1392,
+     "kind": "solid",
+     "color": "#001B78",
+     "dist": 0.0,
+     "dist_own": 59.7,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_04.png",
+     "cell": 2,
+     "x": 130,
+     "y": 0,
+     "w": 60,
+     "h": 63,
+     "kind": "solid",
+     "color": "#2EA3D3",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png",
+     "cell": 2,
+     "x": 128,
+     "y": 0,
+     "w": 64,
+     "h": 64,
+     "kind": "solid",
+     "color": "#63A2D0",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 17,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 12,
+   "key": "paint_blue_grey",
+   "name_ru": "краска серо-синяя (RAL 7031 ближ.)",
+   "kind": "paint",
+   "ral": null,
+   "target": "#526374",
+   "cells": [
+    {
+     "atlas": "MAF_Atlas_001_Diffuse.png",
+     "cell": 1,
+     "x": 1024,
+     "y": 0,
+     "w": 1032,
+     "h": 512,
+     "kind": "solid",
+     "color": "#526374",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [
+      "MAF_0015"
+     ],
+     "uv_faces": 1
+    },
+    {
+     "atlas": "T_Atlas_MAF.png",
+     "cell": 7,
+     "x": 1080,
+     "y": 2800,
+     "w": 1128,
+     "h": 1296,
+     "kind": "solid",
+     "color": "#526267",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [
+      "MAF_0078"
+     ],
+     "uv_faces": 564
+    },
+    {
+     "atlas": "atlas_04.png",
+     "cell": 8,
+     "x": 226,
+     "y": 130,
+     "w": 73,
+     "h": 8,
+     "kind": "solid",
+     "color": "#6B6161",
+     "dist": 10.7,
+     "dist_own": 10.7,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 19,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 13,
+   "key": "paint_brown_dark",
+   "name_ru": "краска тёмно-коричневая (RAL 8017 ближ.)",
+   "kind": "paint",
+   "ral": "8017",
+   "target": "#45322E",
+   "cells": [
+    {
+     "atlas": "1_Diffuse_1.1001_e5pokwfjvgc7.png",
+     "cell": 0,
+     "x": 0,
+     "y": 0,
+     "w": 512,
+     "h": 512,
+     "kind": "solid",
+     "color": "#402E0D",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "MAF_Atlas_001_Diffuse.png",
+     "cell": 7,
+     "x": 1808,
+     "y": 1024,
+     "w": 584,
+     "h": 736,
+     "kind": "solid",
+     "color": "#402618",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_02.png",
+     "cell": 2,
+     "x": 1080,
+     "y": 0,
+     "w": 296,
+     "h": 744,
+     "kind": "solid",
+     "color": "#54493F",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 20,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 14,
+   "key": "wood_light",
+   "name_ru": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+   "kind": "wood",
+   "ral": null,
+   "target": "#BEA581",
+   "cells": [
+    {
+     "atlas": "1_Diffuse_1.1001_e5pokwfjvgc7.png",
+     "cell": 9,
+     "x": 0,
+     "y": 1024,
+     "w": 1024,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#BEA581",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [
+      "MAF_0001"
+     ],
+     "uv_faces": 1006
+    },
+    {
+     "atlas": "MAF_Atlas_001_Diffuse.png",
+     "cell": 6,
+     "x": 0,
+     "y": 1024,
+     "w": 1808,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#B68358",
+     "dist": 0.7,
+     "dist_own": 27.7,
+     "uv_mafs": [
+      "MAF_0014",
+      "MAF_0015"
+     ],
+     "uv_faces": 88
+    },
+    {
+     "atlas": "T_Atlas_MAF.png",
+     "cell": 0,
+     "x": 0,
+     "y": 0,
+     "w": 1080,
+     "h": 4096,
+     "kind": "patterned",
+     "color": "#BEA581",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [
+      "MAF_0073",
+      "MAF_0074",
+      "MAF_0076",
+      "MAF_0079",
+      "MAF_0083",
+      "MAF_0086",
+      "MAF_0087",
+      "MAF_0089",
+      "MAF_0090"
+     ],
+     "uv_faces": 2076
+    },
+    {
+     "atlas": "atlas_01.png",
+     "cell": 3,
+     "x": 0,
+     "y": 1024,
+     "w": 1024,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#BEA581",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png",
+     "cell": 11,
+     "x": 0,
+     "y": 128,
+     "w": 256,
+     "h": 384,
+     "kind": "patterned",
+     "color": "#BEA581",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [
+    {
+     "material": "Balki-wood",
+     "mafs": 1
+    },
+    {
+     "material": "NATURE ДЕРЕВО",
+     "mafs": 4
+    },
+    {
+     "material": "Oak Matt Brightuk",
+     "mafs": 2
+    }
+   ],
+   "spec_rows": [
+    "*T3508#1",
+    "*T3508#2",
+    "*T3508#3",
+    "*T3508#4",
+    "*T3508#5",
+    "*T3508#6",
+    "*T3508#7",
+    "*T3508#8",
+    "*T3508#9",
+    "*T3508#10",
+    "*T3508#11",
+    "*T3508#12",
+    "*T3508#13",
+    "*T3508#14",
+    "*T3508#15",
+    "*T3508#16",
+    "*T3508#17",
+    "*T3510#1",
+    "*T3510#2",
+    "*T3510#3",
+    "*T3510#4",
+    "*T3510#5",
+    "*T3510#7",
+    "*T3510#8",
+    "*T3510#9",
+    "*T3510#10",
+    "*T3510#11",
+    "*T3510#12",
+    "*T3510#13",
+    "*T3510#14",
+    "*T3510#16",
+    "*T3510#17",
+    "*T3510#18",
+    "*T3510#19",
+    "*T3510#20",
+    "*T3510#21",
+    "*T3510#22",
+    "*T3510#23",
+    "*T3510#24",
+    "*T3510#25",
+    "*T3510#26",
+    "*T3510#27",
+    "*T3510#28",
+    "*T3510#29",
+    "*T3510#30",
+    "*T3510#31"
+   ],
+   "size": "L",
+   "atlas": true,
+   "review": [
+    "HPL \"Атласное дерево\" (T3510#26, tennis table) is a light wood decor; light wood cell, на проверку"
+   ],
+   "prev_id": 21,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 15,
+   "key": "wood_medium",
+   "name_ru": "WOOD средняя: дуб усреднённый тон",
+   "kind": "wood",
+   "ral": null,
+   "target": "#967356",
+   "cells": [
+    {
+     "atlas": "1_Diffuse_1.1001_e5pokwfjvgc7.png",
+     "cell": 10,
+     "x": 2048,
+     "y": 1024,
+     "w": 2048,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#957256",
+     "dist": 0.7,
+     "dist_own": 0.7,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_01.png",
+     "cell": 5,
+     "x": 2048,
+     "y": 1024,
+     "w": 2048,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#967356",
+     "dist": 2.0,
+     "dist_own": 2.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_02.png",
+     "cell": 10,
+     "x": 0,
+     "y": 1024,
+     "w": 1696,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#957256",
+     "dist": 0.7,
+     "dist_own": 0.7,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_03.png",
+     "cell": 6,
+     "x": 0,
+     "y": 1024,
+     "w": 1696,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#957256",
+     "dist": 0.7,
+     "dist_own": 0.7,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png",
+     "cell": 17,
+     "x": 256,
+     "y": 255,
+     "w": 256,
+     "h": 257,
+     "kind": "patterned",
+     "color": "#957256",
+     "dist": 0.3,
+     "dist_own": 0.3,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "L",
+   "atlas": true,
+   "review": [],
+   "prev_id": 23,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 16,
+   "key": "wood_dark",
+   "name_ru": "WOOD тёмная: орех / тёмный дуб / лиственница чёрная",
+   "kind": "wood",
+   "ral": null,
+   "target": "#7F583D",
+   "cells": [
+    {
+     "atlas": "ID_2_Лиственница_Черная_f.png",
+     "cell": 4,
+     "x": 0,
+     "y": 1512,
+     "w": 2056,
+     "h": 2584,
+     "kind": "patterned",
+     "color": "#553025",
+     "dist": 0.0,
+     "dist_own": 35.3,
+     "uv_mafs": [
+      "MAF_0056"
+     ],
+     "uv_faces": 80
+    },
+    {
+     "atlas": "MAF_Atlas_001_Diffuse.png",
+     "cell": 9,
+     "x": 1808,
+     "y": 1760,
+     "w": 584,
+     "h": 2336,
+     "kind": "patterned",
+     "color": "#7F583D",
+     "dist": 2.0,
+     "dist_own": 2.0,
+     "uv_mafs": [
+      "MAF_0015"
+     ],
+     "uv_faces": 2
+    },
+    {
+     "atlas": "MAF_Atlas_001_Diffuse.png",
+     "cell": 10,
+     "x": 2392,
+     "y": 2040,
+     "w": 1704,
+     "h": 2056,
+     "kind": "patterned",
+     "color": "#845B3F",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [
+      "MAF_0015"
+     ],
+     "uv_faces": 2
+    }
+   ],
+   "library_materials": [
+    {
+     "material": "ID_2 Лиственница (Тёмная)",
+     "mafs": 7
+    }
+   ],
+   "spec_rows": [],
+   "size": "L",
+   "atlas": true,
+   "review": [],
+   "prev_id": 24,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 17,
+   "key": "wood_grey_washed",
+   "name_ru": "WOOD серая/беленая",
+   "kind": "wood",
+   "ral": null,
+   "target": "#8F785C",
+   "cells": [
+    {
+     "atlas": "atlas_02.png",
+     "cell": 7,
+     "x": 3448,
+     "y": 512,
+     "w": 648,
+     "h": 512,
+     "kind": "patterned",
+     "color": "#8F785C",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_03.png",
+     "cell": 5,
+     "x": 3448,
+     "y": 512,
+     "w": 648,
+     "h": 512,
+     "kind": "patterned",
+     "color": "#8F785C",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "M",
+   "atlas": true,
+   "review": [],
+   "prev_id": 26,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 18,
+   "key": "wood_log_end",
+   "name_ru": "WOOD спил бревна (торец)",
+   "kind": "wood",
+   "ral": null,
+   "target": "#C8A27A",
+   "cells": [],
+   "library_materials": [],
+   "spec_rows": [
+    "*T3510#11",
+    "*T3510#12",
+    "*T3510#13",
+    "*T3510#14",
+    "*T3510#16",
+    "*T3510#17",
+    "*T3510#20",
+    "*T3510#21",
+    "*T3510#22"
+   ],
+   "size": "M",
+   "atlas": true,
+   "review": [],
+   "prev_id": 27,
+   "picked_patch": null,
+   "status": "proposed, gap: no atlas cell (spec asks for it)"
+  },
+  {
+   "id": 19,
+   "key": "plywood",
+   "name_ru": "фанера",
+   "kind": "wood",
+   "ral": null,
+   "target": "#D9B38F",
+   "cells": [
+    {
+     "atlas": "MAF_Atlas_001_Diffuse.png",
+     "cell": 3,
+     "x": 2560,
+     "y": 0,
+     "w": 728,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#D9B38F",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png",
+     "cell": 5,
+     "x": 320,
+     "y": 0,
+     "w": 192,
+     "h": 127,
+     "kind": "patterned",
+     "color": "#DABE98",
+     "dist": 7.7,
+     "dist_own": 7.7,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [
+    {
+     "material": "фанера",
+     "mafs": 4
+    }
+   ],
+   "spec_rows": [],
+   "size": "M",
+   "atlas": true,
+   "review": [],
+   "prev_id": 28,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 20,
+   "key": "steel_stainless",
+   "name_ru": "сталь нержавеющая глянец",
+   "kind": "metal",
+   "ral": null,
+   "target": "#C3C8CE",
+   "cells": [
+    {
+     "atlas": "1_Diffuse_1.1001_e5pokwfjvgc7.png",
+     "cell": 5,
+     "x": 2560,
+     "y": 0,
+     "w": 1536,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#C3C8CE",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "1_Diffuse_1.1001_e5pokwfjvgc7.png",
+     "cell": 8,
+     "x": 1024,
+     "y": 512,
+     "w": 1024,
+     "h": 3584,
+     "kind": "solid",
+     "color": "#BCBCBC",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [
+      "MAF_0001"
+     ],
+     "uv_faces": 515
+    },
+    {
+     "atlas": "MAF_Atlas_001_Diffuse.png",
+     "cell": 8,
+     "x": 2392,
+     "y": 1024,
+     "w": 1704,
+     "h": 1016,
+     "kind": "solid",
+     "color": "#C5C5C5",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [
+      "MAF_0007",
+      "MAF_0011",
+      "MAF_0014",
+      "MAF_0015",
+      "MAF_0016"
+     ],
+     "uv_faces": 1683
+    },
+    {
+     "atlas": "T_Atlas_MAF.png",
+     "cell": 3,
+     "x": 2312,
+     "y": 0,
+     "w": 704,
+     "h": 1072,
+     "kind": "solid",
+     "color": "#B9BDC0",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [
+      "MAF_0072",
+      "MAF_0089"
+     ],
+     "uv_faces": 110
+    },
+    {
+     "atlas": "atlas_01.png",
+     "cell": 2,
+     "x": 2560,
+     "y": 0,
+     "w": 1536,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#C3C8CE",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_01.png",
+     "cell": 4,
+     "x": 1024,
+     "y": 1024,
+     "w": 1024,
+     "h": 3072,
+     "kind": "solid",
+     "color": "#BCBCBC",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_02.png",
+     "cell": 11,
+     "x": 1696,
+     "y": 1024,
+     "w": 352,
+     "h": 408,
+     "kind": "patterned",
+     "color": "#C7C7C7",
+     "dist": 2.3,
+     "dist_own": 2.3,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_03.png",
+     "cell": 0,
+     "x": 0,
+     "y": 0,
+     "w": 2048,
+     "h": 1024,
+     "kind": "patterned",
+     "color": "#D5D5D5",
+     "dist": 4.7,
+     "dist_own": 4.7,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_04.png",
+     "cell": 5,
+     "x": 128,
+     "y": 65,
+     "w": 126,
+     "h": 62,
+     "kind": "solid",
+     "color": "#BDBDBD",
+     "dist": 1.0,
+     "dist_own": 1.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_04.png",
+     "cell": 7,
+     "x": 300,
+     "y": 129,
+     "w": 84,
+     "h": 125,
+     "kind": "solid",
+     "color": "#C4C4C4",
+     "dist": 1.0,
+     "dist_own": 1.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png",
+     "cell": 8,
+     "x": 128,
+     "y": 64,
+     "w": 128,
+     "h": 64,
+     "kind": "solid",
+     "color": "#BCBCBC",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png",
+     "cell": 9,
+     "x": 256,
+     "y": 127,
+     "w": 128,
+     "h": 128,
+     "kind": "solid",
+     "color": "#C3C3C3",
+     "dist": 2.0,
+     "dist_own": 2.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [
+    {
+     "material": "нержа",
+     "mafs": 8
+    }
+   ],
+   "spec_rows": [
+    "*T3510#11",
+    "*T3510#12",
+    "*T3510#13",
+    "*T3510#14",
+    "*T3510#16",
+    "*T3510#17",
+    "*T3510#20",
+    "*T3510#21",
+    "*T3510#22"
+   ],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 29,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 21,
+   "key": "metal_bronze_brushed",
+   "name_ru": "бронза шлифованная",
+   "kind": "metal",
+   "ral": null,
+   "target": "#8C6A3F",
+   "cells": [],
+   "library_materials": [
+    {
+     "material": "Bronze_Brushed",
+     "mafs": 2
+    }
+   ],
+   "spec_rows": [],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 30,
+   "picked_patch": null,
+   "status": "proposed, gap: no atlas cell"
+  },
+  {
+   "id": 22,
+   "key": "cap_black",
+   "name_ru": "пластик чёрный матовый (заглушки, колпаки, полиамид)",
+   "kind": "plastic",
+   "ral": null,
+   "target": "#303030",
+   "cells": [
+    {
+     "atlas": "1_Diffuse_1.1001_e5pokwfjvgc7.png",
+     "cell": 3,
+     "x": 1536,
+     "y": 0,
+     "w": 512,
+     "h": 512,
+     "kind": "solid",
+     "color": "#2E3034",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "Untitled_Diffuse_1.1001.png",
+     "cell": 3,
+     "x": 2048,
+     "y": 1384,
+     "w": 2048,
+     "h": 504,
+     "kind": "solid",
+     "color": "#2B3034",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [
+      "MAF_0008"
+     ],
+     "uv_faces": 1
+    },
+    {
+     "atlas": "atlas_01.png",
+     "cell": 1,
+     "x": 2152,
+     "y": 0,
+     "w": 408,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#303030",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_02.png",
+     "cell": 4,
+     "x": 2808,
+     "y": 0,
+     "w": 640,
+     "h": 512,
+     "kind": "solid",
+     "color": "#2E3034",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_03.png",
+     "cell": 2,
+     "x": 2808,
+     "y": 0,
+     "w": 640,
+     "h": 512,
+     "kind": "solid",
+     "color": "#2E3034",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png",
+     "cell": 3,
+     "x": 192,
+     "y": 0,
+     "w": 64,
+     "h": 64,
+     "kind": "solid",
+     "color": "#2E3034",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [
+    {
+     "material": "Kolpak",
+     "mafs": 2
+    },
+    {
+     "material": "Plastic_Black_Matte",
+     "mafs": 5
+    },
+    {
+     "material": "черный мат",
+     "mafs": 3
+    }
+   ],
+   "spec_rows": [
+    "*T3510#11",
+    "*T3510#12",
+    "*T3510#13",
+    "*T3510#14",
+    "*T3510#16",
+    "*T3510#17",
+    "*T3510#20",
+    "*T3510#21",
+    "*T3510#22"
+   ],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 31,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 23,
+   "key": "rubber_black",
+   "name_ru": "резина чёрная (шина, EPDM)",
+   "kind": "rubber",
+   "ral": null,
+   "target": "#2B2B2B",
+   "cells": [],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "S",
+   "atlas": true,
+   "review": [],
+   "prev_id": 34,
+   "picked_patch": null,
+   "status": "proposed, gap: no atlas cell"
+  },
+  {
+   "id": 24,
+   "key": "concrete_arch",
+   "name_ru": "бетон архитектурный",
+   "kind": "mineral",
+   "ral": null,
+   "target": "#A69799",
+   "cells": [],
+   "library_materials": [],
+   "spec_rows": [
+    "*T3510#11",
+    "*T3510#12",
+    "*T3510#13",
+    "*T3510#14",
+    "*T3510#15",
+    "*T3510#16",
+    "*T3510#17",
+    "*T3510#20",
+    "*T3510#21",
+    "*T3510#22"
+   ],
+   "size": "M",
+   "atlas": true,
+   "review": [],
+   "prev_id": 35,
+   "picked_patch": null,
+   "status": "proposed, gap: no atlas cell (spec asks for it)"
+  },
+  {
+   "id": 25,
+   "key": "terrazzo",
+   "name_ru": "терраццо / гранит крапчатый",
+   "kind": "mineral",
+   "ral": null,
+   "target": "#C7C7C7",
+   "cells": [],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "M",
+   "atlas": true,
+   "review": [],
+   "prev_id": 36,
+   "picked_patch": {
+    "atlas": "atlas_02.png",
+    "x": 2208,
+    "y": 544,
+    "w": 128,
+    "h": 128,
+    "mean": "#D2D0C6",
+    "dist": 7.0,
+    "note": "picked clean patch by colour search inside an unassigned patterned cell - на проверку"
+   },
+   "status": "proposed, gap: no atlas cell"
+  },
+  {
+   "id": 26,
+   "key": "sand",
+   "name_ru": "песок / пробка",
+   "kind": "mineral",
+   "ral": null,
+   "target": "#C3A37E",
+   "cells": [],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "M",
+   "atlas": true,
+   "review": [],
+   "prev_id": 37,
+   "picked_patch": null,
+   "status": "proposed, gap: no atlas cell"
+  },
+  {
+   "id": 27,
+   "key": "mesh_chainlink",
+   "name_ru": "сетка рабица (opacity)",
+   "kind": "opacity",
+   "ral": null,
+   "target": "#3A3A3A",
+   "cells": [
+    {
+     "atlas": "ID_5_Сетка_D.png",
+     "cell": 0,
+     "x": 0,
+     "y": 0,
+     "w": 3708,
+     "h": 4608,
+     "kind": "patterned",
+     "color": "#3A3A3A",
+     "dist": 0.0,
+     "dist_own": 0.0,
+     "uv_mafs": [
+      "MAF_0065"
+     ],
+     "uv_faces": 16
+    },
+    {
+     "atlas": "atlas_01.png",
+     "cell": 0,
+     "x": 0,
+     "y": 0,
+     "w": 2152,
+     "h": 1024,
+     "kind": "patterned",
+     "color": "#3F4749",
+     "dist": 9.0,
+     "dist_own": 9.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_02.png",
+     "cell": 18,
+     "x": 3072,
+     "y": 2568,
+     "w": 1024,
+     "h": 1528,
+     "kind": "patterned",
+     "color": "#3F4749",
+     "dist": 4.0,
+     "dist_own": 4.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    },
+    {
+     "atlas": "atlas_03.png",
+     "cell": 12,
+     "x": 3072,
+     "y": 2568,
+     "w": 1024,
+     "h": 1528,
+     "kind": "patterned",
+     "color": "#3F4749",
+     "dist": 4.0,
+     "dist_own": 4.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [
+    {
+     "material": "ID_5_Сетка",
+     "mafs": 7
+    }
+   ],
+   "spec_rows": [],
+   "size": "M",
+   "atlas": true,
+   "review": [],
+   "prev_id": 38,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 28,
+   "key": "perforation",
+   "name_ru": "перфорация / полосы (opacity)",
+   "kind": "opacity",
+   "ral": null,
+   "target": "#3F4749",
+   "cells": [],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "M",
+   "atlas": true,
+   "review": [],
+   "prev_id": 39,
+   "picked_patch": null,
+   "status": "proposed, spec-only: colour/appearance not given by any atlas or spec - needs Artem"
+  },
+  {
+   "id": 29,
+   "key": "rope_pp",
+   "name_ru": "канат полипропиленовый армированный",
+   "kind": "opacity",
+   "ral": null,
+   "target": "#5A5A5A",
+   "cells": [],
+   "library_materials": [],
+   "spec_rows": [
+    "*T3510#28"
+   ],
+   "size": "M",
+   "atlas": true,
+   "review": [],
+   "prev_id": 40,
+   "picked_patch": null,
+   "status": "proposed, spec-only: colour/appearance not given by any atlas or spec - needs Artem"
+  },
+  {
+   "id": 30,
+   "key": "sheet_profiled",
+   "name_ru": "профнастил",
+   "kind": "sheet",
+   "ral": null,
+   "target": "#707070",
+   "cells": [
+    {
+     "atlas": "Untitled_Diffuse_1.1001.png",
+     "cell": 1,
+     "x": 2048,
+     "y": 0,
+     "w": 976,
+     "h": 1384,
+     "kind": "solid",
+     "color": "#767468",
+     "dist": 6.0,
+     "dist_own": 6.0,
+     "uv_mafs": [
+      "MAF_0008",
+      "MAF_0009"
+     ],
+     "uv_faces": 80
+    },
+    {
+     "atlas": "atlas_02.png",
+     "cell": 14,
+     "x": 1696,
+     "y": 1432,
+     "w": 352,
+     "h": 2664,
+     "kind": "solid",
+     "color": "#726E65",
+     "dist": 5.0,
+     "dist_own": 5.0,
+     "uv_mafs": [],
+     "uv_faces": 0
+    }
+   ],
+   "library_materials": [],
+   "spec_rows": [],
+   "size": "M",
+   "atlas": true,
+   "review": [],
+   "prev_id": 41,
+   "picked_patch": null,
+   "status": "proposed"
+  },
+  {
+   "id": 31,
+   "key": "polycarbonate",
+   "name_ru": "поликарбонат (GroundElGlass, без текстуры, MAF-06)",
+   "kind": "translucent",
+   "ral": null,
+   "target": "#DCE6EA",
+   "cells": [],
+   "library_materials": [],
+   "spec_rows": [
+    "*T3510#19"
+   ],
+   "size": "S",
+   "atlas": false,
+   "review": [],
+   "prev_id": 42,
+   "picked_patch": null,
+   "status": "proposed, not in the atlas: polycarbonate / glass - GroundElGlass, no texture set (MAF-06)"
+  }
+ ],
+ "inventory": {
+  "found": [
+   {
+    "name": "1_Diffuse_1.1001_e5pokwfjvgc7.png",
+    "copies": [
+     {
+      "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps/1_Diffuse_1.1001_e5pokwfjvgc7.png",
+      "bytes": 15121566,
+      "sha256": "512e24b867002a7f6456817e3b23d30df447131dd8628f55ff9fa802fa1d7550"
+     }
+    ],
+    "mafs": [
+     "MAF_0001"
+    ],
+    "materials": [
+     "Material #1255"
+    ],
+    "ground_other_site": false,
+    "copies_identical": true,
+    "size_px": [
+     4096,
+     4096
+    ]
+   },
+   {
+    "name": "77_17_0120316_33510_D_26_Ground_d_1.png",
+    "copies": [
+     {
+      "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/77_17_0120316_33510_D_26_Ground_d_1.png",
+      "bytes": 10407622,
+      "sha256": "486a2b651c1103cc2bade58cd750f9fc0285a19630f239d4bd8d31373be8780e"
+     }
+    ],
+    "mafs": [
+     "MAF_0036",
+     "MAF_0037"
+    ],
+    "materials": [
+     "M_77_17_0120316_33510_D_26_Ground_1"
+    ],
+    "ground_other_site": true,
+    "copies_identical": true
+   },
+   {
+    "name": "77_17_0120316_33510_D_26_Ground_d_2.png",
+    "copies": [
+     {
+      "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/77_17_0120316_33510_D_26_Ground_d_2.png",
+      "bytes": 15553628,
+      "sha256": "7563db4b3a7f0cf3c9a435fda2f41db70aee4ab7083404ca55907ebe4c367d5d"
+     }
+    ],
+    "mafs": [
+     "MAF_0036",
+     "MAF_0037"
+    ],
+    "materials": [
+     "M_77_17_0120316_33510_D_26_Ground_2"
+    ],
+    "ground_other_site": true,
+    "copies_identical": true
+   },
+   {
+    "name": "77_17_0120316_33510_D_26_Ground_d_3.png",
+    "copies": [
+     {
+      "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/77_17_0120316_33510_D_26_Ground_d_3.png",
+      "bytes": 2575624,
+      "sha256": "7149a287e99457d2a6091f70c2be0d94eb12eaa4cc83d51ad876d630052c42b9"
+     }
+    ],
+    "mafs": [
+     "MAF_0036",
+     "MAF_0037"
+    ],
+    "materials": [
+     "M_77_17_0120316_33510_D_26_Ground_3"
+    ],
+    "ground_other_site": true,
+    "copies_identical": true
+   },
+   {
+    "name": "ID_1_RAL 9005.png",
+    "copies": [
+     {
+      "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/ID_1_RAL 9005.png",
+      "bytes": 3411,
+      "sha256": "341f5f5472c8ef04d792e8d2b04806c1403408050de5c1b648ff2490638cb3f9"
+     }
+    ],
+    "mafs": [
+     "MAF_0055",
+     "MAF_0056",
+     "MAF_0057",
+     "MAF_0058",
+     "MAF_0059",
+     "MAF_0060",
+     "MAF_0061",
+     "MAF_0065"
+    ],
+    "materials": [
+     "ID_1_RAL 9005"
+    ],
+    "ground_other_site": false,
+    "copies_identical": true,
+    "size_px": [
+     256,
+     256
+    ]
+   },
+   {
+    "name": "ID_2_Лиственница_Черная_f.png",
+    "copies": [
+     {
+      "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/ID_2_Лиственница_Черная_f.png",
+      "bytes": 16519492,
+      "sha256": "012c3957274eb410c6c2b39d2e30d92970824839d7099c4cf0d82cf16e66d3ce"
+     }
+    ],
+    "mafs": [
+     "MAF_0056",
+     "MAF_0057",
+     "MAF_0058",
+     "MAF_0059",
+     "MAF_0060",
+     "MAF_0061",
+     "MAF_0065"
+    ],
+    "materials": [
+     "ID_2 Лиственница (Тёмная)"
+    ],
+    "ground_other_site": false,
+    "copies_identical": true,
+    "size_px": [
+     4096,
+     4096
+    ]
+   },
+   {
+    "name": "ID_5_Сетка_D.png",
+    "copies": [
+     {
+      "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/ID_5_Сетка_D.png",
+      "bytes": 310151,
+      "sha256": "00abb8bc925e24e52b9b5cd913a46dc9c8c7f25803e47f85cffb46d0fc25b2bd"
+     }
+    ],
+    "mafs": [
+     "MAF_0056",
+     "MAF_0057",
+     "MAF_0058",
+     "MAF_0059",
+     "MAF_0060",
+     "MAF_0061",
+     "MAF_0065"
+    ],
+    "materials": [
+     "ID_5_Сетка"
+    ],
+    "ground_other_site": false,
+    "copies_identical": true,
+    "size_px": [
+     3712,
+     4608
+    ]
+   },
+   {
+    "name": "ID_5_Сетка_O.png",
+    "copies": [
+     {
+      "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/ID_5_Сетка_O.png",
+      "bytes": 261790,
+      "sha256": "96784271f57ab6fe88b37857c9322af0ce89a52b5af07054fd5f5e8740a90dd0"
+     }
+    ],
+    "mafs": [
+     "MAF_0056",
+     "MAF_0057",
+     "MAF_0058",
+     "MAF_0059",
+     "MAF_0060",
+     "MAF_0061",
+     "MAF_0065"
+    ],
+    "materials": [
+     "ID_5_Сетка"
+    ],
+    "ground_other_site": false,
+    "copies_identical": true,
+    "size_px": [
+     3712,
+     4608
+    ]
+   },
+   {
+    "name": "MAF_Atlas_001_Diffuse.png",
+    "copies": [
+     {
+      "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/MAF_Atlas_001_Diffuse.png",
+      "bytes": 16236175,
+      "sha256": "447f6b3196c59673274b315fa9c8703cd21a36c85d38319688396d12414a873f"
+     }
+    ],
+    "mafs": [
+     "MAF_0007",
+     "MAF_0011",
+     "MAF_0014",
+     "MAF_0015",
+     "MAF_0016"
+    ],
+    "materials": [
+     "Material #1167"
+    ],
+    "ground_other_site": false,
+    "copies_identical": true,
+    "size_px": [
+     4096,
+     4096
+    ]
+   },
+   {
+    "name": "T_Atlas_MAF.png",
+    "copies": [
+     {
+      "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/T_Atlas_MAF.png",
+      "bytes": 7609908,
+      "sha256": "4c9f40b6b9d9e714acc647ef17f073f75ddcbe47f2c054d450fea4a8582c88d0"
+     }
+    ],
+    "mafs": [
+     "MAF_0068",
+     "MAF_0069",
+     "MAF_0070",
+     "MAF_0071",
+     "MAF_0072",
+     "MAF_0073",
+     "MAF_0074",
+     "MAF_0075",
+     "MAF_0076",
+     "MAF_0077",
+     "MAF_0078",
+     "MAF_0079",
+     "MAF_0080",
+     "MAF_0081",
+     "MAF_0082",
+     "MAF_0083",
+     "MAF_0084",
+     "MAF_0085",
+     "MAF_0086",
+     "MAF_0087",
+     "MAF_0088",
+     "MAF_0089",
+     "MAF_0090",
+     "MAF_0091",
+     "MAF_0093"
+    ],
+    "materials": [
+     "MAF"
+    ],
+    "ground_other_site": false,
+    "copies_identical": true,
+    "size_px": [
+     4096,
+     4096
+    ]
+   },
+   {
+    "name": "Untitled_Diffuse_1.1001.png",
+    "copies": [
+     {
+      "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps/Untitled_Diffuse_1.1001.png",
+      "bytes": 8450918,
+      "sha256": "0077b477544ddbe2871001f5d4e2f7f5c5d930029c273eced7d084833118a199"
+     }
+    ],
+    "mafs": [
+     "MAF_0008",
+     "MAF_0009"
+    ],
+    "materials": [
+     "Material #53"
+    ],
+    "ground_other_site": false,
+    "copies_identical": true,
+    "size_px": [
+     4096,
+     4096
+    ]
+   },
+   {
+    "name": "Untitled_Diffuse_1.1001_ngosp2lcps3p.png",
+    "copies": [
+     {
+      "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps/Untitled_Diffuse_1.1001_ngosp2lcps3p.png",
+      "bytes": 12998063,
+      "sha256": "6c026c4de531abae2e386d5651e59aa71dc8b7b04f5120d794a44b6f3616b2f5"
+     }
+    ],
+    "mafs": [
+     "MAF_0008",
+     "MAF_0009"
+    ],
+    "materials": [
+     "Untitled_Diffuse_1.1001"
+    ],
+    "ground_other_site": false,
+    "copies_identical": true,
+    "size_px": [
+     4096,
+     4096
+    ]
+   },
+   {
+    "name": "atlas_01.png",
+    "copies": [
+     {
+      "path": "C:/x/maf-atlases-artem/atlas_01.png",
+      "bytes": 15257241,
+      "sha256": "c4dfd7ba60294f78c3d04e28deaf23649e60f265133fe8f8699e5403ac27633c"
+     }
+    ],
+    "mafs": [],
+    "materials": [],
+    "ground_other_site": false,
+    "copies_identical": true,
+    "source": "extra atlas, not bound by a library MAF FBX",
+    "size_px": [
+     4096,
+     4096
+    ]
+   },
+   {
+    "name": "atlas_02.png",
+    "copies": [
+     {
+      "path": "C:/x/maf-atlases-artem/atlas_02.png",
+      "bytes": 14949047,
+      "sha256": "b0f6c46e30f6cc9fdd467ce27a642e28f0310c7cc9c23c34b17cce97f76153b0"
+     }
+    ],
+    "mafs": [],
+    "materials": [],
+    "ground_other_site": false,
+    "copies_identical": true,
+    "source": "extra atlas, not bound by a library MAF FBX",
+    "size_px": [
+     4096,
+     4096
+    ]
+   },
+   {
+    "name": "atlas_03.png",
+    "copies": [
+     {
+      "path": "C:/x/maf-atlases-artem/atlas_03.png",
+      "bytes": 15665205,
+      "sha256": "ab9fbdb03e99000c96d7b701afa2b8f27f92a8c67e4087d34fc6bccb36a17e4b"
+     }
+    ],
+    "mafs": [],
+    "materials": [],
+    "ground_other_site": false,
+    "copies_identical": true,
+    "source": "extra atlas, not bound by a library MAF FBX",
+    "size_px": [
+     4096,
+     4096
+    ]
+   },
+   {
+    "name": "atlas_04.png",
+    "copies": [
+     {
+      "path": "C:/x/maf-atlases-artem/atlas_04.png",
+      "bytes": 309764,
+      "sha256": "a9e897d6db98c46d9aaf3f141f3965a3e6ef8851de98825c08163ebe094e8155"
+     }
+    ],
+    "mafs": [],
+    "materials": [],
+    "ground_other_site": false,
+    "copies_identical": true,
+    "source": "extra atlas, not bound by a library MAF FBX",
+    "size_px": [
+     512,
+     512
+    ]
+   },
+   {
+    "name": "T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png",
+    "copies": [
+     {
+      "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps/T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png",
+      "bytes": 298600,
+      "sha256": "205cf90597c07b03e9c927d48a0278ce35500ac1ad5d7c40f26378531865ddb1"
+     }
+    ],
+    "mafs": [],
+    "materials": [],
+    "ground_other_site": false,
+    "copies_identical": true,
+    "source": "extra atlas, not bound by a library MAF FBX",
+    "size_px": [
+     512,
+     512
+    ]
+   },
+   {
+    "name": "example_id_layout.png",
+    "copies": [
+     {
+      "path": "C:/x/maf-atlases-artem/example_id_layout.png",
+      "bytes": 14432786,
+      "sha256": "1c1a6821c11d867ad330f6d7f5a805ff26992e7d31a35514c51f5f1c21d02bf8"
+     }
+    ],
+    "mafs": [],
+    "materials": [],
+    "ground_other_site": false,
+    "copies_identical": true,
+    "source": "layout example only, never a colour/texture source",
+    "size_px": [
+     4096,
+     4096
+    ]
+   }
+  ],
+  "missing": [
+   {
+    "name": "Maps.png",
+    "referenced_path": "E:\\06.Work\\29_Д5\\maps\\Марьино_Д5\\Maps.png",
+    "mafs": [
+     "MAF_0003"
+    ],
+    "materials": [
+     "Diffuse"
+    ],
+    "reason": "not found in any --maps-dir (searched: C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps; C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps)"
+   },
+   {
+    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1010.png",
+    "referenced_path": "C:\\x\\t_3e6ff1b3\\library\\fbx\\..\\..\\..\\..\\Users\\PC\\Desktop\\Work\\19_Уч_71_6\\_Исходники\\SM_Letnaya_ZU_71_6_Ground\\T_Letnaya_ZU_71_6_Ground_Diffuse_1.1010.png",
+    "mafs": [
+     "MAF_0041",
+     "MAF_0042",
+     "MAF_0043",
+     "MAF_0044",
+     "MAF_0045",
+     "MAF_0046",
+     "MAF_0047",
+     "MAF_0048",
+     "MAF_0049",
+     "MAF_0050",
+     "MAF_0051",
+     "MAF_0052",
+     "MAF_0053",
+     "MAF_0054"
+    ],
+    "materials": [
+     "ID_10"
+    ],
+    "reason": "not found in any --maps-dir (searched: C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps; C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps)"
+   },
+   {
+    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1013.png",
+    "referenced_path": "C:\\x\\t_3e6ff1b3\\library\\fbx\\..\\..\\..\\..\\Users\\Aliev_e\\Desktop\\Эльнур\\27_ModelsPr\\29_Уч_71\\_Исходники\\Ground\\T_Letnaya_ZU_71_6_Ground_Diffuse_1.1013.png",
+    "mafs": [
+     "MAF_0041",
+     "MAF_0042",
+     "MAF_0043",
+     "MAF_0044",
+     "MAF_0045",
+     "MAF_0046",
+     "MAF_0047",
+     "MAF_0048",
+     "MAF_0049",
+     "MAF_0050",
+     "MAF_0051",
+     "MAF_0052",
+     "MAF_0053",
+     "MAF_0054"
+    ],
+    "materials": [
+     "ID_13"
+    ],
+    "reason": "not found in any --maps-dir (searched: C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps; C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps)"
+   },
+   {
+    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1017.png",
+    "referenced_path": "C:\\x\\t_3e6ff1b3\\library\\fbx\\..\\..\\..\\..\\Users\\PC\\Desktop\\Work\\19_Уч_71_6\\_Исходники\\SM_Letnaya_ZU_71_6_Ground\\T_Letnaya_ZU_71_6_Ground_Diffuse_1.1017.png",
+    "mafs": [
+     "MAF_0041",
+     "MAF_0042",
+     "MAF_0043",
+     "MAF_0044",
+     "MAF_0045",
+     "MAF_0046",
+     "MAF_0047",
+     "MAF_0048",
+     "MAF_0049",
+     "MAF_0050",
+     "MAF_0051",
+     "MAF_0052",
+     "MAF_0053",
+     "MAF_0054"
+    ],
+    "materials": [
+     "ID_17"
+    ],
+    "reason": "not found in any --maps-dir (searched: C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps; C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps)"
+   },
+   {
+    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1018.png",
+    "referenced_path": "C:\\x\\t_3e6ff1b3\\library\\fbx\\..\\..\\..\\..\\Users\\PC\\Desktop\\Work\\19_Уч_71_6\\_Исходники\\SM_Letnaya_ZU_71_6_Ground\\T_Letnaya_ZU_71_6_Ground_Diffuse_1.1018.png",
+    "mafs": [
+     "MAF_0041",
+     "MAF_0042",
+     "MAF_0043",
+     "MAF_0044",
+     "MAF_0045",
+     "MAF_0046",
+     "MAF_0047",
+     "MAF_0048",
+     "MAF_0049",
+     "MAF_0050",
+     "MAF_0051",
+     "MAF_0052",
+     "MAF_0053",
+     "MAF_0054"
+    ],
+    "materials": [
+     "ID_18"
+    ],
+    "reason": "not found in any --maps-dir (searched: C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps; C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps)"
+   },
+   {
+    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1021.png",
+    "referenced_path": "C:\\x\\t_3e6ff1b3\\library\\fbx\\..\\..\\..\\..\\Users\\PC\\Desktop\\Work\\19_Уч_71_6\\_Исходники\\SM_Letnaya_ZU_71_6_Ground\\T_Letnaya_ZU_71_6_Ground_Diffuse_1.1021.png",
+    "mafs": [
+     "MAF_0041",
+     "MAF_0042",
+     "MAF_0043",
+     "MAF_0044",
+     "MAF_0045",
+     "MAF_0046",
+     "MAF_0047",
+     "MAF_0048",
+     "MAF_0049",
+     "MAF_0050",
+     "MAF_0051",
+     "MAF_0052",
+     "MAF_0053",
+     "MAF_0054"
+    ],
+    "materials": [
+     "ID_21"
+    ],
+    "reason": "not found in any --maps-dir (searched: C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps; C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps)"
+   },
+   {
+    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1022.png",
+    "referenced_path": "C:\\x\\t_3e6ff1b3\\library\\fbx\\..\\..\\..\\..\\Users\\PC\\Desktop\\Work\\19_Уч_71_6\\_Исходники\\SM_Letnaya_ZU_71_6_Ground\\T_Letnaya_ZU_71_6_Ground_Diffuse_1.1022.png",
+    "mafs": [
+     "MAF_0041",
+     "MAF_0042",
+     "MAF_0043",
+     "MAF_0044",
+     "MAF_0045",
+     "MAF_0046",
+     "MAF_0047",
+     "MAF_0048",
+     "MAF_0049",
+     "MAF_0050",
+     "MAF_0051",
+     "MAF_0052",
+     "MAF_0053",
+     "MAF_0054"
+    ],
+    "materials": [
+     "Material #117"
+    ],
+    "reason": "not found in any --maps-dir (searched: C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps; C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps)"
+   },
+   {
+    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1023.png",
+    "referenced_path": "C:\\x\\t_3e6ff1b3\\library\\fbx\\..\\..\\..\\..\\Users\\PC\\Desktop\\Work\\19_Уч_71_6\\_Исходники\\SM_Letnaya_ZU_71_6_Ground\\T_Letnaya_ZU_71_6_Ground_Diffuse_1.1023.png",
+    "mafs": [
+     "MAF_0041",
+     "MAF_0042",
+     "MAF_0043",
+     "MAF_0044",
+     "MAF_0045",
+     "MAF_0046",
+     "MAF_0047",
+     "MAF_0048",
+     "MAF_0049",
+     "MAF_0050",
+     "MAF_0051",
+     "MAF_0052",
+     "MAF_0053",
+     "MAF_0054"
+    ],
+    "materials": [
+     "Material #116"
+    ],
+    "reason": "not found in any --maps-dir (searched: C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps; C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps)"
+   },
+   {
+    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1024.png",
+    "referenced_path": "C:\\x\\t_3e6ff1b3\\library\\fbx\\..\\..\\..\\..\\Users\\Aliev_e\\Desktop\\Эльнур\\27_ModelsPr\\29_Уч_71\\_Исходники\\Ground\\T_Letnaya_ZU_71_6_Ground_Diffuse_1.1024.png",
+    "mafs": [
+     "MAF_0041",
+     "MAF_0042",
+     "MAF_0043",
+     "MAF_0044",
+     "MAF_0045",
+     "MAF_0046",
+     "MAF_0047",
+     "MAF_0048",
+     "MAF_0049",
+     "MAF_0050",
+     "MAF_0051",
+     "MAF_0052",
+     "MAF_0053",
+     "MAF_0054"
+    ],
+    "materials": [
+     "ID_24"
+    ],
+    "reason": "not found in any --maps-dir (searched: C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps; C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps)"
+   },
+   {
+    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1027.png",
+    "referenced_path": "C:\\x\\t_3e6ff1b3\\library\\fbx\\..\\..\\..\\..\\Users\\Aliev_e\\Desktop\\Эльнур\\27_ModelsPr\\29_Уч_71\\_Исходники\\Ground\\T_Letnaya_ZU_71_6_Ground_Diffuse_1.1027.png",
+    "mafs": [
+     "MAF_0041",
+     "MAF_0042",
+     "MAF_0043",
+     "MAF_0044",
+     "MAF_0045",
+     "MAF_0046",
+     "MAF_0047",
+     "MAF_0048",
+     "MAF_0049",
+     "MAF_0050",
+     "MAF_0051",
+     "MAF_0052",
+     "MAF_0053",
+     "MAF_0054"
+    ],
+    "materials": [
+     "ID_27"
+    ],
+    "reason": "not found in any --maps-dir (searched: C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps; C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps)"
+   },
+   {
+    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1029.png",
+    "referenced_path": "C:\\x\\t_3e6ff1b3\\library\\fbx\\..\\..\\..\\..\\Users\\Aliev_e\\Desktop\\Эльнур\\27_ModelsPr\\29_Уч_71\\_Исходники\\Ground\\T_Letnaya_ZU_71_6_Ground_Diffuse_1.1029.png",
+    "mafs": [
+     "MAF_0041",
+     "MAF_0042",
+     "MAF_0043",
+     "MAF_0044",
+     "MAF_0045",
+     "MAF_0046",
+     "MAF_0047",
+     "MAF_0048",
+     "MAF_0049",
+     "MAF_0050",
+     "MAF_0051",
+     "MAF_0052",
+     "MAF_0053",
+     "MAF_0054"
+    ],
+    "materials": [
+     "ID_29"
+    ],
+    "reason": "not found in any --maps-dir (searched: C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps; C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps)"
+   },
+   {
+    "name": "T_PervyjGrajvoronovskijProezd_Vl_3_Ground_Diffuse_1.1005.png",
+    "referenced_path": "D:\\Рабочий стол\\Work\\39_Паркинг\\Ground\\maps\\maps_HP\\T_PervyjGrajvoronovskijProezd_Vl_3_Ground_Diffuse_1.1005.png",
+    "mafs": [
+     "MAF_0095"
+    ],
+    "materials": [
+     "ID_01"
+    ],
+    "reason": "not found in any --maps-dir (searched: C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps; C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps)"
+   },
+   {
+    "name": "рп012_Diffuse_LOW.png",
+    "referenced_path": "E:\\06.Work\\29_Д5\\2_МАФы\\24_РП012\\рп012_Diffuse_LOW.png",
+    "mafs": [
+     "MAF_0025"
+    ],
+    "materials": [
+     "Mst_001"
+    ],
+    "reason": "not found in any --maps-dir (searched: C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps; C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps)"
+   },
+   {
+    "name": "рп012_Opacity_LOW.png",
+    "referenced_path": "E:\\06.Work\\29_Д5\\2_МАФы\\24_РП012\\рп012_Opacity_LOW.png",
+    "mafs": [
+     "MAF_0025"
+    ],
+    "materials": [
+     "Mst_001"
+    ],
+    "reason": "not found in any --maps-dir (searched: C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps; C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps)"
+   }
+  ],
+  "empty_bitmap": [
+   {
+    "material": "02 - Default",
+    "mafs": 6
+   },
+   {
+    "material": "02 - Default.001",
+    "mafs": 1
+   },
+   {
+    "material": "07 - Default",
+    "mafs": 1
+   },
+   {
+    "material": "08 - Default",
+    "mafs": 1
+   },
+   {
+    "material": "M_77_17_0150309_6155_D_2_GroundEl_1",
+    "mafs": 4
+   },
+   {
+    "material": "M_Pos_Desenovskoe_Kv_23_D_7_GroundEl_1",
+    "mafs": 22
+   },
+   {
+    "material": "M_Pos_Desenovskoe_Kv_23_D_7_GroundEl_1.001",
+    "mafs": 14
+   },
+   {
+    "material": "Material #1150",
+    "mafs": 23
+   },
+   {
+    "material": "Material #1272",
+    "mafs": 1
+   },
+   {
+    "material": "Material #2125652669",
+    "mafs": 19
+   },
+   {
+    "material": "Material #2125652671",
+    "mafs": 17
+   },
+   {
+    "material": "Material #2125652672",
+    "mafs": 19
+   },
+   {
+    "material": "Material #43",
+    "mafs": 22
+   },
+   {
+    "material": "Material #43.001",
+    "mafs": 14
+   },
+   {
+    "material": "Material #53",
+    "mafs": 27
+   },
+   {
+    "material": "Material #56",
+    "mafs": 7
+   },
+   {
+    "material": "Material #57",
+    "mafs": 7
+   },
+   {
+    "material": "Material #58",
+    "mafs": 7
+   },
+   {
+    "material": "Material #66",
+    "mafs": 1
+   },
+   {
+    "material": "Untitled_Diffuse_1.001",
+    "mafs": 1
+   },
+   {
+    "material": "Untitled_Diffuse_1.1001",
+    "mafs": 31
+   },
+   {
+    "material": "lab",
+    "mafs": 6
+   }
+  ],
+  "empty_bitmap_note": "FBX texture with an empty file path; the library .max scene keeps 70 bitmap maps with no file (max_maps readback), so no image is bound - not guessed"
+ },
+ "atlases": [
+  {
+   "size": [
+    4096,
+    4096
+   ],
+   "work_scale": 8.0,
+   "cells": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 512,
+     "h": 512,
+     "kind": "solid",
+     "color": "#402E0D",
+     "mean": "#402E0D",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 13,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 512,
+     "y": 0,
+     "w": 512,
+     "h": 512,
+     "kind": "solid",
+     "color": "#CB2525",
+     "mean": "#CB2525",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 7,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 1024,
+     "y": 0,
+     "w": 512,
+     "h": 512,
+     "kind": "solid",
+     "color": "#63A2D0",
+     "mean": "#63A2D0",
+     "solid_share": 1.0,
+     "std": 0.66,
+     "id": 11,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 1536,
+     "y": 0,
+     "w": 512,
+     "h": 512,
+     "kind": "solid",
+     "color": "#2E3034",
+     "mean": "#2E3034",
+     "solid_share": 0.984,
+     "std": 2.19,
+     "id": 22,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2048,
+     "y": 0,
+     "w": 512,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.21,
+     "id": 1,
+     "dist": 10.0,
+     "reason": null
+    },
+    {
+     "x": 2560,
+     "y": 0,
+     "w": 1536,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#C3C8CE",
+     "mean": "#C1C4C8",
+     "solid_share": 0.922,
+     "std": 24.94,
+     "id": 20,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 0,
+     "y": 512,
+     "w": 512,
+     "h": 512,
+     "kind": "solid",
+     "color": "#F9CF2B",
+     "mean": "#F9CF2B",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 6,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 512,
+     "y": 512,
+     "w": 512,
+     "h": 512,
+     "kind": "solid",
+     "color": "#DCDCDC",
+     "mean": "#DCDCDC",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 4,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 1024,
+     "y": 512,
+     "w": 1024,
+     "h": 3584,
+     "kind": "solid",
+     "color": "#BCBCBC",
+     "mean": "#BCBCBC",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 20,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 0,
+     "y": 1024,
+     "w": 1024,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#BEA581",
+     "mean": "#BEA581",
+     "solid_share": 0.678,
+     "std": 6.46,
+     "id": 14,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2048,
+     "y": 1024,
+     "w": 2048,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#957256",
+     "mean": "#957256",
+     "solid_share": 0.588,
+     "std": 7.89,
+     "id": 15,
+     "dist": 0.7,
+     "reason": null
+    }
+   ],
+   "name": "1_Diffuse_1.1001_e5pokwfjvgc7.png",
+   "mafs": [
+    "MAF_0001"
+   ],
+   "role": "atlas",
+   "uv": {
+    "cells": {
+     "9": {
+      "faces": 1006,
+      "mafs": [
+       "MAF_0001"
+      ],
+      "min_margin_px": -336,
+      "corner_faces": 0
+     },
+     "8": {
+      "faces": 515,
+      "mafs": [
+       "MAF_0001"
+      ],
+      "min_margin_px": -181,
+      "corner_faces": 0
+     },
+     "7": {
+      "faces": 4,
+      "mafs": [
+       "MAF_0001"
+      ],
+      "min_margin_px": -341,
+      "corner_faces": 4
+     }
+    },
+    "uncovered": {
+     "faces": 0,
+     "mafs": []
+    }
+   },
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps/1_Diffuse_1.1001_e5pokwfjvgc7.png"
+  },
+  {
+   "size": [
+    256,
+    256
+   ],
+   "work_scale": 1.0,
+   "cells": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 256,
+     "h": 256,
+     "kind": "solid",
+     "color": "#030305",
+     "mean": "#030305",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 1,
+     "dist": 6.3,
+     "reason": null
+    }
+   ],
+   "name": "ID_1_RAL 9005.png",
+   "mafs": [
+    "MAF_0055",
+    "MAF_0056",
+    "MAF_0057",
+    "MAF_0058",
+    "MAF_0059",
+    "MAF_0060",
+    "MAF_0061",
+    "MAF_0065"
+   ],
+   "role": "single-material map",
+   "uv": {
+    "cells": {
+     "0": {
+      "faces": 7069,
+      "mafs": [
+       "MAF_0055",
+       "MAF_0056",
+       "MAF_0057",
+       "MAF_0058",
+       "MAF_0059",
+       "MAF_0060",
+       "MAF_0061",
+       "MAF_0065"
+      ],
+      "min_margin_px": -9,
+      "corner_faces": 394
+     }
+    },
+    "uncovered": {
+     "faces": 0,
+     "mafs": []
+    }
+   },
+   "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/ID_1_RAL 9005.png"
+  },
+  {
+   "size": [
+    4096,
+    4096
+   ],
+   "work_scale": 8.0,
+   "cells": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 2056,
+     "h": 1512,
+     "kind": "solid",
+     "color": "#030305",
+     "mean": "#030305",
+     "solid_share": 0.998,
+     "std": 0.45,
+     "id": 1,
+     "dist": 6.3,
+     "reason": null
+    },
+    {
+     "x": 2056,
+     "y": 0,
+     "w": 2040,
+     "h": 4096,
+     "kind": "mixed",
+     "color": "#806E5A",
+     "mean": "#8A745F",
+     "solid_share": 0.063,
+     "std": 42.81,
+     "id": null,
+     "reason": "mixed region around flat blocks (non-rectangular content: decal/pattern)"
+    },
+    {
+     "x": 3432,
+     "y": 0,
+     "w": 632,
+     "h": 4088,
+     "kind": "solid",
+     "color": "#414141",
+     "mean": "#464443",
+     "solid_share": 0.958,
+     "std": 16.47,
+     "id": 2,
+     "dist": 3.0,
+     "reason": null
+    },
+    {
+     "x": 2064,
+     "y": 1392,
+     "w": 1400,
+     "h": 64,
+     "kind": "solid",
+     "color": "#BC9272",
+     "mean": "#BC9272",
+     "solid_share": 1.0,
+     "std": 0.75,
+     "id": null,
+     "reason": "flat colour matches no id within tolerance"
+    },
+    {
+     "x": 0,
+     "y": 1512,
+     "w": 2056,
+     "h": 2584,
+     "kind": "patterned",
+     "color": "#553025",
+     "mean": "#553025",
+     "solid_share": 0.227,
+     "std": 19.73,
+     "id": 16,
+     "dist": 0.0,
+     "reason": null
+    }
+   ],
+   "name": "ID_2_Лиственница_Черная_f.png",
+   "mafs": [
+    "MAF_0056",
+    "MAF_0057",
+    "MAF_0058",
+    "MAF_0059",
+    "MAF_0060",
+    "MAF_0061",
+    "MAF_0065"
+   ],
+   "role": "atlas",
+   "uv": {
+    "cells": {
+     "4": {
+      "faces": 80,
+      "mafs": [
+       "MAF_0056"
+      ],
+      "min_margin_px": 74,
+      "corner_faces": 0
+     }
+    },
+    "uncovered": {
+     "faces": 0,
+     "mafs": []
+    }
+   },
+   "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/ID_2_Лиственница_Черная_f.png"
+  },
+  {
+   "size": [
+    3712,
+    4608
+   ],
+   "work_scale": 9.0,
+   "cells": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 3708,
+     "h": 4608,
+     "kind": "patterned",
+     "color": "#3A3A3A",
+     "mean": "#555555",
+     "solid_share": 0.847,
+     "std": 66.05,
+     "id": 27,
+     "dist": 0.0,
+     "reason": null
+    }
+   ],
+   "name": "ID_5_Сетка_D.png",
+   "mafs": [
+    "MAF_0056",
+    "MAF_0057",
+    "MAF_0058",
+    "MAF_0059",
+    "MAF_0060",
+    "MAF_0061",
+    "MAF_0065"
+   ],
+   "role": "single-material map",
+   "uv": {
+    "cells": {
+     "0": {
+      "faces": 16,
+      "mafs": [
+       "MAF_0065"
+      ],
+      "min_margin_px": 1232,
+      "corner_faces": 0
+     }
+    },
+    "uncovered": {
+     "faces": 0,
+     "mafs": []
+    }
+   },
+   "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/ID_5_Сетка_D.png"
+  },
+  {
+   "size": [
+    3712,
+    4608
+   ],
+   "work_scale": 9.0,
+   "cells": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 3708,
+     "h": 4608,
+     "kind": "patterned",
+     "color": "#FFFFFF",
+     "mean": "#DDDDDD",
+     "solid_share": 0.847,
+     "std": 85.45,
+     "id": null,
+     "reason": "opacity mask (alpha of its diffuse map), not a colour cell"
+    }
+   ],
+   "name": "ID_5_Сетка_O.png",
+   "mafs": [
+    "MAF_0056",
+    "MAF_0057",
+    "MAF_0058",
+    "MAF_0059",
+    "MAF_0060",
+    "MAF_0061",
+    "MAF_0065"
+   ],
+   "role": "opacity mask",
+   "uv": {
+    "cells": {
+     "0": {
+      "faces": 16,
+      "mafs": [
+       "MAF_0065"
+      ],
+      "min_margin_px": 1232,
+      "corner_faces": 0
+     }
+    },
+    "uncovered": {
+     "faces": 0,
+     "mafs": []
+    }
+   },
+   "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/ID_5_Сетка_O.png"
+  },
+  {
+   "size": [
+    4096,
+    4096
+   ],
+   "work_scale": 8.0,
+   "cells": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 1024,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#CBBCA7",
+     "mean": "#CBBCA7",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 5,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 1024,
+     "y": 0,
+     "w": 1032,
+     "h": 512,
+     "kind": "solid",
+     "color": "#526374",
+     "mean": "#526373",
+     "solid_share": 0.984,
+     "std": 6.51,
+     "id": 12,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2056,
+     "y": 0,
+     "w": 504,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 0.995,
+     "std": 0.73,
+     "id": 1,
+     "dist": 10.0,
+     "reason": null
+    },
+    {
+     "x": 2560,
+     "y": 0,
+     "w": 728,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#D9B38F",
+     "mean": "#D8B28F",
+     "solid_share": 0.893,
+     "std": 8.07,
+     "id": 19,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 3288,
+     "y": 0,
+     "w": 808,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#622022",
+     "mean": "#622022",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 7,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 1024,
+     "y": 512,
+     "w": 1032,
+     "h": 512,
+     "kind": "solid",
+     "color": "#A5ABB2",
+     "mean": "#A4AAB1",
+     "solid_share": 0.989,
+     "std": 11.42,
+     "id": 3,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 0,
+     "y": 1024,
+     "w": 1808,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#B68358",
+     "mean": "#B68259",
+     "solid_share": 0.573,
+     "std": 7.98,
+     "id": 14,
+     "dist": 0.7,
+     "reason": null
+    },
+    {
+     "x": 1808,
+     "y": 1024,
+     "w": 584,
+     "h": 736,
+     "kind": "solid",
+     "color": "#402618",
+     "mean": "#402718",
+     "solid_share": 0.923,
+     "std": 5.48,
+     "id": 13,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2392,
+     "y": 1024,
+     "w": 1704,
+     "h": 1016,
+     "kind": "solid",
+     "color": "#C5C5C5",
+     "mean": "#C5C5C5",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 20,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 1808,
+     "y": 1760,
+     "w": 584,
+     "h": 2336,
+     "kind": "patterned",
+     "color": "#7F583D",
+     "mean": "#7B563D",
+     "solid_share": 0.65,
+     "std": 10.38,
+     "id": 16,
+     "dist": 2.0,
+     "reason": null
+    },
+    {
+     "x": 2392,
+     "y": 2040,
+     "w": 1704,
+     "h": 2056,
+     "kind": "patterned",
+     "color": "#845B3F",
+     "mean": "#845B3F",
+     "solid_share": 0.731,
+     "std": 6.3,
+     "id": 16,
+     "dist": 0.0,
+     "reason": null
+    }
+   ],
+   "name": "MAF_Atlas_001_Diffuse.png",
+   "mafs": [
+    "MAF_0007",
+    "MAF_0011",
+    "MAF_0014",
+    "MAF_0015",
+    "MAF_0016"
+   ],
+   "role": "atlas",
+   "uv": {
+    "cells": {
+     "8": {
+      "faces": 1683,
+      "mafs": [
+       "MAF_0007",
+       "MAF_0011",
+       "MAF_0014",
+       "MAF_0015",
+       "MAF_0016"
+      ],
+      "min_margin_px": 156,
+      "corner_faces": 0
+     },
+     "2": {
+      "faces": 156,
+      "mafs": [
+       "MAF_0007",
+       "MAF_0014"
+      ],
+      "min_margin_px": 115,
+      "corner_faces": 0
+     },
+     "6": {
+      "faces": 88,
+      "mafs": [
+       "MAF_0014",
+       "MAF_0015"
+      ],
+      "min_margin_px": -439,
+      "corner_faces": 0
+     },
+     "5": {
+      "faces": 41,
+      "mafs": [
+       "MAF_0014"
+      ],
+      "min_margin_px": 44,
+      "corner_faces": 0
+     },
+     "9": {
+      "faces": 2,
+      "mafs": [
+       "MAF_0015"
+      ],
+      "min_margin_px": -1223,
+      "corner_faces": 1
+     },
+     "10": {
+      "faces": 2,
+      "mafs": [
+       "MAF_0015"
+      ],
+      "min_margin_px": -1455,
+      "corner_faces": 1
+     },
+     "4": {
+      "faces": 1,
+      "mafs": [
+       "MAF_0015"
+      ],
+      "min_margin_px": 0,
+      "corner_faces": 0
+     },
+     "0": {
+      "faces": 1,
+      "mafs": [
+       "MAF_0015"
+      ],
+      "min_margin_px": 0,
+      "corner_faces": 0
+     },
+     "1": {
+      "faces": 1,
+      "mafs": [
+       "MAF_0015"
+      ],
+      "min_margin_px": -1455,
+      "corner_faces": 1
+     }
+    },
+    "uncovered": {
+     "faces": 0,
+     "mafs": []
+    }
+   },
+   "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/MAF_Atlas_001_Diffuse.png"
+  },
+  {
+   "size": [
+    4096,
+    4096
+   ],
+   "work_scale": 8.0,
+   "cells": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 1080,
+     "h": 4096,
+     "kind": "patterned",
+     "color": "#BEA581",
+     "mean": "#BEA581",
+     "solid_share": 0.662,
+     "std": 6.72,
+     "id": 14,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 1080,
+     "y": 0,
+     "w": 1224,
+     "h": 1072,
+     "kind": "solid",
+     "color": "#373737",
+     "mean": "#373737",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 2,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 1080,
+     "y": 0,
+     "w": 3016,
+     "h": 4096,
+     "kind": "mixed",
+     "color": "#86866A",
+     "mean": "#99958B",
+     "solid_share": 0.0,
+     "std": 69.41,
+     "id": null,
+     "reason": "mixed region around flat blocks (non-rectangular content: decal/pattern)"
+    },
+    {
+     "x": 2312,
+     "y": 0,
+     "w": 704,
+     "h": 1072,
+     "kind": "solid",
+     "color": "#B9BDC0",
+     "mean": "#B9BDC0",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 20,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 3024,
+     "y": 0,
+     "w": 512,
+     "h": 2792,
+     "kind": "solid",
+     "color": "#EC8E4F",
+     "mean": "#EC8E4F",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 6,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 1080,
+     "y": 1080,
+     "w": 1224,
+     "h": 664,
+     "kind": "solid",
+     "color": "#868686",
+     "mean": "#868686",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 3,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2312,
+     "y": 1080,
+     "w": 704,
+     "h": 1296,
+     "kind": "solid",
+     "color": "#919EA2",
+     "mean": "#919EA2",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 3,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 1080,
+     "y": 2800,
+     "w": 1128,
+     "h": 1296,
+     "kind": "solid",
+     "color": "#526267",
+     "mean": "#526267",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 12,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2216,
+     "y": 2800,
+     "w": 1016,
+     "h": 1296,
+     "kind": "solid",
+     "color": "#567F56",
+     "mean": "#567F56",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 9,
+     "dist": 0.0,
+     "reason": null
+    }
+   ],
+   "name": "T_Atlas_MAF.png",
+   "mafs": [
+    "MAF_0068",
+    "MAF_0069",
+    "MAF_0070",
+    "MAF_0071",
+    "MAF_0072",
+    "MAF_0073",
+    "MAF_0074",
+    "MAF_0075",
+    "MAF_0076",
+    "MAF_0077",
+    "MAF_0078",
+    "MAF_0079",
+    "MAF_0080",
+    "MAF_0081",
+    "MAF_0082",
+    "MAF_0083",
+    "MAF_0084",
+    "MAF_0085",
+    "MAF_0086",
+    "MAF_0087",
+    "MAF_0088",
+    "MAF_0089",
+    "MAF_0090",
+    "MAF_0091",
+    "MAF_0093"
+   ],
+   "role": "atlas",
+   "uv": {
+    "cells": {
+     "2": {
+      "faces": 7543,
+      "mafs": [
+       "MAF_0068",
+       "MAF_0072",
+       "MAF_0073",
+       "MAF_0074",
+       "MAF_0075",
+       "MAF_0076",
+       "MAF_0084",
+       "MAF_0085",
+       "MAF_0086",
+       "MAF_0088",
+       "MAF_0089",
+       "MAF_0093"
+      ],
+      "min_margin_px": 73,
+      "corner_faces": 30
+     },
+     "6": {
+      "faces": 1672,
+      "mafs": [
+       "MAF_0069",
+       "MAF_0070",
+       "MAF_0071",
+       "MAF_0077",
+       "MAF_0080",
+       "MAF_0081"
+      ],
+      "min_margin_px": 11,
+      "corner_faces": 0
+     },
+     "1": {
+      "faces": 4539,
+      "mafs": [
+       "MAF_0072",
+       "MAF_0077",
+       "MAF_0087",
+       "MAF_0091"
+      ],
+      "min_margin_px": 99,
+      "corner_faces": 0
+     },
+     "3": {
+      "faces": 110,
+      "mafs": [
+       "MAF_0072",
+       "MAF_0089"
+      ],
+      "min_margin_px": 103,
+      "corner_faces": 0
+     },
+     "0": {
+      "faces": 2076,
+      "mafs": [
+       "MAF_0073",
+       "MAF_0074",
+       "MAF_0076",
+       "MAF_0079",
+       "MAF_0083",
+       "MAF_0086",
+       "MAF_0087",
+       "MAF_0089",
+       "MAF_0090"
+      ],
+      "min_margin_px": 12,
+      "corner_faces": 0
+     },
+     "5": {
+      "faces": 2431,
+      "mafs": [
+       "MAF_0075",
+       "MAF_0079",
+       "MAF_0080",
+       "MAF_0081",
+       "MAF_0082",
+       "MAF_0083",
+       "MAF_0087",
+       "MAF_0093"
+      ],
+      "min_margin_px": 118,
+      "corner_faces": 0
+     },
+     "7": {
+      "faces": 564,
+      "mafs": [
+       "MAF_0078"
+      ],
+      "min_margin_px": 22,
+      "corner_faces": 0
+     },
+     "8": {
+      "faces": 510,
+      "mafs": [
+       "MAF_0088"
+      ],
+      "min_margin_px": 8,
+      "corner_faces": 0
+     },
+     "4": {
+      "faces": 440,
+      "mafs": [
+       "MAF_0091"
+      ],
+      "min_margin_px": 129,
+      "corner_faces": 0
+     }
+    },
+    "uncovered": {
+     "faces": 0,
+     "mafs": []
+    }
+   },
+   "path": "C:/Users/artsafro/Desktop/!Models & Textures/AGR_Model's/МАФы_Union_ALLin/maps/T_Atlas_MAF.png"
+  },
+  {
+   "size": [
+    4096,
+    4096
+   ],
+   "work_scale": 8.0,
+   "cells": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 2048,
+     "h": 1392,
+     "kind": "solid",
+     "color": "#0D0D0D",
+     "mean": "#0D0D0D",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 1,
+     "dist": 3.0,
+     "reason": null
+    },
+    {
+     "x": 2048,
+     "y": 0,
+     "w": 976,
+     "h": 1384,
+     "kind": "solid",
+     "color": "#767468",
+     "mean": "#767468",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 30,
+     "dist": 6.0,
+     "reason": null
+    },
+    {
+     "x": 3024,
+     "y": 0,
+     "w": 1072,
+     "h": 1384,
+     "kind": "solid",
+     "color": "#072502",
+     "mean": "#082503",
+     "solid_share": 0.993,
+     "std": 6.28,
+     "id": 1,
+     "dist": 12.7,
+     "reason": null
+    },
+    {
+     "x": 2048,
+     "y": 1384,
+     "w": 2048,
+     "h": 504,
+     "kind": "solid",
+     "color": "#2B3034",
+     "mean": "#2B3034",
+     "solid_share": 0.984,
+     "std": 2.06,
+     "id": 22,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 0,
+     "y": 1392,
+     "w": 2048,
+     "h": 2704,
+     "kind": "mixed",
+     "color": "#A8825B",
+     "mean": "#A8815B",
+     "solid_share": 0.576,
+     "std": 8.11,
+     "id": null,
+     "reason": "mixed region around flat blocks (non-rectangular content: decal/pattern)"
+    },
+    {
+     "x": 2048,
+     "y": 1888,
+     "w": 2048,
+     "h": 2208,
+     "kind": "solid",
+     "color": "#CCDAE3",
+     "mean": "#CCDAE3",
+     "solid_share": 0.996,
+     "std": 1.25,
+     "id": 4,
+     "dist": 8.3,
+     "reason": null
+    },
+    {
+     "x": 0,
+     "y": 4008,
+     "w": 88,
+     "h": 88,
+     "kind": "solid",
+     "color": "#A68158",
+     "mean": "#A68158",
+     "solid_share": 1.0,
+     "std": 0.51,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    }
+   ],
+   "name": "Untitled_Diffuse_1.1001.png",
+   "mafs": [
+    "MAF_0008",
+    "MAF_0009"
+   ],
+   "role": "atlas",
+   "uv": {
+    "cells": {
+     "0": {
+      "faces": 344,
+      "mafs": [
+       "MAF_0008",
+       "MAF_0009"
+      ],
+      "min_margin_px": 229,
+      "corner_faces": 0
+     },
+     "1": {
+      "faces": 80,
+      "mafs": [
+       "MAF_0008",
+       "MAF_0009"
+      ],
+      "min_margin_px": 193,
+      "corner_faces": 0
+     },
+     "2": {
+      "faces": 11,
+      "mafs": [
+       "MAF_0008"
+      ],
+      "min_margin_px": -40987,
+      "corner_faces": 11
+     },
+     "5": {
+      "faces": 63,
+      "mafs": [
+       "MAF_0008"
+      ],
+      "min_margin_px": -40987,
+      "corner_faces": 63
+     },
+     "3": {
+      "faces": 1,
+      "mafs": [
+       "MAF_0008"
+      ],
+      "min_margin_px": -40536,
+      "corner_faces": 1
+     },
+     "4": {
+      "faces": 230,
+      "mafs": [
+       "MAF_0008",
+       "MAF_0009"
+      ],
+      "min_margin_px": -8192,
+      "corner_faces": 14
+     },
+     "6": {
+      "faces": 24,
+      "mafs": [
+       "MAF_0008"
+      ],
+      "min_margin_px": 0,
+      "corner_faces": 0
+     }
+    },
+    "uncovered": {
+     "faces": 0,
+     "mafs": []
+    }
+   },
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps/Untitled_Diffuse_1.1001.png"
+  },
+  {
+   "size": [
+    4096,
+    4096
+   ],
+   "work_scale": 8.0,
+   "cells": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 2048,
+     "h": 1392,
+     "kind": "solid",
+     "color": "#0D0D0D",
+     "mean": "#0D0D0D",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 1,
+     "dist": 3.0,
+     "reason": null
+    },
+    {
+     "x": 2048,
+     "y": 0,
+     "w": 976,
+     "h": 1392,
+     "kind": "solid",
+     "color": "#001B78",
+     "mean": "#001B78",
+     "solid_share": 1.0,
+     "std": 0.64,
+     "id": 11,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 3024,
+     "y": 0,
+     "w": 1072,
+     "h": 1392,
+     "kind": "solid",
+     "color": "#B70000",
+     "mean": "#B60001",
+     "solid_share": 0.992,
+     "std": 7.15,
+     "id": 7,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 0,
+     "y": 1392,
+     "w": 2048,
+     "h": 2704,
+     "kind": "mixed",
+     "color": "#A8825B",
+     "mean": "#A8815B",
+     "solid_share": 0.576,
+     "std": 8.11,
+     "id": null,
+     "reason": "mixed region around flat blocks (non-rectangular content: decal/pattern)"
+    },
+    {
+     "x": 2048,
+     "y": 1392,
+     "w": 2048,
+     "h": 2704,
+     "kind": "mixed",
+     "color": "#653F2B",
+     "mean": "#653F2B",
+     "solid_share": 0.807,
+     "std": 4.9,
+     "id": null,
+     "reason": "mixed region around flat blocks (non-rectangular content: decal/pattern)"
+    },
+    {
+     "x": 0,
+     "y": 4008,
+     "w": 88,
+     "h": 88,
+     "kind": "solid",
+     "color": "#A68158",
+     "mean": "#A68158",
+     "solid_share": 1.0,
+     "std": 0.51,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 4016,
+     "y": 4016,
+     "w": 80,
+     "h": 80,
+     "kind": "solid",
+     "color": "#533222",
+     "mean": "#533222",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    }
+   ],
+   "name": "Untitled_Diffuse_1.1001_ngosp2lcps3p.png",
+   "mafs": [
+    "MAF_0008",
+    "MAF_0009"
+   ],
+   "role": "atlas",
+   "uv": {
+    "cells": {
+     "3": {
+      "faces": 516,
+      "mafs": [
+       "MAF_0008",
+       "MAF_0009"
+      ],
+      "min_margin_px": 151,
+      "corner_faces": 0
+     },
+     "0": {
+      "faces": 20,
+      "mafs": [
+       "MAF_0008"
+      ],
+      "min_margin_px": 59,
+      "corner_faces": 0
+     }
+    },
+    "uncovered": {
+     "faces": 0,
+     "mafs": []
+    }
+   },
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps/Untitled_Diffuse_1.1001_ngosp2lcps3p.png"
+  },
+  {
+   "size": [
+    4096,
+    4096
+   ],
+   "work_scale": 8.0,
+   "cells": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 2152,
+     "h": 1024,
+     "kind": "patterned",
+     "color": "#3F4749",
+     "mean": "#5B5F60",
+     "solid_share": 0.588,
+     "std": 64.4,
+     "id": 27,
+     "dist": 9.0,
+     "reason": null
+    },
+    {
+     "x": 2152,
+     "y": 0,
+     "w": 408,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#303030",
+     "mean": "#303030",
+     "solid_share": 1.0,
+     "std": 0.18,
+     "id": 22,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2560,
+     "y": 0,
+     "w": 1536,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#C3C8CE",
+     "mean": "#C1C4C8",
+     "solid_share": 0.918,
+     "std": 24.9,
+     "id": 20,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 0,
+     "y": 1024,
+     "w": 1024,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#BEA581",
+     "mean": "#BEA581",
+     "solid_share": 0.677,
+     "std": 6.45,
+     "id": 14,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 1024,
+     "y": 1024,
+     "w": 1024,
+     "h": 3072,
+     "kind": "solid",
+     "color": "#BCBCBC",
+     "mean": "#BCBCBC",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 20,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2048,
+     "y": 1024,
+     "w": 2048,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#967356",
+     "mean": "#97745A",
+     "solid_share": 0.54,
+     "std": 18.02,
+     "id": 15,
+     "dist": 2.0,
+     "reason": null
+    }
+   ],
+   "name": "atlas_01.png",
+   "mafs": [],
+   "role": "atlas",
+   "uv": null,
+   "path": "C:/x/maf-atlases-artem/atlas_01.png"
+  },
+  {
+   "size": [
+    4096,
+    4096
+   ],
+   "work_scale": 8.0,
+   "cells": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 1080,
+     "h": 744,
+     "kind": "solid",
+     "color": "#CE8F3E",
+     "mean": "#CE8F3E",
+     "solid_share": 0.987,
+     "std": 5.36,
+     "id": 6,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 0,
+     "y": 0,
+     "w": 2048,
+     "h": 1024,
+     "kind": "mixed",
+     "color": "#606044",
+     "mean": "#866D4D",
+     "solid_share": 0.0,
+     "std": 43.35,
+     "id": null,
+     "reason": "mixed region around flat blocks (non-rectangular content: decal/pattern)"
+    },
+    {
+     "x": 1080,
+     "y": 0,
+     "w": 296,
+     "h": 744,
+     "kind": "solid",
+     "color": "#54493F",
+     "mean": "#54493F",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 13,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2048,
+     "y": 0,
+     "w": 760,
+     "h": 1024,
+     "kind": "patterned",
+     "color": "#EDEDED",
+     "mean": "#DFDBD8",
+     "solid_share": 0.766,
+     "std": 41.51,
+     "id": null,
+     "reason": "patterned cell matches no id tone: decal or a material not in the list"
+    },
+    {
+     "x": 2808,
+     "y": 0,
+     "w": 640,
+     "h": 512,
+     "kind": "solid",
+     "color": "#2E3034",
+     "mean": "#2F3135",
+     "solid_share": 0.988,
+     "std": 5.22,
+     "id": 22,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 3448,
+     "y": 0,
+     "w": 648,
+     "h": 512,
+     "kind": "solid",
+     "color": "#959595",
+     "mean": "#959595",
+     "solid_share": 0.988,
+     "std": 2.76,
+     "id": 3,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2808,
+     "y": 512,
+     "w": 640,
+     "h": 512,
+     "kind": "solid",
+     "color": "#DCDCDC",
+     "mean": "#DCDCDC",
+     "solid_share": 1.0,
+     "std": 0.44,
+     "id": 4,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 3448,
+     "y": 512,
+     "w": 648,
+     "h": 512,
+     "kind": "patterned",
+     "color": "#8F785C",
+     "mean": "#8F785C",
+     "solid_share": 0.659,
+     "std": 6.85,
+     "id": 17,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 0,
+     "y": 744,
+     "w": 1808,
+     "h": 280,
+     "kind": "solid",
+     "color": "#444444",
+     "mean": "#444444",
+     "solid_share": 1.0,
+     "std": 0.02,
+     "id": 2,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 1816,
+     "y": 744,
+     "w": 232,
+     "h": 280,
+     "kind": "solid",
+     "color": "#D5D5D5",
+     "mean": "#D5D5D5",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 4,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 0,
+     "y": 1024,
+     "w": 1696,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#957256",
+     "mean": "#957256",
+     "solid_share": 0.589,
+     "std": 7.92,
+     "id": 15,
+     "dist": 0.7,
+     "reason": null
+    },
+    {
+     "x": 1696,
+     "y": 1024,
+     "w": 352,
+     "h": 408,
+     "kind": "patterned",
+     "color": "#C7C7C7",
+     "mean": "#C4C2C2",
+     "solid_share": 0.744,
+     "std": 12.4,
+     "id": 20,
+     "dist": 2.3,
+     "reason": null
+    },
+    {
+     "x": 2048,
+     "y": 1024,
+     "w": 1112,
+     "h": 784,
+     "kind": "solid",
+     "color": "#A43B26",
+     "mean": "#A43B26",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 7,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2048,
+     "y": 1024,
+     "w": 2048,
+     "h": 1544,
+     "kind": "mixed",
+     "color": "#A48655",
+     "mean": "#8D8265",
+     "solid_share": 0.0,
+     "std": 52.21,
+     "id": null,
+     "reason": "mixed region around flat blocks (non-rectangular content: decal/pattern)"
+    },
+    {
+     "x": 1696,
+     "y": 1432,
+     "w": 352,
+     "h": 2664,
+     "kind": "solid",
+     "color": "#726E65",
+     "mean": "#726E65",
+     "solid_share": 0.943,
+     "std": 3.46,
+     "id": 30,
+     "dist": 5.0,
+     "reason": null
+    },
+    {
+     "x": 2048,
+     "y": 2568,
+     "w": 392,
+     "h": 392,
+     "kind": "solid",
+     "color": "#008C44",
+     "mean": "#018C44",
+     "solid_share": 0.96,
+     "std": 3.59,
+     "id": 9,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2440,
+     "y": 2568,
+     "w": 288,
+     "h": 392,
+     "kind": "solid",
+     "color": "#A6CE23",
+     "mean": "#A6CE23",
+     "solid_share": 1.0,
+     "std": 0.38,
+     "id": 8,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2728,
+     "y": 2568,
+     "w": 344,
+     "h": 392,
+     "kind": "solid",
+     "color": "#ADA124",
+     "mean": "#ADA124",
+     "solid_share": 0.997,
+     "std": 2.14,
+     "id": 8,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 3072,
+     "y": 2568,
+     "w": 1024,
+     "h": 1528,
+     "kind": "patterned",
+     "color": "#3F4749",
+     "mean": "#393F40",
+     "solid_share": 0.758,
+     "std": 13.98,
+     "id": 27,
+     "dist": 4.0,
+     "reason": null
+    },
+    {
+     "x": 2048,
+     "y": 2960,
+     "w": 1024,
+     "h": 1136,
+     "kind": "mixed",
+     "color": "#1B9763",
+     "mean": "#438C68",
+     "solid_share": 0.003,
+     "std": 48.38,
+     "id": null,
+     "reason": "mixed region around flat blocks (non-rectangular content: decal/pattern)"
+    },
+    {
+     "x": 2048,
+     "y": 2968,
+     "w": 448,
+     "h": 392,
+     "kind": "solid",
+     "color": "#1BB563",
+     "mean": "#1BB563",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 9,
+     "dist": 0.0,
+     "reason": null
+    }
+   ],
+   "name": "atlas_02.png",
+   "mafs": [],
+   "role": "atlas",
+   "uv": null,
+   "path": "C:/x/maf-atlases-artem/atlas_02.png"
+  },
+  {
+   "size": [
+    4096,
+    4096
+   ],
+   "work_scale": 8.0,
+   "cells": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 2048,
+     "h": 1024,
+     "kind": "patterned",
+     "color": "#D5D5D5",
+     "mean": "#B8B7B7",
+     "solid_share": 0.727,
+     "std": 50.25,
+     "id": 20,
+     "dist": 4.7,
+     "reason": null
+    },
+    {
+     "x": 2048,
+     "y": 0,
+     "w": 760,
+     "h": 1024,
+     "kind": "patterned",
+     "color": "#EDEDED",
+     "mean": "#DFDBD8",
+     "solid_share": 0.766,
+     "std": 41.51,
+     "id": null,
+     "reason": "patterned cell matches no id tone: decal or a material not in the list"
+    },
+    {
+     "x": 2808,
+     "y": 0,
+     "w": 640,
+     "h": 512,
+     "kind": "solid",
+     "color": "#2E3034",
+     "mean": "#2F3135",
+     "solid_share": 0.988,
+     "std": 5.22,
+     "id": 22,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 3448,
+     "y": 0,
+     "w": 648,
+     "h": 512,
+     "kind": "solid",
+     "color": "#959595",
+     "mean": "#959595",
+     "solid_share": 0.988,
+     "std": 2.76,
+     "id": 3,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2808,
+     "y": 512,
+     "w": 640,
+     "h": 512,
+     "kind": "solid",
+     "color": "#DCDCDC",
+     "mean": "#DCDCDC",
+     "solid_share": 1.0,
+     "std": 0.44,
+     "id": 4,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 3448,
+     "y": 512,
+     "w": 648,
+     "h": 512,
+     "kind": "patterned",
+     "color": "#8F785C",
+     "mean": "#8F785C",
+     "solid_share": 0.659,
+     "std": 6.85,
+     "id": 17,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 0,
+     "y": 1024,
+     "w": 1696,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#957256",
+     "mean": "#957256",
+     "solid_share": 0.589,
+     "std": 7.92,
+     "id": 15,
+     "dist": 0.7,
+     "reason": null
+    },
+    {
+     "x": 1696,
+     "y": 1024,
+     "w": 1376,
+     "h": 3072,
+     "kind": "mixed",
+     "color": "#A69799",
+     "mean": "#8E9B88",
+     "solid_share": 0.0,
+     "std": 58.95,
+     "id": null,
+     "reason": "mixed region around flat blocks (non-rectangular content: decal/pattern)"
+    },
+    {
+     "x": 3072,
+     "y": 1024,
+     "w": 1024,
+     "h": 1544,
+     "kind": "solid",
+     "color": "#618656",
+     "mean": "#618656",
+     "solid_share": 0.938,
+     "std": 3.67,
+     "id": 9,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2048,
+     "y": 2568,
+     "w": 384,
+     "h": 384,
+     "kind": "solid",
+     "color": "#008C44",
+     "mean": "#008C44",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 9,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2440,
+     "y": 2568,
+     "w": 280,
+     "h": 392,
+     "kind": "solid",
+     "color": "#A6CE23",
+     "mean": "#A6CE23",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 8,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 2728,
+     "y": 2568,
+     "w": 344,
+     "h": 392,
+     "kind": "solid",
+     "color": "#ADA124",
+     "mean": "#ADA124",
+     "solid_share": 0.997,
+     "std": 2.14,
+     "id": 8,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 3072,
+     "y": 2568,
+     "w": 1024,
+     "h": 1528,
+     "kind": "patterned",
+     "color": "#3F4749",
+     "mean": "#393F40",
+     "solid_share": 0.758,
+     "std": 13.98,
+     "id": 27,
+     "dist": 4.0,
+     "reason": null
+    },
+    {
+     "x": 2048,
+     "y": 2968,
+     "w": 384,
+     "h": 384,
+     "kind": "solid",
+     "color": "#B32B2B",
+     "mean": "#B32B2B",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 7,
+     "dist": 0.0,
+     "reason": null
+    }
+   ],
+   "name": "atlas_03.png",
+   "mafs": [],
+   "role": "atlas",
+   "uv": null,
+   "path": "C:/x/maf-atlases-artem/atlas_03.png"
+  },
+  {
+   "size": [
+    512,
+    512
+   ],
+   "work_scale": 1.0,
+   "cells": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 512,
+     "h": 512,
+     "kind": "mixed",
+     "color": "#C3A37E",
+     "mean": "#B0927A",
+     "solid_share": 0.237,
+     "std": 54.44,
+     "id": null,
+     "reason": "mixed region around flat blocks (non-rectangular content: decal/pattern)"
+    },
+    {
+     "x": 69,
+     "y": 0,
+     "w": 58,
+     "h": 63,
+     "kind": "solid",
+     "color": "#2E3D2A",
+     "mean": "#2E3D2A",
+     "solid_share": 1.0,
+     "std": 0.25,
+     "id": 10,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 130,
+     "y": 0,
+     "w": 60,
+     "h": 63,
+     "kind": "solid",
+     "color": "#2EA3D3",
+     "mean": "#2EA3D3",
+     "solid_share": 1.0,
+     "std": 0.36,
+     "id": 11,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 192,
+     "y": 0,
+     "w": 64,
+     "h": 64,
+     "kind": "solid",
+     "color": "#FF0000",
+     "mean": "#FF0000",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 7,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 256,
+     "y": 0,
+     "w": 63,
+     "h": 127,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.35,
+     "id": 1,
+     "dist": 10.0,
+     "reason": null
+    },
+    {
+     "x": 128,
+     "y": 65,
+     "w": 126,
+     "h": 62,
+     "kind": "solid",
+     "color": "#BDBDBD",
+     "mean": "#BDBDBD",
+     "solid_share": 1.0,
+     "std": 0.3,
+     "id": 20,
+     "dist": 1.0,
+     "reason": null
+    },
+    {
+     "x": 67,
+     "y": 67,
+     "w": 60,
+     "h": 60,
+     "kind": "solid",
+     "color": "#DDDDDD",
+     "mean": "#DDDDDD",
+     "solid_share": 0.996,
+     "std": 0.7,
+     "id": 4,
+     "dist": 1.0,
+     "reason": null
+    },
+    {
+     "x": 300,
+     "y": 129,
+     "w": 84,
+     "h": 125,
+     "kind": "solid",
+     "color": "#C4C4C4",
+     "mean": "#C4C4C4",
+     "solid_share": 1.0,
+     "std": 0.17,
+     "id": 20,
+     "dist": 1.0,
+     "reason": null
+    },
+    {
+     "x": 226,
+     "y": 130,
+     "w": 73,
+     "h": 8,
+     "kind": "solid",
+     "color": "#6B6161",
+     "mean": "#6B6161",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": 12,
+     "dist": 10.7,
+     "reason": null
+    },
+    {
+     "x": 411,
+     "y": 141,
+     "w": 11,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.17,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 436,
+     "y": 141,
+     "w": 11,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.17,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 461,
+     "y": 141,
+     "w": 12,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.13,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 487,
+     "y": 141,
+     "w": 12,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.13,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 397,
+     "y": 154,
+     "w": 12,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 423,
+     "y": 154,
+     "w": 12,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.03,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 449,
+     "y": 154,
+     "w": 11,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.11,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 474,
+     "y": 154,
+     "w": 11,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.13,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 411,
+     "y": 167,
+     "w": 11,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.17,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 436,
+     "y": 167,
+     "w": 11,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.16,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 461,
+     "y": 167,
+     "w": 12,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.1,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 487,
+     "y": 167,
+     "w": 12,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.07,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 486,
+     "y": 179,
+     "w": 10,
+     "h": 10,
+     "kind": "solid",
+     "color": "#FFFFFF",
+     "mean": "#FFFFFF",
+     "solid_share": 1.0,
+     "std": 0.42,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 397,
+     "y": 180,
+     "w": 12,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.16,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 423,
+     "y": 180,
+     "w": 12,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.13,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 449,
+     "y": 180,
+     "w": 11,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.18,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 474,
+     "y": 180,
+     "w": 11,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.16,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 411,
+     "y": 192,
+     "w": 11,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.15,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 436,
+     "y": 192,
+     "w": 11,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.25,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 461,
+     "y": 192,
+     "w": 12,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.1,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 487,
+     "y": 192,
+     "w": 12,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.11,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 400,
+     "y": 194,
+     "w": 10,
+     "h": 10,
+     "kind": "solid",
+     "color": "#FFFFFF",
+     "mean": "#FFFFFF",
+     "solid_share": 1.0,
+     "std": 0.29,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 397,
+     "y": 205,
+     "w": 12,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.07,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 423,
+     "y": 205,
+     "w": 12,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.09,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 449,
+     "y": 205,
+     "w": 11,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.16,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 474,
+     "y": 205,
+     "w": 11,
+     "h": 11,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.17,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 411,
+     "y": 217,
+     "w": 11,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.13,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 436,
+     "y": 217,
+     "w": 11,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.18,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 461,
+     "y": 217,
+     "w": 12,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.03,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 487,
+     "y": 217,
+     "w": 12,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.0,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 397,
+     "y": 230,
+     "w": 12,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.15,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 423,
+     "y": 230,
+     "w": 12,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.12,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 449,
+     "y": 230,
+     "w": 11,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.15,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 474,
+     "y": 230,
+     "w": 11,
+     "h": 12,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 1.0,
+     "std": 0.17,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    }
+   ],
+   "name": "atlas_04.png",
+   "mafs": [],
+   "role": "atlas",
+   "uv": null,
+   "path": "C:/x/maf-atlases-artem/atlas_04.png"
+  },
+  {
+   "size": [
+    512,
+    512
+   ],
+   "work_scale": 1.0,
+   "cells": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 66,
+     "h": 64,
+     "kind": "patterned",
+     "color": "#92898B",
+     "mean": "#918A89",
+     "solid_share": 0.089,
+     "std": 37.62,
+     "id": null,
+     "reason": "patterned cell matches no id tone: decal or a material not in the list"
+    },
+    {
+     "x": 66,
+     "y": 0,
+     "w": 62,
+     "h": 64,
+     "kind": "solid",
+     "color": "#363F2F",
+     "mean": "#384030",
+     "solid_share": 0.953,
+     "std": 10.74,
+     "id": 10,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 128,
+     "y": 0,
+     "w": 64,
+     "h": 64,
+     "kind": "solid",
+     "color": "#63A2D0",
+     "mean": "#63A2CF",
+     "solid_share": 0.969,
+     "std": 3.56,
+     "id": 11,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 192,
+     "y": 0,
+     "w": 64,
+     "h": 64,
+     "kind": "solid",
+     "color": "#2E3034",
+     "mean": "#2E3034",
+     "solid_share": 0.969,
+     "std": 1.54,
+     "id": 22,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 256,
+     "y": 0,
+     "w": 64,
+     "h": 127,
+     "kind": "solid",
+     "color": "#000000",
+     "mean": "#000000",
+     "solid_share": 0.977,
+     "std": 1.91,
+     "id": 1,
+     "dist": 10.0,
+     "reason": null
+    },
+    {
+     "x": 320,
+     "y": 0,
+     "w": 192,
+     "h": 127,
+     "kind": "patterned",
+     "color": "#DABE98",
+     "mean": "#DBBF98",
+     "solid_share": 0.637,
+     "std": 6.38,
+     "id": 19,
+     "dist": 7.7,
+     "reason": null
+    },
+    {
+     "x": 0,
+     "y": 64,
+     "w": 62,
+     "h": 64,
+     "kind": "patterned",
+     "color": "#928888",
+     "mean": "#918987",
+     "solid_share": 0.076,
+     "std": 38.36,
+     "id": null,
+     "reason": "patterned cell matches no id tone: decal or a material not in the list"
+    },
+    {
+     "x": 62,
+     "y": 64,
+     "w": 66,
+     "h": 64,
+     "kind": "solid",
+     "color": "#DCDCDC",
+     "mean": "#D6D5D5",
+     "solid_share": 0.893,
+     "std": 24.08,
+     "id": 4,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 128,
+     "y": 64,
+     "w": 128,
+     "h": 64,
+     "kind": "solid",
+     "color": "#BCBCBC",
+     "mean": "#BCBCBC",
+     "solid_share": 0.984,
+     "std": 1.64,
+     "id": 20,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 256,
+     "y": 127,
+     "w": 128,
+     "h": 128,
+     "kind": "solid",
+     "color": "#C3C3C3",
+     "mean": "#C3C3C3",
+     "solid_share": 0.988,
+     "std": 6.25,
+     "id": 20,
+     "dist": 2.0,
+     "reason": null
+    },
+    {
+     "x": 384,
+     "y": 127,
+     "w": 128,
+     "h": 128,
+     "kind": "mixed",
+     "color": "#FBFBFB",
+     "mean": "#A4A4A4",
+     "solid_share": 0.525,
+     "std": 110.62,
+     "id": null,
+     "reason": "mixed region around flat blocks (non-rectangular content: decal/pattern)"
+    },
+    {
+     "x": 0,
+     "y": 128,
+     "w": 256,
+     "h": 384,
+     "kind": "patterned",
+     "color": "#BEA581",
+     "mean": "#BEA581",
+     "solid_share": 0.692,
+     "std": 6.33,
+     "id": 14,
+     "dist": 0.0,
+     "reason": null
+    },
+    {
+     "x": 423,
+     "y": 155,
+     "w": 11,
+     "h": 11,
+     "kind": "solid",
+     "color": "#010001",
+     "mean": "#010001",
+     "solid_share": 1.0,
+     "std": 0.93,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 398,
+     "y": 156,
+     "w": 11,
+     "h": 10,
+     "kind": "solid",
+     "color": "#010001",
+     "mean": "#010001",
+     "solid_share": 1.0,
+     "std": 0.71,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 486,
+     "y": 179,
+     "w": 10,
+     "h": 10,
+     "kind": "solid",
+     "color": "#FFFFFF",
+     "mean": "#FFFFFF",
+     "solid_share": 1.0,
+     "std": 0.42,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 400,
+     "y": 194,
+     "w": 10,
+     "h": 10,
+     "kind": "solid",
+     "color": "#FFFFFF",
+     "mean": "#FFFFFF",
+     "solid_share": 1.0,
+     "std": 0.29,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 487,
+     "y": 218,
+     "w": 12,
+     "h": 9,
+     "kind": "solid",
+     "color": "#000001",
+     "mean": "#010001",
+     "solid_share": 1.0,
+     "std": 0.73,
+     "id": null,
+     "reason": "fragment below 1/1024 of the atlas (gutter/detail)"
+    },
+    {
+     "x": 256,
+     "y": 255,
+     "w": 256,
+     "h": 257,
+     "kind": "patterned",
+     "color": "#957256",
+     "mean": "#957356",
+     "solid_share": 0.61,
+     "std": 9.41,
+     "id": 15,
+     "dist": 0.3,
+     "reason": null
+    }
+   ],
+   "name": "T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png",
+   "mafs": [],
+   "role": "atlas",
+   "uv": null,
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/MAF_All/maps/T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png"
+  },
+  {
+   "size": [
+    4096,
+    4096
+   ],
+   "work_scale": 8.0,
+   "cells": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 504,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#3C3C3C",
+     "mean": "#3F4340",
+     "solid_share": 0.938,
+     "std": 28.67,
+     "id": null,
+     "reason": "layout example only (Artem 2026-10-21): not a colour/texture source"
+    },
+    {
+     "x": 504,
+     "y": 0,
+     "w": 512,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#4C4F54",
+     "mean": "#4E5756",
+     "solid_share": 0.922,
+     "std": 27.34,
+     "id": null,
+     "reason": "layout example only (Artem 2026-10-21): not a colour/texture source"
+    },
+    {
+     "x": 1016,
+     "y": 0,
+     "w": 512,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#A0A0A0",
+     "mean": "#9EA49F",
+     "solid_share": 0.923,
+     "std": 20.59,
+     "id": null,
+     "reason": "layout example only (Artem 2026-10-21): not a colour/texture source"
+    },
+    {
+     "x": 1528,
+     "y": 0,
+     "w": 528,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#D8D8D0",
+     "mean": "#D0DACA",
+     "solid_share": 0.898,
+     "std": 21.91,
+     "id": null,
+     "reason": "layout example only (Artem 2026-10-21): not a colour/texture source"
+    },
+    {
+     "x": 2056,
+     "y": 0,
+     "w": 504,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#AFAFAF",
+     "mean": "#AEB2AF",
+     "solid_share": 0.937,
+     "std": 16.5,
+     "id": null,
+     "reason": "layout example only (Artem 2026-10-21): not a colour/texture source"
+    },
+    {
+     "x": 2560,
+     "y": 0,
+     "w": 504,
+     "h": 1024,
+     "kind": "solid",
+     "color": "#D2553F",
+     "mean": "#D05C43",
+     "solid_share": 0.937,
+     "std": 25.12,
+     "id": null,
+     "reason": "layout example only (Artem 2026-10-21): not a colour/texture source"
+    },
+    {
+     "x": 3064,
+     "y": 0,
+     "w": 512,
+     "h": 1016,
+     "kind": "solid",
+     "color": "#C6DC7A",
+     "mean": "#C3DC7B",
+     "solid_share": 0.933,
+     "std": 16.74,
+     "id": null,
+     "reason": "layout example only (Artem 2026-10-21): not a colour/texture source"
+    },
+    {
+     "x": 3576,
+     "y": 0,
+     "w": 520,
+     "h": 1016,
+     "kind": "solid",
+     "color": "#D8242C",
+     "mean": "#D33131",
+     "solid_share": 0.915,
+     "std": 33.54,
+     "id": null,
+     "reason": "layout example only (Artem 2026-10-21): not a colour/texture source"
+    },
+    {
+     "x": 3064,
+     "y": 1016,
+     "w": 1032,
+     "h": 1040,
+     "kind": "solid",
+     "color": "#707070",
+     "mean": "#6F766F",
+     "solid_share": 0.927,
+     "std": 21.08,
+     "id": null,
+     "reason": "layout example only (Artem 2026-10-21): not a colour/texture source"
+    },
+    {
+     "x": 0,
+     "y": 1024,
+     "w": 1528,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#967356",
+     "mean": "#957457",
+     "solid_share": 0.509,
+     "std": 15.08,
+     "id": null,
+     "reason": "layout example only (Artem 2026-10-21): not a colour/texture source"
+    },
+    {
+     "x": 1528,
+     "y": 1024,
+     "w": 1536,
+     "h": 3072,
+     "kind": "patterned",
+     "color": "#82543D",
+     "mean": "#82563E",
+     "solid_share": 0.601,
+     "std": 14.08,
+     "id": null,
+     "reason": "layout example only (Artem 2026-10-21): not a colour/texture source"
+    },
+    {
+     "x": 3064,
+     "y": 2056,
+     "w": 1032,
+     "h": 2040,
+     "kind": "solid",
+     "color": "#2B2B2B",
+     "mean": "#2E332F",
+     "solid_share": 0.94,
+     "std": 28.82,
+     "id": null,
+     "reason": "layout example only (Artem 2026-10-21): not a colour/texture source"
+    }
+   ],
+   "name": "example_id_layout.png",
+   "mafs": [],
+   "role": "layout example",
+   "uv": null,
+   "path": "C:/x/maf-atlases-artem/example_id_layout.png"
+  }
+ ],
+ "library_materials": {
+  "excluded": [
+   {
+    "material": "02 - Default",
+    "mafs": 6,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "02 - Default.001",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "07 - Default",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "08 - Default",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "1",
+    "mafs": 166,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "10",
+    "mafs": 15,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "11",
+    "mafs": 5,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "13",
+    "mafs": 2,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "14",
+    "mafs": 3,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "15",
+    "mafs": 18,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "16",
+    "mafs": 14,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "17",
+    "mafs": 25,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "18",
+    "mafs": 21,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "19",
+    "mafs": 4,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "2",
+    "mafs": 156,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "3",
+    "mafs": 168,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "4",
+    "mafs": 45,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "5",
+    "mafs": 13,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "6",
+    "mafs": 11,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "7",
+    "mafs": 31,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "8",
+    "mafs": 9,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "9",
+    "mafs": 8,
+    "class": "marker",
+    "reason": "3ds Max multi-sub slot named by a bare number (MatID marker colour), no material meaning"
+   },
+   {
+    "material": "Diffuse",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Dots Stroke",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "ID_01",
+    "mafs": 1,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "ID_10",
+    "mafs": 14,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "ID_13",
+    "mafs": 14,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "ID_17",
+    "mafs": 14,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "ID_18",
+    "mafs": 14,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "ID_21",
+    "mafs": 14,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "ID_24",
+    "mafs": 14,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "ID_27",
+    "mafs": 14,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "ID_29",
+    "mafs": 14,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "Light",
+    "mafs": 25,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "MAF",
+    "mafs": 25,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "M_77_17_0120114_5803_D_7_1_Ground_1",
+    "mafs": 1,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "M_77_17_0120114_5803_Ground_1",
+    "mafs": 2,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "M_77_17_0120316_33510_D_26_Ground_1",
+    "mafs": 2,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "M_77_17_0120316_33510_D_26_Ground_2",
+    "mafs": 2,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "M_77_17_0120316_33510_D_26_Ground_3",
+    "mafs": 2,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "M_77_17_0150309_6155_D_2_GroundEl_1",
+    "mafs": 4,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "M_PereulokSivtsevVrazhek_Vl_35_Ground_1",
+    "mafs": 1,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "M_Pos_Desenovskoe_Kv_23_D_7_GroundEl_1",
+    "mafs": 22,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "M_Pos_Desenovskoe_Kv_23_D_7_GroundEl_1.001",
+    "mafs": 14,
+    "class": "ground",
+    "reason": "Ground/GroundEl material of another site (site set, not a library material)"
+   },
+   {
+    "material": "Material",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #1",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #11",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #12",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #14",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #15",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #16",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #19",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #2",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #20",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #25",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #26",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #28",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #3",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #4",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #5",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #6",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #7",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #8",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #115 Slot #9",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #1150",
+    "mafs": 23,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #116",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #1167",
+    "mafs": 5,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #117",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #1255",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #1272",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #157",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125647033",
+    "mafs": 6,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125647034",
+    "mafs": 6,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125647034.001",
+    "mafs": 3,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652632",
+    "mafs": 2,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652634",
+    "mafs": 2,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652635",
+    "mafs": 2,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652639",
+    "mafs": 47,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652641",
+    "mafs": 176,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652643",
+    "mafs": 112,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652648",
+    "mafs": 200,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652664",
+    "mafs": 64,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652669",
+    "mafs": 19,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652671",
+    "mafs": 17,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652672",
+    "mafs": 19,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652673",
+    "mafs": 53,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652674",
+    "mafs": 53,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652675",
+    "mafs": 53,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652676",
+    "mafs": 53,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652677",
+    "mafs": 53,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652678",
+    "mafs": 53,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #2125652679",
+    "mafs": 53,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #229",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #27",
+    "mafs": 4,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #394 Slot #10",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #394 Slot #7",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #394 Slot #8",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #394 Slot #9",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #43",
+    "mafs": 22,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #43.001",
+    "mafs": 14,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #48 Slot #10",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #48 Slot #3",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #48 Slot #4",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #48 Slot #5",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #48 Slot #6",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #48 Slot #7",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #48 Slot #8",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #48 Slot #9",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #53",
+    "mafs": 29,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #56",
+    "mafs": 7,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #57",
+    "mafs": 7,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #58",
+    "mafs": 7,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #66",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Material #82",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Me",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Mst_001",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Untitled_Diffuse_1.001",
+    "mafs": 1,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Untitled_Diffuse_1.1001",
+    "mafs": 33,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "lab",
+    "mafs": 6,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Стул_Опорный Slot #3",
+    "mafs": 7,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   },
+   {
+    "material": "Стул_Опорный Slot #4",
+    "mafs": 7,
+    "class": "junk",
+    "reason": "3ds Max / Blender default or slot name, no material meaning"
+   }
+  ],
+  "unmapped": []
+ },
+ "spec_requirements": [
+  {
+   "table": "*T3508",
+   "row": 1,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 1",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 2,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 2",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 3,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 3",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 4,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 4",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 5,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 5",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 6,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 6",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 7,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 7",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 8,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 8",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 9,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 9",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 10,
+   "name": "Скамья индивидуального изготовления на основе Скамейка стальная «Верона» / Артикул: 18694. Тип 9",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 11,
+   "name": "Барная стойка",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 12,
+   "name": "Перучень для МГН",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 13,
+   "name": "Навес \"Андромеда\" Тип 1",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 14,
+   "name": "Навес \"Андромеда\" Тип 2",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 15,
+   "name": "Навес \"Андромеда\" Тип 3",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 16,
+   "name": "Навес \"Андромеда\" Тип 4",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3508",
+   "row": 17,
+   "name": "Песочница с повышением , подпорной стенкой и пандусом / Индивидуального изготовления",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 1,
+   "name": "Скамейка стальная «Андромеда» / Артикул: 14122",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 2,
+   "name": "Урна стальная «Арго» / Артикул: 19648",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 3,
+   "name": "Качели садово-парковые «Кассиопея» / Артикул: 20895",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 4,
+   "name": "Гамак HARDWOOD «Сен-Тропе» / Артикул: 25308",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 5,
+   "name": "Площадка для контейнеров ТБО",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 6,
+   "name": "Контейнер пластиковый ТБО",
+   "ids": [
+    10
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 7,
+   "name": "Скамейка «Фестиваль» Модуль 1 / арт. nv 521-01",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 8,
+   "name": "Скамейка «Фестиваль» Модуль 3 / арт. nv 521-03",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 9,
+   "name": "Лежак «Городской» / 11061",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 10,
+   "name": "Стул на ножке \"Бар\"",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 11,
+   "name": "Качалка балансир / Артикул: ИО 0410-2",
+   "ids": [
+    4,
+    14,
+    18,
+    20,
+    22,
+    24
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 12,
+   "name": "Качели / Артикул:Качели / ИО 0118Т-1",
+   "ids": [
+    4,
+    14,
+    18,
+    20,
+    22,
+    24
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 13,
+   "name": "Игра с песком / Артикул: ИО 1005Т-11",
+   "ids": [
+    4,
+    14,
+    18,
+    20,
+    22,
+    24
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 14,
+   "name": "Игровой комплекс / Артикул: ИК 0408Т-23",
+   "ids": [
+    4,
+    14,
+    18,
+    20,
+    22,
+    24
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 15,
+   "name": "Бетонные раскопки / Артикул:  / ИО 0860Т-1-5",
+   "ids": [
+    24
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 16,
+   "name": "Детская площадка / Артикул: ДП 090",
+   "ids": [
+    4,
+    14,
+    18,
+    20,
+    22,
+    24
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 17,
+   "name": "Вертушка / Артикул: ИО 0208Т-1",
+   "ids": [
+    4,
+    14,
+    18,
+    20,
+    22,
+    24
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 18,
+   "name": "Пенёк / ИО 0906Т-7",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 19,
+   "name": "Пергола «Андромеда» с поликарбонатом и обшивкой / Артикул: 40146-2/1",
+   "ids": [
+    4,
+    14,
+    31
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 20,
+   "name": "Спортивное оборудование / Артикул: 217170",
+   "ids": [
+    4,
+    14,
+    18,
+    20,
+    22,
+    24
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 21,
+   "name": "Спортивное оборудование / Артикул: 217070",
+   "ids": [
+    4,
+    14,
+    18,
+    20,
+    22,
+    24
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 22,
+   "name": "Тренажер Wotkout nature 217100",
+   "ids": [
+    4,
+    14,
+    18,
+    20,
+    22,
+    24
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 23,
+   "name": "Тренажер 'Лыжи'",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 24,
+   "name": "Тренажер 'Волна'",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 25,
+   "name": "Тренажер 'Мышиная охота'",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 26,
+   "name": "Теннисный стол Премиум / Артикул: 4-060",
+   "ids": [
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 27,
+   "name": "Комплект мебели «Ландау» / Артикул: 13994",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 28,
+   "name": "Качели-гнездо круг / 189.001",
+   "ids": [
+    4,
+    14,
+    29
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 29,
+   "name": "Кресло «Парк» / Артикул: 12750",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 30,
+   "name": "Скамья тетрис 03 / Артикул: С-Т03",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 31,
+   "name": "Стол «Лондон» Тип 3 / Артикул: 13032",
+   "ids": [
+    4,
+    14
+   ],
+   "gap": false
+  },
+  {
+   "table": "*T3510",
+   "row": 32,
+   "name": "Приствольная решетка",
+   "ids": [
+    4
+   ],
+   "gap": false
+  }
+ ],
+ "merges": [
+  {
+   "from_key": "paint_ral7004",
+   "from_v004_id": 4,
+   "into": "paint_ral7040",
+   "reason": "RAL 7004 and RAL 7040 are both mid greys (|dRGB| ~4); one mid-grey paint",
+   "review": false
+  },
+  {
+   "from_key": "paint_beige",
+   "from_v004_id": 7,
+   "into": "paint_ral9003",
+   "reason": "beige only in the A101 atlas MAF_Atlas_001, no spec row; nearest light paint",
+   "review": false
+  },
+  {
+   "from_key": "paint_yellow",
+   "from_v004_id": 8,
+   "into": "paint_orange",
+   "reason": "yellow only in the A101 atlas 1_Diffuse, no spec row; nearest warm signal paint",
+   "review": false
+  },
+  {
+   "from_key": "paint_wine",
+   "from_v004_id": 11,
+   "into": "paint_red",
+   "reason": "wine red only in the A101 atlas MAF_Atlas_001, no spec row; one red",
+   "review": false
+  },
+  {
+   "from_key": "paint_olive",
+   "from_v004_id": 13,
+   "into": "paint_green_light",
+   "reason": "olive and light green (lime) are the two yellow-greens of atlas_02/03; one light green",
+   "review": false
+  },
+  {
+   "from_key": "paint_green_reseda",
+   "from_v004_id": 15,
+   "into": "paint_green",
+   "reason": "reseda (RAL 6011) and RAL 6029 are mid greens; one green",
+   "review": false
+  },
+  {
+   "from_key": "paint_blue_dark",
+   "from_v004_id": 18,
+   "into": "paint_blue",
+   "reason": "dark blue only in the A101 atlas Untitled_Diffuse, no spec row; one blue",
+   "review": false
+  },
+  {
+   "from_key": "wood_pine",
+   "from_v004_id": 22,
+   "into": "wood_light",
+   "reason": "pine honey tone sits between light and medium; light wood covers it (wood set: light / medium / dark + specials)",
+   "review": false
+  },
+  {
+   "from_key": "wood_larch_black",
+   "from_v004_id": 25,
+   "into": "wood_dark",
+   "reason": "black larch (ID_2 map) is the darkest wood; one dark wood",
+   "review": false
+  },
+  {
+   "from_key": "plastic_hdpe",
+   "from_v004_id": 32,
+   "into": "paint_green_dark",
+   "reason": "HDPE waste container (T3510#6): no colour in the spec; Moscow MSW containers are usually dark green - flat dark green cell, на проверку",
+   "review": true
+  },
+  {
+   "from_key": "hpl_satin_wood",
+   "from_v004_id": 33,
+   "into": "wood_light",
+   "reason": "HPL \"Атласное дерево\" (T3510#26, tennis table) is a light wood decor; light wood cell, на проверку",
+   "review": true
+  }
+ ],
+ "decals": {
+  "rule": "per-MAF decals are not material IDs (Artem 2026-10-21): they live in a separate per-MAF decal group of the atlas",
+  "examples": [
+   "информационные таблички (ВНИМАНИЕ, правила)",
+   "таблички растений (Деревья хвойные/лиственные, Цветы)",
+   "меловая доска",
+   "лабиринт",
+   "шахматная доска"
+  ]
+ },
+ "evidence": {
+  "contact_sheet": {
+   "path": "C:/x/ev_t_e12b5c0c/v005/material_ids_v005_contact_sheet.png",
+   "sha256": "da4dacc4b30be35f4add92865c1f3275faa43ec4d8b42895065899aa5a5c4c82"
+  },
+  "overlay 1_Diffuse_1.1001_e5pokwfjvgc7.png": {
+   "path": "C:/x/ev_t_e12b5c0c/v005/overlay_1_Diffuse_1.1001_e5pokwfjvgc7.png",
+   "sha256": "a862031e835895875ebb8645acddc704bed6d2841a3b6deadc86c5c6a42a14eb"
+  },
+  "overlay ID_2_Лиственница_Черная_f.png": {
+   "path": "C:/x/ev_t_e12b5c0c/v005/overlay_ID_2____________________f.png",
+   "sha256": "d0760d7674fafca8d7811cd510b3b2c7892c62a42db18a824526daf0f6ea1bbf"
+  },
+  "overlay MAF_Atlas_001_Diffuse.png": {
+   "path": "C:/x/ev_t_e12b5c0c/v005/overlay_MAF_Atlas_001_Diffuse.png",
+   "sha256": "4e6e9b0e2272448e24202c9d535ba9c5f60ca0ed4c24deb09b02e7d28d58748e"
+  },
+  "overlay T_Atlas_MAF.png": {
+   "path": "C:/x/ev_t_e12b5c0c/v005/overlay_T_Atlas_MAF.png",
+   "sha256": "bccad93fb94ae61d71be0d5287c363f41b25bf80519794a2360b14a962ecd0dd"
+  },
+  "overlay Untitled_Diffuse_1.1001.png": {
+   "path": "C:/x/ev_t_e12b5c0c/v005/overlay_Untitled_Diffuse_1.1001.png",
+   "sha256": "f8d703dd9e39367be09b8001b288e6047c94be69d1e4411400e0c60f168d78f4"
+  },
+  "overlay Untitled_Diffuse_1.1001_ngosp2lcps3p.png": {
+   "path": "C:/x/ev_t_e12b5c0c/v005/overlay_Untitled_Diffuse_1.1001_ngosp2lcps3p.png",
+   "sha256": "e3e14bbbdbf5e1203d32f7c79838afdd21b1aeed68c9827072237ebf04c666a9"
+  },
+  "overlay atlas_01.png": {
+   "path": "C:/x/ev_t_e12b5c0c/v005/overlay_atlas_01.png",
+   "sha256": "5cf13dd1927767e59c8463443a08da66da06f711a7314a840048c94a9e6b2a86"
+  },
+  "overlay atlas_02.png": {
+   "path": "C:/x/ev_t_e12b5c0c/v005/overlay_atlas_02.png",
+   "sha256": "ac40f719ea5104a2c6a5c94bd2ef9b9db8fefd7a0a0b8ef67ccf12bcd0249261"
+  },
+  "overlay atlas_03.png": {
+   "path": "C:/x/ev_t_e12b5c0c/v005/overlay_atlas_03.png",
+   "sha256": "34fd48c9c3fc8a53200abef7e55c8bccd12c1055925f1b49da3338d8c9d5fc98"
+  },
+  "overlay atlas_04.png": {
+   "path": "C:/x/ev_t_e12b5c0c/v005/overlay_atlas_04.png",
+   "sha256": "ea72a5c506b46f1d29e4428cb5f74101f29ea7bf731cf86874443a8b7384cddc"
+  },
+  "overlay T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png": {
+   "path": "C:/x/ev_t_e12b5c0c/v005/overlay_T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png",
+   "sha256": "ed3d6317e6bdd468c821d673960442327bd9e9c316ceadb3a45b5c32b0112d87"
+  },
+  "overlay example_id_layout.png": {
+   "path": "C:/x/ev_t_e12b5c0c/v005/overlay_example_id_layout.png",
+   "sha256": "fedcecc3a5df0f2b8f1e2263d1b007ddaf11f2468ea60644582663987fbc983b"
+  },
+  "tiles": [
+   {
+    "id": 1,
+    "key": "paint_ral9005",
+    "file": "tiles/ID_01_paint_ral9005.png",
+    "sha256": "43fe76ffd624eca841ee249cb6e66c64b75de621ea4a92ede37a0db4701506c1",
+    "source": "ID_2_Лиственница_Ч cell 0 (flat #030305)"
+   },
+   {
+    "id": 2,
+    "key": "paint_ral7016",
+    "file": "tiles/ID_02_paint_ral7016.png",
+    "sha256": "d4611579a48d1ffd46d2ed7871af71d9dc6ee5ce5a99cb8f7a91f3b5c030a6a6",
+    "source": "ID_2_Лиственница_Ч cell 2 (flat #414141)"
+   },
+   {
+    "id": 3,
+    "key": "paint_ral7040",
+    "file": "tiles/ID_03_paint_ral7040.png",
+    "sha256": "c3e9907f20e1250572c84109bb66b1216a6eb0266344671eb9632afa1a749146",
+    "source": "T_Atlas_MAF.png cell 6 (flat #919EA2)"
+   },
+   {
+    "id": 4,
+    "key": "paint_ral7047",
+    "file": "tiles/ID_04_paint_ral7047.png",
+    "sha256": "49a0b943b0d31c7c5f0ed3da68ec4ec9c88e258cf57d2b8364af097ed5f0d07f",
+    "source": "atlas_02.png cell 6 (flat #DCDCDC)"
+   },
+   {
+    "id": 5,
+    "key": "paint_ral9003",
+    "file": "tiles/ID_05_paint_ral9003.png",
+    "sha256": "f57f9dcb1c4223f4912ad852d856937135f487c6e36d91f1c1179b64e06dd720",
+    "source": "GAP: target colour #F4F4F4 (cells only of merged shades)"
+   },
+   {
+    "id": 6,
+    "key": "paint_orange",
+    "file": "tiles/ID_06_paint_orange.png",
+    "sha256": "6efe9ccc5964db95093ed65fc440759f3e1362197476ec905b55fb412ff83004",
+    "source": "T_Atlas_MAF.png cell 4 (flat #EC8E4F)"
+   },
+   {
+    "id": 7,
+    "key": "paint_red",
+    "file": "tiles/ID_07_paint_red.png",
+    "sha256": "6fff0a1567629b7e572b89fe95539949e2a39081ff01cf84b875f9c6855448f3",
+    "source": "Untitled_Diffuse_1 cell 2 (flat #B70000)"
+   },
+   {
+    "id": 8,
+    "key": "paint_green_light",
+    "file": "tiles/ID_08_paint_green_light.png",
+    "sha256": "454f985f1976b767a31dd307c63ed0a5966e8faf46ff37ccec22ee356c7320bc",
+    "source": "atlas_02.png cell 16 (flat #A6CE23)"
+   },
+   {
+    "id": 9,
+    "key": "paint_green",
+    "file": "tiles/ID_09_paint_green.png",
+    "sha256": "113577621d8a70de79415c4bb1307140e62aae29bd3de34825347217223083d9",
+    "source": "atlas_02.png cell 20 (flat #1BB563)"
+   },
+   {
+    "id": 10,
+    "key": "paint_green_dark",
+    "file": "tiles/ID_10_paint_green_dark.png",
+    "sha256": "a10f6a47a37419ea9de3102b2f9951377cb2027000648b71d57cdd6ddf1c6a3f",
+    "source": "T_Pos_Desenovskoe_ cell 1 (flat #363F2F)"
+   },
+   {
+    "id": 11,
+    "key": "paint_blue",
+    "file": "tiles/ID_11_paint_blue.png",
+    "sha256": "ef81d1332d58d2f92a1bb98496854d5a700c3b296c43a35ecab98640d7bf7353",
+    "source": "1_Diffuse_1.1001_e cell 2 (flat #63A2D0)"
+   },
+   {
+    "id": 12,
+    "key": "paint_blue_grey",
+    "file": "tiles/ID_12_paint_blue_grey.png",
+    "sha256": "76a47491febab20fa0f5eb655a5c861d6697ea000addaa2360159ebd1af05399",
+    "source": "T_Atlas_MAF.png cell 7 (flat #526267)"
+   },
+   {
+    "id": 13,
+    "key": "paint_brown_dark",
+    "file": "tiles/ID_13_paint_brown_dark.png",
+    "sha256": "48af0ee1162b3208a1930ed1219dddfdcddd61131a1832427b69bd4ef55413f9",
+    "source": "MAF_Atlas_001_Diff cell 7 (flat #402618)"
+   },
+   {
+    "id": 14,
+    "key": "wood_light",
+    "file": "tiles/ID_14_wood_light.png",
+    "sha256": "9f648f67053516bc5709376aaa3738f044e5e8bc71286a9da7fc50f2bb4b7d6b",
+    "source": "T_Atlas_MAF.png cell 0"
+   },
+   {
+    "id": 15,
+    "key": "wood_medium",
+    "file": "tiles/ID_15_wood_medium.png",
+    "sha256": "681d7cd0d89028f0c17c15de1c537b58e273c5b64e41ca4c484e609e50353215",
+    "source": "1_Diffuse_1.1001_e cell 10"
+   },
+   {
+    "id": 16,
+    "key": "wood_dark",
+    "file": "tiles/ID_16_wood_dark.png",
+    "sha256": "c497309a2a95a950bcce710f29d1f8a06721bd2ece8af1238ba1693bc85bf916",
+    "source": "MAF_Atlas_001_Diff cell 10"
+   },
+   {
+    "id": 17,
+    "key": "wood_grey_washed",
+    "file": "tiles/ID_17_wood_grey_washed.png",
+    "sha256": "14ef4b9a7e937fe59bb6aaad371cdcee8a629e53cb482a2a7a3656afeca1ec78",
+    "source": "atlas_02.png cell 7"
+   },
+   {
+    "id": 18,
+    "key": "wood_log_end",
+    "file": "tiles/ID_18_wood_log_end.png",
+    "sha256": "2f511443ba5e02d1bd8f4339b4988e0ed416f2a50803c25b7900610c2abee6e8",
+    "source": "GAP: target colour #C8A27A"
+   },
+   {
+    "id": 19,
+    "key": "plywood",
+    "file": "tiles/ID_19_plywood.png",
+    "sha256": "4673eae0406582f08325093dbee0f7bb88c991366a21d3ec6dbac9dbe5c13f7f",
+    "source": "MAF_Atlas_001_Diff cell 3 (flat #D9B38F)"
+   },
+   {
+    "id": 20,
+    "key": "steel_stainless",
+    "file": "tiles/ID_20_steel_stainless.png",
+    "sha256": "2f7e8f4cb11f04222ff18743cb379dba5759c4410fd38103766a8370f839e733",
+    "source": "1_Diffuse_1.1001_e cell 8 (flat #BCBCBC)"
+   },
+   {
+    "id": 21,
+    "key": "metal_bronze_brushed",
+    "file": "tiles/ID_21_metal_bronze_brushed.png",
+    "sha256": "622151d2d14519c771ad66954e0d8bc6a2be62cb3eb8ab0cddf3e768c635b7c9",
+    "source": "GAP: target colour #8C6A3F"
+   },
+   {
+    "id": 22,
+    "key": "cap_black",
+    "file": "tiles/ID_22_cap_black.png",
+    "sha256": "92ee3344809af00c042161fdbace9b12a9572fd360181d0dc2469264e038bc09",
+    "source": "Untitled_Diffuse_1 cell 3 (flat #2B3034)"
+   },
+   {
+    "id": 23,
+    "key": "rubber_black",
+    "file": "tiles/ID_23_rubber_black.png",
+    "sha256": "91b932e6ad29753ab6db0470b5032af4c6617f405b51d4186833d7ceb61e7c97",
+    "source": "GAP: target colour #2B2B2B"
+   },
+   {
+    "id": 24,
+    "key": "concrete_arch",
+    "file": "tiles/ID_24_concrete_arch.png",
+    "sha256": "07467d4b96a19a6ed04bd33bbbb8c8b153deec6dd1d869393887bedc9efa31ca",
+    "source": "GAP: target colour #A69799"
+   },
+   {
+    "id": 25,
+    "key": "terrazzo",
+    "file": "tiles/ID_25_terrazzo.png",
+    "sha256": "c3b1a81d9b8653d2ae107f4a7cd0088304bdfa4432767574da1b9622c9717d53",
+    "source": "GAP: patch atlas_02.png (на проверку)"
+   },
+   {
+    "id": 26,
+    "key": "sand",
+    "file": "tiles/ID_26_sand.png",
+    "sha256": "5b370b6e7243216b8f8c72ac93c3d421471394159fcf477b93a6a39d1761f2a0",
+    "source": "GAP: target colour #C3A37E"
+   },
+   {
+    "id": 27,
+    "key": "mesh_chainlink",
+    "file": "tiles/ID_27_mesh_chainlink.png",
+    "sha256": "e8771e14001689f05d8b38c386c1f51a9cce13b2f790e51675e04aa77bef5d4a",
+    "source": "ID_5_Сетка_D.png cell 0"
+   },
+   {
+    "id": 28,
+    "key": "perforation",
+    "file": "tiles/ID_28_perforation.png",
+    "sha256": "5391cae7db27321d1f29b4638019d827fe7c2523fb8474c0026637a01ff2cfe4",
+    "source": "GAP: target colour #3F4749"
+   },
+   {
+    "id": 29,
+    "key": "rope_pp",
+    "file": "tiles/ID_29_rope_pp.png",
+    "sha256": "7c569e5a8c6dd6fb665c01cf9d23bb0f30b8e1728dc0cbda96612a90bc8eb15f",
+    "source": "GAP: target colour #5A5A5A"
+   },
+   {
+    "id": 30,
+    "key": "sheet_profiled",
+    "file": "tiles/ID_30_sheet_profiled.png",
+    "sha256": "57954e8e892780c3b69823c67b8947b80554e9dd8096512e67d7fb9f1ccc8255",
+    "source": "Untitled_Diffuse_1 cell 1 (flat #767468)"
+   },
+   {
+    "id": 31,
+    "key": "polycarbonate",
+    "file": "tiles/ID_31_polycarbonate.png",
+    "sha256": "30d01b26accb592cbc25f116df2ab5abba67f51068e08ad7aa18df132c585d65",
+    "source": "GAP: target colour #DCE6EA"
+   }
+  ]
+ }
+}
