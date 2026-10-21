@@ -108,3 +108,17 @@ at build-v013 (A, B) and at F13 (B ends).
 1. Fins sunk 0.808 m below z 0: a rule for placement on relief (all towers, which depth) or this site only?
 2. 9 body wall quads at 51.8-57.8 removed: what was wrong there (duplicate behind another surface?)
 3. Coping, roof and band199 moved to the dark atlas area: is dark the source colour (our mapping error) or a design choice?
+
+## 10. Follow-up issues (created 2026-10-21, `ready-for-agent`)
+
+| Issue | What |
+|---|---|
+| #527 | Overlap gate: `inv_xview` CLI in local coordinates, the postcondition of every build step |
+| #528 | xView runner: `.max`, full face lists, Mesh + Weld 2 mm mode folded into `tools/qa/xview_dump.ms` |
+| #529 | Branch freshness: no production on a detached HEAD; merge main before the first production step |
+| #530 | Engine join: weld or separate beyond the face tolerance; seam-aware simplification |
+| #531 | Attached decor placement: derive from the host face, no shared levels, >= 10 mm per vertex, rigid fixes |
+| #532 | Analysis: which TOW02 job code becomes engine modules (EG6) |
+| #533 | Intake: source-class step; `independent-checker` after every shown build; poll timeouts |
+| #534 | Backfill the user's TOW02 rules into `docs/decisions.md` |
+| #535 | Fast xView-exact checks: seconds, incremental per part, interactive Blender overlay |
