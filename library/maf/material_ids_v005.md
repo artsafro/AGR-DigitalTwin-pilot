@@ -103,8 +103,8 @@ Concept (Artem 2026-10-21): MAFs are textured through atlases for both profiles 
 | 3 | 1536,0 | 512x512 | solid | #2E3034 | 22 | 0 | 0 | - | 0 |
 | 4 | 2048,0 | 512x1024 | solid | #000000 | 1 | 0 | 0 | - | 0 |
 | 5 | 2560,0 | 1536x1024 | solid | #C3C8CE | 20 | 0 | 0 | - | 0 |
-| 6 | 0,512 | 512x512 | solid | #F9CF2B | 6 | 0 | 0 | - | 0 |
-| 7 | 512,512 | 512x512 | solid | #DCDCDC | 4 | 1 | 4 | -341 | 4 |
+| 6 | 0,512 | 512x512 | solid | #F9CF2B | 6 | 0 | 0 | - | 28 |
+| 7 | 512,512 | 512x512 | solid | #DCDCDC | 4 | 1 | 4 | -341 | 11 |
 | 8 | 1024,512 | 1024x3584 | solid | #BCBCBC | 20 | 1 | 515 | -181 | 0 |
 | 9 | 0,1024 | 1024x3072 | patterned | #BEA581 | 14 | 1 | 1006 | -336 | 0 |
 | 10 | 2048,1024 | 2048x3072 | patterned | #957256 | 15 | 0 | 0 | - | 0 |
@@ -156,15 +156,15 @@ Concept (Artem 2026-10-21): MAFs are textured through atlases for both profiles 
 
 | cell | x,y | w x h px | kind | colour | id | MAFs on it (UV) | faces | min margin px | faces in ID corner |
 |---|---|---|---|---|---|---|---|---|---|
-| 0 | 0,0 | 1024x1024 | solid | #CBBCA7 | 5 | 1 | 1 | 0 | 0 |
+| 0 | 0,0 | 1024x1024 | solid | #CBBCA7 | 5 | 1 | 1 | 0 | 1 |
 | 1 | 1024,0 | 1032x512 | solid | #526374 | 12 | 1 | 1 | -1455 | 1 |
-| 2 | 2056,0 | 504x1024 | solid | #000000 | 1 | 2 | 156 | 115 | 0 |
-| 3 | 2560,0 | 728x1024 | solid | #D9B38F | 19 | 0 | 0 | - | 0 |
-| 4 | 3288,0 | 808x1024 | solid | #622022 | 7 | 1 | 1 | 0 | 0 |
-| 5 | 1024,512 | 1032x512 | solid | #A5ABB2 | 3 | 1 | 41 | 44 | 0 |
-| 6 | 0,1024 | 1808x3072 | patterned | #B68358 | 14 | 2 | 88 | -439 | 0 |
-| 7 | 1808,1024 | 584x736 | solid | #402618 | 13 | 0 | 0 | - | 0 |
-| 8 | 2392,1024 | 1704x1016 | solid | #C5C5C5 | 20 | 5 | 1683 | 156 | 0 |
+| 2 | 2056,0 | 504x1024 | solid | #000000 | 1 | 2 | 156 | 115 | 1 |
+| 3 | 2560,0 | 728x1024 | solid | #D9B38F | 19 | 0 | 0 | - | 1 |
+| 4 | 3288,0 | 808x1024 | solid | #622022 | 7 | 1 | 1 | 0 | 1 |
+| 5 | 1024,512 | 1032x512 | solid | #A5ABB2 | 3 | 1 | 41 | 44 | 1 |
+| 6 | 0,1024 | 1808x3072 | patterned | #B68358 | 14 | 2 | 88 | -439 | 1 |
+| 7 | 1808,1024 | 584x736 | solid | #402618 | 13 | 0 | 0 | - | 1 |
+| 8 | 2392,1024 | 1704x1016 | solid | #C5C5C5 | 20 | 5 | 1683 | 156 | 1 |
 | 9 | 1808,1760 | 584x2336 | patterned | #7F583D | 16 | 1 | 2 | -1223 | 1 |
 | 10 | 2392,2040 | 1704x2056 | patterned | #845B3F | 16 | 1 | 2 | -1455 | 1 |
 
@@ -192,13 +192,13 @@ Concept (Artem 2026-10-21): MAFs are textured through atlases for both profiles 
 
 | cell | x,y | w x h px | kind | colour | id | MAFs on it (UV) | faces | min margin px | faces in ID corner |
 |---|---|---|---|---|---|---|---|---|---|
-| 0 | 0,0 | 2048x1392 | solid | #0D0D0D | 1 | 2 | 344 | 229 | 0 |
-| 1 | 2048,0 | 976x1384 | solid | #767468 | 30 | 2 | 80 | 193 | 0 |
-| 2 | 3024,0 | 1072x1384 | solid | #072502 | 1 | 1 | 11 | -40987 | 11 |
-| 3 | 2048,1384 | 2048x504 | solid | #2B3034 | 22 | 1 | 1 | -40536 | 1 |
-| 4 | 0,1392 | 2048x2704 | mixed | #A8825B | - (mixed region around flat blocks (non-rectangular content: decal/pattern)) | 2 | 230 | -8192 | 14 |
-| 5 | 2048,1888 | 2048x2208 | solid | #CCDAE3 | 4 | 1 | 63 | -40987 | 39 |
-| 6 | 0,4008 | 88x88 | solid | #A68158 | - (fragment below 1/1024 of the atlas (gutter/detail)) | 1 | 24 | 0 | 0 |
+| 0 | 0,0 | 2048x1392 | solid | #0D0D0D | 1 | 2 | 344 | 229 | 65 |
+| 1 | 2048,0 | 976x1384 | solid | #767468 | 30 | 2 | 80 | 193 | 65 |
+| 2 | 3024,0 | 1072x1384 | solid | #072502 | 1 | 1 | 11 | -40987 | 65 |
+| 3 | 2048,1384 | 2048x504 | solid | #2B3034 | 22 | 1 | 1 | -40536 | 59 |
+| 4 | 0,1392 | 2048x2704 | mixed | #A8825B | - (mixed region around flat blocks (non-rectangular content: decal/pattern)) | 2 | 230 | -8192 | 63 |
+| 5 | 2048,1888 | 2048x2208 | solid | #CCDAE3 | 4 | 1 | 63 | -40987 | 63 |
+| 6 | 0,4008 | 88x88 | solid | #A68158 | - (fragment below 1/1024 of the atlas (gutter/detail)) | 1 | 24 | 0 | 52 |
 
 ### Untitled_Diffuse_1.1001_ngosp2lcps3p.png (4096x4096, atlas, MAFs: 2)
 - cells: 5; solid area 34%, patterned area 0%; mixed regions 2

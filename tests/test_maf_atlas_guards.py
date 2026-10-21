@@ -316,8 +316,8 @@ def _uv_cells_two(pts, w=200, h=100, cells=None):
 
 
 def test_face_with_centroid_in_the_next_cell_still_hits_the_corner_of_its_neighbour():
-    # centroid in cell 1 (x ~ 135), the face crosses cell 0's corner [84,84,16,16]
-    r = _uv_cells_two([(90, 90), (190, 90), (190, 99)])['cells']
+    # centroid in cell 1 (x = 150), the face crosses cell 0's corner [84,84,16,16], ends before cell 1's [184,..]
+    r = _uv_cells_two([(90, 90), (180, 90), (180, 99)])['cells']
     assert r[1]['faces'] == 1 and r[1]['corner_faces'] == 0
     assert r[0]['faces'] == 0 and r[0]['corner_faces'] == 1 and r[0]['corner_mafs'] == ['MAF_0001']
 

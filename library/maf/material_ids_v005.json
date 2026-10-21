@@ -3234,6 +3234,26 @@
    "role": "atlas",
    "uv": {
     "cells": {
+     "6": {
+      "faces": 0,
+      "mafs": [],
+      "min_margin_px": null,
+      "corner_faces": 28,
+      "corner_mafs": [
+       "MAF_0001"
+      ]
+     },
+     "7": {
+      "faces": 4,
+      "mafs": [
+       "MAF_0001"
+      ],
+      "min_margin_px": -341,
+      "corner_faces": 11,
+      "corner_mafs": [
+       "MAF_0001"
+      ]
+     },
      "9": {
       "faces": 1006,
       "mafs": [
@@ -3251,17 +3271,6 @@
       "min_margin_px": -181,
       "corner_faces": 0,
       "corner_mafs": []
-     },
-     "7": {
-      "faces": 4,
-      "mafs": [
-       "MAF_0001"
-      ],
-      "min_margin_px": -341,
-      "corner_faces": 4,
-      "corner_mafs": [
-       "MAF_0001"
-      ]
      }
     },
     "uncovered": {
@@ -3827,8 +3836,10 @@
        "MAF_0016"
       ],
       "min_margin_px": 156,
-      "corner_faces": 0,
-      "corner_mafs": []
+      "corner_faces": 1,
+      "corner_mafs": [
+       "MAF_0015"
+      ]
      },
      "2": {
       "faces": 156,
@@ -3837,8 +3848,10 @@
        "MAF_0014"
       ],
       "min_margin_px": 115,
-      "corner_faces": 0,
-      "corner_mafs": []
+      "corner_faces": 1,
+      "corner_mafs": [
+       "MAF_0015"
+      ]
      },
      "6": {
       "faces": 88,
@@ -3847,8 +3860,10 @@
        "MAF_0015"
       ],
       "min_margin_px": -439,
-      "corner_faces": 0,
-      "corner_mafs": []
+      "corner_faces": 1,
+      "corner_mafs": [
+       "MAF_0015"
+      ]
      },
      "5": {
       "faces": 41,
@@ -3856,8 +3871,39 @@
        "MAF_0014"
       ],
       "min_margin_px": 44,
-      "corner_faces": 0,
-      "corner_mafs": []
+      "corner_faces": 1,
+      "corner_mafs": [
+       "MAF_0015"
+      ]
+     },
+     "0": {
+      "faces": 1,
+      "mafs": [
+       "MAF_0015"
+      ],
+      "min_margin_px": 0,
+      "corner_faces": 1,
+      "corner_mafs": [
+       "MAF_0015"
+      ]
+     },
+     "3": {
+      "faces": 0,
+      "mafs": [],
+      "min_margin_px": null,
+      "corner_faces": 1,
+      "corner_mafs": [
+       "MAF_0015"
+      ]
+     },
+     "7": {
+      "faces": 0,
+      "mafs": [],
+      "min_margin_px": null,
+      "corner_faces": 1,
+      "corner_mafs": [
+       "MAF_0015"
+      ]
      },
      "9": {
       "faces": 2,
@@ -3887,17 +3933,10 @@
        "MAF_0015"
       ],
       "min_margin_px": 0,
-      "corner_faces": 0,
-      "corner_mafs": []
-     },
-     "0": {
-      "faces": 1,
-      "mafs": [
+      "corner_faces": 1,
+      "corner_mafs": [
        "MAF_0015"
-      ],
-      "min_margin_px": 0,
-      "corner_faces": 0,
-      "corner_mafs": []
+      ]
      },
      "1": {
       "faces": 1,
@@ -4331,8 +4370,10 @@
        "MAF_0009"
       ],
       "min_margin_px": 229,
-      "corner_faces": 0,
-      "corner_mafs": []
+      "corner_faces": 65,
+      "corner_mafs": [
+       "MAF_0008"
+      ]
      },
      "1": {
       "faces": 80,
@@ -4341,8 +4382,10 @@
        "MAF_0009"
       ],
       "min_margin_px": 193,
-      "corner_faces": 0,
-      "corner_mafs": []
+      "corner_faces": 65,
+      "corner_mafs": [
+       "MAF_0008"
+      ]
      },
      "2": {
       "faces": 11,
@@ -4350,18 +4393,7 @@
        "MAF_0008"
       ],
       "min_margin_px": -40987,
-      "corner_faces": 11,
-      "corner_mafs": [
-       "MAF_0008"
-      ]
-     },
-     "5": {
-      "faces": 63,
-      "mafs": [
-       "MAF_0008"
-      ],
-      "min_margin_px": -40987,
-      "corner_faces": 39,
+      "corner_faces": 65,
       "corner_mafs": [
        "MAF_0008"
       ]
@@ -4372,7 +4404,7 @@
        "MAF_0008"
       ],
       "min_margin_px": -40536,
-      "corner_faces": 1,
+      "corner_faces": 59,
       "corner_mafs": [
        "MAF_0008"
       ]
@@ -4384,7 +4416,18 @@
        "MAF_0009"
       ],
       "min_margin_px": -8192,
-      "corner_faces": 14,
+      "corner_faces": 63,
+      "corner_mafs": [
+       "MAF_0008"
+      ]
+     },
+     "5": {
+      "faces": 63,
+      "mafs": [
+       "MAF_0008"
+      ],
+      "min_margin_px": -40987,
+      "corner_faces": 63,
       "corner_mafs": [
        "MAF_0008"
       ]
@@ -4395,8 +4438,10 @@
        "MAF_0008"
       ],
       "min_margin_px": 0,
-      "corner_faces": 0,
-      "corner_mafs": []
+      "corner_faces": 52,
+      "corner_mafs": [
+       "MAF_0008"
+      ]
      }
     },
     "uncovered": {

@@ -299,6 +299,13 @@ def uv_cells(uv_dump: dict, image_name: str, atlas: dict) -> dict:
                 pts = [((face[k] - tu) * W, (1.0 - (face[k + 1] - tv)) * H) for k in range(0, len(face), 2)]
                 cx = min((cu - tu) * W, W - 1e-6)
                 cy = min((1.0 - (cv - tv)) * H, H - 1e-6)
+                # bottom-right ID-number keep-out (Artem 2026-10-21): the same id_corner contract as the
+                # layouts, checked on EVERY cell independently of the centroid cell - a face whose centroid
+                # lies in a neighbour cell (or in no cell) still violates the corner it overlaps
+                for ci, c in enumerate(cells):
+                    if clip_area(pts, id_corner([c['x'], c['y'], c['w'], c['h']])) > 1e-9:
+                        use[ci]['corner_faces'] += 1
+                        use[ci].setdefault('corner_mafs', set()).add(maf)
                 hit = None
                 for mixed in (False, True):  # a flat block wins over the mixed remainder around it
                     for ci, c in enumerate(cells):
@@ -317,11 +324,6 @@ def uv_cells(uv_dump: dict, image_name: str, atlas: dict) -> dict:
                 u['mafs'].add(maf)
                 m = min(min(p[0] - c['x'], c['x'] + c['w'] - p[0], p[1] - c['y'], c['y'] + c['h'] - p[1]) for p in pts)
                 u['min_margin_px'] = round(m) if u['min_margin_px'] is None else min(u['min_margin_px'], round(m))
-                # bottom-right ID-number keep-out (Artem 2026-10-21): the same id_corner contract as the
-                # layouts; a face counts when its polygon overlaps the zone, not only when a vertex is in it
-                if clip_area(pts, id_corner([c['x'], c['y'], c['w'], c['h']])) > 1e-9:
-                    u['corner_faces'] += 1
-                    u.setdefault('corner_mafs', set()).add(maf)
     return {'cells': {k: dict(v, mafs=sorted(v['mafs']), corner_mafs=sorted(v.get('corner_mafs', ())))
                       for k, v in use.items()},
             'uncovered': dict(uncovered, mafs=sorted(uncovered['mafs']))}
@@ -800,7 +802,7 @@ def render_md(r: dict) -> str:
             u = (uv or {}).get('cells', {}).get(ci, {}) if uv else {}
             L.append(f"| {ci} | {c['x']},{c['y']} | {c['w']}x{c['h']} | {c['kind']} | {c['color']} | "
                      f"{c.get('id') or '- (' + (c.get('reason') or '') + ')'} | {len(u.get('mafs', []))} | "
-                     f"{u.get('faces', 0)} | {u.get('min_margin_px', '-')} | {u.get('corner_faces', 0)} |")
+                     f"{u.get('faces', 0)} | {'-' if u.get('min_margin_px') is None else u['min_margin_px']} | {u.get('corner_faces', 0)} |")
         L.append('')
     inv = r['inventory']
     L += ['## Image inventory', '', '| image | px | copies (sha256 12) | MAFs | note |', '|---|---|---|---|---|']
