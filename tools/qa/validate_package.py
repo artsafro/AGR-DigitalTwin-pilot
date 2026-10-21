@@ -7,23 +7,34 @@ Exit code: 0 passed (every blocking machine stage ran and passed), 1 any fail,
 UV islands, UCX, coordinates) are not_run unless --scene runs the Blender readback
 (tools/blender/fbx_readback.py) on every FBX.
 Manual stages (V015-V017) always need a signed review.
+
+    py -3 tools/qa/validate_package.py --recheck old_report.json --output new_report.json [--standards DIR] [--json]
+
+Recheck (issue #511): is a stored report's verdict still true now? current (target sha256 and
+standards digest unchanged; exit = the stored exit code), stale_standards (exit 3),
+evidence_missing (target gone or changed; exit 4). The result is written to a NEW file
+(never over an existing file, the old report or the target); bad input exits 2 and writes nothing.
 """
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path, PurePosixPath
+
+import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from twinqa.bundle import BundleError, read_bundle, size_status  # noqa: E402
 from twinqa.fbx_header import check_fbx_header  # noqa: E402
 from twinqa.geojson import geojson_findings  # noqa: E402
-from twinqa.io import digest  # noqa: E402
+from twinqa.io import digest, json_bytes  # noqa: E402
 from twinqa.png import npm_texture_findings, vpm_texture_findings  # noqa: E402
-from twinqa.profiles import load_profiles  # noqa: E402
-from twinqa.report import Finding, Stage, ValidationReport  # noqa: E402
-from twinqa.scene import readback, scene_findings  # noqa: E402
+from twinqa.profiles import (DEFAULT_STANDARDS, expected_stages, load_profiles, read_snapshot,  # noqa: E402
+                             snapshot_digest, snapshot_validator)
+from twinqa.report import Finding, Stage, ValidationReport, code_commit, recheck, recheck_summary  # noqa: E402
+from twinqa.scene import check_ground_area, readback, scene_findings  # noqa: E402
 from twinqa.uv import sequential_tiles  # noqa: E402
 
 STEM = re.compile(r"^[A-Za-z0-9_]+$")
@@ -142,8 +153,10 @@ def fbx_role(name: str) -> str:
     return "light" if stem.endswith("_Light") else "ground" if stem.endswith("_Ground") else "oks"
 
 
-def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, bytes], notes: list[str]):
-    """Blender readback of each FBX; replaces the scene not_run placeholders it covers."""
+def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, bytes], notes: list[str],
+              ground_area_m2: float | None = None):
+    """Blender readback of each FBX; replaces the scene not_run placeholders it covers.
+    ground_area_m2 (site minus OKS footprint) selects the VPM Ground triangle band (reg p.29)."""
     import tempfile
     with tempfile.TemporaryDirectory() as tmp:
         for name, data in sorted(fbx.items()):
@@ -154,7 +167,8 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
             except (OSError, RuntimeError) as exc:
                 notes.append(f"scene readback skipped for {name}: {exc}")
                 return
-            for stage_id, findings in scene_findings(rb, kind, fbx_role(name), profile).items():
+            for stage_id, findings in scene_findings(rb, kind, fbx_role(name), profile,
+                                                        ground_area_m2=ground_area_m2).items():
                 if stage_id in st:
                     st[stage_id].findings.extend(findings)
             notes.append(f"scene readback: {name} in Blender {rb.get('blender')}")
@@ -167,7 +181,10 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
         v002.findings = [f for f in v002.findings if f.name != "units and scale"]
 
 
-def validate(target: Path, kind: str | None, profiles, scene: bool = False) -> ValidationReport:
+def validate(target: Path, kind: str | None, profiles, scene: bool = False,
+             ground_area_m2: float | None = None) -> ValidationReport:
+    if ground_area_m2 is not None:
+        check_ground_area(ground_area_m2)
     data = target.read_bytes()
     suffix = target.suffix.lower()
     if suffix == ".geojson":
@@ -197,11 +214,12 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False) -> V
                                            st["V001"].source_pdf_pages, conflicts=[]))
         (validate_vpm_zip if kind == "vpm" else validate_npm_zip)(target.stem, files, profile, st)
         if scene:
-            add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes)
+            add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes,
+                      ground_area_m2)
     elif suffix == ".fbx":
         check_fbx_headers(st["V002"], {target.name: data})
         if scene:
-            add_scene(st, kind, profile, {target.name: data}, notes)
+            add_scene(st, kind, profile, {target.name: data}, notes, ground_area_m2)
         else:
             notes.append("single FBX: header only; add --scene for the Blender readback")
     elif suffix == ".geojson":
@@ -211,27 +229,82 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False) -> V
         st["V006"].findings.extend(npm_texture_findings({target.name: data}, profile))
     else:
         notes.append(f"unsupported file type {suffix}")
+    if ground_area_m2 is not None and not (kind == "vpm" and scene and suffix in (".zip", ".fbx")):
+        notes.append(f"ground_area_m2 {ground_area_m2} unused: the VPM Ground band applies only to a VPM --scene readback")
     return report(target, data, kind, profiles, st, notes)
+
+
+def _area_arg(text: str) -> float:
+    try:
+        return check_ground_area(float(text))
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(str(exc)) from None
 
 
 def report(target, data, kind, profiles, stages, notes) -> ValidationReport:
     return ValidationReport(kind, str(target), digest(data), profiles.pdf_sha256, profiles.pdf_verified,
-                            list(stages.values()), notes)
+                            list(stages.values()), notes, profiles.standards_sha256, code_commit())
+
+
+def write_new(out: Path, data: bytes, inputs: list[Path]):
+    """Write `data` to a new file `out` via `out.partial`; refuse any alias of an input or an existing file."""
+    partial = Path(str(out) + ".partial")
+    taken = {os.path.normcase(str(p.resolve())) for p in inputs}
+    for path in (out, partial):
+        if os.path.normcase(str(path.resolve())) in taken:
+            raise ValueError(f"output {path} is an input")
+        if path.exists():
+            raise ValueError(f"output {path} already exists; recheck never overwrites")
+    with open(partial, "xb") as fh:
+        fh.write(data)
+    try:
+        os.link(partial, out)  # fails if `out` appeared meanwhile: no clobber
+    finally:
+        partial.unlink()
+
+
+def run_recheck(old: Path, out: Path, standards: Path, as_json: bool) -> int:
+    try:
+        old_bytes = old.read_bytes()
+        snap = read_snapshot(standards)  # digest and stage schema from the same bytes
+        validator = snapshot_validator(snap)
+        result = recheck(old_bytes, str(old), snapshot_digest(snap), code_commit(),
+                         expected_stages=lambda kind: expected_stages(validator, kind))
+        write_new(out, json_bytes(result), [old, Path(result["target"])])
+    except (OSError, ValueError, KeyError, TypeError, yaml.YAMLError) as exc:
+        print(f"Error: recheck: {exc}", file=sys.stderr)
+        return 2
+    sys.stdout.reconfigure(encoding="utf-8")
+    print(json.dumps(result, ensure_ascii=False, indent=2) if as_json else recheck_summary(result))
+    return result["exit_code"]
 
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("target", type=Path)
+    ap.add_argument("target", type=Path, nargs="?")
     ap.add_argument("--profile", choices=["npm", "vpm"])
     ap.add_argument("--json", action="store_true", help="machine-readable report")
     ap.add_argument("--standards", type=Path, help="standards folder (default: <repo>/standards)")
     ap.add_argument("--scene", action="store_true", help="read every FBX back in background Blender")
+    ap.add_argument("--recheck", type=Path, metavar="OLD_REPORT", help="re-read a stored report.json (needs --output)")
+    ap.add_argument("--output", type=Path, help="new file for the recheck result (never an existing file)")
+    ap.add_argument("--ground-area-m2", type=_area_arg, metavar="M2",
+                    help="VPM Ground area = site minus OKS footprint, m2 (reg p.29 triangle band; without it: review)")
     args = ap.parse_args(argv)
+    if args.recheck is not None:
+        if (args.target is not None or args.output is None or args.profile or args.scene
+                or args.ground_area_m2 is not None):
+            ap.error("--recheck takes only --output, --standards and --json")
+        return run_recheck(args.recheck, args.output, args.standards or DEFAULT_STANDARDS, args.json)
+    if args.output is not None:
+        ap.error("--output is only for --recheck")
+    if args.target is None:
+        ap.error("target is required")
     if not args.target.is_file():
         print(f"Error: {args.target} does not exist", file=sys.stderr)
         return 1
     profiles = load_profiles(args.standards) if args.standards else load_profiles()
-    result = validate(args.target, args.profile, profiles, args.scene)
+    result = validate(args.target, args.profile, profiles, args.scene, args.ground_area_m2)
     sys.stdout.reconfigure(encoding="utf-8")
     print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2) if args.json else result.summary())
     return result.exit_code

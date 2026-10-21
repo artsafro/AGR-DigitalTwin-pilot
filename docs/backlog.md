@@ -212,11 +212,10 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
 - **R16** proposal 2026-10-21, job/vyatskaya-tow02-midpoly - src/ module (checker): xView-equivalent mesh QA with
   explicit tolerances - overlapping vertices (distinct verts within d), overlapping faces (parallel within 5°, planes
   within d, overlap area > 0), mismatched winding edges, bowtie vertices that 3ds Max splits on import, outward
-  orientation by ray test; grouped by source part; seen 5 times; effort M.
-  Review #514 (2026-10-21): the overlap part already exists - `dt_ai.ops.inv_xview` reproduces xView 185/185 on
-  TOW02 export-v005 and 0/0 on the user's model (`jobs/vyatskaya-tow02/REVIEW-514.md`); the "area > 0" rule above is
-  what missed them. Left: a CLI entry that runs `inv_xview` on an FBX in local coordinates with per-part grouping,
-  plus bow-tie / non-manifold vertices (3ds Max Poly splits them); effort S.
+  orientation by ray test; grouped by source part; seen 5 times; effort M. Overlapping vertices / faces and bow-tie
+  vertices: `dt qa xview` (#527); winding edges and outward orientation still open.
+  Review #514 (2026-10-21): `dt_ai.ops.inv_xview` reproduces xView 185/185 on TOW02 export-v005 and 0/0 on the
+  user's model (`jobs/vyatskaya-tow02/REVIEW-514.md`); the "area > 0" rule above is what missed them.
 - **R17** proposal 2026-10-21, job/vyatskaya-tow02-midpoly - CLI command: run 3ds Max xView checks on an FBX in a
   separate Max instance via a startup script (`jobs/vyatskaya-tow02/scripts/xview_check.ms`; xView does not compute
   through the MCP bridge) with the "Disable xView" dialog answered, one JSONL line per checker; seen 3 times; effort S.

@@ -72,6 +72,16 @@ def parser():
     evals.add_argument("--main", type=Path, help="main checkout holding logs/ (default: from git)")
     evals.add_argument("--evals-dir", type=Path, help="default: <repo>/evals")
     evals.add_argument("--output", type=Path, help="new run folder (default: <main>/logs/evals/runs/<time>-<selector>)")
+    qa = sub.add_parser("qa", help="Mesh QA gates; xview = inv_xview overlap gate (#527), postcondition of a build step")
+    qa.add_argument("check", choices=["xview"])
+    qa.add_argument("input", type=Path, help="FBX, .blend (headless Blender) or parts .npz")
+    qa.add_argument("--out", type=Path, required=True, help="new report.json (never the input, never overwritten)")
+    qa.add_argument("--parts", nargs="+", help="check only these objects / named parts (default: every mesh)")
+    qa.add_argument("--profile", default="NPM", help="NPM or VPM (-OKS / -GROUND): xView 2 mm / 5 mm thresholds")
+    qa.add_argument("--coords", default="local", choices=["local", "inplace", "as-stored"],
+                    help="local = object location subtracted, float64 (default)")
+    qa.add_argument("--blender", default=os.environ.get("DT_BLENDER"), help="Blender executable for FBX / .blend")
+    qa.add_argument("--timeout", type=float, default=3600, help="Blender dump timeout, seconds")
     for name in ("build", "validate"):
         item = sub.add_parser(name, help="Build/check a labelled development bundle; never certify delivery")
         item.add_argument("--job" if name == "build" else "--archive", type=Path, required=True)
@@ -235,6 +245,17 @@ def main(argv=None):
                   f"{report['parts']} parts "
                   f"({report['attachment_parts_ignored']} not body, {report['decor']['elements']} decor elements), "
                   f"{len(report['questions'])} questions")
+        elif args.command == "qa":
+            from dt_ai.ops import xview_gate
+            try:
+                rep = xview_gate.run(args.input, args.out, args.profile, args.coords, args.parts, args.blender,
+                                     args.timeout)
+            except (ValueError, OSError, RuntimeError) as exc:     # input / setup error: 2, never a verdict
+                print("ERROR: " + " ".join(str(exc).splitlines()), file=sys.stderr)
+                return 2
+            print("\n".join(xview_gate.summary_lines(rep)))
+            print(f"Report: {args.out}")
+            return 0 if rep["passed"] else 1
         elif args.command == "registry":
             current = MaterialRegistry.model_validate(read_json(args.current.read_bytes()))
             proposal = MaterialRegistry.model_validate(read_json(args.proposal.read_bytes()))
