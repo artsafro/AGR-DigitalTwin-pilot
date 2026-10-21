@@ -27,14 +27,31 @@ class PlanarPatch:
         return self.origin + np.asarray(xy) @ self.axes
 
 
-def planar_patches(mesh, *, allowed_slots):
-    """Keep every seed triangle in one connected semantic plane (0.1 um bound).
+def planar_patches(mesh, *, allowed_slots, protected_faces=(), plane_tolerance_m=1e-7):
+    """Keep every seed triangle in one connected bounded semantic plane.
 
     Membership is tested against the fixed root plane, not pairwise normal
     similarity: a chain of locally similar triangles must not accumulate drift.
     Boundary corners, including collinear ones, are retained in the union.
     """
     _validate_seed(mesh)
+    if (isinstance(plane_tolerance_m, bool) or not isinstance(plane_tolerance_m, (int, float))
+            or not np.isfinite(plane_tolerance_m) or not 0 < plane_tolerance_m <= 1e-5):
+        raise ValueError('plane tolerance must be finite, positive and <=10 micrometres')
+    if (not isinstance(allowed_slots, (set, frozenset)) or not allowed_slots
+            or any(not isinstance(s, str) or not s.strip() for s in allowed_slots)):
+        raise ValueError('allowed_slots must be a nonempty set of named texture slots')
+    for slot in mesh.slot:
+        if slot not in allowed_slots:
+            raise ValueError(f'unmapped texture slot: {slot}')
+    if np.any(mesh.level != np.floor(mesh.level)):
+        raise ValueError('every level must be integral')
+    protected = set()
+    for i in protected_faces:
+        if (isinstance(i, (bool, np.bool_)) or not isinstance(i, (int, np.integer))
+                or not 0 <= i < len(mesh.faces) or i in protected):
+            raise ValueError(f'invalid/duplicate protected source face: {i!r}')
+        protected.add(int(i))
     incidence = defaultdict(list)
     for i, face in enumerate(mesh.faces):
         for a, b in zip(face, np.roll(face, -1)):
@@ -45,7 +62,12 @@ def planar_patches(mesh, *, allowed_slots):
             raise ValueError(f'nonmanifold seed edge {edge}')
         if len(faces) == 2:
             a, b = faces
-            if mesh.slot[a] == mesh.slot[b] and mesh.level[a] == mesh.level[b]:
+            directions = [next((int(x), int(y)) for x, y in zip(mesh.faces[k], np.roll(mesh.faces[k], -1))
+                               if tuple(sorted((int(x), int(y)))) == edge) for k in (a, b)]
+            if directions[0] != directions[1][::-1]:
+                raise ValueError(f'inconsistent winding at source edge {edge}')
+            if (a not in protected and b not in protected
+                    and mesh.slot[a] == mesh.slot[b] and mesh.level[a] == mesh.level[b]):
                 neighbours[a].add(b)
                 neighbours[b].add(a)
     triangles = mesh.verts[mesh.faces]
@@ -69,8 +91,8 @@ def planar_patches(mesh, *, allowed_slots):
                 if other in seen:
                     continue
                 p = triangles[other]-origin
-                if (np.max(np.abs(p @ normal)) <= 1e-7
-                        and normals[other] @ normal >= 1-1e-12):
+                if (np.max(np.abs(p @ normal)) <= plane_tolerance_m
+                        and normals[other] @ normal > 0):
                     seen.add(other)
                     members.add(other)
                     pending.append(other)

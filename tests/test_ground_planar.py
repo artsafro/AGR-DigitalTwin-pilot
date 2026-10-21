@@ -32,6 +32,25 @@ def test_planar_patch_removes_interior_grid_without_source_loss():
     assert np.array_equal(seed.verts, snapshot)
 
 
+def test_bounded_plane_union_does_not_accumulate_pairwise_drift():
+    from dt_ai.geometry.ground_planar import planar_patches
+    seed = grid(8)
+    seed.verts[:, 2] += (seed.verts[:, 0]**2)*1e-6
+    patches = planar_patches(seed, allowed_slots={'TileLight'}, plane_tolerance_m=1e-5)
+    assert 1 < len(patches) < len(seed.faces)
+    for p in patches:
+        xyz = seed.verts[seed.faces[list(p.source_faces)]].reshape(-1, 3)
+        normal = np.cross(*p.axes)
+        assert np.max(np.abs((xyz-p.origin) @ normal)) <= 1e-5
+
+
+@pytest.mark.parametrize('tolerance', [0., -1., float('nan'), float('inf'), 1.0001e-5, True])
+def test_plane_tolerance_is_not_an_acceptance_override(tolerance):
+    from dt_ai.geometry.ground_planar import planar_patches
+    with pytest.raises(ValueError, match='tolerance'):
+        planar_patches(grid(), allowed_slots={'TileLight'}, plane_tolerance_m=tolerance)
+
+
 def test_unmapped_slot_is_named():
     from dt_ai.geometry.ground_planar import planar_patches
     with pytest.raises(ValueError, match='TileLight'):
@@ -75,6 +94,46 @@ def test_semantic_seam_is_not_dissolved():
     seed.slot[:2] = ['Mulch']*2
     patches = planar_patches(seed, allowed_slots={'Mulch', 'TileLight'})
     assert [(p.slot, len(p.source_faces)) for p in patches] == [('Mulch', 2), ('TileLight', 6)]
+
+
+@pytest.mark.parametrize('seed_id', range(30))
+def test_generated_rotations_offsets_keep_union_and_membership(seed_id):
+    from dt_ai.geometry.ground_planar import planar_patches
+    rng = np.random.default_rng(seed_id)
+    seed = grid(4)
+    q, _ = np.linalg.qr(rng.normal(size=(3, 3)))
+    if np.linalg.det(q) < 0:
+        q[:, 0] *= -1
+    seed.verts = seed.verts @ q + rng.uniform(-1e6, 1e6, 3)
+    patches = planar_patches(seed, allowed_slots={'TileLight'})
+    assert len(patches) == 1
+    p = patches[0]
+    assert p.source_faces == tuple(range(8))
+    area = sum(np.linalg.norm(np.cross(*(seed.verts[f][1:]-seed.verts[f][0])))/2
+               for f in seed.faces)
+    assert p.polygon.area == pytest.approx(area, abs=1e-7)
+    boundary = p.to_world(np.array(p.polygon.exterior.coords))
+    assert np.max(np.min(np.linalg.norm(boundary[:, None]-seed.verts, axis=2), axis=1)) < 1e-7
+
+
+@pytest.mark.parametrize('kind', ['empty', 'nan', 'inf', 'duplicate', 'nonmanifold', 'bad_uv', 'blank'])
+def test_malformed_source_is_never_a_successful_empty_patch_set(kind):
+    from dt_ai.geometry.ground_planar import planar_patches
+    seed = grid()
+    if kind == 'empty':
+        seed.faces = np.empty((0, 3), int)
+    elif kind in ('nan', 'inf'):
+        seed.verts[0, 0] = float(kind)
+    elif kind == 'duplicate':
+        seed.faces[1] = seed.faces[0]
+    elif kind == 'nonmanifold':
+        seed.faces[2] = [0, 6, 4]
+    elif kind == 'bad_uv':
+        seed.uv[0, 0, 0] = np.nan
+    else:
+        seed.slot[0] = ' '
+    with pytest.raises(ValueError):
+        planar_patches(seed, allowed_slots={'TileLight'})
 
 
 def test_inconsistent_winding_is_not_hidden_as_separate_patch():
