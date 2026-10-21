@@ -6,6 +6,7 @@ relief, UV density, global budgets or delivery. Callers must measure them before
 use; boundary transition construction is a separate stage. No IO is performed.
 """
 from fractions import Fraction
+from itertools import product
 from math import ceil
 
 import numpy as np
@@ -14,7 +15,7 @@ from dt_ai.geometry.ground_quads import QuadMesh
 from dt_ai.ops.inv_texel import PolyMesh, face_metrics
 
 
-def _acute_template(points):
+def _acute_template(points, source_clear):
     """Four affine quads, with staggered rails rather than short-edge midpoints.
 
     Each boundary edge is retained or subdivided. The fixed positive reference
@@ -33,7 +34,8 @@ def _acute_template(points):
         distances = np.linalg.norm(vertices[:, None]-vertices[None], axis=2)
         distances[np.diag_indices(8)] = np.inf
         metrics = [face_metrics(vertices[list(f)]) for f in faces]
-        if distances.min() > .00205 and all(not r.degenerate and r.aspect <= 8 for r in metrics):
+        if (distances.min() > .00205 and source_clear(vertices[3:])
+                and all(not r.degenerate and r.aspect <= 8 for r in metrics)):
             choices.append((max(r.max_edge_m for r in metrics), shift, vertices, faces, weights@np.eye(3)[order]))
     if not choices:
         return None
@@ -65,6 +67,19 @@ def local_strips(mesh: QuadMesh, *, max_edge_m: float, face_budget: int = 180000
                 or any(isinstance(k, (bool, np.bool_)) or not isinstance(k, (int, np.integer)) or k < 0 for k in ids)):
             raise ValueError('complete nonempty source-face identities required')
     vertices = mesh.verts.tolist()
+    source_grid = {}
+    radius = .00205
+    for i, key in enumerate(np.floor(mesh.verts/radius).astype(np.int64)):
+        source_grid.setdefault(tuple(key), []).append(i)
+    neighbourhood = tuple(product((-1, 0, 1), repeat=3))
+    def source_clear(points):
+        for point in points:
+            key = np.floor(point/radius).astype(np.int64)
+            for delta in neighbourhood:
+                ids = source_grid.get(tuple(key+delta))
+                if ids and np.any(np.linalg.norm(mesh.verts[ids]-point, axis=1) <= radius):
+                    return False
+        return True
     edges = {}
     def edge(a, b, t):
         if t == 0:
@@ -100,7 +115,8 @@ def local_strips(mesh: QuadMesh, *, max_edge_m: float, face_budget: int = 180000
                 proposed = np.vstack((points, points.mean(axis=0), (points+np.roll(points, -1, axis=0))/2))
                 separation = np.linalg.norm(proposed[:, None]-proposed[None], axis=2)
                 separation[np.diag_indices(7)] = np.inf
-                template = _acute_template(points) if separation.min() <= .00205 else None
+                template = (_acute_template(points, source_clear)
+                            if separation.min() <= .00205 or not source_clear(proposed[3:]) else None)
                 if template is not None:
                     xyz, cells, weights = template
                     local_ids = list(face)

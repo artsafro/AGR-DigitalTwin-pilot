@@ -75,6 +75,16 @@ def test_shared_edge_cuts_respect_other_original_vertices_not_only_local_corners
     assert set(out.source_faces) == {(56,), (61,)}
 
 
+def test_centimetre_triangle_needs_distributed_not_clustered_staggered_rails():
+    from dt_ai.geometry.ground_strips import local_strips
+    from dt_ai.ops.inv_xview import vertex_pairs
+    v = np.array([[0., 0., 0.], [.003, 0., .0003], [.015, .006, .001403]])
+    seed = QuadMesh(v, ((0, 1, 2),), ['TileLight'], np.array([0]), (v[:, :2]/4,), ((985,),), 4.)
+    out = local_strips(seed, max_edge_m=3.9)
+    assert len(vertex_pairs(out.verts, .002)[0]) == 0
+    assert all(face_metrics(out.verts[list(f)]).aspect <= 8 for f in out.faces)
+
+
 def test_taper_is_sized_at_every_cell_not_only_average_width():
     from dt_ai.geometry.ground_strips import local_strips
     source = rectangle()
