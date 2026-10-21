@@ -9,32 +9,33 @@ NPM and VPM deliveries for buildings, Ground, MAF, Flora and UCX, plus the Unrea
 ## In production
 
 PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/STATE.md`. Merged pull requests, newest first:
-- `18c6d80` Merge pull request #328 from artsafro/improve/issue-305-flora-npm-vpm-surface-identity-check-fai
-- `fa4640e` Merge pull request #293 from artsafro/sync/upstream-main
-- `8068862` Merge pull request #325 from artsafro/improve/issue-300-silhouette-polygon-fallback-overestimate
-- `7548029` Merge pull request #324 from artsafro/improve/issue-315-p2-extend-v012-mesh-name-grammar-for-gnd
-- `0c732c9` Merge pull request #321 from artsafro/improve/issue-317-kernel-c5-vector-pdf-album-reader-axes-d
-- `50c4c38` Merge pull request #323 from artsafro/improve/issue-316-placement-engine-pure-flora-maf-placemen
-- `f119f87` Merge pull request #320 from artsafro/improve/issue-313-site-slice-maf-set-for-vatutino-schedule
-- `61ebec9` Merge pull request #306 from artsafro/improve/issue-275-record-85-drawing-review-decision-in-can
-- `1dd63ef` Merge pull request #310 from artsafro/improve/issue-217-tool-one-flora-atlas-from-the-placed-sce
-- `cb58e00` Merge pull request #307 from artsafro/improve/issue-166-roadmap-l2-shared-ucx-tool-for-main-and
-- `2248bb3` Merge pull request #309 from artsafro/improve/issue-282-flora-library-rebind-published-map-paths
-- `1436414` Merge pull request #273 from artsafro/improve/issue-216-flora-library-one-consolidated-agent-lib
+- `a29e633` Merge pull request #515 from artsafro/job/vyatskaya-tow02-midpoly
+- `d64a2b3` Merge pull request #476 from artsafro/improve/issue-462-report-measured-value-threshold-and-sign
+- `ed4d774` Merge pull request #501 from artsafro/improve/ucx-too-close-exact-boundary
+- `c3ac83c` Merge pull request #500 from artsafro/engine/roof-screen-shell
+- `b58fa5d` Merge pull request #499 from artsafro/experiment/sliver-etalon-check
+- `a46bdfd` Merge pull request #498 from artsafro/docs/research-ucx-sintez-collision-crosscheck-contract
+- `b7ed7e9` Merge pull request #497 from artsafro/improve/ucx-scene-volume-local-frame
+- `af6f516` Merge pull request #494 from artsafro/improve/issue-488-maf-library-one-library-wide-material-id
+- `2c9076a` Merge pull request #492 from artsafro/improve/issue-489-maf-rules-lego-decomposition-inserts-no
+- `766d3f6` Merge pull request #496 from artsafro/docs/research-cursor-wrapper-settings-test-exposure
+- `79a01c4` Merge pull request #495 from artsafro/improve/ucx-scene-routing-controls
+- `f704dfa` Merge pull request #493 from artsafro/improve/issue-487-maf-vatutino-showcase-scene-of-the-exist
 
 ## Harness
 
+Capability A (`capability-b01`, codex): benchmark 1 passed / 0 failed / 0 not measured; procedural 0 passed / 0 failed / 10 not measured; not ready; repository + user skills. Reference: `evals/capability-b01/reference.json`.
+Capability B (`capability-ticket`, codex): local_pr 0 passed / 1 failed / 0 not measured; procedural 0 passed / 0 failed / 10 not measured; not ready; repository + user skills. Reference: `evals/capability-ticket/reference.json`.
+
 Open pull requests:
-- #248 Checker: horizontal normals in closed welded volumes (#56) [benchmark/check-horizontal-orientation]
-- #252 Decision ids in code, tests and standards (#138) [harness/decision-ids]
-- #260 QA: adaptive sliver-safe orientation bins (#203) [improve/issue-203-qa-adaptive-check-orientation-bins-slive]
-- #266 docs: clarify NPM/VPM zero rotation after placement reset (#214) [improve/issue-214-v004-clarify-profile-aware-npm-plan-rota]
-- #280 Research: Why merged PR #229 turned main red and which pre-merge check would have caught it [docs/research-red-main-after-229]
-- #308 VATUTINO-SITE Ground master: layered cake, relief, NPM/VPM FBX (partial) (#295) [improve/issue-295-site-slice-ground-build-for-vatutino-fro]
-- #329 Generate seamless Ground texture recipes (#319) [improve/issue-319-ground-textures-by-recipe-seamless-npm-2]
-- #331 test: isolate Flora rebind controls from published maps (#312) [improve/issue-312-flora-rebind-unit-tests-remove-dependenc]
-- #334 fix(ucx): #326 bounded Ground UCX for layered perforated heightfields [wt/t_d61e1f10]
-- #335 Kernel C7: trim startup context and generate project state (#333) [improve/issue-333-kernel-c7-context-diet-agents-md-reading]
+- #377 Experiment: Flora texture diagnosis and UV evidence (#369) [docs/research-flora-texture-diagnosis]
+- #505 Research: UCX distance: which endpoint reconstructions change a strict boundary verdict? [docs/research-ucx-distance-endpoint-cancellation]
+- #506 P3: Align UCX boundary controls with order and mutation scope (#503) [improve/issue-503-p3-align-ucx-boundary-controls-with-orde]
+- #507 docs: BODY-Z row reflects bounded mid/VPM roof screen shell (#504) [improve/issue-504-docs-body-z-row-still-says-mid-vpm-roof]
+- #508 Research: UCX distance: do edge-edge and plane-projection paths retain independent cancellation witnesses? [docs/research-ucx-edge-edge-projection-arithmetic]
+- #509 Correct UCX exact-boundary arithmetic claim to 813 ulps (#502) [improve/issue-502-p2-correct-ucx-exact-boundary-arithmetic]
+- #513 Research: Suite slots: why do worker instructions, coordination rules and receipts say 2, 4 and 3? [docs/research-suite-capacity-provenance-drift]
+- #516 twinqa V003: VPM Ground triangle limit from the site-area table (reg p.29) (#510) [improve/issue-510-twinqa-v003-vpm-ground-triangle-limit-fr]
 
 ## Next step
 
