@@ -69,3 +69,57 @@ def test_output_path_that_is_a_file_is_refused(tmp_path):
     out.write_text("not a directory", encoding="utf-8")
     with pytest.raises(FileExistsError):
         build_fins.ensure_output_available(out)
+
+
+# ------------------------------------------------------------------------------------------- main() guard
+# The helpers above only prove the guard API works. PR #392 P2: the publication entry point must
+# call it. These tests invoke the real ``main()`` with OUT/MEAS pointed at synthetic paths so a
+# reviewer mutation that removes the guard call from ``main()`` (while keeping the helpers) fails.
+def _point_paths(monkeypatch, tmp_path):
+    """Point ``build_fins.OUT``/``MEAS`` at synthetic paths under ``tmp_path`` (never real job outputs)."""
+    out = tmp_path / "outputs" / "build-v003-fins"
+    meas = tmp_path / "outputs" / "measure-v001"
+    monkeypatch.setattr(build_fins, "OUT", out)
+    monkeypatch.setattr(build_fins, "MEAS", meas)
+    return out, meas
+
+
+def test_main_refuses_occupied_output_before_measurement(monkeypatch, tmp_path):
+    out, _ = _point_paths(monkeypatch, tmp_path)
+    out.mkdir(parents=True)
+    sentinels = {
+        "fins.obj": b"OBJ original accepted export\n",
+        "fins.mtl": b"MTL original accepted export\n",
+        "fins_summary.json": b'{"original": "accepted export"}\n',
+        "fins_elevation.png": b"PNG original accepted export\n",
+    }
+    for name, data in sentinels.items():
+        (out / name).write_bytes(data)
+    # MEAS is left non-existent: if main() read any measurement before the guard, the missing
+    # fins.json would raise FileNotFoundError first. A FileExistsError therefore proves the guard
+    # refuses BEFORE any measurement access; the sentinels must survive byte-for-byte.
+    with pytest.raises(FileExistsError):
+        build_fins.main()
+    for name, data in sentinels.items():
+        assert (out / name).read_bytes() == data
+    assert sorted(p.name for p in out.iterdir()) == sorted(sentinels)
+
+
+def test_main_reaches_measurement_for_fresh_output(monkeypatch, tmp_path):
+    out, _ = _point_paths(monkeypatch, tmp_path)
+    # A fresh (missing) output is created by the guard, then main() proceeds to the measurement
+    # read; the synthetic MEAS is absent, so the first measurement read raises FileNotFoundError.
+    with pytest.raises(FileNotFoundError):
+        build_fins.main()
+    assert out.is_dir()
+    assert list(out.iterdir()) == []
+
+
+def test_main_reaches_measurement_for_empty_output(monkeypatch, tmp_path):
+    out, _ = _point_paths(monkeypatch, tmp_path)
+    out.mkdir(parents=True)
+    # An existing-but-empty output is reused (not refused), then main() reaches the measurement read.
+    with pytest.raises(FileNotFoundError):
+        build_fins.main()
+    assert out.is_dir()
+    assert list(out.iterdir()) == []
