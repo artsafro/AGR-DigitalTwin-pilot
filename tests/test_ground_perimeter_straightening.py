@@ -40,3 +40,15 @@ def test_collinear_boundary_chain_is_not_a_weld_candidate():
     fixed=gc.weld_base_boundary(m)
     assert fixed.report['boundary_weld']['groups']==[]
     assert fixed.report['boundary_weld']['max_displacement_m']==0
+
+
+def test_nondefective_short_corner_is_not_a_weld_candidate():
+    # Three near corners form a 4.24 mm diameter chain, but no near-parallel
+    # curtains overlap. Their proximity alone is not permission to change them.
+    ring=np.array([[0,-1,100],[1,-1,100],[2.003,0,100],[2,0,100],[2,.003,100],[1.9,2,100],[0,2,100]],float)
+    v=np.vstack([ring,[1,.5,100]])
+    f=np.array([[i,(i+1)%len(ring),len(ring)] for i in range(len(ring))])
+    m=gc.Mesh(v,f,['TileGrey']*len(f),np.zeros(len(f),int),np.zeros((len(f),3,2)),4.)
+    fixed=gc.weld_base_boundary(m)
+    assert fixed.report['boundary_weld']['groups']==[]
+    assert fixed.report['boundary_weld']['max_displacement_m']==0

@@ -1001,7 +1001,23 @@ def weld_base_boundary(mesh: Mesh, weld_m: float = .0041,
     boundary = np.array(sorted({v for edge, ids in edges.items() if len(ids) == 1 for v in edge}), int)
     if not len(boundary):
         raise ValueError("open base boundary required")
-    clusters = _cluster_ids(mesh.verts[boundary], weld_m)
+    neighbours = {}
+    for (a, b), uses in edges.items():
+        if len(uses) == 1:
+            neighbours.setdefault(a, []).append(b)
+            neighbours.setdefault(b, []).append(a)
+    corners = []
+    for i in boundary:
+        adjacent = neighbours[int(i)]
+        if len(adjacent) == 2:
+            a, b = mesh.verts[adjacent, :2]-mesh.verts[i, :2]
+            # Exact straight-line samples are tessellation, not a width defect.
+            cross = a[0]*b[1]-a[1]*b[0]
+            if abs(cross) <= 1e-12*np.linalg.norm(a)*np.linalg.norm(b) and np.dot(a, b) < 0:
+                continue
+        corners.append(int(i))
+    boundary = np.array(corners, int)
+    clusters = _cluster_ids(mesh.verts[boundary], weld_m) if len(boundary) else np.empty(0, int)
     v = mesh.verts.copy()
     groups = []
     for cluster in np.unique(clusters):
