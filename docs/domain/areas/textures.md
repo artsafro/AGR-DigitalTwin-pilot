@@ -41,6 +41,8 @@ Q7's rules are the existing user decisions [D013], [D014], [D020], not new regul
 | TEX-19 — Ground baking versus slicing | reg p.18 §fig.7–8; reg p.10 §6.1 | Figures show baking versus slicing for Ground geometry/atlas; examples, not a command to select one route | Do not treat NPM example figures as a VPM atlas exemption | Review Ground surface, atlas layout and density together against the two illustrated approaches | none | [Ground examples](../uv-textures.md#npm-textures-app1) |
 | TEX-20 — Glass texture interface | reg p.9 §5.10; reg p.10 §7; reg p.32 §8.1 | Opaque atlas glass: Diffuse/Metallic white, Roughness black; opacity absent or glass region white; translucent separate glass has no texture maps | Translucent glass materials have no maps | Manual glass classification and region/channel inspection; PNG headers cannot certify material appearance | none | [Glass maps](../uv-textures.md#npm-textures-app1), [glass materials](../materials.md) |
 
+**2026-10-20 update [D160]:** the VPM lower bound in the historical D097 quotations above is superseded: use 512-1706 px/m. C36 is decided; NPM Ground 10-40 is unchanged. See [2026 requirements](../requirements-2026.md).
+
 ## Source-image evidence
 
 **20 requirement rows**, including Ground-specific TEX-15–19. Every printed numeric quantity

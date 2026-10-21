@@ -34,6 +34,10 @@ def combine(meshes):
 
 def triangle_uv(verts, faces, repeat=4.):
     """Metric, non-mirrored local projection for placeholder solids; tile-contained or fail closed."""
+    if not len(verts) or not len(faces):
+        raise ValueError('nonempty detail geometry required')
+    if not np.isfinite(verts).all() or not math.isfinite(repeat) or repeat <= 0:
+        raise ValueError('finite detail coordinates and positive finite repeat required')
     p=verts[faces]; a=p[:,1]-p[:,0]; b=p[:,2]-p[:,0]
     # Orient each placeholder island along the edge that minimises its square extent.
     candidates=[]
@@ -52,8 +56,9 @@ def triangle_uv(verts, faces, repeat=4.):
     local=candidates[choice,np.arange(len(p))]
     extent=local.max(axis=(1,2))
     scale=np.maximum(repeat,extent)
-    if repeat==4. and np.any(4096/scale<520):
-        raise ValueError('detail triangle exceeds a tile at 520 px/m; subdivide the source contour')
+    # [D160]: inclusive VPM lower bound supersedes D097.
+    if repeat==4. and np.any(4096/scale<512):
+        raise ValueError('detail triangle exceeds a tile at 512 px/m; subdivide the source contour')
     return local/scale[:,None,None]
 
 
