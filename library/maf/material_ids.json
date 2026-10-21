@@ -1,6 +1,6 @@
 {
  "schema": "library-maf-material-ids",
- "version": "v002",
+ "version": "v003",
  "scope": "proposal for Artem's one-time approval; nothing reassigned in the library",
  "generated_by": "tools/library/maf_material_ids.py",
  "extraction": {
@@ -18,6 +18,8 @@
  "counts": {
   "library_maf_entries": 931,
   "extracted_files": 931,
+  "empty_material_files": 42,
+  "null_appearance_materials": 0,
   "candidate_ids": 69,
   "solid_ids": 23,
   "patterned_ids": 46,
@@ -75,8 +77,8 @@
    "id": "pattern:1_Diffuse_1.1001",
    "name": "1_Diffuse_1.1001",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#808080",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../../../../Users/user/Desktop/!3D viz/!А101/maf_All/maps/1_Diffuse_1.1001_e5pokwfjvgc7.png"
    ],
@@ -121,8 +123,8 @@
    "id": "pattern:Maps",
    "name": "Maps",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "E:/06.Work/29_Д5/maps/Марьино_Д5/Maps.png"
    ],
@@ -189,8 +191,8 @@
    "id": "pattern:MAF_Atlas_001_Diffuse",
    "name": "MAF_Atlas_001_Diffuse",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "G:/System 1.0/02_WORK/_2_AGR HOLDING/_Modeling АГР/Material's/MAF/maps/MAF_Atlas_001_Diffuse.png"
    ],
@@ -301,8 +303,8 @@
    "id": "pattern:Untitled_Diffuse_1.1001",
    "name": "Untitled_Diffuse_1.1001",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../../../../Users/user/Desktop/!3D viz/!А101/maf_All/maps/Untitled_Diffuse_1.1001.png"
    ],
@@ -325,8 +327,8 @@
    "id": "pattern:Untitled_Diffuse_1.1001_2",
    "name": "Untitled_Diffuse_1.1001",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../../../../Users/user/Desktop/!3D viz/!А101/maf_All/maps/Untitled_Diffuse_1.1001_ngosp2lcps3p.png"
    ],
@@ -505,8 +507,8 @@
    "id": "pattern:рп012_Diffuse_LOW",
    "name": "рп012_Diffuse_LOW",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "E:/06.Work/29_Д5/2_МАФы/24_РП012/рп012_Diffuse_LOW.png",
     "E:/06.Work/29_Д5/2_МАФы/24_РП012/рп012_Opacity_LOW.png"
@@ -574,8 +576,8 @@
    "id": "pattern:77_17_0120316_33510_D_26_Ground_d_1",
    "name": "77_17_0120316_33510_D_26_Ground_d_1",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "G:/System 1.0/02_WORK/_2_AGR HOLDING/_Modeling АГР/Material's/MAF/maps/77_17_0120316_33510_D_26_Ground_d_1.png"
    ],
@@ -598,8 +600,8 @@
    "id": "pattern:77_17_0120316_33510_D_26_Ground_d_2",
    "name": "77_17_0120316_33510_D_26_Ground_d_2",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "G:/System 1.0/02_WORK/_2_AGR HOLDING/_Modeling АГР/Material's/MAF/maps/77_17_0120316_33510_D_26_Ground_d_2.png"
    ],
@@ -622,8 +624,8 @@
    "id": "pattern:77_17_0120316_33510_D_26_Ground_d_3",
    "name": "77_17_0120316_33510_D_26_Ground_d_3",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "G:/System 1.0/02_WORK/_2_AGR HOLDING/_Modeling АГР/Material's/MAF/maps/77_17_0120316_33510_D_26_Ground_d_3.png"
    ],
@@ -646,8 +648,8 @@
    "id": "pattern:T_Letnaya_ZU_71_6_Ground_Diffuse_1.1010",
    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1010",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../../../../Users/PC/Desktop/Work/19_Уч_71_6/_Исходники/SM_Letnaya_ZU_71_6_Ground/T_Letnaya_ZU_71_6_Ground_Diffuse_1.1010.png"
    ],
@@ -670,8 +672,8 @@
    "id": "pattern:T_Letnaya_ZU_71_6_Ground_Diffuse_1.1013",
    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1013",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../../../../Users/Aliev_e/Desktop/Эльнур/27_ModelsPr/29_Уч_71/_Исходники/Ground/T_Letnaya_ZU_71_6_Ground_Diffuse_1.1013.png"
    ],
@@ -694,8 +696,8 @@
    "id": "pattern:T_Letnaya_ZU_71_6_Ground_Diffuse_1.1017",
    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1017",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../../../../Users/PC/Desktop/Work/19_Уч_71_6/_Исходники/SM_Letnaya_ZU_71_6_Ground/T_Letnaya_ZU_71_6_Ground_Diffuse_1.1017.png"
    ],
@@ -718,8 +720,8 @@
    "id": "pattern:T_Letnaya_ZU_71_6_Ground_Diffuse_1.1018",
    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1018",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#673838",
+   "color_source": "fbx-probe",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../../../../Users/PC/Desktop/Work/19_Уч_71_6/_Исходники/SM_Letnaya_ZU_71_6_Ground/T_Letnaya_ZU_71_6_Ground_Diffuse_1.1018.png"
    ],
@@ -742,8 +744,8 @@
    "id": "pattern:T_Letnaya_ZU_71_6_Ground_Diffuse_1.1021",
    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1021",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../../../../Users/PC/Desktop/Work/19_Уч_71_6/_Исходники/SM_Letnaya_ZU_71_6_Ground/T_Letnaya_ZU_71_6_Ground_Diffuse_1.1021.png"
    ],
@@ -766,8 +768,8 @@
    "id": "pattern:T_Letnaya_ZU_71_6_Ground_Diffuse_1.1024",
    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1024",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../../../../Users/Aliev_e/Desktop/Эльнур/27_ModelsPr/29_Уч_71/_Исходники/Ground/T_Letnaya_ZU_71_6_Ground_Diffuse_1.1024.png"
    ],
@@ -790,8 +792,8 @@
    "id": "pattern:T_Letnaya_ZU_71_6_Ground_Diffuse_1.1027",
    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1027",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../../../../Users/Aliev_e/Desktop/Эльнур/27_ModelsPr/29_Уч_71/_Исходники/Ground/T_Letnaya_ZU_71_6_Ground_Diffuse_1.1027.png"
    ],
@@ -814,8 +816,8 @@
    "id": "pattern:T_Letnaya_ZU_71_6_Ground_Diffuse_1.1029",
    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1029",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../../../../Users/Aliev_e/Desktop/Эльнур/27_ModelsPr/29_Уч_71/_Исходники/Ground/T_Letnaya_ZU_71_6_Ground_Diffuse_1.1029.png"
    ],
@@ -838,8 +840,8 @@
    "id": "pattern:T_Letnaya_ZU_71_6_Ground_Diffuse_1.1023",
    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1023",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../../../../Users/PC/Desktop/Work/19_Уч_71_6/_Исходники/SM_Letnaya_ZU_71_6_Ground/T_Letnaya_ZU_71_6_Ground_Diffuse_1.1023.png"
    ],
@@ -862,8 +864,8 @@
    "id": "pattern:T_Letnaya_ZU_71_6_Ground_Diffuse_1.1022",
    "name": "T_Letnaya_ZU_71_6_Ground_Diffuse_1.1022",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../../../../Users/PC/Desktop/Work/19_Уч_71_6/_Исходники/SM_Letnaya_ZU_71_6_Ground/T_Letnaya_ZU_71_6_Ground_Diffuse_1.1022.png"
    ],
@@ -910,8 +912,8 @@
    "id": "wood_larch_dark",
    "name": "wood_larch_dark",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "G:/System 1.0/02_WORK/_2_AGR HOLDING/_Modeling АГР/Material's/MAF/maps/ID_2_Лиственница_Черная_f.png"
    ],
@@ -934,8 +936,8 @@
    "id": "steel_mesh",
    "name": "steel_mesh",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "G:/System 1.0/02_WORK/_2_AGR HOLDING/_Modeling АГР/Material's/MAF/maps/ID_5_Сетка_D.png",
     "G:/System 1.0/02_WORK/_2_AGR HOLDING/_Modeling АГР/Material's/MAF/maps/ID_5_Сетка_O.png"
@@ -981,8 +983,8 @@
    "id": "pattern:T_Atlas_MAF",
    "name": "T_Atlas_MAF",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "G:/System 1.0/02_WORK/_2_AGR HOLDING/_Modeling АГР/Material's/MAF/maps/T_Atlas_MAF.png"
    ],
@@ -1005,8 +1007,8 @@
    "id": "pattern:T_PervyjGrajvoronovskijProezd_Vl_3_Ground_Diffuse_1.1005",
    "name": "T_PervyjGrajvoronovskijProezd_Vl_3_Ground_Diffuse_1.1005",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#952626",
+   "color_source": "fbx-probe",
    "textures": [
     "D:/Рабочий стол/Work/39_Паркинг/Ground/maps/maps_HP/T_PervyjGrajvoronovskijProezd_Vl_3_Ground_Diffuse_1.1005.png"
    ],
@@ -1051,8 +1053,8 @@
    "id": "pattern:02_default",
    "name": "02_default",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1075,8 +1077,8 @@
    "id": "pattern:02_default_001",
    "name": "02_default_001",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1099,8 +1101,8 @@
    "id": "pattern:untitled_diffuse_1_001",
    "name": "untitled_diffuse_1_001",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1123,8 +1125,8 @@
    "id": "pattern:untitled_diffuse_1_1001",
    "name": "untitled_diffuse_1_1001",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1169,8 +1171,8 @@
    "id": "pattern:m_77_17_0150309_6155_d_2_groundel_1",
    "name": "m_77_17_0150309_6155_d_2_groundel_1",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1193,8 +1195,8 @@
    "id": "pattern:m_pos_desenovskoe_kv_23_d_7_groundel_1",
    "name": "m_pos_desenovskoe_kv_23_d_7_groundel_1",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1217,8 +1219,8 @@
    "id": "pattern:material_2125652669",
    "name": "material_2125652669",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1241,8 +1243,8 @@
    "id": "pattern:07_default",
    "name": "07_default",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1265,8 +1267,8 @@
    "id": "pattern:08_default",
    "name": "08_default",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1289,8 +1291,8 @@
    "id": "pattern:material_53",
    "name": "material_53",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1313,8 +1315,8 @@
    "id": "pattern:material_43",
    "name": "material_43",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1337,8 +1339,8 @@
    "id": "pattern:material_56",
    "name": "material_56",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1361,8 +1363,8 @@
    "id": "pattern:material_57",
    "name": "material_57",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1385,8 +1387,8 @@
    "id": "pattern:material_58",
    "name": "material_58",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1409,8 +1411,8 @@
    "id": "pattern:material_66",
    "name": "material_66",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1433,8 +1435,8 @@
    "id": "pattern:m_pos_desenovskoe_kv_23_d_7_groundel_1_001",
    "name": "m_pos_desenovskoe_kv_23_d_7_groundel_1_001",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1457,8 +1459,8 @@
    "id": "pattern:material_43_001",
    "name": "material_43_001",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1481,8 +1483,8 @@
    "id": "pattern:material_2125652671",
    "name": "material_2125652671",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#808080",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1505,8 +1507,8 @@
    "id": "pattern:material_1272",
    "name": "material_1272",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#808080",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1529,8 +1531,8 @@
    "id": "pattern:material_1150",
    "name": "material_1150",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#808080",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1553,8 +1555,8 @@
    "id": "pattern:material_2125652672",
    "name": "material_2125652672",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1577,8 +1579,8 @@
    "id": "pattern:lab",
    "name": "lab",
    "kind": "patterned",
-   "color": null,
-   "color_source": null,
+   "color": "#969696",
+   "color_source": "fbx-default",
    "textures": [
     "C:/x/t_3e6ff1b3/library/fbx/../.."
    ],
@@ -1974,6 +1976,260 @@
   {
    "filepath": "D:/Рабочий стол/Work/39_Паркинг/Ground/maps/maps_HP/T_PervyjGrajvoronovskijProezd_Vl_3_Ground_Diffuse_1.1005.png",
    "maf_count": 1
+  }
+ ],
+ "gaps": [
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0006_127050.fbx",
+   "maf_id": "MAF_0006",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0019_Lme156.fbx",
+   "maf_id": "MAF_0019",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0022_12012.fbx",
+   "maf_id": "MAF_0022",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0023_12001.fbx",
+   "maf_id": "MAF_0023",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0031_SM123.fbx",
+   "maf_id": "MAF_0031",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0032_SM73.fbx",
+   "maf_id": "MAF_0032",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0033_SM73.fbx",
+   "maf_id": "MAF_0033",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0034_3006.fbx",
+   "maf_id": "MAF_0034",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0035_IS027.fbx",
+   "maf_id": "MAF_0035",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0038_SL505.fbx",
+   "maf_id": "MAF_0038",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0039_TBO.fbx",
+   "maf_id": "MAF_0039",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0040_Bunker.fbx",
+   "maf_id": "MAF_0040",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0062_Mobilnaya_skamya_01.fbx",
+   "maf_id": "MAF_0062",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0063_Mobilnaya_kadka_01.fbx",
+   "maf_id": "MAF_0063",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0064_Mobilnaya_kadka_02.fbx",
+   "maf_id": "MAF_0064",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0066_Parkovka_velo.fbx",
+   "maf_id": "MAF_0066",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0067_Box001.fbx",
+   "maf_id": "MAF_0067",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0133_crp_3_003.fbx",
+   "maf_id": "MAF_0133",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0204_Sphere001.fbx",
+   "maf_id": "MAF_0204",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0365_crp_Cylinder934_003.fbx",
+   "maf_id": "MAF_0365",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0366_crp_Cylinder934_003.fbx",
+   "maf_id": "MAF_0366",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0367_crp_Cylinder934_003.fbx",
+   "maf_id": "MAF_0367",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0368_crp_Cylinder934_003.fbx",
+   "maf_id": "MAF_0368",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0486_M_Carousel_007.fbx",
+   "maf_id": "MAF_0486",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0489_M_Carousel_010.fbx",
+   "maf_id": "MAF_0489",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0716_Shape004.fbx",
+   "maf_id": "MAF_0716",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0717_Cylinder004.fbx",
+   "maf_id": "MAF_0717",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0718_Cylinder004.fbx",
+   "maf_id": "MAF_0718",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0719_Cylinder004.fbx",
+   "maf_id": "MAF_0719",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0720_Cylinder004.fbx",
+   "maf_id": "MAF_0720",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0721_Cylinder004.fbx",
+   "maf_id": "MAF_0721",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0722_Plane002.fbx",
+   "maf_id": "MAF_0722",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0726_Object013.fbx",
+   "maf_id": "MAF_0726",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0727_Line008.fbx",
+   "maf_id": "MAF_0727",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0728_Object014.fbx",
+   "maf_id": "MAF_0728",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0732_Plane002.fbx",
+   "maf_id": "MAF_0732",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0737_10.fbx",
+   "maf_id": "MAF_0737",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0738_Art_0322T_4.fbx",
+   "maf_id": "MAF_0738",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0739_Art_0322T_5.fbx",
+   "maf_id": "MAF_0739",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0740_Art_18694.fbx",
+   "maf_id": "MAF_0740",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0742_Line1179.fbx",
+   "maf_id": "MAF_0742",
+   "reason": "extraction found no materials in this FBX (material-free source)"
+  },
+  {
+   "kind": "empty_materials",
+   "fbx": "MAF_0812_Naves_1.fbx",
+   "maf_id": "MAF_0812",
+   "reason": "extraction found no materials in this FBX (material-free source)"
   }
  ]
 }

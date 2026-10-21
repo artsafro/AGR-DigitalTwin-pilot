@@ -20,12 +20,18 @@ Outputs (refuse to overwrite without `--overwrite`; never an input):
 
 Rules (documented so Artem reviews the proposal, not just its output):
 - Coverage is fail-closed: every catalogue FBX must appear exactly once in the
-  extraction, with no `error`, empty, duplicate or unknown record; otherwise the run
+  extraction, with no `error`, duplicate or unknown record; otherwise the run
   exits nonzero and writes no approval output.
-- Appearance is identity, never a name/basename/majority-colour: a source material is
-  keyed by its full texture file references (not basenames) when textured, and by
-  (name, colour) when solid. Merge happens only for demonstrated near-duplicates
-  (same full texture set + same name, or an explicit `_SEEDS`/`_FAMILY_HEX` rule).
+- Appearance is identity, never a bare name/basename/majority-colour/seed: a source
+  material is keyed by its full texture file references (not basenames) *and* its base
+  colour when textured, and by (name, colour) when solid. A `_SEEDS`/`_FAMILY_HEX` rule
+  is a naming hint or an explicit authoritative colour, never merge evidence on its
+  own: two source materials with the same seed name but different measured colours stay
+  distinct (the seed colour wins only when the seed declares one, e.g. RAL 9005).
+- A source material with neither a texture nor a colour (null appearance), and a
+  catalogue FBX whose extraction has no materials at all, are *reported* in `gaps`
+  (kind `empty_materials` / `null_appearance`) with the FBX/material and reason; they
+  are never silently counted as covered and never become a `color: null` proposal.
 - A solid material with a semantic source name (see `_SEEDS`) is a real *solid*
   candidate named by that source; its colour is the seed colour or the FBX probe.
 - A solid material is a *placeholder* (a colour-coded part marker, never assigned an
@@ -33,8 +39,12 @@ Rules (documented so Artem reviews the proposal, not just its output):
   its colour is a 3ds Max default diffuse grey with a generic auto name.
 - Every candidate id has `status: "proposed"` and `texture_status` ("resolved" when a
   texture file exists, "unresolved" otherwise); nothing is reassigned in the library.
-- Every merged group lists `merged_sources`; placeholders and unresolved texture refs
-  are reported with counts and sources, never silently dropped.
+- Every merged group lists `merged_sources`; placeholders, unresolved texture refs and
+  coverage gaps are reported with counts and sources, never silently dropped.
+- Every input actually read is protected: the four explicit inputs, the implicit
+  `audit.json`, and every consumed preview/texture file path is inventoried before any
+  write, and an output path that resolves to or is the same file as (hardlink) any
+  input or another output exits nonzero and writes nothing.
 """
 from __future__ import annotations
 
@@ -165,17 +175,22 @@ def _seed_for(name: str):
 def _appearance_key(name: str, hexc, textures):
     """Return (kind, key) for one source material instance.
 
-    Identity is appearance, never a bare name/basename/majority-colour: textured
-    materials are keyed by (name, full texture reference set); solids by
-    (name, colour); only explicit seeds/families merge across names.
+    Identity is appearance, never a bare name/basename/majority-colour/seed: textured
+    materials are keyed by (name, full texture reference set, base colour); solids by
+    (name, colour). A `_SEEDS` rule supplies a naming hint and (optionally) an
+    authoritative colour, but a seed never collapses two differing measured colours
+    (the colour stays in the key).
     """
     name = (name or "").strip() or "(none)"
     if textures:
         tex = tuple(sorted({_norm_tex(fp) for fp in textures}))
-        return "patterned", ("patterned", name, tex)
+        return "patterned", ("patterned", name, tex, hexc)
     seed = _seed_for(name)
     if seed:
-        return "seed", ("seed", seed["id"])
+        # Naming hint only; the colour (seed-authoritative or FBX probe) is the identity.
+        if seed["color"] is not None:
+            return "seed", ("seed", seed["id"], seed["color"])
+        return "seed", ("seed", seed["id"], hexc)
     if hexc and _is_placeholder_hex(hexc):
         return "placeholder", ("placeholder", hexc)
     if re.fullmatch(r"\d{1,2}", name):
@@ -196,6 +211,21 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: f.read(1 << 20), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+def _paths_alias(a: Path, b: Path) -> bool:
+    """True when two paths name the same file (canonical path or same-file hardlink)."""
+    try:
+        if a.resolve() == b.resolve():
+            return True
+    except OSError:
+        pass
+    if a.exists() and b.exists():
+        try:
+            return a.samefile(b)
+        except OSError:
+            return False
+    return False
 
 
 def _thumbnail_data_uri(path: str, size: int = 128) -> str | None:
@@ -222,7 +252,9 @@ def _assign_id(g: dict, kind: str, key) -> dict:
     """Assign a candidate id/name/colour to one appearance group."""
     if kind == "seed":
         seed = g["seed"]
-        colour = seed["color"] or (sorted(g["hexes"])[0] if g["hexes"] else None)
+        # key[2] is the identity colour (seed-authoritative when declared, else the
+        # FBX probe that formed this group). Prefer the declared seed colour.
+        colour = seed["color"] or key[2]
         return {"id": seed["id"], "name": seed["name"], "color": colour,
                 "color_source": "seed" if seed["color"] else
                 ("fbx-default" if colour in _DEFAULT_GREY else "fbx-probe"),
@@ -243,17 +275,25 @@ def _assign_id(g: dict, kind: str, key) -> dict:
         return {"id": "solid:" + _slug(name), "name": name, "color": hexc,
                 "color_source": "fbx-default" if hexc in _DEFAULT_GREY else "fbx-probe",
                 "note": None}
-    # patterned
+    # patterned: the base colour (tint) is part of the appearance and is retained as
+    # evidence, not discarded. A textured material with a `_SEEDS` name keeps the seed
+    # id/note but keeps its measured colour unless the seed declares an authoritative one.
+    colour = sorted(g["hexes"])[0] if g["hexes"] else None
     seed = _seed_for(sorted(g["names"])[0])
     if seed:
-        return {"id": seed["id"], "name": seed["name"], "color": seed["color"],
-                "color_source": "seed" if seed["color"] else None, "note": seed["note"]}
+        if seed["color"] is not None:
+            colour = seed["color"]
+        return {"id": seed["id"], "name": seed["name"], "color": colour,
+                "color_source": "seed" if seed["color"] else
+                ("fbx-default" if colour in _DEFAULT_GREY else "fbx-probe"),
+                "note": seed["note"]}
     texs = sorted(g["textures"])
     readable = next((_tex_readable(t) for t in texs
                      if _tex_readable(t) and _tex_readable(t) not in {"..", "maps"}), None)
     stem = readable or _slug(sorted(g["names"])[0])
-    return {"id": "pattern:" + stem, "name": stem, "color": None,
-            "color_source": None, "note": None}
+    return {"id": "pattern:" + stem, "name": stem, "color": colour,
+            "color_source": "fbx-default" if colour in _DEFAULT_GREY else "fbx-probe",
+            "note": None}
 
 
 def main() -> int:
@@ -268,34 +308,52 @@ def main() -> int:
     ap.add_argument("--overwrite", action="store_true")
     args = ap.parse_args()
 
-    # Resolve the complete input inventory (including the implicit audit) BEFORE any
-    # write, then guard every output alias against it.
-    input_paths = {
-        Path(args.materials).resolve(),
-        Path(args.catalogue).resolve(),
-        Path(args.seed).resolve(),
-        Path(args.ral).resolve(),
-    }
-    audit_path = Path(args.catalogue).parent / "audit.json"
-    audit_resolved = None
-    if audit_path.exists():
-        audit_resolved = audit_path.resolve()
-        input_paths.add(audit_resolved)
-
-    outs = [Path(args.out_json), Path(args.out_md), Path(args.out_html)]
-    if len({o.resolve() for o in outs}) != 3:
-        raise SystemExit("output paths must be distinct: " + ", ".join(str(o) for o in outs))
-    for o in outs:
-        if o.resolve() in input_paths:
-            raise SystemExit("output path resolves to an input: " + str(o))
-    if any(o.exists() for o in outs) and not args.overwrite:
-        raise SystemExit("output exists; pass --overwrite to replace: "
-                         + ", ".join(str(o) for o in outs if o.exists()))
-
+    # Read every input first (needed to inventory preview/texture paths and validate
+    # coverage), then build the complete protected input set, then guard outputs.
     materials = json.loads(Path(args.materials).read_text(encoding="utf-8"))
     catalogue = json.loads(Path(args.catalogue).read_text(encoding="utf-8"))
     seed_set = json.loads(Path(args.seed).read_text(encoding="utf-8"))
     json.loads(Path(args.ral).read_text(encoding="utf-8"))  # validated read
+
+    input_paths = [
+        Path(args.materials).resolve(),
+        Path(args.catalogue).resolve(),
+        Path(args.seed).resolve(),
+        Path(args.ral).resolve(),
+    ]
+    audit_path = Path(args.catalogue).parent / "audit.json"
+    audit_resolved = None
+    if audit_path.exists():
+        audit_resolved = audit_path.resolve()
+        input_paths.append(audit_resolved)
+
+    # Inventory every preview/texture file this run actually reads (hashes the preview,
+    # thumbnails the preview, checks texture existence) so an output can never clobber
+    # one of them.
+    for e in catalogue.get("entries", []):
+        pv = e.get("preview_path")
+        if pv and os.path.isfile(pv):
+            input_paths.append(Path(pv).resolve())
+    for rec in materials.get("files", []):
+        for mat in rec.get("materials", []):
+            for t in mat.get("textures", []):
+                fp = t.get("filepath")
+                if fp and os.path.isfile(fp):
+                    input_paths.append(Path(fp).resolve())
+
+    outs = [Path(args.out_json), Path(args.out_md), Path(args.out_html)]
+    for i in range(len(outs)):
+        for j in range(i + 1, len(outs)):
+            if _paths_alias(outs[i], outs[j]):
+                raise SystemExit("output paths must be distinct: "
+                                 + ", ".join(str(o) for o in outs))
+    for o in outs:
+        for inp in input_paths:
+            if _paths_alias(o, inp):
+                raise SystemExit("output path resolves to an input: " + str(o))
+    if any(o.exists() for o in outs) and not args.overwrite:
+        raise SystemExit("output exists; pass --overwrite to replace: "
+                         + ", ".join(str(o) for o in outs if o.exists()))
 
     # --- Fail-closed coverage validation -------------------------------------
     files = materials.get("files")
@@ -311,6 +369,7 @@ def main() -> int:
             raise SystemExit("catalogue has duplicate fbx basename: " + leaf)
         cat_by_fbx[leaf] = e
 
+    gaps = []
     seen = set()
     for rec in files:
         fbx = rec.get("fbx")
@@ -321,11 +380,22 @@ def main() -> int:
             raise SystemExit("extraction failed for FBX %r: %s" % (fbx, rec["error"]))
         if "materials" not in rec:
             raise SystemExit("extraction record without 'materials': %r" % fbx)
+        mats = rec["materials"]
+        if not isinstance(mats, list):
+            raise SystemExit("extraction record 'materials' is not a list: %r" % fbx)
         if fbx in seen:
             raise SystemExit("duplicate extraction record for FBX: " + fbx)
         seen.add(fbx)
         if fbx not in cat_by_fbx:
             raise SystemExit("extraction record for unknown FBX (not in catalogue): " + fbx)
+        if not mats:
+            entry = cat_by_fbx[fbx]
+            gaps.append({
+                "kind": "empty_materials",
+                "fbx": fbx,
+                "maf_id": entry.get("id") or Path(fbx).stem,
+                "reason": "extraction found no materials in this FBX (material-free source)",
+            })
     missing = sorted(set(cat_by_fbx) - seen)
     if missing:
         raise SystemExit("incomplete extraction: %d catalogue FBX missing, first: %s"
@@ -340,6 +410,15 @@ def main() -> int:
             name = (mat.get("name") or "").strip() or "(none)"
             hexc = _norm_hex(mat.get("hex"))
             tex_fps = [t["filepath"] for t in mat.get("textures", [])]
+            if not tex_fps and hexc is None:
+                gaps.append({
+                    "kind": "null_appearance",
+                    "fbx": rec["fbx"],
+                    "maf_id": maf_id,
+                    "material": name,
+                    "reason": "no colour and no texture measured (unresolved appearance)",
+                })
+                continue
             kind, key = _appearance_key(name, hexc, tex_fps)
             g = groups.setdefault(key, {
                 "kind": kind, "names": set(), "hexes": set(), "textures": set(),
@@ -363,8 +442,15 @@ def main() -> int:
 
     def _merge_key(g, kind, cand_id):
         if kind == "patterned":
-            return ("patterned", tuple(sorted(g["names"])), tuple(sorted(g["textures"])))
-        if kind in ("seed", "family", "hex"):
+            return ("patterned", tuple(sorted(g["names"])), tuple(sorted(g["textures"])),
+                    tuple(sorted(g["hexes"])))
+        if kind == "seed":
+            # A seed with a declared authoritative colour merges on that colour alone;
+            # a probe seed (no declared colour) keeps its measured colour distinct.
+            if g["seed"] and g["seed"]["color"] is not None:
+                return ("solid", cand_id)
+            return ("solid", cand_id, tuple(sorted(g["hexes"])))
+        if kind in ("family", "hex"):
             return ("solid", cand_id)
         return ("solid", tuple(sorted(g["names"])), tuple(sorted(g["hexes"])))
 
@@ -456,9 +542,11 @@ def main() -> int:
                 unresolved_tex[t] = unresolved_tex.get(t, 0) + i["maf_count"]
 
     catalogue_entries = len(catalogue.get("entries", []))
+    empty_files = sum(1 for g in gaps if g["kind"] == "empty_materials")
+    null_appearances = sum(1 for g in gaps if g["kind"] == "null_appearance")
     result = {
         "schema": "library-maf-material-ids",
-        "version": "v002",
+        "version": "v003",
         "scope": "proposal for Artem's one-time approval; nothing reassigned in the library",
         "generated_by": "tools/library/maf_material_ids.py",
         "extraction": {
@@ -488,6 +576,8 @@ def main() -> int:
         "counts": {
             "library_maf_entries": catalogue_entries,
             "extracted_files": len(files),
+            "empty_material_files": empty_files,
+            "null_appearance_materials": null_appearances,
             "candidate_ids": len(ids),
             "solid_ids": sum(1 for i in ids if i["kind"] == "solid"),
             "patterned_ids": sum(1 for i in ids if i["kind"] == "patterned"),
@@ -500,6 +590,7 @@ def main() -> int:
         "placeholders": placeholders_out,
         "unresolved_textures": [{"filepath": t, "maf_count": c} for t, c in
                                 sorted(unresolved_tex.items(), key=lambda kv: -kv[1])],
+        "gaps": sorted(gaps, key=lambda g: (g["kind"], g["fbx"], g.get("material", ""))),
     }
 
     if audit_resolved is not None:
@@ -516,7 +607,7 @@ def main() -> int:
     Path(args.out_md).write_text(render_md(result), encoding="utf-8", newline="\n")
     Path(args.out_html).write_text(render_html(result), encoding="utf-8", newline="\n")
     print("AGR_MAT_IDS", len(ids), "ids", len(placeholders_out), "placeholder groups",
-          args.out_json)
+          len(gaps), "gaps", args.out_json)
     return 0
 
 
@@ -528,10 +619,12 @@ def render_md(result) -> str:
         f"Generated by `{result['generated_by']}`.",
         "",
         "Counts: **%d** candidate ids (%d solid, %d patterned); **%d** placeholder groups "
-        "(%d MAF uses) reported, not assigned; **%d** unresolved texture refs." % (
+        "(%d MAF uses) reported, not assigned; **%d** unresolved texture refs; "
+        "**%d** empty-material files and **%d** null-appearance materials reported as gaps." % (
             result["counts"]["candidate_ids"], result["counts"]["solid_ids"],
             result["counts"]["patterned_ids"], result["counts"]["placeholder_groups"],
             result["counts"]["placeholder_maf_uses"], result["counts"]["unresolved_texture_refs"],
+            result["counts"]["empty_material_files"], result["counts"]["null_appearance_materials"],
         ),
         "",
         "| id | name | kind | colour / texture | MAFs | cell | status | texture | merged sources |",
@@ -558,6 +651,12 @@ def render_md(result) -> str:
                   "", "| filepath | MAF uses |", "|---|---|"]
         for u in result["unresolved_textures"]:
             lines.append("| `%s` | %d |" % (u["filepath"], u["maf_count"]))
+    if result["gaps"]:
+        lines += ["", "## Coverage gaps (reported, never silently covered)",
+                  "", "| kind | fbx | material | maf_id | reason |", "|---|---|---|---|---|"]
+        for g in result["gaps"]:
+            lines.append("| %s | `%s` | %s | `%s` | %s |" % (
+                g["kind"], g["fbx"], g.get("material", ""), g["maf_id"], g["reason"]))
     notes = [m for m in result["materials"] if m.get("note")]
     if notes:
         lines += ["", "## Notes", ""]
@@ -607,12 +706,17 @@ def render_html(result) -> str:
     ur = []
     for u in result["unresolved_textures"]:
         ur.append("<tr><td><code>%s</code></td><td>%d</td></tr>" % (u["filepath"], u["maf_count"]))
+    gap = []
+    for g in result["gaps"]:
+        gap.append("<tr><td>%s</td><td><code>%s</code></td><td>%s</td><td><code>%s</code></td><td>%s</td></tr>" % (
+            g["kind"], g["fbx"], g.get("material", ""), g["maf_id"], g["reason"]))
     return (
         "<!doctype html><html><head><meta charset='utf-8'>"
         "<title>MAF library material IDs</title></head><body>"
         "<h1>MAF library material IDs (proposal)</h1>"
         "<p>%d candidate ids (%d solid, %d patterned); %d placeholder groups (not assigned); "
-        "%d unresolved texture refs. Patterned swatches are source MAF previews; "
+        "%d unresolved texture refs; %d empty-material files and %d null-appearance materials "
+        "reported as gaps. Patterned swatches are source MAF previews; "
         "<b>[texture unresolved]</b> means the referenced texture file is not present on this machine.</p>"
         "<table border='1' cellspacing='0' cellpadding='4'>"
         "<tr><th>id</th><th>name</th><th>kind</th><th>swatch / source</th><th>MAFs</th>"
@@ -624,10 +728,15 @@ def render_html(result) -> str:
         "<h2>Unresolved texture references</h2>"
         "<table border='1' cellspacing='0' cellpadding='4'>"
         "<tr><th>filepath</th><th>MAF uses</th></tr>%s</table>"
+        "<h2>Coverage gaps</h2>"
+        "<table border='1' cellspacing='0' cellpadding='4'>"
+        "<tr><th>kind</th><th>fbx</th><th>material</th><th>maf_id</th><th>reason</th></tr>%s</table>"
         "</body></html>"
     ) % (result["counts"]["candidate_ids"], result["counts"]["solid_ids"],
          result["counts"]["patterned_ids"], result["counts"]["placeholder_groups"],
-         result["counts"]["unresolved_texture_refs"], "".join(rows), "".join(ph), "".join(ur))
+         result["counts"]["unresolved_texture_refs"], result["counts"]["empty_material_files"],
+         result["counts"]["null_appearance_materials"],
+         "".join(rows), "".join(ph), "".join(ur), "".join(gap))
 
 
 if __name__ == "__main__":

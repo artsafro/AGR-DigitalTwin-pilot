@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -106,7 +107,15 @@ def test_tex_readable_strips_ext_and_hash():
 
 def test_appearance_key_solid_seed():
     kind, key = mat_ids._appearance_key("нержа", "#808080", [])
-    assert (kind, key) == ("seed", ("seed", "steel_stainless"))
+    assert kind == "seed"
+    # colour stays in the identity so two differing "нержа" probes never merge
+    assert key == ("seed", "steel_stainless", "#808080")
+
+
+def test_appearance_key_solid_seed_authoritative_colour():
+    kind, key = mat_ids._appearance_key("ID_1_RAL 9005", "#969696", [])
+    assert kind == "seed"
+    assert key == ("seed", "cap_black", "#0A0A0A")
 
 
 def test_appearance_key_bright_placeholder():
@@ -133,6 +142,7 @@ def test_appearance_key_patterned_keyed_by_full_path():
     kind, key = mat_ids._appearance_key("MAF", "#969696", [r"C:/maps/T_Atlas_MAF.png"])
     assert kind == "patterned"
     assert key[2] == ("C:/maps/T_Atlas_MAF.png",)
+    assert key[3] == "#969696"  # base colour is part of the appearance identity
 
 
 def test_appearance_key_same_name_different_colour_are_distinct():
@@ -353,3 +363,122 @@ def test_unavailable_preview_marks_missing(tmp_path):
     html = (out / "ids.html").read_text(encoding="utf-8")
     assert "no&nbsp;image" in html
     assert "[texture unresolved]" in html
+
+
+# --- round-3 P1 regression tests (reviewer findings) ---------------------------
+
+def test_empty_material_file_reported_as_gap(tmp_path):
+    mats = _materials(_file("MAF_0001_A.fbx"))  # materials == []
+    _, out = _run(tmp_path, mats)
+    doc = json.loads((out / "ids.json").read_text(encoding="utf-8"))
+    gaps = [g for g in doc["gaps"] if g["kind"] == "empty_materials"]
+    assert len(gaps) == 1
+    assert gaps[0]["fbx"] == "MAF_0001_A.fbx"
+    assert gaps[0]["maf_id"] == "MAF_0000"
+    assert doc["counts"]["empty_material_files"] == 1
+    # no source material is silently claimed: only the 4 site seeds remain, all 0 count
+    assert doc["counts"]["candidate_ids"] == 4
+    assert all(m["maf_count"] == 0 for m in doc["materials"])
+
+
+def test_null_appearance_material_reported_not_proposed(tmp_path):
+    mats = _materials(_file("MAF_0001_A.fbx", _mat("unknown", None)))
+    _, out = _run(tmp_path, mats)
+    doc = json.loads((out / "ids.json").read_text(encoding="utf-8"))
+    gaps = [g for g in doc["gaps"] if g["kind"] == "null_appearance"]
+    assert len(gaps) == 1
+    assert gaps[0]["material"] == "unknown"
+    assert doc["counts"]["null_appearance_materials"] == 1
+    # no solid proposal with color:null is emitted
+    assert not any(m["kind"] == "solid" and m["color"] is None for m in doc["materials"])
+
+
+def test_seed_name_different_colour_distinct(tmp_path):
+    mats = _materials(
+        _file("MAF_0001_A.fbx", _mat("нержа", "#111111")),
+        _file("MAF_0002_B.fbx", _mat("нержа", "#EEEEEE")),
+    )
+    _, out = _run(tmp_path, mats)
+    doc = json.loads((out / "ids.json").read_text(encoding="utf-8"))
+    solids = [m for m in doc["materials"] if m["kind"] == "solid" and m["maf_count"] > 0]
+    assert len(solids) == 2
+    assert {m["color"] for m in solids} == {"#111111", "#EEEEEE"}
+
+
+def test_same_name_same_texture_different_colour_distinct(tmp_path):
+    mats = _materials(
+        _file("MAF_0001_A.fbx", _mat("wood", "#111111", ["C:/missing/wood.png"])),
+        _file("MAF_0002_B.fbx", _mat("wood", "#EEEEEE", ["C:/missing/wood.png"])),
+    )
+    _, out = _run(tmp_path, mats)
+    doc = json.loads((out / "ids.json").read_text(encoding="utf-8"))
+    patterned = [m for m in doc["materials"] if m["kind"] == "patterned" and m["maf_count"] > 0]
+    assert len(patterned) == 2
+    assert {m["color"] for m in patterned} == {"#111111", "#EEEEEE"}
+
+
+def test_output_alias_of_preview_rejected(tmp_path):
+    from PIL import Image
+    png = tmp_path / "preview.png"
+    Image.new("RGB", (16, 16), (0, 200, 0)).save(png)
+    mats = _materials(_file("MAF_0001_A.fbx", _mat("wood", None, ["C:/maps/wood.png"])))
+    catalogue = _catalogue(["MAF_0001_A.fbx"], previews={"MAF_0001_A.fbx": str(png)})
+    cat_p = _write(tmp_path, "catalogue.json", catalogue)
+    seed = _write(tmp_path, "seed.json", _seed())
+    ral = _write(tmp_path, "ral.json", _ral())
+    mats_path = _write(tmp_path, "materials.json", mats)
+    before = png.read_bytes()
+    cmd = [sys.executable, str(TOOL),
+           "--materials", str(mats_path), "--catalogue", str(cat_p),
+           "--seed", str(seed), "--ral", str(ral),
+           "--out-json", str(tmp_path / "ids.json"),
+           "--out-md", str(tmp_path / "ids.md"),
+           "--out-html", str(png),
+           "--overwrite"]
+    proc = subprocess.run(cmd, capture_output=True, text=True)
+    assert proc.returncode != 0
+    assert "resolves to an input" in proc.stderr
+    assert png.read_bytes() == before
+
+
+def test_output_hardlink_to_materials_rejected(tmp_path):
+    mats = _materials(_file("MAF_0001_A.fbx", _mat("нержа", "#808080")))
+    catalogue = _catalogue(["MAF_0001_A.fbx"])
+    cat_p = _write(tmp_path, "catalogue.json", catalogue)
+    seed = _write(tmp_path, "seed.json", _seed())
+    ral = _write(tmp_path, "ral.json", _ral())
+    mats_path = _write(tmp_path, "materials.json", mats)
+    link = tmp_path / "out.html"
+    os.link(mats_path, link)
+    before = mats_path.read_bytes()
+    cmd = [sys.executable, str(TOOL),
+           "--materials", str(mats_path), "--catalogue", str(cat_p),
+           "--seed", str(seed), "--ral", str(ral),
+           "--out-json", str(tmp_path / "ids.json"),
+           "--out-md", str(tmp_path / "ids.md"),
+           "--out-html", str(link),
+           "--overwrite"]
+    proc = subprocess.run(cmd, capture_output=True, text=True)
+    assert proc.returncode != 0
+    assert "resolves to an input" in proc.stderr
+    assert mats_path.read_bytes() == before
+    assert link.read_bytes() == before
+
+
+def test_combined_gaps_and_conflicts_all_accounted(tmp_path):
+    mats = _materials(
+        _file("MAF_0001_A.fbx"),                                    # empty materials
+        _file("MAF_0002_B.fbx", _mat("unknown", None)),             # null appearance
+        _file("MAF_0003_C.fbx", _mat("нержа", "#111111")),
+        _file("MAF_0004_D.fbx", _mat("нержа", "#EEEEEE")),
+        _file("MAF_0005_E.fbx", _mat("wood", "#111111", ["C:/m/wood.png"])),
+        _file("MAF_0006_F.fbx", _mat("wood", "#EEEEEE", ["C:/m/wood.png"])),
+    )
+    _, out = _run(tmp_path, mats)
+    doc = json.loads((out / "ids.json").read_text(encoding="utf-8"))
+    assert doc["counts"]["empty_material_files"] == 1
+    assert doc["counts"]["null_appearance_materials"] == 1
+    solids = [m for m in doc["materials"] if m["kind"] == "solid" and m["maf_count"] > 0]
+    assert {m["color"] for m in solids} == {"#111111", "#EEEEEE"}
+    patterned = [m for m in doc["materials"] if m["kind"] == "patterned" and m["maf_count"] > 0]
+    assert {m["color"] for m in patterned} == {"#111111", "#EEEEEE"}
