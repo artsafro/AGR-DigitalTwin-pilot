@@ -1,0 +1,86 @@
+{
+  "passed": false,
+  "scope": "Source-position/shape legend-binding proposal, not generated geometry or appearance validation",
+  "facade_source_sha256": "9d079ffe7bbcfe035bdb3e13e660444cfb7f831d14c046ba1047572f9c5c52cb",
+  "source_rows": [
+    1676,
+    1677,
+    1678,
+    1679,
+    1680,
+    1681,
+    1682,
+    1683,
+    1828,
+    1829,
+    1830,
+    1831,
+    1832,
+    1833,
+    1834,
+    2370,
+    2789,
+    2790,
+    2791,
+    2792,
+    2793,
+    2794
+  ],
+  "cap_source_rows": [
+    1821,
+    1822,
+    1823
+  ],
+  "source_census_sha256": "0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01",
+  "drawing": "Revision PDF p1 and album p15/p16",
+  "geometry_authority": "Source/revision FBX; no drawing-driven scale change",
+  "columns": [
+    {
+      "x_center_m": 4.9125,
+      "rows": [
+        1828,
+        1829,
+        1830,
+        1831,
+        1832,
+        2370
+      ]
+    },
+    {
+      "x_center_m": 5.99,
+      "rows": [
+        1680,
+        1681,
+        1682,
+        1683,
+        1834
+      ]
+    },
+    {
+      "x_center_m": 7.19,
+      "rows": [
+        1676,
+        1677,
+        1678,
+        1679,
+        1833
+      ]
+    },
+    {
+      "x_center_m": 8.3675,
+      "rows": [
+        2789,
+        2790,
+        2791,
+        2792,
+        2793,
+        2794
+      ]
+    }
+  ],
+  "limitations": [
+    "Source row IDs refer to exact census hash, not display names",
+    "Drawing/source differences in top datum remain reported, not corrected by rescale",
+    "Sheet display has nonuniform X/Z scale; source coordinates remain explicit"
+  ]
+}

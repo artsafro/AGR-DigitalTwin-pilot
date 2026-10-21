@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0.0",
+  "job_id": "SKOLKOVO-L4",
+  "run_id": "issue-353-gate1-proposal-v008c",
+  "synthetic": false,
+  "path": "deviation",
+  "inputs": [
+    {
+      "path": "jobs/SKOLKOVO-L4/inventory.json",
+      "sha256": "68631e7907099b337714548dcf44fd10d4d3ac87ee1e3fca034760748b316c5f"
+    }
+  ],
+  "artifacts": [],
+  "deviations": [
+    {
+      "gate": "inputs",
+      "what_failed": "Previous native baseline census had no diagnostic buffers for29 proposed retained objects; live Max2024 is the user scene.",
+      "what_was_tried": "Read-only job-specific binary FBX supplement with strict XYZ hierarchical transforms, hash/unique-id checks and native bbox/count controls. Initial JSON serialization failed on numpy.bool; explicit bool conversion succeeded into a NEW versioned output. No live scene import/mutation.",
+      "new_tool_written": "tmp/l4_baseline_supplement_v008.py (job-only diagnostic, packaged on Drive; not a shared library)",
+      "result": "29 buffers supplemented,49/49 native bbox/count controls, max error0.000005308251m. Not a UV/normals/topology/material or clean-process delivery readback certificate."
+    }
+  ],
+  "gates": {
+    "inputs": {
+      "status": "pass",
+      "note": "Full pinned inventory snapshot of104 external copied inputs. Rehashed104/104 in input-integrity-v008.json; raw sources stay external/read-only. This is inventory identity, not geometry approval.",
+      "evidence": [
+        {
+          "path": "jobs/SKOLKOVO-L4/inventory.json",
+          "sha256": "68631e7907099b337714548dcf44fd10d4d3ac87ee1e3fca034760748b316c5f"
+        }
+      ]
+    },
+    "parts": {
+      "status": "review",
+      "note": "49-part Gate1 design proposal; planned allocation147000, source bbox candidate-conditioned joint recipes. Exact user approval absent. Canonical proposal and restore path in GATE1-PROPOSAL-v008.md.",
+      "evidence": [
+        {
+          "path": "tmp/skolkovo-l4-v008/parts-gate1-proposal-v008c.json",
+          "sha256": "f1867120b2c7072405d32440a27382a0be8bb2bf9edc56c9fbc2876eb3ff2302"
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/GATE1-PROPOSAL-v008.md",
+          "sha256": "0b35603995dc095906dc3c18227dae3eb6303ee0b5128b7bc154247882805b9c"
+        }
+      ]
+    },
+    "operations": {
+      "status": "missing",
+      "note": "Not run: exact-hash Gate1 absent. Source cleanup permissions are not Gate1.",
+      "evidence": []
+    },
+    "budgets": {
+      "status": "missing",
+      "note": "147000 allocation/10000 KNS target are plans, not measured output.",
+      "evidence": []
+    },
+    "export_readback": {
+      "status": "missing",
+      "note": "No generated model or export.",
+      "evidence": []
+    },
+    "report": {
+      "status": "review",
+      "note": "Prebuild source/operation plan only; not a delivery report.",
+      "evidence": [
+        {
+          "path": "jobs/SKOLKOVO-L4/GATE1-PROPOSAL-v008.md",
+          "sha256": "0b35603995dc095906dc3c18227dae3eb6303ee0b5128b7bc154247882805b9c"
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v008/input-integrity-v008.json",
+          "sha256": "6e0de137ec1ee5b0071c3f22e4f5eed49c91fef24555430966e2340bcba93631"
+        }
+      ]
+    },
+    "visual": {
+      "status": "missing",
+      "note": "Source diagnostic sheet is not output visual approval; board-tool/user gate still required.",
+      "evidence": []
+    },
+    "checker": {
+      "status": "missing",
+      "note": "Complete final SINTEZ only after output visual approval.",
+      "evidence": []
+    }
+  }
+}

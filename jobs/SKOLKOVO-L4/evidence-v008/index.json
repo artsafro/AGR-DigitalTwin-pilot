@@ -1,0 +1,94 @@
+{
+  "passed": false,
+  "buildable": false,
+  "scope": "Prebuild Gate1 proposal and source evidence; no operation/master/export receipt",
+  "canonical_parts_sha256": "f1867120b2c7072405d32440a27382a0be8bb2bf9edc56c9fbc2876eb3ff2302",
+  "canonical_parts_filename": "parts-gate1-proposal-v008c.json",
+  "drive_directory": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v008",
+  "drive_manifest_sha256": "045f7a1c0a1dcf4b8e2acd22099f9841172a1b7e8ef78c043a786a548377c231",
+  "artifacts": [
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v008\\gate1-source-plan-v008c.zip",
+      "sha256": "8ea9677d788bdb8b7b8badc98e9fcd0513aaecc527fd4ced7e09543c946872dc",
+      "bytes": 18840411
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v008\\parts-gate1-proposal-v008c.json",
+      "sha256": "f1867120b2c7072405d32440a27382a0be8bb2bf9edc56c9fbc2876eb3ff2302",
+      "bytes": 1519799
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v008\\appearance-bindings-v008c.json",
+      "sha256": "afa9e148ad4e2cbfa227b7805b6d9cb9ebb74ab0cc76fbb871c7d0805a94eca4",
+      "bytes": 4202609
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v008\\object-decisions-v008b.csv.gz",
+      "sha256": "5435d579da24eb302694e097b28fdd13dd7dff8a17dfecb5c46e595fe4724983",
+      "bytes": 455041
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v008\\source-plan-census-v008.json",
+      "sha256": "be69173d05f3ec05755793045844b8de6cc216c5725a97048a3422adfa6cca2a",
+      "bytes": 6357902
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v008\\gate1-lamella-source-match-v008.png",
+      "sha256": "4cc0582dea1c1ad7961c83ad9464429ec032810a4578cc6ebbbfe9827a6fad56",
+      "bytes": 175929
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v008\\lamella-match-witness-v008.json",
+      "sha256": "f3720b4c6efcfe9d817b67fb17e0845347e0b52faabfcc09cc1bc11314bbf782",
+      "bytes": 1673
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v008\\gate1-summary-v008c.json",
+      "sha256": "10e329c775df08b68cad886040032c83270e5ba3ebeec1a24917e8517eb2e416",
+      "bytes": 1213
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v008\\GATE1-PROPOSAL-v008.md",
+      "sha256": "0b35603995dc095906dc3c18227dae3eb6303ee0b5128b7bc154247882805b9c",
+      "bytes": 8962
+    }
+  ],
+  "archive_members_verified": 7043,
+  "drive_artifacts_rehashed": 9,
+  "original_inputs_rehashed_after_publication": 104,
+  "selected_source_buffers_in_archive": 6955,
+  "baseline_supplement": 29,
+  "native_bbox_count_controls": 49,
+  "timings": {
+    "raw_fbx_supplement": {
+      "seconds": 2.409743999996863,
+      "hours": 0.0006693733333324619
+    },
+    "source_scope_and_contacts": {
+      "seconds": 2.146806299999298,
+      "hours": 0.0005963350833331384
+    },
+    "gate1_proposal_generation": {
+      "seconds": 0.3955876000036369,
+      "hours": 0.00010988544444545469
+    },
+    "focused_tests": {
+      "seconds": 19.97,
+      "hours": 0.005547222222222222
+    },
+    "packaging_nested_total": {
+      "seconds": 8.077759699997841,
+      "hours": 0.0022438221388882892
+    }
+  },
+  "gate1": null,
+  "full_suite": "not_run: reserved for first complete PR/review head through suite_slot.py",
+  "CI": "not_run: billing lock",
+  "production_stages": {
+    "kernel_operations": "not_run: exact-hash Gate1 absent",
+    "measured_master_budget": "not_run: exact-hash Gate1 absent",
+    "export_readback": "not_run: exact-hash Gate1 absent",
+    "board_visual_user_approval": "not_run: exact-hash Gate1 absent",
+    "final_SINTEZ": "not_run: exact-hash Gate1 absent"
+  }
+}

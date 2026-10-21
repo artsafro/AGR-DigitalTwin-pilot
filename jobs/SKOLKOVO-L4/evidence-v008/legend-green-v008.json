@@ -1,0 +1,16 @@
+{
+  "scope": "Policy/data and source-shape regression, not model or Gate1",
+  "checks": {
+    "source_coverage": true,
+    "all22_lamellae_F9": true,
+    "only_source_position_pinned_F9": true,
+    "all22_source_volume_budget12": true,
+    "three_horizontal_caps_F10": true,
+    "no_grey_name_colour_inference": true,
+    "all_lamella_source_thickness025": true,
+    "all_retained_primary_cleanup_preserved": true,
+    "budget150k": true
+  },
+  "passed_checks": 9,
+  "total_checks": 9
+}

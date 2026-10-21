@@ -5,7 +5,46 @@ Input copies: `C:/x/l4-skolkovo/`; originals are read-only and were not opened f
 Profiles: both NPM and VPM from one <=150,000-triangle master (D010).
 Base: pilot `48e2a55`; #348 and #351 are closed. No building output is approved.
 
-## Current status — v007
+## Current status — v008c
+
+**Prior model-policy questions answered; exact-hash Gate 1 design approval needed.**
+`passed=false`, `buildable=false`; no kernel build, export, final visual or SINTEZ,
+and no PR. Read [GATE1-PROPOSAL-v008.md](GATE1-PROPOSAL-v008.md) and
+[RESUME-v008.md](RESUME-v008.md). Canonical PartsList on Drive:
+`G:/Мой диск/AGR-evidence/353-skolkovo-l4/evidence-v008/parts-gate1-proposal-v008c.json`.
+SHA-256: `f1867120b2c7072405d32440a27382a0be8bb2bf9edc56c9fbc2876eb3ff2302`.
+
+Artem's12:39 decision authorizes source-bound cleanup of the five primary mast
+assemblies, preserving supplied FBX placement/heights/exterior profile. Earlier
+immutable-topology statements below are historical; no PDF-rescale or quality
+waiver is authorized. The 108-KNS, opaque-glazing, appearance-only and Drive
+policies remain in force and are not being asked again.
+
+Object-level decomposition now accounts for32,961 unique source rows;6,955
+retained source objects in49 parts and explicit appearance bindings. Planned
+allocation147,000/150,000 (reserve3,000), NOT measured output or proof of the
+10,000-KNS target. Source-position/shape matching identifies22 F.9 lamella panels,
+three separate F.10 caps and cassette-profile F.10 bindings. All6,955 retained
+source diagnostic buffers are available, including29 supplemented directly
+from binary FBX with49 native bbox/count controls (max0.000005308251m).
+
+291 conservative candidate-conditioned joint recipes (240 weld/51 embed) cover
+17,355 source bbox pair candidates, not291 proved physical seams. False bbox
+contacts are rejected/reported rather than bridged; segmentation allocations
+are design estimates, never measured geometry. These qualifications are explicit
+in the exact proposal sent for user approval.
+
+338 focused tests passed/19.97s; primary-policy9/11 ->11/11, legend4/9 ->9/9,
+proposal13/18 ->18/18 plus12/12 rejecting negative witnesses. Procedure walk
+correctly exits1, passed=false, zero validation errors: parts review and all
+production gates remain open. Original104/104 inputs and113/113 mast buffers
+verified; Drive ZIP7,043/7,043 member hashes+CRC and9/9 published artifacts
+independently verified. No full suite before complete review head. Live Max2024
+was only pinged; no scene mutation or DCC subprocess was launched by this run.
+
+Transcript: Hermes task t_b205c8e1, resume after task comment2026-10-21 12:39.
+
+## Historical v007 status — superseded by v008c
 
 **108-component cleanup permission recorded; primary-mast topology decision needed.**
 `passed=false`, `buildable=false`, no Gate 1/build/export/PR. Current report:

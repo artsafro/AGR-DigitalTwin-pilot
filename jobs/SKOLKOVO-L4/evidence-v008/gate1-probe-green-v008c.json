@@ -1,0 +1,78 @@
+{
+  "scope": "Gate1 proposal data/schema consistency ONLY; not user approval, geometry or buildability",
+  "parts_path": "tmp\\skolkovo-l4-v008\\parts-gate1-proposal-v008c.json",
+  "sha256": "f1867120b2c7072405d32440a27382a0be8bb2bf9edc56c9fbc2876eb3ff2302",
+  "checks": {
+    "public_schema": true,
+    "draft_not_approval": true,
+    "all_source_rows_unique": true,
+    "decisions_account_for_every_source": true,
+    "all6955_retained_refs_exact_once": true,
+    "all6955_explicit_appearance_bindings": true,
+    "only_known_appearance_keys": true,
+    "appearance_binding_part_known": true,
+    "all49_known_parts": true,
+    "all_legends_nonblank": true,
+    "positive_allocation_with_reserve": true,
+    "all291_candidate_pair_decisions": true,
+    "no_primary_displacement": true,
+    "candidates_not_contact_certificates": true,
+    "allocations_not_fabricated_measurements": true,
+    "source_bound_primary_plan": true,
+    "no_generated_geometry_claim": true,
+    "source_specific_material_binding": true
+  },
+  "passed_checks": 18,
+  "total_checks": 18,
+  "negative_witnesses": [
+    {
+      "witness": "empty_parts",
+      "rejected": true
+    },
+    {
+      "witness": "partial_parts",
+      "rejected": true
+    },
+    {
+      "witness": "duplicate_input",
+      "rejected": true
+    },
+    {
+      "witness": "unsupported_operation",
+      "rejected": true
+    },
+    {
+      "witness": "nonfinite_budget_nan",
+      "rejected": true
+    },
+    {
+      "witness": "nonfinite_budget_inf",
+      "rejected": true
+    },
+    {
+      "witness": "exact_no_reserve_threshold",
+      "rejected": true
+    },
+    {
+      "witness": "unmapped_legend",
+      "rejected": true
+    },
+    {
+      "witness": "missing_joints",
+      "rejected": true
+    },
+    {
+      "witness": "unmapped_material_key",
+      "rejected": true
+    },
+    {
+      "witness": "wrong_source_binding_known_part",
+      "rejected": true
+    },
+    {
+      "witness": "invented_approval",
+      "rejected": true
+    }
+  ],
+  "negative_rejected": 12
+}

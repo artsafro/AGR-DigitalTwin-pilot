@@ -1,0 +1,34 @@
+{
+  "passed": false,
+  "buildable": false,
+  "status": "awaiting_exact_hash_gate1_not_measured_model",
+  "parts_sha256": "f1867120b2c7072405d32440a27382a0be8bb2bf9edc56c9fbc2876eb3ff2302",
+  "parts": 49,
+  "joints": 291,
+  "joint_decisions": {
+    "weld": 240,
+    "embed": 51
+  },
+  "source_bbox_candidates": 17355,
+  "source_rows": 32961,
+  "retained": 6955,
+  "dispositions": {
+    "superseded": 7059,
+    "drop": 18929,
+    "retain": 6955,
+    "superseded_facade_package": 18
+  },
+  "appearance_bindings": 6955,
+  "allocation": 147000,
+  "master_limit": 150000,
+  "reserve": 3000,
+  "gate1": null,
+  "seconds": 0.3955876000036369,
+  "limitations": [
+    "No geometry generated, no achieved reduction/topology/silhouette pass",
+    "Source bbox joint candidates require actual source-surface reconciliation after face selection; no artificial bridges",
+    "Extra edges are prebuild estimates within declared budgets, not measured retopology counts",
+    "KnS10000 allocation has no achieved mesh yet; earlier straight/PCA prism failures remain evidence",
+    "Human approval is only for starting this exact plan; it cannot waive invariants/export/readback/visual/SINTEZ"
+  ]
+}

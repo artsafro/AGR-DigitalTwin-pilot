@@ -1,0 +1,29 @@
+{
+  "scope": "Gate1 proposal data/schema consistency ONLY; not user approval, geometry or buildability",
+  "parts_path": "tmp\\skolkovo-l4-v007\\parts-policy-diagnostic-v007.json",
+  "sha256": "715d0ffc17e1fa469254f33a38913e2c5af411da7a921cf5f088f4b39e3a9f1d",
+  "checks": {
+    "public_schema": true,
+    "draft_not_approval": true,
+    "all_source_rows_unique": true,
+    "decisions_account_for_every_source": true,
+    "all6955_retained_refs_exact_once": true,
+    "all6955_explicit_appearance_bindings": true,
+    "only_known_appearance_keys": true,
+    "appearance_binding_part_known": false,
+    "all49_known_parts": false,
+    "all_legends_nonblank": true,
+    "positive_allocation_with_reserve": true,
+    "all291_candidate_pair_decisions": false,
+    "no_primary_displacement": true,
+    "candidates_not_contact_certificates": true,
+    "allocations_not_fabricated_measurements": true,
+    "source_bound_primary_plan": false,
+    "no_generated_geometry_claim": true,
+    "source_specific_material_binding": false
+  },
+  "passed_checks": 13,
+  "total_checks": 18,
+  "negative_witnesses": [],
+  "negative_rejected": 0
+}

@@ -1,0 +1,22 @@
+{
+  "passed": false,
+  "buildable": false,
+  "scope": "Read-only diagnostic source supplement, not delivery/clean-process FBX readback or topology/UV approval",
+  "source": "C:\\x\\l4-skolkovo\\01_source\\01_initial_2026-05-26\\СК_ИЦ_ЦОД02_П_АР_3DView(Navisworks)forAGR(fbx).fbx",
+  "source_sha256": "caa89dc0b1ca4effa269dbd7b26f5cd10acbcc00fe5c2c0942d251b1dbb57203",
+  "version": 7400,
+  "units": {
+    "unit_scale_factor": 30.48,
+    "original_unit_scale_factor": 1.0,
+    "error": null
+  },
+  "supplement_count": 29,
+  "controls": 20,
+  "seconds": 2.409743999996863,
+  "limitations": [
+    "Only triangulated geometry and strictly supported XYZ hierarchical transforms",
+    "49 independent native bbox/count checks certify bounds/counts, not winding/normals/UV/materials",
+    "No input mutation or live DCC call"
+  ],
+  "max_native_bbox_error_m": 5.308250422331184e-06
+}

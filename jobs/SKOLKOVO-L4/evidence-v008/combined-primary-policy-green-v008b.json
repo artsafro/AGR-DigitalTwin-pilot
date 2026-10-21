@@ -1,0 +1,18 @@
+{
+  "scope": "Policy/data regression only, not geometry",
+  "checks": {
+    "all_32961_source_rows": true,
+    "all_references_unique": true,
+    "five_primary_retained": true,
+    "five_source_bound_cleanup_plan": true,
+    "primary_authority_recorded": true,
+    "primary_source_count_unchanged": true,
+    "primary_conservative_budget_not_claimed_reduction": true,
+    "all108_kns_retained": true,
+    "kns_target10000_not_measured": true,
+    "allocation_not_over150k": true,
+    "no_approval_claim": true
+  },
+  "passed_checks": 11,
+  "total_checks": 11
+}

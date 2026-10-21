@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "scope": "Source/inventory identity verification only, not geometry or approval",
+  "original_input_hashes_verified": 104,
+  "mast_buffers_rehashed": 113,
+  "retained_diagnostic_buffers_available": 6955,
+  "supplemental_baseline_buffers": 29,
+  "native_bbox_count_controls": 49,
+  "max_native_bbox_error_m": 5.308250422331184e-06,
+  "parts_sha256": "f1867120b2c7072405d32440a27382a0be8bb2bf9edc56c9fbc2876eb3ff2302",
+  "seconds": 0.6529336000021431
+}

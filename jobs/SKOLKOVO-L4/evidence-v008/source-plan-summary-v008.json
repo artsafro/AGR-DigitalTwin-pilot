@@ -1,0 +1,309 @@
+{
+  "passed": false,
+  "buildable": false,
+  "scope": "Source-backed planning census only; bbox contacts are conservative candidates, not actual mating surfaces or automatic weld approval",
+  "rows": 32961,
+  "retained": 6955,
+  "unique_source_references": 32961,
+  "allocation": 147000,
+  "parts": 49,
+  "groups": {
+    "v1_roof_substrate_skins_wall_from_face": {
+      "count": 51,
+      "operation": "from_face",
+      "legend_item": "vpm:roof_enclosure",
+      "budget": 408
+    },
+    "v1_external_railings_railing_detail_per_profile": {
+      "count": 22,
+      "operation": "detail_per_profile",
+      "legend_item": "F.6",
+      "budget": 528
+    },
+    "v1_exterior_substrate_reveals_wall_from_face": {
+      "count": 19,
+      "operation": "from_face",
+      "legend_item": "vpm:exterior_reveal",
+      "budget": 152
+    },
+    "v1_vent_grilles_grille_detail_per_profile": {
+      "count": 2,
+      "operation": "detail_per_profile",
+      "legend_item": "F.5.3",
+      "budget": 32
+    },
+    "v1_additional_exterior_slabs_access_slab_contour_rebuild": {
+      "count": 48,
+      "operation": "contour_rebuild",
+      "legend_item": "vpm:exterior_slab_access",
+      "budget": 790
+    },
+    "v1_additional_exterior_doors_door_from_face": {
+      "count": 1,
+      "operation": "from_face",
+      "legend_item": "F.8",
+      "budget": 12
+    },
+    "v1_opaque_glazing_glazing_from_face": {
+      "count": 7,
+      "operation": "from_face",
+      "legend_item": "F.5.1",
+      "budget": 14
+    },
+    "v1_plinth_flashings_band_contour_rebuild": {
+      "count": 1,
+      "operation": "contour_rebuild",
+      "legend_item": "F.10",
+      "budget": 256
+    },
+    "v1_roofs_slab_contour_rebuild": {
+      "count": 28,
+      "operation": "contour_rebuild",
+      "legend_item": "source:roof-membrane",
+      "budget": 672
+    },
+    "v1_baseline_rooftop_decks_slab_contour_rebuild": {
+      "count": 17,
+      "operation": "contour_rebuild",
+      "legend_item": "vpm:roof_deck_or_entrance",
+      "budget": 912
+    },
+    "v1_mullions_frame_contour_rebuild": {
+      "count": 18,
+      "operation": "contour_rebuild",
+      "legend_item": "F.5.1",
+      "budget": 144
+    },
+    "v1_baseline_rooftop_concrete_wall_from_face": {
+      "count": 35,
+      "operation": "from_face",
+      "legend_item": "vpm:roof_enclosure",
+      "budget": 902
+    },
+    "v1_baseline_entrance_slabs_slab_contour_rebuild": {
+      "count": 2,
+      "operation": "contour_rebuild",
+      "legend_item": "vpm:roof_deck_or_entrance",
+      "budget": 40
+    },
+    "v1_baseline_external_structure_frame_contour_rebuild": {
+      "count": 92,
+      "operation": "contour_rebuild",
+      "legend_item": "vpm:exterior_structure",
+      "budget": 3560
+    },
+    "v1_roof_and_entrance_details_other_contour_rebuild": {
+      "count": 1,
+      "operation": "contour_rebuild",
+      "legend_item": "source:exterior-detail",
+      "budget": 256
+    },
+    "v1_baseline_roof_access_rod_ladder_contour_rebuild": {
+      "count": 3,
+      "operation": "contour_rebuild",
+      "legend_item": "vpm:roof_access",
+      "budget": 1536
+    },
+    "v1_baseline_roof_access_railing_contour_rebuild": {
+      "count": 120,
+      "operation": "contour_rebuild",
+      "legend_item": "vpm:roof_access",
+      "budget": 7680
+    },
+    "facade_solid_cassettes_wall_from_face": {
+      "count": 733,
+      "operation": "from_face",
+      "legend_item": "F.1",
+      "budget": 1466
+    },
+    "facade_cassette_perimeter_profiles_frame_contour_rebuild": {
+      "count": 2632,
+      "operation": "contour_rebuild",
+      "legend_item": "F.10",
+      "budget": 21056
+    },
+    "facade_perforated_cassettes_wall_from_face": {
+      "count": 477,
+      "operation": "from_face",
+      "legend_item": "F.2",
+      "budget": 954
+    },
+    "facade_decorative_lamellae_decor_contour_rebuild": {
+      "count": 22,
+      "operation": "contour_rebuild",
+      "legend_item": "F.9",
+      "budget": 264
+    },
+    "facade_lamella_top_caps_band_contour_rebuild": {
+      "count": 3,
+      "operation": "contour_rebuild",
+      "legend_item": "F.10",
+      "budget": 36
+    },
+    "facade_additional_opaque_panels_wall_from_face": {
+      "count": 1,
+      "operation": "from_face",
+      "legend_item": "vpm:exterior_panel",
+      "budget": 2
+    },
+    "facade_roof_substrate_skins_wall_from_face": {
+      "count": 764,
+      "operation": "from_face",
+      "legend_item": "vpm:roof_enclosure",
+      "budget": 6112
+    },
+    "facade_exterior_substrate_reveals_wall_from_face": {
+      "count": 293,
+      "operation": "from_face",
+      "legend_item": "vpm:exterior_reveal",
+      "budget": 2344
+    },
+    "facade_additional_exterior_slabs_access_slab_contour_rebuild": {
+      "count": 18,
+      "operation": "contour_rebuild",
+      "legend_item": "vpm:exterior_slab_access",
+      "budget": 896
+    },
+    "facade_facade_cassettes_wall_from_face": {
+      "count": 3,
+      "operation": "from_face",
+      "legend_item": "F.1",
+      "budget": 36
+    },
+    "facade_parapet_flashings_parapet_contour_rebuild": {
+      "count": 2,
+      "operation": "contour_rebuild",
+      "legend_item": "F.10",
+      "budget": 1024
+    },
+    "facade_roofs_slab_contour_rebuild": {
+      "count": 284,
+      "operation": "contour_rebuild",
+      "legend_item": "source:roof-membrane",
+      "budget": 6816
+    },
+    "facade_roof_and_entrance_details_other_contour_rebuild": {
+      "count": 19,
+      "operation": "contour_rebuild",
+      "legend_item": "source:exterior-detail",
+      "budget": 4864
+    },
+    "facade_canopy_slab_from_face": {
+      "count": 1,
+      "operation": "from_face",
+      "legend_item": "F.7",
+      "budget": 32
+    },
+    "facade_opaque_glazing_glazing_from_face": {
+      "count": 129,
+      "operation": "from_face",
+      "legend_item": "F.5.1",
+      "budget": 258
+    },
+    "facade_entrance_glazing_door_from_face": {
+      "count": 7,
+      "operation": "from_face",
+      "legend_item": "F.5.1",
+      "budget": 56
+    },
+    "facade_mullions_frame_contour_rebuild": {
+      "count": 407,
+      "operation": "contour_rebuild",
+      "legend_item": "F.5.1",
+      "budget": 3256
+    },
+    "facade_additional_exterior_doors_door_from_face": {
+      "count": 3,
+      "operation": "from_face",
+      "legend_item": "F.8",
+      "budget": 36
+    },
+    "facade_external_railings_railing_detail_per_profile": {
+      "count": 327,
+      "operation": "detail_per_profile",
+      "legend_item": "F.6",
+      "budget": 7848
+    },
+    "facade_plinth_wall_from_face": {
+      "count": 27,
+      "operation": "from_face",
+      "legend_item": "F.4",
+      "budget": 324
+    },
+    "facade_additional_entrance_details_other_detail_per_profile": {
+      "count": 12,
+      "operation": "detail_per_profile",
+      "legend_item": "vpm:entrance_detail",
+      "budget": 168
+    },
+    "facade_vent_grilles_grille_detail_per_profile": {
+      "count": 7,
+      "operation": "detail_per_profile",
+      "legend_item": "F.5.3",
+      "budget": 112
+    },
+    "facade_window_flashings_band_contour_rebuild": {
+      "count": 7,
+      "operation": "contour_rebuild",
+      "legend_item": "F.10",
+      "budget": 448
+    },
+    "facade_external_reveals_band_from_face": {
+      "count": 10,
+      "operation": "from_face",
+      "legend_item": "F.10",
+      "budget": 80
+    },
+    "facade_roof_screen_ac_screen_from_face": {
+      "count": 4,
+      "operation": "from_face",
+      "legend_item": "F.3",
+      "budget": 48
+    },
+    "facade_additional_exterior_railings_railing_contour_rebuild": {
+      "count": 12,
+      "operation": "contour_rebuild",
+      "legend_item": "F.6",
+      "budget": 288
+    },
+    "facade_stemalite_glazing_from_face": {
+      "count": 6,
+      "operation": "from_face",
+      "legend_item": "F.5.2",
+      "budget": 24
+    },
+    "facade_soffits_slab_from_face": {
+      "count": 152,
+      "operation": "from_face",
+      "legend_item": "source:exterior-soffit",
+      "budget": 2432
+    },
+    "facade_external_metal_doors_door_primitive": {
+      "count": 3,
+      "operation": "primitive",
+      "legend_item": "F.8",
+      "budget": 36
+    },
+    "facade_plinth_flashings_band_contour_rebuild": {
+      "count": 10,
+      "operation": "contour_rebuild",
+      "legend_item": "F.10",
+      "budget": 2560
+    },
+    "rods_primary_mast_meshes_rod_ladder_contour_rebuild": {
+      "count": 5,
+      "operation": "contour_rebuild",
+      "legend_item": "source:preserved_mast",
+      "budget": 55230
+    },
+    "rods_additional_kns_components_rod_ladder_contour_rebuild": {
+      "count": 108,
+      "operation": "contour_rebuild",
+      "legend_item": "source:preserved_mast",
+      "budget": 10000
+    }
+  },
+  "candidate_part_pairs": 291,
+  "source_candidate_pairs": 17355,
+  "seconds": 2.146806299999298
+}
