@@ -86,3 +86,14 @@ def test_changed_head_or_input_never_publishes_a_stale_run(tmp_path,monkeypatch)
     with pytest.raises(ValueError,match='HEAD changed'):module.assert_unchanged(snapshot,'head-a')
     monkeypatch.setattr(module,'git_head',lambda:'head-a');p.write_bytes(b'changed')
     with pytest.raises(ValueError,match='inputs changed'):module.assert_unchanged(snapshot,'head-a')
+
+
+def test_unmapped_texture_slot_is_named_even_before_source_hash_rejection(tmp_path):
+    adapter=tmp_path/'adapter.json';adapter.write_text('{}')
+    master=tmp_path/'master.json';master.write_text('{"slots":["UnknownPaving"]}')
+    reference=tmp_path/'reference.npz';reference.write_bytes(b'invalid')
+    out=tmp_path/'out'
+    r=subprocess.run([sys.executable,str(SCRIPT),'--adapter-json',str(adapter),'--source-master',str(master),
+        '--d150-reference',str(reference),'--out',str(out)],capture_output=True,text=True)
+    assert r.returncode!=0 and 'UnknownPaving' in r.stderr
+    assert not out.exists()
