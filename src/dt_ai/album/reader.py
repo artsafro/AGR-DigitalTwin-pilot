@@ -22,11 +22,12 @@ Assumptions (Russian album conventions, stated per #317):
   ``1.2``) for vertical axis lines and Cyrillic capitals without Ё, З, Й, О, Х, Ъ, Ы, Ь (optionally with a
   number, ``А1``) for horizontal ones; a break of that convention or a forbidden letter is a finding, not an error.
 - Dimensions: horizontal dimension lines (chains allowed) with slanted ~45 deg ticks; the value is an integer in
-  mm (``6000`` or ``26 369``) written above the line between two consecutive ticks; the endpoints are the tick
-  centres. Every span between two consecutive ticks is a dimension candidate: a span whose value is not read is a
-  finding with its endpoints and text, never a silent omission - ``dimension_text_invalid`` (text above the line
-  is not an integer, e.g. ``NaN``, ``4500.0``), ``dimension_text_unsupported`` (text only below the line, not read
-  in this version), ``dimension_text_missing`` (no text). An unread span is never a scale reference, so an
+  mm (``6000`` or ``26 369``) written above the line between two consecutive ticks, or below it when no
+  above-line candidate exists; only horizontal positive-direction text is read, and claimed text is not borrowed
+  by the below-line fallback. The endpoints are the tick centres. Every span between two consecutive ticks is a
+  dimension candidate: a span whose value is not read is a finding with its endpoints and text, never a silent
+  omission - ``dimension_text_invalid`` (not an integer, e.g. ``NaN``, ``4500.0``),
+  ``dimension_text_missing`` (no text). An unread span is never a scale reference, so an
   unreadable reference dimension leaves the scale ``unknown``. Vertical dimension chains are not read.
 - Level marks: values in metres with exactly three decimals (``±0.000``, ``+3.000``, ``-0.450``, comma or
   Unicode minus accepted; ``±`` only for zero) next to a triangle symbol; the mark's page Y is the triangle apex.
@@ -650,7 +651,11 @@ def _dimensions(
         span_axes = [la, lb] if la and lb else None
         data = {"p0": [a, y], "p1": [b, y], "axes": span_axes}
         hits = above[(y, a, b)]
+        if not hits:
+            # Reserve above-line matches globally before borrowing any text below.
+            hits = [h for h in runs_at(y, a, b, above=False) if h[1] not in claimed]
         if hits:
+            claimed.add(hits[0][1])
             run = runs[hits[0][1]]
             value = check_dimension_text(run.text)
             if value is not None:
@@ -670,18 +675,6 @@ def _dimensions(
                 Finding(
                     "dimension_text_invalid",
                     f"dimension span {a:.2f}-{b:.2f} at y {y:.2f}: text '{run.text}' is not an integer mm value",
-                    {**data, "text": run.text, "text_bbox": list(run.bbox)},
-                )
-            )
-            continue
-        below = [h for h in runs_at(y, a, b, above=False) if h[1] not in claimed]
-        if below:
-            run = runs[below[0][1]]
-            findings.append(
-                Finding(
-                    "dimension_text_unsupported",
-                    f"dimension span {a:.2f}-{b:.2f} at y {y:.2f}: text '{run.text}' is below the line "
-                    "(not read in this version)",
                     {**data, "text": run.text, "text_bbox": list(run.bbox)},
                 )
             )

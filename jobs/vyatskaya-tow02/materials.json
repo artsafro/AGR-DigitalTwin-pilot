@@ -1,0 +1,32 @@
+{
+ "object": "vyatskaya-tow02",
+ "scheme": "material id ranges of standards/material_id_ranges.yaml (ADR 0001)",
+ "note": "Source finishes are 3ds Max sub-material slots 'Material #NNN' (one shared slot list on all three meshes; id = Blender slot index + 1). Glass #198 (slot 5, alpha 0.145) is split into <mesh>_glass with glass_id 12 (opening group, as OBJ03). RC_TOW_02 slots: #210 spandrel/wall -> facade 1; #199 opaque bluish band -> facade 2 (user 2026-10-20: bands opaque); #201 frames/mullions -> metal 16; #216 louvres -> metal 17; #217 AC baskets -> attachment 26; #215 and #194 small parts at the AC baskets (same storeys, same z distribution) -> attachment 27. Whole meshes: RC_TOW_Lapatki_02 fins (#219/#220/#204/#221) -> 28 (decor, attachment group: pattern facade-decor-inset); SLAB_TOW_02 (#194) -> 0 unassigned (reference slabs, not modelled).",
+ "slots": {
+  "1": 27,
+  "6": 2,
+  "8": 16,
+  "18": 1,
+  "42": 27,
+  "43": 17,
+  "44": 26
+ },
+ "slot_names": {
+  "1": "Material #194",
+  "5": "Material #198",
+  "6": "Material #199",
+  "8": "Material #201",
+  "18": "Material #210",
+  "42": "Material #215",
+  "43": "Material #216",
+  "44": "Material #217"
+ },
+ "meshes": {
+  "RC_TOW_Lapatki_02": 28,
+  "SLAB_TOW_02": 0
+ },
+ "glass_slots": [
+  5
+ ],
+ "glass_id": 12
+}

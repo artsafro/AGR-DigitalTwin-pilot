@@ -94,6 +94,15 @@ def test_ucx_budget_is_checker_formula_conflict_3(model, budget):
     assert ucx_triangle_limit(model) == budget
 
 
+@pytest.mark.parametrize("ucx_tris,status", [(5_000, "pass"), (5_001, "fail")])
+def test_ucx_triangle_budget_at_limit_inclusive(ucx_tris, status):
+    """UCX budget (reg p.36-37 §13.7-13.8): model 100 000 -> ceil(5 %) = 5 000 UCX triangles;
+    exactly at the budget passes and budget+1 fails (the gate is `>` not `>=`)."""
+    found = scene_findings(rb(mesh(tris=100_000), mesh(name="UCX_SM_Test_K_1_Main_001", tris=ucx_tris)),
+                           "vpm", "oks", PROFILES.vpm)
+    assert statuses(found, "V010")["UCX triangle budget"] == status
+
+
 def test_ucx_excluded_from_model_triangles_and_budget_checked():
     found = scene_findings(rb(mesh(tris=100_000), mesh(name="UCX_SM_Test_K_1_Main_001", tris=5_001)), "vpm", "oks",
                            PROFILES.vpm)
@@ -764,6 +773,17 @@ def test_ucx_gap_outside_band_is_review(gap_m):
                ucx_box("UCX_SM_Test_K_1_Main_002", (1 + gap_m, 0, 0), (2 + gap_m, 1, 1)))
     assert st["UCX intersections"] == "pass"
     assert st["UCX piece gap (advisory)"] == "review"
+
+
+@pytest.mark.parametrize("gap_m,status", [(0.002, "pass"), (0.01, "pass"),
+                                          (0.00199, "review"), (0.01001, "review")])
+def test_ucx_gap_exact_boundaries_inclusive_d098(gap_m, status):
+    """D098: neighbour gap 2 mm - 1 cm inclusive (reg p.36 §13.4). The floor (2 mm) and ceiling
+    (10 mm) pass at equality; one 0.01 mm beyond (1.99 mm / 10.01 mm) flips to review."""
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (1 + gap_m, 0, 0), (2 + gap_m, 1, 1)))
+    assert st["UCX intersections"] == "pass"
+    assert st["UCX piece gap (advisory)"] == status
 
 
 def test_ucx_one_metre_apart_is_not_a_neighbour():

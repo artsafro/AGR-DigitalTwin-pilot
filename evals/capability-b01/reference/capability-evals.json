@@ -1,0 +1,36 @@
+{
+  "selector": {
+    "suite": "capability",
+    "task": null,
+    "references": false
+  },
+  "evidence_overrides": {},
+  "main_checkout": "C:\\x\\capability-evals\\t_fd239f23-reference-v007",
+  "branch": "improve/issue-390-capability-eval-a-b01-from-repo",
+  "created": "2026-10-20T20:38:05",
+  "passed": 1,
+  "failed": 0,
+  "not_measured": 0,
+  "exit_code": 0,
+  "checks": [
+    {
+      "task": "capability-b01",
+      "check": "B01 all benchmark and etalon-self checks",
+      "expected": "20/20",
+      "measured": "20/20",
+      "passed": true,
+      "details": [],
+      "supplementary": [
+        {
+          "path": "C:\\x\\capability-evals\\t_fd239f23-reference-v007\\benchmark\\check-v001\\report.json",
+          "measured": "10/10"
+        }
+      ],
+      "evidence": [
+        "C:\\x\\capability-evals\\t_fd239f23-reference-v007\\benchmark\\check-v001\\report.json",
+        "C:\\x\\capability-evals\\t_fd239f23-reference-v007\\benchmark\\run-v001\\report.json",
+        "C:\\x\\capability-evals\\t_fd239f23-reference-v007\\benchmark\\run-v001\\etalon-self.json"
+      ]
+    }
+  ]
+}

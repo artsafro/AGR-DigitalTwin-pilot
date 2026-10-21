@@ -542,9 +542,9 @@ def test_density_grid_keeps_endpoints_and_rejects_the_outside():
             else:
                 with pytest.raises(bind.BindError, match="outside"):
                     bind.density_report([face], "npm")
-    for value in (520.0, 1706.0, math.nextafter(520.0, 0.0), math.nextafter(1706.0, 2000.0)):
+    for value in (512.0, 1706.0, math.nextafter(512.0, 0.0), math.nextafter(1706.0, 2000.0)):
         face = {"slot": "LawnRolled", "world_area_m2": 1.0, "uv_area": (value / 4096) ** 2}
-        if value in (520.0, 1706.0):
+        if value in (512.0, 1706.0):
             report = bind.density_report([face], "vpm")
             assert report["LawnRolled"]["min"] == value
             assert report["LawnRolled"]["max"] == value

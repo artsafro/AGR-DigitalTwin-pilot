@@ -1,4 +1,4 @@
-"""Pull-request graders (#125). Evidence is a recorded `gh` result, never a live call.
+"""Pull-request graders (#125). Evidence is recorded `gh` data or local body/diff files; no live calls.
 
 `pr_agent_trace` — the PR body has an `## Agent trace` span (the same span as
 `tools/hooks/agent_trace.py`) with all ten fields filled. A value `not measured (...)` counts;
@@ -57,13 +57,16 @@ def _raise(message):
     raise EvidenceError(message)
 
 
-def read_view(path):
-    """One `gh pr view --json body,comments` file. Raises EvidenceError when it is not a JSON object."""
+def read_view(path, *, body_file=False):
+    """Read recorded gh JSON or explicit Markdown; body files never imply review comments."""
     path = Path(path)
     if not path.is_file():
         _raise(f"{path} does not exist")
     try:
-        value = json.loads(path.read_text(encoding="utf-8"))
+        text = path.read_text(encoding="utf-8")
+        if body_file:
+            return {"body": text}  # No invented review comments or telemetry.
+        value = json.loads(text)
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         _raise(f"{path}: {type(exc).__name__}: {exc}")
     if not isinstance(value, dict):
@@ -223,9 +226,9 @@ def pr_agent_trace(evidence):
     check, expected = "Agent trace block in the PR body", "present, 10 fields"
     from twinqa.evals.graders import EvidenceError  # graders.py imports this module at its end
     problems, states = [], []
-    for path in evidence.get("pr") or []:
+    for path in evidence.get("pr") or evidence.get("body") or []:
         try:
-            view = read_view(path)
+            view = read_view(path, body_file="body" in evidence)
         except EvidenceError as exc:
             problems.append(str(exc))
             continue
@@ -586,9 +589,9 @@ def pr_numeric_literals(evidence):
             parsed.append(read_diff(path))
         except EvidenceError as exc:
             problems.append(str(exc))
-    for path in evidence.get("pr") or []:
+    for path in evidence.get("pr") or evidence.get("body") or []:
         try:
-            view = read_view(path)
+            view = read_view(path, body_file="body" in evidence)
         except EvidenceError as exc:
             problems.append(str(exc))
             continue
@@ -657,9 +660,9 @@ def pr_review_rounds(evidence):
     from twinqa.evals.graders import EvidenceError
     problems, markers, unrecognized = [], [], []
     readable = False
-    for path in evidence.get("pr") or []:
+    for path in evidence.get("pr") or evidence.get("body") or []:
         try:
-            view = read_view(path)
+            view = read_view(path, body_file="body" in evidence)
         except EvidenceError as exc:
             problems.append(str(exc))
             continue

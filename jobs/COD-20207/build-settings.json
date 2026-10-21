@@ -1,0 +1,15 @@
+{
+  "slots": {
+    "asphalt": "Asphalt",
+    "tile": "Tile",
+    "tile_reinforced": "Tile",
+    "geogrid": "Geogrid",
+    "geogrid_reinforced": "Geogrid",
+    "type6": "Tile",
+    "lawn": "Lawn"
+  },
+  "flat_datum_m": 0.0,
+  "uncovered_covering": "lawn",
+  "separate_curbs": true,
+  "covering_priority": [["Tile", "Geogrid"]]
+}
