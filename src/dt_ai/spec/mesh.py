@@ -1547,16 +1547,15 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, 
         lining = lining or []
         zs = np.concatenate([v[np.unique(every), 2]] + [lv[np.unique(lt), 2] for lv, lt in lining])
         heights = np.unique(np.r_[bottom, zs[(zs > bottom) & (zs < roof_z)], roof_z])
-        cuts = [lo + (hi - lo) * share for lo, hi in zip(heights[:-1], heights[1:])
-                for share in (1e-4, 0.5, 1 - 1e-4)]
-        sections = [shapely.unary_union(_section(v, every, z) or [LineString()]) for z in cuts]
+        # Once the prismatic eligibility check below succeeds, each section is
+        # constant on these open vertex intervals; one interior cut proves all of
+        # it. Non-prismatic evidence must stop rather than trust finite sampling.
+        cuts = [(lo + hi) / 2 for lo, hi in zip(heights[:-1], heights[1:])]
         # The structural opening can be narrower than the roof covering opening
         # (KPP1: 125 mm insulation return). Its occupied section, with voids kept,
         # supports the roof-hole edge even when its inner face is farther inward.
-        solids = [shapely.unary_union([shapely.build_area(shapely.unary_union(
-                    _section(lv, lt, z) or [LineString()])) for lv, lt in lining]) for z in cuts]
         for hole in holes:
-            wall_sections, solid_sections, sample_cuts = sections, solids, cuts
+            sample_cuts = cuts
             if outline is not None and hole.intersects(ref.exterior):
                 # Panel/slab setback strips touch the facade perimeter: they are
                 # not enclosed shaft mouths. Preserve their existing two-cut
@@ -1567,6 +1566,16 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, 
                 wall_sections = [shapely.unary_union(_section(v, tris, z) or [LineString()])
                                  for z in sample_cuts]
                 solid_sections = [Polygon() for _ in sample_cuts]
+            else:
+                certified = _prismatic_lining(v, every, bottom, roof_z, hole)
+                wall_sections = [shapely.unary_union(_section(v, certified, z) or [LineString()])
+                                 for z in cuts]
+                # build_area uses the entire ring: a non-prismatic structural
+                # mesh contributes no occupied material, not guessed sections.
+                certified_solids = [(lv, _prismatic_lining(lv, lt, bottom, roof_z))
+                                    for lv, lt in lining]
+                solid_sections = [shapely.unary_union([shapely.build_area(shapely.unary_union(
+                    _section(lv, lt, z) or [LineString()])) for lv, lt in certified_solids]) for z in cuts]
             lengths = [shapely.unary_union([w.intersection(hole.buffer(PARAPET_EDGE_M)),
                        hole.boundary.intersection(s)]).length for w, s in zip(wall_sections, solid_sections)]
             worst = int(np.argmin(lengths))
@@ -1585,6 +1594,61 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, 
              "slope_max_deg": round(float(slope[idx].max()), 2),
              "slope_mean_deg": round(float((slope[idx] * areas).sum() / areas.sum()), 2)}
     return roof_z, parapet_top if on_edge else roof_z, round(closed, 3), stats
+
+
+def _prismatic_lining(v, tris, bottom, top, hole=None):
+    """Return only evidence with constant sections between vertex heights.
+
+    A vertical planar triangulation has constant sections only if its exposed
+    edges are horizontal or vertical. Oblique edges must have a coplanar triangle
+    on the opposite side (an internal tessellation edge, not a moving boundary).
+    This is a whole-interval eligibility proof, not another set of sample cuts.
+    """
+    nearby = hole.buffer(PARAPET_EDGE_M) if hole is not None else None
+    diagonal_edges = {}
+    certified = []
+    for tri, face in zip(tris, v[tris]):
+        lo, hi = face[:, 2].min(), face[:, 2].max()
+        if hi <= bottom or lo >= top or hi == lo:
+            continue
+        plan = shapely.MultiPoint(face[:, :2]).convex_hull
+        if nearby is not None and not plan.intersects(nearby):
+            continue
+        normal = np.cross(face[1] - face[0], face[2] - face[0])
+        norm = np.linalg.norm(normal)
+        if norm == 0:
+            continue
+        if abs(normal[2]) > 1e-12 * norm:
+            if hole is None:
+                return np.empty((0, 3), dtype=np.int64)
+            continue
+        certified.append(tri)
+        for a, b, c in ((0, 1, 2), (1, 2, 0), (2, 0, 1)):
+            start, end = sorted((tuple(face[a]), tuple(face[b])))
+            delta = np.asarray(end) - start
+            if (delta[2] == 0 or np.linalg.norm(delta[:2]) == 0
+                    or max(start[2], end[2]) <= bottom or min(start[2], end[2]) >= top):
+                continue
+            side = np.cross(delta, face[c] - start)
+            diagonal_edges.setdefault((start, end), []).append((len(certified) - 1, side))
+    # Remove unprovable patches rather than borrowing one of their sampled
+    # sections. Propagate across tessellation diagonals until every retained edge
+    # has an opposite-side neighbour. Axis-aligned boundaries need no neighbour.
+    removed = set()
+    while True:
+        rejected = set()
+        for sides in diagonal_edges.values():
+            for i, side in sides:
+                if i not in removed and not any(j not in removed and np.dot(side, other) < 0
+                                                for j, other in sides):
+                    rejected.add(i)
+        if not rejected:
+            break
+        removed.update(rejected)
+    if removed and hole is None:
+        return np.empty((0, 3), dtype=np.int64)
+    return np.asarray([tri for i, tri in enumerate(certified) if i not in removed],
+                      dtype=np.int64).reshape(-1, 3)
 
 
 def _sizes(g):
