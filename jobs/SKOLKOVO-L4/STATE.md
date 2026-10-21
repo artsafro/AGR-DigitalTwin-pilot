@@ -5,7 +5,28 @@ Input copies: `C:/x/l4-skolkovo/`; originals are read-only and were not opened f
 Profiles: both NPM and VPM from one <=150,000-triangle master (D010).
 Base: pilot `48e2a55`; #348 and #351 are closed. No building output is approved.
 
-## Status
+## Current status — v005 (supersedes historical sections below)
+
+**Partial intake; needs explicit material authority for unmapped exterior finishes.**
+`passed=false`, `buildable=false`; no Gate 1, kernel/export or PR.
+Current report: [RESUME-v005.md](RESUME-v005.md).
+Exact user question: [SOURCE-MATERIAL-QUESTION-v005.md](SOURCE-MATERIAL-QUESTION-v005.md).
+
+Interior/opaque glazing and preserve-FBX masts are answered, NOT reopened.
+Mast draft operation is now `keep`, reserving the actual 55,230 source triangles;
+the incomplete 20-group subset allocates 134,166 triangles, not measured output.
+1,695 facade rows, source supersession, material legend and joints remain open.
+The source-material witness identifies twelve exposed rooftop-substrate walls,
+not an arbitrary request to pick colours. The current subset is NOT for Gate 1.
+
+Drive: `G:/Мой диск/AGR-evidence/353-skolkovo-l4/`; binaries and 11,631-member
+source-diagnostics ZIP are hash-verified there. Only small text/index files are
+added to git. LFS quota is no longer the blocker; no history rewrite in this run.
+Checks: old mast-policy draft 4/8 fail -> v005 8/8 pass; 133 focused tests pass;
+104/104 original input hashes unchanged; 12/12 Drive artifacts rehashed.
+No DCC subprocess was started by this run. Full suite waits for first review head.
+
+## Historical v004 status — superseded by v005
 
 **Interior policy answered; new roof-mast source-choice question before production.**
 `passed=false`. See [current diagnostics](RESUME-v004.md) and

@@ -1,4 +1,13 @@
-# Skolkovo evidence images (rule 57: no Git LFS)
+# Skolkovo evidence (rule 57: no Git LFS)
+
+v005 addition: the five `*.gz` files formerly tracked in this folder are also
+stored in this Drive directory under the same leaf names, with identical SHA-256.
+The v002 and v004 ZIPs are in the Drive root's `archives/`. All twelve migrated
+and new v005 artifacts are indexed in `../evidence-v005/resume-v005.json`.
+Drive manifest: `G:/Мой диск/AGR-evidence/353-skolkovo-l4/evidence-v005/SHA256SUMS.txt`.
+Current report and source-material question: `../RESUME-v005.md` and
+`../SOURCE-MATERIAL-QUESTION-v005.md`. Old relative gzip references resolve here;
+already-pushed history is retained, but the new git tree contains no binaries.
 
 Stored on Google Drive (Drive for desktop): `G:/Мой диск/AGR-evidence/353-skolkovo-l4/evidence-v004/`.
 Copies, verified with `sha256sum -c SHA256SUMS.txt` on 2026-10-21:

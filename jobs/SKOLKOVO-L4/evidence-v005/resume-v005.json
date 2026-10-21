@@ -1,0 +1,85 @@
+{
+  "passed": false,
+  "buildable": false,
+  "gate1": null,
+  "source_rows": 32961,
+  "unique_source_references": 32961,
+  "subset_groups": 20,
+  "subset_target_triangles": 134166,
+  "masts_operation": "keep",
+  "mast_source_triangles": 55230,
+  "remaining_facade_review_rows": 1695,
+  "source_material_witness_rows": 12,
+  "positive_source_samples": 924,
+  "drive_manifest": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v005\\SHA256SUMS.txt",
+  "drive_manifest_sha256": "80f83b053e626a99423258aefb8344acacaf963d0cc18a13a5bedd2b5b6f4942",
+  "artifacts": [
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v004\\mast-geometry.json.gz",
+      "sha256": "ab5ecfefdbd9e7c3520ab0254d05e3d13f1de255a968b78b94acb70bd0840f5a",
+      "bytes": 471349
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v004\\object-decisions-v004.csv.gz",
+      "sha256": "f7001c9761c9eea5a89013590599b4e263e9d62ea552e9f0b33a7f9be0d65aa2",
+      "bytes": 387941
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v004\\parts-subset-v004.json.gz",
+      "sha256": "1b16b8fb715a8a3ba309927320d7f17ca888fc6eabe260d71ba2ab311cb9aafd",
+      "bytes": 19767
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v004\\source-manifest-v002.json.gz",
+      "sha256": "a7d93cd6f5ff16a5506933223043cc0e16ef1b0fcf24615b8648cdc5845cd41d",
+      "bytes": 314153
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v004\\visibility-v002.json.gz",
+      "sha256": "120eb19f18a599437aeefa4e15bf3f7a3d0118800f325fd0c82a2810c9db2c70",
+      "bytes": 95252
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\archives\\skolkovo-l4-intake-v002.zip",
+      "sha256": "848858080d97d95d474f61eab652a2eff2096714bc80d1e1be3306b1492cd077",
+      "bytes": 4291594
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\archives\\skolkovo-l4-diagnostics-v004-portable.zip",
+      "sha256": "05096e0af154b5c7fceea23a05a9d86a45c3da428d4dfbd8ffb19f891dd7cd52",
+      "bytes": 1468016
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v005\\parts-subset-v005.json",
+      "sha256": "c42701a34662a25afe1b1d84ba91d62dbf5f27dd23b8456dc81c1c84d13098c1",
+      "bytes": 898566
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v005\\object-decisions-v005.csv.gz",
+      "sha256": "ba61214fe2f498e3d33e9807c7d82980fe87bd58e9571c53cb9a905f54e32781",
+      "bytes": 387973
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v005\\source-material-question-v005.png",
+      "sha256": "59832d14eae2c0bc3f5ce70ee3f152d68cbd7de1fdae8a1a4c7c984ffc7ba1d8",
+      "bytes": 54760
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v005\\source-material-witness-v005.json",
+      "sha256": "7843073491e84f3e5269a4c8f8af2e603006b68c30e18d64578cdd45c01320ab",
+      "bytes": 9957
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v005\\source-diagnostics-v005.zip",
+      "sha256": "f062fc29494bae547f460329bed69163e284af0fdf1333b9364b31d074b9c5af",
+      "bytes": 36228895,
+      "members_verified": 11631
+    }
+  ],
+  "seconds": 15.845888699997886,
+  "limitations": [
+    "Incomplete subset, not final Gate 1 PartsList",
+    "No kernel, master/export, output readback, visual acceptance or SINTEZ",
+    "Archive and source checks are not delivery invariants"
+  ]
+}

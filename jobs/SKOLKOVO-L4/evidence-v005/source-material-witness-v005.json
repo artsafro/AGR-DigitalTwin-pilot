@@ -1,0 +1,316 @@
+{
+  "passed": false,
+  "buildable": false,
+  "scope": "source material/scope diagnostic, not final visual review",
+  "census_sha256": "0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01",
+  "source_sha256": "9d079ffe7bbcfe035bdb3e13e660444cfb7f831d14c046ba1047572f9c5c52cb",
+  "shafts": [
+    {
+      "source_row": 5402,
+      "source_reference": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/5402",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_100 [4313077]",
+      "bbox_m": {
+        "min": [
+          38.14368438720703,
+          13.484703063964844,
+          11.550000190734863
+        ],
+        "max": [
+          38.243682861328125,
+          15.207893371582031,
+          14.0
+        ]
+      },
+      "materials": [
+        "ADSK_Изоляция_Минеральная_Вата минеральная"
+      ],
+      "visible_samples": 70,
+      "per_view": {
+        "xy-max": 70
+      },
+      "status": "unmapped_exterior_finish_not_approved"
+    },
+    {
+      "source_row": 5403,
+      "source_reference": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/5403",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_100 [4313078]",
+      "bbox_m": {
+        "min": [
+          38.14368438720703,
+          15.207893371582031,
+          11.550000190734863
+        ],
+        "max": [
+          40.2686767578125,
+          15.307891845703125,
+          14.0
+        ]
+      },
+      "materials": [
+        "ADSK_Изоляция_Минеральная_Вата минеральная"
+      ],
+      "visible_samples": 86,
+      "per_view": {
+        "xy-max": 86
+      },
+      "status": "unmapped_exterior_finish_not_approved"
+    },
+    {
+      "source_row": 5404,
+      "source_reference": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/5404",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_100 [4313079]",
+      "bbox_m": {
+        "min": [
+          40.168678283691406,
+          13.38470458984375,
+          11.550000190734863
+        ],
+        "max": [
+          40.2686767578125,
+          15.207893371582031,
+          14.0
+        ]
+      },
+      "materials": [
+        "ADSK_Изоляция_Минеральная_Вата минеральная"
+      ],
+      "visible_samples": 74,
+      "per_view": {
+        "xy-min": 2,
+        "xy-max": 74
+      },
+      "status": "unmapped_exterior_finish_not_approved"
+    },
+    {
+      "source_row": 5405,
+      "source_reference": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/5405",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_100 [4313080]",
+      "bbox_m": {
+        "min": [
+          38.14368438720703,
+          13.38470458984375,
+          11.550000190734863
+        ],
+        "max": [
+          40.168678283691406,
+          13.484703063964844,
+          14.0
+        ]
+      },
+      "materials": [
+        "ADSK_Изоляция_Минеральная_Вата минеральная"
+      ],
+      "visible_samples": 82,
+      "per_view": {
+        "xy-max": 82
+      },
+      "status": "unmapped_exterior_finish_not_approved"
+    },
+    {
+      "source_row": 5406,
+      "source_reference": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/5406",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_100 [4313399]",
+      "bbox_m": {
+        "min": [
+          36.60293197631836,
+          27.117919921875,
+          11.550000190734863
+        ],
+        "max": [
+          36.70293045043945,
+          28.841102600097656,
+          13.600000381469727
+        ]
+      },
+      "materials": [
+        "ADSK_Изоляция_Минеральная_Вата минеральная"
+      ],
+      "visible_samples": 68,
+      "per_view": {
+        "xy-max": 68
+      },
+      "status": "unmapped_exterior_finish_not_approved"
+    },
+    {
+      "source_row": 5407,
+      "source_reference": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/5407",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_100 [4313400]",
+      "bbox_m": {
+        "min": [
+          36.60293197631836,
+          28.841102600097656,
+          11.550000190734863
+        ],
+        "max": [
+          38.72792434692383,
+          28.94110870361328,
+          13.600000381469727
+        ]
+      },
+      "materials": [
+        "ADSK_Изоляция_Минеральная_Вата минеральная"
+      ],
+      "visible_samples": 86,
+      "per_view": {
+        "xy-max": 86
+      },
+      "status": "unmapped_exterior_finish_not_approved"
+    },
+    {
+      "source_row": 5408,
+      "source_reference": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/5408",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_100 [4313401]",
+      "bbox_m": {
+        "min": [
+          38.627925872802734,
+          27.117919921875,
+          11.550000190734863
+        ],
+        "max": [
+          38.72792434692383,
+          28.841102600097656,
+          13.600000381469727
+        ]
+      },
+      "materials": [
+        "ADSK_Изоляция_Минеральная_Вата минеральная"
+      ],
+      "visible_samples": 68,
+      "per_view": {
+        "xy-max": 68
+      },
+      "status": "unmapped_exterior_finish_not_approved"
+    },
+    {
+      "source_row": 5409,
+      "source_reference": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/5409",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_100 [4313402]",
+      "bbox_m": {
+        "min": [
+          36.60293197631836,
+          27.017921447753906,
+          11.550000190734863
+        ],
+        "max": [
+          38.72792434692383,
+          27.117919921875,
+          13.600000381469727
+        ]
+      },
+      "materials": [
+        "ADSK_Изоляция_Минеральная_Вата минеральная"
+      ],
+      "visible_samples": 86,
+      "per_view": {
+        "xy-max": 86
+      },
+      "status": "unmapped_exterior_finish_not_approved"
+    },
+    {
+      "source_row": 5410,
+      "source_reference": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/5410",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_100 [4313916]",
+      "bbox_m": {
+        "min": [
+          12.478960037231445,
+          7.905830383300781,
+          11.550000190734863
+        ],
+        "max": [
+          12.578960418701172,
+          9.629013061523438,
+          14.0
+        ]
+      },
+      "materials": [
+        "ADSK_Изоляция_Минеральная_Вата минеральная"
+      ],
+      "visible_samples": 68,
+      "per_view": {
+        "xy-max": 68
+      },
+      "status": "unmapped_exterior_finish_not_approved"
+    },
+    {
+      "source_row": 5411,
+      "source_reference": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/5411",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_100 [4313917]",
+      "bbox_m": {
+        "min": [
+          12.478960037231445,
+          9.629013061523438,
+          11.550000190734863
+        ],
+        "max": [
+          14.603954315185547,
+          9.729015350341797,
+          14.0
+        ]
+      },
+      "materials": [
+        "ADSK_Изоляция_Минеральная_Вата минеральная"
+      ],
+      "visible_samples": 84,
+      "per_view": {
+        "xy-max": 84
+      },
+      "status": "unmapped_exterior_finish_not_approved"
+    },
+    {
+      "source_row": 5412,
+      "source_reference": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/5412",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_100 [4313918]",
+      "bbox_m": {
+        "min": [
+          14.50395393371582,
+          7.8058319091796875,
+          11.550000190734863
+        ],
+        "max": [
+          14.603954315185547,
+          9.629013061523438,
+          14.0
+        ]
+      },
+      "materials": [
+        "ADSK_Изоляция_Минеральная_Вата минеральная"
+      ],
+      "visible_samples": 72,
+      "per_view": {
+        "xy-max": 72
+      },
+      "status": "unmapped_exterior_finish_not_approved"
+    },
+    {
+      "source_row": 5413,
+      "source_reference": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/5413",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_100 [4313919]",
+      "bbox_m": {
+        "min": [
+          12.478960037231445,
+          7.8058319091796875,
+          11.550000190734863
+        ],
+        "max": [
+          14.50395393371582,
+          7.905830383300781,
+          14.0
+        ]
+      },
+      "materials": [
+        "ADSK_Изоляция_Минеральная_Вата минеральная"
+      ],
+      "visible_samples": 80,
+      "per_view": {
+        "xy-max": 80
+      },
+      "status": "unmapped_exterior_finish_not_approved"
+    }
+  ],
+  "unknown": "source insulation role is known; approved visible finish and material-legend association are not",
+  "limitations": [
+    "Positive source raster samples witness source visibility, not intended finish or architectural acceptance",
+    "No sampled visibility is used as hidden-object proof",
+    "No delivered material has been adopted and no default material assigned"
+  ]
+}
