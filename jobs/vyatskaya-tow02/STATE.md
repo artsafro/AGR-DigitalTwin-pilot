@@ -1,8 +1,9 @@
 # vyatskaya-tow02 (Башня TOW02, ул. Вятская вл. 47–49) - mid-poly master → NPM-OKS, 2026-10-20
 
 Pipeline status: draft
-Status: mid-poly master accepted by the user as "4+" (2026-10-20); textured master build-v015 (module atlas, OKS 013
-[D156]) waiting for the user's review; NPM derivation next
+Status: mid-poly master accepted ("4+", 2026-10-20); after the user's 3ds Max review (2026-10-21): geometry review fixes,
+glass cleanup, run-strip atlas OKS 013 [D156] and overlap fixes -> build-v025 / export-v004 (Overlapping Vertices 2 mm = 0,
+Overlapping Faces 5 mm = 121, all F8); 3 user decisions open (F8, basket posts, 65.4 bowties); NPM derivation after them
 Context: GLOSSARY.md (Body, NPM, Level contour), docs/domain/geometry.md (project modeling rules),
 docs/HARNESS_PLAN.md §3–4, §14–16, docs/backlog.md EG1, EG2, EG4, EG6, docs/domain/patterns/wall-from-contour.md,
 terrace.md, facade-decor-inset.md.
@@ -17,7 +18,8 @@ terrace.md, facade-decor-inset.md.
 > «бадик» = body)
 
 - Profile: mid-poly master (`mid`), then NPM-OKS.
-- Acceptance (compared 2026-10-20 at handover; master = `outputs/build-v013/tow02_master.blend`):
+- Acceptance (compared 2026-10-21 at handover; master = `outputs/build-v025/tow02_tex.blend`, joined
+  `outputs/export-v004/`):
   - [x] Body, decor (bands, fins), glass and openings separated as logical groups — met: TOW02_body, *_glass,
     fins F01–F26, ac_baskets, louvre, coping, top, soffit (Build log build-v013).
   - [x] Every level from the user's helpers built: colonnade, bend, typical, top storey, superstructures 1 and 2 —
@@ -25,9 +27,13 @@ terrace.md, facade-decor-inset.md.
   - [x] Openings as planes (or windows where simpler), chosen per facade — met: ribbon planes at mid reveal,
     glass faces on the outline above 64.7 (decision 2026-10-20).
   - [ ] Mid-poly rules of docs/domain/geometry.md (quads, < 3.8 m, no doubles/T-junctions, normals) — mostly met,
-    not fully: 64 triangles (soffit slab 57, top 6, body 1) and 44 faces with a side < 2 cm kept as listed
-    exceptions; no independent-checker run yet; user verdict "4+", detailed look pending.
-  - [ ] NPM derived from the master — not met: next stage (texturing → NPM).
+    not fully: normals fixed (6 418 reveals were wound into the wall; 0 mismatched edges in export-v004); doubles:
+    Overlapping Vertices 2 mm = 0; Overlapping Faces 5 mm = 121 pairs left (F8 step strips, user to decide); 112
+    triangles (64 kept + 48 from the merged reveal bow-ties); T-junctions at the F8 steps remain; evidence
+    `outputs/xview-v003/qa_joined_export_v004/`, `outputs/xview-v003/joined_checks_v004.json`.
+  - [ ] NPM derived from the master — not met: textured (build-v025, [D156]) and joined into
+    `SM_Vyatskaya_Vl_47_49_013_Main` (export-v004, quads); NPM naming/transform reset/triangulation/validate-delivery
+    not done.
 - Later decisions:
   - 2026-10-20: levels (helpers `Empty`…`Empty.007`, z 0.04 / 6.906 / 31.367 / 65.405 / 69.456 / 72.201 / 76.25 /
     79.237): 0.04–6.9 colonnade (model it), 6.9–31.37 bend, 31.37–65.4 typical, 65.4–69.46 parapet storey,
@@ -183,8 +189,9 @@ terrace.md, facade-decor-inset.md.
   working versions are in `outputs/measure-v001/bend_top/scripts/`.
 
 ## Next
-1. Mid-poly modelling closed by the user 2026-10-20 ("по моделингу мы закончили", 4+); master = build-v013.
-2. Texturing done in build-v015 (module atlas, OKS 013 [D156]); waiting for the user's review (3.5 m window layout
-   is an assumption). Then NPM derivation: join TOW02_* into `SM_Vyatskaya_Vl_47_49_013_Main` (prefix
-   `0200_Vyatskaya_Vl_47_49`), remove helper empties, triangulate, FBX export, validate-delivery.
-3. Optional: independent check of the master (independent-checker) before NPM.
+1. User decisions: F8 step strips (option A snap + cut in `build_stack`, recommended / option B ledge), basket posts
+   (hidden 7 mm behind the glass vs glass ~13 mm inward), and the fix for 12 bowtie vertices of the 65.4 seam weld.
+2. Apply them as new versions after build-v025 (chain: fix -> clean_glass -> texture_atlas -> join_export), re-check
+   Overlapping Faces 5 mm / Overlapping Vertices 2 mm = 0 and let the user re-check in 3ds Max xView.
+3. NPM derivation: names (prefix `0200_Vyatskaya_Vl_47_49`, OKS 013), transform reset [D135], triangulate, FBX export,
+   validate-delivery. Builder root causes for the backlog (Codex): see Build log "Open after the fix chain".

@@ -202,6 +202,16 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
   seen 3 times; effort S
 - **R14** proposal 2026-10-20, job/vyatskaya-tow02-midpoly - skill step: save the open Blender scene as the next
   `outputs/build-vNNN/` version (new folder, never over an existing one) and log it in STATE; seen 6 times; effort S
+- **R15** proposal 2026-10-21, job/vyatskaya-tow02-midpoly - CLI command: headless Blender side-by-side renders of
+  the source vs our model from identical orthographic cameras (per facade normal + top + close-ups, source glass
+  overridden white), composed into left/right sheets; seen 6 times; effort S
+- **R16** proposal 2026-10-21, job/vyatskaya-tow02-midpoly - src/ module (checker): xView-equivalent mesh QA with
+  explicit tolerances - overlapping vertices (distinct verts within d), overlapping faces (parallel within 5°, planes
+  within d, overlap area > 0), mismatched winding edges, bowtie vertices that 3ds Max splits on import, outward
+  orientation by ray test; grouped by source part; seen 5 times; effort M
+- **R17** proposal 2026-10-21, job/vyatskaya-tow02-midpoly - CLI command: run 3ds Max xView checks on an FBX in a
+  separate Max instance via a startup script (`jobs/vyatskaya-tow02/scripts/xview_check.ms`; xView does not compute
+  through the MCP bridge) with the "Disable xView" dialog answered, one JSONL line per checker; seen 3 times; effort S
 
 ## Harness and organization (default owner Codex)
 
