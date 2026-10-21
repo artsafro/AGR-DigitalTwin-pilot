@@ -19,12 +19,28 @@ the fixed edges at the chain ends have columns in their extension zone (between 
 same fractions are added as columns to both fixed edges, so the strips meet the walls without T-junctions.
 An edge that collapses in a ring (< 5 mm, a jog that disappears) is kept as one column and the next edge starts
 `collapse_shift_m` further along itself, so the step stays quads.
-Coordinates: building-local (inspect_sections.py, rotation 56.7 deg) -> world on output. All faces are quads.
+Sliding walls (user decision 2026-10-21, F8 option A): a moving edge whose line between ring k and ring k+1 stays
+within LINE_M (its ends only slide along it, e.g. the side walls of the bend projections) would give a step strip
+narrower than its line offset (0.1-4 mm, xView Overlapping Faces). At such a join the upper ring's bottom points of
+that edge are snapped onto the lower ring's line (the upper wall's band leans by <= LINE_M), no step is built for it,
+and the walls and the neighbouring steps are cut where they share points on that line (resolve_tjunctions: every
+point on the line becomes a vertex of every face edge it lies on; the n-gons are split into quads, a triangle only
+where a point stays unpaired). Steps of moving edges between two sliding walls are not cut into strips; strips that
+start at a fixed edge end on the sliding wall; a strip fraction that would give a strip < MIN_STRIP_M is dropped.
+Fixed-edge columns are unchanged, so the stack top and bottom loops (seams to TOW02_top 64.7 and TOW02_soffit 6.9)
+keep their vertices.
+Coordinates: building-local (inspect_sections.py, rotation 56.7 deg) -> world on output. Faces are quads, triangles
+only from resolve_tjunctions / seal_leftovers (reported).
 
     ns = {}; exec(open(path).read(), ns); ns["build"](cfg)   # from the Blender MCP / Python console
+    blender -b <master.blend> --python scripts/build_body_blender.py -- <out_dir>
+        rebuilds TOW02_body / TOW02_body_glass with CFG_TOW02 and puts the new meshes into the objects of that name
+        (object, transform, collections kept); saves ONLY <out_dir>/tow02_master.blend and <out_dir>/body_info.json.
 """
 import json
 import math
+import os
+import sys
 
 import bmesh
 import bpy
@@ -36,6 +52,9 @@ EPS_POS = 0.01           # positions closer than this are one column (user 2026-
 END_EPS = 0.02           # interval breakpoints closer than this to an edge end are the end (piers >= 0.3 m)
 COLLAPSE_M = 0.005       # an edge shorter than this has collapsed in that ring
 WELD_M = 0.01            # generated points closer than this are one vertex (user: <= 1 cm is skipped)
+LINE_M = 0.01            # a moving edge whose line moves less than this between two rings is one wall (sliding wall)
+TJ_TOL_M = 1e-4          # a point closer than this to an edge interior (on a join line) is on that edge
+MIN_STRIP_M = 0.006      # step strips narrower than this are not built (xView Overlapping Faces 5 mm + margin)
 
 
 def to_world(x, y, z):
@@ -304,22 +323,84 @@ def offset_points(cols, depth):
     return out
 
 
+def sliding_walls(rings, chains):
+    """{k: {edge}}: chain edges whose line between ring k and k+1 stays within LINE_M while an end moves."""
+    out = {}
+    for k in range(len(rings) - 1):
+        s = set()
+        for ch in chains:
+            for i in ch["edges"]:
+                e0, e1 = rings[k]["edges"][i], rings[k + 1]["edges"][i]
+                if e0["length"] < COLLAPSE_M or e1["length"] < COLLAPSE_M:
+                    continue
+                a0, b0, a1, b1 = V(e0["a"]), V(e0["b"]), V(e1["a"]), V(e1["b"])
+                if (a1 - a0).length < 1e-4 and (b1 - b0).length < 1e-4:
+                    continue
+                if max(_line_dist(a1, a0, b0), _line_dist(b1, a0, b0)) < LINE_M:
+                    s.add(i)
+        out[k] = s
+    return out
+
+
+def _line_dist(p, a, b):
+    return (p - _project(p, a, b)).length
+
+
+def _intersect(a0, b0, a1, b1):
+    d0, d1 = b0 - a0, b1 - a1
+    den = d0.x * d1.y - d0.y * d1.x
+    if abs(den) < 1e-12:
+        return None
+    t = ((a1.x - a0.x) * d1.y - (a1.y - a0.y) * d1.x) / den
+    return a0 + d0 * t
+
+
+def snap_upper_cols(cols, lower, walls):
+    """Columns of the upper ring with every point of a sliding wall (its columns and its closing point) projected
+    onto the lower ring's line of that edge (onto the intersection when it closes one sliding wall and starts
+    another). Returns (cols, largest move)."""
+    n, out, worst = len(cols), list(cols), 0.0
+    for q in range(n):
+        own, prev = cols[q][2], cols[(q - 1) % n][2]
+        lines = []
+        if prev != own and prev in walls:                    # closing point of sliding wall `prev`
+            lines.append(prev)
+        if own in walls:
+            lines.append(own)
+        if not lines:
+            continue
+        L = [(V(lower["edges"][i]["a"]), V(lower["edges"][i]["b"])) for i in lines]
+        p = V(cols[q])
+        x = _intersect(*L[0], *L[1]) if len(L) == 2 else None
+        x = x if x is not None else _project(p, *L[0])
+        worst = max(worst, (x - p).length)
+        out[q] = (x.x, x.y, own, cols[q][3])
+    return out, worst
+
+
 def build_stack(rings, cfg, body_name, glass_name, coll):
     kinds, pos, splits, chains, fracs, snapped = prepare(rings, cfg)
     B, G = Builder(), Builder()
     facade, reveal = 0, 1
     allcols = [ring_columns(r, kinds, pos, splits) for r in rings]
+    walls = sliding_walls(rings, chains)
+    botcols, snap_up = [allcols[0]], 0.0                   # ring k's bottom row: on ring k-1's sliding-wall lines
+    for k in range(1, len(rings)):
+        c, w = snap_upper_cols(allcols[k], rings[k - 1], walls[k - 1])
+        botcols.append(c)
+        snap_up = max(snap_up, w)
     for k, r in enumerate(rings):
-        cols = allcols[k]
+        cols, bcols = allcols[k], botcols[k]
         n = len(cols)
         z0, z1, z2 = r["base"], r["base"] + r["band_h"], r["base"] + r["ring_h"]
         inner = offset_points(cols, cfg["reveal_m"])
         mid = offset_points(cols, cfg["reveal_m"] / 2)
         P = lambda i, z: (cols[i % n][0], cols[i % n][1], z)
+        P0 = lambda i: (bcols[i % n][0], bcols[i % n][1], z0)
         Q = lambda i, z: (inner[i % n].x, inner[i % n].y, z)
         for i in range(n):
             j = (i + 1) % n
-            B.quad((P(i, z0), P(j, z0), P(j, z1), P(i, z1)), facade)
+            B.quad((P0(i), P0(j), P(j, z1), P(i, z1)), facade)
             if not cols[i][3]:
                 B.quad((P(i, z1), P(j, z1), P(j, z2), P(i, z2)), facade)
                 continue
@@ -345,38 +426,347 @@ def build_stack(rings, cfg, body_name, glass_name, coll):
                     G.quad(((pts[q].x, pts[q].y, ga), (pts[q + 1].x, pts[q + 1].y, ga),
                             (pts[q + 1].x, pts[q + 1].y, gb), (pts[q].x, pts[q].y, gb)), 0)
                 i0 = None
-    steps = {"quads": 0, "count_mismatch": []}
+    steps = {"quads": 0, "count_mismatch": [], "sliding_walls": {}}
+    tj_z = []
     for k in range(len(rings) - 1):
         lo, up = rings[k], rings[k + 1]
         z = lo["base"] + lo["ring_h"]
         if abs(z - up["base"]) > 1e-6:
             raise ValueError(f"ring {k} top {z} != ring {k + 1} base {up['base']}")
+        if walls[k]:
+            steps["sliding_walls"][round(z, 3)] = sorted(walls[k])
+            tj_z.append(z)
         for c, ch in enumerate(chains):
-            ss = [0.0] + fracs[(k, c)] + [1.0]
+            full = [0.0] + fracs[(k, c)] + [1.0]
+            runs, cur = [], []                             # sub-runs of the chain between sliding walls
             for i in ch["edges"]:
-                pl, pu = edge_points(allcols[k], i), edge_points(allcols[k + 1], i)
-                if len(pl) != len(pu):
-                    steps["count_mismatch"].append({"ring": k, "edge": i, "lo": len(pl), "up": len(pu)})
-                    continue
-                for q in range(len(pl) - 1):
-                    a0, b0, a1, b1 = V(pl[q]), V(pl[q + 1]), V(pu[q]), V(pu[q + 1])
-                    if (a0 - a1).length < 1e-4 and (b0 - b1).length < 1e-4:
-                        continue
-                    e = b0 - a0 if (b0 - a0).length > 1e-6 else b1 - a1
-                    outward = Vector((e.y, -e.x)).dot((a1 + b1) - (a0 + b0)) > 0
-                    want = Vector((0, 0, -1 if outward else 1))
-                    for s0, s1 in zip(ss[:-1], ss[1:]):
-                        A0, B0 = a0.lerp(a1, s0), b0.lerp(b1, s0)
-                        A1, B1 = a0.lerp(a1, s1), b0.lerp(b1, s1)
-                        f = B.quad(((A0.x, A0.y, z), (B0.x, B0.y, z), (B1.x, B1.y, z), (A1.x, A1.y, z)),
-                                   facade, want)
-                        steps["quads"] += f is not None
+                if i in walls[k]:
+                    runs.append(cur)
+                    cur = []
+                else:
+                    cur.append(i)
+            runs.append(cur)
+            for r_i, run in enumerate(runs):
+                # strips only where the run touches a fixed edge (its columns are the strip fractions)
+                ss = full if r_i == 0 or r_i == len(runs) - 1 else [0.0, 1.0]
+                ss, dropped = _wide_strips(allcols[k], botcols[k + 1], run, ss)
+                if dropped:
+                    steps.setdefault("narrow_fractions_dropped", []).append([round(z, 3), run[0], run[-1], dropped])
+                    if z not in tj_z:
+                        tj_z.append(z)
+                for i in run:
+                    steps["quads"] += _step(B, allcols[k], botcols[k + 1], i, z, ss, facade, steps, k)
+    tj = resolve_tjunctions(B.bm, tj_z)
     sealed = seal_leftovers(B.bm, [r["base"] for r in rings[1:]])
     body = _to_object(B.bm, body_name, coll)
     glass = _to_object(G.bm, glass_name, coll)
     return body, glass, {"rings": len(rings), "sealed": sealed, "columns_per_ring": [len(c) for c in allcols],
                          "chains": [(ch["left"], ch["edges"][0], ch["edges"][-1], ch["right"]) for ch in chains],
-                         "snap_fixed_lines_max_m": round(snapped, 4), "skipped": B.skipped, "steps": steps}
+                         "snap_fixed_lines_max_m": round(snapped, 4), "skipped": B.skipped, "steps": steps,
+                         "sliding_wall_snap_max_m": round(snap_up, 5), "tjunctions": tj}
+
+
+def _wide_strips(lcols, ucols, run, ss):
+    """Drop strip fractions that would make a strip narrower than MIN_STRIP_M anywhere along the run (a fixed-edge
+    column just inside the step's end: its point on the fixed edge is then joined by resolve_tjunctions)."""
+    depth = None
+    for i in run:
+        pl, pu = edge_points(lcols, i), edge_points(ucols, i)
+        if len(pl) != len(pu):
+            continue
+        for q in range(len(pl) - 1):
+            a0, b0, a1, b1 = V(pl[q]), V(pl[q + 1]), V(pu[q]), V(pu[q + 1])
+            if (b0 - a0).length < 1e-6:
+                continue
+            d = max(_line_dist(a1, a0, b0), _line_dist(b1, a0, b0))
+            if d > 1e-4:
+                depth = d if depth is None else min(depth, d)
+    if depth is None or len(ss) <= 2:
+        return ss, []
+    keep, dropped = [0.0], []
+    for s in ss[1:-1]:
+        if (s - keep[-1]) * depth < MIN_STRIP_M or (1.0 - s) * depth < MIN_STRIP_M:
+            dropped.append(round(s, 4))
+        else:
+            keep.append(s)
+    return keep + [1.0], dropped
+
+
+def _step(B, lcols, ucols, i, z, ss, facade, steps, k):
+    """Step quads of moving edge i between the lower ring's top columns and the upper ring's bottom columns."""
+    pl, pu = edge_points(lcols, i), edge_points(ucols, i)
+    if len(pl) != len(pu):
+        steps["count_mismatch"].append({"ring": k, "edge": i, "lo": len(pl), "up": len(pu)})
+        return 0
+    made = 0
+    for q in range(len(pl) - 1):
+        a0, b0, a1, b1 = V(pl[q]), V(pl[q + 1]), V(pu[q]), V(pu[q + 1])
+        if (a0 - a1).length < 1e-4 and (b0 - b1).length < 1e-4:
+            continue
+        e = b0 - a0 if (b0 - a0).length > 1e-6 else b1 - a1
+        outward = Vector((e.y, -e.x)).dot((a1 + b1) - (a0 + b0)) > 0
+        want = Vector((0, 0, -1 if outward else 1))
+        for s0, s1 in zip(ss[:-1], ss[1:]):
+            A0, B0 = a0.lerp(a1, s0), b0.lerp(b1, s0)
+            A1, B1 = a0.lerp(a1, s1), b0.lerp(b1, s1)
+            f = B.quad(((A0.x, A0.y, z), (B0.x, B0.y, z), (B1.x, B1.y, z), (A1.x, A1.y, z)), facade, want)
+            made += f is not None
+    return made
+
+
+def resolve_tjunctions(bm, zs, tol=TJ_TOL_M, reveal_mat=1):
+    """Make every facade boundary edge lying on a join plane z (in zs) share the facade points that lie on it: the
+    edge is split at each such vertex within `tol` of its interior and the split points are welded to those
+    vertices (overlapping collinear boundary edges become one manifold edge). Reveal faces (open backs by design)
+    are not touched. Then the n-gons are made quads again without moving anything:
+    - pair_wall_points: a wall face with points on its bottom (band, from the join below) and the wall face above it
+      in the same column with points on its top (storey, from the join above) are cut through their shared edge;
+    - two coplanar n-gons sharing an edge on the join plane (the lower storey and the upper band of one sliding wall,
+      or two steps meeting on a sliding wall) are joined into one polygon;
+    - split_ngon splits every n-gon along diagonals (quads; a triangle only where a point stays unpaired).
+    Also usable on a finished TOW02_body (same plane test, same splits)."""
+    rep = {"points": 0, "wall_pairs": 0, "joined": 0, "ngons": 0, "quads": 0, "triangles": 0, "ngons_left": 0,
+           "min_angle_deg": 180.0}
+    facade = lambda v: any(f.material_index != reveal_mat for f in v.link_faces)
+    for z in zs:
+        on = lambda v: abs(v.co.z - z) < 1e-6
+        edges = [e for e in bm.edges if e.is_boundary and e.link_faces[0].material_index != reveal_mat and
+                 on(e.verts[0]) and on(e.verts[1])]
+        verts = [v for v in {v for e in edges for v in e.verts} if facade(v)]
+        targetmap = {}
+        for e in edges:
+            a, b = e.verts
+            d = b.co - a.co
+            L = d.length
+            if L < 2 * tol:
+                continue
+            u = d / L
+            pts = []
+            for v in verts:
+                if v is a or v is b:
+                    continue
+                w = v.co - a.co
+                t = w.dot(u)
+                if tol < t < L - tol and (w - u * t).length < tol:
+                    pts.append((t, v))
+            pts.sort(key=lambda x: x[0])
+            cur, start, done = e, a, 0.0
+            for t, v in pts:
+                far = cur.other_vert(start)
+                _, nv = bmesh.utils.edge_split(cur, start, (t - done) / (L - done))
+                nv.co = v.co.copy()
+                targetmap[nv] = v
+                cur = next(x for x in nv.link_edges if x.other_vert(nv) is far)
+                start, done = nv, t
+        if targetmap:
+            bmesh.ops.weld_verts(bm, targetmap=targetmap)
+        rep["points"] += len(targetmap)
+    ngons = [f for f in bm.faces if len(f.verts) > 4]
+    rep["wall_pairs"] = pair_wall_points(bm, ngons)
+    joined = []
+    for z in zs:
+        for e in [e for e in bm.edges if len(e.link_faces) == 2 and all(abs(v.co.z - z) < 1e-6 for v in e.verts)]:
+            if not e.is_valid:
+                continue
+            f, g = e.link_faces
+            if (len(f.verts) > 4 and len(g.verts) > 4 and f.material_index == g.material_index != reveal_mat
+                    and f.normal.dot(g.normal) > 0.9999 and f not in joined and g not in joined):
+                h = bmesh.utils.face_join([f, g])
+                if h is not None:
+                    joined.append(h)
+                    rep["joined"] += 1
+    for f in [f for f in bm.faces if len(f.verts) > 4]:
+        for deg in (2.0, 0.5, 0.05):
+            if split_ngon(bm, f, rep, deg):
+                break
+        else:
+            rep["ngons_left"] += 1
+    rep["min_angle_deg"] = round(rep["min_angle_deg"], 2)
+    return rep
+
+
+def _straight(f, min_deg=178.0):
+    """Vertices of face f with a straight corner (points inserted on its sides)."""
+    vs = list(f.verts)
+    out = []
+    for q, v in enumerate(vs):
+        d0, d1 = vs[q - 1].co - v.co, vs[(q + 1) % len(vs)].co - v.co
+        if d0.length > 1e-9 and d1.length > 1e-9 and math.degrees(d0.angle(d1)) > min_deg:
+            out.append(v)
+    return out
+
+
+def _match_in_order(xs, ys):
+    """min(len) pairs (x, y), order kept on both sides, smallest total |x - y| (the longer list keeps a subset)."""
+    swap = len(xs) > len(ys)
+    s, l = (ys, xs) if swap else (xs, ys)
+    n, m = len(s), len(l)
+    INF = float("inf")
+    cost = [[INF] * (m + 1) for _ in range(n + 1)]
+    for j in range(m + 1):
+        cost[0][j] = 0.0
+    for i in range(1, n + 1):
+        for j in range(i, m + 1):
+            cost[i][j] = min(cost[i][j - 1], cost[i - 1][j - 1] + abs(s[i - 1] - l[j - 1]))
+    pairs, i, j = [], n, m
+    while i > 0:
+        if j > i and cost[i][j] == cost[i][j - 1]:
+            j -= 1
+            continue
+        pairs.append((s[i - 1], l[j - 1]))
+        i, j = i - 1, j - 1
+    pairs.reverse()
+    return [(q, p) for p, q in pairs] if swap else pairs
+
+
+def pair_wall_points(bm, faces):
+    """For a vertical face with inserted points only on its bottom edge whose upper neighbour in the same column
+    (sharing its top edge, same plane) has inserted points only on its top edge: pair them in order (as many pairs
+    as the smaller count, nearest positions) and add one point per pair on the shared edge, on the straight line
+    from the bottom point to the top point, so each pair is a cut through both faces and they split into quads."""
+    pairs = 0
+    fs = set(faces)
+    for f in faces:
+        if not f.is_valid or abs(f.normal.z) > 0.1:
+            continue
+        zs = [v.co.z for v in f.verts]
+        zb, zm = min(zs), max(zs)
+        ext = _straight(f)
+        if not ext or any(abs(v.co.z - zb) > 1e-6 for v in ext):
+            continue
+        top = [e for e in f.edges if all(abs(v.co.z - zm) < 1e-6 for v in e.verts)]
+        if len(top) != 1 or len(top[0].link_faces) != 2:
+            continue
+        te = top[0]
+        g = next(x for x in te.link_faces if x is not f)
+        if g not in fs or abs(g.normal.z) > 0.1 or (g.normal - f.normal).length > 1e-3:
+            continue
+        zt = max(v.co.z for v in g.verts)
+        gext = _straight(g)
+        if not gext or any(abs(v.co.z - zt) > 1e-6 for v in gext):
+            continue
+        a, b = te.verts
+        d = (b.co - a.co).xy
+        L = d.length
+        u = d / L
+        par = lambda v: (v.co.xy - a.co.xy).dot(u)
+        bot, up = [par(v) for v in sorted(ext, key=par)], [par(v) for v in sorted(gext, key=par)]
+        fr = (zm - zb) / (zt - zb)
+        xs = []
+        for p, q in _match_in_order(bot, up):
+            x = p + (q - p) * fr
+            if WELD_M <= x <= L - WELD_M and (not xs or x - xs[-1] >= WELD_M):
+                xs.append(x)
+        if not xs:
+            continue
+        cur, start, done = te, a, 0.0
+        for x in xs:
+            far = cur.other_vert(start)
+            _, nv = bmesh.utils.edge_split(cur, start, (x - done) / (L - done))
+            cur = next(e for e in nv.link_edges if e.other_vert(nv) is far)
+            start, done = nv, x
+        pairs += len(xs)
+    return pairs
+
+
+def split_ngon(bm, f, rep, min_deg=2.0):
+    """Split an n-gon whose extra vertices lie on its sides into quads (+ triangles) along inner diagonals only:
+    fewest triangles, then the largest smallest corner angle; no piece may have a straight corner or a corner below
+    min_deg. Returns False (face untouched) when no such split exists."""
+    vs = list(f.verts)
+    n = len(vs)
+    nrm = f.normal.copy()
+    ax = Vector((1, 0, 0)) if abs(nrm.x) < 0.9 else Vector((0, 1, 0))
+    U = nrm.cross(ax).normalized()
+    W = nrm.cross(U)
+    P = [Vector(((v.co - vs[0].co).dot(U), (v.co - vs[0].co).dot(W))) for v in vs]
+
+    def cross(o, p, q):
+        return (p.x - o.x) * (q.y - o.y) - (p.y - o.y) * (q.x - o.x)
+
+    def inside(p):
+        c = False
+        for q in range(n):
+            a, b = P[q], P[(q + 1) % n]
+            if (a.y > p.y) != (b.y > p.y) and p.x < a.x + (p.y - a.y) * (b.x - a.x) / (b.y - a.y):
+                c = not c
+        return c
+
+    diag = {}
+
+    def diagonal(i, j):                                     # chord i-j lies inside the polygon
+        if (j - i) % n in (1, n - 1):
+            return True
+        if (i, j) not in diag:
+            ok = inside((P[i] + P[j]) / 2)
+            for q in range(n):
+                a, b = q, (q + 1) % n
+                if len({a, b, i, j}) < 4:
+                    continue
+                if cross(P[i], P[j], P[a]) * cross(P[i], P[j], P[b]) < 0 and                         cross(P[a], P[b], P[i]) * cross(P[a], P[b], P[j]) < 0:
+                    ok = False
+            diag[(i, j)] = ok
+        return diag[(i, j)]
+
+    def piece(idx):
+        m = len(idx)
+        if not all(diagonal(idx[q], idx[(q + 1) % m]) for q in range(m)):
+            return None
+        angs = []
+        for q in range(m):
+            p0, p1, p2 = P[idx[q - 1]], P[idx[q]], P[idx[(q + 1) % m]]
+            d0, d1 = p0 - p1, p2 - p1
+            if d0.length < 1e-9 or d1.length < 1e-9:
+                return None
+            cr = (p1 - p0).x * (p2 - p1).y - (p1 - p0).y * (p2 - p1).x
+            if cr <= 0:                                     # reflex or straight (CCW in the face basis)
+                return None
+            a = math.degrees(d0.angle(d1))
+            if a < min_deg or a > 180 - min_deg:
+                return None
+            angs.append(a)
+        return min(angs)
+
+    memo = {}
+
+    def best(i, j):
+        if j == i + 1:
+            return (0, -999.0, [])
+        if (i, j) in memo:
+            return memo[(i, j)]
+        res = None
+        for k in range(i + 1, j):
+            for shape in [(i, k, j)] + [(i, k, l, j) for l in range(k + 1, j)]:
+                mn = piece(shape)
+                if mn is None:
+                    continue
+                subs = [best(shape[q], shape[q + 1]) for q in range(len(shape) - 1)]
+                if any(s is None for s in subs):
+                    continue
+                tris = (len(shape) == 3) + sum(s[0] for s in subs)
+                worst = min([mn] + [-s[1] for s in subs if s[2]])
+                cand = (tris, -worst, [shape] + [p for s in subs for p in s[2]])
+                if res is None or cand[:2] < res[:2]:
+                    res = cand
+        memo[(i, j)] = res
+        return res
+
+    r = best(0, n - 1)
+    if r is None:
+        return False
+    rep["ngons"] += 1
+    rep["min_angle_deg"] = min(rep["min_angle_deg"], -r[1])
+    chords = {tuple(sorted((s[q], s[(q + 1) % len(s)]))) for s in r[2] for q in range(len(s))}
+    chords = [c for c in chords if (c[1] - c[0]) % n not in (1, n - 1)]
+    faces = [f]
+    for a, b in chords:
+        va, vb = vs[a], vs[b]
+        g = next(g for g in faces if g.is_valid and va in g.verts and vb in g.verts)
+        nf, _ = bmesh.utils.face_split(g, va, vb)
+        faces.append(nf)
+    for g in faces:
+        rep["triangles" if len(g.verts) == 3 else "quads"] += 1
+    return True
 
 
 def seal_leftovers(bm, open_z, reveal_mat=1):
@@ -479,3 +869,43 @@ def build(cfg):
     glass.data.materials.append(material("TOW02_glass", (0.25, 0.5, 0.9, 1)))
     info.update(body_faces=len(body.data.polygons), glass_faces=len(glass.data.polygons))
     return info
+
+
+JOB = os.path.dirname(os.path.dirname(os.path.abspath(globals().get("__file__", "scripts/x.py"))))
+# The build-v004 body (unchanged through build-v013): reproduced exactly with these values (2026-10-21 check:
+# 0 vertex / face differences); the GUI run that made it did not record them.
+CFG_TOW02 = dict(collection="TOW02_rebuild", name="TOW02_rebuild_body",
+                 rings_json=os.path.join(JOB, "outputs", "measure-v002", "bend_rings", "bend_rings.json"),
+                 typical_bases=[round(37.5 + 3.4 * k, 3) for k in range(8)], band_h=0.7, ring_h=3.4,
+                 reveal_m=0.12, plane_overlap_m=0.01, snap_m=0.03, collapse_shift_m=0.3)
+
+
+def swap_into_master(out_dir, cfg=CFG_TOW02):
+    """Rebuild the body and give TOW02_body / TOW02_body_glass the new meshes (old meshes kept as orphans, not saved)."""
+    out_dir = os.path.abspath(out_dir)
+    os.makedirs(out_dir, exist_ok=True)
+    info = build(cfg)
+    coll = bpy.data.collections[cfg["collection"]]
+    swapped = {}
+    for target, new_name in (("TOW02_body", cfg["name"]), ("TOW02_body_glass", cfg["name"] + "_glass")):
+        ob, nob = bpy.data.objects[target], bpy.data.objects[new_name]
+        old_me, me = ob.data, nob.data
+        if [m.name for m in old_me.materials] != [m.name for m in me.materials]:
+            raise RuntimeError(f"{target}: material slots differ {[m.name for m in old_me.materials]}")
+        swapped[target] = dict(faces=[len(old_me.polygons), len(me.polygons)],
+                               verts=[len(old_me.vertices), len(me.vertices)])
+        bpy.data.objects.remove(nob)
+        old_name = old_me.name
+        old_me.name = old_name + "_prev"
+        me.name = old_name
+        ob.data = me
+    bpy.data.collections.remove(coll)
+    info["swapped"] = swapped
+    path = os.path.join(out_dir, "tow02_master.blend")
+    bpy.ops.wm.save_as_mainfile(filepath=path, copy=False)
+    json.dump(info, open(os.path.join(out_dir, "body_info.json"), "w"), indent=1)
+    print("BODY_SWAP saved", path, json.dumps({k: info[k] for k in ("swapped", "tjunctions", "sliding_wall_snap_max_m")}))
+
+
+if __name__ == "__main__":
+    swap_into_master(sys.argv[sys.argv.index("--") + 1])

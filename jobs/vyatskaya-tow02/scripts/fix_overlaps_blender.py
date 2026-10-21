@@ -16,8 +16,8 @@ Fixes (one function each, applied in this order; parts built by build_review_fix
 F3 F4 F5 V4 and louvre F1 F2 - are fixed there by parameters):
 - fix_orientation_reveals (orientation): TOW02_body faces with material TOW02_reveal (6 418, sill / head / jamb quads
   of build_body_blender.build_stack wound into the wall) and the 16 step slivers listed in BODY_SLIVERS
-  (outputs/xview-v002/orient/orient_faces.npz) are reversed explicitly. Not recalc_face_normals (it turns whole
-  islands inward).
+  (outputs/xview-v002/orient/orient_faces.npz; only when the body still has step strips < 6 mm, i.e. a body built
+  before the sliding-wall fix) are reversed explicitly. Not recalc_face_normals (it turns whole islands inward).
 - fix_F7_bowtie_reveals (F7): a horizontal reveal quad whose front and back edges cross (convex corner with a short
   edge: the mitred back points of the two columns pass each other) gets its two back points merged at the
   intersection of the neighbouring back lines (user: merge the crossed inner points); the quad becomes a triangle.
@@ -38,8 +38,8 @@ F3 F4 F5 V4 and louvre F1 F2 - are fixed there by parameters):
 - fix_F11_F15_louvre (F11, F15): louvre blades / rails are boxes in the louvre frame (s, d, z); an s-face within 6 mm
   of a parallel face of a fin, the roof coping or the walls is moved into its element (the element narrows, nothing
   else moves); then every blade end keeps its rail sides >= CLEAR_M proud (F1) by narrowing the blade.
-Not fixed here: F8 (zero-width step strips at ring joins; user decision pending, analysed separately) and the seams
-V1-V3 (welded in join_export_blender.py).
+Not fixed here: F8 (zero-width step strips at ring joins; fixed in the builder, build_body_blender.build_stack
+sliding walls, user decision 2026-10-21 option A) and the seams V1-V3 (welded in join_export_blender.py).
 """
 import json
 import math
@@ -289,7 +289,10 @@ def fix_orientation_reveals(info):
     bm.from_mesh(ob.data)
     bm.faces.ensure_lookup_table()
     rev = [f for f in bm.faces if f.material_index == mi]
-    sl = [bm.faces[i] for i in BODY_SLIVERS]
+    # BODY_SLIVERS are F8 step strips of the build-v004 body; a body built with the sliding-wall fix of
+    # build_body_blender.build_stack (build-v026 on) has no step strips < 6 mm, so there is nothing to flip
+    strips = [f for f in bm.faces if f.material_index != mi and abs(f.normal.z) > 0.99 and _strip_width(f) < TEST_M]
+    sl = [bm.faces[i] for i in BODY_SLIVERS] if strips else []
     if any(f.calc_area() > 2e-4 or f.material_index == mi for f in sl):
         raise RuntimeError("BODY_SLIVERS do not match the step slivers of this TOW02_body")
     bmesh.ops.reverse_faces(bm, faces=rev + sl)

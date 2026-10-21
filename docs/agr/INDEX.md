@@ -53,6 +53,7 @@ find the line for your question, then read that file. One line per tracked file.
 | `case_studies/WINDOW_FRAMES_BOX_LIGHTS.md` | Decorative frames: box lights on upper inner frame faces v002 (Blender) | Placing box lights on decorative frames |
 | `case_studies/KPP1_VPM_NPM_V005.md` | KPP1: VPM+NPM from Revit v005, ~90% accepted; GeoJSON etc. open | Producing VPM/NPM from Revit with quads ≤4 m |
 | `case_studies/PSU275_VPM_NPM_DELIVERY_V003.md` | PSU275 main building and OKS: VPM+NPM delivery-v003, mesh cleanup accepted | Cleaning/optimising quad masters for multi-OKS delivery |
+| `case_studies/VYATSKAYA_TOW02_MIDPOLY.md` | Vyatskaya TOW02 panelised curtain-wall tower: mid-poly master + OKS 013 atlas accepted as a base, finished by the user by hand | Mid-poly from a panelised (no-shell) curtain-wall source |
 
 ## inventory
 

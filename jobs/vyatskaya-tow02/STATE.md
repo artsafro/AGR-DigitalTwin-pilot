@@ -2,8 +2,11 @@
 
 Pipeline status: draft
 Status: mid-poly master accepted ("4+", 2026-10-20); after the user's 3ds Max review (2026-10-21): geometry review fixes,
-glass cleanup, run-strip atlas OKS 013 [D156] and overlap fixes -> build-v025 / export-v004 (Overlapping Vertices 2 mm = 0,
-Overlapping Faces 5 mm = 121, all F8); 3 user decisions open (F8, basket posts, 65.4 bowties); NPM derivation after them
+glass cleanup, run-strip atlas OKS 013 [D156], overlap fixes and the 3 decisions of 2026-10-21 (F8 option A in the body
+builder, basket posts kept, 65.4 point contacts not welded) -> build-v030 / export-v005; real 3ds Max xView at 5 mm /
+2 mm: Overlapping Faces 185 faces, Overlapping Vertices 0 (the builder's own check said 0 / 0). The user then finished
+the model by hand in 3ds Max (2026-10-21, `outputs/xview-v005/tow02_ovl23_v001.max`) and accepted the base: "ты неплохо
+справился с задачей, с этим можно работать". Next: review issue (our export-v005 vs the user's fix, lessons), then NPM
 Context: GLOSSARY.md (Body, NPM, Level contour), docs/domain/geometry.md (project modeling rules),
 docs/HARNESS_PLAN.md §3–4, §14–16, docs/backlog.md EG1, EG2, EG4, EG6, docs/domain/patterns/wall-from-contour.md,
 terrace.md, facade-decor-inset.md.
@@ -19,7 +22,7 @@ terrace.md, facade-decor-inset.md.
 
 - Profile: mid-poly master (`mid`), then NPM-OKS.
 - Acceptance (compared 2026-10-21 at handover; master = `outputs/build-v025/tow02_tex.blend`, joined
-  `outputs/export-v004/`):
+  `outputs/export-v004/`; mid-poly line updated for build-v030 / export-v005):
   - [x] Body, decor (bands, fins), glass and openings separated as logical groups — met: TOW02_body, *_glass,
     fins F01–F26, ac_baskets, louvre, coping, top, soffit (Build log build-v013).
   - [x] Every level from the user's helpers built: colonnade, bend, typical, top storey, superstructures 1 and 2 —
@@ -27,10 +30,12 @@ terrace.md, facade-decor-inset.md.
   - [x] Openings as planes (or windows where simpler), chosen per facade — met: ribbon planes at mid reveal,
     glass faces on the outline above 64.7 (decision 2026-10-20).
   - [ ] Mid-poly rules of docs/domain/geometry.md (quads, < 3.8 m, no doubles/T-junctions, normals) — mostly met,
-    not fully: normals fixed (6 418 reveals were wound into the wall; 0 mismatched edges in export-v004); doubles:
-    Overlapping Vertices 2 mm = 0; Overlapping Faces 5 mm = 121 pairs left (F8 step strips, user to decide); 112
-    triangles (64 kept + 48 from the merged reveal bow-ties); T-junctions at the F8 steps remain; evidence
-    `outputs/xview-v003/qa_joined_export_v004/`, `outputs/xview-v003/joined_checks_v004.json`.
+    not fully: export-v005: 0 mismatched winding, Overlapping Vertices 2 mm = 0, Overlapping Faces 5 mm = 0, F8
+    T-junctions gone (QA "same object, other" T-vertices 134 -> 0); 136 triangles (112 before + 24 net from the F8
+    cuts); 304 boundary-on-boundary T-vertices remain at part contacts that are not welded by design (glass edges on
+    walls/caps, reveal backs); evidence `outputs/xview-v004/qa_summary.json`. Not met in 3ds Max: xView 2026-10-21
+    at 5 mm finds 185 overlapping faces on export-v005 (`outputs/xview-v005/xview_tol_report.jsonl`); the user fixed
+    them by hand (top floors under-cut, extra edges, balcony glass railings) — see Build log "User finish".
   - [ ] NPM derived from the master — not met: textured (build-v025, [D156]) and joined into
     `SM_Vyatskaya_Vl_47_49_013_Main` (export-v004, quads); NPM naming/transform reset/triangulation/validate-delivery
     not done.
@@ -160,13 +165,53 @@ terrace.md, facade-decor-inset.md.
   Overlapping Vertices 2 mm = 0, Overlapping Faces 5 mm = 121 pairs, all group F8; 0 mismatched winding (verified by
   the main session). Moves: AC baskets −6.6 mm, railings 0–12 mm, soffit steps into fins ≤ 22.7 mm, fins ≤ 2 mm.
   Superseded first run: build-v020..v022, export-v003 (`superseded.json`).
-- Open after the fix chain: (1) F8 step strips at 8 ring joins (69 strips < 6 mm): option A = snap + cut walls so they
-  share points (needs a proper implementation in `build_stack`; the automatic test `outputs/xview-v003/f8/option_a_body.blend`
-  failed, do not use), option B = 6.5 mm ledge (not recommended); (2) basket posts are now 7 mm behind the glass outer
-  face and hidden by it — alternative: glass ~13 mm inward so posts show; (3) 12 bowtie vertices from the
-  top/top_glass seam weld at 65.4 (Max will split them → coincident vertices); (4) builder root causes for the backlog
-  are listed in the agent report (build_stack winding/offset_points/steps, top caps and railings, build_ac floor,
-  build_soffit, build_fins).
+- Open after the fix chain (answered by the user 2026-10-21): (1) F8 -> option A in `build_stack` (below; the post-hoc
+  test `outputs/xview-v003/f8/option_a_body.blend` failed: it looked for wall points within 6 mm across the strip, but the
+  strip corners slide 5-50 cm along the wall, so 0 points merged); (2) basket posts stay hidden 7 mm behind the glass;
+  (3) 65.4 bow-ties -> not welded, moved apart (below); (4) builder root causes for the backlog: agent report (build_stack
+  winding/offset_points/steps, top caps and railings, build_ac floor, build_soffit, build_fins).
+- Chain check 2026-10-21: build-v013 -> v019 -> v023 -> v024 -> v025 rerun from the scripts in scratch is identical
+  (geometry, UV, materials of all 37 objects); the build-v004 body (= build-v013 body) is reproduced exactly by
+  `build_body_blender.build` with snap_m 0.03, collapse_shift_m 0.3 (now `CFG_TOW02`). So F8 is fixed in the builder and
+  the chain is rerun from build-v013 instead of patching build-v025.
+- build-v026 (`blender -b outputs/build-v013/tow02_master.blend --python scripts/build_body_blender.py -- outputs/build-v026`):
+  TOW02_body rebuilt with the sliding-wall fix of `build_stack` (F8 option A): 6 bend side walls (edges 1 3 5 7 21 23)
+  keep their line within <= 1.4 mm while their ends slide 5-50 cm per storey; at 8 joins (10.3-30.7, 37.5) the upper
+  wall's bottom points are snapped onto the lower wall's line (max 1.38 mm), no step strip is built, and walls and steps
+  are cut where they share points (`resolve_tjunctions`: 99 points, 18 wall cuts, 41 coplanar joins, split into quads +
+  25 triangles, min angle 2.15 deg); 2 strip fractions that gave 4 mm strips at 23.9 dropped. Body 14 928 -> 14 855
+  faces (14 830 quads + 25 tris); step strips < 6 mm 69 -> 0; new T-vertices 0 (134 old ones gone); 0 non-manifold,
+  0 mismatched winding; loops 6.9 (257) and 64.7 (177) identical to build-v013, so soffit and top are untouched;
+  TOW02_body_glass identical. vs build-v013 body: max 1.385 mm, 84 of 17 982 vertices moved (median 0.14 mm).
+- build-v027 (review fixes on v026), build-v028 (`fix_overlaps_blender.py`; BODY_SLIVERS flip now only when the body
+  still has step strips < 6 mm: 0 flipped here; on the old v019 it still gives v023 identically), build-v029
+  (clean_glass: 787 / 86 quads as before), build-v030 (`tow02_tex.blend`, texture: same mapping numbers as v025) — all
+  with the same commands as the fix chain (logs `run.log` / `texture_run.log` in each folder).
+- export-v005 (`join_export_blender.py` on build-v030): 35 407 faces (35 271 quads + 136 tris), 44 000 verts, one
+  material; seams welded body/top 328, body/soffit 257, top/top_glass 78; the 12 top_glass corners that would touch the
+  top only at a point (bow-ties at 65.4/68.9 and 72.2/75.7, 6 corners) are not welded and moved 3 mm into the wall /
+  behind the corner (`skip_point_contacts`).
+- QA xview-v004 (FBX read back into an empty scene; scripts `outputs/xview-v004/scripts/`, table `qa_summary.json`):
+  Overlapping Faces 5 mm 121 -> 0, Overlapping Vertices 2 mm 0, mismatched winding 0, non-manifold edges 0, bow-tie
+  vertices 0, F8 strips 0, UV in 0-1 (0 outside), 0 zero-area faces / UV faces, readback vs joined max 0.07 mm, body
+  vs build-v025 max 1.385 mm; window UVs identical on 863 of 873 faces (10 = glass faces with a moved corner). Technical
+  QA only, and its Overlapping Faces check did not match 3ds Max (next two entries).
+- Independent check 2026-10-21 (independent-checker agent, export-v005 FBX only, own method: parallel <= 1 deg, gap
+  < 5 mm over the overlap region, area > 1e-6 m2): 23 overlapping face pairs (4 at z 14.2/17.6 gap 4.1 mm; 16 coplanar
+  at the soffit z 6.9; 3 opposite pairs at 69.52 / 76.32), and 158 on export-v004 where the builder QA said 121. All
+  other checks equal to the builder QA. Markers: `outputs/xview-v005/ovl_pairs_blender.py` -> `ovl_pairs.json`,
+  `tow02_ovl_pairs.fbx` (23 + 58 tiny contact slivers < 1.1e-5 m2 at 69.175 / 75.975).
+- xView 2026-10-21 in a separate 3ds Max 2024 (`outputs/xview-v005/`): default tolerance 0.01 m (`run.ms` ->
+  `xview_report.jsonl`): Overlapping Faces 3 105, Overlapping Vertices 1 210; at the user's tolerances set through
+  `OverlappingFaces.tolerance = 0.005` / `OverlappingVertices.tolerance = 0.002` (the checker interfaces do expose
+  them; earlier note "dialog only" was wrong) in `open_ovl.ms` -> `xview_tol_report.jsonl`: Overlapping Vertices 0,
+  **Overlapping Faces 185 faces**. The face list was not exported (the user stopped the runs to fix by hand).
+- User finish 2026-10-21 (3ds Max 2024, by hand, saved into `outputs/xview-v005/tow02_ovl23_v001.max`, SHA-256
+  1c4c3a8e…01fddf; it replaced our marker scene of the same name): top floors had under-cut geometry and extra edges
+  (overlaps there), edges removed; balcony glass railings rebuilt so they look right and do not overlap; texture
+  slightly re-unwrapped, colours changed; our windows and main geometry kept. User verdict: "ты неплохо справился с
+  задачей, с этим можно работать ... базу и большую часть работы ты выполнил". Comparison with export-v005: open
+  (review issue).
 - Was in progress (agents): top above 64.7 (`scripts/build_top_blender.py` → `outputs/build-v005-top/`; decision:
   cap-band protrusion 71.5–72.2 up to 0.12 m modelled with its own outline); facade decor — AC baskets, louvre,
   balconies, soffit over the colonnade (`scripts/build_decor_blender.py` → `outputs/build-v006-decor/`).
@@ -180,6 +225,12 @@ terrace.md, facade-decor-inset.md.
 - For a panelised curtain-wall source: check the source class first (connected parts vs area of the largest);
   if there is no shell, go straight to measurements → Lego build, do not start the extractor.
 - Tolerance rule from the user: anything within 1 cm is skipped (weld, snap, column merge).
+- 2026-10-21: record the cfg of every builder run (the body cfg had to be reconstructed by matching build-v004; now
+  `CFG_TOW02`); first check that the chain reproduces the current version bit-for-bit — then a builder fix plus a
+  chain rerun is cheaper and cleaner than patching the finished master.
+- 2026-10-21: an own "Overlapping Faces" in Blender is not xView. The builder's check said 0 while xView at the same
+  5 mm said 185 faces and an independent method 23 pairs; only 3ds Max xView with `OverlappingFaces.tolerance` set by
+  script counts for this user. Run it (`outputs/xview-v005/open_ovl.ms`, ~2.5 min on 35k faces) before reporting.
 - Inputs of the builders that live in ignored `outputs/`: `measure-v001/typical/typical_floor.json`,
   `fins.json`; `measure-v002/bend_rings/bend_rings.json`; `measure-v002/top_parts/top_parts.json`; their
   measurement scripts sit next to them (`outputs/measure-v00N/*/scripts/`).
@@ -189,9 +240,8 @@ terrace.md, facade-decor-inset.md.
   working versions are in `outputs/measure-v001/bend_top/scripts/`.
 
 ## Next
-1. User decisions: F8 step strips (option A snap + cut in `build_stack`, recommended / option B ledge), basket posts
-   (hidden 7 mm behind the glass vs glass ~13 mm inward), and the fix for 12 bowtie vertices of the 65.4 seam weld.
-2. Apply them as new versions after build-v025 (chain: fix -> clean_glass -> texture_atlas -> join_export), re-check
-   Overlapping Faces 5 mm / Overlapping Vertices 2 mm = 0 and let the user re-check in 3ds Max xView.
-3. NPM derivation: names (prefix `0200_Vyatskaya_Vl_47_49`, OKS 013), transform reset [D135], triangulate, FBX export,
-   validate-delivery. Builder root causes for the backlog (Codex): see Build log "Open after the fix chain".
+1. Review issue: compare export-v005 with the user's finished `outputs/xview-v005/tow02_ovl23_v001.max` (what the user
+   changed, where and why our QA missed it), turn the differences into lessons and builder fixes.
+2. NPM derivation from the user's finished model (not from export-v005): names (prefix `0200_Vyatskaya_Vl_47_49`, OKS 013), transform reset
+   [D135], triangulate, FBX export, validate-delivery. Builder root causes for the backlog (Codex): see Build log "Open
+   after the fix chain"; `resolve_tjunctions` / sliding walls are job code in `build_body_blender.py` (EG6).

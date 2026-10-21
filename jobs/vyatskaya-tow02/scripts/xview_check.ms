@@ -23,6 +23,9 @@
   select node
   max modify mode
   emit logf ("{\"node\":\"" + node.name + "\",\"faces\":" + (polyop.getNumFaces node) as string + ",\"verts\":" + (polyop.getNumVerts node) as string + "}")
+  -- The user's QA tolerances (2026-10-21); the checker interfaces expose them, the xView dialog is not needed.
+  OverlappingFaces.tolerance = 0.005
+  OverlappingVertices.tolerance = 0.002
   local order = #(1, 3, 4, 5, 6, 7, 8, 9, 10, 2)  -- Overlapping Faces last: slowest
   for i in order do (
     local name = xViewChecker.getCheckerName i

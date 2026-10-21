@@ -9,7 +9,8 @@ empties are not exported. Vertices are not welded across parts (the parts touch 
 three seams where two parts are built on the same points (xView Overlapping Vertices, groups V1-V3 of
 outputs/xview-v002/qa/groups.json): body top loop / top band at 64.7, body bottom loop / soffit at 6.9, top walls /
 top glass faces on the outline. Only vertex pairs of exactly these object pairs closer than SEAM_WELD_M are merged
-(not a global merge by distance); the count per seam is printed.
+(not a global merge by distance); the count per seam is printed. A pair whose parts would share only that point (a
+bow-tie vertex) is not welded but moved apart (skip_point_contacts).
 
 Usage:
   blender -b <textured.blend> --python scripts/join_export_blender.py -- <out_dir>
@@ -22,10 +23,12 @@ import sys
 
 import bmesh
 import bpy
+from mathutils import Vector
 from mathutils.kdtree import KDTree
 
 NAME = "SM_Vyatskaya_Vl_47_49_013_Main"
 SEAM_WELD_M = 1e-5
+POINT_SHIFT_M = 0.003     # seam pair that would touch only at a point: not welded, moved this far (skip_point_contacts)
 SEAMS = (("TOW02_body", "TOW02_top"), ("TOW02_body", "TOW02_soffit"), ("TOW02_top", "TOW02_top_glass"))
 SRC_ATTR = "tow02_src_part"
 
@@ -58,11 +61,49 @@ def weld_seams(obj, names):
             targetmap[drop] = keep
             pair = next(f"{x} | {y}" for x, y in SEAMS if {x, y} == {a, b})
             count[pair] += 1
+    shifted = skip_point_contacts(bm, targetmap, count, names, lay)
     bmesh.ops.weld_verts(bm, targetmap=targetmap)
     bm.to_mesh(obj.data)
     bm.free()
     obj.data.attributes.remove(obj.data.attributes[SRC_ATTR])
+    count["point_contacts_not_welded"] = shifted
     return count
+
+
+def skip_point_contacts(bm, targetmap, count, names, lay):
+    """A seam pair whose two parts would share only that point (no edge: e.g. a top_glass corner on a top wall
+    column with more rows than the glass edge) would become a bow-tie vertex, which 3ds Max splits into coincident
+    vertices. Such a pair is not welded; the dropped vertex is moved POINT_SHIFT_M into the other part's solid:
+    along its face edge past the corner when it has one face there, else inward against its faces' normals
+    (user decision 2026-10-21; 3 mm > Overlapping Vertices 2 mm, <= 1 cm rule)."""
+    def root(v):
+        while v in targetmap:
+            v = targetmap[v]
+        return v
+
+    out, point = [], []
+    for drop, keep in list(targetmap.items()):
+        keep = root(keep)
+        kn = {root(e.other_vert(keep)) for e in keep.link_edges}
+        if not any(root(e.other_vert(drop)) in kn for e in drop.link_edges):
+            point.append((drop, keep))
+    for drop, keep in point:
+        faces = list(drop.link_faces)
+        if len(faces) == 1:
+            nb = [e.other_vert(drop) for e in drop.link_edges if abs(e.other_vert(drop).co.z - drop.co.z) < 1e-6]
+            d = (drop.co - nb[0].co) if nb else -faces[0].normal
+        else:
+            d = -sum((f.normal for f in faces), Vector())
+        d.z = 0.0
+        d.normalize()
+        p0 = drop.co.copy()
+        drop.co = p0 + d * POINT_SHIFT_M
+        del targetmap[drop]
+        pair = next(f"{x} | {y}" for x, y in SEAMS if {x, y} == {names[drop[lay]], names[keep[lay]]})
+        count[pair] -= 1
+        out.append(dict(part=names[drop[lay]], at=[round(c, 4) for c in p0], dir=[round(c, 3) for c in d],
+                        faces=len(faces)))
+    return out
 
 
 def main(out_dir):
