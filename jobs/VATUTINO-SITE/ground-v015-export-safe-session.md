@@ -1,5 +1,7 @@
 # Ground v015 — export-safe producer checkpoint
 
+Historical snapshot. Current construction, binding repair, strict `texel_ready` blocker and final test receipts: [texel contract checkpoint](ground-v015-texel-contract-checkpoint.md). The v005 assets below are diagnostic, not delivery evidence for v009.
+
 Snapshot: 2026-10-21. Code: `da412dc5e673f8db9fcea6b28b0571895e30a792`.
 **Not delivery acceptance.** Final texture binding, native final-file receipts and review publication remain open.
 
