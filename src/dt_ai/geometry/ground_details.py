@@ -34,6 +34,10 @@ def combine(meshes):
 
 def triangle_uv(verts, faces, repeat=4.):
     """Metric, non-mirrored local projection for placeholder solids; tile-contained or fail closed."""
+    if not len(verts) or not len(faces):
+        raise ValueError('nonempty detail geometry required')
+    if not np.isfinite(verts).all() or not math.isfinite(repeat) or repeat <= 0:
+        raise ValueError('finite detail coordinates and positive finite repeat required')
     p=verts[faces]; a=p[:,1]-p[:,0]; b=p[:,2]-p[:,0]
     # Orient each placeholder island along the edge that minimises its square extent.
     candidates=[]
@@ -52,8 +56,9 @@ def triangle_uv(verts, faces, repeat=4.):
     local=candidates[choice,np.arange(len(p))]
     extent=local.max(axis=(1,2))
     scale=np.maximum(repeat,extent)
-    if repeat==4. and np.any(4096/scale<520):
-        raise ValueError('detail triangle exceeds a tile at 520 px/m; subdivide the source contour')
+    # [D160]: inclusive VPM lower bound supersedes D097.
+    if repeat==4. and np.any(4096/scale<512):
+        raise ValueError('detail triangle exceeds a tile at 512 px/m; subdivide the source contour')
     return local/scale[:,None,None]
 
 
@@ -117,8 +122,13 @@ def _stairs_solid(outline, cells, heights, sampler):
     return gc.Mesh(np.array(v),f,['Stairs']*len(f),np.full(len(f),-2),np.zeros((len(f),3,2)),4.)
 
 
-def build_details(elements, boundary, sampler):
-    """Return solid mesh and one disposition per adapter entity (including group INSERTs)."""
+def build_details(elements, boundary, sampler, separate_curbs=False):
+    """Return solid mesh and one disposition per adapter entity (including group INSERTs).
+
+    ``separate_curbs`` is an explicit model-policy opt-in: continue the taller section
+    through mixed-section junctions and end the shorter one with a 6 mm joint.
+    The caller must obtain project approval; default/legacy builds never enable it.
+    """
     if boundary.is_empty or not boundary.is_valid:
         raise ValueError('valid nonempty boundary required')
     meshes=[];report=[]; curbs={};stair_groups={}
@@ -188,9 +198,22 @@ def build_details(elements, boundary, sampler):
                 else:reason='DWG tread lines do not partition the stair footprint'
             else:reason='stair footprint outside Ground or unsupported holes/multiple parts'
         for e,r in group:r['reason']=reason
-    for role,gs in curbs.items():
+    occupied = Polygon()
+    roles = sorted(curbs, key=lambda r: -SECTIONS[r][1]) if separate_curbs else curbs
+    for role in roles:
+        gs = curbs[role]
         width,height,slot=SECTIONS[role]
         footprint=unary_union(gs).difference(unary_union(stair_footprints))
+        if separate_curbs:
+            # Taller section continues through the joint; shorter section ends with
+            # a method-C-sized 6 mm clearance, not a coplanar duplicate bottom.
+            before = footprint.area
+            footprint = footprint.difference(occupied.buffer(.006, join_style='mitre'))
+            for row in report:
+                if row.get('role') == role and row['status'] == 'modeled':
+                    row.update(joint_gap_m=.006, joint_trim_m2=max(0.0, before-footprint.area),
+                               joint_trim_scope='role union', joint_rule='taller section continuous')
+            occupied = unary_union([occupied, footprint])
         if not footprint.is_empty:meshes.append(_curb_solid(footprint,sampler,height,slot))
     mesh=combine(meshes)
     if len(mesh.faces):

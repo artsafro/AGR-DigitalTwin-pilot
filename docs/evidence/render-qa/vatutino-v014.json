@@ -1,0 +1,246 @@
+{
+  "schema": "render-qa-v1",
+  "blender": "5.1.2",
+  "frame_number": 1,
+  "units_m_per_unit": 1.0,
+  "source_metadata": "{\"path\": \"C:\\\\x\\\\t_d94665f2\\\\ground_v014\\\\npm\\\\SM_Vatutino_Ground.fbx\", \"sha256\": \"94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef\", \"note\": \"Delivered Ground only, no ground-resting parts; no added geometry\"}",
+  "config": {
+    "targets": [
+      "SM_Vatutino_Ground"
+    ],
+    "cameras": [
+      "top",
+      "oblique45",
+      "oblique135",
+      "oblique225",
+      "oblique315"
+    ],
+    "ground_resting": [],
+    "ground_objects": [],
+    "thresholds": {
+      "crop_margin": 0.02,
+      "minimum_coverage": 0.05,
+      "floating_m": 0.01,
+      "background_rgb": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "background_tolerance": 0.01
+    }
+  },
+  "visibility": "opaque geometry, every output pixel centre",
+  "frames": [
+    {
+      "camera": "top",
+      "objects": [
+        {
+          "object": "SM_Vatutino_Ground",
+          "bbox": [
+            0.02380952052772045,
+            0.05665925517678261,
+            0.9761905074119568,
+            0.9433407187461853
+          ],
+          "depth": [
+            207.48056030273438,
+            219.48545837402344
+          ],
+          "coverage": 0.332550048828125,
+          "object_coverage": 0.332550048828125,
+          "visible_faces": 8629,
+          "ground_gap_m": null,
+          "ground_contact": "not_applicable: not declared ground-resting"
+        }
+      ],
+      "failures": [],
+      "coverage": 0.332550048828125,
+      "pixels": {
+        "width": 256,
+        "height": 256,
+        "count": 65536,
+        "background_share": 0.637115478515625,
+        "colour_space": "Blender loaded PNG linear RGB",
+        "path": "C:\\x\\render-qa\\t_4a2c4437-real-v001\\frames-final\\frame_0000.png",
+        "sha256": "ab76f63cda2ae5ac0a0359f30e8689e32bc079acf0f00c1c617faef1a4f4eaed"
+      },
+      "status": "pass",
+      "seconds": 2.024232199997641
+    },
+    {
+      "camera": "oblique45",
+      "objects": [
+        {
+          "object": "SM_Vatutino_Ground",
+          "bbox": [
+            -0.04111814498901367,
+            0.2891327440738678,
+            0.9390979409217834,
+            0.8127888441085815
+          ],
+          "depth": [
+            255.3801727294922,
+            394.75164794921875
+          ],
+          "coverage": 0.2303466796875,
+          "object_coverage": 0.2303466796875,
+          "visible_faces": 7675,
+          "ground_gap_m": null,
+          "ground_contact": "not_applicable: not declared ground-resting"
+        }
+      ],
+      "failures": [
+        {
+          "object": "SM_Vatutino_Ground",
+          "frame": "oblique45",
+          "code": "cropped"
+        }
+      ],
+      "coverage": 0.2303466796875,
+      "pixels": {
+        "width": 256,
+        "height": 256,
+        "count": 65536,
+        "background_share": 0.747894287109375,
+        "colour_space": "Blender loaded PNG linear RGB",
+        "path": "C:\\x\\render-qa\\t_4a2c4437-real-v001\\frames-final\\frame_0001.png",
+        "sha256": "bfacae80909ed4152481586d59b1246f01ed0bcde009c81331d11f85e2721b85"
+      },
+      "status": "fail",
+      "seconds": 0.6971544000552967
+    },
+    {
+      "camera": "oblique135",
+      "objects": [
+        {
+          "object": "SM_Vatutino_Ground",
+          "bbox": [
+            0.15440477430820465,
+            0.05891038849949837,
+            1.07420814037323,
+            0.7720639705657959
+          ],
+          "depth": [
+            226.00831604003906,
+            378.2318420410156
+          ],
+          "coverage": 0.269317626953125,
+          "object_coverage": 0.269317626953125,
+          "visible_faces": 8198,
+          "ground_gap_m": null,
+          "ground_contact": "not_applicable: not declared ground-resting"
+        }
+      ],
+      "failures": [
+        {
+          "object": "SM_Vatutino_Ground",
+          "frame": "oblique135",
+          "code": "cropped"
+        }
+      ],
+      "coverage": 0.269317626953125,
+      "pixels": {
+        "width": 256,
+        "height": 256,
+        "count": 65536,
+        "background_share": 0.70794677734375,
+        "colour_space": "Blender loaded PNG linear RGB",
+        "path": "C:\\x\\render-qa\\t_4a2c4437-real-v001\\frames-final\\frame_0002.png",
+        "sha256": "1e22f719adb1d0a7a3565302635d43af24a3ba5e5b918dcf3c8c62519c59e5f1"
+      },
+      "status": "fail",
+      "seconds": 0.8027759999968112
+    },
+    {
+      "camera": "oblique225",
+      "objects": [
+        {
+          "object": "SM_Vatutino_Ground",
+          "bbox": [
+            -0.039191413670778275,
+            -0.10286380350589752,
+            0.9480650424957275,
+            0.6900279521942139
+          ],
+          "depth": [
+            213.17245483398438,
+            340.79083251953125
+          ],
+          "coverage": 0.3106689453125,
+          "object_coverage": 0.3106689453125,
+          "visible_faces": 8610,
+          "ground_gap_m": null,
+          "ground_contact": "not_applicable: not declared ground-resting"
+        }
+      ],
+      "failures": [
+        {
+          "object": "SM_Vatutino_Ground",
+          "frame": "oblique225",
+          "code": "cropped"
+        }
+      ],
+      "coverage": 0.3106689453125,
+      "pixels": {
+        "width": 256,
+        "height": 256,
+        "count": 65536,
+        "background_share": 0.6653289794921875,
+        "colour_space": "Blender loaded PNG linear RGB",
+        "path": "C:\\x\\render-qa\\t_4a2c4437-real-v001\\frames-final\\frame_0003.png",
+        "sha256": "85763fe913652ab5a2d1518243e64d640bf1b1417d62dc6b837514ca7e089e15"
+      },
+      "status": "fail",
+      "seconds": 0.7955751999979839
+    },
+    {
+      "camera": "oblique315",
+      "objects": [
+        {
+          "object": "SM_Vatutino_Ground",
+          "bbox": [
+            -0.09966083616018295,
+            0.03717924281954765,
+            0.7765079736709595,
+            0.782479465007782
+          ],
+          "depth": [
+            228.0451202392578,
+            373.91534423828125
+          ],
+          "coverage": 0.2765350341796875,
+          "object_coverage": 0.2765350341796875,
+          "visible_faces": 8028,
+          "ground_gap_m": null,
+          "ground_contact": "not_applicable: not declared ground-resting"
+        }
+      ],
+      "failures": [
+        {
+          "object": "SM_Vatutino_Ground",
+          "frame": "oblique315",
+          "code": "cropped"
+        }
+      ],
+      "coverage": 0.2765350341796875,
+      "pixels": {
+        "width": 256,
+        "height": 256,
+        "count": 65536,
+        "background_share": 0.7004547119140625,
+        "colour_space": "Blender loaded PNG linear RGB",
+        "path": "C:\\x\\render-qa\\t_4a2c4437-real-v001\\frames-final\\frame_0004.png",
+        "sha256": "6b37fa6ac23c77430b60d225268ba6e67f9843a96be631f89abe58def5c875d9"
+      },
+      "status": "fail",
+      "seconds": 0.7611322000157088
+    }
+  ],
+  "status": "fail",
+  "seconds": 5.331421999959275,
+  "inputs_sha256": {
+    "C:\\x\\render-qa\\t_4a2c4437-real-v001\\preview.blend": "8f3d761c35abbc823b31c4d327c1824a813322460916dbc0d45ad0abdcc01242",
+    "C:\\x\\render-qa\\t_4a2c4437-real-v001\\config.json": "fe4bbb19e46fa0921c328bbe4668290d1b9afdc55fd6a24ebe79036c68ddbecf",
+    "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_4a2c4437\\tools\\qa\\render_qa.py": "3c44ed6bed2d27d25f59c7b81f2db43a8b7759a4b0f3c2d3d3525e2341185647"
+  }
+}

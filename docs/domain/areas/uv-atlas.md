@@ -73,6 +73,8 @@ The table contains **14 requirement rows**: **10** with `none` and **4** with pa
 
 Remaining work on the partial rows: UV-10 checks archive filename sequence only and does not cross-check scene UV tile layout against filenames; UV-14 checks meshes named `*MainGlass` only and does not check GroundGlass. V009 density is roadmap T-UV-3. The UV benchmark is roadmap T-UV-2. No complete UV L2 is claimed.
 
+**2026-10-20 update [D160]:** the VPM lower bound in the historical D097 quotations above is superseded: use 512-1706 px/m. C36 is decided; NPM Ground 10-40 is unchanged. See [2026 requirements](../requirements-2026.md).
+
 ## Notes
 
 No tests were added. This sheet is an L1 index and is not delivery acceptance.

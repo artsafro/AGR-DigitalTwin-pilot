@@ -346,7 +346,15 @@ def _check_ancestors(path):
 
 @contextmanager
 def _store_lock(root):
-    """Serialize read-modify-replace across processes; stale locks fail closed."""
+    """Serialize read-modify-replace across processes; stale locks fail closed.
+
+    Windows delete-pending: while a reader or scanner still holds the lock
+    directory open, another publisher's rmdir leaves it pending deletion.
+    CreateDirectoryW then returns ERROR_ACCESS_DENIED (WinError 5), so
+    ``lock.mkdir()`` raises PermissionError instead of FileExistsError.
+    Retry that inside the same 30 s deadline; a lock that never frees still
+    fails closed and writes nothing.
+    """
     root.mkdir(parents=True, exist_ok=True)
     lock = root / ".pending-lock"
     deadline = time.monotonic() + 30
@@ -354,7 +362,7 @@ def _store_lock(root):
         try:
             lock.mkdir()
             break
-        except FileExistsError:
+        except (FileExistsError, PermissionError):
             if time.monotonic() >= deadline:
                 raise ReviewError("review store is busy; inspect stale .pending-lock")
             time.sleep(0.02)
