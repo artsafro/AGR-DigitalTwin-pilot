@@ -95,10 +95,13 @@ class RoofStructure(SpecPart):
     """A structure on the roof (spec v0.7, pattern roof-screen-enclosure, user 2026-10-13 [D067]): kind "screen" - a
     screen enclosure round roof equipment, its outer outline in plan and its top. npm_min builds it as planes
     (walls on the outline from the roof level to z_top and a top plane, no bottom, no thickness), roof ids; it
-    is part of the body's silhouette, not an attachment."""
+    is part of the body's silhouette, not an attachment. mid / VPM builds the same planes as a shell of
+    `thickness_m` inward (issue #91): measured from the source's screens, else the object's parapet default
+    (rule 4 as the parapet's, user 2026-10-12 [D061]); None = neither, the build input decides."""
     kind: Literal["screen"]
     outline: list[list[float]] = Field(min_length=3)
     z_top_m: float
+    thickness_m: Positive | None = None
 
     @model_validator(mode="after")
     def plan(self):

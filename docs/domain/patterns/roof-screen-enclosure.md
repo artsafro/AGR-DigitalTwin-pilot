@@ -17,19 +17,31 @@ Status: draft (user decision 2026-10-13 [D067], OBJ03). Spec v0.7 `roof_structur
    A build by source modules follows the source: screens with no top get no top plane (OBJ03, user 2026-10-14 [D086]);
    the checker allows the open ring on the outline at the top then.
    Ids: the roof group (21-25).
-3. `mid` / VPM: the same planes as a shell (the screen's thickness); the blocks inside are decided later
-   (issue #91; until then the engine raises a `BuildError`).
+3. `mid` / VPM: the same planes as a shell (the screen's thickness) set inward, as a Shell modifier makes it
+   (issue #91): the outer walls and top as in `npm_min`, inner walls on the outline set in by the thickness (mitred)
+   up to a ceiling one thickness under the top, and the rim between them on the roof level - one closed solid,
+   roof ids. Thickness as the parapet's rule 4 ([D061]): the spec's `thickness_m` (measured from the source, else the
+   object's `parapet_thickness_default_m`), else the build input's parapet thickness, else a `BuildError`; a thickness
+   that leaves no single hollow in plan or none under the top is a `BuildError`. The blocks inside are decided
+   later (not built).
 4. What lies under the outline - the equipment, the screens, their steep parts - is no roof question: the roof
    check keeps only the flat roof at the level there, and the enclosure closes the roof from above.
 
 ## Spec
 
-`roof_structures: [{kind: "screen", outline: [[x, y], …], z_top_m}]` (spec v0.7). The extractor reads the
+`roof_structures: [{kind: "screen", outline: [[x, y], …], z_top_m, thickness_m?}]` (spec v0.7). The extractor reads the
 outline as the outer line of the screens' plan (their faces projected, joints up to 0.10 m closed,
 Douglas–Peucker 0.10 m) and the top as their highest point. A name not in the source, a screen not above the
 roof or a plan that does not close is a stop. A group of screens must enclose exactly one space (a hole of
 its plan not capped by the screens above and below - a thick screen's own inside is capped twice): none is an
 open screen, two or more (enclosures sharing screens) is a stop too - their tops cannot be told apart.
+A screen's own inside is capped at the screens' foot and above it; an enclosure's space is open to the roof at the
+foot (a shell's hollow under its ceiling too). A ring of screens in a group's space with screen between them at
+the foot (the inner face of a screen thicker than 0.10 m) is one group with it.
+`thickness_m` (issue #91): the faces of the screens' section at mid height that are screen (an odd number of caps
+above them) make one ring on the outline whose inner line is the outer one set in by one thickness (mitred,
+0.005 m), measured at the inner edges' midpoints; else the object's `parapet_thickness_default_m`; the report marks
+`thickness.by` (`measured`, `parapet thickness by default`, `not read, no default`) and `why`. Planes have no ring.
 
 ## Check
 

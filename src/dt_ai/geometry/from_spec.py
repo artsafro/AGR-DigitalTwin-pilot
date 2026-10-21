@@ -551,22 +551,58 @@ def build(spec: Spec, inputs: BuildInputs) -> dict:
 def _roof_structures(spec: Spec, inputs: BuildInputs, roof: float) -> "_Mesh":
     """Pattern roof-screen-enclosure (spec v0.7, user 2026-10-13 [D067]): npm_min builds a screen enclosure as planes -
     walls on its outline from the roof level to its top, facing out, and a top plane; no bottom, no thickness;
-    roof ids (an exit to the roof). Part of the silhouette, a mesh of its own. mid / VPM (a shell) is issue #91."""
+    roof ids (an exit to the roof). Part of the silhouette, a mesh of its own.
+    mid / VPM (rule 3, issue #91): the same planes as a shell of the screen's thickness set inward, as a Shell
+    modifier makes it - the outer walls and top as in npm_min, inner walls on the outline set in by the thickness
+    (mitred) up to a ceiling one thickness under the top, and the rim between them on the roof level: one closed
+    solid, faces outward. The thickness: the spec's `thickness_m` (read from the source, or the object's parapet
+    default), else the build input's parapet thickness (rule 4 as the parapet's, user 2026-10-12 [D061]), else a
+    BuildError. A thickness that leaves no single hollow in plan or none under the top is a BuildError. The
+    equipment inside is not built (not decided)."""
     out = _Mesh()
     if not spec.roof_structures:
         return out
-    if spec.profile != "npm_min":
-        raise BuildError(f"roof_structures in profile {spec.profile}: only npm_min builds them yet (planes); the "
-                         "mid / VPM shell is issue #91")
-    for rs in spec.roof_structures:
+    if spec.profile not in ("npm_min", "mid"):
+        raise BuildError(f"roof_structures in profile {spec.profile}: not built")
+    for k, rs in enumerate(spec.roof_structures):
         poly = orient(Polygon(rs.outline), sign=1.0)
-        pts = list(poly.exterior.coords)[:-1]
         z0, z1 = roof, rs.z_top_m
-        for (x0, y0), (x1, y1) in zip(pts, pts[1:] + pts[:1]):
-            out.quad([[x0, y0, z0], [x1, y1, z0], [x1, y1, z1], [x0, y0, z1]], inputs.roof_id, [y1 - y0, x0 - x1, 0.0])
-        for tri in shapely.get_parts(shapely.constrained_delaunay_triangles(poly)):
-            out.tri([[x, y, z1] for x, y in list(tri.exterior.coords)[:3]], inputs.roof_id, [0.0, 0.0, 1.0])
+        _walls(out, poly, z0, z1, inputs.roof_id, outward=True)
+        if spec.profile == "npm_min":
+            _cap(out, poly, z1, inputs.roof_id, up=True)
+            continue
+        where = f"roof structure {k} ({rs.kind})"
+        t = rs.thickness_m if rs.thickness_m is not None else inputs.parapet_thickness_m
+        if not (t > 0 and np.isfinite(t)):
+            raise BuildError(f"{where}: a screen shell (mid / VPM) needs a thickness: thickness_m in the spec or "
+                             "parapet_thickness_m in the build inputs")
+        hollow = poly.buffer(-t, join_style="mitre", mitre_limit=1e6)
+        if hollow.is_empty or hollow.geom_type != "Polygon" or hollow.area <= 0:
+            raise BuildError(f"{where}: the thickness {t} m leaves no single hollow inside the outline; not built")
+        hollow = orient(hollow, sign=1.0)
+        zc = z1 - t
+        if zc - z0 <= KEY_M:
+            raise BuildError(f"{where}: the thickness {t} m leaves no hollow under the top {z1} m over the roof "
+                             f"{z0} m; not built")
+        _cap(out, poly, z1, inputs.roof_id, up=True)                       # the outer top
+        _walls(out, hollow, z0, zc, inputs.roof_id, outward=False)          # the inner walls, facing the hollow
+        _cap(out, hollow, zc, inputs.roof_id, up=False)                     # the ceiling, facing down
+        _cap(out, Polygon(poly.exterior, [hollow.exterior]), z0, inputs.roof_id, up=False)   # the rim on the roof
     return out
+
+
+def _walls(out, poly, z0, z1, mid, outward):
+    """Quads on every edge of a counter-clockwise polygon from z0 to z1, facing out of it (or into it)."""
+    pts = list(poly.exterior.coords)[:-1]
+    s = 1.0 if outward else -1.0
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:] + pts[:1]):
+        out.quad([[x0, y0, z0], [x1, y1, z0], [x1, y1, z1], [x0, y0, z1]], mid, [s * (y1 - y0), s * (x0 - x1), 0.0])
+
+
+def _cap(out, poly, z, mid, up):
+    """A flat face over the polygon (holes kept) at z, triangulated on its own vertices, facing up or down."""
+    for tri in shapely.get_parts(shapely.constrained_delaunay_triangles(poly)):
+        out.tri([[x, y, z] for x, y in list(tri.exterior.coords)[:3]], mid, [0.0, 0.0, 1.0 if up else -1.0])
 
 
 DECOR_INSET_M = 0.02   # pattern facade-decor-inset: a wall element runs this far into the body (user 2026-10-11 [D051])

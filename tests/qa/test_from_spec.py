@@ -1231,6 +1231,13 @@ def test_a_screen_thickness_must_be_positive_and_finite(bad):
         edited(lambda d: d.update({"spec_version": "0.7", "roof_structures": [{**SCREEN, "thickness_m": bad}]}))
 
 
+@pytest.mark.parametrize("bad", [float("nan"), float("inf")])
+def test_a_screen_top_must_be_finite(bad):
+    """Probe: a NaN / inf top never reaches the engine (SpecPart allow_inf_nan=False)."""
+    with pytest.raises(ValueError):
+        edited(lambda d: d.update({"spec_version": "0.7", "roof_structures": [{**SCREEN, "z_top_m": bad}]}))
+
+
 def test_npm_min_keeps_the_planes_whatever_the_thickness():
     """npm_min builds planes (no thickness) even with thickness_m in the spec: the rule is per profile."""
     dump = build(edited(lambda d: d.update({"spec_version": "0.7", "profile": "npm_min",
@@ -1281,6 +1288,28 @@ def test_a_mid_screen_shell_round_trips(t):
     (rs,) = back.roof_structures
     assert rs.z_top_m == 9.0 and rs.thickness_m == t and report["roof_structures"][0]["thickness"]["by"] == "measured"
     assert np.allclose(sorted(map(tuple, rs.outline)), sorted(map(tuple, SCREEN["outline"])), atol=0.01)
+
+
+def test_screen_shell_round_trip_probe():
+    """Probe (seed 9101): every generated mid shell the engine builds is read back with its top and its thickness,
+    ceilings below and above the screens' mid height alike."""
+    from dt_ai.spec import extract_spec
+    rng = np.random.default_rng(9101)
+    read = 0
+    for _ in range(20):
+        x0, y0 = rng.uniform(1, 3, 2)
+        w, h = rng.uniform(2, 5, 2)
+        outline = [[x0, y0], [x0 + w, y0], [x0 + w, y0 + h], [x0, y0 + h]]
+        t = round(float(rng.uniform(0.03, 0.9)), 3)
+        z_top = round(6.6 + float(rng.uniform(t + 0.2, 3)), 3)
+        dump, _ = _shell(outline, z_top, t)
+        for m in dump["meshes"]:
+            if m["name"] == "roof_structures":
+                m["name"] = "Screens"
+        (rs,) = extract_spec(dump, {**SYNTH_OBJECT, "roof_screens": ["Screens"]})[0].roof_structures
+        assert (rs.z_top_m, rs.thickness_m) == (z_top, t), (outline, z_top, t)
+        read += 1
+    assert read == 20
 
 
 def test_the_extractor_reads_a_marked_screen_enclosure_back():
