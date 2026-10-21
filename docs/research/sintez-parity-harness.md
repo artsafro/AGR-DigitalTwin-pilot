@@ -34,6 +34,25 @@ there is no xfail, waiver, synthetic vendor oracle or production-checker repair.
 Default pytest selection excludes `dcc`; no pytest configuration change is needed.
 Use a private `--basetemp` on this Windows workstation.
 
+## Fail-closed bounds evidence (review rework)
+
+The harness boundary rejects malformed `bounds_m` (two numeric 3D corners,
+ordered on all axes), nonpositive X/Y spans, and non-finite intermediate pivot
+arithmetic. Finite input coordinates alone do not prove measurable evidence:
+span subtraction, centre addition, location offset, division and percentage
+multiplication must remain finite under the production checker's arithmetic.
+This does not change production policy or convert unmeasured evidence to pass.
+
+Reviewer witnesses (inverted corners, collapsed X/Y, finite-but-overflowing
+span) are default regressions alongside schema, NaN/inf, centre/ratio/percentage
+overflow and valid pass/fail reset controls. Tests-first `fb8398e`: 20 failed,
+2 passed (existing NaN/inf rejection); fix `985224a`: affected tests 95 passed,
+30 DCC deselected. Generated probes reject 40/40 invalid bounds and preserve
+20/20 valid controls over X/Y axes and five size scales. Replaying all 30
+retained live ZIPs/readbacks preserves exact twinqa results and the seven
+previous disagreements; this is evidence replay, not a new DCC execution.
+The full suite was not repeated for this bounded rework (coordination rule 49).
+
 ## Measured results
 
 `tmp/parity-live-v003`, Blender 5.1.2 / SINTEZ 1.6.1: **30 fixtures,
