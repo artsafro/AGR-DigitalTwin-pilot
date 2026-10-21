@@ -179,9 +179,19 @@ Tolerance and seam tolerance are scene units (meters if the scene is metric). De
 932:  spinner spnMaxCollisions "Max Pieces" range:[1, 99999, 12]
 ```
 
-Outer pad 0.04 and divider pad 0.035 are scene units (4 cm and 3.5 cm when the unit is 1 m). Gap default 5 mm. Protrusion default 500 mm. Piece cap default 12. Hull verts default 16.
+`UcxOuterPadding` (0.04) and `UcxDividerPad` (0.035) are dimensionless fractions of a bbox side, not scene-unit distances. `UCX_N_29.09.ms:417` multiplies each bbox side by 0.04, and `:430-433` expand the outer cell bounds by that amount. `:210` multiplies 0.035 by the largest bbox side to extend the divider plane. Those factors size helper and grid extents. The interior nominal gap is independent of them: it comes from `UcxGetGapSys` (`:32-36`, spinner default 5 mm at `:928`). Protrusion default 500 mm. Piece cap default 12. Hull verts default 16.
 
-**Limitations.** Piece count and protrusion are author defaults, not the regulation bands (10 cm / 30 cm / 1 m). Padding is wider than the project gap of 2 mm–1 cm. Convexity is by construction (hull) and is not rechecked here.
+Worked example (static arithmetic over those formulas; no Max run). Outer extension on a side = that side × 0.04. Divider extension = largest side × 0.035. For a cube of the side below, both apply to the same length:
+
+| Bbox side | Outer extension | Divider extension |
+|---|---|---|
+| 1 m | 0.04 m | 0.035 m |
+| 10 m | 0.4 m | 0.35 m |
+| 100 m | 4 m | 3.5 m |
+
+The nominal interior gap stays 5 mm at all three sizes.
+
+**Limitations.** Piece count and protrusion are author defaults, not the regulation bands (10 cm / 30 cm / 1 m). The 0.04 and 0.035 factors size helper and grid extents; they are not the emitted clearance. Convexity is by construction (hull) and is not rechecked here.
 
 **Diff vs older versions.** `UCX_new_11_09.ms` has the splitter only. `UCX_N_29.09.ms` adds `UcxNextCollisionName`, `rltUcxGapFixer`, `rltEdgeProjector`, and `rltCollisionToolkit`.
 
@@ -511,7 +521,7 @@ README also allows 32 bpp when a 2048 or 4096 image has alpha, and 8 bpp for 256
 
 Low-poly mesh masks require a 3-digit index (`agr_max_check_37.ms:381-387`). High-poly UCX mask is `UCX_SM_*_Main_???` / `Ground` with three digits (`agr_max_check_37.ms:407-421`).
 
-**Limitations.** Overlap angle at 2% dot is about 11.5°, far looser than Max xView. Overlap can skip dense cells (`cfgOverlapMaxBucket = 500`) and can be cancelled. Light numbers are capped at 050 per type, which is not the regulation's 001–250. High-poly OKS fails only above 1_000_000, with no 150_000 review band.
+**Limitations.** The 2% dot (`cosTol` 0.98, about 11.5°) is the overlap candidate normal filter, wider than the pilot xView `>= 0.9999` (about 0.8°): the team filter tests more candidate pairs (higher recall, more false-positive risk), while the pilot filter tests fewer (higher precision, can miss pairs between about 0.8° and about 11.5°). Overlap can skip dense cells (`cfgOverlapMaxBucket = 500`) and can be cancelled. Light numbers are capped at 050 per type, which is not the regulation's 001–250. High-poly OKS fails only above 1_000_000, with no 150_000 review band.
 
 **Diff vs older versions.** Only this file is in the folder. The changelog describes v19–v27 against unseen older copies. Do not treat missing files as present.
 
@@ -654,7 +664,7 @@ Reconstructed from the tools themselves and from `docs/domain/npm-vpm.md`, `docs
 11. **Export.** A101 writes binary FBX with embedded textures and without cameras, lights, or animation. Zipper packs the folder and checks names. One-by-one export is a library pair ZIP, off this path.
 12. **Check the ZIP.** AGR Checker (and Zipper's lighter name/PNG pass) on the archive. Pilot equivalent is `src/twinqa` (scene, naming, uv, png, geojson, bundle).
 
-**Deferred cross-check.** `ИНСТРУКЦИЯ_ПОЛЬЗОВАТЕЛЯ.txt` (8897 bytes, SHA256 `f4016ba0d158a2f4dd9f8615efb68e7f48832d8ca599dd3dc242759e56d76679`) and `Новые требования к НПМ+ВПМ.pdf` (28052150 bytes, SHA256 `080e3454287f0c6a5f1edda5537cad9a9d8370089ad5ed8c48822da6a600e9e6`) are not in the copy. `document_exclusions.json` records both in Google Drive Trash, recovery window 30 days. Their contents were not guessed. The map above is not confirmed against those two documents.
+**Excluded documents.** `ИНСТРУКЦИЯ_ПОЛЬЗОВАТЕЛЯ.txt` and `Новые требования к НПМ+ВПМ.pdf` are excluded by user decision (Artem, 2026-10-21) as outdated; they are not used as a source; the workflow map above is built from the scripts themselves and the pilot `docs/domain/`.
 
 ## Gap table vs the pilot
 
@@ -672,7 +682,7 @@ Pilot values were read from `standards/NPM_STANDARD.yaml`, `standards/VPM_STANDA
 | Scene unit meter, scale 1:1 | `model.py:90`; FreeSpot header | `NPM_STANDARD.yaml` `units` | same | 1 unit = 1 m |
 | Duplicate vertices 0.002 m | `agr_max_check_37.ms:226`; `model.py:91` | D152 overlapping vertices 0.002 m | same | 0.002 m |
 | Coplanar face distance 0.005 m | `agr_max_check_37.ms:253` | D152 overlapping faces 0.005 m | same | 5 mm |
-| Coplanar normal tolerance 2% dot | `agr_max_check_37.ms:248` | xView about 0.81° (`docs/domain/validation.md`) | differs | script ~11.5°; pilot \|cos\| ≥ 0.9999 |
+| Overlap candidate normal filter 2% dot | `agr_max_check_37.ms:248` | xView about 0.81° (`docs/domain/validation.md`) | differs | script ~11.5°; pilot \|cos\| ≥ 0.9999 (team tests more pairs, higher recall; pilot tests fewer, higher precision) |
 | Blender overlap 2 mm and 8° | `overlapping_faces.py:170-178` | D152: faces 5 mm, normals 0.81° | differs | script 2.0 mm and 8.0°; pilot 5 mm and 0.81° |
 | Improved overlap tolerance 0.002 | `xview_overlapping_faces_improved.py:658` | D152 faces 0.005; verts 0.002 | differs | script default 0.002 for the face test; pilot face test is 0.005 m |
 | Material ID = UDIM tile | `UDIM-MultiSub_Universal(max22-26).ms:5` | `material_id_ranges.yaml` groups 1–35; export renumbers to 1001+ | differs | script `1001+floor(U)+10*floor(V)` as the face ID; pilot IDs stay a reading scheme [D030] |
@@ -680,7 +690,7 @@ Pilot values were read from `standards/NPM_STANDARD.yaml`, `standards/VPM_STANDA
 | Atlas cell padding 6 px | `VPM_to_NPM.ms:35` | NPM `island_padding_px_min` 8 | differs | script 6 px; pilot ≥ 8 px (VPM ≥ 16 at 2048 and ≥ 32 at 4096) |
 | Plug if texture ≤ 512 px | `VPM_to_NPM.ms:12`, `plugMaxPx = 512` | NPM 128×128 only for flat metallic/roughness | differs | script ≤ 512 px; pilot 128 px and one-colour MR only |
 | UCX triangle budget | `model.py:77-80` | `scene.py` `UCX_SMALL_MODEL` 50000, 15000, 0.05, 100000 | same | 15_000 under 50_000 else 5% capped at 100_000 |
-| UCX outer pad 0.04 and divider 0.035; gap default 5 mm | `UCX_N_29.09.ms:23-24`, `:928` | D098 band 0.002–0.01 m; D162 also flags gaps under 0.2 mm | differs | script builds with 40 mm / 35 mm pads and a 5 mm inset; pilot check band is 2 mm–1 cm |
+| UCX outer pad 0.04 and divider 0.035 (fractions of the bbox side); gap default 5 mm | `UCX_N_29.09.ms:23-24`, `:210`, `:417`, `:430-433`, `:32-36`, `:928` | D098 band 0.002–0.01 m; D162 also flags gaps under 0.2 mm | differs | 0.04 and 0.035 scale helper/grid extents (bbox side 1 / 10 / 100 m → outer 0.04 / 0.4 / 4 m, divider 0.035 / 0.35 / 3.5 m). Emitted clearance is `UcxGetGapSys`, default 5 mm, inside the pilot 2 mm–1 cm band |
 | UCX toolkit gap default 2 mm | `UCX_Tools.ms:1456` | D098 minimum 2 mm | same | 2 mm is the low edge of the band, not the whole rule |
 | Max protrusion for hull merge 500 mm | `UCX_N_29.09.ms:929` | UCX R11/R12/R13: 0.10 / 0.30 / 1.0 m | differs | script one spinner at 500 mm; pilot three bands |
 | UCX max pieces default 12 | `UCX_N_29.09.ms:932` | triangle budget only | missing | pilot has no piece-count cap |
@@ -716,8 +726,12 @@ Drafts only. Nothing was filed. Artem picks.
 
 2. **Title.** Align the overlap check with xView before any Max script is copied.
    **Action.** port to gate.
-   **Why.** The team checker and the pilot both use 5 mm face distance and 2 mm vertex distance, but `agr_max_check_37.ms` accepts about 11.5° between normals and the Blender helper defaults to 2 mm and 8°. Copying those thresholds would pass models D152 rejects. The high-poly triangle check also lacks the 150_000 review band.
-   **Draft follow-up issue.** title: Reject team overlap angles that are looser than xView. acceptance: document the script values (2% dot, 8°, 2 mm) next to D152; a gate test fails a pair at 5° and 5 mm; VPM triangle count between 150_001 and 1_000_000 stays review, not pass.
+   **Why.** The team checker and the pilot both use 5 mm face distance and 2 mm vertex distance. In `agr_max_check_37.ms:712` and `:892-894`, `cosTol` (default `1.0 - 2/100 = 0.98`, about 11.5°) is a candidate filter: `dotN >= cosTol` chooses which pairs are tested for overlap. A wider accepted angle includes more pairs. The team filter `>= 0.98` has higher recall (tests more candidate pairs, more false-positive risk). The pilot xView filter `>= 0.9999` (about 0.8°) has higher precision and skips pairs between about 0.8° and about 11.5°, so it can miss some. Opposite-normal inclusion (`dotN <= -cosTol` when `cfgOverlapIncludeOppositeNormals` is on) and the distance tolerances are separate policies. The Blender helper defaults to 2 mm and 8°. The high-poly triangle check also lacks the 150_000 review band.
+   Static witness (`dot = cos(angle)`; include means the pair is a candidate, not that the faces overlap):
+   - **0°** → dot `1.0`: team `1.0 >= 0.98` includes; pilot `1.0 >= 0.9999` includes → both include.
+   - **5°** → dot `0.9961946981`: team `>= 0.98` includes; pilot `0.9962 < 0.9999` excludes → team includes, pilot excludes.
+   - **20°** → dot `0.93969262`: team `0.9397 < 0.98` excludes; pilot excludes → both exclude.
+   **Draft follow-up issue.** title: Record the team overlap candidate filter against the pilot xView filter. acceptance: document that `agr_max_check_37.ms` `cosTol` 0.98 is a candidate filter with higher recall and that the pilot `>= 0.9999` filter is more exclusive (higher precision, possible misses between about 0.8° and about 11.5°); opposite-normal and distance policies stay separate from the angle filter; no new angle-blocking rule is introduced; VPM triangle count between 150_001 and 1_000_000 stays review, not pass.
 
 3. **Title.** Export cleanup for custom attributes, UDP, and the UV channel name.
    **Action.** port to gate.
@@ -726,8 +740,8 @@ Drafts only. Nothing was filed. Artem picks.
 
 4. **Title.** Do not adopt the UCX generator pads.
    **Action.** rule.
-   **Why.** `UCX_N_29.09.ms` insets with 40 mm outer padding and 35 mm divider padding, and merges hulls out to 500 mm. The project gap is 2 mm–1 cm [D098], with a separate too-close check under 0.2 mm [D162]. The 5 mm gap spinner is inside the band; the pads are not.
-   **Draft follow-up issue.** title: Record team UCX pad defaults as non-binding. acceptance: decisions entry states 0.04 m / 0.035 m / 500 mm / 12 pieces are script defaults, not delivery rules; the delivery gap stays 2 mm–1 cm; no builder change in that issue.
+   **Why.** `UCX_N_29.09.ms` extends helper and grid bounds by dimensionless fractions of the bbox side: outer `0.04` per axis (`:417`, `:430-433`) and divider `0.035` of the largest side (`:210`). Those are not a constant 40 mm or 35 mm clearance. A 10 m side extends 0.4 m outward and 0.35 m on the divider; at 1 / 10 / 100 m the outer extensions are 0.04 / 0.4 / 4 m and the divider extensions are 0.035 / 0.35 / 3.5 m. The final emitted collision gap is `UcxGetGapSys` (spinner default 5 mm, `:32-36`, `:928`), which is inside the project band of 2 mm–1 cm [D098]. A separate too-close check flags gaps under 0.2 mm [D162]. Hull merge still uses the 500 mm protrusion spinner.
+   **Draft follow-up issue.** title: Record team UCX pad defaults as non-binding. acceptance: decisions entry states that 0.04 and 0.035 are bbox-side fractions for helper/grid extents, not fixed 0.04 m / 0.035 m gaps, and that 500 mm / 12 pieces are script defaults, not delivery rules; the delivery gap stays 2 mm–1 cm on the nominal gap, not on the pads; no builder change in that issue.
 
 5. **Title.** Keep material IDs off the UDIM numbers.
    **Action.** rule.
@@ -769,14 +783,9 @@ Drafts only. Nothing was filed. Artem picks.
     **Why.** `AlexYo_OneByOneExport_Preview_v18.ms` packs `Name_high` / `Name_low` for a prop library. Delivery ZIPs stay address-based.
     **Draft follow-up issue.** title: Do not use OneByOne export for NPM/VPM packages. acceptance: closed as won't-do for delivery; library packaging can be a separate backlog line if a prop library is in scope.
 
-13. **Title.** Restore the two trashed documents and re-check this map.
-    **Action.** rule.
-    **Why.** The user instruction and the 2026 requirements PDF are the team's own statement of order and thresholds. This map was built without them. Treating it as confirmed would freeze a guess.
-    **Draft follow-up issue.** title: Restore the Telegram instruction and the NPM+VPM requirements PDF from Drive Trash. acceptance: both files are back, hashes match `f4016ba0…d76679` and `080e3454…00e9e6`; the workflow section of this audit is updated with a pass/fail against those texts; until then the map stays provisional.
-
 ## Missing inputs & limitations
 
-- **Deferred documents.** `ИНСТРУКЦИЯ_ПОЛЬЗОВАТЕЛЯ.txt` and `Новые требования к НПМ+ВПМ.pdf` are in Google Drive Trash (`document_exclusions.json`, recovery 30 days). Sizes and SHA256 are in the workflow section. Contents were not invented. Cross-check against them is not done.
+- **Excluded documents.** `ИНСТРУКЦИЯ_ПОЛЬЗОВАТЕЛЯ.txt` and `Новые требования к НПМ+ВПМ.pdf` are excluded by user decision (Artem, 2026-10-21) as outdated. They are not used as a source.
 - **Twelve large third-party files were not in the local copy** and were not opened. Name and purpose only: Acrobat Pro portable; `AGR_Arxiv_1.5_Windows` compiled archiver; `AtlasBuilder.zip` and `AtlasBuilder_portable_1.zip`; `FacadeAtlasBuilder-win64.zip`; `Backdrop Generator v2.0_Max2018+.rar`; `Road Markings Generator 2.0.rar`; `Materialize_1.78 (1).zip`; `MaximkaE_PngCompr.7z`; `PNG_Compressor.exe` and `PNG_Compressor__msg_28662.exe`; `TextureMapGeneratorV5.exe`.
 - **Other third-party archives in the copy** (Zen UV, PolyUnwrapper, window/blinds generators, CheckToolBox, BMAX, PruneScene, UVTools, EdgeAlign, xCavity, SafeOrbit, Viewport Reflect, and the rest of the JSON `third-party` rows) were classified from `archive_inventory.json` and the file name. Contents were not read.
 - **Authors.** AlexYo, A101, Nikolay Litvinov, Christoph Bülter, Mathieu Jacquin, WunschTools, IN_tools, and RUST Script are strings in the files. Where the JSON says `author_inferred: true`, the name is taken from a category or filename, not from a signature block.
