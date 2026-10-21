@@ -12,7 +12,7 @@ RANK = {"pass": 0, "not_run": 1, "review": 2, "fail": 3}
 NEAR_THRESHOLD_MARGIN = 0.05
 _FINDING_KEYS = {
     "name", "status", "observed", "expected", "source_pdf_pages",
-    "evidence", "conflicts", "measured", "threshold", "margin",
+    "evidence", "conflicts", "measured", "threshold", "margin", "data",
 }
 _FINDING_REQUIRED = ("name", "status", "observed", "expected", "source_pdf_pages")
 _STAGE_KEYS = {"id", "check", "gate", "source_pdf_pages", "findings", "status"}
@@ -74,6 +74,15 @@ def _require(data, required, label):
             raise ValueError(f"partial {label} missing {key!r}")
 
 
+def _optional_mapping(data, key):
+    value = data.get(key, {})
+    if value is None:
+        return {}
+    if not isinstance(value, dict):
+        raise ValueError(f"{key} must be a mapping, got {type(value).__name__}")
+    return dict(value)
+
+
 def _optional_number(data, key):
     if key not in data or data[key] is None:
         return None
@@ -113,6 +122,7 @@ class Finding:
     measured: float | None = None
     threshold: float | None = None
     margin: float | None = None
+    data: dict = field(default_factory=dict)  # operands behind a computed limit (e.g. V003 Ground area band)
 
     def __post_init__(self):
         if self.status not in STATUSES:
@@ -134,6 +144,7 @@ class Finding:
             measured=_optional_number(data, "measured"),
             threshold=_optional_number(data, "threshold"),
             margin=_optional_number(data, "margin"),
+            data=_optional_mapping(data, "data"),
         )
 
 
@@ -214,6 +225,9 @@ class ValidationReport:
         for s in self.stages:
             d = asdict(s)
             d["status"] = s.status
+            for finding in d["findings"]:
+                if not finding.get("data"):  # keep the #462 report shape; data appears only when it holds operands
+                    finding.pop("data", None)
             stages.append(d)
         counts = {k: sum(s.status == k for s in self.machine_stages) for k in STATUSES}
         return {"profile": self.profile, "target": self.target, "target_sha256": self.target_sha256,

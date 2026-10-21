@@ -8,6 +8,8 @@ uses the method-C top datum + 6 mm (18 mm above VP; covering stack is at most 12
 from __future__ import annotations
 
 import math
+from collections.abc import Mapping
+from datetime import datetime
 import numpy as np
 import shapely
 from shapely.geometry import LineString, MultiPolygon, Polygon, shape
@@ -122,7 +124,41 @@ def _stairs_solid(outline, cells, heights, sampler):
     return gc.Mesh(np.array(v),f,['Stairs']*len(f),np.full(len(f),-2),np.zeros((len(f),3,2)),4.)
 
 
-def build_details(elements, boundary, sampler, separate_curbs=False):
+APPROVAL_KEYS = ('approved_by', 'approved_at', 'decision_id')
+
+
+class CurbJointApprovalError(ValueError):
+    """``separate_curbs`` opt-in without a complete project approval record (#512)."""
+
+
+def approval_record(separate_curbs, approval):
+    """Validate and copy the approval record for the taller-curb joint policy."""
+    if not separate_curbs:
+        if approval is not None:
+            raise CurbJointApprovalError('approval record given but separate_curbs is not enabled')
+        return None
+    if not isinstance(approval, Mapping):
+        raise CurbJointApprovalError(
+            'separate_curbs=True requires approval={approved_by, approved_at, decision_id}; got '
+            + type(approval).__name__)
+    unknown = sorted(map(str, set(approval) - set(APPROVAL_KEYS)))
+    if unknown:
+        raise CurbJointApprovalError(f'unknown approval keys: {unknown}')
+    record = {}
+    for key in APPROVAL_KEYS:
+        value = approval.get(key)
+        if not isinstance(value, str) or not value.strip():
+            raise CurbJointApprovalError(f'approval record needs a non-empty {key}; got {value!r}')
+        record[key] = value.strip()
+    try:
+        datetime.fromisoformat(record['approved_at'])
+    except ValueError as exc:
+        raise CurbJointApprovalError(
+            f"approved_at must be an ISO 8601 date/time; got {record['approved_at']!r}") from exc
+    return record
+
+
+def build_details(elements, boundary, sampler, separate_curbs=False, approval=None):
     """Return ``(mesh, report, joints)``.
 
     ``report`` holds one disposition per adapter entity (including group INSERTs). With
@@ -136,8 +172,13 @@ def build_details(elements, boundary, sampler, separate_curbs=False):
 
     ``separate_curbs`` is an explicit model-policy opt-in: continue the taller section
     through mixed-section junctions and end the shorter one with a 6 mm joint.
-    The caller must obtain project approval; default/legacy builds never enable it.
+    The opt-in requires ``approval`` = ``{approved_by, approved_at, decision_id}`` (non-empty
+    strings, ``approved_at`` ISO 8601); otherwise :class:`CurbJointApprovalError` is raised.
+    The record is copied onto every ``joints`` entry and every curb row that carries
+    ``joint_trim_m2``, so an approved build is distinguishable from an unapproved one.
+    Default/legacy builds never enable it and must not pass ``approval``.
     """
+    approval = approval_record(separate_curbs, approval)
     if boundary.is_empty or not boundary.is_valid:
         raise ValueError('valid nonempty boundary required')
     meshes=[];report=[]; curbs={};stair_groups={}
@@ -229,6 +270,7 @@ def build_details(elements, boundary, sampler, separate_curbs=False):
                 row['retained_m2'] = retained
                 row['stair_trim_m2'] = stair_trim
                 row['joint_trim_m2'] = joint_trim
+                row.update(approval)
                 if joint_trim > 0:
                     row['joint_gap_m'] = .006
                     row['joint_rule'] = 'taller section continuous'
@@ -243,7 +285,7 @@ def build_details(elements, boundary, sampler, separate_curbs=False):
             if union_trim > 0:
                 joints.append(dict(role=role, scope='role union', union_trim_m2=union_trim,
                                    union_retained_m2=footprint.area, gap_m=.006,
-                                   rule='taller section continuous'))
+                                   rule='taller section continuous', **approval))
             occupied = unary_union([occupied, footprint])
         if not footprint.is_empty:meshes.append(_curb_solid(footprint,sampler,height,slot))
     mesh=combine(meshes)

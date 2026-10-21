@@ -1,5 +1,7 @@
 """Headless Blender export/readback of a UV seam on one shared vertex.
 
+Pattern: n/a | new-case: signed numeric-margin reporting + per-corner UV seam preservation.
+
 The unit square and the loop UVs match the review oracle: faces (0,1,2)/(0,2,3),
 seam corners [(0,0),(1,0),(1,1)] / [(0.9,0.9),(1,1),(0,1)], diffuse 1024.
 Readback must keep that second corner on vertex 0 of face 1, and density must

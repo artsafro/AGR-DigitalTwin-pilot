@@ -19,7 +19,7 @@ def tmp_path():
     finally:
         shutil.rmtree(path, ignore_errors=True)
 
-pytestmark = pytest.mark.dcc
+pytestmark = [pytest.mark.dcc, pytest.mark.max]
 
 ROOT = Path(__file__).resolve().parents[2]
 MAX_BATCH = Path(r"C:/Program Files/Autodesk/3ds Max 2026/3dsmaxbatch.exe")
