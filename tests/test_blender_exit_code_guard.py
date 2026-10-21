@@ -10,9 +10,11 @@ Scope per file type:
   and every executable command *string* passed (positional or ``args``/``cmd``/
   ``command`` keyword) to a subprocess/os execution call
   (``subprocess.run``/``Popen``/``call``/``check_call``/``check_output``,
-  ``os.system``/``popen``, ...) is isolated into shell commands with ``#``
-  comments stripped, so each command that contains ``--background`` must carry
-  the flag; a flag in another command or a comment must not discharge it.
+  ``os.system``/``popen``, ...) is isolated into shell commands (split at
+  ``;``/``&``/``|``/``&&``/``||`` and unquoted newline) with ``#`` comments
+  stripped only to each physical line end, so each command that contains
+  ``--background`` must carry the flag; a flag in another command, another
+  line, or a comment must not discharge it.
   Execution functions and module aliases are resolved from import bindings
   (``import subprocess as sp``, ``from subprocess import run``). AST-only,
   never imports or executes the scanned module. Docstrings, usage strings and
@@ -79,32 +81,49 @@ def _string_constants(node: ast.AST) -> list[str]:
 
 
 def _strip_shell_comment(text: str) -> str:
-    """Drop an unquoted ``#`` comment (to end of text) that starts a word."""
+    """Drop each unquoted ``#`` comment up to the end of its physical line.
+
+    Newlines are preserved, so a ``#`` comment on one line cannot hide a
+    command on the next line; a comment stops only at ``\\r``/``\\n``.
+    """
+    out: list[str] = []
     quote: str | None = None
     i = 0
     n = len(text)
     while i < n:
         ch = text[i]
         if quote:
+            out.append(ch)
             if ch == quote and (i == 0 or text[i - 1] != "\\"):
                 quote = None
             i += 1
             continue
         if ch in ("'", '"'):
             quote = ch
+            out.append(ch)
             i += 1
             continue
         if ch == "\\" and i + 1 < n:
+            out.append(ch)
+            out.append(text[i + 1])
             i += 2
             continue
-        if ch == "#" and (i == 0 or text[i - 1] in " \t"):
-            return text[:i]
+        if ch == "#" and (i == 0 or text[i - 1] in " \t\r\n"):
+            while i < n and text[i] not in "\r\n":
+                i += 1
+            continue
+        out.append(ch)
         i += 1
-    return text
+    return "".join(out)
 
 
 def _split_commands(text: str) -> list[str]:
-    """Split a shell/PowerShell logical line into separate command invocations."""
+    """Split a shell/PowerShell logical line into separate command invocations.
+
+    Boundaries are unquoted ``;``, ``&``, ``&&``, ``|``, ``||`` and newline
+    (``\\n``/``\\r``), so a command on one line cannot borrow a flag from the
+    next line.
+    """
     parts: list[str] = []
     cur: list[str] = []
     quote: str | None = None
@@ -165,6 +184,11 @@ def _split_commands(text: str) -> list[str]:
         if ch == ">" and nxt == "&":
             cur.append(">&")  # fd redirect 2>&1
             i += 2
+            continue
+        if ch in ("\n", "\r"):
+            parts.append("".join(cur).strip())
+            cur = []
+            i += 1
             continue
         cur.append(ch)
         i += 1
@@ -482,6 +506,84 @@ def test_py_os_system_comment_flag_does_not_discharge(tmp_path: Path) -> None:
     violations = scan_file(src)
     assert violations, "a flag in a shell comment must not discharge the command"
     assert violations[0][0] == 2
+
+
+def test_py_subprocess_newline_flag_borrows_is_flagged(tmp_path: Path) -> None:
+    """A flag on the next line must not discharge the first line's command."""
+    src = tmp_path / "run.py"
+    src.write_text(
+        "import subprocess\n"
+        "subprocess.run(\"blender --background --python a.py\\n"
+        "blender --background --python-exit-code 1 --python b.py\", shell=True)\n",
+        encoding="utf-8",
+    )
+    violations = scan_file(src)
+    assert violations, "first Blender invocation (line 1 of shell string) must be flagged"
+    assert violations[0][0] == 2
+
+
+def test_py_subprocess_newline_comment_does_not_hide_next_command(tmp_path: Path) -> None:
+    """A ``#`` comment must stop at the line end, not hide the next command."""
+    src = tmp_path / "run.py"
+    src.write_text(
+        "import subprocess\n"
+        "subprocess.run(\"echo ok # comment\\n"
+        "blender --background --python a.py\", shell=True)\n",
+        encoding="utf-8",
+    )
+    violations = scan_file(src)
+    assert violations, "the Blender command after the comment line must be flagged"
+    assert violations[0][0] == 2
+
+
+def test_py_subprocess_newline_both_commands_with_flag_passes(tmp_path: Path) -> None:
+    src = tmp_path / "run.py"
+    src.write_text(
+        "import subprocess\n"
+        "subprocess.run(\"blender --background --python-exit-code 1 --python a.py\\n"
+        "blender --background --python-exit-code 1 --python b.py\", shell=True)\n",
+        encoding="utf-8",
+    )
+    assert scan_file(src) == []
+
+
+def test_py_subprocess_keyword_newline_flag_borrows_is_flagged(tmp_path: Path) -> None:
+    src = tmp_path / "run.py"
+    src.write_text(
+        "import subprocess\n"
+        "subprocess.run(args=\"blender --background --python a.py\\n"
+        "blender --background --python-exit-code 1 --python b.py\", shell=True)\n",
+        encoding="utf-8",
+    )
+    violations = scan_file(src)
+    assert violations and violations[0][0] == 2
+
+
+def test_py_from_subprocess_import_run_newline_comment_is_flagged(tmp_path: Path) -> None:
+    src = tmp_path / "run.py"
+    src.write_text(
+        "from subprocess import run\n"
+        "run(\"echo ok # comment\\n"
+        "blender --background --python a.py\", shell=True)\n",
+        encoding="utf-8",
+    )
+    violations = scan_file(src)
+    assert violations and violations[0][0] == 2
+
+
+def test_md_python_fence_newline_flag_borrows_is_flagged(tmp_path: Path) -> None:
+    src = tmp_path / "run.md"
+    src.write_text(
+        "```python\n"
+        "import subprocess\n"
+        "subprocess.run(\"blender --background --python a.py\\n"
+        "blender --background --python-exit-code 1 --python b.py\", shell=True)\n"
+        "```\n",
+        encoding="utf-8",
+    )
+    violations = scan_file(src)
+    assert violations, "python-fence shell string with a borrowed newline flag must be flagged"
+    assert violations[0][0] == 3
 
 
 def test_py_subprocess_keyword_args_missing_flag_is_flagged(tmp_path: Path) -> None:
