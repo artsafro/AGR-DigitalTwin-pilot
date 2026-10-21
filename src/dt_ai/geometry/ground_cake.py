@@ -1123,6 +1123,110 @@ def close_base_notch(mesh: Mesh, triangle_xy, *, approval_reference: str) -> Mes
                 mesh.cell, report)
 
 
+def cut_base_void(mesh: Mesh, void: Polygon, depth: float = 1.0) -> Mesh:
+    """Cut an explicitly supplied interior source void and add its perimeter skirt.
+
+    Caller must certify the void against the source outline; this is not authority
+    to invent holes. Original triangle planes, corner UVs, slots and source IDs
+    survive clipping. Only the new void gets a skirt, not existing boundaries.
+    """
+    from dt_ai.geometry.ground_quads import _validate_seed
+    from shapely.geometry import LineString
+    _validate_seed(mesh)
+    if (not isinstance(void, Polygon) or void.is_empty or not void.is_valid
+            or void.interiors or not np.isfinite(shapely.get_coordinates(void)).all()
+            or not math.isfinite(depth) or depth < 1.):
+        raise ValueError('finite simple source void and skirt depth >= 1 m required')
+    base = mesh.level == 0
+    base_region = unary_union(face_polys(mesh, base))
+    if not base_region.contains_properly(void):
+        raise ValueError('source void must lie strictly inside the base')
+    if any(p.intersection(void).area > 0 for p in face_polys(mesh, mesh.level > 0)):
+        raise ValueError('source void intersects a raised covering')
+    vertices = mesh.verts.tolist()
+    lookup = {tuple(np.round(mesh.verts[i, :2], 9)): int(i) for i in np.unique(mesh.faces[base])}
+    faces, slots, levels, uvs, sources, trimmed = [], [], [], [], [], []
+    overlay_cleanup_area = 0.
+    for i, face in enumerate(mesh.faces):
+        pts = mesh.verts[face]
+        poly = Polygon(pts[:, :2]) if base[i] else None
+        if poly is None or poly.intersection(void).area == 0:
+            faces.append(face.tolist()); slots.append(mesh.slot[i]); levels.append(mesh.level[i])
+            uvs.append(mesh.uv[i]); sources.append(i)
+            continue
+        trimmed.append(i)
+        raw_region = poly.difference(void)
+        region = shapely.remove_repeated_points(raw_region, 1e-9)
+        overlay_cleanup_area += raw_region.symmetric_difference(region).area
+        pieces = [xy for p in _polys(region) for xy in _tri_piece(p)]
+        if abs(sum(Polygon(xy).area for xy in pieces) - region.area) > 1e-12:
+            raise ValueError(f'source void clipping lost area of face {i}')
+        for xy in pieces:
+            xy = np.asarray(xy)
+            weights = np.linalg.solve((pts[1:, :2]-pts[0, :2]).T, (xy-pts[0, :2]).T).T
+            xyz = np.column_stack((xy, pts[0, 2]+weights @ (pts[1:, 2]-pts[0, 2])))
+            ids = []
+            for point in xyz:
+                key = tuple(np.round(point[:2], 9))
+                if key not in lookup:
+                    lookup[key] = len(vertices); vertices.append(point.tolist())
+                ids.append(lookup[key])
+            faces.append(ids); slots.append(mesh.slot[i]); levels.append(0)
+            uvs.append(mesh.uv[i, 0]+weights @ (mesh.uv[i, 1:]-mesh.uv[i, 0])); sources.append(i)
+    # Clipping can put a void corner on an untrimmed neighbour's edge.
+    # Node these existing points on BOTH sides before creating the curtain.
+    for vi in range(len(mesh.verts), len(vertices)):
+        point = np.asarray(vertices[vi])
+        for fi in range(len(faces)):
+            face = faces[fi]
+            if levels[fi] != 0 or vi in face:
+                continue
+            for j, (a,b) in enumerate(zip(face,face[1:]+face[:1])):
+                pa, pb = np.asarray(vertices[a]), np.asarray(vertices[b])
+                edge = pb[:2]-pa[:2]
+                t = np.dot(point[:2]-pa[:2], edge)/np.dot(edge,edge)
+                if not 1e-9 < t < 1-1e-9 or np.linalg.norm(pa[:2]+t*edge-point[:2]) > 1e-9:
+                    continue
+                if abs(pa[2]+t*(pb[2]-pa[2])-point[2]) > 1e-8:
+                    raise ValueError('source void point has ambiguous base height')
+                c = face[(j+2)%3]
+                tex = uvs[fi]; ta,tb,tc = tex[j],tex[(j+1)%3],tex[(j+2)%3]
+                uvpoint = ta+t*(tb-ta)
+                faces[fi] = [a,vi,c]; uvs[fi] = np.asarray([ta,uvpoint,tc])
+                faces.append([vi,b,c]); uvs.append(np.asarray([uvpoint,tb,tc]))
+                slots.append(slots[fi]); levels.append(0); sources.append(sources[fi])
+                break
+    edges = {}
+    for face, level in zip(faces, levels):
+        if level == 0:
+            for a, b in zip(face, face[1:]+face[:1]):
+                edges.setdefault(tuple(sorted((a,b))), []).append((a,b))
+    low = {}
+    for uses in edges.values():
+        if len(uses) != 1:
+            continue
+        a, b = uses[0]
+        line = LineString([vertices[a][:2], vertices[b][:2]])
+        if line.difference(void.boundary.buffer(1e-8)).length > 1e-8:
+            continue
+        for v in (a,b):
+            if v not in low:
+                low[v] = len(vertices)
+                vertices.append((np.asarray(vertices[v])-[0,0,depth]).tolist())
+        faces.extend([[b,a,low[a]], [b,low[a],low[b]]])
+        slots.extend(['Skirt']*2); levels.extend([-1]*2); sources.extend([-1]*2)
+        uvs.extend([np.full((3,2),.5)]*2)
+    if not low:
+        raise ValueError('source void produced no perimeter')
+    used = np.unique(faces); remap = np.full(len(vertices),-1); remap[used] = np.arange(len(used))
+    result = Mesh(np.asarray(vertices)[used], remap[np.asarray(faces)], slots, np.asarray(levels),
+                  np.asarray(uvs), mesh.cell, dict(mesh.report))
+    result.report['base_void'] = {'trimmed_source_faces': trimmed, 'source_faces': sources,
+                                  'removed_area_m2': void.area, 'skirt_depth_m': depth,
+                                  'overlay_vertex_merge_m': 1e-9, 'overlay_cleanup_area_m2': overlay_cleanup_area}
+    return result
+
+
 def add_skirt(mesh: Mesh, depth: float = 1.0, slot: str = "Skirt") -> Mesh:
     """Vertical skirt down ``depth`` m along every open (single-face) edge of the base layer."""
     if not math.isfinite(depth) or depth < 1.0:
