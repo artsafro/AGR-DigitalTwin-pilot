@@ -151,7 +151,9 @@ def fit_curb_bottom(mesh: gc.Mesh, support: gc.Mesh, gap_m: float = .006,
             b0 = p[fi, 0]
             bz = b0[2] - ((xy-b0[:2]) @ normals[fi, :2])/normals[fi, 2]
             delta = max(delta, float(np.max(sz + gap_m/sn[si, 2] - bz)))
-        if not pieces or poly.difference(unary_union(pieces)).area > 1e-10:
+        # Union the original shared-edge faces BEFORE clipping. Independently
+        # rounded intersection rings can otherwise invent a micron-wide hole.
+        if not pieces or poly.difference(unary_union([polygons[si] for si in ids])).area > 1e-10:
             raise ValueError(f"curb bottom face {fi}: incomplete surface support")
         if delta >= max_trim_m:
             raise ValueError(f"curb bottom face {fi}: trim {delta:.12g} m reaches {max_trim_m} m limit")
