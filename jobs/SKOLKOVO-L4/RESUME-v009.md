@@ -109,9 +109,14 @@ building review page exists yet. After valid geometry: derive NPM/VPM ->versione
 export/readback/comparison ->board-tool user review ->complete final SINTEZ.
 
 Small v009 receipts and approval/question text use job-local `-text` attributes
-to preserve hash-pinned bytes. Fresh-Git-blob checklist portability evidence is
-recorded separately after committing this state; never infer it from a working
-copy-only walk. No Git LFS objects or large binaries are added to git.
+to preserve hash-pinned bytes. Actual fresh-Git-blob CLI witness on commit
+`eec3ee2ce91922a00efb9baa6994d989d2a01b71`: all evidence verified, zero errors,
+exit1/`passed=false` as expected for the failed/open production gates. Record:
+`evidence-v009/checkout-portability-v009.json`; raw walk, original record and
+driver independently rehashed3/3 on Drive `evidence-v009-portability/`, index
+`evidence-v009/portability-index.json`. Final receipt-only commits do not change
+the tested checklist or any evidence it references. No Git LFS objects or large
+binaries are added to git.
 
 ## Partial L5 timings, not whole-building throughput
 
