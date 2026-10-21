@@ -31,6 +31,12 @@ def local_strips(mesh: QuadMesh, *, max_edge_m: float, face_budget: int = 180000
         raise ValueError('max_edge_m must be finite and positive')
     if isinstance(face_budget, bool) or not isinstance(face_budget, int) or face_budget <= 0:
         raise ValueError('face_budget must be a positive integer')
+    if not np.isfinite(mesh.cell) or mesh.cell <= 0:
+        raise ValueError('cell must be positive and finite')
+    for ids in mesh.source_faces:
+        if (not isinstance(ids, (tuple, list)) or not ids or len(ids) != len(set(ids))
+                or any(isinstance(k, (bool, np.bool_)) or not isinstance(k, (int, np.integer)) or k < 0 for k in ids)):
+            raise ValueError('complete nonempty source-face identities required')
     vertices = mesh.verts.tolist()
     edges = {}
     def edge(a, b, t):
@@ -66,6 +72,10 @@ def local_strips(mesh: QuadMesh, *, max_edge_m: float, face_budget: int = 180000
     faces, uvs, slots, levels, sources = [], [], [], [], []
     for f, uv, owner in patches:
         p = np.asarray([vertices[j] for j in f])
+        def evaluate(corners, u, v):
+            u, v = float(u), float(v)
+            return ((1-u)*corners[0]+(u-v)*corners[1]+v*corners[2] if u >= v
+                    else (1-v)*corners[0]+u*corners[2]+(v-u)*corners[3])
         nu = nv = 1
         if len(f) == 4:
             e = np.linalg.norm(np.roll(p, -1, axis=0)-p, axis=1)
@@ -75,12 +85,31 @@ def local_strips(mesh: QuadMesh, *, max_edge_m: float, face_budget: int = 180000
                 nu = max(nu, ceil(means[0]/(7.5*means[1])))
             else:
                 nv = max(nv, ceil(means[1]/(7.5*means[0])))
+        if len(f) == 4:
+            for _ in range(12):
+                if len(faces)+nu*nv > face_budget:
+                    raise ValueError(f'local strip face budget exceeded at source face {owner}')
+                ratios, sizes = [], []
+                for j in range(nv):
+                    for k in range(nu):
+                        cell = np.array([evaluate(p, u, v) for u, v in
+                                         ((k/nu, j/nv), ((k+1)/nu, j/nv),
+                                          ((k+1)/nu, (j+1)/nv), (k/nu, (j+1)/nv))])
+                        e = np.linalg.norm(np.roll(cell, -1, axis=0)-cell, axis=1)
+                        if e.min() <= 0 or not np.isfinite(e).all():
+                            raise ValueError(f'degenerate strip cell at source face {owner}')
+                        ratios.append((e[0]+e[2])/(e[1]+e[3]))
+                        sizes.append((max(e[0], e[2]), max(e[1], e[3])))
+                max_u, max_v = np.max(sizes, axis=0)
+                lo, hi = min(ratios), max(ratios)
+                if lo >= 1/8 and hi <= 8 and max(max_u, max_v) <= max_edge_m:
+                    break
+                nu = max(nu, ceil(nu*max_u/max_edge_m), ceil(nu*hi/7.5) if hi > 8 else nu)
+                nv = max(nv, ceil(nv*max_v/max_edge_m), ceil(nv/(7.5*lo)) if lo < 1/8 else nv)
+            else:
+                raise ValueError(f'bounded strip sizing did not converge at source face {owner}')
         if len(faces)+nu*nv > face_budget:
             raise ValueError(f'local strip face budget exceeded at source face {owner}')
-        def evaluate(corners, u, v):
-            u, v = float(u), float(v)
-            return ((1-u)*corners[0]+(u-v)*corners[1]+v*corners[2] if u >= v
-                    else (1-v)*corners[0]+u*corners[2]+(v-u)*corners[3])
         def point(u, v):
             if v == 0:
                 return edge(f[0], f[1], u)
