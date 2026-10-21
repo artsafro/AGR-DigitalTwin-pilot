@@ -150,3 +150,11 @@ def test_real_v005_layout_artifact_is_consistent():
     assert site['size'] == 512 and {p['set_id'] for p in site['proof']} == {
         'VAT_MAF_T3510_01', 'VAT_MAF_T3510_26', 'VAT_MAF_T3510_28'}
     assert {c['key'] for c in site['cells']} == {p['key'] for p in site['positions']}
+
+
+def test_json_and_md_on_one_file_or_evidence_on_tiles_fail(tmp_path):
+    ids_json, ev = _ids_run(tmp_path)
+    args = _layout_args(tmp_path, ids_json, ev)
+    assert lay.main(args + ['--out-md', str(tmp_path / 'LAYOUT.json')]) == 2
+    assert lay.main(args + ['--evidence-dir', str(ev)]) == 2
+    assert not (tmp_path / 'layout.json').exists()

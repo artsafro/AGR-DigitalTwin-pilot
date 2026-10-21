@@ -339,3 +339,11 @@ def test_real_v004_artifact_is_consistent():
     for at in r['atlases']:
         assert all(c.get('id') or c.get('reason') for c in at['cells']), at['name']
     assert all(not q['gap'] or q['ids'] == [] for q in r['spec_requirements'])
+
+
+def test_same_image_given_twice_fails(tmp_path, capsys):
+    ex = tmp_path / 'x' / 'T_Atlas.png'  # same name as the library-bound atlas in maps/
+    ex.parent.mkdir()
+    _atlas(ex)
+    assert ids_mod.main(_setup(tmp_path) + _outs(tmp_path) + ['--layout-example', str(ex)]) == 2
+    assert 'given twice' in capsys.readouterr().err and not (tmp_path / 'out.json').exists()
