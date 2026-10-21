@@ -301,3 +301,54 @@ def test_require_keepout_fails_naming_the_cell_and_passes_when_clean(tmp_path, c
     err = capsys.readouterr().err
     assert 'keep-out' in err and 'T_Atlas.png' in err and 'MAF_0001' in err
     assert not (tmp_path / 'b' / 'out.json').exists()
+
+
+# --- review round 2: the keep-out is checked on every cell, not only the centroid cell -----------------
+
+_TWO = [{'x': 0, 'y': 0, 'w': 100, 'h': 100, 'kind': 'flat'}, {'x': 100, 'y': 0, 'w': 100, 'h': 100, 'kind': 'flat'}]
+
+
+def _uv_cells_two(pts, w=200, h=100, cells=None):
+    atlas = {'size': [w, h], 'cells': cells or _TWO}
+    uvd = {'files': [{'fbx': 'MAF_0001_A.fbx', 'materials': {
+        'M': {'images': [{'filepath': 'a.png'}], 'uv_layer': 'UVMap', 'faces': [_px(pts, w, h)]}}}]}
+    return ids_mod.uv_cells(uvd, 'a.png', atlas)
+
+
+def test_face_with_centroid_in_the_next_cell_still_hits_the_corner_of_its_neighbour():
+    # centroid in cell 1 (x ~ 135), the face crosses cell 0's corner [84,84,16,16]
+    r = _uv_cells_two([(90, 90), (190, 90), (190, 99)])['cells']
+    assert r[1]['faces'] == 1 and r[1]['corner_faces'] == 0
+    assert r[0]['faces'] == 0 and r[0]['corner_faces'] == 1 and r[0]['corner_mafs'] == ['MAF_0001']
+
+
+def test_face_with_centroid_outside_every_cell_still_hits_a_corner():
+    cells = [{'x': 0, 'y': 0, 'w': 100, 'h': 100, 'kind': 'flat'}]
+    r = _uv_cells_two([(90, 90), (190, 90), (190, 99)], cells=cells)
+    assert r['uncovered']['faces'] == 1
+    assert r['cells'][0]['corner_faces'] == 1 and r['cells'][0]['faces'] == 0
+
+
+def test_face_spanning_two_cells_clear_of_both_corners_is_clean():
+    r = _uv_cells_two([(50, 10), (150, 10), (150, 50)])['cells']
+    assert all(u['corner_faces'] == 0 for u in r.values())
+
+
+def test_cli_require_keepout_reviewer_cross_cell_witness_fails_and_publishes_nothing(tmp_path, capsys):
+    # reviewer round 2 witness on the 512 px _setup atlas: face pixels [(90,110),(190,110),(190,126)],
+    # centroid outside cell 0, 89.6 px2 overlap of cell 0's ID corner
+    (tmp_path / 'a').mkdir()
+    (tmp_path / 'b').mkdir()
+    clean = _setup(tmp_path / 'a')
+    assert ids_mod.main(clean + _outs(tmp_path / 'a') + ['--require-keepout']) == 0
+    r = json.loads((tmp_path / 'a' / 'out.json').read_text(encoding='utf-8'))
+    W, H = r['atlases'][0]['size']
+    c0 = r['atlases'][0]['cells'][0]
+    corner = ids_mod.id_corner([c0['x'], c0['y'], c0['w'], c0['h']])
+    pts = [(90, 110), (190, 110), (190, 126)]
+    assert ids_mod.clip_area(pts, corner) > 1  # the witness really overlaps the corner
+    bad = _setup(tmp_path / 'b', faces=[_px(pts, W, H)])
+    assert ids_mod.main(bad + _outs(tmp_path / 'b') + ['--require-keepout']) == 1
+    err = capsys.readouterr().err
+    assert 'keep-out' in err and 'cell 0:' in err and 'MAF_0001' in err
+    assert not (tmp_path / 'b' / 'out.json').exists() and not (tmp_path / 'b' / 'out.md').exists()
