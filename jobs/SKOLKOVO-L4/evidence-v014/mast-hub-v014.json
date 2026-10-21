@@ -1,0 +1,383 @@
+{
+ "version": "v014",
+ "passed": false,
+ "scope": "five primary masts only (decision 2026-10-21 22:57 variant 1); KNS K1 and the remaining L4 chain not done",
+ "masts": [
+  {
+   "row": 3628,
+   "recipe": "manifold-union + weld + rod T-junction stitch",
+   "source_tris": 11098,
+   "final_tris": 10998,
+   "final_sha256": "c9f33d130a99e4edc1a8540c700e34ba0d81a5be7b0a98501901a58fe9a73922",
+   "edge_use_hist": [
+    0,
+    0,
+    16497
+   ],
+   "body_j": 22,
+   "body_j_detail": {
+    "duplicate_vertices": 4,
+    "duplicate_edges": 8,
+    "duplicate_polygons": 0,
+    "self_intersections": 10
+   },
+   "body_j_limit": 100,
+   "kernel_applied": true,
+   "kernel_counts": {
+    "open_borders_hidden": 0,
+    "no_see_through_hole": 0,
+    "no_visible_back_faces": 0,
+    "no_close_overlap": 0
+   },
+   "kernel_first_offender": null,
+   "kernel_s": 562.7,
+   "union_nonmanifold_before_weld": 23,
+   "weld": {
+    "dup_vertices": 532,
+    "dup_max_dist_from_hub_m": 0.1174,
+    "max_vertex_move_m": 0.00199,
+    "dropped_degenerate": 720,
+    "dropped_coincident": 0
+   },
+   "rods": {
+    "rods_border_before": 238,
+    "splits": 232,
+    "border_edges_after": 0,
+    "vertices_not_in_source": 0,
+    "filled_3loops": null
+   },
+   "deviation_sampled": {
+    "samples_per_tri": 31,
+    "output_to_source": {
+     "n": 333746,
+     "max_m": 0.000344,
+     "p95_m": 8e-06,
+     "p99_m": 8e-06,
+     "over_2mm": 0
+    },
+    "source_to_output_exterior": {
+     "n": 330261,
+     "max_m": 0.000435,
+     "p95_m": 8e-06,
+     "p99_m": 8e-06,
+     "over_2mm": 0
+    },
+    "source_samples_hidden": 13777,
+    "hidden_rule": "both sides at +-HID inside member solids"
+   },
+   "outside_node_identity": {
+    "R": 0.16,
+    "source_far_tris": 7762,
+    "source_far_missing": 8,
+    "output_far_new": 16,
+    "new_dist_from_hub_max": 0.481,
+    "new_beyond_0p3m": 16
+   }
+  },
+  {
+   "row": 3651,
+   "recipe": "manifold-union + weld + rod T-junction stitch",
+   "source_tris": 11940,
+   "final_tris": 11884,
+   "final_sha256": "2d7e296ebb36698af62043504ba72b5b334faa0d2864564f0c46b831e4d9b53d",
+   "edge_use_hist": [
+    0,
+    0,
+    17826
+   ],
+   "body_j": 31,
+   "body_j_detail": {
+    "duplicate_vertices": 6,
+    "duplicate_edges": 12,
+    "duplicate_polygons": 0,
+    "self_intersections": 13
+   },
+   "body_j_limit": 100,
+   "kernel_applied": true,
+   "kernel_counts": {
+    "open_borders_hidden": 0,
+    "no_see_through_hole": 0,
+    "no_visible_back_faces": 0,
+    "no_close_overlap": 0
+   },
+   "kernel_first_offender": null,
+   "kernel_s": 613.3,
+   "union_nonmanifold_before_weld": 15,
+   "weld": {
+    "dup_vertices": 511,
+    "dup_max_dist_from_hub_m": 0.1174,
+    "max_vertex_move_m": 0.00199,
+    "dropped_degenerate": 678,
+    "dropped_coincident": 0
+   },
+   "rods": {
+    "rods_border_before": 240,
+    "splits": 226,
+    "border_edges_after": 0,
+    "vertices_not_in_source": 0,
+    "filled_3loops": null
+   },
+   "deviation_sampled": {
+    "samples_per_tri": 31,
+    "output_to_source": {
+     "n": 361398,
+     "max_m": 0.000446,
+     "p95_m": 4e-06,
+     "p99_m": 7e-06,
+     "over_2mm": 0
+    },
+    "source_to_output_exterior": {
+     "n": 356125,
+     "max_m": 0.000533,
+     "p95_m": 4e-06,
+     "p99_m": 4e-06,
+     "over_2mm": 0
+    },
+    "source_samples_hidden": 14015,
+    "hidden_rule": "both sides at +-HID inside member solids"
+   },
+   "outside_node_identity": {
+    "R": 0.16,
+    "source_far_tris": 8066,
+    "source_far_missing": 8,
+    "output_far_new": 54,
+    "new_dist_from_hub_max": 3.015,
+    "new_beyond_0p3m": 54
+   }
+  },
+  {
+   "row": 3674,
+   "recipe": "manifold-union + weld + rod T-junction stitch",
+   "source_tris": 11940,
+   "final_tris": 11886,
+   "final_sha256": "a40f18f833980e50f99d77313b95759d9ea567e6a730b5fa45a30772ea36c3b7",
+   "edge_use_hist": [
+    0,
+    0,
+    17829
+   ],
+   "body_j": 31,
+   "body_j_detail": {
+    "duplicate_vertices": 6,
+    "duplicate_edges": 12,
+    "duplicate_polygons": 0,
+    "self_intersections": 13
+   },
+   "body_j_limit": 100,
+   "kernel_applied": true,
+   "kernel_counts": {
+    "open_borders_hidden": 0,
+    "no_see_through_hole": 0,
+    "no_visible_back_faces": 0,
+    "no_close_overlap": 0
+   },
+   "kernel_first_offender": null,
+   "kernel_s": 587.3,
+   "union_nonmanifold_before_weld": 22,
+   "weld": {
+    "dup_vertices": 538,
+    "dup_max_dist_from_hub_m": 0.1174,
+    "max_vertex_move_m": 0.00206,
+    "dropped_degenerate": 724,
+    "dropped_coincident": 0
+   },
+   "rods": {
+    "rods_border_before": 240,
+    "splits": 226,
+    "border_edges_after": 0,
+    "vertices_not_in_source": 0,
+    "filled_3loops": null
+   },
+   "deviation_sampled": {
+    "samples_per_tri": 31,
+    "output_to_source": {
+     "n": 361460,
+     "max_m": 0.00076,
+     "p95_m": 4e-06,
+     "p99_m": 8e-06,
+     "over_2mm": 0
+    },
+    "source_to_output_exterior": {
+     "n": 356275,
+     "max_m": 0.000871,
+     "p95_m": 4e-06,
+     "p99_m": 5e-06,
+     "over_2mm": 0
+    },
+    "source_samples_hidden": 13865,
+    "hidden_rule": "both sides at +-HID inside member solids"
+   },
+   "outside_node_identity": {
+    "R": 0.16,
+    "source_far_tris": 8066,
+    "source_far_missing": 8,
+    "output_far_new": 54,
+    "new_dist_from_hub_max": 3.015,
+    "new_beyond_0p3m": 54
+   }
+  },
+  {
+   "row": 3697,
+   "recipe": "manifold-union + weldcl + rod T-junction stitch",
+   "source_tris": 10114,
+   "final_tris": 10120,
+   "final_sha256": "5a6e3cc73673352389a2812adbadc6ddc1da6a2661d7b260971fbceb1ff836f4",
+   "edge_use_hist": [
+    0,
+    0,
+    15180
+   ],
+   "body_j": 61,
+   "body_j_detail": {
+    "duplicate_vertices": 17,
+    "duplicate_edges": 33,
+    "duplicate_polygons": 1,
+    "self_intersections": 10
+   },
+   "body_j_limit": 100,
+   "kernel_applied": false,
+   "kernel_counts": {
+    "open_borders_hidden": 0,
+    "no_see_through_hole": 0,
+    "no_visible_back_faces": 0,
+    "no_close_overlap": 2
+   },
+   "kernel_first_offender": "contour_rebuild on p broke the invariants and was rolled back: no_close_overlap (2): p#6812 / p#9749: 0.0 mm",
+   "kernel_s": 253.4,
+   "union_nonmanifold_before_weld": 12,
+   "weld": {
+    "dup_vertices": 488,
+    "dup_max_dist_from_hub_m": 0.1577,
+    "max_vertex_move_m": 0.00198,
+    "dropped_degenerate": 602,
+    "dropped_coincident": 0
+   },
+   "rods": {
+    "rods_border_before": 238,
+    "splits": 232,
+    "border_edges_after": 0,
+    "vertices_not_in_source": 0,
+    "filled_3loops": 0
+   },
+   "deviation_sampled": {
+    "samples_per_tri": 31,
+    "output_to_source": {
+     "n": 306528,
+     "max_m": 0.000317,
+     "p95_m": 4e-06,
+     "p99_m": 9e-06,
+     "over_2mm": 0
+    },
+    "source_to_output_exterior": {
+     "n": 300117,
+     "max_m": 0.000383,
+     "p95_m": 4e-06,
+     "p99_m": 9e-06,
+     "over_2mm": 0
+    },
+    "source_samples_hidden": 13417,
+    "hidden_rule": "both sides at +-HID inside member solids"
+   },
+   "outside_node_identity": {
+    "R": 0.16,
+    "source_far_tris": 6778,
+    "source_far_missing": 48,
+    "output_far_new": 263,
+    "new_dist_from_hub_max": 1.228,
+    "new_beyond_0p3m": 32
+   }
+  },
+  {
+   "row": 3719,
+   "recipe": "manifold-union + weldcl + rod T-junction stitch",
+   "source_tris": 10138,
+   "final_tris": 10068,
+   "final_sha256": "b929b157f65fd6ce0ac013412f2dc94383f60e6cbdc9725dec4ae02a068941cb",
+   "edge_use_hist": [
+    0,
+    0,
+    15102
+   ],
+   "body_j": 54,
+   "body_j_detail": {
+    "duplicate_vertices": 15,
+    "duplicate_edges": 28,
+    "duplicate_polygons": 1,
+    "self_intersections": 10
+   },
+   "body_j_limit": 100,
+   "kernel_applied": false,
+   "kernel_counts": {
+    "open_borders_hidden": 0,
+    "no_see_through_hole": 0,
+    "no_visible_back_faces": 0,
+    "no_close_overlap": 2
+   },
+   "kernel_first_offender": "contour_rebuild on p broke the invariants and was rolled back: no_close_overlap (2): p#9687 / p#9834: 0.0 mm",
+   "kernel_s": 253.3,
+   "union_nonmanifold_before_weld": 14,
+   "weld": {
+    "dup_vertices": 506,
+    "dup_max_dist_from_hub_m": 0.1577,
+    "max_vertex_move_m": 0.002,
+    "dropped_degenerate": 632,
+    "dropped_coincident": 3
+   },
+   "rods": {
+    "rods_border_before": 158,
+    "splits": 152,
+    "border_edges_after": 0,
+    "vertices_not_in_source": 0,
+    "filled_3loops": 1
+   },
+   "deviation_sampled": {
+    "samples_per_tri": 31,
+    "output_to_source": {
+     "n": 307365,
+     "max_m": 0.000426,
+     "p95_m": 4e-06,
+     "p99_m": 8e-06,
+     "over_2mm": 0
+    },
+    "source_to_output_exterior": {
+     "n": 300758,
+     "max_m": 0.000613,
+     "p95_m": 4e-06,
+     "p99_m": 1.2e-05,
+     "over_2mm": 0
+    },
+    "source_samples_hidden": 13520,
+    "hidden_rule": "both sides at +-HID inside member solids"
+   },
+   "outside_node_identity": {
+    "R": 0.16,
+    "source_far_tris": 6778,
+    "source_far_missing": 48,
+    "output_far_new": 264,
+    "new_dist_from_hub_max": 1.228,
+    "new_beyond_0p3m": 32
+   }
+  }
+ ],
+ "totals": {
+  "source_tris": 55230,
+  "final_tris": 54956,
+  "kernel_applied": 3
+ },
+ "scripts_sha256": {
+  "defects.py": "247413e4a3c2de6c6f78d4e4507a735f6fce49bf9d17c9636eaad936b697526f",
+  "deviation_blender.py": "a9f04564cd04b1c3bfd878d00a46de479d43cb93fcfcff5d5d92328a41bc37c4",
+  "eval_final.py": "d5d2cafd747b8f25e3fca08cec714c7fd56b0b5871b90bfed6c9c0c84628daff",
+  "hub_union_blender.py": "6087c62736accc98a32b37bbb4afbb515ae8d2a8bb8e7f897399c5bd57f8b2fd",
+  "identity.py": "e4832e595fdb26c89cf107f2ddac688285070e9c015838a2750b399a5b068bc8",
+  "kernel.py": "88633152ce2530aa12951430bd76703a7c51d9a63b517f237e90024d61458b14",
+  "look.py": "74deed6a9ee0d2a06697b9044a08a835a2530c038215c2628a10e5d86fef9613",
+  "look2.py": "8aed155a853d2b640e07dc934712ecfde77b89f5d059cfa5b1dadaa7c433fc7f",
+  "prep.py": "ce9c43e2498efc5649dd98b22e07566a029ec517e0d211c6d2cef539ca964fc2",
+  "probe_tjunction.py": "4a651d5f925716c92efec1f4a7c0a8593c2eff5aacfe2b4c90db5206c8c94cbf",
+  "summary.py": "9dc8f69662baab26dcdeb1d26d1549563e159eba847a8cd62c178bb73800c55c",
+  "tjunction.py": "a9438618a86e579c0f8d9097c45312121784680ed29ff619afbfb4a6e8f92c58",
+  "weld.py": "6772fe89489aa89015f59fa746abd6cb256abd935071a5a4d3cd235fbae7f2db",
+  "weld_cl.py": "4db70376926bf02300572fdc9c0611258be1863a74f64d9f9c1a8b43b0ed4535"
+ }
+}
