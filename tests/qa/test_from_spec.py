@@ -1276,6 +1276,70 @@ def test_the_shell_grid_check_stops_each_failure(hi, drop, flip, why):
     _check_closed_solid(ok, "probe", 0.0)
 
 
+def _two_shells(shift, t1=0.2, t2=0.2, by_input=False):
+    """Two mid screens: SCREEN and SCREEN moved by `shift` (dx, dy); `by_input` drops thickness_m (build input t1)."""
+    first = {**SCREEN, **({} if by_input else {"thickness_m": t1})}
+    second = {**SCREEN, "outline": [[x + shift[0], y + shift[1]] for x, y in SCREEN["outline"]],
+              **({} if by_input else {"thickness_m": t2})}
+    def edit(d):
+        d.update({"spec_version": "0.7", "profile": "mid", "roof_structures": [first, second]})
+        d["roof"] = {**(d.get("roof") or {}), "parapet_thickness_m": 0.3}
+    dump = build(edited(edit), replace(INPUTS, parapet_thickness_m=t1) if by_input else INPUTS)
+    return next(m for m in dump["meshes"] if m["name"] == "roof_structures")
+
+
+CONTACTS = [(4.0, 0.0), (4.0000004, 0.0), (4.0000009, 0.0), (4.0, 4.0), (4.0000004, 3.9999996), (2.0, 0.0),
+            (0.0, 0.0), (1.0, 1.0), (4.0, 1.0)]   # shared wall, wall welded on the grid, corner, overlap, same, T
+
+
+@pytest.mark.parametrize("shift", CONTACTS)
+@pytest.mark.parametrize("by_input", [False, True])
+def test_mid_screen_shells_that_touch_are_a_stop(shift, by_input):
+    """Review PR #500 round 2 (P1): two shells that are each clean but touch, overlap or weld on the 1 um output
+    grid would merge into a non-manifold mesh; a named BuildError naming both structures, never returned geometry
+    (spec thickness and the build-input fallback)."""
+    with pytest.raises(BuildError, match=r"roof structures 0 \(screen\) and 1 \(screen\) touch"):
+        _two_shells(shift, by_input=by_input)
+
+
+@pytest.mark.parametrize("t", [1e-8, 1e-6, 2e-6])
+@pytest.mark.parametrize("shift", [(4.0, 0.0), (4.0000004, 0.0), (5.0, 0.0)])
+def test_the_thickness_floor_still_stops_with_a_second_shell(t, shift):
+    """Combined with round 1: a sub-grid second shell is still the thickness stop, touching or not."""
+    with pytest.raises(BuildError, match="roof structure 1 .*output grid"):
+        _two_shells(shift, t2=t)
+
+
+@pytest.mark.parametrize("shift", [(4.000002, 0.0), (4.00001, 0.0), (5.0, 0.0), (0.0, 4.000002), (4.000002, 4.000002)])
+@pytest.mark.parametrize("by_input", [False, True])
+def test_separated_mid_screen_shells_build_as_two_clean_solids(shift, by_input):
+    """Controls: shells apart by two grid steps or more build; the mesh is closed, clean, twice one shell."""
+    got = _two_shells(shift, by_input=by_input)
+    closed, vol = _shell_facts(got)
+    assert closed and _clean(got) and vol == pytest.approx(2 * (16 * 2.4 - 3.6 ** 2 * 2.2), rel=1e-9)
+
+
+def test_two_screen_shell_contact_probe():
+    """Probe (seed 501): random gaps -1e-5..1e-5 m between two shells along x and y: at or under SHELL_MIN_M a
+    named BuildError, over it a clean closed mesh of both volumes; never a non-manifold mesh returned."""
+    from dt_ai.geometry.from_spec import SHELL_MIN_M
+    rng = np.random.default_rng(501)
+    n = 0
+    for _ in range(40):
+        gap = float(rng.uniform(-1e-5, 1e-5))
+        axis = int(rng.integers(2))
+        shift = (4.0 + gap, 0.0) if axis == 0 else (0.0, 4.0 + gap)
+        if gap <= SHELL_MIN_M:
+            with pytest.raises(BuildError, match="touch"):
+                _two_shells(shift)
+        else:
+            got = _two_shells(shift)
+            closed, vol = _shell_facts(got)
+            assert closed and _clean(got), gap
+        n += 1
+    assert n == 40
+
+
 def test_screen_shell_grid_probe_random_thickness_and_offsets():
     """Probe (seed 500): log-uniform thickness 1e-9..1e-3 m and sub-grid / far offsets: every build is a named
     BuildError at or under SHELL_MIN_M, and over it a clean closed solid of the expected volume; never a
