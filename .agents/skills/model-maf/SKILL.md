@@ -94,16 +94,7 @@ The light version goes back through Step 4.
 - Needs: headless, no tool yet; human for the silhouette look.
 - Done when: a table MAF -> tris full / light -> instances -> total against the MAF share, and the NPM total under the budget.
 
-### Step 6 — Shared 512 atlas
-
-One texture set for all GroundEl at 512 (MAF-09), RGB only ([D020]). Assign the material IDs from the approved library-wide list [D168] and their VPM textures first, then build the NPM atlas: solid colours get 64 or 128 squares, patterned textures get larger
-slots; then map the UVs of each MAF into its slot. Embedding in the Ground FBX comes later (MAF-13).
-
-- Route: `tools/materials/atlas_maf.py` (material list -> PNG + UV JSON); UV remap in 3ds Max batch or Blender headless.
-- Needs: headless for packing; no tool yet for the UV remap; human for the visual check.
-- Done when: one 512 RGB atlas, the UV JSON, and every face of every MAF inside its material's slot.
-
-### Step 7 — Hard edges by angle
+### Step 6 — Hard edges by angle
 
 Hard edges by angle 30-45 degrees (smoothing, MAF-20). Round parts with N segments meet at 360/N degrees: they shade
 smooth only when 360/N is below the threshold (at 45 degrees N >= 9, at 30 degrees N >= 13). A light version with
@@ -112,6 +103,15 @@ fewer segments shows facets: pick the threshold inside the band and show the use
 - Route: 3ds Max batch (Smooth modifier, auto smooth threshold) or Blender headless (`shade_smooth_by_angle`).
 - Needs: headless; human for the look of light round parts.
 - Done when: the threshold is recorded per MAF, and no smoothing group crosses an edge sharper than it.
+
+### Step 7 — Shared 512 atlas
+
+One texture set for all GroundEl at 512 (MAF-09), RGB only ([D020]). After the smoothing of Step 6, assign the material IDs from the approved library-wide list [D168] and their VPM textures first, then build the NPM atlas: solid colours get 64 or 128 squares, patterned textures get larger
+slots; then map the UVs of each MAF into its slot. Embedding in the Ground FBX comes later (MAF-13).
+
+- Route: `tools/materials/atlas_maf.py` (material list -> PNG + UV JSON); UV remap in 3ds Max batch or Blender headless.
+- Needs: headless for packing; no tool yet for the UV remap; human for the visual check.
+- Done when: one 512 RGB atlas, the UV JSON, and every face of every MAF inside its material's slot.
 
 ### Step 8 — Placement from SPOZU with sinking
 
