@@ -1,0 +1,114 @@
+{
+  "passed": false,
+  "gates": [
+    {
+      "gate": "inputs",
+      "status": "pass",
+      "evidence_exists": [
+        {
+          "path": "jobs/SKOLKOVO-L4/inventory.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Full pinned inventory snapshot of104 external copied inputs. Rehashed104/104 in input-integrity-v008.json; raw sources stay external/read-only. This is inventory identity, not geometry approval.",
+      "ready": true
+    },
+    {
+      "gate": "parts",
+      "status": "pass",
+      "evidence_exists": [
+        {
+          "path": "tmp/skolkovo-l4-v011/parts-confirmed-v011.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/GATE1-APPROVAL-v011.md",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v010/primary-source-profile-recipe-v010.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Artem2026-10-21 16:58 explicitly confirmed canonical SHA fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a. Separate execution copy changes only status/gate1/question0 answer, verified5/5 +9 negatives. All49parts/291joints/budgets/embedded recipe unchanged. Not geometry approval.",
+      "ready": true
+    },
+    {
+      "gate": "operations",
+      "status": "fail",
+      "evidence_exists": [
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v011/component-kernel-rollback-v011.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v009/source-before-invariants.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "v011 source-profile proximity passes but topology and actual isolated kernel fail; applied=false/rollback original. Three repairs refused. No whole49part operation receipt; read-only live Revit reference access pending, not Gate1.",
+      "ready": false
+    },
+    {
+      "gate": "budgets",
+      "status": "fail",
+      "evidence_exists": [
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v011/kns-profile-summary-v011.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v011/primary-profile-summary-v011.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "No accepted master. Five weld candidates55183 fit55230 but fail quality. Best v011 KNS shortlist62/108 gives candidate-or-unchanged65524 vs10000. Whole master147000 allocation is NOT measured geometry.",
+      "ready": false
+    },
+    {
+      "gate": "export_readback",
+      "status": "missing",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "No generated model or export.",
+      "ready": false
+    },
+    {
+      "gate": "report",
+      "status": "review",
+      "evidence_exists": [
+        {
+          "path": "jobs/SKOLKOVO-L4/REPORT-v011.md",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Measured failed/intermediate v011 report, timings, whole-surface bounds/p95 and rollback. No final delivery or model review.",
+      "ready": false
+    },
+    {
+      "gate": "visual",
+      "status": "missing",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "Source diagnostic sheet is not output visual approval; board-tool/user gate still required.",
+      "ready": false
+    },
+    {
+      "gate": "checker",
+      "status": "missing",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "Complete final SINTEZ only after output visual approval.",
+      "ready": false
+    }
+  ],
+  "errors": [],
+  "job_id": "SKOLKOVO-L4",
+  "run_id": "issue-353-profile-execution-v011",
+  "synthetic": false
+}

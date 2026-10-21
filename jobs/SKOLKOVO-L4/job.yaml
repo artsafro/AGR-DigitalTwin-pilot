@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "job_id": "SKOLKOVO-L4",
-  "run_id": "issue-353-profile-proposal-v010",
+  "run_id": "issue-353-profile-execution-v011",
   "synthetic": false,
   "path": "deviation",
   "inputs": [
@@ -31,7 +31,14 @@
       "what_failed": "Original exact-source cleanup plus three repairs were rejected in v009; the source-profile approximation changes the approved contour recipe.",
       "what_was_tried": "Artem authorized bidirectional exterior surface deviation<=0.002m at2026-10-21 15:19. Prepared a fresh hash-bound draft with original49parts/291joints/budgets preserved; no changed recipe executed.",
       "new_tool_written": "tmp/l4_profile_plan_probe_v010.py: job-only proposal-data regression; no production geometry tool or new library.",
-      "result": "Draft SHA256 fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a awaits its own Gate1. Tolerance permission is settled; no geometry max/p95/quality pass claimed."
+      "result": "Historical v010 draft awaited its own Gate1; Artem granted it at2026-10-21 16:58. Canonical draft bytes remain unchanged; v011 execution copy changes only approval metadata."
+    },
+    {
+      "gate": "operations",
+      "what_failed": "v011 authorized source-profile weld certifies <=0.002m both directions on all5 primaries, but BODY-J1222-1234 remains >100 and isolated kernel rolls back. Three distinct repairs refused: native self-union275878tri>55230; broad planar domains fail topology/Z and native preprocessing stalls before conform; horizontal cap domains refuse2 unresolved24-vertex circuits. KNS best measured component shortlist62/108,65524 vs10000; no achieved master.",
+      "what_was_tried": "Original source buffers only, source weld/retessellation, explicit planar source-domain union, guarded cap-only union, two-way whole-surface convex-cell certificates plus area p95, actual row3628 rollback and KNS edge-collapse/true-plane contours. All failures retained. Documented Revit wrapper ping exit2/10061; independent TCP10061, no Revit.exe/no offline IFC. Need user-opened live reference document under card's ask-before-Revit policy; no app/config/source mutation.",
+      "new_tool_written": "Job-only tmp/l4_*_v011.py adapters/probes in Drive archive; no new library/shared module or modified kernel/checker.",
+      "result": "Approval settled; production remains failed/incomplete. Read-only live Revit topology/family reference requested, not a new tolerance or replacement authority. No final export/readback, board-user visual or SINTEZ."
     }
   ],
   "gates": {
@@ -46,12 +53,16 @@
       ]
     },
     "parts": {
-      "status": "review",
-      "note": "New primary source-profile recipe<=0.002m is permitted in principle; exact-hash revised draft Gate1 is pending. Earlier approval applies to historical canonical f1867120, not this new recipe. All49parts/291joints/budgets preserved.",
+      "status": "pass",
+      "note": "Artem2026-10-21 16:58 explicitly confirmed canonical SHA fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a. Separate execution copy changes only status/gate1/question0 answer, verified5/5 +9 negatives. All49parts/291joints/budgets/embedded recipe unchanged. Not geometry approval.",
       "evidence": [
         {
-          "path": "tmp/skolkovo-l4-v010/parts-gate1-proposal-v010.json",
-          "sha256": "fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a"
+          "path": "tmp/skolkovo-l4-v011/parts-confirmed-v011.json",
+          "sha256": "78c0331b2d8ff994f5f7d155c56ef977a0e53acb004e951be19c07111e4d8931"
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/GATE1-APPROVAL-v011.md",
+          "sha256": "d833d0820f39931d111d29c6c5e649df5095f80853529ac85cd85752ca60e28f"
         },
         {
           "path": "jobs/SKOLKOVO-L4/evidence-v010/primary-source-profile-recipe-v010.json",
@@ -61,11 +72,11 @@
     },
     "operations": {
       "status": "fail",
-      "note": "Historical v009 component candidates failed/rolled back, not whole49part completion. Tolerance permission now granted; revised recipe is not executed pending its own Gate1. No fresh operations receipt.",
+      "note": "v011 source-profile proximity passes but topology and actual isolated kernel fail; applied=false/rollback original. Three repairs refused. No whole49part operation receipt; read-only live Revit reference access pending, not Gate1.",
       "evidence": [
         {
-          "path": "jobs/SKOLKOVO-L4/evidence-v009/primary-cleanup-03-audit.json",
-          "sha256": "2e577150d9978ae0390c464530ca50e47a3fe9ae2c46a0c6dcc50c0e2c37036f"
+          "path": "jobs/SKOLKOVO-L4/evidence-v011/component-kernel-rollback-v011.json",
+          "sha256": "ed7b88065b39b8d7c41ebc6f9cf2f664d79eb94dd71b70d68709f69f9a9b184d"
         },
         {
           "path": "jobs/SKOLKOVO-L4/evidence-v009/source-before-invariants.json",
@@ -75,15 +86,15 @@
     },
     "budgets": {
       "status": "fail",
-      "note": "No accepted master. Five arrangement candidates47234 fit55230 allocation but fail quality; KNS candidate-or-unchanged60826 exceeds10000. Whole master147000 allocation is NOT measured geometry.",
+      "note": "No accepted master. Five weld candidates55183 fit55230 but fail quality. Best v011 KNS shortlist62/108 gives candidate-or-unchanged65524 vs10000. Whole master147000 allocation is NOT measured geometry.",
       "evidence": [
         {
-          "path": "jobs/SKOLKOVO-L4/evidence-v009/kns-source-loft-summary-v009.json",
-          "sha256": "5b16b267c1ff45e7f776d066cb2a979d6d0f7719edbd98e5e6695896a2e048b4"
+          "path": "jobs/SKOLKOVO-L4/evidence-v011/kns-profile-summary-v011.json",
+          "sha256": "27fdbbfbc76d6dc24a8c20b008586ca1d56c4ca00e83a95d4696ab38a8403ad3"
         },
         {
-          "path": "jobs/SKOLKOVO-L4/evidence-v009/primary-arrangement-all-topology.json",
-          "sha256": "85aa5d2288c3766b9deb51b8a932a4dd86a454df7e6a41908fa8ac3572d0f4b1"
+          "path": "jobs/SKOLKOVO-L4/evidence-v011/primary-profile-summary-v011.json",
+          "sha256": "e4cb2467ac189403c4d903e5c306a91fb08dd5009b9284d1dc09e0479b453c4a"
         }
       ]
     },
@@ -94,11 +105,11 @@
     },
     "report": {
       "status": "review",
-      "note": "Revised hash-bound proposal and actual data-regression evidence only. No final delivery or model review.",
+      "note": "Measured failed/intermediate v011 report, timings, whole-surface bounds/p95 and rollback. No final delivery or model review.",
       "evidence": [
         {
-          "path": "jobs/SKOLKOVO-L4/GATE1-PROPOSAL-v010.md",
-          "sha256": "e0760811ad773cd36907023965fd792b1437f8c58fe8cb2e27524ccd85415898"
+          "path": "jobs/SKOLKOVO-L4/REPORT-v011.md",
+          "sha256": "b601157ea927980e429be6da27757bcc9eb8491822374397fc9dfc6ebe11b54a"
         }
       ]
     },

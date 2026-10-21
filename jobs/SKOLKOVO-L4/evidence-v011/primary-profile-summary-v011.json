@@ -1,0 +1,329 @@
+{
+  "passed": false,
+  "scope": "Certified surface proximity does not repair BODY-J or complete an operation; all original faces conservatively exterior",
+  "objects": [
+    {
+      "source_row": 3628,
+      "name": "Молниеприёмник_10,4_м Нержавеющая сталь_10,4м [6631253]",
+      "source_sha256": "47ed66b387c8c014636e009bb6fa200b8b3c98ab3038c5a647fc2aea0355f6dc",
+      "candidate_sha256": "dfc742098a9c4f14e04556ee169f9a4d6eca74383722a1a763816ff24a51643e",
+      "triangles_before": 11098,
+      "triangles_after": 11086,
+      "defects_before": 1302,
+      "defects_after": 1234,
+      "topology_limit": 100,
+      "z_extrema_unchanged": true,
+      "directed_measurements": {
+        "source_exterior_to_output": {
+          "certificate": {
+            "certified": true,
+            "upper_bound_m": 0.0019963742287356753,
+            "limit_m": 0.002,
+            "coverage": 1.0,
+            "accepted_cells": 12601,
+            "visited_cells": 14104,
+            "unresolved_cells": 0,
+            "max_depth": 8,
+            "arithmetic_slack_m": 5.852499485015869e-10,
+            "witness": null,
+            "witness_distance_m": null
+          },
+          "area_sample": {
+            "sample_count": 65536,
+            "seed": 35310,
+            "distribution": "area_weighted_triangle_surface",
+            "p95_m": 5.092657033856085e-07,
+            "max_sample_m": 0.0007040518685244024,
+            "role": "diagnostic_only_not_whole_surface_certificate"
+          }
+        },
+        "output_to_source_exterior": {
+          "certificate": {
+            "certified": true,
+            "upper_bound_m": 0.001994074871503489,
+            "limit_m": 0.002,
+            "coverage": 1.0,
+            "accepted_cells": 12276,
+            "visited_cells": 13466,
+            "unresolved_cells": 0,
+            "max_depth": 7,
+            "arithmetic_slack_m": 5.852499485015869e-10,
+            "witness": null,
+            "witness_distance_m": null
+          },
+          "area_sample": {
+            "sample_count": 65536,
+            "seed": 35310,
+            "distribution": "area_weighted_triangle_surface",
+            "p95_m": 5.075152671452088e-07,
+            "max_sample_m": 0.0007137603824958205,
+            "role": "diagnostic_only_not_whole_surface_certificate"
+          }
+        }
+      },
+      "profile_certified": true,
+      "accepted_geometry": false,
+      "certificate_seconds": 26.257739299995592,
+      "topology_seconds": 47.79299370000081
+    },
+    {
+      "source_row": 3651,
+      "name": "Молниеприёмник_12,45_м Нержавеющая сталь_12,45м [6640426]",
+      "source_sha256": "7cd6aa148a66e0a96c25f44050ab3a3e0b0e55be34afe002748e80e44e7c9191",
+      "candidate_sha256": "c82de8a3847760d27a38029876b14f2275ae0d39ee076b40c142aa26dd0b9e54",
+      "triangles_before": 11940,
+      "triangles_after": 11926,
+      "defects_before": 1307,
+      "defects_after": 1233,
+      "topology_limit": 100,
+      "z_extrema_unchanged": true,
+      "directed_measurements": {
+        "source_exterior_to_output": {
+          "certificate": {
+            "certified": true,
+            "upper_bound_m": 0.001995962360433556,
+            "limit_m": 0.002,
+            "coverage": 1.0,
+            "accepted_cells": 13428,
+            "visited_cells": 14916,
+            "unresolved_cells": 0,
+            "max_depth": 7,
+            "arithmetic_slack_m": 6.877500534057617e-10,
+            "witness": null,
+            "witness_distance_m": null
+          },
+          "area_sample": {
+            "sample_count": 65536,
+            "seed": 35310,
+            "distribution": "area_weighted_triangle_surface",
+            "p95_m": 5.057621592641226e-07,
+            "max_sample_m": 0.0007359873852692544,
+            "role": "diagnostic_only_not_whole_surface_certificate"
+          }
+        },
+        "output_to_source_exterior": {
+          "certificate": {
+            "certified": true,
+            "upper_bound_m": 0.0019937895790900404,
+            "limit_m": 0.002,
+            "coverage": 1.0,
+            "accepted_cells": 13244,
+            "visited_cells": 14562,
+            "unresolved_cells": 0,
+            "max_depth": 10,
+            "arithmetic_slack_m": 6.877500534057617e-10,
+            "witness": null,
+            "witness_distance_m": null
+          },
+          "area_sample": {
+            "sample_count": 65536,
+            "seed": 35310,
+            "distribution": "area_weighted_triangle_surface",
+            "p95_m": 5.075152671452088e-07,
+            "max_sample_m": 0.0006917311111465096,
+            "role": "diagnostic_only_not_whole_surface_certificate"
+          }
+        }
+      },
+      "profile_certified": true,
+      "accepted_geometry": false,
+      "certificate_seconds": 30.029967799993756,
+      "topology_seconds": 41.398060200001055
+    },
+    {
+      "source_row": 3674,
+      "name": "Молниеприёмник_12,45_м Нержавеющая сталь_12,45м [6640949]",
+      "source_sha256": "802c0ac3246e274a8934169f26f7ac7ac6184c0a1fd14e9826bd582b378ade07",
+      "candidate_sha256": "b42633f7f823b3275484f9055fc8b2ac699c6e3e0b4cd843a2fb0a0d737c2e5e",
+      "triangles_before": 11940,
+      "triangles_after": 11936,
+      "defects_before": 1307,
+      "defects_after": 1233,
+      "topology_limit": 100,
+      "z_extrema_unchanged": true,
+      "directed_measurements": {
+        "source_exterior_to_output": {
+          "certificate": {
+            "certified": true,
+            "upper_bound_m": 0.0019935277654660345,
+            "limit_m": 0.002,
+            "coverage": 1.0,
+            "accepted_cells": 13259,
+            "visited_cells": 14578,
+            "unresolved_cells": 0,
+            "max_depth": 7,
+            "arithmetic_slack_m": 6.877500534057617e-10,
+            "witness": null,
+            "witness_distance_m": null
+          },
+          "area_sample": {
+            "sample_count": 65536,
+            "seed": 35310,
+            "distribution": "area_weighted_triangle_surface",
+            "p95_m": 5.085528300696751e-07,
+            "max_sample_m": 0.0007359883165918291,
+            "role": "diagnostic_only_not_whole_surface_certificate"
+          }
+        },
+        "output_to_source_exterior": {
+          "certificate": {
+            "certified": true,
+            "upper_bound_m": 0.0019878267642558585,
+            "limit_m": 0.002,
+            "coverage": 1.0,
+            "accepted_cells": 13201,
+            "visited_cells": 14466,
+            "unresolved_cells": 0,
+            "max_depth": 7,
+            "arithmetic_slack_m": 6.877500534057617e-10,
+            "witness": null,
+            "witness_distance_m": null
+          },
+          "area_sample": {
+            "sample_count": 65536,
+            "seed": 35310,
+            "distribution": "area_weighted_triangle_surface",
+            "p95_m": 5.045071986842231e-07,
+            "max_sample_m": 0.000658737204503268,
+            "role": "diagnostic_only_not_whole_surface_certificate"
+          }
+        }
+      },
+      "profile_certified": true,
+      "accepted_geometry": false,
+      "certificate_seconds": 28.319598099995346,
+      "topology_seconds": 38.00357259999873
+    },
+    {
+      "source_row": 3697,
+      "name": "Молниеприёмник_10,4_м_вариант_2 Нержавеющая сталь_10,4м [6641475]",
+      "source_sha256": "4176151fdca424a8a4501ee81709e5fa4123f496e31d0e76ffb24c33b61b8f38",
+      "candidate_sha256": "a9c5ba293aa9767af9cccaaa151e788b01f8197380af080322daff4951c35516",
+      "triangles_before": 10114,
+      "triangles_after": 10099,
+      "defects_before": 1296,
+      "defects_after": 1222,
+      "topology_limit": 100,
+      "z_extrema_unchanged": true,
+      "directed_measurements": {
+        "source_exterior_to_output": {
+          "certificate": {
+            "certified": true,
+            "upper_bound_m": 0.0019973149235869058,
+            "limit_m": 0.002,
+            "coverage": 1.0,
+            "accepted_cells": 11715,
+            "visited_cells": 13316,
+            "unresolved_cells": 0,
+            "max_depth": 9,
+            "arithmetic_slack_m": 5.852499961853028e-10,
+            "witness": null,
+            "witness_distance_m": null
+          },
+          "area_sample": {
+            "sample_count": 65536,
+            "seed": 35310,
+            "distribution": "area_weighted_triangle_surface",
+            "p95_m": 5.057621592641226e-07,
+            "max_sample_m": 0.0005080869304947555,
+            "role": "diagnostic_only_not_whole_surface_certificate"
+          }
+        },
+        "output_to_source_exterior": {
+          "certificate": {
+            "certified": true,
+            "upper_bound_m": 0.001992703582845066,
+            "limit_m": 0.002,
+            "coverage": 1.0,
+            "accepted_cells": 11678,
+            "visited_cells": 13257,
+            "unresolved_cells": 0,
+            "max_depth": 8,
+            "arithmetic_slack_m": 5.852499961853028e-10,
+            "witness": null,
+            "witness_distance_m": null
+          },
+          "area_sample": {
+            "sample_count": 65536,
+            "seed": 35310,
+            "distribution": "area_weighted_triangle_surface",
+            "p95_m": 5.057621592641226e-07,
+            "max_sample_m": 0.0005136659601703286,
+            "role": "diagnostic_only_not_whole_surface_certificate"
+          }
+        }
+      },
+      "profile_certified": true,
+      "accepted_geometry": false,
+      "certificate_seconds": 24.050539000003482,
+      "topology_seconds": 33.96373249999306
+    },
+    {
+      "source_row": 3719,
+      "name": "Молниеприёмник_10_м Нержавеющая сталь_10м [6677027]",
+      "source_sha256": "eb602dc3d85135c01ac8f530e92b65b16385d63e52a4000633fcda210a222110",
+      "candidate_sha256": "5bc6d3a0b901b454807e4de2f740c0610b2650ff362eee2d6dc77db0ccb6ce04",
+      "triangles_before": 10138,
+      "triangles_after": 10136,
+      "defects_before": 1292,
+      "defects_after": 1225,
+      "topology_limit": 100,
+      "z_extrema_unchanged": true,
+      "directed_measurements": {
+        "source_exterior_to_output": {
+          "certificate": {
+            "certified": true,
+            "upper_bound_m": 0.0019973196054749844,
+            "limit_m": 0.002,
+            "coverage": 1.0,
+            "accepted_cells": 11719,
+            "visited_cells": 13300,
+            "unresolved_cells": 0,
+            "max_depth": 8,
+            "arithmetic_slack_m": 5.652499675750733e-10,
+            "witness": null,
+            "witness_distance_m": null
+          },
+          "area_sample": {
+            "sample_count": 65536,
+            "seed": 35310,
+            "distribution": "area_weighted_triangle_surface",
+            "p95_m": 5.092929882266617e-07,
+            "max_sample_m": 0.0005118330591358244,
+            "role": "diagnostic_only_not_whole_surface_certificate"
+          }
+        },
+        "output_to_source_exterior": {
+          "certificate": {
+            "certified": true,
+            "upper_bound_m": 0.0019859600670832944,
+            "limit_m": 0.002,
+            "coverage": 1.0,
+            "accepted_cells": 11465,
+            "visited_cells": 12794,
+            "unresolved_cells": 0,
+            "max_depth": 8,
+            "arithmetic_slack_m": 5.652499675750733e-10,
+            "witness": null,
+            "witness_distance_m": null
+          },
+          "area_sample": {
+            "sample_count": 65536,
+            "seed": 35310,
+            "distribution": "area_weighted_triangle_surface",
+            "p95_m": 5.078681937220608e-07,
+            "max_sample_m": 0.00048680821782909334,
+            "role": "diagnostic_only_not_whole_surface_certificate"
+          }
+        }
+      },
+      "profile_certified": true,
+      "accepted_geometry": false,
+      "certificate_seconds": 24.682651399998576,
+      "topology_seconds": 39.65846020000026
+    }
+  ],
+  "triangles_before": 55230,
+  "triangles_after": 55183,
+  "allocation": 55230
+}

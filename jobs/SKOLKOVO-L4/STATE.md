@@ -5,7 +5,36 @@ Input copies: `C:/x/l4-skolkovo/`; originals are read-only and were not opened f
 Profiles: both NPM and VPM from one <=150,000-triangle master (D010).
 Base: pilot `48e2a55`; #348 and #351 are closed. No building output is approved.
 
-## Current status — v010
+## Current status — v011
+
+Artem granted revised exact-hash Gate1 at2026-10-21 16:58 on
+`fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a`.
+Read [GATE1-APPROVAL-v011.md](GATE1-APPROVAL-v011.md),
+[REPORT-v011.md](REPORT-v011.md) and [RESUME-v011.md](RESUME-v011.md).
+The canonical49parts/291joints/147000 allocation remain unchanged. No repeat
+Gate1/tolerance question. Separate approval-only confirmed copy is SHA-pinned.
+
+Actual original-source weld candidates pass bidirectional whole-surface<=2mm
+certificates and retain exact heights, but BODY-J1222-1234>100 on all5 primaries;
+isolated row3628 kernel rolls back. Initial attempt plus3 distinct repairs
+failed; final cap-domain seam check refuses2 unresolved24-vertex circuits.
+KNS best component shortlist62/108 remains65524 vs10000; not an accepted master.
+
+Next external need: permission/access to read-only live Revit reference of native
+family/solid topology, as conditionally specified by the card. Wrapper ping exit2,
+WinError10061; independent TCP10061; no Revit.exe and no offline IFC input.
+No Revit was started/document opened/config changed. FBX placement/heights and
+geometry authority stay fixed; RVT reference is not generic replacement approval.
+
+776 affected tests passed/207.32s; approval5/5 +9/9 rejects; synthetic certificate
+8/8 +150/150 generated exact controls +8/8 invalid rejects.104/104inputs and
+113/113buffers unchanged. Current walk zero errors, inputs/parts pass,
+operations/budgets fail; export/visual/checker missing. `passed=false`, no PR.
+Full suite remains deferred to complete first-review head via suite_slot.py.
+
+Transcript: Hermes session local-1ec1333a6816497d539322d2dc648c1e2065addd680f0b90aec42b4187903595 (task t_b205c8e1, run1150).
+
+## Historical status — v010
 
 Artem authorized the <=0.002m bidirectional primary-mast source-profile bound at
 2026-10-21 15:19; no repeat tolerance decision is needed. Revised exact-hash

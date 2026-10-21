@@ -1,0 +1,48 @@
+{
+  "passed": false,
+  "scope": "Failed attempts retained, never accepted as master",
+  "initial": {
+    "route": "source profile weld/retessellation",
+    "triangles": 55183,
+    "all_five_body_j_fail": true
+  },
+  "repairs": [
+    {
+      "attempt": 1,
+      "route": "weld + native exact self-union",
+      "error": "triangle allocation exceeded",
+      "candidate_triangles": 275878,
+      "allocation": 55230
+    },
+    {
+      "attempt": 2,
+      "route": "all-plane source surface-domain union + conform + exact self-union",
+      "error": "raw domain candidate BODY-J2632, z extrema changed; first native run refused height representative; corrected representative attempt stalled before conform (180s foreground timeout, later owned process terminated), no accepted output",
+      "raw_topology_receipt_sha256": "bc87841e091d8423d6bf005a6e013efcecf465f8fc9b294050f4a7cbb557019f"
+    },
+    {
+      "attempt": 3,
+      "route": "horizontal source-cap domain union, unchanged sidewalls + seam conform before native union",
+      "error": "Unresolved source boundary circuits: 2; sizes [24, 24]",
+      "native_exit": 1,
+      "log_sha256": "bf60506f2f15a101e41d2f5c401f695b6a7be3d2fb34cfd129c3b0a932ef6d58"
+    }
+  ],
+  "kns_routes": [
+    {
+      "route": "v009 varying support loft",
+      "candidate_or_unchanged_triangles": 60826,
+      "scope": "historical failed allocation, not achieved geometry"
+    },
+    {
+      "route": "v011 source-edge collapse with conforming quads",
+      "eligible": 15,
+      "candidate_or_unchanged_triangles": 85236
+    },
+    {
+      "route": "v011 all-axis true-plane source-support profiles",
+      "eligible": 50,
+      "candidate_or_unchanged_triangles": 69988
+    }
+  ]
+}

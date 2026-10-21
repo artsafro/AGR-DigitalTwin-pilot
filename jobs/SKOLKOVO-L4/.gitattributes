@@ -11,3 +11,6 @@ PRIMARY-PROFILE-TOLERANCE-QUESTION-v009.md -text whitespace=cr-at-eol
 # Revised profile proposal: exact-hash design/evidence, never Git LFS.
 evidence-v010/*.json -text
 GATE1-PROPOSAL-v010.md -text
+evidence-v011/*.json -text
+GATE1-APPROVAL-v011.md -text
+REPORT-v011.md -text

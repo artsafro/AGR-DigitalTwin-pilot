@@ -1,0 +1,32 @@
+{
+  "passed": false,
+  "scope": "Read-only access observation, no Revit document identified or opened",
+  "wrapper_ping_observed": {
+    "command": "python C:/Users/artsafro/hermes_kanban/scripts/revit_exec.py --ping",
+    "exit_code": 2,
+    "status": "unreachable",
+    "base": "http://127.0.0.1:7891",
+    "error": "WinError 10061 connection refused",
+    "provenance": "Actual terminal tool output in this v011 session; raw ping stdout was not saved"
+  },
+  "configured_port": 7891,
+  "configured_version": "2025",
+  "independent_tcp_connect_ex": 10061,
+  "revit_process_query": {
+    "exit_code": 0,
+    "stdout": "",
+    "processes": []
+  },
+  "rvt_reference_inputs": [
+    {
+      "path": "C:\\x\\l4-skolkovo\\01_source\\02_pravki_2026-09-15\\rvt\\СК_ИЦ_ЦОД02_П_АР.rvt",
+      "sha256": "fe2b10be6eeab365aaba904d595aefb4b7b0609b5bc4245d2c7f66f32f155dc7"
+    },
+    {
+      "path": "C:\\x\\l4-skolkovo\\01_source\\02_pravki_2026-09-15\\rvt\\СК_ИЦ_ЦОД02_П_АР_Ф.rvt",
+      "sha256": "652b5bedabf4453510e9f7ae2cd5582874a3ba12d829d8cd39b1067ee03067ab"
+    }
+  ],
+  "offline_ifc_inputs": 0,
+  "self_repair": "Verified documented wrapper endpoint/version and independently tested TCP/process presence. No Revit process and no offline IFC; live-only task policy forbids starting/opening a document on behalf of the user. No config/addin/token changes."
+}

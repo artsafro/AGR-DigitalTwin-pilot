@@ -1,0 +1,162 @@
+{
+  "passed": false,
+  "scope": "Isolated row3628 component rollback, not whole-building acceptance",
+  "source_sha256": "47ed66b387c8c014636e009bb6fa200b8b3c98ab3038c5a647fc2aea0355f6dc",
+  "candidate_sha256": "dfc742098a9c4f14e04556ee169f9a4d6eca74383722a1a763816ff24a51643e",
+  "before_receipt_path": "jobs/SKOLKOVO-L4/evidence-v009/source-before-invariants.json",
+  "before_receipt_sha256": "e4f196be3e6198f8b8947572fede4324722e8e23e7719961bdc3e7288bd1694d",
+  "before_reused_only_after_hash_match": {
+    "passed": false,
+    "scope": "Before-state raw source diagnostics, not a master or output acceptance",
+    "source_sha256": "47ed66b387c8c014636e009bb6fa200b8b3c98ab3038c5a647fc2aea0355f6dc",
+    "source_row": 3628,
+    "kernel": {
+      "passed": false,
+      "results": [
+        {
+          "name": "open_borders_hidden",
+          "passed": false,
+          "count": 262,
+          "offenders": [
+            "p: edge [-7.877, 64.4237, 12.8564] -> [-7.8135, 64.4237, 12.9163]",
+            "p: edge [-7.877, 64.4237, 12.8564] -> [-7.75, 64.4237, 12.9762]",
+            "p: edge [-7.8135, 64.4237, 12.9163] -> [-7.75, 64.4237, 12.9762]",
+            "p: edge [-7.7581, 64.1366, 12.8564] -> [-7.7132, 64.1815, 12.9163]",
+            "p: edge [-7.7581, 64.1366, 12.8564] -> [-7.6683, 64.2264, 12.9762]"
+          ],
+          "gating": true
+        },
+        {
+          "name": "no_see_through_hole",
+          "passed": true,
+          "count": 0,
+          "offenders": [],
+          "gating": true
+        },
+        {
+          "name": "no_visible_back_faces",
+          "passed": true,
+          "count": 0,
+          "offenders": [],
+          "gating": true
+        },
+        {
+          "name": "no_close_overlap",
+          "passed": false,
+          "count": 5331,
+          "offenders": [
+            "p#3778 / p#4693: 0.0 mm",
+            "p#3778 / p#5611: 0.0 mm",
+            "p#3778 / p#5618: 0.0 mm",
+            "p#3778 / p#5619: 0.0 mm",
+            "p#3778 / p#5629: 0.0 mm"
+          ],
+          "gating": true
+        }
+      ]
+    },
+    "quad": {
+      "name": "quad_dominance",
+      "passed": false,
+      "count": 187,
+      "offenders": [
+        "p#2298: mergeable",
+        "p#2300: mergeable",
+        "p#2301: mergeable",
+        "p#2302: mergeable",
+        "p#2306: mergeable"
+      ],
+      "gating": true
+    },
+    "texel": {
+      "name": "texel_ready",
+      "passed": false,
+      "count": 10389,
+      "offenders": [
+        "p#0: aspect 15.3 > 8",
+        "p#2: aspect 15.2 > 8",
+        "p#3: aspect 8.9 > 8",
+        "p#5: aspect 15.1 > 8",
+        "p#6: aspect 11.3 > 8"
+      ],
+      "gating": true
+    },
+    "seconds": 442.4925970999975
+  },
+  "applied": false,
+  "rollback_scene_identity": true,
+  "rollback_source_identity": true,
+  "kernel": {
+    "passed": false,
+    "results": [
+      {
+        "name": "open_borders_hidden",
+        "passed": false,
+        "count": 250,
+        "offenders": [
+          "p: edge [-7.877, 64.4237, 12.8564] -> [-7.8135, 64.4237, 12.9163]",
+          "p: edge [-7.877, 64.4237, 12.8564] -> [-7.75, 64.4237, 12.9762]",
+          "p: edge [-7.8135, 64.4237, 12.9163] -> [-7.75, 64.4237, 12.9762]",
+          "p: edge [-7.7581, 64.1366, 12.8564] -> [-7.7132, 64.1815, 12.9163]",
+          "p: edge [-7.7581, 64.1366, 12.8564] -> [-7.6683, 64.2264, 12.9762]"
+        ],
+        "gating": true
+      },
+      {
+        "name": "no_see_through_hole",
+        "passed": true,
+        "count": 0,
+        "offenders": [],
+        "gating": true
+      },
+      {
+        "name": "no_visible_back_faces",
+        "passed": true,
+        "count": 0,
+        "offenders": [],
+        "gating": true
+      },
+      {
+        "name": "no_close_overlap",
+        "passed": false,
+        "count": 5448,
+        "offenders": [
+          "p#100 / p#5550: 0.0 mm",
+          "p#100 / p#6447: 0.0 mm",
+          "p#100 / p#6452: 0.0 mm",
+          "p#100 / p#7358: 0.0 mm",
+          "p#100 / p#7365: 0.0 mm"
+        ],
+        "gating": true
+      }
+    ]
+  },
+  "question": "contour_rebuild on p broke the invariants and was rolled back: open_borders_hidden (250): p: edge [-7.877, 64.4237, 12.8564] -> [-7.8135, 64.4237, 12.9163]; no_close_overlap (5448): p#100 / p#5550: 0.0 mm",
+  "quad_after": {
+    "name": "quad_dominance",
+    "passed": false,
+    "count": 383,
+    "offenders": [
+      "p#48: mergeable",
+      "p#54: mergeable",
+      "p#69: mergeable",
+      "p#101: mergeable",
+      "p#123: mergeable"
+    ],
+    "gating": true
+  },
+  "texel_after": {
+    "name": "texel_ready",
+    "passed": false,
+    "count": 10338,
+    "offenders": [
+      "p#0: aspect 15.3 > 8",
+      "p#2: aspect 15.2 > 8",
+      "p#3: aspect 8.9 > 8",
+      "p#5: aspect 15.1 > 8",
+      "p#6: aspect 11.3 > 8"
+    ],
+    "gating": true
+  },
+  "seconds": 128.2587341000035
+}

@@ -1,0 +1,41 @@
+{
+  "passed": false,
+  "scope": "Tests/probes only, not building acceptance",
+  "pytest": {
+    "command": "env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q -p no:cacheprovider tests/contracts/test_parts_list.py tests/contracts/test_parts_import_order.py tests/test_task_to_model.py tests/ops tests/qa/test_topology.py --basetemp=C:/x/t_b205c8e1/pt-v011b",
+    "passed": 776,
+    "seconds": 207.32,
+    "log_sha256": "107f6d4ca8fa21b00c62a17e5314df986ed632e9f221beb5272a52656ecc5241",
+    "exit_code": 0
+  },
+  "approval": {
+    "positive": 5,
+    "negative_rejected": 9,
+    "red_log_sha256": "2047dc2f640cb583402d9697174e7a9f584816bbb430f26b11782aef1d4366f7",
+    "green_log_sha256": "4d23f026d7c977ce7f8660a88d0aab275e6206bddc8e57b26e7fc311df5ed9b9"
+  },
+  "certificate": {
+    "synthetic": true,
+    "initial_probes": 8,
+    "generated_controls": 150,
+    "generated_negative_rejections": 8,
+    "generated_report_sha256": "e10258c2189f50ebce07dab25e63c06818a7c1068e40b29058943ef19d5ec9ed"
+  },
+  "private_tracers": {
+    "source_profile_final": 6,
+    "planar_domains": 4,
+    "cap_domains": 4,
+    "kns_reduction": 4,
+    "triangle_quads": 4,
+    "support_profile": 4
+  },
+  "full_suite": "not run: incomplete production; once on first complete review head via suite_slot.py",
+  "ci": "not run (billing lock)",
+  "errors_retained": [
+    "Source-only census reused historical output path; FileExistsError, no overwrite; existing source evidence preserved.",
+    "Planar-domain native run rejected height endpoint representative; protected representative repair then RED weld displacement0.0033165m; keep original extremal target fixed it; final synthetic6/6 pass. Earlier synthetic height controls were baseline-green, not RED; retained as such.",
+    "First focused selection named nonexistent tests/procedure: exit4/no tests; corrected to tests/test_task_to_model.py and new basetemp/log.",
+    "Foreground native run hit180s timeout; no owned native child remained. Longer background attempt subsequently explicitly stopped; unrelated live Blender4.4 was not touched.",
+    "taskkill succeeded but its localized stdout hit UTF8 decode error; independent CIM showed owned native process gone."
+  ]
+}

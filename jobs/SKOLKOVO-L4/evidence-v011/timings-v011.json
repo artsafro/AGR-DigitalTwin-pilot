@@ -1,0 +1,60 @@
+{
+  "passed": false,
+  "scope": "Observed failed/intermediate stages only; overlapping stages are NOT summed into L5 throughput",
+  "stages": [
+    {
+      "stage": "primary source profile native candidate generation",
+      "seconds": 0.6148662000050535,
+      "hours": 0.00017079616666807043
+    },
+    {
+      "stage": "primary native union rejected",
+      "seconds": 40.126779300000635,
+      "hours": 0.01114632758333351
+    },
+    {
+      "stage": "primary topology polygon+export-triangle diagnostics",
+      "seconds": 200.81681919999392,
+      "hours": 0.055782449777776084
+    },
+    {
+      "stage": "primary bidirectional certificates + p95",
+      "seconds": 133.34049559998675,
+      "hours": 0.03703902655555188
+    },
+    {
+      "stage": "isolated row3628 actual kernel rollback + quad/texel",
+      "seconds": 128.2587341000035,
+      "hours": 0.03562742613888986
+    },
+    {
+      "stage": "108 KNS edge-collapse native generation",
+      "seconds": 8.501305099962337,
+      "hours": 0.002361473638878427
+    },
+    {
+      "stage": "108 KNS edge-collapse independent audits",
+      "seconds": 691.4818021999963,
+      "hours": 0.19207827838888786
+    },
+    {
+      "stage": "108 KNS true-plane profiles+independent audits",
+      "seconds": 80.6582242000004,
+      "hours": 0.02240506227777789
+    },
+    {
+      "stage": "affected pytest",
+      "seconds": 207.32,
+      "hours": 0.057588888888888884
+    }
+  ],
+  "completed_build_hours": null,
+  "remaining_not_measured": [
+    "accepted whole49-part kernel",
+    "accepted master",
+    "exports/readback",
+    "final report vs delivered",
+    "board-user visual approval",
+    "complete final SINTEZ"
+  ]
+}

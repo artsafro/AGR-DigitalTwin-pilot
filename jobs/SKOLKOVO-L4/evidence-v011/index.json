@@ -1,0 +1,30 @@
+{
+  "passed": false,
+  "scope": "Frozen failed/intermediate evidence only, not a completed model",
+  "drive": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v011",
+  "published": [
+    {
+      "name": "profile-execution-evidence-v011.zip",
+      "bytes": 17012034,
+      "sha256": "7a7f2cb0d815409ac0b662e14de47b539cff6502052a0e77050200a39e87ce1d"
+    },
+    {
+      "name": "parts-confirmed-v011.json",
+      "bytes": 1525233,
+      "sha256": "78c0331b2d8ff994f5f7d155c56ef977a0e53acb004e951be19c07111e4d8931"
+    },
+    {
+      "name": "RESTORE-v011.md",
+      "bytes": 2951,
+      "sha256": "6ff7b920428b7aad86b056c852dad3b8de2369e9a5de207c5d6037ce81a3082c"
+    }
+  ],
+  "archive_member_hashes_checked": 1205,
+  "archive_crc_pass": true,
+  "drive_independent_rehashes": 3,
+  "sha256sums_sha256": "153cf9ad6a23441fb4ebcc9102e2ab1df4d576dc6022d6f5bedf97b5beb25c0d",
+  "readback_errors": [],
+  "input_inventory_entries_after_publication": 104,
+  "mast_source_buffers_after_publication": 113,
+  "warning": "Surface certificate and component shortlist are not topology/kernel/master acceptance. No final FBX/review/SINTEZ/PR."
+}
