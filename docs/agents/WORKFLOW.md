@@ -433,6 +433,14 @@ Wall-clock / CPU-time budgets are opt-in: marked `perf` and excluded from the de
 Run the lane through the suite-slot limiter — `uv run pytest -m perf -p no:cacheprovider` (via
 `scripts/suite_slot.py`) — it is not part of a card's full-suite receipt.
 
+## Real 3ds Max lane (#518)
+
+A test that launches real 3ds Max (`max_adapter.default_adapter()` without a mocked `_call`, or any
+`dcc_batch.py` call) is marked `max` and excluded from the default `addopts` in `pyproject.toml`
+(the single place of the default lane expression). Run it on purpose, through the suite-slot limiter:
+`uv run pytest -m max -p no:cacheprovider`. It takes the shared cross-card Max lock and may report
+`busy`. `tests/test_max_marker_contract.py` fails any unmarked real-Max test.
+
 ## Git
 
 - Start independent work from fresh `main` in a new worktree; continue a task in its own

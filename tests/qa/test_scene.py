@@ -70,6 +70,8 @@ def test_v008_uv_contract_excludes_collision_only(uv, expected):
     found = scene_findings(rb(mesh(name="SM_Test_Ground", uv=uv),
                               mesh(name="UCX_SM_Test_Ground_001", uv=0)), "vpm", "ground", PROFILES.vpm)
     assert statuses(found, "V008")["one UV channel"] == expected
+    assert statuses(found, "V008")["texel density"] == "not_run"
+    assert statuses(found, "V008")["texel density upper"] == "not_run"
     assert statuses(found, "V010")["UCX present"] == "pass"
     assert statuses(found, "V010")["UCX triangle budget"] == "pass"
 
@@ -78,7 +80,12 @@ def test_clean_vpm_mesh_passes_scene_stages():
     found = scene_findings(rb(mesh()), "vpm", "oks", PROFILES.vpm)
     assert set(statuses(found, "V003").values()) == {"pass"}
     assert statuses(found, "V004") == {"applied transforms": "pass", "topology defects": "pass", "co-directional clearance": "not_run"}
-    assert set(statuses(found, "V008").values()) == {"pass"}
+    assert statuses(found, "V008") == {
+        "one UV channel": "pass",
+        "mirrored islands": "pass",
+        "texel density": "not_run",
+        "texel density upper": "not_run",
+    }
 
 
 @pytest.mark.parametrize("tris, status", [(150_000, "pass"), (150_001, "review"), (1_000_000, "review"),
@@ -557,7 +564,13 @@ def test_blender_roundtrip_through_validator(tmp_path, variant):
         assert st["V002"].findings[0].status == "pass"  # Blender writes binary FBX 7400
         assert st["V002"].status == "pass"
         assert {st[k].status for k in ("V003", "V004")} == {"pass"}
-        assert st["V008"].status == "pass"
+        v008 = {item.name: item.status for item in st["V008"].findings}
+        assert v008["one UV channel"] == "pass"
+        assert v008["mirrored islands"] == "pass"
+        # The cube FBX has no diffuse size, so density stays not_run and the stage cannot pass.
+        assert v008["texel density"] == "not_run"
+        assert v008["texel density upper"] == "not_run"
+        assert st["V008"].status == "not_run"
     else:
         assert st["V003"].status == "fail" and st["V008"].status == "fail"
         assert st["V002"].status == "fail"
@@ -1040,3 +1053,238 @@ def test_blender_ucx_hull_roundtrip(tmp_path, variant):
     assert other and all("hull" not in m for m in other)
     st = statuses(scene_findings(report, "vpm", "oks", PROFILES.vpm), "V010")
     assert st["UCX intersections"] == ("fail" if variant == "overlap" else "pass")
+
+
+# --- #510: VPM Ground triangle limit from the site-area table (reg p.28-29 §3.10, [D010]) -------------------
+
+def _ground_tri_finding(tris, kind="vpm", area=None, profile=None):
+    found = scene_findings(rb(mesh(name="SM_Test_Ground", tris=tris), mesh(name="UCX_SM_Test_Ground_001", tris=4)),
+                           kind, "ground", profile or (PROFILES.vpm if kind == "vpm" else PROFILES.npm),
+                           ground_area_m2=area)
+    return next(f for f in found["V003"] if f.name == "triangle count")
+
+
+def _ground_bands():
+    return PROFILES.vpm["geometry"]["ground_triangles_max_by_area_ha"]
+
+
+@pytest.mark.parametrize("tris, status", [(1_650_000, "pass"), (1_650_001, "fail")])
+def test_vpm_ground_triangles_by_site_area_boundary(tris, status):
+    f = _ground_tri_finding(tris, area=3431.50)
+    assert f.status == status
+    assert f.data["area_m2"] == 3431.50 and f.data["area_ha"] == pytest.approx(0.34315)
+    assert f.data["band"] == {"area_max": 0.5, "triangles_max": 1_650_000}
+    assert "1650000" in f.expected
+
+
+@pytest.mark.parametrize("area_m2, limit", [(500, 300_000), (500.0001, 705_000), (15_000, 3_150_000),
+                                            (15_001, 4_500_000), (0.01, 300_000), (10**7, 4_500_000)])
+def test_vpm_ground_limit_examples(area_m2, limit):
+    from twinqa.scene import ground_triangle_limit
+    assert ground_triangle_limit(PROFILES.vpm, area_m2)[0] == limit
+
+
+@pytest.mark.parametrize("index", range(8))
+def test_vpm_ground_limit_every_band_from_standard(index):
+    """Every band edge comes from VPM_STANDARD.yaml: the upper edge is inclusive, just above the
+    previous edge already belongs to this band; at the limit passes, limit + 1 fails."""
+    from twinqa.scene import ground_triangle_limit
+    bands = _ground_bands()
+    assert len(bands) == 8
+    band = bands[index]
+    probes = [band["area_max"] * 10_000] if "area_max" in band else [band["area_above"] * 10_000 + 1]
+    if index:
+        probes.append(bands[index - 1]["area_max"] * 10_000 + 0.01)
+    for area in probes:
+        limit, chosen = ground_triangle_limit(PROFILES.vpm, area)
+        assert (limit, chosen) == (band["triangles_max"], band)
+        assert _ground_tri_finding(limit, area=area).status == "pass"
+        assert _ground_tri_finding(limit + 1, area=area).status == "fail"
+
+
+def test_vpm_ground_limit_follows_the_standard_not_code():
+    import copy
+    from twinqa.scene import ground_triangle_limit
+    profile = copy.deepcopy(PROFILES.vpm)
+    profile["geometry"]["ground_triangles_max_by_area_ha"][3]["triangles_max"] = 1_234_567
+    assert ground_triangle_limit(profile, 3431.5)[0] == 1_234_567
+    assert _ground_tri_finding(1_234_568, area=3431.5, profile=profile).status == "fail"
+
+
+@pytest.mark.parametrize("tris", [12, 10_000_000])
+def test_vpm_ground_without_area_stays_review_naming_operand(tris):
+    f = _ground_tri_finding(tris)
+    assert f.status == "review"
+    assert "ground_area_m2" in f.observed and "missing" in f.observed
+    assert f.data == {"area_m2": None, "area_ha": None, "band": None,
+                      "basis": PROFILES.vpm["geometry"]["ground_area_basis"]}
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), float("-inf"), -1, 0, -0.0, True, "3431.5", [3431.5]])
+def test_vpm_ground_area_invalid_is_an_error_never_pass(bad):
+    from twinqa.scene import ground_triangle_limit
+    with pytest.raises(ValueError, match="ground_area_m2"):
+        ground_triangle_limit(PROFILES.vpm, bad)
+    with pytest.raises(ValueError, match="ground_area_m2"):
+        _ground_tri_finding(12, area=bad)
+
+
+def _edge_cases():
+    """(area_m2, expected band index) at nextafter below / exact / nextafter above every YAML edge."""
+    from decimal import Decimal
+    bands = _ground_bands()
+    cases = []
+    for i, band in enumerate(bands[:-1]):
+        edge = float(Decimal(repr(band["area_max"])) * 10_000)  # exact decimal m2 edge (0.05 ha -> 500.0)
+        cases += [(math.nextafter(edge, 0), i, "below"), (edge, i, "exact"), (math.nextafter(edge, math.inf), i + 1, "above")]
+    return cases
+
+
+@pytest.mark.parametrize("area, index, side", _edge_cases(),
+                         ids=[f"{c[0]!r}-{c[2]}" for c in _edge_cases()])
+def test_vpm_ground_band_edge_nextafter(area, index, side):
+    """Review #516 P1: an area one ulp above an edge belongs to the next band (500.00000000000006 m2 ->
+    705 000); a rounded ha quotient must not drop it into the lower band and fail a valid count."""
+    from twinqa.scene import ground_triangle_limit
+    band = _ground_bands()[index]
+    assert ground_triangle_limit(PROFILES.vpm, area) == (band["triangles_max"], band)
+    assert _ground_tri_finding(band["triangles_max"], area=area).status == "pass"
+    assert _ground_tri_finding(band["triangles_max"] + 1, area=area).status == "fail"
+
+
+@pytest.mark.parametrize("area, tris", [(500.00000000000006, 705_000), (1000.0000000000001, 1_125_000)])
+def test_vpm_ground_review_witnesses_pass(area, tris):
+    f = _ground_tri_finding(tris, area=area)
+    assert (f.status, f.data["band"]["triangles_max"]) == ("pass", tris)
+    assert (f.measured, f.threshold) == (tris, tris)
+
+
+def test_vpm_ground_finding_data_survives_report_round_trip():
+    """Finding.data (area operands) and measured/threshold/margin (#462) both serialise and load back."""
+    from dataclasses import asdict
+    from twinqa.report import Finding
+    f = _ground_tri_finding(1_650_001, area=3431.5)
+    back = Finding.from_dict(json.loads(json.dumps(asdict(f))))
+    assert back == f and back.data["band"]["triangles_max"] == 1_650_000 and back.margin < 0
+    with pytest.raises(ValueError, match="data"):
+        Finding.from_dict({**asdict(f), "data": [1]})
+
+
+def test_report_json_carries_data_only_when_present():
+    """Full-suite witness after merging #462: findings without operands keep the old key set; the
+    Ground finding carries `data` and loads back through ValidationReport.from_dict."""
+    from twinqa.report import Stage, ValidationReport
+    ground = _ground_tri_finding(1_650_001, area=3431.5)
+    plain = _ground_tri_finding(12, kind="npm")
+    report = ValidationReport("vpm", "x.fbx", "a" * 64, "b" * 64, True,
+                              [Stage("V003", "geometry", "blocking", [28], [ground, plain])])
+    found = report.to_dict()["stages"][0]["findings"]
+    assert found[0]["data"]["band"]["triangles_max"] == 1_650_000 and "data" not in found[1]
+    back = ValidationReport.from_dict(json.loads(json.dumps(report.to_dict())))
+    assert back.stages[0].findings == [ground, plain]
+
+
+@pytest.mark.parametrize("table", [
+    None, [],
+    [{"area_max": 0.1, "triangles_max": 1}, {"area_max": 0.05, "triangles_max": 2}],
+    [{"area_max": 0.05, "triangles_max": 1}, {"area_above": 0.1, "triangles_max": 2}],
+    [{"area_max": 0.05}],
+    [{"area_max": 0.05, "triangles_max": 1}],
+    [{"area_above": 0.05, "triangles_max": 1}, {"area_max": 0.1, "triangles_max": 2}],
+    [{"area_max": float("nan"), "triangles_max": 1}, {"area_above": float("nan"), "triangles_max": 2}],
+])
+def test_vpm_ground_malformed_table_is_an_error_naming_the_key(table):
+    import copy
+    from twinqa.scene import ground_triangle_limit
+    profile = copy.deepcopy(PROFILES.vpm)
+    if table is None:
+        del profile["geometry"]["ground_triangles_max_by_area_ha"]
+    else:
+        profile["geometry"]["ground_triangles_max_by_area_ha"] = table
+    with pytest.raises(ValueError, match="ground_triangles_max_by_area_ha"):
+        ground_triangle_limit(profile, 3431.5)
+
+
+def test_vpm_ground_limit_brute_force_matches_decimal_reference():
+    """Probe: 5 000 seeded areas (plus every edge +-1e-6 m2) against an independent Decimal reference;
+    the limit never decreases with area."""
+    from decimal import Decimal
+    from twinqa.scene import ground_triangle_limit
+    bands = _ground_bands()
+
+    def reference(area_m2):
+        ha = Decimal(repr(area_m2)) / 10_000
+        for b in bands:
+            if "area_max" in b and ha <= Decimal(repr(b["area_max"])):
+                return b["triangles_max"]
+        return bands[-1]["triangles_max"]
+
+    rng = random.Random(510)
+    areas = [rng.uniform(0.001, 30_000) for _ in range(5_000)]
+    for b in bands:
+        edge = b.get("area_max", b.get("area_above")) * 10_000
+        areas += [edge - 1e-6, edge, edge + 1e-6]
+    previous = 0
+    for area in sorted(areas):
+        limit = ground_triangle_limit(PROFILES.vpm, area)[0]
+        assert limit == reference(area), area
+        assert limit >= previous
+        previous = limit
+
+
+@pytest.mark.parametrize("tris, status", [(180_000, "pass"), (180_001, "fail")])
+@pytest.mark.parametrize("area", [None, 3431.5])
+def test_npm_ground_total_unchanged_by_area(tris, status, area):
+    f = _ground_tri_finding(tris, kind="npm", area=area)
+    assert f.status == status and f.data == {}
+
+
+@pytest.mark.parametrize("tris, status", [(150_000, "pass"), (150_001, "review"), (1_000_001, "fail")])
+def test_vpm_oks_limits_unchanged_by_area(tris, status):
+    found = scene_findings(rb(mesh(tris=tris)), "vpm", "oks", PROFILES.vpm, ground_area_m2=3431.5)
+    assert next(f for f in found["V003"] if f.name == "triangle count").status == status
+
+
+def _ground_cli(monkeypatch, tmp_path, tris, *extra):
+    fbx = tmp_path / "SM_Test_Ground.fbx"
+    fbx.write_bytes(b"Kaydara FBX Binary  \x00")
+    monkeypatch.setattr(vp, "readback", lambda path, blender=None, timeout=600: rb(
+        mesh(name="SM_Test_Ground", tris=tris), mesh(name="UCX_SM_Test_Ground_001", tris=4)))
+    return vp.main([str(fbx), "--profile", "vpm", "--scene", "--json", *extra])
+
+
+def _cli_triangle_finding(capsys):
+    data = json.loads(capsys.readouterr().out)
+    v003 = next(s for s in data["stages"] if s["id"] == "V003")
+    return next(f for f in v003["findings"] if f["name"] == "triangle count")
+
+
+@pytest.mark.parametrize("tris, status", [(1_650_000, "pass"), (1_650_001, "fail")])
+def test_validate_package_cli_passes_ground_area(monkeypatch, tmp_path, capsys, tris, status):
+    _ground_cli(monkeypatch, tmp_path, tris, "--ground-area-m2", "3431.50")
+    f = _cli_triangle_finding(capsys)
+    assert f["status"] == status
+    assert f["data"]["area_m2"] == 3431.5 and f["data"]["band"]["triangles_max"] == 1_650_000
+
+
+def test_validate_package_cli_without_area_is_review(monkeypatch, tmp_path, capsys):
+    _ground_cli(monkeypatch, tmp_path, 10_000_000)
+    f = _cli_triangle_finding(capsys)
+    assert f["status"] == "review" and "ground_area_m2" in f["observed"]
+
+
+@pytest.mark.parametrize("bad", ["nan", "inf", "-5", "0", "abc", ""])
+def test_validate_package_cli_rejects_bad_area(monkeypatch, tmp_path, capsys, bad):
+    with pytest.raises(SystemExit) as exc:
+        _ground_cli(monkeypatch, tmp_path, 12, "--ground-area-m2", bad)
+    assert exc.value.code == 2
+    assert "--ground-area-m2" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("profile, scene", [("npm", True), ("vpm", False)])
+def test_validate_package_unused_ground_area_is_noted(monkeypatch, tmp_path, profile, scene):
+    fbx = tmp_path / "SM_Test_Ground.fbx"
+    fbx.write_bytes(b"Kaydara FBX Binary  \x00")
+    monkeypatch.setattr(vp, "readback", lambda path, blender=None, timeout=600: rb(mesh(name="SM_Test_Ground", tris=12)))
+    report = vp.validate(fbx, profile, PROFILES, scene=scene, ground_area_m2=3431.5)
+    assert any("ground_area_m2 3431.5 unused" in n for n in report.notes)
