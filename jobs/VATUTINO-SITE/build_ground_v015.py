@@ -269,7 +269,10 @@ def main(argv=None):
     out=a.out.resolve()
     if out.exists():raise ValueError('new output directory required; refusing alias or stale receipts')
     resolved=[p.resolve() for p in paths]
-    if len(set(resolved))!=len(resolved) or out in resolved:raise ValueError('input/output path alias')
+    if (len(set(resolved))!=len(resolved) or out in resolved
+            or any(p.exists() and q.exists() and p.samefile(q)
+                   for i,p in enumerate(resolved) for q in resolved[:i])):
+        raise ValueError('input/output path alias')
     payload={p:p.read_bytes() for p in paths};hashes={str(p):hashlib.sha256(v).hexdigest() for p,v in payload.items()}
     data=load_json(payload[a.adapter_json]);raw=load_json(payload[a.source_master]);approval=load_json(payload[paths[3]])
     policy=load_json(payload[paths[4]]);void=load_json(payload[paths[5]]);materials=load_json(payload[paths[6]])['slots']
