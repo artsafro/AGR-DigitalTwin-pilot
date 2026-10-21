@@ -1,8 +1,8 @@
-# vyatskaya-tow02 NPM candidate `0213_Vyatskaya_Vl_47_49_05.fbx` (user hand finish) — 2026-10-21
+# vyatskaya-tow02 NPM candidate `0213_Vyatskaya_Vl_47_49_05.fbx` (Artem's hand finish) — 2026-10-21
 
 Profile **NPM-OKS** (`validate-delivery`, V001-V017 of `docs/domain/validation.md`, LP 2026 rows of
 `docs/domain/requirements-2026.md`, project decisions). Validator: delivery-validator agent, branch
-`job/vyatskaya-tow02-review` (PR #525), 2026-10-21. Read-only on the user's files (hashes identical before and
+`job/vyatskaya-tow02-review` (PR #525), 2026-10-21. Read-only on Artem's files (hashes identical before and
 after); background Blender 5.1.2 and the project venv only; no 3ds Max was started.
 
 **Verdict: not passed.** 6 distinct fails (FBX triangle budget; transforms of 014/015; zero-area UVs; xView vertices
@@ -119,6 +119,12 @@ Total **180 244** triangles. 013 bbox X 4979.84-5016.57, Y 15293.08-15325.31, Z 
 5. Pivot of 013/014 written as an object offset (LP 4.1.5 recommendation only): keep, or make it offset-free like 012?
 6. Package (outside this FBX, not validated): OKS numbers run 001-041 with 029 missing, while reg p.11-12 §3.3 /
    LP 2.10.3.3 give 001-020 without gaps.
+
+## User response (2026-10-22) [D172]
+
+The job is closed at this stage and the FBX stays as delivered (no further 3ds Max fixes). The zero-area UV finding
+(LP 4.1.3) is agreed; the texture findings (the 013 set named 014, the glass own-colour margin) are not accepted until
+the texture requirements and rules are refined. The fix list below is kept as a record, not as open work.
 
 ## What the user should change before sending
 

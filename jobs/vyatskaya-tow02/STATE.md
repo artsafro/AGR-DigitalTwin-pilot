@@ -1,13 +1,14 @@
 # vyatskaya-tow02 (Башня TOW02, ул. Вятская вл. 47–49) - mid-poly master → NPM-OKS, 2026-10-20
 
-Pipeline status: draft
+Pipeline status: closed at the review stage (2026-10-22, [D172])
 Status: mid-poly master accepted ("4+", 2026-10-20); after the user's 3ds Max review (2026-10-21): geometry review fixes,
 glass cleanup, run-strip atlas OKS 013 [D156], overlap fixes and the 3 decisions of 2026-10-21 (F8 option A in the body
 builder, basket posts kept, 65.4 point contacts not welded) -> build-v030 / export-v005; real 3ds Max xView at 5 mm /
 2 mm: Overlapping Faces 185 faces, Overlapping Vertices 0 (the builder's own check said 0 / 0). The user then finished
 the model by hand in 3ds Max (2026-10-21, `outputs/xview-v005/tow02_ovl23_v001.max`) and accepted the base: "ты неплохо
-справился с задачей, с этим можно работать". Review #514 done 2026-10-21 (`REVIEW-514.md`). Next: NPM from the
-user's model (Mesh + Weld 0.002 m first)
+справился с задачей, с этим можно работать". Review #514 done 2026-10-21 (`REVIEW-514.md`, PR #525). Job closed
+2026-10-22 [D172]: the user's `for_placement/0213_Vyatskaya_Vl_47_49_05.fbx` stays as delivered; validate-delivery
+not passed (`docs/deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21.md`), zero-UV agreed, texture findings disputed
 Context: GLOSSARY.md (Body, NPM, Level contour), docs/domain/geometry.md (project modeling rules),
 docs/HARNESS_PLAN.md §3–4, §14–16, docs/backlog.md EG1, EG2, EG4, EG6, docs/domain/patterns/wall-from-contour.md,
 terrace.md, facade-decor-inset.md.
@@ -37,9 +38,14 @@ terrace.md, facade-decor-inset.md.
     walls/caps, reveal backs); evidence `outputs/xview-v004/qa_summary.json`. Not met in 3ds Max: xView 2026-10-21
     at 5 mm finds 185 overlapping faces on export-v005 (`outputs/xview-v005/xview_tol_report.jsonl`); the user fixed
     them by hand (top floors under-cut, extra edges, balcony glass railings) — see Build log "User finish".
+    2026-10-22: met by the user's hand finish only (xView 0 / 0 after Mesh + Weld 0.002 m, `REVIEW-514.md` §2);
+    our export-v005 stays not met.
   - [ ] NPM derived from the master — not met: textured (build-v025, [D156]) and joined into
     `SM_Vyatskaya_Vl_47_49_013_Main` (export-v004, quads); NPM naming/transform reset/triangulation/validate-delivery
-    not done.
+    not done. Changed by [D172] (2026-10-22): the NPM is the user's hand-finished `_05.fbx`, derived from our
+    export-v005; validate-delivery on it: not passed (6 fails: FBX 180 244 > 150 000 tris, 014/015 transforms,
+    3 314 zero-area UV tris, xView vertices 10 before the weld, 013 set named 014, a 0.4 mm pair on 012/015);
+    the user keeps the file as is, agrees on the zero-UV finding, disputes the texture findings.
 - Later decisions:
   - 2026-10-20: levels (helpers `Empty`…`Empty.007`, z 0.04 / 6.906 / 31.367 / 65.405 / 69.456 / 72.201 / 76.25 /
     79.237): 0.04–6.9 colonnade (model it), 6.9–31.37 bend, 31.37–65.4 typical, 65.4–69.46 parapet storey,
@@ -257,12 +263,6 @@ terrace.md, facade-decor-inset.md.
   working versions are in `outputs/measure-v001/bend_top/scripts/`.
 
 ## Next
-1. Review #514 done 2026-10-21: `REVIEW-514.md` (diff, xView, checker parity, causes, time), PR #525, follow-ups
-   #527-#535. The user's answers: fins ~1 m below ground for the relief [D169]; small wall angle deviations squared to
-   ~90 deg [D170]; copings / roof / band dark as in the previous iteration and the source [D171].
-2. NPM derivation from the user's finished model (not from export-v005): source `for_placement/sceene.max` node
-   `SM_Vyatskaya_Vl_47_49_013_Main` (Editable Poly, 36 864 polys; the placed FBX `_05` is the same, triangulated, site
-   coordinates offset (4951.864, 14903.346, 165.443) m). Editable Mesh + Weld 0.002 m first (xView 0 / 0; no Poly
-   round trip after it). Then names (prefix `0200_Vyatskaya_Vl_47_49`, OKS 013), transform reset
-   [D135], triangulate, FBX export, validate-delivery. Builder root causes for the backlog (Codex): see Build log "Open
-   after the fix chain"; `resolve_tjunctions` / sliding walls are job code in `build_body_blender.py` (EG6).
+Job closed at the review stage [D172]. Nothing left in this job. Follow-ups run on the board: #527-#535
+(overlap gate, xView runner, branch freshness, engine join, decor placement, EG6 analysis, intake, decisions
+backfill, fast checks); texture rules for NPM validation: backlog Q8.

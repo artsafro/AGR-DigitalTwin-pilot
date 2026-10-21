@@ -144,6 +144,10 @@ Plan: `docs/HARNESS_PLAN.md` §15 (user decision 2026-10-11 [D049]). One PR each
   alpha-plane offset 0.003-0.01 m; Light FBX rules (point/spot, `_Omni`/`_Spot`, numbering).
 - **Q7** Convert accepted GLB RGBA NPM atlases to RGB + `_o_` opacity (conflict #21); fix the 3ds Max
   placeholder tool to write 128x128 for NPM (conflict #5). Owner: Claude (DCC), Codex (tool).
+- **Q8** NPM texture rules for validation need refinement [D172]: the texture findings on the TOW02 hand finish
+  (a shared set of mirrored twin OKS named after the twin, 014 vs 013 [D156]; own-colour padding under 8 px) were
+  not accepted; settle the rule with Artem before the validator fails on it
+  (`docs/deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21.md`) [D172]. Owner: Claude (rules), Codex (validator).
 
 ## Unreal and IFC
 
@@ -220,12 +224,20 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
   tolerances set by script); `jobs/vyatskaya-tow02/scripts/xview_review.ms` duplicates it and adds `.max` loading,
   face centres per hit and the user's pre-export "Mesh + Weld 2 mm" mode checked on Editable Mesh (Poly re-splits
   non-manifold vertices); paths must be ASCII (Max 2024 misreads a Cyrillic jobs file). Left: fold those into
-  `xview_dump.ms` and list it in `docs/agents/CAPABILITIES.md`; seen 4 times.
+  `xview_dump.ms` and list it in `docs/agents/CAPABILITIES.md` (issue #528); seen 8 times.
 - **R18** proposal 2026-10-21, review #514 - Artem's Blender add-on `xview_overlapping_faces_improved.py`
   (viewport overlay, 16 s on 35k faces vs xView 107 s) as an interactive helper: it finds 40 of 185 xView faces with
   0 false hits; to match xView it needs boundary contact counted (zero-area contact rule), a fixed 0.81 deg normal
   limit and a per-vertex plane test - or call `inv_xview` from it; evidence `outputs/review-v002/xcheck/XCHECK.md`
   (local); seen 1 time; effort S. Waits for the user's decision whether the add-on goes into the repository.
+- **R19** proposal 2026-10-22, job/vyatskaya-tow02-review - pattern: root cause of one overlap defect of a built
+  model: `inv_xview` pair -> part and z -> builder function and line -> the arithmetic that lands inside the 5 mm /
+  0.81 deg window -> the user's hand fix in numbers -> a placement rule + a unit case; seen 4 times (railings,
+  AC glass, louvre, band/glass, `jobs/vyatskaya-tow02/REVIEW-514.md` §7); effort S
+- **R20** proposal 2026-10-22, job/vyatskaya-tow02-review - skill: review of a user's hand finish against our
+  export (per-part BVH diff in a shared local frame, xView and `inv_xview` on both, checker parity, cause class
+  per defect, time from transcripts, follow-up issues through the ready gate); seen 2 times (#424 retro, #514);
+  effort M
 
 ## Harness and organization (default owner Codex)
 
