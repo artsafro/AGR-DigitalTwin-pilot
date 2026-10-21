@@ -57,6 +57,24 @@ def _paths(value, label, root=None):
     return result
 
 
+def _same_file_as_any(path, candidates):
+    """True when ``path`` is the same file (same inode) as any candidate.
+
+    Pathname equality is a fast path; ``samefile`` catches hard-link and
+    symlink aliases that differ by name. A missing ``path`` is not an alias
+    (output freshness, not identity, decides that case).
+    """
+    for candidate in candidates:
+        if path == candidate:
+            return True
+        try:
+            if path.samefile(candidate):
+                return True
+        except OSError:
+            continue
+    return False
+
+
 def _pid_alive_windows(pid):
     kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
     kernel32.OpenProcess.restype = ctypes.c_void_p
@@ -204,9 +222,9 @@ def inspect_run(run_directory, manifest_path, report_path=None, required_checks=
         source_copy = {}
     if source_copy:
         compare(source_copy, "source_copy")
-    protected = {str(root / "run.json"), str(manifest_path),
-                 *(fact["path"] for fact in inputs.values()),
-                 *(fact["path"] for fact in source_copy.values())}
+    protected = [root / "run.json", manifest_path,
+                 *(Path(fact["path"]) for fact in inputs.values()),
+                 *(Path(fact["path"]) for fact in source_copy.values())]
     attempts = ledger.get("attempts")
     if not isinstance(attempts, list):
         raise ValueError("Attempts must be a list")
@@ -227,7 +245,7 @@ def inspect_run(run_directory, manifest_path, report_path=None, required_checks=
             outputs = _facts(stage.get("outputs"), "stage outputs", root)
             declared_outputs = _paths(stage.get("declared_outputs", {}), "stage declared_outputs", root)
             for key, path in declared_outputs.items():
-                if str(path) in protected:
+                if _same_file_as_any(path, protected):
                     raise ValueError(f"stage:{name} declared_output:{key} aliases the ledger, manifest, or an input")
             for log in ("stdout", "stderr"):
                 if log in stage:
