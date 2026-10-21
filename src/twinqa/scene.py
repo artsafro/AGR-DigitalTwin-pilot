@@ -21,7 +21,7 @@ from twinqa.geometry.ucx_audit import (
     sat_separation, surface_distance, weld,
 )
 from twinqa.clearance import BAND_EDGE_TOL_M, co_directional_distribution, co_directional_pairs
-from twinqa.report import Finding
+from twinqa.report import Finding, signed_margin
 from twinqa.naming import mesh_name_findings
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
@@ -68,8 +68,10 @@ def readback(fbx_path: Path, blender: str | None = None, timeout: int = 600) -> 
     return rb
 
 
-def _f(status, name, observed, expected, pages, evidence, conflicts=()):
-    return Finding(name, status, observed, expected, list(pages), evidence, list(conflicts))
+def _f(status, name, observed, expected, pages, evidence, conflicts=(), *,
+      measured=None, threshold=None, margin=None):
+    return Finding(name, status, observed, expected, list(pages), evidence, list(conflicts),
+                   measured, threshold, margin)
 
 
 def _pivot_findings(meshes: list[dict], ucx: list[dict], src: str) -> list[Finding]:
@@ -148,7 +150,9 @@ def _clearance_finding(meshes: list[dict], ucx: list[dict], src: str, profile: d
                 f"distance mm min/median/max {_mm_text(distribution['min_mm'])}/"
                 f"{_mm_text(distribution['median_mm'])}/{_mm_text(distribution['max_mm'])}; "
                 f"histogram {distribution['histogram_mm']}; worst: {worst[:5]}")
-    return _f(status, "co-directional clearance", observed, expected, [8, 29], src, [30])
+    return _f(status, "co-directional clearance", observed, expected, [8, 29], src, [30],
+              measured=distribution["measured"], threshold=distribution["threshold"],
+              margin=distribution["margin"])
 
 
 def _enclosed_volume(verts, tris) -> float:
@@ -231,6 +235,7 @@ def _ucx_pair_findings(ucx: list[dict], src: str) -> list[Finding]:
                 _f("not_run", "UCX piece gap (advisory)", observed, gap_expected, [36], src, [15])]
     overlaps, unresolved, offending, gap_unmeasured = [], [], [], 0
     counts = {"touch": 0, "below_band": 0, "in_band": 0, "wide": 0}
+    worst_gap = None  # (margin, measured_m, threshold_m); smallest safe-side margin wins
     for left, right in itertools.combinations(pieces, 2):
         both_hulls = left["hull"] is not None and right["hull"] is not None
         box_gap = bbox_gap(bounds(left["hull"][0]), bounds(right["hull"][0])) if both_hulls else None
@@ -251,6 +256,7 @@ def _ucx_pair_findings(ucx: list[dict], src: str) -> list[Finding]:
         if kind == "apart":
             continue
         counts[kind] += 1
+        worst_gap = _note_band_margin(worst_gap, gap_m, kind)
         if kind != "in_band":
             offending.append((left["name"], right["name"], round(gap_m * 1000, 2)))
     n_unresolved = len(unresolved)
@@ -276,7 +282,31 @@ def _ucx_pair_findings(ucx: list[dict], src: str) -> list[Finding]:
                f"in_band={counts['in_band']} wide={counts['wide']} unmeasured={n_unresolved + gap_unmeasured}; "
                f"{offending[:5]}")
     gap_status = "review" if bad else "not_run" if n_unresolved or gap_unmeasured else "pass"
-    return [inter, coverage, _f(gap_status, "UCX piece gap (advisory)", gap_obs, gap_expected, [36], src, [15])]
+    if worst_gap is None:
+        gap_measured = gap_threshold = gap_margin = None
+    else:
+        gap_margin, gap_measured, gap_threshold = worst_gap
+    return [inter, coverage, _f(gap_status, "UCX piece gap (advisory)", gap_obs, gap_expected, [36], src, [15],
+                                measured=gap_measured, threshold=gap_threshold, margin=gap_margin)]
+
+
+def _note_band_margin(worst, gap_m, kind):
+    """Smallest D098-band margin for one neighbour gap. Too-close itself is recorded on the audit finding."""
+    if kind in ("touch", "below_band"):
+        options = ((GAP_BAND_M[0], "min"),)
+    elif kind == "wide":
+        options = ((GAP_BAND_M[1], "max"),)
+    elif kind == "in_band":
+        options = ((GAP_BAND_M[0], "min"), (GAP_BAND_M[1], "max"))
+    else:
+        return worst
+    for threshold, bound in options:
+        margin = signed_margin(gap_m, threshold, bound)
+        if margin is None:
+            continue
+        if worst is None or margin < worst[0]:
+            worst = (margin, gap_m, threshold)
+    return worst
 
 
 def _topology_finding(meshes: list[dict], profile: dict, src: str) -> Finding:
@@ -396,9 +426,11 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
     out["V003"].append(_f("fail" if not_tri else "pass", "triangulated", f"{src}: {not_tri or 'all triangles'}",
                           "triangulated on export", [7, 28], src))
     if role != "light":
+        measured = threshold_n = margin = None
         if kind == "npm":
             limit = profile["geometry"]["ground_triangles_total_max" if role == "ground" else "oks_triangles_per_fbx_max"]
             status, conflicts = ("fail" if tris > limit else "pass"), []
+            measured, threshold_n, margin = tris, limit, signed_margin(tris, limit, "max")
         else:
             if role == "ground":
                 status, limit, conflicts = "review", "by site area (reg p.29 table)", []
@@ -408,7 +440,10 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
                 limit = (f"{PROJECT_TRIANGLE_TARGET} project target (reuse as NPM; else windows as atlas planes), "
                          f"{hard} regulation limit")
                 conflicts = []
-        out["V003"].append(_f(status, "triangle count", f"{src}: {tris}", f"<= {limit}", [7, 28, 29], src, conflicts))
+                active = hard if tris > hard else PROJECT_TRIANGLE_TARGET
+                measured, threshold_n, margin = tris, active, signed_margin(tris, active, "max")
+        out["V003"].append(_f(status, "triangle count", f"{src}: {tris}", f"<= {limit}", [7, 28, 29], src, conflicts,
+                              measured=measured, threshold=threshold_n, margin=margin))
     foreign = [o for o in rb["other_objects"] if not (role == "light" and o["type"] in ("LIGHT", "EMPTY"))]
     if foreign:
         # Any non-mesh object, lights included, fails (conflict #14 decided 2026-10-07 as the checker)

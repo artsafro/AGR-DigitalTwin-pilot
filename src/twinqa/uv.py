@@ -5,6 +5,12 @@
 """UDIM tiles, mirrored islands, tile margins and texel density (VPM, reg p.31-32, 39)."""
 import math
 
+from twinqa.report import Finding, signed_margin
+
+# VPM diffuse band (standards/VPM_STANDARD.yaml uv.diffuse_density_px_per_m). Not a new limit.
+DENSITY_MIN_PX_PER_M = 512
+DENSITY_MAX_PX_PER_M = 1706
+
 # UDIM = 1001 + U + 10 * V on a 10 x 10 grid (reg p.23, p.31 §2.1.3, p.39;
 # VPM_STANDARD.yaml uv.udim_grid; figure typo on p.39 is conflict #9, text wins).
 FIRST_TILE, LAST_TILE = 1001, 1100
@@ -68,6 +74,48 @@ def sequential_tiles(tiles) -> bool:
     """Tiles filled from 1001 without gaps (reg p.31 §2.1.3)."""
     ordered = sorted(set(tiles))
     return ordered == list(range(FIRST_TILE, FIRST_TILE + len(ordered))) and (not ordered or ordered[-1] <= LAST_TILE)
+
+
+def _density_finding(name, measured, threshold, bound, observed) -> Finding:
+    """One density bound. No measured value, or a zero threshold, is a fail with margin None."""
+    margin = None if measured is None else signed_margin(measured, threshold, bound)
+    if margin is None:
+        status = "fail"
+    elif bound == "min":
+        status = "pass" if measured >= threshold else "fail"
+    else:
+        status = "pass" if measured <= threshold else "fail"
+    relation = ">=" if bound == "min" else "<="
+    return Finding(
+        name, status, observed, f"{relation} {threshold:g} px/m", [31, 32], "uv edge density",
+        measured=measured, threshold=threshold, margin=margin,
+    )
+
+
+def density_findings(vertices, uv, size, *, min_px_per_m=DENSITY_MIN_PX_PER_M,
+                     max_px_per_m=DENSITY_MAX_PX_PER_M) -> list[Finding]:
+    """Min and max texel-density findings for one polygon.
+
+    The minimum uses the smallest edge density against 512 px/m. The maximum uses the
+    largest edge density against 1706 px/m. An empty polygon fails both; a degenerate
+    edge still raises from ``edge_densities``.
+    """
+    if len(vertices) < 2 or len(uv) < 2:
+        return [
+            _density_finding("texel density", None, min_px_per_m, "min", "no edges"),
+            _density_finding("texel density upper", None, max_px_per_m, "max", "no edges"),
+        ]
+    values = edge_densities(vertices, uv, size)
+    if not values:
+        return [
+            _density_finding("texel density", None, min_px_per_m, "min", "no edges"),
+            _density_finding("texel density upper", None, max_px_per_m, "max", "no edges"),
+        ]
+    low, high = min(values), max(values)
+    return [
+        _density_finding("texel density", low, min_px_per_m, "min", f"min {low:.6g} px/m"),
+        _density_finding("texel density upper", high, max_px_per_m, "max", f"max {high:.6g} px/m"),
+    ]
 
 
 def edge_densities(vertices, uv, size):
