@@ -1,0 +1,29 @@
+{
+ "schema": "library-maf-atlas-layout-spec",
+ "version": "v005",
+ "status": "proposed",
+ "note": "Atlas layouts for the v005 material IDs (#524). VPM: one 4K UDIM tile; NPM: the same layout at 2K (GroundEl naming, Artem 2026-10-21: 2K = NPM, 4K UDIM = VPM); a site set: 512 px with only the IDs the site uses (MAF-09, [D168]). Slot side by layout class: L dominant wood, M patterned, S flat. ID number small in the bottom-right corner of every cell; UV islands stay out of that corner (Artem 2026-10-21).",
+ "library": {
+  "size": 4096,
+  "padding_px": 16,
+  "slot_px": {"L": 1024, "M": 512, "S": 256},
+  "decal_reserve_px": 1024,
+  "profiles": {
+   "vpm_4k": {"size": 4096, "file": "MAF_Atlas_v005_Diffuse.1001.png", "udim": 1001},
+   "npm_2k": {"size": 2048, "file": "T_MAF_Atlas_v005_GroundEl_d.png"}
+  }
+ },
+ "site_sets": {
+  "vatutino": {
+   "source": "jobs/VATUTINO-SITE/maf/site-maf-set.json",
+   "file": "T_Vatutino_MAF_v005_GroundEl_d_512.png",
+   "material_to_id": {
+    "steel_ral7047": "paint_ral7047",
+    "larch_light_oak": "wood_light",
+    "hpl_satin_wood": "wood_light",
+    "rope_pp": "rope_pp"
+   },
+   "proof_positions": ["VAT_MAF_T3510_01", "VAT_MAF_T3510_26", "VAT_MAF_T3510_28"]
+  }
+ }
+}
