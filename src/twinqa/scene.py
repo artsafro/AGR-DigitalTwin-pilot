@@ -152,10 +152,20 @@ def _clearance_finding(meshes: list[dict], ucx: list[dict], src: str, profile: d
 
 
 def _enclosed_volume(verts, tris) -> float:
-    """Absolute enclosed volume (m^3) from the signed tetrahedron sum over triangles."""
+    """Absolute enclosed volume (m^3) from the signed tetrahedron sum over triangles.
+
+    Vertices are shifted by the first vertex before the sum. Signed volume is
+    translation-invariant; the local frame avoids cancellation when the hull sits far
+    from the global origin (same sum as ucx_audit._enclosed_volume, kept as a copy).
+    """
+    if not verts:
+        return 0.0
+    origin = verts[0]
     total = 0.0
     for ia, ib, ic in tris:
-        a, b, c = verts[ia], verts[ib], verts[ic]
+        a = (verts[ia][0] - origin[0], verts[ia][1] - origin[1], verts[ia][2] - origin[2])
+        b = (verts[ib][0] - origin[0], verts[ib][1] - origin[1], verts[ib][2] - origin[2])
+        c = (verts[ic][0] - origin[0], verts[ic][1] - origin[1], verts[ic][2] - origin[2])
         total += a[0] * (b[1] * c[2] - b[2] * c[1])
         total -= a[1] * (b[0] * c[2] - b[2] * c[0])
         total += a[2] * (b[0] * c[1] - b[1] * c[0])
