@@ -290,8 +290,8 @@ local f = createFile @REPORT@ encoding:#utf8
 format "{\"ok\":%,\"units\":\"%\",\"scale\":%,\"version\":%,\"objects\":[" ok (units.SystemType as string) units.SystemScale ((maxVersion())[1]) to:f
 for i = 1 to rows.count do (
     local r = rows[i]
-    local esc = substituteString (substituteString (substituteString r[5] "\\" "\\\\") "\"" "\\\"") "\r" "\\n"
-    esc = substituteString esc "\n" "\\n"
+    local esc = substituteString (substituteString (substituteString r[5] "\\" "\\\\") "\"" "\\\"") "\r\n" "\\n"
+    esc = substituteString (substituteString esc "\r" "\\r") "\n" "\\n"
     format "%{\"name\":\"%\",\"kind\":\"%\",\"tris\":%,\"size\":[%,%,%],\"text\":\"%\"}" (if i > 1 then "," else "") r[1] r[2] r[3] r[4].x r[4].y r[4].z esc to:f
 )
 format "]}" to:f
@@ -307,7 +307,7 @@ def build_script(layout, out_max: Path, render_png: Path, report: Path, row_dir:
         sid = s["set_id"]
         lines.append(f'placeFbx {_p(s["npm"]["fbx"])} "NPM__" {s["npm_x"]:.4f} {s["y"]:.4f}')
         lines.append(f'placeFbx {_p(s["vpm"]["fbx"])} "VPM__" {s["vpm_x"]:.4f} {s["y"]:.4f}')
-        body = "\\n".join(_ms(line)[1:-1] for line in s["lines"])
+        body = "\\r\\n".join(_ms(line)[1:-1] for line in s["lines"])  # Max Text breaks lines on CR LF
         lines.append(f'placeText "{body}" "TXT_{sid}" {s["text_x"]:.4f} {s["y"]:.4f} {TEXT_SIZE}')
     rows = []
     for r in layout["rows"]:
@@ -323,7 +323,7 @@ def build_script(layout, out_max: Path, render_png: Path, report: Path, row_dir:
             f'(local c = Targetcamera name:"Row_Camera" fov:50; '
             f'c.target = Targetobject pos:[{cx:.3f}, {r["y"]:.3f}, 0.8]; '
             f'c.pos = [{cx:.3f}, {r["y"] - dist:.3f}, {dist * 0.35:.3f}]; '
-            f'render camera:c outputSize:[1920,1080] vfb:false outputfile:{png}; delete c)')
+            f'render camera:c outputSize:[1600,900] vfb:false outputfile:{png}; delete c)')
     for s in layout["slots"]:
         x0 = s["npm_x"]
         x1 = s["text_x"] + max(map(len, s["lines"])) * CHAR_W
