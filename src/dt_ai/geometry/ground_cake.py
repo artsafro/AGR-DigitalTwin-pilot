@@ -1016,7 +1016,16 @@ def weld_base_boundary(mesh: Mesh, weld_m: float = .0041,
             if abs(cross) <= 1e-12*np.linalg.norm(a)*np.linalg.norm(b) and np.dot(a, b) < 0:
                 continue
         corners.append(int(i))
-    boundary = np.array(corners, int)
+    # Third construction route: target measured curtain defects, not every pair
+    # of nearby contour samples. A valid tiny source corner must remain unchanged.
+    from dt_ai.ops.inv_xview import part_report, XviewTolerance
+    curtain = add_skirt(mesh)
+    walls = curtain.faces[len(mesh.faces):]
+    quads = tuple((int(a[0]), int(a[1]), int(a[2]), int(b[2]))
+                  for a, b in zip(walls[::2], walls[1::2]))
+    before = part_report('base_curtains', PolyMesh(curtain.verts, quads), XviewTolerance())
+    implicated = {v for fi in before.faces for v in quads[fi-1] if v < len(mesh.verts)}
+    boundary = np.array(sorted(set(corners) & implicated), int)
     clusters = _cluster_ids(mesh.verts[boundary], weld_m) if len(boundary) else np.empty(0, int)
     v = mesh.verts.copy()
     groups = []
