@@ -51,7 +51,7 @@ def test_coverage_restoration_fails_closed_on_unmeasurable_or_at_bound_inputs(ki
     with pytest.raises(ValueError):job.restore_source_coverage(mesh,plan)
 
 
-def test_real_derived_root_roundoff_residual_is_repaired_not_waived():
+def test_real_derived_root_with_boundary_corners_has_an_interior_witness():
     import json
     from shapely.geometry import shape
     data=json.loads((Path(__file__).parent/'data/ground-v015-tongue-root.json').read_text())

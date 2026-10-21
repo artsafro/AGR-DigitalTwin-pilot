@@ -129,21 +129,42 @@ def restore_source_coverage(mesh, plan):
         union=unary_union([Polygon(vertices[f,:2]) for f in mesh.faces[base]])
         residual=plan.surface.buffer(-.0022).difference(union)
         if residual.is_empty or residual.area==0:break
-        points=np.array([p for piece in gc._polys(residual) for p in piece.exterior.coords])
+        # A residual wedge can have every corner on a different mesh boundary
+        # edge while its interior is missing. Include an actual interior witness;
+        # corner-only nearest-edge distances would all be zero in that case.
+        points=np.array([p for piece in gc._polys(residual) for p in [*piece.exterior.coords,*piece.representative_point().coords]])
         if not len(points):raise ValueError('unsupported source coverage residual')
         a=vertices[edges[:,0],:2];direction=vertices[edges[:,1],:2]-a
         lengths=np.einsum('ij,ij->i',direction,direction)
         if np.any(lengths<=0):raise ValueError('collapsed boundary edge in residual repair')
+        # Topological open edges can be nonconforming internal tessellation
+        # seams. Do not mistake a zero distance to such a seam for a boundary
+        # witness: only actual union-boundary segments may drive the movement.
+        samples=a[:,None,:]+direction[:,None,:]*np.array([.25,.5,.75])[None,:,None]
+        on_boundary=np.all(shapely.distance(shapely.points(samples),union.boundary)<=1e-9,axis=1)
+        if not on_boundary.any():raise ValueError('no geometric boundary for source residual')
         best=None
         for point in points:
             t=np.clip(np.einsum('ij,ij->i',point-a,direction)/lengths,0,1)
-            closest=a+t[:,None]*direction;dist=np.linalg.norm(point-closest,axis=1);i=int(dist.argmin())
+            closest=a+t[:,None]*direction;dist=np.where(on_boundary,np.linalg.norm(point-closest,axis=1),np.inf);i=int(dist.argmin())
             if best is None or dist[i]>best[0]:best=(float(dist[i]),point,i,float(t[i]),closest[i])
         distance,point,i,t,closest=best
-        if distance<=0:raise ValueError('nonempty coverage residual without a measurable witness')
         endpoint=0 if t<=.5 else 1;weight=(1-t) if endpoint==0 else t;vi=int(edges[i,endpoint])
         if vi in forbidden:raise ValueError('coverage residual endpoint belongs to upper sheet')
-        vertices[vi,:2]+=(point-closest)/distance*((distance+2e-6)/weight)
+        if distance>0:
+            outward=(point-closest)/distance
+        else:
+            # GEOS can return a positive-area roundoff sliver whose corner
+            # coordinates all round onto the same edge. Move the actual edge
+            # outward, then require the exact residual to disappear; never
+            # treat small area or an unmeasurable point distance as acceptance.
+            edge=edges[i];normal=np.array([direction[i,1],-direction[i,0]])
+            normal/=np.linalg.norm(normal)
+            owner=next(f for f in mesh.faces[base] if set(edge).issubset(f))
+            inside=vertices[next(int(k) for k in owner if k not in edge),:2]
+            if np.dot(normal,inside-a[i])>0:normal=-normal
+            outward=normal
+        vertices[vi,:2]+=outward*((distance+2e-6)/weight)
         if np.linalg.norm(vertices-original,axis=1).max()>=.00005:
             raise ValueError('source coverage residual exceeds 50 micrometre construction bound')
     else:raise ValueError('bounded source coverage residual repair did not converge')
