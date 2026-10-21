@@ -47,3 +47,18 @@ def test_world_face_matching_does_not_round_coordinates_before_matching():
     assert module.match_reference_faces(m,reference,[0])=={0:0}
     reference['verts']=old+10
     with pytest.raises(ValueError,match='unmapped'):module.match_reference_faces(m,reference,[0])
+
+
+def test_pair_hints_are_geometry_bound_and_never_a_pass_receipt():
+    import importlib.util
+    import numpy as np
+    from dt_ai.geometry.ground_cake import Mesh
+    spec=importlib.util.spec_from_file_location('producer_hint_test',SCRIPT)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    m=Mesh(np.array([(0,0,0),(1,0,0),(0,1,0)],float),np.array([(0,1,2)]),['TileLight'],np.array([0]),np.zeros((1,3,2)),4.)
+    hints={'source_geometry_sha256':module.legacy.surface_fingerprint(m.verts,m.faces),'profiles':{'npm':[],'vpm':[]}}
+    assert module.validate_pair_hints(m,hints)=={'npm':[],'vpm':[]}
+    m.verts[0,2]=.001
+    with pytest.raises(ValueError,match='fingerprint'):module.validate_pair_hints(m,hints)
+    hints['profiles']['unknown']=[]
+    with pytest.raises(ValueError):module.validate_pair_hints(m,hints)
