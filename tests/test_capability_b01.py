@@ -141,7 +141,7 @@ def test_task_grades_versioned_runner_output(tmp_path, layout):
     output.mkdir(parents=True)
     for name in ('report.json', 'etalon-self.json'):
         (output / name).write_text(json.dumps(report()))
-    _, result, _ = run(root / 'evals', suite='capability', main=tmp_path,
+    _, result, _ = run(root / 'evals', task='capability-b01', main=tmp_path,
                        branch='synthetic', output=tmp_path / 'evals', cwd=root)
     assert result['passed'] == 1
     assert result['not_measured'] == 0
@@ -184,7 +184,7 @@ def test_supplementary_readback_report(tmp_path, status):
             data['failed'] = ['bbox']
             data['passed'] = False
         path.write_text(json.dumps(data))
-    _, result, _ = run(root / 'evals', suite='capability', main=tmp_path,
+    _, result, _ = run(root / 'evals', task='capability-b01', main=tmp_path,
                        branch='synthetic', output=tmp_path / 'evals', cwd=root)
     assert result['passed'] == (1 if status == 'pass' else 0)
     assert result['failed'] == (0 if status == 'pass' else 1)
@@ -198,7 +198,7 @@ def test_multiple_runner_outputs_rejected(tmp_path):
         output.mkdir(parents=True)
         for filename in ('report.json', 'etalon-self.json'):
             (output / filename).write_text(json.dumps(report()))
-    _, result, _ = run(root / 'evals', suite='capability', main=tmp_path,
+    _, result, _ = run(root / 'evals', task='capability-b01', main=tmp_path,
                        branch='synthetic', output=tmp_path / 'evals', cwd=root)
     assert result['failed'] == 1
     assert result['passed'] == 0
@@ -249,7 +249,7 @@ def test_task_registered():
     from twinqa.evals.runner import load_tasks
     root = Path(__file__).resolve().parents[1]
     tasks = load_tasks(root / 'evals', suite='capability')
-    assert [(p.name, problem) for p, _, problem in tasks] == [('capability-b01', None)]
+    assert [(p.name, problem) for p, _, problem in tasks] == [('capability-b01', None), ('capability-ticket', None)]
 
 
 @pytest.mark.parametrize('location', ['repo', 'jobs', 'benchmark', 'etalon', 'parent', 'existing', 'hardlink'])

@@ -5,6 +5,7 @@ existing procedural graders must report those unsupported transcripts as not mea
 """
 import json
 import math
+import re
 
 CHECKS = frozenset(('bbox', 'levels', 'floor_areas', 'silhouettes', 'mesh',
                     'triangle_budget', 'opening_planes', 'material_ids', 'decor', 'orientation'))
@@ -97,3 +98,33 @@ def capability_b01(evidence):
     return {'check': 'B01 all benchmark and etalon-self checks', 'expected': '20/20',
             'measured': f'{total}/20', 'passed': not problems and total == 20,
             'details': problems, 'supplementary': supplementary}
+
+
+def capability_ticket(evidence):
+    """Grade local artifacts only; procedural/review telemetry is a separate result."""
+    from twinqa.evals.pr_graders import pr_agent_trace, pr_numeric_literals, read_diff
+    problems = []
+    paths = [p for group in evidence.values() for p in group]
+    if set(evidence) != {'body', 'diff', 'branch'} or any(len(v) != 1 for v in evidence.values()):
+        problems.append('expected exactly one body, diff and branch')
+    elif any(a.samefile(b) for i, a in enumerate(paths) for b in paths[i + 1:]):
+        problems.append('local evidence paths alias')
+    if problems:
+        return {'check': 'ticket local PR evidence', 'expected': '4/4', 'measured': '0/4',
+                'passed': False, 'details': problems}
+    body = evidence['body'][0].read_text(encoding='utf-8')
+    branch = evidence['branch'][0].read_text(encoding='utf-8').strip()
+    files = read_diff(evidence['diff'][0])
+    rows = [pr_agent_trace({'body': evidence['body']}),
+            pr_numeric_literals({'body': evidence['body'], 'diff': evidence['diff']})]
+    rows.append({'check': 'named branch and nonempty local diff',
+                 'passed': bool(re.fullmatch(r'(?:feature|fix|experiment|research|harness)/[a-z0-9]+(?:-[a-z0-9]+)*', branch))
+                           and any(f['added'] or f['removed'] for f in files)})
+    rows.append({'check': 'author receipt fields present (lexical only)',
+                 'passed': all(token in body for token in
+                               ('## Author receipts', 'Pattern:', 'Regression evals:', 'Probe:'))})
+    count = sum(r['passed'] is True for r in rows)
+    verdict = False if any(r['passed'] is False for r in rows) else (None if count < 4 else True)
+    return {'check': 'ticket local PR evidence', 'expected': '4/4', 'measured': f'{count}/4',
+            'passed': verdict, 'details': rows}
+
