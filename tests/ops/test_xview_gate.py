@@ -103,10 +103,10 @@ def test_report_lists_ids_partners_kind_and_centres():
     rep = one(*rail_soffit(0.005))
     p = rep["parts"][0]
     assert p["overlapping_faces"] == 2 and p["xview_faces"] == [1, 2]
-    assert p["face_pairs"] == [{"a": 1, "b": 2, "kind": "contact", "separation_m": p["face_pairs"][0]["separation_m"],
+    assert p["face_pairs"] == [{"a": 1, "b": 2, "kind": "area+contact", "separation_m": p["face_pairs"][0]["separation_m"],
                                 "centre": p["face_pairs"][0]["centre"]}]
     f1 = p["faces"][0]
-    assert f1["id"] == 1 and f1["partners"] == [2] and f1["kinds"] == ["contact"] and f1["xview"] is True
+    assert f1["id"] == 1 and f1["partners"] == [2] and f1["kinds"] == ["area+contact"] and f1["xview"] is True
     assert np.allclose(f1["centre"], [1, 1, 0])
 
 
