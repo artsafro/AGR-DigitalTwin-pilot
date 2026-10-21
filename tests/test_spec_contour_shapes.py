@@ -542,6 +542,29 @@ def test_panel_facade_without_a_shell_is_hinted_with_slab_candidates():
         extract_spec(panelised(), OBJECT)
 
 
+@pytest.mark.parametrize("shaft_spans", [None, [(4.85, 5.05), (6.0, 6.2)], [(3.3, 6.6)]])
+def test_panel_roof_setback_strip_is_not_an_enclosed_shaft(shaft_spans):
+    """#37: preserve panel/slab perimeter data without exempting real internal shaft gaps."""
+    dump = panelised()
+    if shaft_spans is not None:
+        slabs = next(m for m in dump["meshes"] if m["name"] == "Slabs")
+        slabs["triangles"] = [tr for tr in slabs["triangles"]
+                              if max(slabs["vertices"][i][2] for i in tr) < 6.5]
+        roof = Mesh("HoledRoof")
+        hole = [[2, 2], [3, 2], [3, 3], [2, 3]]
+        flat(roof, Polygon(SQUARE10, [hole]), 6.6)
+        for z0, z1 in shaft_spans:
+            walls(roof, hole[::-1], z0, z1)
+        dump["meshes"].append(roof.dump())
+    if shaft_spans is not None and len(shaft_spans) > 1:
+        with pytest.raises(SpecError, match=r"opening of 1.00 m2.*not a shaft"):
+            extract_spec(dump, PANEL_OBJECT)
+    else:
+        spec, report = extract_spec(dump, PANEL_OBJECT)
+        assert report["roof"]["closed_share"] >= 0.95
+        assert all(close(f.contour, OUTER10, tol=0.03) for f in spec.expanded_floors())
+
+
 def test_contour_is_the_panels_outer_face_and_the_slab_is_data():
     spec, report = extract_spec(panelised(), PANEL_OBJECT)
     assert all(close(f.contour, OUTER10, tol=0.03) for f in spec.expanded_floors())
