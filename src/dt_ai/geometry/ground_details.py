@@ -126,10 +126,13 @@ def build_details(elements, boundary, sampler, separate_curbs=False):
     """Return ``(mesh, report, joints)``.
 
     ``report`` holds one disposition per adapter entity (including group INSERTs). With
-    ``separate_curbs`` every modeled curb row also carries its own ``retained_m2`` and
-    ``joint_trim_m2``, and a fully covered entity is reported ``status='trimmed'`` with the
-    joint-policy reason instead of staying ``modeled``. ``joints`` holds the role-union trim
-    totals once, at their own scope, so no entity row inherits another role's union trim.
+    ``separate_curbs`` every modeled curb row also carries its own ``retained_m2``,
+    ``stair_trim_m2`` and ``joint_trim_m2`` (``footprint_m2`` reconciles to their sum), and
+    a fully covered entity is reported ``status='trimmed'`` with a truthful reason: the
+    taller-curb joint policy only when that policy actually removed the geometry, the stair
+    footprint when stairs occluded it, and a combined reason when both applied. ``joints``
+    holds the role-union joint trim totals once, at their own scope, so no entity row
+    inherits another role's union trim.
 
     ``separate_curbs`` is an explicit model-policy opt-in: continue the taller section
     through mixed-section junctions and end the shorter one with a 6 mm joint.
@@ -207,9 +210,10 @@ def build_details(elements, boundary, sampler, separate_curbs=False):
     occupied = Polygon()
     roles = sorted(curbs, key=lambda r: -SECTIONS[r][1]) if separate_curbs else curbs
     joints = []
+    stair_union = unary_union(stair_footprints)
     for role in roles:
         width,height,slot=SECTIONS[role]
-        footprint=unary_union([a for a,_ in curbs[role]]).difference(unary_union(stair_footprints))
+        footprint=unary_union([a for a,_ in curbs[role]]).difference(stair_union)
         if separate_curbs:
             # Taller section continues through the joint; shorter section ends with
             # a method-C-sized 6 mm clearance, not a coplanar duplicate bottom.
@@ -218,16 +222,24 @@ def build_details(elements, boundary, sampler, separate_curbs=False):
             footprint = union_pre.difference(occupied.buffer(.006, join_style='mitre'))
             union_trim = max(0.0, before - footprint.area)
             for area,row in curbs[role]:
+                after_stair = area.difference(stair_union)
+                stair_trim = max(0.0, area.area - after_stair.area)
                 retained = area.intersection(footprint).area
-                joint_trim = max(0.0, area.intersection(union_pre).area - retained)
+                joint_trim = max(0.0, after_stair.area - retained)
                 row['retained_m2'] = retained
+                row['stair_trim_m2'] = stair_trim
                 row['joint_trim_m2'] = joint_trim
                 if joint_trim > 0:
                     row['joint_gap_m'] = .006
                     row['joint_rule'] = 'taller section continuous'
                 if retained <= 1e-9:
                     row['status'] = 'trimmed'
-                    row['reason'] = 'joint policy: fully covered by taller curb section'
+                    if stair_trim > 0 and joint_trim > 0:
+                        row['reason'] = 'occluded by stair footprint and taller curb section'
+                    elif stair_trim > 0:
+                        row['reason'] = 'occluded by stair footprint'
+                    else:
+                        row['reason'] = 'joint policy: fully covered by taller curb section'
             if union_trim > 0:
                 joints.append(dict(role=role, scope='role union', union_trim_m2=union_trim,
                                    union_retained_m2=footprint.area, gap_m=.006,

@@ -2,9 +2,10 @@
 
 The role-union trim was previously copied to every entity of the shorter role and a fully
 occluded entity stayed ``modeled`` with no geometry left. These probes pin the corrected
-per-entity retained/trimmed split, the ``trimmed`` status for fully covered entities, the
-once-only role-union totals, and the untouched/partially-trimmed same-role controls, while the
-crossing-junction mesh stays unchanged (see tests/test_ground_curb_joints.py).
+per-entity retained/stair/joint trim split, the ``trimmed`` status for fully covered entities
+with a truthful reason (stair footprint vs taller-curb joint), the once-only role-union totals,
+and the untouched/partially-trimmed same-role controls, while the crossing-junction mesh stays
+unchanged (see tests/test_ground_curb_joints.py).
 """
 import random
 
@@ -113,6 +114,89 @@ def test_legacy_build_has_no_joint_fields_and_keeps_both_slots():
     assert set(mesh.slot) == {'CurbDrive', 'CurbGarden'}
 
 
+def stair_sampler():
+    return gc.ReliefSampler(gc.build_tin([(x, y, 100 + .2 * y) for x in (-10, 20) for y in (-10, 20)]))
+
+
+def stairs(root='S', outline=((1, 1), (3, 1), (3, 4), (1, 4), (1, 1)),
+           treads=(((1, 2), (3, 2)), ((1, 3), (3, 3)))):
+    es = [dict(ref=root, handle=root, kind='INSERT', container=None, role='stairs',
+               label=None, geometry=None, problem=None)]
+    for i, coords in enumerate([list(outline), *[list(t) for t in treads]]):
+        es.append(dict(ref=f'{root}>{i}', handle=f'{root}>{i}', kind='LWPOLYLINE', container=root,
+                       role='stairs', geometry=mapping(LineString(coords)), problem=None))
+    return es
+
+
+def test_fully_stair_covered_garden_reported_trimmed_with_stair_reason():
+    boundary = box(0, 0, 10, 10)
+    elements = stairs() + [element('curb_garden', 'garden', [(1.5, 2.5), (2.5, 2.5)])]
+    mesh, report, joints = gd.build_details(elements, boundary, stair_sampler(), separate_curbs=True)
+    g = by_ref(report)['garden']
+    assert g['status'] == 'trimmed'
+    assert g['footprint_m2'] == pytest.approx(0.08, abs=1e-9)
+    assert g['retained_m2'] == 0.0
+    assert g['stair_trim_m2'] == pytest.approx(0.08, abs=1e-9)
+    assert g['joint_trim_m2'] == 0.0
+    assert 'stair' in g['reason'] and 'taller' not in g['reason']
+    assert joints == []
+    assert set(mesh.slot) == {'Stairs'}
+
+
+def test_partially_stair_covered_garden_reports_stair_trim():
+    boundary = box(0, 0, 10, 10)
+    elements = stairs() + [element('curb_garden', 'garden', [(0, 2.5), (5, 2.5)])]
+    mesh, report, joints = gd.build_details(elements, boundary, stair_sampler(), separate_curbs=True)
+    g = by_ref(report)['garden']
+    assert g['status'] == 'modeled'
+    assert g['footprint_m2'] == pytest.approx(0.40, abs=1e-9)
+    assert g['retained_m2'] == pytest.approx(0.24, abs=1e-6)
+    assert g['stair_trim_m2'] == pytest.approx(0.16, abs=1e-6)
+    assert g['joint_trim_m2'] == 0.0
+    assert g['retained_m2'] + g['stair_trim_m2'] + g['joint_trim_m2'] == pytest.approx(g['footprint_m2'], abs=1e-9)
+    assert joints == []
+
+
+def test_untouched_garden_beside_stairs_reports_no_trim():
+    boundary = box(0, 0, 10, 10)
+    elements = stairs() + [element('curb_garden', 'garden', [(4, 5), (8, 5)])]
+    mesh, report, joints = gd.build_details(elements, boundary, stair_sampler(), separate_curbs=True)
+    g = by_ref(report)['garden']
+    assert g['status'] == 'modeled'
+    assert g['footprint_m2'] == pytest.approx(0.32, abs=1e-9)
+    assert g['retained_m2'] == pytest.approx(0.32, abs=1e-9)
+    assert g['stair_trim_m2'] == 0.0
+    assert g['joint_trim_m2'] == 0.0
+    assert joints == []
+
+
+def test_combined_stair_and_taller_curb_garden_accounts_both_trims():
+    boundary = box(0, 0, 10, 10)
+    elements = stairs(outline=((1, 4), (3, 4), (3, 6), (1, 6), (1, 4)),
+                      treads=(((1, 4.5), (3, 4.5)), ((1, 5.5), (3, 5.5))))
+    elements += [element('curb_drive', 'drive', [(6, 5), (10, 5)]),
+                 element('curb_garden', 'garden', [(0, 5), (10, 5)])]
+    mesh, report, joints = gd.build_details(elements, boundary, stair_sampler(), separate_curbs=True)
+    rows = by_ref(report)
+    g = rows['garden']
+    assert g['status'] == 'modeled'
+    assert g['footprint_m2'] == pytest.approx(0.80, abs=1e-9)
+    assert g['retained_m2'] == pytest.approx(0.32, abs=5e-3)
+    assert g['stair_trim_m2'] == pytest.approx(0.16, abs=5e-3)
+    assert g['joint_trim_m2'] == pytest.approx(0.32, abs=5e-3)
+    assert g['joint_gap_m'] == .006
+    assert g['retained_m2'] + g['stair_trim_m2'] + g['joint_trim_m2'] == pytest.approx(g['footprint_m2'], abs=1e-9)
+    # role-union joint total (stair area already excluded) appears once, at its own scope
+    assert len(joints) == 1
+    j = joints[0]
+    assert j['role'] == 'curb_garden' and j['scope'] == 'role union'
+    assert j['union_trim_m2'] == pytest.approx(0.32, abs=5e-3)
+    # the taller drive section is untouched by the joint policy
+    assert rows['drive']['status'] == 'modeled'
+    assert rows['drive']['retained_m2'] == pytest.approx(0.60, abs=1e-6)
+    assert rows['drive']['joint_trim_m2'] == 0.0
+
+
 def _random_elements(rng):
     drive_y = rng.uniform(3.0, 7.0)
     elements = [element('curb_drive', 'drive', [(0.5, drive_y), (9.5, drive_y)])]
@@ -139,9 +223,9 @@ def test_random_per_entity_reconciliation_and_status_invariants():
         rows = [r for r in report if r['role'] in gd.SECTIONS and r['status'] in ('modeled', 'trimmed')]
         retained_slots = set()
         for r in rows:
-            # per-entity reconciliation: retained + joint trim == own footprint (no stairs here)
-            assert r['retained_m2'] >= -1e-12 and r['joint_trim_m2'] >= -1e-12
-            assert r['retained_m2'] + r['joint_trim_m2'] == pytest.approx(r['footprint_m2'], abs=1e-6)
+            # per-entity reconciliation: retained + stair + joint trim == own footprint (no stairs here)
+            assert r['retained_m2'] >= -1e-12 and r['stair_trim_m2'] >= -1e-12 and r['joint_trim_m2'] >= -1e-12
+            assert r['retained_m2'] + r['stair_trim_m2'] + r['joint_trim_m2'] == pytest.approx(r['footprint_m2'], abs=1e-6)
             # fully covered <=> dropped
             assert (r['status'] == 'trimmed') == (r['retained_m2'] <= 1e-9)
             if r['retained_m2'] > 0:
