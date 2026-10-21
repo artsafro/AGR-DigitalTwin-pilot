@@ -7,12 +7,16 @@ inside Blender can never exit 0 and read as success.
 Scope per file type:
 - ``.py``: every ``list``/``tuple`` literal (multi-line included) whose string
   constants contain ``--background`` must also contain ``--python-exit-code``;
-  and every executable command *string* passed to a subprocess/os execution
-  call (``subprocess.run``/``Popen``/``call``/``check_call``/``check_output``,
-  ``os.system``/``popen``, ...) that contains ``--background`` must also carry
-  the flag. AST-only, never imports or executes the scanned module. Docstrings,
-  usage strings and other non-executable prose are not command lines and are
-  out of scope.
+  and every executable command *string* passed (positional or ``args``/``cmd``/
+  ``command`` keyword) to a subprocess/os execution call
+  (``subprocess.run``/``Popen``/``call``/``check_call``/``check_output``,
+  ``os.system``/``popen``, ...) is isolated into shell commands with ``#``
+  comments stripped, so each command that contains ``--background`` must carry
+  the flag; a flag in another command or a comment must not discharge it.
+  Execution functions and module aliases are resolved from import bindings
+  (``import subprocess as sp``, ``from subprocess import run``). AST-only,
+  never imports or executes the scanned module. Docstrings, usage strings and
+  other non-executable prose are not command lines and are out of scope.
 - ``.sh``/``.ps1``: every logical line (backslash/backtick continuations joined)
   is split into separate commands at shell command boundaries (``;``, ``&``,
   ``&&``, ``|``, ``||``) with ``#`` comments stripped first; a command segment
@@ -53,13 +57,20 @@ _PY_FENCE_LANGS = {"python", "py", "py3", "python3", "ipython"}
 _FENCE = re.compile(r"^\s*(```+|~~~+)\s*(\S*)\s*$")
 _INDENTED = re.compile(r"^(?: {4,}|\t)")
 
-# Execution calls whose first positional argument is a command string.
+# Execution calls whose command string (positional or ``args``/``cmd``/
+# ``command`` keyword) must carry the flag.
 _EXEC_MODULES = {"subprocess", "os"}
 _EXEC_ATTRS = {
     "run", "Popen", "call", "check_call", "check_output",
     "getoutput", "getstatusoutput", "system", "popen",
 }
-_EXEC_BARE_NAMES = {"system", "popen"}
+_COMMAND_KEYWORDS = {"args", "cmd", "command"}
+# Stdlib modules are known even without an explicit import; import statements
+# refine them with aliases and ``from ... import`` name bindings.
+_SEED_BINDINGS: dict[str, tuple] = {
+    "subprocess": ("module", "subprocess"),
+    "os": ("module", "os"),
+}
 
 
 def _string_constants(node: ast.AST) -> list[str]:
@@ -189,23 +200,57 @@ def _logical_lines(lines: list[str], start_line: int) -> list[tuple[int, str]]:
     return logical
 
 
-def _is_exec_call(node: ast.Call) -> bool:
+def _collect_bindings(tree: ast.AST) -> dict[str, tuple]:
+    """Map a name to ('module', mod) or ('attr', mod, attr) from import statements.
+
+    ``import subprocess as sp`` binds ``sp`` to the module; ``from subprocess
+    import run`` (optionally ``as r``) binds the bare name to the exec attr.
+    """
+    bindings: dict[str, tuple] = dict(_SEED_BINDINGS)
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                if alias.name in _EXEC_MODULES:
+                    bindings[alias.asname or alias.name] = ("module", alias.name)
+        elif isinstance(node, ast.ImportFrom):
+            mod = node.module or ""
+            if mod not in _EXEC_MODULES:
+                continue
+            for alias in node.names:
+                if alias.name == "*":
+                    for attr in _EXEC_ATTRS:
+                        bindings[attr] = ("attr", mod, attr)
+                    continue
+                if alias.name in _EXEC_ATTRS:
+                    bindings[alias.asname or alias.name] = ("attr", mod, alias.name)
+    return bindings
+
+
+def _is_exec_call(node: ast.Call, bindings: dict[str, tuple]) -> bool:
     fn = node.func
-    if isinstance(fn, ast.Attribute):
-        return (isinstance(fn.value, ast.Name)
-                and fn.value.id in _EXEC_MODULES
-                and fn.attr in _EXEC_ATTRS)
+    if isinstance(fn, ast.Attribute) and isinstance(fn.value, ast.Name):
+        b = bindings.get(fn.value.id)
+        return bool(
+            b and b[0] == "module" and b[1] in _EXEC_MODULES and fn.attr in _EXEC_ATTRS
+        )
     if isinstance(fn, ast.Name):
-        return fn.id in _EXEC_BARE_NAMES
+        b = bindings.get(fn.id)
+        return bool(
+            b and b[0] == "attr" and b[1] in _EXEC_MODULES and b[2] in _EXEC_ATTRS
+        )
     return False
 
 
 def _command_string_arg(node: ast.Call) -> str | None:
-    if not node.args:
-        return None
-    first = node.args[0]
-    if isinstance(first, ast.Constant) and isinstance(first.value, str):
-        return first.value
+    if node.args:
+        first = node.args[0]
+        if isinstance(first, ast.Constant) and isinstance(first.value, str):
+            return first.value
+    for kw in node.keywords:
+        if kw.arg in _COMMAND_KEYWORDS:
+            val = kw.value
+            if isinstance(val, ast.Constant) and isinstance(val.value, str):
+                return val.value
     return None
 
 
@@ -215,6 +260,7 @@ def _scan_py_source(source: str) -> list[tuple[int, str]]:
         tree = ast.parse(source)
     except (SyntaxError, ValueError):
         return []  # not parseable Python; no literal/command to guard
+    bindings = _collect_bindings(tree)
     out: list[tuple[int, str]] = []
     for node in ast.walk(tree):
         if isinstance(node, (ast.List, ast.Tuple)):
@@ -222,11 +268,9 @@ def _scan_py_source(source: str) -> list[tuple[int, str]]:
             if (any(_BACKGROUND.search(s) for s in strings)
                     and not any(_EXIT_CODE.search(s) for s in strings)):
                 out.append((node.lineno, "python argv literal"))
-        elif isinstance(node, ast.Call) and _is_exec_call(node):
+        elif isinstance(node, ast.Call) and _is_exec_call(node, bindings):
             command = _command_string_arg(node)
-            if (command is not None
-                    and _BACKGROUND.search(command)
-                    and not _EXIT_CODE.search(command)):
+            if command is not None and _shell_violates(command):
                 out.append((node.lineno, "python command string"))
     return out
 
@@ -403,6 +447,126 @@ def test_py_subprocess_run_string_command_with_flag_passes(tmp_path: Path) -> No
     assert scan_file(src) == []
 
 
+def test_py_subprocess_string_semicolon_flag_borrows_is_flagged(tmp_path: Path) -> None:
+    """A flag in the second shell command must not discharge the first."""
+    src = tmp_path / "run.py"
+    src.write_text(
+        "import subprocess\n"
+        "subprocess.run(\"blender --background --python a.py; "
+        "blender --background --python-exit-code 1 --python b.py\", shell=True)\n",
+        encoding="utf-8",
+    )
+    violations = scan_file(src)
+    assert violations, "first Blender invocation missing the flag must be flagged"
+    assert violations[0][0] == 2
+
+
+def test_py_subprocess_string_both_commands_with_flag_passes(tmp_path: Path) -> None:
+    src = tmp_path / "run.py"
+    src.write_text(
+        "import subprocess\n"
+        "subprocess.run(\"blender --background --python-exit-code 1 --python a.py; "
+        "blender --background --python-exit-code 1 --python b.py\", shell=True)\n",
+        encoding="utf-8",
+    )
+    assert scan_file(src) == []
+
+
+def test_py_os_system_comment_flag_does_not_discharge(tmp_path: Path) -> None:
+    src = tmp_path / "run.py"
+    src.write_text(
+        "import os\n"
+        "os.system(\"blender --background --python a.py # remember --python-exit-code 1\")\n",
+        encoding="utf-8",
+    )
+    violations = scan_file(src)
+    assert violations, "a flag in a shell comment must not discharge the command"
+    assert violations[0][0] == 2
+
+
+def test_py_subprocess_keyword_args_missing_flag_is_flagged(tmp_path: Path) -> None:
+    src = tmp_path / "run.py"
+    src.write_text(
+        "import subprocess\n"
+        "subprocess.run(args=\"blender --background --python a.py\", shell=True)\n",
+        encoding="utf-8",
+    )
+    violations = scan_file(src)
+    assert violations, "keyword ``args`` command missing the flag must be flagged"
+    assert violations[0][0] == 2
+
+
+def test_py_subprocess_keyword_args_with_flag_passes(tmp_path: Path) -> None:
+    src = tmp_path / "run.py"
+    src.write_text(
+        "import subprocess\n"
+        "subprocess.run(args=\"blender --background --python-exit-code 1 --python a.py\",\n"
+        "              shell=True)\n",
+        encoding="utf-8",
+    )
+    assert scan_file(src) == []
+
+
+def test_py_os_system_keyword_command_missing_flag_is_flagged(tmp_path: Path) -> None:
+    src = tmp_path / "run.py"
+    src.write_text(
+        "import os\n"
+        "os.system(command=\"blender --background --python a.py\")\n",
+        encoding="utf-8",
+    )
+    violations = scan_file(src)
+    assert violations and violations[0][0] == 2
+
+
+def test_py_from_subprocess_import_run_missing_flag_is_flagged(tmp_path: Path) -> None:
+    src = tmp_path / "run.py"
+    src.write_text(
+        "from subprocess import run\n"
+        "run(\"blender --background --python a.py\", shell=True)\n",
+        encoding="utf-8",
+    )
+    violations = scan_file(src)
+    assert violations, "imported ``run`` missing the flag must be flagged"
+    assert violations[0][0] == 2
+
+
+def test_py_import_subprocess_as_alias_missing_flag_is_flagged(tmp_path: Path) -> None:
+    src = tmp_path / "run.py"
+    src.write_text(
+        "import subprocess as sp\n"
+        "sp.run(\"blender --background --python a.py\", shell=True)\n",
+        encoding="utf-8",
+    )
+    violations = scan_file(src)
+    assert violations, "module alias ``sp.run`` missing the flag must be flagged"
+    assert violations[0][0] == 2
+
+
+def test_py_from_subprocess_import_run_as_alias_missing_flag_is_flagged(
+        tmp_path: Path) -> None:
+    src = tmp_path / "run.py"
+    src.write_text(
+        "from subprocess import run as r\n"
+        "r(\"blender --background --python a.py\", shell=True)\n",
+        encoding="utf-8",
+    )
+    violations = scan_file(src)
+    assert violations, "import alias ``r`` missing the flag must be flagged"
+    assert violations[0][0] == 2
+
+
+def test_py_local_run_function_is_not_execution(tmp_path: Path) -> None:
+    """A locally defined ``run`` is not a subprocess call and must stay unflagged."""
+    src = tmp_path / "run.py"
+    src.write_text(
+        "def run(args):\n"
+        "    return args\n"
+        "run(\"blender --background --python a.py\")\n",
+        encoding="utf-8",
+    )
+    assert scan_file(src) == []
+
+
 def test_py_docstring_usage_without_flag_is_not_flagged(tmp_path: Path) -> None:
     """Prose/docstring command templates are not executable and stay unflagged."""
     src = tmp_path / "run.py"
@@ -534,6 +698,21 @@ def test_md_python_fence_multiline_list_missing_flag_is_flagged(tmp_path: Path) 
     assert violations and violations[0][0] == 2, (
         "multiline list in a python fence must be flagged at its opening line"
     )
+
+
+def test_md_python_fence_command_string_flag_borrows_is_flagged(tmp_path: Path) -> None:
+    src = tmp_path / "run.md"
+    src.write_text(
+        "```python\n"
+        "import subprocess\n"
+        "subprocess.run(\"blender --background --python a.py; "
+        "blender --background --python-exit-code 1 --python b.py\", shell=True)\n"
+        "```\n",
+        encoding="utf-8",
+    )
+    violations = scan_file(src)
+    assert violations, "python-fence shell string with borrowed flag must be flagged"
+    assert violations[0][0] == 3
 
 
 def test_md_text_block_is_recorded_not_runnable(tmp_path: Path) -> None:
