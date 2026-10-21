@@ -158,18 +158,35 @@ def _transition(points):
     return None
 
 
-def pair_triangles(mesh: Mesh) -> QuadMesh:
+def pair_triangles(mesh: Mesh, *, excluded_pairs=()) -> QuadMesh:
     """Option (a): D129-compatible pairing, no new points or changed tessellation.
 
     Every output face carries its exact source triangle IDs. The quad's 0--2
     diagonal is the original shared edge, so its fixed-fan tessellation is exactly
     the source surface (including nonplanar pairs within D129's one degree).
     UV discontinuities, material/level boundaries and inconsistent winding are
-    not crossed. This primitive neither relaxes D129 nor claims xView acceptance.
+    not crossed. ``excluded_pairs`` names zero-based source triangle pairs proven
+    unsafe by an export/alternate-diagonal check; these candidates are not merged.
+    Alternate valid matches remain possible. Exclusion is not a safety certificate:
+    every resulting/exported face still requires checks. This primitive neither
+    relaxes D129 nor claims xView acceptance.
     """
     _validate_seed(mesh)
+    excluded = set()
+    for ids in excluded_pairs:
+        if (not isinstance(ids, (tuple, list)) or len(ids) != 2
+                or any(isinstance(i, (bool, np.bool_)) or not isinstance(i, (int, np.integer))
+                       or not 0 <= i < len(mesh.faces) for i in ids)
+                or ids[0] == ids[1]):
+            raise ValueError(f'invalid excluded pair: {ids!r}')
+        key = tuple(sorted(map(int, ids)))
+        if key in excluded:
+            raise ValueError(f'duplicate excluded pair: {ids!r}')
+        excluded.add(key)
 
     def pair(m, a, b, edge):
+        if tuple(sorted((a, b))) in excluded:
+            return None
         f, g = tuple(m.faces[a]), tuple(m.faces[b])
         if m.slot[a] != m.slot[b] or m.level[a] != m.level[b]:
             return None
