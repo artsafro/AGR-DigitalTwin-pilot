@@ -1138,6 +1138,10 @@ def dissolve_base_vertex(mesh: Mesh, vertex: int) -> Mesh:
     if (len(incident) < 3 or np.any(mesh.level[incident] != 0)
             or len({mesh.slot[i] for i in incident}) != 1):
         raise ValueError('base dissolve requires one interior base slot')
+    triangles = mesh.verts[mesh.faces[incident]]
+    normals = np.cross(triangles[:,1]-triangles[:,0],triangles[:,2]-triangles[:,0])
+    if np.any(normals[:,2] <= 0):
+        raise ValueError('base dissolve requires upward source winding')
     region = unary_union(face_polys(mesh, np.isin(np.arange(len(mesh.faces)), incident)))
     point = shapely.Point(mesh.verts[vertex, :2])
     if not isinstance(region, Polygon) or region.interiors or not region.contains_properly(point):
