@@ -183,7 +183,30 @@ def retain_d150(m, reference, policy):
     return set(mapping.values()),{'samples':rows,'upper_vertex_delta_z_m':-.00002,'stack_gaps':gaps}
 
 
-def derive(m,profile,sampler,protected):
+def validate_pair_hints(m, hints):
+    """Optional exclusions only; the full export-safety proof always runs again."""
+    if not len(m.faces) or not isinstance(hints,dict) or set(hints)!={'source_geometry_sha256','profiles'}:
+        raise ValueError('invalid pair-hint keys or empty geometry')
+    if hints['source_geometry_sha256']!=legacy.surface_fingerprint(m.verts,m.faces):
+        raise ValueError('pair-hint geometry fingerprint mismatch')
+    profiles=hints['profiles']
+    if not isinstance(profiles,dict) or set(profiles)!={'npm','vpm'}:
+        raise ValueError('unmapped pair-hint profile keys')
+    result={}
+    for profile,pairs in profiles.items():
+        seen=set();result[profile]=[]
+        if not isinstance(pairs,list):raise ValueError(f'{profile}: pair-hint list required')
+        for pair in pairs:
+            if (not isinstance(pair,list) or len(pair)!=2 or pair[0]==pair[1]
+                    or any(isinstance(i,bool) or not isinstance(i,int) or not 0<=i<len(m.faces) for i in pair)):
+                raise ValueError(f'{profile}: invalid pair hint {pair!r}')
+            key=tuple(sorted(pair))
+            if key in seen:raise ValueError(f'{profile}: duplicate pair hint {key}')
+            seen.add(key);result[profile].append(list(key))
+    return result
+
+
+def derive(m,profile,sampler,protected,initial_exclusions=()):
     surf=m.level>=0;xy=m.verts[m.faces[surf],:2];base=np.floor(xy.mean(axis=1)/4)*4
     m.uv[surf]=(xy-base[:,None,:])/4
     uv,layout=legacy.profile_uv(m,profile);uv[~surf]=m.uv[~surf]
@@ -192,6 +215,7 @@ def derive(m,profile,sampler,protected):
     for i,f in enumerate(m.faces):
         for a,b in zip(f,np.roll(f,-1)):edges[tuple(sorted((int(a),int(b))))].append(i)
     excluded={tuple(sorted(v)) for v in edges.values() if len(v)==2 and any(i in protected for i in v)}
+    excluded.update(tuple(pair) for pair in initial_exclusions)
     origin=np.r_[(m.verts.min(0)[:2]+m.verts.max(0)[:2])/2,0.]
     verts=(m.verts-origin).astype(np.float32).astype(float)+origin
     z,hit=sampler.sample(m.verts[:,:2]);offset=m.verts[:,2]-z;offset[np.unique(m.faces[m.level==0])]=0
@@ -238,8 +262,10 @@ def main(argv=None):
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--adapter-json',required=True,type=Path);ap.add_argument('--source-master',required=True,type=Path)
     ap.add_argument('--d150-reference',required=True,type=Path);ap.add_argument('--out',required=True,type=Path)
+    ap.add_argument('--pair-hints',type=Path,help='geometry-bound exclusions, never cached acceptance')
     a=ap.parse_args(argv)
     paths=[a.adapter_json,a.source_master,a.d150_reference,ROOT/'ground-notch-approval-v015.json',ROOT/'ground-gap-exceptions.json',ROOT/'ground-source-void-v015.json',ROOT/'ground-material-ids-v015.json']
+    if a.pair_hints is not None:paths.append(a.pair_hints)
     out=a.out.resolve()
     if out.exists():raise ValueError('new output directory required; refusing alias or stale receipts')
     resolved=[p.resolve() for p in paths]
@@ -262,9 +288,10 @@ def main(argv=None):
         raise ValueError(f'contour construction failed: {coverage}; {edges}')
     if gap_receipt['stack_gaps']['normal_gap_vertices_below'] or gap_receipt['stack_gaps']['normal_gap_centroids_below']:
         raise ValueError('normal gap below unchanged 5 mm')
+    hints=validate_pair_hints(m,load_json(payload[a.pair_hints])) if a.pair_hints is not None else {'npm':[],'vpm':[]}
     profiles={};stats={}
     for profile in ('npm','vpm'):
-        q,r=derive(m,profile,sampler,protected)
+        q,r=derive(m,profile,sampler,protected,hints[profile])
         if set(q.slot)!=set(order):raise ValueError(f'expected all fixed texture IDs used, actual {sorted(set(q.slot))}')
         profiles[profile]={'verts':q.verts.tolist(),'faces':[list(map(int,f)) for f in q.faces],'uv':[u.tolist() for u in q.uv],
             'slots':order,'mat':[order.index(s) for s in q.slot],'level':q.level.tolist(),'source_faces':q.source_faces,'cell':4.}
