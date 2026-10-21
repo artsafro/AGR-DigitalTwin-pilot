@@ -114,3 +114,13 @@ def test_exactly_at_line_threshold_is_not_sliding():
 def test_unknown_wall_edge_raises():
     with pytest.raises(ValueError, match=r"\[7\]"):
         snap_upper_cols([(0.0, 0.0, 7, False)], ring(SQUARE), {7})
+
+
+def test_inputs_are_not_mutated_and_duplicate_chain_edges_collapse():
+    lower, upper = ring(SQUARE), ring([(0.0, 0.0), (10.5, 0.0), (10.0, 10.0), (0.0, 10.0)])
+    before = repr((lower, upper))
+    assert sliding_walls([lower, upper], [{"edges": [0, 0]}, {"edges": [0]}]) == {0: {0}}
+    cols = [(0.0, 0.001, 0, False), (10.0, 0.001, 1, False), (10.0, 10.0, 2, False), (0.0, 10.0, 3, False)]
+    snapshot = list(cols)
+    snap_upper_cols(cols, lower, {0})
+    assert cols == snapshot and repr((lower, upper)) == before
