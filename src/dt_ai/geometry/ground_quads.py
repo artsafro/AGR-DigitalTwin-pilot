@@ -79,7 +79,36 @@ def _pair(mesh, a, b, edge):
     return tuple(ring), actual
 
 
-def _patches(mesh, pairer=_pair):
+def _augment_matching(adjacency, matching):
+    """Find simple alternating paths of at most seven edges; no maximum claim."""
+    mate=dict(matching)
+    changed=True
+    while changed:
+        changed=False
+        for root in range(len(adjacency)):
+            if root in mate:
+                continue
+            pending=[(root,(root,))]
+            found=None
+            while pending and found is None:
+                u,path=pending.pop()
+                for v in sorted(adjacency[u],reverse=True):
+                    if v in path or mate.get(u)==v:
+                        continue
+                    if v not in mate:
+                        found=path+(v,)
+                        break
+                    w=mate[v]
+                    if w not in path and len(path)+2<=7:
+                        pending.append((w,path+(v,w)))
+            if found is not None:
+                for a,b in zip(found[::2],found[1::2]):
+                    mate[a]=b;mate[b]=a
+                changed=True
+    return mate
+
+
+def _patches(mesh, pairer=_pair, *, improve_matching=False):
     incidence = defaultdict(list)
     for k, face in enumerate(mesh.faces):
         for e in _edges(face):
@@ -116,6 +145,11 @@ def _patches(mesh, pairer=_pair):
         for j in adjacent[a] | adjacent[b]:
             if j not in used:
                 heapq.heappush(heap, (len(adjacent[j] - used), j))
+    if improve_matching:
+        mate={a:b for _,parent in paired.values() for a,b in (parent,parent[::-1])}
+        mate=_augment_matching(adjacent,mate)
+        paired={a:(candidates[a,b],(a,b)) for a,b in mate.items() if a<b}
+        used=set(mate)
     out = []
     for k, face in enumerate(mesh.faces):
         if k in paired:
@@ -158,7 +192,7 @@ def _transition(points):
     return None
 
 
-def pair_triangles(mesh: Mesh, *, excluded_pairs=()) -> QuadMesh:
+def pair_triangles(mesh: Mesh, *, excluded_pairs=(), improve_matching: bool = False) -> QuadMesh:
     """Option (a): D129-compatible pairing, no new points or changed tessellation.
 
     Every output face carries its exact source triangle IDs. The quad's 0--2
@@ -172,6 +206,8 @@ def pair_triangles(mesh: Mesh, *, excluded_pairs=()) -> QuadMesh:
     relaxes D129 nor claims xView acceptance.
     """
     _validate_seed(mesh)
+    if not isinstance(improve_matching,bool):
+        raise ValueError('improve_matching must be bool')
     excluded = set()
     for ids in excluded_pairs:
         if (not isinstance(ids, (tuple, list)) or len(ids) != 2
@@ -215,7 +251,7 @@ def pair_triangles(mesh: Mesh, *, excluded_pairs=()) -> QuadMesh:
             uv[v] = value
         return tuple(ring), np.asarray([uv[v] for v in ring])
 
-    patches = _patches(mesh, pair)
+    patches = _patches(mesh, pair, improve_matching=improve_matching)
     return QuadMesh(mesh.verts.copy(), tuple(f for f, _, _ in patches),
                     [mesh.slot[ids[0]] for _, _, ids in patches],
                     np.array([mesh.level[ids[0]] for _, _, ids in patches]),
