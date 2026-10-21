@@ -42,6 +42,12 @@ SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 DRIVE_LINK_RE = re.compile(r"^https://(drive|docs)\.google\.com/\S+$")
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_MANIFEST = REPO_ROOT / "assets" / "manifest.json"
+_DRIVE_ROOT_CANDIDATES = (
+    Path("G:/My Drive"),
+    Path("G:/Мой диск"),
+    Path.home() / "Google Drive",
+    Path.home() / "My Drive",
+)
 
 
 def prompt_for_login() -> None:
@@ -53,22 +59,20 @@ def which_rclone() -> str | None:
     return shutil.which("rclone")
 
 
+def _is_dir(path: Path) -> bool:
+    try:
+        return path.is_dir()
+    except OSError:
+        return False
+
+
 def drive_desktop_root(explicit: Path | None = None) -> Path | None:
     if explicit is not None:
         path = Path(explicit)
-        return path if path.is_dir() else None
-    candidates = (
-        Path("G:/My Drive"),
-        Path("G:/"),
-        Path.home() / "Google Drive",
-        Path.home() / "My Drive",
-    )
-    for candidate in candidates:
-        try:
-            if candidate.is_dir():
-                return candidate
-        except OSError:
-            continue
+        return path if _is_dir(path) else None
+    for candidate in _DRIVE_ROOT_CANDIDATES:
+        if _is_dir(candidate):
+            return candidate
     return None
 
 
@@ -114,7 +118,7 @@ def validate_document(document: object) -> list[str]:
         if not isinstance(entry, dict):
             errors.append(f"{label}: partial")
             continue
-        allowed_entry = {"id", "version", "local_path", "sha256", "size", "drive_link", "licence", "source", "recorded_path"}
+        allowed_entry = {"id", "version", "local_path", "sha256", "size", "drive_link", "licence", "source", "recorded_path", "drive_path"}
         if set(entry) - allowed_entry:
             errors.append(f"{label}: unsupported_field")
         for field in ("licence", "source"):
@@ -148,6 +152,13 @@ def validate_document(document: object) -> list[str]:
         link = entry.get("drive_link", None)
         if link != PENDING and not (isinstance(link, str) and DRIVE_LINK_RE.fullmatch(link)):
             errors.append(f"{label}: partial: drive_link")
+        drive_path = entry.get("drive_path", None)
+        if "drive_path" in entry and (
+            not isinstance(drive_path, str) or not drive_path.strip() or _path_escapes(drive_path)
+        ):
+            errors.append(f"{label}: partial: drive_path")
+        elif "drive_path" not in entry and isinstance(link, str) and DRIVE_LINK_RE.fullmatch(link):
+            errors.append(f"{label}: partial: drive_path")
         if not _text(entry.get("source")):
             errors.append(f"{label}: missing_source")
     return errors
@@ -212,6 +223,14 @@ def _load(path: Path) -> tuple[object | None, str | None]:
         return json.loads(text), None
     except json.JSONDecodeError:
         return None, "partial: manifest_json"
+
+
+def _effective_drive_path(entry: dict) -> str:
+    """Drive-for-desktop destination relative to the folder. ``drive_path`` wins."""
+    drive_path = entry.get("drive_path")
+    if isinstance(drive_path, str) and drive_path.strip():
+        return drive_path
+    return entry["local_path"]
 
 
 def _entry_label(entry: object, index: int) -> str:
@@ -298,14 +317,25 @@ def execute(
         for item in row_errors:
             if item not in errors:
                 errors.append(item)
-        rows.append({"id": label, "status": status, "drive_link": link if link == PENDING or status == "match" else PENDING, "errors": row_errors})
+        rows.append({
+            "id": label,
+            "status": status,
+            "drive_link": link if link == PENDING or status == "match" else PENDING,
+            "drive_path": _effective_drive_path(entry) if isinstance(entry, dict) and (
+                (isinstance(entry.get("drive_path"), str) and entry["drive_path"].strip())
+                or isinstance(entry.get("local_path"), str)
+            ) else None,
+            "errors": row_errors,
+        })
 
     # Preflight ALL destinations before any write, including missing asset paths.
     local_paths = [root / e["local_path"] for e in assets_in
                    if isinstance(e, dict) and isinstance(e.get("local_path"), str)]
     desktop = drive_desktop_root(drive_root) if backend == "drive-desktop" else None
-    targets = [desktop / e["local_path"] for e in assets_in
+    targets = [desktop / _effective_drive_path(e) for e in assets_in
                if isinstance(e, dict) and isinstance(e.get("local_path"), str)] if desktop else []
+    if desktop is not None and len({os.path.normcase(str(path.resolve())) for path in targets}) != len(targets):
+        errors.append("duplicate_drive_path")
     # Query only during apply; dry-run must never invoke a remote client.
     if not errors and apply and backend == "rclone" and _credentials(backend, drive_root) == "present":
         try:
@@ -410,7 +440,7 @@ def _copy(entry: dict, root: Path, backend: str, desktop: Path | None) -> str:
     if _sha256(source) != entry["sha256"]:
         raise ValueError("sha256_mismatch before copy")
     if backend == "drive-desktop":
-        target = desktop / entry["local_path"]
+        target = desktop / _effective_drive_path(entry)
         if target.exists():
             if _sha256(target) != entry["sha256"]:
                 raise ValueError("destination differs; use a new versioned path")
