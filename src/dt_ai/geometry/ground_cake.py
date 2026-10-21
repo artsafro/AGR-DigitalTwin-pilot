@@ -962,6 +962,69 @@ def clean_topology(mesh: Mesh, weld_m: float = 0.0021) -> Mesh:
     return Mesh(np.array(v)[used], remap[faces], slots, np.array(levels), tex, mesh.cell, report)
 
 
+def weld_base_boundary(mesh: Mesh, weld_m: float = .0041,
+                       displacement_limit_m: float = .0021) -> Mesh:
+    """Opt-in midpoint closure of tiny base-outline seams before curtain extrusion.
+
+    Only open-edge base vertices may participate. Unlike whole-outline projection,
+    cluster centroids bound displacement by the existing 2.2 mm coverage tolerance.
+    Reject a chained cluster reaching the tighter 2.1 mm movement bound. This merges
+    coincident construction seams; it never splits/displaces disconnected fans.
+    Recheck all geometry gates after cleanup; this is not delivery acceptance.
+    """
+    from twinqa.geometry.topology import _cluster_ids
+    from dt_ai.ops.inv_quads import PolyMesh
+
+    for name, value in (("weld_m", weld_m), ("displacement_limit_m", displacement_limit_m)):
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
+            raise ValueError(f"{name} must be positive finite")
+    if weld_m > .0041 or displacement_limit_m > .0021:
+        raise ValueError("boundary weld cannot exceed 4.1 mm search / 2.1 mm displacement")
+    checked = PolyMesh(mesh.verts, tuple(map(tuple, mesh.faces)))
+    if not checked.faces or any(len(f) != 3 for f in checked.faces):
+        raise ValueError("boundary weld requires nonempty triangles")
+    if np.shape(mesh.level) != (len(mesh.faces),) or not np.isfinite(mesh.level).all() or np.any(mesh.level < 0):
+        raise ValueError("boundary weld requires finite surface-only levels")
+    if len(mesh.slot) != len(mesh.faces) or np.shape(mesh.uv) != (len(mesh.faces), 3, 2) or not np.isfinite(mesh.uv).all():
+        raise ValueError("complete slots and finite corner UV required")
+    if not math.isfinite(mesh.cell) or mesh.cell <= 0:
+        raise ValueError("positive finite cell required")
+    base = np.flatnonzero(mesh.level == 0)
+    if not len(base):
+        raise ValueError("base surface required")
+    edges = {}
+    for fi in base:
+        for a, b in zip(mesh.faces[fi], np.roll(mesh.faces[fi], -1)):
+            edges.setdefault(tuple(sorted((int(a), int(b)))), []).append(int(fi))
+    if any(len(ids) > 2 for ids in edges.values()):
+        raise ValueError("nonmanifold base edge before boundary weld")
+    boundary = np.array(sorted({v for edge, ids in edges.items() if len(ids) == 1 for v in edge}), int)
+    if not len(boundary):
+        raise ValueError("open base boundary required")
+    clusters = _cluster_ids(mesh.verts[boundary], weld_m)
+    v = mesh.verts.copy()
+    groups = []
+    for cluster in np.unique(clusters):
+        ids = boundary[clusters == cluster]
+        if len(ids) == 1:
+            continue
+        centre = mesh.verts[ids].mean(axis=0)
+        displacement = np.linalg.norm(mesh.verts[ids]-centre, axis=1)
+        if displacement.max() >= displacement_limit_m:
+            raise ValueError(f"boundary cluster {ids.tolist()}: displacement {displacement.max()} m reaches {displacement_limit_m} m")
+        v[ids] = centre
+        groups.append(dict(vertices=ids.tolist(), before=mesh.verts[ids].tolist(), after=centre.tolist()))
+    delta = np.linalg.norm(v-mesh.verts, axis=1)
+    moved = np.flatnonzero(delta > 1e-12)
+    if np.intersect1d(moved, mesh.faces[mesh.level > 0]).size:
+        raise ValueError("base boundary shares moved vertices with upper sheets")
+    uv = mesh.uv.copy() + (v[mesh.faces, :2]-mesh.verts[mesh.faces, :2])/mesh.cell
+    result = clean_topology(Mesh(v, mesh.faces.copy(), list(mesh.slot), mesh.level.copy(), uv, mesh.cell, dict(mesh.report)))
+    result.report['boundary_weld'] = dict(weld_m=weld_m, displacement_limit_m=displacement_limit_m,
+        max_displacement_m=float(delta.max()), groups=groups, cleanup=result.report['cleanup'])
+    return result
+
+
 def add_skirt(mesh: Mesh, depth: float = 1.0, slot: str = "Skirt") -> Mesh:
     """Vertical skirt down ``depth`` m along every open (single-face) edge of the base layer."""
     if not math.isfinite(depth) or depth < 1.0:

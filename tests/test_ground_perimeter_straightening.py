@@ -28,3 +28,15 @@ def test_boundary_straightening_removes_a_three_mm_jog_before_skirt(offset):
     assert fixed.report['boundary_weld']['max_displacement_m']<.0021
     r=report(fixed)
     assert not r.vertex_pairs and not r.face_pairs
+
+
+def test_collinear_boundary_chain_is_not_a_weld_candidate():
+    # Three distinct samples 3 mm apart on an already straight boundary are not
+    # a seam. Connected-distance clustering alone would move an endpoint 3 mm.
+    ring=np.array([[0,0,100],[1,0,100],[1.003,0,100],[1.006,0,100],[2,0,100],[2,2,100],[0,2,100]],float)
+    v=np.vstack([ring,[1,1,100]])
+    f=np.array([[i,(i+1)%len(ring),len(ring)] for i in range(len(ring))])
+    m=gc.Mesh(v,f,['TileGrey']*len(f),np.zeros(len(f),int),np.zeros((len(f),3,2)),4.)
+    fixed=gc.weld_base_boundary(m)
+    assert fixed.report['boundary_weld']['groups']==[]
+    assert fixed.report['boundary_weld']['max_displacement_m']==0
