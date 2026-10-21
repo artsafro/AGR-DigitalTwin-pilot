@@ -127,6 +127,31 @@ def validate_data(data):
             vector = mesh[field]
             if not isinstance(vector,list) or len(vector)!=3 or any(type(v) not in (int,float) for v in vector):
                 raise ValueError(f"invalid {field}")
+        bounds = mesh["bounds_m"]
+        if (not isinstance(bounds, list) or len(bounds) != 2
+                or any(not isinstance(v, list) or len(v) != 3 for v in bounds)
+                or any(type(c) not in (int, float) for v in bounds for c in v)):
+            raise ValueError("invalid bounds_m: expected two numeric 3D corners")
+        lo, hi = bounds
+        try:
+            if not all(math.isfinite(c) for v in bounds for c in v):
+                raise ValueError("invalid bounds_m: non-finite corner")
+            if any(a > b for a, b in zip(lo, hi)):
+                raise ValueError("invalid bounds_m: inverted corners")
+            for axis in (0, 1):
+                size = hi[axis] - lo[axis]
+                if not math.isfinite(size) or size <= 0:
+                    raise ValueError("unmeasurable bounds_m: invalid X/Y span")
+                # Mirror the production arithmetic, not an overflow-safe alternative:
+                # a finite mathematical ratio is insufficient if the checker sees inf/NaN.
+                centre = (lo[axis] + hi[axis]) / 2
+                offset = abs(centre - mesh["location"][axis])
+                ratio = offset / size
+                percent = ratio * 100
+                if not all(math.isfinite(v) for v in (centre, offset, ratio, percent)):
+                    raise ValueError("unmeasurable bounds_m: non-finite pivot arithmetic")
+        except ArithmeticError as exc:
+            raise ValueError("unmeasurable bounds_m: pivot arithmetic overflow") from exc
         if type(mesh["triangles"]) is not int or mesh["triangles"]<=0 or not mesh["polygon_degrees"]:
             raise ValueError("empty or invalid triangle evidence")
         if type(mesh.get("uv_channels")) is not int or mesh["uv_channels"] < 1:
