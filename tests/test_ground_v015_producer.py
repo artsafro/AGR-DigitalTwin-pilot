@@ -62,3 +62,14 @@ def test_pair_hints_are_geometry_bound_and_never_a_pass_receipt():
     with pytest.raises(ValueError,match='fingerprint'):module.validate_pair_hints(m,hints)
     hints['profiles']['unknown']=[]
     with pytest.raises(ValueError):module.validate_pair_hints(m,hints)
+
+
+def test_distinct_input_spellings_of_one_hardlink_are_rejected_before_parsing(tmp_path):
+    source=tmp_path/'adapter.json';source.write_text('{}')
+    alias=tmp_path/'master.json';alias.hardlink_to(source)
+    reference=tmp_path/'reference.npz';reference.write_bytes(b'not an npz')
+    out=tmp_path/'new-output'
+    r=subprocess.run([sys.executable,str(SCRIPT),'--adapter-json',str(source),'--source-master',str(alias),
+        '--d150-reference',str(reference),'--out',str(out)],capture_output=True,text=True)
+    assert r.returncode!=0 and 'alias' in r.stderr
+    assert not out.exists() and source.read_text()=='{}' and alias.read_text()=='{}'
