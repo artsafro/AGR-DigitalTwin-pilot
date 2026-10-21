@@ -207,8 +207,13 @@ def run_checker(name, scene):
         return checks.result(name, ok, counts, 100)
     if name in ("clearance", "clearance_target"):
         scope = ["contact_a", "contact_b"] if name == "clearance" else ["normal_target"]
-        soup = scoped(scene, scope)
-        faces = [{"object": scope[0], "index": i, "points": t.tolist()} for i,t in enumerate(soup.corners())]
+        # Keep source object names and object-local indices, not flattened Soup IDs.
+        faces = []
+        for m in scene["meshes"]:
+            if m["name"] in scope:
+                corners = scoped(scene, [m["name"]]).corners()
+                faces.extend({"object": m["name"], "index": i, "points": t.tolist()}
+                             for i, t in enumerate(corners))
         hits = near_parallel_overlaps(faces, .005)
         return checks.result(name, not hits, len(hits), 0, {"pairs": hits})
     if name == "uv_density_adapter":
