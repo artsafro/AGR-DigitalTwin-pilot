@@ -1,5 +1,7 @@
 """Report stamps (standards digest, code commit) and --recheck of a stored report (issue #511).
 
+Pattern: new-case: validator report provenance and recheck (no modelling pattern applies).
+
 recheck reads an old report.json and says whether its verdict still holds now:
 current (standards and target unchanged), stale_standards (a rule file changed),
 evidence_missing (the target is gone or changed). The old report is never rewritten.
