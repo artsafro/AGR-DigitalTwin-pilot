@@ -136,13 +136,31 @@ def geometry(data, raw, approval, void_data):
         'curtain':clipping,'details':dispositions,'joints':joints,'curb_support':fitted.report}
 
 
+def match_reference_faces(m, reference, face_ids):
+    """Unique world-coordinate correspondence, without lossy pre-rounding."""
+    candidates=np.flatnonzero(m.level>=0)
+    xyz=m.verts[m.faces[candidates]];centres=xyz.mean(axis=1)
+    mapping={}
+    for face_id in face_ids:
+        target=reference['verts'][reference['faces'][face_id]]
+        nearby=np.flatnonzero(np.linalg.norm(centres-target.mean(axis=0),axis=1)<2e-6)
+        found=[]
+        for k in nearby:
+            distances=np.linalg.norm(xyz[k,:,None,:]-target[None,:,:],axis=2)
+            nearest=distances.argmin(axis=1)
+            if len(set(nearest.tolist()))==3 and np.max(distances[np.arange(3),nearest])<2e-6:
+                found.append(int(candidates[k]))
+        if len(found)!=1:
+            raise ValueError(f"D150 face {face_id}: {'unmapped' if not found else 'ambiguous'} world identity")
+        mapping[int(face_id)]=found[0]
+    return mapping
+
+
 def retain_d150(m, reference, policy):
     if legacy.surface_fingerprint(reference['verts'],reference['faces'])!=policy['surface_sha256']:
         raise ValueError('D150 original reference surface fingerprint mismatch')
-    def key(v,f):return tuple(sorted(tuple(p) for p in np.round(v[f],5)))
-    index={key(m.verts,f):i for i,f in enumerate(m.faces) if m.level[i]>=0}
     protected=sorted({s[k] for s in policy['samples'] for k in ('upper_face','lower_face')})
-    mapping={i:index[key(reference['verts'],reference['faces'][i])] for i in protected}
+    mapping=match_reference_faces(m,reference,protected)
     vm={}
     for vi in policy['vertices']:
         ids=np.flatnonzero(np.linalg.norm(m.verts-reference['verts'][vi],axis=1)<2e-6)
