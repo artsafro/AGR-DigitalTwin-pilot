@@ -124,3 +124,52 @@ def test_inputs_are_not_mutated_and_duplicate_chain_edges_collapse():
     snapshot = list(cols)
     snap_upper_cols(cols, lower, {0})
     assert cols == snapshot and repr((lower, upper)) == before
+
+
+# Review round 1 (PR #536, P1): NaN/inf must raise on every branch, never be snapped away.
+LOWER_CORNER = ring([(0.0, 0.0), (10.0, 0.0), (10.0, 10.0)])
+
+
+@pytest.mark.parametrize("bad", [math.nan, math.inf, -math.inf])
+def test_non_finite_corner_closing_one_wall_opening_another_raises(bad):
+    cols = [(0.0, 0.0, 0, False), (bad, 0.001, 1, False), (10.0, 10.0, 2, False)]
+    with pytest.raises(ValueError, match="non-finite.*upper column 1"):
+        snap_upper_cols(cols, LOWER_CORNER, {0, 1})
+
+
+@pytest.mark.parametrize("bad", [math.nan, math.inf])
+def test_non_finite_column_off_any_wall_raises(bad):
+    cols = [(0.0, 0.0, 0, False), (10.0, 0.0, 1, False), (bad, 10.0, 2, False)]
+    with pytest.raises(ValueError, match="upper column 2"):
+        snap_upper_cols(cols, LOWER_CORNER, set())
+
+
+@pytest.mark.parametrize("bad", [math.nan, math.inf])
+def test_non_finite_lower_wall_endpoint_raises(bad):
+    lower = ring([(0.0, 0.0), (10.0, 0.0), (10.0, 10.0)])
+    lower["edges"][1]["b"] = (10.0, bad)
+    cols = [(0.0, 0.0, 0, False), (10.0, 0.001, 1, False), (10.0, 10.0, 2, False)]
+    with pytest.raises(ValueError, match="lower edge 1"):
+        snap_upper_cols(cols, lower, {0, 1})
+
+
+@pytest.mark.parametrize("bad", [math.nan, math.inf])
+def test_intersect_rejects_non_finite_endpoints(bad):
+    with pytest.raises(ValueError, match="non-finite"):
+        _intersect((0.0, 0.0), (10.0, 0.0), (10.0, 0.0), (bad, 10.0))
+
+
+@pytest.mark.parametrize("bad", [math.nan, math.inf])
+def test_sliding_walls_rejects_non_finite_before_skips(bad):
+    lower = ring(SQUARE)
+    upper = ring(SQUARE)
+    upper["edges"][2]["length"] = bad   # would otherwise be skipped as unchanged
+    with pytest.raises(ValueError, match="ring 1 edge 2"):
+        sliding_walls([lower, upper], CHAINS)
+
+
+def test_finite_corner_control_still_snaps_to_intersection():
+    cols = [(0.0, 0.0, 0, False), (10.0, 0.001, 1, False), (10.0, 10.0, 2, False)]
+    out, worst = snap_upper_cols(cols, LOWER_CORNER, {0, 1})
+    assert out[1][:2] == pytest.approx((10.0, 0.0), abs=1e-12)
+    assert worst == pytest.approx(0.001, abs=1e-9)

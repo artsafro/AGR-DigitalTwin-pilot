@@ -15,6 +15,12 @@ COLLAPSE_M = 0.005  # an edge shorter than this has collapsed in that ring
 STILL_M = 1e-4     # an end that moves less than this has not moved
 
 
+def _finite(what, *vals):
+    """ValueError naming `what` when any value is NaN/inf (checked before any skip or branch)."""
+    if not all(math.isfinite(v) for v in vals):
+        raise ValueError(f"non-finite geometry in {what}: {vals}")
+
+
 def _sub(p, q):
     return (p[0] - q[0], p[1] - q[1])
 
@@ -42,13 +48,16 @@ def _line_dist(p, a, b):
 
 
 def _intersect(a0, b0, a1, b1):
-    """Intersection of lines a0-b0 and a1-b1, or None when they are parallel."""
+    """Intersection of lines a0-b0 and a1-b1, or None when they are parallel; ValueError on NaN/inf."""
+    _finite("intersect line endpoints", *a0[:2], *b0[:2], *a1[:2], *b1[:2])
     d0, d1 = _sub(b0, a0), _sub(b1, a1)
     den = d0[0] * d1[1] - d0[1] * d1[0]
     if abs(den) < 1e-12:
         return None
     t = ((a1[0] - a0[0]) * d1[1] - (a1[1] - a0[1]) * d1[0]) / den
-    return (a0[0] + d0[0] * t, a0[1] + d0[1] * t)
+    x = (a0[0] + d0[0] * t, a0[1] + d0[1] * t)
+    _finite("intersection result", *x)
+    return x
 
 
 def sliding_walls(rings, chains, *, line_m=LINE_M, collapse_m=COLLAPSE_M, still_m=STILL_M):
@@ -59,6 +68,8 @@ def sliding_walls(rings, chains, *, line_m=LINE_M, collapse_m=COLLAPSE_M, still_
         for ch in chains:
             for i in ch["edges"]:
                 e0, e1 = rings[k]["edges"][i], rings[k + 1]["edges"][i]
+                for r, e in ((k, e0), (k + 1, e1)):
+                    _finite(f"ring {r} edge {i}", *e["a"][:2], *e["b"][:2], e["length"])
                 if e0["length"] < collapse_m or e1["length"] < collapse_m:
                     continue
                 a0, b0, a1, b1 = e0["a"], e0["b"], e1["a"], e1["b"]
@@ -78,6 +89,11 @@ def snap_upper_cols(cols, lower, walls):
     missing = sorted(i for i in walls if not 0 <= i < len(lower["edges"]))
     if missing:
         raise ValueError(f"sliding wall edges {missing} are not edges of the lower ring")
+    for q, c in enumerate(cols):
+        _finite(f"upper column {q}", c[0], c[1])
+    for i in walls:
+        e = lower["edges"][i]
+        _finite(f"lower edge {i}", *e["a"][:2], *e["b"][:2])
     for q in range(n):
         own, prev = cols[q][2], cols[(q - 1) % n][2]
         lines = []
@@ -91,6 +107,7 @@ def snap_upper_cols(cols, lower, walls):
         p = (cols[q][0], cols[q][1])
         x = _intersect(*L[0], *L[1]) if len(L) == 2 else None
         x = x if x is not None else _project(p, *L[0])
+        _finite(f"snapped column {q}", *x)
         worst = max(worst, _len(_sub(x, p)))
         out[q] = (x[0], x[1], own, cols[q][3])
     return out, worst
