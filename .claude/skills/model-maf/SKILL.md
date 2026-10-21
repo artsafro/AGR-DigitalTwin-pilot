@@ -56,7 +56,7 @@ candidates, `npm_matches` are NPM .blend candidates, and previews plus per-MAF .
 dimension candidate is not a match: compare the preview with the specification picture (construction, shape). Where
 the catalogue does not reach (a new library scene, a missing entry): visual selection in a copy of the user's
 library scene `МАФы_Union_ALLin.max`, the way the user does it. The catalogue is a technical audit, not
-identification and not acceptance.
+identification and not acceptance. When the catalogue does not reach, ask Artem first: he names the library object. Only when he cannot find it either does the agent search by specification / manufacturer on the web and send links for his approval — the photos must match the specification AND the DWG contour. No substitution [D164] («Нет замены модели.»).
 
 - Route: catalogue JSON lookup of `library/maf/catalogue.json` plus preview images; `dcc_batch.py max --scene <copy>.max` for a scene read.
 - Needs: headless for candidates; human for the visual choice when several candidates remain.
@@ -66,7 +66,7 @@ identification and not acceptance.
 
 A MAF missing from the library, or individually made: model it from the manufacturer picture and the dimensions, or
 from the legend scheme of the drawing. Silhouette first (MAF-03), metres (MAF-04). Every individually made MAF goes
-to the user as a separate verify line — always, even when all checks pass.
+to the user as a separate verify line — always, even when all checks pass. Model mid-poly quads, decomposed «lego»-style [D165] with inserts (врезки) — ladder steps into the rails as one mesh, the slide into the platform, the handrail into the posts; fasteners are not modelled («крепежи мы обычно не отображаем»); keep it xView-clean (no overlapping vertices or faces).
 
 - Route: 3ds Max batch or Blender headless (primitives and extrusions from the scheme).
 - Needs: human (reference reading and the look), no tool yet.
@@ -85,7 +85,7 @@ in silence: rescale only uniformly and only with a recorded reason, otherwise go
 
 ### Step 5 — Light version for the NPM budget
 
-NPM and VPM ideally share one model. When the MAF total pushes the NPM Ground budget (MAF-07, the planning MAF
+NPM and VPM share one mid-poly model; a light NPM version is made only when the site budget needs it, never as a substitution [D164]. The Ground/Flora/MAF split is Artem's call [D167]: he decides from a table the agent prepares (2-3 options with savings); the agent never deletes Flora or MAF. When the MAF total pushes the NPM Ground budget (MAF-07, the planning MAF
 share of [D097]), make a light version: fewer segments, simpler round parts, until it fits. Count triangles per MAF
 times the instances from Step 1. Prefer an existing NPM candidate (`npm_matches`). The silhouette stays (MAF-03).
 The light version goes back through Step 4.
@@ -94,17 +94,7 @@ The light version goes back through Step 4.
 - Needs: headless, no tool yet; human for the silhouette look.
 - Done when: a table MAF -> tris full / light -> instances -> total against the MAF share, and the NPM total under the budget.
 
-### Step 6 — Shared 512 atlas
-
-One texture set for all GroundEl at 512 (MAF-09), RGB only ([D020]). List every material the MAFs use (wood,
-coloured plastics, metal, signs and the rest): solid colours get 64 or 128 squares, patterned textures get larger
-slots; then map the UVs of each MAF into its slot. Embedding in the Ground FBX comes later (MAF-13).
-
-- Route: `tools/materials/atlas_maf.py` (material list -> PNG + UV JSON); UV remap in 3ds Max batch or Blender headless.
-- Needs: headless for packing; no tool yet for the UV remap; human for the visual check.
-- Done when: one 512 RGB atlas, the UV JSON, and every face of every MAF inside its material's slot.
-
-### Step 7 — Hard edges by angle
+### Step 6 — Hard edges by angle
 
 Hard edges by angle 30-45 degrees (smoothing, MAF-20). Round parts with N segments meet at 360/N degrees: they shade
 smooth only when 360/N is below the threshold (at 45 degrees N >= 9, at 30 degrees N >= 13). A light version with
@@ -113,6 +103,15 @@ fewer segments shows facets: pick the threshold inside the band and show the use
 - Route: 3ds Max batch (Smooth modifier, auto smooth threshold) or Blender headless (`shade_smooth_by_angle`).
 - Needs: headless; human for the look of light round parts.
 - Done when: the threshold is recorded per MAF, and no smoothing group crosses an edge sharper than it.
+
+### Step 7 — Shared 512 atlas
+
+One texture set for all GroundEl at 512 (MAF-09), RGB only ([D020]). After the smoothing of Step 6, assign the material IDs from the approved library-wide list [D168] and their VPM textures first, then build the NPM atlas: solid colours get 64 or 128 squares, patterned textures get larger
+slots; then map the UVs of each MAF into its slot. Embedding in the Ground FBX comes later (MAF-13).
+
+- Route: `tools/materials/atlas_maf.py` (material list -> PNG + UV JSON); UV remap in 3ds Max batch or Blender headless.
+- Needs: headless for packing; no tool yet for the UV remap; human for the visual check.
+- Done when: one 512 RGB atlas, the UV JSON, and every face of every MAF inside its material's slot.
 
 ### Step 8 — Placement from SPOZU with sinking
 
@@ -141,10 +140,10 @@ the user's call) and never delete it. The placement pivot is temporary and is no
 
 Read back the exported Ground FBX (not the working scene) and go through the sheet rows: completeness against the
 specification (MAF-02), scale and dimensions (MAF-04), scene structure (MAF-05), GroundEl/GroundElGlass split
-(MAF-06), budgets (MAF-07, MAF-08), one 512 set (MAF-09), names (MAF-11, MAF-12), embedding (MAF-13),
+(MAF-06), budgets (MAF-07, MAF-08), one 512 set (MAF-09), names (MAF-11, MAF-12; scene objects `<spec position>_<catalogue id>_GroundEl` [D166]), embedding (MAF-13),
 triangulation (MAF-18), transforms (MAF-19), topology, smoothing and sunk bottoms (MAF-20, [D096]), no MAF
-collision (MAF-22), placement (MAF-23). Verify lines for the user: one per individually made MAF from Step 3,
-always a separate verify line, plus every review row.
+collision (MAF-22: «Для МАФ коллизии не делаются.»), placement (MAF-23). Verify lines for the user: one per individually made MAF from Step 3,
+always a separate verify line, plus every review row. User review is one showcase per type/site: NPM/VPM pairs side by side with a text object to the right of each MAF naming what it is by the specification.
 
 - Route: `validate_package.py` through the [validate-delivery](../validate-delivery/SKILL.md) skill; Blender headless readback and renders; MAF checks of [#185](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/185) when merged.
 - Needs: headless for the machine checks; human for the visual review and every verify line.
