@@ -24,7 +24,7 @@ def test_boundary_straightening_removes_a_three_mm_jog_before_skirt(offset):
         q=pair_triangles(mesh)
         return part_report('jog',PolyMesh(q.verts,q.faces),XviewTolerance())
     assert report(projected).face_pairs, 'fixture must reproduce skirt contact across jog'
-    fixed=gc.straighten_base_boundary(projected,sampler,chord_m=.006)
-    assert fixed.report['boundary_straightening']['max_displacement_m']<.01
+    fixed=gc.weld_base_boundary(projected)
+    assert fixed.report['boundary_weld']['max_displacement_m']<.0021
     r=report(fixed)
     assert not r.vertex_pairs and not r.face_pairs
