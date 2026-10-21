@@ -3,7 +3,7 @@
 Fills the scene stages the header-only validator leaves not_run: V002 (units and scale;
 units come from a pure-Python GlobalSettings read), V003 (triangulation,
 triangle limits, object types), V004 (applied transforms, co-directional overlap clearance, regulatory topology defect count, MAF smoothing/flipped normals/dimensions (GroundEl)), V006 (NPM embedded images),
-V008 (one UV channel, mirrored islands, glass tile), V010 (UCX presence, no material slots, triangle budget, intersections, intersection coverage, advisory gap; shape and coverage stay not_run),
+V008 (one UV channel, mirrored islands, glass tile, texel density when the readback has UV and one diffuse size), V010 (UCX presence, no material slots, triangle budget, intersections, intersection coverage, advisory gap; shape and coverage stay not_run),
 V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
 Ground FBX: Flora checks from twinqa.flora (V015 dimensions, V005 maps, V003 Flora share; #191).
 """
@@ -21,8 +21,9 @@ from twinqa.geometry.ucx_audit import (
     sat_separation, surface_distance, weld,
 )
 from twinqa.clearance import BAND_EDGE_TOL_M, co_directional_distribution, co_directional_pairs
-from twinqa.report import Finding
+from twinqa.report import Finding, signed_margin
 from twinqa.naming import mesh_name_findings
+from twinqa.uv import DENSITY_MAX_PX_PER_M, DENSITY_MIN_PX_PER_M, _density_finding, edge_densities
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
 ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
@@ -68,8 +69,10 @@ def readback(fbx_path: Path, blender: str | None = None, timeout: int = 600) -> 
     return rb
 
 
-def _f(status, name, observed, expected, pages, evidence, conflicts=()):
-    return Finding(name, status, observed, expected, list(pages), evidence, list(conflicts))
+def _f(status, name, observed, expected, pages, evidence, conflicts=(), *,
+      measured=None, threshold=None, margin=None):
+    return Finding(name, status, observed, expected, list(pages), evidence, list(conflicts),
+                   measured, threshold, margin)
 
 
 def _pivot_findings(meshes: list[dict], ucx: list[dict], src: str) -> list[Finding]:
@@ -148,7 +151,9 @@ def _clearance_finding(meshes: list[dict], ucx: list[dict], src: str, profile: d
                 f"distance mm min/median/max {_mm_text(distribution['min_mm'])}/"
                 f"{_mm_text(distribution['median_mm'])}/{_mm_text(distribution['max_mm'])}; "
                 f"histogram {distribution['histogram_mm']}; worst: {worst[:5]}")
-    return _f(status, "co-directional clearance", observed, expected, [8, 29], src, [30])
+    return _f(status, "co-directional clearance", observed, expected, [8, 29], src, [30],
+              measured=distribution["measured"], threshold=distribution["threshold"],
+              margin=distribution["margin"])
 
 
 def _enclosed_volume(verts, tris) -> float:
@@ -241,6 +246,7 @@ def _ucx_pair_findings(ucx: list[dict], src: str) -> list[Finding]:
                 _f("not_run", "UCX piece gap (advisory)", observed, gap_expected, [36], src, [15])]
     overlaps, unresolved, offending, gap_unmeasured = [], [], [], 0
     counts = {"touch": 0, "below_band": 0, "in_band": 0, "wide": 0}
+    worst_gap = None  # (margin, measured_m, threshold_m); smallest safe-side margin wins
     for left, right in itertools.combinations(pieces, 2):
         both_hulls = left["hull"] is not None and right["hull"] is not None
         box_gap = bbox_gap(bounds(left["hull"][0]), bounds(right["hull"][0])) if both_hulls else None
@@ -261,6 +267,7 @@ def _ucx_pair_findings(ucx: list[dict], src: str) -> list[Finding]:
         if kind == "apart":
             continue
         counts[kind] += 1
+        worst_gap = _note_band_margin(worst_gap, gap_m, kind)
         if kind != "in_band":
             offending.append((left["name"], right["name"], round(gap_m * 1000, 2)))
     n_unresolved = len(unresolved)
@@ -286,7 +293,31 @@ def _ucx_pair_findings(ucx: list[dict], src: str) -> list[Finding]:
                f"in_band={counts['in_band']} wide={counts['wide']} unmeasured={n_unresolved + gap_unmeasured}; "
                f"{offending[:5]}")
     gap_status = "review" if bad else "not_run" if n_unresolved or gap_unmeasured else "pass"
-    return [inter, coverage, _f(gap_status, "UCX piece gap (advisory)", gap_obs, gap_expected, [36], src, [15])]
+    if worst_gap is None:
+        gap_measured = gap_threshold = gap_margin = None
+    else:
+        gap_margin, gap_measured, gap_threshold = worst_gap
+    return [inter, coverage, _f(gap_status, "UCX piece gap (advisory)", gap_obs, gap_expected, [36], src, [15],
+                                measured=gap_measured, threshold=gap_threshold, margin=gap_margin)]
+
+
+def _note_band_margin(worst, gap_m, kind):
+    """Smallest D098-band margin for one neighbour gap. Too-close itself is recorded on the audit finding."""
+    if kind in ("touch", "below_band"):
+        options = ((GAP_BAND_M[0], "min"),)
+    elif kind == "wide":
+        options = ((GAP_BAND_M[1], "max"),)
+    elif kind == "in_band":
+        options = ((GAP_BAND_M[0], "min"), (GAP_BAND_M[1], "max"))
+    else:
+        return worst
+    for threshold, bound in options:
+        margin = signed_margin(gap_m, threshold, bound)
+        if margin is None:
+            continue
+        if worst is None or margin < worst[0]:
+            worst = (margin, gap_m, threshold)
+    return worst
 
 
 def _topology_finding(meshes: list[dict], profile: dict, src: str) -> Finding:
@@ -387,6 +418,122 @@ def _v002_findings(rb: dict, meshes: list[dict], src: str) -> list[Finding]:
     return [units, scale]
 
 
+_DIFFUSE_SOCKETS = ("Base Color", "Diffuse", "Diffuse Color")
+
+
+def _square_side(size):
+    """Positive square pixel side, or None when the size cannot be used as a texture side."""
+    if not isinstance(size, (list, tuple)) or len(size) != 2:
+        return None
+    width, height = size
+    if isinstance(width, bool) or isinstance(height, bool):
+        return None
+    if not isinstance(width, (int, float)) or not isinstance(height, (int, float)):
+        return None
+    if not math.isfinite(width) or not math.isfinite(height) or width != height or width <= 0:
+        return None
+    if float(width) != int(width):
+        return None
+    return int(width)
+
+
+def _texture_side_px(rb: dict) -> int | None:
+    """Diffuse side in px for rho = texture_side_px / polygon_length_m.
+
+    VPM_STANDARD allows more than one square (2048 and 4096; the regulation also lists
+    256, 512 and 1024) and the diffuse map is an external PNG, so the readback has no
+    single production side. Use a side only when every diffuse image — or, when the
+    readback has no material maps, every image — reports that same positive square size.
+    Anything else stays None and the density findings are not_run, not a guessed number.
+    """
+    by_name = {}
+    for image in rb.get("images") or []:
+        if not isinstance(image, dict) or "name" not in image:
+            return None
+        by_name[image["name"]] = image.get("size")
+    materials = rb.get("materials")
+    if materials:
+        sides = []
+        for material in materials:
+            if not isinstance(material, dict):
+                return None
+            for item in material.get("maps") or []:
+                if not isinstance(item, dict) or item.get("socket") not in _DIFFUSE_SOCKETS:
+                    continue
+                side = _square_side(by_name.get(item.get("image")))
+                if side is None:
+                    return None
+                sides.append(side)
+        if len(set(sides)) != 1:
+            return None
+        return sides[0]
+    sides = [_square_side(size) for size in by_name.values()]
+    if not sides or any(side is None for side in sides) or len(set(sides)) != 1:
+        return None
+    return sides[0]
+
+
+def _density_bounds(src: str, status: str, reason: str) -> list[Finding]:
+    return [
+        _f(status, "texel density", f"{src}: {reason}", f">= {DENSITY_MIN_PX_PER_M:g} px/m", [31, 32], src),
+        _f(status, "texel density upper", f"{src}: {reason}", f"<= {DENSITY_MAX_PX_PER_M:g} px/m", [31, 32], src),
+    ]
+
+
+def _texel_density_findings(rb: dict, meshes: list[dict], ucx: list[dict], src: str) -> list[Finding]:
+    """Min 512 px/m and max 1706 px/m for non-UCX meshes. Missing UV or texture size is not_run."""
+    geometry = [mesh for mesh in meshes if mesh not in ucx]
+    if not geometry:
+        return _density_bounds(src, "not_run", "no render mesh")
+    side = _texture_side_px(rb)
+    missing = [mesh["name"] for mesh in geometry if "uv" not in mesh.get("face_geometry", {})]
+    if side is None or missing:
+        reasons = []
+        if side is None:
+            reasons.append("diffuse texture size is not in the readback")
+        if missing:
+            reasons.append("no per-vertex UV in readback")
+        return _density_bounds(src, "not_run", "; ".join(reasons))
+    try:
+        values = []
+        for mesh in geometry:
+            shape = mesh["face_geometry"]
+            vertices, uvs = shape["vertices"], shape["uv"]
+            polygons = shape.get("polygons")
+            if not isinstance(polygons, list):
+                raise ValueError(f"partial UV geometry on {mesh['name']}: polygons")
+            polygon_uvs = shape.get("polygon_uv")
+            use_corner_uv = polygon_uvs is not None
+            if use_corner_uv and (not isinstance(polygon_uvs, list) or len(polygon_uvs) != len(polygons)):
+                count = len(polygon_uvs) if isinstance(polygon_uvs, list) else None
+                raise ValueError(
+                    f"partial UV geometry on {mesh['name']}: {count} polygon_uv for {len(polygons)} polygons")
+            if not use_corner_uv and len(uvs) != len(vertices):
+                raise ValueError(
+                    f"partial UV geometry on {mesh['name']}: {len(uvs)} uv for {len(vertices)} vertices")
+            for poly_index, polygon in enumerate(polygons):
+                try:
+                    poly_xyz = [vertices[index] for index in polygon]
+                    poly_uv = polygon_uvs[poly_index] if use_corner_uv else [uvs[index] for index in polygon]
+                except (IndexError, TypeError) as exc:
+                    raise ValueError(f"partial UV geometry on {mesh['name']}: polygon index") from exc
+                if len(poly_xyz) < 2:
+                    continue
+                values.extend(edge_densities(poly_xyz, poly_uv, side))
+    except ValueError as exc:
+        return _density_bounds(src, "fail", str(exc))
+    if not values:
+        return [
+            _density_finding("texel density", None, DENSITY_MIN_PX_PER_M, "min", f"{src}: no edges", src),
+            _density_finding("texel density upper", None, DENSITY_MAX_PX_PER_M, "max", f"{src}: no edges", src),
+        ]
+    low, high = min(values), max(values)
+    return [
+        _density_finding("texel density", low, DENSITY_MIN_PX_PER_M, "min", f"{src}: min {low:.6g} px/m", src),
+        _density_finding("texel density upper", high, DENSITY_MAX_PX_PER_M, "max", f"{src}: max {high:.6g} px/m", src),
+    ]
+
+
 def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule: dict | None = None,
                    flora_share: int = FLORA_SHARE, *, maf_sizes=None, smoothing_angle_deg=None) -> dict[str, list[Finding]]:
     """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}. Ground FBX: Flora checks
@@ -406,9 +553,11 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
     out["V003"].append(_f("fail" if not_tri else "pass", "triangulated", f"{src}: {not_tri or 'all triangles'}",
                           "triangulated on export", [7, 28], src))
     if role != "light":
+        measured = threshold_n = margin = None
         if kind == "npm":
             limit = profile["geometry"]["ground_triangles_total_max" if role == "ground" else "oks_triangles_per_fbx_max"]
             status, conflicts = ("fail" if tris > limit else "pass"), []
+            measured, threshold_n, margin = tris, limit, signed_margin(tris, limit, "max")
         else:
             if role == "ground":
                 status, limit, conflicts = "review", "by site area (reg p.29 table)", []
@@ -418,7 +567,10 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
                 limit = (f"{PROJECT_TRIANGLE_TARGET} project target (reuse as NPM; else windows as atlas planes), "
                          f"{hard} regulation limit")
                 conflicts = []
-        out["V003"].append(_f(status, "triangle count", f"{src}: {tris}", f"<= {limit}", [7, 28, 29], src, conflicts))
+                active = hard if tris > hard else PROJECT_TRIANGLE_TARGET
+                measured, threshold_n, margin = tris, active, signed_margin(tris, active, "max")
+        out["V003"].append(_f(status, "triangle count", f"{src}: {tris}", f"<= {limit}", [7, 28, 29], src, conflicts,
+                              measured=measured, threshold=threshold_n, margin=margin))
     foreign = [o for o in rb["other_objects"] if not (role == "light" and o["type"] in ("LIGHT", "EMPTY"))]
     if foreign:
         # Any non-mesh object, lights included, fails (conflict #14 decided 2026-10-07 [D017] as the checker)
@@ -463,6 +615,9 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         out["V008"].append(_f("fail" if mirrored else "pass", "mirrored islands", f"{src}: {mirrored or 'none'}", "no mirrored UV", [31], src))
         if glass:
             out["V008"].append(_f("fail", "glass tile", f"{src}: {glass}", "glass only in UDIM 1001", [31, 32], src))
+        # Texel density is the same 512..1706 px/m band as twinqa.uv (reg p.32). It does not
+        # change the channel / mirror / glass verdicts above.
+        out["V008"].extend(_texel_density_findings(rb, meshes, ucx, src))
         # V013 (reg p.32-33 §9.3-9.5; conflict #19 decided 2026-10-07 [D018] as the checker)
         out["V013"].extend(_pivot_findings(meshes, ucx, src))
         out["V013"].append(_f("not_run", "MSK-77 point", "GeoJSON point vs survey coordinates and project zero",
