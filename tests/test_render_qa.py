@@ -207,6 +207,113 @@ assert not Path({str(renders)!r}).exists()
     assert result.returncode == 0, result.stdout + result.stderr
 
 
+@pytest.mark.blender
+@pytest.mark.parametrize("mode", ["visible_camera", "holdout_shader", "is_holdout",
+                                 "is_shadow_catcher", "layer_holdout", "layer_indirect",
+                                 "layer_exclude", "material_override"])
+@pytest.mark.parametrize("role", ["target", "occluder"])
+def test_blender_rejects_render_visibility_overrides(tmp_path, mode, role):
+    blender = Path("C:/Program Files/Blender Foundation/Blender 5.1/blender.exe")
+    if not blender.exists():
+        pytest.skip("Blender 5.1.2 not installed")
+    script = f'''
+import bpy, importlib.util
+from pathlib import Path
+spec = importlib.util.spec_from_file_location("qa", {str(ROOT / "tools/qa/render_qa.py")!r})
+qa = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(qa)
+assert bpy.app.version == (5, 1, 2)
+bpy.ops.wm.read_factory_settings(use_empty=True)
+scene = bpy.context.scene
+scene.unit_settings.system = "METRIC"
+scene.unit_settings.scale_length = 1
+scene.render.engine = "CYCLES"
+scene.cycles.samples = 1
+scene.render.resolution_x = scene.render.resolution_y = 32
+scene.render.resolution_percentage = 100
+scene.world = bpy.data.worlds.new("BlackWorld")
+scene.world.use_nodes = True
+scene.world.node_tree.nodes.get("Background").inputs[0].default_value = (0, 0, 0, 1)
+bpy.ops.mesh.primitive_cube_add()
+target = bpy.context.object
+target.name = "Target"
+material = bpy.data.materials.new("OpaqueControl")
+material.use_nodes = True
+nodes = material.node_tree.nodes
+nodes.clear()
+output = nodes.new("ShaderNodeOutputMaterial")
+emission = nodes.new("ShaderNodeEmission")
+material.node_tree.links.new(emission.outputs[0], output.inputs["Surface"])
+target.data.materials.append(material)
+bpy.ops.object.camera_add(location=(0, 0, 10))
+camera = bpy.context.object
+camera.name = "Camera"
+camera.data.type = "ORTHO"
+camera.data.ortho_scale = 5
+scene.camera = camera
+config = {{"targets": ["Target"], "cameras": ["Camera"]}}
+root = Path({str(tmp_path)!r})
+bpy.context.view_layer.update()
+control = qa.check_scene(scene, config, root / "opaque-before")
+assert control["status"] == "pass", control
+assert control["frames"][0]["pixels"]["background_share"] < 1
+obj = target
+if {role!r} == "occluder":
+    bpy.ops.mesh.primitive_cube_add(location=(0, 0, 4))
+    obj = bpy.context.object
+    obj.name = "Occluder"
+    material = material.copy()
+    obj.data.materials.append(material)
+    nodes = material.node_tree.nodes
+    output = next(n for n in nodes if n.type == "OUTPUT_MATERIAL")
+    emission = next(n for n in nodes if n.type == "EMISSION")
+collection = bpy.data.collections.new("VisibilityCollection")
+scene.collection.children.link(collection)
+for owner in list(obj.users_collection):
+    owner.objects.unlink(obj)
+collection.objects.link(obj)
+bpy.context.view_layer.update()
+layer = bpy.context.view_layer.layer_collection.children[collection.name]
+mode = {mode!r}
+if mode == "holdout_shader":
+    holdout = nodes.new("ShaderNodeHoldout")
+    material.node_tree.links.new(holdout.outputs[0], output.inputs["Surface"])
+elif mode == "visible_camera":
+    obj.visible_camera = False
+elif mode.startswith("is_"):
+    setattr(obj, mode, True)
+elif mode == "material_override":
+    bpy.context.view_layer.material_override = material
+else:
+    setattr(layer, {{"layer_holdout": "holdout", "layer_indirect": "indirect_only",
+                    "layer_exclude": "exclude"}}[mode], True)
+bpy.context.view_layer.update()
+try:
+    qa.check_scene(scene, config, root / "must-not-exist")
+except ValueError as exc:
+    expected_name = ("VisibilityCollection" if mode.startswith("layer_") else
+                     bpy.context.view_layer.name if mode == "material_override" else obj.name)
+    assert expected_name in str(exc), (expected_name, str(exc))
+else:
+    raise AssertionError("Unsupported render visibility accepted: " + mode)
+assert not (root / "must-not-exist").exists()
+# Reset to prove rejection does not poison later opaque checks.
+obj.visible_camera = True
+obj.is_holdout = obj.is_shadow_catcher = False
+layer.exclude = layer.holdout = layer.indirect_only = False
+bpy.context.view_layer.material_override = None
+material.node_tree.links.new(emission.outputs[0], output.inputs["Surface"])
+if mode == "holdout_shader":
+    nodes.remove(holdout)
+bpy.context.view_layer.update()
+assert qa.check_scene(scene, config, root / "opaque-after")["status"] == "pass"
+'''
+    result = subprocess.run([str(blender), "--background", "--factory-startup",
+                             "--python-exit-code", "1", "--python-expr", script],
+                            capture_output=True, text=True, timeout=180)
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
 def test_generated_verdict_grid():
     qa = load_checker()
     # Independent literal oracle over 3 x 3 x 3 x 2 = 54 measurements.
