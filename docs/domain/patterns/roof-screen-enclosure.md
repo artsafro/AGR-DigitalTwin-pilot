@@ -22,7 +22,9 @@ Status: draft (user decision 2026-10-13 [D067], OBJ03). Spec v0.7 `roof_structur
    up to a ceiling one thickness under the top, and the rim between them on the roof level - one closed solid,
    roof ids. Thickness as the parapet's rule 4 ([D061]): the spec's `thickness_m` (measured from the source, else the
    object's `parapet_thickness_default_m`), else the build input's parapet thickness, else a `BuildError`; a thickness
-   that leaves no single hollow in plan or none under the top is a `BuildError`. The blocks inside are decided
+   that leaves no single hollow in plan or none under the top is a `BuildError`, and so is one not over two steps of
+   the 1 µm output grid (`SHELL_MIN_M` = 2e-6 m) or any shell that the grid collapses (a face with repeated vertices
+   or no area, not closed, no volume) - never clamped (review of PR #500). The blocks inside are decided
    later (not built).
 4. What lies under the outline - the equipment, the screens, their steep parts - is no roof question: the roof
    check keeps only the flat roof at the level there, and the enclosure closes the roof from above.
