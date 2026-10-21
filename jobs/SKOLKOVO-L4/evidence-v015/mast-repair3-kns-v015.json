@@ -1,0 +1,787 @@
+{
+ "version": "v015",
+ "passed": false,
+ "masts_repair3": {
+  "repair3_log": [
+   {
+    "row": 3697,
+    "seeds": [
+     9749,
+     6812,
+     8233
+    ],
+    "tris_before": 10120,
+    "flipped_in_patch": 1,
+    "patch_tris": 17,
+    "old_union_area_mm2": 238.7082,
+    "loop_area_mm2": 238.7082,
+    "sym_diff_mm2": 0.0,
+    "new_area_mm2": 238.7082,
+    "loop_vertices": 7,
+    "new_tris": 5,
+    "dropped_interior_vertices": 6,
+    "tris_after": 10108,
+    "edge_use": [
+     0,
+     0,
+     15162
+    ],
+    "vertices_moved": 0,
+    "vertices_added": 0
+   },
+   {
+    "row": 3719,
+    "seeds": [
+     9687,
+     9834,
+     9945
+    ],
+    "tris_before": 10068,
+    "flipped_in_patch": 1,
+    "patch_tris": 15,
+    "old_union_area_mm2": 238.704,
+    "loop_area_mm2": 238.704,
+    "sym_diff_mm2": 0.0,
+    "new_area_mm2": 238.704,
+    "loop_vertices": 7,
+    "new_tris": 5,
+    "dropped_interior_vertices": 5,
+    "tris_after": 10058,
+    "edge_use": [
+     0,
+     0,
+     15087
+    ],
+    "vertices_moved": 0,
+    "vertices_added": 0
+   }
+  ],
+  "eval": {
+   "3697": {
+    "final_tris": 10108,
+    "final_sha256": "2569fa1a8bd80f329c25c3b89e755ee75a5ba4f365704b33e9f79b3ca42f0ad3",
+    "edge_use": [
+     0,
+     0,
+     15162
+    ],
+    "body_j": 60,
+    "kernel_applied": true,
+    "kernel": [
+     [
+      "open_borders_hidden",
+      true,
+      0
+     ],
+     [
+      "no_see_through_hole",
+      true,
+      0
+     ],
+     [
+      "no_visible_back_faces",
+      true,
+      0
+     ],
+     [
+      "no_close_overlap",
+      true,
+      0
+     ]
+    ],
+    "kernel_s": 219.0
+   },
+   "3719": {
+    "final_tris": 10058,
+    "final_sha256": "45abfdb10399cd7d813ed5504fc3ab14b7b1307223d7bb55e5334e41ea5343a3",
+    "edge_use": [
+     0,
+     0,
+     15087
+    ],
+    "body_j": 53,
+    "kernel_applied": true,
+    "kernel": [
+     [
+      "open_borders_hidden",
+      true,
+      0
+     ],
+     [
+      "no_see_through_hole",
+      true,
+      0
+     ],
+     [
+      "no_visible_back_faces",
+      true,
+      0
+     ],
+     [
+      "no_close_overlap",
+      true,
+      0
+     ]
+    ],
+    "kernel_s": 218.7
+   }
+  },
+  "locator_pairs_after": {
+   "3697": 0,
+   "3719": 0
+  }
+ },
+ "kns_k1_partial": {
+  "scope": "loft proxy run interrupted at object 93/108 (time box); rows not listed were not measured",
+  "measured": 92,
+  "accepted": 14,
+  "source_tris_measured": 80485,
+  "out_tris_measured": 72409,
+  "objects": [
+   {
+    "row": 3629,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3630,
+    "kind": "mastbase",
+    "source_tris": 5306,
+    "out_tris": 5306,
+    "K": "None"
+   },
+   {
+    "row": 3631,
+    "kind": "conn_wire",
+    "source_tris": 836,
+    "out_tris": 28,
+    "K": "4"
+   },
+   {
+    "row": 3632,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3633,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3634,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3635,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3636,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3637,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3638,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3639,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3640,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3641,
+    "kind": "ese",
+    "source_tris": 1049,
+    "out_tris": 1049,
+    "K": "None"
+   },
+   {
+    "row": 3642,
+    "kind": "conn_ese",
+    "source_tris": 304,
+    "out_tris": 12,
+    "K": "4"
+   },
+   {
+    "row": 3643,
+    "kind": "ese",
+    "source_tris": 1049,
+    "out_tris": 1049,
+    "K": "None"
+   },
+   {
+    "row": 3644,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3645,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 52,
+    "K": "4"
+   },
+   {
+    "row": 3646,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3647,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3648,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3649,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3650,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3652,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3653,
+    "kind": "mastbase",
+    "source_tris": 5306,
+    "out_tris": 5306,
+    "K": "None"
+   },
+   {
+    "row": 3654,
+    "kind": "conn_wire",
+    "source_tris": 836,
+    "out_tris": 28,
+    "K": "4"
+   },
+   {
+    "row": 3655,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3656,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3657,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3658,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3659,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3660,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3661,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3662,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3663,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3664,
+    "kind": "ese",
+    "source_tris": 1049,
+    "out_tris": 1049,
+    "K": "None"
+   },
+   {
+    "row": 3665,
+    "kind": "conn_ese",
+    "source_tris": 304,
+    "out_tris": 12,
+    "K": "4"
+   },
+   {
+    "row": 3666,
+    "kind": "ese",
+    "source_tris": 1049,
+    "out_tris": 1049,
+    "K": "None"
+   },
+   {
+    "row": 3667,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3668,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 52,
+    "K": "4"
+   },
+   {
+    "row": 3669,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3670,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3671,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3672,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3673,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3675,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3676,
+    "kind": "mastbase",
+    "source_tris": 5306,
+    "out_tris": 5306,
+    "K": "None"
+   },
+   {
+    "row": 3677,
+    "kind": "conn_wire",
+    "source_tris": 836,
+    "out_tris": 28,
+    "K": "4"
+   },
+   {
+    "row": 3678,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3679,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3680,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3681,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3682,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3683,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3684,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3685,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3686,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3687,
+    "kind": "ese",
+    "source_tris": 1049,
+    "out_tris": 1049,
+    "K": "None"
+   },
+   {
+    "row": 3688,
+    "kind": "conn_ese",
+    "source_tris": 304,
+    "out_tris": 12,
+    "K": "4"
+   },
+   {
+    "row": 3689,
+    "kind": "ese",
+    "source_tris": 1049,
+    "out_tris": 1049,
+    "K": "None"
+   },
+   {
+    "row": 3690,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3691,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 52,
+    "K": "4"
+   },
+   {
+    "row": 3692,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3693,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3694,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3695,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3696,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3698,
+    "kind": "mastbase",
+    "source_tris": 5306,
+    "out_tris": 5306,
+    "K": "None"
+   },
+   {
+    "row": 3699,
+    "kind": "conn_wire",
+    "source_tris": 836,
+    "out_tris": 28,
+    "K": "4"
+   },
+   {
+    "row": 3700,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3701,
+    "kind": "ese",
+    "source_tris": 1049,
+    "out_tris": 1049,
+    "K": "None"
+   },
+   {
+    "row": 3702,
+    "kind": "conn_ese",
+    "source_tris": 304,
+    "out_tris": 12,
+    "K": "4"
+   },
+   {
+    "row": 3703,
+    "kind": "ese",
+    "source_tris": 1049,
+    "out_tris": 1049,
+    "K": "None"
+   },
+   {
+    "row": 3704,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3705,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3706,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3707,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3708,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3709,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3710,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 52,
+    "K": "4"
+   },
+   {
+    "row": 3711,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3712,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3713,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3714,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3715,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3716,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3717,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3718,
+    "kind": "arm",
+    "source_tris": 696,
+    "out_tris": 696,
+    "K": "None"
+   },
+   {
+    "row": 3720,
+    "kind": "mastbase",
+    "source_tris": 5306,
+    "out_tris": 5306,
+    "K": "None"
+   },
+   {
+    "row": 3721,
+    "kind": "conn_wire",
+    "source_tris": 836,
+    "out_tris": 28,
+    "K": "4"
+   },
+   {
+    "row": 3722,
+    "kind": "concrete",
+    "source_tris": 438,
+    "out_tris": 438,
+    "K": "None"
+   },
+   {
+    "row": 3723,
+    "kind": "ese",
+    "source_tris": 1049,
+    "out_tris": 1049,
+    "K": "None"
+   },
+   {
+    "row": 3724,
+    "kind": "conn_ese",
+    "source_tris": 304,
+    "out_tris": 12,
+    "K": "4"
+   }
+  ]
+ }
+}
