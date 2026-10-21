@@ -210,8 +210,10 @@ terrace.md, facade-decor-inset.md.
   1c4c3a8e…01fddf; it replaced our marker scene of the same name): top floors had under-cut geometry and extra edges
   (overlaps there), edges removed; balcony glass railings rebuilt so they look right and do not overlap; texture
   slightly re-unwrapped, colours changed; our windows and main geometry kept. User verdict: "ты неплохо справился с
-  задачей, с этим можно работать ... базу и большую часть работы ты выполнил". Comparison with export-v005: open
-  (review issue).
+  задачей, с этим можно работать ... базу и большую часть работы ты выполнил". **Final (user 2026-10-21):**
+  `C:/Users/artsafro/Desktop/!3D viz/NTR/26_Vyatskoe/001 - Моделирование НПМ с нуля/001 - Моделирование НПМ с нуля/for_placement/0213_Vyatskaya_Vl_47_49_05.fbx`,
+  object `SM_..._013_Main` (FBX 6 302 640 bytes, 17:29, SHA-256 2fd80081…71da68; package prefix 0213, files
+  _01.._05 next to it). The .max above is an intermediate save. Comparison with export-v005: open (issue #514).
 - build-fins-fix (PR #392 P1, 2026-10-20): `scripts/build_fins.py` now refuses an existing, non-empty
   `build-vNNN-fins` output version (clear error naming the next free version, e.g. `build-v014-fins`) instead of
   re-creating it with `mkdir(exist_ok=True)` and truncating `fins.obj`/`fins.mtl`; a fresh or empty directory is
@@ -244,7 +246,8 @@ terrace.md, facade-decor-inset.md.
   working versions are in `outputs/measure-v001/bend_top/scripts/`.
 
 ## Next
-1. Review issue: compare export-v005 with the user's finished `outputs/xview-v005/tow02_ovl23_v001.max` (what the user
+1. Review issue #514: compare export-v005 with the user's final `for_placement/0213_Vyatskaya_Vl_47_49_05.fbx`, object
+   013_Main (what the user
    changed, where and why our QA missed it), turn the differences into lessons and builder fixes.
 2. NPM derivation from the user's finished model (not from export-v005): names (prefix `0200_Vyatskaya_Vl_47_49`, OKS 013), transform reset
    [D135], triangulate, FBX export, validate-delivery. Builder root causes for the backlog (Codex): see Build log "Open

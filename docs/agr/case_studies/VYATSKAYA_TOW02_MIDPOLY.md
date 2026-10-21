@@ -31,7 +31,8 @@
   `fix_overlaps_blender.py` (v028) → `clean_glass_blender.py` (v029) → `texture_atlas_blender.py` (v030) →
   `join_export_blender.py` (export-v005).
 - Нет в Git (локально, `jobs/vyatskaya-tow02/outputs/`): все build/export, замеры `measure-v00*`, результат пользователя.
-- SHA-256: export-v005 FBX `ff8994dc…28080a`; модель пользователя `outputs/xview-v005/tow02_ovl23_v001.max` `1c4c3a8e…01fddf`.
+- SHA-256: export-v005 FBX `ff8994dc…28080a`; финал пользователя `…/26_Vyatskoe/…/for_placement/0213_Vyatskaya_Vl_47_49_05.fbx`, объект 013_Main,
+  `2fd80081…71da68` (промежуточное сохранение: `outputs/xview-v005/tow02_ovl23_v001.max`).
 
 ## Проверки и доказательства
 - Blender QA на перечитанном FBX: `outputs/xview-v004/qa_summary.json` (overlap'ы 0/0 — расходится с Max).

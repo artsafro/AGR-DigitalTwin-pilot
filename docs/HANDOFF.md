@@ -20,8 +20,9 @@ vertices (`outputs/xview-v005/xview_tol_report.jsonl`); independent check 23 pai
 ## In progress
 
 - Local state outside git (keep, git-ignored): `jobs/vyatskaya-tow02/outputs/` — builds v002..v030, exports v001..v005,
-  QA `xview-v001..v005/`. The user's finished model: `outputs/xview-v005/tow02_ovl23_v001.max` (SHA-256
-  `1c4c3a8e…01fddf`) — never overwrite; it replaced our marker scene of the same name. xView helpers in
+  QA `xview-v001..v005/`. The user's final model (user 2026-10-21): `C:/Users/artsafro/Desktop/!3D viz/NTR/26_Vyatskoe/001 - Моделирование НПМ с нуля/001 - Моделирование НПМ с нуля/for_placement/0213_Vyatskaya_Vl_47_49_05.fbx`,
+  object 013_Main (SHA-256 `2fd80081…71da68`; read only). Intermediate save
+  `outputs/xview-v005/tow02_ovl23_v001.max` — never overwrite. xView helpers in
   `outputs/xview-v005/` (`run.ms`, `open_ovl.ms`, `ovl_pairs_blender.py`).
 - Open apps: the user's 3ds Max 2024 PID 85072 (`pravki2/scene.max`, unsaved) and PID 129136 (the finished model,
   the user is working in it) — never touch. The MCP 3ds Max bridge was released (no instance pinned).
@@ -37,7 +38,6 @@ vertices (`outputs/xview-v005/xview_tol_report.jsonl`); independent check 23 pai
 
 ## Waiting for the user
 
-- Confirm that `outputs/xview-v005/tow02_ovl23_v001.max` is the final version for the comparison in #514.
 - Merge command for PR #515.
 
 ## Next step
