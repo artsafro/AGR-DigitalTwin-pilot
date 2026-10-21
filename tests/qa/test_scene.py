@@ -1211,3 +1211,12 @@ def test_validate_package_cli_rejects_bad_area(monkeypatch, tmp_path, capsys, ba
         _ground_cli(monkeypatch, tmp_path, 12, "--ground-area-m2", bad)
     assert exc.value.code == 2
     assert "--ground-area-m2" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("profile, scene", [("npm", True), ("vpm", False)])
+def test_validate_package_unused_ground_area_is_noted(monkeypatch, tmp_path, profile, scene):
+    fbx = tmp_path / "SM_Test_Ground.fbx"
+    fbx.write_bytes(b"Kaydara FBX Binary  \x00")
+    monkeypatch.setattr(vp, "readback", lambda path, blender=None, timeout=600: rb(mesh(name="SM_Test_Ground", tris=12)))
+    report = vp.validate(fbx, profile, PROFILES, scene=scene, ground_area_m2=3431.5)
+    assert any("ground_area_m2 3431.5 unused" in n for n in report.notes)

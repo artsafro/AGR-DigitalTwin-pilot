@@ -18,6 +18,7 @@ class Finding:
     source_pdf_pages: list[int]
     evidence: str = ""
     conflicts: list[int] = field(default_factory=list)
+    data: dict = field(default_factory=dict)  # operands behind a computed limit (e.g. V003 Ground area band)
 
     def __post_init__(self):
         if self.status not in STATUSES:
