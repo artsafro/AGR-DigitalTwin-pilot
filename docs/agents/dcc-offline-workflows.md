@@ -52,7 +52,7 @@ lease, start DCCs, save/reset scenes, delete/quarantine directories, or certify 
 
 ```bash
 uv run pytest -q tests/test_dcc_fixture_manager.py
-uv run pytest -q -m 'not blender and not dcc'
+uv run pytest -q  # default lane from pyproject addopts: excludes blender, dcc, acad, perf, max
 uv run dt profiles check
 uv run dt schemas --check
 ```

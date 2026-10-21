@@ -567,6 +567,7 @@ def test_job_rejects_unsupported_uv_examples():
 
 
 @pytest.mark.dcc
+@pytest.mark.max
 @pytest.mark.skipif(
     not MAX_BATCH.exists() or not DCC_BATCH.exists() or not UV.exists(),
     reason="3ds Max 2026, dcc_batch.py or uv is not installed",
