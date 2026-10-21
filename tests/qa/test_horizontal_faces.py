@@ -662,7 +662,9 @@ def test_open_fragment_does_not_see_decor():
     """SYNTHETIC. A quad moved into decor is judged without the body roof.
 
     Downward and alone, nothing is above it, so it is flagged. The same quad facing up passes.
-    The body stays outward."""
+    The body stays outward. The closed box and the open overhang keep separate index components:
+    they only meet on a non-manifold welded edge, so they are two contexts of one render mesh.
+    """
     picked = [12, 13]
     corrected = _detached_reversed_soffit_dump()
     mesh = corrected["meshes"][0]
@@ -673,11 +675,11 @@ def test_open_fragment_does_not_see_decor():
     assert down["status"] == "fail" and down["value"] == 2
     assert _row(down, "decor")["inward_faces"] == 2
     assert _row(down, "body")["inward_faces"] == 0
-    assert down["details"]["volumes"] == [["body"], ["decor"]]
+    assert down["details"]["volumes"] == [["body"], ["body"], ["decor"]]
     up = _hcheck(_move_picked_to(_detached_reversed_soffit_dump(), picked, "decor"))
     assert up["status"] == "pass" and up["value"] == 0
     assert _row(up, "body")["inward_faces"] == 0
-    assert up["details"]["volumes"] == [["body"], ["decor"]]
+    assert up["details"]["volumes"] == [["body"], ["body"], ["decor"]]
 
 
 def _extruded_step(cut):
@@ -897,6 +899,117 @@ def test_open_part_gap_sweep_never_shares_a_verdict():
         assert _row(result, "lower")["inward_faces"] == 2
         assert _row(result, "upper")["inward_faces"] == 0
         assert result["details"]["volumes"] == [["lower"], ["upper"]]
+
+
+def _combine_parts(parts):
+    """One render mesh, separate vertex indices. SYNTHETIC fixture helper."""
+    out = copy.deepcopy(parts[0])
+    out["name"] = "combined"
+    for part in parts[1:]:
+        offset = len(out["vertices"])
+        out["vertices"] += copy.deepcopy(part["vertices"])
+        out["triangles"] += [[v + offset for v in tri] for tri in part["triangles"]]
+        out["material_ids"] += list(part["material_ids"])
+    return out
+
+
+@pytest.mark.parametrize("gap", [0, .0001, .01])
+@pytest.mark.parametrize("flipped", [False, True])
+@pytest.mark.parametrize("combine", [False, True])
+def test_unwelded_parts_keep_identity(gap, flipped, combine):
+    """SYNTHETIC Acceptance rows. Same geometry, one render mesh or two.
+
+    | gap (m) | flipped | combine | contexts | status | inward |
+    | 0, 0.0001, 0.01 | no | no or yes | 2 | pass | [] |
+    | 0, 0.0001, 0.01 | yes | no or yes | 2 | fail | [0, 1] |
+
+    Gap 0 and 0.0001 touch inside weld. Gap 0.01 is the cap-join threshold and still
+    leaves two open boxes apart. Render-mesh membership does not share the verdict.
+    """
+    a = _box("lower", drop_bottom=True)
+    b = _resize(_box("upper", drop_bottom=True), 1, (0, 0, 1 + gap))
+    if flipped:
+        _reverse(a["triangles"], 0)
+        _reverse(a["triangles"], 1)
+    if combine:
+        offset = len(a["vertices"])
+        a["vertices"] += copy.deepcopy(b["vertices"])
+        a["triangles"] += [[v + offset for v in t] for t in b["triangles"]]
+        a["material_ids"] += b["material_ids"]
+        a["name"] = "combined"
+        meshes = [a]
+    else:
+        meshes = [a, b]
+    result = _hcheck({"meshes": meshes})
+    assert result["status"] == ("fail" if flipped else "pass"), result
+    assert result["value"] == (2 if flipped else 0), result
+    assert result["details"]["inward_triangles"] == ([0, 1] if flipped else []), result
+    assert len(result["details"]["volumes"]) == 2, result
+
+
+@pytest.mark.parametrize("seed", range(16))
+def test_combined_touching_permutation_keeps_two_contexts(seed):
+    """SYNTHETIC probe. Touching unwelded parts in one mesh keep two contexts under reorder."""
+    rng = np.random.default_rng(9000 + seed)
+    gap = float(rng.choice([0.0, 1e-4]))
+    flipped = bool(rng.integers(0, 2))
+    lower = _box("lower", drop_bottom=True)
+    upper = _resize(_box("upper", drop_bottom=True), 1, (0, 0, 1 + gap))
+    if flipped:
+        _reverse(lower["triangles"], 0)
+        _reverse(lower["triangles"], 1)
+    first_upper = bool(rng.integers(0, 2))
+    parts = [upper, lower] if first_upper else [lower, upper]
+    mesh = _combine_parts(parts)
+    offset = len(upper["vertices"]) if first_upper else 0
+    bad = {tuple(v + offset for v in lower["triangles"][i]) for i in (0, 1)} if flipped else set()
+    order = rng.permutation(len(mesh["triangles"]))
+    mesh["triangles"] = [mesh["triangles"][int(i)] for i in order]
+    mesh["material_ids"] = [mesh["material_ids"][int(i)] for i in order]
+    result = _hcheck({"meshes": [mesh]})
+    assert len(result["details"]["volumes"]) == 2, (gap, flipped, result)
+    assert result["status"] == ("fail" if flipped else "pass"), result
+    assert result["value"] == (2 if flipped else 0), result
+    found = {tuple(mesh["triangles"][i]) for i in result["details"]["inward_triangles"]}
+    assert found == bad, result
+
+
+def test_combined_mesh_cap_join_matches_separate_meshes():
+    """SYNTHETIC probe. Exact 0.01 m cap join, and a sweep around it, is unchanged in one mesh."""
+    rng = np.random.default_rng(314)
+    distances = np.unique(np.concatenate([
+        np.array([0.0, 0.01, -0.01, 0.0099, 0.0101, 0.0100000001, -0.0100000001]),
+        rng.uniform(-0.009, 0.009, size=8),
+        rng.uniform(0.0101, 0.05, size=8),
+        rng.uniform(-0.05, -0.0101, size=8),
+    ]))
+    for dz in distances:
+        for upward in (True, False):
+            wall = _open_top()
+            cap = _ledge_cap(float(dz), upward)
+            separate = _hcheck({"meshes": [copy.deepcopy(wall), copy.deepcopy(cap)]})
+            combined = _hcheck({"meshes": [_combine_parts([wall, cap])]})
+            joined = abs(float(dz)) <= 0.01
+            assert combined["status"] == separate["status"], (float(dz), upward, combined, separate)
+            assert combined["value"] == separate["value"], (float(dz), upward)
+            assert len(combined["details"]["volumes"]) == len(separate["details"]["volumes"])
+            assert len(combined["details"]["volumes"]) == (1 if joined else 2), (float(dz), upward)
+            assert combined["status"] != "not_run"
+
+
+def test_combined_mesh_collapsed_part_never_passes():
+    """SYNTHETIC. A collapsed face in one unwelded part of a combined mesh is not a pass.
+
+    The collapsed welded edge is skipped in ``_regroup_open_part``, so it cannot glue the
+    clean neighbour into a silent certificate.
+    """
+    good = _box("lower", drop_bottom=True)
+    bad = _resize(_box("upper", drop_bottom=True), 1, (0, 0, 1))
+    bad["triangles"][0] = [4, 4, 4]
+    result = _hcheck({"meshes": [_combine_parts([good, bad])]})
+    assert result["status"] != "pass"
+    assert result["value"] != 0
+    assert len(result["details"]["volumes"]) == 2
 
 
 def _outward_step(cut):

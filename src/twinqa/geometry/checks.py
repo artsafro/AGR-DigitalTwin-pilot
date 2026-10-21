@@ -1331,14 +1331,14 @@ def _upward_crossings(tri: np.ndarray, ray: np.ndarray, tri_label: np.ndarray | 
 
 
 def _regroup_open_part(chunk: np.ndarray, triangles: np.ndarray, vertices: np.ndarray,
-                       weld_m: float, owner: np.ndarray) -> list[np.ndarray]:
+                       weld_m: float) -> list[np.ndarray]:
     """Re-split one open welded component by original vertex indices.
 
-    ``parts(local, arange)`` keeps two touching meshes apart: they do not share vertex
-    indices even when their coordinates fall inside ``weld_m``. A welded edge used twice
-    is a manifold seam (a render-mesh partition of one shell) and stays joined. A welded
-    edge used three or more times joins triangles only inside one render mesh, so a
-    duplicate-vertex seam in that mesh stays one shell and a second mesh does not.
+    ``parts(local, arange)`` keeps two touching parts apart: they do not share vertex
+    indices even when their coordinates fall inside ``weld_m``, and even when both parts
+    sit in one render mesh. A welded edge used twice is a manifold seam (a render-mesh
+    partition of one shell) and stays joined. A welded edge used three or more times is
+    a non-manifold seam and does not join those index-connected components.
     """
     chunk = np.asarray(chunk, dtype=np.int64)
     if len(chunk) == 0:
@@ -1370,22 +1370,13 @@ def _regroup_open_part(chunk: np.ndarray, triangles: np.ndarray, vertices: np.nd
     tri_of_side = np.repeat(np.arange(len(chunk)), 3)
     collapsed = edges[:, 0] == edges[:, 1]
     for edge in range(len(counts)):
-        if collapsed[edge] or counts[edge] < 2:
+        if collapsed[edge] or counts[edge] != 2:
             continue
         users = np.unique(tri_of_side[edge_id == edge])
         if len(users) < 2:
             continue
-        if counts[edge] == 2:
-            for user in users[1:]:
-                union(int(users[0]), int(user))
-        else:
-            seen = {}
-            for user in users:
-                mesh = int(owner[chunk[int(user)]])
-                if mesh in seen:
-                    union(seen[mesh], int(user))
-                else:
-                    seen[mesh] = int(user)
+        for user in users[1:]:
+            union(int(users[0]), int(user))
     labels = np.array([find(i) for i in range(len(chunk))], dtype=np.int64)
     order = np.argsort(labels, kind="mergesort")
     ordered = labels[order]
@@ -1395,19 +1386,17 @@ def _regroup_open_part(chunk: np.ndarray, triangles: np.ndarray, vertices: np.nd
 
 
 def _side_contexts(tri_idx: np.ndarray, triangles: np.ndarray, vertices: np.ndarray,
-                   weld_m: float, owner: np.ndarray | None = None) -> list[np.ndarray]:
+                   weld_m: float) -> list[np.ndarray]:
     """Closed components alone; every other component uses the bounded cap-join contract.
 
     Closure is exactly two uses of every non-collapsed welded edge. Winding is ignored, so
     reversing a face does not change which component it belongs to. An open welded component
-    is re-split by original vertex indices before the cap join, so touching unwelded meshes
-    do not share a context. Open components are not poured into one bucket: a sheet joins
-    only its unique owner.
+    is re-split by original vertex indices before the cap join, so touching unwelded parts
+    do not share a context, in one render mesh or in several. Open components are not poured
+    into one bucket: a sheet joins only its unique owner.
     """
     if len(tri_idx) == 0:
         return []
-    if owner is None:
-        owner = np.zeros(len(triangles), dtype=np.int64)
     tris = np.asarray(triangles, dtype=np.int64)[tri_idx]
     used = np.unique(tris.reshape(-1))
     local = np.searchsorted(used, tris)
@@ -1427,7 +1416,7 @@ def _side_contexts(tri_idx: np.ndarray, triangles: np.ndarray, vertices: np.ndar
         stop = int(s) + int(size)
         chunk = tri_s[int(s):stop]
         if bad_s[int(s):stop].any():
-            open_parts.extend(_regroup_open_part(chunk, triangles, vertices, weld_m, owner))
+            open_parts.extend(_regroup_open_part(chunk, triangles, vertices, weld_m))
         else:
             closed.append(chunk)
     return closed + _cap_contexts(open_parts, triangles, vertices, weld_m)
@@ -1550,7 +1539,7 @@ def _horizontal_contexts(model: Soup, weld_m: float) -> list[np.ndarray]:
     contexts: list[np.ndarray] = []
     for want_decor in (False, True):
         tri_idx = np.flatnonzero(side == want_decor)
-        contexts.extend(_side_contexts(tri_idx, model.triangles, model.vertices, weld_m, owner))
+        contexts.extend(_side_contexts(tri_idx, model.triangles, model.vertices, weld_m))
     contexts.sort(key=lambda ix: int(ix.min()))
     return contexts
 
