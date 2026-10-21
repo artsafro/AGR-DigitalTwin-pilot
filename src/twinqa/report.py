@@ -225,6 +225,9 @@ class ValidationReport:
         for s in self.stages:
             d = asdict(s)
             d["status"] = s.status
+            for finding in d["findings"]:
+                if not finding.get("data"):  # keep the #462 report shape; data appears only when it holds operands
+                    finding.pop("data", None)
             stages.append(d)
         counts = {k: sum(s.status == k for s in self.machine_stages) for k in STATUSES}
         return {"profile": self.profile, "target": self.target, "target_sha256": self.target_sha256,
