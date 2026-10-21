@@ -353,7 +353,7 @@ The 4096 is a map size in pixels. The result is px per scene-unit length only if
 
 OKS pattern in the dialog: `T_Address_Type_Slot.UDIM.ext`. Ground: `T_Address_Ground_Type_Slot.UDIM.ext` (`dialogs.py:402-405`). Allowed filename characters are ASCII letters, digits, hyphen, underscore, and dot (`utils.py:196-206`). Roughness and metallic strength fall back to 0.5 (`save.py:328-333`). Preview 3D downscales to 512 (`preview_3d.py:294`).
 
-**Limitations.** ERM is one map, not separate roughness and metalness files. Hyphen and dot are outside the pilot file-name charset. The venv under `.venv/` is third-party Python (matplotlib, PyOpenGL, and the rest) and was not read as a tool. Built exes were not run.
+**Limitations.** The renamer emits Diffuse, ERM, and Normal. OKS `T_Address_Type_Slot.UDIM` and Ground `T_Address_Ground_Type_Slot.UDIM`, which matches VPM (TEX-03, TEX-10, TEX-11; `standards/VPM_STANDARD.yaml` `required_maps` and `texture_oks` / `texture_ground`). The dot before UDIM is mandatory for VPM, not a naming gap and not an illegal-character gap. NPM is a separate suffix and packing contract (`_d`, `_n`, `_o`, `_m`, `_r`; roughness and metallic only as a pair; no normal delivery map). A hyphen is still outside both stem charsets. The UDIM wizard button is not implemented yet (`app.py:452`). The venv under `.venv/` is third-party Python (matplotlib, PyOpenGL, and the rest) and was not read as a tool. Built exes were not run.
 
 **Diff vs older versions.** The package is the latest split of the 2.0 GUI. The monolith and `tk2_v2` are the previous single files.
 
@@ -611,7 +611,7 @@ The twelve steps are the #537 map. Each step says whether this pass changed it.
 3. **MAF and flora.** Newly informed. MultiScatter is the scatter plugin. `h_instancer` is on the toolbar. Flora Atlas V1.2 is the packer, with padding 2 px and an 8192 size in the list. Object randomizer is a jitter helper and is not bound. Pilot: one GroundEl set and one Flora set on NPM; VPM UDIM on one channel.
 4. **OKS mesh.** Newly informed. The live hotkeys are stock modifiers plus rapidTools bridge and quad-cap. 3Pt Align and Vertex Cleaner are on the menu. SiNi 2.0.2 is the modelling suite on the toolbar. Pilot: quads in the Max file, triangulate at export, material IDs in the 1–35 scheme.
 5. **Collisions (VPM).** Newly informed. The Octopus button `UCX_Concave` selects concave pairs; it is not a new tolerance. `UCX_Tools` / `UCX_Check` Andrew copies are the zip members. `TS_NameUCXPrimitives.ms` writes `UCX_<mesh>_XX` for UE4, which is not the AGR name. Pilot: `ucx_build` plus V010.
-6. **UV and atlases.** Newly informed. The UV application in daily use is RizomUV (pack, unfold, weld, texel density) via `HOTKEYS_RIZOM.kbd` and the Max bridge, with UVTools 3.3.05 on the Octopus menu. PolyUnwrapper and Adv.UV Normalizer are installed and not on the hotkey file. `density.ms` displays density as if the map were 4096. Texture Map Generator writes ERM names, not `_d/_r/_m/_n/_o`. The 24-bit 256 converter is the #537 file; `index to rgb.py` writes an 8-bit plug instead.
+6. **UV and atlases.** Newly informed. The UV application in daily use is RizomUV (pack, unfold, weld, texel density) via `HOTKEYS_RIZOM.kbd` and the Max bridge, with UVTools 3.3.05 on the Octopus menu. PolyUnwrapper and Adv.UV Normalizer are installed and not on the hotkey file. `density.ms` displays density as if the map were 4096. Texture Map Generator writes `T_Address_Type_Slot.UDIM` and `T_Address_Ground_Type_Slot.UDIM` with Diffuse, ERM, and Normal, which matches VPM (TEX-03, TEX-10, TEX-11). NPM is a separate suffix and packing contract (`_d`, `_n`, `_o`, `_m`, `_r`). The UDIM wizard is not implemented yet (`app.py:452`). The 24-bit 256 converter is the #537 file; `index to rgb.py` writes an 8-bit plug instead.
 7. **Names.** Unchanged tool, newly confirmed as daily. The A101LP Octopus button is `A101AGRLP.ms`. Texmapgen's renamer is a second, different pattern and is not that button.
 8. **Lights.** Newly informed. Corona 12 is the installer in the skipped set. Corona proxy display is the #537 script. The Lumen doc and `Optimised-DefaultEngine.txt` are Unreal settings, not the Max light FBX. Pilot light rules are unchanged.
 9. **Cleanup.** Newly informed. Prune Scene and Relink Bitmaps are on the toolbar. `Optimise_info` moves heavy meshes to a layer before that cleanup. Clear CA/UDP 010 is still the #537 script.
@@ -671,10 +671,10 @@ Rows without `(new)` are the #537 table, copied forward so this pass has one tab
 | (new) Move meshes with more than 100000 faces, top 20 | `Optimise_info_2.ms:126` | D010 | differs | faces, and 100000 is below the review band |
 | (new) List bitmaps with both sides strictly above 4096, top 10 | `Optimise_info_2.ms:125` | VPM sizes 2048 or 4096 | differs | 4096 itself is kept; smaller and non-square maps are not flagged |
 | (new) Display texel density as `4096 * sqrt(uvArea/worldArea)` | `density.ms:42` | D160, 512–1706 px/m | differs | assumes a 4096 map |
-| (new) Flora atlas default 2048, padding 2 px, list includes 8192 | `Flora Atlas V1.2.mcr:1449-1455` | padding ≥ 8 px; VPM 2048/4096 | differs | 2 px and 8192 |
+| (new) Flora atlas default 2048, padding 2 px, list includes 4096 and 8192 | `Flora Atlas V1.2.mcr:1449-1455` | NPM Flora capped at 2048; NPM padding >= 8 px; VPM unique-island padding >= 16 px at 2048 and >= 32 px at 4096 | differs | NPM Flora 4096 is forbidden; VPM 4096 with 8 px unique-island spacing is insufficient; 2 px and 8192 are outside both profiles |
 | (new) 256×256 image saved as an 8-bit palette PNG | `index to rgb.py:242-273` | 24-bit delivery PNG; 128 plug for flat MR only | differs | mode `P`, one flat color |
-| (new) UDIM name `T_Address_Type_Slot.UDIM` or with `_Ground_`; types Diffuse, ERM, Normal | `utils.py:463-525` | `T..._d/_r/_m/_n/_o` | differs | ERM replaces separate roughness and metalness |
-| (new) Filename letters, digits, hyphen, underscore, dot | `utils.py:196-206` | letters, digits, underscore | differs | hyphen and dot |
+| (new) UDIM name `T_Address_Type_Slot.UDIM` or `T_Address_Ground_Type_Slot.UDIM`; types Diffuse, ERM, Normal | `utils.py:463-525` | VPM `texture_oks` / `texture_ground` (TEX-03, TEX-10, TEX-11) | matches VPM | The dot before UDIM is mandatory for VPM, not a naming gap and not an illegal-character gap. NPM is a separate suffix and packing contract (`_d`, `_n`, `_o`, `_m`, `_r`) |
+| (new) Filename letters, digits, hyphen, underscore, dot | `utils.py:196-206` | stem letters, digits, underscore; VPM dot before UDIM is mandatory | differs | the Slot.UDIM dot matches VPM and is not a naming gap; a hyphen is still outside both stem charsets |
 | (new) Square 128/256/512/1024/2048; bpp other than 8 is a warning; alpha is an error | `A101AGRLP.ms:1307-1327` | 24-bit; VPM 2048/4096; NPM alpha forbidden | differs | the 8-bit warning contradicts 24-bit; 4096 is absent; the alpha error matches NPM |
 | (new) GroundEl bitmap cap argument 512 on `btnGElDiff.filename` | `A101AGRLP.ms:1374` | GroundEl set ≤ 512 px | differs | 512 matches the set cap; the property is not the button the UI writes (`btnGElDiffMap`) |
 | (new) Nearly colinear 2-edge vertex if angle > 0.99° | `A101AGRLP.ms:248` | D152 vertex distance 0.002 m | missing | labeled "zero-length"; it is an angle test, and the calls that would run it on export objects are commented out |
@@ -707,20 +707,20 @@ Drafts only. Nothing was filed. Numbering continues from #537 (R1–R12). This i
     **Why.** `layers_polycount.ms` and `Optimise_info_2.ms` use 100000 polygons or faces per layer or per object, then rename and move nodes. The pilot budgets are triangles per file, with a review band at 150000 and a fail at 1000000. The scripts are not on the hotkey set.
     **Draft follow-up issue.** title: Do not port Optimise_info. acceptance: closed as won't-do; the audit quotes the 100000 and 4096 calls; no scene-rewriting sweep is added.
 
-17. **Title.** Do not adopt Flora Atlas padding of 2 px or the 8192 size.
+17. **Title.** Do not adopt Flora Atlas padding of 2 px or the 8192 size; size and padding are profile-specific.
     **Action.** rule.
-    **Why.** Both Flora macros default the atlas to 2048 and the padding to 2, and the list goes up to 8192. #537 already asked to compare FloraAtlas opacity packing. This pass adds the padding and the extra size, which must not be copied with that packer.
-    **Draft follow-up issue.** title: Keep flora atlas padding at 8 px or more. acceptance: the flora packer rejects padding under 8 px and rejects 8192; 2048 and 4096 remain the allowed squares.
+    **Why.** Both Flora macros default the atlas to 2048 and the padding to 2, and the list includes 4096 and 8192. NPM Flora is one shared set capped at 2048, so NPM Flora 4096 is forbidden (TEX-16, UV-05). NPM padding between neighbouring unique-image islands is >= 8 px (TEX-13, UV-13). VPM unique-island padding is >= 16 px at 2048 and >= 32 px at 4096 (TEX-13, UV-13; `padding_px_min`). VPM 4096 with 8 px unique-island spacing is insufficient. 8192 is outside both profiles. #537 already asked to compare FloraAtlas opacity packing. This pass keeps that packing question and corrects the size and padding by profile.
+    **Draft follow-up issue.** title: Check flora atlas size and padding by profile. acceptance: NPM Flora 4096 is forbidden and NPM Flora is capped at 2048; NPM padding under 8 px is rejected; VPM 4096 with 8 px unique-island spacing is insufficient because >= 32 px at 4096 is required; >= 16 px at 2048 is the VPM floor; 8192 is rejected.
 
 18. **Title.** Do not port the 8-bit plug writer.
     **Action.** ignore.
     **Why.** `index to rgb.py` fills a 256×256 image with an 8-bit palette color. The sibling `convert_8bit_to_24bit.py` (#537) does the opposite and is the direction that matches 24-bit delivery. The built `IndextoRgbConverter.exe` was not run.
     **Draft follow-up issue.** title: Do not port index to rgb.py. acceptance: closed as won't-do; 256×256 indexed plugs are not a delivery output.
 
-19. **Title.** Do not adopt Texture Map Generator file names.
-    **Action.** ignore.
-    **Why.** The tool is a real in-house map builder (version 2.0.0) and it is not on the Max hotkeys. Its names use ERM and allow a hyphen and a dot. Pilot texture names stay `_d/_r/_m/_n/_o` with letters, digits, and underscore. The UDIM wizard button is a stub.
-    **Draft follow-up issue.** title: Keep ERM renames out of the pilot. acceptance: closed as won't-do for naming; a later issue can mine the map math only if a job needs an ERM packer.
+19. **Title.** Treat Texture Map Generator names as profile-specific; the Diffuse/ERM/Normal UDIM scheme matches VPM.
+    **Action.** rule.
+    **Why.** The tool is a real in-house map builder (version 2.0.0) and it is not on the Max hotkeys. `T_Address_Type_Slot.UDIM` and `T_Address_Ground_Type_Slot.UDIM` with Diffuse, ERM, and Normal, which matches VPM (TEX-03, TEX-10, TEX-11; `standards/VPM_STANDARD.yaml` `required_maps` at lines 63-64 and `texture_oks` / `texture_ground`). The dot before UDIM is mandatory for VPM, not a naming gap and not an illegal-character gap. NPM is a separate suffix and packing contract (`_d`, `_n`, `_o`, `_m`, `_r`). A hyphen stays outside both stem charsets. The UDIM wizard button is not implemented yet (`app.py:452`).
+    **Draft follow-up issue.** title: Keep the VPM Diffuse/ERM/Normal UDIM names and keep the NPM suffix contract separate. acceptance: the six witness names are classified as matches VPM; the wizard stays not implemented yet (`app.py:452`); NPM suffixes are not rewritten into this pattern.
 
 20. **Title.** Leave h_instancer as a scene helper.
     **Action.** ignore.
@@ -741,6 +741,19 @@ Drafts only. Nothing was filed. Numbering continues from #537 (R1–R12). This i
     **Action.** rule.
     **Why.** The note and `hotkeys.docx` still assign Connect, Slice, Spacing, Cap, and Quick Slice to keys that `my_set_2024.hsx` gives to other commands. F8 is assigned twice. Building a pilot hotkey from the note would bind the wrong command.
     **Draft follow-up issue.** title: Record my_set_2024.hsx as the Max keymap. acceptance: the note's extra keys are listed as unbound in the hsx; no pilot keymap is generated from the docx.
+
+## Correction evidence (review round 2)
+
+Review round 2 supplied two synthetic 2048 RGB triplets (six PNGs). This pass did not execute V007. The recorded result is `VPM maps: pass` for both sets (2/2 sets, 6/6 names). Expected classification matches VPM (TEX-03, TEX-10, TEX-11; `texture_oks` / `texture_ground`).
+
+- `T_Probe_Diffuse_1.1001.png`
+- `T_Probe_ERM_1.1001.png`
+- `T_Probe_Normal_1.1001.png`
+- `T_Probe_Ground_Diffuse_1.1001.png`
+- `T_Probe_Ground_ERM_1.1001.png`
+- `T_Probe_Ground_Normal_1.1001.png`
+
+Further expected classifications from the same profile split: NPM Flora 4096 is forbidden (NPM Flora is capped at 2048). VPM 4096 with 8 px unique-island spacing is insufficient (>= 32 px at 4096 is required). NPM padding stays >= 8 px. VPM unique-island padding is >= 16 px at 2048 and >= 32 px at 4096.
 
 ## Missing inputs & limitations
 
