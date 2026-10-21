@@ -4,10 +4,12 @@ Pattern: n/a | new-case: issue-518 AST scan keeps real-Max tests out of the defa
 
 A test "launches real Max" when its body, a module-level helper it calls or a module-level fixture
 it requests (transitively):
-- calls ``default_adapter()`` without monkeypatching the adapter's ``_call`` in the same function, or
+- calls ``X.default_adapter()`` unless an earlier top-level statement of the same function patches
+  ``X._call`` (same receiver, no ``undo``); any weaker evidence counts as a launch, or
 - references a ``dcc_batch.py`` path: a string literal ending in ``dcc_batch.py``, the ``DCC_BATCH``
   attribute, or a module-level name bound to a ``dcc_batch.py`` path.
-Such a test without ``@pytest.mark.max`` (function, class or module ``pytestmark``) fails this
+Such a test without ``@pytest.mark.max`` (function, class, or the effective = last, unambiguous module
+``pytestmark``) fails this
 contract, because the default ``addopts`` deselects ``max`` and nothing else keeps it off the shared
 cross-card Max lock.
 """
@@ -38,14 +40,39 @@ def _marked(decorators: list[ast.expr]) -> bool:
     return any(_is_max_mark(d) for d in decorators)
 
 
+def _pytestmark_bindings(node: ast.AST) -> list[ast.AST]:
+    """Every node under ``node`` that (re)binds or deletes the name ``pytestmark``."""
+    out = []
+    for n in ast.walk(node):
+        if isinstance(n, ast.Name) and n.id == "pytestmark" and isinstance(n.ctx, (ast.Store, ast.Del)):
+            out.append(n)
+        elif isinstance(n, (ast.Import, ast.ImportFrom)) and any(
+                (i.asname or i.name.split(".")[0]) == "pytestmark" for i in n.names):
+            out.append(n)
+        elif isinstance(n, (ast.Global, ast.Nonlocal)) and "pytestmark" in n.names:
+            out.append(n)
+    return out
+
+
 def _module_marked(tree: ast.Module) -> bool:
-    for stmt in tree.body:
-        if isinstance(stmt, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "pytestmark"
-                                                 for t in stmt.targets):
-            values = stmt.value.elts if isinstance(stmt.value, (ast.List, ast.Tuple)) else [stmt.value]
-            if any(_is_max_mark(v) for v in values):
-                return True
-    return False
+    """Effective module mark = the LAST binding of ``pytestmark``; fail closed when it is ambiguous.
+
+    Marked only when every binding is a top-level ``pytestmark = ...`` statement and the last one
+    carries ``max``. A reset (``pytestmark = []``), an augmented, conditional, deleted, imported,
+    ``global`` or nested binding makes the module count as unmarked.
+    """
+    top = [s for s in tree.body if _pytestmark_bindings(s)]
+    plain = [s for s in top if (isinstance(s, ast.Assign) and len(s.targets) == 1
+                                and isinstance(s.targets[0], ast.Name))
+             or (isinstance(s, ast.AnnAssign) and isinstance(s.target, ast.Name))]
+    if not top or plain != top or len(_pytestmark_bindings(tree)) != len(top):
+        return False
+    last = top[-1]
+    value = last.value
+    if value is None:
+        return False
+    values = value.elts if isinstance(value, (ast.List, ast.Tuple)) else [value]
+    return any(_is_max_mark(v) for v in values)
 
 
 def _dcc_batch_names(tree: ast.Module) -> set[str]:
@@ -58,21 +85,49 @@ def _dcc_batch_names(tree: ast.Module) -> set[str]:
     return names
 
 
-def _patches_call(func: ast.AST) -> bool:
-    return any(isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr == "setattr"
-               and any(isinstance(a, ast.Constant) and a.value == "_call" for a in n.args)
-               for n in ast.walk(func))
+def _call_patch_target(stmt: ast.stmt) -> str | None:
+    """``ast.dump`` of X for a top-level statement ``<mp>.setattr(X, '_call', ...)``, else None."""
+    if not (isinstance(stmt, ast.Expr) and isinstance(stmt.value, ast.Call)):
+        return None
+    call = stmt.value
+    if not (isinstance(call.func, ast.Attribute) and call.func.attr == "setattr" and len(call.args) >= 3):
+        return None
+    name = call.args[1]
+    if not (isinstance(name, ast.Constant) and name.value == "_call"):
+        return None
+    return ast.dump(call.args[0])
+
+
+def _launches(node: ast.AST):
+    for n in ast.walk(node):
+        if isinstance(n, ast.Call):
+            callee = n.func
+            name = callee.id if isinstance(callee, ast.Name) else getattr(callee, "attr", None)
+            if name == "default_adapter":
+                yield callee
 
 
 def _direct_hit(func: ast.AST, dcc_names: set[str]) -> bool:
-    patched = _patches_call(func)
-    for node in ast.walk(func):
-        if isinstance(node, ast.Call):
-            callee = node.func
-            name = callee.id if isinstance(callee, ast.Name) else getattr(callee, "attr", None)
-            if name == "default_adapter" and not patched:
+    """True when ``func`` may launch real Max.
+
+    ``X.default_adapter()`` counts as mocked only when an EARLIER top-level statement of the same
+    function is ``<mp>.setattr(X, '_call', ...)`` for the very same receiver ``X`` and the function
+    never calls ``.undo()``. A patch on another module, a conditional/nested patch, a patch after
+    the launch or a bare ``default_adapter()`` call is not proof and counts as a launch (fail closed).
+    """
+    body = getattr(func, "body", [])
+    undo = any(isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr == "undo"
+               for n in ast.walk(func))
+    patched: set[str] = set()
+    for stmt in body:
+        for callee in _launches(stmt):
+            if undo or not isinstance(callee, ast.Attribute) or ast.dump(callee.value) not in patched:
                 return True
-        elif isinstance(node, ast.Name) and node.id in dcc_names:
+        target = _call_patch_target(stmt)
+        if target is not None:
+            patched.add(target)
+    for node in ast.walk(func):
+        if isinstance(node, ast.Name) and node.id in dcc_names:
             return True
         elif isinstance(node, ast.Attribute) and node.attr == "DCC_BATCH":
             return True
@@ -155,6 +210,41 @@ SYNTHETIC = {
     "module_const_name": ("from pathlib import Path\nDCC = Path(r'C:/s/dcc_batch.py')\ndef test_a():\n    run([str(DCC)])\n", 1),
     "attribute_DCC_BATCH": ("def test_a():\n    run([mod.DCC_BATCH, 'max'])\n", 1),
     "monkeypatched_call": ("def test_a(monkeypatch):\n    monkeypatch.setattr(m, '_call', f)\n    m.default_adapter()\n", 0),
+    # review round 1 (PR #522) bypass witnesses: each must report the unmarked test
+    "patch_unrelated_module": ("def test_live(monkeypatch):\n    monkeypatch.setattr(other_module, '_call', fake)\n"
+                               "    max_adapter.default_adapter().selftest()\n", 1),
+    "patch_unreachable_if_false": ("def test_live(monkeypatch):\n    if False:\n"
+                                   "        monkeypatch.setattr(max_adapter, '_call', fake)\n"
+                                   "    max_adapter.default_adapter().selftest()\n", 1),
+    "pytestmark_reset_after_max": ("import pytest\npytestmark = pytest.mark.max\npytestmark = []\n"
+                                   "def test_live():\n    max_adapter.default_adapter().selftest()\n", 1),
+    # further fail-closed edges of the same two rules
+    "patch_after_launch": ("def test_live(monkeypatch):\n    max_adapter.default_adapter()\n"
+                           "    monkeypatch.setattr(max_adapter, '_call', fake)\n", 1),
+    "patch_then_undo": ("def test_live(monkeypatch):\n    monkeypatch.setattr(max_adapter, '_call', fake)\n"
+                        "    monkeypatch.undo()\n    max_adapter.default_adapter()\n", 1),
+    "patch_other_attr_same_module": ("def test_live(monkeypatch):\n    monkeypatch.setattr(max_adapter, '_run', fake)\n"
+                                     "    max_adapter.default_adapter()\n", 1),
+    "bare_default_adapter_patched": ("def test_live(monkeypatch):\n    monkeypatch.setattr(max_adapter, '_call', fake)\n"
+                                     "    default_adapter()\n", 1),
+    "patch_in_try_block": ("def test_live(monkeypatch):\n    try:\n        monkeypatch.setattr(max_adapter, '_call', fake)\n"
+                           "    except Exception:\n        pass\n    max_adapter.default_adapter()\n", 1),
+    "mocked_control_real_shape": ("def test_live(monkeypatch):\n    monkeypatch.setattr(max_adapter, '_call', fake)\n"
+                                  "    monkeypatch.setattr(max_adapter, 'max_batch_path', p)\n"
+                                  "    adapter = max_adapter.default_adapter()\n", 0),
+    "pytestmark_max_after_reset": ("import pytest\npytestmark = []\npytestmark = [pytest.mark.max]\n"
+                                   "def test_live():\n    m.default_adapter()\n", 0),
+    "pytestmark_augmented": ("import pytest\npytestmark = [pytest.mark.max]\npytestmark += []\n"
+                             "def test_live():\n    m.default_adapter()\n", 1),
+    "pytestmark_conditional": ("import pytest\nif X:\n    pytestmark = pytest.mark.max\n"
+                               "def test_live():\n    m.default_adapter()\n", 1),
+    "pytestmark_deleted": ("import pytest\npytestmark = pytest.mark.max\ndel pytestmark\n"
+                           "def test_live():\n    m.default_adapter()\n", 1),
+    "pytestmark_rebound_in_function": ("import pytest\npytestmark = pytest.mark.max\ndef _f():\n"
+                                       "    global pytestmark\n    pytestmark = []\n"
+                                       "def test_live():\n    m.default_adapter()\n", 1),
+    "pytestmark_reset_after_tests": ("import pytest\npytestmark = pytest.mark.max\n"
+                                     "def test_live():\n    m.default_adapter()\npytestmark = []\n", 1),
     "mention_in_message": ("def test_a():\n    raise AssertionError('dcc_batch must not run')\n", 0),
     "skip_message_mentions_py": ("import pytest\ndef test_a():\n    pytest.skip('needs dcc_batch.py and Max')\n", 0),
     "route_tuple_constant": ("TOOLS = ('dcc_batch.py', 'ezdxf')\ndef test_a():\n    assert TOOLS\n", 0),
@@ -168,6 +258,35 @@ SYNTHETIC = {
 def test_scanner_synthetic(case):
     source, violations = SYNTHETIC[case]
     assert len(scan_source(source)) == violations
+
+
+PATCHES = {  # name -> (statements before the launch, statements after it, proves mocking)
+    "none": ("", "", False),
+    "same_receiver": ("    monkeypatch.setattr(max_adapter, '_call', fake)\n", "", True),
+    "other_module": ("    monkeypatch.setattr(other_module, '_call', fake)\n", "", False),
+    "if_false": ("    if False:\n        monkeypatch.setattr(max_adapter, '_call', fake)\n", "", False),
+    "after_launch": ("", "    monkeypatch.setattr(max_adapter, '_call', fake)\n", False),
+}
+MODULE_MARKS = {  # name -> (module header, effective max mark)
+    "none": ("", False),
+    "max": ("pytestmark = pytest.mark.max\n", True),
+    "max_then_reset": ("pytestmark = pytest.mark.max\npytestmark = []\n", False),
+    "reset_then_max": ("pytestmark = []\npytestmark = [pytest.mark.dcc, pytest.mark.max]\n", True),
+}
+
+
+def test_scanner_brute_force_patch_and_module_mark_combinations():
+    """5 patch shapes x 4 module-mark histories x 2 decorators = 40 sources; violation iff neither proof holds."""
+    checked = 0
+    for (pname, (before, after, mocked)), (mname, (header, marked)), decorated in itertools.product(
+            PATCHES.items(), MODULE_MARKS.items(), (False, True)):
+        source = ("import pytest\n" + header + ("@pytest.mark.max\n" if decorated else "")
+                  + "def test_live(monkeypatch):\n" + before
+                  + "    max_adapter.default_adapter().selftest()\n" + after)
+        expected = [] if (mocked or marked or decorated) else ["<src>::test_live"]
+        assert scan_source(source) == expected, (pname, mname, decorated)
+        checked += 1
+    assert checked == 40
 
 
 def test_max_marker_registered_with_description(pytestconfig):
