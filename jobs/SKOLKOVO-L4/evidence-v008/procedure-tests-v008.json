@@ -1,0 +1,11 @@
+{
+  "model_passed": false,
+  "scope": "Existing procedure unit tests only, not a model or completed production gate",
+  "command": "env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q -p no:cacheprovider tests/test_task_to_model.py --basetemp=C:/x/t_b205c8e1-portability-v008",
+  "exit_code": 0,
+  "tests_passed": 136,
+  "seconds": 72.74,
+  "hours": 0.020205555555555553,
+  "raw_log_sha256": "215065db506b6fb93b364728d8e7628faa56091f9187bb03e5a3015beae44db9",
+  "stdout": "........................................................................ [ 52%]\r\n................................................................         [100%]\r\n136 passed in 72.74s (0:01:12)\r\n"
+}

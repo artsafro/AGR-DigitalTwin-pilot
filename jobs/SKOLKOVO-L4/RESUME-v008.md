@@ -132,6 +132,27 @@ hash-pinned external paths. To resume on another checkout, verify ZIP and its
 internal manifest before restoring the versioned `tmp/` diagnostics. Do not
 use the stale experimentalv008/v008b PartsLists instead of canonicalv008c.
 
+## Checkout-byte portability self-repair
+
+The first commit93bb452 exposed a real portability failure: a fresh CLI walk
+using exact Git blobs rejected three references to two CRLF text files after
+Git LF normalization (`GATE1-PROPOSAL-v008.md` and input-integrity JSON).
+The working-tree walk alone had missed it. Preserve the RED witness.
+
+Two exact job-local `.gitattributes` entries now use `-text` (as the existing
+v004 evidence already does), preserving the hashed bytes across checkouts.
+This is **not LFS**, not a global policy change and not a history rewrite.
+Fresh immutable-Git-tree CLI witness: three hash errors ->zero, **5/5 evidence
+entries verified**; `passed=false` and exit1 remain correct until user Gate1.
+Canonical PartsList SHA and the nine-artifact source archive are unchanged.
+Existing procedure tests additionally passed **136/136 in72.74s**
+(`tests/test_task_to_model.py`, separate focused run; raw stdout/hash in
+`evidence-v008/procedure-tests-v008.json`).
+Witnesses pin the actual tested source bytes in
+`evidence-v008/checkout-portability-{red,green}-v008.json`; the driver and both
+records are independently rehashed on Drive in `evidence-v008-portability/`
+(**3/3**, index `evidence-v008/portability-index.json`).
+
 ## Partial L5 timings (not completed production throughput)
 
 | Measured pre-Gate1 stage | Seconds | Hours |

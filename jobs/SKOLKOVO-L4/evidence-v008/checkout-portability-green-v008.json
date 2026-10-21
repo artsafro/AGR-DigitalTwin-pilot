@@ -1,0 +1,18 @@
+{
+  "revision": "5e8f5aa7a427cede678e760597ebe223ac68d228",
+  "label": "after",
+  "exit_code": 1,
+  "passed": false,
+  "errors": [],
+  "gate_errors": {},
+  "all_evidence_verified": true,
+  "witness_source_sha256": {
+    "jobs/SKOLKOVO-L4/GATE1-PROPOSAL-v008.md": "0b35603995dc095906dc3c18227dae3eb6303ee0b5128b7bc154247882805b9c",
+    "jobs/SKOLKOVO-L4/evidence-v008/input-integrity-v008.json": "6e0de137ec1ee5b0071c3f22e4f5eed49c91fef24555430966e2340bcba93631",
+    "jobs/SKOLKOVO-L4/inventory.json": "68631e7907099b337714548dcf44fd10d4d3ac87ee1e3fca034760748b316c5f",
+    "jobs/SKOLKOVO-L4/job.yaml": "4315e05abd35610936c7c2e60504a59c66e0b5e827eec28183a755ac5ea5edff",
+    "tmp/skolkovo-l4-v008/parts-gate1-proposal-v008c.json": "f1867120b2c7072405d32440a27382a0be8bb2bf9edc56c9fbc2876eb3ff2302"
+  },
+  "verified_evidence_entries": 5,
+  "verification_note": "Frozen staged Git tree was exercised in a fresh CLI process; reproduced tracked-file bytes are also pinned here, since the final evidence-only commit has a later tree. passed=false remains mandatory until Gate1."
+}

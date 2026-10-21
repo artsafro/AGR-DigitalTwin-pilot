@@ -1,0 +1,24 @@
+{
+  "passed": false,
+  "scope": "Checksum portability regression only; original canonical PartsList and9-artifact archive unchanged",
+  "artifacts": [
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\353-skolkovo-l4\\evidence-v008-portability\\l4_checkout_portability_v008.py",
+      "sha256": "1fb20d9d9772b7b7149f6bc14996b5099be8ea742bb848b339b3921a9ca71cee",
+      "bytes": 1676
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\353-skolkovo-l4\\evidence-v008-portability\\checkout-portability-red-v008.json",
+      "sha256": "2d3e909123d81ccd5c01f0b6bff1f8744e7795c1d1808ac644edbe33bfafb744",
+      "bytes": 480
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\353-skolkovo-l4\\evidence-v008-portability\\checkout-portability-green-v008.json",
+      "sha256": "5f378ceb41de0a7edaf538fe5f79f1280bd021d026657a8b2e15e641332b7558",
+      "bytes": 1076
+    }
+  ],
+  "drive_manifest_sha256": "5072a5d5bcbb6230436a1d9b98cdb9501284652d278453cc1d1148ceeb62cfdc",
+  "verified_artifacts": 3,
+  "repair": "Job-local -text for the two byte-hashed text evidence files; no LFS/global attribute or history rewrite"
+}

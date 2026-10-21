@@ -2,3 +2,5 @@
 evidence-v004/* -text
 evidence-v004/*.json whitespace=cr-at-eol
 resume-evidence-v004.json -text whitespace=cr-at-eol
+GATE1-PROPOSAL-v008.md -text whitespace=cr-at-eol
+evidence-v008/input-integrity-v008.json -text whitespace=cr-at-eol

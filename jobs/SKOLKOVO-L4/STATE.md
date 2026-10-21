@@ -42,6 +42,13 @@ verified; Drive ZIP7,043/7,043 member hashes+CRC and9/9 published artifacts
 independently verified. No full suite before complete review head. Live Max2024
 was only pinged; no scene mutation or DCC subprocess was launched by this run.
 
+Fresh-checkout self-review additionally found CRLF-to-LF checksum drift in two
+hashed text evidence files. Job-local `-text` preserves their exact bytes;
+Git-blob CLI witness went from three hash errors to zero,5/5 evidence entries
+verified (overall passed=false still correct). Extra3/3 Drive portability
+artifacts verified;136 procedure tests additionally passed/72.74s. Canonical
+PartsList SHA/source archive are unchanged.
+
 Transcript: Hermes task t_b205c8e1, resume after task comment2026-10-21 12:39.
 
 ## Historical v007 status — superseded by v008c

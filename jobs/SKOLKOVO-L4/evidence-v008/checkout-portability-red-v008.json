@@ -1,0 +1,18 @@
+{
+  "revision": "HEAD",
+  "label": "before",
+  "exit_code": 1,
+  "passed": false,
+  "errors": [],
+  "gate_errors": {
+    "parts": [
+      "hash mismatch: jobs/SKOLKOVO-L4/GATE1-PROPOSAL-v008.md"
+    ],
+    "report": [
+      "hash mismatch: jobs/SKOLKOVO-L4/GATE1-PROPOSAL-v008.md",
+      "hash mismatch: jobs/SKOLKOVO-L4/evidence-v008/input-integrity-v008.json"
+    ]
+  },
+  "all_evidence_verified": false,
+  "resolved_source_commit": "93bb4528e427babd0f696055c83ab1b172ea378d"
+}
