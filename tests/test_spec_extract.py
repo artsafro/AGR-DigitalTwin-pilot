@@ -724,6 +724,40 @@ def test_a_closed_ring_of_thick_boxes_is_read(slope, top):
     assert rs.z_top_m == top and Polygon(rs.outline).symmetric_difference(box(3, 3, 7, 7)).area < 0.02
 
 
+RING_03 = [(3, 3, 7, 3.3), (6.7, 3.3, 7, 7), (3, 6.7, 6.7, 7), (3, 3.3, 3.3, 6.7)]
+
+
+@pytest.mark.parametrize("boxes, default, m, by", [
+    (RING_03, None, 0.3, "measured"),                                            # issue #91: rule 4 for screens
+    (RING_03, 0.25, 0.3, "measured"),                                            # the source wins over the default
+    ([(3, 3, 7, 3.3), (6.5, 3.3, 7, 7), (3, 6.7, 6.5, 7), (3, 3.3, 3.3, 6.7)], 0.25, 0.25,
+     "parapet thickness by default"),                                            # 0.3 and 0.5: not one thickness
+    ([(3, 3, 7, 3.3), (6.5, 3.3, 7, 7), (3, 6.7, 6.5, 7), (3, 3.3, 3.3, 6.7)], None, None, "not read, no default"),
+])
+def test_a_screen_thickness_is_read_or_defaulted(boxes, default, m, by):
+    """Issue #91 (rule 4 as the parapet's, user 2026-10-12 [D061]): the screens' thickness from their section at mid
+    height (one ring, one mitred inset), else the object's parapet_thickness_default_m, marked; never a guess."""
+    dump = box_building()
+    dump["meshes"].append(_boxes(*boxes).dump())
+    cfg = {**OBJECT, "roof_screens": ["Screens"], **({"parapet_thickness_default_m": default} if default else {})}
+    spec, report = extract_spec(dump, cfg)
+    (rs,) = spec.roof_structures
+    got = report["roof_structures"][0]["thickness"]
+    assert rs.thickness_m == m and got["m"] == m and got["by"] == by
+    assert ("why" in got) == (by != "measured")
+
+
+@pytest.mark.parametrize("default, m, by", [(0.25, 0.25, "parapet thickness by default"),
+                                            (None, None, "not read, no default")])
+def test_plane_screens_have_no_thickness_to_read(default, m, by):
+    """Screens built as planes (npm_min, OBJ03 mesh fences) have no section ring: the default, or none."""
+    cfg = {**OBJECT, "roof_screens": ["Screens"], **({"parapet_thickness_default_m": default} if default else {})}
+    spec, report = extract_spec(_with_screened_equipment(), cfg)
+    (rs,) = spec.roof_structures
+    assert rs.thickness_m == m and report["roof_structures"][0]["thickness"]["by"] == by
+    assert "planes" in report["roof_structures"][0]["thickness"]["why"]
+
+
 @pytest.mark.parametrize("second", [[(4, 2), (6, 2), (6, 4), (4, 4)], [(4, 4), (6, 4), (6, 6), (4, 6)]])
 def test_enclosures_sharing_screens_are_a_stop(second):
     """Review 2 of #92: touching enclosures 9 m and 11 m high - one outline and one top would be wrong."""

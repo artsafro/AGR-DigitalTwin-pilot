@@ -1160,9 +1160,127 @@ def test_engine_builds_a_screen_enclosure_as_planes_with_roof_ids():
     assert not all(lp["allowed"] for lp in plain)          # without the spec's structure its bottom is an open loop
 
 
-def test_engine_builds_no_screen_shell_for_mid_yet():
-    with pytest.raises(BuildError, match="issue #91"):
-        build(with_screen("mid"), INPUTS)
+def _shell(outline, z_top, t, inputs=INPUTS):
+    """Build a mid screen enclosure with `t` (None = no thickness_m in the spec) and return its mesh."""
+    rs_ = {"kind": "screen", "outline": outline, "z_top_m": z_top, **({"thickness_m": t} if t is not None else {})}
+    dump = build(edited(lambda d: d.update({"spec_version": "0.7", "roof_structures": [rs_], "profile": "mid"})),
+                 inputs)
+    return dump, next(m for m in dump["meshes"] if m["name"] == "roof_structures")
+
+
+def _shell_facts(rs_):
+    """(closed manifold, consistently oriented, signed volume) of a built enclosure mesh."""
+    v = np.asarray(rs_["vertices"], float)
+    edges = {}
+    for poly in rs_["polygons"]:
+        for a, b in zip(poly, poly[1:] + poly[:1]):
+            edges.setdefault((a, b), 0)
+            edges[(a, b)] += 1
+    closed = all(edges.get((b, a), 0) == 1 and n == 1 for (a, b), n in edges.items())
+    t = v[np.asarray(rs_["triangles"])]
+    vol = float(np.einsum("ij,ij->i", t[:, 0], np.cross(t[:, 1], t[:, 2])).sum() / 6)
+    return closed, vol
+
+
+def test_engine_builds_a_screen_enclosure_as_a_shell_for_mid():
+    """Issue #91 (pattern roof-screen-enclosure rule 3): mid / VPM - the npm_min planes with the screen's thickness
+    inward (a Shell): outer walls and top, inner walls and a ceiling t below the top, the rim on the roof; closed,
+    roof ids, nothing inside (the equipment is not decided)."""
+    dump, rs_ = _shell(SCREEN["outline"], 9.0, 0.2)
+    v = np.asarray(rs_["vertices"])
+    assert set(rs_["material_ids"]) == {INPUTS.roof_id}
+    assert v[:, 2].min() == pytest.approx(6.6) and v[:, 2].max() == pytest.approx(9.0)
+    assert sorted({round(z, 6) for z in v[:, 2]}) == [6.6, 8.8, 9.0]          # roof, ceiling, top
+    assert sorted({round(x, 6) for x in v[:, 0]}) == [3.0, 3.2, 6.8, 7.0]      # outline and its 0.2 m inset
+    closed, vol = _shell_facts(rs_)
+    assert closed and vol == pytest.approx(4 * 4 * 2.4 - 3.6 * 3.6 * 2.2)      # outward normals, box minus hollow
+    soup = from_dump(dump)
+    structures = [(shapely.Polygon(SCREEN["outline"]), 6.6, 9.0)]
+    mesh_ = checks.check_mesh(soup, TOL, checks.load_ranges(), structures=structures)
+    assert not any(lp["kind"].startswith("roof-structure") for lp in mesh_["details"]["open_loops"])
+    assert checks.check_horizontal_faces(soup, TOL)["status"] == "pass"
+
+
+def test_screen_shell_thickness_falls_back_to_the_build_input():
+    """Rule 4 as the parapet's: the spec's thickness_m wins, else the build input's parapet thickness, else a stop."""
+    from dataclasses import replace
+    _, rs_ = _shell(SCREEN["outline"], 9.0, None)
+    assert sorted({round(x, 6) for x in np.asarray(rs_["vertices"])[:, 0]}) == [3.0, 3.3, 6.7, 7.0]   # INPUTS 0.3
+    _, rs_ = _shell(SCREEN["outline"], 9.0, 0.1, replace(INPUTS, parapet_thickness_m=0.3))
+    assert sorted({round(x, 6) for x in np.asarray(rs_["vertices"])[:, 0]}) == [3.0, 3.1, 6.9, 7.0]
+    with pytest.raises(BuildError, match="needs a thickness"):
+        _shell(SCREEN["outline"], 9.0, None, replace(INPUTS, parapet_thickness_m=0.0))
+
+
+@pytest.mark.parametrize("outline, z_top, t, why", [
+    ([[3, 3], [7, 3], [7, 7], [3, 7]], 9.0, 2.0, "leaves no single hollow"),        # exactly half the side
+    ([[3, 3], [7, 3], [7, 7], [3, 7]], 9.0, 2.5, "leaves no single hollow"),
+    ([[3, 3], [5, 3], [5, 3.8], [6, 3.8], [6, 3], [8, 3], [8, 5], [6, 5], [6, 4.2], [5, 4.2], [5, 5], [3, 5]], 9.0, 0.3,
+     "leaves no single hollow"),                                                    # a 0.4 m neck splits it
+    ([[3, 3], [7, 3], [7, 7], [3, 7]], 6.8, 0.2, "no hollow under the top"),        # exactly at the threshold
+    ([[3, 3], [7, 3], [7, 7], [3, 7]], 6.7, 0.2, "no hollow under the top"),
+])
+def test_a_screen_shell_that_leaves_no_hollow_is_a_stop(outline, z_top, t, why):
+    with pytest.raises(BuildError, match=why):
+        _shell(outline, z_top, t)
+
+
+@pytest.mark.parametrize("bad", [0.0, -0.1, float("nan"), float("inf")])
+def test_a_screen_thickness_must_be_positive_and_finite(bad):
+    with pytest.raises(ValueError):
+        edited(lambda d: d.update({"spec_version": "0.7", "roof_structures": [{**SCREEN, "thickness_m": bad}]}))
+
+
+def test_npm_min_keeps_the_planes_whatever_the_thickness():
+    """npm_min builds planes (no thickness) even with thickness_m in the spec: the rule is per profile."""
+    dump = build(edited(lambda d: d.update({"spec_version": "0.7", "profile": "npm_min",
+                                             "roof_structures": [{**SCREEN, "thickness_m": 0.2}]})), INPUTS)
+    rs_ = next(m for m in dump["meshes"] if m["name"] == "roof_structures")
+    assert rs_["polygon_sizes"].count(4) == 4 and rs_["polygon_sizes"].count(3) == 2
+
+
+def test_screen_shell_probe_random_outlines():
+    """Probe: for generated simple orthogonal outlines (seeded) and thicknesses, every mid shell that builds is closed,
+    outward, roof ids only, and its volume is outline x height minus the mitred hollow; the others are a BuildError."""
+    rng = np.random.default_rng(91)
+    built = stopped = 0
+    for _ in range(60):
+        x0, y0 = rng.uniform(1, 3, 2)
+        w, h = rng.uniform(1, 6, 2)
+        poly = shapely.box(x0, y0, x0 + w, y0 + h)
+        if rng.random() < 0.5:                                   # an L: a notch out of one corner
+            poly = poly.difference(shapely.box(x0 + w * rng.uniform(0.3, 0.7), y0 + h * rng.uniform(0.3, 0.7),
+                                               x0 + w + 1, y0 + h + 1))
+        outline = [list(map(float, p)) for p in list(poly.exterior.coords)[:-1]]
+        t = float(rng.uniform(0.05, 1.5))
+        z_top = 6.6 + float(rng.uniform(0.1, 3))
+        try:
+            _, rs_ = _shell(outline, z_top, t)
+        except BuildError:
+            hollow = poly.buffer(-t, join_style="mitre")
+            assert hollow.is_empty or hollow.geom_type != "Polygon" or z_top - t <= 6.6
+            stopped += 1
+            continue
+        closed, vol = _shell_facts(rs_)
+        hollow = poly.buffer(-t, join_style="mitre")
+        assert closed and set(rs_["material_ids"]) == {INPUTS.roof_id}
+        assert vol == pytest.approx(poly.area * (z_top - 6.6) - hollow.area * (z_top - t - 6.6), rel=1e-6)
+        built += 1
+    assert built >= 20 and stopped >= 5
+
+
+@pytest.mark.parametrize("t", [0.08, 0.2])
+def test_a_mid_screen_shell_round_trips(t):
+    """The extractor reads the engine's mid shell back: same outline, top and thickness (measured)."""
+    from dt_ai.spec import extract_spec
+    dump, _ = _shell(SCREEN["outline"], 9.0, t)
+    for m in dump["meshes"]:
+        if m["name"] == "roof_structures":
+            m["name"] = "Screens"
+    back, report = extract_spec(dump, {**SYNTH_OBJECT, "roof_screens": ["Screens"]})
+    (rs,) = back.roof_structures
+    assert rs.z_top_m == 9.0 and rs.thickness_m == t and report["roof_structures"][0]["thickness"]["by"] == "measured"
+    assert np.allclose(sorted(map(tuple, rs.outline)), sorted(map(tuple, SCREEN["outline"])), atol=0.01)
 
 
 def test_the_extractor_reads_a_marked_screen_enclosure_back():
