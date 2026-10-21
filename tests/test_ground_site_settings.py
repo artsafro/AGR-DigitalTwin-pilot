@@ -54,6 +54,27 @@ def test_approved_curb_joint_config_reaches_builder(tmp_path):
     assert rep['codirectional']['pairs_below'] == 0
 
 
+def test_visible_covering_priority_preserves_tile_and_reports_hidden_drop():
+    d = fixture()
+    d['coverings'].update(tile={'geometry': mapping(box(2, 0, 4, 4))},
+                          geogrid={'geometry': mapping(box(3.999, 0, 8, 4))})
+    s = settings()
+    s['slots'].update(tile='Tile', geogrid='Geogrid')
+    s['covering_priority'] = [['Tile', 'Geogrid']]
+    before = copy.deepcopy(d)
+    plan, _ = builder.site_plan(d, s, 1000)
+    tiles = [l for l in plan.layers if l.slot == 'Tile']
+    assert len(tiles) == 1 and tiles[0].level == 1
+    assert tiles[0].geom.area == pytest.approx(8)
+    grid = [l for l in plan.layers if l.slot == 'Geogrid']
+    assert sum(l.geom.area for l in grid) == pytest.approx(16)
+    assert tiles[0].geom.intersection(grid[0].geom).area == 0
+    drops = plan.report['covering_priority_dispositions']
+    assert drops == [dict(visible_slot='Tile', hidden_covering='geogrid',
+                          removed_m2=pytest.approx(.004), reason='hidden_by_visible_covering')]
+    assert d == before
+
+
 def test_site_cli_fresh_process(tmp_path):
     run, out = cli(tmp_path)
     assert run.returncode == 0, run.stderr + run.stdout
