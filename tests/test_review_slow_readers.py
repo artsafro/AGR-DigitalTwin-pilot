@@ -110,3 +110,41 @@ def test_stale_lock_fails_closed_without_writing(tmp_path, monkeypatch):
                        today=date(2026, 10, 20))
     assert pending.read_bytes() == before
     assert sorted(path.name for path in root.iterdir()) == ['.pending-lock', 'pending.json']
+
+
+def test_persistent_permissionerror_fails_closed_at_deadline(tmp_path, monkeypatch):
+    review = _load('common')
+    root = tmp_path / 'review'
+    root.mkdir()
+    pending = root / 'pending.json'
+    pending.write_text('[]', encoding='utf-8')
+    before = pending.read_bytes()
+    source = tmp_path / 'model.fbx'
+    _fbx(source)
+    lock = root / '.pending-lock'
+    lock.mkdir()
+    real_mkdir = Path.mkdir
+
+    def busy_mkdir(self, *args, **kwargs):
+        if self == lock and not args and not kwargs:
+            raise PermissionError(13, 'Access is denied', '.pending-lock')
+        return real_mkdir(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, 'mkdir', busy_mkdir)
+    calls = {'n': 0}
+    samples = [0.0, 29.99, 30.0]
+
+    def monotonic():
+        index = min(calls['n'], len(samples) - 1)
+        calls['n'] += 1
+        return samples[index]
+
+    monkeypatch.setattr(review.time, 'monotonic', monotonic)
+    monkeypatch.setattr(review.time, 'sleep', lambda _seconds: None)
+
+    with pytest.raises(review.ReviewError, match='busy'):
+        review.publish(task='348', slug='denied', source=source, what='Проверка.',
+                       pngs=[], review_root=root, adapter=FakeAdapter(),
+                       today=date(2026, 10, 20))
+    assert pending.read_bytes() == before
+    assert sorted(path.name for path in root.iterdir()) == ['.pending-lock', 'pending.json']
