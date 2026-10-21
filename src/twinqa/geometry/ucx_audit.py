@@ -1,8 +1,11 @@
-"""Read-only UCX hull measurements (reg p.36 §13; docs/domain/areas/ucx.md R06, R08-R10; [D098]).
+"""Read-only UCX hull measurements and collision findings (reg p.36 §13.4; [D098], [D162]).
 
 Pure Python (no numpy, no bpy) so the same functions run inside Blender
-(`tools/blender/ucx_audit.py`) and under pytest. Measurement only: no verdict, no
-construction. A hull is `(verts, tris)` with `verts` a list of xyz tuples in metres and
+(`tools/blender/ucx_audit.py`) and under pytest. Measurement helpers do not emit a
+pass/fail verdict. `pair_findings` and `collision_findings` report req 2.13.4:
+too-close (< 0.2 mm, SINTEZ), gap outside the D098 2 mm - 1 cm band, intersect and
+nested. A hull the SAT machinery cannot measure is `not_run`, never skipped.
+A hull is `(verts, tris)` with `verts` a list of xyz tuples in metres and
 `tris` a list of vertex-index triples.
 """
 from __future__ import annotations
@@ -13,9 +16,10 @@ import re
 
 GAP_BAND_M = (0.002, 0.01)  # [D098]: 2 mm - 1 cm inclusive (reg p.36 §13.4 0.02-1 cm is a typo, C15)
 BAND_TOL_M = 1e-5  # float32 FBX coordinates: a modelled 2.000 mm gap reads back within 0.01 mm
-TOUCH_M = 0.0002  # faces practically touch
+TOUCH_M = 0.0002  # faces practically touch; SINTEZ too-close is gap < this [D162]
 NEIGHBOUR_M = 0.10  # pairs closer than this are "neighbours" in the gap report
 CONVEX_TOL_M = 1e-4  # float32 FBX coordinates around 100 m carry ~1e-5 noise
+REQ_COLLISION = "2.13.4"  # no intersections; neighbour gap 2 mm - 1 cm [D098], plus SINTEZ too-close [D162]
 
 
 def _sub(a, b):
@@ -267,6 +271,119 @@ def inside_convex(p, verts, tris, tol=0.0):
         if _dot(n, p) - d > tol:
             return False
     return True
+
+
+def _unmeasurable(verts, tris):
+    """Why SAT must not run on this hull, or None when the hull is closed, convex and finite."""
+    try:
+        if len(verts) == 0 or len(tris) == 0:
+            return "empty"
+    except TypeError:
+        return "missing geometry"
+    try:
+        for v in verts:
+            if len(v) != 3 or not all(math.isfinite(float(c)) for c in v):
+                return "non-finite coordinates"
+        n = len(verts)
+        for t in tris:
+            if len(t) != 3:
+                return "invalid topology"
+            for i in t:
+                if isinstance(i, bool) or not isinstance(i, int) or i < 0 or i >= n:
+                    return "invalid topology"
+    except (TypeError, ValueError):
+        return "non-finite coordinates"
+    if not is_closed(tris):
+        return "open"
+    if not is_convex(verts, tris):
+        return "non-convex"
+    return None
+
+
+def _drop(reason, hull, index=None):
+    rec = {"type": "not_run", "req": REQ_COLLISION, "reason": reason, "hull": hull}
+    if index is not None:
+        rec["index"] = index
+    return rec
+
+
+def _finding(kind, gap_m, penetration_m, ref_a, ref_b):
+    return {"type": kind, "req": REQ_COLLISION, "gap_m": gap_m, "penetration_m": penetration_m,
+            "a": ref_a, "b": ref_b}
+
+
+def _one_inside_the_other(a, b):
+    """True when every vertex of one hull lies inside the other (boundary counts as inside)."""
+    (va, ta), (vb, tb) = a, b
+    return (all(inside_convex(p, vb, tb) for p in va)
+            or all(inside_convex(p, va, ta) for p in vb))
+
+
+def pair_findings(a, b, name_a=None, name_b=None):
+    """Req 2.13.4 findings for one unordered pair of convex hulls. Zero or more.
+
+    Overlap (penetration > TOUCH_M) is `nested` when one hull contains the other, otherwise
+    `intersect`. A gap below TOUCH_M emits both `too_close` and `gap_out_of_band` [D162].
+    A gap outside 2 mm - 1 cm emits `gap_out_of_band` (above 1 cm only while the pair is still
+    a neighbour, gap <= NEIGHBOUR_M). In-band and non-neighbour gaps emit nothing.
+    An unmeasurable hull is `not_run` and is not given a gap or overlap finding.
+    """
+    ref_a = 0 if name_a is None else name_a
+    ref_b = 1 if name_b is None else name_b
+    drops = []
+    for hull, ref in ((a, ref_a), (b, ref_b)):
+        try:
+            verts, tris = hull[0], hull[1]
+        except (TypeError, ValueError, IndexError, KeyError):
+            drops.append(_drop("missing geometry", ref))
+            continue
+        reason = _unmeasurable(verts, tris)
+        if reason:
+            drops.append(_drop(reason, ref))
+    if drops:
+        return drops
+    cls, gap, pen = pair_relation(a, b)
+    if cls == "overlap":
+        kind = "nested" if _one_inside_the_other(a, b) else "intersect"
+        return [_finding(kind, 0.0, pen, ref_a, ref_b)]
+    if cls == "touch":
+        return [_finding("too_close", gap, 0.0, ref_a, ref_b),
+                _finding("gap_out_of_band", gap, 0.0, ref_a, ref_b)]
+    if cls in ("below_band", "wide"):
+        return [_finding("gap_out_of_band", gap, 0.0, ref_a, ref_b)]
+    return []
+
+
+def collision_findings(hulls):
+    """Findings for every unordered pair of named hulls, plus a drop for each hull SAT cannot measure.
+
+    Each hull is `{"name", "verts", "tris"}`. An empty list returns `[]` (no pairs, not a pass).
+    Open, non-convex, empty and non-finite hulls are `not_run` and are left out of pair checks;
+    every other pair is still measured. Pair order follows input order.
+    """
+    if isinstance(hulls, (list, tuple)) and len(hulls) == 0:
+        return []
+    if not isinstance(hulls, (list, tuple)):
+        return [_drop("missing geometry", None)]
+    drops, usable = [], []
+    for index, item in enumerate(hulls):
+        if not isinstance(item, dict):
+            drops.append(_drop("missing geometry", index, index))
+            continue
+        name = item["name"] if item.get("name") not in (None, "") else index
+        verts, tris = item.get("verts"), item.get("tris")
+        if verts is None or tris is None:
+            drops.append(_drop("missing geometry", name, index))
+            continue
+        reason = _unmeasurable(verts, tris)
+        if reason:
+            drops.append(_drop(reason, name, index))
+        else:
+            usable.append((name, (verts, tris)))
+    findings = list(drops)
+    for (name_a, hull_a), (name_b, hull_b) in itertools.combinations(usable, 2):
+        findings.extend(pair_findings(hull_a, hull_b, name_a=name_a, name_b=name_b))
+    return findings
 
 
 def output_alias_reason(source, out):
