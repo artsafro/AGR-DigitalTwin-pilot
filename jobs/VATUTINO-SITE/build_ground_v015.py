@@ -109,6 +109,17 @@ def clip_curtain(curtain, stairs):
 
 def restore_source_coverage(mesh, plan):
     """Bounded endpoint construction repair; never waive a nonzero coverage residual."""
+    PolyMesh(mesh.verts,tuple(map(tuple,mesh.faces)))
+    if (not len(mesh.faces) or np.shape(mesh.faces)!=(len(mesh.faces),3)
+            or np.shape(mesh.level)!=(len(mesh.faces),) or not np.isfinite(mesh.level).all()
+            or np.any(mesh.level<0) or np.shape(mesh.uv)!=(len(mesh.faces),3,2)
+            or not np.isfinite(mesh.uv).all() or len(mesh.slot)!=len(mesh.faces)
+            or any(not isinstance(s,str) or not s.strip() for s in mesh.slot)
+            or not np.isfinite(mesh.cell) or mesh.cell<=0):
+        raise ValueError('complete finite surface mesh required for coverage restoration')
+    if (not isinstance(plan.surface,(Polygon,gc.MultiPolygon)) or plan.surface.is_empty
+            or not plan.surface.is_valid or not np.isfinite(plan.surface.bounds).all()):
+        raise ValueError('valid finite nonempty source outline required')
     vertices=mesh.verts.copy();original=vertices.copy();base=np.flatnonzero(mesh.level==0)
     edge_uses=Counter(tuple(sorted((int(a),int(b)))) for f in mesh.faces[base] for a,b in zip(f,np.roll(f,-1)))
     edges=np.array([e for e,n in edge_uses.items() if n==1],int)
