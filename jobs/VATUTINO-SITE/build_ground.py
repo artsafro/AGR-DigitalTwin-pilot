@@ -69,10 +69,12 @@ def site_plan(data: dict, settings: dict, footprint_min: float):
     from shapely.ops import unary_union
     required = {"slots", "flat_datum_m", "uncovered_covering"}
     if (not isinstance(settings, dict) or not required.issubset(settings)
-            or set(settings) - required - {"separate_curbs", "covering_priority"}):
-        raise ValueError(f"site settings require {sorted(required)}, optional separate_curbs/covering_priority; got {settings!r}")
+            or set(settings) - required - {"separate_curbs", "curb_joint_approval", "covering_priority"}):
+        raise ValueError(f"site settings require {sorted(required)}, optional separate_curbs/curb_joint_approval/covering_priority; got {settings!r}")
     if type(settings.get("separate_curbs", False)) is not bool:
         raise ValueError("separate_curbs must be a boolean approved joint policy")
+    # #512: the opt-in needs {approved_by, approved_at, decision_id}; checked before --out is created.
+    gd.approval_record(settings.get("separate_curbs", False), settings.get("curb_joint_approval"))
     datum = settings["flat_datum_m"]
     if isinstance(datum, bool) or not isinstance(datum, (float, int)) or not math.isfinite(datum):
         raise ValueError("flat_datum_m must be finite numeric metres")
@@ -190,7 +192,8 @@ def main(argv=None) -> int:
     tin = gc.build_tin(allp)
     sampler = gc.ReliefSampler(tin)
     detail, dispositions, joints = gd.build_details(d.get("ground_elements", []), plan.surface, sampler,
-                                                    separate_curbs=(settings or {}).get("separate_curbs", False))
+                                                    separate_curbs=(settings or {}).get("separate_curbs", False),
+                                                    approval=(settings or {}).get("curb_joint_approval"))
     stair_footprints = [shape(r["footprint"]) for r in dispositions if r.get("footprint")]
     if stair_footprints:
         from shapely.ops import unary_union

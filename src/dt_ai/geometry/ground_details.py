@@ -131,7 +131,7 @@ class CurbJointApprovalError(ValueError):
     """``separate_curbs`` opt-in without a complete project approval record (#512)."""
 
 
-def _approval_record(separate_curbs, approval):
+def approval_record(separate_curbs, approval):
     """Validate and copy the approval record for the taller-curb joint policy."""
     if not separate_curbs:
         if approval is not None:
@@ -178,7 +178,7 @@ def build_details(elements, boundary, sampler, separate_curbs=False, approval=No
     ``joint_trim_m2``, so an approved build is distinguishable from an unapproved one.
     Default/legacy builds never enable it and must not pass ``approval``.
     """
-    approval = _approval_record(separate_curbs, approval)
+    approval = approval_record(separate_curbs, approval)
     if boundary.is_empty or not boundary.is_valid:
         raise ValueError('valid nonempty boundary required')
     meshes=[];report=[]; curbs={};stair_groups={}
