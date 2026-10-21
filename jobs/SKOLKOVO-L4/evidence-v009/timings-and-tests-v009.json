@@ -1,0 +1,81 @@
+{
+  "passed": false,
+  "scope": "Partial failed component-stage L5 measurements, not completed whole-building throughput",
+  "stages": [
+    {
+      "stage": "initial_raw_exact_boolean",
+      "objects": 5,
+      "candidate_triangles": 296642,
+      "seconds": 169.1226481999911,
+      "hours": 0.046978513388886416,
+      "accepted": false
+    },
+    {
+      "stage": "repair1_normalized_exact_boolean",
+      "objects": 5,
+      "candidate_triangles": 122610,
+      "seconds": 160.33908009999868,
+      "hours": 0.04453863336111075,
+      "accepted": false
+    },
+    {
+      "stage": "repair2_source_arrangement",
+      "objects": 5,
+      "candidate_triangles": 47234,
+      "seconds": 2110.358718399999,
+      "hours": 0.5862107551111108,
+      "accepted": false
+    },
+    {
+      "stage": "repair3_conforming_source_boolean_one_object",
+      "objects": 1,
+      "candidate_triangles": 24751,
+      "seconds": 54.39691370000219,
+      "hours": 0.015110253805556164,
+      "accepted": false
+    },
+    {
+      "stage": "raw_source_before_invariants",
+      "seconds": 442.4925970999975,
+      "hours": 0.12291461030555487,
+      "accepted": false
+    },
+    {
+      "stage": "candidate03_invariants_and_diagnostics",
+      "seconds": 441.91763539999374,
+      "hours": 0.12275489872222048,
+      "accepted": false
+    },
+    {
+      "stage": "kns_source_loft_candidates",
+      "seconds": 82.65879870000208,
+      "hours": 0.022960777416667244,
+      "accepted": false
+    },
+    {
+      "stage": "cardinal_profile_diagnostics",
+      "seconds": 5.982834000002185,
+      "hours": 0.0016618983333339403,
+      "accepted": false
+    },
+    {
+      "stage": "focused_tests",
+      "passed": 773,
+      "seconds": 213.16,
+      "hours": 0.05921111111111111
+    }
+  ],
+  "not_measured": [
+    "manual interpretation wall time",
+    "whole49-part build/joints",
+    "completed master/profile budgets",
+    "NPM/VPM export/readback",
+    "final board/user review",
+    "final SINTEZ"
+  ],
+  "do_not_sum": "Some source/diagnostic stages ran concurrently; never sum these into elapsed whole-building time",
+  "test_command": "env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run --extra pdf-review pytest -q -p no:cacheprovider tests/ops tests/qa/test_topology.py tests/parts/test_fbx_reader.py tests/test_album_pdf_reader.py tests/test_album_below_line.py tests/contracts/test_parts_list.py tests/contracts/test_parts_import_order.py --basetemp=C:/x/t_b205c8e1-v009-focused",
+  "test_log_sha256": "a7120732dd64c7ab89616da5af4d8003ab965e0c7ea02bd4737598f0cb9e2331",
+  "full_suite": "Not run: no complete first review head (rule49). Later use suite_slot.py",
+  "ci": "not run (billing lock)"
+}

@@ -1,0 +1,25 @@
+{
+  "passed": false,
+  "scope": "Executed varying source contour candidates only; not whole-scene kernel/master/export acceptance",
+  "confirmed_parts_sha256": "0a002ad56221c1cddeaa6a9a14d97f3b8c29c120f4ff0a8f3c21b5ebc25fe3f2",
+  "objects": 108,
+  "silhouette_eligible": 103,
+  "source_triangles": 90168,
+  "candidate_or_unchanged_triangles": 60826,
+  "allocation": 10000,
+  "seconds": 82.65879870000208,
+  "quad_pass": 96,
+  "texel_pass": 5,
+  "raw_topology_pass": 15,
+  "accepted_objects": 0,
+  "refused_source_rows": [
+    3630,
+    3653,
+    3676,
+    3698,
+    3720
+  ],
+  "generated_candidate_triangles": 34296,
+  "refused_unchanged_source_triangles": 26530,
+  "limitation": "Independent counts, not the intersection of checks. Original object membership108 is intact. Next route would need componentwise source profiles; no minimum count proved."
+}

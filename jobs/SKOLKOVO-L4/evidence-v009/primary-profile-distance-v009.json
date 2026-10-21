@@ -1,0 +1,186 @@
+{
+  "passed": false,
+  "scope": "Three cardinal projection diagnostics of REJECTED candidate, not geometry acceptance",
+  "source_sha256": "47ed66b387c8c014636e009bb6fa200b8b3c98ab3038c5a647fc2aea0355f6dc",
+  "candidate_sha256": "3cd3486aa1fa82f25fcd959fb8ac46819e91e6713e338eeec0074dffda40d962",
+  "rows": [
+    {
+      "dropped_axis": 0,
+      "source_area_m2": 0.7502030552298276,
+      "candidate_area_m2": 0.714550297239593,
+      "source_uncovered_area_m2": 0.03565275799023578,
+      "candidate_extra_area_m2": 0.0,
+      "certificates": [
+        {
+          "bound_m": 0.0,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 1e-06,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 1e-05,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.0001,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.001,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.002,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.005,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.01,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.02,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.07,
+          "source_to_candidate": true,
+          "candidate_to_source": true
+        }
+      ]
+    },
+    {
+      "dropped_axis": 1,
+      "source_area_m2": 0.7517350982400468,
+      "candidate_area_m2": 0.6783814884012458,
+      "source_uncovered_area_m2": 0.07335361132018521,
+      "candidate_extra_area_m2": 1.4813836499660319e-09,
+      "certificates": [
+        {
+          "bound_m": 0.0,
+          "source_to_candidate": false,
+          "candidate_to_source": false
+        },
+        {
+          "bound_m": 1e-06,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 1e-05,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.0001,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.001,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.002,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.005,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.01,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.02,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.07,
+          "source_to_candidate": true,
+          "candidate_to_source": true
+        }
+      ]
+    },
+    {
+      "dropped_axis": 2,
+      "source_area_m2": 0.5510622941637998,
+      "candidate_area_m2": 0.5214759509717073,
+      "source_uncovered_area_m2": 0.029586647063447442,
+      "candidate_extra_area_m2": 3.038713535513597e-07,
+      "certificates": [
+        {
+          "bound_m": 0.0,
+          "source_to_candidate": false,
+          "candidate_to_source": false
+        },
+        {
+          "bound_m": 1e-06,
+          "source_to_candidate": false,
+          "candidate_to_source": false
+        },
+        {
+          "bound_m": 1e-05,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.0001,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.001,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.002,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.005,
+          "source_to_candidate": false,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.01,
+          "source_to_candidate": true,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.02,
+          "source_to_candidate": true,
+          "candidate_to_source": true
+        },
+        {
+          "bound_m": 0.07,
+          "source_to_candidate": true,
+          "candidate_to_source": true
+        }
+      ]
+    }
+  ],
+  "seconds": 5.982834000002185
+}

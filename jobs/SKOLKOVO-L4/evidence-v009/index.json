@@ -1,0 +1,40 @@
+{
+  "passed": false,
+  "scope": "Frozen rejected-component evidence publication only; no completed model",
+  "drive": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v009",
+  "published": [
+    {
+      "name": "source-cleanup-v009.zip",
+      "bytes": 11139823,
+      "sha256": "eb3f394c2c214810bafd8b0c5e8c8fe4afe2ffbc31e8d05c1d35e222037f7183"
+    },
+    {
+      "name": "parts-confirmed-v009.json",
+      "bytes": 1520472,
+      "sha256": "0a002ad56221c1cddeaa6a9a14d97f3b8c29c120f4ff0a8f3c21b5ebc25fe3f2"
+    },
+    {
+      "name": "primary-profile-question-v009.png",
+      "bytes": 79069,
+      "sha256": "c37479dd8f859613689cb1b283d8cb762326462f63568ccb1da65fdcc236f747"
+    },
+    {
+      "name": "RESTORE-v009.md",
+      "bytes": 2803,
+      "sha256": "b4e9348ed7f2a7d0e959f0c187a25fe1f10989c874b0e7c1466edb0951c4865a"
+    },
+    {
+      "name": "toolchain-v009.json",
+      "bytes": 1111,
+      "sha256": "96cbaf9548c00c8faf7a37a0c16f3200ab7b9b7e43b81e8ffc1b03e8f7fd48b9"
+    }
+  ],
+  "sha256sums_sha256": "dca96ef08e609c79abc350c3d45a9f24fcceb0397e96c2938262fd4546c3c9f5",
+  "archive_member_hashes_checked": 573,
+  "archive_crc_pass": true,
+  "drive_independent_rehashes": 5,
+  "readback_errors": [],
+  "source_inputs_after_publication": 104,
+  "seconds": 2.031475899995712,
+  "warning": "A lower triangle/self-intersection count is not acceptance. None of these candidate meshes may be used as an accepted master."
+}

@@ -1,0 +1,76 @@
+{
+  "passed": false,
+  "scope": "Source precision-seam retessellation candidate only; not crossing cleanup or kernel acceptance",
+  "objects": [
+    {
+      "source_row": 3628,
+      "source_sha256": "47ed66b387c8c014636e009bb6fa200b8b3c98ab3038c5a647fc2aea0355f6dc",
+      "candidate_sha256": "def3adde4fe557f6d55dcd588185dea65a9ce31b7a5b46c56184844e120089ad",
+      "receipt": {
+        "source_boundary_edges": 262,
+        "inserted_existing_source_vertices": 240,
+        "precision_sliver_circuits": 0,
+        "max_precision_deviation_m": 3.7082030902323135e-06,
+        "boundary_after": 0,
+        "new_source_vertices": 0
+      },
+      "seconds": 1.030450500002189
+    },
+    {
+      "source_row": 3651,
+      "source_sha256": "7cd6aa148a66e0a96c25f44050ab3a3e0b0e55be34afe002748e80e44e7c9191",
+      "candidate_sha256": "fa30edd2036421c85ac7e7c4e64e2759253b2621e5c0c70bba7d1a3e15fb1864",
+      "receipt": {
+        "source_boundary_edges": 312,
+        "inserted_existing_source_vertices": 272,
+        "precision_sliver_circuits": 0,
+        "max_precision_deviation_m": 3.4688568355616714e-07,
+        "boundary_after": 0,
+        "new_source_vertices": 0
+      },
+      "seconds": 1.225357300005271
+    },
+    {
+      "source_row": 3674,
+      "source_sha256": "802c0ac3246e274a8934169f26f7ac7ac6184c0a1fd14e9826bd582b378ade07",
+      "candidate_sha256": "6e93570d1bf047a21348d2414a25caad3da7074a07f9999d55d2513cf1774b5c",
+      "receipt": {
+        "source_boundary_edges": 312,
+        "inserted_existing_source_vertices": 272,
+        "precision_sliver_circuits": 0,
+        "max_precision_deviation_m": 3.4688568355616714e-07,
+        "boundary_after": 0,
+        "new_source_vertices": 0
+      },
+      "seconds": 1.2522274999937508
+    },
+    {
+      "source_row": 3697,
+      "source_sha256": "4176151fdca424a8a4501ee81709e5fa4123f496e31d0e76ffb24c33b61b8f38",
+      "candidate_sha256": "417a5daff6aa5426670c58b708166063b9a8fc3a075b32f25587a326dcebd19a",
+      "receipt": {
+        "source_boundary_edges": 286,
+        "inserted_existing_source_vertices": 248,
+        "precision_sliver_circuits": 0,
+        "max_precision_deviation_m": 3.8019467794375145e-06,
+        "boundary_after": 0,
+        "new_source_vertices": 0
+      },
+      "seconds": 1.042483600002015
+    },
+    {
+      "source_row": 3719,
+      "source_sha256": "eb602dc3d85135c01ac8f530e92b65b16385d63e52a4000633fcda210a222110",
+      "candidate_sha256": "39df0744dd124fedc24b7f767aa3b177b66f4f0183ad30eb34b9cf5b15405067",
+      "receipt": {
+        "source_boundary_edges": 206,
+        "inserted_existing_source_vertices": 168,
+        "precision_sliver_circuits": 0,
+        "max_precision_deviation_m": 1.6989582833372827e-06,
+        "boundary_after": 0,
+        "new_source_vertices": 0
+      },
+      "seconds": 1.2664954000065336
+    }
+  ]
+}

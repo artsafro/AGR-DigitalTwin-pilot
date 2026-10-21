@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "job_id": "SKOLKOVO-L4",
-  "run_id": "issue-353-gate1-proposal-v008c",
+  "run_id": "issue-353-kernel-start-v009",
   "synthetic": false,
   "path": "deviation",
   "inputs": [
@@ -18,6 +18,13 @@
       "what_was_tried": "Read-only job-specific binary FBX supplement with strict XYZ hierarchical transforms, hash/unique-id checks and native bbox/count controls. Initial JSON serialization failed on numpy.bool; explicit bool conversion succeeded into a NEW versioned output. No live scene import/mutation.",
       "new_tool_written": "tmp/l4_baseline_supplement_v008.py (job-only diagnostic, packaged on Drive; not a shared library)",
       "result": "29 buffers supplemented,49/49 native bbox/count controls, max error0.000005308251m. Not a UV/normals/topology/material or clean-process delivery readback certificate."
+    },
+    {
+      "gate": "operations",
+      "what_failed": "After real Gate1, initial raw Boolean and three distinct repairs failed topology, visibility, quad/texel or measured source-profile preservation; isolated row3628 kernel candidates02/03 rolled back. KNS varying profile60826 vs10000 is a failed first route, not a proved minimum.",
+      "what_was_tried": "Exact duplicate filtering; source intersection-cell arrangement and planar retessellation; source boundary T-junction conformity with existing vertices before Boolean. Independent kernel/topology/profile probes, original inputs unchanged. Initial diagnostic API label/type mistakes repaired with explicit VPM-OKS and separate PolyMesh conversion; successful kernel checkpoint retained.",
+      "new_tool_written": "Job-only tmp/l4_*_v009.py adapters/probes on hash-verified Drive archive; no shared module or new library. Synthetic RED/GREEN logs included.",
+      "result": "All candidates rejected.104/104 copied inputs +113/113 mast buffers unchanged. Gate1 approval retained; requested <=0.002m source-profile approximation for five primaries is a NEW model question, not granted or executed. No export/visual/SINTEZ."
     }
   ],
   "gates": {
@@ -32,28 +39,50 @@
       ]
     },
     "parts": {
-      "status": "review",
-      "note": "49-part Gate1 design proposal; planned allocation147000, source bbox candidate-conditioned joint recipes. Exact user approval absent. Canonical proposal and restore path in GATE1-PROPOSAL-v008.md.",
+      "status": "pass",
+      "note": "Actual Artem Gate1 at2026-10-21 13:34 on canonicalf1867120...; execution copy changes approval metadata only, complete semantic equality verified. New source-profile tolerance is NOT approved; canonical49-part design stays unchanged.",
       "evidence": [
+        {
+          "path": "tmp/skolkovo-l4-v009/parts-confirmed-v009.json",
+          "sha256": "0a002ad56221c1cddeaa6a9a14d97f3b8c29c120f4ff0a8f3c21b5ebc25fe3f2"
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/GATE1-APPROVAL-v009.md",
+          "sha256": "3ca252b105fe17c8210156cc105b6238c79d5a8e605308e7ecf603bead38337b"
+        },
         {
           "path": "tmp/skolkovo-l4-v008/parts-gate1-proposal-v008c.json",
           "sha256": "f1867120b2c7072405d32440a27382a0be8bb2bf9edc56c9fbc2876eb3ff2302"
-        },
-        {
-          "path": "jobs/SKOLKOVO-L4/GATE1-PROPOSAL-v008.md",
-          "sha256": "0b35603995dc095906dc3c18227dae3eb6303ee0b5128b7bc154247882805b9c"
         }
       ]
     },
     "operations": {
-      "status": "missing",
-      "note": "Not run: exact-hash Gate1 absent. Source cleanup permissions are not Gate1.",
-      "evidence": []
+      "status": "fail",
+      "note": "Isolated source-component candidates only, not a completed49-part/master operation. Real kernel rolled back candidates02/03; all six diagnostics preserved. No failed candidate accepted. Source-profile approximation bound for five primaries requires model decision.",
+      "evidence": [
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v009/primary-cleanup-03-audit.json",
+          "sha256": "2e577150d9978ae0390c464530ca50e47a3fe9ae2c46a0c6dcc50c0e2c37036f"
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v009/source-before-invariants.json",
+          "sha256": "e4f196be3e6198f8b8947572fede4324722e8e23e7719961bdc3e7288bd1694d"
+        }
+      ]
     },
     "budgets": {
-      "status": "missing",
-      "note": "147000 allocation/10000 KNS target are plans, not measured output.",
-      "evidence": []
+      "status": "fail",
+      "note": "No accepted master. Five arrangement candidates47234 fit55230 allocation but fail quality; KNS candidate-or-unchanged60826 exceeds10000. Whole master147000 allocation is NOT measured geometry.",
+      "evidence": [
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v009/kns-source-loft-summary-v009.json",
+          "sha256": "5b16b267c1ff45e7f776d066cb2a979d6d0f7719edbd98e5e6695896a2e048b4"
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v009/primary-arrangement-all-topology.json",
+          "sha256": "85aa5d2288c3766b9deb51b8a932a4dd86a454df7e6a41908fa8ac3572d0f4b1"
+        }
+      ]
     },
     "export_readback": {
       "status": "missing",
@@ -62,15 +91,15 @@
     },
     "report": {
       "status": "review",
-      "note": "Prebuild source/operation plan only; not a delivery report.",
+      "note": "Real failed component-stage report and new quantitative source-profile question; no delivery report or final model.",
       "evidence": [
         {
-          "path": "jobs/SKOLKOVO-L4/GATE1-PROPOSAL-v008.md",
-          "sha256": "0b35603995dc095906dc3c18227dae3eb6303ee0b5128b7bc154247882805b9c"
+          "path": "jobs/SKOLKOVO-L4/PRIMARY-PROFILE-TOLERANCE-QUESTION-v009.md",
+          "sha256": "f3dc5581da6e4427eb31938e30fb9553a228518233f5a1e0e2c57f48c4a09825"
         },
         {
-          "path": "jobs/SKOLKOVO-L4/evidence-v008/input-integrity-v008.json",
-          "sha256": "6e0de137ec1ee5b0071c3f22e4f5eed49c91fef24555430966e2340bcba93631"
+          "path": "jobs/SKOLKOVO-L4/evidence-v009/integrity-negative-probes-v009.json",
+          "sha256": "3aafdb1b4382bff315badf27220a8f804bda77247e262728c2239a5caf1268de"
         }
       ]
     },

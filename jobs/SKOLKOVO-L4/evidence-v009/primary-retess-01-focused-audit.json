@@ -1,0 +1,40 @@
+{
+  "defects": {
+    "duplicate_vertices": 757,
+    "duplicate_edges": 772,
+    "duplicate_polygons": 749,
+    "self_intersections": 0,
+    "isolated_vertices": 0,
+    "isolated_edges": 0,
+    "isolated_polygons": 0,
+    "zero_length_edges": 48,
+    "duplicates_and_self_intersections": 2278,
+    "tol_m": 0.002
+  },
+  "quad": {
+    "name": "quad_dominance",
+    "passed": false,
+    "count": 2363,
+    "offenders": [
+      "p#2: unneeded",
+      "p#5: unneeded",
+      "p#7: unneeded",
+      "p#8: unneeded",
+      "p#11: unneeded"
+    ],
+    "gating": true
+  },
+  "texel": {
+    "name": "texel_ready",
+    "passed": false,
+    "count": 7760,
+    "offenders": [
+      "p#0: aspect 123.7 > 8",
+      "p#1: aspect 45.6 > 8",
+      "p#3: aspect 338.5 > 8",
+      "p#4: aspect 10.3 > 8",
+      "p#5: aspect 16.3 > 8"
+    ],
+    "gating": true
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "passed": false,
+  "scope": "Before-state raw source diagnostics, not a master or output acceptance",
+  "source_sha256": "47ed66b387c8c014636e009bb6fa200b8b3c98ab3038c5a647fc2aea0355f6dc",
+  "source_row": 3628,
+  "kernel": {
+    "passed": false,
+    "results": [
+      {
+        "name": "open_borders_hidden",
+        "passed": false,
+        "count": 262,
+        "offenders": [
+          "p: edge [-7.877, 64.4237, 12.8564] -> [-7.8135, 64.4237, 12.9163]",
+          "p: edge [-7.877, 64.4237, 12.8564] -> [-7.75, 64.4237, 12.9762]",
+          "p: edge [-7.8135, 64.4237, 12.9163] -> [-7.75, 64.4237, 12.9762]",
+          "p: edge [-7.7581, 64.1366, 12.8564] -> [-7.7132, 64.1815, 12.9163]",
+          "p: edge [-7.7581, 64.1366, 12.8564] -> [-7.6683, 64.2264, 12.9762]"
+        ],
+        "gating": true
+      },
+      {
+        "name": "no_see_through_hole",
+        "passed": true,
+        "count": 0,
+        "offenders": [],
+        "gating": true
+      },
+      {
+        "name": "no_visible_back_faces",
+        "passed": true,
+        "count": 0,
+        "offenders": [],
+        "gating": true
+      },
+      {
+        "name": "no_close_overlap",
+        "passed": false,
+        "count": 5331,
+        "offenders": [
+          "p#3778 / p#4693: 0.0 mm",
+          "p#3778 / p#5611: 0.0 mm",
+          "p#3778 / p#5618: 0.0 mm",
+          "p#3778 / p#5619: 0.0 mm",
+          "p#3778 / p#5629: 0.0 mm"
+        ],
+        "gating": true
+      }
+    ]
+  },
+  "quad": {
+    "name": "quad_dominance",
+    "passed": false,
+    "count": 187,
+    "offenders": [
+      "p#2298: mergeable",
+      "p#2300: mergeable",
+      "p#2301: mergeable",
+      "p#2302: mergeable",
+      "p#2306: mergeable"
+    ],
+    "gating": true
+  },
+  "texel": {
+    "name": "texel_ready",
+    "passed": false,
+    "count": 10389,
+    "offenders": [
+      "p#0: aspect 15.3 > 8",
+      "p#2: aspect 15.2 > 8",
+      "p#3: aspect 8.9 > 8",
+      "p#5: aspect 15.1 > 8",
+      "p#6: aspect 11.3 > 8"
+    ],
+    "gating": true
+  },
+  "seconds": 442.4925970999975
+}

@@ -4,3 +4,7 @@ evidence-v004/*.json whitespace=cr-at-eol
 resume-evidence-v004.json -text whitespace=cr-at-eol
 GATE1-PROPOSAL-v008.md -text whitespace=cr-at-eol
 evidence-v008/input-integrity-v008.json -text whitespace=cr-at-eol
+# v009 generated receipts and approval/report bytes are SHA-pinned too.
+evidence-v009/*.json -text whitespace=cr-at-eol
+GATE1-APPROVAL-v009.md -text whitespace=cr-at-eol
+PRIMARY-PROFILE-TOLERANCE-QUESTION-v009.md -text whitespace=cr-at-eol

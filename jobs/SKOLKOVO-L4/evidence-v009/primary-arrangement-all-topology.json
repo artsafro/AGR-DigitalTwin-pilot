@@ -1,0 +1,99 @@
+{
+  "passed": false,
+  "scope": "Rejected primary source-arrangement candidates; all five raw topology diagnostics",
+  "source_triangles": 55230,
+  "candidate_triangles": 47234,
+  "allocation": 55230,
+  "objects": [
+    {
+      "source_row": 3628,
+      "source_sha256": "47ed66b387c8c014636e009bb6fa200b8b3c98ab3038c5a647fc2aea0355f6dc",
+      "candidate_sha256": "3cd3486aa1fa82f25fcd959fb8ac46819e91e6713e338eeec0074dffda40d962",
+      "triangles": 9362,
+      "defects": {
+        "duplicate_vertices": 759,
+        "duplicate_edges": 775,
+        "duplicate_polygons": 749,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 48,
+        "duplicates_and_self_intersections": 2283,
+        "tol_m": 0.002
+      }
+    },
+    {
+      "source_row": 3651,
+      "source_sha256": "7cd6aa148a66e0a96c25f44050ab3a3e0b0e55be34afe002748e80e44e7c9191",
+      "candidate_sha256": "716c91e4d9a029473c77bc20fc88e14ca128ce093e60d66f12c6cb295b177b50",
+      "triangles": 10629,
+      "defects": {
+        "duplicate_vertices": 762,
+        "duplicate_edges": 835,
+        "duplicate_polygons": 806,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 31,
+        "duplicates_and_self_intersections": 2403,
+        "tol_m": 0.002
+      }
+    },
+    {
+      "source_row": 3674,
+      "source_sha256": "802c0ac3246e274a8934169f26f7ac7ac6184c0a1fd14e9826bd582b378ade07",
+      "candidate_sha256": "cc56fb8784ade8771cd9907529ae4e299c0e727d7d7c054c381d8c9dae0dd2c3",
+      "triangles": 9588,
+      "defects": {
+        "duplicate_vertices": 764,
+        "duplicate_edges": 776,
+        "duplicate_polygons": 724,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 1,
+        "zero_length_edges": 59,
+        "duplicates_and_self_intersections": 2264,
+        "tol_m": 0.002
+      }
+    },
+    {
+      "source_row": 3697,
+      "source_sha256": "4176151fdca424a8a4501ee81709e5fa4123f496e31d0e76ffb24c33b61b8f38",
+      "candidate_sha256": "68bd0e1719c77bef157b5cd45e0f7003ae46f2a5e87d96dee0206035cbaea98a",
+      "triangles": 8730,
+      "defects": {
+        "duplicate_vertices": 913,
+        "duplicate_edges": 808,
+        "duplicate_polygons": 843,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 37,
+        "duplicates_and_self_intersections": 2564,
+        "tol_m": 0.002
+      }
+    },
+    {
+      "source_row": 3719,
+      "source_sha256": "eb602dc3d85135c01ac8f530e92b65b16385d63e52a4000633fcda210a222110",
+      "candidate_sha256": "d567b12ed6a9e5d126c65590ade54e135000ac20a92e0760c96c5f8e52d39bd2",
+      "triangles": 8925,
+      "defects": {
+        "duplicate_vertices": 890,
+        "duplicate_edges": 800,
+        "duplicate_polygons": 838,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 23,
+        "duplicates_and_self_intersections": 2528,
+        "tol_m": 0.002
+      }
+    }
+  ]
+}

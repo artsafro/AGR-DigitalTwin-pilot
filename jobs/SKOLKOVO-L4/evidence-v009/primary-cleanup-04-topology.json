@@ -1,0 +1,12 @@
+{
+  "duplicate_vertices": 4035,
+  "duplicate_edges": 6492,
+  "duplicate_polygons": 8768,
+  "self_intersections": 0,
+  "isolated_vertices": 0,
+  "isolated_edges": 0,
+  "isolated_polygons": 0,
+  "zero_length_edges": 62,
+  "duplicates_and_self_intersections": 19295,
+  "tol_m": 0.002
+}

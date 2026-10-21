@@ -1,0 +1,158 @@
+{
+  "passed": false,
+  "source": {
+    "triangles": 11098,
+    "area": 3.555831077136978,
+    "signed_volume": 0.04066925720364408,
+    "open_edges": 262,
+    "nonmanifold_edges": 88,
+    "bbox_min": [
+      -8.883012771606445,
+      63.0117073059082,
+      11.9350004196167
+    ],
+    "bbox_max": [
+      -6.0590128898620605,
+      65.83570861816406,
+      23.639999389648438
+    ]
+  },
+  "candidate": {
+    "triangles": 9362,
+    "area": 2.5778421908455056,
+    "signed_volume": 0.18404258633448034,
+    "open_edges": 5739,
+    "nonmanifold_edges": 11,
+    "bbox_min": [
+      -8.883012771606445,
+      63.0117073059082,
+      11.9350004196167
+    ],
+    "bbox_max": [
+      -6.0590128898620605,
+      65.83570861816406,
+      23.639999389648438
+    ]
+  },
+  "source_sha256": "47ed66b387c8c014636e009bb6fa200b8b3c98ab3038c5a647fc2aea0355f6dc",
+  "candidate_sha256": "3cd3486aa1fa82f25fcd959fb8ac46819e91e6713e338eeec0074dffda40d962",
+  "defects": {
+    "duplicate_vertices": 759,
+    "duplicate_edges": 775,
+    "duplicate_polygons": 749,
+    "self_intersections": 0,
+    "isolated_vertices": 0,
+    "isolated_edges": 0,
+    "isolated_polygons": 0,
+    "zero_length_edges": 48,
+    "duplicates_and_self_intersections": 2283,
+    "tol_m": 0.002
+  },
+  "kernel": {
+    "applied": false,
+    "question": "contour_rebuild on primary_3628 broke the invariants and was rolled back: open_borders_hidden (5705): primary_3628: edge [-8.883, 64.4112, 11.9817] -> [-8.883, 64.4172, 11.9841]; no_see_through_hole (4): direction [0.0, -0.71, 0.71]: 1 pixels lost; no_visible_back_faces (29): direction [-0.58, -0.58, -0.58]: 2 pixels of ['primary_3628']",
+    "rollback_identity": true,
+    "report": {
+      "passed": false,
+      "results": [
+        {
+          "name": "open_borders_hidden",
+          "passed": false,
+          "count": 5705,
+          "offenders": [
+            "primary_3628: edge [-8.883, 64.4112, 11.9817] -> [-8.883, 64.4172, 11.9841]",
+            "primary_3628: edge [-8.883, 64.4112, 11.9817] -> [-8.8006, 64.4172, 11.9841]",
+            "primary_3628: edge [-8.883, 64.4172, 11.9841] -> [-8.8006, 64.4172, 11.9841]",
+            "primary_3628: edge [-8.883, 64.4302, 11.9841] -> [-8.883, 64.4362, 11.9817]",
+            "primary_3628: edge [-8.883, 64.4302, 11.9841] -> [-8.8006, 64.4302, 11.9841]"
+          ],
+          "gating": true
+        },
+        {
+          "name": "no_see_through_hole",
+          "passed": false,
+          "count": 4,
+          "offenders": [
+            "direction [0.0, -0.71, 0.71]: 1 pixels lost",
+            "direction [0.0, 0.0, -1.0]: 2 pixels lost",
+            "direction [0.0, 0.71, 0.71]: 1 pixels lost"
+          ],
+          "gating": true
+        },
+        {
+          "name": "no_visible_back_faces",
+          "passed": false,
+          "count": 29,
+          "offenders": [
+            "direction [-0.58, -0.58, -0.58]: 2 pixels of ['primary_3628']",
+            "direction [-0.71, -0.71, 0.0]: 2 pixels of ['primary_3628']",
+            "direction [-0.58, -0.58, 0.58]: 1 pixels of ['primary_3628']",
+            "direction [-0.71, 0.0, -0.71]: 1 pixels of ['primary_3628']",
+            "direction [-0.71, 0.0, 0.71]: 1 pixels of ['primary_3628']"
+          ],
+          "gating": true
+        },
+        {
+          "name": "no_close_overlap",
+          "passed": true,
+          "count": 0,
+          "offenders": [],
+          "gating": true
+        }
+      ]
+    }
+  },
+  "quad_before": {
+    "name": "quad_dominance",
+    "passed": false,
+    "count": 187,
+    "offenders": [
+      "p#2298: mergeable",
+      "p#2300: mergeable",
+      "p#2301: mergeable",
+      "p#2302: mergeable",
+      "p#2306: mergeable"
+    ],
+    "gating": true
+  },
+  "quad_after": {
+    "name": "quad_dominance",
+    "passed": false,
+    "count": 2262,
+    "offenders": [
+      "p#0: mergeable",
+      "p#1: mergeable",
+      "p#2: mergeable",
+      "p#3: mergeable",
+      "p#4: mergeable"
+    ],
+    "gating": true
+  },
+  "texel_before": {
+    "name": "texel_ready",
+    "passed": false,
+    "count": 10389,
+    "offenders": [
+      "p#0: aspect 15.3 > 8",
+      "p#2: aspect 15.2 > 8",
+      "p#3: aspect 8.9 > 8",
+      "p#5: aspect 15.1 > 8",
+      "p#6: aspect 11.3 > 8"
+    ],
+    "gating": true
+  },
+  "texel_after": {
+    "name": "texel_ready",
+    "passed": false,
+    "count": 7704,
+    "offenders": [
+      "p#0: aspect 11.3 > 8",
+      "p#1: aspect 15.1 > 8",
+      "p#2: aspect 8.9 > 8",
+      "p#5: aspect 15.2 > 8",
+      "p#6: aspect 15.3 > 8"
+    ],
+    "gating": true
+  },
+  "seconds": 441.91763539999374
+}

@@ -1,0 +1,61 @@
+{
+  "passed": false,
+  "probes_passed": true,
+  "scope": "Data/CLI provenance and no-clobber probes only, not production geometry acceptance",
+  "input_hashes_checked": 104,
+  "input_hash_mismatches": [],
+  "mast_buffer_hashes_checked": 113,
+  "canonical_sha256": "f1867120b2c7072405d32440a27382a0be8bb2bf9edc56c9fbc2876eb3ff2302",
+  "confirmed_sha256": "0a002ad56221c1cddeaa6a9a14d97f3b8c29c120f4ff0a8f3c21b5ebc25fe3f2",
+  "negative_probes": [
+    {
+      "witness": "changed_budget",
+      "rejected": true,
+      "exit": 1
+    },
+    {
+      "witness": "wrong_actor",
+      "rejected": true,
+      "exit": 1
+    },
+    {
+      "witness": "wrong_approval_sha",
+      "rejected": true,
+      "exit": 1
+    },
+    {
+      "witness": "changed_member",
+      "rejected": true,
+      "exit": 1
+    },
+    {
+      "witness": "unconfirmed",
+      "rejected": true,
+      "exit": 1
+    },
+    {
+      "witness": "missing_approval",
+      "rejected": true,
+      "exit": 1
+    },
+    {
+      "witness": "output_equals_input",
+      "rejected": true,
+      "exit": 1,
+      "source_unchanged": true
+    },
+    {
+      "witness": "output_input_directory_alias",
+      "rejected": true,
+      "exit": 1,
+      "source_unchanged": true
+    },
+    {
+      "witness": "output_existing_candidate",
+      "rejected": true,
+      "exit": 1,
+      "source_unchanged": true
+    }
+  ],
+  "seconds": 6.544400899998436
+}

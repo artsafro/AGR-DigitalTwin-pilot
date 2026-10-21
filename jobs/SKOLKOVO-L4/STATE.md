@@ -270,3 +270,36 @@ have been invented. No source, delivered reference, live DCC document or shared
 review queue was modified.
 
 Transcript: Hermes session local-334de4f92d4c06367dea20c1a18d8e87059b355379b917979a59a8a1f655a249 (task t_b205c8e1, run 965).
+
+## Latest continuation — v009, Gate1 granted; failed component operations
+
+The historical pre-Gate1 sections above are retained as history. Current machine
+state is `job.yaml`; handoff is `RESUME-v009.md`. Artem's actual2026-10-21 13:34
+Gate1 approves canonical SHA256
+`f1867120b2c7072405d32440a27382a0be8bb2bf9edc56c9fbc2876eb3ff2302`.
+It is unchanged; the approval-only confirmed copy is separately pinned.
+
+Initial source Boolean plus three distinct repairs produced rejected candidates.
+The source-arrangement route47,234 triangles fits the five-primary55,230 allocation
+but fails BODY-J on all five; isolated component kernel tests rolled back exposed
+borders, profile loss/back faces or overlaps. KNS varying-section conservative
+candidate-or-source total60,826 exceeds10,000. No candidate is an accepted master.
+
+The new model question is quantitative exterior-profile approximation for the
+five primaries: a new source-derived plan within0.002m, positions/heights locked,
+or exact supplied exterior facets. This bound is NOT already granted or achieved;
+see `PRIMARY-PROFILE-TOLERANCE-QUESTION-v009.md`. Earlier model/material decisions
+and the108-KNS2cm permission are not reopened. Changed recipe ->new exact-hash plan.
+
+773 focused tests pass; nine no-clobber/provenance negatives reject;104 inputs and
+113 original mast buffers unchanged. Source/candidate diagnostics, raw errors,
+synthetic RED/GREEN controls and partial L5 timings are preserved on Drive at
+`G:/Мой диск/AGR-evidence/353-skolkovo-l4/evidence-v009/`; small index and receipts
+are committed under `evidence-v009/`. No Git LFS/new library/shared module.
+
+Current walk: `passed=false`, zero validation errors; inputs/parts pass;
+operations/budgets fail; report review; export/readback, final visual and checker
+missing. Full suite/PR/review wait for complete production acceptance. This is a
+failed component-stage report, not a final delivered FBX or user geometry approval.
+
+Transcript: Hermes session local-132f5ae91dd294db4d9458c18885baef27e67b65176af5c7739935625c367fbc (task t_b205c8e1).

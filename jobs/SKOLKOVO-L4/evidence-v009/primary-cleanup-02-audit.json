@@ -1,0 +1,151 @@
+{
+  "passed": false,
+  "source": {
+    "triangles": 11098,
+    "area": 3.555831077136978,
+    "signed_volume": 0.04066925720364408,
+    "open_edges": 262,
+    "nonmanifold_edges": 88,
+    "bbox_min": [
+      -8.883012771606445,
+      63.0117073059082,
+      11.9350004196167
+    ],
+    "bbox_max": [
+      -6.0590128898620605,
+      65.83570861816406,
+      23.639999389648438
+    ]
+  },
+  "candidate": {
+    "triangles": 24744,
+    "area": 3.500598741395952,
+    "signed_volume": -0.028509221898813292,
+    "open_edges": 306,
+    "nonmanifold_edges": 3199,
+    "bbox_min": [
+      -8.883012771606445,
+      63.0117073059082,
+      11.9350004196167
+    ],
+    "bbox_max": [
+      -6.0590128898620605,
+      65.83570861816406,
+      23.639999389648438
+    ]
+  },
+  "source_sha256": "47ed66b387c8c014636e009bb6fa200b8b3c98ab3038c5a647fc2aea0355f6dc",
+  "candidate_sha256": "b442eb5ea06ba7424ee828ed10289a2d8d1c61162c7f04712633a85c0b86637e",
+  "defects": {
+    "duplicate_vertices": 4035,
+    "duplicate_edges": 6486,
+    "duplicate_polygons": 8770,
+    "self_intersections": 0,
+    "isolated_vertices": 0,
+    "isolated_edges": 0,
+    "isolated_polygons": 0,
+    "zero_length_edges": 62,
+    "duplicates_and_self_intersections": 19291,
+    "tol_m": 0.002
+  },
+  "kernel": {
+    "applied": false,
+    "question": "contour_rebuild on primary_3628 broke the invariants and was rolled back: open_borders_hidden (201): primary_3628: edge [-7.7581, 64.1366, 12.8564] -> [-7.7132, 64.1815, 12.9163]; no_close_overlap (1): primary_3628#11940 / primary_3628#18360: 0.0 mm",
+    "rollback_identity": true,
+    "report": {
+      "passed": false,
+      "results": [
+        {
+          "name": "open_borders_hidden",
+          "passed": false,
+          "count": 201,
+          "offenders": [
+            "primary_3628: edge [-7.7581, 64.1366, 12.8564] -> [-7.7132, 64.1815, 12.9163]",
+            "primary_3628: edge [-7.7581, 64.1366, 12.8564] -> [-7.6683, 64.2264, 12.9762]",
+            "primary_3628: edge [-7.7581, 64.7108, 12.8564] -> [-7.7132, 64.6659, 12.9163]",
+            "primary_3628: edge [-7.7581, 64.7108, 12.8564] -> [-7.6683, 64.621, 12.9762]",
+            "primary_3628: edge [-7.7132, 64.1815, 12.9163] -> [-7.6683, 64.2264, 12.9762]"
+          ],
+          "gating": true
+        },
+        {
+          "name": "no_see_through_hole",
+          "passed": true,
+          "count": 0,
+          "offenders": [],
+          "gating": true
+        },
+        {
+          "name": "no_visible_back_faces",
+          "passed": true,
+          "count": 0,
+          "offenders": [],
+          "gating": true
+        },
+        {
+          "name": "no_close_overlap",
+          "passed": false,
+          "count": 1,
+          "offenders": [
+            "primary_3628#11940 / primary_3628#18360: 0.0 mm"
+          ],
+          "gating": true
+        }
+      ]
+    }
+  },
+  "checkpoint_resumed_without_repeating_kernel": true,
+  "quad_before": {
+    "name": "quad_dominance",
+    "passed": false,
+    "count": 187,
+    "offenders": [
+      "p#2298: mergeable",
+      "p#2300: mergeable",
+      "p#2301: mergeable",
+      "p#2302: mergeable",
+      "p#2306: mergeable"
+    ],
+    "gating": true
+  },
+  "quad_after": {
+    "name": "quad_dominance",
+    "passed": false,
+    "count": 3018,
+    "offenders": [
+      "p#0: mergeable",
+      "p#1: mergeable",
+      "p#3: unneeded",
+      "p#4: mergeable",
+      "p#6: unneeded"
+    ],
+    "gating": true
+  },
+  "texel_before": {
+    "name": "texel_ready",
+    "passed": false,
+    "count": 10389,
+    "offenders": [
+      "p#0: aspect 15.3 > 8",
+      "p#2: aspect 15.2 > 8",
+      "p#3: aspect 8.9 > 8",
+      "p#5: aspect 15.1 > 8",
+      "p#6: aspect 11.3 > 8"
+    ],
+    "gating": true
+  },
+  "texel_after": {
+    "name": "texel_ready",
+    "passed": false,
+    "count": 11009,
+    "offenders": [
+      "p#0: aspect 15.3 > 8",
+      "p#3: aspect 8.4 > 8",
+      "p#4: aspect 8.9 > 8",
+      "p#7: aspect 15.1 > 8",
+      "p#8: aspect 11.3 > 8"
+    ],
+    "gating": true
+  },
+  "seconds": 9.028039800003171
+}
