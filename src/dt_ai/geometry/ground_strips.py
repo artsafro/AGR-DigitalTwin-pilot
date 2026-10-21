@@ -14,6 +14,33 @@ from dt_ai.geometry.ground_quads import QuadMesh
 from dt_ai.ops.inv_texel import PolyMesh, face_metrics
 
 
+def _acute_template(points):
+    """Four affine quads, with staggered rails rather than short-edge midpoints.
+
+    Each boundary edge is retained or subdivided. The fixed positive reference
+    quadrangulation covers the whole reference triangle; any nonsingular affine
+    source map preserves coverage and convexity. Cyclic choices are diagnostics
+    only: whole-mesh xView and conforming boundaries remain caller obligations.
+    """
+    weights = np.array([[2/3, 1/3, 0], [1/3, 2/3, 0], [.5, 0, .5],
+                        [.55, .3, .15], [.2, .3, .5]])
+    topology = ((0, 3, 6, 5), (3, 4, 7, 6), (4, 1, 2, 7), (2, 5, 6, 7))
+    choices = []
+    for shift in range(3):
+        order = [(shift+j)%3 for j in range(3)]
+        vertices = np.vstack((points, weights@points[order]))
+        faces = tuple(tuple(order[k] if k < 3 else k for k in face) for face in topology)
+        distances = np.linalg.norm(vertices[:, None]-vertices[None], axis=2)
+        distances[np.diag_indices(8)] = np.inf
+        metrics = [face_metrics(vertices[list(f)]) for f in faces]
+        if distances.min() > .00205 and all(not r.degenerate and r.aspect <= 8 for r in metrics):
+            choices.append((max(r.max_edge_m for r in metrics), shift, vertices, faces, weights@np.eye(3)[order]))
+    if not choices:
+        return None
+    _, _, vertices, faces, source_weights = min(choices, key=lambda row: row[:2])
+    return vertices, faces, source_weights
+
+
 def local_strips(mesh: QuadMesh, *, max_edge_m: float, face_budget: int = 180000) -> QuadMesh:
     """Split long quads directionally; only bad triangles receive three patches.
 
@@ -70,6 +97,24 @@ def local_strips(mesh: QuadMesh, *, max_edge_m: float, face_budget: int = 180000
             points = np.asarray([vertices[j] for j in face])
             r = face_metrics(points)
             if len(face) == 3 and (r.aspect > 8 or r.max_edge_m > max_edge_m):
+                proposed = np.vstack((points, points.mean(axis=0), (points+np.roll(points, -1, axis=0))/2))
+                separation = np.linalg.norm(proposed[:, None]-proposed[None], axis=2)
+                separation[np.diag_indices(7)] = np.inf
+                template = _acute_template(points) if separation.min() <= .00205 else None
+                if template is not None:
+                    xyz, cells, weights = template
+                    local_ids = list(face)
+                    for point, weight in zip(xyz[3:], weights):
+                        nonzero = np.flatnonzero(weight)
+                        if len(nonzero) == 2:
+                            a, b = nonzero
+                            local_ids.append(edge(face[a], face[b], Fraction(float(weight[b])).limit_denominator(60)))
+                        else:
+                            local_ids.append(len(vertices))
+                            vertices.append(point.tolist())
+                    all_uv = np.vstack((tex, weights@tex))
+                    patches.extend((tuple(local_ids[k] for k in cell), all_uv[list(cell)], i) for cell in cells)
+                    continue
                 center = len(vertices)
                 vertices.append(points.mean(axis=0).tolist())
                 mids = [edge(face[j], face[(j+1)%3], Fraction(1, 2)) for j in range(3)]

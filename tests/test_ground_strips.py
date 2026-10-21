@@ -50,7 +50,7 @@ def test_acute_triangle_does_not_put_midpoint_or_centroid_next_to_source_vertex(
     from dt_ai.geometry.ground_strips import local_strips
     from dt_ai.ops.inv_xview import vertex_pairs
     points = ([[0., 0., 0.], [1., 0., 0.], [1., .003, 0.]] if shape == 'short_edge'
-              else [[-.204, .171, -.000062], [-.411, -.171, -.001317], [0., 0., 0.]])
+              else [[.204, .171, -.000062], [-.207, -.171, -.001317], [0., 0., 0.]])
     vertices = np.array(points)
     seed = QuadMesh(vertices, ((0, 1, 2),), ['TileLight'], np.array([0]),
                     (vertices[:, :2]/4,), ((56,),), 4.)
@@ -59,6 +59,20 @@ def test_acute_triangle_does_not_put_midpoint_or_centroid_next_to_source_vertex(
     assert all(face_metrics(result.verts[list(f)]).aspect <= 8 for f in result.faces)
     area = sum(face_metrics(result.verts[list(f)]).area_m2 for f in result.faces)
     assert area == pytest.approx(face_metrics(vertices).area_m2, rel=1e-8)
+
+
+def test_shared_edge_cuts_respect_other_original_vertices_not_only_local_corners():
+    from dt_ai.geometry.ground_strips import local_strips
+    from dt_ai.ops.inv_xview import vertex_pairs
+    v = np.array([[.204, .171, -.000062], [-.207, -.171, -.001317], [0., 0., 0.],
+                  [-2.025, -1.623, -.012104]])
+    faces = ((0, 1, 2), (3, 1, 0))
+    seed = QuadMesh(v, faces, ['TileLight']*2, np.array([0, 0]),
+                    tuple(v[list(f), :2]/4 for f in faces), ((56,), (61,)), 4.)
+    out = local_strips(seed, max_edge_m=3.9)
+    assert len(vertex_pairs(out.verts, .002)[0]) == 0
+    assert all(face_metrics(out.verts[list(f)]).aspect <= 8 for f in out.faces)
+    assert set(out.source_faces) == {(56,), (61,)}
 
 
 def test_taper_is_sized_at_every_cell_not_only_average_width():
