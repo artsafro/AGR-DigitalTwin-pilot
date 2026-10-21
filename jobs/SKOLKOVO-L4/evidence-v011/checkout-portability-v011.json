@@ -1,0 +1,24 @@
+{
+  "passed": false,
+  "scope": "Fresh committed-byte portability only; failed/incomplete production remains failed",
+  "git_commit": "b11115a31446ae0027f0ef97a58eb1def35bd791",
+  "files_restored": 106,
+  "evidence_refs_checked": 10,
+  "unique_evidence_paths": 9,
+  "all_gate_refs_verified": true,
+  "unchanged_committed_kernel_files_checked": 5,
+  "exit_code": 1,
+  "validation_errors": [],
+  "walk_sha256": "0ca5d3a3b2d2483157a98d076ff4d002534bfa3469df20b859921af73df6d902",
+  "parts_sha256": "78c0331b2d8ff994f5f7d155c56ef977a0e53acb004e951be19c07111e4d8931",
+  "gates": {
+    "inputs": "pass",
+    "parts": "pass",
+    "operations": "fail",
+    "budgets": "fail",
+    "export_readback": "missing",
+    "report": "review",
+    "visual": "missing",
+    "checker": "missing"
+  }
+}

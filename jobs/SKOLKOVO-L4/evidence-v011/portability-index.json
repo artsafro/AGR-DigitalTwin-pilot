@@ -1,0 +1,19 @@
+{
+  "passed": false,
+  "scope": "Supplementary actual Git-blob walk receipt; not production acceptance",
+  "drive": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v011\\portability",
+  "published": [
+    {
+      "name": "fresh-git-blob-walk-v011.json",
+      "bytes": 3828,
+      "sha256": "0ca5d3a3b2d2483157a98d076ff4d002534bfa3469df20b859921af73df6d902"
+    },
+    {
+      "name": "checkout-portability-v011.json",
+      "bytes": 781,
+      "sha256": "91aff01319572949b5e2d2ca8258be2b18ba482803364638526112416c69ea51"
+    }
+  ],
+  "drive_readback_rehashes": 2,
+  "sha256sums_sha256": "006994786eefe8d2969f6dd2ee5f5f9892daa60b90f2c957e176eb3991789386"
+}

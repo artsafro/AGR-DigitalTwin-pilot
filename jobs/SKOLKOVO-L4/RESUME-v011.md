@@ -74,8 +74,21 @@ CI not run (billing lock). No new library/shared module/Git LFS.
 ## Restore and next steps
 
 Drive supplement: `G:/Мой диск/AGR-evidence/353-skolkovo-l4/evidence-v011/`.
-`evidence-v011/index.json` pins the archive, approval-only JSON and restore guide;
-CRC, full member hashes and independent Drive readback are required. Restore
+`evidence-v011/index.json` pins the archive, approval-only JSON and restore guide.
+Archive17012034bytes, SHA256
+`7a7f2cb0d815409ac0b662e14de47b539cff6502052a0e77050200a39e87ce1d`;
+CRC +1205/1205 member hashes verified locally and on Drive;3/3 published files
+independently rehashed, SHA256SUMS read back. No readback errors.
+
+Fresh Git-blob witness on committed `b11115a31446ae0027f0ef97a58eb1def35bd791`
+restores106 job files and verifies10 evidence refs/9 unique paths,5 unchanged
+committed kernel files; fresh CLI zero errors, exit1/passed=false as expected.
+`evidence-v011/checkout-portability-v011.json` and `portability-index.json` identify
+raw walk + receipt on Drive `evidence-v011/portability/`,2/2 independent rehashes
+and SHA256SUMS readback. Later receipt-only commit changes no checklist/parsed
+parts/gate evidence bytes. This is not production acceptance.
+
+Restore
 older v008/v009/v010 packages first where needed, then v011 over its new tmp paths.
 Use current Git job files rather than historical archived checklist snapshots.
 This supplement contains raw failed candidates and113 source mast buffers, not
