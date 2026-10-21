@@ -106,6 +106,18 @@ def test_exact_boundary_precondition_fails_and_witness_reported():
     assert [f["type"] for f in ua.pair_findings(a, b)] == ["too_close", "gap_out_of_band"]
 
 
+def test_witness_is_exactly_813_ulps_below_touch_m():
+    """Brute-force ulp count: 813 ``math.nextafter`` steps down from TOUCH_M land on the
+    witness exactly and 814 overshoot — an independent check of the 813-ulp claim that does
+    not divide by ``math.ulp``.
+    """
+    probe = ua.TOUCH_M
+    for _ in range(813):
+        probe = math.nextafter(probe, -math.inf)
+    assert probe == WITNESS_0002  # exactly 813 ulps below TOUCH_M
+    assert math.nextafter(probe, -math.inf) != WITNESS_0002  # 814 ulps would overshoot
+
+
 def test_reverse_winding_preserves_measured_gap():
     """Reversing triangle winding/order is an invariance control, not a sub-ulp guarantee."""
     for g in (0.000199, 0.0002, 0.000201, 0.0):
