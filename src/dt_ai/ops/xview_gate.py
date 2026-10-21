@@ -322,6 +322,7 @@ def run(src, out, profile="NPM", coords="local", parts=None, blender=None, timeo
         raise ValueError(f"input changed during the run: {src}")
     rep["input"] = {"path": str(src), "sha256": sha, "kind": ext[1:],
                     "parts_in_file": [p.name for p in loaded],
+                    "not_selected": [p.name for p in loaded if p.name not in {q["part"] for q in rep["parts"]}],
                     "dropped": [] if dump is None else dump.get("dropped", []),
                     "blender": None if dump is None else {"version": dump.get("blender"), "log": str(log),
                                                          "scene": dump.get("scene")}}

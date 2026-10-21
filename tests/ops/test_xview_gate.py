@@ -300,3 +300,107 @@ def test_bad_loops_are_an_error(tmp_path):
              lv0=np.array([0, 1, 2]), loc0=np.zeros(3))
     with pytest.raises(ValueError, match="loop"):
         G.load_npz(tmp_path / "x.npz")
+
+
+# ---- generated probes (rule: every stated guarantee gets one besides the issue's examples) ---------------------------
+
+def random_scene(rng):
+    """Random near-parallel quads (gaps 0..13 mm, never exactly 5 mm) and shared / duplicated vertices; synthetic."""
+    V, F = [], []
+    for _ in range(int(rng.integers(2, 7))):
+        o = rng.uniform(-1, 1, 3).round(3)
+        o[2] = rng.choice([0.0, 0.002, 0.0045, 0.0085, 0.013])   # pair gaps never at 5.000 mm
+        w, h = rng.uniform(0.2, 1.5, 2)
+        b = len(V)
+        V += [tuple(o), tuple(o + (w, 0, 0)), tuple(o + (w, h, 0)), tuple(o + (0, h, 0))]
+        F.append((b, b + 1, b + 2, b + 3))
+    if rng.random() < 0.5:                       # an exact duplicate vertex of an existing corner
+        V.append(V[int(rng.integers(len(V)))])
+        F.append((len(V) - 1, 0, 1))
+    return V, F
+
+
+def test_probe_local_equals_inplace_for_float64_site_coordinates():
+    rng = np.random.default_rng(527)
+    n = 0
+    for seed in range(120):
+        V, F = random_scene(rng)
+        loc = tuple(rng.uniform(-3e6, 3e6, 3).round(3))
+        a = one(V, F, loc=loc)["totals"]
+        b = one(V, F, loc=loc, coords="inplace")["totals"]
+        c = one(V, F)["totals"]
+        assert a == c, seed                       # local at the site == the same mesh at the origin
+        assert (a["overlapping_faces"], a["vertex_pairs"]) == (b["overlapping_faces"], b["vertex_pairs"]), seed
+        n += 1
+    assert n == 120
+
+
+def brute_fans(faces):
+    out = {}
+    for x in {i for f in faces for i in f}:
+        inc = [k for k, f in enumerate(faces) if x in f]
+        edges = {k: {frozenset((x, f[(f.index(x) + d) % len(f)])) for d in (-1, 1)} for k, f in
+                 ((k, faces[k]) for k in inc)}
+        seen, comps = set(), 0
+        for k in inc:
+            if k in seen:
+                continue
+            comps += 1
+            stack = [k]
+            while stack:
+                m = stack.pop()
+                if m in seen:
+                    continue
+                seen.add(m)
+                stack += [j for j in inc if j not in seen and edges[j] & edges[m]]
+        if comps > 1:
+            out[x] = comps
+    return out
+
+
+def test_probe_fans_match_brute_force():
+    rng = np.random.default_rng(5270)
+    for seed in range(300):
+        nv = int(rng.integers(4, 9))
+        faces = []
+        for _ in range(int(rng.integers(1, 7))):
+            k = int(rng.integers(3, 5))
+            faces.append(tuple(int(i) for i in rng.choice(nv, k, replace=False)))
+        assert G.fans(faces, nv) == brute_fans(faces), (seed, faces)
+
+
+def test_probe_passed_iff_no_findings_and_cli_exit_matches(tmp_path, capsys):
+    rng = np.random.default_rng(52700)
+    for seed in range(40):
+        V, F = random_scene(rng)
+        src = write_npz(tmp_path / f"s{seed}.npz", [part("p", V, F)])
+        out = tmp_path / f"r{seed}.json"
+        code = main(["qa", "xview", str(src), "--out", str(out)])
+        capsys.readouterr()
+        rep = json.loads(out.read_text(encoding="utf-8"))
+        t = rep["totals"]
+        clean = t["vertex_pairs"] == 0 and t["face_pairs"] == 0 and t["bowtie_vertices"] == 0
+        assert rep["passed"] is clean and code == (0 if clean else 1), seed
+
+
+def test_input_changed_during_run_is_error(tmp_path, capsys, monkeypatch):
+    src = write_npz(tmp_path / "a.npz", [part("rail", *rail_soffit(0.005))])
+    real = G.gate_report
+
+    def mutate(*a, **k):
+        rep = real(*a, **k)
+        with open(src, "ab") as fh:
+            fh.write(b"x")
+        return rep
+
+    monkeypatch.setattr(G, "gate_report", mutate)
+    code, _, err = run(["qa", "xview", str(src), "--out", str(tmp_path / "r.json")], capsys)
+    assert code == 2 and "changed" in err and not (tmp_path / "r.json").exists()
+
+
+def test_parts_not_selected_are_listed(tmp_path, capsys):
+    src = write_npz(tmp_path / "a.npz", [part("rail", *rail_soffit(0.005)), part("band", *glass_band(1))])
+    out = tmp_path / "r.json"
+    run(["qa", "xview", str(src), "--parts", "band", "band", "--out", str(out)], capsys)
+    rep = json.loads(out.read_text(encoding="utf-8"))
+    assert rep["input"]["not_selected"] == ["rail"] and [p["part"] for p in rep["parts"]] == ["band"]
