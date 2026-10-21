@@ -93,3 +93,9 @@ unchanged parts and re-checks the faces of the changed parts in their grid cells
 It fails closed (error naming the part) when a part not listed as changed differs, vertex sharing between unchanged
 parts differs, or the unchanged faces are reordered. Parity on the stored Max lists:
 `tools/qa/xview_parity.py --keep <keep> --npz <arrays.npz>` (TOW02 185/185) and `<dump.json>` (Ground 146/146).
+Interactive Blender path (not in the repository until the user says yes, backlog R18): the user's add-on
+`xview_overlapping_faces_improved.py` patched to v1.1.0 (option "Exact xView rule (AGR dt_ai)", default on, runs
+`inv_xview.mesh_report` through `uv run --project <repo>` in a polled subprocess; tolerance default 5 mm, the float32 UI
+value rounded to 1e-9 m; overlay and selection kept). Blender 5.1.2 headless with the add-on registered: TOW02
+export-v005 185 faces = the Max keep ids (9.4 s incl. uv start), the user's 013 FBX 0 faces (10.5 s).
+Evidence: `G:/Мой диск/AGR-evidence/535-fast-xview/` (+ `SHA256SUMS.txt`; patched add-on SHA-256 `6df2c019e1de...`).
