@@ -3,7 +3,7 @@
     py -3 tools/git-hooks/pipeline_gate.py --staged          # pre-commit: the index
     py -3 tools/git-hooks/pipeline_gate.py --job jobs/<JOB>  # delivery: the working tree
 
-Rules (user decisions 2026-10-11, case alina-bld):
+Rules (user decisions 2026-10-11 [D050], case alina-bld):
 - `jobs/<JOB>/STATE.md` carries one line `Pipeline status: <draft|built|checked|delivered>`. A STATE.md in
   a commit without it is blocked; an untouched old STATE.md is not checked until it changes.
 - Above draft: `jobs/<JOB>/pipeline/spec.json` with its extractor report `spec.report.json` beside it
@@ -13,7 +13,7 @@ Rules (user decisions 2026-10-11, case alina-bld):
 - A new job script (`jobs/<JOB>/scripts/*`) names the engine gap it fills in its first lines,
   `Engine gap: EG<n>`, and that gap is listed in `docs/backlog.md`; anything else is asked, not scripted.
 - A commit on an auto-generated worktree branch (`claude/<words>-<hex6>`, tools/git-hooks/branch_names.py) is
-  blocked until the branch is renamed by docs/agents/NAMING.md (user 2026-10-14).
+  blocked until the branch is renamed by docs/agents/NAMING.md (user 2026-10-14 [D078]).
 - Delivery (--job) also needs a committed `.py` for every `.pyc` under `scripts/` (a lost source with a
   live `.pyc` must not happen again).
 - Attempts limit (#128, docs/HARNESS_PLAN.md §8): `jobs/<JOB>/pipeline/state.json` records failures per item;
@@ -388,7 +388,7 @@ def _git_ok(root, *args):
 
 
 def auto_branch_error(root):
-    """A commit on an auto-generated worktree branch is blocked until it is renamed (user 2026-10-14)."""
+    """A commit on an auto-generated worktree branch is blocked until it is renamed (user 2026-10-14 [D078])."""
     # the full ref, not --short: a tag of the same name makes --short answer `heads/<name>` (review 3 of #107)
     head = _git(root, "symbolic-ref", "-q", "HEAD")
     ref = head.stdout.decode("utf-8", "replace").strip() if head.returncode == 0 else ""   # detached: no branch

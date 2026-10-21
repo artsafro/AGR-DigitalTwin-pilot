@@ -1,5 +1,5 @@
 """Spec v0.3: an opening is the hole in the wall with its frame, glass is its attribute (issue #36,
-user decision 2026-10-08). Synthetic data; not a real object."""
+user decision 2026-10-08 [D026]). Synthetic data; not a real object."""
 import json
 from pathlib import Path
 
@@ -120,7 +120,7 @@ def test_revit_curtain_wall_is_one_opening_with_its_glazed_panels():
 
 
 def test_revit_grille_is_an_opening_of_kind_grille():
-    # user decision 2026-10-09: a vent grille is an opening of kind grille (position, size), no glass
+    # user decision 2026-10-09 [D035]: a vent grille is an opening of kind grille (position, size), no glass
     walls, t = ring()
     grille = {"id": 94, "kind": "window", "hostId": 1, "materials": [1], "hand": [1, 0, 0], "width": 0.3, "height": 0.4,
               "point": [4.15, 0.15, 0.0], "bboxMin": [4.0, 0.0, 3.0], "bboxMax": [4.3, 0.3, 3.4]}

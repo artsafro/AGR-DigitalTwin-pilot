@@ -11,7 +11,7 @@
   py -3 .claude/hooks/subagents.py deny-geometry  PreToolUse in independent-checker: no reading of
                                                   src/dt_ai/geometry/ (it must not know how the model was built)
 
-The hooks guard against a subagent forgetting it is read-only, not against a hostile one (user 2026-10-12): Bash
+The hooks guard against a subagent forgetting it is read-only, not against a hostile one (user 2026-10-12 [D064]): Bash
 stays arbitrary code. Input is the hook's JSON on stdin; anything but a JSON object blocks (fail closed).
 """
 import json

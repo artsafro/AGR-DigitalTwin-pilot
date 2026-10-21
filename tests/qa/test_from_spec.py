@@ -71,7 +71,7 @@ def test_model_is_all_quads_welded_and_open_only_at_the_bottom_and_the_roof_inse
     assert counts.max() <= 2                                   # no fin
     assert t_junctions(dump) == 0
     open_z = soup.vertices[np.unique(ids, return_index=True)[1]][edges[counts == 1].ravel(), 2]
-    # only the bottom ring and the inset roof joint: the hole at 6.6, the plate 5 mm above it (user 2026-10-10)
+    # only the bottom ring and the inset roof joint: the hole at 6.6, the plate 5 mm above it (user 2026-10-10 [D038])
     assert set(np.round(open_z, 6).tolist()) == {0.0, 6.6, 6.605}
     assert {lv["name"] for lv in dump["helpers"]} == {"LEVEL_L0", "LEVEL_L1", "LEVEL_roof"}
 
@@ -150,7 +150,7 @@ def topology_ok(dump):
     soup = from_dump(dump)
     _, counts, _ = edge_uses(soup.triangles, weld(soup.vertices, TOL["weld_m"]))
     loops = checks.check_mesh(soup, TOL, checks.load_ranges())["details"]["open_loops"]
-    # open only at the bottom and at the inset slab joints (pattern roof-inset-plane, user rule 2026-10-10)
+    # open only at the bottom and at the inset slab joints (pattern roof-inset-plane, user rule 2026-10-10 [D038])
     return counts.max() <= 2 and t_junctions(dump) == 0 and all(lp["allowed"] for lp in loops)         and [lp["kind"] for lp in loops].count("bottom") == 1
 
 
@@ -164,7 +164,7 @@ def test_ledge_where_the_floor_below_reaches_out():
 
 
 def test_soffit_where_the_floor_above_overhangs():
-    # user 2026-10-10: the soffit under an overhang takes the facade ID
+    # user 2026-10-10 [D043]: the soffit under an overhang takes the facade ID
     s = stepped([[4, 0], [10, 0], [10, 10], [4, 10]], [[0, 0], [10, 0], [10, 10], [0, 10]])
     dump = build(s, INPUTS)
     soup = from_dump(dump)
@@ -249,7 +249,7 @@ def test_cross_level_opening_in_a_typical_template_is_asked_not_copied():
 
 @pytest.mark.parametrize("profile, seat", [("npm_min", 0.2), ("mid", 0.1)])
 def test_plane_seat_follows_the_profile(profile, seat):
-    # C24 final, user decision 2026-10-10: npm_min at the full opening depth (0.2 m), mid at half of it
+    # C24 final, user decision 2026-10-10 [D037]: npm_min at the full opening depth (0.2 m), mid at half of it
     soup = from_dump(build(edited(lambda d: d.update({"profile": profile})), INPUTS))
     c = soup.corners()
     planes, reveals = c[soup.material_ids == PLANE], c[soup.material_ids == REVEAL]
@@ -566,7 +566,7 @@ def test_near_degenerate_inputs_build_clean_or_stop(contour, window):
 
 @pytest.mark.parametrize("contour, wall, x_m", [
     ([[0, 0], [10, 0], [10, 10], [0, 10]], 0, 0.0031),               # just past the 3 mm weld from the start
-    ([[0, 0], [10, 0], [10, 10], [0, 10]], 0, 8.9969),               # just past it from the end (user 2026-10-13)
+    ([[0, 0], [10, 0], [10, 10], [0, 10]], 0, 8.9969),               # just past it from the end (user 2026-10-13 [D068])
 ])
 def test_windows_just_past_the_weld_are_built(contour, wall, x_m):
     def edit(d):
@@ -578,7 +578,7 @@ def test_windows_just_past_the_weld_are_built(contour, wall, x_m):
 
 
 def test_window_within_the_weld_of_a_wall_end_is_welded_to_it():
-    # user 2026-10-13: 3 mm (inclusive) is the building's weld - the window's end is the wall's end, a corner opening
+    # user 2026-10-13 [D068]: 3 mm (inclusive) is the building's weld - the window's end is the wall's end, a corner opening
     def edit(d):
         d["floors"][0]["openings"] = [{"wall": 0, "x_m": 0.003, "sill_m": 0.9, "w_m": 1.0, "h_m": 1.5, "kind": "window"}]
     with pytest.raises(BuildError, match="reaches the wall end"):
@@ -612,7 +612,7 @@ def test_inputs_at_the_limit_that_would_break_under_the_weld_are_errors():
         d["roof"] = {"parapet_h_m": 0.0}
     with pytest.raises(BuildError):
         build(edited(window_case), INPUTS)
-    # user 2026-10-13: the two floors 0.1 mm apart are one line under the 3 mm weld - built, closed
+    # user 2026-10-13 [D068]: the two floors 0.1 mm apart are one line under the 3 mm weld - built, closed
     assert topology_ok(build(edited(step_case), INPUTS))
 
 
@@ -670,7 +670,7 @@ def test_plan_weld_within_2d_bound_still_builds(shift):
         assert distances.min(axis=1).max() <= sp.weld_m + 1e-9
 
 
-# pattern terrace (spec v0.4, user decisions 2026-10-10): a parapet along a ledge's outer edges
+# pattern terrace (spec v0.4, user decisions 2026-10-10 [D041]): a parapet along a ledge's outer edges
 
 
 def terraced(spec_data_edit, h=0.6):
@@ -691,7 +691,7 @@ def test_terrace_parapet_on_a_ledge():
     dump = build(s, INPUTS)
     soup = from_dump(dump)
     assert topology_ok(dump)
-    assert horizontal(soup, 3.3, ROOF, True) == 0.0                              # the hole (user rule 2026-10-10)
+    assert horizontal(soup, 3.3, ROOF, True) == 0.0                              # the hole (user rule 2026-10-10 [D038])
     assert horizontal(soup, 3.305, ROOF, True) == pytest.approx(3.74 * 9.44)     # walkable plate: 3.7 x 9.4 + 20 mm
     assert horizontal(soup, 3.9, ROOF, True) == pytest.approx(5.22)             # cap: 0.3 x 10 + 2 x 0.3 x 3.7
     c = soup.corners()
@@ -895,7 +895,7 @@ def test_a_slab_joint_the_spec_implies_no_slab_for_is_not_allowed():
 
 
 def test_a_plate_gap_within_the_weld_is_no_spec():
-    # user 2026-10-13: every gap of the spec lies beyond weld_m, else it would weld shut
+    # user 2026-10-13 [D068]: every gap of the spec lies beyond weld_m, else it would weld shut
     with pytest.raises(ValueError, match="larger than weld_m"):
         Spec.model_validate({**spec().model_dump(), "plate_gap_m": 0.003})
 
@@ -982,7 +982,7 @@ def test_a_plate_wider_than_the_faces_around_it_is_a_build_error():
         build(spec(), BuildInputs(**{**INPUTS.__dict__, "parapet_thickness_m": 0.01}))
 
 
-# plate_gap_m / plate_overlap_m: building parameters in the spec (user 2026-10-10)
+# plate_gap_m / plate_overlap_m: building parameters in the spec (user 2026-10-10 [D039])
 
 
 def test_the_extractor_reads_the_plate_parameters_back():
@@ -1101,7 +1101,7 @@ def test_plate_parameters_keep_their_precision_and_the_agreement_limit():
 
 @pytest.mark.parametrize("inner, read", [(0.02, True), (0.03, False)])
 def test_the_extractor_reads_a_plate_around_a_shaft(inner, read):
-    # KPP1 (user 2026-10-10): a shaft stands in the hole as a part of its own; its foot is an inner outline
+    # KPP1 (user 2026-10-10 [D038]): a shaft stands in the hole as a part of its own; its foot is an inner outline
     from dt_ai.spec import extract_spec
     from test_geometry_checks import shaft_roof
     spec_, report = extract_spec(shaft_roof(inner), SYNTH_OBJECT)
@@ -1122,7 +1122,7 @@ def test_engine_takes_the_parapet_thickness_from_the_spec():
 
 
 def test_terrace_parapet_takes_the_roof_thickness_of_the_spec():
-    """Review 1 of #81 / user 2026-10-13 (Q10 a): one parapet thickness per building - with the spec's roof
+    """Review 1 of #81 / user 2026-10-13 [D065] (Q10 a): one parapet thickness per building - with the spec's roof
     thickness 0.2 and a build input of 0.3 the terrace parapet is 0.2 too and the model builds."""
     from dt_ai.spec import extract_spec
 
@@ -1136,7 +1136,7 @@ def test_terrace_parapet_takes_the_roof_thickness_of_the_spec():
     assert back.roof.parapet_thickness_m == 0.2 and [t.level for t in back.terraces] == ["L1"]
 
 
-# --- spec v0.7 roof_structures (pattern roof-screen-enclosure, user 2026-10-13) ----------------------------
+# --- spec v0.7 roof_structures (pattern roof-screen-enclosure, user 2026-10-13 [D067]) ----------------------------
 
 SCREEN = {"kind": "screen", "outline": [[3, 3], [7, 3], [7, 7], [3, 7]], "z_top_m": 9.0}
 
@@ -1201,7 +1201,7 @@ def test_a_shaft_top_on_a_screen_outline_is_no_screen_bottom():
     assert not any(lp["kind"] == "roof-structure" for lp in loops) and not all(lp["allowed"] for lp in loops)
 
 
-# the building's weld (spec weld_m 3 mm inclusive, user 2026-10-13): lines closer than it are one, never an error
+# the building's weld (spec weld_m 3 mm inclusive, user 2026-10-13 [D068]): lines closer than it are one, never an error
 
 
 @pytest.mark.parametrize("off, merged", [(0.002, True), (0.003, True), (0.0035, False)])
@@ -1235,7 +1235,7 @@ def test_a_near_axis_wall_is_welded_straight():
     [[0, 0], [10, 0], [10, 4], [10.4, 5], [10, 6], [10, 10], [0, 10]],
 ])
 def test_pointed_corners_build_as_triangle_fans(contour):
-    """User 2026-10-13: a face piece with one side a point on a strip line is a triangle (a fan to the other
+    """User 2026-10-13 [D145]: a face piece with one side a point on a strip line is a triangle (a fan to the other
     side's cuts); the model stays closed, welded, without T-junctions."""
     def edit(d):
         d["floors"][0]["contour"] = contour

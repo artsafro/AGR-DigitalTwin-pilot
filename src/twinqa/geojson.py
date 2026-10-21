@@ -2,8 +2,8 @@
 
 Typed checks of the exact source schema. Where the regulation contradicts itself the
 result is `review`, never a silent pass/fail. Glasses follow SINTEZ AGR Checker (conflict #13,
-decided 2026-10-07): `[]` without glass, else `[{material: {...}, ...}]` - one object in a list.
-Empty OKS fields follow SINTEZ AGR Checker v1.6.1 (conflict #2, decided 2026-10-07):
+decided 2026-10-07 [D016]): `[]` without glass, else `[{material: {...}, ...}]` - one object in a list.
+Empty OKS fields follow SINTEZ AGR Checker v1.6.1 (conflict #2, decided 2026-10-07 [D011]):
 FNO_code is mandatory (3/6/9 digits), act_AGR may be empty.
 """
 import base64
@@ -18,7 +18,7 @@ from twinqa.report import Finding
 
 PAGES = [26, 27, 51, 52, 53, 54, 55]
 GLASS_RANGES = {"transparency": (0, 1), "refraction": (1, 3), "roughness": (0, 1), "metallicity": (0, 1)}
-OKS_MAY_BE_EMPTY = {"other", "act_AGR"}  # conflict #2, decided 2026-10-07 (as the checker)
+OKS_MAY_BE_EMPTY = {"other", "act_AGR"}  # conflict #2, decided 2026-10-07 [D011] (as the checker)
 
 
 def _f(status, name, observed, expected, pages=PAGES, conflicts=()):
