@@ -84,6 +84,98 @@ def _curb_solid(geom, sampler, height, slot):
     return gc.Mesh(v,faces,[slot]*len(faces),np.full(len(faces),-2),np.zeros((len(faces),3,2)),4.)
 
 
+def fit_curb_bottom(mesh: gc.Mesh, support: gc.Mesh, gap_m: float = .006,
+                    max_trim_m: float = .01) -> gc.Mesh:
+    """Trim ONLY the curb underside to clear the actual raised cake along its normal.
+
+    Opt-in construction step, not a changed datum/section policy: the visible top,
+    footprint, indices and texture identity stay fixed. For each bottom triangle,
+    bound the required lift over every intersecting support triangle (affine-plane
+    extrema lie at overlay vertices). Lift all three corners by at least that bound;
+    shared corners take the maximum, keeping the solid closed. Refuse an unsupported
+    bottom, a trim reaching the relief tolerance, or a collapsed section. No input
+    is mutated and no face is dropped. This is not a final xView/coverage receipt.
+    """
+    from dt_ai.ops.inv_quads import PolyMesh
+
+    for name, value in (("gap_m", gap_m), ("max_trim_m", max_trim_m)):
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
+            raise ValueError(f"{name} must be positive finite")
+    if gap_m <= .005 or max_trim_m > .01:
+        raise ValueError("curb fit requires gap_m > 0.005 and max_trim_m <= 0.01 m")
+    for name, m in (("curb", mesh), ("support", support)):
+        checked = PolyMesh(m.verts, tuple(map(tuple, m.faces)))
+        if not checked.faces or any(len(f) != 3 for f in checked.faces):
+            raise ValueError(f"{name}: nonempty triangular mesh required")
+        if len(m.slot) != len(m.faces) or np.shape(m.level) != (len(m.faces),):
+            raise ValueError(f"{name}: missing face metadata")
+        if not np.isfinite(m.level).all():
+            raise ValueError(f"{name}: nonfinite levels")
+        if np.shape(m.uv) != (len(m.faces), 3, 2) or not np.isfinite(m.uv).all():
+            raise ValueError(f"{name}: finite corner UV required")
+    unknown = sorted(set(mesh.slot) - {s[2] for s in SECTIONS.values()})
+    if unknown:
+        raise ValueError(f"unsupported curb slots: {unknown}")
+    if np.any(mesh.level != -2) or np.any(support.level < 0):
+        raise ValueError("curb detail and surface-only support required")
+    p = mesh.verts[mesh.faces]
+    normals = np.cross(p[:, 1]-p[:, 0], p[:, 2]-p[:, 0])
+    bottoms = np.flatnonzero(normals[:, 2] < -1e-12)
+    tops = np.flatnonzero(normals[:, 2] > 1e-12)
+    if not len(bottoms) or not len(tops) or np.any(np.linalg.norm(normals, axis=1) <= 2e-12):
+        raise ValueError("curb requires nondegenerate top and bottom faces")
+    sp = support.verts[support.faces]
+    sn = np.cross(sp[:, 1]-sp[:, 0], sp[:, 2]-sp[:, 0])
+    lengths = np.linalg.norm(sn, axis=1)
+    if np.any(sn[:, 2] <= 1e-12) or not np.isfinite(lengths).all():
+        raise ValueError("support must be an upward nondegenerate heightfield")
+    sn /= lengths[:, None]
+    polygons = [Polygon(t[:, :2]) for t in sp]
+    tree = shapely.STRtree(polygons)
+    lift = np.zeros(len(mesh.verts))
+    rows = []
+    for fi in bottoms:
+        poly = Polygon(p[fi, :, :2])
+        ids = sorted(tree.query(poly, predicate='intersects').tolist())
+        pieces = []
+        delta = 0.
+        for si in ids:
+            overlap = poly.intersection(polygons[si])
+            if overlap.area <= 1e-14:
+                continue
+            pieces.append(overlap)
+            xy = shapely.get_coordinates(overlap)
+            # Local coordinates avoid cancellation at real-site world offsets.
+            s0 = sp[si, 0]
+            sz = s0[2] - ((xy-s0[:2]) @ sn[si, :2])/sn[si, 2]
+            b0 = p[fi, 0]
+            bz = b0[2] - ((xy-b0[:2]) @ normals[fi, :2])/normals[fi, 2]
+            delta = max(delta, float(np.max(sz + gap_m/sn[si, 2] - bz)))
+        if not pieces or poly.difference(unary_union(pieces)).area > 1e-10:
+            raise ValueError(f"curb bottom face {fi}: incomplete surface support")
+        if delta >= max_trim_m:
+            raise ValueError(f"curb bottom face {fi}: trim {delta:.12g} m reaches {max_trim_m} m limit")
+        lift[mesh.faces[fi]] = np.maximum(lift[mesh.faces[fi]], delta)
+        rows.append(dict(face=int(fi), lift_m=delta, support_faces=ids))
+    top_ids = np.unique(mesh.faces[tops])
+    if np.any(lift[top_ids] > 0):
+        raise ValueError("curb bottom/top vertex identity is ambiguous")
+    v = mesh.verts.copy()
+    v[:, 2] += lift
+    columns = {}
+    for i, xyz in enumerate(mesh.verts):
+        columns.setdefault(tuple(xyz[:2]), []).append(i)
+    for ids in columns.values():
+        if len(ids) != 2 or np.ptp(v[ids, 2]) <= .002 or np.argmin(v[ids, 2]) != np.argmin(mesh.verts[ids, 2]):
+            raise ValueError(f"curb fit collapses or cannot prove paired top/bottom column {ids}")
+    report = dict(mesh.report)
+    report['curb_support_fit'] = dict(gap_m=gap_m, max_trim_m=max_trim_m,
+                                    measured_trim_m=float(lift.max()), bottom_faces=rows,
+                                    dropped_faces=[])
+    return gc.Mesh(v, mesh.faces.copy(), list(mesh.slot), mesh.level.copy(),
+                   mesh.uv.copy(), mesh.cell, report)
+
+
 def _stairs_solid(outline, cells, heights, sampler):
     """Horizontal source treads, connecting risers, outer walls and a single bottom."""
     z,hit=sampler.sample(np.array(outline.exterior.coords)[:,:2])

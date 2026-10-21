@@ -40,3 +40,17 @@ def test_curb_bottom_trims_to_normal_gap_without_moving_top_or_contour(offset):
     assert 0<dz.max()<.01 and dz.min()==0
     r=report(fitted,support)
     assert not r.vertex_pairs and not r.face_pairs
+
+
+def test_real_world_overlay_does_not_invent_a_support_hole():
+    import json
+    from pathlib import Path
+    data=json.loads((Path(__file__).parent/'data/ground-v015-curb-support-overlay.json').read_text())
+    p=np.array(data['bottom']);v=np.vstack([p+np.array([0,0,.05]),p])
+    f=np.array([[2,1,0],[3,4,5],[0,1,4],[0,4,3],[1,2,5],[1,5,4],[2,0,3],[2,3,5]])
+    curb=gc.Mesh(v,f,['CurbGarden']*len(f),np.full(len(f),-2),np.zeros((len(f),3,2)),4.)
+    triangles=np.array(data['support_triangles'])
+    support=gc.Mesh(triangles.reshape(-1,3),np.arange(triangles.size//3).reshape(-1,3),['Mulch']*len(triangles),np.zeros(len(triangles),int),np.zeros((len(triangles),3,2)),4.)
+    fitted=gd.fit_curb_bottom(curb,support)
+    assert np.array_equal(fitted.faces,curb.faces)
+    assert fitted.report['curb_support_fit']['measured_trim_m']<.01
