@@ -7,7 +7,8 @@ ROOT=Path(__file__).resolve().parents[1]
 def test_ground_notch_approval_records_exact_source_and_contour():
     p=json.loads((ROOT/'jobs/VATUTINO-SITE/ground-notch-approval-v015.json').read_text())
     assert p['decision']=='D169'
-    assert p['source_sha256']=='82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5'
+    assert p['source_v014_mesh_sha256']=='82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5'
+    assert p['source_adapter_sha256']=='3b6b433d718c0292f472293849f3363fd2ae90d4892e598efca52be44cd9d502'
     assert p['triangle_xy']==[[-7691.007,-15248.688],[-7691.2305,-15248.001],[-7691.016,-15248.688]]
     assert p['source_footprint_hole']==0
     assert p['approved_by']=='Artem' and p['quote']=='принимаю'

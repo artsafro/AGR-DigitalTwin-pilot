@@ -1,6 +1,10 @@
 # Ground v015 resumed construction checkpoint — #371
 
-**Blocked on a localized footprint decision. Not delivered; no PR, .max, FBX, queue entry or acceptance receipt.**
+**Historical checkpoint.** The localized notch question was answered by Artem on
+2026-10-21 16:58 [D169]. See [approved-notch session](ground-v015-approved-notch-session.md)
+for the applied correction, real native readback and the remaining VPM policy
+question. The measurements below remain historical; this was not a delivery.
+
 
 Artem resumed #371 on 2026-10-21. Start: `95ea3be`; merged `origin/main@08b3cb9`
 via `863dcd1`. The decisions-log conflict contained independent additions (D156/D157

@@ -1,0 +1,20 @@
+{
+  "decision": "D169",
+  "approved_by": "Artem",
+  "quote": "принимаю",
+  "decision_reference": "Kanban t_eb1c51ca orchestrator/default comment 2026-10-21 16:58; local notch explicitly authorized",
+  "scope": "local_contour_correction_only",
+  "source_adapter_sha256": "3b6b433d718c0292f472293849f3363fd2ae90d4892e598efca52be44cd9d502",
+  "source_v014_mesh_sha256": "82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5",
+  "source_footprint_hole": 0,
+  "triangle_xy": [[-7691.007, -15248.688], [-7691.2305, -15248.001], [-7691.016, -15248.688]],
+  "proposed_area_m2": 0.0030915000000045403,
+  "sampled_closing_edge_to_original_outline_max_m": 0.004317305,
+  "outline_tolerance_m": 0.0022,
+  "xview_vertex_tolerance_m": 0.002,
+  "xview_face_tolerance_m": 0.005,
+  "relief_tolerance_m": 0.01,
+  "source_mutation_authorized": false,
+  "numeric_threshold_change_authorized": false,
+  "delivery_accepted": false
+}
