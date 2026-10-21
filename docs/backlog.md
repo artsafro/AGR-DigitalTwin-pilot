@@ -216,10 +216,11 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
 - **R17** proposal 2026-10-21, job/vyatskaya-tow02-midpoly - CLI command: run 3ds Max xView checks on an FBX in a
   separate Max instance via a startup script (`jobs/vyatskaya-tow02/scripts/xview_check.ms`; xView does not compute
   through the MCP bridge) with the "Disable xView" dialog answered, one JSONL line per checker; seen 3 times; effort S.
-  Review #514: `jobs/vyatskaya-tow02/scripts/xview_review.ms` adds several models per run, `.max` or `.fbx`, full
-  face / vertex lists, tolerances through `units.decodeValue`, and the user's pre-export "Mesh + Weld 2 mm" mode
-  checked on Editable Mesh (Poly re-splits non-manifold vertices); paths must be ASCII (Max 2024 misreads a
-  Cyrillic jobs file); seen 4 times.
+  Review #514: the shared runner already exists, `tools/qa/xview_dump.ms` + `tools/qa/xview_parity.py` (#380,
+  tolerances set by script); `jobs/vyatskaya-tow02/scripts/xview_review.ms` duplicates it and adds `.max` loading,
+  face centres per hit and the user's pre-export "Mesh + Weld 2 mm" mode checked on Editable Mesh (Poly re-splits
+  non-manifold vertices); paths must be ASCII (Max 2024 misreads a Cyrillic jobs file). Left: fold those into
+  `xview_dump.ms` and list it in `docs/agents/CAPABILITIES.md`; seen 4 times.
 - **R18** proposal 2026-10-21, review #514 - the user's Blender add-on `xview_overlapping_faces_improved.py`
   (viewport overlay, 16 s on 35k faces vs xView 107 s) as an interactive helper: it finds 40 of 185 xView faces with
   0 false hits; to match xView it needs boundary contact counted (zero-area contact rule), a fixed 0.81 deg normal

@@ -245,7 +245,9 @@ terrace.md, facade-decor-inset.md.
 - Weld at export fixes Overlapping Vertices only; contacts of separate parts in one mesh (T-vertices, edge on edge,
   bow-tie corners) are Overlapping Faces and must be removed in the build. A welded mesh converted back to Editable
   Poly re-splits non-manifold vertices (user, 2026-10-21). Moving a contact apart by less than the 5 mm face
-  tolerance (`skip_point_contacts`, 3 mm) does not remove it.
+  tolerance (`skip_point_contacts`, 3 mm) does not remove it. Root causes per part (coincident constants, two
+  separately simplified envelopes, one level reused for two parallel faces, a one-sided seam simplification in
+  `clean_glass`): `REVIEW-514.md` §7.
 - Inputs of the builders that live in ignored `outputs/`: `measure-v001/typical/typical_floor.json`,
   `fins.json`; `measure-v002/bend_rings/bend_rings.json`; `measure-v002/top_parts/top_parts.json`; their
   measurement scripts sit next to them (`outputs/measure-v00N/*/scripts/`).

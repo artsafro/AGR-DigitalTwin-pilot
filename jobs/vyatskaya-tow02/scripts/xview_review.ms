@@ -1,5 +1,6 @@
 -- TOW02 review (#514): xView Overlapping Faces 5 mm / Overlapping Vertices 2 mm on several models, full face lists.
--- Engine gap: EG6 (no xView-grade overlap check in the engine; 3ds Max xView is the overlap truth).
+-- Engine gap: EG6. Job-local twin of the shared `tools/qa/xview_dump.ms` (#380, not on this job's branch base): adds
+-- .max loading, face centres per hit and the user's Mesh + Weld 2 mm mode; fold those into xview_dump.ms (R17).
 -- Usage: 3dsmax.exe -U MAXScript xview_review.ms   (reads TOW02_XV_OUT; <out>/jobs.txt has lines label|path|node[|weld])
 -- path is .fbx (imported into a reset scene) or .max (loaded, never saved). node empty = largest mesh in the scene.
 -- weld: convert to Editable Mesh, weld at 2 mm, check the mesh (the user's pre-export step); weldpoly: same, then
