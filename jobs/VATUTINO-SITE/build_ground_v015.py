@@ -303,13 +303,14 @@ def derive(m,profile,sampler,protected,initial_exclusions=(),approved_gaps=None)
         errors=sampler.max_error(p[:,:,:2],p[:,:,2]-offset[tris])
         px,lo,hi=(2048,10,40) if profile=='npm' else (4096,512,1706)
         den=gc.texel_density(verts,tris,np.asarray(tex),px)
-        failed=(errors>.01)|(~np.isfinite(den))|(den<lo)|(den>hi)
+        uv_winding_bad=np.linalg.det(np.asarray(tex)[:,1:]-np.asarray(tex)[:,:1])<=0
+        failed=(errors>.01)|(~np.isfinite(den))|(den<lo)|(den>hi)|uv_winding_bad
         for i in np.flatnonzero(failed):
             if len(q.source_faces[own[i]])!=2:raise ValueError(f'unsafe original surface triangle {own[i]}')
             bad.add(own[i])
         spacing_bad,spacing=spacing_pair_rejections(q,verts,approved_gaps or {})
         bad.update(spacing_bad)
-        history.append({'spacing':spacing,'iteration':iteration,'overlap_combinations':count,'relief_max_mm':float(errors.max()*1000),
+        history.append({'mirrored_surface_variants':int(uv_winding_bad.sum()),'spacing':spacing,'iteration':iteration,'overlap_combinations':count,'relief_max_mm':float(errors.max()*1000),
                         'density_min':float(den.min()),'density_max':float(den.max()),'rejected_pairs':len(bad)})
         print(profile,history[-1],flush=True)
         if not bad:break
