@@ -225,6 +225,14 @@ def _load(path: Path) -> tuple[object | None, str | None]:
         return None, "partial: manifest_json"
 
 
+def _effective_drive_path(entry: dict) -> str:
+    """Drive-for-desktop destination relative to the folder. ``drive_path`` wins."""
+    drive_path = entry.get("drive_path")
+    if isinstance(drive_path, str) and drive_path.strip():
+        return drive_path
+    return entry["local_path"]
+
+
 def _entry_label(entry: object, index: int) -> str:
     if isinstance(entry, dict) and isinstance(entry.get("id"), str):
         return entry["id"]
@@ -313,7 +321,10 @@ def execute(
             "id": label,
             "status": status,
             "drive_link": link if link == PENDING or status == "match" else PENDING,
-            "drive_path": entry.get("drive_path") if isinstance(entry, dict) else None,
+            "drive_path": _effective_drive_path(entry) if isinstance(entry, dict) and (
+                (isinstance(entry.get("drive_path"), str) and entry["drive_path"].strip())
+                or isinstance(entry.get("local_path"), str)
+            ) else None,
             "errors": row_errors,
         })
 
@@ -321,8 +332,10 @@ def execute(
     local_paths = [root / e["local_path"] for e in assets_in
                    if isinstance(e, dict) and isinstance(e.get("local_path"), str)]
     desktop = drive_desktop_root(drive_root) if backend == "drive-desktop" else None
-    targets = [desktop / e["local_path"] for e in assets_in
+    targets = [desktop / _effective_drive_path(e) for e in assets_in
                if isinstance(e, dict) and isinstance(e.get("local_path"), str)] if desktop else []
+    if desktop is not None and len({os.path.normcase(str(path.resolve())) for path in targets}) != len(targets):
+        errors.append("duplicate_drive_path")
     # Query only during apply; dry-run must never invoke a remote client.
     if not errors and apply and backend == "rclone" and _credentials(backend, drive_root) == "present":
         try:
@@ -427,7 +440,7 @@ def _copy(entry: dict, root: Path, backend: str, desktop: Path | None) -> str:
     if _sha256(source) != entry["sha256"]:
         raise ValueError("sha256_mismatch before copy")
     if backend == "drive-desktop":
-        target = desktop / entry["local_path"]
+        target = desktop / _effective_drive_path(entry)
         if target.exists():
             if _sha256(target) != entry["sha256"]:
                 raise ValueError("destination differs; use a new versioned path")

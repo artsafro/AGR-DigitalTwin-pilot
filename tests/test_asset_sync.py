@@ -656,3 +656,356 @@ def test_drive_path_validation(case):
     else:
         assert "sample-asset: partial: drive_path" in named
         assert all("not_run" not in error and error != "pass" for error in errors)
+
+
+def _files(root: Path) -> dict:
+    return {p: p.read_bytes() for p in root.rglob("*") if p.is_file()}
+
+
+def test_drive_path_disagreement_copies_to_recorded_path(tmp_path):
+    """Acceptance row: drive_path is the Drive copy, even when it differs from local_path."""
+    entry, payload = _entry(
+        local_path="input.bin",
+        drive_link=FOLDER_URL,
+        drive_path="different/recorded.bin",
+    )
+    manifest, root = _write_manifest(tmp_path, [entry], [payload])
+    source = root / "input.bin"
+    source_bytes = source.read_bytes()
+    drive = tmp_path / "drive"
+    drive.mkdir()
+    code, report = sync.execute(
+        manifest, root=root, backend="drive-desktop", drive_root=drive, apply=True,
+    )
+    row = report["assets"][0]
+    assert code == 0
+    assert row["status"] == "match"
+    assert row["synced"] is True
+    assert row["drive_path"] == "different/recorded.bin"
+    assert (drive / "different/recorded.bin").read_bytes() == payload
+    assert not (drive / "input.bin").exists()
+    assert source.read_bytes() == source_bytes
+
+
+def test_matching_drive_path_copies_to_same_relative_path(tmp_path):
+    """Control: explicit drive_path equal to local_path still copies there."""
+    entry, payload = _entry(drive_link=FOLDER_URL, drive_path="sample/asset.bin")
+    assert entry["drive_path"] == entry["local_path"]
+    manifest, root = _write_manifest(tmp_path, [entry], [payload])
+    drive = tmp_path / "drive"
+    drive.mkdir()
+    code, report = sync.execute(
+        manifest, root=root, backend="drive-desktop", drive_root=drive, apply=True,
+    )
+    assert code == 0
+    assert (drive / entry["local_path"]).read_bytes() == payload
+    assert report["assets"][0]["drive_path"] == entry["local_path"]
+    assert report["assets"][0]["synced"] is True
+
+
+@pytest.mark.parametrize("alias_kind", ["path", "hardlink"])
+def test_output_alias_of_effective_drive_destination_writes_nothing(tmp_path, alias_kind):
+    entry, payload = _entry(
+        local_path="input.bin",
+        drive_link=FOLDER_URL,
+        drive_path="different/recorded.bin",
+    )
+    manifest, root = _write_manifest(tmp_path, [entry], [payload])
+    drive = tmp_path / "drive"
+    drive.mkdir()
+    dest = drive / "different" / "recorded.bin"
+    if alias_kind == "hardlink":
+        dest.parent.mkdir(parents=True)
+        dest.write_bytes(b"preexisting")
+        out = tmp_path / "dest-alias.bin"
+        out.hardlink_to(dest)
+    else:
+        out = dest
+    before = _files(tmp_path)
+    code, report = sync.execute(
+        manifest, root=root, backend="drive-desktop", drive_root=drive, apply=True, out=out,
+    )
+    assert code != 0
+    assert any("output_aliases_input" in error for error in report["errors"])
+    assert _files(tmp_path) == before
+    assert not (drive / "input.bin").exists()
+    if alias_kind == "path":
+        assert not dest.exists()
+
+
+@pytest.mark.parametrize("case", ["same-drive-path", "fallback-collision"])
+def test_duplicate_effective_drive_destination_writes_nothing(tmp_path, case):
+    if case == "same-drive-path":
+        first, payload = _entry(
+            id="first-asset",
+            local_path="a/one.bin",
+            drive_link=FOLDER_URL,
+            drive_path="shared/out.bin",
+        )
+        second, payload_b = _entry(
+            id="second-asset",
+            local_path="b/two.bin",
+            drive_link=FOLDER_URL,
+            drive_path="shared/out.bin",
+        )
+    else:
+        first, payload = _entry(id="first-asset", local_path="shared/out.bin")
+        second, payload_b = _entry(
+            id="second-asset",
+            local_path="b/two.bin",
+            drive_path="shared/out.bin",
+        )
+    manifest, root = _write_manifest(tmp_path, [first, second], [payload, payload_b])
+    drive = tmp_path / "drive"
+    drive.mkdir()
+    sentinel = drive / "sentinel.bin"
+    sentinel.write_bytes(b"keep")
+    before = _files(tmp_path)
+    code, report = sync.execute(
+        manifest, root=root, backend="drive-desktop", drive_root=drive, apply=True,
+    )
+    assert code != 0
+    assert "duplicate_drive_path" in report["errors"]
+    assert _files(tmp_path) == before
+    assert list(drive.rglob("*")) == [sentinel]
+
+
+def test_invariant_bad_inputs_never_pass(tmp_path):
+    """empty / partial / unsupported / NaN-inf / size 0 never pass or not_run."""
+    probes = 0
+    for document in (
+        {},
+        {"schema": "asset-store/1", "local_root": "C:/x/assets", "assets": []},
+        {"assets": [{"id": "only-id"}]},
+        {"schema": "nope"},
+    ):
+        errors = sync.validate_document(document)
+        assert errors
+        assert all(error not in {"pass", "not_run"} and "not_run" not in error for error in errors)
+        probes += 1
+    entry, payload = _entry()
+    manifest, root = _write_manifest(tmp_path, [entry], [payload])
+    for backend in ("dropbox", "s3", "unsupported"):
+        code, report = sync.execute(manifest, root=root, backend=backend, apply=True)
+        assert code != 0
+        assert report["errors"]
+        assert report["assets"][0]["status"] not in {"pass", "not_run"}
+        probes += 1
+    for bad_size in (float("nan"), float("inf"), float("-inf"), 0):
+        bad, _ = _entry(size=bad_size)
+        errors = sync.validate_document(_document([bad]))
+        assert errors
+        assert all(error not in {"pass", "not_run"} for error in errors)
+        if bad_size == 0:
+            assert any("size_at_threshold" in error for error in errors)
+        else:
+            assert any("size_not_finite" in error for error in errors)
+        probes += 1
+    zero, _ = _entry(size=0, sha256=EMPTY_SHA256, local_path="empty.bin")
+    zero_manifest, zero_root = _write_manifest(tmp_path / "zero", [zero], [b""])
+    out = tmp_path / "zero" / "report.json"
+    code, report = sync.execute(zero_manifest, root=zero_root, apply=True, out=out)
+    assert code != 0
+    assert report["assets"][0]["status"] not in {"pass", "not_run", "match"}
+    assert not out.exists()
+    probes += 1
+    unsupported, _ = _entry(drive_link=FOLDER_URL, drive_path=12)
+    errors = sync.validate_document(_document([unsupported]))
+    assert "sample-asset: partial: drive_path" in errors
+    assert all(error not in {"pass", "not_run"} for error in errors)
+    probes += 1
+    assert probes == 13
+
+
+def test_invariant_unmapped_path_names_the_entry(tmp_path):
+    """A bad drive_path or local_path names that entry, never the first asset."""
+    probes = 0
+    for index in range(8):
+        good, payload = _entry(
+            id=f"good-{index}",
+            local_path=f"good/{index}.bin",
+            drive_link=FOLDER_URL,
+            drive_path=f"good/{index}.bin",
+        )
+        bad, bad_payload = _entry(
+            id=f"bad-{index}",
+            local_path=f"bad/{index}.bin",
+            drive_link=FOLDER_URL,
+        )
+        case = tmp_path / f"missing-{index}"
+        manifest, root = _write_manifest(case, [good, bad], [payload, bad_payload])
+        drive = case / "drive"
+        drive.mkdir()
+        before = _files(case)
+        code, report = sync.execute(
+            manifest, root=root, backend="drive-desktop", drive_root=drive, apply=True,
+        )
+        assert code != 0
+        assert f"bad-{index}: partial: drive_path" in report["errors"]
+        assert not any(error.startswith(f"good-{index}:") and "drive_path" in error for error in report["errors"])
+        assert all(f"good/{index}.bin" not in error for error in report["errors"])
+        assert _files(case) == before
+        assert (root / good["local_path"]).read_bytes() == payload
+        probes += 1
+    for index in range(4):
+        named, payload = _entry(id=f"esc-{index}", local_path=f"../escape-{index}.bin")
+        other, other_payload = _entry(
+            id="first-asset",
+            local_path="first/asset.bin",
+            drive_link=FOLDER_URL,
+            drive_path="first/asset.bin",
+        )
+        errors = sync.validate_document(_document([other, named]))
+        assert f"esc-{index}: partial: local_path" in errors
+        assert not any("first/asset.bin" in error for error in errors)
+        case = tmp_path / f"escape-{index}"
+        # Keep the bad path out of the filesystem write helper by planting the file after.
+        safe, _ = _entry(id=f"esc-{index}", local_path=f"held/{index}.bin")
+        manifest, root = _write_manifest(case, [other, safe], [other_payload, payload])
+        document = json.loads(manifest.read_text(encoding="utf-8"))
+        document["assets"][1]["local_path"] = f"../escape-{index}.bin"
+        manifest.write_text(json.dumps(document), encoding="utf-8")
+        drive = case / "drive"
+        drive.mkdir()
+        before = _files(case)
+        code, report = sync.execute(
+            manifest, root=root, backend="drive-desktop", drive_root=drive, apply=True,
+        )
+        assert code != 0
+        assert any(f"esc-{index}: partial: local_path" in error for error in report["errors"])
+        assert not (drive / "first/asset.bin").exists()
+        assert _files(case) == before
+        probes += 1
+    assert probes == 12
+
+
+def test_invariant_distinct_destinations_and_inputs_survive(tmp_path):
+    """Each drive_path is its own copy; failing runs do not delete inputs."""
+    rng = random.Random(463)
+    probes = 0
+    batch_entries = []
+    batch_payloads = []
+    for index in range(8):
+        body = bytes(rng.getrandbits(8) for _ in range(8))
+        entry, _ = _entry(
+            id=f"batch-{index}",
+            local_path=f"local/{index}.bin",
+            sha256=_sha(body),
+            size=len(body),
+            drive_link=FOLDER_URL,
+            drive_path=f"recorded/{index}/file.bin",
+        )
+        batch_entries.append(entry)
+        batch_payloads.append(body)
+    batch = tmp_path / "batch"
+    manifest, root = _write_manifest(batch, batch_entries, batch_payloads)
+    drive = batch / "drive"
+    drive.mkdir()
+    originals = {root / entry["local_path"]: body for entry, body in zip(batch_entries, batch_payloads)}
+    code, report = sync.execute(
+        manifest, root=root, backend="drive-desktop", drive_root=drive, apply=True,
+    )
+    assert code == 0, report
+    for entry, body in zip(batch_entries, batch_payloads):
+        assert (drive / entry["drive_path"]).read_bytes() == body
+        assert not (drive / entry["local_path"]).exists()
+        assert (root / entry["local_path"]).read_bytes() == originals[root / entry["local_path"]]
+        assert report["assets"][int(entry["id"].rsplit("-", 1)[1])]["drive_path"] == entry["drive_path"]
+    assert not (drive / batch_entries[0]["local_path"]).exists()
+    probes += 8
+    for index in range(8):
+        body = bytes(rng.getrandbits(8) for _ in range(rng.randint(1, 24)))
+        local_rel = f"local/{index}.bin"
+        drive_rel = f"recorded/{index}/file.bin"
+        entry, _ = _entry(
+            id=f"asset-{index}",
+            local_path=local_rel,
+            sha256=_sha(body),
+            size=len(body),
+            drive_link=FOLDER_URL,
+            drive_path=drive_rel,
+        )
+        case = tmp_path / f"ok-{index}"
+        manifest, root = _write_manifest(case, [entry], [body])
+        source = root / local_rel
+        drive = case / "drive"
+        drive.mkdir()
+        code, report = sync.execute(
+            manifest, root=root, backend="drive-desktop", drive_root=drive, apply=True,
+        )
+        assert code == 0, report
+        assert (drive / drive_rel).read_bytes() == body
+        assert not (drive / local_rel).exists()
+        assert report["assets"][0]["drive_path"] == drive_rel
+        assert source.read_bytes() == body
+        assert not (drive / "local/0.bin").exists()
+        source_after_conflict = body
+        (drive / drive_rel).write_bytes(b"x")
+        code, report = sync.execute(
+            manifest, root=root, backend="drive-desktop", drive_root=drive, apply=True,
+        )
+        assert code != 0
+        assert source.read_bytes() == source_after_conflict
+        assert (drive / drive_rel).read_bytes() == b"x"
+        probes += 1
+    for index in range(8):
+        shared = f"shared/{index}.bin"
+        first, payload = _entry(
+            id=f"left-{index}",
+            local_path=f"left/{index}.bin",
+            drive_link=FOLDER_URL,
+            drive_path=shared,
+        )
+        second, payload_b = _entry(
+            id=f"right-{index}",
+            local_path=f"right/{index}.bin",
+            drive_link=FOLDER_URL,
+            drive_path=shared,
+        )
+        case = tmp_path / f"dup-{index}"
+        manifest, root = _write_manifest(case, [first, second], [payload, payload_b])
+        left = (root / first["local_path"]).read_bytes()
+        right = (root / second["local_path"]).read_bytes()
+        drive = case / "drive"
+        drive.mkdir()
+        before = _files(case)
+        code, report = sync.execute(
+            manifest, root=root, backend="drive-desktop", drive_root=drive, apply=True,
+        )
+        assert code != 0
+        assert "duplicate_drive_path" in report["errors"]
+        assert _files(case) == before
+        assert (root / first["local_path"]).read_bytes() == left
+        assert (root / second["local_path"]).read_bytes() == right
+        probes += 1
+    for index in range(8):
+        rel = f"alias/{index}/recorded.bin"
+        entry, payload = _entry(
+            id=f"alias-{index}",
+            local_path=f"src/{index}.bin",
+            drive_link=FOLDER_URL,
+            drive_path=rel,
+        )
+        case = tmp_path / f"alias-{index}"
+        manifest, root = _write_manifest(case, [entry], [payload])
+        source_bytes = (root / entry["local_path"]).read_bytes()
+        drive = case / "drive"
+        drive.mkdir()
+        dest = drive / rel
+        if index % 2:
+            dest.parent.mkdir(parents=True)
+            dest.write_bytes(b"preexisting")
+            out = case / "alias.bin"
+            out.hardlink_to(dest)
+        else:
+            out = dest
+        before = _files(case)
+        code, report = sync.execute(
+            manifest, root=root, backend="drive-desktop", drive_root=drive, apply=True, out=out,
+        )
+        assert code != 0
+        assert any("output_aliases_input" in error for error in report["errors"])
+        assert _files(case) == before
+        assert (root / entry["local_path"]).read_bytes() == source_bytes
+        probes += 1
+    assert probes == 32
