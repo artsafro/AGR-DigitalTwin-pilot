@@ -22,6 +22,8 @@ import re
 import sys
 from pathlib import Path, PurePosixPath
 
+import yaml
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from twinqa.bundle import BundleError, read_bundle, size_status  # noqa: E402
@@ -29,7 +31,8 @@ from twinqa.fbx_header import check_fbx_header  # noqa: E402
 from twinqa.geojson import geojson_findings  # noqa: E402
 from twinqa.io import digest, json_bytes  # noqa: E402
 from twinqa.png import npm_texture_findings, vpm_texture_findings  # noqa: E402
-from twinqa.profiles import DEFAULT_STANDARDS, load_profiles, standards_digest  # noqa: E402
+from twinqa.profiles import (DEFAULT_STANDARDS, expected_stages, load_profiles, read_snapshot,  # noqa: E402
+                             snapshot_digest, snapshot_validator)
 from twinqa.report import Finding, Stage, ValidationReport, code_commit, recheck, recheck_summary  # noqa: E402
 from twinqa.scene import readback, scene_findings  # noqa: E402
 from twinqa.uv import sequential_tiles  # noqa: E402
@@ -247,9 +250,12 @@ def write_new(out: Path, data: bytes, inputs: list[Path]):
 def run_recheck(old: Path, out: Path, standards: Path, as_json: bool) -> int:
     try:
         old_bytes = old.read_bytes()
-        result = recheck(old_bytes, str(old), standards_digest(standards), code_commit())
+        snap = read_snapshot(standards)  # digest and stage schema from the same bytes
+        validator = snapshot_validator(snap)
+        result = recheck(old_bytes, str(old), snapshot_digest(snap), code_commit(),
+                         expected_stages=lambda kind: expected_stages(validator, kind))
         write_new(out, json_bytes(result), [old, Path(result["target"])])
-    except (OSError, ValueError, KeyError) as exc:
+    except (OSError, ValueError, KeyError, TypeError, yaml.YAMLError) as exc:
         print(f"Error: recheck: {exc}", file=sys.stderr)
         return 2
     sys.stdout.reconfigure(encoding="utf-8")

@@ -305,15 +305,52 @@ def read_stored_report(data: bytes) -> dict:
         raise ValueError(f"old report: {exc}") from None
     if (rebuilt.passed, rebuilt.exit_code) != (old["passed"], code):
         raise ValueError("old report: stored passed/exit_code do not match its stages")
+    if old.get("profile") not in ("npm", "vpm"):
+        raise ValueError("old report: profile must be npm or vpm")
+    ids = [s.id for s in rebuilt.stages]
+    dupes = sorted({i for i in ids if ids.count(i) > 1})
+    if dupes:
+        raise ValueError(f"old report: duplicate stage {', '.join(dupes)}")
+    for s in rebuilt.stages:
+        if s.gate not in GATES:
+            raise ValueError(f"old report: stage {s.id} has unknown gate {s.gate!r}")
     return old
 
 
-def recheck(old_bytes: bytes, old_path: str, standards_sha256: str, commit: str = "") -> dict:
+GATES = ("blocking", "manual_review")
+
+
+def check_stage_inventory(old: dict, expected: list[tuple[str, str, str]]):
+    """The stored stages must be exactly the (id, gate, check) the standards prescribe; ValueError names the gap."""
+    stored = [(s["id"], s["gate"], s["check"]) for s in old["stages"]]
+    have, want = {s[0]: s for s in stored}, {s[0]: s for s in expected}
+    missing = [i for i in want if i not in have]
+    unknown = [i for i in have if i not in want]
+    if missing:
+        raise ValueError(f"old report: missing stage {', '.join(missing)}")
+    if unknown:
+        raise ValueError(f"old report: unknown stage {', '.join(unknown)}")
+    for i, (_, gate, check) in want.items():
+        if have[i][1] != gate:
+            raise ValueError(f"old report: stage {i} gate {have[i][1]!r} != {gate!r}")
+        if have[i][2] != check:
+            raise ValueError(f"old report: stage {i} check text differs from the standards")
+    if [s[0] for s in stored] != list(want):
+        raise ValueError("old report: stages out of order")
+
+
+def recheck(old_bytes: bytes, old_path: str, standards_sha256: str, commit: str = "", *,
+            expected_stages) -> dict:
     """Is the stored verdict still true now? current / stale_standards / evidence_missing.
 
+    `expected_stages(profile)` gives the (id, gate, check) list of the standards being compared;
+    when their digest equals the stored one, the stored stages must match it exactly, so a
+    partial or re-gated report is an error, never a current pass.
     A relative target resolves against the current directory, as validate_package reads it.
     """
     old = read_stored_report(old_bytes)
+    if old.get("standards_sha256") == standards_sha256:
+        check_stage_inventory(old, expected_stages(old["profile"]))
     target = Path(old["target"])
     then_std = old.get("standards_sha256")
     reasons, now_sha = [], None

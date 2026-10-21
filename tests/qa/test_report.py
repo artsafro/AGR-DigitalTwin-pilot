@@ -340,3 +340,140 @@ def test_output_case_alias_of_old_report_is_refused(old, standards, tmp_path):
     before = old.read_bytes()
     assert recheck(old, standards, tmp_path / "REPORT.JSON") != 0
     assert old.read_bytes() == before
+
+
+# --- review round 1: stage inventory at the recheck boundary (P1-1) ------------------------------------
+
+def _blocking(data):
+    return [s for s in data["stages"] if s["gate"] == "blocking"]
+
+
+def forge_inventory(data, how):
+    make_passed(data)
+    first = _blocking(data)[0]
+    if how == "drop_stages":  # only one passing stage left
+        data["stages"] = [first]
+    elif how == "drop_one_mandatory":
+        data["stages"].remove(_blocking(data)[-1])
+    elif how == "gate_unsupported":  # other mandatory stages renamed out of the blocking gate
+        for s in _blocking(data)[1:]:
+            s["gate"], s["findings"], s["status"] = "unsupported", [], "not_run"
+    elif how == "gate_manual_review":  # a valid gate, but not the one the standards give
+        s = _blocking(data)[-1]
+        s["gate"], s["findings"], s["status"] = "manual_review", [], "not_run"
+    elif how == "duplicate_stage":
+        data["stages"].append(json.loads(json.dumps(first)))
+    elif how == "unknown_stage":
+        extra = json.loads(json.dumps(first))
+        extra["id"] = "V999"
+        data["stages"].append(extra)
+    elif how == "check_text":
+        first["check"] = "anything"
+    elif how == "reordered":
+        data["stages"].reverse()
+    elif how == "profile_unknown":
+        data["profile"] = "ifc"
+    elif how == "profile_other":  # the VPM stage set does not match the stored NPM stages
+        data["profile"] = "vpm" if data["profile"] == "npm" else "npm"
+    data["passed"], data["exit_code"] = True, 0
+    return data
+
+
+INVENTORY_FORGERIES = ["drop_stages", "drop_one_mandatory", "gate_unsupported", "gate_manual_review",
+                       "duplicate_stage", "unknown_stage", "check_text", "reordered", "profile_unknown",
+                       "profile_other"]
+
+
+@pytest.mark.parametrize("how", INVENTORY_FORGERIES)
+def test_incomplete_or_regated_stage_inventory_is_an_error(old, standards, tmp_path, capsys, how):
+    data = forge_inventory(json.loads(old.read_text(encoding="utf-8")), how)
+    old.write_text(json.dumps(data), encoding="utf-8")
+    before = old.read_bytes()
+    out = tmp_path / "recheck.json"
+    code = recheck(old, standards, out)
+    captured = capsys.readouterr()
+    assert code == 2 and not out.exists() and not Path(str(out) + ".partial").exists()
+    assert "PASSED" not in captured.out and "old report" in captured.err
+    assert old.read_bytes() == before
+
+
+@pytest.mark.parametrize("ok, code", [(True, 0), (False, 1)])
+def test_complete_inventory_controls_stay_current(old, standards, tmp_path, capsys, ok, code):
+    data = make_passed(json.loads(old.read_text(encoding="utf-8")), ok)
+    old.write_text(json.dumps(data), encoding="utf-8")
+    out = tmp_path / "recheck.json"
+    assert recheck(old, standards, out) == code
+    assert json.loads(out.read_text(encoding="utf-8"))["status"] == "current"
+
+
+def test_complete_inventory_survives_crlf_standards(old, standards, tmp_path, capsys):
+    data = make_passed(json.loads(old.read_text(encoding="utf-8")))
+    old.write_text(json.dumps(data), encoding="utf-8")
+    for name in ("DELIVERY_VALIDATOR.yaml", "NPM_STANDARD.yaml"):
+        p = standards / name
+        p.write_bytes(p.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+    out = tmp_path / "recheck.json"
+    assert recheck(old, standards, out) == 0
+    assert json.loads(out.read_text(encoding="utf-8"))["status"] == "current"
+
+
+@pytest.mark.parametrize("legacy", [True, False])
+def test_partial_report_on_stale_standards_is_stale_never_pass(old, standards, tmp_path, capsys, legacy):
+    """Stale standards may legitimately prescribe other stages: not an input error, but never a pass."""
+    data = forge_inventory(json.loads(old.read_text(encoding="utf-8")), "drop_stages")
+    if legacy:
+        del data["standards_sha256"]
+    else:
+        edit_threshold(standards)
+    old.write_text(json.dumps(data), encoding="utf-8")
+    out = tmp_path / "recheck.json"
+    code = recheck(old, standards, out)
+    printed = capsys.readouterr().out
+    new = json.loads(out.read_text(encoding="utf-8"))
+    assert (code, new["status"], new["passed"]) == (3, "stale_standards", False)
+    assert "PASSED" not in printed
+
+
+def test_unknown_gate_is_an_error_even_on_stale_standards(old, standards, tmp_path):
+    data = forge_inventory(json.loads(old.read_text(encoding="utf-8")), "gate_unsupported")
+    old.write_text(json.dumps(data), encoding="utf-8")
+    edit_threshold(standards)
+    out = tmp_path / "recheck.json"
+    assert recheck(old, standards, out) == 2 and not out.exists()
+
+
+def test_broken_validator_yaml_is_an_error_and_writes_nothing(old, standards, tmp_path):
+    (standards / "DELIVERY_VALIDATOR.yaml").write_text("stages: [\n", encoding="utf-8")
+    out = tmp_path / "recheck.json"
+    assert recheck(old, standards, out) == 2 and not out.exists()
+
+
+# --- review round 1: the stamp describes the parsed rules (P1-2) ---------------------------------------
+
+def test_edit_during_load_cannot_stamp_parsed_rules_with_the_new_digest(standards, monkeypatch):
+    """Edit max_characters 254 -> 200 (relocked) after the rule files were read, before the stamp."""
+    import twinqa.profiles as profiles
+    original_digest = standards_digest(standards)
+    real, edited = profiles.rule_paths, []
+
+    def mutate_then(value, path):
+        if not edited:
+            edit_threshold(standards)
+            edited.append(True)
+        return real(value, path)
+
+    monkeypatch.setattr(profiles, "rule_paths", mutate_then)
+    loaded = profiles.load_profiles(standards)
+    assert edited
+    assert "'max_characters': 254" in str(loaded.npm)
+    assert standards_digest(standards) != original_digest  # the files really moved
+    assert loaded.standards_sha256 == original_digest  # stamp = the bytes the rules came from
+
+
+def test_unchanged_and_crlf_load_stamp_equals_file_digest(standards):
+    first = load_profiles(standards).standards_sha256
+    assert first == standards_digest(standards)
+    for name in ("NPM_STANDARD.yaml", "traceability.json", "DELIVERY_VALIDATOR.yaml"):
+        p = standards / name
+        p.write_bytes(p.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+    assert load_profiles(standards).standards_sha256 == first == standards_digest(standards)
