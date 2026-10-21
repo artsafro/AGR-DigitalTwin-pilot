@@ -17,6 +17,10 @@ import re
 GAP_BAND_M = (0.002, 0.01)  # [D098]: 2 mm - 1 cm inclusive (reg p.36 §13.4 0.02-1 cm is a typo, C15)
 BAND_TOL_M = 1e-5  # float32 FBX coordinates: a modelled 2.000 mm gap reads back within 0.01 mm
 TOUCH_M = 0.0002  # faces practically touch; SINTEZ too-close is gap < this [D162]
+# Same constant as scene.OVERLAP_EPS_M (scene.py imports this module, so it cannot be imported
+# here). Comment there: it is numerical precision, not a permitted overlap.
+OVERLAP_EPS_M = 1e-5
+DEGENERATE_VOLUME_M3 = 1e-9  # absolute enclosed volume at or below this is not a volumetric hull
 NEIGHBOUR_M = 0.10  # pairs closer than this are "neighbours" in the gap report
 CONVEX_TOL_M = 1e-4  # float32 FBX coordinates around 100 m carry ~1e-5 noise
 REQ_COLLISION = "2.13.4"  # no intersections; neighbour gap 2 mm - 1 cm [D098], plus SINTEZ too-close [D162]
@@ -240,14 +244,18 @@ def surface_distance(a, b):
 def pair_relation(a, b):
     """Relation of two convex hulls: (class, gap_m, penetration_m).
 
-    class: overlap (penetration > TOUCH_M), touch (gap < TOUCH_M), below_band (TOUCH_M <= gap
-    < 2 mm), in_band (2 mm - 1 cm inclusive, [D098]), wide (1 cm < gap <= NEIGHBOUR_M), apart
-    (gap > NEIGHBOUR_M, not neighbours).
+    class: overlap (penetration > OVERLAP_EPS_M), touch (gap < TOUCH_M), below_band
+    (TOUCH_M <= gap < 2 mm), in_band (2 mm - 1 cm inclusive, [D098]), wide (1 cm < gap
+    <= NEIGHBOUR_M), apart (gap > NEIGHBOUR_M, not neighbours).
+
+    OVERLAP_EPS_M separates a true intersection from numerical contact. TOUCH_M is only the
+    SINTEZ too-close gap (< 0.2 mm) and is not an overlap cutoff. A separation at or below
+    OVERLAP_EPS_M is touching; a larger positive separation is a measured gap.
     """
     sep = sat_separation(a, b)
-    if sep < -TOUCH_M:
+    if sep < -OVERLAP_EPS_M:
         return "overlap", 0.0, -sep
-    gap = surface_distance(a, b) if sep > -TOUCH_M else 0.0
+    gap = surface_distance(a, b) if sep > OVERLAP_EPS_M else 0.0
     if gap < TOUCH_M:
         return "touch", gap, max(0.0, -sep)
     if gap < GAP_BAND_M[0] - BAND_TOL_M:
@@ -273,8 +281,23 @@ def inside_convex(p, verts, tris, tol=0.0):
     return True
 
 
+def _enclosed_volume(verts, tris):
+    """Absolute enclosed volume (m^3) from the signed tetrahedron sum over triangles.
+
+    Same formula as scene._enclosed_volume. scene.py imports this module, so the helper
+    is copied rather than imported.
+    """
+    total = 0.0
+    for ia, ib, ic in tris:
+        a, b, c = verts[ia], verts[ib], verts[ic]
+        total += a[0] * (b[1] * c[2] - b[2] * c[1])
+        total -= a[1] * (b[0] * c[2] - b[2] * c[0])
+        total += a[2] * (b[0] * c[1] - b[1] * c[0])
+    return abs(total) / 6.0
+
+
 def _unmeasurable(verts, tris):
-    """Why SAT must not run on this hull, or None when the hull is closed, convex and finite."""
+    """Why SAT must not run on this hull, or None when the hull is closed, convex and volumetric."""
     try:
         if len(verts) == 0 or len(tris) == 0:
             return "empty"
@@ -297,6 +320,8 @@ def _unmeasurable(verts, tris):
         return "open"
     if not is_convex(verts, tris):
         return "non-convex"
+    if _enclosed_volume(verts, tris) <= DEGENERATE_VOLUME_M3:
+        return "degenerate"
     return None
 
 
@@ -322,7 +347,7 @@ def _one_inside_the_other(a, b):
 def pair_findings(a, b, name_a=None, name_b=None):
     """Req 2.13.4 findings for one unordered pair of convex hulls. Zero or more.
 
-    Overlap (penetration > TOUCH_M) is `nested` when one hull contains the other, otherwise
+    Overlap (penetration > OVERLAP_EPS_M) is `nested` when one hull contains the other, otherwise
     `intersect`. A gap below TOUCH_M emits both `too_close` and `gap_out_of_band` [D162].
     A gap outside 2 mm - 1 cm emits `gap_out_of_band` (above 1 cm only while the pair is still
     a neighbour, gap <= NEIGHBOUR_M). In-band and non-neighbour gaps emit nothing.
@@ -358,7 +383,7 @@ def collision_findings(hulls):
     """Findings for every unordered pair of named hulls, plus a drop for each hull SAT cannot measure.
 
     Each hull is `{"name", "verts", "tris"}`. An empty list returns `[]` (no pairs, not a pass).
-    Open, non-convex, empty and non-finite hulls are `not_run` and are left out of pair checks;
+    Open, non-convex, degenerate, empty and non-finite hulls are `not_run` and are left out of pair checks;
     every other pair is still measured. Pair order follows input order.
     """
     if isinstance(hulls, (list, tuple)) and len(hulls) == 0:

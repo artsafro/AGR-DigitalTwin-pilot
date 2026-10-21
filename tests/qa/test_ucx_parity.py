@@ -254,3 +254,127 @@ def test_duplicate_hull_terminates_deterministically():
     assert first == second
     assert [f["type"] for f in first] == ["nested"]
     assert first[0]["req"] == REQ and first[0]["a"] == "A" and first[0]["b"] == "A"
+
+
+def test_overlap_01mm_is_intersect_with_penetration():
+    """0.1 mm penetration is intersect (req 2.13.4), not a zero-penetration proximity finding."""
+    a = box((0, 0, 0), (1, 1, 1))
+    b = box((0.9999, 0, 0), (1.9999, 1, 1))
+    findings = ua.pair_findings(a, b, name_a="A", name_b="B")
+    assert [f["type"] for f in findings] == ["intersect"]
+    assert findings[0]["penetration_m"] == pytest.approx(0.0001, abs=1e-6)
+    assert findings[0]["gap_m"] == 0.0
+    assert findings[0]["req"] == REQ
+
+
+def test_thin_contained_box_is_nested():
+    """A valid box strictly inside a 0.1 mm shell is nested, not too-close."""
+    outer = box((0, 0, 0), (0.0001, 1, 1))
+    inner = box((0.00002, 0.2, 0.2), (0.00008, 0.8, 0.8))
+    findings = ua.pair_findings(outer, inner, name_a="outer", name_b="inner")
+    assert [f["type"] for f in findings] == ["nested"]
+    assert findings[0]["a"] == "outer" and findings[0]["b"] == "inner"
+    assert findings[0]["penetration_m"] > 0
+    assert findings[0]["req"] == REQ
+
+
+def test_flat_hull_is_degenerate_not_clean():
+    """Zero thickness is not_run/degenerate, never a clean pair list."""
+    findings = ua.collision_findings([
+        hull("flat", box((0, 0, 0), (1, 1, 0))),
+        hull("ok", box((5, 0, 0), (6, 1, 1))),
+    ])
+    assert len(findings) == 1
+    assert findings[0]["type"] == "not_run"
+    assert findings[0]["hull"] == "flat"
+    assert findings[0]["reason"] == "degenerate"
+    assert findings[0]["req"] == REQ
+    assert "a" not in findings[0] and "b" not in findings[0]
+
+
+def test_collapsed_hull_is_degenerate():
+    """All vertices coincident is not_run/degenerate, never a clean pair list."""
+    findings = ua.collision_findings([
+        hull("point", box((0, 0, 0), (0, 0, 0))),
+        hull("ok", box((5, 0, 0), (6, 1, 1))),
+    ])
+    assert len(findings) == 1
+    assert findings[0]["type"] == "not_run"
+    assert findings[0]["hull"] == "point"
+    assert findings[0]["reason"] == "degenerate"
+    assert findings[0]["req"] == REQ
+
+
+def test_flat_hull_does_not_hide_later_pair():
+    """A degenerate hull is dropped; a later too-close pair is still reported."""
+    findings = ua.collision_findings([
+        hull("flat", box((0, 0, 0), (1, 1, 0))),
+        hull("L", box((0, 0, 0), (1, 1, 1))),
+        hull("R", box((1.0001, 0, 0), (2, 1, 1))),
+    ])
+    drops = [f for f in findings if f["type"] == "not_run"]
+    pairs = [f for f in findings if f["type"] != "not_run"]
+    assert len(drops) == 1
+    assert drops[0]["hull"] == "flat" and drops[0]["reason"] == "degenerate"
+    assert [f["type"] for f in pairs] == ["too_close", "gap_out_of_band"]
+    assert {f["a"] for f in pairs} == {"L"} and {f["b"] for f in pairs} == {"R"}
+    assert_reqs(findings)
+
+
+def test_penetration_above_overlap_eps_is_intersect_sweep():
+    """Penetration deeper than 1e-5 m is intersect; at or below it stays proximity. N/N.
+
+    The constructed depth is the independent expected penetration. The old 0.2 mm cutoff
+    must not swallow depths in (1e-5, 0.2 mm].
+    """
+    depths = (0.0, 1e-5, 1.1e-5, 2e-5, 5e-5, 1e-4, 1.5e-4, 2e-4, 2.1e-4, 5e-4, 1e-3)
+    matched = intersect_n = proximity_n = 0
+    for depth in depths:
+        a = box((0, 0, 0), (1, 1, 1))
+        b = box((1 - depth, 0, 0), (2 - depth, 1, 1))
+        findings = ua.pair_findings(a, b, name_a="A", name_b="B")
+        types = [f["type"] for f in findings]
+        assert_reqs(findings)
+        if depth > 1e-5:
+            assert types == ["intersect"]
+            assert findings[0]["penetration_m"] == pytest.approx(depth, abs=1e-6)
+            assert findings[0]["gap_m"] == 0.0
+            intersect_n += 1
+        else:
+            assert types == ["too_close", "gap_out_of_band"]
+            assert all(f["penetration_m"] == 0.0 for f in findings)
+            proximity_n += 1
+        matched += 1
+    assert matched == len(depths) == 11
+    assert intersect_n == 9 and proximity_n == 2
+
+
+def test_volume_at_or_below_1e9_is_degenerate_sweep():
+    """Enclosed volume <= 1e-9 m^3 is not_run/degenerate and does not hide a later pair. N/N.
+
+    Expected volume is the box product dx*dy*dz, not the tetrahedron helper.
+    """
+    thicknesses = (0.0, 1e-12, 1e-10, 1e-9, 1e-6, 1e-4)
+    matched = degenerate_n = solid_n = 0
+    for thickness in thicknesses:
+        candidate = hull("cand", box((0, 0, 0), (1, 1, thickness)))
+        left = hull("L", box((10, 0, 0), (11, 1, 1)))
+        right = hull("R", box((11.0001, 0, 0), (12, 1, 1)))
+        findings = ua.collision_findings([candidate, left, right])
+        volume = abs(1.0 * 1.0 * thickness)
+        drops = [f for f in findings if f["type"] == "not_run"]
+        pairs = [f for f in findings if f["type"] != "not_run"]
+        assert_reqs(findings)
+        assert [f["type"] for f in pairs] == ["too_close", "gap_out_of_band"]
+        assert {f["a"] for f in pairs} == {"L"} and {f["b"] for f in pairs} == {"R"}
+        if volume <= 1e-9:
+            assert len(drops) == 1
+            assert drops[0]["hull"] == "cand" and drops[0]["reason"] == "degenerate"
+            assert "gap_m" not in drops[0]
+            degenerate_n += 1
+        else:
+            assert drops == []
+            solid_n += 1
+        matched += 1
+    assert matched == len(thicknesses) == 6
+    assert degenerate_n == 4 and solid_n == 2
