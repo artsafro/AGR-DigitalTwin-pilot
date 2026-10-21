@@ -12,6 +12,7 @@
 !/jobs/**/*.ms
 !/jobs/**/*.rb
 /jobs/*/outputs/
+/jobs/*/pipeline/dump-*.json
 /jobs/*/runs/
 /jobs/*/cli-runs/
 /jobs/**/pytest-tmp/
