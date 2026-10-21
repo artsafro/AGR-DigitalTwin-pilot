@@ -237,10 +237,10 @@ class RunRecord:
             fingerprint = self.fingerprint()
             signature = digest(json_bytes({"fingerprint": fingerprint, "argv": argv,
                                            "cwd": cwd, "outputs": outputs}))
+            self._refuse_unreleased_running(ledger, stage)
             cached = self._matching(ledger, stage, signature)
             if cached:
                 return cached
-            self._refuse_unreleased_running(ledger, stage)
             if any(Path(path).exists() for path in outputs.values()):
                 raise EvidenceMismatch("Unverified or changed-input output exists; use fresh output paths")
             if not ledger["attempts"] or stage in ledger["attempts"][-1]["stages"]:

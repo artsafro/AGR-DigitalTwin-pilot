@@ -23,6 +23,29 @@ def fixture_run(tmp_path):
     return run, inputs
 
 
+def plant_newer_running(run, stage, pid=None, *, include_pid=True):
+    """Append an unreleased running row as attempt N+1. Leaves earlier outputs alone."""
+    ledger = run.read()
+    number = len(ledger["attempts"]) + 1
+    attempt_dir = run.directory / f"attempt-{number:03d}"
+    attempt_dir.mkdir(exist_ok=False)
+    record = {
+        "status": "running",
+        "signature": "planted-running-newer",
+        "argv": ["planted"],
+        "cwd": str(run.directory),
+        "outputs": {},
+    }
+    if include_pid:
+        record["spawned_pid"] = pid
+    ledger["attempts"].append({
+        "number": number,
+        "directory": str(attempt_dir),
+        "stages": {stage: record},
+    })
+    write_json(run.path, ledger)
+
+
 def plant_running(run, stage, pid=None, *, include_pid=True, releases=None):
     """Crash leftover: a running stage row and no outputs on disk."""
     ledger = run.read()
@@ -419,3 +442,43 @@ def test_release_stage_rejects_unsafe_name(tmp_path):
     with pytest.raises(ValueError, match="Unsafe identifier"):
         run.release_stage("not a stage", reason="crash")
     assert run.path.read_bytes() == before
+
+
+def test_older_produced_plus_newer_running_dead_pid_blocks_before_cache(tmp_path):
+    run, _ = fixture_run(tmp_path)
+    output, counter = tmp_path / "out", tmp_path / "counter"
+    argv = writer(output, counter)
+    assert run.run_stage("X", argv, {"out": output})["status"] == "produced"
+    pid = fully_dead_pid(tmp_path / "grandchild.pid")
+    plant_newer_running(run, "X", pid)
+    before = run.path.read_bytes()
+    produced = output.read_bytes()
+    with pytest.raises(StageUnresolved) as caught:
+        run.run_stage("X", argv, {"out": output})
+    assert type(caught.value) is StageUnresolved
+    assert not isinstance(caught.value, StageStillRunning)
+    assert counter.read_text() == "1"
+    assert output.read_bytes() == produced
+    assert run.path.read_bytes() == before
+
+
+def test_older_produced_plus_newer_running_live_pid_blocks_before_cache(tmp_path):
+    run, _ = fixture_run(tmp_path)
+    output, counter = tmp_path / "out", tmp_path / "counter"
+    argv = writer(output, counter)
+    assert run.run_stage("X", argv, {"out": output})["status"] == "produced"
+    child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
+    try:
+        plant_newer_running(run, "X", child.pid)
+        before = run.path.read_bytes()
+        produced = output.read_bytes()
+        with pytest.raises(StageStillRunning) as caught:
+            run.run_stage("X", argv, {"out": output})
+        assert type(caught.value) is StageStillRunning
+        assert not isinstance(caught.value, StageUnresolved)
+        assert counter.read_text() == "1"
+        assert output.read_bytes() == produced
+        assert run.path.read_bytes() == before
+    finally:
+        child.kill()
+        child.wait(timeout=5)
