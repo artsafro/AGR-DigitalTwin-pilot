@@ -275,3 +275,45 @@ def test_relative_target_resolves_against_cwd_like_validate(old, standards, tmp_
     out = tmp_path / "r.json"
     run_recheck(old, standards, out, capsys)
     assert json.loads(out.read_text(encoding="utf-8"))["status"] == status
+
+
+# --- probe: every combination of target x standards x stored verdict ---------------------------------
+
+@pytest.mark.parametrize("stored_ok", [True, False])
+@pytest.mark.parametrize("std", ["same", "edited", "edited_unlocked", "legacy"])
+@pytest.mark.parametrize("tgt", ["same", "changed", "deleted"])
+def test_probe_recheck_matrix(old, standards, tmp_path, capsys, tgt, std, stored_ok):
+    data = json.loads(old.read_text(encoding="utf-8"))
+    data["passed"], data["exit_code"] = stored_ok, 0 if stored_ok else 1
+    if std == "legacy":
+        del data["standards_sha256"], data["code_commit"]
+    old.write_text(json.dumps(data), encoding="utf-8")
+    if std.startswith("edited"):
+        edit_threshold(standards, relock=std == "edited")
+    target = tmp_path / "model.fbx"
+    if tgt == "changed":
+        target.write_bytes(target.read_bytes() + b"\x00")
+    elif tgt == "deleted":
+        target.unlink()
+    before = old.read_bytes()
+    out = tmp_path / "probe.json"
+    code = recheck(old, standards, out)
+    text = capsys.readouterr().out
+    new = json.loads(out.read_text(encoding="utf-8"))
+    expected = "evidence_missing" if tgt != "same" else "stale_standards" if std != "same" else "current"
+    assert old.read_bytes() == before and new["status"] == expected
+    if expected == "current":
+        assert code == new["exit_code"] == data["exit_code"] and new["passed"] is stored_ok
+    else:
+        assert code == new["exit_code"] in (3, 4) and new["passed"] is False and "pass" not in text.lower()
+
+
+def test_missing_standards_folder_is_an_error_and_writes_nothing(old, tmp_path):
+    out = tmp_path / "r.json"
+    assert recheck(old, tmp_path / "no-standards", out) == 2 and not out.exists()
+
+
+def test_output_case_alias_of_old_report_is_refused(old, standards, tmp_path):
+    before = old.read_bytes()
+    assert recheck(old, standards, tmp_path / "REPORT.JSON") != 0
+    assert old.read_bytes() == before

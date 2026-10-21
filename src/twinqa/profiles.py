@@ -7,11 +7,25 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from twinqa.io import digest, digest_text, read_json, read_yaml
+from twinqa.io import digest, digest_text, json_bytes, read_json, read_yaml
 
 FILES = ("NPM_STANDARD.yaml", "VPM_STANDARD.yaml", "DELIVERY_VALIDATOR.yaml")
 NOT_RULES = {"standard", "version", "status", "source", "conflicts"}
 DEFAULT_STANDARDS = Path(__file__).resolve().parents[2] / "standards"
+# Files whose content decides a verdict; the lock keeps only pdf_sha256 (pdf_default_location is per machine).
+DIGEST_FILES = (*FILES, "traceability.json")
+
+
+def standards_digest(folder: Path = DEFAULT_STANDARDS) -> str:
+    """SHA-256 over the rule files and the regulation hash; line-ending neutral.
+
+    Read straight from the files (no lock check), so an unlocked edit still moves the digest.
+    A missing file raises OSError; a lock without pdf_sha256 raises KeyError.
+    """
+    folder = Path(folder)
+    lock = read_json((folder / "source/source-lock.json").read_bytes())
+    stamp = {"pdf_sha256": lock["pdf_sha256"], "files": {n: digest_text(folder / n) for n in DIGEST_FILES}}
+    return digest(json_bytes(stamp))
 
 
 @dataclass
@@ -22,6 +36,7 @@ class Profiles:
     pdf_sha256: str
     pdf_verified: bool  # False when the PDF file was not available to hash
     folder: Path = field(default=DEFAULT_STANDARDS)
+    standards_sha256: str = ""  # standards_digest(folder) at load time
 
     def profile(self, kind: str) -> dict:
         return {"npm": self.npm, "vpm": self.vpm}[kind.lower()]
@@ -102,4 +117,4 @@ def load_profiles(folder: Path = DEFAULT_STANDARDS) -> Profiles:
             raise ValueError(f"Stale traceability source: {row['rule']}")
     return Profiles(npm=data["NPM_STANDARD.yaml"], vpm=data["VPM_STANDARD.yaml"],
                     validator=data["DELIVERY_VALIDATOR.yaml"], pdf_sha256=lock["pdf_sha256"],
-                    pdf_verified=pdf is not None, folder=folder)
+                    pdf_verified=pdf is not None, folder=folder, standards_sha256=standards_digest(folder))
