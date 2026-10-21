@@ -454,7 +454,10 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
   (`tools/blender/xview_dump.py`, evaluated meshes, float64); default `local` = object location subtracted. Report per
   object: Overlapping Vertices / Faces counts and ids, vertex pairs (`double` / `bowtie`), face pairs with partner,
   kind (contact / area / area+contact), separation and centres, bow-tie (non-manifold) vertices, dropped non-mesh
-  objects, input SHA-256. Exit 0 pass, 1 overlaps, 2 error (no verdict).
+  objects, input SHA-256, units. Blender units become metres via `scene.unit_settings.scale_length` (a missing,
+  non-positive or non-finite scale, or system NONE with scale != 1, is an error). Report and `<report>.blender.log`
+  are published no-clobber: a file created at either name by another writer is kept and the run exits 2.
+  Exit 0 pass, 1 overlaps, 2 error (no verdict).
 - Measured on vyatskaya-tow02 (review #514): ours export-v005 185 faces (= xView ids 1:1, centres <= 0.50 mm) and
   0 vertices, ~35 s; user FBX `_05` object 013: 0 faces, 10 vertices = 5 coincident pairs, all `bowtie`, local and
   in place. Postcondition of every build / fix step: `docs/procedure/TASK_TO_MODEL.md`.

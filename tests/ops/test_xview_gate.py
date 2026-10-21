@@ -549,3 +549,41 @@ def test_blend_log_is_published_beside_the_report(tmp_path, capsys, monkeypatch)
     log = tmp_path / "r.json.blender.log"
     assert log.read_text(encoding="utf-8") == "fake blender log" and rep["input"]["blender"]["log"] == str(log)
     assert sorted(x.name for x in tmp_path.iterdir()) == ["a.blend", "r.json", "r.json.blender.log"]
+
+
+def test_probe_unit_scale_invariance(tmp_path, capsys, monkeypatch):
+    """Generated: 40 random (gap, scale_length) -> verdict and face count equal the scale_length 1 control."""
+    rng = np.random.default_rng(527)
+    for k in range(40):
+        gap = float(rng.uniform(0.0, 0.012))
+        scale = float(10.0 ** rng.integers(-3, 4))
+        res = []
+        for j, sc in enumerate((1.0, scale)):
+            src = tmp_path / f"p{k}_{j}.blend"
+            src.write_bytes(b"blend")
+            fake_blender(monkeypatch, [part("rail", *rail_soffit(gap), loc=SITE)], scale=sc)
+            out = tmp_path / f"p{k}_{j}.json"
+            code, _, _ = run(["qa", "xview", str(src), "--out", str(out)], capsys)
+            res.append((code, json.loads(out.read_text(encoding="utf-8"))["totals"]["overlapping_faces"]))
+        assert res[0] == res[1], (gap, scale, res)
+
+
+def test_probe_concurrent_publishers_one_wins(tmp_path):
+    """Generated: 8 threads x 25 rounds publish to one name; exactly one succeeds, its bytes intact, no temp left."""
+    import threading
+    for r in range(25):
+        dest = tmp_path / f"d{r}.json"
+        ok, errs = [], []
+
+        def go(i):
+            try:
+                G.publish(f"writer-{i}".encode() * 1000, dest)
+                ok.append(i)
+            except ValueError as e:
+                errs.append(str(e))
+        ts = [threading.Thread(target=go, args=(i,)) for i in range(8)]
+        [t.start() for t in ts]
+        [t.join() for t in ts]
+        assert len(ok) == 1 and len(errs) == 7 and all("exists" in e for e in errs)
+        assert dest.read_bytes() == f"writer-{ok[0]}".encode() * 1000
+    assert not list(tmp_path.glob("*.partial"))
