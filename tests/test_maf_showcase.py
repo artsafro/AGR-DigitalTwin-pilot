@@ -185,6 +185,54 @@ def test_readback_counts_and_fail_closed(sc, data):
         assert name
 
 
+def _first_mesh(r):
+    return next(o for o in r["objects"] if o["kind"] == "mesh")
+
+
+def _row(r, group):
+    return next(o for o in r["objects"] if o["name"] == f"ROW_{group}")
+
+
+@pytest.mark.parametrize("name, mutate, match", [
+    ("size NaN", lambda r: _first_mesh(r).update(size=[float("nan")] + _first_mesh(r)["size"][1:]), "size"),
+    ("size inf", lambda r: _first_mesh(r).update(size=_first_mesh(r)["size"][:2] + [float("inf")]), "size"),
+    ("size empty", lambda r: _first_mesh(r).update(size=[]), "size"),
+    ("size one", lambda r: _first_mesh(r).update(size=_first_mesh(r)["size"][:1]), "size"),
+    ("size four", lambda r: _first_mesh(r).update(size=_first_mesh(r)["size"] + [0.0]), "size"),
+    ("size str", lambda r: _first_mesh(r).update(size=["1", "1", "1"]), "size"),
+    ("size bool", lambda r: _first_mesh(r).update(size=[True, 1.0, 1.0]), "size"),
+    ("size missing", lambda r: _first_mesh(r).pop("size"), "size"),
+    ("tris str", lambda r: _first_mesh(r).update(tris="12"), "tris"),
+    ("row text wrong", lambda r: _row(r, "lighting").update(text="WRONG ROW LABEL"), "ROW_lighting"),
+    ("row kind mesh", lambda r: _row(r, "sport").update(kind="mesh"), "ROW_sport"),
+    ("row extra", lambda r: r["objects"].append(dict(name="ROW_flora", kind="text", tris=0, size=[1, 0, 1],
+                                                     text="Flora")), "ROW_flora"),
+])
+def test_readback_rejects_malformed_measurement_and_row(sc, data, name, mutate, match):
+    """Review round 1 P1 (PR #493): malformed size / wrong row label must not certify."""
+    layout = sc.plan(*data, check_hashes=False)
+    bad = _readback(layout)
+    mutate(bad)
+    with pytest.raises(sc.ShowcaseError, match=match):
+        sc.check_readback(bad, layout)
+
+
+def test_readback_controls_with_new_checks(sc, data):
+    """Clean, 2 mm boundary still pass; oversize and missing row still fail (combined with round-1 fix)."""
+    layout = sc.plan(*data, check_hashes=False)
+    good = _readback(layout)
+    assert sc.check_readback(good, layout)["meshes"] == 26
+    edge = copy.deepcopy(good)
+    _first_mesh(edge)["size"][2] += 0.0019
+    assert sc.check_readback(edge, layout)["row_labels"] == 5
+    for mutate in (lambda r: _first_mesh(r)["size"].__setitem__(0, _first_mesh(r)["size"][0] + 0.0021),
+                   lambda r: r["objects"].remove(_row(r, "lighting"))):
+        bad = copy.deepcopy(good)
+        mutate(bad)
+        with pytest.raises(sc.ShowcaseError):
+            sc.check_readback(bad, layout)
+
+
 def test_output_folder_overlap_rejected(sc, tmp_path):
     fbx = tmp_path / "v005-set" / "npm" / "a.fbx"
     fbx.parent.mkdir(parents=True)

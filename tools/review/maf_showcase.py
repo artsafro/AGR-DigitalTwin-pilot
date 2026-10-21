@@ -344,6 +344,15 @@ def build_script(layout, out_max: Path, render_png: Path, report: Path, row_dir:
             .replace("@CX@", f"{w / 2:.3f}").replace("@CY@", f"{d / 2:.3f}").replace("@DIST@", f"{dist:.3f}"))
 
 
+def _dims(value):
+    """Exactly three finite real numbers (no bool, str or NaN/inf), else None."""
+    if not isinstance(value, (list, tuple)) or len(value) != 3:
+        return None
+    if not all(isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) for v in value):
+        return None
+    return [float(v) for v in value]
+
+
 def check_readback(readback: dict, layout: dict, tol=0.002) -> dict:
     """Counts and per-position checks of the fresh-process readback; raises on any miss."""
     if readback.get("ok") is not True:
@@ -370,18 +379,34 @@ def check_readback(readback: dict, layout: dict, tol=0.002) -> dict:
                 problems.append(f"{prefix}{sid}: {len(hits)} meshes")
                 continue
             o = hits[0]
+            size = _dims(o.get("size"))
+            if size is None:
+                problems.append(f"{o['name']}: invalid size {o.get('size')!r} (need 3 finite numbers)")
+                continue
+            if not isinstance(o.get("tris"), int) or isinstance(o.get("tris"), bool):
+                problems.append(f"{o['name']}: invalid tris {o.get('tris')!r}")
+                continue
             if o["tris"] != s[prof]["triangles"]:
                 problems.append(f"{o['name']}: tris {o['tris']} != {s[prof]['triangles']}")
-            if any(abs(a - b) > tol for a, b in zip(o["size"], s[prof]["size"])):
+            if any(abs(a - b) > tol for a, b in zip(size, s[prof]["size"])):
                 problems.append(f"{o['name']}: size {o['size']} != {s[prof]['size']}")
         t = by.get(f"TXT_{sid}")
         if t is None or t["kind"] != "text":
             problems.append(f"TXT_{sid}: missing")
         elif t["text"].split("\n") != s["lines"]:
             problems.append(f"TXT_{sid}: text differs")
-    for r in layout["rows"]:
-        if f"ROW_{r['group']}" not in by:
-            problems.append(f"ROW_{r['group']}: missing")
+    planned_rows = {f"ROW_{r['group']}": r["label"] for r in layout["rows"]}
+    for name, label in planned_rows.items():
+        o = by.get(name)
+        if o is None:
+            problems.append(f"{name}: missing")
+        elif o["kind"] != "text":
+            problems.append(f"{name}: kind {o['kind']} != text")
+        elif o.get("text") != label:
+            problems.append(f"{name}: text {o.get('text')!r} != planned {label!r}")
+    extra_rows = sorted(o["name"] for o in objs if o["name"].startswith("ROW_") and o["name"] not in planned_rows)
+    if extra_rows:
+        problems.append(f"unplanned row labels: {extra_rows}")
     expected = 2 * len(layout["slots"])
     if len(meshes) != expected:
         problems.append(f"meshes {len(meshes)} != {expected}")
