@@ -10,6 +10,7 @@ Ground FBX: Flora checks from twinqa.flora (V015 dimensions, V005 maps, V003 Flo
 import itertools
 import math
 import tempfile
+from fractions import Fraction
 from pathlib import Path
 
 from dt_ai.core.blender_runner import blender_executable, run_blender
@@ -118,9 +119,11 @@ def ground_triangle_limit(profile: dict, ground_area_m2) -> tuple[int, dict]:
     Non-finite, non-positive or non-numeric area raises ValueError naming `ground_area_m2`."""
     check_ground_area(ground_area_m2)
     bands = _ground_bands(profile)
-    area_ha = ground_area_m2 / 10_000
+    # Exact rational comparison in m2: a float ha quotient rounds 500.00000000000006 m2 down to 0.05 ha
+    # and would pick the lower band; the YAML edge is read as its decimal text (0.05 ha == 500 m2 exactly).
+    area = Fraction(ground_area_m2)
     for band in bands[:-1]:
-        if area_ha <= band["area_max"]:
+        if area <= Fraction(str(band["area_max"])) * 10_000:
             return band["triangles_max"], band
     return bands[-1]["triangles_max"], bands[-1]
 
