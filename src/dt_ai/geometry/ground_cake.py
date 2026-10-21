@@ -963,7 +963,8 @@ def clean_topology(mesh: Mesh, weld_m: float = 0.0021) -> Mesh:
 
 
 def weld_base_boundary(mesh: Mesh, weld_m: float = .0041,
-                       displacement_limit_m: float = .0021) -> Mesh:
+                       displacement_limit_m: float = .0021, *,
+                       accepted_boundary=None, retained_midpoints=()) -> Mesh:
     """Opt-in midpoint closure of tiny base-outline seams before curtain extrusion.
 
     Only open-edge base vertices may participate. Unlike whole-outline projection,
@@ -976,6 +977,18 @@ def weld_base_boundary(mesh: Mesh, weld_m: float = .0041,
     """
     from twinqa.geometry.topology import _cluster_ids
     from dt_ai.ops.inv_quads import PolyMesh
+    from shapely.geometry import LineString
+
+    if accepted_boundary is not None:
+        if (not isinstance(accepted_boundary, (Polygon, MultiPolygon)) or accepted_boundary.is_empty
+                or not accepted_boundary.is_valid or not np.isfinite(accepted_boundary.bounds).all()):
+            raise ValueError('valid finite nonempty accepted boundary required')
+        permitted = accepted_boundary.buffer(.00219)
+    else:
+        permitted = None
+    protected = np.asarray(retained_midpoints, dtype=float)
+    if protected.size and (protected.ndim != 2 or protected.shape[1] != 2 or not np.isfinite(protected).all()):
+        raise ValueError('finite XY retained midpoints required')
 
     for name, value in (("weld_m", weld_m), ("displacement_limit_m", displacement_limit_m)):
         if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
@@ -1031,6 +1044,7 @@ def weld_base_boundary(mesh: Mesh, weld_m: float = .0041,
     clusters = _cluster_ids(mesh.verts[boundary], weld_m) if len(boundary) else np.empty(0, int)
     v = mesh.verts.copy()
     groups = []
+    retained = []
     for cluster in np.unique(clusters):
         ids = boundary[clusters == cluster]
         if len(ids) == 1:
@@ -1041,21 +1055,65 @@ def weld_base_boundary(mesh: Mesh, weld_m: float = .0041,
             raise ValueError(f"boundary cluster {ids.tolist()}: displacement {displacement.max()} m reaches {displacement_limit_m} m")
         target = centre
         strategy = 'midpoint_seam'
-        if len(ids) == 2 and any(set(ids).issubset(face) for face in mesh.faces):
-            # Collapsing an actual face edge can delete a long narrow tongue,
-            # even though both endpoints move less than 2.1 mm. Retain it by
-            # widening that edge within the same movement bound. 6.3 mm is a
-            # construction width, not a changed xView/outline tolerance; the
-            # complete resulting curtains still require independent checking.
+        preserve_midpoint = protected.size and np.any(np.linalg.norm(protected-centre[:2],axis=1)<1e-7)
+        if len(ids) == 2 and not preserve_midpoint and (permitted is not None or any(set(ids).issubset(face) for face in mesh.faces)):
+            # Preserve a narrow tongue; vertex-motion bounds alone do not bound
+            # the surface lost when a short edge is collapsed.
             direction = mesh.verts[ids[1]] - mesh.verts[ids[0]]
-            direction /= np.linalg.norm(direction)
-            target = np.array([centre-direction*.0063/2, centre+direction*.0063/2])
+            length = np.linalg.norm(direction)
+            direction /= length
+            width = .0059  # construction width, not a changed xView tolerance
+            target = np.array([centre-direction*width/2, centre+direction*width/2])
+            if permitted is not None:
+                budget = displacement_limit_m-abs(width-length)/2-1e-8
+                if budget <= 0 or np.dot(direction[:2],direction[:2]) <= 0:
+                    raise ValueError('no bounded retained-edge translation')
+                intervals = [(-budget,budget)]
+                for point in target:
+                    line = LineString([point[:2]-direction[:2]*budget,point[:2]+direction[:2]*budget])
+                    clipped = line.intersection(permitted)
+                    pieces = list(clipped.geoms) if hasattr(clipped,'geoms') else [clipped]
+                    available = []
+                    for piece in pieces:
+                        if piece.geom_type != 'LineString' or piece.is_empty:continue
+                        values = [(np.asarray(p)-point[:2])@direction[:2]/np.dot(direction[:2],direction[:2]) for p in piece.coords]
+                        available.append((min(values),max(values)))
+                    intervals = [(max(a,c),min(b,d)) for a,b in intervals for c,d in available if max(a,c)<=min(b,d)]
+                if not intervals:raise ValueError('retained edge cannot fit the unchanged outline/movement bounds')
+                retained.append(dict(group=len(groups),ids=ids,direction=direction.copy(),target=target.copy(),intervals=intervals))
+                shift = min((min(max(0.,a),b) for a,b in intervals),key=abs)
+                target += direction*shift
             strategy = 'retained_short_edge'
             actual_displacement = np.linalg.norm(mesh.verts[ids]-target, axis=1)
             if actual_displacement.max() >= displacement_limit_m:
                 raise ValueError(f"retained boundary edge {ids.tolist()}: displacement reaches {displacement_limit_m} m")
         v[ids] = target
         groups.append(dict(vertices=ids.tolist(), before=mesh.verts[ids].tolist(), after=target.tolist(), strategy=strategy))
+    # Connected ends of the same narrow strip must use one translation. Merely
+    # clipping endpoints independently can leave the connecting edge outside a
+    # concave outline even when every endpoint is inside the buffered polygon.
+    pending = set(range(len(retained)))
+    incidence = [{i for i,f in enumerate(mesh.faces) if set(r['ids']) & set(f)} for r in retained]
+    while pending:
+        component = {pending.pop()}
+        while True:
+            extra = {j for j in pending if any(incidence[i]&incidence[j] and abs(np.dot(retained[i]['direction'],retained[j]['direction']))>.999 for i in component)}
+            if not extra:break
+            component.update(extra);pending.difference_update(extra)
+        ref = retained[min(component)]['direction']
+        choices = [(-displacement_limit_m,displacement_limit_m)]
+        for i in sorted(component):
+            r = retained[i];sign = 1 if np.dot(r['direction'],ref)>0 else -1
+            available = r['intervals'] if sign==1 else [(-b,-a) for a,b in r['intervals']]
+            choices = [(max(a,c),min(b,d)) for a,b in choices for c,d in available if max(a,c)<=min(b,d)]
+        if not choices:raise ValueError('connected retained edges cannot fit the unchanged bounds')
+        shift = min((min(max(0.,a),b) for a,b in choices),key=abs)
+        for i in component:
+            r = retained[i];sign = 1 if np.dot(r['direction'],ref)>0 else -1
+            target = r['target']+r['direction']*(sign*shift)
+            if np.linalg.norm(target-mesh.verts[r['ids']],axis=1).max()>=displacement_limit_m:
+                raise ValueError('connected retained edge reaches movement bound')
+            v[r['ids']] = target;groups[r['group']]['after'] = target.tolist()
     delta = np.linalg.norm(v-mesh.verts, axis=1)
     moved = np.flatnonzero(delta > 1e-12)
     if np.intersect1d(moved, mesh.faces[mesh.level > 0]).size:

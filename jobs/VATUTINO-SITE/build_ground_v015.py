@@ -110,7 +110,9 @@ def clip_curtain(curtain, stairs):
 def geometry(data, raw, approval, void_data):
     m=gc.Mesh(np.asarray(raw['verts']),np.asarray(raw['faces']),[raw['slots'][i] for i in raw['mat']],
               np.asarray(raw['level']),np.asarray(raw['uv']),4.)
-    surface=gc.weld_base_boundary(subset(m,m.level>=0))
+    plan=gc.plan_layers(shape(data['boundary']),{t:list(getattr(shape(c['geometry']),'geoms',[])) for t,c in data['coverings'].items()},data['base_covering'],legacy.SLOTS,footprint_min_area=1000.,step=.006)
+    surface=gc.weld_base_boundary(subset(m,m.level>=0), accepted_boundary=plan.surface,
+                                  retained_midpoints=[approval['triangle_xy'][1]])
     surface=gc.close_base_notch(surface,approval['triangle_xy'],approval_reference=approval['decision_reference'])
     surface.uv=surface.verts[surface.faces,:2]/4
     b=np.asarray(approval['triangle_xy'][1]);ids=np.flatnonzero(np.linalg.norm(surface.verts[:,:2]-b,axis=1)<1e-8)
@@ -121,7 +123,6 @@ def geometry(data, raw, approval, void_data):
     surface=gc.cut_base_void(surface,void)
     source_void=surface.report['base_void'];surface=subset(surface,surface.level>=0)
     sampler=gc.ReliefSampler(gc.build_tin([(e['x'],e['y'],e['z']) for e in data['elevations']]))
-    plan=gc.plan_layers(shape(data['boundary']),{t:list(getattr(shape(c['geometry']),'geoms',[])) for t,c in data['coverings'].items()},data['base_covering'],legacy.SLOTS,footprint_min_area=1000.,step=.006)
     detail,dispositions,joints=gd.build_details(data.get('ground_elements',[]),plan.surface,sampler,stair_clearance_m=.012)
     foot=unary_union([shape(r['footprint']) for r in dispositions if r.get('footprint')])
     patch=Polygon(approval['triangle_xy'])
