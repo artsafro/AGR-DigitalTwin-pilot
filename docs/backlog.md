@@ -221,7 +221,7 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
   face centres per hit and the user's pre-export "Mesh + Weld 2 mm" mode checked on Editable Mesh (Poly re-splits
   non-manifold vertices); paths must be ASCII (Max 2024 misreads a Cyrillic jobs file). Left: fold those into
   `xview_dump.ms` and list it in `docs/agents/CAPABILITIES.md`; seen 4 times.
-- **R18** proposal 2026-10-21, review #514 - the user's Blender add-on `xview_overlapping_faces_improved.py`
+- **R18** proposal 2026-10-21, review #514 - Artem's Blender add-on `xview_overlapping_faces_improved.py`
   (viewport overlay, 16 s on 35k faces vs xView 107 s) as an interactive helper: it finds 40 of 185 xView faces with
   0 false hits; to match xView it needs boundary contact counted (zero-area contact rule), a fixed 0.81 deg normal
   limit and a per-vertex plane test - or call `inv_xview` from it; evidence `outputs/review-v002/xcheck/XCHECK.md`
