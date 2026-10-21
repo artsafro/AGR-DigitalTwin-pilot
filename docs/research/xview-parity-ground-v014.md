@@ -77,3 +77,19 @@ report) reproduces all 146 / 351 faces on v014. The issue's area rule is added o
 - It becomes a gate (`gating=True`, and a `gates` entry in the Ground build) once a person accepts this parity.
 - v014 is not xView-clean under the delivery rule [D152]: 146 / 351 faces and 0 / 118 vertices. Fixing the Ground is
   a separate task.
+
+## Speed and incremental re-check (#535)
+
+Same PC, same process, result identical pair for pair (ids, kind, separation): TOW02 export-v005 (35 407 quads)
+`part_report` 25.4 s -> 5.0-5.4 s (185 faces = Max keep, 0 vertex pairs); user 013 FBX (73 594 tris) 22.6 -> 5.8-6.0 s
+(0 faces, 5 vertex pairs = 10 vertices); Ground v014 NPM dumps 10.9 -> 5.7-6.6 s (146) and 12.5 -> 5.8-6.4 s (351 / 118).
+How: convex quads (with a float margin) fanned in numpy, everything else through the exact per-polygon path; a
+uniform grid over the boxes padded by `face_m / parallel_cos_min` instead of the x sweep (1.1 M box pairs instead
+of about 70 M sweep candidates); polygon ownership by `searchsorted`; shapely only on pairs whose separation range
+can reach `face_m`. Tolerances and the rule are unchanged.
+`xview_state` / `xview_state_incremental` (faces labelled by part): the incremental run reuses pairs between
+unchanged parts and re-checks the faces of the changed parts in their grid cells; TOW02 v005 split into 15 parts
+(connected components by 5 m z band), one part moved by -4..+20 mm: equal to the full run, 0.4-3.2 s vs 5.8-8.2 s.
+It fails closed (error naming the part) when a part not listed as changed differs, vertex sharing between unchanged
+parts differs, or the unchanged faces are reordered. Parity on the stored Max lists:
+`tools/qa/xview_parity.py --keep <keep> --npz <arrays.npz>` (TOW02 185/185) and `<dump.json>` (Ground 146/146).

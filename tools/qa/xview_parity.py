@@ -5,6 +5,13 @@ per node the Max result ids (1-based), vertices in metres and faces (1-based ver
 Output: one JSON line per node with counts on both sides and every id that differs.
 
   uv run python tools/qa/xview_parity.py <dump.json> [--out parity.json]
+  uv run python tools/qa/xview_parity.py --keep <xview_check.keep> --npz <arrays.npz> [--out parity.json]
+
+The second form (#535) compares the stored list of a Max xView run (`jobs/vyatskaya-tow02/scripts/xview_check.ms`
+JSON: `verticesCheck` / `facesCheck` with `items` [id, ...] 1-based, `faces`, `verts`, `tolFaces`, `tolVerts`) with
+the checker on the same mesh as Blender arrays (`vertices`, `loop_start`, `loop_total`, `loop_vert`; Max face id
+- 1 = Blender polygon index). A face or vertex count that differs from the keep, a check count that differs from its
+item list, or a tolerance that is not a finite number > 0 exits 2.
 
 Fail-closed: a dump with no nodes, a node without vertices or faces, counts that disagree with the lists (partial
 dump), a checker result that is not `#vertices` / `#faces` (xView failed), a missing result, an id out of range or not
@@ -89,17 +96,76 @@ def compare(dump: dict) -> list[dict]:
     return rows
 
 
+def compare_keep(keep: dict, arrays) -> list[dict]:
+    """One row: Max xView keep (ids only) vs part_report on the Blender arrays of the same FBX."""
+    if not isinstance(keep, dict):
+        raise DumpError("keep is not a JSON object")
+    checks = {}
+    for key in ("verticesCheck", "facesCheck"):
+        c = keep.get(key)
+        if not isinstance(c, dict) or not isinstance(c.get("items"), list) or not isinstance(c.get("count"), int):
+            raise DumpError(f"{key} missing or without count / items (xView failed?)")
+        if c["count"] != len(c["items"]):
+            raise DumpError(f"{key}: count {c['count']} != {len(c['items'])} items (partial keep)")
+        checks[key] = c
+    for key in ("vertices", "loop_start", "loop_total", "loop_vert"):
+        if key not in arrays:
+            raise DumpError(f"arrays: {key} missing")
+    v = np.asarray(arrays["vertices"], dtype=float)
+    st, tot, lv = (np.asarray(arrays[k]) for k in ("loop_start", "loop_total", "loop_vert"))
+    nv, nf = len(v), len(tot)
+    if not nv or not nf or len(st) != nf:
+        raise DumpError("arrays: no vertices or no faces, or loop_start / loop_total lengths differ")
+    if keep.get("faces") != nf or keep.get("verts") != nv:
+        raise DumpError(f"keep has {keep.get('faces')} faces / {keep.get('verts')} verts, arrays {nf} / {nv}: "
+                        "not the same mesh")
+    tol = XviewTolerance(vertex_m=_num(keep, "tolVerts"), face_m=_num(keep, "tolFaces")).validate()
+    mf = {_int(i[0] if isinstance(i, list) else i, "facesCheck item", 1, nf) for i in checks["facesCheck"]["items"]}
+    mv = {_int(i[0] if isinstance(i, list) else i, "verticesCheck item", 1, nv)
+          for i in checks["verticesCheck"]["items"]}
+    try:
+        faces = tuple(tuple(int(x) for x in lv[s:s + t]) for s, t in zip(st, tot))
+        mesh = PolyMesh(v, faces)
+    except (ValueError, TypeError) as e:
+        raise DumpError(f"arrays: {e}") from e
+    r = part_report(str(keep.get("node", "mesh")), mesh, tol)
+    ov, of, oa = set(r.vertices), set(r.xview_faces), set(r.faces)
+    return [{"node": str(keep.get("node", "mesh")), "vertices": nv, "faces": nf, "thresholds_m": [tol.vertex_m, tol.face_m],
+             "max_vertices": len(mv), "ours_vertices": len(ov), "ours_vertex_pairs": len(r.vertex_pairs),
+             "vertices_only_max": sorted(mv - ov), "vertices_only_ours": sorted(ov - mv),
+             "max_faces": len(mf), "ours_contact_faces": len(of), "ours_all_faces": len(oa),
+             "ours_face_pairs": r.to_dict()["face_pairs_by_kind"],
+             "faces_only_max": sorted(mf - of), "faces_only_ours_contact": sorted(of - mf),
+             "faces_area_only": sorted(oa - of), "equal": mv == ov and mf == of}]
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("dump", type=Path)
+    ap.add_argument("dump", type=Path, nargs="?")
+    ap.add_argument("--keep", type=Path)
+    ap.add_argument("--npz", type=Path)
     ap.add_argument("--out", type=Path)
     a = ap.parse_args(argv)
-    if a.out and (a.out.resolve() == a.dump.resolve() or (a.out.exists() and os.path.samefile(a.out, a.dump))):
-        print("--out must not be the input dump (same path, link or hardlink)", file=sys.stderr)
+    inputs = [x for x in (a.dump, a.keep, a.npz) if x]
+    if bool(a.dump) == bool(a.keep or a.npz) or bool(a.keep) != bool(a.npz):
+        print("give either <dump.json> or both --keep and --npz", file=sys.stderr)
+        return 2
+    if a.out and any(a.out.resolve() == x.resolve() or (a.out.exists() and x.exists() and os.path.samefile(a.out, x))
+                     for x in inputs):
+        print("--out must not be an input (same path, link or hardlink)", file=sys.stderr)
         return 2
     try:
-        rows = compare(json.loads(a.dump.read_text(encoding="utf-8")))
-    except (DumpError, ValueError) as e:
+        if a.dump:
+            rows = compare(json.loads(a.dump.read_text(encoding="utf-8")))
+        else:
+            raw = a.keep.read_bytes()
+            try:
+                text = raw.decode("utf-8")
+            except UnicodeDecodeError:
+                text = raw.decode("cp1251")                     # Max writes the keep in the system code page
+            with np.load(a.npz) as z:
+                rows = compare_keep(json.loads(text), {k: z[k] for k in z.files})
+    except (DumpError, ValueError, OSError) as e:
         print(f"xview_parity: {e}", file=sys.stderr)
         return 2
     text = json.dumps(rows, indent=1)

@@ -401,8 +401,8 @@ def _area(v, tris, nrm, s, t, face_m, prefilter=True):
     Shapely runs only on pairs that can pass: the separation is measured from points of s (its overlap with t lies
     inside s) to the plane of t, so it lies between the min and max over s's corners; when that whole range is
     beyond face_m + `_SKIP_M` on one side, or the projected boxes are apart by more than `_SKIP_M`, the pair fails
-    and keeps separation inf. Returns (hit, separation, skipped); `_pairs_found` recomputes the skipped pairs of
-    every reported polygon pair without the prefilter, so the reported separation is the one of the full test.
+    and keeps separation inf. A skipped pair is never a hit, and the reported separation of a polygon pair is the
+    minimum over its hit triangle pairs only (as in #370), so skipping changes nothing. Returns (hit, sep, skipped).
     """
     n = len(s)
     ax = np.argmax(np.abs(nrm[s]), axis=1)
@@ -467,7 +467,6 @@ def _pairs_found(v, tris, owner, poly_key, tol: XviewTolerance, active=None) -> 
     lo, hi = p.min(1), p.max(1)
     rank = np.empty(len(tris), np.int64)
     rank[np.argsort(lo[:, 0], kind="stable")] = np.arange(len(tris))   # pair orientation of the #370 x sweep
-    skipped: list = []
     for s, t in _grid_pairs(lo, hi, pad, active):
         ok = (owner[s] != owner[t]) & live[s] & live[t]
         s, t = s[ok], t[ok]
@@ -479,28 +478,11 @@ def _pairs_found(v, tris, owner, poly_key, tol: XviewTolerance, active=None) -> 
         s, t = np.where(sw, t, s), np.where(sw, s, t)
         con = _contact(v, tris, nrm, s, t, poly_key, owner, nv, tol.face_m) | \
             _contact(v, tris, nrm, t, s, poly_key, owner, nv, tol.face_m)
-        hit_a, sep, skip = _area(v, tris, nrm, s, t, tol.face_m)
-        skipped.append((s[skip], t[skip]))
+        hit_a, sep, _ = _area(v, tris, nrm, s, t, tol.face_m)
         for k in np.flatnonzero(con | hit_a):
             i, j = sorted((int(owner[s[k]]), int(owner[t[k]])))
             prev = found.get((i, j), (False, False, np.inf))
             found[(i, j)] = (prev[0] or bool(con[k]), prev[1] or bool(hit_a[k]), min(prev[2], float(sep[k])))
-    if found and skipped:                       # exact separation of the prefiltered triangle pairs of reported pairs
-        s = np.concatenate([x for x, _ in skipped])
-        t = np.concatenate([y for _, y in skipped])
-        nf = int(owner.max()) + 1
-        key = np.minimum(owner[s], owner[t]) * nf + np.maximum(owner[s], owner[t])
-        want = np.array(sorted(i * nf + j for i, j in found), dtype=np.int64)
-        sel = _owns(want, key)
-        if sel.any():
-            s, t = s[sel], t[sel]
-            hit_a, sep, _ = _area(v, tris, nrm, s, t, tol.face_m, prefilter=False)
-            if hit_a.any():
-                raise RuntimeError("area prefilter skipped a hit")    # cannot happen: the bound is conservative
-            for k in np.flatnonzero(np.isfinite(sep)):
-                i, j = sorted((int(owner[s[k]]), int(owner[t[k]])))
-                c, ar, sp = found[(i, j)]
-                found[(i, j)] = (c, ar, min(sp, float(sep[k])))
     return found
 
 
@@ -579,3 +561,184 @@ def mesh_report(vertices, faces, profile: str = "NPM", tol: XviewTolerance | Non
     return {"name": NAME, "gating": False, "passed": not r.offenders, "count": len(r.offenders),
             "thresholds": {"vertex_m": tol.vertex_m, "face_m": tol.face_m, "parallel_cos_min": tol.parallel_cos_min},
             **r.to_dict()}
+
+
+# ---- per-part state and incremental re-check (#535) ----------------------------------------------------------------
+
+STATE_NAME = "xview_face_state"
+STATE_VERSION = 1
+
+
+def _state_mesh(vertices, faces) -> PolyMesh:
+    if not np.isfinite(np.asarray(vertices, dtype=float)).all():
+        raise ValueError("vertices must be finite")
+    faces = faces.tolist() if isinstance(faces, np.ndarray) and faces.dtype.kind in "iu" else faces
+    if isinstance(faces, np.ndarray):
+        raise ValueError(f"face indices are not an integer array (dtype {faces.dtype})")
+    mesh = PolyMesh(np.asarray(vertices, dtype=float), tuple(tuple(f) for f in faces))
+    if not mesh.faces:
+        raise ValueError("no faces: nothing to check")
+    return mesh
+
+
+def _labels(face_part, nf: int) -> list:
+    labels = list(face_part)
+    if len(labels) != nf:
+        raise ValueError(f"face_part has {len(labels)} labels for {nf} faces")
+    bad = sorted({repr(x) for x in labels if not isinstance(x, str) or not x})
+    if bad:
+        raise ValueError(f"part labels must be non-empty strings, got {bad[:5]}")
+    return labels
+
+
+def _runs(labels: list) -> list:
+    out: list = []
+    for x in labels:
+        if out and out[-1][0] == x:
+            out[-1][1] += 1
+        else:
+            out.append([x, 1])
+    return out
+
+
+def _digests(mesh: PolyMesh, labels: list):
+    """(parts {name: {faces, hash}}, links [[a, b, hash]]): geometry + vertex sharing a face-pair result depends on.
+
+    Part hash: polygon sizes, corner vertex ids renumbered by first use inside the part, and those vertices' float64
+    coordinates. Link hash per two parts that share vertex indices: the sorted (local id in a, local id in b) pairs.
+    """
+    import hashlib
+    v = mesh.vertices
+    by_part: dict = {}
+    for k, x in enumerate(labels):
+        by_part.setdefault(x, []).append(k)
+    parts, gv, gp, gl = {}, [], [], []
+    names = sorted(by_part)
+    for pi, name in enumerate(names):
+        fs = [mesh.faces[k] for k in by_part[name]]
+        sizes = np.fromiter((len(f) for f in fs), np.int64, len(fs))
+        cv = np.fromiter((i for f in fs for i in f), np.int64, int(sizes.sum()))
+        u, first, inv = np.unique(cv, return_index=True, return_inverse=True)
+        rank = np.empty(len(u), np.int64)
+        rank[np.argsort(first, kind="stable")] = np.arange(len(u))
+        local = rank[inv]
+        coords = np.ascontiguousarray(v[u[np.argsort(first, kind="stable")]], dtype=np.float64)
+        h = hashlib.sha256(sizes.tobytes() + b"|" + local.tobytes() + b"|" + coords.tobytes()).hexdigest()
+        parts[name] = {"faces": len(fs), "hash": h}
+        gv.append(u); gp.append(np.full(len(u), pi, np.int64)); gl.append(rank)
+    gv, gp, gl = np.concatenate(gv), np.concatenate(gp), np.concatenate(gl)
+    o = np.lexsort((gp, gv))
+    gv, gp, gl = gv[o], gp[o], gl[o]
+    lo = np.searchsorted(gv, gv, "left")
+    hi = np.searchsorted(gv, gv, "right")
+    shared: dict = {}
+    for s in np.flatnonzero((hi - lo > 1) & (np.arange(len(gv)) == lo)):
+        grp = range(int(lo[s]), int(hi[s]))
+        for x in grp:
+            for y in grp:
+                if gp[x] < gp[y]:
+                    shared.setdefault((names[gp[x]], names[gp[y]]), []).append((int(gl[x]), int(gl[y])))
+    links = [[a, b, hashlib.sha256(np.asarray(sorted(pr), np.int64).tobytes()).hexdigest()]
+             for (a, b), pr in sorted(shared.items())]
+    return parts, links
+
+
+def _state(mesh, labels, tol, found: dict) -> dict:
+    a, b, d = vertex_pairs(mesh.vertices, tol.vertex_m)
+    parts, links = _digests(mesh, labels)
+    pairs = [[i + 1, j + 1, _kind(c, ar), sp if np.isfinite(sp) else None]
+             for (i, j), (c, ar, sp) in sorted(found.items())]
+    return {"name": STATE_NAME, "version": STATE_VERSION,
+            "thresholds": {"vertex_m": tol.vertex_m, "face_m": tol.face_m, "parallel_cos_min": tol.parallel_cos_min},
+            "parts": parts, "runs": _runs(labels), "links": links,
+            "vertex_pairs": [[int(x) + 1, int(y) + 1, float(z)] for x, y, z in zip(a, b, d)],
+            "face_pairs": pairs,
+            "vertices": sorted({int(x) + 1 for x in np.concatenate([a, b])}),
+            "faces": sorted({x for p in pairs for x in p[:2]}),
+            "xview_faces": sorted({x for p in pairs if "contact" in p[2] for x in p[:2]})}
+
+
+def xview_state(vertices, faces, face_part, profile: str = "NPM", tol: XviewTolerance | None = None) -> dict:
+    """Full face + vertex check of one mesh whose faces are labelled by part; JSON-ready, input of the incremental run.
+
+    `face_pairs` / `xview_faces` / `vertex_pairs` equal `part_report` on the same mesh (1-based ids); `parts`,
+    `runs` and `links` record what `xview_state_incremental` must find unchanged to reuse a pair.
+    """
+    tol = (tol or tolerance_for(profile)).validate()
+    mesh = _state_mesh(vertices, faces)
+    labels = _labels(face_part, len(mesh.faces))
+    tris, owner, poly_key = _prepare(mesh)
+    return _state(mesh, labels, tol, _pairs_found(mesh.vertices, tris, owner, poly_key, tol))
+
+
+def xview_state_incremental(vertices, faces, face_part, previous: Mapping, changed: Iterable[str],
+                            profile: str = "NPM", tol: XviewTolerance | None = None) -> dict:
+    """`xview_state` of the new mesh, re-checking only the faces of `changed` parts against their neighbours.
+
+    Face pairs between two unchanged parts are taken from `previous` (renumbered to the new face ids); every pair
+    with a face of a changed part is computed again, its candidates found in the grid cells of the changed faces
+    (padded by face_m). The vertex check is cheap and always runs in full.
+    Fail-closed (ValueError naming the cause): `previous` is not a state of this version or has other thresholds; a
+    changed name is in neither mesh; a part added, removed or edited (hash) without being in `changed`; vertex sharing
+    between two unchanged parts differs; the unchanged faces are in another relative order (pair orientation, hence
+    the area separation, depends on it); a previous pair is out of range. Then the result equals `xview_state`.
+    """
+    tol = (tol or tolerance_for(profile)).validate()
+    mesh = _state_mesh(vertices, faces)
+    labels = _labels(face_part, len(mesh.faces))
+    if not isinstance(previous, Mapping) or previous.get("name") != STATE_NAME or \
+            previous.get("version") != STATE_VERSION:
+        raise ValueError(f"previous is not a {STATE_NAME} v{STATE_VERSION} report")
+    want = {"vertex_m": tol.vertex_m, "face_m": tol.face_m, "parallel_cos_min": tol.parallel_cos_min}
+    if previous.get("thresholds") != want:
+        raise ValueError(f"previous thresholds {previous.get('thresholds')} differ from {want}: run a full check")
+    changed = set(changed) if not isinstance(changed, str) else {changed}
+    old_parts, old_runs = previous["parts"], previous["runs"]
+    old_labels = [x for x, n in old_runs for _ in range(int(n))]
+    if sum(int(p["faces"]) for p in old_parts.values()) != len(old_labels):
+        raise ValueError("previous report: runs and part face counts disagree")
+    parts, links = _digests(mesh, labels)
+    unknown = sorted(changed - set(parts) - set(old_parts))
+    if unknown:
+        raise ValueError(f"changed parts in neither mesh: {unknown}")
+    added = sorted(set(parts) - set(old_parts) - changed)
+    removed = sorted(set(old_parts) - set(parts) - changed)
+    if added or removed:
+        raise ValueError(f"parts added {added} / removed {removed} but not listed as changed")
+    keep = set(parts) - changed
+    edited = sorted(x for x in keep if parts[x] != old_parts[x])
+    if edited:
+        raise ValueError(f"parts changed but not listed as changed: {edited}")
+    lk = {(a, b, h) for a, b, h in links if a in keep and b in keep}
+    old_lk = {(a, b, h) for a, b, h in previous.get("links", []) if a in keep and b in keep}
+    if lk != old_lk:
+        diff = sorted({(a, b) for a, b, _ in lk ^ old_lk})
+        raise ValueError(f"vertex sharing between unchanged parts differs: {diff[:5]}")
+    if _runs([x for x in labels if x in keep]) != _runs([x for x in old_labels if x in keep]):
+        raise ValueError("unchanged faces are in another relative order: run a full check")
+    # (part, local index) -> new 0-based face id, for unchanged parts
+    new_id: dict = {}
+    seen: dict = {}
+    for k, x in enumerate(labels):
+        if x in keep:
+            new_id[(x, seen.get(x, 0))] = k
+        seen[x] = seen.get(x, 0) + 1
+    old_loc, seen = [], {}
+    for x in old_labels:
+        old_loc.append((x, seen.get(x, 0)))
+        seen[x] = seen.get(x, 0) + 1
+    found: dict = {}
+    for row in previous.get("face_pairs", []):
+        i, j, kind, sp = row
+        if not all(isinstance(z, int) and not isinstance(z, bool) and 1 <= z <= len(old_loc) for z in (i, j)) \
+                or kind not in ("contact", "area", "area+contact"):
+            raise ValueError(f"previous report: bad face pair {row!r}")
+        a, b = old_loc[i - 1], old_loc[j - 1]
+        if a[0] in keep and b[0] in keep:
+            ni, nj = sorted((new_id[a], new_id[b]))
+            found[(ni, nj)] = ("contact" in kind, "area" in kind, np.inf if sp is None else float(sp))
+    tris, owner, poly_key = _prepare(mesh)
+    hot = np.fromiter((x not in keep for x in labels), bool, len(labels))
+    if hot.any():
+        found.update(_pairs_found(mesh.vertices, tris, owner, poly_key, tol, active=hot[owner]))
+    return _state(mesh, labels, tol, found)
