@@ -1276,6 +1276,16 @@ def test_the_shell_grid_check_stops_each_failure(hi, drop, flip, why):
     _check_closed_solid(ok, "probe", 0.0)
 
 
+def test_the_merged_check_stops_two_boxes_welded_on_a_face():
+    """The backstop after the cross-structure weld: two clean boxes sharing a face are not one closed solid."""
+    from dt_ai.geometry.from_spec import _check_closed_solid, _Mesh
+    m = _Mesh()
+    _box(m, (0, 0, 0), (1, 1, 1))
+    _box(m, (1, 0, 0), (2, 1, 1))
+    with pytest.raises(BuildError, match="the weld of the shells leaves the shell not closed"):
+        _check_closed_solid(m, "roof structures (merged)", None)
+
+
 def _two_shells(shift, t1=0.2, t2=0.2, by_input=False):
     """Two mid screens: SCREEN and SCREEN moved by `shift` (dx, dy); `by_input` drops thickness_m (build input t1)."""
     first = {**SCREEN, **({} if by_input else {"thickness_m": t1})}

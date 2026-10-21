@@ -24,7 +24,10 @@ Status: draft (user decision 2026-10-13 [D067], OBJ03). Spec v0.7 `roof_structur
    object's `parapet_thickness_default_m`), else the build input's parapet thickness, else a `BuildError`; a thickness
    that leaves no single hollow in plan or none under the top is a `BuildError`, and so is one not over two steps of
    the 1 µm output grid (`SHELL_MIN_M` = 2e-6 m) or any shell that the grid collapses (a face with repeated vertices
-   or no area, not closed, no volume) - never clamped (review of PR #500). The blocks inside are decided
+   or no area, not closed, no volume) - never clamped (review of PR #500). Two mid shells that touch, overlap or lie
+   within `SHELL_MIN_M` of each other in plan are a `BuildError` naming both (their shells would weld into a
+   non-manifold mesh), and the merged mesh is checked closed once more after every weld (review 2 of PR #500).
+   The blocks inside are decided
    later (not built).
 4. What lies under the outline - the equipment, the screens, their steep parts - is no roof question: the roof
    check keeps only the flat roof at the level there, and the enclosure closes the roof from above.

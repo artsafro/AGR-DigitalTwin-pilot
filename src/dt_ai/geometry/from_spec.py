@@ -560,6 +560,7 @@ def _roof_structures(spec: Spec, inputs: BuildInputs, roof: float) -> "_Mesh":
     BuildError. A thickness that leaves no single hollow in plan or none under the top is a BuildError. The
     equipment inside is not built (not decided)."""
     out = _Mesh()
+    built = []                                                              # (index, outline) of the mid shells
     if not spec.roof_structures:
         return out
     if spec.profile not in ("npm_min", "mid"):
@@ -594,8 +595,16 @@ def _roof_structures(spec: Spec, inputs: BuildInputs, roof: float) -> "_Mesh":
         _cap(one, hollow, zc, inputs.roof_id, up=False)                     # the ceiling, facing down
         _cap(one, Polygon(poly.exterior, [hollow.exterior]), z0, inputs.roof_id, up=False)   # the rim on the roof
         _check_closed_solid(one, where, t)
+        for j, other in built:                     # all stand on the roof: touching in plan is touching (PR #500)
+            if poly.distance(other) <= SHELL_MIN_M:
+                raise BuildError(f"roof structures {j} ({spec.roof_structures[j].kind}) and {k} ({rs.kind}) touch, "
+                                 f"overlap or lie within {SHELL_MIN_M} m in plan: their shells would merge into a "
+                                 "non-manifold mesh on the output grid; not built")
+        built.append((k, poly))
         for ids, mid in one.faces:
             out.faces.append(([out.vertex(one.vertices[i]) for i in ids], mid))
+    if built:
+        _check_closed_solid(out, "roof structures (merged)", None)   # the mesh as returned, after every weld
     return out
 
 
@@ -606,21 +615,22 @@ def _check_closed_solid(m, where, t):
     """A built screen shell as written to the output grid: every face keeps distinct vertices and an area over
     KEY_M**2, every directed edge is met once by its reverse (closed, oriented), the volume is positive; else a
     BuildError naming the structure (review of PR #500: welding must not hand back a collapsed shell)."""
+    cause = f"the thickness {t} m" if t is not None else "the weld of the shells"
     v = np.asarray(m.vertices, float)
     edges = {}
     for ids, _ in m.faces:
         q = v[ids]
         area = float(np.linalg.norm(sum(np.cross(q[i], q[(i + 1) % len(q)]) for i in range(len(q))))) / 2
         if len(set(ids)) != len(ids) or area <= KEY_M ** 2:
-            raise BuildError(f"{where}: the thickness {t} m collapses a face on the {KEY_M} m output grid; not built")
+            raise BuildError(f"{where}: {cause} collapses a face on the {KEY_M} m output grid; not built")
         for a, b in zip(ids, ids[1:] + ids[:1]):
             edges[(a, b)] = edges.get((a, b), 0) + 1
     if any(n != 1 or edges.get((b, a), 0) != 1 for (a, b), n in edges.items()):
-        raise BuildError(f"{where}: the thickness {t} m leaves the shell not closed on the {KEY_M} m output grid; "
+        raise BuildError(f"{where}: {cause} leaves the shell not closed on the {KEY_M} m output grid; "
                          "not built")
     tris = [v[[ids[0], ids[k], ids[k + 1]]] for ids, _ in m.faces for k in range(1, len(ids) - 1)]
     if sum(float(a @ np.cross(b, c)) for a, b, c in tris) / 6 <= 0:
-        raise BuildError(f"{where}: the thickness {t} m leaves no volume on the {KEY_M} m output grid; not built")
+        raise BuildError(f"{where}: {cause} leaves no volume on the {KEY_M} m output grid; not built")
 
 
 def _walls(out, poly, z0, z1, mid, outward):
