@@ -28,6 +28,14 @@ evidence contract, **not** a new geometry checker, user-authentication service o
 publication authorization. Producers and the reviewer must verify receipt truth.
 Never synthesize a receipt to fill a missing check or a human decision.
 
+**Overlap postcondition of every build / fix step (#527, D152).** After each step that writes geometry
+(build, fix, simplify, join) and on the export, run `uv run dt qa xview <file.fbx|.blend|.npz> --out <new report.json>`
+(local coordinates, NPM/VPM xView thresholds 2 mm / 5 mm) and keep its report with the step. The step is done
+only with **contact pairs = 0** (`totals.overlapping_faces` = 0, the xView Overlapping Faces selection) before
+export; vertex pairs, `area` pairs and bow-tie findings are fixed or listed as deviations with the user's decision.
+Exit 1 = overlaps found, exit 2 = no verdict (bad input); neither is a pass. A job-local overlap script does not
+replace it (review #514: a local check said 0 where xView said 185).
+
 ## Free PATH and deviation log
 
 The implementation route is free: try another adapter/algorithm, a bounded experiment,
