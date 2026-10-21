@@ -61,6 +61,18 @@ def edit_threshold(folder, relock=True):
         lock_path.write_text(json.dumps(lock), encoding="utf-8")
 
 
+def make_passed(data, ok=True):
+    """Rewrite the stored stages so the report genuinely passed (ok) or failed; keeps it self-consistent."""
+    for stage in data["stages"]:
+        if stage["gate"] == "blocking":
+            status = "pass" if ok else "fail"
+            stage["findings"] = [{"name": "probe", "status": status, "observed": "x", "expected": "x",
+                                  "source_pdf_pages": [1], "evidence": "", "conflicts": []}]
+            stage["status"] = status
+    data["passed"], data["exit_code"] = ok, 0 if ok else 1
+    return data
+
+
 def recheck(old, standards, out, *extra):
     return vp.main(["--recheck", str(old), "--output", str(out), "--standards", str(standards), *extra])
 
@@ -123,7 +135,7 @@ def test_recheck_unchanged_is_current(old, standards, tmp_path, capsys):
 
 def test_recheck_current_keeps_a_stored_pass(old, standards, tmp_path, capsys):
     data = json.loads(old.read_text(encoding="utf-8"))
-    data["passed"], data["exit_code"] = True, 0
+    make_passed(data)
     old.write_text(json.dumps(data), encoding="utf-8")
     out = tmp_path / "recheck.json"
     code, _ = run_recheck(old, standards, out, capsys)
@@ -168,7 +180,7 @@ def test_recheck_both_changed_reports_evidence_missing_with_both_reasons(old, st
 @pytest.mark.parametrize("break_it", ["stale", "missing"])
 def test_stale_or_missing_text_never_prints_pass(old, standards, tmp_path, capsys, break_it):
     data = json.loads(old.read_text(encoding="utf-8"))
-    data["passed"], data["exit_code"] = True, 0  # even a stored pass is not re-confirmed
+    make_passed(data)  # even a stored pass is not re-confirmed
     old.write_text(json.dumps(data), encoding="utf-8")
     if break_it == "stale":
         edit_threshold(standards)
@@ -239,9 +251,18 @@ def test_old_report_with_bad_field_types_is_an_error(old, standards, tmp_path, f
     assert recheck(old, standards, out) != 0 and not out.exists()
 
 
-def test_inconsistent_passed_and_exit_code_is_an_error(old, standards, tmp_path):
+@pytest.mark.parametrize("forge", ["passed_only", "passed_and_exit", "exit_only", "bad_stage"])
+def test_forged_or_inconsistent_verdict_is_an_error(old, standards, tmp_path, forge):
+    """The stored verdict must match its own stages: a hand-edited pass is never re-confirmed."""
     data = json.loads(old.read_text(encoding="utf-8"))
-    data["passed"] = True  # exit_code stays 2
+    if forge == "passed_only":
+        data["passed"] = True  # exit_code stays 2
+    elif forge == "passed_and_exit":
+        data["passed"], data["exit_code"] = True, 0  # stages still not_run
+    elif forge == "exit_only":
+        data["exit_code"] = 1  # no fail finding
+    else:
+        next(st for st in data["stages"] if st["findings"])["findings"][0]["status"] = "great"
     old.write_text(json.dumps(data), encoding="utf-8")
     assert recheck(old, standards, tmp_path / "r.json") != 0 and not (tmp_path / "r.json").exists()
 
@@ -284,7 +305,7 @@ def test_relative_target_resolves_against_cwd_like_validate(old, standards, tmp_
 @pytest.mark.parametrize("tgt", ["same", "changed", "deleted"])
 def test_probe_recheck_matrix(old, standards, tmp_path, capsys, tgt, std, stored_ok):
     data = json.loads(old.read_text(encoding="utf-8"))
-    data["passed"], data["exit_code"] = stored_ok, 0 if stored_ok else 1
+    make_passed(data, stored_ok)
     if std == "legacy":
         del data["standards_sha256"], data["code_commit"]
     old.write_text(json.dumps(data), encoding="utf-8")
