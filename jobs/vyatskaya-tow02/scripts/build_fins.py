@@ -26,6 +26,7 @@ raised 8 mm above that face (user 2026-10-20 "+8 мм над кровлей"; >=
 """
 import json
 import math
+import re
 import sys
 import time
 from pathlib import Path
@@ -702,6 +703,38 @@ def coplanar_check(fn, hits, V, quads, roles, tol=0.005):
 
 
 # ----------------------------------------------------------------------------------------------- output
+_VERSION_RE = re.compile(r"^build-v(\d+)")
+
+
+def next_free_fins_version(outputs: Path) -> str:
+    """Next free ``build-vNNN-fins`` name under ``outputs``, skipping every version already used by a build.
+
+    The version counter is shared with the master builds (``build-vNNN`` without a suffix), so a re-run of the
+    default ``build-v003-fins`` after ``build-v013`` names ``build-v014-fins`` rather than reusing ``v013``.
+    """
+    max_v = 0
+    if outputs.is_dir():
+        for d in outputs.iterdir():
+            m = _VERSION_RE.match(d.name)
+            if m and d.is_dir():
+                max_v = max(max_v, int(m.group(1)))
+    return f"build-v{max_v + 1:03d}-fins"
+
+
+def ensure_output_available(out: Path) -> None:
+    """Create ``out`` if it is free; refuse (never overwrite) an existing, non-empty output version.
+
+    An empty existing directory is reused (fresh-directory behaviour); anything else raises ``FileExistsError``
+    with a clear message naming the next free version.
+    """
+    if out.exists() and (not out.is_dir() or any(out.iterdir())):
+        raise FileExistsError(
+            f"output version {out.name!r} already exists and is non-empty; refusing to overwrite it. "
+            f"Use the next free version instead: {next_free_fins_version(out.parent)!r}."
+        )
+    out.mkdir(parents=True, exist_ok=True)
+
+
 def write_obj(fins, path_obj, path_mtl, colors):
     lines = ["# TOW02 fins (build_fins.py, EG6). World coordinates, metres, Z up.", f"mtllib {path_mtl.name}"]
     off = 1
@@ -742,7 +775,7 @@ def rnd(x, nd=4):
 
 def main():
     t0 = time.time()
-    OUT.mkdir(parents=True, exist_ok=True)
+    ensure_output_available(OUT)
     data = json.loads((MEAS / "typical" / "fins.json").read_text(encoding="utf-8"))
     typ = json.loads((MEAS / "typical" / "typical_floor.json").read_text(encoding="utf-8"))
     outline = typ["b_contour"]["body_outline_spandrel_level"]["edges"]

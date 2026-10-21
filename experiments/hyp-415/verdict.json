@@ -1,0 +1,21 @@
+{
+  "verdict": "CONFIRMED",
+  "delivery_passed": false,
+  "inventory_unchanged": true,
+  "focused_tests_identical": true,
+  "node_count": 326,
+  "decode_rows": 18,
+  "decode_violations": [],
+  "parity_violations": [],
+  "mixed_rows": 8,
+  "mixed_violations": [],
+  "outer_rows": 8,
+  "outer_violations": [],
+  "exc_rows": 12,
+  "exc_violations": [],
+  "rejection_criteria_1_inventory_ok": true,
+  "rejection_criteria_2_parity_ok": true,
+  "rejection_criteria_3_decode_ok": true,
+  "rejection_criteria_4_outer_ok": true,
+  "rejection_criteria_5_exc_ok": true
+}

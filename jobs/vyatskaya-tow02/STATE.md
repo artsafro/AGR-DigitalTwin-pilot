@@ -212,6 +212,10 @@ terrace.md, facade-decor-inset.md.
   slightly re-unwrapped, colours changed; our windows and main geometry kept. User verdict: "ты неплохо справился с
   задачей, с этим можно работать ... базу и большую часть работы ты выполнил". Comparison with export-v005: open
   (review issue).
+- build-fins-fix (PR #392 P1, 2026-10-20): `scripts/build_fins.py` now refuses an existing, non-empty
+  `build-vNNN-fins` output version (clear error naming the next free version, e.g. `build-v014-fins`) instead of
+  re-creating it with `mkdir(exist_ok=True)` and truncating `fins.obj`/`fins.mtl`; a fresh or empty directory is
+  still created as before.
 - Was in progress (agents): top above 64.7 (`scripts/build_top_blender.py` → `outputs/build-v005-top/`; decision:
   cap-band protrusion 71.5–72.2 up to 0.12 m modelled with its own outline); facade decor — AC baskets, louvre,
   balconies, soffit over the colonnade (`scripts/build_decor_blender.py` → `outputs/build-v006-decor/`).

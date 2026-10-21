@@ -59,8 +59,8 @@ Status: draft. Source: `docs/HARNESS_PLAN.md` §3–§4, §7; terms Level contou
   is relief, counted as `section_relief_parts` in the report, not a question.
 - Panes of one frame — side by side or a transom above, gap <= 0.15 m, aligned, and covering the
   joined rectangle — are one opening with `panes: N`; a curtain wall is one opening, the unit of
-  the window library.
+  the window library (user decision 2026-10-08 [D137], #31).
 - An opening across a level (one frame through the slab line) is one record in the lower floor
-  with `level_from` / `level_to` (spec v0.2), not two openings.
+  with `level_from` / `level_to` (spec v0.2, user decision 2026-10-08 [D136]), not two openings.
 - Small kinks (≤ 5°) are removed from the contour on purpose; elements on them are still measured
   on the real facet.

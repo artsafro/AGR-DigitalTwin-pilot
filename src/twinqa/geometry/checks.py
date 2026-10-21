@@ -60,8 +60,8 @@ def check_floor_areas(model: Soup, etalon: Soup, spec: Spec, tol: dict, basis: s
     """Outer section area of every storey at the sampled heights. Where both sections close they are
     compared; where only one closes the model differs from the etalon there (a fail, never skipped).
     Where neither closes both agree; the height is listed as open_on_both_sides, not judged, because an
-    NPM shell open at its reveals has no closed section in a window band (user decision 2026-10-09).
-    A storey with no compared height at all fails. basis "spec" (a panelised source, user 2026-10-14: its
+    NPM shell open at its reveals has no closed section in a window band (user decision 2026-10-09 [D141]).
+    A storey with no compared height at all fails. basis "spec" (a panelised source, user 2026-10-14 [D149]: its
     sections never close): the model's section, decor left out, against the area of the storey's spec contour less
     the recesses of the spec's openings at that height (width x depth; npm_min at the full depth, mid at half)."""
     names = [lv.name for lv in spec.levels]
@@ -135,7 +135,7 @@ def inner_outlines_match(hole, plate, overlap, weld):
 
 
 def open_loops(model: Soup, ids, counts, side_edges, skip, tol: dict, ranges: dict, structures=(), seat=False) -> list[dict]:
-    """Open edges grouped into loops and classified (pattern roof-inset-plane, user rules 2026-10-10):
+    """Open edges grouped into loops and classified (pattern roof-inset-plane, user rules 2026-10-10 [D038]):
     `bottom` - flat, at the model's lowest point. The joint of an inset slab (a roof in a parapet or a
     terrace) is exactly two closed loops per slab: `roof-foot` (contour A, the hole in the body: the
     foot of the upright faces around it - parapet inner faces, and walls of the floor above for a
@@ -146,7 +146,7 @@ def open_loops(model: Soup, ids, counts, side_edges, skip, tol: dict, ranges: di
     cycle - is `other`. `roof-structure` (spec v0.7, pattern roof-screen-enclosure): the bottom of a roof
     structure's walls - a flat closed loop at the top level on one of the spec's outlines; it takes no part in
     the slab joints. structures: [(outline Polygon, roof level z[, top z])]; with a top z an open ring on the
-    outline there is the open top of a screen enclosure (no top plane, user 2026-10-14)."""
+    outline there is the open top of a screen enclosure (no top plane, user 2026-10-14 [D086])."""
     tri = np.flatnonzero(~skip)
     sides = side_edges[tri]
     open_mask = counts[sides] == 1
@@ -201,7 +201,7 @@ def open_loops(model: Soup, ids, counts, side_edges, skip, tol: dict, ranges: di
         elif flat_loop and closed:
             for name, lz in model.levels.items():
                 dz = float(z.mean()) - lz
-                # an inset gap is never welded (user 2026-10-13): past weld_m, within the pattern's range
+                # an inset gap is never welded (user 2026-10-13 [D068]): past weld_m, within the pattern's range
                 if (roof_faces and np.all(nz > 0.99) and dz > tol["weld_m"]
                         and gap_lo - GAP_NOISE_M <= dz <= gap_hi + GAP_NOISE_M):
                     kind, level = "roof-plane", name
@@ -218,7 +218,7 @@ def open_loops(model: Soup, ids, counts, side_edges, skip, tol: dict, ranges: di
                 kind, level = "roof-structure", None
         downward = bool(c_mid.size and np.all(c_mid < float(z.mean()) - tol["weld_m"]))
         if kind == "other" and flat_loop and closed and roof_faces and downward:   # an enclosure with no top
-            ring = list(polygonize(shapely.linestrings(segs)))                     # (user 2026-10-14): its top
+            ring = list(polygonize(shapely.linestrings(segs)))                     # (user 2026-10-14 [D086]): its top
             if len(ring) == 1 and any(len(st) > 2 and abs(float(z.mean()) - st[2]) <= tol["weld_m"]   # edge on
                                       and ring[0].exterior.hausdorff_distance(st[0].exterior) <= tol["weld_m"]
                                       for st in structures):                       # the outline at its top
@@ -233,7 +233,7 @@ def open_loops(model: Soup, ids, counts, side_edges, skip, tol: dict, ranges: di
         feet = [lp for lp in out if lp["level"] == name and lp["kind"] == "roof-foot"]
         # one slab = the hole A (outer foot loop, and an inner one per shaft) and the plate B (its outline,
         # and an inner one around each shaft): regions by even-odd of the loops of a level, so a shaft's
-        # loops are the region's inner outlines (KPP1, user 2026-10-10); every A region lies under exactly
+        # loops are the region's inner outlines (KPP1, user 2026-10-10 [D038]); every A region lies under exactly
         # one B region and every B region over exactly one A; B is A grown by one even overlap, outer
         # outline out and inner outlines in; a level may hold several slabs (a ledge in parts)
         rings = {id(lp): shape(lp) for lp in planes + feet}
@@ -314,15 +314,17 @@ def fan_vertices(triangles, ids, side_edges, skip) -> list[int]:
 def check_mesh(model: Soup, tol: dict, ranges: dict, slabs=None, plate=None, structures=(),
                build: str = "from_spec") -> dict:
     """Edge- and vertex-manifold (one face fan per vertex, issue #57), no n-gons, no overlapping faces, and open edges only where the pattern
-    roof-inset-plane allows them (user rule 2026-10-10): the bottom ring and, per roof, the joint of an
+    roof-inset-plane allows them (user rule 2026-10-10 [D038]): the bottom ring and, per roof, the joint of an
     inset roof plane (its outline and the foot of the faces it is inset into). Parts made only of
     open_part_groups are left out of the open-edge rule. A mesh named DECOR_MESH is facade decor of its own
-    (pattern facade-decor-inset: the body is never cut; user 2026-10-13, 2a): it is left out of these checks -
+    (pattern facade-decor-inset: the body is never cut; user 2026-10-13 [D146], 2a): it is left out of these checks -
     its boxes may meet and overlap - and check_decor reads it. An open loop flat on a horizontal face of the
-    model at its height is closed by contact ("seated": a wall standing on a slab, user 2026-10-13); a
+    model at its height is closed by contact ("seated": a wall standing on a slab, user 2026-10-13 [D147]); a
     separate closed part whose top lies at a slab level over the slab's region is that slab (a slab box). These
     three rules and the open enclosure top are the from_source path's (build="from_source"); the from_spec path
-    keeps the strict rules (review 1 of #106)."""
+    keeps the strict rules (review 1 of #106). After OBJ03 was closed as unsuccessful
+    (user 2026-10-14 [D079], #117) these from_source relaxations are experimental only:
+    they do not authorize skipping topology on any mesh of a new passing delivery."""
     fs = build == "from_source"
     if not fs:
         structures = [st[:2] for st in structures]
@@ -340,7 +342,7 @@ def check_mesh(model: Soup, tol: dict, ranges: dict, slabs=None, plate=None, str
     boundary = np.zeros(len(counts), dtype=bool)
     boundary[np.unique(side_edges[~tri_open][counts[side_edges[~tri_open]] == 1])] = True
     loops = open_loops(model, ids, counts, side_edges, tri_open, tol, ranges, structures, seat=fs)
-    # every slab is inset (user rule 2026-10-10). With the spec's slabs known (a list): a slab joint at a
+    # every slab is inset (user rule 2026-10-10 [D038]). With the spec's slabs known (a list): a slab joint at a
     # level the spec implies no slab at is not allowed, each slab level needs a joint, and no up-facing
     # face of the model may lie flat at a slab level - that is a solid slab beside an inset one
     # (Codex review 1 of PR #63). slabs=None: the spec is unknown, joints are only allowed.
@@ -380,7 +382,7 @@ def check_mesh(model: Soup, tol: dict, ranges: dict, slabs=None, plate=None, str
             if area > tol["weld_m"] ** 2:
                 solid[name] = round(area, 4)
         not_inset = [name for name in slabs if name not in inset or name in solid]
-    # the plates match the building's plate_gap_m / plate_overlap_m (spec, user 2026-10-10) within plate_tol_m
+    # the plates match the building's plate_gap_m / plate_overlap_m (spec, user 2026-10-10 [D039]) within plate_tol_m
     plate_off = []
     if plate is not None:
         gap_s, overlap_s = plate
@@ -400,7 +402,7 @@ def check_mesh(model: Soup, tol: dict, ranges: dict, slabs=None, plate=None, str
     boundary_n = int(boundary.sum())
     corners = model.corners()
     faces = [{"object": "model", "index": i, "points": c.tolist()} for i, c in enumerate(corners)]   # decor left out
-    # an overlap is a crossing deeper than the weld (user 2026-10-14): two faces within weld_m are one weld; an
+    # an overlap is a crossing deeper than the weld (user 2026-10-14 [D148]): two faces within weld_m are one weld; an
     # inset 5 mm off a face (plate_gap_m) is no overlap
     overlaps = near_parallel_overlaps(faces, tol["weld_m"])
     if model.polygon_sizes is None:
@@ -556,7 +558,7 @@ def check_opening_planes(model: Soup, spec: Spec, tol: dict, ranges: dict) -> di
 
 
 def slabs(spec: Spec) -> dict:
-    """Slabs that must be inset (user rule 2026-10-10), level name -> plan region: the roof inside the top
+    """Slabs that must be inset (user rule 2026-10-10 [D038]), level name -> plan region: the roof inside the top
     floor's contour when it has a parapet, every terrace on its ledge (the floor below minus its own floor)."""
     floors = spec.expanded_floors()
     contour = {f.level: shapely.Polygon(f.contour) for f in floors}
@@ -643,7 +645,7 @@ def check_decor(model: Soup, spec: Spec, tol: dict, ranges: dict) -> dict:
         return result("decor", True, 0, 0, {"elements": []})
     from dt_ai.spec import decor as reader                 # one reading for the extractor and the checker
     dt, weld_m = tol["decor_tol_m"], tol["weld_m"]
-    # decor ids by the element's material (user 2026-10-12): metal 16-20, plaster / stone / tile 26-30; the
+    # decor ids by the element's material (user 2026-10-12 [D055]): metal 16-20, plaster / stone / tile 26-30; the
     # finish behind an id is the object's materials table's (ADR 0001), so the check is the group, one per element
     groups = [ranges["groups"][g] for g in ("metal", "attachment")]
     attachment = frozenset(i for g in groups for i in range(g["first"], g["last"] + 1))
@@ -706,7 +708,7 @@ def check_decor(model: Soup, spec: Spec, tol: dict, ranges: dict) -> dict:
             rows.append({"index": None, "kind": d["kind"], "level": d["level"],
                          "problems": [f"decor the spec does not list ({d['kind']} at {d['level']} z {d['z_m']})"]})
     for q in asked:                                      # over 0.8 m is an attachment candidate, no decor (EG2,
-        if q["kind"] == "decor-deep":                    # user 2026-10-12)
+        if q["kind"] == "decor-deep":                    # user 2026-10-12 [D057])
             continue
         rows.append({"index": None, "kind": q["kind"], "level": q["levels"][0],
                      "problems": [f"decor the extractor cannot read ({q['kind']}, {q['count']} piece(s))"]})
@@ -736,7 +738,7 @@ def check_decor(model: Soup, spec: Spec, tol: dict, ranges: dict) -> dict:
             # set into the body deeper than decor is, and not through it: in every storey it stands in, the
             # part of its plan outside the body is one piece (in front of the wall, past a corner or into a
             # concave one); a box through the building (a coping ring round the roof) comes out on the far side
-            # too and is an attachment (user 2026-10-12: against the body between storey contours, no new number)
+            # too and is an attachment (user 2026-10-12 [D142]: against the body between storey contours, no new number)
             if (dd.min() < -reader.EMBED_MAX_M and 0 < dd.max() <= reader.ATTACHMENT_FROM_M
                     and s.max() > FACE_M and s.min() < length - FACE_M
                     and all(_pieces_outside(plan, polys[i], weld_m) == 1 for i in bands)
@@ -897,6 +899,27 @@ def _enumerate_bins(lo, hi, s, t, origin_s, extent_s, bins, grow_s, grow_t):
             low = np.minimum(low, np.where(cross, value, np.inf))
             high = np.maximum(high, np.where(cross, value, -np.inf))
     return row, low - grow_t[chosen], high + grow_t[chosen], chosen
+
+
+def _enumerate_cells(lo_s, hi_s, lo_t, hi_t):
+    """Every integer cell of an inclusive s/t range. Full-cell enumeration for upward crossings.
+
+    ``_enumerate_bins`` stays the orientation narrow phase (row spans). This helper is separate
+    so horizontal rays still visit every cell of a triangle's bin box.
+    """
+    counts = ((hi_s - lo_s + 1) * (hi_t - lo_t + 1)).astype(np.int64)
+    total = int(counts.sum())
+    if total == 0:
+        empty = np.zeros(0, dtype=np.int64)
+        return empty, empty, empty
+    chosen = np.repeat(np.arange(len(counts)), counts)
+    base = np.repeat(np.cumsum(counts) - counts, counts)
+    local = np.arange(total) - base
+    span_t = np.repeat(hi_t - lo_t + 1, counts)
+    di = local // span_t
+    cell_s = np.repeat(lo_s, counts) + di
+    cell_t = np.repeat(lo_t, counts) + (local - di * span_t)
+    return cell_s, cell_t, chosen
 
 
 def _orientation_pair_hits(s, t, depth, unit_dot, ray_s, ray_t, tri_idx, ray_idx):
@@ -1127,10 +1150,606 @@ def check_orientation(model: Soup, tol: dict) -> dict:
         "unjudged_meshes": unjudged, "note": note})
 
 
+# |n_z| / |n| at least this close to 1: the face is horizontal. Issue #56 / #314.
+HORIZONTAL_COS_TOL = 1e-6
+# a hit this far (m) above the ray is a real crossing; closer is the face itself or a coplanar neighbour
+_HOR_DEPTH = 1e-6
+# barycentric distance to an edge at or below this is a boundary hit, not a strict interior crossing
+_HOR_BOUNDARY = 1e-8
+# weld for joining meshes into volumes when tol has none: the Spec default (weld_m 0 overflows the weld grid)
+_HOR_WELD_M = Spec.model_fields["weld_m"].default
+# a planar sheet joins an open owner only inside this coplanar band (m)
+_HOR_CAP_M = 0.01
+# 1.0 - 0.99 is 0.010000000000000009; 1e-12 covers that and stays under the 1e-10 gap that must not join
+_HOR_CAP_ATOL = 1e-12
+# XY slack for an inset plate that overlaps its hole by 0.02 m. Corners of that homothety sit
+# 0.02*sqrt(2) m outside the loop. 0.03 m covers them; outside/hole/concave caps at 0.2 m stay out.
+_HOR_CAP_EMBED_M = 0.03
+_HOR_NOTE = (
+    "closed welded components (every non-collapsed edge used twice) are judged alone; "
+    "each open component is judged alone, except a planar sheet that joins its unique open owner "
+    "when that owner's horizontal boundary-loop footprint covers the sheet, or the sheet overlaps "
+    "the footprint by at most 0.03 m, and the sheet lies within 0.01 m of the loop plane. "
+    "Touching unwelded parts never share a context. Decor is isolated; render-mesh partition is ignored. "
+    "Upward-ray parity decides up versus down, except a detached pure sheet: it faces down when a closed "
+    "solid sits strictly above it and covers its footprint, and faces up otherwise. Both owner sides at "
+    "once is not a clean pass. A ray along a vertical boundary uses scale-adaptive off-boundary samples "
+    "and is not certified when those samples disagree or none of them leaves the boundary. "
+    "A collapsed or non-finite face is never a silent pass. "
+    "A detached soffit faces down, away from the owner above; a ledge cap faces up, away from the wall below."
+)
+
+
+def _vertices_finite(model: Soup) -> bool:
+    return len(model.vertices) == 0 or bool(np.isfinite(model.vertices).all())
+
+
+def _upward_cross_once(tri: np.ndarray, ray: np.ndarray, tri_label: np.ndarray | None = None,
+                       ray_label: np.ndarray | None = None):
+    """Distinct +Z crossings of each ray, and whether any kept hit lies on a triangle boundary.
+
+    Point-in-triangle is barycentric in XY (``_ORI_BARY``). Heights that round to the same multiple
+    of ``_HOR_DEPTH`` are one crossing. Hits at or below the ray origin plus ``_HOR_DEPTH`` are dropped.
+    """
+    n_ray = len(ray)
+    counts = np.zeros(n_ray, dtype=int)
+    on_boundary = np.zeros(n_ray, dtype=bool)
+    if len(tri) == 0 or n_ray == 0:
+        return counts, on_boundary
+    bins = _ORI_BINS
+    s, t, depth = tri[:, :, 0], tri[:, :, 1], tri[:, :, 2]
+    ray_s, ray_t = ray[:, 0], ray[:, 1]
+    s_min, s_max = s.min(1), s.max(1)
+    t_min, t_max = t.min(1), t.max(1)
+    lo_s = min(float(s_min.min()), float(ray_s.min()))
+    hi_s = max(float(s_max.max()), float(ray_s.max()))
+    lo_t = min(float(t_min.min()), float(ray_t.min()))
+    hi_t = max(float(t_max.max()), float(ray_t.max()))
+    pad_s = max(hi_s - lo_s, 1e-9) * 1e-9 + 1e-9
+    pad_t = max(hi_t - lo_t, 1e-9) * 1e-9 + 1e-9
+    origin_s, origin_t = lo_s - pad_s, lo_t - pad_t
+    extent_s, extent_t = (hi_s - lo_s) + 2.0 * pad_s, (hi_t - lo_t) + 2.0 * pad_t
+    grow_s = np.maximum(s_max - s_min, 1e-12) * 1e-8 + 1e-12
+    grow_t = np.maximum(t_max - t_min, 1e-12) * 1e-8 + 1e-12
+    bs_lo = _proj_bins(s_min - grow_s, origin_s, extent_s, bins)
+    bs_hi = _proj_bins(s_max + grow_s, origin_s, extent_s, bins)
+    bt_lo = _proj_bins(t_min - grow_t, origin_t, extent_t, bins)
+    bt_hi = _proj_bins(t_max + grow_t, origin_t, extent_t, bins)
+    cb_s = _proj_bins(s.mean(1), origin_s, extent_s, bins)
+    cb_t = _proj_bins(t.mean(1), origin_t, extent_t, bins)
+    bs_lo, bs_hi = np.minimum(bs_lo, cb_s), np.maximum(bs_hi, cb_s)
+    bt_lo, bt_hi = np.minimum(bt_lo, cb_t), np.maximum(bt_hi, cb_t)
+    bin_s, bin_t, chosen = _enumerate_cells(bs_lo, bs_hi, bt_lo, bt_hi)
+    if len(chosen) == 0:
+        return counts, on_boundary
+    tri_bin = bin_s * bins + bin_t
+    ray_bin = _proj_bins(ray_s, origin_s, extent_s, bins) * bins + _proj_bins(ray_t, origin_t, extent_t, bins)
+    order = np.argsort(ray_bin)
+    uniq, start, rcount = np.unique(ray_bin[order], return_index=True, return_counts=True)
+    pos = np.searchsorted(uniq, tri_bin)
+    pos_c = np.minimum(pos, len(uniq) - 1)
+    valid = (pos < len(uniq)) & (uniq[pos_c] == tri_bin)
+    if not valid.any():
+        return counts, on_boundary
+    n_hit = rcount[pos[valid]]
+    tri_idx = np.repeat(chosen[valid], n_hit)
+    pair_base = np.repeat(np.cumsum(n_hit) - n_hit, n_hit)
+    ray_idx = order[np.repeat(start[pos[valid]], n_hit) + (np.arange(int(n_hit.sum())) - pair_base)]
+    ps = ray_s[ray_idx] - s[tri_idx, 0]
+    pt = ray_t[ray_idx] - t[tri_idx, 0]
+    e1s, e1t = s[tri_idx, 1] - s[tri_idx, 0], t[tri_idx, 1] - t[tri_idx, 0]
+    e2s, e2t = s[tri_idx, 2] - s[tri_idx, 0], t[tri_idx, 2] - t[tri_idx, 0]
+    dot00 = e1s * e1s + e1t * e1t
+    dot01 = e1s * e2s + e1t * e2t
+    dot11 = e2s * e2s + e2t * e2t
+    dot02 = e1s * ps + e1t * pt
+    dot12 = e2s * ps + e2t * pt
+    den = dot00 * dot11 - dot01 * dot01
+    inv = np.divide(1.0, den, out=np.zeros_like(den), where=np.abs(den) > 1e-20)
+    bu = (dot11 * dot02 - dot01 * dot12) * inv
+    bv = (dot00 * dot12 - dot01 * dot02) * inv
+    inside = (np.abs(den) > 1e-20) & (bu >= _ORI_BARY) & (bv >= _ORI_BARY) & (bu + bv <= 1.0 - _ORI_BARY)
+    if tri_label is not None and ray_label is not None:
+        inside &= np.asarray(tri_label)[tri_idx] == np.asarray(ray_label)[ray_idx]
+    if not inside.any():
+        return counts, on_boundary
+    bu_i, bv_i = bu[inside], bv[inside]
+    bary_min = np.minimum(np.minimum(bu_i, bv_i), 1.0 - bu_i - bv_i)
+    picked = tri_idx[inside]
+    hit_z = (1.0 - bu_i - bv_i) * depth[picked, 0] + bu_i * depth[picked, 1] + bv_i * depth[picked, 2]
+    hit_ray = ray_idx[inside]
+    above = hit_z > ray[hit_ray, 2] + _HOR_DEPTH
+    if not above.any():
+        return counts, on_boundary
+    hit_z, hit_ray, bary_min = hit_z[above], hit_ray[above], bary_min[above]
+    on_boundary[hit_ray[bary_min <= _HOR_BOUNDARY]] = True
+    rounded = np.round(hit_z / _HOR_DEPTH).astype(np.int64)
+    order = np.lexsort((rounded, hit_ray))
+    hit_ray, rounded = hit_ray[order], rounded[order]
+    keep = np.empty(len(hit_ray), dtype=bool)
+    keep[0] = True
+    keep[1:] = (hit_ray[1:] != hit_ray[:-1]) | (rounded[1:] != rounded[:-1])
+    np.add.at(counts, hit_ray[keep], 1)
+    return counts, on_boundary
+
+
+def _hor_shift_pairs(tri: np.ndarray, ray: np.ndarray):
+    """Eight XY nudges proportional to the local extent.
+
+    A fixed 1e-8 m step stays inside the barycentric boundary band (``_HOR_BOUNDARY``)
+    once the solid grows: the barycentric move is ``step / extent``. ``extent * 1e-6``
+    leaves that band, and at unit scale it remains a small step off the wall.
+    """
+    chunks = []
+    if len(tri):
+        chunks.append(np.asarray(tri, float).reshape(-1, 3)[:, :2])
+    if len(ray):
+        chunks.append(np.asarray(ray, float).reshape(-1, 3)[:, :2])
+    extent = 1.0
+    if chunks:
+        xy = np.concatenate(chunks, axis=0)
+        finite = xy[np.isfinite(xy).all(axis=1)]
+        if len(finite):
+            span = float(np.ptp(finite, axis=0).max())
+            if np.isfinite(span) and span > 0:
+                extent = span
+    step = max(extent * 1e-6, 1e-8)
+    signs = ((1.0, 0.0), (-1.0, 0.0), (0.0, 1.0), (0.0, -1.0),
+             (1.0, 1.0), (1.0, -1.0), (-1.0, 1.0), (-1.0, -1.0))
+    return tuple((step * a, step * b) for a, b in signs)
+
+
+def _upward_crossings(tri: np.ndarray, ray: np.ndarray, tri_label: np.ndarray | None = None,
+                      ray_label: np.ndarray | None = None) -> np.ndarray:
+    """+Z crossing counts. A ray that only grazes a vertical boundary is reclassified.
+
+    Inclusive barycentric hits plus unique heights count a ray running along a vertical wall as
+    extra crossings and can invert a closed face. Rays with a boundary hit take the parity agreed
+    by samples that leave the boundary. If none of them leave it, or the samples that do leave
+    it disagree, the count is negative: the on-boundary raw parity is not a certificate.
+    """
+    counts, on_boundary = _upward_cross_once(tri, ray, tri_label, ray_label)
+    if not on_boundary.any():
+        return counts
+    idx = np.flatnonzero(on_boundary)
+    votes = []
+    resolved = []
+    for dx, dy in _hor_shift_pairs(tri, ray):
+        shifted = np.array(ray, copy=True, dtype=float)
+        shifted[idx, 0] += dx
+        shifted[idx, 1] += dy
+        shifted_counts, shifted_boundary = _upward_cross_once(tri, shifted, tri_label, ray_label)
+        votes.append(shifted_counts[idx] % 2)
+        resolved.append(~shifted_boundary[idx])
+    votes = np.stack(votes)
+    resolved = np.stack(resolved)
+    for column, ray_i in enumerate(idx):
+        taken = votes[resolved[:, column], column]
+        if len(taken) == 0 or not np.all(taken == taken[0]):
+            counts[ray_i] = -1
+        else:
+            counts[ray_i] = int(taken[0])
+    return counts
+
+
+def _regroup_open_part(chunk: np.ndarray, triangles: np.ndarray, vertices: np.ndarray,
+                       weld_m: float) -> list[np.ndarray]:
+    """Re-split one open welded component by original vertex indices.
+
+    ``parts(local, arange)`` keeps two touching parts apart: they do not share vertex
+    indices even when their coordinates fall inside ``weld_m``, and even when both parts
+    sit in one render mesh. A welded edge used twice is a manifold seam (a render-mesh
+    partition of one shell) and stays joined. A welded edge used three or more times is
+    a non-manifold seam and does not join those index-connected components.
+    """
+    chunk = np.asarray(chunk, dtype=np.int64)
+    if len(chunk) == 0:
+        return []
+    tris = np.asarray(triangles, dtype=np.int64)[chunk]
+    used = np.unique(tris.reshape(-1))
+    local = np.searchsorted(used, tris)
+    index_labels = parts(local, np.arange(len(used)))
+    welded_ids = weld(vertices[used], weld_m)
+    edges, counts, sides = edge_uses(local, welded_ids)
+    parent = np.arange(len(chunk))
+
+    def find(a):
+        while parent[a] != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+
+    def union(a, b):
+        ra, rb = find(int(a)), find(int(b))
+        if ra != rb:
+            parent[rb] = ra
+
+    order = np.argsort(index_labels, kind="mergesort")
+    for i in range(1, len(order)):
+        if index_labels[order[i]] == index_labels[order[i - 1]]:
+            union(int(order[i]), int(order[i - 1]))
+    edge_id = sides.reshape(-1)
+    tri_of_side = np.repeat(np.arange(len(chunk)), 3)
+    collapsed = edges[:, 0] == edges[:, 1]
+    for edge in range(len(counts)):
+        if collapsed[edge] or counts[edge] != 2:
+            continue
+        users = np.unique(tri_of_side[edge_id == edge])
+        if len(users) < 2:
+            continue
+        for user in users[1:]:
+            union(int(users[0]), int(user))
+    labels = np.array([find(i) for i in range(len(chunk))], dtype=np.int64)
+    order = np.argsort(labels, kind="mergesort")
+    ordered = labels[order]
+    grouped = chunk[order]
+    _uniq, start, sizes = np.unique(ordered, return_index=True, return_counts=True)
+    return [grouped[int(s):int(s) + int(size)] for s, size in zip(start, sizes)]
+
+
+def _side_contexts(tri_idx: np.ndarray, triangles: np.ndarray, vertices: np.ndarray,
+                   weld_m: float) -> list[np.ndarray]:
+    """Closed components alone; every other component uses the bounded cap-join contract.
+
+    Closure is exactly two uses of every non-collapsed welded edge. Winding is ignored, so
+    reversing a face does not change which component it belongs to. An open welded component
+    is re-split by original vertex indices before the cap join, so touching unwelded parts
+    do not share a context, in one render mesh or in several. Open components are not poured
+    into one bucket: a sheet joins only its unique owner.
+    """
+    if len(tri_idx) == 0:
+        return []
+    tris = np.asarray(triangles, dtype=np.int64)[tri_idx]
+    used = np.unique(tris.reshape(-1))
+    local = np.searchsorted(used, tris)
+    welded = weld(vertices[used], weld_m)
+    labels = parts(local, welded)
+    edges, counts, sides = edge_uses(local, welded)
+    invalid = (edges[:, 0] == edges[:, 1]) | (counts != 2)
+    bad_tri = invalid[sides].any(axis=1)
+    order = np.argsort(labels, kind="mergesort")
+    ordered = labels[order]
+    tri_s = tri_idx[order]
+    bad_s = bad_tri[order]
+    _uniq, start, sizes = np.unique(ordered, return_index=True, return_counts=True)
+    closed = []
+    open_parts = []
+    for s, size in zip(start, sizes):
+        stop = int(s) + int(size)
+        chunk = tri_s[int(s):stop]
+        if bad_s[int(s):stop].any():
+            open_parts.extend(_regroup_open_part(chunk, triangles, vertices, weld_m))
+        else:
+            closed.append(chunk)
+    return closed + _cap_contexts(open_parts, triangles, vertices, weld_m)
+
+
+def _cap_footprints(chunk, triangles, vertices, weld_m):
+    """Horizontal, simple open-boundary loops as (plane Z, polygon) pairs.
+
+    Only degree-two cycles are supported. Nested loops on the same plane are XORed,
+    preserving holes. Non-horizontal, incomplete or branched loops cannot authorize a cap join.
+    """
+    tris = triangles[chunk]
+    used = np.unique(tris)
+    xyz = vertices[used]
+    ids = weld(xyz, weld_m)
+    local = np.searchsorted(used, tris)
+    edges, counts, _sides = edge_uses(local, ids)
+    _uniq, representative = np.unique(ids, return_index=True)
+    points = xyz[representative]
+    boundary = edges[(counts == 1) & (edges[:, 0] != edges[:, 1])]
+    if not len(boundary):
+        return []
+    flat = np.abs(points[boundary[:, 0], 2] - points[boundary[:, 1], 2]) <= _HOR_DEPTH
+    adjacency = {}
+    for a, b in boundary[flat]:
+        adjacency.setdefault(int(a), set()).add(int(b))
+        adjacency.setdefault(int(b), set()).add(int(a))
+    pending = set(adjacency)
+    loops = []
+    while pending:
+        seed = min(pending)
+        seen, stack = set(), [seed]
+        while stack:
+            v = stack.pop()
+            if v not in seen:
+                seen.add(v)
+                stack.extend(adjacency[v] - seen)
+        pending -= seen
+        if any(len(adjacency[v]) != 2 for v in seen):
+            continue
+        ring, prev, current = [], None, seed
+        while current not in ring:
+            ring.append(current)
+            nxt = min(adjacency[current] - ({prev} if prev is not None else set()))
+            prev, current = current, nxt
+        if current != seed or len(ring) != len(seen):
+            continue
+        coords = points[ring]
+        if np.ptp(coords[:, 2]) > _HOR_DEPTH:
+            continue
+        poly = shapely.Polygon(coords[:, :2])
+        if poly.is_valid and poly.area > 0:
+            loops.append((float(coords[:, 2].mean()), poly))
+    planes = []
+    for z, poly in loops:
+        for i, (plane_z, footprint) in enumerate(planes):
+            if abs(z - plane_z) <= _HOR_DEPTH:
+                planes[i] = (plane_z, footprint.symmetric_difference(poly))
+                break
+        else:
+            planes.append((z, poly))
+    return planes
+
+
+def _sheet_in_footprint(footprint, cap) -> bool:
+    """The sheet sits in the loop, or overlaps it by at most the inset-plate embed.
+
+    ``covers`` is exact, so a roof plate that runs 0.02 m into the parapet (about 0.028 m at
+    the corners) would stay detached and the open shell under it would be judged without its
+    roof. A 0.03 m buffer accepts that embed. A sheet that runs further out stays independent.
+    """
+    if footprint.covers(cap):
+        return True
+    grown = footprint.buffer(_HOR_CAP_EMBED_M, join_style="mitre", mitre_limit=2.0)
+    return bool(grown.covers(cap))
+
+
+def _cap_contexts(open_parts, triangles, vertices, weld_m):
+    """Join a planar open sheet only to its unique coplanar boundary-loop owner.
+
+    Closed components never enter here. Sheets cannot own sheets or bridge two owners.
+    The sheet lies within ``_HOR_CAP_M`` of the loop plane and inside the footprint, or it
+    overlaps that footprint by at most ``_HOR_CAP_EMBED_M``. Anything else stays its own
+    part, including Ground and stacked open boxes.
+    """
+    if not open_parts:
+        return []
+    corners = [vertices[triangles[ix]] for ix in open_parts]
+    sheet = [np.ptp(c[..., 2]) <= _HOR_DEPTH for c in corners]
+    footprints = [(i, z, poly) for i, ix in enumerate(open_parts) if not sheet[i]
+                  for z, poly in _cap_footprints(ix, triangles, vertices, weld_m)]
+    joined = {i: [ix] for i, ix in enumerate(open_parts) if not sheet[i]}
+    separate = []
+    for i, ix in enumerate(open_parts):
+        if not sheet[i]:
+            continue
+        c = corners[i]
+        cap = shapely.union_all(shapely.polygons(c[:, :, :2]))
+        owners = {owner for owner, z, footprint in footprints
+                  if np.max(np.abs(c[..., 2] - z)) <= _HOR_CAP_M + _HOR_CAP_ATOL
+                  and _sheet_in_footprint(footprint, cap)}
+        if len(owners) == 1:
+            joined[next(iter(owners))].append(ix)
+        else:
+            separate.append(ix)
+    return [np.concatenate(chunks) for chunks in joined.values()] + separate
+
+
+def _horizontal_contexts(model: Soup, weld_m: float) -> list[np.ndarray]:
+    """Triangle indices of each context, ordered by the smallest global index.
+
+    Decor (mesh named ``DECOR_MESH``) never shares a weld or a ray with the body.
+    On one side, triangles form connected components through shared welded vertices.
+    """
+    names, owner = _orientation_groups(model)
+    if len(model.triangles) == 0 or len(model.vertices) == 0:
+        return []
+    decor = np.array([name == DECOR_MESH for name in names], dtype=bool)
+    side = decor[owner]
+    contexts: list[np.ndarray] = []
+    for want_decor in (False, True):
+        tri_idx = np.flatnonzero(side == want_decor)
+        contexts.extend(_side_contexts(tri_idx, model.triangles, model.vertices, weld_m))
+    contexts.sort(key=lambda ix: int(ix.min()))
+    return contexts
+
+
+def _context_volume(names: tuple, owner: np.ndarray, tri_idx: np.ndarray) -> list[str]:
+    """Distinct render-mesh names of a context, in mesh-index order."""
+    volume = []
+    seen = set()
+    for mesh_id in np.unique(owner[tri_idx]):
+        name = names[int(mesh_id)]
+        if name in seen:
+            continue
+        seen.add(name)
+        volume.append(name)
+    return volume
+
+
+def _context_is_closed(tri_idx: np.ndarray, triangles: np.ndarray, vertices: np.ndarray,
+                       weld_m: float) -> bool:
+    """True when every non-collapsed welded edge of this context is used twice."""
+    tris = np.asarray(triangles, dtype=np.int64)[np.asarray(tri_idx, dtype=np.int64)]
+    if len(tris) == 0:
+        return False
+    used = np.unique(tris.reshape(-1))
+    local = np.searchsorted(used, tris)
+    edges, counts, _sides = edge_uses(local, weld(vertices[used], weld_m))
+    keep = edges[:, 0] != edges[:, 1]
+    return bool(np.any(keep) and np.all(counts[keep] == 2))
+
+
+def _xy_polygon(tri_idx: np.ndarray, corners: np.ndarray):
+    """Union of the horizontal projections of the non-vertical triangles."""
+    polys = []
+    for tri in corners[np.asarray(tri_idx, dtype=np.int64)]:
+        xy = np.asarray(tri[:, :2], float)
+        edge_a, edge_b = xy[1] - xy[0], xy[2] - xy[0]
+        if abs(float(edge_a[0] * edge_b[1] - edge_a[1] * edge_b[0])) <= 1e-12:
+            continue
+        poly = shapely.Polygon(xy)
+        if not poly.is_valid:
+            poly = poly.buffer(0)
+        if not poly.is_empty and poly.area > 0:
+            polys.append(poly)
+    if not polys:
+        return None
+    geom = shapely.union_all(polys)
+    if geom.is_empty or geom.area <= 0:
+        return None
+    return geom
+
+
+def _footprint_covers(footprint, sheet) -> bool:
+    if footprint is None or sheet is None or sheet.is_empty or footprint.is_empty:
+        return False
+    if footprint.covers(sheet):
+        return True
+    leftover = float(sheet.difference(footprint).area)
+    return leftover <= max(1e-8, float(sheet.area) * 1e-8)
+
+
+def _pure_sheet(tri_idx: np.ndarray, corners: np.ndarray, length: np.ndarray, nz: np.ndarray) -> bool:
+    """A context of only horizontal, coplanar, positive-area triangles."""
+    ix = np.asarray(tri_idx, dtype=np.int64)
+    live = ix[(length[ix] > 0) & np.isfinite(length[ix]) & np.isfinite(nz[ix])]
+    if len(live) == 0:
+        return False
+    if np.any(length[ix] <= 0) or not np.all(np.isfinite(length[ix])):
+        return False
+    if not np.all(np.abs(nz[live]) >= (1.0 - HORIZONTAL_COS_TOL) * length[live]):
+        return False
+    return float(np.ptp(corners[live][..., 2])) <= _HOR_DEPTH
+
+
+def _sheet_owner_side(sheet_ix: np.ndarray, sheet_label: int, contexts, corners: np.ndarray,
+                      triangles: np.ndarray, vertices: np.ndarray, weld_m: float,
+                      decor: np.ndarray) -> str:
+    """``down`` under a covering closed solid, ``up`` otherwise, ``ambiguous`` when both sides cover.
+
+    Decor never supplies the owner, and a decor sheet does not borrow the body. Strictly above
+    means the solid's minimum Z exceeds the sheet by more than ``weld_m``.
+    """
+    sheet_z = float(corners[sheet_ix][..., 2].mean())
+    sheet_poly = _xy_polygon(sheet_ix, corners)
+    eps = max(float(weld_m), _HOR_DEPTH)
+    sheet_decor = bool(decor[sheet_ix].any())
+    above = below = False
+    for label, other in enumerate(contexts):
+        if label == sheet_label:
+            continue
+        if bool(decor[other].any()) != sheet_decor:
+            continue
+        if not _context_is_closed(other, triangles, vertices, weld_m):
+            continue
+        if not _footprint_covers(_xy_polygon(other, corners), sheet_poly):
+            continue
+        height = corners[other][..., 2]
+        if float(height.min()) > sheet_z + eps:
+            above = True
+        elif float(height.max()) < sheet_z - eps:
+            below = True
+    if above and below:
+        return "ambiguous"
+    return "down" if above else "up"
+
+
+def _judge_horizontal_faces(model: Soup, weld_m: float):
+    """Horizontal and inward counts per render mesh, one verdict per context."""
+    names, owner = _orientation_groups(model)
+    n_mesh = len(names)
+    inward = np.zeros(n_mesh, dtype=int)
+    horizontal = np.zeros(n_mesh, dtype=int)
+    if len(model.triangles) == 0 or len(model.vertices) == 0 or not _vertices_finite(model):
+        return inward, horizontal, [], []
+    contexts = _horizontal_contexts(model, weld_m)
+    volumes = [_context_volume(names, owner, ix) for ix in contexts]
+    corners = model.corners()
+    normal = np.cross(corners[:, 1] - corners[:, 0], corners[:, 2] - corners[:, 0])
+    length = np.linalg.norm(normal, axis=1)
+    nz = normal[:, 2]
+    finite_face = np.isfinite(length) & np.isfinite(nz) & np.isfinite(normal).all(axis=1)
+    horiz = finite_face & (length > 0) & (np.abs(nz) >= (1.0 - HORIZONTAL_COS_TOL) * length)
+    nonvert = finite_face & (np.abs(nz) > 1e-9 * length)
+    if horiz.any():
+        np.add.at(horizontal, owner[horiz], 1)
+    context = np.full(len(corners), -1, dtype=np.int64)
+    for label, tri_idx in enumerate(contexts):
+        context[tri_idx] = label
+    bad_tri = np.zeros(len(corners), dtype=bool)
+    rays = np.flatnonzero(horiz & (context >= 0))
+    if len(rays):
+        targets = np.flatnonzero(nonvert & (context >= 0))
+        k = _upward_crossings(corners[targets], corners[rays].mean(1), context[targets], context[rays])
+        face_nz = nz[rays]
+        bad_tri[rays] = (k < 0) | ((face_nz > 0) & (k % 2 == 1)) | ((face_nz < 0) & (k % 2 == 0))
+    decor = np.array([names[int(i)] == DECOR_MESH for i in owner], dtype=bool)
+    for label, tri_idx in enumerate(contexts):
+        if not _pure_sheet(tri_idx, corners, length, nz):
+            continue
+        side = _sheet_owner_side(tri_idx, label, contexts, corners, model.triangles, model.vertices,
+                                 weld_m, decor)
+        if side == "ambiguous":
+            bad_tri[tri_idx] = True
+        elif side == "down":
+            bad_tri[tri_idx] = nz[tri_idx] >= 0
+        else:
+            bad_tri[tri_idx] = nz[tri_idx] <= 0
+    bad_tri[(~np.isfinite(length)) | (~np.isfinite(normal).all(axis=1)) | (length <= 0)] = True
+    found = np.flatnonzero(bad_tri)
+    if len(found) == 0:
+        return inward, horizontal, [], volumes
+    np.add.at(inward, owner[found], 1)
+    return inward, horizontal, [int(i) for i in found], volumes
+
+
+def inward_horizontal_faces(model: Soup, weld_m: float = _HOR_WELD_M) -> tuple[np.ndarray, np.ndarray, list[int]]:
+    """Per-mesh inward and checked-horizontal counts, plus sorted defect indices.
+
+    A closed component is judged alone. An open sheet joins only a unique owner inside
+    ``_HOR_CAP_M`` (with a 0.03 m planar embed); every other open part keeps its own parity.
+    Non-finite vertices are not a clean certificate: every triangle is reported inward.
+    """
+    if not _vertices_finite(model):
+        n_mesh = len(_orientation_groups(model)[0])
+        return (np.zeros(n_mesh, dtype=int), np.zeros(n_mesh, dtype=int),
+                list(range(len(model.triangles))))
+    inward, horizontal, wrong, _volumes = _judge_horizontal_faces(model, weld_m)
+    return inward, horizontal, wrong
+
+
+def check_horizontal_faces(model: Soup, tol: dict) -> dict:
+    """Outward horizontal normals of closed volumes and of detached open parts (issues #56, #314).
+
+    Each connected part is judged on its own. A planar sheet joins an open component only when
+    that component's horizontal boundary loop covers the sheet, or the sheet overlaps the loop by
+    at most 0.03 m, and the sheet lies within 0.01 m of the loop plane; two owners, or none, leave
+    the sheet independent. A detached pure sheet faces down when a closed solid lies strictly
+    above it and covers its footprint, and faces up when nothing does, or a solid is below or
+    coincident; both sides at once is a fail. A collapsed or non-finite face is inward, never a
+    silent pass. Non-finite vertices, an empty model and a model with no horizontal face are not
+    measured, never a pass. This is not architectural acceptance or topology QA.
+    """
+    names, _owner = _orientation_groups(model)
+    details = {
+        "meshes": [{"name": name, "horizontal_faces": 0, "inward_faces": 0} for name in names],
+        "volumes": [],
+        "inward_triangles": [],
+        "note": _HOR_NOTE}
+    if not _vertices_finite(model):
+        details["reason"] = "non-finite vertices"
+        return result("horizontal_faces", False, None, 0, details, measured=False)
+    weld_m = tol.get("weld_m") or _HOR_WELD_M
+    inward, horizontal, wrong, volumes = _judge_horizontal_faces(model, weld_m)
+    details = {
+        "meshes": [{"name": name, "horizontal_faces": int(horizontal[i]), "inward_faces": int(inward[i])}
+                   for i, name in enumerate(names)],
+        "volumes": volumes,
+        "inward_triangles": wrong[:50],
+        "note": _HOR_NOTE}
+    if int(horizontal.sum()) == 0:
+        return result("horizontal_faces", False, None, 0, details, measured=False)
+    value = int(inward.sum())
+    return result("horizontal_faces", value == 0, value, 0, details)
+
+
 def run(model: Soup, etalon: Soup, spec: Spec, tol: dict, ranges: dict | None = None,
         source_class: str | None = None, build: str = "from_spec") -> dict:
     """All §5 checks; tol is the `geometry` block of tolerances.json. The weld is the building's (spec weld_m,
-    user 2026-10-13): open edges, T-junctions and non-manifold are counted after welding the readback by it."""
+    user 2026-10-13 [D068]): open edges, T-junctions and non-manifold are counted after welding the readback by it."""
     ranges = ranges or load_ranges()
     tol = {**tol, "weld_m": spec.weld_m}
     checks = [check_bbox(model, etalon, tol), check_levels(model, etalon, spec, tol),
@@ -1141,7 +1760,8 @@ def run(model: Soup, etalon: Soup, spec: Spec, tol: dict, ranges: dict | None = 
                          build),
               check_budget(model, tol),
               check_opening_planes(model, spec, tol, ranges), check_material_ids(model, tol, ranges),
-              check_decor(model, spec, tol, ranges), check_orientation(model, tol)]
+              check_decor(model, spec, tol, ranges), check_orientation(model, tol),
+              check_horizontal_faces(model, tol)]
     return {"passed": all(c["status"] == "pass" for c in checks),
             "failed": [c["id"] for c in checks if c["status"] == "fail"],
             "not_measured": [c["id"] for c in checks if c["status"] == "not_measured"],

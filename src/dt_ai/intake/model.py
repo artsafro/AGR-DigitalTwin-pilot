@@ -1,4 +1,4 @@
-"""Intake formats (docs/HARNESS_PLAN.md §15, user decisions 2026-10-11): what "study the sources" writes to
+"""Intake formats (docs/HARNESS_PLAN.md §15, user decisions 2026-10-11 [D049]): what "study the sources" writes to
 jobs/<JOB>/intake/ — sources.json (the inventory) and spec-draft.json (a spec whose blocks may be null,
 each with a confidence and its sources). picture.md and questions.md are Markdown (dt_ai.intake.check).
 Pattern: none — intake code (REVIEW_CHECKLIST Q1: new-case, HARNESS_PLAN §15).

@@ -1,4 +1,4 @@
-"""library/windows/window_types.json (issue #4, user decision 2026-10-09)."""
+"""library/windows/window_types.json (issue #4, user decision 2026-10-09 [D140])."""
 import json
 import sys
 from pathlib import Path
@@ -28,7 +28,7 @@ def test_every_entry_has_the_agreed_fields():
 
 
 def test_only_the_users_confirmations_are_confirmed():
-    # user decision 2026-10-09: the atlas types W01-W07, D01-D03 and the three KPP1 candidates, named by form + size
+    # user decision 2026-10-09 [D140]: the atlas types W01-W07, D01-D03 and the three KPP1 candidates, named by form + size
     confirmed = {t["id"]: t for t in DOC["types"] if t["status"] == "confirmed"}
     assert set(confirmed) == CONFIRMED
     for t in confirmed.values():
@@ -63,7 +63,7 @@ def test_kpp1_candidates_come_from_the_spec():
     ([], (None, None)),
     # two leaves under a full-width fanlight: two fields, not one (Win_Typical entrance door)
     ([[0.12, 0.18, 0.49, 2.13], [0.64, 0.18, 1.35, 2.13], [0.07, 2.3, 1.41, 3.0]], (2, 1)),
-    # user rule 2026-10-09: fields of the row under the fanlight; a fanlight in three parts over two fields adds none
+    # user rule 2026-10-09 [D140]: fields of the row under the fanlight; a fanlight in three parts over two fields adds none
     ([[0.05, 0.05, 0.95, 2.0], [1.05, 0.05, 1.95, 2.0], [0.05, 2.1, 0.6, 2.7], [0.7, 2.1, 1.3, 2.7], [1.4, 2.1, 1.95, 2.7]],
      (2, 1)),
     # PR #44 review 1: a fanlight taller than the row under it is still the fanlight
@@ -94,7 +94,7 @@ def test_a_missing_confirmations_file_stops_the_build(tmp_path):
 
 
 def test_max_window_file_types_are_named_without_project():
-    # user decisions 2026-10-09: Win_Typical.max read only; same fields; names form + size, no project;
+    # user decisions 2026-10-09 [D140]: Win_Typical.max read only; same fields; names form + size, no project;
     # all 24 confirmed, WT-01 / WT-08 balcony blocks
     wt = [t for t in DOC["types"] if t["id"].startswith("WT-")]
     assert len(wt) == 24 and all(t["status"] == "confirmed" for t in wt)

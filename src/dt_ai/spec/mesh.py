@@ -25,7 +25,7 @@ from dt_ai.spec import openings as op
 from dt_ai.spec.model import OPENING_DEPTH_DEFAULT_M, Spec
 
 LEVEL_PREFIX = "LEVEL_"
-# pattern markup-helpers (user 2026-10-10): LEVEL_<name>, the name a letter then letters, digits or "_";
+# pattern markup-helpers (user 2026-10-10 [D044]): LEVEL_<name>, the name a letter then letters, digits or "_";
 # no DCC copy suffix (".001", a trailing 3-digit counter as Max's Point001), no spaces, each name once
 LEVEL_NAME = re.compile(r"^LEVEL_[A-Za-z][A-Za-z0-9_]*$")
 LEVEL_COUNTER = re.compile(r"\d{3}$")
@@ -47,7 +47,7 @@ SLAB_EDGE_BAND_M = 0.3    # a section change only this far under the next level 
                           # 2026-10-12)
 SHARE_TOL_M = 0.005       # a piece shares a wall when its boundary lies within 5 mm of it
 PRIORITY_SHARE = 0.10     # question priority high: >= 2 levels or > 10 % of the facade length
-ROOF_LEVEL_TOL_M = 0.10   # roof surfaces lie within this of the top input level (user decision 2026-10-08, #9)
+ROOF_LEVEL_TOL_M = 0.10   # roof surfaces lie within this of the top input level (user decision 2026-10-08 [D024], #9)
 ROOF_SLOPE_MAX_DEG = 10.0 # drainage slopes up to this are a flat roof; steeper roof parts are a question
 ROOF_STEEP_BAND_M = 2.0   # lower search bound for pitched-roof questions, not drainage surfaces
 ROOF_STEEP_SHARE = 0.01   # steep up-facing roof area above this share of the floor stops the extractor
@@ -55,24 +55,23 @@ ROOF_PART_SLIVER_M2 = 0.05  # a separate roof part with more than this both insi
 ROOF_SEARCH_M = 0.3       # only to name nearby surfaces in the error message
 ROOF_OWN = 0.25           # share of the top floor the roof plane itself must cover (else roof or cap?)
 HOLE_MIN_M2 = 0.01        # uncovered pieces of the top floor smaller than this are numeric slivers
-SHAFT_UPPER = 0.85        # ... and again at this share of the top storey's height
 SHAFT_WALL_SHARE = 0.9    # a roof hole is a shaft when body walls line this share of its edge at mid top storey
 ROOF_CLOSED = 0.9         # share of the top floor the roof and surfaces above it must close
 PARAPET_EDGE_M = 0.05     # parapet top is read only on the outer wall line of the top floor
 PARAPET_SAMPLE_M = 0.25   # the roof is compared with the wall top at least this often along the outer wall line
-# user decisions 2026-10-08 (#31): a recess open from the storey floor, at least DOOR_MIN_H_M high
+# user decisions 2026-10-08 [D025] (#31): a recess open from the storey floor, at least DOOR_MIN_H_M high
 # and DOOR_W_M wide at its mouth, is a door opening and leaves the contour (depth is no criterion);
 # a bump or notch with both sizes <= RELIEF_M is relief, not a kink; the same in section: a projection or
-# recess with depth and height both <= RELIEF_M is relief, not a question (user decision 2026-10-09)
+# recess with depth and height both <= RELIEF_M is relief, not a question (user decision 2026-10-09 [D032])
 DOOR_MIN_H_M = 1.9
 DOOR_W_M = (0.7, 3.0)
-DOOR_FLOOR_M = 0.05       # "from the floor": open from within this of the storey floor (user, 2026-10-08)
+DOOR_FLOOR_M = 0.05       # "from the floor": open from within this of the storey floor (user, 2026-10-08 [D025])
 RELIEF_M = 0.10
 DOOR_HOST_M = 0.02        # a source door is a facade door when its ends lie within half its host + this of the contour
 SLAB_GAP_M = (0.002, 0.010)  # an inset slab plate lies this far above its level (pattern roof-inset-plane)
 PLATE_SAME_M = 0.0005    # the inset plates of one building share plate_gap_m / plate_overlap_m within this
 TERRACE_COVER = 0.02      # terrace: the walkable part at the level and the parapet cap together cover the ledge
-                          # within this share of its area (pattern terrace, user plan 2026-10-10)
+                          # within this share of its area (pattern terrace, user plan 2026-10-10 [D041])
 
 
 class SpecError(ValueError):
@@ -186,7 +185,7 @@ def _group_ids(group):
 
 @functools.lru_cache(maxsize=8)
 def _ranges(path, mtime_ns):
-    """The parsed ranges file, once per path and version (user 2026-10-13: the cache follows the file; parsed
+    """The parsed ranges file, once per path and version (user 2026-10-13 [D144]: the cache follows the file; parsed
     per call it cost OBJ03 42 of 48 minutes in _plane_suspects)."""
     import yaml
     return yaml.safe_load(open(path, encoding="utf-8").read())
@@ -350,7 +349,7 @@ def _drop_small_kinks(points):
     return keep if len(keep) >= 3 else list(points)
 
 
-WELD_DEFAULT_M = 0.003    # the building's weld (spec weld_m, user 2026-10-13): contour points this close are one
+WELD_DEFAULT_M = 0.003    # the building's weld (spec weld_m, user 2026-10-13 [D068]): contour points this close are one
 
 
 def _contour_points(poly, weld=WELD_DEFAULT_M):
@@ -584,7 +583,7 @@ def _ledge_faces(v, tris, ledge, z0, z1, cap=None, inner_line=None, zt=None):
 
 
 def _inset_plates(v, extra, z0, region):
-    """Inset slab plates over a level (pattern roof-inset-plane, user rules 2026-10-10): the connected
+    """Inset slab plates over a level (pattern roof-inset-plane, user rules 2026-10-10 [D038]): the connected
     groups of up-facing triangles of the parts outside the body whose height lies SLAB_GAP_M above z0
     (within the checkers' 0.1 mm weld) and whose centre lies inside region. Each group is one plate,
     flat on its own within WELD_M (reviews of PR #63, #64): returns ([(plan polygon, raw gap)], number of
@@ -613,7 +612,7 @@ def _inset_plates(v, extra, z0, region):
 
 def _holes(v, tris, z):
     """The holes of inset slabs at height z: regions bounded by the body's open edges lying flat there,
-    by even-odd, so a shaft's foot is an inner outline of its hole (KPP1, user 2026-10-10)."""
+    by even-odd, so a shaft's foot is an inner outline of its hole (KPP1, user 2026-10-10 [D038])."""
     e = np.sort(np.concatenate([tris[:, [0, 1]], tris[:, [1, 2]], tris[:, [2, 0]]]), axis=1)
     edges, count = np.unique(e, axis=0, return_counts=True)
     once = edges[count == 1]
@@ -648,7 +647,7 @@ def _inner_outlines_match(hole, plate, overlap, weld):
 
 def _plate_params(v, body, extra, z, region):
     """Measured (plate_gap_m, plate_overlap_m) of every inset plate over level z inside region, and the
-    problems that make a plate unreadable (pattern roof-inset-plane, user 2026-10-10): its height above the
+    problems that make a plate unreadable (pattern roof-inset-plane, user 2026-10-10 [D038]): its height above the
     level, and how far it overlaps the one hole of the body it lies over, outline to outline, evenly all
     round as the checker wants it (review 1 of PR #64). A slab with no readable plate is a problem too."""
     plates, bad = _inset_plates(v, extra, z, region)
@@ -676,7 +675,7 @@ def _plate_params(v, body, extra, z, region):
 
 
 def _terrace(v, tris, groups, closed, z0, z1, below, extra=None):
-    """Pattern terrace (user plan 2026-10-10): a storey whose lowest section shape is the floor below's
+    """Pattern terrace (user plan 2026-10-10 [D041]): a storey whose lowest section shape is the floor below's
     contour, from the level up to a parapet top, with the storey's own wall shape above it to the
     storey top. Structure, not a height difference (Codex review 1 of PR #61): the walkable part at the
     level and the parapet cap at its top cover the ledge in plan without overlapping, and the parapet's
@@ -699,7 +698,7 @@ def _terrace(v, tris, groups, closed, z0, z1, below, extra=None):
     limit = TERRACE_COVER * ledge.area
     if cap.area <= HOLE_MIN_M2 or walk.intersection(cap).area > limit:
         return None
-    # an inset walkable plate (user rule 2026-10-10): a separate plate SLAB_GAP_M above the level, its edge
+    # an inset walkable plate (user rule 2026-10-10 [D038]): a separate plate SLAB_GAP_M above the level, its edge
     # under the parapet; the walkable part is the plate where no cap covers it
     plates, bad = _inset_plates(v, extra, z0, ledge)
     if bad:                                              # a plate that is not flat: no terrace read (the
@@ -729,9 +728,9 @@ def _slab_band_from(z0, z1):
 FACADE_VOID_SHARE = 0.25  # a closed facade ring encloses at least this share of its outline as void (an inner mass
                           # joined to it included); an open C or a lone mass encloses none
 OFFSET_STEP_M = 0.02      # facade_offset_m sampled along the envelope this often (reported data, +-0.01 m)
-PANELISED = "panelised"   # object.json source_class of a panel facade without a shell (rule 1, user 2026-10-13)
+PANELISED = "panelised"   # object.json source_class of a panel facade without a shell (rule 1, user 2026-10-13 [D066])
 PANEL_HINT_SHARE = 0.5    # the hint to set source_class: other parts' area outside the body's plan above this share
-                          # (user 2026-10-13: the trigger of a hint, not a geometry rule)
+                          # (user 2026-10-13 [D066]: the trigger of a hint, not a geometry rule)
 
 
 def _up_faces_at(v, tris, z):
@@ -756,7 +755,7 @@ def _slab_candidates(v, tris, owners, levels):
 
 
 def _panel_hint(v, tris, parts, owners, levels):
-    """Rule 1 (user 2026-10-13): when more than PANEL_HINT_SHARE of all surface (body and other parts) is other
+    """Rule 1 (user 2026-10-13 [D066]): when more than PANEL_HINT_SHARE of all surface (body and other parts) is other
     parts outside the body's plan (its sections at mid storey), the source is likely a panel facade without a
     shell; the extractor stops and asks for source_class and slabs, it never decides itself."""
     if len(parts) < 2:
@@ -786,7 +785,7 @@ def _reference_slab(v, slab_tris, ceiling, lv):
     """The storey's reference: the ceiling intersected with the floor slab's filled outline when that floor
     exists, the ceiling alone when it does not (the ground storey). A loggia or a missing wall has slab above
     and below; a cantilever or a canopy above the storey only has the ceiling (that stays data, as today)
-    (user 2026-10-16, #85)."""
+    (user 2026-10-16 [D132], #85)."""
     if ceiling is None:
         return None
     floor_faces = _up_faces_at(v, slab_tris, lv["elev_m"]) if slab_tris is not None and len(slab_tris) else []
@@ -803,7 +802,7 @@ def _reference_slab(v, slab_tris, ceiling, lv):
 def _panel_recesses(env, reference, pts):
     """The parts of the storey's slab outside the panel contour that the contour runs past deeper than
     ATTACHMENT_FROM_M. Detection is geometric (contour ∩ reference eroded by ATTACHMENT_FROM_M); samples
-    are only for reporting (review 1 of #85). Nothing filtered (user 2026-10-16, #85)."""
+    are only for reporting (review 1 of #85). Nothing filtered (user 2026-10-16 [D132], #85)."""
     inner = reference.buffer(-dc.ATTACHMENT_FROM_M, quad_segs=64)   # slightly larger than the true inset where
     if inner.is_empty:                                              # the arcs are chorded, so a touch still stops
         return []
@@ -845,7 +844,7 @@ def _panel_recesses(env, reference, pts):
 
 def _apply_panel_niches(env, reference, pts, niches, lv, poly, rep):
     """Unconfirmed deep pockets stop the contour; confirmed ones are data. The extractor never classifies a
-    pocket as a niche or a missing wall (user 2026-10-16, #85)."""
+    pocket as a niche or a missing wall (user 2026-10-16 [D132], #85)."""
     found = _panel_recesses(env, reference, pts)
     given = [[float(p[0]), float(p[1])] for p in (niches or [])]
     if not found:
@@ -874,21 +873,21 @@ def _apply_panel_niches(env, reference, pts, niches, lv, poly, rep):
     raise SpecError(
         f"level {lv['name']}: the panel contour runs up to {depth} m inside the storey's slabs "
         f"(deeper than {dc.ATTACHMENT_FROM_M} m off the slab edge) - a niche/loggia or a missing facade wall; "
-        f"the extractor does not decide it (user 2026-10-16, #85). Check the drawings at: {where}. "
+        f"the extractor does not decide it (user 2026-10-16 [D132], #85). Check the drawings at: {where}. "
         f"Contour {poly.area:.3f} m2, facade_offset_range_m {rep.get('facade_offset_range_m')}, "
         f"slab_inside_facade_share {rep.get('slab_inside_facade_share')}. "
         f"A niche: object.json panel_niches: {{\"{lv['name']}\": [{centres}]}}; a missing wall: fix the source.")
 
 
 def _panel_contour(v, slab_tris, rest_parts, lv, nxt, niches=None):
-    """Rule 2 (user 2026-10-13): on a panel facade the storey's contour is the envelope of the panels' outer faces
+    """Rule 2 (user 2026-10-13 [D066]): on a panel facade the storey's contour is the envelope of the panels' outer faces
     at mid storey - the section of every part but the slabs, a protrusion further than ATTACHMENT_FROM_M off the
     storey's own slabs (floor and ceiling; the deck at a terrace level) cut off whole, root included, segment by
     segment (attachment candidates, EG2; #87, #88), joints within RELIEF_M closed, the outer line,
     deviations within RELIEF_M collapsed (Douglas-Peucker). The ceiling slab (the next level) is the check:
     the panels stand outside it by facade_offset_m (data, no question). Over a ledge to the storey below, the
     walkable part is the slab there and a parapet is the parts standing on the ledge's outer edge: a terrace
-    (the level is the walkable top, user 2026-10-13). A run of the contour deeper than ATTACHMENT_FROM_M inside
+    (the level is the walkable top, user 2026-10-13 [D066]). A run of the contour deeper than ATTACHMENT_FROM_M inside
     the storey's slabs stops and asks whether it is a niche or a missing wall; the extractor does not decide it
     (user 2026-10-16 [D132], #85): the user checks the drawings to clarify which it is."""
     zmid = (lv["elev_m"] + nxt["elev_m"]) / 2
@@ -903,7 +902,7 @@ def _panel_contour(v, slab_tris, rest_parts, lv, nxt, niches=None):
     reach = outline.buffer(dc.ATTACHMENT_FROM_M) if outline is not None else None
     ceiling = Polygon(max(shapely.get_parts(slab), key=lambda g: g.area).exterior) if slab is not None else None
     sections = []
-    for part in rest_parts:                              # segment by segment (user 2026-10-13, #87): the facade
+    for part in rest_parts:                              # segment by segment (user 2026-10-13 [D066], #87): the facade
         if not len(part):                                # part of a part stays facade, a protrusion further than
             continue                                     # the attachment reach off the slabs is a candidate whole
         z = v[part][:, :, 2]
@@ -990,7 +989,7 @@ def _prune_spurs(kept, dropped, outline, band):
     Inside the band require straight continuation and stop where another within-band direction meets it:
     glass lines and facade steps are junctions, not roots. Only nodes reached from an actual cut are visited;
     an endpoint outside the band alone never classifies a facade segment as a spur.
-    (#87, user 2026-10-13; review 1 of #89; #90; reviews 1-2 of #279)."""
+    (#87, user 2026-10-13 [D066]; review 1 of #89; #90; reviews 1-2 of #279)."""
     if not kept:
         return kept
     noded = [LineString(c) for g in shapely.get_parts(shapely.union_all(kept)) for c in
@@ -1114,7 +1113,7 @@ def _panel_terrace(v, slab_tris, rest, lv, nxt, poly, below):
 
 
 def _mid_storey_shape(groups, closed, z0, z1):
-    """Rule 3 (user 2026-10-12): the contour is the section at mid storey; a section that changes only in the
+    """Rule 3 (user 2026-10-12 [D060]): the contour is the section at mid storey; a section that changes only in the
     band SLAB_EDGE_BAND_M under the next level is the slab edge (floor-step / belt), not the contour. Taken
     when one shape holds the whole wall band below that band - from the storey bottom, through mid storey,
     with no other closed shape in it; otherwise (None) the section changes in the wall band itself and the
@@ -1139,7 +1138,7 @@ def _mid_storey_shape(groups, closed, z0, z1):
 
 
 def _level_contour(v, tris, z0, z1, name, at_m=None, below=None, extra=None):
-    """Level contour = walls over the full storey height (user decisions 2026-10-08). Accepted only
+    """Level contour = walls over the full storey height (user decisions 2026-10-08 [D022]). Accepted only
     when one section shape is at both storey ends and is also the tallest; otherwise the exterior
     shell cannot tell the wall from a plinth, cornice or belt, so the extractor stops with the
     candidate shapes and the user names a height of the wall shape (object.json contour_at_m)."""
@@ -1311,7 +1310,7 @@ def questions_markdown(spec_id, questions):
     """The object's questions file: everything not over the full storey height (HARNESS_PLAN §4)."""
     lines = [f"# Questions — {spec_id}", "",
              "Written by the spec extractor. Each row is geometry that is not over the full storey height,",
-             "so it does not change the level contour (user decision 2026-10-08). Priority high = through",
+             "so it does not change the level contour (user decision 2026-10-08 [D023]). Priority high = through",
              "2 or more levels or over 10 % of the facade length. Heights are the exact height interval of",
              "the element. A recess at window height may be an opening (separated by issue #7).",
              "Wall `—`: the piece shares no facet with the contour (unbound); measured on its own box.", "",
@@ -1409,7 +1408,7 @@ def _roof_surface_groups(v, tris):
     return list(groups.values())
 
 
-def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, outline=None):
+def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, outline=None, lining=None):
     """The roof level is input, like every level; geometry only confirms it (issues #16, #9).
     Roof: up-facing body surfaces inside the top floor contour with a slope up to ROOF_SLOPE_MAX_DEG
     (drainage slopes are a flat roof) whose surface means lie within ROOF_LEVEL_TOL_M of the top input
@@ -1420,6 +1419,8 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, 
     guess. extra: separate roof parts joined to the body for this check (#9, option (a)); above:
     every other separate part, whose near-flat tops above the roof (a parapet cap or shaft top
     modelled apart) count only for closing the floor from above, never for the roof height.
+    lining: separate structural slab meshes (vertices, triangles), used only for
+    occupied shaft-lining sections, never roof height or coverage.
     Parapet top: highest body point on the outer wall line of the top floor."""
     every = tris if extra is None or not len(extra) else np.vstack([tris, extra])
     p = v[every]
@@ -1533,20 +1534,53 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, 
                         f"floor (< {ROOF_CLOSED:.0%}): roof missing or open; ask the user")
     holes = [h for h in shapely.get_parts(ref.difference(cover)) if h.area >= HOLE_MIN_M2]
     # an opening of the slab with both sizes under the narrowest opening (DOOR_W_M[0]) is no opening of the
-    # body: left out and listed (pattern roof-inset-plane, user 2026-10-13; OBJ03's 0.04 m2 at 96.55 m)
+    # body: left out and listed (pattern roof-inset-plane, user 2026-10-13 [D069]; OBJ03's 0.04 m2 at 96.55 m)
     small = [h for h in holes if _sizes(h)[1] < DOOR_W_M[0]]
     holes = [h for h in holes if _sizes(h)[1] >= DOOR_W_M[0]]
     ignored = [{"area_m2": round(h.area, 3), "at": [round(h.centroid.x, 2), round(h.centroid.y, 2)],
                 "sizes_m": [round(x, 3) for x in _sizes(h)]} for h in small]
     if holes:
-        # lined at mid storey and in the storey's upper part: walls that stop well below the roof
-        # line nothing (PR #35 review 2, P1)
-        cuts = [_clear_height(v, tris, below_level["elev_m"] + share * (roof_z - below_level["elev_m"]))
-                for share in (0.5, SHAFT_UPPER)]
-        sections = [shapely.unary_union(_section(v, tris, z) or [LineString()]) for z in cuts]
+        # Check every vertical mesh interval from mid storey to the roof, not just two
+        # storey cuts: disconnected strips can line both cuts (#37). Include the roof
+        # structure's inner reveal, so lining may end at its underside (KPP1).
+        bottom = below_level["elev_m"] + 0.5 * (roof_z - below_level["elev_m"])
+        lining = lining or []
+        zs = np.concatenate([v[np.unique(every), 2]] + [lv[np.unique(lt), 2] for lv, lt in lining])
+        heights = np.unique(np.r_[bottom, zs[(zs > bottom) & (zs < roof_z)], roof_z])
+        # Once the prismatic eligibility check below succeeds, each section is
+        # constant on these open vertex intervals; one interior cut proves all of
+        # it. Non-prismatic evidence must stop rather than trust finite sampling.
+        cuts = [(lo + hi) / 2 for lo, hi in zip(heights[:-1], heights[1:])]
+        # The structural opening can be narrower than the roof covering opening
+        # (KPP1: 125 mm insulation return). Its occupied section, with voids kept,
+        # supports the roof-hole edge even when its inner face is farther inward.
         for hole in holes:
-            lined = min(w.intersection(hole.buffer(PARAPET_EDGE_M)).length for w in sections) / hole.exterior.length
-            z_mid = cuts[0]
+            sample_cuts = cuts
+            if outline is not None and hole.intersects(ref.exterior):
+                # Panel/slab setback strips touch the facade perimeter: they are
+                # not enclosed shaft mouths. Preserve their existing two-cut
+                # facade evidence (panels have construction joints at the roof).
+                # Internal openings, including panelised shafts, stay continuous.
+                sample_cuts = [_clear_height(v, tris, below_level["elev_m"] + share *
+                               (roof_z - below_level["elev_m"])) for share in (0.5, 0.85)]
+                wall_sections = [shapely.unary_union(_section(v, tris, z) or [LineString()])
+                                 for z in sample_cuts]
+                solid_sections = [Polygon() for _ in sample_cuts]
+            else:
+                certified = _prismatic_lining(v, every, bottom, roof_z, hole)
+                wall_sections = [shapely.unary_union(_section(v, certified, z) or [LineString()])
+                                 for z in cuts]
+                # build_area uses the entire ring: a non-prismatic structural
+                # mesh contributes no occupied material, not guessed sections.
+                certified_solids = [(lv, _prismatic_lining(lv, lt, bottom, roof_z))
+                                    for lv, lt in lining]
+                solid_sections = [shapely.unary_union([shapely.build_area(shapely.unary_union(
+                    _section(lv, lt, z) or [LineString()])) for lv, lt in certified_solids]) for z in cuts]
+            lengths = [shapely.unary_union([w.intersection(hole.buffer(PARAPET_EDGE_M)),
+                       hole.boundary.intersection(s)]).length for w, s in zip(wall_sections, solid_sections)]
+            worst = int(np.argmin(lengths))
+            lined = lengths[worst] / hole.exterior.length
+            z_mid = sample_cuts[worst]
             if lined < SHAFT_WALL_SHARE:
                 c = hole.centroid
                 raise SpecError(f"roof at {roof_z:.3f} m has an opening of {hole.area:.2f} m2 at ({c.x:.2f}, {c.y:.2f}) "
@@ -1562,6 +1596,61 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, 
     return roof_z, parapet_top if on_edge else roof_z, round(closed, 3), stats
 
 
+def _prismatic_lining(v, tris, bottom, top, hole=None):
+    """Return only evidence with constant sections between vertex heights.
+
+    A vertical planar triangulation has constant sections only if its exposed
+    edges are horizontal or vertical. Oblique edges must have a coplanar triangle
+    on the opposite side (an internal tessellation edge, not a moving boundary).
+    This is a whole-interval eligibility proof, not another set of sample cuts.
+    """
+    nearby = hole.buffer(PARAPET_EDGE_M) if hole is not None else None
+    diagonal_edges = {}
+    certified = []
+    for tri, face in zip(tris, v[tris]):
+        lo, hi = face[:, 2].min(), face[:, 2].max()
+        if hi <= bottom or lo >= top or hi == lo:
+            continue
+        plan = shapely.MultiPoint(face[:, :2]).convex_hull
+        if nearby is not None and not plan.intersects(nearby):
+            continue
+        normal = np.cross(face[1] - face[0], face[2] - face[0])
+        norm = np.linalg.norm(normal)
+        if norm == 0:
+            continue
+        if abs(normal[2]) > 1e-12 * norm:
+            if hole is None:
+                return np.empty((0, 3), dtype=np.int64)
+            continue
+        certified.append(tri)
+        for a, b, c in ((0, 1, 2), (1, 2, 0), (2, 0, 1)):
+            start, end = sorted((tuple(face[a]), tuple(face[b])))
+            delta = np.asarray(end) - start
+            if (delta[2] == 0 or np.linalg.norm(delta[:2]) == 0
+                    or max(start[2], end[2]) <= bottom or min(start[2], end[2]) >= top):
+                continue
+            side = np.cross(delta, face[c] - start)
+            diagonal_edges.setdefault((start, end), []).append((len(certified) - 1, side))
+    # Remove unprovable patches rather than borrowing one of their sampled
+    # sections. Propagate across tessellation diagonals until every retained edge
+    # has an opposite-side neighbour. Axis-aligned boundaries need no neighbour.
+    removed = set()
+    while True:
+        rejected = set()
+        for sides in diagonal_edges.values():
+            for i, side in sides:
+                if i not in removed and not any(j not in removed and np.dot(side, other) < 0
+                                                for j, other in sides):
+                    rejected.add(i)
+        if not rejected:
+            break
+        removed.update(rejected)
+    if removed and hole is None:
+        return np.empty((0, 3), dtype=np.int64)
+    return np.asarray([tri for i, tri in enumerate(certified) if i not in removed],
+                      dtype=np.int64).reshape(-1, 3)
+
+
 def _sizes(g):
     """The two sides of a shape's minimum rotated rectangle, shorter first."""
     box = np.asarray(g.minimum_rotated_rectangle.exterior.coords)[:3]
@@ -1569,14 +1658,19 @@ def _sizes(g):
     return a, b
 
 
-def _roof_structures(v, tris, owners, names, top_level):
-    """Pattern roof-screen-enclosure (spec v0.7, user 2026-10-13): the meshes object.json names as roof_screens
+def _roof_structures(v, tris, owners, names, top_level, default_m=None):
+    """Pattern roof-screen-enclosure (spec v0.7, user 2026-10-13 [D067]): the meshes object.json names as roof_screens
     are screen enclosures on the roof. Their screens' vertical faces, projected to the plan, group by proximity
     (joints up to RELIEF_M): one group is one enclosure, its outline the outer line of a closed ring of screens
     (Douglas-Peucker RELIEF_M), its top the group's highest point; a lid on top does not count for the ring.
-    The space a group encloses is a hole of its plan that the screens do not cap both above and below (a thick
-    screen's own inside is capped twice); a group must enclose exactly one space - none is an open screen, more
-    are enclosures sharing screens whose tops cannot be told apart (review 2 of #92).
+    The space a group encloses is a hole of its plan that the screens do not cap at their foot and above it (a
+    thick screen's own inside is closed at its foot; an enclosure's space is open to the roof there - a shell's
+    hollow under its ceiling too, issue #91); a group must enclose exactly one space - none is an open screen, more
+    are enclosures sharing screens whose tops cannot be told apart (review 2 of #92). A ring of screens standing in
+    a group's hole with screen between them at the foot (the inner face of a screen thicker than RELIEF_M) is
+    one group with it.
+    Thickness (issue #91, rule 4 as the parapet's, user 2026-10-12 [D061]): `_screen_thickness`, else `default_m`
+    (the object's parapet default), marked in `thickness` {"m", "by", "why"?}.
     The marking is the human's; a name not in the source, a group not above the roof or screens that do not close
     round their plan are a stop, never a guess (review 1 of #92)."""
     if not names:
@@ -1584,7 +1678,8 @@ def _roof_structures(v, tris, owners, names, top_level):
     missing = sorted(set(names) - set(owners.tolist()))
     if missing:
         raise SpecError(f"roof_screens {missing} are not in the source (object.json names the screen meshes)")
-    p = v[tris[np.isin(owners, list(names))]]
+    own = tris[np.isin(owners, list(names))]
+    p = v[own]
     xy = p[..., :2]
     e1, e2 = xy[:, 1] - xy[:, 0], xy[:, 2] - xy[:, 0]
     upright = np.abs(e1[:, 0] * e2[:, 1] - e1[:, 1] * e2[:, 0]) <= 1e-12
@@ -1599,27 +1694,46 @@ def _roof_structures(v, tris, owners, names, top_level):
     caps = [(Polygon(q), t) for q, t in zip(xy[~upright], p[~upright])]   # any face not vertical, sloped too
     cap_tree = shapely.STRtree([c for c, _ in caps])                       # (review 3 of #92)
 
-    def solid(hole):
-        """A screen's own inside: capped by the screens at two heights over one point of it."""
-        pt = Polygon(hole).representative_point()
+    def cap_zs(pt):
+        """Heights of the screens' caps over one point of the plan."""
         hz = set()
         for i in cap_tree.query(pt, predicate="intersects"):
             t = caps[i][1]
             n_ = np.cross(t[1] - t[0], t[2] - t[0])                         # the cap's plane, z at the point
-            hz.add(round(float(t[0, 2] - (n_[0] * (pt.x - t[0, 0]) + n_[1] * (pt.y - t[0, 1])) / n_[2]) / WELD_M))
-        return len(hz) >= 2
+            hz.add(float(t[0, 2] - (n_[0] * (pt.x - t[0, 0]) + n_[1] * (pt.y - t[0, 1])) / n_[2]))
+        return hz
 
-    groups = list(shapely.get_parts(shapely.union_all(pieces).buffer(RELIEF_M / 2)))
+    def solid(hole, foot):
+        """A screen's own inside: capped by the screens at their foot and above it."""
+        return _between_solid(Polygon(hole), foot, cap_zs)
+
     tree = shapely.STRtree(pieces)
+    foot_of = lambda g: min(zs[i][0] for i in tree.query(g, predicate="intersects"))   # noqa: E731
+    groups = list(shapely.get_parts(shapely.union_all(pieces).buffer(RELIEF_M / 2)))
+    merged = True
+    while merged:                                         # a thick screen's inner face ring joins its outer one
+        merged = False
+        for a, b in product(range(len(groups)), repeat=2):
+            if a == b:
+                continue
+            A, B = groups[a], groups[b]
+            h = next((h for h in A.interiors if Polygon(h).contains(B)), None)
+            if h is None or not _between_solid(Polygon(h).difference(Polygon(B.exterior)), foot_of(A), cap_zs):
+                continue
+            groups[a] = A.union(Polygon(h)).difference(shapely.union_all([Polygon(x) for x in B.interiors]))
+            del groups[b]
+            merged = True
+            break
     out = []
     for g in sorted(groups, key=lambda g: (g.centroid.x, g.centroid.y)):
         members = [int(i) for i in tree.query(g, predicate="intersects")]
         top = max(zs[i][1] for i in members)
+        foot = min(zs[i][0] for i in members)
         c = g.centroid
         if top <= top_level["elev_m"] + EVENT_MIN_M:
             raise SpecError(f"roof_screens {sorted(names)}: the screens round ({c.x:.2f}, {c.y:.2f}) do not stand "
                             f"above the roof level {top_level['elev_m']} m")
-        spaces = [h for h in g.interiors if not solid(h)]
+        spaces = [h for h in g.interiors if not solid(h, foot)]
         if not spaces:
             raise SpecError(f"roof_screens {sorted(names)}: the screens round ({c.x:.2f}, {c.y:.2f}) do not close "
                             "round an enclosure with joints up to 0.10 m")
@@ -1629,9 +1743,51 @@ def _roof_structures(v, tris, owners, names, top_level):
         shrunk = Polygon(g.exterior).buffer(-RELIEF_M / 2)
         env = Polygon(max(shapely.get_parts(shrunk), key=lambda h: h.area).exterior)
         poly = orient(env.simplify(RELIEF_M, preserve_topology=True), sign=1.0)
+        lid = min((float(t[:, 2].min()) for c, t in caps if float(t[:, 2].min()) > foot + EVENT_MIN_M
+                   and c.intersects(poly)), default=top)       # a shell's ceiling: cut under it
+        m, why = _screen_thickness(v, own, poly, foot, min(lid, top), cap_zs)
+        by = "measured"
+        if m is None:
+            m = default_m
+            by = "parapet thickness by default" if m is not None else "not read, no default"
         out.append({"kind": "screen", "outline": _contour_points(poly), "z_top_m": round(top, 3),
-                    "meshes": sorted(names), "area_m2": round(poly.area, 3)})
+                    "meshes": sorted(names), "area_m2": round(poly.area, 3),
+                    "thickness": {"m": m, "by": by, **({"why": why} if why else {})}})
     return out
+
+
+def _between_solid(region, foot, cap_zs):
+    """The region between two rings of screens is screen: capped at the foot and above it at one inner point."""
+    if region.is_empty:
+        return False
+    hz = cap_zs(region.representative_point())
+    return any(abs(z - foot) <= WELD_M for z in hz) and any(z > foot + EVENT_MIN_M for z in hz)
+
+
+def _screen_thickness(v, tris, outline, foot, top, cap_zs):
+    """Issue #91 (rule 4 as the parapet's): the screens' thickness from their section half way from their foot to
+    `top` (their lowest cap above the foot, a shell's ceiling, else their top) - the faces of
+    the section that are screen (an odd number of the screens' caps above them: a closed screen's inside) make one
+    ring on the outline (within RELIEF_M, its Douglas-Peucker) whose inner line is the outer one set in by one
+    thickness (mitred, within SAME_CONTOUR_M), measured at the inner edges' midpoints as the parapet. Returns
+    (thickness, None) or (None, why it is not readable)."""
+    z = (foot + top) / 2
+    lines = shapely.union_all([LineString(s) for s in _section(v, tris, z)])
+    faces = [f for f in polygonize(getattr(lines, "geoms", [lines])) if outline.buffer(RELIEF_M).contains(f)]
+    screen = [f for f in faces if sum(h > z for h in cap_zs(f.representative_point())) % 2 == 1]
+    band = shapely.union_all(screen) if screen else Polygon()
+    if band.is_empty or band.geom_type != "Polygon" or not band.interiors:
+        return None, "the screens are planes: their section at mid height has no ring of screen round the space"
+    if len(band.interiors) != 1 or band.exterior.hausdorff_distance(outline.exterior) > RELIEF_M:
+        return None, "the screens' section at mid height is no one ring on the outline"
+    outer, inner = Polygon(band.exterior), Polygon(band.interiors[0])
+    ring = np.asarray(band.interiors[0].coords)
+    t = float(np.median([outer.exterior.distance(shapely.Point(q)) for q in (ring[:-1] + ring[1:]) / 2]))
+    inset = outer.buffer(-t, join_style="mitre")
+    off = inset.hausdorff_distance(inner) if not inset.is_empty else float("inf")
+    if off > SAME_CONTOUR_M:
+        return None, f"the inner line is up to {off:.3f} m off the outer one set in by {t:.3f} m, not one thickness"
+    return round(t, 3), None
 
 
 def _off_structures(v, tris, under, level):
@@ -1653,7 +1809,7 @@ def _off_structures(v, tris, under, level):
 
 
 def _parapet_thickness(v, tris, roof_z, top_z, top_contour):
-    """Rule 4 (user 2026-10-12): the parapet's thickness from the source - its section at mid parapet height
+    """Rule 4 (user 2026-10-12 [D061]): the parapet's thickness from the source - its section at mid parapet height
     is a closed ring on the top floor's outer line whose inner line keeps one distance from it (within
     SAME_CONTOUR_M). Returns (thickness, None) or (None, why it is not readable)."""
     if top_z - roof_z <= 2 * EVENT_MIN_M:
@@ -1777,7 +1933,7 @@ def _planes(v, tris):
 
 
 class SpecStops(SpecError):
-    """`dt spec extract --collect-stops` (rule 5, user 2026-10-12): every stop of one pass, nothing substituted.
+    """`dt spec extract --collect-stops` (rule 5, user 2026-10-12 [D062]): every stop of one pass, nothing substituted.
     stops: [{"stage", "level", "message"}]; report: what was read up to the stops (None before the body)."""
 
     def __init__(self, stops, report):
@@ -1840,7 +1996,7 @@ def _extract(dump, obj_cfg, profile, thresholds, found):
     plane_tris = np.column_stack([tris[plane], mats[plane]])
     tris, owners, mats = tris[~plane], owners[~plane], mats[~plane]
     panelised = obj_cfg.get("source_class") == PANELISED
-    if panelised:                                        # rule 1 (user 2026-10-13): a panel facade without a
+    if panelised:                                        # rule 1 (user 2026-10-13 [D066]): a panel facade without a
         slabs = obj_cfg.get("slabs") or []               # shell - the body is the named slabs, contours by slabs
         missing = sorted(set(slabs) - set(owners.tolist()))
         if not slabs or missing:
@@ -1983,7 +2139,8 @@ def _extract(dump, obj_cfg, profile, thresholds, found):
     if panelised:                                    # the roof, its parapet and shafts are panels as much as
         body, others = tris, []                      # slabs (review 1 of #83): measured on every part
     _stage(found, "roof")
-    structures = _roof_structures(v, tris, owners, obj_cfg.get("roof_screens") or [], levels[-1])
+    structures = _roof_structures(v, tris, owners, obj_cfg.get("roof_screens") or [], levels[-1],
+                                  obj_cfg.get("parapet_thickness_default_m"))
     if structures:                                   # under a screen enclosure: only the flat roof stays a roof
         under = [Polygon(rs["outline"]) for rs in structures]   # question (pattern roof-screen-enclosure)
         body = _off_structures(v, body, under, levels[-1]["elev_m"])
@@ -1992,7 +2149,9 @@ def _extract(dump, obj_cfg, profile, thresholds, found):
     roof_z, top_z, closed, roof_stats = _roof(v, body, levels[-2], levels[-1], polys[-1],
                                               np.vstack(roof_parts) if roof_parts else None,
                                               np.vstack(others) if others else None,
-                                              outlines[-1] if panelised else None)
+                                              outlines[-1] if panelised else None,
+                                              [_mesh({"meshes": [slab]}, m)
+                                               for slab in dump.get("shaft_lining", [])])
     report["roof_structures"] = structures
     report["roof"] = {"plane_m": round(roof_z, 3), "parapet_top_m": round(top_z, 3), "closed_share": closed,
                       "separate_roof_parts": len(roof_parts), **roof_stats,
@@ -2010,7 +2169,7 @@ def _extract(dump, obj_cfg, profile, thresholds, found):
     written, report["floor_classes"] = fl.collapse(levels, floors)
     terraces = [{"level": n, "parapet_h_m": rep["terrace"]["parapet_h_m"]}
                 for n, rep in report["floors"].items() if "terrace" in rep]
-    # inset plates (pattern roof-inset-plane, user 2026-10-10): plate_gap_m / plate_overlap_m are building
+    # inset plates (pattern roof-inset-plane, user 2026-10-10 [D038, D039]): plate_gap_m / plate_overlap_m are building
     # parameters read from the source; plates that disagree by more than PLATE_SAME_M between themselves,
     # or that cannot be read, are a question; none read leaves the defaults (review 1 of PR #64)
     extra = np.vstack(others) if others else None
@@ -2061,14 +2220,16 @@ def _extract(dump, obj_cfg, profile, thresholds, found):
     spec = Spec(id=obj_cfg["id"], profile=profile,
                 frame={"object": obj_cfg["id"], "source": dump.get("source", "?"), "to_object": m.tolist()},
                 # the parapet is measured from the input roof level, never from the roof plane: an inset
-                # roof plane (pattern roof-inset-plane, user rule 2026-10-10) sets no height; a roof whose
+                # roof plane (pattern roof-inset-plane, user rule 2026-10-10 [D038]) sets no height; a roof whose
                 # surface reaches the wall top at the outer wall line has no parapet (reviews of PR #54)
                 levels=levels, floors=written,
                 roof={"parapet_h_m": round(max(top_z - levels[-1]["elev_m"], 0.0), 3) if roof_stats["parapet"] else 0.0,
                       **({"parapet_thickness_m": thickness} if thickness is not None else {})},
-                # pattern terrace (user plan 2026-10-10): a terrace parapet read from the storey's sections
+                # pattern terrace (user plan 2026-10-10 [D041]): a terrace parapet read from the storey's sections
                 **({"terraces": terraces} if terraces else {}), **({"decor": decor} if decor else {}),
-                **({"roof_structures": [{k: rs[k] for k in ("kind", "outline", "z_top_m")} for rs in structures]}
+                **({"roof_structures": [{**{k: rs[k] for k in ("kind", "outline", "z_top_m")},
+                                          **({"thickness_m": rs["thickness"]["m"]} if rs["thickness"]["m"] is not None else {})}
+                                         for rs in structures]}
                    if structures else {}),
                 **({"spec_version": "0.7"} if structures else {"spec_version": "0.6"} if thickness is not None
                    else {"spec_version": "0.5"} if decor

@@ -57,7 +57,8 @@ class Plan:
 
 
 def plan_layers(boundary: Polygon, coverings: dict[str, list[Polygon]], base: str, slots: dict[str, str],
-                footprint_min_area: float = 1000.0, step: float = 0.006) -> Plan:
+                footprint_min_area: float = 1000.0, step: float = 0.006,
+                normalize_clips: bool = False) -> Plan:
     """Layer plan of method C. ``slots`` maps covering type -> material slot (several types may share one).
 
     Footprints: parts of the boundary not covered by any covering with area >= ``footprint_min_area`` become
@@ -69,7 +70,48 @@ def plan_layers(boundary: Polygon, coverings: dict[str, list[Polygon]], base: st
         raise ValueError(f"base covering {base!r} not in coverings")
     if not math.isfinite(step) or step <= 0:
         raise ValueError("step must be a positive finite number")
-    unions = {t: unary_union([p.intersection(boundary) for p in ps]) for t, ps in coverings.items() if ps}
+    dispositions = []
+
+    def polygonal(g, covering, stage):
+        # Opt-in preserves the accepted legacy plan/mesh bytes, including ring order.
+        if not normalize_clips:
+            return g
+        kept = []
+
+        def collect(part):
+            if part.is_empty:
+                dispositions.append(dict(covering=covering, stage=stage, reason="empty", area_m2=0.0))
+            elif part.geom_type == "Polygon":
+                if part.area < 1e-6:
+                    dispositions.append(dict(covering=covering, stage=stage, reason="below_area_threshold",
+                                             area_m2=float(part.area)))
+                else:
+                    kept.append(part)
+            elif hasattr(part, "geoms"):
+                for child in part.geoms:
+                    collect(child)
+            else:
+                dispositions.append(dict(covering=covering, stage=stage, reason="non_polygonal",
+                                         geometry_type=part.geom_type, area_m2=0.0))
+
+        collect(shapely.make_valid(g))
+        snapped_parts = []
+        for part in kept:
+            snapped = shapely.set_precision(part, GRID)
+            polygons = _polys(snapped)
+            if not polygons:
+                dispositions.append(dict(covering=covering, stage=stage, reason="precision_collapse",
+                                         area_m2=float(part.area)))
+            for polygon in polygons:
+                if polygon.area < 1e-6:
+                    dispositions.append(dict(covering=covering, stage=stage, reason="snapped_below_area_threshold",
+                                             area_m2=float(polygon.area)))
+                else:
+                    snapped_parts.append(polygon)
+        return MultiPolygon(_polys(unary_union(snapped_parts)))
+
+    unions = {t: polygonal(unary_union([polygonal(p.intersection(boundary), t, "clip") for p in ps]),
+                           t, "union") for t, ps in coverings.items() if ps}
     allcov = unary_union(list(unions.values())) if unions else Polygon()
     uncovered = _polys(boundary.difference(allcov))
     holes = sorted((p for p in uncovered if p.area >= footprint_min_area), key=lambda p: -p.area)
@@ -81,7 +123,8 @@ def plan_layers(boundary: Polygon, coverings: dict[str, list[Polygon]], base: st
     for t in unions:
         if t != base:
             by_slot.setdefault(slots[t], []).append(t)
-    slot_geom = {s: unary_union([unions[t] for t in ts]).intersection(surface) for s, ts in by_slot.items()}
+    slot_geom = {s: polygonal(unary_union([unions[t] for t in ts]).intersection(surface),
+                               "+".join(sorted(ts)), "surface_clip") for s, ts in by_slot.items()}
     order = sorted((s for s in slot_geom if not slot_geom[s].is_empty), key=lambda s: -slot_geom[s].area)
     below = Polygon()
     overlaps = {}
@@ -100,6 +143,8 @@ def plan_layers(boundary: Polygon, coverings: dict[str, list[Polygon]], base: st
            "slivers_on_base": len(uncovered) - len(holes),
            "slivers_m2": round(sum(p.area for p in uncovered) - sum(h.area for h in holes), 3),
            "level2_m2": overlaps}
+    if normalize_clips:
+        rep["clip_dispositions"] = dispositions
     return Plan(surface, holes, layers, step, rep)
 
 
@@ -192,7 +237,7 @@ def build_flat(plan: Plan, cell: float = 4.0, chord: float = 0.02, origin: tuple
     relief; adjacent faces share edges (no T-junction). Upper layers are clipped to the surface and made disjoint
     per level (chord simplification must not create same-level overlaps = z-fighting).
 
-    With ``sampler`` (relief refinement, user decision 2026-10-19): faces whose triangles deviate from the relief
+    With ``sampler`` (relief refinement, user decision 2026-10-19 [D153]): faces whose triangles deviate from the relief
     by more than ``tol`` (exact maximum, ``ReliefSampler.max_error``) get the TIN edges inside them added to the
     linework and the partition is rebuilt; the relief is planar inside each resulting face there, so the error is
     0. Faces elsewhere keep the plain 4 m cut (they only gain the vertices where a TIN edge ends on their border).
@@ -710,7 +755,7 @@ def _point_gaps(verts: np.ndarray, faces: np.ndarray, level: np.ndarray, *, iden
 def raise_steep_layers(mesh: Mesh, step: float, gap_min: float = 0.0055, gap_max: float = 0.02,
                        max_rounds: int = 10) -> tuple[Mesh, np.ndarray, dict]:
     """Raise upper-layer vertices locally (Z only) so the gap to the base along the face normal is in
-    [gap_min, gap_max] (user decision 2026-10-19: V004 band 5-20 mm on steep relief; nominal step on flat ground).
+    [gap_min, gap_max] (user decision 2026-10-19 [D154]: V004 band 5-20 mm on steep relief; nominal step on flat ground).
 
     A vertical step ``s`` over a face with unit-normal z component ``nz`` gives a normal gap ``s * nz``; at
     ``nz < gap_min / step`` the nominal step is too small. Per vertex ``s_v = max(step, gap_min / nz_f)`` over its

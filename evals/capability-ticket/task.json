@@ -1,0 +1,19 @@
+{
+  "id": "capability-ticket",
+  "suite": "capability",
+  "grader": "capability_ticket",
+  "evidence": {
+    "body": {
+      "root": "main",
+      "path": "pr-body.md"
+    },
+    "diff": {
+      "root": "main",
+      "path": "local.diff"
+    },
+    "branch": {
+      "root": "main",
+      "path": "branch.txt"
+    }
+  }
+}

@@ -1,4 +1,4 @@
-"""Auto-generated worktree branch names (docs/agents/NAMING.md, "Branches"; user 2026-10-14).
+"""Auto-generated worktree branch names (docs/agents/NAMING.md, "Branches"; user 2026-10-14 [D078]).
 
 A worktree made by an agent app gets a random branch: `claude/laughing-hawking-e62961`,
 `claude/kanban-project-4bec5c`, `claude/3d-max-floor-modeling-742570`, or a bare `brave-otter-a1b2c3`. It is

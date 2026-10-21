@@ -24,7 +24,7 @@ openings with host, point, hand, width, sill and head; curtain panels; roofs) an
   width; heights of the family box).
 - doors: the door records (host line, point, hand, width, sill, head) go to the extractor as door
   openings; a door gets no pane.
-- attachment (user decision 2026-10-08, #29): a wall or curtain wall mostly outside the convex hull
+- attachment (user decision 2026-10-08 [D027], #29): a wall or curtain wall mostly outside the convex hull
   of the main walls (walls whose stack reaches their band's top) whose own stack — the wall and the
   walls standing on it — ends below its band's top is not body (entrance frames, vestibules,
   portals) and becomes a question.
@@ -42,7 +42,7 @@ TOP_TOL_M = 0.05          # a stack ends below the band top by more than this; w
 STACK_SHARE = 0.5         # a wall stands on another when it covers this share of the other's footprint
 BAND_GAP_M = 0.001        # twin_export_floor: band top = next band bottom - 1 mm
 JOIN_TOL_M = 0.01         # another wall's plan within this of a wall end is a join
-EMBED_SHARE = 0.9         # a curtain wall is embedded when this share of its line lies in an exterior wall
+EMBED_SHARE = 0.9         # embedded share of a straight line or curved occupied plan in an exterior wall
 OUTSIDE_SHARE = 0.5       # an attachment has more than this share of its plan outside the main walls' hull
 
 
@@ -194,7 +194,7 @@ def _openings(bands, walls, attached, clear_by_band):
     A curtain wall or a window frame wall (function curtain) with glass is one opening on its line
     over its heights, its glass the transparent panels and windows it hosts; a window in a wall is
     its family box; a door its record. A window without a transparent material is a vent grille:
-    an opening of kind grille, its family box (user decision 2026-10-09)."""
+    an opening of kind grille, its family box (user decision 2026-10-09 [D035])."""
     out, glass_of = [], {}
     for b in bands:
         clear = clear_by_band[b["band"]["band"]]
@@ -268,18 +268,25 @@ def to_dump(bands, objs, document=None):
         raise TwinDataError(f"{len(missing)} curved walls without geometry in reference.obj (ids {missing[:10]}); ask the user")
     occupied = {i: _occupied(parts) for i, parts in native.items()}
     attached = set(attachments(bands, occupied))
-    meshes, body = [], []
-    outer = [_footprint(w, "square").buffer(0.01) for w in walls.values() if w.get("function") != "curtain"]
+    meshes, body, shaft_lining = [], [], []
+    outer = [(occupied[i] if i in occupied else _footprint(w, "square")).buffer(0.01)
+             for i, w in walls.items() if w.get("function") != "curtain"]
     plans = {i: _footprint(w) for i, w in walls.items() if w.get("function") != "curtain" and i not in curved}
     plans.update(occupied)                        # a curved wall's occupied plan for the joins of its neighbours
     for i, w in walls.items():
         if w.get("function") == "curtain":       # glazing: its panels are glass; its host carries the facade
             if i in attached:
                 continue
-            line = LineString([p[:2] for p in w["locationLine"]])
-            if not any(f.intersection(line).length >= EMBED_SHARE * line.length for f in outer):
-                meshes.append(_prism(f"curtain_{i}", w))     # a free curtain wall stands in the facade line
-                body.append(f"curtain_{i}")
+            if i in curved:
+                plan = occupied[i]
+                if not any(f.intersection(plan).area >= EMBED_SHARE * plan.area for f in outer):
+                    meshes.extend(native[i])
+                    body.extend(m["name"] for m in native[i])
+            else:
+                line = LineString([p[:2] for p in w["locationLine"]])
+                if not any(f.intersection(line).length >= EMBED_SHARE * line.length for f in outer):
+                    meshes.append(_prism(f"curtain_{i}", w))
+                    body.append(f"curtain_{i}")
             continue
         if i in curved:
             meshes.extend(native[i])
@@ -294,6 +301,11 @@ def to_dump(bands, objs, document=None):
         top = b["band"]["top"]
         for name, (verts, tris) in obj.items():
             kind, _, rid = name.partition("_")
+            if kind == "floor":
+                # Structural slab reveals can connect shaft walls to the roof. They
+                # are evidence only, not BODY or roof-height/closure candidates.
+                shaft_lining.append({"name": f"{name}_b{b['band']['band']}",
+                                     "vertices": verts, "triangles": tris})
             if kind != "roof":
                 continue                         # walls are prisms; glass and openings come from the records
             for v in verts:                      # close the 1 mm band gap
@@ -315,11 +327,14 @@ def to_dump(bands, objs, document=None):
     questions = []
     groups = []                                  # touching attachment elements are one attachment
     for i in sorted(attached):
-        f = _footprint(walls[i]).buffer(0.01)
-        hit = [g for g in groups if g["geom"].intersects(f)]
+        # Native geometry supplies the measurement, not its chord or contact buffer.
+        f = occupied[i] if i in occupied else _footprint(walls[i]).buffer(0.01)
+        contact = (occupied[i] if i in occupied else _footprint(walls[i])).buffer(0.01)
+        hit = [g for g in groups if g["contact"].intersects(contact)]
         for g in hit:
             groups.remove(g)
         groups.append({"geom": unary_union([f] + [g["geom"] for g in hit]),
+                       "contact": unary_union([contact] + [g["contact"] for g in hit]),
                        "ids": [i] + [j for g in hit for j in g["ids"]]})
     for g in groups:
         ws = [walls[i] for i in sorted(g["ids"])]
@@ -331,6 +346,7 @@ def to_dump(bands, objs, document=None):
                           "heights_m": [round(min(w["bboxMin"][2] for w in ws), 3), round(max(w["bboxMax"][2] for w in ws), 3)],
                           "at": [round(c.x, 2), round(c.y, 2)], "revit_ids": sorted(g["ids"])})
     return {"source": "revit", "document": document, "units": "m", "meshes": meshes, "helpers": [], "body": body,
+            "shaft_lining": shaft_lining,
             "openings": openings,
             "windows_glass_unknown": sum(1 for o in openings if o.get("glazed")), "questions": questions}
 

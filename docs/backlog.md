@@ -90,11 +90,11 @@ the engine covers it.
   90/180 degrees is a type of its own (OBJ03 v009: 1 328 piers -> 798 types); add rotation to the type key and the
   modules export; (b) regenerate `npm/` from an edited `modules/modules.blend` (now both come from one build).
   Owner Codex.
-- **EG6** Curtain-wall tower parts the engine does not build (user 2026-10-20, job `vyatskaya-tow02`, hybrid
+- **EG6** Curtain-wall tower parts the engine does not build (2026-10-20, job `vyatskaya-tow02`, hybrid
   route: body by the engine): rounded corners and ribbon glazing that wraps a corner (BuildError "corner openings
   are not built yet"); fins that follow a curve over floors (decor is a straight extrusion per wall); glass
   railings on `from_spec` terraces and roofs (only `from_source.terrace_railings` builds them).
-  Extended 2026-10-20 (user "да"): the whole body of a panelised curtain-wall source built from measurements. This
+  Extended 2026-10-20 ("да"): the whole body of a panelised curtain-wall source built from measurements. This
   3ds Max source has no shell (RC_TOW_02: 5 561 parts, the largest 11 % of its area); run as `source_class:
   panelised` (slabs as body, contours from panels) the extractor took 20 min, sized none of 889 ribbon openings
   (no reveal to measure on a panel facade), found 0 decor, and the engine stopped at BuildError "2D plan weld

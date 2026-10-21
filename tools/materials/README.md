@@ -50,6 +50,7 @@ Each material:
 | `size` | no | Solid: 64 (default) or 128. Patterned: minimum slot, power of two, at least 128 (default 128). |
 
 RAL Classic values in `ral_classic.json` are screen approximations, not measured paint matches.
+`7047` is `#D0D0D0`. This reuses the project's recorded display approximation from #320, not an official or spectrophotometric RAL match or new visual approval.
 
 ## Packing
 
@@ -87,14 +88,16 @@ Add `--force` to replace an existing output. On success the process prints one s
 
 ## Ground recipes (Vatutino)
 
-Seeded Pillow/numpy diffuse maps for the ten Ground slots ([D117]), no external image inputs.
+Seeded Pillow/numpy diffuse maps for the twelve Ground slots ([D117]), no external image inputs.
+CurbGarden and Stairs use the same provisional provenance rules as the other slots.
 
 ```text
-uv run python tools/materials/ground_recipes.py deliver --version v002 --address Vatutino --out C:/x/vatutino-ground-textures/v002
+uv run python tools/materials/ground_recipes.py deliver --version v003 --address Vatutino --out C:/x/vatutino-ground-textures/v003
 ```
 
 NPM: 2048 at 30 px/m, repeat 68.266667 m; VPM: 4096 at 1024 px/m, repeat 4 m.
-Density source: PR #308 `ground-build-v006.md`, still unmerged; recheck after #295 merges.
+Density source: #295 / merged PR #308 (`5eb945a`), v014 FBX; the binding tool measures
+exported per-face density again rather than trusting the recipe's nominal value.
 `nominal_tile_mm` is the sourced 100x300 mm face, `joint_mm` is a **provisional, user review**
 5 mm physical joint, shared by both profiles. No artificial widened joints or pixel-scale overrides.
 An integer tile count closes a periodic supertile with <=1% per-axis physical scale error, as authorized
@@ -104,9 +107,30 @@ integration averages subpixel joints; NPM cannot resolve every grain or joint in
 `fraction_mm` drives Gravel pitch; subpixel grains become a periodic aggregate. Other unsourced
 colours/cells remain explicit provisional review defaults in JSON and on the contact sheet.
 
-Only `C:/x/vatutino-ground-textures/vNNN` (001..999), matching `--version`, is permitted. v002 is the
-corrected delivery authorized on the card; v001 remains untouched. Nonempty folders, repository paths,
+Only `C:/x/vatutino-ground-textures/vNNN` (001..999), matching `--version`, is permitted. v003 is the
+delivery that adds CurbGarden and Stairs; v001 and v002 remain untouched. Nonempty folders, repository paths,
 input aliases, malformed versions, incompatible physical scales and pixel-period overrides are refused.
 Maps and the contact sheet are computed/validated before output creation. Use a new version, never overwrite.
 PNG bytes are RGB uint8 with an sRGB chunk. Diffuse recipes are not a complete material/FBX delivery;
 manual colour/appearance review and subsequent Ground binding remain separate gates.
+
+## Ground binding (#340)
+
+`bind_ground_textures.py plan` reads `--npm-readback`, `--vpm-readback`, `--manifest`,
+`--textures` and writes `--out` JSON. `bind` additionally requires `--npm-fbx` and
+`--vpm-fbx`; its output root is `C:/x/vatutino-ground-textured/v001` and must be empty.
+The v003 manifest supplies the filename/hash table; no map is selected by judgement.
+Wrong names, missing/hash-mismatched maps, wrong dimensions/UDIM tiles, duplicate or
+incomplete inventories and input/output aliases fail before export. Existing output
+versions and v001/v002 source textures are never overwritten.
+
+The companion Blender 5.1.2 headless script works on copies. Separate clean imports
+compare ordered vertices, UVs, topology, imported face material IDs and raw FBX
+`LayerElementMaterial`, then read every Base Color socket with `fbx_readback.py`.
+Materialless UCX in the final #295 VPM is preserved and checked separately, not bound
+or included in relief density. Skirt density is reported but exempt from the relief
+band (GND-03/08). A failed export/readback removes its partial FBX.
+
+Actual commands, source/output hashes, all-slot tables and pending delivery gates:
+[`ground-textures.md`](../../jobs/VATUTINO-SITE/ground-textures.md). Technical binding
+verification is not visual acceptance, SINTEZ acceptance or delivery-package approval.

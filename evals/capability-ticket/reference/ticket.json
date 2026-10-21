@@ -1,0 +1,27 @@
+{
+  "body": "## P3 \u2014 bounded diagnostic traceability/evidence completion\nReview round 1: https://github.com/artsafro/AGR-DigitalTwin-pilot/pull/109#issuecomment-6193798660\nHead: d872fbfe8ac73af4df119a96094f2ed562fa3abe. Nonblocking documentation/evidence follow-up; no wrong numeric result observed.\n\nThe new `src/twinqa/geometry/component_volume.py` references Card #93 but neither a registered pattern nor explicit `new-case`. No matching pattern exists in the inspected registry. PR #109 reproduces the frozen 24-case matrix but does not provide a reproducible author beyond-matrix counterexample probe (or applicability explanation), nor regression-eval report/counts or explicit not-measured reason, as requested by docs/agents/REVIEW_CHECKLIST.md.\n\nFollow-up: mark this optional diagnostic `new-case` with bounded scope; add an author-owned reproducible synthetic invariant probe with command, seed/bounds and evidence path; record regression-eval passed/failed/not-measured counts with report path, or explicit missing-transcript/environment reasons. Do not fabricate telemetry or count not-measured checks as pass. Reviewer independently exercised 800 seeded checks and the matrix; these are not author-session telemetry.\n\nDuplicate search found #99 for the separate CAD proxy; it does not cover this module.\n",
+  "labels": [
+    {
+      "id": "LA_kwDOVKLpt88AAAAC9Kxg2g",
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "id": "LA_kwDOVKLpt88AAAAC9P7iRQ",
+      "name": "ready-for-agent",
+      "description": "Approved for an agent",
+      "color": "0E8A16"
+    },
+    {
+      "id": "LA_kwDOVKLpt88AAAAC9TtdWw",
+      "name": "level:simple",
+      "description": "Triage: docs, tests, one-file fix (cheap lane)",
+      "color": "0e8a16"
+    }
+  ],
+  "number": 111,
+  "state": "CLOSED",
+  "title": "Component volume: document new-case and author evidence boundary",
+  "url": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/111"
+}

@@ -1,0 +1,8 @@
+{
+  "verdict": "REJECTED",
+  "delivery_passed": false,
+  "timing_violations": [],
+  "inventory_unchanged": true,
+  "focused_results_identical": true,
+  "source_test_input_experiment_hashes_unchanged": true
+}

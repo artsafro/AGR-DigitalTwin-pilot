@@ -70,6 +70,8 @@ def test_v008_uv_contract_excludes_collision_only(uv, expected):
     found = scene_findings(rb(mesh(name="SM_Test_Ground", uv=uv),
                               mesh(name="UCX_SM_Test_Ground_001", uv=0)), "vpm", "ground", PROFILES.vpm)
     assert statuses(found, "V008")["one UV channel"] == expected
+    assert statuses(found, "V008")["texel density"] == "not_run"
+    assert statuses(found, "V008")["texel density upper"] == "not_run"
     assert statuses(found, "V010")["UCX present"] == "pass"
     assert statuses(found, "V010")["UCX triangle budget"] == "pass"
 
@@ -78,7 +80,12 @@ def test_clean_vpm_mesh_passes_scene_stages():
     found = scene_findings(rb(mesh()), "vpm", "oks", PROFILES.vpm)
     assert set(statuses(found, "V003").values()) == {"pass"}
     assert statuses(found, "V004") == {"applied transforms": "pass", "topology defects": "pass", "co-directional clearance": "not_run"}
-    assert set(statuses(found, "V008").values()) == {"pass"}
+    assert statuses(found, "V008") == {
+        "one UV channel": "pass",
+        "mirrored islands": "pass",
+        "texel density": "not_run",
+        "texel density upper": "not_run",
+    }
 
 
 @pytest.mark.parametrize("tris, status", [(150_000, "pass"), (150_001, "review"), (1_000_000, "review"),
@@ -92,6 +99,15 @@ def test_vpm_oks_triangles_project_target_and_hard_limit_conflict_1(tris, status
                                            (3_000_000, 100_000)])
 def test_ucx_budget_is_checker_formula_conflict_3(model, budget):
     assert ucx_triangle_limit(model) == budget
+
+
+@pytest.mark.parametrize("ucx_tris,status", [(5_000, "pass"), (5_001, "fail")])
+def test_ucx_triangle_budget_at_limit_inclusive(ucx_tris, status):
+    """UCX budget (reg p.36-37 §13.7-13.8): model 100 000 -> ceil(5 %) = 5 000 UCX triangles;
+    exactly at the budget passes and budget+1 fails (the gate is `>` not `>=`)."""
+    found = scene_findings(rb(mesh(tris=100_000), mesh(name="UCX_SM_Test_K_1_Main_001", tris=ucx_tris)),
+                           "vpm", "oks", PROFILES.vpm)
+    assert statuses(found, "V010")["UCX triangle budget"] == status
 
 
 def test_ucx_excluded_from_model_triangles_and_budget_checked():
@@ -548,7 +564,13 @@ def test_blender_roundtrip_through_validator(tmp_path, variant):
         assert st["V002"].findings[0].status == "pass"  # Blender writes binary FBX 7400
         assert st["V002"].status == "pass"
         assert {st[k].status for k in ("V003", "V004")} == {"pass"}
-        assert st["V008"].status == "pass"
+        v008 = {item.name: item.status for item in st["V008"].findings}
+        assert v008["one UV channel"] == "pass"
+        assert v008["mirrored islands"] == "pass"
+        # The cube FBX has no diffuse size, so density stays not_run and the stage cannot pass.
+        assert v008["texel density"] == "not_run"
+        assert v008["texel density upper"] == "not_run"
+        assert st["V008"].status == "not_run"
     else:
         assert st["V003"].status == "fail" and st["V008"].status == "fail"
         assert st["V002"].status == "fail"
@@ -764,6 +786,17 @@ def test_ucx_gap_outside_band_is_review(gap_m):
                ucx_box("UCX_SM_Test_K_1_Main_002", (1 + gap_m, 0, 0), (2 + gap_m, 1, 1)))
     assert st["UCX intersections"] == "pass"
     assert st["UCX piece gap (advisory)"] == "review"
+
+
+@pytest.mark.parametrize("gap_m,status", [(0.002, "pass"), (0.01, "pass"),
+                                          (0.00199, "review"), (0.01001, "review")])
+def test_ucx_gap_exact_boundaries_inclusive_d098(gap_m, status):
+    """D098: neighbour gap 2 mm - 1 cm inclusive (reg p.36 §13.4). The floor (2 mm) and ceiling
+    (10 mm) pass at equality; one 0.01 mm beyond (1.99 mm / 10.01 mm) flips to review."""
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (1 + gap_m, 0, 0), (2 + gap_m, 1, 1)))
+    assert st["UCX intersections"] == "pass"
+    assert st["UCX piece gap (advisory)"] == status
 
 
 def test_ucx_one_metre_apart_is_not_a_neighbour():
