@@ -91,3 +91,16 @@ def test_empty_boundary_slot_is_named_and_refused():
     m=simple_base();m.slot[0]=''
     with pytest.raises(ValueError,match='slot'):
         gc.weld_base_boundary(m)
+
+
+def test_exact_displacement_limit_is_refused():
+    width=2**-8  # midpoint motion 2**-9, exact in binary64
+    # Construct exact vertices directly: build_flat rounds coordinates to 1 µm,
+    # which would turn 0.00390625 into 0.003906 and invalidate an exact-boundary probe.
+    v=np.array([[0,0,100],[2,0,100],[2,1,100],[2+width,1,100],[2+width,2,100],[0,2,100],[1,.75,100]])
+    f=np.array([[i,(i+1)%6,6] for i in range(6)])
+    flat=gc.Mesh(v,f,['TileGrey']*6,np.zeros(6,int),np.zeros((6,3,2)),4.)
+    before=flat.verts.copy()
+    with pytest.raises(ValueError,match='reaches'):
+        gc.weld_base_boundary(flat,displacement_limit_m=2**-9)
+    assert np.array_equal(flat.verts,before)

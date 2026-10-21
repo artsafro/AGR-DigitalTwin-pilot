@@ -107,7 +107,9 @@ def fit_curb_bottom(mesh: gc.Mesh, support: gc.Mesh, gap_m: float = .006,
         checked = PolyMesh(m.verts, tuple(map(tuple, m.faces)))
         if not checked.faces or any(len(f) != 3 for f in checked.faces):
             raise ValueError(f"{name}: nonempty triangular mesh required")
-        if len(m.slot) != len(m.faces) or np.shape(m.level) != (len(m.faces),):
+        if len(m.slot) != len(m.faces) or any(not isinstance(s, str) or not s.strip() for s in m.slot):
+            raise ValueError(f"{name}: every face requires a nonblank slot")
+        if np.shape(m.level) != (len(m.faces),):
             raise ValueError(f"{name}: missing face metadata")
         if not np.isfinite(m.level).all():
             raise ValueError(f"{name}: nonfinite levels")
@@ -236,6 +238,11 @@ def build_details(elements, boundary, sampler, separate_curbs=False, stair_clear
     ``separate_curbs`` is an explicit model-policy opt-in: continue the taller section
     through mixed-section junctions and end the shorter one with a 6 mm joint.
     The caller must obtain project approval; default/legacy builds never enable it.
+
+    ``stair_clearance_m`` is independently opt-in (zero preserves legacy geometry
+    and recognition/dispositions). Positive clearance uses analytic mitred cuts,
+    not densely sampled circular buffer arcs that can collapse during welding.
+    Each curb reports retained area and the actual stair-clearance trim.
     """
     if isinstance(stair_clearance_m, bool) or not isinstance(stair_clearance_m, (int, float)) or not math.isfinite(stair_clearance_m) or not 0 <= stair_clearance_m <= .02:
         raise ValueError('stair_clearance_m must be finite in [0, 0.02] m')

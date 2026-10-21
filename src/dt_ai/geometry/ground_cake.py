@@ -985,8 +985,8 @@ def weld_base_boundary(mesh: Mesh, weld_m: float = .0041,
         raise ValueError("boundary weld requires nonempty triangles")
     if np.shape(mesh.level) != (len(mesh.faces),) or not np.isfinite(mesh.level).all() or np.any(mesh.level < 0):
         raise ValueError("boundary weld requires finite surface-only levels")
-    if len(mesh.slot) != len(mesh.faces) or np.shape(mesh.uv) != (len(mesh.faces), 3, 2) or not np.isfinite(mesh.uv).all():
-        raise ValueError("complete slots and finite corner UV required")
+    if len(mesh.slot) != len(mesh.faces) or any(not isinstance(s, str) or not s.strip() for s in mesh.slot) or np.shape(mesh.uv) != (len(mesh.faces), 3, 2) or not np.isfinite(mesh.uv).all():
+        raise ValueError("complete nonblank slots and finite corner UV required")
     if not math.isfinite(mesh.cell) or mesh.cell <= 0:
         raise ValueError("positive finite cell required")
     base = np.flatnonzero(mesh.level == 0)
@@ -1046,7 +1046,8 @@ def weld_base_boundary(mesh: Mesh, weld_m: float = .0041,
     uv = mesh.uv.copy() + (v[mesh.faces, :2]-mesh.verts[mesh.faces, :2])/mesh.cell
     result = clean_topology(Mesh(v, mesh.faces.copy(), list(mesh.slot), mesh.level.copy(), uv, mesh.cell, dict(mesh.report)))
     result.report['boundary_weld'] = dict(weld_m=weld_m, displacement_limit_m=displacement_limit_m,
-        max_displacement_m=float(delta.max()), groups=groups, cleanup=result.report['cleanup'])
+        max_displacement_m=float(delta.max()), groups=groups,
+        before_curtains=before.to_dict(), cleanup=result.report['cleanup'])
     return result
 
 
