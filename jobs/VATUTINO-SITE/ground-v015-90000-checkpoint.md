@@ -6,11 +6,11 @@ This run checked origin/main `8d5c898`: no v015 implementation/delivery exists t
 
 ## Authorized scope
 
-[D156] records the card's latest instruction: Vatutino v015 alone may have up to
+[D170] records the card's latest instruction: Vatutino v015 alone may have up to
 90,000 **surface quads**, a narrow exception to D097. The rejected coarse variants
 are not reused. Relief tolerance remains 10 mm; other budgets and gates are not
 waived. D150 must be re-measured against new world-coordinate junction identities.
-D156 was free in origin/main, all open PR bodies/comments, and open-card comments;
+D170 was free in origin/main, all open PR bodies/comments, and open-card comments;
 D153/D154/D155 remain reserved by #373/#252/#377. Only one registry row and one
 area-sheet practice bullet were added. Recheck reservations before eventual review.
 
@@ -120,8 +120,8 @@ mandatory curb/stair geometry, or publish VPM-only as both profiles.
 ## Verification and continuation
 
 - Tests-first commit `12ec137`: new decision-scope regression **1 failed** before
-  D156 was recorded (missing canonical decision row), exit 1.
-- After adding D156 and its area-sheet anchor:
+  D170 was recorded (missing canonical decision row), exit 1.
+- After adding D170 and its area-sheet anchor:
 
   ```text
   env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q tests/test_ground_v015_budget_decision.py tests/test_decisions.py tests/test_ground_quads.py tests/test_ground_surface_requirement_sheet.py -p no:cacheprovider --basetemp=C:/x/t_eb1c51ca/pytest-d156-green

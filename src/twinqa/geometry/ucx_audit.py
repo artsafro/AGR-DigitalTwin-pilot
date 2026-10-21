@@ -382,9 +382,49 @@ def _drop(reason, hull, index=None):
     return rec
 
 
+def _safe_margin(measured, threshold, bound):
+    """Safe-side margin. Same contract as ``twinqa.report.signed_margin``.
+
+    Kept local: Blender loads this file by path, without the twinqa package.
+    """
+    if not isinstance(bound, str) or bound not in ("min", "max"):
+        raise ValueError(f"unmapped bound {bound!r}; expected 'min' or 'max'")
+    if isinstance(measured, bool) or isinstance(threshold, bool):
+        return None
+    if not isinstance(measured, (int, float)) or not isinstance(threshold, (int, float)):
+        return None
+    if not math.isfinite(measured) or not math.isfinite(threshold):
+        raise ValueError(f"non-finite value {measured!r}, {threshold!r}")
+    if threshold == 0:
+        return None
+    if bound == "min":
+        result = (measured - threshold) / threshold
+    else:
+        result = (threshold - measured) / threshold
+    if not math.isfinite(result):
+        raise ValueError(f"non-finite margin {result!r}")
+    return result
+
+
+def _gap_numbers(kind, gap_m):
+    """Measured gap, the threshold it is scored against, and the safe-side margin.
+
+    Too-close is a minimum gap (safe when gap >= 0.2 mm). Below the D098 band is the same
+    shape against 2 mm. A wide neighbour gap is a maximum against 1 cm. Overlap is not scored.
+    """
+    if kind == "too_close":
+        return gap_m, TOUCH_M, _safe_margin(gap_m, TOUCH_M, "min")
+    if kind == "gap_out_of_band":
+        if gap_m < GAP_BAND_M[0]:
+            return gap_m, GAP_BAND_M[0], _safe_margin(gap_m, GAP_BAND_M[0], "min")
+        return gap_m, GAP_BAND_M[1], _safe_margin(gap_m, GAP_BAND_M[1], "max")
+    return None, None, None
+
+
 def _finding(kind, gap_m, penetration_m, ref_a, ref_b):
+    measured, threshold, margin = _gap_numbers(kind, gap_m)
     return {"type": kind, "req": REQ_COLLISION, "gap_m": gap_m, "penetration_m": penetration_m,
-            "a": ref_a, "b": ref_b}
+            "a": ref_a, "b": ref_b, "measured": measured, "threshold": threshold, "margin": margin}
 
 
 def _one_inside_the_other(a, b):

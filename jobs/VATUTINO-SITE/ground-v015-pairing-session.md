@@ -8,7 +8,7 @@ v014 assets are unchanged. The construction changes below are diagnostic only.
 
 ## Active decision
 
-[D157] records the user's latest option (a) and explicitly supersedes [D156].
+[D157] records the user's latest option (a) and explicitly supersedes [D170].
 The 90k Steiner route and coarse remesh routes are rejected. Ground NPM may retain
 up to 35% triangles by polygon count after pairing; this is the whole Ground share,
 not a statement that every texture slot has that share. Pure quads remain a VPM

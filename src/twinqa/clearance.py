@@ -19,6 +19,8 @@ import numpy as np
 import shapely
 from shapely.geometry import Polygon
 
+from twinqa.report import signed_margin
+
 PARALLEL_COS_MIN = 0.999999
 AREA_MIN_M2 = 1e-7
 # Band-edge tolerance: FBX stores float32 coordinates (~1e-5 m at 100 m from the origin), so a pair
@@ -573,6 +575,34 @@ def _histogram_mm(distances_mm: np.ndarray) -> dict[str, int]:
     return counts
 
 
+def _worst_band_margin(distances_m, band_min_m: float, band_max_m: float):
+    """(measured, threshold, margin) of the pair closest to leaving the safe band.
+
+    A zero threshold or a non-numeric distance yields Nones for the whole set: one broken
+    edge is not replaced by the other edge. No distances means nothing was measured.
+    """
+    worst = None
+    for distance in distances_m:
+        try:
+            distance_f = float(distance)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"non-numeric clearance distance {distance!r}") from exc
+        low = signed_margin(distance_f, float(band_min_m), "min")
+        high = signed_margin(distance_f, float(band_max_m), "max")
+        if low is None or high is None:
+            return None, None, None
+        if low <= high:
+            candidate = (low, distance_f, float(band_min_m))
+        else:
+            candidate = (high, distance_f, float(band_max_m))
+        if worst is None or candidate[0] < worst[0]:
+            worst = candidate
+    if worst is None:
+        return None, None, None
+    margin, measured, threshold = worst
+    return measured, threshold, margin
+
+
 def co_directional_distribution(pairs: list[dict], band_min_m: float, band_max_m: float) -> dict:
     """Count co-directional pairs below, inside and above the regulatory spacing band."""
     distances = np.array([pair["distance_m"] for pair in pairs], dtype=float)
@@ -587,5 +617,8 @@ def co_directional_distribution(pairs: list[dict], band_min_m: float, band_max_m
         minimum, median, maximum = float(millimetres.min()), float(np.median(millimetres)), float(millimetres.max())
     below = int(np.count_nonzero(distances < band_min_m - BAND_EDGE_TOL_M))
     above = int(np.count_nonzero(distances > band_max_m + BAND_EDGE_TOL_M))
+    measured, threshold, margin = _worst_band_margin(
+        millimetres / 1000.0 if count else (), band_min_m, band_max_m)
     return {"pairs": count, "below_band": below, "in_band": count - below - above, "above_band": above,
-            "min_mm": minimum, "median_mm": median, "max_mm": maximum, "histogram_mm": _histogram_mm(millimetres)}
+            "min_mm": minimum, "median_mm": median, "max_mm": maximum, "histogram_mm": _histogram_mm(millimetres),
+            "measured": measured, "threshold": threshold, "margin": margin}

@@ -523,6 +523,7 @@ def test_brute_force_escapes_and_protected_names(review, tmp_path):
     assert len(deleted) == len(deletable)
 
 
+@pytest.mark.max
 def test_max_dependent_merge_skips_when_max_absent(review, tmp_path):
     adapter_mod = _load("max_adapter")
     if adapter_mod.max_batch_path() is None:

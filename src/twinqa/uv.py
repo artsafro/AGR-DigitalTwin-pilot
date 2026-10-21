@@ -5,6 +5,12 @@
 """UDIM tiles, mirrored islands, tile margins and texel density (VPM, reg p.31-32, 39)."""
 import math
 
+from twinqa.report import Finding, signed_margin
+
+# VPM diffuse band (standards/VPM_STANDARD.yaml uv.diffuse_density_px_per_m). Not a new limit.
+DENSITY_MIN_PX_PER_M = 512
+DENSITY_MAX_PX_PER_M = 1706
+
 # UDIM = 1001 + U + 10 * V on a 10 x 10 grid (reg p.23, p.31 §2.1.3, p.39;
 # VPM_STANDARD.yaml uv.udim_grid; figure typo on p.39 is conflict #9, text wins).
 FIRST_TILE, LAST_TILE = 1001, 1100
@@ -70,13 +76,95 @@ def sequential_tiles(tiles) -> bool:
     return ordered == list(range(FIRST_TILE, FIRST_TILE + len(ordered))) and (not ordered or ordered[-1] <= LAST_TILE)
 
 
+def _density_finding(name, measured, threshold, bound, observed, evidence="uv edge density") -> Finding:
+    """One density bound. No measured value, or a zero threshold, is a fail with margin None."""
+    margin = None if measured is None else signed_margin(measured, threshold, bound)
+    if margin is None:
+        status = "fail"
+    elif bound == "min":
+        status = "pass" if measured >= threshold else "fail"
+    else:
+        status = "pass" if measured <= threshold else "fail"
+    relation = ">=" if bound == "min" else "<="
+    return Finding(
+        name, status, observed, f"{relation} {threshold:g} px/m", [31, 32], evidence,
+        measured=measured, threshold=threshold, margin=margin,
+    )
+
+
+def density_findings(vertices, uv, size, *, min_px_per_m=DENSITY_MIN_PX_PER_M,
+                     max_px_per_m=DENSITY_MAX_PX_PER_M) -> list[Finding]:
+    """Min and max texel-density findings for one polygon.
+
+    The minimum uses the smallest edge density against 512 px/m. The maximum uses the
+    largest edge density against 1706 px/m. An empty polygon fails both; a degenerate
+    edge still raises from ``edge_densities``.
+    """
+    if len(vertices) < 2 or len(uv) < 2:
+        return [
+            _density_finding("texel density", None, min_px_per_m, "min", "no edges"),
+            _density_finding("texel density upper", None, max_px_per_m, "max", "no edges"),
+        ]
+    values = edge_densities(vertices, uv, size)
+    for value in values:
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+            raise ValueError(f"non-finite edge density {value!r}")
+    if not values:
+        return [
+            _density_finding("texel density", None, min_px_per_m, "min", "no edges"),
+            _density_finding("texel density upper", None, max_px_per_m, "max", "no edges"),
+        ]
+    low, high = min(values), max(values)
+    return [
+        _density_finding("texel density", low, min_px_per_m, "min", f"min {low:.6g} px/m"),
+        _density_finding("texel density upper", high, max_px_per_m, "max", f"max {high:.6g} px/m"),
+    ]
+
+
+def _finite_components(point, label):
+    """Reject a non-finite coordinate before it becomes a density.
+
+    Accept any finite-length iterable of finite numbers, including a numpy
+    ndarray, the same inputs ``math.dist`` accepts. ``str`` and ``bytes`` stay
+    rejected: iterating them would yield characters, not coordinates.
+    """
+    if isinstance(point, (str, bytes)):
+        raise ValueError(f"partial {label}")
+    try:
+        components = list(point)
+    except TypeError:
+        raise ValueError(f"partial {label}") from None
+    if len(components) < 2:
+        raise ValueError(f"partial {label}")
+    for coord in components:
+        if isinstance(coord, bool) or not isinstance(coord, (int, float)) or not math.isfinite(coord):
+            raise ValueError(f"non-finite {label} {coord!r}")
+
+
 def edge_densities(vertices, uv, size):
-    """px/m per polygon edge: texture_side_px * |duv| / |dxyz| (reg p.32 §6.2, division per conflict #10)."""
+    """px/m per polygon edge: texture_side_px * |duv| / |dxyz| (reg p.32 §6.2, division per conflict #10).
+
+    A non-finite UV coordinate, world coordinate, texture size or resulting density raises
+    before any min/max can treat it as a pass.
+    """
+    if isinstance(size, bool) or not isinstance(size, (int, float)) or not math.isfinite(size):
+        raise ValueError(f"non-finite texture size {size!r}")
+    if len(vertices) != len(uv):
+        raise ValueError(f"partial UV geometry: {len(uv)} uv for {len(vertices)} vertices")
     result = []
     for i in range(len(vertices)):
         j = (i + 1) % len(vertices)
+        _finite_components(vertices[i], "world coordinate")
+        _finite_components(vertices[j], "world coordinate")
+        _finite_components(uv[i], "UV coordinate")
+        _finite_components(uv[j], "UV coordinate")
         world = math.dist(vertices[i], vertices[j])
+        if not math.isfinite(world):
+            raise ValueError(f"non-finite world edge {world!r}")
         if world <= 1e-9:
             raise ValueError("Degenerate surface edge")
-        result.append(size * math.dist(uv[i], uv[j]) / world)
+        density = size * math.dist(uv[i], uv[j]) / world
+        if not math.isfinite(density):
+            raise ValueError(f"non-finite edge density {density!r}")
+        result.append(density)
     return result
