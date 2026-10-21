@@ -77,7 +77,11 @@ occurs in every frame's object list; invalid/unsupported elements raise named er
 
 Opaque, realized mesh geometry; perspective/orthographic unscaled cameras; at most 4,194,304
 output pixels. Visibility is geometric, not shader/shadow/anti-alias visibility. Transparent/
-transmissive Principled materials, transparent/glass shader nodes and shader groups are refused.
+transmissive Principled materials, transparent/glass/Holdout shader nodes and shader groups are refused.
+Camera-ray-invisible meshes, object holdout/shadow catchers, view-layer material overrides,
+additional enabled view layers, and layer-collection exclude/hide/holdout/indirect-only masks
+are rejected by name before output, for targets and non-target occluders alike. These guards
+are repeated after rendering so a render-time mask change cannot publish a stale pass.
 Instances, non-mesh renderables, mismatched viewport/render modifier flags, hidden-viewport
 renderable meshes, collection visibility overrides, depth of field, compositor/sequencer,
 render border, multiview and transparent film are refused, not silently skipped. Apply modifiers

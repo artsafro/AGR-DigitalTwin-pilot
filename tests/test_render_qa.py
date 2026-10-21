@@ -210,9 +210,10 @@ assert not Path({str(renders)!r}).exists()
 @pytest.mark.blender
 @pytest.mark.parametrize("mode", ["visible_camera", "holdout_shader", "is_holdout",
                                  "is_shadow_catcher", "layer_holdout", "layer_indirect",
-                                 "layer_exclude", "material_override"])
+                                 "layer_exclude", "layer_hide", "material_override", "extra_layer"])
 @pytest.mark.parametrize("role", ["target", "occluder"])
-def test_blender_rejects_render_visibility_overrides(tmp_path, mode, role):
+@pytest.mark.parametrize("timing", ["before", "render_pre"])
+def test_blender_rejects_render_visibility_overrides(tmp_path, mode, role, timing):
     blender = Path("C:/Program Files/Blender Foundation/Blender 5.1/blender.exe")
     if not blender.exists():
         pytest.skip("Blender 5.1.2 not installed")
@@ -275,38 +276,58 @@ collection.objects.link(obj)
 bpy.context.view_layer.update()
 layer = bpy.context.view_layer.layer_collection.children[collection.name]
 mode = {mode!r}
-if mode == "holdout_shader":
-    holdout = nodes.new("ShaderNodeHoldout")
-    material.node_tree.links.new(holdout.outputs[0], output.inputs["Surface"])
-elif mode == "visible_camera":
-    obj.visible_camera = False
-elif mode.startswith("is_"):
-    setattr(obj, mode, True)
-elif mode == "material_override":
-    bpy.context.view_layer.material_override = material
+def apply_override(*args):
+    global holdout
+    if mode == "holdout_shader":
+        holdout = nodes.new("ShaderNodeHoldout")
+        material.node_tree.links.new(holdout.outputs[0], output.inputs["Surface"])
+    elif mode == "visible_camera":
+        obj.visible_camera = False
+    elif mode.startswith("is_"):
+        setattr(obj, mode, True)
+    elif mode == "material_override":
+        bpy.context.view_layer.material_override = material
+    elif mode == "extra_layer":
+        scene.view_layers.new("ExtraRenderLayer")
+    else:
+        setattr(layer, {{"layer_holdout": "holdout", "layer_indirect": "indirect_only",
+                        "layer_exclude": "exclude", "layer_hide": "hide_viewport"}}[mode], True)
+    bpy.context.view_layer.update()
+if {timing!r} == "before":
+    apply_override()
 else:
-    setattr(layer, {{"layer_holdout": "holdout", "layer_indirect": "indirect_only",
-                    "layer_exclude": "exclude"}}[mode], True)
-bpy.context.view_layer.update()
+    bpy.app.handlers.render_pre.append(apply_override)
 try:
     qa.check_scene(scene, config, root / "must-not-exist")
 except ValueError as exc:
     expected_name = ("VisibilityCollection" if mode.startswith("layer_") else
+                     "ExtraRenderLayer" if mode == "extra_layer" else
                      bpy.context.view_layer.name if mode == "material_override" else obj.name)
     assert expected_name in str(exc), (expected_name, str(exc))
 else:
     raise AssertionError("Unsupported render visibility accepted: " + mode)
-assert not (root / "must-not-exist").exists()
+if {timing!r} == "before":
+    assert not (root / "must-not-exist").exists()
+else:
+    bpy.app.handlers.render_pre.remove(apply_override)
 # Reset to prove rejection does not poison later opaque checks.
 obj.visible_camera = True
 obj.is_holdout = obj.is_shadow_catcher = False
-layer.exclude = layer.holdout = layer.indirect_only = False
+layer.exclude = layer.holdout = layer.indirect_only = layer.hide_viewport = False
+if mode == "extra_layer":
+    scene.view_layers.remove(scene.view_layers["ExtraRenderLayer"])
 bpy.context.view_layer.material_override = None
 material.node_tree.links.new(emission.outputs[0], output.inputs["Surface"])
 if mode == "holdout_shader":
     nodes.remove(holdout)
 bpy.context.view_layer.update()
-assert qa.check_scene(scene, config, root / "opaque-after")["status"] == "pass"
+after = qa.check_scene(scene, config, root / "opaque-after")
+if {role!r} == "target":
+    assert after["status"] == "pass", after
+else:
+    assert after["status"] == "fail", after
+    assert [f["code"] for f in after["frames"][0]["failures"]] == ["empty"]
+    assert after["frames"][0]["objects"][0]["visible_faces"] == 0
 '''
     result = subprocess.run([str(blender), "--background", "--factory-startup",
                              "--python-exit-code", "1", "--python-expr", script],

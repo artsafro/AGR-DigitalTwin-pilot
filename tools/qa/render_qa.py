@@ -95,6 +95,20 @@ def verdicts(obj, frame, facts, thresholds):
 def _mesh_facts(scene, config):
     import bpy
     from mathutils.bvhtree import BVHTree
+    # The viewport depsgraph/BVH cannot model render-only visibility masks.
+    # Check every layer that could contribute to the rendered image, before writes
+    # and again after rendering (the caller rebuilds mesh facts for its snapshot).
+    def layer_masks(layer):
+        if layer.exclude or layer.hide_viewport or layer.holdout or layer.indirect_only:
+            raise ValueError(f"Unsupported layer visibility: {layer.name}")
+        for child in layer.children:
+            layer_masks(child)
+    for layer in scene.view_layers:
+        if not layer.use:
+            continue
+        if layer != bpy.context.view_layer or layer.material_override is not None:
+            raise ValueError(f"Unsupported render view layer/override: {layer.name}")
+        layer_masks(layer.layer_collection)
     graph = bpy.context.evaluated_depsgraph_get()
     if any(instance.is_instance for instance in graph.object_instances):
         raise ValueError("Instanced geometry unsupported; realize instances before QA")
@@ -103,6 +117,8 @@ def _mesh_facts(scene, config):
     for obj in scene.objects:
         if obj.hide_render:
             continue
+        if obj.type == "MESH" and (not obj.visible_camera or obj.is_holdout or obj.is_shadow_catcher):
+            raise ValueError(f"Unsupported render visibility mask: {obj.name}")
         if obj.type == "MESH" and not obj.visible_get():
             raise ValueError(f"Viewport/render visibility mismatch: {obj.name}")
         for modifier in obj.modifiers:
@@ -119,7 +135,7 @@ def _mesh_facts(scene, config):
             material = slot.material
             if material and material.node_tree is not None:
                 for node in material.node_tree.nodes:
-                    if node.type in {"BSDF_TRANSPARENT", "BSDF_GLASS", "GROUP"}:
+                    if node.type in {"BSDF_TRANSPARENT", "BSDF_GLASS", "GROUP", "HOLDOUT"}:
                         raise ValueError(f"Unsupported opacity/shader: {obj.name}/{material.name}")
                     if node.type == "BSDF_PRINCIPLED":
                         for key, expected in (("Alpha", 1), ("Transmission Weight", 0)):
