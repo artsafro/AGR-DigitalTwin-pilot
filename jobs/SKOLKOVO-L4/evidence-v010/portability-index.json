@@ -1,0 +1,17 @@
+{
+  "drive": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\353-skolkovo-l4\\evidence-v010\\portability",
+  "published": [
+    {
+      "name": "fresh-git-blob-walk-v010.json",
+      "sha256": "adf2421d2c7f2ac08f1fc5fc1d8a1e8d9be9b070d89745f00622049139c0e9a0",
+      "bytes": 3610
+    },
+    {
+      "name": "checkout-portability-v010.json",
+      "sha256": "0d10cff56f7c160e8c6fb19823690d9dc227dee77a90500979a837c5be559a6f",
+      "bytes": 767
+    }
+  ],
+  "independent_rehashes": 2,
+  "sha256sums_sha256": "bf4b37a63c098fb6e29627fd8ff76490c0dcb129d6e1e08ab51508d17da442a3"
+}

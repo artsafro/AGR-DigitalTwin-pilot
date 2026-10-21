@@ -48,7 +48,7 @@ author receipts, one PR and dt-reviewer. No success can be inferred from this pl
   GREEN,20/20 negative policy mutations rejected. Existing coverage probe18/18
   with12/12 rejecting negatives. This is data consistency, not geometry QA.
 - Affected PartsList/import-order/procedure tests:163 passed in84.81s
-  (0.023558333333333333hours). Command/log SHA in `evidence-v010/proposal-tests-v010.json`.
+  (0.023558333333333334hours). Command/log SHA in `evidence-v010/proposal-tests-v010.json`.
 - Input rehash104/104 inventory entries,16/16 SHA256SUMS entries,113/113mast
   buffers unchanged; originals not opened for writing. No DCC/geometry build or
   background subprocess was launched in v010. Initial diagnostic path/encoding
@@ -71,6 +71,12 @@ the current checkout. Current Git job files take precedence over frozen archived
 copies. The remaining source buffers/dependencies restore from v008 then v009,
 following RESUME-v009.md/RESTORE-v009.md; this15-file supplement is not a replacement
 for those archives. No binaries/LFS were committed.
+
+Fresh-root CLI on committed9af4216 Git blobs verifies all9 evidence refs
+(8unique paths), zero validation errors, exit1/passed=false as expected. Receipt
+`evidence-v010/checkout-portability-v010.json`; supplementary raw walk and receipt
+are on Drive `evidence-v010/portability/`,2/2 independent hashes plus SHA256SUMS
+readback. Later receipt-only commit changes no checklist/recipe/parts evidence.
 
 Prior real failed geometry and stage timings remain in [RESUME-v009.md](RESUME-v009.md).
 No actual model review path exists; the earlier question-sheet is not visual

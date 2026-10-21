@@ -1,0 +1,12 @@
+{
+  "scope": "fresh-root CLI from committed Git blobs and exact external draft; not delivery acceptance",
+  "commit": "9af421616c0c4b895f4f40cfdb4b50f77a939ea2",
+  "command": "uv run python -m dt_ai.procedure jobs/SKOLKOVO-L4/job.yaml --root C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_b205c8e1\\tmp\\skolkovo-l4-v010\\fresh-git-blob-witness --output C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_b205c8e1\\tmp\\skolkovo-l4-v010\\fresh-git-blob-walk-v010.json",
+  "exit_code": 1,
+  "passed": false,
+  "errors": [],
+  "evidence_refs_checked": 9,
+  "unique_paths": 8,
+  "walk_sha256": "adf2421d2c7f2ac08f1fc5fc1d8a1e8d9be9b070d89745f00622049139c0e9a0",
+  "same_checklist_and_refs_required_after_supplementary_receipt_commit": true
+}
