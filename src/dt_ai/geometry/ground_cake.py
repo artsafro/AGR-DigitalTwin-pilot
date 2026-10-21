@@ -1383,10 +1383,16 @@ def measure_relief_error(mesh: Mesh, sampler: ReliefSampler, step: float, tol: f
             "faces_over_tol": int((err > tol).sum()), "tol_mm": tol * 1000}
 
 
-def measure_stack_gaps(mesh: Mesh, step: float, offsets=None, band: tuple[float, float] = (0.005, 0.02)) -> dict:
+def measure_stack_gaps(mesh: Mesh, step: float, offsets=None, band: tuple[float, float] = (0.005, 0.02),
+                       *, include_under_band_samples: bool = False) -> dict:
     """At the centroid of every upper-layer face: Z gap to the face below it of every lower level against the
     expected offset difference (level difference * step, or the per-vertex ``offsets``); the same-level top-down
     overlap area; and the gap along the lower face's normal at the upper face's centroid and at its vertices."""
+    if not isinstance(include_under_band_samples, bool):
+        raise ValueError('include_under_band_samples must be bool')
+    if include_under_band_samples:
+        from dt_ai.geometry.ground_quads import _validate_seed
+        _validate_seed(mesh)
     surf = np.nonzero(mesh.level >= 0)[0]
     polys = shapely.polygons(mesh.verts[mesh.faces[surf], :2])
     P = mesh.verts[mesh.faces[surf]]
@@ -1425,7 +1431,7 @@ def measure_stack_gaps(mesh: Mesh, step: float, offsets=None, band: tuple[float,
     k = (i < j) & (lev[i] == lev[j])
     inter = shapely.area(shapely.intersection(polys[i[k]], polys[j[k]])) if k.any() else np.zeros(0)
     mm = (lambda x, f: float(f(x) * 1000) if len(x) else None)
-    return {"checked": int(len(err)), "max_gap_error_mm": float(err.max() * 1000) if len(err) else 0.0,
+    result = {"checked": int(len(err)), "max_gap_error_mm": float(err.max() * 1000) if len(err) else 0.0,
             "min_gap_mm": float((c[:, 2] - zb).min() * 1000) if len(err) else None,
             "normal_gap_centroid_min_mm": mm(gc_, np.min), "normal_gap_centroid_max_mm": mm(gc_, np.max),
             "normal_gap_vertex_min_mm": mm(gv, np.min), "normal_gap_vertex_max_mm": mm(gv, np.max),
@@ -1437,6 +1443,16 @@ def measure_stack_gaps(mesh: Mesh, step: float, offsets=None, band: tuple[float,
             "normal_gap_faces_above": sorted({int(surf[x]) for x in up[qi[k0]][gc_ > band[1] + 1e-5]})[:50],
             "normal_gap_over_band_samples": over_samples,
             "same_level_overlap_m2": float(inter.sum())}
+    if include_under_band_samples:
+        under = [{"kind":"centroid", "upper_face":int(surf[x]), "lower_face":int(surf[y]),
+                  "vertex":None, "gap_mm":float(gap*1000)}
+                 for x,y,gap in zip(a,b,gc_) if gap < band[0]-1e-5]
+        under += [{"kind":"corner", "upper_face":int(x), "lower_face":int(y),
+                   "vertex":int(v), "gap_mm":float(gap*1000)}
+                  for x,y,v,gap in zip(upper_faces,lower_faces,vids,gv) if gap < band[0]-1e-5]
+        under.sort(key=lambda s:(s['kind'],s['upper_face'],s['lower_face'],s['vertex'] or -1))
+        result['normal_gap_under_band_samples'] = under
+    return result
 
 
 def measure_codirectional(mesh: Mesh, band_min: float = 0.005, parallel_cos: float = PARALLEL_COS_MARGIN) -> dict:
