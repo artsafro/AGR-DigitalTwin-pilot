@@ -1556,11 +1556,22 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, 
         solids = [shapely.unary_union([shapely.build_area(shapely.unary_union(
                     _section(lv, lt, z) or [LineString()])) for lv, lt in lining]) for z in cuts]
         for hole in holes:
+            wall_sections, solid_sections, sample_cuts = sections, solids, cuts
+            if outline is not None and hole.intersects(ref.exterior):
+                # Panel/slab setback strips touch the facade perimeter: they are
+                # not enclosed shaft mouths. Preserve their existing two-cut
+                # facade evidence (panels have construction joints at the roof).
+                # Internal openings, including panelised shafts, stay continuous.
+                sample_cuts = [_clear_height(v, tris, below_level["elev_m"] + share *
+                               (roof_z - below_level["elev_m"])) for share in (0.5, 0.85)]
+                wall_sections = [shapely.unary_union(_section(v, tris, z) or [LineString()])
+                                 for z in sample_cuts]
+                solid_sections = [Polygon() for _ in sample_cuts]
             lengths = [shapely.unary_union([w.intersection(hole.buffer(PARAPET_EDGE_M)),
-                       hole.boundary.intersection(s)]).length for w, s in zip(sections, solids)]
+                       hole.boundary.intersection(s)]).length for w, s in zip(wall_sections, solid_sections)]
             worst = int(np.argmin(lengths))
             lined = lengths[worst] / hole.exterior.length
-            z_mid = cuts[worst]
+            z_mid = sample_cuts[worst]
             if lined < SHAFT_WALL_SHARE:
                 c = hole.centroid
                 raise SpecError(f"roof at {roof_z:.3f} m has an opening of {hole.area:.2f} m2 at ({c.x:.2f}, {c.y:.2f}) "
