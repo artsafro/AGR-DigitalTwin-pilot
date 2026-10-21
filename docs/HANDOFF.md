@@ -1,7 +1,7 @@
-# Handoff — 2026-10-20 15:00
+# Handoff — 2026-10-21 18:00
 
-Branch: `main` · Commit: `2fd3b2e` · Worktree: `C:\Users\artsafro\agr-pilot\AGR-DigitalTwin (local; shared main snapshot)` · Job: `VATUTINO-SITE`
-Transcript: `-`
+Branch: `job/vyatskaya-tow02-midpoly` · Commit: `fd399e7` · Worktree: `C:\Users\artsafro\.AGR-DigitalTwin_pilot` · Job: `vyatskaya-tow02`
+Transcript: `C:\Users\artsafro\.AGR-DigitalTwin_pilot\logs\transcripts\job-vyatskaya-tow02-midpoly-pr515-dda7a500-3c9f-4186-98c9-299703e97a3a.jsonl`
 
 <!-- Written by /handover (.claude/commands/handover.md), read by tools/hooks/session_context.py and /takeover.
 Keep the `Branch:` line as is (the hook parses it). Facts only, no history: git log and the pull requests hold
@@ -9,74 +9,67 @@ that. The whole file stays under 7000 characters so the SessionStart hook passes
 
 ## Where we are
 
-Goal: a repository from which any agent (Claude Code, ChatGPT, Codex) can model a digital-twin task by the rules.
-The local Kanban board (orchestrator repo `hermes_kanban`, not this one) runs the work; this file records results.
-Merged into main since the 09:10 handoff: site placement #344 (#296), Flora NPM light variants #362 (#347),
-Ground v003 map binding #368 (#340), kernel invariants quad_dominance #354 (#345), texel_ready #356 (#346),
-xview_overlaps #380 (#370, D152), procedure playbook #363 (#351), asset store #372 (#350, D151 source-only),
-eval receipt check `dt evals --check-receipt` #375 (#302), local CI receipt #376 (#318), #283 adoption #374,
-research #280 #367 #379 #383, improves #364 #366 #382, hypothesis reports #357 #360 #378 #381.
-Verified: full non-DCC suite on `c2c9007`: 7676 passed, 2 failed, 15 skipped - both failures are
-`tests/qa/test_orientation_scaling.py::test_orientation_real_size_budget[box-10.0|slivers-5.0]`, the known
-load-sensitive wall-clock budgets of #361 (they fail on main without these changes too).
-**Main is red** on `98eead4` (batch #382 #364 #380 #372 #363 #381 #378): 7995 passed, 1 failed -
-`tests/test_task_to_model.py::test_repository_walks`: #363 pins sha256 of live source files (`invariants.py`,
-`build_ground.py`) as gate evidence, #380 / #368 changed them. Repair issue #387 (card running); merges paused.
-CI is not run (billing lock, D122); local receipts only. Visual acceptance of #344 / #362 is still Artem's.
+Goal: tower TOW02 (ул. Вятская вл. 47–49) mid-poly master → textured → NPM, OKS 013 [D156]. Stage done: our
+export-v005 (`outputs/export-v005/SM_Vyatskaya_Vl_47_49_013_Main.fbx`, F8 option A in `build_stack`, no bow-ties)
+was finished by the user by hand in 3ds Max and accepted as a base (2026-10-21: "ты неплохо справился с задачей, с
+этим можно работать"). Committed `c363f8a` + merge of `origin/main` `fd399e7`; PR #515 open. Case row in
+`docs/cases.md` + `docs/agr/case_studies/VYATSKAYA_TOW02_MIDPOLY.md`. Review of the case = issue #514.
+QA facts: Blender own check Overlapping Faces 5 mm = 0 was wrong; 3ds Max xView at 0.005/0.002 m = 185 faces / 0
+vertices (`outputs/xview-v005/xview_tol_report.jsonl`); independent check 23 pairs. Details: `jobs/vyatskaya-tow02/STATE.md`.
 
 ## In progress
 
-- #371 Ground v015: quad-dominant, one material ID per texture (Multi/Sub), xView 0.002 / 0.005 = 0 (D152).
-- #369 Flora texture diagnosis (PR #377, NOT accepted by Artem): per-island UV-vs-atlas-pixel check. Rule (user
-  2026-10-20): a UV island on a sprite covers 80-95 % of it; NPM whole-plant planes cover most of the image or
-  slightly more (opacity edges not cut); continuous bark strips are checked by containment (>= 95 % of the island
-  on bark pixels), not coverage. Calibrate on the originals, then route per species: rebind original atlas /
-  regenerate atlas under the UV / re-unwrap; the fix goes into a follow-up issue.
-- #361 perf lane: wall-clock budgets move to a `perf` marker out of the default suite (DeepSeek lane card).
-- #337 refresh of PR #252: two dated backfills for the 2026-10-19 Ground decisions (relief TIN cuts only where
-  > 1 cm, issue #295 comment 6265799957; steep-layer local raise 5-20 mm, comment 6274902891).
-- #348 visual review loop (PR #373, review round 1 changes needed).
-- Outputs outside git under `C:/x/` (Ground v014 `C:/x/t_d94665f2/ground_v014/`, Flora `C:/x/flora-library/v003/`,
-  light variants `C:/x/flora-light/v001/`, review scenes `C:/x/review/2026-10-20/` + `pending.json`).
+- Local state outside git (keep, git-ignored): `jobs/vyatskaya-tow02/outputs/` — builds v002..v030, exports v001..v005,
+  QA `xview-v001..v005/`. The user's final model (user 2026-10-21): `C:/Users/artsafro/Desktop/!3D viz/NTR/26_Vyatskoe/001 - Моделирование НПМ с нуля/001 - Моделирование НПМ с нуля/for_placement/0213_Vyatskaya_Vl_47_49_05.fbx`,
+  object 013_Main (SHA-256 `2fd80081…71da68`; read only). Intermediate save
+  `outputs/xview-v005/tow02_ovl23_v001.max` — never overwrite. xView helpers in
+  `outputs/xview-v005/` (`run.ms`, `open_ovl.ms`, `ovl_pairs_blender.py`).
+- Open apps: the user's 3ds Max 2024 PID 85072 (`pravki2/scene.max`, unsaved) and PID 129136 (the finished model,
+  the user is working in it) — never touch. The MCP 3ds Max bridge was released (no instance pinned).
+- Max 2026 batch instances of other sessions may run (`agr-3dsmax-*` listener logs) — not ours.
 
 ## User decisions not in the code
 
-- Deliverables (user 2026-10-20, D152 on main): quads, MatID per texture, xView-clean - Ground v015 must meet it.
-- #298 site assembly waits for #371 and #369; then re-placement with the #347 light Flora (~166 200 tris), not
-  the #296 scene (220 520 > 180 000).
-- #82 terrace parapets: card archived, D065 stays (one parapet thickness per building).
-- #248 / #56 / #314: parked by Artem.
+- Max QA scope: only Overlapping Faces 0.005 m and Overlapping Vertices 0.002 m (user 2026-10-21).
+- Overlaps: no deleting, prefer moving/embedding ≥ 6 mm; cut/weld only coincident points (user 2026-10-21).
+- F8 = option A, basket posts kept hidden behind the glass, 65.4 bow-ties resolved (user 2026-10-21) — in code.
+- NPM comes from the user's finished model, not from export-v005 (user 2026-10-21, "базу ты выполнил, я допилил").
+- Stop launching DCC runs while the user edits by hand ("хватит запускать, дай поправить", 2026-10-21).
 
 ## Waiting for the user
 
-- #353 L4: paths of the first real building (source, delivered FBX, album PDF).
-- #352 roof-equipment library: project paths to pull meshes from.
-- #350: one-time Google Drive login on this PC.
-- Visual acceptance: Ground v014 and Flora v003 review scenes in `C:/x/review/2026-10-20/`, #344 placement, #362.
+- Merge command for PR #515.
 
 ## Next step
 
-Repair red main (#387), then Ground v015 (#371) and the Flora UV verdict (#369), then #298 assembly with light Flora, then L4 (#353).
+Issue #514: compare export-v005 with the user's finished model, lessons with cause classes, then NPM from it.
 
 ## Rules broken
 
-- Merge batch #363 + #380 / #368 together without an integration run between them turned main red (#387).
+- Reported export-v005 as "0 / 0" from the builder's own Blender check before xView; xView at 5 mm found 185 faces.
+  Corrected after the independent check and the real xView run; lesson in STATE.md and the case.
+- Followed the user's "разрезом" for bow-ties only in spirit: the builder moved 12 glass corners 3 mm instead of
+  cutting (a cut leaves coincident vertices); reported to the user.
+- Launched a second 3ds Max that stopped at "Startup Failure Detection"; the user had to click it.
+- Independent checker could not write evidence files (read-only subagent hook); numbers only in its report.
+- Local tests not run: this clone lacks `shapely` / `dt_ai` install; CI on PR #515.
+- Pre-commit hooks not installed (`core.hooksPath` unset): `tools/git-hooks/pre-commit` run by hand (exit 0);
+  commit identity via `-c user.name/email`.
 
 ## Open PRs and issues for this task
 
-- PR #377 (#369) rework after Artem's review; PR #373 (#348) changes needed; PR #252 (#138) refresh by #337,
-  needs a new review on its new head; PR #248 parked.
-- Issues waiting: #353, #352 (`waits-artem`); #246 parked with #45.
+- #515 Job vyatskaya-tow02: textured master OKS 013, F8 fix, export-v005 — open, waiting for review / merge command.
+- #514 Review: our export-v005 vs the user's hand-finished model, lessons — open.
 
 ## Agent trace
 
-- Sessions: not measured (no transcript)
-- Written by: Hermes orchestrator (Telegram session 20261020_091940_f745c6a8, claude-opus-5-5)
-- Subagents: not measured (no usage log, no transcript)
-- Skills: not measured (no usage log, no transcript)
-- Commands: not measured (no usage log, no transcript)
-- Hook denials: not measured (no transcript)
-- Retries: not measured (no transcript)
-- Context at handover: not measured (no transcript)
-- Duration: not measured (no transcript)
-- Commits: `eed5074..2fd3b2e` (119 commits)
+- Sessions: `dda7a500-3c9f-4186-98c9-299703e97a3a`
+- Written by: -
+- Subagents: general-purpose 1, independent-checker 1
+- Skills: 3dsmax-mcp-dev 1, experience-transfer 1
+- Commands: takeover 1
+- Hook denials: 1: mcp__3dsmax-mcp__list_max_instances - Load the `3dsmax-mcp-dev` skill first (Skill tool), follow it, then repeat this 
+- Retries: none
+- Context at handover: 23 % (225k of 1000k tokens)
+- Duration: 6 h 37 min (2026-10-21T12:02:46Z - 2026-10-21T18:40:17Z, UTC)
+- Commits: `d64a2b3..fd399e7` (4 commits)
