@@ -4,6 +4,7 @@ new-case: classify a recorded 'running' stage as late_confirmed / confirmed_fail
 still_unknown from pid liveness and declared outputs, without rewriting the ledger.
 """
 import ctypes
+import math
 import os
 from pathlib import Path
 import re
@@ -87,6 +88,8 @@ def _pid_alive(pid):
     if type(pid) is not int or pid <= 0:
         return None
     if os.name == "nt":
+        if pid > 0xFFFFFFFF:
+            return None
         return _pid_alive_windows(pid)
     try:
         os.kill(pid, 0)
@@ -94,19 +97,37 @@ def _pid_alive(pid):
         return False
     except PermissionError:
         return True
-    except OSError:
+    except (OSError, OverflowError):
         return None
     return True
 
 
-def _outputs_present_and_fresh(declared_outputs):
+def _output_freshness(declared_outputs, started_at):
+    """Classify a dead stage's declared outputs by freshness, never by existence alone.
+
+    ``fresh`` when every declared output exists, is nonempty and is at least as
+    new as the stage start; ``absent`` when an output is missing or empty with a
+    known start; ``stale`` when an output predates the stage start (it cannot be
+    this stage's work); ``unknown`` when the stage start is missing or unusable,
+    so freshness cannot be established. Absent and stale both mean the stage
+    produced no fresh evidence; unknown refuses to judge either way.
+    """
+    if not declared_outputs:
+        return "absent"
+    if (isinstance(started_at, bool) or not isinstance(started_at, (int, float))
+            or not math.isfinite(started_at) or started_at < 0):
+        return "unknown"
+    stale = False
     for path in declared_outputs.values():
         try:
-            if not path.is_file() or path.stat().st_size == 0:
-                return False
+            stat = path.stat()
         except OSError:
-            return False
-    return True
+            return "absent"
+        if stat.st_size == 0:
+            return "absent"
+        if stat.st_mtime < started_at:
+            stale = True
+    return "stale" if stale else "fresh"
 
 
 def _classify_running(stage, declared_outputs):
@@ -115,8 +136,11 @@ def _classify_running(stage, declared_outputs):
         return "still_unknown"
     if _pid_alive(pid) is not False:
         return "still_unknown"
-    if declared_outputs and _outputs_present_and_fresh(declared_outputs):
+    freshness = _output_freshness(declared_outputs, stage.get("started_at"))
+    if freshness == "fresh":
         return "late_confirmed"
+    if freshness == "unknown":
+        return "still_unknown"
     return "confirmed_failed"
 
 
@@ -175,7 +199,14 @@ def inspect_run(run_directory, manifest_path, report_path=None, required_checks=
         if not current_inputs:
             errors.append("Inputs changed during inspection")
     if "source_copy" in manifest:
-        compare(_facts(manifest["source_copy"], "source_copy", root), "source_copy")
+        source_copy = _facts(manifest["source_copy"], "source_copy", root)
+    else:
+        source_copy = {}
+    if source_copy:
+        compare(source_copy, "source_copy")
+    protected = {str(root / "run.json"), str(manifest_path),
+                 *(fact["path"] for fact in inputs.values()),
+                 *(fact["path"] for fact in source_copy.values())}
     attempts = ledger.get("attempts")
     if not isinstance(attempts, list):
         raise ValueError("Attempts must be a list")
@@ -195,6 +226,9 @@ def inspect_run(run_directory, manifest_path, report_path=None, required_checks=
                 raise ValueError("Invalid stage state")
             outputs = _facts(stage.get("outputs"), "stage outputs", root)
             declared_outputs = _paths(stage.get("declared_outputs", {}), "stage declared_outputs", root)
+            for key, path in declared_outputs.items():
+                if str(path) in protected:
+                    raise ValueError(f"stage:{name} declared_output:{key} aliases the ledger, manifest, or an input")
             for log in ("stdout", "stderr"):
                 if log in stage:
                     _path(stage[log], log, root)
