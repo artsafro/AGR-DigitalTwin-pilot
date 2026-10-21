@@ -33,6 +33,16 @@ def test_detail_charts_fail_closed(bad):
     elif bad=='empty':q.faces=()
     elif bad=='nan':q.verts[0,0]=np.nan
     elif bad=='partial_uv':q.uv=q.uv[:1]
-    elif bad=='oversize':q=sample(9.)
-    else:q=sample(8.)
+    elif bad=='oversize':
+        q=sample(9.);q.verts[[6,7],2]=10.
+    else:
+        q=sample(8.);q.verts[[6,7],2]=9.
     with pytest.raises(ValueError):gq.detail_polygon_uv(q,profile)
+
+
+def test_elongated_curb_can_rotate_inside_one_tile_without_density_loss():
+    q=sample(8.02)
+    q.slot[1]='CurbGarden'
+    r=gq.detail_polygon_uv(q,'vpm')
+    assert np.min(r.uv[1])>=0 and np.max(r.uv[1])<=1
+    np.testing.assert_array_equal(r.verts,q.verts)
