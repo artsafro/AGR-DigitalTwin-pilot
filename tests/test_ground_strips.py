@@ -29,6 +29,22 @@ def test_real_narrow_end_requires_nonuniform_longitudinal_cuts():
     assert len(vertex_pairs(result.verts, .002)[0]) == 0
 
 
+def test_short_adjacent_edges_do_not_explode_a_vpm_tensor_grid():
+    import json
+    from pathlib import Path
+    from dt_ai.geometry.ground_strips import local_strips
+    from dt_ai.ops.inv_xview import vertex_pairs
+    d = json.loads((Path(__file__).parent/'data/ground-v015-strict-corner.json').read_text())
+    seed = QuadMesh(np.array(d['verts']), tuple(map(tuple, d['faces'])), d['slot'], np.array(d['level']),
+                    tuple(map(np.array, d['uv'])), tuple(map(tuple, d['source_faces'])), d['cell'])
+    result = local_strips(seed, max_edge_m=3.9, face_budget=100)
+    assert len(result.faces) < 100
+    metrics = [face_metrics(result.verts[list(f)]) for f in result.faces]
+    assert all(r.aspect <= 8 and r.max_edge_m <= 3.9 for r in metrics)
+    assert sum(r.area_m2 for r in metrics) == pytest.approx(face_metrics(seed.verts).area_m2, abs=1e-5)
+    assert len(vertex_pairs(result.verts, .002)[0]) == 0
+
+
 def test_taper_is_sized_at_every_cell_not_only_average_width():
     from dt_ai.geometry.ground_strips import local_strips
     source = rectangle()

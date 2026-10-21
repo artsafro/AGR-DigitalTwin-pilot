@@ -85,30 +85,32 @@ def local_strips(mesh: QuadMesh, *, max_edge_m: float, face_budget: int = 180000
                 nu = max(nu, ceil(means[0]/(7.5*means[1])))
             else:
                 nv = max(nv, ceil(means[1]/(7.5*means[0])))
+        uc = [Fraction(k, nu) for k in range(nu+1)]
+        vc = [Fraction(j, nv) for j in range(nv+1)]
         if len(f) == 4:
-            for _ in range(12):
-                if len(faces)+nu*nv > face_budget:
+            for _ in range(16):
+                if len(faces)+(len(uc)-1)*(len(vc)-1) > face_budget:
                     raise ValueError(f'local strip face budget exceeded at source face {owner}')
-                ratios, sizes = [], []
-                for j in range(nv):
-                    for k in range(nu):
+                split_u, split_v = set(), set()
+                for va, vb in zip(vc, vc[1:]):
+                    for ua, ub in zip(uc, uc[1:]):
                         cell = np.array([evaluate(p, u, v) for u, v in
-                                         ((k/nu, j/nv), ((k+1)/nu, j/nv),
-                                          ((k+1)/nu, (j+1)/nv), (k/nu, (j+1)/nv))])
+                                         ((ua, va), (ub, va), (ub, vb), (ua, vb))])
                         e = np.linalg.norm(np.roll(cell, -1, axis=0)-cell, axis=1)
                         if e.min() <= 0 or not np.isfinite(e).all():
                             raise ValueError(f'degenerate strip cell at source face {owner}')
-                        ratios.append((e[0]+e[2])/(e[1]+e[3]))
-                        sizes.append((max(e[0], e[2]), max(e[1], e[3])))
-                max_u, max_v = np.max(sizes, axis=0)
-                lo, hi = min(ratios), max(ratios)
-                if lo >= 1/8 and hi <= 8 and max(max_u, max_v) <= max_edge_m:
+                        ratio = (e[0]+e[2])/(e[1]+e[3])
+                        if ratio > 8 or max(e[0], e[2]) > max_edge_m:
+                            split_u.add((ua+ub)/2)
+                        if ratio < 1/8 or max(e[1], e[3]) > max_edge_m:
+                            split_v.add((va+vb)/2)
+                if not split_u and not split_v:
                     break
-                nu = max(nu, ceil(nu*max_u/max_edge_m), ceil(nu*hi/7.5) if hi > 8 else nu)
-                nv = max(nv, ceil(nv*max_v/max_edge_m), ceil(nv/(7.5*lo)) if lo < 1/8 else nv)
+                uc = sorted(set(uc)|split_u)
+                vc = sorted(set(vc)|split_v)
             else:
                 raise ValueError(f'bounded strip sizing did not converge at source face {owner}')
-        if len(faces)+nu*nv > face_budget:
+        if len(faces)+(len(uc)-1)*(len(vc)-1) > face_budget:
             raise ValueError(f'local strip face budget exceeded at source face {owner}')
         def point(u, v):
             if v == 0:
@@ -129,10 +131,9 @@ def local_strips(mesh: QuadMesh, *, max_edge_m: float, face_budget: int = 180000
         else:
             interior = {}
             cells = []
-            for j in range(nv):
-                for k in range(nu):
-                    coordinates = [(Fraction(k, nu), Fraction(j, nv)), (Fraction(k+1, nu), Fraction(j, nv)),
-                                   (Fraction(k+1, nu), Fraction(j+1, nv)), (Fraction(k, nu), Fraction(j+1, nv))]
+            for va, vb in zip(vc, vc[1:]):
+                for ua, ub in zip(uc, uc[1:]):
+                    coordinates = [(ua, va), (ub, va), (ub, vb), (ua, vb)]
                     cells.append((tuple(point(u, v) for u, v in coordinates),
                                   np.array([evaluate(uv, u, v) for u, v in coordinates])))
         for cell, tex in cells:
