@@ -968,9 +968,11 @@ def weld_base_boundary(mesh: Mesh, weld_m: float = .0041,
 
     Only open-edge base vertices may participate. Unlike whole-outline projection,
     cluster centroids bound displacement by the existing 2.2 mm coverage tolerance.
-    Reject a chained cluster reaching the tighter 2.1 mm movement bound. This merges
-    coincident construction seams; it never splits/displaces disconnected fans.
-    Recheck all geometry gates after cleanup; this is not delivery acceptance.
+    Reject a chained cluster reaching the tighter 2.1 mm movement bound. Close
+    seams at their midpoint, but widen implicated short face edges within the same
+    bound so their long tongues do not disappear during degenerate-face cleanup.
+    Never split/displace disconnected fans. Recheck all geometry gates after
+    cleanup; neither bounded vertex motion nor this primitive is delivery acceptance.
     """
     from twinqa.geometry.topology import _cluster_ids
     from dt_ai.ops.inv_quads import PolyMesh

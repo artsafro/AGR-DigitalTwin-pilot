@@ -76,6 +76,19 @@ def test_boundary_cleanup_retains_a_long_three_mm_surface_tongue(offset):
     assert not report.vertex_pairs and not report.face_pairs
 
 
+def test_retained_tongue_stays_inside_the_source_outline_band():
+    from shapely.affinity import translate
+    from shapely.ops import unary_union
+    poly = Polygon([(0,0),(2,0),(2,.4985),(2.04,.4985),(2.04,.5015),(2,.5015),(2,1),(0,1)])
+    source = translate(poly, xoff=0, yoff=-.0013)
+    plan = gc.Plan(MultiPolygon([poly]), [], [gc.Layer('TileGrey','tile',0,MultiPolygon([poly]))], .006)
+    mesh = gc.build_flat(plan, cell=4, chord=0, snap=.0001)
+    fixed = gc.weld_base_boundary(mesh, accepted_boundary=source)
+    result = unary_union([Polygon(fixed.verts[f,:2]) for f in fixed.faces])
+    assert result.difference(source.buffer(.0022)).area == 0
+    assert poly.difference(result.buffer(.0021)).area == 0
+
+
 def simple_base():
     v=np.array([[0,0,100],[2,0,100],[2,2,100],[0,2,100]],float)
     return gc.Mesh(v,np.array([[0,1,2],[0,2,3]]),['TileGrey']*2,np.zeros(2,int),np.zeros((2,3,2)),4.)
