@@ -94,6 +94,26 @@ def mesh_facts(obj):
     }
     uv = mesh.uv_layers.active
     if uv:
+        # Per-vertex UV stays one pair per vertex (first loop) for mirrored-island / UDIM
+        # consumers. polygon_uv is one [u, v] per corner, same order as polygons, so a seam
+        # that reuses a vertex keeps every loop. A non-finite loop UV aborts readback.
+        per_vertex = [None] * len(mesh.vertices)
+        polygon_uv = []
+        for poly in mesh.polygons:
+            corners = []
+            for loop_index in range(poly.loop_start, poly.loop_start + poly.loop_total):
+                vert_index = int(mesh.loops[loop_index].vertex_index)
+                pair = uv.data[loop_index].uv
+                u, v = float(pair.x), float(pair.y)
+                if not math.isfinite(u) or not math.isfinite(v):
+                    raise ValueError(f"non-finite UV coordinates: {obj.name} vertex {vert_index}")
+                rounded = [round(u, 6), round(v, 6)]
+                corners.append(rounded)
+                if per_vertex[vert_index] is None:
+                    per_vertex[vert_index] = rounded
+            polygon_uv.append(corners)
+        facts["face_geometry"]["uv"] = per_vertex
+        facts["face_geometry"]["polygon_uv"] = polygon_uv
         tiles, mirrored = set(), 0
         for tri in mesh.loop_triangles:
             a, b, c = (uv.data[i].uv for i in tri.loops)
