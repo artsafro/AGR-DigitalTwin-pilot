@@ -257,8 +257,9 @@ terrace.md, facade-decor-inset.md.
   working versions are in `outputs/measure-v001/bend_top/scripts/`.
 
 ## Next
-1. Review #514 done 2026-10-21: `REVIEW-514.md` (diff, xView, checker parity, causes, time). Three questions to the
-   user there (fins sunk 0.808 m, 9 body quads removed at 51.8-57.8, dark coping/roof UV).
+1. Review #514 done 2026-10-21: `REVIEW-514.md` (diff, xView, checker parity, causes, time), PR #525, follow-ups
+   #527-#535. The user's answers: fins ~1 m below ground for the relief [D169]; small wall angle deviations squared to
+   ~90 deg [D170]; copings / roof / band dark as in the previous iteration and the source [D171].
 2. NPM derivation from the user's finished model (not from export-v005): source `for_placement/sceene.max` node
    `SM_Vyatskaya_Vl_47_49_013_Main` (Editable Poly, 36 864 polys; the placed FBX `_05` is the same, triangulated, site
    coordinates offset (4951.864, 14903.346, 165.443) m). Editable Mesh + Weld 0.002 m first (xView 0 / 0; no Poly
