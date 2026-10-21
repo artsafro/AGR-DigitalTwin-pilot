@@ -5,6 +5,7 @@ the spec is tests/fixtures/spec-b01-v0.3.json. Build inputs the spec does not ca
 thickness, material IDs) are given explicitly, as `jobs/<object>/materials.json` will.
 """
 import json
+from dataclasses import replace
 import subprocess
 from pathlib import Path
 
@@ -1200,6 +1201,102 @@ def test_engine_builds_a_screen_enclosure_as_a_shell_for_mid():
     assert not any(lp["kind"].startswith("roof-structure") for lp in mesh_["details"]["open_loops"])
     assert checks.check_horizontal_faces(soup, TOL)["status"] == "pass"
 
+
+def _clean(rs_):
+    """No repeated vertex in a polygon and no polygon under 1 um^2 (a face the output grid did not collapse)."""
+    v = np.asarray(rs_["vertices"], float)
+    def area(p):
+        q = v[p]
+        return float(np.linalg.norm(sum(np.cross(q[i], q[(i + 1) % len(q)]) for i in range(len(q)))) / 2)
+    return all(len(set(p)) == len(p) and area(p) > 1e-12 for p in rs_["polygons"])
+
+
+SUBGRID = [1e-8, 1e-7, 4e-7, 1e-6, 1.5e-6, 2e-6]   # 2e-6: exactly at the floor, a stop
+SHIFTS = [(0.0, 0.0), (0.4e-6, 0.0), (0.5e-6, 0.5e-6), (0.49e-6, -0.51e-6), (1.2345678, -0.7000004)]
+
+
+def _shell_by_input(outline, t):
+    """The build-input fallback alone: no thickness_m on the screen, the building's parapet keeps its own 0.3 m
+    from the spec (rule 4), so only the screen sees the build input's `t`."""
+    rs_ = {"kind": "screen", "outline": outline, "z_top_m": 9.0}
+    def edit(d):
+        d.update({"spec_version": "0.7", "roof_structures": [rs_], "profile": "mid"})
+        d["roof"] = {**(d.get("roof") or {}), "parapet_thickness_m": 0.3}
+    dump = build(edited(edit), replace(INPUTS, parapet_thickness_m=t))
+    return dump, next(m for m in dump["meshes"] if m["name"] == "roof_structures")
+
+
+@pytest.mark.parametrize("t", SUBGRID)
+@pytest.mark.parametrize("dx,dy", SHIFTS)
+def test_a_screen_shell_thinner_than_the_output_grid_is_a_stop(t, dx, dy):
+    """Review PR #500 round 1 (P1): a thickness whose surfaces collapse on the 1 um output grid (degenerate
+    polygons, zero volume, non-manifold) is a named BuildError, never returned geometry and never clamped; also
+    with the outline moved off the grid, and for the build-input fallback thickness."""
+    outline = [[x + dx, y + dy] for x, y in SCREEN["outline"]]
+    with pytest.raises(BuildError, match="output grid"):
+        _shell(outline, 9.0, t)
+    with pytest.raises(BuildError, match="output grid"):
+        _shell_by_input(outline, t)
+
+
+@pytest.mark.parametrize("t", [2.5e-6, 1e-5, 1e-3, 0.1, 0.2, 0.3])
+@pytest.mark.parametrize("dx,dy", SHIFTS)
+def test_an_ordinary_screen_shell_stays_a_clean_closed_solid(t, dx, dy):
+    """Controls for the grid guard: ordinary and thin-but-representable shells build closed, clean, positive."""
+    outline = [[x + dx, y + dy] for x, y in SCREEN["outline"]]
+    for got in (_shell(outline, 9.0, t)[1], _shell_by_input(outline, t)[1]):
+        closed, vol = _shell_facts(got)
+        assert closed and _clean(got) and vol == pytest.approx(16 * 2.4 - (4 - 2 * t) ** 2 * (2.4 - t), rel=1e-6)
+
+
+def _box(m, lo, hi, drop=0, flip=False):
+    """An axis-aligned box of quads into `m` (outward normals; `flip` inward; `drop` faces left out)."""
+    (x0, y0, z0), (x1, y1, z1) = lo, hi
+    c = [[x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0], [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]]
+    faces = [(0, 3, 2, 1), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)][drop:]
+    for f in faces:
+        ids = [m.vertex(c[i]) for i in f]
+        m.faces.append((ids[::-1] if flip else ids, ROOF))
+
+
+@pytest.mark.parametrize("hi, drop, flip, why", [
+    ((1, 1, 4e-7), 0, False, "collapses a face"),      # top and bottom weld: repeated vertices
+    ((1, 1, 1), 1, False, "not closed"),               # a face missing
+    ((1, 1, 1), 0, True, "no volume"),                 # inside out
+])
+def test_the_shell_grid_check_stops_each_failure(hi, drop, flip, why):
+    """The safety net behind SHELL_MIN_M, one witness per check; a clean unit box passes."""
+    from dt_ai.geometry.from_spec import _check_closed_solid, _Mesh
+    m = _Mesh()
+    _box(m, (0, 0, 0), hi, drop, flip)
+    with pytest.raises(BuildError, match=why):
+        _check_closed_solid(m, "probe", 0.0)
+    ok = _Mesh()
+    _box(ok, (0, 0, 0), (1, 1, 1))
+    _check_closed_solid(ok, "probe", 0.0)
+
+
+def test_screen_shell_grid_probe_random_thickness_and_offsets():
+    """Probe (seed 500): log-uniform thickness 1e-9..1e-3 m and sub-grid / far offsets: every build is a named
+    BuildError at or under SHELL_MIN_M, and over it a clean closed solid of the expected volume; never a
+    collapsed shell returned."""
+    from dt_ai.geometry.from_spec import SHELL_MIN_M
+    rng = np.random.default_rng(500)
+    n = 0
+    for _ in range(60):
+        t = float(10 ** rng.uniform(-9, -3))
+        dx, dy = (float(c) for c in rng.uniform(-1.5, 1.5, 2) + rng.uniform(-1e-6, 1e-6, 2))
+        outline = [[x + dx, y + dy] for x, y in SCREEN["outline"]]
+        if t <= SHELL_MIN_M:
+            with pytest.raises(BuildError, match="output grid"):
+                _shell(outline, 9.0, t)
+        else:
+            got = _shell(outline, 9.0, t)[1]
+            closed, vol = _shell_facts(got)
+            assert closed and _clean(got), (t, dx, dy)
+            assert vol == pytest.approx(16 * 2.4 - (4 - 2 * t) ** 2 * (2.4 - t), rel=1e-6)
+        n += 1
+    assert n == 60
 
 def test_screen_shell_thickness_falls_back_to_the_build_input():
     """Rule 4 as the parapet's: the spec's thickness_m wins, else the build input's parapet thickness, else a stop."""
