@@ -1,7 +1,8 @@
 # vyatskaya-tow02 (Башня TOW02, ул. Вятская вл. 47–49) - mid-poly master → NPM-OKS, 2026-10-20
 
 Pipeline status: draft
-Status: mid-poly master accepted by the user as "4+" (2026-10-20), detailed review pending; texturing next
+Status: mid-poly master accepted by the user as "4+" (2026-10-20); textured master build-v015 (module atlas, OKS 013
+[D156]) waiting for the user's review; NPM derivation next
 Context: GLOSSARY.md (Body, NPM, Level contour), docs/domain/geometry.md (project modeling rules),
 docs/HARNESS_PLAN.md §3–4, §14–16, docs/backlog.md EG1, EG2, EG4, EG6, docs/domain/patterns/wall-from-contour.md,
 terrace.md, facade-decor-inset.md.
@@ -101,6 +102,65 @@ terrace.md, facade-decor-inset.md.
   patch superseded); top rebuilt (`outputs/build-v011-top/` test): `TOW02_coping` 238 quads, section 0.83 × 0.16 m
   (0.10 out + 0.73 in, 10 mm sunk), mitred, NW open with capped ends, roof closed ring; 10 cm jogs and two ~13 cm
   steps dropped. Totals 34 074 faces, 64 triangles. User helper empties 01–04 still in the scene.
+- Texturing reference (2026-10-20, read only): accepted NPM `0200_Vyatskaya_Vl_47_49_02.fbx` next to the source,
+  `SM_..._013_Main` (73.46 m; 014 is its mirrored twin, same mesh and UV). Its `atlas_2048_1` = four baked
+  orthographic elevations A–D (~17.2 px/m, one planar island per facade plane) + dark / grey / glass swatches for
+  everything else; m/r binary (glass m1 r0). Not reusable 1:1: TOW02 has ~2 storeys more and its top starts ~5.8 m
+  higher (window ribbons vs atlas rows IoU 0.57–0.70). Analysis: `outputs/uvref-v001/ref013_uv_analysis.json`,
+  `ref013_uv_overlay_by_category.png`, `ref013_atlas_contact_sheet.png`.
+- build-v014 (`outputs/build-v014/`, superseded): first run of `scripts/texture_atlas_blender.py` with one tile per
+  (height, n panes) per glass face; 2 383 of 2 761 body glass faces are < 0.5 m (ribbons are cut by body columns into
+  runs of 8–15 faces: 458 m narrow vs 637 m wide), so most glass got no mullions.
+- build-v015 (`outputs/build-v015/tow02_tex.blend`, textures `outputs/build-v015/textures/T_Vyatskaya_Vl_47_49_013_Main_{d,m,r}_1.png`,
+  layout `atlas_layout.json`) [D156]: `scripts/texture_atlas_blender.py` on build-v013 (input not saved). One material
+  `M_Vyatskaya_Vl_47_49_013_Main_1`, UV `UV`, 200 px/m. Window strips of 7 panes: storey 2.7 m (frame 0.05, vision
+  to 2.15, transom 2.15–2.20, fanlight 2.20–2.65), storey 3.5 m (transom 2.95–3.00, ASSUMPTION), band 0.7 m; mullion
+  0.055, pitch 1.0. Glass runs (faces joined by shared vertical edges) split into round(L / 1.0) equal panes, each face
+  takes its pane range shifted by an integer (mullions continuous across faces, geometry not cut). 13 solid swatches
+  (wall, reveal, band199, soffit, fin_main, fin_narrow_dark, fin_narrow_light, louvre, roof, coping, ac_perforated,
+  ac_floor, glass_solid); face int attribute `tow02_finish` keeps the finish. Readback: 37 objects, 34 074 faces,
+  all with UV in 0–1, 0 zero-area UV faces, one material; glass: 3 186 faces on window strips, 483 on glass_solid
+  (railings 399, top slivers 84). Renders `outputs/build-v015/chk_*.png`. Helper empties 01–04 still present.
+- Review 2026-10-21 (user, 3ds Max side by side with the source; `outputs/review-v001/`: `max/` pairs, `windows/`
+  per-run source window layout, `decor/` baskets and louvre): no uniform mullion pitch in the source (fixed panes
+  0.335–1.465 m + an openable sash with its own 5 cm frame, almost always the rightmost pane; 49 run types; typical
+  floors identical); top ring 65.40–68.90 and superstructure glass 72.2–75.7 are full-height panes without transoms
+  (the 3.5 m transom of build-v015 was wrong); baskets have a 50 mm coping and 4 posts at the bends; the louvre has no
+  plates but 1 crossbar per storey at the mouth and 15 rails 0.051 × 0.183 running 6 m into the recess.
+- build-v016 (`outputs/build-v016/`, `scripts/build_review_fixes_blender.py` on build-v013): new `TOW02_ac_coping`
+  (coping 50 mm + 4 posts per unit, 1 628 quads), `TOW02_ac_railing_glass` shell 20 mm (333 → 666, no caps, 5 mm into
+  floor and coping), `TOW02_louvre` rebuilt (271 continuous blades, 18 crossbars, 286 rails; 1 666 → 3 698),
+  `TOW02_louvre_plates` deleted; roof boxes: the source is hollow too (rim 76.25–79.25, slab 78.75), so only the box roof
+  faces got `TOW02_shaft_cap` (light; user 2026-10-21: keep the boxes hollow as in the source); ledge 72.2 exists in the source and is dark → `TOW02_ledge_dark`. Distances to
+  the source: coping/posts median ≤ 0.2 mm, p95 ≤ 2 mm; louvre median 0.3 mm. Open: top wall at the louvre screen
+  ~12 cm short of the source (`TOW02_top`).
+- build-v017 (`outputs/build-v017/`, `scripts/clean_glass_blender.py` on build-v016) — user rule 2026-10-21, shown by
+  hand in 3ds Max: flat window = one quad (4 points), bends keep their segments, 90° corner = two quads on one shared
+  edge (6 points). body_glass 2 761 → 787 quads (447 elements: 379 single quads, 34 corners, 34 bends), top_glass
+  509 → 86. Matches the user's manual result (816 quads) within 1 cm; the difference is coplanar pieces the user left
+  split. Tests: `outputs/glassclean-test-v00{1,2,3}/`; user's export `outputs/max-v001/TOW02_*_glass.json`.
+- build-v018 (`outputs/build-v018/`): build-v017 textured by the rewritten `scripts/texture_atlas_blender.py` —
+  windows as source run strips (user 2026-10-21 "ленты как в источнике"): 31 strips, 77.25 px/m, 873 window faces
+  matched by geometry; ray-cast check vs the source ≤ 1 cm except run B088 (1.5 cm, measurement gap).
+- QA 2026-10-21 (user: only Overlapping Faces 5 mm and Overlapping Vertices 2 mm matter; `outputs/xview-v001..v003/`):
+  xView tolerances cannot be set from script (dialog only, default 0.01 m) and xView computes only from a Max startup
+  script (`scripts/xview_check.ms`), so the two checks were computed in Blender (`outputs/xview-v002/scripts/`).
+  Found: all 6 418 TOW02_reveal faces wound into the wall (since build-v013; Max split 6 298 edges on import),
+  2 548 overlapping face pairs, 977 coincident/near vertex pairs (`outputs/xview-v002/findings.json`).
+- Fix chain (user rules 2026-10-21: no deleting, prefer no cutting — embed or move so parallel faces are ≥ 6 mm apart;
+  weld only coincident seams): `build_review_fixes_blender.py` → build-v019, `fix_overlaps_blender.py` → build-v023,
+  clean_glass → v024, texture → v025, `join_export_blender.py` (welds only seams body/top 64.7, body/soffit 6.9,
+  top/top_glass; 675 pairs) → `outputs/export-v004/` (35 480 faces, 35 368 quads + 112 tris, 44 073 verts). Result:
+  Overlapping Vertices 2 mm = 0, Overlapping Faces 5 mm = 121 pairs, all group F8; 0 mismatched winding (verified by
+  the main session). Moves: AC baskets −6.6 mm, railings 0–12 mm, soffit steps into fins ≤ 22.7 mm, fins ≤ 2 mm.
+  Superseded first run: build-v020..v022, export-v003 (`superseded.json`).
+- Open after the fix chain: (1) F8 step strips at 8 ring joins (69 strips < 6 mm): option A = snap + cut walls so they
+  share points (needs a proper implementation in `build_stack`; the automatic test `outputs/xview-v003/f8/option_a_body.blend`
+  failed, do not use), option B = 6.5 mm ledge (not recommended); (2) basket posts are now 7 mm behind the glass outer
+  face and hidden by it — alternative: glass ~13 mm inward so posts show; (3) 12 bowtie vertices from the
+  top/top_glass seam weld at 65.4 (Max will split them → coincident vertices); (4) builder root causes for the backlog
+  are listed in the agent report (build_stack winding/offset_points/steps, top caps and railings, build_ac floor,
+  build_soffit, build_fins).
 - Was in progress (agents): top above 64.7 (`scripts/build_top_blender.py` → `outputs/build-v005-top/`; decision:
   cap-band protrusion 71.5–72.2 up to 0.12 m modelled with its own outline); facade decor — AC baskets, louvre,
   balconies, soffit over the colonnade (`scripts/build_decor_blender.py` → `outputs/build-v006-decor/`).
@@ -124,6 +184,7 @@ terrace.md, facade-decor-inset.md.
 
 ## Next
 1. Mid-poly modelling closed by the user 2026-10-20 ("по моделингу мы закончили", 4+); master = build-v013.
-2. Texturing (EG4: UV, atlas), then NPM derivation: naming per regulation (address/prefix to confirm, likely
+2. Texturing done in build-v015 (module atlas, OKS 013 [D156]); waiting for the user's review (3.5 m window layout
+   is an assumption). Then NPM derivation: join TOW02_* into `SM_Vyatskaya_Vl_47_49_013_Main` (prefix
    `0200_Vyatskaya_Vl_47_49`), remove helper empties, triangulate, FBX export, validate-delivery.
 3. Optional: independent check of the master (independent-checker) before NPM.
