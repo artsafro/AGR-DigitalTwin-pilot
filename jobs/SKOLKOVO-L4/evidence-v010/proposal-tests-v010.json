@@ -1,0 +1,124 @@
+{
+  "scope": "proposal-data consistency; no geometry or acceptance",
+  "parts_sha256": "fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a",
+  "recipe_sha256": "ccfbe7a217b562f226a493981d3514e536967b10bf0046672488faf7ae5ddfba",
+  "proposal_probe": {
+    "scope": "proposal data only, not geometry acceptance",
+    "recipe_sha256": "ccfbe7a217b562f226a493981d3514e536967b10bf0046672488faf7ae5ddfba",
+    "positive": true,
+    "negative_rejected": 20,
+    "witnesses": [
+      "invalid_distance_0.0",
+      "invalid_distance_-0.002",
+      "invalid_distance_0.0020000000000000005",
+      "invalid_distance_nan",
+      "invalid_distance_inf",
+      "invalid_distance_'0.002'",
+      "invalid_distance_None",
+      "one_direction",
+      "sample_only_max",
+      "unmeasured_pass",
+      "source_omission",
+      "moved_placement",
+      "relaxed_topology",
+      "budget_increase",
+      "old_candidate_reuse",
+      "unknown_faces_dropped",
+      "stale_recipe_hash",
+      "unrelated_part_change",
+      "changed_joints",
+      "invented_gate1"
+    ]
+  },
+  "coverage_probe": {
+    "scope": "Gate1 proposal data/schema consistency ONLY; not user approval, geometry or buildability",
+    "parts_path": "tmp\\skolkovo-l4-v010\\parts-gate1-proposal-v010.json",
+    "sha256": "fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a",
+    "checks": {
+      "public_schema": true,
+      "draft_not_approval": true,
+      "all_source_rows_unique": true,
+      "decisions_account_for_every_source": true,
+      "all6955_retained_refs_exact_once": true,
+      "all6955_explicit_appearance_bindings": true,
+      "only_known_appearance_keys": true,
+      "appearance_binding_part_known": true,
+      "all49_known_parts": true,
+      "all_legends_nonblank": true,
+      "positive_allocation_with_reserve": true,
+      "all291_candidate_pair_decisions": true,
+      "no_primary_displacement": true,
+      "candidates_not_contact_certificates": true,
+      "allocations_not_fabricated_measurements": true,
+      "source_bound_primary_plan": true,
+      "no_generated_geometry_claim": true,
+      "source_specific_material_binding": true
+    },
+    "passed_checks": 18,
+    "total_checks": 18,
+    "negative_witnesses": [
+      {
+        "witness": "empty_parts",
+        "rejected": true
+      },
+      {
+        "witness": "partial_parts",
+        "rejected": true
+      },
+      {
+        "witness": "duplicate_input",
+        "rejected": true
+      },
+      {
+        "witness": "unsupported_operation",
+        "rejected": true
+      },
+      {
+        "witness": "nonfinite_budget_nan",
+        "rejected": true
+      },
+      {
+        "witness": "nonfinite_budget_inf",
+        "rejected": true
+      },
+      {
+        "witness": "exact_no_reserve_threshold",
+        "rejected": true
+      },
+      {
+        "witness": "unmapped_legend",
+        "rejected": true
+      },
+      {
+        "witness": "missing_joints",
+        "rejected": true
+      },
+      {
+        "witness": "unmapped_material_key",
+        "rejected": true
+      },
+      {
+        "witness": "wrong_source_binding_known_part",
+        "rejected": true
+      },
+      {
+        "witness": "invented_approval",
+        "rejected": true
+      }
+    ],
+    "negative_rejected": 12
+  },
+  "focused_tests": {
+    "command": "env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q -p no:cacheprovider tests/contracts/test_parts_list.py tests/contracts/test_parts_import_order.py tests/test_task_to_model.py --basetemp=C:/x/t_b205c8e1-v010-pytest",
+    "passed": 163,
+    "seconds": 84.81,
+    "hours": 0.023558333333333334,
+    "log_sha256": "8041d6d2571e535ae8212bad3630b38aaf67e87ae88c05930bd0a3c0452a734e"
+  },
+  "new_build_performed": false,
+  "full_suite_run": false,
+  "full_suite_reason": "deferred until complete first review head",
+  "red_assertion": "Missing newly authorized bidirectional source-profile recipe",
+  "geometry_stages_hours": null,
+  "note": "L5 successful whole-building throughput unmeasured; failed stage timings remain v009."
+}

@@ -1,0 +1,946 @@
+{
+  "scope": "read-only input and source-buffer identity, not geometry acceptance",
+  "inputs": [
+    {
+      "relative": "01_source/01_initial_2026-05-26/СК_ИЦ_ЦОД02_П_АР_3DView(Navisworks)forAGR(fbx).fbx",
+      "sha256": "caa89dc0b1ca4effa269dbd7b26f5cd10acbcc00fe5c2c0942d251b1dbb57203"
+    },
+    {
+      "relative": "01_source/02_pravki_2026-09-15/fbx/генплан - забор и ограждение.fbx",
+      "sha256": "77b05a8d0f87a0f8cd1955bc7295c2c0795d34eb18073a84f0d01fa4f762356c"
+    },
+    {
+      "relative": "01_source/02_pravki_2026-09-15/fbx/СК_ИЦ_ЦОД02_молниеотводы.fbx",
+      "sha256": "f2167c8f48537cfaeaeab3bdad6a81ca1822b86029a1da4c473ec643312ac23e"
+    },
+    {
+      "relative": "01_source/02_pravki_2026-09-15/fbx/СК_ИЦ_ЦОД02_П_АР_Ф-3DView.fbx",
+      "sha256": "9d079ffe7bbcfe035bdb3e13e660444cfb7f831d14c046ba1047572f9c5c52cb"
+    },
+    {
+      "relative": "01_source/02_pravki_2026-09-15/rvt/СК_ИЦ_ЦОД02_П_АР.rvt",
+      "sha256": "fe2b10be6eeab365aaba904d595aefb4b7b0609b5bc4245d2c7f66f32f155dc7"
+    },
+    {
+      "relative": "01_source/02_pravki_2026-09-15/rvt/СК_ИЦ_ЦОД02_П_АР_Ф.rvt",
+      "sha256": "652b5bedabf4453510e9f7ae2cd5582874a3ba12d829d8cd39b1067ee03067ab"
+    },
+    {
+      "relative": "01_source/02_pravki_2026-09-15/Изменение фасадов.pdf",
+      "sha256": "222e6f26efa10b97fe884adea1325aae869d92718b6cb61b4cb27aea9dfc6e90"
+    },
+    {
+      "relative": "02_album/20226-АГК_Инженерный центр ПАО Сбербанк.pdf",
+      "sha256": "ad37ebc67ec5b819075943cefc26da64c3e0a383ba6dad7efaab9ce2ea405c29"
+    },
+    {
+      "relative": "03_LP/0809_BolshoyBulvar_64_01.fbx",
+      "sha256": "1493b06f1bce777c85f36dbed904c16b1fe4d9346ba0532dc92fa0d0649e6d65"
+    },
+    {
+      "relative": "03_LP/0809_BolshoyBulvar_64_Ground.fbx",
+      "sha256": "275f038a036ef91b5a5f0be4a0c6a0bebec03f1f9550b66d33f46b735520c66d"
+    },
+    {
+      "relative": "03_LP/AGRChecker_data/checker_log.txt",
+      "sha256": "36dfc28b55a223a90792647ad39331c27402dccf6c5405ed632ad41523beb475"
+    },
+    {
+      "relative": "03_LP/AGRChecker_data/td_fingerprint.txt",
+      "sha256": "ed84f69e5207c3997bcf476da9a4cae5782d49187d9a30babedfbab0cf306ccf"
+    },
+    {
+      "relative": "04_HP/ground/AGRChecker_data/checker_log.txt",
+      "sha256": "2b8cc8b6ef7c4c0567bbe09dd2b92142f95795cdcb7711b9b1b7c9ab97c059cc"
+    },
+    {
+      "relative": "04_HP/ground/AGRChecker_data/td_fingerprint.txt",
+      "sha256": "25660d74d76e2350a210403a166d1b10fbdc2912bb5fcf3d4a0fb73dd607e137"
+    },
+    {
+      "relative": "04_HP/ground/AGRChecker_data/ucx_fingerprint.txt",
+      "sha256": "65519d193a235f96a95adbc4b63eb146fe8e10374c130546a2dc2a04340d9bef"
+    },
+    {
+      "relative": "04_HP/ground/SM_BolshoyBulvar_64_Ground.fbx",
+      "sha256": "e1f6e2d35e3c2678d76f64424762371e0dc2d757720d2964600ddeefbb14d6e5"
+    },
+    {
+      "relative": "04_HP/ground/SM_BolshoyBulvar_64_Ground.geojson",
+      "sha256": "0194af121f89a4b510c93131a114831e7099731f9d6e3812579cc57e7baa3171"
+    },
+    {
+      "relative": "04_HP/ground/SM_BolshoyBulvar_64_Ground_Light.fbx",
+      "sha256": "ce85a5f000276b75e5f5675c2d38c0454e923e938949c68bb893290614a79ead"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Diffuse_1.1001.png",
+      "sha256": "ba34417bb787be2588416585710537a40afed2ef55e387ba9ced05931c1561f3"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Diffuse_1.1002.png",
+      "sha256": "2023a3a82e742a61ee38437881b9ae36925c15bec5bc7b3a53191dd20cc6ef43"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Diffuse_1.1003.png",
+      "sha256": "9ca3b4d8822eaf94fbef9d7980bbc298efa5c46c6de3a496cc775b6ee3cfd558"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Diffuse_1.1004.png",
+      "sha256": "738b1e86108cf3228099e8bf5823ef04cd2fff57e6a29d53bbd14aa297539561"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Diffuse_1.1005.png",
+      "sha256": "13de1909311303c3facf394e16249b0c8a83fd88ffedbf220d4b89c94e50972b"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Diffuse_1.1006.png",
+      "sha256": "524d8ec6259eb1a23b64a37621a69eae8f5ff7411aa908931701b131adf397cb"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Diffuse_1.1007.png",
+      "sha256": "832ebe10d107ed012ab9f62fbe8152269c3acf13b4a54d7fd2ca979d12528426"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Diffuse_1.1008.png",
+      "sha256": "524d8ec6259eb1a23b64a37621a69eae8f5ff7411aa908931701b131adf397cb"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Diffuse_1.1009.png",
+      "sha256": "4511f4c40d5dd449275ab4357fe6c99e0f366b41716903eab78d3da414601853"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Diffuse_1.1010.png",
+      "sha256": "a9c56aac81352bff195b61f690489ff4c1704aaf6e6b7e8f77658017e5e1bd45"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_ERM_1.1001.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_ERM_1.1002.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_ERM_1.1003.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_ERM_1.1004.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_ERM_1.1005.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_ERM_1.1006.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_ERM_1.1007.png",
+      "sha256": "832ebe10d107ed012ab9f62fbe8152269c3acf13b4a54d7fd2ca979d12528426"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_ERM_1.1008.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_ERM_1.1009.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_ERM_1.1010.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Normal_1.1001.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Normal_1.1002.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Normal_1.1003.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Normal_1.1004.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Normal_1.1005.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Normal_1.1006.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Normal_1.1007.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Normal_1.1008.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Normal_1.1009.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/ground/T_BolshoyBulvar_64_Ground_Normal_1.1010.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/okc/AGRChecker_data/checker_log.txt",
+      "sha256": "1c33c6ee2f1a5cdef6e1f264e3fb0cd185cb5014daed5e69ea7d543fcd1e7593"
+    },
+    {
+      "relative": "04_HP/okc/AGRChecker_data/td_fingerprint.txt",
+      "sha256": "2f9c21d4080ecbb67536d583b5b7f36412c29e8e53801ceb9937ed3e2495f878"
+    },
+    {
+      "relative": "04_HP/okc/AGRChecker_data/ucx_fingerprint.txt",
+      "sha256": "9d4e09c1808dd7f568d23bfe439bbe618833a013d47442750a561b5515ba3430"
+    },
+    {
+      "relative": "04_HP/okc/SM_BolshoyBulvar_64.fbx",
+      "sha256": "fc52d0e231846b5fdce07cba30464da08fe5c3993f60a64df7dd16053ed8f455"
+    },
+    {
+      "relative": "04_HP/okc/SM_BolshoyBulvar_64.geojson",
+      "sha256": "a7bde235910a5c3019c39e3f0ddfaaf03ff889fd4df2dc54a7f93b24f9396122"
+    },
+    {
+      "relative": "04_HP/okc/SM_BolshoyBulvar_64_Light.fbx",
+      "sha256": "fc8db603d114d118388dfc07c4e1e31887822371718a413f119bb29ad1840b9b"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1001.png",
+      "sha256": "e26a5790086a38a4cde5eec4b5c2b3d770f561c0e101b6b5a3cc8d03dcdb486c"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1002.png",
+      "sha256": "09a7aa1cb15e48eafce82436efa9fc6988b7814352da88fd3e5dc1ce99a325de"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1003.png",
+      "sha256": "c04c3a1307a57762aac9a44a46b255c4b582381e6df4f2e425bace22fb38321e"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1004.png",
+      "sha256": "e26a5790086a38a4cde5eec4b5c2b3d770f561c0e101b6b5a3cc8d03dcdb486c"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1005.png",
+      "sha256": "b07d76adf1cdd1f26895919c0193cc23fc02beff8a82009ed894894bffcae9e3"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1006.png",
+      "sha256": "a299e99f3c8d7828c0006979067d125212decbcd6665b31779274cbdac3ac4b4"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1007.png",
+      "sha256": "e26a5790086a38a4cde5eec4b5c2b3d770f561c0e101b6b5a3cc8d03dcdb486c"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1008.png",
+      "sha256": "e26a5790086a38a4cde5eec4b5c2b3d770f561c0e101b6b5a3cc8d03dcdb486c"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1009.png",
+      "sha256": "75a231cc4b76a31d2e980724286f7a6dcb5846f70d0ae88314727940d4b1b8ae"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1010.png",
+      "sha256": "3847234fc6094298bad33ebe40ce069bd2e8432e7e88bbe506ed6e51893bde32"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1011.png",
+      "sha256": "88bbe991d069910d326097c1986d9bbbd46a819cb93c7e41e29d0080a0f4f33e"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1012.png",
+      "sha256": "e26a5790086a38a4cde5eec4b5c2b3d770f561c0e101b6b5a3cc8d03dcdb486c"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1013.png",
+      "sha256": "a2c3e4a76224ff96384f0872893f59a59c571780783f6fd28b3aef9f150cbf49"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1014.png",
+      "sha256": "91d0aa5fe3eaafebef9887b59b49d3b0ac81885683ac40785def833a611ecef5"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1015.png",
+      "sha256": "832ebe10d107ed012ab9f62fbe8152269c3acf13b4a54d7fd2ca979d12528426"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Diffuse_1.1016.png",
+      "sha256": "ff1f5c08331fcd61f4a58ea08393e238462f0264ecf4b86e6884da274ea9c646"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1001.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1002.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1003.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1004.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1005.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1006.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1007.png",
+      "sha256": "7e53c82ccbf7857332ebdd83c5b27713393e729a90eecd917669fecedb994129"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1008.png",
+      "sha256": "7e53c82ccbf7857332ebdd83c5b27713393e729a90eecd917669fecedb994129"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1009.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1010.png",
+      "sha256": "3204160c5409aac6ddddbe832531d3283842b56ffed8dd00727d6cda9cae474a"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1011.png",
+      "sha256": "7e53c82ccbf7857332ebdd83c5b27713393e729a90eecd917669fecedb994129"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1012.png",
+      "sha256": "09a7aa1cb15e48eafce82436efa9fc6988b7814352da88fd3e5dc1ce99a325de"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1013.png",
+      "sha256": "7e53c82ccbf7857332ebdd83c5b27713393e729a90eecd917669fecedb994129"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1014.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1015.png",
+      "sha256": "832ebe10d107ed012ab9f62fbe8152269c3acf13b4a54d7fd2ca979d12528426"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_ERM_1.1016.png",
+      "sha256": "36dc4a680b2bc528c221b7220016558a7f599a07c431581da3b396ac0e653c44"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1001.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1002.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1003.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1004.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1005.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1006.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1007.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1008.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1009.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1010.png",
+      "sha256": "82aa029b76c1907e5a5dde8b3d19d1fc31933291d43d8acb7cb4319da2718aaa"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1011.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1012.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1013.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1014.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1015.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "04_HP/okc/T_BolshoyBulvar_64_Normal_1.1016.png",
+      "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+    },
+    {
+      "relative": "README.md",
+      "sha256": "aa7781743110338b637455b510f45fafa49ac621c64940aec79a9056944a7033"
+    },
+    {
+      "relative": "SHA256SUMS.txt",
+      "sha256": "6f1a67c06426d3a455c6a9b3137854a3e4c941f31adbbd9b4d3a975aed6f01fb"
+    }
+  ],
+  "input_count": 104,
+  "manifest": [
+    {
+      "relative": "./01_source/01_initial_2026-05-26/СК_ИЦ_ЦОД02_П_АР_3DView(Navisworks)forAGR(fbx).fbx",
+      "sha256": "caa89dc0b1ca4effa269dbd7b26f5cd10acbcc00fe5c2c0942d251b1dbb57203"
+    },
+    {
+      "relative": "./01_source/02_pravki_2026-09-15/fbx/генплан - забор и ограждение.fbx",
+      "sha256": "77b05a8d0f87a0f8cd1955bc7295c2c0795d34eb18073a84f0d01fa4f762356c"
+    },
+    {
+      "relative": "./01_source/02_pravki_2026-09-15/fbx/СК_ИЦ_ЦОД02_молниеотводы.fbx",
+      "sha256": "f2167c8f48537cfaeaeab3bdad6a81ca1822b86029a1da4c473ec643312ac23e"
+    },
+    {
+      "relative": "./01_source/02_pravki_2026-09-15/fbx/СК_ИЦ_ЦОД02_П_АР_Ф-3DView.fbx",
+      "sha256": "9d079ffe7bbcfe035bdb3e13e660444cfb7f831d14c046ba1047572f9c5c52cb"
+    },
+    {
+      "relative": "./01_source/02_pravki_2026-09-15/rvt/СК_ИЦ_ЦОД02_П_АР.rvt",
+      "sha256": "fe2b10be6eeab365aaba904d595aefb4b7b0609b5bc4245d2c7f66f32f155dc7"
+    },
+    {
+      "relative": "./01_source/02_pravki_2026-09-15/rvt/СК_ИЦ_ЦОД02_П_АР_Ф.rvt",
+      "sha256": "652b5bedabf4453510e9f7ae2cd5582874a3ba12d829d8cd39b1067ee03067ab"
+    },
+    {
+      "relative": "./01_source/02_pravki_2026-09-15/Изменение фасадов.pdf",
+      "sha256": "222e6f26efa10b97fe884adea1325aae869d92718b6cb61b4cb27aea9dfc6e90"
+    },
+    {
+      "relative": "./02_album/20226-АГК_Инженерный центр ПАО Сбербанк.pdf",
+      "sha256": "ad37ebc67ec5b819075943cefc26da64c3e0a383ba6dad7efaab9ce2ea405c29"
+    },
+    {
+      "relative": "./03_LP/0809_BolshoyBulvar_64_01.fbx",
+      "sha256": "1493b06f1bce777c85f36dbed904c16b1fe4d9346ba0532dc92fa0d0649e6d65"
+    },
+    {
+      "relative": "./03_LP/0809_BolshoyBulvar_64_Ground.fbx",
+      "sha256": "275f038a036ef91b5a5f0be4a0c6a0bebec03f1f9550b66d33f46b735520c66d"
+    },
+    {
+      "relative": "./04_HP/ground/SM_BolshoyBulvar_64_Ground.fbx",
+      "sha256": "e1f6e2d35e3c2678d76f64424762371e0dc2d757720d2964600ddeefbb14d6e5"
+    },
+    {
+      "relative": "./04_HP/ground/SM_BolshoyBulvar_64_Ground.geojson",
+      "sha256": "0194af121f89a4b510c93131a114831e7099731f9d6e3812579cc57e7baa3171"
+    },
+    {
+      "relative": "./04_HP/ground/SM_BolshoyBulvar_64_Ground_Light.fbx",
+      "sha256": "ce85a5f000276b75e5f5675c2d38c0454e923e938949c68bb893290614a79ead"
+    },
+    {
+      "relative": "./04_HP/okc/SM_BolshoyBulvar_64.fbx",
+      "sha256": "fc52d0e231846b5fdce07cba30464da08fe5c3993f60a64df7dd16053ed8f455"
+    },
+    {
+      "relative": "./04_HP/okc/SM_BolshoyBulvar_64.geojson",
+      "sha256": "a7bde235910a5c3019c39e3f0ddfaaf03ff889fd4df2dc54a7f93b24f9396122"
+    },
+    {
+      "relative": "./04_HP/okc/SM_BolshoyBulvar_64_Light.fbx",
+      "sha256": "fc8db603d114d118388dfc07c4e1e31887822371718a413f119bb29ad1840b9b"
+    }
+  ],
+  "manifest_count": 16,
+  "mast_buffers": [
+    {
+      "row": 3628,
+      "sha256": "47ed66b387c8c014636e009bb6fa200b8b3c98ab3038c5a647fc2aea0355f6dc"
+    },
+    {
+      "row": 3629,
+      "sha256": "dd82e117236ea9b5a5d01cf14944fccee5f8d636c16d69b1b8f6cff3e67d2c56"
+    },
+    {
+      "row": 3630,
+      "sha256": "2b266b8ea14542d20d33c646a749dfd02678c6216c074de8ffecd38e6fef0a6b"
+    },
+    {
+      "row": 3631,
+      "sha256": "66464caca6cffe66b628fa88c517c112177b5141dc8887ead2f3845ed795f60b"
+    },
+    {
+      "row": 3632,
+      "sha256": "5575fa8b2a9d3f526aad4105c7fee2662a66a56db9c642d6539cb6e5f6c37b2a"
+    },
+    {
+      "row": 3633,
+      "sha256": "aea97b2f02e70f282b7aa6c92f379082e02a13b52d6147c33d8e9a09705a1e77"
+    },
+    {
+      "row": 3634,
+      "sha256": "e9f78e5673b1f139e5a9757d9c41a9951eaf723f412a93b6401ee24bf024419d"
+    },
+    {
+      "row": 3635,
+      "sha256": "16c6b4357af62c468fe9c2102f4322369642a2258459ff7b332aebd9a082d12d"
+    },
+    {
+      "row": 3636,
+      "sha256": "44d9098b02601b42c462307998866b09d111b67e855162c8c14fa5dd4679afaa"
+    },
+    {
+      "row": 3637,
+      "sha256": "3c00996f5c388379fae44742e6ef1346d7476a034f11cb1fc4ddffabee16370c"
+    },
+    {
+      "row": 3638,
+      "sha256": "ae2ae7bc9d1bcbe58a4d279c9d766f716eea825eba338aec7e2c900642b6e950"
+    },
+    {
+      "row": 3639,
+      "sha256": "7caab1871b39bc1f3f83a671236a47f4189e928a700f56a0b344401df252b64f"
+    },
+    {
+      "row": 3640,
+      "sha256": "6adec83d82de5af0f20148803c25766ce82cfc965c1cd410b4c6acab3a907acd"
+    },
+    {
+      "row": 3641,
+      "sha256": "2c5121976575e0b4af2bd3ce30049628688788f2b4e27845bb782a34a13b33cc"
+    },
+    {
+      "row": 3642,
+      "sha256": "382c2e402bd221196a392d99e663d2a1e377d6e774a5fcd0e7d6622b94c40896"
+    },
+    {
+      "row": 3643,
+      "sha256": "2492d033fa0b66dce9185c30d26fdc8dd71b7cf4cc21e07e815e8ba042b2c9be"
+    },
+    {
+      "row": 3644,
+      "sha256": "497998b82a896d26a099c085d3f4f7fafbf2e80f008d5cc6602740fa520ca84c"
+    },
+    {
+      "row": 3645,
+      "sha256": "5b2bad300c4e2bc10c26380b18b0878a9f6054ab2e00853346fa4dd4c3867d9e"
+    },
+    {
+      "row": 3646,
+      "sha256": "07bbf918f74cf55988ad9871da5b25ac530a17bf8f4dba517cda23d34a620627"
+    },
+    {
+      "row": 3647,
+      "sha256": "6df8af93705f3eb37ace2a2a45e8b92dae76a407deecc25420ba704c23954200"
+    },
+    {
+      "row": 3648,
+      "sha256": "2d671f7dd5de19bfb32c8a8d1c95302391939f131e72b59041cd0f326d0b8a5e"
+    },
+    {
+      "row": 3649,
+      "sha256": "cfcc33b050904dd6d36f8cfed88ae3c55fd953857d4ed04d46bf924444654db6"
+    },
+    {
+      "row": 3650,
+      "sha256": "e9f78e5673b1f139e5a9757d9c41a9951eaf723f412a93b6401ee24bf024419d"
+    },
+    {
+      "row": 3651,
+      "sha256": "7cd6aa148a66e0a96c25f44050ab3a3e0b0e55be34afe002748e80e44e7c9191"
+    },
+    {
+      "row": 3652,
+      "sha256": "957c0db27d4221dbb9efcf80cc4b1bd37b087204c68ef8b507b791fb88ec60f3"
+    },
+    {
+      "row": 3653,
+      "sha256": "8ead2248433722190dbe2383cc83fd89dd7a8541f1d12213e636abfae7fd6c03"
+    },
+    {
+      "row": 3654,
+      "sha256": "98dc4247a21b5ba105098c31708e5cd24fdf63e3d1e3c5c3869af70c0ec2d7f2"
+    },
+    {
+      "row": 3655,
+      "sha256": "fa36184953454a62a49248dc9bda5488160662cd284a636242ee172965bd9f4d"
+    },
+    {
+      "row": 3656,
+      "sha256": "6714b22e51b944d18f680aaecc2dc662178c258b3afc4936b2009902d65d65ed"
+    },
+    {
+      "row": 3657,
+      "sha256": "6f76615439e1c7a51f7f3c0d872e5accb55fa20bfa4c6180c2a19a8d38ae550a"
+    },
+    {
+      "row": 3658,
+      "sha256": "fa30bc7430b5e32a61225522e2e740cb569ba50ca8385c2ef330b3a2c4a39496"
+    },
+    {
+      "row": 3659,
+      "sha256": "fa18cbc0b1dc9de286d43e480496ba5c6e9ad57fcb2121797bb9dcbadd7dbdf9"
+    },
+    {
+      "row": 3660,
+      "sha256": "efc0b887f7421661ee869f58aae27f60863506ca26646902fb181f1de47051c9"
+    },
+    {
+      "row": 3661,
+      "sha256": "c8a8baef92de8e4daa7a3a9dcbb4ecffb9a2447b3aa5152535fca64d9c807f31"
+    },
+    {
+      "row": 3662,
+      "sha256": "d9aa76c37a8f416256fccd7ec8bc643b26544aadb03c07b99eb69962449cb5e1"
+    },
+    {
+      "row": 3663,
+      "sha256": "701a0f11087abc6bbe7c355881bb4f2f57407c03618c859ac1ff31de34b44e24"
+    },
+    {
+      "row": 3664,
+      "sha256": "0492ace96ad562f97c088a41681479061628b7490e4ab37ac1850479c85cff31"
+    },
+    {
+      "row": 3665,
+      "sha256": "9e568eac216990426d09a884a6dbf29c1243a9908361b2ce68e43d998881d82b"
+    },
+    {
+      "row": 3666,
+      "sha256": "cebfe7f9ac84e8b5ea7a709024a134f92291a59038f92bc905014227ec02c778"
+    },
+    {
+      "row": 3667,
+      "sha256": "80fe5f2bd44706e53285ffd44e5e1442407c9d44942527c2db224139fc2ef2b4"
+    },
+    {
+      "row": 3668,
+      "sha256": "9b9cf1f75930bcbae913251d6e5a4b1f6273ef13617201f032e9c977a93f0675"
+    },
+    {
+      "row": 3669,
+      "sha256": "1783cfa80e5c8da38d5349a4ca296b3bfa3cc1aed9e1c3a9982967dc4ab15270"
+    },
+    {
+      "row": 3670,
+      "sha256": "1486098e17a420b66d704d411c63f5df56c0900b07c49c8e168db317877f1777"
+    },
+    {
+      "row": 3671,
+      "sha256": "6071b65a1478dad7faceb5358fefe1609c0316909eb3e76d74d826bd7e247c88"
+    },
+    {
+      "row": 3672,
+      "sha256": "6fd5102e020a94c2a781a8f0a92fdaf344896388a9a695394d515c291b0c05ff"
+    },
+    {
+      "row": 3673,
+      "sha256": "6f76615439e1c7a51f7f3c0d872e5accb55fa20bfa4c6180c2a19a8d38ae550a"
+    },
+    {
+      "row": 3674,
+      "sha256": "802c0ac3246e274a8934169f26f7ac7ac6184c0a1fd14e9826bd582b378ade07"
+    },
+    {
+      "row": 3675,
+      "sha256": "33f9bd2f6c0399dfa63eab3993fb52362bd97274fc0f163ebfb5a6d6864d608b"
+    },
+    {
+      "row": 3676,
+      "sha256": "a6de311fb06e5936a77be46889c6bd4b50be0c132ebf7330d08999ca10bc99c2"
+    },
+    {
+      "row": 3677,
+      "sha256": "3223510233bb770b67d16f9f18a710ec19b0e6b42fece9a1e9f142bc7736937e"
+    },
+    {
+      "row": 3678,
+      "sha256": "30630a7b785100971e9def448aa1e7cdf955b4ddae93c2ee5f60da06f09cd7ab"
+    },
+    {
+      "row": 3679,
+      "sha256": "0dbcc0b76d4ac269f92d01cc6c6975d9a767a392b9e6aff7cf2e6070de17b995"
+    },
+    {
+      "row": 3680,
+      "sha256": "50da1f74b7d363337706efbe2cc35c4b77026e096c348881f1b9d03226d96bb6"
+    },
+    {
+      "row": 3681,
+      "sha256": "c047b36f04a3659035bc97c8e9b4249822f28e6080e4070cac51ae19fe5a3a0b"
+    },
+    {
+      "row": 3682,
+      "sha256": "140d2450260fa4c25623e24c91d7b8ad918ed9651fb9f339a52f0ba39b8abe4c"
+    },
+    {
+      "row": 3683,
+      "sha256": "e73e0a8b44b252e991000e3002f20cc8b0a990339a87830c905f99bdb9fd6ec9"
+    },
+    {
+      "row": 3684,
+      "sha256": "c30029696fecfee14c3de88ae47b5075f585b44004a7201c1c6042f6543bff9b"
+    },
+    {
+      "row": 3685,
+      "sha256": "3f0ed94e216b66985860f771fef439f20ac8f0cc54597412ea9fd953905c017c"
+    },
+    {
+      "row": 3686,
+      "sha256": "23c5e753a021a36a32e47ec18fecd74b880dfefa408ce18ec1c28667d655d1b8"
+    },
+    {
+      "row": 3687,
+      "sha256": "6d3f8b0c50128e1056d83c8572779983cb5ce0b4fbf60a33562299792fedac3c"
+    },
+    {
+      "row": 3688,
+      "sha256": "11b5c9609eeb1be7730232cda4fecfde76eefb092a32d376fa97edd42a134100"
+    },
+    {
+      "row": 3689,
+      "sha256": "b79cca7d7cda6116e99bdf1b1ff5961b0841d410e76a4cf126a2b40c9a334c2c"
+    },
+    {
+      "row": 3690,
+      "sha256": "2163b24bfbf9ec12879d1e32927705b6d4ac3760c64636ae21f1f537a0f7de67"
+    },
+    {
+      "row": 3691,
+      "sha256": "670fd861d4085d4cee72762335fa42c29a56b2e4691c9bae90605ec8765e3241"
+    },
+    {
+      "row": 3692,
+      "sha256": "e038b6c6d606e47c087b71d99925b81fec545d1ff0db5c572da68a12e3ae4bca"
+    },
+    {
+      "row": 3693,
+      "sha256": "f70911a190140d41d8e2543e01f11ae23a66ac1f392628f19087421a0d72888c"
+    },
+    {
+      "row": 3694,
+      "sha256": "f902d972934c91f981dec17bc57fbcbdc2193b408e6e599333f1261082c053dd"
+    },
+    {
+      "row": 3695,
+      "sha256": "acf839cefa6ba55c20ba97286be4c7abed0365d3edf245f1b0c20c9fd04a952e"
+    },
+    {
+      "row": 3696,
+      "sha256": "50da1f74b7d363337706efbe2cc35c4b77026e096c348881f1b9d03226d96bb6"
+    },
+    {
+      "row": 3697,
+      "sha256": "4176151fdca424a8a4501ee81709e5fa4123f496e31d0e76ffb24c33b61b8f38"
+    },
+    {
+      "row": 3698,
+      "sha256": "4c6d5a9d34ab27ed75b596638d909b788cf369394272f0efe4e458f131e58614"
+    },
+    {
+      "row": 3699,
+      "sha256": "566300d0ff0780173d63cf551030fc5dcc3e5fbbaf0f9a00ecf461c40c6ae542"
+    },
+    {
+      "row": 3700,
+      "sha256": "cc1d5d2b4e42ccd400e884c43d9a3d04d37ac4c24c4168ce119eff35d19c6c33"
+    },
+    {
+      "row": 3701,
+      "sha256": "5982c052db6f60f3c66a0db72451f98a2b9b593f0af9c2c9f935b16fffb6abe4"
+    },
+    {
+      "row": 3702,
+      "sha256": "f66b25932ce1232e5727acc9277ca72f3a90136d978cde46850ee4ea69a62c82"
+    },
+    {
+      "row": 3703,
+      "sha256": "7893d344148e6fc1122df1a28435b1acc3d3cb9f61d5b648e38df7ea3bf120eb"
+    },
+    {
+      "row": 3704,
+      "sha256": "dba4542ec1cc8e7002b97ad85d437f15315156f09cd10a49cf2481567143e671"
+    },
+    {
+      "row": 3705,
+      "sha256": "9954f9d88e4c7ef4f291d7a84a7f60229fd503c38f7d818093a1ac20b2bcd5c1"
+    },
+    {
+      "row": 3706,
+      "sha256": "1d914313b0fe56e13397a4f5e6bcf9807a7ffc36d1d5edad93054a08f3714f4c"
+    },
+    {
+      "row": 3707,
+      "sha256": "a10884daf91349b1931fca5091c992033ce2456094ccf0c0238b77791f1dc173"
+    },
+    {
+      "row": 3708,
+      "sha256": "3436cb3883d4ec20ef3e2fa3a65a14178ec79eb19099ff5cf7157a8c0d3cdd9f"
+    },
+    {
+      "row": 3709,
+      "sha256": "132e4afef5149e218ca274c47ce9b459b93d6a0dbd28d94e4c71e2312d2a49ee"
+    },
+    {
+      "row": 3710,
+      "sha256": "7ee1b8a1e30c4ddbe3f68801137094bceafaf8ad03e5a39821b0eba155449929"
+    },
+    {
+      "row": 3711,
+      "sha256": "e08f399e6e74ed45377b1bebc1d4d2a568ed9e2dee90498a3c06fa9259703b59"
+    },
+    {
+      "row": 3712,
+      "sha256": "5f468c29420af76b80aa1d663a01779b9066cebe890cd96d5f4ab5cfe721f9a6"
+    },
+    {
+      "row": 3713,
+      "sha256": "4b9bb9b016b2254520918a93aa6ca7cdd8834d7d3b87ff73854179c016f35699"
+    },
+    {
+      "row": 3714,
+      "sha256": "fd927926237cbd8c46bb8e5984dfc161fd34b1b7fbaaf96d9f9f5e45f54aa878"
+    },
+    {
+      "row": 3715,
+      "sha256": "1359f7897adccbe5fc011501151f6cae4d766c4426988d7d348621624f69f5a0"
+    },
+    {
+      "row": 3716,
+      "sha256": "4652e44a76996850f47b0ab09541d299de7c90741988b115d956da001ac77871"
+    },
+    {
+      "row": 3717,
+      "sha256": "d8823f809a3d56a8c9affc101748e298fa1f9a7566d3e9d91facd7c5c753cc55"
+    },
+    {
+      "row": 3718,
+      "sha256": "939534ed70a916c89528aade2d178d616bf3a7a17efae55a946c392d68a512e8"
+    },
+    {
+      "row": 3719,
+      "sha256": "eb602dc3d85135c01ac8f530e92b65b16385d63e52a4000633fcda210a222110"
+    },
+    {
+      "row": 3720,
+      "sha256": "b5dbc1cde2cb5a7c3857f241402a586649c155dc7661b6c286d3197c873ee674"
+    },
+    {
+      "row": 3721,
+      "sha256": "50bab5903da3d5208451129ec9c0fa211cd7bbaaecb356f6b9bd0dc47627ada4"
+    },
+    {
+      "row": 3722,
+      "sha256": "5e62fbf749f2300924098857ca893ab1f6cac06de76e497baef7b0daea3e7b9f"
+    },
+    {
+      "row": 3723,
+      "sha256": "04bebf3b51c45cad4147ce955c9fc0115509ca3c70199603fa71e14285312d42"
+    },
+    {
+      "row": 3724,
+      "sha256": "11fb43adacfb827e9958e30d06fc171cbaa0bb79745d16b6d8f2bf1981cef855"
+    },
+    {
+      "row": 3725,
+      "sha256": "2f073f0b2cc9f6872c6ca8062f1b29fd5430a99d250d82aa3d2ce595e6dc6682"
+    },
+    {
+      "row": 3726,
+      "sha256": "f6f24f1bfb2e539fd96040ef2abb0e497dc8f71cc9565d3cede3af7de93dcf3f"
+    },
+    {
+      "row": 3727,
+      "sha256": "b0de87de0b6408927d832fd572c429088b459ffa42757fa7977027af00b2b10e"
+    },
+    {
+      "row": 3728,
+      "sha256": "19b4f27f2574b712d874c00fb9c27fca1b89a05a4565840cc7f7ba4eb32b5bbc"
+    },
+    {
+      "row": 3729,
+      "sha256": "7eeb6329bd69d908e82abc0b6a3cc9c370a6a64b93586dd275ec2ae05663e50c"
+    },
+    {
+      "row": 3730,
+      "sha256": "fed120acb859219ef8b343da190ac20967952eef0721e79b15248caac44b2df5"
+    },
+    {
+      "row": 3731,
+      "sha256": "45f71f15236ca16124c41c9ea6bd2fdf3f8b3466b377e86ef02f5a5bf75380b0"
+    },
+    {
+      "row": 3732,
+      "sha256": "11fb5f29649194d2703f2b5b52b59205667db4e271234fb14ff66dc86bd92852"
+    },
+    {
+      "row": 3733,
+      "sha256": "f813b30d8ca3e8e9f5d1615ee152d4f1b35378a5455465d0b5429a9c0a191b1e"
+    },
+    {
+      "row": 3734,
+      "sha256": "4ce143aa698ea1c3f6c1fda86c16c67b07b0fa53f8bc5c89b52f7394d1d2d223"
+    },
+    {
+      "row": 3735,
+      "sha256": "91e5d2d022d90c613250a9dfc9dae9d28b43b6ae1eb2a3f1412c30129872e6b0"
+    },
+    {
+      "row": 3736,
+      "sha256": "f941735175c742c10e647b76df66546fb6093f3dabc4ff00b46b2b1245f0a4dc"
+    },
+    {
+      "row": 3737,
+      "sha256": "79211b06e1e61c8a4fb16336482a0dd377a429bb5467945a418b4cec3cd2449f"
+    },
+    {
+      "row": 3738,
+      "sha256": "79992f56eda612da4ccb3d9e794ca906ee8b30775ddceecc9cac517f77a0a854"
+    },
+    {
+      "row": 3739,
+      "sha256": "a15bcdaa13b1fec24431469ff8250f93c77fad5399261e48b2ab7e9488e522ed"
+    },
+    {
+      "row": 3740,
+      "sha256": "2b30c1375992412a01f6e132145e8d280dc458f94d01d0a27a9f75d55daa0f13"
+    }
+  ],
+  "mast_count": 113,
+  "originals_opened_for_write": false,
+  "note": "First manifest-read diagnostic used unrecognized encoding utf8-sig; corrected to utf-8-sig without any input writes."
+}

@@ -1,0 +1,73 @@
+{
+  "schema_version": "job-design-1",
+  "status": "proposed",
+  "geometry_measured": false,
+  "part": "rods_primary_mast_meshes_rod_ladder_contour_rebuild",
+  "source_rows": [
+    3628,
+    3651,
+    3674,
+    3697,
+    3719
+  ],
+  "source_fbx_sha256": "f2167c8f48537cfaeaeab3bdad6a81ca1822b86029a1da4c473ec643312ac23e",
+  "previous_proposal_sha256": "f1867120b2c7072405d32440a27382a0be8bb2bf9edc56c9fbc2876eb3ff2302",
+  "approval": {
+    "tolerance_permission": "Artem task comment 2026-10-21 15:19",
+    "exact_hash_gate1": null
+  },
+  "operation": "contour_rebuild",
+  "route": [
+    "Start from the five original hash-pinned world-space source buffers, never a rejected Boolean/arrangement candidate.",
+    "Partition each source into connected material-bearing pieces; recover actual source contours and source-varying sections. Keep provenance for every original face.",
+    "Conform true source seams. Remove only proven duplicate/internal surfaces with witnesses; do not classify a nonclosed winding field alone as hidden geometry.",
+    "Simplify the recovered source contours and retessellate a conforming exterior within the authorized two-direction surface-distance bound. Exact source facets are not mandatory. Preserve placement, extrema and all externally visible features; no generic replacement primitive.",
+    "Certify surface distance in both directions; record per-mast max upper bound and sampled p95, source/output hashes, source-face ownership and proof coverage. Refuse uncovered or unprovable cells.",
+    "Measure BODY-J and all six kernel invariants before/after in the actual selected whole-building context. Roll back on any failure; component-only measurements are not whole-building acceptance."
+  ],
+  "source_exterior": {
+    "unknown_face": "retain_as_exterior_until_proved_internal",
+    "internal_removal": "explicit_source_face_ids_and_geometric_witness_required",
+    "source_reference": "original_revision_fbx_not_delivered_geometry"
+  },
+  "distance": {
+    "limit_m": 0.002,
+    "directions": [
+      "source_exterior_to_output",
+      "output_to_source_exterior"
+    ],
+    "acceptance": "certified_whole_surface_upper_bound_le_limit_each_direction",
+    "certificate": "For each exterior triangle, use exact distance where supported or adaptive subdivision with point-to-opposite-surface distance plus the subtriangle covering radius as a 1-Lipschitz upper bound. Cover every exterior subtriangle in both directions; uncertainty or non-finite arithmetic is not acceptance. Bbox, vertex-only, cardinal silhouette and finite random samples alone are not whole-surface max certificates.",
+    "uncertified": "reject_not_pass",
+    "p95": {
+      "role": "diagnostic_not_maximum_certificate",
+      "distribution": "area_weighted_triangle_surface",
+      "samples_each_direction_each_mast": 65536,
+      "seed": 35310,
+      "report": "directed_max_sample_and_p95_alongside_certified_upper_bound_and_coverage"
+    }
+  },
+  "placement": {
+    "source_world_matrix": "unchanged",
+    "source_min_z": "unchanged",
+    "source_max_z": "unchanged",
+    "pdf_rescale": false,
+    "generic_replacement": false
+  },
+  "triangle_ceiling": {
+    "npm": 55230,
+    "vpm": 55230
+  },
+  "topology": {
+    "duplicates_and_self_intersections_le": 100,
+    "isolated_vertices": 0,
+    "isolated_edges": 0,
+    "isolated_polygons": 0,
+    "zero_length_edges": 0,
+    "tolerance_m": 0.002
+  },
+  "all_six_kernel_invariants_required": true,
+  "failure_action": "rollback_keep_source_and_report",
+  "reuse_rejected_candidates": false,
+  "remaining_plan": "All other 48 parts, all source memberships/material bindings, all 291 candidate-conditioned joint decisions, 108-KNS <=0.02 m / target10000, and master147000 allocation /150000 ceiling remain unchanged. These are allocations, not measured results."
+}

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "job_id": "SKOLKOVO-L4",
-  "run_id": "issue-353-kernel-start-v009",
+  "run_id": "issue-353-profile-proposal-v010",
   "synthetic": false,
   "path": "deviation",
   "inputs": [
@@ -25,6 +25,13 @@
       "what_was_tried": "Exact duplicate filtering; source intersection-cell arrangement and planar retessellation; source boundary T-junction conformity with existing vertices before Boolean. Independent kernel/topology/profile probes, original inputs unchanged. Initial diagnostic API label/type mistakes repaired with explicit VPM-OKS and separate PolyMesh conversion; successful kernel checkpoint retained.",
       "new_tool_written": "Job-only tmp/l4_*_v009.py adapters/probes on hash-verified Drive archive; no shared module or new library. Synthetic RED/GREEN logs included.",
       "result": "All candidates rejected.104/104 copied inputs +113/113 mast buffers unchanged. Gate1 approval retained; requested <=0.002m source-profile approximation for five primaries is a NEW model question, not granted or executed. No export/visual/SINTEZ."
+    },
+    {
+      "gate": "parts",
+      "what_failed": "Original exact-source cleanup plus three repairs were rejected in v009; the source-profile approximation changes the approved contour recipe.",
+      "what_was_tried": "Artem authorized bidirectional exterior surface deviation<=0.002m at2026-10-21 15:19. Prepared a fresh hash-bound draft with original49parts/291joints/budgets preserved; no changed recipe executed.",
+      "new_tool_written": "tmp/l4_profile_plan_probe_v010.py: job-only proposal-data regression; no production geometry tool or new library.",
+      "result": "Draft SHA256 fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a awaits its own Gate1. Tolerance permission is settled; no geometry max/p95/quality pass claimed."
     }
   ],
   "gates": {
@@ -39,26 +46,22 @@
       ]
     },
     "parts": {
-      "status": "pass",
-      "note": "Actual Artem Gate1 at2026-10-21 13:34 on canonicalf1867120...; execution copy changes approval metadata only, complete semantic equality verified. New source-profile tolerance is NOT approved; canonical49-part design stays unchanged.",
+      "status": "review",
+      "note": "New primary source-profile recipe<=0.002m is permitted in principle; exact-hash revised draft Gate1 is pending. Earlier approval applies to historical canonical f1867120, not this new recipe. All49parts/291joints/budgets preserved.",
       "evidence": [
         {
-          "path": "tmp/skolkovo-l4-v009/parts-confirmed-v009.json",
-          "sha256": "0a002ad56221c1cddeaa6a9a14d97f3b8c29c120f4ff0a8f3c21b5ebc25fe3f2"
+          "path": "tmp/skolkovo-l4-v010/parts-gate1-proposal-v010.json",
+          "sha256": "fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a"
         },
         {
-          "path": "jobs/SKOLKOVO-L4/GATE1-APPROVAL-v009.md",
-          "sha256": "3ca252b105fe17c8210156cc105b6238c79d5a8e605308e7ecf603bead38337b"
-        },
-        {
-          "path": "tmp/skolkovo-l4-v008/parts-gate1-proposal-v008c.json",
-          "sha256": "f1867120b2c7072405d32440a27382a0be8bb2bf9edc56c9fbc2876eb3ff2302"
+          "path": "jobs/SKOLKOVO-L4/evidence-v010/primary-source-profile-recipe-v010.json",
+          "sha256": "ccfbe7a217b562f226a493981d3514e536967b10bf0046672488faf7ae5ddfba"
         }
       ]
     },
     "operations": {
       "status": "fail",
-      "note": "Isolated source-component candidates only, not a completed49-part/master operation. Real kernel rolled back candidates02/03; all six diagnostics preserved. No failed candidate accepted. Source-profile approximation bound for five primaries requires model decision.",
+      "note": "Historical v009 component candidates failed/rolled back, not whole49part completion. Tolerance permission now granted; revised recipe is not executed pending its own Gate1. No fresh operations receipt.",
       "evidence": [
         {
           "path": "jobs/SKOLKOVO-L4/evidence-v009/primary-cleanup-03-audit.json",
@@ -91,15 +94,11 @@
     },
     "report": {
       "status": "review",
-      "note": "Real failed component-stage report and new quantitative source-profile question; no delivery report or final model.",
+      "note": "Revised hash-bound proposal and actual data-regression evidence only. No final delivery or model review.",
       "evidence": [
         {
-          "path": "jobs/SKOLKOVO-L4/PRIMARY-PROFILE-TOLERANCE-QUESTION-v009.md",
-          "sha256": "f3dc5581da6e4427eb31938e30fb9553a228518233f5a1e0e2c57f48c4a09825"
-        },
-        {
-          "path": "jobs/SKOLKOVO-L4/evidence-v009/integrity-negative-probes-v009.json",
-          "sha256": "3aafdb1b4382bff315badf27220a8f804bda77247e262728c2239a5caf1268de"
+          "path": "jobs/SKOLKOVO-L4/GATE1-PROPOSAL-v010.md",
+          "sha256": "e0760811ad773cd36907023965fd792b1437f8c58fe8cb2e27524ccd85415898"
         }
       ]
     },

@@ -5,7 +5,24 @@ Input copies: `C:/x/l4-skolkovo/`; originals are read-only and were not opened f
 Profiles: both NPM and VPM from one <=150,000-triangle master (D010).
 Base: pilot `48e2a55`; #348 and #351 are closed. No building output is approved.
 
-## Current status — v008c
+## Current status — v010
+
+Artem authorized the <=0.002m bidirectional primary-mast source-profile bound at
+2026-10-21 15:19; no repeat tolerance decision is needed. Revised exact-hash
+PartsList Gate1 is pending: SHA256
+`fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a`.
+Read [GATE1-PROPOSAL-v010.md](GATE1-PROPOSAL-v010.md) and
+[RESUME-v010.md](RESUME-v010.md). All49 part entries/budgets and291 conditional
+joints remain unchanged; only the hash-bound primary recipe/policy questions
+change. The previous approval is historical, not approval of the new bytes.
+
+No new build/candidate/export/visual/SINTEZ in v010. Failed v009 candidates stay
+rejected; the earlier whole-building acceptance is still incomplete.163 affected
+tests passed; proposal policy RED->GREEN with20/20 rejects; existing coverage
+18/18 with12/12 rejects;104/104inputs,16/16manifest,113/113buffers unchanged.
+`passed=false`, no PR; see v009 for failed production timings/evidence.
+
+## Historical v008c status — superseded by v009/v010
 
 **Prior model-policy questions answered; exact-hash Gate 1 design approval needed.**
 `passed=false`, `buildable=false`; no kernel build, export, final visual or SINTEZ,

@@ -8,3 +8,6 @@ evidence-v008/input-integrity-v008.json -text whitespace=cr-at-eol
 evidence-v009/*.json -text whitespace=cr-at-eol
 GATE1-APPROVAL-v009.md -text whitespace=cr-at-eol
 PRIMARY-PROFILE-TOLERANCE-QUESTION-v009.md -text whitespace=cr-at-eol
+# Revised profile proposal: exact-hash design/evidence, never Git LFS.
+evidence-v010/*.json -text
+GATE1-PROPOSAL-v010.md -text

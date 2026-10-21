@@ -1,0 +1,110 @@
+{
+  "passed": false,
+  "gates": [
+    {
+      "gate": "inputs",
+      "status": "pass",
+      "evidence_exists": [
+        {
+          "path": "jobs/SKOLKOVO-L4/inventory.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Full pinned inventory snapshot of104 external copied inputs. Rehashed104/104 in input-integrity-v008.json; raw sources stay external/read-only. This is inventory identity, not geometry approval.",
+      "ready": true
+    },
+    {
+      "gate": "parts",
+      "status": "review",
+      "evidence_exists": [
+        {
+          "path": "tmp/skolkovo-l4-v010/parts-gate1-proposal-v010.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v010/primary-source-profile-recipe-v010.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "New primary source-profile recipe<=0.002m is permitted in principle; exact-hash revised draft Gate1 is pending. Earlier approval applies to historical canonical f1867120, not this new recipe. All49parts/291joints/budgets preserved.",
+      "ready": false
+    },
+    {
+      "gate": "operations",
+      "status": "fail",
+      "evidence_exists": [
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v009/primary-cleanup-03-audit.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v009/source-before-invariants.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Historical v009 component candidates failed/rolled back, not whole49part completion. Tolerance permission now granted; revised recipe is not executed pending its own Gate1. No fresh operations receipt.",
+      "ready": false
+    },
+    {
+      "gate": "budgets",
+      "status": "fail",
+      "evidence_exists": [
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v009/kns-source-loft-summary-v009.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v009/primary-arrangement-all-topology.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "No accepted master. Five arrangement candidates47234 fit55230 allocation but fail quality; KNS candidate-or-unchanged60826 exceeds10000. Whole master147000 allocation is NOT measured geometry.",
+      "ready": false
+    },
+    {
+      "gate": "export_readback",
+      "status": "missing",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "No generated model or export.",
+      "ready": false
+    },
+    {
+      "gate": "report",
+      "status": "review",
+      "evidence_exists": [
+        {
+          "path": "jobs/SKOLKOVO-L4/GATE1-PROPOSAL-v010.md",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Revised hash-bound proposal and actual data-regression evidence only. No final delivery or model review.",
+      "ready": false
+    },
+    {
+      "gate": "visual",
+      "status": "missing",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "Source diagnostic sheet is not output visual approval; board-tool/user gate still required.",
+      "ready": false
+    },
+    {
+      "gate": "checker",
+      "status": "missing",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "Complete final SINTEZ only after output visual approval.",
+      "ready": false
+    }
+  ],
+  "errors": [],
+  "job_id": "SKOLKOVO-L4",
+  "run_id": "issue-353-profile-proposal-v010",
+  "synthetic": false
+}

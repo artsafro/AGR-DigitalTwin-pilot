@@ -1,0 +1,26 @@
+{
+  "scope": "Revised Gate1 design and test evidence only; no geometry acceptance",
+  "drive": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v010",
+  "published": [
+    {
+      "name": "parts-gate1-proposal-v010.json",
+      "bytes": 1493160,
+      "sha256": "fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a"
+    },
+    {
+      "name": "profile-proposal-evidence-v010.zip",
+      "bytes": 66104,
+      "sha256": "1d35985ada6e5dd7a8440e998e8e3f1c6c736415c7a25213119da7dc0c2101e8"
+    },
+    {
+      "name": "primary-source-profile-recipe-v010.json",
+      "bytes": 3827,
+      "sha256": "ccfbe7a217b562f226a493981d3514e536967b10bf0046672488faf7ae5ddfba"
+    }
+  ],
+  "archive_crc_pass": true,
+  "archive_member_hashes_checked": 15,
+  "drive_independent_rehashes": 3,
+  "sha256sums_sha256": "bde69655c9556b60eb5317c975caf0f9908c30fa2a95236d60baee8c8dd256fb",
+  "passed": false
+}
