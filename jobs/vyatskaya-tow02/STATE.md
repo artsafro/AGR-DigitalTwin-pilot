@@ -6,7 +6,8 @@ glass cleanup, run-strip atlas OKS 013 [D156], overlap fixes and the 3 decisions
 builder, basket posts kept, 65.4 point contacts not welded) -> build-v030 / export-v005; real 3ds Max xView at 5 mm /
 2 mm: Overlapping Faces 185 faces, Overlapping Vertices 0 (the builder's own check said 0 / 0). The user then finished
 the model by hand in 3ds Max (2026-10-21, `outputs/xview-v005/tow02_ovl23_v001.max`) and accepted the base: "ты неплохо
-справился с задачей, с этим можно работать". Next: review issue (our export-v005 vs the user's fix, lessons), then NPM
+справился с задачей, с этим можно работать". Review #514 done 2026-10-21 (`REVIEW-514.md`). Next: NPM from the
+user's model (Mesh + Weld 0.002 m first)
 Context: GLOSSARY.md (Body, NPM, Level contour), docs/domain/geometry.md (project modeling rules),
 docs/HARNESS_PLAN.md §3–4, §14–16, docs/backlog.md EG1, EG2, EG4, EG6, docs/domain/patterns/wall-from-contour.md,
 terrace.md, facade-decor-inset.md.
@@ -237,6 +238,14 @@ terrace.md, facade-decor-inset.md.
 - 2026-10-21: an own "Overlapping Faces" in Blender is not xView. The builder's check said 0 while xView at the same
   5 mm said 185 faces and an independent method 23 pairs; only 3ds Max xView with `OverlappingFaces.tolerance` set by
   script counts for this user. Run it (`outputs/xview-v005/open_ovl.ms`, ~2.5 min on 35k faces) before reporting.
+- 2026-10-21, review #514 (`REVIEW-514.md`): the repository already had an xView-exact checker, `dt_ai.ops.inv_xview`
+  (185/185 on export-v005, 52 s, no DCC), merged on main the first day of this job; the job branch never synced with
+  main until the end. Sync the job branch with main at every session start; use `inv_xview` (local coordinates) as
+  the overlap gate during the build loop and xView (`scripts/xview_review.ms`) as the final confirmation.
+- Weld at export fixes Overlapping Vertices only; contacts of separate parts in one mesh (T-vertices, edge on edge,
+  bow-tie corners) are Overlapping Faces and must be removed in the build. A welded mesh converted back to Editable
+  Poly re-splits non-manifold vertices (user, 2026-10-21). Moving a contact apart by less than the 5 mm face
+  tolerance (`skip_point_contacts`, 3 mm) does not remove it.
 - Inputs of the builders that live in ignored `outputs/`: `measure-v001/typical/typical_floor.json`,
   `fins.json`; `measure-v002/bend_rings/bend_rings.json`; `measure-v002/top_parts/top_parts.json`; their
   measurement scripts sit next to them (`outputs/measure-v00N/*/scripts/`).
@@ -246,9 +255,11 @@ terrace.md, facade-decor-inset.md.
   working versions are in `outputs/measure-v001/bend_top/scripts/`.
 
 ## Next
-1. Review issue #514: compare export-v005 with the user's final `for_placement/0213_Vyatskaya_Vl_47_49_05.fbx`, object
-   013_Main (what the user
-   changed, where and why our QA missed it), turn the differences into lessons and builder fixes.
-2. NPM derivation from the user's finished model (not from export-v005): names (prefix `0200_Vyatskaya_Vl_47_49`, OKS 013), transform reset
+1. Review #514 done 2026-10-21: `REVIEW-514.md` (diff, xView, checker parity, causes, time). Three questions to the
+   user there (fins sunk 0.808 m, 9 body quads removed at 51.8-57.8, dark coping/roof UV).
+2. NPM derivation from the user's finished model (not from export-v005): source `for_placement/sceene.max` node
+   `SM_Vyatskaya_Vl_47_49_013_Main` (Editable Poly, 36 864 polys; the placed FBX `_05` is the same, triangulated, site
+   coordinates offset (4951.864, 14903.346, 165.443) m). Editable Mesh + Weld 0.002 m first (xView 0 / 0; no Poly
+   round trip after it). Then names (prefix `0200_Vyatskaya_Vl_47_49`, OKS 013), transform reset
    [D135], triangulate, FBX export, validate-delivery. Builder root causes for the backlog (Codex): see Build log "Open
    after the fix chain"; `resolve_tjunctions` / sliding walls are job code in `build_body_blender.py` (EG6).

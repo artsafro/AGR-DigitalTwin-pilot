@@ -208,10 +208,23 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
 - **R16** proposal 2026-10-21, job/vyatskaya-tow02-midpoly - src/ module (checker): xView-equivalent mesh QA with
   explicit tolerances - overlapping vertices (distinct verts within d), overlapping faces (parallel within 5°, planes
   within d, overlap area > 0), mismatched winding edges, bowtie vertices that 3ds Max splits on import, outward
-  orientation by ray test; grouped by source part; seen 5 times; effort M
+  orientation by ray test; grouped by source part; seen 5 times; effort M.
+  Review #514 (2026-10-21): the overlap part already exists - `dt_ai.ops.inv_xview` reproduces xView 185/185 on
+  TOW02 export-v005 and 0/0 on the user's model (`jobs/vyatskaya-tow02/REVIEW-514.md`); the "area > 0" rule above is
+  what missed them. Left: a CLI entry that runs `inv_xview` on an FBX in local coordinates with per-part grouping,
+  plus bow-tie / non-manifold vertices (3ds Max Poly splits them); effort S.
 - **R17** proposal 2026-10-21, job/vyatskaya-tow02-midpoly - CLI command: run 3ds Max xView checks on an FBX in a
   separate Max instance via a startup script (`jobs/vyatskaya-tow02/scripts/xview_check.ms`; xView does not compute
-  through the MCP bridge) with the "Disable xView" dialog answered, one JSONL line per checker; seen 3 times; effort S
+  through the MCP bridge) with the "Disable xView" dialog answered, one JSONL line per checker; seen 3 times; effort S.
+  Review #514: `jobs/vyatskaya-tow02/scripts/xview_review.ms` adds several models per run, `.max` or `.fbx`, full
+  face / vertex lists, tolerances through `units.decodeValue`, and the user's pre-export "Mesh + Weld 2 mm" mode
+  checked on Editable Mesh (Poly re-splits non-manifold vertices); paths must be ASCII (Max 2024 misreads a
+  Cyrillic jobs file); seen 4 times.
+- **R18** proposal 2026-10-21, review #514 - the user's Blender add-on `xview_overlapping_faces_improved.py`
+  (viewport overlay, 16 s on 35k faces vs xView 107 s) as an interactive helper: it finds 40 of 185 xView faces with
+  0 false hits; to match xView it needs boundary contact counted (zero-area contact rule), a fixed 0.81 deg normal
+  limit and a per-vertex plane test - or call `inv_xview` from it; evidence `outputs/review-v002/xcheck/XCHECK.md`
+  (local); seen 1 time; effort S. Waits for the user's decision whether the add-on goes into the repository.
 
 ## Harness and organization (default owner Codex)
 
