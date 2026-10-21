@@ -1123,6 +1123,49 @@ def close_base_notch(mesh: Mesh, triangle_xy, *, approval_reference: str) -> Mes
                 mesh.cell, report)
 
 
+def dissolve_base_vertex(mesh: Mesh, vertex: int) -> Mesh:
+    """Dissolve one single-slot interior construction sample; recheck relief after.
+
+    Does not move boundary vertices, split fans, approve source changes or certify
+    the altered triangulation. Unsupported/ambiguous ownership is refused.
+    """
+    from dt_ai.geometry.ground_quads import _validate_seed
+    _validate_seed(mesh)
+    if (isinstance(vertex, (bool, np.bool_)) or not isinstance(vertex, (int, np.integer))
+            or not 0 <= vertex < len(mesh.verts)):
+        raise ValueError('base dissolve requires a valid vertex index')
+    incident = np.flatnonzero(np.any(mesh.faces == vertex, axis=1))
+    if (len(incident) < 3 or np.any(mesh.level[incident] != 0)
+            or len({mesh.slot[i] for i in incident}) != 1):
+        raise ValueError('base dissolve requires one interior base slot')
+    region = unary_union(face_polys(mesh, np.isin(np.arange(len(mesh.faces)), incident)))
+    point = shapely.Point(mesh.verts[vertex, :2])
+    if not isinstance(region, Polygon) or region.interiors or not region.contains_properly(point):
+        raise ValueError('base dissolve requires one interior disk, not a boundary or split fan')
+    lookup, uv = {}, {}
+    for i in incident:
+        for vi, tex in zip(mesh.faces[i], mesh.uv[i]):
+            key = tuple(mesh.verts[vi, :2])
+            if key in lookup and lookup[key] != vi:
+                raise ValueError('base dissolve has ambiguous source vertex positions')
+            if vi in uv and not np.allclose(uv[vi],tex,rtol=0,atol=1e-10):
+                raise ValueError('base dissolve crosses a UV seam')
+            lookup[key] = int(vi); uv[int(vi)] = tex
+    replacement = [[lookup[tuple(xy)] for xy in tri] for tri in _tri_piece(region)]
+    if vertex in {i for f in replacement for i in f} or not replacement:
+        raise ValueError('base dissolve failed to remove interior vertex')
+    keep = np.ones(len(mesh.faces),bool);keep[incident] = False
+    faces = np.vstack([mesh.faces[keep],np.asarray(replacement)])
+    slots = np.asarray(mesh.slot)[keep].tolist()+[mesh.slot[incident[0]]]*len(replacement)
+    levels = np.concatenate([mesh.level[keep],np.zeros(len(replacement),int)])
+    tex = np.concatenate([mesh.uv[keep],np.asarray([[uv[i] for i in f] for f in replacement])])
+    used = np.unique(faces);remap = np.full(len(mesh.verts),-1);remap[used] = np.arange(len(used))
+    report = dict(mesh.report)
+    report['base_vertex_dissolve'] = {'removed_vertex':int(vertex), 'source_faces':incident.tolist(),
+        'reason':'interior construction sample; caller must remeasure relief'}
+    return Mesh(mesh.verts[used].copy(),remap[faces],slots,levels,tex,mesh.cell,report)
+
+
 def cut_base_void(mesh: Mesh, void: Polygon, depth: float = 1.0) -> Mesh:
     """Cut an explicitly supplied interior source void and add its perimeter skirt.
 
