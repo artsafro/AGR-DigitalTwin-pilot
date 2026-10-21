@@ -223,6 +223,56 @@ def pair_triangles(mesh: Mesh, *, excluded_pairs=()) -> QuadMesh:
                     tuple(ids for _, _, ids in patches), mesh.cell)
 
 
+def detail_polygon_uv(mesh: QuadMesh, profile: str) -> QuadMesh:
+    """Chart each solid/perimeter polygon, preserving all relief UV and geometry.
+
+    NPM target 30 px/m, VPM target 1024 px/m with a single tile per detail
+    polygon [D097/D160]. Oversized VPM charts are refused, never clamped or
+    silently under-density. Charts do not claim texture seam/visual acceptance.
+    """
+    if profile not in ('npm', 'vpm'):
+        raise ValueError(f'unknown Ground UV profile {profile!r}')
+    checked = PolyMesh(mesh.verts, mesh.faces)
+    n = len(checked.faces)
+    if (not n or len(mesh.uv) != n or len(mesh.slot) != n
+            or np.shape(mesh.level) != (n,) or not np.isfinite(mesh.level).all()
+            or any(np.shape(u) != (len(f),2) or not np.isfinite(u).all()
+                   for f,u in zip(checked.faces,mesh.uv))):
+        raise ValueError('complete finite polygon UV/level/slot inventory required')
+    uvs = []
+    for i,face in enumerate(checked.faces):
+        if mesh.level[i] >= 0:
+            uvs.append(np.asarray(mesh.uv[i]).copy())
+            continue
+        if mesh.level[i] not in (-1,-2):
+            raise ValueError(f'unsupported detail level {mesh.level[i]} at face {i}')
+        p = mesh.verts[list(face)]-mesh.verts[face[0]]
+        normal = np.cross(p[1:-1],p[2:]).sum(axis=0)
+        length = np.linalg.norm(normal)
+        if not np.isfinite(length) or length <= 1e-12:
+            raise ValueError(f'degenerate detail face {i}, slot {mesh.slot[i]}')
+        normal /= length
+        edges = np.roll(p,-1,axis=0)-p
+        u = edges[np.linalg.norm(edges,axis=1).argmax()]
+        u = u-normal*np.dot(u,normal);u /= np.linalg.norm(u)
+        v = np.cross(normal,u)
+        uv = np.column_stack((p@u,p@v));uv -= uv.min(axis=0)
+        scale = 2048/30 if profile == 'npm' else max(4.,float(uv.max()))
+        uv /= scale
+        px = 2048 if profile == 'npm' else 4096
+        for j in range(1,len(face)-1):
+            tri = p[[0,j,j+1]];tex = uv[[0,j,j+1]]
+            area = np.linalg.norm(np.cross(tri[1]-tri[0],tri[2]-tri[0]))/2
+            ua = np.linalg.det(tex[1:]-tex[0])/2
+            density = px*np.sqrt(ua/area) if area > 0 and ua > 0 else np.nan
+            lo, hi = (10.,40.) if profile == 'npm' else (512.,1706.)
+            if not np.isfinite(density) or density <= lo or density > hi:
+                raise ValueError(f'detail chart requires subdivision: face {i}, slot {mesh.slot[i]}, density {density}')
+        uvs.append(uv)
+    return QuadMesh(mesh.verts.copy(),mesh.faces,list(mesh.slot),mesh.level.copy(),
+                    tuple(uvs),mesh.source_faces,mesh.cell)
+
+
 def _validate_seed(mesh: Mesh):
     """Reject malformed or ambiguous triangle seeds before either conversion."""
     checked = PolyMesh(mesh.verts, tuple(map(tuple, mesh.faces)))
