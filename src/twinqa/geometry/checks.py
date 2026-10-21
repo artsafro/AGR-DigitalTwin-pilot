@@ -1169,13 +1169,13 @@ _HOR_NOTE = (
     "when that owner's horizontal boundary-loop footprint covers the sheet, or the sheet overlaps "
     "the footprint by at most 0.03 m, and the sheet lies within 0.01 m of the loop plane. "
     "Touching unwelded parts never share a context. Decor is isolated; render-mesh partition is ignored. "
-    "Upward-ray parity decides up versus down. A ray along a vertical boundary uses off-boundary samples "
-    "and is not certified outward when those samples disagree. If every sample stays on the boundary "
-    "and they agree on parity, that parity stands. "
+    "Upward-ray parity decides up versus down, except a detached pure sheet: it faces down when a closed "
+    "solid sits strictly above it and covers its footprint, and faces up otherwise. Both owner sides at "
+    "once is not a clean pass. A ray along a vertical boundary uses scale-adaptive off-boundary samples "
+    "and is not certified when those samples disagree or none of them leaves the boundary. "
+    "A collapsed or non-finite face is never a silent pass. "
     "A detached soffit faces down, away from the owner above; a ledge cap faces up, away from the wall below."
 )
-_HOR_SHIFTS = ((1e-8, 0.0), (-1e-8, 0.0), (0.0, 1e-8), (0.0, -1e-8),
-               (1e-8, 1e-8), (1e-8, -1e-8), (-1e-8, 1e-8), (-1e-8, -1e-8))
 
 
 def _vertices_finite(model: Soup) -> bool:
@@ -1271,15 +1271,40 @@ def _upward_cross_once(tri: np.ndarray, ray: np.ndarray, tri_label: np.ndarray |
     return counts, on_boundary
 
 
+def _hor_shift_pairs(tri: np.ndarray, ray: np.ndarray):
+    """Eight XY nudges proportional to the local extent.
+
+    A fixed 1e-8 m step stays inside the barycentric boundary band (``_HOR_BOUNDARY``)
+    once the solid grows: the barycentric move is ``step / extent``. ``extent * 1e-6``
+    leaves that band, and at unit scale it remains a small step off the wall.
+    """
+    chunks = []
+    if len(tri):
+        chunks.append(np.asarray(tri, float).reshape(-1, 3)[:, :2])
+    if len(ray):
+        chunks.append(np.asarray(ray, float).reshape(-1, 3)[:, :2])
+    extent = 1.0
+    if chunks:
+        xy = np.concatenate(chunks, axis=0)
+        finite = xy[np.isfinite(xy).all(axis=1)]
+        if len(finite):
+            span = float(np.ptp(finite, axis=0).max())
+            if np.isfinite(span) and span > 0:
+                extent = span
+    step = max(extent * 1e-6, 1e-8)
+    signs = ((1.0, 0.0), (-1.0, 0.0), (0.0, 1.0), (0.0, -1.0),
+             (1.0, 1.0), (1.0, -1.0), (-1.0, 1.0), (-1.0, -1.0))
+    return tuple((step * a, step * b) for a, b in signs)
+
+
 def _upward_crossings(tri: np.ndarray, ray: np.ndarray, tri_label: np.ndarray | None = None,
                       ray_label: np.ndarray | None = None) -> np.ndarray:
     """+Z crossing counts. A ray that only grazes a vertical boundary is reclassified.
 
     Inclusive barycentric hits plus unique heights count a ray running along a vertical wall as
     extra crossings and can invert a closed face. Rays with a boundary hit take the parity agreed
-    by samples that leave the boundary. If none of them leave it, the raw shifted parities are
-    used when they all agree. If the samples disagree, the count is negative: the face is not
-    certified outward.
+    by samples that leave the boundary. If none of them leave it, or the samples that do leave
+    it disagree, the count is negative: the on-boundary raw parity is not a certificate.
     """
     counts, on_boundary = _upward_cross_once(tri, ray, tri_label, ray_label)
     if not on_boundary.any():
@@ -1287,7 +1312,7 @@ def _upward_crossings(tri: np.ndarray, ray: np.ndarray, tri_label: np.ndarray | 
     idx = np.flatnonzero(on_boundary)
     votes = []
     resolved = []
-    for dx, dy in _HOR_SHIFTS:
+    for dx, dy in _hor_shift_pairs(tri, ray):
         shifted = np.array(ray, copy=True, dtype=float)
         shifted[idx, 0] += dx
         shifted[idx, 1] += dy
@@ -1298,26 +1323,91 @@ def _upward_crossings(tri: np.ndarray, ray: np.ndarray, tri_label: np.ndarray | 
     resolved = np.stack(resolved)
     for column, ray_i in enumerate(idx):
         taken = votes[resolved[:, column], column]
-        if len(taken) == 0:
-            raw = votes[:, column]
-            counts[ray_i] = int(raw[0]) if len(raw) and np.all(raw == raw[0]) else -1
-        elif not np.all(taken == taken[0]):
+        if len(taken) == 0 or not np.all(taken == taken[0]):
             counts[ray_i] = -1
         else:
             counts[ray_i] = int(taken[0])
     return counts
 
 
+def _regroup_open_part(chunk: np.ndarray, triangles: np.ndarray, vertices: np.ndarray,
+                       weld_m: float, owner: np.ndarray) -> list[np.ndarray]:
+    """Re-split one open welded component by original vertex indices.
+
+    ``parts(local, arange)`` keeps two touching meshes apart: they do not share vertex
+    indices even when their coordinates fall inside ``weld_m``. A welded edge used twice
+    is a manifold seam (a render-mesh partition of one shell) and stays joined. A welded
+    edge used three or more times joins triangles only inside one render mesh, so a
+    duplicate-vertex seam in that mesh stays one shell and a second mesh does not.
+    """
+    chunk = np.asarray(chunk, dtype=np.int64)
+    if len(chunk) == 0:
+        return []
+    tris = np.asarray(triangles, dtype=np.int64)[chunk]
+    used = np.unique(tris.reshape(-1))
+    local = np.searchsorted(used, tris)
+    index_labels = parts(local, np.arange(len(used)))
+    welded_ids = weld(vertices[used], weld_m)
+    edges, counts, sides = edge_uses(local, welded_ids)
+    parent = np.arange(len(chunk))
+
+    def find(a):
+        while parent[a] != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+
+    def union(a, b):
+        ra, rb = find(int(a)), find(int(b))
+        if ra != rb:
+            parent[rb] = ra
+
+    order = np.argsort(index_labels, kind="mergesort")
+    for i in range(1, len(order)):
+        if index_labels[order[i]] == index_labels[order[i - 1]]:
+            union(int(order[i]), int(order[i - 1]))
+    edge_id = sides.reshape(-1)
+    tri_of_side = np.repeat(np.arange(len(chunk)), 3)
+    collapsed = edges[:, 0] == edges[:, 1]
+    for edge in range(len(counts)):
+        if collapsed[edge] or counts[edge] < 2:
+            continue
+        users = np.unique(tri_of_side[edge_id == edge])
+        if len(users) < 2:
+            continue
+        if counts[edge] == 2:
+            for user in users[1:]:
+                union(int(users[0]), int(user))
+        else:
+            seen = {}
+            for user in users:
+                mesh = int(owner[chunk[int(user)]])
+                if mesh in seen:
+                    union(seen[mesh], int(user))
+                else:
+                    seen[mesh] = int(user)
+    labels = np.array([find(i) for i in range(len(chunk))], dtype=np.int64)
+    order = np.argsort(labels, kind="mergesort")
+    ordered = labels[order]
+    grouped = chunk[order]
+    _uniq, start, sizes = np.unique(ordered, return_index=True, return_counts=True)
+    return [grouped[int(s):int(s) + int(size)] for s, size in zip(start, sizes)]
+
+
 def _side_contexts(tri_idx: np.ndarray, triangles: np.ndarray, vertices: np.ndarray,
-                   weld_m: float) -> list[np.ndarray]:
+                   weld_m: float, owner: np.ndarray | None = None) -> list[np.ndarray]:
     """Closed components alone; every other component uses the bounded cap-join contract.
 
     Closure is exactly two uses of every non-collapsed welded edge. Winding is ignored, so
-    reversing a face does not change which component it belongs to. Open components are not
-    poured into one bucket: a sheet joins only its unique owner.
+    reversing a face does not change which component it belongs to. An open welded component
+    is re-split by original vertex indices before the cap join, so touching unwelded meshes
+    do not share a context. Open components are not poured into one bucket: a sheet joins
+    only its unique owner.
     """
     if len(tri_idx) == 0:
         return []
+    if owner is None:
+        owner = np.zeros(len(triangles), dtype=np.int64)
     tris = np.asarray(triangles, dtype=np.int64)[tri_idx]
     used = np.unique(tris.reshape(-1))
     local = np.searchsorted(used, tris)
@@ -1337,7 +1427,7 @@ def _side_contexts(tri_idx: np.ndarray, triangles: np.ndarray, vertices: np.ndar
         stop = int(s) + int(size)
         chunk = tri_s[int(s):stop]
         if bad_s[int(s):stop].any():
-            open_parts.append(chunk)
+            open_parts.extend(_regroup_open_part(chunk, triangles, vertices, weld_m, owner))
         else:
             closed.append(chunk)
     return closed + _cap_contexts(open_parts, triangles, vertices, weld_m)
@@ -1460,7 +1550,7 @@ def _horizontal_contexts(model: Soup, weld_m: float) -> list[np.ndarray]:
     contexts: list[np.ndarray] = []
     for want_decor in (False, True):
         tri_idx = np.flatnonzero(side == want_decor)
-        contexts.extend(_side_contexts(tri_idx, model.triangles, model.vertices, weld_m))
+        contexts.extend(_side_contexts(tri_idx, model.triangles, model.vertices, weld_m, owner))
     contexts.sort(key=lambda ix: int(ix.min()))
     return contexts
 
@@ -1478,6 +1568,94 @@ def _context_volume(names: tuple, owner: np.ndarray, tri_idx: np.ndarray) -> lis
     return volume
 
 
+def _context_is_closed(tri_idx: np.ndarray, triangles: np.ndarray, vertices: np.ndarray,
+                       weld_m: float) -> bool:
+    """True when every non-collapsed welded edge of this context is used twice."""
+    tris = np.asarray(triangles, dtype=np.int64)[np.asarray(tri_idx, dtype=np.int64)]
+    if len(tris) == 0:
+        return False
+    used = np.unique(tris.reshape(-1))
+    local = np.searchsorted(used, tris)
+    edges, counts, _sides = edge_uses(local, weld(vertices[used], weld_m))
+    keep = edges[:, 0] != edges[:, 1]
+    return bool(np.any(keep) and np.all(counts[keep] == 2))
+
+
+def _xy_polygon(tri_idx: np.ndarray, corners: np.ndarray):
+    """Union of the horizontal projections of the non-vertical triangles."""
+    polys = []
+    for tri in corners[np.asarray(tri_idx, dtype=np.int64)]:
+        xy = np.asarray(tri[:, :2], float)
+        edge_a, edge_b = xy[1] - xy[0], xy[2] - xy[0]
+        if abs(float(edge_a[0] * edge_b[1] - edge_a[1] * edge_b[0])) <= 1e-12:
+            continue
+        poly = shapely.Polygon(xy)
+        if not poly.is_valid:
+            poly = poly.buffer(0)
+        if not poly.is_empty and poly.area > 0:
+            polys.append(poly)
+    if not polys:
+        return None
+    geom = shapely.union_all(polys)
+    if geom.is_empty or geom.area <= 0:
+        return None
+    return geom
+
+
+def _footprint_covers(footprint, sheet) -> bool:
+    if footprint is None or sheet is None or sheet.is_empty or footprint.is_empty:
+        return False
+    if footprint.covers(sheet):
+        return True
+    leftover = float(sheet.difference(footprint).area)
+    return leftover <= max(1e-8, float(sheet.area) * 1e-8)
+
+
+def _pure_sheet(tri_idx: np.ndarray, corners: np.ndarray, length: np.ndarray, nz: np.ndarray) -> bool:
+    """A context of only horizontal, coplanar, positive-area triangles."""
+    ix = np.asarray(tri_idx, dtype=np.int64)
+    live = ix[(length[ix] > 0) & np.isfinite(length[ix]) & np.isfinite(nz[ix])]
+    if len(live) == 0:
+        return False
+    if np.any(length[ix] <= 0) or not np.all(np.isfinite(length[ix])):
+        return False
+    if not np.all(np.abs(nz[live]) >= (1.0 - HORIZONTAL_COS_TOL) * length[live]):
+        return False
+    return float(np.ptp(corners[live][..., 2])) <= _HOR_DEPTH
+
+
+def _sheet_owner_side(sheet_ix: np.ndarray, sheet_label: int, contexts, corners: np.ndarray,
+                      triangles: np.ndarray, vertices: np.ndarray, weld_m: float,
+                      decor: np.ndarray) -> str:
+    """``down`` under a covering closed solid, ``up`` otherwise, ``ambiguous`` when both sides cover.
+
+    Decor never supplies the owner, and a decor sheet does not borrow the body. Strictly above
+    means the solid's minimum Z exceeds the sheet by more than ``weld_m``.
+    """
+    sheet_z = float(corners[sheet_ix][..., 2].mean())
+    sheet_poly = _xy_polygon(sheet_ix, corners)
+    eps = max(float(weld_m), _HOR_DEPTH)
+    sheet_decor = bool(decor[sheet_ix].any())
+    above = below = False
+    for label, other in enumerate(contexts):
+        if label == sheet_label:
+            continue
+        if bool(decor[other].any()) != sheet_decor:
+            continue
+        if not _context_is_closed(other, triangles, vertices, weld_m):
+            continue
+        if not _footprint_covers(_xy_polygon(other, corners), sheet_poly):
+            continue
+        height = corners[other][..., 2]
+        if float(height.min()) > sheet_z + eps:
+            above = True
+        elif float(height.max()) < sheet_z - eps:
+            below = True
+    if above and below:
+        return "ambiguous"
+    return "down" if above else "up"
+
+
 def _judge_horizontal_faces(model: Soup, weld_m: float):
     """Horizontal and inward counts per render mesh, one verdict per context."""
     names, owner = _orientation_groups(model)
@@ -1492,7 +1670,7 @@ def _judge_horizontal_faces(model: Soup, weld_m: float):
     normal = np.cross(corners[:, 1] - corners[:, 0], corners[:, 2] - corners[:, 0])
     length = np.linalg.norm(normal, axis=1)
     nz = normal[:, 2]
-    finite_face = np.isfinite(length) & np.isfinite(nz)
+    finite_face = np.isfinite(length) & np.isfinite(nz) & np.isfinite(normal).all(axis=1)
     horiz = finite_face & (length > 0) & (np.abs(nz) >= (1.0 - HORIZONTAL_COS_TOL) * length)
     nonvert = finite_face & (np.abs(nz) > 1e-9 * length)
     if horiz.any():
@@ -1500,20 +1678,30 @@ def _judge_horizontal_faces(model: Soup, weld_m: float):
     context = np.full(len(corners), -1, dtype=np.int64)
     for label, tri_idx in enumerate(contexts):
         context[tri_idx] = label
+    bad_tri = np.zeros(len(corners), dtype=bool)
     rays = np.flatnonzero(horiz & (context >= 0))
-    wrong = []
     if len(rays):
         targets = np.flatnonzero(nonvert & (context >= 0))
         k = _upward_crossings(corners[targets], corners[rays].mean(1), context[targets], context[rays])
         face_nz = nz[rays]
-        bad = (k < 0) | ((face_nz > 0) & (k % 2 == 1)) | ((face_nz < 0) & (k % 2 == 0))
-        if bad.any():
-            found = rays[bad]
-            np.add.at(inward, owner[found], 1)
-            wrong.append(found)
-    if not wrong:
+        bad_tri[rays] = (k < 0) | ((face_nz > 0) & (k % 2 == 1)) | ((face_nz < 0) & (k % 2 == 0))
+    decor = np.array([names[int(i)] == DECOR_MESH for i in owner], dtype=bool)
+    for label, tri_idx in enumerate(contexts):
+        if not _pure_sheet(tri_idx, corners, length, nz):
+            continue
+        side = _sheet_owner_side(tri_idx, label, contexts, corners, model.triangles, model.vertices,
+                                 weld_m, decor)
+        if side == "ambiguous":
+            bad_tri[tri_idx] = True
+        elif side == "down":
+            bad_tri[tri_idx] = nz[tri_idx] >= 0
+        else:
+            bad_tri[tri_idx] = nz[tri_idx] <= 0
+    bad_tri[(~np.isfinite(length)) | (~np.isfinite(normal).all(axis=1)) | (length <= 0)] = True
+    found = np.flatnonzero(bad_tri)
+    if len(found) == 0:
         return inward, horizontal, [], volumes
-    found = np.sort(np.concatenate(wrong))
+    np.add.at(inward, owner[found], 1)
     return inward, horizontal, [int(i) for i in found], volumes
 
 
@@ -1538,9 +1726,11 @@ def check_horizontal_faces(model: Soup, tol: dict) -> dict:
     Each connected part is judged on its own. A planar sheet joins an open component only when
     that component's horizontal boundary loop covers the sheet, or the sheet overlaps the loop by
     at most 0.03 m, and the sheet lies within 0.01 m of the loop plane; two owners, or none, leave
-    the sheet independent. A downward sheet with nothing above it is inward. Non-finite vertices,
-    an empty model and a model with no horizontal face are not measured, never a pass. This is
-    not architectural acceptance or topology QA.
+    the sheet independent. A detached pure sheet faces down when a closed solid lies strictly
+    above it and covers its footprint, and faces up when nothing does, or a solid is below or
+    coincident; both sides at once is a fail. A collapsed or non-finite face is inward, never a
+    silent pass. Non-finite vertices, an empty model and a model with no horizontal face are not
+    measured, never a pass. This is not architectural acceptance or topology QA.
     """
     names, _owner = _orientation_groups(model)
     details = {

@@ -6,7 +6,7 @@ import pytest
 
 from test_orientation import WELD_M, _box, _built, _resize, _reverse
 from twinqa.geometry import checks
-from twinqa.geometry.mesh import from_dump
+from twinqa.geometry.mesh import edge_uses, from_dump, weld
 
 _BENCHES = ["bench-b01-box", "bench-b02-corner-niche", "bench-b02t-terrace"]
 _TOL = {"weld_m": WELD_M}
@@ -691,8 +691,9 @@ def _extruded_step(cut):
     n = len(profile)
     verts = [[x, 0.0, z] for x, z in profile] + [[x, 1.0, z] for x, z in profile]
     cap = [(0, 4, 5), (0, 1, 4), (1, 3, 4), (1, 2, 3)]
-    tris = [[a, c, b] for a, b, c in cap]
-    tris += [[a + n, b + n, c + n] for a, b, c in cap]
+    # Profile is CCW in XZ: the y=0 cap faces -Y and the y=1 cap faces +Y.
+    tris = [[a, b, c] for a, b, c in cap]
+    tris += [[a + n, c + n, b + n] for a, b, c in cap]
     tris.append([0, n + 1, 1])
     tris.append([0, n, n + 1])
     xyz = np.asarray(verts, float)
@@ -851,3 +852,132 @@ def test_partial_index_input_errors_instead_of_passing():
     with pytest.raises((IndexError, ValueError)):
         _hcheck({"meshes": [{"name": "partial", "vertices": [[0, 0, 0], [1, 0, 0]],
                              "triangles": [[0, 1, 2]], "material_ids": [1]}]})
+
+
+@pytest.mark.parametrize("upward", [False, True])
+def test_detached_soffit_under_closed_slab(upward):
+    """SYNTHETIC. A detached sheet under a closed slab faces down, away from that solid."""
+    slab = _resize(_box("slab"), 1.0, (0, 0, 1))
+    soffit = _sheet(reverse=not upward)
+    soffit["name"] = "soffit"
+    soffit["vertices"] = [[.1 + .8 * x, .1 + .8 * y, .5] for x, y, z in soffit["vertices"]]
+    result = _hcheck({"meshes": [slab, soffit]})
+    assert result["details"]["inward_triangles"] == ([12, 13] if upward else [])
+    assert result["status"] == ("fail" if upward else "pass")
+
+
+@pytest.mark.parametrize("gap", [0, .0001, .01])
+def test_independent_open_parts(gap):
+    """SYNTHETIC. Touching unwelded open boxes keep two contexts, including inside weld_m."""
+    lower = _box("lower", drop_bottom=True)
+    upper = _resize(_box("upper", drop_bottom=True), 1, (0, 0, 1 + gap))
+    result = _hcheck({"meshes": [lower, upper]})
+    assert result["details"]["volumes"] == [["lower"], ["upper"]]
+    assert result["status"] == "pass" and result["value"] == 0
+
+
+def test_open_part_gap_sweep_never_shares_a_verdict():
+    """SYNTHETIC. Gaps through weld_m and the 1 cm band never merge two open boxes.
+
+    Exactly weld_m and exactly 0.01 m stay independent. A flipped neighbour fails alone.
+    """
+    gaps = [0.0, 1e-6, 1e-4, WELD_M / 2, WELD_M, WELD_M + 1e-9, 0.009, 0.01, 0.0101]
+    for gap in gaps:
+        lower = _box("lower", drop_bottom=True)
+        upper = _resize(_box("upper", drop_bottom=True), 1, (0, 0, 1 + gap))
+        clean = _hcheck({"meshes": [lower, upper]})
+        assert clean["status"] == "pass" and clean["value"] == 0, gap
+        assert clean["details"]["volumes"] == [["lower"], ["upper"]], gap
+        assert clean["status"] != "not_run"
+        bad_lower = _box("lower", drop_bottom=True)
+        _reverse(bad_lower["triangles"], 0)
+        _reverse(bad_lower["triangles"], 1)
+        result = _hcheck({"meshes": [bad_lower, upper]})
+        assert result["status"] == "fail" and result["value"] == 2, gap
+        assert _row(result, "lower")["inward_faces"] == 2
+        assert _row(result, "upper")["inward_faces"] == 0
+        assert result["details"]["volumes"] == [["lower"], ["upper"]]
+
+
+def _outward_step(cut):
+    """SYNTHETIC closed outward step. XZ profile, extruded across y, CCW caps face outward."""
+    import shapely
+    polygon = shapely.Polygon([(0, 0), (1, 0), (1, 2), (cut, 2), (cut, 1), (0, 1)])
+    vertices, triangles = [], []
+
+    def add(coords, desired):
+        c = np.asarray(coords, float)
+        if np.cross(c[1] - c[0], c[2] - c[0]) @ desired < 0:
+            c = c[::-1]
+        base = len(vertices)
+        vertices.extend(c.tolist())
+        triangles.append([base, base + 1, base + 2])
+
+    for face in shapely.get_parts(shapely.constrained_delaunay_triangles(polygon)):
+        for y in (0, 1):
+            add([[x, y, z] for x, z in list(face.exterior.coords)[:3]], [0, 2 * y - 1, 0])
+    ring = list(polygon.exterior.coords)
+    for (x, z), (xx, zz) in zip(ring, ring[1:]):
+        q = [[x, 0, z], [xx, 0, zz], [xx, 1, zz], [x, 1, z]]
+        add([q[0], q[1], q[2]], [zz - z, 0, -(xx - x)])
+        add([q[0], q[2], q[3]], [zz - z, 0, -(xx - x)])
+    return {"name": "step", "vertices": vertices, "triangles": triangles,
+            "material_ids": [1] * len(triangles)}
+
+
+@pytest.mark.parametrize("scale,flipped", [
+    (1, False), (1, True), (10, False), (10, True), (100, False), (100, True),
+])
+def test_closed_step_scale_invariance(scale, flipped):
+    """SYNTHETIC. A vertical-wall ray keeps its parity when the solid is scaled."""
+    mesh = _outward_step(1 / 3)
+    mesh["vertices"] = (np.asarray(mesh["vertices"]) * scale).tolist()
+    model = from_dump({"meshes": [mesh]})
+    edges, counts, _sides = edge_uses(model.triangles, weld(model.vertices, .002))
+    assert np.all(counts == 2) and np.all(edges[:, 0] != edges[:, 1])
+    corners = model.corners()
+    volume = np.einsum("ij,ij->i", corners[:, 0], np.cross(corners[:, 1], corners[:, 2])).sum() / 6
+    assert volume == pytest.approx((2 - 1 / 3) * scale ** 3)
+    if flipped:
+        _reverse(mesh["triangles"], 9)
+    result = _hcheck({"meshes": [mesh]})
+    assert result["details"]["inward_triangles"] == ([9] if flipped else [])
+    assert result["status"] == ("fail" if flipped else "pass")
+
+
+@pytest.mark.parametrize("scale", [1, 3, 10, 30, 100])
+def test_closed_step_scale_sweep(scale):
+    """SYNTHETIC sweep. Clean stays pass and a flipped bottom stays fail at every scale."""
+    mesh = _outward_step(1 / 3)
+    mesh["vertices"] = (np.asarray(mesh["vertices"]) * scale).tolist()
+    clean = _hcheck({"meshes": [mesh]})
+    assert clean["status"] == "pass" and clean["value"] == 0
+    flipped = {"meshes": [_outward_step(1 / 3)]}
+    flipped["meshes"][0]["vertices"] = (np.asarray(flipped["meshes"][0]["vertices"]) * scale).tolist()
+    _reverse(flipped["meshes"][0]["triangles"], 9)
+    bad = _hcheck(flipped)
+    assert bad["status"] == "fail" and bad["value"] == 1
+    assert bad["details"]["inward_triangles"] == [9]
+    assert bad["status"] != "not_run"
+
+
+def test_sheet_between_two_closed_solids_is_not_a_clean_pass():
+    """SYNTHETIC. A sheet covered from above and from below has no single owner side."""
+    below = _resize(_box("below"), 1.0, (0, 0, -2))
+    above = _resize(_box("above"), 1.0, (0, 0, 1))
+    sheet = _sheet()
+    sheet["name"] = "sheet"
+    sheet["vertices"] = [[.1 + .8 * x, .1 + .8 * y, .5] for x, y, z in sheet["vertices"]]
+    result = _hcheck({"meshes": [below, above, sheet]})
+    assert result["status"] != "pass"
+    assert set(result["details"]["inward_triangles"]) >= {24, 25}
+
+
+def test_partial_degenerate_is_not_a_clean_certificate():
+    """SYNTHETIC. One collapsed triangle beside a valid quad is not a clean pass."""
+    mesh = _sheet()
+    mesh["vertices"].append([9, 9, 9])
+    mesh["triangles"].append([4, 4, 4])
+    mesh["material_ids"].append(1)
+    result = _hcheck({"meshes": [mesh]})
+    assert result["status"] != "pass"
