@@ -675,3 +675,25 @@ def test_pid_alive_oversize_is_unknown():
     from dt_ai.core.run_inspection import _pid_alive
     assert _pid_alive(2 ** 32) is None
     assert _pid_alive(0xFFFFFFFF + 1) is None
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), float("-inf"), -1, True, "2026-01-01", None])
+def test_output_freshness_invalid_started_at_is_unknown(tmp_path, bad):
+    from dt_ai.core.run_inspection import _output_freshness
+    out = tmp_path / "out.txt"
+    out.write_text("done")
+    assert _output_freshness({"out": out}, bad) == "unknown"
+
+
+@pytest.mark.parametrize("bad", [True, -1, "2026-01-01", None])
+def test_running_invalid_started_at_is_still_unknown(tmp_path, monkeypatch, bad):
+    from dt_ai.core import run_inspection
+    monkeypatch.setattr(run_inspection, "_pid_alive", lambda pid: False)
+    run, manifest = _running_stages_fixture(tmp_path, [
+        {"name": "badmeta", "spawned_pid": 111, "declared_outputs": {"out": "done"}},
+    ])
+    ledger = run.read()
+    ledger["attempts"][0]["stages"]["badmeta"]["started_at"] = bad
+    atomic_json(run.path, ledger)
+    result = inspect_run(run.directory, manifest)
+    assert result["stages"][0]["state"] == "still_unknown"
