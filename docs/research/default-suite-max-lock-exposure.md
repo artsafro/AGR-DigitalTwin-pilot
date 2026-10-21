@@ -7,7 +7,8 @@ The default pytest suite (`-m 'not blender and not dcc and not acad and not perf
 host, because their guard is "skip only when Max is absent" instead of "skip unless an explicit native
 lane is requested". When a real `3dsmaxbatch.exe` exists, `max_adapter.default_adapter()` returns
 `BatchAdapter()`, whose `selftest()`/`build()` run `dcc_batch.py` against the **shared, cross-profile,
-cross-card** tool lock (currently `TMP / "agr-max-session.lock"`; historical receipts named
+cross-card** tool lock (`TMP / "agr-3dsmax-session.lock"` for CLI tool `max`, normalized to
+`3dsmax` before path selection; historical receipts named
 `%LOCALAPPDATA%\Temp\agr-3dsmax-session.lock`), waiting only `--wait 60` seconds. If any
 production review publisher (or another card) already holds that lock, the test's `dcc_batch.py` call
 returns exit 3 (`busy`, `held_by=review-publisher`) after 60 s, the adapter raises `RuntimeError`, and an
@@ -73,8 +74,10 @@ card = os.environ.get("HERMES_KANBAN_TASK", "review-publisher")
 ```
 and passes it as `--card` to `dcc_batch.py` (lines 52-59). `dcc_batch.py` (external, read-only,
 `C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py`) selects the lock via `lock_path(tool)` at
-lines 34-35, called by the CLI at line 149: currently `TMP / "agr-max-session.lock"` for `max`
-(the historical receipts used `%LOCALAPPDATA%\Temp\agr-3dsmax-session.lock`). This is **one lock per
+lines 34-35. The CLI normalizes `max` → `3dsmax` and `acad` → `autocad` at line **142**, then
+calls `lock_path(tool_key)` at **149** and `acquire(path, card, ...)` at **150**. Thus the CLI paths
+are `TMP / "agr-3dsmax-session.lock"` and `TMP / "agr-autocad-session.lock"`, not
+`agr-max-session.lock` / `agr-acad-session.lock`. This is **one lock per
 tool within the same TMP location, shared by profiles and cards using that location**. The production
 publisher `tools/review/publish.py:21` calls the same `default_adapter()`, so it uses the **same** lock and the **same** `review-publisher` fallback when its process has no
 `HERMES_KANBAN_TASK`. These are separate facts: `lock_path(tool)` selects the shared resource;
@@ -100,26 +103,29 @@ This correction did not reproduce a Max failure, inspect live locks, or recheck 
 and installation observations. The first-person observations in F3/F5 and receipts in F5 belong to
 the original investigation, not a fresh run. `delivery_passed=false`.
 
-The driver independently completed the authorized external read-only verification of
-`C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py` and supplied the results for this correction:
+The driver completed the authorized external read-only verification of
+`C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py` and executed the standalone probe below. This is
+source/probe verification only, separate from the historical execution evidence:
 
 - SHA256: `84ac01203545502490d1c18de78b5d12a338f1dfbcf64e91767518ee06d41f55`.
-- Current source references: `lock_path(tool)` at **34-35**, `acquire(path, card, ...)` at **56-85**,
-  and CLI `lock_path` / `acquire` calls at **149-150**.
-- Source trace: the CLI selects the path from the tool, then passes that path and card separately
+- Source references verified against the external file: `lock_path(tool)` at **34-35**, `acquire(path, card, ...)`
+  at **56-85**, CLI tool normalization at **142**, and `lock_path(tool_key)` / `acquire` calls at **149-150**.
+- Source trace: the CLI selects the path from the normalized tool key, then passes that path and card separately
   to `acquire`. In `acquire`, card is recorded in the lock's owner payload; the supplied path is
   used for acquisition, not replaced by a card-specific path. The existing healthy-holder wait/busy
   branch (CLI handling at **150-157**) does not provide isolation for distinct cards.
 - Local callers rechecked in this worktree: `tools/review/max_adapter.py:50-59` obtains the card and
   passes positional tool `max` plus `--card`; `tests/test_review_round2.py:74-80` does likewise.
 
-The external evidence is driver-supplied, not an external read or probe rerun by this writing agent.
-No regression test was added and no RED, GREEN or full-suite pytest run was performed for this
-report-only correction. The historical suite counts below are not correction-run results.
+The previous reported 2/2 path relations used unnormalized keys and do not verify actual CLI paths;
+that result is withdrawn. The corrected AST probe below was executed read-only by the driver; result:
+**2/2 path relations verified**. No regression test was added and no RED, GREEN or full-suite pytest
+run was performed for this report-only correction. The historical suite counts below are not
+correction-run results.
 
-Standalone AST-only read-only reproduction snippet for the driver's verification. Print and inspect
-source to check the payload/path distinction, then execute only the extracted pure `lock_path`
-function, never import or execute the external module or call `acquire`:
+Corrected standalone AST-only read-only reproduction snippet (executed by the driver). It reads and
+parses the external source, prints relevant code, and executes only the extracted pure `lock_path`
+function; it never imports/executes the module or calls `acquire`. `os` is included in the namespace:
 
 ```python
 import ast
@@ -132,6 +138,7 @@ raw = source.read_bytes()
 text = raw.decode("utf-8-sig")
 tree = ast.parse(text)
 print("SHA256", hashlib.sha256(raw).hexdigest())
+print("142", text.splitlines()[141])  # inspect CLI max/acad normalization
 for node in ast.walk(tree):
     if (isinstance(node, ast.FunctionDef) and node.name in {"lock_path", "acquire"}
         or isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
@@ -140,34 +147,35 @@ for node in ast.walk(tree):
 fn, = [n for n in tree.body if isinstance(n, ast.FunctionDef)
        and n.name == "lock_path"]
 # After source inspection confirms purity and the required globals:
-namespace = {"Path": Path, "TMP": Path(r"C:\synthetic\tmp")}
+namespace = {"os": os, "Path": Path, "TMP": Path(r"C:\synthetic\tmp")}
 exec(compile(ast.Module(body=[fn], type_ignores=[]), "<lock_path-only>", "exec"),
      namespace)
 lock_path = namespace["lock_path"]
-a = lock_path("max")  # card A is deliberately not a path argument
-b = lock_path("max")  # card B is deliberately not a path argument
-acad = lock_path("acad")
+# CLI line 142 maps max -> 3dsmax and acad -> autocad before line 149.
+a = lock_path("3dsmax")  # CLI max/card A; card is not a path argument
+b = lock_path("3dsmax")  # CLI max/card B
+acad = lock_path("autocad")  # CLI acad
 print("max/A", a, "max/B", b, "acad", acad)
 print("same-tool equality", a == b, "different-tool inequality", a != acad)
 assert a == b
 assert a != acad
+print("path relations: 2/2")
 ```
 
-Observed driver probe results, formatted below, with synthetic `TMP` (not a real lock location):
+Observed driver probe output (synthetic `TMP`, not a real lock location):
 
 ```text
-max/card-A: C:\synthetic\tmp\agr-max-session.lock
-max/card-B: C:\synthetic\tmp\agr-max-session.lock
-acad:       C:\synthetic\tmp\agr-acad-session.lock
-same-tool equality: True
-different-tool inequality: True
+max/A C:\synthetic\tmp\agr-3dsmax-session.lock max/B C:\synthetic\tmp\agr-3dsmax-session.lock acad C:\synthetic\tmp\agr-autocad-session.lock
+same-tool equality True different-tool inequality True
+path relations: 2/2
 ```
 
-**Path relations: 2/2 verified** (`max/A == max/B`, `max != acad`); card is deliberately not a
-`lock_path` argument. The probe executed only the extracted pure function. No `acquire` call, lock
-access, DCC invocation or pytest execution occurred. This is not a fresh Max or busy reproduction:
-healthy-holder contention is supported by the source trace and historical receipts, not by running
-two concurrent holders in this correction.
+Verified invariants → probe: same CLI tool with distinct cards → `a == b`; different CLI tools →
+`a != acad`. **2/2 executed by driver**. Card is deliberately not a `lock_path` argument; its payload
+role and healthy-holder busy handling were confirmed from source inspection, not execution of `acquire`.
+No `acquire` call, lock access, DCC invocation or pytest execution occurred in this correction. This is
+not a fresh Max or busy reproduction: contention is supported by source and historical receipts, not by
+running two concurrent holders in this correction.
 
 ### F4 — Timeout boundaries: `--wait 60` loses to a healthy long holder
 
@@ -283,11 +291,12 @@ chosen here. This proposal neither enlarges concurrency nor removes serializatio
   **never** reported as a generic `RuntimeError("Max adapter failed")` that reads like a code failure.
 - Input: native smoke, lock free → expected: original assertions run unchanged; a free lock alone
   does not guarantee that those assertions pass.
-- Input: `tool=max/card=A` versus `tool=max/card=B` on the same host → expected: the same lock path;
+- Input: `tool=max/card=A` versus `tool=max/card=B` using the same TMP location → expected: the same
+  `agr-3dsmax-session.lock` path after CLI normalization;
   a second caller may still return `busy` while a healthy concurrent holder retains it. Distinct cards
   provide more legible holder ownership only, never an isolation guarantee.
-- Input: `tool=max` versus `tool=acad` → expected: different tool lock paths; no claim that other
-  shared resources are independent.
+- Input: `tool=max` versus `tool=acad` → expected: `agr-3dsmax-session.lock` versus
+  `agr-autocad-session.lock` after CLI normalization; no claim that other shared resources are independent.
 
 **Value/effort.** M (medium: touches `max_adapter._run`, `dcc_batch` return-code parsing, and one
 `common.publish` error surface). High value: makes a true contention event legible instead of a false red.
