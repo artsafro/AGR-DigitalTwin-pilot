@@ -1,0 +1,184 @@
+{
+ "status": "NOT_DELIVERY",
+ "base_commit": "59799c674b364699c2985447eda9e65082e3d518",
+ "inputs": {
+  "master-npm.json": "c26b7feb85581d6fae47dad85f10f5cad0f01cc6274f08a86f2928507526ca1a",
+  "master-vpm.json": "59310ac9ffc2a932c69404272d216a6f20fa77cc339e8ae30a8f5e0af3452eb4"
+ },
+ "strips_census": {
+  "npm": {
+   "seconds": 11.760326699994039,
+   "faces": 61996,
+   "ov_pairs": 179,
+   "ov_owner_faces": 282,
+   "source_boundary_edges": 8447,
+   "source_boundary_m": 9776.58713427705,
+   "out_boundary_edges": 90332,
+   "out_boundary_m": 47324.99087609044,
+   "owners_thickness_lt_2_05mm": 94
+  },
+  "vpm": {
+   "seconds": 15.56030230000033,
+   "faces": 71957,
+   "ov_pairs": 245,
+   "ov_owner_faces": 412,
+   "source_boundary_edges": 8447,
+   "source_boundary_m": 9776.58713427705,
+   "out_boundary_edges": 88314,
+   "out_boundary_m": 51031.74301587303,
+   "owners_thickness_lt_2_05mm": 111
+  }
+ },
+ "structured_conforming_fixed_point": [
+  {
+   "profile": "npm",
+   "converged": false,
+   "divergent_chords": 5536,
+   "divergent_chord_edges": 25910,
+   "forcing_quads_aspect_gt8": 1308,
+   "forcing_witness": [
+    [
+     108,
+     9.699
+    ],
+    [
+     357,
+     0.004
+    ],
+    [
+     358,
+     0.042
+    ],
+    [
+     359,
+     10.872
+    ],
+    [
+     362,
+     11.372
+    ],
+    [
+     364,
+     10.919
+    ],
+    [
+     366,
+     0.099
+    ],
+    [
+     368,
+     0.065
+    ],
+    [
+     370,
+     9.712
+    ],
+    [
+     372,
+     97.656
+    ],
+    [
+     374,
+     0.045
+    ],
+    [
+     376,
+     0.013
+    ]
+   ],
+   "max_count_digits_after_200": 253,
+   "self_crossing_quads": 11,
+   "self_crossing_aspect_gt8": 0,
+   "witness_faces": []
+  },
+  {
+   "profile": "vpm",
+   "converged": false,
+   "divergent_chords": 5915,
+   "divergent_chord_edges": 24789,
+   "forcing_quads_aspect_gt8": 1331,
+   "forcing_witness": [
+    [
+     111,
+     9.699
+    ],
+    [
+     362,
+     0.004
+    ],
+    [
+     363,
+     0.042
+    ],
+    [
+     364,
+     10.872
+    ],
+    [
+     367,
+     11.372
+    ],
+    [
+     369,
+     10.919
+    ],
+    [
+     371,
+     0.099
+    ],
+    [
+     373,
+     0.065
+    ],
+    [
+     375,
+     9.712
+    ],
+    [
+     377,
+     97.656
+    ],
+    [
+     379,
+     0.045
+    ],
+    [
+     381,
+     0.013
+    ]
+   ],
+   "max_count_digits_after_200": 159,
+   "self_crossing_quads": 7,
+   "self_crossing_aspect_gt8": 0,
+   "witness_faces": []
+  }
+ ],
+ "apex_quad_witness": {
+  "triangle_m": [
+   [
+    0,
+    0,
+    0
+   ],
+   [
+    0.003,
+    0,
+    0.0003
+   ],
+   [
+    0.015,
+    0.006,
+    0.001403
+   ]
+  ],
+  "apex": 2,
+  "rail1_node_mm": 3,
+  "rail0_node_mm": 8,
+  "interior_mm": 11,
+  "min_spacing_mm": 3.0,
+  "pair_aspect": 2.66,
+  "convex": true,
+  "remainder_partition": "open"
+ },
+ "evidence_dir": "C:/x/ev_t_eb1c51ca/census-v001"
+}

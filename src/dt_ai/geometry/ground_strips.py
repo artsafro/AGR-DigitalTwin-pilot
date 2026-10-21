@@ -5,6 +5,7 @@ This local stage intentionally does NOT certify neighbour conformity, xView,
 relief, UV density, global budgets or delivery. Callers must measure them before
 use; boundary transition construction is a separate stage. No IO is performed.
 """
+from functools import lru_cache
 from fractions import Fraction
 from itertools import product
 from math import ceil
@@ -15,6 +16,35 @@ from dt_ai.geometry.ground_quads import QuadMesh
 from dt_ai.ops.inv_texel import PolyMesh, face_metrics
 
 
+@lru_cache(maxsize=1)
+def _positive_templates():
+    """A fixed, bounded search family; positivity is checked before source use."""
+    rng = np.random.default_rng(0x371)
+    reference = np.array([[0., 0., 0.], [1., 0., 0.], [0., 1., 0.]])
+    topology = ((0, 3, 6, 5), (3, 4, 7, 6), (4, 1, 2, 7), (2, 5, 6, 7))
+    result = []
+    for _ in range(20000):
+        lo, hi = sorted(rng.uniform(.08, .92, 2))
+        if hi-lo < .12:
+            continue
+        q = rng.uniform(.08, .92)
+        weights = np.array([[1-lo, lo, 0], [1-hi, hi, 0], [1-q, 0, q],
+                            rng.dirichlet([2, 2, 1]), rng.dirichlet([1, 2, 2])])
+        vertices = np.vstack((reference, weights@reference))
+        valid = True
+        for face in topology:
+            points = vertices[list(face)]
+            e = np.roll(points, -1, axis=0)-points
+            if np.min(np.cross(e, np.roll(e, -1, axis=0))[:, 2]) <= 1e-5:
+                valid = False
+                break
+        if valid:
+            result.append(weights)
+            if len(result) == 256:
+                break
+    return tuple(result)
+
+
 def _acute_template(points, source_clear):
     """Four affine quads, with staggered rails rather than short-edge midpoints.
 
@@ -23,25 +53,42 @@ def _acute_template(points, source_clear):
     source map preserves coverage and convexity. Cyclic choices are diagnostics
     only: whole-mesh xView and conforming boundaries remain caller obligations.
     """
-    weights = np.array([[2/3, 1/3, 0], [1/3, 2/3, 0], [.5, 0, .5],
-                        [.55, .3, .15], [.2, .3, .5]])
+    templates = (
+        np.array([[2/3, 1/3, 0], [1/3, 2/3, 0], [.5, 0, .5], [.55, .3, .15], [.2, .3, .5]]),
+        np.array([[6/7, 1/7, 0], [3/7, 4/7, 0], [4/7, 0, 3/7],
+                  [5/7, 2/7-.1, .1], [2/7, 5/7-.4, .4]]),
+    )
     topology = ((0, 3, 6, 5), (3, 4, 7, 6), (4, 1, 2, 7), (2, 5, 6, 7))
     choices = []
-    for shift in range(3):
-        order = [(shift+j)%3 for j in range(3)]
-        vertices = np.vstack((points, weights@points[order]))
-        faces = tuple(tuple(order[k] if k < 3 else k for k in face) for face in topology)
-        distances = np.linalg.norm(vertices[:, None]-vertices[None], axis=2)
-        distances[np.diag_indices(8)] = np.inf
-        metrics = [face_metrics(vertices[list(f)]) for f in faces]
-        if (distances.min() > .00205 and source_clear(vertices[3:])
-                and all(not r.degenerate and r.aspect <= 8 for r in metrics)):
-            choices.append((max(r.max_edge_m for r in metrics), shift, vertices, faces, weights@np.eye(3)[order]))
+    for template_id, weights in enumerate(templates):
+        for shift in range(3):
+            order = [(shift+j)%3 for j in range(3)]
+            vertices = np.vstack((points, weights@points[order]))
+            faces = tuple(tuple(order[k] if k < 3 else k for k in face) for face in topology)
+            distances = np.linalg.norm(vertices[:, None]-vertices[None], axis=2)
+            distances[np.diag_indices(8)] = np.inf
+            metrics = [face_metrics(vertices[list(f)]) for f in faces]
+            if (distances.min() > .00205 and source_clear(vertices[3:])
+                    and all(not r.degenerate and r.aspect <= 8 for r in metrics)):
+                choices.append((max(r.max_edge_m for r in metrics), shift, template_id,
+                                vertices, faces, weights@np.eye(3)[order]))
     if not choices:
+        for weights in _positive_templates():
+            for shift in range(3):
+                order = [(shift+j)%3 for j in range(3)]
+                vertices = np.vstack((points, weights@points[order]))
+                distances = np.linalg.norm(vertices[:, None]-vertices[None], axis=2)
+                distances[np.diag_indices(8)] = np.inf
+                if distances.min() <= .00205:
+                    continue
+                faces = tuple(tuple(order[k] if k < 3 else k for k in face) for face in topology)
+                metrics = [face_metrics(vertices[list(f)]) for f in faces]
+                if (all(not r.degenerate and r.aspect <= 8 for r in metrics)
+                        and source_clear(vertices[3:])):
+                    return vertices, faces, weights@np.eye(3)[order]
         return None
-    _, _, vertices, faces, source_weights = min(choices, key=lambda row: row[:2])
+    _, _, _, vertices, faces, source_weights = min(choices, key=lambda row: row[:3])
     return vertices, faces, source_weights
-
 
 def local_strips(mesh: QuadMesh, *, max_edge_m: float, face_budget: int = 180000) -> QuadMesh:
     """Split long quads directionally; only bad triangles receive three patches.

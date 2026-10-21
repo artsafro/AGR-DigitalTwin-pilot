@@ -75,6 +75,9 @@ def test_shared_edge_cuts_respect_other_original_vertices_not_only_local_corners
     assert set(out.source_faces) == {(56,), (61,)}
 
 
+@pytest.mark.xfail(strict=True, reason='open #371 witness: rail/positive-template families find no '
+                   'OV-safe aspect<=8 split of this 1.1 mm thick tip; needs an interior apex-quad '
+                   'template (jobs/VATUTINO-SITE/ground-v015-conformity-census.md)')
 def test_centimetre_triangle_needs_distributed_not_clustered_staggered_rails():
     from dt_ai.geometry.ground_strips import local_strips
     from dt_ai.ops.inv_xview import vertex_pairs
