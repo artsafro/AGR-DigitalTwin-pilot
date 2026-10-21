@@ -189,8 +189,8 @@ def main(argv=None) -> int:
         spots = allp = flat_points  # computational plane, not source elevation observations
     tin = gc.build_tin(allp)
     sampler = gc.ReliefSampler(tin)
-    detail, dispositions = gd.build_details(d.get("ground_elements", []), plan.surface, sampler,
-                                            separate_curbs=(settings or {}).get("separate_curbs", False))
+    detail, dispositions, joints = gd.build_details(d.get("ground_elements", []), plan.surface, sampler,
+                                                    separate_curbs=(settings or {}).get("separate_curbs", False))
     stair_footprints = [shape(r["footprint"]) for r in dispositions if r.get("footprint")]
     if stair_footprints:
         from shapely.ops import unary_union
@@ -240,6 +240,7 @@ def main(argv=None) -> int:
     rep["open_edges"] = gc.measure_open_edges(proj, plan, eps=0.0022)
     master = gc.add_skirt(proj, depth=1.0)
     rep["details"] = dispositions
+    rep["curb_joints"] = joints
     rep["detail_triangles"] = len(detail.faces)
     master = gc.clean_topology(gd.combine([master, detail]))
     rep["codirectional"] = gc.measure_codirectional(master, band_min=0.005)
