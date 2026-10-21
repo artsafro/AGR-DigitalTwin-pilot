@@ -107,12 +107,15 @@ def test_shipped_manifest_covers_required_families_without_invented_links():
     document = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
     by_id = {entry["id"]: entry for entry in document["assets"]}
     assert document["local_root"] == sync.LOCAL_ROOT
-    assert document["login"] == "pending"
+    assert document["login"] == "drive-desktop"
     assert document["drive"] == "google-drive"
     assert "dropbox" in document["rejected_backends"]
     for asset_id, digest in GROUNDED_SHA256.items():
         assert by_id[asset_id]["sha256"] == digest
-        assert by_id[asset_id]["drive_link"] == "pending"
+        assert by_id[asset_id]["drive_link"] == (
+            "https://drive.google.com/drive/folders/1zKszwxFRWH0DnrXYiFR7SN3bH9Iph2d6?usp=sharing"
+        )
+        assert by_id[asset_id]["drive_path"] == by_id[asset_id]["local_path"]
         assert by_id[asset_id]["licence"] is None
     assert by_id["flora-library"]["version"] == "v003"
     assert by_id["flora-library"]["sha256"] == "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74"
@@ -529,7 +532,7 @@ def test_real_rclone_local_report_aliases_preflight(tmp_path, monkeypatch, alias
 
 @pytest.mark.parametrize("link", ["pending", "https://drive.google.com/file/d/recorded-id/view"])
 def test_desktop_recorded_link_survives_repeat_and_conflict(tmp_path, link):
-    entry, payload = _entry(drive_link=link)
+    entry, payload = _entry(drive_link=link, drive_path="sample/asset.bin")
     manifest, root = _write_manifest(tmp_path, [entry], [payload])
     drive = tmp_path / "drive"
     drive.mkdir()
@@ -595,3 +598,61 @@ def test_truncated_manifest_file_fails(tmp_path):
     assert code != 0
     assert report["assets"] == []
     assert report["errors"]
+
+
+FOLDER_URL = "https://drive.google.com/drive/folders/1zKszwxFRWH0DnrXYiFR7SN3bH9Iph2d6?usp=sharing"
+
+
+def test_drive_desktop_root_localized_path(monkeypatch):
+    assert Path("G:/Мой диск") in sync._DRIVE_ROOT_CANDIDATES
+    assert Path("G:/") not in sync._DRIVE_ROOT_CANDIDATES
+    monkeypatch.setattr(sync, "_is_dir", lambda path: path == Path("G:/Мой диск"))
+    assert sync.drive_desktop_root() == Path("G:/Мой диск")
+
+
+def test_drive_desktop_root_explicit(tmp_path):
+    assert sync.drive_desktop_root(tmp_path) == tmp_path
+    assert sync.drive_desktop_root(tmp_path / "missing") is None
+
+
+def test_drive_desktop_root_refuses_bare_g(monkeypatch):
+    monkeypatch.setattr(sync, "_is_dir", lambda path: path == Path("G:/"))
+    assert sync.drive_desktop_root() is None
+
+
+@pytest.mark.parametrize("case", ["missing-with-link", "escape", "absolute", "blank", "empty", "unsupported", "valid"])
+def test_drive_path_validation(case):
+    if case == "missing-with-link":
+        first, _ = _entry(
+            id="first-asset",
+            local_path="first/asset.bin",
+            drive_link=FOLDER_URL,
+            drive_path="first/asset.bin",
+        )
+        second, _ = _entry(id="second-asset", local_path="second/asset.bin", drive_link=FOLDER_URL)
+        errors = sync.validate_document(_document([first, second]))
+        assert "second-asset: partial: drive_path" in errors
+        assert not any(error.startswith("first-asset:") and "drive_path" in error for error in errors)
+        assert all("first/asset.bin" not in error for error in errors)
+        assert all("not_run" not in error and error != "pass" for error in errors)
+        return
+    entry, _ = _entry(drive_link=FOLDER_URL)
+    if case == "escape":
+        entry["drive_path"] = "../escape.bin"
+    elif case == "absolute":
+        entry["drive_path"] = "C:/outside.bin"
+    elif case == "blank":
+        entry["drive_path"] = "   "
+    elif case == "empty":
+        entry["drive_path"] = ""
+    elif case == "unsupported":
+        entry["drive_path"] = 12
+    else:
+        entry["drive_path"] = entry["local_path"]
+    errors = sync.validate_document(_document([entry]))
+    named = [error for error in errors if "drive_path" in error]
+    if case == "valid":
+        assert named == []
+    else:
+        assert "sample-asset: partial: drive_path" in named
+        assert all("not_run" not in error and error != "pass" for error in errors)
