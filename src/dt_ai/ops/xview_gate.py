@@ -244,7 +244,9 @@ def summary_lines(rep: dict) -> list:
     t = rep["totals"]
     k = t["face_pairs_by_kind"]
     lines = [f"{p['part']}: Overlapping Faces {p['overlapping_faces']}, Overlapping Vertices "
-             f"{p['overlapping_vertices']} ({len(p['vertex_pairs'])} pairs), bow-tie {len(p['bowtie_vertices'])}"
+             f"{p['overlapping_vertices']} ({len(p['vertex_pairs'])} pairs, "
+             f"{sum(vp['kind'] == 'bowtie' for vp in p['vertex_pairs'])} bow-tie), bow-tie vertices "
+             f"{len(p['bowtie_vertices'])}"
              + ("" if p["passed"] else " FAIL") for p in rep["parts"][:50]]
     lines.append(f"xview {rep['profile']} {rep['coords']}: Overlapping Faces {t['overlapping_faces']}, Overlapping "
                  f"Vertices {t['overlapping_vertices']} ({t['vertex_pairs']} pairs, {t['bowtie_pairs']} bow-tie); "
