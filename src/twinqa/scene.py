@@ -489,16 +489,22 @@ def _texel_density_findings(rb: dict, meshes: list[dict], ucx: list[dict], src: 
         for mesh in geometry:
             shape = mesh["face_geometry"]
             vertices, uvs = shape["vertices"], shape["uv"]
-            if len(uvs) != len(vertices):
-                raise ValueError(
-                    f"partial UV geometry on {mesh['name']}: {len(uvs)} uv for {len(vertices)} vertices")
             polygons = shape.get("polygons")
             if not isinstance(polygons, list):
                 raise ValueError(f"partial UV geometry on {mesh['name']}: polygons")
-            for polygon in polygons:
+            polygon_uvs = shape.get("polygon_uv")
+            use_corner_uv = polygon_uvs is not None
+            if use_corner_uv and (not isinstance(polygon_uvs, list) or len(polygon_uvs) != len(polygons)):
+                count = len(polygon_uvs) if isinstance(polygon_uvs, list) else None
+                raise ValueError(
+                    f"partial UV geometry on {mesh['name']}: {count} polygon_uv for {len(polygons)} polygons")
+            if not use_corner_uv and len(uvs) != len(vertices):
+                raise ValueError(
+                    f"partial UV geometry on {mesh['name']}: {len(uvs)} uv for {len(vertices)} vertices")
+            for poly_index, polygon in enumerate(polygons):
                 try:
                     poly_xyz = [vertices[index] for index in polygon]
-                    poly_uv = [uvs[index] for index in polygon]
+                    poly_uv = polygon_uvs[poly_index] if use_corner_uv else [uvs[index] for index in polygon]
                 except (IndexError, TypeError) as exc:
                     raise ValueError(f"partial UV geometry on {mesh['name']}: polygon index") from exc
                 if len(poly_xyz) < 2:

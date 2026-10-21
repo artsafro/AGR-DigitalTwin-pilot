@@ -6,6 +6,23 @@ Synthetic values only. The sign oracle is the issue formula, written here indepe
 of the helper: min -> (measured - threshold) / threshold, max -> (threshold - measured) / threshold.
 Positive means on the safe side. Margin is None when the check is not numeric or the
 threshold is 0. A pass with 0 <= margin < NEAR_THRESHOLD_MARGIN is a near-threshold line.
+
+Acceptance table (synthetic; not a delivery verdict). Per-corner UV is the loop
+order of each polygon. The per-vertex ``uv`` array is the first-loop collapse
+(shared vertex 0 keeps ``(0, 0)``), which is what readback used to emit.
+
+| Input | Expected | Test |
+|---|---|---|
+| Seam unit square, faces (0,1,2)/(0,2,3), corner UV ``[(0,0),(1,0),(1,1)] / [(0.9,0.9),(1,1),(0,1)]``, diffuse 1024 | texel density fail, measured ≈ 102.4, threshold 512, margin ≈ -0.8; upper threshold 1706, measured ≈ 1024 | ``test_seam_corner_uv_density_fails_below_512`` |
+| Same square, no-seam corner UV ``[(0,0),(1,0),(1,1)] / [(0,0),(1,1),(0,1)]``, diffuse 1024 | pass, measured ≈ 1024, margin ≈ 1.0 | ``test_no_seam_corner_uv_density_passes_at_1024`` |
+| Same seam corner UV, polygons listed in the opposite order and corner UVs re-keyed | same fail, measured ≈ 102.4 | ``test_seam_density_independent_of_polygon_order`` |
+| Blender export/readback of that seam square | ``polygon_uv`` keeps (0.9, 0.9) on vertex 0 of face 1; density fail ≈ 102.4 | ``test_blender_readback_preserves_seam_corner_uv`` |
+| Production 530 px/m (texture 512, world edge 512/530, unit UV) through scene JSON | pass, measured ≈ 530, threshold 512, margin (530-512)/512 | ``test_scene_texel_density_530_reaches_report_json`` |
+| NaN on each UV corner, and every UV/world coordinate plus non-finite size | ValueError, never a pass | ``test_nan_uv_placement_is_rejected``, ``test_probe_non_finite_contributors_never_pass`` |
+| NaN corner inside a scene readback, missing UV, conflicting or non-square sizes | fail or not_run, never pass | ``test_probe_scene_density_never_passes_without_evidence`` |
+| Both margin implementations, overflow magnitudes (1e250..1e308) | ValueError non-finite | ``test_margin_overflow_is_an_arithmetic_error``, ``test_probe_overflow_implementations_and_sign`` |
+| Both implementations, finite min/max including 1e300 | signed finite margin | ``test_margin_finite_controls``, ``test_probe_overflow_implementations_and_sign`` |
+| Mesh with no UV geometry | texel density and upper are not_run | ``test_mesh_without_uv_geometry_density_is_not_run`` |
 """
 import json
 import math
@@ -601,6 +618,80 @@ def test_probe_scene_density_never_passes_without_evidence():
     lower = next(item for item in good["V008"] if item.name == "texel density")
     assert lower.status == "pass" and lower.measured == pytest.approx(530)
     assert seen == 10
+
+
+# Unit square, metres. Two triangles share vertex 0. Corner UVs are loop order.
+_SQUARE = [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [0.0, 1.0, 0.0]]
+_SQUARE_POLYS = [[0, 1, 2], [0, 2, 3]]
+# First loop per vertex: the seam's second corner at vertex 0 is discarded.
+_COLLAPSED_UV = [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]
+_SEAM_CORNERS = [
+    [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0]],
+    [[0.9, 0.9], [1.0, 1.0], [0.0, 1.0]],
+]
+_NO_SEAM_CORNERS = [
+    [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0]],
+    [[0.0, 0.0], [1.0, 1.0], [0.0, 1.0]],
+]
+_SEAM_MIN_PX = 102.4
+_SEAM_MARGIN = (_SEAM_MIN_PX - 512) / 512
+
+
+def _corner_density_scene(corners, polygons):
+    """Render mesh whose per-vertex UV is the first-loop collapse and whose polygon_uv is per corner."""
+    item = mesh(tris=2, degrees={"3": 2})
+    item["face_geometry"] = {
+        "vertices": [list(point) for point in _SQUARE],
+        "polygons": [list(poly) for poly in polygons],
+        "uv": [list(pair) for pair in _COLLAPSED_UV],
+        "polygon_uv": [[list(pair) for pair in face] for face in corners],
+    }
+    data = rb(item)
+    data["images"] = [{"name": "review_diffuse.png", "size": [1024, 1024], "packed": True}]
+    return data
+
+
+def _density_pair(data):
+    found = scene_findings(data, "vpm", "oks", PROFILES.vpm)
+    lower = next(item for item in found["V008"] if item.name == "texel density")
+    upper = next(item for item in found["V008"] if item.name == "texel density upper")
+    return lower, upper
+
+
+def test_seam_corner_uv_density_fails_below_512():
+    """A UV seam on shared vertex 0 is 102.4 px/m, below 512. First-loop UV would report 1024."""
+    lower, upper = _density_pair(_corner_density_scene(_SEAM_CORNERS, _SQUARE_POLYS))
+    assert lower.status == "fail"
+    assert lower.measured == pytest.approx(_SEAM_MIN_PX)
+    assert lower.threshold == 512
+    assert lower.margin == pytest.approx(_SEAM_MARGIN)
+    assert lower.margin == pytest.approx(-0.8)
+    assert upper.threshold == 1706
+    assert upper.measured == pytest.approx(1024)
+    assert upper.status == "pass"
+    assert upper.margin == pytest.approx((1706 - 1024) / 1706)
+
+
+def test_no_seam_corner_uv_density_passes_at_1024():
+    lower, upper = _density_pair(_corner_density_scene(_NO_SEAM_CORNERS, _SQUARE_POLYS))
+    assert lower.status == "pass"
+    assert lower.measured == pytest.approx(1024)
+    assert lower.threshold == 512
+    assert lower.margin == pytest.approx(1.0)
+    assert upper.threshold == 1706
+    assert upper.measured == pytest.approx(1024)
+    assert upper.status == "pass"
+
+
+def test_seam_density_independent_of_polygon_order():
+    """Opposite polygon order, corner UVs re-keyed. The physical seam is unchanged."""
+    polygons = [[0, 2, 3], [0, 1, 2]]
+    corners = [_SEAM_CORNERS[1], _SEAM_CORNERS[0]]
+    lower, _upper = _density_pair(_corner_density_scene(corners, polygons))
+    assert lower.status == "fail"
+    assert lower.measured == pytest.approx(_SEAM_MIN_PX)
+    assert lower.threshold == 512
+    assert lower.margin == pytest.approx(_SEAM_MARGIN)
 
 
 def statuses_of(found):
