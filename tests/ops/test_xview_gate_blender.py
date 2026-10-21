@@ -2,6 +2,7 @@
 
 Synthetic: a .blend with the review #514 rail/soffit case placed at site coordinates (synthetic geometry).
 TOW02: the review #514 inputs when they exist on this PC (git-ignored job outputs; set DT_TOW02_OUTPUTS).
+Pattern: none | new-case: Blender tests of the overlap gate (#527).
 """
 import json
 import os

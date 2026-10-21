@@ -8,6 +8,7 @@ Per mesh object of the active scene (evaluated: modifiers applied), sorted by na
 (matrix_world translation). Non-mesh objects go to `dropped` with the reason. NPZ keys: names, v<i>, lt<i>, lv<i>,
 loc<i> (dt_ai.ops.xview_gate.load_npz). The FBX import runs into an empty factory scene; the .blend is opened, never
 saved.
+Pattern: none | new-case: Blender dump of FBX/.blend mesh objects for the overlap gate (#527).
 """
 import json
 import sys

@@ -1,6 +1,7 @@
 """#527 overlap gate: `dt qa xview` over inv_xview in local coordinates (synthetic geometry, not TOW02 data).
 
 The unit cases are the synthetic builder rules of review #514 (`rootcause/louvre_top/unit_cases.py`).
+Pattern: none | new-case: tests of the overlap gate (#527).
 """
 import json
 import math
