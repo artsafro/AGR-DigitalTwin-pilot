@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import time
 
 import pytest
 
@@ -488,7 +489,7 @@ def test_zero_attempts_plans_authorized_stage(tmp_path):
     assert result["evidence_integrity"] == "incomplete"
 
 
-def _running_stages_fixture(tmp_path, specs):
+def _running_stages_fixture(tmp_path, specs, started_at=None):
     source = tmp_path / "source.txt"
     source.write_text("original")
     inputs = {"source": source}
@@ -496,6 +497,7 @@ def _running_stages_fixture(tmp_path, specs):
     run = RunRecord.create(tmp_path / "runs", "fixture-running", inputs, context)
     attempt = run.new_attempt()
     ledger = run.read()
+    default_started_at = time.time() - 5 if started_at is None else started_at
     for spec in specs:
         declared = {}
         for key, content in spec.get("declared_outputs", {}).items():
@@ -503,7 +505,8 @@ def _running_stages_fixture(tmp_path, specs):
             if content is not None:
                 path.write_bytes(content if isinstance(content, bytes) else content.encode())
             declared[key] = str(path)
-        record = {"status": "running", "outputs": {}, "declared_outputs": declared}
+        record = {"status": "running", "outputs": {}, "declared_outputs": declared,
+                  "started_at": spec.get("started_at", default_started_at)}
         if "spawned_pid" in spec:
             record["spawned_pid"] = spec["spawned_pid"]
         ledger["attempts"][0]["stages"][spec["name"]] = record
@@ -580,3 +583,95 @@ def test_running_classification_counts_zero_without_running_stages(tmp_path):
     run, manifest, _, _ = fixture_run(tmp_path, "produced")
     result = inspect_run(run.directory, manifest)
     assert result["running_classification"] == {"late_confirmed": 0, "confirmed_failed": 0, "still_unknown": 0}
+
+
+def test_running_stale_output_is_not_late_confirmed(tmp_path, monkeypatch):
+    from dt_ai.core import run_inspection
+    monkeypatch.setattr(run_inspection, "_pid_alive", lambda pid: False)
+    run, manifest = _running_stages_fixture(tmp_path, [
+        {"name": "stale", "spawned_pid": 111, "declared_outputs": {"out": "old output"}},
+    ])
+    stage = run.read()["attempts"][0]["stages"]["stale"]
+    output = Path(stage["declared_outputs"]["out"])
+    os.utime(output, (stage["started_at"] - 1000, stage["started_at"] - 1000))
+    before = digest(run.path.read_bytes())
+    result = inspect_run(run.directory, manifest)
+    assert digest(run.path.read_bytes()) == before
+    assert result["stages"][0]["state"] == "confirmed_failed"
+    assert result["stages"][0]["state"] != "late_confirmed"
+    assert result["running_classification"] == {"late_confirmed": 0, "confirmed_failed": 1, "still_unknown": 0}
+
+
+def test_running_missing_started_at_is_still_unknown(tmp_path, monkeypatch):
+    from dt_ai.core import run_inspection
+    monkeypatch.setattr(run_inspection, "_pid_alive", lambda pid: False)
+    run, manifest = _running_stages_fixture(tmp_path, [
+        {"name": "nometa", "spawned_pid": 111, "declared_outputs": {"out": "done"}},
+    ])
+    ledger = run.read()
+    del ledger["attempts"][0]["stages"]["nometa"]["started_at"]
+    atomic_json(run.path, ledger)
+    before = digest(run.path.read_bytes())
+    result = inspect_run(run.directory, manifest)
+    assert digest(run.path.read_bytes()) == before
+    assert result["stages"][0]["state"] == "still_unknown"
+
+
+def test_running_freshness_boundary_is_fresh(tmp_path, monkeypatch):
+    from dt_ai.core import run_inspection
+    monkeypatch.setattr(run_inspection, "_pid_alive", lambda pid: False)
+    started = time.time() - 1000
+    run, manifest = _running_stages_fixture(tmp_path, [
+        {"name": "boundary", "spawned_pid": 111, "declared_outputs": {"out": "done"}},
+    ], started_at=started)
+    output = Path(run.read()["attempts"][0]["stages"]["boundary"]["declared_outputs"]["out"])
+    os.utime(output, (started, started))
+    result = inspect_run(run.directory, manifest)
+    assert result["stages"][0]["state"] == "late_confirmed"
+
+
+def test_running_declared_output_aliases_ledger_rejected(tmp_path):
+    run, manifest = _running_stages_fixture(tmp_path, [{"name": "alias", "spawned_pid": 111}])
+    ledger = run.read()
+    ledger["attempts"][0]["stages"]["alias"]["declared_outputs"] = {"out": str(run.path)}
+    atomic_json(run.path, ledger)
+    with pytest.raises(ValueError, match="aliases"):
+        inspect_run(run.directory, manifest)
+
+
+def test_running_declared_output_aliases_manifest_rejected(tmp_path):
+    run, manifest = _running_stages_fixture(tmp_path, [{"name": "alias", "spawned_pid": 111}])
+    ledger = run.read()
+    ledger["attempts"][0]["stages"]["alias"]["declared_outputs"] = {"out": str(manifest)}
+    atomic_json(run.path, ledger)
+    with pytest.raises(ValueError, match="aliases"):
+        inspect_run(run.directory, manifest)
+
+
+def test_running_declared_output_aliases_source_copy_rejected(tmp_path):
+    run, manifest = _running_stages_fixture(tmp_path, [{"name": "alias", "spawned_pid": 111}])
+    copy = manifest.parent / "copied-source"
+    copy.write_text("original")
+    data = json.loads(manifest.read_text())
+    data["source_copy"] = file_evidence({"copy": copy})
+    atomic_json(manifest, data)
+    ledger = run.read()
+    ledger["attempts"][0]["stages"]["alias"]["declared_outputs"] = {"out": str(copy)}
+    atomic_json(run.path, ledger)
+    with pytest.raises(ValueError, match="aliases"):
+        inspect_run(run.directory, manifest)
+
+
+def test_oversize_pid_yields_unknown_liveness_still_unknown(tmp_path):
+    run, manifest = _running_stages_fixture(tmp_path, [
+        {"name": "oversize", "spawned_pid": 2 ** 32, "declared_outputs": {"out": "done"}},
+    ])
+    result = inspect_run(run.directory, manifest)
+    assert result["stages"][0]["state"] == "still_unknown"
+    assert result["running_classification"] == {"late_confirmed": 0, "confirmed_failed": 0, "still_unknown": 1}
+
+
+def test_pid_alive_oversize_is_unknown():
+    from dt_ai.core.run_inspection import _pid_alive
+    assert _pid_alive(2 ** 32) is None
+    assert _pid_alive(0xFFFFFFFF + 1) is None
