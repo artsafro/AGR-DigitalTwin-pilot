@@ -290,13 +290,16 @@ def main(argv=None):
     payload={p:p.read_bytes() for p in paths};hashes={str(p):hashlib.sha256(v).hexdigest() for p,v in payload.items()}
     data=load_json(payload[a.adapter_json]);raw=load_json(payload[a.source_master]);approval=load_json(payload[paths[3]])
     policy=load_json(payload[paths[4]]);void=load_json(payload[paths[5]]);materials=load_json(payload[paths[6]])['slots']
-    if hashes[str(a.adapter_json)]!=approval['source_adapter_sha256'] or hashes[str(a.source_master)]!=approval['source_v014_mesh_sha256']:
-        raise ValueError('source adapter/v014 master fingerprint mismatch')
     order=[r['slot'] for r in materials]
     if len(order)!=12 or len(set(order))!=12 or [r['material_id'] for r in materials]!=list(range(1,13)):
         raise ValueError('fixed 12-slot/ID inventory invalid')
     unknown=set(raw['slots'])-set(order)
     if unknown:raise ValueError(f'unmapped source texture slots: {sorted(unknown)}')
+    for row in materials:
+        if row['material_name']!='M_Vatutino_Ground_'+row['slot']:
+            raise ValueError(f'unmapped texture material {row["material_name"]!r}')
+    if hashes[str(a.adapter_json)]!=approval['source_adapter_sha256'] or hashes[str(a.source_master)]!=approval['source_v014_mesh_sha256']:
+        raise ValueError('source adapter/v014 master fingerprint mismatch')
     m,plan,sampler,construction=geometry(data,raw,approval,void)
     protected,gap_receipt=retain_d150(m,np.load(a.d150_reference),policy)
     surf=subset(m,m.level>=0);coverage=gc.measure_coverage(surf,plan,tol=.0022)
