@@ -105,8 +105,12 @@ def _mesh_facts(scene, config):
             continue
         if obj.type == "MESH" and not obj.visible_get():
             raise ValueError(f"Viewport/render visibility mismatch: {obj.name}")
-        if any(m.show_render != m.show_viewport for m in obj.modifiers):
-            raise ValueError(f"Modifier viewport/render mismatch: {obj.name}")
+        for modifier in obj.modifiers:
+            if modifier.show_render != modifier.show_viewport:
+                raise ValueError(f"Modifier viewport/render mismatch: {obj.name}/{modifier.name}")
+            if (modifier.show_render and modifier.type in {"SUBSURF", "MULTIRES"}
+                    and modifier.levels != modifier.render_levels):
+                raise ValueError(f"Subdivision viewport/render mismatch: {obj.name}/{modifier.name}")
         if obj.type not in {"MESH", "CAMERA", "LIGHT", "EMPTY"}:
             raise ValueError(f"Unsupported render object {obj.name}: {obj.type}")
         if obj.type != "MESH":
