@@ -32,3 +32,18 @@ def test_v015_output_alias_refuses_before_any_write(tmp_path,alias):
     assert r.returncode!=0 and ('alias' in r.stderr or 'new output' in r.stderr)
     after={p.name:p.read_bytes() for p in tmp_path.rglob('*') if p.is_file()}
     assert before==after
+
+
+def test_world_face_matching_does_not_round_coordinates_before_matching():
+    import importlib.util
+    import numpy as np
+    from dt_ai.geometry.ground_cake import Mesh
+    spec=importlib.util.spec_from_file_location('producer_world_test',SCRIPT)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    old=np.array([(0,0,.00001499999),(4,0,0),(0,4,0)])
+    current=old.copy();current[0,2]=.000015
+    m=Mesh(current,np.array([(0,1,2)]),['TileLight'],np.array([0]),np.zeros((1,3,2)),4.)
+    reference={'verts':old,'faces':np.array([(0,1,2)])}
+    assert module.match_reference_faces(m,reference,[0])=={0:0}
+    reference['verts']=old+10
+    with pytest.raises(ValueError,match='unmapped'):module.match_reference_faces(m,reference,[0])
