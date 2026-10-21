@@ -94,6 +94,56 @@ def test_partial_topology_evidence(field, value):
         evaluate(case, data)
 
 
+@pytest.mark.parametrize("bounds", [
+    pytest.param([[1.2, 1, 120], [-0.8, -1, 122]], id="inverted"),
+    pytest.param([[0, 0, 120], [0, 0, 122]], id="collapsed"),
+    pytest.param([[-1e308, -1e308, 120], [1e308, 1e308, 122]], id="span-overflow"),
+    pytest.param(None, id="absent"),
+    pytest.param([], id="empty"),
+    pytest.param([[-1, -1, 120]], id="one-corner"),
+    pytest.param([[-1, -1], [1, 1]], id="short-vectors"),
+    pytest.param([[-1, -1, 120, 0], [1, 1, 122, 0]], id="long-vectors"),
+    pytest.param(["bad", [1, 1, 122]], id="non-vector"),
+    pytest.param([[False, -1, 120], [1, 1, 122]], id="bool"),
+    pytest.param([["-1", -1, 120], [1, 1, 122]], id="string"),
+    pytest.param([[-1, -1, 123], [1, 1, 122]], id="inverted-z"),
+    pytest.param([[0, -1, 120], [0, 1, 122]], id="collapsed-x"),
+    pytest.param([[-1, 0, 120], [1, 0, 122]], id="collapsed-y"),
+    pytest.param([[9e307, -1, 120], [1e308, 1, 122]], id="centre-overflow"),
+    pytest.param([[1e-310, -1, 120], [2e-310, 1, 122]], id="ratio-overflow"),
+    pytest.param([[1e-307, -1, 120], [2e-307, 1, 122]], id="percent-overflow"),
+    pytest.param([[-1, -1, 120], [float("nan"), 1, 122]], id="nan"),
+    pytest.param([[-1, -1, 120], [float("inf"), 1, 122]], id="infinity"),
+    pytest.param([[-1, -1, 120], [10**400, 1, 122]], id="huge-integer"),
+])
+def test_invalid_pivot_bounds(bounds):
+    from tools.sintez_parity import evaluate, payload, validate_data
+    case = next(c for c in fixtures() if c["id"] == "hp_pivot-fail")
+    data = payload(case)
+    data["readback"]["meshes"][0]["bounds_m"] = bounds
+    if bounds and bounds[0] in ([1e-310, -1, 120], [1e-307, -1, 120]):
+        data["readback"]["meshes"][0]["location"][0] = 1
+    for check in (validate_data, lambda data: evaluate(case, data)):
+        with pytest.raises(ValueError, match="bounds|non-finite evidence"):
+            check(data)
+
+
+@pytest.mark.parametrize("variant", ["pass", "fail"])
+def test_pivot_bounds_controls_and_reset(variant):
+    from tools.sintez_parity import evaluate, payload
+    case = next(c for c in fixtures() if c["id"] == f"hp_pivot-{variant}")
+    data = payload(case)
+    expected = evaluate(case, data)
+    assert expected["status"] == variant
+    original = data["readback"]["meshes"][0]["bounds_m"]
+    for _ in range(3):
+        data["readback"]["meshes"][0]["bounds_m"] = [[0, 0, 120], [0, 0, 122]]
+        with pytest.raises(ValueError, match="bounds"):
+            evaluate(case, data)
+        data["readback"]["meshes"][0]["bounds_m"] = original
+        assert evaluate(case, data) == expected
+
+
 def test_unknown_fixture():
     from tools.sintez_parity import payload
     with pytest.raises(ValueError,match="fixture"):
