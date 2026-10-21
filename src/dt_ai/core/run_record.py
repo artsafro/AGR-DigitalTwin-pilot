@@ -13,6 +13,7 @@ from pathlib import Path
 import re
 import subprocess
 import tempfile
+import time
 
 from dt_ai.core.io import digest, json_bytes, read_json
 
@@ -149,6 +150,9 @@ class RunRecord:
 
         A failed stage retries in a fresh attempt. Existing output files are never
         overwritten on a retry. Callers must choose new outputs for that attempt.
+        A running record also stores ``declared_outputs`` (the intended output paths)
+        and ``started_at`` (spawn timestamp) so a later inspection can classify a
+        dead worker by its liveness and the freshness of its declared outputs.
         Windows timeout terminates only the tree rooted at the spawned child PID.
         POSIX timeout kills the direct child; detached helpers are unsupported.
         """
@@ -182,6 +186,8 @@ class RunRecord:
             record = {"status": "running", "signature": signature,
                       "input_fingerprint": fingerprint, "argv": argv,
                       "cwd": cwd, "outputs": {},
+                      "declared_outputs": dict(outputs),
+                      "started_at": time.time(),
                       "stdout": str(log_dir / "stdout.log"), "stderr": str(log_dir / "stderr.log")}
             attempt["stages"][stage] = record
             atomic_json(self.path, ledger)
