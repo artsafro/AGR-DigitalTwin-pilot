@@ -31,10 +31,79 @@ class RunStopped(RuntimeError):
     pass
 
 
+class StageUnresolved(RuntimeError):
+    """A stage is still 'running' and its pid is dead or unknown."""
+
+
+class StageStillRunning(RuntimeError):
+    """A stage is still 'running' and its pid is live."""
+
+
 def _name(value):
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", value):
         raise ValueError(f"Unsafe identifier: {value}")
     return value
+
+
+def _pid_alive(pid):
+    """Return whether ``pid`` names a live process.
+
+    On POSIX, ``os.kill(pid, 0)`` probes without delivering a signal.
+    ``ProcessLookupError`` means the pid is gone. ``PermissionError`` and any
+    other ``OSError`` count as alive so an uncertain probe never dispatches
+    the stage twice.
+
+    On Windows ``os.kill(pid, 0)`` is not used: a nonexistent pid raises
+    ``OSError`` with ``winerror`` 87, which is not ``ProcessLookupError``.
+    The Windows probe opens the process and reads its exit code.
+
+    The ledger stores only the int pid. After the original process exits the
+    kernel may reuse that pid, so a reused pid can look alive (known limitation).
+    """
+    if isinstance(pid, bool) or not isinstance(pid, int):
+        return False
+    if os.name == "nt":
+        return _windows_pid_still_active(pid)
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except OSError:
+        return True
+    return True
+
+
+def _windows_pid_still_active(pid):
+    """True when ``pid`` still has an active Windows process.
+
+    ``OpenProcess`` failure ``winerror`` 87 (ERROR_INVALID_PARAMETER) means
+    the pid does not exist. Any other ``OSError`` (for example access denied)
+    fails closed as alive. A successful open is alive only while
+    ``GetExitCodeProcess`` returns ``STILL_ACTIVE``.
+
+    The ledger stores only the int pid. After the original process exits the
+    kernel may reuse that pid, so a reused pid can look alive (known limitation).
+    """
+    import _winapi
+
+    # PROCESS_QUERY_LIMITED_INFORMATION. winerror 87: pid does not exist.
+    try:
+        handle = _winapi.OpenProcess(0x1000, False, pid)
+    except OSError as error:
+        return getattr(error, "winerror", None) != 87
+    try:
+        return _winapi.GetExitCodeProcess(handle) == _winapi.STILL_ACTIVE
+    except OSError:
+        return True
+    finally:
+        _winapi.CloseHandle(handle)
+
+
+def _release_matches(ledger, stage, attempt_number):
+    for row in ledger.get("releases") or ():
+        if isinstance(row, dict) and row.get("stage") == stage and row.get("attempt") == attempt_number:
+            return True
+    return False
 
 
 def file_evidence(paths):
@@ -171,6 +240,7 @@ class RunRecord:
             cached = self._matching(ledger, stage, signature)
             if cached:
                 return cached
+            self._refuse_unreleased_running(ledger, stage)
             if any(Path(path).exists() for path in outputs.values()):
                 raise EvidenceMismatch("Unverified or changed-input output exists; use fresh output paths")
             if not ledger["attempts"] or stage in ledger["attempts"][-1]["stages"]:
@@ -241,6 +311,50 @@ class RunRecord:
                     ledger.update(stopped=True, stop_reason=ledger.get("stop_reason", record["reason"]))
             atomic_json(self.path, ledger)
             return record
+
+    def _refuse_unreleased_running(self, ledger, stage):
+        """Block a second dispatch while the latest record for stage is running.
+
+        A release row for this stage and attempt lets the caller open attempt N+1.
+        This path writes nothing and spawns nothing.
+        """
+        for attempt in reversed(ledger["attempts"]):
+            record = attempt["stages"].get(stage)
+            if record is None:
+                continue
+            if record.get("status") != "running":
+                return
+            if _release_matches(ledger, stage, attempt["number"]):
+                return
+            pid = record.get("spawned_pid")
+            if _pid_alive(pid):
+                raise StageStillRunning(
+                    f"Stage {stage} is still running in attempt {attempt['number']} (pid {pid})")
+            raise StageUnresolved(
+                f"Stage {stage} is unresolved in attempt {attempt['number']} (pid {pid})")
+
+    def release_stage(self, stage, *, reason):
+        """Record a release so a running stage may be retried.
+
+        The running row is left unchanged. Raises when no running row exists.
+        """
+        _name(stage)
+        with resource_lock(self.directory, str(self.directory)):
+            ledger = self.read()
+            found = None
+            for attempt in reversed(ledger["attempts"]):
+                record = attempt["stages"].get(stage)
+                if record and record.get("status") == "running":
+                    found = attempt
+                    break
+            if found is None:
+                raise RuntimeError(f"No running record to release for stage {stage}")
+            ledger.setdefault("releases", []).append({
+                "stage": stage,
+                "attempt": found["number"],
+                "reason": reason,
+            })
+            atomic_json(self.path, ledger)
 
     def verify_stage(self, stage, verifier, *, expected_signature=None):
         """Read saved files and record a scoped verifier result, never passed=true."""

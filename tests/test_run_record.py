@@ -3,12 +3,15 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import time
 
 import pytest
 
 from dt_ai.core import run_record as run_record_module
+from dt_ai.core.io import json_bytes, write_json
 from dt_ai.core.run_record import (
-    EvidenceMismatch, OwnershipConflict, RunRecord, RunStopped, resource_lock,
+    EvidenceMismatch, OwnershipConflict, RunRecord, RunStopped, StageStillRunning,
+    StageUnresolved, resource_lock,
 )
 
 
@@ -18,6 +21,55 @@ def fixture_run(tmp_path):
     inputs = {"source": source}
     run = RunRecord.create(tmp_path / "runs", "fixture", inputs, {"tool": "fixture-v1"})
     return run, inputs
+
+
+def plant_running(run, stage, pid=None, *, include_pid=True, releases=None):
+    """Crash leftover: a running stage row and no outputs on disk."""
+    ledger = run.read()
+    attempt_dir = run.directory / "attempt-001"
+    attempt_dir.mkdir(exist_ok=True)
+    record = {
+        "status": "running",
+        "signature": "planted-running",
+        "argv": ["planted"],
+        "cwd": str(run.directory),
+        "outputs": {},
+    }
+    if include_pid:
+        record["spawned_pid"] = pid
+    ledger["attempts"].append({
+        "number": 1,
+        "directory": str(attempt_dir),
+        "stages": {stage: record},
+    })
+    if releases is not None:
+        ledger["releases"] = releases
+    write_json(run.path, ledger)
+
+
+def exited_child():
+    """Exited process. Keep the Popen: Windows reuses the pid after the last handle closes."""
+    child = subprocess.Popen([sys.executable, "-c", "pass"])
+    child.wait()
+    assert child.returncode is not None
+    return child
+
+
+def fully_dead_pid(pid_file):
+    """Pid with no open process handle, as after a crashed parent.
+
+    A helper starts ``python -c pass``, writes that pid, and exits. Its exit
+    closes the only handle. The sleep lets the OS reap the grandchild.
+    """
+    script = (
+        "import subprocess, sys\n"
+        "from pathlib import Path\n"
+        f"Path({str(pid_file)!r}).write_text(str("
+        "subprocess.Popen([sys.executable, '-c', 'pass']).pid))\n"
+    )
+    subprocess.run([sys.executable, "-c", script], check=True)
+    time.sleep(0.5)
+    return int(pid_file.read_text())
 
 
 def writer(output, counter):
@@ -260,3 +312,110 @@ def test_windows_timeout_cleanup_oserror(tmp_path, monkeypatch):
     assert ledger["stopped"] is True
     assert ledger["stop_reason"] == "timeout_cleanup_failed"
     assert run.read()["attempts"][0]["stages"]["export"]["status"] == "interrupted"
+
+
+def test_running_stage_with_fully_dead_pid_is_unresolved(tmp_path):
+    run, _ = fixture_run(tmp_path)
+    pid = fully_dead_pid(tmp_path / "grandchild.pid")
+    plant_running(run, "X", pid)
+    before = run.path.read_bytes()
+    output, counter = tmp_path / "out", tmp_path / "counter"
+    with pytest.raises(StageUnresolved) as caught:
+        run.run_stage("X", writer(output, counter), {"out": output})
+    assert type(caught.value) is StageUnresolved
+    assert not isinstance(caught.value, StageStillRunning)
+    assert not counter.exists()
+    assert not output.exists()
+    assert run.path.read_bytes() == before
+
+
+def test_running_stage_with_dead_pid_does_not_spawn(tmp_path):
+    run, _ = fixture_run(tmp_path)
+    child = exited_child()
+    plant_running(run, "X", child.pid)
+    before = run.path.read_bytes()
+    output, counter = tmp_path / "out", tmp_path / "counter"
+    with pytest.raises(StageUnresolved):
+        run.run_stage("X", writer(output, counter), {"out": output})
+    assert not counter.exists()
+    assert run.path.read_bytes() == before
+    assert len(run.read()["attempts"]) == 1
+
+
+def test_release_running_stage_keeps_row_and_retries_next_attempt(tmp_path):
+    run, _ = fixture_run(tmp_path)
+    child = exited_child()
+    plant_running(run, "X", child.pid)
+    running_before = json_bytes(run.read()["attempts"][0]["stages"]["X"])
+    run.release_stage("X", reason="crash")
+    ledger = run.read()
+    assert json_bytes(ledger["attempts"][0]["stages"]["X"]) == running_before
+    assert ledger["releases"] == [{"stage": "X", "attempt": 1, "reason": "crash"}]
+    output, counter = tmp_path / "out", tmp_path / "counter"
+    record = run.run_stage("X", writer(output, counter), {"out": output})
+    assert record["status"] == "produced"
+    assert len(run.read()["attempts"]) == 2
+    assert json_bytes(run.read()["attempts"][0]["stages"]["X"]) == running_before
+    assert run.read()["attempts"][1]["stages"]["X"]["status"] == "produced"
+    assert counter.read_text() == "1"
+
+
+def test_running_stage_with_live_pid_raises_distinct_error(tmp_path):
+    run, _ = fixture_run(tmp_path)
+    child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
+    try:
+        plant_running(run, "X", child.pid)
+        before = run.path.read_bytes()
+        output, counter = tmp_path / "out", tmp_path / "counter"
+        with pytest.raises(StageStillRunning) as caught:
+            run.run_stage("X", writer(output, counter), {"out": output})
+        assert type(caught.value) is StageStillRunning
+        assert not isinstance(caught.value, StageUnresolved)
+        assert not counter.exists()
+        assert run.path.read_bytes() == before
+    finally:
+        child.kill()
+        child.wait(timeout=5)
+
+
+def test_running_stage_without_spawned_pid_blocks(tmp_path):
+    run, _ = fixture_run(tmp_path)
+    plant_running(run, "X", include_pid=False)
+    before = run.path.read_bytes()
+    output, counter = tmp_path / "out", tmp_path / "counter"
+    with pytest.raises(StageUnresolved):
+        run.run_stage("X", writer(output, counter), {"out": output})
+    assert not counter.exists()
+    assert run.path.read_bytes() == before
+
+
+def test_release_for_other_stage_or_attempt_does_not_unblock(tmp_path):
+    run, _ = fixture_run(tmp_path)
+    child = exited_child()
+    plant_running(run, "X", child.pid, releases=[
+        {"stage": "Y", "attempt": 1, "reason": "other-stage"},
+        {"stage": "X", "attempt": 2, "reason": "other-attempt"},
+    ])
+    before = run.path.read_bytes()
+    output, counter = tmp_path / "out", tmp_path / "counter"
+    with pytest.raises(StageUnresolved):
+        run.run_stage("X", writer(output, counter), {"out": output})
+    assert not counter.exists()
+    assert run.path.read_bytes() == before
+
+
+def test_release_stage_without_running_record_raises(tmp_path):
+    run, _ = fixture_run(tmp_path)
+    before = run.path.read_bytes()
+    with pytest.raises(RuntimeError, match="No running record"):
+        run.release_stage("X", reason="crash")
+    assert run.path.read_bytes() == before
+    assert "releases" not in run.read()
+
+
+def test_release_stage_rejects_unsafe_name(tmp_path):
+    run, _ = fixture_run(tmp_path)
+    before = run.path.read_bytes()
+    with pytest.raises(ValueError, match="Unsafe identifier"):
+        run.release_stage("not a stage", reason="crash")
+    assert run.path.read_bytes() == before
