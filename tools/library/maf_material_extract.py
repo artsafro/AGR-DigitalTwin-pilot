@@ -32,6 +32,17 @@ def _hex8(rgb):
     )
 
 
+def _clear_scene():
+    for ob in list(bpy.data.objects):
+        bpy.data.objects.remove(ob, do_unlink=True)
+    for me in list(bpy.data.meshes):
+        bpy.data.meshes.remove(me, do_unlink=True)
+    for m in list(bpy.data.materials):
+        bpy.data.materials.remove(m, do_unlink=True)
+    for im in list(bpy.data.images):
+        bpy.data.images.remove(im, do_unlink=True)
+
+
 def material_info(mat) -> dict:
     info: dict = {"name": mat.name, "base_color": None, "hex": None, "textures": []}
     if mat.use_nodes and mat.node_tree is not None:
@@ -67,14 +78,15 @@ def main() -> int:
 
     rows = []
     for path in sorted(fbx_dir.glob("*.fbx")):
-        bpy.ops.wm.read_factory_settings(use_empty=True)
         row = {"fbx": path.name}
         try:
             bpy.ops.import_scene.fbx(filepath=str(path))
             row["materials"] = [material_info(m) for m in bpy.data.materials]
         except Exception as exc:  # noqa: BLE001 - report, never crash the sweep
             row["error"] = str(exc)
+        _clear_scene()
         rows.append(row)
+        print("AGR_MAT_EXTRACT_FILE", path.name, len(row.get("materials", [])), flush=True)
 
     result = {"blender": bpy.app.version_string, "fbx_dir": str(fbx_dir), "files": rows}
     out_json.parent.mkdir(parents=True, exist_ok=True)
