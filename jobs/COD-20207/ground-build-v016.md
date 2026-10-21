@@ -174,6 +174,29 @@ previous publications remain. Independent FINAL-path Max reload: 502 geometry
 nodes, 2 camera-related nodes, metre units, all 7 bitmap paths exist. Source
 FBX/live user document untouched; review camera is not exported into delivery.
 
+## Additional UCX parameter probes (diagnostic, NOT selected)
+
+The six planar corridors were not silently accepted. A zero-covered-corridor
+assertion on v016 returned exit 1 (`tmp/ucx-corridor-red.log`). The existing
+shared builder was then exercised WITHOUT code or tolerance changes:
+
+- v017 `gap=0.0025`: rejected with `UcxBuildError: gap 0.0025 m outside the
+  build band 3-6 mm (inside [D098] 2 mm - 1 cm)`. Initial error-report write also
+  found its missing collision parent; creating that new output directory exposed
+  the original error. Both logs retained. No collision FBX was exported.
+- v018 `gap=0.003`: build/export/readback/audit exit 0; 542 hulls / 6304 tris,
+  no overlap/touch/below-band pairs, 1611 in-band / 1244 wide candidates,
+  sampled forward max still 0.046 m. The independent planar probe found 993
+  another-piece / 194 within-5.1-mm / 56 source-void / **1 covered corridor**
+  (350/371, pair distance 54.672795 mm, max-to-any-hull 5.221607 mm).
+
+This reduces but does not establish the adjacency contract. It is NOT a fix or
+reason to relax the classifier. v018 is an unselected diagnostic under its own
+new path; final review remains v016 using Vatutino's default gap=0.004. No UCX
+algorithm/threshold/source changed. A direct-neighbour review, not another guessed
+parameter, is needed to establish whether these planar junction witnesses are
+actual 3D spacing defects. Testing exposes this limitation; no generality claim.
+
 ## Hashes
 
 | Exact path | SHA-256 |
