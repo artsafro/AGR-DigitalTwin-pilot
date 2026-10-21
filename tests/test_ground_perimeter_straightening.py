@@ -1,4 +1,4 @@
-"""Synthetic small-jog perimeter witnesses; original terrain must stay bounded."""
+"""Synthetic bounded perimeter-weld witnesses, plus the unresolved real acute wedge."""
 import numpy as np
 import pytest
 from shapely.geometry import Polygon,MultiPolygon
@@ -52,3 +52,42 @@ def test_nondefective_short_corner_is_not_a_weld_candidate():
     fixed=gc.weld_base_boundary(m)
     assert fixed.report['boundary_weld']['groups']==[]
     assert fixed.report['boundary_weld']['max_displacement_m']==0
+
+
+def simple_base():
+    v=np.array([[0,0,100],[2,0,100],[2,2,100],[0,2,100]],float)
+    return gc.Mesh(v,np.array([[0,1,2],[0,2,3]]),['TileGrey']*2,np.zeros(2,int),np.zeros((2,3,2)),4.)
+
+
+@pytest.mark.parametrize('field,value',[('weld_m',0),('weld_m',.0042),('weld_m',float('nan')),('weld_m',float('inf')),('weld_m',True),('displacement_limit_m',0),('displacement_limit_m',.0022)])
+def test_boundary_weld_rejects_invalid_limits_without_writes(field,value):
+    m=simple_base();before=m.verts.copy()
+    with pytest.raises(ValueError):gc.weld_base_boundary(m,**{field:value})
+    assert np.array_equal(m.verts,before)
+
+
+@pytest.mark.parametrize('kind',['empty','partial','nan','inf','detail_level','no_base','bad_index'])
+def test_boundary_weld_refuses_unsupported_meshes(kind):
+    m=simple_base()
+    if kind=='empty':m=gc.Mesh(np.empty((0,3)),np.empty((0,3),int),[],np.empty(0,int),np.empty((0,3,2)),4.)
+    if kind=='partial':m.level=np.empty(0,int)
+    if kind in ('nan','inf'):m.verts[0,0]=float(kind)
+    if kind=='detail_level':m.level[:]=-2
+    if kind=='no_base':m.level[:]=1
+    if kind=='bad_index':m.faces[0,0]=4
+    with pytest.raises(ValueError):gc.weld_base_boundary(m)
+
+
+def test_real_acute_notch_is_still_a_failure_not_a_hidden_pass():
+    v=np.array([[-7691.007,-15248.688,152.017682],[-7691.2305,-15248.001,151.996786],[-7691.2305,-15248.001,150.996786],[-7691.007,-15248.688,151.017682],[-7691.016,-15248.688,152.017123],[-7691.016,-15248.688,151.017123]])
+    r=part_report('remaining_real_notch',PolyMesh(v,((0,1,2,3),(1,4,5,2))),XviewTolerance())
+    assert not r.vertex_pairs
+    assert len(r.face_pairs)==1 and r.face_pairs[0][2]=='area'
+    assert r.face_pairs[0][3]==0
+    assert not r.xview_faces, 'native-contact parity and stricter area gate are distinct'
+
+
+def test_empty_boundary_slot_is_named_and_refused():
+    m=simple_base();m.slot[0]=''
+    with pytest.raises(ValueError,match='slot'):
+        gc.weld_base_boundary(m)

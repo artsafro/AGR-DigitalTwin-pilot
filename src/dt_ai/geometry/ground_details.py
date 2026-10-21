@@ -221,7 +221,7 @@ def _stairs_solid(outline, cells, heights, sampler):
     return gc.Mesh(np.array(v),f,['Stairs']*len(f),np.full(len(f),-2),np.zeros((len(f),3,2)),4.)
 
 
-def build_details(elements, boundary, sampler, separate_curbs=False):
+def build_details(elements, boundary, sampler, separate_curbs=False, stair_clearance_m=0.):
     """Return ``(mesh, report, joints)``.
 
     ``report`` holds one disposition per adapter entity (including group INSERTs). With
@@ -237,6 +237,8 @@ def build_details(elements, boundary, sampler, separate_curbs=False):
     through mixed-section junctions and end the shorter one with a 6 mm joint.
     The caller must obtain project approval; default/legacy builds never enable it.
     """
+    if isinstance(stair_clearance_m, bool) or not isinstance(stair_clearance_m, (int, float)) or not math.isfinite(stair_clearance_m) or not 0 <= stair_clearance_m <= .02:
+        raise ValueError('stair_clearance_m must be finite in [0, 0.02] m')
     if boundary.is_empty or not boundary.is_valid:
         raise ValueError('valid nonempty boundary required')
     meshes=[];report=[]; curbs={};stair_groups={}
@@ -310,9 +312,20 @@ def build_details(elements, boundary, sampler, separate_curbs=False):
     roles = sorted(curbs, key=lambda r: -SECTIONS[r][1]) if separate_curbs else curbs
     joints = []
     stair_union = unary_union(stair_footprints)
+    if stair_clearance_m:
+        # Analytic mitred cuts avoid sub-mm round-buffer segments collapsing
+        # under the regulatory weld and bridging back across a stair corner.
+        stair_union = stair_union.buffer(stair_clearance_m, join_style='mitre')
     for role in roles:
         width,height,slot=SECTIONS[role]
         footprint=unary_union([a for a,_ in curbs[role]]).difference(stair_union)
+        if stair_clearance_m:
+            for area, row in curbs[role]:
+                retained = area.difference(stair_union).area
+                row.update(stair_clearance_m=stair_clearance_m,
+                           stair_trim_m2=max(0., area.area-retained), retained_m2=retained)
+                if retained <= 1e-9:
+                    row.update(status='trimmed', reason='occluded by stair footprint and explicit clearance')
         if separate_curbs:
             # Taller section continues through the joint; shorter section ends with
             # a method-C-sized 6 mm clearance, not a coplanar duplicate bottom.

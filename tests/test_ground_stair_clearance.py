@@ -10,7 +10,7 @@ from dt_ai.ops.inv_quads import PolyMesh
 from dt_ai.ops.inv_xview import part_report,XviewTolerance
 
 
-@pytest.mark.parametrize('angle,offset',[(0,0),(27,0),(0,-7600),(27,-7600)])
+@pytest.mark.parametrize('angle,offset',[(0,0),(45,0),(0,-7600),(45,-7600)])
 def test_opt_in_stair_clearance_is_closed_and_xview_clean(angle,offset):
     def geom(cs):
         return mapping(translate(rotate(LineString(cs),angle,origin=(0,0)),offset,offset))
@@ -31,3 +31,9 @@ def test_opt_in_stair_clearance_is_closed_and_xview_clean(angle,offset):
     q=pair_triangles(m)
     r=part_report('stairs_clearance',PolyMesh(q.verts,q.faces),XviewTolerance())
     assert not r.vertex_pairs and not r.face_pairs
+
+
+@pytest.mark.parametrize('value',[-.001,.020001,float('nan'),float('inf'),True,None])
+def test_bad_clearance_fails_before_source_processing(value):
+    with pytest.raises(ValueError,match='stair_clearance_m'):
+        gd.build_details([],box(0,0,1,1),None,stair_clearance_m=value)

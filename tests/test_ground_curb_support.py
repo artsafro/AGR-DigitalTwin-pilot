@@ -54,3 +54,39 @@ def test_real_world_overlay_does_not_invent_a_support_hole():
     fitted=gd.fit_curb_bottom(curb,support)
     assert np.array_equal(fitted.faces,curb.faces)
     assert fitted.report['curb_support_fit']['measured_trim_m']<.01
+
+
+@pytest.mark.parametrize('field,value',[('gap_m',0),('gap_m',.005),('gap_m',float('nan')),('gap_m',float('inf')),('gap_m',True),('max_trim_m',0),('max_trim_m',.0100001),('max_trim_m',float('nan'))])
+def test_invalid_fit_limits_fail_without_mutating_inputs(field,value):
+    curb,support=fixture()
+    before=curb.verts.copy();sf=support.faces.copy()
+    with pytest.raises(ValueError):gd.fit_curb_bottom(curb,support,**{field:value})
+    assert np.array_equal(curb.verts,before) and np.array_equal(support.faces,sf)
+
+
+@pytest.mark.parametrize('kind',['empty','partial','nan','inf','unknown_slot','bad_index','incomplete_support'])
+def test_invalid_fit_geometry_fails_without_mutating_curb(kind):
+    curb,support=fixture();before=curb.verts.copy()
+    if kind=='empty':support=gd._empty()
+    if kind=='partial':support.level=np.empty(0,int)
+    if kind in ('nan','inf'):support.verts[0,0]=float(kind)
+    if kind=='unknown_slot':curb.slot[0]='UnmappedCurb'
+    if kind=='bad_index':support.faces[0,0]=len(support.verts)
+    if kind=='incomplete_support':support.verts[:,0]+=20
+    with pytest.raises(ValueError):gd.fit_curb_bottom(curb,support)
+    assert np.array_equal(curb.verts,before)
+
+
+def test_reaching_trim_limit_is_refused_not_accepted():
+    curb,support=fixture()
+    actual=gd.fit_curb_bottom(curb,support).report['curb_support_fit']['measured_trim_m']
+    before=curb.verts.copy()
+    with pytest.raises(ValueError,match='reaches'):
+        gd.fit_curb_bottom(curb,support,max_trim_m=actual)
+    assert np.array_equal(curb.verts,before)
+
+
+def test_empty_support_slot_is_named_and_refused():
+    curb,support=fixture();support.slot[0]=''
+    with pytest.raises(ValueError,match='slot'):
+        gd.fit_curb_bottom(curb,support)
