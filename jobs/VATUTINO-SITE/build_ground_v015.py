@@ -12,6 +12,7 @@ import importlib.util
 import json
 from pathlib import Path
 import sys
+import subprocess
 import numpy as np
 import shapely
 from shapely.geometry import Polygon, MultiPoint, shape
@@ -25,6 +26,17 @@ ROOT = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location('ground_v014_builder', ROOT/'build_ground.py')
 legacy = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(legacy)
+
+
+def git_head():
+    return subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT.parents[1],text=True).strip()
+
+
+def assert_unchanged(payload, initial_head):
+    if any(p.read_bytes()!=v for p,v in payload.items()):
+        raise ValueError('inputs changed during build; no output written')
+    if git_head()!=initial_head:
+        raise ValueError('HEAD changed during build; no output written')
 
 
 def load_json(data):
@@ -266,6 +278,8 @@ def main(argv=None):
     a=ap.parse_args(argv)
     paths=[a.adapter_json,a.source_master,a.d150_reference,ROOT/'ground-notch-approval-v015.json',ROOT/'ground-gap-exceptions.json',ROOT/'ground-source-void-v015.json',ROOT/'ground-material-ids-v015.json']
     if a.pair_hints is not None:paths.append(a.pair_hints)
+    paths.extend([Path(__file__),Path(gc.__file__),Path(gd.__file__),Path(sys.modules[pair_triangles.__module__].__file__),Path(legacy.__file__)])
+    initial_head=git_head()
     out=a.out.resolve()
     if out.exists():raise ValueError('new output directory required; refusing alias or stale receipts')
     resolved=[p.resolve() for p in paths]
@@ -299,9 +313,9 @@ def main(argv=None):
         profiles[profile]={'verts':q.verts.tolist(),'faces':[list(map(int,f)) for f in q.faces],'uv':[u.tolist() for u in q.uv],
             'slots':order,'mat':[order.index(s) for s in q.slot],'level':q.level.tolist(),'source_faces':q.source_faces,'cell':4.}
         stats[profile]=r
-    report={'delivery_accepted':False,'native_readback':'not_run','ucx':'not_run','inputs_sha256':hashes,
+    report={'delivery_accepted':False,'native_readback':'not_run','ucx':'not_run','inputs_sha256':hashes,'git_head':initial_head,
         'construction':construction,'D150':gap_receipt,'coverage':coverage,'open_edges':edges,'profiles':stats}
-    if any(p.read_bytes()!=v for p,v in payload.items()):raise ValueError('inputs changed during build; no output written')
+    assert_unchanged(payload,initial_head)
     out.mkdir(parents=True,exist_ok=False)
     for profile,d in profiles.items():
         with (out/f'master-{profile}.json').open('x',encoding='utf-8') as f:json.dump(d,f,default=int,allow_nan=False)
