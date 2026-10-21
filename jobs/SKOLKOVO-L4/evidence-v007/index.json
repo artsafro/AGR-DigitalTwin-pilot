@@ -1,0 +1,71 @@
+{
+  "passed": false,
+  "buildable": false,
+  "gate1": null,
+  "scope": "Partial pre-Gate1 source diagnostics; no generated model or operation receipt",
+  "drive_directory": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v007b",
+  "drive_manifest_sha256": "7082553456251c52606cc11ca36b9f44d11abe1e9ba30b4199d56ab57a203f6a",
+  "artifacts": [
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v007b\\source-diagnostics-v007b.zip",
+      "sha256": "d3ee69b77d025f29e86def9e83e0cfd10b8f701e24553f6ddb3b61cf40219dfd",
+      "bytes": 2542552
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v007b\\primary-mast-topology-question-v007b.png",
+      "sha256": "2e477f05f0204a8071c319fd50db014670af0c773a374aa5de035d2411396117",
+      "bytes": 107344
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v007b\\object-decisions-v007.csv.gz",
+      "sha256": "0da5938663598107a9e6e902b10fd63a24b58ff023f5f830cc031a1d8ec5f744",
+      "bytes": 450087
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v007b\\parts-policy-diagnostic-v007.json",
+      "sha256": "715d0ffc17e1fa469254f33a38913e2c5af411da7a921cf5f088f4b39e3a9f1d",
+      "bytes": 1193759
+    }
+  ],
+  "archive_members_verified": 135,
+  "drive_artifacts_rehashed": 4,
+  "original_inputs_rehashed": 104,
+  "mast_source_buffers_rehashed": 113,
+  "timings": {
+    "mast-profile-feasibility-v007.json": {
+      "seconds": 116.97139740000057,
+      "hours": 0.03249205483333349
+    },
+    "mast-component-feasibility-v007.json": {
+      "seconds": 33.35831949999556,
+      "hours": 0.009266199861109877
+    },
+    "primary-mast-audit-v007.json": {
+      "seconds": 83.77506490000087,
+      "hours": 0.02327085136111135
+    },
+    "primary-mast-witness-v007.json": {
+      "seconds": 16.84883510000509,
+      "hours": 0.004680231972223636
+    },
+    "focused_tests": {
+      "seconds": 15.62,
+      "hours": 0.004338888888888889
+    }
+  },
+  "focused_tests": {
+    "command": "env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run --extra pdf-review pytest -q -p no:cacheprovider tests/qa/test_topology.py tests/test_album_pdf_reader.py tests/test_album_below_line.py tests/parts/test_fbx_reader.py --basetemp=C:/x/t_b205c8e1-resume-v007",
+    "passed": 311,
+    "seconds": 15.62
+  },
+  "full_suite": "not_run: reserved for first complete review head via suite_slot.py",
+  "open_question": "PRIMARY-MAST-TOPOLOGY-QUESTION-v007.md",
+  "production_stages": {
+    "kernel_operations": "not_run: Gate1 absent",
+    "export_readback": "not_run",
+    "visual_user_review": "not_run",
+    "final_SINTEZ": "not_run"
+  },
+  "packaging_seconds": 0.9489322999943397,
+  "packaging_hours": 0.00026359230555398326
+}

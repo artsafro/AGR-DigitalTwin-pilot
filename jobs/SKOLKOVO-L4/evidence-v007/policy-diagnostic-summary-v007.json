@@ -1,0 +1,15 @@
+{
+  "passed": false,
+  "buildable": false,
+  "status": "schema_valid_diagnostic_not_final_parts",
+  "parts": 46,
+  "allocation": 146750,
+  "limit": 150000,
+  "unallocated_reserve": 3250,
+  "gate1": null,
+  "limitations": [
+    "Not measured geometry or feasible-count proof",
+    "Primary mast BODY-J failures unresolved",
+    "Empty joints and provisional face/material mappings deliberately NOT gate1-ready"
+  ]
+}

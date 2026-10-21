@@ -5,7 +5,34 @@ Input copies: `C:/x/l4-skolkovo/`; originals are read-only and were not opened f
 Profiles: both NPM and VPM from one <=150,000-triangle master (D010).
 Base: pilot `48e2a55`; #348 and #351 are closed. No building output is approved.
 
-## Current status — v006 (supersedes historical sections below)
+## Current status — v007
+
+**108-component cleanup permission recorded; primary-mast topology decision needed.**
+`passed=false`, `buildable=false`, no Gate 1/build/export/PR. Current report:
+[RESUME-v007.md](RESUME-v007.md); exact question:
+[PRIMARY-MAST-TOPOLOGY-QUESTION-v007.md](PRIMARY-MAST-TOPOLOGY-QUESTION-v007.md).
+
+The 46-part diagnostic now separates five primary `keep` meshes (55,230 source
+triangles) and 108 permitted `contour_rebuild` components (10,000 allocated).
+Schema-valid allocation 146,750 is NOT measured geometry or final PartsList:
+face/legend/joint reconciliation remains open. Policy regression old v006
+6/10 pass -> v007 10/10; 311 focused topology/reader tests passed in 15.62s.
+
+Read-only source QA exposes BODY-J/V004 conflicts in the five unchanged primary
+meshes: combined defects 1,302/1,307/1,307/1,296/1,292 vs limit100 per mesh.
+Six original strict crossing witnesses plus six clean controls rule out merely
+counting coincident triangles. Repairing the five is not authorized by the answer
+about 108 additional components. No topology threshold was weakened or waived.
+
+Two analytical projected-profile preflights give counts88,708 / 85,212 for the
+108 components, not achieved output or proof that all source-profile methods fail.
+No new 3D model was built. Drive evidence-v007b has source-only sheet, 135-member
+verified ZIP and 4/4 independently rehashed artifacts; original104/104 and source
+mast buffers113/113 unchanged. All diagnostic processes ended; no DCC launched.
+
+Transcript: Hermes task t_b205c8e1, resume after task comment2026-10-21 12:00.
+
+## Historical v006 status — superseded by v007
 
 **Material authority answered; full mast-system membership/cleanup decision needed.**
 `passed=false`, `buildable=false`; no Gate 1, kernel/export or PR.

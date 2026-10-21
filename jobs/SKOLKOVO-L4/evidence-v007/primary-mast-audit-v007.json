@@ -1,0 +1,114 @@
+{
+  "passed": false,
+  "buildable": false,
+  "scope": "Read-only source diagnostics before Gate1, not an operation/build receipt",
+  "source_fbx_sha256": "f2167c8f48537cfaeaeab3bdad6a81ca1822b86029a1da4c473ec643312ac23e",
+  "objects": [
+    {
+      "source_row": 3628,
+      "name": "Молниеприёмник_10,4_м Нержавеющая сталь_10,4м [6631253]",
+      "source_buffer_sha256": "47ed66b387c8c014636e009bb6fa200b8b3c98ab3038c5a647fc2aea0355f6dc",
+      "vertices": 5475,
+      "triangles": 11098,
+      "defects": {
+        "duplicate_vertices": 36,
+        "duplicate_edges": 48,
+        "duplicate_polygons": 64,
+        "self_intersections": 1154,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 1302,
+        "tol_m": 0.002
+      },
+      "rule": "BODY-J/V004: duplicates_and_self_intersections <=100; isolated/zero edges=0",
+      "source_geometry_unchanged": true
+    },
+    {
+      "source_row": 3651,
+      "name": "Молниеприёмник_12,45_м Нержавеющая сталь_12,45м [6640426]",
+      "source_buffer_sha256": "7cd6aa148a66e0a96c25f44050ab3a3e0b0e55be34afe002748e80e44e7c9191",
+      "vertices": 5912,
+      "triangles": 11940,
+      "defects": {
+        "duplicate_vertices": 38,
+        "duplicate_edges": 48,
+        "duplicate_polygons": 64,
+        "self_intersections": 1157,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 1307,
+        "tol_m": 0.002
+      },
+      "rule": "BODY-J/V004: duplicates_and_self_intersections <=100; isolated/zero edges=0",
+      "source_geometry_unchanged": true
+    },
+    {
+      "source_row": 3674,
+      "name": "Молниеприёмник_12,45_м Нержавеющая сталь_12,45м [6640949]",
+      "source_buffer_sha256": "802c0ac3246e274a8934169f26f7ac7ac6184c0a1fd14e9826bd582b378ade07",
+      "vertices": 5912,
+      "triangles": 11940,
+      "defects": {
+        "duplicate_vertices": 38,
+        "duplicate_edges": 48,
+        "duplicate_polygons": 64,
+        "self_intersections": 1157,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 1307,
+        "tol_m": 0.002
+      },
+      "rule": "BODY-J/V004: duplicates_and_self_intersections <=100; isolated/zero edges=0",
+      "source_geometry_unchanged": true
+    },
+    {
+      "source_row": 3697,
+      "name": "Молниеприёмник_10,4_м_вариант_2 Нержавеющая сталь_10,4м [6641475]",
+      "source_buffer_sha256": "4176151fdca424a8a4501ee81709e5fa4123f496e31d0e76ffb24c33b61b8f38",
+      "vertices": 4987,
+      "triangles": 10114,
+      "defects": {
+        "duplicate_vertices": 36,
+        "duplicate_edges": 48,
+        "duplicate_polygons": 58,
+        "self_intersections": 1154,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 1296,
+        "tol_m": 0.002
+      },
+      "rule": "BODY-J/V004: duplicates_and_self_intersections <=100; isolated/zero edges=0",
+      "source_geometry_unchanged": true
+    },
+    {
+      "source_row": 3719,
+      "name": "Молниеприёмник_10_м Нержавеющая сталь_10м [6677027]",
+      "source_buffer_sha256": "eb602dc3d85135c01ac8f530e92b65b16385d63e52a4000633fcda210a222110",
+      "vertices": 4959,
+      "triangles": 10138,
+      "defects": {
+        "duplicate_vertices": 32,
+        "duplicate_edges": 48,
+        "duplicate_polygons": 58,
+        "self_intersections": 1154,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 1292,
+        "tol_m": 0.002
+      },
+      "rule": "BODY-J/V004: duplicates_and_self_intersections <=100; isolated/zero edges=0",
+      "source_geometry_unchanged": true
+    }
+  ],
+  "seconds": 83.77506490000087
+}

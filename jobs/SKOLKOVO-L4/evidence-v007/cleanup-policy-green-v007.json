@@ -1,0 +1,17 @@
+{
+  "scope": "Policy/data regression only: NOT final PartsList, topology pass or user Gate1",
+  "checks": {
+    "source_coverage_32961": true,
+    "unique_source_references_32961": true,
+    "all_mast_system_members_accounted_113": true,
+    "five_primary_keep": true,
+    "five_primary_actual_count_55230": true,
+    "extra108_contour_plan": true,
+    "extra108_allocation_10000": true,
+    "distinct_operation_groups": true,
+    "whole_proposal_allocation_146750_not_measured": true,
+    "no_bogus_budget_drop": true
+  },
+  "passed_checks": 10,
+  "total_checks": 10
+}

@@ -1,0 +1,40 @@
+[
+  {
+    "passed": false,
+    "buildable": false,
+    "gate1": null,
+    "scope": "Analytical contour-prism feasibility only; no output vertices/faces, kernel operation, master or approval",
+    "source_fbx_sha256": "f2167c8f48537cfaeaeab3bdad6a81ca1822b86029a1da4c473ec643312ac23e",
+    "manifest_sha256": "02eb1f80f1fe73bc58735c3a48784cb2bad93f4adba4c11433526e5352182d9b",
+    "objects": 108,
+    "eligible": 5,
+    "source_triangles": 90168,
+    "feasibility_triangles": 88708,
+    "silhouette_limit_m": 0.02,
+    "conservative_region_buffer_m": 0.0199,
+    "seconds": 116.97139740000057,
+    "limitations": [
+      "Three cardinal silhouettes, not arbitrary-angle three-dimensional surface distance",
+      "Projected prism feasibility does not certify topology, joints, materials, quad dominance or other mandatory invariants",
+      "Ineligible objects retain source counts; no object silently dropped",
+      "Triangle count is analytic planned prism count, NOT measured generated geometry"
+    ]
+  },
+  {
+    "passed": false,
+    "buildable": false,
+    "scope": "Projected analytical PCA prism feasibility per connected source component, not output geometry",
+    "source_sha256": "f2167c8f48537cfaeaeab3bdad6a81ca1822b86029a1da4c473ec643312ac23e",
+    "silhouette_limit_m": 0.02,
+    "region_buffer_m": 0.0199,
+    "objects": 108,
+    "feasibility_triangles": 85212,
+    "seconds": 33.35831949999556,
+    "limitations": [
+      "No mesh operation or approval; geometry still source-only",
+      "Three cardinal projection certificates, not arbitrary-angle or 3D surface distance",
+      "Ineligible and costlier replacements retain original source counts",
+      "No claims about other mandatory invariants"
+    ]
+  }
+]
