@@ -73,3 +73,16 @@ def test_distinct_input_spellings_of_one_hardlink_are_rejected_before_parsing(tm
         '--d150-reference',str(reference),'--out',str(out)],capture_output=True,text=True)
     assert r.returncode!=0 and 'alias' in r.stderr
     assert not out.exists() and source.read_text()=='{}' and alias.read_text()=='{}'
+
+
+def test_changed_head_or_input_never_publishes_a_stale_run(tmp_path,monkeypatch):
+    import importlib.util
+    spec=importlib.util.spec_from_file_location('producer_snapshot_test',SCRIPT)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    p=tmp_path/'input';p.write_bytes(b'original');snapshot={p:b'original'}
+    monkeypatch.setattr(module,'git_head',lambda:'head-a',raising=False)
+    module.assert_unchanged(snapshot,'head-a')
+    monkeypatch.setattr(module,'git_head',lambda:'head-b')
+    with pytest.raises(ValueError,match='HEAD changed'):module.assert_unchanged(snapshot,'head-a')
+    monkeypatch.setattr(module,'git_head',lambda:'head-a');p.write_bytes(b'changed')
+    with pytest.raises(ValueError,match='inputs changed'):module.assert_unchanged(snapshot,'head-a')
