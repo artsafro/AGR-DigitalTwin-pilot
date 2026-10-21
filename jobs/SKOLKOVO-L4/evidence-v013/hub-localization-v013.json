@@ -1,0 +1,425 @@
+{
+ "passed": false,
+ "scope": "read-only localization of BODY-J (count_defects tol 0.002 m) on unchanged source mast buffers; no geometry produced",
+ "tool": "twinqa.geometry.topology.count_defects",
+ "scripts": {
+  "breakdown.py": "8e7971e684abe9f27aff68c23d1d72fc36b4288a0defbacea145a1632159abd2",
+  "per_component.py": "ed15c924c04eeccad0476f07fa80a5106d2b031f6a4a605060d473b16e5a7d11",
+  "sub_bodies.py": "edd1b2b131e5549c92a362a77b4253b73a10dc73801588dfccd1128967e5708b",
+  "pairs.py": "d68e5b3fdc523addcf56fd8a86006159e12d54906d14851192b952a991a3ad45"
+ },
+ "masts": [
+  {
+   "source_row": 3628,
+   "source_buffer_sha256": "47ed66b387c8c014636e009bb6fa200b8b3c98ab3038c5a647fc2aea0355f6dc",
+   "whole_mesh": {
+    "duplicate_vertices": 36,
+    "duplicate_edges": 48,
+    "duplicate_polygons": 64,
+    "self_intersections": 1154,
+    "isolated_vertices": 0,
+    "isolated_edges": 0,
+    "isolated_polygons": 0,
+    "zero_length_edges": 0,
+    "duplicates_and_self_intersections": 1302,
+    "tol_m": 0.002
+   },
+   "components": [
+    {
+     "comp": 0,
+     "tris": 448,
+     "bbox_min": [
+      -7.48,
+      64.415,
+      20.24
+     ],
+     "bbox_max": [
+      -7.463,
+      64.432,
+      23.64
+     ],
+     "border_edges": 196,
+     "nonmanifold_edges": 0,
+     "duplicate_vertices": 4,
+     "duplicate_edges": 0,
+     "duplicate_polygons": 0,
+     "self_intersections": 0,
+     "duplicates_and_self_intersections": 4
+    },
+    {
+     "comp": 1,
+     "tris": 1850,
+     "bbox_min": [
+      -7.488,
+      64.407,
+      16.74
+     ],
+     "bbox_max": [
+      -7.454,
+      64.441,
+      20.24
+     ],
+     "border_edges": 42,
+     "nonmanifold_edges": 0,
+     "duplicate_vertices": 0,
+     "duplicate_edges": 0,
+     "duplicate_polygons": 0,
+     "self_intersections": 0,
+     "duplicates_and_self_intersections": 0
+    },
+    {
+     "comp": 2,
+     "tris": 8800,
+     "bbox_min": [
+      -8.883,
+      63.012,
+      11.935
+     ],
+     "bbox_max": [
+      -6.059,
+      65.836,
+      16.74
+     ],
+     "border_edges": 24,
+     "nonmanifold_edges": 88,
+     "duplicate_vertices": 32,
+     "duplicate_edges": 48,
+     "duplicate_polygons": 64,
+     "self_intersections": 1144,
+     "duplicates_and_self_intersections": 1288
+    }
+   ]
+  },
+  {
+   "source_row": 3651,
+   "source_buffer_sha256": "7cd6aa148a66e0a96c25f44050ab3a3e0b0e55be34afe002748e80e44e7c9191",
+   "whole_mesh": {
+    "duplicate_vertices": 38,
+    "duplicate_edges": 48,
+    "duplicate_polygons": 64,
+    "self_intersections": 1157,
+    "isolated_vertices": 0,
+    "isolated_edges": 0,
+    "isolated_polygons": 0,
+    "zero_length_edges": 0,
+    "duplicates_and_self_intersections": 1307,
+    "tol_m": 0.002
+   },
+   "components": [
+    {
+     "comp": 0,
+     "tris": 594,
+     "bbox_min": [
+      0.12,
+      45.125,
+      21.68
+     ],
+     "bbox_max": [
+      0.137,
+      45.142,
+      25.83
+     ],
+     "border_edges": 194,
+     "nonmanifold_edges": 0,
+     "duplicate_vertices": 6,
+     "duplicate_edges": 0,
+     "duplicate_polygons": 0,
+     "self_intersections": 0,
+     "duplicates_and_self_intersections": 6
+    },
+    {
+     "comp": 1,
+     "tris": 2242,
+     "bbox_min": [
+      0.112,
+      45.117,
+      17.53
+     ],
+     "bbox_max": [
+      0.146,
+      45.151,
+      21.68
+     ],
+     "border_edges": 46,
+     "nonmanifold_edges": 0,
+     "duplicate_vertices": 0,
+     "duplicate_edges": 0,
+     "duplicate_polygons": 0,
+     "self_intersections": 0,
+     "duplicates_and_self_intersections": 0
+    },
+    {
+     "comp": 2,
+     "tris": 9104,
+     "bbox_min": [
+      -1.283,
+      43.722,
+      12.075
+     ],
+     "bbox_max": [
+      1.541,
+      46.546,
+      17.53
+     ],
+     "border_edges": 72,
+     "nonmanifold_edges": 88,
+     "duplicate_vertices": 32,
+     "duplicate_edges": 48,
+     "duplicate_polygons": 64,
+     "self_intersections": 1144,
+     "duplicates_and_self_intersections": 1288
+    }
+   ]
+  },
+  {
+   "source_row": 3674,
+   "source_buffer_sha256": "802c0ac3246e274a8934169f26f7ac7ac6184c0a1fd14e9826bd582b378ade07",
+   "whole_mesh": {
+    "duplicate_vertices": 38,
+    "duplicate_edges": 48,
+    "duplicate_polygons": 64,
+    "self_intersections": 1157,
+    "isolated_vertices": 0,
+    "isolated_edges": 0,
+    "isolated_polygons": 0,
+    "zero_length_edges": 0,
+    "duplicates_and_self_intersections": 1307,
+    "tol_m": 0.002
+   },
+   "components": [
+    {
+     "comp": 0,
+     "tris": 594,
+     "bbox_min": [
+      -38.57,
+      45.125,
+      21.68
+     ],
+     "bbox_max": [
+      -38.553,
+      45.142,
+      25.83
+     ],
+     "border_edges": 194,
+     "nonmanifold_edges": 0,
+     "duplicate_vertices": 6,
+     "duplicate_edges": 0,
+     "duplicate_polygons": 0,
+     "self_intersections": 0,
+     "duplicates_and_self_intersections": 6
+    },
+    {
+     "comp": 1,
+     "tris": 2242,
+     "bbox_min": [
+      -38.578,
+      45.117,
+      17.53
+     ],
+     "bbox_max": [
+      -38.544,
+      45.151,
+      21.68
+     ],
+     "border_edges": 46,
+     "nonmanifold_edges": 0,
+     "duplicate_vertices": 0,
+     "duplicate_edges": 0,
+     "duplicate_polygons": 0,
+     "self_intersections": 0,
+     "duplicates_and_self_intersections": 0
+    },
+    {
+     "comp": 2,
+     "tris": 9104,
+     "bbox_min": [
+      -39.973,
+      43.722,
+      12.075
+     ],
+     "bbox_max": [
+      -37.149,
+      46.546,
+      17.53
+     ],
+     "border_edges": 72,
+     "nonmanifold_edges": 88,
+     "duplicate_vertices": 32,
+     "duplicate_edges": 48,
+     "duplicate_polygons": 64,
+     "self_intersections": 1144,
+     "duplicates_and_self_intersections": 1288
+    }
+   ]
+  },
+  {
+   "source_row": 3697,
+   "source_buffer_sha256": "4176151fdca424a8a4501ee81709e5fa4123f496e31d0e76ffb24c33b61b8f38",
+   "whole_mesh": {
+    "duplicate_vertices": 36,
+    "duplicate_edges": 48,
+    "duplicate_polygons": 58,
+    "self_intersections": 1154,
+    "isolated_vertices": 0,
+    "isolated_edges": 0,
+    "isolated_polygons": 0,
+    "zero_length_edges": 0,
+    "duplicates_and_self_intersections": 1296,
+    "tol_m": 0.002
+   },
+   "components": [
+    {
+     "comp": 0,
+     "tris": 448,
+     "bbox_min": [
+      -31.875,
+      63.915,
+      23.565
+     ],
+     "bbox_max": [
+      -31.858,
+      63.932,
+      26.965
+     ],
+     "border_edges": 196,
+     "nonmanifold_edges": 0,
+     "duplicate_vertices": 4,
+     "duplicate_edges": 0,
+     "duplicate_polygons": 0,
+     "self_intersections": 0,
+     "duplicates_and_self_intersections": 4
+    },
+    {
+     "comp": 1,
+     "tris": 1850,
+     "bbox_min": [
+      -31.883,
+      63.907,
+      20.065
+     ],
+     "bbox_max": [
+      -31.849,
+      63.941,
+      23.565
+     ],
+     "border_edges": 42,
+     "nonmanifold_edges": 0,
+     "duplicate_vertices": 0,
+     "duplicate_edges": 0,
+     "duplicate_polygons": 0,
+     "self_intersections": 0,
+     "duplicates_and_self_intersections": 0
+    },
+    {
+     "comp": 2,
+     "tris": 7816,
+     "bbox_min": [
+      -32.978,
+      62.812,
+      15.26
+     ],
+     "bbox_max": [
+      -30.754,
+      65.036,
+      20.065
+     ],
+     "border_edges": 48,
+     "nonmanifold_edges": 97,
+     "duplicate_vertices": 32,
+     "duplicate_edges": 48,
+     "duplicate_polygons": 58,
+     "self_intersections": 1144,
+     "duplicates_and_self_intersections": 1282
+    }
+   ]
+  },
+  {
+   "source_row": 3719,
+   "source_buffer_sha256": "eb602dc3d85135c01ac8f530e92b65b16385d63e52a4000633fcda210a222110",
+   "whole_mesh": {
+    "duplicate_vertices": 32,
+    "duplicate_edges": 48,
+    "duplicate_polygons": 58,
+    "self_intersections": 1154,
+    "isolated_vertices": 0,
+    "isolated_edges": 0,
+    "isolated_polygons": 0,
+    "zero_length_edges": 0,
+    "duplicates_and_self_intersections": 1292,
+    "tol_m": 0.002
+   },
+   "components": [
+    {
+     "comp": 0,
+     "tris": 472,
+     "bbox_min": [
+      -17.15,
+      44.625,
+      22.115
+     ],
+     "bbox_max": [
+      -17.133,
+      44.642,
+      25.115
+     ],
+     "border_edges": 116,
+     "nonmanifold_edges": 0,
+     "duplicate_vertices": 0,
+     "duplicate_edges": 0,
+     "duplicate_polygons": 0,
+     "self_intersections": 0,
+     "duplicates_and_self_intersections": 0
+    },
+    {
+     "comp": 1,
+     "tris": 1850,
+     "bbox_min": [
+      -17.158,
+      44.617,
+      18.615
+     ],
+     "bbox_max": [
+      -17.124,
+      44.651,
+      22.115
+     ],
+     "border_edges": 42,
+     "nonmanifold_edges": 0,
+     "duplicate_vertices": 0,
+     "duplicate_edges": 0,
+     "duplicate_polygons": 0,
+     "self_intersections": 0,
+     "duplicates_and_self_intersections": 0
+    },
+    {
+     "comp": 2,
+     "tris": 7816,
+     "bbox_min": [
+      -18.253,
+      43.522,
+      13.81
+     ],
+     "bbox_max": [
+      -16.029,
+      45.746,
+      18.615
+     ],
+     "border_edges": 48,
+     "nonmanifold_edges": 97,
+     "duplicate_vertices": 32,
+     "duplicate_edges": 48,
+     "duplicate_polygons": 58,
+     "self_intersections": 1144,
+     "duplicates_and_self_intersections": 1282
+    }
+   ]
+  }
+ ],
+ "row3628_base_sub_bodies": {
+  "split": "faces joined only through 2-face (manifold) edges",
+  "count": 134,
+  "per_sub_body_defects_sum": 0,
+  "large": "8 inclined legs x 893 tris, bbox each ~1.44 m long from hub z=13.24 to ground z=11.935",
+  "pairwise_nonzero": "every leg pair 32-62, every leg vs hub-cap group (198 small tris at z=13.24) 64; no pair outside the hub cluster"
+ }
+}
