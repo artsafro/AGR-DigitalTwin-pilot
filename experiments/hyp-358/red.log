@@ -1,0 +1,90 @@
+FFFF                                                                     [100%]
+================================== FAILURES ===================================
+__________ test_nonfinite_or_nonpositive_tolerance_is_rejected[nan] ___________
+
+tol = nan
+
+    @pytest.mark.parametrize('tol', [float('nan'), float('inf'), -1.0, 0.0])
+    def test_nonfinite_or_nonpositive_tolerance_is_rejected(tol):
+        doc = ezdxf.new()
+        pl = doc.modelspace().add_lwpolyline([(0, 0), (1, 0), (1, 1), (0, 1)], close=True)
+>       with pytest.raises(ValueError, match='tolerance'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+experiments\hyp-358\test_experiment.py:17: Failed
+__________ test_nonfinite_or_nonpositive_tolerance_is_rejected[inf] ___________
+
+tol = inf
+
+    @pytest.mark.parametrize('tol', [float('nan'), float('inf'), -1.0, 0.0])
+    def test_nonfinite_or_nonpositive_tolerance_is_rejected(tol):
+        doc = ezdxf.new()
+        pl = doc.modelspace().add_lwpolyline([(0, 0), (1, 0), (1, 1), (0, 1)], close=True)
+>       with pytest.raises(ValueError, match='tolerance'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+experiments\hyp-358\test_experiment.py:17: Failed
+__________ test_nonfinite_or_nonpositive_tolerance_is_rejected[-1.0] __________
+
+tol = -1.0
+
+    @pytest.mark.parametrize('tol', [float('nan'), float('inf'), -1.0, 0.0])
+    def test_nonfinite_or_nonpositive_tolerance_is_rejected(tol):
+        doc = ezdxf.new()
+        pl = doc.modelspace().add_lwpolyline([(0, 0), (1, 0), (1, 1), (0, 1)], close=True)
+>       with pytest.raises(ValueError, match='tolerance'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+experiments\hyp-358\test_experiment.py:17: Failed
+__________ test_nonfinite_or_nonpositive_tolerance_is_rejected[0.0] ___________
+
+tol = 0.0
+
+    @pytest.mark.parametrize('tol', [float('nan'), float('inf'), -1.0, 0.0])
+    def test_nonfinite_or_nonpositive_tolerance_is_rejected(tol):
+        doc = ezdxf.new()
+        pl = doc.modelspace().add_lwpolyline([(0, 0), (1, 0), (1, 1), (0, 1)], close=True)
+>       with pytest.raises(ValueError, match='tolerance'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+experiments\hyp-358\test_experiment.py:17: Failed
+============================== warnings summary ===============================
+.venv\Lib\site-packages\ezdxf\queryparser.py:50
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:50: PyparsingDeprecationWarning: 'addParseAction' deprecated - use 'add_parse_action'
+    number.addParseAction(lambda t: float(t[0]))  # convert to float
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:51
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:51: PyparsingDeprecationWarning: 'addParseAction' deprecated - use 'add_parse_action'
+    string_ = quotedString.addParseAction(lambda t: t[0][1:-1])  # remove quotes
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:57
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:57: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    Relation = oneOf(["==", "!=", "<", "<=", ">", ">=", "?", "!?"])
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:63
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:63: PyparsingDeprecationWarning: 'setResultsName' deprecated - use 'set_results_name'
+    ).setResultsName("EntityQuery")
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:65
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:65: PyparsingDeprecationWarning: 'infixNotation' deprecated - use 'infix_notation'
+    InfixBoolQuery = infixNotation(
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:72
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:72: PyparsingDeprecationWarning: 'setResultsName' deprecated - use 'set_results_name'
+    ).setResultsName("AttribQuery")
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:74
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:74: PyparsingDeprecationWarning: 'setResultsName' deprecated - use 'set_results_name'
+    AttribQueryOptions = Literal("i").setResultsName("AttribQueryOptions")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED experiments/hyp-358/test_experiment.py::test_nonfinite_or_nonpositive_tolerance_is_rejected[nan]
+FAILED experiments/hyp-358/test_experiment.py::test_nonfinite_or_nonpositive_tolerance_is_rejected[inf]
+FAILED experiments/hyp-358/test_experiment.py::test_nonfinite_or_nonpositive_tolerance_is_rejected[-1.0]
+FAILED experiments/hyp-358/test_experiment.py::test_nonfinite_or_nonpositive_tolerance_is_rejected[0.0]
+4 failed, 7 warnings in 0.63s

@@ -89,6 +89,7 @@ Require `## Author receipts` in the PR body with the following lines:
 - `Pattern: <pattern id | new-case | n/a if no new module>`
 - `Regression evals: <report path>; <passed> passed, <failed> failed, <not measured> not measured (<reasons>)`
 - `Probe: <invariant -> probe -> N/N with command/seed/bounds/evidence path | n/a: <reason>>`
+- `Local CI: CI-RECEIPT v1 pasted in the PR body; python tools/ci_receipt.py --verify <file> --sha <full HEAD sha> exits 0`
 
 ## Questions-only
 
@@ -425,6 +426,12 @@ Worktree ownership first; reject prohibited operations even with authorization. 
 to new versioned paths and read back geometry, UV, materials and transforms. Unknown or
 arbitrary-code operations are destructive until their behavior is inspected. This is a
 manual DCC skill/reviewer gate, not a generic MCP sandbox.
+
+## Performance lane (#361)
+
+Wall-clock / CPU-time budgets are opt-in: marked `perf` and excluded from the default `addopts`.
+Run the lane through the suite-slot limiter — `uv run pytest -m perf -p no:cacheprovider` (via
+`scripts/suite_slot.py`) — it is not part of a card's full-suite receipt.
 
 ## Git
 

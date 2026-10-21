@@ -1,7 +1,6 @@
 """V004 co-directional overlap clearance on FBX face geometry (BODY-K, reg p.8 / p.29)."""
 import math
 import subprocess
-import time
 
 import numpy as np
 import pytest
@@ -380,12 +379,17 @@ def _two_layer_grid():
 def test_two_layer_grid_scales_to_fifty_thousand_triangles():
     faces = _two_layer_grid()
     assert len(faces) == 50_000
-    started = time.perf_counter()
     pairs = co_directional_pairs(faces)
-    elapsed = time.perf_counter() - started
-    assert elapsed < 60  # catches O(n^2); measured 7-14 s on an idle machine
     assert len(pairs) == 25_000
     assert max(abs(pair["distance_m"] - 0.01) for pair in pairs) < 1e-9
+
+
+@pytest.mark.perf
+def test_two_layer_grid_perf_budget(measure_process_time):
+    faces = _two_layer_grid()
+    median, wall = measure_process_time(lambda: co_directional_pairs(faces))
+    print(f"[perf] two-layer grid: median CPU {median:.4f}s, wall {wall:.4f}s, budget 60s")
+    assert median < 60  # catches O(n^2); measured 7-14 s on an idle machine
 
 
 def _welded_grid(z, nx, ny, cell, jitter, index_start, name):
@@ -425,12 +429,17 @@ def _jittered_two_layer_grid(seed):
 def test_jittered_two_layer_grid_scales_to_fifty_thousand_triangles():
     faces = _jittered_two_layer_grid(161)
     assert len(faces) == 50_000
-    started = time.perf_counter()
     pairs = co_directional_pairs(faces)
-    elapsed = time.perf_counter() - started
-    assert elapsed < 60, elapsed  # catches O(n^2); measured 7-14 s idle
     assert len(pairs) == 25_000
     assert max(abs(pair["distance_m"] - 0.01) for pair in pairs) < 1e-5
+
+
+@pytest.mark.perf
+def test_jittered_two_layer_grid_perf_budget(measure_process_time):
+    faces = _jittered_two_layer_grid(161)
+    median, wall = measure_process_time(lambda: co_directional_pairs(faces))
+    print(f"[perf] jittered two-layer grid: median CPU {median:.4f}s, wall {wall:.4f}s, budget 60s")
+    assert median < 60  # catches O(n^2); measured 7-14 s idle
 
 
 def _flat_grid(z, index_start, name, nx=50, ny=25, cell=0.2):
@@ -457,15 +466,26 @@ def test_stacked_layers_report_every_pair():
     chunk, index = _flat_grid(0.002, index, "SM_Test_K_1_Near")
     faces.extend(chunk)
     assert len(faces) == 11 * 2_500
-    started = time.perf_counter()
     pairs = co_directional_pairs(faces)
-    elapsed = time.perf_counter() - started
-    assert elapsed < 90, elapsed  # 525k pairs at 21 layers measured 97-102 s; 10 layers keeps headroom
     assert len(pairs) == 2_500 * 55
     band = PROFILES.vpm["geometry"]["near_coplanar_spacing_m"]
     distribution = co_directional_distribution(pairs, band["min"], band["max"])
     assert distribution["below_band"] == 2_500
     assert sum(abs(pair["distance_m"] - 0.002) < 1e-9 for pair in pairs) == 2_500
+
+
+@pytest.mark.perf
+def test_stacked_layers_perf_budget(measure_process_time):
+    faces = []
+    index = 0
+    for layer in range(10):  # 11 identical footprints per column: every pair is reported, no cutoff
+        chunk, index = _flat_grid(layer * 3.0, index, f"SM_Test_K_1_L{layer}")
+        faces.extend(chunk)
+    chunk, index = _flat_grid(0.002, index, "SM_Test_K_1_Near")
+    faces.extend(chunk)
+    median, wall = measure_process_time(lambda: co_directional_pairs(faces))
+    print(f"[perf] stacked layers: median CPU {median:.4f}s, wall {wall:.4f}s, budget 90s")
+    assert median < 90  # 525k pairs at 21 layers measured 97-102 s; 10 layers keeps headroom
 
 
 def test_large_tilted_quads_match_reference():

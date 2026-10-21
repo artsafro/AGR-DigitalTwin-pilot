@@ -248,3 +248,7 @@ def test_r1_control_build_writes_and_passes_gates(tmp_path):
     rep = json.loads((out / "ground_report.json").read_text(encoding="utf-8"))
     assert all(g["pass"] for g in rep["gates"].values())
     assert (out / "ground_master_vpm.json").exists() and (out / "ground_master_npm.json").exists()
+    # #370: xView overlaps are reported, report-only, never a gate (yet)
+    xv = rep["xview_overlaps"]
+    assert xv["name"] == "xview_overlaps" and xv["gating"] is False and "xview_overlaps" not in rep["gates"]
+    assert xv["thresholds"]["vertex_m"] == 0.002 and xv["thresholds"]["face_m"] == 0.005

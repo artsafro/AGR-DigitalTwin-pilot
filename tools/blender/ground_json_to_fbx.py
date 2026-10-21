@@ -35,7 +35,7 @@ def clean():
     s.unit_settings.scale_length = 1.0
 
 
-def build(src, out, address):
+def build(src, out, address, crs="MSK-77 (SPOZU drawing coordinates, $INSUNITS=6 metres)"):
     d = json.load(open(src, encoding="utf-8"))
     clean()
     vs = d["verts"]
@@ -53,7 +53,7 @@ def build(src, out, address):
     me.update()
     ob = bpy.data.objects.new(f"SM_{address}_Ground", me)
     bpy.context.scene.collection.objects.link(ob)
-    json.dump({"fbx": out, "crs": "MSK-77 (SPOZU drawing coordinates, $INSUNITS=6 metres)",
+    json.dump({"fbx": out, "crs": crs,
                "origin_msk77_xyz": list(piv), "mesh_xyz = msk77_xyz - origin_msk77_xyz": True,
                "object_location": [0.0, 0.0, 0.0]}, open(out + ".placement.json", "w", encoding="utf-8"), indent=1)
     bpy.ops.export_scene.fbx(filepath=out, use_selection=False, apply_unit_scale=True, global_scale=1.0,
@@ -232,7 +232,7 @@ def render(fbx, out_dir, rep):
 
 
 if args[0] == "build":
-    build(*args[1:4])
+    build(*args[1:])
 elif args[0] == "readback":
     readback(*args[1:])
 elif args[0] == "render":

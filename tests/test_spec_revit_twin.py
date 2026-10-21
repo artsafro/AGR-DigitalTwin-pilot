@@ -205,6 +205,132 @@ def test_detached_lining_never_makes_a_roof_hole_a_shaft():
     assert report["roof"]["closed_share"] >= 0.99
 
 
+def shaft_dump(spans, roof_bottom=6.6, roof_top=6.6):
+    """Synthetic 1 m2 roof hole; lining can join the roof slab's inner reveal."""
+    walls, _ = ring(z1=roof_top + 0.6)
+    square = [(4.45, 4.45), (5.55, 4.45), (5.55, 5.55), (4.45, 5.55)]
+    for j, (lo, hi) in enumerate(spans):
+        walls += [wall(70 + 4 * j + k, a, b, t=0.1, z0=lo, z1=hi)
+                  for k, (a, b) in enumerate(zip(square, square[1:] + square[:1]))]
+    outer = [(0, 0), (10, 0), (10, 10), (0, 10)]
+    hole = [(4.5, 4.5), (5.5, 4.5), (5.5, 5.5), (4.5, 5.5)]
+    lines = ["o roof_20"] + [f"v {x} {y} {roof_top}" for x, y in outer + hole]
+    lines += [f"f {a + 1} {(a + 1) % 4 + 1} {(a + 1) % 4 + 5} {a + 5}" for a in range(4)]
+    if roof_bottom < roof_top:
+        lines += [f"v {x} {y} {roof_bottom}" for x, y in hole]
+        lines += [f"f {5 + a} {5 + (a + 1) % 4} {9 + (a + 1) % 4} {9 + a}" for a in range(4)]
+    return to_dump([band(walls)], ["\n".join(lines) + "\n"])
+
+
+def sheared_shaft_dump(shear):
+    """Reviewer witness: three drifting rings fool all old interval samples."""
+    import copy
+
+    dump = shaft_dump([(3.3, 6.6)])
+    names = {f"wall_{i}" for i in range(70, 74)}
+    liners = [m for m in dump["meshes"] if m["name"] in names]
+    assert len(liners) == 4
+    dump["meshes"] = [m for m in dump["meshes"] if m["name"] not in names]
+    dump["body"] = [n for n in dump["body"] if n not in names]
+    dump["shaft_lining"] = []
+    for j, anchor in enumerate((4.95, 5.775, 6.6)):
+        for original in liners:
+            mesh = copy.deepcopy(original)
+            mesh["name"] += f"_sheared_{j}"
+            mesh["vertices"] = [[5 + (x - 5) * 0.96 + shear * (z - anchor),
+                                 5 + (y - 5) * 0.96, z] for x, y, z in mesh["vertices"]]
+            dump["shaft_lining"].append(mesh)
+    return dump
+
+
+def test_sheared_structural_lining_cannot_prove_continuous_shaft():
+    with pytest.raises(SpecError, match="not a shaft|unsupported.*lining"):
+        extract_spec(sheared_shaft_dump(3.0), OBJ)
+
+
+def test_zero_shear_structural_lining_is_continuous():
+    _, report = extract_spec(sheared_shaft_dump(0.0), OBJ)
+    assert report["roof"]["closed_share"] == 0.99
+
+
+def test_disconnected_lining_at_both_old_cuts_is_not_a_shaft():
+    with pytest.raises(SpecError, match="not a shaft"):
+        extract_spec(shaft_dump([(4.85, 5.05), (6.0, 6.2)]), OBJ)
+
+
+@pytest.mark.parametrize("start", [5.10, 5.35, 5.75, 6.15, 6.45])
+@pytest.mark.parametrize("gap", [0.001, 0.03, 0.10])
+def test_shaft_continuity_gap_sweep(start, gap):
+    # Very short upper pieces can also make the roof/cap classification ambiguous;
+    # either explicit rejection is correct, never a silently accepted shaft.
+    with pytest.raises(SpecError, match="not a shaft|covers only"):
+        extract_spec(shaft_dump([(3.3, start), (start + gap, 6.6)]), OBJ)
+
+
+@pytest.mark.parametrize("top", [6.2, 6.5, 6.59])
+def test_shaft_lining_must_reach_roof_structure(top):
+    with pytest.raises(SpecError, match="not a shaft"):
+        extract_spec(shaft_dump([(3.3, top)]), OBJ)
+
+
+@pytest.mark.parametrize("split", [5.1, 5.7, 6.15])
+def test_shaft_continuity_accepts_touching_or_overlapping_parts(split):
+    for overlap in (0.0, 0.02):
+        _, report = extract_spec(shaft_dump([(3.3, split), (split - overlap, 6.6)]), OBJ)
+        assert report["roof"]["closed_share"] == 0.99
+
+
+def test_kpp1_style_lining_joins_roof_reveal_without_reaching_cover_top():
+    # Synthetic control with the issue's KPP1 heights, NOT a real KPP1 spec receipt.
+    obj = {**OBJ, "levels": [{"name": "L0", "elev_m": 0.0},
+                             {"name": "L1", "elev_m": 3.9}, {"name": "roof", "elev_m": 7.7}]}
+    _, report = extract_spec(shaft_dump([(3.8, 7.5), (7.7, 9.5)], 7.5, 7.7), obj)
+    assert report["roof"]["closed_share"] == 0.99
+
+
+@pytest.mark.parametrize("inset", [0.0, 0.125])
+@pytest.mark.parametrize("bottom", [7.5, 7.51])
+def test_kpp1_separate_floor_reveal_is_lining_not_roof_or_body(bottom, inset):
+    obj = {**OBJ, "levels": [{"name": "L0", "elev_m": 0.0},
+                             {"name": "L1", "elev_m": 3.9}, {"name": "roof", "elev_m": 7.7}]}
+    continuous = shaft_dump([(3.8, 7.5), (7.7, 9.5)], bottom, 7.7)
+    # Real TwinPack puts the structural slab under floor_, not roof_. Its
+    # opening can be narrower than the roof covering (insulation return).
+    roof = continuous["meshes"][-1]
+    # TwinPack structural slabs are closed solids, not just inner reveal faces.
+    vertices = roof["vertices"][:8] + [[x, y, bottom] for x, y, _ in roof["vertices"][:8]]
+    for i in [*range(4, 8), *range(12, 16)]:
+        x, y, z = vertices[i]
+        vertices[i] = [x + (inset if x < 5 else -inset),
+                       y + (inset if y < 5 else -inset), z]
+    faces = list(roof["triangles"][:8])
+    faces += [[i + 8 for i in reversed(tri)] for tri in roof["triangles"][:8]]
+    for start in (0, 4):
+        for k in range(4):
+            a, b = start + k, start + (k + 1) % 4
+            faces += [[a, b, b + 8], [a, b + 8, a + 8]]
+    text = "o floor_21\n" + "".join(f"v {x} {y} {z}\n" for x, y, z in vertices)
+    text += "".join("f " + " ".join(str(i + 1) for i in tri) + "\n" for tri in faces)
+    walls, _ = ring(z1=8.3)
+    square = [(4.45, 4.45), (5.55, 4.45), (5.55, 5.55), (4.45, 5.55)]
+    for j, (lo, hi) in enumerate([(3.8, 7.5), (7.7, 9.5)]):
+        walls += [wall(70 + 4*j + k, a, b, t=0.1, z0=lo, z1=hi)
+                  for k, (a, b) in enumerate(zip(square, square[1:] + square[:1]))]
+    cover = {**roof, "triangles": roof["triangles"][:8]}
+    text += "o roof_20\n" + "".join(f"v {x} {y} {z}\n" for x, y, z in roof["vertices"][:8])
+    text += "".join("f " + " ".join(str(i + 17) for i in tri) + "\n" for tri in cover["triangles"])
+    dump = to_dump([band(walls)], [text])
+    assert not any(n.startswith("floor_") for n in dump["body"])
+    if bottom > 7.5:
+        with pytest.raises(SpecError, match="not a shaft"):
+            extract_spec(dump, obj)
+    else:
+        spec, report = extract_spec(dump, obj)
+        expected, _ = extract_spec(continuous, obj)
+        assert spec == expected
+        assert report["roof"]["plane_m"] == 7.7
+
+
 def arc_obj(name, cx, cy, r, t, z0, z1, a0, a1, n=32, offset=0):
     """A curved wall: a closed ring sector between radii r -+ t/2 from angle a0 to a1 (degrees)."""
     ang = [math.radians(a0 + (a1 - a0) * k / n) for k in range(n + 1)]
@@ -227,6 +353,26 @@ def curved(i, cx, cy, r, t, a0, a1, z1):
     return w
 
 
+@pytest.mark.parametrize("host", ["none", "chord", "arc"])
+def test_curved_curtain_uses_occupied_geometry_for_embedding_and_body(host):
+    walls, _ = ring()
+    arc = curved(90, 5.0, 4.0, 1.0, 0.14, 180, 360, 7.2)
+    arc["function"] = "curtain"
+    obj = arc_obj("wall_90", 5.0, 4.0, 1.0, 0.14, 0.0, 7.2, 180, 360)
+    if host == "chord":
+        walls.append(wall(91, (3.5, 4.0), (6.5, 4.0)))
+    elif host == "arc":
+        walls.append(curved(91, 5.0, 4.0, 1.0, 0.3, 180, 360, 7.2))
+        obj += arc_obj("wall_91", 5.0, 4.0, 1.0, 0.3, 0.0, 7.2, 180, 360, offset=132)
+    dump = to_dump([band(walls + [arc])], [obj])
+    assert ("wall_90_b1" in dump["body"]) is (host != "arc")
+    assert "curtain_90" not in dump["body"]
+    if host != "arc":
+        mesh = next(m for m in dump["meshes"] if m["name"] == "wall_90_b1")
+        assert min(v[1] for v in mesh["vertices"]) == pytest.approx(2.93)
+        assert len(mesh["vertices"]) == 132
+
+
 def test_curved_attachment_outside_the_building_is_a_question():
     # a semicircular 0.14 m wall, 2.7 m high, in front of the south facade (PR #35 review 2)
     walls, t = ring()
@@ -234,6 +380,58 @@ def test_curved_attachment_outside_the_building_is_a_question():
     b = band(walls + [arc], band_={**BAND, "top": 3.299})
     dump = to_dump([b], [roof_obj(t) + arc_obj("wall_80", 5.0, 0.0, 1.0, 0.14, 0.0, 2.7, 180, 360, offset=8)])
     assert "wall_80_b1" not in dump["body"] and [q["revit_ids"] for q in dump["questions"]] == [[80]]
+
+
+def test_curved_attachment_question_measures_occupied_plan():
+    walls, _ = ring()
+    arc = curved(80, 5.0, 0.0, 1.0, 0.14, 180, 360, 2.7)
+    dump = to_dump([band(walls + [arc])],
+                   [arc_obj("wall_80", 5.0, 0.0, 1.0, 0.14, 0.0, 2.7, 180, 360)])
+    q, = dump["questions"]
+    assert q["depth_m"] == pytest.approx(1.07, abs=0.001)
+    assert q["length_m"] == pytest.approx(2.14, abs=0.001)
+    assert q["at"] == pytest.approx([5.0, -0.64], abs=0.01)
+
+
+@pytest.mark.parametrize("y,expected", [(-1.05, [[80, 81]]), (-0.3, [[80], [81]])])
+def test_curved_attachment_grouping_uses_occupied_plan(y, expected):
+    walls, _ = ring()
+    arc = curved(80, 5.0, 0.0, 1.0, 0.14, 180, 360, 2.7)
+    stub = wall(81, (5.0, y), (5.0, y - 0.2), t=0.14, z1=2.7)
+    dump = to_dump([band(walls + [arc, stub])],
+                   [arc_obj("wall_80", 5.0, 0.0, 1.0, 0.14, 0.0, 2.7, 180, 360)])
+    assert sorted(q["revit_ids"] for q in dump["questions"]) == expected
+
+
+@pytest.mark.parametrize("radius", [0.5, 1.0, 1.5])
+@pytest.mark.parametrize("function", ["Interior", "curtain"])
+def test_curved_attachment_measure_sweep(radius, function):
+    walls, _ = ring()
+    arc = curved(80, 5.0, 0.0, radius, 0.14, 180, 360, 2.7)
+    arc["function"] = function
+    dump = to_dump([band(walls + [arc])],
+                   [arc_obj("wall_80", 5.0, 0.0, radius, 0.14, 0.0, 2.7, 180, 360, n=64)])
+    q, = dump["questions"]
+    assert q["depth_m"] == pytest.approx(radius + 0.07, abs=0.001)
+    assert q["length_m"] == pytest.approx(2 * radius + 0.14, abs=0.001)
+    outer, inner = radius + 0.07, radius - 0.07
+    cy = -4 / (3 * math.pi) * (outer ** 3 - inner ** 3) / (outer ** 2 - inner ** 2)
+    assert q["at"] == pytest.approx([5.0, cy], abs=0.006)
+    assert not any(m.startswith("wall_80") for m in dump["body"])
+
+
+@pytest.mark.parametrize("start", [0, 45, 90, 180])
+@pytest.mark.parametrize("radius", [0.5, 1.0, 1.5])
+def test_free_curved_curtain_native_bounds_sweep(start, radius):
+    walls, _ = ring()
+    arc = curved(90, 5.0, 5.0, radius, 0.14, start, start + 180, 7.2)
+    arc["function"] = "curtain"
+    dump = to_dump([band(walls + [arc])],
+                   [arc_obj("wall_90", 5.0, 5.0, radius, 0.14, 0.0, 7.2, start, start + 180)])
+    assert "wall_90_b1" in dump["body"] and "curtain_90" not in dump["body"]
+    mesh = next(m for m in dump["meshes"] if m["name"] == "wall_90_b1")
+    assert len(mesh["vertices"]) == 132
+    assert max(math.hypot(v[0] - 5, v[1] - 5) for v in mesh["vertices"]) == pytest.approx(radius + 0.07)
 
 
 def test_wall_end_near_a_curved_wall_is_not_extended_by_its_hull():

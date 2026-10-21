@@ -1,8 +1,13 @@
-"""Read-only UCX hull measurements (reg p.36 §13; docs/domain/areas/ucx.md R06, R08-R10; [D098]).
+"""Read-only UCX hull measurements and collision findings (reg p.36 §13.4; [D098], [D162]).
 
 Pure Python (no numpy, no bpy) so the same functions run inside Blender
-(`tools/blender/ucx_audit.py`) and under pytest. Measurement only: no verdict, no
-construction. A hull is `(verts, tris)` with `verts` a list of xyz tuples in metres and
+(`tools/blender/ucx_audit.py`) and under pytest. Measurement helpers do not emit a
+pass/fail verdict, except `classify`, which returns `status: "review"` (undetermined) for a
+hull with a degenerate triangle (issue #460) so a sliver can never pass closed/convex.
+`pair_findings` and `collision_findings` report req 2.13.4:
+too-close (< 0.2 mm, SINTEZ), gap outside the D098 2 mm - 1 cm band, intersect and
+nested. A hull the SAT machinery cannot measure is `not_run`, never skipped.
+A hull is `(verts, tris)` with `verts` a list of xyz tuples in metres and
 `tris` a list of vertex-index triples.
 """
 from __future__ import annotations
@@ -13,9 +18,15 @@ import re
 
 GAP_BAND_M = (0.002, 0.01)  # [D098]: 2 mm - 1 cm inclusive (reg p.36 §13.4 0.02-1 cm is a typo, C15)
 BAND_TOL_M = 1e-5  # float32 FBX coordinates: a modelled 2.000 mm gap reads back within 0.01 mm
-TOUCH_M = 0.0002  # faces practically touch
+TOUCH_M = 0.0002  # faces practically touch; SINTEZ too-close is gap < this [D162]
+# Same constant as scene.OVERLAP_EPS_M (scene.py imports this module, so it cannot be imported
+# here). Comment there: it is numerical precision, not a permitted overlap.
+OVERLAP_EPS_M = 1e-5
+DEGENERATE_VOLUME_M3 = 1e-9  # absolute enclosed volume at or below this is not a volumetric hull
+DEGENERATE_AREA_M2 = 1e-10  # zero-area / sliver triangle area at or below this is degenerate (issue #460)
 NEIGHBOUR_M = 0.10  # pairs closer than this are "neighbours" in the gap report
 CONVEX_TOL_M = 1e-4  # float32 FBX coordinates around 100 m carry ~1e-5 noise
+REQ_COLLISION = "2.13.4"  # no intersections; neighbour gap 2 mm - 1 cm [D098], plus SINTEZ too-close [D162]
 
 
 def _sub(a, b):
@@ -55,6 +66,31 @@ def weld(verts, tris, tol=1e-5):
         if len({a, b, c}) == 3:
             new_tris.append((a, b, c))
     return out, new_tris
+
+
+def degenerate_triangles(verts, tris, area_tol=DEGENERATE_AREA_M2):
+    """Indices of degenerate triangles: a repeated vertex index, area <= area_tol (m^2), or a
+    non-finite area (NaN / +inf) that cannot be measured.
+
+    A zero-area / sliver triangle fools `is_closed` (its edges, each used twice, "close" a
+    hole) and is silently skipped by `is_convex` (`if plane is None: continue`). Report these
+    up front so the caller can return an undetermined verdict instead of a false pass. The raw
+    input is measured before `weld`, because weld drops repeated-index triangles silently.
+
+    Finite collinear vertices at large scale (e.g. 1e160 m) overflow the cross product to
+    NaN (inf - inf), which compares false against `area_tol` and would slip through as a pass;
+    a non-finite area is therefore degenerate too (fail closed), never a measurable triangle.
+    """
+    out = []
+    for i, (a, b, c) in enumerate(tris):
+        if a == b or b == c or a == c:
+            out.append(i)
+            continue
+        cross = _cross(_sub(verts[b], verts[a]), _sub(verts[c], verts[a]))
+        area = _norm(cross) / 2.0
+        if not math.isfinite(area) or area <= area_tol:
+            out.append(i)
+    return out
 
 
 def face_planes(verts, tris):
@@ -102,7 +138,17 @@ def _normal_axes(verts, tris, angle_tol_deg=0.5):
 
 
 def classify(verts, tris):
-    """Hull kind: box_aabb | box_oriented | convex | custom (open or non-convex)."""
+    """Hull kind: box_aabb | box_oriented | convex | custom (open or non-convex).
+
+    A hull with a degenerate triangle (repeated vertex index or zero area, issue #460) is
+    `review` (undetermined): its closed/convex state cannot be verified, so it is never a
+    false pass. Clean hulls keep their previous verdicts unchanged.
+    """
+    degenerate = degenerate_triangles(verts, tris)
+    if degenerate:
+        return {"kind": "custom", "closed": None, "convex": None, "verts": len(verts),
+                "tris": len(tris), "status": "review",
+                "degenerate_triangles": {"count": len(degenerate), "triangles": degenerate[:5]}}
     verts, tris = weld(verts, tris)
     closed, convex = is_closed(tris), is_convex(verts, tris)
     kind = "custom"
@@ -236,14 +282,18 @@ def surface_distance(a, b):
 def pair_relation(a, b):
     """Relation of two convex hulls: (class, gap_m, penetration_m).
 
-    class: overlap (penetration > TOUCH_M), touch (gap < TOUCH_M), below_band (TOUCH_M <= gap
-    < 2 mm), in_band (2 mm - 1 cm inclusive, [D098]), wide (1 cm < gap <= NEIGHBOUR_M), apart
-    (gap > NEIGHBOUR_M, not neighbours).
+    class: overlap (penetration > OVERLAP_EPS_M), touch (gap < TOUCH_M), below_band
+    (TOUCH_M <= gap < 2 mm), in_band (2 mm - 1 cm inclusive, [D098]), wide (1 cm < gap
+    <= NEIGHBOUR_M), apart (gap > NEIGHBOUR_M, not neighbours).
+
+    OVERLAP_EPS_M separates a true intersection from numerical contact. TOUCH_M is only the
+    SINTEZ too-close gap (< 0.2 mm) and is not an overlap cutoff. A separation at or below
+    OVERLAP_EPS_M is touching; a larger positive separation is a measured gap.
     """
     sep = sat_separation(a, b)
-    if sep < -TOUCH_M:
+    if sep < -OVERLAP_EPS_M:
         return "overlap", 0.0, -sep
-    gap = surface_distance(a, b) if sep > -TOUCH_M else 0.0
+    gap = surface_distance(a, b) if sep > OVERLAP_EPS_M else 0.0
     if gap < TOUCH_M:
         return "touch", gap, max(0.0, -sep)
     if gap < GAP_BAND_M[0] - BAND_TOL_M:
@@ -267,6 +317,148 @@ def inside_convex(p, verts, tris, tol=0.0):
         if _dot(n, p) - d > tol:
             return False
     return True
+
+
+def _enclosed_volume(verts, tris):
+    """Absolute enclosed volume (m^3) from the signed tetrahedron sum over triangles.
+
+    Vertices are shifted by the first vertex before the sum. Signed volume is
+    translation-invariant; the local frame avoids cancellation when the hull sits
+    far from the global origin. Same sum as scene._enclosed_volume, which keeps its
+    own copy because scene.py imports this module.
+    """
+    if not verts:
+        return 0.0
+    origin = verts[0]
+    total = 0.0
+    for ia, ib, ic in tris:
+        a, b, c = _sub(verts[ia], origin), _sub(verts[ib], origin), _sub(verts[ic], origin)
+        total += a[0] * (b[1] * c[2] - b[2] * c[1])
+        total -= a[1] * (b[0] * c[2] - b[2] * c[0])
+        total += a[2] * (b[0] * c[1] - b[1] * c[0])
+    return abs(total) / 6.0
+
+
+def _unmeasurable(verts, tris):
+    """Why SAT must not run on this hull, or None when the hull is closed, convex and volumetric."""
+    try:
+        if len(verts) == 0 or len(tris) == 0:
+            return "empty"
+    except TypeError:
+        return "missing geometry"
+    try:
+        for v in verts:
+            if len(v) != 3 or not all(math.isfinite(float(c)) for c in v):
+                return "non-finite coordinates"
+        n = len(verts)
+        for t in tris:
+            if len(t) != 3:
+                return "invalid topology"
+            for i in t:
+                if isinstance(i, bool) or not isinstance(i, int) or i < 0 or i >= n:
+                    return "invalid topology"
+    except (TypeError, ValueError):
+        return "non-finite coordinates"
+    if not is_closed(tris):
+        return "open"
+    if not is_convex(verts, tris):
+        return "non-convex"
+    try:
+        volume = _enclosed_volume(verts, tris)
+    except (ArithmeticError, TypeError, ValueError, IndexError):
+        return "degenerate"
+    # NaN and +inf compare false against the threshold and would otherwise fall through.
+    if not isinstance(volume, (int, float)) or isinstance(volume, bool) or not math.isfinite(volume):
+        return "degenerate"
+    if volume <= DEGENERATE_VOLUME_M3:
+        return "degenerate"
+    return None
+
+
+def _drop(reason, hull, index=None):
+    rec = {"type": "not_run", "req": REQ_COLLISION, "reason": reason, "hull": hull}
+    if index is not None:
+        rec["index"] = index
+    return rec
+
+
+def _finding(kind, gap_m, penetration_m, ref_a, ref_b):
+    return {"type": kind, "req": REQ_COLLISION, "gap_m": gap_m, "penetration_m": penetration_m,
+            "a": ref_a, "b": ref_b}
+
+
+def _one_inside_the_other(a, b):
+    """True when every vertex of one hull lies inside the other (boundary counts as inside)."""
+    (va, ta), (vb, tb) = a, b
+    return (all(inside_convex(p, vb, tb) for p in va)
+            or all(inside_convex(p, va, ta) for p in vb))
+
+
+def pair_findings(a, b, name_a=None, name_b=None):
+    """Req 2.13.4 findings for one unordered pair of convex hulls. Zero or more.
+
+    Overlap (penetration > OVERLAP_EPS_M) is `nested` when one hull contains the other, otherwise
+    `intersect`. A gap below TOUCH_M emits both `too_close` and `gap_out_of_band` [D162].
+    A gap outside 2 mm - 1 cm emits `gap_out_of_band` (above 1 cm only while the pair is still
+    a neighbour, gap <= NEIGHBOUR_M). In-band and non-neighbour gaps emit nothing.
+    An unmeasurable hull is `not_run` and is not given a gap or overlap finding.
+    """
+    ref_a = 0 if name_a is None else name_a
+    ref_b = 1 if name_b is None else name_b
+    drops = []
+    for hull, ref in ((a, ref_a), (b, ref_b)):
+        try:
+            verts, tris = hull[0], hull[1]
+        except (TypeError, ValueError, IndexError, KeyError):
+            drops.append(_drop("missing geometry", ref))
+            continue
+        reason = _unmeasurable(verts, tris)
+        if reason:
+            drops.append(_drop(reason, ref))
+    if drops:
+        return drops
+    cls, gap, pen = pair_relation(a, b)
+    if cls == "overlap":
+        kind = "nested" if _one_inside_the_other(a, b) else "intersect"
+        return [_finding(kind, 0.0, pen, ref_a, ref_b)]
+    if cls == "touch":
+        return [_finding("too_close", gap, 0.0, ref_a, ref_b),
+                _finding("gap_out_of_band", gap, 0.0, ref_a, ref_b)]
+    if cls in ("below_band", "wide"):
+        return [_finding("gap_out_of_band", gap, 0.0, ref_a, ref_b)]
+    return []
+
+
+def collision_findings(hulls):
+    """Findings for every unordered pair of named hulls, plus a drop for each hull SAT cannot measure.
+
+    Each hull is `{"name", "verts", "tris"}`. An empty list returns `[]` (no pairs, not a pass).
+    Open, non-convex, degenerate, empty and non-finite hulls are `not_run` and are left out of pair checks;
+    every other pair is still measured. Pair order follows input order.
+    """
+    if isinstance(hulls, (list, tuple)) and len(hulls) == 0:
+        return []
+    if not isinstance(hulls, (list, tuple)):
+        return [_drop("missing geometry", None)]
+    drops, usable = [], []
+    for index, item in enumerate(hulls):
+        if not isinstance(item, dict):
+            drops.append(_drop("missing geometry", index, index))
+            continue
+        name = item["name"] if item.get("name") not in (None, "") else index
+        verts, tris = item.get("verts"), item.get("tris")
+        if verts is None or tris is None:
+            drops.append(_drop("missing geometry", name, index))
+            continue
+        reason = _unmeasurable(verts, tris)
+        if reason:
+            drops.append(_drop(reason, name, index))
+        else:
+            usable.append((name, (verts, tris)))
+    findings = list(drops)
+    for (name_a, hull_a), (name_b, hull_b) in itertools.combinations(usable, 2):
+        findings.extend(pair_findings(hull_a, hull_b, name_a=name_a, name_b=name_b))
+    return findings
 
 
 def output_alias_reason(source, out):

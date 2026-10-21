@@ -432,13 +432,13 @@ def test_partial_material_ids_are_an_error():
         extract_spec(d, OBJECT)
 
 
-def test_pier_check_stays_cheap_on_a_comb():
+@pytest.mark.perf
+def test_pier_check_stays_cheap_on_a_comb(measure_process_time):
     # N9: many short teeth; the pier search is bounded by the gap plus two reveals
-    import time
     segs = [[(0, 0), (100, 0)]] + [[(x, 0), (x, 0.3)] for x in np.arange(0.5, 100, 0.5)]
-    t = time.perf_counter()
-    op.close_section(segs)
-    assert time.perf_counter() - t < 5.0
+    median, wall = measure_process_time(lambda: op.close_section(segs))
+    print(f"[perf] comb pier: median CPU {median:.4f}s, wall {wall:.4f}s, budget 5s")
+    assert median < 5.0
 
 
 @pytest.mark.parametrize("n, open_ends", [(50, 41), (100, 68)])
@@ -473,14 +473,14 @@ def test_pier_search_reuse_keeps_the_pairing():
     assert sorted(round(float(a[0]), 3) for a, _ in unresolved) == [-5.0, 10.0]
 
 
-def test_pier_search_stays_fast_at_two_hundred_ends():
+@pytest.mark.perf
+def test_pier_search_stays_fast_at_two_hundred_ends(measure_process_time):
     # R7 (#24): 200 dangling ends took 54 s per section (r3_v_cost.json)
-    import time
     xs = np.linspace(0.0, 7.5, 200)
     segs = [[(0.0, 0.0), (7.5, 0.0)]] + [[(x, 0.0), (x, 0.3)] for x in xs]
-    t = time.perf_counter()
-    op.close_section(segs)
-    assert time.perf_counter() - t < 10.0
+    median, wall = measure_process_time(lambda: op.close_section(segs))
+    print(f"[perf] 200 ends pier: median CPU {median:.4f}s, wall {wall:.4f}s, budget 10s")
+    assert median < 10.0
 
 
 # --- regressions from Codex review 3 of PR #20 -------------------------------------------------

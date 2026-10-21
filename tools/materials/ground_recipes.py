@@ -81,7 +81,7 @@ def require_px_per_m(profile: str, value) -> None:
         raise GroundRecipeError(f"unknown profile {profile}")
     if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
         raise GroundRecipeError(f"{profile} px_per_m must be a finite number")
-    low, high = (10, 40) if profile == "npm" else (520, 1706)
+    low, high = (10, 40) if profile == "npm" else (512, 1706)  # [D160] supersedes the VPM lower bound of D097
     if value < low or value > high:
         raise GroundRecipeError(f"{profile} px_per_m {value} is outside {low}-{high}")
 

@@ -1,0 +1,238 @@
+{
+  "$defs": {
+    "Deviation": {
+      "additionalProperties": false,
+      "properties": {
+        "gate": {
+          "enum": [
+            "inputs",
+            "parts",
+            "operations",
+            "budgets",
+            "export_readback",
+            "report",
+            "visual",
+            "checker"
+          ],
+          "title": "Gate",
+          "type": "string"
+        },
+        "what_failed": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "What Failed",
+          "type": "string"
+        },
+        "what_was_tried": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "What Was Tried",
+          "type": "string"
+        },
+        "new_tool_written": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "New Tool Written",
+          "type": "string"
+        },
+        "result": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Result",
+          "type": "string"
+        }
+      },
+      "required": [
+        "gate",
+        "what_failed",
+        "what_was_tried",
+        "new_tool_written",
+        "result"
+      ],
+      "title": "Deviation",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "description": "A hashed reference. ``commit`` pins source evidence to an immutable revision (#387):\nthe ``inputs`` inventory (any path), or a supplementary source-suffixed reference in the\n``parts``/``operations`` roles; its sha256 is checked against the blob at that commit, so\nlater edits of the live file do not invalidate it. The primary parsed contract of a\n``pass`` ``parts`` gate (the PartsList) and the primary receipt of a ``pass`` ``operations``\ngate are generated semantic roles and always reject ``commit``, regardless of suffix.\nGenerated artifacts, receipts, reports and visual sheets are always hashed from the working\ntree and reject ``commit``.",
+      "properties": {
+        "path": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "commit": {
+          "anyOf": [
+            {
+              "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Commit"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "Gate": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "pass",
+            "fail",
+            "review",
+            "missing"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "note": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Note",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "status",
+        "note",
+        "evidence"
+      ],
+      "title": "Gate",
+      "type": "object"
+    },
+    "Gates": {
+      "additionalProperties": false,
+      "properties": {
+        "inputs": {
+          "$ref": "#/$defs/Gate"
+        },
+        "parts": {
+          "$ref": "#/$defs/Gate"
+        },
+        "operations": {
+          "$ref": "#/$defs/Gate"
+        },
+        "budgets": {
+          "$ref": "#/$defs/Gate"
+        },
+        "export_readback": {
+          "$ref": "#/$defs/Gate"
+        },
+        "report": {
+          "$ref": "#/$defs/Gate"
+        },
+        "visual": {
+          "$ref": "#/$defs/Gate"
+        },
+        "checker": {
+          "$ref": "#/$defs/Gate"
+        }
+      },
+      "required": [
+        "inputs",
+        "parts",
+        "operations",
+        "budgets",
+        "export_readback",
+        "report",
+        "visual",
+        "checker"
+      ],
+      "title": "Gates",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "job_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Job Id",
+      "type": "string"
+    },
+    "run_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "synthetic": {
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "path": {
+      "enum": [
+        "standard",
+        "deviation"
+      ],
+      "title": "Path",
+      "type": "string"
+    },
+    "inputs": {
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "minItems": 1,
+      "title": "Inputs",
+      "type": "array"
+    },
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "deviations": {
+      "items": {
+        "$ref": "#/$defs/Deviation"
+      },
+      "title": "Deviations",
+      "type": "array"
+    },
+    "gates": {
+      "$ref": "#/$defs/Gates"
+    }
+  },
+  "required": [
+    "schema_version",
+    "job_id",
+    "run_id",
+    "synthetic",
+    "path",
+    "inputs",
+    "artifacts",
+    "deviations",
+    "gates"
+  ],
+  "title": "JobChecklist",
+  "type": "object"
+}

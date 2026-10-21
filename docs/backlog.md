@@ -35,6 +35,40 @@ items out of this file in the same merge. `C<N>` = conflict N in `docs/domain/co
   T-free quads), `drop_step_bottom_rims.py` (shell post-step). Move into `src/dt_ai/geometry/`
   with tests; keep the PSU275 outputs as regression.
 
+- **P13** (Codex) Findings of `jobs/vyatskaya-tow02` (2026-10-20, first panelised curtain-wall tower; modelling
+  accepted by the user as "4+", too slow). Details and numbers: `jobs/vyatskaya-tow02/STATE.md` (Build log, Lessons).
+  Engine and harness problems:
+  - Speed: `dt spec extract` took 20 min on 690 k triangles (pure Python); `run_benchmark` extracts again before
+    building, and the engine build ran 64 min with no progress output or timeout before it was stopped.
+  - Panelised source (3ds Max curtain wall, RC_TOW_02: 5 561 parts, no shell): 889 ribbon openings unsized (no
+    reveal on panels), 0 decor (fins missed), terrace parapets 3.41 / 2.75 m, roof parapet read off a glass
+    railing, roof boxes absent, contour edges skewed up to ±3° after simplification.
+  - Engine: BuildError "2D plan weld moves 0.0036 m, beyond weld_m 0.003"; the spec forbids weld_m >= plate_gap_m
+    (0.005), so the spec cannot be built at all.
+  - Dumper `tools/source/measure_spec_blender.py` writes faces of meshes with a mirrored world matrix (negative
+    scale, typical for 3ds Max FBX) inward; some slabs inward as well.
+  - Level helpers: the user's empties (`Empty`…`Empty.007`) are not read, only `LEVEL_*`; levels went to
+    object.json by hand. A rename/markup step or reading any empty named in object.json would remove the detour.
+  - Not built by the engine (EG6): rounded corners, ribbon glazing around a corner, decor along a curve (S-curve
+    fins), glass railings in `from_spec`, mid `roof_structures` (BuildError).
+  - Harness: `pipeline_gate` only admits engine-gap build scripts in `jobs/<JOB>/scripts/`, so read-only
+    `measure_*`/`inspect_*` tools ended in `outputs/` (untracked); subagents may not write report `.md` files, so
+    their reports lived only in chat. Proposal: admit read-only tools (no bpy writes) or a `jobs/<JOB>/tools/`.
+  New job code to generalise (all `Engine gap: EG6`, `jobs/vyatskaya-tow02/scripts/`):
+  - `build_body_blender.py` — ring-stack body: one outline per storey with vertex correspondence; shared columns on
+    fixed edges (union over storeys), own columns on moving edges; step soffits between differing storeys cut into
+    strips per chain so walls and soffits share vertices (no T-junctions); collapsed-jog handling; fixed-line snap;
+    1 cm weld; mitred reveals; mid-reveal glass planes; `seal_leftovers` for quad holes / T-junctions.
+  - `build_fins.py` — decor loft along a measured 3D path with linear profile morph, cut at the body with
+    >= 10 mm embed (ray sampling), ring spacing by chord error, cap lift over coplanar roof faces.
+  - `build_top_blender.py` — zones with z-patterns (solid / opening / glass_face), quad cap fill with holes,
+    single-section coping sweep, railing planes, roof boxes; bottom row equal to the body seam vertex for vertex.
+  - `build_decor_blender.py` — AC baskets (one-sided planes + floor), railings, louvre blades as boxes with
+    ray-cast end embed, colonnade soffit that closes the body's open loop.
+  - Measurement method: building-local frame by min-area rectangle of a slab; orthographic elevations/sections
+    from numpy arrays instead of viewport captures; storey outlines with vertex correspondence
+    (`outputs/measure-v002/bend_rings/`), builder-ready top parts schema (`outputs/measure-v002/top_parts/`).
+
 ## Engine gaps — mixed mode (user decision 2026-10-11 [D050], `docs/HARNESS_PLAN.md` §16)
 
 The engine builds what it can (body, openings, floor steps, terraces, inset slabs). Job scripts do only
@@ -56,6 +90,16 @@ the engine covers it.
   90/180 degrees is a type of its own (OBJ03 v009: 1 328 piers -> 798 types); add rotation to the type key and the
   modules export; (b) regenerate `npm/` from an edited `modules/modules.blend` (now both come from one build).
   Owner Codex.
+- **EG6** Curtain-wall tower parts the engine does not build (2026-10-20, job `vyatskaya-tow02`, hybrid
+  route: body by the engine): rounded corners and ribbon glazing that wraps a corner (BuildError "corner openings
+  are not built yet"); fins that follow a curve over floors (decor is a straight extrusion per wall); glass
+  railings on `from_spec` terraces and roofs (only `from_source.terrace_railings` builds them).
+  Extended 2026-10-20 ("да"): the whole body of a panelised curtain-wall source built from measurements. This
+  3ds Max source has no shell (RC_TOW_02: 5 561 parts, the largest 11 % of its area); run as `source_class:
+  panelised` (slabs as body, contours from panels) the extractor took 20 min, sized none of 889 ribbon openings
+  (no reveal to measure on a panel facade), found 0 decor, and the engine stopped at BuildError "2D plan weld
+  moves ... 0.0036 m, beyond weld_m 0.003" (`jobs/vyatskaya-tow02/pipeline/spec-v002.*`, `outputs/spec-v001/`).
+  Also seen there: the dumper writes mirrored-matrix meshes (negative scale) with inward faces.
 
 ## Markup helpers (after the terrace; owner Claude, code parts Codex)
 
@@ -147,6 +191,17 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
 - **R10** proposal 2026-10-19, feature/kernel-op-primitive - CLI command: the local CI receipt text for a PR
   (commit, commands, counts, known environment failures from R9) for the body and for the billing-lock comment
   of R6; seen 8 times (5 PR bodies, 3 comments, same shape); effort S
+- **R11** proposal 2026-10-20, job/vyatskaya-tow02-midpoly - CLI command: orthographic elevations (4 sides, local
+  frame) of source vs built objects from numpy triangle dumps, stacked into one PNG — a screenshot-free visual
+  check; seen 6 times; effort S
+- **R12** proposal 2026-10-20, job/vyatskaya-tow02-midpoly - src/ module (checker): BVH nearest distance of built
+  faces to source faces filtered by material and z range (median / p95 / max, faces over a limit by z); seen 4
+  times; effort S
+- **R13** proposal 2026-10-20, job/vyatskaya-tow02-midpoly - src/ module (checker): classify open edges (expected:
+  stack seam rows, reveal backs, glass borders; unexpected listed with coordinates) and find T-junction vertices;
+  seen 3 times; effort S
+- **R14** proposal 2026-10-20, job/vyatskaya-tow02-midpoly - skill step: save the open Blender scene as the next
+  `outputs/build-vNNN/` version (new folder, never over an existing one) and log it in STATE; seen 6 times; effort S
 
 ## Harness and organization (default owner Codex)
 

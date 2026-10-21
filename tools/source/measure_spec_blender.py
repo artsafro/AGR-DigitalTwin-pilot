@@ -49,9 +49,15 @@ for obj in bpy.context.scene.objects:
         v = sum(uv[i].uv[1] for i in t.loops) / 3
         return 1001 + int(math.floor(u)) + 10 * int(math.floor(v))
     mw = obj.matrix_world
+    triangles = [list(t.vertices) for t in mesh.loop_triangles]
+    if mw.to_3x3().determinant() < 0.0:
+        # A mirrored world transform (negative determinant) reverses the source
+        # orientation of the baked world vertices; swap two indices of every
+        # triangle so the emitted winding matches the world-space geometry.
+        triangles = [[a, c, b] for a, b, c in triangles]
     meshes.append({"name": obj.name,
                    "vertices": [list(mw @ v.co) for v in mesh.vertices],
-                   "triangles": [list(t.vertices) for t in mesh.loop_triangles],
+                   "triangles": triangles,
                    # material id = slot index + 1 = 3ds Max material id (docs/domain/materials.md)
                    "material_ids": [t.material_index + 1 for t in mesh.loop_triangles],
                    # vertex count of every source polygon: n-gon check of the benchmark (twinqa.geometry)

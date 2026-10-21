@@ -34,6 +34,8 @@ FROZEN_FIXTURE = re.compile(r"^evals/[^/]+/fixtures/")
 CONFLICT_ITEM = re.compile(r"^(\d+)\. ")
 # Lines that match MENTION but state no decision: (file, text on the line).
 NOT_DECISIONS = [
+    ("tests/test_task_to_model.py", '"status": "confirmed", "gate1": {"actor": "synthetic test user", "date": "2026-10-20",'),
+    ("tests/test_task_to_model.py", 'receipt.update(decision="approved", actor_role="user", actor="synthetic test user", date="2026-10-20",'),
     ("tests/placement/test_site_job.py", 'e["approved"] = {"by": "user (synthetic)", "date": "2026-10-20"'),
     ("tests/placement/test_site_placement.py", '"approved": {"by": "user", "date": "2026-10-20", "quote": "q"}'),
     ("docs/experiments/flora-library-audit.md", "user Flora grilling notes (2026-10-15)"),
@@ -370,7 +372,8 @@ def test_live_main_ground_mentions_resolve_to_distinct_sources():
 
 def test_placement_approval_fixtures_do_not_hide_real_mentions(tmp_path, monkeypatch):
     """Synthetic approval literals are not decisions; adjacent real prose stays in scope."""
-    paths = ["tests/placement/test_site_job.py", "tests/placement/test_site_placement.py"]
+    paths = ["tests/placement/test_site_job.py", "tests/placement/test_site_placement.py",
+             "tests/test_task_to_model.py"]
     known = {row[0] for row in log_rows()}
     assert unreferenced(paths, known) == []
     monkeypatch.setitem(globals(), "ROOT", tmp_path)
@@ -382,6 +385,16 @@ def test_placement_approval_fixtures_do_not_hide_real_mentions(tmp_path, monkeyp
         assert in_scope(name)
         assert unreferenced([name], known) == [
             f"{name}:1: dated user decision without [D<n>]", f"{name}:2: unknown D999"]
+        path.write_text("", encoding="utf-8")
+        assert unreferenced([name], known) == []
+    # Partial approval lookalikes must not exempt the whole task-to-model file.
+    name = "tests/test_task_to_model.py"
+    path = tmp_path / name
+    path.write_text('"actor": "user", "date": "2026-10-20"\n'
+                    'actor_role="user", date="2026-10-20"\n', encoding="utf-8")
+    assert unreferenced([name], known) == [
+        f"{name}:1: dated user decision without [D<n>]",
+        f"{name}:2: dated user decision without [D<n>]"]
 
 
 def test_drawing_review_decision_is_logged_and_anchored():

@@ -55,7 +55,6 @@ ROOF_PART_SLIVER_M2 = 0.05  # a separate roof part with more than this both insi
 ROOF_SEARCH_M = 0.3       # only to name nearby surfaces in the error message
 ROOF_OWN = 0.25           # share of the top floor the roof plane itself must cover (else roof or cap?)
 HOLE_MIN_M2 = 0.01        # uncovered pieces of the top floor smaller than this are numeric slivers
-SHAFT_UPPER = 0.85        # ... and again at this share of the top storey's height
 SHAFT_WALL_SHARE = 0.9    # a roof hole is a shaft when body walls line this share of its edge at mid top storey
 ROOF_CLOSED = 0.9         # share of the top floor the roof and surfaces above it must close
 PARAPET_EDGE_M = 0.05     # parapet top is read only on the outer wall line of the top floor
@@ -1409,7 +1408,7 @@ def _roof_surface_groups(v, tris):
     return list(groups.values())
 
 
-def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, outline=None):
+def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, outline=None, lining=None):
     """The roof level is input, like every level; geometry only confirms it (issues #16, #9).
     Roof: up-facing body surfaces inside the top floor contour with a slope up to ROOF_SLOPE_MAX_DEG
     (drainage slopes are a flat roof) whose surface means lie within ROOF_LEVEL_TOL_M of the top input
@@ -1420,6 +1419,8 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, 
     guess. extra: separate roof parts joined to the body for this check (#9, option (a)); above:
     every other separate part, whose near-flat tops above the roof (a parapet cap or shaft top
     modelled apart) count only for closing the floor from above, never for the roof height.
+    lining: separate structural slab meshes (vertices, triangles), used only for
+    occupied shaft-lining sections, never roof height or coverage.
     Parapet top: highest body point on the outer wall line of the top floor."""
     every = tris if extra is None or not len(extra) else np.vstack([tris, extra])
     p = v[every]
@@ -1539,14 +1540,47 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, 
     ignored = [{"area_m2": round(h.area, 3), "at": [round(h.centroid.x, 2), round(h.centroid.y, 2)],
                 "sizes_m": [round(x, 3) for x in _sizes(h)]} for h in small]
     if holes:
-        # lined at mid storey and in the storey's upper part: walls that stop well below the roof
-        # line nothing (PR #35 review 2, P1)
-        cuts = [_clear_height(v, tris, below_level["elev_m"] + share * (roof_z - below_level["elev_m"]))
-                for share in (0.5, SHAFT_UPPER)]
-        sections = [shapely.unary_union(_section(v, tris, z) or [LineString()]) for z in cuts]
+        # Check every vertical mesh interval from mid storey to the roof, not just two
+        # storey cuts: disconnected strips can line both cuts (#37). Include the roof
+        # structure's inner reveal, so lining may end at its underside (KPP1).
+        bottom = below_level["elev_m"] + 0.5 * (roof_z - below_level["elev_m"])
+        lining = lining or []
+        zs = np.concatenate([v[np.unique(every), 2]] + [lv[np.unique(lt), 2] for lv, lt in lining])
+        heights = np.unique(np.r_[bottom, zs[(zs > bottom) & (zs < roof_z)], roof_z])
+        # Once the prismatic eligibility check below succeeds, each section is
+        # constant on these open vertex intervals; one interior cut proves all of
+        # it. Non-prismatic evidence must stop rather than trust finite sampling.
+        cuts = [(lo + hi) / 2 for lo, hi in zip(heights[:-1], heights[1:])]
+        # The structural opening can be narrower than the roof covering opening
+        # (KPP1: 125 mm insulation return). Its occupied section, with voids kept,
+        # supports the roof-hole edge even when its inner face is farther inward.
         for hole in holes:
-            lined = min(w.intersection(hole.buffer(PARAPET_EDGE_M)).length for w in sections) / hole.exterior.length
-            z_mid = cuts[0]
+            sample_cuts = cuts
+            if outline is not None and hole.intersects(ref.exterior):
+                # Panel/slab setback strips touch the facade perimeter: they are
+                # not enclosed shaft mouths. Preserve their existing two-cut
+                # facade evidence (panels have construction joints at the roof).
+                # Internal openings, including panelised shafts, stay continuous.
+                sample_cuts = [_clear_height(v, tris, below_level["elev_m"] + share *
+                               (roof_z - below_level["elev_m"])) for share in (0.5, 0.85)]
+                wall_sections = [shapely.unary_union(_section(v, tris, z) or [LineString()])
+                                 for z in sample_cuts]
+                solid_sections = [Polygon() for _ in sample_cuts]
+            else:
+                certified = _prismatic_lining(v, every, bottom, roof_z, hole)
+                wall_sections = [shapely.unary_union(_section(v, certified, z) or [LineString()])
+                                 for z in cuts]
+                # build_area uses the entire ring: a non-prismatic structural
+                # mesh contributes no occupied material, not guessed sections.
+                certified_solids = [(lv, _prismatic_lining(lv, lt, bottom, roof_z))
+                                    for lv, lt in lining]
+                solid_sections = [shapely.unary_union([shapely.build_area(shapely.unary_union(
+                    _section(lv, lt, z) or [LineString()])) for lv, lt in certified_solids]) for z in cuts]
+            lengths = [shapely.unary_union([w.intersection(hole.buffer(PARAPET_EDGE_M)),
+                       hole.boundary.intersection(s)]).length for w, s in zip(wall_sections, solid_sections)]
+            worst = int(np.argmin(lengths))
+            lined = lengths[worst] / hole.exterior.length
+            z_mid = sample_cuts[worst]
             if lined < SHAFT_WALL_SHARE:
                 c = hole.centroid
                 raise SpecError(f"roof at {roof_z:.3f} m has an opening of {hole.area:.2f} m2 at ({c.x:.2f}, {c.y:.2f}) "
@@ -1560,6 +1594,61 @@ def _roof(v, tris, below_level, top_level, top_contour, extra=None, above=None, 
              "slope_max_deg": round(float(slope[idx].max()), 2),
              "slope_mean_deg": round(float((slope[idx] * areas).sum() / areas.sum()), 2)}
     return roof_z, parapet_top if on_edge else roof_z, round(closed, 3), stats
+
+
+def _prismatic_lining(v, tris, bottom, top, hole=None):
+    """Return only evidence with constant sections between vertex heights.
+
+    A vertical planar triangulation has constant sections only if its exposed
+    edges are horizontal or vertical. Oblique edges must have a coplanar triangle
+    on the opposite side (an internal tessellation edge, not a moving boundary).
+    This is a whole-interval eligibility proof, not another set of sample cuts.
+    """
+    nearby = hole.buffer(PARAPET_EDGE_M) if hole is not None else None
+    diagonal_edges = {}
+    certified = []
+    for tri, face in zip(tris, v[tris]):
+        lo, hi = face[:, 2].min(), face[:, 2].max()
+        if hi <= bottom or lo >= top or hi == lo:
+            continue
+        plan = shapely.MultiPoint(face[:, :2]).convex_hull
+        if nearby is not None and not plan.intersects(nearby):
+            continue
+        normal = np.cross(face[1] - face[0], face[2] - face[0])
+        norm = np.linalg.norm(normal)
+        if norm == 0:
+            continue
+        if abs(normal[2]) > 1e-12 * norm:
+            if hole is None:
+                return np.empty((0, 3), dtype=np.int64)
+            continue
+        certified.append(tri)
+        for a, b, c in ((0, 1, 2), (1, 2, 0), (2, 0, 1)):
+            start, end = sorted((tuple(face[a]), tuple(face[b])))
+            delta = np.asarray(end) - start
+            if (delta[2] == 0 or np.linalg.norm(delta[:2]) == 0
+                    or max(start[2], end[2]) <= bottom or min(start[2], end[2]) >= top):
+                continue
+            side = np.cross(delta, face[c] - start)
+            diagonal_edges.setdefault((start, end), []).append((len(certified) - 1, side))
+    # Remove unprovable patches rather than borrowing one of their sampled
+    # sections. Propagate across tessellation diagonals until every retained edge
+    # has an opposite-side neighbour. Axis-aligned boundaries need no neighbour.
+    removed = set()
+    while True:
+        rejected = set()
+        for sides in diagonal_edges.values():
+            for i, side in sides:
+                if i not in removed and not any(j not in removed and np.dot(side, other) < 0
+                                                for j, other in sides):
+                    rejected.add(i)
+        if not rejected:
+            break
+        removed.update(rejected)
+    if removed and hole is None:
+        return np.empty((0, 3), dtype=np.int64)
+    return np.asarray([tri for i, tri in enumerate(certified) if i not in removed],
+                      dtype=np.int64).reshape(-1, 3)
 
 
 def _sizes(g):
@@ -1992,7 +2081,9 @@ def _extract(dump, obj_cfg, profile, thresholds, found):
     roof_z, top_z, closed, roof_stats = _roof(v, body, levels[-2], levels[-1], polys[-1],
                                               np.vstack(roof_parts) if roof_parts else None,
                                               np.vstack(others) if others else None,
-                                              outlines[-1] if panelised else None)
+                                              outlines[-1] if panelised else None,
+                                              [_mesh({"meshes": [slab]}, m)
+                                               for slab in dump.get("shaft_lining", [])])
     report["roof_structures"] = structures
     report["roof"] = {"plane_m": round(roof_z, 3), "parapet_top_m": round(top_z, 3), "closed_share": closed,
                       "separate_roof_parts": len(roof_parts), **roof_stats,
