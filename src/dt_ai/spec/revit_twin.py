@@ -24,7 +24,7 @@ openings with host, point, hand, width, sill and head; curtain panels; roofs) an
   width; heights of the family box).
 - doors: the door records (host line, point, hand, width, sill, head) go to the extractor as door
   openings; a door gets no pane.
-- attachment (user decision 2026-10-08, #29): a wall or curtain wall mostly outside the convex hull
+- attachment (user decision 2026-10-08 [D027], #29): a wall or curtain wall mostly outside the convex hull
   of the main walls (walls whose stack reaches their band's top) whose own stack — the wall and the
   walls standing on it — ends below its band's top is not body (entrance frames, vestibules,
   portals) and becomes a question.
@@ -194,7 +194,7 @@ def _openings(bands, walls, attached, clear_by_band):
     A curtain wall or a window frame wall (function curtain) with glass is one opening on its line
     over its heights, its glass the transparent panels and windows it hosts; a window in a wall is
     its family box; a door its record. A window without a transparent material is a vent grille:
-    an opening of kind grille, its family box (user decision 2026-10-09)."""
+    an opening of kind grille, its family box (user decision 2026-10-09 [D035])."""
     out, glass_of = [], {}
     for b in bands:
         clear = clear_by_band[b["band"]["band"]]

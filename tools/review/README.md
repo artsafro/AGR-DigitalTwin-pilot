@@ -8,6 +8,20 @@ uv run python tools/review/verdict.py --task 348 --status changes --note "Уто
 uv run python tools/review/cleanup.py --days 7
 ```
 
+Per-item verdict lines (#487): `publish.py ... --item ID --item ID2` writes one
+`pending.json` line per item (`"item": ID`, same scene path); `verdict.py --task N --item ID`
+updates only that line, an unknown item is an error and nothing is written. Without `--item`
+both commands behave as before.
+
+MAF showcase (#487, display only): `uv run python tools/review/maf_showcase.py --set
+jobs/VATUTINO-SITE/maf/site-maf-set.json --config jobs/VATUTINO-SITE/maf/site-maf-showcase.config.json
+--out C:/x/vatutino-maf/showcase-487/vNNN` checks every FBX SHA256, builds one scene in headless
+3dsmaxbatch (NPM left, VPM right, `TXT_<set id>` spec text to the right, `ROW_<group>` label per
+MAF type), renders `renders/`, and a second fresh 3dsmaxbatch process reopens the scene and must
+find 2 meshes with the recorded triangles and size (±2 mm) plus the exact text per set id.
+The output folder must be new and outside the set folders. Publish the result `.max` with
+`publish.py --fbx <scene> --item <set id> ...`.
+
 Publication creates `C:/x/review/YYYY-MM-DD/N-slug/` with a Max scene, previews and
 README. An existing folder is rejected, not overwritten. Existing `.max` sources
 are also accepted through `--fbx`, for the Flora library. The command does not

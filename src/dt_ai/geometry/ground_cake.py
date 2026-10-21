@@ -237,7 +237,7 @@ def build_flat(plan: Plan, cell: float = 4.0, chord: float = 0.02, origin: tuple
     relief; adjacent faces share edges (no T-junction). Upper layers are clipped to the surface and made disjoint
     per level (chord simplification must not create same-level overlaps = z-fighting).
 
-    With ``sampler`` (relief refinement, user decision 2026-10-19): faces whose triangles deviate from the relief
+    With ``sampler`` (relief refinement, user decision 2026-10-19 [D153]): faces whose triangles deviate from the relief
     by more than ``tol`` (exact maximum, ``ReliefSampler.max_error``) get the TIN edges inside them added to the
     linework and the partition is rebuilt; the relief is planar inside each resulting face there, so the error is
     0. Faces elsewhere keep the plain 4 m cut (they only gain the vertices where a TIN edge ends on their border).
@@ -755,7 +755,7 @@ def _point_gaps(verts: np.ndarray, faces: np.ndarray, level: np.ndarray, *, iden
 def raise_steep_layers(mesh: Mesh, step: float, gap_min: float = 0.0055, gap_max: float = 0.02,
                        max_rounds: int = 10) -> tuple[Mesh, np.ndarray, dict]:
     """Raise upper-layer vertices locally (Z only) so the gap to the base along the face normal is in
-    [gap_min, gap_max] (user decision 2026-10-19: V004 band 5-20 mm on steep relief; nominal step on flat ground).
+    [gap_min, gap_max] (user decision 2026-10-19 [D154]: V004 band 5-20 mm on steep relief; nominal step on flat ground).
 
     A vertical step ``s`` over a face with unit-normal z component ``nz`` gives a normal gap ``s * nz``; at
     ``nz < gap_min / step`` the nominal step is too small. Per vertex ``s_v = max(step, gap_min / nz_f)`` over its

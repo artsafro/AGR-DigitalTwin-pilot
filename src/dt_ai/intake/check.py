@@ -1,6 +1,6 @@
 """Check an intake folder (docs/HARNESS_PLAN.md §15): `dt intake check --dir jobs/<JOB>/intake`.
 
-The four files and their rules (user decisions 2026-10-11):
+The four files and their rules (user decisions 2026-10-11 [D049]):
 - sources.json (dt_ai.intake.model.SourcesFile): every file, what was read (only what its format can
   give), units, frame, version, what did not open and why; the primary source is the best-ranked one with
   geometry or dimensions.

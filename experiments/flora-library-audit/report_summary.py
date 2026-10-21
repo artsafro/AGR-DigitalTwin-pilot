@@ -26,7 +26,7 @@ def main():
         '- Native entry points: `tools/max_flora_inventory.py`, `tools/max_flora_archive.py`. Pure analysis and reproduction commands: [README](../../experiments/flora-library-audit/README.md).',
         '- Actual FBX outputs: `C:/x/t_366e8d9d/out/assets-v003/`; corrected SVG previews and coordinate-verified receipts: `out/verified-v004/`. FBX 2014 / 7.4 binary. No binaries in Git.',
         '- Machine [catalogue](../../experiments/flora-library-audit/catalogue.json); schema/fields in README; complete [findings](flora-library-audit-findings.md).',
-        '- Source method context: [Max scripting research](../research/3dsmax-scripting.md), `tools/max_profile_roundtrip.py`, user Flora grilling notes (2026-10-15).',
+        '- Source method context: [Max scripting research](../research/3dsmax-scripting.md), `tools/max_profile_roundtrip.py`, user Flora grilling notes (2026-10-15 [D099, D100, D101, D102]).',
         '- Startup warning: `polyunwrapper_autoload.mse` CLR error returns native -130; the wrapper classifies it as a warning. Current job markers/receipts and independent hash/readback checks determine completion, not native exit alone. Legacy mental-ray attributes are unavailable.', '',
         '## Counts and interpretation', '',
         '| Source | All nodes | Text / TextPlus | All meshes / plant | Paired labels | Ambiguous | Orphan incl headings | Normalized captions | NPM / VPM candidates |',

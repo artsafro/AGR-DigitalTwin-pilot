@@ -1,4 +1,4 @@
-"""Auto-generated worktree branches: the pattern, the pre-commit block and the SessionStart prompt (user 2026-10-14)."""
+"""Auto-generated worktree branches: the pattern, the pre-commit block and the SessionStart prompt (user 2026-10-14 [D078])."""
 import json
 import os
 import subprocess

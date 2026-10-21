@@ -3,7 +3,7 @@
 The box below is synthetic test data, not the user's etalon (issue #12): 10 x 10 m, levels
 0 / 3.3 / 6.6, parapet 0.6 m, one 1.5 x 1.5 m window per storey on wall 0 with reveals and an
 opening plane at 0.2 m — the numbers of tests/fixtures/spec-b01-v0.3.json (opening depth 0.2 m,
-npm_min plane at the full depth: C24 final, user decision 2026-10-10). The synthetic mesh is closed and welded:
+npm_min plane at the full depth: C24 final, user decision 2026-10-10 [D037]). The synthetic mesh is closed and welded:
 global height cuts on every wall, per-wall cuts at the opening edges, fans on the bottom and roof.
 """
 import json
@@ -21,7 +21,7 @@ from twinqa.geometry.mesh import from_dump
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = Spec.model_validate(json.loads((ROOT / "tests/fixtures/spec-b01-v0.3.json").read_text(encoding="utf-8")))
 TOLERANCES = ROOT / "benchmark/bench-b01-box/tolerances.json"
-# the weld is the spec's (weld_m, user 2026-10-13); checks.run puts it into the tolerances
+# the weld is the spec's (weld_m, user 2026-10-13 [D068]); checks.run puts it into the tolerances
 TOL = {**json.loads(TOLERANCES.read_text(encoding="utf-8"))["geometry"], "weld_m": Spec.model_fields["weld_m"].default}
 WINDOWS = [(0, 2.0, 3.5, 0.9, 2.4), (0, 2.0, 3.5, 4.2, 5.7)]
 FACADE, REVEAL, PLANE, ROOF = 1, 6, 11, 21
@@ -31,7 +31,7 @@ def box_dump(size=10.0, roof=6.6, top=7.2, parapet_t=0.3, windows=WINDOWS, depth
              levels=(("L0", 0.0), ("L1", 3.3), ("roof", 6.6)), polygon_sizes=True, extra=(), roof_inset=0.005,
              roof_embed=0.02):
     """Mesh dump of a box with recessed windows, a parapet and, by default, an inset roof plate 5 mm above
-    the roof level (every slab is inset, user rule 2026-10-10); roof_inset=0 gives a solid roof (synthetic)."""
+    the roof level (every slab is inset, user rule 2026-10-10 [D038]); roof_inset=0 gives a solid roof (synthetic)."""
     faces = []  # (points, material id)
     corners = [np.array(p, float) for p in ((0, 0), (size, 0), (size, size), (0, size))]
     zcuts = sorted({0.0, top, *(w[3] for w in windows), *(w[4] for w in windows)})
@@ -101,7 +101,7 @@ def run(model_dump, etalon_dump=None, tol=TOL, spec=None):
 
 
 def plates(gap=0.005, overlap=0.02):
-    """The synthetic spec with the building's inset plate parameters (user 2026-10-10)."""
+    """The synthetic spec with the building's inset plate parameters (user 2026-10-10 [D039])."""
     return Spec.model_validate({**SPEC.model_dump(), "plate_gap_m": gap, "plate_overlap_m": overlap})
 
 
@@ -136,7 +136,7 @@ def _walk(node):
 def test_missing_opening_plane_fails_cover_and_leaves_a_hole():
     report = run(box_dump(planes=False, windows=WINDOWS))
     # the open window also stops the model section closing where the etalon's closes
-    # an open window is no allowed open loop (pattern roof-inset-plane, user rule 2026-10-10)
+    # an open window is no allowed open loop (pattern roof-inset-plane, user rule 2026-10-10 [D038])
     # and lets outside rays reach the back of the inner wall faces (orientation sees through the hole)
     assert report["failed"] == ["floor_areas", "mesh", "opening_planes", "orientation"]
     assert by_id(report)["opening_planes"]["value"] == 0.0
@@ -276,7 +276,7 @@ def test_section_open_in_both_is_listed_not_judged():
 
 
 
-# pattern roof-inset-plane (user rule 2026-10-10): open edges = bottom ring + the inset roof joint
+# pattern roof-inset-plane (user rule 2026-10-10 [D038]): open edges = bottom ring + the inset roof joint
 
 
 def loops_of(report):
@@ -290,7 +290,7 @@ def test_inset_roof_plane_joint_is_allowed():
 
 
 def test_a_solid_roof_in_a_parapet_fails():
-    # user rule 2026-10-10: every slab is inset; the checker requires the joint, it does not only allow it
+    # user rule 2026-10-10 [D038]: every slab is inset; the checker requires the joint, it does not only allow it
     report = run(box_dump(roof_inset=0.0), box_dump(roof_inset=0.0))
     mesh = by_id(report)["mesh"]
     assert mesh["status"] == "fail" and mesh["details"]["slabs_not_inset"] == ["roof"]
@@ -341,7 +341,7 @@ def test_lone_foot_or_plane_is_not_a_joint():
 @pytest.mark.parametrize("embed, ok", [(-0.02, False), (0.0, False), (0.005, False), (0.01, True), (0.02, True),
                                        (0.05, True), (0.08, False)])
 def test_plane_is_embedded_into_the_parapet_by_an_even_offset(embed, ok):
-    # user 2026-10-10: contour B outside contour A, the plane embedded into the parapet faces (B02: 20 mm)
+    # user 2026-10-10 [D038, D039]: contour B outside contour A, the plane embedded into the parapet faces (B02: 20 mm)
     report = run(box_dump(roof_inset=0.005, roof_embed=embed), box_dump(), spec=plates(overlap=max(embed, 0.001)))
     assert (by_id(report)["mesh"]["status"] == "pass") == ok
 
@@ -349,7 +349,7 @@ def test_plane_is_embedded_into_the_parapet_by_an_even_offset(embed, ok):
 @pytest.mark.parametrize("gap, overlap, ok", [(0.005, 0.02, True), (0.0054, 0.0204, True), (0.006, 0.02, False),
                                               (0.005, 0.03, False)])
 def test_plates_match_the_building_parameters_of_the_spec(gap, overlap, ok):
-    # user 2026-10-10: plate_gap_m / plate_overlap_m are building parameters; the checker compares within plate_tol_m
+    # user 2026-10-10 [D039]: plate_gap_m / plate_overlap_m are building parameters; the checker compares within plate_tol_m
     report = run(box_dump(), box_dump(), spec=plates(gap, overlap))
     mesh = by_id(report)["mesh"]
     assert (mesh["status"] == "pass") == ok and bool(mesh["details"]["plates_off_spec"]) != ok
@@ -415,7 +415,7 @@ def test_acute_corner_keeps_its_full_mitre():
 
 @pytest.mark.parametrize("shift, ok", [(0.0009, True), (0.0045, False)])
 def test_evenness_tolerance_is_the_weld_tolerance(shift, ok):
-    # Codex review 2 of PR #54: one side embedded more than the weld (3 mm, user 2026-10-13) is uneven
+    # Codex review 2 of PR #54: one side embedded more than the weld (3 mm, user 2026-10-13 [D068]) is uneven
     dump = box_dump(roof_inset=0.005)
     for v in dump["meshes"][0]["vertices"]:
         if abs(v[2] - 6.605) < 1e-6 and v[0] > 9:
@@ -503,7 +503,7 @@ def shaft_roof(inner_overlap=0.02):
 
 @pytest.mark.parametrize("inner, ok", [(0.02, True), (0.03, False)])
 def test_a_shaft_through_an_inset_roof_is_an_inner_outline_of_its_joint(inner, ok):
-    # KPP1 (user 2026-10-10, flat inset roof around its vent shaft): the shaft's foot is an inner outline
+    # KPP1 (user 2026-10-10 [D038], flat inset roof around its vent shaft): the shaft's foot is an inner outline
     # of the hole, the plate's hole around the shaft an inner outline of the plate, the same overlap
     report = run(shaft_roof(inner), shaft_roof(0.02))
     mesh = by_id(report)["mesh"]
@@ -601,7 +601,7 @@ def test_a_vanished_shaft_never_hides_behind_a_split_one():
 
 
 def test_material_ids_from_an_objects_udim_table():
-    # K01 (user 2026-10-11): finishes as UDIM tiles; ids from jobs/<object>/materials.json; unknown tile = 0
+    # K01 (user 2026-10-11 [D053]): finishes as UDIM tiles; ids from jobs/<object>/materials.json; unknown tile = 0
     from twinqa.geometry.mesh import assign_material_ids
     dump = {"meshes": [{"name": "body", "vertices": [], "triangles": [[0, 1, 2]] * 3, "material_ids": [1, 1, 1],
                         "udim_tiles": [1001, 1006, 1099]},
