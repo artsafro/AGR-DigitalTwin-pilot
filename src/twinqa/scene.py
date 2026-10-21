@@ -30,7 +30,7 @@ ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
 METRE_UNIT_SCALE_CM = 100.0
 UNIT_REL_TOL = 1e-6
 UNIT_PAGES = [4, 24]
-# Project target (user decision on conflict #1, 2026-10-07): one model serves VPM and NPM, so
+# Project target (user decision on conflict #1, 2026-10-07 [D010]): one model serves VPM and NPM, so
 # VPM OKS aims at the NPM limit; above it, windows go to atlas textures on planes.
 PROJECT_TRIANGLE_TARGET = 150_000
 PIVOT_CENTRE_TOL_PCT, PIVOT_SHARED_TOL_M = 10, 0.001  # SINTEZ AGR Checker 2.9.4a / 2.9.5
@@ -157,10 +157,20 @@ def _clearance_finding(meshes: list[dict], ucx: list[dict], src: str, profile: d
 
 
 def _enclosed_volume(verts, tris) -> float:
-    """Absolute enclosed volume (m^3) from the signed tetrahedron sum over triangles."""
+    """Absolute enclosed volume (m^3) from the signed tetrahedron sum over triangles.
+
+    Vertices are shifted by the first vertex before the sum. Signed volume is
+    translation-invariant; the local frame avoids cancellation when the hull sits far
+    from the global origin (same sum as ucx_audit._enclosed_volume, kept as a copy).
+    """
+    if not verts:
+        return 0.0
+    origin = verts[0]
     total = 0.0
     for ia, ib, ic in tris:
-        a, b, c = verts[ia], verts[ib], verts[ic]
+        a = (verts[ia][0] - origin[0], verts[ia][1] - origin[1], verts[ia][2] - origin[2])
+        b = (verts[ib][0] - origin[0], verts[ib][1] - origin[1], verts[ib][2] - origin[2])
+        c = (verts[ic][0] - origin[0], verts[ic][1] - origin[1], verts[ic][2] - origin[2])
         total += a[0] * (b[1] * c[2] - b[2] * c[1])
         total -= a[1] * (b[0] * c[2] - b[2] * c[0])
         total += a[2] * (b[0] * c[1] - b[1] * c[0])
@@ -563,7 +573,7 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
                               measured=measured, threshold=threshold_n, margin=margin))
     foreign = [o for o in rb["other_objects"] if not (role == "light" and o["type"] in ("LIGHT", "EMPTY"))]
     if foreign:
-        # Any non-mesh object, lights included, fails (conflict #14 decided 2026-10-07 as the checker)
+        # Any non-mesh object, lights included, fails (conflict #14 decided 2026-10-07 [D017] as the checker)
         out["V003"].append(_f("fail", "object types", f"{src}: {[(o['name'], o['type']) for o in foreign][:5]}",
                               "meshes only (lights only in the _Light FBX)", [4, 24, 33], src))
 
@@ -608,7 +618,7 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         # Texel density is the same 512..1706 px/m band as twinqa.uv (reg p.32). It does not
         # change the channel / mirror / glass verdicts above.
         out["V008"].extend(_texel_density_findings(rb, meshes, ucx, src))
-        # V013 (reg p.32-33 §9.3-9.5; conflict #19 decided 2026-10-07 as the checker)
+        # V013 (reg p.32-33 §9.3-9.5; conflict #19 decided 2026-10-07 [D018] as the checker)
         out["V013"].extend(_pivot_findings(meshes, ucx, src))
         out["V013"].append(_f("not_run", "MSK-77 point", "GeoJSON point vs survey coordinates and project zero",
                               "reg p.32-33, p.55", [32, 33, 55], src))

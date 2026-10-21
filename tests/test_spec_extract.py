@@ -261,7 +261,7 @@ def wide_cap_building(roof=True, inner_x=8.0):
 @pytest.mark.parametrize("inner_x", [8.0, 4.0])
 def test_wide_cap_never_becomes_the_roof(inner_x):
     # symmetric: roof 36 % under a cap at 6.8 -> 6.6 / 0.2; asymmetric: roof 12 % -> "roof or cap?"
-    # question (ROOF_OWN 25 %, user decision 2026-10-08); never 6.8 / 0 (issue #16)
+    # question (ROOF_OWN 25 %, user decision 2026-10-08 [D024]); never 6.8 / 0 (issue #16)
     if inner_x == 8.0:
         spec, report = extract_spec(wide_cap_building(inner_x=inner_x), OBJECT)
         assert (report["roof"]["plane_m"], spec.roof.parapet_h_m) == (6.6, 0.2)
@@ -422,7 +422,7 @@ def test_blender_dump_to_spec(tmp_path):
     assert report["attachment_parts_ignored"] == 1
 
 
-# pattern markup-helpers (user 2026-10-10): level helper names
+# pattern markup-helpers (user 2026-10-10 [D044]): level helper names
 
 
 @pytest.mark.parametrize("names, message", [
@@ -458,7 +458,7 @@ def test_a_model_in_the_wrong_units_stops_with_a_units_hint():
         extract_spec(dump, OBJECT)
 
 
-# MH2 (pattern markup-helpers, user decisions 2026-10-10): level helpers generated from Revit Levels and roof
+# MH2 (pattern markup-helpers, user decisions 2026-10-10 [D045]): level helpers generated from Revit Levels and roof
 
 REVIT_TABLE = {"levels": {"Level 0": "L0", "Level 1": "L1", "Structural": None},
                "roof": {"type": "Covering"}}
@@ -533,7 +533,7 @@ def test_the_3_cm_agreement_limit_itself_agrees(roof):
     extract_spec(revit_box(), {**OBJECT, "revit_levels": REVIT_TABLE, "levels": given})
 
 
-# rule 5 (user 2026-10-12): `dt spec extract --collect-stops` - one pass, every stop listed, nothing substituted
+# rule 5 (user 2026-10-12 [D062]): `dt spec extract --collect-stops` - one pass, every stop listed, nothing substituted
 
 OPEN_SOUTH = {(i, k) for i in range(3) for k in range(6)}       # the south wall missing on both storeys
 
@@ -606,7 +606,7 @@ def test_collect_stops_keeps_the_contour_check_inside_each_storey():
     assert caught.value.report["floors"] == {}
 
 
-# rule 4 (user 2026-10-12): the parapet thickness is read from the source, else the object's default, never asked
+# rule 4 (user 2026-10-12 [D061]): the parapet thickness is read from the source, else the object's default, never asked
 
 def _uneven_parapet():
     """The north inner line of the parapet 0.4 m in, the others 0.2 m: no one thickness."""
@@ -636,7 +636,7 @@ def test_unreadable_parapet_thickness_without_a_default_is_left_to_the_build_inp
     assert report["roof"]["parapet_thickness"]["by"] == "not read, no default"
 
 
-# spec v0.7 roof_structures (pattern roof-screen-enclosure, user 2026-10-13)
+# spec v0.7 roof_structures (pattern roof-screen-enclosure, user 2026-10-13 [D067])
 
 def _with_screened_equipment():
     """B01-like box; on its roof a screen enclosure 3-7 x 3-7 m to 9.0 m and inside it equipment with a pitched
@@ -722,6 +722,40 @@ def test_a_closed_ring_of_thick_boxes_is_read(slope, top):
     (rs,) = extract_spec(dump, {**OBJECT, "roof_screens": ["Screens"]})[0].roof_structures
     from shapely.geometry import Polygon, box
     assert rs.z_top_m == top and Polygon(rs.outline).symmetric_difference(box(3, 3, 7, 7)).area < 0.02
+
+
+RING_03 = [(3, 3, 7, 3.3), (6.7, 3.3, 7, 7), (3, 6.7, 6.7, 7), (3, 3.3, 3.3, 6.7)]
+
+
+@pytest.mark.parametrize("boxes, default, m, by", [
+    (RING_03, None, 0.3, "measured"),                                            # issue #91: rule 4 for screens
+    (RING_03, 0.25, 0.3, "measured"),                                            # the source wins over the default
+    ([(3, 3, 7, 3.3), (6.5, 3.3, 7, 7), (3, 6.7, 6.5, 7), (3, 3.3, 3.3, 6.7)], 0.25, 0.25,
+     "parapet thickness by default"),                                            # 0.3 and 0.5: not one thickness
+    ([(3, 3, 7, 3.3), (6.5, 3.3, 7, 7), (3, 6.7, 6.5, 7), (3, 3.3, 3.3, 6.7)], None, None, "not read, no default"),
+])
+def test_a_screen_thickness_is_read_or_defaulted(boxes, default, m, by):
+    """Issue #91 (rule 4 as the parapet's, user 2026-10-12 [D061]): the screens' thickness from their section at mid
+    height (one ring, one mitred inset), else the object's parapet_thickness_default_m, marked; never a guess."""
+    dump = box_building()
+    dump["meshes"].append(_boxes(*boxes).dump())
+    cfg = {**OBJECT, "roof_screens": ["Screens"], **({"parapet_thickness_default_m": default} if default else {})}
+    spec, report = extract_spec(dump, cfg)
+    (rs,) = spec.roof_structures
+    got = report["roof_structures"][0]["thickness"]
+    assert rs.thickness_m == m and got["m"] == m and got["by"] == by
+    assert ("why" in got) == (by != "measured")
+
+
+@pytest.mark.parametrize("default, m, by", [(0.25, 0.25, "parapet thickness by default"),
+                                            (None, None, "not read, no default")])
+def test_plane_screens_have_no_thickness_to_read(default, m, by):
+    """Screens built as planes (npm_min, OBJ03 mesh fences) have no section ring: the default, or none."""
+    cfg = {**OBJECT, "roof_screens": ["Screens"], **({"parapet_thickness_default_m": default} if default else {})}
+    spec, report = extract_spec(_with_screened_equipment(), cfg)
+    (rs,) = spec.roof_structures
+    assert rs.thickness_m == m and report["roof_structures"][0]["thickness"]["by"] == by
+    assert "planes" in report["roof_structures"][0]["thickness"]["why"]
 
 
 @pytest.mark.parametrize("second", [[(4, 2), (6, 2), (6, 4), (4, 4)], [(4, 4), (6, 4), (6, 6), (4, 6)]])
