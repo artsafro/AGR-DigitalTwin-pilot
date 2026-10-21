@@ -1,0 +1,162 @@
+{
+  "schema_version": "1.0.0",
+  "synthetic": false,
+  "object_id": "COD_20207_Ground",
+  "source_tier": "C",
+  "sources": [
+    {
+      "kind": "model",
+      "reference": "C:/x/ground-cod-22/spozu.dwg",
+      "sha256": "9b409b023a5dd494c91f6807e7aee392b6a684da48fac371209764770d5f764b"
+    },
+    {
+      "kind": "user",
+      "reference": "Card t_3e9518e5: Gate 1 answers 2026-10-20/21, final orange-footprint approval"
+    }
+  ],
+  "triangle_budget": {
+    "npm": 150000,
+    "vpm": 150000
+  },
+  "parts": [
+    {
+      "id": "Asphalt",
+      "part_class": "other",
+      "sources": [
+        {
+          "kind": "layer",
+          "reference": "ГП_Благо_ТИП_1"
+        }
+      ],
+      "legend_item": "5_Благоустройство; Gate 1 card t_3e9518e5",
+      "operation": "primitive",
+      "build_as": "plane",
+      "triangle_budget": {
+        "npm": 20000,
+        "vpm": 20000
+      }
+    },
+    {
+      "id": "Tile",
+      "part_class": "other",
+      "sources": [
+        {
+          "kind": "layer",
+          "reference": "ГП_Благо_ТИП_2 / ГП_Благо_ТИП_3 / ГП_Благо_ТИП_6"
+        }
+      ],
+      "legend_item": "5_Благоустройство; Gate 1 card t_3e9518e5",
+      "operation": "primitive",
+      "build_as": "plane",
+      "triangle_budget": {
+        "npm": 12000,
+        "vpm": 12000
+      }
+    },
+    {
+      "id": "Geogrid",
+      "part_class": "other",
+      "sources": [
+        {
+          "kind": "layer",
+          "reference": "ГП_Благо_ТИП_4 / ГП_Благо_ТИП_5"
+        }
+      ],
+      "legend_item": "5_Благоустройство; Gate 1 card t_3e9518e5",
+      "operation": "primitive",
+      "build_as": "plane",
+      "triangle_budget": {
+        "npm": 12000,
+        "vpm": 12000
+      }
+    },
+    {
+      "id": "Lawn",
+      "part_class": "other",
+      "sources": [
+        {
+          "kind": "region",
+          "reference": "unhatched components below 1000 m2; boundary 69002 minus coverings and approved building hole"
+        }
+      ],
+      "legend_item": "5_Благоустройство; Gate 1 card t_3e9518e5",
+      "operation": "primitive",
+      "build_as": "plane",
+      "triangle_budget": {
+        "npm": 6000,
+        "vpm": 6000
+      }
+    },
+    {
+      "id": "DriveCurbs",
+      "part_class": "other",
+      "sources": [
+        {
+          "kind": "layer",
+          "reference": "ГП_БР дорожный"
+        }
+      ],
+      "legend_item": "5_Благоустройство; Gate 1 card t_3e9518e5",
+      "operation": "primitive",
+      "build_as": "profile_extrude",
+      "triangle_budget": {
+        "npm": 15000,
+        "vpm": 15000
+      }
+    },
+    {
+      "id": "GardenCurbs",
+      "part_class": "other",
+      "sources": [
+        {
+          "kind": "layer",
+          "reference": "ГП_БР сад"
+        }
+      ],
+      "legend_item": "5_Благоустройство; Gate 1 card t_3e9518e5",
+      "operation": "primitive",
+      "build_as": "profile_extrude",
+      "triangle_budget": {
+        "npm": 15000,
+        "vpm": 15000
+      }
+    },
+    {
+      "id": "Skirt",
+      "part_class": "other",
+      "sources": [
+        {
+          "kind": "region",
+          "reference": "ГП_Граница участка / 69002"
+        }
+      ],
+      "legend_item": "5_Благоустройство; Gate 1 card t_3e9518e5",
+      "operation": "primitive",
+      "build_as": "profile_extrude",
+      "triangle_budget": {
+        "npm": 10000,
+        "vpm": 10000
+      }
+    }
+  ],
+  "joints": [],
+  "questions": [
+    {
+      "audience": "user",
+      "text": "Flat datum versus method-C offsets?",
+      "answer": "Common zero datum; keep +6/+12 mm method-C layers; no relief."
+    },
+    {
+      "audience": "user",
+      "text": "Building hole authority?",
+      "answer": "Orange largest unhatched SPOZU component 1670.085519 m2; other unhatched areas lawn; canopy coverings stay."
+    }
+  ],
+  "status": "confirmed",
+  "gate1": {
+    "actor": "Artem",
+    "date": "2026-10-21",
+    "scope": "project",
+    "note": "Card comments: accepts recommendations and default Vatutino budgets/grid; flat offsets clarified; orange footprint approved. This is decomposition approval, not built geometry/material/visual acceptance. Method-C overlapping plates are separate, not welded construction joints."
+  }
+}
