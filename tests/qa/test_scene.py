@@ -1129,6 +1129,47 @@ def test_vpm_ground_area_invalid_is_an_error_never_pass(bad):
         _ground_tri_finding(12, area=bad)
 
 
+def _edge_cases():
+    """(area_m2, expected band index) at nextafter below / exact / nextafter above every YAML edge."""
+    from decimal import Decimal
+    bands = _ground_bands()
+    cases = []
+    for i, band in enumerate(bands[:-1]):
+        edge = float(Decimal(repr(band["area_max"])) * 10_000)  # exact decimal m2 edge (0.05 ha -> 500.0)
+        cases += [(math.nextafter(edge, 0), i, "below"), (edge, i, "exact"), (math.nextafter(edge, math.inf), i + 1, "above")]
+    return cases
+
+
+@pytest.mark.parametrize("area, index, side", _edge_cases(),
+                         ids=[f"{c[0]!r}-{c[2]}" for c in _edge_cases()])
+def test_vpm_ground_band_edge_nextafter(area, index, side):
+    """Review #516 P1: an area one ulp above an edge belongs to the next band (500.00000000000006 m2 ->
+    705 000); a rounded ha quotient must not drop it into the lower band and fail a valid count."""
+    from twinqa.scene import ground_triangle_limit
+    band = _ground_bands()[index]
+    assert ground_triangle_limit(PROFILES.vpm, area) == (band["triangles_max"], band)
+    assert _ground_tri_finding(band["triangles_max"], area=area).status == "pass"
+    assert _ground_tri_finding(band["triangles_max"] + 1, area=area).status == "fail"
+
+
+@pytest.mark.parametrize("area, tris", [(500.00000000000006, 705_000), (1000.0000000000001, 1_125_000)])
+def test_vpm_ground_review_witnesses_pass(area, tris):
+    f = _ground_tri_finding(tris, area=area)
+    assert (f.status, f.data["band"]["triangles_max"]) == ("pass", tris)
+    assert (f.measured, f.threshold) == (tris, tris)
+
+
+def test_vpm_ground_finding_data_survives_report_round_trip():
+    """Finding.data (area operands) and measured/threshold/margin (#462) both serialise and load back."""
+    from dataclasses import asdict
+    from twinqa.report import Finding
+    f = _ground_tri_finding(1_650_001, area=3431.5)
+    back = Finding.from_dict(json.loads(json.dumps(asdict(f))))
+    assert back == f and back.data["band"]["triangles_max"] == 1_650_000 and back.margin < 0
+    with pytest.raises(ValueError, match="data"):
+        Finding.from_dict({**asdict(f), "data": [1]})
+
+
 @pytest.mark.parametrize("table", [
     None, [],
     [{"area_max": 0.1, "triangles_max": 1}, {"area_max": 0.05, "triangles_max": 2}],
