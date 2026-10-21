@@ -107,6 +107,45 @@ def clip_curtain(curtain, stairs):
     return m,{'output_source_faces':source,'dropped':dropped}
 
 
+def restore_source_coverage(mesh, plan):
+    """Bounded endpoint construction repair; never waive a nonzero coverage residual."""
+    vertices=mesh.verts.copy();original=vertices.copy();base=np.flatnonzero(mesh.level==0)
+    edge_uses=Counter(tuple(sorted((int(a),int(b)))) for f in mesh.faces[base] for a,b in zip(f,np.roll(f,-1)))
+    edges=np.array([e for e,n in edge_uses.items() if n==1],int)
+    if not len(edges):raise ValueError('coverage residual repair requires open base edges')
+    forbidden=set(mesh.faces[mesh.level>0].ravel())
+    for iteration in range(12):
+        union=unary_union([Polygon(vertices[f,:2]) for f in mesh.faces[base]])
+        residual=plan.surface.buffer(-.0022).difference(union)
+        if residual.is_empty or residual.area==0:break
+        points=np.array([p for piece in gc._polys(residual) for p in piece.exterior.coords])
+        if not len(points):raise ValueError('unsupported source coverage residual')
+        a=vertices[edges[:,0],:2];direction=vertices[edges[:,1],:2]-a
+        lengths=np.einsum('ij,ij->i',direction,direction)
+        if np.any(lengths<=0):raise ValueError('collapsed boundary edge in residual repair')
+        best=None
+        for point in points:
+            t=np.clip(np.einsum('ij,ij->i',point-a,direction)/lengths,0,1)
+            closest=a+t[:,None]*direction;dist=np.linalg.norm(point-closest,axis=1);i=int(dist.argmin())
+            if best is None or dist[i]>best[0]:best=(float(dist[i]),point,i,float(t[i]),closest[i])
+        distance,point,i,t,closest=best
+        if distance<=0:raise ValueError('nonempty coverage residual without a measurable witness')
+        endpoint=0 if t<=.5 else 1;weight=(1-t) if endpoint==0 else t;vi=int(edges[i,endpoint])
+        if vi in forbidden:raise ValueError('coverage residual endpoint belongs to upper sheet')
+        vertices[vi,:2]+=(point-closest)/distance*((distance+2e-6)/weight)
+        if np.linalg.norm(vertices-original,axis=1).max()>=.00005:
+            raise ValueError('source coverage residual exceeds 50 micrometre construction bound')
+    else:raise ValueError('bounded source coverage residual repair did not converge')
+    union=unary_union([Polygon(vertices[f,:2]) for f in mesh.faces[base]])
+    if union.difference(plan.surface.buffer(.0022)).area:
+        raise ValueError('coverage restoration creates outside-outline residual')
+    delta=vertices-original;uv=mesh.uv+delta[mesh.faces,:2]/mesh.cell
+    moved=np.flatnonzero(np.linalg.norm(delta,axis=1)>0)
+    receipt={'iterations':iteration,'moved_vertices':moved.tolist(),'delta_xyz_m':delta[moved].tolist(),
+             'max_displacement_m':float(np.linalg.norm(delta,axis=1).max())}
+    return gc.Mesh(vertices,mesh.faces.copy(),list(mesh.slot),mesh.level.copy(),uv,mesh.cell,dict(mesh.report)),receipt
+
+
 def geometry(data, raw, approval, void_data):
     m=gc.Mesh(np.asarray(raw['verts']),np.asarray(raw['faces']),[raw['slots'][i] for i in raw['mat']],
               np.asarray(raw['level']),np.asarray(raw['uv']),4.)
@@ -128,6 +167,7 @@ def geometry(data, raw, approval, void_data):
     patch=Polygon(approval['triangle_xy'])
     plan.surface=gc.MultiPolygon(gc._polys(plan.surface.union(patch).difference(foot)))
     for layer in plan.layers:layer.geom=gc.MultiPolygon(gc._polys((layer.geom.union(patch) if layer.level==0 else layer.geom).difference(foot)))
+    surface,coverage_repair=restore_source_coverage(surface,plan)
     corners=np.asarray(void.exterior.coords)
     bound=0.
     for a,b in zip(corners,corners[1:]):
@@ -145,7 +185,7 @@ def geometry(data, raw, approval, void_data):
         axes=[j for j in range(3) if j!=abs(np.cross(p[1]-p[0],p[2]-p[0])).argmax()]
         m.uv[i]=p[:,axes]/4
     m=gc.clean_topology(m)
-    return m,plan,sampler,{'void_contour_upper_bound_m':bound,'source_void':source_void,
+    return m,plan,sampler,{'void_contour_upper_bound_m':bound,'source_void':source_void,'source_coverage_repair':coverage_repair,
         'curtain':clipping,'details':dispositions,'joints':joints,'curb_support':fitted.report}
 
 

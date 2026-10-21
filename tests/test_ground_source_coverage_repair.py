@@ -30,6 +30,16 @@ def test_existing_boundary_endpoints_restore_a_thirty_micrometre_residual():
     assert receipt['moved_vertices']
 
 
+@pytest.mark.parametrize('kind',['empty_plan','partial_levels','nan','inf','empty_faces','exact_bound'])
+def test_coverage_restoration_fails_closed_on_unmeasurable_or_at_bound_inputs(kind):
+    mesh,plan=fixture(.00225 if kind=='exact_bound' else 0)
+    if kind=='empty_plan':plan.surface=MultiPolygon([])
+    if kind=='partial_levels':mesh.level=np.array([],int)
+    if kind in ('nan','inf'):mesh.verts[0,0]=float(kind)
+    if kind=='empty_faces':mesh.faces=np.empty((0,3),int);mesh.level=np.array([],int);mesh.slot=[];mesh.uv=np.empty((0,3,2))
+    with pytest.raises(ValueError):job.restore_source_coverage(mesh,plan)
+
+
 def test_large_residual_is_not_silently_repaired():
     mesh,plan=fixture(.003)
     with pytest.raises(ValueError,match='bound|residual'):
