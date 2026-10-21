@@ -44,3 +44,37 @@ def test_density_limits_from_profile(side_m, size, ok):
     uv = [[0, 0], [1, 0], [1, 1], [0, 1]]
     values = edge_densities(square, uv, size)
     assert all(limits["min"] <= d <= limits["max"] for d in values) == ok
+
+
+@pytest.mark.parametrize("density_px_per_m,ok", [(512.0, True), (1706.0, True),
+                                                 (511.9, False), (1706.1, False)])
+def test_density_limits_at_exact_boundaries(density_px_per_m, ok):
+    """Inclusive bounds (reg p.32 §6.2): the density floor and ceiling pass at equality and
+    flip to fail one 0.1 px/m beyond. A 1 m square with a unit UV unwrap yields density == size
+    exactly (size * 1 / 1), so the probe value carries no float noise."""
+    limits = load_profiles().vpm["uv"]["diffuse_density_px_per_m"]
+    square = [[0, 0, 0], [1, 0, 0], [1, 0, 1], [0, 0, 1]]
+    uv = [[0, 0], [1, 0], [1, 1], [0, 1]]
+    values = edge_densities(square, uv, density_px_per_m)
+    assert all(d == density_px_per_m for d in values)
+    assert all(limits["min"] <= d <= limits["max"] for d in values) == ok
+
+
+def test_density_limits_inclusive_sweep():
+    """Generated probe: edge_densities == size * |duv| / |dxyz| over varied square geometry, and
+    the inclusive floor/ceiling classification flips exactly at the profile bounds."""
+    limits = load_profiles().vpm["uv"]["diffuse_density_px_per_m"]
+    uv = [[0, 0], [1, 0], [1, 1], [0, 1]]
+    checked = 0
+    for size in (2048, 4096):
+        for side_m in (size / limits["max"], size / limits["min"], 0.5, 2.0, 8.5):
+            square = [[0, 0, 0], [side_m, 0, 0], [side_m, 0, side_m], [0, 0, side_m]]
+            values = edge_densities(square, uv, size)
+            density = size / side_m
+            assert len(values) == 4
+            for d in values:
+                assert d == pytest.approx(density, rel=1e-12)
+            assert all(limits["min"] <= d <= limits["max"] for d in values) is (limits["min"] <= density <= limits["max"])
+            checked += 1
+    print(f"{checked}/{checked} density formula probes")
+    assert checked == 2 * 5

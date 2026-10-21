@@ -123,7 +123,16 @@ def _stairs_solid(outline, cells, heights, sampler):
 
 
 def build_details(elements, boundary, sampler, separate_curbs=False):
-    """Return solid mesh and one disposition per adapter entity (including group INSERTs).
+    """Return ``(mesh, report, joints)``.
+
+    ``report`` holds one disposition per adapter entity (including group INSERTs). With
+    ``separate_curbs`` every modeled curb row also carries its own ``retained_m2``,
+    ``stair_trim_m2`` and ``joint_trim_m2`` (``footprint_m2`` reconciles to their sum), and
+    a fully covered entity is reported ``status='trimmed'`` with a truthful reason: the
+    taller-curb joint policy only when that policy actually removed the geometry, the stair
+    footprint when stairs occluded it, and a combined reason when both applied. ``joints``
+    holds the role-union joint trim totals once, at their own scope, so no entity row
+    inherits another role's union trim.
 
     ``separate_curbs`` is an explicit model-policy opt-in: continue the taller section
     through mixed-section junctions and end the shorter one with a 6 mm joint.
@@ -152,7 +161,7 @@ def build_details(elements, boundary, sampler, separate_curbs=False):
         area=path.buffer(width/2,cap_style='flat',join_style='mitre').intersection(boundary)
         if area.is_empty:
             row['reason']='empty clipped curb footprint';continue
-        curbs.setdefault(role,[]).append(area)
+        curbs.setdefault(role,[]).append((area,row))
         row.update(status='modeled',reason='approved section; polyline is the width centreline',width_m=width,height_m=height,
                    length_m=path.length,footprint_m2=area.area,bottom_above_vp_m=DATUM)
     stair_footprints=[]
@@ -200,23 +209,45 @@ def build_details(elements, boundary, sampler, separate_curbs=False):
         for e,r in group:r['reason']=reason
     occupied = Polygon()
     roles = sorted(curbs, key=lambda r: -SECTIONS[r][1]) if separate_curbs else curbs
+    joints = []
+    stair_union = unary_union(stair_footprints)
     for role in roles:
-        gs = curbs[role]
         width,height,slot=SECTIONS[role]
-        footprint=unary_union(gs).difference(unary_union(stair_footprints))
+        footprint=unary_union([a for a,_ in curbs[role]]).difference(stair_union)
         if separate_curbs:
             # Taller section continues through the joint; shorter section ends with
             # a method-C-sized 6 mm clearance, not a coplanar duplicate bottom.
-            before = footprint.area
-            footprint = footprint.difference(occupied.buffer(.006, join_style='mitre'))
-            for row in report:
-                if row.get('role') == role and row['status'] == 'modeled':
-                    row.update(joint_gap_m=.006, joint_trim_m2=max(0.0, before-footprint.area),
-                               joint_trim_scope='role union', joint_rule='taller section continuous')
+            union_pre = footprint
+            before = union_pre.area
+            footprint = union_pre.difference(occupied.buffer(.006, join_style='mitre'))
+            union_trim = max(0.0, before - footprint.area)
+            for area,row in curbs[role]:
+                after_stair = area.difference(stair_union)
+                stair_trim = max(0.0, area.area - after_stair.area)
+                retained = area.intersection(footprint).area
+                joint_trim = max(0.0, after_stair.area - retained)
+                row['retained_m2'] = retained
+                row['stair_trim_m2'] = stair_trim
+                row['joint_trim_m2'] = joint_trim
+                if joint_trim > 0:
+                    row['joint_gap_m'] = .006
+                    row['joint_rule'] = 'taller section continuous'
+                if retained <= 1e-9:
+                    row['status'] = 'trimmed'
+                    if stair_trim > 0 and joint_trim > 0:
+                        row['reason'] = 'occluded by stair footprint and taller curb section'
+                    elif stair_trim > 0:
+                        row['reason'] = 'occluded by stair footprint'
+                    else:
+                        row['reason'] = 'joint policy: fully covered by taller curb section'
+            if union_trim > 0:
+                joints.append(dict(role=role, scope='role union', union_trim_m2=union_trim,
+                                   union_retained_m2=footprint.area, gap_m=.006,
+                                   rule='taller section continuous'))
             occupied = unary_union([occupied, footprint])
         if not footprint.is_empty:meshes.append(_curb_solid(footprint,sampler,height,slot))
     mesh=combine(meshes)
     if len(mesh.faces):
         # Detail UV is derived after cleanup. No loose edges or near-duplicate solid vertices are retained.
         mesh=gc.clean_topology(mesh)
-    return mesh,report
+    return mesh, report, joints
