@@ -21,7 +21,7 @@ def test_dissolve_keeps_boundary_positions_uv_slot_and_drop_disposition():
     assert len(m.verts)==5 and len(m.faces)==4
 
 
-@pytest.mark.parametrize('kind',['boundary','mixed_slot','raised','uv_seam','bool','out_of_range'])
+@pytest.mark.parametrize('kind',['boundary','mixed_slot','raised','uv_seam','bool','out_of_range','winding'])
 def test_dissolve_refuses_unsupported_owner_or_boundary(kind):
     m=mesh();index=4
     if kind=='boundary':index=0
@@ -29,5 +29,7 @@ def test_dissolve_refuses_unsupported_owner_or_boundary(kind):
     elif kind=='raised':m.level[0]=1
     elif kind=='uv_seam':m.uv[0,0,0]+=.1
     elif kind=='bool':index=True
+    elif kind=='winding':
+        m.faces[0]=m.faces[0,::-1];m.uv[0]=m.uv[0,::-1]
     else:index=5
     with pytest.raises(ValueError):gc.dissolve_base_vertex(m,index)
