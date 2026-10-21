@@ -40,9 +40,10 @@ assert set(models.SCHEMAS) == {{
     'ProjectManifest', 'Spec', 'ValidationReport', 'WindowType',
 }}
 schemas = {{k: v.model_json_schema() for k, v in models.SCHEMAS.items()}}
-# Snapshot of every generated schema before the provenance extraction.
+# Strict snapshot includes #138 decision-ID annotations in three Spec descriptions;
+# provenance extraction and import order must preserve those annotations too.
 assert hashlib.sha256(json.dumps(schemas, sort_keys=True).encode()).hexdigest() == (
-    '105324c719a7e5633babf54cd1dc0cf8a971cc635000cfc44778f52a6f1d64e0'
+    '43c9119992197cfdadc007c329a23ae260bbd8bb06acc943dd6f7923cce7aea0'
 )
 """)
 
