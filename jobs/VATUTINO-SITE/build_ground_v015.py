@@ -168,6 +168,54 @@ def match_reference_faces(m, reference, face_ids):
     return mapping
 
 
+def lower_quantized_y(vertices, vertex):
+    """One bounded float32-grid step, only for the measured D150 ray-boundary corner."""
+    v=np.asarray(vertices,float)
+    if (v.ndim!=2 or v.shape[1]!=3 or not len(v) or not np.isfinite(v).all()
+            or isinstance(vertex,bool) or not isinstance(vertex,(int,np.integer)) or not 0<=vertex<len(v)):
+        raise ValueError('finite vertices and a valid quantization-pin index required')
+    origin=(v[:,1].min()+v[:,1].max())/2
+    local=np.float32(v[vertex,1]-origin)
+    value=float(np.nextafter(local,np.float32(-np.inf)))+origin
+    if not np.isfinite(value) or abs(value-v[vertex,1])>=1e-5:
+        raise ValueError('quantization pin exceeds 10 micrometres')
+    return value
+
+
+def spacing_pair_rejections(q, vertices, approved):
+    """Check every neighbouring original/opposite fan combination, not xView alone."""
+    triangles=[];levels=[];slots=[];parents=[]
+    for i,(face,level,slot) in enumerate(zip(q.faces,q.level,q.slot)):
+        if level<0:continue
+        for variant in range(2 if len(face)==4 else 1):
+            f=face[1:]+face[:1] if variant else face
+            for j in range(1,len(f)-1):
+                triangles.append((f[0],f[j],f[j+1]));levels.append(level);slots.append(slot);parents.append((i,variant))
+    m=gc.Mesh(vertices,np.asarray(triangles),slots,np.asarray(levels),np.zeros((len(triangles),3,2)),q.cell)
+    report=gc.measure_stack_gaps(m,.006,include_under_band_samples=True)
+    rows=list(report['normal_gap_under_band_samples']);seen=set()
+    for row in report['normal_gap_over_band_samples']:
+        upper=q.source_faces[parents[row['upper_face']][0]];lower=q.source_faces[parents[row['lower_face']][0]]
+        key=(row['kind'],upper[0],lower[0],row['vertex']) if len(upper)==len(lower)==1 else None
+        if key in approved and row['gap_mm']<=approved[key]+.000001:
+            seen.add(key)
+        else:rows.append(row)
+    if seen!=set(approved):raise ValueError(f'missing or increased frozen D150 samples: {set(approved)-seen}')
+    constraints=[]
+    for row in rows:
+        changed={i for i,variant in (parents[row['upper_face']],parents[row['lower_face']]) if variant}
+        if not changed:raise ValueError(f'unsafe original-source spacing sample: {row}')
+        constraints.append(changed)
+    chosen={next(iter(c)) for c in constraints if len(c)==1}
+    pending=[c for c in constraints if not c&chosen]
+    while pending:
+        counts=Counter(i for c in pending for i in c);best=max(counts,key=lambda i:(counts[i],-i))
+        chosen.add(best);pending=[c for c in pending if best not in c]
+    return chosen,{'under_band_samples':len(report['normal_gap_under_band_samples']),
+        'unaccepted_over_band_samples':len(rows)-len(report['normal_gap_under_band_samples']),
+        'accepted_D150_samples':len(seen),'virtual_surface_triangles':len(triangles)}
+
+
 def retain_d150(m, reference, policy):
     if legacy.surface_fingerprint(reference['verts'],reference['faces'])!=policy['surface_sha256']:
         raise ValueError('D150 original reference surface fingerprint mismatch')
@@ -179,6 +227,10 @@ def retain_d150(m, reference, policy):
         if len(ids)!=1:raise ValueError(f'D150 vertex {vi}: ambiguous world-coordinate identity')
         vm[vi]=int(ids[0])
     for vi in vm.values():m.verts[vi,2]-=.00002
+    pin_vertex=vm[17852];before_y=float(m.verts[pin_vertex,1])
+    m.verts[pin_vertex,1]=lower_quantized_y(m.verts,pin_vertex)
+    pin={'reference_vertex':17852,'current_vertex':pin_vertex,'before_y_m':before_y,
+         'after_y_m':float(m.verts[pin_vertex,1]),'delta_y_m':float(m.verts[pin_vertex,1]-before_y)}
     surf=m.level>=0;sf=np.flatnonzero(surf);sm=subset(m,surf)
     fm={int(k):i for i,k in enumerate(sf)}
     # subset compacts vertices in increasing source index order.
@@ -192,7 +244,7 @@ def retain_d150(m, reference, policy):
         if a['gap_mm']>s['gap_mm']+.000001:raise ValueError(f'D150 frozen maximum increased: {s} -> {a}')
         rows.append({'frozen':s,'current':a})
     if actual:raise ValueError(f'new unaccepted D150 samples: {actual}')
-    return set(mapping.values()),{'samples':rows,'upper_vertex_delta_z_m':-.00002,'stack_gaps':gaps}
+    return set(mapping.values()),{'samples':rows,'upper_vertex_delta_z_m':-.00002,'quantization_pin':pin,'stack_gaps':gaps}
 
 
 def validate_pair_hints(m, hints):
@@ -218,7 +270,7 @@ def validate_pair_hints(m, hints):
     return result
 
 
-def derive(m,profile,sampler,protected,initial_exclusions=()):
+def derive(m,profile,sampler,protected,initial_exclusions=(),approved_gaps=None):
     surf=m.level>=0;xy=m.verts[m.faces[surf],:2];base=np.floor(xy.mean(axis=1)/4)*4
     m.uv[surf]=(xy-base[:,None,:])/4
     uv,layout=legacy.profile_uv(m,profile);uv[~surf]=m.uv[~surf]
@@ -233,7 +285,7 @@ def derive(m,profile,sampler,protected,initial_exclusions=()):
     z,hit=sampler.sample(m.verts[:,:2]);offset=m.verts[:,2]-z;offset[np.unique(m.faces[m.level==0])]=0
     history=[]
     for iteration in range(12):
-        q=pair_triangles(seed,excluded_pairs=sorted(excluded))
+        q=pair_triangles(seed,excluded_pairs=sorted(excluded),improve_matching=True)
         cycles=list(q.faces);uvs=list(q.uv);owners=list(range(len(q.faces)))
         for i,(f,u) in enumerate(zip(q.faces,q.uv)):
             if len(f)==4:cycles.append(f[1:]+f[:1]);uvs.append(np.roll(u,-1,axis=0));owners.append(i)
@@ -255,7 +307,9 @@ def derive(m,profile,sampler,protected,initial_exclusions=()):
         for i in np.flatnonzero(failed):
             if len(q.source_faces[own[i]])!=2:raise ValueError(f'unsafe original surface triangle {own[i]}')
             bad.add(own[i])
-        history.append({'iteration':iteration,'overlap_combinations':count,'relief_max_mm':float(errors.max()*1000),
+        spacing_bad,spacing=spacing_pair_rejections(q,verts,approved_gaps or {})
+        bad.update(spacing_bad)
+        history.append({'spacing':spacing,'iteration':iteration,'overlap_combinations':count,'relief_max_mm':float(errors.max()*1000),
                         'density_min':float(den.min()),'density_max':float(den.max()),'rejected_pairs':len(bad)})
         print(profile,history[-1],flush=True)
         if not bad:break
@@ -309,9 +363,13 @@ def main(argv=None):
     if gap_receipt['stack_gaps']['normal_gap_vertices_below'] or gap_receipt['stack_gaps']['normal_gap_centroids_below']:
         raise ValueError('normal gap below unchanged 5 mm')
     hints=validate_pair_hints(m,load_json(payload[a.pair_hints])) if a.pair_hints is not None else {'npm':[],'vpm':[]}
+    sf=np.flatnonzero(m.level>=0);sv=np.unique(m.faces[m.level>=0])
+    approved_gaps={(s['current']['kind'],int(sf[s['current']['upper_face']]),int(sf[s['current']['lower_face']]),
+                    None if s['current']['vertex'] is None else int(sv[s['current']['vertex']])):s['frozen']['gap_mm']
+                   for s in gap_receipt['samples']}
     profiles={};stats={}
     for profile in ('npm','vpm'):
-        q,r=derive(m,profile,sampler,protected,hints[profile])
+        q,r=derive(m,profile,sampler,protected,hints[profile],approved_gaps)
         if set(q.slot)!=set(order):raise ValueError(f'expected all fixed texture IDs used, actual {sorted(set(q.slot))}')
         profiles[profile]={'verts':q.verts.tolist(),'faces':[list(map(int,f)) for f in q.faces],'uv':[u.tolist() for u in q.uv],
             'slots':order,'mat':[order.index(s) for s in q.slot],'level':q.level.tolist(),'source_faces':q.source_faces,'cell':4.}
