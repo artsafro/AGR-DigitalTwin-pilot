@@ -98,11 +98,15 @@ def test_main_refuses_occupied_output_before_measurement(monkeypatch, tmp_path):
     # MEAS is left non-existent: if main() read any measurement before the guard, the missing
     # fins.json would raise FileNotFoundError first. A FileExistsError therefore proves the guard
     # refuses BEFORE any measurement access; the sentinels must survive byte-for-byte.
-    with pytest.raises(FileExistsError):
-        build_fins.main()
-    for name, data in sentinels.items():
-        assert (out / name).read_bytes() == data
-    assert sorted(p.name for p in out.iterdir()) == sorted(sentinels)
+    # The guard must be idempotent: every repeated re-run on the occupied output (E3) refuses the
+    # same way and never touches the sentinels, so invoke the publication entry point 3 times and
+    # re-check the bytes after each refusal (matches the independent reviewer's 3/3 probe).
+    for _ in range(3):
+        with pytest.raises(FileExistsError):
+            build_fins.main()
+        for name, data in sentinels.items():
+            assert (out / name).read_bytes() == data
+        assert sorted(p.name for p in out.iterdir()) == sorted(sentinels)
 
 
 def test_main_reaches_measurement_for_fresh_output(monkeypatch, tmp_path):
