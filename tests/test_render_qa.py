@@ -171,6 +171,42 @@ def test_blender_fixtures(tmp_path):
     assert json.loads((output / "bad-cli.json").read_text())["status"] == "fail"
 
 
+@pytest.mark.blender
+@pytest.mark.parametrize("modifier_type", ["SUBSURF", "MULTIRES"])
+def test_blender_rejects_subdivision_level_mismatch(tmp_path, modifier_type):
+    blender = Path("C:/Program Files/Blender Foundation/Blender 5.1/blender.exe")
+    if not blender.exists():
+        pytest.skip("Blender 5.1.2 not installed")
+    renders = tmp_path / "must-not-exist"
+    script = f'''
+import bpy, importlib.util
+from pathlib import Path
+spec = importlib.util.spec_from_file_location("qa", {str(ROOT / "tools/qa/render_qa.py")!r})
+qa = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(qa)
+assert bpy.app.version == (5, 1, 2)
+scene = bpy.context.scene
+cube = scene.objects["Cube"]
+modifier = cube.modifiers.new("SubdivisionMismatch", {modifier_type!r})
+if modifier.type == "MULTIRES":
+    bpy.context.view_layer.objects.active = cube
+    bpy.ops.object.multires_subdivide(modifier=modifier.name)
+modifier.levels = 0
+modifier.render_levels = 1
+try:
+    qa.check_scene(scene, {{"targets": ["Cube"], "cameras": ["Camera"]}}, {str(renders)!r})
+except ValueError as exc:
+    assert "Cube" in str(exc) and "SubdivisionMismatch" in str(exc), str(exc)
+else:
+    raise AssertionError("Viewport/render subdivision mismatch accepted")
+assert not Path({str(renders)!r}).exists()
+'''
+    result = subprocess.run([str(blender), "--background", "--factory-startup",
+                             "--python-exit-code", "1", "--python-expr", script],
+                            capture_output=True, text=True, timeout=180)
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
 def test_generated_verdict_grid():
     qa = load_checker()
     # Independent literal oracle over 3 x 3 x 3 x 2 = 54 measurements.
