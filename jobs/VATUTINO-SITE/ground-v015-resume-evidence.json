@@ -1,0 +1,2622 @@
+{
+  "issue": 371,
+  "status": "blocked_model_decision_not_delivered",
+  "code_commit": "d5631211535c79b7d03518d166318a0618e4623e",
+  "base_merged": "08b3cb9",
+  "storage": {
+    "archive": "G:\\Мой диск\\AGR-evidence\\371-ground-v015-resume-20261021\\rejected-checkpoint-evidence.zip",
+    "sha256": "b2282d5e69dc51a84137e448026f08775ccbc240668580a26f1da2e8bcd29912",
+    "size_bytes": 5479115,
+    "sha256sums": "G:\\Мой диск\\AGR-evidence\\371-ground-v015-resume-20261021\\SHA256SUMS.txt"
+  },
+  "rejected_noding_supplement": {"archive": "G:/Мой диск/AGR-evidence/371-ground-v015-resume-20261021/rejected-stair-noding-supplement.zip", "sha256": "6d40898f39510bf9d3e77a2efdddbfd916a398c7c3ef969ab40b81b1080320ea", "size_bytes": 1005044},
+  "input_inventory": [
+    {
+      "path": "C:\\x\\ev_t_eb1c51ca\\v014_rebuild\\ground_master_vpm.json",
+      "archive_name": "inputs/ground_master_vpm.json",
+      "sha256": "82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5"
+    },
+    {
+      "path": "C:\\x\\ev_t_eb1c51ca\\v014_rebuild\\ground_report.json",
+      "archive_name": "inputs/ground_report.json",
+      "sha256": "f0ee6010f5af82fe8a14d32f6ae115a8723c7195e9b5771d9e068054626775f4"
+    },
+    {
+      "path": "C:\\x\\t_d94665f2\\paving_ground_inputs_v4.json",
+      "archive_name": "inputs/paving_ground_inputs_v4.json",
+      "sha256": "3b6b433d718c0292f472293849f3363fd2ae90d4892e598efca52be44cd9d502"
+    },
+    {
+      "path": "tmp\\final-session-before-bevel.npz",
+      "archive_name": "tmp/final-session-before-bevel.npz",
+      "sha256": "0d0db0490f00a37e833f0ca3b596a317fca59ce49a5f78a04067b114614e59e8"
+    },
+    {
+      "path": "tmp\\resume-curb-fit.py",
+      "archive_name": "tmp/resume-curb-fit.py",
+      "sha256": "dbb8dc22a5eac8bcd541b1ca5f007deb27f59a139dfe8a27abb96854d7c85bf7"
+    },
+    {
+      "path": "tmp\\resume-curb-fit.json",
+      "archive_name": "tmp/resume-curb-fit.json",
+      "sha256": "3bb919b90c45ef65294008b4a00dc202cd1dc18b4e617bd1ef3c4d5beda0d1b8"
+    },
+    {
+      "path": "tmp\\resume-curb-fit-reference.npz",
+      "archive_name": "tmp/resume-curb-fit-reference.npz",
+      "sha256": "eaef9a400b52bc58627252d3f5e81d7b23b0cb8ab89f7b883008ba3506454517"
+    },
+    {
+      "path": "tmp\\resume-curb-fit-reference.json",
+      "archive_name": "tmp/resume-curb-fit-reference.json",
+      "sha256": "74c5ef6d44fd9124190be94b630c82b02bfbc9a520af2658d84e845623396937"
+    },
+    {
+      "path": "tmp\\construction-probe.py",
+      "archive_name": "tmp/construction-probe.py",
+      "sha256": "c87e8ed0bc61be9c3380608513c9bd891c90be1678d9b4138560c799ff1c8590"
+    },
+    {
+      "path": "tmp\\bowtie-conversion-risk.py",
+      "archive_name": "tmp/bowtie-conversion-risk.py",
+      "sha256": "e2cbbdb43a748e7049ddd4962eb71358ba7610c85481a6b745ed1a2edaff229d"
+    },
+    {
+      "path": "tmp\\resume-boundary.json",
+      "archive_name": "tmp/resume-boundary.json",
+      "sha256": "6b04feb8236fe654349b48da9d996c245b451d603464ab29d47d3ca3072a4eeb"
+    },
+    {
+      "path": "tmp\\resume-boundary-weld.json",
+      "archive_name": "tmp/resume-boundary-weld.json",
+      "sha256": "c0bc8f7078d1a4296b9ac87a18105d0ce14c9005230f42986d20de9217e23ef1"
+    },
+    {
+      "path": "tmp\\resume-boundary-weld-corners.json",
+      "archive_name": "tmp/resume-boundary-weld-corners.json",
+      "sha256": "be6bf90f78f4320c1617a0d0c2933cf87f1d8337a525be24fbb066ea50ec80d3"
+    },
+    {
+      "path": "tmp\\rejected-boundary-straightening.py",
+      "archive_name": "tmp/rejected-boundary-straightening.py",
+      "sha256": "7e154b95861d26a3f29e81b40032fe1f3c46be836cb7c83fe291e8610d997f9d"
+    },
+    {
+      "path": "tmp\\resume-boundary-targeted-v002.py",
+      "archive_name": "tmp/resume-boundary-targeted-v002.py",
+      "sha256": "6fa497dd1b7422aea122a7c671cb2f2ba935c98a9cfe1635678665ed4a748a2b"
+    },
+    {
+      "path": "tmp\\resume-boundary-targeted-v002.json",
+      "archive_name": "tmp/resume-boundary-targeted-v002.json",
+      "sha256": "5f93fdca825dbb1aed43501d7d8ea3f01cf2a4a765311d16edfebf447425fe4e"
+    },
+    {
+      "path": "tmp\\resume-boundary-targeted-v002.npz",
+      "archive_name": "tmp/resume-boundary-targeted-v002.npz",
+      "sha256": "fae33551647d668d99112b4f9f07b2094ac3a377ec244aca9423899e88f4cfaf"
+    },
+    {
+      "path": "tmp\\resume-boundary-targeted-v002.log",
+      "archive_name": "tmp/resume-boundary-targeted-v002.log",
+      "sha256": "b9786c84a2c677b41fc88342048b1e7cba7b971b9fd773a6c56547e5da9c55d9"
+    },
+    {
+      "path": "tmp\\resume-mitred-legacy-inventory-v002.py",
+      "archive_name": "tmp/resume-mitred-legacy-inventory-v002.py",
+      "sha256": "e1d79f8a3225bb42063e0173c329e23eaa05a887ede244ea756af263b200aa3c"
+    },
+    {
+      "path": "tmp\\resume-mitred-legacy-inventory-v002.json",
+      "archive_name": "tmp/resume-mitred-legacy-inventory-v002.json",
+      "sha256": "2d7af21a7cd3846c3f844fc3ad8e889df6860e980e4b587ccf51c214d1d14d89"
+    },
+    {
+      "path": "tmp\\resume-mitred-legacy-inventory-v002.npz",
+      "archive_name": "tmp/resume-mitred-legacy-inventory-v002.npz",
+      "sha256": "9e261b3cb3712fd51680315cfe1c063312b11d1a4a7d392314b28ae881d0376d"
+    },
+    {
+      "path": "tmp\\resume-mitred-legacy-inventory-v002.log",
+      "archive_name": "tmp/resume-mitred-legacy-inventory-v002.log",
+      "sha256": "e9d0e3b51b14f351982c9e7f501d7a910123c44d7262df934eb40b526446d553"
+    },
+    {
+      "path": "tmp\\resume-legacy-final-gates-v002.py",
+      "archive_name": "tmp/resume-legacy-final-gates-v002.py",
+      "sha256": "2508884de03036c145d07946c37b114d64aec37ec9a8f3591fa41c5662cb4a00"
+    },
+    {
+      "path": "tmp\\resume-legacy-final-gates-v002.json",
+      "archive_name": "tmp/resume-legacy-final-gates-v002.json",
+      "sha256": "a7a9a67f054b849ebca8d1e6ab7cebe0706079c0ccdfdca7759e98aa1c2f1c35"
+    },
+    {
+      "path": "tmp\\resume-legacy-final-gates-v002.log",
+      "archive_name": "tmp/resume-legacy-final-gates-v002.log",
+      "sha256": "265efddb86d9e7eb5816aee470e2a77f9aefe5d0ad5a5a0166e5f82a052a129f"
+    },
+    {
+      "path": "tmp\\resume-before-after-gates.py",
+      "archive_name": "tmp/resume-before-after-gates.py",
+      "sha256": "cc0e0cd3696165c327022f667ce2102f3a6baced9a56c49b5788ddece34a702d"
+    },
+    {
+      "path": "tmp\\resume-before-after-gates.json",
+      "archive_name": "tmp/resume-before-after-gates.json",
+      "sha256": "dfe8e2b07a9d9c07628a5d22565c3e46fee50b24127473b1bf1e7fa13abf2e1a"
+    },
+    {
+      "path": "tmp\\ground_details_before_clearance.py",
+      "archive_name": "tmp/ground_details_before_clearance.py",
+      "sha256": "94a6072d02c5e5c74f5eb9c1e5159688c94e17355a23eab84fc491f966acb04e"
+    },
+    {
+      "path": "tmp\\legacy-detail-parity.py",
+      "archive_name": "tmp/legacy-detail-parity.py",
+      "sha256": "e2af7b26a0cd0f4ed088fb45d364c18c30760ffd5d9cbb0cc5aac5de900dd926"
+    },
+    {
+      "path": "tmp\\legacy-detail-parity.json",
+      "archive_name": "tmp/legacy-detail-parity.json",
+      "sha256": "248b66af312c69016fc2f0509c36bde59c2598686de17afd0289621c093bfd85"
+    },
+    {
+      "path": "tmp\\resume-red.log",
+      "archive_name": "tmp/resume-red.log",
+      "sha256": "444efa9120cc0aad525e8b54eca51c7aedeef5dc963d6f7b1ec621fd420836fe"
+    },
+    {
+      "path": "tmp\\overlay-red.log",
+      "archive_name": "tmp/overlay-red.log",
+      "sha256": "7a2c39d89d5abe0843eef88e728d00b95ee43d0661f588e202a4687862a153ac"
+    },
+    {
+      "path": "tmp\\perimeter-red.log",
+      "archive_name": "tmp/perimeter-red.log",
+      "sha256": "3402fdc27a3afed25e360c2e1e39c7be4ad7287179b19fb01c1f90b02bed7bbf"
+    },
+    {
+      "path": "tmp\\boundary-weld-red.log",
+      "archive_name": "tmp/boundary-weld-red.log",
+      "sha256": "5d33b66eaa9c0c81b13b300540bba535c1ad9d7912d2d03ee4d62fadaa69486c"
+    },
+    {
+      "path": "tmp\\collinear-red.log",
+      "archive_name": "tmp/collinear-red.log",
+      "sha256": "90da9b57ab044f75dfe71ac9fd130fa5a795864d02ae5084b97e1dc1beea22ad"
+    },
+    {
+      "path": "tmp\\targeted-red.log",
+      "archive_name": "tmp/targeted-red.log",
+      "sha256": "ad1c2b1113f77cc8fb5a12199ae137f41b42d9e6f7bc6a299f3b038c0aea1649"
+    },
+    {
+      "path": "tmp\\stair-clearance-red.log",
+      "archive_name": "tmp/stair-clearance-red.log",
+      "sha256": "bd0490816bbae2d44df7e4171317648c65cb26b5c3ae89073d55480e30adad95"
+    },
+    {
+      "path": "tmp\\blank-slot-red.log",
+      "archive_name": "tmp/blank-slot-red.log",
+      "sha256": "06e932dd4a5321f988a6ce09911963c3f82c053f9625552db6a75b5e1523b15a"
+    },
+    {
+      "path": "tmp\\resume-focused-final.log",
+      "archive_name": "tmp/resume-focused-final.log",
+      "sha256": "2902cee6c364cd7bd8adb4e82f1188f6bf8d05117047e944dd2840f91fc6a29d"
+    },
+    {
+      "path": "src\\dt_ai\\geometry\\ground_cake.py",
+      "archive_name": "code/src/dt_ai/geometry/ground_cake.py",
+      "sha256": "ede517713b3c98aa7d4d575cbeb75779e033ac2fd95a138281491fc235861216"
+    },
+    {
+      "path": "src\\dt_ai\\geometry\\ground_details.py",
+      "archive_name": "code/src/dt_ai/geometry/ground_details.py",
+      "sha256": "335ac0ed3a30ef0ea4f11d17a66ea65446c00469438b510121456050c6019de6"
+    },
+    {
+      "path": "src\\dt_ai\\geometry\\ground_quads.py",
+      "archive_name": "code/src/dt_ai/geometry/ground_quads.py",
+      "sha256": "730e7b74059c315cef39f3449ab363af28e57d56f041e60d62478e067759e09c"
+    },
+    {
+      "path": "tests\\test_ground_curb_support.py",
+      "archive_name": "code/tests/test_ground_curb_support.py",
+      "sha256": "c030741b1f6aa83ec9c508e0e0076f0e826bbf21d0d5de865ef75795a5e5fe6e"
+    },
+    {
+      "path": "tests\\test_ground_perimeter_straightening.py",
+      "archive_name": "code/tests/test_ground_perimeter_straightening.py",
+      "sha256": "a344135b71125de963ad69bee3c2a9229de544f4d105235adf042edc469ea21a"
+    },
+    {
+      "path": "tests\\test_ground_stair_clearance.py",
+      "archive_name": "code/tests/test_ground_stair_clearance.py",
+      "sha256": "147f2ddc16e0f28f5948bbddf32de19cdea29fef989433f228bd007923e49705"
+    },
+    {
+      "path": "tests\\data\\ground-v015-curb-support-overlay.json",
+      "archive_name": "code/tests/data/ground-v015-curb-support-overlay.json",
+      "sha256": "05bdef69f8c6e7d54dd333b2bbd816f57d37f11d7ff56d1c512671e0f670fcf5"
+    }
+  ],
+  "xview": {
+    "part": "mitred-joint",
+    "vertex_pairs": 0,
+    "face_pairs": 1,
+    "face_pairs_by_kind": {
+      "contact": 0,
+      "area": 1,
+      "area+contact": 0
+    },
+    "vertices": [],
+    "faces": [
+      21770,
+      21772
+    ],
+    "xview_faces": [],
+    "offenders": [
+      "mitred-joint f21770/f21772: area, 0.00 mm"
+    ]
+  },
+  "quad_budget": {
+    "quads": 19224,
+    "triangles": 8005,
+    "triangle_equivalent": 46453,
+    "surface_polygons": 20149
+  },
+  "per_slot": [
+    {
+      "slot": "CurbGarden",
+      "v014_triangles": 9844,
+      "v015_quads": 4703,
+      "v015_triangles": 426,
+      "v015_triangle_share_pct": 8.305712614544746,
+      "triangle_reasons": "not_certified",
+      "material_ID_readback": "not_run"
+    },
+    {
+      "slot": "FlowerBed",
+      "v014_triangles": 134,
+      "v015_quads": 49,
+      "v015_triangles": 36,
+      "v015_triangle_share_pct": 42.35294117647059,
+      "triangle_reasons": "not_certified",
+      "material_ID_readback": "not_run"
+    },
+    {
+      "slot": "Gravel",
+      "v014_triangles": 618,
+      "v015_quads": 220,
+      "v015_triangles": 178,
+      "v015_triangle_share_pct": 44.72361809045226,
+      "triangle_reasons": "not_certified",
+      "material_ID_readback": "not_run"
+    },
+    {
+      "slot": "LawnReinforced",
+      "v014_triangles": 1311,
+      "v015_quads": 500,
+      "v015_triangles": 311,
+      "v015_triangle_share_pct": 38.347718865598026,
+      "triangle_reasons": "not_certified",
+      "material_ID_readback": "not_run"
+    },
+    {
+      "slot": "LawnRolled",
+      "v014_triangles": 2088,
+      "v015_quads": 677,
+      "v015_triangles": 734,
+      "v015_triangle_share_pct": 52.0198440822112,
+      "triangle_reasons": "not_certified",
+      "material_ID_readback": "not_run"
+    },
+    {
+      "slot": "Mulch",
+      "v014_triangles": 3263,
+      "v015_quads": 1140,
+      "v015_triangles": 983,
+      "v015_triangle_share_pct": 46.30240226095148,
+      "triangle_reasons": "not_certified",
+      "material_ID_readback": "not_run"
+    },
+    {
+      "slot": "Pebbles",
+      "v014_triangles": 291,
+      "v015_quads": 76,
+      "v015_triangles": 139,
+      "v015_triangle_share_pct": 64.65116279069767,
+      "triangle_reasons": "not_certified",
+      "material_ID_readback": "not_run"
+    },
+    {
+      "slot": "Skirt",
+      "v014_triangles": 3578,
+      "v015_quads": 1790,
+      "v015_triangles": 89,
+      "v015_triangle_share_pct": 4.736562001064396,
+      "triangle_reasons": "not_certified",
+      "material_ID_readback": "not_run"
+    },
+    {
+      "slot": "Stairs",
+      "v014_triangles": 100,
+      "v015_quads": 64,
+      "v015_triangles": 8,
+      "v015_triangle_share_pct": 11.11111111111111,
+      "triangle_reasons": "not_certified",
+      "material_ID_readback": "not_run"
+    },
+    {
+      "slot": "TileDark",
+      "v014_triangles": 509,
+      "v015_quads": 220,
+      "v015_triangles": 69,
+      "v015_triangle_share_pct": 23.875432525951556,
+      "triangle_reasons": "not_certified",
+      "material_ID_readback": "not_run"
+    },
+    {
+      "slot": "TileLight",
+      "v014_triangles": 21603,
+      "v015_quads": 8559,
+      "v015_triangles": 4480,
+      "v015_triangle_share_pct": 34.3584630723215,
+      "triangle_reasons": "not_certified",
+      "material_ID_readback": "not_run"
+    },
+    {
+      "slot": "TileRed",
+      "v014_triangles": 3004,
+      "v015_quads": 1226,
+      "v015_triangles": 552,
+      "v015_triangle_share_pct": 31.046119235095613,
+      "triangle_reasons": "not_certified",
+      "material_ID_readback": "not_run"
+    }
+  ],
+  "curb_max_trim_m": 0.004398460582109465,
+  "boundary_max_displacement_m": 0.001503197924730087,
+  "remaining_face_witnesses": [
+    {
+      "a": 21770,
+      "b": 21772,
+      "slot_a": "Skirt",
+      "slot_b": "Skirt",
+      "kind": "area",
+      "gap_m": 0.0,
+      "xyz_a": [
+        [
+          -7691.007,
+          -15248.688,
+          152.017682
+        ],
+        [
+          -7691.2305,
+          -15248.001,
+          151.996786
+        ],
+        [
+          -7691.2305,
+          -15248.001,
+          150.996786
+        ],
+        [
+          -7691.007,
+          -15248.688,
+          151.017682
+        ]
+      ],
+      "xyz_b": [
+        [
+          -7691.2305,
+          -15248.001,
+          151.996786
+        ],
+        [
+          -7691.016,
+          -15248.688,
+          152.017123
+        ],
+        [
+          -7691.016,
+          -15248.688,
+          151.017123
+        ],
+        [
+          -7691.2305,
+          -15248.001,
+          150.996786
+        ]
+      ]
+    }
+  ],
+  "gates": {
+    "coverage": {
+      "surface_m2": 16733.706022139453,
+      "base_m2": 16733.572429802978,
+      "uncovered_m2": 0.6343151109769916,
+      "coverage_pct": 99.99620935667127,
+      "tol_m": 0.0022,
+      "uncovered_beyond_tol_m2": 0.0,
+      "outside_surface_beyond_tol_m2": 0.000174812795467591
+    },
+    "open_edges": {
+      "open_edges": 1782,
+      "open_edges_off_outline": 1,
+      "non_manifold": 0
+    },
+    "inside": {
+      "faces": 32816,
+      "outside": 0,
+      "tol_m": 0.022
+    },
+    "relief": {
+      "faces": 32816,
+      "max_mm": 9.963067254147973,
+      "faces_over_tol": 0,
+      "tol_mm": 10.0
+    },
+    "stack_gaps": {
+      "checked": 11628,
+      "max_gap_error_mm": 0.025807817962686386,
+      "min_gap_mm": 5.701833333290551,
+      "normal_gap_centroid_min_mm": 5.04882758728203,
+      "normal_gap_centroid_max_mm": 26.622740148687747,
+      "normal_gap_vertex_min_mm": 5.048687487020151,
+      "normal_gap_vertex_max_mm": 36.9243908529725,
+      "normal_gap_band_mm": [
+        5.0,
+        20.0
+      ],
+      "normal_gap_centroids_below": 0,
+      "normal_gap_centroids_above": 6,
+      "normal_gap_vertices_below": 0,
+      "normal_gap_vertices_above": 18,
+      "normal_gap_faces_above": [
+        22987,
+        25835,
+        25847,
+        26260,
+        26275,
+        32785
+      ],
+      "normal_gap_over_band_samples": [
+        {
+          "kind": "centroid",
+          "upper_face": 22987,
+          "lower_face": 22986,
+          "vertex": null,
+          "gap_mm": 22.67129168624078
+        },
+        {
+          "kind": "centroid",
+          "upper_face": 25835,
+          "lower_face": 25834,
+          "vertex": null,
+          "gap_mm": 22.94111354292167
+        },
+        {
+          "kind": "centroid",
+          "upper_face": 25847,
+          "lower_face": 25846,
+          "vertex": null,
+          "gap_mm": 26.61480723249746
+        },
+        {
+          "kind": "centroid",
+          "upper_face": 26260,
+          "lower_face": 26259,
+          "vertex": null,
+          "gap_mm": 22.34768778972845
+        },
+        {
+          "kind": "centroid",
+          "upper_face": 26275,
+          "lower_face": 26274,
+          "vertex": null,
+          "gap_mm": 24.901308759815443
+        },
+        {
+          "kind": "centroid",
+          "upper_face": 32785,
+          "lower_face": 32784,
+          "vertex": null,
+          "gap_mm": 26.622740148687747
+        },
+        {
+          "kind": "corner",
+          "upper_face": 22987,
+          "lower_face": 22986,
+          "vertex": 16239,
+          "gap_mm": 31.248995491296167
+        },
+        {
+          "kind": "corner",
+          "upper_face": 22987,
+          "lower_face": 22986,
+          "vertex": 16240,
+          "gap_mm": 31.248144753116506
+        },
+        {
+          "kind": "corner",
+          "upper_face": 22989,
+          "lower_face": 22988,
+          "vertex": 16239,
+          "gap_mm": 31.240410054759817
+        },
+        {
+          "kind": "corner",
+          "upper_face": 22999,
+          "lower_face": 22998,
+          "vertex": 16245,
+          "gap_mm": 36.914078168674145
+        },
+        {
+          "kind": "corner",
+          "upper_face": 25835,
+          "lower_face": 25834,
+          "vertex": 17903,
+          "gap_mm": 31.62985393424646
+        },
+        {
+          "kind": "corner",
+          "upper_face": 25835,
+          "lower_face": 25834,
+          "vertex": 17904,
+          "gap_mm": 31.628995844370234
+        },
+        {
+          "kind": "corner",
+          "upper_face": 25837,
+          "lower_face": 25836,
+          "vertex": 17903,
+          "gap_mm": 31.349957938028744
+        },
+        {
+          "kind": "corner",
+          "upper_face": 25847,
+          "lower_face": 25846,
+          "vertex": 17907,
+          "gap_mm": 36.91139415783935
+        },
+        {
+          "kind": "corner",
+          "upper_face": 25847,
+          "lower_face": 25846,
+          "vertex": 17914,
+          "gap_mm": 36.91359743527476
+        },
+        {
+          "kind": "corner",
+          "upper_face": 26260,
+          "lower_face": 26259,
+          "vertex": 18094,
+          "gap_mm": 30.763751446188362
+        },
+        {
+          "kind": "corner",
+          "upper_face": 26260,
+          "lower_face": 26259,
+          "vertex": 18095,
+          "gap_mm": 30.7629007080087
+        },
+        {
+          "kind": "corner",
+          "upper_face": 26262,
+          "lower_face": 26261,
+          "vertex": 18094,
+          "gap_mm": 30.755327810033762
+        },
+        {
+          "kind": "corner",
+          "upper_face": 26273,
+          "lower_face": 26272,
+          "vertex": 18099,
+          "gap_mm": 36.10855655275015
+        },
+        {
+          "kind": "corner",
+          "upper_face": 26275,
+          "lower_face": 26274,
+          "vertex": 18099,
+          "gap_mm": 36.09620786878348
+        },
+        {
+          "kind": "corner",
+          "upper_face": 26275,
+          "lower_face": 26274,
+          "vertex": 18100,
+          "gap_mm": 32.59339301557101
+        },
+        {
+          "kind": "corner",
+          "upper_face": 32769,
+          "lower_face": 25846,
+          "vertex": 17914,
+          "gap_mm": 36.903290317275925
+        },
+        {
+          "kind": "corner",
+          "upper_face": 32785,
+          "lower_face": 32784,
+          "vertex": 16245,
+          "gap_mm": 36.9243908529725
+        },
+        {
+          "kind": "corner",
+          "upper_face": 32785,
+          "lower_face": 32784,
+          "vertex": 16250,
+          "gap_mm": 36.924390852858835
+        }
+      ],
+      "same_level_overlap_m2": 0.0
+    },
+    "source_notch": {
+      "hypothetical_patch_m2": 0.0030915000000045403,
+      "hypothetical_closing_edge_m": 0.009000000000014552,
+      "sampled_closing_edge_to_source_outline_max_m": 0.004317305246049075,
+      "outline_tolerance_m": 0.0022,
+      "source_void_area_inside_patch_m2": 0.0027793467728598753,
+      "point_in_source_holes": [
+        0
+      ],
+      "not_authorized": true,
+      "patch_xy": [
+        [
+          -7691.007,
+          -15248.688
+        ],
+        [
+          -7691.2305,
+          -15248.001
+        ],
+        [
+          -7691.016,
+          -15248.688
+        ],
+        [
+          -7691.007,
+          -15248.688
+        ]
+      ]
+    }
+  },
+  "fan_risk_count": 59,
+  "fan_classes": {
+    "[('Mulch', 1), ('TileDark', 1)]": 1,
+    "[('LawnRolled', 1), ('Mulch', 1)]": 24,
+    "[('LawnRolled', 1)]": 6,
+    "[('Gravel', 1), ('LawnRolled', 1)]": 2,
+    "[('TileDark', 2)]": 1,
+    "[('Gravel', 1), ('Mulch', 1)]": 2,
+    "[('LawnRolled', 2)]": 1,
+    "[('LawnReinforced', 2)]": 1,
+    "[('LawnReinforced', 2), ('LawnRolled', 2)]": 1,
+    "[('FlowerBed', 1), ('Mulch', 1)]": 1,
+    "[('FlowerBed', 2)]": 1,
+    "[('LawnReinforced', 1), ('LawnRolled', 1)]": 16,
+    "[('LawnRolled', 1), ('Pebbles', 1)]": 1,
+    "[('Gravel', 1), ('LawnReinforced', 1)]": 1
+  },
+  "fan_witnesses": [
+    {
+      "vertex": 3503,
+      "xyz": [
+        -7644.432,
+        -15376.461,
+        146.110447
+      ],
+      "fan_faces": [
+        [
+          2299
+        ],
+        [
+          18753,
+          18755
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "TileDark",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 5859,
+      "xyz": [
+        -7611.159,
+        -15311.223,
+        150.219983
+      ],
+      "fan_faces": [
+        [
+          4451
+        ],
+        [
+          4556,
+          4574
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 5878,
+      "xyz": [
+        -7609.89,
+        -15312.768,
+        150.192977
+      ],
+      "fan_faces": [
+        [
+          4477
+        ],
+        [
+          4549,
+          4553
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 6007,
+      "xyz": [
+        -7602.474,
+        -15307.755,
+        150.324738
+      ],
+      "fan_faces": [
+        [
+          4649,
+          4655
+        ],
+        [
+          4664
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 6041,
+      "xyz": [
+        -7603.788,
+        -15308.835,
+        150.297437
+      ],
+      "fan_faces": [
+        [
+          4673
+        ],
+        [
+          8367
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 6342,
+      "xyz": [
+        -7618.992,
+        -15301.695,
+        150.386501
+      ],
+      "fan_faces": [
+        [
+          4917
+        ],
+        [
+          8776,
+          8795,
+          8797
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 6886,
+      "xyz": [
+        -7622.571,
+        -15277.755,
+        150.7372
+      ],
+      "fan_faces": [
+        [
+          5458,
+          5480
+        ],
+        [
+          5460
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 6961,
+      "xyz": [
+        -7628.856,
+        -15268.686,
+        150.834241
+      ],
+      "fan_faces": [
+        [
+          5526,
+          5528
+        ],
+        [
+          17443
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 7115,
+      "xyz": [
+        -7603.974,
+        -15269.232,
+        151.098668
+      ],
+      "fan_faces": [
+        [
+          5686
+        ],
+        [
+          6273
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 7119,
+      "xyz": [
+        -7603.572,
+        -15269.721,
+        151.095035
+      ],
+      "fan_faces": [
+        [
+          5686
+        ],
+        [
+          6269
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 7301,
+      "xyz": [
+        -7607.145,
+        -15265.365,
+        151.127515
+      ],
+      "fan_faces": [
+        [
+          5850,
+          5858,
+          5862
+        ],
+        [
+          6387
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 7299,
+      "xyz": [
+        -7605.369,
+        -15267.531,
+        151.111355
+      ],
+      "fan_faces": [
+        [
+          5852,
+          5854
+        ],
+        [
+          6346,
+          6348
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 7296,
+      "xyz": [
+        -7605.876,
+        -15266.913,
+        151.115962
+      ],
+      "fan_faces": [
+        [
+          5852
+        ],
+        [
+          6360
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 7304,
+      "xyz": [
+        -7607.589,
+        -15264.825,
+        151.131554
+      ],
+      "fan_faces": [
+        [
+          5857,
+          5862
+        ],
+        [
+          6392
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 7307,
+      "xyz": [
+        -7606.194,
+        -15266.526,
+        151.118839
+      ],
+      "fan_faces": [
+        [
+          5858,
+          5860
+        ],
+        [
+          6363
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 7365,
+      "xyz": [
+        -7629.174,
+        -15267.999,
+        150.843309
+      ],
+      "fan_faces": [
+        [
+          5910
+        ],
+        [
+          5911
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Gravel",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 8145,
+      "xyz": [
+        -7615.644,
+        -15253.584,
+        151.245448
+      ],
+      "fan_faces": [
+        [
+          6629,
+          6641
+        ],
+        [
+          6693
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 8156,
+      "xyz": [
+        -7615.77,
+        -15253.428,
+        151.247057
+      ],
+      "fan_faces": [
+        [
+          6641,
+          6643
+        ],
+        [
+          6695
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 8189,
+      "xyz": [
+        -7615.833,
+        -15254.772,
+        151.221402
+      ],
+      "fan_faces": [
+        [
+          6682,
+          6686
+        ],
+        [
+          17463
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "Gravel",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 8236,
+      "xyz": [
+        -7617.291,
+        -15252.996,
+        151.237258
+      ],
+      "fan_faces": [
+        [
+          6729
+        ],
+        [
+          6878,
+          6886
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 8242,
+      "xyz": [
+        -7617.609,
+        -15252.609,
+        151.24071
+      ],
+      "fan_faces": [
+        [
+          6736
+        ],
+        [
+          6884,
+          6886
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 8313,
+      "xyz": [
+        -7618.497,
+        -15250.104,
+        151.280653
+      ],
+      "fan_faces": [
+        [
+          6783,
+          6788
+        ],
+        [
+          6815
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 8338,
+      "xyz": [
+        -7619.511,
+        -15250.29,
+        151.261434
+      ],
+      "fan_faces": [
+        [
+          6820
+        ],
+        [
+          6995,
+          6999
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 8924,
+      "xyz": [
+        -7539.999,
+        -15344.082,
+        147.837527
+      ],
+      "fan_faces": [
+        [
+          7402
+        ],
+        [
+          7414
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "TileDark",
+            2
+          ]
+        ],
+        [
+          [
+            "TileDark",
+            2
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 9519,
+      "xyz": [
+        -7603.221,
+        -15320.877,
+        150.052065
+      ],
+      "fan_faces": [
+        [
+          7920
+        ],
+        [
+          8431,
+          8432
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 9919,
+      "xyz": [
+        -7578.561,
+        -15322.734,
+        150.084454
+      ],
+      "fan_faces": [
+        [
+          8259,
+          8261,
+          8263
+        ],
+        [
+          17771
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "Gravel",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 9941,
+      "xyz": [
+        -7608.303,
+        -15314.697,
+        150.159269
+      ],
+      "fan_faces": [
+        [
+          8284
+        ],
+        [
+          18178
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 9956,
+      "xyz": [
+        -7607.031,
+        -15316.242,
+        150.132275
+      ],
+      "fan_faces": [
+        [
+          8287,
+          8297
+        ],
+        [
+          18483
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 9946,
+      "xyz": [
+        -7607.985,
+        -15315.084,
+        150.152505
+      ],
+      "fan_faces": [
+        [
+          8289,
+          8291
+        ],
+        [
+          18174
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 9950,
+      "xyz": [
+        -7605.444,
+        -15318.174,
+        150.098505
+      ],
+      "fan_faces": [
+        [
+          8293,
+          8295
+        ],
+        [
+          18473
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 9954,
+      "xyz": [
+        -7605.762,
+        -15317.787,
+        150.105269
+      ],
+      "fan_faces": [
+        [
+          8295,
+          8297
+        ],
+        [
+          18475
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 10147,
+      "xyz": [
+        -7592.127,
+        -15305.64,
+        150.408127
+      ],
+      "fan_faces": [
+        [
+          8501,
+          8509
+        ],
+        [
+          18670
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 10157,
+      "xyz": [
+        -7597.887,
+        -15305.151,
+        150.395992
+      ],
+      "fan_faces": [
+        [
+          8514
+        ],
+        [
+          9014
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 10561,
+      "xyz": [
+        -7596.276,
+        -15300.9,
+        150.497441
+      ],
+      "fan_faces": [
+        [
+          8886,
+          8894,
+          8919,
+          8921
+        ],
+        [
+          18672
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 10708,
+      "xyz": [
+        -7565.652,
+        -15291.999,
+        150.483321
+      ],
+      "fan_faces": [
+        [
+          9046
+        ],
+        [
+          9049
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            2
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            2
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 10765,
+      "xyz": [
+        -7559.748,
+        -15296.001,
+        150.423622
+      ],
+      "fan_faces": [
+        [
+          9100
+        ],
+        [
+          9179
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnReinforced",
+            2
+          ]
+        ],
+        [
+          [
+            "LawnReinforced",
+            2
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 10850,
+      "xyz": [
+        -7559.076,
+        -15296.841,
+        150.412794
+      ],
+      "fan_faces": [
+        [
+          9172
+        ],
+        [
+          9179
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            2
+          ]
+        ],
+        [
+          [
+            "LawnReinforced",
+            2
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 10927,
+      "xyz": [
+        -7592.001,
+        -15295.113,
+        150.645479
+      ],
+      "fan_faces": [
+        [
+          9243,
+          9246,
+          9358
+        ],
+        [
+          17824,
+          17828
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "Gravel",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 11253,
+      "xyz": [
+        -7575.747,
+        -15255.999,
+        151.662951
+      ],
+      "fan_faces": [
+        [
+          9593,
+          9596,
+          9601
+        ],
+        [
+          9736,
+          9744,
+          17893
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "Mulch",
+            1
+          ]
+        ],
+        [
+          [
+            "FlowerBed",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 11859,
+      "xyz": [
+        -7650.282,
+        -15303.999,
+        149.921381
+      ],
+      "fan_faces": [
+        [
+          10213
+        ],
+        [
+          10216
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "FlowerBed",
+            2
+          ]
+        ],
+        [
+          [
+            "FlowerBed",
+            2
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 11930,
+      "xyz": [
+        -7653.462,
+        -15264.312,
+        150.652643
+      ],
+      "fan_faces": [
+        [
+          10304
+        ],
+        [
+          18078,
+          18079
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 11971,
+      "xyz": [
+        -7653.147,
+        -15262.767,
+        150.684161
+      ],
+      "fan_faces": [
+        [
+          10375
+        ],
+        [
+          10382
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12109,
+      "xyz": [
+        -7593.57,
+        -15334.11,
+        149.898873
+      ],
+      "fan_faces": [
+        [
+          10531,
+          10548
+        ],
+        [
+          10611
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12132,
+      "xyz": [
+        -7592.544,
+        -15335.358,
+        149.884866
+      ],
+      "fan_faces": [
+        [
+          10540,
+          10553
+        ],
+        [
+          10633,
+          10635
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12139,
+      "xyz": [
+        -7592.49,
+        -15335.424,
+        149.884126
+      ],
+      "fan_faces": [
+        [
+          10542
+        ],
+        [
+          10635
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12142,
+      "xyz": [
+        -7592.175,
+        -15335.811,
+        149.879782
+      ],
+      "fan_faces": [
+        [
+          10544,
+          10555
+        ],
+        [
+          18555
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12195,
+      "xyz": [
+        -7593.453,
+        -15332.838,
+        149.912423
+      ],
+      "fan_faces": [
+        [
+          10576,
+          10584
+        ],
+        [
+          10943,
+          10952
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12201,
+      "xyz": [
+        -7593.144,
+        -15333.216,
+        149.908612
+      ],
+      "fan_faces": [
+        [
+          10596,
+          10598,
+          10600
+        ],
+        [
+          10950
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12202,
+      "xyz": [
+        -7593.195,
+        -15333.153,
+        149.909247
+      ],
+      "fan_faces": [
+        [
+          10596
+        ],
+        [
+          10943
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12271,
+      "xyz": [
+        -7591.437,
+        -15336.705,
+        149.875418
+      ],
+      "fan_faces": [
+        [
+          10651
+        ],
+        [
+          10875
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12627,
+      "xyz": [
+        -7595.1,
+        -15330.834,
+        149.929805
+      ],
+      "fan_faces": [
+        [
+          10992,
+          11034
+        ],
+        [
+          18559
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12632,
+      "xyz": [
+        -7595.694,
+        -15330.114,
+        149.935182
+      ],
+      "fan_faces": [
+        [
+          10994,
+          10997,
+          11004
+        ],
+        [
+          11042,
+          11044
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12633,
+      "xyz": [
+        -7595.418,
+        -15330.45,
+        149.931608
+      ],
+      "fan_faces": [
+        [
+          10994
+        ],
+        [
+          18566
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12640,
+      "xyz": [
+        -7594.656,
+        -15331.377,
+        149.927156
+      ],
+      "fan_faces": [
+        [
+          10998,
+          11011,
+          11018
+        ],
+        [
+          11020
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12731,
+      "xyz": [
+        -7597.065,
+        -15329.862,
+        149.929088
+      ],
+      "fan_faces": [
+        [
+          11086
+        ],
+        [
+          18584,
+          18606
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "Pebbles",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12783,
+      "xyz": [
+        -7598.277,
+        -15326.973,
+        149.949485
+      ],
+      "fan_faces": [
+        [
+          11123
+        ],
+        [
+          11171
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12880,
+      "xyz": [
+        -7600.5,
+        -15324.27,
+        149.980734
+      ],
+      "fan_faces": [
+        [
+          11210,
+          11212,
+          11216
+        ],
+        [
+          18449,
+          18451
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 12935,
+      "xyz": [
+        -7587.639,
+        -15313.305,
+        150.242405
+      ],
+      "fan_faces": [
+        [
+          11263,
+          11265
+        ],
+        [
+          11271
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnReinforced",
+            1
+          ]
+        ],
+        [
+          [
+            "Gravel",
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "vertex": 19841,
+      "xyz": [
+        -7608.096,
+        -15264.207,
+        151.137075
+      ],
+      "fan_faces": [
+        [
+          18200,
+          18204
+        ],
+        [
+          18267
+        ]
+      ],
+      "fan_slots_levels": [
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ],
+        [
+          [
+            "LawnRolled",
+            1
+          ]
+        ]
+      ]
+    }
+  ],
+  "same_oracle_comparison": {
+    "before_scratch_candidate_not_delivery": {
+      "normal_gap_centroids_below": 0,
+      "normal_gap_centroids_above": 6,
+      "normal_gap_vertices_below": 0,
+      "normal_gap_vertices_above": 18,
+      "normal_gap_vertex_min_mm": 5.048687487020151,
+      "normal_gap_centroid_min_mm": 5.04882758728203
+    },
+    "after_scratch_candidate_not_delivery": {
+      "normal_gap_centroids_below": 0,
+      "normal_gap_centroids_above": 6,
+      "normal_gap_vertices_below": 0,
+      "normal_gap_vertices_above": 18,
+      "normal_gap_vertex_min_mm": 5.048687487020151,
+      "normal_gap_centroid_min_mm": 5.04882758728203
+    },
+    "open_edges_before": {
+      "open_edges": 1789,
+      "open_edges_off_outline": 0,
+      "non_manifold": 0
+    },
+    "open_edges_after": {
+      "open_edges": 1782,
+      "open_edges_off_outline": 1,
+      "non_manifold": 0
+    },
+    "open_edge_witnesses_after": [
+      {
+        "vertices": [
+          3075,
+          3076
+        ],
+        "xyz": [
+          [
+            -7691.2305,
+            -15248.001,
+            151.996786
+          ],
+          [
+            -7691.007,
+            -15248.688,
+            152.017682
+          ]
+        ],
+        "midpoint_distance_m": 0.002402022771767237
+      }
+    ],
+    "D150_repin_still_required": true
+  },
+  "legacy_default_parity": {
+    "baseline": "af6573d",
+    "actual_site": true,
+    "checks": {
+      "verts": true,
+      "faces": true,
+      "slot": true,
+      "level": true,
+      "uv": true,
+      "cell": true,
+      "rows": true,
+      "joints": true,
+      "report": true
+    },
+    "faces": 9980,
+    "dispositions": 481
+  },
+  "tests": {
+    "command": "uv run pytest -q <14 focused files named in ground-v015-resume-session.md> -p no:cacheprovider --basetemp=C:/x/t_eb1c51ca/resume-focused-final",
+    "passed": 225,
+    "failed": 0,
+    "seconds": 11.87,
+    "full_suite": "not_run: rejected candidate; first-review suite remains pending",
+    "DCC": "not_run: ours xView prerequisite fails"
+  },
+  "unmeasured": [
+    "native Max and Blender exports/readbacks",
+    "D150 geometry-bound re-pin",
+    "per-face triangle reasons and VPM quad acceptance",
+    "final profile UV and material IDs",
+    "complete per-input-face construction dispositions",
+    "UCX and placement compatibility",
+    "review queue publication",
+    "first-review full suite"
+  ]
+}
