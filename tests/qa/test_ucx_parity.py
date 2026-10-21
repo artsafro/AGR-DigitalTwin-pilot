@@ -378,3 +378,117 @@ def test_volume_at_or_below_1e9_is_degenerate_sweep():
         matched += 1
     assert matched == len(thicknesses) == 6
     assert degenerate_n == 4 and solid_n == 2
+
+
+# Reviewer round-2 P1: planar tetra whose coordinates sit near 1000 m. The signed
+# tetrahedron sum against the global origin cancels; the local-frame volume is ~4e-15 m^3.
+PLANAR_FAR_VERTS = [
+    (1000.1991318887165, 1000.49685239103, 1000.407536240336),
+    (1000.0404634437695, 1000.6185336735048, 1000.4451126045842),
+    (1000.8893204056178, 1000.9434298198049, 1000.9271969955487),
+    (1000.794621338583, 1000.118105348362, 1000.3210601454282),
+]
+PLANAR_FAR_TRIS = [(0, 2, 1), (0, 1, 3), (0, 3, 2), (1, 2, 3)]
+SHIFT_1000 = (1000.0, 1000.0, 1000.0)
+
+
+def _shift(verts, delta):
+    return [(x + delta[0], y + delta[1], z + delta[2]) for x, y, z in verts]
+
+
+def _assert_flat_degenerate(findings):
+    assert len(findings) == 1
+    finding = findings[0]
+    assert finding == {
+        "type": "not_run",
+        "req": REQ,
+        "reason": "degenerate",
+        "hull": "flat",
+    }
+
+
+def test_planar_tetra_near_1000m_is_degenerate_not_clean():
+    """A planar tetra near 1000 m is not_run/degenerate, never a clean pair list."""
+    far_box = box((1005, 1000, 1000), (1006, 1001, 1001))
+    findings = ua.pair_findings(
+        (PLANAR_FAR_VERTS, PLANAR_FAR_TRIS), far_box, name_a="flat", name_b="far")
+    _assert_flat_degenerate(findings)
+
+
+def test_planar_tetra_origin_copy_is_the_same_degenerate():
+    """Subtracting (1000,1000,1000) from the tetra and the far box keeps not_run/degenerate."""
+    verts = _shift(PLANAR_FAR_VERTS, (-SHIFT_1000[0], -SHIFT_1000[1], -SHIFT_1000[2]))
+    findings = ua.pair_findings(
+        (verts, PLANAR_FAR_TRIS), box((5, 0, 0), (6, 1, 1)), name_a="flat", name_b="far")
+    _assert_flat_degenerate(findings)
+
+
+def test_solid_unit_box_near_1000m_is_not_degenerate():
+    """A solid unit box translated to ~1000 m is still measured."""
+    solid = box((1000, 1000, 1000), (1001, 1001, 1001))
+    far_box = box((1005, 1000, 1000), (1006, 1001, 1001))
+    findings = ua.pair_findings(solid, far_box, name_a="solid", name_b="far")
+    assert findings == []
+    assert ua.DEGENERATE_VOLUME_M3 == 1e-9
+
+
+def test_overlapping_boxes_near_1000m_are_intersect():
+    """Overlap of two solid boxes near 1000 m stays intersect."""
+    a = box((1000, 1000, 1000), (1001, 1001, 1001))
+    b = box((1000.5, 1000, 1000), (1001.5, 1001, 1001))
+    findings = ua.pair_findings(a, b, name_a="A", name_b="B")
+    assert [f["type"] for f in findings] == ["intersect"]
+    assert findings[0]["req"] == REQ
+    assert findings[0]["a"] == "A" and findings[0]["b"] == "B"
+    assert findings[0]["penetration_m"] > ua.OVERLAP_EPS_M
+
+
+def test_planar_tetra_near_1000m_does_not_hide_later_pair():
+    """The far planar tetra is dropped; a later too-close pair is still reported."""
+    findings = ua.collision_findings([
+        hull("flat", (PLANAR_FAR_VERTS, PLANAR_FAR_TRIS)),
+        hull("L", box((0, 0, 0), (1, 1, 1))),
+        hull("R", box((1.0001, 0, 0), (2, 1, 1))),
+    ])
+    drops = [f for f in findings if f["type"] == "not_run"]
+    pairs = [f for f in findings if f["type"] != "not_run"]
+    assert len(drops) == 1
+    assert drops[0]["hull"] == "flat" and drops[0]["reason"] == "degenerate"
+    assert drops[0]["req"] == REQ
+    assert "a" not in drops[0] and "b" not in drops[0]
+    assert [f["type"] for f in pairs] == ["too_close", "gap_out_of_band"]
+    assert {f["a"] for f in pairs} == {"L"} and {f["b"] for f in pairs} == {"R"}
+    assert_reqs(findings)
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), float("-inf")])
+def test_non_finite_volume_is_degenerate_not_clean(monkeypatch, bad):
+    """A non-finite enclosed volume is a named not_run, never a clean pair list."""
+    monkeypatch.setattr(ua, "_enclosed_volume", lambda verts, tris: bad)
+    findings = ua.pair_findings(
+        box((0, 0, 0), (1, 1, 1)), box((5, 0, 0), (6, 1, 1)), name_a="bad", name_b="ok")
+    assert len(findings) == 2
+    assert {f["type"] for f in findings} == {"not_run"}
+    assert {f["reason"] for f in findings} == {"degenerate"}
+    assert {f["hull"] for f in findings} == {"bad", "ok"}
+    assert all(f["req"] == REQ and "a" not in f and "b" not in f for f in findings)
+
+
+def test_translated_planar_tetra_stays_degenerate_and_solid_box_does_not():
+    """invariant: local-frame volume is translation-invariant. probe: random shifts. N/N."""
+    rng = random.Random(433)
+    n = 64
+    planar_local = _shift(PLANAR_FAR_VERTS, (-SHIFT_1000[0], -SHIFT_1000[1], -SHIFT_1000[2]))
+    planar_n = solid_n = 0
+    for _ in range(n):
+        t = (rng.uniform(-5000.0, 5000.0), rng.uniform(-5000.0, 5000.0), rng.uniform(-5000.0, 5000.0))
+        partner = box((t[0] + 5.0, t[1], t[2]), (t[0] + 6.0, t[1] + 1.0, t[2] + 1.0))
+        flat = ua.pair_findings(
+            (_shift(planar_local, t), PLANAR_FAR_TRIS), partner, name_a="flat", name_b="far")
+        _assert_flat_degenerate(flat)
+        planar_n += 1
+        solid = ua.pair_findings(
+            box(t, (t[0] + 1.0, t[1] + 1.0, t[2] + 1.0)), partner, name_a="solid", name_b="far")
+        assert solid == []
+        solid_n += 1
+    assert planar_n == n and solid_n == n

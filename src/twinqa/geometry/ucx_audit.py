@@ -284,12 +284,17 @@ def inside_convex(p, verts, tris, tol=0.0):
 def _enclosed_volume(verts, tris):
     """Absolute enclosed volume (m^3) from the signed tetrahedron sum over triangles.
 
-    Same formula as scene._enclosed_volume. scene.py imports this module, so the helper
-    is copied rather than imported.
+    Vertices are shifted by the first vertex before the sum. Signed volume is
+    translation-invariant; the local frame avoids cancellation when the hull sits
+    far from the global origin. Same sum as scene._enclosed_volume, which keeps its
+    own copy because scene.py imports this module.
     """
+    if not verts:
+        return 0.0
+    origin = verts[0]
     total = 0.0
     for ia, ib, ic in tris:
-        a, b, c = verts[ia], verts[ib], verts[ic]
+        a, b, c = _sub(verts[ia], origin), _sub(verts[ib], origin), _sub(verts[ic], origin)
         total += a[0] * (b[1] * c[2] - b[2] * c[1])
         total -= a[1] * (b[0] * c[2] - b[2] * c[0])
         total += a[2] * (b[0] * c[1] - b[1] * c[0])
@@ -320,7 +325,14 @@ def _unmeasurable(verts, tris):
         return "open"
     if not is_convex(verts, tris):
         return "non-convex"
-    if _enclosed_volume(verts, tris) <= DEGENERATE_VOLUME_M3:
+    try:
+        volume = _enclosed_volume(verts, tris)
+    except (ArithmeticError, TypeError, ValueError, IndexError):
+        return "degenerate"
+    # NaN and +inf compare false against the threshold and would otherwise fall through.
+    if not isinstance(volume, (int, float)) or isinstance(volume, bool) or not math.isfinite(volume):
+        return "degenerate"
+    if volume <= DEGENERATE_VOLUME_M3:
         return "degenerate"
     return None
 
