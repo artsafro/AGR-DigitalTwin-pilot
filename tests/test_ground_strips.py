@@ -45,6 +45,22 @@ def test_short_adjacent_edges_do_not_explode_a_vpm_tensor_grid():
     assert len(vertex_pairs(result.verts, .002)[0]) == 0
 
 
+@pytest.mark.parametrize('shape', ['short_edge', 'near_collinear'])
+def test_acute_triangle_does_not_put_midpoint_or_centroid_next_to_source_vertex(shape):
+    from dt_ai.geometry.ground_strips import local_strips
+    from dt_ai.ops.inv_xview import vertex_pairs
+    points = ([[0., 0., 0.], [1., 0., 0.], [1., .003, 0.]] if shape == 'short_edge'
+              else [[-.204, .171, -.000062], [-.411, -.171, -.001317], [0., 0., 0.]])
+    vertices = np.array(points)
+    seed = QuadMesh(vertices, ((0, 1, 2),), ['TileLight'], np.array([0]),
+                    (vertices[:, :2]/4,), ((56,),), 4.)
+    result = local_strips(seed, max_edge_m=3.9)
+    assert len(vertex_pairs(result.verts, .002)[0]) == 0
+    assert all(face_metrics(result.verts[list(f)]).aspect <= 8 for f in result.faces)
+    area = sum(face_metrics(result.verts[list(f)]).area_m2 for f in result.faces)
+    assert area == pytest.approx(face_metrics(vertices).area_m2, rel=1e-8)
+
+
 def test_taper_is_sized_at_every_cell_not_only_average_width():
     from dt_ai.geometry.ground_strips import local_strips
     source = rectangle()

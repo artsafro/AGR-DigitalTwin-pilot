@@ -59,16 +59,26 @@ def local_strips(mesh: QuadMesh, *, max_edge_m: float, face_budget: int = 180000
         metric = face_metrics(p)
         if metric.degenerate:
             raise ValueError(f'degenerate source face {i}')
-        if len(f) == 3 and (metric.aspect > 8 or metric.max_edge_m > max_edge_m):
-            center = len(vertices)
-            vertices.append(p.mean(axis=0).tolist())
-            mids = [edge(f[j], f[(j+1)%3], Fraction(1, 2)) for j in range(3)]
-            for j in range(3):
-                patches.append(((f[j], mids[j], center, mids[j-1]),
-                                np.array([uv[j], (uv[j]+uv[(j+1)%3])/2, np.mean(uv, axis=0),
-                                          (uv[j-1]+uv[j])/2]), i))
-        else:
-            patches.append((f, np.asarray(uv), i))
+        # A corner fan (two adjacent long sides) has no well-conditioned
+        # tensor chart after a hard-size cut. Retain its original 0--2 split
+        # and refine only the resulting poor triangles, not the entire mesh.
+        variants = [(f, np.asarray(uv))]
+        if len(f) == 4 and metric.max_edge_m > max_edge_m:
+            variants = [(tuple(f[j] for j in ids), np.asarray(uv)[list(ids)])
+                        for ids in ((0, 1, 2), (0, 2, 3))]
+        for face, tex in variants:
+            points = np.asarray([vertices[j] for j in face])
+            r = face_metrics(points)
+            if len(face) == 3 and (r.aspect > 8 or r.max_edge_m > max_edge_m):
+                center = len(vertices)
+                vertices.append(points.mean(axis=0).tolist())
+                mids = [edge(face[j], face[(j+1)%3], Fraction(1, 2)) for j in range(3)]
+                for j in range(3):
+                    patches.append(((face[j], mids[j], center, mids[j-1]),
+                                    np.array([tex[j], (tex[j]+tex[(j+1)%3])/2, np.mean(tex, axis=0),
+                                              (tex[j-1]+tex[j])/2]), i))
+            else:
+                patches.append((face, tex, i))
     faces, uvs, slots, levels, sources = [], [], [], [], []
     for f, uv, owner in patches:
         p = np.asarray([vertices[j] for j in f])
