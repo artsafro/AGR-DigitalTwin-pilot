@@ -243,7 +243,8 @@ def fingerprint(value):
                                       separators=(",", ":")).encode()).hexdigest()
 
 
-INPUTS = ("tests/fixtures/spec-b01-v0.3.json", "benchmark/bench-b01-box/tolerances.json",
+INPUTS = ("tools/evals_geometry_mutation.py", "tests/fixtures/spec-b01-v0.3.json",
+          "benchmark/bench-b01-box/tolerances.json",
           "standards/material_id_ranges.yaml", "src/twinqa/geometry/checks.py",
           "src/twinqa/geometry/mesh.py", "src/twinqa/geometry/topology.py",
           "src/twinqa/geometry/complexity.py", "src/twinqa/clearance.py", "src/twinqa/uv.py")
