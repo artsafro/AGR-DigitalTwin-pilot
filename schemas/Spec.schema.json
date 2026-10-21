@@ -458,7 +458,7 @@
     },
     "RoofStructure": {
       "additionalProperties": false,
-      "description": "A structure on the roof (spec v0.7, pattern roof-screen-enclosure, user 2026-10-13 [D067]): kind \"screen\" - a\nscreen enclosure round roof equipment, its outer outline in plan and its top. npm_min builds it as planes\n(walls on the outline from the roof level to z_top and a top plane, no bottom, no thickness), roof ids; it\nis part of the body's silhouette, not an attachment.",
+      "description": "A structure on the roof (spec v0.7, pattern roof-screen-enclosure, user 2026-10-13 [D067]): kind \"screen\" - a\nscreen enclosure round roof equipment, its outer outline in plan and its top. npm_min builds it as planes\n(walls on the outline from the roof level to z_top and a top plane, no bottom, no thickness), roof ids; it\nis part of the body's silhouette, not an attachment. mid / VPM builds the same planes as a shell of\n`thickness_m` inward (issue #91): measured from the source's screens, else the object's parapet default\n(rule 4 as the parapet's, user 2026-10-12 [D061]); None = neither, the build input decides.",
       "properties": {
         "kind": {
           "const": "screen",
@@ -475,6 +475,19 @@
           "minItems": 3,
           "title": "Outline",
           "type": "array"
+        },
+        "thickness_m": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Thickness M"
         },
         "z_top_m": {
           "title": "Z Top M",
