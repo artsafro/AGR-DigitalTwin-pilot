@@ -97,3 +97,33 @@ def test_unmapped_texture_slot_is_named_even_before_source_hash_rejection(tmp_pa
         '--d150-reference',str(reference),'--out',str(out)],capture_output=True,text=True)
     assert r.returncode!=0 and 'UnknownPaving' in r.stderr
     assert not out.exists()
+
+
+def test_quantized_corner_pin_is_bounded_and_does_not_mutate_input():
+    import importlib.util,struct
+    import numpy as np
+    spec=importlib.util.spec_from_file_location('producer_pin_test',SCRIPT)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    v=np.array([(0,-15387.123,0),(0,-15188.367,0),(0,-15379.661353,0)],float)
+    before=v.copy();origin=(v[:,1].min()+v[:,1].max())/2
+    bits=struct.unpack('<I',struct.pack('<f',v[2,1]-origin))[0]
+    expected=struct.unpack('<f',struct.pack('<I',bits+1))[0]+origin
+    actual=module.lower_quantized_y(v,2)
+    assert actual==expected and 0<v[2,1]-actual<1e-5
+    np.testing.assert_array_equal(v,before)
+    with pytest.raises(ValueError):module.lower_quantized_y(v,True)
+
+
+def test_spacing_pair_guard_covers_mixed_diagonals_not_only_native_xview():
+    import importlib.util
+    import numpy as np
+    from dt_ai.geometry.ground_quads import QuadMesh
+    spec=importlib.util.spec_from_file_location('producer_spacing_test',SCRIPT)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    base=np.array([(0,0,0),(4,0,0),(4,4,.02),(0,4,0)],float)
+    verts=np.vstack([base,base+[0,0,.006]])
+    q=QuadMesh(verts,((0,1,2,3),(4,5,6,7)),['TileLight','Mulch'],np.array([0,1]),
+               (np.zeros((4,2)),np.zeros((4,2))),((0,1),(2,3)),4.)
+    bad,report=module.spacing_pair_rejections(q,verts,{})
+    assert bad=={1} and report['under_band_samples']>0
+    with pytest.raises(ValueError):module.spacing_pair_rejections(q,verts,{('centroid',9,8,None):30.})
