@@ -5,11 +5,13 @@ Outputs are local only: `C:/x/t_d94665f2/ground_v005/` (master JSON, report, FBX
 renders `C:/x/vatutino-ground/v005/{npm,vpm}/face_orientation_*.png`. Nothing binary is tracked.
 
 Input: `C:/x/t_d94665f2/paving_ground_inputs_v2.json` (adapter `adapters.cad.spozu` on the paving DWG copy,
-sha256 `231e4044774c520a…`). Command:
+sha256 `231e4044774c520a…`). Command (historical record — run before `--python-exit-code` became mandatory):
 
-    uv run python jobs/VATUTINO-SITE/build_ground.py C:/x/t_d94665f2/paving_ground_inputs_v2.json --out C:/x/t_d94665f2/ground_v005
-    blender --background --factory-startup --python tools/blender/ground_json_to_fbx.py -- build|readback|render ...
-    uv run python tools/qa/validate_package.py <fbx> --profile npm|vpm --scene --json
+```text
+uv run python jobs/VATUTINO-SITE/build_ground.py C:/x/t_d94665f2/paving_ground_inputs_v2.json --out C:/x/t_d94665f2/ground_v005
+blender --background --factory-startup --python tools/blender/ground_json_to_fbx.py -- build|readback|render ...
+uv run python tools/qa/validate_package.py <fbx> --profile npm|vpm --scene --json
+```
 
 ## User decisions applied
 
