@@ -383,4 +383,3 @@ The importer obstacle is repaired for **diagnostic comparison**, not a new model
 acceptance. Parts/build, true material transfer, own-output readback, flatness,
 UCX/xView/budget comparison and review publication remain incomplete. No full suite,
 PR or pending.json publication: stopping for this source/model decision before build.
-
