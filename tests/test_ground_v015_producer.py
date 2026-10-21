@@ -127,3 +127,20 @@ def test_spacing_pair_guard_covers_mixed_diagonals_not_only_native_xview():
     bad,report=module.spacing_pair_rejections(q,verts,{})
     assert bad=={1} and report['under_band_samples']>0
     with pytest.raises(ValueError):module.spacing_pair_rejections(q,verts,{('centroid',9,8,None):30.})
+
+
+def test_source_surface_mirrors_are_not_hidden_by_absolute_texel_density(monkeypatch):
+    import importlib.util
+    import numpy as np
+    from dt_ai.geometry import ground_cake as gc
+    spec=importlib.util.spec_from_file_location('producer_uv_winding_test',SCRIPT)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    v=np.array([(0,0,0),(4,0,0),(4,4,0),(0,4,0)],float);f=np.array([(0,1,2),(0,2,3)])
+    m=gc.Mesh(v,f,['TileLight']*2,np.zeros(2,int),v[f,:2]/4,4.)
+    def mirrored(mesh,profile):
+        uv=mesh.uv.copy();uv[:,:,0]=1-uv[:,:,0]
+        return uv,{}
+    monkeypatch.setattr(module.legacy,'profile_uv',mirrored)
+    sampler=gc.ReliefSampler(gc.build_tin([tuple(p) for p in v]))
+    with pytest.raises(ValueError,match='unsafe original surface triangle'):
+        module.derive(m,'vpm',sampler,set())
