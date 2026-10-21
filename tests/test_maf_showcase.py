@@ -1,4 +1,4 @@
-"""MAF showcase scene (#487): layout, spec text, fail-closed inputs, readback, per-item pending lines."""
+"""new-case: MAF showcase scene (#487): layout, spec text, fail-closed inputs, readback, per-item pending lines."""
 import copy
 import json
 import math
