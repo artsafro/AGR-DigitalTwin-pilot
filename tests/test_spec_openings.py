@@ -43,7 +43,7 @@ def test_hole_with_glass_is_one_opening():
     spec, report = extract_spec(building(boxes=[(0, 2.0, 3.5, 0.9, 2.4, 0.0)],
                                          extra=[pane("Glass", 2.1, 3.4, 1.0, 2.3)]), OBJECT)
     assert openings(spec) == [(0, 2.0, 0.9, 1.5, 1.5, None, "hole+glass")]
-    # no reveal: the default depth, marked in the report, never 0 and no question (OD1, user 2026-10-11)
+    # no reveal: the default depth, marked in the report, never 0 and no question (OD1, user 2026-10-11 [D048])
     assert report["questions"] == []
     assert report["openings"]["openings_depth_by_default"] == 1
 
@@ -522,7 +522,7 @@ def test_remote_or_high_flat_objects_are_not_questions():
 
 
 def test_plane_at_the_back_of_its_reveal_gives_the_opening_depth():
-    # C24 final (user 2026-10-10): the depth is facade -> back polygon; the plane is that polygon in npm_min
+    # C24 final (user 2026-10-10 [D037]): the depth is facade -> back polygon; the plane is that polygon in npm_min
     b = Mesh("Body")
     walls(b, SQUARE10, 0.0, 6.6, [(0, 2.0, 3.5, 0.9, 2.4, 0.0)])
     reveal(b, 2.0, 3.5, 0.9, 2.4, 0.4)
@@ -581,7 +581,7 @@ def test_glass_position_never_sets_the_depth(glass_y):
 
 
 def test_od1_default_depth_is_0_4_and_marked():
-    """OD1 (user 2026-10-11): without a value in object.json the default is 0.4; openings whose source gives no
+    """OD1 (user 2026-10-11 [D048]): without a value in object.json the default is 0.4; openings whose source gives no
     depth take it and are listed in the report as 'depth by default', never 0 or a minimum."""
     obj = {k: v for k, v in OBJECT.items() if k != "opening_depth_default_m"}
     spec, report = extract_spec(building(boxes=[(0, 2.0, 3.5, 0.9, 2.4, 0.0)]), obj)

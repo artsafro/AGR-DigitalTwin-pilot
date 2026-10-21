@@ -44,8 +44,10 @@ def default_manifests() -> list[Path]:
     return sorted(path for path in library.rglob("*.json") if path.is_file())
 
 
-def publish(*, task, slug, source, what, pngs, review_root, adapter, today) -> int:
+def publish(*, task, slug, source, what, pngs, review_root, adapter, today, items=None) -> int:
+    """``items`` (#487): one pending.json verdict line per item id instead of one per scene."""
     task_n = _parse_task(task)
+    item_ids = _parse_items(items)
     slug_s = _parse_slug(slug)
     what_s = _parse_what(what)
     source_p = _check_source(Path(source))
@@ -111,7 +113,11 @@ def publish(*, task, slug, source, what, pngs, review_root, adapter, today) -> i
             )
             with _store_lock(root):
                 rows = _read_pending(pending)
-                rows.append({"task": f"#{task_n}", "path": scene.resolve().as_posix(), "what": what_s})
+                row = {"task": f"#{task_n}", "path": scene.resolve().as_posix(), "what": what_s}
+                if item_ids is None:
+                    rows.append(row)
+                else:
+                    rows.extend({**row, "item": item} for item in item_ids)
                 _atomic_write_json(pending, rows)
         except Exception as exc:
             if created and folder.exists():
@@ -130,8 +136,10 @@ def publish(*, task, slug, source, what, pngs, review_root, adapter, today) -> i
     return 0
 
 
-def verdict(*, task, status, note, review_root) -> int:
+def verdict(*, task, status, note, review_root, item=None) -> int:
+    """``item`` (#487) limits the verdict to that item's line of the task."""
     task_n = _parse_task(task)
+    item_s = None if item is None else _parse_item(item)
     status_s = _parse_status(status)
     note_s = _parse_note(note)
     pending = Path(review_root) / "pending.json"
@@ -141,10 +149,15 @@ def verdict(*, task, status, note, review_root) -> int:
         raise ReviewError(f"unknown task {key}")
     with _store_lock(pending.parent):
         entries = _read_pending(pending)
+        def hit(row):
+            return row.get("task") == key and (item_s is None or row.get("item") == item_s)
+
         if not any(row.get("task") == key for row in entries):
             raise ReviewError(f"unknown task {key}")
+        if not any(hit(row) for row in entries):
+            raise ReviewError(f"unknown item {item_s} for task {key}")
         for row in entries:
-            if row.get("task") == key:
+            if hit(row):
                 row["status"] = status_s
                 row["note"] = note_s
         _atomic_write_json(pending, entries)
@@ -192,6 +205,27 @@ def _parse_task(task) -> str:
     if not re.fullmatch(r"[1-9][0-9]{0,8}", text):
         raise ReviewError("task must be a positive integer")
     return text
+
+
+_ITEM = re.compile(r"[A-Za-z0-9][A-Za-z0-9_\-]{0,63}")
+
+
+def _parse_item(item) -> str:
+    if not isinstance(item, str) or not _ITEM.fullmatch(item):
+        raise ReviewError(f"item id is not a single identifier: {item!r}")
+    return item
+
+
+def _parse_items(items):
+    if items is None:
+        return None
+    if isinstance(items, str) or not isinstance(items, (list, tuple)) or not items:
+        raise ReviewError("items must be a non-empty list of ids")
+    parsed = [_parse_item(item) for item in items]
+    dup = sorted({item for item in parsed if parsed.count(item) > 1})
+    if dup:
+        raise ReviewError(f"duplicate item ids: {dup}")
+    return parsed
 
 
 def _parse_slug(slug) -> str:
