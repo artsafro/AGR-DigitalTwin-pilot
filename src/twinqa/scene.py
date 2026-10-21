@@ -10,6 +10,7 @@ Ground FBX: Flora checks from twinqa.flora (V015 dimensions, V005 maps, V003 Flo
 import itertools
 import math
 import tempfile
+from fractions import Fraction
 from pathlib import Path
 
 from dt_ai.core.blender_runner import blender_executable, run_blender
@@ -69,10 +70,62 @@ def readback(fbx_path: Path, blender: str | None = None, timeout: int = 600) -> 
     return rb
 
 
-def _f(status, name, observed, expected, pages, evidence, conflicts=(), *,
+def _f(status, name, observed, expected, pages, evidence, conflicts=(), data=None, *,
       measured=None, threshold=None, margin=None):
     return Finding(name, status, observed, expected, list(pages), evidence, list(conflicts),
-                   measured, threshold, margin)
+                   measured, threshold, margin, dict(data or {}))
+
+
+GROUND_TABLE_KEY = "ground_triangles_max_by_area_ha"
+
+
+def _finite_number(value) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
+
+
+def check_ground_area(value) -> float:
+    """Fail closed: the Ground area operand must be a finite number > 0 (m2), never bool/str/NaN/inf."""
+    if not _finite_number(value) or value <= 0:
+        raise ValueError(f"ground_area_m2 must be a finite number > 0 (m2), got {value!r}")
+    return value
+
+
+def _ground_bands(profile: dict) -> list[dict]:
+    """The VPM Ground table (reg p.28-29 §3.10) from the standard, checked: ascending finite `area_max`
+    bands (upper edge inclusive) ending in one `area_above` band equal to the last `area_max`."""
+    bands = profile.get("geometry", {}).get(GROUND_TABLE_KEY)
+    if not isinstance(bands, list) or len(bands) < 2:
+        raise ValueError(f"{GROUND_TABLE_KEY}: expected a list of >= 2 bands, got {bands!r}")
+    previous = 0.0
+    for i, band in enumerate(bands):
+        last = i == len(bands) - 1
+        edge_key = "area_above" if last else "area_max"
+        if not isinstance(band, dict) or set(band) != {edge_key, "triangles_max"}:
+            raise ValueError(f"{GROUND_TABLE_KEY}[{i}]: expected keys {{{edge_key}, triangles_max}}, got {band!r}")
+        edge, limit = band[edge_key], band["triangles_max"]
+        if not _finite_number(edge) or not (isinstance(limit, int) and not isinstance(limit, bool) and limit > 0):
+            raise ValueError(f"{GROUND_TABLE_KEY}[{i}]: non-finite edge or non-positive triangles_max: {band!r}")
+        if last and edge != previous:
+            raise ValueError(f"{GROUND_TABLE_KEY}[{i}]: area_above {edge} != last area_max {previous}")
+        if not last and edge <= previous:
+            raise ValueError(f"{GROUND_TABLE_KEY}[{i}]: area_max {edge} not above {previous}")
+        previous = edge
+    return bands
+
+
+def ground_triangle_limit(profile: dict, ground_area_m2) -> tuple[int, dict]:
+    """VPM Ground triangle limit for (site area - OKS footprint) in m2 (reg p.28-29 §3.10, [D010]).
+    Bands come from VPM_STANDARD.yaml; the upper edge of each band is inclusive (500 m2 -> 300 000).
+    Non-finite, non-positive or non-numeric area raises ValueError naming `ground_area_m2`."""
+    check_ground_area(ground_area_m2)
+    bands = _ground_bands(profile)
+    # Exact rational comparison in m2: a float ha quotient rounds 500.00000000000006 m2 down to 0.05 ha
+    # and would pick the lower band; the YAML edge is read as its decimal text (0.05 ha == 500 m2 exactly).
+    area = Fraction(ground_area_m2)
+    for band in bands[:-1]:
+        if area <= Fraction(str(band["area_max"])) * 10_000:
+            return band["triangles_max"], band
+    return bands[-1]["triangles_max"], bands[-1]
 
 
 def _pivot_findings(meshes: list[dict], ucx: list[dict], src: str) -> list[Finding]:
@@ -535,9 +588,14 @@ def _texel_density_findings(rb: dict, meshes: list[dict], ucx: list[dict], src: 
 
 
 def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule: dict | None = None,
-                   flora_share: int = FLORA_SHARE, *, maf_sizes=None, smoothing_angle_deg=None) -> dict[str, list[Finding]]:
+                   flora_share: int = FLORA_SHARE, *, maf_sizes=None, smoothing_angle_deg=None,
+                   ground_area_m2=None) -> dict[str, list[Finding]]:
     """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}. Ground FBX: Flora checks
-    (twinqa.flora; flora_schedule = {mesh name: {"height_m", "crown_m"}}, flora_share default 70 000)."""
+    (twinqa.flora; flora_schedule = {mesh name: {"height_m", "crown_m"}}, flora_share default 70 000).
+    ground_area_m2: VPM Ground area basis = site minus OKS footprint, m2; selects the reg p.29 band for the
+    Ground triangle count (None keeps it at 'review'; a non-finite or non-positive value raises ValueError)."""
+    if ground_area_m2 is not None:
+        check_ground_area(ground_area_m2)
     src = Path(rb["source"]).name
     out = {"V003": [], "V004": [], "V008": [], "V010": [], "V013": [], "V006": [], "V002": []}
     if not rb.get("readback_ok"):
@@ -553,6 +611,7 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
     out["V003"].append(_f("fail" if not_tri else "pass", "triangulated", f"{src}: {not_tri or 'all triangles'}",
                           "triangulated on export", [7, 28], src))
     if role != "light":
+        observed, data = f"{src}: {tris}", None
         measured = threshold_n = margin = None
         if kind == "npm":
             limit = profile["geometry"]["ground_triangles_total_max" if role == "ground" else "oks_triangles_per_fbx_max"]
@@ -560,7 +619,19 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
             measured, threshold_n, margin = tris, limit, signed_margin(tris, limit, "max")
         else:
             if role == "ground":
-                status, limit, conflicts = "review", "by site area (reg p.29 table)", []
+                basis = profile["geometry"].get("ground_area_basis")
+                conflicts = []
+                if ground_area_m2 is None:
+                    status, limit = "review", "by site area (reg p.29 table)"
+                    observed += "; ground_area_m2 (site minus OKS footprint, m2) missing, band not selected"
+                    data = {"area_m2": None, "area_ha": None, "band": None, "basis": basis}
+                else:
+                    limit, band = ground_triangle_limit(profile, ground_area_m2)
+                    status = "fail" if tris > limit else "pass"
+                    measured, threshold_n, margin = tris, limit, signed_margin(tris, limit, "max")
+                    area_ha = ground_area_m2 / 10_000
+                    observed += f"; ground_area_m2 {ground_area_m2} ({area_ha:g} ha)"
+                    data = {"area_m2": ground_area_m2, "area_ha": area_ha, "band": dict(band), "basis": basis}
             else:
                 hard = profile["geometry"]["oks_triangles_per_fbx_max_excluding_collision"]
                 status = "fail" if tris > hard else "review" if tris > PROJECT_TRIANGLE_TARGET else "pass"
@@ -569,7 +640,7 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
                 conflicts = []
                 active = hard if tris > hard else PROJECT_TRIANGLE_TARGET
                 measured, threshold_n, margin = tris, active, signed_margin(tris, active, "max")
-        out["V003"].append(_f(status, "triangle count", f"{src}: {tris}", f"<= {limit}", [7, 28, 29], src, conflicts,
+        out["V003"].append(_f(status, "triangle count", observed, f"<= {limit}", [7, 28, 29], src, conflicts, data,
                               measured=measured, threshold=threshold_n, margin=margin))
     foreign = [o for o in rb["other_objects"] if not (role == "light" and o["type"] in ("LIGHT", "EMPTY"))]
     if foreign:

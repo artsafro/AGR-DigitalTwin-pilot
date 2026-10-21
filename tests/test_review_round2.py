@@ -80,6 +80,7 @@ def _run_max(script: Path, card: str) -> None:
     assert proc.returncode == 0, (proc.stdout + proc.stderr)[-2000:]
 
 
+@pytest.mark.max
 def test_real_max_keeps_fbx_mesh_named_review_camera(review, tmp_path):
     adapter = _load('max_adapter')
     if adapter.max_batch_path() is None:

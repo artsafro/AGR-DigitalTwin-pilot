@@ -34,7 +34,7 @@ from twinqa.png import npm_texture_findings, vpm_texture_findings  # noqa: E402
 from twinqa.profiles import (DEFAULT_STANDARDS, expected_stages, load_profiles, read_snapshot,  # noqa: E402
                              snapshot_digest, snapshot_validator)
 from twinqa.report import Finding, Stage, ValidationReport, code_commit, recheck, recheck_summary  # noqa: E402
-from twinqa.scene import readback, scene_findings  # noqa: E402
+from twinqa.scene import check_ground_area, readback, scene_findings  # noqa: E402
 from twinqa.uv import sequential_tiles  # noqa: E402
 
 STEM = re.compile(r"^[A-Za-z0-9_]+$")
@@ -153,8 +153,10 @@ def fbx_role(name: str) -> str:
     return "light" if stem.endswith("_Light") else "ground" if stem.endswith("_Ground") else "oks"
 
 
-def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, bytes], notes: list[str]):
-    """Blender readback of each FBX; replaces the scene not_run placeholders it covers."""
+def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, bytes], notes: list[str],
+              ground_area_m2: float | None = None):
+    """Blender readback of each FBX; replaces the scene not_run placeholders it covers.
+    ground_area_m2 (site minus OKS footprint) selects the VPM Ground triangle band (reg p.29)."""
     import tempfile
     with tempfile.TemporaryDirectory() as tmp:
         for name, data in sorted(fbx.items()):
@@ -165,7 +167,8 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
             except (OSError, RuntimeError) as exc:
                 notes.append(f"scene readback skipped for {name}: {exc}")
                 return
-            for stage_id, findings in scene_findings(rb, kind, fbx_role(name), profile).items():
+            for stage_id, findings in scene_findings(rb, kind, fbx_role(name), profile,
+                                                        ground_area_m2=ground_area_m2).items():
                 if stage_id in st:
                     st[stage_id].findings.extend(findings)
             notes.append(f"scene readback: {name} in Blender {rb.get('blender')}")
@@ -178,7 +181,10 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
         v002.findings = [f for f in v002.findings if f.name != "units and scale"]
 
 
-def validate(target: Path, kind: str | None, profiles, scene: bool = False) -> ValidationReport:
+def validate(target: Path, kind: str | None, profiles, scene: bool = False,
+             ground_area_m2: float | None = None) -> ValidationReport:
+    if ground_area_m2 is not None:
+        check_ground_area(ground_area_m2)
     data = target.read_bytes()
     suffix = target.suffix.lower()
     if suffix == ".geojson":
@@ -208,11 +214,12 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False) -> V
                                            st["V001"].source_pdf_pages, conflicts=[]))
         (validate_vpm_zip if kind == "vpm" else validate_npm_zip)(target.stem, files, profile, st)
         if scene:
-            add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes)
+            add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes,
+                      ground_area_m2)
     elif suffix == ".fbx":
         check_fbx_headers(st["V002"], {target.name: data})
         if scene:
-            add_scene(st, kind, profile, {target.name: data}, notes)
+            add_scene(st, kind, profile, {target.name: data}, notes, ground_area_m2)
         else:
             notes.append("single FBX: header only; add --scene for the Blender readback")
     elif suffix == ".geojson":
@@ -222,7 +229,16 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False) -> V
         st["V006"].findings.extend(npm_texture_findings({target.name: data}, profile))
     else:
         notes.append(f"unsupported file type {suffix}")
+    if ground_area_m2 is not None and not (kind == "vpm" and scene and suffix in (".zip", ".fbx")):
+        notes.append(f"ground_area_m2 {ground_area_m2} unused: the VPM Ground band applies only to a VPM --scene readback")
     return report(target, data, kind, profiles, st, notes)
+
+
+def _area_arg(text: str) -> float:
+    try:
+        return check_ground_area(float(text))
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(str(exc)) from None
 
 
 def report(target, data, kind, profiles, stages, notes) -> ValidationReport:
@@ -272,9 +288,12 @@ def main(argv=None) -> int:
     ap.add_argument("--scene", action="store_true", help="read every FBX back in background Blender")
     ap.add_argument("--recheck", type=Path, metavar="OLD_REPORT", help="re-read a stored report.json (needs --output)")
     ap.add_argument("--output", type=Path, help="new file for the recheck result (never an existing file)")
+    ap.add_argument("--ground-area-m2", type=_area_arg, metavar="M2",
+                    help="VPM Ground area = site minus OKS footprint, m2 (reg p.29 triangle band; without it: review)")
     args = ap.parse_args(argv)
     if args.recheck is not None:
-        if args.target is not None or args.output is None or args.profile or args.scene:
+        if (args.target is not None or args.output is None or args.profile or args.scene
+                or args.ground_area_m2 is not None):
             ap.error("--recheck takes only --output, --standards and --json")
         return run_recheck(args.recheck, args.output, args.standards or DEFAULT_STANDARDS, args.json)
     if args.output is not None:
@@ -285,7 +304,7 @@ def main(argv=None) -> int:
         print(f"Error: {args.target} does not exist", file=sys.stderr)
         return 1
     profiles = load_profiles(args.standards) if args.standards else load_profiles()
-    result = validate(args.target, args.profile, profiles, args.scene)
+    result = validate(args.target, args.profile, profiles, args.scene, args.ground_area_m2)
     sys.stdout.reconfigure(encoding="utf-8")
     print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2) if args.json else result.summary())
     return result.exit_code
