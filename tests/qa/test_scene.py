@@ -1170,6 +1170,20 @@ def test_vpm_ground_finding_data_survives_report_round_trip():
         Finding.from_dict({**asdict(f), "data": [1]})
 
 
+def test_report_json_carries_data_only_when_present():
+    """Full-suite witness after merging #462: findings without operands keep the old key set; the
+    Ground finding carries `data` and loads back through ValidationReport.from_dict."""
+    from twinqa.report import Stage, ValidationReport
+    ground = _ground_tri_finding(1_650_001, area=3431.5)
+    plain = _ground_tri_finding(12, kind="npm")
+    report = ValidationReport("vpm", "x.fbx", "a" * 64, "b" * 64, True,
+                              [Stage("V003", "geometry", "blocking", [28], [ground, plain])])
+    found = report.to_dict()["stages"][0]["findings"]
+    assert found[0]["data"]["band"]["triangles_max"] == 1_650_000 and "data" not in found[1]
+    back = ValidationReport.from_dict(json.loads(json.dumps(report.to_dict())))
+    assert back.stages[0].findings == [ground, plain]
+
+
 @pytest.mark.parametrize("table", [
     None, [],
     [{"area_max": 0.1, "triangles_max": 1}, {"area_max": 0.05, "triangles_max": 2}],
