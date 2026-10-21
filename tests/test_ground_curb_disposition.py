@@ -9,12 +9,17 @@ unchanged (see tests/test_ground_curb_joints.py).
 """
 import random
 
+import numpy as np
+
 import pytest
 from shapely.geometry import box, mapping, LineString
 from shapely.ops import unary_union
 
 from dt_ai.geometry import ground_cake as gc
 from dt_ai.geometry import ground_details as gd
+
+# Synthetic approval record for tests only; not a real project decision.
+APPROVAL = dict(approved_by='synthetic-test-approver', approved_at='2026-10-21', decision_id='D-test')
 
 
 def sampler():
@@ -34,7 +39,7 @@ def test_fully_occluded_garden_is_reported_trimmed_not_modeled():
     boundary = box(0, 0, 10, 10)
     elements = [element('curb_drive', 'drive', [(1, 5), (9, 5)]),
                 element('curb_garden', 'garden', [(2, 5), (8, 5)])]
-    mesh, report, joints = gd.build_details(elements, boundary, sampler(), separate_curbs=True)
+    mesh, report, joints = gd.build_details(elements, boundary, sampler(), separate_curbs=True, approval=APPROVAL)
     rows = by_ref(report)
     # taller drive section continues through the joint unchanged
     assert rows['drive']['status'] == 'modeled'
@@ -60,7 +65,7 @@ def test_multiple_garden_entities_each_report_own_trim_and_union_total_once():
     elements = [element('curb_drive', 'drive', [(1, 5), (9, 5)]),
                 element('curb_garden', 'g1', [(2, 5), (8, 5)]),
                 element('curb_garden', 'g2', [(3, 5), (7, 5)])]
-    mesh, report, joints = gd.build_details(elements, boundary, sampler(), separate_curbs=True)
+    mesh, report, joints = gd.build_details(elements, boundary, sampler(), separate_curbs=True, approval=APPROVAL)
     rows = by_ref(report)
     # each garden entity carries its OWN area, not the whole role-union trim
     assert rows['g1']['status'] == 'trimmed'
@@ -76,7 +81,7 @@ def test_partially_trimmed_garden_reports_retained_and_trimmed():
     boundary = box(0, 0, 8, 8)
     elements = [element('curb_drive', 'drive', [(1, 4), (7, 4)]),
                 element('curb_garden', 'garden', [(4, 1), (4, 7)])]
-    mesh, report, joints = gd.build_details(elements, boundary, sampler(), separate_curbs=True)
+    mesh, report, joints = gd.build_details(elements, boundary, sampler(), separate_curbs=True, approval=APPROVAL)
     rows = by_ref(report)
     g = rows['garden']
     assert g['status'] == 'modeled'
@@ -91,7 +96,7 @@ def test_untouched_same_role_garden_reports_no_joint_trim():
     boundary = box(0, 0, 10, 10)
     elements = [element('curb_drive', 'drive', [(1, 1), (9, 1)]),
                 element('curb_garden', 'far', [(1, 8), (9, 8)])]
-    mesh, report, joints = gd.build_details(elements, boundary, sampler(), separate_curbs=True)
+    mesh, report, joints = gd.build_details(elements, boundary, sampler(), separate_curbs=True, approval=APPROVAL)
     rows = by_ref(report)
     f = rows['far']
     assert f['status'] == 'modeled'
@@ -131,7 +136,7 @@ def stairs(root='S', outline=((1, 1), (3, 1), (3, 4), (1, 4), (1, 1)),
 def test_fully_stair_covered_garden_reported_trimmed_with_stair_reason():
     boundary = box(0, 0, 10, 10)
     elements = stairs() + [element('curb_garden', 'garden', [(1.5, 2.5), (2.5, 2.5)])]
-    mesh, report, joints = gd.build_details(elements, boundary, stair_sampler(), separate_curbs=True)
+    mesh, report, joints = gd.build_details(elements, boundary, stair_sampler(), separate_curbs=True, approval=APPROVAL)
     g = by_ref(report)['garden']
     assert g['status'] == 'trimmed'
     assert g['footprint_m2'] == pytest.approx(0.08, abs=1e-9)
@@ -146,7 +151,7 @@ def test_fully_stair_covered_garden_reported_trimmed_with_stair_reason():
 def test_partially_stair_covered_garden_reports_stair_trim():
     boundary = box(0, 0, 10, 10)
     elements = stairs() + [element('curb_garden', 'garden', [(0, 2.5), (5, 2.5)])]
-    mesh, report, joints = gd.build_details(elements, boundary, stair_sampler(), separate_curbs=True)
+    mesh, report, joints = gd.build_details(elements, boundary, stair_sampler(), separate_curbs=True, approval=APPROVAL)
     g = by_ref(report)['garden']
     assert g['status'] == 'modeled'
     assert g['footprint_m2'] == pytest.approx(0.40, abs=1e-9)
@@ -160,7 +165,7 @@ def test_partially_stair_covered_garden_reports_stair_trim():
 def test_untouched_garden_beside_stairs_reports_no_trim():
     boundary = box(0, 0, 10, 10)
     elements = stairs() + [element('curb_garden', 'garden', [(4, 5), (8, 5)])]
-    mesh, report, joints = gd.build_details(elements, boundary, stair_sampler(), separate_curbs=True)
+    mesh, report, joints = gd.build_details(elements, boundary, stair_sampler(), separate_curbs=True, approval=APPROVAL)
     g = by_ref(report)['garden']
     assert g['status'] == 'modeled'
     assert g['footprint_m2'] == pytest.approx(0.32, abs=1e-9)
@@ -176,7 +181,7 @@ def test_combined_stair_and_taller_curb_garden_accounts_both_trims():
                       treads=(((1, 4.5), (3, 4.5)), ((1, 5.5), (3, 5.5))))
     elements += [element('curb_drive', 'drive', [(6, 5), (10, 5)]),
                  element('curb_garden', 'garden', [(0, 5), (10, 5)])]
-    mesh, report, joints = gd.build_details(elements, boundary, stair_sampler(), separate_curbs=True)
+    mesh, report, joints = gd.build_details(elements, boundary, stair_sampler(), separate_curbs=True, approval=APPROVAL)
     rows = by_ref(report)
     g = rows['garden']
     assert g['status'] == 'modeled'
@@ -219,7 +224,7 @@ def test_random_per_entity_reconciliation_and_status_invariants():
     boundary = box(0, 0, 10, 10)
     for _ in range(60):
         elements = _random_elements(rng)
-        mesh, report, joints = gd.build_details(elements, boundary, sampler(), separate_curbs=True)
+        mesh, report, joints = gd.build_details(elements, boundary, sampler(), separate_curbs=True, approval=APPROVAL)
         rows = [r for r in report if r['role'] in gd.SECTIONS and r['status'] in ('modeled', 'trimmed')]
         retained_slots = set()
         for r in rows:
@@ -239,3 +244,88 @@ def test_random_per_entity_reconciliation_and_status_invariants():
             assert j['scope'] == 'role union' and j['gap_m'] == .006
             assert j['rule'] == 'taller section continuous'
             assert j['union_trim_m2'] >= -1e-12
+
+
+# --- #512: separate_curbs requires an approval record ---------------------------------
+
+def _mixed():
+    return [element('curb_drive', 'drive', [(1, 5), (9, 5)]),
+            element('curb_garden', 'garden', [(5, 1), (5, 9)]),
+            element('curb_garden', 'garden2', [(2, 5), (4, 5)])]
+
+
+@pytest.mark.parametrize('approval', [
+    None,
+    {},
+    dict(APPROVAL, approved_by=''),
+    dict(APPROVAL, approved_by='   '),
+    dict(APPROVAL, approved_at=''),
+    dict(APPROVAL, approved_at=' '),
+    dict(APPROVAL, decision_id=''),
+    {k: v for k, v in APPROVAL.items() if k != 'approved_by'},
+    {k: v for k, v in APPROVAL.items() if k != 'approved_at'},
+    {k: v for k, v in APPROVAL.items() if k != 'decision_id'},
+    dict(APPROVAL, approved_by=None),
+    dict(APPROVAL, approved_at=float('nan')),
+    dict(APPROVAL, approved_at='yesterday'),
+    dict(APPROVAL, approved_at='2026-13-40'),
+    dict(APPROVAL, extra='x'),
+    'approved',
+    [('approved_by', 'x')],
+], ids=['none', 'empty', 'by-empty', 'by-blank', 'at-empty', 'at-blank', 'decision-empty',
+        'by-missing', 'at-missing', 'decision-missing', 'by-none', 'at-nan', 'at-garbage',
+        'at-invalid-date', 'unknown-key', 'string', 'list'])
+def test_separate_curbs_without_valid_approval_raises_named_error(approval):
+    with pytest.raises(gd.CurbJointApprovalError):
+        gd.build_details(_mixed(), box(0, 0, 10, 10), sampler(), separate_curbs=True, approval=approval)
+
+
+def test_separate_curbs_without_approval_argument_raises_named_error():
+    with pytest.raises(gd.CurbJointApprovalError, match='approved_by'):
+        gd.build_details(_mixed(), box(0, 0, 10, 10), sampler(), separate_curbs=True)
+
+
+def test_approval_without_opt_in_is_rejected():
+    with pytest.raises(gd.CurbJointApprovalError):
+        gd.build_details(_mixed(), box(0, 0, 10, 10), sampler(), separate_curbs=False, approval=APPROVAL)
+
+
+def test_joints_and_rows_carry_approval_beside_joint_trim():
+    approval = dict(approved_by='synthetic-reviewer', approved_at='2026-10-21T20:00:00+02:00',
+                    decision_id='D-synthetic-512')
+    mesh, report, joints = gd.build_details(_mixed(), box(0, 0, 10, 10), sampler(),
+                                            separate_curbs=True, approval=approval)
+    assert joints, 'mixed junction must produce a joint entry'
+    for j in joints:
+        assert {k: j[k] for k in approval} == approval
+    rows = [r for r in report if 'joint_trim_m2' in r]
+    assert {r['ref'] for r in rows} == {'drive', 'garden', 'garden2'}
+    for r in rows:
+        assert {k: r[k] for k in approval} == approval
+    # the caller's record is copied, not aliased
+    approval['approved_by'] = 'mutated'
+    assert all(j['approved_by'] == 'synthetic-reviewer' for j in joints)
+
+
+LEGACY_DIGEST = '0f4465405faa45a09ab900575692a69f8d415a3a31fa9391af34d65bf3853d2d'
+
+
+def _legacy_digest():
+    import hashlib, json
+    boundary = box(0, 0, 10, 10)
+    h = hashlib.sha256()
+    for els, sp in ((_mixed(), sampler()),
+                    ([element('curb_drive', 'drive', [(1, 5), (9, 5)]),
+                      element('curb_garden', 'garden', [(2, 5), (8, 5)])], sampler()),
+                    ([*stairs(), element('curb_garden', 'g', [(0.5, 2.5), (3.5, 2.5)])], stair_sampler())):
+        mesh, report, joints = gd.build_details(els, boundary, sp, separate_curbs=False)
+        h.update(json.dumps([report, joints], sort_keys=True, default=str).encode())
+        for a in (mesh.verts, mesh.faces, mesh.uv, mesh.level):
+            h.update(np.ascontiguousarray(a).tobytes())
+        h.update(json.dumps([list(mesh.slot), mesh.cell, mesh.report], sort_keys=True, default=str).encode())
+    return h.hexdigest()
+
+
+def test_legacy_output_byte_identical_to_pre_512():
+    # Golden digest recorded on origin/main ed4d774 before #512.
+    assert _legacy_digest() == LEGACY_DIGEST
