@@ -200,6 +200,56 @@ def test_committed_report_matches():
     assert saved.startswith(ev.markdown(ev.evaluate()) + "\n")
 
 
+@pytest.mark.parametrize("reverse", [False, True])
+def test_clearance_evidence_provenance(reverse):
+    ev = evaluator()
+    base, mutants = ev.corpus()
+
+    def run(scene, adapter):
+        scene = copy.deepcopy(scene)
+        if reverse:
+            scene["meshes"].reverse()
+        result = ev.run_checker(adapter, scene)
+        inventory = {m["name"]: len(m["triangles"]) for m in scene["meshes"]}
+        for pair in result["details"]["pairs"]:
+            for endpoint in (pair["a"], pair["b"]):
+                name, index = endpoint
+                assert name in inventory
+                assert 0 <= index < inventory[name], endpoint
+        return result
+
+    contact = run(mutants["false_contact"]["scene"], "clearance")
+    assert contact["status"] == "fail" and contact["value"] == 2
+    pairs = contact["details"]["pairs"]
+    assert {frozenset((tuple(p["a"]), tuple(p["b"]))) for p in pairs} == {
+        frozenset((("contact_a", 0), ("contact_b", 0))),
+        frozenset((("contact_a", 1), ("contact_b", 1))),
+    }
+    for pair in pairs:
+        assert pair["distance_m"] == 0
+        assert pair["projected_area_m2"] == .5
+        assert pair["same_direction"] is True
+
+    # Clean/reset and each contact panel alone must remain clean, not cross-target hits.
+    assert run(base, "clearance")["details"]["pairs"] == []
+    for target in ("contact_a", "contact_b"):
+        scene = copy.deepcopy(mutants["false_contact"]["scene"])
+        panel = copy.deepcopy(next(m for m in scene["meshes"] if m["name"] == target))
+        panel["name"] = "normal_target"
+        scene["meshes"] = [panel if m["name"] == "normal_target" else m for m in scene["meshes"]]
+        assert run(scene, "clearance_target")["status"] == "pass"
+
+    # Same adapter also preserves local IDs and metric evidence on a single-mesh defect.
+    duplicate = run(mutants["duplicate_faces"]["scene"], "clearance_target")
+    assert duplicate["status"] == "fail" and duplicate["value"] == 1
+    pair, = duplicate["details"]["pairs"]
+    assert {tuple(pair["a"]), tuple(pair["b"])} == {("normal_target", 11), ("normal_target", 12)}
+    assert pair["distance_m"] == pytest.approx(.001)
+    assert pair["projected_area_m2"] == .5
+    assert run(base, "clearance_target")["status"] == "pass"
+    assert run(mutants["false_contact"]["scene"], "clearance") == contact
+
+
 def test_base_is_clean():
     ev = evaluator()
     report = ev.evaluate()
