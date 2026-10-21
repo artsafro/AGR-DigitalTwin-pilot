@@ -94,6 +94,19 @@ def mesh_facts(obj):
     }
     uv = mesh.uv_layers.active
     if uv:
+        # One UV pair per vertex, same order as face_geometry["vertices"].
+        # A seam keeps the first loop so the list stays aligned; a non-finite UV aborts readback.
+        per_vertex = [None] * len(mesh.vertices)
+        for poly in mesh.polygons:
+            for loop_index in range(poly.loop_start, poly.loop_start + poly.loop_total):
+                vert_index = int(mesh.loops[loop_index].vertex_index)
+                pair = uv.data[loop_index].uv
+                u, v = float(pair.x), float(pair.y)
+                if not math.isfinite(u) or not math.isfinite(v):
+                    raise ValueError(f"non-finite UV coordinates: {obj.name} vertex {vert_index}")
+                if per_vertex[vert_index] is None:
+                    per_vertex[vert_index] = [round(u, 6), round(v, 6)]
+        facts["face_geometry"]["uv"] = per_vertex
         tiles, mirrored = set(), 0
         for tri in mesh.loop_triangles:
             a, b, c = (uv.data[i].uv for i in tri.loops)

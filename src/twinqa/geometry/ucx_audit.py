@@ -398,8 +398,12 @@ def _safe_margin(measured, threshold, bound):
     if threshold == 0:
         return None
     if bound == "min":
-        return (measured - threshold) / threshold
-    return (threshold - measured) / threshold
+        result = (measured - threshold) / threshold
+    else:
+        result = (threshold - measured) / threshold
+    if not math.isfinite(result):
+        raise ValueError(f"non-finite margin {result!r}")
+    return result
 
 
 def _gap_numbers(kind, gap_m):

@@ -76,7 +76,7 @@ def sequential_tiles(tiles) -> bool:
     return ordered == list(range(FIRST_TILE, FIRST_TILE + len(ordered))) and (not ordered or ordered[-1] <= LAST_TILE)
 
 
-def _density_finding(name, measured, threshold, bound, observed) -> Finding:
+def _density_finding(name, measured, threshold, bound, observed, evidence="uv edge density") -> Finding:
     """One density bound. No measured value, or a zero threshold, is a fail with margin None."""
     margin = None if measured is None else signed_margin(measured, threshold, bound)
     if margin is None:
@@ -87,7 +87,7 @@ def _density_finding(name, measured, threshold, bound, observed) -> Finding:
         status = "pass" if measured <= threshold else "fail"
     relation = ">=" if bound == "min" else "<="
     return Finding(
-        name, status, observed, f"{relation} {threshold:g} px/m", [31, 32], "uv edge density",
+        name, status, observed, f"{relation} {threshold:g} px/m", [31, 32], evidence,
         measured=measured, threshold=threshold, margin=margin,
     )
 
@@ -106,6 +106,9 @@ def density_findings(vertices, uv, size, *, min_px_per_m=DENSITY_MIN_PX_PER_M,
             _density_finding("texel density upper", None, max_px_per_m, "max", "no edges"),
         ]
     values = edge_densities(vertices, uv, size)
+    for value in values:
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+            raise ValueError(f"non-finite edge density {value!r}")
     if not values:
         return [
             _density_finding("texel density", None, min_px_per_m, "min", "no edges"),
@@ -118,13 +121,50 @@ def density_findings(vertices, uv, size, *, min_px_per_m=DENSITY_MIN_PX_PER_M,
     ]
 
 
+def _finite_components(point, label):
+    """Reject a non-finite coordinate before it becomes a density.
+
+    Accept any finite-length iterable of finite numbers, including a numpy
+    ndarray, the same inputs ``math.dist`` accepts. ``str`` and ``bytes`` stay
+    rejected: iterating them would yield characters, not coordinates.
+    """
+    if isinstance(point, (str, bytes)):
+        raise ValueError(f"partial {label}")
+    try:
+        components = list(point)
+    except TypeError:
+        raise ValueError(f"partial {label}") from None
+    if len(components) < 2:
+        raise ValueError(f"partial {label}")
+    for coord in components:
+        if isinstance(coord, bool) or not isinstance(coord, (int, float)) or not math.isfinite(coord):
+            raise ValueError(f"non-finite {label} {coord!r}")
+
+
 def edge_densities(vertices, uv, size):
-    """px/m per polygon edge: texture_side_px * |duv| / |dxyz| (reg p.32 §6.2, division per conflict #10)."""
+    """px/m per polygon edge: texture_side_px * |duv| / |dxyz| (reg p.32 §6.2, division per conflict #10).
+
+    A non-finite UV coordinate, world coordinate, texture size or resulting density raises
+    before any min/max can treat it as a pass.
+    """
+    if isinstance(size, bool) or not isinstance(size, (int, float)) or not math.isfinite(size):
+        raise ValueError(f"non-finite texture size {size!r}")
+    if len(vertices) != len(uv):
+        raise ValueError(f"partial UV geometry: {len(uv)} uv for {len(vertices)} vertices")
     result = []
     for i in range(len(vertices)):
         j = (i + 1) % len(vertices)
+        _finite_components(vertices[i], "world coordinate")
+        _finite_components(vertices[j], "world coordinate")
+        _finite_components(uv[i], "UV coordinate")
+        _finite_components(uv[j], "UV coordinate")
         world = math.dist(vertices[i], vertices[j])
+        if not math.isfinite(world):
+            raise ValueError(f"non-finite world edge {world!r}")
         if world <= 1e-9:
             raise ValueError("Degenerate surface edge")
-        result.append(size * math.dist(uv[i], uv[j]) / world)
+        density = size * math.dist(uv[i], uv[j]) / world
+        if not math.isfinite(density):
+            raise ValueError(f"non-finite edge density {density!r}")
+        result.append(density)
     return result

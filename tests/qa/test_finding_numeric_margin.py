@@ -385,6 +385,228 @@ def test_clearance_band_margin():
     assert failed.margin < 0
 
 
+def _unit_square():
+    return [(0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (1.0, 1.0, 0.0), (0.0, 1.0, 0.0)]
+
+
+def _unit_uv():
+    return [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)]
+
+
+def _margin_fns():
+    signed = _signed_margin()
+    safe = getattr(ua, "_safe_margin", None)
+    assert safe is not None, "_safe_margin missing"
+    return (("signed_margin", signed), ("_safe_margin", safe))
+
+
+def _density_scene(side_px, world_side):
+    """One render quad: texture side `side_px`, each world edge `world_side` metres, unit UV."""
+    square = [(0.0, 0.0, 0.0), (world_side, 0.0, 0.0), (world_side, world_side, 0.0), (0.0, world_side, 0.0)]
+    item = mesh(tris=2, degrees={"4": 1})
+    item["face_geometry"] = {"vertices": square, "polygons": [[0, 1, 2, 3]], "uv": [list(p) for p in _unit_uv()]}
+    data = rb(item)
+    data["images"] = [{"name": "diffuse.png", "size": [side_px, side_px], "packed": False}]
+    return data
+
+
+@pytest.mark.parametrize("index", [0, 1, 2, 3])
+def test_nan_uv_placement_is_rejected(index):
+    """Each corner of the unit square, including [(0,0),(1,0),(1,1),(NaN,1)], fails closed."""
+    fn = getattr(uv_mod, "density_findings", None)
+    assert fn is not None, "density_findings missing"
+    uv = _unit_uv()
+    _u, v = uv[index]
+    uv[index] = (float("nan"), v)
+    with pytest.raises(ValueError, match="non-finite"):
+        fn(_unit_square(), uv, 1024)
+
+
+@pytest.mark.parametrize("impl", ["signed_margin", "_safe_margin"])
+@pytest.mark.parametrize("bound", ["min", "max"])
+def test_margin_overflow_is_an_arithmetic_error(impl, bound):
+    fn = dict(_margin_fns())[impl]
+    with pytest.raises(ValueError, match="non-finite"):
+        fn(1e308, 1e-308, bound)
+
+
+@pytest.mark.parametrize("impl", ["signed_margin", "_safe_margin"])
+@pytest.mark.parametrize("measured, threshold, bound, expected", [
+    (600, 500, "min", 0.2),
+    (400, 500, "min", -0.2),
+    (1e300, 1e300, "min", 0.0),
+    (400, 500, "max", 0.2),
+    (600, 500, "max", -0.2),
+    (1e300, 1e300, "max", 0.0),
+])
+def test_margin_finite_controls(impl, measured, threshold, bound, expected):
+    fn = dict(_margin_fns())[impl]
+    got = fn(measured, threshold, bound)
+    if expected == 0.0:
+        assert got == 0.0
+    else:
+        assert got == pytest.approx(expected)
+    assert math.isfinite(got)
+
+
+def test_scene_texel_density_530_reaches_report_json():
+    """530 px/m (texture 512, world edge 512/530, unit UV) through scene_findings into report JSON."""
+    data = _density_scene(512, 512 / 530)
+    found = scene_findings(data, "vpm", "oks", PROFILES.vpm)
+    lower = next(item for item in found["V008"] if item.name == "texel density")
+    assert lower.measured == pytest.approx(530)
+    assert lower.threshold == 512
+    assert lower.margin == pytest.approx((530 - 512) / 512)
+    assert lower.margin > 0
+    assert lower.status == "pass"
+    upper = next(item for item in found["V008"] if item.name == "texel density upper")
+    assert upper.measured == pytest.approx(530)
+    assert upper.threshold == 1706
+    assert upper.status == "pass"
+    report = _report(found["V008"])
+    report.stages[0].id = "V008"
+    payload = json.loads(json.dumps(report.to_dict()))
+    finding = next(item for item in payload["stages"][0]["findings"] if item["name"] == "texel density")
+    assert {"measured", "threshold", "margin"} <= set(finding)
+    assert finding["measured"] == pytest.approx(530)
+    assert finding["threshold"] == 512
+    assert finding["margin"] == pytest.approx((530 - 512) / 512)
+    assert finding["status"] == "pass"
+    assert "near threshold:" in report.summary()
+    for key in ("one UV channel", "mirrored islands"):
+        assert statuses_of(found)[key] == "pass"
+
+
+def test_density_report_json_keeps_old_shape_and_adds_measures(tmp_path):
+    """Before: a density finding without the three keys still loads. After: the 530 scene writes them."""
+    before = {
+        "name": "texel density",
+        "status": "pass",
+        "observed": "synthetic: min 530 px/m",
+        "expected": ">= 512 px/m",
+        "source_pdf_pages": [31, 32],
+        "evidence": "synthetic.fbx",
+        "conflicts": [],
+    }
+    loaded = Finding.from_dict(json.loads(json.dumps(before)))
+    assert loaded.measured is None and loaded.threshold is None and loaded.margin is None
+    data = _density_scene(512, 512 / 530)
+    found = scene_findings(data, "vpm", "oks", PROFILES.vpm)
+    report = _report([item for item in found["V008"] if item.name == "texel density"])
+    after = json.loads(json.dumps(report.to_dict()))["stages"][0]["findings"][0]
+    assert set(before) <= set(after)
+    assert after["measured"] == pytest.approx(530)
+    assert after["threshold"] == 512
+    assert after["margin"] == pytest.approx((530 - 512) / 512)
+    path = tmp_path / "density-before-after.json"
+    path.write_text(json.dumps({"before": before, "after": after}, indent=2), encoding="utf-8")
+    dumped = json.loads(path.read_text(encoding="utf-8"))
+    assert dumped["before"] == before
+    assert dumped["after"]["measured"] == pytest.approx(530)
+
+
+def test_mesh_without_uv_geometry_density_is_not_run():
+    found = scene_findings(rb(mesh()), "vpm", "oks", PROFILES.vpm)
+    statuses = {item.name: item.status for item in found["V008"]}
+    assert statuses["one UV channel"] == "pass"
+    assert statuses["mirrored islands"] == "pass"
+    assert statuses["texel density"] == "not_run"
+    assert statuses["texel density upper"] == "not_run"
+    assert statuses["texel density"] != "pass"
+
+
+def test_probe_non_finite_contributors_never_pass():
+    """Beyond the four NaN corners: every coordinate of UV and world, plus inf size."""
+    fn = uv_mod.density_findings
+    bad_values = (float("nan"), float("inf"), float("-inf"))
+    seen = 0
+    for index in range(4):
+        for coord in range(2):
+            for bad in bad_values:
+                uv = [list(point) for point in _unit_uv()]
+                uv[index][coord] = bad
+                with pytest.raises(ValueError, match="non-finite"):
+                    fn(_unit_square(), uv, 1024)
+                seen += 1
+    for index in range(4):
+        for coord in range(3):
+            for bad in bad_values:
+                verts = [list(point) for point in _unit_square()]
+                verts[index][coord] = bad
+                with pytest.raises(ValueError, match="non-finite"):
+                    fn(verts, _unit_uv(), 1024)
+                seen += 1
+    for bad in bad_values:
+        with pytest.raises(ValueError, match="non-finite"):
+            fn(_unit_square(), _unit_uv(), bad)
+        seen += 1
+    assert seen == 4 * 2 * 3 + 4 * 3 * 3 + 3
+
+
+def test_probe_overflow_implementations_and_sign():
+    """Both margin implementations: overflow magnitudes raise; finite magnitudes keep the sign."""
+    seen = 0
+    overflows = []
+    for exp in range(250, 309, 2):
+        overflows.append((float(f"1e{exp}"), float(f"1e-{exp}")))
+    for name, fn in _margin_fns():
+        for measured, threshold in overflows:
+            for bound in ("min", "max"):
+                with pytest.raises(ValueError, match="non-finite"):
+                    fn(measured, threshold, bound)
+                seen += 1
+        for _ in range(40):
+            threshold = 10 ** random.Random(seen).uniform(-6, 6)
+            measured = threshold * (0.25 + (seen % 7) / 7)
+            for bound in ("min", "max"):
+                got = fn(measured, threshold, bound)
+                expect = _spec_margin(measured, threshold, bound)
+                assert got == pytest.approx(expect, rel=1e-12, abs=1e-12)
+                assert math.isfinite(got)
+                safe = measured >= threshold if bound == "min" else measured <= threshold
+                assert (got > 0) is safe or got == 0
+                other = dict(_margin_fns())["_safe_margin" if name == "signed_margin" else "signed_margin"]
+                assert other(measured, threshold, bound) == pytest.approx(got, rel=1e-12, abs=1e-12)
+                seen += 1
+    assert seen == 2 * (len(overflows) * 2 + 40 * 2)
+
+
+def test_probe_scene_density_never_passes_without_evidence():
+    """Missing UV, conflicting texture sizes and a NaN corner never pass."""
+    side = 512 / 530
+    cases = []
+    bare = rb(mesh())
+    cases.append(bare)
+    partial = rb(mesh())
+    partial["images"] = [{"name": "a.png", "size": [512, 512]}, {"name": "b.png", "size": [1024, 1024]}]
+    cases.append(partial)
+    nonsquare = rb(mesh())
+    nonsquare["images"] = [{"name": "a.png", "size": [512, 256]}]
+    cases.append(nonsquare)
+    empty_images = _density_scene(512, side)
+    empty_images["images"] = []
+    cases.append(empty_images)
+    nan_uv = _density_scene(512, side)
+    nan_uv["meshes"][0]["face_geometry"]["uv"][3] = [float("nan"), 1.0]
+    cases.append(nan_uv)
+    seen = 0
+    for data in cases:
+        found = scene_findings(data, "vpm", "oks", PROFILES.vpm)
+        for item in found["V008"]:
+            if item.name in ("texel density", "texel density upper"):
+                assert item.status in ("fail", "not_run")
+                assert item.status != "pass"
+                seen += 1
+    good = scene_findings(_density_scene(512, side), "vpm", "oks", PROFILES.vpm)
+    lower = next(item for item in good["V008"] if item.name == "texel density")
+    assert lower.status == "pass" and lower.measured == pytest.approx(530)
+    assert seen == 10
+
+
+def statuses_of(found):
+    return {item.name: item.status for item in found["V008"]}
+
+
 def _probe_disposition(margin, measured, threshold, bound):
     """Closed reading of one input. Exact threshold is fail, never an unmarked pass."""
     if not isinstance(bound, str) or bound not in ("min", "max"):

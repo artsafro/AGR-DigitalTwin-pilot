@@ -43,6 +43,7 @@ def signed_margin(measured, threshold, bound):
     ``max`` (measured must be <= threshold): (threshold - measured) / threshold.
     None when measured or threshold is not numeric, or when threshold is 0.
     Any other bound is an error that names it.
+    A finite pair whose division overflows to a non-finite result is an arithmetic error.
     """
     if not isinstance(bound, str) or bound not in ("min", "max"):
         raise ValueError(f"unmapped bound {bound!r}; expected 'min' or 'max'")
@@ -51,8 +52,12 @@ def signed_margin(measured, threshold, bound):
     if measured_n is None or threshold_n is None or threshold_n == 0:
         return None
     if bound == "min":
-        return (measured_n - threshold_n) / threshold_n
-    return (threshold_n - measured_n) / threshold_n
+        result = (measured_n - threshold_n) / threshold_n
+    else:
+        result = (threshold_n - measured_n) / threshold_n
+    if not math.isfinite(result):
+        raise ValueError(f"non-finite margin {result!r}")
+    return result
 
 
 def _mapping(data, allowed, label):
