@@ -5,6 +5,7 @@ Pattern: none | new-case: tests of the overlap gate (#527).
 """
 import json
 import math
+import os
 
 import numpy as np
 import pytest
@@ -405,3 +406,146 @@ def test_parts_not_selected_are_listed(tmp_path, capsys):
     run(["qa", "xview", str(src), "--parts", "band", "band", "--out", str(out)], capsys)
     rep = json.loads(out.read_text(encoding="utf-8"))
     assert rep["input"]["not_selected"] == ["rail"] and [p["part"] for p in rep["parts"]] == ["band"]
+
+
+# ---- review round 1 (PR #541): unit scale of a .blend, no-clobber publication ------------------------------------
+
+def fake_blender(monkeypatch, parts, scale=1.0, system="METRIC", hook=None, drop_scale=False):
+    """Replace run_blender by a writer of the dump format: raw Blender units = metres / scale (as xview_dump stores)."""
+    import dt_ai.core.blender_runner as BR
+
+    def fake(script, args, executable=None, output_json=None, outputs=(), timeout=0, log_path=None):
+        src, npz, manifest = args
+        bu = [G.Part(q.name, np.asarray(q.vertices) / scale, q.faces,
+                     None if q.location is None else np.asarray(q.location) / scale) for q in parts]
+        G.save_npz(npz, bu)
+        man = {"source": str(src), "blender": "fake", "scene": "Scene", "unit_system": system, "unit_scale": scale,
+               "objects": [{"name": q.name} for q in parts], "dropped": []}
+        if drop_scale:
+            man.pop("unit_scale")
+        Path(manifest).write_text(json.dumps(man), encoding="utf-8")
+        Path(log_path).write_text("fake blender log", encoding="utf-8")
+        if hook:
+            hook()
+        return man
+
+    monkeypatch.setattr(BR, "run_blender", fake)
+
+
+from pathlib import Path  # noqa: E402
+
+RAIL3 = [part("rail", *rail_soffit(0.003), loc=SITE)]
+
+
+@pytest.mark.parametrize("scale", [1.0, 0.001, 0.01, 1000.0])
+def test_blend_unit_scale_is_converted_to_metres(tmp_path, capsys, monkeypatch, scale):
+    """P1-1: the same physical 3 mm gap gives 2 faces whatever scale_length the .blend has (control: scale 1)."""
+    src = tmp_path / "a.blend"
+    src.write_bytes(b"blend")
+    fake_blender(monkeypatch, RAIL3, scale=scale)
+    out = tmp_path / "r.json"
+    code, _, _ = run(["qa", "xview", str(src), "--out", str(out)], capsys)
+    rep = json.loads(out.read_text(encoding="utf-8"))
+    assert code == 1 and rep["totals"]["overlapping_faces"] == 2
+    assert rep["input"]["units"] == {"unit_system": "METRIC", "unit_scale": scale, "coordinates": "m"}
+    rail = rep["parts"][0]
+    assert np.allclose(rail["location"], SITE, atol=1e-6)
+
+
+@pytest.mark.parametrize("scale, system, drop", [(0.0, "METRIC", False), (-1.0, "METRIC", False),
+                                                 (math.nan, "METRIC", False), (math.inf, "METRIC", False),
+                                                 (0.001, "NONE", False), (1.0, "METRIC", True),
+                                                 (1.0, "BOGUS", False)])
+def test_blend_bad_unit_scale_is_an_error(tmp_path, capsys, monkeypatch, scale, system, drop):
+    src = tmp_path / "a.blend"
+    src.write_bytes(b"blend")
+    fake_blender(monkeypatch, RAIL3, scale=scale if math.isfinite(scale) and scale > 0 else 1.0, system=system,
+                 drop_scale=drop)
+    if not (math.isfinite(scale) and scale > 0):
+        import dt_ai.core.blender_runner as BR
+        inner = BR.run_blender
+
+        def bad(*a, **k):
+            man = inner(*a, **k)
+            man["unit_scale"] = scale
+            return man
+        monkeypatch.setattr(BR, "run_blender", bad)
+    out = tmp_path / "r.json"
+    code, _, err = run(["qa", "xview", str(src), "--out", str(out)], capsys)
+    assert code == 2 and "unit" in err and not out.exists()
+    assert not list(tmp_path.glob("*.partial")) and not list(tmp_path.glob("r.json.dump-*"))
+
+
+def test_npz_units_are_recorded_as_metres(tmp_path, capsys):
+    src = write_npz(tmp_path / "a.npz", RAIL3)
+    out = tmp_path / "r.json"
+    run(["qa", "xview", str(src), "--out", str(out)], capsys)
+    assert json.loads(out.read_text(encoding="utf-8"))["input"]["units"]["coordinates"] == "m"
+
+
+@pytest.mark.parametrize("alias", [False, True])
+@pytest.mark.parametrize("parts_, code_", [([part("rail", *rail_soffit(0.003), loc=SITE)], 1),
+                                           ([part("band", *glass_band(1))], 0)])
+def test_partial_name_hardlink_after_preflight_is_not_written(tmp_path, capsys, monkeypatch, alias, parts_, code_):
+    """P1-2: a second writer links `<out>.partial` to an unrelated file after preflight; that file keeps its bytes."""
+    src = write_npz(tmp_path / "a.npz", parts_)
+    out = tmp_path / "r.json"
+    sentinel = tmp_path / "keep.txt"
+    sentinel.write_bytes(b"KEEP-ME")
+    real = G.gate_report
+
+    def race(*a, **k):
+        rep = real(*a, **k)
+        os.link(sentinel, out.with_name(out.name + ".partial"))
+        return rep
+
+    monkeypatch.setattr(G, "gate_report", race)
+    arg = str(tmp_path / "." / "r.json") if alias else str(out)
+    code, _, _ = run(["qa", "xview", str(src), "--out", arg], capsys)
+    assert sentinel.read_bytes() == b"KEEP-ME"
+    assert out.with_name(out.name + ".partial").read_bytes() == b"KEEP-ME"
+    assert code == code_ and json.loads(out.read_text(encoding="utf-8"))["passed"] is (code_ == 0)
+    assert sorted(x.name for x in tmp_path.iterdir()) == ["a.npz", "keep.txt", "r.json", "r.json.partial"]
+
+
+@pytest.mark.parametrize("alias", [False, True])
+def test_final_out_created_after_preflight_is_not_replaced(tmp_path, capsys, monkeypatch, alias):
+    src = write_npz(tmp_path / "a.npz", [part("band", *glass_band(1))])
+    before = src.read_bytes()
+    out = tmp_path / "r.json"
+    real = G.gate_report
+
+    def race(*a, **k):
+        rep = real(*a, **k)
+        out.write_bytes(b"OTHER-WRITER")
+        return rep
+
+    monkeypatch.setattr(G, "gate_report", race)
+    arg = str(tmp_path / "." / "r.json") if alias else str(out)
+    code, _, err = run(["qa", "xview", str(src), "--out", arg], capsys)
+    assert code == 2 and "exists" in err and out.read_bytes() == b"OTHER-WRITER"
+    assert src.read_bytes() == before
+    assert sorted(x.name for x in tmp_path.iterdir()) == ["a.npz", "r.json"]
+
+
+def test_log_created_after_preflight_is_not_replaced(tmp_path, capsys, monkeypatch):
+    src = tmp_path / "a.blend"
+    src.write_bytes(b"blend")
+    out = tmp_path / "r.json"
+    log = tmp_path / "r.json.blender.log"
+    fake_blender(monkeypatch, RAIL3, hook=lambda: log.write_bytes(b"OTHER-LOG"))
+    code, _, err = run(["qa", "xview", str(src), "--out", str(out)], capsys)
+    assert code == 2 and "exists" in err and log.read_bytes() == b"OTHER-LOG" and not out.exists()
+    assert sorted(x.name for x in tmp_path.iterdir()) == ["a.blend", "r.json.blender.log"]
+
+
+def test_blend_log_is_published_beside_the_report(tmp_path, capsys, monkeypatch):
+    src = tmp_path / "a.blend"
+    src.write_bytes(b"blend")
+    out = tmp_path / "r.json"
+    fake_blender(monkeypatch, RAIL3, scale=0.001)
+    assert run(["qa", "xview", str(src), "--out", str(out)], capsys)[0] == 1
+    rep = json.loads(out.read_text(encoding="utf-8"))
+    log = tmp_path / "r.json.blender.log"
+    assert log.read_text(encoding="utf-8") == "fake blender log" and rep["input"]["blender"]["log"] == str(log)
+    assert sorted(x.name for x in tmp_path.iterdir()) == ["a.blend", "r.json", "r.json.blender.log"]

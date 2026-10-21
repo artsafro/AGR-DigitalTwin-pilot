@@ -52,6 +52,42 @@ def test_blend_parts_local_at_site_coordinates(tmp_path, capsys):
     assert main(["qa", "xview", str(blend), "--parts", "clean", "--out", str(out2)]) == 0
 
 
+MAKE_SCALED = r'''
+import sys, bpy
+out, s = sys.argv[sys.argv.index("--") + 1], float(sys.argv[-1])
+bpy.ops.wm.read_factory_settings(use_empty=True)
+bpy.context.scene.unit_settings.system = "METRIC"
+bpy.context.scene.unit_settings.scale_length = s
+def obj(name, verts, faces, loc):
+    me = bpy.data.meshes.new(name); me.from_pydata([tuple(c / s for c in v) for v in verts], [], faces); me.update()
+    o = bpy.data.objects.new(name, me); o.location = tuple(c / s for c in loc)
+    bpy.context.scene.collection.objects.link(o)
+# nested parallel squares 3 mm apart (physical metres), off origin (float32 location exact at both scales)
+obj("sq", [(0,0,0),(1,0,0),(1,1,0),(0,1,0),(0.25,0.25,0.003),(0.75,0.25,0.003),(0.75,0.75,0.003),(0.25,0.75,0.003)],
+    [(0,1,2,3),(4,5,6,7)], (1234.5, 345.5, 152.25))
+obj("clean", [(0,0,0),(1,0,0),(1,1,0),(0,1,0)], [(0,1,2,3)], (0, 0, 0))
+bpy.ops.wm.save_as_mainfile(filepath=out)
+'''
+
+
+@pytest.mark.parametrize("scale", [1.0, 0.001])
+def test_blend_scale_length_gives_same_physical_verdict(tmp_path, scale):
+    """Review #541 P1-1: scale_length 0.001 (side 1000 / gap 3 BU) = scale_length 1 (side 1 / gap 0.003)."""
+    script = tmp_path / "make.py"
+    script.write_text(MAKE_SCALED, encoding="utf-8")
+    blend = tmp_path / "scaled.blend"
+    subprocess.run([blender_executable(), "-b", "--factory-startup", "--python-exit-code", "1", "--python",
+                    str(script), "--", str(blend), str(scale)], check=True, capture_output=True, timeout=300)
+    out = tmp_path / "r.json"
+    assert main(["qa", "xview", str(blend), "--out", str(tmp_path / "." / "r.json")]) == 1
+    rep = json.loads(out.read_text(encoding="utf-8"))
+    assert rep["input"]["units"] == {"unit_system": "METRIC", "unit_scale": scale, "coordinates": "m"}
+    sq = {p["part"]: p for p in rep["parts"]}["sq"]
+    assert sq["overlapping_faces"] == 2 and rep["parts"][0]["passed"] is True
+    assert max(abs(a - b) for a, b in zip(sq["location"], (1234.5, 345.5, 152.25))) < 1e-3
+    assert sorted(x.name for x in tmp_path.iterdir()) == ["make.py", "r.json", "r.json.blender.log", "scaled.blend"]
+
+
 TOW02 = Path(os.environ.get("DT_TOW02_OUTPUTS",
                             Path.home() / ".AGR-DigitalTwin_pilot/jobs/vyatskaya-tow02/outputs"))
 OURS = TOW02 / "export-v005" / "SM_Vyatskaya_Vl_47_49_013_Main.fbx"
