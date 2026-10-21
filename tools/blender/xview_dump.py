@@ -5,7 +5,9 @@ Usage (via dt_ai.core.blender_runner.run_blender, Blender 5.1.2):
 
 Per mesh object of the active scene (evaluated: modifiers applied), sorted by name: vertices in place in float64
 (float32 local co @ matrix_world in float64, as review #514 XCHECK), the polygon loops and the object location
-(matrix_world translation). Non-mesh objects go to `dropped` with the reason. NPZ keys: names, v<i>, lt<i>, lv<i>,
+(matrix_world translation), all in raw Blender units: the manifest carries unit_system and unit_scale
+(scene.unit_settings.scale_length, a float32: stored as its shortest decimal, 0.001 not 0.0010000000475,
+raw value in unit_scale_float32) and the gate converts to metres (dt_ai.ops.xview_gate.to_metres). Non-mesh objects go to `dropped` with the reason. NPZ keys: names, v<i>, lt<i>, lv<i>,
 loc<i> (dt_ai.ops.xview_gate.load_npz). The FBX import runs into an empty factory scene; the .blend is opened, never
 saved.
 Pattern: none | new-case: Blender dump of FBX/.blend mesh objects for the overlap gate (#527).
@@ -60,5 +62,7 @@ with open(npz_path, "wb") as fh:
     np.savez(fh, **data)
 with open(manifest_path, "w", encoding="utf-8") as fh:
     json.dump({"source": src, "blender": bpy.app.version_string, "scene": scene.name,
-               "unit_scale": scene.unit_settings.scale_length, "objects": objects, "dropped": dropped}, fh, indent=1)
+               "unit_system": scene.unit_settings.system,
+               "unit_scale": float(str(np.float32(scene.unit_settings.scale_length))),
+               "unit_scale_float32": scene.unit_settings.scale_length, "objects": objects, "dropped": dropped}, fh, indent=1)
 print("XVIEW_DUMP", len(names), "mesh objects,", len(dropped), "dropped")

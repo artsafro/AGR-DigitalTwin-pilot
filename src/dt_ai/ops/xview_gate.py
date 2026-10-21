@@ -24,6 +24,8 @@ bad loop arrays raise ValueError; a part without faces fails. `passed` needs zer
 any kind and zero bow-tie vertices in every part.
 Pattern: none | new-case: overlap gate CLI over inv_xview on FBX/.blend/.npz parts in local coordinates (#527).
 """
+import math
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -271,14 +273,83 @@ def _sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+UNIT_SYSTEMS = ("METRIC", "IMPERIAL", "NONE")
+
+
+def to_metres(parts, manifest: dict) -> tuple:
+    """Blender units of the dump -> metres: vertices and location times `scene.unit_settings.scale_length`.
+
+    The dump stores raw Blender units; a .blend with scale_length 0.001 (millimetre scene) holds 1000 for 1 m. A
+    missing, non-finite or non-positive scale, an unknown unit system, or a unitless scene (system NONE) with a
+    scale other than 1 is an error: no verdict without known metres. Returns (parts in metres, unit provenance).
+    """
+    if "unit_scale" not in manifest or "unit_system" not in manifest:
+        raise ValueError("Blender manifest has no unit_scale / unit_system; cannot convert to metres")
+    scale, system = manifest["unit_scale"], manifest["unit_system"]
+    if isinstance(scale, bool) or not isinstance(scale, (int, float)) or not math.isfinite(scale) or scale <= 0:
+        raise ValueError(f"unsupported Blender unit scale {scale!r}; expected a finite positive scale_length")
+    if system not in UNIT_SYSTEMS:
+        raise ValueError(f"unsupported Blender unit system {system!r}; expected one of {UNIT_SYSTEMS}")
+    if system == "NONE" and scale != 1:
+        raise ValueError(f"Blender unit system NONE with unit scale {scale!r}: units unknown, cannot convert to metres")
+    s = float(scale)
+    out = [Part(p.name, np.asarray(p.vertices, dtype=np.float64) * s, p.faces,
+                None if p.location is None else np.asarray(p.location, dtype=np.float64) * s) for p in parts]
+    return out, {"unit_system": system, "unit_scale": s, "coordinates": "m"}
+
+
+def _owned(path: Path, ident) -> bool:
+    try:
+        st = os.lstat(path)
+    except FileNotFoundError:
+        return False
+    return (st.st_dev, st.st_ino) == ident
+
+
+def publish(data: bytes, dest: Path) -> None:
+    """Write `data` to a new `dest`, never replacing or writing through any existing file (no-clobber).
+
+    The bytes go to an exclusively created, uniquely named temporary file beside `dest` (`tempfile.mkstemp`,
+    O_EXCL), then are published with `os.link` (fails if `dest` exists); on file systems without hard links, Windows
+    `os.rename` (also fails if `dest` exists). The temporary file is removed only while it is still ours (same inode).
+    """
+    import tempfile
+
+    fd, tmp = tempfile.mkstemp(prefix=dest.name + ".", suffix=".partial", dir=dest.parent)
+    tmp = Path(tmp)
+    st = os.fstat(fd)
+    ident = (st.st_dev, st.st_ino)
+    try:
+        with os.fdopen(fd, "wb") as fh:
+            fh.write(data)
+            fh.flush()
+            os.fsync(fh.fileno())
+        try:
+            os.link(tmp, dest)
+        except FileExistsError:
+            raise ValueError(f"{dest} exists (created by another writer during the run); nothing replaced") from None
+        except OSError:
+            if os.name != "nt":
+                raise
+            try:
+                os.rename(tmp, dest)            # Windows: refuses an existing destination
+            except FileExistsError:
+                raise ValueError(f"{dest} exists (created by another writer during the run); nothing replaced") \
+                    from None
+    finally:
+        if _owned(tmp, ident):
+            os.unlink(tmp)
+
+
 def run(src, out, profile="NPM", coords="local", parts=None, blender=None, timeout=3600) -> dict:
     """Load `src` (.npz directly, .fbx / .blend through headless Blender), gate it, write `out`; return the report.
 
-    `out` must be new and must not be the input; the report goes through `<out>.partial`; the Blender dump lives in a
-    fresh temporary folder beside `out` and is removed afterwards; the input is never written or deleted.
+    `out` (and, for FBX/.blend, `<out>.blender.log`) must be new and must not be the input; both are published by
+    `publish` (exclusive unique temporary file + no-clobber link), so a file another writer creates at either name
+    during the run is kept and the run fails. The Blender dump lives in a fresh temporary folder beside `out` and is
+    removed afterwards; Blender units are converted to metres (`to_metres`); the input is never written or deleted.
     """
     import json
-    import os
     import shutil
     import tempfile
 
@@ -288,18 +359,17 @@ def run(src, out, profile="NPM", coords="local", parts=None, blender=None, timeo
         raise ValueError(f"unsupported input {src.name!r}; expected one of {INPUTS}")
     if not src.is_file():
         raise ValueError(f"input not found: {src}")
-    partial = out.with_name(out.name + ".partial")
     log = out.with_name(out.name + ".blender.log")
-    for p in (out, partial, log):
+    for p in (out, log):
         if p.resolve() == src.resolve():
             raise ValueError(f"{p} is the input; write the report elsewhere")
-    for p in (out, partial):
-        if p.exists():
-            raise ValueError(f"{p} exists; write a new versioned report")
+    if out.exists():
+        raise ValueError(f"{out} exists; write a new versioned report")
     if not out.parent.is_dir():
         raise ValueError(f"report folder does not exist: {out.parent}")
     sha = _sha256(src)
     dump = None
+    units = {"unit_system": None, "unit_scale": None, "coordinates": "m"}   # .npz: dump format, metres
     if ext == ".npz":
         loaded = load_npz(src)
     else:
@@ -309,25 +379,31 @@ def run(src, out, profile="NPM", coords="local", parts=None, blender=None, timeo
         if not DUMP_SCRIPT.is_file():
             raise ValueError(f"Blender dump script not found: {DUMP_SCRIPT}")
         tmp = Path(tempfile.mkdtemp(prefix=out.name + ".dump-", dir=out.parent))
+        tmp_log = tmp / "blender.log"
         try:
             npz, manifest = tmp / "parts.npz", tmp / "manifest.json"
-            dump = run_blender(DUMP_SCRIPT, [src.resolve(), npz, manifest], executable=blender,
-                               output_json=manifest, outputs=[npz], timeout=timeout, log_path=log)
+            try:
+                dump = run_blender(DUMP_SCRIPT, [src.resolve(), npz, manifest], executable=blender,
+                                   output_json=manifest, outputs=[npz], timeout=timeout, log_path=tmp_log)
+            finally:
+                if tmp_log.is_file():
+                    publish(tmp_log.read_bytes(), log)
             loaded = load_npz(npz)
         finally:
             shutil.rmtree(tmp, ignore_errors=True)
         names = [o["name"] for o in dump.get("objects", [])]
         if names != [p.name for p in loaded]:
             raise ValueError(f"Blender manifest objects {names[:10]} do not match the dumped parts")
+        loaded, units = to_metres(loaded, dump)
     rep = gate_report(loaded, profile, coords, parts)
     if _sha256(src) != sha:
         raise ValueError(f"input changed during the run: {src}")
     rep["input"] = {"path": str(src), "sha256": sha, "kind": ext[1:],
                     "parts_in_file": [p.name for p in loaded],
                     "not_selected": [p.name for p in loaded if p.name not in {q["part"] for q in rep["parts"]}],
+                    "units": units,
                     "dropped": [] if dump is None else dump.get("dropped", []),
                     "blender": None if dump is None else {"version": dump.get("blender"), "log": str(log),
                                                          "scene": dump.get("scene")}}
-    partial.write_text(json.dumps(rep, ensure_ascii=False, indent=1), encoding="utf-8")
-    os.replace(partial, out)
+    publish(json.dumps(rep, ensure_ascii=False, indent=1).encode("utf-8"), out)
     return rep
