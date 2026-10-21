@@ -1037,8 +1037,23 @@ def weld_base_boundary(mesh: Mesh, weld_m: float = .0041,
         displacement = np.linalg.norm(mesh.verts[ids]-centre, axis=1)
         if displacement.max() >= displacement_limit_m:
             raise ValueError(f"boundary cluster {ids.tolist()}: displacement {displacement.max()} m reaches {displacement_limit_m} m")
-        v[ids] = centre
-        groups.append(dict(vertices=ids.tolist(), before=mesh.verts[ids].tolist(), after=centre.tolist()))
+        target = centre
+        strategy = 'midpoint_seam'
+        if len(ids) == 2 and any(set(ids).issubset(face) for face in mesh.faces):
+            # Collapsing an actual face edge can delete a long narrow tongue,
+            # even though both endpoints move less than 2.1 mm. Retain it by
+            # widening that edge within the same movement bound. 6.3 mm is a
+            # construction width, not a changed xView/outline tolerance; the
+            # complete resulting curtains still require independent checking.
+            direction = mesh.verts[ids[1]] - mesh.verts[ids[0]]
+            direction /= np.linalg.norm(direction)
+            target = np.array([centre-direction*.0063/2, centre+direction*.0063/2])
+            strategy = 'retained_short_edge'
+            actual_displacement = np.linalg.norm(mesh.verts[ids]-target, axis=1)
+            if actual_displacement.max() >= displacement_limit_m:
+                raise ValueError(f"retained boundary edge {ids.tolist()}: displacement reaches {displacement_limit_m} m")
+        v[ids] = target
+        groups.append(dict(vertices=ids.tolist(), before=mesh.verts[ids].tolist(), after=target.tolist(), strategy=strategy))
     delta = np.linalg.norm(v-mesh.verts, axis=1)
     moved = np.flatnonzero(delta > 1e-12)
     if np.intersect1d(moved, mesh.faces[mesh.level > 0]).size:
