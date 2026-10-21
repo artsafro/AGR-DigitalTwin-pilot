@@ -1,0 +1,411 @@
+{
+  "good": {
+    "schema": "render-qa-v1",
+    "blender": "5.1.2",
+    "frame_number": 1,
+    "units_m_per_unit": 1.0,
+    "source_metadata": null,
+    "config": {
+      "targets": [
+        "Target"
+      ],
+      "cameras": [
+        "Camera"
+      ],
+      "ground_resting": [
+        "Target"
+      ],
+      "ground_objects": [
+        "Ground"
+      ],
+      "thresholds": {
+        "crop_margin": 0.02,
+        "minimum_coverage": 0.05,
+        "floating_m": 0.01,
+        "background_rgb": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "background_tolerance": 0.01
+      }
+    },
+    "visibility": "opaque geometry, every output pixel centre",
+    "frames": [
+      {
+        "camera": "Camera",
+        "objects": [
+          {
+            "object": "Target",
+            "bbox": [
+              0.30000001192092896,
+              0.24002647399902344,
+              0.699999988079071,
+              0.7599733471870422
+            ],
+            "depth": [
+              9.470460891723633,
+              12.070195198059082
+            ],
+            "coverage": 0.2158203125,
+            "object_coverage": 0.2158203125,
+            "visible_faces": 2,
+            "ground_gap_m": 0.0,
+            "ground_contact": {
+              "minimum_m": 0.0,
+              "maximum_m": 0.0,
+              "lowest_vertices": 4
+            }
+          }
+        ],
+        "failures": [],
+        "coverage": 0.2158203125,
+        "pixels": {
+          "width": 64,
+          "height": 64,
+          "count": 4096,
+          "background_share": 0.0,
+          "colour_space": "Blender loaded PNG linear RGB",
+          "path": "C:\\x\\render-qa\\t_4a2c4437-final-blender\\test_blender_fixtures0\\fixtures\\good\\frame_0000.png",
+          "sha256": "956f28974526cb99db65a3b26f9c33451f518b56dd0fb28a8da16f220e993fb0"
+        },
+        "status": "pass",
+        "seconds": 1.6416889999527484
+      }
+    ],
+    "status": "pass",
+    "seconds": 1.643189699971117
+  },
+  "cropped": {
+    "schema": "render-qa-v1",
+    "blender": "5.1.2",
+    "frame_number": 1,
+    "units_m_per_unit": 1.0,
+    "source_metadata": null,
+    "config": {
+      "targets": [
+        "Target"
+      ],
+      "cameras": [
+        "Camera"
+      ],
+      "ground_resting": [
+        "Target"
+      ],
+      "ground_objects": [
+        "Ground"
+      ],
+      "thresholds": {
+        "crop_margin": 0.02,
+        "minimum_coverage": 0.05,
+        "floating_m": 0.01,
+        "background_rgb": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "background_tolerance": 0.01
+      }
+    },
+    "visibility": "opaque geometry, every output pixel centre",
+    "frames": [
+      {
+        "camera": "Camera",
+        "objects": [
+          {
+            "object": "Target",
+            "bbox": [
+              -0.10000000149011612,
+              0.24002647399902344,
+              0.30000001192092896,
+              0.7599733471870422
+            ],
+            "depth": [
+              9.470460891723633,
+              12.070195198059082
+            ],
+            "coverage": 0.15771484375,
+            "object_coverage": 0.15771484375,
+            "visible_faces": 2,
+            "ground_gap_m": 0.0,
+            "ground_contact": {
+              "minimum_m": 0.0,
+              "maximum_m": 0.0,
+              "lowest_vertices": 4
+            }
+          }
+        ],
+        "failures": [
+          {
+            "object": "Target",
+            "frame": "Camera",
+            "code": "cropped"
+          }
+        ],
+        "coverage": 0.15771484375,
+        "pixels": {
+          "width": 64,
+          "height": 64,
+          "count": 4096,
+          "background_share": 0.0,
+          "colour_space": "Blender loaded PNG linear RGB",
+          "path": "C:\\x\\render-qa\\t_4a2c4437-final-blender\\test_blender_fixtures0\\fixtures\\cropped\\frame_0000.png",
+          "sha256": "9a204229991def37343c42700e91562e36fbe2ec279ee00b4ecf9037d8d225c4"
+        },
+        "status": "fail",
+        "seconds": 0.023176999995484948
+      }
+    ],
+    "status": "fail",
+    "seconds": 0.023918399936519563
+  },
+  "empty": {
+    "schema": "render-qa-v1",
+    "blender": "5.1.2",
+    "frame_number": 1,
+    "units_m_per_unit": 1.0,
+    "source_metadata": null,
+    "config": {
+      "targets": [
+        "Target"
+      ],
+      "cameras": [
+        "Camera"
+      ],
+      "ground_resting": [
+        "Target"
+      ],
+      "ground_objects": [
+        "Ground"
+      ],
+      "thresholds": {
+        "crop_margin": 0.02,
+        "minimum_coverage": 0.05,
+        "floating_m": 0.01,
+        "background_rgb": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "background_tolerance": 0.01
+      }
+    },
+    "visibility": "opaque geometry, every output pixel centre",
+    "frames": [
+      {
+        "camera": "Camera",
+        "objects": [
+          {
+            "object": "Target",
+            "bbox": [
+              0.47999998927116394,
+              0.3068767786026001,
+              0.5199999809265137,
+              0.3588714599609375
+            ],
+            "depth": [
+              10.974593162536621,
+              11.234566688537598
+            ],
+            "coverage": 0.00146484375,
+            "object_coverage": 0.00146484375,
+            "visible_faces": 2,
+            "ground_gap_m": 0.0,
+            "ground_contact": {
+              "minimum_m": 0.0,
+              "maximum_m": 0.0,
+              "lowest_vertices": 4
+            }
+          }
+        ],
+        "failures": [
+          {
+            "object": "Target",
+            "frame": "Camera",
+            "code": "empty"
+          }
+        ],
+        "coverage": 0.00146484375,
+        "pixels": {
+          "width": 64,
+          "height": 64,
+          "count": 4096,
+          "background_share": 0.0,
+          "colour_space": "Blender loaded PNG linear RGB",
+          "path": "C:\\x\\render-qa\\t_4a2c4437-final-blender\\test_blender_fixtures0\\fixtures\\empty\\frame_0000.png",
+          "sha256": "a92415b2f6397b53585ba25404fc4257ce0e426fd2f4491e99ebbbdeb983b3f7"
+        },
+        "status": "fail",
+        "seconds": 0.022419400047510862
+      }
+    ],
+    "status": "fail",
+    "seconds": 0.024265200016088784
+  },
+  "floating": {
+    "schema": "render-qa-v1",
+    "blender": "5.1.2",
+    "frame_number": 1,
+    "units_m_per_unit": 1.0,
+    "source_metadata": null,
+    "config": {
+      "targets": [
+        "Target"
+      ],
+      "cameras": [
+        "Camera"
+      ],
+      "ground_resting": [
+        "Target"
+      ],
+      "ground_objects": [
+        "Ground"
+      ],
+      "thresholds": {
+        "crop_margin": 0.02,
+        "minimum_coverage": 0.05,
+        "floating_m": 0.01,
+        "background_rgb": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "background_tolerance": 0.01
+      }
+    },
+    "visibility": "opaque geometry, every output pixel centre",
+    "frames": [
+      {
+        "camera": "Camera",
+        "objects": [
+          {
+            "object": "Target",
+            "bbox": [
+              0.30000001192092896,
+              0.2585960030555725,
+              0.699999988079071,
+              0.7785428762435913
+            ],
+            "depth": [
+              9.433321952819824,
+              12.033056259155273
+            ],
+            "coverage": 0.20947265625,
+            "object_coverage": 0.20947265625,
+            "visible_faces": 2,
+            "ground_gap_m": 0.10000002384185791,
+            "ground_contact": {
+              "minimum_m": 0.10000002384185791,
+              "maximum_m": 0.10000002384185791,
+              "lowest_vertices": 4
+            }
+          }
+        ],
+        "failures": [
+          {
+            "object": "Target",
+            "frame": "Camera",
+            "code": "floating"
+          }
+        ],
+        "coverage": 0.20947265625,
+        "pixels": {
+          "width": 64,
+          "height": 64,
+          "count": 4096,
+          "background_share": 0.0,
+          "colour_space": "Blender loaded PNG linear RGB",
+          "path": "C:\\x\\render-qa\\t_4a2c4437-final-blender\\test_blender_fixtures0\\fixtures\\floating\\frame_0000.png",
+          "sha256": "ced5c7759a357ee3502bb5d947314193381177d6f309a50980980891d38b5735"
+        },
+        "status": "fail",
+        "seconds": 0.024441599962301552
+      }
+    ],
+    "status": "fail",
+    "seconds": 0.02537420007865876
+  },
+  "occluded": {
+    "schema": "render-qa-v1",
+    "blender": "5.1.2",
+    "frame_number": 1,
+    "units_m_per_unit": 1.0,
+    "source_metadata": null,
+    "config": {
+      "targets": [
+        "Target"
+      ],
+      "cameras": [
+        "Camera"
+      ],
+      "ground_resting": [
+        "Target"
+      ],
+      "ground_objects": [
+        "Ground"
+      ],
+      "thresholds": {
+        "crop_margin": 0.02,
+        "minimum_coverage": 0.05,
+        "floating_m": 0.01,
+        "background_rgb": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "background_tolerance": 0.01
+      }
+    },
+    "visibility": "opaque geometry, every output pixel centre",
+    "frames": [
+      {
+        "camera": "Camera",
+        "objects": [
+          {
+            "object": "Target",
+            "bbox": [
+              0.30000001192092896,
+              0.24002647399902344,
+              0.699999988079071,
+              0.7599733471870422
+            ],
+            "depth": [
+              9.470460891723633,
+              12.070195198059082
+            ],
+            "coverage": 0.0,
+            "object_coverage": 0.0,
+            "visible_faces": 0,
+            "ground_gap_m": 0.0,
+            "ground_contact": {
+              "minimum_m": 0.0,
+              "maximum_m": 0.0,
+              "lowest_vertices": 4
+            }
+          }
+        ],
+        "failures": [
+          {
+            "object": "Target",
+            "frame": "Camera",
+            "code": "empty"
+          }
+        ],
+        "coverage": 0.0,
+        "pixels": {
+          "width": 64,
+          "height": 64,
+          "count": 4096,
+          "background_share": 0.0,
+          "colour_space": "Blender loaded PNG linear RGB",
+          "path": "C:\\x\\render-qa\\t_4a2c4437-final-blender\\test_blender_fixtures0\\fixtures\\occluded\\frame_0000.png",
+          "sha256": "4d1749d003c0e84af34ec9a7bfd17c4f99ca0ffb46388a3b91064f20a154fd23"
+        },
+        "status": "fail",
+        "seconds": 0.023032499942928553
+      }
+    ],
+    "status": "fail",
+    "seconds": 0.023919599945656955
+  }
+}
