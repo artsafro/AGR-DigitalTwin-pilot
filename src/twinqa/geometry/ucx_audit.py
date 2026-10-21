@@ -2,7 +2,9 @@
 
 Pure Python (no numpy, no bpy) so the same functions run inside Blender
 (`tools/blender/ucx_audit.py`) and under pytest. Measurement helpers do not emit a
-pass/fail verdict. `pair_findings` and `collision_findings` report req 2.13.4:
+pass/fail verdict, except `classify`, which returns `status: "review"` (undetermined) for a
+hull with a degenerate triangle (issue #460) so a sliver can never pass closed/convex.
+`pair_findings` and `collision_findings` report req 2.13.4:
 too-close (< 0.2 mm, SINTEZ), gap outside the D098 2 mm - 1 cm band, intersect and
 nested. A hull the SAT machinery cannot measure is `not_run`, never skipped.
 A hull is `(verts, tris)` with `verts` a list of xyz tuples in metres and
@@ -21,6 +23,7 @@ TOUCH_M = 0.0002  # faces practically touch; SINTEZ too-close is gap < this [D16
 # here). Comment there: it is numerical precision, not a permitted overlap.
 OVERLAP_EPS_M = 1e-5
 DEGENERATE_VOLUME_M3 = 1e-9  # absolute enclosed volume at or below this is not a volumetric hull
+DEGENERATE_AREA_M2 = 1e-10  # zero-area / sliver triangle area at or below this is degenerate (issue #460)
 NEIGHBOUR_M = 0.10  # pairs closer than this are "neighbours" in the gap report
 CONVEX_TOL_M = 1e-4  # float32 FBX coordinates around 100 m carry ~1e-5 noise
 REQ_COLLISION = "2.13.4"  # no intersections; neighbour gap 2 mm - 1 cm [D098], plus SINTEZ too-close [D162]
@@ -63,6 +66,25 @@ def weld(verts, tris, tol=1e-5):
         if len({a, b, c}) == 3:
             new_tris.append((a, b, c))
     return out, new_tris
+
+
+def degenerate_triangles(verts, tris, area_tol=DEGENERATE_AREA_M2):
+    """Indices of degenerate triangles: a repeated vertex index or area <= area_tol (m^2).
+
+    A zero-area / sliver triangle fools `is_closed` (its edges, each used twice, "close" a
+    hole) and is silently skipped by `is_convex` (`if plane is None: continue`). Report these
+    up front so the caller can return an undetermined verdict instead of a false pass. The raw
+    input is measured before `weld`, because weld drops repeated-index triangles silently.
+    """
+    out = []
+    for i, (a, b, c) in enumerate(tris):
+        if a == b or b == c or a == c:
+            out.append(i)
+            continue
+        area = _norm(_cross(_sub(verts[b], verts[a]), _sub(verts[c], verts[a]))) / 2.0
+        if area <= area_tol:
+            out.append(i)
+    return out
 
 
 def face_planes(verts, tris):
@@ -110,7 +132,17 @@ def _normal_axes(verts, tris, angle_tol_deg=0.5):
 
 
 def classify(verts, tris):
-    """Hull kind: box_aabb | box_oriented | convex | custom (open or non-convex)."""
+    """Hull kind: box_aabb | box_oriented | convex | custom (open or non-convex).
+
+    A hull with a degenerate triangle (repeated vertex index or zero area, issue #460) is
+    `review` (undetermined): its closed/convex state cannot be verified, so it is never a
+    false pass. Clean hulls keep their previous verdicts unchanged.
+    """
+    degenerate = degenerate_triangles(verts, tris)
+    if degenerate:
+        return {"kind": "custom", "closed": None, "convex": None, "verts": len(verts),
+                "tris": len(tris), "status": "review",
+                "degenerate_triangles": {"count": len(degenerate), "triangles": degenerate[:5]}}
     verts, tris = weld(verts, tris)
     closed, convex = is_closed(tris), is_convex(verts, tris)
     kind = "custom"
