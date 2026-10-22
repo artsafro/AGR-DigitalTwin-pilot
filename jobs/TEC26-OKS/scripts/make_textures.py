@@ -123,9 +123,22 @@ def make_user_vjoints(t, size):
         z = (size - np.arange(size) - 0.5) * t["S"] / size
         rows = z < lb["z_max_m"]
         col[rows] = np.array(lb["rgb"], float) * (col[rows].mean(-1, keepdims=True) / med.mean())
+    jd = t.get("joint_dark")
+    if jd:  # AC07 r2 (orchestrator 2026-10-22): joints read dark and crisp like the slide, on 5015 and on 7047
+        base = np.tile(np.array(t["rgb"], float), (size, 1))
+        if lb:
+            base[(size - np.arange(size) - 0.5) * t["S"] / size < lb["z_max_m"]] = np.array(lb["rgb"], float)
+        col[:, joint] = base[:, None, :] * jd["core"]               # dark joint core in the row's own colour
+        ao = jd["ao_mm"] * size / (t["S"] * 1000)                   # halo width (px) on each side of the joint
+        dist = np.abs(p + 0.5)
+        halo = ~joint & (dist < jw + ao)
+        if ao > 0 and halo.any():
+            f = jd["ao_min"] + (1 - jd["ao_min"]) * ((dist[halo] - jw) / ao) ** 2
+            col[:, halo] *= f[None, :, None]
+            h[:, halo] = -3.0 * (1 - (dist[halo] - jw) / ao)[None, :]
     dif = np.clip(col, 0, 255).round().astype(np.uint8)
     erm = np.stack([np.zeros((size, size)), rough * 255, np.full((size, size), t["metal"] * 255)], -1)
-    return dif, None, erm.round().astype(np.uint8), normal_from_height(h, 0.5)
+    return dif, None, erm.round().astype(np.uint8), normal_from_height(h, (jd or {}).get("normal_strength", 0.5))
 
 
 def make_full(t, size):

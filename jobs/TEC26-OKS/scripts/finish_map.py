@@ -80,13 +80,19 @@ def validate_spec(spec, kpp_spec=None):
     for sid, rule in src.items():
         if rule.get("split") == "below_zero":
             names = [rule["above"], rule["below"]]
+        elif rule.get("split") == "vertical":  # AC07 vents: vertical cap = light disc, the rest = dark hood [#564]
+            if "vertical" not in rule or "nonvertical" not in rule:
+                raise ValueError(f"source ID {sid}: split vertical needs 'vertical' and 'nonvertical' finishes")
+            if rule["vertical"] == rule["nonvertical"]:
+                raise ValueError(f"source ID {sid}: split vertical finishes must differ, got {rule['vertical']} twice")
+            names = [rule["vertical"], rule["nonvertical"]]
         elif rule.get("split") == "facade":
             names = sorted({f["finish"] for f in spec["facades"].values()})
             if "nonvertical" in rule:  # AC07: one ID = wall panels (vertical) + roof (not vertical)
                 names.append(rule["nonvertical"])
         else:
             names = [rule.get("finish")]
-        if rule.get("split") not in (None, "below_zero", "facade"):
+        if rule.get("split") not in (None, "below_zero", "facade", "vertical"):
             raise ValueError(f"source ID {sid}: unsupported split {rule.get('split')}")
         for n in names:
             if n not in fin:
@@ -134,6 +140,8 @@ def validate_spec(spec, kpp_spec=None):
     for name, t in fin.items():
         if t.get("pattern") == "user_vjoints" and name not in (spec.get("kpp_palette") or {}):
             raise ValueError(f"{name}: a user-texture finish needs a kpp_palette twin (colour + density contract)")
+        if t.get("joint_dark") is not None:
+            validate_joint_dark(name, t)
         if t.get("plan_uv") is not None:
             validate_plan_uv(name, spec)
         elif t.get("pattern") == "user_vjoints" and not any(f.get("finish") == name
@@ -143,6 +151,26 @@ def validate_spec(spec, kpp_spec=None):
     if spec.get("facades") is not None or "legend" in spec:
         validate_legend(spec, kpp_spec)
     return True
+
+
+def validate_joint_dark(name, t):
+    """joint_dark (AC07 r2, orchestrator 2026-10-22: joints dark and crisp like the slide): core = joint colour as a
+    fraction of the row's panel colour (0 < core < 1), ao_mm = width of the darkening halo on each side (finite >= 0),
+    ao_min = panel factor at the joint edge (0 < ao_min <= 1), optional normal_strength (finite > 0)."""
+    jd = t["joint_dark"]
+    if t.get("pattern") != "user_vjoints" or not isinstance(jd, dict):
+        raise ValueError(f"{name}: joint_dark needs a user_vjoints finish and an object")
+
+    def num(k, lo, hi, lo_open=True, hi_open=False):
+        v = jd.get(k)
+        if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or (
+                (v <= lo if lo_open else v < lo) or (v >= hi if hi_open else v > hi)):
+            raise ValueError(f"{name}: joint_dark {k} out of range, got {v!r}")
+    num("core", 0.0, 1.0, True, True)
+    num("ao_mm", 0.0, 50.0, False)
+    num("ao_min", 0.0, 1.0)
+    if "normal_strength" in jd:
+        num("normal_strength", 0.0, 10.0)
 
 
 LEGEND_TEXTURES = {"ribbed": ("user_vjoints",), "plain": (None,)}   # legend texture -> allowed finish patterns
@@ -176,13 +204,47 @@ def validate_legend(spec, kpp_spec=None):
             pat = fin[n].get("pattern")
             if pat not in LEGEND_TEXTURES[tex]:
                 raise ValueError(f"{n}: legend row {i} is {tex} but the finish pattern is {pat or 'plain'}")
+    # AC07 (#564): the RAL 7047 lower band of a ribbed panel finish (lower_band) is its own legend row
+    # («Сэндвич-панели - RAL 7047», ribbed): listed under `lower_bands` of exactly one ribbed row with the band's RAL.
+    band_rows = {}
+    for i, r in enumerate(rows):
+        for n in r.get("lower_bands") or []:
+            if n not in fin:
+                raise ValueError(f"legend row {i}: lower band of {n}: finish is not declared in finishes")
+            lb = fin[n].get("lower_band")
+            if not lb:
+                raise ValueError(f"legend row {i}: {n} has no lower_band")
+            km = re.search(r"RAL(\d{4})", str(lb.get("kpp_finish", "")))
+            if r.get("texture") != "ribbed" or fin[n].get("pattern") not in LEGEND_TEXTURES["ribbed"] or (
+                    not km) or km.group(1) != str(r.get("ral")):
+                raise ValueError(f"legend row {i}: lower band of {n} (RAL {km.group(1) if km else '?'}) needs a ribbed "
+                                 f"row of its own RAL, row is {r.get('texture')} RAL {r.get('ral')}")
+            band_rows.setdefault(n, []).append(i)
+    for n, t in fin.items():
+        if t.get("lower_band") and len(band_rows.get(n, [])) != 1:
+            raise ValueError(f"{n}: its lower band is in {len(band_rows.get(n, []))} legend rows (needs exactly one)")
+    # finishes that are not on a facade (e.g. the inner shell): named with a reason, never in a row
+    exempt = spec.get("legend_exempt") or {}
+    if not isinstance(exempt, dict):
+        raise ValueError("legend_exempt must be a {finish: reason} object")
+    for n, why in exempt.items():
+        if n not in fin:
+            raise ValueError(f"legend_exempt: finish {n} is not declared in finishes")
+        if n in seen:
+            raise ValueError(f"{n}: legend-exempt but also in legend rows {seen[n]}")
+        if not isinstance(why, str) or not why.strip():
+            raise ValueError(f"legend_exempt {n}: needs a non-empty reason")
     for n in fin:
+        if n in exempt:
+            continue
         if n not in seen:
             raise ValueError(f"{n}: no legend row (every finish must map to one hatch of the facade legend)")
         if len(seen[n]) > 1:
             raise ValueError(f"{n}: in {len(seen[n])} legend rows {seen[n]}")
     if kpp_spec is not None:
         for n, ref in (spec.get("kpp_palette") or {}).items():
+            if n in exempt:
+                continue
             k = kpp_spec["finishes"][ref["kpp_finish"]]
             km = re.search(r"RAL(\d{4})", ref["kpp_finish"])
             if not km or km.group(1) != re.search(r"RAL(\d{4})", n).group(1):
@@ -399,6 +461,8 @@ def assign_finishes(vertices, faces, mat_ids, spec):
         if rule.get("split") == "below_zero":
             zmax = max(vertices[k][2] for k in f)
             out.append(rule["below"] if zmax <= zero else rule["above"])
+        elif rule.get("split") == "vertical":
+            out.append(rule["vertical"] if is_vertical(vertices, f) else rule["nonvertical"])
         elif rule.get("split") == "facade":
             if "nonvertical" in rule and not is_vertical(vertices, f):
                 out.append(rule["nonvertical"])

@@ -25,7 +25,10 @@
    "finish": "Metal_RAL7004"
   },
   "6": {
-   "finish": "Insert_RAL7004"
+   "split": "vertical",
+   "vertical": "VentDisc_RAL7047",
+   "nonvertical": "Insert_RAL7004",
+   "why": "ID6 round vents: 100 vertical cap triangles (light disc) + 100 hood quads (dark edge), slide 44"
   },
   "7": {
    "finish": "Door_RAL7004"
@@ -37,7 +40,10 @@
    "finish": "Frame_RAL9016"
   },
   "10": {
-   "finish": "Plinth_RAL7004"
+   "split": "below_zero",
+   "above": "Plinth_RAL7004",
+   "below": "BelowGrade_RAL7047",
+   "why": "ID10: 44 strip faces -0.019..+0.132 (zmax > 0) = plinth 7004; 44 drop faces -2.025..-0.019 = wall colour 7047 plain"
   },
   "11": {
    "finish": "Interior"
@@ -50,9 +56,9 @@
  "glass": {
   "udim": 1001
  },
- "drop_finish": "Plinth_RAL7004",
+ "drop_finish": "BelowGrade_RAL7047",
  "kpp_palette": {
-  "PanelVJ68": {
+  "PanelVJ68_RAL5015": {
    "kpp_finish": "Metal_RAL5015",
    "kpp_udim": 1013,
    "density_twin": {
@@ -60,7 +66,7 @@
     "kpp_udim": 1007
    }
   },
-  "PanelVJ55": {
+  "PanelVJ55_RAL5015": {
    "kpp_finish": "Metal_RAL5015",
    "kpp_udim": 1013,
    "density_twin": {
@@ -103,10 +109,18 @@
     "kpp_finish": "Cassette_RAL5015",
     "kpp_udim": 1007
    }
+  },
+  "VentDisc_RAL7047": {
+   "kpp_finish": "Cassette_RAL7047",
+   "kpp_udim": 1006
+  },
+  "BelowGrade_RAL7047": {
+   "kpp_finish": "Cassette_RAL7047",
+   "kpp_udim": 1006
   }
  },
  "finishes": {
-  "PanelVJ68": {
+  "PanelVJ68_RAL5015": {
    "udim": 1001,
    "kind": "full",
    "S": 4.096,
@@ -149,9 +163,16 @@
     "kpp_udim": 1006,
     "why": "sheet: the ribbed sandwich wall is RAL 7047 grey from +0.120 to +2.500 (ID3) and RAL 5015 blue above (ID1); same rib layout through both (DXF vertical lines run the full wall height)"
    },
-   "why": "long facades 1-3 (+y) / 3-1 (-y): 68 ribs evenly over the 13.5 m wall (sheet: 67 joint lines every 200 mm)"
+   "why": "long facades 1-3 (+y) / 3-1 (-y): 68 ribs evenly over the 13.5 m wall (sheet: 67 joint lines every 200 mm)",
+   "joint_dark": {
+    "core": 0.2,
+    "ao_mm": 12,
+    "ao_min": 0.55,
+    "normal_strength": 1.0,
+    "why": "orchestrator 2026-10-22 r2: joints dark and crisp like slide 44/45 (black lines) on 5015 and 7047; 8 mm core at 0.2 of the panel colour + 12 mm darkening halo each side, normal x2"
+   }
   },
-  "PanelVJ55": {
+  "PanelVJ55_RAL5015": {
    "udim": 1002,
    "kind": "full",
    "S": 4.096,
@@ -194,7 +215,14 @@
     "kpp_udim": 1006,
     "why": "sheet: the ribbed sandwich wall is RAL 7047 grey from +0.120 to +2.500 (ID3) and RAL 5015 blue above (ID1); same rib layout through both (DXF vertical lines run the full wall height)"
    },
-   "why": "short facades А-Д (-x) / Д-А (+x): 55 ribs evenly over the 10.9 m wall (sheet: 54 joint lines every 200 mm)"
+   "why": "short facades А-Д (-x) / Д-А (+x): 55 ribs evenly over the 10.9 m wall (sheet: 54 joint lines every 200 mm)",
+   "joint_dark": {
+    "core": 0.2,
+    "ao_mm": 12,
+    "ao_min": 0.55,
+    "normal_strength": 1.0,
+    "why": "orchestrator 2026-10-22 r2: joints dark and crisp like slide 44/45 (black lines) on 5015 and 7047; 8 mm core at 0.2 of the panel colour + 12 mm darkening halo each side, normal x2"
+   }
   },
   "Roof_RAL5015": {
    "udim": 1003,
@@ -234,7 +262,14 @@
     "ribs_from": "А-Д",
     "why": "slide 44 (А-Д, Д-А) draws the roof RAL 5015 with ribs down the slope: 54-55 dark runs over the 10.9 m eave on the slide roof rows y=150/155, the same step as the wall band (56 at y=190/200); u = world y from the wall field edge (ribs on the wall rib positions), v = world x (slope 0.994: texel -0.3 %)"
    },
-   "why": "ID1 non-vertical faces (roof): BLUE RAL 5015 ribbed sandwich (legend «Сэндвич-панели, козырьки - RAL 5015»; slide 44/45 roof blue, ribbed down the slope; supersedes the Gate-1 «ID1 кровля 7004»)"
+   "why": "ID1 non-vertical faces (roof): BLUE RAL 5015 ribbed sandwich (legend «Сэндвич-панели, козырьки - RAL 5015»; slide 44/45 roof blue, ribbed down the slope; supersedes the Gate-1 «ID1 кровля 7004»)",
+   "joint_dark": {
+    "core": 0.2,
+    "ao_mm": 12,
+    "ao_min": 0.55,
+    "normal_strength": 1.0,
+    "why": "orchestrator 2026-10-22 r2: joints dark and crisp like slide 44/45 (black lines) on 5015 and 7047; 8 mm core at 0.2 of the panel colour + 12 mm darkening halo each side, normal x2"
+   }
   },
   "Trim_RAL5015": {
    "udim": 1004,
@@ -270,7 +305,7 @@
    ],
    "rough": 0.4,
    "metal": 0.0,
-   "why": "ID6 round facade vents: dark grey RAL 7004 (slide 44: round vents dark; Gate-1: to verify), shown enlarged on the acceptance sheet"
+   "why": "ID6 round facade vents, the hood/edge faces (non-vertical): dark RAL 7004 = the dark crescent/edge of the slide 44 circles (orchestrator 2026-10-22 r2)"
   },
   "Door_RAL7004": {
    "udim": 1007,
@@ -306,7 +341,7 @@
    ],
    "rough": 0.45,
    "metal": 0.0,
-   "why": "ID10 plinth +0.000..+0.132 and the required perimeter drop to -2.025: RAL 7004 plain, no joints (below ±0.000 plain) (slide 44/45: plinth/footing dark grey 155 = RAL 7004)"
+   "why": "ID10 plinth strip -0.019..+0.132 above ground: thin RAL 7004 (legend «цоколь - RAL 7004»; slide 44/45 thin dark strip)"
   },
   "Interior": {
    "udim": 1010,
@@ -319,11 +354,35 @@
    "rough": 0.9,
    "metal": 0.0,
    "why": "ID11 inner shell = KPP Interior (Gate-1)"
+  },
+  "VentDisc_RAL7047": {
+   "udim": 1011,
+   "kind": "placeholder",
+   "rgb": [
+    208,
+    208,
+    208
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "why": "ID6 round vents, the vertical cap disc: light grey RAL 7047 (slide 44: light disc with a dark crescent; orchestrator 2026-10-22 r2)"
+  },
+  "BelowGrade_RAL7047": {
+   "udim": 1012,
+   "kind": "placeholder",
+   "rgb": [
+    208,
+    208,
+    208
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "why": "ID10 perimeter drop -2.025..-0.019 below ±0.000: the wall colour RAL 7047 without ribs (orchestrator 2026-10-22 r2: below ±0.000 wall colour, no ribs)"
   }
  },
  "facade_uv": {
-  "PanelVJ68": "u' = metres along the facade from the wall field's smaller world coordinate (joints at u' = k * P), v = world z",
-  "PanelVJ55": "same frame, P of the short facades"
+  "PanelVJ68_RAL5015": "u' = metres along the facade from the wall field's smaller world coordinate (joints at u' = k * P), v = world z",
+  "PanelVJ55_RAL5015": "same frame, P of the short facades"
  },
  "ring_cuts": {
   "allowed": "edge ring at joint positions, quads only, boundary to boundary",
@@ -332,7 +391,7 @@
  "facades": {
   "1-3": {
    "normal": "+y",
-   "finish": "PanelVJ68",
+   "finish": "PanelVJ68_RAL5015",
    "ribs": 68,
    "field_m": 13.500136,
    "sheet_field_mm": 13500.2,
@@ -341,7 +400,7 @@
   },
   "3-1": {
    "normal": "-y",
-   "finish": "PanelVJ68",
+   "finish": "PanelVJ68_RAL5015",
    "ribs": 68,
    "field_m": 13.500136,
    "sheet_field_mm": 13500.2,
@@ -350,7 +409,7 @@
   },
   "А-Д": {
    "normal": "-x",
-   "finish": "PanelVJ55",
+   "finish": "PanelVJ55_RAL5015",
    "ribs": 55,
    "field_m": 10.899869,
    "sheet_field_mm": 10900.0,
@@ -359,7 +418,7 @@
   },
   "Д-А": {
    "normal": "+x",
-   "finish": "PanelVJ55",
+   "finish": "PanelVJ55_RAL5015",
    "ribs": 55,
    "field_m": 10.899869,
    "sheet_field_mm": 10900.0,
@@ -410,5 +469,79 @@
     155
    ]
   }
- }
+ },
+ "legend": [
+  {
+   "hatch": "Сэндвич-панели, козырьки - RAL 5015 (ribbed blue band above +2.500, gables, roof down the slope)",
+   "source": "DWG/slide 44-45 legend «Условные обозначения» + Artem 2026-10-22",
+   "material": "sandwich panel",
+   "ral": "5015",
+   "texture": "ribbed",
+   "finishes": [
+    "PanelVJ68_RAL5015",
+    "PanelVJ55_RAL5015",
+    "Roof_RAL5015"
+   ]
+  },
+  {
+   "hatch": "Сэндвич-панели - RAL 7047 (ribbed light grey wall +0.132..+2.500, same ribs as the band)",
+   "source": "legend + slide 44/45",
+   "material": "sandwich panel",
+   "ral": "7047",
+   "texture": "ribbed",
+   "finishes": [],
+   "lower_bands": [
+    "PanelVJ68_RAL5015",
+    "PanelVJ55_RAL5015"
+   ]
+  },
+  {
+   "hatch": "Козырьки, отливы, парапет - RAL 5015 (plain metal trims)",
+   "source": "legend «козырьки - RAL 5015» + slide 44 (roof edge, parapet, canopies blue)",
+   "material": "metal trim",
+   "ral": "5015",
+   "texture": "plain",
+   "finishes": [
+    "Trim_RAL5015"
+   ]
+  },
+  {
+   "hatch": "Крыльца, двери, цоколь, элементы водосточной системы - RAL 7004",
+   "source": "legend + slide 44/45 (thin plinth strip, downpipes, vent edges)",
+   "material": "doors / plinth / drainage / vent hoods",
+   "ral": "7004",
+   "texture": "plain",
+   "finishes": [
+    "Door_RAL7004",
+    "Plinth_RAL7004",
+    "Metal_RAL7004",
+    "Insert_RAL7004"
+   ]
+  },
+  {
+   "hatch": "Рамы светопрозрачных конструкций - RAL 9016",
+   "source": "legend",
+   "material": "frames",
+   "ral": "9016",
+   "texture": "plain",
+   "finishes": [
+    "Frame_RAL9016"
+   ]
+  },
+  {
+   "hatch": "Wall colour RAL 7047 without ribs: below ±0.000 and the vent discs",
+   "source": "slide 44/45 (light vent discs) + orchestrator 2026-10-22 r2 (below ±0.000 wall colour, no ribs)",
+   "material": "plain wall colour",
+   "ral": "7047",
+   "texture": "plain",
+   "finishes": [
+    "VentDisc_RAL7047",
+    "BelowGrade_RAL7047"
+   ]
+  }
+ ],
+ "legend_exempt": {
+  "Interior": "ID11 inner shell, not visible on any facade (KPP Interior, Gate-1)"
+ },
+ "legend_doc": "Binding legend [D171] (Artem 2026-10-22): every finish in exactly one row, the RAL 7047 grey lower band of the ribbed panels under lower_bands of the 7047 ribbed row; legend_exempt = finishes not on a facade, with the reason."
 }

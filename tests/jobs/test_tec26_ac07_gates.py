@@ -126,14 +126,6 @@ def test_estimate_sparse_grid_unresolved():
     assert e["status"] == "unresolved"
 
 
-def test_estimate_edge_ambiguous_unresolved():
-    """width / pitch = 54.25 (the real AC07 slide: 200 mm pitch over 10.9 m): a node sits near the p/2 limit."""
-    p = 9.605
-    found = [3.4 + k * p for k in range(1, 54)]
-    e = cs.slide_rib_estimate(found, 521.0)
-    assert e["status"] == "unresolved" and "ambiguous" in e["reason"]
-
-
 def _row(model_ok=True, slide=None):
     return {"vpm": {"ok": model_ok}, "npm": {"ok": True}, "slide_estimate": slide or {"status": "unresolved"}}
 
@@ -181,7 +173,7 @@ sys.exit(cs.main(sys.argv[2:]))
 
 @pytest.mark.skipif(not REAL, reason="build-v005 renders not on this machine")
 @pytest.mark.parametrize("mode,rc,status", [("one", 1, {"unresolved"}), ("other", 1, {"mismatch"}),
-                                            ("exact", 0, {"match"}), ("real", 1, {"unresolved"})])
+                                            ("exact", 0, {"match"}), ("real", 0, {"match"})])  # real: decision (a) 55/68
 def test_compare_cli_fresh_process(tmp_path, mode, rc, status):
     w = tmp_path / "wrap.py"
     w.write_text(WRAP.format(scripts=SCRIPTS), encoding="utf-8")
@@ -199,3 +191,20 @@ def test_compare_cli_fresh_process(tmp_path, mode, rc, status):
                          os.path.join(B5, "renders"), os.path.join(B5, "readback", "vpm.readback.json"), str(out)],
                         capture_output=True, text=True, encoding="utf-8")
     assert p2.returncode != 0 and (out / "compare.json").read_bytes() == before
+
+
+def test_estimate_partial_end_panel_even_ribs_rule():
+    """Orchestrator decision (a) 2026-10-22 17:45: the slide grid ends in a partial panel (width/pitch 54.25, the real
+    AC07 slide): even ribs over the wall, ribs = ceil(width / pitch) = 55 (54 joints, as the DWG), recorded as a rule."""
+    p = 9.605
+    found = [3.4 + k * p for k in range(1, 54)]
+    e = cs.slide_rib_estimate(found, 521.0)
+    assert e["status"] == "measured" and e["ribs"] == 55 and "rule" in e
+
+
+@pytest.mark.parametrize("width", [9.605 * 54 + 0.3, 9.605 * 54 + 9.3])   # frac 0.03 / 0.97: whole-count ambiguous
+def test_estimate_near_whole_pitch_count_stays_unresolved(width):
+    p = 9.605
+    found = [p / 2 + 0.05 + k * p for k in range(1, 54)]
+    e = cs.slide_rib_estimate(found, width)
+    assert e["status"] == "unresolved" and e["ribs"] is None

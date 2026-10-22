@@ -58,10 +58,12 @@ def test_every_polygon_gets_its_finish(spec, body, fins):
     by = {}
     for m, f in zip(body["mat_ids"], fins):
         by.setdefault(m, Counter())[f] += 1
-    assert by[1] == Counter({"PanelVJ68": 53, "PanelVJ55": 32, "Roof_RAL5015": 96})
-    assert set(by[3]) == {"PanelVJ68", "PanelVJ55"} and sum(by[3].values()) == 300
-    assert by[6] == Counter({"Insert_RAL7004": 200})
-    assert by[10] == Counter({"Plinth_RAL7004": 88})
+    assert by[1] == Counter({"PanelVJ68_RAL5015": 53, "PanelVJ55_RAL5015": 32, "Roof_RAL5015": 96})
+    assert set(by[3]) == {"PanelVJ68_RAL5015", "PanelVJ55_RAL5015"} and sum(by[3].values()) == 300
+    # slide 44: round vents = light disc (the vertical cap, 7047) with a dark hood/crescent (7004)
+    assert by[6] == Counter({"VentDisc_RAL7047": 100, "Insert_RAL7004": 100})
+    # slide 44/45: thin 7004 plinth above ±0.000, wall colour 7047 plain (no ribs) below
+    assert by[10] == Counter({"Plinth_RAL7004": 44, "BelowGrade_RAL7047": 44})
     assert by[11] == Counter({"Interior": 64})
 
 
@@ -158,7 +160,7 @@ def test_glass_ids_contract(spec, kpp):
                                   "kpp_udim": 1006}])
 def test_lower_band_fail_closed(spec, kpp, bad):
     s = copy.deepcopy(spec)
-    s["finishes"]["PanelVJ68"]["lower_band"] = bad
+    s["finishes"]["PanelVJ68_RAL5015"]["lower_band"] = bad
     with pytest.raises(ValueError, match="lower_band"):
         fm.validate_spec(s, kpp)
 
@@ -167,7 +169,7 @@ def test_lower_band_fail_closed(spec, kpp, bad):
                     reason="Artem's panel texture is not on this machine")
 def test_tile_grey_below_blue_above_same_joints(spec):
     import make_textures as mt
-    t = spec["finishes"]["PanelVJ68"]
+    t = spec["finishes"]["PanelVJ68_RAL5015"]
     dif, _, _, nrm = mt.make_full(t, spec["size_full"])
     size, S = spec["size_full"], t["S"]
     z = (size - np.arange(size) - 0.5) * S / size
@@ -236,7 +238,7 @@ def test_plan_uv_fail_closed(spec, kpp):
     with pytest.raises(ValueError):
         fm.validate_spec(bad, kpp)
     bad = copy.deepcopy(spec)  # a v shift is only for a plan-UV finish (rows carry noise, no joints)
-    bad["finishes"]["PanelVJ55"]["shift"] = [True, True]
+    bad["finishes"]["PanelVJ55_RAL5015"]["shift"] = [True, True]
     with pytest.raises(ValueError, match="shift"):
         fm.validate_spec(bad, kpp)
     bad = copy.deepcopy(spec)
@@ -248,3 +250,96 @@ def test_plan_uv_fail_closed(spec, kpp):
 def test_plan_uv_coordinates():
     V = [[1.0, 2.0, 3.3], [3.0, 2.0, 3.5], [3.0, 4.5, 3.5]]
     assert fm.plan_uv(V, [0, 1, 2], {"u_axis": 1, "v_axis": 0}, 0.5) == [(1.5, 1.0), (1.5, 3.0), (4.0, 3.0)]
+
+
+# ------------------------------------------------ v006: binding legend, vents, below grade, joint contrast (#564 r2)
+def test_legend_covers_every_finish_and_the_grey_band(spec, kpp):
+    """«Условные обозначения» [D171]: the RAL 7047 ribbed sandwich row holds the grey lower band of both panel
+    finishes; Interior is the only exempt finish (not on a facade)."""
+    rows = {(r["ral"], r["texture"]): r for r in spec["legend"]}
+    assert set(rows[("7047", "ribbed")]["lower_bands"]) == {"PanelVJ68_RAL5015", "PanelVJ55_RAL5015"}
+    assert set(rows[("5015", "ribbed")]["finishes"]) == {"PanelVJ68_RAL5015", "PanelVJ55_RAL5015", "Roof_RAL5015"}
+    assert set(spec["legend_exempt"]) == {"Interior"}
+    assert fm.validate_legend(spec, kpp) is True
+
+
+def _legend_row(s, ral, tex):
+    return next(r for r in s["legend"] if r["ral"] == ral and r["texture"] == tex)
+
+
+@pytest.mark.parametrize("mutate,msg", [
+    (lambda s: _legend_row(s, "7047", "ribbed")["lower_bands"].remove("PanelVJ55_RAL5015"), "lower band"),
+    (lambda s: _legend_row(s, "7047", "ribbed")["lower_bands"].append("Roof_RAL5015"), "no lower_band"),
+    (lambda s: _legend_row(s, "7047", "ribbed")["lower_bands"].append("Nope"), "not declared"),
+    (lambda s: _legend_row(s, "7004", "plain").__setitem__("lower_bands", ["PanelVJ68_RAL5015"]), "lower band"),
+    (lambda s: _legend_row(s, "5015", "ribbed").__setitem__("lower_bands", ["PanelVJ68_RAL5015"]), "lower band"),
+    (lambda s: s.__setitem__("legend_exempt", {}), "Interior"),
+    (lambda s: s["legend_exempt"].__setitem__("Nope", "x"), "not declared"),
+    (lambda s: s["legend_exempt"].__setitem__("Door_RAL7004", "x"), "exempt"),
+    (lambda s: s["legend_exempt"].__setitem__("Interior", ""), "reason"),
+])
+def test_legend_extensions_fail_closed(spec, kpp, mutate, msg):
+    s = copy.deepcopy(spec)
+    mutate(s)
+    with pytest.raises(ValueError, match=msg):
+        fm.validate_legend(s, kpp)
+
+
+@pytest.mark.parametrize("rule,msg", [
+    ({"split": "vertical", "vertical": "VentDisc_RAL7047"}, "nonvertical"),
+    ({"split": "vertical", "vertical": "Nope", "nonvertical": "Insert_RAL7004"}, "not declared"),
+    ({"split": "vertical", "vertical": "Insert_RAL7004", "nonvertical": "Insert_RAL7004"}, "differ"),
+    ({"split": "normal"}, "unsupported split"),
+])
+def test_vertical_split_fail_closed(spec, kpp, rule, msg):
+    s = copy.deepcopy(spec)
+    s["source_ids"]["6"] = rule
+    with pytest.raises(ValueError, match=msg):
+        fm.validate_spec(s, kpp)
+
+
+def test_vertical_split_assigns_by_face_orientation(spec):
+    V = [[0, 0, 0], [0, 1, 0], [0, 1, 1], [0, 0, 1], [1, 0, 1], [1, 1, 1]]
+    faces, ids = [[0, 1, 2, 3], [3, 2, 5, 4]], [6, 6]
+    assert fm.assign_finishes(V, faces, ids, spec) == ["VentDisc_RAL7047", "Insert_RAL7004"]
+
+
+def test_below_grade_is_plain_wall_colour(spec, kpp):
+    """Below ±0.000 = wall colour 7047 without ribs (the KPP 7047 colour); the drop check runs on it."""
+    t = spec["finishes"]["BelowGrade_RAL7047"]
+    assert t["kind"] == "placeholder" and "pattern" not in t
+    assert t["rgb"] == kpp["finishes"]["Cassette_RAL7047"]["rgb"]
+    assert spec["drop_finish"] == "BelowGrade_RAL7047"
+    assert spec["source_ids"]["10"] == {**spec["source_ids"]["10"], "split": "below_zero",
+                                        "above": "Plinth_RAL7004", "below": "BelowGrade_RAL7047"}
+
+
+@pytest.mark.parametrize("bad", [{"core": 0.0, "ao_mm": 10, "ao_min": 0.6}, {"core": 1.0, "ao_mm": 10, "ao_min": 0.6},
+                                 {"core": 0.2, "ao_mm": -1, "ao_min": 0.6},
+                                 {"core": 0.2, "ao_mm": float("nan"), "ao_min": 0.6},
+                                 {"core": 0.2, "ao_mm": 10, "ao_min": 1.5}, {"core": 0.2, "ao_mm": 10},
+                                 {"core": 0.2, "ao_mm": 10, "ao_min": 0.6, "normal_strength": float("inf")}])
+def test_joint_dark_fail_closed(spec, kpp, bad):
+    s = copy.deepcopy(spec)
+    s["finishes"]["PanelVJ68_RAL5015"]["joint_dark"] = bad
+    with pytest.raises(ValueError, match="joint_dark"):
+        fm.validate_spec(s, kpp)
+
+
+@pytest.mark.skipif(not os.path.exists("C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png"),
+                    reason="Artem's panel texture is not on this machine")
+def test_joints_read_dark_on_grey_and_blue(spec):
+    """Orchestrator 2026-10-22: joints dark and crisp on both 5015 and 7047 like the slide. Averaged over 10 mm
+    (one render pixel at the 100 px/m compare scale) around each joint, the joint column is <= 0.55 of the panel."""
+    import make_textures as mt
+    t = spec["finishes"]["PanelVJ68_RAL5015"]
+    dif, _, _, _ = mt.make_full(t, spec["size_full"])
+    size, S = spec["size_full"], t["S"]
+    z = (size - np.arange(size) - 0.5) * S / size
+    Pp = t["P"][0] * size / S
+    d = (np.arange(size) + 0.5 + Pp / 2) % Pp - Pp / 2
+    near = np.abs(d) < 0.005 * size / S          # 10 mm wide window around each joint centre
+    panel = np.abs(d) > 0.05 * size / S
+    for rows in (np.where((z > 0.2) & (z < 2.45))[0], np.where((z > 2.55) & (z < 3.9))[0]):
+        lum = dif[rows].mean((0, 2))
+        assert lum[near].mean() <= 0.55 * lum[panel].mean(), (lum[near].mean(), lum[panel].mean())

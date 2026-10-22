@@ -15,6 +15,7 @@ measured. Exit 0 only when every facade is `match`; 1 otherwise; refusing an exi
 """
 import hashlib
 import json
+import math
 import os
 import sys
 
@@ -62,7 +63,7 @@ def slide_row_count(im, x0, x1, y, ribs, colour):
     return joint_count.count_joints(s, lum, 0.0, float(x1 - x0), ribs, tol=0.35 * (x1 - x0) / ribs, dark=0.85)
 
 
-def slide_rib_estimate(found, width, min_cover=0.6, max_rms=0.15, edge_band=0.2):
+def slide_rib_estimate(found, width, min_cover=0.6, max_rms=0.15, edge_band=0.2, partial_band=0.1):
     """Rib count of a slide row established from the slide ALONE (the spec value is never used): the dark joint
     centres `found` (px from the wall's left edge) are indexed by their spacing (k += round(gap / p), robust to a
     missing or extra line) and fitted to a regular grid x = a + k p (3 passes, inliers |resid| < 0.25 p). The grid is
@@ -111,6 +112,16 @@ def slide_rib_estimate(found, width, min_cover=0.6, max_rms=0.15, edge_band=0.2)
         why.append(f"only {seen} of {joints} grid joints seen")
     if rms > max_rms * p:
         why.append(f"grid residual {rms:.2f} px > {max_rms} pitch")
+    if edge < edge_band and not why:
+        # Orchestrator decision (a) 2026-10-22 17:45 (#564): the slide grid ends in a partial panel; ribs are laid
+        # EVENLY over the wall, ribs = ceil(width / pitch) (AC07: 54.24 -> 55, 67.16 -> 68, = the DWG joint count).
+        # Only when width / pitch is clearly fractional; near a whole number the count stays ambiguous.
+        q = width / p
+        frac = q - math.floor(q)
+        if partial_band <= frac <= 1 - partial_band:
+            return {**rep, "joints": math.ceil(q) - 1, "status": "measured", "ribs": math.ceil(q),
+                    "rule": f"even ribs over a partial end panel (width/pitch {q:.2f}): ribs = ceil(width/pitch) "
+                            f"[orchestrator decision (a) 2026-10-22, #564]"}
     if edge < edge_band:
         why.append(f"a grid node {edge:.2f} pitch from the p/2 edge limit: joint or wall outline is ambiguous")
     if why:
