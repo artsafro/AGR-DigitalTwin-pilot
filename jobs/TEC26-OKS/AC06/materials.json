@@ -6,7 +6,7 @@
   "status": "awaiting_artem_gate_1",
   "approved": false,
   "build_allowed": false,
-  "evidence_directory": "G:/Мой диск/AGR-evidence/tec26-oks/AC06/evidence-v001",
+  "evidence_directory": "G:/Мой диск/AGR-evidence/tec26-oks/AC06/evidence-v004",
   "inputs": [
     {
       "path": "C:/x/tec26-oks/AC06/sources-v001/22E.pdf",
@@ -42,6 +42,11 @@
       "path": "jobs/KPP1/materials.json",
       "sha256": "cf78ec011420843cec35972165a6b488f79004d66ae42524c938343566c7faeb",
       "bytes": 1801
+    },
+    {
+      "path": "C:/x/tec26-oks/sources-v001/Vlad_OKS/04-09 Geometry Final.max",
+      "sha256": "eb0cffedefa80678cf4ada13db71f2e80795a92212f9fbf60b7c30c54a7852bd",
+      "bytes": 999424
     }
   ],
   "pdf": {
@@ -83,7 +88,7 @@
       "0.0.6"
     ],
     "layer_actual": "006",
-    "layer_question": "Confirm that actual layer 006 is the intended AC06 layer (mesh name and drawing title agree).",
+    "layer_question": null,
     "multisub": {
       "name": "Material #6",
       "class": "Multimaterial",
@@ -1216,8 +1221,177 @@
       }
     ],
     "collision_status": "source collision candidates; not UCX-compliance validated or renamed",
-    "diagnostic_render_method": "software orthographic triangle projection; no DCC scene mutation",
-    "diagnostic_render_limit": "Painter sorting, no z-buffer/backface/physical render; coplanar or interior triangles may show. Not native Max or delivery QA."
+    "diagnostic_render_method": "Blender 5.1.2 headless Cycles CPU; exact triangle readback; depth-correct shaded and ID pairs",
+    "diagnostic_render_limit": "Diagnostic ID glass is opaque; neutral shaded view is not a finish/shader preview. No source scene or geometry changed.",
+    "empty_multisub_slots": [],
+    "main_mesh_unused_ids": [
+      12
+    ],
+    "combined_building_unused_ids": [],
+    "depth_render": {
+      "application": "Blender",
+      "version": "5.1.2",
+      "mode": "headless factory scene; Cycles CPU",
+      "inputs": {
+        "C:\\x\\tec26-oks\\max-readback-v002\\geometry-170.json": "ddd68cc66a2b744611ba82bb5429771088c827b0a977fb313808c01891fa0af7",
+        "C:\\x\\tec26-oks\\max-readback-v002\\geometry-378.json": "562125a95de3107c0c653411df73795897b233fe57140c0d50314bc1928df7dd"
+      },
+      "mesh_triangles": 5608,
+      "source_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "collision_loaded": false,
+      "source_geometry_edited": false,
+      "zero_reference_z_m": 0.0,
+      "bbox_m": [
+        [
+          -1.8147459030151367,
+          -6.405006408691406,
+          -2.025103807449341
+        ],
+        [
+          12.385055541992188,
+          6.554864883422852,
+          3.958081007003784
+        ]
+      ],
+      "renders": 22,
+      "render_pixels": [
+        1200,
+        900
+      ],
+      "note": "Geometry reconstructed exactly from #558 world-coordinate triangle readback; no source scene saved. ID12 rendered opaque diagnostically, not glass shader preview."
+    },
+    "perimeter_drop": {
+      "source_id": 10,
+      "meaning": "Required perimeter drop retained; RAL7004 plinth continuation",
+      "geometry_changed": false,
+      "method": "Actual axis-aligned plinth footprint; union of triangle/height-plane intersection intervals on each of four perimeter walls at 0 and -1 m. This is perimeter reach evidence, not whole-model topology QA.",
+      "numeric_coordinate_tolerance_m": 0.0001,
+      "bbox_m": [
+        [
+          -1.583681583404541,
+          -5.38123083114624,
+          -2.025103807449341
+        ],
+        [
+          11.916460037231445,
+          5.518638610839844,
+          0.13246476650238037
+        ]
+      ],
+      "coverage_checks": [
+        {
+          "side": "west",
+          "z_m": 0.0,
+          "span_m": [
+            -5.38123083114624,
+            5.518638610839844
+          ],
+          "intervals": 16,
+          "gaps_m": [],
+          "coverage_ok": true,
+          "lowest_side_vertex_m": -2.0250978469848633
+        },
+        {
+          "side": "west",
+          "z_m": -1.0,
+          "span_m": [
+            -5.38123083114624,
+            5.518638610839844
+          ],
+          "intervals": 16,
+          "gaps_m": [],
+          "coverage_ok": true,
+          "lowest_side_vertex_m": -2.0250978469848633
+        },
+        {
+          "side": "east",
+          "z_m": 0.0,
+          "span_m": [
+            -5.38123083114624,
+            5.518638610839844
+          ],
+          "intervals": 16,
+          "gaps_m": [],
+          "coverage_ok": true,
+          "lowest_side_vertex_m": -2.0251033306121826
+        },
+        {
+          "side": "east",
+          "z_m": -1.0,
+          "span_m": [
+            -5.38123083114624,
+            5.518638610839844
+          ],
+          "intervals": 16,
+          "gaps_m": [],
+          "coverage_ok": true,
+          "lowest_side_vertex_m": -2.0251033306121826
+        },
+        {
+          "side": "south",
+          "z_m": 0.0,
+          "span_m": [
+            -1.583681583404541,
+            11.916460037231445
+          ],
+          "intervals": 28,
+          "gaps_m": [],
+          "coverage_ok": true,
+          "lowest_side_vertex_m": -2.0251028537750244
+        },
+        {
+          "side": "south",
+          "z_m": -1.0,
+          "span_m": [
+            -1.583681583404541,
+            11.916460037231445
+          ],
+          "intervals": 28,
+          "gaps_m": [],
+          "coverage_ok": true,
+          "lowest_side_vertex_m": -2.0251028537750244
+        },
+        {
+          "side": "north",
+          "z_m": 0.0,
+          "span_m": [
+            -1.583681583404541,
+            11.916460037231445
+          ],
+          "intervals": 28,
+          "gaps_m": [],
+          "coverage_ok": true,
+          "lowest_side_vertex_m": -2.025103807449341
+        },
+        {
+          "side": "north",
+          "z_m": -1.0,
+          "span_m": [
+            -1.583681583404541,
+            11.916460037231445
+          ],
+          "intervals": 28,
+          "gaps_m": [],
+          "coverage_ok": true,
+          "lowest_side_vertex_m": -2.025103807449341
+        }
+      ],
+      "coverage_passed": 8,
+      "coverage_total": 8
+    }
   },
   "drawing_finishes": [
     {
@@ -1392,12 +1566,19 @@
       "ral": null,
       "map_type": "?",
       "status": "unknown",
-      "question": "ID 1 covers roof planes and upper fascia: which roof material/RAL and seam layout apply? Does panel RAL 5015 include the roof, or only the blue facade band?",
+      "question": "Confirm proposed solid RAL 5015 for roof and upper fascia; the DWG does not explicitly specify roof colour.",
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=1",
-        "ids-iso.png#legend-ID-1",
-        "ids-reverse.png#legend-ID-1"
-      ]
+        "depth-iso.png#legend-ID-1",
+        "depth-reverse.png#legend-ID-1"
+      ],
+      "proposal": {
+        "component": "Roof sandwich panels and upper fascia",
+        "ral": "5015",
+        "map_type": "solid",
+        "rationale": "PDF roof plan calls out sandwich panels; same DWG names 5015/7047 sandwich panels, but does not explicitly label roof RAL. Blue facade band and canopy correspondence favour 5015.",
+        "approved": false
+      }
     },
     {
       "id": 2,
@@ -1409,11 +1590,11 @@
       "ral": "5015",
       "map_type": "metal",
       "status": "proposed",
-      "question": "Confirm ID 2 = Canopies and roof trims, RAL 5015.",
+      "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=2",
-        "ids-iso.png#legend-ID-2",
-        "ids-reverse.png#legend-ID-2",
+        "depth-iso.png#legend-ID-2",
+        "depth-reverse.png#legend-ID-2",
         "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
       ],
       "swatch_rgb": [
@@ -1430,20 +1611,21 @@
       "area_m2": 94.41786615692793,
       "finish": "Wall sandwich panels",
       "ral": "7047",
-      "map_type": "joints",
+      "map_type": "solid",
       "status": "proposed",
-      "question": "Confirm ID 3 = Wall sandwich panels, RAL 7047.",
+      "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=3",
-        "ids-iso.png#legend-ID-3",
-        "ids-reverse.png#legend-ID-3",
+        "depth-iso.png#legend-ID-3",
+        "depth-reverse.png#legend-ID-3",
         "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
       ],
       "swatch_rgb": [
         208,
         208,
         208
-      ]
+      ],
+      "joint_policy": "No dimensioned panel module established from the facade drawing; solid colour, no invented joints."
     },
     {
       "id": 4,
@@ -1451,15 +1633,22 @@
       "object_handle": 170,
       "triangles": 1576,
       "area_m2": 4.984936342231726,
-      "finish": "?",
-      "ral": null,
-      "map_type": "?",
-      "status": "unknown",
-      "question": "ID 4 has small hardware/detail faces: identify the components and their finish/RAL; may they share 7004 or require a separate finish?",
+      "finish": "Rainwater downpipes",
+      "ral": "7004",
+      "map_type": "metal",
+      "status": "proposed",
+      "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=4",
-        "ids-iso.png#legend-ID-4",
-        "ids-reverse.png#legend-ID-4"
+        "depth-iso.png#legend-ID-4",
+        "depth-reverse.png#legend-ID-4",
+        "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm",
+        "depth-isolated.png"
+      ],
+      "swatch_rgb": [
+        150,
+        153,
+        146
       ]
     },
     {
@@ -1472,12 +1661,20 @@
       "ral": null,
       "map_type": "?",
       "status": "unknown",
-      "question": "ID 5 contains small bright details: identify the components and confirm finish/RAL (the legend does not name them).",
+      "question": "Are the six thin strips above entrances luminaires? Confirm proposed RAL 9016 housing/diffuser or give the luminaire specification.",
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=5",
-        "ids-iso.png#legend-ID-5",
-        "ids-reverse.png#legend-ID-5"
-      ]
+        "depth-iso.png#legend-ID-5",
+        "depth-reverse.png#legend-ID-5",
+        "depth-isolated.png"
+      ],
+      "proposal": {
+        "component": "Thin elements above entrances, possible luminaire strips",
+        "ral": "9016",
+        "map_type": "solid",
+        "rationale": "Isolated geometry is six thin strips at z=2.318..2.530 m, outside facade below canopies. White finish is a proposal only; no luminaire specification was found.",
+        "approved": false
+      }
     },
     {
       "id": 6,
@@ -1489,12 +1686,20 @@
       "ral": null,
       "map_type": "?",
       "status": "unknown",
-      "question": "ID 6 includes circular ventilation assemblies: confirm material, RAL and whether visible grille detail is metal or perforation.",
+      "question": "Confirm proposed RAL 7004 metal for the five ventilation assemblies, or give their finish/perforation specification.",
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=6",
-        "ids-iso.png#legend-ID-6",
-        "ids-reverse.png#legend-ID-6"
-      ]
+        "depth-iso.png#legend-ID-6",
+        "depth-reverse.png#legend-ID-6",
+        "depth-isolated.png"
+      ],
+      "proposal": {
+        "component": "Circular ventilation assemblies",
+        "ral": "7004",
+        "map_type": "metal",
+        "rationale": "Isolated geometry is five round assemblies on end facade; neutral 7004 is a proposed match to adjacent metalwork, not a drawing requirement.",
+        "approved": false
+      }
     },
     {
       "id": 7,
@@ -1506,11 +1711,11 @@
       "ral": "7004",
       "map_type": "metal",
       "status": "proposed",
-      "question": "Confirm ID 7 = Doors, RAL 7004.",
+      "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=7",
-        "ids-iso.png#legend-ID-7",
-        "ids-reverse.png#legend-ID-7",
+        "depth-iso.png#legend-ID-7",
+        "depth-reverse.png#legend-ID-7",
         "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
       ],
       "swatch_rgb": [
@@ -1529,12 +1734,13 @@
       "ral": "9016",
       "map_type": "metal",
       "status": "proposed",
-      "question": "Confirm ID 8 = Lightweight relief glazing frames, RAL 9016.",
+      "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=8",
-        "ids-iso.png#legend-ID-8",
-        "ids-reverse.png#legend-ID-8",
-        "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
+        "depth-iso.png#legend-ID-8",
+        "depth-reverse.png#legend-ID-8",
+        "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm",
+        "depth-isolated.png"
       ],
       "swatch_rgb": [
         246,
@@ -1548,22 +1754,25 @@
       "object_handle": 170,
       "triangles": 60,
       "area_m2": 7.950371332550838,
-      "finish": "Rainwater system",
-      "ral": "7004",
-      "map_type": "metal",
-      "status": "proposed",
-      "question": "Confirm ID 9 = Rainwater system, RAL 7004.",
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unknown",
+      "question": "Confirm proposed RAL 9016 on the three perimeter reveals, or identify their finish separately from the frames.",
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=9",
-        "ids-iso.png#legend-ID-9",
-        "ids-reverse.png#legend-ID-9",
-        "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
+        "depth-iso.png#legend-ID-9",
+        "depth-reverse.png#legend-ID-9",
+        "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm",
+        "depth-isolated.png"
       ],
-      "swatch_rgb": [
-        150,
-        153,
-        146
-      ]
+      "proposal": {
+        "component": "Window perimeter reveals",
+        "ral": "9016",
+        "map_type": "solid",
+        "rationale": "Isolated geometry is three rectangular reveal rings around relief glazing, not drainage. Propose frame white 9016; the legend only explicitly covers frames.",
+        "approved": false
+      }
     },
     {
       "id": 10,
@@ -1575,11 +1784,11 @@
       "ral": "7004",
       "map_type": "solid",
       "status": "proposed",
-      "question": "Confirm ID 10 = Plinth, RAL 7004.",
+      "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=10",
-        "ids-iso.png#legend-ID-10",
-        "ids-reverse.png#legend-ID-10",
+        "depth-iso.png#legend-ID-10",
+        "depth-reverse.png#legend-ID-10",
         "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
       ],
       "swatch_rgb": [
@@ -1598,12 +1807,32 @@
       "ral": null,
       "map_type": "?",
       "status": "unknown",
-      "question": "ID 11 is an additional large surface group partially visible through/over roof faces: identify interior/underside surfaces and their finish; is this interior group required?",
+      "question": "Confirm KPP Interior neutral finish for the visible interior box, or give the interior finish specification.",
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=11",
-        "ids-iso.png#legend-ID-11",
-        "ids-reverse.png#legend-ID-11"
-      ]
+        "depth-iso.png#legend-ID-11",
+        "depth-reverse.png#legend-ID-11",
+        "depth-isolated.png"
+      ],
+      "proposal": {
+        "component": "Interior box behind relief glazing",
+        "ral": null,
+        "map_type": "solid",
+        "rationale": "Isolated geometry forms the visible interior box behind three relief-glazing modules. Propose reuse of KPP Interior colour; no interior finish specification was found.",
+        "approved": false,
+        "kpp_colour": {
+          "finish": "Interior",
+          "udim": 1011,
+          "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1011.png",
+          "sha256": "ec5ed808306c18568b104797b3c0f10bd2bf73c98507402d4a432b651b3366bc",
+          "method": "most_frequent_rgb_pixel",
+          "rgb": [
+            25,
+            25,
+            28
+          ]
+        }
+      }
     },
     {
       "id": 12,
@@ -1615,20 +1844,34 @@
       "ral": null,
       "map_type": "glass",
       "status": "proposed",
-      "question": "Confirm ID 12 = Glazing, and supply glass parameters.",
+      "question": null,
       "evidence": [
         "oks.json#objects/handle=378/material_ids/id=12",
-        "ids-iso.png#legend-ID-12",
-        "ids-reverse.png#legend-ID-12",
+        "depth-iso.png#legend-ID-12",
+        "depth-reverse.png#legend-ID-12",
         "oks.json#object=АС.06_Glass; geometry only, optical parameters not specified"
-      ]
+      ],
+      "glass_policy": {
+        "source": "operator standing rule: glass as KPP; docs/domain/materials.md",
+        "material": "M_Glass_01",
+        "npm_alpha": 0.5,
+        "vpm": "separate map-free glass material per standard; no invented optical override"
+      }
     }
   ],
   "limitations": [
     "No native facade PDF supplied; supplied PDF is printed sheet 2 only. DWG text recovered read-only directly in AutoCAD 2025, INSUNITS=4.",
     "Shared DXF is truncated: ezdxf normal read rejected missing ENDSEC; recovered rendering is supplemental, not proof of full DWG fidelity.",
-    "Native Max census reports geometry/materials; software ID renders are generated from that readback, not a new Max render.",
     "Generic material names and existing diffuse colours are not finish evidence; all mapped finishes are proposals requiring Gate 1.",
-    "No NPM/VPM or scene mutation performed. No roof material, hardware RAL or glass optical parameters invented."
-  ]
+    "Revised after isolated-group review: ID4 downpipes; ID9 window reveals. Earlier v001 painter projections and their first interpretation are superseded by depth-correct Gate images and the final mapping.",
+    "Supersedes archived painter-projection images: Gate v004 uses depth-correct Blender renders with UCX excluded, +/-0.000 reference and neutral shaded comparison."
+  ],
+  "authority": {
+    "finishes": "DWG *_R1.dwg governs; PDF only if DWG has no information",
+    "geometry": "final scene mid-poly geometry; dimension conflicts are noted, not modelled or blocking",
+    "layers": "actual #558 census names and handles are authoritative",
+    "glass": "KPP M_Glass_01; NPM alpha 0.5; VPM per standard",
+    "joints": "dimensioned facade module only; otherwise solid colour"
+  },
+  "joint_question": "If panel joints are required later, supply a dimensioned module; until then ID 3 stays solid without joints."
 }

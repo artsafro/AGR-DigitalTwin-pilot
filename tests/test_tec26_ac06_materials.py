@@ -29,7 +29,7 @@ def test_ac06_unknowns_fail_closed_and_gate_stays_open():
     assert data['build_allowed'] is False
     assert data['approved'] is False
     unknowns = [r for r in data['materials'] if r['finish'] == '?']
-    assert {r['id'] for r in unknowns} == {1, 4, 5, 6, 11}
+    assert {r['id'] for r in unknowns} == {1, 5, 6, 9, 11}
     assert all(r['question'] and r['ral'] is None and r['map_type'] == '?' for r in unknowns)
     assert all(r['status'] != 'approved' for r in data['materials'])
 
@@ -60,8 +60,8 @@ def test_ac06_kpp_colour_reuse_has_hashed_pixel_provenance():
 
 def test_ac06_evidence_is_external_and_no_final_delivery_claim():
     data = load_packet()
-    assert data['evidence_directory'] == 'G:/Мой диск/AGR-evidence/tec26-oks/AC06/evidence-v001'
+    assert data['evidence_directory'] == 'G:/Мой диск/AGR-evidence/tec26-oks/AC06/evidence-v004'
     assert len(data['inputs']) >= 4
     assert all(len(r['sha256']) == 64 for r in data['inputs'])
-    assert data['scene']['diagnostic_render_method'] == 'software orthographic triangle projection; no DCC scene mutation'
+    assert data['scene']['diagnostic_render_method'] == 'Blender 5.1.2 headless Cycles CPU; exact triangle readback; depth-correct shaded and ID pairs'
     assert (ROOT / 'jobs/TEC26-OKS/AC06/MATERIALS.md').is_file()

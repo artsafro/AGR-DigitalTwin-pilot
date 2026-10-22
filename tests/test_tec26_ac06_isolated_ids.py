@@ -13,7 +13,7 @@ def test_ac06_isolated_downpipes_not_window_reveals():
     assert rows[9]['finish'] == '?'
     assert rows[9]['proposal']['component'] == 'Window perimeter reveals'
     assert rows[9]['proposal']['ral'] == '9016'
-    assert all('ids-isolated-unknowns.png' in r['evidence'] for r in [rows[4],rows[5],rows[6],rows[8],rows[9],rows[11]])
+    assert all('depth-isolated.png' in r['evidence'] for r in [rows[4],rows[5],rows[6],rows[8],rows[9],rows[11]])
     assert data['scene']['layer_question'] is None
     assert rows[3]['map_type'] == 'solid'
     assert rows[12]['glass_policy']['material'] == 'M_Glass_01'

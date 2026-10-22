@@ -7,6 +7,17 @@ Building name, read from the supplied PDF title block and DWG layout `3`, entity
 Pilot `origin/main` at start: `442f0b695a91f9abc180783c26978fbe85fefcf9`.
 Target downstream: both NPM/VPM; this card produces neither.
 
+## Authority (operator decisions during this card)
+
+DWG **R1 governs finishes**; PDF fills only missing DWG information. Same-DWG
+model legend/title block apply; no other-building/template finish note was used.
+The scene geometry is final: dimension discrepancies do not authorize geometry
+changes or block this texture task. No dimension conflict was adjudicated here.
+Actual census layer names/handles are authoritative. Undimensioned panel module:
+**solid colour, no invented joints**. Glass: **KPP M_Glass_01, NPM alpha 0.5,
+VPM per standard**. Keep the required perimeter drop below zero, with the adjacent
+plinth finish, without cutting or adding IDs.
+
 ## Sources and sheet locators
 
 Copies: `C:/x/tec26-oks/AC06/sources-v001/`. Exact input hashes and byte sizes are
@@ -50,43 +61,61 @@ Reused #558 `C:/x/tec26-oks/census/oks.json` and geometry readbacks from
 `C:/x/tec26-oks/max-readback-v002/`. Source scene copy:
 `C:/x/tec26-oks/sources-v001/Vlad_OKS/04-09 Geometry Final.max`.
 3ds Max 2026.3 census; source file version `[26000,26000]`; metres, 1 unit/m, Z up.
-Actual layer is **`006`**, not `0.0.0.6` / `0.0.6`: confirm the correspondence.
+Actual layer **`006`** is authoritative per operator clarification; no layer question.
 
 - `АС.06`, handle 170: 3118 vertices, 5596 triangles; Multi/Sub `Material #6`,
   12 slots with actual IDs 1–12. All IDs 1–11 occur on this mesh.
 - `АС.06_Glass`, handle 378: 24 vertices, 12 triangles, material ID 12.
-  The main mesh's unused slot 12 is not an unused ID for the combined building.
+  Main's unused slot 12 is used by Glass. No empty submaterial slots or unused IDs for the combined building.
 - 21 `Colizii_*` objects on layer 006, listed with handles/counts in JSON.
   They are **collision candidates**, not verified/renamed UCX delivery objects.
 - ID measurements are triangle counts and triangulated surface area in m²,
   **not** Editable Poly polygon counts, net facade quantities or unique exposed area.
-- Diagnostic `ids-{iso,reverse,roof,front}.png` are software orthographic projections
-  of the census triangle readback. No native Max render or geometry edit was run.
-  Painter sorting has no z-buffer: coplanar/interior triangles can show through.
-  These views identify groups but do not prove topology, visibility or finish approval.
+- Final Gate views are **Blender 5.1.2, headless Cycles CPU**, depth-correct,
+  with UCX excluded, a gold world-space **±0.000 m** reference, and neutral shaded
+  views alongside ID colours. All 5608 source triangles reconstructed from the
+  exact readback; no source scene/geometry changed. ID glass opaque diagnostically;
+  neutral shading is not final finish/glass preview. No production scene saved.
+- Earlier painter projections are archived diagnostics, **not Gate images**:
+  they could falsely show hidden/interior triangles across the roof.
+- ID 10 contains the **required perimeter drop**, reaching **−2.025103807 m**.
+  Keep proposed RAL 7004 plinth finish, no new ID. Independent triangle/height-plane
+  intersections show complete four-side rectangular perimeter coverage at **0 and
+  −1 m: 8/8**. `perimeter-drop-probe.json` records spans, gaps and side minima.
+  Coordinate tolerance 0.0001 m handles roundoff, not modelling movement. This is
+  reach evidence, not whole-model topology or export acceptance.
 
 ## Material-ID table
 
-Legend **L** = DWG `136EBB` locator above. **V** = `ids-iso.png` and
-`ids-reverse.png`, labelled colour legend for that ID. **C** = measured census
+Legend **L** = DWG `136EBB` locator above. **V** = `depth-iso.png` and
+`depth-reverse.png`, labelled depth-correct shaded/ID pairs. **I** =
+`depth-isolated.png`, seven isolated groups with shaded/ID comparison.
+**C** = measured census
 `objects/handle=170` (ID 12: handle 378). The JSON preserves full precision.
 All non-`?` assignments are **proposals based on component correspondence**, not
 approved assignments. Panel module/joint spacing has not been measured.
 
 | Material ID | Triangles | Area m² | Finish / RAL | Map type | Evidence / open point |
 |---|---:|---:|---|---|---|
-| 1 | 362 | 177.127566 | ? | ? | C,V: roof/upper fascia; Q1 |
+| 1 | 362 | 177.127566 | ? | ? | C,V,I: roof/upper fascia; propose solid 5015, Q1 |
 | 2 | 1290 | 83.268399 | Canopies and roof trims / 5015 (proposed) | metal | C,V,L; trim inclusion requires confirmation |
-| 3 | 444 | 94.417866 | Wall sandwich panels / 7047 (proposed) | joints | C,V,L; panel rhythm not measured |
-| 4 | 1576 | 4.984936 | ? | ? | C,V: small detail/hardware group; Q2 |
-| 5 | 48 | 0.697030 | ? | ? | C,V: small bright detail group; Q3 |
-| 6 | 300 | 3.303690 | ? | ? | C,V: ventilation assemblies; Q4 |
+| 3 | 444 | 94.417866 | Wall sandwich panels / 7047 (proposed) | solid | C,V,L; no dimensioned joint module established |
+| 4 | 1576 | 4.984936 | Rainwater downpipes / 7004 (proposed) | metal | C,V,I,L; vertical pipes/elbows |
+| 5 | 48 | 0.697030 | ? | ? | C,I: six thin strips above entrances; propose solid 9016, Q2 |
+| 6 | 300 | 3.303690 | ? | ? | C,V,I: five ventilation assemblies; propose metal 7004, Q3 |
 | 7 | 204 | 5.655707 | Doors / 7004 (proposed) | metal | C,V,L |
 | 8 | 1008 | 21.514535 | Relief-glazing frames / 9016 (proposed) | metal | C,V,L |
-| 9 | 60 | 7.950371 | Rainwater system / 7004 (proposed) | metal | C,V,L; confirm all faces are drainage |
-| 10 | 176 | 105.289011 | Plinth / 7004 (proposed) | solid | C,V,L |
-| 11 | 128 | 116.797765 | ? | ? | C,V: additional large surface group; Q5 |
-| 12 | 12 | 32.651300 | Glazing (geometry identified; optics unknown) | glass | C,V; separate Glass object; Q6 |
+| 9 | 60 | 7.950371 | ? | ? | C,I: three perimeter reveal rings, NOT drainage; propose solid 9016, Q4 |
+| 10 | 176 | 105.289011 | Plinth including perimeter drop / 7004 (proposed) | solid | C,V,L; keep below zero |
+| 11 | 128 | 116.797765 | ? | ? | C,I: visible interior box; propose KPP Interior solid, Q5 |
+| 12 | 12 | 32.651300 | Glazing as KPP (proposed) | glass | C,V; M_Glass_01, NPM alpha 0.5, VPM standard |
+
+Audit correction: initial contextual painter-view interpretation misclassified
+ID 9 as drainage and left ID 4 unidentified. Isolated geometry proved ID 4 is
+vertical downpipes and ID 9 window reveals. Tests-first commits `3640c92` and
+`1e29ce8` preserve the ID correction and depth/drop regression. Final table
+supersedes that first interpretation. Unknown finishes keep canonical `?` even
+when an explicit candidate is shown under hatching.
 
 ## KPP colour reuse (no invented RAL conversion)
 
@@ -105,32 +134,46 @@ or permission to copy KPP cassette construction onto AC06 sandwich panels.
 
 ## Evidence and checks
 
-Evidence folder: **`G:/Мой диск/AGR-evidence/tec26-oks/AC06/evidence-v001/`**.
+Evidence folder: **`G:/Мой диск/AGR-evidence/tec26-oks/AC06/evidence-v004/`**.
 `contact-sheet.png`: exactly one swatch per actual ID, no numbers inside swatches;
-unknown finish/optical parameters are hatched, labels remain outside. Six coloured
-swatches are proposals, not approvals. Four ID projections and the drawing PNG are
-alongside the sheet. No large binaries are committed or stored in Git LFS.
+unknown IDs 1/5/6/9/11 are hatched over explicit candidates; labels remain outside.
+Six unhatched colour proposals and KPP glass are not approvals. Four depth-correct
+building view pairs and seven isolated shaded/ID pairs, 22 raw Blender renders,
+receipts, drawing PNG and scripts are alongside. No large binaries/Git LFS committed.
+ID 11's neutral candidate uses separately hashed KPP Interior tile 1011; it is not
+drawing evidence of the interior finish. Glass swatch is symbolic, not a tint.
+Independent geometry count/area parity **12/12**, source/copy SHA256 **2/2**, frozen
+input hashes **8/8**. External SHA256 manifest covers published evidence.
 
 Regression RED at tests-first commit `c0d1f7a`: **5 failed** because the packet was
-absent. Focused GREEN and final suite receipts are recorded in the PR/card.
+absent. Isolated correction RED: **1 failed** (`3640c92`); depth/drop RED:
+**2 failed** (`1e29ce8`). Final focused receipt is recorded in PR/card.
+One full suite on the pre-steering packet: **13354 passed, 1 failed, 19 skipped,
+179 deselected**. Existing TOW02 <=10 s performance assertion measured **10.8 s**.
+Exact test on detached starting main, import path verified: **1 passed in 6.58 s**.
+This does not relabel the failed full run green. No checker/tolerance changes;
+no final Gate-approved-head full suite is claimed.
 Tests check this evidence snapshot only; they do not validate architectural mapping,
 DCC render quality, UCX, VPM/NPM compliance or human acceptance.
 
 ## Gate-1 questions for Artem — STOP
 
-1. **ID 1**: roof planes and upper fascia — what roof material/RAL and seam layout?
-   Does 5015 in the legend cover the roof or only the blue facade band?
-2. **ID 4**: identify the small hardware/detail components; confirm material/RAL.
-3. **ID 5**: identify the small bright components; confirm material/RAL.
-4. **ID 6**: confirm ventilation assembly material/RAL and metal versus perforation.
-5. **ID 11**: identify the large additional surface group (interior/underside?);
-   confirm finish and whether it is required. Projection can show hidden surfaces.
-6. **ID 12**: confirm glazing type, tint and optical properties; no frame colour or
-   invented glass shader is substituted.
-7. Confirm proposed IDs **2=5015, 3=7047, 7/9/10=7004, 8=9016** (including all
-   faces of each ID), and reuse of the exact KPP colour pixels shown above.
-8. Confirm layer **006** is the intended source for АС.06, with its Glass mesh and
-   21 collision candidates; the card's dotted layer names are absent from the census.
+Approve the proposals on the contact sheet; only five drawing gaps remain:
+
+1. **ID 1 roof/upper fascia:** confirm proposed **solid RAL 5015**. The own DWG
+   names 5015/7047 sandwich panels but does not explicitly assign roof colour.
+2. **ID 5 six thin strips above entrances:** are these luminaires? Confirm proposed
+   **RAL 9016** housing/diffuser, or provide their specification.
+3. **ID 6 five ventilation assemblies:** confirm proposed **RAL 7004 metal**, or
+   give actual finish/perforation specification.
+4. **ID 9 three window perimeter reveals:** confirm proposed **RAL 9016** with
+   the frames, or specify their distinct finish.
+5. **ID 11 visible interior box:** confirm shown **KPP Interior** neutral, or
+   provide the interior finish specification.
+
+Panel joints are not blocking: supply a dimensioned module only if joints are
+required later; until then solid colour is authorized. No redundant layer, glass
+or below-zero geometry question.
 
 Gate 1 remains open. **Do not build VPM/NPM or publish accepted materials** until
 these questions are answered. A draft PR/evidence packet is not Gate-1 approval.
