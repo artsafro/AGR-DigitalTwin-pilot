@@ -6,7 +6,7 @@ from collections import Counter, defaultdict
 from pymxs import runtime as rt
 
 ROOT = Path('C:/x/tec26-oks/sources-v001')
-OUT = Path('C:/x/tec26-oks/max-readback-v001')
+OUT = Path('C:/x/tec26-oks/max-readback-v002')
 OUT.mkdir(exist_ok=False)
 
 
@@ -41,7 +41,7 @@ def material(m, seen=None):
             maps.append({'slot': i, 'slot_name': str(rt.getSubTexmapSlotName(m, i)), 'map': material(child, seen)})
     result['maps'] = maps
     subs = []
-    for i in range(1, int(rt.getNumSubMtls(m)) + 1):
+    for i in range(1, (int(rt.getNumSubMtls(m)) if str(rt.superClassOf(m)).lower() == 'material' else 0) + 1):
         entry = {'slot': i, 'material': material(rt.getSubMtl(m, i), seen)}
         if rt.isProperty(m, 'materialIDList'):
             entry['id'] = int(m.materialIDList[i-1])
