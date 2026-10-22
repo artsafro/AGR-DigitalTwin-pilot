@@ -1,5 +1,5 @@
 {
- "_doc": "AC08 (Контейнер НКУ) VPM texture sets, KPP1 recipe (jobs/KPP1/scripts/vpm_textures.json). Gate 1 approved by Artem 2026-10-22 (#565 comment: «Принимаю»): ID2 sandwich panels RAL 5015, ID3 door RAL 7004, mixed ID1 = roof RAL 7004 + frame RAL 7004 + perimeter drop below ±0.000 in the wall colour. Panels per Artem 2026-10-22 on the v006 render: «должны быть вертикальные швы только; текстуру пришлю; если не влезает, то можно аккуратно порезать через loop или ring»: ID2 = PanelVJ_RAL5015 = Artem's texture panel_RAL5015_vertical_joints_4096.png (4096 px, joints 8 mm every 600 px, panel median = KPP 5015 RGB exactly), at the KPP VPM texel 1000 px/m (density twin KPP Cassette_RAL5015, S = 4.096 m), vertical joints every 0.60 m from each panel's edge with the smaller world coordinate (the mirrored long facades share one grid); faces longer than the tile holds (S - 2 pad - P = 3.416 m) are cut by edge rings at joint positions (finish_map.apply_cuts, every cut listed in the build report). The drop below ±0.000 stays plain KPP 5015 without joints. RGB = exact KPP tiles (maps_kpp T_Kpp_1_Diffuse_1.1013 = RAL 5015, .1010 = RAL 7004, pixel-verified in jobs/TEC26-OKS/AC08/MATERIALS.md); roughness/metallic = the KPP proposals of the same finishes. Placeholders: 256 px single colour (reg p.31 §3, density-exempt reg p.31-32 §6.1). Address Nku_1 is a placeholder token (address/coordinates deferred as for KPP).",
+ "_doc": "AC08 (Контейнер НКУ) VPM texture sets, KPP1 recipe. Gate 1 approved by Artem 2026-10-22 (#565 «Принимаю»): ID2 sandwich panels RAL 5015, ID3 door RAL 7004; ID1 = frame band + roof, Gate-1 RAL 7004 superseded by Artem 2026-10-22 on v008 (panels accepted; the outer wall / frame band is BLUE RAL 5015 with the sheet's thin dark outline, RAL 7004 only for doors, porches/steps, the plinth and parts the sheet shows grey). Rework 2026-10-22 (PR #574 issuecomment-6342141336, supersedes the 0.60 m step): joint COUNT per facade from the colour-solution sheet (facades, facades_doc) [D169]; Artem's texture panel_RAL5015_vertical_joints_4096.png (SHA256 checked) gives the colour, noise and the look of one 8 mm joint only, repeated at P = field / ribs; KPP VPM texel 1000 px/m (density twin KPP Cassette_RAL5015, S = 4.096 m); two tiles because the long and short facades have different pitches; faces longer than S - 2 pad - P are cut by edge rings at joints (finish_map.apply_cuts). Below ±0.000 = plain plinth RAL 7004 (sheet grey). Placeholders 256 px single colour (reg p.31 §3). Address Nku_1 is a placeholder token.",
  "address": "Nku_1",
  "size_full": 4096,
  "size_placeholder": 256,
@@ -8,13 +8,13 @@
  "source_ids": {
   "1": {
    "split": "below_zero",
-   "above": "Frame_RAL7004",
-   "below": "Panel_RAL5015",
-   "why": "mixed ID: roof + frame RAL 7004; faces entirely at or below ±0.000 (perimeter drop) take the wall colour (Artem 2026-10-22)"
+   "above": "Frame_RAL5015",
+   "below": "Plinth_RAL7004",
+   "why": "mixed ID1 = frame band (posts, rails) + roof: above ±0.000 blue RAL 5015 (Artem 2026-10-22 on v008, rule for all TEC26: the wall edging is blue, not 7004); at or below ±0.000 the plinth strip, plain RAL 7004 (sheet grey)"
   },
   "2": {
-   "finish": "PanelVJ_RAL5015",
-   "why": "sandwich panels RAL 5015 (DWG legend 1395), vertical joints only, Artem's texture (2026-10-22)"
+   "split": "facade",
+   "why": "sandwich panels RAL 5015 (DWG legend 1395), vertical joints only (Artem's joint look); rib count per facade from the colour-solution sheet (facades)"
   },
   "3": {
    "finish": "Door_RAL7004",
@@ -31,7 +31,7 @@
   10
  ],
  "kpp_palette": {
-  "PanelVJ_RAL5015": {
+  "PanelVJ30_RAL5015": {
    "kpp_finish": "Metal_RAL5015",
    "kpp_udim": 1013,
    "density_twin": {
@@ -39,27 +39,35 @@
     "kpp_udim": 1007
    }
   },
-  "Panel_RAL5015": {
+  "PanelVJ12_RAL5015": {
    "kpp_finish": "Metal_RAL5015",
-   "kpp_udim": 1013
-  },
-  "Frame_RAL7004": {
-   "kpp_finish": "Door_RAL7004",
-   "kpp_udim": 1010
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
   },
   "Door_RAL7004": {
    "kpp_finish": "Door_RAL7004",
    "kpp_udim": 1010
+  },
+  "Plinth_RAL7004": {
+   "kpp_finish": "Door_RAL7004",
+   "kpp_udim": 1010
+  },
+  "Frame_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013
   }
  },
  "finishes": {
-  "PanelVJ_RAL5015": {
+  "PanelVJ30_RAL5015": {
    "udim": 1001,
    "kind": "full",
    "S": 4.096,
    "P": [
-    0.6,
-    0.6
+    0.195316833,
+    0.195316833
    ],
    "shift": [
     true,
@@ -83,21 +91,55 @@
      266,
      274
     ],
-    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/)"
-   }
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "why": "long facades 1-2 / 2-1: 30 ribs evenly over the 5.8595 m panel field (sheet: 29 joint lines)",
+   "outline_z_m": [
+    0.113077,
+    2.399134
+   ],
+   "outline_why": "thin dark outline of the panel field as on the colour sheet (inner edge of the frame band): the field's left/right edges carry the half joint at k = 0 / ribs, its bottom/top edges (world z of the ID2 field, max-dump-008) a joint_half_mm line inside the field in the joint colour; not a horizontal joint (Artem 2026-10-22, operator note on v008)"
   },
-  "Panel_RAL5015": {
+  "PanelVJ12_RAL5015": {
    "udim": 1002,
-   "kind": "placeholder",
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.186277667,
+    0.186277667
+   ],
+   "shift": [
+    true,
+    false
+   ],
    "rgb": [
     34,
     113,
     179
    ],
-   "rough": 0.45,
-   "metal": 0.0
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 4,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "why": "short facades A-B / B-A: 12 ribs evenly over the 2.2353 m panel field (sheet: 11 joint lines)",
+   "outline_z_m": [
+    0.113077,
+    2.399134
+   ],
+   "outline_why": "thin dark outline of the panel field as on the colour sheet (inner edge of the frame band): the field's left/right edges carry the half joint at k = 0 / ribs, its bottom/top edges (world z of the ID2 field, max-dump-008) a joint_half_mm line inside the field in the joint colour; not a horizontal joint (Artem 2026-10-22, operator note on v008)"
   },
-  "Frame_RAL7004": {
+  "Plinth_RAL7004": {
    "udim": 1003,
    "kind": "placeholder",
    "rgb": [
@@ -106,10 +148,23 @@
     146
    ],
    "rough": 0.45,
-   "metal": 0.0
+   "metal": 0.0,
+   "why": "plinth strip below ±0.000: grey on the sheet (ac_vid hatch 155,155,155) = RAL 7004 per Artem 2026-10-22 («RAL 7004 stays only for doors, porches/steps, the plinth strip and other parts the sheet shows grey»); plain, no joints"
+  },
+  "Frame_RAL5015": {
+   "udim": 1004,
+   "kind": "placeholder",
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "why": "outer wall / frame band (posts, top and bottom rails) and the rest of ID1 above ±0.000: BLUE RAL 5015 like the panels (Artem 2026-10-22 on v008: «почему внешняя стенка серая, когда как в презе должна быть синяя»; supersedes Gate-1 «каркас 7004») [D170]"
   },
   "Door_RAL7004": {
-   "udim": 1004,
+   "udim": 1005,
    "kind": "placeholder",
    "rgb": [
     150,
@@ -121,10 +176,55 @@
   }
  },
  "facade_uv": {
-  "PanelVJ_RAL5015": "u' = metres along the facade from the panel's smaller-world-coordinate edge (joints at u' = n * 0.6), v = world z"
+  "PanelVJ30_RAL5015": "u' = metres along the facade from the panel field's smaller world coordinate (joints at u' = k * P), v = world z",
+  "PanelVJ12_RAL5015": "same frame, P of the short facades"
  },
  "ring_cuts": {
   "allowed": "edge ring at joint positions, quads only, boundary to boundary",
   "decision": "Artem 2026-10-22 «если не влезает, то можно аккуратно порезать через loop или ring»"
+ },
+ "facades": {
+  "1-2": {
+   "normal": "+y",
+   "finish": "PanelVJ30_RAL5015",
+   "ribs": 30,
+   "field_m": 5.859505,
+   "sheet_field_mm": 5858.0,
+   "sheet_joints": 29
+  },
+  "2-1": {
+   "normal": "-y",
+   "finish": "PanelVJ30_RAL5015",
+   "ribs": 30,
+   "field_m": 5.859505,
+   "sheet_field_mm": 5858.0,
+   "sheet_joints": 29,
+   "door": "Door_RAL7004 (ID3) hides 4 joints below +2.200, as on the sheet"
+  },
+  "А-Б": {
+   "normal": "-x",
+   "finish": "PanelVJ12_RAL5015",
+   "ribs": 12,
+   "field_m": 2.235332,
+   "sheet_field_mm": 2238.0,
+   "sheet_joints": 11
+  },
+  "Б-А": {
+   "normal": "+x",
+   "finish": "PanelVJ12_RAL5015",
+   "ribs": 12,
+   "field_m": 2.235332,
+   "sheet_field_mm": 2238.0,
+   "sheet_joints": 11
+  }
+ },
+ "facades_doc": "Rib contract (Artem 2026-10-22, operator measurements: long 1-2 = 30 ribs, short A-B/B-A = 12, ~0.20 m, evenly over the whole panel field, symmetric, no horizontal joints). Source: the building's own colour-solution sheet 22Е56-АР2-1002-АС.08.dwg (AutoCAD readback C:/x/tec26-oks/acad-readback-v001/ac08.dxf, read by scripts/sheet_facades.py -> AC08/sheet-facades.json): the field inside the 100 mm posts / 150 mm rails is 5858 mm (long) / 2238 mm (short) with 29 / 11 vertical joint lines drawn every 200 mm from the field's left edge (58 / 38 mm remainder at the right) -> ribs = joints + 1 = 30 / 12. Model field (ID2 panels of max-dump-008) = 5.8595 / 2.2353 m; P = field_m / ribs = 0.19532 / 0.18628 m, joints at field_lo + k P (k = 1 .. ribs - 1), so the sheet's uneven last strip becomes the operator's even symmetric layout. Facade names: south -y = 2-1 (door, axis 2 at -x), north +y = 1-2, west -x = A-B, east +x = B-A (porch side, sheet elevations).",
+ "sheet": {
+  "facades_json": "jobs/TEC26-OKS/AC08/sheet-facades.json",
+  "dwg": "C:/x/tec26-oks/sources-v001/ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Графическая часть/22Е56-АР2-1002-АС.08/22Е56-АР2-1002-АС.08.dwg",
+  "dwg_sha256": "cb90ed375df4fd708b7a69c6d018600347953245f0f6bde396f394bee3e1fa52",
+  "dxf": "C:/x/tec26-oks/acad-readback-v001/ac08.dxf",
+  "dxf_sha256": "a4950b815cf26e549261a6db4165e34b499e2b0daf6b7acc667ea8303fca8fec",
+  "artem_reference": "C:/x/tec26-oks/user-refs/AC08_facades_colour_from_artem.jpg"
  }
 }
