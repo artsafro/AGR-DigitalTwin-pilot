@@ -284,3 +284,12 @@ def test_cli_fresh_process(tmp_path):
     r = subprocess.run([sys.executable, "-m", "twinqa.export_hygiene", str(scene)], capture_output=True, text=True)
     assert r.returncode == 0, r.stderr
     assert "pass" in r.stdout
+
+
+def test_rule_text_cites_team_script_as_origin():
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[2]
+    for rel in ("docs/domain/export-import.md", "docs/domain/areas/uv-atlas.md", "src/twinqa/export_hygiene.py"):
+        text = (root / rel).read_text(encoding="utf-8")
+        assert "ClearCustomAttributesAndObjProp_010.ms" in text and "export_hygiene" in text or rel.endswith(".py"), rel
+        assert "ClearCustomAttributesAndObjProp_010.ms" in text, rel
