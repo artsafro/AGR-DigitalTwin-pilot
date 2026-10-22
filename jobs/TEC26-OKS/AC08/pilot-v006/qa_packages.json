@@ -230,9 +230,10 @@
    "ok": true,
    "detail": {
     "faces_per_udim": {
-     "1002": 222,
-     "1001": 62,
-     "1003": 64
+     "1003": 222,
+     "1001": 30,
+     "1004": 64,
+     "1002": 32
     },
     "bad": 0
    }
@@ -248,12 +249,100 @@
    "ok": true,
    "detail": {
     "faces": 348,
-    "mismatch": 0,
+    "finish_mismatch": 0,
     "unmatched": 0,
-    "vpm_colours": {
-     "[150, 153, 146]": 286,
-     "[34, 113, 179]": 62
+    "faces_per_finish": {
+     "Frame_RAL7004": 222,
+     "Cassette_RAL5015": 30,
+     "Door_RAL7004": 64,
+     "Panel_RAL5015": 32
     }
+   }
+  },
+  "colour_median_vpm_eq_npm_eq_spec": {
+   "ok": true,
+   "detail": {
+    "Cassette_RAL5015": {
+     "vpm": [
+      34.0,
+      113.0,
+      179.0
+     ],
+     "npm": [
+      34.0,
+      113.0,
+      179.0
+     ],
+     "spec": [
+      34,
+      113,
+      179
+     ],
+     "ok": true
+    },
+    "Panel_RAL5015": {
+     "vpm": [
+      34.0,
+      113.0,
+      179.0
+     ],
+     "npm": [
+      34.0,
+      113.0,
+      179.0
+     ],
+     "spec": [
+      34,
+      113,
+      179
+     ],
+     "ok": true
+    },
+    "Frame_RAL7004": {
+     "vpm": [
+      150.0,
+      153.0,
+      146.0
+     ],
+     "npm": [
+      150.0,
+      153.0,
+      146.0
+     ],
+     "spec": [
+      150,
+      153,
+      146
+     ],
+     "ok": true
+    },
+    "Door_RAL7004": {
+     "vpm": [
+      150.0,
+      153.0,
+      146.0
+     ],
+     "npm": [
+      150.0,
+      153.0,
+      146.0
+     ],
+     "spec": [
+      150,
+      153,
+      146
+     ],
+     "ok": true
+    }
+   }
+  },
+  "vpm_texel_band": {
+   "ok": true,
+   "detail": {
+    "Cassette_RAL5015": [
+     750.0,
+     750.0
+    ]
    }
   },
   "vpm_zip_contents": {
@@ -264,23 +353,26 @@
      "T_Nku_1_Diffuse_1.1001.png",
      "T_Nku_1_Diffuse_1.1002.png",
      "T_Nku_1_Diffuse_1.1003.png",
+     "T_Nku_1_Diffuse_1.1004.png",
      "T_Nku_1_ERM_1.1001.png",
      "T_Nku_1_ERM_1.1002.png",
      "T_Nku_1_ERM_1.1003.png",
+     "T_Nku_1_ERM_1.1004.png",
      "T_Nku_1_Normal_1.1001.png",
      "T_Nku_1_Normal_1.1002.png",
-     "T_Nku_1_Normal_1.1003.png"
+     "T_Nku_1_Normal_1.1003.png",
+     "T_Nku_1_Normal_1.1004.png"
     ]
    }
   },
-  "vpm_png_rgb_256": {
+  "vpm_png_rgb": {
    "ok": true,
    "detail": {
     "T_Nku_1_Diffuse_1.1001.png": [
      "RGB",
      [
-      256,
-      256
+      4096,
+      4096
      ]
     ],
     "T_Nku_1_Diffuse_1.1002.png": [
@@ -297,11 +389,18 @@
       256
      ]
     ],
-    "T_Nku_1_ERM_1.1001.png": [
+    "T_Nku_1_Diffuse_1.1004.png": [
      "RGB",
      [
       256,
       256
+     ]
+    ],
+    "T_Nku_1_ERM_1.1001.png": [
+     "RGB",
+     [
+      4096,
+      4096
      ]
     ],
     "T_Nku_1_ERM_1.1002.png": [
@@ -318,11 +417,18 @@
       256
      ]
     ],
-    "T_Nku_1_Normal_1.1001.png": [
+    "T_Nku_1_ERM_1.1004.png": [
      "RGB",
      [
       256,
       256
+     ]
+    ],
+    "T_Nku_1_Normal_1.1001.png": [
+     "RGB",
+     [
+      4096,
+      4096
      ]
     ],
     "T_Nku_1_Normal_1.1002.png": [
@@ -333,6 +439,13 @@
      ]
     ],
     "T_Nku_1_Normal_1.1003.png": [
+     "RGB",
+     [
+      256,
+      256
+     ]
+    ],
+    "T_Nku_1_Normal_1.1004.png": [
      "RGB",
      [
       256,

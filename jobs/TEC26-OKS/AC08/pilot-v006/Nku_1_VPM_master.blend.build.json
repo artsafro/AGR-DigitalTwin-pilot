@@ -1,7 +1,7 @@
 {
  "dump": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_e9cc2568\\jobs\\TEC26-OKS\\AC08\\max-dump-008.json",
  "spec": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_e9cc2568\\jobs\\TEC26-OKS\\AC08\\vpm_textures.json",
- "blend": "C:\\x\\tec26-oks\\AC08\\pilot-v004\\build\\Nku_1_VPM_master.blend",
+ "blend": "C:\\x\\tec26-oks\\AC08\\pilot-v006\\build\\Nku_1_VPM_master.blend",
  "source": {
   "name": "АС.08",
   "vertices": 193,
@@ -12,29 +12,42 @@
  "master_tris": 348,
  "max_edge_m": 4.8588,
  "faces_per_finish": {
-  "Panel_RAL5015": 31,
+  "Cassette_RAL5015": 15,
+  "Panel_RAL5015": 16,
   "Frame_RAL7004": 111,
   "Door_RAL7004": 38
  },
  "uv_qa": {
   "Frame_RAL7004": {
-   "udim": 1002,
+   "udim": 1003,
    "faces": 111,
    "overflow": 0,
    "min_margin_px": 12.8
   },
-  "Panel_RAL5015": {
+  "Cassette_RAL5015": {
    "udim": 1001,
-   "faces": 31,
+   "faces": 15,
    "overflow": 0,
-   "min_margin_px": 12.8
+   "min_margin_px": 74.5
   },
   "Door_RAL7004": {
-   "udim": 1003,
+   "udim": 1004,
    "faces": 38,
    "overflow": 0,
    "min_margin_px": 12.8
+  },
+  "Panel_RAL5015": {
+   "udim": 1002,
+   "faces": 16,
+   "overflow": 0,
+   "min_margin_px": 12.8
   }
+ },
+ "density_px_per_m": {
+  "Cassette_RAL5015": [
+   750,
+   750
+  ]
  },
  "ucx": [
   {

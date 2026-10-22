@@ -1,6 +1,6 @@
 {
  "address": "Nku_1",
- "fbx": "C:/x/tec26-oks/AC08/pilot-v004/package-vpm/SM_Nku_1\\SM_Nku_1.fbx",
+ "fbx": "C:/x/tec26-oks/AC08/pilot-v006/package-vpm/SM_Nku_1\\SM_Nku_1.fbx",
  "pivot_revit_internal_m": [
   33.9534,
   0.1134,
@@ -23,5 +23,5 @@
  "glass_tris": 0,
  "ucx": 1,
  "ucx_tris": 12,
- "thumbnail": "C:\\x\\tec26-oks\\AC08\\pilot-v004\\package-vpm\\thumbnail_256.jpg"
+ "thumbnail": "C:\\x\\tec26-oks\\AC08\\pilot-v006\\package-vpm\\thumbnail_256.jpg"
 }

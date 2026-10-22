@@ -1,6 +1,6 @@
 {
  "vpm": {
-  "fbx": "C:\\x\\tec26-oks\\AC08\\pilot-v004\\readback\\vpm\\SM_Nku_1.fbx",
+  "fbx": "C:\\x\\tec26-oks\\AC08\\pilot-v006\\readback\\vpm\\SM_Nku_1.fbx",
   "objects": [
    "SM_Nku_1_Main",
    "UCX_SM_Nku_1_Main_001"
@@ -19,7 +19,7 @@
   ]
  },
  "npm": {
-  "fbx": "C:\\x\\tec26-oks\\AC08\\pilot-v004\\readback\\npm\\0000_Nku_1_01.fbx",
+  "fbx": "C:\\x\\tec26-oks\\AC08\\pilot-v006\\readback\\npm\\0000_Nku_1_01.fbx",
   "objects": [
    "SM_Nku_1_001_Main"
   ],

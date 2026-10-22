@@ -37,9 +37,12 @@ Report: `census/README.md`; scene tables: `census/scenes.md`; KPP: `census/kpp-r
 ## Pilot AC08 VPM + NPM (#559, branch `job/tec26-oks-pilot-ac08`)
 
 Gate 1 approved (#565). Scope (Artem 2026-10-22): colour only - geometry, topology, UCX and IDs exactly as in the
-source; only UV + textures; geometry checks reported, never fixed. Run `pilot-v004`: `SM_Nku_1.zip` (VPM, 3 UDIM
-placeholder sets) and `0000_Nku_1.zip` (NPM, 2048 `_d_` + `_o_` embedded) on Drive
-`G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot/` (23/23 hashes). `qa_packages.py` 31/31 (geometry = source,
-xView 0/0, doubles 0, per-face VPM = NPM colour, KPP RGB), `qa_master` normals 0 / T-junctions 0 / leaks 0; SINTEZ
-VPM 62/4, NPM 38/5 (deferred GeoJSON/district/Ground/УКЭП + 2.3.17 untriangulated source UCX). Open questions for
-Artem in `AC08/PILOT_REPORT.md` (19 quads > 4 m vs D021, UCX triangulation). Scripts: `scripts/run_building.sh`.
+source; only UV + textures; geometry checks reported, never fixed. After the v004 renders Artem asked for the KPP panel
+joints («Не вижу швов на панелях ... такой же тексель, как в VPM КПП»; «ниже ±0.000 без швов»): ID2 = KPP
+`Cassette_RAL5015` recipe, rows from ±0.000, drop plain. Run `pilot-v006`: `SM_Nku_1.zip` (VPM, 1001 cassette 4096 +
+3 placeholders) and `0000_Nku_1.zip` (NPM, 2048 `_d_` + `_o_` embedded, joints 1.6 px) on Drive
+`G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v006/` (24/24 hashes). `qa_packages.py` 33/33 (geometry = source,
+xView 0/0, doubles 0, finish per face VPM = NPM, medians = KPP RGB, texel 750 px/m), `qa_master` normals 0 /
+T-junctions 0 / leaks 0; SINTEZ VPM 62/4, NPM 38/5. Open for Artem (`AC08/PILOT_REPORT.md`): 750 vs KPP 1000 px/m
+(4.86 m panels cannot fit a 4.096 m tile without cutting geometry), 19 quads > 4 m vs D021, UCX triangulation
+(SINTEZ 2.3.17). Scripts: `scripts/run_building.sh`.
