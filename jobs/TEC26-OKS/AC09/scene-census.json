@@ -1,0 +1,971 @@
+{
+  "source_census_sha256": "a99de19f1d30633eaab9c52ac44f253ed6ea97e03358755ff2a77458f0f54f2f",
+  "objects": [
+    {
+      "handle": 173,
+      "name": "АС.09",
+      "layer": "009",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "mesh",
+      "position": [
+        40.55158996582031,
+        0.11338730901479721,
+        0.2646005153656006
+      ],
+      "pivot": [
+        40.55158996582031,
+        0.11338730901479721,
+        0.2646005153656006
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        4.371138828673793e-08,
+        1.1924878862146215e-08,
+        -4.371138828673793e-08,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          39.32661056518555,
+          -1.386789083480835,
+          -2.038278341293335
+        ],
+        [
+          41.77656936645508,
+          1.6135640144348145,
+          2.567479372024536
+        ]
+      ],
+      "material": {
+        "name": "Material #7",
+        "class": "Multimaterial",
+        "handle": 4439,
+        "maps": [],
+        "submaterials": [
+          {
+            "slot": 1,
+            "material": {
+              "name": "Material #4",
+              "class": "Standardmaterial",
+              "handle": 4298,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                12.66126537322998,
+                3.768308162689209,
+                221.85260009765625
+              ],
+              "Diffuse_Color": [
+                12.66126537322998,
+                3.768308162689209,
+                221.85260009765625
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [],
+              "submaterials": []
+            },
+            "id": 1
+          },
+          {
+            "slot": 2,
+            "material": {
+              "name": "Material #2",
+              "class": "Standardmaterial",
+              "handle": 4321,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                10.376846313476562,
+                3.1277337074279785,
+                180.7834930419922
+              ],
+              "Diffuse_Color": [
+                10.376846313476562,
+                3.1277337074279785,
+                180.7834930419922
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [],
+              "submaterials": []
+            },
+            "id": 2
+          },
+          {
+            "slot": 3,
+            "material": {
+              "name": "Material #3",
+              "class": "Standardmaterial",
+              "handle": 4344,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                190.07810974121094,
+                190.07810974121094,
+                190.07810974121094
+              ],
+              "Diffuse_Color": [
+                190.07810974121094,
+                190.07810974121094,
+                190.07810974121094
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [],
+              "submaterials": []
+            },
+            "id": 3
+          },
+          {
+            "slot": 4,
+            "material": {
+              "name": "Material #5",
+              "class": "Standardmaterial",
+              "handle": 4367,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                85.97673797607422,
+                85.97672271728516,
+                85.97673034667969
+              ],
+              "Diffuse_Color": [
+                85.97673797607422,
+                85.97672271728516,
+                85.97673034667969
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [],
+              "submaterials": []
+            },
+            "id": 4
+          },
+          {
+            "slot": 5,
+            "material": {
+              "name": "Material #13",
+              "class": "Standardmaterial",
+              "handle": 4390,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                11.15243148803711,
+                11.152432441711426,
+                11.15243148803711
+              ],
+              "Diffuse_Color": [
+                11.15243148803711,
+                11.152432441711426,
+                11.15243148803711
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [],
+              "submaterials": []
+            },
+            "id": 5
+          },
+          {
+            "slot": 6,
+            "material": {
+              "name": "Material #47",
+              "class": "Standardmaterial",
+              "handle": 4413,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "Diffuse_Color": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [],
+              "submaterials": []
+            },
+            "id": 6
+          },
+          {
+            "slot": 7,
+            "material": {
+              "name": "Material #48",
+              "class": "Standardmaterial",
+              "handle": 4436,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                149.94000244140625,
+                149.94000244140625,
+                149.94000244140625
+              ],
+              "Diffuse_Color": [
+                149.94000244140625,
+                149.94000244140625,
+                149.94000244140625
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [],
+              "submaterials": []
+            },
+            "id": 7
+          },
+          {
+            "slot": 8,
+            "material": null,
+            "id": 8
+          },
+          {
+            "slot": 9,
+            "material": null,
+            "id": 9
+          },
+          {
+            "slot": 10,
+            "material": null,
+            "id": 10
+          }
+        ]
+      },
+      "bbox_snapshot": [
+        [
+          39.32661056518555,
+          -1.3867887258529663,
+          -2.038278341293335
+        ],
+        [
+          41.77656555175781,
+          1.6135637760162354,
+          2.567479372024536
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 3.814697265625e-06,
+      "vertices": 369,
+      "triangles": 682,
+      "material_ids": [
+        {
+          "id": 1,
+          "triangles": 376,
+          "area_m2": 38.713608267577335
+        },
+        {
+          "id": 2,
+          "triangles": 100,
+          "area_m2": 18.757031060906957
+        },
+        {
+          "id": 3,
+          "triangles": 80,
+          "area_m2": 1.901034464914308
+        },
+        {
+          "id": 4,
+          "triangles": 66,
+          "area_m2": 1.77165064257911
+        },
+        {
+          "id": 5,
+          "triangles": 24,
+          "area_m2": 0.9405206678686933
+        },
+        {
+          "id": 7,
+          "triangles": 36,
+          "area_m2": 27.345943736013954
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 473,
+          "faces": 682,
+          "exists": true,
+          "bounds": [
+            [
+              -0.08333331346511841,
+              0.0,
+              -0.9999999403953552
+            ],
+            [
+              1.0,
+              1.0,
+              1.0000001192092896
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 335,
+        "3": 12
+      },
+      "poly_faces_by_id": {
+        "1": 188,
+        "4": 39,
+        "2": 50,
+        "5": 12,
+        "7": 18,
+        "3": 40
+      },
+      "diagnostic_buffer": "geometry-173.json"
+    },
+    {
+      "handle": 342,
+      "name": "Colizii_043",
+      "layer": "009",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "mesh",
+      "position": [
+        40.55158996582031,
+        0.11338730901479721,
+        0.2646005153656006
+      ],
+      "pivot": [
+        40.55158996582031,
+        0.11338730901479721,
+        0.2646005153656006
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          39.32661056518555,
+          -1.386786937713623,
+          -0.03252291679382324
+        ],
+        [
+          41.77656555175781,
+          1.6135621070861816,
+          2.5674774646759033
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          39.32661056518555,
+          -1.386786937713623,
+          -0.03252291679382324
+        ],
+        [
+          41.77656555175781,
+          1.6135621070861816,
+          2.5674774646759033
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 1,
+          "triangles": 2,
+          "area_m2": 7.350713504880787
+        },
+        {
+          "id": 2,
+          "triangles": 2,
+          "area_m2": 7.3507077821705025
+        },
+        {
+          "id": 3,
+          "triangles": 2,
+          "area_m2": 6.369873981457234
+        },
+        {
+          "id": 4,
+          "triangles": 2,
+          "area_m2": 6.369878940564497
+        },
+        {
+          "id": 5,
+          "triangles": 2,
+          "area_m2": 7.800908041140776
+        },
+        {
+          "id": 6,
+          "triangles": 2,
+          "area_m2": 7.800907421245029
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 24,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              1.0,
+              1.0,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "2": 1,
+        "1": 1,
+        "5": 1,
+        "4": 1,
+        "6": 1,
+        "3": 1
+      },
+      "diagnostic_buffer": "geometry-342.json"
+    },
+    {
+      "handle": 369,
+      "name": "АС.09_Glass",
+      "layer": "009",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "mesh",
+      "position": [
+        40.55158996582031,
+        0.11338730901479721,
+        0.2646005153656006
+      ],
+      "pivot": [
+        40.55158996582031,
+        0.11338730901479721,
+        0.2646005153656006
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          39.76887512207031,
+          -1.220649003982544,
+          1.1506338119506836
+        ],
+        [
+          41.59941101074219,
+          0.4507025182247162,
+          2.3250198364257812
+        ]
+      ],
+      "material": {
+        "name": "Material #7",
+        "class": "Multimaterial",
+        "handle": 4439,
+        "maps": [],
+        "submaterials": [
+          {
+            "slot": 1,
+            "material": {
+              "name": "Material #4",
+              "class": "Standardmaterial",
+              "handle": 4298,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                12.66126537322998,
+                3.768308162689209,
+                221.85260009765625
+              ],
+              "Diffuse_Color": [
+                12.66126537322998,
+                3.768308162689209,
+                221.85260009765625
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [],
+              "submaterials": []
+            },
+            "id": 1
+          },
+          {
+            "slot": 2,
+            "material": {
+              "name": "Material #2",
+              "class": "Standardmaterial",
+              "handle": 4321,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                10.376846313476562,
+                3.1277337074279785,
+                180.7834930419922
+              ],
+              "Diffuse_Color": [
+                10.376846313476562,
+                3.1277337074279785,
+                180.7834930419922
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [],
+              "submaterials": []
+            },
+            "id": 2
+          },
+          {
+            "slot": 3,
+            "material": {
+              "name": "Material #3",
+              "class": "Standardmaterial",
+              "handle": 4344,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                190.07810974121094,
+                190.07810974121094,
+                190.07810974121094
+              ],
+              "Diffuse_Color": [
+                190.07810974121094,
+                190.07810974121094,
+                190.07810974121094
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [],
+              "submaterials": []
+            },
+            "id": 3
+          },
+          {
+            "slot": 4,
+            "material": {
+              "name": "Material #5",
+              "class": "Standardmaterial",
+              "handle": 4367,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                85.97673797607422,
+                85.97672271728516,
+                85.97673034667969
+              ],
+              "Diffuse_Color": [
+                85.97673797607422,
+                85.97672271728516,
+                85.97673034667969
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [],
+              "submaterials": []
+            },
+            "id": 4
+          },
+          {
+            "slot": 5,
+            "material": {
+              "name": "Material #13",
+              "class": "Standardmaterial",
+              "handle": 4390,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                11.15243148803711,
+                11.152432441711426,
+                11.15243148803711
+              ],
+              "Diffuse_Color": [
+                11.15243148803711,
+                11.152432441711426,
+                11.15243148803711
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [],
+              "submaterials": []
+            },
+            "id": 5
+          },
+          {
+            "slot": 6,
+            "material": {
+              "name": "Material #47",
+              "class": "Standardmaterial",
+              "handle": 4413,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "Diffuse_Color": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [],
+              "submaterials": []
+            },
+            "id": 6
+          },
+          {
+            "slot": 7,
+            "material": {
+              "name": "Material #48",
+              "class": "Standardmaterial",
+              "handle": 4436,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                149.94000244140625,
+                149.94000244140625,
+                149.94000244140625
+              ],
+              "Diffuse_Color": [
+                149.94000244140625,
+                149.94000244140625,
+                149.94000244140625
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [],
+              "submaterials": []
+            },
+            "id": 7
+          },
+          {
+            "slot": 8,
+            "material": null,
+            "id": 8
+          },
+          {
+            "slot": 9,
+            "material": null,
+            "id": 9
+          },
+          {
+            "slot": 10,
+            "material": null,
+            "id": 10
+          }
+        ]
+      },
+      "bbox_snapshot": [
+        [
+          39.76887512207031,
+          -1.220649003982544,
+          1.1506338119506836
+        ],
+        [
+          41.59941101074219,
+          0.4507025182247162,
+          2.3250198364257812
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 16,
+      "triangles": 8,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 8,
+          "area_m2": 3.216858372327969
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 8,
+          "exists": true,
+          "bounds": [
+            [
+              0.16763803362846375,
+              0.44992882013320923,
+              0.0
+            ],
+            [
+              0.47291675209999084,
+              0.9118790626525879,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 4
+      },
+      "poly_faces_by_id": {
+        "6": 4
+      },
+      "diagnostic_buffer": "geometry-369.json"
+    }
+  ]
+}
