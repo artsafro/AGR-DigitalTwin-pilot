@@ -4,25 +4,33 @@ Goal: the fastest exact core for the 3ds Max xView Overlapping Faces (5 mm) / Ov
 for #535 (parity guard, incremental mode, Blender path) to adopt. Method: skill `autoresearch`, classic mode,
 `Iterations: 25` cap, time box 3 h; run by Hermes dt-worker (claude-opus-5-5), card t_fb698124, 2026-10-22.
 
-- Pilot main at start: `996b34a6d84c06a1bdef7fe4caa9288d556bb48c`.
+- Pilot main at start: `996b34a6d84c06a1bdef7fe4caa9288d556bb48c`; the branch base is `e74e77d` (`inv_xview.py`,
+  `inv_quads.py` and `tools/qa/` identical between the two, so the baseline is the same).
 - Candidate: `src/dt_ai/ops/inv_xview_fast.py` (new; `src/dt_ai/ops/inv_xview.py` untouched, it is the baseline).
 - Frozen bench: `tools/qa/xview_bench.py`, SHA-256 `883d08e5d30b03ab4455e50ab07a1ded5646c6f9b53302ed4a2d7acba6a399cb`
-  (committed in `9a75d32` before the first experiment, never edited after).
+  (committed in `9a75d32` before the first experiment, unchanged during the loop). After the loop, the hostile
+  self-review found that `--out` could overwrite an oracle file; `23ff90b` adds an `--out` alias guard and an
+  input-changed check (exit 2). The fixtures, timing and comparison code did not change. New SHA-256
+  `48442a0073040d38de9506e8d1bf510081212cab087eb6e1e142f6afa76999a4`; baseline and winner were re-run with it (table
+  below, quiet board).
 - Metric: `cpu_s` = median of 5 `time.process_time()` runs of the candidate on TOW02 export-v005, single process.
 - Evidence (small text, committed): `docs/experiments/autoresearch-xview-speed/` (`results.tsv`, `bench_baseline.json`,
-  `bench_final.json`, `pairs_parity.json`). Logs: `C:/x/ev_t_fb698124/` on this PC.
+  `bench_final.json`, `bench_baseline2.json`, `bench_final2.json`, `pairs_parity.json`, `ab.py`). Logs: `C:/x/ev_t_fb698124/` on this PC.
 
 ## Result
 
 | | TOW02 export-v005 `cpu_s` | wall | TOW02 user `_05` | Ground v014 NPM | Ground v014 NPM poly | parity |
 |---|---|---|---|---|---|---|
-| baseline `inv_xview.part_report` | **40.0 s** | 40.4 s | 51.1 s | 20.0 s | 17.7 s | 11/11 |
-| winner `inv_xview_fast` (`d3a0cee`) | **0.438 s** | 0.455 s | 0.594 s | 0.266 s | 0.391 s | 11/11 |
+| baseline `inv_xview.part_report`, loaded board (bench `883d08e5`) | **40.0 s** | 40.4 s | 51.1 s | 20.0 s | 17.7 s | 11/11 |
+| winner `inv_xview_fast` (`d3a0cee`), loaded board (bench `883d08e5`) | **0.438 s** | 0.455 s | 0.594 s | 0.266 s | 0.391 s | 11/11 |
+| baseline, quiet board (bench `48442a00`) | **21.6 s** | 21.7 s | 20.2 s | 10.2 s | 10.0 s | 11/11 |
+| winner (`23ff90b`), quiet board (bench `48442a00`) | **0.219 s** | 0.220 s | 0.359 s | 0.219 s | 0.203 s | 11/11 |
 
-91x faster on the primary metric (target <= 2 s met, #535's <= 10 s met), 34x-86x on the other fixtures, with
-exact list parity on every fixture. Board load during the runs: CPU 40 % (baseline, other workers' suites
-running) and 24-36 % (final), 32 logical CPUs; `process_time` still moved +-25 % run to run under that load (see
-"Noise"). Same PC, same venv (numpy 2.x, shapely; scipy is NOT installed, so no cKDTree).
+91x faster on the primary metric under load and 99x on a quiet board (target <= 2 s met, #535's <= 10 s met),
+28x-86x on the other fixtures, with exact list parity on every fixture. Board load: CPU 40 % (loaded baseline,
+other workers' suites running), 24-36 % (loaded winner), 1-2 % (quiet pair, run back to back after the full
+suite); 32 logical CPUs. Under load `process_time` ran ~2x higher and moved +-25 % run to run (see "Noise"). Same PC,
+same venv (numpy 2.x, shapely; scipy is NOT installed, so no cKDTree).
 
 Parity per fixture (oracle = stored xView lists, never a candidate output):
 
@@ -87,7 +95,7 @@ one process so both see the same load.
 ## Tokens
 
 Not measured: the Hermes dt-worker lane writes no usage log for this run (see the Agent trace in the PR). About 80
-tool calls, one session, ~1 h 30 min from setup to the final bench.
+tool calls, one session, ~2 h 20 min including the full suite (21 min) and the re-runs.
 
 ## Verdict on the method
 
