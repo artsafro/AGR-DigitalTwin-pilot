@@ -62,6 +62,22 @@ def source_coverage(source, output, shift):
     return owners
 
 
+def validate_raw(raw):
+    """Require every AC08 measurement and literal booleans, never truthy strings."""
+    base = set('names_vpm names_npm triangulated_vpm budget_vpm one_uv_vpm transforms_vpm xview_vpm triangulated_npm budget_npm one_uv_npm transforms_npm xview_npm geometry_source_plus_ring_cuts_vpm geometry_source_plus_ring_cuts_npm ucx_count_eq_source bbox_vpm_eq_npm perimeter_drop_min_z vpm_uv_tiles npm_uv_regions colour_vpm_eq_npm_per_face colour_median_vpm_eq_npm_eq_spec spec_contract_kpp source_finish_vpm source_finish_npm cuts_at_joints_vpm cuts_at_joints_npm vpm_texel_contract vpm_zip_contents vpm_png_rgb npm_zip_contents npm_embedded_png npm_material npm_png_d_rgb_2048 npm_png_o_rgb_2048 vpm_material'.split())
+    for i in range(1,22):
+        for prefix in ('ucx_', 'xview_', 'geometry_unchanged_'):
+            base.add(f'{prefix}UCX_SM_Prg_1_Main_{i:03d}')
+    checks = raw.get('checks')
+    if not isinstance(checks,dict) or set(checks)!=base:
+        raise ValueError('missing/unknown raw QA checks')
+    if any(not isinstance(row,dict) or type(row.get('ok')) is not bool for row in checks.values()):
+        raise ValueError('raw QA status must be a boolean')
+    failed=raw.get('failed')
+    if not isinstance(failed,list) or len(failed)!=len(set(failed)) or set(failed)!={n for n,c in checks.items() if c['ok'] is False}:
+        raise ValueError('raw QA failed summary disagrees with measurements')
+
+
 def snapshot(paths):
     result = {}
     for path in paths:
@@ -98,7 +114,8 @@ def main(root, out):
     sv=np.asarray(source['vertices']); shift=[(sv[:,0].min()+sv[:,0].max())/2,(sv[:,1].min()+sv[:,1].max())/2,0]
     atlas=load(root/'textures-npm/npm_atlas.json')['finishes']
     raw=load(root/'qa_packages.json')
-    checks={}; facts={}
+    validate_raw(raw)
+    checks={}
     def check(name,ok,detail):
         checks[name]={'ok':bool(ok),'detail':detail}
     raw_replaced={'names_vpm','names_npm','source_finish_vpm','source_finish_npm','vpm_texel_contract'}|{n for n in raw['checks'] if n.startswith('geometry_unchanged_UCX_')}

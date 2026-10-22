@@ -1,5 +1,60 @@
 # TEC26 AC06 — material-ID Gate 1
 
+## BUILD override — presentation authority (supersedes historical statements below)
+
+**Built for review, not a passed AGR delivery.** The latest Artem answers on card
+`t_6af403e8` (2026-10-22 16:37–16:39) govern: presentation slide39/40 first;
+DWG/PDF only where the slides are silent. Historical Gate-1 fields and its old
+solid-grey statements below are retained as history, not the current recipe.
+BUILD authorization is the orchestrator note, not `build_allowed` in that packet.
+
+| Hatch / region | Material | RAL / exact KPP RGB | Texture |
+|---|---|---|---|
+| Blue facade hatch, canopies | Sandwich panels | 5015 / 34,113,179 | Same approved source profile; vertical ribs |
+| Light-grey wall hatch | Sandwich panels | 7047 / 208,208,208 | Same profile/noise recoloured, vertical ribs |
+| Doors, porches, plinth, drainage | Painted metal / concrete | 7004 / 150,153,146 | Solid |
+| Relief-glazing frames | Painted frame | 9016 / 246,246,246 | Solid |
+| Sloping roof | Roof panels | 7004 / 150,153,146 | Solid, per explicit roof/fascia answer |
+| Below-zero perimeter drop | Same source ID10 | 7047 / 208,208,208 | Plain; no ribs below zero |
+
+| Original ID / region | Current finish | Source polygons / evidence |
+|---|---|---|
+| ID1 vertical fascia | Blue ribbed 5015 | 85; slide39/40 and explicit answer |
+| ID1 other roof faces | Grey 7004 | 96; explicit answer; no vertex/ID change |
+| ID2 sandwich canopies + broad vertical fascia | Blue ribbed 5015 | 177; legend; all 39 faces of three canopy components included |
+| ID2 thin trims / snow guards | Blue solid 5015 | 494; same geometry, colour preserved |
+| ID3 walls | Light-grey ribbed 7047 | All 300; legend, never plain grey |
+| IDs4,6,7 | Solid 7004 | Same approved Gate-1 mapping |
+| IDs5,8,9 | Solid 9016 | Same approved Gate-1 mapping |
+| ID10 | Plinth7004 / below-zero plain7047 | Same approved split, same ID |
+| ID11 / ID12 | Interior / map-free glass | Same source objects; glass alpha0.5 |
+
+The ID2 classifier is **source-bound**, not a general material recognizer: broad
+vertical faces have height/width >0.08m; canopy components lie entirely below
+3.0m (actual maximum 2.902m; next roof-trim component begins at3.081m).
+The source dump is pinned by the build manifest. New geometry needs a new mapping.
+
+Slide39 line spacing is approximately8.53px over465px/10.9m; slide40 approximately
+8.53px over575px/13.5m. Nominal step0.20m; full grids **55 /55 /68 /68 bays**
+(A–D /D–A /1–3 /3–1). These are full grid bays, **not equal counts of visible
+black pixel strokes**: pipes, canopies and windows occlude some positions.
+No AC08 0.60m grid was copied. Both colours retain the same eight-pixel source
+joint profile; only400 flat pixels per original600px period are removed.
+There are no horizontal panel joints. Source image SHA256 is in `vpm_textures.json`.
+
+New evidence: `G:/Мой диск/AGR-evidence/tec26-oks/AC06/build-v006/`:
+`contact-sheet.png` (12 swatches, labels outside), `compare/` (flat colour),
+`compare-cavity/` (edge-shaded preview), `renders/` (including full drop),
+`audit-v006-final.json`, raw `qa_packages.json`, public validator reports and
+`SHA256SUMS.txt`. Plates use slide|VPM|NPM at42.6px/m and retain discrepancies.
+The slide39 top roof strip is blue in the graphic while the built sloping roof
+is grey by the explicit answer; **this is visible, not retouched or called an
+exact slide match**. User visual approval and final SINTEZ are pending.
+
+See [BUILD_REPORT.md](BUILD_REPORT.md) for measured exports and remaining failures.
+
+---
+
 **Status: `approved-gate1`. Artem, 2026-10-22, approved colouring (`approved`: true). `build_allowed` stays false: VPM/NPM are a later card, and this packet must not start a build.**
 
 Building name, read from the supplied PDF title block and DWG layout `3`, entity

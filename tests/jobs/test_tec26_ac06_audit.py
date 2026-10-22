@@ -30,6 +30,30 @@ def test_triangulation_preserves_polygon_boundary_not_polygon_count():
         module().source_coverage({**src,'vertices':[src['vertices'][0],*src['vertices']]},out,[0,0,0])
 
 
+@pytest.mark.parametrize('checks', [{}, {'names_vpm': {'ok': 'fail'}}, {'names_vpm': {'ok': True}}])
+def test_partial_or_nonboolean_raw_receipts_refused(checks):
+    with pytest.raises(ValueError):
+        module().validate_raw({'checks': checks, 'failed': []})
+
+
+def test_complete_raw_status_schema_and_lying_summary():
+    import json
+    import copy
+    names=json.loads((PATH.parents[3]/'tests/fixtures/tec26_ac06_raw_check_names.json').read_text())
+    raw={'checks': {n:{'ok':True,'detail':{}} for n in names}, 'failed':[]}
+    assert module().validate_raw(raw) is None
+    for value in ('fail','review','not_run','unknown',None,0,1):
+        changed=copy.deepcopy(raw)
+        changed['checks']['xview_vpm']['ok']=value
+        with pytest.raises(ValueError,match='boolean'):
+            module().validate_raw(changed)
+    raw['checks']['xview_vpm']['ok']=False
+    with pytest.raises(ValueError,match='summary'):
+        module().validate_raw(raw)
+    raw['failed']=['xview_vpm']
+    assert module().validate_raw(raw) is None  # Fail is valid evidence, NOT a pass.
+
+
 def test_snapshot_rejects_changed_or_duplicated_input(tmp_path):
     p=tmp_path/'one.json'; p.write_text('{}')
     snap=module().snapshot([p])
