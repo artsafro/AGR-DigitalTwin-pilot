@@ -32,11 +32,23 @@
     "process_exit_codes": [0, 0],
     "report": "G:/Мой диск/AGR-evidence/tec26-oks/AC07/v006/blender-render-report.json"
   },
-  "focused_pytest": {
+  "focused_pytest_before_panel_rule": {
     "passed": 13,
     "failed": 0,
     "seconds": 0.12,
     "command": "python C:/Users/artsafro/hermes_kanban/scripts/suite_slot.py --card t_2a6583a6 -- env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q -p no:cacheprovider --basetemp=C:/x/t_2a6583a6 tests/jobs/test_tec26_ac07_materials.py"
+  },
+  "focused_pytest": {
+    "passed": 16,
+    "failed": 0,
+    "seconds": 0.11,
+    "command": "uv run pytest -q tests/jobs/test_tec26_ac07_materials.py --basetemp=C:/x/t_2a6583a6"
+  },
+  "panel_rule_probes": {
+    "invariant": "RAL 5015 panel rows map_type vertical_joints; panel_rule module_m 0.60, joint_mm 8, vertical_only true, below_zero_plain true; texture sha256 and bytes match the file on disk; ID10 map_type solid; ID2 map_type metal",
+    "rejected": 2,
+    "total": 2,
+    "cases": ["solid on panel row", "horizontal joints"]
   },
   "red": {
     "missing_record_failed": 12,
@@ -44,7 +56,9 @@
     "aggregate_count_failed": 1,
     "operator_contract_failed": 1,
     "native_depth_and_drop_contract_failed": 1,
-    "native_depth_pre_fix_commit": "48fb7c6e8c0156f7ed821fa74cff463b2eaf9c5c"
+    "native_depth_pre_fix_commit": "48fb7c6e8c0156f7ed821fa74cff463b2eaf9c5c",
+    "panel_vertical_joints_failed": 13,
+    "panel_vertical_joints_note": "On the pre-update record: 13 failed, 3 passed. Twelve failures were the stale Gate 1 answer 1; one was missing panel_rule."
   },
   "full_suite": "not run: Gate-1 stop, no review request yet; required before first review request"
 }

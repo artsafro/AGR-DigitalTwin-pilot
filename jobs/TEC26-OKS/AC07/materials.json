@@ -5,8 +5,57 @@
   "building_name": "Пункт редуцирования газа 2",
   "base_main_sha": "442f0b695a91f9abc180783c26978fbe85fefcf9",
   "gate1": {
-    "status": "awaiting_artem",
-    "approved": false
+    "status": "approved-gate1",
+    "approved": true,
+    "approved_by": "Artem",
+    "date": "2026-10-22",
+    "quote": "Принимаю",
+    "answers": [
+      "RAL 5015 sandwich panels (ID1 upper facade and any other RAL 5015 panel region): vertical joints only, map_type vertical_joints, module 0.60 m, joint 8 mm, no horizontal joints; do not tile the raw 4K image; phase from +-0.000 / panel corner. RAL 7047 sandwich panels stay solid. Metal trims (ID2) unchanged. Below +-0.000 (ID10 drop and any perimeter drop): plain colour, no joints. Supersedes solid-without-joints for blue panels.",
+      "Roof: RAL 7004 grey (as KPP 7004), not 5015.",
+      "A mixed ID may be painted per part (roof 7004, frame 7004, plinth/drop = wall colour) without changing geometry - via UV / atlas regions or face-group split inside the same ID.",
+      "Panels RAL 5015 = KPP blue, doors/frames/porches RAL 7004 = KPP grey, glass as KPP; drop below +-0.000 = wall colour.",
+      "ID6 round inserts: Artem did not define; set 7004 metal, status to_verify (на проверку), show enlarged on the VPM/NPM acceptance sheet."
+    ],
+    "later_scope": "Only colouring. Geometry, topology, UCX and multisub IDs stay exactly as source. VPM = UDIM tiles, NPM = one 2048 atlas; geometry checks only reported. VPM/NPM of this building are a separate card."
+  },
+  "panel_rule": {
+    "date": "2026-10-22",
+    "author": "Artem",
+    "supersedes": "Gate 1 point 1 solid-without-joints, for RAL 5015 sandwich panels only",
+    "applies_to": "RAL 5015 sandwich panels: ID1 upper facade panels and any other RAL 5015 panel region. ID2 metal trims stay metal. ID3 RAL 7047 sandwich panels stay solid.",
+    "map_type": "vertical_joints",
+    "module_m": 0.60,
+    "joint_mm": 8,
+    "vertical_only": true,
+    "horizontal_joints": false,
+    "below_zero_plain": true,
+    "below_zero": "Below +-0.000 (ID10 drop and any perimeter drop): plain colour, no joints.",
+    "do_not_tile_raw_image": true,
+    "do_not_tile_reason": "4096 is not a multiple of 600. Lay joints at a 0.60 m period from each panel start edge. Phase is +-0.000 / the panel corner, not the raw image origin.",
+    "phase": "0.60 m period from each panel start edge; phase from +-0.000 / panel corner",
+    "texel_px_per_m": 1000,
+    "texel_note": "KPP VPM 1000 px/m on a 4K UDIM: 600 px = 0.60 m module, 8 px = 8 mm joint.",
+    "vpm": "Diffuse+Normal, same joint look as NPM",
+    "npm": "one atlas; joints at least 1.5 px",
+    "replaces": "KPP cassette tile for RAL 5015 panels",
+    "cuts_made": false,
+    "cut_rule": "Where a panel face does not fit a 4K tile, cutting is allowed only as clean edge loop/ring cuts across the panel at joint positions. Silhouette, normals, UCX and IDs stay unchanged. Quads are kept. Every cut is listed in the report. No cuts are made in this card.",
+    "cuts": [],
+    "texture": {
+      "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+      "bytes": 1010080,
+      "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+      "width": 4096,
+      "height": 4096,
+      "mode": "RGB",
+      "mean_rgb": [34, 112, 177],
+      "mean_rgb_measured": [33.7033, 112.0103, 177.4277],
+      "vertical_joint_count": 7,
+      "joint_width_px": 8,
+      "joint_period_px": 600,
+      "observed_joint_start_x_px": [266, 866, 1466, 2066, 2666, 3266, 3866]
+    }
   },
   "delivery_built": false,
   "source_copies": {
@@ -940,10 +989,10 @@
       "triangles": 362,
       "area_m2": 177.12756502922196,
       "role_observed": "roof panels + upper facade panels",
-      "finish": "sandwich panels RAL 5015; roof colour extrapolated",
-      "ral": "5015",
-      "map_type": "solid",
-      "status": "proposed",
+      "finish": "mixed ID: roof faces RAL 7004; upper facade panels RAL 5015 (regions inside the same ID; geometry unchanged)",
+      "ral": "7004+5015",
+      "map_type": "mixed",
+      "status": "approved",
       "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
       "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=1; ids-isolated.png cell 1; polygon counts from census",
       "drawing_evidence": [
@@ -951,7 +1000,7 @@
         "section",
         "roof"
       ],
-      "question": "May ID 1 use RAL 5015 on the roof as well as the upper facades, or must roof faces be separated and assigned another coating/RAL?",
+      "question": null,
       "kpp_colour": {
         "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1013.png",
         "sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
@@ -968,7 +1017,56 @@
         ],
         "method": "exact KPP map pixels; no RAL approximation",
         "note": "Dominant RGB only from the approved KPP map, not its cassette pattern; no reuse of KPP material IDs."
-      }
+      },
+      "regions": [
+        {
+          "part": "roof faces",
+          "finish": "RAL 7004",
+          "ral": "7004",
+          "map_type": "solid",
+          "kpp_colour": {
+            "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1010.png",
+            "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+            "tile": 1010,
+            "rgb": [
+              150,
+              153,
+              146
+            ],
+            "dominant_pixel_count": 65536,
+            "image_size": [
+              256,
+              256
+            ],
+            "method": "exact KPP map pixels; no RAL approximation",
+            "note": "Dominant RGB only from the approved KPP map, not its cassette pattern; no reuse of KPP material IDs."
+          }
+        },
+        {
+          "part": "upper facade panels",
+          "finish": "sandwich panels RAL 5015",
+          "ral": "5015",
+          "map_type": "vertical_joints",
+          "horizontal_joints": false,
+          "kpp_colour": {
+            "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1013.png",
+            "sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+            "tile": 1013,
+            "rgb": [
+              34,
+              113,
+              179
+            ],
+            "dominant_pixel_count": 65536,
+            "image_size": [
+              256,
+              256
+            ],
+            "method": "exact KPP map pixels; no RAL approximation",
+            "note": "Prior dominant-pixel sample of KPP tile 1013. The panel map is panel_rule.texture, which replaces the KPP cassette tile. No reuse of KPP material IDs."
+          }
+        }
+      ]
     },
     {
       "id": 2,
@@ -983,7 +1081,7 @@
       "finish": "metal RAL 5015",
       "ral": "5015",
       "map_type": "metal",
-      "status": "proposed",
+      "status": "approved",
       "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
       "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=2; ids-isolated.png cell 2; polygon counts from census",
       "drawing_evidence": [
@@ -1021,7 +1119,7 @@
       "finish": "sandwich panels RAL 7047",
       "ral": "7047",
       "map_type": "solid",
-      "status": "proposed",
+      "status": "approved",
       "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
       "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=3; ids-isolated.png cell 3; polygon counts from census",
       "drawing_evidence": [
@@ -1060,7 +1158,7 @@
       "finish": "metal RAL 7004",
       "ral": "7004",
       "map_type": "metal",
-      "status": "proposed",
+      "status": "approved",
       "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
       "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=4; ids-isolated.png cell 4; polygon counts from census",
       "drawing_evidence": [
@@ -1094,19 +1192,35 @@
       "polygons": 24,
       "triangles": 48,
       "area_m2": 0.6970296496195834,
-      "role_observed": "small roof-line tubular pieces; snow-retainer candidate",
-      "finish": "?",
-      "ral": null,
+      "role_observed": "snow guards (tubular snow retainers)",
+      "finish": "metal RAL 7004",
+      "ral": "7004",
       "map_type": "metal",
-      "status": "unknown",
+      "status": "approved",
       "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
       "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=5; ids-isolated.png cell 5; polygon counts from census",
       "drawing_evidence": [
         "roof",
         "section"
       ],
-      "question": "What coating/RAL applies to ID 5 tubular roof pieces (snow retainers), and is this role correct?",
-      "kpp_colour": null
+      "question": null,
+      "kpp_colour": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1010.png",
+        "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "tile": 1010,
+        "rgb": [
+          150,
+          153,
+          146
+        ],
+        "dominant_pixel_count": 65536,
+        "image_size": [
+          256,
+          256
+        ],
+        "method": "exact KPP map pixels; no RAL approximation",
+        "note": "Dominant RGB only from the approved KPP map, not its cassette pattern; no reuse of KPP material IDs."
+      }
     },
     {
       "id": 6,
@@ -1118,15 +1232,32 @@
       "triangles": 300,
       "area_m2": 3.303690907223189,
       "role_observed": "round facade inserts / service penetrations",
-      "finish": "?",
-      "ral": null,
-      "map_type": "?",
-      "status": "unknown",
+      "finish": "metal RAL 7004",
+      "ral": "7004",
+      "map_type": "metal",
+      "status": "to_verify",
       "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
       "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=6; ids-isolated.png cell 6; polygon counts from census",
       "drawing_evidence": [],
-      "question": "What are the ID 6 round facade inserts (vent grilles, pipe closures or another element), and what material/RAL/map type do they require?",
-      "kpp_colour": null
+      "question": "what are the round inserts, is 7004 metal right?",
+      "kpp_colour": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1010.png",
+        "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "tile": 1010,
+        "rgb": [
+          150,
+          153,
+          146
+        ],
+        "dominant_pixel_count": 65536,
+        "image_size": [
+          256,
+          256
+        ],
+        "method": "exact KPP map pixels; no RAL approximation",
+        "note": "Dominant RGB only from the approved KPP map, not its cassette pattern; no reuse of KPP material IDs."
+      },
+      "show_enlarged": true
     },
     {
       "id": 7,
@@ -1141,7 +1272,7 @@
       "finish": "doors RAL 7004",
       "ral": "7004",
       "map_type": "solid",
-      "status": "proposed",
+      "status": "approved",
       "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
       "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=7; ids-isolated.png cell 7; polygon counts from census",
       "drawing_evidence": [
@@ -1179,7 +1310,7 @@
       "finish": "frames RAL 9016",
       "ral": "9016",
       "map_type": "solid",
-      "status": "proposed",
+      "status": "approved",
       "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
       "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=8; ids-isolated.png cell 8; polygon counts from census",
       "drawing_evidence": [
@@ -1218,7 +1349,7 @@
       "finish": "frames and surrounds RAL 9016",
       "ral": "9016",
       "map_type": "solid",
-      "status": "proposed",
+      "status": "approved",
       "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
       "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=9; ids-isolated.png cell 9; polygon counts from census",
       "drawing_evidence": [
@@ -1257,7 +1388,7 @@
       "finish": "plinth and required perimeter drop RAL 7004",
       "ral": "7004",
       "map_type": "solid",
-      "status": "proposed",
+      "status": "approved",
       "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
       "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=10; ids-isolated.png cell 10; polygon counts from census",
       "drawing_evidence": [
@@ -1293,17 +1424,22 @@
       "triangles": 128,
       "area_m2": 116.79776658804516,
       "role_observed": "inner floor / wall shell",
-      "finish": "?",
+      "finish": "Interior",
       "ral": null,
-      "map_type": "?",
-      "status": "unknown",
+      "map_type": "solid",
+      "status": "approved",
       "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
       "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=11; ids-isolated.png cell 11; polygon counts from census",
       "drawing_evidence": [
         "section"
       ],
-      "question": "What finish is required on ID 11 interior/floor faces visible through the pressure-relief glazing? No internal finish schedule was found.",
-      "kpp_colour": null
+      "question": null,
+      "kpp_colour": null,
+      "kpp_finish_name": "Interior",
+      "kpp_finish_source": "jobs/KPP1/materials.json",
+      "kpp_finish_id": 31,
+      "kpp_finish_udim": 1011,
+      "kpp_finish_note": "Exact finishes key Interior (id 31, udim 1011). Artem called this KPP Interior; Interior is the library name."
     },
     {
       "id": 12,
@@ -1318,7 +1454,7 @@
       "finish": "M_Glass_01 (KPP convention)",
       "ral": null,
       "map_type": "glass",
-      "status": "proposed",
+      "status": "approved",
       "geometry_sha256": "2bbb2d6b882ea764917aaeaa8a4bee04d0f89a04971a369fca05eaeecdcb0653",
       "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-388.json material_ids=12; ids-isolated.png cell 12; polygon counts from census",
       "drawing_evidence": [
@@ -1374,16 +1510,13 @@
     "all_views": "depth-correct-views.png"
   },
   "questions": [
-    "May ID 1 use RAL 5015 on the roof as well as the upper facades, or must roof faces be separated and assigned another coating/RAL?",
-    "What coating/RAL applies to ID 5 tubular roof pieces (snow retainers), and is this role correct?",
-    "What are the ID 6 round facade inserts (vent grilles, pipe closures or another element), and what material/RAL/map type do they require?",
-    "What finish is required on ID 11 interior/floor faces visible through the pressure-relief glazing? No internal finish schedule was found.",
-    "The facade panel rib/joint module is not dimensioned in the inspected views: propose solid colour without joints; provide a module only if joints are required."
+    "what are the round inserts, is 7004 metal right?"
   ],
   "limits": [
     "Recovered DXF (strict parser missing ENDSEC; recover 0 errors, 2 orphan paper-space block removals). Native source DWG not edited.",
     "Only PDF sheet 3 is supplied. Facade/roof sheet numbers are not guessed: DWG model-space titles and coordinates are locators.",
     "No yellow RAL 1021, cassette, perforation or membrane specification found in AC07; KPP-only finishes are not transferred.",
-    "All assignments remain proposals; ambiguous finish is ?; no VPM/NPM export, no texture production."
+    "Gate 1 colours are approved except ID 6 (to_verify, show enlarged on the later acceptance sheet). No VPM/NPM export and no texture production in this card. Geometry, topology, UCX and multisub IDs stay as source.",
+    "RAL 5015 vertical joints are a recorded rule only. The user texture is referenced, not tiled (4096 is not a multiple of 600). No panel cuts are made in this card."
   ]
 }
