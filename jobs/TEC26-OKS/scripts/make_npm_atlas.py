@@ -1,4 +1,4 @@
-"""Build the KPP1 NPM texture set: one 2048 atlas per OKS (reg p.9 §5.1-5.11), PNG, no alpha channel.
+"""new-case: TEC26 copy of jobs/KPP1/scripts/make_npm_atlas.py (KPP1 recipe, card #559). Build the KPP1 NPM texture set: one 2048 atlas per OKS (reg p.9 §5.1-5.11), PNG, no alpha channel.
 
 Usage: python make_npm_atlas.py <spec.json> <new_out_dir>   (TEC26 copy of jobs/KPP1/scripts/make_npm_atlas.py)
 Writes T_<A>_001_Main_d_1.png (Diffuse, RGB), T_<A>_001_Main_o_1.png (Opacity, RGB white = solid,

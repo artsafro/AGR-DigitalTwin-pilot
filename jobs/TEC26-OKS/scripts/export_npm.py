@@ -1,4 +1,4 @@
-"""Export the NPM OKS FBX from a TEC26 master (headless Blender; TEC26 copy of jobs/KPP1/scripts/export_npm.py).
+"""new-case: TEC26 copy of jobs/KPP1/scripts/export_npm.py (KPP1 recipe, card #559). Export the NPM OKS FBX from a TEC26 master (headless Blender; TEC26 copy of jobs/KPP1/scripts/export_npm.py).
 
 Usage: blender --background --factory-startup --python export_npm.py -- <master.blend> <spec.json> <atlas_dir> <out_dir> [prefix]
 TEC26 changes: texture spec passed explicitly; MainGlass optional (AC08 has none); out_dir must be new and empty.

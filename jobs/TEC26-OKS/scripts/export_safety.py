@@ -1,4 +1,4 @@
-"""Pure preflight checks for KPP1 delivery runs (no Blender dependency)."""
+"""new-case: TEC26 copy of jobs/KPP1/scripts/export_safety.py (KPP1 recipe, card #559). Pure preflight checks for KPP1 delivery runs (no Blender dependency)."""
 import argparse
 import os
 from pathlib import Path

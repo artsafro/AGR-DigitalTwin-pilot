@@ -1,4 +1,4 @@
-"""Generate the KPP1 VPM UDIM texture sets (Diffuse, ERM, Normal) from vpm_textures.json.
+"""new-case: TEC26 copy of jobs/KPP1/scripts/make_textures.py (KPP1 recipe, card #559). Generate the KPP1 VPM UDIM texture sets (Diffuse, ERM, Normal) from vpm_textures.json.
 
 Usage: python make_textures.py <spec.json> <new_out_dir>   (TEC26 copy of jobs/KPP1/scripts/make_textures.py)
 Writes T_<Address>_{Diffuse|ERM|Normal}_1.<UDIM>.png (VPM naming, reg p.34 §4.3).

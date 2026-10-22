@@ -1,4 +1,4 @@
-"""Run SINTEZ AGR Checker (Blender extension sintez_agr_checker) headless on a folder of AGR ZIPs.
+"""new-case: TEC26 copy of jobs/KPP1/scripts/run_agr_checker.py (KPP1 recipe, card #559). Run SINTEZ AGR Checker (Blender extension sintez_agr_checker) headless on a folder of AGR ZIPs.
 
 Usage: blender --background --factory-startup --python run_agr_checker.py -- <folder_with_zips> <out.json>
 

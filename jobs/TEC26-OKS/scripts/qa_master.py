@@ -1,4 +1,4 @@
-"""Master-geometry QA for KPP1: quads, quad size, gaps (T-junctions, open edges), flipped normals.
+"""new-case: TEC26 copy of jobs/KPP1/scripts/qa_master.py (KPP1 recipe, card #559). Master-geometry QA for KPP1: quads, quad size, gaps (T-junctions, open edges), flipped normals.
 
 Usage: blender --background --factory-startup <file.blend|-> --python qa_master.py -- <out.json> [fbx]
 With an FBX path the scene is reset and the FBX is imported first (readback of an export).

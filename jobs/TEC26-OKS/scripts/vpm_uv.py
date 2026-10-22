@@ -1,4 +1,4 @@
-"""VPM texel cuts, UDIM UV packing and materials for the KPP1 build (stage 5).
+"""new-case: TEC26 copy of jobs/KPP1/scripts/vpm_uv.py (KPP1 recipe, card #559). VPM texel cuts, UDIM UV packing and materials for the KPP1 build (stage 5).
 
 Faces carry a `finish` int layer (index into the builder's finish names). Texture sets per finish are
 in vpm_textures.json. Rules (docs/domain/uv-textures.md, geometry.md):

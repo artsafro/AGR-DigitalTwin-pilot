@@ -1,4 +1,4 @@
-"""Export the VPM FBX from a TEC26 master (headless Blender; TEC26 copy of jobs/KPP1/scripts/export_vpm.py).
+"""new-case: TEC26 copy of jobs/KPP1/scripts/export_vpm.py (KPP1 recipe, card #559). Export the VPM FBX from a TEC26 master (headless Blender; TEC26 copy of jobs/KPP1/scripts/export_vpm.py).
 
 TEC26 changes: MainGlass is optional (AC08 has no glass); the package dir must be new and empty.
 

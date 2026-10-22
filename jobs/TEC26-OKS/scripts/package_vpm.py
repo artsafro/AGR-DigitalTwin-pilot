@@ -1,4 +1,4 @@
-"""Assemble a TEC26 VPM OKS package (TEC26 copy of jobs/KPP1/scripts/package_vpm.py; spec not needed, TEC26 values): FBX + external PNG set + GeoJSON -> SM_<Address>.zip.
+"""new-case: TEC26 copy of jobs/KPP1/scripts/package_vpm.py (KPP1 recipe, card #559). Assemble a TEC26 VPM OKS package (TEC26 copy of jobs/KPP1/scripts/package_vpm.py; spec not needed, TEC26 values): FBX + external PNG set + GeoJSON -> SM_<Address>.zip.
 
 Usage: py -3 package_vpm.py <package_dir> <textures_dir> [--no-geojson]
 --no-geojson: user decision 2026-10-07 (GeoJSON, coordinates and district code deferred) -> ZIP holds
