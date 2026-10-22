@@ -5,6 +5,8 @@ duplicate, draws a bar on z=0, and renders a clay view plus finish-colour views.
 Does not save.
 
 Usage: dcc_batch.py max --file render_preview_max.py --scene <truba_named.max>
+
+new-case: depth-correct scanline renders with UCX hidden and a z=0 reference line.
 """
 from __future__ import annotations
 

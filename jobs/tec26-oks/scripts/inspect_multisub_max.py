@@ -5,6 +5,8 @@ save, rename, or export. The opened file is a copy; this script never calls
 saveMaxFile or saveNodes.
 
 Usage: dcc_batch.py max --file inspect_multisub_max.py --scene <copy.max>
+
+new-case: read-only Multi/Sub census mapping scene slots to finish swatches.
 """
 from __future__ import annotations
 

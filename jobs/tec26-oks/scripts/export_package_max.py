@@ -10,6 +10,8 @@ again as a separate UCX FBX. The VPM zip contains the visual FBX (UCX included),
 the external PNGs and a manifest. The NPM FBX has no UCX.
 
 Usage: dcc_batch.py max --file export_package_max.py --scene <copy.max>
+
+new-case: rename + assign VPM/NPM materials + export FBX packages with UCX from a laid-out Max scene.
 """
 from __future__ import annotations
 

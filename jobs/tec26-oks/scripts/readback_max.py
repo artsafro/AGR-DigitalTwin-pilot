@@ -5,6 +5,8 @@ source mesh can be checked, then reset and import each FBX. Writes the receipt
 next to the packages and into jobs/tec26-oks/scripts/qa-receipt.json.
 
 Does not save.
+
+new-case: FBX re-import readback with xView overlap/backface/winding checks.
 """
 from __future__ import annotations
 
