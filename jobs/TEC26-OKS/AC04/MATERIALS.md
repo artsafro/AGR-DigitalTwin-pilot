@@ -209,3 +209,22 @@ Stop at Gate 1 paint. `delivery_passed` is false. Technical QA, user acceptance 
 ## Swatch sheet (post-approval)
 
 `G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v007/swatches.png` (+ `SHA256SUMS.txt`): one swatch per ID/region, no numbers inside swatches, empty slots 6-10 crossed out. Blue = mean of KPP tile 1013 (34,113,179); grey = mean of KPP tile 1010 (150,153,146). v006 had a wrong ID5 yellow (243,165,5); v007 fixes it to the KPP RAL1021 (238,201,0). Yellow = KPP RAL1021 (238,201,0). `contact-sheet-ids.png` is the unchanged v005 depth-correct ID render sheet. Facade-vs-sheet acceptance pictures are made by the build card; 4 facade rib counts stay open (see joint_report).
+
+
+## Build legend (binding, [D171]) - build-v003
+
+Card #561 build on the AC08 v010 recipe; `vpm_textures.json` `legend`, checked by `finish_map.validate_legend` before
+textures, build and renders. Presentation slide 31 is the authority; it supersedes the DWG-based Gate-1 rows where
+they differ (frame band blue [D170]). Report: `BUILD_REPORT.md`.
+
+| Hatch (slide 31 / DWG legend 170B10) | Material | RAL | Texture | Finishes (source ID) |
+|---|---|---|---|---|
+| Сэндвич-панели, козырьки | sandwich panel | 5015 | ribbed (Artem's vertical joints, 1000 px/m) | `PanelVJ6`, `PanelVJ10`, `PanelS1`, `PanelS2`, `PanelS3`, `PanelS23` `_RAL5015` (ID2) |
+| Обрамление сэндвич-стены + drop below ±0.000 in wall colour | sandwich wall edging | 5015 | plain | `Frame_RAL5015` (ID1 except roof) |
+| Крыльца, двери | door, small frames | 7004 | plain | `Door_RAL7004` (ID4) |
+| Кровля (not on the slide; Gate-1 point 2) | roof deck | 7004 | plain | `Roof_RAL7004` (ID1 up-faces z >= 3.2 m) |
+| Ограждения лестниц | railings, ladder, cage | 1021 | plain | `Railing_RAL1021` (ID5) |
+| - | glass | - | none (KPP glass object) | `SM_Los_1_MainGlass` (ID3) |
+
+No RAL 7047 sandwich and no RAL 9016 frames on slide 31 or the DWG legend of AC04. Rib count per container field from
+slide 31: А-В 5 + 9, В-А 9 + 5, 1-2 2 (door edges), 2-1 1 (+2 ladder stringers); spread evenly per field.

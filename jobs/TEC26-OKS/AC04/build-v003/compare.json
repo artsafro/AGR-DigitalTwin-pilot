@@ -1,0 +1,2433 @@
+{
+ "px_per_m": 200.0,
+ "slide": "C:/x/tec26-oks/pptx/facades/slide31.png",
+ "slide_sha256": "fa8e23805bcb43ad2af83848104805ba89c51ba9f83da1b04133cb710e0ce269",
+ "slide_no": 31,
+ "facades": {
+  "А-В": {
+   "normal": "+x",
+   "slide_box_px": [
+    137,
+    151,
+    617,
+    264
+   ],
+   "slide_rows": {
+    "0.20": {
+     "row_y": 241,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        171.0,
+        205.0,
+        239.0,
+        272.5
+       ],
+       "ladder_px": [],
+       "hi_px": 306.5,
+       "joints": 4,
+       "field_mm": 4776.0
+      },
+      {
+       "lo_px": 313.0,
+       "joints_px": [],
+       "ladder_px": [],
+       "hi_px": 317.5,
+       "joints": 0,
+       "field_mm": 133.5
+      },
+      {
+       "lo_px": 322.0,
+       "joints_px": [
+        333.0
+       ],
+       "ladder_px": [],
+       "hi_px": 347.5,
+       "joints": 1,
+       "field_mm": 756.4
+      },
+      {
+       "lo_px": 357.5,
+       "joints_px": [
+        376.0,
+        391.5,
+        425.0,
+        459.0,
+        493.0,
+        527.0,
+        561.0,
+        595.0
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 8,
+       "field_mm": 7430.9
+      }
+     ]
+    },
+    "0.25": {
+     "row_y": 236,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        171.0,
+        205.0,
+        239.0,
+        272.5,
+        306.5,
+        317.5
+       ],
+       "ladder_px": [],
+       "hi_px": 333.5,
+       "joints": 6,
+       "field_mm": 5576.9
+      },
+      {
+       "lo_px": 342.0,
+       "joints_px": [
+        357.5,
+        376.0,
+        391.5,
+        425.0,
+        459.0,
+        493.0,
+        527.0,
+        561.0,
+        595.0
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 9,
+       "field_mm": 7890.7
+      }
+     ]
+    },
+    "0.30": {
+     "row_y": 230,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        171.0,
+        205.0,
+        239.0,
+        272.5,
+        306.5,
+        317.5
+       ],
+       "ladder_px": [],
+       "hi_px": 333.0,
+       "joints": 6,
+       "field_mm": 5562.1
+      },
+      {
+       "lo_px": 342.5,
+       "joints_px": [
+        357.5,
+        376.0,
+        391.5,
+        425.0,
+        459.0,
+        493.0,
+        527.0,
+        561.0,
+        595.0
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 9,
+       "field_mm": 7875.9
+      }
+     ]
+    },
+    "0.35": {
+     "row_y": 224,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        171.0,
+        205.0,
+        239.0,
+        272.5
+       ],
+       "ladder_px": [],
+       "hi_px": 333.0,
+       "joints": 4,
+       "field_mm": 5562.1
+      },
+      {
+       "lo_px": 342.5,
+       "joints_px": [
+        357.5,
+        376.0,
+        391.5,
+        425.0,
+        459.0,
+        493.0,
+        527.0,
+        561.0,
+        595.0
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 9,
+       "field_mm": 7875.9
+      }
+     ]
+    },
+    "0.40": {
+     "row_y": 219,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        171.0,
+        205.0,
+        239.0
+       ],
+       "ladder_px": [],
+       "hi_px": 272.5,
+       "joints": 3,
+       "field_mm": 3767.4
+      },
+      {
+       "lo_px": 281.5,
+       "joints_px": [],
+       "ladder_px": [],
+       "hi_px": 286.5,
+       "joints": 0,
+       "field_mm": 148.3
+      },
+      {
+       "lo_px": 290.5,
+       "joints_px": [],
+       "ladder_px": [],
+       "hi_px": 300.5,
+       "joints": 0,
+       "field_mm": 296.6
+      },
+      {
+       "lo_px": 309.5,
+       "joints_px": [
+        313.5
+       ],
+       "ladder_px": [],
+       "hi_px": 333.0,
+       "joints": 1,
+       "field_mm": 697.1
+      },
+      {
+       "lo_px": 342.5,
+       "joints_px": [
+        357.5,
+        376.0,
+        391.5,
+        425.0,
+        459.0,
+        493.0,
+        527.0,
+        561.0,
+        595.0
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 9,
+       "field_mm": 7875.9
+      }
+     ]
+    },
+    "0.45": {
+     "row_y": 213,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        171.0,
+        205.0,
+        239.0,
+        272.5
+       ],
+       "ladder_px": [],
+       "hi_px": 333.0,
+       "joints": 4,
+       "field_mm": 5562.1
+      },
+      {
+       "lo_px": 342.5,
+       "joints_px": [
+        357.5,
+        376.0,
+        391.5,
+        425.0,
+        459.0,
+        493.0,
+        527.0,
+        561.0,
+        595.0
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 9,
+       "field_mm": 7875.9
+      }
+     ]
+    },
+    "0.50": {
+     "row_y": 208,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        171.0,
+        205.0,
+        239.0,
+        272.5,
+        306.5
+       ],
+       "ladder_px": [],
+       "hi_px": 333.0,
+       "joints": 5,
+       "field_mm": 5562.1
+      },
+      {
+       "lo_px": 342.5,
+       "joints_px": [
+        357.5,
+        376.0,
+        391.5,
+        425.0,
+        459.0,
+        493.0,
+        527.0,
+        561.0,
+        595.0
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 9,
+       "field_mm": 7875.9
+      }
+     ]
+    },
+    "0.55": {
+     "row_y": 202,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        171.0,
+        205.0,
+        239.0,
+        272.5,
+        306.5
+       ],
+       "ladder_px": [],
+       "hi_px": 333.0,
+       "joints": 5,
+       "field_mm": 5562.1
+      },
+      {
+       "lo_px": 342.5,
+       "joints_px": [
+        357.5,
+        376.0,
+        391.5,
+        425.0,
+        459.0,
+        493.0,
+        527.0,
+        561.0,
+        595.0
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 9,
+       "field_mm": 7875.9
+      }
+     ]
+    },
+    "0.60": {
+     "row_y": 196,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        171.0,
+        205.0,
+        239.0,
+        272.5,
+        306.5
+       ],
+       "ladder_px": [],
+       "hi_px": 333.0,
+       "joints": 5,
+       "field_mm": 5562.1
+      },
+      {
+       "lo_px": 342.0,
+       "joints_px": [
+        357.5,
+        376.0,
+        391.5,
+        425.0,
+        459.0,
+        493.0,
+        527.0,
+        561.0,
+        595.0
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 9,
+       "field_mm": 7890.7
+      }
+     ]
+    },
+    "0.65": {
+     "row_y": 191,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        171.0,
+        205.0,
+        239.0,
+        272.5,
+        306.5
+       ],
+       "ladder_px": [],
+       "hi_px": 333.0,
+       "joints": 5,
+       "field_mm": 5562.1
+      },
+      {
+       "lo_px": 342.5,
+       "joints_px": [
+        357.5,
+        376.0,
+        391.5,
+        416.5,
+        459.0,
+        493.0,
+        527.0,
+        561.0,
+        595.0
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 9,
+       "field_mm": 7875.9
+      }
+     ]
+    },
+    "0.70": {
+     "row_y": 185,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        171.0,
+        205.0,
+        239.0,
+        272.5,
+        306.5
+       ],
+       "ladder_px": [],
+       "hi_px": 333.5,
+       "joints": 5,
+       "field_mm": 5576.9
+      },
+      {
+       "lo_px": 342.5,
+       "joints_px": [
+        357.5,
+        376.0,
+        391.5
+       ],
+       "ladder_px": [],
+       "hi_px": 402.5,
+       "joints": 3,
+       "field_mm": 1779.9
+      },
+      {
+       "lo_px": 409.5,
+       "joints_px": [],
+       "ladder_px": [],
+       "hi_px": 419.5,
+       "joints": 0,
+       "field_mm": 296.6
+      },
+      {
+       "lo_px": 426.5,
+       "joints_px": [],
+       "ladder_px": [],
+       "hi_px": 430.5,
+       "joints": 0,
+       "field_mm": 118.7
+      },
+      {
+       "lo_px": 434.5,
+       "joints_px": [
+        438.5,
+        459.0,
+        493.0,
+        527.0,
+        561.0,
+        595.0
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 6,
+       "field_mm": 5146.8
+      }
+     ]
+    },
+    "0.75": {
+     "row_y": 179,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        171.0,
+        205.0,
+        239.0,
+        272.5,
+        306.5
+       ],
+       "ladder_px": [],
+       "hi_px": 333.0,
+       "joints": 5,
+       "field_mm": 5562.1
+      },
+      {
+       "lo_px": 342.5,
+       "joints_px": [
+        357.5,
+        376.0,
+        391.5
+       ],
+       "ladder_px": [],
+       "hi_px": 409.5,
+       "joints": 3,
+       "field_mm": 1987.5
+      },
+      {
+       "lo_px": 419.5,
+       "joints_px": [],
+       "ladder_px": [],
+       "hi_px": 426.0,
+       "joints": 0,
+       "field_mm": 192.8
+      },
+      {
+       "lo_px": 433.0,
+       "joints_px": [
+        438.5,
+        459.0,
+        493.0,
+        527.0,
+        561.0,
+        595.0
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 6,
+       "field_mm": 5191.3
+      }
+     ]
+    },
+    "0.80": {
+     "row_y": 174,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        171.0,
+        205.0,
+        239.0,
+        272.5,
+        306.5
+       ],
+       "ladder_px": [],
+       "hi_px": 333.0,
+       "joints": 5,
+       "field_mm": 5562.1
+      },
+      {
+       "lo_px": 342.5,
+       "joints_px": [
+        357.5,
+        376.0,
+        391.5
+       ],
+       "ladder_px": [],
+       "hi_px": 425.0,
+       "joints": 3,
+       "field_mm": 2447.3
+      },
+      {
+       "lo_px": 435.0,
+       "joints_px": [],
+       "ladder_px": [],
+       "hi_px": 438.5,
+       "joints": 0,
+       "field_mm": 103.8
+      },
+      {
+       "lo_px": 442.5,
+       "joints_px": [
+        459.0,
+        474.5,
+        493.0,
+        527.0
+       ],
+       "ladder_px": [],
+       "hi_px": 561.0,
+       "joints": 4,
+       "field_mm": 3515.2
+      },
+      {
+       "lo_px": 568.5,
+       "joints_px": [
+        595.0
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 1,
+       "field_mm": 1171.7
+      }
+     ]
+    }
+   },
+   "slide_fields": [
+    {
+     "joints": 5,
+     "rows": [
+      6,
+      6,
+      4,
+      4,
+      5,
+      5,
+      5,
+      5
+     ],
+     "field_mm": 5562.1,
+     "ladder_lines": 0,
+     "joints_px": [
+      171.0,
+      205.0,
+      239.0,
+      272.5,
+      306.5
+     ],
+     "ladder_px": []
+    },
+    {
+     "joints": 9,
+     "rows": [
+      9,
+      9,
+      9,
+      9,
+      9,
+      9,
+      9,
+      9
+     ],
+     "field_mm": 7890.7,
+     "ladder_lines": 0,
+     "joints_px": [
+      357.5,
+      376.0,
+      391.5,
+      425.0,
+      459.0,
+      493.0,
+      527.0,
+      561.0,
+      595.0
+     ],
+     "ladder_px": []
+    }
+   ],
+   "groups": [
+    {
+     "fields": [
+      "А-В/1"
+     ],
+     "lo": -7.334,
+     "hi": -1.7943,
+     "contract_joints": 5,
+     "vpm_rows": [
+      {
+       "ok": true,
+       "joints_found": 5,
+       "joints_expected": 5,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -6.4113,
+        -5.4875,
+        -4.565,
+        -3.6413,
+        -2.7175
+       ],
+       "z": 0.776
+      },
+      {
+       "ok": true,
+       "joints_found": 5,
+       "joints_expected": 5,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -6.4113,
+        -5.4875,
+        -4.565,
+        -3.6413,
+        -2.7175
+       ],
+       "z": 2.795
+      }
+     ],
+     "vpm_visible": 5,
+     "vpm_hidden": 0,
+     "npm_rows": [
+      {
+       "ok": true,
+       "joints_found": 5,
+       "joints_expected": 5,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -6.41,
+        -5.4875,
+        -4.565,
+        -3.64,
+        -2.7175
+       ],
+       "z": 0.776
+      },
+      {
+       "ok": true,
+       "joints_found": 5,
+       "joints_expected": 5,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -6.41,
+        -5.4875,
+        -4.565,
+        -3.64,
+        -2.7175
+       ],
+       "z": 2.795
+      }
+     ],
+     "npm_visible": 5,
+     "npm_hidden": 0,
+     "slide_joints": 5,
+     "slide_ladder_lines": 0,
+     "match": true
+    },
+    {
+     "fields": [
+      "А-В/2"
+     ],
+     "lo": -1.5134,
+     "hi": 6.3249,
+     "contract_joints": 9,
+     "vpm_rows": [
+      {
+       "ok": true,
+       "joints_found": 9,
+       "joints_expected": 9,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.73,
+        0.0538,
+        0.8375,
+        1.6213,
+        2.405,
+        3.1888,
+        3.9738,
+        4.7575,
+        5.54
+       ],
+       "z": 0.776
+      },
+      {
+       "ok": true,
+       "joints_found": 9,
+       "joints_expected": 9,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.73,
+        0.0538,
+        0.8375,
+        1.6213,
+        2.405,
+        3.1888,
+        3.9738,
+        4.7575,
+        5.54
+       ],
+       "z": 2.795
+      }
+     ],
+     "vpm_visible": 9,
+     "vpm_hidden": 0,
+     "npm_rows": [
+      {
+       "ok": true,
+       "joints_found": 9,
+       "joints_expected": 9,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.73,
+        0.055,
+        0.8375,
+        1.6225,
+        2.405,
+        3.19,
+        3.9725,
+        4.7575,
+        5.54
+       ],
+       "z": 0.776
+      },
+      {
+       "ok": true,
+       "joints_found": 9,
+       "joints_expected": 9,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.73,
+        0.055,
+        0.8375,
+        1.6225,
+        2.405,
+        3.19,
+        3.9725,
+        4.7575,
+        5.54
+       ],
+       "z": 2.795
+      }
+     ],
+     "npm_visible": 9,
+     "npm_hidden": 0,
+     "slide_joints": 9,
+     "slide_ladder_lines": 0,
+     "match": true
+    }
+   ],
+   "ground_m": 0.0,
+   "slide_height_scale_ratio": 0.9698,
+   "totals_visible": {
+    "slide": 14,
+    "vpm": 14,
+    "npm": 14,
+    "contract": 14
+   },
+   "match": true,
+   "png": "compare_east_А-В.png",
+   "slide_per_field": "5 + 9"
+  },
+  "1-2": {
+   "normal": "-y",
+   "slide_box_px": [
+    1035,
+    151,
+    1134,
+    260
+   ],
+   "slide_rows": {
+    "0.20": {
+     "row_y": 238,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1067.5,
+        1101.5
+       ],
+       "ladder_px": [],
+       "hi_px": 1124.5,
+       "joints": 2,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.25": {
+     "row_y": 233,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1067.5,
+        1101.5
+       ],
+       "ladder_px": [],
+       "hi_px": 1124.5,
+       "joints": 2,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.30": {
+     "row_y": 227,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1067.5,
+        1101.5
+       ],
+       "ladder_px": [],
+       "hi_px": 1124.5,
+       "joints": 2,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.35": {
+     "row_y": 222,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1067.5,
+        1100.3
+       ],
+       "ladder_px": [],
+       "hi_px": 1124.5,
+       "joints": 2,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.40": {
+     "row_y": 216,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1067.5,
+        1100.3
+       ],
+       "ladder_px": [],
+       "hi_px": 1125.0,
+       "joints": 2,
+       "field_mm": 2426.8
+      }
+     ]
+    },
+    "0.45": {
+     "row_y": 211,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1053.5,
+        1067.5,
+        1101.5
+       ],
+       "ladder_px": [],
+       "hi_px": 1124.5,
+       "joints": 3,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.50": {
+     "row_y": 206,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1067.5,
+        1101.5
+       ],
+       "ladder_px": [],
+       "hi_px": 1125.0,
+       "joints": 2,
+       "field_mm": 2426.8
+      }
+     ]
+    },
+    "0.55": {
+     "row_y": 200,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1067.5,
+        1101.5
+       ],
+       "ladder_px": [],
+       "hi_px": 1124.5,
+       "joints": 2,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.60": {
+     "row_y": 195,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1067.5,
+        1101.5
+       ],
+       "ladder_px": [],
+       "hi_px": 1125.0,
+       "joints": 2,
+       "field_mm": 2426.8
+      }
+     ]
+    },
+    "0.65": {
+     "row_y": 189,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1083.5,
+        1102.5
+       ],
+       "ladder_px": [],
+       "hi_px": 1124.5,
+       "joints": 2,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.70": {
+     "row_y": 184,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1063.5
+       ],
+       "ladder_px": [],
+       "hi_px": 1074.5,
+       "joints": 1,
+       "field_mm": 913.8
+      },
+      {
+       "lo_px": 1084.5,
+       "joints_px": [
+        1094.5,
+        1105.5
+       ],
+       "ladder_px": [],
+       "hi_px": 1124.5,
+       "joints": 2,
+       "field_mm": 1198.4
+      }
+     ]
+    },
+    "0.75": {
+     "row_y": 178,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1067.0,
+        1101.0
+       ],
+       "ladder_px": [],
+       "hi_px": 1124.5,
+       "joints": 2,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.80": {
+     "row_y": 173,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1067.0,
+        1101.0
+       ],
+       "ladder_px": [],
+       "hi_px": 1124.5,
+       "joints": 2,
+       "field_mm": 2411.8
+      }
+     ]
+    }
+   },
+   "slide_fields": [
+    {
+     "joints": 2,
+     "rows": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      3,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+     ],
+     "field_mm": 2411.8,
+     "ladder_lines": 0,
+     "joints_px": [
+      1067.5,
+      1101.5
+     ],
+     "ladder_px": []
+    }
+   ],
+   "groups": [
+    {
+     "fields": [
+      "1-2/1",
+      "1-2/2",
+      "1-2/3"
+     ],
+     "lo": -1.1801,
+     "hi": 1.2015,
+     "contract_joints": 2,
+     "vpm_rows": [
+      {
+       "ok": true,
+       "joints_found": 1,
+       "joints_expected": 2,
+       "hidden_m": [],
+       "at_edge_m": [
+        0.5422
+       ],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.5187
+       ],
+       "z": 0.776
+      },
+      {
+       "ok": true,
+       "joints_found": 2,
+       "joints_expected": 2,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.5162,
+        0.5412
+       ],
+       "z": 2.795
+      }
+     ],
+     "vpm_visible": 2,
+     "vpm_hidden": 0,
+     "npm_rows": [
+      {
+       "ok": true,
+       "joints_found": 2,
+       "joints_expected": 2,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.5225,
+        0.5475
+       ],
+       "z": 0.776
+      },
+      {
+       "ok": true,
+       "joints_found": 2,
+       "joints_expected": 2,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.5162,
+        0.5412
+       ],
+       "z": 2.795
+      }
+     ],
+     "npm_visible": 2,
+     "npm_hidden": 0,
+     "slide_joints": 2,
+     "slide_ladder_lines": 0,
+     "match": true
+    }
+   ],
+   "ground_m": 0.0,
+   "slide_height_scale_ratio": 1.0002,
+   "totals_visible": {
+    "slide": 2,
+    "vpm": 2,
+    "npm": 2,
+    "contract": 2
+   },
+   "match": true,
+   "png": "compare_south_1-2.png",
+   "slide_per_field": "2"
+  },
+  "В-А": {
+   "normal": "-x",
+   "slide_box_px": [
+    137,
+    611,
+    617,
+    724
+   ],
+   "slide_rows": {
+    "0.20": {
+     "row_y": 701,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        158.5,
+        192.5,
+        226.5,
+        260.5,
+        294.5,
+        328.0,
+        362.0,
+        377.0
+       ],
+       "ladder_px": [],
+       "hi_px": 396.0,
+       "joints": 8,
+       "field_mm": 7430.9
+      },
+      {
+       "lo_px": 403.5,
+       "joints_px": [],
+       "ladder_px": [],
+       "hi_px": 411.0,
+       "joints": 0,
+       "field_mm": 222.5
+      },
+      {
+       "lo_px": 420.0,
+       "joints_px": [
+        446.5,
+        480.5,
+        514.5,
+        548.5,
+        582.5
+       ],
+       "ladder_px": [],
+       "hi_px": 607.5,
+       "joints": 5,
+       "field_mm": 5562.1
+      }
+     ]
+    },
+    "0.25": {
+     "row_y": 696,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.0,
+       "joints_px": [
+        158.5,
+        192.5,
+        226.5,
+        260.5,
+        294.5,
+        328.0,
+        362.0,
+        377.0
+       ],
+       "ladder_px": [],
+       "hi_px": 396.0,
+       "joints": 8,
+       "field_mm": 7445.8
+      },
+      {
+       "lo_px": 403.5,
+       "joints_px": [],
+       "ladder_px": [],
+       "hi_px": 411.0,
+       "joints": 0,
+       "field_mm": 222.5
+      },
+      {
+       "lo_px": 420.0,
+       "joints_px": [
+        446.5,
+        480.5,
+        514.5,
+        548.5,
+        582.5
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 5,
+       "field_mm": 5576.9
+      }
+     ]
+    },
+    "0.30": {
+     "row_y": 690,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        158.5,
+        192.5,
+        226.5,
+        260.5,
+        294.5,
+        328.0,
+        362.0,
+        379.5
+       ],
+       "ladder_px": [],
+       "hi_px": 411.0,
+       "joints": 8,
+       "field_mm": 7875.9
+      },
+      {
+       "lo_px": 420.0,
+       "joints_px": [
+        446.5,
+        480.5,
+        514.5,
+        548.5,
+        582.5
+       ],
+       "ladder_px": [],
+       "hi_px": 607.5,
+       "joints": 5,
+       "field_mm": 5562.1
+      }
+     ]
+    },
+    "0.35": {
+     "row_y": 684,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        158.5,
+        192.5,
+        226.5,
+        260.5,
+        294.5,
+        328.0
+       ],
+       "ladder_px": [],
+       "hi_px": 362.0,
+       "joints": 6,
+       "field_mm": 6422.3
+      },
+      {
+       "lo_px": 368.5,
+       "joints_px": [
+        373.5
+       ],
+       "ladder_px": [],
+       "hi_px": 384.5,
+       "joints": 1,
+       "field_mm": 474.6
+      },
+      {
+       "lo_px": 390.5,
+       "joints_px": [],
+       "ladder_px": [],
+       "hi_px": 395.5,
+       "joints": 0,
+       "field_mm": 148.3
+      },
+      {
+       "lo_px": 399.5,
+       "joints_px": [],
+       "ladder_px": [],
+       "hi_px": 411.0,
+       "joints": 0,
+       "field_mm": 341.1
+      },
+      {
+       "lo_px": 420.0,
+       "joints_px": [
+        446.5,
+        480.5,
+        514.5,
+        548.5,
+        582.5
+       ],
+       "ladder_px": [],
+       "hi_px": 607.5,
+       "joints": 5,
+       "field_mm": 5562.1
+      }
+     ]
+    },
+    "0.40": {
+     "error": "slide facade (np.int64(137), np.int64(611), np.int64(617), np.int64(724)): body/field outline not found on row y=679 (19 lines)"
+    },
+    "0.45": {
+     "error": "slide facade (np.int64(137), np.int64(611), np.int64(617), np.int64(724)): body/field outline not found on row y=673 (24 lines)"
+    },
+    "0.50": {
+     "row_y": 668,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        158.5,
+        192.5,
+        226.5,
+        260.5,
+        294.5,
+        328.0,
+        362.0,
+        377.0,
+        396.0
+       ],
+       "ladder_px": [],
+       "hi_px": 411.0,
+       "joints": 9,
+       "field_mm": 7875.9
+      },
+      {
+       "lo_px": 420.0,
+       "joints_px": [
+        446.5,
+        480.5
+       ],
+       "ladder_px": [],
+       "hi_px": 514.5,
+       "joints": 2,
+       "field_mm": 2803.3
+      },
+      {
+       "lo_px": 524.5,
+       "joints_px": [],
+       "ladder_px": [],
+       "hi_px": 531.0,
+       "joints": 0,
+       "field_mm": 192.8
+      },
+      {
+       "lo_px": 537.5,
+       "joints_px": [
+        548.5,
+        582.5
+       ],
+       "ladder_px": [],
+       "hi_px": 607.5,
+       "joints": 2,
+       "field_mm": 2076.5
+      }
+     ]
+    },
+    "0.55": {
+     "row_y": 662,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        158.5,
+        192.5,
+        226.5,
+        260.5,
+        294.5,
+        328.0,
+        362.0,
+        377.0,
+        396.0
+       ],
+       "ladder_px": [],
+       "hi_px": 411.0,
+       "joints": 9,
+       "field_mm": 7875.9
+      },
+      {
+       "lo_px": 420.0,
+       "joints_px": [
+        424.0
+       ],
+       "ladder_px": [],
+       "hi_px": 439.5,
+       "joints": 1,
+       "field_mm": 578.5
+      },
+      {
+       "lo_px": 446.5,
+       "joints_px": [
+        480.5,
+        514.5,
+        531.0,
+        548.5,
+        582.5
+       ],
+       "ladder_px": [],
+       "hi_px": 607.5,
+       "joints": 5,
+       "field_mm": 4776.0
+      }
+     ]
+    },
+    "0.60": {
+     "row_y": 656,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.0,
+       "joints_px": [
+        158.5,
+        192.5,
+        226.5,
+        260.5,
+        294.5,
+        328.0,
+        362.0,
+        377.0,
+        396.0
+       ],
+       "ladder_px": [],
+       "hi_px": 411.0,
+       "joints": 9,
+       "field_mm": 7890.7
+      },
+      {
+       "lo_px": 420.0,
+       "joints_px": [
+        432.0,
+        446.5,
+        480.5,
+        514.5,
+        531.0,
+        548.5,
+        582.5
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 7,
+       "field_mm": 5576.9
+      }
+     ]
+    },
+    "0.65": {
+     "row_y": 651,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        158.5,
+        192.5,
+        226.5,
+        260.5,
+        294.5,
+        328.0,
+        362.0,
+        377.0,
+        396.0
+       ],
+       "ladder_px": [],
+       "hi_px": 411.0,
+       "joints": 9,
+       "field_mm": 7875.9
+      },
+      {
+       "lo_px": 420.0,
+       "joints_px": [
+        446.5,
+        480.5,
+        514.5
+       ],
+       "ladder_px": [],
+       "hi_px": 537.5,
+       "joints": 3,
+       "field_mm": 3485.6
+      },
+      {
+       "lo_px": 546.0,
+       "joints_px": [
+        563.5,
+        582.5
+       ],
+       "ladder_px": [],
+       "hi_px": 607.5,
+       "joints": 2,
+       "field_mm": 1824.4
+      }
+     ]
+    },
+    "0.70": {
+     "row_y": 645,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        158.5,
+        192.5,
+        226.5,
+        260.5,
+        294.5,
+        328.0,
+        362.0,
+        377.0,
+        396.0
+       ],
+       "ladder_px": [],
+       "hi_px": 411.0,
+       "joints": 9,
+       "field_mm": 7875.9
+      },
+      {
+       "lo_px": 420.0,
+       "joints_px": [
+        446.5,
+        480.5,
+        514.5
+       ],
+       "ladder_px": [],
+       "hi_px": 543.5,
+       "joints": 3,
+       "field_mm": 3663.6
+      },
+      {
+       "lo_px": 551.5,
+       "joints_px": [],
+       "ladder_px": [],
+       "hi_px": 563.5,
+       "joints": 0,
+       "field_mm": 356.0
+      },
+      {
+       "lo_px": 567.5,
+       "joints_px": [
+        582.5
+       ],
+       "ladder_px": [],
+       "hi_px": 608.0,
+       "joints": 1,
+       "field_mm": 1201.4
+      }
+     ]
+    },
+    "0.75": {
+     "row_y": 639,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        158.5,
+        192.5,
+        226.5,
+        260.5,
+        294.5,
+        328.0,
+        362.0,
+        377.0,
+        396.0
+       ],
+       "ladder_px": [],
+       "hi_px": 411.0,
+       "joints": 9,
+       "field_mm": 7875.9
+      },
+      {
+       "lo_px": 420.0,
+       "joints_px": [
+        446.5,
+        480.5,
+        514.5,
+        548.5,
+        582.5
+       ],
+       "ladder_px": [],
+       "hi_px": 607.5,
+       "joints": 5,
+       "field_mm": 5562.1
+      }
+     ]
+    },
+    "0.80": {
+     "row_y": 634,
+     "px_per_mm": 0.033710414755385644,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 145.5,
+       "joints_px": [
+        158.5,
+        192.5,
+        226.5,
+        260.5,
+        294.5,
+        328.0,
+        362.0,
+        377.0,
+        396.0
+       ],
+       "ladder_px": [],
+       "hi_px": 411.0,
+       "joints": 9,
+       "field_mm": 7875.9
+      },
+      {
+       "lo_px": 420.0,
+       "joints_px": [
+        446.5,
+        480.5,
+        514.5,
+        548.5,
+        582.5
+       ],
+       "ladder_px": [],
+       "hi_px": 607.5,
+       "joints": 5,
+       "field_mm": 5562.1
+      }
+     ]
+    }
+   },
+   "slide_fields": [
+    {
+     "joints": 9,
+     "rows": [
+      8,
+      9,
+      9,
+      9
+     ],
+     "field_mm": 7890.7,
+     "ladder_lines": 0,
+     "joints_px": [
+      158.5,
+      192.5,
+      226.5,
+      260.5,
+      294.5,
+      328.0,
+      362.0,
+      377.0,
+      396.0
+     ],
+     "ladder_px": []
+    },
+    {
+     "joints": 5,
+     "rows": [
+      5,
+      7,
+      5,
+      5
+     ],
+     "field_mm": 5562.1,
+     "ladder_lines": 0,
+     "joints_px": [
+      446.5,
+      480.5,
+      514.5,
+      548.5,
+      582.5
+     ],
+     "ladder_px": []
+    }
+   ],
+   "groups": [
+    {
+     "fields": [
+      "В-А/1"
+     ],
+     "lo": -1.5134,
+     "hi": 6.3249,
+     "contract_joints": 9,
+     "vpm_rows": [
+      {
+       "ok": true,
+       "joints_found": 9,
+       "joints_expected": 9,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.7288,
+        0.0538,
+        0.8388,
+        1.6225,
+        2.4063,
+        3.19,
+        3.9738,
+        4.7588,
+        5.5413
+       ],
+       "z": 0.776
+      },
+      {
+       "ok": true,
+       "joints_found": 9,
+       "joints_expected": 9,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.7288,
+        0.0538,
+        0.8388,
+        1.6225,
+        2.4063,
+        3.19,
+        3.9738,
+        4.7588,
+        5.5413
+       ],
+       "z": 2.795
+      }
+     ],
+     "vpm_visible": 9,
+     "vpm_hidden": 0,
+     "npm_rows": [
+      {
+       "ok": true,
+       "joints_found": 9,
+       "joints_expected": 9,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.73,
+        0.055,
+        0.8375,
+        1.6225,
+        2.405,
+        3.19,
+        3.9725,
+        4.7575,
+        5.54
+       ],
+       "z": 0.776
+      },
+      {
+       "ok": true,
+       "joints_found": 9,
+       "joints_expected": 9,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.73,
+        0.055,
+        0.8375,
+        1.6225,
+        2.405,
+        3.19,
+        3.9725,
+        4.7575,
+        5.54
+       ],
+       "z": 2.795
+      }
+     ],
+     "npm_visible": 9,
+     "npm_hidden": 0,
+     "slide_joints": 9,
+     "slide_ladder_lines": 0,
+     "match": true
+    },
+    {
+     "fields": [
+      "В-А/2"
+     ],
+     "lo": -7.334,
+     "hi": -1.7943,
+     "contract_joints": 5,
+     "vpm_rows": [
+      {
+       "ok": true,
+       "joints_found": 5,
+       "joints_expected": 5,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -6.4113,
+        -5.4875,
+        -4.5638,
+        -3.6413,
+        -2.7175
+       ],
+       "z": 0.776
+      },
+      {
+       "ok": true,
+       "joints_found": 5,
+       "joints_expected": 5,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -6.41,
+        -5.4875,
+        -4.5638,
+        -3.6413,
+        -2.7175
+       ],
+       "z": 2.795
+      }
+     ],
+     "vpm_visible": 5,
+     "vpm_hidden": 0,
+     "npm_rows": [
+      {
+       "ok": true,
+       "joints_found": 5,
+       "joints_expected": 5,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -6.41,
+        -5.4875,
+        -4.5638,
+        -3.64,
+        -2.7175
+       ],
+       "z": 0.776
+      },
+      {
+       "ok": true,
+       "joints_found": 5,
+       "joints_expected": 5,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -6.41,
+        -5.4875,
+        -4.5638,
+        -3.64,
+        -2.7175
+       ],
+       "z": 2.795
+      }
+     ],
+     "npm_visible": 5,
+     "npm_hidden": 0,
+     "slide_joints": 5,
+     "slide_ladder_lines": 0,
+     "match": true
+    }
+   ],
+   "ground_m": 0.0,
+   "slide_height_scale_ratio": 0.9698,
+   "totals_visible": {
+    "slide": 14,
+    "vpm": 14,
+    "npm": 14,
+    "contract": 14
+   },
+   "match": true,
+   "png": "compare_west_В-А.png",
+   "slide_per_field": "9 + 5"
+  },
+  "2-1": {
+   "normal": "+y",
+   "slide_box_px": [
+    1035,
+    611,
+    1134,
+    724
+   ],
+   "slide_rows": {
+    "0.20": {
+     "row_y": 701,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1107.0
+       ],
+       "ladder_px": [
+        1073.5,
+        1095.5
+       ],
+       "hi_px": 1124.5,
+       "joints": 1,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.25": {
+     "row_y": 696,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1107.0
+       ],
+       "ladder_px": [
+        1073.5,
+        1095.5
+       ],
+       "hi_px": 1125.0,
+       "joints": 1,
+       "field_mm": 2426.8
+      }
+     ]
+    },
+    "0.30": {
+     "row_y": 690,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1107.0
+       ],
+       "ladder_px": [
+        1073.5,
+        1095.5
+       ],
+       "hi_px": 1124.5,
+       "joints": 1,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.35": {
+     "row_y": 684,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1107.0
+       ],
+       "ladder_px": [
+        1073.5,
+        1095.5
+       ],
+       "hi_px": 1124.5,
+       "joints": 1,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.40": {
+     "row_y": 679,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1107.0
+       ],
+       "ladder_px": [
+        1073.5,
+        1095.5
+       ],
+       "hi_px": 1124.5,
+       "joints": 1,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.45": {
+     "row_y": 673,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1107.0
+       ],
+       "ladder_px": [
+        1073.5,
+        1095.5
+       ],
+       "hi_px": 1124.5,
+       "joints": 1,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.50": {
+     "row_y": 668,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1107.0
+       ],
+       "ladder_px": [
+        1073.5,
+        1095.5
+       ],
+       "hi_px": 1124.5,
+       "joints": 1,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.55": {
+     "row_y": 662,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1107.0
+       ],
+       "ladder_px": [
+        1073.5,
+        1095.5
+       ],
+       "hi_px": 1124.5,
+       "joints": 1,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.60": {
+     "row_y": 656,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1095.5,
+        1107.0
+       ],
+       "ladder_px": [
+        1073.2,
+        1084.5
+       ],
+       "hi_px": 1125.0,
+       "joints": 2,
+       "field_mm": 2426.8
+      }
+     ]
+    },
+    "0.65": {
+     "row_y": 651,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1095.5,
+        1107.0
+       ],
+       "ladder_px": [
+        1073.2,
+        1084.5
+       ],
+       "hi_px": 1124.5,
+       "joints": 2,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.70": {
+     "row_y": 645,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1095.5,
+        1107.0
+       ],
+       "ladder_px": [
+        1073.2,
+        1084.5
+       ],
+       "hi_px": 1125.0,
+       "joints": 2,
+       "field_mm": 2426.8
+      }
+     ]
+    },
+    "0.75": {
+     "row_y": 639,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1095.5,
+        1107.0
+       ],
+       "ladder_px": [
+        1073.2,
+        1084.5
+       ],
+       "hi_px": 1124.5,
+       "joints": 2,
+       "field_mm": 2411.8
+      }
+     ]
+    },
+    "0.80": {
+     "row_y": 634,
+     "px_per_mm": 0.03337738698888769,
+     "height_scale_ratio": null,
+     "fields": [
+      {
+       "lo_px": 1044.0,
+       "joints_px": [
+        1095.5,
+        1107.0
+       ],
+       "ladder_px": [
+        1073.2,
+        1084.5
+       ],
+       "hi_px": 1124.5,
+       "joints": 2,
+       "field_mm": 2411.8
+      }
+     ]
+    }
+   },
+   "slide_fields": [
+    {
+     "joints": 1,
+     "rows": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2,
+      2,
+      2
+     ],
+     "field_mm": 2411.8,
+     "ladder_lines": 2,
+     "joints_px": [
+      1107.0
+     ],
+     "ladder_px": [
+      1073.5,
+      1095.5
+     ]
+    }
+   ],
+   "groups": [
+    {
+     "fields": [
+      "2-1/2",
+      "2-1/1"
+     ],
+     "lo": -1.1801,
+     "hi": 1.2015,
+     "contract_joints": 1,
+     "vpm_rows": [
+      {
+       "ok": true,
+       "joints_found": 1,
+       "joints_expected": 1,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.5162
+       ],
+       "z": 0.776
+      },
+      {
+       "ok": true,
+       "joints_found": 1,
+       "joints_expected": 1,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.5162
+       ],
+       "z": 2.795
+      }
+     ],
+     "vpm_visible": 1,
+     "vpm_hidden": 0,
+     "npm_rows": [
+      {
+       "ok": true,
+       "joints_found": 1,
+       "joints_expected": 1,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.515
+       ],
+       "z": 0.776
+      },
+      {
+       "ok": true,
+       "joints_found": 1,
+       "joints_expected": 1,
+       "hidden_m": [],
+       "at_edge_m": [],
+       "missing_m": [],
+       "extra_m": [],
+       "found_m": [
+        -0.515
+       ],
+       "z": 2.795
+      }
+     ],
+     "npm_visible": 1,
+     "npm_hidden": 0,
+     "slide_joints": 1,
+     "slide_ladder_lines": 2,
+     "match": true
+    }
+   ],
+   "ground_m": 0.0,
+   "slide_height_scale_ratio": 1.0369,
+   "totals_visible": {
+    "slide": 1,
+    "vpm": 1,
+    "npm": 1,
+    "contract": 1
+   },
+   "match": true,
+   "png": "compare_north_2-1.png",
+   "slide_per_field": "1"
+  }
+ }
+}

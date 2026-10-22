@@ -1,0 +1,605 @@
+{
+ "_doc": "AC04 (Локальные очистные сооружения поверхностных сточных вод, layer 004, mesh АС.04 handle 174) VPM texture sets, AC08 v010 recipe (PR #574 ed743ab). Authority: presentation slide 31 + binding legend [D171]; Gate-1 (#561) approved paint: panels RAL 5015 = KPP blue, roof RAL 7004, doors/frames RAL 7004, railings RAL 1021, glass as KPP, drop below ±0.000 = wall colour plain. Frame band blue [D170]. Each container panel field is its own facade field (span) because the long facades carry two containers with a frame between them and the short walls are split into three panels at the door edges on the slide; joints evenly per field, count from slide 31. Address Los_1 is a placeholder token.",
+ "address": "Los_1",
+ "size_full": 4096,
+ "size_placeholder": 256,
+ "pad_m": 0.04,
+ "zero_m": 0.0,
+ "source_ids": {
+  "1": {
+   "split": "below_zero",
+   "above": "Frame_RAL5015",
+   "below": "Frame_RAL5015",
+   "roof": {
+    "finish": "Roof_RAL7004",
+    "min_z": 3.2,
+    "min_nz": 0.9
+   },
+   "why": "mixed ID1: frame band/edging above ±0.000 blue 5015 [D170]; roof decks (up-facing, z >= 3.2 m) RAL 7004 (Gate-1 point 2); at/below ±0.000 the drop in wall colour 5015 plain (Gate-1 point 4)"
+  },
+  "2": {
+   "split": "facade",
+   "why": "sandwich panels RAL 5015, vertical joints only; rib count per container field from slide 31 (facades)"
+  },
+  "3": {
+   "glass": true,
+   "why": "two small panes: KPP glass M_<A>_MainGlass_1 (Gate-1 ID3)"
+  },
+  "4": {
+   "finish": "Door_RAL7004",
+   "why": "door and small opening frames RAL 7004 (Gate-1 ID4)"
+  },
+  "5": {
+   "finish": "Railing_RAL1021",
+   "why": "railings, ladder and cage RAL 1021 (Gate-1 ID5)"
+  }
+ },
+ "empty_ids": [
+  6,
+  7,
+  8,
+  9,
+  10
+ ],
+ "glass": {
+  "udim": 1001
+ },
+ "drop_body_finishes": [
+  "Frame_RAL5015",
+  "PanelVJ6_RAL5015",
+  "PanelVJ10_RAL5015",
+  "PanelS1_RAL5015",
+  "PanelS2_RAL5015",
+  "PanelS3_RAL5015",
+  "PanelS23_RAL5015"
+ ],
+ "kpp_palette": {
+  "PanelVJ6_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
+  },
+  "PanelVJ10_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
+  },
+  "PanelS1_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
+  },
+  "PanelS2_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
+  },
+  "PanelS3_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
+  },
+  "Frame_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013
+  },
+  "Roof_RAL7004": {
+   "kpp_finish": "Door_RAL7004",
+   "kpp_udim": 1010
+  },
+  "Door_RAL7004": {
+   "kpp_finish": "Door_RAL7004",
+   "kpp_udim": 1010
+  },
+  "Railing_RAL1021": {
+   "kpp_finish": "Ladder_Alpha_RAL1021",
+   "kpp_udim": 1004
+  },
+  "PanelS23_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
+  }
+ },
+ "finishes": {
+  "PanelVJ6_RAL5015": {
+   "udim": 1001,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.923289833,
+    0.923289833
+   ],
+   "shift": [
+    true,
+    false
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 4,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "why": "small container field of the long facades А-В/В-А: slide 31 shows 5 joint lines = 6 panels; laid evenly over the 5.5397 m field",
+   "outline_z_m": [
+    0.237672,
+    2.929656
+   ],
+   "outline_why": "thin dark outline of the panel field as on slide 31 (inner edge of the blue frame band): half joints on the field's left/right edges, a joint_half_mm line at the field's bottom/top (world z of the ID2 field, max-dump-004)"
+  },
+  "PanelVJ10_RAL5015": {
+   "udim": 1002,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.7838308,
+    0.7838308
+   ],
+   "shift": [
+    true,
+    false
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 4,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "why": "large container field of the long facades: slide 31 shows 9 joint lines = 10 panels; laid evenly over the 7.8383 m field (the slide draws 3 narrow panels at the container junction and one at the far end - positions differ, count equal; open question to Artem)",
+   "outline_z_m": [
+    0.237672,
+    2.929656
+   ],
+   "outline_why": "thin dark outline of the panel field as on slide 31 (inner edge of the blue frame band): half joints on the field's left/right edges, a joint_half_mm line at the field's bottom/top (world z of the ID2 field, max-dump-004)"
+  },
+  "PanelS1_RAL5015": {
+   "udim": 1003,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.664059,
+    0.664059
+   ],
+   "shift": [
+    true,
+    false
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 4,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "why": "short facades 1-2/2-1, panel x -11.4995..-10.8354: slide 31 draws the short wall as 3 panels split at the door edges (2 joint lines); one panel, outline half-joints on both edges",
+   "outline_z_m": [
+    0.237672,
+    2.929656
+   ],
+   "outline_why": "thin dark outline of the panel field as on slide 31 (inner edge of the blue frame band): half joints on the field's left/right edges, a joint_half_mm line at the field's bottom/top (world z of the ID2 field, max-dump-004)"
+  },
+  "PanelS2_RAL5015": {
+   "udim": 1004,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    1.058223,
+    1.058223
+   ],
+   "shift": [
+    true,
+    false
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 4,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "why": "short facades, middle panel x -10.8354..-9.7772 (above the door on 1-2, behind the ladder on 2-1)",
+   "outline_z_m": [
+    0.237672,
+    2.929656
+   ],
+   "outline_why": "thin dark outline of the panel field as on slide 31 (inner edge of the blue frame band): half joints on the field's left/right edges, a joint_half_mm line at the field's bottom/top (world z of the ID2 field, max-dump-004)"
+  },
+  "PanelS3_RAL5015": {
+   "udim": 1005,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.659279,
+    0.659279
+   ],
+   "shift": [
+    true,
+    false
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 4,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "why": "short facades, panel x -9.7772..-9.1179",
+   "outline_z_m": [
+    0.237672,
+    2.929656
+   ],
+   "outline_why": "thin dark outline of the panel field as on slide 31 (inner edge of the blue frame band): half joints on the field's left/right edges, a joint_half_mm line at the field's bottom/top (world z of the ID2 field, max-dump-004)"
+  },
+  "Frame_RAL5015": {
+   "udim": 1006,
+   "kind": "placeholder",
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "why": "ID1 above ±0.000 except the roof: frame band (posts, rails, corner returns, junction posts), parapet/edges - BLUE RAL 5015 as on slide 31 [D170]; ID1 at or below ±0.000 (perimeter drop to -2.003 m): the same wall colour, plain, no joints (Gate-1 approval: drop = wall colour; «ниже ±0.000 без швов»)"
+  },
+  "Roof_RAL7004": {
+   "udim": 1007,
+   "kind": "placeholder",
+   "rgb": [
+    150,
+    153,
+    146
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "why": "ID1 upward faces at z >= 3.2 m (roof decks at 3.227 and 3.387 m): RAL 7004 grey per AC04 Gate-1 approval point 2 («Кровля: RAL 7004 серый (как КПП 7004), не 5015»); the slide does not show the roof"
+  },
+  "Door_RAL7004": {
+   "udim": 1008,
+   "kind": "placeholder",
+   "rgb": [
+    150,
+    153,
+    146
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "why": "ID4 door leaf and small opening frames: RAL 7004 (DWG legend 170B10 «двери»; slide 31 grey door on 1-2; Gate-1: small frames of ID4 = 7004)"
+  },
+  "Railing_RAL1021": {
+   "udim": 1009,
+   "kind": "placeholder",
+   "rgb": [
+    238,
+    201,
+    0
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "why": "ID5 roof railings, ladder and cage: RAL 1021 yellow (DWG legend 170B10 «ограждения»; slide 31 yellow), KPP RAL1021 colour; geometry railings, no alpha map"
+  },
+  "PanelS23_RAL5015": {
+   "udim": 1010,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    1.717502,
+    1.717502
+   ],
+   "shift": [
+    true,
+    false
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 4,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "why": "short facade 2-1 (+y, ladder side): slide 31 draws ONE joint line on this wall (plus the two ladder stringers in front of it), 0.54 m from the -x edge, while 1-2 shows two at the door edges; the +y wall is therefore two panels split at the existing face edge x = -10.8354 (0.664 m from the -x edge, 0.125 m from the slide position; no geometry cut): this field is x -10.8354..-9.1179 with no joint inside",
+   "outline_z_m": [
+    0.237672,
+    2.929656
+   ],
+   "outline_why": "thin dark outline of the panel field as on slide 31 (inner edge of the blue frame band): half joints on the field's left/right edges, a joint_half_mm line at the field's bottom/top (world z of the ID2 field, max-dump-004)"
+  }
+ },
+ "facade_uv": {
+  "PanelVJ6_RAL5015": "u' = metres along the facade from the panel field's smaller world coordinate (joints at u' = k * P), v = world z",
+  "PanelVJ10_RAL5015": "u' = metres along the facade from the panel field's smaller world coordinate (joints at u' = k * P), v = world z",
+  "PanelS1_RAL5015": "u' = metres along the facade from the panel field's smaller world coordinate (joints at u' = k * P), v = world z",
+  "PanelS2_RAL5015": "u' = metres along the facade from the panel field's smaller world coordinate (joints at u' = k * P), v = world z",
+  "PanelS3_RAL5015": "u' = metres along the facade from the panel field's smaller world coordinate (joints at u' = k * P), v = world z",
+  "PanelS23_RAL5015": "u' = metres along the facade from the panel field's smaller world coordinate (joints at u' = k * P), v = world z"
+ },
+ "ring_cuts": {
+  "allowed": "edge ring at joint positions, quads only, boundary to boundary",
+  "decision": "Artem 2026-10-22 «если не влезает, то можно аккуратно порезать через loop или ring»"
+ },
+ "facades": {
+  "А-В/1": {
+   "normal": "+x",
+   "span": [
+    -7.334002,
+    -1.794263
+   ],
+   "finish": "PanelVJ6_RAL5015",
+   "ribs": 6,
+   "field_m": 5.539739,
+   "slide_facade": "А-В"
+  },
+  "А-В/2": {
+   "normal": "+x",
+   "span": [
+    -1.513437,
+    6.324871
+   ],
+   "finish": "PanelVJ10_RAL5015",
+   "ribs": 10,
+   "field_m": 7.838308,
+   "slide_facade": "А-В"
+  },
+  "В-А/1": {
+   "normal": "-x",
+   "span": [
+    -1.513437,
+    6.324871
+   ],
+   "finish": "PanelVJ10_RAL5015",
+   "ribs": 10,
+   "field_m": 7.838308,
+   "slide_facade": "В-А"
+  },
+  "В-А/2": {
+   "normal": "-x",
+   "span": [
+    -7.334002,
+    -1.794263
+   ],
+   "finish": "PanelVJ6_RAL5015",
+   "ribs": 6,
+   "field_m": 5.539739,
+   "slide_facade": "В-А"
+  },
+  "1-2/1": {
+   "normal": "-y",
+   "span": [
+    -11.499483,
+    -10.835424
+   ],
+   "finish": "PanelS1_RAL5015",
+   "ribs": 1,
+   "field_m": 0.664059,
+   "slide_facade": "1-2"
+  },
+  "1-2/2": {
+   "normal": "-y",
+   "span": [
+    -10.835424,
+    -9.777201
+   ],
+   "finish": "PanelS2_RAL5015",
+   "ribs": 1,
+   "field_m": 1.058223,
+   "slide_facade": "1-2",
+   "z_m": [
+    2.266318,
+    2.929656
+   ],
+   "door": "Door_RAL7004 (ID4) fills the panel below +2.266, as on the slide"
+  },
+  "1-2/3": {
+   "normal": "-y",
+   "span": [
+    -9.777201,
+    -9.117922
+   ],
+   "finish": "PanelS3_RAL5015",
+   "ribs": 1,
+   "field_m": 0.659279,
+   "slide_facade": "1-2"
+  },
+  "2-1/1": {
+   "normal": "+y",
+   "span": [
+    -10.835424,
+    -9.117922
+   ],
+   "finish": "PanelS23_RAL5015",
+   "ribs": 1,
+   "field_m": 1.717502,
+   "slide_facade": "2-1"
+  },
+  "2-1/2": {
+   "normal": "+y",
+   "span": [
+    -11.499483,
+    -10.835424
+   ],
+   "finish": "PanelS1_RAL5015",
+   "ribs": 1,
+   "field_m": 0.664059,
+   "slide_facade": "2-1"
+  }
+ },
+ "facades_doc": "Fields per facade from the model (ID2 faces of max-dump-004) and slide 31 (deck slide image image57.png): long facades +x = А-В (small container on the left, axis А at -y) and -x = В-А; short -y = 1-2 (door), +y = 2-1 (ladder). Slide counts (dark lines between the field outlines, compare_facades.slide_fields): small container 5 joints, large container 9 joints on both long facades; 1-2 (door): 2 joint lines at the door edges = three one-panel fields whose touching outlines form the 2 joints; 2-1 (ladder): 1 joint line + 2 ladder stringers = two one-panel fields split at the existing face edge x = -10.8354. Joints are spread evenly per field (AC08 accepted layout); the slide's uneven panel widths in the large container are reported, not copied.",
+ "sheet": {
+  "facades_json": "jobs/TEC26-OKS/AC04/sheet-facades.json",
+  "dwg": "C:/x/tec26-oks/AC04/sources-v003 (22E56-АР2-1002-AC.04_R1.dwg)",
+  "dwg_sha256": "d34638d96ea51046e25b0376f4cd589c0725aeb15f2bccc4800ab3716b1a409b"
+ },
+ "presentation": {
+  "authority": "Artem 2026-10-22 (top precedence, all TEC26): the presentation facade slides «Схема фасадов ... Цветовое решение» decide colours, colour bands, rib direction and rib count/step and which surfaces are blue / light grey / dark grey; the DWG/PDF only where the slide is silent [D171]",
+  "deck": "C:/x/tec26-oks/pptx/deck.pptx",
+  "deck_sha256": "74e50277df5e2dfde3ba7ab945eb6bab45a8fa8c0207d7aca3a136d9656b78ac",
+  "slide": 31,
+  "slide_title": "Локальные очистные сооружения дождевых стоков. Схема фасадов (на основе М 1:200)",
+  "image": "C:/x/tec26-oks/pptx/facades/slide31.png",
+  "image_member": "ppt/media/image57.png",
+  "image_sha256": "fa8e23805bcb43ad2af83848104805ba89c51ba9f83da1b04133cb710e0ce269",
+  "quadrants": [
+   "А-В",
+   "1-2",
+   "В-А",
+   "2-1"
+  ],
+  "quadrants_doc": "reading order on slide 31: top-left А-В, top-right 1-2, bottom-left В-А, bottom-right 2-1"
+ },
+ "legend": [
+  {
+   "hatch": "Сэндвич-панели, козырьки - RAL 5015 (the blue ribbed panel fields of both containers)",
+   "source": "DWG legend 170B10 + slide 31",
+   "material": "sandwich panel",
+   "ral": "5015",
+   "texture": "ribbed",
+   "finishes": [
+    "PanelVJ6_RAL5015",
+    "PanelVJ10_RAL5015",
+    "PanelS1_RAL5015",
+    "PanelS2_RAL5015",
+    "PanelS3_RAL5015",
+    "PanelS23_RAL5015"
+   ]
+  },
+  {
+   "hatch": "Обрамление сэндвич-стены (frame band, corner and junction posts, edging; blue on slide 31) and the drop below ±0.000 in wall colour",
+   "source": "slide 31 + [D170] + Gate-1 point 4",
+   "material": "sandwich wall edging",
+   "ral": "5015",
+   "texture": "plain",
+   "finishes": [
+    "Frame_RAL5015"
+   ]
+  },
+  {
+   "hatch": "Крыльца, двери - RAL 7004",
+   "source": "DWG legend 170B10 + slide 31 (grey door on 1-2)",
+   "material": "door, small frames",
+   "ral": "7004",
+   "texture": "plain",
+   "finishes": [
+    "Door_RAL7004"
+   ]
+  },
+  {
+   "hatch": "Кровля - RAL 7004 (not on the slide; Gate-1 approval point 2)",
+   "source": "AC04 Gate-1 approval (Artem, 2026-10-22)",
+   "material": "roof deck",
+   "ral": "7004",
+   "texture": "plain",
+   "finishes": [
+    "Roof_RAL7004"
+   ]
+  },
+  {
+   "hatch": "Ограждения лестниц, лестница - RAL 1021",
+   "source": "DWG legend 170B10 + slide 31 (yellow)",
+   "material": "metal railings",
+   "ral": "1021",
+   "texture": "plain",
+   "finishes": [
+    "Railing_RAL1021"
+   ]
+  }
+ ],
+ "legend_doc": "Binding legend [D171]: every finish in exactly one row; RAL of the name = row = KPP colour; ribbed rows = sandwich joint texture; plain rows none. No RAL 7047 sandwich and no RAL 9016 frames on slide 31 / DWG legend of AC04. Glass (ID3) is the separate KPP glass object, not a facade finish."
+}

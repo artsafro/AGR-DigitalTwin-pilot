@@ -57,7 +57,8 @@ names = sorted(spec["finishes"], key=lambda k: spec["finishes"][k]["udim"])
 V = body["vertices"]
 faces, ids = body["faces"], body["mat_ids"]
 fins = finish_map.assign_finishes(V, faces, ids, spec)
-drop = finish_map.perimeter_drop(V, faces, fins, spec["source_ids"]["1"]["below"]) \
+drop = finish_map.perimeter_drop(V, faces, fins, spec["source_ids"]["1"]["below"],
+                                 body_finishes=spec.get("drop_body_finishes")) \
     if spec["source_ids"].get("1", {}).get("split") == "below_zero" else None
 plan_lo, plan_hi = finish_map.body_plan_bbox(V, spec["zero_m"])
 fields = finish_map.field_frames(V, faces, fins, spec, plan_lo, plan_hi) if spec.get("facades") else None
@@ -75,9 +76,14 @@ bm.faces.layers.int.new("srcid")
 uvx = bm.faces.layers.int.new("uvx")
 uvm = bm.loops.layers.uv.new("UVM")
 CV = cut["vertices"]
-vs = [bm.verts.new(c) for c in CV]
+glass_faces = [(f, src) for f, src in zip(cut["faces"], cut["parents"]) if fins[src] == finish_map.GLASS]
+glass_only = {k for f, _ in glass_faces for k in f} - {k for f, src in zip(cut["faces"], cut["parents"])
+                                                         if fins[src] != finish_map.GLASS for k in f}
+vs = [None if i in glass_only else bm.verts.new(c) for i, c in enumerate(CV)]
 for f, src in zip(cut["faces"], cut["parents"]):
     fin, m = fins[src], ids[src]
+    if fin == finish_map.GLASS:     # KPP glass: separate object SM_<A>_MainGlass, M_<A>_MainGlass_1, no texture
+        continue
     nf = bm.faces.new([vs[k] for k in f])
     nf[fl] = names.index(fin)
     nf[bm.faces.layers.int["srcid"]] = m
@@ -111,6 +117,25 @@ main = bpy.data.objects.new(f"SM_{A}_Main", me)
 sc.collection.objects.link(main)
 main["finish_names"] = ",".join(names)
 main.data.materials.append(vpm_uv.main_material(bpy, spec, tex_dir))
+glass_report = None
+if glass_faces:
+    gb = bmesh.new()
+    gb.faces.layers.int.new("finish")
+    gb.loops.layers.uv.new("UVM")
+    gmap = {}
+    for f, src in glass_faces:
+        gf = gb.faces.new([gmap.setdefault(k, gb.verts.new(CV[k])) for k in f])
+    gb.normal_update()
+    gqa = vpm_uv.pack_uv(gb, ["glass"], spec, glass=True)
+    gme = bpy.data.meshes.new(f"SM_{A}_MainGlass")
+    gb.to_mesh(gme)
+    gb.free()
+    for uvl in [u for u in gme.uv_layers if u.name != "UVMap"]:
+        gme.uv_layers.remove(uvl)
+    gob = bpy.data.objects.new(f"SM_{A}_MainGlass", gme)
+    sc.collection.objects.link(gob)
+    gob.data.materials.append(vpm_uv.glass_material(bpy, spec))
+    glass_report = {"faces": len(gme.polygons), "source_ids": sorted({ids[s] for _, s in glass_faces}), "uv_qa": gqa}
 
 ucx_report = []
 for k, h in enumerate(sorted(hulls, key=lambda n: n["name"]), start=1):
@@ -140,7 +165,7 @@ report = {"dump": os.path.abspath(dump_path), "spec": os.path.abspath(spec_path)
           "ring_cuts": cut["cuts"], "cut_vertices_added": len(CV) - len(V),
           "master_tris": sum(len(p.vertices) - 2 for p in me.polygons), "max_edge_m": round(max_edge, 4),
           "faces_per_finish": counts, "uv_qa": uvqa, "density_px_per_m": density, "ucx": ucx_report, "perimeter_drop": drop,
-          "facade_fields": fields[1] if fields else None}
+          "facade_fields": fields[1] if fields else None, "glass": glass_report}
 json.dump(report, open(out + ".build.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 print("BUILD", json.dumps({k: report[k] for k in ("master_faces", "non_quads", "master_tris", "max_edge_m",
                                                   "faces_per_finish")}))

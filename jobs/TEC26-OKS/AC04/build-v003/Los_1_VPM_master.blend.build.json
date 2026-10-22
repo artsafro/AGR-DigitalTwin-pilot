@@ -1,0 +1,601 @@
+{
+ "dump": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_223eb7bb\\jobs\\TEC26-OKS\\AC04\\max-dump-004.json",
+ "spec": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_223eb7bb\\jobs\\TEC26-OKS\\AC04\\vpm_textures.json",
+ "blend": "C:\\x\\tec26-oks\\AC04\\build-v003\\build\\Los_1_VPM_master.blend",
+ "source": {
+  "name": "АС.04",
+  "vertices": 2462,
+  "polygons": 2552
+ },
+ "master_faces": 2617,
+ "non_quads": 98,
+ "ring_cuts": [
+  {
+   "axis": 1,
+   "X": -4.564132995812011,
+   "ring_faces": 21,
+   "source_faces": [
+    14,
+    21,
+    31,
+    48,
+    62,
+    68,
+    79,
+    93,
+    113,
+    129,
+    130,
+    133,
+    135,
+    141,
+    143,
+    168,
+    171,
+    207,
+    210,
+    2533,
+    2541
+   ],
+   "new_vertices": 22,
+   "planned_for": 31,
+   "finish": "PanelVJ6_RAL5015",
+   "u_joint_m": -2.769869
+  },
+  {
+   "axis": 1,
+   "X": 3.9733789249282836,
+   "ring_faces": 23,
+   "source_faces": [
+    7,
+    10,
+    23,
+    33,
+    38,
+    40,
+    41,
+    43,
+    94,
+    100,
+    115,
+    119,
+    174,
+    177,
+    181,
+    184,
+    212,
+    213,
+    214,
+    216,
+    217,
+    2530,
+    2544
+   ],
+   "new_vertices": 24,
+   "planned_for": 33,
+   "finish": "PanelVJ10_RAL5015",
+   "u_joint_m": -5.486816
+  },
+  {
+   "axis": 1,
+   "X": 0.8380557249282838,
+   "ring_faces": 23,
+   "source_faces": [
+    7,
+    10,
+    23,
+    33,
+    38,
+    40,
+    41,
+    43,
+    94,
+    100,
+    115,
+    119,
+    174,
+    177,
+    181,
+    184,
+    212,
+    213,
+    214,
+    216,
+    217,
+    2530,
+    2544
+   ],
+   "new_vertices": 24,
+   "planned_for": 33,
+   "finish": "PanelVJ10_RAL5015",
+   "u_joint_m": -2.351492
+  }
+ ],
+ "cut_vertices_added": 70,
+ "master_tris": 5136,
+ "max_edge_m": 7.8422,
+ "faces_per_finish": {
+  "PanelVJ6_RAL5015": 8,
+  "PanelVJ10_RAL5015": 12,
+  "PanelS1_RAL5015": 4,
+  "PanelS2_RAL5015": 1,
+  "PanelS3_RAL5015": 2,
+  "Frame_RAL5015": 403,
+  "Roof_RAL7004": 91,
+  "Door_RAL7004": 166,
+  "Railing_RAL1021": 1926,
+  "PanelS23_RAL5015": 4
+ },
+ "uv_qa": {
+  "Roof_RAL7004": {
+   "udim": 1007,
+   "faces": 91,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  },
+  "Frame_RAL5015": {
+   "udim": 1006,
+   "faces": 403,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  },
+  "PanelVJ6_RAL5015": {
+   "udim": 1001,
+   "faces": 8,
+   "overflow": 0,
+   "min_margin_px": 237.7
+  },
+  "PanelVJ10_RAL5015": {
+   "udim": 1002,
+   "faces": 12,
+   "overflow": 0,
+   "min_margin_px": 176.8
+  },
+  "PanelS1_RAL5015": {
+   "udim": 1003,
+   "faces": 4,
+   "overflow": 0,
+   "min_margin_px": 237.7
+  },
+  "PanelS3_RAL5015": {
+   "udim": 1005,
+   "faces": 2,
+   "overflow": 0,
+   "min_margin_px": 237.7
+  },
+  "PanelS23_RAL5015": {
+   "udim": 1010,
+   "faces": 4,
+   "overflow": 0,
+   "min_margin_px": 237.7
+  },
+  "PanelS2_RAL5015": {
+   "udim": 1004,
+   "faces": 1,
+   "overflow": 0,
+   "min_margin_px": 1058.2
+  },
+  "Door_RAL7004": {
+   "udim": 1008,
+   "faces": 166,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  },
+  "Railing_RAL1021": {
+   "udim": 1009,
+   "faces": 1926,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  }
+ },
+ "density_px_per_m": {
+  "PanelVJ6_RAL5015": [
+   1000,
+   1000
+  ],
+  "PanelVJ10_RAL5015": [
+   1000,
+   1000
+  ],
+  "PanelS1_RAL5015": [
+   1000,
+   1000
+  ],
+  "PanelS3_RAL5015": [
+   1000,
+   1000
+  ],
+  "PanelS23_RAL5015": [
+   1000,
+   1000
+  ],
+  "PanelS2_RAL5015": [
+   1000,
+   1000
+  ]
+ },
+ "ucx": [
+  {
+   "source": "Colizii_047",
+   "name": "UCX_SM_Los_1_Main_001",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_048",
+   "name": "UCX_SM_Los_1_Main_002",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_049",
+   "name": "UCX_SM_Los_1_Main_003",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_050",
+   "name": "UCX_SM_Los_1_Main_004",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_051",
+   "name": "UCX_SM_Los_1_Main_005",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_052",
+   "name": "UCX_SM_Los_1_Main_006",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_053",
+   "name": "UCX_SM_Los_1_Main_007",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_054",
+   "name": "UCX_SM_Los_1_Main_008",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_055",
+   "name": "UCX_SM_Los_1_Main_009",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_056",
+   "name": "UCX_SM_Los_1_Main_010",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_057",
+   "name": "UCX_SM_Los_1_Main_011",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_058",
+   "name": "UCX_SM_Los_1_Main_012",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_059",
+   "name": "UCX_SM_Los_1_Main_013",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_060",
+   "name": "UCX_SM_Los_1_Main_014",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_061",
+   "name": "UCX_SM_Los_1_Main_015",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_062",
+   "name": "UCX_SM_Los_1_Main_016",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_063",
+   "name": "UCX_SM_Los_1_Main_017",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  }
+ ],
+ "perimeter_drop": {
+  "x-": {
+   "length_m": 14.2,
+   "covered_m": 14.2,
+   "ok": true
+  },
+  "x+": {
+   "length_m": 14.2,
+   "covered_m": 14.2,
+   "ok": true
+  },
+  "y-": {
+   "length_m": 2.93,
+   "covered_m": 2.93,
+   "ok": true
+  },
+  "y+": {
+   "length_m": 2.93,
+   "covered_m": 2.93,
+   "ok": true
+  }
+ },
+ "facade_fields": {
+  "А-В/1": {
+   "normal": "+x",
+   "finish": "PanelVJ6_RAL5015",
+   "faces": 2,
+   "axis": "y",
+   "field_lo": -7.334002,
+   "field_hi": -1.794263,
+   "field_m": 5.53974,
+   "ribs": 6,
+   "pitch_m": 0.92329,
+   "joints_world": [
+    -6.410713,
+    -5.487423,
+    -4.564133,
+    -3.640843,
+    -2.717553
+   ]
+  },
+  "А-В/2": {
+   "normal": "+x",
+   "finish": "PanelVJ10_RAL5015",
+   "faces": 2,
+   "axis": "y",
+   "field_lo": -1.513437,
+   "field_hi": 6.324871,
+   "field_m": 7.838308,
+   "ribs": 10,
+   "pitch_m": 0.783831,
+   "joints_world": [
+    -0.729606,
+    0.054225,
+    0.838056,
+    1.621886,
+    2.405717,
+    3.189548,
+    3.973379,
+    4.75721,
+    5.54104
+   ]
+  },
+  "2-1/1": {
+   "normal": "+y",
+   "finish": "PanelS23_RAL5015",
+   "faces": 4,
+   "axis": "x",
+   "field_lo": -10.835424,
+   "field_hi": -9.117923,
+   "field_m": 1.717502,
+   "ribs": 1,
+   "pitch_m": 1.717502,
+   "joints_world": []
+  },
+  "2-1/2": {
+   "normal": "+y",
+   "finish": "PanelS1_RAL5015",
+   "faces": 2,
+   "axis": "x",
+   "field_lo": -11.499483,
+   "field_hi": -10.835423,
+   "field_m": 0.66406,
+   "ribs": 1,
+   "pitch_m": 0.664059,
+   "joints_world": []
+  },
+  "В-А/1": {
+   "normal": "-x",
+   "finish": "PanelVJ10_RAL5015",
+   "faces": 2,
+   "axis": "y",
+   "field_lo": -1.513437,
+   "field_hi": 6.324871,
+   "field_m": 7.838308,
+   "ribs": 10,
+   "pitch_m": 0.783831,
+   "joints_world": [
+    -0.729606,
+    0.054225,
+    0.838056,
+    1.621887,
+    2.405717,
+    3.189548,
+    3.973379,
+    4.75721,
+    5.541041
+   ]
+  },
+  "В-А/2": {
+   "normal": "-x",
+   "finish": "PanelVJ6_RAL5015",
+   "faces": 2,
+   "axis": "y",
+   "field_lo": -7.334002,
+   "field_hi": -1.794263,
+   "field_m": 5.539739,
+   "ribs": 6,
+   "pitch_m": 0.92329,
+   "joints_world": [
+    -6.410713,
+    -5.487423,
+    -4.564133,
+    -3.640843,
+    -2.717553
+   ]
+  },
+  "1-2/1": {
+   "normal": "-y",
+   "finish": "PanelS1_RAL5015",
+   "faces": 2,
+   "axis": "x",
+   "field_lo": -11.499481,
+   "field_hi": -10.835423,
+   "field_m": 0.664059,
+   "ribs": 1,
+   "pitch_m": 0.664059,
+   "joints_world": []
+  },
+  "1-2/2": {
+   "normal": "-y",
+   "finish": "PanelS2_RAL5015",
+   "faces": 1,
+   "axis": "x",
+   "field_lo": -10.835423,
+   "field_hi": -9.777201,
+   "field_m": 1.058222,
+   "ribs": 1,
+   "pitch_m": 1.058223,
+   "joints_world": []
+  },
+  "1-2/3": {
+   "normal": "-y",
+   "finish": "PanelS3_RAL5015",
+   "faces": 2,
+   "axis": "x",
+   "field_lo": -9.777201,
+   "field_hi": -9.117922,
+   "field_m": 0.659279,
+   "ribs": 1,
+   "pitch_m": 0.659279,
+   "joints_world": []
+  }
+ },
+ "glass": {
+  "faces": 2,
+  "source_ids": [
+   3
+  ],
+  "uv_qa": {
+   "glass": {
+    "udim": 1001,
+    "faces": 2,
+    "overflow": 0,
+    "min_margin_px": 12.8
+   }
+  }
+ }
+}

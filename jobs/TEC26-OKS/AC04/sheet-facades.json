@@ -1,0 +1,81 @@
+{
+ "_doc": "AC04 facade facts for compare_facades.main_fields. size_mm = the blue body hatch of each facade in the AC04 colour-solution DWG (22E56-АР2-1002-AC.04_R1.dwg, recovered ac04.dxf; Gate-1 #561 MATERIALS.md: hatches 17BA5A / 17D200 = 14238.923 x 3456.626 mm, 1854A2 / 185FC2 = 2966.08 x 3265.17 mm) - used only as the slide scale (body px / body mm). body_m = world extent of the model body along the facade (ID1 walls above ±0.000, max-dump-004). ground_m = ground line of the slide (0.000 under the bodies). slide_rows = rows (fraction of the body height from the bottom) on which slide joints are counted; per field the most frequent count wins (labels, door handles and louvres cross single rows).",
+ "source": {
+  "dwg": "22E56-АР2-1002-AC.04_R1.dwg",
+  "dwg_sha256": "d34638d96ea51046e25b0376f4cd589c0725aeb15f2bccc4800ab3716b1a409b",
+  "gate1": "jobs/TEC26-OKS/AC04/MATERIALS.md (#561, PR #573)"
+ },
+ "slide_rows": [
+  0.2,
+  0.25,
+  0.3,
+  0.35,
+  0.4,
+  0.45,
+  0.5,
+  0.55,
+  0.6,
+  0.65,
+  0.7,
+  0.75,
+  0.8
+ ],
+ "field_z_m": [
+  0.237672,
+  2.929656
+ ],
+ "facades": {
+  "А-В": {
+   "normal": "+x",
+   "size_mm": [
+    14238.923,
+    3456.626
+   ],
+   "body_m": [
+    -7.606678,
+    6.593322
+   ],
+   "ground_m": 0.0,
+   "dwg_hatch": "17BA5A"
+  },
+  "В-А": {
+   "normal": "-x",
+   "size_mm": [
+    14238.923,
+    3456.626
+   ],
+   "body_m": [
+    -7.606678,
+    6.593322
+   ],
+   "ground_m": 0.0,
+   "dwg_hatch": "17D200"
+  },
+  "1-2": {
+   "normal": "-y",
+   "size_mm": [
+    2966.08,
+    3265.17
+   ],
+   "body_m": [
+    -11.7844,
+    -8.8544
+   ],
+   "ground_m": 0.0,
+   "dwg_hatch": "1854A2"
+  },
+  "2-1": {
+   "normal": "+y",
+   "size_mm": [
+    2966.08,
+    3265.17
+   ],
+   "body_m": [
+    -11.7844,
+    -8.8544
+   ],
+   "ground_m": 0.0,
+   "dwg_hatch": "185FC2"
+  }
+ }
+}

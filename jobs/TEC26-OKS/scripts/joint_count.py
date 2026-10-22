@@ -52,7 +52,7 @@ def count_joints(s, lum, field_lo, field_hi, ribs, tol, dark=0.8, edge=0.25):
     extra = [round(f, 4) for f in found if not any(abs(f - e) <= tol for e in exp)]
     first = found[0] - field_lo if found else None
     last = field_hi - found[-1] if found else None
-    errs = [min(abs(f - e) for e in exp) for f in found] if found else []
+    errs = [min(abs(f - e) for e in exp) for f in found] if found and exp else []
     return {"ok": not missing and not extra and len(found) == len(exp) - len(hidden),
             "joints_found": len(found), "joints_expected": len(exp), "ribs_expected": ribs,
             "hidden_by_other_finish": hidden, "missing": missing, "extra": extra,
@@ -64,6 +64,8 @@ def count_joints(s, lum, field_lo, field_hi, ribs, tol, dark=0.8, edge=0.25):
 
 def symmetric(rep, tol):
     """Symmetric phase on a full (unhidden) row: the first and last joints sit one pitch inside the field edges."""
+    if rep.get("ribs_expected") == 1:   # one panel between two field outlines (AC04 short walls): no joint inside
+        return rep.get("joints_found") == 0 and not rep.get("extra")
     a, b = rep.get("first_joint_from_field_m"), rep.get("last_joint_to_field_m")
     return a is not None and b is not None and abs(a - b) <= tol and abs(a - rep["pitch_m"]) <= tol
 

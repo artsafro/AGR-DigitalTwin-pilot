@@ -98,6 +98,11 @@ def match_source_faces(src_v, src_faces, out_v, out_faces, shift, tol=2e-4):
     `tol`, after undoing the pivot shift), whose outline contains them (edges within `tol` count) and contains the
     triangle centroid strictly. Returns owners per triangle: sorted tuple of source polygon indices, possibly empty."""
     geo = _poly_geo(src_v, src_faces)
+    sv = np.asarray(src_v, float)
+    # source polygons that are not planar within `tol` (AC04: 26 tiny ID4 quads, 0.2-0.7 mm twist; geometry is kept
+    # as in the source): a triangle owns such a polygon only when its three corners ARE corners of that polygon
+    twisted = [pi for pi, (f, g) in enumerate(zip(src_faces, geo))
+               if g is not None and np.abs(sv[list(f)] @ g["n"] - g["d"]).max() > tol]
     ov = np.asarray(out_v, float) + np.asarray(shift, float)
     owners = []
     for f in out_faces:
@@ -112,6 +117,11 @@ def match_source_faces(src_v, src_faces, out_v, out_faces, shift, tol=2e-4):
                 continue
             if all(_inside2d(x[g["keep"]], g["p2"], tol) for x in q) and _inside2d(c[g["keep"]], g["p2"], -1):
                 hits.append(pi)
+        if not hits:
+            for pi in twisted:
+                corners = sv[list(src_faces[pi])]
+                if all(np.abs(corners - x).max(1).min() <= tol for x in q):
+                    hits.append(pi)
         owners.append(tuple(hits))
     return owners
 
@@ -123,6 +133,19 @@ def tri_areas(out_v, out_faces):
 
 def poly_areas(src_v, src_faces):
     return [g["area"] if g else 0.0 for g in _poly_geo(src_v, src_faces)]
+
+
+def _dist_mm(offender):
+    return float(offender.rsplit(":", 1)[1].strip().split()[0])
+
+
+def source_xview(dump_p, profile):
+    """inv_xview report of the SOURCE body (polygons fan-triangulated, no edit) for the inherited-finding comparison."""
+    body = next(n for n in load(dump_p)["nodes"] if n["multisub"])
+    tris = [[f[0], f[k], f[k + 1]] for f in body["faces"] for k in range(1, len(f) - 1)]
+    x = mesh_report(body["vertices"], tris, profile=profile)
+    return {"vertex_pairs": x["vertex_pairs"], "face_pairs": x["face_pairs"],
+            "offender_distances_mm": sorted(_dist_mm(t) for t in x["offenders"] if t.startswith("mesh v"))}
 
 
 def source_finish_report(expected, src_faces, owners, delivered, t_areas=None, p_areas=None):
@@ -150,10 +173,11 @@ def source_finish_report(expected, src_faces, owners, delivered, t_areas=None, p
             wrong += 1
             if len(examples) < 5:
                 examples.append({"tri": t, "source_polygon": own[0], "expected": w, "delivered": got})
+    main = [i for i in range(len(src_faces)) if expected[i] != finish_map.GLASS]   # glass polygons: MainGlass check
     if t_areas is not None and p_areas is not None:
-        uncovered = [i for i in range(len(src_faces)) if abs(per_area[i] - p_areas[i]) > 1e-6 + 1e-5 * p_areas[i]]
+        uncovered = [i for i in main if abs(per_area[i] - p_areas[i]) > 1e-6 + 1e-5 * p_areas[i]]
     else:
-        uncovered = [i for i, f in enumerate(src_faces) if per_poly[i] != len(f) - 2]
+        uncovered = [i for i in main if per_poly[i] != len(src_faces[i]) - 2]
     return {"ok": not (wrong or unmatched or ambiguous or uncovered) and len(owners) > 0, "tris": len(owners),
             "wrong_finish": wrong, "unmatched": unmatched, "ambiguous": ambiguous,
             "source_polygons_not_covered": len(uncovered), "uncovered_examples": uncovered[:5], "examples": examples}
@@ -281,9 +305,11 @@ def main(argv):
     nobj = {o["name"]: o for o in nr["objects"]}
     vmain, nmain = vobj.get(f"SM_{A}_Main"), nobj.get(f"SM_{A}_001_Main")
     ucx = [o for n, o in vobj.items() if n.startswith(f"UCX_SM_{A}_Main_")]
-    check("names_vpm", vmain is not None and len(ucx) >= 1 and set(vobj) == {f"SM_{A}_Main"} | {o["name"] for o in ucx},
-          sorted(vobj))
-    check("names_npm", set(nobj) == {f"SM_{A}_001_Main"}, sorted(nobj))
+    has_glass = any(r.get("glass") for r in spec["source_ids"].values())   # glass ID -> MainGlass is REQUIRED
+    vglass, nglass = ({f"SM_{A}_MainGlass"}, {f"SM_{A}_001_MainGlass"}) if has_glass else (set(), set())
+    check("names_vpm", vmain is not None and len(ucx) >= 1 and set(vobj) == {f"SM_{A}_Main"} | vglass | {
+        o["name"] for o in ucx}, sorted(vobj))
+    check("names_npm", set(nobj) == {f"SM_{A}_001_Main"} | nglass, sorted(nobj))
     if vmain is None or nmain is None:
         write(out, {"checks": rep, "failed": fails})
         return 1
@@ -295,8 +321,16 @@ def main(argv):
         check(f"transforms_{tag}", o["scale"] == [1.0, 1.0, 1.0] and max(map(abs, o["rotation"])) < 1e-6 and
               max(map(abs, o["location"])) < 1e-6, {"loc": o["location"], "rot": o["rotation"], "scale": o["scale"]})
         x = mesh_report(o["vertices"], o["faces"], profile=tag.upper())
-        check(f"xview_{tag}", x["passed"], {k: x[k] for k in ("vertex_pairs", "face_pairs", "face_pairs_by_kind",
-                                                              "thresholds", "offenders")})
+        det = {k: x[k] for k in ("vertex_pairs", "face_pairs", "face_pairs_by_kind", "thresholds", "offenders")}
+        ok = x["passed"]
+        if not ok:   # geometry is the source's (colour-only scope): near pairs the SOURCE already has are inherited
+            s = source_xview(dump_p, tag.upper())
+            det["source"] = {k: s[k] for k in ("vertex_pairs", "face_pairs", "offender_distances_mm")}
+            mine = sorted(_dist_mm(t) for t in x["offenders"])
+            ok = (x["face_pairs"] <= s["face_pairs"] and x["vertex_pairs"] <= s["vertex_pairs"]
+                  and all(any(abs(d - e) <= 0.02 for e in s["offender_distances_mm"]) for d in mine))
+            det["inherited_from_source"] = bool(ok)
+        check(f"xview_{tag}", ok, det)
     for o in ucx:
         h = ucx_hull(o)
         check(f"ucx_{o['name']}", h["closed"] and h["convex"] and h["outward"] and h["uv_layers"] == 0
@@ -411,6 +445,14 @@ def main(argv):
                                                            tri_areas(vmain["vertices"], vmain["faces"]), pa)))
     check("source_finish_npm", **_rep(source_finish_report(expected, body["faces"], nown, nfin,
                                                            tri_areas(nmain["vertices"], nmain["faces"]), pa)))
+    gpolys = [f for f, e in zip(body["faces"], expected) if e == finish_map.GLASS]
+    for tag, name in (("vpm", f"SM_{A}_MainGlass"), ("npm", f"SM_{A}_001_MainGlass")):
+        o = (vobj if tag == "vpm" else nobj).get(name)
+        got = sum(len(f) - 2 for f in o["faces"]) if o else 0
+        want = sum(len(f) - 2 for f in gpolys)
+        if gpolys or o:
+            check(f"glass_{tag}", o is not None and got == want and want > 0,
+                  {"object": name, "tris": got, "source_glass_polygons": len(gpolys), "source_tris": want})
     for tag, o in (("vpm", vmain), ("npm", nmain)):
         check(f"cuts_at_joints_{tag}", **_rep(cut_joint_report(body["vertices"], body["faces"], expected, spec,
                                                                o["vertices"], shift)))

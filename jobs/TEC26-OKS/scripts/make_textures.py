@@ -86,13 +86,21 @@ def make_user_vjoints(t, size):
     if not (math.isfinite(Pp) and Pp >= 4 * (j1 - j0)):
         raise ValueError(f"tile period {Pp} px leaves no panel between {j1 - j0} px joints")
     ce = (j0 + j1) // 2 + per                  # centre (pixel edge) of the second joint: room on both sides
-    half = int(math.ceil(Pp / 2)) + 1
+    lim = per - (j1 - j0) // 2 - 2             # last panel offset before the source's next joint (fold limit below)
+    half = min(int(math.ceil(Pp / 2)), lim) + 1
     if ce + half > W:
         ce -= per
     if ce - half < 0 or ce + half > W:
         raise ValueError(f"source texture {W} px: no source joint with {half} px of panel on both sides")
     d = (np.arange(size) + 0.5 + Pp / 2) % Pp - Pp / 2           # signed distance (px) to the nearest tile joint
     p = np.floor(d).astype(int)                                # integer source offset (1:1 joint profile)
+    # a tile period wider than the source's own (AC04 one-panel fields up to 1.72 m vs 0.60 m) would copy the
+    # source's NEXT joints as extra dark lines: offsets past the source panel are folded back into it (mirror),
+    # the joint at offset 0 is never reached again
+    if Pp / 2 > 2 * lim - (j1 - j0):
+        raise ValueError(f"tile period {Pp:.0f} px is wider than the folded source panel ({2 * (2 * lim - (j1 - j0))} px)")
+    a = np.abs(p)
+    p = np.where(a > lim, np.sign(p) * (2 * lim - a), p)
     col = src[:, ce + p]
     src_joint = (p >= j0 - (j0 + j1) // 2) & (p < j1 - (j0 + j1) // 2)
     panel = col[:, ~src_joint].reshape(-1, 3)

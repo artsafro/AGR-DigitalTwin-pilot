@@ -78,8 +78,18 @@ def validate_spec(spec, kpp_spec=None):
     if any(r.get("split") == "facade" for r in src.values()) or spec.get("facades") is not None:
         validate_facades(spec)
     for sid, rule in src.items():
+        if rule.get("glass"):
+            if not isinstance(spec.get("glass"), dict) or set(rule) - {"glass", "why"}:
+                raise ValueError(f"source ID {sid}: a glass rule needs spec glass {{udim}} and no finish keys")
+            continue
         if rule.get("split") == "below_zero":
             names = [rule["above"], rule["below"]]
+            if "roof" in rule:
+                rf = rule["roof"]
+                if not (isinstance(rf, dict) and isinstance(rf.get("min_z"), (int, float)) and math.isfinite(rf["min_z"])
+                        and isinstance(rf.get("min_nz"), (int, float)) and 0 < rf["min_nz"] <= 1):
+                    raise ValueError(f"source ID {sid}: roof needs finish, finite min_z and 0 < min_nz <= 1, got {rf}")
+                names.append(rf.get("finish"))
         elif rule.get("split") == "facade":
             names = sorted({f["finish"] for f in spec["facades"].values()})
         else:
@@ -182,17 +192,34 @@ def validate_facades(spec):
     if not isinstance(facades, dict) or not facades:
         raise ValueError("split 'facade' needs a non-empty spec facades block (rib contract per facade)")
     fin = spec.get("finishes") or {}
-    seen, pitch = set(), {}
+    seen, pitch, spans = set(), {}, {}
     for name, f in facades.items():
         n, fname, ribs, W = f.get("normal"), f.get("finish"), f.get("ribs"), f.get("field_m")
-        if n not in NORMALS or n in seen:
-            raise ValueError(f"facade {name}: normal must be one of {sorted(NORMALS)}, once each; got {n}")
-        seen.add(n)
+        span = f.get("span")
+        if n not in NORMALS:
+            raise ValueError(f"facade {name}: normal must be one of {sorted(NORMALS)}, got {n}")
+        if span is None:   # one field per facade (AC08 contract)
+            if n in seen or n in spans:
+                raise ValueError(f"facade {name}: normal must be one of {sorted(NORMALS)}, once each (several fields on one "
+                                 f"facade need a span each); got {n} twice")
+            seen.add(n)
+        else:              # several panel fields on one facade (AC04: two containers, door-split short walls)
+            if n in seen or not (isinstance(span, list) and len(span) == 2 and all(
+                    isinstance(c, (int, float)) and math.isfinite(c) for c in span) and span[0] < span[1]):
+                raise ValueError(f"facade {name}: span must be [lo, hi] world metres along the facade, lo < hi, and "
+                                 f"the normal {n} must not also have a span-less field; got {span}")
+            if not (isinstance(W, (int, float)) and abs((span[1] - span[0]) - W) <= 1e-6):
+                raise ValueError(f"facade {name}: field_m {W} != span width {span[1] - span[0]:.6f}")
+            for other, s2 in spans.get(n, []):
+                if span[0] < s2[1] - 1e-6 and s2[0] < span[1] - 1e-6:
+                    raise ValueError(f"facade {name}: span {span} overlaps field {other} {s2} on {n}")
+            spans.setdefault(n, []).append((name, span))
         t = fin.get(fname)
         if t is None or t.get("kind") != "full" or t.get("pattern") != "user_vjoints":
             raise ValueError(f"facade {name}: finish {fname} must be a declared full user_vjoints finish")
-        if not (isinstance(ribs, int) and not isinstance(ribs, bool) and ribs >= 2):
-            raise ValueError(f"facade {name}: ribs must be an int >= 2, got {ribs}")
+        rmin = 1 if span is not None else 2
+        if not (isinstance(ribs, int) and not isinstance(ribs, bool) and ribs >= rmin):
+            raise ValueError(f"facade {name}: ribs must be an int >= {rmin}, got {ribs}")
         if not (isinstance(W, (int, float)) and math.isfinite(W) and W > 0):
             raise ValueError(f"facade {name}: field_m must be finite > 0, got {W}")
         P = t.get("P")
@@ -215,11 +242,24 @@ def facade_key(vertices, face, tol=1e-3):
     return ("+" if n[a] > 0 else "-") + "xy"[a]
 
 
-def facade_of(spec, key):
-    for name, f in spec["facades"].items():
-        if f["normal"] == key:
-            return name, f
-    raise ValueError(f"no facade in the spec faces {key}")
+def facade_of(spec, key, pts=None, tol=1e-3):
+    """The spec facade (panel field) of a face with outward normal `key`. Several fields on one facade carry a `span`
+    along the facade axis; `pts` (the face's vertices) picks the one whose span holds the whole face. Fail-closed:
+    no field, or a face outside every span / straddling two spans, raises ValueError naming it."""
+    cand = [(name, f) for name, f in spec["facades"].items() if f["normal"] == key]
+    if not cand:
+        raise ValueError(f"no facade in the spec faces {key}")
+    if len(cand) == 1 and cand[0][1].get("span") is None:
+        return cand[0]
+    if pts is None:
+        raise ValueError(f"facade {key} has {len(cand)} fields: the face vertices are needed to pick one")
+    axis = 1 - NORMALS[key][0]
+    a, b = min(p[axis] for p in pts), max(p[axis] for p in pts)
+    hit = [(name, f) for name, f in cand if f["span"][0] - tol <= a and b <= f["span"][1] + tol]
+    if len(hit) != 1:
+        raise ValueError(f"face {'xy'[axis]} {a:.4f}..{b:.4f} on {key} lies in {len(hit)} field spans "
+                         f"{[(n, f['span']) for n, f in cand]}")
+    return hit[0]
 
 
 DECISION_REF = re.compile(r"^(D\d+|https://github\.com/\S+#issuecomment-\d+)$")
@@ -317,6 +357,14 @@ def _finite(vertices):
             raise ValueError(f"non-finite or malformed vertex {v}")
 
 
+GLASS = "__glass__"   # assign_finishes marker: the polygon goes to SM_<A>_MainGlass (KPP glass, no texture)
+
+
+def _up(vertices, face):
+    n = _newell([vertices[k] for k in face])
+    return -1.0 if n is None else n[2] / math.sqrt(sum(c * c for c in n))
+
+
 def assign_finishes(vertices, faces, mat_ids, spec):
     """Return one finish name per polygon (fail-closed on unmapped / empty IDs)."""
     if not faces:
@@ -332,12 +380,20 @@ def assign_finishes(vertices, faces, mat_ids, spec):
         rule = src.get(str(int(m)))
         if rule is None:
             raise ValueError(f"polygon {i}: material ID {m} has no finish mapping")
-        if rule.get("split") == "below_zero":
+        if rule.get("glass"):
+            out.append(GLASS)
+        elif rule.get("split") == "below_zero":
             zmax = max(vertices[k][2] for k in f)
-            out.append(rule["below"] if zmax <= zero else rule["above"])
+            rf = rule.get("roof")
+            if zmax <= zero:
+                out.append(rule["below"])
+            elif rf and min(vertices[k][2] for k in f) >= rf["min_z"] and _up(vertices, f) >= rf["min_nz"]:
+                out.append(rf["finish"])
+            else:
+                out.append(rule["above"])
         elif rule.get("split") == "facade":
             try:
-                out.append(facade_of(spec, facade_key(vertices, f))[1]["finish"])
+                out.append(facade_of(spec, facade_key(vertices, f), [vertices[k] for k in f])[1]["finish"])
             except ValueError as e:
                 raise ValueError(f"polygon {i}: material ID {m} (split facade): {e}") from None
         else:
@@ -366,10 +422,12 @@ def facade_uv(vertices, face, lo, hi, tol=1e-3):
     return [((q[1] - lo[1]) if n[0] > 0 else (hi[1] - q[1]), q[2]) for q in p]
 
 
-def perimeter_drop(vertices, faces, finishes, drop_finish, tol=0.001):
-    """Per plan side of the body bbox: covered length of drop faces reaching <= DROP_MIN_M (box bodies only)."""
+def perimeter_drop(vertices, faces, finishes, drop_finish, tol=0.001, body_finishes=None):
+    """Per plan side of the body bbox: covered length of drop faces reaching <= DROP_MIN_M (box bodies only).
+    `body_finishes`: the bbox comes from these finishes only (AC04: walls, not the railings/ladder that overhang)."""
     _finite(vertices)
-    body = [k for f in faces for k in f if vertices[k][2] > 0.0]
+    keep = (lambda fin: True) if body_finishes is None else (lambda fin: fin in body_finishes)  # noqa: E731
+    body = [k for f, fin in zip(faces, finishes) if keep(fin) for k in f if vertices[k][2] > 0.0]
     if not body:
         raise ValueError("no body above ±0.000")
     lo = [min(vertices[k][a] for k in body) for a in (0, 1)]
@@ -413,8 +471,11 @@ def facade_axis(vertices, face, lo, hi):
     """(world axis along the facade, +1 if facade u grows with that world coordinate else -1)."""
     uv = facade_uv(vertices, face, lo, hi)
     p = [vertices[k] for k in face]
-    for axis in (0, 1):
-        span = max(q[axis] for q in p) - min(q[axis] for q in p)
+    spans = {a: max(q[a] for q in p) - min(q[a] for q in p) for a in (0, 1)}
+    # the wider plan span first: a wall whose constant coordinate carries float noise (AC04 +x wall: 2e-6 m) must not
+    # be read as running along that axis (same fix as the AC07 build branch)
+    for axis in sorted((0, 1), key=lambda a: -spans[a]):
+        span = spans[axis]
         if span > 1e-9:
             i, j = max(range(len(p)), key=lambda m: p[m][axis]), min(range(len(p)), key=lambda m: p[m][axis])
             if abs(abs(uv[i][0] - uv[j][0]) - span) < 1e-6:
@@ -438,17 +499,18 @@ def field_frames(vertices, faces, finishes, spec, lo, hi, tol=1e-3):
     groups = {}
     for i, (f, fin) in enumerate(zip(faces, finishes)):
         if fin in patterned:
-            groups.setdefault(facade_key(vertices, f), []).append(i)
+            key = facade_key(vertices, f)
+            groups.setdefault((key, facade_of(spec, key, [vertices[k] for k in f])[0]), []).append(i)
     frames: list = [None] * len(faces)
     report = {}
-    for key, idx in sorted(groups.items()):
-        name, fc = facade_of(spec, key)
+    for (key, _), idx in sorted(groups.items()):
+        name, fc = facade_of(spec, key, [vertices[k] for k in faces[idx[0]]])
         axis = 1 - NORMALS[key][0]
         cs = [vertices[k][axis] for i in idx for k in faces[i]]
         a, b = min(cs), max(cs)
         if abs((b - a) - fc["field_m"]) > tol:
             raise ValueError(f"facade {name}: measured panel field {b - a:.4f} m != spec field_m {fc['field_m']} m")
-        oz = spec["finishes"][fc["finish"]].get("outline_z_m")
+        oz = fc.get("z_m") or spec["finishes"][fc["finish"]].get("outline_z_m")
         zs = [vertices[k][2] for i in idx for k in faces[i]]
         if oz and (abs(min(zs) - oz[0]) > tol or abs(max(zs) - oz[1]) > tol):
             raise ValueError(f"facade {name}: panel field z {min(zs):.4f}..{max(zs):.4f} != outline_z_m {oz}")
