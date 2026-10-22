@@ -178,11 +178,121 @@ def test_bench_missing_data_exits_2(tmp_path, capsys):
     assert "missing input" in capsys.readouterr().err
 
 
+V4 = np.array([(0, 0, 0), (0.001, 0, 0), (5, 0, 0), (5.001, 0, 0)], float)     # oracle pairs (1, 2), (3, 4)
+
+
+def chk(r, of=(), ov=(1, 2, 3, 4), op=((1, 2), (3, 4)), v=V4):
+    return bench.check(r, of, ov, op, v, VERTEX_M)
+
+
 def test_bench_check_rejects_any_difference():
-    good = {"xview_faces": (1, 2), "vertices": (3, 4), "vertex_pairs": ((3, 4, 0.0),)}
-    assert bench.check(good, (1, 2), (3, 4))["equal"]
-    for bad in ({**good, "xview_faces": (1,)}, {**good, "vertices": (3,)}, {**good, "vertex_pairs": ()}):
-        assert not bench.check(bad, (1, 2), (3, 4))["equal"]
+    good = {"xview_faces": (1, 2), "vertices": (1, 2, 3, 4), "vertex_pairs": ((1, 2, 0.001), (3, 4, 0.001))}
+    assert chk(good, (1, 2))["equal"]
+    for bad in ({**good, "xview_faces": (1,)}, {**good, "vertices": (3,)}, {**good, "vertex_pairs": ()},
+                {**good, "xview_faces": (1.0, 2.0)}, {**good, "vertices": (True, 2, 3, 4)}):
+        assert not chk(bad, (1, 2))["equal"]
+
+
+def test_bench_check_without_a_pair_oracle_fails_closed():
+    r = {"xview_faces": (), "vertices": (1, 2, 3, 4), "vertex_pairs": ((1, 2, 0.001), (3, 4, 0.001))}
+    assert not bench.check(r, (), (1, 2, 3, 4))["equal"]
+
+
+@pytest.mark.parametrize("pairs", [
+    ((1, 3, 0.001), (2, 4, 0.001)),                      # rewired, same endpoint union (reviewer P1-2)
+    ((1, 2, 0.001), (3, 4, 0.001), (1, 2, 0.001)),       # duplicated
+    ((3, 4, 0.001), (1, 2, 0.001)),                      # order
+    ((2, 1, 0.001), (3, 4, 0.001)),                      # a > b
+    ((1, 2, 999.0), (3, 4, 0.001)),                      # impossible distance (reviewer P1-2)
+    ((1, 2, float("nan")), (3, 4, 0.001)),
+    ((1, 2, 0.0011), (3, 4, 0.001)),                     # distance not the geometry
+    ((1, 2), (3, 4, 0.001)),                             # schema
+    ((1, 2, True), (3, 4, 0.001)),
+    ((1.0, 2, 0.001), (3, 4, 0.001)),
+    ((1, 2, 0.001), (3, 9, 0.001)),                      # id out of range
+])
+def test_bench_check_rejects_bad_vertex_pairs(pairs):
+    r = {"xview_faces": (), "vertices": (1, 2, 3, 4), "vertex_pairs": pairs}
+    assert not chk(r)["equal"]
+
+
+def test_bench_check_rejects_pair_beyond_the_tolerance_even_if_the_oracle_lists_it():
+    v = np.array([(0, 0, 0), (0.0021, 0, 0)], float)
+    r = {"xview_faces": (), "vertices": (1, 2), "vertex_pairs": ((1, 2, 0.0021),)}
+    assert not bench.check(r, (), (1, 2), ((1, 2),), v, VERTEX_M)["equal"]
+
+
+def test_oracle_pairs_match_brute_force():
+    """Generated probe: the bench's independent pair derivation equals an O(n^2) brute force (incl. exactly 2 mm)."""
+    rng = np.random.default_rng(553)
+    for _ in range(30):
+        v = np.round(rng.random((60, 3)) * 0.01, 3)                       # 1 mm lattice: many exact 2 mm pairs
+        want = tuple((a + 1, b + 1) for a in range(60) for b in range(a + 1, 60)
+                     if np.linalg.norm(v[a] - v[b]) <= VERTEX_M)
+        assert bench.oracle_pairs(v, VERTEX_M) == want
+        x = xview_lists(v, ((0, 1, 2),), XviewTolerance())
+        assert tuple(p[:2] for p in x["vertex_pairs"]) == want
+
+
+def _npz(p, **over):
+    kw = dict(vertices=np.array([(0, 0, 0), (1, 0, 0), (0, 1, 0)], float), loop_vert=np.array([0, 1, 2]),
+              loop_start=np.array([0]), loop_total=np.array([3]))
+    kw.update(over)
+    np.savez(p, **kw)
+    return p
+
+
+def test_load_npz_accepts_a_valid_inventory(tmp_path):
+    v, f = bench.load_npz(_npz(tmp_path / "m.npz"))
+    assert f == ((0, 1, 2),) and v.shape == (3, 3)
+    v, f = bench.load_npz(_npz(tmp_path / "q.npz", vertices=np.array([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)], float),
+                               loop_vert=np.array([0, 1, 2, 0, 2, 3]), loop_start=np.array([0, 3]),
+                               loop_total=np.array([3, 3])))
+    assert f == ((0, 1, 2), (0, 2, 3))
+
+
+@pytest.mark.parametrize("over, match", [
+    ({"loop_vert": np.array([0, 1.5, 2])}, "loop_vert must be a 1-D integer"),     # fractional (reviewer P1-3)
+    ({"loop_vert": np.array([0, 1, 2, 0])}, "cover 3 of 4"),                     # unconsumed suffix
+    ({"loop_start": np.array([0, 3])}, "lengths differ"),                        # unmatched loop records
+    ({"loop_start": np.array([1]), "loop_vert": np.array([0, 0, 1, 2])}, "not contiguous"),
+    ({"loop_total": np.array([2]), "loop_vert": np.array([0, 1])}, "fewer than 3"),
+    ({"loop_vert": np.array([0, 1, 3])}, "out of range"),
+    ({"loop_vert": np.array([0, -1, 2])}, "out of range"),
+    ({"loop_vert": np.array([True, False, True])}, "integer"),
+    ({"loop_start": np.array([], int), "loop_total": np.array([], int)}, "empty"),
+    ({"vertices": np.array([(0, 0, 0), (1, 0, np.nan), (0, 1, 0)])}, "finite float"),
+    ({"vertices": np.array([(0, 0), (1, 0), (0, 1)], float)}, "finite float"),
+])
+def test_load_npz_rejects_malformed_inventory(tmp_path, over, match):
+    with pytest.raises(bench.BenchError, match=match):
+        bench.load_npz(_npz(tmp_path / "m.npz", **over))
+
+
+def test_load_npz_rejects_a_missing_array(tmp_path):
+    p = tmp_path / "m.npz"
+    np.savez(p, vertices=np.zeros((3, 3)), loop_vert=np.array([0, 1, 2]), loop_start=np.array([0]))
+    with pytest.raises(bench.BenchError, match="missing array loop_total"):
+        bench.load_npz(p)
+
+
+def test_bench_cli_malformed_npz_exits_2_and_keeps_out(tmp_path):
+    """Fresh process: a fractional corner index in the TOW02 inventory is exit 2, the --out file is untouched."""
+    import subprocess
+    import sys
+    raw = tmp_path / bench.TOW / "xcheck" / "raw"
+    raw.mkdir(parents=True)
+    _npz(raw / "arrays_ours.npz", loop_vert=np.array([0, 1.5, 2]))
+    (tmp_path / bench.TOW / "xview").mkdir(parents=True)
+    (tmp_path / bench.TOW / "xview" / "ours_v005.keep").write_text("{}", encoding="utf-8")
+    out = tmp_path / "result.json"
+    out.write_text("previous", encoding="utf-8")
+    p = subprocess.run([sys.executable, str(ROOT / "tools" / "qa" / "xview_bench.py"), "--candidate", "baseline",
+                        "--data", str(tmp_path), "--ground", str(tmp_path), "--out", str(out)],
+                       capture_output=True, text=True, cwd=ROOT)
+    assert p.returncode == 2, p.stderr
+    assert "loop_vert must be a 1-D integer" in p.stderr and "METRIC" not in p.stdout
+    assert out.read_text(encoding="utf-8") == "previous"
 
 
 def test_bench_reps_must_be_positive():
@@ -254,6 +364,24 @@ def test_bench_wrong_candidate_is_a_failure(fake_bench):
     (tmp / "empty_cand.py").write_text(
         "def xview_lists(v, f, tol):\n    return {'xview_faces': (), 'vertices': (), 'vertex_pairs': ()}\n")
     assert bench.main(["--candidate", "empty_cand", "--reps", "1"]) == 1
+
+
+def test_bench_rewiring_candidate_is_a_failure(fake_bench):
+    """A candidate with the right selections but invented pairs fails the run (reviewer P1-2, end to end)."""
+    tmp, _ = fake_bench
+    (tmp / "rewire_cand.py").write_text(
+        "from dt_ai.ops.inv_xview_fast import xview_lists as f0\n"
+        "def xview_lists(v, f, tol):\n    r = f0(v, f, tol)\n"
+        "    return {**r, 'vertex_pairs': tuple((a, b, 999.0) for a, b, _ in r['vertex_pairs'])}\n")
+    assert bench.main(["--candidate", "rewire_cand", "--reps", "1"]) == 1
+
+
+def test_bench_oracle_selection_without_rule_pairs_exits_2(fake_bench, monkeypatch, capsys):
+    """xView vertex ids that the rule cannot reproduce are an oracle error (exit 2), never a pass or a fail."""
+    cases = [("tow02_v005", V4, ((0, 1, 2),), (), (1, 2, 3), XviewTolerance())]
+    monkeypatch.setattr(bench, "fixtures", lambda data, ground: (cases, [fake_bench[1]]))
+    assert bench.main(["--candidate", "baseline", "--reps", "1"]) == 2
+    assert "do not reproduce the xView vertex selection" in capsys.readouterr().err
 
 
 def test_bench_input_changed_during_the_run_exits_2(fake_bench):

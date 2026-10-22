@@ -19,6 +19,10 @@ Fixtures (all must match exactly; the oracle is the stored xView list, never a p
 Metric: `cpu_s` = median of `--reps` `time.process_time()` runs of the candidate on tow02_v005 (single process);
 `wall_s` = median `time.perf_counter()` for information. Data root: `--data` or env `XVIEW_BENCH_DATA`
 (default the primary checkout's git-ignored outputs on this PC); SHA-256 of every input is printed.
+Vertex pairs are checked as a full list against `oracle_pairs` (an independent sort-and-sweep derivation of the rule,
+which must reproduce the stored xView vertex selection, else exit 2): exact ids and order, each distance equal to the
+geometry within 1e-12 m and within the tolerance. Mesh inventories are strict (integer arrays, contiguous spans that
+cover every loop record); xView ids must be unique integers in range.
 Exit 0: every fixture equal; 1: a parity mismatch or a candidate error; 2: missing / malformed input, an input that
 changed during the run, or `--out` that is an input or the bench itself (checked before anything is written).
 Pattern: none | new-case: frozen parity + CPU benchmark for the xView-exact overlap check (#553).
@@ -58,10 +62,48 @@ def baseline_lists(vertices, faces, tol):
             "vertex_pairs": tuple((a, b, d) for a, b, d in r.vertex_pairs)}
 
 
+def _int_array(z, key: str, p: Path) -> np.ndarray:
+    a = z[key]
+    if a.ndim != 1 or a.dtype == bool or not np.issubdtype(a.dtype, np.integer):
+        raise BenchError(f"{p.name}: {key} must be a 1-D integer array, got {a.dtype} {a.shape}")
+    return a.astype(np.int64)
+
+
 def load_npz(p: Path):
-    z = np.load(p)
-    lv, st, tot = z["loop_vert"], z["loop_start"], z["loop_total"]
-    return np.asarray(z["vertices"], float), tuple(tuple(int(x) for x in lv[s:s + t]) for s, t in zip(st, tot))
+    """Strict mesh inventory: integer corner/start/total arrays, contiguous spans covering every loop record."""
+    with np.load(p, allow_pickle=False) as z:
+        for k in ("vertices", "loop_vert", "loop_start", "loop_total"):
+            if k not in z.files:
+                raise BenchError(f"{p.name}: missing array {k}")
+        v = z["vertices"]
+        lv, st, tot = (_int_array(z, k, p) for k in ("loop_vert", "loop_start", "loop_total"))
+    if v.ndim != 2 or v.shape[1] != 3 or not np.issubdtype(v.dtype, np.floating) or not np.isfinite(v).all():
+        raise BenchError(f"{p.name}: vertices must be a finite float (n, 3) array, got {v.dtype} {v.shape}")
+    if len(st) != len(tot) or not len(st):
+        raise BenchError(f"{p.name}: loop_start ({len(st)}) / loop_total ({len(tot)}) lengths differ or are empty")
+    if (tot < 3).any():
+        raise BenchError(f"{p.name}: polygon {int(np.argmax(tot < 3))} has fewer than 3 corners")
+    expect = np.concatenate(([0], np.cumsum(tot)[:-1]))
+    if (st != expect).any():
+        i = int(np.argmax(st != expect))
+        raise BenchError(f"{p.name}: loop_start[{i}]={int(st[i])} is not contiguous (expected {int(expect[i])})")
+    if int(tot.sum()) != len(lv):
+        raise BenchError(f"{p.name}: spans cover {int(tot.sum())} of {len(lv)} loop records")
+    if len(lv) and (lv.min() < 0 or lv.max() >= len(v)):
+        raise BenchError(f"{p.name}: loop_vert index out of range 0..{len(v) - 1}")
+    lv = lv.tolist()
+    return np.asarray(v, float), tuple(tuple(lv[s:s + t]) for s, t in zip(st.tolist(), tot.tolist()))
+
+
+def _is_int(x) -> bool:
+    return isinstance(x, (int, np.integer)) and not isinstance(x, (bool, np.bool_))
+
+
+def _ids(items, n: int, what: str, p: Path) -> tuple:
+    ids = [i[0] if isinstance(i, list) and i else i for i in items]
+    if not all(_is_int(i) and 1 <= i <= n for i in ids) or len(set(ids)) != len(ids):
+        raise BenchError(f"{p.name}: {what} ids must be unique integers in 1..{n}")
+    return tuple(sorted(int(i) for i in ids))
 
 
 def load_keep(p: Path, nv: int, nf: int):
@@ -73,7 +115,7 @@ def load_keep(p: Path, nv: int, nf: int):
             or fc["count"] != len(fc["items"]):
         raise BenchError(f"{p.name}: partial or failed xView result")
     tol = XviewTolerance(vertex_m=float(d["tolVerts"]), face_m=float(d["tolFaces"])).validate()
-    return tuple(sorted(int(i[0]) for i in fc["items"])), tuple(sorted(int(i[0]) for i in vc["items"])), tol
+    return _ids(fc["items"], nf, "face", p), _ids(vc["items"], nv, "vertex", p), tol
 
 
 def load_dump(p: Path):
@@ -159,15 +201,68 @@ def run(fn, v, f, tol):
     return r, time.process_time() - c0, time.perf_counter() - w0
 
 
-def check(r, of, ov) -> dict:
+def oracle_pairs(v: np.ndarray, r: float) -> tuple:
+    """Expected vertex pairs, derived independently of every candidate: sort-and-sweep on the widest axis, then the
+    rule itself (two distinct indices at |v[a] - v[b]| <= r). 1-based (a, b) with a < b, lexicographic order."""
+    v = np.asarray(v, float)
+    n = len(v)
+    if n < 2:
+        return ()
+    ax = int(np.argmax(np.ptp(v, axis=0)))
+    order = np.argsort(v[:, ax], kind="stable")
+    x = v[order, ax]
+    hi = np.searchsorted(x, x + r, "right")
+    cnt = hi - np.arange(n) - 1
+    out = []
+    for s in range(0, n, 4096):                     # bounded memory per block
+        c = cnt[s:s + 4096]
+        if not c.sum():
+            continue
+        i = np.repeat(np.arange(s, s + len(c)), c)
+        j = i + 1 + (np.arange(c.sum()) - np.repeat(np.cumsum(c) - c, c))
+        a, b = order[i], order[j]
+        keep = np.linalg.norm(v[a] - v[b], axis=1) <= r
+        out += list(zip(np.minimum(a, b)[keep].tolist(), np.maximum(a, b)[keep].tolist()))
+    return tuple(sorted((a + 1, b + 1) for a, b in out))
+
+
+def _pair_errors(vp, op, v, vertex_m) -> list:
+    """Schema, id range, distance and exact identity of the candidate's vertex pairs against `op`."""
+    if op is None or v is None or vertex_m is None:
+        return ["no independent pair oracle"]
+    v = np.asarray(v, float)
+    err, ids = [], []
+    for k, p in enumerate(vp):
+        if not isinstance(p, (tuple, list)) or len(p) != 3 or not _is_int(p[0]) or not _is_int(p[1]) \
+                or isinstance(p[2], (bool, np.bool_)) or not isinstance(p[2], (int, float, np.integer, np.floating)):
+            err.append(f"pair {k}: not (int a, int b, float d): {p!r}"[:120])
+            continue
+        a, b, d = int(p[0]), int(p[1]), float(p[2])
+        if not 1 <= a < b <= len(v):
+            err.append(f"pair {k}: ids ({a}, {b}) not 1 <= a < b <= {len(v)}")
+            continue
+        true = float(np.linalg.norm(v[a - 1] - v[b - 1]))
+        if not np.isfinite(d) or abs(d - true) > 1e-12 or true > vertex_m:
+            err.append(f"pair {k}: ({a}, {b}) distance {d!r}, geometry {true!r}, limit {vertex_m}")
+        ids.append((a, b))
+    if tuple(ids) != tuple(op):
+        err.append(f"pairs differ from the oracle: only candidate {sorted(set(ids) - set(op))[:10]}, "
+                   f"only oracle {sorted(set(op) - set(ids))[:10]}, {len(ids)} vs {len(op)}")
+    return err
+
+
+def check(r, of, ov, op=None, v=None, vertex_m=None) -> dict:
+    """Exact face list, vertex list and pair list (`op` = independent oracle pairs) parity; anything else fails."""
     xf, vs, vp = tuple(r["xview_faces"]), tuple(r["vertices"]), tuple(r["vertex_pairs"])
-    pair_ids = tuple(sorted({int(x) for p in vp for x in p[:2]}))
+    typed = all(_is_int(x) for x in xf + vs)
+    pe = _pair_errors(vp, op, v, vertex_m)
     return {"faces": len(xf), "oracle_faces": len(of), "vertices": len(vs), "oracle_vertices": len(ov),
-            "vertex_pairs": len(vp), "faces_only_candidate": sorted(set(xf) - set(of))[:20],
+            "vertex_pairs": len(vp), "oracle_pairs": None if op is None else len(op),
+            "faces_only_candidate": sorted(set(xf) - set(of))[:20],
             "faces_only_oracle": sorted(set(of) - set(xf))[:20],
             "vertices_only_candidate": sorted(set(vs) - set(ov))[:20],
-            "vertices_only_oracle": sorted(set(ov) - set(vs))[:20],
-            "equal": xf == of and vs == ov and pair_ids == vs}
+            "vertices_only_oracle": sorted(set(ov) - set(vs))[:20], "pair_errors": pe[:5],
+            "equal": typed and xf == of and vs == ov and not pe}
 
 
 def main(argv=None) -> int:
@@ -184,6 +279,11 @@ def main(argv=None) -> int:
     try:
         fx, inputs = fixtures(Path(a.data), Path(a.ground))
         before = {p.name: sha(p) for p in inputs}
+        pairs = {}
+        for name, v, _f, _of, ov, tol in fx:
+            pairs[name] = oracle_pairs(v, tol.vertex_m)
+            if tuple(sorted({i for p in pairs[name] for i in p})) != ov:
+                raise BenchError(f"{name}: pairs derived from the rule do not reproduce the xView vertex selection")
         if a.out and _aliases(Path(a.out), inputs + [Path(__file__)]):
             raise BenchError(f"--out {a.out} is an input or the bench itself")
     except (BenchError, OSError, ValueError, KeyError) as e:
@@ -199,7 +299,7 @@ def main(argv=None) -> int:
         try:
             for _ in range(reps):
                 r, c, w = run(fn, v, f, tol)
-                row = check(r, of, ov)
+                row = check(r, of, ov, pairs[name], v, tol.vertex_m)
                 if rows is not None and row != rows:
                     row["equal"] = False                      # a nondeterministic candidate never passes
                 rows = row
