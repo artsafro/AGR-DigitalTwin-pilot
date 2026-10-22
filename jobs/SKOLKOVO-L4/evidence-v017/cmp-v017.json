@@ -1,0 +1,73 @@
+{
+"pair_residual_m": 9.358714596979391e-07,
+"yaw_deg": 61.41247498983469,
+"assembly_bbox": [
+[
+-28.02080165611889,
+-30.500652686333215,
+-1.8009917736053467
+],
+[
+43.87804164551017,
+64.48558101300424,
+26.879677812350963
+]
+],
+"delivered_bbox": [
+[
+-28.12,
+-30.52,
+-2.48
+],
+[
+28.12,
+30.52,
+26.38
+]
+],
+"parts_outside_m": {
+"rods_additional_kns_components_rod_ladder_contour_rebuild": 0.5,
+"rods_primary_mast_meshes_rod_ladder_contour_rebuild": 0.5,
+"facade_additional_entrance_details_other_detail_per_profile": 0.0,
+"facade_additional_exterior_doors_door_from_face": 0.0,
+"facade_additional_exterior_railings_railing_contour_rebuild": 0.0,
+"facade_additional_exterior_slabs_access_slab_contour_rebuild": 0.0,
+"facade_additional_opaque_panels_wall_from_face": 0.0,
+"facade_canopy_slab_from_face": 0.0,
+"facade_cassette_perimeter_profiles_frame_contour_rebuild": 0.0,
+"facade_decorative_lamellae_decor_contour_rebuild": 0.0,
+"facade_entrance_glazing_door_from_face": 0.0,
+"facade_exterior_substrate_reveals_wall_from_face": 0.0,
+"facade_external_metal_doors_door_primitive": 0.0,
+"facade_external_railings_railing_detail_per_profile": 0.0,
+"facade_external_reveals_band_from_face": 0.0,
+"facade_facade_cassettes_wall_from_face": 0.0,
+"facade_lamella_top_caps_band_contour_rebuild": 0.0,
+"facade_mullions_frame_contour_rebuild": 0.0,
+"facade_opaque_glazing_glazing_from_face": 0.0,
+"facade_parapet_flashings_parapet_contour_rebuild": 0.0,
+"facade_perforated_cassettes_wall_from_face": 0.0,
+"facade_plinth_wall_from_face": 0.0,
+"facade_roof_and_entrance_details_other_contour_rebuild": 0.0,
+"facade_roof_screen_ac_screen_from_face": 0.0,
+"facade_roof_substrate_skins_wall_from_face": 0.0,
+"facade_roofs_slab_contour_rebuild": 0.0,
+"facade_soffits_slab_from_face": 0.0,
+"facade_solid_cassettes_wall_from_face": 0.0,
+"facade_stemalite_glazing_from_face": 0.0,
+"facade_vent_grilles_grille_detail_per_profile": 0.0,
+"facade_window_flashings_band_contour_rebuild": 0.0,
+"v1_additional_exterior_doors_door_from_face": 0.0,
+"v1_additional_exterior_slabs_access_slab_contour_rebuild": 0.0,
+"v1_baseline_entrance_slabs_slab_contour_rebuild": 0.0,
+"v1_baseline_external_structure_frame_contour_rebuild": 33.97,
+"v1_baseline_rooftop_concrete_wall_from_face": 0.0,
+"v1_baseline_rooftop_decks_slab_contour_rebuild": 0.0,
+"v1_exterior_substrate_reveals_wall_from_face": 0.0,
+"v1_external_railings_railing_detail_per_profile": 0.0,
+"v1_opaque_glazing_glazing_from_face": 0.0,
+"v1_roof_substrate_skins_wall_from_face": 0.0,
+"v1_roofs_slab_contour_rebuild": 0.0,
+"v1_vent_grilles_grille_detail_per_profile": 0.0
+}
+}

@@ -1,0 +1,1582 @@
+{
+"objects": 175,
+"applied": 109,
+"tris": 7536,
+"rows": [
+{
+"part": "facade_mullions_frame_contour_rebuild",
+"row": "9464",
+"name": "Прямоугольный импост 50х100 мм [5749335]",
+"src": 8,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_mullions_frame_contour_rebuild",
+"row": "9469",
+"name": "Прямоугольный импост 50х100 мм [5749340]",
+"src": 8,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_mullions_frame_contour_rebuild",
+"row": "9496",
+"name": "Прямоугольный импост 50х100 мм [5749745]",
+"src": 8,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_mullions_frame_contour_rebuild",
+"row": "9475",
+"name": "Прямоугольный импост 50х100 мм [5749347]",
+"src": 8,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_mullions_frame_contour_rebuild",
+"row": "9501",
+"name": "Прямоугольный импост 50х100 мм [5749750]",
+"src": 8,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_mullions_frame_contour_rebuild",
+"row": "9507",
+"name": "Прямоугольный импост 50х100 мм [5749757]",
+"src": 8,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_exterior_substrate_reveals_wall_from_face",
+"row": "3962",
+"name": "Basic Wall Ст-2_ Сэндвич-панель_100мм [2340328]",
+"src": 776,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_additional_exterior_railings_railing_contour_rebuild",
+"row": "8046",
+"name": "Railing ADSK_МГН_h 1200 [4672094]",
+"src": 975,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"row": "10057",
+"name": "Railing АР_Цокольный отлив_360 [5926139]",
+"src": 602,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "3906",
+"name": "Ladder-Precision_Ladders-Tubular_Ladder_With_Parapet_Platform_and_Roof-Side Fixed Ladder With Cage, Platform & Roofside Return [2277003]",
+"src": 1000,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7932",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4656129]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7933",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657666]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7934",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657674]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7936",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657786]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7935",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657682]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_additional_exterior_railings_railing_contour_rebuild",
+"row": "8047",
+"name": "Railing ADSK_МГН_h 1200 [4672537]",
+"src": 1968,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_external_railings_railing_detail_per_profile",
+"row": "4665",
+"name": "Railing ADSK_МГН_h 900 [3798618]",
+"src": 1844,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"row": "10059",
+"name": "Railing АР_Цокольный отлив_360 [5927508]",
+"src": 1975,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7940",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657804]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7944",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657820]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_additional_exterior_railings_railing_contour_rebuild",
+"row": "7968",
+"name": "Railing ADSK_МГН_h 1200 [4667836]",
+"src": 5307,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"row": "10060",
+"name": "Railing АР_Цокольный отлив_360 [5927667]",
+"src": 1771,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"row": "9534",
+"name": "Railing АР_Цокольный отлив_360 [5819517]",
+"src": 2018,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "4297",
+"name": "АР_ДорХан_Ворота_R21 НВр-1(3500hх2600)_Вал сверху_С калиткой [3292916]",
+"src": 1158,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7938",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657790]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7937",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657788]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7939",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657792]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7943",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657807]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7942",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657806]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7941",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657805]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7945",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657821]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7946",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657822]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"row": "9536",
+"name": "Railing АР_Цокольный отлив_360 [5819596]",
+"src": 4396,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"row": "7947",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657823]",
+"src": 1991,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"row": "9533",
+"name": "Railing АР_Цокольный отлив_360 [5819488]",
+"src": 3154,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"row": "10058",
+"name": "Railing АР_Цокольный отлив_360 [5927346]",
+"src": 3157,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11051",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741571]",
+"src": 1800,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11052",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741573]",
+"src": 1800,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11053",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741575]",
+"src": 1800,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11054",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741577]",
+"src": 1800,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11055",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741579]",
+"src": 1800,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11056",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741581]",
+"src": 1800,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11057",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741583]",
+"src": 1800,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11059",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741587]",
+"src": 1800,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_roofs_slab_contour_rebuild",
+"row": "9521",
+"name": "Basic Roof ТН_КРОВЛЯ Солид [5783763]",
+"src": 3994,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11060",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741589]",
+"src": 1800,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11061",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741591]",
+"src": 1800,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11062",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741593]",
+"src": 1800,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11063",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741595]",
+"src": 1800,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_external_structure_frame_contour_rebuild",
+"row": "9721",
+"name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4883923]",
+"src": 2750,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11064",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741597]",
+"src": 1800,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_external_structure_frame_contour_rebuild",
+"row": "9723",
+"name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884101]",
+"src": 2707,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_external_structure_frame_contour_rebuild",
+"row": "9722",
+"name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884087]",
+"src": 2750,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_external_structure_frame_contour_rebuild",
+"row": "9724",
+"name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884117]",
+"src": 2750,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_external_structure_frame_contour_rebuild",
+"row": "10398",
+"name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5905599]",
+"src": 2734,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_additional_exterior_railings_railing_contour_rebuild",
+"row": "8022",
+"name": "Railing ADSK_МГН_h 1200 [4668108]",
+"src": 5307,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_external_structure_frame_contour_rebuild",
+"row": "9725",
+"name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884133]",
+"src": 2750,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_external_structure_frame_contour_rebuild",
+"row": "10399",
+"name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5906904]",
+"src": 2736,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"row": "9532",
+"name": "Railing АР_Цокольный отлив_360 [5819454]",
+"src": 10099,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"row": "9535",
+"name": "Railing АР_Цокольный отлив_360 [5819573]",
+"src": 11522,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"row": "9528",
+"name": "Railing АР_Цокольный отлив_360 [5802837]",
+"src": 14964,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11058",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741585]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11070",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741609]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11071",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741611]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11067",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741603]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11069",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741607]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11073",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741615]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11077",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741623]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11078",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741625]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11079",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741627]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11068",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741605]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11074",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741617]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11065",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741599]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11066",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741601]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11082",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741633]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11072",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741613]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11081",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741631]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11080",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741629]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11076",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741621]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11075",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741619]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "facade_external_railings_railing_detail_per_profile",
+"row": "4675",
+"name": "Railing ADSK_МГН_h 900 [3799019]",
+"src": 1844,
+"status": "applied",
+"op": "multi:front",
+"tris": 292
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11083",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741635]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11084",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741637]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "facade_external_railings_railing_detail_per_profile",
+"row": "4670",
+"name": "Railing ADSK_МГН_h 900 [3798985]",
+"src": 1844,
+"status": "applied",
+"op": "multi:front",
+"tris": 292
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11085",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741639]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11050",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741569]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11101",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741671]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11103",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741675]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11102",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741673]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11104",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741677]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11105",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741679]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11106",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741681]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11107",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741683]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11086",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741641]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11087",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741643]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11108",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741685]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11090",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741649]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11091",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741651]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11088",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741645]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11093",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741655]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11089",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741647]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11092",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741653]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11098",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741665]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11094",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741657]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11095",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741659]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11096",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741661]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11100",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741669]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11097",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741663]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11099",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741667]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11109",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741687]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11121",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741711]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11120",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741709]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11122",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741713]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11123",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741715]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11125",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741719]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11124",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741717]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11126",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741721]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11110",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741689]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11111",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741691]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11112",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741693]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11114",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741697]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11115",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741699]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11113",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741695]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11116",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741701]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11117",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741703]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11119",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741707]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11118",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741705]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11128",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741725]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11131",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741731]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11127",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741723]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11130",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741729]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11132",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741733]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11129",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741727]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11133",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741735]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11135",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741739]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11134",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741737]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11136",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741741]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11138",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741745]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11137",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741743]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11139",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741747]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11140",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741749]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11141",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741751]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11154",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741777]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11142",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741753]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11156",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741781]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11157",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741783]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11143",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741755]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11146",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741761]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11144",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741757]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11145",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741759]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_plinth_flashings_band_contour_rebuild",
+"row": "2960",
+"name": "Railing АР_Цокольный отлив_360 [5819534]",
+"src": 1776,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_roof_and_entrance_details_other_contour_rebuild",
+"row": "9240",
+"name": "Ladder-Precision_Ladders-Tubular_Ladder_With_Parapet_Platform_and_Roof-Side Fixed Ladder With Cage, Platform & Roofside Return [4219121]",
+"src": 1000,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11147",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741763]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_rod_ladder_contour_rebuild",
+"row": "10439",
+"name": "Лестничный марш ТA Лестничный марш ТA [5923699]",
+"src": 8760,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11148",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741765]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11149",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741767]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11150",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741769]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11163",
+"name": "Ограждение ТА 300 Ограждение ТА 300 [6741797]",
+"src": 676,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_rod_ladder_contour_rebuild",
+"row": "11171",
+"name": "Лестничный марш ТA Лестничный марш ТA [6743475]",
+"src": 8760,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_rod_ladder_contour_rebuild",
+"row": "10401",
+"name": "Лестничный марш ТA Лестничный марш ТA [5922442]",
+"src": 8760,
+"status": "rejected_all",
+"op": null,
+"tris": null
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11165",
+"name": "Ограждение ТА 300 Ограждение ТА 300 [6741799]",
+"src": 676,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11210",
+"name": "Ограждение ТА 300 Ограждение ТА 300 [6743682]",
+"src": 676,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11212",
+"name": "Ограждение ТА 300 Ограждение ТА 300 [6743684]",
+"src": 676,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11159",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741787]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11158",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741785]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11160",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741789]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11161",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741791]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11162",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741793]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11167",
+"name": "Ограждение ТА 300 Ограждение ТА 300 [6741801]",
+"src": 676,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11169",
+"name": "Ограждение ТА 300 Ограждение ТА 300 [6741803]",
+"src": 676,
+"status": "applied",
+"op": "multi:front",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11153",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741775]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11155",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741779]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11152",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741773]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11151",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741771]",
+"src": 1800,
+"status": "applied",
+"op": "multi:side",
+"tris": 36
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"row": "11209",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6743680]",
+"src": 1800,
+"status": "applied",
+"op": "multi:front",
+"tris": 160
+}
+]
+}

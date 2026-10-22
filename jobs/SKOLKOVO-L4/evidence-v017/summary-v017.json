@@ -1,0 +1,2081 @@
+{
+ "totals": {
+  "parts": 49,
+  "objects": 6955,
+  "applied": 6751,
+  "missing": 29,
+  "rejected": 175,
+  "tris": 161694,
+  "budget": 147000,
+  "parts_over_budget": 20,
+  "asm_manifest_sha256": "0ea5b65250bfa23642c7a1a9e3fa52e701ba31ecbecdd82422957c4afd07e3dd"
+ },
+ "reject_reasons": [
+  [
+   "a box would change the silhouette by 287 mm in the front view | open_borders_hidden | the front contour splits into 3 pieces; rebuild each piece as its own part",
+   66
+  ],
+  [
+   "a box would change the silhouette by 287 mm in the front view | open_borders_hidden | the front contour splits into 2 pieces; rebuild each piece as its own part",
+   50
+  ],
+  [
+   "a box would change the silhouette by 156 mm in the front view | open_borders_hidden | the front contour cannot be extruded | the prism is not a closed oriented ",
+   11
+  ],
+  [
+   "a box would change the silhouette by 82 mm in the top view | open_borders_hidden | the prism would change the silhouette by 82 mm in the top view | the top cont",
+   6
+  ],
+  [
+   "a box would change the silhouette by 138 mm in the front view | open_borders_hidden | the front contour cannot be extruded | the prism would change the silhouet",
+   5
+  ],
+  [
+   "a box would change the silhouette by 123 mm in the side view | open_borders_hidden | the prism is not a closed oriented 2-manifold after the 0.1 mm weld | the p",
+   4
+  ],
+  [
+   "a box would change the silhouette by 155 mm in the front view | open_borders_hidden | the front contour cannot be extruded | the prism is not a closed oriented ",
+   4
+  ],
+  [
+   "a box would change the silhouette by 287 mm in the side view | open_borders_hidden | the front contour splits into 2 pieces; rebuild each piece as its own part ",
+   4
+  ],
+  [
+   "a box would change the silhouette by 305 mm in the side view | open_borders_hidden | the front contour splits into 3 pieces; rebuild each piece as its own part ",
+   3
+  ],
+  [
+   "a box would change the silhouette by 127 mm in the side view | open_borders_hidden | the prism is not a closed oriented 2-manifold after the 0.1 mm weld | the p",
+   3
+  ],
+  [
+   "a box would change the silhouette by 1986 mm in the side view | open_borders_hidden | the prism is not a closed oriented 2-manifold after the 0.1 mm weld | the ",
+   2
+  ],
+  [
+   "a box would change the silhouette by 400 mm in the front view | open_borders_hidden | the front contour splits into 3 pieces; rebuild each piece as its own part",
+   2
+  ],
+  [
+   "a box would change the silhouette by 1118 mm in the front view | open_borders_hidden | the front contour cannot be extruded | the prism would change the silhoue",
+   1
+  ],
+  [
+   "a box would change the silhouette by 7289 mm in the top view | open_borders_hidden | the prism is not a closed oriented 2-manifold after the 0.1 mm weld | the p",
+   1
+  ],
+  [
+   "a box would change the silhouette by 6546 mm in the top view | open_borders_hidden | the prism is not a closed oriented 2-manifold after the 0.1 mm weld | the p",
+   1
+  ],
+  [
+   "a box would change the silhouette by 6545 mm in the top view | open_borders_hidden | the prism is not a closed oriented 2-manifold after the 0.1 mm weld | the p",
+   1
+  ],
+  [
+   "a box would change the silhouette by 5460 mm in the top view | open_borders_hidden | the prism is not a closed oriented 2-manifold after the 0.1 mm weld | the p",
+   1
+  ],
+  [
+   "a box would change the silhouette by 952 mm in the front view | no_close_overlap | the front contour cannot be extruded | the prism would change the silhouette ",
+   1
+  ],
+  [
+   "a box would change the silhouette by 1312 mm in the side view | open_borders_hidden | the prism would change the silhouette by 1312 mm in the side view | the pr",
+   1
+  ],
+  [
+   "a box would change the silhouette by 156 mm in the front view | open_borders_hidden | the front contour cannot be extruded | the prism would change the silhouet",
+   1
+  ],
+  [
+   "a box would change the silhouette by 1586 mm in the top view | open_borders_hidden | the prism is not a closed oriented 2-manifold after the 0.1 mm weld | the p",
+   1
+  ],
+  [
+   "a box would change the silhouette by 121 mm in the front view | open_borders_hidden | the front contour cannot be extruded | the prism would change the silhouet",
+   1
+  ],
+  [
+   "a box would change the silhouette by 138 mm in the front view | open_borders_hidden | the prism is not a closed oriented 2-manifold after the 0.1 mm weld | the ",
+   1
+  ],
+  [
+   "a box would change the silhouette by 1279 mm in the front view | open_borders_hidden | the front contour splits into 4 pieces; rebuild each piece as its own par",
+   1
+  ],
+  [
+   "a box would change the silhouette by 1281 mm in the side view | open_borders_hidden | the front contour splits into 4 pieces; rebuild each piece as its own part",
+   1
+  ],
+  [
+   "a box would change the silhouette by 1281 mm in the front view | open_borders_hidden | the front contour splits into 4 pieces; rebuild each piece as its own par",
+   1
+  ],
+  [
+   "a box would change the silhouette by 952 mm in the front view | no_close_overlap | the prism is not a closed oriented 2-manifold after the 0.1 mm weld | the pri",
+   1
+  ]
+ ],
+ "parts": [
+  {
+   "id": "facade_additional_entrance_details_other_detail_per_profile",
+   "operation": "detail_per_profile",
+   "budget": 168,
+   "objects": 12,
+   "applied": 12,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 168,
+   "over_budget": 0,
+   "ops": {
+    "keep": 12,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_additional_exterior_doors_door_from_face",
+   "operation": "from_face",
+   "budget": 36,
+   "objects": 3,
+   "applied": 3,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 36,
+   "over_budget": 0,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 3,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_additional_exterior_railings_railing_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 288,
+   "objects": 12,
+   "applied": 8,
+   "missing": 0,
+   "rejected": 4,
+   "tris": 96,
+   "over_budget": 0,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 8,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": [
+    {
+     "ref": "objects/7968",
+     "name": "Railing ADSK_МГН_h 1200 [4667836]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/8022",
+     "name": "Railing ADSK_МГН_h 1200 [4668108]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/8046",
+     "name": "Railing ADSK_МГН_h 1200 [4672094]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/8047",
+     "name": "Railing ADSK_МГН_h 1200 [4672537]",
+     "status": "rejected_all"
+    }
+   ]
+  },
+  {
+   "id": "facade_additional_exterior_slabs_access_slab_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 896,
+   "objects": 18,
+   "applied": 18,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 792,
+   "over_budget": 0,
+   "ops": {
+    "keep": 9,
+    "primitive_box": 0,
+    "contour:top": 3,
+    "contour:front": 4,
+    "contour:side": 2
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_additional_opaque_panels_wall_from_face",
+   "operation": "from_face",
+   "budget": 2,
+   "objects": 1,
+   "applied": 1,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 12,
+   "over_budget": 10,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 1,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_canopy_slab_from_face",
+   "operation": "from_face",
+   "budget": 32,
+   "objects": 1,
+   "applied": 1,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 16,
+   "over_budget": 0,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 1,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_cassette_perimeter_profiles_frame_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 21056,
+   "objects": 2632,
+   "applied": 2632,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 31584,
+   "over_budget": 10528,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 2632,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_decorative_lamellae_decor_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 264,
+   "objects": 22,
+   "applied": 22,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 280,
+   "over_budget": 16,
+   "ops": {
+    "keep": 20,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 2
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_entrance_glazing_door_from_face",
+   "operation": "from_face",
+   "budget": 56,
+   "objects": 7,
+   "applied": 7,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 84,
+   "over_budget": 28,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 7,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_exterior_substrate_reveals_wall_from_face",
+   "operation": "from_face",
+   "budget": 2344,
+   "objects": 293,
+   "applied": 292,
+   "missing": 0,
+   "rejected": 1,
+   "tris": 11402,
+   "over_budget": 9058,
+   "ops": {
+    "keep": 63,
+    "primitive_box": 179,
+    "contour:top": 1,
+    "contour:front": 27,
+    "contour:side": 22
+   },
+   "missing_or_rejected": [
+    {
+     "ref": "objects/3962",
+     "name": "Basic Wall Ст-2_ Сэндвич-панель_100мм [2340328]",
+     "status": "rejected_all"
+    }
+   ]
+  },
+  {
+   "id": "facade_external_metal_doors_door_primitive",
+   "operation": "primitive",
+   "budget": 36,
+   "objects": 3,
+   "applied": 3,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 36,
+   "over_budget": 0,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 3,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_external_railings_railing_detail_per_profile",
+   "operation": "detail_per_profile",
+   "budget": 7848,
+   "objects": 327,
+   "applied": 324,
+   "missing": 0,
+   "rejected": 3,
+   "tris": 4344,
+   "over_budget": 0,
+   "ops": {
+    "keep": 128,
+    "primitive_box": 196,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": [
+    {
+     "ref": "objects/4665",
+     "name": "Railing ADSK_МГН_h 900 [3798618]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/4670",
+     "name": "Railing ADSK_МГН_h 900 [3798985]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/4675",
+     "name": "Railing ADSK_МГН_h 900 [3799019]",
+     "status": "rejected_all"
+    }
+   ]
+  },
+  {
+   "id": "facade_external_reveals_band_from_face",
+   "operation": "from_face",
+   "budget": 80,
+   "objects": 10,
+   "applied": 10,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 280,
+   "over_budget": 200,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 8,
+    "contour:side": 2
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_facade_cassettes_wall_from_face",
+   "operation": "from_face",
+   "budget": 36,
+   "objects": 3,
+   "applied": 3,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 36,
+   "over_budget": 0,
+   "ops": {
+    "keep": 1,
+    "primitive_box": 2,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_lamella_top_caps_band_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 36,
+   "objects": 3,
+   "applied": 3,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 36,
+   "over_budget": 0,
+   "ops": {
+    "keep": 3,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_mullions_frame_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 3256,
+   "objects": 407,
+   "applied": 401,
+   "missing": 0,
+   "rejected": 6,
+   "tris": 4812,
+   "over_budget": 1556,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 378,
+    "contour:top": 0,
+    "contour:front": 4,
+    "contour:side": 19
+   },
+   "missing_or_rejected": [
+    {
+     "ref": "objects/9464",
+     "name": "Прямоугольный импост 50х100 мм [5749335]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/9469",
+     "name": "Прямоугольный импост 50х100 мм [5749340]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/9475",
+     "name": "Прямоугольный импост 50х100 мм [5749347]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/9496",
+     "name": "Прямоугольный импост 50х100 мм [5749745]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/9501",
+     "name": "Прямоугольный импост 50х100 мм [5749750]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/9507",
+     "name": "Прямоугольный импост 50х100 мм [5749757]",
+     "status": "rejected_all"
+    }
+   ]
+  },
+  {
+   "id": "facade_opaque_glazing_glazing_from_face",
+   "operation": "from_face",
+   "budget": 258,
+   "objects": 129,
+   "applied": 129,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 1548,
+   "over_budget": 1290,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 112,
+    "contour:top": 0,
+    "contour:front": 3,
+    "contour:side": 14
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_parapet_flashings_parapet_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 1024,
+   "objects": 2,
+   "applied": 2,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 236,
+   "over_budget": 0,
+   "ops": {
+    "keep": 2,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_perforated_cassettes_wall_from_face",
+   "operation": "from_face",
+   "budget": 954,
+   "objects": 477,
+   "applied": 477,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 5884,
+   "over_budget": 4930,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 457,
+    "contour:top": 0,
+    "contour:front": 4,
+    "contour:side": 16
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_plinth_flashings_band_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 2560,
+   "objects": 10,
+   "applied": 0,
+   "missing": 0,
+   "rejected": 10,
+   "tris": 0,
+   "over_budget": 0,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": [
+    {
+     "ref": "objects/9528",
+     "name": "Railing АР_Цокольный отлив_360 [5802837]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/9532",
+     "name": "Railing АР_Цокольный отлив_360 [5819454]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/9533",
+     "name": "Railing АР_Цокольный отлив_360 [5819488]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/9534",
+     "name": "Railing АР_Цокольный отлив_360 [5819517]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/9535",
+     "name": "Railing АР_Цокольный отлив_360 [5819573]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/9536",
+     "name": "Railing АР_Цокольный отлив_360 [5819596]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/10057",
+     "name": "Railing АР_Цокольный отлив_360 [5926139]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/10058",
+     "name": "Railing АР_Цокольный отлив_360 [5927346]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/10059",
+     "name": "Railing АР_Цокольный отлив_360 [5927508]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/10060",
+     "name": "Railing АР_Цокольный отлив_360 [5927667]",
+     "status": "rejected_all"
+    }
+   ]
+  },
+  {
+   "id": "facade_plinth_wall_from_face",
+   "operation": "from_face",
+   "budget": 324,
+   "objects": 27,
+   "applied": 27,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 508,
+   "over_budget": 184,
+   "ops": {
+    "keep": 13,
+    "primitive_box": 9,
+    "contour:top": 0,
+    "contour:front": 5,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_roof_and_entrance_details_other_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 4864,
+   "objects": 19,
+   "applied": 1,
+   "missing": 0,
+   "rejected": 18,
+   "tris": 152,
+   "over_budget": 0,
+   "ops": {
+    "keep": 1,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": [
+    {
+     "ref": "objects/3906",
+     "name": "Ladder-Precision_Ladders-Tubular_Ladder_With_Parapet_Platform_and_Roof-Side Fixed Ladder With Cage, Platform & Roofside Return [2277003]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/4297",
+     "name": "АР_ДорХан_Ворота_R21 НВр-1(3500hх2600)_Вал сверху_С калиткой [3292916]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7932",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4656129]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7933",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657666]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7934",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657674]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7935",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657682]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7936",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657786]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7937",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657788]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7938",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657790]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7939",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657792]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7940",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657804]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7941",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657805]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7942",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657806]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7943",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657807]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7944",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657820]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7945",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657821]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7946",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657822]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/7947",
+     "name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657823]",
+     "status": "rejected_all"
+    }
+   ]
+  },
+  {
+   "id": "facade_roof_screen_ac_screen_from_face",
+   "operation": "from_face",
+   "budget": 48,
+   "objects": 4,
+   "applied": 4,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 64,
+   "over_budget": 16,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 3,
+    "contour:top": 0,
+    "contour:front": 1,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_roof_substrate_skins_wall_from_face",
+   "operation": "from_face",
+   "budget": 6112,
+   "objects": 764,
+   "applied": 764,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 10776,
+   "over_budget": 4664,
+   "ops": {
+    "keep": 6,
+    "primitive_box": 749,
+    "contour:top": 0,
+    "contour:front": 6,
+    "contour:side": 3
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_roofs_slab_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 6816,
+   "objects": 284,
+   "applied": 283,
+   "missing": 0,
+   "rejected": 1,
+   "tris": 2392,
+   "over_budget": 0,
+   "ops": {
+    "keep": 283,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": [
+    {
+     "ref": "objects/9521",
+     "name": "Basic Roof ТН_КРОВЛЯ Солид [5783763]",
+     "status": "rejected_all"
+    }
+   ]
+  },
+  {
+   "id": "facade_soffits_slab_from_face",
+   "operation": "from_face",
+   "budget": 2432,
+   "objects": 152,
+   "applied": 152,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 4880,
+   "over_budget": 2448,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 1,
+    "contour:top": 151,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_solid_cassettes_wall_from_face",
+   "operation": "from_face",
+   "budget": 1466,
+   "objects": 733,
+   "applied": 733,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 8828,
+   "over_budget": 7362,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 729,
+    "contour:top": 0,
+    "contour:front": 2,
+    "contour:side": 2
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_stemalite_glazing_from_face",
+   "operation": "from_face",
+   "budget": 24,
+   "objects": 6,
+   "applied": 6,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 72,
+   "over_budget": 48,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 6,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_vent_grilles_grille_detail_per_profile",
+   "operation": "detail_per_profile",
+   "budget": 112,
+   "objects": 7,
+   "applied": 7,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 84,
+   "over_budget": 0,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 7,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "facade_window_flashings_band_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 448,
+   "objects": 7,
+   "applied": 7,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 196,
+   "over_budget": 0,
+   "ops": {
+    "keep": 7,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "v1_additional_exterior_doors_door_from_face",
+   "operation": "from_face",
+   "budget": 12,
+   "objects": 1,
+   "applied": 1,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 12,
+   "over_budget": 0,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 1,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "v1_additional_exterior_slabs_access_slab_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 790,
+   "objects": 48,
+   "applied": 48,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 790,
+   "over_budget": 0,
+   "ops": {
+    "keep": 43,
+    "primitive_box": 0,
+    "contour:top": 5,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "v1_baseline_entrance_slabs_slab_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 40,
+   "objects": 2,
+   "applied": 2,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 24,
+   "over_budget": 0,
+   "ops": {
+    "keep": 1,
+    "primitive_box": 1,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "v1_baseline_external_structure_frame_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 3560,
+   "objects": 92,
+   "applied": 85,
+   "missing": 0,
+   "rejected": 7,
+   "tris": 1852,
+   "over_budget": 0,
+   "ops": {
+    "keep": 38,
+    "primitive_box": 45,
+    "contour:top": 2,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": [
+    {
+     "ref": "objects/9721",
+     "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4883923]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/9722",
+     "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884087]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/9723",
+     "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884101]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/9724",
+     "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884117]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/9725",
+     "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884133]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/10398",
+     "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5905599]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/10399",
+     "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5906904]",
+     "status": "rejected_all"
+    }
+   ]
+  },
+  {
+   "id": "v1_baseline_roof_access_railing_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 7680,
+   "objects": 120,
+   "applied": 0,
+   "missing": 0,
+   "rejected": 120,
+   "tris": 0,
+   "over_budget": 0,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": [
+    {
+     "ref": "objects/11050",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741569]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11051",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741571]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11052",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741573]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11053",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741575]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11054",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741577]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11055",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741579]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11056",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741581]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11057",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741583]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11058",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741585]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11059",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741587]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11060",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741589]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11061",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741591]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11062",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741593]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11063",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741595]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11064",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741597]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11065",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741599]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11066",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741601]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11067",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741603]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11068",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741605]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11069",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741607]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11070",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741609]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11071",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741611]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11072",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741613]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11073",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741615]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11074",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741617]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11075",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741619]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11076",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741621]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11077",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741623]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11078",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741625]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11079",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741627]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11080",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741629]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11081",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741631]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11082",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741633]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11083",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741635]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11084",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741637]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11085",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741639]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11086",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741641]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11087",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741643]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11088",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741645]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11089",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741647]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11090",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741649]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11091",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741651]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11092",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741653]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11093",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741655]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11094",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741657]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11095",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741659]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11096",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741661]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11097",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741663]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11098",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741665]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11099",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741667]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11100",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741669]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11101",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741671]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11102",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741673]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11103",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741675]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11104",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741677]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11105",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741679]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11106",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741681]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11107",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741683]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11108",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741685]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11109",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741687]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11110",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741689]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11111",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741691]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11112",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741693]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11113",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741695]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11114",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741697]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11115",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741699]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11116",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741701]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11117",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741703]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11118",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741705]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11119",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741707]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11120",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741709]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11121",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741711]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11122",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741713]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11123",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741715]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11124",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741717]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11125",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741719]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11126",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741721]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11127",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741723]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11128",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741725]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11129",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741727]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11130",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741729]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11131",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741731]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11132",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741733]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11133",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741735]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11134",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741737]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11135",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741739]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11136",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741741]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11137",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741743]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11138",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741745]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11139",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741747]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11140",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741749]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11141",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741751]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11142",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741753]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11143",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741755]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11144",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741757]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11145",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741759]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11146",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741761]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11147",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741763]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11148",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741765]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11149",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741767]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11150",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741769]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11151",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741771]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11152",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741773]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11153",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741775]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11154",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741777]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11155",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741779]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11156",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741781]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11157",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741783]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11158",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741785]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11159",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741787]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11160",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741789]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11161",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741791]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11162",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741793]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11163",
+     "name": "Ограждение ТА 300 Ограждение ТА 300 [6741797]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11165",
+     "name": "Ограждение ТА 300 Ограждение ТА 300 [6741799]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11167",
+     "name": "Ограждение ТА 300 Ограждение ТА 300 [6741801]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11169",
+     "name": "Ограждение ТА 300 Ограждение ТА 300 [6741803]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11209",
+     "name": "Ограждение ТА 1000 Ограждение ТА 1000 [6743680]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11210",
+     "name": "Ограждение ТА 300 Ограждение ТА 300 [6743682]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11212",
+     "name": "Ограждение ТА 300 Ограждение ТА 300 [6743684]",
+     "status": "rejected_all"
+    }
+   ]
+  },
+  {
+   "id": "v1_baseline_roof_access_rod_ladder_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 1536,
+   "objects": 3,
+   "applied": 0,
+   "missing": 0,
+   "rejected": 3,
+   "tris": 0,
+   "over_budget": 0,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": [
+    {
+     "ref": "objects/10401",
+     "name": "Лестничный марш ТA Лестничный марш ТA [5922442]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/10439",
+     "name": "Лестничный марш ТA Лестничный марш ТA [5923699]",
+     "status": "rejected_all"
+    },
+    {
+     "ref": "objects/11171",
+     "name": "Лестничный марш ТA Лестничный марш ТA [6743475]",
+     "status": "rejected_all"
+    }
+   ]
+  },
+  {
+   "id": "v1_baseline_rooftop_concrete_wall_from_face",
+   "operation": "from_face",
+   "budget": 902,
+   "objects": 35,
+   "applied": 35,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 2224,
+   "over_budget": 1322,
+   "ops": {
+    "keep": 18,
+    "primitive_box": 5,
+    "contour:top": 0,
+    "contour:front": 7,
+    "contour:side": 5
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "v1_baseline_rooftop_decks_slab_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 912,
+   "objects": 17,
+   "applied": 17,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 1556,
+   "over_budget": 644,
+   "ops": {
+    "keep": 15,
+    "primitive_box": 0,
+    "contour:top": 2,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "v1_exterior_substrate_reveals_wall_from_face",
+   "operation": "from_face",
+   "budget": 152,
+   "objects": 19,
+   "applied": 12,
+   "missing": 7,
+   "rejected": 0,
+   "tris": 348,
+   "over_budget": 196,
+   "ops": {
+    "keep": 1,
+    "primitive_box": 6,
+    "contour:top": 0,
+    "contour:front": 3,
+    "contour:side": 2
+   },
+   "missing_or_rejected": [
+    {
+     "ref": "objects/308",
+     "name": "Basic Wall ОС-2_Зашивка сэндвич-панель 50 мм [3118267]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/449",
+     "name": "Basic Wall ОС-2_Зашивка сэндвич-панель 50 мм [3309697]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/1090",
+     "name": "Basic Wall ОС-2_Зашивка сэндвич-панель 50 мм [4206374]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/1098",
+     "name": "Basic Wall АР_Наружная_Газобетон_200 (ДО 4х метров) [4242528]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/1592",
+     "name": "Basic Wall ОС-2_Зашивка сэндвич-панель 50 мм [4316511]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/2951",
+     "name": "Basic Wall ОС-2_Зашивка сэндвич-панель 50 мм [5811549]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/2952",
+     "name": "Basic Wall ОС-2_Зашивка сэндвич-панель 50 мм [5811619]",
+     "status": "missing_source_buffer"
+    }
+   ]
+  },
+  {
+   "id": "v1_external_railings_railing_detail_per_profile",
+   "operation": "detail_per_profile",
+   "budget": 528,
+   "objects": 22,
+   "applied": 22,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 264,
+   "over_budget": 0,
+   "ops": {
+    "keep": 18,
+    "primitive_box": 4,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "v1_mullions_frame_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 144,
+   "objects": 18,
+   "applied": 0,
+   "missing": 18,
+   "rejected": 0,
+   "tris": 0,
+   "over_budget": 0,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": [
+    {
+     "ref": "objects/3551",
+     "name": "Прямоугольный импост 50х100 мм [5934111]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/3552",
+     "name": "Прямоугольный импост 50х100 мм [5934112]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/3553",
+     "name": "Прямоугольный импост 50х100 мм [5934113]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/3554",
+     "name": "Прямоугольный импост 50х100 мм [5934114]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/3555",
+     "name": "Прямоугольный импост 50х100 мм [5934115]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/3556",
+     "name": "Прямоугольный импост 50х100 мм [5934116]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/3557",
+     "name": "Прямоугольный импост 50х100 мм [5934117]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/3558",
+     "name": "Прямоугольный импост 50х100 мм [5934118]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/17697",
+     "name": "Прямоугольный импост 50х100 мм [6268531]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/17698",
+     "name": "Прямоугольный импост 50х100 мм [6268532]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/17699",
+     "name": "Прямоугольный импост 50х100 мм [6268533]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/17700",
+     "name": "Прямоугольный импост 50х100 мм [6268534]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/17701",
+     "name": "Прямоугольный импост 50х100 мм [6268535]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/17704",
+     "name": "Прямоугольный импост 50х100 мм [6268812]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/17705",
+     "name": "Прямоугольный импост 50х100 мм [6268813]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/17706",
+     "name": "Прямоугольный импост 50х100 мм [6268814]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/17707",
+     "name": "Прямоугольный импост 50х100 мм [6268815]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/17708",
+     "name": "Прямоугольный импост 50х100 мм [6268816]",
+     "status": "missing_source_buffer"
+    }
+   ]
+  },
+  {
+   "id": "v1_opaque_glazing_glazing_from_face",
+   "operation": "from_face",
+   "budget": 14,
+   "objects": 7,
+   "applied": 3,
+   "missing": 4,
+   "rejected": 0,
+   "tris": 36,
+   "over_budget": 22,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 3,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": [
+    {
+     "ref": "objects/17695",
+     "name": "Системная панель ADSK_Cтеклопакет_25 мм [6268521]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/17696",
+     "name": "Системная панель ADSK_Cтеклопакет_25 мм [6268522]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/17702",
+     "name": "Системная панель ADSK_Cтеклопакет_25 мм [6268802]",
+     "status": "missing_source_buffer"
+    },
+    {
+     "ref": "objects/17703",
+     "name": "Системная панель ADSK_Cтеклопакет_25 мм [6268803]",
+     "status": "missing_source_buffer"
+    }
+   ]
+  },
+  {
+   "id": "v1_plinth_flashings_band_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 256,
+   "objects": 1,
+   "applied": 0,
+   "missing": 0,
+   "rejected": 1,
+   "tris": 0,
+   "over_budget": 0,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": [
+    {
+     "ref": "objects/2960",
+     "name": "Railing АР_Цокольный отлив_360 [5819534]",
+     "status": "rejected_all"
+    }
+   ]
+  },
+  {
+   "id": "v1_roof_and_entrance_details_other_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 256,
+   "objects": 1,
+   "applied": 0,
+   "missing": 0,
+   "rejected": 1,
+   "tris": 0,
+   "over_budget": 0,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": [
+    {
+     "ref": "objects/9240",
+     "name": "Ladder-Precision_Ladders-Tubular_Ladder_With_Parapet_Platform_and_Roof-Side Fixed Ladder With Cage, Platform & Roofside Return [4219121]",
+     "status": "rejected_all"
+    }
+   ]
+  },
+  {
+   "id": "v1_roof_substrate_skins_wall_from_face",
+   "operation": "from_face",
+   "budget": 408,
+   "objects": 51,
+   "applied": 51,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 1076,
+   "over_budget": 668,
+   "ops": {
+    "keep": 1,
+    "primitive_box": 44,
+    "contour:top": 0,
+    "contour:front": 2,
+    "contour:side": 4
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "v1_roofs_slab_contour_rebuild",
+   "operation": "contour_rebuild",
+   "budget": 672,
+   "objects": 28,
+   "applied": 28,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 224,
+   "over_budget": 0,
+   "ops": {
+    "keep": 28,
+    "primitive_box": 0,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "v1_vent_grilles_grille_detail_per_profile",
+   "operation": "detail_per_profile",
+   "budget": 32,
+   "objects": 2,
+   "applied": 2,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 24,
+   "over_budget": 0,
+   "ops": {
+    "keep": 0,
+    "primitive_box": 2,
+    "contour:top": 0,
+    "contour:front": 0,
+    "contour:side": 0
+   },
+   "missing_or_rejected": []
+  },
+  {
+   "id": "rods_primary_mast_meshes_rod_ladder_contour_rebuild",
+   "operation": "contour_rebuild",
+   "objects": 5,
+   "applied": 5,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 54934,
+   "budget": 55230,
+   "ops": {
+    "v014/v015/v016 accepted proxies": 5
+   },
+   "over_budget": 0
+  },
+  {
+   "id": "rods_additional_kns_components_rod_ladder_contour_rebuild",
+   "operation": "contour_rebuild",
+   "objects": 108,
+   "applied": 108,
+   "missing": 0,
+   "rejected": 0,
+   "tris": 8696,
+   "budget": 10000,
+   "ops": {
+    "v014/v015/v016 accepted proxies": 108
+   },
+   "over_budget": 0
+  }
+ ]
+}
