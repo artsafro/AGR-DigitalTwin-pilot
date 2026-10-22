@@ -2,6 +2,7 @@
 
 All meshes here are SYNTHETIC (random near-parallel polygon stacks), except the TOW02 / Ground v014 parity tests,
 which read the local job evidence of #514 / #370 and skip when it is not on this PC.
+Pattern: none | new-case: speed-path equivalence, incremental per-part state and keep parity tests for inv_xview (#535).
 """
 import json
 import os
