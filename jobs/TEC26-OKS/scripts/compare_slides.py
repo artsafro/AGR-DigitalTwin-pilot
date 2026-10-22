@@ -7,8 +7,11 @@ spec `presentation`: slide image per facade (sha256 checked); `facades`: normal,
 its half of the slide (top = first facade listed for that slide, bottom = second) by the light-grey wall (RGB 208):
 wall columns -> horizontal scale (wall width = the model wall field), grey-band bottom/top rows -> +0.120 / +2.500.
 Counts: dark runs (< 0.85 x the local panel median) inside the wall on two rows - grey z = 0.30 m, blue z = 3.00 m
-(+ roof z = 3.65 m on the eave-side facades) -
-never the spec value. A facade whose VPM or NPM count differs from the slide on a row is marked MISMATCH.
+(+ roof z = 3.65 m on the eave-side facades) - never the spec value. The slide row's rib count is established from
+the slide alone (slide_rib_estimate: regular joint grid fitted to the raster, extrapolated over the wall). Facade
+status (facade_verdict): `match` only when VPM and NPM pass every row AND every slide row is measured with the spec
+rib count; `mismatch` when a model row fails or a measured slide row differs; `unresolved` when a slide row cannot be
+measured. Exit 0 only when every facade is `match`; 1 otherwise; refusing an existing output dir exits nonzero.
 """
 import hashlib
 import json
@@ -57,6 +60,77 @@ def slide_row_count(im, x0, x1, y, ribs, colour):
     s = np.arange(x1 - x0) + 0.5
     lum = np.where(dark | near, row.sum(-1), np.nan)
     return joint_count.count_joints(s, lum, 0.0, float(x1 - x0), ribs, tol=0.35 * (x1 - x0) / ribs, dark=0.85)
+
+
+def slide_rib_estimate(found, width, min_cover=0.6, max_rms=0.15, edge_band=0.2):
+    """Rib count of a slide row established from the slide ALONE (the spec value is never used): the dark joint
+    centres `found` (px from the wall's left edge) are indexed by their spacing (k += round(gap / p), robust to a
+    missing or extra line) and fitted to a regular grid x = a + k p (3 passes, inliers |resid| < 0.25 p). The grid is
+    then extrapolated over the wall: joints = grid nodes in [p/2, width - p/2] (a node closer to the wall edge is the
+    wall outline, not a joint), ribs = joints + 1. Windows, doors and labels hide or add a few lines, they do not move
+    the grid. Status `measured` only when >= min_cover of those joints are seen on the grid, the residual RMS
+    <= max_rms p and no node lies within edge_band p of the p/2 edge limits (else the joint/outline split is
+    ambiguous); otherwise `unresolved` with the reason. Non-finite, non-numeric or empty input -> unresolved."""
+    out = {"status": "unresolved", "ribs": None}
+    try:
+        width = float(width)
+        f = np.sort(np.asarray([float(x) for x in found], float))
+    except (TypeError, ValueError):
+        return {**out, "reason": "non-numeric slide measurement"}
+    if not np.isfinite(width) or width <= 0 or not np.isfinite(f).all():
+        return {**out, "reason": "non-finite or empty wall width / joint positions"}
+    f = f[(f > 0) & (f < width)]
+    if len(f) < 3:
+        return {**out, "reason": f"{len(f)} joint(s) on the slide row: no rib grid"}
+    gaps = np.diff(f)
+    p = float(np.median(gaps))
+    if p <= 0:
+        return {**out, "reason": "coincident joints"}
+    k = np.concatenate([[0], np.cumsum(np.round(gaps / p))])
+    inl = np.ones(len(f), bool)
+    for _ in range(3):
+        if len(np.unique(k[inl])) < 3:
+            return {**out, "reason": "fewer than 3 joints on a common grid"}
+        p, a = (float(v) for v in np.polyfit(k[inl], f[inl], 1))
+        if p <= 0:
+            return {**out, "reason": "non-positive rib step"}
+        k = np.round((f - a) / p)
+        res = f - (a + p * k)
+        inl = np.abs(res) < 0.25 * p
+    a = a % p                                        # phase of the grid: node positions a + j p
+    nodes = a + p * np.arange(-1, int(width / p) + 2)
+    joints = int(((nodes >= p / 2) & (nodes <= width - p / 2)).sum())
+    seen = len(np.unique(k[inl & (f >= p / 2) & (f <= width - p / 2)]))
+    rms = float(np.sqrt(np.mean(res[inl] ** 2)))
+    edge = float(np.min(np.abs(np.concatenate([nodes - p / 2, nodes - (width - p / 2)])))) / p
+    rep = {"pitch_px": round(p, 4), "phase_px": round(a, 3), "width_px": round(width, 2), "joints": joints,
+           "joints_seen_on_grid": seen, "lines_found": int(len(f)), "rms_px": round(rms, 4),
+           "edge_margin_pitch": round(edge, 3)}
+    why = []
+    if seen < min_cover * joints:
+        why.append(f"only {seen} of {joints} grid joints seen")
+    if rms > max_rms * p:
+        why.append(f"grid residual {rms:.2f} px > {max_rms} pitch")
+    if edge < edge_band:
+        why.append(f"a grid node {edge:.2f} pitch from the p/2 edge limit: joint or wall outline is ambiguous")
+    if why:
+        return {**out, **rep, "reason": "; ".join(why)}
+    return {**rep, "status": "measured", "ribs": joints + 1}
+
+
+def facade_verdict(rows, ribs):
+    """`match` only when every row's VPM and NPM counts pass AND the slide row is independently measured with the
+    spec rib count; any measured slide disagreement or failing model row -> `mismatch`; otherwise (a slide row that
+    cannot be measured) `unresolved`. Neither of the last two passes; no rows -> unresolved."""
+    if not rows:
+        return "unresolved"
+    model_ok = all(r.get(t, {}).get("ok") is True for r in rows for t in ("vpm", "npm"))
+    est = [r.get("slide_estimate", {}) for r in rows]
+    if not model_ok or any(e.get("status") == "measured" and e.get("ribs") != ribs for e in est):
+        return "mismatch"
+    if all(e.get("status") == "measured" and e.get("ribs") == ribs for e in est):
+        return "match"
+    return "unresolved"
 
 
 def crop_render(png, view, key, lo, hi, pxm):
@@ -127,8 +201,11 @@ def main(argv):
         rows = list(ROWS.items()) + ([("roof", ROOF_Z)] if key in ("+x", "-x") else [])  # eave side: roof ribs
         for colour, z in rows:
             rs = slide_row_count(imgs[sl], wall[0], wall[1], int(round(y0 - z * sz)), ribs, colour)
-            row = {"slide": {k: rs[k] for k in ("joints_found", "hidden_by_other_finish", "missing", "extra")
-                             if k in rs}}
+            row = {"slide": {k: rs[k] for k in ("joints_found", "hidden_by_other_finish", "missing", "extra", "found_m")
+                             if k in rs},
+                   "slide_estimate": slide_rib_estimate(rs.get("found_m", []), wall[1] - wall[0])
+                   if len(rs.get("found_m", [])) == rs.get("joints_found") else
+                   {"status": "unresolved", "ribs": None, "reason": "slide joint list and count disagree"}}
             for tag in ("vpm", "npm"):
                 view = meta[tag]["views"][VIEW[key]]
                 img = np.asarray(Image.open(os.path.join(rdir, view["png"])).convert("RGB"))
@@ -136,13 +213,20 @@ def main(argv):
                 r = joint_count.count_joints(s, lum, lo, hi, ribs, tol=0.01, dark=0.85)
                 row[tag] = {k: r[k] for k in ("ok", "joints_found", "missing", "extra") if k in r}
                 row[tag]["hidden"] = len(r.get("hidden_by_other_finish", []))
-                ok &= bool(r.get("ok"))
             for tag in under:
                 h = row[tag].get("hidden", len(row[tag].get("hidden_by_other_finish", [])))
                 under[tag].append(f"{colour} z={z:.2f}: {row[tag].get('joints_found')} швов (+{h} скрыто)")
             row["slide"]["hidden"] = len(rs.get("hidden_by_other_finish", []))
+            est = row["slide_estimate"]
+            if "pitch_px" in est:
+                est["pitch_m"] = round(est["pitch_px"] / sx, 4)
+            est["model_pitch_m"] = round((hi - lo) / ribs, 4)
+            under["slide"][-1] += (f"; шаг {est['pitch_m']:.3f} м -> {est['ribs']} рёбер" if est["status"] == "measured"
+                                   else f"; шаг {est.get('pitch_m', float('nan')):.3f} м, число рёбер НЕ установлено")
             counts["rows"][f"{colour}_z={z:.2f}"] = row
-        counts["match"] = bool(ok)
+        counts["status"] = facade_verdict(list(counts["rows"].values()), ribs)
+        counts["match"] = counts["status"] == "match"
+        ok = counts["match"]
         report["facades"][name] = counts
         panels = [(f"Слайд {sl} презентации", sc, under["slide"])]
         for tag in ("vpm", "npm"):
@@ -155,7 +239,7 @@ def main(argv):
         im = Image.new("RGB", (Wt, Ht), (255, 255, 255))
         d = ImageDraw.Draw(im)
         d.text((gap, 10), f"Фасад {name}: слайд и рендеры в одном масштабе {pxm:.0f} px/м, ±0.000 на одной высоте; "
-                          f"по чертежу {ribs} рёбер = {ribs - 1} швов" + ("" if ok else "   MISMATCH"),
+                          f"по чертежу {ribs} рёбер = {ribs - 1} швов" + ("" if ok else f"   {counts['status'].upper()}"),
                fill=(0, 0, 0) if ok else (200, 0, 0), font=font(20))
         x = gap
         for title, p, lines in panels:
@@ -168,7 +252,7 @@ def main(argv):
             x += p.width + gap
         fn = os.path.join(out, f"compare_{VIEW[key]}_{name}.png")
         im.save(fn)
-        print("COMPARE", name, "match" if ok else "MISMATCH", json.dumps(
+        print("COMPARE", name, counts["status"], json.dumps(
             {k: {t: v[t].get("joints_found") for t in v} for k, v in counts["rows"].items()}, ensure_ascii=False))
     json.dump(report, open(os.path.join(out, "compare.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     return 0 if all(f["match"] for f in report["facades"].values()) else 1

@@ -131,7 +131,44 @@ def poly_areas(src_v, src_faces):
     return [g["area"] if g else 0.0 for g in _poly_geo(src_v, src_faces)]
 
 
-def source_finish_report(expected, src_faces, owners, delivered, t_areas=None, p_areas=None):
+def twisted_quad_cover(src_v, src_faces, out_v, out_faces, owners, shift, tol=2e-4):
+    """Non-planar source quads (a corner > tol off the polygon's Newell plane; AC07: 4 twisted ID2 trims) have no
+    single plane area, so the area rule cannot prove their coverage. Returns {"twisted": [...], "covered": [...]}:
+    a twisted quad is covered only when EXACTLY two delivered triangles are owned by it alone and their corners are
+    the quad's corners forming one complementary diagonal pair ({0,1,2}+{0,2,3} or {0,1,3}+{1,2,3}); any other
+    triangulation (overlap, gap, a third triangle, a repeated triangle) leaves it uncovered. Planar polygons are never
+    in either list - they keep the strict area rule."""
+    sv = np.asarray(src_v, float)
+    ov = np.asarray(out_v, float) + np.asarray(shift, float)
+    twisted = []
+    for pi, (f, g) in enumerate(zip(src_faces, _poly_geo(src_v, src_faces))):
+        if len(f) == 4 and g is not None and np.abs(sv[list(f)] @ g["n"] - g["d"]).max() > tol:
+            twisted.append(pi)
+    tw = set(twisted)
+    tris = {pi: [] for pi in twisted}
+    for t, own in enumerate(owners):
+        if len(own) == 1 and own[0] in tw:
+            tris[own[0]].append(t)
+    pairs = ({frozenset((0, 1, 2)), frozenset((0, 2, 3))}, {frozenset((0, 1, 3)), frozenset((1, 2, 3))})
+    covered = []
+    for pi in twisted:
+        if len(tris[pi]) != 2:
+            continue
+        corners = sv[list(src_faces[pi])]
+        sets = set()
+        for t in tris[pi]:
+            idx = set()
+            for x in ov[list(out_faces[t])]:
+                d = np.abs(corners - x).max(1)
+                if d.min() <= tol:
+                    idx.add(int(d.argmin()))
+            sets.add(frozenset(idx))
+        if sets in pairs:
+            covered.append(pi)
+    return {"twisted": twisted, "covered": covered}
+
+
+def source_finish_report(expected, src_faces, owners, delivered, t_areas=None, p_areas=None, twisted_covered=()):
     """Delivered finish per triangle vs the approved source-ID mapping (finish_map.assign_finishes incl. the ID1
     below-zero split). Fail-closed: an unmatched triangle, a triangle whose candidate source polygons disagree, a
     wrong finish, and a source polygon not covered (by exactly len(f)-2 triangles, or - with areas given, as after
@@ -157,10 +194,11 @@ def source_finish_report(expected, src_faces, owners, delivered, t_areas=None, p
             if len(examples) < 5:
                 examples.append({"tri": t, "source_polygon": own[0], "expected": w, "delivered": got})
     if t_areas is not None and p_areas is not None:
-        # area rule (ring cuts) or, for an uncut polygon, exactly len(f)-2 owned triangles: a non-planar source quad
-        # (AC07 ID2 trims) has no single plane area, its two corner triangles cover it
-        uncovered = [i for i, f in enumerate(src_faces) if abs(per_area[i] - p_areas[i]) > 1e-6 + 1e-5 * p_areas[i]
-                     and per_poly[i] != len(f) - 2]
+        # strict area rule for every polygon (ring cuts included); only a non-planar quad proven covered by one
+        # complementary corner-diagonal pair (twisted_quad_cover) is exempt - it has no single plane area
+        tw = set(twisted_covered)
+        uncovered = [i for i in range(len(src_faces))
+                     if abs(per_area[i] - p_areas[i]) > 1e-6 + 1e-5 * p_areas[i] and i not in tw]
     else:
         uncovered = [i for i, f in enumerate(src_faces) if per_poly[i] != len(f) - 2]
     return {"ok": not (wrong or unmatched or ambiguous or uncovered) and len(owners) > 0, "tris": len(owners),
@@ -434,10 +472,14 @@ def main(argv):
             for u in vmain["face_uvs"]]
     nfin = [npm_finish(u) for u in nmain["face_uvs"]]
     pa = poly_areas(body["vertices"], body["faces"])
+    vtw = twisted_quad_cover(body["vertices"], body["faces"], vmain["vertices"], vmain["faces"], vown, shift)
+    ntw = twisted_quad_cover(body["vertices"], body["faces"], nmain["vertices"], nmain["faces"], nown, shift)
     check("source_finish_vpm", **_rep(source_finish_report(expected, body["faces"], vown, vfin,
-                                                           tri_areas(vmain["vertices"], vmain["faces"]), pa)))
+                                                           tri_areas(vmain["vertices"], vmain["faces"]), pa,
+                                                           vtw["covered"]) | {"twisted_quads": vtw}))
     check("source_finish_npm", **_rep(source_finish_report(expected, body["faces"], nown, nfin,
-                                                           tri_areas(nmain["vertices"], nmain["faces"]), pa)))
+                                                           tri_areas(nmain["vertices"], nmain["faces"]), pa,
+                                                           ntw["covered"]) | {"twisted_quads": ntw}))
     for tag, o in (("vpm", vmain), ("npm", nmain)):
         check(f"cuts_at_joints_{tag}", **_rep(cut_joint_report(body["vertices"], body["faces"], expected, spec,
                                                                o["vertices"], shift)))
