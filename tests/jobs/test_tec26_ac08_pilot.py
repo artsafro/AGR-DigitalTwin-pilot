@@ -39,6 +39,10 @@ def test_spec_is_valid_and_matches_kpp_palette():
     (lambda s: s.update(zero_m=float("nan")), "zero_m"),
     (lambda s: s["finishes"]["Door_RAL7004"].update(rgb=[1, 2]), "rgb"),
     (lambda s: s.update(finishes={}), "no finishes"),
+    (lambda s: s["finishes"]["Cassette_RAL5015"].update(P=[0.6, 0.6]), "P"),
+    (lambda s: s["finishes"]["Cassette_RAL5015"].update(h_joints=False), "h_joints"),
+    (lambda s: s["finishes"]["Cassette_RAL5015"].update(S=10.0), "density"),
+    (lambda s: s["finishes"]["Cassette_RAL5015"].update(S=float("inf")), "S must"),
 ])
 def test_spec_fail_closed(mutate, match):
     s = copy.deepcopy(SPEC)
@@ -60,7 +64,7 @@ def test_assign_real_building():
         by.setdefault((m, f), 0)
         by[(m, f)] += 1
     # ID1 splits into the 16 perimeter-drop polygons (wall colour) and 111 roof/frame polygons
-    assert by == {(1, "Panel_RAL5015"): 16, (1, "Frame_RAL7004"): 111, (2, "Panel_RAL5015"): 15,
+    assert by == {(1, "Panel_RAL5015"): 16, (1, "Frame_RAL7004"): 111, (2, "Cassette_RAL5015"): 15,
                   (3, "Door_RAL7004"): 38}
 
 
@@ -85,7 +89,7 @@ def test_assign_fail_closed():
 def test_below_zero_threshold_is_inclusive():
     v = [[0, 0, -2.0], [1, 0, -2.0], [1, 0, 0.0], [0, 0, 0.0], [1, 0, 1e-9], [0, 0, 1e-9]]
     out = fm.assign_finishes(v, [[0, 1, 2, 3], [0, 1, 4, 5]], [1, 1], SPEC)
-    assert out == ["Panel_RAL5015", "Frame_RAL7004"]
+    assert out == ["Panel_RAL5015", "Frame_RAL7004"]  # drop below ±0.000: plain panel colour, no joints
 
 
 def test_probe_random_ids_never_default():
@@ -152,6 +156,34 @@ def test_fresh_out_dir_refuses_aliases(tmp_path):
     assert Path(fm.fresh_out_dir(str(tmp_path / "new"), [str(spec)])).is_dir()
 
 
+def test_facade_uv_phase_and_winding():
+    lo, hi = [0.0, 0.0], [6.0, 2.0]
+    v = [[1, 0, 0], [3, 0, 0], [3, 0, 2], [1, 0, 2],          # south wall, normal -y
+         [5, 2, 0], [3, 2, 0], [3, 2, 2], [5, 2, 2],          # north wall, normal +y
+         [6, 0.5, -1], [6, 1.5, -1], [6, 1.5, 1], [6, 0.5, 1],  # east wall, normal +x
+         [0, 0, 0], [1, 0, 0], [1, 1, 0]]                      # floor
+    assert fm.facade_uv(v, [0, 1, 2, 3], lo, hi) == [(1, 0), (3, 0), (3, 2), (1, 2)]
+    assert fm.facade_uv(v, [4, 5, 6, 7], lo, hi) == [(1, 0), (3, 0), (3, 2), (1, 2)]   # from the NE corner
+    assert fm.facade_uv(v, [8, 9, 10, 11], lo, hi) == [(0.5, -1), (1.5, -1), (1.5, 1), (0.5, 1)]
+    with pytest.raises(ValueError, match="not vertical"):
+        fm.facade_uv(v, [12, 13, 14], lo, hi)
+    for f in ([0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]):  # counter-clockwise = not mirrored
+        uv = fm.facade_uv(v, f, lo, hi)
+        assert sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(uv, uv[1:] + uv[:1])) > 0
+
+
+def test_cassette_is_the_kpp_recipe_at_800px():
+    t, k = SPEC["finishes"]["Cassette_RAL5015"], KPP["finishes"]["Cassette_RAL5015"]
+    assert {x: t[x] for x in ("pattern", "P", "h_joints", "rgb", "rough", "metal")} == \
+        {x: k[x] for x in ("pattern", "P", "h_joints", "rgb", "rough", "metal")}
+    assert t["phase"] == [0.0, 0.0] and SPEC["size_full"] / t["S"] == 800
+    d, _, _, _ = make_textures.make_full(t, 4096)
+    v = (4096 - np.arange(4096) - 0.5) * t["S"] / 4096        # metres per image row (v up)
+    joint_rows = np.abs(((v * 1000 + 4) % 550) - 4) < 4        # 8 mm joints every 0.55 m from v = 0
+    assert (d[joint_rows, 2000:2100] < 100).all() and (d[~joint_rows][:, 50:51] > 100).any()
+    assert np.median(d.reshape(-1, 3), 0).tolist() == pytest.approx([34, 113, 179], abs=3)
+
+
 def test_vpm_and_npm_colours_match_and_kpp(tmp_path):
     spec = tmp_path / "spec.json"
     spec.write_text(json.dumps(SPEC), encoding="utf-8")
@@ -167,12 +199,21 @@ def test_vpm_and_npm_colours_match_and_kpp(tmp_path):
     da = np.asarray(d)
     for name, t in SPEC["finishes"].items():
         tile = np.asarray(Image.open(vpm / f"T_{a}_Diffuse_1.{t['udim']}.png"))
-        assert tile.shape == (256, 256, 3) and (tile == t["rgb"]).all()
         r = layout["finishes"][name]
         x0, y1 = round(r["u0"] * 2048), round((1 - r["v0"]) * 2048)
         n = round(r["size"] * 2048)
         region = da[y1 - n:y1, x0:x0 + n]
-        assert (region == t["rgb"]).all(), name
+        if t["kind"] == "placeholder":
+            assert tile.shape == (256, 256, 3) and (tile == t["rgb"]).all()
+            assert (region == t["rgb"]).all(), name
+        else:  # joints survive in NPM (>= 1.5 px) and the base colour reads the same as VPM
+            assert tile.shape == (4096, 4096, 3)
+            assert np.abs(np.median(region.reshape(-1, 3), 0) - np.median(tile.reshape(-1, 3), 0)).max() <= 3
+            col = region[:, n // 2].astype(int).sum(1)
+            dark = col < 0.75 * np.median(col)
+            runs = int(dark[0]) + int((dark[1:] & ~dark[:-1]).sum())
+            assert runs >= int(t["S"] / t["P"][1]) - 1, runs  # every 0.55 m joint row is still visible in NPM
+            assert (np.asarray(Image.open(vpm / f"T_{a}_Normal_1.{t['udim']}.png")).shape == (4096, 4096, 3))
         kpp = KPP["finishes"][SPEC["kpp_palette"][name]["kpp_finish"]]["rgb"]
         assert t["rgb"] == kpp
     assert (np.asarray(o) == 255).all()  # no alpha-cut finish on AC08: opacity all solid
