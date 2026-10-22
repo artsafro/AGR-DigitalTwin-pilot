@@ -38,12 +38,14 @@ Report: `census/README.md`; scene tables: `census/scenes.md`; KPP: `census/kpp-r
 
 Gate 1 approved (#565). Scope (Artem 2026-10-22): colour only - geometry, topology, UCX and IDs as in the source; the
 one allowed edit is a clean edge-ring cut at a joint where a panel does not fit a tile. v007 (joints every 0.60 m) was
-rejected; Artem accepted the v008 panels and asked for a blue wall edging. Run `pilot-v009` [D169] [D170]: rib count
-per facade from the colour-solution sheet (`AC08/sheet-facades.json`: 29 / 11 joint lines = 30 / 12 ribs), evenly and
+rejected; Artem accepted the v008 panels and asked for a blue wall edging, then made the presentation the authority and
+the facade legend binding [D171]. Run `pilot-v010` [D169] [D170] [D171]: rib count per facade counted on presentation
+slide 49 (29 / 11 joint lines = 30 / 12 ribs, equal to the DWG sheet `AC08/sheet-facades.json`), evenly and
 symmetrically over the panel field (P = 0.19532 / 0.18628 m, tiles 1001 / 1002, Artem's texture = one joint's look,
 KPP texel 1000 px/m); frame band (ID1 above ±0.000) blue RAL 5015 with a dark field outline; plinth and door RAL 7004;
-one ring cut at joint 12 (X = 33.3673, 19 quads -> 38). Drive `G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v009/`
-(33/33 hashes). `qa_packages.py` 40/40 incl. `facade_joints_vpm/npm` (counts measured on the delivered meshes/textures);
-rendered counts = sheet on all 4 facades (`compare_facades.py`, sheet and render side by side at 200 px/m); SINTEZ as
-v007. Open for Artem (`AC08/PILOT_REPORT.md`): roof colour (now blue), outer outline, UCX triangulation.
+legend table in `AC08/MATERIALS.md` checked by `finish_map.validate_legend`; one ring cut at joint 12 (X = 33.3673,
+19 quads -> 38). Drive `G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v010/` (34/34 hashes). `qa_packages.py`
+40/40 (also from the Drive ZIPs and textures); acceptance picture slide | VPM | NPM at 200 px/m with the measured counts
+(`compare_facades.py`), all 4 facades equal; SINTEZ as v007. Open for Artem (`AC08/PILOT_REPORT.md`): roof colour (now
+blue), outer outline, UCX triangulation.
 Scripts: `scripts/run_building.sh`, `render_facades.py`, `compare_facades.py`, `sheet_facades.py`.

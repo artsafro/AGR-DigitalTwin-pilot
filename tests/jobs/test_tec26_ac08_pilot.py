@@ -8,7 +8,6 @@ plinth [D170]."""
 import copy
 import hashlib
 import json
-import math
 import random
 import sys
 from pathlib import Path
@@ -101,7 +100,7 @@ def test_spec_fail_closed(mutate, match):
         fm.validate_spec(s, KPP)
 
 
-# --- the binding legend «Условные обозначения» (Artem 2026-10-22, all TEC26) ----------------------------------------
+# --- the binding legend «Условные обозначения» [D171] (Artem 2026-10-22, all TEC26) ----------------------------------------
 def test_legend_covers_every_finish_and_matches_materials_md():
     """Every finish is in exactly one legend row; RAL of the name = row RAL = KPP colour; ribbed rows = the sandwich
     joint texture, plain rows none; the table is written into MATERIALS.md (hatch -> material -> RAL -> texture)."""
@@ -122,7 +121,7 @@ def test_legend_covers_every_finish_and_matches_materials_md():
     (lambda s: s.pop("legend"), "legend"),
     (lambda s: s.update(legend=[]), "legend"),
     (lambda s: s["legend"][1]["finishes"].remove("Frame_RAL5015"), "Frame_RAL5015.*no legend row"),
-    (lambda s: s["legend"][0]["finishes"].append("Door_RAL7004"), "Door_RAL7004.*2 legend rows"),
+    (lambda s: s["legend"][3]["finishes"].append("Door_RAL7004"), "Door_RAL7004: in 2 legend rows"),
     (lambda s: s["legend"][2].update(ral="9016"), "Door_RAL7004.*RAL 9016"),
     (lambda s: s["legend"][0].update(texture="plain"), "PanelVJ30_RAL5015.*plain"),          # sandwich left untextured
     (lambda s: s["legend"][1].update(texture="ribbed"), "Frame_RAL5015.*ribbed"),            # ribbed row, plain finish

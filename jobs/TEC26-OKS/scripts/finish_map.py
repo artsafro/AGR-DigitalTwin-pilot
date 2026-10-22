@@ -119,6 +119,55 @@ def validate_spec(spec, kpp_spec=None):
                                                           for f in (spec.get("facades") or {}).values()):
             raise ValueError(f"{name}: a user_vjoints finish needs a facade rib contract (spec facades: ribs per "
                              f"field from the building's colour-solution sheet); the joint period is not free")
+    if spec.get("facades") is not None or "legend" in spec:
+        validate_legend(spec, kpp_spec)
+    return True
+
+
+LEGEND_TEXTURES = {"ribbed": ("user_vjoints",), "plain": (None,)}   # legend texture -> allowed finish patterns
+
+
+def validate_legend(spec, kpp_spec=None):
+    """The binding facade legend «Условные обозначения» [D171] (Artem 2026-10-22, all TEC26): every finish sits in one
+    legend row; the RAL in the finish name = the row RAL (and, via kpp_palette, the KPP colour); a ribbed row (sandwich
+    panels) only holds sandwich-joint finishes, a plain row only joint-free ones - a sandwich wall never stays
+    untextured. Unknown finishes in a row and unknown textures are errors naming them."""
+    rows = spec.get("legend")
+    if not isinstance(rows, list) or not rows:
+        raise ValueError("spec has no facade legend (hatch -> material -> RAL -> texture); required for TEC26 facades")
+    fin = spec["finishes"]
+    seen = {}
+    for i, r in enumerate(rows):
+        tex = r.get("texture")
+        if tex not in LEGEND_TEXTURES:
+            raise ValueError(f"legend row {i}: unsupported texture {tex!r} (allowed {sorted(LEGEND_TEXTURES)})")
+        ral = str(r.get("ral", ""))
+        if not re.fullmatch(r"\d{4}", ral):
+            raise ValueError(f"legend row {i}: RAL must be four digits, got {ral!r}")
+        for n in r.get("finishes") or []:
+            if n not in fin:
+                raise ValueError(f"legend row {i}: finish {n} is not declared in finishes")
+            seen.setdefault(n, []).append(i)
+            m = re.search(r"RAL(\d{4})", n)
+            if not m or m.group(1) != ral:
+                raise ValueError(f"{n}: legend row {i} says RAL {ral}, the finish name says "
+                                 f"{m.group(1) if m else 'no RAL'}")
+            pat = fin[n].get("pattern")
+            if pat not in LEGEND_TEXTURES[tex]:
+                raise ValueError(f"{n}: legend row {i} is {tex} but the finish pattern is {pat or 'plain'}")
+    for n in fin:
+        if n not in seen:
+            raise ValueError(f"{n}: no legend row (every finish must map to one hatch of the facade legend)")
+        if len(seen[n]) > 1:
+            raise ValueError(f"{n}: in {len(seen[n])} legend rows {seen[n]}")
+    if kpp_spec is not None:
+        for n, ref in (spec.get("kpp_palette") or {}).items():
+            k = kpp_spec["finishes"][ref["kpp_finish"]]
+            km = re.search(r"RAL(\d{4})", ref["kpp_finish"])
+            if not km or km.group(1) != re.search(r"RAL(\d{4})", n).group(1):
+                raise ValueError(f"{n}: KPP twin {ref['kpp_finish']} is another RAL")
+            if fin[n]["rgb"] != k["rgb"]:
+                raise ValueError(f"{n}: rgb {fin[n]['rgb']} != KPP {ref['kpp_finish']} {k['rgb']} (same RAL = same colour)")
     return True
 
 
