@@ -86,3 +86,22 @@ def test_depth_renderer_creates_world_for_empty_factory_scene():
     bpy=SimpleNamespace(data=SimpleNamespace(worlds=SimpleNamespace(new=lambda _:SimpleNamespace(color=None))))
     exec(compile(ast.Module(body=setup,type_ignores=[]),str(script),'exec'),{'scene':scene,'bpy':bpy})
     assert scene.world.color == (0.88,0.88,0.88)
+
+
+def test_depth_render_receipts_and_retired_painter():
+    evidence=json.loads((CENSUS/'depth-renders.json').read_text(encoding='utf-8'))
+    assert len(evidence['renders']) == 14
+    assert evidence['members_verified'] == 23
+    assert 'not measured' in evidence['perimeter_wall_continuity_status']
+    for name in [f'ac{i:02d}' for i in range(4,10)]+['truba']:
+        rows=[r for r in evidence['renders'] if r['building']==name]
+        assert {r['mode'] for r in rows} == {'ids','shaded'}
+        assert len(rows) == 2
+        for row in rows:
+            assert row['engine']=='BLENDER_WORKBENCH'
+            assert row['application']=='5.1.2'
+            assert row['collision_objects_loaded']==0
+            assert row['zero_line_world_z_m']==0
+            assert row['world_bounds_m'][0][2] <= -1
+    tree=ast.parse(PUBLISH.read_text(encoding='utf-8'))
+    assert not any(isinstance(n,ast.FunctionDef) and n.name=='render' for n in ast.walk(tree))

@@ -6,6 +6,15 @@ During this run the operator directed: prioritize kotelnya, publish scene census
 
 Already-extracted drawing/office text from before that instruction is retained only at `C:/x/tec26-oks/pre-scope-change-drawings.json`; PDF images at `G:/Мой диск/AGR-evidence/tec26-oks/drawings-v002/`. The native AutoCAD 2025 DXFOUT run is in `C:/x/tec26-oks/acad-readback-v001/`. All six outputs lacked final ENDSEC/EOF; ezdxf recovery was required, so this is an **unvalidated text aid**, not authoritative complete CAD validation. Re-check titles/materials against the copies on each drawing card. No full drawings census is included in this PR.
 
+## Depth-render correction and perimeter-drop decision (operator/user, 2026-10-22)
+
+Artem: «должна, это опуски геометрии по требованиям — полигоны по периметру должны быть утоплены минимум на метр вниз».
+Keep the below-±0.000 perimeter drop in **both VPM and NPM**, never cut it at ground; use the adjacent facade/plinth finish, without a separate ID unless already present in the source multisub. Production check: **every identified perimeter wall bottom ≤ −1.0 m**. No source geometry or material IDs were changed here.
+
+The earlier painter views in `scene-census-v002` are **superseded and forbidden for Gate images**: they can show false crossing triangles. Authoritative inspection views are now in `G:/Мой диск/AGR-evidence/tec26-oks/depth-census-v002/`: Blender **5.1.2 Workbench**, actual depth buffer, UCX/collision candidates not loaded, a red outline at world Z=0, no ground plane hiding the drop, ID colours beside neutral shaded view. Fourteen native renders form seven `*-gate-inspection.png` sheets. These are inspection evidence, not Gate approval or RAL previews. `depth-renders.json` records the exact handles, bounds, renderer/version and **23/23** verified evidence members. AC.05/08 sheets visually rechecked: old painter triangle artefacts absent.
+
+Global source minima in metres: AC.04 −2.003180; AC.05 −2.004332; AC.06 −2.025104; AC.07 −2.025107; AC.08 −2.046546; AC.09 −2.038278; truba −1.445580. **These node minima do not prove every perimeter wall reaches −1 m**. Wall-by-wall perimeter continuity remains unmeasured in intake and must be checked on the production cards after identifying the perimeter walls; do not turn a bbox into a pass.
+
 ## Ready for parallel readers
 
 - Raw native JSON published first: `C:/x/tec26-oks/census/{oks,truba,kpp}.json`.

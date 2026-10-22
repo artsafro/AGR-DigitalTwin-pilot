@@ -7,7 +7,7 @@ from mathutils import Vector
 
 JOB = Path(__file__).resolve().parents[1]
 ROOT = Path('C:/x/tec26-oks/max-readback-v002')
-OUT = Path('G:/Мой диск/AGR-evidence/tec26-oks/depth-census-v001')
+OUT = Path('G:/Мой диск/AGR-evidence/tec26-oks/depth-census-v002')
 OUT.mkdir(parents=True,exist_ok=False)
 
 
@@ -94,6 +94,7 @@ for name,nodes in sets:
         shade.cavity_type='BOTH'
         shade.show_object_outline=False
         shade.background_type='WORLD'
+        scene.world=bpy.data.worlds.new('CensusWorld')
         scene.world.color=(0.88,0.88,0.88)
         scene.view_settings.view_transform='Standard'
         scene.render.resolution_x=1000

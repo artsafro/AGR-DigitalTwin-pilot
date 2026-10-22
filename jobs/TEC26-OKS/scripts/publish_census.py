@@ -1,12 +1,9 @@
-"""new-case: publish TEC26 measured census and diagnostic ID-colour views (not delivery QA)."""
-import colorsys
+"""new-case: publish TEC26 measured census; use render_depth.py for views (not delivery QA)."""
 import hashlib
 import json
 import math
 from pathlib import Path
 import shutil
-import numpy as np
-from PIL import Image, ImageDraw
 
 JOB = Path(__file__).resolve().parents[1]
 ROOT = Path('C:/x/tec26-oks')
@@ -46,51 +43,6 @@ def validate_scene(data):
         if err > 0.00001 * data['units_per_meter'] and classify(node['name']) == 'surface':
             raise ValueError(f'Snapshot/native bbox mismatch: {node["name"]}')
     return True
-
-
-def palette(mid):
-    return tuple(round(x*255) for x in colorsys.hsv_to_rgb((mid*0.61803398875)%1,0.65,0.9))
-
-
-def render(nodes, title, destination):
-    # Native world-space vertices only, painter-sorted orthographic diagnostic views.
-    # This is not an occlusion, normal, topology or visual-acceptance certificate.
-    buffers = [json.loads((NATIVE/n['diagnostic_buffer']).read_text(encoding='utf-8')) for n in nodes]
-    vertices, faces, mids = [], [], []
-    for b in buffers:
-        offset = len(vertices)
-        vertices.extend(b['vertices'])
-        faces.extend([[i+offset for i in f] for f in b['triangles']])
-        mids.extend(b['material_ids'])
-    verts = np.asarray(vertices,dtype=float)
-    tri = np.asarray(faces,dtype=int)
-    ids = np.asarray(mids,dtype=int)
-    image = Image.new('RGB',(1800,1050),(245,245,245))
-    draw = ImageDraw.Draw(image)
-    draw.text((30,20),title+' | native Max snapshot; diagnostic ID colours (not RAL)',fill='black')
-    for side, angle in enumerate((45,225)):
-        a = math.radians(angle)
-        elev = math.radians(24)
-        right = np.array([math.cos(a),-math.sin(a),0.0])
-        up = np.array([math.sin(a)*math.sin(elev),math.cos(a)*math.sin(elev),math.cos(elev)])
-        depth = np.cross(right,up)
-        xy = np.column_stack((verts@right,-verts@up))
-        low, high = xy.min(axis=0), xy.max(axis=0)
-        span = high-low
-        scale = min(810/max(span[0],1e-9),850/max(span[1],1e-9))
-        xy = (xy-(low+high)/2)*scale + np.array([450+side*900,500])
-        order = np.argsort((verts@depth)[tri].mean(axis=1))
-        for idx in order:
-            pts = [tuple(p) for p in xy[tri[idx]]]
-            draw.polygon(pts,fill=palette(int(ids[idx])))
-        draw.text((40+side*900,65),'Azimuth '+str(angle)+' deg; elevation 24 deg',fill='black')
-    for k,mid in enumerate(sorted(set(mids))):
-        x=30+(k%12)*145; y=950+(k//12)*32
-        draw.rectangle((x,y,x+25,y+18),fill=palette(mid))
-        draw.text((x+30,y),f'ID {mid}',fill='black')
-    with destination.open('xb') as stream:
-        image.save(stream,format='PNG')
-    return len(faces)
 
 
 def main():
@@ -142,11 +94,7 @@ def main():
                      '', '| Material ID | Poly faces | Triangles | Area m² | Candidate finish | Evidence |', '|---:|---:|---:|---:|---|---|']
             for entry in n['material_ids']:
                 rows.append(f'| {entry["id"]} | {entry["poly_faces"]} | {entry["triangles"]} | {entry["area_m2"]:.6f} | ? | Material evidence delegated; no RAL inferred from viewport colour |')
-    for i in range(4,10):
-        nodes=[n for n in native_results['oks']['objects'] if n['layer']==f'{i:03d}' and n['kind']=='surface']
-        count=render(nodes,f'AC.{i:02d}',DRIVE/f'ac{i:02d}-ids.png')
-        assert count==sum(n['triangles'] for n in nodes)
-    render([n for n in native_results['truba']['objects'] if n['kind']=='surface'],'truba',DRIVE/'truba-ids.png')
+    # Gate-quality views are produced only by render_depth.py (native depth buffer).
     (JOB/'census/scenes.md').write_text('\n'.join(rows)+'\n',encoding='utf-8')
     # Preserve all native buffers/logs outside git, with hashes and no source modification.
     shutil.copytree(NATIVE,DRIVE/'native-max-readback-v002')
@@ -159,7 +107,7 @@ def main():
     (DRIVE/'SHA256SUMS.txt').write_text('\n'.join(sums)+'\n',encoding='utf-8')
     manifest += [{'path':str(DRIVE/'SHA256SUMS.txt'),'sha256':hashlib.sha256((DRIVE/'SHA256SUMS.txt').read_bytes()).hexdigest()}]
     (JOB/'census/evidence.json').write_text(json.dumps({'drive':str(DRIVE),'files':len(sums),'manifest':manifest},indent=2),encoding='utf-8')
-    print('Published 3 classified scene censuses; 7 two-view ID renders; all native buffers/logs on Drive.')
+    print('Published 3 classified scene censuses; native buffers/logs on Drive; render_depth.py required for views.')
 
 if __name__=='__main__':
     main()
