@@ -1,0 +1,123 @@
+{
+  "_doc": "AC06 BUILD card #563, approved Gate-1 colours. No blue wall-panel ID: ID2 blue metal only; ID3 walls RAL7047 remain solid. No rib recipe copied from AC08. Naming token temporary; address/GeoJSON not supplied.",
+  "address": "Prg_1",
+  "size_full": 4096,
+  "size_placeholder": 256,
+  "pad_m": 0.04,
+  "zero_m": 0.0,
+  "main_handle": 170,
+  "glass_handle": 378,
+  "source_ids": {
+    "1": {
+      "finish": "Door_RAL7004"
+    },
+    "2": {
+      "finish": "Metal_RAL5015"
+    },
+    "3": {
+      "finish": "Panel_RAL7047"
+    },
+    "4": {
+      "finish": "Door_RAL7004"
+    },
+    "5": {
+      "finish": "Frame_RAL9016"
+    },
+    "6": {
+      "finish": "Door_RAL7004"
+    },
+    "7": {
+      "finish": "Door_RAL7004"
+    },
+    "8": {
+      "finish": "Frame_RAL9016"
+    },
+    "9": {
+      "finish": "Frame_RAL9016"
+    },
+    "11": {
+      "finish": "Interior"
+    },
+    "10": {
+      "split": "below_zero",
+      "above": "Door_RAL7004",
+      "below": "Panel_RAL7047"
+    }
+  },
+  "empty_ids": [],
+  "kpp_palette": {
+    "Door_RAL7004": {
+      "kpp_finish": "Door_RAL7004",
+      "kpp_udim": 1010
+    },
+    "Metal_RAL5015": {
+      "kpp_finish": "Metal_RAL5015",
+      "kpp_udim": 1013
+    },
+    "Frame_RAL9016": {
+      "kpp_finish": "Frame_RAL9016",
+      "kpp_udim": 1009
+    },
+    "Interior": {
+      "kpp_finish": "Interior",
+      "kpp_udim": 1011
+    }
+  },
+  "finishes": {
+    "Door_RAL7004": {
+      "udim": 1001,
+      "kind": "placeholder",
+      "rgb": [
+        150,
+        153,
+        146
+      ],
+      "rough": 0.45,
+      "metal": 0.0
+    },
+    "Metal_RAL5015": {
+      "udim": 1002,
+      "kind": "placeholder",
+      "rgb": [
+        34,
+        113,
+        179
+      ],
+      "rough": 0.45,
+      "metal": 0.0
+    },
+    "Frame_RAL9016": {
+      "udim": 1003,
+      "kind": "placeholder",
+      "rgb": [
+        246,
+        246,
+        246
+      ],
+      "rough": 0.4,
+      "metal": 0.0
+    },
+    "Interior": {
+      "udim": 1004,
+      "kind": "placeholder",
+      "rgb": [
+        25,
+        25,
+        28
+      ],
+      "rough": 1.0,
+      "metal": 0.0
+    },
+    "Panel_RAL7047": {
+      "udim": 1005,
+      "kind": "placeholder",
+      "rgb": [
+        208,
+        208,
+        208
+      ],
+      "rough": 0.45,
+      "metal": 0.0
+    }
+  }
+}

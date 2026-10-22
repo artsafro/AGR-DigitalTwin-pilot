@@ -1,0 +1,311 @@
+{
+ "dump": "C:\\x\\tec26-oks\\AC06\\build-v002\\build\\body-collisions.json",
+ "spec": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_6af403e8\\jobs\\TEC26-OKS\\AC06\\vpm_textures.json",
+ "blend": "C:\\x\\tec26-oks\\AC06\\build-v002\\build\\body.blend",
+ "source": {
+  "name": "АС.06",
+  "vertices": 3118,
+  "polygons": 2954
+ },
+ "master_faces": 2954,
+ "non_quads": 388,
+ "ring_cuts": [],
+ "cut_vertices_added": 0,
+ "master_tris": 5596,
+ "max_edge_m": 10.8524,
+ "faces_per_finish": {
+  "Door_RAL7004": 1317,
+  "Metal_RAL5015": 671,
+  "Frame_RAL9016": 558,
+  "Interior": 64,
+  "Panel_RAL7047": 344
+ },
+ "uv_qa": {
+  "Door_RAL7004": {
+   "udim": 1001,
+   "faces": 1317,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  },
+  "Panel_RAL7047": {
+   "udim": 1005,
+   "faces": 344,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  },
+  "Metal_RAL5015": {
+   "udim": 1002,
+   "faces": 671,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  },
+  "Frame_RAL9016": {
+   "udim": 1003,
+   "faces": 558,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  },
+  "Interior": {
+   "udim": 1004,
+   "faces": 64,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  }
+ },
+ "density_px_per_m": {},
+ "ucx": [
+  {
+   "source": "Colizii_001",
+   "name": "UCX_SM_Prg_1_Main_001",
+   "verts": 24,
+   "faces": 14,
+   "tris": 44,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_002",
+   "name": "UCX_SM_Prg_1_Main_002",
+   "verts": 24,
+   "faces": 14,
+   "tris": 44,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_003",
+   "name": "UCX_SM_Prg_1_Main_003",
+   "verts": 24,
+   "faces": 14,
+   "tris": 44,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_004",
+   "name": "UCX_SM_Prg_1_Main_004",
+   "verts": 24,
+   "faces": 14,
+   "tris": 44,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_005",
+   "name": "UCX_SM_Prg_1_Main_005",
+   "verts": 24,
+   "faces": 14,
+   "tris": 44,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_006",
+   "name": "UCX_SM_Prg_1_Main_006",
+   "verts": 24,
+   "faces": 14,
+   "tris": 44,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_007",
+   "name": "UCX_SM_Prg_1_Main_007",
+   "verts": 24,
+   "faces": 14,
+   "tris": 44,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_008",
+   "name": "UCX_SM_Prg_1_Main_008",
+   "verts": 24,
+   "faces": 14,
+   "tris": 44,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_030",
+   "name": "UCX_SM_Prg_1_Main_009",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_031",
+   "name": "UCX_SM_Prg_1_Main_010",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_032",
+   "name": "UCX_SM_Prg_1_Main_011",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_033",
+   "name": "UCX_SM_Prg_1_Main_012",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_034",
+   "name": "UCX_SM_Prg_1_Main_013",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_035",
+   "name": "UCX_SM_Prg_1_Main_014",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_036",
+   "name": "UCX_SM_Prg_1_Main_015",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_037",
+   "name": "UCX_SM_Prg_1_Main_016",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_038",
+   "name": "UCX_SM_Prg_1_Main_017",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_039",
+   "name": "UCX_SM_Prg_1_Main_018",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_040",
+   "name": "UCX_SM_Prg_1_Main_019",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_041",
+   "name": "UCX_SM_Prg_1_Main_020",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  },
+  {
+   "source": "Colizii_042",
+   "name": "UCX_SM_Prg_1_Main_021",
+   "verts": 12,
+   "faces": 10,
+   "tris": 20,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  }
+ ],
+ "perimeter_drop": null
+}

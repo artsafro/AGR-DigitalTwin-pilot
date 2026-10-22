@@ -1,0 +1,622 @@
+{
+ "name": "xview_gate",
+ "kernel": "xview_overlaps",
+ "profile": "NPM",
+ "coords": "local",
+ "thresholds": {
+  "vertex_m": 0.002,
+  "face_m": 0.005,
+  "parallel_cos_min": 0.9999
+ },
+ "totals": {
+  "overlapping_vertices": 0,
+  "overlapping_faces": 0,
+  "vertex_pairs": 0,
+  "face_pairs": 0,
+  "face_pairs_by_kind": {
+   "contact": 0,
+   "area": 0,
+   "area+contact": 0
+  },
+  "bowtie_vertices": 0,
+  "bowtie_pairs": 0,
+  "parts_without_faces": 0
+ },
+ "passed": true,
+ "parts": [
+  {
+   "part": "SM_Prg_1_Main",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 3118,
+   "faces_count": 5596,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "SM_Prg_1_MainGlass",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 24,
+   "faces_count": 12,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_001",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 24,
+   "faces_count": 44,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_002",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 24,
+   "faces_count": 44,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_003",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 24,
+   "faces_count": 44,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_004",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 24,
+   "faces_count": 44,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_005",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 24,
+   "faces_count": 44,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_006",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 24,
+   "faces_count": 44,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_007",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 24,
+   "faces_count": 44,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_008",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 24,
+   "faces_count": 44,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_009",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 8,
+   "faces_count": 12,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_010",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 8,
+   "faces_count": 12,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_011",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 8,
+   "faces_count": 12,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_012",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 8,
+   "faces_count": 12,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_013",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 8,
+   "faces_count": 12,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_014",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 8,
+   "faces_count": 12,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_015",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 8,
+   "faces_count": 12,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_016",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 8,
+   "faces_count": 12,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_017",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 8,
+   "faces_count": 12,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_018",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 8,
+   "faces_count": 12,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_019",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 8,
+   "faces_count": 12,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_020",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 8,
+   "faces_count": 12,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  },
+  {
+   "part": "UCX_SM_Prg_1_Main_021",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 12,
+   "faces_count": 20,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  }
+ ],
+ "input": {
+  "path": "C:\\x\\tec26-oks\\AC06\\build-v002\\readback\\vpm\\SM_Prg_1.fbx",
+  "sha256": "5bd05ef9f0a2aa842031ad82ae653985b8ef89059d57ffbddf8ae2ec12dfb1bb",
+  "kind": "fbx",
+  "parts_in_file": [
+   "SM_Prg_1_Main",
+   "SM_Prg_1_MainGlass",
+   "UCX_SM_Prg_1_Main_001",
+   "UCX_SM_Prg_1_Main_002",
+   "UCX_SM_Prg_1_Main_003",
+   "UCX_SM_Prg_1_Main_004",
+   "UCX_SM_Prg_1_Main_005",
+   "UCX_SM_Prg_1_Main_006",
+   "UCX_SM_Prg_1_Main_007",
+   "UCX_SM_Prg_1_Main_008",
+   "UCX_SM_Prg_1_Main_009",
+   "UCX_SM_Prg_1_Main_010",
+   "UCX_SM_Prg_1_Main_011",
+   "UCX_SM_Prg_1_Main_012",
+   "UCX_SM_Prg_1_Main_013",
+   "UCX_SM_Prg_1_Main_014",
+   "UCX_SM_Prg_1_Main_015",
+   "UCX_SM_Prg_1_Main_016",
+   "UCX_SM_Prg_1_Main_017",
+   "UCX_SM_Prg_1_Main_018",
+   "UCX_SM_Prg_1_Main_019",
+   "UCX_SM_Prg_1_Main_020",
+   "UCX_SM_Prg_1_Main_021"
+  ],
+  "not_selected": [],
+  "units": {
+   "unit_system": "METRIC",
+   "unit_scale": 1.0,
+   "coordinates": "m"
+  },
+  "dropped": [],
+  "blender": {
+   "version": "5.1.2",
+   "log": "C:\\x\\tec26-oks\\AC06\\build-v002\\xview-vpm.json.blender.log",
+   "scene": "Scene"
+  }
+ }
+}
