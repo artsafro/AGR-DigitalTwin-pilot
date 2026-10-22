@@ -12,7 +12,8 @@ edges, every cut listed in the build report).
   material ID is kept per polygon in the `srcid` layer (dropped at export, the delivery has one material);
 - UV only: one UDIM tile per finish, placeholder islands scaled into the tile with a 5 % margin (vpm_uv.pack_uv);
   finishes listed in spec `facade_uv` (joint patterns) get metre UVs in their source face's joint frame
-  (finish_map.facade_joint_uv: joints at u' = n * P from the panel edge with the smaller world coordinate, v = z),
+  (finish_map.facade_joint_uv + field_frames: joints at u' = n * P from the facade panel FIELD edge with the smaller
+  world coordinate, P = field / ribs of the spec facades contract from the colour-solution sheet; v = z),
   shifted by whole periods into their full 4096 tile;
   UDIM material M_<A>_Main_1 (the source channel-1 UV is not laid out per finish tile, so it is replaced);
 - the layer's collision mesh (no Multi/Sub) is renamed UCX_SM_<A>_Main_NNN, unchanged; closed/convex/outward are
@@ -59,10 +60,12 @@ fins = finish_map.assign_finishes(V, faces, ids, spec)
 drop = finish_map.perimeter_drop(V, faces, fins, spec["source_ids"]["1"]["below"]) \
     if spec["source_ids"].get("1", {}).get("split") == "below_zero" else None
 plan_lo, plan_hi = finish_map.body_plan_bbox(V, spec["zero_m"])
+fields = finish_map.field_frames(V, faces, fins, spec, plan_lo, plan_hi) if spec.get("facades") else None
 cut = finish_map.apply_cuts(V, faces, fins, spec, plan_lo, plan_hi) if spec.get("ring_cuts") else \
     {"vertices": V, "faces": faces, "parents": list(range(len(faces))), "cuts": [],
-     "frames": [finish_map.joint_origin(V, f, plan_lo, plan_hi) if fin in spec.get("facade_uv", {}) else None
-                for f, fin in zip(faces, fins)]}
+     "frames": fields[0] if fields else
+     [finish_map.joint_origin(V, f, plan_lo, plan_hi) if fin in spec.get("facade_uv", {}) else None
+      for f, fin in zip(faces, fins)]}
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene
@@ -136,7 +139,8 @@ report = {"dump": os.path.abspath(dump_path), "spec": os.path.abspath(spec_path)
           "master_faces": len(me.polygons), "non_quads": non_quads,
           "ring_cuts": cut["cuts"], "cut_vertices_added": len(CV) - len(V),
           "master_tris": sum(len(p.vertices) - 2 for p in me.polygons), "max_edge_m": round(max_edge, 4),
-          "faces_per_finish": counts, "uv_qa": uvqa, "density_px_per_m": density, "ucx": ucx_report, "perimeter_drop": drop}
+          "faces_per_finish": counts, "uv_qa": uvqa, "density_px_per_m": density, "ucx": ucx_report, "perimeter_drop": drop,
+          "facade_fields": fields[1] if fields else None}
 json.dump(report, open(out + ".build.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 print("BUILD", json.dumps({k: report[k] for k in ("master_faces", "non_quads", "master_tris", "max_edge_m",
                                                   "faces_per_finish")}))

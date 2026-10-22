@@ -1,8 +1,26 @@
 # TEC26-OKS / AC08 — Gate 1 material proposal
 
 **Building:** Контейнер низковольтных комплектных устройств (НКУ) (low-voltage switchgear container).
-**Status:** awaiting Artem; NOT approved, no NPM/VPM build and no scene material changes.
+**Status:** Gate 1 approved by Artem 2026-10-22 (#565); the proposal below is the intake record. The binding
+finishes are the facade legend that follows (machine form: `vpm_textures.json` `legend`, checked by
+`finish_map.validate_legend` before textures, build and the acceptance renders).
 **Pilot main at intake:** `442f0b695a91f9abc180783c26978fbe85fefcf9`.
+
+## Facade legend (binding)
+
+Authority (Artem 2026-10-22, all TEC26): the presentation slide «Схема фасадов ... Цветовое решение» decides
+colours, bands, rib direction and rib count [D171]; the «Условные обозначения» legend of the colour sheets is
+binding. AC08 = slide **49** of `deck.pptx` (`ppt/media/image78.png`, SHA256 `256f32da…08a8fd`): four blue ribbed
+facades, blue edging with a thin dark outline, grey door on 2-1, grey plinth strip under every facade. No RAL 7047
+sandwich and no RAL 9016 glazing frames exist on this building.
+
+| Hatch (slide / DWG legend) | Material | RAL | Texture | Finish (ID) | Colour = KPP |
+|---|---|---|---|---|---|
+| Сэндвич-панель - RAL 5015 (blue rib field, slide 49; DWG 1395) | sandwich panel | RAL 5015 | ribbed: Artem's joint, 30 ribs long / 12 short (slide 49) | `PanelVJ30_RAL5015` (ID2, 1-2 / 2-1) | Metal_RAL5015 (34,113,179) |
+| same | sandwich panel | RAL 5015 | ribbed: same joint, 12 ribs | `PanelVJ12_RAL5015` (ID2, А-Б / Б-А) | Metal_RAL5015 (34,113,179) |
+| Edging of the sandwich wall (frame band, corners, top/bottom; slide 49 blue, dark outline) [D170] | sandwich wall edging | RAL 5015 | plain + dark field outline | `Frame_RAL5015` (ID1 above ±0.000) | Metal_RAL5015 (34,113,179) |
+| Крыльца, двери - RAL 7004 (DWG 1397; slide 49 grey door) | door | RAL 7004 | plain | `Door_RAL7004` (ID3) | Door_RAL7004 (150,153,146) |
+| Цоколь - RAL 7004 (slide 49 grey strip; legend rule «Крыльца, двери, цоколь, ... — RAL 7004») | plinth | RAL 7004 | plain | `Plinth_RAL7004` (ID1 at/below ±0.000) | Door_RAL7004 (150,153,146) |
 
 ## Sources and interpretation
 
