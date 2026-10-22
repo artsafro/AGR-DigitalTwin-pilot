@@ -36,7 +36,22 @@ def test_ac04_finish_evidence_and_unknowns():
             assert m['question_ids']
     assert d['materials'][2]['map_type'] == 'glass'
     assert d['materials'][2]['glass']['npm_opacity'] == 0.5
-    assert d['materials'][0]['question_ids']  # mixed roof / base surfaces not silently resolved
+    assert d['materials'][0]['question_ids']  # proposals still need Gate-1 approval
+
+
+def test_ac04_depth_render_and_perimeter_drop():
+    d = load()
+    assert d['rendering']['renderer'] == 'BLENDER_WORKBENCH'
+    assert d['rendering']['depth_correct'] is True
+    assert d['rendering']['ucx_visible'] is False
+    assert d['rendering']['datum_z_m'] == 0
+    assert d['rendering']['plain_shaded_companion'] is True
+    assert d['perimeter_drop']['material_id'] == 1
+    assert not any(q['id'] == 'Q2' for q in d['questions'])
+    drop = json.loads((ROOT / 'perimeter-drop.json').read_text())
+    assert drop['walls_verified'] == 4 and drop['walls_failed'] == 0
+    assert all(w['verified'] and w['minimum_z_m'] <= -1 for w in drop['walls'])
+    assert all(len(w['below_minus_1_continuous_spans_m']) == 1 for w in drop['walls'])
 
 
 def test_ac04_kpp_colours_exact():
