@@ -19,6 +19,17 @@ ARTEM_PANEL_MEAN_RGB = [34, 112, 177]
 # Max |channel| distance from KPP Metal_RAL5015 (34,113,179) is 2 (B).
 ARTEM_MEAN_KPP_TOLERANCE = 2
 
+# Artem 2026-10-22, from the AC08 «Цветовое решение» sheet. Supersedes the 0.60 m step.
+SHEET_STEP_M = 0.20
+SHEET_STEP_PX_AT_1000 = 200
+FACADE_RIBS = {'1-2': 30, 'A-B': 12, 'B-A': 12}
+# Facade 2-1 is on the sheet and was not counted. Do not invent a rib count.
+FACADE_2_1_QUESTION = (
+    'Facade 2-1 («Фасад 2-1. Цветовое решение») is drawn on the colour sheet '
+    'and this round does not count it. How many vertical ribs does facade 2-1 have, '
+    'and is the step the same ~0.20 m as facade 1-2?'
+)
+
 
 def load():
     return json.loads((JOB / 'materials.json').read_text(encoding='utf-8'))
@@ -123,7 +134,9 @@ def test_mixed_id1_split_by_region_keeps_aggregate():
         assert part['triangles'] is None
         assert part['area_m2'] is None
         assert 'scene-census.json' in part['area_reason']
-    assert data['questions'] == []
+    assert data['questions'] == [
+        {'facade': '2-1', 'vertical_ribs': '?', 'question': FACADE_2_1_QUESTION}
+    ]
 
 
 def test_no_question_mark_finish_on_an_approved_id():
@@ -175,13 +188,18 @@ def _finish_targets(data):
         yield from row.get('parts') or []
 
 
-def test_id2_vertical_joints_only_module_matches_texel():
-    """Vertical joints only. Module 0.60 m is 600 px at 1000 px/m; 8 px is 8 mm."""
-    data = load()
+def _id2_joints(data):
     row = next(x for x in data['materials'] if x['id'] == 2)
     assert row['map_type'] == 'joints'
-    joints = row['joints']
+    return row, row['joints']
+
+
+def test_id2_vertical_joints_only_module_matches_texel():
+    """Layout step is 0.20 m (200 px at 1000 px/m). The texture pitch is not that step."""
+    data = load()
+    row, joints = _id2_joints(data)
     assert joints['joint_orientation'] == 'vertical_only'
+    assert joints['vertical_only'] is True
     assert joints['horizontal_joints'] is False
     assert joints['pattern'] == 'vertical_only'
     assert joints.get('source_udim') != 1007
@@ -202,22 +220,36 @@ def test_id2_vertical_joints_only_module_matches_texel():
     assert source['joint_centres_px'][-1] == 3870
     assert source['width_px'] % source['joint_pitch_px'] != 0
     assert joints['seamless_wrap'] is False
-    assert joints['module_m'] == pytest.approx(0.60)
+    assert joints['module_m'] == pytest.approx(SHEET_STEP_M)
+    assert joints['step_m'] == pytest.approx(SHEET_STEP_M)
     assert joints['texel_px_per_m'] == 1000
-    assert source['joint_pitch_px'] / joints['texel_px_per_m'] == pytest.approx(joints['module_m'])
+    assert joints['step_px'] == SHEET_STEP_PX_AT_1000
+    assert joints['step_px'] / joints['texel_px_per_m'] == pytest.approx(joints['step_m'])
+    # File pitch (600 px / 0.60 m) is the drawn joint in the texture, not the facade step.
+    assert source['joint_pitch_px'] != joints['step_px']
+    assert source['joint_pitch_px'] / joints['texel_px_per_m'] != pytest.approx(joints['step_m'])
     assert (
         source['joint_width_px'] * 1000 / joints['texel_px_per_m']
         == pytest.approx(joints['joint_width_mm'])
     )
     assert joints['joint_width_mm'] == 8
-    assert joints['phase_anchor'] == 'panel_start_edge'
-    assert joints['phase_origin_z'] == 0.0
+    assert joints['phase_symmetric'] is True
+    assert joints['phase_anchor'] == 'panel_field_symmetric'
+    assert joints['phase_anchor'] != 'panel_start_edge'
+    assert joints['spacing'] == 'even_over_panel_field'
     assert joints['below_ground_plain'] is True
     assert joints['vpm_maps'] == ['diffuse', 'normal']
     assert joints['npm_joints_min_px'] == 1.5
+    history = joints['superseded_0_60_m']
+    assert history['module_m'] == pytest.approx(0.60)
+    assert history['phase_anchor'] == 'panel_start_edge'
+    assert history['cut_at'] == 'joint_positions_only'
+    assert 'edge loop' in history['cut_policy'].lower()
+    assert 'ring' in history['cut_policy'].lower()
     cutting = joints['cutting']
+    assert cutting['new_cuts_for_0_20_m_step'] is False
     assert cutting['method'] == 'edge_loop_or_ring'
-    assert cutting['at'] == 'joint_positions_only'
+    assert '4k' in cutting['when'].lower()
     assert cutting['quads_kept'] is True
     assert cutting['listed_in_build_report'] is True
     assert cutting['unchanged'] == ['silhouette', 'normals', 'UCX', 'IDs']
@@ -225,17 +257,111 @@ def test_id2_vertical_joints_only_module_matches_texel():
     summary = data['panel_joints']
     assert summary['joints'] is True
     assert summary['map_type'] == 'joints'
+    assert summary['vertical_only'] is True
     assert summary['joint_orientation'] == 'vertical_only'
     assert summary['horizontal_joints'] is False
-    assert summary['module_m'] == pytest.approx(0.60)
+    assert summary['module_m'] == pytest.approx(SHEET_STEP_M)
+    assert summary['step_m'] == pytest.approx(SHEET_STEP_M)
     assert summary['texel_px_per_m'] == 1000
-    assert summary['phase_origin_z'] == 0.0
+    assert summary['phase_anchor'] == 'panel_field_symmetric'
     assert summary['below_zero_joints'] is False
+    assert summary['superseded_0_60_m']['module_m'] == pytest.approx(0.60)
     assert summary.get('source_udim') != 1007
     assert summary['source_sha256'] == ARTEM_PANEL_SHA256
     assert '1007' in summary['superseded']
     assert 'not the panel source' in summary['superseded'].lower()
     assert 'all TEC26' in summary['applies_to']
+
+
+def test_per_facade_rib_counts_from_the_colour_sheet():
+    """Known counts are positive ints. Facade 2-1 stays '?' with the question."""
+    _, joints = _id2_joints(load())
+    assert joints['horizontal_joints'] is False
+    assert joints['vertical_only'] is True
+    facades = joints['facades']
+    assert set(facades) == {'1-2', 'A-B', 'B-A', '2-1'}
+    for name, count in FACADE_RIBS.items():
+        assert facades[name]['vertical_ribs'] == count
+        assert isinstance(facades[name]['vertical_ribs'], int)
+        assert facades[name]['vertical_ribs'] > 0
+        assert facades[name]['step_m'] == pytest.approx(SHEET_STEP_M)
+    open_side = facades['2-1']
+    assert open_side['vertical_ribs'] == '?'
+    assert open_side['question'] == FACADE_2_1_QUESTION
+    assert load()['questions'] == [
+        {'facade': '2-1', 'vertical_ribs': '?', 'question': FACADE_2_1_QUESTION}
+    ]
+
+
+def test_count_times_step_fits_panel_field_width():
+    """count * step stays inside the mesh plan extent of that facade (non-negative slack)."""
+    _, joints = _id2_joints(load())
+    step = joints['step_m']
+    assert step > 0
+    census = json.loads((JOB / 'scene-census.json').read_text(encoding='utf-8'))
+    mesh = next(obj for obj in census['objects'] if obj['handle'] == 172)
+    (xmin, ymin, _), (xmax, ymax, _) = mesh['bbox_native']
+    long_m = xmax - xmin
+    short_m = ymax - ymin
+    width_by_facade = {'1-2': long_m, '2-1': long_m, 'A-B': short_m, 'B-A': short_m}
+    assert long_m > short_m > 0
+    for name, facade in joints['facades'].items():
+        width = width_by_facade[name]
+        assert width > 0
+        count = facade['vertical_ribs']
+        if count == '?':
+            continue
+        assert isinstance(count, int) and count > 0
+        slack = width - count * step
+        assert slack >= 0
+
+
+def test_texture_role_is_joint_look_not_tiling_source():
+    _, joints = _id2_joints(load())
+    source = joints['source']
+    assert source['role'] == 'colour_noise_joint_look'
+    assert source['role'] != 'tiling source'
+    assert 'tiling' not in source['role'].lower()
+    assert source['tiling_source'] is False
+    summary = load()['panel_joints']
+    assert summary['source_role'] == 'colour_noise_joint_look'
+    assert summary['source_role'] != 'tiling source'
+
+
+def test_frame_band_and_plinth_strip_follow_the_sheet():
+    _, joints = _id2_joints(load())
+    band = joints['frame_band']
+    assert band['tone'] == 'darker'
+    assert band['edges'] == ['top', 'bottom', 'corners']
+    assert band['outlines'] == 'panel field'
+    plinth = joints['plinth_strip']
+    assert plinth['colour'] == 'grey'
+    assert plinth['ral'] == '7004'
+    assert plinth['rgb_srgb'] == KPP_RGB_BY_RAL['7004']
+    assert plinth['basis'] == 'per-sheet'
+    door = next(x for x in load()['materials'] if x['id'] == 3)
+    assert door['ral'] == '7004'
+    assert door['rgb_srgb'] == KPP_RGB_BY_RAL['7004']
+    assert door['map_type'] == 'solid'
+
+
+def test_acceptance_picture_required_before_asking_artem():
+    data = load()
+    picture = data['acceptance_picture']
+    assert picture['required'] is True
+    assert 'build card' in picture['when'].lower()
+    assert 'before asking artem' in picture['when'].lower()
+    content = picture['content'].lower()
+    assert 'each facade' in content
+    assert 'same scale' in content
+    assert 'rib count' in content
+    assert 'sheet' in content
+    ref = picture['reference'].replace('\\', '/')
+    assert ref.endswith('user-refs/AC08_facades_colour_from_artem.jpg')
+    md = (JOB / 'MATERIALS.md').read_text(encoding='utf-8').lower()
+    assert 'acceptance picture' in md
+    assert 'same scale' in md
+    assert 'rib count' in md
 
 
 def test_below_ground_drop_has_no_joints():
@@ -333,9 +459,19 @@ def test_materials_md_records_approval_and_separate_build():
     assert 'vertical joints only' in lowered
     assert 'no horizontal joints' in lowered
     assert '0.60' in text
+    assert '0.20' in text
     assert '1000 px/m' in text
     assert 'edge loop' in lowered
     assert 'all tec26' in lowered
+    assert '30' in text and '12' in text
+    assert FACADE_2_1_QUESTION in text
+    assert 'symmetric' in lowered
+    assert 'frame band' in lowered
+    assert 'plinth' in lowered
+    assert 'per-sheet' in lowered
+    assert 'not a tiling source' in lowered
+    assert '4k tile' in lowered
+    assert 'acceptance picture' in lowered
     # Cassette tile 1007 stays only as the superseded rule.
     assert 'T_Kpp_1_Diffuse_1.1007' in text
     assert 'superseded' in lowered

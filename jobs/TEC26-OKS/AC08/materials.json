@@ -65,7 +65,7 @@
     "GEOM": "Census geometry-172.json: zero-based vertex indices, 348 triangles, 193 vertices; ID renders + ID1-isolated from this actual mesh, not synthetic geometry.",
     "KPP5015": "KPP1 Metal_RAL5015 tile 1013: every one of 65536 pixels is RGB (34,113,179).",
     "KPP7004": "KPP1 Door_RAL7004 tile 1010: every one of 65536 pixels is RGB (150,153,146).",
-    "PANEL5015VERTICAL": "Artem 2026-10-22 texture C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png (Drive AGR-evidence/tec26-oks/user-textures/), sha256 2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece. 4096x4096 RGB, mean RGB (34,112,177), 7 vertical dark joints 8 px wide every 600 px, centres 270..3870. At 1000 px/m the module is 0.60 m and the joint is 8 mm. 4096 is not a multiple of 600, so the file is a colour/noise/joint-profile source and is not tiled.",
+    "PANEL5015VERTICAL": "Artem 2026-10-22 texture C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png (Drive AGR-evidence/tec26-oks/user-textures/), sha256 2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece. 4096x4096 RGB, mean RGB (34,112,177), 7 vertical dark joints 8 px wide every 600 px, centres 270..3870. At 1000 px/m the file pitch is 0.60 m and the joint is 8 mm. That 0.60 m pitch is superseded as the facade step. 4096 is not a multiple of 600, so the file is a colour/noise/joint-look source and is not a tiling source.",
     "KPPCASSETTE5015": "Superseded 2026-10-22. History only, not the panel source: maps_kpp Cassette_RAL5015 UDIM 1007, 4096 px over 4.096 m (1000 px/m), period 0.6 x 0.55 m, 8 mm joints. Diffuse T_Kpp_1_Diffuse_1.1007.png sha256 323ca26ba0685dc32f8afb12b9218a76e51570c39301b5d6606171f7f9660ee0. Normal T_Kpp_1_Normal_1.1007.png sha256 73a3430cb255d2cf8ecbd6ab477248ad94a3d86f5850efedaf86d91787c4ee3d."
   },
   "materials": [
@@ -149,17 +149,44 @@
       "joints": {
         "pattern": "vertical_only",
         "joint_orientation": "vertical_only",
+        "vertical_only": true,
         "horizontal_joints": false,
-        "module_m": 0.6,
+        "module_m": 0.2,
+        "step_m": 0.2,
+        "step_px": 200,
         "joint_width_mm": 8,
         "texel_px_per_m": 1000,
-        "phase_anchor": "panel_start_edge",
-        "phase_origin_z": 0.0,
+        "spacing": "even_over_panel_field",
+        "phase_anchor": "panel_field_symmetric",
+        "phase_symmetric": true,
         "seamless_wrap": false,
-        "lay_joints": "0.60 m period from each panel start edge (phase from ±0.000 / panel corner). The raw 4096 image is not tiled: 4096 is not a multiple of 600.",
+        "lay_joints": "Per facade from the colour sheet. Ribs are evenly spaced over the whole panel field, phase symmetric in that field. Step 0.20 m is 200 px at 1000 px/m. The raw 4096 image is not a tiling source.",
         "below_ground_plain": true,
+        "count_source": "C:/x/tec26-oks/user-refs/AC08_facades_colour_from_artem.jpg",
+        "facades": {
+          "1-2": {"vertical_ribs": 30, "step_m": 0.2},
+          "A-B": {"vertical_ribs": 12, "step_m": 0.2},
+          "B-A": {"vertical_ribs": 12, "step_m": 0.2},
+          "2-1": {
+            "vertical_ribs": "?",
+            "question": "Facade 2-1 («Фасад 2-1. Цветовое решение») is drawn on the colour sheet and this round does not count it. How many vertical ribs does facade 2-1 have, and is the step the same ~0.20 m as facade 1-2?"
+          }
+        },
+        "frame_band": {
+          "tone": "darker",
+          "edges": ["top", "bottom", "corners"],
+          "outlines": "panel field"
+        },
+        "plinth_strip": {
+          "colour": "grey",
+          "ral": "7004",
+          "rgb_srgb": [150, 153, 146],
+          "basis": "per-sheet",
+          "note": "Grey on the colour sheet. RAL 7004 (KPP Door_RAL7004) unless the sheet states another grey. Porch and door legend is RAL 7004."
+        },
         "source": {
-          "role": "colour_noise_joint_profile",
+          "role": "colour_noise_joint_look",
+          "tiling_source": false,
           "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
           "drive_path": "AGR-evidence/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
           "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
@@ -175,10 +202,17 @@
         },
         "vpm_maps": ["diffuse", "normal"],
         "npm_joints_min_px": 1.5,
+        "superseded_0_60_m": {
+          "module_m": 0.6,
+          "phase_anchor": "panel_start_edge",
+          "cut_at": "joint_positions_only",
+          "cut_policy": "Superseded 2026-10-22. A face that does not fit a 4K tile may be cut only by an edge loop or ring at joint positions. Replaced by the per-facade 0.20 m step: no new cuts when UV per face lies within one 4K tile.",
+          "superseded_on": "2026-10-22"
+        },
         "cutting": {
-          "when": "panel face does not fit a 4K tile",
+          "new_cuts_for_0_20_m_step": false,
+          "when": "only where a face still does not fit one 4K tile",
           "method": "edge_loop_or_ring",
-          "at": "joint_positions_only",
           "quads_kept": true,
           "listed_in_build_report": true,
           "unchanged": ["silhouette", "normals", "UCX", "IDs"]
@@ -219,7 +253,19 @@
       "kpp_sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969"
     }
   ],
-  "questions": [],
+  "questions": [
+    {
+      "facade": "2-1",
+      "vertical_ribs": "?",
+      "question": "Facade 2-1 («Фасад 2-1. Цветовое решение») is drawn on the colour sheet and this round does not count it. How many vertical ribs does facade 2-1 have, and is the step the same ~0.20 m as facade 1-2?"
+    }
+  ],
+  "acceptance_picture": {
+    "required": true,
+    "when": "build card, before asking Artem",
+    "content": "Each facade render next to the same facade of the colour sheet, same scale, rib count under both.",
+    "reference": "C:/x/tec26-oks/user-refs/AC08_facades_colour_from_artem.jpg"
+  },
   "contact_sheet": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/contact-sheet.png",
   "evidence_files": [
     {
@@ -375,25 +421,33 @@
     "note": "AC08 has no glass material ID. Glass, if later present, follows KPP glass (M_Glass_01: NPM alpha 0.5; VPM per standard), not a wall or door RAL. This card does not invent a glass finish."
   },
   "panel_joints": {
-    "applies_to": "all TEC26 buildings",
-    "module_mm": 600,
-    "module_m": 0.6,
+    "applies_to": "all TEC26 buildings; count and step come from each building's own colour sheet",
+    "module_mm": 200,
+    "module_m": 0.2,
+    "step_m": 0.2,
     "joints": true,
     "map_type": "joints",
     "pattern": "vertical_only",
     "joint_orientation": "vertical_only",
+    "vertical_only": true,
     "horizontal_joints": false,
-    "phase_anchor": "panel_start_edge",
-    "phase_origin_z": 0.0,
+    "phase_anchor": "panel_field_symmetric",
     "below_zero_joints": false,
     "texel_px_per_m": 1000,
     "joint_width_mm": 8,
     "npm_joints_min_px": 1.5,
     "seamless_wrap": false,
+    "source_role": "colour_noise_joint_look",
     "source_path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
     "source_sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
     "superseded": "KPP Cassette_RAL5015 tile 1007 is history only; it is not the panel source.",
-    "decision": "Artem 2026-10-22 supersedes the KPP cassette tile 1007 for all TEC26 buildings: blue sandwich panels (RAL 5015) have vertical joints only, no horizontal joints. Source is C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png, sha256 2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece, used for colour, noise and joint profile. Joints are laid on a 0.60 m period from each panel start edge at 1000 px/m (8 mm joints). The raw 4096 image is not tiled. VPM diffuse and normal, NPM joints >= 1.5 px. Below ±0.000 stays plain RAL 5015. A face that does not fit a 4K tile may be cut only by an edge loop or ring at joint positions; quads kept; every cut listed in the build report; silhouette, normals, UCX and IDs stay unchanged."
+    "superseded_0_60_m": {
+      "module_m": 0.6,
+      "phase_anchor": "panel_start_edge",
+      "cut_at": "joint_positions_only",
+      "note": "Superseded 2026-10-22 by the per-facade colour-sheet count and 0.20 m step."
+    },
+    "decision": "Artem 2026-10-22: joint count and step come from the building's own facade «Цветовое решение» sheet, per facade. AC08 facade 1-2 has 30 vertical ribs and facades A-B and B-A have 12, step 0.20 m (200 px at 1000 px/m), evenly spaced, phase symmetric in the panel field, no horizontal joints. Facade 2-1 is on the sheet and is unmarked (?). The texture supplies colour, noise and the look of one joint only and is not a tiling source. A darker frame band outlines each panel field (top, bottom, corners). The plinth strip is grey RAL 7004 per-sheet. The door is RAL 7004 as on the sheet. Below ±0.000 stays plain colour with no joints. The 0.60 m step and the joint-position cut policy are history. A 0.20 m step needs no new cuts when UV per face lies within one 4K tile; keep an edge loop or ring only where a face still does not fit. VPM diffuse and normal, NPM joints >= 1.5 px. Silhouette, normals, UCX and IDs stay unchanged."
   },
   "limitations": [
     "DXFOUT lacked final ENDSEC/EOF. Recover repaired two orphan layout records; diagnostic drawings are recovered views, not certified native plots.",

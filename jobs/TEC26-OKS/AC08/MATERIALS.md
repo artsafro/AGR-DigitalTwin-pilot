@@ -50,7 +50,7 @@ Note **1D3D** describes guard posts 1–4 and elevations 166.05 / 162.65 / 163.7
 re-escalated to Artem. Proxy 26FC's crossed-out region is not the active colour legend.
 No active legend independently specifies a roof RAL, frame RAL or exposed foundation finish.
 Those colours are Artem's Gate-1 approval, recorded below, not a second reading of the legend.
-No dimensioned panel/joint/profile module was verified on this drawing. The KPP VPM blue cassette (tile 1007) was applied the same day and is superseded: it is not the panel source. All TEC26 buildings use vertical joints only, no horizontal joints, module 0.60 m at 1000 px/m, taken from Artem's texture as a colour, noise and joint-profile source. The perimeter drop below ±0.000 stays plain RAL 5015.
+No dimensioned panel module is printed as a number on this drawing. Joint count and step come from the building's own facade «Цветовое решение» sheet, per facade. The reference is `C:/x/tec26-oks/user-refs/AC08_facades_colour_from_artem.jpg`. AC08 measured from that sheet: facade 1-2 (long side) = 30 vertical ribs, step 0.20 m; facades A-B and B-A (short sides) = 12 vertical ribs, step 0.20 m. Ribs are evenly spaced over the whole panel field. There are no horizontal joints. Facade 2-1 («Фасад 2-1. Цветовое решение») is drawn on the colour sheet and this round does not count it. How many vertical ribs does facade 2-1 have, and is the step the same ~0.20 m as facade 1-2? The KPP VPM blue cassette (tile 1007) was applied the same day and is superseded: it is not the panel source. The later 0.60 m step, read off Artem's texture, is also superseded history. All TEC26 buildings still use vertical joints only. The texture is not a tiling source. The perimeter drop below ±0.000 stays plain RAL 5015.
 
 AutoCAD core console **2025**, read-only copy, supplied text and DXF diagnostics.
 DXFOUT exit 0 was insufficient: normal ezdxf reading failed with `missing ENDSEC tag`.
@@ -81,8 +81,8 @@ this is not a remap to the standard's semantic ID ranges or UDIMs.
 | Source ID | Polygons | Triangles | Area m² | Geometry from ID views | Approved finish | Map type | Evidence / decision |
 |---|---:|---:|---:|---|---|---|---|
 | 1 | 127 | 254 | 60.50952526944401 | Roof, perimeter frame and skirt/foundation extending down to Z=-2.046546 | Mixed ID, split by region inside the same ID: roof **RAL 7004** RGB **150,153,146**; frame **RAL 7004** RGB **150,153,146**; visible foundation/drop below 0.000 = wall colour **RAL 5015** RGB **34,113,179**. Part areas are null (census has no face split). | **solid** | Artem 2026-10-22. KPP tiles 1010 and 1013. Totals stay 127 / 254 / 60.50952526944401. |
-| 2 | 15 | 30 | 35.3280560120449 | Wall infill panels on all sides | Sandwich panel, **RAL 5015**, RGB **34,113,179**, vertical joints only | **joints** (vertical only) | DWG 1395 + 1399/2AF2/25D4; flat colour KPP Metal_RAL5015 tile 1013 (34,113,179). Joints from Artem's texture, mean RGB (34,112,177), max channel delta 2. Approved. |
-| 3 | 38 | 64 | 1.6974531660811787 | Door assembly including leaf/frame/handle geometry | Door, **RAL 7004**, RGB **150,153,146** | **solid** | DWG 1397; exact KPP Door_RAL7004 solid tile 1010. Approved. |
+| 2 | 15 | 30 | 35.3280560120449 | Wall infill panels on all sides | Sandwich panel, **RAL 5015**, RGB **34,113,179**, vertical joints only, step **0.20 m** | **joints** (vertical only) | DWG 1395 + 1399/2AF2/25D4; flat colour KPP Metal_RAL5015 tile 1013 (34,113,179). Counts from the colour sheet: 1-2 = 30, A-B = 12, B-A = 12. Facade 2-1 is `?`. Texture mean RGB (34,112,177), max channel delta 2. Approved. |
+| 3 | 38 | 64 | 1.6974531660811787 | Door assembly including leaf/frame/handle geometry | Door, **RAL 7004**, RGB **150,153,146**, as on the colour sheet | **solid** | DWG 1397; exact KPP Door_RAL7004 solid tile 1010. Approved. |
 | 4–5 | 0 | 0 | 0 | Populated unused submaterials | Unused, not assigned | n/a | Multi/Sub census |
 | 6–10 | 0 | 0 | 0 | Empty slots | Remain empty | n/a | Multi/Sub census |
 
@@ -94,22 +94,29 @@ The contact sheet still shows the intake diagnostic (magenta on ID 1); it is not
 and it does not modify the master mesh.
 AC08 has no glass ID. The glass rule is still KPP: if glass is later found, use `M_Glass_01`
 (NPM alpha 0.5; VPM per standard), not the door or wall colour. ID 2 panels are RAL 5015
-with vertical joints only (no horizontal joints) for all TEC26 buildings. The joint profile,
-colour and noise come from
+with vertical joints only (no horizontal joints) for all TEC26 buildings. Colour, noise and
+the look of one joint come from
 `C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png`
 (also Drive `AGR-evidence/tec26-oks/user-textures/`), SHA256
 `2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece`.
-Measured 4096×4096 RGB, mean RGB (34,112,177), 7 vertical dark joints 8 px wide every 600 px
-(centres 270, 870, 1470, 2070, 2670, 3270, 3870). At 1000 px/m that is a panel module of 0.60 m
-and a joint of 8 mm. 4096 is not a multiple of 600, so the image does not wrap seamlessly:
-it is not tiled. Joints are laid at a 0.60 m period from each panel's start edge
-(phase from ±0.000 / panel corner). The same look is used in VPM (diffuse and normal) and in
-the NPM atlas (joints at least 1.5 px). Where a panel face does not fit a 4K tile, the only
-allowed cut is an edge loop or ring (connect) across the panel at joint positions. Quads stay,
-every cut is listed in the build report, and silhouette, normals, UCX and IDs stay unchanged.
-Approved flat RGB stays KPP (34,113,179). The texture mean (34,112,177) is within a tolerance
-of 2 per channel. ID 1 foundation keeps that wall colour. Doors, frames and porches stay solid
-RAL 7004. The drop below ±0.000 stays plain RAL 5015.
+That file is not a tiling source. Measured 4096×4096 RGB, mean RGB (34,112,177), 7 vertical
+dark joints 8 px wide every 600 px (centres 270, 870, 1470, 2070, 2670, 3270, 3870). At
+1000 px/m the file's own pitch is 0.60 m and the joint is 8 mm. 4096 is not a multiple of 600,
+so the image does not wrap seamlessly. That 0.60 m pitch and the start-edge phase are
+superseded. Joints are laid out per facade from the colour sheet: step 0.20 m (200 px at
+1000 px/m), phase symmetric in the panel field, ribs evenly spaced across the whole field.
+Facade 1-2 has 30 vertical ribs. Facades A-B and B-A have 12. Facade 2-1 stays `?`.
+A darker frame band outlines each panel field on the top, the bottom and the corners.
+The visible plinth strip is grey, RAL 7004, per-sheet (the sheet shows grey; the porch/door
+legend is RAL 7004 unless the sheet states another grey). The door is RAL 7004 as on the sheet.
+The same look is used in VPM (diffuse and normal) and in the NPM atlas (joints at least 1.5 px).
+A 0.20 m step needs no new cuts when the UV of a face lies within one 4K tile. Keep an edge
+loop or ring only where a face still does not fit. The previous cut policy (an edge loop or
+ring at joint positions whenever a face missed a 4K tile under the 0.60 m step) is history.
+Quads stay, every remaining cut is listed in the build report, and silhouette, normals, UCX
+and IDs stay unchanged. Approved flat RGB stays KPP (34,113,179). The texture mean
+(34,112,177) is within a tolerance of 2 per channel. ID 1 foundation below ±0.000 keeps that
+plain wall colour. Doors, frames and porches stay solid RAL 7004.
 
 ## KPP colour provenance
 
@@ -141,9 +148,11 @@ No RGB was guessed from an online RAL chart or sampled from a DWG screenshot.
 
 The panel source is now Artem's file
 `panel_RAL5015_vertical_joints_4096.png`, same SHA256 as
-`C:/x/tec26-oks/user-textures/SHA256SUMS.txt`. Vertical joints only, module 0.60 m, joint 8 mm,
-texel 1000 px/m, phase from the panel start edge. A face that does not fit a 4K tile may take
-an edge loop or ring cut at joint positions only.
+`C:/x/tec26-oks/user-textures/SHA256SUMS.txt`. It supplies colour, noise and the joint look
+only and is not a tiling source. Vertical joints only, layout step 0.20 m, joint 8 mm,
+texel 1000 px/m, phase symmetric in the panel field. The 0.60 m module is history. A face
+whose UV still does not fit one 4K tile may take an edge loop or ring cut; the 0.20 m step
+itself does not add cuts.
 
 ## Review evidence
 
@@ -168,6 +177,8 @@ data, **GREEN 14 passed** after the first approval record. The 2026-10-22 joints
 record: **RED 4 failed, 13 passed** before the cassette data, **GREEN 17 passed** after it.
 The later same-day vertical-joints revision (cassette tile 1007 superseded): **RED 5 failed, 14 passed**
 before the texture record, **GREEN 19 passed** after it.
+The 2026-10-22 per-facade count/step revision (0.60 m superseded): **RED 8 failed, 16 passed**
+before this record, **GREEN 24 passed** after it.
 No production code was introduced.
 Independent NumPy recomputation from all **348/348** census triangles reproduced the three stored
 areas exactly. Drive readback verified **27/27** evidence file sizes and SHA256 values; the checksum
@@ -182,17 +193,27 @@ full-suite gate before a subsequent first code-review request if the task advanc
 
 Artem, 2026-10-22, quote: «Принимаю».
 
-1. Sandwich panels. Original answer, Artem 2026-10-22: solid colour, no joints (module not confirmed in the drawings). Superseded the same day, 2026-10-22: «Не вижу швов на панелях. В КПП есть текстура для VPM со швами — можно такой же тексель, как в VPM КПП, взять на панелях и такой же на наших домиках сделать в VPM и NPM» and «ниже ±0.000 без швов (под землёй не видно)». That cassette reading (KPP Cassette_RAL5015 tile 1007, diffuse and normal) is itself superseded the same day and is not the panel source. Latest instruction, Artem 2026-10-22, for all TEC26 buildings: «Панели неверные, должны быть вертикальные швы только; текстуру пришлю; если не влезает, можно аккуратно порезать через loop или ring». Blue sandwich panels (RAL 5015) have vertical joints only, no horizontal joints. Texel matches KPP VPM: 1000 px/m on a 4K UDIM. Module 0.60 m, joint 8 mm, phase from each panel start edge (±0.000 / panel corner). Source file `panel_RAL5015_vertical_joints_4096.png` supplies colour, noise and the joint profile and is not tiled. VPM uses diffuse and normal; the NPM atlas keeps joints at least 1.5 px. If a panel face does not fit a 4K tile, cutting is an edge loop or ring at joint positions only, quads kept, every cut listed in the build report; silhouette, normals, UCX and IDs stay unchanged. The perimeter drop below ±0.000 stays plain RAL 5015.
+1. Sandwich panels. Original answer, Artem 2026-10-22: solid colour, no joints (module not confirmed in the drawings). Superseded the same day, 2026-10-22: «Не вижу швов на панелях. В КПП есть текстура для VPM со швами — можно такой же тексель, как в VPM КПП, взять на панелях и такой же на наших домиках сделать в VPM и NPM» and «ниже ±0.000 без швов (под землёй не видно)». That cassette reading (KPP Cassette_RAL5015 tile 1007, diffuse and normal) is itself superseded the same day and is not the panel source. Next instruction, Artem 2026-10-22, for all TEC26 buildings: «Панели неверные, должны быть вертикальные швы только; текстуру пришлю; если не влезает, можно аккуратно порезать через loop или ring». That reading fixed vertical joints only, module 0.60 m, joint 8 mm, phase from each panel start edge, and an edge loop or ring at joint positions when a face did not fit a 4K tile. It is superseded the same day. Latest instruction, Artem 2026-10-22: «всё равно говно, почему нельзя сделать как на презе — тут прям всё читается, и швы, и количество» against the «Фасад … Цветовое решение» sheets (`C:/x/tec26-oks/user-refs/AC08_facades_colour_from_artem.jpg`). Joint count and step come from that sheet, per facade. AC08: facade 1-2 = 30 vertical ribs, step 0.20 m; facades A-B and B-A = 12 vertical ribs, step 0.20 m; ribs evenly spaced over the whole panel field; phase symmetric; no horizontal joints. Facade 2-1 is `?`. A darker frame band outlines each panel field (top, bottom, corners). The door is RAL 7004 as on the sheet. The plinth strip is grey, RAL 7004, per-sheet. The texture supplies colour, noise and the look of one joint only (200 px step at 1000 px/m) and is not a tiling source. A 0.20 m step needs no new cuts when UV per face lies within one 4K tile; keep an edge loop or ring only where a face still does not fit. Quads stay, every cut is listed in the build report; silhouette, normals, UCX and IDs stay unchanged. Below ±0.000 stays plain RAL 5015. The 0.60 m step and its cut policy stay in the record as history.
 2. Roof: RAL 7004 grey (same as KPP 7004), not 5015.
 3. Mixed ID 1 may be painted differently (roof 7004, frame 7004, plinth/below-grade drop = wall colour)
    without changing geometry, via UV/atlas regions or a face-group split inside the same ID.
 4. Panels RAL 5015 = KPP blue, doors/frames/porches RAL 7004 = KPP grey, glass as KPP.
    The drop below ±0.000 takes the wall colour.
 
-AC08 assignment: ID 2 panels 5015 with vertical joints only, ID 3 door 7004, mixed ID 1 roof 7004 / frame 7004 /
-visible foundation/drop = plain wall colour RAL 5015. No open question remains.
+AC08 assignment: ID 2 panels 5015 with vertical joints only, step 0.20 m, ID 3 door 7004 as on the sheet,
+mixed ID 1 roof 7004 / frame 7004 / visible foundation/drop below ±0.000 = plain wall colour RAL 5015.
+The visible plinth strip is grey RAL 7004, per-sheet. One question remains, and it is not a finish:
+Facade 2-1 («Фасад 2-1. Цветовое решение») is drawn on the colour sheet and this round does not count it. How many vertical ribs does facade 2-1 have, and is the step the same ~0.20 m as facade 1-2?
 The build (VPM UDIM tiles, NPM one 2048 atlas) is a separate card and starts with pilot #559.
 This card builds nothing.
+
+## Acceptance picture
+
+Mandatory in the build card before asking Artem. Place each facade render next to the same
+facade of the colour sheet, at the same scale, with the rib count under both. The sheet is
+`C:/x/tec26-oks/user-refs/AC08_facades_colour_from_artem.jpg` (the «Фасад … Цветовое решение»
+views). `materials.json` records this as `acceptance_picture`. This card builds nothing, so
+the picture is a requirement for the build card, not a render produced here.
 
 ## Updated contact sheet (approved state)
 `G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v003/contact-sheet-approved.png` (sha256 394acc07fc598b8e11af770dda079b7829275edab0df63043a545eb222d65146); one swatch per ID/part, no numbers inside swatches, gaps (slots 4-10) crossed out. Earlier ID renders: evidence-v002.
