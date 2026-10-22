@@ -13,6 +13,12 @@ for #535 (parity guard, incremental mode, Blender path) to adopt. Method: skill 
   input-changed check (exit 2). The fixtures, timing and comparison code did not change. New SHA-256
   `48442a0073040d38de9506e8d1bf510081212cab087eb6e1e142f6afa76999a4`; baseline and winner were re-run with it (table
   below, quiet board).
+- Review round 1 (PR #555) found that the guard compared only the union of vertex-pair endpoints and that the NPZ
+  loader truncated / dropped malformed inventory. `126b53a` amends the guard: the full pair list is compared with an
+  independent sort-and-sweep derivation of the rule (`oracle_pairs`, which must reproduce the stored xView vertex
+  selection, else exit 2), each pair's schema, ids and distance are validated, and NPZ / keep inventories are strict.
+  New SHA-256 `1f1c18fb2c1c48c4ab443abc7fccd035a5fefb9ccc31566e2b12db847869792c`; baseline and winner re-run with it
+  (`bench_baseline3.json`, `bench_final3.json`). The loop rows below keep their original bench SHA.
 - Metric: `cpu_s` = median of 5 `time.process_time()` runs of the candidate on TOW02 export-v005, single process.
 - Evidence (small text, committed): `docs/experiments/autoresearch-xview-speed/` (`results.tsv`, `bench_baseline.json`,
   `bench_final.json`, `bench_baseline2.json`, `bench_final2.json`, `pairs_parity.json`, `ab.py`). Logs: `C:/x/ev_t_fb698124/` on this PC.
@@ -25,6 +31,8 @@ for #535 (parity guard, incremental mode, Blender path) to adopt. Method: skill 
 | winner `inv_xview_fast` (`d3a0cee`), loaded board (bench `883d08e5`) | **0.438 s** | 0.455 s | 0.594 s | 0.266 s | 0.391 s | 11/11 |
 | baseline, quiet board (bench `48442a00`) | **21.6 s** | 21.7 s | 20.2 s | 10.2 s | 10.0 s | 11/11 |
 | winner (`23ff90b`), quiet board (bench `48442a00`) | **0.219 s** | 0.220 s | 0.359 s | 0.219 s | 0.203 s | 11/11 |
+| baseline, quiet board (bench `1f1c18fb`, pair-list guard) | **20.3 s** | 20.5 s | 19.3 s | 10.0 s | 9.8 s | 11/11 |
+| winner (`126b53a`), quiet board (bench `1f1c18fb`, pair-list guard) | **0.219 s** | 0.217 s | 0.328 s | 0.188 s | 0.203 s | 11/11 |
 
 91x faster on the primary metric under load and 99x on a quiet board (target <= 2 s met, #535's <= 10 s met),
 28x-86x on the other fixtures, with exact list parity on every fixture. Board load: CPU 40 % (loaded baseline,
