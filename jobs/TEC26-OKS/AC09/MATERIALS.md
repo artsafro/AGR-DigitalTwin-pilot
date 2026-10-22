@@ -1,116 +1,134 @@
-# AC09 — material evidence / Gate 1 (not approved)
+# AC09 — material proposal / Gate 1 STOP (not approved)
 
-Building name read from the title block: **Контейнер системы автоматического контроля вредных выбросов (САКВ)**.
-Source: `22Е56-АР2-1002-АС.09.dwg`, layout `2`, handles `3437` and `3438`, insertions
-(499.713, 27.7392, 0) and (504.356, 23.9892, 0), paper-space mm.
+Building: **Контейнер системы автоматического контроля вредных выбросов (САКВ)**.
+Title block: `22Е56-АР2-1002-АС.09.dwg`, layout2, handles3437/3438 at
+(499.713,27.7392,0)/(504.356,23.9892,0) paper mm.
 Pilot main at start: `442f0b695a91f9abc180783c26978fbe85fefcf9`.
 
-**Status: awaiting_gate1; passed=false. No VPM/NPM build, source edits, material reassignment or delivery export.**
-This is an evidence checkpoint, not a completed material mapping or a full architectural audit.
+**awaiting_gate1; passed=false. All finishes unapproved. No NPM/VPM build, geometry/UV/material
+assignment edits or delivery export.** IDs, editor slots and UDIMs are distinct concepts.
 
-## Inputs and readback
+## Inputs and decisions
 
-- Original drawing was copied to `C:/x/tec26-oks/AC09/drawings-v001/ac09.dwg`.
-  Original/copy SHA256: `feb22366bd7270f6912de797d9ffc0cc075d451cb154e3aaa1deaea96c88a5b5`.
-  No PDF or R1 drawing was present in the AC09 source directory.
-- AutoCAD 2025 Core Engine V.72.0.0 / ACADVER 25.0; INSUNITS=4 (mm).
-  Existing #558 DXF and independent DXFOUT both terminate at XRECORD 35B without ENDSEC/EOF.
-  `ezdxf.readfile` rejects both: `DXFStructureError: missing ENDSEC tag.`
-  Neither nominal wrapper exit 0 nor the incomplete DXF is treated as a successful readback.
-- Alternate read-only AutoLISP `entget` on the copy recovered 59 text/insert records (51 non-insert
-  text records saved in `drawing-text.json`). A separate block walk recovered 204 lines.
-  Initial text attempt failed (`prin1`: too many arguments); corrected to
-  `write-line (vl-prin1-to-string ...)`, yielding `AC09_TEXT_DONE count=59`.
-  Block extraction completed; optional `layoutlist` failed as unavailable in this core console.
-  Nested transform/viewport mapping and native sheet rendering remain unverified.
-- #558 census: `C:/x/tec26-oks/census/oks.json`, source copy
-  `C:/x/tec26-oks/sources-v001/Vlad_OKS/04-09 Geometry Final.max`.
-  3ds Max 2026.3, original Max file version 26000; meters, 1 unit/m, Z up.
-  Only census rows on **actual layer `009`** are used; requested `0.0.0.9` / `0.0.9` was not found.
-  No new Max session was started. This layer alias needs confirmation, not silent normalization.
-- Main handle 173: `АС.09`, Multi/Sub `Material #7` (handle 4439), 10 slots;
-  glass handle 369: `АС.09_Glass`, same Multi/Sub;
-  collision handle 342: `Colizii_043`, 12 triangles, no material (not renamed UCX).
-  Other layers and similarly numbered `Colizii_009` on layer 007 are excluded.
-- Native/snapshot bbox error: main 0.000003814697265625 m, glass/collision 0 m.
-  Census geometry buffers are reused for diagnostic views only; topology/UV/material delivery QA is not performed.
+Orchestrator rules on this card (2026-10-22) settle revision, actual layer names, same-DWG legend,
+KPP glass, empty slots, and final geometry. Only one DWG, no R1/PDF, exists in the AC09 directory,
+re-inventoried after plotting. Original SHA256 remains
+`feb22366bd7270f6912de797d9ffc0cc075d451cb154e3aaa1deaea96c88a5b5`.
+Pristine copy `C:/x/tec26-oks/AC09/drawings-v002/ac09.dwg`, same SHA256, manifest beside it.
+Earlier disposable `drawings-v001/ac09.dwg` was rewritten by DXFOUT; its hash is
+`e4adf48e7ac6fed2cc7efd8d512e34048c281e259f160d51dacb9aefe608ddf0`. It is the working copy used
+for text/plots, NOT byte-identical to the original. Original never edited; JSON distinguishes hashes.
 
-## Drawing sheets and finishes
+AutoCAD2025 Core Engine V.72.0.0 / ACADVER25.0, INSUNITS4(mm), locked dcc_batch.py acad,
+copy only, QUIT discarding plot/page-setup changes. #558 and independent DXFOUT both end at
+XRECORD35B without ENDSEC/EOF; ezdxf rejects them despite wrapper exit0. AutoLISP fallback
+recovered59 text/insert records (51 non-insert records in drawing-text.json); block walk204 lines.
+First text attempt failed at prin1 extra argument, repaired with write-line/vl-prin1-to-string.
+Optional layoutlist was unavailable; no nested-block transform verification is claimed.
 
-Layout 2 / printed sheet 2 is identified by handle `3443` at (596.531,23.75,0).
-The sheet contains plan at 0.000 (`2374`, 91.7101,283.955), section 1-1 (`23EA`,269.028,283.955),
-roof plan (`2460`,444.483,283.955). Title-block equivalents: `3439`, `343A`, `343B`.
-Facade-associated legend is present in Model space; its printed sheet number and viewport placement
-are **unverified**, not invented. Coordinates below are native Model-space mm, not PDF pages.
+## Native drawing evidence
 
-| Drawing finish | RAL | Map-type proposal (not approved) | Evidence handle; Model insertion x,y,z |
-|---|---|---|---|
-| Sandwich panels | 5015 | joints; module/joint dimensions unknown | D4B; 27521.4,-943.967,0 |
-| Porches and doors | 7004 | metal | D4D; 27521.4,-2647.4,0 |
-| Window frames | 9016 | solid | 1C5A; 27521.4,-4105.6,0 |
-| Three-layer sandwich panels, 100 mm, basalt mineral-wool infill | not specified in this note | joints | FFD; 12472.7,-20445.8,0 |
-| Reinforced-concrete slab | not specified | ? visible finish | 1003; 12472.7,-22195.1,0 |
-| Concrete | not specified | ? visible finish | 8B0; 56333.5,5967.98,0 |
+Folder: **`G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v002/`**.
 
-No yellow RAL is specified in the recovered AC09 text. Do not borrow KPP yellow or other-building finishes.
-Drawing handle `36B1`, Model (25439.7,-10124.7,0), says the roof level did not match facades/section,
-formerly +2.330; handle `36B0` says `ИСПРАВЛЕНО!`. The replacement level was not independently
-read from geometry/dimensions. No level is silently chosen.
-Layout-2 note `259F` at (304.027,-18.1194,0) gives floor 0.000 = absolute 171.27 and factory-ready
-modular construction; it is not a material specification or approval of source placement.
+- `ac09-facades.pdf` p1: native Model plot window(-1000,-6000)–(40000,20000)mm,
+  four blue-panel elevations and colour legend. No printed facade sheet title/number recovered;
+  explicitly a Model-space group, NOT invented sheet1. Ribs visible, no module/joint dimensions established.
+- `ac09-sheet2.pdf` p1: native layout2/printed sheet2 (`3443`), plan0.000 (`2374`, paper91.7101,283.955),
+  section1-1 (`23EA`,269.028,283.955), roof (`2460`,444.483,283.955), title equivalents3439–343B.
+  Plan/roof3000x2450 are envelope dimensions, not cladding module. No separate roof RAL established.
+- Both PDFs rendered via PyMuPDF and visually inspected. CS_Gost2304.shx/russwin.shx substitution
+  to simplex.shx and missing-font warnings retained; legend cross-checked with native entget text.
+- ac09-viewports.lsp: 3 VIEWPORT records, all layout2; viewport11B3 targets(9744.14,-10424.1,0),
+  view height9600; 247E targets(16278.5,-21276,0), height10287.7. Facade colour legend outside
+  these sheet2 windows, hence separate Model plot rather than a false paper-sheet locator.
 
-## Per-ID table — unknowns are deliberate
+| Drawing finish/material | Map proposal | Model handle; insertion mm; native PDF |
+|---|---|---|
+| Sandwich panels RAL5015 | solid, no invented joints | D4B;27521.4,-943.967,0; facades p1 |
+| Porches/doors RAL7004 | metal | D4D;27521.4,-2647.4,0; facades p1 |
+| Window frames RAL9016 | solid | 1C5A;27521.4,-4105.6,0; facades p1 |
+| Three-layer sandwich100mm, basalt mineral wool | structural note, not module | FFD;12472.7,-20445.8,0; sheet2 p1 |
+| Reinforced-concrete slab | finish/RAL unspecified | 1003;12472.7,-22195.1,0; sheet2 p1 |
+| Concrete | finish/RAL unspecified | 8B0;56333.5,5967.98,0; unplaced Model detail outside facade window |
 
-Area is summed triangle surface area in m², not projected/visible area. Main polygon counts and
-triangulated counts remain separate. Collision IDs are topology-face IDs, not visible finish assignments.
-Source diagnostic colours and generic material names do not establish RAL correspondence.
+No yellow RAL in recovered AC09 text. No other-building finish borrowed. Roof correction36B1
+(25439.7,-10124.7,0) mentions former+2.330, 36B0 says corrected; informational drawing conflict,
+not a geometry change or user question under orchestrator rule1. Area notes21FC/21FF
+(6.30/19.28m²) are not finish evidence or scene-rescaling instructions. Layout2 note259F
+(304.027,-18.1194,0): factory-ready SAKV, floor0.000=absolute171.27, not coating specification.
+No recovered note explicitly says «Посты охраны»; no such template leftover invented. If later found,
+other-object notes are excluded per rule3, not used to override the same-DWG SAKV legend.
 
-| ID | Main polygons | Main triangles | Main area m² | Glass triangles / area m² | Finish | Map type | Evidence / exact question |
+Plot failures retained: attempt1 `_Model` nonexistent layout; attempt2 `_As displayed` split answers,
+timeout180s; attempt3 actual `Model`, `_A` succeeded with readable PDF. Paper plot first omitted
+hide-paperspace answer; extra `_N` succeeded. All logs/scripts on Drive; nominal exit0 never sufficient.
+
+## Scene and per-ID proposal
+
+Reuse #558 C:/x/tec26-oks/census/oks.json; no new Max session. Scene copy:
+C:/x/tec26-oks/sources-v001/Vlad_OKS/04-09 Geometry Final.max, Max2026.3, fileversion26000,
+meters/1unit per m/Zup. Actual layer **009** accepted by orchestrator: main АС.09 handle173,
+glass АС.09_Glass handle369, collision Colizii_043 handle342 (12triangles/no material/not renamed UCX).
+Other layers excluded. Main/glass share Multi/Sub Material#7 handle4439, 10slots, 8–10empty.
+Native/snapshot bbox difference: main0.000003814697265625m; glass/collision0m.
+
+Six orthographic **software census renders** in id-colours.png (front/back/sides/top/bottom),
+not native Max renderer output. isolated-ids.png shows each populated opaque ID separately;
+proposed-finishes.png shows unchanged geometry with proposed finish colours. Camera changes
+are not geometry edits. No topology/UV/delivery QA certification.
+
+| ID | Main polygons | Main triangles | Main area m² | Glass triangles/area m² | Geometry -> proposed finish | Map | Evidence/limitation |
 |---|---:|---:|---:|---|---|---|---|
-| 1 | 188 | 376 | 38.713608 | 0 / 0 | ? | ? | census 173 ID1: which faces are RAL5015 sandwich panels; panel/joint dimensions? |
-| 2 | 50 | 100 | 18.757031 | 0 / 0 | ? | ? | census 173 ID2: same RAL5015 as ID1, or a different finish? |
-| 3 | 40 | 80 | 1.901034 | 0 / 0 | ? | ? | census 173 ID3: window-frame RAL9016, porch/door RAL7004, or another grey? |
-| 4 | 39 | 66 | 1.771651 | 0 / 0 | ? | ? | census 173 ID4: porch/door RAL7004, window-frame RAL9016, or another finish? |
-| 5 | 12 | 24 | 0.940521 | 0 / 0 | ? | ? | census 173 ID5: specify finish/RAL/map type. |
-| 6 | 0 | 0 | 0 | 8 / 3.216858 | ? | ? | census 369 ID6: confirm glass, tint and transparency. |
-| 7 | 18 | 36 | 27.345944 | 0 / 0 | ? | ? | census 173 ID7: specify roof/underside/interior finish. |
-| 8 | 0 | 0 | 0 | 0 / 0 | ? | ? | empty Multi/Sub slot: keep empty? |
-| 9 | 0 | 0 | 0 | 0 / 0 | ? | ? | empty Multi/Sub slot: keep empty? |
-| 10 | 0 | 0 | 0 | 0 / 0 | ? | ? | empty Multi/Sub slot: keep empty? |
+| 1 |188|376|38.713608|0/0| Mixed roof, corner frame, plinth, below-zero extrusion -> **?** | ? | isolated ID1, z=-2.0383..2.5675; blue facade trim not evidence for all regions |
+| 2 |50|100|18.757031|0/0| Wall panels -> **RAL5015** | solid | D4B+facades p1+isolated ID2 |
+| 3 |40|80|1.901034|0/0| Window frame outlines -> **RAL9016** | solid | 1C5A+isolated ID3 |
+| 4 |39|66|1.771651|0/0| Door/handle -> **RAL7004** | metal | D4D+isolated ID4 |
+| 5 |12|24|0.940521|0/0| Window reveals/thickness -> **RAL9016 proposed** | solid | ID5 behind ID3, extension of1C5A, not independently specified |
+| 6 |0|0|0|8/3.216858| Glass -> **KPP M_Glass_01** | glass | handle369, orchestrator rule6, KPP export_npm.py:152–157 |
+| 7 |18|36|27.345944|0/0| Interior walls/floor/ceiling -> **?** | ? | isolated ID7, floor/ceiling each4.898m², section no finish |
+| 8 |0|0|0|0/0| empty, keep | none | census; resolved rule4 |
+| 9 |0|0|0|0/0| empty, keep | none | census; resolved rule4 |
+| 10 |0|0|0|0/0| empty, keep | none | census; resolved rule4 |
 
-`materials.json` retains unrounded areas and exact per-ID questions. Geometry is unchanged.
+Areas summed triangle surface, not projected/visible; JSON retains unrounded values. ID1 is NOT
+all wall panel, ID7 NOT exterior roof. Both stay pink gaps. Later per-face finish groups inside ID1
+may be needed without geometry change; none built here. Generic source names/ID colours do not prove RAL.
 
-## KPP colour reuse, not an inferred RAL conversion
+## KPP exact colour reuse
 
-Hash-pinned references in JSON come from the user's `maps_kpp` and the finish-to-tile table in
-`jobs/KPP1/materials.json`: RAL5015 tile1007, RAL7004 tile1001, RAL9016 tile1009.
-Their modal RGBs are respectively (34,113,179), (150,153,146), (246,246,246).
-These are measured modes of existing textures, **not calibrated RAL values** and not replacements
-for the original KPP image pixels. No reference is applied to an unknown AC09 ID.
+Hash-pinned maps_kpp sources and jobs/KPP1/materials.json: RAL5015 tile1007, RAL7004 tile1001,
+RAL9016 tile1009. Chips use existing modal pixels(34,113,179)/(150,153,146)/(246,246,246),
+not calibrated RAL conversion. Full original maps remain authoritative; chips are not delivery maps.
+KPP NPM glass linear base(.75,.82,.82), alpha.5, roughness.05, no maps (export_npm.py:152–157).
+Glass chip is opaque linear-to-sRGB base colour, not transparency simulation. VPM glass separate,
+no maps, properties per standard at build time; package_vpm.py:37–39 values are explicitly proposals,
+not approved AC09 values. No repeat glass question already resolved by orchestrator.
 
-## Visual evidence and reproducibility
+## Contact sheet and checks
 
-Drive folder: `G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v001/`.
-`contact-sheet.png`: ten ID swatches, labels outside, pink hatch = unknown; empty slots marked.
-`id-colours.png`: four orthographic source-census projections, coloured by actual source material ID;
-these are software diagnostic projections, **not native Max renders**, nor approved finish previews.
-Native facade/roof sheet captures and top/bottom diagnostic views remain open.
-A contact sheet visually inspected with the image tool shows readable labels and projections.
-Raw geometry-173/342/369, native text and block extraction are stored beside images.
-`SHA256SUMS.txt` pins the evidence. JSON pins the source/census/buffers and manifest.
-No binary is committed. No LFS is used.
+**G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v002/contact-sheet.png**:
+ten swatches, labels outside, pink hatch=unknown, empty slots marked, six ID views+six finish views.
+Separate isolated-ID views explain the proposal. SHA256SUMS.txt pins PDFs/images/buffers/scripts/logs;
+no binary or LFS committed. Focused tests check proposals/unknowns/empty slots, face accounting,
+source locators, KPP identity, glass policy and fail-closed approval status, not delivery compliance.
 
-## Gate-1 questions for Artem — STOP
+## Verification receipt (checkpoint only)
 
-1. Confirm that actual layer `009`, handles 173/342/369, is the intended AC09 scope.
-2. Approve/correct the per-ID finish correspondence above, especially ID1 versus ID2,
-   grey ID3 versus ID4, and dark ID5 / roof-or-underside ID7. The colours in the diagnostic
-   views are ID markers, not proposed finishes. Confirm glass ID6 and leave empty slots 8–10?
-3. Specify sandwich-panel module and joint appearance; for IDs without a drawing finish,
-   provide the manufacturer specification or exact intended finish/RAL. Do not default to KPP.
-4. Which facade sheet/revision and corrected roof level govern? The recovered text includes a
-   correction note but does not independently establish the replacement dimension.
+Tests-first commit `9685723`: focused suite RED **1 failed / 1 passed** (missing geometry_evidence),
+then GREEN **2 passed** through suite_slot.py on the proposed mapping. Drive manifest **20/20**
+file hashes matched; input/KPP/pristine-copy hashes **10/10** matched. Native PDFs **1 page each**.
+Main/glass triangle accounting **682/8**. `passed=false` and all ten slots remain unapproved.
+Full suite and author eval receipts deferred until actual Gate-1 answer and first PR review request.
 
-After these answers: complete drawing/viewport/native visual verification, update the mapping,
-add approved KPP-colour swatches, obtain explicit approval of the resulting exact sheet.
-Focused tests validate this checkpoint only; no full suite/PR/review is claimed at this blocked stage.
+## Questions for Artem — STOP
+
+1. Approve/correct this proposal **on the contact sheet**: ID2 RAL5015, ID3 RAL9016,
+   ID4 RAL7004, ID5 RAL9016 reveals (extension proposal), ID6 KPP glass.
+2. ID1 mixes roof, exterior frame, plinth and below-zero faces. Which finishes for these subregions?
+   May later material work distinguish face groups without changing geometry? No single whole-ID finish evidenced.
+3. Specify visible interior ID7 wall/floor/ceiling finishes; no interior finish schedule found.
+4. Ribs drawn without established module/profile: approve solid RAL5015 without synthetic joints,
+   or provide panel profile/module dimensions.
+
+Layer, edition, old roof elevation, glass convention and empty slots resolved, NOT blind user questions.
+Await actual Gate-1 approval. No full-suite/PR/review/delivery-completion claim at this blocked stage.

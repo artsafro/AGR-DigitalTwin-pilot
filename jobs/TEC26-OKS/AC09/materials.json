@@ -31,8 +31,8 @@
       "text": "- Сэндвич-панели - RAL 5015 ",
       "ral": "5015",
       "finish": "Sandwich panels",
-      "map_type": "joints",
-      "sheet": "AC09; model-space legend; printed facade sheet number unverified"
+      "map_type": "solid",
+      "sheet": "AC09 Model-space facade group; no printed facade sheet title; native ac09-facades.pdf p1"
     },
     {
       "handle": "D4D",
@@ -46,7 +46,7 @@
       "ral": "7004",
       "finish": "Porches and doors",
       "map_type": "metal",
-      "sheet": "AC09; model-space legend; printed facade sheet number unverified"
+      "sheet": "AC09 Model-space facade group; no printed facade sheet title; native ac09-facades.pdf p1"
     },
     {
       "handle": "1C5A",
@@ -60,7 +60,7 @@
       "ral": "9016",
       "finish": "Window frames",
       "map_type": "solid",
-      "sheet": "AC09; model-space legend; printed facade sheet number unverified"
+      "sheet": "AC09 Model-space facade group; no printed facade sheet title; native ac09-facades.pdf p1"
     }
   ],
   "materials": [
@@ -76,8 +76,12 @@
       "finish": "?",
       "map_type": "?",
       "approved": false,
-      "question": "Which faces of ID 1 are the RAL 5015 sandwich-panel wall, and what are the panel/joint dimensions?",
-      "evidence": "census handle 173/369, material ID 1; drawing-to-face correspondence not established"
+      "question": "ID1 combines roof, frame, plinth and faces down to z=-2.0383 m; no single finish in legend. Specify finishes for those subregions; allow per-face finish groups later without changing geometry?",
+      "evidence": "Native facade plot p1: blue perimeter trim but no independent roof/base finish; mixed ID cannot safely receive one finish",
+      "ral": null,
+      "geometry_role": "Mixed exterior roof, corner frame, plinth and below-zero extrusion",
+      "geometry_evidence": "isolated-ids.png ID1; geometry-173/369.json; unchanged source ID",
+      "status": "unknown"
     },
     {
       "id": 2,
@@ -88,11 +92,17 @@
       "triangles_glass": 0,
       "area_main_m2": 18.757031060906957,
       "area_glass_m2": 0,
-      "finish": "?",
-      "map_type": "?",
+      "finish": "RAL5015 sandwich panels",
+      "map_type": "solid",
       "approved": false,
-      "question": "Is ID 2 also RAL 5015, or a distinct finish? Source blue shades do not prove different RALs.",
-      "evidence": "census handle 173/369, material ID 2; drawing-to-face correspondence not established"
+      "question": null,
+      "evidence": "DWG Model D4B (27521.4,-943.967,0); native facades PDF p1; ID2 wall geometry",
+      "ral": "5015",
+      "geometry_role": "Exterior wall panel faces around openings",
+      "geometry_evidence": "isolated-ids.png ID2; geometry-173/369.json; unchanged source ID",
+      "status": "proposed",
+      "colour_reference_sha256": "323ca26ba0685dc32f8afb12b9218a76e51570c39301b5d6606171f7f9660ee0",
+      "colour_reference_path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1007.png"
     },
     {
       "id": 3,
@@ -103,11 +113,17 @@
       "triangles_glass": 0,
       "area_main_m2": 1.901034464914308,
       "area_glass_m2": 0,
-      "finish": "?",
-      "map_type": "?",
+      "finish": "RAL9016 window frames",
+      "map_type": "solid",
       "approved": false,
-      "question": "Does ID 3 correspond to window-frame RAL 9016, porch/door RAL 7004, or another grey finish?",
-      "evidence": "census handle 173/369, material ID 3; drawing-to-face correspondence not established"
+      "question": null,
+      "evidence": "DWG Model 1C5A (27521.4,-4105.6,0); native facades PDF p1; ID3 outlines",
+      "ral": "9016",
+      "geometry_role": "Two window frame outlines",
+      "geometry_evidence": "isolated-ids.png ID3; geometry-173/369.json; unchanged source ID",
+      "status": "proposed",
+      "colour_reference_sha256": "5a24af09b5c0da12873e6f7cdc170acc6b7b339815ce470dfee5336a81925eda",
+      "colour_reference_path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1009.png"
     },
     {
       "id": 4,
@@ -118,11 +134,17 @@
       "triangles_glass": 0,
       "area_main_m2": 1.77165064257911,
       "area_glass_m2": 0,
-      "finish": "?",
-      "map_type": "?",
+      "finish": "RAL7004 door",
+      "map_type": "metal",
       "approved": false,
-      "question": "Is ID 4 window-frame RAL 9016, porch/door RAL 7004, or another finish?",
-      "evidence": "census handle 173/369, material ID 4; drawing-to-face correspondence not established"
+      "question": null,
+      "evidence": "DWG Model D4D (27521.4,-2647.4,0); native facades PDF p1; ID4 door geometry",
+      "ral": "7004",
+      "geometry_role": "Door leaf including handle",
+      "geometry_evidence": "isolated-ids.png ID4; geometry-173/369.json; unchanged source ID",
+      "status": "proposed",
+      "colour_reference_sha256": "6e088cbdeea1f88e8ff25b78d47b71cc0cea889183027829695b4104a6acca66",
+      "colour_reference_path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1001.png"
     },
     {
       "id": 5,
@@ -133,11 +155,17 @@
       "triangles_glass": 0,
       "area_main_m2": 0.9405206678686933,
       "area_glass_m2": 0,
-      "finish": "?",
-      "map_type": "?",
+      "finish": "RAL9016 window reveals (proposal)",
+      "map_type": "solid",
       "approved": false,
-      "question": "What finish/RAL and map type apply to ID 5?",
-      "evidence": "census handle 173/369, material ID 5; drawing-to-face correspondence not established"
+      "question": null,
+      "evidence": "Geometry shows window thickness behind ID3; extend window-frame legend 1C5A as explicit proposal, not separate drawing specification",
+      "ral": "9016",
+      "geometry_role": "Two window reveal/thickness strips",
+      "geometry_evidence": "isolated-ids.png ID5; geometry-173/369.json; unchanged source ID",
+      "status": "proposed",
+      "colour_reference_sha256": "5a24af09b5c0da12873e6f7cdc170acc6b7b339815ce470dfee5336a81925eda",
+      "colour_reference_path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1009.png"
     },
     {
       "id": 6,
@@ -148,11 +176,26 @@
       "triangles_glass": 8,
       "area_main_m2": 0,
       "area_glass_m2": 3.216858372327969,
-      "finish": "?",
-      "map_type": "?",
+      "finish": "M_Glass_01 (KPP)",
+      "map_type": "glass",
       "approved": false,
-      "question": "Confirm ID 6 is the separate glass (handle 369), and specify tint/transparency; it has no main-mesh faces.",
-      "evidence": "census handle 173/369, material ID 6; drawing-to-face correspondence not established"
+      "question": null,
+      "evidence": "Orchestrator rule 6 on this card; census handle 369 ID6; KPP glass convention; KPP NPM shader lines 152-157; swatch is opaque base-colour chip, not transparency simulation",
+      "ral": null,
+      "geometry_role": "Separate glazing planes, handle 369",
+      "geometry_evidence": "id-colours.png front/side glazing; geometry-369.json all 8 triangles use ID6",
+      "status": "proposed",
+      "npm_material": "M_Glass_01",
+      "npm_alpha": 0.5,
+      "vpm_policy": "Separate glass; no maps; properties per docs/domain/materials.md and GeoJSON Glasses standard, not source ID6 = UDIM6",
+      "glass_reference": "jobs/KPP1/scripts/export_npm.py:152-157",
+      "npm_base_colour_linear": [
+        0.75,
+        0.82,
+        0.82
+      ],
+      "npm_roughness": 0.05,
+      "glass_reference_sha256": "265a0e0e0d89f1f82b24a19e8eaaf95cb2cf917a588e334039f4f5e84a8df90f"
     },
     {
       "id": 7,
@@ -166,8 +209,12 @@
       "finish": "?",
       "map_type": "?",
       "approved": false,
-      "question": "What finish applies to ID 7, including any underside/interior/roof faces? No roof finish is specified in the extracted legend.",
-      "evidence": "census handle 173/369, material ID 7; drawing-to-face correspondence not established"
+      "question": "Specify visible interior wall/floor/ceiling finishes for ID7; drawing section does not specify them.",
+      "evidence": "Native sheet2 PDF p1 section: interior enclosure, finish unspecified",
+      "ral": null,
+      "geometry_role": "Interior walls, floor and ceiling shell",
+      "geometry_evidence": "isolated-ids.png ID7; geometry-173/369.json; unchanged source ID",
+      "status": "unknown"
     },
     {
       "id": 8,
@@ -178,11 +225,15 @@
       "triangles_glass": 0,
       "area_main_m2": 0,
       "area_glass_m2": 0,
-      "finish": "?",
-      "map_type": "?",
+      "finish": "empty",
+      "map_type": null,
       "approved": false,
-      "question": "ID 8 is an unused empty Multi/Sub slot. Keep it empty?",
-      "evidence": "census handle 173/369, material ID 8; drawing-to-face correspondence not established"
+      "question": null,
+      "evidence": "Census Material #7 subslot empty, zero faces; orchestrator rule 4: keep empty",
+      "ral": null,
+      "geometry_role": "Unused empty slot",
+      "geometry_evidence": "scene-census.json: empty subslot 8, zero main/glass faces",
+      "status": "empty"
     },
     {
       "id": 9,
@@ -193,11 +244,15 @@
       "triangles_glass": 0,
       "area_main_m2": 0,
       "area_glass_m2": 0,
-      "finish": "?",
-      "map_type": "?",
+      "finish": "empty",
+      "map_type": null,
       "approved": false,
-      "question": "ID 9 is an unused empty Multi/Sub slot. Keep it empty?",
-      "evidence": "census handle 173/369, material ID 9; drawing-to-face correspondence not established"
+      "question": null,
+      "evidence": "Census Material #7 subslot empty, zero faces; orchestrator rule 4: keep empty",
+      "ral": null,
+      "geometry_role": "Unused empty slot",
+      "geometry_evidence": "scene-census.json: empty subslot 9, zero main/glass faces",
+      "status": "empty"
     },
     {
       "id": 10,
@@ -208,11 +263,15 @@
       "triangles_glass": 0,
       "area_main_m2": 0,
       "area_glass_m2": 0,
-      "finish": "?",
-      "map_type": "?",
+      "finish": "empty",
+      "map_type": null,
       "approved": false,
-      "question": "ID 10 is an unused empty Multi/Sub slot. Keep it empty?",
-      "evidence": "census handle 173/369, material ID 10; drawing-to-face correspondence not established"
+      "question": null,
+      "evidence": "Census Material #7 subslot empty, zero faces; orchestrator rule 4: keep empty",
+      "ral": null,
+      "geometry_role": "Unused empty slot",
+      "geometry_evidence": "scene-census.json: empty subslot 10, zero main/glass faces",
+      "status": "empty"
     }
   ],
   "kpp_colour_references": [
@@ -226,7 +285,7 @@
         179
       ],
       "modal_pixel_count": 2430149,
-      "note": "Exact KPP diffuse reference; not assigned to an AC09 ID"
+      "note": "Exact KPP source tile; swatch uses an existing modal pixel, no RAL conversion"
     },
     {
       "ral": "7004",
@@ -238,7 +297,7 @@
         146
       ],
       "modal_pixel_count": 1700867,
-      "note": "Exact KPP diffuse reference; not assigned to an AC09 ID"
+      "note": "Exact KPP source tile; swatch uses an existing modal pixel, no RAL conversion"
     },
     {
       "ral": "9016",
@@ -250,7 +309,7 @@
         246
       ],
       "modal_pixel_count": 65536,
-      "note": "Exact KPP diffuse reference; not assigned to an AC09 ID"
+      "note": "Exact KPP source tile; swatch uses an existing modal pixel, no RAL conversion"
     }
   ],
   "files": [
@@ -279,12 +338,47 @@
       "sha256": "c2c54938c8f97573bcc307d5a1499939307784c6db06b1dd46bfae1814565abd"
     }
   ],
-  "contact_sheet": "G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v001/contact-sheet.png",
-  "evidence_manifest_sha256": "bc0efd360d15ee2e54e37d0f04f65b69eedeef18cfd2df2cd247b1500c62f0b5",
+  "contact_sheet": "G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v002/contact-sheet.png",
+  "evidence_manifest_sha256": "63b4a2fe2aeaf5001e17e3dc5619a39332d358d3deb23ffa088033faabb23c48",
   "open_items": [
-    "Confirm actual layer 009 corresponds to the requested AC09 scope.",
-    "Identify/approve facade sheet/revision; only layout 2 sheet title was extracted.",
-    "Confirm corrected roof level noted by drawing handle 36B1; do not adopt old +2.330.",
-    "Approve per-ID mapping and the gaps listed in materials; no assignment inferred from source colours."
-  ]
+    "Approve the proposed ID2=RAL5015, ID3=RAL9016, ID4=RAL7004, ID5=RAL9016 reveals and ID6=KPP glass on contact-sheet.png; ID5 is an extension proposal, not independently specified.",
+    "ID1 combines roof, frame, plinth and faces down to z=-2.0383 m; no single finish in legend. Specify finishes for those subregions; allow per-face finish groups later without changing geometry?",
+    "Specify visible interior wall/floor/ceiling finishes for ID7; drawing section does not specify them.",
+    "Panel ribs are drawn but module/joint dimensions are not established: approve solid RAL5015 without synthetic joints, or provide the panel profile/module."
+  ],
+  "orchestrator_rules_applied": {
+    "revision": "R1 when present; AC09 has only base DWG, no R1/PDF in its directory",
+    "layer": "009 accepted per census handles 173/342/369",
+    "dimensions": "Final scene geometry unchanged; roof correction note is informational",
+    "empty_slots": [
+      8,
+      9,
+      10
+    ],
+    "glass": "KPP M_Glass_01, NPM alpha=0.5; VPM per standard",
+    "panel_module": "Not established; solid colour without invented joints"
+  },
+  "native_drawing_evidence": {
+    "facades": {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v002/ac09-facades.pdf",
+      "pages": 1,
+      "sha256": "bbd9bb58fdf9654080a45f9894deb3cc213da187737cff4217efb8ce1b6c4fc4",
+      "limitation": "AutoCAD font substitution warnings; native geometry and recovered text cross-checked"
+    },
+    "sheet2": {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v002/ac09-sheet2.pdf",
+      "pages": 1,
+      "sha256": "d9ee6b0c3385d2dd9af0973679c3ce1df48e33e36176497604a5f4f5a48ed8b7",
+      "limitation": "AutoCAD font substitution warnings; native geometry and recovered text cross-checked"
+    }
+  },
+  "id_colour_render": "G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v002/id-colours.png",
+  "isolated_id_render": "G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v002/isolated-ids.png",
+  "source_dwg_sha256": "feb22366bd7270f6912de797d9ffc0cc075d451cb154e3aaa1deaea96c88a5b5",
+  "working_copy_note": "Earlier DXFOUT updated the disposable copy (hash listed in files); original hash is distinct and never edited.",
+  "pristine_copy": {
+    "path": "C:/x/tec26-oks/AC09/drawings-v002/ac09.dwg",
+    "sha256": "feb22366bd7270f6912de797d9ffc0cc075d451cb154e3aaa1deaea96c88a5b5",
+    "manifest": "C:/x/tec26-oks/AC09/drawings-v002/SHA256SUMS.txt"
+  }
 }
