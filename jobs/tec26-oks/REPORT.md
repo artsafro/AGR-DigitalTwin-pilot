@@ -67,20 +67,19 @@ not yet applied to a Max scene.
 | VPM material | `M_Truba_1_Main_1` |
 | NPM material | `M_Truba_1_003_Main_1` |
 | UCX | `UCX_SM_Truba_1_Main_001` (further hulls `_002`…; railings ≤ 5 cm get no hull) |
-| NPM maps | `T_Truba_1_003_Main_{d\|r\|m\|n\|o}_{1..6}.png` |
+| NPM maps | `T_Truba_1_003_Main_{d\|r\|m\|o}_{1..6}.png` (no `_n_`) |
 | VPM maps | `T_Truba_1_{Diffuse\|ERM\|Normal}_1.{1001..1006}.png` |
 
-Map rules written by `make_textures.py`:
+Map rules written by `make_textures.py`. NPM and VPM are separate sets.
 
-- Every file is 24-bit RGB. No alpha channel.
-- Solid diffuse and solid opacity: 256 px. Opacity stub is white.
-- Railing diffuse: source RGB at 4096. Railing opacity: source alpha replicated into R=G=B, 4096, no alpha channel.
-- `_r`, `_m`, `_n`, ERM and Normal: 256 px stubs. ERM = (0, roughness, metallic). Normal = (128, 128, 255), DirectX flat.
+- NPM maps are 24-bit RGB. No alpha in any NPM image [D020]. No NPM normal [D014].
+- Solid NPM diffuse and opacity: 256 px. Opacity plate is white.
+- Railing NPM diffuse and opacity: source capped at 2048. Opacity is the alpha channel replicated into R=G=B.
+- NPM roughness and metallic: 128 px constant plates.
+- VPM railing Diffuse: source size (4096) RGBA, alpha kept (cutout lives in Diffuse alpha).
+- VPM solid Diffuse: 256 px RGB. ERM and Normal: 256 px RGB, no alpha. ERM = (0, roughness, metallic). Normal = (128, 128, 255), DirectX flat.
 - Roughness / metallic proposals, not measurements: paint 0.60 / 0, bands 0.50 / 0, railing 0.45 / 1 (KPP1 railing body).
-
-`_n` is in this normalised set because the task asked for the five NPM suffixes. [D014] still
-excludes a normal map from an NPM delivery. The later NPM package must drop `_n`. VPM Normal
-stays; it is the required triplet member and here it is only the flat stub.
+- `--sums`, `--out`, the materials JSON, each source and each planned output are refused when any two are the same file (resolved path or hard link), before any directory or file is created.
 
 Outputs: `C:/x/tec26-oks/textures-v001/` and `C:/x/tec26-oks/SHA256SUMS.txt`.
 

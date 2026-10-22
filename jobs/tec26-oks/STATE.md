@@ -11,10 +11,12 @@ No FBX, UCX, SINTEZ result or render exists for this object.
   `gray.png`, which matches the KPP1 RAL 7047 sample exactly.
 - Naming spec for the later package: address `Truba_1`, NPM number `003` (OKS 3),
   one material, finishes as UDIM 1001-1006.
-- `make_textures.py` writes 24-bit RGB maps (no alpha) to
+- `make_textures.py` writes separate NPM and VPM sets to
   `C:/x/tec26-oks/textures-v001/` and `C:/x/tec26-oks/SHA256SUMS.txt`.
-  Solids are 256 px placeholders. The railing keeps its raster and is split into
-  diffuse plus a separate opacity map. `_r` / `_m` / `_n` / ERM / Normal are 256 px stubs.
+  NPM: 24-bit RGB, no normal; railing diffuse/opacity capped at 2048; roughness and
+  metallic are 128 px plates; solids stay 256. VPM: railing Diffuse keeps the 4096
+  RGBA cutout; ERM and Normal are 256 px RGB stubs. Aliased report or output paths
+  exit before any write.
 - Regression: `tests/test_tec26_oks_truba_textures.py`.
 
 ## Not done (DCC phase, gated on the #558 census)

@@ -9,13 +9,15 @@
   "mesh_vpm": "SM_Truba_1_Main",
   "mesh_npm": "SM_Truba_1_003_Main",
   "ucx": "UCX_SM_Truba_1_Main_001",
-  "size_placeholder": 256,
+  "size_placeholder": 128,
+  "size_vpm_stub": 256,
+  "npm_max": 2048,
   "size_full": 4096,
   "source_dir": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/Vlad_OKS/maps_truba",
   "pptx": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/Vlad_OKS/ТЭЦ26 на РР (1).pptx",
   "palette_slide": 58,
   "slides_mentioning_truba": [],
-  "note": "Diffuse texels are the measured source swatches, not a repaint onto the KPP sRGB sample. RAL is the site identity label. size_placeholder 256 is the KPP1 stub (vpm_textures.json). The railing keeps its source raster (4096) and is split into RGB diffuse plus a separate opacity map.",
+  "note": "Diffuse texels are the measured source swatches, not a repaint onto the KPP sRGB sample. RAL is the site identity label. size_placeholder 128 is the NPM roughness/metallic plate. size_vpm_stub 256 is the VPM ERM/Normal plate and the solid diffuse/opacity plate. npm_max 2048 caps the NPM railing diffuse and opacity. No NPM normal is written. size_full 4096 is the railing source kept on the VPM Diffuse, alpha included. NPM opacity is a separate 24-bit map.",
   "finishes": {
     "Paint_Red": {
       "id": 1,
@@ -115,7 +117,7 @@
       "nearest_kpp_finish": "Railing_Alpha",
       "nearest_kpp_rgb": [125, 127, 130],
       "nearest_distance": null,
-      "ral_note": "Steel cutout, not a flat swatch. KPP1 Railing_Alpha has no RAL (body rgb 125, 127, 130, metal 1, handrail RAL 1021 is a different finish). No RAL is adopted. RGBA is split into an RGB diffuse and a separate opacity map; texels are copied, not recoloured.",
+      "ral_note": "Steel cutout, not a flat swatch. KPP1 Railing_Alpha has no RAL (body rgb 125, 127, 130, metal 1, handrail RAL 1021 is a different finish). No RAL is adopted. NPM copies RGB into diffuse and replicates alpha into a separate opacity map, both capped at 2048. VPM Diffuse keeps the source RGBA alpha. Texels are copied, not recoloured.",
       "rough": 0.45,
       "metal": 1.0
     }
