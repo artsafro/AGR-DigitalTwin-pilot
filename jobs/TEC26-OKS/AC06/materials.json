@@ -1,0 +1,1634 @@
+{
+  "job": "tec26-oks",
+  "building": "AC06",
+  "building_name": "Пункт редуцирования газа 1",
+  "base_main": "442f0b695a91f9abc180783c26978fbe85fefcf9",
+  "status": "awaiting_artem_gate_1",
+  "approved": false,
+  "build_allowed": false,
+  "evidence_directory": "G:/Мой диск/AGR-evidence/tec26-oks/AC06/evidence-v001",
+  "inputs": [
+    {
+      "path": "C:/x/tec26-oks/AC06/sources-v001/22E.pdf",
+      "sha256": "694b06db0cae5dfec2cf15d3d8fa3909982965bb5bb3ea9abb850bce75a04c2a",
+      "bytes": 100591
+    },
+    {
+      "path": "C:/x/tec26-oks/AC06/sources-v001/22E56-АР2-1002-AC.06_R1.dwg",
+      "sha256": "0787fd3307383aee9f8964b5a5c28dc2ceae2de47bca708a9fa9434f91391ea4",
+      "bytes": 4751950
+    },
+    {
+      "path": "C:/x/tec26-oks/census/oks.json",
+      "sha256": "a99de19f1d30633eaab9c52ac44f253ed6ea97e03358755ff2a77458f0f54f2f",
+      "bytes": 261871
+    },
+    {
+      "path": "C:/x/tec26-oks/max-readback-v002/geometry-170.json",
+      "sha256": "ddd68cc66a2b744611ba82bb5429771088c827b0a977fb313808c01891fa0af7",
+      "bytes": 313592
+    },
+    {
+      "path": "C:/x/tec26-oks/max-readback-v002/geometry-378.json",
+      "sha256": "562125a95de3107c0c653411df73795897b233fe57140c0d50314bc1928df7dd",
+      "bytes": 1688
+    },
+    {
+      "path": "C:/x/tec26-oks/AC06/dwg-text-v001.txt",
+      "sha256": "1bd4aa9a82f0464594912a93b29ffbef79f69139c21a945c53949c39e7a6e6aa",
+      "bytes": 19555
+    },
+    {
+      "path": "jobs/KPP1/materials.json",
+      "sha256": "cf78ec011420843cec35972165a6b488f79004d66ae42524c938343566c7faeb",
+      "bytes": 1801
+    }
+  ],
+  "pdf": {
+    "physical_pages": 1,
+    "printed_sheet": "2",
+    "content": "Plan at 0.000 and roof plan; raster only",
+    "title_block_pixels": [
+      2460,
+      1320,
+      3565,
+      1680
+    ],
+    "panel_legend_pixels": [
+      2880,
+      380,
+      3545,
+      760
+    ],
+    "panel_spec": "Three-layer sandwich panels, basalt-based mineral wool infill, 120 mm"
+  },
+  "scene": {
+    "source_copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\04-09 Geometry Final.max",
+    "application_version": [
+      28000,
+      68,
+      0,
+      28,
+      3,
+      0,
+      30732,
+      2026,
+      ".3"
+    ],
+    "file_version": "#(26000, 26000)",
+    "units": "meters",
+    "units_per_meter": 1.0,
+    "layer_requested": [
+      "0.0.0.6",
+      "0.0.6"
+    ],
+    "layer_actual": "006",
+    "layer_question": "Confirm that actual layer 006 is the intended AC06 layer (mesh name and drawing title agree).",
+    "multisub": {
+      "name": "Material #6",
+      "class": "Multimaterial",
+      "handle": 4719,
+      "maps": [],
+      "submaterials": [
+        {
+          "slot": 1,
+          "material": {
+            "name": "Material #7",
+            "class": "Standardmaterial",
+            "handle": 4463,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              12.66126537322998,
+              3.768308162689209,
+              221.85260009765625
+            ],
+            "Diffuse_Color": [
+              12.66126537322998,
+              3.768308162689209,
+              221.85260009765625
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 1
+        },
+        {
+          "slot": 2,
+          "material": {
+            "name": "Material #2",
+            "class": "Standardmaterial",
+            "handle": 4486,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              10.376846313476562,
+              3.1277337074279785,
+              180.7834930419922
+            ],
+            "Diffuse_Color": [
+              10.376846313476562,
+              3.1277337074279785,
+              180.7834930419922
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 2
+        },
+        {
+          "slot": 3,
+          "material": {
+            "name": "Material #3",
+            "class": "Standardmaterial",
+            "handle": 4509,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              190.07810974121094,
+              190.07810974121094,
+              190.07810974121094
+            ],
+            "Diffuse_Color": [
+              190.07810974121094,
+              190.07810974121094,
+              190.07810974121094
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 3
+        },
+        {
+          "slot": 4,
+          "material": {
+            "name": "Material #4",
+            "class": "Standardmaterial",
+            "handle": 4532,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              85.97673797607422,
+              85.97672271728516,
+              85.97673034667969
+            ],
+            "Diffuse_Color": [
+              85.97673797607422,
+              85.97672271728516,
+              85.97673034667969
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 4
+        },
+        {
+          "slot": 5,
+          "material": {
+            "name": "Material #5",
+            "class": "Standardmaterial",
+            "handle": 4555,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              230.6886444091797,
+              230.68862915039062,
+              230.6886444091797
+            ],
+            "Diffuse_Color": [
+              230.6886444091797,
+              230.68862915039062,
+              230.6886444091797
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 5
+        },
+        {
+          "slot": 6,
+          "material": {
+            "name": "Material #8",
+            "class": "Standardmaterial",
+            "handle": 4578,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              132.8538818359375,
+              132.8538818359375,
+              132.8538818359375
+            ],
+            "Diffuse_Color": [
+              132.8538818359375,
+              132.8538818359375,
+              132.8538818359375
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 6
+        },
+        {
+          "slot": 7,
+          "material": {
+            "name": "Material #9",
+            "class": "Standardmaterial",
+            "handle": 4601,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              36.02214431762695,
+              36.02214431762695,
+              36.02214431762695
+            ],
+            "Diffuse_Color": [
+              36.02214431762695,
+              36.02214431762695,
+              36.02214431762695
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 7
+        },
+        {
+          "slot": 8,
+          "material": {
+            "name": "Material #10",
+            "class": "Standardmaterial",
+            "handle": 4624,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              255.0,
+              255.0,
+              255.0
+            ],
+            "Diffuse_Color": [
+              255.0,
+              255.0,
+              255.0
+            ],
+            "Specular_Color": [
+              255.0,
+              255.0,
+              255.0
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 8
+        },
+        {
+          "slot": 9,
+          "material": {
+            "name": "Material #11",
+            "class": "Standardmaterial",
+            "handle": 4647,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              20.982088088989258,
+              20.982088088989258,
+              20.982088088989258
+            ],
+            "Diffuse_Color": [
+              20.982088088989258,
+              20.982088088989258,
+              20.982088088989258
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 9
+        },
+        {
+          "slot": 10,
+          "material": {
+            "name": "Material #12",
+            "class": "Standardmaterial",
+            "handle": 4670,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              85.97673797607422,
+              85.97672271728516,
+              85.97673034667969
+            ],
+            "Diffuse_Color": [
+              85.97673797607422,
+              85.97672271728516,
+              85.97673034667969
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 10
+        },
+        {
+          "slot": 11,
+          "material": {
+            "name": "Material #49",
+            "class": "Standardmaterial",
+            "handle": 4693,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              98.53950500488281,
+              98.53949737548828,
+              98.53950500488281
+            ],
+            "Diffuse_Color": [
+              98.53950500488281,
+              98.53949737548828,
+              98.53950500488281
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 11
+        },
+        {
+          "slot": 12,
+          "material": {
+            "name": "Material #50",
+            "class": "Standardmaterial",
+            "handle": 4716,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              255.0,
+              255.0,
+              255.0
+            ],
+            "Diffuse_Color": [
+              255.0,
+              255.0,
+              255.0
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 12
+        }
+      ]
+    },
+    "glass_material": {
+      "name": "Material #6",
+      "class": "Multimaterial",
+      "handle": 4719,
+      "maps": [],
+      "submaterials": [
+        {
+          "slot": 1,
+          "material": {
+            "name": "Material #7",
+            "class": "Standardmaterial",
+            "handle": 4463,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              12.66126537322998,
+              3.768308162689209,
+              221.85260009765625
+            ],
+            "Diffuse_Color": [
+              12.66126537322998,
+              3.768308162689209,
+              221.85260009765625
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 1
+        },
+        {
+          "slot": 2,
+          "material": {
+            "name": "Material #2",
+            "class": "Standardmaterial",
+            "handle": 4486,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              10.376846313476562,
+              3.1277337074279785,
+              180.7834930419922
+            ],
+            "Diffuse_Color": [
+              10.376846313476562,
+              3.1277337074279785,
+              180.7834930419922
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 2
+        },
+        {
+          "slot": 3,
+          "material": {
+            "name": "Material #3",
+            "class": "Standardmaterial",
+            "handle": 4509,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              190.07810974121094,
+              190.07810974121094,
+              190.07810974121094
+            ],
+            "Diffuse_Color": [
+              190.07810974121094,
+              190.07810974121094,
+              190.07810974121094
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 3
+        },
+        {
+          "slot": 4,
+          "material": {
+            "name": "Material #4",
+            "class": "Standardmaterial",
+            "handle": 4532,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              85.97673797607422,
+              85.97672271728516,
+              85.97673034667969
+            ],
+            "Diffuse_Color": [
+              85.97673797607422,
+              85.97672271728516,
+              85.97673034667969
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 4
+        },
+        {
+          "slot": 5,
+          "material": {
+            "name": "Material #5",
+            "class": "Standardmaterial",
+            "handle": 4555,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              230.6886444091797,
+              230.68862915039062,
+              230.6886444091797
+            ],
+            "Diffuse_Color": [
+              230.6886444091797,
+              230.68862915039062,
+              230.6886444091797
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 5
+        },
+        {
+          "slot": 6,
+          "material": {
+            "name": "Material #8",
+            "class": "Standardmaterial",
+            "handle": 4578,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              132.8538818359375,
+              132.8538818359375,
+              132.8538818359375
+            ],
+            "Diffuse_Color": [
+              132.8538818359375,
+              132.8538818359375,
+              132.8538818359375
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 6
+        },
+        {
+          "slot": 7,
+          "material": {
+            "name": "Material #9",
+            "class": "Standardmaterial",
+            "handle": 4601,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              36.02214431762695,
+              36.02214431762695,
+              36.02214431762695
+            ],
+            "Diffuse_Color": [
+              36.02214431762695,
+              36.02214431762695,
+              36.02214431762695
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 7
+        },
+        {
+          "slot": 8,
+          "material": {
+            "name": "Material #10",
+            "class": "Standardmaterial",
+            "handle": 4624,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              255.0,
+              255.0,
+              255.0
+            ],
+            "Diffuse_Color": [
+              255.0,
+              255.0,
+              255.0
+            ],
+            "Specular_Color": [
+              255.0,
+              255.0,
+              255.0
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 8
+        },
+        {
+          "slot": 9,
+          "material": {
+            "name": "Material #11",
+            "class": "Standardmaterial",
+            "handle": 4647,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              20.982088088989258,
+              20.982088088989258,
+              20.982088088989258
+            ],
+            "Diffuse_Color": [
+              20.982088088989258,
+              20.982088088989258,
+              20.982088088989258
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 9
+        },
+        {
+          "slot": 10,
+          "material": {
+            "name": "Material #12",
+            "class": "Standardmaterial",
+            "handle": 4670,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              85.97673797607422,
+              85.97672271728516,
+              85.97673034667969
+            ],
+            "Diffuse_Color": [
+              85.97673797607422,
+              85.97672271728516,
+              85.97673034667969
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 10
+        },
+        {
+          "slot": 11,
+          "material": {
+            "name": "Material #49",
+            "class": "Standardmaterial",
+            "handle": 4693,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              98.53950500488281,
+              98.53949737548828,
+              98.53950500488281
+            ],
+            "Diffuse_Color": [
+              98.53950500488281,
+              98.53949737548828,
+              98.53950500488281
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 11
+        },
+        {
+          "slot": 12,
+          "material": {
+            "name": "Material #50",
+            "class": "Standardmaterial",
+            "handle": 4716,
+            "FilterColor": [
+              127.5,
+              127.5,
+              127.5
+            ],
+            "useSelfIllumColor": false,
+            "selfIllumColor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Ambient_Color": [
+              255.0,
+              255.0,
+              255.0
+            ],
+            "Diffuse_Color": [
+              255.0,
+              255.0,
+              255.0
+            ],
+            "Specular_Color": [
+              229.5,
+              229.5,
+              229.5
+            ],
+            "Self_Illum_Color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maps": [],
+            "submaterials": []
+          },
+          "id": 12
+        }
+      ]
+    },
+    "collision_candidates": [
+      {
+        "name": "Colizii_001",
+        "handle": 219,
+        "triangles": 44
+      },
+      {
+        "name": "Colizii_002",
+        "handle": 220,
+        "triangles": 44
+      },
+      {
+        "name": "Colizii_003",
+        "handle": 221,
+        "triangles": 44
+      },
+      {
+        "name": "Colizii_004",
+        "handle": 222,
+        "triangles": 44
+      },
+      {
+        "name": "Colizii_005",
+        "handle": 223,
+        "triangles": 44
+      },
+      {
+        "name": "Colizii_006",
+        "handle": 224,
+        "triangles": 44
+      },
+      {
+        "name": "Colizii_007",
+        "handle": 225,
+        "triangles": 44
+      },
+      {
+        "name": "Colizii_008",
+        "handle": 226,
+        "triangles": 44
+      },
+      {
+        "name": "Colizii_030",
+        "handle": 329,
+        "triangles": 12
+      },
+      {
+        "name": "Colizii_031",
+        "handle": 330,
+        "triangles": 12
+      },
+      {
+        "name": "Colizii_032",
+        "handle": 331,
+        "triangles": 12
+      },
+      {
+        "name": "Colizii_033",
+        "handle": 332,
+        "triangles": 12
+      },
+      {
+        "name": "Colizii_034",
+        "handle": 333,
+        "triangles": 12
+      },
+      {
+        "name": "Colizii_035",
+        "handle": 334,
+        "triangles": 12
+      },
+      {
+        "name": "Colizii_036",
+        "handle": 335,
+        "triangles": 12
+      },
+      {
+        "name": "Colizii_037",
+        "handle": 336,
+        "triangles": 12
+      },
+      {
+        "name": "Colizii_038",
+        "handle": 337,
+        "triangles": 12
+      },
+      {
+        "name": "Colizii_039",
+        "handle": 338,
+        "triangles": 12
+      },
+      {
+        "name": "Colizii_040",
+        "handle": 339,
+        "triangles": 12
+      },
+      {
+        "name": "Colizii_041",
+        "handle": 340,
+        "triangles": 12
+      },
+      {
+        "name": "Colizii_042",
+        "handle": 341,
+        "triangles": 20
+      }
+    ],
+    "collision_status": "source collision candidates; not UCX-compliance validated or renamed",
+    "diagnostic_render_method": "software orthographic triangle projection; no DCC scene mutation",
+    "diagnostic_render_limit": "Painter sorting, no z-buffer/backface/physical render; coplanar or interior triangles may show. Not native Max or delivery QA."
+  },
+  "drawing_finishes": [
+    {
+      "ral": "5015",
+      "finish": "Sandwich panels and canopies",
+      "locator": "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
+    },
+    {
+      "ral": "7047",
+      "finish": "Sandwich panels",
+      "locator": "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
+    },
+    {
+      "ral": "7004",
+      "finish": "Porches, doors, plinth and rainwater system",
+      "locator": "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
+    },
+    {
+      "ral": "9016",
+      "finish": "Frames of lightweight relief constructions",
+      "locator": "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
+    }
+  ],
+  "drawing_locators": {
+    "facades": [
+      {
+        "entity": "BA82E",
+        "label": "1-3",
+        "xy_mm": [
+          146296.0,
+          76333.4
+        ]
+      },
+      {
+        "entity": "DBF13",
+        "label": "3-1",
+        "xy_mm": [
+          147861.0,
+          67031.4
+        ]
+      },
+      {
+        "entity": "19C226",
+        "label": "А-Д",
+        "xy_mm": [
+          121003.0,
+          76333.4
+        ]
+      },
+      {
+        "entity": "19C227",
+        "label": "Д-А",
+        "xy_mm": [
+          121067.0,
+          67031.4
+        ]
+      }
+    ],
+    "roof": {
+      "entity": "FD2FE",
+      "xy_mm": [
+        148494.0,
+        24594.5
+      ]
+    },
+    "section": {
+      "entity": "19DB85",
+      "xy_mm": [
+        149595.0,
+        -2842.8
+      ],
+      "paper_layout": "3",
+      "paper_entity": "19C770"
+    },
+    "name": {
+      "entity": "19C767",
+      "paper_layout": "3",
+      "xy_mm": [
+        302.403,
+        25.9681
+      ]
+    },
+    "panels": {
+      "entity": "14741E",
+      "xy_mm": [
+        118487.0,
+        46630.7
+      ]
+    },
+    "reinforced_concrete_slab": {
+      "entity": "147424",
+      "xy_mm": [
+        118487.0,
+        44173.1
+      ]
+    }
+  },
+  "kpp_colours": {
+    "5015": {
+      "ral": "5015",
+      "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1013.png",
+      "sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+      "kpp_finish": "Metal_RAL5015",
+      "udim": 1013,
+      "method": "most_frequent_rgb_pixel",
+      "rgb": [
+        34,
+        113,
+        179
+      ],
+      "pixel_count": 65536,
+      "image_pixels": 65536,
+      "note": "Exact existing KPP pixel, not calibrated RAL; does not prove AC06 mapping or authorize cassette pattern."
+    },
+    "7047": {
+      "ral": "7047",
+      "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1006.png",
+      "sha256": "953d54d37cd8b3193afc5d3b973afc87ed06a9949232799a466193b1617efeb9",
+      "kpp_finish": "Cassette_RAL7047",
+      "udim": 1006,
+      "method": "most_frequent_rgb_pixel",
+      "rgb": [
+        208,
+        208,
+        208
+      ],
+      "pixel_count": 2124178,
+      "image_pixels": 16777216,
+      "note": "Exact existing KPP pixel, not calibrated RAL; does not prove AC06 mapping or authorize cassette pattern."
+    },
+    "7004": {
+      "ral": "7004",
+      "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1001.png",
+      "sha256": "6e088cbdeea1f88e8ff25b78d47b71cc0cea889183027829695b4104a6acca66",
+      "kpp_finish": "Plinth_RAL7004",
+      "udim": 1001,
+      "method": "most_frequent_rgb_pixel",
+      "rgb": [
+        150,
+        153,
+        146
+      ],
+      "pixel_count": 1700867,
+      "image_pixels": 16777216,
+      "note": "Exact existing KPP pixel, not calibrated RAL; does not prove AC06 mapping or authorize cassette pattern."
+    },
+    "9016": {
+      "ral": "9016",
+      "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1009.png",
+      "sha256": "5a24af09b5c0da12873e6f7cdc170acc6b7b339815ce470dfee5336a81925eda",
+      "kpp_finish": "Frame_RAL9016",
+      "udim": 1009,
+      "method": "most_frequent_rgb_pixel",
+      "rgb": [
+        246,
+        246,
+        246
+      ],
+      "pixel_count": 65536,
+      "image_pixels": 65536,
+      "note": "Exact existing KPP pixel, not calibrated RAL; does not prove AC06 mapping or authorize cassette pattern."
+    }
+  },
+  "materials": [
+    {
+      "id": 1,
+      "object": "АС.06",
+      "object_handle": 170,
+      "triangles": 362,
+      "area_m2": 177.12756631157777,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unknown",
+      "question": "ID 1 covers roof planes and upper fascia: which roof material/RAL and seam layout apply? Does panel RAL 5015 include the roof, or only the blue facade band?",
+      "evidence": [
+        "oks.json#objects/handle=170/material_ids/id=1",
+        "ids-iso.png#legend-ID-1",
+        "ids-reverse.png#legend-ID-1"
+      ]
+    },
+    {
+      "id": 2,
+      "object": "АС.06",
+      "object_handle": 170,
+      "triangles": 1290,
+      "area_m2": 83.26839949224545,
+      "finish": "Canopies and roof trims",
+      "ral": "5015",
+      "map_type": "metal",
+      "status": "proposed",
+      "question": "Confirm ID 2 = Canopies and roof trims, RAL 5015.",
+      "evidence": [
+        "oks.json#objects/handle=170/material_ids/id=2",
+        "ids-iso.png#legend-ID-2",
+        "ids-reverse.png#legend-ID-2",
+        "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
+      ],
+      "swatch_rgb": [
+        34,
+        113,
+        179
+      ]
+    },
+    {
+      "id": 3,
+      "object": "АС.06",
+      "object_handle": 170,
+      "triangles": 444,
+      "area_m2": 94.41786615692793,
+      "finish": "Wall sandwich panels",
+      "ral": "7047",
+      "map_type": "joints",
+      "status": "proposed",
+      "question": "Confirm ID 3 = Wall sandwich panels, RAL 7047.",
+      "evidence": [
+        "oks.json#objects/handle=170/material_ids/id=3",
+        "ids-iso.png#legend-ID-3",
+        "ids-reverse.png#legend-ID-3",
+        "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
+      ],
+      "swatch_rgb": [
+        208,
+        208,
+        208
+      ]
+    },
+    {
+      "id": 4,
+      "object": "АС.06",
+      "object_handle": 170,
+      "triangles": 1576,
+      "area_m2": 4.984936342231726,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unknown",
+      "question": "ID 4 has small hardware/detail faces: identify the components and their finish/RAL; may they share 7004 or require a separate finish?",
+      "evidence": [
+        "oks.json#objects/handle=170/material_ids/id=4",
+        "ids-iso.png#legend-ID-4",
+        "ids-reverse.png#legend-ID-4"
+      ]
+    },
+    {
+      "id": 5,
+      "object": "АС.06",
+      "object_handle": 170,
+      "triangles": 48,
+      "area_m2": 0.6970296509167692,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unknown",
+      "question": "ID 5 contains small bright details: identify the components and confirm finish/RAL (the legend does not name them).",
+      "evidence": [
+        "oks.json#objects/handle=170/material_ids/id=5",
+        "ids-iso.png#legend-ID-5",
+        "ids-reverse.png#legend-ID-5"
+      ]
+    },
+    {
+      "id": 6,
+      "object": "АС.06",
+      "object_handle": 170,
+      "triangles": 300,
+      "area_m2": 3.303690195518504,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unknown",
+      "question": "ID 6 includes circular ventilation assemblies: confirm material, RAL and whether visible grille detail is metal or perforation.",
+      "evidence": [
+        "oks.json#objects/handle=170/material_ids/id=6",
+        "ids-iso.png#legend-ID-6",
+        "ids-reverse.png#legend-ID-6"
+      ]
+    },
+    {
+      "id": 7,
+      "object": "АС.06",
+      "object_handle": 170,
+      "triangles": 204,
+      "area_m2": 5.655707045463322,
+      "finish": "Doors",
+      "ral": "7004",
+      "map_type": "metal",
+      "status": "proposed",
+      "question": "Confirm ID 7 = Doors, RAL 7004.",
+      "evidence": [
+        "oks.json#objects/handle=170/material_ids/id=7",
+        "ids-iso.png#legend-ID-7",
+        "ids-reverse.png#legend-ID-7",
+        "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
+      ],
+      "swatch_rgb": [
+        150,
+        153,
+        146
+      ]
+    },
+    {
+      "id": 8,
+      "object": "АС.06",
+      "object_handle": 170,
+      "triangles": 1008,
+      "area_m2": 21.51453499593177,
+      "finish": "Lightweight relief glazing frames",
+      "ral": "9016",
+      "map_type": "metal",
+      "status": "proposed",
+      "question": "Confirm ID 8 = Lightweight relief glazing frames, RAL 9016.",
+      "evidence": [
+        "oks.json#objects/handle=170/material_ids/id=8",
+        "ids-iso.png#legend-ID-8",
+        "ids-reverse.png#legend-ID-8",
+        "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
+      ],
+      "swatch_rgb": [
+        246,
+        246,
+        246
+      ]
+    },
+    {
+      "id": 9,
+      "object": "АС.06",
+      "object_handle": 170,
+      "triangles": 60,
+      "area_m2": 7.950371332550838,
+      "finish": "Rainwater system",
+      "ral": "7004",
+      "map_type": "metal",
+      "status": "proposed",
+      "question": "Confirm ID 9 = Rainwater system, RAL 7004.",
+      "evidence": [
+        "oks.json#objects/handle=170/material_ids/id=9",
+        "ids-iso.png#legend-ID-9",
+        "ids-reverse.png#legend-ID-9",
+        "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
+      ],
+      "swatch_rgb": [
+        150,
+        153,
+        146
+      ]
+    },
+    {
+      "id": 10,
+      "object": "АС.06",
+      "object_handle": 170,
+      "triangles": 176,
+      "area_m2": 105.28901082506398,
+      "finish": "Plinth",
+      "ral": "7004",
+      "map_type": "solid",
+      "status": "proposed",
+      "question": "Confirm ID 10 = Plinth, RAL 7004.",
+      "evidence": [
+        "oks.json#objects/handle=170/material_ids/id=10",
+        "ids-iso.png#legend-ID-10",
+        "ids-reverse.png#legend-ID-10",
+        "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm"
+      ],
+      "swatch_rgb": [
+        150,
+        153,
+        146
+      ]
+    },
+    {
+      "id": 11,
+      "object": "АС.06",
+      "object_handle": 170,
+      "triangles": 128,
+      "area_m2": 116.79776482928031,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unknown",
+      "question": "ID 11 is an additional large surface group partially visible through/over roof faces: identify interior/underside surfaces and their finish; is this interior group required?",
+      "evidence": [
+        "oks.json#objects/handle=170/material_ids/id=11",
+        "ids-iso.png#legend-ID-11",
+        "ids-reverse.png#legend-ID-11"
+      ]
+    },
+    {
+      "id": 12,
+      "object": "АС.06_Glass",
+      "object_handle": 378,
+      "triangles": 12,
+      "area_m2": 32.6512995355551,
+      "finish": "Glazing",
+      "ral": null,
+      "map_type": "glass",
+      "status": "proposed",
+      "question": "Confirm ID 12 = Glazing, and supply glass parameters.",
+      "evidence": [
+        "oks.json#objects/handle=378/material_ids/id=12",
+        "ids-iso.png#legend-ID-12",
+        "ids-reverse.png#legend-ID-12",
+        "oks.json#object=АС.06_Glass; geometry only, optical parameters not specified"
+      ]
+    }
+  ],
+  "limitations": [
+    "No native facade PDF supplied; supplied PDF is printed sheet 2 only. DWG text recovered read-only directly in AutoCAD 2025, INSUNITS=4.",
+    "Shared DXF is truncated: ezdxf normal read rejected missing ENDSEC; recovered rendering is supplemental, not proof of full DWG fidelity.",
+    "Native Max census reports geometry/materials; software ID renders are generated from that readback, not a new Max render.",
+    "Generic material names and existing diffuse colours are not finish evidence; all mapped finishes are proposals requiring Gate 1.",
+    "No NPM/VPM or scene mutation performed. No roof material, hardware RAL or glass optical parameters invented."
+  ]
+}
