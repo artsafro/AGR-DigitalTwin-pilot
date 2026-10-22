@@ -837,7 +837,23 @@
     ],
     "unmapped_ids": [],
     "id_gaps": [],
-    "note": "Colizii_* are source collision candidates, not named UCX_*; no collision acceptance performed."
+    "note": "Colizii_* are source collision candidates, not named UCX_*; no collision acceptance performed.",
+    "perimeter_drop": {
+      "preserved": true,
+      "cut_at_ground": false,
+      "material_id": 10,
+      "finish": "RAL 7004, same as adjacent plinth",
+      "lower_wall_triangles": 88,
+      "upper_band_triangles": 88,
+      "bottom_z_range_m": [
+        -2.0251073837280273,
+        -2.0250959396362305
+      ],
+      "all_lower_wall_triangles_reach_below_minus_1m": true,
+      "max_upper_to_bottom_xy_mismatch_m": 3.932099938981686e-06,
+      "xy_comparison_tolerance_m": 0.0001,
+      "scope": "All 88 ID10 lower-wall triangles have min Z <= -1m; every upper-band vertex has a corresponding deep bottom vertex within 1e-4m XY. Source tessellation and positions unchanged."
+    }
   },
   "drawing_evidence": [
     {
@@ -1237,8 +1253,8 @@
       "polygons": 88,
       "triangles": 176,
       "area_m2": 105.28904354252025,
-      "role_observed": "deep foundation/plinth perimeter shell",
-      "finish": "visible plinth RAL 7004; buried concrete remains untreated",
+      "role_observed": "visible plinth and required deep perimeter drop (not untreated foundation)",
+      "finish": "plinth and required perimeter drop RAL 7004",
       "ral": "7004",
       "map_type": "solid",
       "status": "proposed",
@@ -1338,16 +1354,24 @@
     }
   ],
   "evidence": {
-    "directory": "G:/Мой диск/AGR-evidence/tec26-oks/AC07/v004",
+    "directory": "G:/Мой диск/AGR-evidence/tec26-oks/AC07/v006",
     "contact_sheet": "contact-sheet.png",
     "hashes": "SHA256SUMS.txt",
-    "renderer": "CPU orthographic projection of real census zero-based triangle buffers; painter depth ordering, unlit diagnostic colours. Not a native Max beauty render.",
+    "renderer": "Blender 5.1.2 / Cycles CPU, native ray-traced depth; generated diagnostic scene from immutable census buffers",
     "excluded_attempts": [
       "v001: erroneous one-based index interpretation; do not use",
-      "v002 non-inline drawing PNGs: SVG CSS ignored by rasterizer; use only *-inline.png"
+      "v002 non-inline drawing PNGs: SVG CSS ignored by rasterizer; use only *-inline.png",
+      "v001-v004 CPU painter projections withdrawn from Gate approval: no correct per-pixel depth; use v005 native Cycles only",
+      "v001-v004 CPU painter projections withdrawn from Gate approval: no correct per-pixel depth; use v005 native Cycles only"
     ],
-    "contact_sheet_sha256": "6e532b1d57d213c0b7ffaf13389e44ea546e4cfef4da5be0df7d8f34e3e5a5ff",
-    "hash_manifest_sha256": "f31fcec942abfb6c99e324d3bd561189cc4688042c7ba9fc7695341fe04e8c98"
+    "contact_sheet_sha256": "b93f7648ae3cf5aa82b1f7d8915c18a5df4f83f0252cf555398c0f0353ae9bbd",
+    "hash_manifest_sha256": "e22a8ebdb31ab13d531bffd67b8c608cc528655d02f4c0a2d3d440e169e6325b",
+    "depth_correct": true,
+    "datum_z_m": 0.0,
+    "collision_visible": false,
+    "plain_shaded_views": true,
+    "native_render_report": "blender-render-report.json",
+    "all_views": "depth-correct-views.png"
   },
   "questions": [
     "May ID 1 use RAL 5015 on the roof as well as the upper facades, or must roof faces be separated and assigned another coating/RAL?",

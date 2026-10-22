@@ -54,3 +54,16 @@ def test_ac07_gate1_preserves_ids_and_unresolved_evidence(mid, polygons, triangl
     assert sum(r['polygons'] for r in data['materials']) == data['scene']['render_polygons']
     assert sum(r['triangles'] for r in data['materials']) == data['scene']['render_triangles']
     assert data['scene']['id_gaps'] == []
+
+
+def test_ac07_gate_images_and_perimeter_drop_follow_operator_clarification():
+    data = json.loads((JOB / 'materials.json').read_text(encoding='utf-8'))
+    assert data['evidence']['renderer'].startswith('Blender ')
+    assert data['evidence']['depth_correct'] is True
+    assert data['evidence']['datum_z_m'] == 0.0
+    assert data['evidence']['collision_visible'] is False
+    assert data['evidence']['plain_shaded_views'] is True
+    assert data['materials'][9]['finish'] == 'plinth and required perimeter drop RAL 7004'
+    assert data['scene']['perimeter_drop']['preserved'] is True
+    assert data['scene']['perimeter_drop']['cut_at_ground'] is False
+    assert data['scene']['perimeter_drop']['all_lower_wall_triangles_reach_below_minus_1m'] is True

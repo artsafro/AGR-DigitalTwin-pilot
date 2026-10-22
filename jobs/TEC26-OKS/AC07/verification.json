@@ -1,32 +1,50 @@
 {
-  "real_record_controls": 12,
-  "synthetic_mutations_rejected": 64,
-  "synthetic_mutations_total": 64,
+  "real_record_controls": 13,
+  "synthetic_mutations_rejected": 73,
+  "synthetic_mutations_total": 73,
   "mutation_classes": {
     "missing-id": 12,
     "invalid-area": 36,
     "unmapped-id": 12,
     "unknown-without-question": 3,
-    "false-approval": 1
+    "false-approval": 1,
+    "native-render-contract": 5,
+    "perimeter-drop-contract": 3,
+    "perimeter-finish": 1
   },
-  "evidence_files_hash_verified": 9,
+  "evidence_files_hash_verified": 41,
   "original_copies_hash_verified": 2,
   "census_hash_verified": true,
   "geometry_and_kpp_hashes_verified": true,
   "gate1": "awaiting_artem",
   "scope": "record consistency only; not source completeness or model approval",
-  "evidence_directory": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-evidence/tec26-oks/AC07/verification-v001",
+  "evidence_directory": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-evidence/tec26-oks/AC07/verification-v002",
+  "gate_image_directory": "G:/Мой диск/AGR-evidence/tec26-oks/AC07/v006",
+  "native_render": {
+    "application": "Blender 5.1.2",
+    "engine": "Cycles CPU",
+    "original_png_count": 32,
+    "full_building_id_plain_pairs": 4,
+    "isolated_id_plain_pairs": 12,
+    "source_geometry_unchanged": true,
+    "collision_visible": false,
+    "datum_z_m": 0.0,
+    "process_exit_codes": [0, 0],
+    "report": "G:/Мой диск/AGR-evidence/tec26-oks/AC07/v006/blender-render-report.json"
+  },
   "focused_pytest": {
-    "passed": 12,
+    "passed": 13,
     "failed": 0,
-    "seconds": 0.07,
+    "seconds": 0.12,
     "command": "python C:/Users/artsafro/hermes_kanban/scripts/suite_slot.py --card t_2a6583a6 -- env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q -p no:cacheprovider --basetemp=C:/x/t_2a6583a6 tests/jobs/test_tec26_ac07_materials.py"
   },
   "red": {
     "missing_record_failed": 12,
     "tests_first_commit": "39d08a6",
     "aggregate_count_failed": 1,
-    "operator_contract_failed": 1
+    "operator_contract_failed": 1,
+    "native_depth_and_drop_contract_failed": 1,
+    "native_depth_pre_fix_commit": "48fb7c6e8c0156f7ed821fa74cff463b2eaf9c5c"
   },
   "full_suite": "not run: Gate-1 stop, no review request yet; required before first review request"
 }

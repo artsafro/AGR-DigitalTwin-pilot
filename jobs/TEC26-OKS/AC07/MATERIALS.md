@@ -14,7 +14,7 @@ Census: `C:/x/tec26-oks/census/oks.json`, SHA256 `a99de19f1d30633eaab9c52ac44f25
 
 Actual layer **007**, not literal 0.0.0.7/0.0.7: explicit АС.07 object names and 13.5 m section span support correspondence, correspondence is confirmed by the operator (actual census layers govern). 23 geometry objects: main handle 385, glass 388, 21 `Colizii_*` collision candidates. Multi/Sub **Material #59**, handle 4999, Standard submaterials IDs/slots 1..12. Main 5596 triangles; glass 12. No ID gaps; glass uses ID 12 only. Collision IDs have no finish semantics; per-object counts/areas are retained separately in JSON. Native polygon counts and triangulated counts are not interchangeable.
 
-Diagnostic render area/counts recomputed independently from zero-based census vertex/triangle buffers for all 12 render IDs: 12/12 counts and areas agree (<1e-9 m²). Painter projection has no native renderer lighting/occlusion guarantee; use isolated views as well as overview. No source materials were changed.
+Diagnostic render area/counts recomputed independently from zero-based census vertex/triangle buffers for all 12 render IDs: 12/12 counts and areas agree (<1e-9 m²). Final Gate images use Blender 5.1.2 Cycles CPU with native ray-traced depth. Each full-building ID view has a matching plain-shaded view and magenta datum at +/-0.000 m; collision candidates are not created in the diagnostic scene. Isolated ID views are native renders too. Source vertices, triangles and buffers are preserved; no source materials were changed.
 
 ## Drawing evidence
 
@@ -48,7 +48,7 @@ RAL colour is never inferred from Max diffuse or the diagnostic ID colours. Geom
 | 7 | Material #53 | 120 / 204 | 5.655706857 | door leaves | doors RAL 7004 | solid | legend; geometry handle 385 |
 | 8 | Material #58 | 504 / 1008 | 21.514531059 | pressure-relief opening frames and mullions | frames RAL 9016 | solid | legend, section; geometry handle 385 |
 | 9 | Material #57 | 30 / 60 | 7.950371307 | outer rectangular opening surrounds | frames and surrounds RAL 9016 | solid | legend, section; geometry handle 385 |
-| 10 | Material #54 | 88 / 176 | 105.289043543 | deep foundation/plinth perimeter shell | visible plinth RAL 7004; buried concrete remains untreated | solid | legend, section; geometry handle 385 |
+| 10 | Material #54 | 88 / 176 | 105.289043543 | visible plinth and required deep perimeter drop | plinth and required perimeter drop RAL 7004 | solid | legend, section; geometry handle 385 |
 | 11 | Material #56 | 64 / 128 | 116.797766588 | inner floor / wall shell | ? | ? | section; geometry handle 385 |
 | 12 | Material #55 | 6 / 12 | 32.651295360 | separate glazing infill | M_Glass_01 (KPP convention) | glass | section; geometry handle 388 |
 
@@ -58,7 +58,7 @@ Governing finishes/colours: DWG *_R1.dwg; PDF supplements only missing DWG infor
 
 Glass follows KPP: M_Glass_01, NPM alpha 0.5 and no textures; KPP source export_npm.py Base Color (0.75,0.82,0.82), roughness 0.05. VPM remains a separate untextured glass material per standard; KPP package_vpm.py values are proposals, not a substitute for delivery approval. No extra glass question is raised.
 
-ID 1 roof colour is an explicit extrapolated blue proposal, not a directly specified roof RAL. ID 9 white surrounds and ID 10 visible grey plinth are role-based proposals from the legend; buried ID 10 concrete is not painted wholesale. Only the unresolved details below need an answer.
+ID 1 roof colour is an explicit extrapolated blue proposal, not a directly specified roof RAL. ID 9 white surrounds and ID 10 visible grey plinth are role-based proposals from the legend; ID 10 below zero is the required perimeter drop and receives the same RAL7004 as the adjacent plinth. Only the unresolved details below need an answer.
 
 ## KPP colour parity
 
@@ -83,22 +83,28 @@ Only colour, not KPP material numbering or cassette geometry, is borrowed. Same-
 
 ## Evidence and limits
 
-Drive: `G:/Мой диск/AGR-evidence/tec26-oks/AC07/v004`
+Drive: `G:/Мой диск/AGR-evidence/tec26-oks/AC07/v006`
 
 - `contact-sheet.png`: one number-free swatch rectangle per ID; labels outside, hatching for unresolved finishes; overview ID render below.
-- `id-colours.png`, `ids-isolated.png`, `collision-census.png`: CPU diagnostic projections of real census geometry, not synthetic geometry.
+- `depth-correct-views.png`: four native Blender ID/plain-shaded pairs; `ids-isolated.png`: 12 native isolated-ID renders. UCX hidden (not created); magenta geometry marks +/-0.000 m. The 32 original native PNGs and `blender-render-report.json` are included.
 - `facades-inline.png`, `roof-inline.png`, `section-inline.png`, `other-group-inline.png`: recovered-DXF crops, with SVG CSS expanded to attributes so colours render correctly.
 - `pdf-p1.png`: actual supplied PDF section/title block.
-- `SHA256SUMS.txt`: all final image hashes; contact sheet SHA256 `6e532b1d57d213c0b7ffaf13389e44ea546e4cfef4da5be0df7d8f34e3e5a5ff`.
+- `SHA256SUMS.txt`: all final image hashes; contact sheet SHA256 `b93f7648ae3cf5aa82b1f7d8915c18a5df4f83f0252cf555398c0f0353ae9bbd`.
 
-Discarded previews remain in v001/v002 for traceability: v001 had incorrect triangle indexing; v002 non-inline drawing PNGs failed to apply CSS. Neither is final evidence. Only v004 is the current review bundle (v003 superseded by operator clarification).
+Discarded previews remain versioned for traceability: v001 had incorrect triangle indexing; v002 non-inline drawing PNGs failed to apply CSS. All v001-v004 CPU painter projections are withdrawn from Gate approval because they lack correct per-pixel depth. Only v006 native Blender images are current Gate evidence; v005 is superseded by adding plain-shaded partners to all 12 isolated views.
 
 Geometry health, collision compliance, UV/delivery/export checks are not run in Gate 1. No maps, material assignments, VPM or NPM were built. No `passed=true` is claimed. Local focused regression verifies this record, not architectural approval.
 
+## Perimeter drop clarification (2026-10-22)
+
+Artem: the geometry below zero is the required perimeter drop, minimum 1 m down. It is retained without cutting at ground, in both later VPM/NPM derivatives, with the adjacent plinth/wall finish. For AC07 it already has source ID10, proposed RAL7004 throughout. This replaces the earlier untreated-foundation interpretation, not the source geometry.
+
+Measured from unchanged census triangles: all 88 lower ID10 wall triangles reach Z <= -1 m; bottom range -2.025107384 .. -2.025095940 m. The 88 upper-band triangles share vertically corresponding bottom vertices: maximum XY mismatch 0.0000039321 m, below the diagnostic 0.0001 m correspondence tolerance. This confirms the existing drop, not a proposal to remodel it.
+
 ## Verification receipt
 
-`verification.json` records 12/12 focused tests green (0.07 s) through the suite-slot wrapper. The tests-first commit `39d08a6` preserves the missing-record regression (12 failures observed before that commit and before adding the record); a further aggregate-count regression caught 2960 versus the draft typo 2944, then passed after correction. The operator-contract RED rejected the stale glass/question policy before the final record.
+`verification.json` records 13/13 focused tests green through the suite-slot wrapper. The tests-first commit `39d08a6` preserves the missing-record regression (12 failures observed before that commit and before adding the record); a further aggregate-count regression caught 2960 versus the draft typo 2944, then passed after correction. The operator-contract RED rejected the stale glass/question policy before the final record. The depth/drop regression additionally failed on the former CPU renderer record before native Blender publication.
 
-Independent readback: 9/9 final image hashes, 2/2 original/copy hashes, census and geometry-buffer hashes, and exact KPP sampled colours verified. Synthetic record mutations rejected 64/64 (12 missing IDs, 36 invalid areas including zero/NaN/inf, 12 unmapped IDs, 3 unknowns without a question, 1 false approval). This proves record consistency only. Reproduction scripts, original failures and final focused log are on Drive at `G:/Мой диск/AGR-evidence/tec26-oks/AC07/verification-v001/`, with their own `SHA256SUMS.txt`. No source geometry or material was mutated.
+Independent readback: 41/41 final bundle file hashes, 2/2 original/copy hashes, census and geometry-buffer hashes, and exact KPP sampled colours verified. Synthetic record mutations rejected 73/73 (12 missing IDs, 36 invalid areas including zero/NaN/inf, 12 unmapped IDs, 3 unknowns without a question, 1 false approval, 5 native-render contract violations, 3 drop contract violations and 1 untreated-foundation finish). This proves record consistency only. Reproduction scripts, original failures and final focused log are on Drive at `G:/Мой диск/AGR-evidence/tec26-oks/AC07/verification-v002/`, with their own `SHA256SUMS.txt`. No source geometry or material was mutated.
 
 Full suite is deferred until the first review request: this card must stop for human Gate 1, not request review or production yet. CI: not run (billing lock).
