@@ -20,3 +20,19 @@ def test_ac06_isolated_downpipes_not_window_reveals():
     assert rows[12]['glass_policy']['npm_alpha'] == 0.5
     assert rows[12]['question'] is None
     assert all(r['proposal']['rationale'] and r['proposal']['map_type'] for r in rows.values() if r['finish'] == '?')
+
+
+def test_ac06_depth_correct_gate_and_perimeter_drop():
+    data = json.loads(PACKET.read_text(encoding='utf-8'))
+    scene = data['scene']
+    assert scene['depth_render']['application'] == 'Blender'
+    assert scene['depth_render']['version'] == '5.1.2'
+    assert scene['depth_render']['collision_loaded'] is False
+    assert scene['depth_render']['zero_reference_z_m'] == 0.0
+    assert scene['depth_render']['mesh_triangles'] == 5608
+    assert scene['depth_render']['source_geometry_edited'] is False
+    assert scene['perimeter_drop']['coverage_passed'] == scene['perimeter_drop']['coverage_total'] == 8
+    assert all(c['lowest_side_vertex_m'] <= -1.0 for c in scene['perimeter_drop']['coverage_checks'])
+    assert scene['perimeter_drop']['geometry_changed'] is False
+    assert all(r['evidence'] and any('depth-' in p for p in r['evidence']) for r in data['materials'])
+
