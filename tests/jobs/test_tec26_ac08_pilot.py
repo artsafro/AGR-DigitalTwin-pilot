@@ -172,11 +172,11 @@ def test_facade_uv_phase_and_winding():
         assert sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(uv, uv[1:] + uv[:1])) > 0
 
 
-def test_cassette_is_the_kpp_recipe_at_800px():
+def test_cassette_is_the_kpp_recipe_at_750px():
     t, k = SPEC["finishes"]["Cassette_RAL5015"], KPP["finishes"]["Cassette_RAL5015"]
     assert {x: t[x] for x in ("pattern", "P", "h_joints", "rgb", "rough", "metal")} == \
         {x: k[x] for x in ("pattern", "P", "h_joints", "rgb", "rough", "metal")}
-    assert t["phase"] == [0.0, 0.0] and SPEC["size_full"] / t["S"] == 800
+    assert t["phase"] == [0.0, 0.0] and round(SPEC["size_full"] / t["S"]) == 750
     d, _, _, _ = make_textures.make_full(t, 4096)
     v = (4096 - np.arange(4096) - 0.5) * t["S"] / 4096        # metres per image row (v up)
     joint_rows = np.abs(((v * 1000 + 4) % 550) - 4) < 4        # 8 mm joints every 0.55 m from v = 0

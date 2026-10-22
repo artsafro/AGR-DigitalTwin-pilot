@@ -204,7 +204,8 @@ def main(argv):
             continue
         p = np.asarray(vmain["vertices"])[f]
         a3 = np.linalg.norm(np.cross(p[1] - p[0], p[2] - p[0])) / 2
-        a2 = abs(np.cross(u[1] - u[0], u[2] - u[0])) / 2 * spec["size_full"] ** 2
+        e1, e2 = u[1] - u[0], u[2] - u[0]
+        a2 = abs(e1[0] * e2[1] - e1[1] * e2[0]) / 2 * spec["size_full"] ** 2
         if a3 > 1e-4:
             d = math.sqrt(a2 / a3)
             lo_, hi_ = dens.get(name, (1e9, 0))
