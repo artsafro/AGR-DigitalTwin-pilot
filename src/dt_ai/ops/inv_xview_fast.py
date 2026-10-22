@@ -27,6 +27,7 @@ import numpy as np
 from dt_ai.ops.inv_xview import AREA_EPS_M2, XviewTolerance, _dot, _polygon_triangles, vertex_pairs
 
 _CHUNK = 4_000_000          # (triangle, vertex) candidates per numpy block
+_CELL_FACTOR = 0.5         # vertex grid cell = this x median padded polygon box extent (bench-tuned, #553)
 
 
 def _faces_array(faces, nv: int):
@@ -97,7 +98,7 @@ def _vertex_candidates(v, lo, hi, used):
     vid = np.flatnonzero(used)
     pv = v[vid]
     ext = np.maximum(hi - lo, 0)
-    cell = max(float(np.median(ext.max(1))) if len(ext) else 1.0, 1e-6)
+    cell = max(_CELL_FACTOR * float(np.median(ext.max(1))) if len(ext) else 1.0, 1e-6)
     base = pv.min(0) - cell
     kv = np.floor((pv - base) / cell).astype(np.int64)
     dims = kv.max(0) + 2
