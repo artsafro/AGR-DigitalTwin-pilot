@@ -1,5 +1,10 @@
 # AC09 — material mapping / approved-gate1
 
+> Historical Gate-1 record below. Current slide53 production overrides, binding legend
+> (hatch → material → RAL → texture), packages and comparisons: [BUILD_REPORT.md](BUILD_REPORT.md).
+> In production, edging is blue5015 and the plinth grey7004 per the latest card instructions;
+> ID2 ribs use the building's own slide counts, not the historical KPP cassette repeat.
+
 Building: **Контейнер системы автоматического контроля вредных выбросов (САКВ)**.
 Title block: `22Е56-АР2-1002-АС.09.dwg`, layout2, handles3437/3438 at
 (499.713,27.7392,0)/(504.356,23.9892,0) paper mm.
