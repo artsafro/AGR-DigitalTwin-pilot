@@ -1,5 +1,5 @@
 {
- "_doc": "AC08 (Контейнер НКУ) VPM texture sets, KPP1 recipe (jobs/KPP1/scripts/vpm_textures.json). Gate 1 approved by Artem 2026-10-22 (#565 comment: «Принимаю»): ID2 sandwich panels RAL 5015, ID3 door RAL 7004, mixed ID1 = roof RAL 7004 + frame RAL 7004 + perimeter drop below ±0.000 in the wall colour; solid colours without joints (panel module not dimensioned in the DWG). SUPERSEDED for panels by Artem 2026-10-22 on the pilot renders: «Не вижу швов на панелях ... такой же тексель, как в VPM КПП ... в VPM и NPM» + «ниже ±0.000 без швов»: ID2 = KPP Cassette_RAL5015 recipe (module 0.6 x 0.55 m, 8 mm joints, same noise/recess/roughness), joint rows start at ±0.000 and columns at each facade's left corner; the drop below ±0.000 stays the plain KPP 5015 colour. Geometry stays unchanged (Artem 2026-10-22), so the 4.86 m panel faces cannot fit KPP's 4.096 m tile: S = 5.461333 m per 4096 tile = 750 px/m (KPP 1000 px/m; band 512..1706); the north panel (4.86 m, 0.44 m off the joint grid) needs 5.34 m + pad, so 800 px/m overflowed (build fail-closed), pattern size in metres identical to KPP. RGB = exact KPP tiles (maps_kpp T_Kpp_1_Diffuse_1.1013 = RAL 5015, .1010 = RAL 7004, pixel-verified in jobs/TEC26-OKS/AC08/MATERIALS.md); roughness/metallic = the KPP proposals of the same finishes. Placeholders: 256 px single colour (reg p.31 §3, density-exempt reg p.31-32 §6.1), as KPP 1010/1013. Address Nku_1 is a placeholder token (address/coordinates deferred as for KPP).",
+ "_doc": "AC08 (Контейнер НКУ) VPM texture sets, KPP1 recipe (jobs/KPP1/scripts/vpm_textures.json). Gate 1 approved by Artem 2026-10-22 (#565 comment: «Принимаю»): ID2 sandwich panels RAL 5015, ID3 door RAL 7004, mixed ID1 = roof RAL 7004 + frame RAL 7004 + perimeter drop below ±0.000 in the wall colour. Panels per Artem 2026-10-22 on the v006 render: «должны быть вертикальные швы только; текстуру пришлю; если не влезает, то можно аккуратно порезать через loop или ring»: ID2 = PanelVJ_RAL5015 = Artem's texture panel_RAL5015_vertical_joints_4096.png (4096 px, joints 8 mm every 600 px, panel median = KPP 5015 RGB exactly), at the KPP VPM texel 1000 px/m (density twin KPP Cassette_RAL5015, S = 4.096 m), vertical joints every 0.60 m from each panel's edge with the smaller world coordinate (the mirrored long facades share one grid); faces longer than the tile holds (S - 2 pad - P = 3.416 m) are cut by edge rings at joint positions (finish_map.apply_cuts, every cut listed in the build report). The drop below ±0.000 stays plain KPP 5015 without joints. RGB = exact KPP tiles (maps_kpp T_Kpp_1_Diffuse_1.1013 = RAL 5015, .1010 = RAL 7004, pixel-verified in jobs/TEC26-OKS/AC08/MATERIALS.md); roughness/metallic = the KPP proposals of the same finishes. Placeholders: 256 px single colour (reg p.31 §3, density-exempt reg p.31-32 §6.1). Address Nku_1 is a placeholder token (address/coordinates deferred as for KPP).",
  "address": "Nku_1",
  "size_full": 4096,
  "size_placeholder": 256,
@@ -13,8 +13,8 @@
    "why": "mixed ID: roof + frame RAL 7004; faces entirely at or below ±0.000 (perimeter drop) take the wall colour (Artem 2026-10-22)"
   },
   "2": {
-   "finish": "Cassette_RAL5015",
-   "why": "sandwich panels RAL 5015 (DWG legend 1395) with KPP VPM joints (Artem 2026-10-22)"
+   "finish": "PanelVJ_RAL5015",
+   "why": "sandwich panels RAL 5015 (DWG legend 1395), vertical joints only, Artem's texture (2026-10-22)"
   },
   "3": {
    "finish": "Door_RAL7004",
@@ -31,9 +31,13 @@
   10
  ],
  "kpp_palette": {
-  "Cassette_RAL5015": {
-   "kpp_finish": "Cassette_RAL5015",
-   "kpp_udim": 1007
+  "PanelVJ_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
   },
   "Panel_RAL5015": {
    "kpp_finish": "Metal_RAL5015",
@@ -49,21 +53,17 @@
   }
  },
  "finishes": {
-  "Cassette_RAL5015": {
+  "PanelVJ_RAL5015": {
    "udim": 1001,
    "kind": "full",
-   "S": 5.461333,
+   "S": 4.096,
    "P": [
     0.6,
-    0.55
+    0.6
    ],
    "shift": [
     true,
-    true
-   ],
-   "phase": [
-    0.0,
-    0.0
+    false
    ],
    "rgb": [
     34,
@@ -72,8 +72,19 @@
    ],
    "rough": 0.5,
    "metal": 0.0,
-   "pattern": "cassette",
-   "h_joints": true
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 4,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/)"
+   }
   },
   "Panel_RAL5015": {
    "udim": 1002,
@@ -110,6 +121,10 @@
   }
  },
  "facade_uv": {
-  "Cassette_RAL5015": "u = metres from the facade's left corner seen from outside, v = world z (joint rows from ±0.000)"
+  "PanelVJ_RAL5015": "u' = metres along the facade from the panel's smaller-world-coordinate edge (joints at u' = n * 0.6), v = world z"
+ },
+ "ring_cuts": {
+  "allowed": "edge ring at joint positions, quads only, boundary to boundary",
+  "decision": "Artem 2026-10-22 «если не влезает, то можно аккуратно порезать через loop или ring»"
  }
 }
