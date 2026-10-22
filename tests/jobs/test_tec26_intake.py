@@ -74,3 +74,15 @@ def test_native_reader_never_saves_or_exports_and_only_loads_copies():
     text=SCRIPT.read_text(encoding='utf-8')
     assert 'path.resolve().is_relative_to(ROOT.resolve())' in text
     assert 'sources-v001' in text
+
+
+def test_depth_renderer_creates_world_for_empty_factory_scene():
+    # Execute only world setup from the native driver against Blender's factory-empty condition.
+    script=SCRIPT.with_name('render_depth.py')
+    tree=ast.parse(script.read_text(encoding='utf-8'))
+    setup=[n for n in ast.walk(tree) if isinstance(n,ast.Assign)
+           and any(ast.unparse(t).startswith('scene.world') for t in n.targets)]
+    scene=SimpleNamespace(world=None)
+    bpy=SimpleNamespace(data=SimpleNamespace(worlds=SimpleNamespace(new=lambda _:SimpleNamespace(color=None))))
+    exec(compile(ast.Module(body=setup,type_ignores=[]),str(script),'exec'),{'scene':scene,'bpy':bpy})
+    assert scene.world.color == (0.88,0.88,0.88)
