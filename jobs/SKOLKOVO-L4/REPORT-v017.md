@@ -26,11 +26,23 @@ over the plan budget, and joints, UV/materials/UCX, visual review and SINTEZ are
 | | objects | built | not built | tris | plan budget |
 |---|---:|---:|---:|---:|---:|
 | run-01 (47 parts) + rods (2 parts) | 6,955 | 6,751 | 204 (29 no buffer, 175 rejected) | 161,694 | 147,000 |
-| + repair 1 (175 rejected) | | +109 | 95 (29 no buffer, 66 rejected) | +7,536 → **169,230** | 147,000 |
+| + repair 1 (175 rejected) | | +109 | 95 (29 no buffer, 66 rejected) | +7,536 → 169,230 | 147,000 |
+| + repair 2 (66 rejected, per connected component) | | +18 | **77 (29 no buffer, 48 rejected)** | +2,746 → **171,976** | 147,000 |
 
 - Operation mix in run-01: `primitive_box` 5,593, `keep` 711, `contour` top 164 / side 93 / front 77, plus the 113 accepted rod proxies (6,751 in total).
   Repair 1 rebuilt 107 of the 120 `v1_baseline_roof_access_railing` objects (6,952 of 7,680 tris) and 2 railings.
-- Still rejected (66), with the kernel's reasons:
+- Repair 2 (`repair2.py`, `evidence-v017/repair2-v017.json`) split each object into connected components and ran
+  the decision table per component; an object is built only when every component applies. It built 18 of 66 (the
+  last 13 v1 roof-access railings, so 120/120 there now; 3 roof/entrance details; 2 railings).
+  The 48 still rejected are mostly single-component objects:
+  - plinth flashings 10+1, a single profile railing each;
+  - roof/entrance details 15+1;
+  - v1 external structure 7, which lies outside the building;
+  - mullions 6, ladders 3, railings 3, others 2.
+
+  These need a per-profile loft recipe like the v016 KNS recipes. Repair 2 meshes are on Drive; they are not in the
+  v017 FBX.
+- Rejected after repair 1 (66), with the kernel's reasons:
   - "prism is not a closed oriented 2-manifold after the 0.1 mm weld" (68 tries).
   - "contour repeats a vertex" (39).
   - Silhouette 82–287 mm over the limit (25).
@@ -89,17 +101,16 @@ over the plan budget, and joints, UV/materials/UCX, visual review and SINTEZ are
 | Rods collection | 2 min |
 | Export + readback + delivered-frame comparison | 10 min |
 | Repair 1 | 13 min |
+| Repair 2 | 20 min |
 | Probes / report / evidence | 15 min |
-| **Total** | **≈ 1 h 50 min** |
+| **Total** | **≈ 2 h 10 min** |
 
 Cumulative since v013 (masts hub, KNS, assembly) ≈ 6 h; earlier stages are in RESUME-v009/v011.
 
 ## Next steps
 
-1. 66 rejected objects:
-   - Split them into connected components before contour (welded components first). This fixes the "not closed
-     after weld" and "repeats a vertex" cases.
-   - The remaining silhouette failures need a per-piece loft, like the v016 KNS recipes.
+1. 48 rejected objects (after repairs 1-2): a per-profile loft recipe, like v016 (plinth flashings, roof details,
+   mullions, ladders). Then re-export the FBX with the repair-1/2 meshes merged.
 2. 29 v1 objects without a buffer: extract them from the v1 FBX (3ds Max headless, one process, copy only), or
    report them as dropped with the reason.
 3. `from_face` overrun (+32k): build an exterior-face operation in context (hidden open borders against the
@@ -109,5 +120,5 @@ Cumulative since v013 (masts hub, KNS, assembly) ≈ 6 h; earlier stages are in 
 5. UV/materials (v008 appearance bindings), UCX, NPM derivation, then review tool, SINTEZ, suite via
    `suite_slot.py`, PR, dt-reviewer.
 
-Drive `G:/Мой диск/AGR-evidence/353-skolkovo-l4/evidence-v017/`: 174 files, `SHA256SUMS.txt` sha256
-`928def4d8ce4da81877b42ca8e9907df892466a5193ed30f19ba4506558b679e`, `sha256sum -c` 0 mismatches.
+Drive `G:/Мой диск/AGR-evidence/353-skolkovo-l4/evidence-v017/`: 195 files, `SHA256SUMS.txt` sha256
+`454ca30806e01efadcd4f4dea69b730c8f5a8d232f69240a788375827fb98ab8`, `sha256sum -c` 0 mismatches.

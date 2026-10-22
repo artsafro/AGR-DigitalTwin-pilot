@@ -1,0 +1,774 @@
+{
+"objects": 66,
+"applied": 18,
+"tris": 2746,
+"rows": [
+{
+"part": "facade_mullions_frame_contour_rebuild",
+"name": "Прямоугольный импост 50х100 мм [5749347]",
+"src": 8,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 8,
+"row": "9475"
+},
+{
+"part": "facade_mullions_frame_contour_rebuild",
+"name": "Прямоугольный импост 50х100 мм [5749335]",
+"src": 8,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 8,
+"row": "9464"
+},
+{
+"part": "facade_mullions_frame_contour_rebuild",
+"name": "Прямоугольный импост 50х100 мм [5749340]",
+"src": 8,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 8,
+"row": "9469"
+},
+{
+"part": "facade_mullions_frame_contour_rebuild",
+"name": "Прямоугольный импост 50х100 мм [5749750]",
+"src": 8,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 8,
+"row": "9501"
+},
+{
+"part": "facade_mullions_frame_contour_rebuild",
+"name": "Прямоугольный импост 50х100 мм [5749745]",
+"src": 8,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 8,
+"row": "9496"
+},
+{
+"part": "facade_mullions_frame_contour_rebuild",
+"name": "Прямоугольный импост 50х100 мм [5749757]",
+"src": 8,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 8,
+"row": "9507"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657674]",
+"src": 1991,
+"components": 2,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 164,
+"row": "7934"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657786]",
+"src": 1991,
+"components": 2,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 164,
+"row": "7936"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4656129]",
+"src": 1991,
+"components": 2,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 164,
+"row": "7932"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657682]",
+"src": 1991,
+"components": 2,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 164,
+"row": "7935"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657666]",
+"src": 1991,
+"components": 2,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 164,
+"row": "7933"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657792]",
+"src": 1991,
+"components": 2,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 164,
+"row": "7939"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657806]",
+"src": 1991,
+"components": 2,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 164,
+"row": "7942"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657804]",
+"src": 1991,
+"components": 2,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 164,
+"row": "7940"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657805]",
+"src": 1991,
+"components": 2,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 164,
+"row": "7941"
+},
+{
+"part": "facade_additional_exterior_railings_railing_contour_rebuild",
+"name": "Railing ADSK_МГН_h 1200 [4672094]",
+"src": 975,
+"components": 3,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 433,
+"row": "8046"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "Ladder-Precision_Ladders-Tubular_Ladder_With_Parapet_Platform_and_Roof-Side Fixed Ladder With Cage, Platform & Roofside Return [2277003]",
+"src": 1000,
+"components": 22,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 476,
+"row": "3906"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657807]",
+"src": 1991,
+"components": 2,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 164,
+"row": "7943"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657821]",
+"src": 1991,
+"components": 2,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 164,
+"row": "7945"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657820]",
+"src": 1991,
+"components": 2,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 164,
+"row": "7944"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657822]",
+"src": 1991,
+"components": 2,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 164,
+"row": "7946"
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"name": "Railing АР_Цокольный отлив_360 [5926139]",
+"src": 602,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 602,
+"row": "10057"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657823]",
+"src": 1991,
+"components": 2,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 164,
+"row": "7947"
+},
+{
+"part": "facade_exterior_substrate_reveals_wall_from_face",
+"name": "Basic Wall Ст-2_ Сэндвич-панель_100мм [2340328]",
+"src": 776,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 776,
+"row": "3962"
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"name": "Railing АР_Цокольный отлив_360 [5927667]",
+"src": 1771,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 1771,
+"row": "10060"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "АР_ДорХан_Ворота_R21 НВр-1(3500hх2600)_Вал сверху_С калиткой [3292916]",
+"src": 1158,
+"components": 6,
+"status": "applied",
+"ops": [
+"keep",
+"primitive_box"
+],
+"tris": 96,
+"failed_component_tris": null,
+"row": "4297"
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"name": "Railing АР_Цокольный отлив_360 [5927508]",
+"src": 1975,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 1975,
+"row": "10059"
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"name": "Railing АР_Цокольный отлив_360 [5819517]",
+"src": 2018,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 2018,
+"row": "9534"
+},
+{
+"part": "facade_additional_exterior_railings_railing_contour_rebuild",
+"name": "Railing ADSK_МГН_h 1200 [4672537]",
+"src": 1968,
+"components": 3,
+"status": "applied",
+"ops": [
+"contour:top",
+"keep"
+],
+"tris": 1078,
+"failed_component_tris": null,
+"row": "8047"
+},
+{
+"part": "facade_additional_exterior_railings_railing_contour_rebuild",
+"name": "Railing ADSK_МГН_h 1200 [4667836]",
+"src": 5307,
+"components": 3,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 2418,
+"row": "7968"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657788]",
+"src": 1991,
+"components": 2,
+"status": "applied",
+"ops": [
+"contour:top",
+"primitive_box"
+],
+"tris": 128,
+"failed_component_tris": null,
+"row": "7937"
+},
+{
+"part": "facade_roof_and_entrance_details_other_contour_rebuild",
+"name": "TN_Аэратор кровельный ТехноНИКОЛЬ Аэратор кровельный ТехноНИКОЛЬ 160х460мм [4657790]",
+"src": 1991,
+"components": 2,
+"status": "applied",
+"ops": [
+"contour:top",
+"primitive_box"
+],
+"tris": 128,
+"failed_component_tris": null,
+"row": "7938"
+},
+{
+"part": "facade_external_railings_railing_detail_per_profile",
+"name": "Railing ADSK_МГН_h 900 [3798618]",
+"src": 1844,
+"components": 3,
+"status": "applied",
+"ops": [
+"keep",
+"primitive_box"
+],
+"tris": 848,
+"failed_component_tris": null,
+"row": "4665"
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"name": "Railing АР_Цокольный отлив_360 [5819488]",
+"src": 3154,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 3154,
+"row": "9533"
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"name": "Railing АР_Цокольный отлив_360 [5927346]",
+"src": 3157,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 3157,
+"row": "10058"
+},
+{
+"part": "v1_baseline_external_structure_frame_contour_rebuild",
+"name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884101]",
+"src": 2707,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 2707,
+"row": "9723"
+},
+{
+"part": "v1_baseline_external_structure_frame_contour_rebuild",
+"name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884087]",
+"src": 2750,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 2750,
+"row": "9722"
+},
+{
+"part": "v1_baseline_external_structure_frame_contour_rebuild",
+"name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4883923]",
+"src": 2750,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 2750,
+"row": "9721"
+},
+{
+"part": "v1_baseline_external_structure_frame_contour_rebuild",
+"name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884117]",
+"src": 2750,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 2750,
+"row": "9724"
+},
+{
+"part": "v1_baseline_external_structure_frame_contour_rebuild",
+"name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884133]",
+"src": 2750,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 2750,
+"row": "9725"
+},
+{
+"part": "v1_baseline_external_structure_frame_contour_rebuild",
+"name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5905599]",
+"src": 2734,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 2734,
+"row": "10398"
+},
+{
+"part": "v1_baseline_external_structure_frame_contour_rebuild",
+"name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5906904]",
+"src": 2736,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 2736,
+"row": "10399"
+},
+{
+"part": "v1_baseline_roof_access_rod_ladder_contour_rebuild",
+"name": "Лестничный марш ТA Лестничный марш ТA [6743475]",
+"src": 8760,
+"components": 8,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 708,
+"row": "11171"
+},
+{
+"part": "v1_baseline_roof_access_rod_ladder_contour_rebuild",
+"name": "Лестничный марш ТA Лестничный марш ТA [5922442]",
+"src": 8760,
+"components": 8,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 708,
+"row": "10401"
+},
+{
+"part": "v1_roof_and_entrance_details_other_contour_rebuild",
+"name": "Ladder-Precision_Ladders-Tubular_Ladder_With_Parapet_Platform_and_Roof-Side Fixed Ladder With Cage, Platform & Roofside Return [4219121]",
+"src": 1000,
+"components": 22,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 476,
+"row": "9240"
+},
+{
+"part": "facade_roofs_slab_contour_rebuild",
+"name": "Basic Roof ТН_КРОВЛЯ Солид [5783763]",
+"src": 3994,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 3994,
+"row": "9521"
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"name": "Railing АР_Цокольный отлив_360 [5819596]",
+"src": 4396,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 4396,
+"row": "9536"
+},
+{
+"part": "v1_plinth_flashings_band_contour_rebuild",
+"name": "Railing АР_Цокольный отлив_360 [5819534]",
+"src": 1776,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 1776,
+"row": "2960"
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741571]",
+"src": 1800,
+"components": 3,
+"status": "applied",
+"ops": [
+"primitive_box"
+],
+"tris": 36,
+"failed_component_tris": null,
+"row": "11051"
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741573]",
+"src": 1800,
+"components": 3,
+"status": "applied",
+"ops": [
+"primitive_box"
+],
+"tris": 36,
+"failed_component_tris": null,
+"row": "11052"
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741575]",
+"src": 1800,
+"components": 3,
+"status": "applied",
+"ops": [
+"primitive_box"
+],
+"tris": 36,
+"failed_component_tris": null,
+"row": "11053"
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741577]",
+"src": 1800,
+"components": 3,
+"status": "applied",
+"ops": [
+"primitive_box"
+],
+"tris": 36,
+"failed_component_tris": null,
+"row": "11054"
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741579]",
+"src": 1800,
+"components": 3,
+"status": "applied",
+"ops": [
+"primitive_box"
+],
+"tris": 36,
+"failed_component_tris": null,
+"row": "11055"
+},
+{
+"part": "facade_additional_exterior_railings_railing_contour_rebuild",
+"name": "Railing ADSK_МГН_h 1200 [4668108]",
+"src": 5307,
+"components": 3,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 2877,
+"row": "8022"
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741581]",
+"src": 1800,
+"components": 3,
+"status": "applied",
+"ops": [
+"primitive_box"
+],
+"tris": 36,
+"failed_component_tris": null,
+"row": "11056"
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741583]",
+"src": 1800,
+"components": 3,
+"status": "applied",
+"ops": [
+"primitive_box"
+],
+"tris": 36,
+"failed_component_tris": null,
+"row": "11057"
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741587]",
+"src": 1800,
+"components": 3,
+"status": "applied",
+"ops": [
+"primitive_box"
+],
+"tris": 36,
+"failed_component_tris": null,
+"row": "11059"
+},
+{
+"part": "v1_baseline_roof_access_rod_ladder_contour_rebuild",
+"name": "Лестничный марш ТA Лестничный марш ТA [5923699]",
+"src": 8760,
+"components": 8,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 2168,
+"row": "10439"
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741591]",
+"src": 1800,
+"components": 3,
+"status": "applied",
+"ops": [
+"primitive_box"
+],
+"tris": 36,
+"failed_component_tris": null,
+"row": "11061"
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741589]",
+"src": 1800,
+"components": 3,
+"status": "applied",
+"ops": [
+"primitive_box"
+],
+"tris": 36,
+"failed_component_tris": null,
+"row": "11060"
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741593]",
+"src": 1800,
+"components": 3,
+"status": "applied",
+"ops": [
+"primitive_box"
+],
+"tris": 36,
+"failed_component_tris": null,
+"row": "11062"
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741597]",
+"src": 1800,
+"components": 3,
+"status": "applied",
+"ops": [
+"primitive_box"
+],
+"tris": 36,
+"failed_component_tris": null,
+"row": "11064"
+},
+{
+"part": "v1_baseline_roof_access_railing_contour_rebuild",
+"name": "Ограждение ТА 1000 Ограждение ТА 1000 [6741595]",
+"src": 1800,
+"components": 3,
+"status": "applied",
+"ops": [
+"primitive_box"
+],
+"tris": 36,
+"failed_component_tris": null,
+"row": "11063"
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"name": "Railing АР_Цокольный отлив_360 [5819454]",
+"src": 10099,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 10099,
+"row": "9532"
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"name": "Railing АР_Цокольный отлив_360 [5819573]",
+"src": 11522,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 11522,
+"row": "9535"
+},
+{
+"part": "facade_plinth_flashings_band_contour_rebuild",
+"name": "Railing АР_Цокольный отлив_360 [5802837]",
+"src": 14964,
+"components": 1,
+"status": "rejected_all",
+"ops": null,
+"tris": null,
+"failed_component_tris": 14964,
+"row": "9528"
+}
+]
+}
