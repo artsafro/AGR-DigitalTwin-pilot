@@ -96,6 +96,37 @@ def compare(dump: dict) -> list[dict]:
     return rows
 
 
+def _loops(arrays) -> tuple:
+    """Validated (vertices, loop_start, loop_total, loop_vert): no coercion, no ignored or shared loop.
+
+    vertices: float (n, 3), n > 0; the loop arrays: 1-D, integer dtype (not bool, not float even if integral);
+    loop_total >= 3; loop_start[0] == 0 and each face starts where the previous ends, so the faces cover loop_vert
+    exactly (no overlap, gap or unused suffix); loop_vert in 0..n-1. Anything else -> DumpError naming the array.
+    """
+    v = np.asarray(arrays["vertices"])
+    if v.ndim != 2 or v.shape[1] != 3 or not len(v) or not np.issubdtype(v.dtype, np.number) or v.dtype == bool:
+        raise DumpError(f"arrays: vertices must be a non-empty numeric (n, 3) array, got {v.dtype} {v.shape}")
+    out = [v.astype(float)]
+    for key in ("loop_start", "loop_total", "loop_vert"):
+        a = np.asarray(arrays[key])
+        if a.ndim != 1 or not np.issubdtype(a.dtype, np.integer):
+            raise DumpError(f"arrays: {key} must be a 1-D integer array, got {a.dtype} {a.shape}")
+        out.append(a.astype(np.int64))
+    v, st, tot, lv = out
+    if not len(tot) or len(st) != len(tot):
+        raise DumpError(f"arrays: loop_start ({len(st)}) / loop_total ({len(tot)}): no faces or lengths differ")
+    if (tot < 3).any():
+        raise DumpError(f"arrays: loop_total has {int((tot < 3).sum())} faces with fewer than 3 corners")
+    ends = np.cumsum(tot)
+    if st[0] != 0 or (st[1:] != ends[:-1]).any():
+        raise DumpError("arrays: loop_start is not contiguous from 0 (overlapping or skipped loops)")
+    if ends[-1] != len(lv):
+        raise DumpError(f"arrays: loop_vert has {len(lv)} entries, the faces use {int(ends[-1])} (unused suffix?)")
+    if lv.min() < 0 or lv.max() >= len(v):
+        raise DumpError(f"arrays: loop_vert outside 0..{len(v) - 1}")
+    return v, st, tot, lv
+
+
 def compare_keep(keep: dict, arrays) -> list[dict]:
     """One row: Max xView keep (ids only) vs part_report on the Blender arrays of the same FBX."""
     if not isinstance(keep, dict):
@@ -111,11 +142,8 @@ def compare_keep(keep: dict, arrays) -> list[dict]:
     for key in ("vertices", "loop_start", "loop_total", "loop_vert"):
         if key not in arrays:
             raise DumpError(f"arrays: {key} missing")
-    v = np.asarray(arrays["vertices"], dtype=float)
-    st, tot, lv = (np.asarray(arrays[k]) for k in ("loop_start", "loop_total", "loop_vert"))
+    v, st, tot, lv = _loops(arrays)
     nv, nf = len(v), len(tot)
-    if not nv or not nf or len(st) != nf:
-        raise DumpError("arrays: no vertices or no faces, or loop_start / loop_total lengths differ")
     if keep.get("faces") != nf or keep.get("verts") != nv:
         raise DumpError(f"keep has {keep.get('faces')} faces / {keep.get('verts')} verts, arrays {nf} / {nv}: "
                         "not the same mesh")
@@ -124,7 +152,7 @@ def compare_keep(keep: dict, arrays) -> list[dict]:
     mv = {_int(i[0] if isinstance(i, list) else i, "verticesCheck item", 1, nv)
           for i in checks["verticesCheck"]["items"]}
     try:
-        faces = tuple(tuple(int(x) for x in lv[s:s + t]) for s, t in zip(st, tot))
+        faces = tuple(tuple(int(x) for x in lv[s:s + t]) for s, t in zip(st.tolist(), tot.tolist()))
         mesh = PolyMesh(v, faces)
     except (ValueError, TypeError) as e:
         raise DumpError(f"arrays: {e}") from e

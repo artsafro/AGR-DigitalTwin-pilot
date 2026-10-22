@@ -415,3 +415,127 @@ def test_parity_keep_fail_closed_exit_2_writes_nothing(tmp_path, case):
     if case == "no_npz":
         args = args[:2]
     assert _parity().main(args + ["--out", str(out)]) == 2 and not out.exists()
+
+
+# ---- review round 1 (#554): incomplete previous state, malformed NPZ indices --------------------------------------
+
+_CORNER_V = np.array([(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 0), (-1, 0, 0), (-1, 1, 0.0)])
+_CORNER_F = [(0, 1, 2), (3, 5, 4)]                       # SYNTHETIC: unwelded corner touch, xView faces 1, 2
+
+
+def _corner_prev():
+    prev = _rt(xview_state(_CORNER_V, _CORNER_F, ["a", "b"]))
+    assert prev["xview_faces"] == [1, 2]
+    return prev
+
+
+def test_incremental_intact_cache_and_changed_part_controls():
+    prev = _corner_prev()
+    full = _rt(xview_state(_CORNER_V, _CORNER_F, ["a", "b"]))
+    assert _rt(xview_state_incremental(_CORNER_V, _CORNER_F, ["a", "b"], prev, [])) == full
+    assert _rt(xview_state_incremental(_CORNER_V, _CORNER_F, ["a", "b"], prev, ["b"])) == full
+
+
+@pytest.mark.parametrize("bad", [
+    "pairs_missing", "pairs_empty", "pairs_empty_summaries_too", "pairs_dropped_row", "pairs_duplicated",
+    "pairs_not_list", "pair_swapped", "pair_bool_id", "pair_nan_sep", "pair_short_row", "faces_summary",
+    "xview_summary", "digest_missing", "parts_missing", "part_faces_bool", "part_hash_missing", "runs_counts",
+    "links_missing", "vertex_pairs_missing"])
+def test_incremental_incomplete_previous_is_an_error(bad):
+    prev = _corner_prev()
+    if bad == "pairs_missing":
+        del prev["face_pairs"]
+    elif bad == "pairs_empty":
+        prev["face_pairs"] = []
+    elif bad == "pairs_empty_summaries_too":                  # a consistent-looking truncation: only the digest sees it
+        prev["face_pairs"], prev["faces"], prev["xview_faces"] = [], [], []
+    elif bad == "pairs_dropped_row":
+        prev["face_pairs"] = prev["face_pairs"][1:]
+    elif bad == "pairs_duplicated":
+        prev["face_pairs"] = prev["face_pairs"] * 2
+    elif bad == "pairs_not_list":
+        prev["face_pairs"] = {"1": 2}
+    elif bad == "pair_swapped":
+        prev["face_pairs"][0][:2] = prev["face_pairs"][0][1::-1]
+    elif bad == "pair_bool_id":
+        prev["face_pairs"][0][0] = True
+    elif bad == "pair_nan_sep":
+        prev["face_pairs"][0][3] = float("nan")
+    elif bad == "pair_short_row":
+        prev["face_pairs"][0] = prev["face_pairs"][0][:3]
+    elif bad == "faces_summary":
+        prev["faces"] = []
+    elif bad == "xview_summary":
+        prev["xview_faces"] = [1]
+    elif bad == "digest_missing":
+        del prev["face_pairs_sha256"]
+    elif bad == "parts_missing":
+        del prev["parts"]
+    elif bad == "part_faces_bool":
+        prev["parts"]["a"]["faces"] = True
+    elif bad == "part_hash_missing":
+        del prev["parts"]["a"]["hash"]
+    elif bad == "runs_counts":                                # same total, wrong per-part counts
+        prev["parts"]["a"]["faces"], prev["parts"]["b"]["faces"] = 2, 0
+    elif bad == "links_missing":
+        del prev["links"]
+    else:
+        del prev["vertex_pairs"]
+    with pytest.raises(ValueError, match="previous"):
+        xview_state_incremental(_CORNER_V, _CORNER_F, ["a", "b"], prev, [])
+
+
+def _arrays(**kw):
+    a = {"vertices": _CORNER_V, "loop_start": np.array([0, 3]), "loop_total": np.array([3, 3]),
+         "loop_vert": np.array([0, 1, 2, 3, 5, 4])}
+    a.update(kw)
+    return a
+
+
+_KEEP = {"node": "n", "faces": 2, "verts": 6, "tolFaces": 0.005, "tolVerts": 0.002,
+         "verticesCheck": {"count": 2, "items": [[1, 1], [4, 1]]}, "facesCheck": {"count": 2, "items": [[1, 1], [2, 1]]}}
+
+_BAD_ARRAYS = {
+    "loop_vert_fractional": {"loop_vert": np.array([0, 1, 2, 3, 5, 4]) + 0.25},
+    "loop_vert_float_integral": {"loop_vert": np.array([0, 1, 2, 3, 5, 4], dtype=float)},
+    "loop_vert_bool": {"loop_vert": np.array([0, 1, 1, 0, 1, 1], dtype=bool)},
+    "loop_vert_unused_suffix": {"loop_vert": np.array([0, 1, 2, 3, 5, 4, 999, 998, 997])},
+    "loop_vert_out_of_range": {"loop_vert": np.array([0, 1, 2, 3, 5, 6])},
+    "loop_vert_negative": {"loop_vert": np.array([0, 1, 2, 3, 5, -1])},
+    "loop_vert_2d": {"loop_vert": np.array([[0, 1, 2], [3, 5, 4]])},
+    "loop_start_overlap": {"loop_start": np.array([0, 2])},
+    "loop_start_gap": {"loop_start": np.array([0, 4]), "loop_vert": np.array([0, 1, 2, 7, 3, 5, 4])},
+    "loop_start_not_zero": {"loop_start": np.array([1, 4]), "loop_vert": np.array([9, 0, 1, 2, 3, 5, 4])},
+    "loop_start_float": {"loop_start": np.array([0.0, 3.0])},
+    "loop_total_fractional": {"loop_total": np.array([3.5, 3])},
+    "loop_total_below_3": {"loop_start": np.array([0, 2]), "loop_total": np.array([2, 4])},
+    "vertices_shape": {"vertices": _CORNER_V[:, :2]},
+}
+
+
+def test_parity_arrays_valid_control():
+    rows = _parity().compare_keep(dict(_KEEP), _arrays())
+    assert rows[0]["equal"]
+
+
+@pytest.mark.parametrize("case", sorted(_BAD_ARRAYS))
+def test_parity_malformed_arrays_are_a_dump_error_naming_the_array(case):
+    P = _parity()
+    with pytest.raises(P.DumpError, match="loop_|vertices"):
+        P.compare_keep(dict(_KEEP), _arrays(**_BAD_ARRAYS[case]))
+
+
+@pytest.mark.parametrize("case", ["loop_vert_fractional", "loop_vert_unused_suffix", "valid"])
+def test_parity_cli_fresh_process_malformed_npz_exit_2_writes_nothing(tmp_path, case):
+    import subprocess
+    import sys
+    np.savez(tmp_path / "a.npz", **_arrays(**_BAD_ARRAYS.get(case, {})))
+    (tmp_path / "k.keep").write_text(json.dumps(_KEEP), encoding="cp1251")
+    out = tmp_path / "p.json"
+    tool = Path(__file__).resolve().parents[2] / "tools" / "qa" / "xview_parity.py"
+    r = subprocess.run([sys.executable, str(tool), "--keep", str(tmp_path / "k.keep"), "--npz", str(tmp_path / "a.npz"),
+                        "--out", str(out)], capture_output=True, text=True, timeout=120)
+    if case == "valid":
+        assert r.returncode == 0 and json.loads(out.read_text())[0]["equal"], r.stderr
+    else:
+        assert r.returncode == 2 and not out.exists() and "loop_" in r.stderr, (r.returncode, r.stderr)

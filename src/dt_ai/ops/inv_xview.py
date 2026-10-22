@@ -31,6 +31,7 @@ v014 parity; `gating=True` makes it a gate.
 numpy + shapely (projected overlap area, as `twinqa.clearance`); not pure numpy; no Blender.
 Pattern: none | new-case: xView overlapping vertices / faces kernel invariant with measured Max parity (#370).
 """
+import math
 from dataclasses import dataclass
 from typing import Iterable, Mapping
 
@@ -566,7 +567,7 @@ def mesh_report(vertices, faces, profile: str = "NPM", tol: XviewTolerance | Non
 # ---- per-part state and incremental re-check (#535) ----------------------------------------------------------------
 
 STATE_NAME = "xview_face_state"
-STATE_VERSION = 1
+STATE_VERSION = 2                                   # v2: face_pairs_sha256 + validated inventory (#554 review)
 
 
 def _state_mesh(vertices, faces) -> PolyMesh:
@@ -643,6 +644,72 @@ def _digests(mesh: PolyMesh, labels: list):
     return parts, links
 
 
+def _pairs_digest(pairs) -> str:
+    """SHA-256 of the canonical JSON of `face_pairs`: a truncated, padded or edited pair list no longer matches."""
+    import hashlib
+    import json
+    rows = [[int(i), int(j), str(k), None if sp is None else float(sp)] for i, j, k, sp in pairs]
+    return hashlib.sha256(json.dumps(rows, separators=(",", ":")).encode("ascii")).hexdigest()
+
+
+def _is_id(x) -> bool:
+    return isinstance(x, int) and not isinstance(x, bool)
+
+
+def _is_real(x) -> bool:
+    return isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)
+
+
+def _check_previous(previous: Mapping) -> list:
+    """Validate the reusable inventory of a previous state; return its 0-based-ready face labels (old_labels).
+
+    Every key the incremental run reads or reproduces must be present with its shape; the pair list must be sorted,
+    unique, in range, match its digest and the `faces` / `xview_faces` summaries. Any gap -> ValueError("previous
+    report: ..."), never a silently smaller result.
+    """
+    def bad(msg):
+        raise ValueError(f"previous report: {msg}")
+    for key, typ in (("parts", Mapping), ("runs", list), ("links", list), ("vertex_pairs", list), ("face_pairs", list),
+                     ("faces", list), ("xview_faces", list), ("vertices", list), ("face_pairs_sha256", str)):
+        if not isinstance(previous.get(key), typ):
+            bad(f"{key} missing or not a {typ.__name__} (incomplete report: run a full check)")
+    parts = previous["parts"]
+    for name, p in parts.items():
+        if not (isinstance(name, str) and name and isinstance(p, Mapping) and _is_id(p.get("faces"))
+                and p["faces"] > 0 and isinstance(p.get("hash"), str) and len(p["hash"]) == 64):
+            bad(f"part {name!r}: {p!r} is not {{faces: int > 0, hash: sha256}}")
+    old_labels: list = []
+    for row in previous["runs"]:
+        if not (isinstance(row, list) and len(row) == 2 and row[0] in parts and _is_id(row[1]) and row[1] > 0):
+            bad(f"bad run {row!r}")
+        old_labels.extend([row[0]] * row[1])
+    counts: dict = {}
+    for x in old_labels:
+        counts[x] = counts.get(x, 0) + 1
+    if counts != {k: p["faces"] for k, p in parts.items()}:
+        bad("runs and part face counts disagree")
+    for row in previous["links"]:
+        if not (isinstance(row, list) and len(row) == 3 and row[0] in parts and row[1] in parts
+                and isinstance(row[2], str)):
+            bad(f"bad link {row!r}")
+    n = len(old_labels)
+    pairs = previous["face_pairs"]
+    for row in pairs:
+        if not (isinstance(row, list) and len(row) == 4 and _is_id(row[0]) and _is_id(row[1])
+                and 1 <= row[0] < row[1] <= n and row[2] in ("contact", "area", "area+contact")
+                and (row[3] is None or _is_real(row[3]))):
+            bad(f"bad face pair {row!r}")
+    keys = [(r[0], r[1]) for r in pairs]
+    if keys != sorted(set(keys)):
+        bad("face_pairs not sorted or duplicated")
+    if _pairs_digest(pairs) != previous["face_pairs_sha256"]:
+        bad("face_pairs do not match face_pairs_sha256 (truncated or edited): run a full check")
+    if previous["faces"] != sorted({x for r in pairs for x in r[:2]}) or \
+            previous["xview_faces"] != sorted({x for r in pairs if "contact" in r[2] for x in r[:2]}):
+        bad("faces / xview_faces summaries disagree with face_pairs")
+    return old_labels
+
+
 def _state(mesh, labels, tol, found: dict) -> dict:
     a, b, d = vertex_pairs(mesh.vertices, tol.vertex_m)
     parts, links = _digests(mesh, labels)
@@ -652,7 +719,7 @@ def _state(mesh, labels, tol, found: dict) -> dict:
             "thresholds": {"vertex_m": tol.vertex_m, "face_m": tol.face_m, "parallel_cos_min": tol.parallel_cos_min},
             "parts": parts, "runs": _runs(labels), "links": links,
             "vertex_pairs": [[int(x) + 1, int(y) + 1, float(z)] for x, y, z in zip(a, b, d)],
-            "face_pairs": pairs,
+            "face_pairs": pairs, "face_pairs_sha256": _pairs_digest(pairs),
             "vertices": sorted({int(x) + 1 for x in np.concatenate([a, b])}),
             "faces": sorted({x for p in pairs for x in p[:2]}),
             "xview_faces": sorted({x for p in pairs if "contact" in p[2] for x in p[:2]})}
@@ -681,7 +748,9 @@ def xview_state_incremental(vertices, faces, face_part, previous: Mapping, chang
     Fail-closed (ValueError naming the cause): `previous` is not a state of this version or has other thresholds; a
     changed name is in neither mesh; a part added, removed or edited (hash) without being in `changed`; vertex sharing
     between two unchanged parts differs; the unchanged faces are in another relative order (pair orientation, hence
-    the area separation, depends on it); a previous pair is out of range. Then the result equals `xview_state`.
+    the area separation, depends on it); `previous` is incomplete or inconsistent (a key missing, a pair row malformed,
+    out of range, unsorted or duplicated, `face_pairs` not matching `face_pairs_sha256` or the `faces` /
+    `xview_faces` summaries, runs not matching part face counts). Then the result equals `xview_state`.
     """
     tol = (tol or tolerance_for(profile)).validate()
     mesh = _state_mesh(vertices, faces)
@@ -693,10 +762,8 @@ def xview_state_incremental(vertices, faces, face_part, previous: Mapping, chang
     if previous.get("thresholds") != want:
         raise ValueError(f"previous thresholds {previous.get('thresholds')} differ from {want}: run a full check")
     changed = set(changed) if not isinstance(changed, str) else {changed}
-    old_parts, old_runs = previous["parts"], previous["runs"]
-    old_labels = [x for x, n in old_runs for _ in range(int(n))]
-    if sum(int(p["faces"]) for p in old_parts.values()) != len(old_labels):
-        raise ValueError("previous report: runs and part face counts disagree")
+    old_labels = _check_previous(previous)
+    old_parts = previous["parts"]
     parts, links = _digests(mesh, labels)
     unknown = sorted(changed - set(parts) - set(old_parts))
     if unknown:
@@ -710,7 +777,7 @@ def xview_state_incremental(vertices, faces, face_part, previous: Mapping, chang
     if edited:
         raise ValueError(f"parts changed but not listed as changed: {edited}")
     lk = {(a, b, h) for a, b, h in links if a in keep and b in keep}
-    old_lk = {(a, b, h) for a, b, h in previous.get("links", []) if a in keep and b in keep}
+    old_lk = {(a, b, h) for a, b, h in previous["links"] if a in keep and b in keep}
     if lk != old_lk:
         diff = sorted({(a, b) for a, b, _ in lk ^ old_lk})
         raise ValueError(f"vertex sharing between unchanged parts differs: {diff[:5]}")
@@ -728,11 +795,7 @@ def xview_state_incremental(vertices, faces, face_part, previous: Mapping, chang
         old_loc.append((x, seen.get(x, 0)))
         seen[x] = seen.get(x, 0) + 1
     found: dict = {}
-    for row in previous.get("face_pairs", []):
-        i, j, kind, sp = row
-        if not all(isinstance(z, int) and not isinstance(z, bool) and 1 <= z <= len(old_loc) for z in (i, j)) \
-                or kind not in ("contact", "area", "area+contact"):
-            raise ValueError(f"previous report: bad face pair {row!r}")
+    for i, j, kind, sp in previous["face_pairs"]:                    # validated by _check_previous
         a, b = old_loc[i - 1], old_loc[j - 1]
         if a[0] in keep and b[0] in keep:
             ni, nj = sorted((new_id[a], new_id[b]))
