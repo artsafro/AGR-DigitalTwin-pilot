@@ -158,14 +158,20 @@ def contact_pairs(v, tris, owner, tol: XviewTolerance):
     used[vt_v] = True
     # polygon membership keys owner * nv + vertex (sorted, unique)
     pk = np.unique(np.concatenate([owner * nv + tris[:, k] for k in range(3)]))
-    lo, hi = p[lt].min(1) - pad, p[lt].max(1) + pad
+    # one query box per polygon (union of its live triangles), expanded to the triangles after the own-vertex test
+    ol = lt[np.argsort(owner[lt], kind="stable")]
+    upoly, ostart, ocnt = np.unique(owner[ol], return_index=True, return_counts=True)
+    lo = np.minimum.reduceat(p[ol].min(1), ostart) - pad
+    hi = np.maximum.reduceat(p[ol].max(1), ostart) + pad
     hits_s, hits_p = [], []
-    for si, pid in _vertex_candidates(v, lo, hi, used):
-        s = lt[si]
-        key = owner[s] * nv + pid
+    for pi, pid in _vertex_candidates(v, lo, hi, used):
+        key = upoly[pi] * nv + pid
         pos = np.minimum(np.searchsorted(pk, key), len(pk) - 1)
         ok = pk[pos] != key
-        s, pid = s[ok], pid[ok]
+        pi, pid = pi[ok], pid[ok]
+        c = ocnt[pi]
+        s = ol[np.repeat(ostart[pi] - np.cumsum(c) + c, c) + np.arange(c.sum())]
+        pid = np.repeat(pid, c)
         a = v[tris[s, 0]]
         w = v[pid] - a
         dist = _dot(w, nrm[s])
