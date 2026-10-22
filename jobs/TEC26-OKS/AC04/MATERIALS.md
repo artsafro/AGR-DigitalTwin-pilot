@@ -73,20 +73,25 @@ not included in finish-area sums or textured. UCX acceptance is not certified by
 
 **All rows are proposals awaiting approval**, not a claim that source diagnostic colours prove RAL.
 Areas are snapshot triangle areas in m², not a facade bill of quantities.
-`only-N.png` isolates the actual face set for each ID. Orthographic software z-buffer renders
-use the census world vertices without changing geometry; they are not a Max beauty render.
+`only-N.png` isolates the actual face set for each ID. Blender **5.1.2 Workbench** native renders
+use the census world vertices without changing geometry; each image pairs depth-correct ID colours
+with a plain shaded view from the same orthographic camera. UCX are excluded. The diagnostic perimeter
+line is at **±0.000 m**, not a geometry cut. No .blend or delivery model was saved.
 
 | ID / source material | Polygon faces / triangles | Area m² | Geometric reading | Proposed finish | Map type | Evidence / limits |
 |---|---:|---:|---|---|---|---|
-| 1 / `1` | 439 / 780 | 179.668028 | Outer structural strips/enclosure, roof, canopy and deep base | RAL5015 above-grade shell/roof proposal; base **?** within mixed ID | solid | `170B10`, `only-1.png`; Q2: no evidence justifies blindly painting every below-grade/base face blue |
+| 1 / `1` | 439 / 780 | 179.668028 | Outer structural strips/enclosure, roof, canopy and deep base | RAL5015 shell/roof proposal; full perimeter drop uses adjacent-wall blue | solid | `170B10`, `only-1.png`; operator relay of Artem decision, 2026-10-22: retain drop with adjacent-wall finish |
 | 2 / `Material #36` | 19 / 38 | 82.702408 | Broad recessed wall-panel infill | Sandwich RAL5015 | solid | `170B10`, `only-2.png`; Q4: no invented cassette grid |
 | 3 / `Material #37` | 2 / 4 | 0.238398 | Two small panes in the openings | `M_Glass_01`, NPM opacity 0.5 | glass | `only-3.png`, KPP glass policy in orchestrator comment; not a RAL claim |
 | 4 / `Material #38` | 166 / 332 | 2.934883 | Door and small opening frames | Door RAL7004; propose same grey for frames | metal | `170B10`, `only-4.png`; Q3: frame colour not explicitly specified by legend |
 | 5 / `Material #39` | 1926 / 3852 | 24.248557 | Roof railings, ladder/cage assembly | RAL1021 | metal | `170B10`, `only-5.png`; railing geometry is already present, no alpha/perforation map invented |
 
-ID 1 is a **mixed unresolved assignment**, despite the useful above-grade blue proposal. The report
-is not buildable as an unconditional one-finish-per-ID recipe until Q2 is answered. No source ID is
-renumbered, dropped or assigned a fallback. No independent roof membrane brand, frame RAL9016,
+**Perimeter drop resolved by Artem (operator relay, 2026-10-22):** retain the part below ±0.000
+in both VPM and NPM; use the same finish as the adjacent facade, not a separate new ID. For AC04
+this is the ID1 blue RAL5015 proposal. The former Q2 about a separate plinth finish is withdrawn.
+`perimeter-drop.json` checks all four external shell wall planes: their bottom-edge intervals cover
+the full wall length at z ≤ −1.0 m (coordinate grouping tolerance 0.0001 m); minima are
+−2.003179 to −2.003180 m. **4/4 walls verified.** No cutting, extending, renumbering or fallback assignment. No independent roof membrane brand, frame RAL9016,
 perforation, cassette module or hidden interior finish is inferred from KPP.
 
 ### KPP colour identity
@@ -107,20 +112,19 @@ VPM separation/no-map constraints remain for the later build, not certified here
 
 ## Evidence and questions for Artem
 
-Drive: **`G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v003/`**.
+Drive: **`G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v005/`**.
 Open **`contact-sheet.png`** first: unnumbered finish swatches, ID labels outside swatches,
 empty slots marked separately, ID-colour views and isolated face groups. The glass swatch is a schematic
 translucency cue, not a measured/approved KPP glass tint or a rendered opacity test.
 `iso.png`, `reverse.png`, `roof.png`, `only-1.png` … `only-5.png`, drawing diagnostic and PDF
 are full-size companions. Diagnostic colours are deliberately distinct from finish swatches.
 `evidence.json` lists the exact files, byte counts and hashes; Drive `SHA256SUMS.txt` is the checksum list.
-The local generation folder is `C:/x/tec26-oks/AC04/evidence-v003/`.
-Earlier v002 painter-sorted renders were superseded by explicit v003 z-buffer views; they are not
-published as final evidence. Binary evidence is not committed and no LFS is used.
+The local native-render folder is `C:/x/tec26-oks/AC04/evidence-v005/`.
+Earlier v002–v004 software diagnostic images are superseded by native Blender v005 pairs and are
+not published as final Gate images. `blender-context.json` and the native render log record version,
+engine and context. The render and verification scripts are included for reproducibility. Binary evidence is not committed and no LFS is used.
 
 1. **Q1 — Mapping approval:** approve ID1/2 blue, ID3 glass, ID4 grey, ID5 yellow on the contact sheet?
-2. **Q2 — Mixed ID1:** approve blue on the above-grade shell/roof, keeping the deep base unresolved;
-   if a base is visible in the final placement, what finish applies there? No whole-ID repaint before this answer.
 3. **Q3 — Small frames:** approve RAL7004 for the small frames sharing ID4 with the specified grey door?
 4. **Q4 — Panel joints:** approve solid RAL5015 without fabricated joints, or provide the dimensioned panel module?
 

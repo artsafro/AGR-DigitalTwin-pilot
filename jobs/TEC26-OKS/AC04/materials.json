@@ -5,12 +5,6 @@
   "gate_1_status": "awaiting_artem",
   "delivery_passed": false,
   "scope": "Gate 1 evidence and proposed finishes only; no VPM/NPM or scene mutation",
-  "source_copy_mutation": {
-    "path": "C:/x/tec26-oks/AC04/sources-v001/22E56-АР2-1002-AC.04_R1.dwg",
-    "sha256_after_native_session": "253bdb2a9e2e2ddc64d79550b9e56f41035d3d025e1457947cb9e5ac5c4d2b75",
-    "original_sha256_unchanged": "d34638d96ea51046e25b0376f4cd589c0725aeb15f2bccc4800ab3716b1a409b",
-    "disposition": "Working copy retained; frozen v003 sources freshly copied and hash-verified against originals. Cause not established. Native text, not post-session DWG immutability, is verified."
-  },
   "governing_revision": "DWG R1 finishes; PDF only supplemental; orchestrator comment 2026-10-22",
   "sources": [
     {
@@ -82,9 +76,7 @@
       "source_slot": 1,
       "source_material": "1",
       "component": "External shell, structural strips, roof and below-grade base",
-      "finish": "Sandwich / canopy RAL5015; mixed base and roof provisional",
-      "unresolved_components": [{"component": "base and independent roof finish", "finish": "?", "question_ids": ["Q2"]}],
-      "assignment_ready": false,
+      "finish": "Sandwich / canopy / roof proposal RAL5015; required perimeter drop same adjacent-wall finish",
       "ral": "RAL5015",
       "map_type": "solid",
       "rgb_srgb": [
@@ -102,7 +94,6 @@
       "geometry_evidence": "only-1.png",
       "question_ids": [
         "Q1",
-        "Q2",
         "Q4"
       ],
       "kpp_reference": {
@@ -240,10 +231,6 @@
       "question": "Approve the proposed ID 1/2 blue, ID 3 glass, ID 4 grey, ID 5 yellow mapping on the contact sheet? Diagnostic colours identify IDs, not finish colours."
     },
     {
-      "id": "Q2",
-      "question": "ID 1 combines external strips, roof and a below-grade base. Proposal: blue RAL5015 on above-grade shell/roof; no independent base finish is proven. Approve this for Gate 1, and keep any visible base finish unresolved rather than recolour the whole ID blindly?"
-    },
-    {
       "id": "Q3",
       "question": "ID 4 combines a door and small opening frames. Proposal: RAL7004 for both, with M_Glass_01 in ID 3. The legend explicitly specifies doors but not small frames: approve frame grey?"
     },
@@ -292,5 +279,28 @@
       "disposition": "Documented only; scene geometry final, no geometry edits per orchestrator."
     }
   ],
-  "contact_sheet": "G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v003/contact-sheet.png"
+  "contact_sheet": "G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v005/contact-sheet.png",
+  "source_copy_mutation": {
+    "path": "C:/x/tec26-oks/AC04/sources-v001/22E56-АР2-1002-AC.04_R1.dwg",
+    "sha256_after_native_session": "253bdb2a9e2e2ddc64d79550b9e56f41035d3d025e1457947cb9e5ac5c4d2b75",
+    "original_sha256_unchanged": "d34638d96ea51046e25b0376f4cd589c0725aeb15f2bccc4800ab3716b1a409b",
+    "disposition": "Working copy retained; frozen v003 package independently matches Desktop originals. Cause unknown."
+  },
+  "rendering": {
+    "application": "Blender 5.1.2",
+    "renderer": "BLENDER_WORKBENCH",
+    "depth_correct": true,
+    "ucx_visible": false,
+    "datum_z_m": 0,
+    "plain_shaded_companion": true,
+    "saved_scene": false,
+    "views": 8
+  },
+  "perimeter_drop": {
+    "policy": "Keep full drop, same finish as adjacent wall; no cut at ground and no new ID. Operator relay of Artem decision 2026-10-22.",
+    "material_id": 1,
+    "ral": "RAL5015",
+    "measured_report": "perimeter-drop.json",
+    "walls_verified": 4
+  }
 }

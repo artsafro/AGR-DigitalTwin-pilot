@@ -1,10 +1,20 @@
 {
-  "storage_path": "G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v003",
+  "storage_path": "G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v005",
   "files": [
     {
+      "filename": "blender-context.json",
+      "sha256": "a8fdb6eb8f66b3ba9ba3711810e51d4c1c381913962af2bf4d1258a1b5f347ae",
+      "bytes": 253
+    },
+    {
+      "filename": "blender-v005.log",
+      "sha256": "5d6285b3de41a29be31e9093bef1d6fdb8c14b948393f99ac2e40f8ffa8775bb",
+      "bytes": 1607
+    },
+    {
       "filename": "contact-sheet.png",
-      "sha256": "0fd491102fdf0796369c3ce04779e172faa5b82bcad0814336ff7a9a68999ce4",
-      "bytes": 167673
+      "sha256": "a9d3a5e1a29f9d205edfe613754b15a57ed4f9a5ae2c8163257546616ec0d4ab",
+      "bytes": 1246864
     },
     {
       "filename": "dwg-ac04-recovered.png",
@@ -13,8 +23,8 @@
     },
     {
       "filename": "iso.png",
-      "sha256": "b70ad653fe2fe27c1fac6f51be1157558667b21202aac5046e4a142a2ea2681b",
-      "bytes": 17005
+      "sha256": "d3623f9e512905a0014689d073a4a15c1101a9f76aca930f9d65dc0887cee821",
+      "bytes": 1470333
     },
     {
       "filename": "native-run-v002.json",
@@ -28,28 +38,28 @@
     },
     {
       "filename": "only-1.png",
-      "sha256": "b8ecd766910c24be28ba5f429f8fafde8b2b7a1aa9c335d238a799bdaa63627f",
-      "bytes": 10686
+      "sha256": "f627e67adb92614b6cd938e5354f967d3b0fd6f05536530a241a29b23512212e",
+      "bytes": 1054449
     },
     {
       "filename": "only-2.png",
-      "sha256": "063430390b8f1926fe3751fe8aca6898d982c22f8582d3d62c048bb351f02749",
-      "bytes": 9609
+      "sha256": "e2ace5692f97457f080cf98849408580c4d54f0315af803a5ec75dddcee5a7bc",
+      "bytes": 830569
     },
     {
       "filename": "only-3.png",
-      "sha256": "062b639e411e094eb90f8d330bf62d4dae387e5462ac9cde7c353f70af804999",
-      "bytes": 8059
+      "sha256": "1b9593fb75ce4bab10970bab3cea5cb690324acfce16fccad43c5dbfd79a3dd2",
+      "bytes": 537073
     },
     {
       "filename": "only-4.png",
-      "sha256": "2df22892952d6dc84b665665f79f8000f2b328c03c242a21722b919bb88d150d",
-      "bytes": 8273
+      "sha256": "ac7f661dbc584fca6f604db820fe8f431c7cc27b830e5b17ce5a73e4085c702b",
+      "bytes": 552107
     },
     {
       "filename": "only-5.png",
-      "sha256": "c4fa5ac0c5da9abe67ad09c70d888ec60e02a9c15ceaba7b8f815e7a28a96c22",
-      "bytes": 13144
+      "sha256": "e767af962b92fc2b30283dc5d01bb44baa5413399f49ffd78ea80537bd4c3e2c",
+      "bytes": 701439
     },
     {
       "filename": "pdf-sheet2.png",
@@ -57,24 +67,29 @@
       "bytes": 468039
     },
     {
-      "filename": "render-drawing-diagnostic.py",
-      "sha256": "4e667f7df248a75ccec42aa4fc93e024689b94d0807622444cd7153a4a421b38",
-      "bytes": 577
-    },
-    {
-      "filename": "render-id-diagnostics.py",
-      "sha256": "dd9d7e4059f2f788afc7ef61e837a5b6aee9f464122e0cf3504e7779e6847593",
-      "bytes": 1728
+      "filename": "render-blender-diagnostics.py",
+      "sha256": "4b01c7143da8540a8d1f3e27480ca33d0576dded0d5ce43f8af66de1f056c2b3",
+      "bytes": 4106
     },
     {
       "filename": "reverse.png",
-      "sha256": "3642133bb673977e0556d42f118acfc70fff96d0a3898d8eb2b5a75db3a9aff2",
-      "bytes": 15630
+      "sha256": "afb05c4d787b3dde1d91ee211cd5da430e9782eec685e8942008cbe5659b8bd6",
+      "bytes": 1262027
     },
     {
       "filename": "roof.png",
-      "sha256": "b553f6e712692a67053f54aa0e61040885a0404946e629b49b75d2a1a9ed577b",
-      "bytes": 7869
+      "sha256": "6cc1f39329e76280c75a05167813d6fd08bbeccf34da06c06a80c54923047a96",
+      "bytes": 898201
+    },
+    {
+      "filename": "verify-evidence.py",
+      "sha256": "c66df22fa2bf0c512f4c36ee8975eafe0d1bb178cacd793fc7c307a4478801d9",
+      "bytes": 2209
+    },
+    {
+      "filename": "verify-perimeter-drop.py",
+      "sha256": "178359077ad13e0eed7b7037fa0f814a10a2aa3c74cb39adf782f065f756b57b",
+      "bytes": 1596
     }
   ]
 }
