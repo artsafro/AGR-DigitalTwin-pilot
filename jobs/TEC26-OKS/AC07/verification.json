@@ -1,0 +1,32 @@
+{
+  "real_record_controls": 12,
+  "synthetic_mutations_rejected": 64,
+  "synthetic_mutations_total": 64,
+  "mutation_classes": {
+    "missing-id": 12,
+    "invalid-area": 36,
+    "unmapped-id": 12,
+    "unknown-without-question": 3,
+    "false-approval": 1
+  },
+  "evidence_files_hash_verified": 9,
+  "original_copies_hash_verified": 2,
+  "census_hash_verified": true,
+  "geometry_and_kpp_hashes_verified": true,
+  "gate1": "awaiting_artem",
+  "scope": "record consistency only; not source completeness or model approval",
+  "evidence_directory": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-evidence/tec26-oks/AC07/verification-v001",
+  "focused_pytest": {
+    "passed": 12,
+    "failed": 0,
+    "seconds": 0.07,
+    "command": "python C:/Users/artsafro/hermes_kanban/scripts/suite_slot.py --card t_2a6583a6 -- env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q -p no:cacheprovider --basetemp=C:/x/t_2a6583a6 tests/jobs/test_tec26_ac07_materials.py"
+  },
+  "red": {
+    "missing_record_failed": 12,
+    "tests_first_commit": "39d08a6",
+    "aggregate_count_failed": 1,
+    "operator_contract_failed": 1
+  },
+  "full_suite": "not run: Gate-1 stop, no review request yet; required before first review request"
+}

@@ -28,8 +28,9 @@ def test_ac07_gate1_preserves_ids_and_unresolved_evidence(mid, polygons, triangl
     assert row['triangles'] == triangles
     assert math.isfinite(row['area_m2']) and row['area_m2'] > 0
     assert row['status'] in {'proposed', 'unknown'}
-    assert row['geometry_evidence'] and row['question']
+    assert row['geometry_evidence']
     if row['finish'] == '?':
+        assert row['question'] and row['question'] in data['questions']
         assert row['status'] == 'unknown'
         assert row['ral'] is None
     else:
@@ -39,9 +40,17 @@ def test_ac07_gate1_preserves_ids_and_unresolved_evidence(mid, polygons, triangl
         assert row['kpp_colour']['method'] == 'exact KPP map pixels; no RAL approximation'
     report = (JOB / 'MATERIALS.md').read_text(encoding='utf-8')
     assert f'| {mid} |' in report
-    assert row['question'] in report
+    if row['question']:
+        assert row['question'] in report
+    assert data['materials'][11]['finish'] == 'M_Glass_01 (KPP convention)'
+    assert data['materials'][8]['ral'] == '9016'
+    assert data['materials'][9]['ral'] == '7004'
+    assert data['materials'][2]['map_type'] == 'solid'
+    assert data['scene']['layer_correspondence'] == 'confirmed by operator: actual census layer names govern'
     assert data['scene']['actual_layer'] == '007'
     assert data['scene']['collision_objects'] == 21
     assert len(data['scene']['objects']) == 23
     assert data['scene']['unmapped_ids'] == []
+    assert sum(r['polygons'] for r in data['materials']) == data['scene']['render_polygons']
+    assert sum(r['triangles'] for r in data['materials']) == data['scene']['render_triangles']
     assert data['scene']['id_gaps'] == []
