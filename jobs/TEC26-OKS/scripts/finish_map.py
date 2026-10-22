@@ -95,6 +95,8 @@ def validate_spec(spec, kpp_spec=None):
     if clash:
         raise ValueError(f"IDs both mapped and empty: {sorted(clash)}")
     glass = spec.get("glass_ids")
+    if spec.get("drop_finish") is not None and spec["drop_finish"] not in fin:
+        raise ValueError(f"drop_finish {spec['drop_finish']} is not declared")
     if glass is not None:
         if not (isinstance(glass, list) and glass and all(isinstance(i, int) and not isinstance(i, bool) for i in glass)):
             raise ValueError(f"glass_ids must be a non-empty list of ints, got {glass}")
@@ -131,8 +133,10 @@ def validate_spec(spec, kpp_spec=None):
     for name, t in fin.items():
         if t.get("pattern") == "user_vjoints" and name not in (spec.get("kpp_palette") or {}):
             raise ValueError(f"{name}: a user-texture finish needs a kpp_palette twin (colour + density contract)")
-        if t.get("pattern") == "user_vjoints" and not any(f.get("finish") == name
-                                                          for f in (spec.get("facades") or {}).values()):
+        if t.get("plan_uv") is not None:
+            validate_plan_uv(name, spec)
+        elif t.get("pattern") == "user_vjoints" and not any(f.get("finish") == name
+                                                            for f in (spec.get("facades") or {}).values()):
             raise ValueError(f"{name}: a user_vjoints finish needs a facade rib contract (spec facades: ribs per "
                              f"field from the building's colour-solution sheet); the joint period is not free")
     return True
@@ -171,6 +175,30 @@ def validate_facades(spec):
             raise ValueError(f"facade {name}: finish {fname} is shared by facades with different pitches")
         pitch[fname] = p
     return True
+
+
+def validate_plan_uv(name, spec):
+    """A roof finish (AC07 slide 44: ribs down the slope at the wall step) with plan UVs u = world[u_axis] - origin,
+    v = world[v_axis]: it must be a full user_vjoints finish and borrow the rib contract of a named facade
+    (`ribs_from`): the same P[0] as that facade's finish, so the roof ribs sit on the wall rib positions."""
+    t = spec["finishes"][name]
+    pu = t["plan_uv"]
+    if not isinstance(pu, dict) or {pu.get("u_axis"), pu.get("v_axis")} != {0, 1}:
+        raise ValueError(f"{name}: plan_uv needs u_axis / v_axis = 0 and 1 (plan x, y), got {pu}")
+    if t.get("kind") != "full" or t.get("pattern") != "user_vjoints":
+        raise ValueError(f"{name}: plan_uv is for a full user_vjoints finish")
+    fc = (spec.get("facades") or {}).get(pu.get("ribs_from"))
+    if fc is None:
+        raise ValueError(f"{name}: plan_uv ribs_from {pu.get('ribs_from')!r} is not a spec facade")
+    P, Pf = t.get("P") or [None], spec["finishes"][fc["finish"]].get("P") or [None]
+    if not (isinstance(P[0], (int, float)) and isinstance(Pf[0], (int, float)) and abs(P[0] - Pf[0]) <= 1e-9):
+        raise ValueError(f"{name}: plan_uv ribs_from {pu['ribs_from']}: P {P} != facade finish P {Pf}")
+    return True
+
+
+def plan_uv(vertices, face, pu, origin):
+    """Metre UVs of a (roof) face in plan: u = world[u_axis] - origin (ribs at u = n * P), v = world[v_axis]."""
+    return [(vertices[k][pu["u_axis"]] - origin, vertices[k][pu["v_axis"]]) for k in face]
 
 
 def facade_key(vertices, face, tol=1e-3):
@@ -246,8 +274,11 @@ def check_user_texture(name, spec):
     t = spec["finishes"][name]
     if t.get("pattern") != "user_vjoints":
         raise ValueError(f"{name}: a full finish on a plain KPP twin must be pattern user_vjoints, got {t.get('pattern')}")
-    if t.get("h_joints") is not False or t.get("shift") != [True, False]:
-        raise ValueError(f"{name}: vertical joints only: h_joints must be false and shift [true, false]")
+    plan = t.get("plan_uv")
+    shifts = ([True, False], [True, True]) if plan is not None and not t.get("lower_band") else ([True, False],)
+    if t.get("h_joints") is not False or t.get("shift") not in shifts:
+        raise ValueError(f"{name}: vertical joints only: h_joints must be false and shift [true, false] "
+                         f"([true, true] only for a plan_uv finish without lower_band: its rows carry noise only)")
     P = t.get("P")
     if not (isinstance(P, list) and len(P) == 2 and all(isinstance(x, (int, float)) and math.isfinite(x) and x > 0
                                                           for x in P)):
@@ -352,14 +383,17 @@ def facade_uv(vertices, face, lo, hi, tol=1e-3):
     return [((q[1] - lo[1]) if n[0] > 0 else (hi[1] - q[1]), q[2]) for q in p]
 
 
-def perimeter_drop(vertices, faces, finishes, drop_finish, tol=0.001):
-    """Per plan side of the body bbox: covered length of drop faces reaching <= DROP_MIN_M (box bodies only)."""
+def perimeter_drop(vertices, faces, finishes, drop_finish, tol=0.001, plan=None):
+    """Per plan side of the body bbox (or of `plan` = (lo, hi), e.g. the wall field when eaves overhang, AC07):
+    covered length of drop faces reaching <= DROP_MIN_M (box bodies only)."""
     _finite(vertices)
     body = [k for f in faces for k in f if vertices[k][2] > 0.0]
     if not body:
         raise ValueError("no body above ±0.000")
     lo = [min(vertices[k][a] for k in body) for a in (0, 1)]
     hi = [max(vertices[k][a] for k in body) for a in (0, 1)]
+    if plan is not None:
+        lo, hi = list(plan[0]), list(plan[1])
     sides = {"x-": (0, lo[0], 1), "x+": (0, hi[0], 1), "y-": (1, lo[1], 0), "y+": (1, hi[1], 0)}
     report = {}
     for side, (axis, coord, along) in sides.items():
@@ -399,8 +433,11 @@ def facade_axis(vertices, face, lo, hi):
     """(world axis along the facade, +1 if facade u grows with that world coordinate else -1)."""
     uv = facade_uv(vertices, face, lo, hi)
     p = [vertices[k] for k in face]
-    for axis in (0, 1):
-        span = max(q[axis] for q in p) - min(q[axis] for q in p)
+    spans = {a: max(q[a] for q in p) - min(q[a] for q in p) for a in (0, 1)}
+    # the wider plan span first: a wall whose constant coordinate carries float noise (~1e-7 m, AC07) must not be
+    # mistaken for running along that axis (two loops at the same u differ by the noise only)
+    for axis in sorted((0, 1), key=lambda a: -spans[a]):
+        span = spans[axis]
         if span > 1e-9:
             i, j = max(range(len(p)), key=lambda m: p[m][axis]), min(range(len(p)), key=lambda m: p[m][axis])
             if abs(abs(uv[i][0] - uv[j][0]) - span) < 1e-6:

@@ -43,8 +43,13 @@ spec = finish_map.load(spec_path)
 finish_map.validate_spec(spec, finish_map.load_kpp())
 dump = finish_map.load(dump_path)
 A = spec["address"]
+glass_ids = set(spec.get("glass_ids") or [])
 bodies = [n for n in dump["nodes"] if n["multisub"]]
+glasses = [n for n in bodies if glass_ids and set(n["mat_ids"]) <= glass_ids]  # AC07: separate glazing node, ID 12
+bodies = [n for n in bodies if n not in glasses]
 hulls = [n for n in dump["nodes"] if not n["multisub"]]
+if len(glasses) > 1:
+    raise SystemExit(f"expected at most one glass node, got {[n['name'] for n in glasses]}")
 if len(bodies) != 1:
     raise SystemExit(f"expected exactly one Multi/Sub mesh on the layer, got {[n['name'] for n in bodies]}")
 body = bodies[0]
@@ -57,9 +62,20 @@ names = sorted(spec["finishes"], key=lambda k: spec["finishes"][k]["udim"])
 V = body["vertices"]
 faces, ids = body["faces"], body["mat_ids"]
 fins = finish_map.assign_finishes(V, faces, ids, spec)
-drop = finish_map.perimeter_drop(V, faces, fins, spec["source_ids"]["1"]["below"]) \
-    if spec["source_ids"].get("1", {}).get("split") == "below_zero" else None
+if spec["source_ids"].get("1", {}).get("split") == "below_zero":
+    drop = finish_map.perimeter_drop(V, faces, fins, spec["source_ids"]["1"]["below"])
+elif spec.get("drop_finish"):  # AC07: ID10 plinth + drop; sides = the wall field (the eaves overhang the walls)
+    wall = [V[k] for f, fin in zip(faces, fins) if fin in spec.get("facade_uv", {}) for k in f]
+    drop = finish_map.perimeter_drop(V, faces, fins, spec["drop_finish"],
+                                     plan=([min(c[0] for c in wall), min(c[1] for c in wall)],
+                                           [max(c[0] for c in wall), max(c[1] for c in wall)]))
+else:
+    drop = None
 plan_lo, plan_hi = finish_map.body_plan_bbox(V, spec["zero_m"])
+_wall = [V[k] for f, fin in zip(faces, fins) if fin in spec.get("facade_uv", {}) for k in f]
+plan_origin = [min(c[0] for c in _wall), min(c[1] for c in _wall)] if _wall else None  # wall field lo (x, y)
+if plan_origin is None and any(t.get("plan_uv") for t in spec["finishes"].values()):
+    raise SystemExit("a plan_uv finish needs the facade wall field (no facade_uv faces)")
 fields = finish_map.field_frames(V, faces, fins, spec, plan_lo, plan_hi) if spec.get("facades") else None
 cut = finish_map.apply_cuts(V, faces, fins, spec, plan_lo, plan_hi) if spec.get("ring_cuts") else \
     {"vertices": V, "faces": faces, "parents": list(range(len(faces))), "cuts": [],
@@ -84,6 +100,11 @@ for f, src in zip(cut["faces"], cut["parents"]):
     if cut["frames"][src] is not None:  # metre UVs in the source face's joint frame, packed by whole periods
         nf[uvx] = 1
         for loop, (u, v) in zip(nf.loops, finish_map.facade_joint_uv(CV, f, cut["frames"][src])):
+            loop[uvm].uv = (u, v)
+    elif spec["finishes"][fin].get("plan_uv"):  # roof ribs down the slope on the wall rib positions (slide 44)
+        nf[uvx] = 1
+        pu = spec["finishes"][fin]["plan_uv"]
+        for loop, (u, v) in zip(nf.loops, finish_map.plan_uv(CV, f, pu, plan_origin[pu["u_axis"]])):
             loop[uvm].uv = (u, v)
 bm.normal_update()
 unused = [v for v in bm.verts if not v.link_faces]
@@ -111,6 +132,25 @@ main = bpy.data.objects.new(f"SM_{A}_Main", me)
 sc.collection.objects.link(main)
 main["finish_names"] = ",".join(names)
 main.data.materials.append(vpm_uv.main_material(bpy, spec, tex_dir))
+
+glass_report = None
+if glasses:  # SM_<A>_MainGlass: source geometry unchanged, own UV (pack_uv glass), M_<A>_MainGlass_1 (no maps)
+    g = glasses[0]
+    gb = bmesh.new()
+    gfl = gb.faces.layers.int.new("finish")
+    gv = [gb.verts.new(c) for c in g["vertices"]]
+    for f in g["faces"]:
+        gb.faces.new([gv[i] for i in f])[gfl] = 0
+    gb.normal_update()
+    gqa = vpm_uv.pack_uv(gb, ["glass"], spec, glass=True)
+    gme = bpy.data.meshes.new(f"SM_{A}_MainGlass")
+    gb.to_mesh(gme)
+    gb.free()
+    go = bpy.data.objects.new(gme.name, gme)
+    sc.collection.objects.link(go)
+    go.data.materials.append(vpm_uv.glass_material(bpy, spec))
+    glass_report = {"source": g["name"], "name": go.name, "vertices": len(gme.vertices), "faces": len(gme.polygons),
+                    "uv_qa": gqa}
 
 ucx_report = []
 for k, h in enumerate(sorted(hulls, key=lambda n: n["name"]), start=1):
@@ -140,7 +180,7 @@ report = {"dump": os.path.abspath(dump_path), "spec": os.path.abspath(spec_path)
           "ring_cuts": cut["cuts"], "cut_vertices_added": len(CV) - len(V),
           "master_tris": sum(len(p.vertices) - 2 for p in me.polygons), "max_edge_m": round(max_edge, 4),
           "faces_per_finish": counts, "uv_qa": uvqa, "density_px_per_m": density, "ucx": ucx_report, "perimeter_drop": drop,
-          "facade_fields": fields[1] if fields else None}
+          "facade_fields": fields[1] if fields else None, "glass": glass_report}
 json.dump(report, open(out + ".build.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 print("BUILD", json.dumps({k: report[k] for k in ("master_faces", "non_quads", "master_tris", "max_edge_m",
                                                   "faces_per_finish")}))

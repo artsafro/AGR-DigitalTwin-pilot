@@ -58,7 +58,7 @@ def test_every_polygon_gets_its_finish(spec, body, fins):
     by = {}
     for m, f in zip(body["mat_ids"], fins):
         by.setdefault(m, Counter())[f] += 1
-    assert by[1] == Counter({"PanelVJ68": 53, "PanelVJ55": 32, "Roof_RAL7004": 96})
+    assert by[1] == Counter({"PanelVJ68": 53, "PanelVJ55": 32, "Roof_RAL5015": 96})
     assert set(by[3]) == {"PanelVJ68", "PanelVJ55"} and sum(by[3].values()) == 300
     assert by[6] == Counter({"Insert_RAL7004": 200})
     assert by[10] == Counter({"Plinth_RAL7004": 88})
@@ -69,7 +69,7 @@ def test_roof_faces_never_take_a_panel_finish(body, fins):
     for f, fin in zip(body["faces"], fins):
         if fin.startswith("PanelVJ"):
             assert fm.is_vertical(body["vertices"], f)
-        if fin == "Roof_RAL7004":
+        if fin == "Roof_RAL5015":
             assert not fm.is_vertical(body["vertices"], f)
 
 
@@ -188,3 +188,63 @@ def test_tile_grey_below_blue_above_same_joints(spec):
                         rel_tol=0.25)
     assert np.array_equal(nrm[grey_rows[0]], nrm[blue_rows[0]])  # normal map unchanged by the colour band
     json.dumps(t)  # spec stays JSON
+
+
+def test_grey_mask_drops_antialiased_door_edge():
+    """A 7047 wall row with real joints and a RAL 7004 door whose anti-aliased edge pixels blend into the wall:
+    the edge blends must not count as joints (build-v004 counted 2 extra on facade 1-3)."""
+    import joint_count as jc
+    W = 400
+    wall, joint, door = np.array([207, 207, 207]), np.array([73, 73, 73]), np.array([150, 153, 146])
+    row = np.tile(wall, (W, 1)).astype(float)
+    joints = list(range(40, 400, 40))
+    for x in joints:
+        row[x] = joint
+    row[210:270] = door
+    for x, w in ((209, 0.55), (208, 0.3), (270, 0.55), (271, 0.3)):  # blends wall|door
+        row[x] = np.round(w * door + (1 - w) * wall)
+    img = np.zeros((3, W, 3), np.uint8)
+    img[1] = row.astype(np.uint8)
+    view = {"center": [W / 2, 0.0, 0.0], "right": [1.0, 0.0, 0.0], "up": [0.0, 0.0, 1.0], "ortho_scale": float(W),
+            "res": [W, 3]}
+    s, lum = jc.render_row(img, view, 0, 0.0, 0.0, float(W), mask="grey")
+    r = jc.count_joints(s, lum, 0.0, float(W), len(joints) + 1, tol=2.0, dark=0.85)
+    visible = [x for x in joints if not 208 <= x <= 271]
+    assert r["joints_found"] == len(visible) and not r.get("extra"), r
+
+
+def test_roof_is_ribbed_like_the_slide(spec, kpp):
+    """Slide 44 draws the roof RAL 5015 with ribs down the slope at the wall step (54 joints over the 10.9 m eave,
+    like the wall band): the roof finish is the ribbed user texture with a plan UV (u = y, v = x) borrowing the
+    rib contract of facade А-Д, not a plain placeholder."""
+    t = spec["finishes"]["Roof_RAL5015"]
+    assert t["kind"] == "full" and t["pattern"] == "user_vjoints" and "lower_band" not in t
+    pu = t["plan_uv"]
+    assert (pu["u_axis"], pu["v_axis"]) == (1, 0)
+    src = spec["facades"][pu["ribs_from"]]
+    assert math.isclose(t["P"][0], spec["finishes"][src["finish"]]["P"][0], abs_tol=1e-9)
+    assert fm.validate_spec(spec, kpp)
+
+
+def test_plan_uv_fail_closed(spec, kpp):
+    bad = copy.deepcopy(spec)
+    bad["finishes"]["Roof_RAL5015"]["plan_uv"]["ribs_from"] = "nope"
+    with pytest.raises(ValueError, match="ribs_from"):
+        fm.validate_spec(bad, kpp)
+    bad = copy.deepcopy(spec)
+    bad["finishes"]["Roof_RAL5015"]["P"] = [0.25, 0.25]
+    with pytest.raises(ValueError):
+        fm.validate_spec(bad, kpp)
+    bad = copy.deepcopy(spec)  # a v shift is only for a plan-UV finish (rows carry noise, no joints)
+    bad["finishes"]["PanelVJ55"]["shift"] = [True, True]
+    with pytest.raises(ValueError, match="shift"):
+        fm.validate_spec(bad, kpp)
+    bad = copy.deepcopy(spec)
+    bad["finishes"]["Roof_RAL5015"]["plan_uv"]["u_axis"] = 2
+    with pytest.raises(ValueError, match="plan_uv"):
+        fm.validate_spec(bad, kpp)
+
+
+def test_plan_uv_coordinates():
+    V = [[1.0, 2.0, 3.3], [3.0, 2.0, 3.5], [3.0, 4.5, 3.5]]
+    assert fm.plan_uv(V, [0, 1, 2], {"u_axis": 1, "v_axis": 0}, 0.5) == [(1.5, 1.0), (1.5, 3.0), (4.0, 3.0)]

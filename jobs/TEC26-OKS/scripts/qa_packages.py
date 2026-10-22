@@ -98,6 +98,7 @@ def match_source_faces(src_v, src_faces, out_v, out_faces, shift, tol=2e-4):
     `tol`, after undoing the pivot shift), whose outline contains them (edges within `tol` count) and contains the
     triangle centroid strictly. Returns owners per triangle: sorted tuple of source polygon indices, possibly empty."""
     geo = _poly_geo(src_v, src_faces)
+    sv = np.asarray(src_v, float)
     ov = np.asarray(out_v, float) + np.asarray(shift, float)
     owners = []
     for f in out_faces:
@@ -109,6 +110,11 @@ def match_source_faces(src_v, src_faces, out_v, out_faces, shift, tol=2e-4):
             if g is None or (qlo < g["lo"] - tol).any() or (qhi > g["hi"] + tol).any():
                 continue
             if np.abs(q @ g["n"] - g["d"]).max() > tol:
+                # a non-planar source polygon (AC07: 4 twisted ID2 trim quads) is triangulated on its own corners:
+                # a triangle whose three corners are corners of this polygon belongs to it (reported, not repaired)
+                corners = sv[list(src_faces[pi])]
+                if len(src_faces[pi]) == 4 and all(np.abs(corners - x).max(1).min() <= tol for x in q):
+                    hits.append(pi)
                 continue
             if all(_inside2d(x[g["keep"]], g["p2"], tol) for x in q) and _inside2d(c[g["keep"]], g["p2"], -1):
                 hits.append(pi)
@@ -151,7 +157,10 @@ def source_finish_report(expected, src_faces, owners, delivered, t_areas=None, p
             if len(examples) < 5:
                 examples.append({"tri": t, "source_polygon": own[0], "expected": w, "delivered": got})
     if t_areas is not None and p_areas is not None:
-        uncovered = [i for i in range(len(src_faces)) if abs(per_area[i] - p_areas[i]) > 1e-6 + 1e-5 * p_areas[i]]
+        # area rule (ring cuts) or, for an uncut polygon, exactly len(f)-2 owned triangles: a non-planar source quad
+        # (AC07 ID2 trims) has no single plane area, its two corner triangles cover it
+        uncovered = [i for i, f in enumerate(src_faces) if abs(per_area[i] - p_areas[i]) > 1e-6 + 1e-5 * p_areas[i]
+                     and per_poly[i] != len(f) - 2]
     else:
         uncovered = [i for i, f in enumerate(src_faces) if per_poly[i] != len(f) - 2]
     return {"ok": not (wrong or unmatched or ambiguous or uncovered) and len(owners) > 0, "tris": len(owners),
@@ -281,9 +290,10 @@ def main(argv):
     nobj = {o["name"]: o for o in nr["objects"]}
     vmain, nmain = vobj.get(f"SM_{A}_Main"), nobj.get(f"SM_{A}_001_Main")
     ucx = [o for n, o in vobj.items() if n.startswith(f"UCX_SM_{A}_Main_")]
-    check("names_vpm", vmain is not None and len(ucx) >= 1 and set(vobj) == {f"SM_{A}_Main"} | {o["name"] for o in ucx},
-          sorted(vobj))
-    check("names_npm", set(nobj) == {f"SM_{A}_001_Main"}, sorted(nobj))
+    gl = bool(spec.get("glass_ids"))  # AC07: a separate glazing node -> SM_<A>_MainGlass / SM_<A>_001_MainGlass
+    check("names_vpm", vmain is not None and len(ucx) >= 1 and set(vobj) == {f"SM_{A}_Main"} | {o["name"] for o in ucx}
+          | ({f"SM_{A}_MainGlass"} if gl else set()), sorted(vobj))
+    check("names_npm", set(nobj) == {f"SM_{A}_001_Main"} | ({f"SM_{A}_001_MainGlass"} if gl else set()), sorted(nobj))
     if vmain is None or nmain is None:
         write(out, {"checks": rep, "failed": fails})
         return 1
@@ -304,7 +314,9 @@ def main(argv):
         x = mesh_report(o["vertices"], o["faces"], profile="VPM")
         check(f"xview_{o['name']}", x["passed"], {k: x[k] for k in ("vertex_pairs", "face_pairs")})
     dump = load(dump_p)
-    body = next(n for n in dump["nodes"] if n["multisub"])
+    gids = set(spec.get("glass_ids") or [])
+    gnodes = [n for n in dump["nodes"] if n["multisub"] and gids and set(n["mat_ids"]) <= gids]
+    body = next(n for n in dump["nodes"] if n["multisub"] and n not in gnodes)
     hulls = sorted((n for n in dump["nodes"] if not n["multisub"]), key=lambda n: n["name"])
     sv = np.asarray(body["vertices"], float)
     shift = np.array([(sv[:, 0].min() + sv[:, 0].max()) / 2, (sv[:, 1].min() + sv[:, 1].max()) / 2, 0.0])
@@ -320,6 +332,12 @@ def main(argv):
         g = geometry_report(body["vertices"], body["faces"], o["vertices"], shift, bool(spec.get("ring_cuts")))
         check(f"geometry_source_plus_ring_cuts_{tag}", g["ok"] and tris >= src_tris,
               dict(g, tris=tris, source_tris=src_tris, pivot_shift=shift.round(4).tolist()))
+    if gl:  # glass: source vertices only (after the pivot shift), same polygon count, in both packages
+        for tag, name in (("vpm", f"SM_{A}_MainGlass"), ("npm", f"SM_{A}_001_MainGlass")):
+            o = (vobj if tag == "vpm" else nobj).get(name)
+            ok = len(gnodes) == 1 and o is not None and same_points(o["vertices"], np.asarray(gnodes[0]["vertices"]) - shift) \
+                and sum(len(f) - 2 for f in o["faces"]) == sum(len(f) - 2 for f in gnodes[0]["faces"])
+            check(f"glass_geometry_unchanged_{tag}", ok, {"source": [n["name"] for n in gnodes], "object": name})
     check("ucx_count_eq_source", len(ucx) == len(hulls), {"ucx": len(ucx), "source_hulls": [h["name"] for h in hulls]})
     for o, h in zip(sorted(ucx, key=lambda o: o["name"]), hulls):
         check(f"geometry_unchanged_{o['name']}", same_points(o["vertices"], np.asarray(h["vertices"]) - shift) and
@@ -385,10 +403,19 @@ def main(argv):
     for n, t in fin.items():
         r = by_region[n]
         x0, y1, sz = round(r["u0"] * 2048), round((1 - r["v0"]) * 2048), round(r["size"] * 2048)
-        vm = np.median(tiles_img[t["udim"]].reshape(-1, 3), 0)
-        nm = np.median(atlas_img[y1 - sz:y1, x0:x0 + sz].reshape(-1, 3), 0)
-        med[n] = {"vpm": vm.tolist(), "npm": nm.tolist(), "spec": t["rgb"],
-                  "ok": bool(np.abs(vm - nm).max() <= 3 and np.abs(vm - t["rgb"]).max() <= 3)}
+        vt, nt = tiles_img[t["udim"]], atlas_img[y1 - sz:y1, x0:x0 + sz]
+        lb = t.get("lower_band")
+        bands = [("", 0.0, t.get("S", 4.096), t["rgb"])] if not lb else \
+            [("", lb["z_max_m"], t["S"], t["rgb"]), ("_lower", 0.0, lb["z_max_m"], lb["rgb"])]
+        for sfx, za, zb, want in bands:  # rows by world z (v = z / S): each colour band against its own RGB
+            def rows(img, za=za, zb=zb):
+                h = img.shape[0]
+                z = (h - np.arange(h) - 0.5) * t.get("S", 4.096) / h
+                return img[(z >= za + 0.05) & (z <= zb - 0.05)] if lb else img
+            vm = np.median(rows(vt).reshape(-1, 3), 0)
+            nm = np.median(rows(nt).reshape(-1, 3), 0)
+            med[n + sfx] = {"vpm": vm.tolist(), "npm": nm.tolist(), "spec": want,
+                            "ok": bool(np.abs(vm - nm).max() <= 3 and np.abs(vm - want).max() <= 3)}
     check("colour_vpm_eq_npm_per_face", mism == 0 and unmatched == 0,
           {"faces": len(vkey), "finish_mismatch": int(mism), "unmatched": unmatched, "faces_per_finish": per_finish})
     check("colour_median_vpm_eq_npm_eq_spec", all(m["ok"] for m in med.values()), med)

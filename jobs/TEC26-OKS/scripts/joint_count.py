@@ -62,6 +62,18 @@ def count_joints(s, lum, field_lo, field_hi, ribs, tol, dark=0.8, edge=0.25):
             "found_m": [round(f, 4) for f in found]}
 
 
+def local_median(lum, ok, win):
+    """Median luminance of the panel samples within +-win/2 samples (a colour band - AC07 grey 7047 below +2.500,
+    blue 5015 above - is a wide step, not a narrow dark joint: compare each sample with its own neighbourhood)."""
+    out = np.full(lum.shape, np.nan)
+    h = max(win // 2, 1)
+    for i in range(len(lum)):
+        seg = lum[max(0, i - h):i + h + 1][ok[max(0, i - h):i + h + 1]]
+        if seg.size:
+            out[i] = np.median(seg)
+    return out
+
+
 def symmetric(rep, tol):
     """Symmetric phase on a full (unhidden) row: the first and last joints sit one pitch inside the field edges."""
     a, b = rep.get("first_joint_from_field_m"), rep.get("last_joint_to_field_m")
@@ -161,8 +173,12 @@ def mesh_facade_report(V, F, UV, keep, key, ribs, tile_of, tol, step=0.0005, row
         r = count_joints(s, lum, lo, hi, ribs, tol)
         out["rows"][f"z={z:.3f}"] = r
         ok &= r["ok"]
-    full = [r for r in out["rows"].values() if not r.get("hidden_by_other_finish")]
+    # rows whose first and last expected joints are visible (doors/windows may hide joints in between, AC07)
+    exp_ends = (round(lo + P, 4), round(lo + (ribs - 1) * P, 4))
+    full = [r for r in out["rows"].values() if "hidden_by_other_finish" in r
+            and not set(exp_ends) & set(r["hidden_by_other_finish"])]
     out["symmetric"] = bool(full) and all(symmetric(r, tol) for r in full)
+    out["symmetric_rows"] = len(full)
     zs = np.arange(zlo + 0.02, zhi - 0.02, step)
     hj = {}
     for k in (0, ribs // 2, ribs - 1):
@@ -170,7 +186,7 @@ def mesh_facade_report(V, F, UV, keep, key, ribs, tile_of, tol, step=0.0005, row
         uv = interpolate_uv(V, F, UV, tris, key, np.full(zs.shape, sc), zs)
         lum = sample_luminance(uv, tile_of)
         okm = np.isfinite(lum)
-        dark = okm & (lum < 0.8 * np.median(lum[okm])) if okm.any() else okm
+        dark = okm & (lum < 0.8 * local_median(lum, okm, int(round(0.2 / step)))) if okm.any() else okm
         hj[f"rib{k + 1}"] = len(runs(dark))
     out["horizontal_joint_runs"] = hj
     out["no_horizontal_joints"] = all(v == 0 for v in hj.values())
@@ -178,10 +194,12 @@ def mesh_facade_report(V, F, UV, keep, key, ribs, tile_of, tol, step=0.0005, row
     return out
 
 
-def render_row(img, view, axis_index, z, lo, hi):
+def render_row(img, view, axis_index, z, lo, hi, mask="blue"):
     """Luminance along the pixel row of world height z between world coordinates lo..hi on the facade axis of an
     orthographic render. `view`: {"center", "right", "up", "ortho_scale", "res"} from render_facades.py (horizontal
-    sensor fit). Returns (s world positions, luminance; NaN where the pixel is not the blue panel)."""
+    sensor fit). Returns (s world positions, luminance; NaN where the pixel is not the panel). `mask`: "blue" = the
+    RAL 5015 panel; "grey" = the RAL 7047 lower band of AC07 (neutral, panel lum 540..700 or joint lum 120..330, so
+    RAL 7004 doors/plinth ~450, white RAL 9016 frames ~740 and the black background are not panel)."""
     c, r, u = (np.asarray(view[k], float) for k in ("center", "right", "up"))
     W, H = view["res"]
     scale = view["ortho_scale"] / W                       # metres per pixel (square pixels)
@@ -192,6 +210,13 @@ def render_row(img, view, axis_index, z, lo, hi):
     sel = (s >= min(lo, hi)) & (s <= max(lo, hi))
     rgb = img[y, :, :3].astype(float)
     lum = rgb.sum(-1)
-    lum[(rgb[:, 2] - rgb[:, 0]) <= 25] = np.nan          # not the blue panel (frame, door, background): no sample
+    if mask == "grey":  # pure neutral (7047 panel 207 and its joints 73 and their blends; RAL 7004 has a +7 green tint,
+        # so a 60/40 anti-aliased 7004|7047 door-edge pixel has tint 4 and lum < 0.85 x panel: <= 2 keeps it out)
+        neutral = (rgb.max(-1) - rgb.min(-1)) <= 2
+        lum[~(neutral & (lum >= 120) & (lum <= 700))] = np.nan
+    elif mask == "blue":
+        lum[(rgb[:, 2] - rgb[:, 0]) <= 25] = np.nan      # not the blue panel (frame, door, background): no sample
+    else:
+        raise ValueError(f"unknown panel mask {mask!r}")
     order = np.argsort(s[sel])
     return s[sel][order], lum[sel][order]

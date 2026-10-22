@@ -1,5 +1,5 @@
 {
- "_doc": "AC07 (Пункт редуцирования газа 2) VPM texture sets, KPP1 recipe of the AC08 pilot (#559, PR #574). Gate 1 approved by Artem 2026-10-22 (#564 «Принимаю»; ID6 to verify). Colour only: geometry, topology, UCX and IDs from the source (max-dump-007.json). Panels: Artem's vertical-joint texture (colour/noise/look of one joint), rib COUNT per facade from this building's «Фасад ... Цветовое решение» sheet (ac07.dxf model space): ribs every 200 mm over the whole wall height, grey RAL 7047 to +2.500 and blue RAL 5015 above in ONE tile per facade pair (lower_band, v = world z). KPP VPM texel 1000 px/m. No frame posts on this sheet (no AC08-style frame band). Address Prg_2 is a placeholder token.",
+ "_doc": "AC07 (Пункт редуцирования газа 2) VPM texture sets, KPP1 recipe of the AC08 pilot (#559, PR #574). Colour only: geometry, topology, UCX and IDs from the source (max-dump-007.json). Colour authority = presentation «ТЭЦ26 на РР (1).pptx» slides 44 (А-Д, Д-А) and 45 (1-3, 3-1) (Artem 2026-10-22 16:1x, supersedes DWG-based colour decisions): walls light grey RAL 7047 with vertical ribs over the full height, band above +2.500, roof, eaves and canopies blue RAL 5015 (band ribbed), plinth/footing/downpipes dark grey RAL 7004, round vents dark. Gate 1 (#564 «Принимаю») where the slides are silent. Rib COUNT per facade measured on the same «Фасад ... Цветовое решение» drawing in 22Е56-АР2-1002-АС.07_R1.dwg (ac07.dxf): one rib every 200 mm, 55 ribs short / 68 long, and on the slide images (compare). Panels: Artem's vertical-joint texture (colour/noise/look of one joint), grey below +2.500 and blue above in ONE tile per facade pair (lower_band, v = world z), KPP VPM texel 1000 px/m. No frame posts on this building (no AC08-style frame band). Address Prg_2 is a placeholder token.",
  "address": "Prg_2",
  "size_full": 4096,
  "size_placeholder": 256,
@@ -8,7 +8,7 @@
  "source_ids": {
   "1": {
    "split": "facade",
-   "nonvertical": "Roof_RAL7004",
+   "nonvertical": "Roof_RAL5015",
    "why": "mixed ID1 (Gate-1): vertical faces = upper blue wall panels (+2.500..+3.761), non-vertical = roof"
   },
   "2": {
@@ -50,6 +50,7 @@
  "glass": {
   "udim": 1001
  },
+ "drop_finish": "Plinth_RAL7004",
  "kpp_palette": {
   "PanelVJ68": {
    "kpp_finish": "Metal_RAL5015",
@@ -66,10 +67,6 @@
     "kpp_finish": "Cassette_RAL5015",
     "kpp_udim": 1007
    }
-  },
-  "Roof_RAL7004": {
-   "kpp_finish": "Door_RAL7004",
-   "kpp_udim": 1010
   },
   "Trim_RAL5015": {
    "kpp_finish": "Metal_RAL5015",
@@ -98,6 +95,14 @@
   "Interior": {
    "kpp_finish": "Interior",
    "kpp_udim": 1011
+  },
+  "Roof_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
   }
  },
  "finishes": {
@@ -191,17 +196,45 @@
    },
    "why": "short facades А-Д (-x) / Д-А (+x): 55 ribs evenly over the 10.9 m wall (sheet: 54 joint lines every 200 mm)"
   },
-  "Roof_RAL7004": {
+  "Roof_RAL5015": {
    "udim": 1003,
-   "kind": "placeholder",
-   "rgb": [
-    150,
-    153,
-    146
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.19817943572998048,
+    0.19817943572998048
    ],
-   "rough": 0.45,
+   "shift": [
+    true,
+    true
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
    "metal": 0.0,
-   "why": "ID1 non-vertical faces (roof): RAL 7004 per Artem's AC07 Gate-1 answer «ID1 кровля 7004» (the elevations draw the roof blue: question to Artem)"
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 4,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "plan_uv": {
+    "u_axis": 1,
+    "v_axis": 0,
+    "ribs_from": "А-Д",
+    "why": "slide 44 (А-Д, Д-А) draws the roof RAL 5015 with ribs down the slope: 54-55 dark runs over the 10.9 m eave on the slide roof rows y=150/155, the same step as the wall band (56 at y=190/200); u = world y from the wall field edge (ribs on the wall rib positions), v = world x (slope 0.994: texel -0.3 %)"
+   },
+   "why": "ID1 non-vertical faces (roof): BLUE RAL 5015 ribbed sandwich (legend «Сэндвич-панели, козырьки - RAL 5015»; slide 44/45 roof blue, ribbed down the slope; supersedes the Gate-1 «ID1 кровля 7004»)"
   },
   "Trim_RAL5015": {
    "udim": 1004,
@@ -237,7 +270,7 @@
    ],
    "rough": 0.4,
    "metal": 0.0,
-   "why": "ID6 round facade inserts: Artem did not define them; RAL 7004 metal, TO VERIFY (Gate-1 answer), shown enlarged on the acceptance sheet"
+   "why": "ID6 round facade vents: dark grey RAL 7004 (slide 44: round vents dark; Gate-1: to verify), shown enlarged on the acceptance sheet"
   },
   "Door_RAL7004": {
    "udim": 1007,
@@ -273,7 +306,7 @@
    ],
    "rough": 0.45,
    "metal": 0.0,
-   "why": "ID10 plinth +0.000..+0.132 and the required perimeter drop to -2.025: RAL 7004 plain, no joints (below ±0.000 plain)"
+   "why": "ID10 plinth +0.000..+0.132 and the required perimeter drop to -2.025: RAL 7004 plain, no joints (below ±0.000 plain) (slide 44/45: plinth/footing dark grey 155 = RAL 7004)"
   },
   "Interior": {
    "udim": 1010,
@@ -340,5 +373,42 @@
   "dwg_sha256": "51b355e53288391b439a7aec01627a0cd1962041f12a3a2125cf797ca70edf3d",
   "dxf": "C:/x/tec26-oks/acad-readback-v001/ac07.dxf",
   "dxf_sha256": "7a35d7064fe6bba2ae56ac5ef7cc363440ff5bb3db095c1e7c5094b5c0e2bdc5"
+ },
+ "presentation": {
+  "pptx": "C:/x/tec26-oks/sources-v001/Vlad_OKS/ТЭЦ26 на РР (1).pptx",
+  "slides": {
+   "А-Д": 44,
+   "Д-А": 44,
+   "1-3": 45,
+   "3-1": 45
+  },
+  "images": {
+   "44": {
+    "path": "C:/x/tec26-oks/pptx/facades/slide44.png",
+    "sha256": "0d8d6e5b4f2c320cbf64897239902ec1e42886d3602ea2c0edd4d3a7b9876e98"
+   },
+   "45": {
+    "path": "C:/x/tec26-oks/pptx/facades/slide45.png",
+    "sha256": "a2e8fed4b81361bedae2d49e68ba0acdaaca488d59bdf783f1ba285b42a5db8a"
+   }
+  },
+  "rule": "Artem 2026-10-22 16:1x (operator note): the presentation facade slides are THE authority for colours, bands, rib direction and count; DWG/PDF only where a slide is silent",
+  "colours_read": {
+   "blue (band above +2.500, roof, eaves, canopies)": [
+    0,
+    124,
+    176
+   ],
+   "light grey (walls)": [
+    208,
+    208,
+    208
+   ],
+   "dark grey (plinth, footing, downpipes)": [
+    155,
+    155,
+    155
+   ]
+  }
  }
 }
