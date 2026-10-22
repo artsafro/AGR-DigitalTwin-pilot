@@ -133,3 +133,33 @@ Measured from unchanged census triangles: all 88 lower ID10 wall triangles reach
 Independent readback: 41/41 final bundle file hashes, 2/2 original/copy hashes, census and geometry-buffer hashes, and exact KPP sampled colours verified. Synthetic record mutations rejected 73/73 (12 missing IDs, 36 invalid areas including zero/NaN/inf, 12 unmapped IDs, 3 unknowns without a question, 1 false approval, 5 native-render contract violations, 3 drop contract violations and 1 untreated-foundation finish). This proves record consistency only. Reproduction scripts, original failures and final focused log are on Drive at `G:/Мой диск/AGR-evidence/tec26-oks/AC07/verification-v002/`, with their own `SHA256SUMS.txt`. No source geometry or material was mutated.
 
 The receipt above is the pre-approval record (status was awaiting Artem). Gate 1 colour approval is now recorded in this file and in `materials.json`. ID 6 stays `to_verify`. VPM/NPM of this building remain a separate card; this card still does not build them. CI: not run (billing lock).
+
+## Build legend check (presentation authority, 2026-10-22 16:1x/16:2x)
+
+Colour authority for the build: `ТЭЦ26 на РР (1).pptx` slides 44 (А-Д, Д-А) and 45 (1-3, 3-1)
+(`C:/x/tec26-oks/pptx/facades/slide44.png` sha256 0d8d6e5b…, `slide45.png` a2e8fed4…); DWG/PDF only where a slide is
+silent. The «Условные обозначения» legend is binding; same RAL = the KPP colour.
+
+| Hatch / legend line | Material | RAL (KPP colour) | Texture in the build |
+|---|---|---|---|
+| Сэндвич-панели, козырьки (blue) | sandwich panel, canopy | 5015 (34,113,179 = KPP Metal_RAL5015) | ribbed sandwich (Artem's vertical-joint texture), band above +2.500 incl. gables; roof ribbed down the slope; canopies/trims plain 5015 metal |
+| Сэндвич-панели (light grey) | sandwich panel | 7047 (208,208,208 = KPP Cassette_RAL7047) | the SAME ribbed sandwich texture recoloured, +0.120..+2.500, never flat |
+| Крыльца, двери, цоколь, водосток | porches, doors, plinth, gutters/downpipes | 7004 (150,153,146 = KPP Door_RAL7004) | plain |
+| Рамы светопрозрачных конструкций | window/relief frames | 9016 (246,246,246 = KPP Frame_RAL9016) | plain |
+
+| Source ID / region | Slide reading | Legend line | Build finish (vpm_textures.json) | Check |
+|---|---|---|---|---|
+| ID3 lower walls +0.120..+2.500 | light grey, vertical ribs, full height | Сэндвич-панели 7047 | PanelVJ68 / PanelVJ55 `lower_band` 7047, ribbed | ribs 67/54 joints per facade = sheet; compare grey row |
+| ID1 vertical faces (+2.500..eaves, gables) | blue band with vertical ribs | Сэндвич-панели 5015 | PanelVJ68 / PanelVJ55 (5015 above z 2.5) | compare blue row 66+1 hidden / 54 |
+| ID1 non-vertical (roof) | blue, ribs down the slope (54-55 dark runs on the slide roof rows, same step as the wall) | Сэндвич-панели 5015 | Roof_RAL5015 ribbed, plan UV u = y (rib contract of А-Д) | compare roof row: slide 54/53, VPM 54, NPM 54. Supersedes Gate-1 «ID1 кровля 7004» |
+| ID2 roof edge / canopies | blue | козырьки 5015 | Trim_RAL5015 plain | visual |
+| ID4 gutters/downpipes, ID5 snow guards | grey | водосток 7004 | Metal_RAL7004 | visual |
+| ID6 round vents | drawn as circles with a dark inner shadow | (not in the legend) | Insert_RAL7004 | **question 1** |
+| ID7 doors | grey | двери 7004 | Door_RAL7004 | visual |
+| ID8/ID9 frames, surrounds | white | рамы 9016 | Frame_RAL9016 | visual |
+| ID10 plinth + required drop | dark grey band 0.000..+0.120 | цоколь 7004 | Plinth_RAL7004 plain (below ±0.000 plain) | BUILD-DROP 4/4 sides covered |
+| ID11 interior | not visible | - | Interior (KPP) | - |
+| ID12 glazing | light glass | - | SM_Prg_2_MainGlass, M_Glass (no maps) | - |
+
+Every sandwich-hatched wall surface carries the ribbed texture in its legend RAL; no flat grey wall remains
+(build-v005 renders, `C:/x/tec26-oks/AC07/build-v005/compare/`, Drive `AGR-evidence/tec26-oks/AC07/build-v005/`).
