@@ -1,6 +1,6 @@
 """Generate the KPP1 VPM UDIM texture sets (Diffuse, ERM, Normal) from vpm_textures.json.
 
-Usage: py -3 make_textures.py <out_dir>
+Usage: python make_textures.py <spec.json> <new_out_dir>   (TEC26 copy of jobs/KPP1/scripts/make_textures.py)
 Writes T_<Address>_{Diffuse|ERM|Normal}_1.<UDIM>.png (VPM naming, reg p.34 §4.3).
 - full finishes: 4096 px, S = 4.096 m -> 1 px = 1 mm; patterns are periodic with the finish period P
   so faces shifted by whole periods keep the phase (vpm_uv.pack_uv);
@@ -133,9 +133,12 @@ def make_full(t, size):
     return dif, alpha, erm, nrm
 
 
-def main(out):
-    spec = json.load(open(os.path.join(HERE, "vpm_textures.json"), encoding="utf-8"))
-    os.makedirs(out, exist_ok=True)
+def main(spec_path, out):
+    sys.path.insert(0, HERE)
+    import finish_map
+    spec = json.load(open(spec_path, encoding="utf-8"))
+    finish_map.validate_spec(spec)
+    finish_map.fresh_out_dir(out, [spec_path, HERE])
     a, fs, ps = spec["address"], spec["size_full"], spec["size_placeholder"]
     name = lambda kind, udim: os.path.join(out, f"T_{a}_{kind}_1.{udim}.png")
     flat_normal = np.broadcast_to(np.array([128, 128, 255], np.uint8), (ps, ps, 3)).copy()
@@ -166,4 +169,4 @@ def main(out):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])

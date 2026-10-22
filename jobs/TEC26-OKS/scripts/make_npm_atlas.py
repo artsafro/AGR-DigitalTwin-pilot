@@ -1,6 +1,6 @@
 """Build the KPP1 NPM texture set: one 2048 atlas per OKS (reg p.9 §5.1-5.11), PNG, no alpha channel.
 
-Usage: py -3 make_npm_atlas.py <out_dir>
+Usage: python make_npm_atlas.py <spec.json> <new_out_dir>   (TEC26 copy of jobs/KPP1/scripts/make_npm_atlas.py)
 Writes T_<A>_001_Main_d_1.png (Diffuse, RGB), T_<A>_001_Main_o_1.png (Opacity, RGB white = solid,
 black = void; railings/ladder/cage only, reg p.9 §5.8; no alpha channel anywhere, conflict #21) and
 npm_atlas.json (finish -> region). No normal map (conflict #6), no metallic/roughness (optional pair,
@@ -25,10 +25,14 @@ REGION = CELL - 2 * PAD
 NPM_JOINT_HALF_MM = 8  # 16 mm on the atlas ~ 1.5 px at 97 px/m
 
 
-def main(out):
-    spec = json.load(open(os.path.join(HERE, "vpm_textures.json"), encoding="utf-8"))
+def main(spec_path, out):
+    import finish_map
+    spec = json.load(open(spec_path, encoding="utf-8"))
+    finish_map.validate_spec(spec)
+    if len(spec["finishes"]) > COLS * (ATLAS // CELL):
+        raise ValueError(f"{len(spec['finishes'])} finishes do not fit the {COLS} x {ATLAS // CELL} atlas grid")
     a = spec["address"]
-    os.makedirs(out, exist_ok=True)
+    finish_map.fresh_out_dir(out, [spec_path, HERE])
     dif = np.zeros((ATLAS, ATLAS, 3), np.uint8)
     opa = np.full((ATLAS, ATLAS, 3), 255, np.uint8)
     layout = {}
@@ -65,4 +69,4 @@ def main(out):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])
