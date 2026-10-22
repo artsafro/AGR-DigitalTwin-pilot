@@ -11,7 +11,7 @@
     "questions": [
       {
         "id": "Q1",
-        "question": "Approve the contact-sheet proposal: IDs 1-2 RAL5015 blue, IDs 3-4 opaque painted metal RAL7004 grey, including ID1 whole roof/edge/shell colour and ID4 end door/gate infill; otherwise identify the changed physical region on the sheet."
+        "question": "Approve the native contact-sheet proposal: IDs1-2 RAL5015 blue, IDs3-4 opaque painted metal RAL7004 grey. Required perimeter drop already inherits adjacent-facade blue under Artem clarification; no geometry-removal question remains."
       },
       {
         "id": "Q2",
@@ -159,7 +159,74 @@
       "path": "C:\\x\\tec26-oks\\max-readback-v002\\geometry-161.json",
       "sha256": "22406a97eaf836e47cce92ef871a5cceea3357b3f936ea13ca2764791ac6e500",
       "verified": "bbox, per-ID triangle counts and area recomputed against census; 4/4",
-      "evidence_copy": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/geometry-161.json"
+      "evidence_copy": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004/geometry-161.json"
+    },
+    "perimeter_drop": {
+      "keep_in_both_profiles": true,
+      "finish_policy": "adjacent facade; no new ID",
+      "source_geometry_sha256": "22406a97eaf836e47cce92ef871a5cceea3357b3f936ea13ca2764791ac6e500",
+      "source_face_ids_below_zero": [
+        1
+      ],
+      "method": "Triangle intersection with Z=-1 m, four axis-aligned outer shell sides from bottom vertices; union interval spans complete perimeter sides. Numeric side classifier 0.1mm, interval tolerance 0.01mm; neither is a model-edit or acceptance depth tolerance. Bottom vertices separately measured.",
+      "walls": [
+        {
+          "wall": "X_min",
+          "axis_coordinate_m": -7.289708137512207,
+          "cross_section_z_m": -1.0,
+          "coverage_span_m": [
+            -4.5200514793396,
+            4.605574607849121
+          ],
+          "coverage_at_minus_1_m": "complete",
+          "gaps_m": [],
+          "lowest_bottom_z_m": -2.0043320655822754,
+          "highest_bottom_z_m": -2.004328966140747,
+          "cross_section_segments": 10
+        },
+        {
+          "wall": "X_max",
+          "axis_coordinate_m": -4.851757049560547,
+          "cross_section_z_m": -1.0,
+          "coverage_span_m": [
+            -4.520052909851074,
+            4.605572700500488
+          ],
+          "coverage_at_minus_1_m": "complete",
+          "gaps_m": [],
+          "lowest_bottom_z_m": -2.0043318271636963,
+          "highest_bottom_z_m": -2.004328727722168,
+          "cross_section_segments": 10
+        },
+        {
+          "wall": "Y_min",
+          "axis_coordinate_m": -4.520052909851074,
+          "cross_section_z_m": -1.0,
+          "coverage_span_m": [
+            -7.289708137512207,
+            -4.851761817932129
+          ],
+          "coverage_at_minus_1_m": "complete",
+          "gaps_m": [],
+          "lowest_bottom_z_m": -2.0043318271636963,
+          "highest_bottom_z_m": -2.004331588745117,
+          "cross_section_segments": 6
+        },
+        {
+          "wall": "Y_max",
+          "axis_coordinate_m": 4.605574607849121,
+          "cross_section_z_m": -1.0,
+          "coverage_span_m": [
+            -7.289702654230242,
+            -4.851757049560547
+          ],
+          "coverage_at_minus_1_m": "complete",
+          "gaps_m": [],
+          "lowest_bottom_z_m": -2.004328966140747,
+          "highest_bottom_z_m": -2.004328727722168,
+          "cross_section_segments": 6
+        }
+      ]
     }
   },
   "drawing_finishes": [
@@ -219,7 +286,7 @@
         179
       ],
       "sample": "all 65536 RGB pixels equal; no resampling or colour conversion",
-      "evidence_copy": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/T_Kpp_1_Diffuse_1.1013.png"
+      "evidence_copy": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004/T_Kpp_1_Diffuse_1.1013.png"
     },
     {
       "ral": "7004",
@@ -233,7 +300,7 @@
         146
       ],
       "sample": "all 65536 RGB pixels equal; no resampling or colour conversion",
-      "evidence_copy": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/T_Kpp_1_Diffuse_1.1010.png"
+      "evidence_copy": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004/T_Kpp_1_Diffuse_1.1010.png"
     }
   ],
   "materials": [
@@ -242,12 +309,12 @@
       "poly_faces": 127,
       "triangles": 254,
       "area_m2": 82.98113025259933,
-      "finish": "Roof/edge structure and continuous shell, blue RAL5015",
+      "finish": "Roof/edge structure and required perimeter wall drop, blue RAL5015",
       "ral": "5015",
       "map_type": "metal",
       "status": "proposed",
       "question_id": "Q1",
-      "proposal": "Whole-ID finish proposal from measured physical region + governing R1 same-DWG colour legend; not approved.",
+      "proposal": "Required drop below 0.000 retained with adjacent facade finish RAL5015, existing ID1. No ground cut in either profile.",
       "proposal_ral": "5015",
       "proposal_map_type": "metal",
       "source_slot": 1,
@@ -256,7 +323,7 @@
       "evidence": [
         "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 1",
         "DWG R1 MTEXT 276D52 at (137106.628,19878.504) mm; same-DWG facade colour legend",
-        "Gate1 v002 contact sheet: diagnostic face IDs and proposed finish-colour views"
+        "Gate1 v004 native Blender contact sheet: ID colours + plain shaded depth + proposed finish colours; UCX excluded, Z0 datum"
       ]
     },
     {
@@ -279,7 +346,7 @@
         "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 2",
         "DWG model-space MTEXT 276D52 at (137106.628,19878.504) mm; facade colour legend (sheet number not available in model-space)",
         "DWG R1 MTEXT 276D52 at (137106.628,19878.504) mm; same-DWG facade colour legend",
-        "Gate1 v002 contact sheet: diagnostic face IDs and proposed finish-colour views"
+        "Gate1 v004 native Blender contact sheet: ID colours + plain shaded depth + proposed finish colours; UCX excluded, Z0 datum"
       ]
     },
     {
@@ -302,7 +369,7 @@
         "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 3",
         "DWG model-space MTEXT 276D52 at (137106.628,19878.504) mm; facade colour legend (sheet number not available in model-space)",
         "DWG R1 MTEXT 276D52 at (137106.628,19878.504) mm; same-DWG facade colour legend",
-        "Gate1 v002 contact sheet: diagnostic face IDs and proposed finish-colour views"
+        "Gate1 v004 native Blender contact sheet: ID colours + plain shaded depth + proposed finish colours; UCX excluded, Z0 datum"
       ]
     },
     {
@@ -325,7 +392,7 @@
         "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 4",
         "DWG model-space MTEXT 276D52 at (137106.628,19878.504) mm; facade colour legend (sheet number not available in model-space)",
         "DWG R1 MTEXT 276D52 at (137106.628,19878.504) mm; same-DWG facade colour legend",
-        "Gate1 v002 contact sheet: diagnostic face IDs and proposed finish-colour views"
+        "Gate1 v004 native Blender contact sheet: ID colours + plain shaded depth + proposed finish colours; UCX excluded, Z0 datum"
       ]
     },
     {
@@ -450,21 +517,58 @@
     }
   ],
   "evidence": {
-    "directory": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002",
-    "contact_sheet": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/contact-sheet.png",
-    "contact_sheet_sha256": "cc69a0371b8e57bb1dbeada76e1466f5a2a9b750e7d7da61a29c0062a7797856",
-    "checksum_file": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/SHA256SUMS.txt",
-    "render_method": "read-only software orthographic z-buffer projections from #558 measured vertices/triangles/IDs; not Max renderer output",
+    "directory": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004",
+    "contact_sheet": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004/contact-sheet.png",
+    "contact_sheet_sha256": "85cfcd646ca45aea95158775d947bea95a233c1aa9b0d76a9fd768de4052feb9",
+    "checksum_file": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004/SHA256SUMS.txt",
+    "render_method": "native Blender 5.1.2 Cycles CPU; ID, neutral plain shaded and proposed-finish views; source geometry unchanged; UCX excluded; world Z0 datum line",
     "renders": [
-      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/id-axon-front.png",
-      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/id-axon-back.png",
-      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/id-side-x.png",
-      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/id-end-y.png",
-      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/id-roof.png"
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004/id-front.png",
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004/id-back.png"
     ],
     "finish_previews": [
-      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/finish-axon-front.png",
-      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/finish-axon-back.png"
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004/finish-front.png",
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004/finish-back.png"
+    ],
+    "native_render": {
+      "application": "Blender 5.1.2",
+      "engine": "Cycles CPU, 16 samples",
+      "source_geometry_sha256": "22406a97eaf836e47cce92ef871a5cceea3357b3f936ea13ca2764791ac6e500",
+      "source_unchanged": true,
+      "mesh_vertices": 784,
+      "mesh_triangles": 1290,
+      "render_meshes": [
+        "AC05 handle161"
+      ],
+      "ucx_visible": false,
+      "zero_level_line_m": 0.0,
+      "datum_geometry": "native 3D yellow outline at Z0, 5cm outward offset; source geometry untouched",
+      "paired_views": [
+        {
+          "view": "front",
+          "id": "id-front.png",
+          "plain": "plain-front.png",
+          "finish": "finish-front.png"
+        },
+        {
+          "view": "back",
+          "id": "id-back.png",
+          "plain": "plain-back.png",
+          "finish": "finish-back.png"
+        }
+      ],
+      "files": [
+        "id-front.png",
+        "plain-front.png",
+        "finish-front.png",
+        "id-back.png",
+        "plain-back.png",
+        "finish-back.png"
+      ]
+    },
+    "plain_shaded_views": [
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004/plain-front.png",
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004/plain-back.png"
     ]
   },
   "limitations": [
@@ -483,6 +587,7 @@
     "scene_geometry": "final; no geometry rebuild",
     "layer_scope": "actual census layer 005 accepted",
     "undimensioned_panel_joints": "solid without joints",
-    "glass_if_confirmed": "KPP M_Glass_01; NPM alpha 0.5; VPM standard"
+    "glass_if_confirmed": "KPP M_Glass_01; NPM alpha 0.5; VPM standard",
+    "perimeter_drop": "required >=1m down; keep in both profiles; adjacent-facade finish; no new ID"
   }
 }

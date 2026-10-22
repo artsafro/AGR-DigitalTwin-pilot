@@ -25,7 +25,7 @@ R1 DWG governs finishes; PDF fills only what DWG lacks. Actual #558 layers 004�
 1. AutoCAD `-DXFOUT` was unsupported, although the wrapper returned exit 0. No DXF was produced; raw `ac05-acad-v001.json` retained.
 2. `DXFOUT` (without dash) produced DXF. Strict ezdxf read failed with `missing ENDSEC tag`; recovery yielded 0 remaining audit errors and **one** fix: removed orphaned paper-space layout block `*Paper_Space1`, handle `36D49`. The original DXF is retained, not rewritten. Model-space text including RAL legend is readable; orphaned-layout completeness is not asserted.
 3. `QUIT No` means *do not discard* in this console, so AutoCAD saved its disposable **v001 copy**, not the original. That copy is not presented as hash-identical. Fresh pristine **v002** copies were made and rehashed against unchanged originals.
-4. An exploratory ezdxf proxy facade raster was unusable (SHELL face-colour warnings / black output); excluded from the final evidence set. Facade evidence is source DWG text handles/coordinates, not that failed raster. Final ID renders use a per-pixel software z-buffer, not the exploratory painter ordering and not a native Max photoreal renderer.
+4. An exploratory ezdxf proxy facade raster was unusable (SHELL face-colour warnings / black output); excluded from the final evidence set. Facade evidence is source DWG text handles/coordinates, not that failed raster. Earlier v002 used a per-pixel software z-buffer; these software views are superseded by the native Blender v004 review below.
 
 ## Drawing evidence
 
@@ -61,7 +61,7 @@ All used IDs below are **proposed, not approved**. Geometry, not source colour, 
 
 | Face ID | Poly faces | Triangles | Area m² | Proposed finish / RAL | Map type | Evidence / physical region |
 |---|---:|---:|---:|---|---|---|
-| 1 | 127 | 254 | 82.98113025259933 | **RAL 5015**, blue roof/edge structure and continuous shell | **metal** (solid colour) | DF1 + red diagnostic ID region: roof, perimeter/edge structure and downward shell. Z min **-2.004332** m. Whole-ID colour proposal, not a claim of specified blue concrete on hidden surfaces. |
+| 1 | 127 | 254 | 82.98113025259933 | **RAL 5015**, blue roof/edge structure and continuous shell | **metal** (solid colour) | DF1 + red diagnostic ID region: roof, perimeter/edge structure and downward shell. Z min **-2.004332** m. Required perimeter drop retained with adjacent facade RAL5015 blue, existing ID1; never cut at ground. |
 | 2 | 22 | 44 | 56.48439932962852 | **RAL 5015**, blue sandwich-panel walls | **solid**, no joints | DF1 + DF3 + blue diagnostic ID region: side/end wall panels. No dimensioned seam/profile/module found; no KPP cassette pattern copied. |
 | 3 | 476 | 990 | 6.699798207317762 | **RAL 7004**, opaque painted door/frame/hardware | **metal** | DF2 + yellow diagnostic ID region: end-opening frame/hardware and side door. Diagnostic yellow is not a drawing finish. |
 | 4 | 1 | 2 | 4.313754850037867 | **RAL 7004**, opaque painted end door/gate infill | **metal** | DF2 + purple rectangular end infill. Proposed door/gate finish, not unproven glass. |
@@ -72,7 +72,9 @@ All used IDs below are **proposed, not approved**. Geometry, not source colour, 
 | 9 | 0 | 0 | 0 | ? (empty slot) | ? | No faces; leave empty. |
 | 10 | 0 | 0 | 0 | ? (empty slot) | ? | No faces; leave empty. |
 
-DF4 concrete slab remains inventoried, not arbitrarily assigned to an existing mixed blue ID. ID 1's whole-ID blue proposal includes hidden shell geometry but does not certify that hidden concrete is specified blue. Source geometry is final and untouched under operator policy; any disagreement on that whole-ID finish is a Gate-1 colour decision, not permission for a geometry rebuild.
+DF4 concrete slab remains inventoried, not arbitrarily assigned to another ID. **Artem's perimeter-drop clarification (2026-10-22):** below-zero geometry is required, not a defect. Preserve it in both VPM and NPM, never cut at ground, keep adjacent-facade finish and existing ID. Here all below-minus-one-metre triangles use ID1; the drop therefore inherits RAL5015 blue from adjacent wall ID2 without adding an ID. This is settled policy, not an extra question for Artem.
+
+**Read-only depth measurement:** intersect source triangles with Z=-1.0 m and merge intervals on each of the four outer rectangular sides. All four side spans are complete (no gaps); bottom-vertex upper bounds: X-min -2.004328966, X-max -2.004328728, Y-min -2.004331589, Y-max -2.004328728 m, each <= -1.0 m. Raw `ac05-drop.json` records intervals and exact bounds; side classification 0.1 mm and interval merge 0.01 mm address source float jitter, not model edits or a relaxation of the one-metre requirement. This is a source measurement, not final exported-profile QA.
 
 ## KPP colour reuse, not KPP finish substitution
 
@@ -80,15 +82,20 @@ DF4 concrete slab remains inventoried, not arbitrarily assigned to an existing m
 
 ## Evidence and tests
 
-Drive evidence directory: `G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/`.
-Contact sheet: `contact-sheet.png`; individual ID renders: `id-axon-front.png`, `id-axon-back.png`, `id-side-x.png`, `id-end-y.png`, `id-roof.png`.
-Two unchanged-geometry finish-colour previews (`finish-axon-front.png`, `finish-axon-back.png`) accompany the diagnostic views; these are Gate-1 colour proposals, not VPM/NPM exports. Previous `gate1-v001` is superseded and retained. Also included: original census JSON, three AC05 geometry buffers, recovered-text inventory with native handles, unmodified DXF, PDF page raster, raw AutoCAD receipts, reproducibility scripts and exact KPP blue/grey reference images. `SHA256SUMS.txt` in this directory and this job pins the published files. Render colours distinguish face IDs and are **not** drawing finish colours.
+**Current Gate review:** `G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004/contact-sheet.png`.
+Every current geometry view is a **native Blender 5.1.2 / Cycles CPU render**, source geometry unchanged, collision meshes excluded. For each of two camera directions the sheet places **ID colours next to a plain neutral shaded view**, plus a proposed-finish shaded view. A yellow native 3D outline at **Z=0.000** (5 cm outward for visibility) marks the datum without cutting/occluding the required drop. No wireframe triangle overlay. Source: 784 vertices / 1290 triangles, handle161 only; counts/IDs and source buffer hash unchanged. Native renderer receipt: `native-render.json`.
 
-Focused test seam: this issue's `materials.json` + report; no shared validator or production module added. Tests-first commit `0396035` demonstrated **1 failed** because the AC05 inventory was missing. Operator-policy tests-first commit `3a6a8b9` then demonstrated **1 failed** (`unresolved != proposed`) before the concrete proposal update. Final focused run through `suite_slot.py`: **1 passed in 0.04s**. Independent read-only probes: **22/22 Drive file hashes**, **4/4 source hashes**, **3/3 distinct source/copy files**, **4/4 recomputed ID areas/counts**, **2/2 exact KPP constant-colour images**, **30/30 swatch samples**. `git diff --check` passed. Full suite is deferred until the first code-review request after the human Gate-1 answer. Inventory tests do not imply source completeness, model acceptance or Gate-1 approval.
+Old v001/v002 software projections are **superseded and not for Gate approval**; v003 first native framing clipped the extremities and is also superseded. v004 expands framing to preserve visible margin around the entire mesh. These old versions remain trace evidence only; no claim that their technical image generation was the current acceptance evidence.
+
+Current directory also retains the governing drawing raster, original census and three AC05 raw geometry buffers, recovered DWG text/handles, unmodified DXF, raw AutoCAD receipts, exact KPP constant-colour references, native renderer/drop scripts and checksums. All evidence binaries remain on Drive. `SHA256SUMS.txt` here pins the current bundle. Model geometry and original files were never edited, no VPM/NPM was built or exported.
+
+Focused test seam: this issue's `materials.json` + report; no shared validator or production module added. Tests-first commit `0396035` demonstrated **1 failed** because the AC05 inventory was missing. Operator-policy tests-first commit `3a6a8b9` then demonstrated **1 failed** (`unresolved != proposed`) before the concrete proposal update. Final focused run through `suite_slot.py`: **1 passed in 0.04s**. Independent read-only probes: **25/25 current Drive file hashes**, **4/4 source hashes**, **3/3 distinct source/copy files**, **4/4 recomputed ID areas/counts**, **2/2 exact KPP constant-colour images**, **30/30 swatch samples**. `git diff --check` passed. Full suite is deferred until the first code-review request after the human Gate-1 answer. Inventory tests do not imply source completeness, model acceptance or Gate-1 approval.
 
 ## Gate 1 — STOP (answers on this card)
 
-1. **Approve the visual proposal:** IDs **1–2 RAL 5015 blue**, IDs **3–4 opaque painted metal RAL 7004 grey**, including ID 1 whole-ID roof/edge/shell colour and ID 4 opaque door/gate infill? If not, identify the changed region on the sheet; the mapping is already proposed, not left to the user blind.
+1. **Approve the visual proposal:** IDs **1–2 RAL 5015 blue**, IDs **3–4 opaque painted metal RAL 7004 grey**, including ID 4 opaque door/gate infill? ID1 required drop already follows the adjacent-wall finish by the operator clarification. If not, identify the changed region on the sheet; the mapping is already proposed, not left to the user blind.
 2. **Only missing drawing fact:** no panel seam/profile/module dimension was found. The proposal uses **solid blue without joints**. Keep this, or provide the dimensioned module if joints are required.
 
 No layer-name, dimensional-rebuild, unused-slot or blind ID-mapping questions remain. Record Artem's answer against the current exact contact-sheet hash; then update only the approved statuses and request technical review. No model build is authorized in this card. Technical QA and user acceptance remain separate.
+
+Native-image follow-up RED: commit `0ae100c`, **1 failed / 1 passed** (missing native-render receipt), prior to the new bundle. Final focused `suite_slot.py` run: **2 passed in 0.08s**. Independent current-bundle probe: **25/25 hashes**, **4/4 source hashes**, **3/3 nonaliased source/copies**, **4/4 ID counts/areas**, **2/2 exact KPP images**, **30/30 swatch samples**. Perimeter-drop span probe: **4/4**. Native Blender process exited **0**, six rendered images read back, final sheet visually checked for whole-object framing and correct depth. Earlier software/framing versions are not current Gate evidence.
