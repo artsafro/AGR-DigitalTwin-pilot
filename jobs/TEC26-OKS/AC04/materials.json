@@ -1,0 +1,296 @@
+{
+  "object": "tec26-oks-AC04",
+  "building_title": "Локальные очистные сооружения поверхностных сточных вод",
+  "base_sha": "442f0b695a91f9abc180783c26978fbe85fefcf9",
+  "gate_1_status": "awaiting_artem",
+  "delivery_passed": false,
+  "scope": "Gate 1 evidence and proposed finishes only; no VPM/NPM or scene mutation",
+  "source_copy_mutation": {
+    "path": "C:/x/tec26-oks/AC04/sources-v001/22E56-АР2-1002-AC.04_R1.dwg",
+    "sha256_after_native_session": "253bdb2a9e2e2ddc64d79550b9e56f41035d3d025e1457947cb9e5ac5c4d2b75",
+    "original_sha256_unchanged": "d34638d96ea51046e25b0376f4cd589c0725aeb15f2bccc4800ab3716b1a409b",
+    "disposition": "Working copy retained; frozen v003 sources freshly copied and hash-verified against originals. Cause not established. Native text, not post-session DWG immutability, is verified."
+  },
+  "governing_revision": "DWG R1 finishes; PDF only supplemental; orchestrator comment 2026-10-22",
+  "sources": [
+    {
+      "path": "C:/x/tec26-oks/AC04/sources-v003/22E56-АР2-1002-AC.04_R1.dwg",
+      "sha256": "d34638d96ea51046e25b0376f4cd589c0725aeb15f2bccc4800ab3716b1a409b",
+      "bytes": 9162192
+    },
+    {
+      "path": "C:/x/tec26-oks/AC04/sources-v003/22Е56-АР2-1002-АС.pdf",
+      "sha256": "97e324176ffc6c078f27849e98a08b530cbd1d07ddb3fe71b5fe66754dc1ccfe",
+      "bytes": 170118
+    }
+  ],
+  "scene": {
+    "source_copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\04-09 Geometry Final.max",
+    "source_sha256": "eb0cffedefa80678cf4ada13db71f2e80795a92212f9fbf60b7c30c54a7852bd",
+    "census_path": "C:/x/tec26-oks/census/oks.json",
+    "census_sha256": "a99de19f1d30633eaab9c52ac44f253ed6ea97e03358755ff2a77458f0f54f2f",
+    "application_version": [
+      28000,
+      68,
+      0,
+      28,
+      3,
+      0,
+      30732,
+      2026,
+      ".3"
+    ],
+    "system_unit_type": "meters",
+    "units_per_meter": 1.0,
+    "mesh_handle": 174,
+    "layer": "004",
+    "multisub": "Material #35",
+    "triangles": 5006,
+    "poly_faces": 2552,
+    "empty_slots": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "collision_handles": [
+      346,
+      347,
+      348,
+      349,
+      350,
+      351,
+      352,
+      353,
+      354,
+      355,
+      356,
+      357,
+      358,
+      359,
+      360,
+      361,
+      362
+    ],
+    "geometry_path": "C:/x/tec26-oks/max-readback-v001/geometry-174.json",
+    "geometry_sha256": "393cb5bcab9d1a73dc705af60a7c4aac0483b8fe310a9bed5399e189572f4c03"
+  },
+  "materials": [
+    {
+      "id": 1,
+      "source_slot": 1,
+      "source_material": "1",
+      "component": "External shell, structural strips, roof and below-grade base",
+      "finish": "Sandwich / canopy RAL5015; mixed base and roof provisional",
+      "unresolved_components": [{"component": "base and independent roof finish", "finish": "?", "question_ids": ["Q2"]}],
+      "assignment_ready": false,
+      "ral": "RAL5015",
+      "map_type": "solid",
+      "rgb_srgb": [
+        34,
+        113,
+        179
+      ],
+      "status": "proposed",
+      "triangles": 780,
+      "poly_faces": 439,
+      "area_m2": 179.66802845578127,
+      "evidence": [
+        "DWG:170B10"
+      ],
+      "geometry_evidence": "only-1.png",
+      "question_ids": [
+        "Q1",
+        "Q2",
+        "Q4"
+      ],
+      "kpp_reference": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1013.png",
+        "sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+        "sampling": "exact uniform RGB; all pixels checked",
+        "tile": 1013
+      }
+    },
+    {
+      "id": 2,
+      "source_slot": 2,
+      "source_material": "Material #36",
+      "component": "Recessed wall panel infill",
+      "finish": "Sandwich panels RAL5015",
+      "ral": "RAL5015",
+      "map_type": "solid",
+      "rgb_srgb": [
+        34,
+        113,
+        179
+      ],
+      "status": "proposed",
+      "triangles": 38,
+      "poly_faces": 19,
+      "area_m2": 82.70240776665933,
+      "evidence": [
+        "DWG:170B10"
+      ],
+      "geometry_evidence": "only-2.png",
+      "question_ids": [
+        "Q1",
+        "Q4"
+      ],
+      "kpp_reference": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1013.png",
+        "sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+        "sampling": "exact uniform RGB; all pixels checked",
+        "tile": 1013
+      }
+    },
+    {
+      "id": 3,
+      "source_slot": 3,
+      "source_material": "Material #37",
+      "component": "Two small glazed panes",
+      "finish": "M_Glass_01",
+      "ral": null,
+      "map_type": "glass",
+      "rgb_srgb": null,
+      "status": "proposed",
+      "triangles": 4,
+      "poly_faces": 2,
+      "area_m2": 0.23839848492252003,
+      "evidence": [
+        "KPP-glass-policy:orchestrator-comment-2026-10-22"
+      ],
+      "geometry_evidence": "only-3.png",
+      "question_ids": [
+        "Q1"
+      ],
+      "glass": {
+        "name": "M_Glass_01",
+        "npm_opacity": 0.5,
+        "vpm": "Separate glass object / no maps at future build; parameters require KPP readback, not set in this Gate-1 report"
+      }
+    },
+    {
+      "id": 4,
+      "source_slot": 4,
+      "source_material": "Material #38",
+      "component": "Door leaf and small opening frames",
+      "finish": "Doors RAL7004; frames proposed same grey",
+      "ral": "RAL7004",
+      "map_type": "metal",
+      "rgb_srgb": [
+        150,
+        153,
+        146
+      ],
+      "status": "proposed",
+      "triangles": 332,
+      "poly_faces": 166,
+      "area_m2": 2.9348832911761047,
+      "evidence": [
+        "DWG:170B10"
+      ],
+      "geometry_evidence": "only-4.png",
+      "question_ids": [
+        "Q1",
+        "Q3"
+      ],
+      "kpp_reference": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1010.png",
+        "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "sampling": "exact uniform RGB; all pixels checked",
+        "tile": 1010
+      }
+    },
+    {
+      "id": 5,
+      "source_slot": 5,
+      "source_material": "Material #39",
+      "component": "Roof railing, ladder and cage",
+      "finish": "Metal ladder / safety rail RAL1021",
+      "ral": "RAL1021",
+      "map_type": "metal",
+      "rgb_srgb": [
+        238,
+        201,
+        0
+      ],
+      "status": "proposed",
+      "triangles": 3852,
+      "poly_faces": 1926,
+      "area_m2": 24.24855738402235,
+      "evidence": [
+        "DWG:170B10"
+      ],
+      "geometry_evidence": "only-5.png",
+      "question_ids": [
+        "Q1"
+      ],
+      "kpp_reference": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1004.png",
+        "sha256": "953557e3202eabaa2085cb78446b923ee9ea181266565a98e7c124add2da4616",
+        "sampling": "exact uniform RGB; all pixels checked",
+        "tile": 1004
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "Q1",
+      "question": "Approve the proposed ID 1/2 blue, ID 3 glass, ID 4 grey, ID 5 yellow mapping on the contact sheet? Diagnostic colours identify IDs, not finish colours."
+    },
+    {
+      "id": "Q2",
+      "question": "ID 1 combines external strips, roof and a below-grade base. Proposal: blue RAL5015 on above-grade shell/roof; no independent base finish is proven. Approve this for Gate 1, and keep any visible base finish unresolved rather than recolour the whole ID blindly?"
+    },
+    {
+      "id": "Q3",
+      "question": "ID 4 combines a door and small opening frames. Proposal: RAL7004 for both, with M_Glass_01 in ID 3. The legend explicitly specifies doors but not small frames: approve frame grey?"
+    },
+    {
+      "id": "Q4",
+      "question": "No verified dimensioned panel joint module was identified. Proposal: solid RAL5015 without fabricated cassette/joint pattern. Approve solid for Gate 1, or provide the panel module drawing?"
+    }
+  ],
+  "drawing_evidence": {
+    "DWG:170B10": {
+      "sheet": "1 of 2",
+      "space": "Model",
+      "xy_mm": [
+        52042.21105447865,
+        11555.88227939619
+      ],
+      "text": "Сэндвич-панели, козырёк - RAL 5015; Крыльца, двери - RAL 7004; Ограждения металлической лестницы - RAL 1021"
+    },
+    "native_title": {
+      "layout": "1",
+      "handles": [
+        "E42B7",
+        "E42B8",
+        "E42B5",
+        "E42BD",
+        "E4341"
+      ],
+      "xy_mm": [
+        508.101,
+        28.4873
+      ]
+    },
+    "native_readback": {
+      "path": "C:/x/tec26-oks/AC04/native-text-v002.txt",
+      "sha256": "6afdf365fdd2f126cbe0c11fbc4435c34e9057b0f9dce8b22ff4ddb9c32f66f2",
+      "records": 104,
+      "acad_version": "25.0",
+      "insunits": 4
+    }
+  },
+  "conflicts": [
+    {
+      "fact": "sandwich thickness",
+      "dwg_mm": 150,
+      "pdf_mm": 120,
+      "disposition": "Documented only; scene geometry final, no geometry edits per orchestrator."
+    }
+  ],
+  "contact_sheet": "G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v003/contact-sheet.png"
+}

@@ -1,0 +1,80 @@
+{
+  "storage_path": "G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v003",
+  "files": [
+    {
+      "filename": "contact-sheet.png",
+      "sha256": "0fd491102fdf0796369c3ce04779e172faa5b82bcad0814336ff7a9a68999ce4",
+      "bytes": 167673
+    },
+    {
+      "filename": "dwg-ac04-recovered.png",
+      "sha256": "dfb80d6ee3d87c64923aaaf3db9b315225695a774da50d0d1cdc480a7b0f1fd4",
+      "bytes": 67704
+    },
+    {
+      "filename": "iso.png",
+      "sha256": "b70ad653fe2fe27c1fac6f51be1157558667b21202aac5046e4a142a2ea2681b",
+      "bytes": 17005
+    },
+    {
+      "filename": "native-run-v002.json",
+      "sha256": "ae23050ec094693daf22ef47de75bb498e3912248bd5227cc295c3670df8f634",
+      "bytes": 2431
+    },
+    {
+      "filename": "native-text-v002.txt",
+      "sha256": "6afdf365fdd2f126cbe0c11fbc4435c34e9057b0f9dce8b22ff4ddb9c32f66f2",
+      "bytes": 45498
+    },
+    {
+      "filename": "only-1.png",
+      "sha256": "b8ecd766910c24be28ba5f429f8fafde8b2b7a1aa9c335d238a799bdaa63627f",
+      "bytes": 10686
+    },
+    {
+      "filename": "only-2.png",
+      "sha256": "063430390b8f1926fe3751fe8aca6898d982c22f8582d3d62c048bb351f02749",
+      "bytes": 9609
+    },
+    {
+      "filename": "only-3.png",
+      "sha256": "062b639e411e094eb90f8d330bf62d4dae387e5462ac9cde7c353f70af804999",
+      "bytes": 8059
+    },
+    {
+      "filename": "only-4.png",
+      "sha256": "2df22892952d6dc84b665665f79f8000f2b328c03c242a21722b919bb88d150d",
+      "bytes": 8273
+    },
+    {
+      "filename": "only-5.png",
+      "sha256": "c4fa5ac0c5da9abe67ad09c70d888ec60e02a9c15ceaba7b8f815e7a28a96c22",
+      "bytes": 13144
+    },
+    {
+      "filename": "pdf-sheet2.png",
+      "sha256": "a44d6d2f5457de23018b17b25b826007a0efb4b34e908246cd75f35bd9674b3d",
+      "bytes": 468039
+    },
+    {
+      "filename": "render-drawing-diagnostic.py",
+      "sha256": "4e667f7df248a75ccec42aa4fc93e024689b94d0807622444cd7153a4a421b38",
+      "bytes": 577
+    },
+    {
+      "filename": "render-id-diagnostics.py",
+      "sha256": "dd9d7e4059f2f788afc7ef61e837a5b6aee9f464122e0cf3504e7779e6847593",
+      "bytes": 1728
+    },
+    {
+      "filename": "reverse.png",
+      "sha256": "3642133bb673977e0556d42f118acfc70fff96d0a3898d8eb2b5a75db3a9aff2",
+      "bytes": 15630
+    },
+    {
+      "filename": "roof.png",
+      "sha256": "b553f6e712692a67053f54aa0e61040885a0404946e629b49b75d2a1a9ed577b",
+      "bytes": 7869
+    }
+  ]
+}
