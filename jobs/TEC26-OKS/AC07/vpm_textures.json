@@ -1,0 +1,344 @@
+{
+ "_doc": "AC07 (Пункт редуцирования газа 2) VPM texture sets, KPP1 recipe of the AC08 pilot (#559, PR #574). Gate 1 approved by Artem 2026-10-22 (#564 «Принимаю»; ID6 to verify). Colour only: geometry, topology, UCX and IDs from the source (max-dump-007.json). Panels: Artem's vertical-joint texture (colour/noise/look of one joint), rib COUNT per facade from this building's «Фасад ... Цветовое решение» sheet (ac07.dxf model space): ribs every 200 mm over the whole wall height, grey RAL 7047 to +2.500 and blue RAL 5015 above in ONE tile per facade pair (lower_band, v = world z). KPP VPM texel 1000 px/m. No frame posts on this sheet (no AC08-style frame band). Address Prg_2 is a placeholder token.",
+ "address": "Prg_2",
+ "size_full": 4096,
+ "size_placeholder": 256,
+ "pad_m": 0.04,
+ "zero_m": 0.0,
+ "source_ids": {
+  "1": {
+   "split": "facade",
+   "nonvertical": "Roof_RAL7004",
+   "why": "mixed ID1 (Gate-1): vertical faces = upper blue wall panels (+2.500..+3.761), non-vertical = roof"
+  },
+  "2": {
+   "finish": "Trim_RAL5015"
+  },
+  "3": {
+   "split": "facade",
+   "why": "lower sandwich panels RAL 7047 (+0.132..+2.500), ribbed like the sheet"
+  },
+  "4": {
+   "finish": "Metal_RAL7004"
+  },
+  "5": {
+   "finish": "Metal_RAL7004"
+  },
+  "6": {
+   "finish": "Insert_RAL7004"
+  },
+  "7": {
+   "finish": "Door_RAL7004"
+  },
+  "8": {
+   "finish": "Frame_RAL9016"
+  },
+  "9": {
+   "finish": "Frame_RAL9016"
+  },
+  "10": {
+   "finish": "Plinth_RAL7004"
+  },
+  "11": {
+   "finish": "Interior"
+  }
+ },
+ "empty_ids": [],
+ "glass_ids": [
+  12
+ ],
+ "glass": {
+  "udim": 1001
+ },
+ "kpp_palette": {
+  "PanelVJ68": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
+  },
+  "PanelVJ55": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
+  },
+  "Roof_RAL7004": {
+   "kpp_finish": "Door_RAL7004",
+   "kpp_udim": 1010
+  },
+  "Trim_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013
+  },
+  "Metal_RAL7004": {
+   "kpp_finish": "Door_RAL7004",
+   "kpp_udim": 1010
+  },
+  "Insert_RAL7004": {
+   "kpp_finish": "Door_RAL7004",
+   "kpp_udim": 1010
+  },
+  "Door_RAL7004": {
+   "kpp_finish": "Door_RAL7004",
+   "kpp_udim": 1010
+  },
+  "Frame_RAL9016": {
+   "kpp_finish": "Frame_RAL9016",
+   "kpp_udim": 1009
+  },
+  "Plinth_RAL7004": {
+   "kpp_finish": "Door_RAL7004",
+   "kpp_udim": 1010
+  },
+  "Interior": {
+   "kpp_finish": "Interior",
+   "kpp_udim": 1011
+  }
+ },
+ "finishes": {
+  "PanelVJ68": {
+   "udim": 1001,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.1985314172856948,
+    0.1985314172856948
+   ],
+   "shift": [
+    true,
+    false
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 4,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "lower_band": {
+    "z_max_m": 2.5,
+    "rgb": [
+     208,
+     208,
+     208
+    ],
+    "kpp_finish": "Cassette_RAL7047",
+    "kpp_udim": 1006,
+    "why": "sheet: the ribbed sandwich wall is RAL 7047 grey from +0.120 to +2.500 (ID3) and RAL 5015 blue above (ID1); same rib layout through both (DXF vertical lines run the full wall height)"
+   },
+   "why": "long facades 1-3 (+y) / 3-1 (-y): 68 ribs evenly over the 13.5 m wall (sheet: 67 joint lines every 200 mm)"
+  },
+  "PanelVJ55": {
+   "udim": 1002,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.19817943572998048,
+    0.19817943572998048
+   ],
+   "shift": [
+    true,
+    false
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 4,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "lower_band": {
+    "z_max_m": 2.5,
+    "rgb": [
+     208,
+     208,
+     208
+    ],
+    "kpp_finish": "Cassette_RAL7047",
+    "kpp_udim": 1006,
+    "why": "sheet: the ribbed sandwich wall is RAL 7047 grey from +0.120 to +2.500 (ID3) and RAL 5015 blue above (ID1); same rib layout through both (DXF vertical lines run the full wall height)"
+   },
+   "why": "short facades А-Д (-x) / Д-А (+x): 55 ribs evenly over the 10.9 m wall (sheet: 54 joint lines every 200 mm)"
+  },
+  "Roof_RAL7004": {
+   "udim": 1003,
+   "kind": "placeholder",
+   "rgb": [
+    150,
+    153,
+    146
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "why": "ID1 non-vertical faces (roof): RAL 7004 per Artem's AC07 Gate-1 answer «ID1 кровля 7004» (the elevations draw the roof blue: question to Artem)"
+  },
+  "Trim_RAL5015": {
+   "udim": 1004,
+   "kind": "placeholder",
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.4,
+   "metal": 0.0,
+   "why": "ID2 roof edge trims / canopies, metal RAL 5015 (legend «Сэндвич-панели, козырьки - RAL 5015»)"
+  },
+  "Metal_RAL7004": {
+   "udim": 1005,
+   "kind": "placeholder",
+   "rgb": [
+    150,
+    153,
+    146
+   ],
+   "rough": 0.4,
+   "metal": 0.0,
+   "why": "ID4 downpipes/gutters, ID5 tubular snow retainers: RAL 7004 (legend «элементы водосточной системы - RAL 7004»; Gate-1 ID5)"
+  },
+  "Insert_RAL7004": {
+   "udim": 1006,
+   "kind": "placeholder",
+   "rgb": [
+    150,
+    153,
+    146
+   ],
+   "rough": 0.4,
+   "metal": 0.0,
+   "why": "ID6 round facade inserts: Artem did not define them; RAL 7004 metal, TO VERIFY (Gate-1 answer), shown enlarged on the acceptance sheet"
+  },
+  "Door_RAL7004": {
+   "udim": 1007,
+   "kind": "placeholder",
+   "rgb": [
+    150,
+    153,
+    146
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "why": "ID7 doors RAL 7004 (legend)"
+  },
+  "Frame_RAL9016": {
+   "udim": 1008,
+   "kind": "placeholder",
+   "rgb": [
+    246,
+    246,
+    246
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "why": "ID8 pressure-relief frames/mullions, ID9 opening surrounds: RAL 9016 (legend)"
+  },
+  "Plinth_RAL7004": {
+   "udim": 1009,
+   "kind": "placeholder",
+   "rgb": [
+    150,
+    153,
+    146
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "why": "ID10 plinth +0.000..+0.132 and the required perimeter drop to -2.025: RAL 7004 plain, no joints (below ±0.000 plain)"
+  },
+  "Interior": {
+   "udim": 1010,
+   "kind": "placeholder",
+   "rgb": [
+    25,
+    25,
+    28
+   ],
+   "rough": 0.9,
+   "metal": 0.0,
+   "why": "ID11 inner shell = KPP Interior (Gate-1)"
+  }
+ },
+ "facade_uv": {
+  "PanelVJ68": "u' = metres along the facade from the wall field's smaller world coordinate (joints at u' = k * P), v = world z",
+  "PanelVJ55": "same frame, P of the short facades"
+ },
+ "ring_cuts": {
+  "allowed": "edge ring at joint positions, quads only, boundary to boundary",
+  "decision": "Artem 2026-10-22 «если не влезает, то можно аккуратно порезать через loop или ring»"
+ },
+ "facades": {
+  "1-3": {
+   "normal": "+y",
+   "finish": "PanelVJ68",
+   "ribs": 68,
+   "field_m": 13.500136,
+   "sheet_field_mm": 13500.2,
+   "sheet_joints": 67,
+   "door": "two doors ID7 (RAL 7004) hide joints below +2.220, as on the sheet"
+  },
+  "3-1": {
+   "normal": "-y",
+   "finish": "PanelVJ68",
+   "ribs": 68,
+   "field_m": 13.500136,
+   "sheet_field_mm": 13500.2,
+   "sheet_joints": 67,
+   "door": "three pressure-relief windows (ID8/9/glass) and one door hide joints, as on the sheet"
+  },
+  "А-Д": {
+   "normal": "-x",
+   "finish": "PanelVJ55",
+   "ribs": 55,
+   "field_m": 10.899869,
+   "sheet_field_mm": 10900.0,
+   "sheet_joints": 54,
+   "door": "round inserts ID6"
+  },
+  "Д-А": {
+   "normal": "+x",
+   "finish": "PanelVJ55",
+   "ribs": 55,
+   "field_m": 10.899869,
+   "sheet_field_mm": 10900.0,
+   "sheet_joints": 54
+  }
+ },
+ "facades_doc": "Rib contract from 22Е56-АР2-1002-АС.07_R1.dwg (AutoCAD readback ac07.dxf, model space, titles #105135 А-Д, #105134 Д-А, #104EB0 1-3, #104EB2 3-1 «Фасад ... Цветовое решение»): vertical joint lines (layer PDF_Чертеж.АР) every 200 mm across the whole 10900 / 13500 mm wall from +0.120 to the eaves - А-Д at 100+200k (54 lines), Д-А at 200+200k (54), 1-3 at 100+200k (67), 3-1 at 200+200k (67); ribs = joints + 1 = 55 / 68. Lines of downpipes (115/237 mm) and window frames excluded. Model wall (ID3 faces of max-dump-007) = 10.9 / 13.5 m; P = field_m / ribs = 0.19818 / 0.19853 m, joints at field_lo + k P (even and symmetric, as accepted on the AC08 pilot). Facade names: -x = А-Д (round inserts ID6), +x = Д-А, -y = 3-1 (pressure-relief windows), +y = 1-3.",
+ "sheet": {
+  "facades_json": "jobs/TEC26-OKS/AC07/sheet-facades.json",
+  "dwg": "C:/x/tec26-oks/AC07/22E56-АР2-1002-AC.07_R1.dwg",
+  "dwg_sha256": "51b355e53288391b439a7aec01627a0cd1962041f12a3a2125cf797ca70edf3d",
+  "dxf": "C:/x/tec26-oks/acad-readback-v001/ac07.dxf",
+  "dxf_sha256": "7a35d7064fe6bba2ae56ac5ef7cc363440ff5bb3db095c1e7c5094b5c0e2bdc5"
+ }
+}

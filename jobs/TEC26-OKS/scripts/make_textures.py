@@ -118,6 +118,11 @@ def make_user_vjoints(t, size):
         col[rows, :] = np.median(jcol, 0)
         h[rows, :] = -3.0
         rough[rows, :] = 0.9
+    lb = t.get("lower_band")
+    if lb:  # AC07 sheet: one ribbed sandwich wall, RAL 7047 grey below z_max_m and RAL 5015 blue above (v = world z)
+        z = (size - np.arange(size) - 0.5) * t["S"] / size
+        rows = z < lb["z_max_m"]
+        col[rows] = np.array(lb["rgb"], float) * (col[rows].mean(-1, keepdims=True) / med.mean())
     dif = np.clip(col, 0, 255).round().astype(np.uint8)
     erm = np.stack([np.zeros((size, size)), rough * 255, np.full((size, size), t["metal"] * 255)], -1)
     return dif, None, erm.round().astype(np.uint8), normal_from_height(h, 0.5)

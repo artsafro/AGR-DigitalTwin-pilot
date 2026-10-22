@@ -81,6 +81,8 @@ def validate_spec(spec, kpp_spec=None):
             names = [rule["above"], rule["below"]]
         elif rule.get("split") == "facade":
             names = sorted({f["finish"] for f in spec["facades"].values()})
+            if "nonvertical" in rule:  # AC07: one ID = wall panels (vertical) + roof (not vertical)
+                names.append(rule["nonvertical"])
         else:
             names = [rule.get("finish")]
         if rule.get("split") not in (None, "below_zero", "facade"):
@@ -92,6 +94,15 @@ def validate_spec(spec, kpp_spec=None):
     clash = empty & {int(i) for i in src}
     if clash:
         raise ValueError(f"IDs both mapped and empty: {sorted(clash)}")
+    glass = spec.get("glass_ids")
+    if glass is not None:
+        if not (isinstance(glass, list) and glass and all(isinstance(i, int) and not isinstance(i, bool) for i in glass)):
+            raise ValueError(f"glass_ids must be a non-empty list of ints, got {glass}")
+        both = set(glass) & ({int(i) for i in src} | empty)
+        if both:
+            raise ValueError(f"IDs both glass and mapped/empty: {sorted(both)}")
+        if not isinstance((spec.get("glass") or {}).get("udim"), int):
+            raise ValueError("glass_ids need a spec glass block with an int udim")
     if not isinstance(spec.get("zero_m"), (int, float)) or not math.isfinite(spec["zero_m"]):
         raise ValueError("zero_m must be a finite number")
     if spec.get("kpp_palette") and kpp_spec is None:
@@ -106,6 +117,12 @@ def validate_spec(spec, kpp_spec=None):
             if fin[name]["kind"] == "full" and k["kind"] == "placeholder":  # user texture in the KPP colour
                 check_user_texture(name, spec)
                 check_density_contract(name, spec, density_twin(name, spec, kpp_spec), kpp_spec)
+                lb = fin[name].get("lower_band")
+                if lb is not None:  # the grey lower part of the same ribbed wall: exactly the KPP colour too
+                    k2 = kpp_spec["finishes"].get(lb.get("kpp_finish"))
+                    if k2 is None or k2["udim"] != lb.get("kpp_udim") or k2["rgb"] != lb.get("rgb"):
+                        raise ValueError(f"{name}: lower_band rgb {lb.get('rgb')} != KPP {lb.get('kpp_finish')} "
+                                         f"{None if k2 is None else k2['rgb']}")
             elif fin[name]["kind"] == "full":  # same joints/noise/recess as the KPP VPM tile; only S/phase may differ
                 for key in ("pattern", "P", "h_joints", "rough", "metal", "joint_half_mm"):
                     if fin[name].get(key) != k.get(key):
@@ -163,6 +180,14 @@ def facade_key(vertices, face, tol=1e-3):
         raise ValueError(f"face {face} is not vertical; a facade finish needs a wall face")
     a = 0 if abs(n[0]) >= abs(n[1]) else 1
     return ("+" if n[a] > 0 else "-") + "xy"[a]
+
+
+def is_vertical(vertices, face, tol=1e-3):
+    """True for a wall face (unit Newell normal |n_z| <= tol); a degenerate face raises ValueError."""
+    n = _newell([vertices[k] for k in face])
+    if n is None:
+        raise ValueError(f"face {face} is degenerate (zero area)")
+    return abs(n[2]) <= tol
 
 
 def facade_of(spec, key):
@@ -241,6 +266,14 @@ def check_user_texture(name, spec):
     # the repeat comes from the sheet (facades.ribs), so the tile period `want` may differ from the source period.
     if not want >= 4 * (fj[1] - fj[0]):
         raise ValueError(f"{name}: tile period {want:.1f} px leaves no panel between {fj[1] - fj[0]} px joints")
+    lb = t.get("lower_band")
+    if lb is not None:
+        zb = lb.get("z_max_m") if isinstance(lb, dict) else None
+        if not (isinstance(zb, (int, float)) and math.isfinite(zb) and spec["pad_m"] < zb < t["S"] - spec["pad_m"]):
+            raise ValueError(f"{name}: lower_band z_max_m must be finite inside the tile, got {zb}")
+        rgb = lb.get("rgb")
+        if not (isinstance(rgb, list) and len(rgb) == 3 and all(isinstance(c, int) and 0 <= c <= 255 for c in rgb)):
+            raise ValueError(f"{name}: lower_band rgb must be three ints 0..255, got {rgb}")
     oz = t.get("outline_z_m")
     if oz is not None and not (isinstance(oz, list) and len(oz) == 2 and all(isinstance(x, (int, float)) and
                                                                             math.isfinite(x) for x in oz)
@@ -286,6 +319,9 @@ def assign_finishes(vertices, faces, mat_ids, spec):
             zmax = max(vertices[k][2] for k in f)
             out.append(rule["below"] if zmax <= zero else rule["above"])
         elif rule.get("split") == "facade":
+            if "nonvertical" in rule and not is_vertical(vertices, f):
+                out.append(rule["nonvertical"])
+                continue
             try:
                 out.append(facade_of(spec, facade_key(vertices, f))[1]["finish"])
             except ValueError as e:
