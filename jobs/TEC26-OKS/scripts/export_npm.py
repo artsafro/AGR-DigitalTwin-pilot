@@ -1,6 +1,7 @@
-"""Export the KPP1 NPM OKS FBX from the stage-6 master (headless Blender).
+"""Export the NPM OKS FBX from a TEC26 master (headless Blender; TEC26 copy of jobs/KPP1/scripts/export_npm.py).
 
-Usage: blender --background --factory-startup --python export_npm.py -- <master.blend> <atlas_dir> <out_dir> [prefix]
+Usage: blender --background --factory-startup --python export_npm.py -- <master.blend> <spec.json> <atlas_dir> <out_dir> [prefix]
+TEC26 changes: texture spec passed explicitly; MainGlass optional (AC08 has none); out_dir must be new and empty.
 
 Same model as VPM (project decision, conflict #1); NPM-specific changes on an export copy only:
 - objects SM_<A>_001_Main / SM_<A>_001_MainGlass (reg p.11-12 §3.3); UCX and reference data removed
@@ -23,12 +24,14 @@ sys.path.insert(0, HERE)
 from export_safety import require_udim_regions, validate_atlas
 
 args = sys.argv[sys.argv.index("--") + 1:]
-master, atlas_dir, out = args[:3]
-prefix = args[3] if len(args) > 3 else "0000"
+master, spec_path, atlas_dir, out = args[:4]
+prefix = args[4] if len(args) > 4 else "0000"
 atlas = json.load(open(os.path.join(atlas_dir, "npm_atlas.json"), encoding="utf-8"))
-texture_spec = json.load(open(os.path.join(HERE, "vpm_textures.json"), encoding="utf-8"))
+texture_spec = json.load(open(spec_path, encoding="utf-8"))
 by_udim = validate_atlas(atlas, texture_spec)
 os.makedirs(out, exist_ok=True)
+if os.listdir(out):
+    raise SystemExit(f"NPM out dir {out} is not empty")
 bpy.ops.wm.open_mainfile(filepath=master)
 sc = bpy.context.scene
 
@@ -40,12 +43,13 @@ for c in list(bpy.data.collections):
         bpy.data.collections.remove(c)
 
 main = next(o for o in sc.objects if o.name.endswith("_Main"))
-glass = next(o for o in sc.objects if o.name.endswith("_MainGlass"))
+glass = next((o for o in sc.objects if o.name.endswith("_MainGlass")), None)
+vis = [o for o in (main, glass) if o is not None]
 A = main.name[3:-5]
 names = main["finish_names"].split(",")
 alpha_ids = {i for i, n in enumerate(names) if "Alpha" in n}
 
-pts = [o.matrix_world @ v.co for o in (main, glass) for v in o.data.vertices]
+pts = [o.matrix_world @ v.co for o in vis for v in o.data.vertices]
 lo = Vector([min(p[i] for p in pts) for i in range(3)])
 hi = Vector([max(p[i] for p in pts) for i in range(3)])
 centre = Vector(((lo.x + hi.x) / 2, (lo.y + hi.y) / 2, 0.0))
@@ -100,11 +104,11 @@ bm.free()
 report.update({"alpha_back_copies_removed": len(drop), "faces_without_region": 0})
 
 # ---- clean layers / attributes not meant for delivery, apply transforms, pivot, triangulate
-for o in (main, glass):
+for o in vis:
     me = o.data
     for uvl in [u for u in me.uv_layers if u.name != "UVMap"]:
         me.uv_layers.remove(uvl)
-    for an in [a.name for a in me.attributes if a.name in ("finish", "uvx")]:
+    for an in [a.name for a in me.attributes if a.name in ("finish", "uvx", "srcid")]:
         me.attributes.remove(me.attributes[an])
     for k in list(o.keys()):
         del o[k]
@@ -123,7 +127,8 @@ for o in (main, glass):
     sc.collection.objects.link(o)
 
 main.name = main.data.name = f"SM_{A}_001_Main"
-glass.name = glass.data.name = f"SM_{A}_001_MainGlass"
+if glass:
+    glass.name = glass.data.name = f"SM_{A}_001_MainGlass"
 
 # ---- materials
 def image(path):
@@ -149,24 +154,24 @@ bsdf.inputs["Roughness"].default_value = 0.6
 main.data.materials.clear()
 main.data.materials.append(mm)
 
-mg = bpy.data.materials.new("M_Glass_01")
-mg.use_nodes = True
-gb = next(n for n in mg.node_tree.nodes if n.type == "BSDF_PRINCIPLED")
-gb.inputs["Base Color"].default_value = (0.75, 0.82, 0.82, 1.0)
-gb.inputs["Alpha"].default_value = 0.5
-gb.inputs["Roughness"].default_value = 0.05
-glass.data.materials.clear()
-glass.data.materials.append(mg)
-for p in main.data.polygons:
-    p.material_index = 0
-for p in glass.data.polygons:
-    p.material_index = 0
+if glass:
+    mg = bpy.data.materials.new("M_Glass_01")
+    mg.use_nodes = True
+    gb = next(n for n in mg.node_tree.nodes if n.type == "BSDF_PRINCIPLED")
+    gb.inputs["Base Color"].default_value = (0.75, 0.82, 0.82, 1.0)
+    gb.inputs["Alpha"].default_value = 0.5
+    gb.inputs["Roughness"].default_value = 0.05
+    glass.data.materials.clear()
+    glass.data.materials.append(mg)
+for o in vis:
+    for p in o.data.polygons:
+        p.material_index = 0
 
 for m in list(bpy.data.materials):
     if m.users == 0:
         bpy.data.materials.remove(m)
 
-deliver = [main, glass]
+deliver = vis
 for o in sc.objects:
     o.select_set(o in deliver)
 fbx = os.path.join(out, f"{prefix}_{A}_01.fbx")
@@ -176,7 +181,7 @@ bpy.ops.export_scene.fbx(filepath=fbx, use_selection=True, object_types={"MESH"}
                          mesh_smooth_type="FACE", use_triangles=False, use_custom_props=False,
                          add_leaf_bones=False, bake_anim=False, path_mode="COPY", embed_textures=True)
 tri = lambda o: sum(len(p.vertices) - 2 for p in o.data.polygons)
-report.update({"fbx": fbx, "main_tris": tri(main), "glass_tris": tri(glass)})
+report.update({"fbx": fbx, "main_tris": tri(main), "glass_tris": tri(glass) if glass else 0})
 json.dump(report, open(os.path.join(out, "..", "export_npm_meta.json"), "w"), indent=1)
-bpy.ops.wm.save_as_mainfile(filepath=os.path.join(out, "..", "KPP1_NPM_export_tri.blend"))
+bpy.ops.wm.save_as_mainfile(filepath=os.path.join(out, "..", "NPM_export_tri.blend"))
 print("EXPORT-NPM", json.dumps(report))

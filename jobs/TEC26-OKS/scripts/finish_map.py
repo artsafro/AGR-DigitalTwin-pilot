@@ -7,8 +7,6 @@ Used by build_master.py (Blender) and by the tests. Contracts (fail-closed, neve
 - assign_finishes: one finish per polygon; a polygon whose material ID is unmapped, or declared empty, raises
   ValueError naming the ID; NaN/inf coordinates raise. Split rule `below_zero`: a polygon whose highest vertex is at
   or below `zero_m` (±0.000) takes `below`, every other polygon `above`.
-- pair_triangles: joins triangles of one material ID that share an edge into convex planar quads (fan caps of the
-  mid-poly); a triangle left unpaired raises with its index (the VPM master must be 100 % quads).
 - perimeter_drop: for a footprint-aligned box body, every side of the plan must be covered by drop faces reaching
   <= -1.0 m (Artem 2026-10-22: «полигоны по периметру должны быть утоплены минимум на метр вниз»).
 """
@@ -103,71 +101,6 @@ def assign_finishes(vertices, faces, mat_ids, spec):
         else:
             out.append(rule["finish"])
     return out
-
-
-def _sub(a, b):
-    return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
-
-
-def _cross(a, b):
-    return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]
-
-
-def _dot(a, b):
-    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
-
-
-def _convex_planar(vertices, quad, cos_min=0.9999):
-    p = [vertices[k] for k in quad]
-    ns = [_cross(_sub(p[(k + 1) % 4], p[k]), _sub(p[(k + 2) % 4], p[(k + 1) % 4])) for k in range(4)]
-    lens = [math.sqrt(_dot(n, n)) for n in ns]
-    if min(lens) <= 1e-12:
-        return False
-    for k in range(1, 4):
-        if _dot(ns[0], ns[k]) / (lens[0] * lens[k]) < cos_min:
-            return False  # reflex corner (negative) or non-planar
-    return True
-
-
-def pair_triangles(vertices, faces, mat_ids):
-    """Join triangle pairs into convex planar quads; returns (faces, mat_ids, source_index_per_face)."""
-    tris = [i for i, f in enumerate(faces) if len(f) == 3]
-    edge = {}
-    for i in tris:
-        f = faces[i]
-        for k in range(3):
-            edge.setdefault(frozenset((f[k], f[(k + 1) % 3])), []).append(i)
-    used, joined = set(), {}
-    for i in tris:
-        if i in used:
-            continue
-        f = faces[i]
-        for k in range(3):
-            a, b = f[k], f[(k + 1) % 3]
-            for j in edge[frozenset((a, b))]:
-                if j == i or j in used or mat_ids[j] != mat_ids[i]:
-                    continue
-                g = faces[j]
-                c = f[(k + 2) % 3]
-                d = next(x for x in g if x not in (a, b))
-                quad = [a, d, b, c]  # keeps the winding of triangle i (a->b->c)
-                if _convex_planar(vertices, quad):
-                    used |= {i, j}
-                    joined[i] = quad
-                    break
-            if i in used:
-                break
-    left = [i for i in tris if i not in used]
-    if left:
-        raise ValueError(f"triangles that cannot be paired into convex quads: {left}")
-    out_f, out_m, src = [], [], []
-    for i, f in enumerate(faces):
-        if len(f) == 3 and i not in joined:
-            continue
-        out_f.append(joined.get(i, list(f)))
-        out_m.append(mat_ids[i])
-        src.append(i)
-    return out_f, out_m, src
 
 
 def perimeter_drop(vertices, faces, finishes, drop_finish, tol=0.001):

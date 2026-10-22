@@ -113,29 +113,19 @@ def test_probe_random_ids_never_default():
     assert ok > 0 and err > 0
 
 
-def test_pair_triangles_real_building():
-    faces, ids, src = fm.pair_triangles(BODY["vertices"], BODY["faces"], BODY["mat_ids"])
-    assert all(len(q) == 4 for q in faces) and len(faces) == 174
-    # every source polygon ends in the output (quads kept, 12 triangles -> 6 quads)
-    assert len(set(src)) == len(src) and sum(len(BODY["faces"][i]) == 3 for i in src) == 6
-    used = {k for q in faces for k in q}
-    assert used == {k for q in BODY["faces"] for k in q}
-
-
-def test_pair_triangles_fail_closed():
-    v = [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0], [0.5, 0.5, 1]]
-    with pytest.raises(ValueError, match=r"\[0\]"):
-        fm.pair_triangles(v, [[0, 1, 2]], [1])
-    # two triangles of different material IDs never join
-    with pytest.raises(ValueError, match="cannot be paired"):
-        fm.pair_triangles(v, [[0, 1, 2], [0, 2, 3]], [1, 2])
-    # a non-planar pair (folded along the diagonal) never joins
-    with pytest.raises(ValueError, match="cannot be paired"):
-        fm.pair_triangles(v, [[0, 1, 4], [0, 4, 3]], [1, 1])
-    # concave union (dart) never joins
-    dart = [[0, 0, 0], [2, 0, 0], [0.5, 0.5, 0], [0, 2, 0]]
-    with pytest.raises(ValueError, match="cannot be paired"):
-        fm.pair_triangles(dart, [[0, 1, 2], [0, 2, 3]], [1, 1])
+def test_scope_colour_only_no_geometry_edits():
+    """Artem 2026-10-22: «геометрию менять не надо» - the build keeps source polygons; no quadify/cut/weld/rebuild."""
+    import ast
+    src = (SCRIPTS / "build_master.py").read_text(encoding="utf-8")
+    calls = {n.func.attr if isinstance(n.func, ast.Attribute) else getattr(n.func, "id", "")
+             for n in ast.walk(ast.parse(src)) if isinstance(n, ast.Call)}
+    forbidden = {"texel_cut", "pair_triangles", "join_triangles", "remove_doubles", "weld_verts", "triangulate",
+                 "convex_hull", "dissolve_degenerate", "quadify"}
+    assert not calls & forbidden, calls & forbidden
+    assert not hasattr(fm, "pair_triangles")
+    exp = (SCRIPTS / "export_vpm.py").read_text(encoding="utf-8")
+    ucx_block = exp[exp.index("for o in ucx:\n    # TEC26"):]
+    assert "triangulate" not in ucx_block.split("\nfor m in")[0]
 
 
 def test_perimeter_drop_real_building():

@@ -1,4 +1,4 @@
-"""Assemble the KPP1 VPM OKS package: FBX + external PNG set + GeoJSON -> SM_<Address>.zip.
+"""Assemble a TEC26 VPM OKS package (TEC26 copy of jobs/KPP1/scripts/package_vpm.py; spec not needed, TEC26 values): FBX + external PNG set + GeoJSON -> SM_<Address>.zip.
 
 Usage: py -3 package_vpm.py <package_dir> <textures_dir> [--no-geojson]
 --no-geojson: user decision 2026-10-07 (GeoJSON, coordinates and district code deferred) -> ZIP holds
@@ -15,7 +15,6 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 pkg, tex = sys.argv[1:3]
 NO_GEOJSON = "--no-geojson" in sys.argv
 meta = json.load(open(os.path.join(pkg, "..", "export_meta.json")))
-spec = json.load(open(os.path.join(HERE, "vpm_textures.json"), encoding="utf-8"))
 A = meta["address"]
 stem = f"SM_{A}"
 
@@ -23,12 +22,12 @@ for f in sorted(os.listdir(tex)):
     if f.startswith(f"T_{A}_") and f.endswith(".png"):
         shutil.copy2(os.path.join(tex, f), os.path.join(pkg, f))
 
-H_RELIEF = 171.05  # Revit project base point elevation 171050 mm = level 0.000 (document 26_KPP1, 2026-10-06)
+H_RELIEF = 170.50  # AC08 DWG note 1ADF: project zero 170.50 (jobs/TEC26-OKS/AC08/MATERIALS.md)
 h_otn = meta["h_otn_model_max_z_m"]
 img = base64.b64encode(open(meta["thumbnail"], "rb").read()).decode("ascii")
 props = {
     "address": "", "okrug": "", "rajon": "",
-    "name": "Центральная проходная",  # Revit Project Information: Building Name
+    "name": "Контейнер низковольтных комплектных устройств (НКУ)",  # AC08 DWG title block
     "developer": "", "designer": "", "cadNum": "", "FNO_code": "", "FNO_name": "", "ZU_area": "",
     "h_relief": H_RELIEF, "h_otn": h_otn, "h_abs": round(H_RELIEF + h_otn, 2),
     "s_obsh": "", "s_naz": "", "s_podz": "", "spp_gns": "", "act_AGR": "",
@@ -53,7 +52,7 @@ with zipfile.ZipFile(zpath, "w", zipfile.ZIP_DEFLATED) as z:
         z.write(os.path.join(pkg, f), f)
 
 blockers = ([k for k, v in props.items() if v == "" and k != "other"] + ["geometry.coordinates (MSK-77)"]
-            if not NO_GEOJSON else ["GeoJSON deferred by the user (2026-10-07)"])
+            if not NO_GEOJSON else ["GeoJSON deferred by the user (2026-10-07, KPP; TEC26 card #559 out of scope)"])
 report = {"zip": os.path.abspath(zpath), "zip_bytes": os.path.getsize(zpath),
           "files": sorted(os.listdir(pkg)), "geojson_blockers_unknown_in_source": blockers,
           "geojson_proposals": ["Glasses values (colour/transparency/refraction/roughness/metallicity)"],

@@ -1,0 +1,421 @@
+{
+ "checks": {
+  "names_vpm": {
+   "ok": true,
+   "detail": [
+    "SM_Nku_1_Main",
+    "UCX_SM_Nku_1_Main_001"
+   ]
+  },
+  "names_npm": {
+   "ok": true,
+   "detail": [
+    "SM_Nku_1_001_Main"
+   ]
+  },
+  "triangulated_vpm": {
+   "ok": true,
+   "detail": {
+    "faces": 348
+   }
+  },
+  "budget_vpm": {
+   "ok": true,
+   "detail": {
+    "tris": 348,
+    "budget": 150000
+   }
+  },
+  "one_uv_vpm": {
+   "ok": true,
+   "detail": [
+    "UVMap"
+   ]
+  },
+  "transforms_vpm": {
+   "ok": true,
+   "detail": {
+    "loc": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     0.0,
+     -0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  "xview_vpm": {
+   "ok": true,
+   "detail": {
+    "vertex_pairs": 0,
+    "face_pairs": 0,
+    "face_pairs_by_kind": {
+     "contact": 0,
+     "area": 0,
+     "area+contact": 0
+    },
+    "thresholds": {
+     "vertex_m": 0.002,
+     "face_m": 0.005,
+     "parallel_cos_min": 0.9999
+    },
+    "offenders": []
+   }
+  },
+  "triangulated_npm": {
+   "ok": true,
+   "detail": {
+    "faces": 348
+   }
+  },
+  "budget_npm": {
+   "ok": true,
+   "detail": {
+    "tris": 348,
+    "budget": 150000
+   }
+  },
+  "one_uv_npm": {
+   "ok": true,
+   "detail": [
+    "UVMap"
+   ]
+  },
+  "transforms_npm": {
+   "ok": true,
+   "detail": {
+    "loc": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     0.0,
+     -0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  "xview_npm": {
+   "ok": true,
+   "detail": {
+    "vertex_pairs": 0,
+    "face_pairs": 0,
+    "face_pairs_by_kind": {
+     "contact": 0,
+     "area": 0,
+     "area+contact": 0
+    },
+    "thresholds": {
+     "vertex_m": 0.002,
+     "face_m": 0.005,
+     "parallel_cos_min": 0.9999
+    },
+    "offenders": []
+   }
+  },
+  "ucx_UCX_SM_Nku_1_Main_001": {
+   "ok": true,
+   "detail": {
+    "closed": true,
+    "convex": true,
+    "outward": true,
+    "tris": 12,
+    "uv_layers": 0,
+    "materials": 0
+   }
+  },
+  "xview_UCX_SM_Nku_1_Main_001": {
+   "ok": true,
+   "detail": {
+    "vertex_pairs": 0,
+    "face_pairs": 0
+   }
+  },
+  "geometry_unchanged_vpm": {
+   "ok": true,
+   "detail": {
+    "tris": 348,
+    "source_tris": 348,
+    "vertices": 193,
+    "source_vertices": 193,
+    "pivot_shift": [
+     33.9534,
+     0.1134,
+     0.0
+    ]
+   }
+  },
+  "geometry_unchanged_npm": {
+   "ok": true,
+   "detail": {
+    "tris": 348,
+    "source_tris": 348,
+    "vertices": 193,
+    "source_vertices": 193,
+    "pivot_shift": [
+     33.9534,
+     0.1134,
+     0.0
+    ]
+   }
+  },
+  "ucx_count_eq_source": {
+   "ok": true,
+   "detail": {
+    "ucx": 1,
+    "source_hulls": [
+     "Colizii_044"
+    ]
+   }
+  },
+  "geometry_unchanged_UCX_SM_Nku_1_Main_001": {
+   "ok": true,
+   "detail": {
+    "source": "Colizii_044",
+    "faces": 6,
+    "source_faces": 6
+   }
+  },
+  "bbox_vpm_eq_npm": {
+   "ok": true,
+   "detail": {
+    "vpm": [
+     [
+      -3.0294,
+      -1.219,
+      -2.0465
+     ],
+     [
+      3.0294,
+      1.219,
+      2.5502
+     ]
+    ],
+    "npm": [
+     [
+      -3.0294,
+      -1.219,
+      -2.0465
+     ],
+     [
+      3.0294,
+      1.219,
+      2.5502
+     ]
+    ]
+   }
+  },
+  "perimeter_drop_min_z": {
+   "ok": true,
+   "detail": {
+    "vpm_min_z": -2.0465,
+    "npm_min_z": -2.0465
+   }
+  },
+  "vpm_uv_tiles": {
+   "ok": true,
+   "detail": {
+    "faces_per_udim": {
+     "1002": 222,
+     "1001": 62,
+     "1003": 64
+    },
+    "bad": 0
+   }
+  },
+  "npm_uv_regions": {
+   "ok": true,
+   "detail": {
+    "faces": 348,
+    "outside_any_region": 0
+   }
+  },
+  "colour_vpm_eq_npm_per_face": {
+   "ok": true,
+   "detail": {
+    "faces": 348,
+    "mismatch": 0,
+    "unmatched": 0,
+    "vpm_colours": {
+     "[150, 153, 146]": 286,
+     "[34, 113, 179]": 62
+    }
+   }
+  },
+  "vpm_zip_contents": {
+   "ok": true,
+   "detail": {
+    "names": [
+     "SM_Nku_1.fbx",
+     "T_Nku_1_Diffuse_1.1001.png",
+     "T_Nku_1_Diffuse_1.1002.png",
+     "T_Nku_1_Diffuse_1.1003.png",
+     "T_Nku_1_ERM_1.1001.png",
+     "T_Nku_1_ERM_1.1002.png",
+     "T_Nku_1_ERM_1.1003.png",
+     "T_Nku_1_Normal_1.1001.png",
+     "T_Nku_1_Normal_1.1002.png",
+     "T_Nku_1_Normal_1.1003.png"
+    ]
+   }
+  },
+  "vpm_png_rgb_256": {
+   "ok": true,
+   "detail": {
+    "T_Nku_1_Diffuse_1.1001.png": [
+     "RGB",
+     [
+      256,
+      256
+     ]
+    ],
+    "T_Nku_1_Diffuse_1.1002.png": [
+     "RGB",
+     [
+      256,
+      256
+     ]
+    ],
+    "T_Nku_1_Diffuse_1.1003.png": [
+     "RGB",
+     [
+      256,
+      256
+     ]
+    ],
+    "T_Nku_1_ERM_1.1001.png": [
+     "RGB",
+     [
+      256,
+      256
+     ]
+    ],
+    "T_Nku_1_ERM_1.1002.png": [
+     "RGB",
+     [
+      256,
+      256
+     ]
+    ],
+    "T_Nku_1_ERM_1.1003.png": [
+     "RGB",
+     [
+      256,
+      256
+     ]
+    ],
+    "T_Nku_1_Normal_1.1001.png": [
+     "RGB",
+     [
+      256,
+      256
+     ]
+    ],
+    "T_Nku_1_Normal_1.1002.png": [
+     "RGB",
+     [
+      256,
+      256
+     ]
+    ],
+    "T_Nku_1_Normal_1.1003.png": [
+     "RGB",
+     [
+      256,
+      256
+     ]
+    ]
+   }
+  },
+  "npm_zip_contents": {
+   "ok": true,
+   "detail": {
+    "names": [
+     "0000_Nku_1_01.fbx"
+    ]
+   }
+  },
+  "npm_embedded_png": {
+   "ok": true,
+   "detail": {
+    "names_in_fbx": [
+     "T_Nku_1_001_Main_d_1.png",
+     "T_Nku_1_001_Main_o_1.png"
+    ],
+    "png_signatures": 2
+   }
+  },
+  "npm_material": {
+   "ok": true,
+   "detail": {
+    "T_Nku_1_001_Main_d_1": {
+     "name": "T_Nku_1_001_Main_d_1",
+     "file": "T_Nku_1_001_Main_d_1.png",
+     "size": [
+      2048,
+      2048
+     ],
+     "channels": 4,
+     "packed": true,
+     "links": [
+      "Base Color"
+     ]
+    },
+    "T_Nku_1_001_Main_o_1": {
+     "name": "T_Nku_1_001_Main_o_1",
+     "file": "T_Nku_1_001_Main_o_1.png",
+     "size": [
+      2048,
+      2048
+     ],
+     "channels": 4,
+     "packed": true,
+     "links": [
+      "Alpha"
+     ]
+    }
+   }
+  },
+  "npm_png_d_rgb_2048": {
+   "ok": true,
+   "detail": [
+    "RGB",
+    [
+     2048,
+     2048
+    ]
+   ]
+  },
+  "npm_png_o_rgb_2048": {
+   "ok": true,
+   "detail": [
+    "RGB",
+    [
+     2048,
+     2048
+    ]
+   ]
+  },
+  "vpm_material": {
+   "ok": true,
+   "detail": [
+    "M_Nku_1_Main_1"
+   ]
+  }
+ },
+ "failed": []
+}

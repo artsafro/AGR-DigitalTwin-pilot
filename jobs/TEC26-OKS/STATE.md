@@ -33,3 +33,13 @@ Source geometry untouched. No VPM/NPM models, textures, packages or exports buil
 
 Transcript: Hermes session `local-e92d7962ac47bbe3a7753bf3acc0e564e892854103048b6af44b6213acb099a6` (profile dt-worker-codex; no Claude JSONL transcript).
 Report: `census/README.md`; scene tables: `census/scenes.md`; KPP: `census/kpp-recipe.md`; evidence index: `census/evidence.json`.
+
+## Pilot AC08 VPM + NPM (#559, branch `job/tec26-oks-pilot-ac08`)
+
+Gate 1 approved (#565). Scope (Artem 2026-10-22): colour only - geometry, topology, UCX and IDs exactly as in the
+source; only UV + textures; geometry checks reported, never fixed. Run `pilot-v004`: `SM_Nku_1.zip` (VPM, 3 UDIM
+placeholder sets) and `0000_Nku_1.zip` (NPM, 2048 `_d_` + `_o_` embedded) on Drive
+`G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot/` (23/23 hashes). `qa_packages.py` 31/31 (geometry = source,
+xView 0/0, doubles 0, per-face VPM = NPM colour, KPP RGB), `qa_master` normals 0 / T-junctions 0 / leaks 0; SINTEZ
+VPM 62/4, NPM 38/5 (deferred GeoJSON/district/Ground/УКЭП + 2.3.17 untriangulated source UCX). Open questions for
+Artem in `AC08/PILOT_REPORT.md` (19 quads > 4 m vs D021, UCX triangulation). Scripts: `scripts/run_building.sh`.

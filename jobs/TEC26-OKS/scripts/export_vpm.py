@@ -1,4 +1,6 @@
-"""Export the KPP1 VPM FBX from the stage-6 master (headless Blender).
+"""Export the VPM FBX from a TEC26 master (headless Blender; TEC26 copy of jobs/KPP1/scripts/export_vpm.py).
+
+TEC26 changes: MainGlass is optional (AC08 has no glass); the package dir must be new and empty.
 
 Usage: blender --background --factory-startup --python export_vpm.py -- <master.blend> <package_dir>
 
@@ -31,12 +33,15 @@ for c in list(bpy.data.collections):
         bpy.data.collections.remove(c)
 
 main = next(o for o in sc.objects if o.name.endswith("_Main") and o.name.startswith("SM_"))
-glass = next(o for o in sc.objects if o.name.endswith("_MainGlass"))
+glass = next((o for o in sc.objects if o.name.endswith("_MainGlass")), None)
+if os.listdir(pkg):
+    raise SystemExit(f"package dir {pkg} is not empty")
 ucx = sorted((o for o in sc.objects if o.name.startswith("UCX_")), key=lambda o: o.name)
 address = main.name[3:-5]
-deliver = [main, glass] + ucx
+vis = [o for o in (main, glass) if o is not None]
+deliver = vis + ucx
 
-pts = [o.matrix_world @ v.co for o in (main, glass) for v in o.data.vertices]
+pts = [o.matrix_world @ v.co for o in vis for v in o.data.vertices]
 lo = Vector([min(p[i] for p in pts) for i in range(3)])
 hi = Vector([max(p[i] for p in pts) for i in range(3)])
 centre = Vector(((lo.x + hi.x) / 2, (lo.y + hi.y) / 2, 0.0))
@@ -79,7 +84,7 @@ for o in deliver:
     for m in list(o.modifiers):
         o.modifiers.remove(m)
 QUADS = bool(os.environ.get("KEEP_QUADS"))  # review copy for 3ds Max: no triangulation (not a delivery)
-for o in (main, glass):
+for o in vis:
     if QUADS:
         o.data.shade_flat()
         continue
@@ -89,13 +94,19 @@ for o in (main, glass):
     bm.to_mesh(o.data)
     bm.free()
     o.data.shade_flat()
+for o in vis:
+    for an in [a.name for a in o.data.attributes if a.name in ("finish", "uvx", "srcid")]:
+        o.data.attributes.remove(o.data.attributes[an])
+    for k in list(o.keys()):
+        del o[k]
 for o in ucx:
+    # TEC26 scope (Artem 2026-10-22): collision exported exactly as in the source scene (no triangulation/rebuild)
     o.data.materials.clear()
     # no UV on collision: regulation requires the single UV set for Main/Ground only (p.31 §2.1.1) and
     # SINTEZ AGR Checker 2.13.1 rejects UCX with UVs; twinqa V008 counting UCX is broader than the text
     for uvl in list(o.data.uv_layers):
         o.data.uv_layers.remove(uvl)
-for m in (main.data.materials[0], glass.data.materials[0]):
+for m in (o.data.materials[0] for o in vis):
     nt = m.node_tree
     for n in list(nt.nodes):
         if n.type not in {"BSDF_PRINCIPLED", "OUTPUT_MATERIAL"}:
@@ -114,8 +125,8 @@ tri = lambda o: sum(len(p.vertices) - 2 for p in o.data.polygons)
 meta = {"address": address, "fbx": fbx, "pivot_revit_internal_m": [round(centre.x, 4), round(centre.y, 4), 0.0],
         "bbox_after_pivot": [[round(lo.x - centre.x, 3), round(lo.y - centre.y, 3), round(lo.z, 3)],
                              [round(hi.x - centre.x, 3), round(hi.y - centre.y, 3), round(hi.z, 3)]],
-        "h_otn_model_max_z_m": round(hi.z, 2), "main_tris": tri(main), "glass_tris": tri(glass),
+        "h_otn_model_max_z_m": round(hi.z, 2), "main_tris": tri(main), "glass_tris": tri(glass) if glass else 0,
         "ucx": len(ucx), "ucx_tris": sum(tri(o) for o in ucx), "thumbnail": os.path.abspath(thumb)}
 json.dump(meta, open(os.path.join(pkg, "..", "export_meta.json"), "w"), indent=1)
-bpy.ops.wm.save_as_mainfile(filepath=os.path.join(pkg, "..", "KPP1_VPM_export_tri.blend"))
+bpy.ops.wm.save_as_mainfile(filepath=os.path.join(pkg, "..", "VPM_export_tri.blend"))
 print("EXPORT", json.dumps(meta))
