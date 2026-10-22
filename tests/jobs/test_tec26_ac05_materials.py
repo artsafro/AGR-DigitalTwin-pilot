@@ -26,8 +26,14 @@ def test_ac05_gate1_inventory_preserves_measured_ids_and_unknowns():
                 4: (1, 2, 4.313754850037867)}
     for row in rows:
         assert row['status'] != 'approved'
-        assert row['finish'] == '?', 'Do not turn an unapproved ID match into a fact'
-        assert row['question_id'] in {q['id'] for q in data['gate1']['questions']}
+        if row['id'] in expected:
+            assert row['status'] == 'proposed'
+            assert row['ral'] == ('5015' if row['id'] <= 2 else '7004')
+            assert row['map_type'] in {'solid', 'metal'}
+            assert row['question_id'] in {q['id'] for q in data['gate1']['questions']}
+        else:
+            assert row['finish'] == '?'
+            assert row['status'] == 'unused'
         if row['id'] in expected:
             faces, triangles, area = expected[row['id']]
             assert row['poly_faces'] == faces
