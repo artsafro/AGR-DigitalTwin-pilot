@@ -3,9 +3,10 @@ doubles 2 mm, UV tiles/regions, VPM-vs-NPM colour per face, UCX hull checks, ZIP
 
 Usage: uv run python qa_packages.py <spec.json> <vpm.zip> <vpm.readback.json> <npm.zip> <npm.readback.json>
                                    <npm_atlas.json> <vpm_textures_dir> <npm_textures_dir> <max_dump.json> <new_out.json>
-Scope (Artem 2026-10-22): geometry is the source's - `geometry_unchanged_*` compares every delivered mesh with the
-Max dump (same vertex positions after the plan-centre pivot shift, same triangle count); geometry findings are
-reported, never repaired.
+Scope (Artem 2026-10-22): geometry is the source's - `geometry_source_plus_ring_cuts_*` compares every delivered mesh
+with the Max dump (all source vertex positions after the plan-centre pivot shift; new vertices only with spec
+`ring_cuts` and only ON source edges; every triangle inside one source polygon, areas covering it exactly) and
+`cuts_at_joints` puts every new vertex on a panel edge at a joint; geometry findings are reported, never repaired.
 Exit 0 only when every check passes; 1 when a check fails (report still written); 2 on bad input (nothing written).
 """
 import io
@@ -51,47 +52,82 @@ def ucx_hull(o):
             "materials": len([m for m in o["materials"] if m["name"]])}
 
 
+def _poly_geo(src_v, src_faces):
+    out = []
+    for f in src_faces:
+        p = np.asarray([src_v[k] for k in f], float)
+        n = np.zeros(3)
+        for i in range(len(p)):
+            a, b = p[i], p[(i + 1) % len(p)]
+            n += [(a[1] - b[1]) * (a[2] + b[2]), (a[2] - b[2]) * (a[0] + b[0]), (a[0] - b[0]) * (a[1] + b[1])]
+        ln = np.linalg.norm(n)
+        if ln <= 0:
+            out.append(None)
+            continue
+        n /= ln
+        keep = [a for a in range(3) if a != int(np.argmax(np.abs(n)))]
+        out.append({"n": n, "d": float(n @ p[0]), "p2": p[:, keep], "keep": keep, "lo": p.min(0), "hi": p.max(0),
+                    "area": ln / 2})
+    return out
+
+
+def _inside2d(q, poly, tol):
+    """Point in polygon (2-D, ray casting); with tol >= 0 a point within tol of an edge counts as inside."""
+    x, y = q
+    inside = False
+    for i in range(len(poly)):
+        (x1, y1), (x2, y2) = poly[i], poly[(i + 1) % len(poly)]
+        if tol >= 0:
+            e = np.array([x2 - x1, y2 - y1])
+            t = np.clip(((x - x1) * e[0] + (y - y1) * e[1]) / max(e @ e, 1e-30), 0, 1)
+            if np.hypot(x - x1 - t * e[0], y - y1 - t * e[1]) <= tol:
+                return True
+        if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
+            inside = not inside
+    return inside
+
+
 def match_source_faces(src_v, src_faces, out_v, out_faces, shift, tol=2e-4):
-    """Source polygon of every delivered triangle (export triangulation / vertex splitting tolerant): a triangle
-    belongs to the source polygon(s) whose vertex set holds all three of its corners (positions after the pivot
-    shift, within `tol`). Returns (owners per triangle: sorted tuple of source polygon indices, possibly empty)."""
-    src = np.asarray(src_v, float) - shift
-    cell = {}
-    for i, p in enumerate(src):
-        cell.setdefault(tuple(np.floor(p / tol).astype(int)), []).append(i)
-    polys_of = {}
-    for pi, f in enumerate(src_faces):
-        for k in f:
-            polys_of.setdefault(k, set()).add(pi)
-
-    def near(q):
-        c = np.floor(q / tol).astype(int)
-        hits = set()
-        for dx in (-1, 0, 1):
-            for dy in (-1, 0, 1):
-                for dz in (-1, 0, 1):
-                    for i in cell.get((c[0] + dx, c[1] + dy, c[2] + dz), ()):
-                        if np.abs(src[i] - q).max() <= tol:
-                            hits |= polys_of.get(i, set())
-        return hits
-
-    ov = np.asarray(out_v, float)
-    memo, owners = {}, []
+    """Source polygon of every delivered triangle, by containment (export triangulation, vertex splitting and the
+    allowed ring cuts tolerant): a triangle belongs to the source polygon whose plane holds its three corners (within
+    `tol`, after undoing the pivot shift), whose outline contains them (edges within `tol` count) and contains the
+    triangle centroid strictly. Returns owners per triangle: sorted tuple of source polygon indices, possibly empty."""
+    geo = _poly_geo(src_v, src_faces)
+    ov = np.asarray(out_v, float) + np.asarray(shift, float)
+    owners = []
     for f in out_faces:
-        sets = []
-        for k in f:
-            if k not in memo:
-                memo[k] = near(ov[k])
-            sets.append(memo[k])
-        owners.append(tuple(sorted(set.intersection(*sets))) if sets else ())
+        q = ov[list(f)]
+        c = q.mean(0)
+        qlo, qhi = q.min(0), q.max(0)
+        hits = []
+        for pi, g in enumerate(geo):
+            if g is None or (qlo < g["lo"] - tol).any() or (qhi > g["hi"] + tol).any():
+                continue
+            if np.abs(q @ g["n"] - g["d"]).max() > tol:
+                continue
+            if all(_inside2d(x[g["keep"]], g["p2"], tol) for x in q) and _inside2d(c[g["keep"]], g["p2"], -1):
+                hits.append(pi)
+        owners.append(tuple(hits))
     return owners
 
 
-def source_finish_report(expected, src_faces, owners, delivered):
+def tri_areas(out_v, out_faces):
+    v = np.asarray(out_v, float)
+    return [float(np.linalg.norm(np.cross(v[f[1]] - v[f[0]], v[f[2]] - v[f[0]])) / 2) for f in out_faces]
+
+
+def poly_areas(src_v, src_faces):
+    return [g["area"] if g else 0.0 for g in _poly_geo(src_v, src_faces)]
+
+
+def source_finish_report(expected, src_faces, owners, delivered, t_areas=None, p_areas=None):
     """Delivered finish per triangle vs the approved source-ID mapping (finish_map.assign_finishes incl. the ID1
     below-zero split). Fail-closed: an unmatched triangle, a triangle whose candidate source polygons disagree, a
-    wrong finish, and a source polygon not covered by exactly len(f)-2 triangles are all counted as errors."""
-    wrong, unmatched, ambiguous, per_poly, examples = 0, 0, 0, [0] * len(src_faces), []
+    wrong finish, and a source polygon not covered (by exactly len(f)-2 triangles, or - with areas given, as after
+    ring cuts - by triangles whose areas sum to the polygon area within 1e-6 m2 + 1e-5) are all counted as errors."""
+    wrong, unmatched, ambiguous, examples = 0, 0, 0, []
+    per_poly = [0] * len(src_faces)
+    per_area = [0.0] * len(src_faces)
     for t, (own, got) in enumerate(zip(owners, delivered)):
         if not own:
             unmatched += 1
@@ -99,6 +135,8 @@ def source_finish_report(expected, src_faces, owners, delivered):
         want = {expected[i] for i in own}
         if len(own) == 1:
             per_poly[own[0]] += 1
+            if t_areas is not None:
+                per_area[own[0]] += t_areas[t]
         if len(want) != 1:
             ambiguous += 1
             continue
@@ -107,10 +145,63 @@ def source_finish_report(expected, src_faces, owners, delivered):
             wrong += 1
             if len(examples) < 5:
                 examples.append({"tri": t, "source_polygon": own[0], "expected": w, "delivered": got})
-    uncovered = [i for i, f in enumerate(src_faces) if per_poly[i] != len(f) - 2]
+    if t_areas is not None and p_areas is not None:
+        uncovered = [i for i in range(len(src_faces)) if abs(per_area[i] - p_areas[i]) > 1e-6 + 1e-5 * p_areas[i]]
+    else:
+        uncovered = [i for i, f in enumerate(src_faces) if per_poly[i] != len(f) - 2]
     return {"ok": not (wrong or unmatched or ambiguous or uncovered) and len(owners) > 0, "tris": len(owners),
             "wrong_finish": wrong, "unmatched": unmatched, "ambiguous": ambiguous,
             "source_polygons_not_covered": len(uncovered), "uncovered_examples": uncovered[:5], "examples": examples}
+
+
+def _new_vertices(src_v, out_v, shift, tol=2e-4):
+    sv = np.asarray(src_v, float)
+    ov = np.unique(np.round(np.asarray(out_v, float) + np.asarray(shift, float), 5), axis=0)
+    d = np.abs(ov[:, None, :] - sv[None, :, :]).max(2)
+    missing = int((d.min(0) > tol).sum())          # source vertices absent from the delivery
+    return ov[d.min(1) > tol], missing
+
+
+def _on_edge(q, a, b, tol):
+    e = b - a
+    t = float((q - a) @ e / max(e @ e, 1e-30))
+    return 1e-6 < t < 1 - 1e-6 and np.linalg.norm(a + t * e - q) <= tol
+
+
+def geometry_report(src_v, src_faces, out_v, shift, cuts_allowed, tol=2e-4):
+    """Delivered vertices = all source vertices + (only with spec ring_cuts) new points ON source edges."""
+    new, missing = _new_vertices(src_v, out_v, shift, tol)
+    sv = np.asarray(src_v, float)
+    edges = {tuple(sorted((f[k], f[(k + 1) % len(f)]))) for f in src_faces for k in range(len(f))}
+    off = [q.round(4).tolist() for q in new if not any(_on_edge(q, sv[a], sv[b], tol) for a, b in edges)]
+    ok = missing == 0 and not off and (cuts_allowed or len(new) == 0)
+    return {"ok": ok, "missing_source_vertices": missing, "new_vertices": len(new), "cuts_allowed": bool(cuts_allowed),
+            "new_off_source_edges": len(off), "off_examples": off[:5]}
+
+
+def cut_joint_report(src_v, src_faces, expected, spec, out_v, shift, tol=2e-4):
+    """Every new vertex on an edge of a patterned (facade_uv) source polygon sits on a joint of that polygon's joint
+    frame (|u' - n P| <= half joint width). Vacuous when no new vertex exists (no cut needed)."""
+    new, _ = _new_vertices(src_v, out_v, shift, tol)
+    sv = np.asarray(src_v, float)
+    lo, hi = finish_map.body_plan_bbox(src_v, spec["zero_m"])
+    pat = set(spec.get("facade_uv", {}))
+    checked, off = 0, []
+    for q in new:
+        for pi, f in enumerate(src_faces):
+            if expected[pi] not in pat or not any(_on_edge(q, sv[f[k]], sv[f[(k + 1) % len(f)]], tol)
+                                                  for k in range(len(f))):
+                continue
+            t = spec["finishes"][expected[pi]]
+            axis, sign, origin = finish_map.joint_origin(src_v, f, lo, hi)
+            u = sign * (q[axis] - origin)
+            r = u % t["P"][0]
+            dist = min(r, t["P"][0] - r)
+            checked += 1
+            if dist > t.get("joint_half_mm", 4) / 1000:
+                off.append({"source_polygon": pi, "u_m": round(float(u), 4), "off_joint_m": round(float(dist), 4)})
+    return {"ok": not off, "new_vertices": len(new), "checked_on_patterned_edges": checked, "off_joint": off[:10],
+            "off_joint_count": len(off)}
 
 
 def sample(img, uv):
@@ -187,10 +278,9 @@ def main(argv):
 
     for tag, o in (("vpm", vmain), ("npm", nmain)):
         tris = sum(len(f) - 2 for f in o["faces"])
-        check(f"geometry_unchanged_{tag}", tris == src_tris and len(o["vertices"]) >= len(sv) and
-              same_points(o["vertices"], sv - shift),
-              {"tris": tris, "source_tris": src_tris, "vertices": len(o["vertices"]), "source_vertices": len(sv),
-               "pivot_shift": shift.round(4).tolist()})
+        g = geometry_report(body["vertices"], body["faces"], o["vertices"], shift, bool(spec.get("ring_cuts")))
+        check(f"geometry_source_plus_ring_cuts_{tag}", g["ok"] and tris >= src_tris,
+              dict(g, tris=tris, source_tris=src_tris, pivot_shift=shift.round(4).tolist()))
     check("ucx_count_eq_source", len(ucx) == len(hulls), {"ucx": len(ucx), "source_hulls": [h["name"] for h in hulls]})
     for o, h in zip(sorted(ucx, key=lambda o: o["name"]), hulls):
         check(f"geometry_unchanged_{o['name']}", same_points(o["vertices"], np.asarray(h["vertices"]) - shift) and
@@ -277,8 +367,14 @@ def main(argv):
     vfin = [by_udim.get(int(1001 + np.floor(np.asarray(u).mean(0)[0]) + 10 * np.floor(np.asarray(u).mean(0)[1])))
             for u in vmain["face_uvs"]]
     nfin = [npm_finish(u) for u in nmain["face_uvs"]]
-    check("source_finish_vpm", **_rep(source_finish_report(expected, body["faces"], vown, vfin)))
-    check("source_finish_npm", **_rep(source_finish_report(expected, body["faces"], nown, nfin)))
+    pa = poly_areas(body["vertices"], body["faces"])
+    check("source_finish_vpm", **_rep(source_finish_report(expected, body["faces"], vown, vfin,
+                                                           tri_areas(vmain["vertices"], vmain["faces"]), pa)))
+    check("source_finish_npm", **_rep(source_finish_report(expected, body["faces"], nown, nfin,
+                                                           tri_areas(nmain["vertices"], nmain["faces"]), pa)))
+    for tag, o in (("vpm", vmain), ("npm", nmain)):
+        check(f"cuts_at_joints_{tag}", **_rep(cut_joint_report(body["vertices"], body["faces"], expected, spec,
+                                                               o["vertices"], shift)))
     # texel density of full (patterned) finishes: EVERY triangle the source mapping makes patterned must be measured
     # (no vacuous all([]) pass) and deliver the contract density (KPP twin, or an approved exception) +-1 %; band
     # reg p.32 §6.2 512..1706 px/m

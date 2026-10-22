@@ -54,6 +54,58 @@ def save(arr, path, mode):
     Image.fromarray(arr, mode).save(path, optimize=True)
 
 
+def load_user_texture(st):
+    """The user's source image as float RGB, after the sha256 in the spec matched (fail-closed otherwise)."""
+    import hashlib
+    raw = open(st["path"], "rb").read()
+    got = hashlib.sha256(raw).hexdigest()
+    if got != st["sha256"]:
+        raise ValueError(f"source texture {st['path']}: sha256 {got} != spec {st['sha256']}")
+    import io
+    return np.asarray(Image.open(io.BytesIO(raw)).convert("RGB"), float)
+
+
+def make_user_vjoints(t, size):
+    """TEC26 panels (Artem 2026-10-22): VERTICAL joints only, from the user's texture. Tile column x takes the source
+    column at the same offset from a source joint centre, so joints sit at x = n * period_px (u' = n * P, the joint
+    frame of finish_map.facade_joint_uv) and whole-period u shifts keep the phase; rows are the source rows (no
+    horizontal joints). The user's colour, noise and joint profile are kept unchanged: the panel median must already
+    equal the spec/KPP RGB within 3 levels and the declared joint columns must be dark, else ValueError. A wider
+    `joint_half_mm` (NPM, >= 1.5 px) paints the extra joint width in the source joint median colour."""
+    st = t["source_texture"]
+    src = load_user_texture(st)
+    H, W = src.shape[:2]
+    per, (j0, j1) = st["period_px"], st["first_joint_px"]
+    if H != size or W < 2 * per:
+        raise ValueError(f"source texture {W}x{H}: needs height {size} and >= 2 joint periods")
+    if abs(per - t["P"][0] * size / t["S"]) > 1e-6:
+        raise ValueError(f"source period {per} px != P {t['P'][0]} m at {size / t['S']:.1f} px/m")
+    ce = (j0 + j1) // 2 + per                  # centre (pixel edge) of the second joint: a full period around it
+    if ce + per // 2 > W:
+        ce -= per
+    p = (np.arange(size) + per // 2) % per - per // 2          # signed px offset of each tile column from its joint
+    col = src[:, ce + p]
+    src_joint = (p >= j0 - (j0 + j1) // 2) & (p < j1 - (j0 + j1) // 2)
+    panel = col[:, ~src_joint].reshape(-1, 3)
+    med = np.median(panel, 0)
+    if np.abs(med - np.array(t["rgb"], float)).max() > 3:
+        raise ValueError(f"source texture panel median {med.tolist()} != spec rgb {t['rgb']} (> 3 levels)")
+    jcol = col[:, src_joint].reshape(-1, 3)
+    if not len(jcol) or jcol.mean() >= 0.6 * panel.mean():
+        raise ValueError(f"declared joint columns {st['first_joint_px']} are not dark in the source texture")
+    jw = t.get("joint_half_mm", 4) * size / (t["S"] * 1000)  # half joint width in px
+    joint = np.abs(p + 0.5) < jw
+    extra = joint & ~src_joint
+    col[:, extra] = np.median(jcol, 0)
+    h = np.zeros((size, size))
+    h[:, joint] = -3.0
+    rough = np.full((size, size), t["rough"])
+    rough[:, joint] = 0.9
+    dif = np.clip(col, 0, 255).round().astype(np.uint8)
+    erm = np.stack([np.zeros((size, size)), rough * 255, np.full((size, size), t["metal"] * 255)], -1)
+    return dif, None, erm.round().astype(np.uint8), normal_from_height(h, 0.5)
+
+
 def make_full(t, size):
     u, v = uv_grid(size, t.get("S", 4.096))
     rgb = np.array(t["rgb"], float)
@@ -61,6 +113,8 @@ def make_full(t, size):
     alpha = None
     rough = np.full((size, size), t["rough"])
     pat = t["pattern"]
+    if pat == "user_vjoints":
+        return make_user_vjoints(t, size)
     if pat == "tile300":  # porcelain 300x300, 4 mm joints at multiples of 0.3 m (world-aligned)
         jw = t.get("joint_half_mm", 2)
         ju = np.abs(((u * 1000 + jw) % 300) - jw) < jw

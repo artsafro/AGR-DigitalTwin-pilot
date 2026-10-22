@@ -3,13 +3,17 @@
 Usage: blender --background --factory-startup --python build_master.py -- <dump.json> <spec.json> <textures_dir> <new.blend>
 
 Scope (Artem 2026-10-22: «там задача только раскрасить, геометрию менять не надо»): geometry, topology, UCX and
-the Multi/Sub IDs stay EXACTLY as in the source - no quadification, no texel cuts, no weld/seam repair, no hull rebuild.
-- mesh = the Max mid-poly as is (same vertices, same polygons, same order);
+the Multi/Sub IDs stay as in the source - no quadification, no weld/seam repair, no hull rebuild. The ONLY geometry
+edit is the one Artem allowed for panels that do not fit a tile («можно аккуратно порезать через loop или ring»):
+edge-ring cuts at joint positions (finish_map.apply_cuts; quads only, boundary to boundary, new vertices on source
+edges, every cut listed in the build report).
+- mesh = the Max mid-poly (same source vertices, polygons in source order, ring-cut polygons replaced by their halves);
 - one finish per polygon from the approved Gate-1 mapping (finish_map.assign_finishes, fail-closed); the source
   material ID is kept per polygon in the `srcid` layer (dropped at export, the delivery has one material);
 - UV only: one UDIM tile per finish, placeholder islands scaled into the tile with a 5 % margin (vpm_uv.pack_uv);
-  finishes listed in spec `facade_uv` (joint patterns) get metre UVs from finish_map.facade_uv (u from the facade's
-  left corner, v = z so joint rows start at ±0.000), shifted by whole periods into their full 4096 tile;
+  finishes listed in spec `facade_uv` (joint patterns) get metre UVs in their source face's joint frame
+  (finish_map.facade_joint_uv: joints at u' = n * P from the panel edge with the smaller world coordinate, v = z),
+  shifted by whole periods into their full 4096 tile;
   UDIM material M_<A>_Main_1 (the source channel-1 UV is not laid out per finish tile, so it is replaced);
 - the layer's collision mesh (no Multi/Sub) is renamed UCX_SM_<A>_Main_NNN, unchanged; closed/convex/outward are
   checked and REPORTED (a finding is listed, never fixed);
@@ -54,6 +58,11 @@ faces, ids = body["faces"], body["mat_ids"]
 fins = finish_map.assign_finishes(V, faces, ids, spec)
 drop = finish_map.perimeter_drop(V, faces, fins, spec["source_ids"]["1"]["below"]) \
     if spec["source_ids"].get("1", {}).get("split") == "below_zero" else None
+plan_lo, plan_hi = finish_map.body_plan_bbox(V, spec["zero_m"])
+cut = finish_map.apply_cuts(V, faces, fins, spec, plan_lo, plan_hi) if spec.get("ring_cuts") else \
+    {"vertices": V, "faces": faces, "parents": list(range(len(faces))), "cuts": [],
+     "frames": [finish_map.joint_origin(V, f, plan_lo, plan_hi) if fin in spec.get("facade_uv", {}) else None
+                for f, fin in zip(faces, fins)]}
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene
@@ -62,18 +71,16 @@ fl = bm.faces.layers.int.new("finish")
 bm.faces.layers.int.new("srcid")
 uvx = bm.faces.layers.int.new("uvx")
 uvm = bm.loops.layers.uv.new("UVM")
-body_pts = [c for c in V if c[2] > spec["zero_m"]]
-plan_lo = [min(c[0] for c in body_pts), min(c[1] for c in body_pts)]
-plan_hi = [max(c[0] for c in body_pts), max(c[1] for c in body_pts)]
-facade = set(spec.get("facade_uv", {}))
-vs = [bm.verts.new(c) for c in V]
-for f, m, fin in zip(faces, ids, fins):
+CV = cut["vertices"]
+vs = [bm.verts.new(c) for c in CV]
+for f, src in zip(cut["faces"], cut["parents"]):
+    fin, m = fins[src], ids[src]
     nf = bm.faces.new([vs[k] for k in f])
     nf[fl] = names.index(fin)
     nf[bm.faces.layers.int["srcid"]] = m
-    if fin in facade:  # metre UVs from the facade corner / ±0.000 (joint phase), packed by whole periods
+    if cut["frames"][src] is not None:  # metre UVs in the source face's joint frame, packed by whole periods
         nf[uvx] = 1
-        for loop, (u, v) in zip(nf.loops, finish_map.facade_uv(V, f, plan_lo, plan_hi)):
+        for loop, (u, v) in zip(nf.loops, finish_map.facade_joint_uv(CV, f, cut["frames"][src])):
             loop[uvm].uv = (u, v)
 bm.normal_update()
 unused = [v for v in bm.verts if not v.link_faces]
@@ -127,6 +134,7 @@ bpy.ops.wm.save_as_mainfile(filepath=out)
 report = {"dump": os.path.abspath(dump_path), "spec": os.path.abspath(spec_path), "blend": os.path.abspath(out),
           "source": {"name": body["name"], "vertices": len(V), "polygons": len(body["faces"])},
           "master_faces": len(me.polygons), "non_quads": non_quads,
+          "ring_cuts": cut["cuts"], "cut_vertices_added": len(CV) - len(V),
           "master_tris": sum(len(p.vertices) - 2 for p in me.polygons), "max_edge_m": round(max_edge, 4),
           "faces_per_finish": counts, "uv_qa": uvqa, "density_px_per_m": density, "ucx": ucx_report, "perimeter_drop": drop}
 json.dump(report, open(out + ".build.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
@@ -135,3 +143,4 @@ print("BUILD", json.dumps({k: report[k] for k in ("master_faces", "non_quads", "
 print("BUILD-UV", json.dumps(uvqa), json.dumps(density))
 print("BUILD-UCX", json.dumps(ucx_report))
 print("BUILD-DROP", json.dumps(drop))
+print("BUILD-CUTS", json.dumps(cut["cuts"]))
