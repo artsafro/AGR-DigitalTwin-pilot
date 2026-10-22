@@ -10,9 +10,13 @@ Used by build_master.py (Blender) and by the tests. Contracts (fail-closed, neve
   or below `zero_m` (±0.000) takes `below`, every other polygon `above`.
 - user-texture finishes (pattern `user_vjoints`, Artem 2026-10-22: vertical joints only, his 4096 texture, KPP texel):
   a full finish whose KPP colour twin is a plain placeholder carries `source_texture` (path, sha256, period_px,
-  first_joint_px) and a `density_twin` (a patterned KPP finish) for the texel contract.
-- joint frame (facade_joint_uv): vertical joints repeat every P from the panel's edge with the smaller world coordinate
-  along its facade, so the two mirrored long facades share one joint grid and one ring cut lands on a joint on both.
+  first_joint_px) and a `density_twin` (a patterned KPP finish) for the texel contract. Split rule `facade`: the
+  finish of a vertical polygon is its facade's finish (spec facades, by outward normal +x/-x/+y/-y).
+- facade rib contract (validate_facades / field_frames; Artem 2026-10-22, supersedes the 0.60 m step): per facade the
+  sheet's rib count `ribs` is spread evenly over the whole panel field (all patterned faces of the facade together),
+  P = field_m / ribs, joints at field_lo + k * P (k = 1 .. ribs - 1), symmetric; the user texture gives one joint's
+  look only. Without a facades block the old per-face frame (joint_origin) is used and user_vjoints is rejected.
+  [D169]; the wall edging around the field is blue RAL 5015 with a dark field outline (outline_z_m) [D170].
 - ring cuts (plan_cuts / ring_cut / apply_cuts; Artem 2026-10-22 «если не влезает, то можно аккуратно порезать через
   loop или ring»): a patterned face longer than the tile holds is split by an edge ring at a joint position; the ring
   runs through quads only, from boundary to boundary (or closed), so no T-junction is created; every new vertex lies
@@ -71,9 +75,16 @@ def validate_spec(spec, kpp_spec=None):
     src = spec.get("source_ids") or {}
     if not src:
         raise ValueError("spec has no source_ids")
+    if any(r.get("split") == "facade" for r in src.values()) or spec.get("facades") is not None:
+        validate_facades(spec)
     for sid, rule in src.items():
-        names = [rule["above"], rule["below"]] if rule.get("split") == "below_zero" else [rule.get("finish")]
-        if rule.get("split") not in (None, "below_zero"):
+        if rule.get("split") == "below_zero":
+            names = [rule["above"], rule["below"]]
+        elif rule.get("split") == "facade":
+            names = sorted({f["finish"] for f in spec["facades"].values()})
+        else:
+            names = [rule.get("finish")]
+        if rule.get("split") not in (None, "below_zero", "facade"):
             raise ValueError(f"source ID {sid}: unsupported split {rule.get('split')}")
         for n in names:
             if n not in fin:
@@ -104,7 +115,62 @@ def validate_spec(spec, kpp_spec=None):
     for name, t in fin.items():
         if t.get("pattern") == "user_vjoints" and name not in (spec.get("kpp_palette") or {}):
             raise ValueError(f"{name}: a user-texture finish needs a kpp_palette twin (colour + density contract)")
+        if t.get("pattern") == "user_vjoints" and not any(f.get("finish") == name
+                                                          for f in (spec.get("facades") or {}).values()):
+            raise ValueError(f"{name}: a user_vjoints finish needs a facade rib contract (spec facades: ribs per "
+                             f"field from the building's colour-solution sheet); the joint period is not free")
     return True
+
+
+NORMALS = {"+x": (0, 1), "-x": (0, -1), "+y": (1, 1), "-y": (1, -1)}  # facade outward normal -> (axis index, sign)
+
+
+def validate_facades(spec):
+    """Per-facade rib contract (Artem 2026-10-22, operator measurements on the building's own colour-solution sheet):
+    `ribs` strips spread EVENLY over the panel field of `field_m` metres, so joints sit at field_lo + k * field_m / ribs
+    (k = 1 .. ribs - 1; symmetric by construction) and the finish period P[0] must equal field_m / ribs. Fail-closed."""
+    facades = spec.get("facades")
+    if not isinstance(facades, dict) or not facades:
+        raise ValueError("split 'facade' needs a non-empty spec facades block (rib contract per facade)")
+    fin = spec.get("finishes") or {}
+    seen, pitch = set(), {}
+    for name, f in facades.items():
+        n, fname, ribs, W = f.get("normal"), f.get("finish"), f.get("ribs"), f.get("field_m")
+        if n not in NORMALS or n in seen:
+            raise ValueError(f"facade {name}: normal must be one of {sorted(NORMALS)}, once each; got {n}")
+        seen.add(n)
+        t = fin.get(fname)
+        if t is None or t.get("kind") != "full" or t.get("pattern") != "user_vjoints":
+            raise ValueError(f"facade {name}: finish {fname} must be a declared full user_vjoints finish")
+        if not (isinstance(ribs, int) and not isinstance(ribs, bool) and ribs >= 2):
+            raise ValueError(f"facade {name}: ribs must be an int >= 2, got {ribs}")
+        if not (isinstance(W, (int, float)) and math.isfinite(W) and W > 0):
+            raise ValueError(f"facade {name}: field_m must be finite > 0, got {W}")
+        P = t.get("P")
+        p = W / ribs
+        if not (isinstance(P, list) and P and isinstance(P[0], (int, float)) and abs(P[0] - p) <= 1e-6):
+            raise ValueError(f"facade {name}: finish {fname} period P {P} != field {W} m / {ribs} ribs = {p:.6f} m "
+                             f"(the rib count comes from the sheet, not from the texture image)")
+        if fname in pitch and abs(pitch[fname] - p) > 1e-6:
+            raise ValueError(f"facade {name}: finish {fname} is shared by facades with different pitches")
+        pitch[fname] = p
+    return True
+
+
+def facade_key(vertices, face, tol=1e-3):
+    """Outward facade of a vertical face: '+x', '-x', '+y' or '-y' by the dominant Newell normal; ValueError else."""
+    n = _newell([vertices[k] for k in face])
+    if n is None or abs(n[2]) > tol:
+        raise ValueError(f"face {face} is not vertical; a facade finish needs a wall face")
+    a = 0 if abs(n[0]) >= abs(n[1]) else 1
+    return ("+" if n[a] > 0 else "-") + "xy"[a]
+
+
+def facade_of(spec, key):
+    for name, f in spec["facades"].items():
+        if f["normal"] == key:
+            return name, f
+    raise ValueError(f"no facade in the spec faces {key}")
 
 
 DECISION_REF = re.compile(r"^(D\d+|https://github\.com/\S+#issuecomment-\d+)$")
@@ -150,8 +216,9 @@ HEX64 = re.compile(r"^[0-9a-f]{64}$")
 
 
 def check_user_texture(name, spec):
-    """A `user_vjoints` finish: vertical joints only, laid out every P[0] by whole-period u shifts, from a user image
-    whose joint period in px equals P[0] at the finish density (no resampling of the user's joint profile)."""
+    """A `user_vjoints` finish: vertical joints only, laid out every P[0] by whole-period u shifts. The user image gives
+    the joint profile (columns first_joint_px, kept 1:1 at the finish density - not resampled) and the panel colour/noise;
+    the period P[0] is the facade rib contract (validate_facades), independent of the image's own joint spacing."""
     t = spec["finishes"][name]
     if t.get("pattern") != "user_vjoints":
         raise ValueError(f"{name}: a full finish on a plain KPP twin must be pattern user_vjoints, got {t.get('pattern')}")
@@ -169,9 +236,17 @@ def check_user_texture(name, spec):
             and 0 <= fj[0] < fj[1] and (fj[1] - fj[0]) % 2 == 0):
         raise ValueError(f"{name}: source_texture period_px / first_joint_px [a, b) malformed: {per}, {fj}")
     want = P[0] * spec["size_full"] / t["S"]
-    if abs(per - want) > 1e-6:
-        raise ValueError(f"{name}: source period {per} px != P {P[0]} m at {spec['size_full'] / t['S']:.1f} px/m "
-                         f"({want:.2f} px); the user's joint profile is not resampled")
+    if not (isinstance(per, int) and per > 0 and fj[1] <= per):
+        raise ValueError(f"{name}: source_texture period_px {per} must be an int > 0 that holds the declared joint {fj}")
+    # Artem 2026-10-22 (supersedes the 0.60 m step): his texture supplies the colour, noise and ONE joint's profile;
+    # the repeat comes from the sheet (facades.ribs), so the tile period `want` may differ from the source period.
+    if not want >= 4 * (fj[1] - fj[0]):
+        raise ValueError(f"{name}: tile period {want:.1f} px leaves no panel between {fj[1] - fj[0]} px joints")
+    oz = t.get("outline_z_m")
+    if oz is not None and not (isinstance(oz, list) and len(oz) == 2 and all(isinstance(x, (int, float)) and
+                                                                            math.isfinite(x) for x in oz)
+                               and 0 < oz[0] < oz[1] < t["S"] - spec["pad_m"]):
+        raise ValueError(f"{name}: outline_z_m must be [z_lo, z_hi] inside the tile, got {oz}")
 
 
 def check_density_contract(name, spec, k, kpp_spec, tol=0.5):
@@ -211,6 +286,11 @@ def assign_finishes(vertices, faces, mat_ids, spec):
         if rule.get("split") == "below_zero":
             zmax = max(vertices[k][2] for k in f)
             out.append(rule["below"] if zmax <= zero else rule["above"])
+        elif rule.get("split") == "facade":
+            try:
+                out.append(facade_of(spec, facade_key(vertices, f))[1]["finish"])
+            except ValueError as e:
+                raise ValueError(f"polygon {i}: material ID {m} (split facade): {e}") from None
         else:
             out.append(rule["finish"])
     return out
@@ -297,6 +377,45 @@ def joint_origin(vertices, face, lo, hi):
     """Joint frame of a patterned source face: (axis, sign, origin) with origin = its smallest world coordinate."""
     axis, sign = facade_axis(vertices, face, lo, hi)
     return axis, sign, min(vertices[k][axis] for k in face)
+
+
+def field_frames(vertices, faces, finishes, spec, lo, hi, tol=1e-3):
+    """Joint frames of the patterned faces from the facade PANEL FIELD (all patterned faces of one facade together):
+    origin = the field's smallest world coordinate along the facade, so joints sit at field_lo + k * P with
+    P = field_m / ribs (spec facades) - evenly over the whole field, symmetric, continuous across face splits.
+    Returns (frames per face or None, report per facade). Fail-closed: a field whose measured width differs from the
+    spec field_m by more than `tol`, or a patterned face whose finish is not its facade's finish."""
+    patterned = set(spec.get("facade_uv", {}))
+    groups = {}
+    for i, (f, fin) in enumerate(zip(faces, finishes)):
+        if fin in patterned:
+            groups.setdefault(facade_key(vertices, f), []).append(i)
+    frames: list = [None] * len(faces)
+    report = {}
+    for key, idx in sorted(groups.items()):
+        name, fc = facade_of(spec, key)
+        axis = 1 - NORMALS[key][0]
+        cs = [vertices[k][axis] for i in idx for k in faces[i]]
+        a, b = min(cs), max(cs)
+        if abs((b - a) - fc["field_m"]) > tol:
+            raise ValueError(f"facade {name}: measured panel field {b - a:.4f} m != spec field_m {fc['field_m']} m")
+        oz = spec["finishes"][fc["finish"]].get("outline_z_m")
+        zs = [vertices[k][2] for i in idx for k in faces[i]]
+        if oz and (abs(min(zs) - oz[0]) > tol or abs(max(zs) - oz[1]) > tol):
+            raise ValueError(f"facade {name}: panel field z {min(zs):.4f}..{max(zs):.4f} != outline_z_m {oz}")
+        for i in idx:
+            if finishes[i] != fc["finish"]:
+                raise ValueError(f"face {i}: finish {finishes[i]} on facade {name} expects {fc['finish']}")
+            ax, sign = facade_axis(vertices, faces[i], lo, hi)
+            if ax != axis:
+                raise ValueError(f"face {i}: facade axis {ax} != field axis {axis}")
+            frames[i] = (axis, sign, a)
+        P = spec["finishes"][fc["finish"]]["P"][0]
+        report[name] = {"normal": key, "finish": fc["finish"], "faces": len(idx), "axis": "xy"[axis],
+                        "field_lo": round(a, 6), "field_hi": round(b, 6), "field_m": round(b - a, 6),
+                        "ribs": fc["ribs"], "pitch_m": round(P, 6),
+                        "joints_world": [round(a + k * P, 6) for k in range(1, fc["ribs"])]}
+    return frames, report
 
 
 def facade_joint_uv(vertices, face, frame):
@@ -398,10 +517,14 @@ def apply_cuts(vertices, faces, finishes, spec, lo, hi, max_rings=64):
 
     Returns {"vertices", "faces", "parents", "frames" (per source face, None if not patterned), "cuts": [...]}.
     A face of length L gets ceil(L / Lmax) - 1 cuts at the joints nearest the even split points; the loop re-plans
-    on the current pieces, so a ring that already cut a face elsewhere is not cut again next to it."""
+    on the current pieces, so a ring that already cut a face elsewhere is not cut again next to it. Joint frames are
+    the facade panel fields (field_frames) when the spec has a facades contract, else per face (joint_origin)."""
     _finite(vertices)
     patterned = set(spec.get("facade_uv", {}))
-    frames = [joint_origin(vertices, f, lo, hi) if fin in patterned else None for f, fin in zip(faces, finishes)]
+    if spec.get("facades"):
+        frames, _ = field_frames(vertices, faces, finishes, spec, lo, hi)
+    else:
+        frames = [joint_origin(vertices, f, lo, hi) if fin in patterned else None for f, fin in zip(faces, finishes)]
     V, F, par = [list(c) for c in vertices], [list(f) for f in faces], list(range(len(faces)))
     cuts = []
     while True:

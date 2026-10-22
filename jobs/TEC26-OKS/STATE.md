@@ -37,13 +37,13 @@ Report: `census/README.md`; scene tables: `census/scenes.md`; KPP: `census/kpp-r
 ## Pilot AC08 VPM + NPM (#559, branch `job/tec26-oks-pilot-ac08`)
 
 Gate 1 approved (#565). Scope (Artem 2026-10-22): colour only - geometry, topology, UCX and IDs as in the source; the
-one allowed edit is a clean edge-ring cut at a joint where a panel does not fit a tile («можно аккуратно порезать через
-loop или ring»). Panels ID2 = `PanelVJ_RAL5015`: Artem's texture (vertical joints only, 8 mm / 0.60 m, sha256-checked),
-KPP texel 1000 px/m, joints from each panel's smaller-world-coordinate edge; drop below ±0.000 plain 5015. Run
-`pilot-v007`: one ring cut at X = 33.4234 (19 quads -> 38, +20 vertices on source edges), `SM_Nku_1.zip` (VPM, 1001
-4096 + 3 placeholders) and `0000_Nku_1.zip` (NPM, 2048 `_d_` + `_o_` embedded, joints 1.55 px) on Drive
-`G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v007/` (27/27 hashes). `qa_packages.py` 38/38 (source + ring cuts
-only, cuts at joints 8/8, finish per triangle 386/386 vs source IDs, xView 0/0, doubles 0, VPM = NPM, medians = KPP RGB,
-texel 1000 px/m 38/38), `qa_master` normals 0 / T-junctions 0 / leaks 0; SINTEZ VPM 62/4, NPM 38/5 (deferred GeoJSON /
-Ground / district code / UKEP + UCX triangulation 2.3.17). Open for Artem (`AC08/PILOT_REPORT.md`): UCX triangulation,
-joint phase convention. Scripts: `scripts/run_building.sh` (spec `ring_cuts` enables the cut).
+one allowed edit is a clean edge-ring cut at a joint where a panel does not fit a tile. v007 (joints every 0.60 m) was
+rejected; Artem accepted the v008 panels and asked for a blue wall edging. Run `pilot-v009` [D169] [D170]: rib count
+per facade from the colour-solution sheet (`AC08/sheet-facades.json`: 29 / 11 joint lines = 30 / 12 ribs), evenly and
+symmetrically over the panel field (P = 0.19532 / 0.18628 m, tiles 1001 / 1002, Artem's texture = one joint's look,
+KPP texel 1000 px/m); frame band (ID1 above ±0.000) blue RAL 5015 with a dark field outline; plinth and door RAL 7004;
+one ring cut at joint 12 (X = 33.3673, 19 quads -> 38). Drive `G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v009/`
+(33/33 hashes). `qa_packages.py` 40/40 incl. `facade_joints_vpm/npm` (counts measured on the delivered meshes/textures);
+rendered counts = sheet on all 4 facades (`compare_facades.py`, sheet and render side by side at 200 px/m); SINTEZ as
+v007. Open for Artem (`AC08/PILOT_REPORT.md`): roof colour (now blue), outer outline, UCX triangulation.
+Scripts: `scripts/run_building.sh`, `render_facades.py`, `compare_facades.py`, `sheet_facades.py`.
