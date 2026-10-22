@@ -55,3 +55,21 @@ def test_ac05_gate1_inventory_preserves_measured_ids_and_unknowns():
     assert 'not a delivery acceptance' in report
     assert '276D52' in report
     assert '-2.004332' in report
+
+
+def test_ac05_gate_images_and_required_perimeter_drop():
+    data = json.loads((JOB / 'materials.json').read_text(encoding='utf-8'))
+    render = data['evidence'].get('native_render', {})
+    assert render.get('application') == 'Blender 5.1.2'
+    assert render.get('ucx_visible') is False
+    assert render.get('zero_level_line_m') == 0.0
+    assert len(render.get('paired_views', [])) == 2
+    drop = data['scene'].get('perimeter_drop', {})
+    assert drop.get('keep_in_both_profiles') is True
+    assert drop.get('finish_policy') == 'adjacent facade; no new ID'
+    walls = drop.get('walls', [])
+    assert len(walls) == 4
+    for wall in walls:
+        assert wall['coverage_at_minus_1_m'] == 'complete'
+        assert math.isfinite(wall['highest_bottom_z_m'])
+        assert wall['highest_bottom_z_m'] <= -1.0
