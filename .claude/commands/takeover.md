@@ -18,11 +18,19 @@ This command only reads and reports. Change no file, run no DCC call, push nothi
    - uncommitted changes (`git status --short`) the handoff does not mention;
    - each PR and issue in the handoff vs its real state (`gh pr view <N> --json state,mergedAt,reviewDecision`,
      `gh issue view <N> --json state`), and open PRs of this branch the handoff does not list;
-   - `main` moved since the handoff (`git fetch` then `git log --oneline HEAD..origin/main`), if relevant.
+   - `main` moved since the handoff (`git fetch` then `git log --oneline HEAD..origin/main`), if relevant;
+   - HEAD detached (the report names the commit);
+   - the branch behind `origin/main` by N relevant merges — commits that touch `src/`, `tools/`,
+     `standards/`, `docs/domain/`, `docs/decisions.md`, `docs/procedure/` or
+     `docs/agents/CAPABILITIES.md` (the report gives the count and the titles). Docs-only or job-only
+     merges are not this discrepancy.
    No discrepancy: say so in one line.
 3. **List what is open**, from the handoff: "In progress", "Waiting for the user", "Next step", open PRs and
    issues, "Rules broken" still unresolved. One line each.
 4. **Propose** what to take first and why, in one or two lines. A question waiting for the user goes first.
+   When HEAD is detached, or the branch is behind `origin/main` by relevant merges, the first proposed
+   step is to merge `origin/main` into the job branch (or record the user's explicit skip). This command
+   does not merge.
 5. **Usage.** End the answer with the usage counts of the last 7 days below, as is, and one line naming what was
    never called although its trigger (`docs/agents/WORKFLOW.md`, "Triggers") occurred in that time, if you can
    tell.

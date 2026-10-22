@@ -27,6 +27,8 @@ from branch_names import RENAME_HINT, is_auto  # noqa: E402
 HANDOFF = "docs/HANDOFF.md"
 LIMIT = 9500                                         # under the 10 000-character hook cap
 LINE = 300                                           # one commit subject, PR title or status line
+RELEVANT_PATHS = ("src/", "tools/", "standards/", "docs/domain/", "docs/decisions.md",
+                  "docs/procedure/", "docs/agents/CAPABILITIES.md")
 BRANCH_LINE = re.compile(r"^Branch:\s*`([^`]+)`", re.M)
 COMMIT_LINE = re.compile(r"Commit:\s*`([0-9a-f]{7,40})`")
 TRANSCRIPT_LINE = re.compile(r"^Transcript:[ \t]*`([^`\n]+)`", re.M)
@@ -115,6 +117,41 @@ def _line(text):
     return text if len(text) <= LINE else text[:LINE] + " [...]"
 
 
+def branch_freshness():
+    """Warnings for a detached HEAD or for origin/main commits that touch production paths.
+
+    Read-only and offline: no fetch. A missing origin/main ref skips the behind check and does not
+    claim the branch is current. Git failure is a warning, never a clean result.
+    """
+    branch = _git("branch", "--show-current")
+    head = _git("rev-parse", "--short", "HEAD")
+    if branch is None or head is None:
+        return ["git failed: branch freshness is not verified"]
+    warnings = []
+    if branch == "":
+        warnings.append(f"HEAD is detached at `{head}`: no production work may happen on a detached HEAD "
+                        "(create or switch to a task branch first)")
+    if _git("rev-parse", "--verify", "origin/main") is None:
+        return warnings
+    behind = _git("rev-list", "--count", "HEAD..origin/main")
+    if behind is None or not behind.strip().isdigit():
+        warnings.append("git failed counting commits behind origin/main: branch freshness is not verified")
+        return warnings
+    if int(behind) == 0:
+        return warnings
+    log = _git("log", "--oneline", "HEAD..origin/main", "--", *RELEVANT_PATHS)
+    if log is None:
+        warnings.append("git failed listing relevant commits behind origin/main: branch freshness is not verified")
+        return warnings
+    titles = [line.strip() for line in log.splitlines() if line.strip()]
+    if not titles:
+        return warnings
+    noun = "merge" if len(titles) == 1 else "merges"
+    warnings.append(f"behind origin/main by {len(titles)} relevant {noun}")
+    warnings.extend(titles)
+    return warnings
+
+
 def _rename_prompt(branch):
     """Lines (each under LINE) telling the agent to get the auto-generated branch renamed (user 2026-10-14 [D078])."""
     return [f"BRANCH NAME: `{branch}` is an auto-generated worktree name (docs/agents/NAMING.md).",
@@ -142,6 +179,9 @@ def context(source):
                            "run the /handover procedure (.claude/commands/handover.md) while the summary is "
                            "fresh, or tell the user why you cannot")
     head += ["Handoff warnings:", *(("  - " + w) for w in warnings)] if warnings else ["Handoff: current"]
+    fresh = branch_freshness()
+    if fresh:
+        head += ["Branch freshness:", *(("  - " + w) for w in fresh)]
     head += [t for t in [transcript_line(text)] if t]
     if source in ("startup", "clear", "compact"):
         head += ["If the user says «продолжай»: first name the branch, the HEAD commit and the next step from the "

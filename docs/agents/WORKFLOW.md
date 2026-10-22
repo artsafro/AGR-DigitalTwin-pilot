@@ -8,6 +8,12 @@ task: a one-line fix skips most steps; a multi-stage delivery uses all of them.
 Harness work (issues labelled `harness`) runs grilling -> to-spec -> to-tickets -> implement ->
 code-review (user 2026-10-14 [D091]); production work runs the steps below.
 
+Before the first production step of a session, merge `origin/main` into the job branch
+(`git fetch origin`, then `git merge --no-edit origin/main`; never rebase), or record the
+user's explicit skip. A detached HEAD never does production work. A production step touches
+`src/`, `tools/`, `standards/`, `docs/domain/`, `docs/decisions.md`, `docs/procedure/` or
+`docs/agents/CAPABILITIES.md`.
+
 0. **Card and recitation.** A task with an issue moves on the board (`docs/agents/KANBAN.md`): In progress
    when taken, Needs you when it waits on the user. Then recite the ticket ("Recitation" below)
    before any file is changed.

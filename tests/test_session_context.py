@@ -21,6 +21,23 @@ def git(repo, *args):
                    capture_output=True)
 
 
+def git_out(repo, *args):
+    r = subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True, text=True, encoding="utf-8")
+    return r.stdout.strip()
+
+
+def leave_origin_main_ahead(repo, path, title):
+    """Point refs/remotes/origin/main at a new commit, and leave the branch on the previous HEAD."""
+    base = git_out(repo, "rev-parse", "HEAD")
+    dest = repo / path
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text("x\n", encoding="utf-8")
+    git(repo, "add", "--", path)
+    git(repo, "commit", "-q", "-m", title)
+    git(repo, "update-ref", "refs/remotes/origin/main", "HEAD")
+    git(repo, "reset", "-q", "--hard", base)
+
+
 def handoff(branch, extra=""):
     return f"# Handoff — 2026-10-14\n\nBranch: `{branch}` · Commit: `abc1234` · Job: `-`\n\n## Next step\n\nDo X.\n{extra}"
 
@@ -186,3 +203,98 @@ def test_failed_git_status_is_a_warning(repo):                       # review 2 
     ctx = start(repo, "startup")
     assert "git status failed" in ctx and "Handoff: current" not in ctx
     assert json.loads(run("precompact", {"trigger": "manual"}, repo))["decision"] == "block"
+
+
+# #529: branch freshness. Warn cases fail until branch_freshness() is wired into context().
+
+def test_detached_head_is_a_freshness_warning(repo):
+    git(repo, "checkout", "-q", "--detach", "HEAD")
+    short = git_out(repo, "rev-parse", "--short", "HEAD")
+    ctx = start(repo, "startup")
+    assert "Branch freshness:" in ctx
+    assert "detached" in ctx and short in ctx and "no production work" in ctx
+    report = run("report", {}, repo)
+    assert "Branch freshness:" in report and "detached" in report and short in report
+
+
+@pytest.mark.parametrize("path,title", [
+    ("src/x.py", "add src helper"),
+    ("tools/h.py", "add a tool helper"),
+    ("standards/rule.json", "add a standard"),
+    ("docs/decisions.md", "record a decision"),
+    ("docs/agents/CAPABILITIES.md", "note a capability"),
+    ("docs/domain/node.md", "add a domain rule"),
+])
+def test_relevant_main_merges_are_listed(repo, path, title):
+    leave_origin_main_ahead(repo, path, title)
+    ctx = start(repo, "startup")
+    assert "Branch freshness:" in ctx and "1 relevant merge" in ctx and title in ctx
+    report = run("report", {}, repo)
+    assert "1 relevant merge" in report and title in report
+
+
+def test_irrelevant_commits_do_not_add_to_the_relevant_count(repo):
+    base = git_out(repo, "rev-parse", "HEAD")
+    (repo / "docs/cases.md").write_text("c\n", encoding="utf-8")
+    git(repo, "add", "--", "docs/cases.md")
+    git(repo, "commit", "-q", "-m", "docs only case")
+    (repo / "src").mkdir()
+    (repo / "src/x.py").write_text("x\n", encoding="utf-8")
+    git(repo, "add", "--", "src/x.py")
+    git(repo, "commit", "-q", "-m", "add src helper")
+    git(repo, "update-ref", "refs/remotes/origin/main", "HEAD")
+    git(repo, "reset", "-q", "--hard", base)
+    ctx = start(repo, "startup")
+    assert "1 relevant merge" in ctx and "add src helper" in ctx
+    assert "2 relevant" not in ctx and "docs only case" not in ctx
+
+
+@pytest.mark.parametrize("path,title", [
+    ("docs/cases.md", "docs only case"),
+    ("jobs/NOTE.md", "job only note"),
+])
+def test_docs_only_or_job_only_main_merges_do_not_warn(repo, path, title):
+    leave_origin_main_ahead(repo, path, title)
+    ctx = start(repo, "startup")
+    assert "Branch freshness:" not in ctx and title not in ctx
+    assert "relevant merge" not in run("report", {}, repo)
+
+
+def test_branch_even_with_origin_main_has_no_freshness_warning(repo):
+    git(repo, "update-ref", "refs/remotes/origin/main", "HEAD")
+    ctx = start(repo, "startup")
+    assert "Branch freshness:" not in ctx and "up to date" not in ctx.lower()
+    assert "Branch freshness:" not in run("report", {}, repo)
+
+
+def test_missing_origin_main_does_not_claim_the_branch_current(repo):
+    ctx = start(repo, "startup")
+    assert "up to date" not in ctx.lower() and "Branch freshness: current" not in ctx
+
+
+def test_git_unavailable_does_not_call_branch_freshness_current(repo, tmp_path):
+    env = {**os.environ, "CLAUDE_PROJECT_DIR": str(repo), "PATH": str(tmp_path)}
+    r = subprocess.run([sys.executable, str(HOOK), "report"], capture_output=True, text=True,
+                       encoding="utf-8", env=env)
+    assert r.returncode == 0, r.stderr
+    assert "branch freshness is not verified" in r.stdout
+    assert "up to date" not in r.stdout.lower() and "clean" not in r.stdout
+
+
+def test_takeover_lists_freshness_and_proposes_merge():
+    text = (ROOT / ".claude/commands/takeover.md").read_text(encoding="utf-8")
+    assert "HEAD detached" in text
+    assert "relevant merge" in text
+    assert "explicit skip" in text
+    assert "does not merge" in text
+
+
+def test_loop_merges_main_before_the_first_production_step():
+    loop = (ROOT / "docs/agents/WORKFLOW.md").read_text(encoding="utf-8").split("## Before requesting review")[0]
+    assert "git fetch origin" in loop
+    assert "git merge --no-edit origin/main" in loop
+    assert "never rebase" in loop
+    assert "detached HEAD" in loop
+    for path in ("src/", "tools/", "standards/", "docs/domain/", "docs/decisions.md",
+                 "docs/procedure/", "docs/agents/CAPABILITIES.md"):
+        assert path in loop
