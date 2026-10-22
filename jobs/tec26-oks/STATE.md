@@ -1,37 +1,29 @@
 # tec26-oks3-truba
 
-Status: **texture foundation only**. Issue 560 acceptance items 3 and 4 are open.
-No FBX, UCX, SINTEZ result or render exists for this object.
+Status: **DCC packages, checks and renders are on disk**. Not a delivery (`passed` is not claimed).
+SINTEZ, GeoJSON, MSK-77 and the manual gates are still open.
 
 ## Done
 
-- Finish census of `maps_truba`: five uniform RGB swatches and one 4096 RGBA railing.
-- RAL labels recorded in `materials.json`. The facade album does not name the truba;
-  slide 58 states the site palette only. Decisions are marked `assumption` except
-  `gray.png`, which matches the KPP1 RAL 7047 sample exactly.
-- Naming spec for the later package: address `Truba_1`, NPM number `003` (OKS 3),
-  one material, finishes as UDIM 1001-1006.
-- `make_textures.py` writes separate NPM and VPM sets to
-  `C:/x/tec26-oks/textures-v001/` and `C:/x/tec26-oks/SHA256SUMS.txt`.
-  NPM: 24-bit RGB, no normal; railing diffuse/opacity capped at 2048; roughness and
-  metallic are 128 px plates; solids stay 256. VPM: railing Diffuse keeps the 4096
-  RGBA cutout; ERM and Normal are 256 px RGB stubs. Aliased report or output paths
-  exit before any write.
-- Regression: `tests/test_tec26_oks_truba_textures.py`.
+- Finish census and `make_textures.py` (previous run). Normalised PNGs stay in
+  `C:/x/tec26-oks/textures-v001/`.
+- Multi/Sub census of `Tuba` / `Material #75`. Mapping is
+  `scripts/multisub-map.json`. Four empty slots (ids 4, 8, 9, 10) have no faces
+  and were not given a finish.
+- VPM and NPM FBX, separate UCX FBX, both zips, scanline renders.
+  Working Max file: `C:/x/tec26-oks/max-v001/truba_named.max`.
+- Readback, xView overlaps, winding and outside-ray back faces:
+  `scripts/qa-receipt.json`.
+- Copies of the packages, renders and `SHA256SUMS.txt` are on Drive
+  `G:/Мой диск/AGR-evidence/560-tec26-oks3-truba/`.
 
-## Not done (DCC phase, gated on the #558 census)
+## Not done
 
-- Read `truba.max`, confirm the Multi/Sub assignment against these six finishes.
-- Export VPM and NPM FBX, build UCX, run overlap / normals / doubles / readback and SINTEZ.
-- Renders for Artem.
-
-DCC-phase requirements (operator note 2026-10-22, applies to this object too):
-
-- Perimeter drop: never cut the geometry at ±0.000. The base must drop at least 1.0 m below
-  ground in both VPM and NPM, and the dropped shell keeps the adjacent facade/wall finish (no
-  separate material id unless the Multi/Sub already has one). Check: every perimeter wall reaches
-  ≤ −1.0 m.
-- Renders for Artem must be depth-correct (Max scanline), UCX hidden, a line at ±0.000, and a
-  plain shaded view next to the finish/id colours.
+- SINTEZ AGR Checker.
+- GeoJSON, district code, MSK-77 placement.
+- Manual gates V015–V017.
+- The Max FBX importer rebuilds the Multi/Sub container as `MultiMat_0`.
+  The six sub-material names in the FBX are `M_Truba_1_Main_1_<Finish>` and
+  `M_Truba_1_003_Main_1_<Finish>`.
 
 Do not treat this job as a delivery package.

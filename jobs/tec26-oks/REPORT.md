@@ -1,96 +1,114 @@
-# TEC26 OKS 3 truba — texture foundation
+# TEC26 OKS 3 truba — VPM / NPM packages
 
-Issue 560, this run only. The laid-out scene was not opened. Acceptance items 3 and 4
-(full VPM + NPM package, mesh/material/UCX names on the exported models, overlap /
-normals / doubles / readback, renders) are **not done**.
+Issue 560, acceptance items 3 and 4 for this object. The source `truba.max` and
+the working copy were not modified (sha256 of both:
+`4f2d97744853de1f50347d432da609e08ec7c846cd8ddb3bb62b452440b03556`).
 
-## Finishes
+This is not a passed delivery. SINTEZ, GeoJSON and the manual gates are open.
 
-Source directory (read only):
-`C:\Users\artsafro\Desktop\!3D viz\Dima_Andrew\2_kotelnya\Vlad_OKS\maps_truba`.
+## Mesh
 
-Measured with PIL on the source files. Diffuse texels in the normalised set are these
-values, not a repaint onto the KPP sRGB sample. Distance is Euclidean RGB to the nearest
-KPP1 sample in `jobs/KPP1/scripts/vpm_textures.json`.
+`Tuba` is an Editable Poly, 24 372 vertices, **25 128 quads** (0 other faces),
+**50 256 triangles**. The brief's 50 256 faces are that triangle count.
+World bbox min `[-51.174, -27.8791, -1.4456]`, max `[5.4444, 27.8791, 69.3844]`
+metres. The base stays below ±0.000.
 
-| Finish | Source | RGB | RAL | Status | UDIM | id | NPM slot |
-|---|---|---|---|---|---|---|---|
-| Paint_Red | `red.png` 256 RGB | 195, 65, 65 | none adopted | assumption | 1001 | 1 | 1 |
-| Band_RAL5015 | `blu.png` 256 RGB | 0, 124, 176 | RAL 5015 | assumption | 1002 | 2 | 2 |
-| Band_RAL7047 | `gray.png` 256 RGB | 208, 208, 208 | RAL 7047 | exact KPP sRGB | 1003 | 3 | 3 |
-| Band_RAL7004 | `dark_gray.png` 256 RGB | 173, 173, 173 | RAL 7004 | assumption | 1004 | 4 | 4 |
-| Band_RAL7004_Dark | `dark_gray2.png` 256 RGB | 128, 128, 128 | RAL 7004 | assumption | 1005 | 5 | 5 |
-| Railing_Steel | `railing_10mx1_2m_8posts_RGBA_2048.png` 4096 RGBA | copied, not a swatch | none | assumption | 1006 | 26 | 6 |
+## Finish → material id
 
-Nearest KPP sample when the pptx gives no truba RAL:
+`Material #75` is a Multi/Sub with 10 slots. A used slot maps by the diffuse-map
+filename (`dark_gray2`, `dark_gray`, `railing`, `gray`, `blu`, `red`). The swatch
+is the PNG in `materials.json`. The Standard diffuse tint is recorded and is not
+used when a bitmap is assigned. Empty slots with no faces are not given a finish.
 
-| Finish | Nearest KPP finish | KPP RGB | Distance | Adopted? |
-|---|---|---|---|---|
-| Paint_Red | Plinth_RAL7004 | 150, 153, 146 | 127.79 | No. Not a red. Source kept. |
-| Band_RAL5015 | Cassette_RAL5015 | 34, 113, 179 | 35.86 | Label only. Source kept. |
-| Band_RAL7047 | Cassette_RAL7047 | 208, 208, 208 | 0 | Yes, same bytes. |
-| Band_RAL7004 | Plinth_RAL7004 | 150, 153, 146 | 40.72 | Label only. Closer than RAL 7047 (60.62). |
-| Band_RAL7004_Dark | Grille_RAL7004 | 120, 122, 117 | 14.87 | Label only. Same code as the lighter band, separate tile. |
-| Railing_Steel | Railing_Alpha (no RAL) | 125, 127, 130 | n/a (texture) | No RAL. KPP railing body is uncoded steel; handrail RAL 1021 is a different finish. |
+| Source id | Faces | Map | Finish | UDIM | Export slot |
+|---|---:|---|---|---:|---:|
+| 1 | 180 | `gray.png` | Band_RAL7047 | 1003 | 3 |
+| 2 | 36 | `blu.png` | Band_RAL5015 | 1002 | 2 |
+| 3 | 36 | `red.png` | Paint_Red | 1001 | 1 |
+| 5 | 126 | `dark_gray2.png` | Band_RAL7004_Dark | 1005 | 5 |
+| 6 | 24462 | `dark_gray.png` | Band_RAL7004 | 1004 | 4 |
+| 7 | 288 | `railing_…RGBA_2048.png` | Railing_Steel | 1006 | 6 |
 
-One VPM material, six UDIM tiles. There is no glass, so tile 1001 is the red paint,
-not a glass slot.
+Empty, 0 faces: source ids **4, 8, 9, 10**. Unmapped used slots: none.
+Dropped finishes: none. Face ids on the export are the export slots above.
+Slot 6's material tint `(205, 210, 215)` is nearer the gray swatch than the
+`dark_gray.png` swatch `(173, 173, 173)`; the bitmap filename decides the finish.
 
-## Album
-
-File: `ТЭЦ26 на РР (1).pptx` (61 slides), read with python-pptx (text frames, tables, notes)
-and a byte search of every zip member for `труб`.
-
-Slides that mention `труб`: **none**.
-
-The colour statement is slide 58 (explanatory note), not a chimney drawing:
-
-> Основной колористический принцип, заложенный в проекте — активное использование цветов,
-> определенных как основные цвета оформления для производственных объектов компании «Газпром» -
-> RAL 5015, RAL 9016, RAL 7047 и RAL 7004.
-
-Slides 57-61 are the cooling tower, that note, the technical-economic tables and the parking
-calculation. Slides 9-10 use the word «цвет» for landscape materials. No slide assigns a RAL
-to the truba. RAL 9016 and RAL 1021 are in the KPP palette and are not used here: nothing in
-the six maps is that white or that yellow.
-
-## Naming
-
-Regulation forms (`docs/domain/geometry.md`), address chosen as `Truba_1` (same pattern as
-`Kpp_1`). NPM number `003` is OKS 3. These names are the spec for the DCC export; they are
-not yet applied to a Max scene.
+## Names
 
 | Role | Name |
 |---|---|
 | VPM mesh | `SM_Truba_1_Main` |
 | NPM mesh | `SM_Truba_1_003_Main` |
-| VPM material | `M_Truba_1_Main_1` |
-| NPM material | `M_Truba_1_003_Main_1` |
-| UCX | `UCX_SM_Truba_1_Main_001` (further hulls `_002`…; railings ≤ 5 cm get no hull) |
-| NPM maps | `T_Truba_1_003_Main_{d\|r\|m\|o}_{1..6}.png` (no `_n_`) |
-| VPM maps | `T_Truba_1_{Diffuse\|ERM\|Normal}_1.{1001..1006}.png` |
+| VPM material | `M_Truba_1_Main_1` (sub-materials `M_Truba_1_Main_1_<Finish>`) |
+| NPM material | `M_Truba_1_003_Main_1` (sub-materials `M_Truba_1_003_Main_1_<Finish>`) |
+| UCX | `UCX_SM_Truba_1_Main_001` … `_060` (renamed `Col_001` … `Col_060`, not rebuilt) |
 
-Map rules written by `make_textures.py`. NPM and VPM are separate sets.
+UCX is inside the VPM FBX (`ucx.md` R05, same file as KPP1) and is also written
+as its own FBX. The VPM zip does not contain that second FBX. NPM has no UCX.
 
-- NPM maps are 24-bit RGB. No alpha in any NPM image [D020]. No NPM normal [D014].
-- Solid NPM diffuse and opacity: 256 px. Opacity plate is white.
-- Railing NPM diffuse and opacity: source capped at 2048. Opacity is the alpha channel replicated into R=G=B.
-- NPM roughness and metallic: 128 px constant plates.
-- VPM railing Diffuse: source size (4096) RGBA, alpha kept (cutout lives in Diffuse alpha).
-- VPM solid Diffuse: 256 px RGB. ERM and Normal: 256 px RGB, no alpha. ERM = (0, roughness, metallic). Normal = (128, 128, 255), DirectX flat.
-- Roughness / metallic proposals, not measurements: paint 0.60 / 0, bands 0.50 / 0, railing 0.45 / 1 (KPP1 railing body).
-- `--sums`, `--out`, the materials JSON, each source and each planned output are refused when any two are the same file (resolved path or hard link), before any directory or file is created.
+## Packages
 
-Outputs: `C:/x/tec26-oks/textures-v001/` and `C:/x/tec26-oks/SHA256SUMS.txt`.
+FBX 7.4 (version 7400), Z-up, quads kept, metres. Geometry was not moved.
 
-## What is NOT yet done
+| File | Bytes | SHA-256 |
+|---|---:|---|
+| `C:/x/tec26-oks/package-vpm/SM_Truba_1/SM_Truba_1.fbx` | 1 896 976 | `4d6be473c8746e49d256b3e26ea857e102ab6f6e8f00b696bf8181b122ae9487` |
+| `C:/x/tec26-oks/package-vpm/SM_Truba_1.zip` | 1 559 043 | `2fe0dce55046baddce37fd64f9d11bc34a59d5a051ee4c7410266e84a358efa0` |
+| `C:/x/tec26-oks/package-vpm/UCX_SM_Truba_1_Main.fbx` | 245 248 | `b3fd42bfc338a1b505bf4917513382e34f7c2e3735268c49cd3ca0e6c11be778` |
+| `C:/x/tec26-oks/package-npm/SM_Truba_1_003_Main.fbx` | 1 771 168 | `df1d853978ab999185f64d70e2f4f029d24178347c61a9b19667857c47aa96a0` |
+| `C:/x/tec26-oks/package-npm/SM_Truba_1_003_Main.zip` | 1 525 239 | `4a6e3a5db75b13486f1522b79ffeb32e695d1be5c3d46c1f3f3285544871749b` |
 
-The DCC phase needs the #558 census. It is not started here, and no result below was fabricated.
+The VPM zip is the FBX, 18 PNGs (Diffuse/ERM/Normal × UDIM 1001–1006) and
+`manifest.json`. The NPM zip is the FBX (textures embedded), the `_d_/_r_/_m_/_o_`
+PNGs and `manifest.json`. No `_n_` map is in the zip. Max also wrote
+`SM_Truba_1_003_Main.fbm/` beside the NPM FBX when it embedded the maps.
 
-- Open `truba.max` and check that the Multi/Sub slots match these six finishes.
-- Export the VPM package and the NPM package (FBX, maps, names above).
-- Build `UCX_SM_Truba_1_Main_###`.
-- Overlap, normals, doubled vertices, readback, SINTEZ.
-- Renders for Artem.
+On re-import, Max names the Multi/Sub container `MultiMat_0`. The sub-material
+names above are the strings stored in the FBX.
 
-Until that phase, issue 560 items 3 and 4 stay open.
+## Checks
+
+Same numbers on the source mesh, the re-imported VPM mesh and the re-imported
+NPM mesh. Receipt: `scripts/qa-receipt.json`.
+
+| Check | Source | VPM | NPM |
+|---|---:|---:|---:|
+| Vertices | 24 372 | 24 372 | 24 372 |
+| Quads / poly faces | 25 128 | 25 128 | 25 128 |
+| Triangles | 50 256 | 50 256 | 50 256 |
+| Material slots | 10 (4 empty) | 6 | 6 |
+| xView overlapping vertices, 0.002 m | 0 | 0 | 0 |
+| xView overlapping faces, 0.005 m | 0 | 0 | 0 |
+| Edges with disagreeing winding | 0 | 0 | 0 |
+| Open edges | 756 | 756 | 756 |
+| Non-manifold edges | 0 | 0 | 0 |
+| Outside rays, front / back / miss (96) | 90 / 0 / 6 | 90 / 0 / 6 | 90 / 0 / 6 |
+| Min z, m | −1.4456 | −1.4456 | −1.4456 |
+
+UCX readback: 60 hulls, names `_001`–`_060`, no material, lowest z **−1.466 m**
+in both the VPM file and `UCX_SM_Truba_1_Main.fbx`. `Col_002` stays one polygon
+(18 verts); it was renamed, not rebuilt. The 756 open edges are borders of the
+lattice, not flipped faces.
+
+## Renders
+
+Scanline, UCX hidden, red bar centred on z = 0 (bbox z −0.04…+0.04). 1280×960.
+
+| File | SHA-256 |
+|---|---|
+| `C:/x/tec26-oks/renders/truba_shaded.png` | `b367cedfab20eb9c0db2a7655800fc5731255831c8e92330c908584edb73c0c7` |
+| `C:/x/tec26-oks/renders/truba_finishes.png` | `84f1539044b1b441298faa86b1a823e53086a127f700fa859d178f263237471d` |
+| `C:/x/tec26-oks/renders/truba_finishes_base.png` | `b1877cacc945d4df1b7fa92229ed83613c3cf48b47c8c7968c42e57f5029e5e8` |
+
+The side view shows the base below the zero bar.
+
+## Drive
+
+`G:/Мой диск/AGR-evidence/560-tec26-oks3-truba/` — `package-vpm/`, `package-npm/`,
+`renders/`, `SHA256SUMS.txt`.
+
+## Still open
+
+SINTEZ, GeoJSON, district code, MSK-77, manual gates V015–V017.
+The Multi/Sub container name does not survive the Max FBX importer.

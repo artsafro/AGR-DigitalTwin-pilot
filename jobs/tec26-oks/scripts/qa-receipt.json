@@ -1,0 +1,166 @@
+{
+  "system_units": "meters",
+  "xview_tolerances_m": {
+    "vertices": 0.002,
+    "faces": 0.005
+  },
+  "xview_checker_names": "Faces Orientation|Overlapping Faces|Open Edges|Multiple Edges|Isolated Vertices|Overlapping Vertices|T-Vertices|Missing UVW Coordinates|Flipped UVW Faces|Overlapped UVW Faces|",
+  "source": {
+    "name": "Tuba",
+    "class": "Editable_Poly",
+    "verts": 24372,
+    "faces_before_convert": 25128,
+    "material": "Material #75",
+    "material_class": "Multimaterial",
+    "bbox": [
+      -51.174,
+      -27.8791,
+      -1.4456,
+      5.4444,
+      27.8791,
+      69.3844
+    ],
+    "material_slots": 10,
+    "poly_faces": 25128,
+    "quads": 25128,
+    "other": 0,
+    "triangles": 50256,
+    "face_material_ids": "1:180,2:36,3:36,5:126,6:24462,7:288,",
+    "xview": {
+      "overlapping_vertices_0_002m": 0,
+      "overlapping_faces_0_005m": 0,
+      "vertex_result": "vertices",
+      "face_result": "faces"
+    },
+    "backface_rays": {
+      "samples": 96,
+      "front_first_hit": 90,
+      "back_first_hit": 0,
+      "miss": 6
+    },
+    "winding": {
+      "flipped_edges": 0,
+      "open_edges": 756,
+      "nonmanifold_edges": 0,
+      "edges": 50634
+    }
+  },
+  "source_collision_names": 60,
+  "saved": false,
+  "vpm_summary": {
+    "path": "C:/x/tec26-oks/package-vpm/SM_Truba_1/SM_Truba_1.fbx",
+    "import_ok": true,
+    "error": null,
+    "visual": [
+      {
+        "name": "SM_Truba_1_Main",
+        "class": "Editable_Poly",
+        "verts": 24372,
+        "faces_before_convert": 25128,
+        "material": "MultiMat_0",
+        "material_class": "Multimaterial",
+        "bbox": [
+          -51.174,
+          -27.8791,
+          -1.4456,
+          5.4444,
+          27.8791,
+          69.3844
+        ],
+        "material_slots": 6,
+        "poly_faces": 25128,
+        "quads": 25128,
+        "other": 0,
+        "triangles": 50256,
+        "face_material_ids": "1:36,2:36,3:180,4:24462,5:126,6:288,",
+        "xview": {
+          "overlapping_vertices_0_002m": 0,
+          "overlapping_faces_0_005m": 0,
+          "vertex_result": "vertices",
+          "face_result": "faces"
+        },
+        "backface_rays": {
+          "samples": 96,
+          "front_first_hit": 90,
+          "back_first_hit": 0,
+          "miss": 6
+        },
+        "winding": {
+          "flipped_edges": 0,
+          "open_edges": 756,
+          "nonmanifold_edges": 0,
+          "edges": 50634
+        }
+      }
+    ],
+    "ucx_count": 60,
+    "ucx_names_match_001_060": true,
+    "ucx_materials": [
+      null
+    ],
+    "min_z": -1.466
+  },
+  "npm_summary": {
+    "path": "C:/x/tec26-oks/package-npm/SM_Truba_1_003_Main.fbx",
+    "import_ok": true,
+    "error": null,
+    "visual": [
+      {
+        "name": "SM_Truba_1_003_Main",
+        "class": "Editable_Poly",
+        "verts": 24372,
+        "faces_before_convert": 25128,
+        "material": "MultiMat_0",
+        "material_class": "Multimaterial",
+        "bbox": [
+          -51.174,
+          -27.8791,
+          -1.4456,
+          5.4444,
+          27.8791,
+          69.3844
+        ],
+        "material_slots": 6,
+        "poly_faces": 25128,
+        "quads": 25128,
+        "other": 0,
+        "triangles": 50256,
+        "face_material_ids": "1:36,2:36,3:180,4:24462,5:126,6:288,",
+        "xview": {
+          "overlapping_vertices_0_002m": 0,
+          "overlapping_faces_0_005m": 0,
+          "vertex_result": "vertices",
+          "face_result": "faces"
+        },
+        "backface_rays": {
+          "samples": 96,
+          "front_first_hit": 90,
+          "back_first_hit": 0,
+          "miss": 6
+        },
+        "winding": {
+          "flipped_edges": 0,
+          "open_edges": 756,
+          "nonmanifold_edges": 0,
+          "edges": 50634
+        }
+      }
+    ],
+    "ucx_count": 0,
+    "ucx_names_match_001_060": "no hulls",
+    "ucx_materials": [],
+    "min_z": -1.4456
+  },
+  "ucx_summary": {
+    "path": "C:/x/tec26-oks/package-vpm/UCX_SM_Truba_1_Main.fbx",
+    "import_ok": true,
+    "error": null,
+    "visual": [],
+    "ucx_count": 60,
+    "ucx_names_match_001_060": true,
+    "ucx_materials": [
+      null
+    ],
+    "min_z": -1.466
+  }
+}
