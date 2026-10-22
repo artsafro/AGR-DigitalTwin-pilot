@@ -157,10 +157,12 @@ def contact_pairs(v, tris, owner, tol: XviewTolerance):
     used = np.zeros(nv, bool)
     used[vt_v] = True
     # polygon membership keys owner * nv + vertex (sorted, unique)
-    pk = np.unique(np.concatenate([owner * nv + tris[:, k] for k in range(3)]))
+    pk = np.sort(np.concatenate([owner * nv + tris[:, k] for k in range(3)]))      # duplicates are harmless
     # one query box per polygon (union of its live triangles), expanded to the triangles after the own-vertex test
     ol = lt[np.argsort(owner[lt], kind="stable")]
-    upoly, ostart, ocnt = np.unique(owner[ol], return_index=True, return_counts=True)
+    so = owner[ol]
+    ostart = np.flatnonzero(np.concatenate([[True], so[1:] != so[:-1]]))
+    upoly, ocnt = so[ostart], np.diff(np.append(ostart, len(so)))
     lo = np.minimum.reduceat(p[ol].min(1), ostart) - pad
     hi = np.maximum.reduceat(p[ol].max(1), ostart) + pad
     hits_s, hits_p = [], []
