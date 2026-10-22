@@ -1,4 +1,7 @@
-"""Tests for the NPM atlas packer from a UDIM mesh (tools/materials/npm_atlas_udim.py, #546)."""
+"""Tests for the NPM atlas packer from a UDIM mesh (tools/materials/npm_atlas_udim.py, #546).
+
+Pattern: none | new-case: tests of the NPM atlas packer from a UDIM mesh (synthetic Multi/Sub data).
+"""
 
 import hashlib
 import importlib.util
