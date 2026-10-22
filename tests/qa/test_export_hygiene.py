@@ -291,5 +291,5 @@ def test_rule_text_cites_team_script_as_origin():
     root = Path(__file__).resolve().parents[2]
     for rel in ("docs/domain/export-import.md", "docs/domain/areas/uv-atlas.md", "src/twinqa/export_hygiene.py"):
         text = (root / rel).read_text(encoding="utf-8")
-        assert "ClearCustomAttributesAndObjProp_010.ms" in text and "export_hygiene" in text or rel.endswith(".py"), rel
         assert "ClearCustomAttributesAndObjProp_010.ms" in text, rel
+        assert rel.endswith(".py") or "export_hygiene" in text, rel
