@@ -5,10 +5,21 @@
   "base_sha": "442f0b695a91f9abc180783c26978fbe85fefcf9",
   "gate": {
     "stage": 1,
-    "status": "awaiting_artem",
-    "approved": false
+    "status": "approved-gate1",
+    "approved": true,
+    "approved_by": "Artem",
+    "approved_on": "2026-10-22",
+    "quote": "Принимаю"
   },
   "production_outputs": [],
+  "scope": {
+    "colouring_only": true,
+    "geometry_topology_ucx_ids_unchanged": true,
+    "builds_in_this_card": false,
+    "vpm": "UDIM tiles",
+    "npm": "one 2048 atlas",
+    "build_note": "VPM and NPM are built in separate cards; pilot #559 first. This card builds nothing."
+  },
   "drawing": {
     "copy": "C:/x/tec26-oks/AC08/sources-v001/AC08.dwg",
     "source_filename": "22Е56-АР2-1002-АС.08.dwg",
@@ -53,7 +64,9 @@
     "DSTRUCT": "Proxy 3DE6 XY (19782.601,4826.825): reinforced-concrete slab. Proxy 26FC XY (-44377.189,3847.916): profiled galvanized polymer-coated sheet / mineral wool 100 mm; crossed-out model-space region, non-governing.",
     "GEOM": "Census geometry-172.json: zero-based vertex indices, 348 triangles, 193 vertices; ID renders + ID1-isolated from this actual mesh, not synthetic geometry.",
     "KPP5015": "KPP1 Metal_RAL5015 tile 1013: every one of 65536 pixels is RGB (34,113,179).",
-    "KPP7004": "KPP1 Door_RAL7004 tile 1010: every one of 65536 pixels is RGB (150,153,146)."
+    "KPP7004": "KPP1 Door_RAL7004 tile 1010: every one of 65536 pixels is RGB (150,153,146).",
+    "PANEL5015VERTICAL": "Artem 2026-10-22 texture C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png (Drive AGR-evidence/tec26-oks/user-textures/), sha256 2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece. 4096x4096 RGB, mean RGB (34,112,177), 7 vertical dark joints 8 px wide every 600 px, centres 270..3870. At 1000 px/m the module is 0.60 m and the joint is 8 mm. 4096 is not a multiple of 600, so the file is a colour/noise/joint-profile source and is not tiled.",
+    "KPPCASSETTE5015": "Superseded 2026-10-22. History only, not the panel source: maps_kpp Cassette_RAL5015 UDIM 1007, 4096 px over 4.096 m (1000 px/m), period 0.6 x 0.55 m, 8 mm joints. Diffuse T_Kpp_1_Diffuse_1.1007.png sha256 323ca26ba0685dc32f8afb12b9218a76e51570c39301b5d6606171f7f9660ee0. Normal T_Kpp_1_Normal_1.1007.png sha256 73a3430cb255d2cf8ecbd6ab477248ad94a3d86f5850efedaf86d91787c4ee3d."
   },
   "materials": [
     {
@@ -62,16 +75,61 @@
       "triangles": 254,
       "area_m2": 60.50952526944401,
       "geometry_role": "roof, perimeter frame, base/foundation skirt below ground",
-      "finish": "?",
+      "finish": "mixed ID kept: roof RAL 7004, frame RAL 7004, visible foundation/drop below 0.000 = wall RAL 5015",
       "ral": null,
       "rgb_srgb": null,
-      "map_type": null,
-      "status": "unresolved_mixed_id",
-      "question": "ID 1 combines roof, perimeter frame and a skirt/foundation down to Z=-2.047 m. May these surfaces be separated by finish later; which roof/frame finish and exposed foundation finish are required? Proposed visible blue frame: RAL 5015; roof/foundation remain ?.",
+      "map_type": "solid",
+      "status": "approved_mixed_id_split_by_region",
+      "split": "UV/atlas regions or a face-group split inside the same ID. Geometry, topology, UCX and multisub IDs stay as in the source scene.",
+      "parts": [
+        {
+          "role": "roof",
+          "finish": "RAL 7004 grey, same solid as KPP Door_RAL7004",
+          "ral": "7004",
+          "rgb_srgb": [150, 153, 146],
+          "kpp_tile": 1010,
+          "kpp_sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+          "map_type": "solid",
+          "poly_faces": null,
+          "triangles": null,
+          "area_m2": null,
+          "area_reason": "Not computable from jobs/TEC26-OKS/AC08/scene-census.json: ID 1 is one aggregate (127 poly faces, 254 triangles, 60.50952526944401 m2) with no roof/frame/foundation face groups."
+        },
+        {
+          "role": "frame",
+          "finish": "RAL 7004 grey (frames/porches), same solid as KPP Door_RAL7004",
+          "ral": "7004",
+          "rgb_srgb": [150, 153, 146],
+          "kpp_tile": 1010,
+          "kpp_sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+          "map_type": "solid",
+          "poly_faces": null,
+          "triangles": null,
+          "area_m2": null,
+          "area_reason": "Not computable from jobs/TEC26-OKS/AC08/scene-census.json: ID 1 is one aggregate (127 poly faces, 254 triangles, 60.50952526944401 m2) with no roof/frame/foundation face groups."
+        },
+        {
+          "role": "foundation_drop",
+          "finish": "visible foundation/drop below 0.000 takes plain wall colour RAL 5015 (ID 2 flat colour), joints off",
+          "ral": "5015",
+          "rgb_srgb": [34, 113, 179],
+          "kpp_tile": 1013,
+          "kpp_sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+          "map_type": "solid",
+          "joints": false,
+          "poly_faces": null,
+          "triangles": null,
+          "area_m2": null,
+          "area_reason": "Not computable from jobs/TEC26-OKS/AC08/scene-census.json: ID 1 is one aggregate (127 poly faces, 254 triangles, 60.50952526944401 m2) with no roof/frame/foundation face groups."
+        }
+      ],
       "evidence": [
         "GEOM",
         "D5015",
-        "DSTRUCT"
+        "D7004",
+        "DSTRUCT",
+        "KPP5015",
+        "KPP7004"
       ]
     },
     {
@@ -80,20 +138,59 @@
       "triangles": 30,
       "area_m2": 35.3280560120449,
       "geometry_role": "wall infill / sandwich panels",
-      "finish": "mineral-wool sandwich panel, polymer-coated metal, RAL 5015",
+      "finish": "mineral-wool sandwich panel, polymer-coated metal, RAL 5015, vertical joints only",
       "ral": "5015",
       "rgb_srgb": [
         34,
         113,
         179
       ],
-      "map_type": "solid",
-      "status": "proposed",
+      "map_type": "joints",
+      "joints": {
+        "pattern": "vertical_only",
+        "joint_orientation": "vertical_only",
+        "horizontal_joints": false,
+        "module_m": 0.6,
+        "joint_width_mm": 8,
+        "texel_px_per_m": 1000,
+        "phase_anchor": "panel_start_edge",
+        "phase_origin_z": 0.0,
+        "seamless_wrap": false,
+        "lay_joints": "0.60 m period from each panel start edge (phase from ±0.000 / panel corner). The raw 4096 image is not tiled: 4096 is not a multiple of 600.",
+        "below_ground_plain": true,
+        "source": {
+          "role": "colour_noise_joint_profile",
+          "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+          "drive_path": "AGR-evidence/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+          "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+          "width_px": 4096,
+          "height_px": 4096,
+          "color_mode": "RGB",
+          "mean_rgb": [34, 112, 177],
+          "mean_rgb_note": "Measured mean (34,112,177). Approved flat wall colour stays KPP Metal_RAL5015 (34,113,179); max channel delta is 2.",
+          "vertical_joint_count": 7,
+          "joint_width_px": 8,
+          "joint_pitch_px": 600,
+          "joint_centres_px": [270, 870, 1470, 2070, 2670, 3270, 3870]
+        },
+        "vpm_maps": ["diffuse", "normal"],
+        "npm_joints_min_px": 1.5,
+        "cutting": {
+          "when": "panel face does not fit a 4K tile",
+          "method": "edge_loop_or_ring",
+          "at": "joint_positions_only",
+          "quads_kept": true,
+          "listed_in_build_report": true,
+          "unchanged": ["silhouette", "normals", "UCX", "IDs"]
+        }
+      },
+      "status": "approved",
       "evidence": [
         "GEOM",
         "D5015",
         "D100",
-        "KPP5015"
+        "KPP5015",
+        "PANEL5015VERTICAL"
       ],
       "kpp_tile": 1013,
       "kpp_sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2"
@@ -112,7 +209,7 @@
         146
       ],
       "map_type": "solid",
-      "status": "proposed",
+      "status": "approved",
       "evidence": [
         "GEOM",
         "D7004",
@@ -122,11 +219,7 @@
       "kpp_sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969"
     }
   ],
-  "questions": [
-    "ID 1 combines roof, perimeter frame and a skirt/foundation down to Z=-2.047 m. May these surfaces be separated by finish later; which roof/frame finish and exposed foundation finish are required? Proposed visible blue frame: RAL 5015; roof/foundation remain ?.",
-    "Approve ID 2 = blue sandwich panels RAL 5015 and ID 3 = door RAL 7004 as shown on the contact sheet?",
-    "No panel-joint/profile pitch was found as a dimension in the facade legend. Keep solid KPP colours without invented joints, or provide the manufacturer module/profile pitch?"
-  ],
+  "questions": [],
   "contact_sheet": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/contact-sheet.png",
   "evidence_files": [
     {
@@ -277,16 +370,36 @@
   ],
   "glass": {
     "observed": false,
-    "note": "No separate glazing evidenced by the three used IDs; do not invent a glass finish."
+    "id": null,
+    "rule": "as KPP",
+    "note": "AC08 has no glass material ID. Glass, if later present, follows KPP glass (M_Glass_01: NPM alpha 0.5; VPM per standard), not a wall or door RAL. This card does not invent a glass finish."
   },
   "panel_joints": {
-    "module_mm": null,
-    "proposal": "solid pending answer"
+    "applies_to": "all TEC26 buildings",
+    "module_mm": 600,
+    "module_m": 0.6,
+    "joints": true,
+    "map_type": "joints",
+    "pattern": "vertical_only",
+    "joint_orientation": "vertical_only",
+    "horizontal_joints": false,
+    "phase_anchor": "panel_start_edge",
+    "phase_origin_z": 0.0,
+    "below_zero_joints": false,
+    "texel_px_per_m": 1000,
+    "joint_width_mm": 8,
+    "npm_joints_min_px": 1.5,
+    "seamless_wrap": false,
+    "source_path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "source_sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "superseded": "KPP Cassette_RAL5015 tile 1007 is history only; it is not the panel source.",
+    "decision": "Artem 2026-10-22 supersedes the KPP cassette tile 1007 for all TEC26 buildings: blue sandwich panels (RAL 5015) have vertical joints only, no horizontal joints. Source is C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png, sha256 2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece, used for colour, noise and joint profile. Joints are laid on a 0.60 m period from each panel start edge at 1000 px/m (8 mm joints). The raw 4096 image is not tiled. VPM diffuse and normal, NPM joints >= 1.5 px. Below ±0.000 stays plain RAL 5015. A face that does not fit a 4K tile may be cut only by an edge loop or ring at joint positions; quads kept; every cut listed in the build report; silhouette, normals, UCX and IDs stay unchanged."
   },
   "limitations": [
     "DXFOUT lacked final ENDSEC/EOF. Recover repaired two orphan layout records; diagnostic drawings are recovered views, not certified native plots.",
-    "Scene finish assignments are proposals; no source material was changed.",
+    "Gate 1 approves colouring only. Geometry, topology, UCX and multisub IDs stay as in the source scene. This card builds nothing.",
     "Native scene colours are diagnostic, not RAL evidence.",
-    "Roof/foundation have no independent verified RAL in the active legend."
+    "Per-part areas inside ID 1 are null: scene-census.json stores ID 1 only as one aggregate, with no roof/frame/foundation face split.",
+    "VPM (UDIM tiles) and NPM (one 2048 atlas) are separate cards; pilot #559 first."
   ]
 }
