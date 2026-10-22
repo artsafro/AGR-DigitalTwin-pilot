@@ -1,0 +1,100 @@
+{
+ "_doc": "AC05 facade sheet, hand-written (scripts/sheet_facades.py reads 0 titles / 0 hatches from ac05.dxf: the AC05 colour sheet is built of block inserts). Long facades: DWG R1 outer 277F0C 9125.492 x 2896 mm and module inserts (Gate-1 MATERIALS.md 'Facade rib count'); short facades: body 2438 x 2896 mm (model body x -7.2897..-4.8518 m, slide 35 body box). frame_bands_mm = model frame posts (body bbox minus the ID2 panel field, world low -> high), used only for the crop. plinth: slide 35 draws no plinth under the body, ground = ±0.000 (the +0.070 grey strip is the separate pad). joints = DWG lines (informational; the slide count is the authority [D171]).",
+ "source": "Gate-1 DWG readback C:/x/tec26-oks/AC05/ (recovered DXF handles) + model max-dump-005.json + slide 35",
+ "units": "mm",
+ "facades": {
+  "1-2": {
+   "size_mm": [
+    9125.492,
+    2896.0
+   ],
+   "frame_bands_mm": {
+    "left": 185.0,
+    "right": 101.8
+   },
+   "plinth": [
+    {
+     "bbox_mm": [
+      0.0,
+      0.0,
+      9125.492,
+      0.0
+     ]
+    }
+   ],
+   "joints": 43,
+   "dwg_modules": 44,
+   "dwg_insert": "278551"
+  },
+  "2-1": {
+   "size_mm": [
+    9125.492,
+    2896.0
+   ],
+   "frame_bands_mm": {
+    "left": 185.0,
+    "right": 101.8
+   },
+   "plinth": [
+    {
+     "bbox_mm": [
+      0.0,
+      0.0,
+      9125.492,
+      0.0
+     ]
+    }
+   ],
+   "joints": 43,
+   "dwg_modules": 44,
+   "dwg_insert": "27A88C",
+   "door": "27A4C1 RAL 7004 1.100 x 2.187 m"
+  },
+  "Б-А": {
+   "size_mm": [
+    2438.0,
+    2896.0
+   ],
+   "frame_bands_mm": {
+    "left": 98.2,
+    "right": 101.6
+   },
+   "plinth": [
+    {
+     "bbox_mm": [
+      0.0,
+      0.0,
+      2438.0,
+      0.0
+     ]
+    }
+   ],
+   "joints": 13,
+   "dwg_insert": "27C3DE",
+   "dwg_step_mm": 149.577
+  },
+  "А-Б": {
+   "size_mm": [
+    2438.0,
+    2896.0
+   ],
+   "frame_bands_mm": {
+    "left": 98.2,
+    "right": 101.6
+   },
+   "plinth": [
+    {
+     "bbox_mm": [
+      0.0,
+      0.0,
+      2438.0,
+      0.0
+     ]
+    }
+   ],
+   "joints": 0,
+   "dwg_insert": "27E19F",
+   "gate": "27D28A RAL 7004 2.287 x 2.547 m"
+  }
+ }
+}

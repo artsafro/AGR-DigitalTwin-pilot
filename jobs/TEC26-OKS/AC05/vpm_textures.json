@@ -1,0 +1,307 @@
+{
+ "_doc": "AC05 (Блок-модуль пенного пожаротушения) VPM texture sets, the AC08 pilot-v010 recipe (PR #574 @ed743ab). Authority: presentation slide 35 + the binding legend [D171]; Gate 1 (#562, Artem «Принимаю»): roof RAL 7004, doors/gate RAL 7004, drop below ±0.000 = wall colour. ID1 = frame + roof + perimeter drop: roof plane grey 7004, the rest blue 5015 plain. ID2 = the inset sandwich field of each facade: ribbed 5015 with the slide's rib count on 1-2 / 2-1 / Б-А; on А-Б the field sits behind the grey gate (ID4) and only thin strips show -> plain blue as the slide's frame. Artem's texture gives colour, noise and one 8 mm joint; the repeat P = field / ribs. Faces longer than the tile are cut by edge rings at joints. Placeholders 256 px single colour. Address Bmpp_1 is a placeholder token.",
+ "address": "Bmpp_1",
+ "size_full": 4096,
+ "size_placeholder": 256,
+ "pad_m": 0.04,
+ "zero_m": 0.0,
+ "source_ids": {
+  "1": {
+   "split": "roof",
+   "roof": "Roof_RAL7004",
+   "rest": "Frame_RAL5015",
+   "roof_z_m": 2.89,
+   "why": "mixed ID1: roof plane (up-facing, z >= 2.89 m: 15 polygons, Gate 1) grey RAL 7004; frame band, rails and the perimeter drop to -2.004 m blue RAL 5015 plain"
+  },
+  "2": {
+   "split": "facade",
+   "plain": {
+    "-y": "Frame_RAL5015"
+   },
+   "why": "sandwich panel field RAL 5015, vertical joints only, rib count per facade from slide 35; -y (А-Б) field strips around the gate plain blue"
+  },
+  "3": {
+   "finish": "Door_RAL7004",
+   "why": "door / gate frame and hardware RAL 7004 (Gate 1)"
+  },
+  "4": {
+   "finish": "Door_RAL7004",
+   "why": "end gate infill RAL 7004 (Gate 1)"
+  }
+ },
+ "empty_ids": [
+  5,
+  6,
+  7,
+  8,
+  9,
+  10
+ ],
+ "kpp_palette": {
+  "PanelVJ45_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
+  },
+  "PanelVJ14_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
+  },
+  "Roof_RAL7004": {
+   "kpp_finish": "Door_RAL7004",
+   "kpp_udim": 1010
+  },
+  "Frame_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013
+  },
+  "Door_RAL7004": {
+   "kpp_finish": "Door_RAL7004",
+   "kpp_udim": 1010
+  }
+ },
+ "finishes": {
+  "PanelVJ45_RAL5015": {
+   "udim": 1001,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.198318022,
+    0.198318022
+   ],
+   "shift": [
+    true,
+    false
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 5,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "why": "long facades 1-2 (+x) / 2-1 (-x): slide 35 draws 44 joint lines at ~199 mm over the 8.96 m panel field -> 45 ribs evenly over the model field 8.9243 m (P 0.19832 m)",
+   "outline_z_m": [
+    0.121138,
+    2.760317
+   ],
+   "outline_why": "thin dark outline of the panel field as on slide 35 (inner edge of the blue frame band): left/right = half joints at k = 0 / ribs, bottom/top = world z of the ID2 field (max-dump-005); not a horizontal joint",
+   "joint_rgb": [
+    2,
+    22,
+    46
+   ],
+   "joint_why": "TEC26 rule (orchestrator 2026-10-22, from the AC07 review): joints read as on the slide - dark, crisp lines; joint/panel luminance contrast in the compare image >= the slide's. Artem's joint colour (median (12,40,63)) at 8 mm gave 0.60/0.56 (VPM/NPM) vs slide 0.78 on build-v001; joint painted dark RAL 5015 shade (2,22,46), 10 mm wide (build-v002 with (6,18,30) lost its blue hue: the render joint counter treats non-blue pixels as no panel and split every joint in two); NPM joint 24 mm (npm_joint_half_mm 12): at the 2048 atlas (~97 px/m) the 16 mm joint gave contrast 0.69 vs slide 0.78 on build-v003",
+   "npm_joint_half_mm": 12
+  },
+  "PanelVJ14_RAL5015": {
+   "udim": 1002,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.159870714,
+    0.159870714
+   ],
+   "shift": [
+    true,
+    false
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 5,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "why": "end facade Б-А (+y): slide 35 draws 13 joint lines (corrugation of the end wall, inside its inner frame) -> 14 ribs evenly over the model field 2.2382 m (P 0.15987 m; DWG 27C3DE step 0.1496 m)",
+   "outline_z_m": [
+    0.121138,
+    2.760317
+   ],
+   "outline_why": "thin dark outline of the panel field as on slide 35 (inner edge of the blue frame band): left/right = half joints at k = 0 / ribs, bottom/top = world z of the ID2 field (max-dump-005); not a horizontal joint",
+   "joint_rgb": [
+    2,
+    22,
+    46
+   ],
+   "joint_why": "TEC26 rule (orchestrator 2026-10-22, from the AC07 review): joints read as on the slide - dark, crisp lines; joint/panel luminance contrast in the compare image >= the slide's. Artem's joint colour (median (12,40,63)) at 8 mm gave 0.60/0.56 (VPM/NPM) vs slide 0.78 on build-v001; joint painted dark RAL 5015 shade (2,22,46), 10 mm wide (build-v002 with (6,18,30) lost its blue hue: the render joint counter treats non-blue pixels as no panel and split every joint in two); NPM joint 24 mm (npm_joint_half_mm 12): at the 2048 atlas (~97 px/m) the 16 mm joint gave contrast 0.69 vs slide 0.78 on build-v003",
+   "npm_joint_half_mm": 12
+  },
+  "Roof_RAL7004": {
+   "kind": "placeholder",
+   "rgb": [
+    150,
+    153,
+    146
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "why": "roof plane (15 up-facing ID1 polygons at z 2.897) RAL 7004 grey (Gate 1, Artem «Принимаю» item 2); plain",
+   "udim": 1003
+  },
+  "Frame_RAL5015": {
+   "kind": "placeholder",
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "why": "frame band (corner posts, top/bottom rails, rail ledges), the А-Б strips of the end field around the gate and the perimeter drop below ±0.000 (wall colour, no joints): BLUE RAL 5015 plain (slide 35 blue frame; Artem 2026-10-22 rule for all TEC26 [D170]; Gate-1 drop = wall colour)",
+   "udim": 1004
+  },
+  "Door_RAL7004": {
+   "kind": "placeholder",
+   "rgb": [
+    150,
+    153,
+    146
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "why": "side door (2-1), end-gate frame/hardware (ID3) and the gate infill (ID4) RAL 7004 plain (Gate 1; slide 35 grey door and gate)",
+   "udim": 1005
+  }
+ },
+ "facade_uv": {
+  "PanelVJ45_RAL5015": "u' = metres along the facade from the panel field's smaller world coordinate (joints at u' = k * P), v = world z",
+  "PanelVJ14_RAL5015": "same frame, P of the end facade Б-А"
+ },
+ "ring_cuts": {
+  "allowed": "edge ring at joint positions, quads only, boundary to boundary",
+  "decision": "Artem 2026-10-22 «если не влезает, то можно аккуратно порезать через loop или ring»"
+ },
+ "facades": {
+  "1-2": {
+   "normal": "+x",
+   "finish": "PanelVJ45_RAL5015",
+   "ribs": 45,
+   "field_m": 8.924311,
+   "slide_joints": 44,
+   "slide_row_frac": 0.9
+  },
+  "2-1": {
+   "normal": "-x",
+   "finish": "PanelVJ45_RAL5015",
+   "ribs": 45,
+   "field_m": 8.924311,
+   "slide_joints": 44,
+   "slide_row_frac": 0.9,
+   "door": "Door_RAL7004 (ID3) hides the joints across the door, as on the slide"
+  },
+  "Б-А": {
+   "normal": "+y",
+   "finish": "PanelVJ14_RAL5015",
+   "ribs": 14,
+   "field_m": 2.23819,
+   "slide_joints": 13,
+   "slide_row_frac": 0.5,
+   "slide_skip_inner": 1
+  }
+ },
+ "facades_plain": {
+  "А-Б": {
+   "normal": "-y",
+   "label": "ворота RAL 7004, синяя рамка; сэндвич-поля нет",
+   "why": "slide 35 А-Б: grey gate leaves inside a blue frame, no blue sandwich field; the gate is plain RAL 7004 per Gate 1 / legend «двери» (the slide draws corrugation lines on the gate leaves - open question for Artem)"
+  }
+ },
+ "facades_doc": "Rib contract from presentation slide 35 (the authority [D171]), counted on the slide pixels by compare_facades.slide_count: 1-2 and 2-1 44 joint lines (~199 mm, field 8.96 m; the DWG modules 278551 / 27A88C give 44 x 200 mm = 8.8 m with 43 interior lines - the slide/model field is 8.92 m with an uneven last strip), Б-А 13 lines (row at half height, skipping the end wall's inner frame line on each side). Even layout: ribs = joints + 1 over the model field (ID2 of max-dump-005: long 8.924311 m, end 2.23819 m). Facade names: +x = 1-2, -x = 2-1 (door, ID3 3.1 m2 on -x), +y = Б-А, -y = А-Б (gate ID4).",
+ "sheet": {
+  "facades_json": "jobs/TEC26-OKS/AC05/sheet-facades.json"
+ },
+ "presentation": {
+  "authority": "Artem 2026-10-22 (top precedence, all TEC26): the presentation facade slides «Схема фасадов ... Цветовое решение» decide colours, colour bands, rib direction and rib count/step and which surfaces are blue / light grey / dark grey; the DWG/PDF only where the slide is silent [D171]",
+  "deck": "C:/x/tec26-oks/pptx/deck.pptx",
+  "deck_sha256": "74e50277df5e2dfde3ba7ab945eb6bab45a8fa8c0207d7aca3a136d9656b78ac",
+  "slide": 35,
+  "slide_title": "Блок-модуль пенного пожаротушения. Схема фасадов",
+  "image": "C:/x/tec26-oks/pptx/facades/slide35.png",
+  "image_sha256": "de3d7d9614fb2b78f4c37cc23cfbe7ede7ba588d11bec5f634271488aa5cb96b",
+  "quadrants": [
+   "А-Б",
+   "1-2",
+   "Б-А",
+   "2-1"
+  ],
+  "quadrants_doc": "reading order of the four facades on the slide: top-left, top-right, bottom-left, bottom-right (titles «Фасад А-Б / 1-2 / Б-А / 2-1. Цветовое решение»)"
+ },
+ "legend": [
+  {
+   "hatch": "Сэндвич-панели, козырьки - RAL 5015 (the blue ribbed field of 1-2, 2-1, Б-А)",
+   "source": "binding legend (Artem 2026-10-22) + slide 35",
+   "material": "sandwich panel",
+   "ral": "5015",
+   "texture": "ribbed",
+   "finishes": [
+    "PanelVJ45_RAL5015",
+    "PanelVJ14_RAL5015"
+   ]
+  },
+  {
+   "hatch": "Обрамление (frame band, corner posts, rails, the А-Б strips around the gate, perimeter drop below ±0.000)",
+   "source": "slide 35 (blue frame, no ribs) + [D170] + Gate 1 (drop = wall colour)",
+   "material": "sandwich wall edging",
+   "ral": "5015",
+   "texture": "plain",
+   "finishes": [
+    "Frame_RAL5015"
+   ]
+  },
+  {
+   "hatch": "Крыльца, двери (side door, end gate) - RAL 7004",
+   "source": "binding legend + slide 35 (grey door on 2-1, grey gate on А-Б) + Gate 1",
+   "material": "door / gate",
+   "ral": "7004",
+   "texture": "plain",
+   "finishes": [
+    "Door_RAL7004"
+   ]
+  },
+  {
+   "hatch": "Кровля - RAL 7004 (not on the facade slide)",
+   "source": "Gate 1 (#562, Artem «Принимаю» item 2: roof RAL 7004 as KPP)",
+   "material": "roof",
+   "ral": "7004",
+   "texture": "plain",
+   "finishes": [
+    "Roof_RAL7004"
+   ]
+  }
+ ],
+ "legend_doc": "Binding legend (Artem 2026-10-22): every finish in exactly one row; RAL in the name = row RAL = KPP colour; ribbed rows carry the sandwich joint texture, plain rows none. AC05 has no RAL 7047 sandwich and no RAL 9016 glazing (slide 35: blue field and frame, grey door and gate only); no plinth is drawn (body blue down to ±0.000). Checked by finish_map.validate_legend before any texture, build or render."
+}
