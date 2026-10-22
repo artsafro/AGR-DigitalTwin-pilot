@@ -12,7 +12,7 @@ finish module (cassette 0.6 m, tile 0.3 m) has the same physical size as in VPM 
 NPM-OKS rule). 6 px edge padding around each region -> >= 12 px between regions (reg p.9 §5.4: >= 8 px).
 Joints are rasterised >= 1.5 px wide (lesson: sub-pixel joints vanish, FACADES_ATLAS).
 """
-import json, os, sys
+import json, math, os, sys
 import numpy as np
 from PIL import Image
 
@@ -39,7 +39,8 @@ def main(spec_path, out):
     for k, (f, t) in enumerate(sorted(spec["finishes"].items(), key=lambda kv: kv[1]["udim"])):
         cx, cy = (k % COLS) * CELL, (k // COLS) * CELL      # cell origin, image rows from the top
         if t["kind"] == "full":
-            tt = dict(t, joint_half_mm=NPM_JOINT_HALF_MM)
+            # >= 1.5 px joints whatever metres the region spans (TEC26: S may exceed KPP's 4.096 m)
+            tt = dict(t, joint_half_mm=max(NPM_JOINT_HALF_MM, math.ceil(750 * t.get("S", 4.096) / REGION)))
             d, alpha, _, _ = mt.make_full(tt, spec["size_full"])
             reg = np.asarray(Image.fromarray(d, "RGB").resize((REGION, REGION), Image.LANCZOS))
             if alpha is not None:

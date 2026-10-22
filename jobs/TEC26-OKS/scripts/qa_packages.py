@@ -155,28 +155,62 @@ def main(argv):
                    (u[:, 1] >= r["v0"] - 1e-6).all() and (u[:, 1] <= r["v0"] + r["size"] + 1e-6).all() for r in regions):
             bad_reg += 1
     check("npm_uv_regions", bad_reg == 0, {"faces": len(nmain["face_uvs"]), "outside_any_region": bad_reg})
-    # colour per face: VPM tile at the face UV centroid vs NPM atlas at the face UV centroid (same face order)
+    # colour: every face shows the same finish in VPM (its UDIM tile) and NPM (its atlas region); per finish the median
+    # colour of the VPM tile equals the median of the NPM region and the spec/KPP RGB (joints/noise excluded by median)
+    by_udim = {t["udim"]: n for n, t in fin.items()}
+    by_region = {}
+    for n, r in atlas["finishes"].items():
+        by_region[n] = r
     tiles_img = {t["udim"]: np.asarray(Image.open(os.path.join(vtex, f"T_{A}_Diffuse_1.{t['udim']}.png")).convert("RGB"))
                  for t in fin.values()}
     atlas_img = np.asarray(Image.open(os.path.join(ntex, f"T_{A}_001_Main_d_1.png")).convert("RGB"))
-    vcent = [np.asarray(f).mean(0) for f in vmain["face_uvs"]]
-    ncent = [np.asarray(f).mean(0) for f in nmain["face_uvs"]]
-    vtri = [tuple(np.round(np.asarray(vmain["vertices"])[f].mean(0), 4)) for f in vmain["faces"]]
-    ntri = [tuple(np.round(np.asarray(nmain["vertices"])[f].mean(0), 4)) for f in nmain["faces"]]
-    nidx = {c: i for i, c in enumerate(ntri)}
-    mism, unmatched, palette = 0, 0, {}
-    for i, c in enumerate(vtri):
-        j = nidx.get(c)
+
+    def npm_finish(uvs):
+        u = np.asarray(uvs).mean(0)
+        hits = [n for n, r in by_region.items() if r["u0"] <= u[0] <= r["u0"] + r["size"] and
+                r["v0"] <= u[1] <= r["v0"] + r["size"]]
+        return hits[0] if len(hits) == 1 else None
+
+    vkey = [tuple(np.round(np.asarray(vmain["vertices"])[f].mean(0), 4)) for f in vmain["faces"]]
+    nkey = {tuple(np.round(np.asarray(nmain["vertices"])[f].mean(0), 4)): i for i, f in enumerate(nmain["faces"])}
+    mism, unmatched, per_finish = 0, 0, {}
+    for i, k in enumerate(vkey):
+        j = nkey.get(k)
         if j is None:
             unmatched += 1
             continue
-        tu, tv = np.floor(vcent[i]).astype(int)
-        vc = sample(tiles_img[1001 + tu + 10 * tv], vcent[i] - [tu, tv])
-        nc = sample(atlas_img, ncent[j])
-        palette[str(vc)] = palette.get(str(vc), 0) + 1
-        mism += vc != nc
+        c = np.asarray(vmain["face_uvs"][i]).mean(0)
+        vf = by_udim.get(int(1001 + np.floor(c[0]) + 10 * np.floor(c[1])))
+        nf = npm_finish(nmain["face_uvs"][j])
+        per_finish[str(vf)] = per_finish.get(str(vf), 0) + 1
+        mism += vf is None or vf != nf
+    med = {}
+    for n, t in fin.items():
+        r = by_region[n]
+        x0, y1, sz = round(r["u0"] * 2048), round((1 - r["v0"]) * 2048), round(r["size"] * 2048)
+        vm = np.median(tiles_img[t["udim"]].reshape(-1, 3), 0)
+        nm = np.median(atlas_img[y1 - sz:y1, x0:x0 + sz].reshape(-1, 3), 0)
+        med[n] = {"vpm": vm.tolist(), "npm": nm.tolist(), "spec": t["rgb"],
+                  "ok": bool(np.abs(vm - nm).max() <= 3 and np.abs(vm - t["rgb"]).max() <= 3)}
     check("colour_vpm_eq_npm_per_face", mism == 0 and unmatched == 0,
-          {"faces": len(vtri), "mismatch": int(mism), "unmatched": unmatched, "vpm_colours": palette})
+          {"faces": len(vkey), "finish_mismatch": int(mism), "unmatched": unmatched, "faces_per_finish": per_finish})
+    check("colour_median_vpm_eq_npm_eq_spec", all(m["ok"] for m in med.values()), med)
+    # texel density of full (patterned) finishes, reg p.32 §6.2 band 512..1706 px/m
+    dens = {}
+    for o_uvs, f in zip(vmain["face_uvs"], vmain["faces"]):
+        u = np.asarray(o_uvs)
+        name = by_udim.get(int(1001 + np.floor(u.mean(0)[0]) + 10 * np.floor(u.mean(0)[1])))
+        if name is None or fin[name]["kind"] != "full":
+            continue
+        p = np.asarray(vmain["vertices"])[f]
+        a3 = np.linalg.norm(np.cross(p[1] - p[0], p[2] - p[0])) / 2
+        a2 = abs(np.cross(u[1] - u[0], u[2] - u[0])) / 2 * spec["size_full"] ** 2
+        if a3 > 1e-4:
+            d = math.sqrt(a2 / a3)
+            lo_, hi_ = dens.get(name, (1e9, 0))
+            dens[name] = (min(lo_, d), max(hi_, d))
+    check("vpm_texel_band", all(512 <= a and b <= 1706 for a, b in dens.values()),
+          {k: [round(a, 1), round(b, 1)] for k, (a, b) in dens.items()})
     # ZIP contents and PNG headers
     with zipfile.ZipFile(vzip) as z:
         names = sorted(z.namelist())
@@ -184,7 +218,14 @@ def main(argv):
                                           for k in ("Diffuse", "ERM", "Normal")])
         pngs = {n: Image.open(io.BytesIO(z.read(n))) for n in names if n.endswith(".png")}
         check("vpm_zip_contents", names == want, {"names": names})
-        check("vpm_png_rgb_256", all(im.mode == "RGB" and im.size == (256, 256) for im in pngs.values()),
+        def size_ok(n, im):
+            t = next(t for t in fin.values() if n.endswith(f".{t['udim']}.png"))
+            if t["kind"] == "placeholder":
+                return im.size == (spec["size_placeholder"],) * 2
+            full = (spec["size_full"],) * 2
+            return im.size == full or ("_ERM_" in n and im.size == (spec["size_placeholder"],) * 2)
+
+        check("vpm_png_rgb", all(im.mode == "RGB" and size_ok(n, im) for n, im in pngs.items()),
               {n: [im.mode, list(im.size)] for n, im in pngs.items()})
     with zipfile.ZipFile(nzip) as z:
         names = sorted(z.namelist())

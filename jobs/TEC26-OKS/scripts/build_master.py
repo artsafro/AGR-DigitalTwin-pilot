@@ -7,7 +7,9 @@ the Multi/Sub IDs stay EXACTLY as in the source - no quadification, no texel cut
 - mesh = the Max mid-poly as is (same vertices, same polygons, same order);
 - one finish per polygon from the approved Gate-1 mapping (finish_map.assign_finishes, fail-closed); the source
   material ID is kept per polygon in the `srcid` layer (dropped at export, the delivery has one material);
-- UV only: one UDIM tile per finish, placeholder islands scaled into the tile with a 5 % margin (vpm_uv.pack_uv),
+- UV only: one UDIM tile per finish, placeholder islands scaled into the tile with a 5 % margin (vpm_uv.pack_uv);
+  finishes listed in spec `facade_uv` (joint patterns) get metre UVs from finish_map.facade_uv (u from the facade's
+  left corner, v = z so joint rows start at ±0.000), shifted by whole periods into their full 4096 tile;
   UDIM material M_<A>_Main_1 (the source channel-1 UV is not laid out per finish tile, so it is replaced);
 - the layer's collision mesh (no Multi/Sub) is renamed UCX_SM_<A>_Main_NNN, unchanged; closed/convex/outward are
   checked and REPORTED (a finding is listed, never fixed);
@@ -58,17 +60,31 @@ sc = bpy.context.scene
 bm = bmesh.new()
 fl = bm.faces.layers.int.new("finish")
 bm.faces.layers.int.new("srcid")
+uvx = bm.faces.layers.int.new("uvx")
+uvm = bm.loops.layers.uv.new("UVM")
+body_pts = [c for c in V if c[2] > spec["zero_m"]]
+plan_lo = [min(c[0] for c in body_pts), min(c[1] for c in body_pts)]
+plan_hi = [max(c[0] for c in body_pts), max(c[1] for c in body_pts)]
+facade = set(spec.get("facade_uv", {}))
 vs = [bm.verts.new(c) for c in V]
 for f, m, fin in zip(faces, ids, fins):
     nf = bm.faces.new([vs[k] for k in f])
     nf[fl] = names.index(fin)
     nf[bm.faces.layers.int["srcid"]] = m
+    if fin in facade:  # metre UVs from the facade corner / ±0.000 (joint phase), packed by whole periods
+        nf[uvx] = 1
+        for loop, (u, v) in zip(nf.loops, finish_map.facade_uv(V, f, plan_lo, plan_hi)):
+            loop[uvm].uv = (u, v)
 bm.normal_update()
 unused = [v for v in bm.verts if not v.link_faces]
 if unused:
     raise SystemExit(f"{len(unused)} source vertices are not used by any polygon")
 nb = bm
 uvqa = vpm_uv.pack_uv(nb, names, spec)
+density = vpm_uv.density_qa(nb, names, spec)
+bad = {k: q for k, q in uvqa.items() if q["overflow"]}
+if bad:
+    raise SystemExit(f"UV islands overflow their UDIM tile: {bad}")
 nfl = nb.faces.layers.int["finish"]
 counts = {n: 0 for n in names}
 for f in nb.faces:
@@ -112,10 +128,10 @@ report = {"dump": os.path.abspath(dump_path), "spec": os.path.abspath(spec_path)
           "source": {"name": body["name"], "vertices": len(V), "polygons": len(body["faces"])},
           "master_faces": len(me.polygons), "non_quads": non_quads,
           "master_tris": sum(len(p.vertices) - 2 for p in me.polygons), "max_edge_m": round(max_edge, 4),
-          "faces_per_finish": counts, "uv_qa": uvqa, "ucx": ucx_report, "perimeter_drop": drop}
+          "faces_per_finish": counts, "uv_qa": uvqa, "density_px_per_m": density, "ucx": ucx_report, "perimeter_drop": drop}
 json.dump(report, open(out + ".build.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 print("BUILD", json.dumps({k: report[k] for k in ("master_faces", "non_quads", "master_tris", "max_edge_m",
                                                   "faces_per_finish")}))
-print("BUILD-UV", json.dumps(uvqa))
+print("BUILD-UV", json.dumps(uvqa), json.dumps(density))
 print("BUILD-UCX", json.dumps(ucx_report))
 print("BUILD-DROP", json.dumps(drop))

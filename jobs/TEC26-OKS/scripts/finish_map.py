@@ -48,6 +48,13 @@ def validate_spec(spec, kpp_spec=None):
             raise ValueError(f"finish {name}: rgb must be three ints 0..255, got {rgb}")
         if t.get("kind") not in ("placeholder", "full"):
             raise ValueError(f"finish {name}: unsupported kind {t.get('kind')}")
+        if t["kind"] == "full":
+            S = t.get("S")
+            if not (isinstance(S, (int, float)) and math.isfinite(S) and S > 0):
+                raise ValueError(f"finish {name}: S must be a finite number > 0, got {S}")
+            dens = spec["size_full"] / S
+            if not 512 <= dens <= 1706:  # reg p.32 §6.2 band
+                raise ValueError(f"finish {name}: density {dens:.0f} px/m outside 512..1706")
     src = spec.get("source_ids") or {}
     if not src:
         raise ValueError("spec has no source_ids")
@@ -71,6 +78,10 @@ def validate_spec(spec, kpp_spec=None):
                 raise ValueError(f"{name}: KPP twin {ref} not found in the KPP spec")
             if fin[name]["rgb"] != k["rgb"]:
                 raise ValueError(f"{name}: rgb {fin[name]['rgb']} != KPP {ref['kpp_finish']} {k['rgb']}")
+            if fin[name]["kind"] == "full":  # same joints/noise/recess as the KPP VPM tile; only S/phase may differ
+                for key in ("pattern", "P", "h_joints", "rough", "metal", "joint_half_mm"):
+                    if fin[name].get(key) != k.get(key):
+                        raise ValueError(f"{name}: {key} {fin[name].get(key)} != KPP {k.get(key)}")
     return True
 
 
@@ -101,6 +112,27 @@ def assign_finishes(vertices, faces, mat_ids, spec):
         else:
             out.append(rule["finish"])
     return out
+
+
+def facade_uv(vertices, face, lo, hi, tol=1e-3):
+    """Metre UVs of a vertical face: u from the left corner of its facade seen from outside, v = world z.
+
+    lo/hi: plan bbox (x, y) of the body. The facade is picked by the dominant horizontal normal axis; the winding
+    follows the face (no mirrored islands). A face that is not vertical raises ValueError.
+    """
+    p = [vertices[k] for k in face]
+    n = [0.0, 0.0, 0.0]
+    for i in range(len(p)):
+        a, b = p[i], p[(i + 1) % len(p)]
+        n[0] += (a[1] - b[1]) * (a[2] + b[2])
+        n[1] += (a[2] - b[2]) * (a[0] + b[0])
+        n[2] += (a[0] - b[0]) * (a[1] + b[1])
+    ln = math.sqrt(sum(c * c for c in n))
+    if ln <= 0 or abs(n[2]) / ln > tol:
+        raise ValueError(f"face {face} is not vertical; facade UV needs a wall face")
+    if abs(n[1]) >= abs(n[0]):
+        return [((q[0] - lo[0]) if n[1] < 0 else (hi[0] - q[0]), q[2]) for q in p]
+    return [((q[1] - lo[1]) if n[0] > 0 else (hi[1] - q[1]), q[2]) for q in p]
 
 
 def perimeter_drop(vertices, faces, finishes, drop_finish, tol=0.001):

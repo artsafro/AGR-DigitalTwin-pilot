@@ -32,10 +32,10 @@ def tile(cell, size):
     return np.tile(cell, (reps, reps))[:size, :size]
 
 
-def uv_grid(size):
-    """Pixel centres in tile metres (u right, v up), 1 px = 1 mm for S = 4.096 m."""
-    u = (np.arange(size) + 0.5) / 1000.0
-    v = (size - np.arange(size) - 0.5) / 1000.0
+def uv_grid(size, S=4.096):
+    """Pixel centres in tile metres (u right, v up); S metres per tile (KPP: 4.096 m -> 1 px = 1 mm)."""
+    u = (np.arange(size) + 0.5) * S / size
+    v = (size - np.arange(size) - 0.5) * S / size
     return np.meshgrid(u, v)
 
 
@@ -55,7 +55,7 @@ def save(arr, path, mode):
 
 
 def make_full(t, size):
-    u, v = uv_grid(size)
+    u, v = uv_grid(size, t.get("S", 4.096))
     rgb = np.array(t["rgb"], float)
     h = np.zeros((size, size))
     alpha = None
