@@ -608,3 +608,21 @@ def test_texture_sha_mismatch_is_an_error():
             validate_panel_joints(doc)
         caught += 1
     assert caught == len(bad_hashes)
+
+
+SWATCH_V007 = Path('G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v007/swatches.png')
+
+
+@pytest.mark.skipif(not SWATCH_V007.exists(), reason='Drive evidence not mounted')
+def test_published_swatches_use_pinned_kpp_colours():
+    from PIL import Image
+
+    im = Image.open(SWATCH_V007).convert('RGB')
+    counts = {}
+    for count, colour in im.getcolors(maxcolors=1 << 20):
+        counts[colour] = count
+    assert counts.get((238, 201, 0), 0) >= 40000, 'ID5 RAL1021 yellow missing'
+    assert (243, 165, 5) not in counts, 'wrong ID5 yellow present'
+    assert counts.get((34, 113, 179), 0) > 0 and counts.get((150, 153, 146), 0) > 0
+    assert hashlib.sha256(SWATCH_V007.read_bytes()).hexdigest() == (
+        '014cc4011049e5d26a8b2eede5cf898788f6e73bd2c4fa0c34b0e99fc356ba7d')

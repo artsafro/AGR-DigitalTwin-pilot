@@ -208,4 +208,4 @@ Stop at Gate 1 paint. `delivery_passed` is false. Technical QA, user acceptance 
 
 ## Swatch sheet (post-approval)
 
-`G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v006/swatches.png` (+ `SHA256SUMS.txt`): one swatch per ID/region, no numbers inside swatches, empty slots 6-10 crossed out. Blue = mean of KPP tile 1013 (34,113,179); grey = mean of KPP tile 1010 (150,153,146). `contact-sheet-ids.png` is the unchanged v005 depth-correct ID render sheet. Facade-vs-sheet acceptance pictures are made by the build card; 4 facade rib counts stay open (see joint_report).
+`G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v007/swatches.png` (+ `SHA256SUMS.txt`): one swatch per ID/region, no numbers inside swatches, empty slots 6-10 crossed out. Blue = mean of KPP tile 1013 (34,113,179); grey = mean of KPP tile 1010 (150,153,146). v006 had a wrong ID5 yellow (243,165,5); v007 fixes it to the KPP RAL1021 (238,201,0). Yellow = KPP RAL1021 (238,201,0). `contact-sheet-ids.png` is the unchanged v005 depth-correct ID render sheet. Facade-vs-sheet acceptance pictures are made by the build card; 4 facade rib counts stay open (see joint_report).
