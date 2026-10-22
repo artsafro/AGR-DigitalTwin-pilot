@@ -1,0 +1,16 @@
+{
+  "build": "truba-build-v003",
+  "drive": "G:/Мой диск/AGR-evidence/560-tec26-oks3-truba/v003/",
+  "source_max_sha256": "4f2d97744853de1f50347d432da609e08ec7c846cd8ddb3bb62b452440b03556",
+  "checksums": {
+    "NPM/0000_Truba_1.zip": "1f339e83e6a89e64f9bd044220aae00962980b0e618480f2f4215696b348373e",
+    "VPM/SM_Truba_1.zip": "63920a3258e28f1fb7ed051497497645d3df2d48cc49d58682acaaeedd07ec75",
+    "VPM/UCX_SM_Truba_1_Main.fbx": "4bfc89142671990ea274562e25f9fe421a3da8aa86a9f60d0f1e71120836f3b7",
+    "compare/slide57_VPM_NPM_angle.png": "a191f7f23017c05565c59029cd33263132ab9d38397cb4e3e037992499daa03a",
+    "compare/slide57_VPM_NPM_front.png": "f448a45ac7de3f2e7a7ff9fc10617ea7a2db680f0d6548be145d79ff9e3f1313"
+  },
+  "zip_readback": "2/2, Blender 5.1.2; NPM embedded PNG 2/2; VPM PNG 18/18",
+  "max_geometry": "24,372 vertices; 25,128 quads; 50,256 triangles; xView overlaps 0; winding 0; world vertex delta 0.0 m; original UCX 60",
+  "publication_passed": false,
+  "deferred": ["NPM site Ground integration", "VPM GeoJSON / V013 / V014", "MSK-77 / district / address", "SINTEZ / UKEP", "manual V015-V017"]
+}

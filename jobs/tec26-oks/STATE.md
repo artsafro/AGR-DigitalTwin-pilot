@@ -1,29 +1,25 @@
 # tec26-oks3-truba
 
-Status: **DCC packages, checks and renders are on disk**. Not a delivery (`passed` is not claimed).
-SINTEZ, GeoJSON, MSK-77 and the manual gates are still open.
+Status: **v003 colour/package build complete; human acceptance / publication not claimed**.
 
-## Done
+User scope (2026-10-22 18:45–18:46): keep source maps_truba RGB/layout, geometry,
+UCX and source face regions; VPM UDIM, one NPM atlas, comparisons and Drive.
+No unit/full-suite or further reviewer round requested for this production lane.
 
-- Finish census and `make_textures.py` (previous run). Normalised PNGs stay in
-  `C:/x/tec26-oks/textures-v001/`.
-- Multi/Sub census of `Tuba` / `Material #75`. Mapping is
-  `scripts/multisub-map.json`. Four empty slots (ids 4, 8, 9, 10) have no faces
-  and were not given a finish.
-- VPM and NPM FBX, separate UCX FBX, both zips, scanline renders.
-  Working Max file: `C:/x/tec26-oks/max-v001/truba_named.max`.
-- Readback, xView overlaps, winding and outside-ray back faces:
-  `scripts/qa-receipt.json`.
-- Copies of the packages, renders and `SHA256SUMS.txt` are on Drive
-  `G:/Мой диск/AGR-evidence/560-tec26-oks3-truba/`.
+- Current local build: `C:/x/tec26-oks/truba-build-v003/`.
+- Current Drive: `G:/Мой диск/AGR-evidence/560-tec26-oks3-truba/v003/`.
+- VPM: one material, 6 UDIMs / 18 PNGs, original railing RGBA, 60 original UCX.
+- NPM: one 2048 RGB diffuse/opacity atlas embedded in the FBX; FBX-only ZIP.
+- ZIP readback Blender 2/2; Max overlaps/winding 0, source topology/world vertices
+  unchanged, mesh min Z −1.4456 m; native receipt `scripts/qa-receipt.json`.
+- Comparison plates: `compare/slide57_VPM_NPM_front.png` and `_angle.png`.
+- Source assignment retained on SOURCE_Tuba and source_material_id attributes;
+  export copies use one named shader. No repaint by guessed RAL.
+- v001 and unversioned packages are superseded; old exporter refuses execution.
 
-## Not done
+Deferred: site-wide NPM Ground integration, GeoJSON, MSK-77/district/address,
+SINTEZ, УКЭП, manual V015–V017. Package validator exit 1 is retained, not hidden.
+Existing source top +69.384 m differs from slide +64 m; noted, not remodelled.
+Details / commands: `REPORT.md`.
 
-- SINTEZ AGR Checker.
-- GeoJSON, district code, MSK-77 placement.
-- Manual gates V015–V017.
-- The Max FBX importer rebuilds the Multi/Sub container as `MultiMat_0`.
-  The six sub-material names in the FBX are `M_Truba_1_Main_1_<Finish>` and
-  `M_Truba_1_003_Main_1_<Finish>`.
-
-Do not treat this job as a delivery package.
+Transcript: Hermes session `local-ea1006365802885a8cab37a076271abb73cba39fbc0db368cdf360d03adfd8d5`.

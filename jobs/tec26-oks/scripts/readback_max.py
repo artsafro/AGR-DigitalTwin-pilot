@@ -18,11 +18,12 @@ import pymxs
 rt = pymxs.runtime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-VPM = r"C:/x/tec26-oks/package-vpm/SM_Truba_1/SM_Truba_1.fbx"
-UCX = r"C:/x/tec26-oks/package-vpm/UCX_SM_Truba_1_Main.fbx"
-NPM = r"C:/x/tec26-oks/package-npm/SM_Truba_1_003_Main.fbx"
+BUILD = os.environ.get("TEC26_BUILD")
+VPM = os.path.join(BUILD, 'readback/vpm/SM_Truba_1.fbx') if BUILD else r"C:/x/tec26-oks/package-vpm/SM_Truba_1/SM_Truba_1.fbx"
+UCX = os.path.join(BUILD, 'package-vpm/UCX_SM_Truba_1_Main.fbx') if BUILD else r"C:/x/tec26-oks/package-vpm/UCX_SM_Truba_1_Main.fbx"
+NPM = os.path.join(BUILD, 'readback/npm/0000_Truba_1_03.fbx') if BUILD else r"C:/x/tec26-oks/package-npm/SM_Truba_1_003_Main.fbx"
 OUTS = [
-    r"C:/x/tec26-oks/qa-receipt.json",
+    os.path.join(BUILD, 'max-qa-receipt.json') if BUILD else r"C:/x/tec26-oks/qa-receipt.json",
     os.path.join(HERE, "qa-receipt.json"),
 ]
 

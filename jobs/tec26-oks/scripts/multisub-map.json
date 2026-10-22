@@ -114,7 +114,7 @@
     "5": "Band_RAL7004_Dark",
     "6": "Railing_Steel"
   },
-  "export_note": "Face material ids are renumbered to export slots 1-6 in UDIM order 1001-1006. Reading ids 1-5 and 26 stay in materials.json. Empty source ids 4, 8, 9 and 10 are not given a finish.",
+  "export_note": "Historical export_slot/npm_slot fields describe v001 only. Current build preserves original IDs on the source object and source_material_id FACE attribute, and uses one named shader on each export copy. Empty source ids 4, 8, 9 and 10 are not given a finish.",
   "collision": {
     "count": 60,
     "layer": "Colizii",

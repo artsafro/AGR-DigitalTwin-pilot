@@ -1,4 +1,4 @@
-"""Rename the truba mesh and UCX, assign VPM/NPM materials, export FBX packages.
+"""RETIRED v001 exporter; exits before writes. See REPORT.md for the replacement.
 
 Runs inside 3ds Max (pymxs). The scene opened by dcc_batch is a copy. This
 script saves only to a new .max under C:/x/tec26-oks/max-v001/ and exports only
@@ -14,6 +14,12 @@ Usage: dcc_batch.py max --file export_package_max.py --scene <copy.max>
 new-case: rename + assign VPM/NPM materials + export FBX packages with UCX from a laid-out Max scene.
 """
 from __future__ import annotations
+
+raise RuntimeError(
+    "Retired v001 exporter: stale textures / six NPM sets. "
+    "Use export_source_max.py -> make_delivery_maps.py -> build_delivery_blender.py; "
+    "see jobs/tec26-oks/REPORT.md."
+)
 
 import json
 import os
