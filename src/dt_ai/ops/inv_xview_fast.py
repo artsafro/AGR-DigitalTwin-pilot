@@ -213,13 +213,12 @@ def xview_lists(vertices, faces, tol: XviewTolerance | None = None) -> dict:
     if not np.isfinite(v).all():
         raise ValueError("vertices must be finite")
     ln, flat, start = _faces_array(faces, len(v))
+    if not len(ln):
+        raise ValueError("no faces: nothing to check (never an empty pass)")
     a, b, d = vertex_pairs(v, tol.vertex_m)
     vp = tuple((int(x) + 1, int(y) + 1, float(z)) for x, y, z in zip(a, b, d))
-    fp = np.zeros((0, 2), np.int64)
-    if len(ln):
-        tris, owner = _triangulate(v, faces, ln, flat, start)
-        if len(tris):
-            fp = contact_pairs(v, tris, owner, tol)
+    tris, owner = _triangulate(v, faces, ln, flat, start)
+    fp = contact_pairs(v, tris, owner, tol)
     return {"xview_faces": tuple(int(x) + 1 for x in np.unique(fp)),
             "vertices": tuple(sorted({x for p in vp for x in p[:2]})),
             "vertex_pairs": vp, "face_pairs": tuple((int(i) + 1, int(j) + 1) for i, j in fp)}
