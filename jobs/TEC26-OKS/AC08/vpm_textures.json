@@ -1,0 +1,25 @@
+{
+ "_doc": "AC08 (Контейнер НКУ) VPM texture sets, KPP1 recipe (jobs/KPP1/scripts/vpm_textures.json). Gate 1 approved by Artem 2026-10-22 (#565 comment: «Принимаю»): ID2 sandwich panels RAL 5015, ID3 door RAL 7004, mixed ID1 = roof RAL 7004 + frame RAL 7004 + perimeter drop below ±0.000 in the wall colour; solid colours without joints (panel module not dimensioned in the DWG). RGB = exact KPP tiles (maps_kpp T_Kpp_1_Diffuse_1.1013 = RAL 5015, .1010 = RAL 7004, pixel-verified in jobs/TEC26-OKS/AC08/MATERIALS.md); roughness/metallic = the KPP proposals of the same finishes. Placeholders: 256 px single colour (reg p.31 §3, density-exempt reg p.31-32 §6.1), as KPP 1010/1013. Address Nku_1 is a placeholder token (address/coordinates deferred as for KPP).",
+ "address": "Nku_1",
+ "size_full": 4096,
+ "size_placeholder": 256,
+ "pad_m": 0.04,
+ "zero_m": 0.0,
+ "source_ids": {
+  "1": {"split": "below_zero", "above": "Frame_RAL7004", "below": "Panel_RAL5015",
+        "why": "mixed ID: roof + frame RAL 7004; faces entirely at or below ±0.000 (perimeter drop) take the wall colour (Artem 2026-10-22)"},
+  "2": {"finish": "Panel_RAL5015", "why": "sandwich panels RAL 5015 (DWG legend 1395)"},
+  "3": {"finish": "Door_RAL7004", "why": "door RAL 7004 (DWG legend 1397)"}
+ },
+ "empty_ids": [4, 5, 6, 7, 8, 9, 10],
+ "kpp_palette": {
+  "Panel_RAL5015": {"kpp_finish": "Metal_RAL5015", "kpp_udim": 1013},
+  "Frame_RAL7004": {"kpp_finish": "Door_RAL7004", "kpp_udim": 1010},
+  "Door_RAL7004": {"kpp_finish": "Door_RAL7004", "kpp_udim": 1010}
+ },
+ "finishes": {
+  "Panel_RAL5015": {"udim": 1001, "kind": "placeholder", "rgb": [34, 113, 179], "rough": 0.45, "metal": 0.0},
+  "Frame_RAL7004": {"udim": 1002, "kind": "placeholder", "rgb": [150, 153, 146], "rough": 0.45, "metal": 0.0},
+  "Door_RAL7004": {"udim": 1003, "kind": "placeholder", "rgb": [150, 153, 146], "rough": 0.45, "metal": 0.0}
+ }
+}
