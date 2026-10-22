@@ -11,6 +11,10 @@ def _quad(u0, v0, w=0.5, h=0.5):
     return [(u0, v0), (u0 + w, v0), (u0 + w, v0 + h), (u0, v0 + h)]
 
 
+def _flat(points):
+    return [c for p in points for c in p]
+
+
 def _phase_kept(old, new, period, tol=1e-9):
     k = (new - old) / period
     return abs(k - round(k)) <= tol
@@ -19,7 +23,7 @@ def _phase_kept(old, new, period, tol=1e-9):
 def test_tiled_quad_shifted_by_integer_step_keeps_fractional_uv():
     uv = _quad(3.2, -1.8)
     result = nudge_repeating_islands(uv, [[0, 1, 2, 3]], ["brick"], {"brick": (1.0, 1.0)})
-    assert result.uv == pytest.approx(_quad(0.2, 0.2))
+    assert _flat(result.uv) == pytest.approx(_flat(_quad(0.2, 0.2)))
     for (u0, v0), (u1, v1) in zip(uv, result.uv):
         assert u1 - u0 == pytest.approx(round(u1 - u0))
         assert v1 - v0 == pytest.approx(round(v1 - v0))
@@ -51,14 +55,14 @@ def test_only_repeating_islands_move():
     uv = _quad(3.2, 4.2) + _quad(3.2, 4.2)
     faces = [[0, 1, 2, 3], [4, 5, 6, 7]]
     result = nudge_repeating_islands(uv, faces, ["brick", "glass"], {"brick": (1, 1), "glass": None})
-    assert result.uv[:4] == pytest.approx(_quad(0.2, 0.2))
+    assert _flat(result.uv[:4]) == pytest.approx(_flat(_quad(0.2, 0.2)))
     assert result.uv[4:] == uv[4:]
 
 
 def test_udim_tile_offset_option():
     uv = _quad(0.2, 0.2)
     result = nudge_repeating_islands(uv, [[0, 1, 2, 3]], ["brick"], {"brick": (1, 1)}, target_tile=1012)
-    assert result.uv == pytest.approx(_quad(1.2, 1.2))
+    assert _flat(result.uv) == pytest.approx(_flat(_quad(1.2, 1.2)))
     assert result.islands[0]["target_tile"] == 1012
 
 
@@ -115,6 +119,11 @@ def test_unmapped_material_or_bad_period_is_an_error(periods, match):
     ([(0, 0), (1, math.nan), (1, 1)], [[0, 1, 2]], ["brick"], "finite"),
     ([(0, 0), (1, math.inf), (1, 1)], [[0, 1, 2]], ["brick"], "finite"),
     ([(0, 0), (1,), (1, 1)], [[0, 1, 2]], ["brick"], "partial"),
+    ([(0, 0), 5, (1, 1)], [[0, 1, 2]], ["brick"], "partial"),
+    ([(0, 0), "ab", (1, 1)], [[0, 1, 2]], ["brick"], "partial"),
+    ([(0, 0), (1, 2, 3), (1, 1)], [[0, 1, 2]], ["brick"], "partial"),
+    ([(0, 0), (True, 0), (1, 1)], [[0, 1, 2]], ["brick"], "finite"),
+    (_quad(0, 0), [[0, 1.0, 2]], ["brick"], "index"),
 ])
 def test_fail_closed_inputs(uv, faces, mats, match):
     with pytest.raises(ValueError, match=match):
@@ -177,3 +186,16 @@ def test_probe_random_islands_keep_phase_and_land_nearest_target(seed):
         cu = (min(p[0] for p in new) + max(p[0] for p in new)) / 2
         cv = (min(p[1] for p in new) + max(p[1] for p in new)) / 2
         assert abs(cu - tu) <= pu / 2 + 1e-7 and abs(cv - tv) <= pv / 2 + 1e-7
+
+
+def test_duplicated_face_is_one_island_moved_once():
+    uv = _quad(3.2, 3.2)
+    result = nudge_repeating_islands(uv, [[0, 1, 2, 3], [0, 1, 2, 3]], ["brick"] * 2, {"brick": (1, 1)})
+    assert len(result.islands) == 1 and result.islands[0]["faces"] == [0, 1]
+    assert _flat(result.uv) == pytest.approx(_flat(_quad(0.2, 0.2)))
+
+
+def test_repeat_call_is_idempotent():
+    first = nudge_repeating_islands(_quad(3.2, 3.2), [[0, 1, 2, 3]], ["brick"], {"brick": (1, 1)})
+    second = nudge_repeating_islands(first.uv, [[0, 1, 2, 3]], ["brick"], {"brick": (1, 1)})
+    assert second.uv == first.uv and second.islands[0]["steps"] == (0, 0)
