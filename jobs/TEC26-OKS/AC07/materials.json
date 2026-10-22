@@ -1,0 +1,1522 @@
+{
+  "schema_version": 1,
+  "job": "tec26-oks",
+  "building": "AC07",
+  "building_name": "Пункт редуцирования газа 2",
+  "base_main_sha": "442f0b695a91f9abc180783c26978fbe85fefcf9",
+  "gate1": {
+    "status": "approved-gate1",
+    "approved": true,
+    "approved_by": "Artem",
+    "date": "2026-10-22",
+    "quote": "Принимаю",
+    "answers": [
+      "RAL 5015 sandwich panels (ID1 upper facade and any other RAL 5015 panel region): vertical joints only, map_type vertical_joints, module 0.60 m, joint 8 mm, no horizontal joints; do not tile the raw 4K image; phase from +-0.000 / panel corner. RAL 7047 sandwich panels stay solid. Metal trims (ID2) unchanged. Below +-0.000 (ID10 drop and any perimeter drop): plain colour, no joints. Supersedes solid-without-joints for blue panels.",
+      "Roof: RAL 7004 grey (as KPP 7004), not 5015.",
+      "A mixed ID may be painted per part (roof 7004, frame 7004, plinth/drop = wall colour) without changing geometry - via UV / atlas regions or face-group split inside the same ID.",
+      "Panels RAL 5015 = KPP blue, doors/frames/porches RAL 7004 = KPP grey, glass as KPP; drop below +-0.000 = wall colour.",
+      "ID6 round inserts: Artem did not define; set 7004 metal, status to_verify (на проверку), show enlarged on the VPM/NPM acceptance sheet."
+    ],
+    "later_scope": "Only colouring. Geometry, topology, UCX and multisub IDs stay exactly as source. VPM = UDIM tiles, NPM = one 2048 atlas; geometry checks only reported. VPM/NPM of this building are a separate card."
+  },
+  "panel_rule": {
+    "date": "2026-10-22",
+    "author": "Artem",
+    "supersedes": "Gate 1 point 1 solid-without-joints, for RAL 5015 sandwich panels only",
+    "applies_to": "RAL 5015 sandwich panels: ID1 upper facade panels and any other RAL 5015 panel region. ID2 metal trims stay metal. ID3 RAL 7047 sandwich panels stay solid.",
+    "map_type": "vertical_joints",
+    "module_m": 0.60,
+    "joint_mm": 8,
+    "vertical_only": true,
+    "horizontal_joints": false,
+    "below_zero_plain": true,
+    "below_zero": "Below +-0.000 (ID10 drop and any perimeter drop): plain colour, no joints.",
+    "do_not_tile_raw_image": true,
+    "do_not_tile_reason": "4096 is not a multiple of 600. Lay joints at a 0.60 m period from each panel start edge. Phase is +-0.000 / the panel corner, not the raw image origin.",
+    "phase": "0.60 m period from each panel start edge; phase from +-0.000 / panel corner",
+    "texel_px_per_m": 1000,
+    "texel_note": "KPP VPM 1000 px/m on a 4K UDIM: 600 px = 0.60 m module, 8 px = 8 mm joint.",
+    "vpm": "Diffuse+Normal, same joint look as NPM",
+    "npm": "one atlas; joints at least 1.5 px",
+    "replaces": "KPP cassette tile for RAL 5015 panels",
+    "cuts_made": false,
+    "cut_rule": "Where a panel face does not fit a 4K tile, cutting is allowed only as clean edge loop/ring cuts across the panel at joint positions. Silhouette, normals, UCX and IDs stay unchanged. Quads are kept. Every cut is listed in the report. No cuts are made in this card.",
+    "cuts": [],
+    "texture": {
+      "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+      "bytes": 1010080,
+      "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+      "width": 4096,
+      "height": 4096,
+      "mode": "RGB",
+      "mean_rgb": [34, 112, 177],
+      "mean_rgb_measured": [33.7033, 112.0103, 177.4277],
+      "vertical_joint_count": 7,
+      "joint_width_px": 8,
+      "joint_period_px": 600,
+      "observed_joint_start_x_px": [266, 866, 1466, 2066, 2666, 3266, 3866]
+    }
+  },
+  "delivery_built": false,
+  "source_copies": {
+    "directory": "C:/x/tec26-oks/AC07",
+    "files": [
+      {
+        "name": "22E.pdf",
+        "bytes": 69654,
+        "sha256": "f05a7b539bacc907c5f95c5c846d73b2ef7392d4368d92b58a4343a637dd1c3a"
+      },
+      {
+        "name": "22E56-АР2-1002-AC.07_R1.dwg",
+        "bytes": 1902674,
+        "sha256": "51b355e53288391b439a7aec01627a0cd1962041f12a3a2125cf797ca70edf3d"
+      }
+    ]
+  },
+  "scene": {
+    "source_copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\04-09 Geometry Final.max",
+    "census": "C:/x/tec26-oks/census/oks.json",
+    "census_sha256": "a99de19f1d30633eaab9c52ac44f253ed6ea97e03358755ff2a77458f0f54f2f",
+    "application_version": [
+      28000,
+      68,
+      0,
+      28,
+      3,
+      0,
+      30732,
+      2026,
+      ".3"
+    ],
+    "file_version": "#(26000, 26000)",
+    "units_per_meter": 1.0,
+    "up_axis": "Z",
+    "requested_layers": [
+      "0.0.0.7",
+      "0.0.7"
+    ],
+    "actual_layer": "007",
+    "layer_correspondence": "confirmed by operator: actual census layer names govern",
+    "multisub": {
+      "name": "Material #59",
+      "handle": 4999,
+      "class": "Multimaterial",
+      "submaterial_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    "render_triangles": 5608,
+    "render_polygons": 2960,
+    "collision_objects": 21,
+    "objects": [
+      {
+        "handle": 241,
+        "name": "Colizii_009",
+        "layer": "007",
+        "triangles": 44,
+        "material_ids": [
+          {
+            "id": 4,
+            "triangles": 44,
+            "area_m2": 0.9818050584424859
+          }
+        ],
+        "poly_faces_by_id": {
+          "4": 14
+        },
+        "diagnostic_buffer": "geometry-241.json"
+      },
+      {
+        "handle": 242,
+        "name": "Colizii_010",
+        "layer": "007",
+        "triangles": 44,
+        "material_ids": [
+          {
+            "id": 4,
+            "triangles": 44,
+            "area_m2": 0.848957927234754
+          }
+        ],
+        "poly_faces_by_id": {
+          "4": 14
+        },
+        "diagnostic_buffer": "geometry-242.json"
+      },
+      {
+        "handle": 243,
+        "name": "Colizii_011",
+        "layer": "007",
+        "triangles": 44,
+        "material_ids": [
+          {
+            "id": 4,
+            "triangles": 44,
+            "area_m2": 0.12808479082050983
+          }
+        ],
+        "poly_faces_by_id": {
+          "4": 14
+        },
+        "diagnostic_buffer": "geometry-243.json"
+      },
+      {
+        "handle": 244,
+        "name": "Colizii_012",
+        "layer": "007",
+        "triangles": 44,
+        "material_ids": [
+          {
+            "id": 4,
+            "triangles": 44,
+            "area_m2": 0.11492217301436858
+          }
+        ],
+        "poly_faces_by_id": {
+          "4": 14
+        },
+        "diagnostic_buffer": "geometry-244.json"
+      },
+      {
+        "handle": 245,
+        "name": "Colizii_013",
+        "layer": "007",
+        "triangles": 44,
+        "material_ids": [
+          {
+            "id": 4,
+            "triangles": 44,
+            "area_m2": 0.848957927234754
+          }
+        ],
+        "poly_faces_by_id": {
+          "4": 14
+        },
+        "diagnostic_buffer": "geometry-245.json"
+      },
+      {
+        "handle": 246,
+        "name": "Colizii_014",
+        "layer": "007",
+        "triangles": 44,
+        "material_ids": [
+          {
+            "id": 4,
+            "triangles": 44,
+            "area_m2": 0.12808479082050983
+          }
+        ],
+        "poly_faces_by_id": {
+          "4": 14
+        },
+        "diagnostic_buffer": "geometry-246.json"
+      },
+      {
+        "handle": 247,
+        "name": "Colizii_015",
+        "layer": "007",
+        "triangles": 44,
+        "material_ids": [
+          {
+            "id": 4,
+            "triangles": 44,
+            "area_m2": 0.11492217301436858
+          }
+        ],
+        "poly_faces_by_id": {
+          "4": 14
+        },
+        "diagnostic_buffer": "geometry-247.json"
+      },
+      {
+        "handle": 248,
+        "name": "Colizii_016",
+        "layer": "007",
+        "triangles": 44,
+        "material_ids": [
+          {
+            "id": 4,
+            "triangles": 44,
+            "area_m2": 0.9818050584424859
+          }
+        ],
+        "poly_faces_by_id": {
+          "4": 14
+        },
+        "diagnostic_buffer": "geometry-248.json"
+      },
+      {
+        "handle": 316,
+        "name": "Colizii_017",
+        "layer": "007",
+        "triangles": 12,
+        "material_ids": [
+          {
+            "id": 1,
+            "triangles": 2,
+            "area_m2": 1.2654261988803188
+          },
+          {
+            "id": 2,
+            "triangles": 4,
+            "area_m2": 1.3292201238709482
+          },
+          {
+            "id": 3,
+            "triangles": 2,
+            "area_m2": 1.363300472162417
+          },
+          {
+            "id": 4,
+            "triangles": 2,
+            "area_m2": 1.363300472162417
+          },
+          {
+            "id": 6,
+            "triangles": 2,
+            "area_m2": 0.04458331364276091
+          }
+        ],
+        "poly_faces_by_id": {
+          "6": 1,
+          "3": 1,
+          "2": 2,
+          "1": 1,
+          "4": 1
+        },
+        "diagnostic_buffer": "geometry-316.json"
+      },
+      {
+        "handle": 317,
+        "name": "Colizii_018",
+        "layer": "007",
+        "triangles": 12,
+        "material_ids": [
+          {
+            "id": 1,
+            "triangles": 2,
+            "area_m2": 1.3518476438921723
+          },
+          {
+            "id": 2,
+            "triangles": 4,
+            "area_m2": 1.3988425796416577
+          },
+          {
+            "id": 3,
+            "triangles": 2,
+            "area_m2": 1.2093568323955424
+          },
+          {
+            "id": 4,
+            "triangles": 2,
+            "area_m2": 1.209357035294829
+          },
+          {
+            "id": 6,
+            "triangles": 2,
+            "area_m2": 0.04458331364276091
+          }
+        ],
+        "poly_faces_by_id": {
+          "6": 1,
+          "3": 1,
+          "2": 2,
+          "1": 1,
+          "4": 1
+        },
+        "diagnostic_buffer": "geometry-317.json"
+      },
+      {
+        "handle": 318,
+        "name": "Colizii_019",
+        "layer": "007",
+        "triangles": 12,
+        "material_ids": [
+          {
+            "id": 1,
+            "triangles": 2,
+            "area_m2": 0.5473200904016267
+          },
+          {
+            "id": 2,
+            "triangles": 4,
+            "area_m2": 0.5921798183626515
+          },
+          {
+            "id": 3,
+            "triangles": 2,
+            "area_m2": 0.4841406387522511
+          },
+          {
+            "id": 4,
+            "triangles": 2,
+            "area_m2": 0.48414044877904416
+          },
+          {
+            "id": 6,
+            "triangles": 2,
+            "area_m2": 0.044859513194751344
+          }
+        ],
+        "poly_faces_by_id": {
+          "6": 1,
+          "3": 1,
+          "2": 2,
+          "1": 1,
+          "4": 1
+        },
+        "diagnostic_buffer": "geometry-318.json"
+      },
+      {
+        "handle": 319,
+        "name": "Colizii_020",
+        "layer": "007",
+        "triangles": 12,
+        "material_ids": [
+          {
+            "id": 1,
+            "triangles": 2,
+            "area_m2": 1.2654261988803188
+          },
+          {
+            "id": 2,
+            "triangles": 4,
+            "area_m2": 1.3292201238709482
+          },
+          {
+            "id": 3,
+            "triangles": 2,
+            "area_m2": 1.3633004721623565
+          },
+          {
+            "id": 4,
+            "triangles": 2,
+            "area_m2": 1.3633004721623565
+          },
+          {
+            "id": 6,
+            "triangles": 2,
+            "area_m2": 0.04458331364276091
+          }
+        ],
+        "poly_faces_by_id": {
+          "6": 1,
+          "3": 1,
+          "2": 2,
+          "1": 1,
+          "4": 1
+        },
+        "diagnostic_buffer": "geometry-319.json"
+      },
+      {
+        "handle": 320,
+        "name": "Colizii_021",
+        "layer": "007",
+        "triangles": 12,
+        "material_ids": [
+          {
+            "id": 1,
+            "triangles": 2,
+            "area_m2": 1.3518476438921723
+          },
+          {
+            "id": 2,
+            "triangles": 4,
+            "area_m2": 1.3988425796416577
+          },
+          {
+            "id": 3,
+            "triangles": 2,
+            "area_m2": 1.2093568323955424
+          },
+          {
+            "id": 4,
+            "triangles": 2,
+            "area_m2": 1.209357035294829
+          },
+          {
+            "id": 6,
+            "triangles": 2,
+            "area_m2": 0.04458331364276091
+          }
+        ],
+        "poly_faces_by_id": {
+          "6": 1,
+          "3": 1,
+          "2": 2,
+          "1": 1,
+          "4": 1
+        },
+        "diagnostic_buffer": "geometry-320.json"
+      },
+      {
+        "handle": 321,
+        "name": "Colizii_022",
+        "layer": "007",
+        "triangles": 12,
+        "material_ids": [
+          {
+            "id": 1,
+            "triangles": 2,
+            "area_m2": 4.822030064604405
+          },
+          {
+            "id": 2,
+            "triangles": 4,
+            "area_m2": 7.12477043757908
+          },
+          {
+            "id": 3,
+            "triangles": 2,
+            "area_m2": 0.10192462462111962
+          },
+          {
+            "id": 4,
+            "triangles": 2,
+            "area_m2": 0.10192464479382579
+          },
+          {
+            "id": 6,
+            "triangles": 2,
+            "area_m2": 2.741867631580898
+          }
+        ],
+        "poly_faces_by_id": {
+          "6": 1,
+          "3": 1,
+          "2": 2,
+          "1": 1,
+          "4": 1
+        },
+        "diagnostic_buffer": "geometry-321.json"
+      },
+      {
+        "handle": 322,
+        "name": "Colizii_023",
+        "layer": "007",
+        "triangles": 12,
+        "material_ids": [
+          {
+            "id": 1,
+            "triangles": 2,
+            "area_m2": 2.5061961641549715
+          },
+          {
+            "id": 2,
+            "triangles": 4,
+            "area_m2": 4.723502667389578
+          },
+          {
+            "id": 3,
+            "triangles": 2,
+            "area_m2": 0.0448509644004389
+          },
+          {
+            "id": 4,
+            "triangles": 2,
+            "area_m2": 0.044850774427231954
+          },
+          {
+            "id": 6,
+            "triangles": 2,
+            "area_m2": 2.2173171185658216
+          }
+        ],
+        "poly_faces_by_id": {
+          "6": 1,
+          "3": 1,
+          "2": 2,
+          "1": 1,
+          "4": 1
+        },
+        "diagnostic_buffer": "geometry-322.json"
+      },
+      {
+        "handle": 323,
+        "name": "Colizii_024",
+        "layer": "007",
+        "triangles": 12,
+        "material_ids": [
+          {
+            "id": 1,
+            "triangles": 2,
+            "area_m2": 0.5993545272253868
+          },
+          {
+            "id": 2,
+            "triangles": 4,
+            "area_m2": 0.6442141601993535
+          },
+          {
+            "id": 3,
+            "triangles": 2,
+            "area_m2": 0.5301696270089451
+          },
+          {
+            "id": 4,
+            "triangles": 2,
+            "area_m2": 0.5301694370357382
+          },
+          {
+            "id": 6,
+            "triangles": 2,
+            "area_m2": 0.04485941820814787
+          }
+        ],
+        "poly_faces_by_id": {
+          "6": 1,
+          "3": 1,
+          "2": 2,
+          "1": 1,
+          "4": 1
+        },
+        "diagnostic_buffer": "geometry-323.json"
+      },
+      {
+        "handle": 324,
+        "name": "Colizii_025",
+        "layer": "007",
+        "triangles": 12,
+        "material_ids": [
+          {
+            "id": 1,
+            "triangles": 2,
+            "area_m2": 1.5675901036011055
+          },
+          {
+            "id": 2,
+            "triangles": 4,
+            "area_m2": 1.9747554155846956
+          },
+          {
+            "id": 3,
+            "triangles": 2,
+            "area_m2": 0.6160054006686551
+          },
+          {
+            "id": 4,
+            "triangles": 2,
+            "area_m2": 0.6160054006686551
+          },
+          {
+            "id": 6,
+            "triangles": 2,
+            "area_m2": 0.4071653119835901
+          }
+        ],
+        "poly_faces_by_id": {
+          "6": 1,
+          "3": 1,
+          "2": 2,
+          "1": 1,
+          "4": 1
+        },
+        "diagnostic_buffer": "geometry-324.json"
+      },
+      {
+        "handle": 325,
+        "name": "Colizii_026",
+        "layer": "007",
+        "triangles": 12,
+        "material_ids": [
+          {
+            "id": 1,
+            "triangles": 2,
+            "area_m2": 1.5863768004228405
+          },
+          {
+            "id": 2,
+            "triangles": 4,
+            "area_m2": 1.998420524995936
+          },
+          {
+            "id": 3,
+            "triangles": 2,
+            "area_m2": 0.6160054006686551
+          },
+          {
+            "id": 4,
+            "triangles": 2,
+            "area_m2": 0.6160057821396094
+          },
+          {
+            "id": 6,
+            "triangles": 2,
+            "area_m2": 0.4120447069637645
+          }
+        ],
+        "poly_faces_by_id": {
+          "6": 1,
+          "3": 1,
+          "2": 2,
+          "1": 1,
+          "4": 1
+        },
+        "diagnostic_buffer": "geometry-325.json"
+      },
+      {
+        "handle": 326,
+        "name": "Colizii_027",
+        "layer": "007",
+        "triangles": 12,
+        "material_ids": [
+          {
+            "id": 1,
+            "triangles": 2,
+            "area_m2": 1.5863768004228405
+          },
+          {
+            "id": 2,
+            "triangles": 4,
+            "area_m2": 1.998420524995936
+          },
+          {
+            "id": 3,
+            "triangles": 2,
+            "area_m2": 0.6160054006686551
+          },
+          {
+            "id": 4,
+            "triangles": 2,
+            "area_m2": 0.6160057821396094
+          },
+          {
+            "id": 6,
+            "triangles": 2,
+            "area_m2": 0.4120447069637645
+          }
+        ],
+        "poly_faces_by_id": {
+          "6": 1,
+          "3": 1,
+          "2": 2,
+          "1": 1,
+          "4": 1
+        },
+        "diagnostic_buffer": "geometry-326.json"
+      },
+      {
+        "handle": 327,
+        "name": "Colizii_028",
+        "layer": "007",
+        "triangles": 12,
+        "material_ids": [
+          {
+            "id": 1,
+            "triangles": 2,
+            "area_m2": 24.182279412842036
+          },
+          {
+            "id": 2,
+            "triangles": 4,
+            "area_m2": 60.171509275414564
+          },
+          {
+            "id": 3,
+            "triangles": 2,
+            "area_m2": 7.325340929884078
+          },
+          {
+            "id": 4,
+            "triangles": 2,
+            "area_m2": 7.325340929884078
+          },
+          {
+            "id": 6,
+            "triangles": 2,
+            "area_m2": 35.98922986257253
+          }
+        ],
+        "poly_faces_by_id": {
+          "6": 1,
+          "3": 1,
+          "2": 2,
+          "1": 1,
+          "4": 1
+        },
+        "diagnostic_buffer": "geometry-327.json"
+      },
+      {
+        "handle": 328,
+        "name": "Colizii_029",
+        "layer": "007",
+        "triangles": 20,
+        "material_ids": [
+          {
+            "id": 1,
+            "triangles": 4,
+            "area_m2": 122.89346103479784
+          },
+          {
+            "id": 2,
+            "triangles": 6,
+            "area_m2": 160.86042058613208
+          },
+          {
+            "id": 3,
+            "triangles": 4,
+            "area_m2": 41.75983503657703
+          },
+          {
+            "id": 4,
+            "triangles": 4,
+            "area_m2": 41.759835036576455
+          },
+          {
+            "id": 5,
+            "triangles": 2,
+            "area_m2": 37.38902835833786
+          }
+        ],
+        "poly_faces_by_id": {
+          "2": 3,
+          "1": 2,
+          "5": 1,
+          "4": 2,
+          "3": 2
+        },
+        "diagnostic_buffer": "geometry-328.json"
+      },
+      {
+        "handle": 385,
+        "name": "АС.07",
+        "layer": "007",
+        "triangles": 5596,
+        "material_ids": [
+          {
+            "id": 1,
+            "triangles": 362,
+            "area_m2": 177.12756502922207
+          },
+          {
+            "id": 2,
+            "triangles": 1290,
+            "area_m2": 83.26838515128969
+          },
+          {
+            "id": 3,
+            "triangles": 444,
+            "area_m2": 94.41785970094375
+          },
+          {
+            "id": 4,
+            "triangles": 1576,
+            "area_m2": 4.984935707012734
+          },
+          {
+            "id": 5,
+            "triangles": 48,
+            "area_m2": 0.697029649619583
+          },
+          {
+            "id": 6,
+            "triangles": 300,
+            "area_m2": 3.3036909072231913
+          },
+          {
+            "id": 7,
+            "triangles": 204,
+            "area_m2": 5.655706857282653
+          },
+          {
+            "id": 8,
+            "triangles": 1008,
+            "area_m2": 21.514531059439413
+          },
+          {
+            "id": 9,
+            "triangles": 60,
+            "area_m2": 7.95037130734616
+          },
+          {
+            "id": 10,
+            "triangles": 176,
+            "area_m2": 105.28904354252023
+          },
+          {
+            "id": 11,
+            "triangles": 128,
+            "area_m2": 116.7977665880451
+          }
+        ],
+        "poly_faces_by_id": {
+          "1": 181,
+          "10": 88,
+          "3": 300,
+          "7": 120,
+          "2": 671,
+          "4": 772,
+          "6": 200,
+          "5": 24,
+          "9": 30,
+          "11": 64,
+          "8": 504
+        },
+        "diagnostic_buffer": "geometry-385.json"
+      },
+      {
+        "handle": 388,
+        "name": "АС.07_Glass",
+        "layer": "007",
+        "triangles": 12,
+        "material_ids": [
+          {
+            "id": 12,
+            "triangles": 12,
+            "area_m2": 32.65129536046115
+          }
+        ],
+        "poly_faces_by_id": {
+          "12": 6
+        },
+        "diagnostic_buffer": "geometry-388.json"
+      }
+    ],
+    "unmapped_ids": [],
+    "id_gaps": [],
+    "note": "Colizii_* are source collision candidates, not named UCX_*; no collision acceptance performed.",
+    "perimeter_drop": {
+      "preserved": true,
+      "cut_at_ground": false,
+      "material_id": 10,
+      "finish": "RAL 7004, same as adjacent plinth",
+      "lower_wall_triangles": 88,
+      "upper_band_triangles": 88,
+      "bottom_z_range_m": [
+        -2.0251073837280273,
+        -2.0250959396362305
+      ],
+      "all_lower_wall_triangles_reach_below_minus_1m": true,
+      "max_upper_to_bottom_xy_mismatch_m": 3.932099938981686e-06,
+      "xy_comparison_tolerance_m": 0.0001,
+      "scope": "All 88 ID10 lower-wall triangles have min Z <= -1m; every upper-band vertex has a corresponding deep bottom vertex within 1e-4m XY. Source tessellation and positions unchanged."
+    }
+  },
+  "drawing_evidence": [
+    {
+      "id": "legend",
+      "source": "22E56-АР2-1002-AC.07_R1.dwg",
+      "layout": "Model",
+      "handle": "10C71C",
+      "xy_mm": [
+        22699.66838582569,
+        65365.49480536217
+      ],
+      "text": "Sandwich panels and canopies RAL 5015; sandwich panels RAL 7047; porches, doors, plinth, drainage RAL 7004; pressure-relief frames RAL 9016.",
+      "image": "facades-inline.png"
+    },
+    {
+      "id": "title",
+      "source": "22E.pdf",
+      "page": 1,
+      "printed_sheet": "3",
+      "text": "Пункт редуцирования газа 2; Разрез 1-1; 22E56-АР2-1002-AC.07",
+      "dwg_locator": "Layout1 #1059C7 (301.868,25.968) mm; sheet #1059C4; title #1059D0",
+      "image": "pdf-p1.png"
+    },
+    {
+      "id": "section",
+      "source": "22E.pdf",
+      "page": 1,
+      "printed_sheet": "3",
+      "text": "Three-layer sandwich panel with basalt mineral-wool infill, 120 mm, roof/walls/floor; reinforced-concrete slab; tubular snow retainers; pressure-relief structures. Roof 6 degrees, axes 2500+11000=13500 mm. No roof RAL or membrane specification.",
+      "image": "pdf-p1.png"
+    },
+    {
+      "id": "roof",
+      "source": "22E56-АР2-1002-AC.07_R1.dwg",
+      "layout": "Model",
+      "handle": "104EB7",
+      "xy_mm": [
+        52613.75339042968,
+        35863.55240563567
+      ],
+      "text": "Roof plan, tubular snow retainers, 6-degree slopes; axes 13500 x 10900 mm. No roof coating RAL.",
+      "image": "roof-inline.png"
+    },
+    {
+      "id": "panel-legend",
+      "source": "22E56-АР2-1002-AC.07_R1.dwg",
+      "layout": "Model",
+      "handle": "10C71F",
+      "xy_mm": [
+        21673.52974873521,
+        57899.76512993906
+      ],
+      "text": "Three-layer sandwich panels, basalt mineral wool, 120 mm; #10C725 reinforced concrete slab.",
+      "image": "section-inline.png"
+    },
+    {
+      "id": "excluded-group",
+      "source": "22E56-АР2-1002-AC.07_R1.dwg",
+      "layout": "Model",
+      "handles": [
+        "FF24D",
+        "FF24F",
+        "FF251",
+        "FF265"
+      ],
+      "region_mm": [
+        190000,
+        10000,
+        250000,
+        80000
+      ],
+      "text": "Separate group crossed by red diagonal lines: axes 1-6, blue-only panels, thickness 150/250 mm. Retained as excluded evidence, not silently substituted for the 1-3 / 120 mm section.",
+      "image": "other-group-inline.png"
+    }
+  ],
+  "materials": [
+    {
+      "id": 1,
+      "slot": 1,
+      "source_material": "Material #62",
+      "source_object": "АС.07",
+      "object_handle": 385,
+      "polygons": 181,
+      "triangles": 362,
+      "area_m2": 177.12756502922196,
+      "role_observed": "roof panels + upper facade panels",
+      "finish": "mixed ID: roof faces RAL 7004; upper facade panels RAL 5015 (regions inside the same ID; geometry unchanged)",
+      "ral": "7004+5015",
+      "map_type": "mixed",
+      "status": "approved",
+      "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
+      "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=1; ids-isolated.png cell 1; polygon counts from census",
+      "drawing_evidence": [
+        "legend",
+        "section",
+        "roof"
+      ],
+      "question": null,
+      "kpp_colour": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1013.png",
+        "sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+        "tile": 1013,
+        "rgb": [
+          34,
+          113,
+          179
+        ],
+        "dominant_pixel_count": 65536,
+        "image_size": [
+          256,
+          256
+        ],
+        "method": "exact KPP map pixels; no RAL approximation",
+        "note": "Dominant RGB only from the approved KPP map, not its cassette pattern; no reuse of KPP material IDs."
+      },
+      "regions": [
+        {
+          "part": "roof faces",
+          "finish": "RAL 7004",
+          "ral": "7004",
+          "map_type": "solid",
+          "kpp_colour": {
+            "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1010.png",
+            "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+            "tile": 1010,
+            "rgb": [
+              150,
+              153,
+              146
+            ],
+            "dominant_pixel_count": 65536,
+            "image_size": [
+              256,
+              256
+            ],
+            "method": "exact KPP map pixels; no RAL approximation",
+            "note": "Dominant RGB only from the approved KPP map, not its cassette pattern; no reuse of KPP material IDs."
+          }
+        },
+        {
+          "part": "upper facade panels",
+          "finish": "sandwich panels RAL 5015",
+          "ral": "5015",
+          "map_type": "vertical_joints",
+          "horizontal_joints": false,
+          "kpp_colour": {
+            "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1013.png",
+            "sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+            "tile": 1013,
+            "rgb": [
+              34,
+              113,
+              179
+            ],
+            "dominant_pixel_count": 65536,
+            "image_size": [
+              256,
+              256
+            ],
+            "method": "exact KPP map pixels; no RAL approximation",
+            "note": "Prior dominant-pixel sample of KPP tile 1013. The panel map is panel_rule.texture, which replaces the KPP cassette tile. No reuse of KPP material IDs."
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "slot": 2,
+      "source_material": "Material #60",
+      "source_object": "АС.07",
+      "object_handle": 385,
+      "polygons": 671,
+      "triangles": 1290,
+      "area_m2": 83.26838515128912,
+      "role_observed": "roof edge trims / canopy plates",
+      "finish": "metal RAL 5015",
+      "ral": "5015",
+      "map_type": "metal",
+      "status": "approved",
+      "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
+      "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=2; ids-isolated.png cell 2; polygon counts from census",
+      "drawing_evidence": [
+        "legend"
+      ],
+      "question": null,
+      "kpp_colour": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1013.png",
+        "sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+        "tile": 1013,
+        "rgb": [
+          34,
+          113,
+          179
+        ],
+        "dominant_pixel_count": 65536,
+        "image_size": [
+          256,
+          256
+        ],
+        "method": "exact KPP map pixels; no RAL approximation",
+        "note": "Dominant RGB only from the approved KPP map, not its cassette pattern; no reuse of KPP material IDs."
+      }
+    },
+    {
+      "id": 3,
+      "slot": 3,
+      "source_material": "Material #61",
+      "source_object": "АС.07",
+      "object_handle": 385,
+      "polygons": 300,
+      "triangles": 444,
+      "area_m2": 94.4178597009437,
+      "role_observed": "lower wall sandwich panels",
+      "finish": "sandwich panels RAL 7047",
+      "ral": "7047",
+      "map_type": "solid",
+      "status": "approved",
+      "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
+      "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=3; ids-isolated.png cell 3; polygon counts from census",
+      "drawing_evidence": [
+        "legend",
+        "panel-legend"
+      ],
+      "question": null,
+      "kpp_colour": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1006.png",
+        "sha256": "953d54d37cd8b3193afc5d3b973afc87ed06a9949232799a466193b1617efeb9",
+        "tile": 1006,
+        "rgb": [
+          208,
+          208,
+          208
+        ],
+        "dominant_pixel_count": 2124178,
+        "image_size": [
+          4096,
+          4096
+        ],
+        "method": "exact KPP map pixels; no RAL approximation",
+        "note": "Dominant RGB only from the approved KPP map, not its cassette pattern; no reuse of KPP material IDs."
+      }
+    },
+    {
+      "id": 4,
+      "slot": 4,
+      "source_material": "Material #63",
+      "source_object": "АС.07",
+      "object_handle": 385,
+      "polygons": 772,
+      "triangles": 1576,
+      "area_m2": 4.984935707012734,
+      "role_observed": "downpipes and gutter components",
+      "finish": "metal RAL 7004",
+      "ral": "7004",
+      "map_type": "metal",
+      "status": "approved",
+      "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
+      "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=4; ids-isolated.png cell 4; polygon counts from census",
+      "drawing_evidence": [
+        "legend"
+      ],
+      "question": null,
+      "kpp_colour": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1010.png",
+        "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "tile": 1010,
+        "rgb": [
+          150,
+          153,
+          146
+        ],
+        "dominant_pixel_count": 65536,
+        "image_size": [
+          256,
+          256
+        ],
+        "method": "exact KPP map pixels; no RAL approximation",
+        "note": "Dominant RGB only from the approved KPP map, not its cassette pattern; no reuse of KPP material IDs."
+      }
+    },
+    {
+      "id": 5,
+      "slot": 5,
+      "source_material": "Material #52",
+      "source_object": "АС.07",
+      "object_handle": 385,
+      "polygons": 24,
+      "triangles": 48,
+      "area_m2": 0.6970296496195834,
+      "role_observed": "snow guards (tubular snow retainers)",
+      "finish": "metal RAL 7004",
+      "ral": "7004",
+      "map_type": "metal",
+      "status": "approved",
+      "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
+      "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=5; ids-isolated.png cell 5; polygon counts from census",
+      "drawing_evidence": [
+        "roof",
+        "section"
+      ],
+      "question": null,
+      "kpp_colour": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1010.png",
+        "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "tile": 1010,
+        "rgb": [
+          150,
+          153,
+          146
+        ],
+        "dominant_pixel_count": 65536,
+        "image_size": [
+          256,
+          256
+        ],
+        "method": "exact KPP map pixels; no RAL approximation",
+        "note": "Dominant RGB only from the approved KPP map, not its cassette pattern; no reuse of KPP material IDs."
+      }
+    },
+    {
+      "id": 6,
+      "slot": 6,
+      "source_material": "Material #51",
+      "source_object": "АС.07",
+      "object_handle": 385,
+      "polygons": 200,
+      "triangles": 300,
+      "area_m2": 3.303690907223189,
+      "role_observed": "round facade inserts / service penetrations",
+      "finish": "metal RAL 7004",
+      "ral": "7004",
+      "map_type": "metal",
+      "status": "to_verify",
+      "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
+      "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=6; ids-isolated.png cell 6; polygon counts from census",
+      "drawing_evidence": [],
+      "question": "what are the round inserts, is 7004 metal right?",
+      "kpp_colour": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1010.png",
+        "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "tile": 1010,
+        "rgb": [
+          150,
+          153,
+          146
+        ],
+        "dominant_pixel_count": 65536,
+        "image_size": [
+          256,
+          256
+        ],
+        "method": "exact KPP map pixels; no RAL approximation",
+        "note": "Dominant RGB only from the approved KPP map, not its cassette pattern; no reuse of KPP material IDs."
+      },
+      "show_enlarged": true
+    },
+    {
+      "id": 7,
+      "slot": 7,
+      "source_material": "Material #53",
+      "source_object": "АС.07",
+      "object_handle": 385,
+      "polygons": 120,
+      "triangles": 204,
+      "area_m2": 5.655706857282676,
+      "role_observed": "door leaves",
+      "finish": "doors RAL 7004",
+      "ral": "7004",
+      "map_type": "solid",
+      "status": "approved",
+      "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
+      "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=7; ids-isolated.png cell 7; polygon counts from census",
+      "drawing_evidence": [
+        "legend"
+      ],
+      "question": null,
+      "kpp_colour": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1010.png",
+        "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "tile": 1010,
+        "rgb": [
+          150,
+          153,
+          146
+        ],
+        "dominant_pixel_count": 65536,
+        "image_size": [
+          256,
+          256
+        ],
+        "method": "exact KPP map pixels; no RAL approximation",
+        "note": "Dominant RGB only from the approved KPP map, not its cassette pattern; no reuse of KPP material IDs."
+      }
+    },
+    {
+      "id": 8,
+      "slot": 8,
+      "source_material": "Material #58",
+      "source_object": "АС.07",
+      "object_handle": 385,
+      "polygons": 504,
+      "triangles": 1008,
+      "area_m2": 21.514531059439424,
+      "role_observed": "pressure-relief opening frames and mullions",
+      "finish": "frames RAL 9016",
+      "ral": "9016",
+      "map_type": "solid",
+      "status": "approved",
+      "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
+      "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=8; ids-isolated.png cell 8; polygon counts from census",
+      "drawing_evidence": [
+        "legend",
+        "section"
+      ],
+      "question": null,
+      "kpp_colour": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1009.png",
+        "sha256": "5a24af09b5c0da12873e6f7cdc170acc6b7b339815ce470dfee5336a81925eda",
+        "tile": 1009,
+        "rgb": [
+          246,
+          246,
+          246
+        ],
+        "dominant_pixel_count": 65536,
+        "image_size": [
+          256,
+          256
+        ],
+        "method": "exact KPP map pixels; no RAL approximation",
+        "note": "Dominant RGB only from the approved KPP map, not its cassette pattern; no reuse of KPP material IDs."
+      }
+    },
+    {
+      "id": 9,
+      "slot": 9,
+      "source_material": "Material #57",
+      "source_object": "АС.07",
+      "object_handle": 385,
+      "polygons": 30,
+      "triangles": 60,
+      "area_m2": 7.950371307346159,
+      "role_observed": "outer rectangular opening surrounds",
+      "finish": "frames and surrounds RAL 9016",
+      "ral": "9016",
+      "map_type": "solid",
+      "status": "approved",
+      "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
+      "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=9; ids-isolated.png cell 9; polygon counts from census",
+      "drawing_evidence": [
+        "legend",
+        "section"
+      ],
+      "question": null,
+      "kpp_colour": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1009.png",
+        "sha256": "5a24af09b5c0da12873e6f7cdc170acc6b7b339815ce470dfee5336a81925eda",
+        "tile": 1009,
+        "rgb": [
+          246,
+          246,
+          246
+        ],
+        "dominant_pixel_count": 65536,
+        "image_size": [
+          256,
+          256
+        ],
+        "method": "exact KPP map pixels; no RAL approximation",
+        "note": "Dominant RGB only from the approved KPP map, not its cassette pattern; no reuse of KPP material IDs."
+      }
+    },
+    {
+      "id": 10,
+      "slot": 10,
+      "source_material": "Material #54",
+      "source_object": "АС.07",
+      "object_handle": 385,
+      "polygons": 88,
+      "triangles": 176,
+      "area_m2": 105.28904354252025,
+      "role_observed": "visible plinth and required deep perimeter drop (not untreated foundation)",
+      "finish": "plinth and required perimeter drop RAL 7004",
+      "ral": "7004",
+      "map_type": "solid",
+      "status": "approved",
+      "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
+      "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=10; ids-isolated.png cell 10; polygon counts from census",
+      "drawing_evidence": [
+        "legend",
+        "section"
+      ],
+      "question": null,
+      "kpp_colour": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1010.png",
+        "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "tile": 1010,
+        "rgb": [
+          150,
+          153,
+          146
+        ],
+        "dominant_pixel_count": 65536,
+        "image_size": [
+          256,
+          256
+        ],
+        "method": "exact KPP map pixels; no RAL approximation",
+        "note": "Dominant RGB only from the approved KPP map, not its cassette pattern; no reuse of KPP material IDs."
+      }
+    },
+    {
+      "id": 11,
+      "slot": 11,
+      "source_material": "Material #56",
+      "source_object": "АС.07",
+      "object_handle": 385,
+      "polygons": 64,
+      "triangles": 128,
+      "area_m2": 116.79776658804516,
+      "role_observed": "inner floor / wall shell",
+      "finish": "Interior",
+      "ral": null,
+      "map_type": "solid",
+      "status": "approved",
+      "geometry_sha256": "daebde11357b727c26c217261788a2d89b39bd6cb9d5c6ca76ebc6d9ec280ce1",
+      "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-385.json material_ids=11; ids-isolated.png cell 11; polygon counts from census",
+      "drawing_evidence": [
+        "section"
+      ],
+      "question": null,
+      "kpp_colour": null,
+      "kpp_finish_name": "Interior",
+      "kpp_finish_source": "jobs/KPP1/materials.json",
+      "kpp_finish_id": 31,
+      "kpp_finish_udim": 1011,
+      "kpp_finish_note": "Exact finishes key Interior (id 31, udim 1011). Artem called this KPP Interior; Interior is the library name."
+    },
+    {
+      "id": 12,
+      "slot": 12,
+      "source_material": "Material #55",
+      "source_object": "АС.07_Glass",
+      "object_handle": 388,
+      "polygons": 6,
+      "triangles": 12,
+      "area_m2": 32.65129536046115,
+      "role_observed": "separate glazing infill",
+      "finish": "M_Glass_01 (KPP convention)",
+      "ral": null,
+      "map_type": "glass",
+      "status": "approved",
+      "geometry_sha256": "2bbb2d6b882ea764917aaeaa8a4bee04d0f89a04971a369fca05eaeecdcb0653",
+      "geometry_evidence": "C:/x/tec26-oks/max-readback-v002/geometry-388.json material_ids=12; ids-isolated.png cell 12; polygon counts from census",
+      "drawing_evidence": [
+        "section"
+      ],
+      "question": null,
+      "kpp_colour": null,
+      "glass_convention": {
+        "source": "jobs/KPP1/scripts/export_npm.py:152-157; jobs/KPP1/scripts/package_vpm.py:37-39",
+        "npm": {
+          "material": "M_Glass_01",
+          "alpha": 0.5,
+          "base_color_linear": [
+            0.75,
+            0.82,
+            0.82
+          ],
+          "roughness": 0.05,
+          "textures": false
+        },
+        "vpm": {
+          "textures": false,
+          "naming": "per docs/domain/materials.md VPM and GeoJSON convention",
+          "physical_values": "KPP package values remain proposals; this card does not publish a VPM package"
+        },
+        "swatch_rgb": [
+          225,
+          235,
+          235
+        ],
+        "swatch_note": "KPP package glass colour proposal, not a RAL or opacity measurement"
+      }
+    }
+  ],
+  "evidence": {
+    "directory": "G:/Мой диск/AGR-evidence/tec26-oks/AC07/v006",
+    "contact_sheet": "contact-sheet.png",
+    "hashes": "SHA256SUMS.txt",
+    "renderer": "Blender 5.1.2 / Cycles CPU, native ray-traced depth; generated diagnostic scene from immutable census buffers",
+    "excluded_attempts": [
+      "v001: erroneous one-based index interpretation; do not use",
+      "v002 non-inline drawing PNGs: SVG CSS ignored by rasterizer; use only *-inline.png",
+      "v001-v004 CPU painter projections withdrawn from Gate approval: no correct per-pixel depth; use v005 native Cycles only",
+      "v001-v004 CPU painter projections withdrawn from Gate approval: no correct per-pixel depth; use v005 native Cycles only"
+    ],
+    "contact_sheet_sha256": "b93f7648ae3cf5aa82b1f7d8915c18a5df4f83f0252cf555398c0f0353ae9bbd",
+    "hash_manifest_sha256": "e22a8ebdb31ab13d531bffd67b8c608cc528655d02f4c0a2d3d440e169e6325b",
+    "depth_correct": true,
+    "datum_z_m": 0.0,
+    "collision_visible": false,
+    "plain_shaded_views": true,
+    "native_render_report": "blender-render-report.json",
+    "all_views": "depth-correct-views.png"
+  },
+  "questions": [
+    "what are the round inserts, is 7004 metal right?"
+  ],
+  "limits": [
+    "Recovered DXF (strict parser missing ENDSEC; recover 0 errors, 2 orphan paper-space block removals). Native source DWG not edited.",
+    "Only PDF sheet 3 is supplied. Facade/roof sheet numbers are not guessed: DWG model-space titles and coordinates are locators.",
+    "No yellow RAL 1021, cassette, perforation or membrane specification found in AC07; KPP-only finishes are not transferred.",
+    "Gate 1 colours are approved except ID 6 (to_verify, show enlarged on the later acceptance sheet). No VPM/NPM export and no texture production in this card. Geometry, topology, UCX and multisub IDs stay as source.",
+    "RAL 5015 vertical joints are a recorded rule only. The user texture is referenced, not tiled (4096 is not a multiple of 600). No panel cuts are made in this card."
+  ]
+}
