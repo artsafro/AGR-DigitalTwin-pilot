@@ -82,9 +82,19 @@ def validate_spec(spec, kpp_spec=None):
             names = [rule["above"], rule["below"]]
         elif rule.get("split") == "facade":
             names = sorted({f["finish"] for f in spec["facades"].values()})
+            plain = rule.get("plain") or {}
+            for key, n in plain.items():
+                if key not in NORMALS or any(f["normal"] == key for f in spec["facades"].values()):
+                    raise ValueError(f"source ID {sid}: plain override {key!r} must be a normal without a rib facade")
+                names.append(n)
+        elif rule.get("split") == "roof":
+            names = [rule.get("roof"), rule.get("rest")]
+            rz = rule.get("roof_z_m")
+            if not (isinstance(rz, (int, float)) and not isinstance(rz, bool) and math.isfinite(rz)):
+                raise ValueError(f"source ID {sid}: split roof needs a finite roof_z_m, got {rz!r}")
         else:
             names = [rule.get("finish")]
-        if rule.get("split") not in (None, "below_zero", "facade"):
+        if rule.get("split") not in (None, "below_zero", "facade", "roof"):
             raise ValueError(f"source ID {sid}: unsupported split {rule.get('split')}")
         for n in names:
             if n not in fin:
@@ -291,6 +301,15 @@ def check_user_texture(name, spec):
     # the repeat comes from the sheet (facades.ribs), so the tile period `want` may differ from the source period.
     if not want >= 4 * (fj[1] - fj[0]):
         raise ValueError(f"{name}: tile period {want:.1f} px leaves no panel between {fj[1] - fj[0]} px joints")
+    nj = t.get("npm_joint_half_mm")
+    if nj is not None and not (isinstance(nj, int) and not isinstance(nj, bool) and 1 <= nj <= 30):
+        raise ValueError(f"{name}: npm_joint_half_mm must be an int 1..30 mm, got {nj!r}")
+    jr = t.get("joint_rgb")
+    if jr is not None and not (isinstance(jr, list) and len(jr) == 3 and all(isinstance(c, int) and not
+                                                                            isinstance(c, bool) and 0 <= c <= 255
+                                                                            for c in jr)
+                               and sum(jr) < 0.5 * sum(t["rgb"])):
+        raise ValueError(f"{name}: joint_rgb must be three ints 0..255, darker than half the panel rgb; got {jr}")
     oz = t.get("outline_z_m")
     if oz is not None and not (isinstance(oz, list) and len(oz) == 2 and all(isinstance(x, (int, float)) and
                                                                             math.isfinite(x) for x in oz)
@@ -337,9 +356,15 @@ def assign_finishes(vertices, faces, mat_ids, spec):
             out.append(rule["below"] if zmax <= zero else rule["above"])
         elif rule.get("split") == "facade":
             try:
-                out.append(facade_of(spec, facade_key(vertices, f))[1]["finish"])
+                key = facade_key(vertices, f)
+                plain = rule.get("plain") or {}
+                out.append(plain[key] if key in plain else facade_of(spec, key)[1]["finish"])
             except ValueError as e:
                 raise ValueError(f"polygon {i}: material ID {m} (split facade): {e}") from None
+        elif rule.get("split") == "roof":   # AC05 Gate 1: the roof plane of a mixed ID is grey, the rest wall colour
+            n = _newell([vertices[k] for k in f])
+            roof = n is not None and n[2] > 0.999 and min(vertices[k][2] for k in f) >= rule["roof_z_m"]
+            out.append(rule["roof"] if roof else rule["rest"])
         else:
             out.append(rule["finish"])
     return out

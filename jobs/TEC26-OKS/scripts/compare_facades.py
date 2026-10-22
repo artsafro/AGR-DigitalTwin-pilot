@@ -38,7 +38,7 @@ def font(sz):
         return ImageFont.load_default()
 
 
-def slide_boxes(im):
+def slide_boxes(im, gap=10, min_px=40):
     """Bounding boxes (x0, y0, x1, y1 px) of the four blue facade bodies of the slide, in reading order
     (top-left, top-right, bottom-left, bottom-right = spec presentation.quadrants)."""
     im = np.asarray(im).astype(int)
@@ -46,19 +46,30 @@ def slide_boxes(im):
     H, W = blue.shape
     boxes = []
     for r0, r1 in ((0, H // 2), (H // 2, H)):
-        for c0, c1 in ((0, W // 2), (W // 2, W)):
-            ys, xs = np.where(blue[r0:r1, c0:c1])
-            if not len(xs):
-                raise ValueError(f"no blue facade body in slide quadrant rows {r0}:{r1} cols {c0}:{c1}")
-            boxes.append((c0 + xs.min(), r0 + ys.min(), c0 + xs.max() + 1, r0 + ys.max() + 1))
+        # AC05 slide 35: the long facade starts left of W/2, so the bodies are not split at the image centre; each
+        # body = a group of columns holding blue pixels, groups closer than `gap` px merged (outlines, axis lines)
+        groups = []
+        for a, b in joint_count.runs(blue[r0:r1].any(0)):
+            if groups and a - groups[-1][1] <= gap:
+                groups[-1][1] = b
+            else:
+                groups.append([a, b])
+        groups = sorted(sorted(groups, key=lambda g: g[1] - g[0], reverse=True)[:2])
+        if len(groups) < 2 or min(b - a for a, b in groups) < min_px:
+            raise ValueError(f"slide rows {r0}:{r1}: two blue facade bodies expected, column groups {groups}")
+        for a, b in groups:
+            ys = np.where(blue[r0:r1, a:b].any(1))[0]
+            boxes.append((a, r0 + ys.min(), b, r0 + ys.max() + 1))
     return boxes
 
 
-def slide_count(im, box, f, frac=0.9, margin=3):
+def slide_count(im, box, f, frac=0.9, margin=3, skip_inner=0):
     """Ribs drawn on the slide itself: dark runs on the row at `frac` of the body height (above the door) between
-    the body outline and the panel-field outline on each side. The outermost run per side = body outline, the next
-    = field outline (it must lie inside the frame band, < 300 mm from the body edge); every run between the field
-    outlines is one joint line. Scale: body width in px / the drawing's body width (sheet size_mm); the same scale
+    the body outline and the panel-field outline on each side. The outermost run per side = body outline when it sits
+    on the box edge (AC05 slide 35 draws the left body outline red, not dark: then there is none), the next = field
+    outline (it must lie inside the frame band, < 300 mm from the body edge); `skip_inner` more runs per side are the
+    end wall's inner frame (AC05 Б-А), not joints; every run between is one joint line. Scale: body width in px / the
+    drawing's body width (sheet size_mm); the same scale
     measured on the body height is returned as height_scale_ratio (1.0 = one drawing scale). No DWG joint
     positions are used. Raises ValueError when the outlines are missing."""
     im = np.asarray(im)
@@ -68,15 +79,19 @@ def slide_count(im, box, f, frac=0.9, margin=3):
     row = im[y, x0 - margin:x1 + margin].astype(float).sum(-1)
     dark = row < 0.75 * np.median(row)
     cen = [x0 - margin + (a + b - 1) / 2 + 0.5 for a, b in joint_count.runs(dark)]
+    if cen and cen[0] <= x0 + 1:
+        cen = cen[1:]
+    if cen and cen[-1] >= x1 - 1:
+        cen = cen[:-1]
     band = 300 * pxmm
-    if (len(cen) < 4 or not (0 < cen[1] - cen[0] < band) or not (0 < cen[-1] - cen[-2] < band)
-            or cen[0] > x0 + 1 or cen[-1] < x1 - 1):
+    k = 1 + skip_inner
+    if (len(cen) < 2 * k or not (0 < cen[0] - x0 < band) or not (0 < x1 - cen[-1] < band)):
         raise ValueError(f"slide facade {box}: body/field outline not found on row y={y} (runs {len(cen)})")
-    joints = cen[2:-2]
-    field_mm = (cen[-2] - cen[1]) / pxmm
+    joints = cen[k:-k]
+    field_mm = (cen[-1] - cen[0]) / pxmm
     return {"joints": len(joints), "field_mm": field_mm, "step_mm": field_mm / (len(joints) + 1), "row_y": y,
             "px_per_mm": pxmm, "height_scale_ratio": ((y1 - y0) / f["size_mm"][1]) / pxmm,
-            "joint_x_mm": [round((c - cen[1]) / pxmm, 1) for c in joints]}
+            "joint_x_mm": [round((c - cen[0]) / pxmm, 1) for c in joints]}
 
 
 def panel_slide(im, box, f, pxm):
@@ -134,8 +149,10 @@ def main(argv):
         sha = hashlib.sha256(fh.read()).hexdigest()
     if sha != pres["image_sha256"]:
         raise SystemExit(f"slide image {pres['image']} sha256 {sha} != spec {pres['image_sha256']}")
-    if sorted(pres["quadrants"]) != sorted(spec["facades"]):
-        raise SystemExit(f"slide quadrants {pres['quadrants']} != spec facades {sorted(spec['facades'])}")
+    plain = spec.get("facades_plain") or {}       # AC05 А-Б: a slide facade without a sandwich rib field (gate)
+    if set(plain) & set(spec["facades"]) or sorted(pres["quadrants"]) != sorted(list(spec["facades"]) + list(plain)):
+        raise SystemExit(f"slide quadrants {pres['quadrants']} != spec facades {sorted(spec['facades'])} + "
+                         f"facades_plain {sorted(plain)} (each once)")
     meta = json.load(open(os.path.join(rdir, "renders.json"), encoding="utf-8"))
     vrb = json.load(open(vrb_p, encoding="utf-8"))
     vmain = next(o for o in vrb["objects"] if not o["name"].startswith("UCX_"))
@@ -155,7 +172,8 @@ def main(argv):
         # the body outline (frame outer faces) for the crop: field +- the drawing's frame posts
         blo, bhi = lo - f["frame_bands_mm"]["left"] / 1000, hi + f["frame_bands_mm"]["right"] / 1000
         ground = min(p["bbox_mm"][1] for p in f["plinth"]) / 1000
-        sc = slide_count(slide, boxes[name], f)
+        sc = slide_count(slide, boxes[name], f, frac=fc.get("slide_row_frac", 0.9),
+                         skip_inner=fc.get("slide_skip_inner", 0))
         counts = {"panels": ["slide", "vpm", "npm"], "slide_joints": sc["joints"], "slide_step_mm": sc["step_mm"],
                   "slide_field_mm": sc["field_mm"], "slide_height_scale_ratio": sc["height_scale_ratio"],
                   "slide_box_px": [int(v) for v in boxes[name]], "contract_ribs": fc["ribs"],
@@ -197,9 +215,39 @@ def main(argv):
         counts["png"] = os.path.basename(png)
         report["facades"][name] = counts
         print("COMPARE", name, {k: v for k, v in counts.items() if not k.endswith("_rows")})
+    body = V[V[:, 2] > 0.0]
+    for name, pc in plain.items():
+        f, key = sheet["facades"][name], pc["normal"]
+        if key not in VIEW or any(fc["normal"] == key for fc in spec["facades"].values()):
+            raise SystemExit(f"facades_plain {name}: normal {key!r} must be a view without a rib facade")
+        axis = 1 if key in ("+x", "-x") else 0
+        lo, hi = body[:, axis].min(), body[:, axis].max()
+        ground = min(p["bbox_mm"][1] for p in f["plinth"]) / 1000
+        panels = [(f"Слайд {pres['slide']} презентации", panel_slide(slide, boxes[name], f, pxm))]
+        for tag in ("vpm", "npm"):
+            view = meta[tag]["views"][VIEW[key]]
+            panels.append((f"{tag.upper()} рендер", panel_render(os.path.join(rdir, view["png"]), view, key, lo, hi,
+                                                                 pxm, ground)))
+        gap, lab = 24, 70
+        sheet_img = Image.new("RGB", (sum(p.width for _, p in panels) + gap * (len(panels) + 1),
+                                      max(p.height for _, p in panels) + lab + 50), (255, 255, 255))
+        d = ImageDraw.Draw(sheet_img)
+        d.text((gap, 10), f"Фасад {name}: слайд и рендеры в одном масштабе {pxm:.0f} px/м, ±0.000 на одной высоте",
+               fill=(0, 0, 0), font=font(22))
+        x = gap
+        for title, p in panels:
+            sheet_img.paste(p, (x, 45))
+            d.text((x, 45 + p.height + 6), title, fill=(0, 0, 0), font=font(18))
+            d.text((x, 45 + p.height + 30), pc["label"], fill=(0, 0, 0), font=font(16))
+            x += p.width + gap
+        png = os.path.join(out, f"compare_{VIEW[key]}_{name}.png")
+        sheet_img.save(png, optimize=True)
+        report["facades"][name] = {"plain": True, "why": pc.get("why"), "label": pc["label"], "ground_m": ground,
+                                   "slide_box_px": [int(v) for v in boxes[name]], "png": os.path.basename(png)}
+        print("COMPARE", name, "plain:", pc["label"])
     with open(os.path.join(out, "compare.json"), "w", encoding="utf-8") as fh:
         json.dump(report, fh, ensure_ascii=False, indent=1)
-    return 0 if all(c["match"] for c in report["facades"].values()) else 1
+    return 0 if all(c["match"] for c in report["facades"].values() if not c.get("plain")) else 1
 
 
 if __name__ == "__main__":

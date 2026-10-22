@@ -105,7 +105,10 @@ def make_user_vjoints(t, size):
     jw = t.get("joint_half_mm", 4) * size / (t["S"] * 1000)  # half joint width in px
     joint = np.abs(p + 0.5) < jw
     extra = joint & ~src_joint
-    col[:, extra] = np.median(jcol, 0)
+    jrgb = np.array(t["joint_rgb"], float) if "joint_rgb" in t else np.median(jcol, 0)
+    col[:, extra] = jrgb
+    if "joint_rgb" in t:  # TEC26 rule (AC07 review 2026-10-22): joints read dark and crisp as on the slide
+        col[:, joint] = jrgb
     h = np.zeros((size, size))
     h[:, joint] = -3.0
     rough = np.full((size, size), t["rough"])
@@ -115,7 +118,7 @@ def make_user_vjoints(t, size):
         z = (size - np.arange(size) - 0.5) * t["S"] / size          # world z of each tile row
         w = t.get("joint_half_mm", 4) / 1000
         rows = ((z >= oz[0]) & (z <= oz[0] + w)) | ((z >= oz[1] - w) & (z <= oz[1]))
-        col[rows, :] = np.median(jcol, 0)
+        col[rows, :] = jrgb
         h[rows, :] = -3.0
         rough[rows, :] = 0.9
     dif = np.clip(col, 0, 255).round().astype(np.uint8)

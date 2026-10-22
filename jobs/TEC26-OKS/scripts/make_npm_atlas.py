@@ -40,7 +40,8 @@ def main(spec_path, out):
         cx, cy = (k % COLS) * CELL, (k // COLS) * CELL      # cell origin, image rows from the top
         if t["kind"] == "full":
             # >= 1.5 px joints whatever metres the region spans (TEC26: S may exceed KPP's 4.096 m)
-            tt = dict(t, joint_half_mm=max(NPM_JOINT_HALF_MM, math.ceil(750 * t.get("S", 4.096) / REGION)))
+            tt = dict(t, joint_half_mm=max(NPM_JOINT_HALF_MM, math.ceil(750 * t.get("S", 4.096) / REGION),
+                                           t.get("npm_joint_half_mm", 0)))   # AC05: wider so NPM joints read dark
             d, alpha, _, _ = mt.make_full(tt, spec["size_full"])
             reg = np.asarray(Image.fromarray(d, "RGB").resize((REGION, REGION), Image.LANCZOS))
             if alpha is not None:

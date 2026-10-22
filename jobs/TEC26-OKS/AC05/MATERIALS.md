@@ -174,3 +174,16 @@ Focused test seam: this issue's `materials.json` + report; no shared validator o
 No open Gate-1 question remains. The first answer's solid-panel line is superseded for blue panels, and the 0.60 m step is superseded by the measured sheet. Current rule: **vertical joints only; rib count and step from each facade colour-solution sheet; no horizontal joints; drop below +-0.000 plain**. ID1 roof is KPP RAL7004 metal, no joints; ID1 wall at and above ±0.000 is RAL5015 with vertical joints only; the drop at and below ±0.000 is plain without joints; the plinth strip is grey; ID2 is RAL5015 vertical joints only; IDs 3–4 are KPP RAL7004 metal, including the gate infill, no joints; slots 5–10 stay unused. The current sheet is `gate1-v007/contact-sheet.png`. No model build and no mesh cut is authorized in this card. Technical QA and user acceptance remain separate. `passed=false`.
 
 Native-image follow-up RED: commit `0ae100c`, **1 failed / 1 passed** (missing native-render receipt), prior to the new bundle. Final focused `suite_slot.py` run: **2 passed in 0.08s**. Independent current-bundle probe: **25/25 hashes**, **4/4 source hashes**, **3/3 nonaliased source/copies**, **4/4 ID counts/areas**, **2/2 exact KPP images**, **30/30 swatch samples**. Perimeter-drop span probe: **4/4**. Native Blender process exited **0**, six rendered images read back, final sheet visually checked for whole-object framing and correct depth. Earlier software/framing versions are not current Gate evidence.
+
+## Build legend (slide 35 + binding legend, build-v004)
+
+Artem 2026-10-22: the «Условные обозначения» legend and presentation slide 35 govern colours [D171]. Every ID/region of the build was checked against this table (`finish_map.validate_legend`) before textures and renders; details and rib counts in `BUILD_REPORT.md`.
+
+| Legend row | Material | RAL | Texture | Finish | Source ID / region | Polygons |
+|---|---|---|---|---|---|---:|
+| Сэндвич-панели (blue ribbed field) | sandwich panel | 5015 | ribbed | PanelVJ45_RAL5015 | ID2, facades 1-2 (+x) / 2-1 (-x) | 16 |
+| Сэндвич-панели (blue ribbed field) | sandwich panel | 5015 | ribbed | PanelVJ14_RAL5015 | ID2, facade Б-А (+y) | 3 |
+| Обрамление (frame band, posts, rails, А-Б strips, drop) | edging | 5015 | plain | Frame_RAL5015 | ID1 except roof (112) + ID2 -y (3) | 115 |
+| Крыльца, двери (door, end gate) | door / gate | 7004 | plain | Door_RAL7004 | ID3 (476) + ID4 (1) | 477 |
+| Кровля (Gate 1) | roof | 7004 | plain | Roof_RAL7004 | ID1 up-facing, z >= 2.89 m | 15 |
+

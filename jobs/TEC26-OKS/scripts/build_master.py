@@ -57,8 +57,9 @@ names = sorted(spec["finishes"], key=lambda k: spec["finishes"][k]["udim"])
 V = body["vertices"]
 faces, ids = body["faces"], body["mat_ids"]
 fins = finish_map.assign_finishes(V, faces, ids, spec)
-drop = finish_map.perimeter_drop(V, faces, fins, spec["source_ids"]["1"]["below"]) \
-    if spec["source_ids"].get("1", {}).get("split") == "below_zero" else None
+_r1 = spec["source_ids"].get("1", {})
+_drop_fin = {"below_zero": _r1.get("below"), "roof": _r1.get("rest")}.get(_r1.get("split"))   # roof: AC05 drop = wall
+drop = finish_map.perimeter_drop(V, faces, fins, _drop_fin) if _drop_fin else None
 plan_lo, plan_hi = finish_map.body_plan_bbox(V, spec["zero_m"])
 fields = finish_map.field_frames(V, faces, fins, spec, plan_lo, plan_hi) if spec.get("facades") else None
 cut = finish_map.apply_cuts(V, faces, fins, spec, plan_lo, plan_hi) if spec.get("ring_cuts") else \
