@@ -226,5 +226,66 @@
   "dxf": "C:/x/tec26-oks/acad-readback-v001/ac08.dxf",
   "dxf_sha256": "a4950b815cf26e549261a6db4165e34b499e2b0daf6b7acc667ea8303fca8fec",
   "artem_reference": "C:/x/tec26-oks/user-refs/AC08_facades_colour_from_artem.jpg"
- }
+ },
+ "presentation": {
+  "authority": "Artem 2026-10-22 (top precedence, all TEC26): the presentation facade slides «Схема фасадов ... Цветовое решение» decide colours, colour bands, rib direction and rib count/step and which surfaces are blue / light grey / dark grey; the DWG/PDF only where the slide is silent [D171]",
+  "deck": "C:/x/tec26-oks/pptx/deck.pptx",
+  "deck_sha256": "74e50277df5e2dfde3ba7ab945eb6bab45a8fa8c0207d7aca3a136d9656b78ac",
+  "slide": 49,
+  "slide_title": "Контейнер низковольтных комплектных устройств(НКУ). Схема фасадов (на основе М 1:200)",
+  "image": "C:/x/tec26-oks/pptx/facades/slide49.png",
+  "image_member": "ppt/media/image78.png",
+  "image_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd",
+  "quadrants": [
+   "А-Б",
+   "1-2",
+   "Б-А",
+   "2-1"
+  ],
+  "quadrants_doc": "reading order of the four facades on the slide: top-left, top-right, bottom-left, bottom-right (titles «Фасад А-Б / 1-2 / Б-А / 2-1. Цветовое решение»)"
+ },
+ "legend": [
+  {
+   "hatch": "Сэндвич-панель - RAL 5015 (the blue ribbed field of every facade)",
+   "source": "DWG legend «Условные обозначения» (drawing-text, handle 1395) + slide 49",
+   "material": "sandwich panel",
+   "ral": "5015",
+   "texture": "ribbed",
+   "finishes": [
+    "PanelVJ30_RAL5015",
+    "PanelVJ12_RAL5015"
+   ]
+  },
+  {
+   "hatch": "Обрамление сэндвич-стены (frame band around the rib field, corners, top/bottom edging; thin dark outline)",
+   "source": "slide 49 (blue band, no ribs, dark outline) + Artem 2026-10-22 on v008 [D170]",
+   "material": "sandwich wall edging",
+   "ral": "5015",
+   "texture": "plain",
+   "finishes": [
+    "Frame_RAL5015"
+   ]
+  },
+  {
+   "hatch": "Крыльца, двери - RAL 7004",
+   "source": "DWG legend (handle 1397) + slide 49 (grey door on 2-1)",
+   "material": "door",
+   "ral": "7004",
+   "texture": "plain",
+   "finishes": [
+    "Door_RAL7004"
+   ]
+  },
+  {
+   "hatch": "Цоколь - RAL 7004 (grey strip at ±0.000 and below)",
+   "source": "slide 49 (grey strip under every facade) + legend rule Artem 2026-10-22 («Крыльца, двери, цоколь, элементы водосточной системы — RAL 7004»)",
+   "material": "plinth",
+   "ral": "7004",
+   "texture": "plain",
+   "finishes": [
+    "Plinth_RAL7004"
+   ]
+  }
+ ],
+ "legend_doc": "Binding legend (Artem 2026-10-22: «Условные обозначения» of the facade colour sheets, DWG + presentation): every finish belongs to exactly one row; the RAL in the finish name = the row RAL = the KPP colour (kpp_palette); ribbed rows carry the sandwich joint texture (user_vjoints), plain rows none; a sandwich wall never stays untextured. AC08 has no RAL 7047 sandwich and no RAL 9016 glazing frames (slide 49: blue field, blue edging, grey door and plinth only). Checked by finish_map.validate_legend before any texture, build or render."
 }
