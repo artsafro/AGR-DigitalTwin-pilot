@@ -9,7 +9,7 @@ Writes T_<Address>_{Diffuse|ERM|Normal}_1.<UDIM>.png (VPM naming, reg p.34 §4.3
 - alpha only in Diffuse of alpha-cut finishes (0 = void, 255 = solid), reg p.36 §12.
 Procedural, deterministic (fixed seeds). Colours are approximate RAL sRGB, not calibrated samples.
 """
-import json, os, sys
+import json, math, os, sys
 import numpy as np
 from PIL import Image
 
@@ -66,24 +66,33 @@ def load_user_texture(st):
 
 
 def make_user_vjoints(t, size):
-    """TEC26 panels (Artem 2026-10-22): VERTICAL joints only, from the user's texture. Tile column x takes the source
-    column at the same offset from a source joint centre, so joints sit at x = n * period_px (u' = n * P, the joint
-    frame of finish_map.facade_joint_uv) and whole-period u shifts keep the phase; rows are the source rows (no
-    horizontal joints). The user's colour, noise and joint profile are kept unchanged: the panel median must already
-    equal the spec/KPP RGB within 3 levels and the declared joint columns must be dark, else ValueError. A wider
-    `joint_half_mm` (NPM, >= 1.5 px) paints the extra joint width in the source joint median colour."""
+    """TEC26 panels (Artem 2026-10-22): VERTICAL joints only, from the user's texture. The tile period is the facade
+    rib contract P[0] (finish_map.validate_facades: field / ribs from the colour-solution sheet), in px
+    Pp = P[0] * size / S, generally NOT an integer and NOT the source image's own joint spacing (the image gives the
+    look of ONE joint plus colour/noise only - Artem: the repeat comes from the sheet). Tile column x takes the source
+    column at the same integer offset floor(d) from a source joint centre, d = signed distance of the column centre to
+    the nearest tile joint at x = k * Pp; so joints sit at u' = k * P (finish_map.facade_joint_uv), whole-period u
+    shifts keep the phase, the joint profile is copied 1:1 (no resampling) and rows are the source rows (no horizontal
+    joints). The user's colour, noise and joint profile are kept unchanged: the panel median must already equal the
+    spec/KPP RGB within 3 levels and the declared joint columns must be dark, else ValueError. A wider `joint_half_mm`
+    (NPM, >= 1.5 px) paints the extra joint width in the source joint median colour."""
     st = t["source_texture"]
     src = load_user_texture(st)
     H, W = src.shape[:2]
     per, (j0, j1) = st["period_px"], st["first_joint_px"]
+    Pp = t["P"][0] * size / t["S"]
     if H != size or W < 2 * per:
         raise ValueError(f"source texture {W}x{H}: needs height {size} and >= 2 joint periods")
-    if abs(per - t["P"][0] * size / t["S"]) > 1e-6:
-        raise ValueError(f"source period {per} px != P {t['P'][0]} m at {size / t['S']:.1f} px/m")
-    ce = (j0 + j1) // 2 + per                  # centre (pixel edge) of the second joint: a full period around it
-    if ce + per // 2 > W:
+    if not (math.isfinite(Pp) and Pp >= 4 * (j1 - j0)):
+        raise ValueError(f"tile period {Pp} px leaves no panel between {j1 - j0} px joints")
+    ce = (j0 + j1) // 2 + per                  # centre (pixel edge) of the second joint: room on both sides
+    half = int(math.ceil(Pp / 2)) + 1
+    if ce + half > W:
         ce -= per
-    p = (np.arange(size) + per // 2) % per - per // 2          # signed px offset of each tile column from its joint
+    if ce - half < 0 or ce + half > W:
+        raise ValueError(f"source texture {W} px: no source joint with {half} px of panel on both sides")
+    d = (np.arange(size) + 0.5 + Pp / 2) % Pp - Pp / 2           # signed distance (px) to the nearest tile joint
+    p = np.floor(d).astype(int)                                # integer source offset (1:1 joint profile)
     col = src[:, ce + p]
     src_joint = (p >= j0 - (j0 + j1) // 2) & (p < j1 - (j0 + j1) // 2)
     panel = col[:, ~src_joint].reshape(-1, 3)
@@ -101,6 +110,14 @@ def make_user_vjoints(t, size):
     h[:, joint] = -3.0
     rough = np.full((size, size), t["rough"])
     rough[:, joint] = 0.9
+    oz = t.get("outline_z_m")
+    if oz:  # the sheet's thin dark field outline: joint_half_mm inside the field's bottom and top edge (v = world z)
+        z = (size - np.arange(size) - 0.5) * t["S"] / size          # world z of each tile row
+        w = t.get("joint_half_mm", 4) / 1000
+        rows = ((z >= oz[0]) & (z <= oz[0] + w)) | ((z >= oz[1] - w) & (z <= oz[1]))
+        col[rows, :] = np.median(jcol, 0)
+        h[rows, :] = -3.0
+        rough[rows, :] = 0.9
     dif = np.clip(col, 0, 255).round().astype(np.uint8)
     erm = np.stack([np.zeros((size, size)), rough * 255, np.full((size, size), t["metal"] * 255)], -1)
     return dif, None, erm.round().astype(np.uint8), normal_from_height(h, 0.5)

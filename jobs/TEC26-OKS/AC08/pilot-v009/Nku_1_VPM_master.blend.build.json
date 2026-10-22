@@ -1,0 +1,266 @@
+{
+ "dump": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_e9cc2568\\jobs\\TEC26-OKS\\AC08\\max-dump-008.json",
+ "spec": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_e9cc2568\\jobs\\TEC26-OKS\\AC08\\vpm_textures.json",
+ "blend": "C:\\x\\tec26-oks\\AC08\\pilot-v009\\build\\Nku_1_VPM_master.blend",
+ "source": {
+  "name": "АС.08",
+  "vertices": 193,
+  "polygons": 180
+ },
+ "master_faces": 199,
+ "non_quads": 12,
+ "ring_cuts": [
+  {
+   "axis": 0,
+   "X": 33.36725094009179,
+   "ring_faces": 19,
+   "source_faces": [
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    71,
+    72,
+    84,
+    91,
+    101,
+    108,
+    117,
+    120,
+    166,
+    176
+   ],
+   "new_vertices": 20,
+   "planned_for": 34,
+   "finish": "PanelVJ30_RAL5015",
+   "u_joint_m": -2.343802
+  }
+ ],
+ "cut_vertices_added": 20,
+ "master_tris": 386,
+ "max_edge_m": 2.515,
+ "faces_per_finish": {
+  "PanelVJ30_RAL5015": 15,
+  "PanelVJ12_RAL5015": 4,
+  "Plinth_RAL7004": 18,
+  "Frame_RAL5015": 124,
+  "Door_RAL7004": 38
+ },
+ "uv_qa": {
+  "Frame_RAL5015": {
+   "udim": 1004,
+   "faces": 124,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  },
+  "PanelVJ12_RAL5015": {
+   "udim": 1002,
+   "faces": 4,
+   "overflow": 0,
+   "min_margin_px": 113.1
+  },
+  "PanelVJ30_RAL5015": {
+   "udim": 1001,
+   "faces": 15,
+   "overflow": 0,
+   "min_margin_px": 113.1
+  },
+  "Door_RAL7004": {
+   "udim": 1005,
+   "faces": 38,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  },
+  "Plinth_RAL7004": {
+   "udim": 1003,
+   "faces": 18,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  }
+ },
+ "density_px_per_m": {
+  "PanelVJ12_RAL5015": [
+   1000,
+   1000
+  ],
+  "PanelVJ30_RAL5015": [
+   1000,
+   1000
+  ]
+ },
+ "ucx": [
+  {
+   "source": "Colizii_044",
+   "name": "UCX_SM_Nku_1_Main_001",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  }
+ ],
+ "perimeter_drop": {
+  "x-": {
+   "length_m": 2.438,
+   "covered_m": 2.438,
+   "ok": true
+  },
+  "x+": {
+   "length_m": 2.438,
+   "covered_m": 2.438,
+   "ok": true
+  },
+  "y-": {
+   "length_m": 6.0588,
+   "covered_m": 6.0588,
+   "ok": true
+  },
+  "y+": {
+   "length_m": 6.0588,
+   "covered_m": 6.0588,
+   "ok": true
+  }
+ },
+ "facade_fields": {
+  "Б-А": {
+   "normal": "+x",
+   "finish": "PanelVJ12_RAL5015",
+   "faces": 2,
+   "axis": "y",
+   "field_lo": -1.002305,
+   "field_hi": 1.233027,
+   "field_m": 2.235332,
+   "ribs": 12,
+   "pitch_m": 0.186278,
+   "joints_world": [
+    -0.816028,
+    -0.62975,
+    -0.443472,
+    -0.257195,
+    -0.070917,
+    0.115361,
+    0.301638,
+    0.487916,
+    0.674194,
+    0.860471,
+    1.046749
+   ]
+  },
+  "1-2": {
+   "normal": "+y",
+   "finish": "PanelVJ30_RAL5015",
+   "faces": 6,
+   "axis": "x",
+   "field_lo": 31.023449,
+   "field_hi": 36.882954,
+   "field_m": 5.859505,
+   "ribs": 30,
+   "pitch_m": 0.195317,
+   "joints_world": [
+    31.218766,
+    31.414083,
+    31.609399,
+    31.804716,
+    32.000033,
+    32.19535,
+    32.390667,
+    32.585984,
+    32.7813,
+    32.976617,
+    33.171934,
+    33.367251,
+    33.562568,
+    33.757885,
+    33.953201,
+    34.148518,
+    34.343835,
+    34.539152,
+    34.734469,
+    34.929786,
+    35.125102,
+    35.320419,
+    35.515736,
+    35.711053,
+    35.90637,
+    36.101687,
+    36.297003,
+    36.49232,
+    36.687637
+   ]
+  },
+  "А-Б": {
+   "normal": "-x",
+   "finish": "PanelVJ12_RAL5015",
+   "faces": 2,
+   "axis": "y",
+   "field_lo": -1.002305,
+   "field_hi": 1.233027,
+   "field_m": 2.235332,
+   "ribs": 12,
+   "pitch_m": 0.186278,
+   "joints_world": [
+    -0.816027,
+    -0.62975,
+    -0.443472,
+    -0.257194,
+    -0.070917,
+    0.115361,
+    0.301639,
+    0.487916,
+    0.674194,
+    0.860472,
+    1.046749
+   ]
+  },
+  "2-1": {
+   "normal": "-y",
+   "finish": "PanelVJ30_RAL5015",
+   "faces": 5,
+   "axis": "x",
+   "field_lo": 31.023449,
+   "field_hi": 36.882954,
+   "field_m": 5.859505,
+   "ribs": 30,
+   "pitch_m": 0.195317,
+   "joints_world": [
+    31.218766,
+    31.414083,
+    31.609399,
+    31.804716,
+    32.000033,
+    32.19535,
+    32.390667,
+    32.585984,
+    32.7813,
+    32.976617,
+    33.171934,
+    33.367251,
+    33.562568,
+    33.757885,
+    33.953201,
+    34.148518,
+    34.343835,
+    34.539152,
+    34.734469,
+    34.929786,
+    35.125102,
+    35.320419,
+    35.515736,
+    35.711053,
+    35.90637,
+    36.101687,
+    36.297003,
+    36.49232,
+    36.687637
+   ]
+  }
+ }
+}

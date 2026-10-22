@@ -7,6 +7,10 @@ Scope (Artem 2026-10-22): geometry is the source's - `geometry_source_plus_ring_
 with the Max dump (all source vertex positions after the plan-centre pivot shift; new vertices only with spec
 `ring_cuts` and only ON source edges; every triangle inside one source polygon, areas covering it exactly) and
 `cuts_at_joints` puts every new vertex on a panel edge at a joint; geometry findings are reported, never repaired.
+`facade_joints_{vpm,npm}` (Artem 2026-10-22 rework: rib count per facade from the colour-solution sheet): per spec
+facade the joints the DELIVERED mesh shows - delivered UVs, delivered VPM tiles from the ZIP / the NPM atlas, sampled
+along two rows of the panel field (joint_count.mesh_facade_report) - must be exactly ribs - 1 at field_lo + k * field /
+ribs (VPM within 3 mm, NPM within 12 mm = 1.2 atlas px), symmetric, with no horizontal joint.
 Exit 0 only when every check passes; 1 when a check fails (report still written); 2 on bad input (nothing written).
 """
 import io
@@ -23,6 +27,7 @@ from dt_ai.ops.inv_xview import mesh_report
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import finish_map  # noqa: E402
+import joint_count  # noqa: E402
 
 TRI_BUDGET = 150_000  # KPP1 limit per OKS (jobs/KPP1/REPORT.md §2)
 
@@ -181,11 +186,13 @@ def geometry_report(src_v, src_faces, out_v, shift, cuts_allowed, tol=2e-4):
 
 def cut_joint_report(src_v, src_faces, expected, spec, out_v, shift, tol=2e-4):
     """Every new vertex on an edge of a patterned (facade_uv) source polygon sits on a joint of that polygon's joint
-    frame (|u' - n P| <= half joint width). Vacuous when no new vertex exists (no cut needed)."""
+    frame - the facade panel field (finish_map.field_frames) when the spec has a facades contract - (|u' - n P| <= half
+    joint width). Vacuous when no new vertex exists (no cut needed)."""
     new, _ = _new_vertices(src_v, out_v, shift, tol)
     sv = np.asarray(src_v, float)
     lo, hi = finish_map.body_plan_bbox(src_v, spec["zero_m"])
     pat = set(spec.get("facade_uv", {}))
+    frames = finish_map.field_frames(src_v, src_faces, expected, spec, lo, hi)[0] if spec.get("facades") else None
     checked, off = 0, []
     for q in new:
         for pi, f in enumerate(src_faces):
@@ -193,7 +200,7 @@ def cut_joint_report(src_v, src_faces, expected, spec, out_v, shift, tol=2e-4):
                                                   for k in range(len(f))):
                 continue
             t = spec["finishes"][expected[pi]]
-            axis, sign, origin = finish_map.joint_origin(src_v, f, lo, hi)
+            axis, sign, origin = frames[pi] if frames else finish_map.joint_origin(src_v, f, lo, hi)
             u = sign * (q[axis] - origin)
             r = u % t["P"][0]
             dist = min(r, t["P"][0] - r)
@@ -202,6 +209,38 @@ def cut_joint_report(src_v, src_faces, expected, spec, out_v, shift, tol=2e-4):
                 off.append({"source_polygon": pi, "u_m": round(float(u), 4), "off_joint_m": round(float(dist), 4)})
     return {"ok": not off, "new_vertices": len(new), "checked_on_patterned_edges": checked, "off_joint": off[:10],
             "off_joint_count": len(off)}
+
+
+def facade_joint_checks(spec, vmain, nmain, vpm_tiles, atlas_img, atlas):
+    """joint_count.mesh_facade_report per spec facade for the VPM (UDIM tiles) and NPM (atlas) readback meshes."""
+    fin = spec["finishes"]
+    out = {"vpm": {}, "npm": {}}
+
+    def vpm_tile_of(u, v):
+        groups = []
+        tu, tv = np.floor(u).astype(int), np.floor(v).astype(int)
+        for a, b in sorted(set(zip(tu.tolist(), tv.tolist()))):
+            idx = np.where((tu == a) & (tv == b))[0]
+            img = vpm_tiles.get(1001 + a + 10 * b)
+            if img is not None:
+                groups.append((idx, img, u[idx] - a, v[idx] - b))
+        return groups
+
+    def npm_tile_of(u, v):
+        return [(np.arange(len(u)), atlas_img, u, v)]
+
+    for name, fc in spec["facades"].items():
+        t, r = fin[fc["finish"]], atlas["finishes"].get(fc["finish"])
+        vuv = [np.asarray(x, float) for x in vmain["face_uvs"]]
+        nuv = [np.asarray(x, float) for x in nmain["face_uvs"]]
+        vkeep = lambda i, ud=t["udim"]: int(1001 + np.floor(vuv[i].mean(0)[0]) + 10 * np.floor(vuv[i].mean(0)[1])) == ud  # noqa: E731
+        nkeep = (lambda i: False) if r is None else (  # noqa: E731
+            lambda i, r=r: r["u0"] <= nuv[i].mean(0)[0] <= r["u0"] + r["size"] and r["v0"] <= nuv[i].mean(0)[1] <= r["v0"] + r["size"])
+        out["vpm"][name] = joint_count.mesh_facade_report(vmain["vertices"], vmain["faces"], vuv, vkeep, fc["normal"],
+                                                          fc["ribs"], vpm_tile_of, tol=0.003)
+        out["npm"][name] = joint_count.mesh_facade_report(nmain["vertices"], nmain["faces"], nuv, nkeep, fc["normal"],
+                                                          fc["ribs"], npm_tile_of, tol=0.012)
+    return out
 
 
 def sample(img, uv):
@@ -409,6 +448,15 @@ def main(argv):
           {"patterned_tris_expected": need, "measured": measured, "degenerate": degenerate,
            "off_contract": len(off), "examples": off[:5],
            "range_px_per_m": {k: [round(a, 1), round(b, 1)] for k, (a, b) in dens.items()}})
+    # rib count per facade on the delivered meshes and textures (VPM tiles from the ZIP, NPM atlas)
+    if spec.get("facades"):
+        with zipfile.ZipFile(vzip) as z:
+            vt = {t["udim"]: np.asarray(Image.open(io.BytesIO(z.read(f"T_{A}_Diffuse_1.{t['udim']}.png"))).convert("RGB"))
+                  for t in fin.values() if f"T_{A}_Diffuse_1.{t['udim']}.png" in z.namelist()}
+        rep_f = facade_joint_checks(spec, vmain, nmain, vt, atlas_img, atlas)
+        for tag in ("vpm", "npm"):
+            check(f"facade_joints_{tag}", all(r["ok"] for r in rep_f[tag].values()) and len(rep_f[tag]) == len(spec["facades"]),
+                  rep_f[tag])
     # ZIP contents and PNG headers
     with zipfile.ZipFile(vzip) as z:
         names = sorted(z.namelist())
