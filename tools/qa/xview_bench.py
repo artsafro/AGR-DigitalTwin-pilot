@@ -19,7 +19,8 @@ Fixtures (all must match exactly; the oracle is the stored xView list, never a p
 Metric: `cpu_s` = median of `--reps` `time.process_time()` runs of the candidate on tow02_v005 (single process);
 `wall_s` = median `time.perf_counter()` for information. Data root: `--data` or env `XVIEW_BENCH_DATA`
 (default the primary checkout's git-ignored outputs on this PC); SHA-256 of every input is printed.
-Exit 0: every fixture equal; 1: a parity mismatch or a candidate error; 2: missing / malformed input.
+Exit 0: every fixture equal; 1: a parity mismatch or a candidate error; 2: missing / malformed input, an input that
+changed during the run, or `--out` that is an input or the bench itself (checked before anything is written).
 Pattern: none | new-case: frozen parity + CPU benchmark for the xView-exact overlap check (#553).
 """
 import argparse
@@ -143,6 +144,15 @@ def fixtures(root: Path, ground: Path):
     return out + synthetic(), inputs
 
 
+def _aliases(out: Path, paths) -> bool:
+    """`out` is one of `paths` (same resolved path, symlink or hardlink)."""
+    ro = out.resolve()
+    for p in paths:
+        if ro == p.resolve() or (out.exists() and p.exists() and os.path.samefile(out, p)):
+            return True
+    return False
+
+
 def run(fn, v, f, tol):
     c0, w0 = time.process_time(), time.perf_counter()
     r = fn(v, f, tol)
@@ -173,12 +183,15 @@ def main(argv=None) -> int:
         return 2
     try:
         fx, inputs = fixtures(Path(a.data), Path(a.ground))
+        before = {p.name: sha(p) for p in inputs}
+        if a.out and _aliases(Path(a.out), inputs + [Path(__file__)]):
+            raise BenchError(f"--out {a.out} is an input or the bench itself")
     except (BenchError, OSError, ValueError, KeyError) as e:
         print(f"bench input error: {e}", file=sys.stderr)
         return 2
     fn = baseline_lists if a.candidate == "baseline" else importlib.import_module(a.candidate).xview_lists
     res = {"candidate": a.candidate, "bench_sha256": sha(Path(__file__)),
-           "inputs": {p.name: sha(p) for p in inputs}, "fixtures": {}}
+           "inputs": before, "fixtures": {}}
     ok = True
     for name, v, f, of, ov, tol in fx:
         reps = a.reps if name == "tow02_v005" else 1
@@ -199,6 +212,9 @@ def main(argv=None) -> int:
         ok &= rows["equal"]
         res["fixtures"][name] = rows
         print(name, json.dumps({k: x for k, x in rows.items() if x not in ([],)}), flush=True)
+    if {p.name: sha(p) for p in inputs} != before:
+        print("bench input error: an input changed during the run", file=sys.stderr)
+        return 2
     t = res["fixtures"]["tow02_v005"]
     res.update({"parity": ok, "cpu_s": t["cpu_s"], "wall_s": t["wall_s"]})
     print(f"METRIC cpu_s={t['cpu_s']} wall_s={t['wall_s']} parity={'PASS' if ok else 'FAIL'}")

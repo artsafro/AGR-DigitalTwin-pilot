@@ -1,6 +1,7 @@
 """inv_xview_fast (#553): exact parity with the inv_xview contact rule (xView selection), fail-closed input, bench."""
 import importlib.util
 import itertools
+import os
 from pathlib import Path
 
 import numpy as np
@@ -207,3 +208,54 @@ def test_random_t_vertices_on_edges_are_boundary_contacts_like_the_baseline():
         v = np.array([a, b, c, p, p + 0.3 * u, p + 0.3 * np.cross(n, u)])
         x = assert_parity(v, ((0, 1, 2), (3, 4, 5)))
         assert x["xview_faces"] == (1, 2)
+
+
+@pytest.fixture
+def fake_bench(tmp_path, monkeypatch):
+    """The bench on the synthetic cases only (the real fixtures are local data), with one fake input file."""
+    inp = tmp_path / "oracle.keep"
+    inp.write_text("oracle", encoding="utf-8")
+    cases = bench.synthetic()
+    cases = [("tow02_v005", *cases[0][1:])] + cases[1:]
+    monkeypatch.setattr(bench, "fixtures", lambda data, ground: (cases, [inp]))
+    monkeypatch.syspath_prepend(str(tmp_path))
+    return tmp_path, inp
+
+
+def test_bench_synthetic_run_passes_and_writes_out(fake_bench):
+    tmp, _ = fake_bench
+    assert bench.main(["--candidate", "dt_ai.ops.inv_xview_fast", "--reps", "1", "--out", str(tmp / "r.json")]) == 0
+    assert '"parity": true' in (tmp / "r.json").read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("alias", ["same", "hardlink", "bench"])
+def test_bench_out_that_is_an_input_exits_2_and_writes_nothing(fake_bench, alias):
+    tmp, inp = fake_bench
+    out = {"same": inp, "bench": Path(bench.__file__)}.get(alias)
+    if alias == "hardlink":
+        out = tmp / "link.keep"
+        os.link(inp, out)
+    before = Path(out).read_bytes()
+    assert bench.main(["--candidate", "baseline", "--reps", "1", "--out", str(out)]) == 2
+    assert Path(out).read_bytes() == before
+
+
+def test_bench_crashing_candidate_is_a_failure(fake_bench):
+    tmp, _ = fake_bench
+    (tmp / "crash_cand.py").write_text("def xview_lists(v, f, tol):\n    raise RuntimeError('boom')\n")
+    assert bench.main(["--candidate", "crash_cand", "--reps", "1"]) == 1
+
+
+def test_bench_wrong_candidate_is_a_failure(fake_bench):
+    tmp, _ = fake_bench
+    (tmp / "empty_cand.py").write_text(
+        "def xview_lists(v, f, tol):\n    return {'xview_faces': (), 'vertices': (), 'vertex_pairs': ()}\n")
+    assert bench.main(["--candidate", "empty_cand", "--reps", "1"]) == 1
+
+
+def test_bench_input_changed_during_the_run_exits_2(fake_bench):
+    tmp, inp = fake_bench
+    (tmp / "mut_cand.py").write_text(
+        "from pathlib import Path\nfrom dt_ai.ops.inv_xview_fast import xview_lists as f0\n"
+        f"def xview_lists(v, f, tol):\n    Path({str(inp)!r}).write_text('changed')\n    return f0(v, f, tol)\n")
+    assert bench.main(["--candidate", "mut_cand", "--reps", "1"]) == 2
