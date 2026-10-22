@@ -3,7 +3,8 @@
 **Building (native DWG title):** «Локальные очистные сооружения поверхностных сточных вод».
 Job `tec26-oks`, issue #561. Base `origin/main` at intake and resume:
 `442f0b695a91f9abc180783c26978fbe85fefcf9`.
-**Gate 1: awaiting Artem. No material assignment, model change or NPM/VPM build performed.**
+**Gate 1: `approved-gate1` (Artem, 2026-10-22, orchestrator relay). `delivery_passed` remains false. Technical QA and publication are separate.**
+Only paint is approved. Geometry, topology, UCX and multisub IDs stay exactly as in the source scene. VPM/NPM (UDIM/atlas) of this building are built by a separate build card, not here.
 
 ## Sources and precedence
 
@@ -69,26 +70,39 @@ Empty Multi/Sub slots **6–10** have no material and no assigned faces; they st
 17 collision meshes: handles **346–362**, same layer; all retained in the census inventory,
 not included in finish-area sums or textured. UCX acceptance is not certified by this material report.
 
-## Proposed ID mapping
+## Approved ID mapping
 
-**All rows are proposals awaiting approval**, not a claim that source diagnostic colours prove RAL.
+**Gate 1 paint is approved. Rows are not a delivery pass**, and source diagnostic colours still do not prove RAL.
 Areas are snapshot triangle areas in m², not a facade bill of quantities.
 `only-N.png` isolates the actual face set for each ID. Blender **5.1.2 Workbench** native renders
 use the census world vertices without changing geometry; each image pairs depth-correct ID colours
 with a plain shaded view from the same orthographic camera. UCX are excluded. The diagnostic perimeter
 line is at **±0.000 m**, not a geometry cut. No .blend or delivery model was saved.
 
-| ID / source material | Polygon faces / triangles | Area m² | Geometric reading | Proposed finish | Map type | Evidence / limits |
+| ID / source material | Polygon faces / triangles | Area m² | Geometric reading | Approved finish | Map type | Evidence / limits |
 |---|---:|---:|---|---|---|---|
-| 1 / `1` | 439 / 780 | 179.668028 | Outer structural strips/enclosure, roof, canopy and deep base | RAL5015 shell/roof proposal; full perimeter drop uses adjacent-wall blue | solid | `170B10`, `only-1.png`; operator relay of Artem decision, 2026-10-22: retain drop with adjacent-wall finish |
-| 2 / `Material #36` | 19 / 38 | 82.702408 | Broad recessed wall-panel infill | Sandwich RAL5015 | solid | `170B10`, `only-2.png`; Q4: no invented cassette grid |
-| 3 / `Material #37` | 2 / 4 | 0.238398 | Two small panes in the openings | `M_Glass_01`, NPM opacity 0.5 | glass | `only-3.png`, KPP glass policy in orchestrator comment; not a RAL claim |
-| 4 / `Material #38` | 166 / 332 | 2.934883 | Door and small opening frames | Door RAL7004; propose same grey for frames | metal | `170B10`, `only-4.png`; Q3: frame colour not explicitly specified by legend |
+| 1 / `1` | 439 / 780 | 179.668028 | Outer structural strips/enclosure, roof, canopy and deep base | Mixed, same ID: roof and frame/carcass RAL7004; wall panels RAL5015 with vertical joints; below-grade drop RAL5015 plain. Face groups unresolved | mixed | `170B10`, `only-1.png`; regions below. Geometry JSON does not label these parts |
+| 2 / `Material #36` | 19 / 38 | 82.702408 | Broad recessed wall-panel infill | Sandwich RAL5015, vertical joints only | vertical_joints | `170B10`, `only-2.png`; Q4 closed by joint_spec |
+| 3 / `Material #37` | 2 / 4 | 0.238398 | Two small panes in the openings | `M_Glass_01`, NPM opacity 0.5, glass as KPP | glass | `only-3.png`, KPP glass policy; not a RAL claim |
+| 4 / `Material #38` | 166 / 332 | 2.934883 | Door and small opening frames | RAL7004, including small frames | metal | `170B10`, `only-4.png`; Q3 closed. KPP grey tile 1010 |
 | 5 / `Material #39` | 1926 / 3852 | 24.248557 | Roof railings, ladder/cage assembly | RAL1021 | metal | `170B10`, `only-5.png`; railing geometry is already present, no alpha/perforation map invented |
 
-**Perimeter drop resolved by Artem (operator relay, 2026-10-22):** retain the part below ±0.000
-in both VPM and NPM; use the same finish as the adjacent facade, not a separate new ID. For AC04
-this is the ID1 blue RAL5015 proposal. The former Q2 about a separate plinth finish is withdrawn.
+### ID1 regions (paint only)
+
+Artem allowed different colours inside one multisub ID via UV/atlas regions or face groups, without changing geometry. `geometry-174.json` stores vertices, triangles and `material_ids` only, so none of the four parts is an existing face group. Each region is `faces: unresolved` until a face-index or UV-island list already in the evidence names it. Counts and the multisub id stay as read.
+
+| Part | RAL | KPP tile | Why the faces stay unresolved |
+|---|---|---|---|
+| roof | 7004 (same SHA as ID4, tile 1010) | `T_Kpp_1_Diffuse_1.1010.png` | Upward ID1 triangles sit at several heights (about 0.238, 2.397, 3.227, 3.240, 3.387, 3.419 m) and are not labeled roof |
+| frame/carcass | 7004 (same tile 1010) | `T_Kpp_1_Diffuse_1.1010.png` | No frame/carcass subset inside material id 1. ID2 is a different material |
+| wall panels | 5015, vertical joints only (`joint_spec`) | `T_Kpp_1_Diffuse_1.1013.png` is colour only | No wall-panel subset inside ID1. Recessed infill is already ID2 |
+| below-grade drop/plinth | 5015, wall colour, plain, no joints | `T_Kpp_1_Diffuse_1.1013.png` | 48 ID1 triangles cross z=0, so the drop is not its own face set. `perimeter-drop.json` checks wall bottoms and does not list face indices |
+
+**Perimeter drop resolved by Artem (orchestrator relay, 2026-10-22):** retain the part below ±0.000
+in both VPM and NPM; use the same finish as the adjacent wall, not a separate new ID. For AC04
+that wall colour is RAL5015, and below ±0.000 it is plain colour with no joints
+(«ниже ±0.000 без швов (под землёй не видно)»). The former Q2 about a separate plinth finish is withdrawn.
+Which ID1 faces are only the drop is still unresolved (see the region table).
 `perimeter-drop.json` checks all four external shell wall planes: their bottom-edge intervals cover
 the full wall length at z ≤ −1.0 m (coordinate grouping tolerance 0.0001 m); minima are
 −2.003179 to −2.003180 m. **4/4 walls verified.** No cutting, extending, renumbering or fallback assignment. No independent roof membrane brand, frame RAL9016,
@@ -100,17 +114,77 @@ Use exact existing KPP pixels, not a newly sampled PDF or a new RAL conversion:
 
 | RAL | Exact sRGB byte triplet | Existing `maps_kpp` Diffuse tile | Reuse |
 |---|---|---|---|
-| 5015 | 34,113,179 | `T_Kpp_1_Diffuse_1.1013.png` | Solid metal blue; same base tint as cassette 1007, without importing its joints |
-| 7004 | 150,153,146 | `T_Kpp_1_Diffuse_1.1010.png` | Door grey |
+| 5015 | 34,113,179 | `T_Kpp_1_Diffuse_1.1013.png` | Colour reference only for the blue panels. Joints come from the user texture, not from this tile or from cassette 1007 |
+| 7004 | 150,153,146 | `T_Kpp_1_Diffuse_1.1010.png` | Door, porch and ID4 frame grey; same tile for the approved ID1 roof and carcass colour |
 | 1021 | 238,201,0 | `T_Kpp_1_Diffuse_1.1004.png` | Stair yellow |
 
-All pixels in each selected solid tile were checked; SHA256 is in each material's `kpp_reference`.
+All pixels in each selected solid tile were checked; SHA256 is on each single-colour material and on each ID1 region.
 KPP names/UDIM references come from `jobs/KPP1/materials.json` and `scripts/vpm_textures.json`.
 These are the existing project's approximate sRGB RAL representations, **not calibrated physical RAL**.
 No KPP cassette scale is transferred. Glass uses the named KPP-style material and constant NPM opacity;
 VPM separation/no-map constraints remain for the later build, not certified here.
 
-## Evidence and questions for Artem
+Whole-texture mean versus KPP 5015 is delta approximately (−0.297, −0.990, −1.572), max abs 1.572,
+inside tolerance 2.0. The non-joint field mean is about (34.004, 113.008, 179.014); the joints
+(RGB 12, 40, 63) pull the whole-image mean down to the rounded (34, 112, 177).
+
+## RAL5015 vertical joints (supersedes Gate-1 point 1)
+
+Live rule for ID1 wall panels and ID2. Roof and frame/carcass stay RAL7004 with no panel joints.
+ID5 stays RAL1021 with no panel joints. Geometry is untouched on this card.
+
+Artem, later than Gate 1: «Панели неверные, должны быть вертикальные швы только; текстуру пришлю; если не влезает, можно аккуратно порезать через loop или ring» and «ниже ±0.000 без швов (под землёй не видно)».
+
+| Rule | Value |
+|---|---|
+| `map_type` | `vertical_joints` |
+| orientation | vertical only; no horizontal joints |
+| step | `joint_spec.per_facade`, measured on this building's own colour sheet. No fixed module. The texture period is not a fallback |
+| joint width | 8 mm |
+| texel | 1000 px/m (KPP VPM on a 4K UDIM). A 0.20 m step is about 200 px. NPM atlas joints at least 1.5 px |
+| phase | symmetric in the panel field, not from tiling the source |
+| below ±0.000 | plain colour, no joints |
+| source | `C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png` |
+| SHA256 | `2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece` |
+
+Measured on that file (PIL/numpy): 4096×4096 RGB, 1010080 bytes, mean RGB (33.703318, 112.010291, 177.427655), rounded (34, 112, 177). Seven vertical joints, each 8 px, period 600 px, x0 at 266, 866, 1466, 2066, 2666, 3266, 3866. No horizontal joint run. 4096 is not a multiple of 600, so the image does not wrap. It is the colour, noise and one-joint profile only. It is not a tiling source. The build lays joints out per facade.
+
+### Per facade (measured, not invented)
+
+Source: recovered `C:/x/tec26-oks/acad-readback-v001/ac04.dxf` (`ezdxf.recover`, the file has no ENDSEC, auditor errors 0, fixes 1). Titles from `native-text-v002.txt`. Model units are millimetres. The census folder has no DXF; this is the readback the gate-1 diagnostic plot used. No facade on this sheet has one even rib step across its whole blue panel field, so every entry is `unresolved`. `gate_1_status` stays `approved-gate1`. `joint_report.unresolved_facades` lists them. The build must not invent a count.
+
+| Facade on the sheet | Field | What was counted | Evidence |
+|---|---|---|---|
+| Фасад А-В. Цветовое решение | blue hatch `17BA5A`, 14.238923 m × 3.456626 m, XY mm (2467.96, 48891.24)–(16706.89, 52347.86) | not one even step. 1.00203 m repeats in two separate runs only | TEXT `1523A2`; insert `184E3E`; lines `17BA52`…`17BA54` and `17A794`…`17A796` |
+| Фасад 1-2. Цветовое решение | blue hatch `1854A2`, 2.96608 m × 3.26517 m, XY mm (29011.58, 48892.45)–(31977.66, 52157.62) | no repeating interior rib. Outer edges and two returns about 0.288 m | TEXT `1523A0`; insert `184E70`; lines `185588`, `185589`, `18558B`, `18558A` |
+| Фасад В-А. Цветовое решение | blue hatch `17D200`, 14.238923 m × 3.456626 m, XY mm (2468.79, 35300.83)–(16707.72, 38757.45) | mirror of А-В; 1.00203 m in two runs, not one grid | TEXT `1523A3`; insert `185AD0`; lines `17D321`…`17D329` and `17E599`…`17E595` |
+| Фасад 2-1. Цветовое решение | blue hatch `185FC2`, 2.96608 m × 3.26517 m, XY mm (29011.58, 35300.83)–(31977.66, 38566.00) | no repeating interior rib. Centre is the yellow stair hatch `13CAC5` | TEXT `1523A1`; insert `185AD6`; lines `186017`, `186018`, `185FDA`, `18601A`, `186019` |
+
+Horizontal joint lines inside those fields: none. The bottom outline is a grey strip, true colour `0x9B9B9B` (155, 155, 155), 24.77 mm, handles `17BA5D` (А-В), `17D1FF` (В-А), `185FC1` (2-1). On Фасад 1-2 the grey hatch `1854A3` (2969.9 × 2328.86 mm) is the door fill and starts 24.8 mm below the blue field. Legend `170B10`: doors RAL7004, sandwich panels RAL5015, stair rails RAL1021. The drawn blue is RGB (0, 124, 176), true colour `0x007CB0`, which is the sheet blue for RAL5015, not the KPP byte triple. No taller plinth course is drawn. Corner returns sit about 0.288 m in from the outer edges.
+
+The exact questions are on each `per_facade` entry.
+
+### Acceptance picture
+
+The build card places each facade render next to the same facade of this sheet, at the same scale, with the rib count written under both. A render whose rib count differs from the sheet count is not sent to Artem. This Gate-1 card does not make that picture.
+
+### Geometry
+
+No new cuts are needed for a 0.20 m step when the UV of a face lies in one 4K tile (4096 px at 1000 px/m covers 4.096 m). A ring cut or an edge loop is allowed only where a face still does not fit one 4K tile, and that cut is reported in the build card. This card does not cut geometry. Quads, silhouette, normals, UCX and multisub IDs stay.
+
+## Gate-1 approval (verbatim)
+
+Source: orchestrator relay of Artem, 2026-10-22 («Принимаю»).
+
+1. Sandwich panels: solid colour without joints (module not confirmed by the drawings). **Superseded** by the vertical-joint rule above. This line is the Gate-1 wording, not the live panel rule.
+2. Roof: RAL 7004 grey (as KPP 7004), not 5015.
+3. Mixed ID: allowed to paint parts differently (roof 7004, frame/carcass 7004, plinth/drop = wall colour) WITHOUT changing geometry - via UV/atlas regions or splitting face groups inside the same ID.
+4. Panels RAL 5015 = KPP blue, doors/frames/porches RAL 7004 = KPP grey, glass as KPP; the drop below +-0.000 = wall colour.
+AC04: small frames of ID4 = RAL 7004.
+
+Scope from Artem: only paint. Geometry, topology, UCX and multisub IDs stay exactly as in the source scene. VPM/NPM of this building are a separate build card.
+
+## Evidence and closed questions
 
 Drive: **`G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v005/`**.
 Open **`contact-sheet.png`** first: unnumbered finish swatches, ID labels outside swatches,
@@ -124,8 +198,14 @@ Earlier v002–v004 software diagnostic images are superseded by native Blender 
 not published as final Gate images. `blender-context.json` and the native render log record version,
 engine and context. The render and verification scripts are included for reproducibility. Binary evidence is not committed and no LFS is used.
 
-1. **Q1 — Mapping approval:** approve ID1/2 blue, ID3 glass, ID4 grey, ID5 yellow on the contact sheet?
-3. **Q3 — Small frames:** approve RAL7004 for the small frames sharing ID4 with the specified grey door?
-4. **Q4 — Panel joints:** approve solid RAL5015 without fabricated joints, or provide the dimensioned panel module?
+1. **Q1 — closed.** Approved with the quote above: panels RAL5015, doors/frames/porches RAL7004, glass as KPP, roof RAL7004 (not 5015), drop = wall colour.
+3. **Q3 — closed.** Small frames of ID4 = RAL7004.
+4. **Q4 — closed.** Answered by `joint_spec`: vertical joints only, rib count and step from `per_facade` on this sheet, joint 8 mm, 1000 px/m, phase symmetric in the panel field, plain below ±0.000. The four facades are unresolved and listed in `joint_report`. Supersedes Gate-1 point 1. The texture period is not a fallback step.
 
-Stop at Gate 1. Review, texture approval and delivery acceptance are separate; none is automatically passed.
+The 150 mm (DWG) versus 120 mm (PDF) sandwich thickness remains an open dimension note. It does not block this paint approval and it does not authorise a geometry edit.
+
+Stop at Gate 1 paint. `delivery_passed` is false. Technical QA, user acceptance and publication are separate.
+
+## Swatch sheet (post-approval)
+
+`G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v006/swatches.png` (+ `SHA256SUMS.txt`): one swatch per ID/region, no numbers inside swatches, empty slots 6-10 crossed out. Blue = mean of KPP tile 1013 (34,113,179); grey = mean of KPP tile 1010 (150,153,146). `contact-sheet-ids.png` is the unchanged v005 depth-correct ID render sheet. Facade-vs-sheet acceptance pictures are made by the build card; 4 facade rib counts stay open (see joint_report).

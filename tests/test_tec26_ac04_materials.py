@@ -1,21 +1,340 @@
-"""new-case: AC04 Gate-1 material evidence is complete but never approved automatically."""
+"""new-case: AC04 Gate-1 paint may be approved while delivery stays unpassed.
+
+RAL5015 panels are vertical joints only. Gate-1 point 1 (solid, no joints) is superseded.
+"""
+import hashlib
 import json
 import math
+from io import BytesIO
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1] / 'jobs/TEC26-OKS/AC04'
+
+ALLOWED_GATE_STATUS = ('awaiting_artem', 'approved-gate1')
+# KPP tiles already pinned in this building's material evidence (sRGB bytes).
+KPP_RALS = {
+    'RAL5015': [34, 113, 179],
+    'RAL7004': [150, 153, 146],
+    'RAL1021': [238, 201, 0],
+}
+KPP_GREY_SHA = '765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969'
+QUOTE_MARKS = (
+    'Sandwich panels: solid colour without joints',
+    'Roof: RAL 7004 grey (as KPP 7004), not 5015.',
+    'WITHOUT changing geometry',
+    'small frames of ID4 = RAL 7004',
+)
+PANEL_TEXTURE = 'C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png'
+PANEL_TEXTURE_SHA = '2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece'
+PANEL_QUOTE = (
+    'Панели неверные, должны быть вертикальные швы только; текстуру пришлю; '
+    'если не влезает, можно аккуратно порезать через loop или ring'
+)
+BELOW_GRADE_QUOTE = 'ниже ±0.000 без швов (под землёй не видно)'
+POSITIVE_FINITE_KEYS = ('joint_width_mm', 'texel_px_per_m')
+WIDTH_TOLERANCE = 0.02
+SHEET_FACADES = (
+    'Фасад А-В. Цветовое решение',
+    'Фасад 1-2. Цветовое решение',
+    'Фасад В-А. Цветовое решение',
+    'Фасад 2-1. Цветовое решение',
+)
+# KPP 5015 versus the whole-texture mean. Joints darken the mean; 2 sRGB units
+# covers the measured gap (max abs channel delta about 1.57).
+COLOUR_TOLERANCE_MAX_ABS = 2.0
 
 
 def load():
     return json.loads((ROOT / 'materials.json').read_text(encoding='utf-8'))
 
 
-def test_ac04_gate_is_pending():
+def _id_label(material):
+    return f"ID {material.get('id')}"
+
+
+def validate_gate1(doc):
+    """Fail closed: unknown gate status, a material with no finish, or a RAL outside KPP/JSON."""
+    status = doc.get('gate_1_status')
+    if status not in ALLOWED_GATE_STATUS:
+        raise ValueError(
+            f'gate_1_status {status!r} is not allowed; '
+            f'allowed values are {ALLOWED_GATE_STATUS[0]} and {ALLOWED_GATE_STATUS[1]}'
+        )
+    for material in doc['materials']:
+        label = _id_label(material)
+        finish = material.get('finish')
+        if not isinstance(finish, str) or not finish.strip() or finish.strip() == '?':
+            raise ValueError(f'{label} has no finish')
+        _require_known_ral(label, material.get('ral'), allow_null=True)
+        for region in material.get('regions') or []:
+            part = region.get('part', '?')
+            _require_known_ral(f'{label} region {part}', region.get('ral'), allow_null=False)
+
+
+def _require_known_ral(label, ral, allow_null):
+    if ral is None and allow_null:
+        return
+    if ral not in KPP_RALS:
+        raise ValueError(f'{label} RAL {ral!r} not found in KPP/JSON')
+
+
+def _walk_finish_nodes(doc):
+    """Yield (label, node, is_ral5015_panel) for each material and ID1 region."""
+    for material in doc['materials']:
+        label = _id_label(material)
+        yield label, material, material.get('id') == 2
+        for region in material.get('regions') or []:
+            part = region.get('part', '?')
+            is_panel = material.get('id') == 1 and part == 'wall panels'
+            yield f'{label} region {part}', region, is_panel
+
+
+def _positive_finite(label, spec, key):
+    value = spec.get(key)
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
+        raise ValueError(f'{label} {key} must be a positive finite number, got {value!r}')
+
+
+def _facade_name(facade):
+    name = facade.get('facade')
+    if not isinstance(name, str) or not name.strip():
+        return '?'
+    return name
+
+
+def _require_resolved_facade(label, facade):
+    """A counted facade has an integer rib count and a positive step.
+
+    When the panel-field width is recorded, count times step stays within 2% of that width.
+    """
+    name = _facade_name(facade)
+    count = facade.get('rib_count')
+    if isinstance(count, bool) or not isinstance(count, int) or count < 1:
+        raise ValueError(
+            f'{label} facade {name} rib_count must be an integer >= 1, got {count!r}'
+        )
+    step = facade.get('step_m')
+    if isinstance(step, bool) or not isinstance(step, (int, float)) or not math.isfinite(step) or step <= 0:
+        raise ValueError(
+            f'{label} facade {name} step_m must be a positive finite number, got {step!r}'
+        )
+    width = facade.get('field_width_m')
+    if width is None:
+        return
+    if isinstance(width, bool) or not isinstance(width, (int, float)) or not math.isfinite(width) or width <= 0:
+        raise ValueError(
+            f'{label} facade {name} field_width_m must be a positive finite number, got {width!r}'
+        )
+    if abs(count * float(step) - float(width)) / float(width) > WIDTH_TOLERANCE:
+        raise ValueError(
+            f'{label} facade {name} rib_count * step_m is not within 2% of the panel-field width'
+        )
+
+
+def _require_per_facade(label, spec):
+    if 'module_m' in spec:
+        raise ValueError(
+            f'{label} module_m is not the panel step; per_facade is required and 0.60 is not a fallback'
+        )
+    facades = spec.get('per_facade')
+    if not isinstance(facades, list) or len(facades) == 0:
+        raise ValueError(f'{label} per_facade must be a non-empty list')
+    for facade in facades:
+        if not isinstance(facade, dict):
+            raise ValueError(f'{label} per_facade entry must be an object')
+        name = _facade_name(facade)
+        if facade.get('status') == 'unresolved':
+            question = facade.get('question')
+            if not isinstance(question, str) or not question.strip():
+                raise ValueError(f'{label} facade {name} is unresolved without a question')
+            continue
+        _require_resolved_facade(label, facade)
+
+
+def unresolved_facade_report(doc):
+    """Names of facades whose rib count is not settled. Does not change gate status."""
+    names = []
+    for _label, node, is_panel in _walk_finish_nodes(doc):
+        if not is_panel:
+            continue
+        spec = node.get('joint_spec') or {}
+        for facade in spec.get('per_facade') or []:
+            if isinstance(facade, dict) and facade.get('status') == 'unresolved':
+                name = _facade_name(facade)
+                if name not in names:
+                    names.append(name)
+    return names
+
+
+def validate_panel_joints(doc):
+    """RAL5015 panels are vertical joints only; every other finish stays free of panel joints.
+
+    The joint step is per facade from the colour sheet. A fixed module_m is not a fallback.
+    An unresolved facade must carry a question. It does not by itself revoke gate approval;
+    unresolved_facade_report lists it.
+    Fail closed: a horizontal orientation, a bad rib count (the error names the facade),
+    a non-positive step, a count that misses the recorded field width by more than 2%,
+    a below-grade value other than plain, or a texture SHA256 that does not match the file.
+    """
+    for label, node, is_panel in _walk_finish_nodes(doc):
+        if not is_panel:
+            if node.get('map_type') == 'vertical_joints' or 'joint_spec' in node:
+                raise ValueError(f'{label} must not carry panel joints')
+            continue
+        if node.get('map_type') != 'vertical_joints':
+            raise ValueError(
+                f'{label} map_type must be vertical_joints, got {node.get("map_type")!r}'
+            )
+        spec = node.get('joint_spec')
+        if not isinstance(spec, dict):
+            raise ValueError(f'{label} joint_spec is missing')
+        orientation = spec.get('orientation')
+        if orientation != 'vertical_only':
+            raise ValueError(
+                f'{label} joint_spec orientation must equal vertical_only; '
+                f'horizontal joints are not allowed, got {orientation!r}'
+            )
+        for key in POSITIVE_FINITE_KEYS:
+            _positive_finite(label, spec, key)
+        _require_per_facade(label, spec)
+        below = spec.get('below_grade')
+        if below != 'plain_no_joints':
+            raise ValueError(
+                f'{label} below_grade must be plain (plain_no_joints), got {below!r}'
+            )
+        source = spec.get('source_texture')
+        if not isinstance(source, dict):
+            raise ValueError(f'{label} source_texture is missing')
+        recorded = source.get('sha256')
+        path = source.get('path')
+        if not isinstance(path, str) or not path:
+            raise ValueError(f'{label} source_texture path is missing')
+        actual = hashlib.sha256(Path(path).read_bytes()).hexdigest()
+        if recorded != actual:
+            raise ValueError(
+                f'{label} source_texture sha256 mismatch: recorded {recorded!r} != file {actual}'
+            )
+    report = doc.get('joint_report', {}).get('unresolved_facades')
+    expected = unresolved_facade_report(doc)
+    if report != expected:
+        raise ValueError(
+            f'joint_report.unresolved_facades {report!r} does not list unresolved facades {expected!r}'
+        )
+
+
+def _panel_nodes(doc):
+    return [node for _label, node, is_panel in _walk_finish_nodes(doc) if is_panel]
+
+
+def _measure_panel_texture(path):
+    import numpy as np
+    from PIL import Image
+
+    raw = Path(path).read_bytes()
+    image = np.asarray(Image.open(BytesIO(raw)))
+    if image.shape != (4096, 4096, 3):
+        raise AssertionError(f'expected 4096x4096 RGB, got {image.shape}')
+    mean = image.reshape(-1, 3).astype(np.float64).mean(axis=0)
+    column = image.astype(np.float64).mean(axis=2).mean(axis=0)
+    dark = column < 60
+    runs = []
+    index = 0
+    while index < len(dark):
+        if dark[index]:
+            end = index
+            while end < len(dark) and dark[end]:
+                end += 1
+            runs.append((index, end - index))
+            index = end
+        else:
+            index += 1
+    return {'sha256': hashlib.sha256(raw).hexdigest(), 'mean': mean, 'runs': runs}
+
+
+def test_ac04_gate1_approved_delivery_still_open():
     d = load()
-    assert d['gate_1_status'] == 'awaiting_artem'
+    validate_gate1(d)
+    assert d['gate_1_status'] == 'approved-gate1'
     assert d['delivery_passed'] is False
-    assert d['questions']
-    assert all(m['status'] == 'proposed' for m in d['materials'])
+    approval = d['approval']
+    assert approval['date'] == '2026-10-22'
+    assert approval['source'] == 'orchestrator relay of Artem'
+    for mark in QUOTE_MARKS:
+        assert mark in approval['quote']
+    statement = approval['geometry_untouched']
+    assert 'Geometry, topology, UCX and multisub IDs stay exactly as in the source scene' in statement
+    md = (ROOT / 'MATERIALS.md').read_text(encoding='utf-8')
+    assert 'approved-gate1' in md
+    assert '150' in md and '120' in md
+
+
+def test_ac04_questions_closed():
+    d = load()
+    by_id = {q['id']: q for q in d['questions']}
+    for qid in ('Q1', 'Q3', 'Q4'):
+        assert by_id[qid]['status'] == 'closed'
+        assert by_id[qid]['answer'].strip()
+        assert by_id[qid].get('open') is not True
+    assert 'solid colour without joints' not in by_id['Q4']['answer']
+    assert 'joint_spec' in by_id['Q4']['answer']
+    assert '0.60' not in by_id['Q4']['answer']
+    assert 'per_facade' in by_id['Q4']['answer']
+    assert not any(q['id'] == 'Q2' for q in d['questions'])
+
+
+def test_ac04_id1_regions_and_grey_roof():
+    d = load()
+    by_id = {m['id']: m for m in d['materials']}
+    id1 = by_id[1]
+    id4 = by_id[4]
+    regions = {r['part']: r for r in id1['regions']}
+    assert set(regions) == {'roof', 'frame/carcass', 'wall panels', 'below-grade drop/plinth'}
+    assert regions['roof']['ral'] == 'RAL7004'
+    assert regions['roof']['rgb_srgb'] == KPP_RALS['RAL7004']
+    assert regions['roof']['kpp_reference']['sha256'] == KPP_GREY_SHA
+    assert regions['frame/carcass']['ral'] == 'RAL7004'
+    assert regions['frame/carcass']['kpp_reference']['sha256'] == KPP_GREY_SHA
+    assert regions['wall panels']['ral'] == 'RAL5015'
+    assert regions['wall panels']['map_type'] == 'vertical_joints'
+    assert regions['below-grade drop/plinth']['ral'] == 'RAL5015'
+    assert regions['below-grade drop/plinth']['map_type'] == 'solid'
+    assert 'joint_spec' not in regions['below-grade drop/plinth']
+    assert regions['roof']['map_type'] == 'solid' and 'joint_spec' not in regions['roof']
+    assert regions['frame/carcass']['map_type'] == 'solid' and 'joint_spec' not in regions['frame/carcass']
+    for region in id1['regions']:
+        assert region['faces'] == 'unresolved'
+        assert region['need'].strip()
+    assert id4['ral'] == 'RAL7004'
+    assert id4['rgb_srgb'] == KPP_RALS['RAL7004']
+    assert id4['kpp_reference']['sha256'] == KPP_GREY_SHA
+    assert by_id[2]['ral'] == 'RAL5015' and by_id[2]['map_type'] == 'vertical_joints'
+    assert 'joint_spec' not in by_id[4] and 'joint_spec' not in by_id[5]
+    assert by_id[4]['map_type'] == 'metal' and by_id[5]['map_type'] == 'metal'
+    assert by_id[3]['map_type'] == 'glass'
+    assert by_id[5]['ral'] == 'RAL1021'
+
+
+def test_fail_closed_missing_finish_names_id():
+    d = load()
+    d['materials'][1]['finish'] = ''
+    with pytest.raises(ValueError, match=r'ID 2'):
+        validate_gate1(d)
+
+
+def test_fail_closed_unknown_ral_names_id():
+    d = load()
+    d['materials'][4]['ral'] = 'RAL9999'
+    with pytest.raises(ValueError, match=r'ID 5'):
+        validate_gate1(d)
+
+
+def test_fail_closed_status_outside_two_allowed_values():
+    d = load()
+    d['gate_1_status'] = 'published'
+    with pytest.raises(ValueError, match='published'):
+        validate_gate1(d)
 
 
 def test_ac04_all_ids_and_slots_accounted():
@@ -36,7 +355,6 @@ def test_ac04_finish_evidence_and_unknowns():
             assert m['question_ids']
     assert d['materials'][2]['map_type'] == 'glass'
     assert d['materials'][2]['glass']['npm_opacity'] == 0.5
-    assert d['materials'][0]['question_ids']  # proposals still need Gate-1 approval
 
 
 def test_ac04_depth_render_and_perimeter_drop():
@@ -56,11 +374,14 @@ def test_ac04_depth_render_and_perimeter_drop():
 
 def test_ac04_kpp_colours_exact():
     d = load()
-    expected = {'RAL5015': [34, 113, 179], 'RAL7004': [150, 153, 146], 'RAL1021': [238, 201, 0]}
     for m in d['materials']:
         if m['ral']:
-            assert m['rgb_srgb'] == expected[m['ral']]
+            assert m['rgb_srgb'] == KPP_RALS[m['ral']]
             assert len(m['kpp_reference']['sha256']) == 64
+        for region in m.get('regions') or []:
+            if region.get('ral'):
+                assert region['rgb_srgb'] == KPP_RALS[region['ral']]
+                assert region['kpp_reference']['sha256']
 
 
 def test_ac04_manifest_and_source_provenance():
@@ -74,3 +395,216 @@ def test_ac04_manifest_and_source_provenance():
     assert len(names) == len(set(names))
     assert {'contact-sheet.png', 'iso.png', 'reverse.png', 'roof.png'} <= set(names)
     assert all(len(e['sha256']) == 64 and e['bytes'] > 0 for e in manifest['files'])
+
+
+def test_ac04_ral5015_vertical_joints_spec():
+    import numpy as np
+
+    d = load()
+    validate_gate1(d)
+    validate_panel_joints(d)
+    panels = _panel_nodes(d)
+    assert len(panels) == 2
+    measured = _measure_panel_texture(PANEL_TEXTURE)
+    assert measured['sha256'] == PANEL_TEXTURE_SHA
+    assert measured['runs'] == [(266, 8), (866, 8), (1466, 8), (2066, 8), (2666, 8), (3266, 8), (3866, 8)]
+    assert all(measured['runs'][i + 1][0] - measured['runs'][i][0] == 600 for i in range(6))
+    mean = measured['mean']
+    assert [int(round(channel)) for channel in mean] == [34, 112, 177]
+    kpp = np.array(KPP_RALS['RAL5015'], dtype=np.float64)
+    delta = mean - kpp
+    assert float(np.max(np.abs(delta))) <= COLOUR_TOLERANCE_MAX_ABS
+    for panel in panels:
+        spec = panel['joint_spec']
+        assert spec['orientation'] == 'vertical_only'
+        assert 'module_m' not in spec
+        assert '0.60' not in spec.get('layout', '')
+        assert spec['joint_width_mm'] == 8
+        assert spec['texel_px_per_m'] == 1000
+        assert spec['phase_origin'] == 'symmetric in the panel field'
+        assert spec['below_grade'] == 'plain_no_joints'
+        assert spec['npm_min_joint_px'] == 1.5
+        assert spec['source_texture']['role'] == 'colour_noise_one_joint_profile'
+        assert spec['source_texture']['tiling_source'] is False
+        names = [entry['facade'] for entry in spec['per_facade']]
+        assert names == list(SHEET_FACADES)
+        assert spec['source_texture']['path'] == PANEL_TEXTURE
+        assert spec['source_texture']['sha256'] == PANEL_TEXTURE_SHA
+        assert spec['supersedes']['replaced'] == (
+            'Sandwich panels: solid colour without joints (module not confirmed by the drawings).'
+        )
+        assert spec['supersedes']['quote'] == PANEL_QUOTE
+        assert spec['supersedes']['below_grade_quote'] == BELOW_GRADE_QUOTE
+        recorded_mean = spec['measured']['mean_rgb']
+        assert np.allclose(recorded_mean, mean, atol=1e-6)
+        assert spec['measured']['mean_rgb_rounded'] == [34, 112, 177]
+        assert spec['measured']['width_px'] == 4096 and spec['measured']['height_px'] == 4096
+        assert spec['measured']['joint_count'] == 7
+        assert spec['measured']['joint_width_px'] == 8
+        assert spec['measured']['joint_period_px'] == 600
+        assert np.allclose(spec['colour_delta_vs_kpp'], delta, atol=1e-6)
+        assert spec['colour_tolerance_max_abs'] == COLOUR_TOLERANCE_MAX_ABS
+        assert spec['colour_reference_role'] == 'kpp_colour_only'
+    md = (ROOT / 'MATERIALS.md').read_text(encoding='utf-8')
+    assert PANEL_QUOTE in md and BELOW_GRADE_QUOTE in md
+    assert 'vertical_joints' in md
+    assert 'approved-gate1' in md
+
+
+def test_horizontal_joints_not_allowed():
+    """Invariant: panel joint orientation is vertical_only. Probe rejects horizontal values."""
+    orientations = ('horizontal', 'horizontal_only', 'both', None)
+    caught = 0
+    for orientation in orientations:
+        doc = load()
+        for node in _panel_nodes(doc):
+            spec = node.get('joint_spec')
+            if isinstance(spec, dict):
+                spec['orientation'] = orientation
+        with pytest.raises(ValueError, match='vertical_only'):
+            validate_panel_joints(doc)
+        caught += 1
+    assert caught == len(orientations)
+
+
+def test_panel_joint_texel_positive_finite():
+    """Invariant: joint_width_mm and texel_px_per_m are positive finite. Probe: 0/NaN/inf."""
+    bad_values = (0, float('nan'), float('inf'), float('-inf'))
+    caught = 0
+    for key in POSITIVE_FINITE_KEYS:
+        for bad in bad_values:
+            doc = load()
+            for node in _panel_nodes(doc):
+                spec = node.get('joint_spec')
+                if isinstance(spec, dict):
+                    spec[key] = bad
+            with pytest.raises(ValueError, match=rf'\b{key}\b'):
+                validate_panel_joints(doc)
+            caught += 1
+    assert caught == len(POSITIVE_FINITE_KEYS) * len(bad_values)
+
+
+def test_per_facade_rib_count_rejects_bad_values_by_name():
+    """Invariant: a resolved rib_count is an integer >= 1. Probe: 0/NaN/negative/float, error names the facade."""
+    target = SHEET_FACADES[0]
+    bad_values = (0, float('nan'), -3, 1.5)
+    caught = 0
+    for bad in bad_values:
+        doc = load()
+        for node in _panel_nodes(doc):
+            for facade in node['joint_spec']['per_facade']:
+                if facade['facade'] == target:
+                    facade.pop('status', None)
+                    facade.pop('question', None)
+                    facade['rib_count'] = bad
+                    facade['step_m'] = 1.0
+        with pytest.raises(ValueError, match=target):
+            validate_panel_joints(doc)
+        caught += 1
+    assert caught == len(bad_values)
+
+
+def test_per_facade_step_and_width_and_no_module_fallback():
+    """Step is a positive finite number. Count times step stays within 2% of a recorded width. module_m 0.60 is rejected."""
+    target = SHEET_FACADES[1]
+    doc = load()
+    for node in _panel_nodes(doc):
+        for facade in node['joint_spec']['per_facade']:
+            if facade['facade'] == target:
+                facade.pop('status', None)
+                facade.pop('question', None)
+                facade['rib_count'] = 14
+                facade['step_m'] = 1.0
+                facade['field_width_m'] = 14.0
+        node['joint_spec']['per_facade'] = [
+            facade for facade in node['joint_spec']['per_facade'] if facade.get('status') != 'unresolved'
+        ]
+    doc['joint_report'] = {'unresolved_facades': unresolved_facade_report(doc)}
+    validate_panel_joints(doc)
+
+    mismatch = load()
+    for node in _panel_nodes(mismatch):
+        for facade in node['joint_spec']['per_facade']:
+            if facade['facade'] == target:
+                facade.pop('status', None)
+                facade.pop('question', None)
+                facade['rib_count'] = 10
+                facade['step_m'] = 1.0
+                facade['field_width_m'] = 14.0
+    with pytest.raises(ValueError, match=target):
+        validate_panel_joints(mismatch)
+
+    fallback = load()
+    for node in _panel_nodes(fallback):
+        node['joint_spec']['module_m'] = 0.60
+    with pytest.raises(ValueError, match='0.60'):
+        validate_panel_joints(fallback)
+
+    empty = load()
+    for node in _panel_nodes(empty):
+        node['joint_spec']['per_facade'] = []
+    with pytest.raises(ValueError, match='per_facade'):
+        validate_panel_joints(empty)
+
+
+def test_unresolved_facade_keeps_gate_approved_and_is_listed():
+    """An unresolved facade does not revoke approved-gate1. The report lists it."""
+    doc = load()
+    validate_gate1(doc)
+    validate_panel_joints(doc)
+    assert doc['gate_1_status'] == 'approved-gate1'
+    report = unresolved_facade_report(doc)
+    assert report
+    assert doc['joint_report']['unresolved_facades'] == report
+    for name in report:
+        assert name in SHEET_FACADES
+    md = (ROOT / 'MATERIALS.md').read_text(encoding='utf-8')
+    for name in report:
+        assert name in md
+
+
+def test_acceptance_picture_blocks_a_count_mismatch():
+    """Each facade render sits beside the sheet facade. A differing rib count is not sent to Artem."""
+    doc = load()
+    picture = doc['acceptance_picture']
+    assert picture['required'] is True
+    assert picture['made_by'] == 'build card'
+    text = picture['rule']
+    assert 'same scale' in text
+    assert 'rib count' in text.lower()
+    assert 'not sent' in text.lower()
+    md = (ROOT / 'MATERIALS.md').read_text(encoding='utf-8')
+    assert 'same scale' in md
+    assert 'not sent' in md.lower()
+
+
+def test_below_grade_must_be_plain():
+    """Invariant: below +-0.000 the panel finish is plain, with no joints."""
+    bad_values = ('joints', 'vertical_joints', 'solid', '', None)
+    caught = 0
+    for below in bad_values:
+        doc = load()
+        for node in _panel_nodes(doc):
+            spec = node.get('joint_spec')
+            if isinstance(spec, dict):
+                spec['below_grade'] = below
+        with pytest.raises(ValueError, match='plain'):
+            validate_panel_joints(doc)
+        caught += 1
+    assert caught == len(bad_values)
+
+
+def test_texture_sha_mismatch_is_an_error():
+    """Invariant: the recorded panel-texture SHA256 matches the file bytes."""
+    bad_hashes = ('0' * 64, PANEL_TEXTURE_SHA[:-1] + ('0' if PANEL_TEXTURE_SHA[-1] != '0' else '1'))
+    caught = 0
+    for bad in bad_hashes:
+        doc = load()
+        for node in _panel_nodes(doc):
+            spec = node.get('joint_spec')
+            if isinstance(spec, dict):
+                spec['source_texture']['sha256'] = bad
+        with pytest.raises(ValueError, match='sha256 mismatch'):
+            validate_panel_joints(doc)
+        caught += 1
+    assert caught == len(bad_hashes)
