@@ -1,0 +1,5 @@
+# gate1-v007 current 2026-10-22. v006 is superseded. v005 and v004 remain superseded.
+# superseded gate1-v006 contact-sheet.png c167d7920f9be168733799516834fff7c20e5b05b17c395c3ee277eaade6d91e
+ee19eb4d5fa09d720e146e363c5bf66d758b930adaad02a597d3d170563c71e7  G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v007/ac05_facade_compare_v007.py
+9714633a8def72a852722e6a9c5f8ba7f1ff70de6a7b5e3108450af2c011344f  G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v007/contact-sheet.png
+4cfc341d879fb968e74a92b9c23bb38feca9fce438b612fb7c09242306e71784  G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v007/SHA256SUMS.txt

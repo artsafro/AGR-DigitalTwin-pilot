@@ -1,0 +1,2307 @@
+{
+  "job": "tec26-oks",
+  "building": "AC05",
+  "building_name": "Блок-модуль пенного пожаротушения",
+  "main_at_start": "442f0b695a91f9abc180783c26978fbe85fefcf9",
+  "profile": "both NPM and VPM later; Gate 1 only",
+  "passed": false,
+  "gate1": {
+    "status": "approved-gate1",
+    "approved": true,
+    "date": "2026-10-22",
+    "quote": "Принимаю",
+    "answer_verbatim": "Artem, 2026-10-22, quote \"Принимаю\" (orchestrator recommendations):\n1. Sandwich panels: solid colour without joints (module not confirmed in drawings).\n2. Roof: RAL 7004 grey (as KPP 7004), not 5015.\n3. Mixed ID: allowed to paint parts differently (roof 7004, frame 7004, plinth/perimeter drop = wall colour) WITHOUT changing geometry - via UV/atlas regions or splitting face groups inside the same ID.\n4. Panels RAL 5015 = KPP blue; doors/frames/porches RAL 7004 = KPP grey; glass as KPP; the drop below +-0.000 = wall colour.\nAC05 result: ID1-2 blue 5015 (roof part of ID1 -> 7004 per 2-3); ID3-4 metal 7004 including the gate infill.",
+    "questions": [],
+    "panel_module": "vertical joints only; rib count and step from each facade colour-solution sheet; no horizontal joints; drop below +-0.000 plain"
+  },
+  "sources": [
+    {
+      "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.05 (Блок-модуль пенного пожаротушения)\\22E56-АР2-1002-AC.05_R1.dwg",
+      "copy": "C:\\x\\tec26-oks\\AC05\\sources-v002\\22E56-АР2-1002-AC.05_R1.dwg",
+      "sha256": "363d3635dd877608c55aee3f01131e8e0d269fa5d8324a2111d39ac39d70cb72",
+      "bytes": 1899958
+    },
+    {
+      "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.05 (Блок-модуль пенного пожаротушения)\\22Е56-АР2-1002-АС.pdf",
+      "copy": "C:\\x\\tec26-oks\\AC05\\sources-v002\\22Е56-АР2-1002-АС.pdf",
+      "sha256": "409671b95322798342812c1eee6320d1bf05fc326c4805e1e15c1d5fb72c8b11",
+      "bytes": 75887
+    },
+    {
+      "source": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/Vlad_OKS/04-09 Geometry Final.max",
+      "copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\04-09 Geometry Final.max",
+      "sha256": "eb0cffedefa80678cf4ada13db71f2e80795a92212f9fbf60b7c30c54a7852bd",
+      "bytes": 999424
+    },
+    {
+      "source": "C:\\x\\tec26-oks\\census\\oks.json",
+      "copy": null,
+      "sha256": "a99de19f1d30633eaab9c52ac44f253ed6ea97e03358755ff2a77458f0f54f2f",
+      "bytes": 261871
+    }
+  ],
+  "scene": {
+    "application_version": [
+      28000,
+      68,
+      0,
+      28,
+      3,
+      0,
+      30732,
+      2026,
+      ".3"
+    ],
+    "file_version": "#(26000, 26000)",
+    "units": "m",
+    "up_axis": "Z",
+    "layer": "005",
+    "requested_layer": [
+      "0.0.0.5",
+      "0.0.5"
+    ],
+    "mesh": {
+      "name": "АС.05",
+      "handle": 161,
+      "vertices": 784,
+      "triangles": 1290,
+      "bbox_snapshot": [
+        [
+          -7.289708137512207,
+          -4.605573654174805,
+          -2.0043320655822754
+        ],
+        [
+          -4.851757049560547,
+          4.605574607849121,
+          2.8974244594573975
+        ]
+      ],
+      "poly_faces_by_id": {
+        "3": 476,
+        "1": 127,
+        "2": 22,
+        "4": 1
+      },
+      "material_ids": [
+        {
+          "id": 1,
+          "triangles": 254,
+          "area_m2": 82.98113025259933
+        },
+        {
+          "id": 2,
+          "triangles": 44,
+          "area_m2": 56.48439932962852
+        },
+        {
+          "id": 3,
+          "triangles": 990,
+          "area_m2": 6.699798207317762
+        },
+        {
+          "id": 4,
+          "triangles": 2,
+          "area_m2": 4.313754850037867
+        }
+      ]
+    },
+    "multisub": {
+      "name": "Material #27",
+      "handle": 4036,
+      "slots": 10,
+      "materialIDList": "not measured in #558 census"
+    },
+    "collision_candidates": [
+      {
+        "name": "Colizii_045",
+        "handle": 344,
+        "layer": "005",
+        "triangles": 12,
+        "bbox_snapshot": [
+          [
+            -7.229453086853027,
+            -4.581299781799316,
+            0.24815797805786133
+          ],
+          [
+            -4.9726362228393555,
+            -4.52588415145874,
+            2.6723735332489014
+          ]
+        ]
+      },
+      {
+        "name": "Colizii_046",
+        "handle": 345,
+        "layer": "005",
+        "triangles": 12,
+        "bbox_snapshot": [
+          [
+            -7.289708137512207,
+            -4.520053386688232,
+            0.0014214515686035156
+          ],
+          [
+            -4.851761817932129,
+            4.60557222366333,
+            2.8974251747131348
+          ]
+        ]
+      }
+    ],
+    "geometry_buffer": {
+      "path": "C:\\x\\tec26-oks\\max-readback-v002\\geometry-161.json",
+      "sha256": "22406a97eaf836e47cce92ef871a5cceea3357b3f936ea13ca2764791ac6e500",
+      "verified": "bbox, per-ID triangle counts and area recomputed against census; 4/4",
+      "evidence_copy": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004/geometry-161.json"
+    },
+    "perimeter_drop": {
+      "keep_in_both_profiles": true,
+      "finish_policy": "adjacent facade; no new ID",
+      "source_geometry_sha256": "22406a97eaf836e47cce92ef871a5cceea3357b3f936ea13ca2764791ac6e500",
+      "source_face_ids_below_zero": [
+        1
+      ],
+      "method": "Triangle intersection with Z=-1 m, four axis-aligned outer shell sides from bottom vertices; union interval spans complete perimeter sides. Numeric side classifier 0.1mm, interval tolerance 0.01mm; neither is a model-edit or acceptance depth tolerance. Bottom vertices separately measured.",
+      "walls": [
+        {
+          "wall": "X_min",
+          "axis_coordinate_m": -7.289708137512207,
+          "cross_section_z_m": -1.0,
+          "coverage_span_m": [
+            -4.5200514793396,
+            4.605574607849121
+          ],
+          "coverage_at_minus_1_m": "complete",
+          "gaps_m": [],
+          "lowest_bottom_z_m": -2.0043320655822754,
+          "highest_bottom_z_m": -2.004328966140747,
+          "cross_section_segments": 10
+        },
+        {
+          "wall": "X_max",
+          "axis_coordinate_m": -4.851757049560547,
+          "cross_section_z_m": -1.0,
+          "coverage_span_m": [
+            -4.520052909851074,
+            4.605572700500488
+          ],
+          "coverage_at_minus_1_m": "complete",
+          "gaps_m": [],
+          "lowest_bottom_z_m": -2.0043318271636963,
+          "highest_bottom_z_m": -2.004328727722168,
+          "cross_section_segments": 10
+        },
+        {
+          "wall": "Y_min",
+          "axis_coordinate_m": -4.520052909851074,
+          "cross_section_z_m": -1.0,
+          "coverage_span_m": [
+            -7.289708137512207,
+            -4.851761817932129
+          ],
+          "coverage_at_minus_1_m": "complete",
+          "gaps_m": [],
+          "lowest_bottom_z_m": -2.0043318271636963,
+          "highest_bottom_z_m": -2.004331588745117,
+          "cross_section_segments": 6
+        },
+        {
+          "wall": "Y_max",
+          "axis_coordinate_m": 4.605574607849121,
+          "cross_section_z_m": -1.0,
+          "coverage_span_m": [
+            -7.289702654230242,
+            -4.851757049560547
+          ],
+          "coverage_at_minus_1_m": "complete",
+          "gaps_m": [],
+          "lowest_bottom_z_m": -2.004328966140747,
+          "highest_bottom_z_m": -2.004328727722168,
+          "cross_section_segments": 6
+        }
+      ]
+    }
+  },
+  "drawing_finishes": [
+    {
+      "id": "DF1",
+      "material": "Sandwich panels and canopy",
+      "ral": "5015",
+      "map_type": "metal",
+      "evidence": [
+        "DWG model-space MTEXT 276D52 at (137106.628,19878.504) mm; facade colour legend (sheet number not available in model-space)"
+      ],
+      "quote": "Сэндвич-панели, козырёк - RAL 5015"
+    },
+    {
+      "id": "DF2",
+      "material": "Porch, doors, gates",
+      "ral": "7004",
+      "map_type": "metal",
+      "evidence": [
+        "DWG model-space MTEXT 276D52 at (137106.628,19878.504) mm; facade colour legend (sheet number not available in model-space)"
+      ],
+      "quote": "Крыльцо, двери, ворота - RAL 7004"
+    },
+    {
+      "id": "DF3",
+      "material": "Three-layer sandwich panel, basalt mineral-wool filling, 120 mm",
+      "ral": null,
+      "map_type": "solid",
+      "evidence": [
+        "DWG 276D48 at (135520.713,11813.496) mm",
+        "PDF physical page 1 / title-block sheet 2, section 1-1: wall, roof and floor callouts; page points [660,50,1290,515]"
+      ],
+      "quote": "Трехслойная сэндвич-панель с заполнением минераловатными плитами на базальтовой основе, толщиной 120 мм"
+    },
+    {
+      "id": "DF4",
+      "material": "Reinforced-concrete slab",
+      "ral": null,
+      "map_type": "solid",
+      "evidence": [
+        "DWG 276D59 at (135520.713,10237.866) mm",
+        "PDF physical page 1 / sheet 2, section 1-1 bottom callout, page points [1035,435,1265,505]"
+      ],
+      "quote": "Железобетонная плита"
+    }
+  ],
+  "kpp_palette": [
+    {
+      "ral": "5015",
+      "registry": "jobs/KPP1/materials.json",
+      "finish": "Metal_RAL5015",
+      "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1013.png",
+      "sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+      "rgb": [
+        34,
+        113,
+        179
+      ],
+      "sample": "all 65536 RGB pixels equal; no resampling or colour conversion",
+      "evidence_copy": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004/T_Kpp_1_Diffuse_1.1013.png"
+    },
+    {
+      "ral": "7004",
+      "registry": "jobs/KPP1/materials.json",
+      "finish": "Door_RAL7004",
+      "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1010.png",
+      "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+      "rgb": [
+        150,
+        153,
+        146
+      ],
+      "sample": "all 65536 RGB pixels equal; no resampling or colour conversion",
+      "evidence_copy": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v004/T_Kpp_1_Diffuse_1.1010.png"
+    }
+  ],
+  "materials": [
+    {
+      "id": 1,
+      "poly_faces": 127,
+      "triangles": 254,
+      "area_m2": 82.98113025259933,
+      "finish": "Mixed ID: wall and perimeter drop RAL5015 KPP blue; roof faces RAL7004 KPP grey",
+      "ral": null,
+      "map_type": "mixed",
+      "status": "approved-gate1",
+      "question_id": null,
+      "proposal": "Approved 2026-10-22 without a geometry edit. Roof faces (unit normal Z > 0.5 and minimum vertex Z > 2.0 m) stay KPP RAL7004 metal, no joints. Blue wall faces at and above +-0.000 are RAL5015 with vertical joints only. The perimeter drop below +-0.000 stays plain RAL5015 without joints.",
+      "proposal_ral": null,
+      "proposal_map_type": null,
+      "source_slot": 1,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": "Material #26",
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 1",
+        "DWG R1 MTEXT 276D52 at (137106.628,19878.504) mm; same-DWG facade colour legend",
+        "Gate-1 answer 2026-10-22 quote Принимаю: roof of ID1 is RAL7004, drop below +-0.000 stays wall colour",
+        "Gate1 v005 native Blender contact sheet: ID colours + plain shaded depth + approved finish with roof grey; UCX excluded, Z0 datum"
+      ],
+      "regions": [
+        {
+          "region": "wall_drop",
+          "role": "blue wall at and above +-0.000 with vertical joints; perimeter drop below +-0.000 plain, no joints",
+          "ral": "5015",
+          "rgb": [
+            34,
+            113,
+            179
+          ],
+          "kpp_finish": "Metal_RAL5015",
+          "map_type": "mixed",
+          "match": {
+            "complement_of": "roof"
+          },
+          "poly_faces": 112,
+          "triangles": 224,
+          "area_m2": 60.73334688412373,
+          "triangle_indices": [
+            460,
+            461,
+            462,
+            463,
+            464,
+            465,
+            466,
+            467,
+            468,
+            469,
+            470,
+            471,
+            472,
+            473,
+            474,
+            475,
+            478,
+            479,
+            480,
+            481,
+            482,
+            483,
+            484,
+            485,
+            486,
+            487,
+            488,
+            489,
+            490,
+            491,
+            492,
+            493,
+            494,
+            495,
+            496,
+            497,
+            498,
+            499,
+            504,
+            505,
+            506,
+            507,
+            508,
+            509,
+            514,
+            515,
+            516,
+            517,
+            518,
+            519,
+            522,
+            523,
+            526,
+            527,
+            528,
+            529,
+            530,
+            531,
+            532,
+            533,
+            534,
+            535,
+            536,
+            537,
+            546,
+            547,
+            550,
+            551,
+            556,
+            557,
+            558,
+            559,
+            564,
+            565,
+            566,
+            567,
+            572,
+            573,
+            574,
+            575,
+            576,
+            577,
+            578,
+            579,
+            590,
+            591,
+            592,
+            593,
+            594,
+            595,
+            600,
+            601,
+            602,
+            603,
+            608,
+            609,
+            614,
+            615,
+            620,
+            621,
+            626,
+            627,
+            638,
+            639,
+            640,
+            641,
+            642,
+            643,
+            644,
+            645,
+            646,
+            647,
+            648,
+            649,
+            650,
+            651,
+            652,
+            653,
+            654,
+            655,
+            656,
+            657,
+            658,
+            659,
+            660,
+            661,
+            662,
+            663,
+            664,
+            665,
+            666,
+            667,
+            668,
+            669,
+            670,
+            671,
+            672,
+            673,
+            674,
+            675,
+            676,
+            677,
+            678,
+            679,
+            680,
+            681,
+            682,
+            683,
+            684,
+            685,
+            686,
+            687,
+            688,
+            689,
+            690,
+            691,
+            692,
+            693,
+            694,
+            695,
+            696,
+            697,
+            698,
+            699,
+            700,
+            701,
+            702,
+            703,
+            704,
+            705,
+            706,
+            707,
+            708,
+            709,
+            710,
+            711,
+            712,
+            713,
+            714,
+            715,
+            716,
+            717,
+            718,
+            719,
+            720,
+            721,
+            722,
+            723,
+            724,
+            725,
+            726,
+            727,
+            1258,
+            1259,
+            1260,
+            1261,
+            1262,
+            1263,
+            1264,
+            1265,
+            1266,
+            1267,
+            1268,
+            1269,
+            1270,
+            1271,
+            1272,
+            1273,
+            1274,
+            1275,
+            1276,
+            1277,
+            1278,
+            1279,
+            1280,
+            1281,
+            1282,
+            1283,
+            1284,
+            1285,
+            1286,
+            1287,
+            1288,
+            1289
+          ],
+          "above_zero": {
+            "map_type": "joints",
+            "orientation": "vertical",
+            "horizontal_joints": false,
+            "ral": "5015",
+            "applies": "wall-region polygons whose maximum vertex Z is above the drop shell"
+          },
+          "drop": {
+            "region": "perimeter_drop",
+            "map_type": "solid",
+            "joints": false,
+            "ral": "5015",
+            "below": "+-0.000",
+            "quote": "ниже ±0.000 без швов (под землёй не видно).",
+            "rule": "plain panel colour without joints"
+          }
+        },
+        {
+          "region": "roof",
+          "role": "roof faces",
+          "ral": "7004",
+          "rgb": [
+            150,
+            153,
+            146
+          ],
+          "kpp_finish": "Door_RAL7004",
+          "map_type": "metal",
+          "match": {
+            "normal_z_gt": 0.5,
+            "min_vertex_z_gt_m": 2.0
+          },
+          "poly_faces": 15,
+          "triangles": 30,
+          "area_m2": 22.24778336847559,
+          "triangle_indices": [
+            458,
+            459,
+            476,
+            477,
+            502,
+            503,
+            512,
+            513,
+            554,
+            555,
+            588,
+            589,
+            598,
+            599,
+            604,
+            605,
+            606,
+            607,
+            612,
+            613,
+            618,
+            619,
+            624,
+            625,
+            628,
+            629,
+            630,
+            631,
+            634,
+            635
+          ],
+          "joints": false
+        }
+      ],
+      "classification": {
+        "geometry": "C:\\x\\tec26-oks\\max-readback-v002\\geometry-161.json",
+        "geometry_sha256": "22406a97eaf836e47cce92ef871a5cceea3357b3f936ea13ca2764791ac6e500",
+        "face_unit": "triangle in geometry-161.json; an ID1 polygon is the consecutive triangle pair (2k, 2k+1) sharing an edge",
+        "rule": "ID1 roof: unit normal Z > 0.5 and minimum vertex Z > 2.0 m (roof plane near 2.897 m). ID1 wall_drop: every other ID1 triangle, including the perimeter drop at and below Z = 0 and the upward plinth ledge near Z = 0.121 m. No geometry edit; regions are face groups inside the same ID.",
+        "roof_normal_z_gt": 0.5,
+        "roof_min_vertex_z_gt_m": 2.0
+      }
+    },
+    {
+      "id": 2,
+      "poly_faces": 22,
+      "triangles": 44,
+      "area_m2": 56.48439932962852,
+      "finish": "Sandwich-panel walls, blue RAL5015, vertical joints only",
+      "ral": "5015",
+      "map_type": "joints",
+      "status": "approved-gate1",
+      "question_id": null,
+      "proposal": "Superseded 2026-10-22: blue sandwich-panel walls, RAL5015, vertical joints only, no horizontal joints. Rib count and step come from this building's facade colour-solution sheet. Texel 1000 px/m on a 4K UDIM.",
+      "proposal_ral": "5015",
+      "proposal_map_type": "joints",
+      "source_slot": 2,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": "Material #28",
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 2",
+        "DWG model-space MTEXT 276D52 at (137106.628,19878.504) mm; facade colour legend (sheet number not available in model-space)",
+        "DWG R1 MTEXT 276D52 at (137106.628,19878.504) mm; same-DWG facade colour legend",
+        "Gate1 v005 native Blender contact sheet: ID colours + plain shaded depth + approved finish colours; UCX excluded, Z0 datum"
+      ],
+      "joints": {
+        "orientation": "vertical",
+        "horizontal_joints": false
+      }
+    },
+    {
+      "id": 3,
+      "poly_faces": 476,
+      "triangles": 990,
+      "area_m2": 6.699798207317762,
+      "finish": "Opaque painted door/frame/hardware, grey RAL7004",
+      "ral": "7004",
+      "map_type": "metal",
+      "status": "approved-gate1",
+      "question_id": null,
+      "proposal": "Approved 2026-10-22: opaque painted door/frame/hardware, KPP RAL7004.",
+      "proposal_ral": "7004",
+      "proposal_map_type": "metal",
+      "source_slot": 3,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": "Material #24",
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 3",
+        "DWG model-space MTEXT 276D52 at (137106.628,19878.504) mm; facade colour legend (sheet number not available in model-space)",
+        "DWG R1 MTEXT 276D52 at (137106.628,19878.504) mm; same-DWG facade colour legend",
+        "Gate1 v005 native Blender contact sheet: ID colours + plain shaded depth + approved finish colours; UCX excluded, Z0 datum"
+      ],
+      "joints": false
+    },
+    {
+      "id": 4,
+      "poly_faces": 1,
+      "triangles": 2,
+      "area_m2": 4.313754850037867,
+      "finish": "Opaque painted end door/gate infill, grey RAL7004",
+      "ral": "7004",
+      "map_type": "metal",
+      "status": "approved-gate1",
+      "question_id": null,
+      "proposal": "Approved 2026-10-22: opaque painted end door/gate infill, KPP RAL7004.",
+      "proposal_ral": "7004",
+      "proposal_map_type": "metal",
+      "source_slot": 4,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": "Material #29",
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 4",
+        "DWG model-space MTEXT 276D52 at (137106.628,19878.504) mm; facade colour legend (sheet number not available in model-space)",
+        "DWG R1 MTEXT 276D52 at (137106.628,19878.504) mm; same-DWG facade colour legend",
+        "Gate1 v005 native Blender contact sheet: ID colours + plain shaded depth + approved finish colours; UCX excluded, Z0 datum"
+      ],
+      "joints": false
+    },
+    {
+      "id": 5,
+      "poly_faces": 0,
+      "triangles": 0,
+      "area_m2": 0,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unused",
+      "question_id": null,
+      "proposal": "Leave unused; no face uses this ID. Source populated/empty slots are not additional drawing finishes.",
+      "proposal_ral": null,
+      "proposal_map_type": null,
+      "source_slot": 5,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": "Material #25",
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 5"
+      ]
+    },
+    {
+      "id": 6,
+      "poly_faces": 0,
+      "triangles": 0,
+      "area_m2": 0,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unused",
+      "question_id": null,
+      "proposal": "Leave unused; no face uses this ID. Source populated/empty slots are not additional drawing finishes.",
+      "proposal_ral": null,
+      "proposal_map_type": null,
+      "source_slot": 6,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": null,
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 6"
+      ]
+    },
+    {
+      "id": 7,
+      "poly_faces": 0,
+      "triangles": 0,
+      "area_m2": 0,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unused",
+      "question_id": null,
+      "proposal": "Leave unused; no face uses this ID. Source populated/empty slots are not additional drawing finishes.",
+      "proposal_ral": null,
+      "proposal_map_type": null,
+      "source_slot": 7,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": null,
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 7"
+      ]
+    },
+    {
+      "id": 8,
+      "poly_faces": 0,
+      "triangles": 0,
+      "area_m2": 0,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unused",
+      "question_id": null,
+      "proposal": "Leave unused; no face uses this ID. Source populated/empty slots are not additional drawing finishes.",
+      "proposal_ral": null,
+      "proposal_map_type": null,
+      "source_slot": 8,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": null,
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 8"
+      ]
+    },
+    {
+      "id": 9,
+      "poly_faces": 0,
+      "triangles": 0,
+      "area_m2": 0,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unused",
+      "question_id": null,
+      "proposal": "Leave unused; no face uses this ID. Source populated/empty slots are not additional drawing finishes.",
+      "proposal_ral": null,
+      "proposal_map_type": null,
+      "source_slot": 9,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": null,
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 9"
+      ]
+    },
+    {
+      "id": 10,
+      "poly_faces": 0,
+      "triangles": 0,
+      "area_m2": 0,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unused",
+      "question_id": null,
+      "proposal": "Leave unused; no face uses this ID. Source populated/empty slots are not additional drawing finishes.",
+      "proposal_ral": null,
+      "proposal_map_type": null,
+      "source_slot": 10,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": null,
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 10"
+      ]
+    }
+  ],
+  "evidence": {
+    "directory": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v007",
+    "contact_sheet": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v007/contact-sheet.png",
+    "contact_sheet_sha256": "9714633a8def72a852722e6a9c5f8ba7f1ff70de6a7b5e3108450af2c011344f",
+    "checksum_file": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v007/SHA256SUMS.txt",
+    "render_method": "native Blender 5.1.2 Cycles CPU stills carried from gate1-v005; finish views are colour-only (roof KPP RAL7004, blue walls RAL5015). 8 mm vertical joints are under one pixel at ortho scale 14.5 m / 1200 px and are shown on the swatch crop instead. Source geometry unchanged; UCX excluded; world Z0 datum line",
+    "renders": [
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v006/id-front.png",
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v006/id-back.png"
+    ],
+    "finish_previews": [
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v006/finish-front.png",
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v006/finish-back.png"
+    ],
+    "native_render": {
+      "application": "Blender 5.1.2",
+      "engine": "Cycles CPU, 16 samples",
+      "source_geometry_sha256": "22406a97eaf836e47cce92ef871a5cceea3357b3f936ea13ca2764791ac6e500",
+      "source_unchanged": true,
+      "mesh_vertices": 784,
+      "mesh_triangles": 1290,
+      "render_meshes": [
+        "AC05 handle161"
+      ],
+      "ucx_visible": false,
+      "zero_level_line_m": 0.0,
+      "datum_geometry": "native 3D yellow outline at Z0, 5cm outward offset; source geometry untouched",
+      "id1_classification": "roof: unit normal Z > 0.5 and min vertex Z > 2.0 m; other ID1 triangles wall_drop",
+      "id1_roof_triangles": 30,
+      "id1_wall_drop_triangles": 224,
+      "finish_rgb": {
+        "wall_drop_and_id2": [
+          34,
+          113,
+          179
+        ],
+        "roof_and_id3_id4": [
+          150,
+          153,
+          146
+        ]
+      },
+      "paired_views": [
+        {
+          "view": "front",
+          "id": "id-front.png",
+          "plain": "plain-front.png",
+          "finish": "finish-front.png"
+        },
+        {
+          "view": "back",
+          "id": "id-back.png",
+          "plain": "plain-back.png",
+          "finish": "finish-back.png"
+        }
+      ],
+      "files": [
+        "id-front.png",
+        "plain-front.png",
+        "finish-front.png",
+        "id-back.png",
+        "plain-back.png",
+        "finish-back.png"
+      ],
+      "finish_views": "colour-only",
+      "vertical_joints_in_finish_render": false,
+      "stills_copied_from": "gate1-v005",
+      "finish_view_note": "Colour-only. 8 mm vertical joints are under one pixel at ortho scale 14.5 m on a 1200 px frame, so they are not drawn into the depth views. Roof remains RAL7004 grey and blue walls remain RAL5015. The contact-sheet blue swatch is a crop of the operator texture and shows the vertical joints."
+    },
+    "plain_shaded_views": [
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v006/plain-front.png",
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v006/plain-back.png"
+    ],
+    "supersedes": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v006/contact-sheet.png"
+  },
+  "limitations": [
+    "Gate 1 approved 2026-10-22 for finishes only: no model build/export/delivery QA performed. passed=false.",
+    "Census slot-to-custom-ID binding not recorded; do not assume slot = face material ID.",
+    "DXF recovered: one orphaned paper-space layout removed; materials read from model-space text.",
+    "PDF only contains sheet 2; facade colour legend is in DWG model-space, no facade PDF sheet.",
+    "No source or approved output edited. AutoCAD QUIT No saved its disposable v001 DWG copy; pristine v002 copies rehashed against unchanged originals.",
+    "Operator policy accepts actual 005 layer and final scene geometry; dimensional discrepancies are notes, not blockers.",
+    "The 0.60 m joint step is superseded on 2026-10-22 by the per-facade colour-sheet rib count. AC05 long facades measure 44 modules at 0.200 m. Facade B-A measures 13 ribs at 0.149577 m. Facade A-B is a grey gate without an even panel step. No horizontal joints. The drop below +-0.000 stays plain. No cut was performed. gate1-v006 is superseded by gate1-v007. passed=false."
+  ],
+  "operator_policy": {
+    "date": "2026-10-22",
+    "source": "operator note on t_70bf180b",
+    "governing_revision": "DWG R1",
+    "scene_geometry": "final; no geometry rebuild",
+    "layer_scope": "actual census layer 005 accepted",
+    "undimensioned_panel_joints": "vertical joints only; rib count and step from each facade colour-solution sheet; no horizontal joints; drop below +-0.000 plain",
+    "glass_if_confirmed": "KPP M_Glass_01; NPM alpha 0.5; VPM standard",
+    "perimeter_drop": "required >=1m down; keep in both profiles; adjacent-facade finish; no new ID",
+    "gate1_answer": "2026-10-22 Принимаю",
+    "panel_joints_supersedes": "Sandwich panels: solid colour without joints (module not confirmed in drawings)."
+  },
+  "superseding_decisions": [
+    {
+      "date": "2026-10-22",
+      "author": "Artem",
+      "supersedes": "Sandwich panels: solid colour without joints (module not confirmed in drawings).",
+      "quote": "Не вижу швов на панелях. В КПП есть текстура для VPM со швами... такой же тексель на наших домиках в VPM и NPM\nниже ±0.000 без швов (под землёй не видно)."
+    },
+    {
+      "date": "2026-10-22",
+      "author": "Artem",
+      "supersedes": "Sandwich panels: solid colour without joints (module not confirmed in drawings).",
+      "quote": "Панели неверные, должны быть вертикальные швы только; текстуру пришлю; если не влезает, можно аккуратно порезать через loop или ring."
+    },
+    {
+      "date": "2026-10-22",
+      "author": "Artem",
+      "scope": "all TEC26 buildings; recorded from the AC08 note",
+      "supersedes": "vertical joints only; module 0.60 m; joint period 0.60 m",
+      "quote": "всё равно говно, почему нельзя сделать как на презе — тут прям всё читается, и швы, и количество"
+    }
+  ],
+  "facade_rib_source": "found",
+  "facade_rib_files_searched": [
+    "C:/x/tec26-oks/AC05/sources-v002/22E56-АР2-1002-AC.05_R1.dwg",
+    "C:/x/tec26-oks/AC05/sources-v002/22Е56-АР2-1002-АС.pdf",
+    "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Графическая часть/22Е56-АР2-1002-АС.05 (Блок-модуль пенного пожаротушения)/22E56-АР2-1002-AC.05_R1.dwg",
+    "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Графическая часть/22Е56-АР2-1002-АС.05 (Блок-модуль пенного пожаротушения)/22Е56-АР2-1002-АС.pdf",
+    "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/ИД/ТЭЦ26 на РР.pptx",
+    "C:/x/tec26-oks/user-refs/AC08_facades_colour_from_artem.jpg"
+  ],
+  "panel_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "drive_copy": "G:/Мой диск/AGR-evidence/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "width_px": 4096,
+    "height_px": 4096,
+    "mean_rgb": [
+      34,
+      112,
+      177
+    ],
+    "vertical_joints": 7,
+    "joint_width_px": 8,
+    "joint_period_px": 600,
+    "role": "colour, noise and the look of one joint only; the 600 px period in the file is not the layout step"
+  },
+  "panel_rule": {
+    "orientation": "vertical",
+    "horizontal_joints": false,
+    "texel_px_per_m": 1000,
+    "udim_px": 4096,
+    "tile_m": 4.096,
+    "step_source": "facade_colour_sheet",
+    "source_tiled_raw": false,
+    "source_note": "The operator image supplies colour, noise and the look of one joint. It is not tiled raw. Joints are laid out per facade from the colour-solution sheet, symmetric only where that sheet is symmetric. At 1000 px/m a 0.200 m step is 200 px.",
+    "drop_rule": "The perimeter drop below +-0.000 stays plain, without joints.",
+    "plinth_rule": "Plinth strip grey. Doors and the A-B gate are RAL 7004 as on the sheet. The drawn long facade has a 119.66 mm base band under the panel field, inside the blue hatch. The mesh drop below Z=0 stays plain and is a separate buried part.",
+    "cut_rule": "A 0.20 m step needs no new cut when the UV of a face lies in one 4K tile. A later cut is allowed only as a clean edge loop or ring where a face still does not fit one 4K tile. The 16 faces wider than 4.096 m stay listed. Quads kept. Silhouette, normals, UCX and IDs unchanged. This card performs no cut.",
+    "cuts_performed": [],
+    "facades": [
+      {
+        "id": "1-2",
+        "name": "Фасад 1-2",
+        "sheet": "DWG R1 model-space block Фасад 1-2, label TEXT 2713A8",
+        "block_insert_handle": "278551",
+        "insert_mm": [122528.47, 40927.664],
+        "outer_handle": "277F0C",
+        "outer_width_mm": 9125.492385393009,
+        "outer_height_mm": 2896.0,
+        "rib_count": 44,
+        "step_m": 0.2,
+        "panel_field_width_m": 8.8,
+        "even_step": true,
+        "horizontal_joints": false,
+        "module_handles": ["278522", "27854D"],
+        "module_x_mm": [-5600.0, 3200.0],
+        "module_y_mm": [0.0, 2639.341481526688],
+        "frame_band_mm": {"left": 101.6, "right": 223.89, "top": 137.0, "base_band": 119.66},
+        "panel_rib_count": 44,
+        "door": null,
+        "note": "44 contiguous closed polylines, each 200.0 mm wide, no gaps. Count times step equals the module run."
+      },
+      {
+        "id": "2-1",
+        "name": "Фасад 2-1",
+        "sheet": "DWG R1 model-space block Фасад 2-1, label TEXT 2713A5",
+        "block_insert_handle": "27A88C",
+        "insert_mm": [121650.763, 33567.005],
+        "outer_handle": "279E98",
+        "outer_width_mm": 9125.492385393007,
+        "outer_height_mm": 2896.0,
+        "rib_count": 44,
+        "step_m": 0.2,
+        "panel_field_width_m": 8.8,
+        "even_step": true,
+        "horizontal_joints": false,
+        "module_handles": ["27A4C0", "27A495"],
+        "module_x_mm": [-4600.0, 4200.0],
+        "module_y_mm": [-2639.341481526695, 0.0],
+        "frame_band_mm": {"left": 223.89, "right": 101.6, "top": 137.0, "base_band": 119.66},
+        "panel_rib_count": 44,
+        "door": {
+          "ral": "7004",
+          "hatch_handle": "27A4C1",
+          "rgb": [155, 155, 155],
+          "width_m": 1.099892,
+          "height_m": 2.187404
+        },
+        "note": "Same 44 by 200.0 mm module run as facade 1-2, mirrored insets. The grey door hatch sits on that run; the module polylines are not interrupted."
+      },
+      {
+        "id": "BA",
+        "name": "Фасад Б-А",
+        "sheet": "DWG R1 model-space block Фасад Б-А, label TEXT 2713A4",
+        "block_insert_handle": "27C3DE",
+        "insert_mm": [109902.119, 33230.879],
+        "outer_handle": "27BC92",
+        "outer_width_mm": 2437.945746357116,
+        "outer_height_mm": 2896.0,
+        "rib_count": 13,
+        "step_m": 0.149577,
+        "panel_field_width_m": 1.79493,
+        "even_step": true,
+        "horizontal_joints": false,
+        "module_handles": [],
+        "panel_rib_count": 13,
+        "door": null,
+        "note": "13 vertical rib pairs on the blue field. Twelve intervals of 149.577 mm; the first-to-last span is 1794.93 mm, so (rib_count - 1) times step matches the field. No 200 mm module polylines on this facade. Blue hatch 27BC91 only."
+      },
+      {
+        "id": "AB",
+        "name": "Фасад А-Б",
+        "sheet": "DWG R1 model-space block Фасад А-Б, label TEXT 2713A7",
+        "block_insert_handle": "27E19F",
+        "insert_mm": [109842.852, 41119.857],
+        "outer_handle": "27D28B",
+        "outer_width_mm": 2437.9457463571152,
+        "outer_height_mm": 2896.0,
+        "rib_count": null,
+        "step_m": null,
+        "panel_field_width_m": null,
+        "even_step": false,
+        "horizontal_joints": false,
+        "module_handles": [],
+        "panel_rib_count": null,
+        "door": null,
+        "gate": {
+          "ral": "7004",
+          "hatch_handle": "27D28A",
+          "rgb": [155, 155, 155],
+          "width_m": 2.287411,
+          "height_m": 2.547055
+        },
+        "note": "The short end is a grey gate inside a blue frame. Vertical bars on the gate are not an even panel step, so no sandwich rib count is set."
+      }
+    ],
+    "wall_face_count": 134,
+    "wall_faces_exceeding_4k": [
+      239,
+      241,
+      259,
+      260,
+      261,
+      262,
+      271,
+      272,
+      285,
+      291,
+      327,
+      335,
+      336,
+      340,
+      633,
+      643
+    ],
+    "wall_faces": [
+      {
+        "polygon": 230,
+        "material_id": 1,
+        "width_m": 0.1018218994140625,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 231,
+        "material_id": 1,
+        "width_m": 0.09816169738769531,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 232,
+        "material_id": 1,
+        "width_m": 0.09949398040771484,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 233,
+        "material_id": 1,
+        "width_m": 0.10159492492675781,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 234,
+        "material_id": 1,
+        "width_m": 0.1018218994140625,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 235,
+        "material_id": 1,
+        "width_m": 0.09816169738769531,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 236,
+        "material_id": 1,
+        "width_m": 0.09949398040771484,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 237,
+        "material_id": 1,
+        "width_m": 0.10159492492675781,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 239,
+        "material_id": 1,
+        "width_m": 6.428147077561292,
+        "exceeds_4k_tile": true,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 240,
+        "material_id": 1,
+        "width_m": 0.10182285308949535,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 241,
+        "material_id": 1,
+        "width_m": 6.428146362305325,
+        "exceeds_4k_tile": true,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 242,
+        "material_id": 1,
+        "width_m": 0.1018228530883789,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 243,
+        "material_id": 1,
+        "width_m": 0.10182189941517983,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 244,
+        "material_id": 1,
+        "width_m": 0.09816169738856395,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 245,
+        "material_id": 1,
+        "width_m": 0.09949493408203125,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 246,
+        "material_id": 1,
+        "width_m": 0.10159444808959961,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 247,
+        "material_id": 1,
+        "width_m": 0.09949445724487305,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 248,
+        "material_id": 1,
+        "width_m": 0.1018218994140625,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 249,
+        "material_id": 1,
+        "width_m": 1.398041009903035,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 250,
+        "material_id": 2,
+        "width_m": 1.3980410099032787,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 252,
+        "material_id": 1,
+        "width_m": 0.09949445724487305,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 253,
+        "material_id": 1,
+        "width_m": 0.09949445724487305,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 254,
+        "material_id": 1,
+        "width_m": 1.3980407714844563,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 255,
+        "material_id": 2,
+        "width_m": 1.3980417251587722,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 257,
+        "material_id": 1,
+        "width_m": 1.0981218814853995,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 258,
+        "material_id": 1,
+        "width_m": 1.0981218814853995,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 259,
+        "material_id": 1,
+        "width_m": 6.42814755439845,
+        "exceeds_4k_tile": true,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 260,
+        "material_id": 2,
+        "width_m": 6.4281466007241335,
+        "exceeds_4k_tile": true,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 261,
+        "material_id": 1,
+        "width_m": 6.4281466007241335,
+        "exceeds_4k_tile": true,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 262,
+        "material_id": 2,
+        "width_m": 6.428147077561291,
+        "exceeds_4k_tile": true,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 263,
+        "material_id": 1,
+        "width_m": 0.10182189941490005,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 264,
+        "material_id": 1,
+        "width_m": 0.09816169738856395,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 265,
+        "material_id": 1,
+        "width_m": 0.09949493408203125,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 266,
+        "material_id": 1,
+        "width_m": 0.10159492492675781,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 267,
+        "material_id": 1,
+        "width_m": 0.09949445724487305,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 268,
+        "material_id": 1,
+        "width_m": 0.10182285308949535,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 269,
+        "material_id": 2,
+        "width_m": 1.098122119903668,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 271,
+        "material_id": 2,
+        "width_m": 6.4281475543987145,
+        "exceeds_4k_tile": true,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 272,
+        "material_id": 2,
+        "width_m": 6.4281470775615395,
+        "exceeds_4k_tile": true,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 273,
+        "material_id": 1,
+        "width_m": 1.0981223583225577,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 274,
+        "material_id": 2,
+        "width_m": 1.0981223583222468,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 275,
+        "material_id": 1,
+        "width_m": 1.0981223583225581,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 276,
+        "material_id": 2,
+        "width_m": 1.0981218814853995,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 278,
+        "material_id": 1,
+        "width_m": 1.3980417251587718,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 279,
+        "material_id": 1,
+        "width_m": 1.398041725159017,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 280,
+        "material_id": 2,
+        "width_m": 1.398041248321614,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 281,
+        "material_id": 2,
+        "width_m": 1.3980417251587731,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 282,
+        "material_id": 1,
+        "width_m": 0.09949493408203125,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 283,
+        "material_id": 1,
+        "width_m": 0.10182189941490005,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 284,
+        "material_id": 2,
+        "width_m": 1.398041725158997,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 285,
+        "material_id": 2,
+        "width_m": 6.428147315980131,
+        "exceeds_4k_tile": true,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 286,
+        "material_id": 1,
+        "width_m": 0.10182189941517983,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 287,
+        "material_id": 1,
+        "width_m": 0.09816169738885439,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 288,
+        "material_id": 1,
+        "width_m": 0.09949493408203125,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 289,
+        "material_id": 1,
+        "width_m": 0.10159444808959961,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 291,
+        "material_id": 2,
+        "width_m": 6.428146362305554,
+        "exceeds_4k_tile": true,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 292,
+        "material_id": 2,
+        "width_m": 1.0981228351596124,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 293,
+        "material_id": 2,
+        "width_m": 1.3980419635775143,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 295,
+        "material_id": 1,
+        "width_m": 0.10159492492675781,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 296,
+        "material_id": 1,
+        "width_m": 2.238189697266386,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 297,
+        "material_id": 1,
+        "width_m": 0.10159492492675781,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 298,
+        "material_id": 2,
+        "width_m": 2.2381901741035444,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 300,
+        "material_id": 1,
+        "width_m": 0.10159492492675781,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 301,
+        "material_id": 1,
+        "width_m": 2.238189697266386,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 304,
+        "material_id": 1,
+        "width_m": 0.10159540176391602,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 305,
+        "material_id": 2,
+        "width_m": 2.2381901741029857,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 307,
+        "material_id": 1,
+        "width_m": 0.10159492492675781,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 308,
+        "material_id": 2,
+        "width_m": 2.2381896972658275,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 310,
+        "material_id": 1,
+        "width_m": 2.23818922042867,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 311,
+        "material_id": 2,
+        "width_m": 2.23818922042891,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 313,
+        "material_id": 1,
+        "width_m": 2.238189697266069,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 316,
+        "material_id": 2,
+        "width_m": 2.238189697265815,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 318,
+        "material_id": 2,
+        "width_m": 2.2381896972658284,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 319,
+        "material_id": 1,
+        "width_m": 0.09816169738769531,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 320,
+        "material_id": 1,
+        "width_m": 0.09816169738769531,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 321,
+        "material_id": 1,
+        "width_m": 0.09816169738769531,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 322,
+        "material_id": 1,
+        "width_m": 0.09816217422485352,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 323,
+        "material_id": 1,
+        "width_m": 0.09816169738769531,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 324,
+        "material_id": 1,
+        "width_m": 0.10000038146972656,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 325,
+        "material_id": 1,
+        "width_m": 0.10000038146972656,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 326,
+        "material_id": 1,
+        "width_m": 0.09999990463256836,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 327,
+        "material_id": 1,
+        "width_m": 6.428146600723267,
+        "exceeds_4k_tile": true,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 328,
+        "material_id": 1,
+        "width_m": 1.0981221199035645,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 329,
+        "material_id": 1,
+        "width_m": 1.3980412483215332,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 330,
+        "material_id": 1,
+        "width_m": 0.09999990463256836,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 331,
+        "material_id": 1,
+        "width_m": 0.10000038146972656,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 332,
+        "material_id": 1,
+        "width_m": 0.10000038146972656,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 333,
+        "material_id": 1,
+        "width_m": 1.398041009902954,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 334,
+        "material_id": 1,
+        "width_m": 1.0981223583221436,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 335,
+        "material_id": 1,
+        "width_m": 6.428146600723267,
+        "exceeds_4k_tile": true,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 336,
+        "material_id": 1,
+        "width_m": 6.428147077560425,
+        "exceeds_4k_tile": true,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 337,
+        "material_id": 1,
+        "width_m": 0.09999990463256836,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 338,
+        "material_id": 1,
+        "width_m": 0.10000038146972656,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 339,
+        "material_id": 1,
+        "width_m": 0.10000038146972656,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 340,
+        "material_id": 1,
+        "width_m": 6.428146123886108,
+        "exceeds_4k_tile": true,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 341,
+        "material_id": 1,
+        "width_m": 1.0981218814849854,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 342,
+        "material_id": 1,
+        "width_m": 1.3980417251586914,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 343,
+        "material_id": 1,
+        "width_m": 0.10000038146972656,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 344,
+        "material_id": 1,
+        "width_m": 0.10000038146972656,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 345,
+        "material_id": 1,
+        "width_m": 0.09999990463342101,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 346,
+        "material_id": 1,
+        "width_m": 1.3980417251586914,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 347,
+        "material_id": 1,
+        "width_m": 1.0981218814849854,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 348,
+        "material_id": 1,
+        "width_m": 2.238190174102783,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 349,
+        "material_id": 1,
+        "width_m": 0.09499645233154297,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 350,
+        "material_id": 1,
+        "width_m": 0.09499549865812362,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 351,
+        "material_id": 1,
+        "width_m": 0.09499454498410564,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 352,
+        "material_id": 1,
+        "width_m": 2.238190174102783,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 353,
+        "material_id": 1,
+        "width_m": 0.09499454498410742,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 354,
+        "material_id": 1,
+        "width_m": 0.09499549866081569,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 355,
+        "material_id": 1,
+        "width_m": 0.09499549865842383,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 356,
+        "material_id": 1,
+        "width_m": 0.07558536529541016,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 357,
+        "material_id": 1,
+        "width_m": 2.238189220428467,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 358,
+        "material_id": 1,
+        "width_m": 0.07558584213256836,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 359,
+        "material_id": 1,
+        "width_m": 0.07558679580688477,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 360,
+        "material_id": 1,
+        "width_m": 0.07558679580688477,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 361,
+        "material_id": 1,
+        "width_m": 2.238189697265625,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 362,
+        "material_id": 1,
+        "width_m": 0.07558679580688477,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 363,
+        "material_id": 1,
+        "width_m": 0.07558679580688477,
+        "exceeds_4k_tile": false,
+        "role": "wall",
+        "joints": "vertical",
+        "horizontal_joints": false
+      },
+      {
+        "polygon": 629,
+        "material_id": 1,
+        "width_m": 0.09816169738769531,
+        "exceeds_4k_tile": false,
+        "role": "perimeter_drop",
+        "joints": false
+      },
+      {
+        "polygon": 630,
+        "material_id": 1,
+        "width_m": 2.238190174103596,
+        "exceeds_4k_tile": false,
+        "role": "perimeter_drop",
+        "joints": false
+      },
+      {
+        "polygon": 631,
+        "material_id": 1,
+        "width_m": 0.10159492492675781,
+        "exceeds_4k_tile": false,
+        "role": "perimeter_drop",
+        "joints": false
+      },
+      {
+        "polygon": 632,
+        "material_id": 1,
+        "width_m": 0.1018218994140625,
+        "exceeds_4k_tile": false,
+        "role": "perimeter_drop",
+        "joints": false
+      },
+      {
+        "polygon": 633,
+        "material_id": 1,
+        "width_m": 6.428145647049812,
+        "exceeds_4k_tile": true,
+        "role": "perimeter_drop",
+        "joints": false
+      },
+      {
+        "polygon": 634,
+        "material_id": 1,
+        "width_m": 1.0981224775315366,
+        "exceeds_4k_tile": false,
+        "role": "perimeter_drop",
+        "joints": false
+      },
+      {
+        "polygon": 635,
+        "material_id": 1,
+        "width_m": 1.3980407714846805,
+        "exceeds_4k_tile": false,
+        "role": "perimeter_drop",
+        "joints": false
+      },
+      {
+        "polygon": 636,
+        "material_id": 1,
+        "width_m": 0.09949493408203125,
+        "exceeds_4k_tile": false,
+        "role": "perimeter_drop",
+        "joints": false
+      },
+      {
+        "polygon": 637,
+        "material_id": 1,
+        "width_m": 0.10159492492675781,
+        "exceeds_4k_tile": false,
+        "role": "perimeter_drop",
+        "joints": false
+      },
+      {
+        "polygon": 638,
+        "material_id": 1,
+        "width_m": 2.2381896972660833,
+        "exceeds_4k_tile": false,
+        "role": "perimeter_drop",
+        "joints": false
+      },
+      {
+        "polygon": 639,
+        "material_id": 1,
+        "width_m": 0.09816169738769531,
+        "exceeds_4k_tile": false,
+        "role": "perimeter_drop",
+        "joints": false
+      },
+      {
+        "polygon": 640,
+        "material_id": 1,
+        "width_m": 0.09949445724487305,
+        "exceeds_4k_tile": false,
+        "role": "perimeter_drop",
+        "joints": false
+      },
+      {
+        "polygon": 641,
+        "material_id": 1,
+        "width_m": 1.3980417251590165,
+        "exceeds_4k_tile": false,
+        "role": "perimeter_drop",
+        "joints": false
+      },
+      {
+        "polygon": 642,
+        "material_id": 1,
+        "width_m": 1.0981216430668208,
+        "exceeds_4k_tile": false,
+        "role": "perimeter_drop",
+        "joints": false
+      },
+      {
+        "polygon": 643,
+        "material_id": 1,
+        "width_m": 6.428146481514614,
+        "exceeds_4k_tile": true,
+        "role": "perimeter_drop",
+        "joints": false
+      },
+      {
+        "polygon": 644,
+        "material_id": 1,
+        "width_m": 0.10182189941824937,
+        "exceeds_4k_tile": false,
+        "role": "perimeter_drop",
+        "joints": false
+      }
+    ]
+  }
+}
