@@ -2,11 +2,12 @@
 panel texture at the KPP texel (1000 px/m), the ring cuts at joint positions that make long panels fit a tile, and the
 rework contract (Artem 2026-10-22, PR #574 issuecomment-6342141336): rib COUNT per facade from the colour-solution sheet
 (long 30 / short 12 ribs, evenly and symmetrically over the panel field, no horizontal joints), grey plinth as drawn,
-counted on the delivered VPM/NPM meshes and on the renders; the old 0.60 m v007 delivery is the failing input."""
+counted on the delivered VPM/NPM meshes and on the renders; the old 0.60 m v007 delivery is the failing input
+[D169]; the wall edging around every panel field is blue RAL 5015 with a dark outline, RAL 7004 only for door and
+plinth [D170]."""
 import copy
 import hashlib
 import json
-import math
 import random
 import sys
 from pathlib import Path
@@ -19,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "jobs/TEC26-OKS/scripts"
 AC08 = ROOT / "jobs/TEC26-OKS/AC08"
 sys.path.insert(0, str(SCRIPTS))
+import compare_facades  # noqa: E402
 import finish_map as fm  # noqa: E402
 import joint_count  # noqa: E402
 import make_npm_atlas  # noqa: E402
@@ -92,6 +94,42 @@ def test_spec_is_valid_and_matches_kpp_palette():
     (lambda s: s["kpp_palette"].pop("PanelVJ30_RAL5015"), "kpp_palette twin"),
 ])
 def test_spec_fail_closed(mutate, match):
+    s = copy.deepcopy(SPEC_OK)
+    mutate(s)
+    with pytest.raises(ValueError, match=match):
+        fm.validate_spec(s, KPP)
+
+
+# --- the binding legend «Условные обозначения» [D171] (Artem 2026-10-22, all TEC26) ----------------------------------------
+def test_legend_covers_every_finish_and_matches_materials_md():
+    """Every finish is in exactly one legend row; RAL of the name = row RAL = KPP colour; ribbed rows = the sandwich
+    joint texture, plain rows none; the table is written into MATERIALS.md (hatch -> material -> RAL -> texture)."""
+    assert fm.validate_legend(SPEC, KPP)
+    rows = {n: r for r in SPEC["legend"] for n in r["finishes"]}
+    assert set(rows) == set(SPEC["finishes"])
+    assert {n for n, r in rows.items() if r["texture"] == "ribbed"} == {VJ30, VJ12}
+    assert rows["Frame_RAL5015"]["ral"] == "5015" and rows["Plinth_RAL7004"]["ral"] == rows["Door_RAL7004"]["ral"] == "7004"
+    md = (AC08 / "MATERIALS.md").read_text(encoding="utf-8")
+    sec = md.split("## Facade legend")[1].split("\n## ")[0]
+    for r in SPEC["legend"]:
+        for n in r["finishes"]:
+            line = next(x for x in sec.splitlines() if f"`{n}`" in x)
+            assert f"RAL {r['ral']}" in line and r["texture"] in line, line
+
+
+@pytest.mark.parametrize("mutate,match", [
+    (lambda s: s.pop("legend"), "legend"),
+    (lambda s: s.update(legend=[]), "legend"),
+    (lambda s: s["legend"][1]["finishes"].remove("Frame_RAL5015"), "Frame_RAL5015.*no legend row"),
+    (lambda s: s["legend"][3]["finishes"].append("Door_RAL7004"), "Door_RAL7004: in 2 legend rows"),
+    (lambda s: s["legend"][2].update(ral="9016"), "Door_RAL7004.*RAL 9016"),
+    (lambda s: s["legend"][0].update(texture="plain"), "PanelVJ30_RAL5015.*plain"),          # sandwich left untextured
+    (lambda s: s["legend"][1].update(texture="ribbed"), "Frame_RAL5015.*ribbed"),            # ribbed row, plain finish
+    (lambda s: s["legend"][0].update(texture="cassette"), "texture"),
+    (lambda s: s["legend"][0]["finishes"].append("Ghost_RAL5015"), "Ghost_RAL5015"),
+    (lambda s: s["finishes"]["Plinth_RAL7004"].update(rgb=[155, 155, 155]), "Plinth_RAL7004"),  # sheet grey != KPP 7004
+])
+def test_legend_fail_closed(mutate, match):
     s = copy.deepcopy(SPEC_OK)
     mutate(s)
     with pytest.raises(ValueError, match=match):
@@ -629,7 +667,7 @@ def test_source_finish_report_fail_closed():
 
 
 PILOT7 = Path("C:/x/tec26-oks/AC08/pilot-v007")   # superseded 0.60 m delivery: the FAILING input
-PILOT = Path("C:/x/tec26-oks/AC08/pilot-v009")    # sheet rib counts + blue wall edging: the passing control
+PILOT = Path("C:/x/tec26-oks/AC08/pilot-v010")    # slide 49 counts + legend + blue wall edging: the passing control
 
 
 def _qa_run(tmp_path, pilot, spec, mutate=None):
@@ -687,11 +725,11 @@ def _cut_off_joint(vm, nm, atlas):
                 q[0] += 0.05
 
 
-@pytest.mark.skipif(not (PILOT / "readback/vpm.readback.json").exists(), reason="pilot-v009 outputs not on this PC")
+@pytest.mark.skipif(not (PILOT / "readback/vpm.readback.json").exists(), reason="pilot outputs not on this PC")
 @pytest.mark.parametrize("variant", ["baseline", "joint_loss", "pitch_swap", "cut_off_joint", "density_750",
                                      "spec_0p6"])
-def test_qa_packages_on_pilot_v009(tmp_path, variant):
-    """Acceptance rows on the real pilot-v009 readbacks: the delivery passes every check incl. the per-facade rib counts
+def test_qa_packages_on_pilot(tmp_path, variant):
+    """Acceptance rows on the real pilot readbacks (v010): the delivery passes every check incl. the per-facade rib counts
     (VPM and NPM: 29 / 11 joints = 30 / 12 ribs, symmetric, no horizontal joint); mutants fail - joint loss (panels ->
     plain grey plinth), pitch swap (long facades on the 12-rib tile and vice versa: same colour, wrong count), cut
     vertices 50 mm off the joint, the old 750 px/m density, and the superseded 0.60 m spec."""
@@ -736,7 +774,7 @@ def test_qa_packages_on_pilot_v009(tmp_path, variant):
 @pytest.mark.skipif(not (PILOT7 / "readback/vpm.readback.json").exists(), reason="pilot-v007 outputs not on this PC")
 def test_superseded_v007_delivery_fails_rib_counts():
     """The old 0.60 m v007 delivery (Artem rejected it against his facade colour reference) must fail the per-facade
-    rib counts when measured exactly like v009: its VPM/NPM meshes show far fewer joints than the sheet's 29 / 11."""
+    rib counts when measured exactly like v010: its VPM/NPM meshes show far fewer joints than the sheet's 29 / 11."""
     v = json.loads((PILOT7 / "readback/vpm.readback.json").read_text(encoding="utf-8"))
     n = json.loads((PILOT7 / "readback/npm.readback.json").read_text(encoding="utf-8"))
     vm = next(o for o in v["objects"] if o["name"] == "SM_Nku_1_Main")
@@ -756,7 +794,7 @@ def test_superseded_v007_delivery_fails_rib_counts():
         for name, r in rep[tag].items():
             assert not r["ok"], (tag, name)
             found = max(row["joints_found"] for row in r["rows"].values())
-            assert found < SPEC["facades"][name]["ribs"] - 1 - 3, (tag, name, found)   # 0.6 m: ~9 / ~3 joints
+            assert found < SPEC["facades"][name]["ribs"] - 1 - 3, (tag, name, found)   # 0.6 m: 11 / 3 joints (measured)
 
 
 # --- the colour-solution sheet and the rendered counts ---------------------------------------------------------------
@@ -850,18 +888,66 @@ def test_count_joints_contract_and_counterexamples():
 
 COMPARE = PILOT / "compare/compare.json"
 VIEW = {"+y": "north", "-y": "south", "+x": "east", "-x": "west"}
+SLIDE = Path(SPEC["presentation"]["image"])
+needs_slide = pytest.mark.skipif(not SLIDE.exists(), reason="presentation slide 49 not on this PC")
 
 
-@pytest.mark.skipif(not COMPARE.exists(), reason="pilot-v009 comparison sheets not on this PC")
+def _slide():
+    return np.asarray(Image.open(SLIDE).convert("RGB"))
+
+
+@needs_slide
+def test_slide_rib_counts_are_the_contract():
+    """The presentation slide is THE authority (Artem 2026-10-22): the ribs counted on slide 49 itself (dark runs
+    between the field outlines, no DWG positions used) = the spec contract on every facade; the slide's scale from
+    the body width agrees with its scale from the body height (one drawing scale, «на основе М 1:200»)."""
+    assert hashlib.sha256(SLIDE.read_bytes()).hexdigest() == SPEC["presentation"]["image_sha256"]
+    im = _slide()
+    boxes = compare_facades.slide_boxes(im)
+    for name, box in zip(SPEC["presentation"]["quadrants"], boxes):
+        r = compare_facades.slide_count(im, box, SHEET["facades"][name])
+        assert r["joints"] == SPEC["facades"][name]["ribs"] - 1, (name, r)
+        assert abs(r["height_scale_ratio"] - 1) < 0.03, (name, r)
+        assert abs(r["field_mm"] - SPEC["facades"][name]["field_m"] * 1000) < 2 / r["px_per_mm"], (name, r)
+
+
+@needs_slide
+def test_slide_count_counterexamples():
+    """A lost rib line, an extra line and a missing field outline on the slide change or refuse the count."""
+    im = _slide()
+    box = compare_facades.slide_boxes(im)[1]                      # 1-2
+    f = SHEET["facades"]["1-2"]
+    base = compare_facades.slide_count(im, box, f)["joints"]
+    y0, y1 = box[1] + 10, box[3] - 10
+    row = im[(box[1] + box[3]) // 2]
+    xs = [x for x in range(box[0] + 12, box[2] - 12) if row[x].sum() < 0.75 * np.median(row[box[0]:box[2]].sum(-1))]
+    lost = im.copy()
+    lost[y0:y1, xs[3] - 1:xs[3] + 2] = (0, 124, 176)              # paint one joint line blue
+    assert compare_facades.slide_count(lost, box, f)["joints"] == base - 1
+    extra = im.copy()
+    mid = (xs[3] + xs[4]) // 2
+    extra[y0:y1, mid] = (0, 0, 0)
+    assert compare_facades.slide_count(extra, box, f)["joints"] == base + 1
+    bare = im.copy()
+    bare[y0:y1, box[0] - 4:box[2] + 4] = (0, 124, 176)            # no outlines, no lines at all
+    with pytest.raises(ValueError, match="outline"):
+        compare_facades.slide_count(bare, box, f)
+
+
+@pytest.mark.skipif(not COMPARE.exists(), reason="pilot comparison sheets not on this PC")
 def test_rendered_counts_match_sheet():
-    """Mandatory before Artem's acceptance: every facade render next to its sheet facade at the same scale, counts
-    written below both; the counts are MEASURED on the rendered pixels (VPM and NPM) and equal the sheet."""
+    """Mandatory before Artem's acceptance: per facade the presentation slide | VPM | NPM side by side at the same
+    scale (no DWG column), the rib count written below each; the counts are MEASURED on the slide pixels and on the
+    rendered pixels (VPM and NPM) and are equal; the renders are clipped at the slide's ground line."""
     c = json.loads(COMPARE.read_text(encoding="utf-8"))
     assert set(c["facades"]) == set(SPEC["facades"]) and c["px_per_m"] == 200.0
+    assert c["slide_sha256"] == SPEC["presentation"]["image_sha256"]
     for name, r in c["facades"].items():
-        want = SHEET["facades"][name]["joints"]
-        assert r["match"] and r["sheet_dwg_joints"] == r["sheet_jpg_joints_confirmed"] == want
-        assert r["vpm_render_joints"] == r["npm_render_joints"] == want and r["sheet_jpg_extra_runs"] == 0
+        want = SPEC["facades"][name]["ribs"] - 1
+        assert r["panels"] == ["slide", "vpm", "npm"], r["panels"]
+        assert r["match"] and r["slide_joints"] == r["vpm_render_joints"] == r["npm_render_joints"] == want
+        assert abs(r["slide_height_scale_ratio"] - 1) < 0.03
+        assert r["ground_m"] == min(p["bbox_mm"][1] for p in SHEET["facades"][name]["plinth"]) / 1000
         assert (PILOT / "compare" / r["png"]).exists()
     meta = json.loads((PILOT / "renders/renders.json").read_text(encoding="utf-8"))
     vr = json.loads((PILOT / "readback/vpm.readback.json").read_text(encoding="utf-8"))
