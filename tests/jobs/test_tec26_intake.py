@@ -1,4 +1,4 @@
-"""Regression probes for the job-specific native reader (synthetic Max stub)."""
+"""new-case: TEC26 intake regression probes, including a synthetic native Max stub."""
 import ast
 import copy
 import json
