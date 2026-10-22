@@ -27,6 +27,17 @@ def test_same_profile_recoloured_and_vertical_only():
     assert np.any(np.all(grey == 208, axis=2))
 
 
+def test_crisp_joint_contrast_survives_npm_scale():
+    from PIL import Image
+    src=np.full((1000,600,3),[34,113,179],np.uint8)
+    src[:,266:274]=[8,25,39]
+    for rgb,minimum in [([34,113,179],81.7724),([208,208,208],168.0)]:
+        tile=module().sandwich(src,rgb,1000,200,[266,274],joint_width=32)
+        img=np.asarray(Image.fromarray(tile).resize((100,100),Image.Resampling.LANCZOS))
+        lum=img@np.array([.2126,.7152,.0722])
+        assert np.median(lum)-np.min(lum)>=minimum
+
+
 @pytest.mark.parametrize('period', [0, -1, float('nan'), float('inf'), 8])
 def test_invalid_or_all_joint_period_refused(period):
     with pytest.raises(ValueError):

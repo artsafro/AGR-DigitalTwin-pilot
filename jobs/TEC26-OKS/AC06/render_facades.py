@@ -1,4 +1,4 @@
-"""new-case: AC06 facade renders (job-local variant of TEC26 renderer) of the delivered VPM and NPM FBX (headless Blender Workbench).
+"""new-case: TEC26 facade renders of the delivered VPM and NPM FBX (headless Blender Workbench).
 
 Usage: blender --background --factory-startup --python render_facades.py -- <spec.json> <vpm.fbx> <vpm_textures_dir>
                                                                           <npm.fbx> <new_out_dir>
@@ -6,6 +6,9 @@ Per package: 4 orthographic facades (south -Y, east +X, north +Y, west -X) with 
 colour, for the VPM-vs-NPM comparison) + one 3/4 STUDIO view. UCX hidden. A red line marks ±0.000.
 VPM: the FBX carries no texture paths (reg p.30 §4.2), so the UDIM Diffuse set is attached for preview only.
 NPM: the embedded atlas of the FBX is used as imported. Writes <out>/<vpm|npm>_<view>.png and renders.json.
+Facades are rendered at a FIXED scale (env PX_PER_M, default 400 px/m, horizontal sensor fit) and renders.json keeps
+each view's camera (center, right, up, ortho_scale, res) so joint_count.render_row can measure the rendered joints and
+compare_facades.py can put the render next to the colour-solution sheet at the same scale.
 """
 import json
 import math
@@ -26,6 +29,7 @@ os.makedirs(out)
 spec = json.load(open(spec_p, encoding="utf-8"))
 VIEWS = {"south": Vector((0, -1, 0)), "east": Vector((1, 0, 0)), "north": Vector((0, 1, 0)), "west": Vector((-1, 0, 0))}
 meta = {}
+PX_PER_M = float(os.environ.get("PX_PER_M", "400"))
 
 
 def zero_line(lo, hi):
@@ -59,7 +63,7 @@ for tag, fbx in (("vpm", vfbx), ("npm", nfbx)):
         mat = vpm_uv.main_material(bpy, spec, vtex)
         for o in vis:
             if o.name.endswith("_MainGlass"):
-                continue  # Preserve map-free glass; do not attach the opaque UDIM.
+                continue  # Preserve separate map-free source glass.
             o.data.materials.clear()
             o.data.materials.append(mat)
     pts = [o.matrix_world @ v.co for o in vis for v in o.data.vertices]
@@ -70,31 +74,46 @@ for tag, fbx in (("vpm", vfbx), ("npm", nfbx)):
     size = (hi - lo).length
     sc.render.engine = "BLENDER_WORKBENCH"
     sc.display.shading.color_type = "TEXTURE"
-    sc.display.shading.background_type = "WORLD"
     sc.display.shading.show_backface_culling = False
     sc.view_settings.view_transform = "Standard"
-    sc.render.resolution_x, sc.render.resolution_y = 1600, 900
+    sc.render.resolution_percentage = 100
     sc.render.image_settings.file_format = "PNG"
+    sc.render.film_transparent = True              # background = alpha 0 (not panel, not joint) for the comparisons
+    sc.render.image_settings.color_mode = "RGBA"
     sc.world = bpy.data.worlds.new("w")
-    sc.world.color = (1, 1, 1)
     cam = bpy.data.objects.new("cam", bpy.data.cameras.new("cam"))
     sc.collection.objects.link(cam)
     sc.camera = cam
     cam.data.type = "ORTHO"
+    cam.data.sensor_fit = "HORIZONTAL"
     cam.data.clip_end = size * 10
     shots = {k: (d, "FLAT") for k, d in VIEWS.items()}
     shots["iso"] = (Vector((1, -1.3, 0.8)).normalized(), "STUDIO")
+    views = {}
     for name, (d, light) in shots.items():
         sc.display.shading.light = light
-        ext = hi - lo  # fit width and height of this view (16:9 frame), 8 % margin
-        wide = abs(d.x) * ext.y + abs(d.y) * ext.x if name != "iso" else size
-        cam.data.ortho_scale = max(wide, ext.z * 16 / 9 if name != "iso" else size) * 1.08
+        ext = hi - lo  # fixed px/m, 8 % margin around the body
+        if name != "iso":
+            wide = (abs(d.x) * ext.y + abs(d.y) * ext.x) * 1.08
+            tall = ext.z * 1.08
+            sc.render.resolution_x = int(math.ceil(wide * PX_PER_M))
+            sc.render.resolution_y = int(math.ceil(tall * PX_PER_M))
+            cam.data.ortho_scale = sc.render.resolution_x / PX_PER_M
+        else:
+            sc.render.resolution_x, sc.render.resolution_y = 1600, 900
+            cam.data.ortho_scale = size * 1.08
         cam.location = c + d * size * 3
         cam.rotation_euler = (-d).to_track_quat("-Z", "Y").to_euler()
+        bpy.context.view_layer.update()
+        rot = cam.matrix_world.to_3x3()
         path = os.path.join(out, f"{tag}_{name}.png")
         sc.render.filepath = path
         bpy.ops.render.render(write_still=True)
+        views[name] = {"png": os.path.basename(path), "center": list(c), "right": list(rot.col[0]),
+                       "up": list(rot.col[1]), "ortho_scale": cam.data.ortho_scale,
+                       "res": [sc.render.resolution_x, sc.render.resolution_y],
+                       "px_per_m": sc.render.resolution_x / cam.data.ortho_scale}
     meta[tag] = {"fbx": os.path.abspath(fbx), "objects": [o.name for o in meshes],
-                 "bbox": [list(lo), list(hi)]}
+                 "bbox": [list(lo), list(hi)], "views": views}
 json.dump(meta, open(os.path.join(out, "renders.json"), "w", encoding="utf-8"), indent=1)
 print("RENDERS", json.dumps(meta))

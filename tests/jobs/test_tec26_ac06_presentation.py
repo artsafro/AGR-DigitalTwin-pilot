@@ -25,8 +25,23 @@ def test_slide_regions_inside_original_ids():
     faces = [[0, 1, 2, 3], [3, 2, 5, 4], [0, 1, 2, 3], [6, 7, 8, 9], [0, 1, 2, 3]]
     spec = json.loads((JOB / 'vpm_textures.json').read_text())
     assert m.region_finishes(vertices, faces, [1, 1, 3, 10, 2], spec) == [
-        'Sandwich_RAL5015', 'Door_RAL7004', 'Sandwich_RAL7047', 'Panel_RAL7047', 'Sandwich_RAL5015']
+        'SandwichSouth_RAL5015', 'Door_RAL7004', 'SandwichSouth_RAL7047', 'Panel_RAL7047', 'SandwichSouth_RAL5015']
     assert faces == [[0, 1, 2, 3], [3, 2, 5, 4], [0, 1, 2, 3], [6, 7, 8, 9], [0, 1, 2, 3]]
+
+
+def test_opposite_facades_use_their_measured_slide_counts():
+    s=json.loads((JOB/'vpm_textures.json').read_text())
+    assert {k:s['rib_fields'][k]['ribs'] for k in ('0','1','east','south')} == {'0':67,'1':55,'east':54,'south':68}
+    for prefix,key in [('Sandwich','0'),('SandwichShort','1'),('SandwichEast','east'),('SandwichSouth','south')]:
+        field=s['rib_fields'][key]
+        for ral in ('5015','7047'):
+            assert s['finishes'][prefix+'_RAL'+ral]['P'][0] == pytest.approx((field['hi']-field['lo'])/field['ribs'])
+
+
+def test_sloping_roof_surface_visible_as_edge_is_blue():
+    s=json.loads((JOB/'vpm_textures.json').read_text())
+    v=[[0,0,3.3],[1,0,3.3],[1,1,3.4],[0,1,3.4]]
+    assert adapter().region_finishes(v,[[0,1,2,3]],[1],s)==['SandwichSouth_RAL5015']
 
 
 def test_canopy_horizontal_faces_also_sandwich():

@@ -1,61 +1,115 @@
-# TEC26 AC06 — material-ID Gate 1
+# TEC26 AC06 — operational delivery build-v014
 
-## BUILD override — presentation authority (supersedes historical statements below)
+Completed per the operator's 2026-10-22 18:4x instruction: no new unit tests,
+full suite, reviewer round or diagnostic evidence bundle. Final files:
+`G:/Мой диск/AGR-evidence/tec26-oks/AC06/build-v014/` — two ZIP packages and
+four `compare-*.png` plates;6/6 copies byte-verified. Only the mandatory basic
+Drive checksum list accompanies those six files.
 
-**Built for review, not a passed AGR delivery.** The latest Artem answers on card
-`t_6af403e8` (2026-10-22 16:37–16:39) govern: presentation slide39/40 first;
-DWG/PDF only where the slides are silent. Historical Gate-1 fields and its old
-solid-grey statements below are retained as history, not the current recipe.
-BUILD authorization is the orchestrator note, not `build_allowed` in that packet.
+The NPM2048 atlas is now derived from the actual VPM Diffuse UDIM pixels,
+with joint-preserving reduction, NOT a separately regenerated pattern.
+RAL5015 blue sandwich and7047 light-grey sandwich follow own slides39/40;
+facade-visible roof edge blue;7004 doors/plinth,9016 frames. Geometry/UCX/IDs
+pipeline unchanged. All four actual image counts match; all eight blue/grey
+contrast comparisons meet or exceed the slide.
 
-| Hatch / region | Material | RAL / exact KPP RGB | Texture |
+| Facade | Ribs slide / VPM / NPM |
+|---|---|
+| A-D | 55 / 55 / 55 |
+| D-A | 54 / 54 / 54 |
+| 1-3 | 67 / 67 / 67 |
+| 3-1 | 68 / 68 / 68 |
+
+The south NPM image splits ONE joint into two strokes3px apart; measurement
+counts one fitted grid position and retains both fragment coordinates, not an
+extra rib. The next physical joint is about40px away. No missing ribs are filled.
+
+This is an operational building deliverable, not a whole-site AGR/SINTEZ pass.
+No formal v014 unit/full-suite result or Artem AC06 visual acceptance is invented.
+
+## Historical v013 technical snapshot below
+
+All v013 audit counts, NPM32mm generation notes and old comparison metrics below
+are historical, NOT measurements of the v014 atlas. Use the final plates above.
+
+### Historical heading: TEC26 AC06 — current BUILD material map
+
+## Current authority and status
+
+**Built for review, not a passed AGR delivery.** Latest operator instructions govern:
+use own presentation slide39/40; all facade-visible roof-edge/parapet surfaces blue;
+dark crisp joints on both 5015 and 7047 with final-picture contrast ≥ slide; actual
+pixel counts must match. AC08 v010 is the accepted reference, not a source for
+AC06 counts. Parent `ed743ab` was merged; shared scripts were not edited here.
+
+The earlier “sloping roof grey even when visible” interpretation and nominal
+55/55/68/68 grid are superseded. Actual final-picture counts are below. Source
+geometry/UCX/source IDs are unchanged; original ID1 sloping surfaces themselves
+form the projected roof band, so those visible surfaces are blue too. No fake
+angle-dependent shader or geometry facade was added. Non-visible ID1 faces stay 7004.
+
+## Binding legend and original-ID regions
+
+| Hatch / region | Material | RAL / exact KPP RGB | Current texture |
 |---|---|---|---|
-| Blue facade hatch, canopies | Sandwich panels | 5015 / 34,113,179 | Same approved source profile; vertical ribs |
-| Light-grey wall hatch | Sandwich panels | 7047 / 208,208,208 | Same profile/noise recoloured, vertical ribs |
-| Doors, porches, plinth, drainage | Painted metal / concrete | 7004 / 150,153,146 | Solid |
-| Relief-glazing frames | Painted frame | 9016 / 246,246,246 | Solid |
-| Sloping roof | Roof panels | 7004 / 150,153,146 | Solid, per explicit roof/fascia answer |
-| Below-zero perimeter drop | Same source ID10 | 7047 / 208,208,208 | Plain; no ribs below zero |
+| Blue facade field / visible roof edge / canopies | Sandwich panels | 5015 / 34,113,179 | Dark vertical ribs, facade-specific count |
+| Light-grey wall field | Sandwich panels | 7047 / 208,208,208 | SAME noise/profile recoloured, dark vertical ribs |
+| Doors, porches, plinth, drainage | Painted metal/concrete | 7004 / 150,153,146 | Solid |
+| Relief-glazing frames/reveals | Painted frame | 9016 / 246,246,246 | Solid |
+| Below-zero drop (ID10) | Wall-colour perimeter | 7047 / 208,208,208 | Plain, no ribs |
 
-| Original ID / region | Current finish | Source polygons / evidence |
-|---|---|---|
-| ID1 vertical fascia | Blue ribbed 5015 | 85; slide39/40 and explicit answer |
-| ID1 other roof faces | Grey 7004 | 96; explicit answer; no vertex/ID change |
-| ID2 sandwich canopies + broad vertical fascia | Blue ribbed 5015 | 177; legend; all 39 faces of three canopy components included |
-| ID2 thin trims / snow guards | Blue solid 5015 | 494; same geometry, colour preserved |
-| ID3 walls | Light-grey ribbed 7047 | All 300; legend, never plain grey |
-| IDs4,6,7 | Solid 7004 | Same approved Gate-1 mapping |
-| IDs5,8,9 | Solid 9016 | Same approved Gate-1 mapping |
-| ID10 | Plinth7004 / below-zero plain7047 | Same approved split, same ID |
-| ID11 / ID12 | Interior / map-free glass | Same source objects; glass alpha0.5 |
+| Original ID | Current regions / evidence |
+|---|---|
+| 1 | 157 facade-visible roof-edge/fascia polygons blue ribbed; 24 non-visible polygons 7004; latest roof-edge instruction |
+| 2 | 177 sandwich canopy/fascia polygons ribbed blue, including every face of three canopies; 494 thin trims/snow-guard polygons solid blue |
+| 3 | All 300 wall polygons ribbed light-grey7047; none left plain |
+| 4,6,7 | Drainage, ventilation and doors: approved 7004 |
+| 5,8,9 | Strips, frames and reveals: approved 9016 |
+| 10 | Above zero thin 7004 plinth; at/below zero plain7047 drop, same ID |
+| 11,12 | Approved Interior / separate map-free glass, alpha0.5 |
 
-The ID2 classifier is **source-bound**, not a general material recognizer: broad
-vertical faces have height/width >0.08m; canopy components lie entirely below
-3.0m (actual maximum 2.902m; next roof-trim component begins at3.081m).
-The source dump is pinned by the build manifest. New geometry needs a new mapping.
+The source-bound ID2 classifier separates broad vertical faces (>0.08m height/width)
+and canopy components below3.0m (actual maximum2.902m, next roof trim starts3.081m).
+The pinned source dump is not a general semantic recognizer. The model's visible
+plinth is only0.1325m above zero (sheet +0.120); no geometric height was altered.
+The below-zero drop is retained to−2.0251m but not exposed as a huge plinth in plates.
 
-Slide39 line spacing is approximately8.53px over465px/10.9m; slide40 approximately
-8.53px over575px/13.5m. Nominal step0.20m; full grids **55 /55 /68 /68 bays**
-(A–D /D–A /1–3 /3–1). These are full grid bays, **not equal counts of visible
-black pixel strokes**: pipes, canopies and windows occlude some positions.
-The supplemental `export-grid-probe.json` independently verifies888 vertical
-triangles per export and55/55/68/68 full rib centres, phase residual≤1.39µm.
-No AC08 0.60m grid was copied. Both colours retain the same eight-pixel source
-joint profile; only400 flat pixels per original600px period are removed.
-There are no horizontal panel joints. Source image SHA256 is in `vpm_textures.json`.
+## Measured final comparison pictures
 
-New evidence: `G:/Мой диск/AGR-evidence/tec26-oks/AC06/build-v006/`:
-`contact-sheet.png` (12 swatches, labels outside), `compare/` (flat colour),
-`compare-cavity/` (edge-shaded preview), `renders/` (including full drop),
-`audit-v006-final.json`, raw `qa_packages.json`, public validator reports and
-`SHA256SUMS.txt`. Plates use slide|VPM|NPM at42.6px/m and retain discrepancies.
-The slide39 top roof strip is blue in the graphic while the built sloping roof
-is grey by the explicit answer; **this is visible, not retouched or called an
-exact slide match**. User visual approval and final SINTEZ are pending.
+`compare_ac06.py` measures regular vertical strokes on the **actual final 200px/m
+slide|VPM|NPM panels**, not a count copied from the spec. It uses the AC08 v010
+camera metadata/`joint_count.runs`, adapted to this building's gables, two slides
+and grey wall field. Every candidate/outlier coordinate and ROI is retained.
+Counts can differ between opposite facades; no width/0.20 nominal count is printed.
 
-See [BUILD_REPORT.md](BUILD_REPORT.md) for measured exports and remaining failures.
+ΔY = Rec709 sRGB luma, column-profile P50−P05, measured in the same final panels.
+Grey control patches are explicitly located in `compare/comparison.json`.
+
+| Facade | Measured ribs slide / VPM / NPM | Blue ΔY slide / VPM / NPM | Grey ΔY slide / VPM / NPM |
+|---|---|---|---|
+| A-D | 55 / 55 / 55 | 72.29 / 98.66 / 95.30 | 147.60 / 207.21 / 196.13 |
+| D-A | 54 / 54 / 54 | 74.32 / 98.66 / 94.87 | 146.70 / 201.08 / 192.14 |
+| 1-3 | 67 / 67 / 67 | 70.27 / 98.66 / 95.24 | 152.00 / 207.28 / 198.50 |
+| 3-1 | 68 / 68 / 68 | 70.42 / 98.66 / 95.30 | 149.00 / 207.72 / 194.49 |
+
+All four counts match; all eight colour/profile contrast comparisons exceed the
+slide. Pitch is the measured panel width / that facade's counted ribs (see
+`vpm_textures.json.rib_fields`), not the original texture's 600px spacing.
+The latest crisp-line instruction overrides the old 8mm ink: VPM20mm, NPM32mm
+preserve a dark centre after atlas reduction. The same panel noise is recoloured;
+no horizontal panel joints are added (only the actual field boundary outline).
+
+Final evidence: `G:/Мой диск/AGR-evidence/tec26-oks/AC06/build-v013/`.
+`compare/compare-{A-D,D-A,1-3,3-1}.png` are the final acceptance pictures;
+`contact-sheet.png` has one swatch per ID, labels outside; raw renders retain the
+full drop. Nothing is labelled Artem-approved: his «Да, похоже» accepts the AC08
+reference, not this AC06 export. Final SINTEZ follows AC06 visual approval.
+
+See [BUILD_REPORT.md](BUILD_REPORT.md), `BUILD_MANIFEST.json`, `DRIVE-SHA256SUMS.txt`.
 
 ---
+
+## Historical Gate-1 packet (colour approval, not current BUILD rules)
 
 **Status: `approved-gate1`. Artem, 2026-10-22, approved colouring (`approved`: true). `build_allowed` stays false: VPM/NPM are a later card, and this packet must not start a build.**
 

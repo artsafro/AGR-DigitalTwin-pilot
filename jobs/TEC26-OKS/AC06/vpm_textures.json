@@ -1,5 +1,5 @@
 {
-  "_doc": "AC06 build: slide39/40 and Artem 2026-10-22 supersede historical Gate-1; region overrides preserve IDs and geometry.",
+  "_doc": "Latest operator review: every facade-visible roof-edge surface blue; crisp joints >= slide contrast; AC08 v010 source recipe and fixed-scale renderer. No geometry change.",
   "address": "Prg_1",
   "size_full": 4096,
   "size_placeholder": 256,
@@ -124,8 +124,8 @@
       "kind": "full",
       "S": 4.096,
       "P": [
-        0.2,
-        0.2
+        0.20149460123546087,
+        0.20149460123546087
       ],
       "shift": [
         true,
@@ -140,15 +140,15 @@
       "metal": 0.0,
       "pattern": "ac06_sandwich",
       "h_joints": false,
-      "joint_half_mm": 4
+      "joint_half_mm": 10
     },
     "Sandwich_RAL7047": {
       "udim": 1007,
       "kind": "full",
       "S": 4.096,
       "P": [
-        0.2,
-        0.2
+        0.20149460123546087,
+        0.20149460123546087
       ],
       "shift": [
         true,
@@ -163,7 +163,145 @@
       "metal": 0.0,
       "pattern": "ac06_sandwich",
       "h_joints": false,
-      "joint_half_mm": 4
+      "joint_half_mm": 10
+    },
+    "SandwichShort_RAL5015": {
+      "udim": 1008,
+      "kind": "full",
+      "S": 4.096,
+      "P": [
+        0.19817945306951348,
+        0.19817945306951348
+      ],
+      "shift": [
+        true,
+        false
+      ],
+      "rgb": [
+        34,
+        113,
+        179
+      ],
+      "rough": 0.5,
+      "metal": 0.0,
+      "pattern": "ac06_sandwich",
+      "h_joints": false,
+      "joint_half_mm": 10
+    },
+    "SandwichShort_RAL7047": {
+      "udim": 1009,
+      "kind": "full",
+      "S": 4.096,
+      "P": [
+        0.19817945306951348,
+        0.19817945306951348
+      ],
+      "shift": [
+        true,
+        false
+      ],
+      "rgb": [
+        208,
+        208,
+        208
+      ],
+      "rough": 0.5,
+      "metal": 0.0,
+      "pattern": "ac06_sandwich",
+      "h_joints": false,
+      "joint_half_mm": 10
+    },
+    "SandwichEast_RAL5015": {
+      "udim": 1010,
+      "kind": "full",
+      "S": 4.096,
+      "P": [
+        0.20184944294117116,
+        0.20184944294117116
+      ],
+      "shift": [
+        true,
+        false
+      ],
+      "rgb": [
+        34,
+        113,
+        179
+      ],
+      "rough": 0.5,
+      "metal": 0.0,
+      "pattern": "ac06_sandwich",
+      "h_joints": false,
+      "joint_half_mm": 10
+    },
+    "SandwichEast_RAL7047": {
+      "udim": 1011,
+      "kind": "full",
+      "S": 4.096,
+      "P": [
+        0.20184944294117116,
+        0.20184944294117116
+      ],
+      "shift": [
+        true,
+        false
+      ],
+      "rgb": [
+        208,
+        208,
+        208
+      ],
+      "rough": 0.5,
+      "metal": 0.0,
+      "pattern": "ac06_sandwich",
+      "h_joints": false,
+      "joint_half_mm": 10
+    },
+    "SandwichSouth_RAL5015": {
+      "udim": 1012,
+      "kind": "full",
+      "S": 4.096,
+      "P": [
+        0.19853144533493938,
+        0.19853144533493938
+      ],
+      "shift": [
+        true,
+        false
+      ],
+      "rgb": [
+        34,
+        113,
+        179
+      ],
+      "rough": 0.5,
+      "metal": 0.0,
+      "pattern": "ac06_sandwich",
+      "h_joints": false,
+      "joint_half_mm": 10
+    },
+    "SandwichSouth_RAL7047": {
+      "udim": 1013,
+      "kind": "full",
+      "S": 4.096,
+      "P": [
+        0.19853144533493938,
+        0.19853144533493938
+      ],
+      "shift": [
+        true,
+        false
+      ],
+      "rgb": [
+        208,
+        208,
+        208
+      ],
+      "rough": 0.5,
+      "metal": 0.0,
+      "pattern": "ac06_sandwich",
+      "h_joints": false,
+      "joint_half_mm": 10
     }
   },
   "presentation": {
@@ -171,10 +309,20 @@
       39,
       40
     ],
-    "pitch_m": 0.2,
-    "phase_m": 0.1,
-    "authority": "Artem via card comments 2026-10-22 16:39",
-    "no_geometry_change": true
+    "pitch_m": "field width / counted ribs; see rib_fields",
+    "phase_m": 0.0,
+    "authority": "Latest operator AC06 roof-edge and contrast reviews; AC08 v010 accepted reference; own slide39/40 govern.",
+    "no_geometry_change": true,
+    "measured_slide_ribs": {
+      "A-D": 55,
+      "D-A": 54,
+      "1-3": 67,
+      "3-1": 68
+    },
+    "slide_sha256": {
+      "39": "31af159aa88a22fa4798e618407c440f28adc23c56b488e58a276d056693c0ff",
+      "40": "8a207e3056be750e1ea7ce030cfbbbef9282c05043a58c8dab15bc67e4e3b50a"
+    }
   },
   "sandwich_source": {
     "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
@@ -184,8 +332,34 @@
       266,
       274
     ],
-    "derived_period_px": 200,
-    "method": "retain eight-pixel joint and source rib profile, remove 400 pixels of flat panel per period; recolour same texture to legend RAL"
-  }
+    "method": "Approved panel noise recoloured to KPP; measured per-facade field/rib pitch. Latest operator contrast rule overrides ink: 20mm VPM dark joints; NPM atlas derived from VPM UDIM pixels with joint-preserving reduction; no horizontal joints except the actual field border."
+  },
+  "rib_fields": {
+    "0": {
+      "lo": -1.5836782455444336,
+      "hi": 11.916460037231445,
+      "ribs": 67,
+      "pitch_m": 0.20149460123546087
+    },
+    "1": {
+      "lo": -5.381231307983398,
+      "hi": 5.518638610839844,
+      "ribs": 55,
+      "pitch_m": 0.19817945306951348
+    },
+    "east": {
+      "lo": -5.381231307983398,
+      "hi": 5.518638610839844,
+      "ribs": 54,
+      "pitch_m": 0.20184944294117116
+    },
+    "south": {
+      "lo": -1.5836782455444336,
+      "hi": 11.916460037231445,
+      "ribs": 68,
+      "pitch_m": 0.19853144533493938
+    }
+  },
+  "npm_derivation": "VPM Diffuse UDIM pixels -> 2048 atlas, joint-preserving reduction; no separately regenerated pattern"
 }
 

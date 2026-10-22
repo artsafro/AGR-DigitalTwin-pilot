@@ -1,235 +1,175 @@
-# AC06 build-v006 — built for review, NOT a passed AGR delivery
+# TEC26 AC06 — operational delivery build-v014
 
-## Current result and authority
+Completed per the operator's 2026-10-22 18:4x instruction: no new unit tests,
+full suite, reviewer round or diagnostic evidence bundle. Final files:
+`G:/Мой диск/AGR-evidence/tec26-oks/AC06/build-v014/` — two ZIP packages and
+four `compare-*.png` plates;6/6 copies byte-verified. Only the mandatory basic
+Drive checksum list accompanies those six files.
 
-The prior fascia question is answered. Latest card comments (Artem, 2026-10-22
-16:37–16:39): slide39/40 govern; vertical upper fascia is blue5015 sandwich,
-walls are light-grey7047 sandwich with the SAME vertical-rib profile, sloping
-roof remains7004. The explicit roof answer is retained even where slide39's
-projected top strip is blue. The comparisons show that difference; it is not
-retouched or called an exact visual match. Full geometry is the approved source.
+The NPM2048 atlas is now derived from the actual VPM Diffuse UDIM pixels,
+with joint-preserving reduction, NOT a separately regenerated pattern.
+RAL5015 blue sandwich and7047 light-grey sandwich follow own slides39/40;
+facade-visible roof edge blue;7004 doors/plinth,9016 frames. Geometry/UCX/IDs
+pipeline unchanged. All four actual image counts match; all eight blue/grey
+contrast comparisons meet or exceed the slide.
 
-`bash jobs/TEC26-OKS/AC06/run_build.sh C:/x/tec26-oks/AC06/build-v006`
-completed with exit0, Blender5.1.2 headless, fresh processes for ZIP FBX readback.
-Source model3dsMax2026.3 copy in metres; no source scene saved or edited.
-`materials.json.production_build` supersedes historical Gate-1 solid-grey text;
-the original Gate-1 approval/scope is not reinterpreted as build acceptance.
+| Facade | Ribs slide / VPM / NPM |
+|---|---|
+| A-D | 55 / 55 / 55 |
+| D-A | 54 / 54 / 54 |
+| 1-3 | 67 / 67 / 67 |
+| 3-1 | 68 / 68 / 68 |
 
-## Measured files and coverage
+The south NPM image splits ONE joint into two strokes3px apart; measurement
+counts one fitted grid position and retains both fragment coordinates, not an
+extra rib. The next physical joint is about40px away. No missing ribs are filled.
 
-- Main: all3118 source vertices,2954 source polygons retained in the master;
-  both exported profiles5596 triangles; source IDs retained in master `srcid`.
-- Glass: all24 vertices/6 polygons,12 exported triangles, map-free, alpha0.5.
-  Delivery's normalized main material is one slot; source Multi/Sub IDs are
-  **not claimed to survive as FBX slot numbers**. IDs are recorded in the master.
-- VPM has21 UCX (516 triangles), NPM has main+glass and no UCX. Cap tessellation
-  uses only original corners; no hull rebuild, weld, vertex move, or ring cut.
-- Current regions: 300 grey sandwich polygons,262 blue sandwich polygons
-  (85 ID1 +177 ID2, including all39 faces of three canopy components).
-  Below-zero drop remains plain7047 on the same ID10, minimum−2.025103807m.
-- VPM full Diffuse/ERM/Normal4096 for both sandwich colours; plain finishes256.
-  NPM one2048 RGB diffuse atlas plus2048 RGB `_o_`, embedded; no delivered normal.
-- **924/924** exported patterned triangles measured **999.9583–1000.0841px/m**
-  (target1000, strict measurement band±1%); zero UV overflow in all7 finish tiles.
-- **5596/5596** main triangles map to the correct presentation region in BOTH
-  VPM and NPM, with0 wrong finishes; every source polygon's directed boundary
-  and positive projected triangle area are covered exactly. Glass and all21 UCX
-  receive the same complete original-corner/boundary coverage check.
-- `audit_build.py .../build-v006 tmp/ac06-slide/audit-v006-final.json`:
-  **104/104 measured checks pass**. This is a building-specific build audit,
-  **not** the public full-delivery validator or SINTEZ.
-- Public `dt qa xview` on master, exported VPM, exported NPM: **0 contact/area
-  face pairs,0 overlapping vertices,0 bowties**, each exit0. CLI default local
-  profile is NPM; the retained AC08 per-profile mesh_report checks also run.
+This is an operational building deliverable, not a whole-site AGR/SINTEZ pass.
+No formal v014 unit/full-suite result or Artem AC06 visual acceptance is invented.
 
-## Pictures and count boundary
+## Historical v013 technical snapshot below
 
-Drive `G:/Мой диск/AGR-evidence/tec26-oks/AC06/build-v006/`:
-`contact-sheet.png` has12 swatches, labels outside. Four `compare/facade-*.png`
-plates are slide|VPM|NPM at42.6px/m; `compare-cavity/` additionally shows actual
-geometry edges using Workbench cavity shading (not painted texture borders).
-Uncropped `renders/` includes the full below-zero drop and iso views.
-The comparison viewport is z≥−0.23m; this crop does not delete model geometry.
+All v013 audit counts, NPM32mm generation notes and old comparison metrics below
+are historical, NOT measurements of the v014 atlas. Use the final plates above.
 
-Nominal grid0.20m from slide spacing (~8.53px per rib,465px/10.9m and575px/13.5m):
-**55 /55 /68 /68 full facade bays** for A–D/D–A/1–3/3–1. These are reconstructed
-full grid bays including occluded positions; **a pixel-perfect count of all
-visible strokes is NOT certified**. Windows, doors and pipes occlude lines.
-Independent `export-grid-probe.json` reads both actual exported UV sets:
-888/888 vertical sandwich triangles per profile preserve the0.20m grid;
-maximum phase residual1.39µm. Full rib centres within measured wall spans are
-55/55/68/68 in BOTH exports. This proves grid count/phase, not hidden pixel strokes.
-Supplement: `G:/Мой диск/AGR-evidence/tec26-oks/AC06/build-v006-grid-probe-v001/`
-(2/2 files SHA256 verified; original143-file build manifest is unchanged).
-No image is submitted as Artem-approved or as a certified exact visual match.
+### Historical heading: TEC26 AC06 — final build-v013 review packet
 
-## Remaining public validation failures — not waived
+**Status: built for review, NOT a passed AGR delivery.** Current visual reference:
+AC08 v010 (`ed743ab`, PR574; Artem «Да, похоже»). That approval is for AC08,
+not an invented AC06 acceptance. Latest AC06 operator instructions supersede the
+v006 grey projected roof band and nominal-width rib estimates.
 
-Both `tools/qa/validate_package.py ... --json --scene` runs exit1; raw reports
-are retained. VPM machine stages3 pass /3 fail /1 review /5 not_run; NPM4 pass /
-2 fail /0 review /2 not_run. Pending manual reviews are listed in those reports.
+## Inputs / scope
 
-- VPM V001: missing GeoJSON; actual address/coordinates are not supplied.
-- NPM V001: one-building ZIP has1 FBX, no mandatory whole-site Ground FBX.
-  This card builds AC06, not the complete site's final combined delivery.
-- V004 in both: public validator reports6992 duplicates/self-intersections;
-  its broader topology metric is NOT the xView contact-pair count above. It also
-  retains a clearance review (8937 projected pairs, including widely separated
-  faces). No threshold/checker/source geometry was changed to hide those results.
-- VPM V010:4 existing UCX piece intersections (2.2/3.8mm); all source corners
-  and source polygon coverage are unchanged. Fixing the source UCX is outside
-  the explicit colour-only authorization; no silent geometric repair was made.
-- Temporary `Prg_1`/`0000` names, user visual acceptance and final SINTEZ remain
-  open. No `passed=true`, publication-ready status, or final checker pass claimed.
+- Starting main: `442f0b695a91f9abc180783c26978fbe85fefcf9`; no AC06 build there.
+- Named parents merged into this feature branch: AC08 pilot through `ed743ab`
+  and approved AC06 Gate-1 (#571). No shared scripts/checkers/standards edited.
+- Own presentation slide39 (A–D, D–A) and slide40 (1–3, 3–1) are primary.
+  Their exact image SHA256 values are in `vpm_textures.json` and comparison receipt.
+  Source DWG/PDF copies and hashes remain in `materials.json.inputs`.
+- Source scene read-only Max2026.3/metres, layer006: main handle170, glass378,
+  21 collision candidates. The copied source scene was never saved or edited.
+- Current material legend/regions: [MATERIALS.md](MATERIALS.md),
+  `materials.json.production_build`. Historical Gate-1 `build_allowed=false`
+  is retained as the old packet's scope marker, not a prohibition on this BUILD card.
 
-Unchanged shared AC08 `qa_packages.py` has72/98 passing checks,26 failures:
-no-glass name assumptions, polygon-count equality despite requested UCX
-triangulation, old one-finish-per-ID mappings and density contract assumptions.
-The raw report is retained, NOT rewritten green. The AC06 audit names each
-replaced inapplicable check and supplies a complete stricter source-bound probe;
-all other raw checks (including UCX convexity/xView/PNG/budgets) remain active.
-Its strict raw schema requires all98 check keys, literal boolean statuses and
-an exactly matching failed-summary list; malformed/partial evidence is refused.
+## Executed build and readback
 
-## Regression and repair evidence
+`PX_PER_M=200 bash jobs/TEC26-OKS/AC06/run_build.sh C:/x/tec26-oks/AC06/build-v013`
+completed exit0. The runner uses AC08 v010's fixed-scale/camera recipe, preserves
+separate map-free glass and runs the actual pixel comparison gate BEFORE
+`AC06-BUILD-OK`. A mismatch or insufficient joint contrast returns nonzero.
+Blender5.1.2 headless; fresh-process FBX readback from BOTH exported ZIPs.
 
-- `7258f8f` RED:3 failures for missing presentation region function; then GREEN.
-- Additional observed RED: ID2 fascia1 failure; canopy top1 failure; supporting
-  cap fan1 failure; map module6 failures; audit coverage1 failure; raw-schema3
-  failures. Final focused run: **34 passed**, including historical Gate-1 tests.
-- v003 exposed untextured ID2 faces over the fascia; all broad vertical faces
-  and complete canopy components now share the correct sandwich finish.
-- UCX004 BEAUTY cap residual14.59µm exceeded the1e-5m supporting-plane bound.
-  Source-corner fan selection passes the SAME bound; no vertex moved. Real-source
-  negative/control regression keeps concave geometry fail-closed.
-- Hostile fresh-process probes **5/5**: declared raw failure remains failure;
-  truthy `fail` and empty checks refused; report hardlink/input alias preserves
-  source bytes; existing report and `.partial` sentinel not clobbered. Snapshot
-  regression rejects duplicate inputs and input rewrites; non-finite/exact-bound
-  and missing/duplicate/reversed triangle probes reject without a pass.
-- Non-final suite attempts were stopped for audit self-review and the final
-  author-receipt/docstring freeze; no success is claimed for those snapshots.
-  Owned native pytest/uv children were checked absent before each restart.
-  The one completed final full-suite receipt belongs in the PR.
-- Regression evals: tmp/evals/report.json;0 passed /0 failed /10 not measured
-  (no Claude transcript); exact receipt validation exit0. Missing telemetry is
-  not substituted with pytest counts or fabricated transcripts.
+- Master main: all3118 source vertices /2954 source polygons; same source IDs
+  stored in `srcid`. Both FBXs:5596 main +12 glass triangles.
+- Glass retains all24 vertices/6 source polygons; map-free, alpha0.5.
+- VPM retains21 UCX /516 triangles; NPM has main+glass and no UCX.
+- No weld, vertex movement, hull rebuild, ring cut or silhouette change.
+  Source-corner cap triangulation is the explicitly requested export representation.
+  Every polygon's directed boundary, positive projected triangle area and source
+  corners are covered; no dropped/unmapped object or polygon.
+- Facade-visible ID1 roof-edge surfaces are BLUE as the slide:157 blue polygons,
+  24 non-visible7004 polygons. The source sloped surfaces themselves form the
+  projected upper band; they are not left grey or hidden behind fake geometry.
+- ID2:177 blue ribbed canopy/fascia faces,494 plain blue trim/snow-guard faces.
+  ID3:ALL300 wall polygons ribbed7047. Thin plinth above zero remains7004;
+  below-zero drop remains PLAIN7047 on ID10 to−2.0251m. Source visible plinth
+  is0.1325m above zero versus the sheet's+0.120; geometry was not retuned.
+- VPM:13 sequential UDIM triplets (8 full4096 patterned tiles,5 plain256 tiles).
+  NPM:ONE2048 RGB diffuse atlas +separate2048 RGB `_o_`, embedded; no normal map.
+- **1068/1068** patterned triangles measure **999.9583–1000.0742px/m**
+  (target1000±1%);0 UV overflow. All5596 exported main triangles in EACH
+  profile have the correct presentation finish (0 wrong finishes).
+- Building-specific audit: **104/104 measured checks pass**.
+  Public xView on master/VPM/NPM:0 face pairs,0 overlapping vertices,0 bowties;
+  each exit0. CLI local default profile is NPM; raw per-profile mesh checks remain.
 
-## Storage, resume and status
+## Final acceptance pictures — measured pixels, not declared counts
 
-Only small text, hashes, source geometry dump and code are in git. Older verbose
-v002 diagnostic JSON receipts are now kept only in their already verified Drive
-folder (82/82 hashes); the retained historical manifest still identifies them.
-New evidence is versioned separately and verified after Drive copy. See
-`BUILD_MANIFEST.json` and `DRIVE-SHA256SUMS.txt` for paths and exact artifact hashes.
+Only `compare/compare-{A-D,D-A,1-3,3-1}.png` are the final review pictures.
+Source|VPM|NPM at200px/m, aligned at±0.000, clipped at the slide's−0.200 ground.
+Pixels outside the render are padded WHITE, not fake black outlines. Full raw
+renders/iso retain the actual below-grade geometry. No source/model retouching.
 
-Next: independent review of the material/UV implementation and comparison plates;
-Artem's explicit visual acceptance before final SINTEZ; preserve the public
-validator failures and resolve final whole-site packaging/metadata separately.
+The adapted AC08 v010 counter measures actual regular vertical strokes over
+the blue field in each final panel. It retains all candidates, excluded
+annotation/window/pipe outliers and exact source/control ROIs. It never copies
+an expected rib number into a render caption. Asymmetric counts are intentional:
+each facade's pitch = measured field width / its own measured slide ribs.
 
----
+ΔY is Rec709 sRGB luma, column-profile P50−P05; grey patches are explicit in JSON.
 
-## Historical blocked attempt (superseded by the answered question above)
+| Facade | Ribs slide / VPM / NPM | Blue ΔY slide / VPM / NPM | Grey ΔY slide / VPM / NPM |
+|---|---|---|---|
+| A-D | 55 / 55 / 55 | 72.29 / 98.66 / 95.30 | 147.60 / 207.21 / 196.13 |
+| D-A | 54 / 54 / 54 | 74.32 / 98.66 / 94.87 | 146.70 / 201.08 / 192.14 |
+| 1-3 | 67 / 67 / 67 | 70.27 / 98.66 / 95.24 | 152.00 / 207.28 / 198.50 |
+| 3-1 | 68 / 68 / 68 | 70.42 / 98.66 / 95.30 | 149.00 / 207.72 / 194.49 |
 
+**4/4 count matches;8/8 colour/profile contrast comparisons ≥slide.**
+The same approved panel noise is recoloured to KPP5015 and7047. Latest crisp-line
+instruction overrides old8mm ink: VPM20mm and NPM32mm preserve a dark centre at
+comparison/atlas scale. No horizontal panel joints; the actual field border
+is outlined. Doors are7004, frames/reveals9016. No AC08 rib count was imported.
 
-## Scope and pinned inputs
+## Public full-delivery validator — still NOT passed
 
-Issue #563 BUILD fan-out, branch `job/tec26-oks-ac06-build`.
-Starting main: `442f0b695a91f9abc180783c26978fbe85fefcf9`.
-Merged designated inputs: `origin/job/tec26-oks-pilot-ac08` (`5febf7c`) and
-AC06 Gate-1 branch `origin/improve/issue-563-tec26-06-1-materials-per-multisub-id-fro`.
-Historical `materials.json.build_allowed=false` is retained as the Gate-1 packet's
-scope marker; the BUILD authorization is this card's orchestrator note, not an
-edit to the historical approval. No new user approval is claimed.
+Actual final v012 `tools/qa/validate_package.py <zip> --profile <vpm|npm>
+--json --scene` runs exit1. Raw reports are on Drive:
+VPM3 pass /3 fail /1 review /5 not_run; NPM4 pass /2 fail /0 review /2 not_run.
 
-Staged Max copy and drawing hashes: `materials.json.inputs`.
-Read source layer `006` once using the card-authorized locked headless Max route,
-not the reachable user's live Max scene. Native version 2026.3; metres x1.
-`max-dump-006.json` has 23 uniquely handled nodes: main 170, glass 378, 21
-collision candidates. Max wrapper status `ok`, native exit `4294967166` with
-polyunwrapper startup warning; `DUMP-OK` and the actual complete JSON establish
-extraction, not the wrapper status alone. Source file was not saved.
+- V001: missing VPM GeoJSON/address; NPM is a one-building ZIP without the
+  mandatory whole-site Ground FBX. This is not a complete site delivery.
+- V004:6992 duplicates/self-intersections plus a projected-clearance review.
+  This metric is NOT the xView contact-pair count above. No threshold was changed
+  or a failed finding converted into a pass. Geometry remains the approved source.
+- V010:4 source UCX piece intersections (2.2/3.8mm). Source geometry/collision
+  repair is explicitly outside the colour-only authorization; no silent repair.
+- Temporary `Prg_1`/`0000`, manual AC06 visual approval and final SINTEZ remain open.
+  No final publication-ready or whole-delivery `passed=true` is claimed.
 
-## Blocking question: conflicting visible upper fascia
+Shared AC08 QA remains raw72/98 pass,26 fail: no-glass naming, equality of UCX
+polygon counts despite triangulation, old one-finish-per-ID and density assumptions.
+The AC06 audit names every inapplicable check and supplies independent stricter
+source-bound proofs. All other raw checks remain active. Its schema requires
+ALL98 raw keys, literal boolean statuses and a matching failure summary; empty,
+partial or truthy-string evidence cannot pass. Raw reports were not edited green.
 
-The approved mapping assigns ID1 (roof **and upper fascia**) entirely RAL7004,
-ID2 (canopies/trims) blue metal, and ID3 walls solid RAL7047. The Gate-1 packet's
-last section explicitly leaves blue-wall ID identity unresolved. The building's
-own supplemental DWG colour rendering
-`C:/x/tec26-oks/AC06/evidence-v001/dwg-facades-recovered.png` visibly has a blue,
-vertically ribbed **upper facade band** on all four facades. Isolated ID1 evidence
-`evidence-v004/isolated-1-shaded.png` includes the roof and vertical upper fascia.
-The diagnostic build follows the approved table, so this upper fascia is grey.
-It is NOT an acceptance render and is not being sent to Artem as one.
+## Tests, hostile review and history
 
-**Question for Artem:** should the vertical upper-fascia faces within ID1 be
-RAL5015 with vertical ribs, while sloping roof faces stay RAL7004, preserving
-source ID1 and geometry? The alternative is to retain approved ID1 wholly grey,
-which differs from the colour sheet. Please confirm which authority applies.
-After this answer, measure this building's rib count separately on all four
-native DWG colour views; do not import AC08's 30/12 counts or 0.20 m step.
-The recovered DXF image is supplemental, not a native authoritative count source.
+- Current focused regressions: **42 passed**, including historical Gate-1 cases.
+- Observed REDs precede region/map/audit implementation, ID2/canopy coverage,
+  UCX004 fan selection, strict raw status schema, crisp contrast/blue roof edge,
+  pixel counter, opposite-facade counts and white out-of-bounds padding.
+- Actual v009 comparison failed3–1 (67 versus68 measured after final resampling);
+  the south recipe was separated from north, not a caption or checker weakened.
+  v010/v011/v012 match all4. Earlier v006 nominal55/55/68/68 is historical only.
+- UCX004 BEAUTY cap residual14.59µm exceeded the unchanged10µm supporting-plane
+  bound. Another original-corner fan passes; concave negative controls still fail.
+- Final hostile fresh-process probes: **5/5**. Declared raw false stays failure;
+  truthy `fail` and empty checks refused; output/input hardlink and existing
+  report/`.partial` sentinels preserve bytes. Duplicate/reversed/missing triangle,
+  NaN/inf, exact20µm corner-boundary, duplicate-handle and input-change regressions
+  fail closed. Actual input hashes remain unchanged.
+- Source/destination hashes are verified; before/after snapshot checks do NOT
+  claim detection of a hostile change restored between snapshots.
+- Non-final full-suite attempts were explicitly stopped/discarded for author
+  snapshot changes and new operator steering; no completed success claimed for
+  them. Owned native children were checked absent before restarting. The final
+  frozen full-suite command/counts are recorded in the PR, not invented here.
+- Regression evals:0 passed /0 failed /10 not measured (no Claude transcript),
+  receipt validation exit0. No fabricated telemetry or pytest-count substitution.
 
-## Executed result (diagnostic only)
+## Artifacts / continuation
 
-`bash jobs/TEC26-OKS/AC06/run_build.sh C:/x/tec26-oks/AC06/build-v002`
-completed with exit 0. AC08's shared builder first refused the two Multi/Sub
-meshes (main + separate glass). The job-local adapter explicitly partitions by
-handles, builds the main/collisions using the existing recipe, and retains the
-separate map-free glass object. No node is dropped. All five opaque finishes
-are currently solid placeholders (density-exempt, not a measured 1000 px/m
-panel texture); exact KPP 5015/7004/9016/Interior colours, approved 7047 RGB.
-Source geometry/IDs preserved in the working master; UCX triangulated for export.
-No ring cuts. Mixed ID10 below zero uses wall 7047, above uses plinth 7004.
+`G:/Мой диск/AGR-evidence/tec26-oks/AC06/build-v013/` with `SHA256SUMS.txt`;
+tracked current pointers: `BUILD_MANIFEST.json`, `DRIVE-SHA256SUMS.txt`.
+Contains both ZIPs/FBXs, master, maps, source slides,12 swatches,4 final plates,
+readbacks, raw public failures, audit, pixel comparison receipts and reproducers.
+Binaries stay off git/LFS. Earlier diagnostic versions remain immutable on Drive;
+7 verbose v002 git JSON copies were removed only after byte-identical Drive checks.
 
-- Main: 3118 source vertices, 2954 source polygons, 5596 exported triangles.
-- Glass: 24 source vertices, 6 source polygons, 12 exported triangles.
-- VPM: 21 UCX objects, all triangulated. NPM: main + glass, no UCX.
-- VPM: 5 sequential placeholder UDIM triplets, 256 square RGB.
-- NPM: one 2048 RGB diffuse atlas and separate opacity atlas, embedded FBX.
-- Separate clean-process readback of both exported ZIP FBXs completed.
-- Public `uv run dt qa xview .../readback/vpm/SM_Prg_1.fbx --out .../xview-vpm.json`:
-  zero overlapping faces/vertices, exit 0 (CLI printed default NPM local profile;
-  do not misstate this as a VPM-threshold certification).
-- `qa_packages.py`: **71/98 checks pass; 27 fail**. This is NOT green QA.
-  Failures: hardcoded no-glass name expectations; UCX comparison expects original
-  polygon counts rather than required triangulation; UCX004 convexity false at
-  readback; 8 unmatched main triangles / 4 uncovered source polygons in finish
-  coverage, though wrong-finish=0; texel-contract check rejects no patterned faces.
-  None is waived. Investigate source-geometry/triangulation comparisons test-first
-  after the material decision. Never fix source geometry to silence findings.
-- VPM preview helper replaces glass material with main UDIM material; its preview
-  is diagnostic, not authoritative glass appearance. Correct before acceptance.
-- No native DWG/rib-count comparison sheets, final SINTEZ, user visual acceptance,
-  final full suite, or publication is claimed. Address/GeoJSON remain unavailable;
-  `Prg_1` / `0000` are explicit temporary naming tokens.
-
-## Tests and repair log
-
-RED commit `70966b7`: 5/5 new build mapping witnesses failed (missing build spec).
-After the spec: 5/5 passed. Final focused run: **16 passed in 0.31 s**:
-`uv run pytest -q tests/jobs/test_tec26_ac06_build.py tests/test_tec26_ac06_materials.py tests/test_tec26_ac06_isolated_ids.py -p no:cacheprovider --basetemp=C:/x/t_6af403e8-focused`.
-Includes all 11 opaque IDs, separate glass handle, all 23 nodes, duplicate/empty/
-partial node partition refusal and four unmapped-ID failures. These are not
-architecture/export acceptance tests.
-
-Repair 1: native Blender adapter run failed with `KeyError: finish` in glass
-`pack_uv`; added the required BMesh finish layer and reran in a fresh build-r1
-folder successfully, then ran the complete build-v002 pipeline successfully.
-No retry or repair of the model-authority conflict was attempted.
-
-## Durable evidence and resume
-
-All 82 diagnostic build files copied to
-`G:/Мой диск/AGR-evidence/tec26-oks/AC06/build-v002-diagnostic/`.
-All **82/82 SHA256 hashes** verified after copy; `SHA256SUMS.txt` there,
-copy in `build-v002/DRIVE-SHA256SUMS.txt`. Binaries are not in git/LFS.
-Only small JSON QA/adapter/readback receipts and hashes are committed.
-Local raw logs: ignored `tmp/ac06-build/`.
-
-Resume: answer upper-fascia question; update build mapping only with that answer;
-obtain native DWG facade images and measure rib count per facade if applicable;
-repair/extend job-local export coverage probes and glass preview without shared
-script refactoring; rebuild to a new version; run complete acceptance comparisons,
-full suite through suite_slot, eval receipts, push and open one PR based on the
-AC08 parent branch. Do not request review of this diagnostic snapshot.
+Next: independent code/material review and Artem's final AC06 picture acceptance;
+final SINTEZ after that. Do not erase source QA failures or pretend a single
+building is the whole-site AGR package. No further per-step questions are needed.

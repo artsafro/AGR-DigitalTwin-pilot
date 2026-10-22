@@ -3,12 +3,12 @@
   "production_build": {
     "status": "built-for-review",
     "delivery_passed": false,
-    "authority": "Artem via card t_6af403e8 comments 2026-10-22 16:37-16:39; presentation slide39/40 supersedes historical Gate-1 below",
+    "authority": "Latest operator roof-edge and crisp-joint instructions; AC08 v010 reference accepted; own presentation slide39/40 pixel counts.",
     "build_authorization": "BUILD orchestrator note on #563; historical build_allowed=false refers to Gate-1-only packet",
-    "evidence_directory": "G:/Мой диск/AGR-evidence/tec26-oks/AC06/build-v006",
+    "evidence_directory": "G:/Мой диск/AGR-evidence/tec26-oks/AC06/build-v014",
     "spec": "vpm_textures.json",
     "region_rules": {
-      "1": "Vertical fascia: 85 polygons Sandwich_RAL5015; other 96 roof polygons solid RAL7004",
+      "1": "157 facade-visible roof-edge/fascia polygons ribbed5015;24 non-visible polygons solid7004. This supersedes grey projected roof band.",
       "2": "177 polygons: sandwich canopies and broad vertical fascia RAL5015; remaining 494 trim/snow-guard polygons solid blue",
       "3": "All 300 wall sandwich polygons ribbed RAL7047, RGB [208,208,208]",
       "10": "Above zero plinth RAL7004; at/below zero plain wall RGB7047; unchanged source ID"
@@ -20,16 +20,17 @@
       "white": "Relief-glazing frames: RAL9016"
     },
     "rib_grid": {
-      "authority": "slide39/40",
-      "nominal_pitch_m": 0.2,
-      "phase_m": 0.1,
-      "full_facade_bays": {
+      "method": "Actual final comparison pixels, not nominal width/0.2",
+      "measured_ribs": {
         "A-D": 55,
-        "D-A": 55,
-        "1-3": 68,
+        "D-A": 54,
+        "1-3": 67,
         "3-1": 68
       },
-      "limitation": "Full grid bays reconstructed from slide spacing and wall dimensions; visible line counts include occlusion and are not claimed as pixel-count certification"
+      "phase": "symmetric field/ribs per facade",
+      "comparison_receipt": "compare/comparison.json",
+      "all_counts_match": true,
+      "all_joint_contrasts_at_least_slide": true
     },
     "visual_approval": "pending",
     "public_validator": "not passed; source topology/UCX findings and incomplete whole-site delivery retained"

@@ -1,0 +1,105 @@
+{
+  "status": "built-for-review",
+  "delivery_passed": false,
+  "version": "build-v013",
+  "reference_parent": "ed743ab",
+  "drive_path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\AC06\\build-v013",
+  "files_verified": 184,
+  "sha256_manifest": "DRIVE-SHA256SUMS.txt",
+  "inputs": {
+    "jobs\\TEC26-OKS\\AC06\\max-dump-006.json": "66e3f30a1a85fda26335fe4c189ed8189c049cd5d40ac446b87b075d9a5cd66f",
+    "jobs\\TEC26-OKS\\AC06\\vpm_textures.json": "ccc61f5e74941780a4a11922c1dbc64bf4b7a1fa3a581dc5a1a70d863d4b1064",
+    "jobs\\TEC26-OKS\\AC06\\build_ac06.py": "1079b4d4354e675b7e470d640f56d7b138901f196a232608b640df6fa9258d12",
+    "jobs\\TEC26-OKS\\AC06\\make_maps.py": "07469e0364124c663b7097b8df9311fdb73e295c47c3cb44def458c0ceeee2aa",
+    "jobs\\TEC26-OKS\\AC06\\audit_build.py": "6b8af309de719b648a1abb9af39aa05beb143f1b4c375ef1545a0fd15c97527b",
+    "jobs\\TEC26-OKS\\AC06\\render_facades.py": "d097d00870aae840035cad295b94605227819e86617b9ab42e428ea4ee74d4fc",
+    "jobs\\TEC26-OKS\\AC06\\compare_ac06.py": "0bcf263a0d61e7d8c5e0a84086a793220285f0738ce01a7f781f5784683aee07",
+    "jobs\\TEC26-OKS\\AC06\\run_build.sh": "4d0bcc55bdfdfca2a34bf8b0ccaf8079ebb336e348729d92bcedf33a3e62470a"
+  },
+  "outputs": {
+    "package-vpm/SM_Prg_1.zip": "40121a1ebf10e0820b7ac641a248b9f7b010c23b2e9f18117b5cb0ebc55be43a",
+    "package-vpm/SM_Prg_1/SM_Prg_1.fbx": "39952f5dce76ccca320c7e8fb6bf4f9a272080faa4816444513169320691880d",
+    "package-npm/0000_Prg_1.zip": "955bb0ec6615263d43b75bcdea654eb9a009768b86b446b40b9bf9d0c6c4d6fc",
+    "package-npm/0000_Prg_1/0000_Prg_1_01.fbx": "3f66f991be7a6e225495d726383f693982ccb02e2762e727442e427e9642fd1f",
+    "build/Prg_1_VPM_master.blend": "80dcceb794694a81b09ddcd7ebb66d1396619306ae050ec5159eb65c4a6c4d62",
+    "audit-final.json": "d9de44ab6a2b6791c5cf598d4791ef6f4d42615adec73e9017694bcae8a71c29",
+    "compare/comparison.json": "37d211dd4d3784dc95b1dddd7eb4e69cdd891df55947d5d9d488a2ba8f4f5a02",
+    "contact-sheet.png": "22e57cde9217ad3d0f0385281faa5361e702be9c0400585cbacda1ea7f15179f"
+  },
+  "build_audit": {
+    "passed": 104,
+    "failed": 0
+  },
+  "raw_ac08_qa": {
+    "passed": 72,
+    "failed": 26
+  },
+  "density": {
+    "measured_triangles": 1068,
+    "min": 999.9583254489977,
+    "max": 1000.0741042252789,
+    "target": 1000
+  },
+  "public_validator": {
+    "vpm": {
+      "pass": 3,
+      "fail": 3,
+      "review": 1,
+      "not_run": 5
+    },
+    "npm": {
+      "pass": 4,
+      "fail": 2,
+      "review": 0,
+      "not_run": 2
+    }
+  },
+  "comparisons": {
+    "A-D": {
+      "ribs": {
+        "slide": 55,
+        "vpm": 55,
+        "npm": 55
+      },
+      "count_match": true,
+      "contrast_at_least_slide": true,
+      "png": "compare-A-D.png"
+    },
+    "D-A": {
+      "ribs": {
+        "slide": 54,
+        "vpm": 54,
+        "npm": 54
+      },
+      "count_match": true,
+      "contrast_at_least_slide": true,
+      "png": "compare-D-A.png"
+    },
+    "1-3": {
+      "ribs": {
+        "slide": 67,
+        "vpm": 67,
+        "npm": 67
+      },
+      "count_match": true,
+      "contrast_at_least_slide": true,
+      "png": "compare-1-3.png"
+    },
+    "3-1": {
+      "ribs": {
+        "slide": 68,
+        "vpm": 68,
+        "npm": 68
+      },
+      "count_match": true,
+      "contrast_at_least_slide": true,
+      "png": "compare-3-1.png"
+    }
+  },
+  "manual": {
+    "AC06_visual": "pending",
+    "AC08_reference_visual": "accepted by Artem, not AC06 acceptance",
+    "final_sintez": "pending AC06 visual approval",
+    "whole_site_delivery": "not claimed"
+  }
+}

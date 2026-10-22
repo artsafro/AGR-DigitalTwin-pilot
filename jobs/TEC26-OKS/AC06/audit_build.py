@@ -155,7 +155,7 @@ def main(root, out):
             if tag=='vpm':
                 density=[]
                 for i,owner in enumerate(owners):
-                    if not expected[owner].startswith('Sandwich_'):continue
+                    if not expected[owner].startswith('Sandwich'):continue
                     v=np.asarray(o['vertices'])[o['faces'][i]]; u=np.asarray(o['face_uvs'][i])
                     area=np.linalg.norm(np.cross(v[1]-v[0],v[2]-v[0]))/2
                     e1,e2=u[1]-u[0],u[2]-u[0]; ua=abs(e1[0]*e2[1]-e1[1]*e2[0])/2

@@ -50,7 +50,7 @@ def region_finishes(vertices, faces, ids, spec):
         vertical = abs(normal[2]) / length < 0.001
         tall = max(v[2] for v in p) - min(v[2] for v in p) > 0.08
         wide = max(max(v[a] for v in p)-min(v[a] for v in p) for a in (0,1)) > 0.08
-        if (sid == 1 and vertical) or (sid == 2 and ((vertical and tall and wide) or max(v[2] for v in p) < 3.0)):
+        if (sid == 1 and abs(normal[2])/length < 0.999999) or (sid == 2 and ((vertical and tall and wide) or max(v[2] for v in p) < 3.0)):
             finish = 'Sandwich_RAL5015'
         elif sid == 3:
             finish = 'Sandwich_RAL7047'
@@ -59,6 +59,10 @@ def region_finishes(vertices, faces, ids, spec):
             if rule is None:
                 raise ValueError(f'unmapped material ID {sid}')
             finish = (rule['below'] if max(v[2] for v in p) <= spec['zero_m'] else rule['above']) if rule.get('split') else rule['finish']
+        if finish.startswith('Sandwich_') and abs(normal[0]) > abs(normal[1]):
+            finish = finish.replace('Sandwich_', 'SandwichEast_' if normal[0] > 0 else 'SandwichShort_')
+        if finish.startswith('Sandwich_') and normal[1] < 0:
+            finish = finish.replace('Sandwich_', 'SandwichSouth_')
         result.append(finish)
     return result
 
@@ -129,17 +133,25 @@ def main():
     for f, material_id, finish in zip(F, IDs, finishes):
         nf = bm.faces.new([vs[k] for k in f])
         nf[fl], nf[sid] = names.index(finish), material_id
-        if finish.startswith('Sandwich_'):
+        if finish.startswith('Sandwich'):
             n = finish_map._newell([V[k] for k in f])
             if abs(n[2]) < 0.001:
                 axis = 0 if abs(n[1]) >= abs(n[0]) else 1
                 # Shared global grid, NOT a new phase on each source polygon.
                 nf[flag] = 1
                 for l, k in zip(nf.loops, f):
-                    l[uvm].uv = (V[k][axis] - lo[axis] - 0.1, V[k][2])
+                    l[uvm].uv = (V[k][axis] - spec['rib_fields']['east' if axis == 1 and n[0] > 0 else ('south' if axis == 0 and n[1] < 0 else str(axis))]['lo'], V[k][2])
             else:
                 # Canopy top/soffit: same joint profile in planar metre UVs.
-                projected = [vpm_uv.project(Vector(V[k]), Vector(n)) for k in f]
+                # Sloped roof itself forms the visible roof-edge band in this source.
+                # Use an orthonormal in-plane frame; the eave direction stays horizontal.
+                normal = Vector(n)
+                axis = 0 if abs(n[1]) >= abs(n[0]) else 1
+                along = Vector((1,0,0) if axis == 0 else (0,1,0))
+                along = (along-normal*normal.dot(along)).normalized()
+                across = normal.cross(along).normalized()
+                projected = [Vector((Vector(V[k]).dot(along)-spec['rib_fields']['east' if axis == 1 and n[0] > 0 else ('south' if axis == 0 and n[1] < 0 else str(axis))]['lo'],
+                                     Vector(V[k]).dot(across))) for k in f]
                 base = min(p.y for p in projected)
                 nf[flag] = 1
                 for l, p in zip(nf.loops, projected):

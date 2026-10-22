@@ -1,53 +1,43 @@
 {
-  "status": "built-for-review",
+  "version": "build-v014",
+  "status": "operational-build-complete",
   "delivery_passed": false,
-  "drive_path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\AC06\\build-v006",
-  "files_verified": 143,
-  "sha256_manifest": "DRIVE-SHA256SUMS.txt",
-  "inputs": {
-    "jobs\\TEC26-OKS\\AC06\\max-dump-006.json": "66e3f30a1a85fda26335fe4c189ed8189c049cd5d40ac446b87b075d9a5cd66f",
-    "jobs\\TEC26-OKS\\AC06\\vpm_textures.json": "ff32e5b0758bc9b26a3abcc876d97b8baee145743cea37d82b0ffd944a73b971",
-    "jobs\\TEC26-OKS\\AC06\\build_ac06.py": "c3d28c0f8590f0e7bf2c704e2df9a8fa00020b146d7dee683add9dc37191aafc",
-    "jobs\\TEC26-OKS\\AC06\\make_maps.py": "41dbc2e82dcf9da67938b8d90d5692e1b705333770cece8eda744b7705cb567e",
-    "jobs\\TEC26-OKS\\AC06\\audit_build.py": "a34d9ef347a7bd9fc5e13473e8faf676d23de5d0afc22fceee7eb67f00697e44",
-    "jobs\\TEC26-OKS\\AC06\\render_facades.py": "8e0e4adc42b9f21889eb0ae1f9ab18d3012db4d2578b92eebb5079fe80adf7e4",
-    "jobs\\TEC26-OKS\\AC06\\run_build.sh": "ce364cb3f11606e0e35eb79ab2093924dfbd8cee9c0b830d047d6a48728f41ae"
-  },
-  "outputs": {
-    "package-vpm/SM_Prg_1.zip": "dab64df8f7b906a821038c3a66544a5dee361c5dfeb0128ab11dc6df34c44182",
-    "package-vpm/SM_Prg_1/SM_Prg_1.fbx": "197805f0cda4727758a8b491d7f9f22ca13b28cb5e00f07d688bdbbad42d2de4",
-    "package-npm/0000_Prg_1.zip": "1b3d4a624f49c008cea56ac16949dcca1693f3da49964ae66b8c42295bc896b4",
-    "package-npm/0000_Prg_1/0000_Prg_1_01.fbx": "7b08f0b560ed14c6cc521bf30ea76b98e825bcde827b4bcfc7bd6432551afb22",
-    "build/Prg_1_VPM_master.blend": "a6335a5448bcad309219ac357bbe09782d908793c67f3b2a270ae9d12716bf61",
-    "audit-v006-final.json": "a612a14de50ba27957575b581fc881a661c32c103e83e2e92be88ab9138f0476",
-    "contact-sheet.png": "a579a70b0226889ca6afeaf0fad8c7a613ddc046bab06208940eae4cdac95d82"
-  },
-  "build_audit": {
-    "passed": 104,
-    "failed": 0
-  },
-  "raw_ac08_qa": {
-    "passed": 72,
-    "failed": 26
-  },
-  "public_validator": {
-    "vpm": {
-      "pass": 3,
-      "fail": 3,
-      "review": 1,
-      "not_run": 5
+  "drive_path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\AC06\\build-v014",
+  "packages": [
+    "G:\\Мой диск\\AGR-evidence\\tec26-oks\\AC06\\build-v014\\SM_Prg_1-VPM.zip",
+    "G:\\Мой диск\\AGR-evidence\\tec26-oks\\AC06\\build-v014\\0000_Prg_1-NPM.zip"
+  ],
+  "compares": [
+    "G:\\Мой диск\\AGR-evidence\\tec26-oks\\AC06\\build-v014\\compare-A-D.png",
+    "G:\\Мой диск\\AGR-evidence\\tec26-oks\\AC06\\build-v014\\compare-D-A.png",
+    "G:\\Мой диск\\AGR-evidence\\tec26-oks\\AC06\\build-v014\\compare-1-3.png",
+    "G:\\Мой диск\\AGR-evidence\\tec26-oks\\AC06\\build-v014\\compare-3-1.png"
+  ],
+  "copied_and_byte_verified": 6,
+  "npm": "2048 atlas derived from VPM Diffuse UDIMs; joint-preserving reduction",
+  "counts": {
+    "A-D": {
+      "slide": 55,
+      "vpm": 55,
+      "npm": 55
     },
-    "npm": {
-      "pass": 4,
-      "fail": 2,
-      "review": 0,
-      "not_run": 2
+    "D-A": {
+      "slide": 54,
+      "vpm": 54,
+      "npm": 54
+    },
+    "1-3": {
+      "slide": 67,
+      "vpm": 67,
+      "npm": 67
+    },
+    "3-1": {
+      "slide": 68,
+      "vpm": 68,
+      "npm": 68
     }
   },
-  "manual": {
-    "visual": "pending",
-    "final_sintez": "pending user visual approval",
-    "whole_site_package": "outside AC06-only build"
-  },
-  "rib_grid": "55/55/68/68 full bays, nominal step0.20m; visible stroke counts not certified"
+  "all_comparisons_passed": true,
+  "workflow": "Operator 2026-10-22 18:4x: no new unit/full suite/reviewer round or diagnostic evidence. Final packages and compares only.",
+  "boundary": "Not a full-site AGR/SINTEZ delivery pass; source geometry and UCX pipeline unchanged."
 }

@@ -20,4 +20,5 @@ uv run python -c "import zipfile,sys; r=sys.argv[1]; zipfile.ZipFile(r+'/package
 blender --python "$S/qa_readback.py" -- "$O/readback/vpm/SM_Prg_1.fbx" "$O/readback/vpm.json"
 blender --python "$S/qa_readback.py" -- "$O/readback/npm/0000_Prg_1_01.fbx" "$O/readback/npm.json"
 blender --python "$B/render_facades.py" -- "$B/vpm_textures.json" "$O/readback/vpm/SM_Prg_1.fbx" "$O/textures-vpm" "$O/readback/npm/0000_Prg_1_01.fbx" "$O/renders"
+uv run python "$B/compare_ac06.py" "$O" "$O/compare"
 printf 'AC06-BUILD-OK %s\n' "$O"
