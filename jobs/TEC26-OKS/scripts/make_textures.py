@@ -137,7 +137,7 @@ def main(spec_path, out):
     sys.path.insert(0, HERE)
     import finish_map
     spec = json.load(open(spec_path, encoding="utf-8"))
-    finish_map.validate_spec(spec)
+    finish_map.validate_spec(spec, finish_map.load_kpp())
     finish_map.fresh_out_dir(out, [spec_path, HERE])
     a, fs, ps = spec["address"], spec["size_full"], spec["size_placeholder"]
     name = lambda kind, udim: os.path.join(out, f"T_{a}_{kind}_1.{udim}.png")

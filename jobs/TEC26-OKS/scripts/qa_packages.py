@@ -20,6 +20,9 @@ from PIL import Image
 
 from dt_ai.ops.inv_xview import mesh_report
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import finish_map  # noqa: E402
+
 TRI_BUDGET = 150_000  # KPP1 limit per OKS (jobs/KPP1/REPORT.md §2)
 
 
@@ -48,6 +51,68 @@ def ucx_hull(o):
             "materials": len([m for m in o["materials"] if m["name"]])}
 
 
+def match_source_faces(src_v, src_faces, out_v, out_faces, shift, tol=2e-4):
+    """Source polygon of every delivered triangle (export triangulation / vertex splitting tolerant): a triangle
+    belongs to the source polygon(s) whose vertex set holds all three of its corners (positions after the pivot
+    shift, within `tol`). Returns (owners per triangle: sorted tuple of source polygon indices, possibly empty)."""
+    src = np.asarray(src_v, float) - shift
+    cell = {}
+    for i, p in enumerate(src):
+        cell.setdefault(tuple(np.floor(p / tol).astype(int)), []).append(i)
+    polys_of = {}
+    for pi, f in enumerate(src_faces):
+        for k in f:
+            polys_of.setdefault(k, set()).add(pi)
+
+    def near(q):
+        c = np.floor(q / tol).astype(int)
+        hits = set()
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                for dz in (-1, 0, 1):
+                    for i in cell.get((c[0] + dx, c[1] + dy, c[2] + dz), ()):
+                        if np.abs(src[i] - q).max() <= tol:
+                            hits |= polys_of.get(i, set())
+        return hits
+
+    ov = np.asarray(out_v, float)
+    memo, owners = {}, []
+    for f in out_faces:
+        sets = []
+        for k in f:
+            if k not in memo:
+                memo[k] = near(ov[k])
+            sets.append(memo[k])
+        owners.append(tuple(sorted(set.intersection(*sets))) if sets else ())
+    return owners
+
+
+def source_finish_report(expected, src_faces, owners, delivered):
+    """Delivered finish per triangle vs the approved source-ID mapping (finish_map.assign_finishes incl. the ID1
+    below-zero split). Fail-closed: an unmatched triangle, a triangle whose candidate source polygons disagree, a
+    wrong finish, and a source polygon not covered by exactly len(f)-2 triangles are all counted as errors."""
+    wrong, unmatched, ambiguous, per_poly, examples = 0, 0, 0, [0] * len(src_faces), []
+    for t, (own, got) in enumerate(zip(owners, delivered)):
+        if not own:
+            unmatched += 1
+            continue
+        want = {expected[i] for i in own}
+        if len(own) == 1:
+            per_poly[own[0]] += 1
+        if len(want) != 1:
+            ambiguous += 1
+            continue
+        w = next(iter(want))
+        if got != w:
+            wrong += 1
+            if len(examples) < 5:
+                examples.append({"tri": t, "source_polygon": own[0], "expected": w, "delivered": got})
+    uncovered = [i for i, f in enumerate(src_faces) if per_poly[i] != len(f) - 2]
+    return {"ok": not (wrong or unmatched or ambiguous or uncovered) and len(owners) > 0, "tris": len(owners),
+            "wrong_finish": wrong, "unmatched": unmatched, "ambiguous": ambiguous,
+            "source_polygons_not_covered": len(uncovered), "uncovered_examples": uncovered[:5], "examples": examples}
+
+
 def sample(img, uv):
     h, w = img.shape[:2]
     x = min(w - 1, max(0, int(uv[0] * w)))
@@ -73,6 +138,9 @@ def main(argv):
     A = spec["address"]
     fin = spec["finishes"]
     rep, fails = {}, []
+
+    def _rep(r):
+        return {"ok": r["ok"], "detail": r}
 
     def check(name, ok, detail):
         rep[name] = {"ok": bool(ok), "detail": detail}
@@ -195,23 +263,56 @@ def main(argv):
     check("colour_vpm_eq_npm_per_face", mism == 0 and unmatched == 0,
           {"faces": len(vkey), "finish_mismatch": int(mism), "unmatched": unmatched, "faces_per_finish": per_finish})
     check("colour_median_vpm_eq_npm_eq_spec", all(m["ok"] for m in med.values()), med)
-    # texel density of full (patterned) finishes, reg p.32 §6.2 band 512..1706 px/m
-    dens = {}
-    for o_uvs, f in zip(vmain["face_uvs"], vmain["faces"]):
-        u = np.asarray(o_uvs)
-        name = by_udim.get(int(1001 + np.floor(u.mean(0)[0]) + 10 * np.floor(u.mean(0)[1])))
-        if name is None or fin[name]["kind"] != "full":
+    # delivered finish per triangle vs the approved source face/ID mapping (incl. the ID1 below-zero split): VPM=NPM
+    # alone cannot prove either is right (review #574: all cassette faces remapped to plain blue in both passed)
+    try:
+        finish_map.validate_spec(spec, finish_map.load_kpp())
+        contract_err = None
+    except ValueError as e:
+        contract_err = str(e)
+    check("spec_contract_kpp", contract_err is None, {"error": contract_err})
+    expected = finish_map.assign_finishes(body["vertices"], body["faces"], body["mat_ids"], spec)
+    vown = match_source_faces(body["vertices"], body["faces"], vmain["vertices"], vmain["faces"], shift)
+    nown = match_source_faces(body["vertices"], body["faces"], nmain["vertices"], nmain["faces"], shift)
+    vfin = [by_udim.get(int(1001 + np.floor(np.asarray(u).mean(0)[0]) + 10 * np.floor(np.asarray(u).mean(0)[1])))
+            for u in vmain["face_uvs"]]
+    nfin = [npm_finish(u) for u in nmain["face_uvs"]]
+    check("source_finish_vpm", **_rep(source_finish_report(expected, body["faces"], vown, vfin)))
+    check("source_finish_npm", **_rep(source_finish_report(expected, body["faces"], nown, nfin)))
+    # texel density of full (patterned) finishes: EVERY triangle the source mapping makes patterned must be measured
+    # (no vacuous all([]) pass) and deliver the contract density (KPP twin, or an approved exception) +-1 %; band
+    # reg p.32 §6.2 512..1706 px/m
+    V = np.asarray(vmain["vertices"], float)
+    dens, need, measured, off, degenerate = {}, 0, 0, [], 0
+    for t, (o_uvs, f) in enumerate(zip(vmain["face_uvs"], vmain["faces"])):
+        own = vown[t]
+        want = expected[own[0]] if len(own) == 1 else None
+        if want is None or fin[want]["kind"] != "full":
             continue
-        p = np.asarray(vmain["vertices"])[f]
-        a3 = np.linalg.norm(np.cross(p[1] - p[0], p[2] - p[0])) / 2
+        need += 1
+        p3 = V[f]
+        u = np.asarray(o_uvs)
+        a3 = np.linalg.norm(np.cross(p3[1] - p3[0], p3[2] - p3[0])) / 2
+        if a3 <= 1e-4:
+            degenerate += 1
+            continue
+        if vfin[t] != want:
+            continue
         e1, e2 = u[1] - u[0], u[2] - u[0]
-        a2 = abs(e1[0] * e2[1] - e1[1] * e2[0]) / 2 * spec["size_full"] ** 2
-        if a3 > 1e-4:
-            d = math.sqrt(a2 / a3)
-            lo_, hi_ = dens.get(name, (1e9, 0))
-            dens[name] = (min(lo_, d), max(hi_, d))
-    check("vpm_texel_band", all(512 <= a and b <= 1706 for a, b in dens.values()),
-          {k: [round(a, 1), round(b, 1)] for k, (a, b) in dens.items()})
+        d = math.sqrt(abs(e1[0] * e2[1] - e1[1] * e2[0]) / 2 * spec["size_full"] ** 2 / a3)
+        measured += 1
+        lo_, hi_ = dens.get(want, (1e9, 0))
+        dens[want] = (min(lo_, d), max(hi_, d))
+        try:
+            c = finish_map.contract_density(want, spec, finish_map.load_kpp())
+        except (ValueError, KeyError) as e:
+            c = None
+        if c is None or abs(d - c) > 0.01 * c or not 512 <= d <= 1706:
+            off.append({"tri": t, "finish": want, "px_per_m": round(d, 1), "contract": c})
+    check("vpm_texel_contract", need > 0 and measured == need - degenerate and not off,
+          {"patterned_tris_expected": need, "measured": measured, "degenerate": degenerate,
+           "off_contract": len(off), "examples": off[:5],
+           "range_px_per_m": {k: [round(a, 1), round(b, 1)] for k, (a, b) in dens.items()}})
     # ZIP contents and PNG headers
     with zipfile.ZipFile(vzip) as z:
         names = sorted(z.namelist())

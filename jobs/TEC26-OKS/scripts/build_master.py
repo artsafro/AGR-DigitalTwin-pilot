@@ -35,7 +35,7 @@ for p in (dump_path, spec_path):
     if os.path.realpath(p) == os.path.realpath(out):
         raise SystemExit("output aliases an input")
 spec = finish_map.load(spec_path)
-finish_map.validate_spec(spec)
+finish_map.validate_spec(spec, finish_map.load_kpp())
 dump = finish_map.load(dump_path)
 A = spec["address"]
 bodies = [n for n in dump["nodes"] if n["multisub"]]

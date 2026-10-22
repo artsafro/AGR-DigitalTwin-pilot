@@ -3,7 +3,8 @@
 Used by build_master.py (Blender) and by the tests. Contracts (fail-closed, never a default finish):
 - validate_spec: every finish has a unique UDIM and an integer sRGB triple; every source ID maps to declared
   finishes; empty IDs are disjoint from mapped IDs; a finish that names a KPP twin must carry exactly the KPP RGB
-  («синий, жёлтый, серый должны биться»).
+  («синий, жёлтый, серый должны биться»). A full (patterned) finish must deliver its KPP twin's texel density
+  (contract_density); a different density needs an approved `density_exception` citing the user decision.
 - assign_finishes: one finish per polygon; a polygon whose material ID is unmapped, or declared empty, raises
   ValueError naming the ID; NaN/inf coordinates raise. Split rule `below_zero`: a polygon whose highest vertex is at
   or below `zero_m` (±0.000) takes `below`, every other polygon `above`.
@@ -12,6 +13,8 @@ Used by build_master.py (Blender) and by the tests. Contracts (fail-closed, neve
 """
 import json
 import math
+import os
+import re
 
 DROP_MIN_M = -1.0
 
@@ -71,6 +74,8 @@ def validate_spec(spec, kpp_spec=None):
         raise ValueError(f"IDs both mapped and empty: {sorted(clash)}")
     if not isinstance(spec.get("zero_m"), (int, float)) or not math.isfinite(spec["zero_m"]):
         raise ValueError("zero_m must be a finite number")
+    if spec.get("kpp_palette") and kpp_spec is None:
+        raise ValueError("spec has a kpp_palette: validate it against the KPP spec (load_kpp())")
     if kpp_spec is not None:
         for name, ref in (spec.get("kpp_palette") or {}).items():
             k = kpp_spec["finishes"].get(ref["kpp_finish"])
@@ -82,7 +87,43 @@ def validate_spec(spec, kpp_spec=None):
                 for key in ("pattern", "P", "h_joints", "rough", "metal", "joint_half_mm"):
                     if fin[name].get(key) != k.get(key):
                         raise ValueError(f"{name}: {key} {fin[name].get(key)} != KPP {k.get(key)}")
+                check_density_contract(name, spec, k, kpp_spec)
     return True
+
+
+DECISION_REF = re.compile(r"^(D\d+|https://github\.com/\S+#issuecomment-\d+)$")
+
+
+def contract_density(name, spec, kpp_spec):
+    """px/m a full finish must deliver: the KPP twin's density (Artem 2026-10-22 «такой же тексель, как в VPM КПП»),
+    or the value of an approved `density_exception` that cites the user decision (D<n> or the issue-comment URL)."""
+    ref = (spec.get("kpp_palette") or {}).get(name)
+    if ref is None:
+        raise ValueError(f"{name}: full finish without a KPP twin has no density contract")
+    k = kpp_spec["finishes"][ref["kpp_finish"]]
+    exc = (spec.get("density_exception") or {}).get(name)
+    if exc is not None:
+        v = exc.get("px_per_m")
+        if not (isinstance(exc.get("decision"), str) and DECISION_REF.match(exc["decision"])):
+            raise ValueError(f"{name}: density_exception needs decision = D<n> or an issue-comment URL, got "
+                             f"{exc.get('decision')!r}")
+        if not (isinstance(v, (int, float)) and math.isfinite(v) and 512 <= v <= 1706):
+            raise ValueError(f"{name}: density_exception px_per_m must be finite in 512..1706, got {v}")
+        return float(v)
+    return kpp_spec["size_full"] / k["S"]
+
+
+def check_density_contract(name, spec, k, kpp_spec, tol=0.5):
+    dens = spec["size_full"] / spec["finishes"][name]["S"]
+    want = contract_density(name, spec, kpp_spec)
+    if not abs(dens - want) <= tol:
+        raise ValueError(f"{name}: texel density {dens:.1f} px/m != contract {want:.1f} px/m "
+                         f"(KPP {kpp_spec['size_full'] / k['S']:.1f}; no approved density_exception)")
+
+
+def load_kpp():
+    return load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "KPP1", "scripts",
+                             "vpm_textures.json"))
 
 
 def _finite(vertices):

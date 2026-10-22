@@ -17,16 +17,21 @@ sys.path.insert(0, str(SCRIPTS))
 import finish_map as fm  # noqa: E402
 import make_npm_atlas  # noqa: E402
 import make_textures  # noqa: E402
+import qa_packages  # noqa: E402
 
 SPEC = fm.load(AC08 / "vpm_textures.json")
 KPP = fm.load(ROOT / "jobs/KPP1/scripts/vpm_textures.json")
 DUMP = fm.load(AC08 / "max-dump-008.json")
 BODY = next(n for n in DUMP["nodes"] if n["multisub"])
+# SYNTHETIC test fixture: the delivered 750 px/m spec with a made-up approved exception, used only where a test needs a
+# contract-valid spec (texture generators, fail-closed mutations). It is NOT a user decision.
+SPEC_OK = copy.deepcopy(SPEC)
+SPEC_OK["density_exception"] = {"Cassette_RAL5015": {"px_per_m": 750.0, "decision": "D0"}}
 
 
 def test_spec_is_valid_and_matches_kpp_palette():
-    assert fm.validate_spec(SPEC, KPP)
-    bad = copy.deepcopy(SPEC)
+    assert fm.validate_spec(SPEC_OK, KPP)
+    bad = copy.deepcopy(SPEC_OK)
     bad["finishes"]["Panel_RAL5015"]["rgb"] = [34, 113, 180]
     with pytest.raises(ValueError, match="Panel_RAL5015"):
         fm.validate_spec(bad, KPP)
@@ -45,7 +50,7 @@ def test_spec_is_valid_and_matches_kpp_palette():
     (lambda s: s["finishes"]["Cassette_RAL5015"].update(S=float("inf")), "S must"),
 ])
 def test_spec_fail_closed(mutate, match):
-    s = copy.deepcopy(SPEC)
+    s = copy.deepcopy(SPEC_OK)
     mutate(s)
     with pytest.raises(ValueError, match=match):
         fm.validate_spec(s, KPP)
@@ -186,7 +191,7 @@ def test_cassette_is_the_kpp_recipe_at_750px():
 
 def test_vpm_and_npm_colours_match_and_kpp(tmp_path):
     spec = tmp_path / "spec.json"
-    spec.write_text(json.dumps(SPEC), encoding="utf-8")
+    spec.write_text(json.dumps(SPEC_OK), encoding="utf-8")
     vpm, npm = tmp_path / "vpm", tmp_path / "npm"
     make_textures.main(str(spec), str(vpm))
     make_npm_atlas.main(str(spec), str(npm))
@@ -219,3 +224,127 @@ def test_vpm_and_npm_colours_match_and_kpp(tmp_path):
     assert (np.asarray(o) == 255).all()  # no alpha-cut finish on AC08: opacity all solid
     with pytest.raises(FileExistsError):  # never overwrite a previous version
         make_npm_atlas.main(str(spec), str(npm))
+
+
+# --- review #574 round 1 -------------------------------------------------------------------------------------------
+def test_density_contract_rejects_750_without_a_user_decision():
+    """P1-1: Artem 2026-10-22 «такой же тексель, как в VPM КПП» = KPP 1000 px/m; the delivered 750 px/m spec is
+    rejected until an approved exception citing the decision exists."""
+    with pytest.raises(ValueError, match=r"Cassette_RAL5015: texel density 750.0 px/m != contract 1000.0"):
+        fm.validate_spec(SPEC, KPP)
+    with pytest.raises(ValueError, match="KPP spec"):
+        fm.validate_spec(SPEC)  # a KPP-twin spec cannot skip the KPP comparison
+    assert fm.validate_spec(SPEC_OK, KPP)
+    kpp_dens = copy.deepcopy(SPEC)
+    kpp_dens["finishes"]["Cassette_RAL5015"]["S"] = KPP["finishes"]["Cassette_RAL5015"]["S"]
+    assert fm.validate_spec(kpp_dens, KPP)  # exactly the KPP density needs no exception
+    for exc, match in (({"px_per_m": 750.0}, "decision"), ({"px_per_m": 750.0, "decision": "ok by me"}, "decision"),
+                       ({"px_per_m": 800.0, "decision": "D1"}, "contract 800.0"),
+                       ({"px_per_m": float("nan"), "decision": "D1"}, "finite"),
+                       ({"px_per_m": 400.0, "decision": "D1"}, "512..1706")):
+        s = copy.deepcopy(SPEC)
+        s["density_exception"] = {"Cassette_RAL5015": exc}
+        with pytest.raises(ValueError, match=match):
+            fm.validate_spec(s, KPP)
+
+
+def _delivered_from_source(split=True):
+    """Export-like triangulation of the real AC08 dump: fan triangles, pivot shift, optional per-face vertex split."""
+    v = np.asarray(BODY["vertices"], float)
+    shift = np.array([(v[:, 0].min() + v[:, 0].max()) / 2, (v[:, 1].min() + v[:, 1].max()) / 2, 0.0])
+    out_v, out_f, src_of = [], [], []
+    for pi, f in enumerate(BODY["faces"]):
+        if split:
+            base = len(out_v)
+            out_v += (v[f] - shift + 1e-5).tolist()  # FBX float noise below tolerance
+            loc = list(range(base, base + len(f)))
+        else:
+            loc = list(f)
+        for k in range(1, len(f) - 1):
+            out_f.append([loc[0], loc[k], loc[k + 1]])
+            src_of.append(pi)
+    if not split:
+        out_v = (v - shift).tolist()
+    return shift, out_v, out_f, src_of
+
+
+@pytest.mark.parametrize("split", [True, False])
+def test_source_finish_report_catches_joint_loss(split):
+    """P1-2: a delivery whose cassette triangles all show plain Panel_RAL5015 must fail against the source IDs,
+    even when VPM and NPM agree; the faithful delivery (control) passes."""
+    expected = fm.assign_finishes(BODY["vertices"], BODY["faces"], BODY["mat_ids"], SPEC)
+    shift, ov, of, src_of = _delivered_from_source(split)
+    owners = qa_packages.match_source_faces(BODY["vertices"], BODY["faces"], ov, of, shift)
+    good = [expected[i] for i in src_of]
+    r = qa_packages.source_finish_report(expected, BODY["faces"], owners, good)
+    assert r["ok"] and r["tris"] == 348 and r["wrong_finish"] == r["ambiguous"] == r["unmatched"] == 0
+    cas = sum(g == "Cassette_RAL5015" for g in good)
+    assert cas == 30
+    mut = ["Panel_RAL5015" if g == "Cassette_RAL5015" else g for g in good]
+    r = qa_packages.source_finish_report(expected, BODY["faces"], owners, mut)
+    assert not r["ok"] and r["wrong_finish"] == 30
+    # below-zero split: ID1 faces at/below ±0.000 must be Panel_RAL5015, above Frame_RAL7004 - swap one of each
+    below = next(t for t, i in enumerate(src_of) if BODY["mat_ids"][i] == 1 and expected[i] == "Panel_RAL5015")
+    above = next(t for t, i in enumerate(src_of) if BODY["mat_ids"][i] == 1 and expected[i] == "Frame_RAL7004")
+    sw = list(good)
+    sw[below], sw[above] = "Frame_RAL7004", "Panel_RAL5015"
+    assert qa_packages.source_finish_report(expected, BODY["faces"], owners, sw)["wrong_finish"] == 2
+
+
+def test_source_finish_report_fail_closed():
+    expected = fm.assign_finishes(BODY["vertices"], BODY["faces"], BODY["mat_ids"], SPEC)
+    shift, ov, of, src_of = _delivered_from_source()
+    good = [expected[i] for i in src_of]
+    owners = qa_packages.match_source_faces(BODY["vertices"], BODY["faces"], ov, of, shift)
+    assert not qa_packages.source_finish_report(expected, BODY["faces"], [], [])["ok"]  # empty
+    r = qa_packages.source_finish_report(expected, BODY["faces"], owners[:-1], good[:-1])  # partial
+    assert not r["ok"] and r["source_polygons_not_covered"] == 1
+    moved = copy.deepcopy(ov)
+    moved[of[0][0]] = [c + 0.01 for c in moved[of[0][0]]]  # a corner 10 mm off the source
+    r = qa_packages.source_finish_report(
+        expected, BODY["faces"], qa_packages.match_source_faces(BODY["vertices"], BODY["faces"], moved, of, shift), good)
+    assert not r["ok"] and r["unmatched"] >= 1
+    r = qa_packages.source_finish_report(expected, BODY["faces"], owners, [None] + good[1:])  # unmapped finish
+    assert not r["ok"] and r["wrong_finish"] == 1
+
+
+PILOT = Path("C:/x/tec26-oks/AC08/pilot-v006")
+
+
+@pytest.mark.skipif(not (PILOT / "readback/vpm.readback.json").exists(), reason="pilot-v006 outputs not on this PC")
+@pytest.mark.parametrize("variant", ["baseline", "joint_loss", "approved_750"])
+def test_qa_packages_on_pilot_v006(tmp_path, variant):
+    """Acceptance rows on the real pilot-v006 readbacks (reviewer probe): the joint-loss mutant fails the source-ID
+    checks; the 750 px/m delivery fails the KPP density contract until an approved exception exists."""
+    spec = SPEC_OK if variant == "approved_750" else SPEC
+    sp = tmp_path / "spec.json"
+    sp.write_text(json.dumps(spec), encoding="utf-8")
+    v, n = json.loads((PILOT / "readback/vpm.readback.json").read_text(encoding="utf-8")), \
+        json.loads((PILOT / "readback/npm.readback.json").read_text(encoding="utf-8"))
+    atlas = json.loads((PILOT / "textures-npm/npm_atlas.json").read_text(encoding="utf-8"))
+    if variant == "joint_loss":  # every cassette triangle -> plain blue, identically in VPM and NPM
+        r0, r1 = atlas["finishes"]["Cassette_RAL5015"], atlas["finishes"]["Panel_RAL5015"]
+        vm = next(o for o in v["objects"] if o["name"] == "SM_Nku_1_Main")
+        for uv in vm["face_uvs"]:
+            c = np.mean(uv, 0)
+            if int(1001 + np.floor(c[0]) + 10 * np.floor(c[1])) == 1001:
+                for z in uv:
+                    z[0] += 1
+        for uv in n["objects"][0]["face_uvs"]:
+            c = np.mean(uv, 0)
+            if r0["u0"] <= c[0] <= r0["u0"] + r0["size"] and r0["v0"] <= c[1] <= r0["v0"] + r0["size"]:
+                for z in uv:
+                    z[0] += r1["u0"] - r0["u0"]
+                    z[1] += r1["v0"] - r0["v0"]
+    (tmp_path / "v.json").write_text(json.dumps(v), encoding="utf-8")
+    (tmp_path / "n.json").write_text(json.dumps(n), encoding="utf-8")
+    out = tmp_path / "qa.json"
+    rc = qa_packages.main([str(sp), str(PILOT / "package-vpm/SM_Nku_1.zip"), str(tmp_path / "v.json"),
+                          str(PILOT / "package-npm/0000_Nku_1.zip"), str(tmp_path / "n.json"),
+                          str(PILOT / "textures-npm/npm_atlas.json"), str(PILOT / "textures-vpm"),
+                          str(PILOT / "textures-npm"), str(AC08 / "max-dump-008.json"), str(out)])
+    failed = json.loads(out.read_text(encoding="utf-8"))["failed"]
+    want = {"baseline": ["spec_contract_kpp", "vpm_texel_contract"],
+            "joint_loss": ["spec_contract_kpp", "source_finish_vpm", "source_finish_npm", "vpm_texel_contract"],
+            "approved_750": []}[variant]
+    assert (rc, failed) == (1 if want else 0, want)

@@ -43,6 +43,6 @@ joints («Не вижу швов на панелях ... такой же тек�
 3 placeholders) and `0000_Nku_1.zip` (NPM, 2048 `_d_` + `_o_` embedded, joints 1.6 px) on Drive
 `G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v006/` (24/24 hashes). `qa_packages.py` 33/33 (geometry = source,
 xView 0/0, doubles 0, finish per face VPM = NPM, medians = KPP RGB, texel 750 px/m), `qa_master` normals 0 /
-T-junctions 0 / leaks 0; SINTEZ VPM 62/4, NPM 38/5. Open for Artem (`AC08/PILOT_REPORT.md`): 750 vs KPP 1000 px/m
+T-junctions 0 / leaks 0; SINTEZ VPM 62/4, NPM 38/5. Review #574 r1: QA now enforces the KPP density contract and source-ID finish per triangle; v006 = FAIL 34/36 (750 px/m, no approved exception) until Artem decides. Open for Artem (`AC08/PILOT_REPORT.md`): 750 vs KPP 1000 px/m
 (4.86 m panels cannot fit a 4.096 m tile without cutting geometry), 19 quads > 4 m vs D021, UCX triangulation
 (SINTEZ 2.3.17). Scripts: `scripts/run_building.sh`.

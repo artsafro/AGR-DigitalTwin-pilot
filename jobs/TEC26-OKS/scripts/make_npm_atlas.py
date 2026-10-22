@@ -28,7 +28,7 @@ NPM_JOINT_HALF_MM = 8  # 16 mm on the atlas ~ 1.5 px at 97 px/m
 def main(spec_path, out):
     import finish_map
     spec = json.load(open(spec_path, encoding="utf-8"))
-    finish_map.validate_spec(spec)
+    finish_map.validate_spec(spec, finish_map.load_kpp())
     if len(spec["finishes"]) > COLS * (ATLAS // CELL):
         raise ValueError(f"{len(spec['finishes'])} finishes do not fit the {COLS} x {ATLAS // CELL} atlas grid")
     a = spec["address"]
