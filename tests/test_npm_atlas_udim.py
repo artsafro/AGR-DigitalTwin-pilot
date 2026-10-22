@@ -5,6 +5,7 @@ import importlib.util
 import json
 import math
 import random
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -19,6 +20,7 @@ def _load():
     path = ROOT / "tools" / "materials" / "npm_atlas_udim.py"
     spec = importlib.util.spec_from_file_location("npm_atlas_udim", path)
     mod = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = mod  # dataclasses resolve the module by name
     spec.loader.exec_module(mod)
     return mod
 
@@ -59,7 +61,7 @@ def write_fixture(d: Path, *, curb_map=None, extra=None):
     Image.fromarray(pav, "RGBA").save(d / "T_Syn_Paving.1002.png")
     parts = [("Grass", _grid(0, 0, 40, 30, 4, 3, 0, (0.1, 0.1, 0.9, 0.7))),
              ("Paving", _grid(40, 0, 20, 15, 4, 3, 1, (0.05, 0.05, 0.95, 0.72))),
-             ("Curb", _grid(0, 30, 60, 0.5, 6, 1, 2, (0.1, 0.1, 0.9, 0.2)))]
+             ("Curb", _grid(0, 30, 60, 0.5, 6, 1, 2, (0.1, 0.1, 0.9, 0.1 + 0.8 * 0.5 / 60)))]
     if extra:
         parts += extra
     lines, vo, to = ["mtllib syn.mtl", "o SYN_Ground"], 0, 0
@@ -259,8 +261,8 @@ def test_texel_spread_that_cannot_fit_the_band_is_an_error(tmp_path):
     uvs = mesh.uvs.copy()
     uvs[:5, 1] = 0.1
     uvs[5:10, 1] = 0.6  # first face row: 10 m tall -> 0.5 UV; others 0.1 / 2 rows
-    uvs[10:15, 1] = 0.65
-    uvs[15:20, 1] = 0.7
+    uvs[10:15, 1] = 0.605
+    uvs[15:20, 1] = 0.61
     with pytest.raises(na.AtlasError, match="Grass.*spread"):
         na.pack(na.UdimMesh(mesh.vertices, uvs, mesh.faces, mesh.face_uvs, mesh.face_materials), mats)
 
@@ -381,4 +383,53 @@ def test_probe_random_layouts_keep_invariants(tmp_path):
         for row in rep["materials"].values():
             assert row["padding_px"] >= pad and 10 <= row["texel_min"] <= row["texel_max"] <= 40
         n_pass += 1
+    print(f"probe seed 546: {n_pass} packed with invariants held, {n_err} AtlasError, of 40")
     assert n_pass >= 20 and n_pass + n_err == 40
+
+
+# ---------------------------------------------------------------- hostile self-review witnesses
+def test_overlay_aliasing_an_output_or_input_writes_nothing(tmp_path, capsys):
+    src = write_fixture(tmp_path / "s")
+    out = tmp_path / "o"
+    for overlay in (out / "T_syn_NPM_d.png", src.parent / "T_Syn_Grass.1001.png", src):
+        before = _hashes(src.parent)
+        assert na.main([str(src), "--out-dir", str(out), "--overlay", str(overlay)]) == 2
+        assert "resolves to input or output" in capsys.readouterr().err
+        assert not out.exists() and _hashes(src.parent) == before
+
+
+def test_duplicate_material_definition_refused(tmp_path):
+    src = write_fixture(tmp_path)
+    mtl = tmp_path / "syn.mtl"
+    mtl.write_text(mtl.read_text(encoding="utf-8") + "newmtl Grass\nKd 0 0 0\n", encoding="utf-8")
+    with pytest.raises(na.AtlasError, match="'Grass' defined twice"):
+        na.read_obj(src)
+
+
+def test_separate_map_d_opacity_and_conflicting_alpha(tmp_path):
+    src = write_fixture(tmp_path)
+    op = np.full((1024, 1024), 255, np.uint8)
+    op[:, :100] = 0
+    Image.fromarray(op, "L").save(tmp_path / "grass_o.png")
+    mtl = tmp_path / "syn.mtl"
+    text = mtl.read_text(encoding="utf-8")
+    mtl.write_text(text.replace("map_Kd T_Syn_Grass.<UDIM>.png", "map_Kd T_Syn_Grass.<UDIM>.png\nmap_d grass_o.png"),
+                   encoding="utf-8")
+    rep = na.pack(*na.read_obj(src))["report"]
+    assert rep["materials"]["Grass"]["opacity"] == "map" and rep["opacity_map"]
+    mtl.write_text(text.replace("map_Kd T_Syn_Paving.<UDIM>.png", "map_Kd T_Syn_Paving.<UDIM>.png\nmap_d grass_o.png"),
+                   encoding="utf-8")
+    with pytest.raises(na.AtlasError, match="Paving.*both diffuse alpha and map_d"):
+        na.pack(*na.read_obj(src))
+
+
+def test_fresh_process_cli(tmp_path):
+    import subprocess
+
+    src = write_fixture(tmp_path / "s")
+    out = tmp_path / "o"
+    tool = ROOT / "tools" / "materials" / "npm_atlas_udim.py"
+    ok = subprocess.run([sys.executable, str(tool), str(src), "--out-dir", str(out)], capture_output=True, text=True)
+    assert ok.returncode == 0 and ok.stdout.startswith("ok:"), ok.stderr
+    again = subprocess.run([sys.executable, str(tool), str(src), "--out-dir", str(out)], capture_output=True, text=True)
+    assert again.returncode == 2 and "already exists" in again.stderr
