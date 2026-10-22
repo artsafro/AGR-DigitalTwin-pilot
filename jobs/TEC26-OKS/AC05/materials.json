@@ -1,0 +1,488 @@
+{
+  "job": "tec26-oks",
+  "building": "AC05",
+  "building_name": "Блок-модуль пенного пожаротушения",
+  "main_at_start": "442f0b695a91f9abc180783c26978fbe85fefcf9",
+  "profile": "both NPM and VPM later; Gate 1 only",
+  "passed": false,
+  "gate1": {
+    "status": "awaiting_user",
+    "approved": false,
+    "questions": [
+      {
+        "id": "Q1",
+        "question": "Approve the contact-sheet proposal: IDs 1-2 RAL5015 blue, IDs 3-4 opaque painted metal RAL7004 grey, including ID1 whole roof/edge/shell colour and ID4 end door/gate infill; otherwise identify the changed physical region on the sheet."
+      },
+      {
+        "id": "Q2",
+        "question": "No dimensioned panel seam/profile/module found. Proposal is solid blue without joints. Keep this, or provide the dimensioned module if joints are required."
+      }
+    ]
+  },
+  "sources": [
+    {
+      "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.05 (Блок-модуль пенного пожаротушения)\\22E56-АР2-1002-AC.05_R1.dwg",
+      "copy": "C:\\x\\tec26-oks\\AC05\\sources-v002\\22E56-АР2-1002-AC.05_R1.dwg",
+      "sha256": "363d3635dd877608c55aee3f01131e8e0d269fa5d8324a2111d39ac39d70cb72",
+      "bytes": 1899958
+    },
+    {
+      "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.05 (Блок-модуль пенного пожаротушения)\\22Е56-АР2-1002-АС.pdf",
+      "copy": "C:\\x\\tec26-oks\\AC05\\sources-v002\\22Е56-АР2-1002-АС.pdf",
+      "sha256": "409671b95322798342812c1eee6320d1bf05fc326c4805e1e15c1d5fb72c8b11",
+      "bytes": 75887
+    },
+    {
+      "source": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/Vlad_OKS/04-09 Geometry Final.max",
+      "copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\04-09 Geometry Final.max",
+      "sha256": "eb0cffedefa80678cf4ada13db71f2e80795a92212f9fbf60b7c30c54a7852bd",
+      "bytes": 999424
+    },
+    {
+      "source": "C:\\x\\tec26-oks\\census\\oks.json",
+      "copy": null,
+      "sha256": "a99de19f1d30633eaab9c52ac44f253ed6ea97e03358755ff2a77458f0f54f2f",
+      "bytes": 261871
+    }
+  ],
+  "scene": {
+    "application_version": [
+      28000,
+      68,
+      0,
+      28,
+      3,
+      0,
+      30732,
+      2026,
+      ".3"
+    ],
+    "file_version": "#(26000, 26000)",
+    "units": "m",
+    "up_axis": "Z",
+    "layer": "005",
+    "requested_layer": [
+      "0.0.0.5",
+      "0.0.5"
+    ],
+    "mesh": {
+      "name": "АС.05",
+      "handle": 161,
+      "vertices": 784,
+      "triangles": 1290,
+      "bbox_snapshot": [
+        [
+          -7.289708137512207,
+          -4.605573654174805,
+          -2.0043320655822754
+        ],
+        [
+          -4.851757049560547,
+          4.605574607849121,
+          2.8974244594573975
+        ]
+      ],
+      "poly_faces_by_id": {
+        "3": 476,
+        "1": 127,
+        "2": 22,
+        "4": 1
+      },
+      "material_ids": [
+        {
+          "id": 1,
+          "triangles": 254,
+          "area_m2": 82.98113025259933
+        },
+        {
+          "id": 2,
+          "triangles": 44,
+          "area_m2": 56.48439932962852
+        },
+        {
+          "id": 3,
+          "triangles": 990,
+          "area_m2": 6.699798207317762
+        },
+        {
+          "id": 4,
+          "triangles": 2,
+          "area_m2": 4.313754850037867
+        }
+      ]
+    },
+    "multisub": {
+      "name": "Material #27",
+      "handle": 4036,
+      "slots": 10,
+      "materialIDList": "not measured in #558 census"
+    },
+    "collision_candidates": [
+      {
+        "name": "Colizii_045",
+        "handle": 344,
+        "layer": "005",
+        "triangles": 12,
+        "bbox_snapshot": [
+          [
+            -7.229453086853027,
+            -4.581299781799316,
+            0.24815797805786133
+          ],
+          [
+            -4.9726362228393555,
+            -4.52588415145874,
+            2.6723735332489014
+          ]
+        ]
+      },
+      {
+        "name": "Colizii_046",
+        "handle": 345,
+        "layer": "005",
+        "triangles": 12,
+        "bbox_snapshot": [
+          [
+            -7.289708137512207,
+            -4.520053386688232,
+            0.0014214515686035156
+          ],
+          [
+            -4.851761817932129,
+            4.60557222366333,
+            2.8974251747131348
+          ]
+        ]
+      }
+    ],
+    "geometry_buffer": {
+      "path": "C:\\x\\tec26-oks\\max-readback-v002\\geometry-161.json",
+      "sha256": "22406a97eaf836e47cce92ef871a5cceea3357b3f936ea13ca2764791ac6e500",
+      "verified": "bbox, per-ID triangle counts and area recomputed against census; 4/4",
+      "evidence_copy": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/geometry-161.json"
+    }
+  },
+  "drawing_finishes": [
+    {
+      "id": "DF1",
+      "material": "Sandwich panels and canopy",
+      "ral": "5015",
+      "map_type": "metal",
+      "evidence": [
+        "DWG model-space MTEXT 276D52 at (137106.628,19878.504) mm; facade colour legend (sheet number not available in model-space)"
+      ],
+      "quote": "Сэндвич-панели, козырёк - RAL 5015"
+    },
+    {
+      "id": "DF2",
+      "material": "Porch, doors, gates",
+      "ral": "7004",
+      "map_type": "metal",
+      "evidence": [
+        "DWG model-space MTEXT 276D52 at (137106.628,19878.504) mm; facade colour legend (sheet number not available in model-space)"
+      ],
+      "quote": "Крыльцо, двери, ворота - RAL 7004"
+    },
+    {
+      "id": "DF3",
+      "material": "Three-layer sandwich panel, basalt mineral-wool filling, 120 mm",
+      "ral": null,
+      "map_type": "solid",
+      "evidence": [
+        "DWG 276D48 at (135520.713,11813.496) mm",
+        "PDF physical page 1 / title-block sheet 2, section 1-1: wall, roof and floor callouts; page points [660,50,1290,515]"
+      ],
+      "quote": "Трехслойная сэндвич-панель с заполнением минераловатными плитами на базальтовой основе, толщиной 120 мм"
+    },
+    {
+      "id": "DF4",
+      "material": "Reinforced-concrete slab",
+      "ral": null,
+      "map_type": "solid",
+      "evidence": [
+        "DWG 276D59 at (135520.713,10237.866) mm",
+        "PDF physical page 1 / sheet 2, section 1-1 bottom callout, page points [1035,435,1265,505]"
+      ],
+      "quote": "Железобетонная плита"
+    }
+  ],
+  "kpp_palette": [
+    {
+      "ral": "5015",
+      "registry": "jobs/KPP1/materials.json",
+      "finish": "Metal_RAL5015",
+      "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1013.png",
+      "sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+      "rgb": [
+        34,
+        113,
+        179
+      ],
+      "sample": "all 65536 RGB pixels equal; no resampling or colour conversion",
+      "evidence_copy": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/T_Kpp_1_Diffuse_1.1013.png"
+    },
+    {
+      "ral": "7004",
+      "registry": "jobs/KPP1/materials.json",
+      "finish": "Door_RAL7004",
+      "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1010.png",
+      "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+      "rgb": [
+        150,
+        153,
+        146
+      ],
+      "sample": "all 65536 RGB pixels equal; no resampling or colour conversion",
+      "evidence_copy": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/T_Kpp_1_Diffuse_1.1010.png"
+    }
+  ],
+  "materials": [
+    {
+      "id": 1,
+      "poly_faces": 127,
+      "triangles": 254,
+      "area_m2": 82.98113025259933,
+      "finish": "Roof/edge structure and continuous shell, blue RAL5015",
+      "ral": "5015",
+      "map_type": "metal",
+      "status": "proposed",
+      "question_id": "Q1",
+      "proposal": "Whole-ID finish proposal from measured physical region + governing R1 same-DWG colour legend; not approved.",
+      "proposal_ral": "5015",
+      "proposal_map_type": "metal",
+      "source_slot": 1,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": "Material #26",
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 1",
+        "DWG R1 MTEXT 276D52 at (137106.628,19878.504) mm; same-DWG facade colour legend",
+        "Gate1 v002 contact sheet: diagnostic face IDs and proposed finish-colour views"
+      ]
+    },
+    {
+      "id": 2,
+      "poly_faces": 22,
+      "triangles": 44,
+      "area_m2": 56.48439932962852,
+      "finish": "Sandwich-panel walls, blue RAL5015",
+      "ral": "5015",
+      "map_type": "solid",
+      "status": "proposed",
+      "question_id": "Q1",
+      "proposal": "Whole-ID finish proposal from measured physical region + governing R1 same-DWG colour legend; not approved.",
+      "proposal_ral": "5015",
+      "proposal_map_type": "solid",
+      "source_slot": 2,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": "Material #28",
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 2",
+        "DWG model-space MTEXT 276D52 at (137106.628,19878.504) mm; facade colour legend (sheet number not available in model-space)",
+        "DWG R1 MTEXT 276D52 at (137106.628,19878.504) mm; same-DWG facade colour legend",
+        "Gate1 v002 contact sheet: diagnostic face IDs and proposed finish-colour views"
+      ]
+    },
+    {
+      "id": 3,
+      "poly_faces": 476,
+      "triangles": 990,
+      "area_m2": 6.699798207317762,
+      "finish": "Opaque painted door/frame/hardware, grey RAL7004",
+      "ral": "7004",
+      "map_type": "metal",
+      "status": "proposed",
+      "question_id": "Q1",
+      "proposal": "Whole-ID finish proposal from measured physical region + governing R1 same-DWG colour legend; not approved.",
+      "proposal_ral": "7004",
+      "proposal_map_type": "metal",
+      "source_slot": 3,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": "Material #24",
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 3",
+        "DWG model-space MTEXT 276D52 at (137106.628,19878.504) mm; facade colour legend (sheet number not available in model-space)",
+        "DWG R1 MTEXT 276D52 at (137106.628,19878.504) mm; same-DWG facade colour legend",
+        "Gate1 v002 contact sheet: diagnostic face IDs and proposed finish-colour views"
+      ]
+    },
+    {
+      "id": 4,
+      "poly_faces": 1,
+      "triangles": 2,
+      "area_m2": 4.313754850037867,
+      "finish": "Opaque painted end door/gate infill, grey RAL7004",
+      "ral": "7004",
+      "map_type": "metal",
+      "status": "proposed",
+      "question_id": "Q1",
+      "proposal": "Whole-ID finish proposal from measured physical region + governing R1 same-DWG colour legend; not approved.",
+      "proposal_ral": "7004",
+      "proposal_map_type": "metal",
+      "source_slot": 4,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": "Material #29",
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 4",
+        "DWG model-space MTEXT 276D52 at (137106.628,19878.504) mm; facade colour legend (sheet number not available in model-space)",
+        "DWG R1 MTEXT 276D52 at (137106.628,19878.504) mm; same-DWG facade colour legend",
+        "Gate1 v002 contact sheet: diagnostic face IDs and proposed finish-colour views"
+      ]
+    },
+    {
+      "id": 5,
+      "poly_faces": 0,
+      "triangles": 0,
+      "area_m2": 0,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unused",
+      "question_id": null,
+      "proposal": "Leave unused; no face uses this ID. Source populated/empty slots are not additional drawing finishes.",
+      "proposal_ral": null,
+      "proposal_map_type": null,
+      "source_slot": 5,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": "Material #25",
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 5"
+      ]
+    },
+    {
+      "id": 6,
+      "poly_faces": 0,
+      "triangles": 0,
+      "area_m2": 0,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unused",
+      "question_id": null,
+      "proposal": "Leave unused; no face uses this ID. Source populated/empty slots are not additional drawing finishes.",
+      "proposal_ral": null,
+      "proposal_map_type": null,
+      "source_slot": 6,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": null,
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 6"
+      ]
+    },
+    {
+      "id": 7,
+      "poly_faces": 0,
+      "triangles": 0,
+      "area_m2": 0,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unused",
+      "question_id": null,
+      "proposal": "Leave unused; no face uses this ID. Source populated/empty slots are not additional drawing finishes.",
+      "proposal_ral": null,
+      "proposal_map_type": null,
+      "source_slot": 7,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": null,
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 7"
+      ]
+    },
+    {
+      "id": 8,
+      "poly_faces": 0,
+      "triangles": 0,
+      "area_m2": 0,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unused",
+      "question_id": null,
+      "proposal": "Leave unused; no face uses this ID. Source populated/empty slots are not additional drawing finishes.",
+      "proposal_ral": null,
+      "proposal_map_type": null,
+      "source_slot": 8,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": null,
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 8"
+      ]
+    },
+    {
+      "id": 9,
+      "poly_faces": 0,
+      "triangles": 0,
+      "area_m2": 0,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unused",
+      "question_id": null,
+      "proposal": "Leave unused; no face uses this ID. Source populated/empty slots are not additional drawing finishes.",
+      "proposal_ral": null,
+      "proposal_map_type": null,
+      "source_slot": 9,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": null,
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 9"
+      ]
+    },
+    {
+      "id": 10,
+      "poly_faces": 0,
+      "triangles": 0,
+      "area_m2": 0,
+      "finish": "?",
+      "ral": null,
+      "map_type": "?",
+      "status": "unused",
+      "question_id": null,
+      "proposal": "Leave unused; no face uses this ID. Source populated/empty slots are not additional drawing finishes.",
+      "proposal_ral": null,
+      "proposal_map_type": null,
+      "source_slot": 10,
+      "source_slot_binding": "unverified: materialIDList not recorded by census",
+      "source_material": null,
+      "evidence": [
+        "census mesh 161 material_ids / poly_faces_by_id; geometry-161.json ID 10"
+      ]
+    }
+  ],
+  "evidence": {
+    "directory": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002",
+    "contact_sheet": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/contact-sheet.png",
+    "contact_sheet_sha256": "cc69a0371b8e57bb1dbeada76e1466f5a2a9b750e7d7da61a29c0062a7797856",
+    "checksum_file": "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/SHA256SUMS.txt",
+    "render_method": "read-only software orthographic z-buffer projections from #558 measured vertices/triangles/IDs; not Max renderer output",
+    "renders": [
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/id-axon-front.png",
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/id-axon-back.png",
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/id-side-x.png",
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/id-end-y.png",
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/id-roof.png"
+    ],
+    "finish_previews": [
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/finish-axon-front.png",
+      "G:/Мой диск/AGR-evidence/tec26-oks/AC05/gate1-v002/finish-axon-back.png"
+    ]
+  },
+  "limitations": [
+    "Gate 1 unapproved: no model build/export/delivery QA performed.",
+    "Census slot-to-custom-ID binding not recorded; do not assume slot = face material ID.",
+    "DXF recovered: one orphaned paper-space layout removed; materials read from model-space text.",
+    "PDF only contains sheet 2; facade colour legend is in DWG model-space, no facade PDF sheet.",
+    "No source or approved output edited. AutoCAD QUIT No saved its disposable v001 DWG copy; pristine v002 copies rehashed against unchanged originals.",
+    "Operator policy accepts actual 005 layer and final scene geometry; dimensional discrepancies are notes, not blockers.",
+    "Undimensioned panel joints are not generated. IDs1-4 concrete whole-ID proposals remain awaiting human approval."
+  ],
+  "operator_policy": {
+    "date": "2026-10-22",
+    "source": "operator note on t_70bf180b",
+    "governing_revision": "DWG R1",
+    "scene_geometry": "final; no geometry rebuild",
+    "layer_scope": "actual census layer 005 accepted",
+    "undimensioned_panel_joints": "solid without joints",
+    "glass_if_confirmed": "KPP M_Glass_01; NPM alpha 0.5; VPM standard"
+  }
+}
