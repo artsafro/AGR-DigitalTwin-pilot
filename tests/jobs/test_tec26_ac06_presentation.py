@@ -1,4 +1,4 @@
-"""AC06 presentation overrides retain source identity and sandwich coverage."""
+"""new-case: AC06 presentation overrides retain source identity and sandwich coverage."""
 import importlib.util
 import json
 from pathlib import Path

@@ -1,4 +1,4 @@
-"""Synthetic probes for AC06 shared-profile recolouring; no real source quantities."""
+"""new-case: Synthetic probes for AC06 shared-profile recolouring; no real source quantities."""
 import importlib.util
 from pathlib import Path
 

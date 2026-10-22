@@ -1,4 +1,4 @@
-"""AC06 approved colours and colour-only build regression witnesses."""
+"""new-case: AC06 approved colours and colour-only build regression witnesses."""
 import importlib.util
 import json
 from pathlib import Path

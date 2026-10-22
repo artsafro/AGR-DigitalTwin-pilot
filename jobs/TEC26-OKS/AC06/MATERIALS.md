@@ -38,6 +38,8 @@ Slide39 line spacing is approximately8.53px over465px/10.9m; slide40 approximate
 8.53px over575px/13.5m. Nominal step0.20m; full grids **55 /55 /68 /68 bays**
 (A–D /D–A /1–3 /3–1). These are full grid bays, **not equal counts of visible
 black pixel strokes**: pipes, canopies and windows occlude some positions.
+The supplemental `export-grid-probe.json` independently verifies888 vertical
+triangles per export and55/55/68/68 full rib centres, phase residual≤1.39µm.
 No AC08 0.60m grid was copied. Both colours retain the same eight-pixel source
 joint profile; only400 flat pixels per original600px period are removed.
 There are no horizontal panel joints. Source image SHA256 is in `vpm_textures.json`.

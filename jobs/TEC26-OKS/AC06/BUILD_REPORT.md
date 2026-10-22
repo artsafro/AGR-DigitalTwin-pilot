@@ -55,6 +55,12 @@ Nominal grid0.20m from slide spacing (~8.53px per rib,465px/10.9m and575px/13.5m
 **55 /55 /68 /68 full facade bays** for A–D/D–A/1–3/3–1. These are reconstructed
 full grid bays including occluded positions; **a pixel-perfect count of all
 visible strokes is NOT certified**. Windows, doors and pipes occlude lines.
+Independent `export-grid-probe.json` reads both actual exported UV sets:
+888/888 vertical sandwich triangles per profile preserve the0.20m grid;
+maximum phase residual1.39µm. Full rib centres within measured wall spans are
+55/55/68/68 in BOTH exports. This proves grid count/phase, not hidden pixel strokes.
+Supplement: `G:/Мой диск/AGR-evidence/tec26-oks/AC06/build-v006-grid-probe-v001/`
+(2/2 files SHA256 verified; original143-file build manifest is unchanged).
 No image is submitted as Artem-approved or as a certified exact visual match.
 
 ## Remaining public validation failures — not waived
@@ -101,9 +107,10 @@ an exactly matching failed-summary list; malformed/partial evidence is refused.
   source bytes; existing report and `.partial` sentinel not clobbered. Snapshot
   regression rejects duplicate inputs and input rewrites; non-finite/exact-bound
   and missing/duplicate/reversed triangle probes reject without a pass.
-- One non-final full-suite attempt was stopped after audit self-review changed
-  its snapshot; no full-suite success is claimed for it, and no matching native
-  pytest/uv children remained. Final full-suite receipt belongs in the PR.
+- Non-final suite attempts were stopped for audit self-review and the final
+  author-receipt/docstring freeze; no success is claimed for those snapshots.
+  Owned native pytest/uv children were checked absent before each restart.
+  The one completed final full-suite receipt belongs in the PR.
 - Regression evals: tmp/evals/report.json;0 passed /0 failed /10 not measured
   (no Claude transcript); exact receipt validation exit0. Missing telemetry is
   not substituted with pytest counts or fabricated transcripts.

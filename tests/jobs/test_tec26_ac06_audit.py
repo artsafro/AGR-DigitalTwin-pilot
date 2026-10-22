@@ -1,4 +1,4 @@
-"""AC06 export topology certification regressions (synthetic plus real receipts)."""
+"""new-case: AC06 export topology certification regressions (synthetic plus real receipts)."""
 import importlib.util
 from pathlib import Path
 
