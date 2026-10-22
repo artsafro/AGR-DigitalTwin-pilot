@@ -1,12 +1,13 @@
-# AC09 — material proposal / Gate 1 STOP (not approved)
+# AC09 — material mapping / approved-gate1
 
 Building: **Контейнер системы автоматического контроля вредных выбросов (САКВ)**.
 Title block: `22Е56-АР2-1002-АС.09.dwg`, layout2, handles3437/3438 at
 (499.713,27.7392,0)/(504.356,23.9892,0) paper mm.
 Pilot main at start: `442f0b695a91f9abc180783c26978fbe85fefcf9`.
 
-**awaiting_gate1; passed=false. All finishes unapproved. No NPM/VPM build, geometry/UV/material
-assignment edits or delivery export.** IDs, editor slots and UDIMs are distinct concepts.
+**approved-gate1; passed=false.** «Принимаю» (Artem, 2026-10-22, Gate 1 answer) accepts the
+orchestrator finish mapping below. VPM/NPM are not built; technical QA and publication stay
+separate statuses. No geometry change. IDs, editor slots and UDIMs stay distinct.
 
 ## Inputs and decisions
 
@@ -32,7 +33,8 @@ Folder: **`G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v002/`**.
 
 - `ac09-facades.pdf` p1: native Model plot window(-1000,-6000)–(40000,20000)mm,
   four blue-panel elevations and colour legend. No printed facade sheet title/number recovered;
-  explicitly a Model-space group, NOT invented sheet1. Ribs visible, no module/joint dimensions established.
+  explicitly a Model-space group, NOT invented sheet1. Ribs are visible. The drawing does not
+  dimension a module; joint scale is the KPP panel tile (Artem, 2026-10-22).
 - `ac09-sheet2.pdf` p1: native layout2/printed sheet2 (`3443`), plan0.000 (`2374`, paper91.7101,283.955),
   section1-1 (`23EA`,269.028,283.955), roof (`2460`,444.483,283.955), title equivalents3439–343B.
   Plan/roof3000x2450 are envelope dimensions, not cladding module. No separate roof RAL established.
@@ -44,7 +46,7 @@ Folder: **`G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v002/`**.
 
 | Drawing finish/material | Map proposal | Model handle; insertion mm; native PDF |
 |---|---|---|
-| Sandwich panels RAL5015 | solid, no invented joints | D4B;27521.4,-943.967,0; facades p1 |
+| Sandwich panels RAL5015 | joints (KPP panel tile, same texel density/joint scale) | D4B;27521.4,-943.967,0; facades p1 |
 | Porches/doors RAL7004 | metal | D4D;27521.4,-2647.4,0; facades p1 |
 | Window frames RAL9016 | solid | 1C5A;27521.4,-4105.6,0; facades p1 |
 | Three-layer sandwich100mm, basalt mineral wool | structural note, not module | FFD;12472.7,-20445.8,0; sheet2 p1 |
@@ -79,25 +81,31 @@ are not geometry edits. No topology/UV/delivery QA certification.
 
 | ID | Main polygons | Main triangles | Main area m² | Glass triangles/area m² | Geometry -> proposed finish | Map | Evidence/limitation |
 |---|---:|---:|---:|---|---|---|---|
-| 1 |188|376|38.713608|0/0| Mixed roof, corner frame, plinth, below-zero extrusion -> **?** | ? | isolated ID1, z=-2.0383..2.5675; blue facade trim not evidence for all regions |
-| 2 |50|100|18.757031|0/0| Wall panels -> **RAL5015** | solid | D4B+facades p1+isolated ID2 |
+| 1 |188|376|38.713608|0/0| Same ID, no geometry change. Roof and frame **RAL7004**; plinth and below-grade drop **RAL5015** plain wall colour without joints (adjacent wall). Perimeter drop below +-0.000 keeps that plain wall colour, no separate ID | split (UV / face groups) | Gate 1 decision; KPP colour tiles 1001 and 1007, joints not used on the drop |
+| 2 |50|100|18.757031|0/0| Wall panels -> **RAL5015** KPP blue cassette tile with joints, same texel density and joint scale as KPP VPM. Phase z=0.000. Below +-0.000 the perimeter drop is plain 5015 without joints | joints (KPP panel tile, same texel density/joint scale) | D4B+facades p1+isolated ID2; maps_kpp T_Kpp_1_Diffuse/Normal_1.1007 |
 | 3 |40|80|1.901034|0/0| Window frame outlines -> **RAL9016** | solid | 1C5A+isolated ID3 |
-| 4 |39|66|1.771651|0/0| Door/handle -> **RAL7004** | metal | D4D+isolated ID4 |
-| 5 |12|24|0.940521|0/0| Window reveals/thickness -> **RAL9016 proposed** | solid | ID5 behind ID3, extension of1C5A, not independently specified |
+| 4 |39|66|1.771651|0/0| Door/porch -> **RAL7004** KPP grey | metal | D4D+isolated ID4 |
+| 5 |12|24|0.940521|0/0| Window reveals/thickness -> **RAL9016** | solid | Gate 1; same KPP white as the frames |
 | 6 |0|0|0|8/3.216858| Glass -> **KPP M_Glass_01** | glass | handle369, orchestrator rule6, KPP export_npm.py:152–157 |
-| 7 |18|36|27.345944|0/0| Interior walls/floor/ceiling -> **?** | ? | isolated ID7, floor/ceiling each4.898m², section no finish |
+| 7 |18|36|27.345944|0/0| Interior walls/floor/ceiling -> **KPP Interior** | solid | jobs/KPP1/materials.json Interior, UDIM 1011; no hex stored here |
 | 8 |0|0|0|0/0| empty, keep | none | census; resolved rule4 |
 | 9 |0|0|0|0/0| empty, keep | none | census; resolved rule4 |
 | 10 |0|0|0|0/0| empty, keep | none | census; resolved rule4 |
 
-Areas summed triangle surface, not projected/visible; JSON retains unrounded values. ID1 is NOT
-all wall panel, ID7 NOT exterior roof. Both stay pink gaps. Later per-face finish groups inside ID1
-may be needed without geometry change; none built here. Generic source names/ID colours do not prove RAL.
+Areas summed triangle surface, not projected/visible; JSON retains unrounded values. ID1 is not
+one wall-panel finish: roof and frame are RAL 7004, plinth and the below-grade drop are plain wall
+colour RAL 5015 without joints, assigned later as UV regions or face groups inside the same ID. ID7 is KPP
+Interior, not the exterior roof. Generic source names and ID colours do not prove RAL. Same RAL as
+KPP uses the hash-pinned maps_kpp chips already listed below. KPP Interior is referenced by name
+from `jobs/KPP1/materials.json`; this record does not invent a hex for it.
 
 ## KPP exact colour reuse
 
-Hash-pinned maps_kpp sources and jobs/KPP1/materials.json: RAL5015 tile1007, RAL7004 tile1001,
-RAL9016 tile1009. Chips use existing modal pixels(34,113,179)/(150,153,146)/(246,246,246),
+Hash-pinned maps_kpp sources and jobs/KPP1/materials.json: RAL5015 tile1007
+(`T_Kpp_1_Diffuse_1.1007` / `T_Kpp_1_Normal_1.1007`, KPP finish `Cassette_RAL5015`), RAL7004 tile1001,
+RAL9016 tile1009. ID2 uses that cassette tile with its joints at the same texel density and joint
+scale as KPP VPM (VPM diffuse+normal; NPM atlas, joints >= 1.5 px like make_npm_atlas.py). Phase
+starts at z=0.000. `C:/x/tec26-oks/census/kpp-recipe.md` was not present. Chips use existing modal pixels(34,113,179)/(150,153,146)/(246,246,246),
 not calibrated RAL conversion. Full original maps remain authoritative; chips are not delivery maps.
 KPP NPM glass linear base(.75,.82,.82), alpha.5, roughness.05, no maps (export_npm.py:152–157).
 Glass chip is opaque linear-to-sRGB base colour, not transparency simulation. VPM glass separate,
@@ -120,15 +128,19 @@ file hashes matched; input/KPP/pristine-copy hashes **10/10** matched. Native PD
 Main/glass triangle accounting **682/8**. `passed=false` and all ten slots remain unapproved.
 Full suite and author eval receipts deferred until actual Gate-1 answer and first PR review request.
 
-## Questions for Artem — STOP
+## Gate 1 decision
 
-1. Approve/correct this proposal **on the contact sheet**: ID2 RAL5015, ID3 RAL9016,
-   ID4 RAL7004, ID5 RAL9016 reveals (extension proposal), ID6 KPP glass.
-2. ID1 mixes roof, exterior frame, plinth and below-zero faces. Which finishes for these subregions?
-   May later material work distinguish face groups without changing geometry? No single whole-ID finish evidenced.
-3. Specify visible interior ID7 wall/floor/ceiling finishes; no interior finish schedule found.
-4. Ribs drawn without established module/profile: approve solid RAL5015 without synthetic joints,
-   or provide panel profile/module dimensions.
+«Принимаю» (Artem, 2026-10-22, Gate 1 answer). The four open questions are resolved:
 
-Layer, edition, old roof elevation, glass convention and empty slots resolved, NOT blind user questions.
-Await actual Gate-1 approval. No full-suite/PR/review/delivery-completion claim at this blocked stage.
+1. ID2 RAL 5015, ID3 RAL 9016, ID4 RAL 7004, ID5 RAL 9016 reveals, ID6 KPP `M_Glass_01` (NPM alpha 0.5).
+2. ID1 stays one material ID. Roof RAL 7004 (not 5015), frame RAL 7004, plinth and below-grade drop
+   are plain wall colour RAL 5015 without joints (adjacent wall). Perimeter drop below +-0.000 keeps
+   that plain wall colour and gets no separate ID. Later UV regions or face groups may carry those
+   finishes; geometry is unchanged.
+3. ID7 walls, floor and ceiling are KPP Interior.
+4. Panel joints are resolved by Artem, 2026-10-22. New rule from Artem (2026-10-22, supersedes "solid colour without joints" for panels): ID2 blue sandwich panels (RAL 5015) use the KPP VPM panel texture WITH its joints (blue cassette tile(s) of maps_kpp T_Kpp_1_Diffuse/Normal_1.10xx, see C:/x/tec26-oks/census/kpp-recipe.md if present) at the SAME texel density and joint scale as KPP VPM, in VPM (diffuse+normal) and NPM (atlas, joints >= 1.5 px like make_npm_atlas.py). Joint phase starts at +-0.000; the perimeter drop below +-0.000 stays plain panel colour WITHOUT joints (underground). Geometry unchanged.
+   Slots 8-10 stay empty.
+
+Non-blocking, not finish questions: roof elevation +2.330 (note 36B1) versus the corrected note (36B0);
+sandwich thickness 120 mm versus 150 mm. Recovered note FFD still says 100 mm. Neither conflict changes
+geometry or the approved colours. Contact sheet on Drive is unchanged. passed=false.

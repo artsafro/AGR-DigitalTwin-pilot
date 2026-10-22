@@ -1,6 +1,14 @@
 {
-  "status": "awaiting_gate1",
+  "status": "approved-gate1",
   "passed": false,
+  "passed_note": "VPM/NPM not built; technical QA and publication are separate statuses.",
+  "gate1_approval": {
+    "quote": "«Принимаю» (Artem, 2026-10-22, Gate 1 answer)",
+    "answer": "Принимаю",
+    "by": "Artem",
+    "date": "2026-10-22",
+    "scope": "Orchestrator recommendations. Finish mapping only; geometry unchanged."
+  },
   "base_main": "442f0b695a91f9abc180783c26978fbe85fefcf9",
   "building_name": "Контейнер системы автоматического контроля вредных выбросов (САКВ)",
   "title_evidence": [
@@ -31,7 +39,7 @@
       "text": "- Сэндвич-панели - RAL 5015 ",
       "ral": "5015",
       "finish": "Sandwich panels",
-      "map_type": "solid",
+      "map_type": "joints (KPP panel tile, same texel density/joint scale)",
       "sheet": "AC09 Model-space facade group; no printed facade sheet title; native ac09-facades.pdf p1"
     },
     {
@@ -73,15 +81,62 @@
       "triangles_glass": 0,
       "area_main_m2": 38.713608267577335,
       "area_glass_m2": 0,
-      "finish": "?",
-      "map_type": "?",
-      "approved": false,
-      "question": "ID1 combines roof, frame, plinth and faces down to z=-2.0383 m; no single finish in legend. Specify finishes for those subregions; allow per-face finish groups later without changing geometry?",
-      "evidence": "Native facade plot p1: blue perimeter trim but no independent roof/base finish; mixed ID cannot safely receive one finish",
+      "finish": "Split inside ID1: roof RAL7004, frame RAL7004, plinth and below-grade drop RAL5015",
+      "map_type": "split",
+      "approved": true,
+      "question": null,
+      "evidence": "Gate 1 «Принимаю» (Artem, 2026-10-22): UV regions / face groups inside the same ID; geometry unchanged",
       "ral": null,
       "geometry_role": "Mixed exterior roof, corner frame, plinth and below-zero extrusion",
       "geometry_evidence": "isolated-ids.png ID1; geometry-173/369.json; unchanged source ID",
-      "status": "unknown"
+      "geometry_change": false,
+      "status": "approved-gate1",
+      "sub_regions": [
+        {
+          "name": "roof",
+          "finish": "RAL7004 roof",
+          "ral": "7004",
+          "map_type": "solid",
+          "geometry_change": false,
+          "assignment": "UV regions / face groups inside the same ID",
+          "colour_reference_sha256": "6e088cbdeea1f88e8ff25b78d47b71cc0cea889183027829695b4104a6acca66",
+          "note": "KPP grey, not RAL 5015"
+        },
+        {
+          "name": "frame",
+          "finish": "RAL7004 frame",
+          "ral": "7004",
+          "map_type": "solid",
+          "geometry_change": false,
+          "assignment": "UV regions / face groups inside the same ID",
+          "colour_reference_sha256": "6e088cbdeea1f88e8ff25b78d47b71cc0cea889183027829695b4104a6acca66"
+        },
+        {
+          "name": "plinth",
+          "finish": "RAL5015 plinth, colour of the adjacent wall",
+          "ral": "5015",
+          "map_type": "solid",
+          "geometry_change": false,
+          "assignment": "UV regions / face groups inside the same ID",
+          "colour_reference_sha256": "323ca26ba0685dc32f8afb12b9218a76e51570c39301b5d6606171f7f9660ee0",
+          "note": "plain wall colour without joints; colour of the adjacent wall"
+        },
+        {
+          "name": "below_grade_drop",
+          "finish": "RAL5015 below-grade drop, colour of the adjacent wall",
+          "ral": "5015",
+          "map_type": "solid",
+          "geometry_change": false,
+          "assignment": "UV regions / face groups inside the same ID",
+          "colour_reference_sha256": "323ca26ba0685dc32f8afb12b9218a76e51570c39301b5d6606171f7f9660ee0",
+          "note": "plain wall colour without joints; perimeter drop below +-0.000 keeps the wall colour; no separate ID"
+        }
+      ],
+      "perimeter_drop_below_zero": {
+        "ral": "5015",
+        "separate_id": false,
+        "note": "plain wall colour without joints; perimeter drop below +-0.000 keeps the wall colour (no separate ID)"
+      }
     },
     {
       "id": 2,
@@ -93,14 +148,33 @@
       "area_main_m2": 18.757031060906957,
       "area_glass_m2": 0,
       "finish": "RAL5015 sandwich panels",
-      "map_type": "solid",
-      "approved": false,
+      "map_type": "joints (KPP panel tile, same texel density/joint scale)",
+      "panel_joints": "KPP VPM panel texture with joints",
+      "panel_module": "KPP VPM cassette tile, same texel density and joint scale",
+      "quote": "New rule from Artem (2026-10-22, supersedes \"solid colour without joints\" for panels): ID2 blue sandwich panels (RAL 5015) use the KPP VPM panel texture WITH its joints (blue cassette tile(s) of maps_kpp T_Kpp_1_Diffuse/Normal_1.10xx, see C:/x/tec26-oks/census/kpp-recipe.md if present) at the SAME texel density and joint scale as KPP VPM, in VPM (diffuse+normal) and NPM (atlas, joints >= 1.5 px like make_npm_atlas.py). Joint phase starts at +-0.000; the perimeter drop below +-0.000 stays plain panel colour WITHOUT joints (underground). Geometry unchanged.",
+      "joint_phase_z": 0.0,
+      "kpp_tile_source": {
+        "finish": "Cassette_RAL5015",
+        "udim": 1007,
+        "diffuse": "maps_kpp/T_Kpp_1_Diffuse_1.1007",
+        "normal": "maps_kpp/T_Kpp_1_Normal_1.1007",
+        "note": "kpp-recipe.md was not present; blue cassette tile is Cassette_RAL5015 UDIM 1007"
+      },
+      "vpm": "diffuse+normal",
+      "npm": "atlas, joints >= 1.5 px like make_npm_atlas.py",
+      "texel_density": "same as KPP VPM",
+      "joint_scale": "same as KPP VPM",
+      "below_grade": {
+        "ral": "5015",
+        "rule": "Perimeter drop below +-0.000 stays plain panel colour RAL 5015 without joints"
+      },
+      "approved": true,
       "question": null,
       "evidence": "DWG Model D4B (27521.4,-943.967,0); native facades PDF p1; ID2 wall geometry",
       "ral": "5015",
       "geometry_role": "Exterior wall panel faces around openings",
       "geometry_evidence": "isolated-ids.png ID2; geometry-173/369.json; unchanged source ID",
-      "status": "proposed",
+      "status": "approved-gate1",
       "colour_reference_sha256": "323ca26ba0685dc32f8afb12b9218a76e51570c39301b5d6606171f7f9660ee0",
       "colour_reference_path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1007.png"
     },
@@ -115,13 +189,13 @@
       "area_glass_m2": 0,
       "finish": "RAL9016 window frames",
       "map_type": "solid",
-      "approved": false,
+      "approved": true,
       "question": null,
       "evidence": "DWG Model 1C5A (27521.4,-4105.6,0); native facades PDF p1; ID3 outlines",
       "ral": "9016",
       "geometry_role": "Two window frame outlines",
       "geometry_evidence": "isolated-ids.png ID3; geometry-173/369.json; unchanged source ID",
-      "status": "proposed",
+      "status": "approved-gate1",
       "colour_reference_sha256": "5a24af09b5c0da12873e6f7cdc170acc6b7b339815ce470dfee5336a81925eda",
       "colour_reference_path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1009.png"
     },
@@ -134,15 +208,15 @@
       "triangles_glass": 0,
       "area_main_m2": 1.77165064257911,
       "area_glass_m2": 0,
-      "finish": "RAL7004 door",
+      "finish": "RAL7004 door/porch",
       "map_type": "metal",
-      "approved": false,
+      "approved": true,
       "question": null,
       "evidence": "DWG Model D4D (27521.4,-2647.4,0); native facades PDF p1; ID4 door geometry",
       "ral": "7004",
       "geometry_role": "Door leaf including handle",
       "geometry_evidence": "isolated-ids.png ID4; geometry-173/369.json; unchanged source ID",
-      "status": "proposed",
+      "status": "approved-gate1",
       "colour_reference_sha256": "6e088cbdeea1f88e8ff25b78d47b71cc0cea889183027829695b4104a6acca66",
       "colour_reference_path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1001.png"
     },
@@ -155,15 +229,15 @@
       "triangles_glass": 0,
       "area_main_m2": 0.9405206678686933,
       "area_glass_m2": 0,
-      "finish": "RAL9016 window reveals (proposal)",
+      "finish": "RAL9016 window reveals",
       "map_type": "solid",
-      "approved": false,
+      "approved": true,
       "question": null,
       "evidence": "Geometry shows window thickness behind ID3; extend window-frame legend 1C5A as explicit proposal, not separate drawing specification",
       "ral": "9016",
       "geometry_role": "Two window reveal/thickness strips",
       "geometry_evidence": "isolated-ids.png ID5; geometry-173/369.json; unchanged source ID",
-      "status": "proposed",
+      "status": "approved-gate1",
       "colour_reference_sha256": "5a24af09b5c0da12873e6f7cdc170acc6b7b339815ce470dfee5336a81925eda",
       "colour_reference_path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1009.png"
     },
@@ -178,13 +252,13 @@
       "area_glass_m2": 3.216858372327969,
       "finish": "M_Glass_01 (KPP)",
       "map_type": "glass",
-      "approved": false,
+      "approved": true,
       "question": null,
       "evidence": "Orchestrator rule 6 on this card; census handle 369 ID6; KPP glass convention; KPP NPM shader lines 152-157; swatch is opaque base-colour chip, not transparency simulation",
       "ral": null,
       "geometry_role": "Separate glazing planes, handle 369",
       "geometry_evidence": "id-colours.png front/side glazing; geometry-369.json all 8 triangles use ID6",
-      "status": "proposed",
+      "status": "approved-gate1",
       "npm_material": "M_Glass_01",
       "npm_alpha": 0.5,
       "vpm_policy": "Separate glass; no maps; properties per docs/domain/materials.md and GeoJSON Glasses standard, not source ID6 = UDIM6",
@@ -206,15 +280,18 @@
       "triangles_glass": 0,
       "area_main_m2": 27.345943736013954,
       "area_glass_m2": 0,
-      "finish": "?",
-      "map_type": "?",
-      "approved": false,
-      "question": "Specify visible interior wall/floor/ceiling finishes for ID7; drawing section does not specify them.",
-      "evidence": "Native sheet2 PDF p1 section: interior enclosure, finish unspecified",
+      "finish": "KPP Interior",
+      "map_type": "solid",
+      "approved": true,
+      "question": null,
+      "evidence": "Gate 1 «Принимаю» (Artem, 2026-10-22): interior walls, floor and ceiling use KPP Interior. No RAL hex is stored on this record.",
       "ral": null,
+      "kpp_finish": "Interior",
+      "kpp_reference": "jobs/KPP1/materials.json",
+      "kpp_udim": 1011,
       "geometry_role": "Interior walls, floor and ceiling shell",
       "geometry_evidence": "isolated-ids.png ID7; geometry-173/369.json; unchanged source ID",
-      "status": "unknown"
+      "status": "approved-gate1"
     },
     {
       "id": 8,
@@ -340,11 +417,54 @@
   ],
   "contact_sheet": "G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v002/contact-sheet.png",
   "evidence_manifest_sha256": "63b4a2fe2aeaf5001e17e3dc5619a39332d358d3deb23ffa088033faabb23c48",
-  "open_items": [
-    "Approve the proposed ID2=RAL5015, ID3=RAL9016, ID4=RAL7004, ID5=RAL9016 reveals and ID6=KPP glass on contact-sheet.png; ID5 is an extension proposal, not independently specified.",
-    "ID1 combines roof, frame, plinth and faces down to z=-2.0383 m; no single finish in legend. Specify finishes for those subregions; allow per-face finish groups later without changing geometry?",
-    "Specify visible interior wall/floor/ceiling finishes for ID7; drawing section does not specify them.",
-    "Panel ribs are drawn but module/joint dimensions are not established: approve solid RAL5015 without synthetic joints, or provide the panel profile/module."
+  "open_items": [],
+  "empty_slot_list": [
+    {
+      "id": 8,
+      "reason": "Census Material #7 subslot empty, zero faces; orchestrator rule 4: keep empty"
+    },
+    {
+      "id": 9,
+      "reason": "Census Material #7 subslot empty, zero faces; orchestrator rule 4: keep empty"
+    },
+    {
+      "id": 10,
+      "reason": "Census Material #7 subslot empty, zero faces; orchestrator rule 4: keep empty"
+    }
+  ],
+  "resolved_items": [
+    {
+      "status": "resolved",
+      "item": "ID2 RAL5015, ID3 RAL9016, ID4 RAL7004, ID5 RAL9016 reveals, ID6 KPP glass",
+      "decision": "«Принимаю» (Artem, 2026-10-22, Gate 1 answer). ID2 = RAL 5015 KPP blue cassette tile with joints (same texel density and joint scale as KPP VPM). ID3 = RAL 9016 frames. ID4 = RAL 7004 door/porch, KPP grey. ID5 = RAL 9016 window reveals. ID6 = M_Glass_01, NPM alpha 0.5. Amended 2026-10-22: joints on the panels; phase z=0.000."
+    },
+    {
+      "status": "resolved",
+      "item": "ID1 mixed roof, frame, plinth and below-zero faces",
+      "decision": "«Принимаю» (Artem, 2026-10-22, Gate 1 answer). Split by UV regions / face groups inside ID1, no geometry change. Roof = RAL 7004 (not 5015). Frame = RAL 7004. Plinth and below-grade drop = plain wall colour RAL 5015 without joints. Perimeter drop below +-0.000 keeps that plain wall colour and has no separate ID."
+    },
+    {
+      "status": "resolved",
+      "item": "ID7 interior walls, floor and ceiling",
+      "decision": "«Принимаю» (Artem, 2026-10-22, Gate 1 answer). ID7 = KPP Interior (jobs/KPP1/materials.json). No hex invented on this record."
+    },
+    {
+      "status": "resolved",
+      "item": "Panel module and joints",
+      "decision": "New rule from Artem (2026-10-22, supersedes \"solid colour without joints\" for panels): ID2 uses the KPP VPM panel texture with its joints at the same texel density and joint scale. Joint phase z=0.000. Below +-0.000 the perimeter drop is plain RAL 5015 without joints. Geometry unchanged."
+    }
+  ],
+  "non_blocking": [
+    {
+      "status": "non-blocking",
+      "item": "roof elevation +2.330 vs corrected",
+      "note": "Drawing note 36B1 mentions former +2.330; 36B0 says corrected. Informational conflict only; scene geometry stays unchanged."
+    },
+    {
+      "status": "non-blocking",
+      "item": "sandwich 120 vs 150 mm",
+      "note": "Thickness conflict is recorded and does not assign a finish or change geometry. Recovered sheet note FFD still says a 100 mm three-layer sandwich; 120 mm vs 150 mm is not resolved here."
+    }
   ],
   "orchestrator_rules_applied": {
     "revision": "R1 when present; AC09 has only base DWG, no R1/PDF in its directory",
@@ -356,7 +476,7 @@
       10
     ],
     "glass": "KPP M_Glass_01, NPM alpha=0.5; VPM per standard",
-    "panel_module": "Not established; solid colour without invented joints"
+    "panel_module": "KPP VPM cassette tile, same texel density and joint scale; phase z=0.000; below-grade plain RAL 5015"
   },
   "native_drawing_evidence": {
     "facades": {
