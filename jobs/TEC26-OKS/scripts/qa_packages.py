@@ -28,6 +28,7 @@ from dt_ai.ops.inv_xview import mesh_report
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import finish_map  # noqa: E402
 import joint_count  # noqa: E402
+import make_npm_atlas  # noqa: E402
 
 TRI_BUDGET = 150_000  # KPP1 limit per OKS (jobs/KPP1/REPORT.md §2)
 
@@ -283,10 +284,15 @@ def facade_joint_checks(spec, vmain, nmain, vpm_tiles, atlas_img, atlas):
         vkeep = lambda i, ud=t["udim"]: int(1001 + np.floor(vuv[i].mean(0)[0]) + 10 * np.floor(vuv[i].mean(0)[1])) == ud  # noqa: E731
         nkeep = (lambda i: False) if r is None else (  # noqa: E731
             lambda i, r=r: r["u0"] <= nuv[i].mean(0)[0] <= r["u0"] + r["size"] and r["v0"] <= nuv[i].mean(0)[1] <= r["v0"] + r["size"])
+        # painted joint footprint (joint half width + joint_dark halo, AC07 r2): a hidden joint's halo beside a door
+        ao = (t.get("joint_dark") or {}).get("ao_mm", 0)
+        vfp = (t.get("joint_half_mm", 4) + ao) / 1000 if ao else 0.0
+        nfp = (max(make_npm_atlas.NPM_JOINT_HALF_MM, math.ceil(750 * t.get("S", 4.096) / make_npm_atlas.REGION))
+               + ao) / 1000 if ao else 0.0
         out["vpm"][name] = joint_count.mesh_facade_report(vmain["vertices"], vmain["faces"], vuv, vkeep, fc["normal"],
-                                                          fc["ribs"], vpm_tile_of, tol=0.003)
+                                                          fc["ribs"], vpm_tile_of, tol=0.003, footprint=vfp)
         out["npm"][name] = joint_count.mesh_facade_report(nmain["vertices"], nmain["faces"], nuv, nkeep, fc["normal"],
-                                                          fc["ribs"], npm_tile_of, tol=0.012)
+                                                          fc["ribs"], npm_tile_of, tol=0.012, footprint=nfp)
     return out
 
 

@@ -149,17 +149,21 @@ silent. The «Условные обозначения» legend is binding; same 
 
 | Source ID / region | Slide reading | Legend line | Build finish (vpm_textures.json) | Check |
 |---|---|---|---|---|
-| ID3 lower walls +0.120..+2.500 | light grey, vertical ribs, full height | Сэндвич-панели 7047 | PanelVJ68 / PanelVJ55 `lower_band` 7047, ribbed | ribs 67/54 joints per facade = sheet; compare grey row |
-| ID1 vertical faces (+2.500..eaves, gables) | blue band with vertical ribs | Сэндвич-панели 5015 | PanelVJ68 / PanelVJ55 (5015 above z 2.5) | compare blue row 66+1 hidden / 54 |
+| ID3 lower walls +0.120..+2.500 | light grey, vertical ribs, full height | Сэндвич-панели 7047 | PanelVJ68_RAL5015 / PanelVJ55_RAL5015 `lower_band` 7047, ribbed | ribs 67/54 joints per facade = sheet; compare grey row |
+| ID1 vertical faces (+2.500..eaves, gables) | blue band with vertical ribs | Сэндвич-панели 5015 | PanelVJ68_RAL5015 / PanelVJ55_RAL5015 (5015 above z 2.5) | compare blue row 66+1 hidden / 54 |
 | ID1 non-vertical (roof) | blue, ribs down the slope (54-55 dark runs on the slide roof rows, same step as the wall) | Сэндвич-панели 5015 | Roof_RAL5015 ribbed, plan UV u = y (rib contract of А-Д) | compare roof row: slide 54/53, VPM 54, NPM 54. Supersedes Gate-1 «ID1 кровля 7004» |
 | ID2 roof edge / canopies | blue | козырьки 5015 | Trim_RAL5015 plain | visual |
 | ID4 gutters/downpipes, ID5 snow guards | grey | водосток 7004 | Metal_RAL7004 | visual |
-| ID6 round vents | drawn as circles with a dark inner shadow | (not in the legend) | Insert_RAL7004 | **question 1** |
+| ID6 round vents | light circles with a dark crescent/edge | 7047 plain (disc) / водосток-элементы 7004 (hood) | `split: vertical`: 100 cap faces VentDisc_RAL7047, 100 hood faces Insert_RAL7004 | v006; crescent not painted on the disc (BUILD_REPORT «Open») |
 | ID7 doors | grey | двери 7004 | Door_RAL7004 | visual |
 | ID8/ID9 frames, surrounds | white | рамы 9016 | Frame_RAL9016 | visual |
-| ID10 plinth + required drop | dark grey band 0.000..+0.120 | цоколь 7004 | Plinth_RAL7004 plain (below ±0.000 plain) | BUILD-DROP 4/4 sides covered |
+| ID10 plinth + required drop | thin dark strip at ±0.000; below ±0.000 wall colour, no ribs | цоколь 7004 / wall 7047 | `split: below_zero`: 44 faces -0.019..+0.132 Plinth_RAL7004, 44 drop faces BelowGrade_RAL7047 plain | v006, BUILD-DROP 4/4 sides covered |
 | ID11 interior | not visible | - | Interior (KPP) | - |
 | ID12 glazing | light glass | - | SM_Prg_2_MainGlass, M_Glass (no maps) | - |
 
 Every sandwich-hatched wall surface carries the ribbed texture in its legend RAL; no flat grey wall remains
 (build-v005 renders, `C:/x/tec26-oks/AC07/build-v005/compare/`, Drive `AGR-evidence/tec26-oks/AC07/build-v005/`).
+
+v006 (review round 2): the legend is machine-checked (`finish_map.validate_legend`): spec `legend` rows = the table
+above, the RAL 7047 grey band of both panel finishes under `lower_bands` of the 7047 ribbed row, `legend_exempt`
+= Interior only (not on a facade). Finish names carry their RAL (PanelVJ68_RAL5015, PanelVJ55_RAL5015).

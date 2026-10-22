@@ -200,6 +200,8 @@ def main(argv):
         seen[sl] = half + 1
         key, ribs = fc["normal"], fc["ribs"]
         ud = spec["finishes"][fc["finish"]]["udim"]
+        ao = (spec["finishes"][fc["finish"]].get("joint_dark") or {}).get("ao_mm", 0)   # painted joint footprint (r2)
+        fp = (spec["finishes"][fc["finish"]].get("joint_half_mm", 4) + ao) / 1000 if ao else 0.0
         keep = lambda t, ud=ud: int(1001 + np.floor(uvs[t].mean(0)[0]) + 10 * np.floor(uvs[t].mean(0)[1])) == ud  # noqa
         tris = joint_count.facade_triangles(V, vmain["faces"], keep, key)
         lo, hi, zlo, _ = joint_count.field_extent(V, vmain["faces"], tris, key)
@@ -221,8 +223,11 @@ def main(argv):
                 view = meta[tag]["views"][VIEW[key]]
                 img = np.asarray(Image.open(os.path.join(rdir, view["png"])).convert("RGB"))
                 s, lum = joint_count.render_row(img, view, 1 if key in ("+x", "-x") else 0, z, lo, hi, mask="grey" if colour == "grey" else "blue")
-                r = joint_count.count_joints(s, lum, lo, hi, ribs, tol=0.01, dark=0.85)
-                row[tag] = {k: r[k] for k in ("ok", "joints_found", "missing", "extra") if k in r}
+                # + one render pixel: the pixel blends the footprint edge with the occluder (1 / px_per_m metres)
+                r = joint_count.count_joints(s, lum, lo, hi, ribs, tol=0.01, dark=0.85,
+                                             footprint=fp + 1.0 / pxm if fp else 0.0)
+                row[tag] = {k: r[k] for k in ("ok", "joints_found", "missing", "extra", "hidden_partial", "clipped", "split")
+                            if k in r}
                 row[tag]["hidden"] = len(r.get("hidden_by_other_finish", []))
             for tag in under:
                 h = row[tag].get("hidden", len(row[tag].get("hidden_by_other_finish", [])))

@@ -343,3 +343,77 @@ def test_joints_read_dark_on_grey_and_blue(spec):
     for rows in (np.where((z > 0.2) & (z < 2.45))[0], np.where((z > 2.55) & (z < 3.9))[0]):
         lum = dif[rows].mean((0, 2))
         assert lum[near].mean() <= 0.55 * lum[panel].mean(), (lum[near].mean(), lum[panel].mean())
+
+
+def _door_profile(remnants, step=0.0005):
+    """Panel field 0..2 m, 10 ribs (P 0.2), lum 200, joints 8 mm dark; a door (NaN) over 0.985..1.3 hides the joint at
+    1.0 (and 1.2); `remnants` = centres of dark 6 mm runs left beside the door (the hidden joint's darkening halo)."""
+    s = np.arange(step / 2, 2.0, step)
+    lum = np.full(s.shape, 200.0)
+    for k in range(1, 10):
+        lum[np.abs(s - 0.2 * k) < 0.004] = 40.0
+    for c in remnants:
+        lum[np.abs(s - c) < 0.003] = 90.0
+    lum[(s > 0.985) & (s < 1.3)] = np.nan
+    return s, lum
+
+
+@pytest.mark.parametrize("remnants,footprint,ok", [
+    ([], 0.0, True),                     # control: plain door, nothing beside it
+    ([0.982], 0.0, False),               # halo remnant, no footprint declared -> extra (old behaviour, fail-closed)
+    ([0.982], 0.021, True),              # remnant touching the door 18 mm from the hidden joint, footprint 21 mm
+    ([0.95], 0.06, False),               # 50 mm away, not touching the door: a real extra line, never absorbed
+    ([0.97], 0.021, False),              # within reach but free-standing (does not touch the occluder)
+    ([0.972, 0.982], 0.03, False),       # two runs for one hidden joint -> one is extra
+])
+def test_hidden_joint_halo_remnant(remnants, footprint, ok):
+    import joint_count as jc
+    s, lum = _door_profile(remnants)
+    r = jc.count_joints(s, lum, 0.0, 2.0, 10, tol=0.003, footprint=footprint)
+    assert r["ok"] is ok, r
+    if ok and remnants:
+        assert r["hidden_partial"] == [1.0]
+
+
+@pytest.mark.parametrize("fp", [-0.01, float("nan"), float("inf"), 0.2])
+def test_footprint_fail_closed(fp):
+    import joint_count as jc
+    s, lum = _door_profile([])
+    with pytest.raises(ValueError, match="footprint"):
+        jc.count_joints(s, lum, 0.0, 2.0, 10, tol=0.003, footprint=fp)
+
+
+@pytest.mark.parametrize("footprint,ok", [(0.0, False), (0.021, True)])
+def test_clipped_joint_beside_door(footprint, ok):
+    """NPM 1-3 v006: the door clips a joint's dark footprint, the visible run's centre moves 9 mm (> tol): with the
+    declared footprint it is that joint (clipped), without it a missing + extra pair (fail-closed default)."""
+    import joint_count as jc
+    step = 0.0005
+    s = np.arange(step / 2, 2.0, step)
+    lum = np.full(s.shape, 200.0)
+    for k in range(1, 10):
+        lum[np.abs(s - 0.2 * k) < 0.004] = 40.0
+    lum[(s > 0.984) & (s < 1.0)] = 90.0          # halo + joint core of the 1.0 joint, left of the door
+    lum[(s >= 0.999) & (s < 1.3)] = np.nan
+    r = jc.count_joints(s, lum, 0.0, 2.0, 10, tol=0.003, footprint=footprint)
+    assert r["ok"] is ok, r
+    if ok:
+        assert r["clipped"] == [1.0] and not r["missing"] and not r["extra"]
+
+
+@pytest.mark.parametrize("footprint,ok", [(0.0, False), (0.021, True)])
+def test_split_footprint_beside_matched_joint(footprint, ok):
+    """Compare render NPM 1-3 v006: the door edge pixel sits inside the halo of a VISIBLE joint 21 mm away and falls
+    below the threshold as its own run: with the declared footprint it is that joint's (`split`), else extra."""
+    import joint_count as jc
+    step = 0.0005
+    s = np.arange(step / 2, 2.0, step)
+    lum = np.full(s.shape, 200.0)
+    for k in range(1, 10):
+        lum[np.abs(s - 0.2 * k) < 0.004] = 40.0
+    lum[(s > 1.0185) & (s < 1.0195)] = 150.0       # halo + edge blend, separated from the joint core by panel
+    lum[(s >= 1.0195) & (s < 1.3)] = np.nan          # the door
+    r = jc.count_joints(s, lum, 0.0, 2.0, 10, tol=0.003, footprint=footprint)
+    assert r["ok"] is ok, r
+    if ok:
+        assert r["split"] == [1.0]

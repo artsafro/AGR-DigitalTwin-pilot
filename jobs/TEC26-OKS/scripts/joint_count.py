@@ -23,23 +23,35 @@ def runs(mask):
     return list(zip(np.where(d == 1)[0], np.where(d == -1)[0]))
 
 
-def count_joints(s, lum, field_lo, field_hi, ribs, tol, dark=0.8, edge=0.25):
+def count_joints(s, lum, field_lo, field_hi, ribs, tol, dark=0.8, edge=0.25, footprint=0.0):
     """Joint centres (world metres) in a luminance profile `lum` sampled at positions `s` (NaN = no panel there).
 
     Dark = below `dark` x the median panel luminance. Runs whose centre lies within `edge` x P of a field edge are the
     field outline, not joints. Returns a report: found centres, expected positions, which are matched (within tol),
-    hidden (no panel sample within max(tol, 6 mm)), extra (found but not expected), symmetric phase (first/last offsets)."""
+    hidden (no panel sample within max(tol, 6 mm)), extra (found but not expected), symmetric phase (first/last offsets).
+    `footprint` (m, 0 <= footprint < P/2): half-width of a painted joint's dark footprint incl. its darkening halo
+    (AC07 joint_dark). A hidden joint's halo may show beside the occluder: ONE dark run within `footprint` of a hidden
+    joint is that joint's remnant (`hidden_partial`), and ONE such run for a visible joint whose centre the occluder
+    shifted beyond tol is that joint (`clipped`); ONE such run beside a matched joint is the rest of its footprint cut
+    off by the threshold (`split`) - in all cases only a run that ENDS at the occluder (NaN), at most one per joint;
+    never a free-standing line. Default 0 = nothing absorbed."""
     s, lum = np.asarray(s, float), np.asarray(lum, float)
     P = (field_hi - field_lo) / ribs
+    if isinstance(footprint, bool) or not isinstance(footprint, (int, float)) or not np.isfinite(footprint) or not (
+            0 <= footprint < P / 2):
+        raise ValueError(f"joint footprint must be finite in [0, P/2 = {P / 2:.4f}) m, got {footprint!r}")
     ok = np.isfinite(lum)
     if ok.sum() < 10:
         return {"ok": False, "reason": "no panel samples on this row", "found": [], "expected": ribs - 1}
     thr = dark * np.median(lum[ok])
     found = []
+    touch = set()                                    # runs that end at an occluder (another finish, NaN)
     for a, b in runs(ok & (lum < thr)):
         c = float(s[a:b].mean())
         if field_lo + edge * P < c < field_hi - edge * P:
             found.append(c)
+            if (a > 0 and not ok[a - 1]) or (b < len(ok) and not ok[b]):
+                touch.add(c)
     exp = [field_lo + k * P for k in range(1, ribs)]
     hidden, matched, missing = [], [], []
     for e in exp:
@@ -49,11 +61,20 @@ def count_joints(s, lum, field_lo, field_hi, ribs, tol, dark=0.8, edge=0.25):
             continue
         hit = [f for f in found if abs(f - e) <= tol]
         (matched if hit else missing).append(round(e, 4))
-    extra = [round(f, 4) for f in found if not any(abs(f - e) <= tol for e in exp)]
+    extra = [f for f in found if not any(abs(f - e) <= tol for e in exp)]
+    partial, clipped, split = [], [], []   # a joint's dark footprint cut by the occluder: hidden / missing / matched
+    for e, bucket in [(e, partial) for e in hidden] + [(e, clipped) for e in missing] + [(e, split) for e in matched]:
+        near = [f for f in extra if abs(f - e) <= footprint and f in touch]
+        if len(near) == 1:
+            bucket.append(e)
+            extra.remove(near[0])
+    missing = [e for e in missing if e not in clipped]
+    extra = [round(f, 4) for f in extra]
     first = found[0] - field_lo if found else None
     last = field_hi - found[-1] if found else None
     errs = [min(abs(f - e) for e in exp) for f in found] if found else []
-    return {"ok": not missing and not extra and len(found) == len(exp) - len(hidden),
+    return {"ok": not missing and not extra and len(found) == len(exp) - len(hidden) + len(partial) + len(split),
+            "hidden_partial": partial, "clipped": clipped, "split": split,
             "joints_found": len(found), "joints_expected": len(exp), "ribs_expected": ribs,
             "hidden_by_other_finish": hidden, "missing": missing, "extra": extra,
             "pitch_m": round(P, 6), "max_position_error_m": round(max(errs), 5) if errs else None,
@@ -153,7 +174,7 @@ def sample_luminance(uv, tile_of):
     return lum
 
 
-def mesh_facade_report(V, F, UV, keep, key, ribs, tile_of, tol, step=0.0005, rows=None, field=None):
+def mesh_facade_report(V, F, UV, keep, key, ribs, tile_of, tol, step=0.0005, rows=None, field=None, footprint=0.0):
     """Joint count of one facade of a delivered mesh. `keep(t)`: triangle shows the patterned finish. Rows default to
     the panel field's 20 % and 95 % heights (the 95 % row runs above the door). Also checks a vertical profile through
     the middle of the first, middle and last rib for horizontal joints (there must be none)."""
@@ -170,7 +191,7 @@ def mesh_facade_report(V, F, UV, keep, key, ribs, tile_of, tol, step=0.0005, row
     for frac in (rows or (0.2, 0.95)):
         z = zlo + frac * (zhi - zlo)
         lum = sample_luminance(interpolate_uv(V, F, UV, tris, key, s, z), tile_of)
-        r = count_joints(s, lum, lo, hi, ribs, tol)
+        r = count_joints(s, lum, lo, hi, ribs, tol, footprint=footprint)
         out["rows"][f"z={z:.3f}"] = r
         ok &= r["ok"]
     # rows whose first and last expected joints are visible (doors/windows may hide joints in between, AC07)
