@@ -3,8 +3,8 @@
   "building": "AC06",
   "building_name": "Пункт редуцирования газа 1",
   "base_main": "442f0b695a91f9abc180783c26978fbe85fefcf9",
-  "status": "awaiting_artem_gate_1",
-  "approved": false,
+  "status": "approved-gate1",
+  "approved": true,
   "build_allowed": false,
   "evidence_directory": "G:/Мой диск/AGR-evidence/tec26-oks/AC06/evidence-v004",
   "inputs": [
@@ -1275,7 +1275,7 @@
     },
     "perimeter_drop": {
       "source_id": 10,
-      "meaning": "Required perimeter drop retained; RAL7004 plinth continuation",
+      "meaning": "Required perimeter drop retained on ID 10; geometry unchanged. Gate 1 colours the drop below ±0.000 as wall RAL 7047. The ID 10 plinth finish remains the approved RAL 7004 proposal.",
       "geometry_changed": false,
       "method": "Actual axis-aligned plinth footprint; union of triangle/height-plane intersection intervals on each of four perimeter walls at 0 and -1 m. This is perimeter reach evidence, not whole-model topology QA.",
       "numeric_coordinate_tolerance_m": 0.0001,
@@ -1390,7 +1390,13 @@
         }
       ],
       "coverage_passed": 8,
-      "coverage_total": 8
+      "coverage_total": 8,
+      "colour": {
+        "takes": "wall colour",
+        "ral": "7047",
+        "wall_id": 3,
+        "geometry_changed": false
+      }
     }
   },
   "drawing_finishes": [
@@ -1562,23 +1568,22 @@
       "object_handle": 170,
       "triangles": 362,
       "area_m2": 177.12756631157777,
-      "finish": "?",
-      "ral": null,
-      "map_type": "?",
-      "status": "unknown",
-      "question": "Confirm proposed solid RAL 5015 for roof and upper fascia; the DWG does not explicitly specify roof colour.",
+      "finish": "Roof sandwich panels and upper fascia",
+      "ral": "7004",
+      "map_type": "solid",
+      "status": "approved",
+      "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=1",
         "depth-iso.png#legend-ID-1",
         "depth-reverse.png#legend-ID-1"
       ],
-      "proposal": {
-        "component": "Roof sandwich panels and upper fascia",
-        "ral": "5015",
-        "map_type": "solid",
-        "rationale": "PDF roof plan calls out sandwich panels; same DWG names 5015/7047 sandwich panels, but does not explicitly label roof RAL. Blue facade band and canopy correspondence favour 5015.",
-        "approved": false
-      }
+      "swatch_rgb": [
+        150,
+        153,
+        146
+      ],
+      "gate1_note": "Approved RAL 7004 grey as KPP 7004, not 5015. Solid colour, no joints."
     },
     {
       "id": 2,
@@ -1589,7 +1594,7 @@
       "finish": "Canopies and roof trims",
       "ral": "5015",
       "map_type": "metal",
-      "status": "proposed",
+      "status": "approved",
       "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=2",
@@ -1612,7 +1617,7 @@
       "finish": "Wall sandwich panels",
       "ral": "7047",
       "map_type": "solid",
-      "status": "proposed",
+      "status": "approved",
       "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=3",
@@ -1625,7 +1630,7 @@
         208,
         208
       ],
-      "joint_policy": "No dimensioned panel module established from the facade drawing; solid colour, no invented joints."
+      "joint_policy": "RAL 7047 wall sandwich panels stay solid colour, no joints. This ID is not a blue RAL 5015 sandwich wall panel, so it is not switched to joints."
     },
     {
       "id": 4,
@@ -1636,7 +1641,7 @@
       "finish": "Rainwater downpipes",
       "ral": "7004",
       "map_type": "metal",
-      "status": "proposed",
+      "status": "approved",
       "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=4",
@@ -1657,24 +1662,24 @@
       "object_handle": 170,
       "triangles": 48,
       "area_m2": 0.6970296509167692,
-      "finish": "?",
-      "ral": null,
-      "map_type": "?",
-      "status": "unknown",
-      "question": "Are the six thin strips above entrances luminaires? Confirm proposed RAL 9016 housing/diffuser or give the luminaire specification.",
+      "finish": "Strips over entrances",
+      "ral": "9016",
+      "map_type": "solid",
+      "status": "approved",
+      "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=5",
         "depth-iso.png#legend-ID-5",
         "depth-reverse.png#legend-ID-5",
         "depth-isolated.png"
       ],
-      "proposal": {
-        "component": "Thin elements above entrances, possible luminaire strips",
-        "ral": "9016",
-        "map_type": "solid",
-        "rationale": "Isolated geometry is six thin strips at z=2.318..2.530 m, outside facade below canopies. White finish is a proposal only; no luminaire specification was found.",
-        "approved": false
-      }
+      "swatch_rgb": [
+        246,
+        246,
+        246
+      ],
+      "emission": false,
+      "gate1_note": "Luminaires: colour only, no emission."
     },
     {
       "id": 6,
@@ -1682,24 +1687,22 @@
       "object_handle": 170,
       "triangles": 300,
       "area_m2": 3.303690195518504,
-      "finish": "?",
-      "ral": null,
-      "map_type": "?",
-      "status": "unknown",
-      "question": "Confirm proposed RAL 7004 metal for the five ventilation assemblies, or give their finish/perforation specification.",
+      "finish": "Ventilation assemblies",
+      "ral": "7004",
+      "map_type": "metal",
+      "status": "approved",
+      "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=6",
         "depth-iso.png#legend-ID-6",
         "depth-reverse.png#legend-ID-6",
         "depth-isolated.png"
       ],
-      "proposal": {
-        "component": "Circular ventilation assemblies",
-        "ral": "7004",
-        "map_type": "metal",
-        "rationale": "Isolated geometry is five round assemblies on end facade; neutral 7004 is a proposed match to adjacent metalwork, not a drawing requirement.",
-        "approved": false
-      }
+      "swatch_rgb": [
+        150,
+        153,
+        146
+      ]
     },
     {
       "id": 7,
@@ -1710,7 +1713,7 @@
       "finish": "Doors",
       "ral": "7004",
       "map_type": "metal",
-      "status": "proposed",
+      "status": "approved",
       "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=7",
@@ -1733,7 +1736,7 @@
       "finish": "Lightweight relief glazing frames",
       "ral": "9016",
       "map_type": "metal",
-      "status": "proposed",
+      "status": "approved",
       "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=8",
@@ -1754,11 +1757,11 @@
       "object_handle": 170,
       "triangles": 60,
       "area_m2": 7.950371332550838,
-      "finish": "?",
-      "ral": null,
-      "map_type": "?",
-      "status": "unknown",
-      "question": "Confirm proposed RAL 9016 on the three perimeter reveals, or identify their finish separately from the frames.",
+      "finish": "Window reveals",
+      "ral": "9016",
+      "map_type": "solid",
+      "status": "approved",
+      "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=9",
         "depth-iso.png#legend-ID-9",
@@ -1766,13 +1769,11 @@
         "22E56-АР2-1002-AC.06_R1.dwg#Model/MTEXT 136EBB at (119514.0,54096.4) mm",
         "depth-isolated.png"
       ],
-      "proposal": {
-        "component": "Window perimeter reveals",
-        "ral": "9016",
-        "map_type": "solid",
-        "rationale": "Isolated geometry is three rectangular reveal rings around relief glazing, not drainage. Propose frame white 9016; the legend only explicitly covers frames.",
-        "approved": false
-      }
+      "swatch_rgb": [
+        246,
+        246,
+        246
+      ]
     },
     {
       "id": 10,
@@ -1783,7 +1784,7 @@
       "finish": "Plinth",
       "ral": "7004",
       "map_type": "solid",
-      "status": "proposed",
+      "status": "approved",
       "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=10",
@@ -1795,6 +1796,22 @@
         150,
         153,
         146
+      ],
+      "regions": [
+        {
+          "part": "plinth",
+          "ral": "7004",
+          "source": "approved proposal, DWG legend 136EBB"
+        },
+        {
+          "part": "drop_below_pm_0_000",
+          "takes": "wall colour",
+          "ral": "7047",
+          "wall_id": 3,
+          "geometry_change": false,
+          "joints": false,
+          "below_zero": "plain"
+        }
       ]
     },
     {
@@ -1803,36 +1820,34 @@
       "object_handle": 170,
       "triangles": 128,
       "area_m2": 116.79776482928031,
-      "finish": "?",
+      "finish": "KPP Interior",
       "ral": null,
-      "map_type": "?",
-      "status": "unknown",
-      "question": "Confirm KPP Interior neutral finish for the visible interior box, or give the interior finish specification.",
+      "map_type": "solid",
+      "status": "approved",
+      "question": null,
       "evidence": [
         "oks.json#objects/handle=170/material_ids/id=11",
         "depth-iso.png#legend-ID-11",
         "depth-reverse.png#legend-ID-11",
         "depth-isolated.png"
       ],
-      "proposal": {
-        "component": "Interior box behind relief glazing",
-        "ral": null,
-        "map_type": "solid",
-        "rationale": "Isolated geometry forms the visible interior box behind three relief-glazing modules. Propose reuse of KPP Interior colour; no interior finish specification was found.",
-        "approved": false,
-        "kpp_colour": {
-          "finish": "Interior",
-          "udim": 1011,
-          "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1011.png",
-          "sha256": "ec5ed808306c18568b104797b3c0f10bd2bf73c98507402d4a432b651b3366bc",
-          "method": "most_frequent_rgb_pixel",
-          "rgb": [
-            25,
-            25,
-            28
-          ]
-        }
-      }
+      "kpp_colour": {
+        "finish": "Interior",
+        "udim": 1011,
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1011.png",
+        "sha256": "ec5ed808306c18568b104797b3c0f10bd2bf73c98507402d4a432b651b3366bc",
+        "method": "most_frequent_rgb_pixel",
+        "rgb": [
+          25,
+          25,
+          28
+        ]
+      },
+      "swatch_rgb": [
+        25,
+        25,
+        28
+      ]
     },
     {
       "id": 12,
@@ -1843,7 +1858,7 @@
       "finish": "Glazing",
       "ral": null,
       "map_type": "glass",
-      "status": "proposed",
+      "status": "approved",
       "question": null,
       "evidence": [
         "oks.json#objects/handle=378/material_ids/id=12",
@@ -1862,16 +1877,150 @@
   "limitations": [
     "No native facade PDF supplied; supplied PDF is printed sheet 2 only. DWG text recovered read-only directly in AutoCAD 2025, INSUNITS=4.",
     "Shared DXF is truncated: ezdxf normal read rejected missing ENDSEC; recovered rendering is supplemental, not proof of full DWG fidelity.",
-    "Generic material names and existing diffuse colours are not finish evidence; all mapped finishes are proposals requiring Gate 1.",
     "Revised after isolated-group review: ID4 downpipes; ID9 window reveals. Earlier v001 painter projections and their first interpretation are superseded by depth-correct Gate images and the final mapping.",
-    "Supersedes archived painter-projection images: Gate v004 uses depth-correct Blender renders with UCX excluded, +/-0.000 reference and neutral shaded comparison."
+    "Supersedes archived painter-projection images: Gate v004 uses depth-correct Blender renders with UCX excluded, +/-0.000 reference and neutral shaded comparison.",
+    "Gate 1 closed 2026-10-22 (Artem, Принимаю): colouring is approved. Geometry, topology, UCX and multisub IDs were not changed. build_allowed stays false; VPM/NPM are a later card.",
+    "2026-10-22 panel texture rules supersede Gate-1 item 1 for blue RAL 5015 sandwich wall panels. No approved AC06 ID has that finish, so no map_type was switched. Rib count and step are ? until the AC06 colour sheet dimensions them."
   ],
   "authority": {
     "finishes": "DWG *_R1.dwg governs; PDF only if DWG has no information",
     "geometry": "final scene mid-poly geometry; dimension conflicts are noted, not modelled or blocking",
     "layers": "actual #558 census names and handles are authoritative",
     "glass": "KPP M_Glass_01; NPM alpha 0.5; VPM per standard",
-    "joints": "dimensioned facade module only; otherwise solid colour"
+    "joints": "Blue RAL 5015 sandwich wall panels use vertical ribs only. Count and step come from this building's Цветовое решение sheet, or stay ?. Gate-1 item 1 is superseded for those panels. See panel_texture_rules."
   },
-  "joint_question": "If panel joints are required later, supply a dimensioned module; until then ID 3 stays solid without joints."
+  "joint_question": "Vertical rib count and step are not dimensioned for AC06 facades 1-3, 3-1, А-Д and Д-А in dwg-text-v001.txt. What is the count and the step on each «Цветовое решение» facade? Do not copy AC08's 30 ribs / 12 ribs at ~0.20 m.",
+  "build_allowed_reason": "Gate-1 approves colouring only. VPM (UDIM) and NPM (2048 atlas) stay on a later card. build_allowed remains false so this packet cannot start a build: geometry, topology, UCX and multisub IDs stay as in the source scene.",
+  "gate1_approval": {
+    "date": "2026-10-22",
+    "by": "Artem",
+    "decision": "Принимаю",
+    "quote": "Принимаю\n1. Sandwich panels: solid colour without joints (module not confirmed in drawings).\n2. Roof: RAL 7004 grey (as KPP 7004), NOT 5015.\n3. Mixed ID: parts may be painted differently (roof 7004, frame 7004, plinth/drop = wall colour) without geometry change - via UV/atlas regions or face-group split inside the same ID.\n4. Panels RAL 5015 = KPP blue, doors/frames/porches RAL 7004 = KPP grey, glass as KPP; drop below ±0.000 = wall colour.\nAC06 specifically: ID1 roof 7004; ID5 strips over entrances RAL 9016 (luminaires: colour only, no emission); ID6 ventilation 7004; ID9 window reveals 9016; ID11 interior box = KPP Interior.\nScope (Artem): only colouring; geometry, topology, UCX and multisub IDs stay exactly as in the source scene. Later cards build VPM (UDIM) / NPM (2048 atlas); do NOT build them here. Geometry checks are reported only, never fixed.",
+    "superseded_by": {
+      "item": 1,
+      "quote_kept": true,
+      "date": "2026-10-22",
+      "by": "Artem",
+      "replacement": "panel_texture_rules",
+      "scope": "Item 1 (solid colour without joints) is superseded for blue RAL 5015 sandwich wall panels. The quote is kept. RAL 5015 metal canopies and trims are not switched."
+    }
+  },
+  "mixed_id_rule": {
+    "geometry_change": false,
+    "topology_change": false,
+    "ucx_change": false,
+    "multisub_id_change": false,
+    "method": "UV/atlas regions or face-group split inside the same ID",
+    "roof": "7004",
+    "frame": "7004",
+    "plinth_and_drop": "wall colour",
+    "drop_below_pm_0_000": {
+      "takes": "wall colour",
+      "wall_id": 3,
+      "ral": "7047",
+      "geometry_change": false,
+      "joints": false,
+      "below_zero": "plain",
+      "note": "The AC06 perimeter drop below ±0.000 stays on material ID 10. Its colour is wall RAL 7047 (KPP Cassette_RAL7047), plain, with no joints. The ID is not split and the mesh is not edited."
+    }
+  },
+  "contact_sheet_note": "Contact-sheet swatches for ID1 (7004) must match KPP 7004.",
+  "joint_decision": "Artem 2026-10-22 panel texture rules supersede Gate-1 item 1 for blue RAL 5015 sandwich wall panels: vertical ribs only. Count and step stay ? because the AC06 colour sheet does not dimension them in the text evidence. No approved ID is that finish, so none were switched.",
+  "panel_texture_rules": {
+    "date": "2026-10-22",
+    "by": "Artem",
+    "supersedes": "Gate-1 item 1: sandwich panels solid colour without joints",
+    "applies_to": "Every material ID whose finish is a blue RAL 5015 sandwich wall panel. RAL 5015 metal canopies and trims stay metal unless they are wall panels.",
+    "joint_style": "vertical_ribs",
+    "vertical_only": true,
+    "horizontal_joints": false,
+    "texel_px_per_m": 1000,
+    "udim": "4K",
+    "vpm_maps": ["diffuse", "normal"],
+    "npm_joints_min_px": 1.5,
+    "same_look": "VPM Diffuse+Normal and NPM atlas, joints at least 1.5 px",
+    "step_m": "?",
+    "module_m": "?",
+    "count_step_source": "This building's own facade sheet «Цветовое решение», per facade. AC08's 30 ribs / 12 ribs at ~0.20 m are AC08-only and are not AC06 values.",
+    "switched_ids": [],
+    "not_switched": [
+      {"id": 2, "reason": "RAL 5015 canopies and roof trims stay metal"},
+      {"id": 3, "reason": "Wall sandwich panels are RAL 7047, not blue RAL 5015"}
+    ],
+    "facades": [
+      {
+        "label": "1-3",
+        "entity": "BA82E",
+        "sheet": "Фасад 1-3. Цветовое решение",
+        "vertical_ribs": "?",
+        "step": "?",
+        "sheet_evidence": null,
+        "question": "What is the vertical rib count and the step on facade 1-3 («Фасад 1-3. Цветовое решение»)? dwg-text-v001.txt names the sheet and does not dimension count or step. Do not copy AC08's 30 ribs / 12 ribs at ~0.20 m; those are AC08-only."
+      },
+      {
+        "label": "3-1",
+        "entity": "DBF13",
+        "sheet": "Фасад 3-1. Цветовое решение",
+        "vertical_ribs": "?",
+        "step": "?",
+        "sheet_evidence": null,
+        "question": "What is the vertical rib count and the step on facade 3-1 («Фасад 3-1. Цветовое решение»)? dwg-text-v001.txt names the sheet and does not dimension count or step. Do not copy AC08's 30 ribs / 12 ribs at ~0.20 m; those are AC08-only."
+      },
+      {
+        "label": "А-Д",
+        "entity": "19C226",
+        "sheet": "Фасад А-Д. Цветовое решение",
+        "vertical_ribs": "?",
+        "step": "?",
+        "sheet_evidence": null,
+        "question": "What is the vertical rib count and the step on facade А-Д («Фасад А-Д. Цветовое решение»)? dwg-text-v001.txt names the sheet and does not dimension count or step. Do not copy AC08's 30 ribs / 12 ribs at ~0.20 m; those are AC08-only."
+      },
+      {
+        "label": "Д-А",
+        "entity": "19C227",
+        "sheet": "Фасад Д-А. Цветовое решение",
+        "vertical_ribs": "?",
+        "step": "?",
+        "sheet_evidence": null,
+        "question": "What is the vertical rib count and the step on facade Д-А («Фасад Д-А. Цветовое решение»)? dwg-text-v001.txt names the sheet and does not dimension count or step. Do not copy AC08's 30 ribs / 12 ribs at ~0.20 m; those are AC08-only."
+      }
+    ],
+    "frame_band": {
+      "tone": "darker",
+      "edges": ["top", "bottom", "corners"],
+      "outlines": "each panel field",
+      "as_on_sheet": true
+    },
+    "doors_ral": "7004",
+    "plinth_strip": "grey",
+    "texture": {
+      "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+      "role": "colour_noise_joint_look",
+      "note": "Colour, noise and the look of one joint only. Joints are laid out per facade from the count and step, not tiled raw.",
+      "width_px": 4096,
+      "mean_rgb": [34, 112, 177],
+      "joint_px": 8,
+      "tiling_source": false
+    },
+    "below_zero": "plain",
+    "below_zero_joints": false,
+    "below_zero_note": "Perimeter drop below ±0.000 is plain colour, no joints.",
+    "edge_cut": {
+      "when": "a face does not fit one 4K tile",
+      "allowed_in": "later build card",
+      "method": "clean edge loop or ring cut",
+      "quads_kept": true,
+      "unchanged": ["silhouette", "normals", "UCX", "IDs"],
+      "every_cut_listed": true,
+      "record_only": true
+    },
+    "acceptance_picture": {
+      "when": "later build card",
+      "content": "Each facade render next to the same facade of the sheet, same scale, rib count under both."
+    },
+    "open_questions": [
+      "No approved AC06 material ID is a blue RAL 5015 sandwich wall panel, so switched_ids is empty. ID 2 stays metal canopies and roof trims (RAL 5015). ID 3 stays solid wall sandwich panels (RAL 7047). If «Сэндвич-панели, козырьки - RAL 5015» includes wall-panel faces on another ID, which ID are they?",
+      "What is the vertical rib count and the step on each AC06 facade «Цветовое решение» (1-3, 3-1, А-Д, Д-А)? The text evidence does not dimension them. Do not copy AC08's 30 ribs / 12 ribs at ~0.20 m."
+    ]
+  }
 }

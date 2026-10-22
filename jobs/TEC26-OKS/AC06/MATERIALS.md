@@ -1,6 +1,6 @@
 # TEC26 AC06 — material-ID Gate 1
 
-**Status: awaiting Artem; no material approval, no build authorization.**
+**Status: `approved-gate1`. Artem, 2026-10-22, approved colouring (`approved`: true). `build_allowed` stays false: VPM/NPM are a later card, and this packet must not start a build.**
 
 Building name, read from the supplied PDF title block and DWG layout `3`, entity
 `19C767`: **Пункт редуцирования газа 1**. Drawing code `22E56-АР2-1002-AC.06`.
@@ -13,10 +13,17 @@ DWG **R1 governs finishes**; PDF fills only missing DWG information. Same-DWG
 model legend/title block apply; no other-building/template finish note was used.
 The scene geometry is final: dimension discrepancies do not authorize geometry
 changes or block this texture task. No dimension conflict was adjudicated here.
-Actual census layer names/handles are authoritative. Undimensioned panel module:
-**solid colour, no invented joints**. Glass: **KPP M_Glass_01, NPM alpha 0.5,
-VPM per standard**. Keep the required perimeter drop below zero, with the adjacent
-plinth finish, without cutting or adding IDs.
+Actual census layer names/handles are authoritative. Blue RAL 5015 sandwich wall
+panels take vertical joints only (see “Panel texture rules (supersede solid-without-joints)”);
+count and step stay `?` until this building’s colour sheet dimensions them. RAL 7047
+wall panels stay solid colour. Glass: **KPP M_Glass_01, NPM alpha 0.5,
+VPM per standard**. Keep the required perimeter drop below zero on the same ID,
+without cutting or adding IDs. Gate 1 colours that drop as wall colour.
+
+Gate 1 (Artem, 2026-10-22) approves colouring only. Geometry, topology, UCX and
+multisub IDs stay exactly as in the source scene. This card does not build VPM
+(UDIM) or NPM (2048 atlas). `build_allowed` remains false so a later card, not
+this packet, is what may build. Same RAL as KPP uses the exact KPP colour.
 
 ## Sources and sheet locators
 
@@ -79,7 +86,10 @@ Actual layer **`006`** is authoritative per operator clarification; no layer que
 - Earlier painter projections are archived diagnostics, **not Gate images**:
   they could falsely show hidden/interior triangles across the roof.
 - ID 10 contains the **required perimeter drop**, reaching **−2.025103807 m**.
-  Keep proposed RAL 7004 plinth finish, no new ID. Independent triangle/height-plane
+  The ID stays 10: no new ID and no geometry change. The approved plinth finish
+  remains RAL 7004. The drop below ±0.000 takes wall colour (ID 3, RAL 7047)
+  by a UV/atlas region or a face-group split inside the same ID. Mixed IDs may
+  also carry roof 7004 and frame 7004 the same way. Independent triangle/height-plane
   intersections show complete four-side rectangular perimeter coverage at **0 and
   −1 m: 8/8**. `perimeter-drop-probe.json` records spans, gaps and side minima.
   Coordinate tolerance 0.0001 m handles roundoff, not modelling movement. This is
@@ -92,30 +102,31 @@ Legend **L** = DWG `136EBB` locator above. **V** = `depth-iso.png` and
 `depth-isolated.png`, seven isolated groups with shaded/ID comparison.
 **C** = measured census
 `objects/handle=170` (ID 12: handle 378). The JSON preserves full precision.
-All non-`?` assignments are **proposals based on component correspondence**, not
-approved assignments. Panel module/joint spacing has not been measured.
+All twelve IDs are **Gate-1 approved** colour assignments. Same RAL as KPP uses
+the exact KPP colour. No approved ID is a blue RAL 5015 sandwich wall panel, so
+none were switched to joints. ID 3 stays solid RAL 7047. ID 2 stays metal RAL 5015
+canopies and trims. Rib count and step on the colour sheets are `?`.
 
 | Material ID | Triangles | Area m² | Finish / RAL | Map type | Evidence / open point |
 |---|---:|---:|---|---|---|
-| 1 | 362 | 177.127566 | ? | ? | C,V,I: roof/upper fascia; propose solid 5015, Q1 |
-| 2 | 1290 | 83.268399 | Canopies and roof trims / 5015 (proposed) | metal | C,V,L; trim inclusion requires confirmation |
-| 3 | 444 | 94.417866 | Wall sandwich panels / 7047 (proposed) | solid | C,V,L; no dimensioned joint module established |
-| 4 | 1576 | 4.984936 | Rainwater downpipes / 7004 (proposed) | metal | C,V,I,L; vertical pipes/elbows |
-| 5 | 48 | 0.697030 | ? | ? | C,I: six thin strips above entrances; propose solid 9016, Q2 |
-| 6 | 300 | 3.303690 | ? | ? | C,V,I: five ventilation assemblies; propose metal 7004, Q3 |
-| 7 | 204 | 5.655707 | Doors / 7004 (proposed) | metal | C,V,L |
-| 8 | 1008 | 21.514535 | Relief-glazing frames / 9016 (proposed) | metal | C,V,L |
-| 9 | 60 | 7.950371 | ? | ? | C,I: three perimeter reveal rings, NOT drainage; propose solid 9016, Q4 |
-| 10 | 176 | 105.289011 | Plinth including perimeter drop / 7004 (proposed) | solid | C,V,L; keep below zero |
-| 11 | 128 | 116.797765 | ? | ? | C,I: visible interior box; propose KPP Interior solid, Q5 |
-| 12 | 12 | 32.651300 | Glazing as KPP (proposed) | glass | C,V; M_Glass_01, NPM alpha 0.5, VPM standard |
+| 1 | 362 | 177.127566 | Roof sandwich panels and upper fascia / 7004 | solid | C,V,I; KPP 7004, not 5015 |
+| 2 | 1290 | 83.268399 | Canopies and roof trims / 5015 | metal | C,V,L |
+| 3 | 444 | 94.417866 | Wall sandwich panels / 7047 | solid | C,V,L; RAL 7047, not the blue 5015 wall panel; stays solid |
+| 4 | 1576 | 4.984936 | Rainwater downpipes / 7004 | metal | C,V,I,L; vertical pipes/elbows |
+| 5 | 48 | 0.697030 | Strips over entrances / 9016 | solid | C,I; luminaires, colour only, no emission |
+| 6 | 300 | 3.303690 | Ventilation assemblies / 7004 | metal | C,V,I; five ventilation assemblies |
+| 7 | 204 | 5.655707 | Doors / 7004 | metal | C,V,L |
+| 8 | 1008 | 21.514535 | Relief-glazing frames / 9016 | metal | C,V,L |
+| 9 | 60 | 7.950371 | Window reveals / 9016 | solid | C,I; three perimeter reveal rings, not drainage |
+| 10 | 176 | 105.289011 | Plinth / 7004; drop below ±0.000 = wall colour 7047 | solid | C,V,L; same ID, no geometry change |
+| 11 | 128 | 116.797765 | KPP Interior | solid | C,I; visible interior box; KPP Interior tile 1011 |
+| 12 | 12 | 32.651300 | Glazing as KPP | glass | C,V; M_Glass_01, NPM alpha 0.5, VPM standard |
 
 Audit correction: initial contextual painter-view interpretation misclassified
 ID 9 as drainage and left ID 4 unidentified. Isolated geometry proved ID 4 is
 vertical downpipes and ID 9 window reveals. Tests-first commits `3640c92` and
 `1e29ce8` preserve the ID correction and depth/drop regression. Final table
-supersedes that first interpretation. Unknown finishes keep canonical `?` even
-when an explicit candidate is shown under hatching.
+supersedes that first interpretation. Every ID 1–12 is approved; none remain `?`.
 
 ## KPP colour reuse (no invented RAL conversion)
 
@@ -135,9 +146,13 @@ or permission to copy KPP cassette construction onto AC06 sandwich panels.
 ## Evidence and checks
 
 Evidence folder: **`G:/Мой диск/AGR-evidence/tec26-oks/AC06/evidence-v004/`**.
-`contact-sheet.png`: exactly one swatch per actual ID, no numbers inside swatches;
-unknown IDs 1/5/6/9/11 are hatched over explicit candidates; labels remain outside.
-Six unhatched colour proposals and KPP glass are not approvals. Four depth-correct
+Geometry renders stay there. Contact-sheet swatches for ID1 (7004) must match
+KPP 7004 (exact RGB 150, 153, 146 from Plinth_RAL7004, tile 1001). The v004
+sheet still hatches the pre-approval gaps and is not the approved swatch set.
+Approved swatches: `G:/Мой диск/AGR-evidence/tec26-oks/AC06/evidence-v005/contact-sheet.png`.
+That folder is a copy of v004; v004 was not overwritten. The ID1 swatch pixel is
+KPP 7004 RGB 150, 153, 146. `evidence-v005/SHA256SUMS.txt` covers the copy.
+Four depth-correct
 building view pairs and seven isolated shaded/ID pairs, 22 raw Blender renders,
 receipts, drawing PNG and scripts are alongside. No large binaries/Git LFS committed.
 ID 11's neutral candidate uses separately hashed KPP Interior tile 1011; it is not
@@ -156,24 +171,74 @@ no final Gate-approved-head full suite is claimed.
 Tests check this evidence snapshot only; they do not validate architectural mapping,
 DCC render quality, UCX, VPM/NPM compliance or human acceptance.
 
-## Gate-1 questions for Artem — STOP
+## Gate-1 answers
 
-Approve the proposals on the contact sheet; only five drawing gaps remain:
+Artem, 2026-10-22. Quoted verbatim:
 
-1. **ID 1 roof/upper fascia:** confirm proposed **solid RAL 5015**. The own DWG
-   names 5015/7047 sandwich panels but does not explicitly assign roof colour.
-2. **ID 5 six thin strips above entrances:** are these luminaires? Confirm proposed
-   **RAL 9016** housing/diffuser, or provide their specification.
-3. **ID 6 five ventilation assemblies:** confirm proposed **RAL 7004 metal**, or
-   give actual finish/perforation specification.
-4. **ID 9 three window perimeter reveals:** confirm proposed **RAL 9016** with
-   the frames, or specify their distinct finish.
-5. **ID 11 visible interior box:** confirm shown **KPP Interior** neutral, or
-   provide the interior finish specification.
+```
+Принимаю
+1. Sandwich panels: solid colour without joints (module not confirmed in drawings).
+2. Roof: RAL 7004 grey (as KPP 7004), NOT 5015.
+3. Mixed ID: parts may be painted differently (roof 7004, frame 7004, plinth/drop = wall colour) without geometry change - via UV/atlas regions or face-group split inside the same ID.
+4. Panels RAL 5015 = KPP blue, doors/frames/porches RAL 7004 = KPP grey, glass as KPP; drop below ±0.000 = wall colour.
+AC06 specifically: ID1 roof 7004; ID5 strips over entrances RAL 9016 (luminaires: colour only, no emission); ID6 ventilation 7004; ID9 window reveals 9016; ID11 interior box = KPP Interior.
+Scope (Artem): only colouring; geometry, topology, UCX and multisub IDs stay exactly as in the source scene. Later cards build VPM (UDIM) / NPM (2048 atlas); do NOT build them here. Geometry checks are reported only, never fixed.
+```
 
-Panel joints are not blocking: supply a dimensioned module only if joints are
-required later; until then solid colour is authorized. No redundant layer, glass
-or below-zero geometry question.
+Applied to AC06:
 
-Gate 1 remains open. **Do not build VPM/NPM or publish accepted materials** until
-these questions are answered. A draft PR/evidence packet is not Gate-1 approval.
+- ID 1 roof and upper fascia: solid RAL 7004, the exact KPP 7004 colour, not 5015.
+- ID 5 strips over entrances: solid RAL 9016. Luminaires are colour only, no emission.
+- ID 6 ventilation: metal RAL 7004.
+- ID 9 window reveals: solid RAL 9016.
+- ID 11 interior box: KPP Interior.
+- IDs 2, 3, 4, 7, 8, 10 and 12 keep their existing proposals, now approved.
+  ID 10 plinth stays RAL 7004. The drop below ±0.000 on that same ID takes wall
+  colour (ID 3, RAL 7047) with no geometry change.
+- Mixed-ID rule: roof 7004, frame 7004, plinth/drop = wall colour, painted by
+  UV/atlas regions or a face-group split inside the same ID.
+
+`build_allowed` stays false. Colouring is approved; building VPM/NPM is not.
+
+Item 1 of the quote above (solid colour, no joints) is **`superseded_by`**
+`panel_texture_rules` for blue RAL 5015 sandwich wall panels. The quote itself
+is unchanged.
+
+## Panel texture rules (supersede solid-without-joints)
+
+Artem, 2026-10-22. These rules replace Gate-1 item 1 for every ID whose finish
+is a blue RAL 5015 sandwich wall panel (`map_type` `solid` → `joints`, joint
+style `vertical_ribs`). RAL 5015 metal canopies and trims stay as they are
+unless they are wall panels. `build_allowed` stays false. This section records
+the rule only; it does not build VPM or NPM.
+
+1. Blue sandwich panels (RAL 5015): vertical joints only, no horizontal joints.
+   Texel matches KPP VPM: 1000 px/m on a 4K UDIM. The same look is used in VPM
+   (Diffuse + Normal) and in the NPM atlas (joints at least 1.5 px).
+2. Joint count and step come from this building’s own facade «Цветовое решение»
+   sheet, per facade. AC06 text evidence names the sheets and does not dimension
+   count or step, so each facade is `?` with a question. AC08’s 30 ribs / 12 ribs
+   at ~0.20 m are AC08-only and are not used here. 0.60 m is not invented either.
+3. A darker frame band outlines each panel field (top, bottom and corners) as on
+   the sheet. Doors stay RAL 7004. The plinth strip is grey.
+4. `C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png` gives
+   only colour, noise and the look of one joint (4096 px, mean RGB 34, 112, 177,
+   joint 8 px). Joints are laid out per facade from rule 2, not tiled raw.
+   Below ±0.000 (the perimeter drop) the colour is plain, with no joints.
+5. Where a face does not fit one 4K tile, a clean edge loop or ring cut is
+   allowed in the later build card. Quads stay. Silhouette, normals, UCX and
+   IDs stay unchanged. Every cut is listed. Recorded here as a rule only.
+6. Acceptance picture, later build card: each facade render next to the same
+   facade of the sheet, same scale, with the rib count under both.
+
+| Facade | Sheet title in DWG text | Rib count | Step | Question |
+|---|---|---|---|---|
+| 1-3 | Фасад 1-3. Цветовое решение (`BA82E`) | ? | ? | Count and step are not dimensioned in `dwg-text-v001.txt`. What are they? Do not copy AC08 ~0.20 m. |
+| 3-1 | Фасад 3-1. Цветовое решение (`DBF13`) | ? | ? | Same question for this facade. |
+| А-Д | Фасад А-Д. Цветовое решение (`19C226`) | ? | ? | Same question for this facade. |
+| Д-А | Фасад Д-А. Цветовое решение (`19C227`) | ? | ? | Same question for this facade. |
+
+Switched IDs: none. ID 2 remains metal RAL 5015 canopies and roof trims. ID 3
+remains solid RAL 7047 wall sandwich panels. Open question: if the legend line
+«Сэндвич-панели, козырьки - RAL 5015» includes wall-panel faces on another ID,
+which ID are they?
