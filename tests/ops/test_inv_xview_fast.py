@@ -1,4 +1,7 @@
-"""inv_xview_fast (#553): exact parity with the inv_xview contact rule (xView selection), fail-closed input, bench."""
+"""inv_xview_fast (#553): exact parity with the inv_xview contact rule (xView selection), fail-closed input, bench.
+
+Pattern: none | new-case: tests of the fast xView-exact core and its frozen bench (#553).
+"""
 import importlib.util
 import itertools
 import os
