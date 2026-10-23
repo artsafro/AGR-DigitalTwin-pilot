@@ -298,6 +298,33 @@ def test_probe_material_ids_fail_closed():
     assert seen == len(cases) == 13
 
 
+def test_id_1001_fails_even_if_a_configured_group_range_covers_it():
+    """Synthetic. A widened group range must not hide a UDIM number used as a MatID."""
+    import copy
+    ranges = copy.deepcopy(checks.load_ranges())
+    first = next(iter(ranges["groups"]))
+    ranges["groups"][first] = {**ranges["groups"][first], "first": 1, "last": 2000}
+    for mid in (1001, 1012, 1100):
+        report = checks.check_material_ids(_id_soup([5, mid]), {"unassigned_ids_max": 0}, ranges)
+        assert report["status"] == "fail" and report["details"]["udim_as_material_id"] == [mid]
+        assert report["value"]["out_of_range"] == []
+
+
+def test_repeated_and_mixed_ids_report_each_udim_id_once_and_5_alone_passes():
+    """Synthetic. Repeats collapse to one entry; one bad face among good faces fails the mesh."""
+    mixed = _id_check([5, 1012, 5, 1012, 1001, 7])
+    assert mixed["status"] == "fail" and mixed["details"]["udim_as_material_id"] == [1001, 1012]
+    assert _id_check([5, 5, 5])["status"] == "pass"
+
+
+def test_export_udim_tiles_stay_outside_the_working_mesh_check():
+    """Export keeps tiles 1001-1100 in udim_tiles; the working check reads material_ids only."""
+    dump = box_dump()
+    dump["meshes"][0]["udim_tiles"] = [1001, 1006, 1099]
+    ids = by_id(run(dump))["material_ids"]
+    assert ids["status"] == "pass" and ids["details"]["udim_as_material_id"] == []
+
+
 def test_face_two_mm_in_front_of_a_wall_is_an_overlap():
     patch = ([[6, -0.002, 1], [8, -0.002, 1], [8, -0.002, 2], [6, -0.002, 2]], FACADE)
     mesh = by_id(run(box_dump(extra=[patch])))["mesh"]
