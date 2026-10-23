@@ -80,7 +80,9 @@ def _weld(v, faces, sources):
 def join_parts(parts, *, displacements=None):
     """Join nonempty named parts, splitting receiving edges at shared T-vertices.
 
-    Larger faces anchor a boundary weld. Near-parallel incident faces are required
+    Larger faces anchor a boundary weld (ties: source part name, face index).
+    Endpoint contacts share one original authoritative vertex, never swap snaps.
+    Near-parallel incident faces are required
     for a noncoincident weld. Interior overlaps need an explicit >=6 mm rigid
     separation in `displacements={part: vector}`; they are never guessed away.
     Full face-pair postcondition (contact AND area) gates the returned result.
@@ -122,11 +124,23 @@ def join_parts(parts, *, displacements=None):
     for fi, f in enumerate(faces):
         for i in f:
             incidence[i].append(fi)
-    best = np.full(len(v), -np.inf)
+    # Stable source labels break equal-area ties independently of part order.
+    order = sorted(range(len(faces)), key=lambda i: (-planes[i][1], fs[i]))
+    rank = {fi: priority for priority, fi in enumerate(order)}
+    authority = [min(rank[fi] for fi in incident) for incident in incidence]
+    parent = list(range(len(v)))
+
+    def root(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    best = np.full(len(v), len(faces))
     snapped = v.copy()
-    for fi in sorted(range(len(faces)), key=lambda i: (-planes[i][1], i)):
+    for fi in order:
         f = faces[fi]
-        n, area = planes[fi]
+        n, _ = planes[fi]
         a = v[list(f)]
         b = np.roll(a, -1, axis=0)
         edges = b - a
@@ -134,7 +148,7 @@ def join_parts(parts, *, displacements=None):
         if np.any(lengths <= 1e-20):
             raise OperationRefused('zero length polygon edge')
         lo, hi = a.min(0) - _FACE_M, a.max(0) + _FACE_M
-        candidates = np.flatnonzero(np.all((v >= lo) & (v <= hi), axis=1) & (best < area))
+        candidates = np.flatnonzero(np.all((v >= lo) & (v <= hi), axis=1) & (best > rank[fi]))
         for i in candidates:
             if any(owners[j] == owners[fi] for j in incidence[i]):
                 continue
@@ -151,7 +165,22 @@ def join_parts(parts, *, displacements=None):
             # Only boundary projection is a seam; an interior overlap is not a seam.
             if distances[e] > _EPS or np.linalg.norm(points[e] - v[i]) > _FACE_M:
                 continue
-            snapped[i], best[i] = points[e], area
+            snapped[i], best[i] = points[e], rank[fi]
+            # Endpoint contacts are one equivalence class, not two independent
+            # projections into each other's frozen positions. Include unilateral
+            # corner contacts too (the reciprocal projection may miss a boundary).
+            for endpoint in (f[e], f[(e + 1) % len(f)]):
+                if np.linalg.norm(points[e] - v[endpoint]) <= _EPS:
+                    aroot, broot = root(i), root(endpoint)
+                    if (authority[aroot], vs[aroot]) > (authority[broot], vs[broot]):
+                        aroot, broot = broot, aroot
+                    parent[broot] = aroot
+    groups = defaultdict(list)
+    for i in range(len(v)):
+        groups[root(i)].append(i)
+    for anchor, members in groups.items():
+        if len(members) > 1:
+            snapped[members] = v[anchor]
     v, faces, vs = _weld(snapped, faces, vs)
     max_weld = max(float(np.linalg.norm(point - original[label]))
                    for point, labels in zip(v, vs) for label in labels)

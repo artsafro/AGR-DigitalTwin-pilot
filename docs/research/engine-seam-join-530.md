@@ -15,7 +15,10 @@ cleaned = simplify_part({'top': top_mesh, 'glass': glass_mesh}, 'glass')
 
 - Boundary contacts of near-parallel incident faces (`abs(cos) >= 0.9999`)
   within 5 mm are projected onto the receiving boundary. Larger faces anchor
-  simultaneous welds; every receiving edge is split at existing seam vertices.
+  welds, with source part name / face index breaking equal-area ties. Endpoint
+  contacts form equivalence groups with one original authoritative endpoint;
+  reciprocal projections cannot exchange positions. Every receiving edge is
+  split at existing seam vertices.
   Coincident corners, including bow-ties, become one indexed vertex.
 - Noncoincident interior overlaps are not guessed into a Boolean union. Supply
   an explicit rigid part displacement of at least 6 mm, for example
@@ -80,12 +83,24 @@ native Max or FBX/export parity. The source TOW02 model remains out of scope.
 - Hostile report probe: coincident 5 nm consolidation initially reported 0 m
   movement; observed assertion RED, then corrected to account for every source
   vertex. This was an in-scope repair, not a threshold change.
-- `tests/ops/test_seams.py`: 56 synthetic controls, including the original
+- Initial `tests/ops/test_seams.py`: 56 synthetic controls, including the original
   `unit_cases.py` band/bow-tie and rail/soffit examples, 12 seeded 3D transforms,
   16 column/sag bounds, all-neighbour conformance, conservation, immutable inputs,
   fresh-process imports, explicit separation thresholds and invalid inputs.
-- Final affected run: 295 passed (56 synthetic, 2 real-fixture, 237 existing
+- Initial affected run: 295 passed (56 synthetic, 2 real-fixture, 237 existing
   xView tests). Original `unit_cases.py` also executed unchanged: all 11 diagnostic
   rows reproduced the review's counts. Full-suite evidence belongs in the PR.
+- Review P1: tests-first `a667b8e` reproduces reciprocal endpoint exchange:
+  12 failed / 4 controls passed at offsets {2,3,5} mm, widths {1,2} m, both
+  part orders. Grouping endpoint contacts and selecting one original endpoint
+  fixes all 16, preserving <=5 mm motion, source lineage and input immutability.
+  A blanket strongest-incident-face protection attempt was rejected because the
+  existing unilateral shifted bow-tie regressed (1 failed / 73 passed).
+- Rework affected run: **324 passed in 34.44 s** (same five seam/xView test files).
+  This includes 12 generated transformed/order-independent reciprocal controls
+  and one combined reciprocal + sagged/all-neighbour/simplification regression.
+  Retained real fixtures still assert v017 141 -> 0 and v016 simplification
+  0 -> 0 / 3305 -> 2882 faces, and unchanged input bytes. Full suite was run on
+  initial head only; per coordination rule 49 it is not repeated for this rework.
 - Environment self-repair: `$PWD` produced `/c/...` for native Windows fixture
   paths (2 FileNotFoundError cases); using relative `tmp/tow02` fixed both.

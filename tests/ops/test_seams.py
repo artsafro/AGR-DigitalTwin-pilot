@@ -216,6 +216,56 @@ def test_adjacent_offset_boundaries_have_one_authority(width, dz, reverse):
         assert m.faces == ((0,1,2,3),)
 
 
+@pytest.mark.parametrize('seed', range(12))
+def test_generated_reciprocal_seams_are_order_independent(seed):
+    from dt_ai.ops.seams import join_parts
+    rng = np.random.default_rng(seed)
+    # Axis permutations/signs preserve exact equal-area ties; random translations
+    # and unequal widths exercise authority in either source, not only part 'a'.
+    matrix = np.eye(3)[rng.permutation(3)] * rng.choice([-1, 1], (3, 1))
+    offset = rng.uniform(-20, 20, 3)
+    aw, bw = [(1,1), (1,2), (2,1)][seed % 3]
+    dz = [.002, .003][seed % 2]
+    a = PolyMesh(np.array([(-aw,0,0),(0,0,0),(0,1,0),(-aw,1,0)]) @ matrix + offset,
+                 ((0,1,2,3),))
+    b = PolyMesh(np.array([(0,0,dz),(bw,0,dz),(bw,1,dz),(0,1,dz)]) @ matrix + offset,
+                 ((0,1,2,3),))
+    outputs = []
+    for parts in ({'a':a,'b':b}, {'b':b,'a':a}):
+        result = join_parts(parts)
+        assert face_pairs(result.mesh, XviewTolerance()) == []
+        shared = set(result.mesh.faces[0]) & set(result.mesh.faces[1])
+        assert len(shared) == 2
+        expected = np.array([[0,0,dz if bw > aw else 0],
+                             [0,1,dz if bw > aw else 0]]) @ matrix + offset
+        np.testing.assert_allclose(sorted(result.mesh.vertices[list(shared)].tolist()),
+                                   sorted(expected.tolist()), atol=1e-12, rtol=0)
+        assert result.max_weld_m <= .005
+        assert result.displacements == {}
+        outputs.append({tuple(sorted(labels)): tuple(point) for point, labels
+                        in zip(result.mesh.vertices, result.vertex_sources)})
+    assert outputs[0] == outputs[1]
+
+
+def test_reciprocal_fix_combines_with_sagged_all_neighbour_simplification():
+    from dt_ai.ops.seams import simplify_part
+    g,b = band(8,.002)
+    left = PolyMesh(b.vertices.copy(),b.faces[:4])
+    right = PolyMesh(b.vertices.copy(),b.faces[4:])
+    a = PolyMesh([(19,0,0),(20,0,0),(20,1,0),(19,1,0)], ((0,1,2,3),))
+    c = PolyMesh([(20,0,.003),(21,0,.003),(21,1,.003),(20,1,.003)], ((0,1,2,3),))
+    parts = {'glass':g,'left':left,'right':right,'a':a,'c':c}
+    snapshots = {name: m.vertices.copy() for name,m in parts.items()}
+    result = simplify_part(parts,'glass')
+    assert face_pairs(result.mesh, XviewTolerance()) == []
+    assert len(result.mesh.faces[0]) == 11
+    assert len(set(result.mesh.faces[-2]) & set(result.mesh.faces[-1])) == 2
+    assert result.displacements == {}
+    assert result.max_weld_m <= .005
+    for name, m in parts.items():
+        np.testing.assert_array_equal(m.vertices, snapshots[name])
+
+
 def test_report_includes_coincident_weld_motion_not_only_boundary_snaps():
     from dt_ai.ops.seams import join_parts
     mesh = PolyMesh([(0,0,0),(1,0,0),(0,1,0),
