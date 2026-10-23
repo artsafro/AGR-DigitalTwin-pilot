@@ -132,6 +132,20 @@
           ],
           "default": null,
           "title": "Version"
+        },
+        "waiver_question": {
+          "anyOf": [
+            {
+              "pattern": "^Q\\d+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User waiver of opening this source: answered question ID in questions.md; never authorizes citing an unread source as evidence.",
+          "title": "Waiver Question"
         }
       },
       "required": [
