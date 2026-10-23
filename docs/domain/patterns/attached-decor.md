@@ -28,6 +28,10 @@ Project construction rule, not a new regulatory tolerance; [D152](../../decision
 - Recheck the entire candidate at xView 5 mm, including unchanged obstacles and internal faces; any contact/area overlap raises.
   No input mutation or partial result on failure. Returned `clearance` still lists 10 mm construction violations: zero xView
   contacts alone is not construction acceptance. A rigid move cannot remove an existing contact inside the moved cluster.
+- Reject internal cluster contacts before translation as well as checking the full candidate afterwards; rounding must not
+  make a retained defect appear repaired. Require source and candidate binary64 coordinate spacing <=1e-12 m per axis.
+  This numerical support bound is not a modelling/contact tolerance: unsupported large-coordinate translations raise
+  even if all faces remain nondegenerate (e.g. dz=2**45 rounds a 4/5 mm gap to 7.8125 mm). Use local metres.
 
 ## Evidence and traps
 

@@ -13,6 +13,16 @@ from dt_ai.ops import inv_xview as ix
 from dt_ai.ops.inv_quads import PolyMesh
 
 CLEARANCE_M = 0.010
+# Numerical support limit, NOT a modelling/contact tolerance. With binary64
+# rounding, each addition error is at most half a coordinate spacing, so two
+# translated vertices change relative position by at most this budget per axis.
+MAX_COORDINATE_SPACING_M = 1e-12
+
+
+def _require_precision(scene):
+    for name, mesh in scene.items():
+        if np.any(np.spacing(np.abs(mesh.vertices)) > MAX_COORDINATE_SPACING_M):
+            raise ValueError(f'{name}: insufficient float64 coordinate precision for rigid move')
 
 
 def _snapshot(scene):
@@ -88,6 +98,9 @@ def move_rigid(scene, seeds, vector, *, fixed):
     remains anywhere at 5 mm, including internal pairs and newly reached obstacles.
     Return no candidate on failure and never mutate caller arrays. Remaining 10 mm
     construction failures stay visible in `clearance`; zero xView is not acceptance.
+    Reject source/candidate coordinates with float64 spacing >1e-12 m; this is a
+    numerical support bound, not a contact tolerance. Retained cluster contacts
+    are rejected before translating, so rounding cannot turn them into clean gaps.
     """
     for selection in (seeds, fixed):
         if not isinstance(selection, (list, tuple, set, frozenset)) or any(
@@ -103,6 +116,7 @@ def move_rigid(scene, seeds, vector, *, fixed):
     vector = np.asarray(vector, dtype=float)
     if vector.shape != (3,) or not np.isfinite(vector).all() or not np.any(vector):
         raise ValueError('vector must be a finite nonzero (3,) translation')
+    _require_precision(scene)
     near = _pairs(scene, CLEARANCE_M)
     while True:
         expanded = moving | {b for a, _, b, _, _ in near if a in moving and b not in fixed} | \
@@ -110,9 +124,15 @@ def move_rigid(scene, seeds, vector, *, fixed):
         if expanded == moving:
             break
         moving = expanded
+    # Translation cannot repair contacts within the moving cluster, even if
+    # rounding at a threshold would make the candidate checker miss them.
+    internal, _, _ = _joined({name: mesh for name, mesh in scene.items() if name in moving})
+    if ix.face_pairs(internal, ix.XviewTolerance()):
+        raise ValueError('rigid move retains internal face contacts/overlaps')
     after = {name: PolyMesh(mesh.vertices + vector if name in moving else mesh.vertices.copy(), mesh.faces)
              for name, mesh in scene.items()}
     after = _snapshot(after)  # finite translations can still collapse geometry at float64 precision
+    _require_precision(after)
     mesh, owners, local = _joined(after)
     contacts = ix.face_pairs(mesh, ix.XviewTolerance())
     if contacts:

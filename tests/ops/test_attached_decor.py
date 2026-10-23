@@ -246,6 +246,12 @@ def test_generated_translation_precision_budget(axis, sign, exponent):
         assert not result.contacts
         np.testing.assert_array_equal(result.scene['a'].vertices, before + vector)
     np.testing.assert_array_equal(scene['a'].vertices, before)
+    # Cancellation to a small output must not hide an unsupported source frame.
+    shifted = PolyMesh(before + vector, scene['a'].faces)
+    if exponent >= 13:
+        with pytest.raises(ValueError, match='precision'):
+            api().move_rigid({'a': shifted}, ['a'], -vector, fixed=[])
+        np.testing.assert_array_equal(shifted.vertices, before + vector)
 
 
 def test_fresh_process_api():
