@@ -66,6 +66,23 @@ def test_uncited_unopened_source_blocks_until_user_waiver(tmp_path):
     assert check(d)["buildable"], check(d)["errors"]
 
 
+@pytest.mark.parametrize("citation, value, confidence, buildable", [
+    ("view.png", "grey", "estimated", False),
+    ("slides.pptx#slide3", "grey", "estimated", True),
+    ("slides.pptx#slide3", "—", "unknown", False),
+    ("slides.pptx#slide3", "", "estimated", False),
+])
+def test_materials_source_needs_a_stated_fact(tmp_path, citation, value, confidence, buildable):
+    slides = {"path": "slides.pptx", "format": "pptx", "reads": ["materials"], "opened": True, "role": "materials"}
+    facts = FACTS.replace("| facade colour | grey | view.png | estimated |",
+                          f"| facade colour | {value} | {citation} | {confidence} |")
+    d = folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG, slides), facts=facts)
+    r = check(d)
+    assert r["buildable"] == buildable, r["errors"]
+    if not buildable:
+        assert any("slides.pptx" in e and "materials source not cited" in e and "D171" in e for e in r["errors"])
+
+
 def test_a_complete_intake_is_buildable(tmp_path):
     r = check(folder(tmp_path))
     assert r["ok"] and r["buildable"], r["errors"] + r["not_buildable_because"]
