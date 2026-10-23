@@ -16,6 +16,13 @@ raises. Empty, partial, unsupported and non-finite input raises, or is listed in
 ``dropped`` with a reason. ``passed`` is true only when every reported face and every
 assigned material is inside the band and nothing was dropped.
 
+A polygon uses the Newell vector area in world space and the shoelace area in UV.
+An absolute fan is not the area: a concave ring would count the overlap. A
+self-intersecting ring, a ring more than ``PLANAR_TOL_M`` (1 mm) off its Newell
+plane, or a degenerate ring is dropped with an error that names the face, in world
+and in UV. Publication links the partial onto the destination and does not replace
+an existing file.
+
     uv run python -m dt_ai.ops.texel_density_readout --input faces.json --output out.json --report report.json
 
 Pattern: none | new-case: agent texel-density readout from the assigned map pixel size (#548).
@@ -39,6 +46,11 @@ from twinqa.profiles import load_profiles
 METHOD = "dt_ai.geometry.ground_cake.texel_density"
 SCHEMA = "texel-density-readout-v1"
 REPORT_SCHEMA = "texel-density-readout-report-v1"
+PLANAR_TOL_M = 1e-3  # 1 mm off the Newell plane: the contour lattice, beyond this the ring is nonplanar
+_WORLD_AREA_EPS = 1e-12  # same floor texel_density uses before it returns NaN
+_UV_AREA_EPS = 1e-16
+_WORLD_EDGE_EPS_M = 1e-12
+_UV_EDGE_EPS = 1e-15
 _BANDS: dict | None = None
 
 
@@ -158,30 +170,122 @@ def _coords(points, width: int, label: str) -> list[list[float]]:
     return out
 
 
-def _measure(xyz, uv, map_px: int) -> tuple[float, float, float]:
+def _polygon_error(face_id: str, text: str) -> ReadoutError:
+    return ReadoutError(f"face {face_id!r}: {text}")
+
+
+def _newell_vector(points: np.ndarray) -> np.ndarray:
+    """2 x signed area vector. Subtract the first corner so a face far from the origin keeps its area."""
+    local = points - points[0]
+    return np.cross(local, np.roll(local, -1, axis=0)).sum(axis=0)
+
+
+def _shoelace(points: np.ndarray) -> float:
+    x, y = points[:, 0], points[:, 1]
+    return 0.5 * float(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
+
+
+def _zero_edge(points: np.ndarray, eps: float) -> bool:
+    return bool(np.any(np.linalg.norm(np.roll(points, -1, axis=0) - points, axis=1) <= eps))
+
+
+def _simple_2d(points: np.ndarray) -> bool:
+    """True when no two non-adjacent edges of a closed 2D ring touch or cross.
+
+    Adjacent edges share a vertex and are not a self-intersection. A vertex lying on a
+    non-adjacent edge, a collinear overlap, or a proper crossing is not simple.
+    """
+    ring = np.asarray(points, dtype=np.float64)
+    count = len(ring)
+    scale = max(float(np.max(np.abs(ring))) if count else 0.0, 1e-12)
+    eps = 1e-12 * scale * scale
+
+    def orient(a, b, c) -> int:
+        signed = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+        if abs(signed) <= eps:
+            return 0
+        return 1 if signed > 0 else -1
+
+    def on_segment(a, b, c) -> bool:
+        pad = 1e-15 * scale
+        return (min(a[0], b[0]) - pad <= c[0] <= max(a[0], b[0]) + pad
+                and min(a[1], b[1]) - pad <= c[1] <= max(a[1], b[1]) + pad)
+
+    for i in range(count):
+        a, b = ring[i], ring[(i + 1) % count]
+        for j in range(i + 2, count):
+            if i == 0 and j == count - 1:
+                continue
+            c, d = ring[j], ring[(j + 1) % count]
+            o1, o2 = orient(a, b, c), orient(a, b, d)
+            o3, o4 = orient(c, d, a), orient(c, d, b)
+            if o1 != o2 and o3 != o4 and 0 not in (o1, o2, o3, o4):
+                return False
+            if ((o1 == 0 and on_segment(a, b, c)) or (o2 == 0 and on_segment(a, b, d))
+                    or (o3 == 0 and on_segment(c, d, a)) or (o4 == 0 and on_segment(c, d, b))):
+                return False
+    return True
+
+
+def _plane_distance(points: np.ndarray, newell: np.ndarray) -> float:
+    norm = float(np.linalg.norm(newell))
+    if norm == 0.0:
+        return 0.0
+    unit = newell / norm
+    return float(np.max(np.abs((points - points.mean(axis=0)) @ unit)))
+
+
+def _world_simple(points: np.ndarray, newell: np.ndarray) -> bool:
+    """Simplicity in the plane of the ring. A cancelling bowtie has no trustworthy normal, so every
+    axis is checked and any crossing rejects the ring. A real plane uses its dominant axis only:
+    an edge-on projection of a simple ring is not a self-intersection."""
+    span = float(np.max(np.ptp(points, axis=0))) if len(points) else 0.0
+    norm = float(np.linalg.norm(newell))
+    if norm > _WORLD_AREA_EPS * max(span, 1e-12):
+        axis = int(np.argmax(np.abs(newell)))
+        keep = [index for index in range(3) if index != axis]
+        return _simple_2d(points[:, keep])
+    return all(_simple_2d(points[:, list(pair)]) for pair in ((0, 1), (0, 2), (1, 2)))
+
+
+def _measure(xyz, uv, map_px: int, face_id: str = "") -> tuple[float, float, float]:
     xyz = _coords(xyz, 3, "world coordinate")
     uv = _coords(uv, 2, "UV coordinate")
     if len(xyz) != len(uv):
         raise ReadoutError("partial face: UV count does not match the world corners")
     if len(xyz) < 3:
         raise ReadoutError("partial face: fewer than 3 corners")
+    world_pts = np.asarray(xyz, dtype=np.float64)
+    uv_pts = np.asarray(uv, dtype=np.float64)
+    if _zero_edge(world_pts, _WORLD_EDGE_EPS_M):
+        raise _polygon_error(face_id, "degenerate world polygon")
+    if _zero_edge(uv_pts, _UV_EDGE_EPS):
+        raise _polygon_error(face_id, "degenerate UV polygon")
     if len(xyz) == 3:
-        verts = np.asarray(xyz, dtype=np.float64)
-        packed = np.asarray(uv, dtype=np.float64).reshape(1, 3, 2)
-        value = float(texel_density(verts, np.array([[0, 1, 2]], dtype=np.int64), packed, map_px)[0])
         uv_area, world = _triangle_areas(xyz, uv)
+        if world < _WORLD_AREA_EPS:
+            raise _polygon_error(face_id, "degenerate world polygon")
+        if uv_area < _UV_AREA_EPS:
+            raise _polygon_error(face_id, "degenerate UV polygon")
+        packed = uv_pts.reshape(1, 3, 2)
+        value = float(texel_density(world_pts, np.array([[0, 1, 2]], dtype=np.int64), packed, map_px)[0])
         if not math.isfinite(value):
-            raise ReadoutError("at_threshold: zero area")
+            raise _polygon_error(face_id, "degenerate world polygon")
         return value, uv_area, world
-    uv_area = 0.0
-    world = 0.0
-    for index in range(1, len(xyz) - 1):
-        part_uv, part_world = _triangle_areas(
-            [xyz[0], xyz[index], xyz[index + 1]],
-            [uv[0], uv[index], uv[index + 1]],
-        )
-        uv_area += part_uv
-        world += part_world
+    # Newell / shoelace, not an absolute fan: the fan double-counts a concave notch.
+    newell = _newell_vector(world_pts)
+    if _plane_distance(world_pts, newell) > PLANAR_TOL_M:
+        raise _polygon_error(face_id, "nonplanar world polygon")
+    if not _world_simple(world_pts, newell):
+        raise _polygon_error(face_id, "self-intersecting world polygon")
+    world = float(np.linalg.norm(newell) / 2.0)
+    if world < _WORLD_AREA_EPS:
+        raise _polygon_error(face_id, "degenerate world polygon")
+    if not _simple_2d(uv_pts):
+        raise _polygon_error(face_id, "self-intersecting UV polygon")
+    uv_area = abs(_shoelace(uv_pts))
+    if uv_area < _UV_AREA_EPS:
+        raise _polygon_error(face_id, "degenerate UV polygon")
     return px_per_m(uv_area, world, map_px), uv_area, world
 
 
@@ -281,7 +385,7 @@ def readout(payload: dict) -> dict:
             dropped.append(_drop("face", index, reason, face_id=face_id, name=material))
             continue
         try:
-            value, uv_area, world = _measure(face.get("xyz"), face.get("uv"), sizes[material])
+            value, uv_area, world = _measure(face.get("xyz"), face.get("uv"), sizes[material], face_id)
         except ReadoutError as exc:
             dropped.append(_drop("face", index, str(exc), face_id=face_id, name=material))
             continue
@@ -387,6 +491,12 @@ def _distinct(input_path: Path, output_path: Path, report_path: Path) -> None:
             idents[ident] = role
 
 
+def _commit_partial(partial: Path, dest: Path) -> None:
+    """Link the finished partial onto dest. ``os.link`` fails if dest already exists, so a file
+    created after the exists() precheck is left untouched. Tests replace this to open that window."""
+    os.link(partial, dest)
+
+
 def _publish(dest: Path, data: bytes) -> None:
     partial = Path(str(dest) + ".partial")
     if dest.exists() or partial.exists():
@@ -394,11 +504,12 @@ def _publish(dest: Path, data: bytes) -> None:
     with open(partial, "xb") as handle:
         handle.write(data)
     try:
-        os.replace(partial, dest)
-    except Exception:
-        if partial.exists() and not dest.exists():
+        _commit_partial(partial, dest)
+    except FileExistsError as exc:
+        if partial.exists():
             partial.unlink()
-        raise
+        raise ReadoutError(f"{dest} exists; write a new file") from exc
+    partial.unlink()
 
 
 def _report(result: dict, raw: bytes) -> dict:
