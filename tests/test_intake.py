@@ -83,6 +83,123 @@ def test_materials_source_needs_a_stated_fact(tmp_path, citation, value, confide
         assert any("slides.pptx" in e and "materials source not cited" in e and "D171" in e for e in r["errors"])
 
 
+@pytest.mark.parametrize("answer,status,qid", [
+    ("", "answered", "Q001"), (" ", "answered", "Q001"),
+    ("—", "answered", "Q001"), ("-", "answered", "Q001"),
+    ("Waive opening slides.pptx", "open", "Q001"),
+    ("Waive opening slides.pptx", "gone v002", "Q001"),
+    ("Waive opening slides.pptx", "answered", "Q999"),
+])
+def test_waiver_requires_unique_answered_question(tmp_path, answer, status, qid):
+    closed = {"path": "slides.pptx", "format": "pptx", "reads": [], "opened": False,
+              "not_opened_reason": "corrupt", "role": "none", "waiver_question": "Q001"}
+    d = folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG, closed))
+    _questions(d, [(qid, answer)])
+    path = d / "questions.md"
+    text = path.read_text(encoding="utf-8")
+    path.write_text(text.replace("| answered |", f"| {status} |"), encoding="utf-8")
+    assert not check(d)["buildable"]
+    assert any("slides.pptx" in e for e in check(d)["errors"])
+    _questions(d, [("Q001", "Waive opening slides.pptx"), ("Q001", "Waive opening slides.pptx")])
+    assert not check(d)["buildable"]
+
+
+@pytest.mark.parametrize("where", ["fact", "block", "contradiction"])
+def test_waiver_does_not_make_unopened_source_evidence(tmp_path, where):
+    closed = {"path": "slides.pptx", "format": "pptx", "reads": [], "opened": False,
+              "not_opened_reason": "corrupt", "role": "none", "waiver_question": "Q001"}
+    facts = FACTS
+    blocks = None
+    if where == "fact":
+        facts = facts.replace("view.png | estimated", "slides.pptx | estimated")
+    elif where == "contradiction":
+        facts = facts.replace("| album.pdf#p3 | 0.65 m |", "| slides.pptx | 0.65 m |")
+    else:
+        blocks = {k: block(B01[k], sources=("etalon.fbx", "slides.pptx"))
+                  for k in ("frame", "levels", "floors", "roof")}
+    d = folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG, closed), facts=facts, blocks=blocks)
+    _questions(d, [("Q001", "Waive opening slides.pptx")])
+    r = check(d)
+    assert not r["buildable"]
+    assert any("'slides.pptx' did not open; it is no evidence" in e for e in r["errors"])
+
+
+def test_source_gate_generated_matrix(tmp_path):
+    """Synthetic exhaustive 6 source orders x 2 opened states x 2 citation states = 24 cases."""
+    from itertools import permutations, product
+
+    slides = {"path": "slides.pptx", "format": "pptx", "reads": [], "opened": False,
+              "not_opened_reason": "corrupt", "role": "none", "waiver_question": "Q001"}
+    for i, (order, opened, cited) in enumerate(product(permutations(range(3)), (False, True), (False, True))):
+        source = dict(slides, opened=True, reads=["materials"], not_opened_reason=None) if opened else slides
+        entries = (FBX, PNG, source)
+        facts = FACTS.split("## Contradictions")[0].replace("etalon.fbx, album.pdf#p3", "etalon.fbx") + EMPTY_CONTRA
+        if cited:
+            facts = facts.replace("view.png | estimated", "slides.pptx#slide3 | estimated")
+        d = folder(tmp_path / str(i), files=tuple(entries[k] for k in order), facts=facts)
+        before = {p.name: p.read_bytes() for p in d.iterdir()}
+        r = check(d)
+        assert r["buildable"] == (opened and cited), r
+        assert check(d) == r  # repeats do not cache or change the result
+        assert {p.name: p.read_bytes() for p in d.iterdir()} == before  # read-only
+        _questions(d, [("Q001", "Waive opening slides.pptx")])
+        assert check(d)["buildable"] == (opened == cited)
+        _questions(d, [])
+        assert check(d)["buildable"] == (opened and cited)  # stale waiver must not survive reset
+
+
+def test_materials_contradiction_is_not_a_fact(tmp_path):
+    slides = {"path": "slides.pptx", "format": "pptx", "reads": ["materials"], "opened": True, "role": "check"}
+    facts = FACTS.replace("| album.pdf#p3 | 0.65 m |", "| slides.pptx#slide3 | 0.65 m |")
+    d = folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG, slides), facts=facts)
+    assert any("materials source not cited" in e for e in check(d)["errors"])
+
+
+@pytest.mark.parametrize("citation", ["SLIDES.pptx", "./slides.pptx", "other/slides.pptx"])
+def test_materials_citation_is_source_specific(tmp_path, citation):
+    slides = {"path": "slides.pptx", "format": "pptx", "reads": ["materials"], "opened": True, "role": "none"}
+    facts = FACTS.replace("view.png | estimated", f"{citation} | estimated")
+    d = folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG, slides), facts=facts)
+    assert not check(d)["buildable"]
+    assert any("materials source not cited" in e for e in check(d)["errors"])
+
+
+@pytest.mark.parametrize("format", ["rvt", "ifc", "skp", "max", "fbx", "blend", "obj", "dwg", "dxf", "pdf", "image", "pptx", "other"])
+def test_every_unopened_format_blocks_without_waiver(tmp_path, format):
+    closed = {"path": f"unread.{format}", "format": format, "reads": [], "opened": False,
+              "not_opened_reason": "reader unavailable", "role": "none"}
+    r = check(folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG, closed)))
+    assert not r["buildable"]
+    assert any(closed["path"] in e and "reader unavailable" in e for e in r["errors"])
+
+
+@pytest.mark.parametrize("waiver", ["", "Q", "Q1 extra", "NaN", "inf", float("nan"), float("inf"), 1, {}])
+def test_invalid_waiver_reference_is_not_an_answer(tmp_path, waiver):
+    closed = {"path": "slides.pptx", "format": "pptx", "reads": [], "opened": False,
+              "not_opened_reason": "corrupt", "role": "none", "waiver_question": waiver}
+    d = folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG, closed))
+    _questions(d, [("Q001", "Waive opening slides.pptx")])
+    assert not check(d)["buildable"]
+
+
+def test_source_gate_fresh_cli_is_read_only(tmp_path):
+    import subprocess
+    import sys
+
+    closed = {"path": "slides.pptx", "format": "pptx", "reads": [], "opened": False,
+              "not_opened_reason": "corrupt", "role": "none"}
+    d = folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG, closed))
+    sentinel = d / "report.partial"
+    sentinel.write_bytes(b"do not clobber")
+    before = {p.name: p.read_bytes() for p in d.iterdir()}
+    command = [sys.executable, "-c", "from dt_ai.cli.main import main; raise SystemExit(main())",
+               "intake", "check", "--dir", str(d)]
+    result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert result.returncode == 1, result.stdout + result.stderr
+    assert "slides.pptx" in result.stdout and "corrupt" in result.stdout
+    assert {p.name: p.read_bytes() for p in d.iterdir()} == before
+
+
 def test_a_complete_intake_is_buildable(tmp_path):
     r = check(folder(tmp_path))
     assert r["ok"] and r["buildable"], r["errors"] + r["not_buildable_because"]
