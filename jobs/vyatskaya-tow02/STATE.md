@@ -40,7 +40,7 @@ terrace.md, facade-decor-inset.md.
     `SM_Vyatskaya_Vl_47_49_013_Main` (export-v004, quads); NPM naming/transform reset/triangulation/validate-delivery
     not done.
 - Later decisions:
-  - 2026-10-21 quotes logged in `docs/decisions.md` (#534): glass quads [D172]; xView vertices 0.002 m and faces 0.005 m [D173] (same numbers as [D152]); embed or move, including the agreed 6 mm shifts [D174]; weld wording [D175] (needs user confirmation); F8 option A [D176] (option text not recoverable here); Mesh then Weld 0.002 m before export, no Poly round trip [D177]; weld fixes vertices, not faces [D178]; step strips already one centimetre wide [D179]. A general skip of anything within 1 cm is not a logged decision.
+  - 2026-10-21 quotes logged in `docs/decisions.md` (#534): glass quads [D172]; xView vertices 0.002 m and faces 0.005 m [D173] (same numbers as [D152]); embed or move, including the agreed 6 mm shifts [D174]; weld wording [D175] (needs user confirmation); F8 option A [D176] (align the upper wall to the lower wall and split both walls so they share points; baskets kept); Mesh then Weld 0.002 m before export, no Poly round trip [D177]; weld fixes vertices, not faces [D178]; step strips narrower than 1 cm, remedy not decided [D179]. A general skip of anything within 1 cm is not a logged decision.
   - 2026-10-20: levels (helpers `Empty`…`Empty.007`, z 0.04 / 6.906 / 31.367 / 65.405 / 69.456 / 72.201 / 76.25 /
     79.237): 0.04–6.9 colonnade (model it), 6.9–31.37 bend, 31.37–65.4 typical, 65.4–69.46 parapet storey,
     69.46–76.25 superstructure 1, 76.25–79.24 superstructure 2. Stylobate is in another file, out of scope.
@@ -166,7 +166,7 @@ terrace.md, facade-decor-inset.md.
   Overlapping Vertices 2 mm = 0, Overlapping Faces 5 mm = 121 pairs, all group F8; 0 mismatched winding (verified by
   the main session). Moves: AC baskets −6.6 mm, railings 0–12 mm, soffit steps into fins ≤ 22.7 mm, fins ≤ 2 mm.
   Superseded first run: build-v020..v022, export-v003 (`superseded.json`).
-- Open after the fix chain (answered by the user 2026-10-21): (1) F8 -> option A [D176] in `build_stack` (below; the post-hoc
+- Open after the fix chain (answered by the user 2026-10-21): (1) F8 -> option A [D176] (align the upper wall to the lower wall and split both walls so they share points) in `build_stack` (below; the post-hoc
   test `outputs/xview-v003/f8/option_a_body.blend` failed: it looked for wall points within 6 mm across the strip, but the
   strip corners slide 5-50 cm along the wall, so 0 points merged); (2) basket posts stay hidden 7 mm behind the glass;
   (3) 65.4 bow-ties -> not welded, moved apart (below); (4) builder root causes for the backlog: agent report (build_stack
@@ -231,7 +231,7 @@ terrace.md, facade-decor-inset.md.
   measurement agents 35–55 min each; three rewrites of the ring-stack step logic (T-junctions at differing storeys).
 - For a panelised curtain-wall source: check the source class first (connected parts vs area of the largest);
   if there is no shell, go straight to measurements → Lego build, do not start the extractor.
-- Tolerance note in this job file: anything within 1 cm is skipped (weld, snap, column merge). Not a logged decision. The only logged quote is step strips already one centimetre wide [D179]; whether overlaps below 1 cm are skipped is open in `docs/domain/conflicts.md`. [D153] is Ground relief, a different rule.
+- Tolerance note in this job file: anything within 1 cm is skipped (weld, snap, column merge). Not a logged decision. The only logged step quote is strips narrower than 1 cm, remedy not decided [D179]; whether overlaps below 1 cm are skipped is open in `docs/domain/conflicts.md`. [D153] is Ground relief, a different rule.
 - 2026-10-21 Max export prep [D177] [D178]: convert to Mesh and Weld at 0.002 m before export; do not round-trip through Poly; the weld fixes vertices, not faces.
 - 2026-10-21: record the cfg of every builder run (the body cfg had to be reconstructed by matching build-v004; now
   `CFG_TOW02`); first check that the chain reproduces the current version bit-for-bit — then a builder fix plus a

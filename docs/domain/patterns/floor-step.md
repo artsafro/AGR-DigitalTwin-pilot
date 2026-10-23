@@ -34,4 +34,4 @@ Status: draft. Source: B02 etalon and user decisions 2026-10-10 [D043] (engine o
 - Walls must be axis-parallel until `non-90-corner` is built; an oblique wall is a BuildError.
 - A step that is only part of a storey high is no contour step: it is a question (pattern
   `contour-niche`, Level contour).
-- Strips on steps that are already one centimetre wide are removed [D179]. Skipping every overlap or defect below 1 cm is not decided.
+- Strips on steps narrower than 1 cm are not an approved removal [D179]. The quote is not sure (trim the side walls; the second point is for later). Exact 10 mm is outside "narrower than". Skipping every overlap or defect below 1 cm is not decided.

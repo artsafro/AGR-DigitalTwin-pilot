@@ -87,7 +87,7 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N (see npm-vpm
 - Flat window glass with no bend is one quad (4 points); a bend keeps its segments; a 90 deg corner window is one element of two quads on a shared edge (6 points) [D172].
 - Overlap clearance: embed or move the whole mesh (agreed shifts of 6 mm; sink one mesh into the other by several millimetres where they meet joint to joint; move balcony meshes) instead of cutting or deleting [D174]. The constructive embed of >= 10 mm above is a different rule; which minimum applies is open in conflicts.md.
 - 3ds Max xView Overlapping Vertices at 0.002 m and Overlapping Faces at 0.005 m, with a gap between polygons of more than 5 mm [D173]. Same thresholds as [D152]; this line does not add a second tolerance.
-- Step strips that are already one centimetre wide are removed [D179]. This is not the Ground relief tolerance [D153] and it is not a rule to skip every defect below 1 cm.
+- Step strips narrower than 1 cm are not an approved removal [D179]. The same quote is not sure (trim the side walls) and leaves the second point for later. Exact 10 mm is not covered by "narrower than". This is not the Ground relief tolerance [D153] and it is not a rule to skip every defect below 1 cm.
 - Closest weld quotes (a shared edge so corner points stitch; a welded trim in some places and a move in others; bring overlapped points together) are [D175]. Limiting weld to coincident seam points is not confirmed.
 - NPM AC baskets: one-sided planes without top, perforation via opacity only, no Solidify/modeled holes. local: docs/agr/case_studies/GLB_AB_REFERENCE_AND_PLANES.md (project decision).
 
