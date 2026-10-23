@@ -197,6 +197,12 @@ def test_snapshot_survives_caller_mutation_during_check(monkeypatch):
     np.testing.assert_array_equal(result.scene['a'].vertices, patch(.02).vertices)
 
 
+@pytest.mark.parametrize('vector', [[1e20, 1e20, 1e20], [1e308, 1e308, 1e308]])
+def test_translation_cannot_collapse_geometry(vector):
+    with pytest.raises(ValueError, match='degenerate|nonfinite'):
+        api().move_rigid({'a': patch()}, ['a'], vector, fixed=[])
+
+
 def test_fresh_process_api():
     import subprocess
     import sys
