@@ -85,6 +85,8 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N (see npm-vpm
 - Frame topology: frame = outer rectangle minus panels with 4 convex quads around each panel; avoid propagating panel grid across frame (removed 47% of window quads). local: docs/agr/case_studies/OBR22_ACCEPTED_WORKFLOW.md#3 (lesson).
 - NPM window planes: two planes (corner windows at 90 deg, shared welded corner), 10 mm beyond opening edges on 4 sides, seated mid-depth of reveal (e.g. 240 mm reveal -> 120 mm); reveals = color/ID of existing opening faces, no extra geometry; sills = simple sliced plate with thickness. local: docs/agr/case_studies/GLB_AB_REFERENCE_AND_PLANES.md (project decision).
 - NPM AC baskets: one-sided planes without top, perforation via opacity only, no Solidify/modeled holes. local: docs/agr/case_studies/GLB_AB_REFERENCE_AND_PLANES.md (project decision).
+- Facade elements of a building that reach the ground (TOW02: fins) are extended about 1 m below ground level (z 0) so the building sits on the relief [D182]. local: jobs/vyatskaya-tow02/REVIEW-514.md (project decision).
+- Walls that the source draws at 90 deg are squared to (almost) 90 deg when measurement leaves small angle deviations [D183]; truly non-orthogonal walls are still kept and not flattened (contour orthogonalization lesson below). local: jobs/vyatskaya-tow02/REVIEW-514.md (project decision).
 
 ## Job-level rules and lessons (jobs/*; mostly one project each)
 - Raw Revit import (5% quads, 440 duplicate faces) is not a model; Join/Dissolve is not retopology. Revit FBX: no Material nodes, matrices carry 0.3048 (feet) factor, Blender truncates names - restore full names/Revit IDs first. local: jobs/OBR22-K02/STATE.md (lesson).
