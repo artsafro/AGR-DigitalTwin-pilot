@@ -434,6 +434,7 @@ def test_count_parser_flags_malformed(token, field):
     ("13,676 passed, 2 failed (known #361)", {"passed": 13676, "failed": 2}),
     ("4 passed, 1 error", {"passed": 4, "errors": 1}),
     ("all tests passed", {}),
+    ("3ff7e37 failed: 3 failed", {"failed": 3}),
     ("", {}),
 ])
 def test_count_parser_valid(value, expected):

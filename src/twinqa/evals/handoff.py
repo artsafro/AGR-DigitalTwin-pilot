@@ -37,10 +37,39 @@ _DELEGATION = (
 _NEGATION = re.compile(r"\b(?:not|never|no)\b|n't\b", re.IGNORECASE)
 
 
-def _count(value, word):
-    """Sum of ``<int> word`` counts; ``None`` when absent. ``nan passed`` is no count."""
-    found = re.findall(r"(?<![\w.])(\d+)\s+" + word + r"\b", value, re.IGNORECASE)
-    return sum(int(n) for n in found) if found else None
+_COUNT_TOKEN = re.compile(r"(?:^|(?<=[\s(\[:>,;]))(?P<token>[^\s(\[:>,;]+(?:,\d+)*)\s+"
+                          r"(?P<word>passed|failed|errors?)\b", re.IGNORECASE)
+_INTEGER = re.compile(r"\d+|\d{1,3}(?:,\d{3})+")
+_NUMERIC = re.compile(r"^[-+.]?\d|^[-+]?(?:nan|inf(?:inity)?)$", re.IGNORECASE)
+
+
+def parse_counts(value):
+    """``({"passed", "failed", "errors"} -> int or None, malformed)`` for one evidence value.
+
+    A token before ``passed``/``failed``/``error(s)`` is a count only as a plain non-negative integer
+    (``13,676`` thousands allowed). A numeric-looking token that is not one (``nan``, ``inf``, ``-1``,
+    ``1.5``, ``1e3``, ``0x1``) is reported in ``malformed`` and never counted, so it cannot default to
+    zero; a word (``all tests passed``) is no count at all.
+    """
+    counts, malformed = {"passed": None, "failed": None, "errors": None}, []
+    for match in _COUNT_TOKEN.finditer(value):
+        token, word = match["token"], match["word"]
+        key = "errors" if word.lower().startswith("error") else word.lower()
+        if _INTEGER.fullmatch(token):
+            counts[key] = (counts[key] or 0) + int(token.replace(",", ""))
+        elif _HEX.fullmatch(token) and re.search(r"[a-f]", token):
+            continue  # "3ff7e37 failed": a commit, not a count
+        elif _NUMERIC.search(token):
+            malformed.append(f"{token} {word}")
+    return counts, malformed
+
+
+def _counts(label, value, problems):
+    """Parsed counts of a count-bearing line; each malformed count is a problem naming it."""
+    counts, malformed = parse_counts(value)
+    for bad in malformed:
+        problems.append(f"{label}: malformed count '{bad}' (a non-negative integer is required)")
+    return counts, bool(malformed)
 
 
 def _git(cwd, *args):
@@ -108,12 +137,21 @@ def _na(value, label, problems):
 
 
 def _passing_run(cwd, sha, label, value, problems):
-    """GREEN / Affected tests: names the head, >= 1 passed, 0 failed and 0 errors."""
+    """GREEN / Affected tests: names the head, >= 1 passed, 0 failed and 0 errors, no omission.
+
+    ``n/a``, ``not run``, ``pending`` ... are not a run, even next to counts copied from elsewhere.
+    """
+    if _NA.match(value) or _OMISSION.search(value):
+        problems.append(f"{label} is not evidence: {value[:80]!r}; run the tests on head {sha[:12]}")
+        return
     if sha not in _commits(cwd, value):
         problems.append(f"{label} not on head {sha[:12]}")
-    if not _count(value, "passed"):
+    counts, malformed = _counts(label, value, problems)
+    if malformed:
+        return
+    if not counts["passed"]:
         problems.append(f"{label} shows no passed count")
-    if (_count(value, "failed") or 0) + (_count(value, "errors?") or 0) > 0:
+    if (counts["failed"] or 0) + (counts["errors"] or 0) > 0:
         problems.append(f"{label} has failures")
 
 
@@ -133,10 +171,12 @@ def _full_suite(cwd, sha, value, affected, problems):
         older = [c for c in commits if _ancestor(cwd, c, sha)]
         if not older or not affected:
             problems.append(f"full suite not on head {sha[:12]} (a rework needs an Affected tests line on head)")
-    passed = _count(value, "passed")
-    if not passed:
+    counts, malformed = _counts(FULL, value, problems)
+    if malformed:
+        return
+    if not counts["passed"]:
         problems.append("full suite shows no passed count")
-    bad = (_count(value, "failed") or 0) + (_count(value, "errors?") or 0)
+    bad = (counts["failed"] or 0) + (counts["errors"] or 0)
     if bad and not re.search(r"known #\d+", value):
         problems.append(f"full suite has {bad} failed/errors without a known #<issue> owner")
 
@@ -176,9 +216,10 @@ def check_handoff(text, sha, output, cwd="."):
             problems.append("RED names no commit")
         elif not any(c != sha and _ancestor(cwd, c, sha) for c in commits):
             problems.append("RED is not on a commit before head")
-        if not ((_count(one[RED], "failed") or 0) + (_count(one[RED], "errors?") or 0)):
+        counts, malformed = _counts(RED, one[RED], problems)
+        if not malformed and not ((counts["failed"] or 0) + (counts["errors"] or 0)):
             problems.append("RED shows no failure count")
-    if GREEN in one and not _na(one[GREEN], GREEN, problems):
+    if GREEN in one:  # GREEN has no n/a: the head always has tests to run (review r1, PR #612)
         _passing_run(cwd, sha, "GREEN", one[GREEN], problems)
     if SAMPLE in one and not _na(one[SAMPLE], SAMPLE, problems):
         if not one[SAMPLE] or _OMISSION.search(one[SAMPLE]):

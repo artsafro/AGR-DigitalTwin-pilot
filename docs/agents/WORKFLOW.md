@@ -104,7 +104,9 @@ uv run dt evals --check-handoff <pr-body.md> --sha <full HEAD sha> --output <wor
   `Affected tests:` line on the head with `0 failed` is required.
 - `Regression evals:` as above. It is verified with `check_receipt`, and the all-not-measured `no Claude transcript` receipt is valid.
 - `Before (RED):` names a commit before the head and has ≥ 1 failed or error, or `n/a: <reason>`.
-  `After (GREEN):` names the head and has ≥ 1 passed and 0 failed.
+  `After (GREEN):` names the head and has ≥ 1 passed and 0 failed; it has no `n/a`. A GREEN or
+  `Affected tests:` line that says `not run`, `pending`, `n/a` etc. is not a run, even next to counts.
+  Every count is a plain integer: `nan failed`, `-1 failed`, `1.5 passed` are errors, never zero.
 - `Sample output:` gives the output the acceptance asks for (path or inline), or `n/a: <reason>`.
 Exit 1 prints one `ERROR:` line per problem. Fix the evidence or run the missing step. Never edit a line to pass the check.
 
