@@ -643,6 +643,43 @@ def test_per_facade_step_and_width_and_no_module_fallback():
         _validate_unit(empty)
 
 
+def test_width_ratio_just_inside_exact_and_just_outside():
+    """The field-width ratio is strict: exactly 2% and 2.01% fail; 1.99% passes.
+
+    Worked synthetic widths, all with step_m 1:
+    rib_count 10199 / field 10000 = 1.99% (accepted);
+    rib_count 10200 / field 10000 = 2% (rejected);
+    rib_count 10201 / field 10000 = 2.01% (rejected).
+    NaN/inf field width is an error. A finite step whose product overflows
+    to a non-finite ratio is an error.
+    """
+    target = SHEET_FACADES[2]
+    width = 10000.0
+    inside = _settle_target_facade(load(), target, rib_count=10199, step_m=1.0, field_width_m=width)
+    _validate_unit(inside)
+
+    exact = _settle_target_facade(load(), target, rib_count=10200, step_m=1.0, field_width_m=width)
+    with pytest.raises(ValueError, match='2%'):
+        _validate_unit(exact)
+
+    outside = _settle_target_facade(load(), target, rib_count=10201, step_m=1.0, field_width_m=width)
+    with pytest.raises(ValueError, match='2%'):
+        _validate_unit(outside)
+
+    for bad in (float('nan'), float('inf'), float('-inf')):
+        width_doc = _settle_target_facade(load(), target, rib_count=14, step_m=1.0, field_width_m=14.0)
+        for node in _panel_nodes(width_doc):
+            for facade in node['joint_spec']['per_facade']:
+                if facade['facade'] == target:
+                    facade['field_width_m'] = bad
+        with pytest.raises(ValueError, match='field_width_m'):
+            _validate_unit(width_doc)
+
+    overflow = _settle_target_facade(load(), target, rib_count=10, step_m=1e308, field_width_m=1.0)
+    with pytest.raises(ValueError, match='2%'):
+        _validate_unit(overflow)
+
+
 def test_unresolved_facade_keeps_gate_approved_and_is_listed():
     """An unresolved facade does not revoke approved-gate1. The report lists it."""
     doc = load()
@@ -724,6 +761,32 @@ def test_texture_bytes_fail_closed():
     assert caught == len(readers)
 
 
+def test_valid_synthetic_panel_control_passes():
+    """A synthetic panel payload validates, and the control is marked synthetic=True.
+
+    The reader serves only the in-memory bytes. The provisioned publication path is not used.
+    """
+    doc = load()
+    seen = []
+
+    def read_bytes(path):
+        seen.append(path)
+        if path != SYNTHETIC_PANEL_PATH:
+            raise FileNotFoundError(path)
+        return SYNTHETIC_PANEL_BYTES
+
+    _use_synthetic_panel(doc)
+    panels = _panel_nodes(doc)
+    assert panels
+    for node in panels:
+        source = node['joint_spec']['source_texture']
+        assert source['synthetic'] is True
+        assert source['path'] == SYNTHETIC_PANEL_PATH
+        assert source['sha256'] == hashlib.sha256(SYNTHETIC_PANEL_BYTES).hexdigest()
+    validate_panel_joints(doc, read_bytes=read_bytes)
+    assert seen == [SYNTHETIC_PANEL_PATH] * len(panels)
+
+
 def test_missing_provisioned_panel_texture_is_an_error():
     """Invariant: the publication check fails when the provisioned file is absent. It does not skip."""
     original = Path.is_file
@@ -739,6 +802,39 @@ def test_missing_provisioned_panel_texture_is_an_error():
             test_ac04_ral5015_panel_texture_publication_evidence()
     finally:
         Path.is_file = original
+
+
+@pytest.mark.panel_texture
+def test_hash_mismatched_publication_panel_bytes_are_an_error():
+    """The provisioned file is present, but injected bytes do not match its recorded SHA256.
+
+    The reader is injected on the publication path. The file on disk is not modified.
+    A mismatch is an error and must not pass.
+    """
+    path = Path(PANEL_TEXTURE)
+    if not path.is_file():
+        raise FileNotFoundError(
+            f'required provisioned panel texture is missing: {PANEL_TEXTURE} sha256 {PANEL_TEXTURE_SHA}'
+        )
+    on_disk = path.read_bytes()
+    assert hashlib.sha256(on_disk).hexdigest() == PANEL_TEXTURE_SHA
+    mismatched = b'hash-mismatch-' + on_disk[:16]
+    assert hashlib.sha256(mismatched).hexdigest() != PANEL_TEXTURE_SHA
+
+    def read_mismatched(requested):
+        if requested != PANEL_TEXTURE:
+            raise AssertionError(requested)
+        return mismatched
+
+    doc = load()
+    for node in _panel_nodes(doc):
+        source = node['joint_spec']['source_texture']
+        assert source['path'] == PANEL_TEXTURE
+        assert source['sha256'] == PANEL_TEXTURE_SHA
+        assert source.get('synthetic') is not True
+    with pytest.raises(ValueError, match='sha256 mismatch'):
+        validate_panel_joints(doc, read_bytes=read_mismatched)
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == PANEL_TEXTURE_SHA
 
 
 _PROBE_TEST = 'test_default_unit_tests_do_not_read_private_panel_texture'
