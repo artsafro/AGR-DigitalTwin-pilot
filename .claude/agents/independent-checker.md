@@ -1,6 +1,6 @@
 ---
 name: independent-checker
-description: 'Use when the engine has built a model - after every engine run, before the main agent reports it done. Takes the exported FBX, the spec.json, the tolerances and optionally the etalon, reads the model back, runs the geometry checks and compares with the patterns. Returns a table check / expected / measured / pass-fail, without fix proposals. It never reads how the model was built. Use when: «модель собрана, проверь», «сверь FBX со спекой», «проверь независимо перед показом».'
+description: 'Use when a job build is shown to the user - after every such build, an engine run included, before the main agent reports it done. Takes the exported FBX, the spec.json, the tolerances and optionally the etalon, reads the model back, runs the geometry checks including the inv_xview overlap gate (dt qa xview, #527) and compares with the patterns. Returns a table check / expected / measured / pass-fail, without fix proposals. It never reads how the model was built. Use when: «модель собрана, проверь», «сверь FBX со спекой», «проверь независимо перед показом».'
 tools: Read, Grep, Glob, Bash
 disallowedTools: Edit, Write
 model: inherit
@@ -34,6 +34,8 @@ Your final message must contain a Markdown table:
 | check | expected | measured | pass/fail |
 |---|---|---|---|
 
-one row per check (bbox, levels, areas, silhouettes, opening planes, material ids, mesh, decor, plates, …),
+one row per check (bbox, levels, areas, silhouettes, opening planes, material ids, mesh, decor, plates,
+`inv_xview`, …). The `inv_xview` row is the overlap gate: `dt qa xview` (`src/dt_ai/ops/inv_xview.py`,
+kernel `xview_overlaps`, #527) on the built model. A missing xview run is `not measured` with the reason.
 `not measured` with the reason where a check could not run. After the table, the input paths and the commit.
 No proposals, no fixes, no guesses about the cause.
