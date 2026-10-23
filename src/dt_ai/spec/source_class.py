@@ -9,6 +9,10 @@ with no shell and more than one part, raises `SourceClassError`.
 
 Empty input, a non-finite coordinate, a zero total area, a bad triangle index, or a face
 that is not a triangle also raises. Nothing here changes the extractor.
+
+A closed shell is topological: every edge of the part is used by exactly two triangles.
+Winding is ignored, and there is no signed-volume test. Inconsistent winding on a closed
+mesh stays a shell (`monolithic`); it is never certified shell-free or `panelised`.
 """
 import math
 from dataclasses import dataclass
@@ -65,7 +69,7 @@ def source_facts(vertices, triangles) -> SourceFacts:
     if any(not math.isfinite(share) for share in shares):
         raise SourceClassError("non-finite area share")
     largest = shares[0]
-    shell = any(_closed_shell(v, tris[part]) for part in parts)
+    shell = any(_closed_shell(tris[part]) for part in parts)
     return SourceFacts(len(parts), largest, shell, _decide(len(parts), largest, shell))
 
 
@@ -107,8 +111,12 @@ def _welded(vertices, triangles):
     return v[used], inverse.ravel()[tris]
 
 
-def _closed_shell(v, comp_tris) -> bool:
-    """A part is a shell when every edge has two triangles and the volume is non-zero."""
+def _closed_shell(comp_tris) -> bool:
+    """A part is a shell when every undirected edge is used by exactly two triangles.
+
+    Closedness does not use a signed volume. Reversing any subset of faces leaves the
+    edge counts unchanged, so an inconsistently wound closed mesh stays a shell.
+    """
     if len(comp_tris) < 4:
         return False
     counts: dict[tuple[int, int], int] = {}
@@ -119,10 +127,4 @@ def _closed_shell(v, comp_tris) -> bool:
         for i, j in ((a, b), (b, c), (c, a)):
             edge = (i, j) if i < j else (j, i)
             counts[edge] = counts.get(edge, 0) + 1
-    if not counts or any(n != 2 for n in counts.values()):
-        return False
-    p = v[comp_tris]
-    volume = float(np.einsum("ij,ij->i", p[:, 0], np.cross(p[:, 1], p[:, 2])).sum()) / 6.0
-    if not math.isfinite(volume):
-        raise SourceClassError("non-finite shell volume")
-    return abs(volume) > 1e-9
+    return bool(counts) and all(n == 2 for n in counts.values())

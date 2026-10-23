@@ -1,9 +1,10 @@
 # Vyatskaya TOW02 — source class
 
 Object: tower TOW02, ul. Vyatskaya vl. 47–49. Target profile recorded on the job: mid-poly master
-of the curtain-wall tower. The three facts below are the recorded classification in
-`jobs/vyatskaya-tow02/object.json` (`source_class`, `source_class_note`), not a fresh measurement.
-The raw inventory `jobs/vyatskaya-tow02/outputs/measure-v001` is git-ignored and absent on this PC.
+of the curtain-wall tower. The connected-part count, the largest-part share and the shell fact
+below are copied from `jobs/vyatskaya-tow02/object.json` (`source_class`, `source_class_note`).
+They are historical and were not recomputed, because the raw inventory
+`jobs/vyatskaya-tow02/outputs/measure-v001` is git-ignored and absent on this PC.
 
 ## Source class
 

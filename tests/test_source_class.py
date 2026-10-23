@@ -44,8 +44,12 @@ def _curtain(largest_area, other_areas, gap=3.0):
     return np.asarray(verts, dtype=float), np.asarray(tris, dtype=np.int64)
 
 
-def _box(scale=1.0, origin=(0.0, 0.0, 0.0)):
-    """Closed box with duplicated corners (a shell only after welding). Synthetic."""
+def _box(scale=1.0, origin=(0.0, 0.0, 0.0), reverse=()):
+    """Closed box with duplicated corners (a shell only after welding). Synthetic.
+
+    `reverse` is a set of face indices whose two triangles are wound the other way.
+    Reversing faces does not change the undirected edges.
+    """
     x, y, z = origin
     s = float(scale)
     lo = (x, y, z)
@@ -58,12 +62,44 @@ def _box(scale=1.0, origin=(0.0, 0.0, 0.0)):
         ((hi[0], hi[1], lo[2]), (lo[0], hi[1], lo[2]), (lo[0], hi[1], hi[2]), (hi[0], hi[1], hi[2])),
         ((lo[0], hi[1], lo[2]), (lo[0], lo[1], lo[2]), (lo[0], lo[1], hi[2]), (lo[0], hi[1], hi[2])),
     )
+    flipped = set(reverse)
     verts, tris = [], []
-    for face in faces:
+    for index, face in enumerate(faces):
         n = len(verts)
         verts.extend(face)
-        tris.extend(((n, n + 1, n + 2), (n, n + 2, n + 3)))
+        pair = ((n, n + 1, n + 2), (n, n + 2, n + 3))
+        if index in flipped:
+            pair = tuple(tuple(reversed(tri)) for tri in pair)
+        tris.extend(pair)
     return np.asarray(verts, dtype=float), np.asarray(tris, dtype=np.int64)
+
+
+def _shell_witness(center=(0.0, 0.0, 0.0), reverse=()):
+    """Unit cube plus ten disconnected open panels of area 4. Synthetic.
+
+    The cube is the largest part (area 6 of 46, share 0.1304). A missed shell
+    classifies the mesh as panelised.
+    """
+    origin = (center[0] - 0.5, center[1] - 0.5, center[2] - 0.5)
+    cube_v, cube_t = _box(origin=origin, reverse=reverse)
+    panels_v, panels_t = _curtain(4.0, [4.0] * 9, gap=3.0)
+    panels_v = panels_v.copy()
+    panels_v[:, 0] += 30.0
+    verts = np.vstack([cube_v, panels_v])
+    tris = np.vstack([cube_t, panels_t + len(cube_v)])
+    return verts, tris
+
+
+def _welded_cube_edge_uses(vertices, triangles):
+    """Undirected edge counts of the cube (its 12 triangles) after welding."""
+    from dt_ai.spec.source_class import _welded
+    _v, tris = _welded(vertices, triangles)
+    counts = {}
+    for a, b, c in tris[:12]:
+        for i, j in ((int(a), int(b)), (int(b), int(c)), (int(c), int(a))):
+            edge = (i, j) if i < j else (j, i)
+            counts[edge] = counts.get(edge, 0) + 1
+    return counts
 
 
 def _panelised_tow02():
@@ -204,6 +240,76 @@ def test_brute_share_above_threshold_is_monolithic():
         assert source_route(monolithic) == route_extract
 
 
+def test_oriented_origin_cube_with_panels_is_a_shell():
+    """Control: consistent winding, cube centred at the origin, ten open panels."""
+    _, panelised, monolithic, _, _, _, _, source_facts, _ = _load()
+    verts, tris = _shell_witness(center=(0.0, 0.0, 0.0), reverse=())
+    uses = _welded_cube_edge_uses(verts, tris)
+    assert uses and set(uses.values()) == {2}
+    facts = source_facts(verts, tris)
+    assert facts.connected_parts == 11
+    assert facts.largest_share == pytest.approx(0.1304, abs=5e-5)
+    assert facts.shell is True
+    assert facts.source_class == monolithic
+    assert facts.source_class != panelised
+
+
+def test_three_reversed_faces_on_origin_cube_stay_a_shell():
+    """Witness: reverse three faces. Edges stay paired; the mesh must not become panelised."""
+    _, panelised, monolithic, _, _, err, _, source_facts, _ = _load()
+    verts, tris = _shell_witness(center=(0.0, 0.0, 0.0), reverse=(0, 1, 2))
+    uses = _welded_cube_edge_uses(verts, tris)
+    # 12 cube edges plus one diagonal on each of the 6 faces.
+    assert len(uses) == 18 and set(uses.values()) == {2}
+    try:
+        facts = source_facts(verts, tris)
+    except err:
+        return
+    assert facts.connected_parts == 11
+    assert facts.largest_share == pytest.approx(0.1304, abs=5e-5)
+    assert facts.shell is True
+    assert facts.source_class == monolithic
+    assert facts.source_class != panelised
+
+
+def test_translated_cube_oriented_and_three_faces_reversed():
+    """Same cube centred away from the origin, consistent winding and three faces reversed."""
+    _, panelised, monolithic, _, _, err, _, source_facts, _ = _load()
+    center = (12.0, -4.0, 7.0)
+    for reverse in ((), (0, 1, 2)):
+        verts, tris = _shell_witness(center=center, reverse=reverse)
+        uses = _welded_cube_edge_uses(verts, tris)
+        assert set(uses.values()) == {2}
+        try:
+            facts = source_facts(verts, tris)
+        except err:
+            continue
+        assert facts.shell is True
+        assert facts.connected_parts == 11
+        assert facts.source_class == monolithic
+        assert facts.source_class != panelised
+
+
+def test_brute_winding_subsets_never_panelised():
+    """Every subset of reversed cube faces, at three translations, stays a shell or errors."""
+    _, panelised, monolithic, _, _, err, _, source_facts, _ = _load()
+    translations = ((0.0, 0.0, 0.0), (12.0, -4.0, 7.0), (-20.0, 3.0, 15.0))
+    seen = 0
+    for mask in range(2 ** 6):
+        reverse = tuple(i for i in range(6) if mask & (1 << i))
+        for center in translations:
+            seen += 1
+            verts, tris = _shell_witness(center=center, reverse=reverse)
+            try:
+                facts = source_facts(verts, tris)
+            except err:
+                continue
+            assert facts.shell is True
+            assert facts.source_class == monolithic
+            assert facts.source_class != panelised
+    assert seen == 192
+
+
 def test_brute_closed_shells_stay_monolithic():
     _, panelised, monolithic, route_extract, _, _, classify_source, source_facts, source_route = _load()
     rng = np.random.default_rng(535)
@@ -230,25 +336,57 @@ def test_skill_routes_panelised_away_from_extract():
     assert mirror == text
 
 
-def test_workflow_requires_checker_on_every_shown_build_and_a_poll_timeout():
-    text = (ROOT / "docs/agents/WORKFLOW.md").read_text(encoding="utf-8")
-    triggers = text.split("## Triggers", 1)[1].split("## Rule of three", 1)[0]
-    assert "shown to the user" in triggers
-    assert "independent-checker" in triggers
-    assert "inv_xview" in triggers
-    assert "6 polls" in triggers
-    assert "30 minutes" in triggers
-    assert "progress line" in triggers
-    assert "After every job build that is shown to the user" in text
+def _flat(text):
+    return " ".join(text.split())
 
 
-def test_independent_checker_includes_inv_xview():
-    text = (ROOT / ".claude/agents/independent-checker.md").read_text(encoding="utf-8")
-    assert "shown to the user" in text
-    assert "inv_xview" in text
-    assert "dt qa xview" in text
-    assert "527" in text
-    assert text.split("---", 2)[1].lstrip().lower().find("use when") >= 0 or "Use when" in text.split("---", 2)[1]
+def _checker_policy_texts():
+    workflow = (ROOT / "docs/agents/WORKFLOW.md").read_text(encoding="utf-8")
+    checker = (ROOT / ".claude/agents/independent-checker.md").read_text(encoding="utf-8")
+    subagents = workflow.split("## Subagents", 1)[1].split("## Triggers", 1)[0]
+    triggers = workflow.split("## Triggers", 1)[1].split("## Rule of three", 1)[0]
+    return _flat(subagents), _flat(triggers), _flat(checker)
+
+
+def test_unshown_engine_run_still_requires_the_checker():
+    subagents, triggers, checker = _checker_policy_texts()
+    for text in (subagents, triggers, checker):
+        assert "every engine run, shown or not" in text
+        assert "independent-checker" in text
+        assert "inv_xview" in text
+        assert "dt qa xview" in text
+        assert "527" in text
+
+
+def test_shown_direct_or_lego_build_requires_the_checker():
+    subagents, triggers, checker = _checker_policy_texts()
+    for text in (subagents, triggers, checker):
+        assert "direct / Lego" in text
+        assert "shown or reported to the user" in text
+        assert "independent-checker" in text
+
+
+def test_checker_runs_before_the_build_is_shown():
+    subagents, triggers, checker = _checker_policy_texts()
+    for text in (subagents, triggers, checker):
+        assert "before the build is shown or reported" in text
+
+
+def test_each_new_build_version_needs_its_own_check():
+    subagents, triggers, checker = _checker_policy_texts()
+    for text in (subagents, triggers, checker):
+        assert "Each new build version needs its own check" in text
+
+
+def test_poll_timeout_and_progress_report():
+    subagents, triggers, checker = _checker_policy_texts()
+    assert "independent-checker" in subagents
+    assert "independent-checker" in checker
+    for text in (triggers, checker):
+        assert "6 polls" in text
+        assert "30 minutes" in text
+        assert "progress line" in text
+        assert "polls remain" in text
 
 
 def test_tow02_source_record():
@@ -261,5 +399,8 @@ def test_tow02_source_record():
     assert "dt spec extract" in page
     assert "measure-v001" in page
     assert "absent" in page
+    assert "copied from" in page and "jobs/vyatskaya-tow02/object.json" in page
+    assert "historical" in page and "not recomputed" in page
+    assert "git-ignored" in page
     assert "vyatskaya-tow02.md" in readme
     assert "panelised" in readme

@@ -40,7 +40,11 @@ against both NPM and VPM.
 4. **Source class.** On the welded mesh, measure three facts with `classify_source`
    (`src/dt_ai/spec/source_class.py`; `PANELISED` and `PANEL_HINT_SHARE` live in
    `src/dt_ai/spec/mesh.py`): the number of connected parts, the share of the largest
-   part by surface area, and whether any part is a closed shell. Rule 1 [D066]:
+   part by surface area, and whether any part is a closed shell. A closed shell is
+   topological and ignores winding: every edge of that part is used by exactly two
+   triangles, with no signed-volume test. Inconsistent winding on a closed mesh is
+   still a shell, so the class stays monolithic and is never certified shell-free or
+   panelised. Rule 1 [D066]:
    `panelised` only when there are at least two connected parts, the largest share is
    strictly below `PANEL_HINT_SHARE` (0.5), and no shell is present. Route `panelised`
    to `measurement+direct-build` (measurement and a direct build). Do not run

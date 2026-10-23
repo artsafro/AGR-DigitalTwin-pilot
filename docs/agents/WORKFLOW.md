@@ -207,9 +207,10 @@ context. It delegates them to the read-only subagents in `.claude/agents/`:
 Rules:
 - Only the main agent writes code, commits and decides. No subagent may write to `src/`, `docs/` or `jobs/`,
   and none is created with write tools. Agent Teams are not enabled.
-- After every job build that is shown to the user, an engine run included, the main agent calls
-  `independent-checker` before it reports the build done. The checker's checks include the `inv_xview`
-  overlap gate (`dt qa xview`, #527).
+- `independent-checker` is mandatory after every engine run, shown or not, and also after every other
+  job build (direct / Lego) intended to be shown or reported to the user. The checker runs before the
+  build is shown or reported. Each new build version needs its own check; a check of an earlier version
+  does not cover a later one. The checks include the `inv_xview` overlap gate (`dt qa xview`, #527).
 - A subagent's result is data, not a decision. The main agent verifies applicability and follows
   [Questions-only](#questions-only): reuse a quoted decision by [Escalation](#escalation-131), and ask only
   unresolved result-changing questions while preserving mandatory confirmations.
@@ -224,7 +225,7 @@ An event makes a skill or subagent mandatory, not optional:
 |---|---|
 | A new or updated source (FBX, Revit, Max, SketchUp, Blender) | skill `analyze-architectural-source` + subagent `source-inspector` |
 | A first call to a DCC MCP (3ds Max, Blender, Revit) in the session | skill `3dsmax-mcp-dev` / `blender-mcp` / `revit-mcp` |
-| A job build is shown to the user (an engine run or any other build) | subagent `independent-checker` (checks include the `inv_xview` overlap gate, `dt qa xview`, #527) |
+| after every engine run, shown or not, and after every other job build (direct / Lego) intended to be shown or reported to the user | subagent `independent-checker` before the build is shown or reported. Each new build version needs its own check (checks include the `inv_xview` overlap gate, `dt qa xview`, #527) |
 | Before "done", a handover of a deliverable or sending it | skill `validate-delivery` |
 | "Is there a rule for …?" (pattern, case, conflict) | subagent `pattern-librarian` |
 | Benchmarks or the test suite must run | subagent `bench-runner` |
