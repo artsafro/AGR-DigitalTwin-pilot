@@ -1,0 +1,514 @@
+[
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\KPP1_VPM_NPM_quads_v002.max",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\KPP1_VPM_NPM_quads_v002.max",
+    "relative": "KPP1_VPM_NPM_quads_v002.max",
+    "sha256": "f32bf86c724634aeac4440ce67caea1c231e175797e759ba497b0530cb14a824",
+    "bytes": 1662100,
+    "mtime_ns": 1791880871600000000
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_001_Main_d_1.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_001_Main_d_1.png",
+    "relative": "maps_kpp/T_Kpp_1_001_Main_d_1.png",
+    "sha256": "722b370349dc690a882df86c1cc0eb2b1fd3060eca426f655d2a19919ba05447",
+    "bytes": 888421,
+    "mtime_ns": 1791328725890341100
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_001_Main_o_1.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_001_Main_o_1.png",
+    "relative": "maps_kpp/T_Kpp_1_001_Main_o_1.png",
+    "sha256": "c58a061e4e2247db54fa8b8b8070dc24d0e5e0c7d79025bd19762b23c1da85bf",
+    "bytes": 16415,
+    "mtime_ns": 1791328725954635200
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1001.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1001.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1001.png",
+    "sha256": "6e088cbdeea1f88e8ff25b78d47b71cc0cea889183027829695b4104a6acca66",
+    "bytes": 1265520,
+    "mtime_ns": 1791328598024623800
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1002.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1002.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1002.png",
+    "sha256": "00d351c403817fce24963615bfbe2cbcf23e5e0faf608104689f03f1d4c99ce0",
+    "bytes": 7205144,
+    "mtime_ns": 1791328607940631500
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1003.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1003.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1003.png",
+    "sha256": "68e43f023648eb02096f60058f2d7ca373165393514bef9cdd6dabf47d00aa55",
+    "bytes": 74377,
+    "mtime_ns": 1791328612533845200
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1004.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1004.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1004.png",
+    "sha256": "953557e3202eabaa2085cb78446b923ee9ea181266565a98e7c124add2da4616",
+    "bytes": 74636,
+    "mtime_ns": 1791328615156165600
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1005.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1005.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1005.png",
+    "sha256": "657d96944b04ec61fb216dd16b6c612642e43d1e08f576ae588c0e20f5f29182",
+    "bytes": 74506,
+    "mtime_ns": 1791328618553994300
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1006.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1006.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1006.png",
+    "sha256": "953d54d37cd8b3193afc5d3b973afc87ed06a9949232799a466193b1617efeb9",
+    "bytes": 742124,
+    "mtime_ns": 1791328626043698100
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1007.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1007.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1007.png",
+    "sha256": "323ca26ba0685dc32f8afb12b9218a76e51570c39301b5d6606171f7f9660ee0",
+    "bytes": 999880,
+    "mtime_ns": 1791328634594615500
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1008.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1008.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1008.png",
+    "sha256": "1a6ce772739a9e57fde83e6ff593eea01dafe37420a3074a59da96b082b1b030",
+    "bytes": 112229,
+    "mtime_ns": 1791328641888297600
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1009.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1009.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1009.png",
+    "sha256": "5a24af09b5c0da12873e6f7cdc170acc6b7b339815ce470dfee5336a81925eda",
+    "bytes": 565,
+    "mtime_ns": 1791328642655082400
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1010.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1010.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1010.png",
+    "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+    "bytes": 568,
+    "mtime_ns": 1791328642661513800
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1011.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1011.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1011.png",
+    "sha256": "ec5ed808306c18568b104797b3c0f10bd2bf73c98507402d4a432b651b3366bc",
+    "bytes": 566,
+    "mtime_ns": 1791328642666391800
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1012.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1012.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1012.png",
+    "sha256": "9bc7e602eadf2de36a2c901332ff8942758dae9e16d200c20814592780a76566",
+    "bytes": 567,
+    "mtime_ns": 1791328642670441600
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1013.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1013.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1013.png",
+    "sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+    "bytes": 568,
+    "mtime_ns": 1791328642675014000
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1014.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1014.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1014.png",
+    "sha256": "f98768beee3dddf7e49643c5e7ad6ba3cbc397cc11388bba80ad36a5cf9cae2e",
+    "bytes": 565,
+    "mtime_ns": 1791328642680529100
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1015.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1015.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1015.png",
+    "sha256": "495139761f4836e5b19e453b82ecce174e5956f1d8e0c0ef7f7903a4686911f4",
+    "bytes": 567,
+    "mtime_ns": 1791328642685209300
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1016.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1016.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1016.png",
+    "sha256": "d459679ce225cf13cb88cb4630f1c6106bac18bcded039a0bd70fa9c6d92d82a",
+    "bytes": 568,
+    "mtime_ns": 1791328642689938700
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1017.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1017.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1017.png",
+    "sha256": "d77330dc0168994c57db9fcfbb21e8ade8048978509360bdfba1c1d5d3cb70aa",
+    "bytes": 566,
+    "mtime_ns": 1791328642695113800
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1018.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1018.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1018.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "bytes": 1010080,
+    "mtime_ns": 1791328649012474300
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Diffuse_1.1019.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1019.png",
+    "relative": "maps_kpp/T_Kpp_1_Diffuse_1.1019.png",
+    "sha256": "7f05b24bef75f00388893b7aed2257ec8970feaee09738317df7dda3a801fed1",
+    "bytes": 568,
+    "mtime_ns": 1791328649584342600
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1001.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1001.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1001.png",
+    "sha256": "5e20501391cc4e42a8df5ac6281d5a827567c333c9e053d91fe05293498aed87",
+    "bytes": 59093,
+    "mtime_ns": 1791328598277729800
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1002.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1002.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1002.png",
+    "sha256": "aa28d5e2edda8c15424aa2afc4edcf1f210ae3aed4cbd20fc1ff73875da35b3d",
+    "bytes": 13087618,
+    "mtime_ns": 1791328608771435400
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1003.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1003.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1003.png",
+    "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "bytes": 564,
+    "mtime_ns": 1791328612538329300
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1004.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1004.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1004.png",
+    "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "bytes": 564,
+    "mtime_ns": 1791328615160744500
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1005.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1005.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1005.png",
+    "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "bytes": 564,
+    "mtime_ns": 1791328618558777700
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1006.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1006.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1006.png",
+    "sha256": "7eca84ded3796ff75f6c75423bb7bc86229f8c262d8dc09e5932ad94b3b83240",
+    "bytes": 56226,
+    "mtime_ns": 1791328626296369800
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1007.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1007.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1007.png",
+    "sha256": "73a3430cb255d2cf8ecbd6ab477248ad94a3d86f5850efedaf86d91787c4ee3d",
+    "bytes": 57599,
+    "mtime_ns": 1791328634823970200
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1008.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1008.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1008.png",
+    "sha256": "525080e570cafe0d000802307b42a6f904352483d88b513d855318ee30e9462c",
+    "bytes": 148188,
+    "mtime_ns": 1791328642235587400
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1009.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1009.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1009.png",
+    "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "bytes": 564,
+    "mtime_ns": 1791328642659995600
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1010.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1010.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1010.png",
+    "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "bytes": 564,
+    "mtime_ns": 1791328642664187000
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1011.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1011.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1011.png",
+    "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "bytes": 564,
+    "mtime_ns": 1791328642668912100
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1012.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1012.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1012.png",
+    "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "bytes": 564,
+    "mtime_ns": 1791328642673512300
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1013.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1013.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1013.png",
+    "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "bytes": 564,
+    "mtime_ns": 1791328642678021600
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1014.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1014.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1014.png",
+    "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "bytes": 564,
+    "mtime_ns": 1791328642682700100
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1015.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1015.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1015.png",
+    "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "bytes": 564,
+    "mtime_ns": 1791328642688396900
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1016.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1016.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1016.png",
+    "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "bytes": 564,
+    "mtime_ns": 1791328642693037900
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1017.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1017.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1017.png",
+    "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "bytes": 564,
+    "mtime_ns": 1791328642698353800
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1018.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1018.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1018.png",
+    "sha256": "7eca84ded3796ff75f6c75423bb7bc86229f8c262d8dc09e5932ad94b3b83240",
+    "bytes": 56226,
+    "mtime_ns": 1791328649238965900
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\maps_kpp\\T_Kpp_1_Normal_1.1019.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1019.png",
+    "relative": "maps_kpp/T_Kpp_1_Normal_1.1019.png",
+    "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "bytes": 564,
+    "mtime_ns": 1791328649591543900
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\Vlad_OKS\\04-09 Geometry Final.max",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\04-09 Geometry Final.max",
+    "relative": "Vlad_OKS/04-09 Geometry Final.max",
+    "sha256": "eb0cffedefa80678cf4ada13db71f2e80795a92212f9fbf60b7c30c54a7852bd",
+    "bytes": 999424,
+    "mtime_ns": 1792657510574000000
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\Vlad_OKS\\maps_truba\\blu.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\maps_truba\\blu.png",
+    "relative": "Vlad_OKS/maps_truba/blu.png",
+    "sha256": "697c0c5b3ec008704a301e9848257e68804c572d64ac36f8162a1ad373a8588e",
+    "bytes": 3411,
+    "mtime_ns": 1792521912613151100
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\Vlad_OKS\\maps_truba\\dark_gray.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\maps_truba\\dark_gray.png",
+    "relative": "Vlad_OKS/maps_truba/dark_gray.png",
+    "sha256": "a8ae7e5ebacf1e5d2de9103bd52bdae48b2ddcfa2a245759d78caeda5d09a5cb",
+    "bytes": 3411,
+    "mtime_ns": 1792522038853512800
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\Vlad_OKS\\maps_truba\\dark_gray2.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\maps_truba\\dark_gray2.png",
+    "relative": "Vlad_OKS/maps_truba/dark_gray2.png",
+    "sha256": "f7906abe2b1da74c9d0cd871339c570e7cf2a79a8cc1ecc980cdcee78d2af552",
+    "bytes": 3409,
+    "mtime_ns": 1792522273280487400
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\Vlad_OKS\\maps_truba\\gray.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\maps_truba\\gray.png",
+    "relative": "Vlad_OKS/maps_truba/gray.png",
+    "sha256": "816025d7a467c9fc0d658baf2f40b9cfc55ea3804e930cfb2b83c69af4c4068c",
+    "bytes": 3411,
+    "mtime_ns": 1792521944083582000
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\Vlad_OKS\\maps_truba\\railing_10mx1_2m_8posts_RGBA_2048.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\maps_truba\\railing_10mx1_2m_8posts_RGBA_2048.png",
+    "relative": "Vlad_OKS/maps_truba/railing_10mx1_2m_8posts_RGBA_2048.png",
+    "sha256": "536def75dafdeeaacecfe853b48f28bd20acfc5c4d593a2c89f932687915db22",
+    "bytes": 96374,
+    "mtime_ns": 1792522339752492900
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\Vlad_OKS\\maps_truba\\red.png",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\maps_truba\\red.png",
+    "relative": "Vlad_OKS/maps_truba/red.png",
+    "sha256": "ecee6a25cf59cadf54c30d5b6cfd1b4751dcb8698fbbb3639af642dd54f37486",
+    "bytes": 3411,
+    "mtime_ns": 1792521973715840900
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\Vlad_OKS\\truba.max",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\truba.max",
+    "relative": "Vlad_OKS/truba.max",
+    "sha256": "4f2d97744853de1f50347d432da609e08ec7c846cd8ddb3bb62b452440b03556",
+    "bytes": 5947392,
+    "mtime_ns": 1792525002416000000
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\Vlad_OKS\\ТЭЦ26 на РР (1).pptx",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\ТЭЦ26 на РР (1).pptx",
+    "relative": "Vlad_OKS/ТЭЦ26 на РР (1).pptx",
+    "sha256": "74e50277df5e2dfde3ba7ab945eb6bab45a8fa8c0207d7aca3a136d9656b78ac",
+    "bytes": 87990058,
+    "mtime_ns": 1792484864572367400
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.04 (Локальные очистные сооружения дождевых стоков)\\22E56-АР2-1002-AC.04_R1.dwg",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.04 (Локальные очистные сооружения дождевых стоков)\\22E56-АР2-1002-AC.04_R1.dwg",
+    "relative": "ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Графическая часть/22Е56-АР2-1002-АС.04 (Локальные очистные сооружения дождевых стоков)/22E56-АР2-1002-AC.04_R1.dwg",
+    "sha256": "d34638d96ea51046e25b0376f4cd589c0725aeb15f2bccc4800ab3716b1a409b",
+    "bytes": 9162192,
+    "mtime_ns": 1791444908455814600
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.04 (Локальные очистные сооружения дождевых стоков)\\22Е56-АР2-1002-АС.pdf",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.04 (Локальные очистные сооружения дождевых стоков)\\22Е56-АР2-1002-АС.pdf",
+    "relative": "ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Графическая часть/22Е56-АР2-1002-АС.04 (Локальные очистные сооружения дождевых стоков)/22Е56-АР2-1002-АС.pdf",
+    "sha256": "97e324176ffc6c078f27849e98a08b530cbd1d07ddb3fe71b5fe66754dc1ccfe",
+    "bytes": 170118,
+    "mtime_ns": 1791444908461047000
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.05 (Блок-модуль пенного пожаротушения)\\22E56-АР2-1002-AC.05_R1.dwg",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.05 (Блок-модуль пенного пожаротушения)\\22E56-АР2-1002-AC.05_R1.dwg",
+    "relative": "ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Графическая часть/22Е56-АР2-1002-АС.05 (Блок-модуль пенного пожаротушения)/22E56-АР2-1002-AC.05_R1.dwg",
+    "sha256": "363d3635dd877608c55aee3f01131e8e0d269fa5d8324a2111d39ac39d70cb72",
+    "bytes": 1899958,
+    "mtime_ns": 1791444908498897800
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.05 (Блок-модуль пенного пожаротушения)\\22Е56-АР2-1002-АС.pdf",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.05 (Блок-модуль пенного пожаротушения)\\22Е56-АР2-1002-АС.pdf",
+    "relative": "ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Графическая часть/22Е56-АР2-1002-АС.05 (Блок-модуль пенного пожаротушения)/22Е56-АР2-1002-АС.pdf",
+    "sha256": "409671b95322798342812c1eee6320d1bf05fc326c4805e1e15c1d5fb72c8b11",
+    "bytes": 75887,
+    "mtime_ns": 1791444908505925100
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.06 (Пункт редуцирования газа 1)\\22E.pdf",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.06 (Пункт редуцирования газа 1)\\22E.pdf",
+    "relative": "ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Графическая часть/22Е56-АР2-1002-АС.06 (Пункт редуцирования газа 1)/22E.pdf",
+    "sha256": "694b06db0cae5dfec2cf15d3d8fa3909982965bb5bb3ea9abb850bce75a04c2a",
+    "bytes": 100591,
+    "mtime_ns": 1791444908522340500
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.06 (Пункт редуцирования газа 1)\\22E56-АР2-1002-AC.06_R1.dwg",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.06 (Пункт редуцирования газа 1)\\22E56-АР2-1002-AC.06_R1.dwg",
+    "relative": "ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Графическая часть/22Е56-АР2-1002-АС.06 (Пункт редуцирования газа 1)/22E56-АР2-1002-AC.06_R1.dwg",
+    "sha256": "0787fd3307383aee9f8964b5a5c28dc2ceae2de47bca708a9fa9434f91391ea4",
+    "bytes": 4751950,
+    "mtime_ns": 1791444908561559200
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.07 (Пункт редуцирования газа 2)\\22E.pdf",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.07 (Пункт редуцирования газа 2)\\22E.pdf",
+    "relative": "ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Графическая часть/22Е56-АР2-1002-АС.07 (Пункт редуцирования газа 2)/22E.pdf",
+    "sha256": "f05a7b539bacc907c5f95c5c846d73b2ef7392d4368d92b58a4343a637dd1c3a",
+    "bytes": 69654,
+    "mtime_ns": 1791444908570876900
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.07 (Пункт редуцирования газа 2)\\22E56-АР2-1002-AC.07_R1.dwg",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.07 (Пункт редуцирования газа 2)\\22E56-АР2-1002-AC.07_R1.dwg",
+    "relative": "ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Графическая часть/22Е56-АР2-1002-АС.07 (Пункт редуцирования газа 2)/22E56-АР2-1002-AC.07_R1.dwg",
+    "sha256": "51b355e53288391b439a7aec01627a0cd1962041f12a3a2125cf797ca70edf3d",
+    "bytes": 1902674,
+    "mtime_ns": 1791444908587816200
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.08\\22Е56-АР2-1002-АС.08.dwg",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.08\\22Е56-АР2-1002-АС.08.dwg",
+    "relative": "ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Графическая часть/22Е56-АР2-1002-АС.08/22Е56-АР2-1002-АС.08.dwg",
+    "sha256": "cb90ed375df4fd708b7a69c6d018600347953245f0f6bde396f394bee3e1fa52",
+    "bytes": 679359,
+    "mtime_ns": 1791444908600035500
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.09\\22Е56-АР2-1002-АС.09.dwg",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Графическая часть\\22Е56-АР2-1002-АС.09\\22Е56-АР2-1002-АС.09.dwg",
+    "relative": "ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Графическая часть/22Е56-АР2-1002-АС.09/22Е56-АР2-1002-АС.09.dwg",
+    "sha256": "feb22366bd7270f6912de797d9ffc0cc075d451cb154e3aaa1deaea96c88a5b5",
+    "bytes": 627340,
+    "mtime_ns": 1791444908611390000
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Раздел ПД №1 22Е56-ПД изм 1_100926_v4.docm",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Раздел ПД №1 22Е56-ПД изм 1_100926_v4.docm",
+    "relative": "ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Раздел ПД №1 22Е56-ПД изм 1_100926_v4.docm",
+    "sha256": "932196bb12125cb2778391164e7bef6854464def08bee570e550871a43b90ea3",
+    "bytes": 586126,
+    "mtime_ns": 1791444907357169200
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Текстовая часть\\22E56-АР1-T_R3.docx",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Текстовая часть\\22E56-АР1-T_R3.docx",
+    "relative": "ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Текстовая часть/22E56-АР1-T_R3.docx",
+    "sha256": "0698a346b69566384f7159f259b32bf4c66519b3046886f63c7952c143d62ba0",
+    "bytes": 1243193,
+    "mtime_ns": 1791444908626706400
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Текстовая часть\\22E56-АР1-С_R3.docx",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Текстовая часть\\22E56-АР1-С_R3.docx",
+    "relative": "ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Текстовая часть/22E56-АР1-С_R3.docx",
+    "sha256": "65e8dcedd1cd30b48a6204b6308bd0140993cc53011702dd272d3e3263e5d288",
+    "bytes": 71651,
+    "mtime_ns": 1791444908632288000
+  },
+  {
+    "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Текстовая часть\\22E56-АР1_TL.docx",
+    "copy": "C:\\x\\tec26-oks\\sources-v001\\ИД\\ТЭЦ-26 для передачи АГР\\Актуальная ПД\\Текстовая часть\\22E56-АР1_TL.docx",
+    "relative": "ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Текстовая часть/22E56-АР1_TL.docx",
+    "sha256": "b39f91dca293a41107c4e38933cf72dc691cf603a40b5801d8023c559179b810",
+    "bytes": 45908,
+    "mtime_ns": 1791444908636938600
+  }
+]
