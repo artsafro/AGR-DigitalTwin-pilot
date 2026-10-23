@@ -1,0 +1,7 @@
+baseline=9c7e9290b6cfcd3f4eee0e586791db70a820b880
+python=3.14.7
+inputs_sha256={"jobs\\vyatskaya-tow02\\object.json": "6e327b3be1adf72f11a9e28789bc91c736c943bf2d2f82d714c56b3e990f00dc", "jobs\\vyatskaya-tow02\\pipeline\\spec-v002.json": "0130a927c9e6fdb9f79bf989d072ec889ca639b674b99983474eb065b981dda4"}
+spec_version=0.4; floors=21; levels=22; weld_m=0.003; plate_gap_m=0.005
+build=BuildError: 2D plan weld moves [391.779, 147.796] by 0.003605551 m, beyond weld_m 0.003 m; not built
+generated_2d_bound=25/25; includes axial exactly-at-threshold and diagonal over-bound
+input_hashes_unchanged=2/2; no model output requested or written
