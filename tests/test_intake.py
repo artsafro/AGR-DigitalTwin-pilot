@@ -98,6 +98,28 @@ def test_opening_waiver_does_not_transfer_between_sources(tmp_path):
     assert not check(d)["buildable"]  # revoked decision cannot survive the earlier positive control
 
 
+def test_opening_waiver_generated_prose_and_materials_matrix(tmp_path):
+    """Synthetic 25 exact-token mutations x 2 materials coverage states; no NLP permissions."""
+    from itertools import product
+
+    prefixes = ("", "NOT ", "Do not ", "Quoted: ", "Maybe ")
+    suffixes = ("", " denied", "; read first", "?", " for other.pptx")
+    closed = {"path": "slides.pptx", "format": "pptx", "reads": [], "opened": False,
+              "not_opened_reason": "corrupt", "role": "none", "waiver_question": "Q001"}
+    materials = {"path": "finishes.pptx", "format": "pptx", "reads": ["materials"],
+                 "opened": True, "role": "materials"}
+    for i, (prefix, suffix, cited) in enumerate(product(prefixes, suffixes, (False, True))):
+        facts = FACTS.replace("view.png | estimated", "finishes.pptx | estimated") if cited else FACTS
+        d = folder(tmp_path / str(i), files=(FBX, dict(PDF, path="album.pdf"), PNG, closed, materials), facts=facts)
+        _questions(d, [("Q001", prefix + "WAIVE OPENING: slides.pptx" + suffix)])
+        r = check(d)
+        assert r["buildable"] == (not prefix and not suffix and cited), r
+        if prefix or suffix:
+            assert any("slides.pptx" in e and "corrupt" in e for e in r["errors"])
+        if not cited:
+            assert any("finishes.pptx" in e and "materials source not cited" in e for e in r["errors"])
+
+
 def test_uncited_unopened_source_blocks_until_user_waiver(tmp_path):
     closed = {"path": "slides.pptx", "format": "pptx", "reads": [], "opened": False,
               "not_opened_reason": "corrupt archive", "role": "none"}
@@ -108,7 +130,7 @@ def test_uncited_unopened_source_blocks_until_user_waiver(tmp_path):
     inventory = json.loads((d / "sources.json").read_text(encoding="utf-8"))
     inventory["files"][-1]["waiver_question"] = "Q001"
     (d / "sources.json").write_text(json.dumps(inventory), encoding="utf-8")
-    _questions(d, [("Q001", "I waive opening slides.pptx for this build.")])
+    _questions(d, [("Q001", "WAIVE OPENING: slides.pptx")])
     assert check(d)["buildable"], check(d)["errors"]
 
 
@@ -132,9 +154,9 @@ def test_materials_source_needs_a_stated_fact(tmp_path, citation, value, confide
 @pytest.mark.parametrize("answer,status,qid", [
     ("", "answered", "Q001"), (" ", "answered", "Q001"),
     ("—", "answered", "Q001"), ("-", "answered", "Q001"),
-    ("Waive opening slides.pptx", "open", "Q001"),
-    ("Waive opening slides.pptx", "gone v002", "Q001"),
-    ("Waive opening slides.pptx", "answered", "Q999"),
+    ("WAIVE OPENING: slides.pptx", "open", "Q001"),
+    ("WAIVE OPENING: slides.pptx", "gone v002", "Q001"),
+    ("WAIVE OPENING: slides.pptx", "answered", "Q999"),
 ])
 def test_waiver_requires_unique_answered_question(tmp_path, answer, status, qid):
     closed = {"path": "slides.pptx", "format": "pptx", "reads": [], "opened": False,
@@ -146,7 +168,7 @@ def test_waiver_requires_unique_answered_question(tmp_path, answer, status, qid)
     path.write_text(text.replace("| answered |", f"| {status} |"), encoding="utf-8")
     assert not check(d)["buildable"]
     assert any("slides.pptx" in e for e in check(d)["errors"])
-    _questions(d, [("Q001", "Waive opening slides.pptx"), ("Q001", "Waive opening slides.pptx")])
+    _questions(d, [("Q001", "WAIVE OPENING: slides.pptx"), ("Q001", "WAIVE OPENING: slides.pptx")])
     assert not check(d)["buildable"]
 
 
@@ -164,7 +186,7 @@ def test_waiver_does_not_make_unopened_source_evidence(tmp_path, where):
         blocks = {k: block(B01[k], sources=("etalon.fbx", "slides.pptx"))
                   for k in ("frame", "levels", "floors", "roof")}
     d = folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG, closed), facts=facts, blocks=blocks)
-    _questions(d, [("Q001", "Waive opening slides.pptx")])
+    _questions(d, [("Q001", "WAIVE OPENING: slides.pptx")])
     r = check(d)
     assert not r["buildable"]
     assert any("'slides.pptx' did not open; it is no evidence" in e for e in r["errors"])
@@ -188,7 +210,7 @@ def test_source_gate_generated_matrix(tmp_path):
         assert r["buildable"] == (opened and cited), r
         assert check(d) == r  # repeats do not cache or change the result
         assert {p.name: p.read_bytes() for p in d.iterdir()} == before  # read-only
-        _questions(d, [("Q001", "Waive opening slides.pptx")])
+        _questions(d, [("Q001", "WAIVE OPENING: slides.pptx")])
         assert check(d)["buildable"] == (opened == cited)
         _questions(d, [])
         assert check(d)["buildable"] == (opened and cited)  # stale waiver must not survive reset
@@ -224,7 +246,7 @@ def test_invalid_waiver_reference_is_not_an_answer(tmp_path, waiver):
     closed = {"path": "slides.pptx", "format": "pptx", "reads": [], "opened": False,
               "not_opened_reason": "corrupt", "role": "none", "waiver_question": waiver}
     d = folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG, closed))
-    _questions(d, [("Q001", "Waive opening slides.pptx")])
+    _questions(d, [("Q001", "WAIVE OPENING: slides.pptx")])
     assert not check(d)["buildable"]
 
 

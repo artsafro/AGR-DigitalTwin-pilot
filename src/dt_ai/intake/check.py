@@ -14,7 +14,8 @@ The four files and their rules (user decisions 2026-10-11 [D049]):
 - spec-draft.json (dt_ai.intake.model.SpecDraft): null without a source, a confidence per block.
 
 Every listed unopened source blocks the draft unless its waiver_question names a unique answered
-question in questions.md with a non-placeholder user answer explicitly waiving opening that source.
+question in questions.md whose entire Answer is `WAIVE OPENING: <exact source path>`
+(outer whitespace ignored). Refusal, unrelated prose and path aliases never grant permission.
 A waiver never makes unread content evidence. Every opened source read for materials must appear in
 at least MIN_MATERIAL_FACTS stated picture.md facts (including colour facts from presentations; [D171],
 docs/decisions.md). This coverage gate does not change geometry priority or establish colour correctness.
@@ -140,7 +141,7 @@ def check(folder):
         errors.append("spec-draft.json: only images / sources without dimensions, yet no scale anchor needed (§15)")
     anchor_open = bool(draft and draft.anchor.needed and not draft.anchor.confirmed)
 
-    answers, opening_waivers = {}, set()
+    answers, opening_waivers = {}, {}
     questions = folder / "questions.md"
     if not questions.exists():
         errors.append("questions.md missing")
@@ -154,8 +155,8 @@ def check(folder):
             if twice:                                    # one answer per question (review 2 of PR #71)
                 errors.append(f"questions.md: question ids {twice} given more than once")
             answers = {r["ID"]: r["Answer"] for r in rows if r["ID"] not in twice}
-            opening_waivers = {r["ID"] for r in rows if r["ID"] not in twice
-                               and r["Status"] == "answered" and r["Answer"].strip() not in ("", "—", "-")}
+            opening_waivers = {r["ID"]: r["Answer"].strip() for r in rows
+                               if r["ID"] not in twice and r["Status"] == "answered"}
             report["questions"] = len(rows)
         except ValueError as exc:
             errors.append(f"questions.md: {exc}")
@@ -168,9 +169,10 @@ def check(folder):
         errors.append(f"spec-draft.json: object {draft.object!r} is not the inventory's {sources.object!r}")
 
     for source in by_path.values():
-        if not source.opened and source.waiver_question not in opening_waivers:
+        if not source.opened and opening_waivers.get(source.waiver_question) != f"WAIVE OPENING: {source.path}":
             errors.append(f"sources.json: {source.path!r} did not open: {source.not_opened_reason}; "
-                          "requires a user answer waiving it in questions.md (waiver_question)")
+                          f"requires answered waiver_question in questions.md with exact Answer "
+                          f"WAIVE OPENING: {source.path}")
 
     picture = folder / "picture.md"
     if not picture.exists():
