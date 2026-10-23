@@ -24,6 +24,22 @@ A new point at x = 21.01 has u = 1.01 on that face.
 
 Geometry eligibility is a separate report, geometry_report. checked == 0 does not
 mean the new point is geometrically valid.
+
+Acceptance table (new point; report fields ok / new / checked / off; test)
+  none                  -> True / 0 / 0 / 0           test_no_new_vertices_is_vacuous
+  (2, 0, 1)             -> True / 1 / 1 / 0           test_integer_joint_on_bottom_edge
+  (1.003, 0, 1)         -> True / 1 / 1 / 0           test_phase_0_003_inside_half_joint
+  (1.997, 0, 1)         -> True / 1 / 1 / 0           test_phase_0_997_wraps_inside_half_joint
+  (1.01, 0, 1)          -> False / 1 / 1 / 1, entry   test_phase_0_010_is_off_joint
+                           {source_polygon 0, u_m 1.01, off_joint_m 0.01}
+  (21.01, 10, 1) plain  -> True / 1 / 0 / 0           test_non_patterned_edge_is_not_checked
+  every case above, pivot shift (3,-5,2) restored, source vertices permuted
+  [3,7,1,5,0,4,2,6] with src_faces indices remapped, out_v reversed: reports equal the
+  canonical run, inputs unchanged   test_shift_and_vertex_order_leave_results_and_inputs
+  mutant: no wrap `dist = r`: (1.997,0,1) -> False / 1 / 1 / 1, polygon 0, u 1.997,
+                           distance 0.997                test_mutant_without_period_wrap_is_rejected
+  mutant: no patterned filter: (21.01,10,1) -> False / 1 / 1 / 1, polygon 1, u 1.01,
+                           distance 0.01          test_mutant_without_pattern_filter_is_rejected
 """
 import copy
 import importlib.util
@@ -95,6 +111,16 @@ def assert_clear_of_ends(x, x0, x1):
 def call_report(report_fn, extra, shift, permute):
     src_v = copy.deepcopy(SRC_V)
     src_faces = copy.deepcopy(SRC_FACES)
+    if permute:
+        # Jointly permute source vertices and remap src_faces indices.
+        perm = [3, 7, 1, 5, 0, 4, 2, 6]
+        assert sorted(perm) == list(range(len(SRC_V))) and perm != sorted(perm)
+        inv = {old: new for new, old in enumerate(perm)}
+        src_v = [list(SRC_V[old]) for old in perm]
+        src_faces = [[inv[i] for i in f] for f in SRC_FACES]
+        assert src_faces != SRC_FACES
+        for f, g in zip(SRC_FACES, src_faces):
+            assert [SRC_V[i] for i in f] == [src_v[i] for i in g]
     expected = copy.deepcopy(EXPECTED)
     spec = make_spec()
     shift_v = list(shift)
