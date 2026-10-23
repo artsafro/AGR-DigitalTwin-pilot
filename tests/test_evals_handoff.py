@@ -119,7 +119,8 @@ def test_body_delegation_sentence_rejected(tmp_path, repo, evals, capsys, senten
 def test_reviewer_negation_is_not_delegation(tmp_path, repo, evals, capsys):
     _, shas = repo
     extra = ("Verification boundary: reviewer did not run the full suite; reviewer ran 34 tests.\n"
-             "Keep author full-suite counts separate from reviewer runs.\n")
+             "Keep author full-suite counts separate from reviewer runs.\n"
+             "Issue: do not invent results or ask reviewers to run the full suite.\n")
     code, out = run(tmp_path, body(lines(shas, evals), extra), shas["head"], evals, capsys)
     assert code == 0, out.err
 
