@@ -80,6 +80,37 @@ def _islands(faces, n):
     return list(groups.values())
 
 
+def _cyclic_error(a, b, period):
+    d = abs(a % period - b % period)
+    return min(d, period - d)
+
+
+def _residual_steps(moved, period, tile):
+    us, vs = [p[0] for p in moved.values()], [p[1] for p in moved.values()]
+    cu, cv = (min(us) + max(us)) / 2, (min(vs) + max(vs)) / 2
+    return (math.floor((tile[0] + 0.5 - cu) / period[0] + 0.5),
+            math.floor((tile[1] + 0.5 - cv) / period[1] + 0.5))
+
+
+def _check_precision(island, points, moved, period, centre):
+    """Fail closed when float rounding broke the phase or the nearest-target placement."""
+    pu, pv = period
+    for i, (u1, v1) in moved.items():
+        u0, v0 = points[i]
+        err = max(_cyclic_error(u0, u1, pu), _cyclic_error(v0, v1, pv))
+        if not err <= PHASE_TOL:
+            raise ValueError(
+                f"island of faces {island}: precision-unsafe UV {points[i]!r} for period {period!r}, "
+                f"shift would change the phase by {err!r} > PHASE_TOL={PHASE_TOL}")
+    us = [p[0] for p in moved.values()]
+    vs = [p[1] for p in moved.values()]
+    cu, cv = (min(us) + max(us)) / 2, (min(vs) + max(vs)) / 2
+    if not (abs(cu - centre[0]) <= pu / 2 + PHASE_TOL and abs(cv - centre[1]) <= pv / 2 + PHASE_TOL):
+        raise ValueError(
+            f"island of faces {island}: precision-unsafe UV for period {period!r}, shifted centre "
+            f"({cu!r}, {cv!r}) is not within half a period of the target centre {centre!r}")
+
+
 def nudge_repeating_islands(uv, faces, face_materials, periods, *, target_tile: int = 1001) -> NudgeResult:
     """Shift islands of repeating materials by whole periods towards ``target_tile``.
 
@@ -88,7 +119,9 @@ def nudge_repeating_islands(uv, faces, face_materials, periods, *, target_tile: 
     ``(pu, pv)`` pattern period in UV units (``1 / repeats per tile``) or ``None``
     for a non-repeating material. An unmapped material, an island mixing
     repeating and non-repeating materials or different periods, a non-finite
-    coordinate and an empty mesh are errors. The input is not modified.
+    coordinate and an empty mesh are errors. A shift that float rounding would
+    spoil (phase error or centre overshoot > ``PHASE_TOL``, e.g. huge coordinates)
+    is an error naming the island, so the whole call fails and the input is not modified.
     """
     tu, tv = tile_origin(target_tile)
     if not faces or not uv:
@@ -135,8 +168,22 @@ def nudge_repeating_islands(uv, faces, face_materials, periods, *, target_tile: 
         ku = math.floor((tu + 0.5 - cu) / pu + 0.5)
         kv = math.floor((tv + 0.5 - cv) / pv + 0.5)
         du, dv = ku * pu, kv * pv
-        for i in verts:
-            out[i] = (points[i][0] + du, points[i][1] + dv)
+        moved = {i: (points[i][0] + du, points[i][1] + dv) for i in verts}
+        # Rounding of a huge (centre - target) / period can land one step off the
+        # canonical position; one fix-up step on the moved centre makes the result a
+        # fixed point (a second call gives steps (0, 0)).
+        fu, fv = _residual_steps(moved, period, (tu, tv))
+        if fu or fv:
+            ku, kv = ku + fu, kv + fv
+            du, dv = ku * pu, kv * pv
+            moved = {i: (points[i][0] + du, points[i][1] + dv) for i in verts}
+            if _residual_steps(moved, period, (tu, tv)) != (0, 0):
+                raise ValueError(
+                    f"island of faces {island}: precision-unsafe UV for period {period!r}, "
+                    f"shift by ({ku}, {kv}) steps does not reach a fixed point")
+        _check_precision(island, points, moved, period, (tu + 0.5, tv + 0.5))
+        for i, p in moved.items():
+            out[i] = p
         entry.update(steps=(ku, kv), shift=(du, dv), reason="repeating")
         report.append(entry)
     return NudgeResult(uv=out, islands=report)
