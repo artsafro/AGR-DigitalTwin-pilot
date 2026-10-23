@@ -214,4 +214,3 @@ def test_fresh_process_api():
     r = subprocess.run([sys.executable, '-c', code], capture_output=True, text=True)
     assert r.returncode == 0, r.stderr
     assert r.stdout.strip() == 'fresh-process OK'
-
