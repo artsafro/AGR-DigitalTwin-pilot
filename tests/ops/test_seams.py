@@ -188,6 +188,34 @@ def test_mesh_adapter_and_fresh_process_import():
     assert run.stdout.strip() == 'IMPORT_OK'
 
 
+@pytest.mark.parametrize('reverse', [False, True])
+@pytest.mark.parametrize('width, dz', [(w, d) for w in (1, 2) for d in (.002, .003, .005)]
+                         + [(1, 0), (1, .006)])
+def test_adjacent_offset_boundaries_have_one_authority(width, dz, reverse):
+    from dt_ai.ops.seams import join_parts
+    a = PolyMesh([(-width,0,0),(0,0,0),(0,1,0),(-width,1,0)], ((0,1,2,3),))
+    b = PolyMesh([(0,0,dz),(1,0,dz),(1,1,dz),(0,1,dz)], ((0,1,2,3),))
+    parts = dict([('a', a), ('b', b)][::(-1 if reverse else 1)])
+    snapshots = {name: m.vertices.copy() for name, m in parts.items()}
+    result = join_parts(parts)
+    assert face_pairs(result.mesh, XviewTolerance()) == []
+    shared = set(result.mesh.faces[0]) & set(result.mesh.faces[1])
+    assert len(shared) == (2 if dz <= .005 else 0)
+    assert result.max_weld_m == pytest.approx(dz if dz <= .005 else 0)
+    assert result.max_weld_m <= .005
+    assert result.displacements == {}
+    if shared:
+        # 'a' is larger, or wins equal-area ties by stable source name, not order.
+        np.testing.assert_array_equal(sorted(result.mesh.vertices[list(shared)].tolist()),
+                                      [[0,0,0], [0,1,0]])
+    assert {s for labels in result.face_sources for s in labels} == {('a',0), ('b',0)}
+    assert {s for labels in result.vertex_sources for s in labels} == {
+        (name,i) for name in parts for i in range(4)}
+    for name, m in parts.items():
+        np.testing.assert_array_equal(m.vertices, snapshots[name])
+        assert m.faces == ((0,1,2,3),)
+
+
 def test_report_includes_coincident_weld_motion_not_only_boundary_snaps():
     from dt_ai.ops.seams import join_parts
     mesh = PolyMesh([(0,0,0),(1,0,0),(0,1,0),
