@@ -26,8 +26,14 @@ QUOTE_MARKS = (
     'WITHOUT changing geometry',
     'small frames of ID4 = RAL 7004',
 )
+# Provisioned publication input. Default unit tests must not read this file.
+# Marker panel_texture requires this path and PANEL_TEXTURE_SHA.
 PANEL_TEXTURE = 'C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png'
 PANEL_TEXTURE_SHA = '2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece'
+# In-memory stand-in for validator mutation tests. synthetic=True; not publication evidence.
+SYNTHETIC_PANEL_BYTES = b'synthetic-ac04-panel-joints-v1'
+SYNTHETIC_PANEL_SHA = hashlib.sha256(SYNTHETIC_PANEL_BYTES).hexdigest()
+SYNTHETIC_PANEL_PATH = 'synthetic://ac04/panel_RAL5015_vertical_joints'
 PANEL_QUOTE = (
     'Панели неверные, должны быть вертикальные швы только; текстуру пришлю; '
     'если не влезает, можно аккуратно порезать через loop или ring'
@@ -107,7 +113,8 @@ def _facade_name(facade):
 def _require_resolved_facade(label, facade):
     """A counted facade has an integer rib count and a positive step.
 
-    When the panel-field width is recorded, count times step stays within 2% of that width.
+    When the panel-field width is recorded, count times step stays strictly inside 2%.
+    A ratio of exactly 2% is an error.
     """
     name = _facade_name(facade)
     count = facade.get('rib_count')
@@ -127,9 +134,10 @@ def _require_resolved_facade(label, facade):
         raise ValueError(
             f'{label} facade {name} field_width_m must be a positive finite number, got {width!r}'
         )
-    if abs(count * float(step) - float(width)) / float(width) > WIDTH_TOLERANCE:
+    ratio = abs(count * float(step) - float(width)) / float(width)
+    if not math.isfinite(ratio) or ratio >= WIDTH_TOLERANCE:
         raise ValueError(
-            f'{label} facade {name} rib_count * step_m is not within 2% of the panel-field width'
+            f'{label} facade {name} rib_count * step_m is not strictly within 2% of the panel-field width'
         )
 
 
@@ -168,16 +176,21 @@ def unresolved_facade_report(doc):
     return names
 
 
-def validate_panel_joints(doc):
+def validate_panel_joints(doc, read_bytes=None):
     """RAL5015 panels are vertical joints only; every other finish stays free of panel joints.
 
     The joint step is per facade from the colour sheet. A fixed module_m is not a fallback.
     An unresolved facade must carry a question. It does not by itself revoke gate approval;
     unresolved_facade_report lists it.
     Fail closed: a horizontal orientation, a bad rib count (the error names the facade),
-    a non-positive step, a count that misses the recorded field width by more than 2%,
-    a below-grade value other than plain, or a texture SHA256 that does not match the file.
+    a non-positive step, a count whose field-width ratio is 2% or more,
+    a below-grade value other than plain, empty or unsupported texture bytes,
+    or a texture SHA256 that does not match the file.
+    read_bytes defaults to Path(path).read_bytes(). Unit tests pass an in-memory reader.
     """
+    if read_bytes is None:
+        def read_bytes(path):
+            return Path(path).read_bytes()
     for label, node, is_panel in _walk_finish_nodes(doc):
         if not is_panel:
             if node.get('map_type') == 'vertical_joints' or 'joint_spec' in node:
@@ -211,7 +224,10 @@ def validate_panel_joints(doc):
         path = source.get('path')
         if not isinstance(path, str) or not path:
             raise ValueError(f'{label} source_texture path is missing')
-        actual = hashlib.sha256(Path(path).read_bytes()).hexdigest()
+        raw = read_bytes(path)
+        if isinstance(raw, str) or not isinstance(raw, (bytes, bytearray)) or len(raw) == 0:
+            raise ValueError(f'{label} source_texture bytes are missing or unsupported')
+        actual = hashlib.sha256(bytes(raw)).hexdigest()
         if recorded != actual:
             raise ValueError(
                 f'{label} source_texture sha256 mismatch: recorded {recorded!r} != file {actual}'
@@ -226,6 +242,35 @@ def validate_panel_joints(doc):
 
 def _panel_nodes(doc):
     return [node for _label, node, is_panel in _walk_finish_nodes(doc) if is_panel]
+
+
+def _read_synthetic_panel(path):
+    if path != SYNTHETIC_PANEL_PATH:
+        raise FileNotFoundError(path)
+    return SYNTHETIC_PANEL_BYTES
+
+
+def _use_synthetic_panel(doc, sha=None):
+    """Point panel source_texture at the in-memory synthetic payload.
+
+    synthetic=True marks the bytes as not publication evidence.
+    """
+    recorded = SYNTHETIC_PANEL_SHA if sha is None else sha
+    for node in _panel_nodes(doc):
+        spec = node.get('joint_spec')
+        if not isinstance(spec, dict):
+            continue
+        source = spec.get('source_texture')
+        if not isinstance(source, dict):
+            continue
+        source['path'] = SYNTHETIC_PANEL_PATH
+        source['sha256'] = recorded
+        source['synthetic'] = True
+    return doc
+
+
+def _validate_unit(doc, sha=None):
+    return validate_panel_joints(_use_synthetic_panel(doc, sha=sha), read_bytes=_read_synthetic_panel)
 
 
 def _measure_panel_texture(path):
@@ -398,22 +443,11 @@ def test_ac04_manifest_and_source_provenance():
 
 
 def test_ac04_ral5015_vertical_joints_spec():
-    import numpy as np
-
+    """JSON and MATERIALS.md only. Does not read the provisioned panel texture."""
     d = load()
     validate_gate1(d)
-    validate_panel_joints(d)
     panels = _panel_nodes(d)
     assert len(panels) == 2
-    measured = _measure_panel_texture(PANEL_TEXTURE)
-    assert measured['sha256'] == PANEL_TEXTURE_SHA
-    assert measured['runs'] == [(266, 8), (866, 8), (1466, 8), (2066, 8), (2666, 8), (3266, 8), (3866, 8)]
-    assert all(measured['runs'][i + 1][0] - measured['runs'][i][0] == 600 for i in range(6))
-    mean = measured['mean']
-    assert [int(round(channel)) for channel in mean] == [34, 112, 177]
-    kpp = np.array(KPP_RALS['RAL5015'], dtype=np.float64)
-    delta = mean - kpp
-    assert float(np.max(np.abs(delta))) <= COLOUR_TOLERANCE_MAX_ABS
     for panel in panels:
         spec = panel['joint_spec']
         assert spec['orientation'] == 'vertical_only'
@@ -435,20 +469,53 @@ def test_ac04_ral5015_vertical_joints_spec():
         )
         assert spec['supersedes']['quote'] == PANEL_QUOTE
         assert spec['supersedes']['below_grade_quote'] == BELOW_GRADE_QUOTE
-        recorded_mean = spec['measured']['mean_rgb']
-        assert np.allclose(recorded_mean, mean, atol=1e-6)
         assert spec['measured']['mean_rgb_rounded'] == [34, 112, 177]
         assert spec['measured']['width_px'] == 4096 and spec['measured']['height_px'] == 4096
         assert spec['measured']['joint_count'] == 7
         assert spec['measured']['joint_width_px'] == 8
         assert spec['measured']['joint_period_px'] == 600
-        assert np.allclose(spec['colour_delta_vs_kpp'], delta, atol=1e-6)
         assert spec['colour_tolerance_max_abs'] == COLOUR_TOLERANCE_MAX_ABS
         assert spec['colour_reference_role'] == 'kpp_colour_only'
     md = (ROOT / 'MATERIALS.md').read_text(encoding='utf-8')
     assert PANEL_QUOTE in md and BELOW_GRADE_QUOTE in md
     assert 'vertical_joints' in md
     assert 'approved-gate1' in md
+
+
+@pytest.mark.panel_texture
+def test_ac04_ral5015_panel_texture_publication_evidence():
+    """Publication evidence for the RAL5015 vertical-joint texture.
+
+    Required provisioned input, not a unit fixture and not a skip:
+    path C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png
+    sha256 2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece.
+    A missing file fails this check.
+    """
+    import numpy as np
+
+    if PANEL_TEXTURE != 'C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png':
+        raise AssertionError('provisioned path contract drifted')
+    if PANEL_TEXTURE_SHA != '2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece':
+        raise AssertionError('provisioned sha256 contract drifted')
+    if not Path(PANEL_TEXTURE).is_file():
+        raise FileNotFoundError(
+            f'required provisioned panel texture is missing: {PANEL_TEXTURE} sha256 {PANEL_TEXTURE_SHA}'
+        )
+    d = load()
+    validate_panel_joints(d)
+    measured = _measure_panel_texture(PANEL_TEXTURE)
+    assert measured['sha256'] == PANEL_TEXTURE_SHA
+    assert measured['runs'] == [(266, 8), (866, 8), (1466, 8), (2066, 8), (2666, 8), (3266, 8), (3866, 8)]
+    assert all(measured['runs'][i + 1][0] - measured['runs'][i][0] == 600 for i in range(6))
+    mean = measured['mean']
+    assert [int(round(channel)) for channel in mean] == [34, 112, 177]
+    kpp = np.array(KPP_RALS['RAL5015'], dtype=np.float64)
+    delta = mean - kpp
+    assert float(np.max(np.abs(delta))) <= COLOUR_TOLERANCE_MAX_ABS
+    for panel in _panel_nodes(d):
+        spec = panel['joint_spec']
+        assert np.allclose(spec['measured']['mean_rgb'], mean, atol=1e-6)
+        assert np.allclose(spec['colour_delta_vs_kpp'], delta, atol=1e-6)
 
 
 def test_horizontal_joints_not_allowed():
@@ -462,7 +529,7 @@ def test_horizontal_joints_not_allowed():
             if isinstance(spec, dict):
                 spec['orientation'] = orientation
         with pytest.raises(ValueError, match='vertical_only'):
-            validate_panel_joints(doc)
+            _validate_unit(doc)
         caught += 1
     assert caught == len(orientations)
 
@@ -479,7 +546,7 @@ def test_panel_joint_texel_positive_finite():
                 if isinstance(spec, dict):
                     spec[key] = bad
             with pytest.raises(ValueError, match=rf'\b{key}\b'):
-                validate_panel_joints(doc)
+                _validate_unit(doc)
             caught += 1
     assert caught == len(POSITIVE_FINITE_KEYS) * len(bad_values)
 
@@ -499,28 +566,57 @@ def test_per_facade_rib_count_rejects_bad_values_by_name():
                     facade['rib_count'] = bad
                     facade['step_m'] = 1.0
         with pytest.raises(ValueError, match=target):
-            validate_panel_joints(doc)
+            _validate_unit(doc)
         caught += 1
     assert caught == len(bad_values)
 
 
-def test_per_facade_step_and_width_and_no_module_fallback():
-    """Step is a positive finite number. Count times step stays within 2% of a recorded width. module_m 0.60 is rejected."""
-    target = SHEET_FACADES[1]
-    doc = load()
+def _settle_target_facade(doc, target, **fields):
     for node in _panel_nodes(doc):
         for facade in node['joint_spec']['per_facade']:
             if facade['facade'] == target:
                 facade.pop('status', None)
                 facade.pop('question', None)
-                facade['rib_count'] = 14
-                facade['step_m'] = 1.0
-                facade['field_width_m'] = 14.0
+                facade.update(fields)
         node['joint_spec']['per_facade'] = [
             facade for facade in node['joint_spec']['per_facade'] if facade.get('status') != 'unresolved'
         ]
     doc['joint_report'] = {'unresolved_facades': unresolved_facade_report(doc)}
-    validate_panel_joints(doc)
+    return doc
+
+
+def test_per_facade_step_and_width_and_no_module_fallback():
+    """Invariant: step is positive finite, and count times step is strictly inside 2% of the field width.
+
+    Probe: 0/NaN/inf step, a ratio of exactly 2%, a ratio above 2%, module_m 0.60, and an empty per_facade.
+    A ratio of 1% passes.
+    """
+    target = SHEET_FACADES[1]
+    doc = _settle_target_facade(load(), target, rib_count=14, step_m=1.0, field_width_m=14.0)
+    _validate_unit(doc)
+
+    inside = _settle_target_facade(load(), target, rib_count=101, step_m=1.0, field_width_m=100.0)
+    _validate_unit(inside)
+
+    exact = _settle_target_facade(load(), target, rib_count=102, step_m=1.0, field_width_m=100.0)
+    with pytest.raises(ValueError, match=target):
+        _validate_unit(exact)
+
+    bad_steps = (0, float('nan'), float('inf'), float('-inf'))
+    step_caught = 0
+    for bad in bad_steps:
+        step_doc = load()
+        for node in _panel_nodes(step_doc):
+            for facade in node['joint_spec']['per_facade']:
+                if facade['facade'] == target:
+                    facade.pop('status', None)
+                    facade.pop('question', None)
+                    facade['rib_count'] = 14
+                    facade['step_m'] = bad
+        with pytest.raises(ValueError, match=target):
+            _validate_unit(step_doc)
+        step_caught += 1
+    assert step_caught == len(bad_steps)
 
     mismatch = load()
     for node in _panel_nodes(mismatch):
@@ -532,26 +628,63 @@ def test_per_facade_step_and_width_and_no_module_fallback():
                 facade['step_m'] = 1.0
                 facade['field_width_m'] = 14.0
     with pytest.raises(ValueError, match=target):
-        validate_panel_joints(mismatch)
+        _validate_unit(mismatch)
 
     fallback = load()
     for node in _panel_nodes(fallback):
         node['joint_spec']['module_m'] = 0.60
     with pytest.raises(ValueError, match='0.60'):
-        validate_panel_joints(fallback)
+        _validate_unit(fallback)
 
     empty = load()
     for node in _panel_nodes(empty):
         node['joint_spec']['per_facade'] = []
     with pytest.raises(ValueError, match='per_facade'):
-        validate_panel_joints(empty)
+        _validate_unit(empty)
+
+
+def test_width_ratio_just_inside_exact_and_just_outside():
+    """The field-width ratio is strict: exactly 2% and 2.01% fail; 1.99% passes.
+
+    Worked synthetic widths, all with step_m 1:
+    rib_count 10199 / field 10000 = 1.99% (accepted);
+    rib_count 10200 / field 10000 = 2% (rejected);
+    rib_count 10201 / field 10000 = 2.01% (rejected).
+    NaN/inf field width is an error. A finite step whose product overflows
+    to a non-finite ratio is an error.
+    """
+    target = SHEET_FACADES[2]
+    width = 10000.0
+    inside = _settle_target_facade(load(), target, rib_count=10199, step_m=1.0, field_width_m=width)
+    _validate_unit(inside)
+
+    exact = _settle_target_facade(load(), target, rib_count=10200, step_m=1.0, field_width_m=width)
+    with pytest.raises(ValueError, match='2%'):
+        _validate_unit(exact)
+
+    outside = _settle_target_facade(load(), target, rib_count=10201, step_m=1.0, field_width_m=width)
+    with pytest.raises(ValueError, match='2%'):
+        _validate_unit(outside)
+
+    for bad in (float('nan'), float('inf'), float('-inf')):
+        width_doc = _settle_target_facade(load(), target, rib_count=14, step_m=1.0, field_width_m=14.0)
+        for node in _panel_nodes(width_doc):
+            for facade in node['joint_spec']['per_facade']:
+                if facade['facade'] == target:
+                    facade['field_width_m'] = bad
+        with pytest.raises(ValueError, match='field_width_m'):
+            _validate_unit(width_doc)
+
+    overflow = _settle_target_facade(load(), target, rib_count=10, step_m=1e308, field_width_m=1.0)
+    with pytest.raises(ValueError, match='2%'):
+        _validate_unit(overflow)
 
 
 def test_unresolved_facade_keeps_gate_approved_and_is_listed():
     """An unresolved facade does not revoke approved-gate1. The report lists it."""
     doc = load()
     validate_gate1(doc)
-    validate_panel_joints(doc)
+    _validate_unit(doc)
     assert doc['gate_1_status'] == 'approved-gate1'
     report = unresolved_facade_report(doc)
     assert report
@@ -589,25 +722,198 @@ def test_below_grade_must_be_plain():
             if isinstance(spec, dict):
                 spec['below_grade'] = below
         with pytest.raises(ValueError, match='plain'):
-            validate_panel_joints(doc)
+            _validate_unit(doc)
         caught += 1
     assert caught == len(bad_values)
 
 
 def test_texture_sha_mismatch_is_an_error():
-    """Invariant: the recorded panel-texture SHA256 matches the file bytes."""
+    """Invariant: the recorded panel-texture SHA256 matches the bytes the reader returns."""
     bad_hashes = ('0' * 64, PANEL_TEXTURE_SHA[:-1] + ('0' if PANEL_TEXTURE_SHA[-1] != '0' else '1'))
     caught = 0
     for bad in bad_hashes:
-        doc = load()
-        for node in _panel_nodes(doc):
-            spec = node.get('joint_spec')
-            if isinstance(spec, dict):
-                spec['source_texture']['sha256'] = bad
         with pytest.raises(ValueError, match='sha256 mismatch'):
-            validate_panel_joints(doc)
+            _validate_unit(load(), sha=bad)
         caught += 1
     assert caught == len(bad_hashes)
+
+
+def test_texture_bytes_fail_closed():
+    """Invariant: empty, partial and unsupported texture bytes are errors, never a pass."""
+    def empty(_path):
+        return b''
+
+    def partial(_path):
+        return SYNTHETIC_PANEL_BYTES[:4]
+
+    def missing(_path):
+        return None
+
+    def text(_path):
+        return 'unsupported'
+
+    readers = (empty, partial, missing, text)
+    caught = 0
+    for reader in readers:
+        with pytest.raises(ValueError):
+            validate_panel_joints(_use_synthetic_panel(load()), read_bytes=reader)
+        caught += 1
+    assert caught == len(readers)
+
+
+def test_valid_synthetic_panel_control_passes():
+    """A synthetic panel payload validates, and the control is marked synthetic=True.
+
+    The reader serves only the in-memory bytes. The provisioned publication path is not used.
+    """
+    doc = load()
+    seen = []
+
+    def read_bytes(path):
+        seen.append(path)
+        if path != SYNTHETIC_PANEL_PATH:
+            raise FileNotFoundError(path)
+        return SYNTHETIC_PANEL_BYTES
+
+    _use_synthetic_panel(doc)
+    panels = _panel_nodes(doc)
+    assert panels
+    for node in panels:
+        source = node['joint_spec']['source_texture']
+        assert source['synthetic'] is True
+        assert source['path'] == SYNTHETIC_PANEL_PATH
+        assert source['sha256'] == hashlib.sha256(SYNTHETIC_PANEL_BYTES).hexdigest()
+    validate_panel_joints(doc, read_bytes=read_bytes)
+    assert seen == [SYNTHETIC_PANEL_PATH] * len(panels)
+
+
+def test_missing_provisioned_panel_texture_is_an_error():
+    """Invariant: the publication check fails when the provisioned file is absent. It does not skip."""
+    original = Path.is_file
+
+    def missing(self):
+        if Path(str(self)) == Path(PANEL_TEXTURE):
+            return False
+        return original(self)
+
+    Path.is_file = missing
+    try:
+        with pytest.raises(FileNotFoundError, match=PANEL_TEXTURE_SHA):
+            test_ac04_ral5015_panel_texture_publication_evidence()
+    finally:
+        Path.is_file = original
+
+
+@pytest.mark.panel_texture
+def test_hash_mismatched_publication_panel_bytes_are_an_error():
+    """The provisioned file is present, but injected bytes do not match its recorded SHA256.
+
+    The reader is injected on the publication path. The file on disk is not modified.
+    A mismatch is an error and must not pass.
+    """
+    path = Path(PANEL_TEXTURE)
+    if not path.is_file():
+        raise FileNotFoundError(
+            f'required provisioned panel texture is missing: {PANEL_TEXTURE} sha256 {PANEL_TEXTURE_SHA}'
+        )
+    on_disk = path.read_bytes()
+    assert hashlib.sha256(on_disk).hexdigest() == PANEL_TEXTURE_SHA
+    mismatched = b'hash-mismatch-' + on_disk[:16]
+    assert hashlib.sha256(mismatched).hexdigest() != PANEL_TEXTURE_SHA
+
+    def read_mismatched(requested):
+        if requested != PANEL_TEXTURE:
+            raise AssertionError(requested)
+        return mismatched
+
+    doc = load()
+    for node in _panel_nodes(doc):
+        source = node['joint_spec']['source_texture']
+        assert source['path'] == PANEL_TEXTURE
+        assert source['sha256'] == PANEL_TEXTURE_SHA
+        assert source.get('synthetic') is not True
+    with pytest.raises(ValueError, match='sha256 mismatch'):
+        validate_panel_joints(doc, read_bytes=read_mismatched)
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == PANEL_TEXTURE_SHA
+
+
+_PROBE_TEST = 'test_default_unit_tests_do_not_read_private_panel_texture'
+_INTEGRATION_MARKER = 'panel_texture'
+
+
+def _pytest_marks(fn):
+    marks = getattr(fn, 'pytestmark', ())
+    if not isinstance(marks, (list, tuple)):
+        return (marks,)
+    return tuple(marks)
+
+
+def _default_unit_test_functions():
+    selected = []
+    for name, fn in sorted(globals().items()):
+        if not name.startswith('test_') or not callable(fn) or name == _PROBE_TEST:
+            continue
+        marks = _pytest_marks(fn)
+        if any(getattr(mark, 'name', None) == _INTEGRATION_MARKER for mark in marks):
+            continue
+        selected.append((name, fn, marks))
+    return selected
+
+
+def test_default_unit_tests_do_not_read_private_panel_texture(monkeypatch):
+    """Invariant: the default unit selection never reads the private panel texture.
+
+    Probe: Path.read_bytes and Path.open raise FileNotFoundError for
+    C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png,
+    and Path.exists on that path is recorded. Every default unit test still passes,
+    and none of those calls touch the path.
+    """
+    hits = []
+    original_read = Path.read_bytes
+    original_open = Path.open
+    original_exists = Path.exists
+
+    def is_private(path):
+        try:
+            return Path(str(path)) == Path(PANEL_TEXTURE)
+        except (TypeError, ValueError):
+            return False
+
+    def guarded_read(self):
+        if is_private(self):
+            hits.append(('read_bytes', str(self)))
+            raise FileNotFoundError(PANEL_TEXTURE)
+        return original_read(self)
+
+    def guarded_open(self, *args, **kwargs):
+        if is_private(self):
+            hits.append(('open', str(self)))
+            raise FileNotFoundError(PANEL_TEXTURE)
+        return original_open(self, *args, **kwargs)
+
+    def guarded_exists(self):
+        if is_private(self):
+            hits.append(('exists', str(self)))
+            return False
+        return original_exists(self)
+
+    monkeypatch.setattr(Path, 'read_bytes', guarded_read)
+    monkeypatch.setattr(Path, 'open', guarded_open)
+    monkeypatch.setattr(Path, 'exists', guarded_exists)
+
+    ran = []
+    for name, fn, marks in _default_unit_test_functions():
+        skipped = False
+        for mark in marks:
+            if getattr(mark, 'name', None) == 'skipif' and mark.args and bool(mark.args[0]):
+                skipped = True
+                break
+        if skipped:
+            continue
+        fn()
+        ran.append(name)
+    assert ran
+    assert hits == []
 
 
 SWATCH_V007 = Path('G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v007/swatches.png')
