@@ -181,7 +181,8 @@ def _newell_vector(points: np.ndarray) -> np.ndarray:
 
 
 def _shoelace(points: np.ndarray) -> float:
-    x, y = points[:, 0], points[:, 1]
+    local = points - points[0]  # local frame: a far-from-origin ring keeps its area
+    x, y = local[:, 0], local[:, 1]
     return 0.5 * float(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
 
 
@@ -197,6 +198,8 @@ def _simple_2d(points: np.ndarray) -> bool:
     """
     ring = np.asarray(points, dtype=np.float64)
     count = len(ring)
+    if count:
+        ring = ring - ring.min(axis=0)  # local frame: tolerances follow the ring extent, not its offset
     scale = max(float(np.max(np.abs(ring))) if count else 0.0, 1e-12)
     eps = 1e-12 * scale * scale
 

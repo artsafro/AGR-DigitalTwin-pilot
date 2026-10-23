@@ -812,3 +812,33 @@ def test_cli_repeat_does_not_overwrite(tmp_path):
         assert list(tmp_path.glob("*.partial")) == []
         repeats += 1
     print(f"repeat publish probe {repeats}/{repeats}")
+
+
+@pytest.mark.parametrize("offset", [0.0, 1.0, 1e3, 1e5, 1e7])
+@pytest.mark.parametrize("start", [0, 1, 2, 3])
+@pytest.mark.parametrize("reverse", [False, True])
+def test_uv_area_is_origin_independent_for_far_offsets(offset, start, reverse):
+    """Round 3 P1: unit world square, UV side .84 at (1e7,1e7) must be ~0.7056 area / ~1720.32 px/m / fail."""
+    xyz, _ = _square(1.0, 1.0)
+    base = [[offset, offset], [offset + 0.84, offset], [offset + 0.84, offset + 0.84], [offset, offset + 0.84]]
+    uv = base[start:] + base[:start]
+    pts = list(zip(xyz[start:] + xyz[:start], uv))
+    if reverse:
+        pts = pts[::-1]
+    xs, uvs = [p[0] for p in pts], [p[1] for p in pts]
+    value, uv_area, world = _mod()._measure(xs, uvs, 2048)
+    assert uv_area == pytest.approx(0.7056, rel=1e-6)
+    assert world == pytest.approx(1.0)
+    assert value == pytest.approx(1720.32, rel=1e-6)
+
+
+def test_far_offset_uv_square_fails_vpm_band_in_a_fresh_cli_process(tmp_path):
+    xyz, _ = _square(1.0, 1.0)
+    o = 1e7
+    uv = [[o, o], [o + 0.84, o], [o + 0.84, o + 0.84], [o, o + 0.84]]
+    src, out, rep = tmp_path / "in.json", tmp_path / "out.json", tmp_path / "rep.json"
+    src.write_text(json.dumps(_payload("VPM", 2048, xyz, uv)), encoding="utf-8")
+    done = subprocess.run([sys.executable, "-m", "dt_ai.ops.texel_density_readout", "--input", str(src),
+                           "--output", str(out), "--report", str(rep)], capture_output=True, text=True)
+    assert done.returncode == 1, done.stdout + done.stderr
+    assert json.loads(out.read_text(encoding="utf-8"))["faces"][0]["px_per_m"] == pytest.approx(1720.32, rel=1e-6)
