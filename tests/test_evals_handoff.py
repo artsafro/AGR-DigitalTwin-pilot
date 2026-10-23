@@ -512,3 +512,82 @@ def test_round1_fixes_combined(tmp_path, repo, evals, capsys):
                    capsys, "malformed count", "Affected tests is not evidence", "GREEN",
                    "delegated to the reviewer")
     assert out.err.count("ERROR:") >= 4
+
+
+# Review round 2 (PR #612): scientific tokens that also look like a short hex commit id are malformed counts.
+SCIENTIFIC = [f"{m}{e}{z}{x}" for m in ("1", "12", "999") for e in ("e", "E") for z in ("", "0", "0000")
+              for x in ("3", "10000", "1")]
+
+
+@pytest.mark.parametrize("token", SCIENTIFIC)
+@pytest.mark.parametrize("field", ["passed", "failed", "errors"])
+def test_count_parser_flags_scientific(token, field):
+    """Generated: mantissa/exponent length variants, incl. 7+ char hex-shaped ones (1e00003), never pass."""
+    from twinqa.evals.handoff import parse_counts
+
+    counts, bad = parse_counts(f"abc1234 -> 4 passed, {token} {field}, 0 failed")
+    assert bad == [f"{token} {field}"]
+
+
+@pytest.mark.parametrize("key", ["full", "green", "affected", "red"])
+@pytest.mark.parametrize("token", ["1e00003", "1e10000", "12e0003", "1E00003", "999e00001"])
+def test_scientific_counts_rejected(tmp_path, repo, evals, capsys, key, token):
+    """CLI: hex-shaped scientific counts on every count-bearing line exit 1 naming them; no OK."""
+    _, shas = repo
+    head, red = shas["head"][:9], shas["red"][:9]
+    tail = f"4 passed, {token} failed"
+    parts = lines(shas, evals)
+    if key == "full":
+        parts["full"] = f"- Full suite: suite_slot.py on {head}: {tail}"
+    elif key == "green":
+        parts["green"] = f"- After (GREEN): {head} {tail}"
+    elif key == "red":
+        parts["red"] = f"- Before (RED): {red} -> 3 failed, {token} errors"
+        token = f"{token} errors"
+    else:
+        parts["full"] = parts["full"].replace(head, red)
+        parts["affected"] = f"- Affected tests: {head} -> {tail}"
+    expected = token if key == "red" else f"{token} failed"
+    out = rejected(tmp_path, body(parts), shas["head"], evals, capsys, "malformed count", expected)
+    assert "OK" not in out.out
+
+
+@pytest.mark.parametrize("value", [
+    "- After (GREEN): {head} 4 passed, 1e00003 failed",
+    "- Full suite: suite_slot.py on {head}: 4 passed, 1e10000 failed",
+])
+def test_reviewer_round2_witnesses_rejected(tmp_path, repo, evals, capsys, value):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["green" if "GREEN" in value else "full"] = value.format(head=shas["head"][:9])
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "malformed count")
+
+
+@pytest.mark.parametrize("value,expected", [
+    ("3ff7e37 failed: 3 failed", {"failed": 3}),
+    ("abc1234 passed; 4 passed, 0 failed", {"passed": 4, "failed": 0}),
+    ("on deadbeef0123: 13676 passed, 0 failed", {"passed": 13676, "failed": 0}),
+    ("1e2f3a4 failed: 2 failed", {"failed": 2}),
+])
+def test_commit_annotations_still_not_counts(value, expected):
+    """Controls: a real hex commit id (letters beyond a single e) before a count word is not a count."""
+    from twinqa.evals.handoff import parse_counts
+
+    counts, bad = parse_counts(value)
+    assert bad == []
+    assert {k: v for k, v in counts.items() if v is not None} == expected
+
+
+def test_round2_fixes_combined(tmp_path, repo, evals, capsys):
+    """Round-2 witness with every round-1 and earlier fix in one body: all reported, no OK."""
+    _, shas = repo
+    head, red = shas["head"][:9], shas["red"][:9]
+    parts = lines(shas, evals)
+    parts["full"] = f"- Full suite: suite_slot.py on {red}: 4 passed, 1e10000 failed"
+    parts["affected"] = f"- Affected tests: {head} 4 passed, nan failed; pending rerun"
+    parts["green"] = f"- After (GREEN): {head} 4 passed, 1e00003 failed"
+    out = rejected(tmp_path, body(parts, "The full suite is left to the reviewer.\n"), shas["head"], evals,
+                   capsys, "1e10000 failed", "1e00003 failed", "nan failed", "Affected tests is not evidence",
+                   "delegated to the reviewer")
+    assert out.err.count("ERROR:") >= 5
+    assert "OK" not in out.out
