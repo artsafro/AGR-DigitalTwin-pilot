@@ -5,6 +5,7 @@ No DCC, files, cached reports or inferred movement direction. Inputs are copied.
 The construction gate conservatively rejects exactly 10 mm; xView remains 5 mm.
 """
 from collections.abc import Mapping
+from dataclasses import dataclass
 
 import numpy as np
 
@@ -68,3 +69,48 @@ def clearance_pairs(scene):
     into independent parts: this interface never guesses a weld by coordinates.
     """
     return _pairs(_snapshot(scene), CLEARANCE_M)
+
+
+@dataclass(frozen=True)
+class RigidMove:
+    scene: dict
+    moved: tuple
+    contacts: tuple
+    clearance: tuple
+
+
+def move_rigid(scene, seeds, vector, *, fixed):
+    """Move the transitive <=10 mm parallel-neighbour closure by one vector.
+
+    `fixed` explicitly identifies stationary hosts/obstacles (not guessed from names).
+    Neighbours of fixed parts are still tested; fixed parts only stop propagation.
+    Whole parts move, never selected end vertices. Refuse if ANY inv_xview face pair
+    remains anywhere at 5 mm, including internal pairs and newly reached obstacles.
+    Return no candidate on failure and never mutate caller arrays. Remaining 10 mm
+    construction failures stay visible in `clearance`; zero xView is not acceptance.
+    """
+    scene = _snapshot(scene)
+    moving, fixed = set(seeds), set(fixed)
+    for label in moving | fixed:
+        if label not in scene:
+            raise ValueError(f'unknown part: {label!r}')
+    if not moving or moving & fixed:
+        raise ValueError('seeds must be nonempty and disjoint from fixed parts')
+    vector = np.asarray(vector, dtype=float)
+    if vector.shape != (3,) or not np.isfinite(vector).all() or not np.any(vector):
+        raise ValueError('vector must be a finite nonzero (3,) translation')
+    near = _pairs(scene, CLEARANCE_M)
+    while True:
+        expanded = moving | {b for a, _, b, _, _ in near if a in moving and b not in fixed} | \
+            {a for a, _, b, _, _ in near if b in moving and a not in fixed}
+        if expanded == moving:
+            break
+        moving = expanded
+    after = {name: PolyMesh(mesh.vertices + vector if name in moving else mesh.vertices.copy(), mesh.faces)
+             for name, mesh in scene.items()}
+    mesh, owners, local = _joined(after)
+    contacts = ix.face_pairs(mesh, ix.XviewTolerance())
+    if contacts:
+        named = [(owners[a], local[a], owners[b], local[b], kind) for a, b, kind, _ in contacts]
+        raise ValueError(f'rigid move leaves face contacts/overlaps: {named[:5]}')
+    return RigidMove(after, tuple(sorted(moving)), (), _pairs(after, CLEARANCE_M))

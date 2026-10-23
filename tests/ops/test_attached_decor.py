@@ -63,3 +63,32 @@ def test_stub_move_rigid():
     # Rigid repair is not a construction-clearance waiver: the old 7 mm stays reported.
     assert result.clearance
 
+
+@pytest.mark.parametrize('dz,contact', [(0, True), (.003, True), (.005, True), (.006, False), (.032, False)])
+def test_louvre_rail_threshold_from_unit_fixture(dz, contact):
+    # rootcause/louvre_top/unit_cases.py rail_soffit: synthetic, copied verbatim.
+    from dt_ai.ops import inv_xview as ix
+    v = np.array([(0, 0, 0), (0, 2, 0), (2, 2, 0), (2, 0, 0),
+                  (-3.37 + .012, .5, dz), (-3.37 + .012, .565, dz),
+                  (.012, .565, dz), (.012, .5, dz)])
+    r = ix.mesh_report(v, [(0, 1, 2, 3), (4, 5, 6, 7)])
+    assert bool(r['xview_faces']) == contact
+
+
+@pytest.mark.parametrize('case', [k for k in FIXTURE['cases'] if k.startswith('louvre_')])
+def test_real_louvre_fix(case):
+    op = api()
+    scene = scene_case(case)
+    rail = next(k for k in scene if 'louvre' in k.lower())
+    fixed = [k for k in scene if k != rail]
+    assert op.clearance_pairs(scene)
+    result = op.move_rigid(scene, [rail], [0, 0, .032], fixed=fixed)
+    assert not result.contacts and not result.clearance
+    np.testing.assert_allclose(result.scene[rail].vertices, scene[rail].vertices + [0, 0, .032])
+
+
+@pytest.mark.parametrize('seed,fixed', [(['a', 'a'], []), (['a'], ['b', 'b']), ('a', ['b']), (['a'], 'b')])
+def test_duplicate_or_string_selection_is_error(seed, fixed):
+    with pytest.raises(ValueError, match='selection'):
+        api().move_rigid({'a': patch(), 'b': patch(.1)}, seed, [0, 0, .02], fixed=fixed)
+
