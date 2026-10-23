@@ -1,13 +1,13 @@
 # vyatskaya-tow02 (Башня TOW02, ул. Вятская вл. 47–49) - mid-poly master → NPM-OKS, 2026-10-20
 
-Pipeline status: closed at the review stage (2026-10-22, [D172])
+Pipeline status: closed at the review stage (2026-10-22, [D185])
 Status: mid-poly master accepted ("4+", 2026-10-20); after the user's 3ds Max review (2026-10-21): geometry review fixes,
 glass cleanup, run-strip atlas OKS 013 [D156], overlap fixes and the 3 decisions of 2026-10-21 (F8 option A in the body
 builder, basket posts kept, 65.4 point contacts not welded) -> build-v030 / export-v005; real 3ds Max xView at 5 mm /
 2 mm: Overlapping Faces 185 faces, Overlapping Vertices 0 (the builder's own check said 0 / 0). The user then finished
 the model by hand in 3ds Max (2026-10-21, `outputs/xview-v005/tow02_ovl23_v001.max`) and accepted the base: "ты неплохо
 справился с задачей, с этим можно работать". Review #514 done 2026-10-21 (`REVIEW-514.md`, PR #525). Job closed
-2026-10-22 [D172]: the user's `for_placement/0213_Vyatskaya_Vl_47_49_05.fbx` stays as delivered; validate-delivery
+2026-10-22 [D185]: the user's `for_placement/0213_Vyatskaya_Vl_47_49_05.fbx` stays as delivered; validate-delivery
 not passed (`docs/deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21.md`), zero-UV agreed, texture findings disputed
 Context: GLOSSARY.md (Body, NPM, Level contour), docs/domain/geometry.md (project modeling rules),
 docs/HARNESS_PLAN.md §3–4, §14–16, docs/backlog.md EG1, EG2, EG4, EG6, docs/domain/patterns/wall-from-contour.md,
@@ -42,7 +42,7 @@ terrace.md, facade-decor-inset.md.
     our export-v005 stays not met.
   - [ ] NPM derived from the master — not met: textured (build-v025, [D156]) and joined into
     `SM_Vyatskaya_Vl_47_49_013_Main` (export-v004, quads); NPM naming/transform reset/triangulation/validate-delivery
-    not done. Changed by [D172] (2026-10-22): the NPM is the user's hand-finished `_05.fbx`, derived from our
+    not done. Changed by [D185] (2026-10-22): the NPM is the user's hand-finished `_05.fbx`, derived from our
     export-v005; validate-delivery on it: not passed (6 fails: FBX 180 244 > 150 000 tris, 014/015 transforms,
     3 314 zero-area UV tris, xView vertices 10 before the weld, 013 set named 014, a 0.4 mm pair on 012/015);
     the user keeps the file as is, agrees on the zero-UV finding, disputes the texture findings.
@@ -263,6 +263,6 @@ terrace.md, facade-decor-inset.md.
   working versions are in `outputs/measure-v001/bend_top/scripts/`.
 
 ## Next
-Job closed at the review stage [D172]. Nothing left in this job. Follow-ups run on the board: #527-#535
+Job closed at the review stage [D185]. Nothing left in this job. Follow-ups run on the board: #527-#535
 (overlap gate, xView runner, branch freshness, engine join, decor placement, EG6 analysis, intake, decisions
 backfill, fast checks); texture rules for NPM validation: backlog Q8.

@@ -15,13 +15,13 @@ system the job ran on. Done and pushed in PR #525 (open, mergeable, no CI per D1
   0.002 m), checker parity (`inv_xview` 185/185, the user's Blender add-on 40/185, our builder check 0), cause per
   defect, time, builder root causes §7, system audit §8, answers §9, follow-ups §10.
 - `docs/deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21.md`: validate-delivery of the user's `_05.fbx`: not passed
-  (6 fails); the user keeps the file as is [D172].
-- D169-D172 in `docs/decisions.md`, anchored in `docs/domain/geometry.md`, `materials.md`, `docs/cases.md`.
+  (6 fails); the user keeps the file as is [D185].
+- D182-D185 in `docs/decisions.md`, anchored in `docs/domain/geometry.md`, `materials.md`, `docs/cases.md`.
 - Follow-up issues #527-#535 (`ready-for-agent`); PR #541 (#527 overlap gate) and #536 (ring stack to src) are
   already open by board agents.
 - Verified: `tests/test_decisions.py` + `tests/test_harness_policy_docs.py` 23 passed; docs tests touching the
   edited files 162 passed after the main merge `22dde48`. Full suite not run.
-The job is closed at the review stage [D172].
+The job is closed at the review stage [D185].
 
 ## In progress
 
@@ -35,10 +35,10 @@ The job is closed at the review stage [D172].
 
 ## User decisions not in the code
 
-- Fins / ground-reaching elements ~1 m below ground for the relief [D169]; small wall angle deviations squared to
-  ~90 deg [D170]; finish colours from the previous iteration and the source [D171] (user 2026-10-21).
+- Fins / ground-reaching elements ~1 m below ground for the relief [D182]; small wall angle deviations squared to
+  ~90 deg [D183]; finish colours from the previous iteration and the source [D184] (user 2026-10-21).
 - Job closed; `_05.fbx` stays; zero-UV finding agreed; texture findings disputed until texture rules are refined
-  [D172] (user 2026-10-22) — backlog Q8.
+  [D185] (user 2026-10-22) — backlog Q8.
 - Mesh + Weld 0.002 m on Editable Mesh before export, no Poly round trip; weld fixes vertices, not faces
   (user 2026-10-21) — to be recorded as D<n> by #534.
 
@@ -48,7 +48,7 @@ The job is closed at the review stage [D172].
   overwrote main's once, restored in `c5f5b51`).
 - Whether the Blender add-on `xview_overlapping_faces_improved.py` goes into the repository (backlog R18, #535).
 - Open review items of the delivery report (prefix 0213 vs 0200, set name 014 vs 013, self-intersection count
-  vs embeds, 014 fins 0.471 m, pivot offset, package OKS numbering) — parked by [D172], not blocking.
+  vs embeds, 014 fins 0.471 m, pivot offset, package OKS numbering) — parked by [D185], not blocking.
 - Yes / no to delete the stray pytest folder above.
 
 ## Next step

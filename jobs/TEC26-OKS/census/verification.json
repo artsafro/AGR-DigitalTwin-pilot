@@ -1,0 +1,28 @@
+{
+  "scope": "intake_only_not_delivery_QA",
+  "base_main": "442f0b695a91f9abc180783c26978fbe85fefcf9",
+  "native_max": {
+    "application": "3ds Max 2026.3 (28.3.0.30732)",
+    "python": "3.11.12",
+    "wrapper_status": "ok_with_startup_warning",
+    "native_exit": 4294967166,
+    "warning": "polyunwrapper_autoload.mse .NET startup error",
+    "expected_scene_completion_markers": 3,
+    "observed_scene_completion_markers": 3,
+    "final_marker": "TEC26_MAX_CENSUS_COMPLETE",
+    "native_log": "G:/Мой диск/AGR-evidence/tec26-oks/scene-census-v002/max-run-v002.json",
+    "file_version_tokens": {
+      "oks": "#(26000, 26000)",
+      "truba": "#(26000, 27000)",
+      "kpp": "#(28000, 28000)"
+    },
+    "version_code_labels": {"26000": "3ds Max 2024", "27000": "3ds Max 2025", "28000": "3ds Max 2026"}
+  },
+  "source_integrity_after_readback": {"source_hashes_verified": 64, "copy_hashes_verified": 64, "mismatches": 0},
+  "drive_evidence_checksum_members_verified": 182,
+  "regression": {"red_commit": "1b55514", "red_failed": 1, "green_focused_passed": 17},
+  "focused_command": "python C:/Users/artsafro/hermes_kanban/scripts/suite_slot.py --card t_8e55c5f5 -- uv run pytest -q tests/jobs/test_tec26_intake.py -p no:cacheprovider",
+  "fresh_process_reused_staging": {"exit": 1, "reason": "Missing sources or destination already exists", "expected": "refuse_no_overwrite"},
+  "regression_evals": {"report": "tmp/evals/report.json", "passed": 0, "failed": 0, "not_measured": 10, "reason": "no Claude transcript", "check_receipt_exit": 0},
+  "not_measured": ["delivery_QA", "material_finish_authority", "uv_density", "collision_hull_validity", "human_visual_acceptance"]
+}

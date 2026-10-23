@@ -303,6 +303,11 @@ Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `per
   `{source: hook, decision: reject}` (or a `PreToolUse:<tool> hook error:` tool_result); synthetic references.
   Run on this branch's real handover transcript: 1 denial found (a Write into another worktree).
 - Tests: `tests/test_evals.py`.
+- Handoff evidence check (#584): `uv run dt evals --check-handoff <pr-body.md> [--sha <full head>] --output
+  <evals dir>` (read-only, `src/twinqa/evals/handoff.py`). It exits 0 only when the body has the Full suite
+  (`suite_slot.py`, exact head), Regression evals (`check_receipt`), RED, GREEN and Sample output lines and
+  does not hand the full suite to the reviewer. Rules: `docs/agents/WORKFLOW.md#handoff-evidence-check-584`.
+  Tests: `tests/test_evals_handoff.py`.
 
 ### Skills sync — `tools/sync_skills.py`
 - Status: WORKING (2026-10-06): `.agents/skills/` is canonical; the script regenerates

@@ -1,0 +1,25 @@
+{
+  "drive": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\tec26-oks\\scene-census-v002",
+  "files": 182,
+  "gate_view_receipts": "depth-renders.json",
+  "gate_view_storage": "G:/Мой диск/AGR-evidence/tec26-oks/depth-census-v002/",
+  "legacy_painter_images": "superseded; never use for Gate evidence",
+  "manifest": [
+    {
+      "path": "C:\\x\\tec26-oks\\max-readback-v002\\oks.json",
+      "sha256": "a99de19f1d30633eaab9c52ac44f253ed6ea97e03358755ff2a77458f0f54f2f"
+    },
+    {
+      "path": "C:\\x\\tec26-oks\\max-readback-v002\\truba.json",
+      "sha256": "df8e72dec63150733c25eb7f9c51c8224cc7398a745918e59da38d26c55f47ef"
+    },
+    {
+      "path": "C:\\x\\tec26-oks\\max-readback-v002\\kpp.json",
+      "sha256": "a4c9738fb1d28769485afc6df287519f33eb62ec87aecfdb29448b8b2bf3409c"
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\tec26-oks\\scene-census-v002\\SHA256SUMS.txt",
+      "sha256": "48e8479846d292fc415c66b44162fd280257c22986c77ec9476bf430520a64c9"
+    }
+  ]
+}
