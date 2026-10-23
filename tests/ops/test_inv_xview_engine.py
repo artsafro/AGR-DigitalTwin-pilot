@@ -11,31 +11,12 @@ from dt_ai.ops import inv_xview as X
 from dt_ai.ops import inv_xview_fast as F
 from dt_ai.ops import xview_gate as G
 from dt_ai.ops.inv_quads import PolyMesh
+from tests.ops.xview_oracle import ref_contact as _ref_contact
 
 TOL = X.XviewTolerance()
 
 
-# ---- the oracle: the pre-#556 contact test, per triangle pair ------------------------------------------------------
-
-def _ref_contact(v, tris, nrm, s, t, poly_key, owner, nv, face_m):
-    hit = np.zeros(len(s), dtype=bool)
-    a, b, c = (v[tris[s, k]] for k in range(3))
-    e0, e1 = b - a, c - a
-    d00, d01, d11 = X._dot(e0, e0), X._dot(e0, e1), X._dot(e1, e1)
-    den = d00 * d11 - d01 * d01
-    for k in range(3):
-        p_id = tris[t, k]
-        own = X._owns(poly_key, owner[s] * nv + p_id)
-        w = v[p_id] - a
-        dist = X._dot(w, nrm[s])
-        q = w - dist[:, None] * nrm[s]
-        d20, d21 = X._dot(q, e0), X._dot(q, e1)
-        bv = (d11 * d20 - d01 * d21) / den
-        bw = (d00 * d21 - d01 * d20) / den
-        inside = (bv >= -1e-12) & (bw >= -1e-12) & (bv + bw <= 1 + 1e-12)
-        hit |= inside & (np.abs(dist) <= face_m) & ~own
-    return hit
-
+# ---- the oracle: the pre-#556 contact test, per triangle pair (tests/ops/xview_oracle.py) -----------------------------
 
 def _reference_pairs(mesh, tol=TOL, active_parts=None):
     v = mesh.vertices
@@ -200,6 +181,29 @@ def test_flat_welded_grid_never_reaches_shapely(monkeypatch):
     r = X.part_report("grid", PolyMesh(v, tuple(quads)), TOL)
     assert r.face_pairs == () and r.vertex_pairs == ()
     assert sum(calls) == 0
+
+
+def test_probe_sat_skip_never_hides_an_overlap_area():
+    """Generated 2D triangle pairs (shared edges, shared corners, touching, slivers, 1e5 m site offsets): whenever
+    `_sat_zero` skips a pair, shapely's intersection area is <= AREA_MIN_M2 / 2 (so the old code had no hit either)."""
+    import shapely
+    rng = np.random.default_rng(556)
+    n = 20000
+    a = rng.uniform(-1, 1, (n, 3, 2)) * rng.choice([1e-3, 0.1, 1.0, 30.0], (n, 1, 1))
+    b = rng.uniform(-1, 1, (n, 3, 2)) * rng.choice([1e-3, 0.1, 1.0, 30.0], (n, 1, 1))
+    kind = rng.integers(0, 4, n)
+    b[kind == 1, :2] = a[kind == 1, :2]                                  # shared edge, third vertex anywhere
+    b[kind == 2, 0] = a[kind == 2, 0]                                    # shared corner
+    mirror = a[:, :2].mean(1)                                            # third vertex mirrored: opposite side
+    b[kind == 3, :2] = a[kind == 3, :2]
+    b[kind == 3, 2] = 2 * mirror[kind == 3] - a[kind == 3, 2] + rng.normal(0, 1e-9, (int((kind == 3).sum()), 2))
+    off = rng.uniform(-1e5, 1e5, (n, 1, 2)) * (rng.random((n, 1, 1)) < 0.5)
+    a, b = a + off, b + off
+    skip = X._sat_zero(a, b)
+    area = shapely.area(shapely.intersection(shapely.polygons(a), shapely.polygons(b)))
+    assert skip.sum() > 5000                                             # the probe exercises the skip
+    assert np.all(area[skip] <= X.AREA_MIN_M2 / 2), np.max(area[skip])
+    assert np.all(~skip[area > X.AREA_MIN_M2])
 
 
 def test_xview_lists_output_unchanged_by_the_triangle_level_api():
