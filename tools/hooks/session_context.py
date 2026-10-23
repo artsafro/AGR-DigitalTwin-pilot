@@ -211,7 +211,7 @@ def branch_freshness():
         return warnings
     if int(behind) == 0:
         return warnings
-    log = _git("log", "--first-parent", "--diff-merges=first-parent", "--name-only",
+    log = _git("log", "--first-parent", "--diff-merges=first-parent", "--name-only", "--no-renames",
                "--format=%x1e%H%x09%h%x09%s%x09%P", "HEAD..origin/main")
     if log:
         log = log.lstrip("\r\n")

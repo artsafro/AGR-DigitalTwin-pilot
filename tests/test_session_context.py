@@ -540,3 +540,42 @@ def test_docs_or_job_only_merges_never_warn_probe(repo):
         assert (title in ctx) is relevant
         assert side not in ctx
     assert "Branch freshness:" in ctx
+
+
+def _rename_merge(repo, old, new, merge_title, extra_side=2):
+    """Real --no-ff merge whose side branch renames old -> new plus extra docs commits."""
+    commit_paths(repo, [old], "add file to rename")
+    base = git_out(repo, "rev-parse", "HEAD")
+    git(repo, "switch", "-q", "-c", "side/rename")
+    for i in range(extra_side):
+        commit_paths(repo, [f"docs/side_{i}.md"], f"rename side commit {i}")
+    (repo / new).parent.mkdir(parents=True, exist_ok=True)
+    git(repo, "mv", old, new)
+    git(repo, "commit", "-q", "-m", "rename commit")
+    git(repo, "switch", "-q", "-")
+    git(repo, "merge", "--no-ff", "--no-edit", "-m", merge_title, "side/rename")
+    git(repo, "branch", "-q", "-D", "side/rename")
+    point_origin_main_and_return(repo, base)
+
+
+def test_outward_rename_src_to_docs_counts_once_with_merge_title(repo):
+    """Rename src/check.py -> docs/check.py (+2 side commits) = 1 relevant merge."""
+    _rename_merge(repo, "src/check.py", "docs/check.py", "merge outward rename")
+    ctx = start(repo, "startup")
+    assert "behind origin/main by 1 relevant merge" in ctx
+    assert "merge outward rename" in ctx
+    assert "rename side commit" not in ctx
+
+
+def test_inward_rename_docs_to_src_counts(repo):
+    _rename_merge(repo, "docs/check.py", "src/check.py", "merge inward rename")
+    ctx = start(repo, "startup")
+    assert "behind origin/main by 1 relevant merge" in ctx
+    assert "merge inward rename" in ctx
+
+
+def test_irrelevant_only_rename_does_not_warn(repo):
+    _rename_merge(repo, "docs/a.md", "jobs/SYNTH/a.md", "merge irrelevant rename")
+    ctx = start(repo, "startup")
+    assert "merge irrelevant rename" not in ctx
+    assert "behind origin/main by" not in ctx
