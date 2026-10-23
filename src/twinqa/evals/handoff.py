@@ -40,6 +40,9 @@ _NEGATION = re.compile(r"\b(?:not|never|no)\b|n't\b", re.IGNORECASE)
 _COUNT_TOKEN = re.compile(r"(?:^|(?<=[\s(\[:>,;]))(?P<token>[^\s(\[:>,;]+(?:,\d+)*)\s+"
                           r"(?P<word>passed|failed|errors?)\b", re.IGNORECASE)
 _INTEGER = re.compile(r"\d+|\d{1,3}(?:,\d{3})+")
+# Scientific notation (``1e00003``) is a malformed count even when it also has the shape of a short hex
+# commit id; it is tested before the commit exemption, so it can never default to zero (review r2).
+_SCIENTIFIC = re.compile(r"[-+]?(?:\d+\.?\d*|\.\d+)[eE][-+]?\d+")
 _NUMERIC = re.compile(r"^[-+.]?\d|^[-+]?(?:nan|inf(?:inity)?)$", re.IGNORECASE)
 
 
@@ -48,7 +51,7 @@ def parse_counts(value):
 
     A token before ``passed``/``failed``/``error(s)`` is a count only as a plain non-negative integer
     (``13,676`` thousands allowed). A numeric-looking token that is not one (``nan``, ``inf``, ``-1``,
-    ``1.5``, ``1e3``, ``0x1``) is reported in ``malformed`` and never counted, so it cannot default to
+    ``1.5``, ``1e3``, the hex-shaped ``1e00003``, ``0x1``) is reported in ``malformed`` and never counted, so it cannot default to
     zero; a word (``all tests passed``) is no count at all.
     """
     counts, malformed = {"passed": None, "failed": None, "errors": None}, []
@@ -57,6 +60,8 @@ def parse_counts(value):
         key = "errors" if word.lower().startswith("error") else word.lower()
         if _INTEGER.fullmatch(token):
             counts[key] = (counts[key] or 0) + int(token.replace(",", ""))
+        elif _SCIENTIFIC.fullmatch(token):
+            malformed.append(f"{token} {word}")
         elif _HEX.fullmatch(token) and re.search(r"[a-f]", token):
             continue  # "3ff7e37 failed": a commit, not a count
         elif _NUMERIC.search(token):

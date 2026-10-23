@@ -589,5 +589,5 @@ def test_round2_fixes_combined(tmp_path, repo, evals, capsys):
     out = rejected(tmp_path, body(parts, "The full suite is left to the reviewer.\n"), shas["head"], evals,
                    capsys, "1e10000 failed", "1e00003 failed", "nan failed", "Affected tests is not evidence",
                    "delegated to the reviewer")
-    assert out.err.count("ERROR:") >= 5
+    assert out.err.count("ERROR:") >= 4  # the omitted Affected line is one error that quotes its nan
     assert "OK" not in out.out
