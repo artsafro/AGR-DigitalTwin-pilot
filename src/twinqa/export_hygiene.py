@@ -25,6 +25,7 @@ import json
 import os
 import re
 import sys
+import tempfile
 from dataclasses import asdict
 from pathlib import Path
 
@@ -194,9 +195,21 @@ def repair_plan(objects: list[dict]) -> dict:
     return {"origin": ORIGIN, "objects": entries}
 
 
+def _no_duplicate_keys(pairs: list[tuple[str, object]]) -> dict:
+    """json object_pairs_hook: a repeated key at any depth is an error, never last-wins."""
+    out: dict = {}
+    for key, value in pairs:
+        if key in out:
+            raise InputError(f"duplicate key {key!r} in JSON object")
+        out[key] = value
+    return out
+
+
 def load_scene(path: Path) -> list[dict]:
     try:
-        data = json.loads(Path(path).read_text(encoding="utf-8"))
+        data = json.loads(Path(path).read_text(encoding="utf-8"), object_pairs_hook=_no_duplicate_keys)
+    except InputError as exc:
+        raise InputError(f"{path}: {exc}") from exc
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise InputError(f"cannot read scene dump {path}: {exc}") from exc
     if not isinstance(data, dict) or set(data) != {"objects"}:
@@ -214,10 +227,21 @@ def _same(a: Path, b: Path) -> bool:
         return False
 
 
-def _write(path: Path, data: dict) -> None:
-    tmp = path.with_name(path.name + ".partial")
-    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-    os.replace(tmp, path)
+def _write_all(items: list[tuple[Path, dict]]) -> None:
+    """Write every output through its own uniquely named, exclusively created temp file (mkstemp,
+    never `<path>.partial`), then rename all; on any failure only our own temps are removed."""
+    temps: list[tuple[Path, Path]] = []
+    try:
+        for path, data in items:
+            fd, tmp_name = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+            temps.append((Path(tmp_name), path))
+            with os.fdopen(fd, "w", encoding="utf-8") as fh:
+                fh.write(json.dumps(data, ensure_ascii=False, indent=2))
+        for tmp, path in temps:
+            os.replace(tmp, path)
+    finally:
+        for tmp, _ in temps:
+            tmp.unlink(missing_ok=True)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -229,7 +253,6 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     outputs = [p for p in (args.report, args.repair_out) if p is not None]
     files = [args.scene, *outputs]
-    files += [p.with_name(p.name + ".partial") for p in outputs]
     for i, a in enumerate(files):
         for b in files[i + 1:]:
             if _same(a, b):
@@ -244,11 +267,17 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     for f in findings:
         print(f"{f.status:5} {f.name}: {f.observed}")
+    items = []
     if args.report:
-        _write(args.report, {"source": str(args.scene), "origin": ORIGIN,
-                             "findings": [asdict(f) for f in findings]})
+        items.append((args.report, {"source": str(args.scene), "origin": ORIGIN,
+                                    "findings": [asdict(f) for f in findings]}))
     if plan is not None:
-        _write(args.repair_out, {"source": str(args.scene), **plan})
+        items.append((args.repair_out, {"source": str(args.scene), **plan}))
+    try:
+        _write_all(items)
+    except OSError as exc:
+        print(f"error: cannot write output: {exc}", file=sys.stderr)
+        return 2
     return 1 if any(f.status != "pass" for f in findings) else 0
 
 

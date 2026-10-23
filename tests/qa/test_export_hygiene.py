@@ -349,6 +349,16 @@ def test_cli_fresh_process_duplicate_key_exits_2_and_writes_nothing(tmp_path, ca
     assert {p.name for p in tmp_path.iterdir()} == {"scene.json", "report.json.partial"}
 
 
+def test_cli_unwritable_second_output_exits_2_and_writes_no_output(tmp_path):
+    scene = _dump(tmp_path, [clean()])
+    report = tmp_path / "report.json"
+    sentinel = tmp_path / "report.json.partial"
+    sentinel.write_bytes(SENTINEL)
+    assert main([str(scene), "--report", str(report), "--repair-out", str(tmp_path / "nodir" / "p.json")]) == 2
+    assert sentinel.read_bytes() == SENTINEL
+    assert {p.name for p in tmp_path.iterdir()} == {"scene.json", "report.json.partial"}
+
+
 def test_cli_fresh_process_combined_sentinel_and_findings(tmp_path):
     obj = clean()
     obj["custom_attributes"]["base"] = ["AGR_Data"]
