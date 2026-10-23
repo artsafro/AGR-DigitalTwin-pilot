@@ -8,6 +8,7 @@ Output: one JSON line per node with counts on both sides and every id that diffe
   uv run python tools/qa/xview_parity.py --keep <xview_check.keep> --npz <arrays.npz> [--out parity.json]
   uv run python tools/qa/xview_parity.py <review.json> --validate-review [--out copy.json]
   uv run python tools/qa/xview_parity.py --check-run <out-dir> --labels a,b
+  (jobs.txt must start with #nonce:<id>; done.txt and each result JSON must carry that nonce)
 
 The second form (#535) compares the stored list of a Max xView run (`jobs/vyatskaya-tow02/scripts/xview_check.ms`
 JSON: `verticesCheck` / `facesCheck` with `items` [id, ...] 1-based, `faces`, `verts`, `tolFaces`, `tolVerts`) with
@@ -25,6 +26,8 @@ import hashlib
 import json
 import math
 import os
+import re
+import secrets
 import shutil
 import sys
 from pathlib import Path
@@ -177,6 +180,14 @@ WELD_M = 0.002  # Editable Mesh weld, exactly units.decodeValue "2mm"; inclusive
 _JOB_KEYS = {"label", "path", "node", "mode", "material", "slot"}
 _MODES = {"", "plain", "weld", "weldpoly"}
 _MESH_SUFFIXES = {".fbx", ".max"}
+_NONCE_RE = re.compile(r"^[A-Za-z0-9_-]{8,64}$")
+# Keys written by tools/qa/xview_dump.ms for one successful model, plus the run nonce.
+NATIVE_KEYS = (
+    "dump_version", "nonce", "label", "path", "saved", "sha256_before", "sha256_after",
+    "units", "systemScale", "tolFaces", "tolVerts", "scene", "dropped", "node",
+    "sourceClass", "weldedVerts", "faces", "verts", "tris", "ngons", "bbox",
+    "verticesCheck", "facesCheck",
+)
 
 
 def sha256_file(path) -> str:
@@ -336,92 +347,228 @@ def select_node(scene, node_name, material=None, materials=None, slot=None, slot
     return chosen, dropped
 
 
-def prepare_run(jobs, out_dir, temp_dir, scene=None) -> dict:
-    """Stage inputs and write an ASCII jobs.txt.
+def _bad_field(value, what: str) -> str:
+    text = "" if value is None else str(value)
+    if any(ord(ch) < 32 or ch == "|" for ch in text):
+        raise DumpError(f"bad field {what} {text!r}")
+    return text
 
-    The whole inventory is checked before any directory is created, any stale file is
-    removed, or any byte is written: each input, each ``<label>.json``, ``jobs.txt``,
-    ``report.jsonl``, ``done.txt``, ``failed.txt`` and every staged temp copy. A duplicate
-    label (case-insensitive) is an error naming that label. A stale ``done.txt`` and this
-    run's outputs are removed only after that check, and only when they are not an input.
-    """
-    if not isinstance(jobs, list) or not jobs:
-        raise DumpError("no inputs")
-    out_dir, temp_dir = Path(out_dir), Path(temp_dir)
-    staged_jobs = []
-    seen_labels = {}
-    for job in jobs:
-        if not isinstance(job, dict):
-            raise DumpError("job is not an object")
-        unknown = sorted(set(job) - _JOB_KEYS)
-        if unknown:
-            raise DumpError(f"unmapped key {unknown[0]!r}")
-        mode = job.get("mode", "") or ""
-        if mode not in _MODES:
-            raise DumpError(f"unmapped mode {mode!r}")
-        label = str(job.get("label", ""))
-        if not label or label != Path(label).name or not _ascii_path(Path(label)):
-            raise DumpError(f"unmapped label {label!r}")
-        key = label.casefold()
-        if key in seen_labels:
-            raise DumpError(f"duplicate label {seen_labels[key]!r} and {label!r}")
-        seen_labels[key] = label
-        src = Path(job.get("path", ""))
-        if src.suffix.lower() not in _MESH_SUFFIXES:
-            raise DumpError(f"unsupported input {src.name!r}")
-        if not src.is_file():
-            raise DumpError(f"input missing: {src}")
-        out_file = out_dir / f"{label}.json"
-        if scene is not None:
-            select_node(scene, job.get("node") or "", job.get("material"), None if "material" not in job else [],
-                        job.get("slot"), None)
-        staged_jobs.append((job, label, src, out_file, _planned_stage(src, temp_dir)))
+
+def bind_slot(slot, sub_count=None, present=None):
+    """Empty slot is unset. Anything else must be a material id that is present when the map is known."""
+    text = "" if slot is None else str(slot)
+    if text == "":
+        return ""
+    if not text.isdigit() or text[0] == "0":
+        raise DumpError(f"unmapped slot {text!r}")
+    if sub_count is None:
+        return text
+    ident = int(text)
+    if present is None or ident < 1 or ident > sub_count or ident > len(present) or not present[ident - 1]:
+        raise DumpError(f"unmapped slot {text!r}")
+    return text
+
+
+def parse_job_line(line: str) -> dict:
+    """One jobs.txt model line: exactly label|path|node|mode|material|slot."""
+    parts = line.split("|")
+    if len(parts) != 6:
+        raise DumpError(f"jobs.txt line field count {len(parts)}")
+    keys = ("label", "path", "node", "mode", "material", "slot")
+    fields = {key: _bad_field(part, key) for key, part in zip(keys, parts)}
+    label = fields["label"]
+    if not label or label != Path(label).name or not _ascii_path(Path(label)):
+        raise DumpError(f"unmapped label {label!r}")
+    if fields["mode"] not in _MODES:
+        raise DumpError(f"unmapped mode {fields['mode']!r}")
+    fields["slot"] = bind_slot(fields["slot"])
+    return fields
+
+
+def _inventory(records, out_dir, temp_dir, jobs_file=None) -> None:
+    """Raise when any managed path is the same file as an input or as another managed path."""
+    out_dir = Path(out_dir)
+    jobs_file = Path(jobs_file) if jobs_file is not None else out_dir / "jobs.txt"
     entries = []
-    for _job, label, src, out_file, dest in staged_jobs:
-        entries.append(("input", src, f"input {src.name}"))
-        entries.append(("output", out_file, f"output {label!r}"))
-        if dest is not None:
-            entries.append(("temp", dest, f"temp {dest.name}"))
-    jobs_file = out_dir / "jobs.txt"
-    report = out_dir / "report.jsonl"
-    done = out_dir / "done.txt"
-    failed = out_dir / "failed.txt"
+    for rec in records:
+        entries.append(("input", rec["src"], f"input {rec['src'].name}"))
+        entries.append(("output", rec["out_file"], f"output {rec['label']!r}"))
+        if rec.get("dest") is not None:
+            entries.append(("temp", rec["dest"], f"temp {rec['dest'].name}"))
     entries.append(("jobs", jobs_file, "jobs.txt"))
-    entries.append(("report", report, "report.jsonl"))
-    entries.append(("done", done, "done.txt"))
-    entries.append(("failed", failed, "failed.txt"))
+    entries.append(("report", out_dir / "report.jsonl", "report.jsonl"))
+    entries.append(("done", out_dir / "done.txt", "done.txt"))
+    entries.append(("failed", out_dir / "failed.txt", "failed.txt"))
+    if jobs_file.is_symlink():
+        raise DumpError(f"jobs.txt aliases {os.path.realpath(jobs_file)}")
     for i, (kind_a, path_a, name_a) in enumerate(entries):
         for kind_b, path_b, name_b in entries[i + 1:]:
             if _conflicts(kind_a, kind_b, path_a, path_b):
                 raise DumpError(f"{name_a} aliases {name_b}")
-    if jobs_file.is_symlink():
-        raise DumpError(f"jobs.txt aliases {os.path.realpath(jobs_file)}")
-    before = [(src, sha256_file(src)) for _job, _label, src, _out, _dest in staged_jobs]
-    # Accepted: drop a previous success, then stage and write jobs.txt.
+
+
+def _invalidate(out_dir, labels, inputs) -> None:
+    """Drop this run's done receipt and result jsons. Never unlinks a path that is an input."""
+    out_dir = Path(out_dir)
+    if not out_dir.exists():
+        return
+    targets = [out_dir / "done.txt", out_dir / "report.jsonl", out_dir / "failed.txt"]
+    targets += [out_dir / f"{label}.json" for label in labels]
+    live = []
+    for target in targets:
+        if not (target.is_symlink() or target.exists()):
+            continue
+        for src in inputs:
+            if same_file(target, src):
+                raise DumpError(f"{target.name} aliases input {Path(src).name}")
+        live.append(target)
+    for target in live:
+        target.unlink()
+
+
+def _try_record(job, out_dir, temp_dir, scene):
+    """Return (record or None, error or None). A record exists only when its paths can be checked."""
+    if not isinstance(job, dict):
+        return None, DumpError("job is not an object")
+    unknown = sorted(set(job) - _JOB_KEYS)
+    if unknown:
+        return None, DumpError(f"unmapped key {unknown[0]!r}")
+    try:
+        label = _bad_field("" if job.get("label") is None else str(job.get("label")), "label")
+        node = _bad_field("" if job.get("node") is None else str(job.get("node")), "node")
+        mode = _bad_field("" if job.get("mode") is None else str(job.get("mode")), "mode")
+        material = _bad_field("" if job.get("material") is None else str(job.get("material")), "material")
+        slot = _bad_field("" if job.get("slot") is None else str(job.get("slot")), "slot")
+        src = Path(job.get("path", ""))
+        _bad_field(str(src), "path")
+    except DumpError as exc:
+        return None, exc
+    if not label or label != Path(label).name or not _ascii_path(Path(label)):
+        return None, DumpError(f"unmapped label {label!r}")
+    error = None
+    if mode not in _MODES:
+        error = DumpError(f"unmapped mode {mode!r}")
+    else:
+        try:
+            slot = bind_slot(slot)
+        except DumpError as exc:
+            error = exc
+    if src.suffix.lower() not in _MESH_SUFFIXES:
+        return None, error or DumpError(f"unsupported input {src.name!r}")
+    if not src.is_file():
+        return None, error or DumpError(f"input missing: {src}")
+    try:
+        dest = _planned_stage(src, temp_dir)
+    except DumpError as exc:
+        return None, error or exc
+    if scene is not None and error is None:
+        try:
+            select_node(scene, node, material, None if "material" not in job else [], slot, None)
+        except DumpError as exc:
+            error = exc
+    record = {"label": label, "src": src, "node": node, "mode": mode, "material": material, "slot": slot,
+              "out_file": out_dir / f"{label}.json", "dest": dest}
+    return record, error
+
+
+def preflight_jobs_txt(jobs_file, out_dir, temp_dir) -> dict:
+    """Read a manual or prepare_run jobs.txt the way the Max runner does. No writes.
+
+    First line is ``#nonce:<id>``. Each other line has six fields. Duplicate labels, a bad
+    slot token, and any output / report / done / failed / jobs / staging path that is the
+    same file as an input (or as each other) raise before a directory is created.
+    """
+    jobs_file = Path(jobs_file)
+    out_dir = Path(out_dir)
+    temp_dir = Path(temp_dir)
+    if not jobs_file.is_file():
+        raise DumpError("jobs.txt missing")
+    try:
+        text = jobs_file.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as exc:
+        raise DumpError(f"jobs.txt unreadable: {exc}") from exc
+    lines = [ln for ln in text.splitlines() if ln != ""]
+    if not lines or not lines[0].startswith("#nonce:"):
+        raise DumpError("nonce missing")
+    nonce = lines[0][len("#nonce:"):]
+    if not _NONCE_RE.fullmatch(nonce):
+        raise DumpError("nonce missing")
+    if len(lines) < 2:
+        raise DumpError("no inputs")
+    parsed = [parse_job_line(ln) for ln in lines[1:]]
+    seen = {}
+    records = []
+    for job in parsed:
+        key = job["label"].casefold()
+        if key in seen:
+            raise DumpError(f"duplicate label {seen[key]!r} and {job['label']!r}")
+        seen[key] = job["label"]
+        src = Path(job["path"])
+        if src.suffix.lower() not in _MESH_SUFFIXES:
+            raise DumpError(f"unsupported input {src.name!r}")
+        if not src.is_file():
+            raise DumpError(f"input missing: {src}")
+        records.append({"label": job["label"], "path": str(src), "node": job["node"], "mode": job["mode"],
+                        "material": job["material"], "slot": job["slot"], "src": src,
+                        "out_file": out_dir / f"{job['label']}.json", "dest": _planned_stage(src, temp_dir)})
+    _inventory(records, out_dir, temp_dir, jobs_file)
+    return {"nonce": nonce, "jobs": records}
+
+
+def prepare_run(jobs, out_dir, temp_dir, scene=None) -> dict:
+    """Stage inputs and write an ASCII jobs.txt whose first line is ``#nonce:<id>``.
+
+    The whole inventory is checked before any directory is created or any byte is written.
+    A duplicate label, a ``|`` / control character, or an unknown slot token is an error
+    naming it. When the paths are not inputs, a failed preparation still removes this
+    run's ``done.txt`` and ``<label>.json`` so an older success cannot be read back.
+    An alias of an input is raised with nothing removed and nothing written.
+    """
+    if not isinstance(jobs, list) or not jobs:
+        raise DumpError("no inputs")
+    out_dir, temp_dir = Path(out_dir), Path(temp_dir)
+    records = []
+    errors = []
+    for job in jobs:
+        record, err = _try_record(job, out_dir, temp_dir, scene)
+        if record is not None:
+            records.append(record)
+        if err is not None:
+            errors.append(err)
+    if records:
+        _inventory(records, out_dir, temp_dir)
+    seen = {}
+    for record in records:
+        key = record["label"].casefold()
+        if key in seen:
+            errors.append(DumpError(f"duplicate label {seen[key]!r} and {record['label']!r}"))
+        else:
+            seen[key] = record["label"]
+    if errors:
+        if records:
+            _invalidate(out_dir, [record["label"] for record in records], [record["src"] for record in records])
+        raise errors[0]
+    before = [(record["src"], sha256_file(record["src"])) for record in records]
+    _invalidate(out_dir, [record["label"] for record in records], [record["src"] for record in records])
     temp_dir.mkdir(parents=True, exist_ok=True)
     out_dir.mkdir(parents=True, exist_ok=True)
-    for stale in (done, report, failed):
-        if stale.is_symlink() or stale.exists():
-            stale.unlink()
-    for _job, _label, _src, out_file, _dest in staged_jobs:
-        if out_file.is_symlink() or out_file.exists():
-            out_file.unlink()
+    nonce = secrets.token_hex(16)
+    jobs_file = out_dir / "jobs.txt"
+    report = out_dir / "report.jsonl"
+    done = out_dir / "done.txt"
     lines = []
     staged = []
     outputs = []
-    for job, label, src, out_file, _dest in staged_jobs:
-        opened = stage_input(src, temp_dir)
-        digest = sha256_file(src)
+    for record in records:
+        opened = stage_input(record["src"], temp_dir)
+        digest = sha256_file(record["src"])
         if sha256_file(opened) != digest:
-            raise DumpError(f"SHA-256 mismatch for {src}")
-        node = job.get("node") or ""
-        mode = job.get("mode") or ""
-        material = job.get("material") or ""
-        slot = job.get("slot") or ""
-        lines.append("|".join([label, str(opened), node, mode, material, slot]))
-        staged.append({"label": label, "source": str(src), "opened": str(opened), "sha256": digest,
-                       "output": str(out_file)})
-        outputs.append(out_file)
+            raise DumpError(f"SHA-256 mismatch for {record['src']}")
+        lines.append("|".join([record["label"], str(opened), record["node"], record["mode"],
+                               record["material"], record["slot"]]))
+        staged.append({"label": record["label"], "source": str(record["src"]), "opened": str(opened),
+                       "sha256": digest, "output": str(record["out_file"])})
+        outputs.append(record["out_file"])
     for row in staged:
         roles = {"input": Path(row["source"]), "output": Path(row["output"]), "report": report,
                  "jobs": jobs_file, "done": done}
@@ -429,22 +576,109 @@ def prepare_run(jobs, out_dir, temp_dir, scene=None) -> dict:
         if not same_file(opened, row["source"]):
             roles["temp"] = opened
         require_distinct(roles)
-    jobs_file.write_text("\n".join(lines) + "\n", encoding="ascii")
+    jobs_file.write_text("#nonce:" + nonce + "\n" + "\n".join(lines) + "\n", encoding="ascii")
     for src, digest in before:
         if sha256_file(src) != digest:
             raise DumpError("input bytes changed (the .max/.fbx must never be saved)")
-    return {"jobs_file": jobs_file, "staged": staged, "outputs": outputs, "report": report}
+    return {"jobs_file": jobs_file, "staged": staged, "outputs": outputs, "report": report, "nonce": nonce}
+
+
+def _read_receipt(jobs_file):
+    if not Path(jobs_file).is_file():
+        raise DumpError("nonce missing")
+    try:
+        text = Path(jobs_file).read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as exc:
+        raise DumpError(f"jobs.txt unreadable: {exc}") from exc
+    lines = [ln for ln in text.splitlines() if ln != ""]
+    if not lines or not lines[0].startswith("#nonce:"):
+        raise DumpError("nonce missing")
+    nonce = lines[0][len("#nonce:"):]
+    if not _NONCE_RE.fullmatch(nonce):
+        raise DumpError("nonce missing")
+    if len(lines) < 2:
+        raise DumpError("no inputs")
+    labels = [parse_job_line(ln)["label"] for ln in lines[1:]]
+    return nonce, labels
+
+
+def _bbox(value, what):
+    if not isinstance(value, list) or len(value) != 2:
+        raise DumpError(f"{what}: bbox must be two points")
+    return [_xyz(value[0], what), _xyz(value[1], what)]
+
+
+def _require_native(obj, label, nonce):
+    if not isinstance(obj, dict):
+        raise DumpError(f"{label}: result is not an object")
+    if "error" in obj:
+        raise DumpError(f"{label}: {obj.get('error')}")
+    missing = [key for key in NATIVE_KEYS if key not in obj]
+    if missing:
+        raise DumpError(f"{label}: missing {missing[0]}")
+    if obj.get("label") != label:
+        raise DumpError(f"unmapped label {obj.get('label')!r}")
+    if obj.get("nonce") != nonce:
+        raise DumpError(f"{label}: stale nonce")
+    validate_review(obj)
+    if not isinstance(obj.get("path"), str) or not obj["path"]:
+        raise DumpError(f"{label}: path missing")
+    if not isinstance(obj.get("units"), str) or not obj["units"]:
+        raise DumpError(f"{label}: units missing")
+    _finite(obj.get("systemScale"), "systemScale")
+    if not isinstance(obj.get("sourceClass"), str) or not obj["sourceClass"]:
+        raise DumpError(f"{label}: sourceClass missing")
+    welded = obj["weldedVerts"]
+    if isinstance(welded, bool) or not isinstance(welded, int) or welded < -1:
+        raise DumpError(f"{label}: weldedVerts {welded!r}")
+    for key in ("faces", "verts", "tris", "ngons"):
+        value = obj[key]
+        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+            raise DumpError(f"{label}: {key} {value!r}")
+    _bbox(obj.get("bbox"), label)
+    for check, kind in (("verticesCheck", "#Vertices"), ("facesCheck", "#Faces")):
+        block = obj[check]
+        for key in ("name", "type", "text", "seconds"):
+            if key not in block:
+                raise DumpError(f"{label}: {check} missing {key}")
+        if block["type"] != kind:
+            raise DumpError(f"{label}: {check} type {block['type']!r}")
+        if not isinstance(block["name"], str) or not block["name"]:
+            raise DumpError(f"{label}: {check} name")
+        if not isinstance(block["text"], str):
+            raise DumpError(f"{label}: {check} text")
+        if _finite(block["seconds"], f"{check} seconds") < 0:
+            raise DumpError(f"{label}: {check} seconds")
+    return obj
 
 
 def check_run(out_dir, expected_labels) -> dict:
-    """Collect a Max run. Success is done.txt, no failed.txt, and every label json parsing.
+    """Success is this invocation only: jobs.txt nonce, the same nonce in done.txt, no failed.txt,
+    and every label json a complete native result carrying that nonce.
 
-    A partial run raises DumpError naming each missing or unreadable label. This is the
-    wrapper result: quitMax does not publish a process exit code.
+    ``{}``, an ``error`` key, null, a mismatched label, a partial schema, or a done receipt from
+    another nonce is DumpError. quitMax does not publish a process exit code; this is the result.
     """
     out_dir = Path(out_dir)
     if not isinstance(expected_labels, (list, tuple)) or not list(expected_labels):
         raise DumpError("no inputs")
+    nonce, job_labels = _read_receipt(out_dir / "jobs.txt")
+    problems = []
+    if list(expected_labels) != job_labels:
+        problems.append("labels do not match jobs.txt")
+    done = out_dir / "done.txt"
+    if not done.is_file():
+        problems.append("done.txt missing")
+    else:
+        try:
+            done_text = done.read_text(encoding="ascii")
+        except (OSError, UnicodeError) as exc:
+            problems.append(f"stale done.txt: {exc}")
+        else:
+            if done_text.strip() != nonce:
+                problems.append("stale done.txt")
+    if (out_dir / "failed.txt").exists():
+        problems.append("failed.txt present")
     parsed = {}
     missing = []
     unreadable = []
@@ -455,14 +689,14 @@ def check_run(out_dir, expected_labels) -> dict:
             missing.append(text)
             continue
         try:
-            parsed[text] = json.loads(path.read_text(encoding="utf-8"))
+            data = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, UnicodeError, json.JSONDecodeError):
             unreadable.append(text)
-    problems = []
-    if not (out_dir / "done.txt").is_file():
-        problems.append("done.txt missing")
-    if (out_dir / "failed.txt").exists():
-        problems.append("failed.txt present")
+            continue
+        try:
+            parsed[text] = _require_native(data, text, nonce)
+        except DumpError as exc:
+            problems.append(str(exc))
     if missing:
         problems.append("missing labels: " + ", ".join(missing))
     if unreadable:

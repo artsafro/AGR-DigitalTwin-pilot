@@ -102,25 +102,79 @@ def _cli(args):
         capture_output=True, text=True, check=False)
 
 
+def _full(label, nonce, **over):
+    face = [49, 1, 0.25, [1.0, 2.0, 3.0]]
+    data = {
+        "dump_version": 2, "nonce": nonce, "label": label, "path": "C:/ascii/model.fbx", "saved": False,
+        "sha256_before": "ab" * 32, "sha256_after": "ab" * 32, "units": "meters", "systemScale": 1.0,
+        "tolFaces": 0.005, "tolVerts": 0.002, "node": "big", "sourceClass": "Editable_Poly",
+        "weldedVerts": -1, "faces": 4, "verts": 8, "tris": 4, "ngons": 0,
+        "bbox": [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+        "scene": [["big", "Editable_Poly", 4], ["small", "Editable_mesh", 1]],
+        "dropped": [{"name": "small", "reason": "not selected"}],
+        "verticesCheck": {"name": "Overlapping Vertices", "type": "#Vertices", "count": 0, "items": [],
+                          "text": "", "seconds": 0.0},
+        "facesCheck": {"name": "Overlapping Faces", "type": "#Faces", "count": 1, "items": [face],
+                       "text": "", "seconds": 0.1},
+    }
+    data.update(over)
+    return data
+
+
+def _install_run(out, labels, nonce="abc12345"):
+    out.mkdir(parents=True, exist_ok=True)
+    lines = [f"#nonce:{nonce}"]
+    for label in labels:
+        lines.append(f"{label}|C:/ascii/{label}.fbx||plain||")
+        (out / f"{label}.json").write_text(json.dumps(_full(label, nonce)), encoding="utf-8")
+    (out / "jobs.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (out / "done.txt").write_text(nonce + "\n", encoding="ascii")
+
+
 def test_check_run_cli_accepts_a_complete_directory(tmp_path):
     out = tmp_path / "out"
-    out.mkdir()
-    (out / "done.txt").write_text("ok", encoding="ascii")
-    (out / "a.json").write_text('{"node":"a"}', encoding="utf-8")
-    (out / "b.json").write_text('{"node":"b"}', encoding="utf-8")
+    _install_run(out, ["a", "b"])
     proc = _cli(["--check-run", str(out), "--labels", "a,b"])
     assert proc.returncode == 0
     got = json.loads(proc.stdout)
-    assert got["a"]["node"] == "a" and got["b"]["node"] == "b"
+    assert got["a"]["label"] == "a" and got["b"]["nonce"] == "abc12345"
+    assert got["a"]["saved"] is False and got["a"]["facesCheck"]["count"] == 1
 
 
 def test_check_run_cli_names_missing_labels_of_a_partial_run(tmp_path):
     out = tmp_path / "out"
-    out.mkdir()
-    (out / "a.json").write_text("{}", encoding="utf-8")
+    _install_run(out, ["a", "b"])
+    (out / "b.json").unlink()
     (out / "failed.txt").write_text("b failed", encoding="utf-8")
     proc = _cli(["--check-run", str(out), "--labels", "a,b"])
     assert proc.returncode == 2
     assert "missing labels" in proc.stderr
     assert "b" in proc.stderr
-    assert "a.json" not in proc.stderr or "b" in proc.stderr
+
+
+@pytest.mark.parametrize("body", [
+    "{}",
+    '{"error":"checker failed"}',
+    "null",
+    '{"label":"wrong","saved":true}',
+])
+def test_check_run_cli_rejects_bad_result(tmp_path, body):
+    out = tmp_path / "out"
+    _install_run(out, ["a"])
+    target = out / "a.json"
+    target.write_text(body, encoding="utf-8")
+    before = target.read_bytes()
+    proc = _cli(["--check-run", str(out), "--labels", "a"])
+    assert proc.returncode == 2
+    assert target.read_bytes() == before
+
+
+def test_check_run_cli_rejects_stale_done(tmp_path):
+    out = tmp_path / "out"
+    _install_run(out, ["a"])
+    (out / "done.txt").write_text("othernonce\n", encoding="ascii")
+    before = (out / "a.json").read_bytes()
+    proc = _cli(["--check-run", str(out), "--labels", "a"])
+    assert proc.returncode == 2
+    assert "stale" in proc.stderr
+    assert (out / "a.json").read_bytes() == before
