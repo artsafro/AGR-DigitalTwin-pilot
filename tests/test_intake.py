@@ -52,6 +52,52 @@ def folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG), facts=FACTS,
     return d
 
 
+@pytest.mark.parametrize("answer,waived", [
+    ("Do not waive opening slides.pptx. Read the presentation before building.", False),
+    ("The door height is 2.1 m.", False),
+    ("WAIVE OPENING: slides.pptx", True),
+    ("WAIVE OPENING: other/slides.pptx", False),
+    ("WAIVE OPENING: SLIDES.pptx", False),
+    ("WAIVE OPENING: ./slides.pptx", False),
+    ("Do not WAIVE OPENING: slides.pptx", False),
+    ("WAIVE OPENING: slides.pptx but read it first", False),
+    ("WAIVE OPENING:", False), ("NaN", False), ("inf", False), ("", False),
+])
+def test_opening_waiver_requires_explicit_source_bound_answer(tmp_path, answer, waived):
+    closed = {"path": "slides.pptx", "format": "pptx", "reads": [], "opened": False,
+              "not_opened_reason": "corrupt", "role": "none", "waiver_question": "Q001"}
+    d = folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG, closed))
+    _questions(d, [("Q001", answer)])
+    before = {p.name: p.read_bytes() for p in d.iterdir()}
+    r = check(d)
+    assert r["buildable"] == waived, r
+    assert r["ok"] == waived
+    if not waived:
+        assert any("slides.pptx" in e and "corrupt" in e for e in r["errors"])
+    assert check(d) == r
+    assert {p.name: p.read_bytes() for p in d.iterdir()} == before
+
+
+def test_opening_waiver_does_not_transfer_between_sources(tmp_path):
+    closed = {"path": "slides.pptx", "format": "pptx", "reads": [], "opened": False,
+              "not_opened_reason": "corrupt", "role": "none", "waiver_question": "Q001"}
+    other = dict(closed, path="other.pptx")
+    d = folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG, closed, other))
+    _questions(d, [("Q001", "WAIVE OPENING: slides.pptx")])
+    r = check(d)
+    assert not r["buildable"]
+    assert any("other.pptx" in e and "corrupt" in e for e in r["errors"])
+    assert not any("'slides.pptx' did not open" in e for e in r["errors"])
+    inventory = json.loads((d / "sources.json").read_text(encoding="utf-8"))
+    inventory["files"][-1]["waiver_question"] = "Q002"
+    (d / "sources.json").write_text(json.dumps(inventory), encoding="utf-8")
+    _questions(d, [("Q001", "WAIVE OPENING: slides.pptx"), ("Q002", "WAIVE OPENING: other.pptx")])
+    assert check(d)["buildable"]
+    _questions(d, [("Q001", "Do not waive opening slides.pptx. Read the presentation before building."),
+                   ("Q002", "WAIVE OPENING: other.pptx")])
+    assert not check(d)["buildable"]  # revoked decision cannot survive the earlier positive control
+
+
 def test_uncited_unopened_source_blocks_until_user_waiver(tmp_path):
     closed = {"path": "slides.pptx", "format": "pptx", "reads": [], "opened": False,
               "not_opened_reason": "corrupt archive", "role": "none"}
