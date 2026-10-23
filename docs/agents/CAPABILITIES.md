@@ -463,6 +463,20 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
   in place. Postcondition of every build / fix step: `docs/procedure/TASK_TO_MODEL.md`.
 - Limits: pairs only within one object (a joined mesh is one object, as in xView); FBX / .blend need Blender.
 
+### 3ds Max xView runner — `tools/qa/xview_dump.ms` (#528)
+- Status: WORKING (contract tests 2026-10-23; a Max startup script, not the MCP bridge and not `3dsmaxbatch`).
+  `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` with `XVIEW_OUT` (alias `TOW02_XV_OUT`) a new directory that
+  contains `jobs.txt`. One Max session, one line per model, empty fields kept:
+  `label|path|node|mode|material|slot`. Path is `.fbx` (import into a reset scene) or `.max`
+  (`loadMaxFile` quiet, `useFileUnits`, never saved). Empty node = the largest mesh by polygon count; a name
+  that is not in the scene is an error naming it. Modes: `plain`, `weld` (Editable Mesh, weld all vertices at
+  `units.decodeValue "2mm"`, checks stay on the mesh), `weldpoly` (same weld, then Editable Poly). Face tolerance
+  `units.decodeValue "5mm"`. A non-ASCII path is copied to `XVIEW_TEMP` under an ASCII name; the copy's SHA-256
+  must equal the source. The opened file is hashed before and after; a change is an error. JSON: scene inventory,
+  dropped nodes, counts, every flagged face (Max face id, material id, area, centre) and every flagged vertex
+  (id, position). Job twin `jobs/vyatskaya-tow02/scripts/xview_review.ms` points here. One Max owner;
+  lock `%LOCALAPPDATA%\Temp\agr-3dsmax-session.lock`.
+
 ### Face overlap check — `tools/qa/check_clearance.py`
 - Status: WORKING (2026-10-06; AGR boundary cases + FBX planes 3 mm apart)
 - Near-parallel faces closer than 5 mm (profile), on faces JSON or FBX via

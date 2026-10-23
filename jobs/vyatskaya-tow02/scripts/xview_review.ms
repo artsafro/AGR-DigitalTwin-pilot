@@ -1,0 +1,8 @@
+-- Point at tools/qa/xview_dump.ms (#528). This job twin is not a second runner.
+-- The shared script loads .fbx and .max (never saved), several models per Max run,
+-- an optional node name (default: the largest mesh), and modes plain / weld / weldpoly.
+-- weld: Editable Mesh + weld all vertices at units.decodeValue "2mm", checks stay on the mesh.
+-- weldpoly: the same weld, then Editable Poly. Face tolerance: units.decodeValue "5mm".
+-- Non-ASCII paths are copied to an ASCII temp file; the copy's SHA-256 must equal the source.
+-- Usage: 3dsmax.exe -U MAXScript <repo>/tools/qa/xview_dump.ms with XVIEW_OUT set to a directory
+-- that contains jobs.txt (label|path|node|mode|material|slot).
