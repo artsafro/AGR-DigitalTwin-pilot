@@ -203,6 +203,51 @@ def test_translation_cannot_collapse_geometry(vector):
         api().move_rigid({'a': patch()}, ['a'], vector, fixed=[])
 
 
+@pytest.mark.parametrize('gap', [.004, .005])
+def test_rigid_translation_precision_combined_controls(gap):
+    op = api()
+    scene = {'a': patch(), 'b': patch(gap)}
+    before = {name: mesh.vertices.copy() for name, mesh in scene.items()}
+    # Both faces stay nondegenerate, but rounding falsely expands 4/5 mm to 7.8125 mm.
+    with pytest.raises(ValueError, match='precision|contacts'):
+        op.move_rigid(scene, ['a'], [0, 0, 2**45], fixed=[])
+    for name in scene:
+        np.testing.assert_array_equal(scene[name].vertices, before[name])
+    with pytest.raises(ValueError, match='contacts'):
+        op.move_rigid(scene, ['a'], [0, 0, .032], fixed=[])
+    # Repeat the earlier protections in the same regression, including reset controls.
+    test_translation_cannot_collapse_geometry([1e20, 1e20, 1e20])
+    test_postcondition_refuses_new_obstacle_and_retained_contacts()
+    test_generated_neighbour_closure_and_rigidity(5)
+    for clean_gap in (.008, .020):
+        clean = {'a': patch(), 'b': patch(clean_gap), 'host': patch(1)}
+        result = op.move_rigid(clean, ['a'], [0, 0, .032], fixed=['host'])
+        assert result.moved == (('a', 'b') if clean_gap == .008 else ('a',))
+        assert not result.contacts
+        for name in result.moved:
+            np.testing.assert_allclose(result.scene[name].vertices,
+                                       clean[name].vertices + [0, 0, .032], rtol=0, atol=1e-14)
+        np.testing.assert_array_equal(result.scene['host'].vertices, clean['host'].vertices)
+
+
+@pytest.mark.parametrize('axis', range(3))
+@pytest.mark.parametrize('sign', [-1, 1])
+@pytest.mark.parametrize('exponent', [10, 12, 13, 30, 45])
+def test_generated_translation_precision_budget(axis, sign, exponent):
+    scene = {'a': patch()}
+    before = scene['a'].vertices.copy()
+    vector = np.zeros(3)
+    vector[axis] = sign * 2**exponent
+    if exponent >= 13:  # float64 coordinate spacing exceeds the 1e-12 m budget
+        with pytest.raises(ValueError, match='precision'):
+            api().move_rigid(scene, ['a'], vector, fixed=[])
+    else:
+        result = api().move_rigid(scene, ['a'], vector, fixed=[])
+        assert not result.contacts
+        np.testing.assert_array_equal(result.scene['a'].vertices, before + vector)
+    np.testing.assert_array_equal(scene['a'].vertices, before)
+
+
 def test_fresh_process_api():
     import subprocess
     import sys
