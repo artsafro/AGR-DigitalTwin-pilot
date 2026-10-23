@@ -68,6 +68,60 @@ def test_named_non_inferred_author_is_not_team_utility() -> None:
     assert not bad, bad
 
 
+TEAM_AUTHORS = {"A101", "AlexYo"}
+# In-source attribution that may support a team-ownership claim; a load/fileIn path is not one.
+ATTRIBUTION_MARKERS = ("macro category", "author line", "header author")
+
+
+def _in_house_claim_problems(row: dict) -> list[str]:
+    """Why an `in-house-utility` row does not carry genuine team attribution (empty = acceptable)."""
+    problems: list[str] = []
+    if row.get("author") not in TEAM_AUTHORS:
+        problems.append(f"author {row.get('author')!r} is not a team author")
+    evidence = row.get("provenance_evidence", "").lower()
+    if not any(m in evidence for m in ATTRIBUTION_MARKERS):
+        problems.append("evidence cites no in-source attribution (path-only or empty)")
+    if row.get("author_inferred") and "inferred" not in evidence:
+        problems.append("inferred author but evidence does not say the ownership is inferred")
+    return problems
+
+
+def test_in_house_utility_requires_team_attribution() -> None:
+    """Unknown author or a workstation path alone must not establish team ownership (PR #605 round 1)."""
+    bad = {
+        r["name"]: _in_house_claim_problems(r)
+        for r in _rows()
+        if r["classification"] == "in-house-utility" and _in_house_claim_problems(r)
+    }
+    assert not bad, bad
+
+
+def test_edge_connect_segments_is_unattributed() -> None:
+    row = next(r for r in _rows() if r["name"] == "edge_connect_segments.ms")
+    assert row["classification"] == "unattributed-utility"
+    assert "unresolved" in row["provenance_evidence"]
+
+
+@pytest.mark.parametrize(
+    "row",
+    [
+        {"author": "unknown", "author_inferred": False, "provenance_evidence": "header fileIn path C:/Users/x/a.ms"},
+        {"author": "A101", "author_inferred": True, "provenance_evidence": "header path under C:/Users/artsafro/"},
+        {"author": "A101", "author_inferred": True, "provenance_evidence": ""},
+        {"author": "", "author_inferred": False, "provenance_evidence": "macro category 'A101'"},
+        {"author": "Mathieu Jacquin", "author_inferred": False, "provenance_evidence": "header author line"},
+        {"author": "A101", "author_inferred": True, "provenance_evidence": "macro category 'A101'"},
+    ],
+)
+def test_in_house_claim_probe_rejects_unsupported(row: dict) -> None:
+    assert _in_house_claim_problems(row)
+
+
+def test_in_house_claim_probe_accepts_explicit_inference() -> None:
+    row = {"author": "A101", "author_inferred": True, "provenance_evidence": "macro category 'A101'; ownership inferred"}
+    assert not _in_house_claim_problems(row)
+
+
 def test_report_totals_match_json() -> None:
     rows = _rows()
     counts = Counter(r["classification"] for r in rows)
