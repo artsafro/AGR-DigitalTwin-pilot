@@ -139,7 +139,10 @@ def classify(fuv, z, atlas):
 
 
 def check_uv(path, polys, uv, uvi):
-    """Source UV inventory must be consumed exactly by the closed-face walk (research #2); target UVs are unused."""
+    """Source UV inventory must be consumed exactly by the closed-face walk (research #2); target UVs are unused.
+
+    Each component a UVIndex entry reads must be finite. Pairs no index reads are not inspected.
+    """
     if not polys:
         raise ValueError("%s: source mesh has 0 complete polygons" % path)
     corners = sum(len(p) for p in polys)
@@ -148,9 +151,31 @@ def check_uv(path, polys, uv, uvi):
     if len(uvi) != corners:
         raise ValueError("%s: UVIndex has %d entries, expected %d (corners of %d complete polygons)"
                          % (path, len(uvi), corners, len(polys)))
-    for k, u in enumerate(uvi):
-        if not 0 <= u < len(uv) // 2:
-            raise ValueError("%s: UVIndex[%d] = %d outside UV pairs 0..%d" % (path, k, u, len(uv) // 2 - 1))
+    for k, idx in enumerate(uvi):
+        if not 0 <= idx < len(uv) // 2:
+            raise ValueError("%s: UVIndex[%d] = %d outside UV pairs 0..%d" % (path, k, idx, len(uv) // 2 - 1))
+        if not math.isfinite(uv[2 * idx]):
+            raise ValueError("%s: UVIndex[%d] u is not finite" % (path, k))
+        if not math.isfinite(uv[2 * idx + 1]):
+            raise ValueError("%s: UVIndex[%d] v is not finite" % (path, k))
+
+
+def check_face_numeric(path, fi, poly, k, verts, uv, uvi, atlas):
+    """One face of the historical walk: sum, divide, then the atlas pixel products. Returns (uvc, cen)."""
+    n = len(poly)
+    su = sum(uv[2 * uvi[k + i]] for i in range(n))
+    u = su / n
+    sv = sum(uv[2 * uvi[k + i] + 1] for i in range(n))
+    v = sv / n
+    uvc = (u, v)
+    cen = tuple(sum(verts[i][a] for i in poly) / n for a in range(3))
+    px = uvc[0] * atlas["size"]
+    py = (1 - uvc[1]) * atlas["size"]
+    for name, value in (("su", su), ("sv", sv), ("uvc[0]", uvc[0]), ("uvc[1]", uvc[1]),
+                        ("z", cen[2]), ("uvc[0]*size", px), ("(1-uvc[1])*size", py)):
+        if not math.isfinite(value):
+            raise ValueError("%s: face %d %s is not finite" % (path, fi, name))
+    return uvc, cen
 
 
 def main(out_dir):
@@ -173,11 +198,12 @@ def main(out_dir):
                 best, bd = j, d
         return best, bd
 
-    faces, k = [], 0
+    numeric, k = [], 0
     for fi, p in enumerate(AP):
-        uvc = (sum(AUV[2 * AUI[k + i]] for i in range(len(p))) / len(p),
-               sum(AUV[2 * AUI[k + i] + 1] for i in range(len(p))) / len(p)); k += len(p)
-        cen = tuple(sum(AV[i][a] for i in p) / len(p) for a in range(3))
+        numeric.append(check_face_numeric(V5, fi, p, k, AV, AUV, AUI, atlas))
+        k += len(p)
+    faces = []
+    for fi, (p, (uvc, cen)) in enumerate(zip(AP, numeric)):
         diags = [[(p[0], p[1], p[2])]] if len(p) == 3 else \
             [[(p[0], p[1], p[2]), (p[0], p[2], p[3])], [(p[1], p[2], p[3]), (p[1], p[3], p[0])]]
         faces.append(dict(i=fi, c=cen, part=classify(uvc, cen[2], atlas), diags=[[tri(AV, t) for t in d] for d in diags]))
