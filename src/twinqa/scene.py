@@ -183,21 +183,31 @@ def _clearance_finding(meshes: list[dict], ucx: list[dict], src: str, profile: d
         return _f("not_run", "co-directional clearance", f"{src}: no face geometry in readback",
                   expected, [8, 29], src, [30])
     faces = []
+    malformed = []
     for mesh in geometry:
         shape = mesh["face_geometry"]
         vertices = shape["vertices"]
         for index, polygon in enumerate(shape["polygons"]):
-            # A broken index or a vertex with no Z is reported by the footprint findings.
-            # Skipping it here keeps that explicit failure from aborting the whole readback.
+            label = f"{mesh['name']}#{index}"
             if isinstance(polygon, (str, bytes)) or not isinstance(polygon, (list, tuple)):
+                malformed.append(f"{label}: polygon is not an index list")
                 continue
             try:
+                if any(isinstance(v, bool) or not isinstance(v, int) or v < 0 for v in polygon):
+                    raise IndexError("negative or non-integer index")
                 points = [vertices[vertex] for vertex in polygon]
             except (IndexError, TypeError, KeyError):
+                malformed.append(f"{label}: vertex index out of range")
                 continue
-            if (len(points) >= 3 and all(isinstance(point, (list, tuple)) and len(point) >= 3
-                                          for point in points)):
+            if not all(isinstance(point, (list, tuple)) and len(point) >= 3 for point in points):
+                malformed.append(f"{label}: vertex without X/Y/Z")
+                continue
+            if len(points) >= 3:
                 faces.append({"object": mesh["name"], "index": index, "points": points})
+    if malformed:
+        return _f("fail", "co-directional clearance",
+                  f"{src}: malformed face geometry, {len(malformed)} face(s) cannot be measured: "
+                  f"{malformed[:5]}", expected, [8, 29], src, [30])
     pairs = co_directional_pairs(faces)
     distribution = co_directional_distribution(pairs, band_min, band_max)
     if distribution["below_band"]:

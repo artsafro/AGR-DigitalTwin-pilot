@@ -1778,3 +1778,45 @@ def _compensated_fill_rects(fill_area):
     rects[0] = (cut_w, 0.0, 100.0, 10.0)
     rects.append((10.0, 10.0, 10.0 + fill_area, 11.0))
     return rects
+
+
+def _oks_clearance(item, role="oks"):
+    found = scene_findings(rb(item), "vpm", role, PROFILES.vpm)
+    return next(f for f in found["V004"] if f.name == "co-directional clearance")
+
+
+def test_651_oks_clean_control_clearance_passes():
+    item = _ground_surface("SM_Oks", [(0.0, 0.0, 10.0, 10.0)])
+    assert _oks_clearance(item).status == "pass"
+
+
+def test_651_oks_vertices_missing_z_fail_clearance():
+    item = _ground_surface("SM_Oks", [(0.0, 0.0, 10.0, 10.0)])
+    item["face_geometry"]["vertices"] = [v[:2] for v in item["face_geometry"]["vertices"]]
+    finding = _oks_clearance(item)
+    assert finding.status == "fail"
+    assert "malformed face geometry" in finding.observed and "SM_Oks#0" in finding.observed
+
+
+def test_651_oks_out_of_range_index_fails_clearance():
+    item = _ground_surface("SM_Oks", [(0.0, 0.0, 10.0, 10.0)])
+    item["face_geometry"]["polygons"] = [[0, 1, 99]]
+    finding = _oks_clearance(item)
+    assert finding.status == "fail"
+    assert "out of range" in finding.observed
+
+
+def test_651_oks_negative_index_fails_clearance():
+    item = _ground_surface("SM_Oks", [(0.0, 0.0, 10.0, 10.0)])
+    item["face_geometry"]["polygons"] = [[-4, -3, -2]]
+    assert _oks_clearance(item).status == "fail"
+
+
+def test_651_ground_compensated_hole_and_malformed_both_fail():
+    item = _ground_surface("SM_Frame_Ground", _witness_rects())
+    item["face_geometry"]["polygons"].append([0, 1, 99])
+    report = rb(item)
+    found = scene_findings(report, "vpm", "ground", PROFILES.vpm, ground_area_m2=FRAME_AREA_M2,
+                           footprint_holes=[_frame_hole_ring()])
+    assert next(f for f in found["V003"] if f.name == "ground footprint hole coverage").status == "fail"
+    assert next(f for f in found["V004"] if f.name == "co-directional clearance").status == "fail"
