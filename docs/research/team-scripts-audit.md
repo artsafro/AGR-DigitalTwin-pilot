@@ -8,14 +8,23 @@ Full row-per-file data (name, size, SHA256, type, family, author, class, one-lin
 
 | Split | Count | What it is |
 |---|---|---|
-| In-house script files | 51 | 45 MaxScript, 2 Python, 3 AutoLISP, 1 `.mat` |
+| In-house script files | 37 | 31 MaxScript, 2 Python, 3 AutoLISP, 1 `.mat` (34 `in-house` + 3 `in-house-utility`) |
+| Unattributed utilities | 10 | MaxScript helpers with no author line in the header; owner unresolved (`unattributed-utility`) |
 | In-house archives | 6 | `Для Артема.zip`, `AGR_Checker.zip`, `AGR_Zipper.zip`, `AGR_Zipper_.zip`, `Telegram Desktop.zip`, `UDIM_Tool_new.mzp` |
-| Third-party | 42 | 35 archives, 6 programs, 1 reference PNG |
+| Third-party | 46 | 35 archives, 6 programs, 4 MaxScript with an external author in the header, 1 reference PNG |
 | Export artifacts | 7 | manifest, verification, archive inventory, export/media/document exclusions |
 | Programs (type) | 6 | all third-party; none executed |
 | Archives (type) | 41 | 6 in-house + 35 third-party |
 
-Classification field in the JSON: `in-house` 40, `in-house-utility` 17, `third-party` 42, `export-artifact` 7.
+Classification field in the JSON: `in-house` 40, `in-house-utility` 3, `unattributed-utility` 10, `third-party` 46, `export-artifact` 7.
+
+Utility provenance (issue #540). Presence in the folder is not proof of team ownership. Each utility row has a `provenance_evidence` field citing header lines 1-8 (or the cited author lines); the files were read as text and not run.
+
+| Class | Files | Evidence |
+|---|---|---|
+| `third-party` | `zOffTy Tools-Copitor_v3.mcr`, `uniconnector_v4.23.3_0.ms`, `dragNDropReferences11.ms`, `imagecomphelper.ms` | header names Mathieu Jacquin (Gumroad Copitor), Nikolay Litvinov, Christoph Buelter (both Buelter files) |
+| `in-house-utility` | `ClearCustomAttributesAndObjProp_010.ms`, `_001.ms`, `edge_connect_segments.ms` | macro category "A101" (`_001` by family); header path under `C:\Users\artsafro\` |
+| `unattributed-utility` | `A-Tools_SelectSimilar.ms`, `CoronaProxyDisplay_EN.ms`, `IN_tools-detriangulator.mcr`, `VertexEdgeSplit_UI_v2.ms`, `edge_tool.ms`, `EdgeDistributor.ms`, `floor_trace_extrude.ms`, `MultiBridge.ms`, `Poly_X,Y,Z.ms`, `SelectConcavePolygons.ms` | only a macro category label (A-Tools, WunschTools, IN_tools, RUST Script) or nothing; ownership unresolved, ask the team before treating any of them as an AGR tool |
 
 Version families with more than one file (latest marked in the JSON):
 
@@ -575,7 +584,7 @@ Low-poly mesh masks require a 3-digit index (`agr_max_check_37.ms:381-387`). Hig
 
 ### Modeling utilities
 
-Each of these is a general mesh helper. None of them encodes an AGR numeric rule unless noted.
+Each of these is a general mesh helper. None of them encodes an AGR numeric rule unless noted. Provenance per file is in the Inventory provenance table; owner unresolved means `unattributed-utility`.
 
 **floor_trace_extrude.ms.** Typical-floor trace: plane to border edge, click snaps, extrude in plan (`delta.z = 0`). `floor_trace_extrude.ms:1-12`. Step: modeling.
 
@@ -595,7 +604,7 @@ Each of these is a general mesh helper. None of them encodes an AGR numeric rule
 
 **VertexEdgeSplit_UI_v2.ms.** Split an edge where a vertex lies on the segment. `VES_eps = 0.001` (`VertexEdgeSplit_UI_v2.ms:6`). Category "RUST Script". Step: modeling.
 
-**uniconnector_v4.23.3_0.ms.** Flow-connect switcher. Author Nikolay Litvinov, 2014-05-10, modified 2016-03-18, tested in Max 2016 (`uniconnector_v4.23.3_0.ms:1-5`). Step: modeling. Not an AGR rule.
+**uniconnector_v4.23.3_0.ms (third-party).** Flow-connect switcher. Header author Nikolay Litvinov, category "Niklit Scripts" (`uniconnector_v4.23.3_0.ms:2-7`). Name and purpose only. Step: modeling. Not an AGR rule.
 
 **A-Tools_SelectSimilar.ms.** Select similar by edge count, area, topology, normal. Settings ini under user scripts. Step: modeling.
 
@@ -605,7 +614,7 @@ Each of these is a general mesh helper. None of them encodes an AGR numeric rule
 
 **Interier_Box (bundle).** Interior Box Creator v1.37. Extrudes an interior box. Depth default 2.0 m, range 0.05–20 (`Interier_Box.ms:4-14`). Step: modeling (interior capsule).
 
-**Limitations.** Author names on Uniconnector, AlexYo, A-Tools, IN_tools, and RUST Script are labels from the file, not a verified person record. No numeric AGR threshold except the 0.001 m vertex-on-edge epsilon and the 2 m interior default.
+**Limitations.** Author names on AlexYo, A-Tools, IN_tools, and RUST Script are labels from the file, not a verified person record; A-Tools, IN_tools and RUST Script rows are `unattributed-utility`. No numeric AGR threshold except the 0.001 m vertex-on-edge epsilon and the 2 m interior default.
 
 **Diff vs older versions.** Only the files present. Concave fixer has no older copy here. Poly Actions header mentions v7.6.0 versus a removed Shell feature; older copies are absent.
 
@@ -635,11 +644,11 @@ Each of these is a general mesh helper. None of them encodes an AGR numeric rule
 
 ### Misc
 
-**dragNDropReferences11.ms.** Image drop becomes reference planes with a two-sided material. Author line: Christoph Bülter, 2012 (`dragNDropReferences11.ms:5-8`). Step: utility. Not an AGR material.
+**dragNDropReferences11.ms (third-party).** Image drop becomes reference planes. Header author Christoph Bülter, 2012 (`dragNDropReferences11.ms:7-8`). Name and purpose only. Step: utility. Not an AGR material.
 
-**imagecomphelper.ms.** Viewport composition lines (thirds, golden spiral). Comments dated 2010–2013. Step: utility. No modelling effect.
+**imagecomphelper.ms (third-party).** Viewport composition lines (thirds, golden spiral). Header author Christoph Bülter, 2010–2013 (`imagecomphelper.ms:20-21`). Name and purpose only. Step: utility. No modelling effect.
 
-**zOffTy Tools-Copitor_v3.mcr.** Mesh clipboard. Header names Mathieu Jacquin and a Gumroad link, v3 dated 2017 (`zOffTy Tools-Copitor_v3.mcr:1-7`). Step: utility. Treat as a third-party helper that the folder happened to include; no AGR rule inside.
+**zOffTy Tools-Copitor_v3.mcr (third-party).** Mesh clipboard. Header names Mathieu Jacquin and the Gumroad Copitor product, v3 dated 2017 (`zOffTy Tools-Copitor_v3.mcr:1-7`). Name and purpose only. Step: utility. JSON class `third-party`.
 
 **Volume_vision.mat.** 36864-byte material library. Not decoded and not quoted. Step: utility.
 
@@ -788,7 +797,7 @@ Drafts only. Nothing was filed. Artem picks.
 - **Excluded documents.** `ИНСТРУКЦИЯ_ПОЛЬЗОВАТЕЛЯ.txt` and `Новые требования к НПМ+ВПМ.pdf` are excluded by user decision (Artem, 2026-10-21) as outdated. They are not used as a source.
 - **Twelve large third-party files were not in the local copy** and were not opened. Name and purpose only: Acrobat Pro portable; `AGR_Arxiv_1.5_Windows` compiled archiver; `AtlasBuilder.zip` and `AtlasBuilder_portable_1.zip`; `FacadeAtlasBuilder-win64.zip`; `Backdrop Generator v2.0_Max2018+.rar`; `Road Markings Generator 2.0.rar`; `Materialize_1.78 (1).zip`; `MaximkaE_PngCompr.7z`; `PNG_Compressor.exe` and `PNG_Compressor__msg_28662.exe`; `TextureMapGeneratorV5.exe`.
 - **Other third-party archives in the copy** (Zen UV, PolyUnwrapper, window/blinds generators, CheckToolBox, BMAX, PruneScene, UVTools, EdgeAlign, xCavity, SafeOrbit, Viewport Reflect, and the rest of the JSON `third-party` rows) were classified from `archive_inventory.json` and the file name. Contents were not read.
-- **Authors.** AlexYo, A101, Nikolay Litvinov, Christoph Bülter, Mathieu Jacquin, WunschTools, IN_tools, and RUST Script are strings in the files. Where the JSON says `author_inferred: true`, the name is taken from a category or filename, not from a signature block.
+- **Authors.** AlexYo, A101, Nikolay Litvinov, Christoph Bülter, Mathieu Jacquin, WunschTools, IN_tools, and RUST Script are strings in the files. Where the JSON says `author_inferred: true`, the name is taken from a category or filename, not from a signature block. Bülter, Litvinov and Jacquin files are `third-party`; ten utilities with no signature are `unattributed-utility` (owner unresolved).
 - **Not executed.** No script, installer, or exe was run. AGR Checker's README says its FBX parser was not validated on real Max exports. `agr_max_check_37.ms` says the same about Max. Those limitations still stand.
 - **Partial reads.** `apply_atlas_uv.ms`, `Maf Tools.mcr`, `agr_max_check_37.ms`, `UCX_Tools.ms`, and `A101AGRLP.ms` are long. Thresholds above are from the lines cited. Unquoted magic numbers in those files are not claimed. `Ground_Tools.ms` in the bundle was not line-matched to the loose file. The two Zipper copies differ by a small line count that was not interpreted. `Udim_Geo_Json.ms` was not line-matched to UDIM Viewer v1.4.
 - **`Volume_vision.mat`** was not decoded.

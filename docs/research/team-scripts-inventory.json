@@ -19,9 +19,10 @@
       "is_latest_in_family": true,
       "author": "A-Tools",
       "author_inferred": true,
-      "classification": "in-house-utility",
+      "classification": "unattributed-utility",
       "purpose": "Select similar elements by edge count, area, topology, or normal.",
-      "production_step": "modeling"
+      "production_step": "modeling",
+      "provenance_evidence": "comment 'Category: A-Tools' only (A-Tools_SelectSimilar.ms:2); no author line; A-Tools not matched to a team member"
     },
     {
       "name": "A101AGRLP.ms",
@@ -357,7 +358,8 @@
       "author_inferred": true,
       "classification": "in-house-utility",
       "purpose": "Strip custom attributes and user-defined properties from selected nodes.",
-      "production_step": "cleanup"
+      "production_step": "cleanup",
+      "provenance_evidence": "no author line; earlier copy of ClearCustomAttributesAndObjProp_010.ms (same header text, lines 1-8), attributed by family"
     },
     {
       "name": "ClearCustomAttributesAndObjProp_010.ms",
@@ -371,7 +373,8 @@
       "author_inferred": true,
       "classification": "in-house-utility",
       "purpose": "CA/UDP cleaner plus vertex channels, extra map channels, and rename channel 1 to UV.",
-      "production_step": "cleanup"
+      "production_step": "cleanup",
+      "provenance_evidence": "macro category 'A101' (ClearCustomAttributesAndObjProp_010.ms:22), same as in-house A101AGRLP.ms"
     },
     {
       "name": "Collizii.ms",
@@ -453,9 +456,10 @@
       "is_latest_in_family": true,
       "author": "WunschTools",
       "author_inferred": true,
-      "classification": "in-house-utility",
+      "classification": "unattributed-utility",
       "purpose": "Batch-switch Corona Proxy viewport display mode.",
-      "production_step": "lighting"
+      "production_step": "lighting",
+      "provenance_evidence": "macro category 'WunschTools' only (CoronaProxyDisplay_EN.ms:12,18); no author line"
     },
     {
       "name": "developer_tools-h_instancer-1.0.rar",
@@ -495,9 +499,10 @@
       "is_latest_in_family": true,
       "author": "Christoph Buelter",
       "author_inferred": false,
-      "classification": "in-house-utility",
+      "classification": "third-party",
       "purpose": "Drop images as dimensioned reference planes (Christoph Buelter, 2012).",
-      "production_step": "utility"
+      "production_step": "utility",
+      "provenance_evidence": "header 'written by Christoph Buelter 11/09/2012', www.cbuelter.de, macro category 'Buelter' (dragNDropReferences11.ms:7-8,21)"
     },
     {
       "name": "edge_connect_segments.ms",
@@ -511,7 +516,8 @@
       "author_inferred": false,
       "classification": "in-house-utility",
       "purpose": "Connect on selected edges with an explicit segment count.",
-      "production_step": "modeling"
+      "production_step": "modeling",
+      "provenance_evidence": "header fileIn path C:/Users/artsafro/Desktop/zavod/scripts/mesh/ (edge_connect_segments.ms:6); no author line"
     },
     {
       "name": "edge_tool.ms",
@@ -523,9 +529,10 @@
       "is_latest_in_family": true,
       "author": "unknown",
       "author_inferred": false,
-      "classification": "in-house-utility",
+      "classification": "unattributed-utility",
       "purpose": "Border Loop Cleaner 0.2: preview removal of intermediate border grid edges.",
-      "production_step": "modeling"
+      "production_step": "modeling",
+      "provenance_evidence": "no author line, category, URL or path in header (edge_tool.ms:1-8)"
     },
     {
       "name": "EdgeAlign-3dsMax-2024-2027v1.0.0.zip",
@@ -551,9 +558,10 @@
       "is_latest_in_family": true,
       "author": "unknown",
       "author_inferred": false,
-      "classification": "in-house-utility",
+      "classification": "unattributed-utility",
       "purpose": "Evenly space verts, edge rings, or polygon strips; corners stay fixed.",
-      "production_step": "modeling"
+      "production_step": "modeling",
+      "provenance_evidence": "no author line, category, URL or path in header (EdgeDistributor.ms:1-8)"
     },
     {
       "name": "export_summary.json",
@@ -621,9 +629,10 @@
       "is_latest_in_family": true,
       "author": "unknown",
       "author_inferred": false,
-      "classification": "in-house-utility",
+      "classification": "unattributed-utility",
       "purpose": "Trace a floor border by snapping and extruding in plan (typical floors).",
-      "production_step": "modeling"
+      "production_step": "modeling",
+      "provenance_evidence": "no author line, category, URL or path in header (floor_trace_extrude.ms:1-8)"
     },
     {
       "name": "glue.dlu",
@@ -689,11 +698,12 @@
       "version_family": "n/a",
       "version": "n/a",
       "is_latest_in_family": true,
-      "author": "unknown",
+      "author": "Christoph Buelter",
       "author_inferred": false,
-      "classification": "in-house-utility",
-      "purpose": "Viewport composition overlays (thirds, golden ratio); updates dated 2010-2013.",
-      "production_step": "utility"
+      "classification": "third-party",
+      "purpose": "Viewport composition overlays (thirds, golden ratio); Christoph Buelter, 2010-2013.",
+      "production_step": "utility",
+      "provenance_evidence": "header 'Written by Christoph Buelter 23.11.10', www.cbuelter.de (imagecomphelper.ms:20-21)"
     },
     {
       "name": "IN_tools-detriangulator.mcr",
@@ -705,9 +715,10 @@
       "is_latest_in_family": true,
       "author": "IN_tools",
       "author_inferred": true,
-      "classification": "in-house-utility",
+      "classification": "unattributed-utility",
       "purpose": "Remove triangulation edges on Editable Poly (Detriangulator v1.0).",
-      "production_step": "modeling"
+      "production_step": "modeling",
+      "provenance_evidence": "macro category 'IN_tools' only (IN_tools-detriangulator.mcr:1); no author line"
     },
     {
       "name": "Layer Manager Extension 2.0.rar",
@@ -873,9 +884,10 @@
       "is_latest_in_family": true,
       "author": "unknown",
       "author_inferred": false,
-      "classification": "in-house-utility",
+      "classification": "unattributed-utility",
       "purpose": "Bridge multiple edge or polygon selections in one action (v1.3).",
-      "production_step": "modeling"
+      "production_step": "modeling",
+      "provenance_evidence": "no author line, category, URL or path in header (MultiBridge.ms:1-4)"
     },
     {
       "name": "Narezka_Ucx.ms",
@@ -971,9 +983,10 @@
       "is_latest_in_family": true,
       "author": "unknown",
       "author_inferred": false,
-      "classification": "in-house-utility",
+      "classification": "unattributed-utility",
       "purpose": "Select polygons facing a world axis.",
-      "production_step": "modeling"
+      "production_step": "modeling",
+      "provenance_evidence": "no author line, category, URL or path in header (Poly_X,Y,Z.ms:1-8)"
     },
     {
       "name": "PolyUnwrapper_v4.5.0.rar",
@@ -1083,9 +1096,10 @@
       "is_latest_in_family": true,
       "author": "unknown",
       "author_inferred": false,
-      "classification": "in-house-utility",
+      "classification": "unattributed-utility",
       "purpose": "Select polygons that are strictly concave.",
-      "production_step": "modeling"
+      "production_step": "modeling",
+      "provenance_evidence": "no author line, category, URL or path in header (SelectConcavePolygons.ms:1-8)"
     },
     {
       "name": "SelectNumbers.lsp",
@@ -1307,9 +1321,10 @@
       "is_latest_in_family": true,
       "author": "Nikolay Litvinov",
       "author_inferred": false,
-      "classification": "in-house-utility",
+      "classification": "third-party",
       "purpose": "Flow-connect / uni-connector switcher (Nikolay Litvinov, 2014-2016).",
-      "production_step": "modeling"
+      "production_step": "modeling",
+      "provenance_evidence": "header 'By Nikolay Litvinov', macro category 'Niklit Scripts' (uniconnector_v4.23.3_0.ms:2-7)"
     },
     {
       "name": "uPVC Window Generator 2.0.rar",
@@ -1363,9 +1378,10 @@
       "is_latest_in_family": true,
       "author": "RUST Script",
       "author_inferred": true,
-      "classification": "in-house-utility",
+      "classification": "unattributed-utility",
       "purpose": "Split an edge at a vertex that lies on the segment (eps 0.001).",
-      "production_step": "modeling"
+      "production_step": "modeling",
+      "provenance_evidence": "macro category 'RUST Script' only (VertexEdgeSplit_UI_v2.ms:2); no author line"
     },
     {
       "name": "Viewport_Reflect.zip",
@@ -1475,9 +1491,10 @@
       "is_latest_in_family": true,
       "author": "Mathieu Jacquin",
       "author_inferred": false,
-      "classification": "in-house-utility",
+      "classification": "third-party",
       "purpose": "Clipboard mesh copier; file header names Mathieu Jacquin / Gumroad Copitor v3.",
-      "production_step": "utility"
+      "production_step": "utility",
+      "provenance_evidence": "header names Mathieu Jacquin, gumroad.com/l/Copitor, mathieujacquin.com (zOffTy Tools-Copitor_v3.mcr:1-4)"
     },
     {
       "name": "Для Артема.zip",
