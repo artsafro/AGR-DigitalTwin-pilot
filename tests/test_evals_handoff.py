@@ -391,3 +391,123 @@ def test_label_mentions_are_not_evidence(tmp_path, repo, evals, capsys):
     assert code == 0, out.err
     out = rejected(tmp_path, mention, shas["head"], evals, capsys, "missing Before (RED)", "missing Full suite")
     assert "duplicate" not in out.err
+
+
+# Review round 1 (PR #612): GREEN/Affected omissions and malformed counts must not pass.
+@pytest.mark.parametrize("key,value,reason", [
+    ("green", "- After (GREEN): n/a: tests not run", "GREEN"),
+    ("green", "- After (GREEN): n/a: docs-only change", "GREEN"),
+    ("green", "- After (GREEN): {head} 4 passed, 0 failed; pending rerun", "GREEN is not evidence"),
+    ("green", "- After (GREEN): {head} 4 passed, 0 failed; not run, copied old counts",
+     "GREEN is not evidence"),
+    ("affected", "- Affected tests: {head} 4 passed, 0 failed; not run, copied old counts",
+     "Affected tests is not evidence"),
+    ("affected", "- Affected tests: {head} 4 passed, 0 failed; pending rerun", "Affected tests is not evidence"),
+    ("affected", "- Affected tests: n/a: nothing changed", "Affected tests"),
+])
+def test_green_affected_omission_rejected(tmp_path, repo, evals, capsys, key, value, reason):
+    """Each witness alone, on top of the rework shape (full suite on an ancestor) for Affected tests."""
+    _, shas = repo
+    parts = lines(shas, evals)
+    if key == "affected":
+        parts["full"] = parts["full"].replace(shas["head"][:9], shas["red"][:9])
+    parts[key] = value.format(**{k: v[:9] for k, v in shas.items()})
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, reason)
+
+
+MALFORMED = ["nan", "NaN", "inf", "-inf", "infinity", "-1", "1.5", "0.0", "1e3", "+0", "1e+3", "0x1", "1,5"]
+
+
+@pytest.mark.parametrize("token", MALFORMED)
+@pytest.mark.parametrize("field", ["passed", "failed", "error", "errors"])
+def test_count_parser_flags_malformed(token, field):
+    """Generated, in-process: every malformed token before every count word is reported, never counted."""
+    from twinqa.evals.handoff import parse_counts
+
+    counts, bad = parse_counts(f"abc1234 -> 4 passed, {token} {field}, 0 failed")
+    assert bad == [f"{token} {field}"]
+    assert (counts["passed"], counts["failed"]) == (4, 0)
+
+
+@pytest.mark.parametrize("value,expected", [
+    ("13676 passed, 21 skipped, 179 deselected, 0 failed in 1374.5 s", {"passed": 13676, "failed": 0}),
+    ("13,676 passed, 2 failed (known #361)", {"passed": 13676, "failed": 2}),
+    ("4 passed, 1 error", {"passed": 4, "errors": 1}),
+    ("all tests passed", {}),
+    ("", {}),
+])
+def test_count_parser_valid(value, expected):
+    from twinqa.evals.handoff import parse_counts
+
+    counts, bad = parse_counts(value)
+    assert bad == []
+    assert {k: v for k, v in counts.items() if v is not None} == expected
+
+
+@pytest.mark.parametrize("key", ["full", "green", "affected", "red"])
+@pytest.mark.parametrize("token,field", [("nan", "failed"), ("inf", "passed"), ("-1", "errors"),
+                                         ("1.5", "failed")])
+def test_malformed_counts_rejected(tmp_path, repo, evals, capsys, token, key, field):
+    """CLI: a malformed count on any count-bearing line exits 1 naming it; no OK."""
+    _, shas = repo
+    head, red = shas["head"][:9], shas["red"][:9]
+    counts = {"passed": "4 passed", "failed": "0 failed", "errors": "0 errors"}
+    if key == "red":
+        counts["failed"] = "3 failed"
+    counts[field] = f"{token} {field}"
+    tail = ", ".join(counts.values())
+    parts = lines(shas, evals)
+    if key == "full":
+        parts["full"] = f"- Full suite: suite_slot.py on {head}: {tail}"
+    elif key == "green":
+        parts["green"] = f"- After (GREEN): {head} -> {tail}"
+    elif key == "red":
+        parts["red"] = f"- Before (RED): {red} -> {tail}"
+    else:
+        parts["full"] = parts["full"].replace(head, red)
+        parts["affected"] = f"- Affected tests: {head} -> {tail}"
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "malformed count", f"{token} {field}")
+
+
+@pytest.mark.parametrize("value", [
+    "- After (GREEN): {head} 4 passed, nan failed",
+    "- Full suite: suite_slot.py on {head}: 4 passed, nan failed",
+])
+def test_reviewer_nan_witnesses_rejected(tmp_path, repo, evals, capsys, value):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["green" if "GREEN" in value else "full"] = value.format(head=shas["head"][:9])
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "malformed count 'nan failed'")
+
+
+@pytest.mark.parametrize("key,value", [
+    ("green", "- After (GREEN): {head} -> 4 passed, 0 failed"),
+    ("green", "- After (GREEN): {head} -> 4 passed, 0 failed, 0 errors"),
+    ("green", "- After (GREEN): {head} -> 4 passed"),
+    ("full", "- Full suite: suite_slot.py on {head}: 13,676 passed, 21 skipped, 0 failed"),
+    ("full", "- Full suite: suite_slot.py on {head}: 13676 passed, 21 skipped, 179 deselected, 0 failed in 1374.5 s"),
+    ("affected", "- Affected tests: {head} `pytest -q` -> 156 passed, 0 failed in 94.47s"),
+])
+def test_valid_integer_counts_and_rework_pass(tmp_path, repo, evals, capsys, key, value):
+    """Controls: well-formed integer counts (and the rework shape) still pass."""
+    _, shas = repo
+    parts = lines(shas, evals)
+    if key == "affected":
+        parts["full"] = parts["full"].replace(shas["head"][:9], shas["red"][:9])
+    parts[key] = value.format(**{k: v[:9] for k, v in shas.items()})
+    code, out = run(tmp_path, body(parts), shas["head"], evals, capsys)
+    assert code == 0, out.err
+
+
+def test_round1_fixes_combined(tmp_path, repo, evals, capsys):
+    """Round-1 witnesses together with the earlier fixes (delegation, placeholders) all reported at once."""
+    _, shas = repo
+    head, red = shas["head"][:9], shas["red"][:9]
+    parts = lines(shas, evals)
+    parts["full"] = f"- Full suite: suite_slot.py on {red}: 4 passed, nan failed"
+    parts["affected"] = f"- Affected tests: {head} 4 passed, 0 failed; not run, copied old counts"
+    parts["green"] = "- After (GREEN): n/a: tests not run"
+    out = rejected(tmp_path, body(parts, "The full suite is left to the reviewer.\n"), shas["head"], evals,
+                   capsys, "malformed count", "Affected tests is not evidence", "GREEN",
+                   "delegated to the reviewer")
+    assert out.err.count("ERROR:") >= 4
