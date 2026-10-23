@@ -137,3 +137,81 @@ def test_real_tow02_inputs_reproduce_report(tmp_path):
     assert [(f["face"], f["target_tri"]) for f in d["over_limit_faces"]] == \
         [(35321, 29005), (35336, 29029), (35380, 29038), (33613, 63297), (33614, 63300)]
     assert d["worst_m"] == pytest.approx(0.001986, abs=1e-6)
+
+
+
+# --- R1/R2 (PR #609 review round 1): synthetic binary FBX (synthetic data, not a real object) ---
+def _prop(v):
+    import struct
+    if isinstance(v, str):
+        b = v.encode(); return b"S" + struct.pack("<I", len(b)) + b
+    if isinstance(v, int):
+        return b"L" + struct.pack("<q", v)
+    kind, vals = v; b = struct.pack("<%d%s" % (len(vals), kind), *vals)
+    return kind.encode() + struct.pack("<III", len(vals), 0, len(b)) + b
+
+
+def _node(n, start):
+    import struct
+    name, props, kids = n; name = name.encode(); p = b"".join(_prop(v) for v in props)
+    pos = start + 13 + len(name) + len(p); body = b""
+    for k in kids:
+        b = _node(k, pos); body += b; pos += len(b)
+    body += b"\0" * 13; pos += 13
+    return struct.pack("<IIIB", pos, len(props), len(p), len(name)) + name + p + body
+
+
+def _fbx(path, indices):
+    import struct
+    uv = ("LayerElementUV", [], [("UV", [("d", [0, 0, 1, 0, 0, 1])], []), ("UVIndex", [("i", [0, 1, 2])], [])])
+    geo = ("Geometry", [1], [("Vertices", [("d", [0, 0, 0, 1, 0, 0, 0, 1, 0])], []),
+                             ("PolygonVertexIndex", [("i", indices)], []), uv])
+    model = ("Model", [2, "SM_Vyatskaya_Vl_47_49_013_Main"], [])
+    top = [("Objects", [], [geo, model]), ("Connections", [], [("C", ["OO", 1, 2], [])])]
+    b = b"Kaydara FBX Binary  \x00\x1a\x00" + struct.pack("<I", 7400)
+    for n in top:
+        b += _node(n, len(b))
+    path.write_bytes(b + b"\0" * 240)
+
+
+def test_cli_complete_triangle_control_passes(tmp_path):
+    a, b, out = tmp_path / "a.fbx", tmp_path / "b.fbx", tmp_path / "o.json"
+    _fbx(a, [0, 1, -3]); _fbx(b, [0, 1, -3])
+    r = _cli(a, b, out)
+    assert r.returncode == 0, r.stderr
+    d = json.loads(out.read_text(encoding="utf-8"))
+    assert (d["source_faces"], d["target_tris"], d["accepted"], d["over_limit"]) == (1, 1, 1, 0)
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["a.fbx", "b.fbx", "o.json"]   # no temp left
+
+
+def test_cli_preserves_unrelated_partial_sentinel(tmp_path):
+    a, b, out = tmp_path / "a.fbx", tmp_path / "b.fbx", tmp_path / "o.json"
+    _fbx(a, [0, 1, -3]); _fbx(b, [0, 1, -3])
+    sentinel = Path(str(out) + ".partial"); sentinel.write_bytes(b"UNRELATED USER DATA")
+    r = _cli(a, b, out)
+    assert r.returncode == 0, r.stderr
+    assert sentinel.read_bytes() == b"UNRELATED USER DATA"
+    assert json.loads(out.read_text(encoding="utf-8"))["accepted"] == 1
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["a.fbx", "b.fbx", "o.json", "o.json.partial"]
+
+
+@pytest.mark.parametrize("side", ["source", "target"])
+def test_cli_unterminated_polygon_fails_closed(tmp_path, side):
+    a, b, out = tmp_path / "a.fbx", tmp_path / "b.fbx", tmp_path / "o.json"
+    _fbx(a, [0, 1, -3, 0, 1] if side == "source" else [0, 1, -3])
+    _fbx(b, [0, 1, -3, 0, 1] if side == "target" else [0, 1, -3])
+    sentinel = Path(str(out) + ".partial"); sentinel.write_bytes(b"UNRELATED USER DATA")
+    before = (a.read_bytes(), b.read_bytes())
+    r = _cli(a, b, out)
+    assert r.returncode == 2 and "incomplete polygon data" in r.stderr
+    assert str(a if side == "source" else b) in r.stderr
+    assert not out.exists() and sentinel.read_bytes() == b"UNRELATED USER DATA"
+    assert (a.read_bytes(), b.read_bytes()) == before
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["a.fbx", "b.fbx", "o.json.partial"]
+
+
+def test_cli_out_of_range_vertex_index_fails_closed(tmp_path):
+    a, b, out = tmp_path / "a.fbx", tmp_path / "b.fbx", tmp_path / "o.json"
+    _fbx(a, [0, 1, -4]); _fbx(b, [0, 1, -3])
+    r = _cli(a, b, out)
+    assert r.returncode == 2 and "names vertex 3 of 3" in r.stderr and not out.exists()

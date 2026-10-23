@@ -10,9 +10,10 @@ triangles pass. NOT a production or delivery gate (delivery_passed is always fal
 
 Usage: python audit_correspondence.py SOURCE.fbx TARGET.fbx OUT.json [--limit 0.001] [--fraction 0.99]
 Exit 0: computed and pass fraction >= --fraction; 1: computed but below --fraction; 2: bad input/arguments.
-Inputs are read only and hashed before and after; OUT may not resolve to an input; written via OUT.partial.
+Inputs are read only and hashed before and after; OUT may not resolve to an input; written via a unique exclusively created sibling OUT.<random>.partial (never a fixed name);
+the raw PolygonVertexIndex stream must be fully consumed into closed polygons (else exit 2).
 """
-import argparse, hashlib, importlib.util, itertools, json, math, os, sys
+import argparse, hashlib, importlib.util, itertools, json, math, os, sys, tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 _spec = importlib.util.spec_from_file_location("face_diff", os.path.join(HERE, "face_diff.py"))
@@ -121,6 +122,59 @@ def audit_meshes(AV, AP, BV, BP, limit=LIMIT, fraction=FRACTION):
                 worst10=sorted(rows, key=lambda r: -r["bottleneck_m"])[:10])
 
 
+def load_mesh(path, want):
+    """Vertices and polygons of model want*, like face_diff.mesh, but the raw index stream is validated.
+
+    face_diff.mesh silently drops an unterminated trailing polygon; here every index of
+    PolygonVertexIndex must end in a closed polygon and name an existing vertex, else AuditError.
+    """
+    top = fd.read_fbx(path)
+    objs = next((n for n in top if n[0] == "Objects"), None); conns = next((n for n in top if n[0] == "Connections"), None)
+    if objs is None or conns is None:
+        raise AuditError("%s: no Objects/Connections" % path)
+    geo = {k[1][0]: k for k in objs[2] if k[0] == "Geometry"}; mod = {k[1][0]: k for k in objs[2] if k[0] == "Model"}
+    gids = [c[1][1] for c in conns[2] if c[1][0] == "OO" and c[1][1] in geo and c[1][2] in mod
+            and mod[c[1][2]][1][1].startswith(want)]
+    if not gids:
+        raise AuditError("%s: no geometry for model %s*" % (path, want))
+    g = geo[gids[0]]
+    vk, ik = fd.kid(g, "Vertices"), fd.kid(g, "PolygonVertexIndex")
+    if not vk or not ik:
+        raise AuditError("%s: geometry without Vertices or PolygonVertexIndex" % path)
+    v, raw = vk[0][1][0], ik[0][1][0]
+    if len(v) % 3:
+        raise AuditError("%s: %d vertex coordinates is not a multiple of 3" % (path, len(v)))
+    verts = [(v[i], v[i + 1], v[i + 2]) for i in range(0, len(v), 3)]
+    polys, cur = [], []
+    for k, i in enumerate(raw):
+        vi = ~i if i < 0 else i
+        if vi >= len(verts):
+            raise AuditError("%s: PolygonVertexIndex[%d]=%d names vertex %d of %d" % (path, k, i, vi, len(verts)))
+        cur.append(vi)
+        if i < 0:
+            polys.append(cur); cur = []
+    if cur:
+        raise AuditError("%s: incomplete polygon data: %d trailing PolygonVertexIndex entries %s without a "
+                         "closing negative index" % (path, len(cur), cur[:10]))
+    if sum(map(len, polys)) != len(raw):
+        raise AuditError("%s: PolygonVertexIndex not fully consumed" % path)
+    return verts, polys
+
+
+def _write_json_atomic(out, res):
+    """Publish via an exclusively created unique sibling temp file; only that file is ever removed."""
+    d = os.path.dirname(os.path.abspath(out))
+    fdh, tmp = tempfile.mkstemp(dir=d, prefix=os.path.basename(out) + ".", suffix=".partial")
+    try:
+        with os.fdopen(fdh, "w", encoding="utf-8") as f:
+            json.dump(res, f, indent=1)
+        os.replace(tmp, out)
+    except BaseException:
+        if os.path.exists(tmp):
+            os.remove(tmp)
+        raise
+
+
 def _sha(p):
     h = hashlib.sha256()
     with open(p, "rb") as f:
@@ -146,16 +200,14 @@ def main(argv=None):
         for p in (a.source, a.target):
             if not os.path.isfile(p):
                 raise AuditError("input not found: %s" % p)
-        partial = a.out + ".partial"
-        for p in (a.out, partial):
-            for q in (a.source, a.target):
-                if _same(p, q):
-                    raise AuditError("output path %s resolves to input %s" % (p, q))
+        for q in (a.source, a.target):
+            if _same(a.out, q):
+                raise AuditError("output path %s resolves to input %s" % (a.out, q))
         if not (math.isfinite(a.limit) and a.limit >= 0 and math.isfinite(a.fraction) and 0 < a.fraction <= 1):
             raise AuditError("bad --limit %r or --fraction %r" % (a.limit, a.fraction))
         before = {p: _sha(p) for p in (a.source, a.target)}
-        AV, AP, _, _ = fd.mesh(a.source, a.object)
-        BV, BP, _, _ = fd.mesh(a.target, a.object)
+        AV, AP = load_mesh(a.source, a.object)
+        BV, BP = load_mesh(a.target, a.object)
         res = audit_meshes(AV, AP, BV, BP, a.limit, a.fraction)
         if {p: _sha(p) for p in before} != before:
             raise AuditError("input changed during the run")
@@ -163,9 +215,11 @@ def main(argv=None):
         print("ERROR: %s" % (e or type(e).__name__), file=sys.stderr)
         return 2
     res["inputs"] = {"source": a.source, "target": a.target, "object": a.object, "sha256": before}
-    with open(partial, "w", encoding="utf-8") as f:
-        json.dump(res, f, indent=1)
-    os.replace(partial, a.out)
+    try:
+        _write_json_atomic(a.out, res)
+    except OSError as e:
+        print("ERROR: cannot write %s: %s" % (a.out, e), file=sys.stderr)
+        return 2
     print(json.dumps({k: res[k] for k in ("accepted", "over_limit", "pass_fraction", "worst_m", "passes_fraction")}))
     return 0 if res["passes_fraction"] else 1
 
