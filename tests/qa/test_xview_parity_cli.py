@@ -7,6 +7,8 @@ import hashlib
 import importlib.util
 import json
 import os
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -92,3 +94,33 @@ def test_out_distinct_existing_file_control_is_written(tmp_path):
     h = sha(p)
     assert xp.main([str(p), "--out", str(other)]) == 0
     assert sha(p) == h and isinstance(json.loads(other.read_text(encoding="utf-8")), list)
+
+
+def _cli(args):
+    return subprocess.run(
+        [sys.executable, str(ROOT / "tools" / "qa" / "xview_parity.py"), *args],
+        capture_output=True, text=True, check=False)
+
+
+def test_check_run_cli_accepts_a_complete_directory(tmp_path):
+    out = tmp_path / "out"
+    out.mkdir()
+    (out / "done.txt").write_text("ok", encoding="ascii")
+    (out / "a.json").write_text('{"node":"a"}', encoding="utf-8")
+    (out / "b.json").write_text('{"node":"b"}', encoding="utf-8")
+    proc = _cli(["--check-run", str(out), "--labels", "a,b"])
+    assert proc.returncode == 0
+    got = json.loads(proc.stdout)
+    assert got["a"]["node"] == "a" and got["b"]["node"] == "b"
+
+
+def test_check_run_cli_names_missing_labels_of_a_partial_run(tmp_path):
+    out = tmp_path / "out"
+    out.mkdir()
+    (out / "a.json").write_text("{}", encoding="utf-8")
+    (out / "failed.txt").write_text("b failed", encoding="utf-8")
+    proc = _cli(["--check-run", str(out), "--labels", "a,b"])
+    assert proc.returncode == 2
+    assert "missing labels" in proc.stderr
+    assert "b" in proc.stderr
+    assert "a.json" not in proc.stderr or "b" in proc.stderr

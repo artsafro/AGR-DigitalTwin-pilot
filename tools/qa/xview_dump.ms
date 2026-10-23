@@ -10,7 +10,12 @@
 -- A non-ASCII path is copied to XVIEW_TEMP under an ASCII name; SHA-256 of the copy must equal the source.
 -- SHA-256 of the opened file is taken before the load and after the checks; a change is an error.
 -- Writes <out>/<label>.json: scene inventory, dropped nodes, counts, every flagged face
--- (Max face id, material id, area, centre) and every flagged vertex (id, position). Then <out>/done.txt.
+-- (Max face id, material id, area, centre) and every flagged vertex (id, position).
+-- After the alias guard, done.txt is removed. It is written back only when every job succeeds.
+-- Any failure writes <out>/failed.txt (the reason) and does not leave done.txt.
+-- quitMax does not set a process exit code. On failure the script calls
+-- System.Environment.Exit 1. The wrapper check_run is the result either way:
+-- done.txt present, failed.txt absent, every <label>.json present and parseable.
 -- xView only computes from this startup script, not from the MCP bridge. One Max owner at a time.
 (
   local outp = systemTools.getEnvVariable "XVIEW_OUT"
@@ -105,12 +110,29 @@
       ",\"text\":" + (q (xViewChecker.getCurrentString())) + ",\"seconds\":" + (xv_num ((timeStamp() - t0) / 1000.0)) + \
       ",\"items\":[" + items + "]}"
   )
+  fn xv_exit code = (
+    if code != 0 do try ((dotNetClass "System.Environment").Exit code) catch ()
+    quitMax #noPrompt
+  )
+  fn xv_write_failed path reason inputs = (
+    for p in inputs where xv_same path p do return false
+    local fs = createFile path
+    if fs == undefined then return false
+    format "%" reason to:fs
+    close fs
+    true
+  )
 
   local failed = false
+  local reason = ""
+  local inputPaths = #()
   try (
   if outp == undefined or outp == "" then throw "XVIEW_OUT is empty"
   local report = outp + "/report.jsonl"
-  local jf = openFile (outp + "/jobs.txt")
+  local doneP = outp + "/done.txt"
+  local failedP = outp + "/failed.txt"
+  local jobsP = outp + "/jobs.txt"
+  local jf = openFile jobsP
   if jf == undefined then throw "jobs.txt missing"
   local jobs = #()
   while not eof jf do (
@@ -119,6 +141,24 @@
   )
   close jf
   if jobs.count == 0 then throw "no inputs"
+  local ji = 1
+  while ji <= jobs.count do (
+    local guard = jobs[ji]
+    if guard.count < 2 then throw "jobs.txt line is short"
+    local guardPath = guard[2]
+    append inputPaths guardPath
+    local guardRes = outp + "/" + guard[1] + ".json"
+    if xv_same guardPath guardRes or xv_same guardPath report or xv_same guardPath doneP or xv_same guardPath failedP or xv_same guardPath jobsP then
+      throw "output aliases input"
+    local ki = 1
+    while ki <= jobs.count do (
+      if xv_same guardPath (outp + "/" + jobs[ki][1] + ".json") then throw "output aliases input"
+      ki += 1
+    )
+    ji += 1
+  )
+  if doesFileExist doneP then deleteFile doneP
+  if doesFileExist report then deleteFile report
   local ok = 0
   for j in jobs do (
     local label = j[1]
@@ -233,6 +273,7 @@
     ) catch (
       local msg = getCurrentException()
       format "XVIEW_ERROR % %\n" label msg
+      if reason == "" then reason = (label as string) + ": " + (msg as string) + "\n"
       if res != undefined and not (xv_same res path) and not (xv_same res openPath) then (
         local fs = createFile res
         format "{\"label\":%,\"path\":%,\"error\":%}\n" (q label) (q path) (q msg) to:fs
@@ -240,10 +281,20 @@
       )
     )
   )
-  if ok == jobs.count then close (createFile (outp + "/done.txt")) else failed = true
+  if ok == jobs.count then (
+    if doesFileExist failedP then deleteFile failedP
+    close (createFile doneP)
+  ) else (
+    failed = true
+    if reason == "" then reason = "not all jobs ok\n"
+    if not (xv_write_failed failedP reason inputPaths) then throw "output aliases input"
+  )
   ) catch (
     failed = true
-    format "XVIEW_ERROR %\n" (getCurrentException())
+    local msg = getCurrentException()
+    format "XVIEW_ERROR %\n" msg
+    if reason == "" then reason = (msg as string)
+    if outp != undefined and outp != "" then xv_write_failed (outp + "/failed.txt") (reason + "\n") inputPaths
   )
-  quitMax #noPrompt
+  if failed then xv_exit 1 else xv_exit 0
 )

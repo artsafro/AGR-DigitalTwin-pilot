@@ -7,6 +7,7 @@ Output: one JSON line per node with counts on both sides and every id that diffe
   uv run python tools/qa/xview_parity.py <dump.json> [--out parity.json]
   uv run python tools/qa/xview_parity.py --keep <xview_check.keep> --npz <arrays.npz> [--out parity.json]
   uv run python tools/qa/xview_parity.py <review.json> --validate-review [--out copy.json]
+  uv run python tools/qa/xview_parity.py --check-run <out-dir> --labels a,b
 
 The second form (#535) compares the stored list of a Max xView run (`jobs/vyatskaya-tow02/scripts/xview_check.ms`
 JSON: `verticesCheck` / `facesCheck` with `items` [id, ...] 1-based, `faces`, `verts`, `tolFaces`, `tolVerts`) with
@@ -245,6 +246,57 @@ def require_distinct(paths: dict) -> None:
                 raise DumpError(f"{role} aliases {role2}")
 
 
+def same_file(a, b) -> bool:
+    """True when two paths are one file: case-folded path, samefile, or st_dev+st_ino.
+
+    Hardlinks, symlinks and Windows case variants count. A path that does not exist yet
+    matches only a case-folded absolute path (the file it would create).
+    """
+    a, b = Path(a), Path(b)
+    if os.path.normcase(os.path.abspath(os.fspath(a))) == os.path.normcase(os.path.abspath(os.fspath(b))):
+        return True
+    try:
+        both = a.exists() and b.exists()
+    except OSError:
+        return False
+    if not both:
+        return False
+    try:
+        if os.path.samefile(a, b):
+            return True
+    except OSError:
+        pass
+    try:
+        sa = os.stat(a, follow_symlinks=True)
+        sb = os.stat(b, follow_symlinks=True)
+    except OSError:
+        return False
+    return sa.st_ino != 0 and sa.st_ino == sb.st_ino and sa.st_dev == sb.st_dev
+
+
+def _planned_stage(src: Path, temp_dir: Path):
+    """ASCII sources open in place. Anything else is the future xv_<sha> copy, not yet written."""
+    if _ascii_path(src):
+        return None
+    if not _ascii_path(temp_dir):
+        raise DumpError(f"temp dir is not ASCII: {temp_dir}")
+    suffix = src.suffix if src.suffix.isascii() else ""
+    dest = Path(temp_dir) / f"xv_{sha256_file(src)}{suffix}"
+    if not _ascii_path(dest):
+        raise DumpError(f"staged path is not ASCII: {dest}")
+    return dest
+
+
+def _conflicts(kind_a, kind_b, path_a, path_b) -> bool:
+    if not same_file(path_a, path_b):
+        return False
+    if kind_a == "input" and kind_b == "input":
+        return False
+    if kind_a == "temp" and kind_b == "temp":
+        return os.path.normcase(os.path.abspath(path_a)) != os.path.normcase(os.path.abspath(path_b))
+    return True
+
+
 def select_node(scene, node_name, material=None, materials=None, slot=None, slots=None):
     """Pick the named mesh, or the largest when the name is empty. Every other element is dropped with a reason."""
     if not isinstance(scene, list) or not scene:
@@ -285,12 +337,19 @@ def select_node(scene, node_name, material=None, materials=None, slot=None, slot
 
 
 def prepare_run(jobs, out_dir, temp_dir, scene=None) -> dict:
-    """Stage inputs and write an ASCII jobs.txt. Refuses before any write when a path, key or mode is wrong."""
+    """Stage inputs and write an ASCII jobs.txt.
+
+    The whole inventory is checked before any directory is created, any stale file is
+    removed, or any byte is written: each input, each ``<label>.json``, ``jobs.txt``,
+    ``report.jsonl``, ``done.txt``, ``failed.txt`` and every staged temp copy. A duplicate
+    label (case-insensitive) is an error naming that label. A stale ``done.txt`` and this
+    run's outputs are removed only after that check, and only when they are not an input.
+    """
     if not isinstance(jobs, list) or not jobs:
         raise DumpError("no inputs")
     out_dir, temp_dir = Path(out_dir), Path(temp_dir)
     staged_jobs = []
-    outputs = []
+    seen_labels = {}
     for job in jobs:
         if not isinstance(job, dict):
             raise DumpError("job is not an object")
@@ -303,25 +362,54 @@ def prepare_run(jobs, out_dir, temp_dir, scene=None) -> dict:
         label = str(job.get("label", ""))
         if not label or label != Path(label).name or not _ascii_path(Path(label)):
             raise DumpError(f"unmapped label {label!r}")
+        key = label.casefold()
+        if key in seen_labels:
+            raise DumpError(f"duplicate label {seen_labels[key]!r} and {label!r}")
+        seen_labels[key] = label
         src = Path(job.get("path", ""))
         if src.suffix.lower() not in _MESH_SUFFIXES:
             raise DumpError(f"unsupported input {src.name!r}")
         if not src.is_file():
             raise DumpError(f"input missing: {src}")
         out_file = out_dir / f"{label}.json"
-        report = out_dir / "report.jsonl"
-        require_distinct({"input": src, "output": out_file, "report": report})
         if scene is not None:
             select_node(scene, job.get("node") or "", job.get("material"), None if "material" not in job else [],
                         job.get("slot"), None)
-        staged_jobs.append((job, src, out_file))
-        outputs.append(out_file)
-    # writes happen only after every job has been accepted
+        staged_jobs.append((job, label, src, out_file, _planned_stage(src, temp_dir)))
+    entries = []
+    for _job, label, src, out_file, dest in staged_jobs:
+        entries.append(("input", src, f"input {src.name}"))
+        entries.append(("output", out_file, f"output {label!r}"))
+        if dest is not None:
+            entries.append(("temp", dest, f"temp {dest.name}"))
+    jobs_file = out_dir / "jobs.txt"
+    report = out_dir / "report.jsonl"
+    done = out_dir / "done.txt"
+    failed = out_dir / "failed.txt"
+    entries.append(("jobs", jobs_file, "jobs.txt"))
+    entries.append(("report", report, "report.jsonl"))
+    entries.append(("done", done, "done.txt"))
+    entries.append(("failed", failed, "failed.txt"))
+    for i, (kind_a, path_a, name_a) in enumerate(entries):
+        for kind_b, path_b, name_b in entries[i + 1:]:
+            if _conflicts(kind_a, kind_b, path_a, path_b):
+                raise DumpError(f"{name_a} aliases {name_b}")
+    if jobs_file.is_symlink():
+        raise DumpError(f"jobs.txt aliases {os.path.realpath(jobs_file)}")
+    before = [(src, sha256_file(src)) for _job, _label, src, _out, _dest in staged_jobs]
+    # Accepted: drop a previous success, then stage and write jobs.txt.
     temp_dir.mkdir(parents=True, exist_ok=True)
     out_dir.mkdir(parents=True, exist_ok=True)
+    for stale in (done, report, failed):
+        if stale.is_symlink() or stale.exists():
+            stale.unlink()
+    for _job, _label, _src, out_file, _dest in staged_jobs:
+        if out_file.is_symlink() or out_file.exists():
+            out_file.unlink()
     lines = []
     staged = []
-    for job, src, out_file in staged_jobs:
+    outputs = []
+    for job, label, src, out_file, _dest in staged_jobs:
         opened = stage_input(src, temp_dir)
         digest = sha256_file(src)
         if sha256_file(opened) != digest:
@@ -330,19 +418,58 @@ def prepare_run(jobs, out_dir, temp_dir, scene=None) -> dict:
         mode = job.get("mode") or ""
         material = job.get("material") or ""
         slot = job.get("slot") or ""
-        lines.append("|".join([job["label"], str(opened), node, mode, material, slot]))
-        staged.append({"label": job["label"], "source": str(src), "opened": str(opened), "sha256": digest,
+        lines.append("|".join([label, str(opened), node, mode, material, slot]))
+        staged.append({"label": label, "source": str(src), "opened": str(opened), "sha256": digest,
                        "output": str(out_file)})
-    jobs_file = out_dir / "jobs.txt"
-    report = out_dir / "report.jsonl"
+        outputs.append(out_file)
     for row in staged:
-        roles = {"input": Path(row["source"]), "output": Path(row["output"]), "report": report}
+        roles = {"input": Path(row["source"]), "output": Path(row["output"]), "report": report,
+                 "jobs": jobs_file, "done": done}
         opened = Path(row["opened"])
-        if opened.resolve() != Path(row["source"]).resolve():
+        if not same_file(opened, row["source"]):
             roles["temp"] = opened
         require_distinct(roles)
     jobs_file.write_text("\n".join(lines) + "\n", encoding="ascii")
+    for src, digest in before:
+        if sha256_file(src) != digest:
+            raise DumpError("input bytes changed (the .max/.fbx must never be saved)")
     return {"jobs_file": jobs_file, "staged": staged, "outputs": outputs, "report": report}
+
+
+def check_run(out_dir, expected_labels) -> dict:
+    """Collect a Max run. Success is done.txt, no failed.txt, and every label json parsing.
+
+    A partial run raises DumpError naming each missing or unreadable label. This is the
+    wrapper result: quitMax does not publish a process exit code.
+    """
+    out_dir = Path(out_dir)
+    if not isinstance(expected_labels, (list, tuple)) or not list(expected_labels):
+        raise DumpError("no inputs")
+    parsed = {}
+    missing = []
+    unreadable = []
+    for label in expected_labels:
+        text = str(label)
+        path = out_dir / f"{text}.json"
+        if not path.is_file():
+            missing.append(text)
+            continue
+        try:
+            parsed[text] = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError):
+            unreadable.append(text)
+    problems = []
+    if not (out_dir / "done.txt").is_file():
+        problems.append("done.txt missing")
+    if (out_dir / "failed.txt").exists():
+        problems.append("failed.txt present")
+    if missing:
+        problems.append("missing labels: " + ", ".join(missing))
+    if unreadable:
+        problems.append("unreadable labels: " + ", ".join(unreadable))
+    if problems:
+        raise DumpError("; ".join(problems))
+    return parsed
 
 
 def _finite(x, what: str) -> float:
@@ -439,7 +566,21 @@ def main(argv=None) -> int:
     ap.add_argument("--npz", type=Path)
     ap.add_argument("--out", type=Path)
     ap.add_argument("--validate-review", action="store_true")
+    ap.add_argument("--check-run", type=Path, metavar="OUT")
+    ap.add_argument("--labels", default="", help="comma-separated labels for --check-run")
     a = ap.parse_args(argv)
+    if a.check_run:
+        if a.dump or a.keep or a.npz or a.validate_review or a.out:
+            print("give --check-run OUT --labels a,b", file=sys.stderr)
+            return 2
+        labels = [part.strip() for part in a.labels.split(",") if part.strip()]
+        try:
+            found = check_run(a.check_run, labels)
+        except (DumpError, OSError) as e:
+            print(f"xview_parity: {e}", file=sys.stderr)
+            return 2
+        print(json.dumps(found))
+        return 0
     inputs = [x for x in (a.dump, a.keep, a.npz) if x]
     if a.validate_review:
         if not a.dump or a.keep or a.npz:
