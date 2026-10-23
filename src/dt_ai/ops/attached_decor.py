@@ -112,6 +112,7 @@ def move_rigid(scene, seeds, vector, *, fixed):
         moving = expanded
     after = {name: PolyMesh(mesh.vertices + vector if name in moving else mesh.vertices.copy(), mesh.faces)
              for name, mesh in scene.items()}
+    after = _snapshot(after)  # finite translations can still collapse geometry at float64 precision
     mesh, owners, local = _joined(after)
     contacts = ix.face_pairs(mesh, ix.XviewTolerance())
     if contacts:
