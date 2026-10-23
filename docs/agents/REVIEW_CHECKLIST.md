@@ -18,6 +18,9 @@ confidence. Source: `docs/HARNESS_PLAN.md` §8. Post the answer as a PR comment:
    100 % for measured checks: a failed check blocks the merge, and a check that is not
    measured is named with its reason (no transcript, a torn line, an unclassified question),
    never counted as a pass. The tasks and what fails each: `evals/README.md`, "Regression tasks".
+   Does the author's handoff evidence check (`--check-handoff` on the PR body and head) exit 0
+   ([WORKFLOW.md#handoff-evidence-check-584](WORKFLOW.md#handoff-evidence-check-584))? A missing full suite,
+   RED/GREEN or sample output is a finding, not a pass. The reviewer does not run the full suite for the author.
 
 ## Counterexamples
 
