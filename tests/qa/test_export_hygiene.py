@@ -286,6 +286,84 @@ def test_cli_fresh_process(tmp_path):
     assert "pass" in r.stdout
 
 
+# --- review round 1 (PR #594): unrelated .partial sentinels, duplicate JSON keys -------------
+
+SENTINEL = b"unrelated user file, not ours"
+
+
+@pytest.mark.parametrize("flags", [("--report",), ("--repair-out",), ("--report", "--repair-out")])
+def test_cli_preserves_unrelated_partial_sentinel(tmp_path, flags):
+    obj = clean()
+    obj["user_props"] += "x=1\r\n"
+    scene = _dump(tmp_path, [obj])
+    argv = [str(scene)]
+    sentinels = []
+    for flag in flags:
+        out = tmp_path / (flag.strip("-") + ".json")
+        sentinel = out.with_name(out.name + ".partial")
+        sentinel.write_bytes(SENTINEL)
+        sentinels.append(sentinel)
+        argv += [flag, str(out)]
+    assert main(argv) == 1
+    for flag in flags:
+        assert json.loads((tmp_path / (flag.strip("-") + ".json")).read_text(encoding="utf-8"))
+    for s in sentinels:
+        assert s.read_bytes() == SENTINEL
+    expected = {"scene.json", *(f.strip("-") + ".json" for f in flags), *(s.name for s in sentinels)}
+    assert {p.name for p in tmp_path.iterdir()} == expected
+
+
+DUP_DUMPS = {
+    "ca_owner": '{"objects": [{"name": "Box001", "custom_attributes": {"base": ["AGR_Data"], "base": [],'
+                ' "node": [], "modifiers": [], "materials": []}, "user_props": "MapChannel:1 = UV",'
+                ' "map_channels": [1]}]}',
+    "object_key": '{"objects": [{"name": "Box001", "custom_attributes": {"base": [], "node": [],'
+                  ' "modifiers": [], "materials": []}, "user_props": "x=1", "user_props": "MapChannel:1 = UV",'
+                  ' "map_channels": [1]}]}',
+    "top_level": '{"objects": [], "objects": [{"name": "Box001", "custom_attributes": {"base": [],'
+                 ' "node": [], "modifiers": [], "materials": []}, "user_props": "MapChannel:1 = UV",'
+                 ' "map_channels": [1]}]}',
+}
+
+
+@pytest.mark.parametrize("case", sorted(DUP_DUMPS))
+def test_duplicate_json_keys_at_any_depth_are_input_errors(tmp_path, case):
+    scene = tmp_path / "scene.json"
+    scene.write_text(DUP_DUMPS[case], encoding="utf-8")
+    with pytest.raises(InputError, match="duplicate key"):
+        load_scene(scene)
+
+
+@pytest.mark.parametrize("case", sorted(DUP_DUMPS))
+def test_cli_fresh_process_duplicate_key_exits_2_and_writes_nothing(tmp_path, case):
+    scene = tmp_path / "scene.json"
+    scene.write_text(DUP_DUMPS[case], encoding="utf-8")
+    report, plan = tmp_path / "report.json", tmp_path / "plan.json"
+    sentinel = report.with_name("report.json.partial")
+    sentinel.write_bytes(SENTINEL)
+    r = subprocess.run([sys.executable, "-m", "twinqa.export_hygiene", str(scene), "--report", str(report),
+                        "--repair-out", str(plan)], capture_output=True, text=True)
+    assert r.returncode == 2, r.stdout
+    assert "duplicate key" in r.stderr
+    assert sentinel.read_bytes() == SENTINEL
+    assert {p.name for p in tmp_path.iterdir()} == {"scene.json", "report.json.partial"}
+
+
+def test_cli_fresh_process_combined_sentinel_and_findings(tmp_path):
+    obj = clean()
+    obj["custom_attributes"]["base"] = ["AGR_Data"]
+    scene = _dump(tmp_path, [obj])
+    report = tmp_path / "report.json"
+    sentinel = tmp_path / "report.json.partial"
+    sentinel.write_bytes(SENTINEL)
+    r = subprocess.run([sys.executable, "-m", "twinqa.export_hygiene", str(scene), "--report", str(report)],
+                       capture_output=True, text=True)
+    assert r.returncode == 1, r.stderr
+    assert sentinel.read_bytes() == SENTINEL
+    data = json.loads(report.read_text(encoding="utf-8"))
+    assert {f["name"]: f["status"] for f in data["findings"]}["no custom attributes"] == "fail"
+
+
 def test_rule_text_cites_team_script_as_origin():
     from pathlib import Path
     root = Path(__file__).resolve().parents[2]
