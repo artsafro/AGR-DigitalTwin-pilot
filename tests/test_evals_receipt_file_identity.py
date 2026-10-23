@@ -89,6 +89,14 @@ def test_other_directory_with_identical_report_rejected(tmp_path):
     _reject(tmp_path, _line(other / "report.json"), out)
 
 
+def test_receipt_names_original_output_names_second_directory_rejected(tmp_path):
+    original = _write(tmp_path / "original" / "output" / "report.json")
+    second = tmp_path / "second"
+    (second / "report.json").parent.mkdir()
+    (second / "report.json").write_bytes(original.read_bytes())
+    _reject(tmp_path, _line(original), second)
+
+
 def test_dotdot_alias_of_same_file_accepted(tmp_path):
     out = tmp_path / "output"
     _write(out / "report.json")
