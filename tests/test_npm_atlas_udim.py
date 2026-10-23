@@ -436,3 +436,128 @@ def test_fresh_process_cli(tmp_path):
     assert ok.returncode == 0 and ok.stdout.startswith("ok:"), ok.stderr
     again = subprocess.run([sys.executable, str(tool), str(src), "--out-dir", str(out)], capture_output=True, text=True)
     assert again.returncode == 2 and "already exists" in again.stderr
+
+
+# ---------------------------------------------------------------- review round 1 regressions (PR #590)
+def _quad_case(d: Path, *, verts=((0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)),
+               uvs=((0.1, 0.1), (0.9, 0.1), (0.9, 0.9), (0.1, 0.9)), mtl=("map_Kd map.png",)):
+    """One textured Ground quad (SYNTHETIC), 256 px gradient map, material M."""
+    d.mkdir(parents=True, exist_ok=True)
+    Image.fromarray(_gradient(256, 256, 7), "RGB").save(d / "map.png")
+    lines = ["mtllib q.mtl", "o Q"] + [f"v {a} {b} {c}" for a, b, c in verts] + [f"vt {a} {b}" for a, b in uvs]
+    lines += ["usemtl M", "f 1/1 2/2 3/3 4/4"]
+    (d / "q.obj").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (d / "q.mtl").write_text("\n".join(["newmtl M", "Kd 1 1 1", *mtl]) + "\n", encoding="utf-8")
+    return d / "q.obj"
+
+
+def _cli(argv):
+    import subprocess
+
+    tool = ROOT / "tools" / "materials" / "npm_atlas_udim.py"
+    return subprocess.run([sys.executable, str(tool), *map(str, argv)], capture_output=True, text=True)
+
+
+def test_mtl_dissolve_is_kept_as_opacity_fresh_cli(tmp_path):
+    """d 0.25 (and Tr 0.75) must reach the separate opacity map, never an opaque atlas (review P1-1)."""
+    for i, line in enumerate(("d 0.25", "Tr 0.75")):
+        src = _quad_case(tmp_path / f"s{i}", mtl=("map_Kd map.png", line))
+        out = tmp_path / f"o{i}"
+        p = _cli([src, "--out-dir", out])
+        assert p.returncode == 0, p.stderr
+        rep = json.loads((out / "T_q_NPM_report.json").read_text(encoding="utf-8"))
+        assert rep["opacity_map"] is True and rep["materials"]["M"]["opacity"] == "map"
+        x, y, w, h = rep["materials"]["M"]["cell_px"]
+        with Image.open(out / "T_q_NPM_o.png") as im:
+            assert im.mode == "L"
+            cell = np.asarray(im)[y:y + h, x:x + w]
+        assert abs(int(cell.min()) - 64) <= 1 and abs(int(cell.max()) - 64) <= 1  # 0.25 x 255
+        assert "map_d" in (out / "T_q_NPM.mtl").read_text(encoding="utf-8")
+    ctl = _cli([_quad_case(tmp_path / "c"), "--out-dir", tmp_path / "oc"])  # opaque control
+    assert ctl.returncode == 0 and not (tmp_path / "oc" / "T_q_NPM_o.png").exists()
+
+
+def test_flat_material_dissolve_becomes_flat_opacity(tmp_path):
+    src = _quad_case(tmp_path, mtl=("d 0.5",))
+    (tmp_path / "q.mtl").write_text("newmtl M\nKd 0.2 0.4 0.6\nd 0.5\n", encoding="utf-8")
+    rep = na.pack(*na.read_obj(src))["report"]
+    assert rep["opacity_map"] is True and rep["materials"]["M"]["opacity"] == "flat"
+
+
+@pytest.mark.parametrize("lines,needle", [
+    (("map_Kd -s 2 2 1 map.png",), "'-s'"),
+    (("map_Kd -o 0.5 0 0 map.png",), "'-o'"),
+    (("map_Kd map.png", "map_d -clamp on map.png"), "'-clamp'"),
+    (("map_Kd map.png", "d -halo 0.5"), "-halo"),
+    (("map_Kd map.png", "d 0.5", "Tr 0.1"), "d and Tr"),
+    (("map_Kd map.png", "d 1.5"), "d 1.5"),
+    (("map_Kd map.png", "bump n.png"), "'bump'"),
+    (("map_Kd map.png", "map_Ks s.png"), "'map_Ks'"),
+    (("map_Kd map.png", "norm n.png"), "'norm'"),
+    (("map_Kd map.png", "Pr 0.4"), "'Pr'"),
+    (("map_Kd map.png", "frobnicate 1"), "'frobnicate'"),
+])
+def test_mtl_unsupported_directive_refused_fresh_cli(tmp_path, lines, needle):
+    """Pattern transform / extra maps / unknown directives: nonzero exit naming material + directive, no output."""
+    src = _quad_case(tmp_path / "s", mtl=lines)
+    before = _hashes(src.parent)
+    p = _cli([src, "--out-dir", tmp_path / "o"])
+    assert p.returncode == 2 and needle in p.stderr and "'M'" in p.stderr, p.stderr
+    assert not (tmp_path / "o").exists() and _hashes(src.parent) == before
+
+
+def test_mtl_ignored_scalars_are_reported(tmp_path):
+    src = _quad_case(tmp_path, mtl=("map_Kd map.png", "Ka 0 0 0", "Ks 0.5 0.5 0.5", "Ns 10", "illum 2"))
+    (tmp_path / "q.mtl").write_text("newmtl M\nKd 0.5 0.5 0.5\nmap_Kd map.png\nKs 0.5 0.5 0.5\nillum 2\n",
+                                    encoding="utf-8")
+    rep = na.pack(*na.read_obj(src))["report"]
+    ign = rep["materials"]["M"]["ignored_mtl"]
+    assert {i["directive"] for i in ign} == {"Kd", "Ks", "illum"} and all(i["reason"] for i in ign)
+
+
+def _texel(res):
+    row = res["report"]["materials"]["M"]
+    return row["texel_min"], row["texel_max"], res["report"]["passed"]
+
+
+def test_anisotropic_ground_quad_refused(tmp_path):
+    """0.1 x 10 m quad with square UV: 2048 / 20.5 source px/m -> no uniform scale fits 10..40 (review P1-2)."""
+    src = _quad_case(tmp_path / "s", verts=((0, 0, 0), (0.1, 0, 0), (0.1, 10, 0), (0, 10, 0)))
+    with pytest.raises(na.AtlasError, match="'M'.*cannot fit"):
+        na.pack(*na.read_obj(src))
+    p = _cli([src, "--out-dir", tmp_path / "o"])
+    assert p.returncode == 2 and "'M'" in p.stderr and not (tmp_path / "o").exists()
+
+
+def test_measure_reports_directional_extrema():
+    """The 0.1 x 10 m output of round 1 (UV 350 x 3.5 px/m, area mean 35) must fail the read-back."""
+    verts = np.array([(0, 0, 0), (0.1, 0, 0), (0.1, 10, 0), (0, 10, 0)], float)
+    s = 35.0 / 2048
+    uvs = np.array([(0.01, 0.5), (0.01 + 35 * s / 1.0, 0.5), (0.01 + 35 * s, 0.5 + 35 * s), (0.01, 0.5 + 35 * s)])
+    mesh = na.UdimMesh(verts, uvs, ((0, 1, 2, 3),), ((0, 1, 2, 3),), ("M",))
+    m = na.measure(mesh, uvs, mesh.face_uvs, {"M": [0, 0, 2048, 2048]}, 2048, mode="ground", pad_min=8)
+    row = m["materials"]["M"]
+    assert m["passed"] is False and row["texel_in_band"] is False
+    assert row["texel_min"] == pytest.approx(3.5, rel=1e-6) and row["texel_max"] == pytest.approx(350, rel=1e-6)
+
+
+def test_isotropic_rotated_and_sheared_controls(tmp_path):
+    # isotropic 1 x 1 m control: 35 / 35
+    assert _texel(na.pack(*na.read_obj(_quad_case(tmp_path / "a")))) == (35.0, 35.0, True)
+    # rotated in plane (37 deg) and tilted out of plane: still isotropic -> 35 / 35
+    c, s = math.cos(math.radians(37)), math.sin(math.radians(37))
+    n = math.sqrt(1 + 0.09)  # x edge (c, s, 0.3) / n and y edge (-s, c, 0): orthonormal in 3D
+    rot = tuple((c * x / n - s * y, s * x / n + c * y, 0.3 * x / n) for x, y, _ in
+                ((0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)))
+    lo, hi, ok = _texel(na.pack(*na.read_obj(_quad_case(tmp_path / "b", verts=rot))))
+    assert ok and lo == pytest.approx(35, abs=1e-3) and hi == pytest.approx(35, abs=1e-3)
+    # strong shear: edge lengths differ only x2.24 (an edge-length check passes) but the singular values differ
+    # x5.83 > 40/10 -> refused
+    sh = ((0.1, 0.1), (0.25, 0.1), (0.55, 0.25), (0.4, 0.25))  # J = k [[1, 2], [0, 1]]
+    with pytest.raises(na.AtlasError, match="'M'.*cannot fit"):
+        na.pack(*na.read_obj(_quad_case(tmp_path / "c", uvs=sh)))
+    # mild shear J = k [[1, 0.3], [0, 1]]: passes, min / max are the singular values, both inside the band
+    ms = ((0.1, 0.1), (0.6, 0.1), (0.75, 0.6), (0.25, 0.6))
+    lo, hi, ok = _texel(na.pack(*na.read_obj(_quad_case(tmp_path / "d", uvs=ms))))
+    sv = np.linalg.svd(np.array([[1, 0.3], [0, 1]]), compute_uv=False)
+    assert ok and 10 <= lo < hi <= 40 and hi / lo == pytest.approx(sv[0] / sv[1], rel=1e-3)
