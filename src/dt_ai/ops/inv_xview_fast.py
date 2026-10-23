@@ -1,11 +1,12 @@
 """Fast xView-exact overlap lists: 3ds Max xView Overlapping Faces (5 mm) / Overlapping Vertices (2 mm) (#553).
 
-Same rule, thresholds and arithmetic as `dt_ai.ops.inv_xview` (the baseline and oracle runner, D152): a polygon pair
+Same rule, thresholds and arithmetic as the pre-#556 `dt_ai.ops.inv_xview` contact test (now `tests/ops/xview_oracle.py`, D152): a polygon pair
 (different polygons of one mesh) is an xView face pair when two live triangles of their triangulation have
 |cos| >= `parallel_cos_min` and a vertex of one triangle that is not a vertex of the other polygon projects along the
 other triangle's normal into it (boundary included, barycentric slack 1e-12) at a plane distance <= `face_m`.
 Overlapping vertices: two distinct vertex indices at a distance <= `vertex_m` (`inv_xview.vertex_pairs`).
 Only the xView selection is computed (no `area` rule: that is the kernel's extra, see `inv_xview`).
+`contact_tri_pairs` is the one contact implementation: `inv_xview` (reports, gate, state, incremental) calls it (#556).
 
 Speed comes from the search order, not from a looser rule: the contact rule is evaluated per (triangle, vertex)
 instead of per triangle pair. A vertex grid gives the vertices inside each triangle's bounding box padded by
@@ -136,7 +137,22 @@ def _vertex_candidates(v, lo, hi, used):
 
 def contact_pairs(v, tris, owner, tol: XviewTolerance):
     """0-based polygon pairs (i < j) of the xView contact rule, as an (m, 2) array."""
+    s, t = contact_tri_pairs(v, tris, owner, tol)
+    i, j = owner[s], owner[t]
+    pr = np.stack([np.minimum(i, j), np.maximum(i, j)], 1)
+    return np.unique(pr, axis=0) if len(pr) else np.zeros((0, 2), np.int64)
+
+
+def contact_tri_pairs(v, tris, owner, tol: XviewTolerance, poly_key=None):
+    """(s, t) triangle-index arrays of the contact rule: a vertex of live triangle t, not a vertex of the polygon of
+    live triangle s, projects into s within `face_m`, polygons differ, |cos| >= `parallel_cos_min`.
+
+    The one implementation of the xView contact test (#556): `inv_xview._pairs_found` (gate, reports, state,
+    incremental) and `xview_lists` both call it. A pair can appear more than once (several shared vertices).
+    `poly_key`: sorted `polygon * n_vertices + vertex` membership keys of the polygons (default: from `tris`).
+    """
     nv = len(v)
+    none = (np.zeros(0, np.int64), np.zeros(0, np.int64))
     p = v[tris]
     origin = p[:, 0]
     cr = np.cross(p[:, 1] - origin, p[:, 2] - origin)
@@ -148,7 +164,7 @@ def contact_pairs(v, tris, owner, tol: XviewTolerance):
     pad = tol.face_m / max(tol.parallel_cos_min, 1e-9) + 1e-9
     lt = np.flatnonzero(live)
     if not len(lt):
-        return np.zeros((0, 2), np.int64)
+        return none
     # vertex -> live triangles (CSR)
     vt_v = tris[lt].ravel()
     vt_t = np.repeat(lt, 3)
@@ -158,7 +174,10 @@ def contact_pairs(v, tris, owner, tol: XviewTolerance):
     used = np.zeros(nv, bool)
     used[vt_v] = True
     # polygon membership keys owner * nv + vertex (sorted, unique)
-    pk = np.sort(np.concatenate([owner * nv + tris[:, k] for k in range(3)]))      # duplicates are harmless
+    pk = np.sort(np.concatenate([owner * nv + tris[:, k] for k in range(3)])) if poly_key is None \
+        else np.asarray(poly_key, np.int64)                                       # duplicates are harmless
+    if not len(pk):
+        return none
     # one query box per polygon (union of its live triangles), expanded to the triangles after the own-vertex test
     ol = lt[np.argsort(owner[lt], kind="stable")]
     so = owner[ol]
@@ -193,15 +212,13 @@ def contact_pairs(v, tris, owner, tol: XviewTolerance):
         hits_s.append(s[inside])
         hits_p.append(pid[inside])
     if not hits_s:
-        return np.zeros((0, 2), np.int64)
+        return none
     s, pid = np.concatenate(hits_s), np.concatenate(hits_p)
     cnt = vptr[pid + 1] - vptr[pid]
     ss = np.repeat(s, cnt)
     t = vt_t[np.repeat(vptr[pid] - np.cumsum(cnt) + cnt, cnt) + np.arange(cnt.sum())]
     ok = (owner[ss] != owner[t]) & (np.abs(_dot(nrm[ss], nrm[t])) >= tol.parallel_cos_min)
-    i, j = owner[ss[ok]], owner[t[ok]]
-    pr = np.stack([np.minimum(i, j), np.maximum(i, j)], 1)
-    return np.unique(pr, axis=0) if len(pr) else np.zeros((0, 2), np.int64)
+    return ss[ok].astype(np.int64), t[ok].astype(np.int64)
 
 
 def xview_lists(vertices, faces, tol: XviewTolerance | None = None) -> dict:

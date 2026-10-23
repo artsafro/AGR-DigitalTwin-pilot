@@ -4,9 +4,14 @@
 
 ## Evidence
 
-- Before (RED): <same regression, pre-fix revision, command, expected assertion failure and counts>
-- After (GREEN): <revision + uncommitted changes if any, command, counts, evidence path>
-- Full suite: <command, counts, environment and per-card temp path; not measured with reason if absent>
+<!-- `uv run dt evals --check-handoff <this body file> --sha <full HEAD sha> --output <worktree>/tmp/evals`
+must exit 0 before review_requested (#584). The author owns the full suite: never hand it to the reviewer. -->
+
+- Before (RED): <pre-fix commit sha, command, N failed/errors; or n/a: <reason>>
+- After (GREEN): <head sha, command, N passed, 0 failed, evidence path; never n/a>
+- Full suite: <suite_slot.py command on the head sha, N passed, 0 failed, environment and per-card temp path>
+- Affected tests: <only after a rework (rule 49): head sha, command, N passed, 0 failed; else delete this line>
+- Sample output: <the output the acceptance asks for (path or inline); or n/a: <reason>>
 - Counterexamples: <invariant -> generated/brute-force probe -> N/N; seed/bounds and evidence path, or not applicable with reason; label synthetic inputs>
 - Review fixes: <combined probe with previous fixes, or not applicable>
 
