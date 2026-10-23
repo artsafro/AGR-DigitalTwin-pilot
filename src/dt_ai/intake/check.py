@@ -13,6 +13,12 @@ The four files and their rules (user decisions 2026-10-11 [D049]):
   is one of its rows.
 - spec-draft.json (dt_ai.intake.model.SpecDraft): null without a source, a confidence per block.
 
+Every listed unopened source blocks the draft unless its waiver_question names a unique answered
+question in questions.md with a non-placeholder user answer explicitly waiving opening that source.
+A waiver never makes unread content evidence. Every opened source read for materials must appear in
+at least MIN_MATERIAL_FACTS stated picture.md facts (including colour facts from presentations; [D171],
+docs/decisions.md). This coverage gate does not change geometry priority or establish colour correctness.
+
 Confidence: `measured` needs a source read for geometry; `read_from_drawing` one read for dimensions;
 anything taken from images only is at most `estimated`; while an anchor is needed and not confirmed,
 nothing is measured or read from a drawing and no spec is built. The draft is buildable only when every
@@ -30,6 +36,9 @@ from pydantic import ValidationError
 from dt_ai.intake.model import BLOCKS, REQUIRED, SourcesFile, SpecDraft
 from dt_ai.spec import questions_file
 from dt_ai.spec.model import Spec
+
+MIN_MATERIAL_FACTS = 1
+"""Minimum stated picture.md facts citing each opened materials-reading source ([D171])."""
 
 CONFIDENCE = ("measured", "read_from_drawing", "estimated", "unknown")
 FACTS = ("Fact", "Value", "Source", "Confidence")
@@ -198,6 +207,14 @@ def check(folder):
                     errors.append(f"{where}: source {p!r} is not in sources.json")
                 elif not by_path[p].opened:                     # review 3 of PR #71
                     errors.append(f"{where}: source {p!r} did not open; it is no evidence")
+        for source in by_path.values():
+            if source.opened and "materials" in source.reads:
+                citations = sum(source.path in _paths(row["Source"])
+                                for row in facts or [] if row["Value"] not in ("", "—")
+                                and row["Confidence"] in CONFIDENCE and row["Confidence"] != "unknown")
+                if citations < MIN_MATERIAL_FACTS:
+                    errors.append(f"picture.md: {source.path!r}: materials source not cited in a stated fact "
+                                  "([D171], docs/decisions.md)")
         report["facts"], report["contradictions"] = len(facts or []), len(contra or [])
 
     buildable, why = False, []
