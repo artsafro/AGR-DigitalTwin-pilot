@@ -40,6 +40,7 @@ terrace.md, facade-decor-inset.md.
     `SM_Vyatskaya_Vl_47_49_013_Main` (export-v004, quads); NPM naming/transform reset/triangulation/validate-delivery
     not done.
 - Later decisions:
+  - 2026-10-21 quotes logged in `docs/decisions.md` (#534): glass quads [D172]; xView vertices 0.002 m and faces 0.005 m [D173] (same numbers as [D152]); embed or move, including the agreed 6 mm shifts [D174]; weld wording [D175] (needs user confirmation); F8 option A [D176] (option text not recoverable here); Mesh then Weld 0.002 m before export, no Poly round trip [D177]; weld fixes vertices, not faces [D178]; step strips already one centimetre wide [D179]. A general skip of anything within 1 cm is not a logged decision.
   - 2026-10-20: levels (helpers `Empty`…`Empty.007`, z 0.04 / 6.906 / 31.367 / 65.405 / 69.456 / 72.201 / 76.25 /
     79.237): 0.04–6.9 colonnade (model it), 6.9–31.37 bend, 31.37–65.4 typical, 65.4–69.46 parapet storey,
     69.46–76.25 superstructure 1, 76.25–79.24 superstructure 2. Stylobate is in another file, out of scope.
@@ -145,7 +146,7 @@ terrace.md, facade-decor-inset.md.
   faces got `TOW02_shaft_cap` (light; user 2026-10-21: keep the boxes hollow as in the source); ledge 72.2 exists in the source and is dark → `TOW02_ledge_dark`. Distances to
   the source: coping/posts median ≤ 0.2 mm, p95 ≤ 2 mm; louvre median 0.3 mm. Open: top wall at the louvre screen
   ~12 cm short of the source (`TOW02_top`).
-- build-v017 (`outputs/build-v017/`, `scripts/clean_glass_blender.py` on build-v016) — user rule 2026-10-21, shown by
+- build-v017 (`outputs/build-v017/`, `scripts/clean_glass_blender.py` on build-v016) — user rule 2026-10-21 [D172], shown by
   hand in 3ds Max: flat window = one quad (4 points), bends keep their segments, 90° corner = two quads on one shared
   edge (6 points). body_glass 2 761 → 787 quads (447 elements: 379 single quads, 34 corners, 34 bends), top_glass
   509 → 86. Matches the user's manual result (816 quads) within 1 cm; the difference is coplanar pieces the user left
@@ -153,19 +154,19 @@ terrace.md, facade-decor-inset.md.
 - build-v018 (`outputs/build-v018/`): build-v017 textured by the rewritten `scripts/texture_atlas_blender.py` —
   windows as source run strips (user 2026-10-21 "ленты как в источнике"): 31 strips, 77.25 px/m, 873 window faces
   matched by geometry; ray-cast check vs the source ≤ 1 cm except run B088 (1.5 cm, measurement gap).
-- QA 2026-10-21 (user: only Overlapping Faces 5 mm and Overlapping Vertices 2 mm matter; `outputs/xview-v001..v003/`):
+- QA 2026-10-21 (user: only Overlapping Faces 5 mm and Overlapping Vertices 2 mm matter [D173], same thresholds as [D152]; `outputs/xview-v001..v003/`):
   xView tolerances cannot be set from script (dialog only, default 0.01 m) and xView computes only from a Max startup
   script (`scripts/xview_check.ms`), so the two checks were computed in Blender (`outputs/xview-v002/scripts/`).
   Found: all 6 418 TOW02_reveal faces wound into the wall (since build-v013; Max split 6 298 edges on import),
   2 548 overlapping face pairs, 977 coincident/near vertex pairs (`outputs/xview-v002/findings.json`).
-- Fix chain (user rules 2026-10-21: no deleting, prefer no cutting — embed or move so parallel faces are ≥ 6 mm apart;
-  weld only coincident seams): `build_review_fixes_blender.py` → build-v019, `fix_overlaps_blender.py` → build-v023,
+- Fix chain (user rules 2026-10-21: no deleting, prefer no cutting — embed or move so parallel faces are ≥ 6 mm apart [D174];
+  weld only coincident seams [D175], needs user confirmation): `build_review_fixes_blender.py` → build-v019, `fix_overlaps_blender.py` → build-v023,
   clean_glass → v024, texture → v025, `join_export_blender.py` (welds only seams body/top 64.7, body/soffit 6.9,
   top/top_glass; 675 pairs) → `outputs/export-v004/` (35 480 faces, 35 368 quads + 112 tris, 44 073 verts). Result:
   Overlapping Vertices 2 mm = 0, Overlapping Faces 5 mm = 121 pairs, all group F8; 0 mismatched winding (verified by
   the main session). Moves: AC baskets −6.6 mm, railings 0–12 mm, soffit steps into fins ≤ 22.7 mm, fins ≤ 2 mm.
   Superseded first run: build-v020..v022, export-v003 (`superseded.json`).
-- Open after the fix chain (answered by the user 2026-10-21): (1) F8 -> option A in `build_stack` (below; the post-hoc
+- Open after the fix chain (answered by the user 2026-10-21): (1) F8 -> option A [D176] in `build_stack` (below; the post-hoc
   test `outputs/xview-v003/f8/option_a_body.blend` failed: it looked for wall points within 6 mm across the strip, but the
   strip corners slide 5-50 cm along the wall, so 0 points merged); (2) basket posts stay hidden 7 mm behind the glass;
   (3) 65.4 bow-ties -> not welded, moved apart (below); (4) builder root causes for the backlog: agent report (build_stack
@@ -230,13 +231,14 @@ terrace.md, facade-decor-inset.md.
   measurement agents 35–55 min each; three rewrites of the ring-stack step logic (T-junctions at differing storeys).
 - For a panelised curtain-wall source: check the source class first (connected parts vs area of the largest);
   if there is no shell, go straight to measurements → Lego build, do not start the extractor.
-- Tolerance rule from the user: anything within 1 cm is skipped (weld, snap, column merge).
+- Tolerance note in this job file: anything within 1 cm is skipped (weld, snap, column merge). Not a logged decision. The only logged quote is step strips already one centimetre wide [D179]; whether overlaps below 1 cm are skipped is open in `docs/domain/conflicts.md`. [D153] is Ground relief, a different rule.
+- 2026-10-21 Max export prep [D177] [D178]: convert to Mesh and Weld at 0.002 m before export; do not round-trip through Poly; the weld fixes vertices, not faces.
 - 2026-10-21: record the cfg of every builder run (the body cfg had to be reconstructed by matching build-v004; now
   `CFG_TOW02`); first check that the chain reproduces the current version bit-for-bit — then a builder fix plus a
   chain rerun is cheaper and cleaner than patching the finished master.
 - 2026-10-21: an own "Overlapping Faces" in Blender is not xView. The builder's check said 0 while xView at the same
   5 mm said 185 faces and an independent method 23 pairs; only 3ds Max xView with `OverlappingFaces.tolerance` set by
-  script counts for this user. Run it (`outputs/xview-v005/open_ovl.ms`, ~2.5 min on 35k faces) before reporting.
+  script counts for this user. The logged thresholds are [D173], the same numbers as [D152]. Run it (`outputs/xview-v005/open_ovl.ms`, ~2.5 min on 35k faces) before reporting.
 - Inputs of the builders that live in ignored `outputs/`: `measure-v001/typical/typical_floor.json`,
   `fins.json`; `measure-v002/bend_rings/bend_rings.json`; `measure-v002/top_parts/top_parts.json`; their
   measurement scripts sit next to them (`outputs/measure-v00N/*/scripts/`).

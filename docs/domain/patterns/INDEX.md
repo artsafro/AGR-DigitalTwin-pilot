@@ -23,3 +23,16 @@ Status: draft / proven on benchmark / in work. A pattern changes only with the u
 | Markup helpers | `markup-helpers` | levels from `LEVEL_<name>` helpers only (name rule, no copy suffixes, once each); per-source routes: Max Point, Blender Empty (MH1), Revit Levels (MH2) | draft |
 | Primitive first | `primitive-first` | reduction, not reproduction: parts listed and confirmed first (build_as box / plane / frame / shell / profile-extrude / instance, joints), one primitive per element, profile steps < 7 cm collapse, silhouette test 0.07 m, nothing of the source dropped, instances for repeats, two deliveries (modules / npm), blocking `complexity` check (user 2026-10-14 [D080]) | draft |
 | Facade decor inset | `facade-decor-inset` | one simple solid per decor element, embedded 0.02 m with the inner face deleted, body not cut, 5 mm off openings, ids 26-30; 0.10 m or less is texture (user 2026-10-11 [D051]); by source modules: real sections, one mesh per run, piers run through and are never cut, storey bands as frames on the contour cut where they show without a source band, other bands stop 0.02 m inside piers, inset dark panels (user 2026-10-14 [D080], pattern `primitive-first`) | draft |
+
+## Decision keywords
+
+Grep lines for dated decisions that are not a building-node pattern. The quote and the rule text are in `docs/decisions.md`. A building name does not belong here.
+
+- flat window glass quad, 4 points, 90 deg corner, two quads, 6 points: [D172]
+- xView overlapping vertices 0.002 m, overlapping faces 0.005 m, 5 mm, 2 mm: [D173], same thresholds as [D152]
+- embed or move a mesh to clear an overlap, 6 mm, do not cut: [D174]
+- weld coincident seam (needs user confirmation): [D175]
+- F8 option A (option text not recoverable): [D176]
+- convert to mesh and weld 0.002 m before export, no poly round trip: [D177]
+- weld fixes vertices, not faces: [D178]
+- step strips narrower than 1 cm, one centimetre: [D179]
