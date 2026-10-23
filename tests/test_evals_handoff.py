@@ -1,0 +1,338 @@
+"""Handoff evidence check (#584); every body, report and repository here is synthetic."""
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
+from dt_ai.cli.main import main
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def git(repo, *args):
+    return subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True,
+                          text=True).stdout.strip()
+
+
+@pytest.fixture
+def repo(tmp_path, monkeypatch):
+    """Synthetic repository: base -> test-first (RED) -> fix (head); `side` is not an ancestor."""
+    path = tmp_path / "repo"
+    path.mkdir()
+    git(path, "init", "-q")
+    git(path, "config", "user.email", "t@example.invalid")
+    git(path, "config", "user.name", "t")
+    shas = {}
+    for name in ("base", "red", "head"):
+        (path / f"{name}.txt").write_text(name, encoding="utf-8")
+        git(path, "add", "-A")
+        git(path, "commit", "-q", "-m", name)
+        shas[name] = git(path, "rev-parse", "HEAD")
+    git(path, "checkout", "-q", "-b", "side", shas["base"])
+    (path / "side.txt").write_text("side", encoding="utf-8")
+    git(path, "add", "-A")
+    git(path, "commit", "-q", "-m", "side")
+    shas["side"] = git(path, "rev-parse", "HEAD")
+    git(path, "checkout", "-q", shas["head"])
+    monkeypatch.chdir(path)
+    return path, shas
+
+
+@pytest.fixture
+def evals(tmp_path):
+    out = tmp_path / "evals"
+    out.mkdir()
+    report = {"selector": {"suite": "regression", "task": None, "references": False},
+              "passed": 0, "failed": 0, "not_measured": 10,
+              "checks": [{"passed": None} for _ in range(10)]}
+    (out / "report.json").write_text(json.dumps(report), encoding="utf-8")
+    return out
+
+
+def lines(shas, evals):
+    head, red = shas["head"][:9], shas["red"][:9]
+    return {
+        "full": f"- Full suite: `python suite_slot.py --card t_x -- uv run pytest -q` on {head}: "
+                "13290 passed, 21 skipped, 179 deselected, 0 failed in 1400 s",
+        "evals": f"Regression evals: {evals / 'report.json'}; 0 passed / 0 failed / 10 not measured "
+                 "(no Claude transcript)",
+        "red": f"- Before (RED): {red} `uv run pytest -q tests/test_x.py` -> 3 failed, 1 passed",
+        "green": f"- After (GREEN): {head} `uv run pytest -q tests/test_x.py` -> 4 passed, 0 failed",
+        "sample": "- Sample output: tmp/hook-sample.txt (`OK: 3 rows`)",
+    }
+
+
+def body(parts, extra=""):
+    return ("## Summary\n\nSynthetic body; reviewer: pending.\n\n## Evidence\n\n"
+            + "\n".join(v for v in parts.values() if v is not None)
+            + "\n\nThe review's input is the diff, not the full suite.\n" + extra)
+
+
+def run(tmp_path, text, sha, evals, capsys, encoding="utf-8"):
+    path = tmp_path / "pr-body.md"
+    path.write_bytes(text.encode(encoding) if isinstance(text, str) else text)
+    code = main(["evals", "--check-handoff", str(path), "--sha", sha, "--output", str(evals)])
+    return code, capsys.readouterr()
+
+
+def rejected(tmp_path, text, sha, evals, capsys, *reasons):
+    code, out = run(tmp_path, text, sha, evals, capsys)
+    assert code == 1, out
+    for reason in reasons:
+        assert reason in out.err, out.err
+    assert "OK" not in out.out
+    return out
+
+
+def test_valid_body_passes(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    code, out = run(tmp_path, body(lines(shas, evals)), shas["head"], evals, capsys)
+    assert code == 0, out.err
+    assert out.out.strip() == f"OK: handoff evidence complete for {shas['head']}"
+
+
+@pytest.mark.parametrize("text", [
+    "- Full suite: delegated to the reviewer",
+    "- Full suite: left for the reviewer (suite_slot.py busy) on {head}: 1 passed",
+])
+def test_full_suite_delegation_rejected(tmp_path, repo, evals, capsys, text):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["full"] = text.format(head=shas["head"][:9])
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "full suite delegated to the reviewer")
+
+
+@pytest.mark.parametrize("sentence", [
+    "Reviewer please run the full suite.",
+    "The full suite is delegated to the reviewer.",
+    "Full-suite run deferred to the reviewer.",
+])
+def test_body_delegation_sentence_rejected(tmp_path, repo, evals, capsys, sentence):
+    _, shas = repo
+    rejected(tmp_path, body(lines(shas, evals), sentence + "\n"), shas["head"], evals, capsys,
+             "full suite delegated to the reviewer")
+
+
+def test_reviewer_negation_is_not_delegation(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    extra = ("Verification boundary: reviewer did not run the full suite; reviewer ran 34 tests.\n"
+             "Keep author full-suite counts separate from reviewer runs.\n")
+    code, out = run(tmp_path, body(lines(shas, evals), extra), shas["head"], evals, capsys)
+    assert code == 0, out.err
+
+
+def test_full_suite_requires_suite_slot(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["full"] = f"- Full suite: uv run pytest -q on {shas['head'][:9]}: 13290 passed, 0 failed"
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "suite_slot.py")
+
+
+def test_full_suite_must_be_exact_head(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    parts = lines(shas, evals)
+    for other in ("side", "red"):
+        parts["full"] = lines(shas, evals)["full"].replace(shas["head"][:9], shas[other][:9])
+        rejected(tmp_path, body(parts), shas["head"], evals, capsys, "full suite not on head")
+    parts["full"] = "- Full suite: suite_slot.py on HEAD: 13290 passed, 0 failed"
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "full suite names no commit")
+
+
+@pytest.mark.parametrize("counts,ok", [
+    ("13290 passed, 0 failed", True),
+    ("13290 passed", True),
+    ("13290 passed, 2 failed", False),
+    ("13290 passed, 1 error", False),
+    ("13290 passed, 2 failed (known #361)", True),
+    ("0 passed, 0 failed", False),
+    ("nan passed, 0 failed", False),
+    ("inf passed", False),
+])
+def test_full_suite_counts(tmp_path, repo, evals, capsys, counts, ok):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["full"] = f"- Full suite: suite_slot.py on {shas['head'][:9]}: {counts}"
+    code, out = run(tmp_path, body(parts), shas["head"], evals, capsys)
+    assert code == (0 if ok else 1), out.err
+
+
+@pytest.mark.parametrize("word", ["not run", "not measured", "pending", "skipped", "n/a: busy",
+                                  "TODO", "not rerun"])
+def test_full_suite_omission_is_not_pass(tmp_path, repo, evals, capsys, word):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["full"] = f"- Full suite: {word}"
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "full suite")
+
+
+def test_skipped_count_is_not_omission(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["full"] = f"- Full suite: suite_slot.py on {shas['head'][:9]}: 10 passed, 21 skipped"
+    code, out = run(tmp_path, body(parts), shas["head"], evals, capsys)
+    assert code == 0, out.err
+
+
+def test_eval_receipt_validated(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["evals"] = parts["evals"].replace("0 passed / 0 failed / 10", "10 passed / 0 failed / 0")
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "regression evals: counts differ")
+    parts["evals"] = "Regression evals: 13290 passed"
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "regression evals: not a dt evals receipt")
+    code, out = run(tmp_path, body(lines(shas, evals)), shas["head"], tmp_path / "missing", capsys)
+    assert code == 1 and "regression evals: report missing" in out.err
+
+
+def test_all_not_measured_receipt_valid(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    code, out = run(tmp_path, body(lines(shas, evals)), shas["head"], evals, capsys)
+    assert code == 0, out.err
+
+
+@pytest.mark.parametrize("key,value,reason", [
+    ("red", None, "missing Before (RED)"),
+    ("red", "- Before (RED): {red} -> 0 failed, 4 passed", "RED shows no failure"),
+    ("red", "- Before (RED): {head} -> 3 failed", "RED is not on a commit before head"),
+    ("red", "- Before (RED): {side} -> 3 failed", "RED is not on a commit before head"),
+    ("red", "- Before (RED): tests failed", "RED names no commit"),
+    ("green", None, "missing After (GREEN)"),
+    ("green", "- After (GREEN): {red} -> 4 passed, 0 failed", "GREEN not on head"),
+    ("green", "- After (GREEN): {head} -> 3 passed, 1 failed", "GREEN has failures"),
+    ("green", "- After (GREEN): {head} -> all good", "GREEN shows no passed count"),
+])
+def test_red_green_required(tmp_path, repo, evals, capsys, key, value, reason):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts[key] = None if value is None else value.format(**{k: v[:9] for k, v in shas.items()})
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, reason)
+
+
+def test_red_aliases_and_na(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["red"] = f"- RED: test-first commit `{shas['red'][:9]}`: 2 failed"
+    parts["green"] = f"- GREEN: {shas['head']}: 2 passed"
+    assert run(tmp_path, body(parts), shas["head"], evals, capsys)[0] == 0
+    parts["red"] = "- Before (RED): n/a: docs-only change, no behaviour to regress"
+    assert run(tmp_path, body(parts), shas["head"], evals, capsys)[0] == 0
+    parts["red"] = "- Before (RED): n/a:"
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "n/a without a reason")
+
+
+@pytest.mark.parametrize("value,ok", [
+    (None, False),
+    ("- Sample output: n/a: the acceptance asks for no sample output", True),
+    ("- Sample output: tmp/hook.txt", True),
+    ("- Sample output:", False),
+    ("- Sample output: not run", False),
+    ("- Sample output: pending", False),
+])
+def test_sample_output_line(tmp_path, repo, evals, capsys, value, ok):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["sample"] = value
+    code, out = run(tmp_path, body(parts), shas["head"], evals, capsys)
+    assert code == (0 if ok else 1), out.err
+    if not ok:
+        assert "Sample output" in out.err
+
+
+def test_order_and_markup_independent(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    parts = lines(shas, evals)
+    marked = {k: "* **" + v.lstrip("- ").replace(":", ":**", 1) for k, v in reversed(parts.items())}
+    code, out = run(tmp_path, body(marked), shas["head"], evals, capsys)
+    assert code == 0, out.err
+
+
+def test_lines_inside_code_fence_ignored(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    parts = lines(shas, evals)
+    fenced = "```\n" + parts.pop("full") + "\n```"
+    parts["fenced"] = fenced
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "missing Full suite")
+
+
+def test_rework_ancestor_needs_affected_tests(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["full"] = parts["full"].replace(shas["head"][:9], shas["red"][:9])
+    parts["affected"] = (f"- Affected tests: {shas['head'][:9]} `uv run pytest -q tests/test_x.py` "
+                         "-> 40 passed, 0 failed")
+    assert run(tmp_path, body(parts), shas["head"], evals, capsys)[0] == 0
+    parts["affected"] = parts["affected"].replace("0 failed", "1 failed")
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "Affected tests has failures")
+    del parts["affected"]
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "full suite not on head")
+    parts["full"] = lines(shas, evals)["full"].replace(shas["head"][:9], shas["side"][:9])
+    parts["affected"] = f"- Affected tests: {shas['head'][:9]} -> 40 passed, 0 failed"
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "full suite not on head")
+
+
+@pytest.mark.parametrize("key", ["full", "evals", "red", "green", "sample"])
+def test_duplicate_lines_rejected(tmp_path, repo, evals, capsys, key):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["dup"] = parts[key]
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "duplicate")
+
+
+@pytest.mark.parametrize("text", ["", "   \n\n"])
+def test_empty_body_lists_every_missing_line(tmp_path, repo, evals, capsys, text):
+    _, shas = repo
+    out = rejected(tmp_path, text, shas["head"], evals, capsys)
+    errors = [line for line in out.err.splitlines() if line.startswith("ERROR: ")]
+    assert len(errors) == 5, out.err
+    for label in ("Full suite", "Regression evals", "Before (RED)", "After (GREEN)", "Sample output"):
+        assert f"missing {label}" in out.err
+
+
+def test_template_placeholders_rejected(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    template = (ROOT / ".github" / "pull_request_template.md").read_text(encoding="utf-8")
+    out = rejected(tmp_path, template, shas["head"], evals, capsys, "placeholder")
+    assert "OK" not in out.out
+
+
+def test_bad_sha_and_files(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    text = body(lines(shas, evals))
+    for sha in ("abc", shas["head"][:9], "0" * 40, ""):
+        code, out = run(tmp_path, text, sha, evals, capsys)
+        assert code == 1 and "sha" in out.err, (sha, out.err)
+    code, out = run(tmp_path, text.encode("utf-16"), shas["head"], evals, capsys)
+    assert code == 1 and "body" in out.err
+    code = main(["evals", "--check-handoff", str(tmp_path / "nope.md"), "--sha", shas["head"],
+                 "--output", str(evals)])
+    assert code == 1 and "body" in capsys.readouterr().err
+    code = main(["evals", "--check-handoff", str(tmp_path / "pr-body.md"), "--suite", "regression",
+                 "--output", str(evals)])
+    assert code == 1 and "--check-handoff accepts only" in capsys.readouterr().err
+
+
+def test_default_sha_is_head(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    path = tmp_path / "pr-body.md"
+    path.write_text(body(lines(shas, evals)), encoding="utf-8")
+    assert main(["evals", "--check-handoff", str(path), "--output", str(evals)]) == 0
+    assert shas["head"] in capsys.readouterr().out
+
+
+def test_cli_fresh_process_read_only(tmp_path, repo, evals):
+    path_repo, shas = repo
+    path = tmp_path / "pr-body.md"
+    path.write_text(body(lines(shas, evals)), encoding="utf-8")
+    before = {p: p.read_bytes() for p in (path, evals / "report.json")}
+    listing = sorted(p.name for p in evals.iterdir())
+    env = {k: v for k, v in os.environ.items() if k not in ("PYTHONPATH", "PYTHONHOME")}
+    proc = subprocess.run([sys.executable, "-m", "dt_ai.cli.main", "evals", "--check-handoff", str(path),
+                           "--sha", shas["head"], "--output", str(evals)],
+                          cwd=path_repo, capture_output=True, text=True, env=env, timeout=120)
+    assert proc.returncode == 0, proc.stderr
+    assert "OK: handoff evidence complete" in proc.stdout
+    assert {p: p.read_bytes() for p in before} == before
+    assert sorted(p.name for p in evals.iterdir()) == listing
