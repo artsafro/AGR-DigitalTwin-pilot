@@ -154,10 +154,11 @@ def fbx_role(name: str) -> str:
 
 
 def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, bytes], notes: list[str],
-              ground_area_m2: float | None = None):
+              ground_area_m2: float | None = None, footprint_holes=None):
     """Blender readback of each FBX; replaces the scene not_run placeholders it covers.
     ground_area_m2 (site minus OKS footprint) selects the VPM Ground triangle band (reg p.29)
-    and is the expected top-down area for the Ground footprint-coverage finding."""
+    and is the expected top-down area for the Ground footprint-coverage finding.
+    footprint_holes is an optional list of XY rings for the footprint-hole coverage finding."""
     import tempfile
     with tempfile.TemporaryDirectory() as tmp:
         for name, data in sorted(fbx.items()):
@@ -169,7 +170,8 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
                 notes.append(f"scene readback skipped for {name}: {exc}")
                 return
             for stage_id, findings in scene_findings(rb, kind, fbx_role(name), profile,
-                                                        ground_area_m2=ground_area_m2).items():
+                                                        ground_area_m2=ground_area_m2,
+                                                        footprint_holes=footprint_holes).items():
                 if stage_id in st:
                     st[stage_id].findings.extend(findings)
             notes.append(f"scene readback: {name} in Blender {rb.get('blender')}")
@@ -183,7 +185,7 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
 
 
 def validate(target: Path, kind: str | None, profiles, scene: bool = False,
-             ground_area_m2: float | None = None) -> ValidationReport:
+             ground_area_m2: float | None = None, footprint_holes=None) -> ValidationReport:
     if ground_area_m2 is not None:
         check_ground_area(ground_area_m2)
     data = target.read_bytes()
@@ -216,11 +218,11 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         (validate_vpm_zip if kind == "vpm" else validate_npm_zip)(target.stem, files, profile, st)
         if scene:
             add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes,
-                      ground_area_m2)
+                      ground_area_m2, footprint_holes)
     elif suffix == ".fbx":
         check_fbx_headers(st["V002"], {target.name: data})
         if scene:
-            add_scene(st, kind, profile, {target.name: data}, notes, ground_area_m2)
+            add_scene(st, kind, profile, {target.name: data}, notes, ground_area_m2, footprint_holes)
         else:
             notes.append("single FBX: header only; add --scene for the Blender readback")
     elif suffix == ".geojson":
@@ -235,7 +237,20 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
     scene_readback = bool(scene and kind in ("vpm", "npm") and suffix in (".zip", ".fbx"))
     if ground_area_m2 is not None and not scene_readback:
         notes.append(f"ground_area_m2 {ground_area_m2} unused: the VPM Ground band applies only to a VPM --scene readback")
+    if footprint_holes is not None and not scene_readback:
+        notes.append("footprint_holes unused: the footprint-hole check applies only to a --scene readback")
     return report(target, data, kind, profiles, st, notes)
+
+
+def _holes_arg(text: str):
+    """JSON list of footprint-hole rings: [[[x, y], ...], ...]."""
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise argparse.ArgumentTypeError(f"footprint_holes must be JSON: {exc.msg}") from None
+    if not isinstance(data, list) or not data:
+        raise argparse.ArgumentTypeError("footprint_holes must be a non-empty JSON list of rings")
+    return data
 
 
 def _area_arg(text: str) -> float:
@@ -294,10 +309,12 @@ def main(argv=None) -> int:
     ap.add_argument("--output", type=Path, help="new file for the recheck result (never an existing file)")
     ap.add_argument("--ground-area-m2", type=_area_arg, metavar="M2",
                     help="VPM Ground area = site minus OKS footprint, m2 (reg p.29 triangle band; without it: review)")
+    ap.add_argument("--footprint-holes", type=_holes_arg, default=None, metavar="JSON",
+                    help="JSON list of OKS footprint-hole rings [[[x,y],...], ...]; hole coverage is not_run without it")
     args = ap.parse_args(argv)
     if args.recheck is not None:
         if (args.target is not None or args.output is None or args.profile or args.scene
-                or args.ground_area_m2 is not None):
+                or args.ground_area_m2 is not None or args.footprint_holes is not None):
             ap.error("--recheck takes only --output, --standards and --json")
         return run_recheck(args.recheck, args.output, args.standards or DEFAULT_STANDARDS, args.json)
     if args.output is not None:
@@ -308,7 +325,8 @@ def main(argv=None) -> int:
         print(f"Error: {args.target} does not exist", file=sys.stderr)
         return 1
     profiles = load_profiles(args.standards) if args.standards else load_profiles()
-    result = validate(args.target, args.profile, profiles, args.scene, args.ground_area_m2)
+    result = validate(args.target, args.profile, profiles, args.scene, args.ground_area_m2,
+                      args.footprint_holes)
     sys.stdout.reconfigure(encoding="utf-8")
     print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2) if args.json else result.summary())
     return result.exit_code

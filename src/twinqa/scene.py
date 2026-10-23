@@ -78,11 +78,13 @@ def _f(status, name, observed, expected, pages, evidence, conflicts=(), data=Non
 
 GROUND_TABLE_KEY = "ground_triangles_max_by_area_ha"
 GROUND_AREA_TOL_M2 = 0.25
-"""Absolute tolerance in m2 between the readback top-down Ground area and ground_area_m2.
+"""Absolute tolerance in m2 for the Ground footprint checks.
 
-Pass only when the absolute difference is strictly below this value, so a difference
-of exactly 0.25 m2 fails closed. A 0.5 m2 fill of the OKS footprint fails on the
-3431.50 m2 Vatutino fixture.
+The top-down area check passes only when ``|measured - ground_area_m2|`` is strictly
+below this value, so a difference of exactly 0.25 m2 fails closed. The footprint-hole
+check uses the same constant: top-down coverage inside the hole polygon(s) passes
+only when it is strictly below this value. A 0.5 m2 net excess fails on the 3431.50 m2
+Vatutino fixture. A 0.5 m2 coverage of the hole fails even when the net area is unchanged.
 """
 
 
@@ -185,8 +187,16 @@ def _clearance_finding(meshes: list[dict], ucx: list[dict], src: str, profile: d
         shape = mesh["face_geometry"]
         vertices = shape["vertices"]
         for index, polygon in enumerate(shape["polygons"]):
-            points = [vertices[vertex] for vertex in polygon]
-            if len(points) >= 3:
+            # A broken index or a vertex with no Z is reported by the footprint findings.
+            # Skipping it here keeps that explicit failure from aborting the whole readback.
+            if isinstance(polygon, (str, bytes)) or not isinstance(polygon, (list, tuple)):
+                continue
+            try:
+                points = [vertices[vertex] for vertex in polygon]
+            except (IndexError, TypeError, KeyError):
+                continue
+            if (len(points) >= 3 and all(isinstance(point, (list, tuple)) and len(point) >= 3
+                                          for point in points)):
                 faces.append({"object": mesh["name"], "index": index, "points": points})
     pairs = co_directional_pairs(faces)
     distribution = co_directional_distribution(pairs, band_min, band_max)
@@ -601,7 +611,9 @@ def _m2_text(value: float) -> str:
 def _ground_xy_rings(geometry: list[dict]) -> list[list[tuple[float, float]]]:
     """XY rings of render-mesh faces. Empty geometry raises ValueError('empty face geometry').
 
-    Unsupported structure, a partial index and a non-finite coordinate also raise ValueError.
+    A polygon with fewer than 3 indices, a negative index, an out-of-range index,
+    a vertex with fewer than 3 components, and a non-finite coordinate each raise
+    ValueError naming that problem. Unsupported structure does too.
     """
     rings = []
     for mesh in geometry:
@@ -613,18 +625,24 @@ def _ground_xy_rings(geometry: list[dict]) -> list[list[tuple[float, float]]]:
             if isinstance(polygon, (str, bytes)) or not isinstance(polygon, (list, tuple)):
                 raise ValueError(f"unsupported polygon on {mesh['name']}")
             if len(polygon) < 3:
-                continue
+                raise ValueError(f"polygon with fewer than 3 indices on {mesh['name']}")
             ring = []
             for index in polygon:
                 if isinstance(index, bool) or not isinstance(index, int):
                     raise ValueError(f"unsupported polygon index on {mesh['name']}")
+                if index < 0:
+                    raise ValueError(f"negative face index on {mesh['name']}")
+                if index >= len(vertices):
+                    raise ValueError(f"out-of-range face index on {mesh['name']}")
                 try:
                     point = vertices[index]
                 except (IndexError, TypeError) as exc:
-                    raise ValueError(f"partial face geometry on {mesh['name']}") from exc
+                    raise ValueError(f"out-of-range face index on {mesh['name']}") from exc
                 if isinstance(point, (str, bytes)) or not isinstance(point, (list, tuple)) or len(point) < 2:
                     raise ValueError(f"unsupported vertex on {mesh['name']}")
-                coords = (point[0], point[1], point[2] if len(point) > 2 else 0.0)
+                if len(point) < 3:
+                    raise ValueError(f"vertex missing Z on {mesh['name']}")
+                coords = (point[0], point[1], point[2])
                 if any(isinstance(coord, bool) or not isinstance(coord, (int, float)) or not math.isfinite(coord)
                        for coord in coords):
                     raise ValueError(f"non-finite coordinate on {mesh['name']}")
@@ -636,8 +654,8 @@ def _ground_xy_rings(geometry: list[dict]) -> list[list[tuple[float, float]]]:
     return rings
 
 
-def _topdown_area_m2(rings: list[list[tuple[float, float]]]) -> float:
-    """Union area of the XY projections. Stacked coverings count once; a filled hole adds its area."""
+def _projected_union(rings: list[list[tuple[float, float]]]):
+    """XY union of face rings. Stacked coverings count once. An empty union has area 0."""
     import shapely
 
     parts = []
@@ -649,81 +667,173 @@ def _topdown_area_m2(rings: list[list[tuple[float, float]]]) -> float:
             continue
         parts.append(polygon)
     if not parts:
-        return 0.0
+        return shapely.Polygon()
     try:
-        area = float(shapely.union_all(parts).area)
+        return shapely.union_all(parts)
     except shapely.errors.GEOSException as exc:
         raise ValueError(f"unsupported face geometry: {exc}") from exc
+
+
+def _topdown_area_m2(rings: list[list[tuple[float, float]]]) -> float:
+    """Union area of the XY projections. Stacked coverings count once."""
+    area = float(_projected_union(rings).area)
     if not math.isfinite(area):
         raise ValueError("non-finite projected area")
     return area
 
 
-def _ground_footprint_finding(meshes: list[dict], ucx: list[dict], src: str, ground_area_m2) -> Finding:
-    """Ground footprint coverage (V003), next to the triangle count.
+def _parse_footprint_holes(footprint_holes):
+    """Shapely geometries for the absence rings. Raises ValueError naming a bad reference."""
+    import shapely
 
-    ``GROUND_AREA_TOL_M2`` is the absolute tolerance in square metres between the
-    top-down (XY union) area of the Ground render meshes and ``ground_area_m2``
-    (site area minus the OKS footprint). Pass only when the absolute difference is
-    strictly below this value, so a difference of exactly ``GROUND_AREA_TOL_M2``
-    fails closed. A 0.5 m2 fill is above the band and fails on the 3431.50 m2
-    Vatutino fixture. UCX meshes are excluded. A positive difference is the area
-    of the filled absence. Missing ``ground_area_m2``, or a readback with no face
-    geometry, is ``not_run`` and never a pass. Empty, partial, unsupported and
-    non-finite face data fail.
-    """
-    name = "ground footprint coverage"
-    expected = (f"|top-down area - ground_area_m2| < {GROUND_AREA_TOL_M2} m2 "
-                f"(filled footprint above the tolerance fails)")
-    pages = [28, 29]
-    geometry = [mesh for mesh in meshes if mesh not in ucx]
-    if ground_area_m2 is None:
-        return _f("not_run", name, f"{src}: ground_area_m2 missing", expected, pages, src,
-                  data={"measured_m2": None, "expected_m2": None, "difference_m2": None})
+    if isinstance(footprint_holes, (str, bytes)) or not isinstance(footprint_holes, (list, tuple)):
+        raise ValueError("footprint hole reference is not a list of rings")
+    if len(footprint_holes) == 0:
+        raise ValueError("footprint hole reference is empty")
+    polygons = []
+    for ring in footprint_holes:
+        if isinstance(ring, (str, bytes)) or not isinstance(ring, (list, tuple)) or len(ring) < 3:
+            raise ValueError("footprint hole ring has fewer than 3 points")
+        coords = []
+        for point in ring:
+            if isinstance(point, (str, bytes)) or not isinstance(point, (list, tuple)) or len(point) < 2:
+                raise ValueError("footprint hole point is not an XY coordinate")
+            x, y = point[0], point[1]
+            if any(isinstance(coord, bool) or not isinstance(coord, (int, float)) or not math.isfinite(coord)
+                   for coord in (x, y)):
+                raise ValueError("non-finite footprint hole coordinate")
+            coords.append((float(x), float(y)))
+        polygon = shapely.Polygon(coords)
+        if not polygon.is_valid:
+            polygon = shapely.make_valid(polygon)
+        if polygon.is_empty or not math.isfinite(polygon.area) or polygon.area <= 0.0:
+            raise ValueError("footprint hole ring has no area")
+        polygons.append(polygon)
+    return polygons
+
+
+def _hole_coverage_m2(rings: list[list[tuple[float, float]]], holes) -> float:
+    """Top-down area of the Ground union that lies inside the footprint-hole union."""
+    import shapely
+
+    ground = _projected_union(rings)
+    try:
+        covered = ground.intersection(shapely.union_all(holes))
+    except shapely.errors.GEOSException as exc:
+        raise ValueError(f"unsupported face geometry: {exc}") from exc
+    area = float(covered.area)
+    if not math.isfinite(area):
+        raise ValueError("non-finite hole coverage")
+    return area
+
+
+def _ground_face_presence(geometry: list[dict]) -> tuple[str, str] | None:
+    """``None`` when every mesh has a face_geometry dict. Otherwise ``(status, reason)``."""
     missing = [mesh for mesh in geometry if not isinstance(mesh.get("face_geometry"), dict)]
     if not geometry or len(missing) == len(geometry):
-        return _f("not_run", name, f"{src}: no face geometry in readback", expected, pages, src,
-                  data={"measured_m2": None, "expected_m2": ground_area_m2, "difference_m2": None})
+        return "not_run", "no face geometry in readback"
     if missing:
-        return _f("fail", name, f"{src}: partial face geometry", expected, pages, src,
+        return "fail", "partial face geometry"
+    return None
+
+
+def _ground_area_finding(geometry: list[dict], src: str, ground_area_m2) -> Finding:
+    """Scalar top-down area against ``ground_area_m2``.
+
+    Pass only when the absolute difference is strictly below ``GROUND_AREA_TOL_M2``.
+    This comparison does not locate the OKS footprint. Missing ``ground_area_m2``,
+    or a readback with no face geometry, is ``not_run`` and never a pass. Empty,
+    partial, negative, short, out-of-range and non-finite face data fail.
+    """
+    name = "ground footprint coverage"
+    expected = f"|top-down area - ground_area_m2| < {GROUND_AREA_TOL_M2} m2"
+    pages = [28, 29]
+    presence = _ground_face_presence(geometry)
+    if presence is not None and presence[0] == "not_run":
+        return _f("not_run", name, f"{src}: {presence[1]}", expected, pages, src,
+                  data={"measured_m2": None, "expected_m2": ground_area_m2, "difference_m2": None})
+    if presence is not None:
+        return _f("fail", name, f"{src}: {presence[1]}", expected, pages, src,
                   data={"measured_m2": None, "expected_m2": ground_area_m2, "difference_m2": None})
     try:
         measured = _topdown_area_m2(_ground_xy_rings(geometry))
     except ValueError as exc:
         reason = str(exc)
         data = {"measured_m2": None, "expected_m2": ground_area_m2, "difference_m2": None}
-        if reason == "empty face geometry":
+        if reason == "empty face geometry" and ground_area_m2 is not None:
             measured = 0.0
             difference = measured - ground_area_m2
             data = {"measured_m2": measured, "expected_m2": ground_area_m2, "difference_m2": difference}
             reason = (f"empty face geometry; measured {_m2_text(measured)} m2, "
                       f"expected {_m2_text(ground_area_m2)} m2, difference {_m2_text(difference)} m2")
         return _f("fail", name, f"{src}: {reason}", expected, pages, src, data=data)
+    if ground_area_m2 is None:
+        return _f("not_run", name, f"{src}: ground_area_m2 missing", expected, pages, src,
+                  data={"measured_m2": measured, "expected_m2": None, "difference_m2": None})
     difference = measured - ground_area_m2
     if not math.isfinite(difference):
         return _f("fail", name, f"{src}: non-finite difference", expected, pages, src,
                   data={"measured_m2": measured, "expected_m2": ground_area_m2, "difference_m2": None})
     data = {"measured_m2": measured, "expected_m2": ground_area_m2, "difference_m2": difference}
-    if difference > 0:
-        data["filled_absence_m2"] = difference
     status = "pass" if abs(difference) < GROUND_AREA_TOL_M2 else "fail"
     margin = (GROUND_AREA_TOL_M2 - abs(difference)) / GROUND_AREA_TOL_M2
     observed = (f"{src}: measured {_m2_text(measured)} m2, expected {_m2_text(ground_area_m2)} m2, "
                 f"difference {_m2_text(difference)} m2")
-    if difference > 0:
-        observed += f", filled absence {_m2_text(difference)} m2"
     return _f(status, name, observed, expected, pages, src, data=data,
               measured=measured, threshold=ground_area_m2, margin=margin)
 
 
+def _ground_hole_finding(geometry: list[dict], src: str, footprint_holes) -> Finding:
+    """Top-down coverage of Ground inside the footprint-hole polygons.
+
+    Independent of the scalar area difference: coverage strictly below
+    ``GROUND_AREA_TOL_M2`` passes, and coverage at or above it fails even when
+    the same area was removed outside the hole. No hole reference, or a readback
+    with no face geometry, is ``not_run`` and never a pass of the hole claim.
+    """
+    name = "ground footprint hole coverage"
+    expected = f"top-down coverage inside the footprint hole < {GROUND_AREA_TOL_M2} m2"
+    pages = [28, 29]
+    data = {"hole_coverage_m2": None, "tolerance_m2": GROUND_AREA_TOL_M2}
+    if footprint_holes is None:
+        return _f("not_run", name, f"{src}: footprint hole reference missing", expected, pages, src, data=data)
+    presence = _ground_face_presence(geometry)
+    if presence is not None:
+        return _f(presence[0], name, f"{src}: {presence[1]}", expected, pages, src, data=data)
+    try:
+        holes = _parse_footprint_holes(footprint_holes)
+        coverage = _hole_coverage_m2(_ground_xy_rings(geometry), holes)
+    except ValueError as exc:
+        return _f("fail", name, f"{src}: {exc}", expected, pages, src, data=data)
+    status = "pass" if coverage < GROUND_AREA_TOL_M2 else "fail"
+    margin = (GROUND_AREA_TOL_M2 - coverage) / GROUND_AREA_TOL_M2
+    observed = (f"{src}: hole coverage {_m2_text(coverage)} m2, "
+                f"tolerance {_m2_text(GROUND_AREA_TOL_M2)} m2")
+    return _f(status, name, observed, expected, pages, src,
+              data={"hole_coverage_m2": coverage, "tolerance_m2": GROUND_AREA_TOL_M2},
+              measured=coverage, threshold=GROUND_AREA_TOL_M2, margin=margin)
+
+
+def _ground_footprint_findings(meshes: list[dict], ucx: list[dict], src: str, ground_area_m2,
+                               footprint_holes) -> list[Finding]:
+    """Scalar area check, then the spatial hole check. UCX meshes are excluded from both."""
+    geometry = [mesh for mesh in meshes if mesh not in ucx]
+    return [
+        _ground_area_finding(geometry, src, ground_area_m2),
+        _ground_hole_finding(geometry, src, footprint_holes),
+    ]
+
+
 def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule: dict | None = None,
                    flora_share: int = FLORA_SHARE, *, maf_sizes=None, smoothing_angle_deg=None,
-                   ground_area_m2=None) -> dict[str, list[Finding]]:
+                   ground_area_m2=None, footprint_holes=None) -> dict[str, list[Finding]]:
     """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}. Ground FBX: Flora checks
     (twinqa.flora; flora_schedule = {mesh name: {"height_m", "crown_m"}}, flora_share default 70 000).
     ground_area_m2: VPM Ground area basis = site minus OKS footprint, m2; selects the reg p.29 band for the
     Ground triangle count (None keeps it at 'review'; a non-finite or non-positive value raises ValueError)
-    and is the expected top-down area of the footprint-coverage finding (missing -> not_run, never pass)."""
+    and is the expected top-down area of the footprint-coverage finding (missing -> not_run, never pass).
+    footprint_holes: optional list of XY rings, one polygon per OKS footprint hole. Ground coverage
+    inside that region is a separate finding; None leaves it not_run and never a pass of the hole claim."""
     if ground_area_m2 is not None:
         check_ground_area(ground_area_m2)
     src = Path(rb["source"]).name
@@ -773,7 +883,7 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         out["V003"].append(_f(status, "triangle count", observed, f"<= {limit}", [7, 28, 29], src, conflicts, data,
                               measured=measured, threshold=threshold_n, margin=margin))
         if role == "ground":
-            out["V003"].append(_ground_footprint_finding(meshes, ucx, src, ground_area_m2))
+            out["V003"].extend(_ground_footprint_findings(meshes, ucx, src, ground_area_m2, footprint_holes))
     foreign = [o for o in rb["other_objects"] if not (role == "light" and o["type"] in ("LIGHT", "EMPTY"))]
     if foreign:
         # Any non-mesh object, lights included, fails (conflict #14 decided 2026-10-07 [D017] as the checker)
