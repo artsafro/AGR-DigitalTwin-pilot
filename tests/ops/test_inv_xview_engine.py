@@ -3,6 +3,7 @@
 The per-triangle-pair implementation that `inv_xview` used before #556 is kept here, and only here, as the test
 oracle (`_reference_pairs`, brute force over every triangle pair, area rule without prefilter): the production
 `_pairs_found` must return the identical {(i, j): (contact, area, separation)} dict on generated meshes.
+Pattern: none | new-case: one-engine adoption tests for the xView overlap check, oracle parity (#556).
 """
 import numpy as np
 import pytest

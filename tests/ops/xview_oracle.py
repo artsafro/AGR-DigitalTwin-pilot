@@ -1,6 +1,7 @@
 """Test oracle (#556): the per-triangle-pair xView contact test `inv_xview` used before the fast core became its engine.
 
 Kept only here, for the tests; production code calls `inv_xview_fast.contact_tri_pairs`.
+Pattern: none | new-case: test-only oracle of the pre-#556 per-triangle-pair xView contact test (#556).
 """
 import numpy as np
 
