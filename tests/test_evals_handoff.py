@@ -336,3 +336,44 @@ def test_cli_fresh_process_read_only(tmp_path, repo, evals):
     assert "OK: handoff evidence complete" in proc.stdout
     assert {p: p.read_bytes() for p in before} == before
     assert sorted(p.name for p in evals.iterdir()) == listing
+
+
+MUTATIONS = {
+    "drop": lambda v, s: None,
+    "placeholder": lambda v, s: v + " <counts>",
+    "not run": lambda v, s: v.split(":", 1)[0] + ": not run",
+    "empty": lambda v, s: v.split(":", 1)[0] + ":",
+    "pending": lambda v, s: v.split(":", 1)[0] + ": pending",
+    "side commit": lambda v, s: v.replace(s["head"][:9], s["side"][:9]).replace(s["red"][:9], s["side"][:9]),
+}
+
+
+def test_generated_mutations_never_pass(tmp_path, repo, evals, capsys):
+    """Probe: every single mutation of every required line (5 x 6, 'side commit' only where a sha
+    stands) and every pair of dropped lines (10) exits 1, never 0."""
+    _, shas = repo
+    base = lines(shas, evals)
+    cases = []
+    for key in base:
+        for name, mutate in MUTATIONS.items():
+            if name == "side commit" and key in ("evals", "sample"):
+                continue
+            parts = dict(base)
+            parts[key] = mutate(base[key], shas)
+            cases.append((key, name, parts))
+    keys = list(base)
+    for i, first in enumerate(keys):
+        for second in keys[i + 1:]:
+            cases.append((first, second, {k: (None if k in (first, second) else v) for k, v in base.items()}))
+    passed = [(k, n) for k, n, parts in cases if run(tmp_path, body(parts), shas["head"], evals, capsys)[0] != 1]
+    assert len(cases) == 38 and passed == []
+
+
+def test_label_with_parenthetical_note(tmp_path, repo, evals, capsys):
+    """`Full suite (suite_slot, head <sha>): ...` (the PR #583 form) is read; its note is evidence."""
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["full"] = f"- Full suite (suite_slot, head {shas['head'][:7]}): 13290 passed, 0 failed"
+    assert run(tmp_path, body(parts), shas["head"], evals, capsys)[0] == 0
+    parts["full"] = f"- Full suite (head {shas['head'][:7]}): 13290 passed, 0 failed"
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "suite_slot")
