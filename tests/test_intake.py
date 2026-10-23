@@ -52,6 +52,20 @@ def folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG), facts=FACTS,
     return d
 
 
+def test_uncited_unopened_source_blocks_until_user_waiver(tmp_path):
+    closed = {"path": "slides.pptx", "format": "pptx", "reads": [], "opened": False,
+              "not_opened_reason": "corrupt archive", "role": "none"}
+    d = folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG, closed))
+    r = check(d)
+    assert not r["buildable"]
+    assert any("slides.pptx" in e and "corrupt archive" in e for e in r["errors"])
+    inventory = json.loads((d / "sources.json").read_text(encoding="utf-8"))
+    inventory["files"][-1]["waiver_question"] = "Q001"
+    (d / "sources.json").write_text(json.dumps(inventory), encoding="utf-8")
+    _questions(d, [("Q001", "I waive opening slides.pptx for this build.")])
+    assert check(d)["buildable"], check(d)["errors"]
+
+
 def test_a_complete_intake_is_buildable(tmp_path):
     r = check(folder(tmp_path))
     assert r["ok"] and r["buildable"], r["errors"] + r["not_buildable_because"]
