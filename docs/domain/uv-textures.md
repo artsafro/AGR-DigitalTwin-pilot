@@ -43,6 +43,7 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N. `local:` re
 - Main and Ground: UDIM only, single UV set on one channel. reg p.31 §2.1.1.
 - Geometry larger than one tile (at required density) must be split; repeating/similar islands placed by overlap. reg p.31 §2.1.2.
 - Tiles filled from 1001 strictly sequential, no gaps, 10x10 grid (1001-1100), numbered left->right, bottom->top. reg p.23, p.31 §2.1.3, p.39. UDIM = 1001 + U + 10*V. local: docs/agr/decisions/ADR-0002-source-discrepancies.md#5.
+- Those tile numbers are export UDIMs, not working-mesh material IDs. A face material ID >= 1001 on the working mesh is an error [D030]: the team script `UDIM-MultiSub_Universal(max22-26).ms` stores `1001+floor(U)+10*floor(V)` in the face ID (`getUDIMFromUV` returns `1001 + udimU + (udimV * 10)`, lines 1 and 5; the script is not in this repo). The reading scheme is 1-35 (`standards/material_id_ranges.yaml`). Export may still emit tiles 1001-1100. Checked on the working mesh by `check_material_ids`. local: docs/domain/materials.md; local: docs/adr/0001-material-ids-are-a-reading-scheme.md (project decision).
 - Mirrored islands forbidden; rotating islands not recommended. reg p.31 §2.1.4.
 - Keep margin from tile borders. reg p.31 §2.1.5.
 - Avoid visible seams/shifts/pattern mismatch between maps. reg p.31 §2.1.6.

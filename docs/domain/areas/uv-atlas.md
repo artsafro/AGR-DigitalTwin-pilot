@@ -78,3 +78,12 @@ Remaining work on the partial rows: UV-10 checks archive filename sequence only 
 ## Notes
 
 No tests were added. This sheet is an L1 index and is not delivery acceptance.
+
+Working-mesh material IDs are not UDIM tiles [D030]. `UDIM-MultiSub_Universal(max22-26).ms` (not in this repo) writes the tile into the face material ID:
+
+```
+fn getUDIMFromUV u v =
+    return 1001 + udimU + (udimV * 10)
+```
+
+(`UDIM-MultiSub_Universal(max22-26).ms:1` and `:5`, `1001+floor(U)+10*floor(V)`). A working-mesh ID >= 1001 fails `check_material_ids`. Export still numbers tiles 1001-1100 (UV-10). See [Materials](../materials.md).
