@@ -380,3 +380,14 @@ def test_label_with_parenthetical_note(tmp_path, repo, evals, capsys):
     assert run(tmp_path, body(parts), shas["head"], evals, capsys)[0] == 0
     parts["full"] = f"- Full suite (head {shas['head'][:7]}): 13290 passed, 0 failed"
     rejected(tmp_path, body(parts), shas["head"], evals, capsys, "suite_slot")
+
+
+def test_label_mentions_are_not_evidence(tmp_path, repo, evals, capsys):
+    """A prose line that starts with a code-span label (`Before (RED):`, ...) is no second RED line,
+    and a body made only of such mentions still misses every line (#584 dogfood on its own PR body)."""
+    _, shas = repo
+    mention = "`Before (RED):`, `After (GREEN):`, `Full suite:` and `Sample output:` lines are required.\n"
+    code, out = run(tmp_path, body(lines(shas, evals), mention), shas["head"], evals, capsys)
+    assert code == 0, out.err
+    out = rejected(tmp_path, mention, shas["head"], evals, capsys, "missing Before (RED)", "missing Full suite")
+    assert "duplicate" not in out.err

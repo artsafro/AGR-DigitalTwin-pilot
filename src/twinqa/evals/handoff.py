@@ -86,6 +86,8 @@ def _evidence_lines(text):
             continue
         line = re.sub(r"^[\s\-*+>`]+", "", raw.replace("**", ""))
         match = _LABEL.match(line)
+        if match and match["value"].startswith("`"):
+            continue  # "`Before (RED):`, `After (GREEN):` ..." mentions a label; it is not evidence
         if match:
             value = match["value"].strip().strip("`").strip()
             note = match["note"]
