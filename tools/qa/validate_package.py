@@ -156,7 +156,8 @@ def fbx_role(name: str) -> str:
 def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, bytes], notes: list[str],
               ground_area_m2: float | None = None):
     """Blender readback of each FBX; replaces the scene not_run placeholders it covers.
-    ground_area_m2 (site minus OKS footprint) selects the VPM Ground triangle band (reg p.29)."""
+    ground_area_m2 (site minus OKS footprint) selects the VPM Ground triangle band (reg p.29)
+    and is the expected top-down area for the Ground footprint-coverage finding."""
     import tempfile
     with tempfile.TemporaryDirectory() as tmp:
         for name, data in sorted(fbx.items()):
@@ -229,7 +230,10 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         st["V006"].findings.extend(npm_texture_findings({target.name: data}, profile))
     else:
         notes.append(f"unsupported file type {suffix}")
-    if ground_area_m2 is not None and not (kind == "vpm" and scene and suffix in (".zip", ".fbx")):
+    # A scene readback of an FBX/ZIP consumes the area: VPM selects the triangle band, and both
+    # profiles check Ground footprint coverage. Anywhere else the value is unused.
+    scene_readback = bool(scene and kind in ("vpm", "npm") and suffix in (".zip", ".fbx"))
+    if ground_area_m2 is not None and not scene_readback:
         notes.append(f"ground_area_m2 {ground_area_m2} unused: the VPM Ground band applies only to a VPM --scene readback")
     return report(target, data, kind, profiles, st, notes)
 

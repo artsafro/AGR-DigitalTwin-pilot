@@ -77,6 +77,13 @@ def _f(status, name, observed, expected, pages, evidence, conflicts=(), data=Non
 
 
 GROUND_TABLE_KEY = "ground_triangles_max_by_area_ha"
+GROUND_AREA_TOL_M2 = 0.25
+"""Absolute tolerance in m2 between the readback top-down Ground area and ground_area_m2.
+
+Pass only when the absolute difference is strictly below this value, so a difference
+of exactly 0.25 m2 fails closed. A 0.5 m2 fill of the OKS footprint fails on the
+3431.50 m2 Vatutino fixture.
+"""
 
 
 def _finite_number(value) -> bool:
@@ -587,13 +594,136 @@ def _texel_density_findings(rb: dict, meshes: list[dict], ucx: list[dict], src: 
     ]
 
 
+def _m2_text(value: float) -> str:
+    return f"{value:.6f}".rstrip("0").rstrip(".")
+
+
+def _ground_xy_rings(geometry: list[dict]) -> list[list[tuple[float, float]]]:
+    """XY rings of render-mesh faces. Empty geometry raises ValueError('empty face geometry').
+
+    Unsupported structure, a partial index and a non-finite coordinate also raise ValueError.
+    """
+    rings = []
+    for mesh in geometry:
+        shape = mesh["face_geometry"]
+        vertices, polygons = shape.get("vertices"), shape.get("polygons")
+        if not isinstance(vertices, (list, tuple)) or not isinstance(polygons, (list, tuple)):
+            raise ValueError(f"unsupported face geometry on {mesh['name']}")
+        for polygon in polygons:
+            if isinstance(polygon, (str, bytes)) or not isinstance(polygon, (list, tuple)):
+                raise ValueError(f"unsupported polygon on {mesh['name']}")
+            if len(polygon) < 3:
+                continue
+            ring = []
+            for index in polygon:
+                if isinstance(index, bool) or not isinstance(index, int):
+                    raise ValueError(f"unsupported polygon index on {mesh['name']}")
+                try:
+                    point = vertices[index]
+                except (IndexError, TypeError) as exc:
+                    raise ValueError(f"partial face geometry on {mesh['name']}") from exc
+                if isinstance(point, (str, bytes)) or not isinstance(point, (list, tuple)) or len(point) < 2:
+                    raise ValueError(f"unsupported vertex on {mesh['name']}")
+                coords = (point[0], point[1], point[2] if len(point) > 2 else 0.0)
+                if any(isinstance(coord, bool) or not isinstance(coord, (int, float)) or not math.isfinite(coord)
+                       for coord in coords):
+                    raise ValueError(f"non-finite coordinate on {mesh['name']}")
+                ring.append((float(point[0]), float(point[1])))
+            if len(ring) >= 3:
+                rings.append(ring)
+    if not rings:
+        raise ValueError("empty face geometry")
+    return rings
+
+
+def _topdown_area_m2(rings: list[list[tuple[float, float]]]) -> float:
+    """Union area of the XY projections. Stacked coverings count once; a filled hole adds its area."""
+    import shapely
+
+    parts = []
+    for ring in rings:
+        polygon = shapely.Polygon(ring)
+        if not polygon.is_valid:
+            polygon = shapely.make_valid(polygon)
+        if polygon.is_empty or polygon.area <= 0.0:
+            continue
+        parts.append(polygon)
+    if not parts:
+        return 0.0
+    try:
+        area = float(shapely.union_all(parts).area)
+    except shapely.errors.GEOSException as exc:
+        raise ValueError(f"unsupported face geometry: {exc}") from exc
+    if not math.isfinite(area):
+        raise ValueError("non-finite projected area")
+    return area
+
+
+def _ground_footprint_finding(meshes: list[dict], ucx: list[dict], src: str, ground_area_m2) -> Finding:
+    """Ground footprint coverage (V003), next to the triangle count.
+
+    ``GROUND_AREA_TOL_M2`` is the absolute tolerance in square metres between the
+    top-down (XY union) area of the Ground render meshes and ``ground_area_m2``
+    (site area minus the OKS footprint). Pass only when the absolute difference is
+    strictly below this value, so a difference of exactly ``GROUND_AREA_TOL_M2``
+    fails closed. A 0.5 m2 fill is above the band and fails on the 3431.50 m2
+    Vatutino fixture. UCX meshes are excluded. A positive difference is the area
+    of the filled absence. Missing ``ground_area_m2``, or a readback with no face
+    geometry, is ``not_run`` and never a pass. Empty, partial, unsupported and
+    non-finite face data fail.
+    """
+    name = "ground footprint coverage"
+    expected = (f"|top-down area - ground_area_m2| < {GROUND_AREA_TOL_M2} m2 "
+                f"(filled footprint above the tolerance fails)")
+    pages = [28, 29]
+    geometry = [mesh for mesh in meshes if mesh not in ucx]
+    if ground_area_m2 is None:
+        return _f("not_run", name, f"{src}: ground_area_m2 missing", expected, pages, src,
+                  data={"measured_m2": None, "expected_m2": None, "difference_m2": None})
+    missing = [mesh for mesh in geometry if not isinstance(mesh.get("face_geometry"), dict)]
+    if not geometry or len(missing) == len(geometry):
+        return _f("not_run", name, f"{src}: no face geometry in readback", expected, pages, src,
+                  data={"measured_m2": None, "expected_m2": ground_area_m2, "difference_m2": None})
+    if missing:
+        return _f("fail", name, f"{src}: partial face geometry", expected, pages, src,
+                  data={"measured_m2": None, "expected_m2": ground_area_m2, "difference_m2": None})
+    try:
+        measured = _topdown_area_m2(_ground_xy_rings(geometry))
+    except ValueError as exc:
+        reason = str(exc)
+        data = {"measured_m2": None, "expected_m2": ground_area_m2, "difference_m2": None}
+        if reason == "empty face geometry":
+            measured = 0.0
+            difference = measured - ground_area_m2
+            data = {"measured_m2": measured, "expected_m2": ground_area_m2, "difference_m2": difference}
+            reason = (f"empty face geometry; measured {_m2_text(measured)} m2, "
+                      f"expected {_m2_text(ground_area_m2)} m2, difference {_m2_text(difference)} m2")
+        return _f("fail", name, f"{src}: {reason}", expected, pages, src, data=data)
+    difference = measured - ground_area_m2
+    if not math.isfinite(difference):
+        return _f("fail", name, f"{src}: non-finite difference", expected, pages, src,
+                  data={"measured_m2": measured, "expected_m2": ground_area_m2, "difference_m2": None})
+    data = {"measured_m2": measured, "expected_m2": ground_area_m2, "difference_m2": difference}
+    if difference > 0:
+        data["filled_absence_m2"] = difference
+    status = "pass" if abs(difference) < GROUND_AREA_TOL_M2 else "fail"
+    margin = (GROUND_AREA_TOL_M2 - abs(difference)) / GROUND_AREA_TOL_M2
+    observed = (f"{src}: measured {_m2_text(measured)} m2, expected {_m2_text(ground_area_m2)} m2, "
+                f"difference {_m2_text(difference)} m2")
+    if difference > 0:
+        observed += f", filled absence {_m2_text(difference)} m2"
+    return _f(status, name, observed, expected, pages, src, data=data,
+              measured=measured, threshold=ground_area_m2, margin=margin)
+
+
 def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule: dict | None = None,
                    flora_share: int = FLORA_SHARE, *, maf_sizes=None, smoothing_angle_deg=None,
                    ground_area_m2=None) -> dict[str, list[Finding]]:
     """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}. Ground FBX: Flora checks
     (twinqa.flora; flora_schedule = {mesh name: {"height_m", "crown_m"}}, flora_share default 70 000).
     ground_area_m2: VPM Ground area basis = site minus OKS footprint, m2; selects the reg p.29 band for the
-    Ground triangle count (None keeps it at 'review'; a non-finite or non-positive value raises ValueError)."""
+    Ground triangle count (None keeps it at 'review'; a non-finite or non-positive value raises ValueError)
+    and is the expected top-down area of the footprint-coverage finding (missing -> not_run, never pass)."""
     if ground_area_m2 is not None:
         check_ground_area(ground_area_m2)
     src = Path(rb["source"]).name
@@ -642,6 +772,8 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
                 measured, threshold_n, margin = tris, active, signed_margin(tris, active, "max")
         out["V003"].append(_f(status, "triangle count", observed, f"<= {limit}", [7, 28, 29], src, conflicts, data,
                               measured=measured, threshold=threshold_n, margin=margin))
+        if role == "ground":
+            out["V003"].append(_ground_footprint_finding(meshes, ucx, src, ground_area_m2))
     foreign = [o for o in rb["other_objects"] if not (role == "light" and o["type"] in ("LIGHT", "EMPTY"))]
     if foreign:
         # Any non-mesh object, lights included, fails (conflict #14 decided 2026-10-07 [D017] as the checker)
