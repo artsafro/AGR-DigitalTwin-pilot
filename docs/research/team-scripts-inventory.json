@@ -359,7 +359,7 @@
       "classification": "in-house-utility",
       "purpose": "Strip custom attributes and user-defined properties from selected nodes.",
       "production_step": "cleanup",
-      "provenance_evidence": "no author line; earlier copy of ClearCustomAttributesAndObjProp_010.ms (same header text, lines 1-8), attributed by family"
+      "provenance_evidence": "no author line; earlier copy of ClearCustomAttributesAndObjProp_010.ms (same header text, lines 1-8); ownership inferred from the family and that file's macro category 'A101', not proven, team confirmation pending"
     },
     {
       "name": "ClearCustomAttributesAndObjProp_010.ms",
@@ -374,7 +374,7 @@
       "classification": "in-house-utility",
       "purpose": "CA/UDP cleaner plus vertex channels, extra map channels, and rename channel 1 to UV.",
       "production_step": "cleanup",
-      "provenance_evidence": "macro category 'A101' (ClearCustomAttributesAndObjProp_010.ms:22), same as in-house A101AGRLP.ms"
+      "provenance_evidence": "no author line; macro category 'A101' (ClearCustomAttributesAndObjProp_010.ms:22), same label as in-house A101AGRLP.ms; ownership inferred from that label, not proven, team confirmation pending"
     },
     {
       "name": "Collizii.ms",
@@ -514,10 +514,10 @@
       "is_latest_in_family": true,
       "author": "unknown",
       "author_inferred": false,
-      "classification": "in-house-utility",
+      "classification": "unattributed-utility",
       "purpose": "Connect on selected edges with an explicit segment count.",
       "production_step": "modeling",
-      "provenance_evidence": "header fileIn path C:/Users/artsafro/Desktop/zavod/scripts/mesh/ (edge_connect_segments.ms:6); no author line"
+      "provenance_evidence": "no author line; header line 6 is only a fileIn load path (C:/Users/artsafro/Desktop/zavod/scripts/mesh/), which is not source attribution; ownership unresolved"
     },
     {
       "name": "edge_tool.ms",

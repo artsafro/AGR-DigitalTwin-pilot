@@ -8,23 +8,23 @@ Full row-per-file data (name, size, SHA256, type, family, author, class, one-lin
 
 | Split | Count | What it is |
 |---|---|---|
-| In-house script files | 37 | 31 MaxScript, 2 Python, 3 AutoLISP, 1 `.mat` (34 `in-house` + 3 `in-house-utility`) |
-| Unattributed utilities | 10 | MaxScript helpers with no author line in the header; owner unresolved (`unattributed-utility`) |
+| In-house script files | 36 | 30 MaxScript, 2 Python, 3 AutoLISP, 1 `.mat` (34 `in-house` + 2 `in-house-utility`) |
+| Unattributed utilities | 11 | MaxScript helpers with no author line in the header; owner unresolved (`unattributed-utility`) |
 | In-house archives | 6 | `Для Артема.zip`, `AGR_Checker.zip`, `AGR_Zipper.zip`, `AGR_Zipper_.zip`, `Telegram Desktop.zip`, `UDIM_Tool_new.mzp` |
 | Third-party | 46 | 35 archives, 6 programs, 4 MaxScript with an external author in the header, 1 reference PNG |
 | Export artifacts | 7 | manifest, verification, archive inventory, export/media/document exclusions |
 | Programs (type) | 6 | all third-party; none executed |
 | Archives (type) | 41 | 6 in-house + 35 third-party |
 
-Classification field in the JSON: `in-house` 40, `in-house-utility` 3, `unattributed-utility` 10, `third-party` 46, `export-artifact` 7.
+Classification field in the JSON: `in-house` 40, `in-house-utility` 2, `unattributed-utility` 11, `third-party` 46, `export-artifact` 7.
 
 Utility provenance (issue #540). Presence in the folder is not proof of team ownership. Each utility row has a `provenance_evidence` field citing header lines 1-8 (or the cited author lines); the files were read as text and not run.
 
 | Class | Files | Evidence |
 |---|---|---|
 | `third-party` | `zOffTy Tools-Copitor_v3.mcr`, `uniconnector_v4.23.3_0.ms`, `dragNDropReferences11.ms`, `imagecomphelper.ms` | header names Mathieu Jacquin (Gumroad Copitor), Nikolay Litvinov, Christoph Buelter (both Buelter files) |
-| `in-house-utility` | `ClearCustomAttributesAndObjProp_010.ms`, `_001.ms`, `edge_connect_segments.ms` | macro category "A101" (`_001` by family); header path under `C:\Users\artsafro\` |
-| `unattributed-utility` | `A-Tools_SelectSimilar.ms`, `CoronaProxyDisplay_EN.ms`, `IN_tools-detriangulator.mcr`, `VertexEdgeSplit_UI_v2.ms`, `edge_tool.ms`, `EdgeDistributor.ms`, `floor_trace_extrude.ms`, `MultiBridge.ms`, `Poly_X,Y,Z.ms`, `SelectConcavePolygons.ms` | only a macro category label (A-Tools, WunschTools, IN_tools, RUST Script) or nothing; ownership unresolved, ask the team before treating any of them as an AGR tool |
+| `in-house-utility` | `ClearCustomAttributesAndObjProp_010.ms`, `_001.ms` | no author line; macro category "A101" in `_010` (`_001` by family), the same label as in-house `A101AGRLP.ms`. Ownership is inferred from that label, not proven; team confirmation pending |
+| `unattributed-utility` | `A-Tools_SelectSimilar.ms`, `CoronaProxyDisplay_EN.ms`, `IN_tools-detriangulator.mcr`, `VertexEdgeSplit_UI_v2.ms`, `edge_tool.ms`, `EdgeDistributor.ms`, `floor_trace_extrude.ms`, `MultiBridge.ms`, `Poly_X,Y,Z.ms`, `SelectConcavePolygons.ms`, `edge_connect_segments.ms` | only a macro category label (A-Tools, WunschTools, IN_tools, RUST Script), a local `fileIn` load path (`edge_connect_segments.ms:6`, not source attribution) or nothing; ownership unresolved, ask the team before treating any of them as an AGR tool |
 
 Version families with more than one file (latest marked in the JSON):
 
@@ -572,7 +572,7 @@ Low-poly mesh masks require a 3-digit index (`agr_max_check_37.ms:381-387`). Hig
 
 **Production step.** Cleanup.
 
-**Inputs/Outputs.** Selected nodes. Latest `ClearCustomAttributesAndObjProp_010.ms`. Macro category "A101".
+**Inputs/Outputs.** Selected nodes. Latest `ClearCustomAttributesAndObjProp_010.ms`. Macro category "A101"; no author line, so team ownership is inferred from that label, not proven.
 
 **Algorithm.** Always removes CA from the base object. Optional: CA on node, modifiers, materials; clear UDP; clear vertex channels 0, −1, −2; delete map channels 2+; rename channel 1 to `UV`.
 
@@ -592,7 +592,7 @@ Each of these is a general mesh helper. None of them encodes an AGR numeric rule
 
 **EdgeDistributor.ms.** Even spacing of verts, vertical edge rings, or face strips. Corner angle default 30° (`EdgeDistributor.ms:8`). Anchors do not move. Step: modeling.
 
-**edge_connect_segments.ms.** Connect on selected edges with a segment count. Editable Poly or Edit Poly. The file header points at `C:\Users\artsafro\Desktop\zavod\scripts\mesh\` (`edge_connect_segments.ms:6`). Step: modeling.
+**edge_connect_segments.ms.** Connect on selected edges with a segment count. Editable Poly or Edit Poly. The file header points at `C:\Users\artsafro\Desktop\zavod\scripts\mesh\` (`edge_connect_segments.ms:6`); a load path is not authorship, so the row is `unattributed-utility`. Step: modeling.
 
 **MultiBridge.ms.** Bridge several edge or polygon pairs from one button. v1.3. Step: modeling.
 
@@ -744,7 +744,7 @@ Drafts only. Nothing was filed. Artem picks.
 
 3. **Title.** Export cleanup for custom attributes, UDP, and the UV channel name.
    **Action.** port to gate.
-   **Why.** `ClearCustomAttributesAndObjProp_010.ms` is the team's pre-export sweep. The pilot checks channel count and does not remove CA/UDP or require the channel name `UV`.
+   **Why.** `ClearCustomAttributesAndObjProp_010.ms` is the pre-export sweep found in the team folder (ownership inferred from macro category "A101"). The pilot checks channel count and does not remove CA/UDP or require the channel name `UV`.
    **Draft follow-up issue.** title: Flag custom attributes, UDP, and a map channel not named UV. acceptance: a mesh with a custom attribute fails the pre-export check; channel 1 not named UV is a finding; channels 2+ are listed; the check does not delete data unless a separate repair switch is on.
 
 4. **Title.** Do not adopt the UCX generator pads.
@@ -797,7 +797,7 @@ Drafts only. Nothing was filed. Artem picks.
 - **Excluded documents.** `ИНСТРУКЦИЯ_ПОЛЬЗОВАТЕЛЯ.txt` and `Новые требования к НПМ+ВПМ.pdf` are excluded by user decision (Artem, 2026-10-21) as outdated. They are not used as a source.
 - **Twelve large third-party files were not in the local copy** and were not opened. Name and purpose only: Acrobat Pro portable; `AGR_Arxiv_1.5_Windows` compiled archiver; `AtlasBuilder.zip` and `AtlasBuilder_portable_1.zip`; `FacadeAtlasBuilder-win64.zip`; `Backdrop Generator v2.0_Max2018+.rar`; `Road Markings Generator 2.0.rar`; `Materialize_1.78 (1).zip`; `MaximkaE_PngCompr.7z`; `PNG_Compressor.exe` and `PNG_Compressor__msg_28662.exe`; `TextureMapGeneratorV5.exe`.
 - **Other third-party archives in the copy** (Zen UV, PolyUnwrapper, window/blinds generators, CheckToolBox, BMAX, PruneScene, UVTools, EdgeAlign, xCavity, SafeOrbit, Viewport Reflect, and the rest of the JSON `third-party` rows) were classified from `archive_inventory.json` and the file name. Contents were not read.
-- **Authors.** AlexYo, A101, Nikolay Litvinov, Christoph Bülter, Mathieu Jacquin, WunschTools, IN_tools, and RUST Script are strings in the files. Where the JSON says `author_inferred: true`, the name is taken from a category or filename, not from a signature block. Bülter, Litvinov and Jacquin files are `third-party`; ten utilities with no signature are `unattributed-utility` (owner unresolved).
+- **Authors.** AlexYo, A101, Nikolay Litvinov, Christoph Bülter, Mathieu Jacquin, WunschTools, IN_tools, and RUST Script are strings in the files. Where the JSON says `author_inferred: true`, the name is taken from a category or filename, not from a signature block. Bülter, Litvinov and Jacquin files are `third-party`; eleven utilities with no signature are `unattributed-utility` (owner unresolved).
 - **Not executed.** No script, installer, or exe was run. AGR Checker's README says its FBX parser was not validated on real Max exports. `agr_max_check_37.ms` says the same about Max. Those limitations still stand.
 - **Partial reads.** `apply_atlas_uv.ms`, `Maf Tools.mcr`, `agr_max_check_37.ms`, `UCX_Tools.ms`, and `A101AGRLP.ms` are long. Thresholds above are from the lines cited. Unquoted magic numbers in those files are not claimed. `Ground_Tools.ms` in the bundle was not line-matched to the loose file. The two Zipper copies differ by a small line count that was not interpreted. `Udim_Geo_Json.ms` was not line-matched to UDIM Viewer v1.4.
 - **`Volume_vision.mat`** was not decoded.
