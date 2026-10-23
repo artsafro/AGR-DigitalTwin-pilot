@@ -20,16 +20,22 @@ This command only reads and reports. Change no file, run no DCC call, push nothi
      `gh issue view <N> --json state`), and open PRs of this branch the handoff does not list;
    - `main` moved since the handoff (`git fetch` then `git log --oneline HEAD..origin/main`), if relevant;
    - HEAD detached (the report names the commit);
-   - the branch behind `origin/main` by N relevant merges — commits that touch `src/`, `tools/`,
-     `standards/`, `docs/domain/`, `docs/decisions.md`, `docs/procedure/` or
-     `docs/agents/CAPABILITIES.md` (the report gives the count and the titles). Docs-only or job-only
-     merges are not this discrepancy.
+   - the branch behind `origin/main` by N relevant merges. The report counts first-parent
+     integrations on `origin/main` (merge commits and plain commits) whose diff against the
+     first parent touches `src/`, `tools/`, `standards/`, `docs/domain/`, `docs/decisions.md`,
+     `docs/procedure/` or `docs/agents/CAPABILITIES.md`, and it gives that count and those
+     titles. Docs-only or job-only merges are not this discrepancy. Those paths only choose
+     which merges are reported.
    No discrepancy: say so in one line.
 3. **List what is open**, from the handoff: "In progress", "Waiting for the user", "Next step", open PRs and
    issues, "Rules broken" still unresolved. One line each.
 4. **Propose** what to take first and why, in one or two lines. A question waiting for the user goes first.
-   When HEAD is detached, or the branch is behind `origin/main` by relevant merges, the first proposed
-   step is to merge `origin/main` into the job branch (or record the user's explicit skip). This command
+   A production step is any DCC build, export, validation or delivery run (Blender, 3ds Max, Unreal,
+   and `dt` operations that write job outputs, even when the run only writes under `jobs/<id>/outputs/`)
+   and any edit of code or rules. Before the first production step, when HEAD is detached or the branch
+   is behind `origin/main` by relevant merges: if HEAD is detached, create or switch to a named branch
+   first (`git switch -c job/<id>`), then merge `origin/main` (`git fetch origin`, then
+   `git merge --no-edit origin/main`; never rebase), or record the user's explicit skip. This command
    does not merge.
 5. **Usage.** End the answer with the usage counts of the last 7 days below, as is, and one line naming what was
    never called although its trigger (`docs/agents/WORKFLOW.md`, "Triggers") occurred in that time, if you can

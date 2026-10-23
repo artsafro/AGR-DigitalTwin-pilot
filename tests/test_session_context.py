@@ -1,6 +1,8 @@
 """Context rotation: tools/hooks/session_context.py, its wiring, the handoff template and the two commands."""
+import importlib.util
 import json
 import os
+import random
 import re
 import shutil
 import subprocess
@@ -213,8 +215,10 @@ def test_detached_head_is_a_freshness_warning(repo):
     ctx = start(repo, "startup")
     assert "Branch freshness:" in ctx
     assert "detached" in ctx and short in ctx and "no production work" in ctx
+    assert "before merging" in ctx
     report = run("report", {}, repo)
     assert "Branch freshness:" in report and "detached" in report and short in report
+    assert "before merging" in report
 
 
 @pytest.mark.parametrize("path,title", [
@@ -298,3 +302,241 @@ def test_loop_merges_main_before_the_first_production_step():
     for path in ("src/", "tools/", "standards/", "docs/domain/", "docs/decisions.md",
                  "docs/procedure/", "docs/agents/CAPABILITIES.md"):
         assert path in loop
+
+
+# #529 round 2: count first-parent integrations, and do not define production by those paths.
+
+RELEVANT_SPECS = ("src/", "tools/", "standards/", "docs/domain/", "docs/decisions.md",
+                  "docs/procedure/", "docs/agents/CAPABILITIES.md")
+PROBE_RELEVANT = (
+    "src/synthetic.py", "src/pkg/synthetic.py", "tools/synthetic.py", "standards/synthetic.json",
+    "docs/domain/synthetic.md", "docs/decisions.md", "docs/procedure/synthetic.md",
+    "docs/agents/CAPABILITIES.md",
+)
+PROBE_IRRELEVANT = (
+    "docs/cases.md", "docs/notes/synthetic.md", "jobs/SYNTH/NOTE.md", "jobs/SYNTH/outputs/mesh.txt",
+    "README.md", "docs/decisions.md.bak", "src-extra/synthetic.py", "docs/domain-notes/synthetic.md",
+    "docs/procedure-notes/synthetic.md", "toolshed/synthetic.py",
+)
+
+
+def _path_counts_as_relevant(path):
+    for spec in RELEVANT_SPECS:
+        if spec.endswith("/"):
+            if path.startswith(spec):
+                return True
+        elif path == spec:
+            return True
+    return False
+
+
+def commit_paths(repo, paths, title):
+    for path in paths:
+        dest = repo / path
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(title + "\n", encoding="utf-8")
+        git(repo, "add", "--", path)
+    git(repo, "commit", "-q", "-m", title)
+
+
+def merge_side(repo, branch, paths, side_title, merge_title, resolution_paths=()):
+    """Real --no-ff merge. resolution_paths are written only on the merge commit."""
+    git(repo, "switch", "-q", "-c", branch)
+    commit_paths(repo, paths, side_title)
+    git(repo, "switch", "-q", "-")
+    if resolution_paths:
+        git(repo, "merge", "--no-ff", "--no-commit", "--no-edit", branch)
+        for path in resolution_paths:
+            dest = repo / path
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_text(merge_title + "\n", encoding="utf-8")
+            git(repo, "add", "--", path)
+        git(repo, "commit", "-q", "-m", merge_title)
+    else:
+        git(repo, "merge", "--no-ff", "--no-edit", "-m", merge_title, branch)
+    git(repo, "branch", "-q", "-D", branch)
+
+
+def point_origin_main_and_return(repo, base):
+    git(repo, "update-ref", "refs/remotes/origin/main", "HEAD")
+    git(repo, "reset", "-q", "--hard", base)
+
+
+def test_no_ff_src_merge_counts_once_with_the_merge_title(repo):
+    """(a) two src commits on a side branch are one relevant merge, titled by the merge."""
+    base = git_out(repo, "rev-parse", "HEAD")
+    git(repo, "switch", "-q", "-c", "side/src")
+    commit_paths(repo, ["src/one.py"], "src commit one")
+    commit_paths(repo, ["src/two.py"], "src commit two")
+    git(repo, "switch", "-q", "-")
+    git(repo, "merge", "--no-ff", "--no-edit", "-m", "merge two src commits", "side/src")
+    git(repo, "branch", "-q", "-D", "side/src")
+    point_origin_main_and_return(repo, base)
+    ctx = start(repo, "startup")
+    assert "behind origin/main by 1 relevant merge" in ctx
+    assert "merge two src commits" in ctx
+    assert "src commit one" not in ctx and "src commit two" not in ctx
+    assert "behind origin/main by 2" not in ctx
+    report = run("report", {}, repo)
+    assert "behind origin/main by 1 relevant merge" in report and "merge two src commits" in report
+
+
+def test_mixed_real_merges_count_only_the_src_integration(repo):
+    """(b) one src merge plus a docs-only merge and a jobs-only merge counts as 1."""
+    base = git_out(repo, "rev-parse", "HEAD")
+    git(repo, "switch", "-q", "-c", "side/src")
+    commit_paths(repo, ["src/a.py"], "src side one")
+    commit_paths(repo, ["src/b.py"], "src side two")
+    git(repo, "switch", "-q", "-")
+    git(repo, "merge", "--no-ff", "--no-edit", "-m", "merge src feature", "side/src")
+    git(repo, "branch", "-q", "-D", "side/src")
+    merge_side(repo, "side/docs", ["docs/cases.md"], "docs side commit", "merge docs only")
+    merge_side(repo, "side/jobs", ["jobs/SYNTH/NOTE.md"], "jobs side commit", "merge jobs only")
+    point_origin_main_and_return(repo, base)
+    ctx = start(repo, "startup")
+    assert "behind origin/main by 1 relevant merge" in ctx
+    assert "merge src feature" in ctx
+    assert "merge docs only" not in ctx and "merge jobs only" not in ctx
+    assert "src side one" not in ctx and "src side two" not in ctx
+    assert "docs side commit" not in ctx and "jobs side commit" not in ctx
+    assert "behind origin/main by 2" not in ctx and "behind origin/main by 3" not in ctx
+
+
+def test_merge_resolution_that_touches_src_counts(repo):
+    """(c) docs-only side commits, but the merge resolution itself touches src/."""
+    base = git_out(repo, "rev-parse", "HEAD")
+    merge_side(repo, "side/docs", ["docs/cases.md"], "docs only side",
+               "merge docs side with src resolution", resolution_paths=["src/from_resolution.py"])
+    point_origin_main_and_return(repo, base)
+    ctx = start(repo, "startup")
+    assert "behind origin/main by 1 relevant merge" in ctx
+    assert "merge docs side with src resolution" in ctx
+    assert "docs only side" not in ctx
+
+
+def test_up_to_date_real_merge_has_no_freshness_warning(repo):
+    """(d) HEAD is the merge that origin/main names."""
+    merge_side(repo, "side/src", ["src/one.py"], "src commit one", "merge src already contained")
+    git(repo, "update-ref", "refs/remotes/origin/main", "HEAD")
+    ctx = start(repo, "startup")
+    assert "Branch freshness:" not in ctx and "relevant merge" not in ctx
+    assert "Branch freshness:" not in run("report", {}, repo)
+
+
+def test_origin_main_root_commit_is_not_verified(repo):
+    """(f) a commit with no parent is unsupported: warn, do not report a count."""
+    git(repo, "checkout", "-q", "--orphan", "synthetic-main")
+    (repo / "src").mkdir(exist_ok=True)
+    (repo / "src/root.py").write_text("synthetic root\n", encoding="utf-8")
+    git(repo, "add", "--", "src/root.py")
+    git(repo, "commit", "-q", "-m", "root on main")
+    git(repo, "update-ref", "refs/remotes/origin/main", "HEAD")
+    git(repo, "switch", "-q", "task/a")
+    ctx = start(repo, "startup")
+    assert "branch freshness is not verified" in ctx
+    assert "relevant merge" not in ctx and "root on main" not in ctx
+
+
+def test_production_step_includes_dcc_job_outputs_and_branch_before_merge():
+    """Production is a DCC/code step, not the relevance-path list. Detached: branch, then merge."""
+    texts = [
+        (ROOT / "docs/agents/WORKFLOW.md").read_text(encoding="utf-8").split("## Before requesting review")[0],
+        (ROOT / ".claude/commands/takeover.md").read_text(encoding="utf-8"),
+    ]
+    for text in texts:
+        assert "jobs/<id>/outputs/" in text
+        window = text[max(0, text.index("jobs/<id>/outputs/") - 500): text.index("jobs/<id>/outputs/") + 40]
+        folded = window.lower()
+        assert "dcc" in folded and "build" in folded and "export" in folded
+        assert "git switch -c" in text
+        assert text.index("git switch -c") < text.index("git merge --no-edit origin/main")
+        assert "detached" in text.lower()
+
+
+def _load_session_context():
+    spec = importlib.util.spec_from_file_location("session_context_under_test", HOOK)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _record(subject, parents, paths, n=1):
+    sha = f"{n:040x}"
+    parent_field = " ".join(parents)
+    body = "\n".join(paths)
+    extra = f"\n{body}\n" if paths else "\n"
+    return f"\x1e{sha}\t{sha[:7]}\t{subject}\t{parent_field}{extra}"
+
+
+def test_classifier_fail_closed_on_empty_partial_and_unsupported():
+    """Empty, partial and unsupported integration records are not a clean 'nothing relevant'."""
+    mod = _load_session_context()
+    classify = mod.classify_integration_log
+    parent = f"{2:040x}"
+    with pytest.raises(mod.FreshnessIncomplete):
+        classify("")
+    with pytest.raises(mod.FreshnessIncomplete):
+        classify("\x1e")
+    with pytest.raises(mod.FreshnessIncomplete):
+        classify("not a record")
+    with pytest.raises(mod.FreshnessIncomplete):
+        classify(f"\x1e{'abcd'}\t{'abcd'}\tmerge synthetic\t{parent}\n")
+    with pytest.raises(mod.FreshnessIncomplete):
+        classify(f"\x1e{f'{1:040x}'}\t{f'{1:07x}'}\t\t{parent}\n")
+    with pytest.raises(mod.FreshnessIncomplete):
+        classify(_record("root synthetic", [], ["src/synthetic.py"]))
+    with pytest.raises(mod.FreshnessIncomplete):
+        classify(_record("partial parent", ["zzzz"], ["src/synthetic.py"]))
+    with pytest.raises(mod.FreshnessIncomplete):
+        classify(_record("escape path", [parent], ["../src/synthetic.py"]))
+    with pytest.raises(mod.FreshnessIncomplete):
+        classify(_record("dot path", [parent], ["."]))
+    assert classify(_record("empty diff", [parent], [])) == []
+    assert classify(_record("docs only", [parent], ["docs/cases.md", "jobs/SYNTH/NOTE.md"])) == []
+    src = classify(_record("merge synthetic", [parent, f"{3:040x}"], ["docs/cases.md", "src/synthetic.py"]))
+    assert src == [f"{f'{1:040x}'[:7]} merge synthetic"]
+
+
+def test_docs_or_job_only_merges_never_warn_probe(repo):
+    """Synthetic probe: reported relevant merges equal merges whose first-parent diff is relevant.
+
+    Seed 529, N=12 no-ff merges. Path sets are a shuffled mix of docs-only, jobs-only, relevant,
+    near-miss traps and mixed sides, sometimes plus a path that exists only on the merge commit.
+    """
+    rng = random.Random(529)
+    n = 12
+    kinds = ["docs", "jobs", "relevant", "mixed", "trap"]
+    deck = kinds * 2 + [rng.choice(kinds) for _ in range(n - 10)]
+    rng.shuffle(deck)
+    base = git_out(repo, "rev-parse", "HEAD")
+    rows = []
+    for i, kind in enumerate(deck):
+        if kind == "docs":
+            paths = [rng.choice(("docs/cases.md", "docs/notes/synthetic.md"))]
+        elif kind == "jobs":
+            paths = [rng.choice(("jobs/SYNTH/NOTE.md", "jobs/SYNTH/outputs/mesh.txt"))]
+        elif kind == "relevant":
+            paths = [rng.choice(PROBE_RELEVANT)]
+        elif kind == "trap":
+            paths = [rng.choice(("docs/decisions.md.bak", "src-extra/synthetic.py",
+                                 "docs/domain-notes/synthetic.md", "docs/procedure-notes/synthetic.md",
+                                 "toolshed/synthetic.py"))]
+        else:
+            paths = [rng.choice(PROBE_RELEVANT), rng.choice(PROBE_IRRELEVANT)]
+        resolution = [rng.choice(PROBE_RELEVANT + PROBE_IRRELEVANT)] if rng.random() < 0.35 else []
+        merge_title = f"synthetic-merge-{i:02d}"
+        side_title = f"synthetic-side-{i:02d}"
+        merge_side(repo, f"syn-side-{i}", list(dict.fromkeys(paths)), side_title, merge_title,
+                   resolution_paths=resolution)
+        touched = list(dict.fromkeys([*paths, *resolution]))
+        rows.append((merge_title, side_title, any(_path_counts_as_relevant(p) for p in touched)))
+    point_origin_main_and_return(repo, base)
+    ctx = start(repo, "startup")
+    expected = sum(1 for _title, _side, relevant in rows if relevant)
+    assert expected not in (0, n)                                  # the mix actually contains both kinds
+    noun = "merge" if expected == 1 else "merges"
+    assert f"behind origin/main by {expected} relevant {noun}" in ctx
+    for title, side, relevant in rows:
+        assert (title in ctx) is relevant
+        assert side not in ctx
+    assert "Branch freshness:" in ctx
