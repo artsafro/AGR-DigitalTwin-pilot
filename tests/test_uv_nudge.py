@@ -4,7 +4,7 @@ import random
 
 import pytest
 
-from dt_ai.geometry.uv_nudge import nudge_repeating_islands
+from dt_ai.geometry.uv_nudge import PHASE_TOL, nudge_repeating_islands
 
 
 def _quad(u0, v0, w=0.5, h=0.5):
@@ -199,3 +199,63 @@ def test_repeat_call_is_idempotent():
     first = nudge_repeating_islands(_quad(3.2, 3.2), [[0, 1, 2, 3]], ["brick"], {"brick": (1, 1)})
     second = nudge_repeating_islands(first.uv, [[0, 1, 2, 3]], ["brick"], {"brick": (1, 1)})
     assert second.uv == first.uv and second.islands[0]["steps"] == (0, 0)
+
+
+def _cyclic_phase_error(old, new, period):
+    d = abs(old % period - new % period)
+    return min(d, period - d)
+
+
+def _assert_invariants(uv, result, period, tile=1001):
+    pu, pv = period
+    tu, tv = (tile - 1001) % 10 + 0.5, (tile - 1001) // 10 + 0.5
+    for (u0, v0), (u1, v1) in zip(uv, result.uv):
+        assert _cyclic_phase_error(u0, u1, pu) <= PHASE_TOL
+        assert _cyclic_phase_error(v0, v1, pv) <= PHASE_TOL
+    us, vs = [p[0] for p in result.uv], [p[1] for p in result.uv]
+    assert abs((min(us) + max(us)) / 2 - tu) <= pu / 2 + PHASE_TOL
+    assert abs((min(vs) + max(vs)) / 2 - tv) <= pv / 2 + PHASE_TOL
+
+
+HUGE_QUAD = [(1e16, 0.0), (1e16 + 4, 0.0), (1e16 + 4, 4.0), (1e16, 4.0)]
+
+
+@pytest.mark.parametrize("period", [(0.3, 0.3), (0.25, 0.25)])
+def test_precision_unsafe_shift_is_rejected_not_silently_wrong(period):
+    # review round 1 P1: phase error 0.07 for (.3,.3); centre 0.0 outside .5 +- .125 for (.25,.25)
+    with pytest.raises(ValueError, match="precision"):
+        nudge_repeating_islands(HUGE_QUAD, [[0, 1, 2, 3]], ["brick"], {"brick": period})
+
+
+@pytest.mark.parametrize("period", [(0.3, 0.3), (0.25, 0.25), (1.0, 1.0)])
+def test_ordinary_offset_control_keeps_phase_centre_and_is_idempotent(period):
+    uv = _quad(3.2, 3.2)
+    first = nudge_repeating_islands(uv, [[0, 1, 2, 3]], ["brick"], {"brick": period})
+    _assert_invariants(uv, first, period)
+    second = nudge_repeating_islands(first.uv, [[0, 1, 2, 3]], ["brick"], {"brick": period})
+    assert second.uv == first.uv and second.islands[0]["steps"] == (0, 0)
+
+
+def test_one_unsafe_island_fails_whole_call_and_input_is_kept():
+    uv = _quad(3.2, 3.2) + HUGE_QUAD
+    before = list(uv)
+    with pytest.raises(ValueError, match="precision"):
+        nudge_repeating_islands(uv, [[0, 1, 2, 3], [4, 5, 6, 7]], ["a", "b"],
+                                {"a": (0.3, 0.3), "b": (0.3, 0.3)})
+    assert uv == before
+
+
+@pytest.mark.parametrize("exp", range(0, 18))
+@pytest.mark.parametrize("period", [(0.3, 0.3), (0.25, 0.25), (1 / 3, 0.7), (1.0, 1.0)])
+def test_probe_magnitude_sweep_holds_invariants_or_raises(exp, period):
+    rng = random.Random(exp)
+    sign = rng.choice((-1, 1))
+    uv = _quad(sign * 10.0 ** exp + rng.random(), -sign * 10.0 ** exp + rng.random(), 0.4, 0.4)
+    try:
+        result = nudge_repeating_islands(uv, [[0, 1, 2, 3]], ["brick"], {"brick": period})
+    except ValueError as exc:
+        assert "precision" in str(exc)
+        return
+    _assert_invariants(uv, result, period)
+    again = nudge_repeating_islands(result.uv, [[0, 1, 2, 3]], ["brick"], {"brick": period})
+    assert again.uv == result.uv

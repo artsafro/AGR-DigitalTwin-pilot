@@ -22,6 +22,9 @@ from dataclasses import dataclass, field
 
 from dt_ai.geometry.uv import tile_origin
 
+# Max cyclic phase error and centre overshoot (UV units) a returned shift may carry.
+PHASE_TOL = 1e-9
+
 
 @dataclass(frozen=True)
 class NudgeResult:
