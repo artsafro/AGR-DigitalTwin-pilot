@@ -153,3 +153,5 @@ never a claim of cryptographic validity. No signature checker is added by this d
 - Material ID selection by old number after renumbering selects nothing; check actual face counts per ID first. local: docs/agr/case_studies/GLB_A_MAIN_ATLAS.md.
 - Save over a file erased previous readback evidence; snapshot versions, approved files frozen, new iterations to new paths. local: docs/agr/case_studies/GLB_A_MAIN_ATLAS.md; local: jobs/OBR22-K02/STATE.md.
 - User praise/% ratings and renders are not QA metrics; ray coverage vs Revit is a completeness gauge, not tolerance. local: jobs/GLB-NPM/STATE.md; local: jobs/MASHI-LP/AUDIT_AND_PLAN.md.
+
+- Team-script defaults are not delivery rules [D180]: UCX pads 0.04/0.035 (bbox-side fractions), hull merge 500 mm, 12 pieces, light index 001-050, A101 bitmap ladder 128-2048 with the 8-bit warning, Flora Atlas padding 2 px and size 8192, and team overlap angles about 11.5 deg / 8 deg do not override the values in this file.
