@@ -77,13 +77,17 @@ def _failures(fn):
         r = _run(fn, exp, own, dl, t, p)
         if _counts(r) != want:
             bad.append(name)
+    for name, exp, own, dl, t, p, want in CASES:
+        r = _run(fn, exp, own, dl)
+        if _counts(r) != want:
+            bad.append(name + "_noarea")
     r = _run(fn, ["A", "B"], [(0,), (1,)], ["A", "A"], [0.5, 0.5], P2)
     if r["examples"] != WRONG_EXAMPLE:
         bad.append("wrong_example")
     return bad
 
 
-def _mutant(multi_ambiguous=False, credit=False):
+def _mutant(multi_ambiguous=False, credit=False, noarea_ambiguous=False):
     def fn(expected, src_faces, owners, delivered, t_areas=None, p_areas=None):
         wrong = unmatched = ambiguous = 0
         exs = []
@@ -98,7 +102,9 @@ def _mutant(multi_ambiguous=False, credit=False):
                 if t_areas is not None:
                     per[own[0]] += t_areas[t]
             want = {expected[i] for i in own}
-            if len(want) != 1 or (multi_ambiguous and len(own) > 1):
+            if len(want) != 1 or (multi_ambiguous and len(own) > 1) or (
+                noarea_ambiguous and t_areas is None and len(own) > 1
+            ):
                 ambiguous += 1
                 continue
             if got != next(iter(want)):
@@ -138,6 +144,21 @@ def test_areas_omitted_matches_for_singleton_streams():
         assert _counts(_run(qa_packages.source_finish_report, exp, own, dl)) == want, name
 
 
+def test_areas_omitted_all_core_cases():
+    # Reviewer witness: no areas, same-label multiowner -> ok true, all diagnostics 0.
+    for name, exp, own, dl, t, p, want in CASES:
+        assert _counts(_run(qa_packages.source_finish_report, exp, own, dl)) == want, name
+
+
+def test_areas_omitted_permutation_and_reversal_stable():
+    for name, exp, own, dl, t, p, want in CASES:
+        for perm in itertools.permutations(range(len(own))):
+            o = [tuple(reversed(own[i])) for i in perm]
+            d = [dl[i] for i in perm]
+            r = _run(qa_packages.source_finish_report, exp, o, d)
+            assert _counts(r) == want, (name, perm)
+
+
 def test_permutation_and_tuple_reversal_stable():
     for name, exp, own, dl, t, p, want in CASES:
         n = len(own)
@@ -160,3 +181,5 @@ def test_mutants_are_caught():
     assert "same_label_multi" in m1 and "sole_same_label" in m1
     m2 = _failures(_mutant(credit=True))
     assert "same_label_multi" in m2 and "conflict_multi" in m2
+    m3 = _failures(_mutant(noarea_ambiguous=True))  # no-area-only count-path mutant
+    assert "same_label_multi_noarea" in m3 and "same_label_multi" not in m3
