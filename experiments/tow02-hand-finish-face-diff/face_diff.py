@@ -140,6 +140,8 @@ def classify(fuv, z, atlas):
 
 def check_uv(path, polys, uv, uvi):
     """Source UV inventory must be consumed exactly by the closed-face walk (research #2); target UVs are unused."""
+    if not polys:
+        raise ValueError("%s: source mesh has 0 complete polygons" % path)
     corners = sum(len(p) for p in polys)
     if len(uv) % 2:
         raise ValueError("%s: UV has %d values: incomplete (u, v) pair" % (path, len(uv)))

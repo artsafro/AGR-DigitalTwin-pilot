@@ -113,6 +113,7 @@ def test_main_uv_centroid_is_one_third(monkeypatch, tmp_path):
     (dict(uvi=[0, 1, 3]), r"UVIndex\[2\] = 3 outside UV pairs 0\.\.2"),
     (dict(uvi=[0, 1, -1]), r"UVIndex\[2\] = -1 outside UV pairs 0\.\.2"),
     (dict(uv=UV + [0.5]), r"UV has 7 values: incomplete \(u, v\) pair"),
+    (dict(pvi=[], uv=[], uvi=[]), r"source mesh has 0 complete polygons"),
 ])
 def test_main_rejects_partial_source_inventory_and_writes_nothing(monkeypatch, tmp_path, kw, msg):
     mod = load()
