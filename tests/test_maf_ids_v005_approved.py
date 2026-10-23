@@ -80,12 +80,31 @@ def test_status_invariant_probe_rejects_each_of_31_entries():
     assert caught == 31
 
 
+def _canonical_sha(raw: bytes) -> str:
+    """SHA256 of the LF (committed) form; CRLF checkouts hash the same."""
+    return hashlib.sha256(raw.replace(b"\r\n", b"\n")).hexdigest()
+
+
+def test_pointer_hash_matches_committed_lf_and_crlf_working_copy():
+    import subprocess
+
+    blob = subprocess.run(
+        ["git", "show", "HEAD:library/maf/material_ids_v005.json"],
+        capture_output=True, check=True, cwd=Path(__file__).resolve().parents[1],
+    ).stdout
+    pointer = json.loads(Path("library/maf/material_ids.json").read_text(encoding="utf-8"))
+    assert b"\r" not in blob
+    assert _canonical_sha(blob) == pointer["sha256"]
+    assert _canonical_sha(blob.replace(b"\n", b"\r\n")) == pointer["sha256"]
+    assert _canonical_sha(blob + b" ") != pointer["sha256"]
+
+
 def test_material_ids_pointer_is_v005():
     pointer = json.loads(POINTER.read_text(encoding="utf-8"))
     assert pointer["active"] == "v005"
     assert pointer["path"].replace("\\", "/") == "library/maf/material_ids_v005.json"
     target = ROOT / pointer["path"]
-    assert hashlib.sha256(target.read_bytes()).hexdigest() == pointer["sha256"]
+    assert _canonical_sha(target.read_bytes()) == pointer["sha256"]
 
 
 def test_d181_is_logged_once():
