@@ -181,13 +181,19 @@ def check_handoff(text, sha, output, cwd="."):
     if SAMPLE in one and not _na(one[SAMPLE], SAMPLE, problems):
         if not one[SAMPLE] or _OMISSION.search(one[SAMPLE]):
             problems.append(f"{SAMPLE}: no evidence ({one[SAMPLE]!r}); give a path/inline output or n/a: <reason>")
-    for line in text.splitlines():
+    fenced = False
+    for raw in text.splitlines():
+        if raw.lstrip().startswith(("```", "~~~")):
+            fenced = not fenced
+            continue
+        # Quoted literals (fenced blocks, `inline code`) are examples, not the author's statement.
+        line = "" if fenced else re.sub(r"`[^`\n]*`", "``", raw)
         for pattern in _DELEGATION:
             match = pattern.search(line)
             negated = (_NEGATION.search(line[max(0, match.start() - 40):match.start()]) or
                        (match.groupdict().get("gap") and _NEGATION.search(match["gap"]))) if match else False
             if match and not negated:
-                problems.append(f"full suite delegated to the reviewer: {line.strip()[:80]!r}")
+                problems.append(f"full suite delegated to the reviewer: {raw.strip()[:80]!r}")
                 break
     return list(dict.fromkeys(problems))
 
