@@ -19,7 +19,11 @@ Algorithm choices (not normative): shelf packing by cell height; Ground target t
 x0.96 steps; OKS scale bisected; Lanczos resampling of a tile-wrapped crop; plug faces scaled one by one about
 their centroid (flat colour, so overlap inside the plug cell is harmless).
 
-Inputs: an OBJ + MTL (`usemtl` per face; `map_Kd` may hold `<UDIM>`; `Kd` for flat materials; optional `map_d`)
+Texel density is directional: per fan triangle the singular values of the metre -> pixel map; both the least and
+the most stretched direction must sit in the band (an area mean hides anisotropy).
+
+Inputs: an OBJ + MTL (`usemtl` per face; `map_Kd` may hold `<UDIM>`; `Kd` for flat materials; optional `map_d`;
+`d` / `Tr` multiply the opacity; any directive the atlas cannot carry is an error, harmless scalars are reported)
 or an in-memory `UdimMesh` + `MaterialSource` map. FBX is not read: convert to OBJ first (error, not a guess).
 Mesh units are metres times `unit_m`. Outputs (new files only, inputs never written): `<base>_d.png` (RGB),
 `<base>_o.png` (L, only when some material is transparent), `<base>.obj` + `<base>.mtl` (same geometry, one
@@ -59,6 +63,8 @@ class MaterialSource:
     diffuse: Path | None = None  # may contain <UDIM>
     color: tuple[int, int, int] | None = None  # flat material (Kd x 255)
     opacity: Path | None = None  # optional separate opacity map (may contain <UDIM>)
+    dissolve: float = 1.0  # MTL `d` (or 1 - `Tr`): multiplies the opacity
+    ignored: tuple[tuple[str, str, str], ...] = ()  # (directive, value, reason) not carried into the atlas
 
 
 @dataclass(frozen=True)
@@ -87,7 +93,7 @@ class _Rec:
     plug: bool = False
     color: tuple[int, int, int] = (128, 128, 128)
     plug_alpha: int = 255
-    dens: dict[int, float] = field(default_factory=dict)  # face -> source px/m
+    dens: dict[int, tuple[float, float]] = field(default_factory=dict)  # face -> (min, max) source px/m
     x0: float = 0.0
     x1: float = 0.0
     y0: float = 0.0
@@ -103,16 +109,46 @@ class _Rec:
 
 
 # ---------------------------------------------------------------- geometry helpers
-def _geo_area(pts: np.ndarray) -> float:
+def _face_texel(pts_m: np.ndarray, px: np.ndarray) -> tuple[float, float] | None:
+    """Directional density of one face: (min, max) singular value over its fan triangles of the affine map
+    metre -> pixel (px per linear metre along the least / most stretched direction). None: no triangle has area."""
+    lo, hi = math.inf, 0.0
+    for i in range(1, len(pts_m) - 1):
+        e1, e2 = pts_m[i] - pts_m[0], pts_m[i + 1] - pts_m[0]
+        l1 = float(np.linalg.norm(e1))
+        n = np.cross(e1, e2)
+        an = float(np.linalg.norm(n))
+        if l1 <= 1e-12 or an <= 2e-12:  # triangle area <= 1e-12 m2
+            continue
+        x = e1 / l1
+        y = np.cross(n, x) / an
+        g = np.array([[l1, float(e2 @ x)], [0.0, float(e2 @ y)]])
+        q = np.stack([px[i] - px[0], px[i + 1] - px[0]], axis=1)
+        sv = np.linalg.svd(q @ np.linalg.inv(g), compute_uv=False)
+        lo, hi = min(lo, float(sv[1])), max(hi, float(sv[0]))
+    return None if hi == 0.0 and lo == math.inf else (lo, hi)
+
+
+def _plane_offsets(pts_m: np.ndarray) -> np.ndarray:
+    """Face corners in metres in its own plane (Newell normal, first edge as x), centred on the centroid."""
     n = np.zeros(3)
-    for i in range(len(pts)):
-        n += np.cross(pts[i], pts[(i + 1) % len(pts)])
-    return float(np.linalg.norm(n)) / 2.0
-
-
-def _uv_area(pts: np.ndarray) -> float:
-    x, y = pts[:, 0], pts[:, 1]
-    return float(abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))) / 2.0
+    for i in range(len(pts_m)):
+        n += np.cross(pts_m[i], pts_m[(i + 1) % len(pts_m)])
+    c = pts_m.mean(axis=0)
+    nl = float(np.linalg.norm(n))
+    if nl <= 2e-12:
+        return np.zeros((len(pts_m), 2))
+    n /= nl
+    x = None
+    for i in range(len(pts_m)):
+        e = pts_m[(i + 1) % len(pts_m)] - pts_m[i]
+        e = e - (e @ n) * n
+        if np.linalg.norm(e) > 1e-12:
+            x = e / np.linalg.norm(e)
+            break
+    y = np.cross(n, x)
+    d = pts_m - c
+    return np.stack([d @ x, d @ y], axis=1)
 
 
 def _same_path(a: Path, b: Path) -> bool:
@@ -189,7 +225,33 @@ def read_obj(path: Path) -> tuple[UdimMesh, dict[str, MaterialSource]]:
     return mesh, mats
 
 
+# MTL directives this tool does not carry into the NPM atlas but that cannot change the diffuse / opacity
+# result; each one is reported per material in `ignored_mtl` (never dropped silently).
+_MTL_IGNORED = {
+    "Ka": "ambient colour: the NPM atlas carries diffuse and opacity only",
+    "Ks": "specular colour: the NPM atlas carries diffuse and opacity only",
+    "Ns": "specular exponent: the NPM atlas carries diffuse and opacity only",
+    "Ni": "index of refraction: the NPM atlas carries diffuse and opacity only",
+    "illum": "illumination model: the NPM atlas carries diffuse and opacity only",
+}
+# scalar directives accepted only at their neutral value (anything else changes the look -> error)
+_MTL_NEUTRAL = {"Ke": (0.0, 0.0, 0.0), "Tf": (1.0, 1.0, 1.0)}
+_MTL_MAPS = ("map_Kd", "map_d")
+
+
+def _map_file(path: Path, no: int, cur: str, tag: str, rest: list[str]) -> Path:
+    for tok in rest:
+        if tok.startswith("-"):
+            raise AtlasError(f"{path.name} line {no}: material {cur!r}: {tag} option {tok!r} (texture transform/"
+                             f"clamp/blend) is not supported; bake it into the map")
+    if not rest:
+        raise AtlasError(f"{path.name} line {no}: material {cur!r}: {tag} without a file")
+    return path.parent / " ".join(rest)
+
+
 def read_mtl(path: Path) -> dict[str, MaterialSource]:
+    """Fail-closed MTL reader: every directive is carried (Kd, map_Kd, map_d, d/Tr), reported as ignored with its
+    reason (`_MTL_IGNORED`, neutral Ke/Tf, Kd under map_Kd), or an error naming the material and directive."""
     path = Path(path)
     if not path.is_file():
         raise AtlasError(f"mtllib {path.name}: file not found")
@@ -204,15 +266,54 @@ def read_mtl(path: Path) -> dict[str, MaterialSource]:
             cur = " ".join(rest)
             if cur in out:
                 raise AtlasError(f"{path.name} line {no}: material {cur!r} defined twice")
-            out[cur] = {}
-        elif cur is None:
+            out[cur] = {"ignored": []}
             continue
-        elif tag == "Kd":
-            rgb = _finite([float(t) for t in rest[:3]], "Kd", no)
-            out[cur]["color"] = tuple(int(round(min(max(c, 0.0), 1.0) * 255)) for c in rgb)
-        elif tag in ("map_Kd", "map_d"):
-            out[cur]["diffuse" if tag == "map_Kd" else "opacity"] = path.parent / rest[-1]
-    return {n: MaterialSource(n, d.get("diffuse"), d.get("color"), d.get("opacity")) for n, d in out.items()}
+        if cur is None:
+            raise AtlasError(f"{path.name} line {no}: directive {tag!r} before any newmtl")
+        m = out[cur]
+        where = f"{path.name} line {no}: material {cur!r}"
+        if tag in m and tag != "ignored":
+            raise AtlasError(f"{where}: directive {tag!r} given twice")
+        if tag == "Kd":
+            m[tag] = tuple(_finite([float(t) for t in rest[:3]], "Kd", no))
+        elif tag in _MTL_MAPS:
+            m[tag] = _map_file(path, no, cur, tag, rest)
+        elif tag in ("d", "Tr"):
+            if any(t.startswith("-") for t in rest) or len(rest) != 1:
+                raise AtlasError(f"{where}: {tag} {' '.join(rest)} is not supported (one value 0..1 expected)")
+            v = _finite([float(rest[0])], tag, no)[0]
+            if not 0.0 <= v <= 1.0:
+                raise AtlasError(f"{where}: {tag} {rest[0]} outside 0..1")
+            m[tag] = v
+        elif tag in _MTL_IGNORED:
+            m["ignored"].append((tag, " ".join(rest), _MTL_IGNORED[tag]))
+        elif tag in _MTL_NEUTRAL:
+            v = tuple(_finite([float(t) for t in rest[:3]], tag, no))
+            if v != _MTL_NEUTRAL[tag]:
+                raise AtlasError(f"{where}: {tag} {' '.join(rest)} is not supported (only the neutral value)")
+            m["ignored"].append((tag, " ".join(rest), "neutral value, no effect"))
+        elif tag.startswith("map_") or tag in ("bump", "disp", "decal", "refl", "norm"):
+            raise AtlasError(f"{where}: map directive {tag!r} is not carried into the NPM atlas (diffuse + "
+                             f"opacity only); remove it or bake it into map_Kd")
+        else:
+            raise AtlasError(f"{where}: unsupported MTL directive {tag!r}")
+    res = {}
+    for n, m in out.items():
+        d = 1.0
+        if "d" in m and "Tr" in m and abs(m["d"] - (1.0 - m["Tr"])) > 1e-6:
+            raise AtlasError(f"{path.name}: material {n!r}: d and Tr disagree (d {m['d']}, Tr {m['Tr']})")
+        if "d" in m:
+            d = m["d"]
+        elif "Tr" in m:
+            d = 1.0 - m["Tr"]
+        color = None
+        if "Kd" in m:
+            color = tuple(int(round(min(max(c, 0.0), 1.0) * 255)) for c in m["Kd"])
+            if "map_Kd" in m and m["Kd"] != (1.0, 1.0, 1.0):
+                m["ignored"].append(("Kd", " ".join(map(str, m["Kd"])),
+                                     "map_Kd replaces Kd (3ds Max OBJ convention); tint not applied"))
+        res[n] = MaterialSource(n, m.get("map_Kd"), color, m.get("map_d"), d, tuple(m["ignored"]))
+    return res
 
 
 # ---------------------------------------------------------------- analysis
@@ -272,6 +373,9 @@ def analyze(mesh: UdimMesh, materials: dict[str, MaterialSource], unit_m: float 
         if umn < r.tu - EPS or umx > r.tu + 1 + EPS or vmn < r.tv - EPS or vmx > r.tv + 1 + EPS:
             raise AtlasError(f"material {name!r}: UV island crosses a UDIM tile border")
         r.tile = 1001 + r.tu + 10 * r.tv
+        dis = src.dissolve
+        if not (isinstance(dis, (int, float)) and math.isfinite(dis) and 0.0 <= dis <= 1.0):
+            raise AtlasError(f"material {name!r}: dissolve {dis} outside 0..1")
         if src.diffuse is not None:
             p = _udim_path(src.diffuse, r.tile)
             r.rgb, r.alpha = _load_rgb_alpha(p, f"material {name!r}")
@@ -286,6 +390,9 @@ def analyze(mesh: UdimMesh, materials: dict[str, MaterialSource], unit_m: float 
                     raise AtlasError(f"material {name!r}: opacity map must be grey, same size as diffuse")
                 r.alpha = orgb[..., 0].copy()
                 r.sources.append(str(po))
+            if dis < 1.0:  # MTL d / Tr multiplies the opacity (map or opaque)
+                base = np.full((r.H, r.W), 255.0) if r.alpha is None else r.alpha.astype(float)
+                r.alpha = np.clip(np.rint(base * dis), 0, 255).astype(np.uint8)
             flat_rgb = bool((r.rgb == r.rgb[0, 0]).all())
             flat_a = r.alpha is None or bool((r.alpha == r.alpha[0, 0]).all())
             if flat_rgb and flat_a:  # one-colour map -> plug (pilot rule; script: <= 512 px, VPM_to_NPM.ms:167)
@@ -295,35 +402,38 @@ def analyze(mesh: UdimMesh, materials: dict[str, MaterialSource], unit_m: float 
             if src.opacity is not None:
                 raise AtlasError(f"material {name!r}: map_d without map_Kd is not supported")
             r.plug, r.color, r.W, r.H = True, tuple(int(c) for c in src.color), 1, 1
+            r.plug_alpha = int(round(255 * dis))
         else:
             raise AtlasError(f"material {name!r}: neither map_Kd nor Kd")
         # used UV rect in source pixel space (y down)
         r.x0, r.x1 = (umn - r.tu) * r.W, (umx - r.tu) * r.W
         r.y0, r.y1 = (1 - (vmx - r.tv)) * r.H, (1 - (vmn - r.tv)) * r.H
         for f in r.faces:
-            ga = _geo_area(mesh.vertices[list(mesh.faces[f])]) * unit_m * unit_m
-            ua = _uv_area(mesh.uvs[list(mesh.face_uvs[f])]) * r.W * r.H
-            if ga > 1e-12 and ua > 1e-12:
-                r.dens[f] = math.sqrt(ua / ga)
+            t = _face_texel(mesh.vertices[list(mesh.faces[f])] * unit_m, _src_px(mesh, r, f))
+            if t is not None:
+                r.dens[f] = t
         out.append(r)
     return out
 
 
 # ---------------------------------------------------------------- planning
-def _plug_extent(mesh: UdimMesh, r: _Rec, mode: str, plug_px_m: float, cell_px: int) -> tuple[float, float, dict]:
-    """Per face scale about its centroid (source px -> atlas px): Ground -> plug_px_m, OKS -> fits cell_px."""
-    scales, ext_x, ext_y = {}, 0.0, 0.0
+def _plug_extent(mesh: UdimMesh, r: _Rec, mode: str, plug_px_m: float, cell_px: int,
+                 unit_m: float) -> tuple[float, float, dict]:
+    """Per plug face: corner offsets (atlas px) about the cell centre. Ground: the face laid flat in its own plane at
+    exactly plug_px_m in every direction (flat colour, so the source UV shape carries nothing). OKS: the source UV
+    shape scaled to fit cell_px."""
+    offs, ext_x, ext_y = {}, 0.0, 0.0
     for f in r.faces:
-        pts = _src_px(mesh, r, f)
-        span = pts.max(axis=0) - pts.min(axis=0)
-        size = float(span.max())
         if mode == "ground":
-            s = plug_px_m / r.dens[f] if f in r.dens else 0.0
+            o = _plane_offsets(mesh.vertices[list(mesh.faces[f])] * unit_m) * plug_px_m
         else:
-            s = cell_px / size if size > 0 else 0.0
-        scales[f] = s
-        ext_x, ext_y = max(ext_x, float(span[0]) * s), max(ext_y, float(span[1]) * s)
-    return ext_x, ext_y, scales
+            pts = _src_px(mesh, r, f)
+            size = float((pts.max(axis=0) - pts.min(axis=0)).max())
+            o = (pts - pts.mean(axis=0)) * (cell_px / size if size > 0 else 0.0)
+        offs[f] = o
+        ext_x = max(ext_x, 2 * float(np.abs(o[:, 0]).max()))
+        ext_y = max(ext_y, 2 * float(np.abs(o[:, 1]).max()))
+    return ext_x, ext_y, offs
 
 
 def _src_px(mesh: UdimMesh, r: _Rec, f: int) -> np.ndarray:
@@ -355,7 +465,7 @@ def _shelf(recs: list[_Rec], size: int) -> bool:
 
 
 def plan(mesh: UdimMesh, recs: list[_Rec], *, mode: str, size: int, pad: int, target: float,
-         plug_px_m: float, plug_cell: int) -> dict:
+         plug_px_m: float, plug_cell: int, unit_m: float = 1.0) -> dict:
     if mode not in ("ground", "oks"):
         raise AtlasError(f"mode must be ground or oks, got {mode!r}")
     if size not in ATLAS_SIZES:
@@ -370,23 +480,29 @@ def plan(mesh: UdimMesh, recs: list[_Rec], *, mode: str, size: int, pad: int, ta
         if mode == "ground" and not r.dens:
             raise AtlasError(f"material {r.name!r}: no face with measurable UV and geometry area")
         if r.plug:
-            r.x1, r.y1, plug_scales[r.name] = _plug_extent(mesh, r, mode, plug_px_m, plug_cell)
+            r.x1, r.y1, plug_scales[r.name] = _plug_extent(mesh, r, mode, plug_px_m, plug_cell, unit_m)
             r.x0 = r.y0 = 0.0
             _cell(r, pad, 1.0)
     tex = [r for r in recs if not r.plug]
 
     def bounds(r: _Rec) -> tuple[float, float, float]:
-        d = sorted(r.dens.values())
-        # keep every face inside the band with a 3 % margin (script margin, VPM_to_NPM.ms:194-196)
-        return d[(len(d) - 1) // 2], GROUND_MIN * 1.03 / d[0], GROUND_MAX * 0.97 / d[-1]
+        # directional bounds: the least stretched direction of every face >= 10, the most stretched <= 40, with a
+        # 3 % margin (script margin, VPM_to_NPM.ms:194-196; the script measures area density, not direction)
+        mean = sorted(math.sqrt(a * b) for a, b in r.dens.values())
+        smin = min(a for a, _ in r.dens.values())
+        smax = max(b for _, b in r.dens.values())
+        lo = GROUND_MIN * 1.03 / smin if smin > 1e-9 else math.inf
+        return mean[(len(mean) - 1) // 2], lo, GROUND_MAX * 0.97 / smax
 
     used = None
     if mode == "ground":
         for r in tex:
             med, lo, hi = bounds(r)
             if lo > hi:
-                raise AtlasError(f"material {r.name!r}: texel spread {min(r.dens.values()):.2f}.."
-                                 f"{max(r.dens.values()):.2f} source px/m cannot fit the band "
+                smin = min(a for a, _ in r.dens.values())
+                smax = max(b for _, b in r.dens.values())
+                raise AtlasError(f"material {r.name!r}: directional texel spread {smin:.2f}..{smax:.2f} source "
+                                 f"px/m (ratio {smax / max(smin, 1e-300):.2f}) cannot fit the band "
                                  f"{GROUND_MIN}..{GROUND_MAX} with one uniform scale")
         t = target
         while t >= GROUND_MIN * 1.05 - 1e-9:
@@ -452,10 +568,9 @@ def build(mesh: UdimMesh, recs: list[_Rec], planned: dict, size: int) -> dict:
         r = byname[m]
         pts = _src_px(mesh, r, f)
         if r.plug:
-            s = planned["plug_scales"][m][f]
-            c = pts.mean(axis=0)
-            ax = r.cx + r.dw / 2 + (pts[:, 0] - c[0]) * s
-            ay = r.cy + r.dh / 2 + (pts[:, 1] - c[1]) * s
+            o = planned["plug_scales"][m][f]
+            ax = r.cx + r.dw / 2 + o[:, 0]
+            ay = r.cy + r.dh / 2 + o[:, 1]
             ids = []
             for x, y in zip(ax, ay):
                 new_uv.append((x / size, 1 - y / size))
@@ -495,10 +610,9 @@ def measure(mesh: UdimMesh, uvs: np.ndarray, face_uvs, cells: dict[str, list[int
         b = e["bbox"]
         b[:] = [min(b[0], float(px[:, 0].min())), min(b[1], float(px[:, 1].min())),
                 max(b[2], float(px[:, 0].max())), max(b[3], float(px[:, 1].max()))]
-        ga = _geo_area(mesh.vertices[list(mesh.faces[f])]) * unit_m * unit_m
-        ua = _uv_area(uv) * size * size
-        if ga > 1e-12:
-            e["dens"].append(math.sqrt(ua / ga))
+        t = _face_texel(mesh.vertices[list(mesh.faces[f])] * unit_m, px)
+        if t is not None:
+            e["dens"].append(t)
     rows, ok = {}, True
     for m in sorted(per):
         e = per[m]
@@ -508,12 +622,13 @@ def measure(mesh: UdimMesh, uvs: np.ndarray, face_uvs, cells: dict[str, list[int
         d = e["dens"]
         row = {"faces": e["faces"], "cell_px": cells[m], "island_bbox_px": [round(v, 3) for v in b],
                "padding_px": round(padding, 3), "uv_outside_01": e["outside_01"], "uv_outside_cell": e["outside_cell"],
-               "texel_min": round(min(d), 3) if d else None, "texel_max": round(max(d), 3) if d else None,
+               "texel_min": round(min(a for a, _ in d), 3) if d else None,
+               "texel_max": round(max(b for _, b in d), 3) if d else None,
                "faces_without_area": e["faces"] - len(d)}
         # inclusive bounds (reg '>= 8 px', '>= 10 and <= 40'); EPS absorbs float noise only
         row["padding_ok"] = bool(padding >= pad_min - EPS)
-        row["texel_in_band"] = bool(d and len(d) == e["faces"] and GROUND_MIN - EPS <= min(d)
-                                    and max(d) <= GROUND_MAX + EPS) if mode == "ground" else None
+        row["texel_in_band"] = bool(d and len(d) == e["faces"] and GROUND_MIN - EPS <= min(a for a, _ in d)
+                                    and max(b for _, b in d) <= GROUND_MAX + EPS) if mode == "ground" else None
         row["passed"] = bool(row["padding_ok"] and not row["uv_outside_01"] and not row["uv_outside_cell"]
                              and row["texel_in_band"] is not False)
         ok &= row["passed"]
@@ -561,7 +676,7 @@ def pack(mesh: UdimMesh, materials: dict[str, MaterialSource], *, mode: str = "g
     """Pure in-memory pack: returns atlas arrays, new UV and the measured report. Never touches files."""
     recs = analyze(mesh, materials, unit_m)
     planned = plan(mesh, recs, mode=mode, size=size, pad=pad, target=target, plug_px_m=plug_px_m,
-                   plug_cell=plug_cell)
+                   plug_cell=plug_cell, unit_m=unit_m)
     built = build(mesh, recs, planned, size)
     cells = {r.name: [r.cx, r.cy, r.dw, r.dh] for r in recs}
     meas = measure(mesh, built["uvs"], built["face_uvs"], cells, size, mode=mode, pad_min=pad, unit_m=unit_m)
@@ -570,13 +685,17 @@ def pack(mesh: UdimMesh, materials: dict[str, MaterialSource], *, mode: str = "g
         row.update({"kind": "plug" if r.plug else "texture", "udim": r.tile, "sources": r.sources,
                     "source_size_px": [r.W, r.H] if not (r.plug and not r.sources) else None,
                     "scale_k": None if r.plug else round(r.k, 6),
-                    "source_texel_min": round(min(r.dens.values()), 3) if r.dens else None,
-                    "source_texel_max": round(max(r.dens.values()), 3) if r.dens else None,
+                    "source_texel_min": round(min(a for a, _ in r.dens.values()), 3) if r.dens else None,
+                    "source_texel_max": round(max(b for _, b in r.dens.values()), 3) if r.dens else None,
+                    "dissolve": materials[r.name].dissolve,
+                    "ignored_mtl": [{"directive": a, "value": v, "reason": why}
+                                    for a, v, why in materials[r.name].ignored],
                     "opacity": "map" if r.alpha is not None else ("flat" if r.plug and r.plug_alpha < 255 else "none")})
     report = {"tool": "tools/materials/npm_atlas_udim.py", "mode": mode, "atlas_size": size, "padding_px": pad,
               "target_px_m": target, "used": round(planned["used"], 6), "plug_px_m": plug_px_m,
               "opacity_map": built["alpha"] is not None, "faces": len(mesh.faces),
-              "materials_in": len({*mesh.face_materials}), **meas}
+              "materials_in": len({*mesh.face_materials}),
+              "texel_rule": "directional: min/max singular value of the metre->pixel map per fan triangle", **meas}
     return {**built, "report": report, "cells": cells}
 
 

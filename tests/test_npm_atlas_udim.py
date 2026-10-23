@@ -354,6 +354,10 @@ def test_probe_random_layouts_keep_invariants(tmp_path):
             sx, sy = rng.uniform(0.3, 60), rng.uniform(0.3, 40)
             u0, v0 = rng.uniform(0, 0.4), rng.uniform(0, 0.4)
             u1, v1 = rng.uniform(u0 + 0.05, 1), rng.uniform(v0 + 0.05, 1)
+            if rng.random() < 0.75:  # mostly near-isotropic (x0.7..1.4); the rest stays random (refusals)
+                du, dv = u1 - u0, (u1 - u0) * sy / sx * rng.uniform(0.7, 1.4)
+                f = min(1.0, (1 - u0) / du, (1 - v0) / dv)
+                u1, v1 = u0 + du * f, v0 + dv * f
             v, t, f = _grid(rng.uniform(-100, 100), rng.uniform(-100, 100), sx, sy, rng.randint(1, 4),
                             rng.randint(1, 4), m, (u0, v0, u1, v1))
             o, q = len(verts), len(uvs)
@@ -385,6 +389,13 @@ def test_probe_random_layouts_keep_invariants(tmp_path):
                 assert x + w <= x2 or x2 + w2 <= x or y + h <= y2 or y2 + h2 <= y
         for row in rep["materials"].values():
             assert row["padding_px"] >= pad and 10 <= row["texel_min"] <= row["texel_max"] <= 40
+        for f, (vi, ti) in enumerate(zip(mesh.faces, res["face_uvs"])):  # independent directional texel (pinv)
+            p3, uv = mesh.vertices[list(vi)], res["uvs"][list(ti)] * size
+            for i in range(1, len(vi) - 1):
+                e = np.stack([p3[i] - p3[0], p3[i + 1] - p3[0]], axis=1)
+                q = np.stack([uv[i] - uv[0], uv[i + 1] - uv[0]], axis=1)
+                sv = np.linalg.svd(q @ np.linalg.pinv(e), compute_uv=False)
+                assert 10 - 1e-6 <= sv[1] <= sv[0] <= 40 + 1e-6, (trial, f, sv)
         n_pass += 1
     print(f"probe seed 546: {n_pass} packed with invariants held, {n_err} AtlasError, of 40")
     assert n_pass >= 20 and n_pass + n_err == 40
@@ -532,8 +543,8 @@ def test_anisotropic_ground_quad_refused(tmp_path):
 def test_measure_reports_directional_extrema():
     """The 0.1 x 10 m output of round 1 (UV 350 x 3.5 px/m, area mean 35) must fail the read-back."""
     verts = np.array([(0, 0, 0), (0.1, 0, 0), (0.1, 10, 0), (0, 10, 0)], float)
-    s = 35.0 / 2048
-    uvs = np.array([(0.01, 0.5), (0.01 + 35 * s / 1.0, 0.5), (0.01 + 35 * s, 0.5 + 35 * s), (0.01, 0.5 + 35 * s)])
+    s = 1.0 / 2048  # 35 atlas px in both UV directions
+    uvs = np.array([(0.01, 0.5), (0.01 + 35 * s, 0.5), (0.01 + 35 * s, 0.5 + 35 * s), (0.01, 0.5 + 35 * s)])
     mesh = na.UdimMesh(verts, uvs, ((0, 1, 2, 3),), ((0, 1, 2, 3),), ("M",))
     m = na.measure(mesh, uvs, mesh.face_uvs, {"M": [0, 0, 2048, 2048]}, 2048, mode="ground", pad_min=8)
     row = m["materials"]["M"]
@@ -561,3 +572,25 @@ def test_isotropic_rotated_and_sheared_controls(tmp_path):
     lo, hi, ok = _texel(na.pack(*na.read_obj(_quad_case(tmp_path / "d", uvs=ms))))
     sv = np.linalg.svd(np.array([[1, 0.3], [0, 1]]), compute_uv=False)
     assert ok and 10 <= lo < hi <= 40 and hi / lo == pytest.approx(sv[0] / sv[1], rel=1e-3)
+
+
+def test_dissolve_bounds_and_directional_threshold(tmp_path):
+    """Fail-closed edges: dissolve NaN / > 1 refused; d 1 gives no opacity map; directional band inclusive."""
+    mesh, _ = na.read_obj(_quad_case(tmp_path))
+    for bad in (float("nan"), 1.5, -0.1):
+        with pytest.raises(na.AtlasError, match="dissolve"):
+            na.pack(mesh, {"M": na.MaterialSource("M", diffuse=tmp_path / "map.png", dissolve=bad)})
+    one = na.pack(mesh, {"M": na.MaterialSource("M", diffuse=tmp_path / "map.png", dissolve=1.0)})
+    assert one["alpha"] is None
+    zero = na.pack(mesh, {"M": na.MaterialSource("M", diffuse=tmp_path / "map.png", dissolve=0.0)})
+    x, y, w, h = zero["cells"]["M"]
+    assert int(zero["alpha"][y:y + h, x:x + w].max()) == 0
+
+    def aniso(a, b):  # 1 x 1 m face mapped to a x b atlas px (directions a, b px/m)
+        verts = np.array([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)], float)
+        u0 = 8.0 / 100
+        uvs = np.array([(u0, u0), (u0 + a / 100, u0), (u0 + a / 100, u0 + b / 100), (u0, u0 + b / 100)])
+        m = na.UdimMesh(verts, uvs, ((0, 1, 2, 3),), ((0, 1, 2, 3),), ("M",))
+        return na.measure(m, uvs, m.face_uvs, {"M": [0, 0, 100, 100]}, 100, mode="ground", pad_min=8)["passed"]
+    assert aniso(10.0, 40.0) and aniso(40.0, 10.0)
+    assert not aniso(9.99, 40.0) and not aniso(10.0, 40.01)
