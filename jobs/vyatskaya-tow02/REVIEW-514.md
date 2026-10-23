@@ -125,3 +125,39 @@ at build-v013 (A, B) and at F13 (B ends).
 | #533 | Intake: source-class step; `independent-checker` after every shown build; poll timeouts |
 | #534 | Backfill the user's TOW02 rules into `docs/decisions.md` |
 | #535 | Fast xView-exact checks: seconds, incremental per part, interactive Blender overlay |
+
+## 11. PR #525 review rework (2026-10-23)
+
+The job-local runner now rejects an explicit missing/non-mesh target with a named
+per-job error and no checker measurements; only an omitted name selects the largest
+mesh. Missing checkers and `#Failed`/unsupported returns are errors, not clean counts.
+Both checks finish before opening a success report. Preflight rejects empty job
+lists, duplicate labels (case-insensitive), traversal, existing reports/completion
+receipts and output/input aliases, including an absent input at a report path.
+There is no `deleteFile` of previous reports. This is not concurrent-writer protection;
+run in a private versioned directory through the existing session lock.
+
+Verification: native **3ds Max 2024.2.5, live PID 145692**, metres, synthetic fixtures
+only, hold/restore around the run. No production model was modified or re-imported.
+
+- Tests-first `8a76818`, detached `tmp/red-original`: **9 failed / 5 passed**,
+  including explicit missing/non-mesh targets and checker failure/unavailability.
+- Additional publication probes: **4 failed / 15 passed** before preflight;
+  absent-input alias probe: **1 failed / 28 deselected** before alias protection.
+- Final: `MCP_MAX_PID=145692 AGR_TOW02_NATIVE=1 uv run pytest -q --tb=short -m max
+  tests/test_tow02_xview_review.py -p no:cacheprovider
+  --basetemp=C:/x/t_87373483-native-v002`: **29 passed**.
+- Affected xView suites (`tests/ops/test_inv_xview{,_fast,_incremental}.py`):
+  **237 passed**. Decision/harness-policy docs: **23 passed**. Full suite not repeated
+  for this review rework (rule 49); no shared source/configuration changed.
+- Recorded-array replay (`tmp/replay525.py`, receipt `tmp/replay525.json`): ours
+  **185 hits / 0 FP / 0 FN / 0 vertex pairs**; user **0 hits / 0 FP / 0 FN /
+  5 vertex pairs**, before the user's Mesh + Weld step. Exact face IDs match the
+  retained Max oracle; array/oracle hashes unchanged. This is not a fresh DCC import.
+- Retained evidence root is
+  `C:/Users/artsafro/.AGR-DigitalTwin_pilot/jobs/vyatskaya-tow02/outputs/review-v002/`,
+  not the primary pilot checkout. Native receipts: `C:/x/t_87373483-native-v002/`;
+  worker logs and eval receipt: this worktree's ignored `tmp/`.
+
+The PR Acceptance table was published before these implementation fixes; its rows
+now reference executable native tests. Shared-runner consolidation stays in #528.

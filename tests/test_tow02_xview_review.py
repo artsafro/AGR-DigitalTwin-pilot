@@ -43,6 +43,7 @@ def native(tmp_path_factory):
         ("badmode", "scene.max", "013_Main", "bogus"),
         ("partial", "", "013_Main", ""),
     ]
+    specs.extend((f"generated{i}", "scene.max", f"013_Missing_{i}", "") for i in range(5))
     (out / "jobs.txt").write_text("\n".join(
         f"{label}|{(out / path).as_posix() if path else ''}|{node}|{mode}"
         for label, path, node, mode in specs
@@ -59,6 +60,30 @@ def native(tmp_path_factory):
         sub.mkdir()
         (sub / "jobs.txt").write_text(f"{label}|{(out / 'scene.max').as_posix()}|013_Main|", encoding="ascii")
         (sub / "runner.ms").write_text(patched.replace(ms_string(out), ms_string(sub)), encoding="utf-8")
+    guard_calls = []
+    for label, lines, sentinel in [
+        ("stale", "existing|{scene}|013_Main|", "existing.json"),
+        ("duplicate", "again|{scene}|013_Main|\nagain|{scene}|013_Main|", None),
+        ("traversal", "../escape|{scene}|013_Main|", None),
+        ("done", "existing|{scene}|013_Main|", "done.txt"),
+        ("emptyjobs", "", None),
+        ("absentalias", "absentalias|{self}|013_Main|", None),
+        ("case_duplicate", "again|{scene}|013_Main|\nAGAIN|{scene}|013_Main|", None),
+    ]:
+        sub = out / label
+        sub.mkdir()
+        (sub / "jobs.txt").write_text(lines.format(scene=(out / "scene.max").as_posix(),
+                                                  self=(sub / f"{label}.json").as_posix()), encoding="ascii")
+        if sentinel:
+            (sub / sentinel).write_text("DO NOT OVERWRITE", encoding="ascii")
+        (sub / "runner.ms").write_text(run.replace(ms_string(out), ms_string(sub)), encoding="utf-8")
+        guard_calls.append(f'''(
+          local rejected = false
+          try (fileIn {ms_string(sub / 'runner.ms')}) catch (rejected = true)
+          local f = createFile {ms_string(sub / 'guard.txt')}
+          format "%" rejected to:f
+          close f
+        )''')
     setup = f'''(
       holdMaxFile()
       local failure = undefined
@@ -75,12 +100,15 @@ def native(tmp_path_factory):
         saveMaxFile {ms_string(out / 'scene.max')} quiet:true
         select small
         exportFile {ms_string(out / 'scene.fbx')} #noPrompt selectedOnly:true using:FBXEXP
+        copyFile {ms_string(out / 'scene.max')} {ms_string(out / 'scene-before.max')}
+        copyFile {ms_string(out / 'scene.fbx')} {ms_string(out / 'scene-before.fbx')}
         local f = createFile {ms_string(out / 'scene.txt')}
         format "unsupported" to:f
         close f
         fileIn {ms_string(out / 'runner.ms')}
         fileIn {ms_string(out / 'unavailable/runner.ms')}
-        fileIn {ms_string(out / 'failed/runner.ms')}
+        fileIn {ms_string(out / 'failed/runner.ms')};
+        {';'.join(guard_calls)}
       ) catch (failure = getCurrentException())
       fetchMaxFile quiet:true
       if failure != undefined then throw failure
@@ -102,6 +130,7 @@ def native(tmp_path_factory):
     rows = {label: json.loads((out / f"{label}.json").read_text()) for label, *_ in specs}
     for label in ("unavailable", "failed"):
         rows[label] = json.loads((out / label / f"{label}.json").read_text())
+    rows["_out"] = out
     return rows
 
 
@@ -124,6 +153,11 @@ def test_explicit_existing(native):
 
 def test_explicit_missing(native):
     error(native["missing"], "013_Mian")
+
+
+@pytest.mark.parametrize("i", range(5))
+def test_generated_missing_targets(native, i):
+    error(native[f"generated{i}"], f"013_Missing_{i}")
 
 
 def test_explicit_nonmesh(native):
@@ -174,3 +208,49 @@ def test_checker_unavailable(native):
 
 def test_checker_failed(native):
     error(native["failed"], "Failed")
+
+
+@pytest.mark.parametrize("label,sentinel", [("stale", "existing.json"), ("duplicate", None),
+                                            ("traversal", None), ("done", "done.txt"),
+                                            ("emptyjobs", None), ("absentalias", None), ("case_duplicate", None)])
+def test_no_clobber_preflight(native, label, sentinel):
+    out = native["_out"]
+    assert (out / label / "guard.txt").read_text() == "true"
+    if sentinel:
+        assert (out / label / sentinel).read_text() == "DO NOT OVERWRITE"
+    assert not (out / "escape.json").exists()
+
+
+def test_source_bytes_preserved(native):
+    for ext in ("max", "fbx"):
+        out = native["_out"]
+        assert hashlib.sha256((out / f"scene.{ext}").read_bytes()).digest() == hashlib.sha256(
+            (out / f"scene-before.{ext}").read_bytes()).digest()
+
+
+@pytest.mark.parametrize("kind", ["hardlink", "resolved"])
+def test_output_input_alias(native, kind):
+    out = native["_out"]
+    sub = out / f"alias-{kind}"
+    sub.mkdir()
+    original = out / "scene.max"
+    destination = sub / "alias.json"
+    if kind == "hardlink":
+        os.link(original, destination)
+        input_path = original
+    else:
+        destination.write_bytes(original.read_bytes())
+        input_path = sub / "." / "alias.json"
+    before = destination.read_bytes()
+    (sub / "jobs.txt").write_text(f"alias|{input_path.as_posix()}|013_Main|", encoding="ascii")
+    source = RUNNER.read_text(encoding="utf-8").replace(
+        'systemTools.getEnvVariable "TOW02_XV_OUT"', ms_string(sub)).replace("quitMax #noPrompt", "()")
+    script = sub / "runner.ms"
+    script.write_text(source, encoding="utf-8")
+    result = subprocess.run([sys.executable, str(MAX_EXEC), "--file", str(script),
+                             "--card", "t_87373483", "--timeout", "30"],
+                            capture_output=True, text=True, encoding="utf-8", timeout=60)
+    payload = json.loads(result.stdout)
+    assert "Existing report: alias" in payload["result"]["result"], payload
+    assert destination.read_bytes() == before == original.read_bytes()
+    assert not (sub / "done.txt").exists()
