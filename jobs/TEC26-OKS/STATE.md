@@ -33,3 +33,19 @@ Source geometry untouched. No VPM/NPM models, textures, packages or exports buil
 
 Transcript: Hermes session `local-e92d7962ac47bbe3a7753bf3acc0e564e892854103048b6af44b6213acb099a6` (profile dt-worker-codex; no Claude JSONL transcript).
 Report: `census/README.md`; scene tables: `census/scenes.md`; KPP: `census/kpp-recipe.md`; evidence index: `census/evidence.json`.
+
+## Pilot AC08 VPM + NPM (#559, branch `job/tec26-oks-pilot-ac08`)
+
+Gate 1 approved (#565). Scope (Artem 2026-10-22): colour only - geometry, topology, UCX and IDs as in the source; the
+one allowed edit is a clean edge-ring cut at a joint where a panel does not fit a tile. v007 (joints every 0.60 m) was
+rejected; Artem accepted the v008 panels and asked for a blue wall edging, then made the presentation the authority and
+the facade legend binding [D171]. Run `pilot-v010` [D169] [D170] [D171]: rib count per facade counted on presentation
+slide 49 (29 / 11 joint lines = 30 / 12 ribs, equal to the DWG sheet `AC08/sheet-facades.json`), evenly and
+symmetrically over the panel field (P = 0.19532 / 0.18628 m, tiles 1001 / 1002, Artem's texture = one joint's look,
+KPP texel 1000 px/m); frame band (ID1 above ±0.000) blue RAL 5015 with a dark field outline; plinth and door RAL 7004;
+legend table in `AC08/MATERIALS.md` checked by `finish_map.validate_legend`; one ring cut at joint 12 (X = 33.3673,
+19 quads -> 38). Drive `G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v010/` (34/34 hashes). `qa_packages.py`
+40/40 (also from the Drive ZIPs and textures); acceptance picture slide | VPM | NPM at 200 px/m with the measured counts
+(`compare_facades.py`), all 4 facades equal; SINTEZ as v007. Open for Artem (`AC08/PILOT_REPORT.md`): roof colour (now
+blue), outer outline, UCX triangulation.
+Scripts: `scripts/run_building.sh`, `render_facades.py`, `compare_facades.py`, `sheet_facades.py`.
