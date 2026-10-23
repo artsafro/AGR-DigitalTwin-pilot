@@ -73,10 +73,15 @@ def mesh(path, want):
     v = kid(g, "Vertices")[0][1][0]
     verts = [(v[i], v[i + 1], v[i + 2]) for i in range(0, len(v), 3)]
     polys, cur = [], []
-    for i in kid(g, "PolygonVertexIndex")[0][1][0]:
+    pvi = kid(g, "PolygonVertexIndex")[0][1][0]
+    for i in pvi:
         cur.append(~i if i < 0 else i)
         if i < 0:
             polys.append(cur); cur = []
+    if cur:  # an unclosed tail is not a smaller mesh (research fbx-polygon-stream-consumption-boundary #1)
+        raise ValueError("%s: %d trailing PolygonVertexIndex entries %s at positions %d..%d are not closed by a "
+                         "negative end marker" % (path, len(cur), list(pvi[len(pvi) - len(cur):]),
+                                                  len(pvi) - len(cur), len(pvi) - 1))
     uvl = kid(g, "LayerElementUV")[0]
     return verts, polys, kid(uvl, "UV")[0][1][0], kid(uvl, "UVIndex")[0][1][0]
 
@@ -133,9 +138,23 @@ def classify(fuv, z, atlas):
     return "TOW02_top" if z >= Z_TOP else "body"           # wall/roof/soffit/reveal/louvre/coping/ledge by z
 
 
+def check_uv(path, polys, uv, uvi):
+    """Source UV inventory must be consumed exactly by the closed-face walk (research #2); target UVs are unused."""
+    corners = sum(len(p) for p in polys)
+    if len(uv) % 2:
+        raise ValueError("%s: UV has %d values: incomplete (u, v) pair" % (path, len(uv)))
+    if len(uvi) != corners:
+        raise ValueError("%s: UVIndex has %d entries, expected %d (corners of %d complete polygons)"
+                         % (path, len(uvi), corners, len(polys)))
+    for k, u in enumerate(uvi):
+        if not 0 <= u < len(uv) // 2:
+            raise ValueError("%s: UVIndex[%d] = %d outside UV pairs 0..%d" % (path, k, u, len(uv) // 2 - 1))
+
+
 def main(out_dir):
     atlas = json.load(open(ATLAS, encoding="utf-8"))
     AV, AP, AUV, AUI = mesh(V5, OBJ)
+    check_uv(V5, AP, AUV, AUI)
     BV, BP, _, _ = mesh(USER, OBJ)
     B = [tri(BV, p) for p in BP]
     assert all(len(p) == 3 for p in BP), "user mesh expected fully triangulated"
