@@ -89,6 +89,10 @@ def move_rigid(scene, seeds, vector, *, fixed):
     Return no candidate on failure and never mutate caller arrays. Remaining 10 mm
     construction failures stay visible in `clearance`; zero xView is not acceptance.
     """
+    for selection in (seeds, fixed):
+        if not isinstance(selection, (list, tuple, set, frozenset)) or any(
+                not isinstance(x, str) or not x for x in selection) or len(set(selection)) != len(selection):
+            raise ValueError('selection must contain distinct nonempty part names, not a string')
     scene = _snapshot(scene)
     moving, fixed = set(seeds), set(fixed)
     for label in moving | fixed:
