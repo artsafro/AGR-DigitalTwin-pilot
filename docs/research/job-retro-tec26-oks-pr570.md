@@ -133,7 +133,7 @@ returned 38 k and 72 k chars, and the final one (after `request_review`) was unn
 6. **CI not run (billing lock)**: there is no remote check; the full suite and DCC runs are author-only, which the reviewer
    noted as an open item.
 7. **Card facts wrong at dispatch**: layer names (`0.0.0.4` vs `004`) and railing size (2048 vs 4096). The worker caught
-   both; an orchestrator 5-min source read before writing the card (now `task-intake`, PR #576/D169) prevents it.
+   both; an orchestrator 5-min source read before writing the card (now `task-intake`, PR #576/D186) prevents it.
 8. **Tool slips**: an `execute_code` `NameError: patch` (missing import, 11:27:25) and a failed `patch` on
    `evidence.json` (11:33:02). Each cost about 10 s.
 
@@ -178,7 +178,7 @@ Open roadmap issues checked with `gh issue list --label roadmap --state open` (#
 4. **Intake: slide map from pptx facade albums.** A small reader (zip + `ppt/slides/*.xml` text + slide images) that
    writes `slide → building/АС → legend/RAL text` into the D049 `jobs/<JOB>/intake/` format. The task-intake procedure
    requires it whenever a pptx is staged. Value: high (the main downstream loss of this job). Effort S.
-   Archive: no roadmap link (process/intake; partly covered by PR #576/D169).
+   Archive: no roadmap link (process/intake; partly covered by PR #576/D186).
 5. **Job-only diff test scope.** Rule 49 exemption: a diff limited to `jobs/**` + `tests/jobs/**` (no `src/`, `adapters/`, `tools/`,
    conftest, pyproject) runs the affected tests + `tests/jobs/` only. Value: about 30 min per job-stage PR. Effort S
    (COORDINATION_RULES + `suite_slot.py` check). Archive: no roadmap link (harness).
