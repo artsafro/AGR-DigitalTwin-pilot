@@ -44,7 +44,9 @@ FENCE_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 CLOSE_FENCE_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})[ \t]*$")
 HEADING_RE = re.compile(r"^ {0,3}(#{1,6})[ \t]+(.*?)[ \t]*#*[ \t]*$")
 TRACE_TITLE_RE = re.compile(r"agent trace", re.IGNORECASE)
-DECL_RE = re.compile(r"^ {0,3}(?:[-*+]\s+)?(?:\*\*)?Card:(?:\*\*)?\s*(.*)$", re.IGNORECASE)
+DECL_RE = re.compile(
+    r"^ {0,3}(?:[-*+]\s+)?(?:\*\*)?Card:(?:\*\*)?\s*(.*)$", re.IGNORECASE
+)
 DECL_ID_RE = re.compile(r"(t_[0-9a-f]{8})(?=$|[;,\s])")
 ANY_ID_RE = re.compile(r"\bt_[0-9a-f]{8}\b")
 
