@@ -143,6 +143,13 @@ BAD = {
     "totals_not_dict": _doc(totals=[]),
     "totals_entry_not_dict": _doc(totals={"w": 3}),
     "totals_bool": _doc(totals={"w": {"cards": False}}),
+    # Review R1 (PR #673): partial or unsupported totals entries must not publish a report.
+    "totals_unknown_metric": _doc(totals={"w": {"banana": 1}}),
+    "totals_entry_empty": _doc(totals={"w": {}}),
+    "totals_missing_minutes": _doc(totals={"w": {"cards": 1}}),
+    "totals_missing_cards": _doc(totals={"w": {"minutes": 1.0}}),
+    "totals_extra_metric": _doc(totals={"w": {"cards": 1, "minutes": 1.0, "banana": 1}}),
+    "totals_fractional_cards": _doc(totals={"w": {"cards": 1.5, "minutes": 1.0}}),
     "missing_cards": {"totals": {}},
     "missing_totals": {"cards": []},
     "top_not_dict": [],
@@ -190,8 +197,12 @@ def test_cli_positive_fresh_process(tmp_path):
         '{"cards": [], "cards": [], "totals": {}}',
         '{"cards": [',
         "",
+        json.dumps(BAD["totals_unknown_metric"]),
+        json.dumps(BAD["totals_entry_empty"]),
+        json.dumps(BAD["totals_missing_minutes"]),
     ],
-    ids=["dup_id", "negative", "nan", "inf", "neg_inf_totals", "dup_json_key", "truncated", "empty_file"],
+    ids=["dup_id", "negative", "nan", "inf", "neg_inf_totals", "dup_json_key", "truncated", "empty_file",
+         "totals_banana", "totals_empty_entry", "totals_cards_only"],
 )
 def test_cli_invalid_input_nonzero_no_stdout(tmp_path, text):
     src = _write(tmp_path, text)
@@ -216,3 +227,26 @@ def test_cli_rejects_directory_input(tmp_path):
     proc = _run("--input", str(tmp_path), cwd=tmp_path)
     assert proc.returncode != 0 and proc.stdout == b""
     assert os.listdir(tmp_path) == []
+
+
+@pytest.mark.parametrize(
+    "totals, needle",
+    [
+        ({"w": {"banana": 1}}, "unsupported metric 'banana'"),
+        ({"w": {}}, "missing required metric"),
+        ({"w": {"cards": 1}}, "missing required metric 'minutes'"),
+    ],
+    ids=["banana", "empty_entry", "cards_only"],
+)
+def test_totals_entry_error_is_named(totals, needle):
+    mod = _load()
+    with pytest.raises(mod.OverlayError, match=needle):
+        mod.build_report(_doc(totals=totals), source_sha256="0" * 64, source_path="x")
+
+
+def test_totals_entry_with_all_supported_metrics_accepted():
+    mod = _load()
+    full = {"w": {"cards": 2, "minutes": 3.5, "done": 1, "first_pass": 1, "review_rounds": 0,
+                  "blocked_runs": 0, "failed_runs": 0}}
+    rep = mod.build_report(_doc(totals=full), source_sha256="0" * 64, source_path="x")
+    assert rep["original_totals"] == full

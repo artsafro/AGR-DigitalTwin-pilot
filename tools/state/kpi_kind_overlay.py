@@ -15,7 +15,8 @@ Hidden keys (``idempotency_key`` etc.) are never used. Counts and minutes are gr
 and label; ``original_totals`` is the input ``totals`` unchanged. No rates or quality grades are
 computed: taxonomy and denominators are the user's decision (report #671, O1-O4).
 
-Invalid input (duplicate card id or JSON key, malformed cards/totals, NaN/inf, bool, negative or
+Invalid input (duplicate card id or JSON key, malformed cards/totals, a totals entry without
+``cards``/``minutes`` or with an unsupported metric, NaN/inf, bool, negative or
 non-numeric minutes) is an error: exit 2, message on stderr, nothing on stdout.
 
 new-case: offline advisory overlay over a frozen KPI snapshot, stdout-only, no taxonomy change.
@@ -43,6 +44,12 @@ NOTICE = ("advisory, report-only: candidate labels are not an official taxonomy;
 
 class OverlayError(ValueError):
     """Invalid input; the CLI exits nonzero and prints nothing on stdout."""
+
+
+# Metrics of a Worker KPI totals entry (frozen kpi.json shape); each entry needs at least cards+minutes.
+TOTALS_REQUIRED = ("cards", "minutes")
+TOTALS_METRICS = frozenset(TOTALS_REQUIRED + (
+    "done", "first_pass", "review_rounds", "blocked_runs", "failed_runs"))
 
 
 def candidate_label(stored_kind, title):
@@ -81,8 +88,17 @@ def _validate_totals(totals):
     for key, entry in totals.items():
         if not isinstance(entry, dict):
             raise OverlayError(f"totals[{key!r}] must be an object")
+        for metric in entry:
+            if metric not in TOTALS_METRICS:
+                raise OverlayError(f"totals[{key!r}]: unsupported metric {metric!r} "
+                                   f"(supported: {', '.join(sorted(TOTALS_METRICS))})")
+        for metric in TOTALS_REQUIRED:
+            if metric not in entry:
+                raise OverlayError(f"totals[{key!r}]: missing required metric {metric!r}")
         for metric, value in entry.items():
             _number(value, f"totals[{key!r}][{metric!r}]")
+        if not float(entry["cards"]).is_integer():
+            raise OverlayError(f"totals[{key!r}]['cards']: not a whole count {entry['cards']!r}")
 
 
 def build_report(doc, source_sha256, source_path):
