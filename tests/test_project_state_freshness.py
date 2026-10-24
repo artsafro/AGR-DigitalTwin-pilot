@@ -59,8 +59,9 @@ OPEN_660 = [599, 601, 610, 611, 629, 631, 633, 643, 654, 655, 656, 661]
 MERGED_ON_2026_10_24 = [505, 506, 507, 508, 509, 513, 516]
 KEYS = [
     "checked_at", "diagnostics", "evidence_missing", "expected_origin", "head",
-    "origin", "pin", "repo", "source_timestamp", "stale_merges_prs", "stale_open_prs",
-    "status", "truncated_open", "truncated_open_prs", "wrong_head",
+    "open_window_missing_prs", "open_window_outside_prs", "origin", "pin", "repo",
+    "source_timestamp", "stale_merges_prs", "stale_open_prs", "status", "truncated_open",
+    "truncated_open_prs", "unexpected_snapshot_merge_prs", "wrong_head",
 ]
 
 
@@ -235,7 +236,7 @@ def _window_660():
 
 
 def _base(mod, monkeypatch, tmp_path, *, head=None, origin=ORIGIN, blob=None, log=None,
-          listing=None, search=None, views=None, fail=None, numbers=None, **kwargs):
+          listing=None, search=None, views=None, fail=None, numbers=None, stamp=STAMP, **kwargs):
     numbers = list(FROZEN_OPENS and [n for n, _t, _b in FROZEN_OPENS]) if numbers is None else numbers
     if blob is None:
         blob = _frozen_blob()
@@ -252,7 +253,7 @@ def _base(mod, monkeypatch, tmp_path, *, head=None, origin=ORIGIN, blob=None, lo
             count = 0
         search = _search(count)
     fake = FakeRun(head=head, origin=origin, blob=blob, merges=log, listing=listing,
-                   search=search, views=views, fail=fail)
+                   search=search, views=views, fail=fail, stamp=stamp)
     code, data, clocks = _invoke(mod, monkeypatch, fake, tmp_path, **kwargs)
     return code, data, fake, clocks
 
@@ -353,12 +354,15 @@ def test_snapshot_open_outside_the_full_window_is_truncation(mod, monkeypatch, t
 
 
 def test_limit_12_numbers_missing_from_snapshot_are_window_mismatch(mod, monkeypatch, tmp_path):
+    """Full open window absent from the snapshot, snapshot opens absent from that window."""
     code, data, _fake, _clocks = _base(
-        mod, monkeypatch, tmp_path, listing=_list_json([599]), search=_search(1),
+        mod, monkeypatch, tmp_path, listing=_list_json(OPEN_660), search=_search(20),
         views=_views({n: "OPEN" for n, _t, _b in FROZEN_OPENS}))
     assert code == 1
     assert data["status"] == "stale"
     assert data["diagnostics"] == ["open_window_mismatch"]
+    assert data["open_window_missing_prs"] == OPEN_660
+    assert data["open_window_outside_prs"] == [n for n, _t, _b in FROZEN_OPENS]
     assert data["stale_open_prs"] == []
 
 
@@ -435,8 +439,61 @@ def test_extra_snapshot_merge_is_not_current(mod, monkeypatch, tmp_path):
     assert data["status"] == "stale"
     assert "stale_merges" in data["diagnostics"]
     assert data["stale_merges_prs"] == []
+    assert data["unexpected_snapshot_merge_prs"] == [1]
     assert blob  # historical blob id is cited, not parsed from this synthetic text
     assert BLOB
+
+
+def test_invalid_source_timestamp_is_evidence_missing(mod, monkeypatch, tmp_path):
+    probes = ["not-a-timestamp"]
+    hits = 0
+    for stamp in probes:
+        code, data, _fake, _clocks = _base(mod, monkeypatch, tmp_path, stamp=stamp)
+        assert code == 2, stamp
+        assert data["status"] == "evidence_missing", stamp
+        assert "invalid_timestamp" in data["evidence_missing"]
+        assert data["source_timestamp"] is None
+        assert data["status"] != "current"
+        hits += 1
+    assert hits == len(probes), f"{hits}/{len(probes)}"
+
+
+def test_evidenced_open_union_above_total_is_evidence_missing(mod, monkeypatch, tmp_path):
+    """Twelve listed opens plus snapshot #377 and #525 are 14 distinct OPEN PRs."""
+    rows = _window_660()
+    merges = [_merge_line(sha[:7], n, sub) for sha, n, sub in rows]
+    numbers = OPEN_660 + [377, 525]
+    opens = [_open_line(n, f"synthetic title {n}", f"branch-{n}") for n in numbers]
+    probes = [13]
+    hits = 0
+    for total in probes:
+        code, data, _fake, _clocks = _base(
+            mod, monkeypatch, tmp_path, blob=_snapshot(merges, opens),
+            log=_log([(sha, sub) for sha, _n, sub in rows]),
+            listing=_list_json(OPEN_660), search=_search(total),
+            views=_views({n: "OPEN" for n in numbers}), numbers=numbers)
+        assert code == 2, total
+        assert data["status"] == "evidence_missing"
+        assert "total_count_short" in data["evidence_missing"]
+        assert data["truncated_open"] is False
+        assert data["status"] != "current"
+        hits += 1
+    assert hits == len(probes), f"{hits}/{len(probes)}"
+
+
+def test_view_state_array_is_evidence_missing(mod, monkeypatch, tmp_path):
+    views = _views({n: "OPEN" for n, _t, _b in FROZEN_OPENS})
+    views[377] = json.dumps({"number": 377, "state": []})
+    probes = [views]
+    hits = 0
+    for view in probes:
+        code, data, _fake, _clocks = _base(mod, monkeypatch, tmp_path, views=view)
+        assert code == 2
+        assert data["status"] == "evidence_missing"
+        assert "partial_json" in data["evidence_missing"]
+        assert data["status"] != "current"
+        hits += 1
+    assert hits == len(probes), f"{hits}/{len(probes)}"
 
 
 def test_empty_open_list_with_total_zero_is_current(mod, monkeypatch, tmp_path):
@@ -706,7 +763,7 @@ def _fixture_repo(tmp_path, open_numbers):
     return repo, path
 
 
-def _shim(bin_dir, mode, listing, states, search):
+def _shim(bin_dir, mode, listing, states, search, view_raw=None):
     py = bin_dir / "gh_shim.py"
     py.write_text(
         "import json, os, sys\n"
@@ -718,8 +775,12 @@ def _shim(bin_dir, mode, listing, states, search):
         "if args[:2] == ['pr', 'list']:\n"
         "    sys.stdout.write(os.environ['GH_LIST'])\n"
         "elif args[:2] == ['pr', 'view']:\n"
-        "    states = json.loads(os.environ['GH_STATES'])\n"
-        "    sys.stdout.write(json.dumps({'number': int(args[2]), 'state': states[args[2]]}))\n"
+        "    raw = os.environ.get('GH_VIEW_RAW')\n"
+        "    if raw:\n"
+        "        sys.stdout.write(raw)\n"
+        "    else:\n"
+        "        states = json.loads(os.environ['GH_STATES'])\n"
+        "        sys.stdout.write(json.dumps({'number': int(args[2]), 'state': states[args[2]]}))\n"
         "elif args[:1] == ['api']:\n"
         "    sys.stdout.write(os.environ['GH_SEARCH'])\n"
         "else:\n"
@@ -737,6 +798,8 @@ def _shim(bin_dir, mode, listing, states, search):
     env["GH_LIST"] = listing
     env["GH_STATES"] = json.dumps({str(k): v for k, v in states.items()})
     env["GH_SEARCH"] = search
+    if view_raw is not None:
+        env["GH_VIEW_RAW"] = view_raw
     return env
 
 
@@ -792,3 +855,32 @@ def test_cli_fixture_current_stale_and_missing_gh(tmp_path):
         _assert_untouched(repo, path, before, digest, env)
         outcomes.append(mode)
     assert outcomes == ["current", "stale", "fail"]
+
+
+def test_cli_malformed_json_and_state_type_are_evidence_missing(tmp_path):
+    """Fresh process: malformed JSON and a non-string view state stay JSON, exit 2."""
+    probes = [
+        ("malformed_list", "{", None, [377], 1),
+        ("malformed_view", _list_json([377]), "{", [377], 1),
+        ("array_state", _list_json([377]), '{"number":377,"state":[]}', [377], 1),
+    ]
+    hits = 0
+    for name, listing, view_raw, numbers, total in probes:
+        work = tmp_path / name
+        work.mkdir()
+        repo, path = _fixture_repo(work, numbers)
+        before = _worktree(repo)
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        bin_dir = work / "bin"
+        bin_dir.mkdir()
+        env = _shim(
+            bin_dir, "ok", listing, {n: "OPEN" for n in numbers}, _search(total), view_raw=view_raw)
+        proc = _run_cli(repo, env)
+        data = json.loads(proc.stdout)
+        assert proc.returncode == 2, (name, proc.returncode, proc.stderr, proc.stdout)
+        assert data["status"] == "evidence_missing", name
+        assert data["status"] != "current"
+        assert '"status": "current"' not in proc.stdout
+        _assert_untouched(repo, path, before, digest, env)
+        hits += 1
+    assert hits == len(probes), f"{hits}/{len(probes)}"

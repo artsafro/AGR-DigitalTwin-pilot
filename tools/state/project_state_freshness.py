@@ -20,7 +20,15 @@ fetched, so a matching twelve-open list with `total_count` 29 is current and
 `truncated_open_prs` is empty (#377 and #525 in the report are that case).
 `wrong_head` (HEAD sha or origin slug) is never an age diagnostic and never
 `current`. Empty, partial, non-finite, and non-integer threshold input is
-`evidence_missing`.
+`evidence_missing`. A snapshot timestamp that is not timezone-aware ISO-8601
+is `evidence_missing`. `total_count` below the union of the open window and
+snapshot rows individually evidenced OPEN is `evidence_missing` (twelve listed
+opens plus snapshot #377 and #525 is 14, so total 13 is not current; total 29
+with truncation and total 0 with an empty list stay current). A non-string
+`gh pr view` state is `evidence_missing`, not an exception. Snapshot merge
+rows absent from the pinned window are `unexpected_snapshot_merge_prs`.
+`open_window_mismatch` names `open_window_missing_prs` and
+`open_window_outside_prs`.
 """
 import argparse
 import json
@@ -278,6 +286,21 @@ def _parse_search(raw):
     return total
 
 
+def _parse_stamp(text):
+    stamp = text.strip()
+    if stamp == "":
+        raise _Partial("empty")
+    if stamp.casefold() in _NONFINITE:
+        raise _Partial("non_finite")
+    try:
+        parsed = datetime.fromisoformat(stamp)
+    except ValueError as exc:
+        raise _Partial("invalid_timestamp") from exc
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        raise _Partial("invalid_timestamp")
+    return stamp
+
+
 def _parse_view(raw, expected):
     data = _loads(raw)
     if not isinstance(data, dict) or "number" not in data or "state" not in data:
@@ -286,7 +309,7 @@ def _parse_view(raw, expected):
     state = data["state"]
     if isinstance(number, bool) or not isinstance(number, int) or number != expected:
         raise _Partial("partial_json")
-    if state not in {"OPEN", "MERGED", "CLOSED"}:
+    if not isinstance(state, str) or state not in {"OPEN", "MERGED", "CLOSED"}:
         raise _Partial("partial_json")
     return state
 
@@ -329,24 +352,30 @@ def _opens(snap, states, listed, total):
     diags = []
     truncated = False
     truncated_prs = []
+    window_missing = []
+    window_outside = []
     if stale_open:
         diags.append("stale_open")
-    if missing or (outside and not (total > OPEN_LIMIT and len(listed) == OPEN_LIMIT and set(listed) <= set(still))):
+    covered = total > OPEN_LIMIT and len(listed) == OPEN_LIMIT and set(listed) <= set(still)
+    if missing or (outside and not covered):
         diags.append("open_window_mismatch")
-    elif total > OPEN_LIMIT and len(listed) == OPEN_LIMIT and set(listed) <= set(still) and not missing:
+        window_missing = missing
+        window_outside = outside
+    elif covered and not missing:
         truncated = True
         truncated_prs = outside
     if set(listed) & set(stale_open):
         raise _Partial("open_list_incomplete")
-    return diags, stale_open, truncated, truncated_prs
+    return diags, stale_open, truncated, truncated_prs, window_missing, window_outside
 
 
 def _payload(checked, repo, expected, **fields):
     data = {
         "pin": None, "repo": repo, "expected_origin": expected, "origin": None, "head": None,
-        "source_timestamp": None, "checked_at": checked, "status": "evidence_missing",
+        "source_timestamp": None, "checked_at": checked,         "status": "evidence_missing",
         "diagnostics": [], "wrong_head": False, "truncated_open": False, "stale_open_prs": [],
-        "stale_merges_prs": [], "truncated_open_prs": [], "evidence_missing": [],
+        "stale_merges_prs": [], "truncated_open_prs": [], "unexpected_snapshot_merge_prs": [],
+        "open_window_missing_prs": [], "open_window_outside_prs": [], "evidence_missing": [],
     }
     data.update(fields)
     return data
@@ -437,10 +466,10 @@ def evaluate(repo, ref, expected_origin, max_merges, timeout):
             ["git", "log", "-1", "--format=%cI", pin, "--", "docs/PROJECT_STATE.md"],
             repo_text, timeout, problems, "git_failed")
         if stamped is not None:
-            stamp = stamped.strip()
-            if stamp == "" or stamp.casefold() in _NONFINITE:
-                problems.append("empty" if stamp == "" else "non_finite")
-                stamp = None
+            try:
+                stamp = _parse_stamp(stamped)
+            except _Partial as exc:
+                problems.append(exc.reason)
     if origin is not None and opens is not None:
         raw_list = _capture(
             ["gh", "pr", "list", "--repo", origin, "--state", "open", "--limit", "12",
@@ -471,12 +500,15 @@ def evaluate(repo, ref, expected_origin, max_merges, timeout):
                 problems.append(exc.reason)
     diags = []
     stale_merges = []
+    unexpected = []
     stale_open = []
     truncated = False
     truncated_prs = []
+    window_missing = []
+    window_outside = []
     if merges is not None and window is not None:
-        stale_merges, leftovers = _merge_gap(window, merges)
-        if stale_merges or leftovers:
+        stale_merges, unexpected = _merge_gap(window, merges)
+        if stale_merges or unexpected:
             diags.append("stale_merges")
     if opens is not None and listed is not None and total is not None and not any(
             item in problems for item in ("gh_failed", "timeout", "partial_json", "malformed_json",
@@ -488,8 +520,13 @@ def evaluate(repo, ref, expected_origin, max_merges, timeout):
         elif len(opens) != len(states):
             problems.append("partial_json")
         else:
+            evidenced_open = set(listed)
+            evidenced_open.update(number for number in opens if states.get(number) == "OPEN")
+            if len(evidenced_open) > total:
+                problems.append("total_count_short")
             try:
-                open_diags, stale_open, truncated, truncated_prs = _opens(opens, states, listed, total)
+                (open_diags, stale_open, truncated, truncated_prs,
+                 window_missing, window_outside) = _opens(opens, states, listed, total)
             except _Partial as exc:
                 problems.append(exc.reason)
             else:
@@ -509,7 +546,8 @@ def evaluate(repo, ref, expected_origin, max_merges, timeout):
         checked, repo_text, expected_origin, pin=pin, origin=origin, head=head, source_timestamp=stamp,
         status=status, diagnostics=diags, wrong_head=wrong, truncated_open=truncated,
         stale_open_prs=stale_open, stale_merges_prs=stale_merges, truncated_open_prs=truncated_prs,
-        evidence_missing=evidence)
+        unexpected_snapshot_merge_prs=unexpected, open_window_missing_prs=window_missing,
+        open_window_outside_prs=window_outside, evidence_missing=evidence)
 
 
 def _exit(payload):
