@@ -319,7 +319,44 @@ HIDDEN_CARD_TRACES = {
     "html_comment_one_line": [f"<!-- - Card: {GROUND_CARD} -->"],
     "html_comment_multi_line": ["<!--", f"- Card: {GROUND_CARD}", "-->"],
     "html_comment_unclosed": ["<!-- draft", f"- Card: {GROUND_CARD}"],
+    # R2 P1: raw HTML blocks render their content as HTML, not as a list item.
+    "html_pre_block": ["<pre>", f"- Card: {GROUND_CARD}", "</pre>"],
+    "html_pre_unclosed": ["<pre>", f"- Card: {GROUND_CARD}"],
+    "html_textarea_block": ["<textarea>", f"- Card: {GROUND_CARD}", "</textarea>"],
+    "html_script_block": ["<script>", f"- Card: {GROUND_CARD}", "</script>"],
+    "html_div_block": ["<div>", f"- Card: {GROUND_CARD}", "</div>"],
 }
+
+
+# R2 P1: "## Agent trace#" is a heading titled "Agent trace#" (a closing
+# sequence needs a space before it), so there is no Agent trace section.
+@pytest.mark.parametrize(
+    "heading",
+    ["## Agent trace#", "## Agent trace##", "##Agent trace", "## Agent trace\\#"],
+)
+def test_heading_suffix_is_not_agent_trace(tmp_path, capsys, heading):
+    body = (
+        "SYNTHETIC test body - not a real PR description.\n\n"
+        f"{heading}\n- Card: {GROUND_CARD}\n"
+    )
+    code, report = _run(tmp_path, _expected(body), _observed(body), capsys)
+    assert code == 2, report
+    assert report["identity_match"] is False
+    assert "trace_section_missing" in _codes(report)
+
+
+@pytest.mark.parametrize(
+    "heading",
+    ["## Agent trace", "## Agent trace #", "## Agent trace ##  ", "### Agent trace"],
+)
+def test_heading_closing_sequence_is_agent_trace(tmp_path, capsys, heading):
+    body = (
+        "SYNTHETIC test body - not a real PR description.\n\n"
+        f"{heading}\n- Card: {GROUND_CARD}\n"
+    )
+    code, report = _run(tmp_path, _expected(body), _observed(body), capsys)
+    assert code == 0, report
+    assert report["observed_card"] == GROUND_CARD
 
 
 @pytest.mark.parametrize("name", sorted(HIDDEN_CARD_TRACES))
@@ -339,6 +376,8 @@ def test_card_hidden_from_markdown_render_is_missing(tmp_path, capsys, name):
         ["~~~~", "- Card: t_fce04873", "~~~~~", f"- Card: {GROUND_CARD}"],
         ["<!-- note -->", f"- Card: {GROUND_CARD}, dt-worker"],
         ["<!--", "- Card: t_fce04873", "-->", f"   - Card: {GROUND_CARD}"],
+        ["<pre>", "- Card: t_fce04873", "</pre>", f"- Card: {GROUND_CARD}"],
+        ["<div>", "- Card: t_fce04873", "", f"- Card: {GROUND_CARD}"],
     ],
 )
 def test_card_after_properly_closed_fence_or_comment_matches(tmp_path, capsys, trace):

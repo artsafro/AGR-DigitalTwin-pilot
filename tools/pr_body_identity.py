@@ -42,7 +42,27 @@ SHA256_RE = re.compile(r"[0-9a-f]{64}")
 
 FENCE_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 CLOSE_FENCE_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})[ \t]*$")
-HEADING_RE = re.compile(r"^ {0,3}(#{1,6})[ \t]+(.*?)[ \t]*#*[ \t]*$")
+HEADING_RE = re.compile(r"^ {0,3}(#{1,6})(?:[ \t]+(.*?))?[ \t]*$")
+# CommonMark: an optional closing '#' run must be preceded by a space or tab.
+HEADING_CLOSE_RE = re.compile(r"(?:^|[ \t]+)#+[ \t]*$")
+# CommonMark raw HTML blocks: type 1 ends at its closing tag, types 6/7 at a
+# blank line. Their content is HTML, never a Markdown list item.
+HTML1_START_RE = re.compile(r"^ {0,3}<(pre|script|style|textarea)(?=[\s>]|$)", re.I)
+HTML6_START_RE = re.compile(
+    r"^ {0,3}</?(address|article|aside|base|basefont|blockquote|body|caption|"
+    r"center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|"
+    r"figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|"
+    r"legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|p|"
+    r"param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|"
+    r"track|ul)(?=[\s>]|/>|$)",
+    re.I,
+)
+HTML7_START_RE = re.compile(
+    r"^ {0,3}(?:<[A-Za-z][A-Za-z0-9-]*(?:\s+[A-Za-z_:][\w.:-]*"
+    r"(?:\s*=\s*(?:[^\s\"'=<>`]+|'[^']*'|\"[^\"]*\"))?)*\s*/?>"
+    r"|</[A-Za-z][A-Za-z0-9-]*\s*>)[ \t]*$"
+)
+BLANK_RE = re.compile(r"^[ \t]*$")
 TRACE_TITLE_RE = re.compile(r"agent trace", re.IGNORECASE)
 DECL_RE = re.compile(
     r"^ {0,3}(?:[-*+]\s+)?(?:\*\*)?Card:(?:\*\*)?\s*(.*)$", re.IGNORECASE
@@ -198,7 +218,15 @@ def trace_cards(body: str) -> tuple[list[str], list[dict]]:
     current: list[str] | None = None
     level = 0
     in_comment = False
+    html_end: re.Pattern | None = None  # closing tag regex, or BLANK_RE
     for line in lines:
+        if html_end is not None:
+            if html_end is BLANK_RE:
+                if not line.strip():
+                    html_end = None
+            elif html_end.search(line):
+                html_end = None
+            continue
         if fence is not None:
             # CommonMark: a closer is the same char, at least as long, nothing but
             # trailing whitespace after it (an info string means it is NOT a closer).
@@ -213,10 +241,20 @@ def trace_cards(body: str) -> tuple[list[str], list[dict]]:
         if m and not (m.group(1)[0] == "`" and "`" in m.group(2)):
             fence = m.group(1)
             continue
+        t1 = HTML1_START_RE.match(line)
+        if t1:
+            end = re.compile(rf"</{t1.group(1)}>", re.I)
+            if not end.search(line, t1.end()):
+                html_end = end
+            continue
+        if HTML6_START_RE.match(line) or HTML7_START_RE.match(line):
+            html_end = BLANK_RE
+            continue
         h = HEADING_RE.match(line)
         if h:
             hlevel = len(h.group(1))
-            if TRACE_TITLE_RE.fullmatch(h.group(2)):
+            title = HEADING_CLOSE_RE.sub("", h.group(2) or "")
+            if TRACE_TITLE_RE.fullmatch(title):
                 current, level = [], hlevel
                 sections.append(current)
                 continue
