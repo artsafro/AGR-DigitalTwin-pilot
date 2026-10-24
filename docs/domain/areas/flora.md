@@ -82,6 +82,36 @@ working method from the same grilling, not a fixed rule.
 - **Budget start.** Inside the NPM 180 000 Ground total, the project starts from Flora 70k
   [D097]; this is a planning split, not a regulation limit.
 
+## Geometric sprite coverage [D155]
+
+Project practice, not a regulation threshold. Source: Artem's voice decision recorded
+2026-10-20 in [Kanban #369, comment 1542](../../research/flora-texture-diagnosis.md#geometric-recalibration-d155)
+(coordination rule 48). This **replaces** the earlier proposed 95% pixel-class/opaque-support metric.
+VPM foliage/trunk roles must still match the atlas content; a geometric score alone does not prove that.
+
+- For a VPM sprite, define its region independently as the axis-aligned bbox of opaque
+  pixels (opacity >=128) inside its authored atlas cell. Score =
+  `area(UV island intersect sprite bbox) / area(sprite bbox)`. The target is 0.80–0.95;
+  >0.95 is tolerated only when no neighbouring sprite's opaque pixel is inside the island.
+- Continuous bark/trunk strips are tiling regions, not discrete sprites: require >=95% of
+  the island area to lie on bark pixels; V wrapping/tiling along that strip is allowed.
+  Do not require an individual bark island to cover 80% of the full strip.
+- For an NPM whole-plant star plane, the island covers >=80% of the plant-image region and
+  may extend beyond the plant bbox; require no clipped opaque plant pixels (1 pixel tolerance).
+  Record both bbox/island area ratio and clipping, rather than treating excess transparent
+  plane margin as proof of clipping. The plane should be slightly larger than the plant.
+  This scope follows the orchestrator's 2026-10-20 14:42 clarification on the same card;
+  the original 0.80–0.95 bbox/island target remains reported for comparison.
+- Calibrate on valid original controls (Tilia/Crataegus VPM, Spiraea NPM star) before judging replacements.
+  Artem accepted this scope on 2026-10-20 (Kanban t_49156f66, 20:27): originals failing D155
+  are retained as source defects/limitations, each with a listed, unexecuted repair route.
+  Do not lower the 80% rule, turn these failures into passes, or edit originals in the diagnosis.
+  Do not substitute opaque-pixel density,
+  silently change the denominator, call an unclassified island a pass, or assume a catalogue
+  NPM label proves whole-plant star topology. Report original failures, unknown roles/cells
+  and the score distribution. The diagnostic implementation is not an L2 delivery gate;
+  see the report for measured calibration limitations.
+
 ## Source-image evidence
 
 **17 requirement rows.** All numbers, units and limits from the regulation were visually checked

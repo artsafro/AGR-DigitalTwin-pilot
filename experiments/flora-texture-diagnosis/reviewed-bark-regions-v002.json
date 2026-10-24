@@ -1,0 +1,333 @@
+{
+  "status": "diagnostic annotation, not delivery acceptance",
+  "regions": [
+    {
+      "basename": "T_77_17_0150309_6155_D_7_Ground_Diffuse_1.1030.png",
+      "sha256": "37b47fa16dc0f2a497a88e777c009b8cc3f13747a9e43ebe7fe402d71cf1d2e8",
+      "bboxes": [
+        [
+          2657,
+          0,
+          4096,
+          4096
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-000.png row 0; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_77_07_0004008_95_K_6_Ground_Diffuse_1.1035.png",
+      "sha256": "11b9889bb0e7c7c8e9733052a9662ecd213fa3f3a968a04a2588de1ef6d41fb4",
+      "bboxes": [
+        [
+          3304,
+          0,
+          4096,
+          4096
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-000.png row 1; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "Maps_Bereza_01.png",
+      "sha256": "eff9cbcb8b0ed8df4d41c179a7580edd58300eb6b905fc514ff199b02731400e",
+      "bboxes": [
+        [
+          3080,
+          90,
+          3838,
+          4004
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-000.png row 2; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "Maps_Boyaryshhnyak_01.png",
+      "sha256": "0eca524a1b92898a9cddbe9c547286cdd294e28768c2b1c920c122c7923da855",
+      "bboxes": [
+        [
+          3230,
+          0,
+          3666,
+          4096
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-000.png row 3; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_boyaryshnyck_obyknovennyi_d_1.png",
+      "sha256": "3fca1557dab2ad6b43c321e5bd15306c43ed0ee4fb58ea653259cdf5f9f2c055",
+      "bboxes": [
+        [
+          1355,
+          0,
+          2037,
+          2048
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-000.png row 4; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "Maps_Cheryomukha_Maaka_01.png",
+      "sha256": "7c71ad847154be14d83017dc6bf1007321b478ba1d841d2badf9af397256c0d1",
+      "bboxes": [
+        [
+          2973,
+          969,
+          3551,
+          2905
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-000.png row 5; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_cheryomuha_maakha_d_1.png",
+      "sha256": "a6f0e88db356e3784a2d2f9c86cea00f1c209ba3539610d599efed2867bd51de",
+      "bboxes": [
+        [
+          3266,
+          0,
+          4096,
+          4096
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-000.png row 6; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_Irga_Lamarka_01.png",
+      "sha256": "73d9eedce087612f4ece6a8e6f65ac3e9a8bf1ef58d1a0a18c07cc7d3534b664",
+      "bboxes": [
+        [
+          2732,
+          0,
+          4096,
+          4096
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-000.png row 7; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_77_07_0004008_95_K_6_Ground_Diffuse_1.1036.png",
+      "sha256": "b694dd10756fd864bcdf4a425926d6c2b1fb2bed3fc6d1999d7638b4e0115ce1",
+      "bboxes": [
+        [
+          3180,
+          0,
+          4096,
+          4096
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-001.png row 1; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_77_17_0120114_5803_D_12_Ground_Diffuse_1.1028_v1.png",
+      "sha256": "c87c3e027b19d075d8cef03d996fe18954df0397fd19d04a77ba671275618b84",
+      "bboxes": [
+        [
+          3581,
+          1871,
+          3816,
+          3709
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-001.png row 3; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_77_17_0120114_5803_D_12_Ground_Diffuse_1.1030.png",
+      "sha256": "40ecbb71ac380f751681d80922d7bea1e3a5bd7e66589a58d3a7bd2c994d5eea",
+      "bboxes": [
+        [
+          3230,
+          1151,
+          3666,
+          3302
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-001.png row 4; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_klen_tatarsky_d_1.png",
+      "sha256": "f2dc02e93200bd57db16d16657afe07d5ef67075cae2c8106bdc7a43d4236723",
+      "bboxes": [
+        [
+          1355,
+          0,
+          2037,
+          2048
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-001.png row 5; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_ryabina_dongdong_d_1.png",
+      "sha256": "ea1dea15822e2770cb0be041a74dcf76264fd4a511b6d50923deefc0b7d4648a",
+      "bboxes": [
+        [
+          2959,
+          0,
+          4096,
+          4096
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-001.png row 6; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_siren_krasavica_moskvy_d_1.png",
+      "sha256": "125bc93653a54a8fe6940624b95ec4f960a6b27b703847e237dea4e730c80387",
+      "bboxes": [
+        [
+          1366,
+          0,
+          2048,
+          2048
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-001.png row 7; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_Sosnaya_chornaya_02.png",
+      "sha256": "a63dc658d4fc23521cd93aa03c3e1e90ee81eea5469ea4a4975349ea4390352b",
+      "bboxes": [
+        [
+          3280,
+          0,
+          4096,
+          4096
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-002.png row 1; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_yablonya_hybrid_d_1.png",
+      "sha256": "dfd02c48016a712adcb015c8e3b0e68e8d6ba41e845832a47fe1b6363f28f90a",
+      "bboxes": [
+        [
+          1691,
+          63,
+          1920,
+          1918
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-002.png row 2; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_Syringa_vulgaris_01.png",
+      "sha256": "488af8954af464900b8fc10668da9745d1e7323142adbd754831583fdd3205f0",
+      "bboxes": [
+        [
+          2732,
+          0,
+          4096,
+          4096
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-002.png row 3; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_77_07_0004008_95_K_6_Ground_Diffuse_1.1033.png",
+      "sha256": "d29cfaad8e184eb0599f154d47cbe458b7153130a290987bc21732255d16d7c7",
+      "bboxes": [
+        [
+          3280,
+          0,
+          4096,
+          4096
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-002.png row 5; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_Yablonya_Evereste_01.png",
+      "sha256": "a7495c102c8490072b895685985382dc11d32e279c3e05047e094376162ae790",
+      "bboxes": [
+        [
+          3382,
+          126,
+          3840,
+          3836
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-002.png row 6; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_bresklet_krylaty_d_1.png",
+      "sha256": "2fc371eb0fd8944371f62afa38cf7ff95c484daa943caa3114cc1b5cf0a3bca7",
+      "bboxes": [
+        [
+          1521,
+          0,
+          2048,
+          2048
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-004.png row 5; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "T_kalina_buldenezh_d_1.png",
+      "sha256": "afc96b6038d7995fd9114e6325ce7b71c4e8ee1df8aa7e6317ccdc5081f8f5d7",
+      "bboxes": [
+        [
+          1366,
+          0,
+          2048,
+          2048
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-005.png row 1; continuous bark texture separated from foliage."
+    },
+    {
+      "basename": "_low_atlas_flora_2BT_1_d.png",
+      "sha256": "c0fd3b3b17fd3dde570bd69e45a979401eb30e09c1ea775c0b71414368fd00b7",
+      "bboxes": [
+        [
+          1708,
+          684,
+          2048,
+          1366
+        ],
+        [
+          1366,
+          1366,
+          2048,
+          2048
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-007.png row 0; continuous bark texture, not foliage. FLORIO L shape excludes grass."
+    },
+    {
+      "basename": "cheremuxa_t1_h400.png",
+      "sha256": "a8af03bf819abc3b0117cecf6d34834c5327e5943a23d6889fff4f7b200c3fbb",
+      "bboxes": [
+        [
+          2756,
+          0,
+          4096,
+          4096
+        ]
+      ],
+      "reviewed": true,
+      "note": "Visually inspected atlas-regions-v001/sheet-007.png row 1; continuous bark texture separated from foliage."
+    }
+  ]
+}

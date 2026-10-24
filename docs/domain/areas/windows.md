@@ -41,6 +41,8 @@ to, not decided here.
 | WIN-16 — Interior behind glazing / C23 | reg p.8 §3.12; reg p.29 §3.12 | Simplified interior walls, ceiling and floor only where seen through translucent parts | Interiors replaced by solid walls and slabs; wall thickness >= 10 cm | Sightline inspection through glazing; the shell policy C23 stays with the user | none | [BODY-L](body.md), [C23](../conflicts.md#c-between-local-sources-project-decisionslessons) |
 | WIN-17 — Window types match the design / C25 | reg p.4 §1.3; reg p.24 §1.3 | Window type per opening from the source; one atlas region per type | Same types; `mid` library type with an infill recess behind the frame, C25 open | V015 manual (window types); the type library #4 waits for the user | none | [Window types](../../../library/windows/window_types.json), [C25](../conflicts.md#c-between-local-sources-project-decisionslessons), [V015](../validation.md#implementation-status-inventory-static-audit) |
 
+Glass quad layout [D172]: a flat window with no bend is one quad (4 points); a bend keeps its segments; a 90 deg corner is one element of two quads sharing an edge (6 points). This note is not an extra requirement row. Detail in [geometry](../geometry.md) and [the decision log](../../decisions.md).
+
 ## Image verification and review evidence
 
 The supplied PDF has 56 physical pages. Rendered with PyMuPDF 1.28.2 at scale 1.5 and visually

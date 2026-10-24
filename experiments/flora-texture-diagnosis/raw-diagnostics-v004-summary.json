@@ -1,0 +1,1457 @@
+{
+  "accepted": false,
+  "calibration_gate": "failed",
+  "calibration_gate_reason": "original calibration not clean: Tilia_cordata_NPM island 3",
+  "records": 201,
+  "face_accounting_pass": 201,
+  "route_counts": {
+    "source_validation_required": 91,
+    "keep_or_rebuild_star": 1,
+    "rebind_original_atlas": 7
+  },
+  "definitive_routes": 0,
+  "counts": {
+    "original": {
+      "objects": 68,
+      "islands": 26504,
+      "unknown_roles": 16042
+    },
+    "florio": {
+      "objects": 31,
+      "islands": 1443,
+      "unknown_roles": 281
+    },
+    "ours": {
+      "objects": 99,
+      "islands": 27947,
+      "unknown_roles": 16323
+    },
+    "light": {
+      "objects": 3,
+      "islands": 326,
+      "unknown_roles": 113
+    }
+  },
+  "file_hashes": {
+    "101.png": "d6fea9f933cf4f4c645be9d3cf0322be777bb78bc4e0b09f8c6e6f94b0073bda",
+    "102.png": "0e46fb3f071757f14b9e3333198ea8d464ed1b5e3620b95085e44aa1069c3207",
+    "103.png": "63b3ac36811c67951210b3f9402de2406cdf500804dc900cd0f0c257fca07a33",
+    "105.png": "71873d723ef4d9b8dcb7153f7b06ec6ec35dc785d30cd0c4e9d760f293093507",
+    "204.png": "952848e1fe3941f60474ec7266645a703da7c31e9422b35e84960902e8f66c7c",
+    "225.png": "d6c274da47224c95114c7945fabb88e3866d047ad412ea28a3fbae10bdd1df1c",
+    "checkpoint.json": "894953f64d1f5bca8321abdf592bb9a52b2fa244af422d762adde522573201b1",
+    "distribution.json": "128faa6e98beccb703988ad21cda8eb8ec2d1c89506d55c486d5056cbc7028ae",
+    "index.html": "3a626a687f39c5526eca1e307eb144d6f0436ff4f52420ddc84c72aafff65024",
+    "metrics.json": "8e657a57a87e2f785d8c216753b790e4dc36e5b43797b1ea85e2ef57bd8fec96",
+    "provenance.json": "6d8005d68409f909e8946a77de7beb884553400bb57b94d4957c7ba18add53ac",
+    "routes.json": "0653d3a00f0ebd6f0e8b5f56aa9cea5ca874c4525c93dff600ef8e3c2282af5f"
+  },
+  "per_object_routes": [
+    {
+      "object": "Tilia_cordata_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 200,
+        "vertical_plane_count": 6,
+        "horizontal_normal_count": 6,
+        "uv_extent": [
+          0.9128408432006836,
+          0.9389686584472656
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Tilia_cordata_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Betula_pendula_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 366,
+        "vertical_plane_count": 26,
+        "horizontal_normal_count": 26,
+        "uv_extent": [
+          0.8247361183166504,
+          0.9161732792854309
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Crataegus_mollis_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 371,
+        "vertical_plane_count": 3,
+        "horizontal_normal_count": 3,
+        "uv_extent": [
+          0.6831037253141403,
+          0.643604502081871
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Crataegus_mollis_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Padus_maackii_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 320,
+        "vertical_plane_count": 20,
+        "horizontal_normal_count": 20,
+        "uv_extent": [
+          0.6812340319156647,
+          0.6670588254928589
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Padus_maackii_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Amelanchier_lamarckii_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Acer_tataricum_subsp_ginnala_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 4,
+        "vertical_plane_count": 4,
+        "horizontal_normal_count": 4,
+        "uv_extent": [
+          0.4226524829864502,
+          0.3936821408569813
+        ],
+        "opacity_enabled": true,
+        "is_star": true,
+        "unknowns": []
+      }
+    },
+    {
+      "object": "Acer_tataricum_subsp_ginnala_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Acer_platanoides_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 5,
+        "horizontal_normal_count": 5,
+        "uv_extent": [
+          0.932561706751585,
+          0.9694519639015198
+        ],
+        "opacity_enabled": true,
+        "is_star": true,
+        "unknowns": []
+      }
+    },
+    {
+      "object": "Acer_platanoides_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Sorbus_aucuparia_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Acer_tataricum_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Sorbus_commixta_Dodong_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 191,
+        "vertical_plane_count": 5,
+        "horizontal_normal_count": 5,
+        "uv_extent": [
+          0.9000716879963875,
+          0.9424265790730715
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Syringa_vulgaris_Krasavitsa_Moskvy_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 701,
+        "vertical_plane_count": 32,
+        "horizontal_normal_count": 32,
+        "uv_extent": [
+          0.8840359412133694,
+          0.9134257771074772
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Syringa_vulgaris_Andenken_an_Ludwig_Spath_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 701,
+        "vertical_plane_count": 32,
+        "horizontal_normal_count": 32,
+        "uv_extent": [
+          0.8840359412133694,
+          0.9134257771074772
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Syringa_josikaea_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Pinus_nigra_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 4,
+        "vertical_plane_count": 4,
+        "horizontal_normal_count": 4,
+        "uv_extent": [
+          0.11704324930906296,
+          0.19859512895345688
+        ],
+        "opacity_enabled": true,
+        "is_star": true,
+        "unknowns": []
+      }
+    },
+    {
+      "object": "Pinus_nigra_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Malus_niedzwetzkyana_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Syringa_vulgaris_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Picea_pungens_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 2424,
+        "vertical_plane_count": 57,
+        "horizontal_normal_count": 57,
+        "uv_extent": [
+          0.3898742198944092,
+          0.9249274730682373
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Picea_pungens_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Malus_Evereste_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 339,
+        "vertical_plane_count": 22,
+        "horizontal_normal_count": 22,
+        "uv_extent": [
+          0.8306784629821777,
+          0.8727824687957764
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Thuja_occidentalis_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 4,
+        "vertical_plane_count": 4,
+        "horizontal_normal_count": 4,
+        "uv_extent": [
+          0.450517863035202,
+          0.7644239366054535
+        ],
+        "opacity_enabled": true,
+        "is_star": true,
+        "unknowns": []
+      }
+    },
+    {
+      "object": "Berberis_ottawensis_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 32,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.28174495697021484,
+          0.26253843307495117
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Crataegus_monogyna_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 36,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.48562049865722656,
+          0.3969604969024658
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Cornus_alba_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 32,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.3171182870864868,
+          0.2076871395111084
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Cornus_alba_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Cornus_sericea_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 40,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.4168919622898102,
+          0.37003251910209656
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Physocarpus_opulifolius_Diabolo_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 9,
+        "vertical_plane_count": 9,
+        "horizontal_normal_count": 9,
+        "uv_extent": [
+          0.19932226836681366,
+          0.16293197870254517
+        ],
+        "opacity_enabled": true,
+        "is_star": true,
+        "unknowns": []
+      }
+    },
+    {
+      "object": "Physocarpus_opulifolius_Diabolo_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Hydrangea_paniculata_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 18,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.13453441858291626,
+          0.1564156413078308
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Hydrangea_arborescens_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Salix_purpurea_Mayak_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 36,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.48562049865722656,
+          0.3969604969024658
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Cotoneaster_lucidus_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Juniperus_sabina_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 16,
+        "vertical_plane_count": 16,
+        "horizontal_normal_count": 16,
+        "uv_extent": [
+          0.2414851188659668,
+          0.13107872009277344
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Physocarpus_opulifolius_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 10,
+        "vertical_plane_count": 10,
+        "horizontal_normal_count": 10,
+        "uv_extent": [
+          0.16989082098007202,
+          0.19541484117507935
+        ],
+        "opacity_enabled": true,
+        "is_star": true,
+        "unknowns": []
+      }
+    },
+    {
+      "object": "Physocarpus_opulifolius_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Sorbaria_sorbifolia_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Dasiphora_fruticosa_Goldfinger_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 58,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.4656789302825928,
+          0.4656789302825928
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Euonymus_alatus_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 1000,
+        "vertical_plane_count": 22,
+        "horizontal_normal_count": 22,
+        "uv_extent": [
+          0.8093929700553417,
+          0.9100674837827682
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Philadelphus_coronarius_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 42,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.6202392578125,
+          0.6199951171875
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Hydrangea_arborescens_Bounty_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 54,
+        "vertical_plane_count": 2,
+        "horizontal_normal_count": 2,
+        "uv_extent": [
+          0.6202392578125,
+          0.6199951171875
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Hydrangea_paniculata_Limelight_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 50,
+        "vertical_plane_count": 2,
+        "horizontal_normal_count": 2,
+        "uv_extent": [
+          0.6202392578125,
+          0.6199951171875
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Viburnum_opulus_Roseum_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Sorbaria_sorbifolia_Sem_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 58,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.6201171875,
+          0.6201171875
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Spiraea_betulifolia_Tor_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Spiraea_cinerea_Grefsheim_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Spiraea_japonica_Little_Princess_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 40,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.5340562015771866,
+          0.4759386479854584
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Stephanandra_incisa_Crispa_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Pinus_mugo_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Spiraea_japonica_NPM",
+      "provisional_route": "keep_or_rebuild_star",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 10,
+        "vertical_plane_count": 10,
+        "horizontal_normal_count": 10,
+        "uv_extent": [
+          0.1775982901453972,
+          0.130872905254364
+        ],
+        "opacity_enabled": true,
+        "is_star": true,
+        "unknowns": []
+      }
+    },
+    {
+      "object": "Spiraea_japonica_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Symphyotrichum_novae_angliae_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 18,
+        "vertical_plane_count": 18,
+        "horizontal_normal_count": 18,
+        "uv_extent": [
+          0.18744886852800846,
+          0.14377492666244507
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Symphyotrichum_novae_angliae_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Echinacea_purpurea_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 16,
+        "vertical_plane_count": 16,
+        "horizontal_normal_count": 16,
+        "uv_extent": [
+          0.17876946926116943,
+          0.15503931045532227
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Echinacea_purpurea_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Heuchera_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 40,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.2856760025024414,
+          0.2526392936706543
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Actaea_simplex_Atropurpurea_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 40,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.16347219981253147,
+          0.1880323588848114
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Filipendula_ulmaria_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 32,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.29991817474365234,
+          0.2300398349761963
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Miscanthus_sinensis_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 36,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.2668342590332031,
+          0.4699211120605469
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Eutrochium_maculatum_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 32,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.1799495816230774,
+          0.15606290102005005
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Eutrochium_maculatum_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Calamagrostis_brachytricha_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 20,
+        "vertical_plane_count": 20,
+        "horizontal_normal_count": 20,
+        "uv_extent": [
+          0.16940838098526,
+          0.19486045837402344
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Calamagrostis_brachytricha_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Calamagrostis_acutiflora_Karl_Foerster_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 36,
+        "vertical_plane_count": 0,
+        "horizontal_normal_count": 0,
+        "uv_extent": [
+          0.2668342590332031,
+          0.4699211120605469
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Amelanchier_lamarckii_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 710,
+        "vertical_plane_count": 28,
+        "horizontal_normal_count": 28,
+        "uv_extent": [
+          0.9141324367374182,
+          0.7794922050088644
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Sorbus_aucuparia_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 108,
+        "vertical_plane_count": 23,
+        "horizontal_normal_count": 23,
+        "uv_extent": [
+          0.9205877352505922,
+          0.2820360530167818
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Acer_tataricum_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 108,
+        "vertical_plane_count": 23,
+        "horizontal_normal_count": 23,
+        "uv_extent": [
+          0.9252772051841021,
+          0.28097751922905445
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Syringa_josikaea_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 1,
+        "horizontal_normal_count": 1,
+        "uv_extent": [
+          0.14039355516433716,
+          0.11516314744949341
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Malus_niedzwetzkyana_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 108,
+        "vertical_plane_count": 23,
+        "horizontal_normal_count": 23,
+        "uv_extent": [
+          0.9205877352505922,
+          0.2820360530167818
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Syringa_vulgaris_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 1,
+        "horizontal_normal_count": 1,
+        "uv_extent": [
+          0.14039355516433716,
+          0.11516314744949341
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Prunus_padus_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 155,
+        "vertical_plane_count": 7,
+        "horizontal_normal_count": 7,
+        "uv_extent": [
+          0.7702310997992754,
+          0.9729278488084674
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical",
+          "complex whole-tree mesh is not a star"
+        ]
+      }
+    },
+    {
+      "object": "Prunus_padus_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Hydrangea_arborescens_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 1,
+        "horizontal_normal_count": 1,
+        "uv_extent": [
+          0.11649531126022339,
+          0.11455368995666504
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Cotoneaster_lucidus_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 1,
+        "horizontal_normal_count": 1,
+        "uv_extent": [
+          0.12103980779647827,
+          0.12108445167541504
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Sorbaria_sorbifolia_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 2,
+        "horizontal_normal_count": 2,
+        "uv_extent": [
+          0.12897032499313354,
+          0.07805585861206055
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Viburnum_opulus_Roseum_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 1,
+        "horizontal_normal_count": 1,
+        "uv_extent": [
+          0.13516002893447876,
+          0.0922008752822876
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Spiraea_betulifolia_Tor_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 2,
+        "horizontal_normal_count": 2,
+        "uv_extent": [
+          0.13148227334022522,
+          0.07542040944099426
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Spiraea_cinerea_Grefsheim_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 1,
+        "horizontal_normal_count": 1,
+        "uv_extent": [
+          0.1320059895515442,
+          0.07476651668548584
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Spiraea_japonica_Little_Princess_VPM",
+      "provisional_route": "rebind_original_atlas",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Stephanandra_incisa_Crispa_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 2,
+        "horizontal_normal_count": 2,
+        "uv_extent": [
+          0.26498210802674294,
+          0.058241188526153564
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Pinus_mugo_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 2,
+        "horizontal_normal_count": 2,
+        "uv_extent": [
+          0.12655936926603317,
+          0.09851226210594177
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Berberis_thunbergii_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 1,
+        "horizontal_normal_count": 1,
+        "uv_extent": [
+          0.12103980779647827,
+          0.12108445167541504
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Berberis_thunbergii_VPM",
+      "provisional_route": "rebind_original_atlas",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Cornus_alba_Sibirica_Variegata_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 1,
+        "horizontal_normal_count": 1,
+        "uv_extent": [
+          0.1223154366016388,
+          0.10782051086425781
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Cornus_alba_Sibirica_Variegata_VPM",
+      "provisional_route": "rebind_original_atlas",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Dasiphora_fruticosa_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 2,
+        "horizontal_normal_count": 2,
+        "uv_extent": [
+          0.12611812353134155,
+          0.09485942125320435
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Dasiphora_fruticosa_VPM",
+      "provisional_route": "rebind_original_atlas",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Physocarpus_opulifolius_Luteus_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 1,
+        "horizontal_normal_count": 1,
+        "uv_extent": [
+          0.12351542711257935,
+          0.10067236423492432
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Physocarpus_opulifolius_Luteus_VPM",
+      "provisional_route": "rebind_original_atlas",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Spiraea_japonica_Firelight_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 6,
+        "vertical_plane_count": 4,
+        "horizontal_normal_count": 4,
+        "uv_extent": [
+          0.1257806420326233,
+          0.11751030199229717
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Spiraea_japonica_Firelight_VPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Spiraea_bumalda_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 2,
+        "horizontal_normal_count": 2,
+        "uv_extent": [
+          0.12650436162948608,
+          0.07280376553535461
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Spiraea_bumalda_VPM",
+      "provisional_route": "rebind_original_atlas",
+      "definitive_route": null,
+      "star": null
+    },
+    {
+      "object": "Parthenocissus_quinquefolia_NPM",
+      "provisional_route": "source_validation_required",
+      "definitive_route": null,
+      "star": {
+        "candidate_plane_count": 5,
+        "vertical_plane_count": 2,
+        "horizontal_normal_count": 2,
+        "uv_extent": [
+          0.06279018521308899,
+          0.25375667214393616
+        ],
+        "opacity_enabled": true,
+        "is_star": false,
+        "unknowns": [
+          "plane is not vertical"
+        ]
+      }
+    },
+    {
+      "object": "Parthenocissus_quinquefolia_VPM",
+      "provisional_route": "rebind_original_atlas",
+      "definitive_route": null,
+      "star": null
+    }
+  ]
+}
