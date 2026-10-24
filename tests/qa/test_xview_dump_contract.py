@@ -1139,3 +1139,48 @@ def test_dump_writes_hash_prefixed_checker_type_names():
     text = Path(__file__).resolve().parents[2].joinpath("tools/qa/xview_dump.ms").read_text(encoding="utf-8")
     assert '"#Faces"' in text and '"#Vertices"' in text
     assert "(q rv)" not in text
+
+
+def _publish_success(xp_mod, src, out, temp, nonce="abc12345"):
+    xp_mod.prepare_run([{"label": "a", "path": src, "mode": "plain"}], out, temp)
+    (out / "jobs.txt").write_text(f"#nonce:{nonce}\na|{src}||plain||\n", encoding="utf-8")
+    (out / "a.json").write_text(json.dumps(full_result("a", nonce)), encoding="utf-8")
+    (out / "done.txt").write_text(nonce + "\n", encoding="ascii")
+    assert xp_mod.check_run(out, ["a"])["a"]["nonce"] == nonce
+
+
+@pytest.mark.parametrize("bad", [
+    {"label": "a", "unknown": "bad"},
+    {"label": "a", "mode": "bad"},
+    {"label": "a", "path": "MISSING.max"},
+    {"label": "a", "path": "x.txt"},
+    {"label": "../a"},
+    {"label": ""},
+    "notadict",
+])
+def test_every_rejected_prepare_invalidates_prior_success(tmp_path, bad):
+    """Acceptance row P1-1: success, then a rejected prepare_run of any class -> check_run fails."""
+    src = _job_file(tmp_path, "m.max", b"SCENE")
+    out, temp = tmp_path / "out", tmp_path / "temp"
+    _publish_success(xp, src, out, temp)
+    job = bad
+    if isinstance(bad, dict):
+        job = dict(bad)
+        job["path"] = str(tmp_path / job["path"]) if "path" in job else src
+    with pytest.raises(xp.DumpError):
+        xp.prepare_run([job], out, temp)
+    assert src.read_bytes() == b"SCENE"
+    with pytest.raises(xp.DumpError):
+        xp.check_run(out, ["a"])
+
+
+def test_unknown_key_after_success_keeps_hardlinked_done_input(tmp_path):
+    """Control: done.txt hardlinked to the input -> refuse, input bytes survive, nothing deleted."""
+    src = _job_file(tmp_path, "source.max", b"SCENE")
+    out = tmp_path / "out"
+    out.mkdir()
+    os.link(src, out / "done.txt")
+    with pytest.raises(xp.DumpError, match="alias"):
+        xp.prepare_run([{"label": "a", "path": src, "unknown": "bad"}], out, tmp_path / "temp")
+    assert src.read_bytes() == b"SCENE"
+    assert (out / "done.txt").read_bytes() == b"SCENE"

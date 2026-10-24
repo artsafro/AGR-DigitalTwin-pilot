@@ -1,7 +1,6 @@
 # xView runner acceptance (#528)
 
-Native Max was not started. Rows below are the contract and the Python mirror of the same rules.
-Expected Vyatskaya counts are recorded in `not-measured.json` and were not measured this round.
+Rows 1..N are contract/Python-mirror tests; the NATIVE rows are measured Max 2024 startup runs (see SUMMARY.md). Python-mirror tests do not prove native execution.
 
 | Acceptance point | Concrete input | Expected output | Test |
 | --- | --- | --- | --- |
@@ -28,3 +27,10 @@ Expected Vyatskaya counts are recorded in `not-measured.json` and were not measu
 | Same-file probe | 32 layouts, NTFS file index as the oracle | agree, and preflight creates nothing | `test_probe_preflight_inode_identity` |
 | Schema probe | 48 mutations of a full result | `check_run` matches the independent schema oracle | `test_probe_done_only_on_all_success` |
 | Field probe | 40 labels and node names | control characters and `\|` never produce `jobs.txt` | `test_probe_fields_reject_controls` |
+| Unknown key after success (round-3 P1-1) | valid run + complete result + matching done nonce, then `prepare_run([{label:'a',path:src,unknown:'bad'}])` | DumpError naming `unknown`; `check_run` then fails; source bytes unchanged | `test_every_rejected_prepare_invalidates_prior_success[bad0]` |
+| Mode / missing path / unsupported suffix / bad label / empty label / non-object after success | same setup, one rejected job per class | each raises DumpError; `check_run` fails afterwards | `test_every_rejected_prepare_invalidates_prior_success[bad1..bad6]` |
+| Unknown key with hardlinked done.txt | `out/done.txt` hardlink of `source.max`, job with `unknown` | alias error; source and done bytes unchanged | `test_unknown_key_after_success_keeps_hardlinked_done_input` |
+| NATIVE: TOW02 export-v005 plain (Max 2024 startup, on copy) | `export-v005.fbx` copy under C:/x/xview-528/in | 185 faces / 0 vertices; source SHA-256 before == after | native run, `evidence/xview-528/*.json`, `check_run` exit 0 |
+| NATIVE: 013 plain | `sceene.max` copy, node `SM_Vyatskaya_Vl_47_49_013_Main` | 0 faces / 10 vertices | native run |
+| NATIVE: 013 weld 2 mm | same, mode weld | 0 / 0 | native run |
+| NATIVE: 013 weldpoly | same, mode weldpoly | 0 / 10 | native run |

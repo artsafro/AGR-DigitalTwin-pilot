@@ -415,7 +415,11 @@ def _invalidate(out_dir, labels, inputs) -> None:
     targets = [out_dir / "done.txt", out_dir / "report.jsonl", out_dir / "failed.txt"]
     targets += [out_dir / f"{label}.json" for label in labels]
     live = []
+    seen_targets = set()
     for target in targets:
+        if str(target) in seen_targets:
+            continue
+        seen_targets.add(str(target))
         if not (target.is_symlink() or target.exists()):
             continue
         for src in inputs:
@@ -545,8 +549,18 @@ def prepare_run(jobs, out_dir, temp_dir, scene=None) -> dict:
         else:
             seen[key] = record["label"]
     if errors:
-        if records:
-            _invalidate(out_dir, [record["label"] for record in records], [record["src"] for record in records])
+        # Every rejection path (unknown key, malformed, missing, unsupported) drops the old success.
+        labels = [record["label"] for record in records]
+        inputs = [record["src"] for record in records]
+        for job in jobs:
+            if not isinstance(job, dict):
+                continue
+            raw = job.get("label")
+            if isinstance(raw, str) and raw and raw == Path(raw).name and _ascii_path(Path(raw)):
+                labels.append(raw)
+            if isinstance(job.get("path"), (str, os.PathLike)) and str(job.get("path")):
+                inputs.append(Path(job["path"]))
+        _invalidate(out_dir, labels, inputs)
         raise errors[0]
     before = [(record["src"], sha256_file(record["src"])) for record in records]
     _invalidate(out_dir, [record["label"] for record in records], [record["src"] for record in records])
