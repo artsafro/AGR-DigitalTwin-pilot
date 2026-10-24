@@ -1132,3 +1132,10 @@ def test_probe_slot_binding():
         if got == expect:
             ok += 1
     assert ok == n, f"slot binding: {ok}/{n}"
+
+
+def test_dump_writes_hash_prefixed_checker_type_names():
+    """The native run printed `vertices`; xview_parity.check_run requires `#Vertices` / `#Faces`."""
+    text = Path(__file__).resolve().parents[2].joinpath("tools/qa/xview_dump.ms").read_text(encoding="utf-8")
+    assert '"#Faces"' in text and '"#Vertices"' in text
+    assert "(q rv)" not in text

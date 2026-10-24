@@ -274,7 +274,7 @@
     )
     xViewChecker.on = false
     if k != cnt then throw ("partial " + what + " list")
-    "{\"name\":" + (q (xViewChecker.getCheckerName idx)) + ",\"type\":" + (q rv) + ",\"count\":" + (cnt as string) + \
+    "{\"name\":" + (q (xViewChecker.getCheckerName idx)) + ",\"type\":" + (q (if rv == #Faces then "#Faces" else "#Vertices")) + ",\"count\":" + (cnt as string) + \
       ",\"text\":" + (q (xViewChecker.getCurrentString())) + ",\"seconds\":" + (xv_num ((timeStamp() - t0) / 1000.0)) + \
       ",\"items\":[" + items + "]}"
   )
