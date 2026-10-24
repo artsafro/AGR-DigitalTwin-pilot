@@ -1,0 +1,1191 @@
+{
+  "status": "complete source-only baseline, unreviewed bark candidates, NOT accepted",
+  "counts": {
+    "original": {
+      "objects": 68,
+      "islands": 26504,
+      "scored": 24088,
+      "passing": 2625,
+      "unknown": 2416
+    },
+    "florio": {
+      "objects": 31,
+      "islands": 1443,
+      "scored": 680,
+      "passing": 76,
+      "unknown": 763
+    },
+    "ours": {
+      "objects": 0,
+      "islands": 0,
+      "scored": 0,
+      "passing": 0,
+      "unknown": 0
+    },
+    "light": {
+      "objects": 0,
+      "islands": 0,
+      "scored": 0,
+      "passing": 0,
+      "unknown": 0
+    }
+  },
+  "seconds": 881.4961011999985,
+  "metrics_sha256": "606c2fa104fbb1cbd58c6213f66daca0c04423881b7743b6f902d47b5089d333",
+  "source_islands": 27947,
+  "roles": {
+    "trunk": 2475,
+    "unknown": 16323,
+    "foliage": 9016,
+    "star_plane": 133
+  },
+  "all_islands_pass_objects": [
+    "Spiraea_japonica_NPM",
+    "Spiraea_japonica_Little_Princess_VPM",
+    "Berberis_thunbergii_VPM",
+    "Cornus_alba_Sibirica_Variegata_VPM",
+    "Dasiphora_fruticosa_VPM",
+    "Physocarpus_opulifolius_Luteus_VPM",
+    "Spiraea_bumalda_VPM",
+    "Parthenocissus_quinquefolia_VPM"
+  ],
+  "per_object": [
+    {
+      "object": "Tilia_cordata_NPM",
+      "tag": "original",
+      "islands": 149,
+      "roles": {
+        "trunk": 3,
+        "unknown": 14,
+        "foliage": 132
+      },
+      "scored": 146,
+      "passing": 0,
+      "unscored": 3
+    },
+    {
+      "object": "Tilia_cordata_VPM",
+      "tag": "original",
+      "islands": 664,
+      "roles": {
+        "foliage": 165,
+        "unknown": 419,
+        "trunk": 80
+      },
+      "scored": 584,
+      "passing": 165,
+      "unscored": 80
+    },
+    {
+      "object": "Betula_pendula_NPM",
+      "tag": "original",
+      "islands": 361,
+      "roles": {
+        "unknown": 245,
+        "trunk": 116
+      },
+      "scored": 225,
+      "passing": 0,
+      "unscored": 136
+    },
+    {
+      "object": "Crataegus_mollis_NPM",
+      "tag": "original",
+      "islands": 436,
+      "roles": {
+        "trunk": 198,
+        "unknown": 238
+      },
+      "scored": 238,
+      "passing": 0,
+      "unscored": 198
+    },
+    {
+      "object": "Crataegus_mollis_VPM",
+      "tag": "original",
+      "islands": 264,
+      "roles": {
+        "foliage": 239,
+        "unknown": 25
+      },
+      "scored": 264,
+      "passing": 239,
+      "unscored": 0
+    },
+    {
+      "object": "Padus_maackii_NPM",
+      "tag": "original",
+      "islands": 147,
+      "roles": {
+        "trunk": 47,
+        "unknown": 100
+      },
+      "scored": 100,
+      "passing": 0,
+      "unscored": 47
+    },
+    {
+      "object": "Padus_maackii_VPM",
+      "tag": "original",
+      "islands": 45,
+      "roles": {
+        "trunk": 16,
+        "unknown": 29
+      },
+      "scored": 29,
+      "passing": 0,
+      "unscored": 16
+    },
+    {
+      "object": "Amelanchier_lamarckii_VPM",
+      "tag": "original",
+      "islands": 4672,
+      "roles": {
+        "unknown": 61,
+        "trunk": 89,
+        "foliage": 4522
+      },
+      "scored": 4583,
+      "passing": 0,
+      "unscored": 89
+    },
+    {
+      "object": "Acer_tataricum_subsp_ginnala_NPM",
+      "tag": "original",
+      "islands": 4,
+      "roles": {
+        "star_plane": 4
+      },
+      "scored": 4,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Acer_tataricum_subsp_ginnala_VPM",
+      "tag": "original",
+      "islands": 664,
+      "roles": {
+        "foliage": 165,
+        "unknown": 419,
+        "trunk": 80
+      },
+      "scored": 584,
+      "passing": 165,
+      "unscored": 80
+    },
+    {
+      "object": "Acer_platanoides_NPM",
+      "tag": "original",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Acer_platanoides_VPM",
+      "tag": "original",
+      "islands": 1070,
+      "roles": {
+        "trunk": 222,
+        "unknown": 848
+      },
+      "scored": 810,
+      "passing": 0,
+      "unscored": 260
+    },
+    {
+      "object": "Sorbus_aucuparia_VPM",
+      "tag": "original",
+      "islands": 35,
+      "roles": {
+        "trunk": 12,
+        "unknown": 23
+      },
+      "scored": 23,
+      "passing": 0,
+      "unscored": 12
+    },
+    {
+      "object": "Acer_tataricum_VPM",
+      "tag": "original",
+      "islands": 1702,
+      "roles": {
+        "foliage": 1140,
+        "unknown": 256,
+        "trunk": 306
+      },
+      "scored": 1396,
+      "passing": 1139,
+      "unscored": 306
+    },
+    {
+      "object": "Sorbus_commixta_Dodong_NPM",
+      "tag": "original",
+      "islands": 130,
+      "roles": {
+        "foliage": 123,
+        "trunk": 1,
+        "unknown": 6
+      },
+      "scored": 129,
+      "passing": 0,
+      "unscored": 1
+    },
+    {
+      "object": "Syringa_vulgaris_Krasavitsa_Moskvy_NPM",
+      "tag": "original",
+      "islands": 511,
+      "roles": {
+        "foliage": 507,
+        "trunk": 4
+      },
+      "scored": 507,
+      "passing": 0,
+      "unscored": 4
+    },
+    {
+      "object": "Syringa_vulgaris_Andenken_an_Ludwig_Spath_NPM",
+      "tag": "original",
+      "islands": 511,
+      "roles": {
+        "foliage": 507,
+        "trunk": 4
+      },
+      "scored": 507,
+      "passing": 0,
+      "unscored": 4
+    },
+    {
+      "object": "Syringa_josikaea_VPM",
+      "tag": "original",
+      "islands": 511,
+      "roles": {
+        "foliage": 507,
+        "trunk": 4
+      },
+      "scored": 507,
+      "passing": 302,
+      "unscored": 4
+    },
+    {
+      "object": "Pinus_nigra_NPM",
+      "tag": "original",
+      "islands": 8,
+      "roles": {
+        "star_plane": 8
+      },
+      "scored": 8,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Pinus_nigra_VPM",
+      "tag": "original",
+      "islands": 5996,
+      "roles": {
+        "unknown": 5834,
+        "trunk": 162
+      },
+      "scored": 5368,
+      "passing": 0,
+      "unscored": 628
+    },
+    {
+      "object": "Malus_niedzwetzkyana_VPM",
+      "tag": "original",
+      "islands": 45,
+      "roles": {
+        "trunk": 16,
+        "unknown": 29
+      },
+      "scored": 29,
+      "passing": 0,
+      "unscored": 16
+    },
+    {
+      "object": "Syringa_vulgaris_VPM",
+      "tag": "original",
+      "islands": 363,
+      "roles": {
+        "foliage": 176,
+        "unknown": 85,
+        "trunk": 102
+      },
+      "scored": 261,
+      "passing": 165,
+      "unscored": 102
+    },
+    {
+      "object": "Picea_pungens_NPM",
+      "tag": "original",
+      "islands": 371,
+      "roles": {
+        "unknown": 325,
+        "trunk": 46
+      },
+      "scored": 320,
+      "passing": 0,
+      "unscored": 51
+    },
+    {
+      "object": "Picea_pungens_VPM",
+      "tag": "original",
+      "islands": 5991,
+      "roles": {
+        "unknown": 5834,
+        "trunk": 157
+      },
+      "scored": 5664,
+      "passing": 0,
+      "unscored": 327
+    },
+    {
+      "object": "Malus_Evereste_NPM",
+      "tag": "original",
+      "islands": 224,
+      "roles": {
+        "trunk": 35,
+        "unknown": 189
+      },
+      "scored": 187,
+      "passing": 0,
+      "unscored": 37
+    },
+    {
+      "object": "Thuja_occidentalis_NPM",
+      "tag": "original",
+      "islands": 8,
+      "roles": {
+        "star_plane": 8
+      },
+      "scored": 8,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Berberis_ottawensis_NPM",
+      "tag": "original",
+      "islands": 8,
+      "roles": {
+        "unknown": 8
+      },
+      "scored": 8,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Crataegus_monogyna_NPM",
+      "tag": "original",
+      "islands": 9,
+      "roles": {
+        "unknown": 9
+      },
+      "scored": 9,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Cornus_alba_NPM",
+      "tag": "original",
+      "islands": 8,
+      "roles": {
+        "unknown": 8
+      },
+      "scored": 8,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Cornus_alba_VPM",
+      "tag": "original",
+      "islands": 16,
+      "roles": {
+        "unknown": 16
+      },
+      "scored": 16,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Cornus_sericea_NPM",
+      "tag": "original",
+      "islands": 65,
+      "roles": {
+        "unknown": 65
+      },
+      "scored": 65,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Physocarpus_opulifolius_Diabolo_NPM",
+      "tag": "original",
+      "islands": 9,
+      "roles": {
+        "star_plane": 9
+      },
+      "scored": 9,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Physocarpus_opulifolius_Diabolo_VPM",
+      "tag": "original",
+      "islands": 18,
+      "roles": {
+        "unknown": 18
+      },
+      "scored": 18,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Hydrangea_paniculata_NPM",
+      "tag": "original",
+      "islands": 9,
+      "roles": {
+        "unknown": 9
+      },
+      "scored": 9,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Hydrangea_arborescens_VPM",
+      "tag": "original",
+      "islands": 10,
+      "roles": {
+        "unknown": 10
+      },
+      "scored": 10,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Salix_purpurea_Mayak_NPM",
+      "tag": "original",
+      "islands": 9,
+      "roles": {
+        "unknown": 9
+      },
+      "scored": 9,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Cotoneaster_lucidus_VPM",
+      "tag": "original",
+      "islands": 16,
+      "roles": {
+        "unknown": 16
+      },
+      "scored": 16,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Juniperus_sabina_NPM",
+      "tag": "original",
+      "islands": 8,
+      "roles": {
+        "unknown": 8
+      },
+      "scored": 8,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Physocarpus_opulifolius_NPM",
+      "tag": "original",
+      "islands": 10,
+      "roles": {
+        "star_plane": 10
+      },
+      "scored": 10,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Physocarpus_opulifolius_VPM",
+      "tag": "original",
+      "islands": 20,
+      "roles": {
+        "unknown": 20
+      },
+      "scored": 20,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Sorbaria_sorbifolia_VPM",
+      "tag": "original",
+      "islands": 74,
+      "roles": {
+        "unknown": 74
+      },
+      "scored": 74,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Dasiphora_fruticosa_Goldfinger_NPM",
+      "tag": "original",
+      "islands": 16,
+      "roles": {
+        "unknown": 16
+      },
+      "scored": 16,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Euonymus_alatus_NPM",
+      "tag": "original",
+      "islands": 436,
+      "roles": {
+        "trunk": 6,
+        "unknown": 428,
+        "foliage": 2
+      },
+      "scored": 430,
+      "passing": 0,
+      "unscored": 6
+    },
+    {
+      "object": "Philadelphus_coronarius_NPM",
+      "tag": "original",
+      "islands": 11,
+      "roles": {
+        "unknown": 11
+      },
+      "scored": 11,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Hydrangea_arborescens_Bounty_NPM",
+      "tag": "original",
+      "islands": 15,
+      "roles": {
+        "unknown": 15
+      },
+      "scored": 15,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Hydrangea_paniculata_Limelight_NPM",
+      "tag": "original",
+      "islands": 14,
+      "roles": {
+        "unknown": 14
+      },
+      "scored": 14,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Viburnum_opulus_Roseum_VPM",
+      "tag": "original",
+      "islands": 505,
+      "roles": {
+        "foliage": 501,
+        "trunk": 4
+      },
+      "scored": 501,
+      "passing": 440,
+      "unscored": 4
+    },
+    {
+      "object": "Sorbaria_sorbifolia_Sem_NPM",
+      "tag": "original",
+      "islands": 16,
+      "roles": {
+        "unknown": 16
+      },
+      "scored": 16,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Spiraea_betulifolia_Tor_VPM",
+      "tag": "original",
+      "islands": 15,
+      "roles": {
+        "unknown": 15
+      },
+      "scored": 15,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Spiraea_cinerea_Grefsheim_VPM",
+      "tag": "original",
+      "islands": 11,
+      "roles": {
+        "unknown": 11
+      },
+      "scored": 11,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Spiraea_japonica_Little_Princess_NPM",
+      "tag": "original",
+      "islands": 10,
+      "roles": {
+        "unknown": 10
+      },
+      "scored": 10,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Stephanandra_incisa_Crispa_VPM",
+      "tag": "original",
+      "islands": 90,
+      "roles": {
+        "unknown": 80,
+        "foliage": 10
+      },
+      "scored": 87,
+      "passing": 0,
+      "unscored": 3
+    },
+    {
+      "object": "Pinus_mugo_VPM",
+      "tag": "original",
+      "islands": 8,
+      "roles": {
+        "unknown": 8
+      },
+      "scored": 8,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Spiraea_japonica_NPM",
+      "tag": "original",
+      "islands": 10,
+      "roles": {
+        "star_plane": 10
+      },
+      "scored": 10,
+      "passing": 10,
+      "unscored": 0
+    },
+    {
+      "object": "Spiraea_japonica_VPM",
+      "tag": "original",
+      "islands": 20,
+      "roles": {
+        "unknown": 20
+      },
+      "scored": 20,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Symphyotrichum_novae_angliae_NPM",
+      "tag": "original",
+      "islands": 9,
+      "roles": {
+        "unknown": 9
+      },
+      "scored": 9,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Symphyotrichum_novae_angliae_VPM",
+      "tag": "original",
+      "islands": 18,
+      "roles": {
+        "unknown": 18
+      },
+      "scored": 18,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Echinacea_purpurea_NPM",
+      "tag": "original",
+      "islands": 8,
+      "roles": {
+        "unknown": 8
+      },
+      "scored": 8,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Echinacea_purpurea_VPM",
+      "tag": "original",
+      "islands": 16,
+      "roles": {
+        "unknown": 16
+      },
+      "scored": 16,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Heuchera_NPM",
+      "tag": "original",
+      "islands": 10,
+      "roles": {
+        "unknown": 10
+      },
+      "scored": 10,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Actaea_simplex_Atropurpurea_NPM",
+      "tag": "original",
+      "islands": 10,
+      "roles": {
+        "unknown": 10
+      },
+      "scored": 10,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Filipendula_ulmaria_NPM",
+      "tag": "original",
+      "islands": 8,
+      "roles": {
+        "unknown": 8
+      },
+      "scored": 8,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Miscanthus_sinensis_NPM",
+      "tag": "original",
+      "islands": 9,
+      "roles": {
+        "unknown": 8,
+        "trunk": 1
+      },
+      "scored": 8,
+      "passing": 0,
+      "unscored": 1
+    },
+    {
+      "object": "Eutrochium_maculatum_NPM",
+      "tag": "original",
+      "islands": 8,
+      "roles": {
+        "unknown": 8
+      },
+      "scored": 8,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Eutrochium_maculatum_VPM",
+      "tag": "original",
+      "islands": 16,
+      "roles": {
+        "unknown": 16
+      },
+      "scored": 16,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Calamagrostis_brachytricha_NPM",
+      "tag": "original",
+      "islands": 10,
+      "roles": {
+        "unknown": 10
+      },
+      "scored": 10,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Calamagrostis_brachytricha_VPM",
+      "tag": "original",
+      "islands": 20,
+      "roles": {
+        "unknown": 20
+      },
+      "scored": 20,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Calamagrostis_acutiflora_Karl_Foerster_NPM",
+      "tag": "original",
+      "islands": 9,
+      "roles": {
+        "unknown": 8,
+        "trunk": 1
+      },
+      "scored": 8,
+      "passing": 0,
+      "unscored": 1
+    },
+    {
+      "object": "Amelanchier_lamarckii_NPM",
+      "tag": "florio",
+      "islands": 701,
+      "roles": {
+        "trunk": 290,
+        "unknown": 197,
+        "foliage": 214
+      },
+      "scored": 411,
+      "passing": 0,
+      "unscored": 290
+    },
+    {
+      "object": "Sorbus_aucuparia_NPM",
+      "tag": "florio",
+      "islands": 110,
+      "roles": {
+        "trunk": 95,
+        "foliage": 10,
+        "unknown": 5
+      },
+      "scored": 15,
+      "passing": 0,
+      "unscored": 95
+    },
+    {
+      "object": "Acer_tataricum_NPM",
+      "tag": "florio",
+      "islands": 110,
+      "roles": {
+        "trunk": 95,
+        "foliage": 10,
+        "unknown": 5
+      },
+      "scored": 15,
+      "passing": 0,
+      "unscored": 95
+    },
+    {
+      "object": "Syringa_josikaea_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Malus_niedzwetzkyana_NPM",
+      "tag": "florio",
+      "islands": 110,
+      "roles": {
+        "trunk": 95,
+        "foliage": 10,
+        "unknown": 5
+      },
+      "scored": 15,
+      "passing": 0,
+      "unscored": 95
+    },
+    {
+      "object": "Syringa_vulgaris_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Prunus_padus_NPM",
+      "tag": "florio",
+      "islands": 103,
+      "roles": {
+        "trunk": 94,
+        "unknown": 9
+      },
+      "scored": 9,
+      "passing": 0,
+      "unscored": 94
+    },
+    {
+      "object": "Prunus_padus_VPM",
+      "tag": "florio",
+      "islands": 144,
+      "roles": {
+        "trunk": 94,
+        "unknown": 50
+      },
+      "scored": 50,
+      "passing": 0,
+      "unscored": 94
+    },
+    {
+      "object": "Hydrangea_arborescens_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 1,
+        "unknown": 4
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Cotoneaster_lucidus_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Sorbaria_sorbifolia_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Viburnum_opulus_Roseum_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Spiraea_betulifolia_Tor_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Spiraea_cinerea_Grefsheim_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Spiraea_japonica_Little_Princess_VPM",
+      "tag": "florio",
+      "islands": 10,
+      "roles": {
+        "foliage": 10
+      },
+      "scored": 10,
+      "passing": 10,
+      "unscored": 0
+    },
+    {
+      "object": "Stephanandra_incisa_Crispa_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Pinus_mugo_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Berberis_thunbergii_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Berberis_thunbergii_VPM",
+      "tag": "florio",
+      "islands": 10,
+      "roles": {
+        "foliage": 10
+      },
+      "scored": 10,
+      "passing": 10,
+      "unscored": 0
+    },
+    {
+      "object": "Cornus_alba_Sibirica_Variegata_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Cornus_alba_Sibirica_Variegata_VPM",
+      "tag": "florio",
+      "islands": 10,
+      "roles": {
+        "foliage": 10
+      },
+      "scored": 10,
+      "passing": 10,
+      "unscored": 0
+    },
+    {
+      "object": "Dasiphora_fruticosa_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Dasiphora_fruticosa_VPM",
+      "tag": "florio",
+      "islands": 10,
+      "roles": {
+        "foliage": 10
+      },
+      "scored": 10,
+      "passing": 10,
+      "unscored": 0
+    },
+    {
+      "object": "Physocarpus_opulifolius_Luteus_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Physocarpus_opulifolius_Luteus_VPM",
+      "tag": "florio",
+      "islands": 10,
+      "roles": {
+        "foliage": 10
+      },
+      "scored": 10,
+      "passing": 10,
+      "unscored": 0
+    },
+    {
+      "object": "Spiraea_japonica_Firelight_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "unknown": 2,
+        "star_plane": 3
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Spiraea_japonica_Firelight_VPM",
+      "tag": "florio",
+      "islands": 10,
+      "roles": {
+        "unknown": 4,
+        "foliage": 6
+      },
+      "scored": 10,
+      "passing": 6,
+      "unscored": 0
+    },
+    {
+      "object": "Spiraea_bumalda_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Spiraea_bumalda_VPM",
+      "tag": "florio",
+      "islands": 10,
+      "roles": {
+        "foliage": 10
+      },
+      "scored": 10,
+      "passing": 10,
+      "unscored": 0
+    },
+    {
+      "object": "Parthenocissus_quinquefolia_NPM",
+      "tag": "florio",
+      "islands": 5,
+      "roles": {
+        "star_plane": 5
+      },
+      "scored": 5,
+      "passing": 0,
+      "unscored": 0
+    },
+    {
+      "object": "Parthenocissus_quinquefolia_VPM",
+      "tag": "florio",
+      "islands": 10,
+      "roles": {
+        "foliage": 10
+      },
+      "scored": 10,
+      "passing": 10,
+      "unscored": 0
+    }
+  ]
+}
