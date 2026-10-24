@@ -1,0 +1,292 @@
+{
+  "job": "tec26-oks",
+  "building": "AC08",
+  "building_name": "Контейнер низковольтных комплектных устройств (НКУ)",
+  "base_sha": "442f0b695a91f9abc180783c26978fbe85fefcf9",
+  "gate": {
+    "stage": 1,
+    "status": "awaiting_artem",
+    "approved": false
+  },
+  "production_outputs": [],
+  "drawing": {
+    "copy": "C:/x/tec26-oks/AC08/sources-v001/AC08.dwg",
+    "source_filename": "22Е56-АР2-1002-АС.08.dwg",
+    "sha256": "cb90ed375df4fd708b7a69c6d018600347953245f0f6bde396f394bee3e1fa52",
+    "r1_available": false,
+    "pdf_available": false,
+    "application": "AutoCAD core console 2025",
+    "native_plot_verified": false,
+    "recovery_errors": 0,
+    "recovery_fixes": 2,
+    "facade_sheet": "1; title proxy 514, duplicate title proxy 2120 also says sheet 1",
+    "construction_views": "Unissued model-space plan/roof/section views; not represented as an additional numbered sheet."
+  },
+  "scene": {
+    "source_census": "C:/x/tec26-oks/census/oks.json",
+    "census_sha256": "a99de19f1d30633eaab9c52ac44f253ed6ea97e03358755ff2a77458f0f54f2f",
+    "mesh_handle": 172,
+    "collision_handle": 343,
+    "layer": "008",
+    "material_name": "Material #3",
+    "material_handle": 4155,
+    "system_units": "meters",
+    "unit_scale": 1.0,
+    "unused_populated_ids": [
+      4,
+      5
+    ],
+    "empty_ids": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "collision_triangles": 12,
+    "collision_material": null
+  },
+  "evidence": {
+    "D5015": "DWG model-space MTEXT 1395, XY (61753.624964,-10160.289410): sandwich panel RAL 5015; issued facade sheet 1, proxy 514.",
+    "D7004": "DWG model-space MTEXT 1397, XY (61753.624964,-11863.718713): porches, doors RAL 7004; issued facade sheet 1.",
+    "D100": "Model-space 1399 XY (21258.467,-6840.458), 2AF2 XY (32226.993,-6840.458), proxy 25D4 XY (16646.579,11183.681): 100 mm mineral-wool sandwich panels.",
+    "DSTRUCT": "Proxy 3DE6 XY (19782.601,4826.825): reinforced-concrete slab. Proxy 26FC XY (-44377.189,3847.916): profiled galvanized polymer-coated sheet / mineral wool 100 mm; crossed-out model-space region, non-governing.",
+    "GEOM": "Census geometry-172.json: zero-based vertex indices, 348 triangles, 193 vertices; ID renders + ID1-isolated from this actual mesh, not synthetic geometry.",
+    "KPP5015": "KPP1 Metal_RAL5015 tile 1013: every one of 65536 pixels is RGB (34,113,179).",
+    "KPP7004": "KPP1 Door_RAL7004 tile 1010: every one of 65536 pixels is RGB (150,153,146)."
+  },
+  "materials": [
+    {
+      "id": 1,
+      "poly_faces": 127,
+      "triangles": 254,
+      "area_m2": 60.50952526944401,
+      "geometry_role": "roof, perimeter frame, base/foundation skirt below ground",
+      "finish": "?",
+      "ral": null,
+      "rgb_srgb": null,
+      "map_type": null,
+      "status": "unresolved_mixed_id",
+      "question": "ID 1 combines roof, perimeter frame and a skirt/foundation down to Z=-2.047 m. May these surfaces be separated by finish later; which roof/frame finish and exposed foundation finish are required? Proposed visible blue frame: RAL 5015; roof/foundation remain ?.",
+      "evidence": [
+        "GEOM",
+        "D5015",
+        "DSTRUCT"
+      ]
+    },
+    {
+      "id": 2,
+      "poly_faces": 15,
+      "triangles": 30,
+      "area_m2": 35.3280560120449,
+      "geometry_role": "wall infill / sandwich panels",
+      "finish": "mineral-wool sandwich panel, polymer-coated metal, RAL 5015",
+      "ral": "5015",
+      "rgb_srgb": [
+        34,
+        113,
+        179
+      ],
+      "map_type": "solid",
+      "status": "proposed",
+      "evidence": [
+        "GEOM",
+        "D5015",
+        "D100",
+        "KPP5015"
+      ],
+      "kpp_tile": 1013,
+      "kpp_sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2"
+    },
+    {
+      "id": 3,
+      "poly_faces": 38,
+      "triangles": 64,
+      "area_m2": 1.6974531660811787,
+      "geometry_role": "door leaf/frame/handle assembly",
+      "finish": "door RAL 7004",
+      "ral": "7004",
+      "rgb_srgb": [
+        150,
+        153,
+        146
+      ],
+      "map_type": "solid",
+      "status": "proposed",
+      "evidence": [
+        "GEOM",
+        "D7004",
+        "KPP7004"
+      ],
+      "kpp_tile": 1010,
+      "kpp_sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969"
+    }
+  ],
+  "questions": [
+    "ID 1 combines roof, perimeter frame and a skirt/foundation down to Z=-2.047 m. May these surfaces be separated by finish later; which roof/frame finish and exposed foundation finish are required? Proposed visible blue frame: RAL 5015; roof/foundation remain ?.",
+    "Approve ID 2 = blue sandwich panels RAL 5015 and ID 3 = door RAL 7004 as shown on the contact sheet?",
+    "No panel-joint/profile pitch was found as a dimension in the facade legend. Keep solid KPP colours without invented joints, or provide the manufacturer module/profile pitch?"
+  ],
+  "contact_sheet": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/contact-sheet.png",
+  "evidence_files": [
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/ac08.dxf",
+      "sha256": "964f038e59195ebd5f28b66f981dc96ee652437b7aaae8dcbdfc76255eb71a72",
+      "bytes": 2690929
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/ac08_contact.py",
+      "sha256": "e660fbc4ad3de5c4c33934ef2ffc364194b7c047554d95d603df86db51563407",
+      "bytes": 2544
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/ac08_details.py",
+      "sha256": "a2b795aee420ccdf232e7045fb1d11902905aaebf21839680aaae1febcef3b81",
+      "bytes": 1570
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/ac08_final_dwg.py",
+      "sha256": "b88e331edffb2b8ac4520b7857262dfd5da9808342fcbc32af206755e08e9017",
+      "bytes": 847
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/ac08_package.py",
+      "sha256": "c67cca2f2ed221cee4bb48a96f3559eaea8c7ac6cee3f7fdbaa45e0892030426",
+      "bytes": 6697
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/ac08_preview.py",
+      "sha256": "05551ff161e40158405b78594120cc53d334fa22944dbcf3a9c6afddfb236574",
+      "bytes": 2035
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/ac08_proxy_text.json",
+      "sha256": "afca0fa556808e1ecac85ed1a9139d0dd990ff06eb5801e8cbf3f04b42a3d84d",
+      "bytes": 34461
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/ac08_text.json",
+      "sha256": "0fc061fd2c1a89eab9f53b051009afb8efa41c45639ef822459ceab4c9eede94",
+      "bytes": 16679
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/acad-run.json",
+      "sha256": "1a54cd2f0a97d834815b68f00362fda48f63f472c1539c27bcc07f38d18205bb",
+      "bytes": 2073
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/acad-text-run.json",
+      "sha256": "d7293762a9975fee0dbeb6e7f1204ea8ec9998d68d575a1138b88d780c7f73d7",
+      "bytes": 2273
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/contact-sheet.png",
+      "sha256": "9e824d666c031e6b55d4849728160dff82367e695e5ecb147ad47759cf077c7d",
+      "bytes": 337610
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/drawing-layout-1.png",
+      "sha256": "df08ff381285397a67fe039a701bb859d9c22de848cce29f09a9fcb74ee2d2cc",
+      "bytes": 92935
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/drawing-model.png",
+      "sha256": "293483b0e148c9cf41e6cc7daccdec527fc7ce0f5072ad95411f088ff6a94b23",
+      "bytes": 93342
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/dwg-facades-complete.png",
+      "sha256": "549a3d653711b837615cd9d565c90e2aa6296810fdad62c86473cf77a7be5a42",
+      "bytes": 89270
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/dwg-facades.png",
+      "sha256": "f745f0e10bd83f83c017eb10324b719b57dddcd8c0e953c761bf42fcc9caa744",
+      "bytes": 43448
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/dwg-issued-sheet1.png",
+      "sha256": "cc403f92fec34b6fff0193c8814c5d70ef11773fd4fb1d2f05cfca8d10a260f0",
+      "bytes": 254290
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/dwg-plans-sections.png",
+      "sha256": "34445e529965f44f63607d61377210e8e4bb8052bdce9b697db1c22cf4ef35c4",
+      "bytes": 88300
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/dwg-roof-notes.png",
+      "sha256": "bc6cb5e8703c48d940e48689e0f8419774b1ea8d641ad4c3b500227f024a8e82",
+      "bytes": 90544
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/geometry-172.json",
+      "sha256": "1d9a2bd5dfd5890da5187d41a0bd76eda6c3c2b765dba68bd4fafa75d8a50ede",
+      "bytes": 18256
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/geometry-343.json",
+      "sha256": "cf9ddfddea8ba1299ee413d08417486a649e21c3c11c2bc56af4683359961543",
+      "bytes": 710
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/id1-isolated.png",
+      "sha256": "58f0332284775a6cbb501c5e7d2eecd3a4f3054d2ed38092d7152043781e7994",
+      "bytes": 157573
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/ids-front.png",
+      "sha256": "836fedaa607e63dbeb052215152d2693b515001667cc783a4e62a03f2aaef811",
+      "bytes": 152185
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/ids-reverse.png",
+      "sha256": "1e61e1c0f73bd41e6b51f0cf54744e1b00206f0d50a48be8f278b54464a6fd6d",
+      "bytes": 151812
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/ids-side.png",
+      "sha256": "27565683022dae0c5f3d795fd94594706a715d243f106bea4c767b319f1615a4",
+      "bytes": 58706
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/ids-top.png",
+      "sha256": "57561e9658827776ed6b407f4e88306d43656bf4390dad60fe9bd42c677201cc",
+      "bytes": 45399
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/proposal.png",
+      "sha256": "baaa6a602b06aea53f0f3ec1b9b31395d54d10fe4a42a7e7e85dc6fcb05020a3",
+      "bytes": 151847
+    },
+    {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/text-entities.lisp",
+      "sha256": "3a7be01bcf7907e16fbb11693484af4c742726c59be9300684d360c99976f2e8",
+      "bytes": 62805
+    }
+  ],
+  "ignored_template_notes": [
+    {
+      "handle": "1D3D",
+      "reason": "Different objects: guard posts 1-4 and different elevations."
+    },
+    {
+      "handle": "2123",
+      "reason": "Elevation 320.35 conflicts with NKU-specific 1ADF 170.50; ignored per orchestrator same-DWG rule."
+    }
+  ],
+  "glass": {
+    "observed": false,
+    "note": "No separate glazing evidenced by the three used IDs; do not invent a glass finish."
+  },
+  "panel_joints": {
+    "module_mm": null,
+    "proposal": "solid pending answer"
+  },
+  "limitations": [
+    "DXFOUT lacked final ENDSEC/EOF. Recover repaired two orphan layout records; diagnostic drawings are recovered views, not certified native plots.",
+    "Scene finish assignments are proposals; no source material was changed.",
+    "Native scene colours are diagnostic, not RAL evidence.",
+    "Roof/foundation have no independent verified RAL in the active legend."
+  ]
+}

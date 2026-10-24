@@ -49,7 +49,7 @@ gets a line in `docs/decisions.md` and its `[D<n>]` where it applies.
 
 - A new task from Artem: task intake BEFORE code, issues or cards (sources first, one batch of <= 5 questions
   with recommendations, «Не трогать» + numbers, first piece accepted, then the rest). A card worker runs the
-  preflight and asks all open questions once at the start: `docs/agents/task-intake.md` [D169].
+  preflight and asks all open questions once at the start: `docs/agents/task-intake.md` [D186].
 - One task = one branch = one worktree = one writing agent. Branch names, prefixes and tags:
   `docs/agents/NAMING.md`. `main` stays clean; work reaches it by reviewed merge.
   A second agent in someone else's worktree only reads, researches or reviews.

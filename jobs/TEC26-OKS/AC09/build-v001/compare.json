@@ -1,0 +1,550 @@
+{
+ "px_per_m": 200.0,
+ "slide": "C:/x/tec26-oks/pptx/facades/slide53.png",
+ "slide_sha256": "718b225fb167a2f580972de5bd5ba8b939a6a4d768a7fe9e836ea00996e773da",
+ "slide_no": 53,
+ "facades": {
+  "А-Б": {
+   "panels": [
+    "slide",
+    "vpm",
+    "npm"
+   ],
+   "slide_joints": 11,
+   "slide_step_mm": 188.74782986111111,
+   "slide_field_mm": 2264.9739583333335,
+   "slide_height_scale_ratio": 1.0,
+   "slide_box_px": [
+    104,
+    85,
+    296,
+    277
+   ],
+   "contract_ribs": 12,
+   "sheet_dwg_joints": 11,
+   "ground_m": -0.15,
+   "vpm_render_joints": 11,
+   "vpm_render_rows": {
+    "z=0.679": {
+     "ok": true,
+     "joints_found": 7,
+     "joints_expected": 11,
+     "ribs_expected": 12,
+     "hidden_by_other_finish": [
+      0.375,
+      0.5624,
+      0.7498,
+      0.9372
+     ],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.187401,
+     "max_position_error_m": 0.00144,
+     "first_joint_from_field_m": 0.188,
+     "last_joint_to_field_m": 0.9371,
+     "found_m": [
+      -0.9363,
+      -0.75,
+      -0.5625,
+      -0.375,
+      -0.1875,
+      -0.0013,
+      0.1875
+     ]
+    },
+    "z=2.426": {
+     "ok": true,
+     "joints_found": 11,
+     "joints_expected": 11,
+     "ribs_expected": 12,
+     "hidden_by_other_finish": [],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.187401,
+     "max_position_error_m": 0.00144,
+     "first_joint_from_field_m": 0.1867,
+     "last_joint_to_field_m": 0.1871,
+     "found_m": [
+      -0.9375,
+      -0.75,
+      -0.5625,
+      -0.375,
+      -0.1875,
+      -0.0013,
+      0.1875,
+      0.3737,
+      0.5625,
+      0.7487,
+      0.9375
+     ]
+    }
+   },
+   "npm_render_joints": 11,
+   "npm_render_rows": {
+    "z=0.679": {
+     "ok": true,
+     "joints_found": 7,
+     "joints_expected": 11,
+     "ribs_expected": 12,
+     "hidden_by_other_finish": [
+      0.375,
+      0.5624,
+      0.7498,
+      0.9372
+     ],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.187401,
+     "max_position_error_m": 0.00144,
+     "first_joint_from_field_m": 0.1867,
+     "last_joint_to_field_m": 0.9383,
+     "found_m": [
+      -0.9375,
+      -0.75,
+      -0.5625,
+      -0.375,
+      -0.1863,
+      -0.0013,
+      0.1862
+     ]
+    },
+    "z=2.426": {
+     "ok": true,
+     "joints_found": 11,
+     "joints_expected": 11,
+     "ribs_expected": 12,
+     "hidden_by_other_finish": [],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.187401,
+     "max_position_error_m": 0.00221,
+     "first_joint_from_field_m": 0.1867,
+     "last_joint_to_field_m": 0.1858,
+     "found_m": [
+      -0.9375,
+      -0.75,
+      -0.5625,
+      -0.375,
+      -0.185,
+      -0.0013,
+      0.1862,
+      0.3737,
+      0.5625,
+      0.75,
+      0.9387
+     ]
+    }
+   },
+   "match": true,
+   "png": "compare_south_А-Б.png"
+  },
+  "Б-А": {
+   "panels": [
+    "slide",
+    "vpm",
+    "npm"
+   ],
+   "slide_joints": 10,
+   "slide_step_mm": 205.9067234848485,
+   "slide_field_mm": 2264.9739583333335,
+   "slide_height_scale_ratio": 1.0,
+   "slide_box_px": [
+    104,
+    496,
+    296,
+    688
+   ],
+   "contract_ribs": 11,
+   "sheet_dwg_joints": 10,
+   "ground_m": -0.15,
+   "vpm_render_joints": 10,
+   "vpm_render_rows": {
+    "z=0.679": {
+     "ok": true,
+     "joints_found": 10,
+     "joints_expected": 10,
+     "ribs_expected": 11,
+     "hidden_by_other_finish": [],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.204438,
+     "max_position_error_m": 0.00134,
+     "first_joint_from_field_m": 0.2055,
+     "last_joint_to_field_m": 0.2046,
+     "found_m": [
+      -0.9188,
+      -0.715,
+      -0.51,
+      -0.3063,
+      -0.1013,
+      0.1037,
+      0.3075,
+      0.5112,
+      0.7162,
+      0.92
+     ]
+    },
+    "z=2.426": {
+     "ok": true,
+     "joints_found": 10,
+     "joints_expected": 10,
+     "ribs_expected": 11,
+     "hidden_by_other_finish": [],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.204438,
+     "max_position_error_m": 0.00134,
+     "first_joint_from_field_m": 0.2055,
+     "last_joint_to_field_m": 0.2046,
+     "found_m": [
+      -0.9188,
+      -0.715,
+      -0.51,
+      -0.3063,
+      -0.1013,
+      0.1037,
+      0.3075,
+      0.5112,
+      0.7162,
+      0.92
+     ]
+    }
+   },
+   "npm_render_joints": 10,
+   "npm_render_rows": {
+    "z=0.679": {
+     "ok": true,
+     "joints_found": 10,
+     "joints_expected": 10,
+     "ribs_expected": 11,
+     "hidden_by_other_finish": [],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.204438,
+     "max_position_error_m": 0.00178,
+     "first_joint_from_field_m": 0.2042,
+     "last_joint_to_field_m": 0.2046,
+     "found_m": [
+      -0.92,
+      -0.715,
+      -0.51,
+      -0.3075,
+      -0.1025,
+      0.1025,
+      0.3075,
+      0.5125,
+      0.7175,
+      0.92
+     ]
+    },
+    "z=2.426": {
+     "ok": true,
+     "joints_found": 10,
+     "joints_expected": 10,
+     "ribs_expected": 11,
+     "hidden_by_other_finish": [],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.204438,
+     "max_position_error_m": 0.00178,
+     "first_joint_from_field_m": 0.2042,
+     "last_joint_to_field_m": 0.2046,
+     "found_m": [
+      -0.92,
+      -0.715,
+      -0.51,
+      -0.3075,
+      -0.1025,
+      0.1025,
+      0.3075,
+      0.5125,
+      0.7175,
+      0.92
+     ]
+    }
+   },
+   "match": true,
+   "png": "compare_north_Б-А.png"
+  },
+  "1-2": {
+   "panels": [
+    "slide",
+    "vpm",
+    "npm"
+   ],
+   "slide_joints": 13,
+   "slide_step_mm": 201.06382978723403,
+   "slide_field_mm": 2814.8936170212764,
+   "slide_height_scale_ratio": 1.0004342162396873,
+   "slide_box_px": [
+    544,
+    85,
+    779,
+    277
+   ],
+   "contract_ribs": 14,
+   "sheet_dwg_joints": 13,
+   "ground_m": -0.15,
+   "vpm_render_joints": 13,
+   "vpm_render_rows": {
+    "z=0.679": {
+     "ok": true,
+     "joints_found": 13,
+     "joints_expected": 13,
+     "ribs_expected": 14,
+     "hidden_by_other_finish": [],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.199867,
+     "max_position_error_m": 0.00142,
+     "first_joint_from_field_m": 0.2012,
+     "last_joint_to_field_m": 0.1995,
+     "found_m": [
+      -1.2038,
+      -1.0038,
+      -0.805,
+      -0.605,
+      -0.405,
+      -0.205,
+      -0.0063,
+      0.1938,
+      0.3938,
+      0.5938,
+      0.7938,
+      0.9938,
+      1.1938
+     ]
+    },
+    "z=2.426": {
+     "ok": true,
+     "joints_found": 13,
+     "joints_expected": 13,
+     "ribs_expected": 14,
+     "hidden_by_other_finish": [],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.199867,
+     "max_position_error_m": 0.00142,
+     "first_joint_from_field_m": 0.2012,
+     "last_joint_to_field_m": 0.1995,
+     "found_m": [
+      -1.2038,
+      -1.0038,
+      -0.805,
+      -0.605,
+      -0.405,
+      -0.205,
+      -0.0063,
+      0.1938,
+      0.3938,
+      0.5938,
+      0.7938,
+      0.9938,
+      1.1938
+     ]
+    }
+   },
+   "npm_render_joints": 13,
+   "npm_render_rows": {
+    "z=0.679": {
+     "ok": true,
+     "joints_found": 13,
+     "joints_expected": 13,
+     "ribs_expected": 14,
+     "hidden_by_other_finish": [],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.199867,
+     "max_position_error_m": 0.00153,
+     "first_joint_from_field_m": 0.1999,
+     "last_joint_to_field_m": 0.2007,
+     "found_m": [
+      -1.205,
+      -1.0038,
+      -0.805,
+      -0.6063,
+      -0.405,
+      -0.205,
+      -0.005,
+      0.1925,
+      0.395,
+      0.5938,
+      0.795,
+      0.9938,
+      1.1925
+     ]
+    },
+    "z=2.426": {
+     "ok": true,
+     "joints_found": 13,
+     "joints_expected": 13,
+     "ribs_expected": 14,
+     "hidden_by_other_finish": [],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.199867,
+     "max_position_error_m": 0.00153,
+     "first_joint_from_field_m": 0.1999,
+     "last_joint_to_field_m": 0.2007,
+     "found_m": [
+      -1.205,
+      -1.0038,
+      -0.805,
+      -0.6063,
+      -0.405,
+      -0.205,
+      -0.005,
+      0.1925,
+      0.395,
+      0.5925,
+      0.795,
+      0.9938,
+      1.1925
+     ]
+    }
+   },
+   "match": true,
+   "png": "compare_west_1-2.png"
+  },
+  "2-1": {
+   "panels": [
+    "slide",
+    "vpm",
+    "npm"
+   ],
+   "slide_joints": 13,
+   "slide_step_mm": 201.06382978723403,
+   "slide_field_mm": 2814.8936170212764,
+   "slide_height_scale_ratio": 1.0004342162396873,
+   "slide_box_px": [
+    544,
+    496,
+    779,
+    688
+   ],
+   "contract_ribs": 14,
+   "sheet_dwg_joints": 13,
+   "ground_m": -0.15,
+   "vpm_render_joints": 13,
+   "vpm_render_rows": {
+    "z=0.679": {
+     "ok": true,
+     "joints_found": 13,
+     "joints_expected": 13,
+     "ribs_expected": 14,
+     "hidden_by_other_finish": [],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.199867,
+     "max_position_error_m": 0.001,
+     "first_joint_from_field_m": 0.1999,
+     "last_joint_to_field_m": 0.2007,
+     "found_m": [
+      -1.205,
+      -1.005,
+      -0.8063,
+      -0.6063,
+      -0.4063,
+      -0.2063,
+      -0.0063,
+      0.1938,
+      0.3938,
+      0.5938,
+      0.7938,
+      0.9925,
+      1.1925
+     ]
+    },
+    "z=2.426": {
+     "ok": true,
+     "joints_found": 13,
+     "joints_expected": 13,
+     "ribs_expected": 14,
+     "hidden_by_other_finish": [],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.199867,
+     "max_position_error_m": 0.001,
+     "first_joint_from_field_m": 0.1999,
+     "last_joint_to_field_m": 0.2007,
+     "found_m": [
+      -1.205,
+      -1.005,
+      -0.8063,
+      -0.6063,
+      -0.4063,
+      -0.2063,
+      -0.0063,
+      0.1938,
+      0.3938,
+      0.5938,
+      0.7938,
+      0.9925,
+      1.1925
+     ]
+    }
+   },
+   "npm_render_joints": 13,
+   "npm_render_rows": {
+    "z=0.679": {
+     "ok": true,
+     "joints_found": 13,
+     "joints_expected": 13,
+     "ribs_expected": 14,
+     "hidden_by_other_finish": [],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.199867,
+     "max_position_error_m": 0.0022,
+     "first_joint_from_field_m": 0.2012,
+     "last_joint_to_field_m": 0.1995,
+     "found_m": [
+      -1.2038,
+      -1.005,
+      -0.8075,
+      -0.605,
+      -0.4075,
+      -0.205,
+      -0.0063,
+      0.1925,
+      0.3925,
+      0.595,
+      0.7925,
+      0.9925,
+      1.1938
+     ]
+    },
+    "z=2.426": {
+     "ok": true,
+     "joints_found": 13,
+     "joints_expected": 13,
+     "ribs_expected": 14,
+     "hidden_by_other_finish": [],
+     "missing": [],
+     "extra": [],
+     "pitch_m": 0.199867,
+     "max_position_error_m": 0.00193,
+     "first_joint_from_field_m": 0.2012,
+     "last_joint_to_field_m": 0.1995,
+     "found_m": [
+      -1.2038,
+      -1.005,
+      -0.8063,
+      -0.605,
+      -0.4075,
+      -0.205,
+      -0.0063,
+      0.1925,
+      0.3925,
+      0.595,
+      0.7925,
+      0.9925,
+      1.1938
+     ]
+    }
+   },
+   "match": true,
+   "png": "compare_east_2-1.png"
+  }
+ }
+}

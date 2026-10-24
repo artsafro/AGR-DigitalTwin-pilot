@@ -16,7 +16,7 @@ import yaml
 import check_geometry
 from dt_ai.spec.model import Spec
 from twinqa.geometry import checks
-from twinqa.geometry.mesh import from_dump
+from twinqa.geometry.mesh import Soup, from_dump
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = Spec.model_validate(json.loads((ROOT / "tests/fixtures/spec-b01-v0.3.json").read_text(encoding="utf-8")))
@@ -191,6 +191,138 @@ def test_material_id_out_of_range_and_unassigned_fail():
     dump["meshes"][0]["material_ids"][1] = 0
     ids = by_id(run(dump))["material_ids"]
     assert ids["status"] == "fail" and ids["value"] == {"out_of_range": [99], "unassigned_triangles": 1}
+
+
+def _id_soup(material_ids, triangles=None):
+    """Synthetic one-or-more triangles. Not a real building."""
+    ids = np.asarray(material_ids)
+    n = int(ids.shape[0]) if ids.ndim == 1 else 0
+    if triangles is None:
+        triangles = np.array([[0, 1, 2]] * max(n, 1), dtype=int) if n else np.zeros((0, 3), dtype=int)
+        if n == 0:
+            triangles = np.zeros((0, 3), dtype=int)
+    return Soup(np.zeros((4, 3), dtype=float), np.asarray(triangles), ids, None, {})
+
+
+def _id_check(material_ids, triangles=None):
+    return checks.check_material_ids(_id_soup(material_ids, triangles), {"unassigned_ids_max": 0}, checks.load_ranges())
+
+
+def test_working_mesh_id_5_passes_and_id_1012_fails():
+    """Reading-scheme ID 5 passes. 1012 is the team script's UDIM number and fails."""
+    good = _id_check([5])
+    bad = _id_check([1012])
+    assert good["status"] == "pass" and good["details"]["udim_as_material_id"] == []
+    assert bad["status"] == "fail" and bad["details"]["udim_as_material_id"] == [1012]
+    assert bad["value"]["out_of_range"] == [1012]
+
+
+def test_probe_ids_at_or_above_1001_fail():
+    """Synthetic. Invariant: every working-mesh material ID >= 1001 fails."""
+    ids = list(range(1001, 1101)) + [1101, 2000, 10_001]
+    seen = 0
+    for mid in ids:
+        report = _id_check([mid])
+        assert report["status"] == "fail", mid
+        assert report["details"]["udim_as_material_id"] == [mid], mid
+        assert mid in report["value"]["out_of_range"], mid
+        seen += 1
+    assert seen == len(ids) == 103
+
+
+def test_probe_exactly_1001_fails():
+    """Synthetic. Invariant: material ID exactly 1001 fails; 1000 is not a UDIM id."""
+    tiles = [1001 + u + 10 * v for u in range(10) for v in range(10)]
+    assert tiles[0] == 1001 and 1001 in tiles
+    seen = 0
+    for mid in tiles:
+        report = _id_check([mid])
+        assert report["status"] == "fail" and report["details"]["udim_as_material_id"] == [mid]
+        seen += 1
+    alone = _id_check([1001])
+    assert alone["status"] == "fail" and alone["details"]["udim_as_material_id"] == [1001]
+    below = _id_check([1000])
+    assert below["status"] == "fail" and below["details"]["udim_as_material_id"] == []
+    assert below["value"]["out_of_range"] == [1000]
+    assert seen == 100
+
+
+def test_probe_id_1000_follows_the_reading_scheme():
+    """Synthetic. Invariant: 1000 matches every other id outside 0..35 and below 1001."""
+    outside = sorted(set(list(range(36, 1001)) + [1000]))
+    legal = list(range(1, 36))
+    seen = 0
+    for mid in legal:
+        report = _id_check([mid])
+        assert report["status"] == "pass" and report["details"]["udim_as_material_id"] == [], mid
+        seen += 1
+    for mid in outside:
+        report = _id_check([mid])
+        assert report["status"] == "fail", mid
+        assert report["value"]["out_of_range"] == [mid], mid
+        assert report["details"]["udim_as_material_id"] == [], mid
+        seen += 1
+    ref = _id_check([99])
+    got = _id_check([1000])
+    assert got["status"] == ref["status"] == "fail"
+    assert got["value"]["out_of_range"] == [1000] and ref["value"]["out_of_range"] == [99]
+    assert got["details"]["udim_as_material_id"] == ref["details"]["udim_as_material_id"] == []
+    assert got["value"]["unassigned_triangles"] == ref["value"]["unassigned_triangles"] == 0
+    assert seen == len(legal) + len(outside) == 35 + 965
+
+
+def test_probe_material_ids_fail_closed():
+    """Synthetic. Empty, partial, unsupported, non-finite and the threshold never pass."""
+    tris2 = np.array([[0, 1, 2], [0, 2, 3]], dtype=int)
+    cases = {
+        "empty": _id_soup(np.zeros((0,), dtype=int)),
+        "no_triangles": _id_soup(np.array([5], dtype=int), np.zeros((0, 3), dtype=int)),
+        "partial_short": _id_soup(np.array([5], dtype=int), tris2),
+        "partial_long": _id_soup(np.array([5, 5], dtype=int), np.array([[0, 1, 2]], dtype=int)),
+        "bool": _id_soup(np.array([True])),
+        "float": _id_soup(np.array([5.0])),
+        "truncated_float": _id_soup(np.array([5.5])),
+        "none": _id_soup(np.array([None], dtype=object)),
+        "string": _id_soup(np.array(["5"], dtype=object)),
+        "nan": _id_soup(np.array([float("nan")])),
+        "inf": _id_soup(np.array([float("inf")])),
+        "ninf": _id_soup(np.array([float("-inf")])),
+        "threshold": _id_soup(np.array([1001], dtype=int)),
+    }
+    seen = 0
+    for name, soup in cases.items():
+        report = checks.check_material_ids(soup, {"unassigned_ids_max": 0}, checks.load_ranges())
+        assert report["status"] == "fail", name
+        assert report["status"] not in ("pass", "not_measured", "not_run")
+        seen += 1
+    assert seen == len(cases) == 13
+
+
+def test_id_1001_fails_even_if_a_configured_group_range_covers_it():
+    """Synthetic. A widened group range must not hide a UDIM number used as a MatID."""
+    import copy
+    ranges = copy.deepcopy(checks.load_ranges())
+    first = next(iter(ranges["groups"]))
+    ranges["groups"][first] = {**ranges["groups"][first], "first": 1, "last": 2000}
+    for mid in (1001, 1012, 1100):
+        report = checks.check_material_ids(_id_soup([5, mid]), {"unassigned_ids_max": 0}, ranges)
+        assert report["status"] == "fail" and report["details"]["udim_as_material_id"] == [mid]
+        assert report["value"]["out_of_range"] == []
+
+
+def test_repeated_and_mixed_ids_report_each_udim_id_once_and_5_alone_passes():
+    """Synthetic. Repeats collapse to one entry; one bad face among good faces fails the mesh."""
+    mixed = _id_check([5, 1012, 5, 1012, 1001, 7])
+    assert mixed["status"] == "fail" and mixed["details"]["udim_as_material_id"] == [1001, 1012]
+    assert _id_check([5, 5, 5])["status"] == "pass"
+
+
+def test_export_udim_tiles_stay_outside_the_working_mesh_check():
+    """Export keeps tiles 1001-1100 in udim_tiles; the working check reads material_ids only."""
+    dump = box_dump()
+    dump["meshes"][0]["udim_tiles"] = [1001, 1006, 1099]
+    ids = by_id(run(dump))["material_ids"]
+    assert ids["status"] == "pass" and ids["details"]["udim_as_material_id"] == []
 
 
 def test_face_two_mm_in_front_of_a_wall_is_an_overlap():

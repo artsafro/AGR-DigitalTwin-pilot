@@ -1,0 +1,24 @@
+{
+  "id": "tec26-oks",
+  "name": "TEC26 OKS AC.04-09 and chimney intake",
+  "site": "TEC26",
+  "profiles": ["NPM", "VPM"],
+  "stage": "intake",
+  "production_authorized": false,
+  "source_issue": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/558",
+  "base_main_sha": "442f0b695a91f9abc180783c26978fbe85fefcf9",
+  "source_inventory": "census/sources.json",
+  "copies_root": "C:/x/tec26-oks/sources-v001/",
+  "external_census": "C:/x/tec26-oks/census/",
+  "scene_census": ["census/oks.json", "census/truba.json", "census/kpp.json"],
+  "evidence": "census/evidence.json",
+  "pilot_recommendation": {
+    "primary": "AC.08",
+    "status": "provisional_pending_drawing_material_evidence_565",
+    "fallback": "AC.05"
+  },
+  "drawing_analysis_owners": [561, 562, 563, 564, 565, 566],
+  "truba_followup_owner": 560,
+  "frames": {},
+  "unverified": ["coordinates", "project_zero", "topology", "uv_quality_and_density", "collision_hull_validity", "material_finish_evidence", "human_acceptance"]
+}

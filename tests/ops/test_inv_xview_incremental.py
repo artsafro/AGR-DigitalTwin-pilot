@@ -15,6 +15,7 @@ import pytest
 from dt_ai.ops.inv_quads import PolyMesh
 from dt_ai.ops import inv_xview as X
 from dt_ai.ops.inv_xview import XviewTolerance, face_pairs, xview_state, xview_state_incremental
+from tests.ops.xview_oracle import ref_contact
 
 TOL = XviewTolerance()
 
@@ -107,8 +108,8 @@ def brute(v, faces, tol=TOL):
     s, t = s[ok], t[ok]
     found = {}
     if len(s):
-        con = X._contact(v, tris, nrm, s, t, poly_key, owner, nv, tol.face_m) | \
-            X._contact(v, tris, nrm, t, s, poly_key, owner, nv, tol.face_m)
+        con = ref_contact(v, tris, nrm, s, t, poly_key, owner, nv, tol.face_m) | \
+            ref_contact(v, tris, nrm, t, s, poly_key, owner, nv, tol.face_m)
         hit, sep, _ = X._area(v, tris, nrm, s, t, tol.face_m, prefilter=False)
         for k in range(len(s)):
             i, j = sorted((int(owner[s[k]]), int(owner[t[k]])))
