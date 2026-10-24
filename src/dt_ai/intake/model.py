@@ -43,6 +43,10 @@ class SourceEntry(Part):
     version: str | None = None
     opened: bool
     not_opened_reason: str | None = None
+    waiver_question: str | None = Field(
+        default=None, pattern=r"^Q\d+$",
+        description="User waiver of opening this source: answered question ID in questions.md; "
+                    "never authorizes citing an unread source as evidence.")
     role: Literal["primary", "check", "materials", "none"] = Field(
         description="primary: the best-ranked source that gives geometry or dimensions; lower-ranked sources "
                     "only check it or give materials (§15)")
