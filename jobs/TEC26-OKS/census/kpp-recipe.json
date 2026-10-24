@@ -1,0 +1,833 @@
+{
+  "source": "jobs/KPP1/scripts/vpm_textures.json",
+  "source_main": "442f0b695a91f9abc180783c26978fbe85fefcf9",
+  "finishes": [
+    {
+      "finish": "Plinth_RAL7004",
+      "source_spec": {
+        "udim": 1001,
+        "kind": "full",
+        "S": 4.096,
+        "P": [
+          0.3,
+          0.3
+        ],
+        "shift": [
+          true,
+          true
+        ],
+        "rgb": [
+          150,
+          153,
+          146
+        ],
+        "rough": 0.45,
+        "metal": 0.0,
+        "pattern": "tile300"
+      },
+      "scene_preview_id": 1,
+      "scene_preview_material": "UDIM_1001",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1001.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1001.png",
+        "sha256": "6e088cbdeea1f88e8ff25b78d47b71cc0cea889183027829695b4104a6acca66",
+        "size": [
+          4096,
+          4096
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1001.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1001.png",
+        "sha256": "5e20501391cc4e42a8df5ac6281d5a827567c333c9e053d91fe05293498aed87",
+        "size": [
+          4096,
+          4096
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": 1000.0
+    },
+    {
+      "finish": "Asphalt",
+      "source_spec": {
+        "udim": 1002,
+        "kind": "full",
+        "S": 4.096,
+        "P": [
+          1.3,
+          1.3
+        ],
+        "shift": [
+          true,
+          true
+        ],
+        "rgb": [
+          62,
+          62,
+          64
+        ],
+        "rough": 0.9,
+        "metal": 0.0,
+        "pattern": "asphalt"
+      },
+      "scene_preview_id": 2,
+      "scene_preview_material": "UDIM_1002",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1002.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1002.png",
+        "sha256": "00d351c403817fce24963615bfbe2cbcf23e5e0faf608104689f03f1d4c99ce0",
+        "size": [
+          4096,
+          4096
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1002.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1002.png",
+        "sha256": "aa28d5e2edda8c15424aa2afc4edcf1f210ae3aed4cbd20fc1ff73875da35b3d",
+        "size": [
+          4096,
+          4096
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": 1000.0
+    },
+    {
+      "finish": "Railing_Alpha",
+      "source_spec": {
+        "udim": 1003,
+        "kind": "full",
+        "S": 4.096,
+        "P": [
+          0.9,
+          4.096
+        ],
+        "shift": [
+          true,
+          false
+        ],
+        "rgb": [
+          125,
+          127,
+          130
+        ],
+        "rough": 0.45,
+        "metal": 1.0,
+        "pattern": "railing",
+        "rgb_top": [
+          238,
+          201,
+          0
+        ]
+      },
+      "scene_preview_id": 3,
+      "scene_preview_material": "UDIM_1003",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1003.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1003.png",
+        "sha256": "68e43f023648eb02096f60058f2d7ca373165393514bef9cdd6dabf47d00aa55",
+        "size": [
+          4096,
+          4096
+        ],
+        "mode": "RGBA"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1003.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1003.png",
+        "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": 1000.0
+    },
+    {
+      "finish": "Ladder_Alpha_RAL1021",
+      "source_spec": {
+        "udim": 1004,
+        "kind": "full",
+        "S": 4.096,
+        "P": [
+          4.096,
+          0.372
+        ],
+        "shift": [
+          false,
+          true
+        ],
+        "mirror_u": 0.44,
+        "rgb": [
+          238,
+          201,
+          0
+        ],
+        "rough": 0.5,
+        "metal": 0.0,
+        "pattern": "ladder"
+      },
+      "scene_preview_id": 4,
+      "scene_preview_material": "UDIM_1004",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1004.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1004.png",
+        "sha256": "953557e3202eabaa2085cb78446b923ee9ea181266565a98e7c124add2da4616",
+        "size": [
+          4096,
+          4096
+        ],
+        "mode": "RGBA"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1004.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1004.png",
+        "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": 1000.0
+    },
+    {
+      "finish": "Cage_Alpha_RAL1021",
+      "source_spec": {
+        "udim": 1005,
+        "kind": "full",
+        "S": 4.096,
+        "P": [
+          0.46,
+          0.833
+        ],
+        "shift": [
+          true,
+          true
+        ],
+        "rgb": [
+          238,
+          201,
+          0
+        ],
+        "rough": 0.5,
+        "metal": 0.0,
+        "pattern": "cage"
+      },
+      "scene_preview_id": 5,
+      "scene_preview_material": "UDIM_1005",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1005.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1005.png",
+        "sha256": "657d96944b04ec61fb216dd16b6c612642e43d1e08f576ae588c0e20f5f29182",
+        "size": [
+          4096,
+          4096
+        ],
+        "mode": "RGBA"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1005.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1005.png",
+        "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": 1000.0
+    },
+    {
+      "finish": "Cassette_RAL7047",
+      "source_spec": {
+        "udim": 1006,
+        "kind": "full",
+        "S": 4.096,
+        "P": [
+          0.6,
+          1.0
+        ],
+        "shift": [
+          true,
+          true
+        ],
+        "phase": [
+          0.27,
+          0.0
+        ],
+        "rgb": [
+          208,
+          208,
+          208
+        ],
+        "rough": 0.5,
+        "metal": 0.0,
+        "pattern": "cassette",
+        "h_joints": false
+      },
+      "scene_preview_id": 6,
+      "scene_preview_material": "UDIM_1006",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1006.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1006.png",
+        "sha256": "953d54d37cd8b3193afc5d3b973afc87ed06a9949232799a466193b1617efeb9",
+        "size": [
+          4096,
+          4096
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1006.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1006.png",
+        "sha256": "7eca84ded3796ff75f6c75423bb7bc86229f8c262d8dc09e5932ad94b3b83240",
+        "size": [
+          4096,
+          4096
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": 1000.0
+    },
+    {
+      "finish": "Cassette_RAL5015",
+      "source_spec": {
+        "udim": 1007,
+        "kind": "full",
+        "S": 4.096,
+        "P": [
+          0.6,
+          0.55
+        ],
+        "shift": [
+          true,
+          true
+        ],
+        "phase": [
+          0.27,
+          0.5
+        ],
+        "rgb": [
+          34,
+          113,
+          179
+        ],
+        "rough": 0.5,
+        "metal": 0.0,
+        "pattern": "cassette",
+        "h_joints": true
+      },
+      "scene_preview_id": 7,
+      "scene_preview_material": "UDIM_1007",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1007.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1007.png",
+        "sha256": "323ca26ba0685dc32f8afb12b9218a76e51570c39301b5d6606171f7f9660ee0",
+        "size": [
+          4096,
+          4096
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1007.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1007.png",
+        "sha256": "73a3430cb255d2cf8ecbd6ab477248ad94a3d86f5850efedaf86d91787c4ee3d",
+        "size": [
+          4096,
+          4096
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": 1000.0
+    },
+    {
+      "finish": "Perforated_RAL9016",
+      "source_spec": {
+        "udim": 1008,
+        "kind": "full",
+        "S": 4.096,
+        "P": [
+          0.6,
+          0.6
+        ],
+        "shift": [
+          true,
+          true
+        ],
+        "phase": [
+          0.27,
+          0.3
+        ],
+        "rgb": [
+          236,
+          236,
+          234
+        ],
+        "rough": 0.55,
+        "metal": 0.0,
+        "pattern": "perforated"
+      },
+      "scene_preview_id": 8,
+      "scene_preview_material": "UDIM_1008",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1008.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1008.png",
+        "sha256": "1a6ce772739a9e57fde83e6ff593eea01dafe37420a3074a59da96b082b1b030",
+        "size": [
+          4096,
+          4096
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1008.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1008.png",
+        "sha256": "525080e570cafe0d000802307b42a6f904352483d88b513d855318ee30e9462c",
+        "size": [
+          4096,
+          4096
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": 1000.0
+    },
+    {
+      "finish": "Frame_RAL9016",
+      "source_spec": {
+        "udim": 1009,
+        "kind": "placeholder",
+        "rgb": [
+          246,
+          246,
+          246
+        ],
+        "rough": 0.4,
+        "metal": 0.0
+      },
+      "scene_preview_id": 9,
+      "scene_preview_material": "UDIM_1009",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1009.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1009.png",
+        "sha256": "5a24af09b5c0da12873e6f7cdc170acc6b7b339815ce470dfee5336a81925eda",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1009.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1009.png",
+        "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": null
+    },
+    {
+      "finish": "Door_RAL7004",
+      "source_spec": {
+        "udim": 1010,
+        "kind": "placeholder",
+        "rgb": [
+          150,
+          153,
+          146
+        ],
+        "rough": 0.45,
+        "metal": 0.0
+      },
+      "scene_preview_id": 10,
+      "scene_preview_material": "UDIM_1010",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1010.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1010.png",
+        "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1010.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1010.png",
+        "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": null
+    },
+    {
+      "finish": "Interior",
+      "source_spec": {
+        "udim": 1011,
+        "kind": "placeholder",
+        "rgb": [
+          25,
+          25,
+          28
+        ],
+        "rough": 1.0,
+        "metal": 0.0
+      },
+      "scene_preview_id": 11,
+      "scene_preview_material": "UDIM_1011",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1011.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1011.png",
+        "sha256": "ec5ed808306c18568b104797b3c0f10bd2bf73c98507402d4a432b651b3366bc",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1011.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1011.png",
+        "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": null
+    },
+    {
+      "finish": "Membrane_Logicroof",
+      "source_spec": {
+        "udim": 1012,
+        "kind": "placeholder",
+        "rgb": [
+          140,
+          143,
+          145
+        ],
+        "rough": 0.8,
+        "metal": 0.0
+      },
+      "scene_preview_id": 12,
+      "scene_preview_material": "UDIM_1012",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1012.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1012.png",
+        "sha256": "9bc7e602eadf2de36a2c901332ff8942758dae9e16d200c20814592780a76566",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1012.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1012.png",
+        "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": null
+    },
+    {
+      "finish": "Metal_RAL5015",
+      "source_spec": {
+        "udim": 1013,
+        "kind": "placeholder",
+        "rgb": [
+          34,
+          113,
+          179
+        ],
+        "rough": 0.45,
+        "metal": 0.0
+      },
+      "scene_preview_id": 13,
+      "scene_preview_material": "UDIM_1013",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1013.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1013.png",
+        "sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1013.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1013.png",
+        "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": null
+    },
+    {
+      "finish": "Plastic_Black",
+      "source_spec": {
+        "udim": 1014,
+        "kind": "placeholder",
+        "rgb": [
+          20,
+          20,
+          20
+        ],
+        "rough": 0.6,
+        "metal": 0.0
+      },
+      "scene_preview_id": 14,
+      "scene_preview_material": "UDIM_1014",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1014.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1014.png",
+        "sha256": "f98768beee3dddf7e49643c5e7ad6ba3cbc397cc11388bba80ad36a5cf9cae2e",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1014.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1014.png",
+        "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": null
+    },
+    {
+      "finish": "Grille_RAL7004",
+      "source_spec": {
+        "udim": 1015,
+        "kind": "placeholder",
+        "rgb": [
+          120,
+          122,
+          117
+        ],
+        "rough": 0.5,
+        "metal": 0.0
+      },
+      "scene_preview_id": 15,
+      "scene_preview_material": "UDIM_1015",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1015.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1015.png",
+        "sha256": "495139761f4836e5b19e453b82ecce174e5956f1d8e0c0ef7f7903a4686911f4",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1015.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1015.png",
+        "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": null
+    },
+    {
+      "finish": "Slat_RAL5015",
+      "source_spec": {
+        "udim": 1016,
+        "kind": "placeholder",
+        "rgb": [
+          30,
+          104,
+          166
+        ],
+        "rough": 0.5,
+        "metal": 0.0
+      },
+      "scene_preview_id": 16,
+      "scene_preview_material": "UDIM_1016",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1016.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1016.png",
+        "sha256": "d459679ce225cf13cb88cb4630f1c6106bac18bcded039a0bd70fa9c6d92d82a",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1016.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1016.png",
+        "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": null
+    },
+    {
+      "finish": "Membrane_Solo",
+      "source_spec": {
+        "udim": 1017,
+        "kind": "placeholder",
+        "rgb": [
+          45,
+          45,
+          48
+        ],
+        "rough": 0.85,
+        "metal": 0.0
+      },
+      "scene_preview_id": 17,
+      "scene_preview_material": "UDIM_1017",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1017.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1017.png",
+        "sha256": "d77330dc0168994c57db9fcfbb21e8ade8048978509360bdfba1c1d5d3cb70aa",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1017.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1017.png",
+        "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": null
+    },
+    {
+      "finish": "Cassette_RAL5015_Top",
+      "source_spec": {
+        "udim": 1018,
+        "kind": "full",
+        "S": 4.096,
+        "P": [
+          0.6,
+          0.55
+        ],
+        "shift": [
+          true,
+          true
+        ],
+        "phase": [
+          0.27,
+          0.0
+        ],
+        "rgb": [
+          34,
+          113,
+          179
+        ],
+        "rough": 0.5,
+        "metal": 0.0,
+        "pattern": "cassette",
+        "h_joints": false
+      },
+      "scene_preview_id": 18,
+      "scene_preview_material": "UDIM_1018",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1018.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1018.png",
+        "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+        "size": [
+          4096,
+          4096
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1018.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1018.png",
+        "sha256": "7eca84ded3796ff75f6c75423bb7bc86229f8c262d8dc09e5932ad94b3b83240",
+        "size": [
+          4096,
+          4096
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": 1000.0
+    },
+    {
+      "finish": "Walkway_Logicroof",
+      "source_spec": {
+        "udim": 1019,
+        "kind": "placeholder",
+        "rgb": [
+          108,
+          110,
+          113
+        ],
+        "rough": 0.85,
+        "metal": 0.0
+      },
+      "scene_preview_id": 19,
+      "scene_preview_material": "UDIM_1019",
+      "diffuse": {
+        "name": "T_Kpp_1_Diffuse_1.1019.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Diffuse_1.1019.png",
+        "sha256": "7f05b24bef75f00388893b7aed2257ec8970feaee09738317df7dda3a801fed1",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "normal": {
+        "name": "T_Kpp_1_Normal_1.1019.png",
+        "source_copy": "C:\\x\\tec26-oks\\sources-v001\\maps_kpp\\T_Kpp_1_Normal_1.1019.png",
+        "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGB"
+      },
+      "nominal_full_px_per_m": null
+    }
+  ],
+  "npm": {
+    "atlas": 2048,
+    "cell": 409,
+    "padding": 6,
+    "region": 397,
+    "columns": 5,
+    "full_px_per_m": 96.923828125
+  },
+  "delivered_erm_maps": 0
+}

@@ -34,6 +34,14 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N. `local:` re
 - Window frames in VPM: separate flat untextured material (no extra UDIM) was the working variant; glass separate by material. local: docs/agr/decisions/OBR22_SHARED_UV_V011.md (lesson, working variant only).
 - Keep chain source material -> face/instance -> finish -> atlas region; generic names ("auto", "Material") and texture names don't prove finish; Revit structural-material parameter is not wall finish. local: jobs/GLB-NPM/AUDIT_AND_PLAN.md; local: jobs/OBR22-K02/STATE.md (lesson).
 - Material IDs of the working model follow group ranges (`standards/material_id_ranges.yaml`: 1-5 facade, 6-10 reveals, 11-15 openings, 16-20 metal, 21-25 roof, 26-30 attachments, 31-35 interior); an unused range stays empty. They are a reading scheme only: UDIM tiles/slots are assigned on export by the regulation, glass always 1001. Boundaries are still a test. local: docs/adr/0001-material-ids-are-a-reading-scheme.md; local: docs/HARNESS_PLAN.md#6 (project decision).
+- A working-mesh face material ID >= 1001 is an error. The team script writes the UDIM tile into that ID; the pilot scheme stays 1-35 and export still renumbers tiles 1001-1100 [D030]. Mixing the two breaks the legend. `check_material_ids` (`src/twinqa/geometry/checks.py`) fails the face. Export tile numbering is a separate check and is not this rule. Quote from `UDIM-MultiSub_Universal(max22-26).ms` (the script is not in this repo):
+
+```
+fn getUDIMFromUV u v =
+    return 1001 + udimU + (udimV * 10)
+```
+
+  `UDIM-MultiSub_Universal(max22-26).ms:1` and `:5` (`1001+floor(U)+10*floor(V)`). local: docs/research/team-scripts-audit.md (project decision [D030]).
 - finish_id = Blender slot index + 1 = 3ds Max material ID; keep a material_ids.json to verify reorderings after import. local: jobs/MASHI-LP/MASTER_DIRECTIVE.md; local: jobs/GROUND-PROJECTION/RESULT.md (lesson).
 - Glass: separate material, transparency from shader, never reuse frame color for glass; export glass as separate mesh in final FBX. local: jobs/REVIT-OPENINGS/outputs/diffuse-v001/README.md (project decision).
 - Do not auto-transfer old model material slots to new surfaces without checking correspondence. local: jobs/MASHI-LP/AUDIT_AND_PLAN.md (lesson).

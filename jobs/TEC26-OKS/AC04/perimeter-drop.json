@@ -1,0 +1,76 @@
+{
+  "basis": "Exact census world-space vertices in metres; planar external shell side faces within 0.0001 m; full bottom-edge interval coverage at z <= -1.0 m. This does not change geometry.",
+  "walls": [
+    {
+      "axis": 0,
+      "side": "low",
+      "wall_plane_m": -11.784400939941406,
+      "minimum_z_m": -2.0031800270080566,
+      "below_minus_1_continuous_spans_m": [
+        [
+          -7.606677055358887,
+          6.59332275390625
+        ]
+      ],
+      "expected_span_m": [
+        -7.606678009033203,
+        6.59332275390625
+      ],
+      "verified": true
+    },
+    {
+      "axis": 0,
+      "side": "high",
+      "wall_plane_m": -8.854398727416992,
+      "minimum_z_m": -2.0031800270080566,
+      "below_minus_1_continuous_spans_m": [
+        [
+          -7.606677055358887,
+          6.59332275390625
+        ]
+      ],
+      "expected_span_m": [
+        -7.606678009033203,
+        6.59332275390625
+      ],
+      "verified": true
+    },
+    {
+      "axis": 1,
+      "side": "low",
+      "wall_plane_m": -7.606678009033203,
+      "minimum_z_m": -2.0031790733337402,
+      "below_minus_1_continuous_spans_m": [
+        [
+          -11.784399032592773,
+          -8.854398727416992
+        ]
+      ],
+      "expected_span_m": [
+        -11.784400939941406,
+        -8.854398727416992
+      ],
+      "verified": true
+    },
+    {
+      "axis": 1,
+      "side": "high",
+      "wall_plane_m": 6.59332275390625,
+      "minimum_z_m": -2.0031800270080566,
+      "below_minus_1_continuous_spans_m": [
+        [
+          -11.784400939941406,
+          -8.854400634765625
+        ]
+      ],
+      "expected_span_m": [
+        -11.784400939941406,
+        -8.854398727416992
+      ],
+      "verified": true
+    }
+  ],
+  "walls_verified": 4,
+  "walls_failed": 0,
+  "finish_policy": "Retain full perimeter drop in NPM and VPM; same blue RAL5015 proposal as adjacent wall; existing material ID 1 unchanged."
+}

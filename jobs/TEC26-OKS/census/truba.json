@@ -1,0 +1,6184 @@
+{
+  "source_copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\truba.max",
+  "application_version": [
+    28000,
+    68,
+    0,
+    28,
+    3,
+    0,
+    30732,
+    2026,
+    ".3"
+  ],
+  "file_version": "#(26000, 27000)",
+  "system_unit_type": "meters",
+  "system_unit_scale": 1.0,
+  "display_unit_type": "metric",
+  "units_per_meter": 1.0,
+  "up_axis": "Z",
+  "objects": [
+    {
+      "handle": 395,
+      "name": "Tuba",
+      "layer": "0",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "surface",
+      "position": [
+        -22.864810943603516,
+        5.076221866082923e-15,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        5.076221866082923e-15,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -51.17400360107422,
+          -27.879104614257812,
+          -1.4455795288085938
+        ],
+        [
+          5.444379806518555,
+          27.879104614257812,
+          69.3843994140625
+        ]
+      ],
+      "material": {
+        "name": "Material #75",
+        "class": "Multimaterial",
+        "handle": 16307,
+        "maps": [],
+        "submaterials": [
+          {
+            "slot": 1,
+            "material": {
+              "name": "Material #76",
+              "class": "Standardmaterial",
+              "handle": 16057,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                209.81040954589844,
+                209.81039428710938,
+                209.81039428710938
+              ],
+              "Diffuse_Color": [
+                209.81040954589844,
+                209.81039428710938,
+                209.81039428710938
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [
+                {
+                  "slot": 2,
+                  "slot_name": "Diffuse Color",
+                  "map": {
+                    "name": "Map #1",
+                    "class": "Bitmaptexture",
+                    "handle": 16035,
+                    "filename": "A:\\3d Max\\JOB\\подработка\\Ухх артем\\ТЭЦ\\truba\\gray.png",
+                    "maps": [],
+                    "submaterials": []
+                  }
+                }
+              ],
+              "submaterials": []
+            },
+            "id": 1
+          },
+          {
+            "slot": 2,
+            "material": {
+              "name": "Material #77",
+              "class": "Standardmaterial",
+              "handle": 16102,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                20.5081729888916,
+                11.267477035522461,
+                222.85479736328125
+              ],
+              "Diffuse_Color": [
+                20.5081729888916,
+                11.267477035522461,
+                222.85479736328125
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [
+                {
+                  "slot": 2,
+                  "slot_name": "Diffuse Color",
+                  "map": {
+                    "name": "Map #2",
+                    "class": "Bitmaptexture",
+                    "handle": 16080,
+                    "filename": "A:\\3d Max\\JOB\\подработка\\Ухх артем\\ТЭЦ\\truba\\blu.png",
+                    "maps": [],
+                    "submaterials": []
+                  }
+                }
+              ],
+              "submaterials": []
+            },
+            "id": 2
+          },
+          {
+            "slot": 3,
+            "material": {
+              "name": "Material #78",
+              "class": "Standardmaterial",
+              "handle": 16147,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                97.33932495117188,
+                13.07913589477539,
+                5.384469509124756
+              ],
+              "Diffuse_Color": [
+                97.33932495117188,
+                13.07913589477539,
+                5.384469509124756
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [
+                {
+                  "slot": 2,
+                  "slot_name": "Diffuse Color",
+                  "map": {
+                    "name": "Map #3",
+                    "class": "Bitmaptexture",
+                    "handle": 16125,
+                    "filename": "A:\\3d Max\\JOB\\подработка\\Ухх артем\\ТЭЦ\\truba\\red.png",
+                    "maps": [],
+                    "submaterials": []
+                  }
+                }
+              ],
+              "submaterials": []
+            },
+            "id": 3
+          },
+          {
+            "slot": 4,
+            "material": null,
+            "id": 4
+          },
+          {
+            "slot": 5,
+            "material": {
+              "name": "Material #80",
+              "class": "Standardmaterial",
+              "handle": 16192,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                81.22943878173828,
+                81.22943878173828,
+                81.22943878173828
+              ],
+              "Diffuse_Color": [
+                81.22943878173828,
+                81.22943878173828,
+                81.22943878173828
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [
+                {
+                  "slot": 2,
+                  "slot_name": "Diffuse Color",
+                  "map": {
+                    "name": "Map #6",
+                    "class": "Bitmaptexture",
+                    "handle": 16170,
+                    "filename": "A:\\3d Max\\JOB\\подработка\\Ухх артем\\ТЭЦ\\truba\\dark_gray2.png",
+                    "maps": [],
+                    "submaterials": []
+                  }
+                }
+              ],
+              "submaterials": []
+            },
+            "id": 5
+          },
+          {
+            "slot": 6,
+            "material": {
+              "name": "M_Decor_Silver_v001",
+              "class": "Standardmaterial",
+              "handle": 16237,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                149.94000244140625,
+                149.94000244140625,
+                149.94000244140625
+              ],
+              "Diffuse_Color": [
+                205.0,
+                210.0,
+                215.0
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [
+                {
+                  "slot": 2,
+                  "slot_name": "Diffuse Color",
+                  "map": {
+                    "name": "Map #5",
+                    "class": "Bitmaptexture",
+                    "handle": 16215,
+                    "filename": "A:\\3d Max\\JOB\\подработка\\Ухх артем\\ТЭЦ\\truba\\dark_gray.png",
+                    "maps": [],
+                    "submaterials": []
+                  }
+                }
+              ],
+              "submaterials": []
+            },
+            "id": 6
+          },
+          {
+            "slot": 7,
+            "material": {
+              "name": "Material #82",
+              "class": "Standardmaterial",
+              "handle": 16304,
+              "FilterColor": [
+                127.5,
+                127.5,
+                127.5
+              ],
+              "useSelfIllumColor": false,
+              "selfIllumColor": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "Ambient_Color": [
+                179.87904357910156,
+                185.61326599121094,
+                194.39723205566406
+              ],
+              "Diffuse_Color": [
+                179.87904357910156,
+                185.61326599121094,
+                194.39723205566406
+              ],
+              "Specular_Color": [
+                229.5,
+                229.5,
+                229.5
+              ],
+              "Self_Illum_Color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "maps": [
+                {
+                  "slot": 2,
+                  "slot_name": "Diffuse Color",
+                  "map": {
+                    "name": "Map #7",
+                    "class": "Bitmaptexture",
+                    "handle": 16260,
+                    "filename": "A:\\3d Max\\JOB\\подработка\\Ухх артем\\ТЭЦ\\truba\\railing_10mx1_2m_8posts_RGBA_2048.png",
+                    "maps": [],
+                    "submaterials": []
+                  }
+                },
+                {
+                  "slot": 7,
+                  "slot_name": "Opacity",
+                  "map": {
+                    "name": "Map #8",
+                    "class": "Bitmaptexture",
+                    "handle": 16282,
+                    "filename": "A:\\3d Max\\JOB\\подработка\\Ухх артем\\ТЭЦ\\truba\\railing_10mx1_2m_8posts_RGBA_2048.png",
+                    "maps": [],
+                    "submaterials": []
+                  }
+                }
+              ],
+              "submaterials": []
+            },
+            "id": 7
+          },
+          {
+            "slot": 8,
+            "material": null,
+            "id": 8
+          },
+          {
+            "slot": 9,
+            "material": null,
+            "id": 9
+          },
+          {
+            "slot": 10,
+            "material": null,
+            "id": 10
+          }
+        ]
+      },
+      "bbox_snapshot": [
+        [
+          -51.17400360107422,
+          -27.879104614257812,
+          -1.4455795288085938
+        ],
+        [
+          5.444379806518555,
+          27.879104614257812,
+          69.3843994140625
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 24372,
+      "triangles": 50256,
+      "material_ids": [
+        {
+          "id": 1,
+          "triangles": 360,
+          "area_m2": 8725.373299001247,
+          "poly_faces": 180
+        },
+        {
+          "id": 2,
+          "triangles": 72,
+          "area_m2": 1504.1307774267045,
+          "poly_faces": 36
+        },
+        {
+          "id": 3,
+          "triangles": 72,
+          "area_m2": 1099.9678792034072,
+          "poly_faces": 36
+        },
+        {
+          "id": 5,
+          "triangles": 252,
+          "area_m2": 5758.079292538405,
+          "poly_faces": 126
+        },
+        {
+          "id": 6,
+          "triangles": 48924,
+          "area_m2": 6957.6477582777,
+          "poly_faces": 24462
+        },
+        {
+          "id": 7,
+          "triangles": 576,
+          "area_m2": 940.2486132905206,
+          "poly_faces": 288
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 100152,
+          "faces": 50256,
+          "exists": true,
+          "bounds": [
+            [
+              0.1865006983280182,
+              -97.7855453491211,
+              -1.0000004768371582
+            ],
+            [
+              138.3710174560547,
+              0.6280309557914734,
+              1.0000001192092896
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 25128
+      },
+      "poly_faces_by_id": {
+        "1": 180,
+        "2": 36,
+        "5": 126,
+        "3": 36,
+        "6": 24462,
+        "7": 288
+      },
+      "diagnostic_buffer": "geometry-395.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_source_names_not_delivery_names"
+    },
+    {
+      "handle": 482,
+      "name": "Col_001",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        5.076221866082923e-15,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        5.076221866082923e-15,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -49.45881652832031,
+          -26.18998908996582,
+          -1.4659843444824219
+        ],
+        [
+          3.7291946411132812,
+          26.18998908996582,
+          9.306310653686523
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -49.45881652832031,
+          -26.18998908996582,
+          -1.4659843444824219
+        ],
+        [
+          3.7291946411132812,
+          26.18998908996582,
+          9.306310653686523
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 54,
+      "triangles": 104,
+      "material_ids": [
+        {
+          "id": 1,
+          "triangles": 104,
+          "area_m2": 5986.977954364098,
+          "poly_faces": 38
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 144,
+          "faces": 104,
+          "exists": true,
+          "bounds": [
+            [
+              3.4797844886779785,
+              0.4301297068595886,
+              0.0
+            ],
+            [
+              3.5646581649780273,
+              0.5150033235549927,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 36,
+        "18": 2
+      },
+      "poly_faces_by_id": {
+        "1": 38
+      },
+      "diagnostic_buffer": "geometry-482.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 483,
+      "name": "Col_002",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        5.076221866082923e-15,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        5.076221866082923e-15,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -43.2908935546875,
+          -20.115758895874023,
+          25.333887100219727
+        ],
+        [
+          -2.438732147216797,
+          20.115758895874023,
+          25.333988189697266
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -43.2908935546875,
+          -20.115758895874023,
+          25.333887100219727
+        ],
+        [
+          -2.438732147216797,
+          20.115758895874023,
+          25.333887100219727
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0001010894775390625,
+      "vertices": 18,
+      "triangles": 16,
+      "material_ids": [
+        {
+          "id": 1,
+          "triangles": 16,
+          "area_m2": 1284.2931454350025,
+          "poly_faces": 1
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 18,
+          "faces": 16,
+          "exists": true,
+          "bounds": [
+            [
+              3.469223737716675,
+              0.41956907510757446,
+              0.0
+            ],
+            [
+              3.575218677520752,
+              0.5255639553070068,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "18": 1
+      },
+      "poly_faces_by_id": {
+        "1": 1
+      },
+      "diagnostic_buffer": "geometry-483.json",
+      "snapshot_bbox_parity_0_01mm": false,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 484,
+      "name": "Col_003",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          1.3563117980957031,
+          0.0032510757446289062,
+          8.65921401977539
+        ],
+        [
+          5.443803787231445,
+          9.679060935974121,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          1.3563117980957031,
+          0.0032510757446289062,
+          8.65921401977539
+        ],
+        [
+          5.443803787231445,
+          9.679060935974121,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.18531214774012,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.390172958374023,
+              0.48852598667144775,
+              0.0
+            ],
+            [
+              4.431006908416748,
+              0.5289707779884338,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-484.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 485,
+      "name": "Col_004",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          1.3563079833984375,
+          -9.679075241088867,
+          8.65921401977539
+        ],
+        [
+          5.443805694580078,
+          -0.0032515525817871094,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          1.3563079833984375,
+          -9.679075241088867,
+          8.65921401977539
+        ],
+        [
+          5.443805694580078,
+          -0.0032515525817871094,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.18537328279969,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.390173435211182,
+              0.48852595686912537,
+              0.0
+            ],
+            [
+              4.431007385253906,
+              0.5289707183837891,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-485.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 486,
+      "name": "Col_005",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -3.118337631225586,
+          -18.193944931030273,
+          8.65921401977539
+        ],
+        [
+          3.735454559326172,
+          -8.81856632232666,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -3.118337631225586,
+          -18.193944931030273,
+          8.65921401977539
+        ],
+        [
+          3.735454559326172,
+          -8.81856632232666,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.185060466631896,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.3903679847717285,
+              0.48916783928871155,
+              0.0
+            ],
+            [
+              4.430812358856201,
+              0.5283288955688477,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-486.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 487,
+      "name": "Col_006",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -9.974703788757324,
+          -24.514352798461914,
+          8.65921401977539
+        ],
+        [
+          -1.1812629699707031,
+          -16.57005500793457,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -9.974703788757324,
+          -24.514352798461914,
+          8.65921401977539
+        ],
+        [
+          -1.1812629699707031,
+          -16.57005500793457,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.18510170744498,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.390173435211182,
+              0.48811522126197815,
+              0.0
+            ],
+            [
+              4.431007385253906,
+              0.5293814539909363,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-487.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 488,
+      "name": "Col_007",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -18.385805130004883,
+          -27.877975463867188,
+          8.65921401977539
+        ],
+        [
+          -8.713337898254395,
+          -22.322940826416016,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -18.385805130004883,
+          -27.877975463867188,
+          8.65921401977539
+        ],
+        [
+          -8.713337898254395,
+          -22.322940826416016,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.18522891070233,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.392441272735596,
+              0.48821398615837097,
+              0.0
+            ],
+            [
+              4.428739070892334,
+              0.5292826294898987,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-488.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 489,
+      "name": "Col_008",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -27.777355194091797,
+          -27.879104614257812,
+          8.65921401977539
+        ],
+        [
+          -17.952293395996094,
+          -25.383365631103516,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -27.777355194091797,
+          -27.879104614257812,
+          8.65921401977539
+        ],
+        [
+          -17.952293395996094,
+          -25.383365631103516,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.185102106438805,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.39689826965332,
+              0.48811519145965576,
+              0.0
+            ],
+            [
+              4.424282073974609,
+              0.529381513595581,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-489.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 490,
+      "name": "Col_009",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -37.01631164550781,
+          -27.877967834472656,
+          8.65921401977539
+        ],
+        [
+          -27.343849182128906,
+          -22.32292938232422,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -37.01631164550781,
+          -27.877967834472656,
+          8.65921401977539
+        ],
+        [
+          -27.343849182128906,
+          -22.32292938232422,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.18521868688809,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.392441272735596,
+              0.48821404576301575,
+              0.0
+            ],
+            [
+              4.428739070892334,
+              0.5292826890945435,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-490.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 491,
+      "name": "Col_010",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -44.54838562011719,
+          -24.514341354370117,
+          8.65921401977539
+        ],
+        [
+          -35.75494384765625,
+          -16.570043563842773,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -44.54838562011719,
+          -24.514341354370117,
+          8.65921401977539
+        ],
+        [
+          -35.75494384765625,
+          -16.570043563842773,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.1850609453455,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.390173435211182,
+              0.4881151616573334,
+              0.0
+            ],
+            [
+              4.431007385253906,
+              0.5293814539909363,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-491.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 492,
+      "name": "Col_011",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -49.465087890625,
+          -18.193918228149414,
+          8.65921401977539
+        ],
+        [
+          -42.611305236816406,
+          -8.818543434143066,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -49.465087890625,
+          -18.193918228149414,
+          8.65921401977539
+        ],
+        [
+          -42.611305236816406,
+          -8.818543434143066,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.18504526981539,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.3903679847717285,
+              0.4891678988933563,
+              0.0
+            ],
+            [
+              4.430812358856201,
+              0.5283288359642029,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-492.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 493,
+      "name": "Col_012",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -51.173431396484375,
+          -9.679052352905273,
+          8.65921401977539
+        ],
+        [
+          -47.0859375,
+          -0.003246307373046875,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -51.173431396484375,
+          -9.679052352905273,
+          8.65921401977539
+        ],
+        [
+          -47.0859375,
+          -0.003246307373046875,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.18529944026571,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.390173435211182,
+              0.49258214235305786,
+              0.0
+            ],
+            [
+              4.431007385253906,
+              0.524914562702179,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-493.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 494,
+      "name": "Col_013",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -51.173431396484375,
+          0.0032567977905273438,
+          8.65921401977539
+        ],
+        [
+          -47.0859375,
+          9.679061889648438,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -51.173431396484375,
+          0.0032567977905273438,
+          8.65921401977539
+        ],
+        [
+          -47.0859375,
+          9.679061889648438,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.185318415990814,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.390172958374023,
+              0.49258220195770264,
+              0.0
+            ],
+            [
+              4.431006908416748,
+              0.5249145030975342,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-494.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 495,
+      "name": "Col_014",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -49.465087890625,
+          8.818546295166016,
+          8.65921401977539
+        ],
+        [
+          -42.611297607421875,
+          18.19392204284668,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -49.465087890625,
+          8.818546295166016,
+          8.65921401977539
+        ],
+        [
+          -42.611297607421875,
+          18.19392204284668,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.18512802974354,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.3903679847717285,
+              0.48916786909103394,
+              0.0
+            ],
+            [
+              4.430812358856201,
+              0.5283288359642029,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-495.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 496,
+      "name": "Col_015",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -44.54838562011719,
+          16.57004737854004,
+          8.65921401977539
+        ],
+        [
+          -35.75493621826172,
+          24.51434898376465,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -44.54838562011719,
+          16.57004737854004,
+          8.65921401977539
+        ],
+        [
+          -35.75493621826172,
+          24.51434898376465,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.18514793027134,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.390172958374023,
+              0.48811519145965576,
+              0.0
+            ],
+            [
+              4.431006908416748,
+              0.529381513595581,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-496.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 497,
+      "name": "Col_016",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -37.01630401611328,
+          22.32293701171875,
+          8.65921401977539
+        ],
+        [
+          -27.343841552734375,
+          27.877975463867188,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -37.01630401611328,
+          22.32293701171875,
+          8.65921401977539
+        ],
+        [
+          -27.343841552734375,
+          27.877975463867188,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.185254327851354,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.392441272735596,
+              0.48821398615837097,
+              0.0
+            ],
+            [
+              4.428739070892334,
+              0.5292826890945435,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-497.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 498,
+      "name": "Col_017",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -27.777347564697266,
+          25.38336944580078,
+          8.65921401977539
+        ],
+        [
+          -17.952281951904297,
+          27.879104614257812,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -27.777347564697266,
+          25.38336944580078,
+          8.65921401977539
+        ],
+        [
+          -17.952281951904297,
+          27.879104614257812,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.18519493478988,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.39689826965332,
+              0.4881151616573334,
+              0.0
+            ],
+            [
+              4.424282073974609,
+              0.529381513595581,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-498.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 499,
+      "name": "Col_018",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -18.385791778564453,
+          22.322938919067383,
+          8.65921401977539
+        ],
+        [
+          -8.713323593139648,
+          27.877975463867188,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -18.385791778564453,
+          22.322938919067383,
+          8.65921401977539
+        ],
+        [
+          -8.713323593139648,
+          27.877975463867188,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.185287457888016,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.392441272735596,
+              0.48821404576301575,
+              0.0
+            ],
+            [
+              4.428739070892334,
+              0.5292826890945435,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-499.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 500,
+      "name": "Col_019",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -9.974693298339844,
+          16.570049285888672,
+          8.65921401977539
+        ],
+        [
+          -1.1812458038330078,
+          24.514352798461914,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -9.974693298339844,
+          16.570049285888672,
+          8.65921401977539
+        ],
+        [
+          -1.1812458038330078,
+          24.514352798461914,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.185144185391394,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.390172958374023,
+              0.4881151616573334,
+              0.0
+            ],
+            [
+              4.431006908416748,
+              0.529381513595581,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-500.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 501,
+      "name": "Col_020",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -3.1183300018310547,
+          8.818546295166016,
+          8.65921401977539
+        ],
+        [
+          3.735464096069336,
+          18.19392204284668,
+          8.811470031738281
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -3.1183300018310547,
+          8.818546295166016,
+          8.65921401977539
+        ],
+        [
+          3.735464096069336,
+          18.19392204284668,
+          8.811470031738281
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 50.1851293254721,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.3903679847717285,
+              0.48916783928871155,
+              0.0
+            ],
+            [
+              4.430812358856201,
+              0.5283288955688477,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-501.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 502,
+      "name": "Col_021",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -8.435159683227539,
+          0.003251314163208008,
+          46.71470260620117
+        ],
+        [
+          -6.558994293212891,
+          5.573861598968506,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -8.435159683227539,
+          0.003251314163208008,
+          46.71470260620117
+        ],
+        [
+          -6.558994293212891,
+          5.573861598968506,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.102368050386062,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.401280879974365,
+              0.49699297547340393,
+              0.0
+            ],
+            [
+              4.419898986816406,
+              0.5205036997795105,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-502.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 503,
+      "name": "Col_022",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -8.435163497924805,
+          -5.5738701820373535,
+          46.71470260620117
+        ],
+        [
+          -6.558994293212891,
+          -0.0032515525817871094,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -8.435163497924805,
+          -5.5738701820373535,
+          46.71470260620117
+        ],
+        [
+          -6.558994293212891,
+          -0.0032515525817871094,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.102381891227624,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.401280879974365,
+              0.4969930350780487,
+              0.0
+            ],
+            [
+              4.419898986816406,
+              0.5205036401748657,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-503.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 504,
+      "name": "Col_023",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -11.100373268127441,
+          -10.478691101074219,
+          46.71470260620117
+        ],
+        [
+          -7.543476104736328,
+          -5.254847049713135,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -11.100373268127441,
+          -10.478691101074219,
+          46.71470260620117
+        ],
+        [
+          -7.543476104736328,
+          -5.254847049713135,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.102320579417322,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.399316310882568,
+              0.49710580706596375,
+              0.0
+            ],
+            [
+              4.4218645095825195,
+              0.5203908681869507,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-504.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 505,
+      "name": "Col_024",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -15.184553146362305,
+          -14.119625091552734,
+          46.71470260620117
+        ],
+        [
+          -10.375930786132812,
+          -9.872346878051758,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -15.184553146362305,
+          -14.119625091552734,
+          46.71470260620117
+        ],
+        [
+          -10.375930786132812,
+          -9.872346878051758,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.10230960531567,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398710250854492,
+              0.4969930052757263,
+              0.0
+            ],
+            [
+              4.422469615936279,
+              0.5205036997795105,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-505.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 506,
+      "name": "Col_025",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -20.19508171081543,
+          -16.057527542114258,
+          46.71470260620117
+        ],
+        [
+          -14.714729309082031,
+          -13.299095153808594,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -20.19508171081543,
+          -16.057527542114258,
+          46.71470260620117
+        ],
+        [
+          -14.714729309082031,
+          -13.299095153808594,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.10233384937903,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398767948150635,
+              0.4982980787754059,
+              0.0
+            ],
+            [
+              4.422412395477295,
+              0.5191985964775085,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-506.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 507,
+      "name": "Col_026",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -25.69308853149414,
+          -16.058656692504883,
+          46.71470260620117
+        ],
+        [
+          -20.036548614501953,
+          -15.121776580810547,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -25.69308853149414,
+          -16.058656692504883,
+          46.71470260620117
+        ],
+        [
+          -20.036548614501953,
+          -15.121776580810547,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.102339690329988,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.39871072769165,
+              0.5008635520935059,
+              0.0
+            ],
+            [
+              4.4224700927734375,
+              0.5166330933570862,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-507.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 508,
+      "name": "Col_027",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -31.014907836914062,
+          -16.057523727416992,
+          46.71470260620117
+        ],
+        [
+          -25.53455924987793,
+          -13.299089431762695,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -31.014907836914062,
+          -16.057523727416992,
+          46.71470260620117
+        ],
+        [
+          -25.53455924987793,
+          -13.299089431762695,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.102331865517051,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398767948150635,
+              0.4982980489730835,
+              0.0
+            ],
+            [
+              4.422412395477295,
+              0.5191986560821533,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-508.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 509,
+      "name": "Col_028",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -35.35370635986328,
+          -14.119620323181152,
+          46.71470260620117
+        ],
+        [
+          -30.54508399963379,
+          -9.872340202331543,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -35.35370635986328,
+          -14.119620323181152,
+          46.71470260620117
+        ],
+        [
+          -30.54508399963379,
+          -9.872340202331543,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.102299708192266,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.39871072769165,
+              0.4969930350780487,
+              0.0
+            ],
+            [
+              4.4224700927734375,
+              0.5205036401748657,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-509.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 510,
+      "name": "Col_029",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -38.186153411865234,
+          -10.478676795959473,
+          46.71470260620117
+        ],
+        [
+          -34.62925720214844,
+          -5.254833221435547,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -38.186153411865234,
+          -10.478676795959473,
+          46.71470260620117
+        ],
+        [
+          -34.62925720214844,
+          -5.254833221435547,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.102331899919541,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.39931583404541,
+              0.49710577726364136,
+              0.0
+            ],
+            [
+              4.4218645095825195,
+              0.5203908681869507,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-510.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 511,
+      "name": "Col_030",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -39.170631408691406,
+          -5.573857307434082,
+          46.71470260620117
+        ],
+        [
+          -37.294464111328125,
+          -0.003248453140258789,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -39.170631408691406,
+          -5.573857307434082,
+          46.71470260620117
+        ],
+        [
+          -37.294464111328125,
+          -0.003248453140258789,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.102370961162771,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.401281356811523,
+              0.4969930052757263,
+              0.0
+            ],
+            [
+              4.4198994636535645,
+              0.5205036997795105,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-511.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 512,
+      "name": "Col_031",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -39.170631408691406,
+          0.0032546520233154297,
+          46.71470260620117
+        ],
+        [
+          -37.294464111328125,
+          5.5738630294799805,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -39.170631408691406,
+          0.0032546520233154297,
+          46.71470260620117
+        ],
+        [
+          -37.294464111328125,
+          5.5738630294799805,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.102377277438089,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.401281356811523,
+              0.4969930052757263,
+              0.0
+            ],
+            [
+              4.4198994636535645,
+              0.5205036997795105,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-512.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 513,
+      "name": "Col_032",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -38.186153411865234,
+          5.2548370361328125,
+          46.71470260620117
+        ],
+        [
+          -34.62925338745117,
+          10.478677749633789,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -38.186153411865234,
+          5.2548370361328125,
+          46.71470260620117
+        ],
+        [
+          -34.62925338745117,
+          10.478677749633789,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.102330613527814,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.39931583404541,
+              0.49710583686828613,
+              0.0
+            ],
+            [
+              4.4218645095825195,
+              0.5203908681869507,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-513.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 514,
+      "name": "Col_033",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -35.35370635986328,
+          9.872343063354492,
+          46.71470260620117
+        ],
+        [
+          -30.545082092285156,
+          14.119623184204102,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -35.35370635986328,
+          9.872343063354492,
+          46.71470260620117
+        ],
+        [
+          -30.545082092285156,
+          14.119623184204102,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.102294276156044,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.39871072769165,
+              0.49699297547340393,
+              0.0
+            ],
+            [
+              4.4224700927734375,
+              0.5205036401748657,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-514.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 515,
+      "name": "Col_034",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -31.014904022216797,
+          13.299093246459961,
+          46.71470260620117
+        ],
+        [
+          -25.53455352783203,
+          16.057527542114258,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -31.014904022216797,
+          13.299093246459961,
+          46.71470260620117
+        ],
+        [
+          -25.53455352783203,
+          16.057527542114258,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.102329672017358,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398767948150635,
+              0.49829810857772827,
+              0.0
+            ],
+            [
+              4.422412395477295,
+              0.5191985964775085,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-515.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 516,
+      "name": "Col_035",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -25.693084716796875,
+          15.121780395507812,
+          46.71470260620117
+        ],
+        [
+          -20.036542892456055,
+          16.058656692504883,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -25.693084716796875,
+          15.121780395507812,
+          46.71470260620117
+        ],
+        [
+          -20.036542892456055,
+          16.058656692504883,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.102343790618923,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398710250854492,
+              0.5008635520935059,
+              0.0
+            ],
+            [
+              4.4224700927734375,
+              0.516633152961731,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-516.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 517,
+      "name": "Col_036",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -20.1950740814209,
+          13.299094200134277,
+          46.71470260620117
+        ],
+        [
+          -14.714719772338867,
+          16.057527542114258,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -20.1950740814209,
+          13.299094200134277,
+          46.71470260620117
+        ],
+        [
+          -14.714719772338867,
+          16.057527542114258,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.102344902493554,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398767948150635,
+              0.4982980787754059,
+              0.0
+            ],
+            [
+              4.422412395477295,
+              0.5191985964775085,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-517.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 518,
+      "name": "Col_037",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -15.184544563293457,
+          9.872344017028809,
+          46.71470260620117
+        ],
+        [
+          -10.375921249389648,
+          14.119625091552734,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -15.184544563293457,
+          9.872344017028809,
+          46.71470260620117
+        ],
+        [
+          -10.375921249389648,
+          14.119625091552734,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.10230286976127,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398710250854492,
+              0.4969930052757263,
+              0.0
+            ],
+            [
+              4.422469615936279,
+              0.5205036997795105,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-518.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 519,
+      "name": "Col_038",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -11.100370407104492,
+          5.254836559295654,
+          46.71470260620117
+        ],
+        [
+          -7.543471336364746,
+          10.478677749633789,
+          46.878395080566406
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -11.100370407104492,
+          5.254836559295654,
+          46.71470260620117
+        ],
+        [
+          -7.543471336364746,
+          10.478677749633789,
+          46.878395080566406
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 12.102323882112957,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 12,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.399316310882568,
+              0.49710583686828613,
+              0.0
+            ],
+            [
+              4.4218645095825195,
+              0.5203908681869507,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-519.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 520,
+      "name": "Col_039",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -8.040130615234375,
+          0.003251314163208008,
+          68.24967956542969
+        ],
+        [
+          -6.262992858886719,
+          5.675100326538086,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -8.040130615234375,
+          0.003251314163208008,
+          68.24967956542969
+        ],
+        [
+          -6.262992858886719,
+          5.675100326538086,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.218386778300507,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398621082305908,
+              0.4992702603340149,
+              0.0
+            ],
+            [
+              4.4225592613220215,
+              0.5182263851165771,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-520.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 521,
+      "name": "Col_040",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -8.040135383605957,
+          -5.675108909606934,
+          68.24967956542969
+        ],
+        [
+          -6.262992858886719,
+          -0.0032515525817871094,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -8.040135383605957,
+          -5.675108909606934,
+          68.24967956542969
+        ],
+        [
+          -6.262992858886719,
+          -0.0032515525817871094,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.21840334781967,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398621082305908,
+              0.4992702901363373,
+              0.0
+            ],
+            [
+              4.4225592613220215,
+              0.5182263851165771,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-521.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 522,
+      "name": "Col_041",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -10.778331756591797,
+          -10.668957710266113,
+          68.24967956542969
+        ],
+        [
+          -7.265326499938965,
+          -5.398650646209717,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -10.778331756591797,
+          -10.668957710266113,
+          68.24967956542969
+        ],
+        [
+          -7.265326499938965,
+          -5.398650646209717,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.21834541157665,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398736476898193,
+              0.4972694516181946,
+              0.0
+            ],
+            [
+              4.4224443435668945,
+              0.5202272534370422,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-522.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 523,
+      "name": "Col_042",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -14.97434139251709,
+          -14.375969886779785,
+          68.24967956542969
+        ],
+        [
+          -10.149181365966797,
+          -10.142578125,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -14.97434139251709,
+          -14.375969886779785,
+          68.24967956542969
+        ],
+        [
+          -10.149181365966797,
+          -10.142578125,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.218348871731775,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398621082305908,
+              0.4966530501842499,
+              0.0
+            ],
+            [
+              4.4225592613220215,
+              0.5208436250686646,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-523.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 524,
+      "name": "Col_043",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -20.122055053710938,
+          -16.34903335571289,
+          68.24967956542969
+        ],
+        [
+          -14.566728591918945,
+          -13.663162231445312,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -20.122055053710938,
+          -16.34903335571289,
+          68.24967956542969
+        ],
+        [
+          -14.566728591918945,
+          -13.663162231445312,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.218350777257493,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.3992791175842285,
+              0.496711403131485,
+              0.0
+            ],
+            [
+              4.421901702880859,
+              0.5207852721214294,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-524.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 525,
+      "name": "Col_044",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -25.744489669799805,
+          -16.350162506103516,
+          68.24967956542969
+        ],
+        [
+          -19.985149383544922,
+          -15.535765647888184,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -25.744489669799805,
+          -16.350162506103516,
+          68.24967956542969
+        ],
+        [
+          -19.985149383544922,
+          -15.535765647888184,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.21837677011744,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398553371429443,
+              0.4966530501842499,
+              0.0
+            ],
+            [
+              4.422626972198486,
+              0.5208436846733093,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-525.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 526,
+      "name": "Col_045",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -31.16290855407715,
+          -16.349029541015625,
+          68.24967956542969
+        ],
+        [
+          -25.607585906982422,
+          -13.663154602050781,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -31.16290855407715,
+          -16.349029541015625,
+          68.24967956542969
+        ],
+        [
+          -25.607585906982422,
+          -13.663154602050781,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.218356398073471,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.39927864074707,
+              0.4967113435268402,
+              0.0
+            ],
+            [
+              4.421901226043701,
+              0.5207853317260742,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-526.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 527,
+      "name": "Col_046",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -35.58045959472656,
+          -14.375965118408203,
+          68.24967956542969
+        ],
+        [
+          -30.755294799804688,
+          -10.142572402954102,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -35.58045959472656,
+          -14.375965118408203,
+          68.24967956542969
+        ],
+        [
+          -30.755294799804688,
+          -10.142572402954102,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.218356314297617,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398621082305908,
+              0.4966530501842499,
+              0.0
+            ],
+            [
+              4.4225592613220215,
+              0.5208436250686646,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-527.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 528,
+      "name": "Col_047",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -38.46430206298828,
+          -10.668941497802734,
+          68.24967956542969
+        ],
+        [
+          -34.95130157470703,
+          -5.398636817932129,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -38.46430206298828,
+          -10.668941497802734,
+          68.24967956542969
+        ],
+        [
+          -34.95130157470703,
+          -5.398636817932129,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.218343561240038,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398736476898193,
+              0.4972693920135498,
+              0.0
+            ],
+            [
+              4.4224443435668945,
+              0.5202273726463318,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-528.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 529,
+      "name": "Col_048",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -39.46663284301758,
+          -5.675095558166504,
+          68.24967956542969
+        ],
+        [
+          -37.689491271972656,
+          -0.0032482147216796875,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -39.46663284301758,
+          -5.675095558166504,
+          68.24967956542969
+        ],
+        [
+          -37.689491271972656,
+          -0.0032482147216796875,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.218400917664251,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398621082305908,
+              0.4992702603340149,
+              0.0
+            ],
+            [
+              4.4225592613220215,
+              0.5182264447212219,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-529.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 530,
+      "name": "Col_049",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -39.46663284301758,
+          0.0032546520233154297,
+          68.24967956542969
+        ],
+        [
+          -37.689491271972656,
+          5.675101280212402,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -39.46663284301758,
+          0.0032546520233154297,
+          68.24967956542969
+        ],
+        [
+          -37.689491271972656,
+          5.675101280212402,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.21840776719785,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398621082305908,
+              0.49927031993865967,
+              0.0
+            ],
+            [
+              4.4225592613220215,
+              0.5182264447212219,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-530.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 531,
+      "name": "Col_050",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -38.46430206298828,
+          5.398640155792236,
+          68.24967956542969
+        ],
+        [
+          -34.951297760009766,
+          10.668944358825684,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -38.46430206298828,
+          5.398640155792236,
+          68.24967956542969
+        ],
+        [
+          -34.951297760009766,
+          10.668944358825684,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.218345769231846,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398736000061035,
+              0.49726948142051697,
+              0.0
+            ],
+            [
+              4.422443866729736,
+              0.520227313041687,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-531.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 532,
+      "name": "Col_051",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -35.5804557800293,
+          10.142572402954102,
+          68.24967956542969
+        ],
+        [
+          -30.755292892456055,
+          14.375967979431152,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -35.5804557800293,
+          10.142572402954102,
+          68.24967956542969
+        ],
+        [
+          -30.755292892456055,
+          14.375967979431152,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.218356565049374,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398621082305908,
+              0.4966530501842499,
+              0.0
+            ],
+            [
+              4.4225592613220215,
+              0.5208436250686646,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-532.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 533,
+      "name": "Col_052",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -31.162904739379883,
+          13.663156509399414,
+          68.24967956542969
+        ],
+        [
+          -25.607582092285156,
+          16.34903335571289,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -31.162904739379883,
+          13.663156509399414,
+          68.24967956542969
+        ],
+        [
+          -25.607582092285156,
+          16.34903335571289,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.218379229584814,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.3992791175842285,
+              0.4967113435268402,
+              0.0
+            ],
+            [
+              4.421901702880859,
+              0.5207852721214294,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-533.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 534,
+      "name": "Col_053",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -25.744483947753906,
+          15.53576374053955,
+          68.24967956542969
+        ],
+        [
+          -19.98514175415039,
+          16.350162506103516,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -25.744483947753906,
+          15.53576374053955,
+          68.24967956542969
+        ],
+        [
+          -19.98514175415039,
+          16.350162506103516,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.21841903577469,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398553371429443,
+              0.4966530501842499,
+              0.0
+            ],
+            [
+              4.422626972198486,
+              0.5208436250686646,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-534.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 535,
+      "name": "Col_054",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -20.122047424316406,
+          13.663158416748047,
+          68.24967956542969
+        ],
+        [
+          -14.566720008850098,
+          16.34903335571289,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -20.122047424316406,
+          13.663158416748047,
+          68.24967956542969
+        ],
+        [
+          -14.566720008850098,
+          16.34903335571289,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.21838676127842,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.39927864074707,
+              0.49671128392219543,
+              0.0
+            ],
+            [
+              4.421901226043701,
+              0.5207853317260742,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-535.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 536,
+      "name": "Col_055",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -14.974332809448242,
+          10.142574310302734,
+          68.24967956542969
+        ],
+        [
+          -10.149169921875,
+          14.375969886779785,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -14.974332809448242,
+          10.142574310302734,
+          68.24967956542969
+        ],
+        [
+          -10.149169921875,
+          14.375969886779785,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.218351864663388,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398621082305908,
+              0.4966530501842499,
+              0.0
+            ],
+            [
+              4.4225592613220215,
+              0.5208436250686646,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-536.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 537,
+      "name": "Col_056",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -10.778327941894531,
+          5.398639678955078,
+          68.24967956542969
+        ],
+        [
+          -7.265321731567383,
+          10.668944358825684,
+          68.41734313964844
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -10.778327941894531,
+          5.398639678955078,
+          68.24967956542969
+        ],
+        [
+          -7.265321731567383,
+          10.668944358825684,
+          68.41734313964844
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 8,
+      "triangles": 12,
+      "material_ids": [
+        {
+          "id": 6,
+          "triangles": 12,
+          "area_m2": 11.218364781982135,
+          "poly_faces": 6
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 16,
+          "faces": 12,
+          "exists": true,
+          "bounds": [
+            [
+              4.398736000061035,
+              0.4972694218158722,
+              0.0
+            ],
+            [
+              4.422443866729736,
+              0.5202273726463318,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 6
+      },
+      "poly_faces_by_id": {
+        "6": 6
+      },
+      "diagnostic_buffer": "geometry-537.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 538,
+      "name": "Col_057",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        5.076221866082923e-15,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        5.076221866082923e-15,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -48.560302734375,
+          -25.30512046813965,
+          9.311834335327148
+        ],
+        [
+          2.8306808471679688,
+          25.30512046813965,
+          25.333887100219727
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -48.560302734375,
+          -25.30512046813965,
+          9.311834335327148
+        ],
+        [
+          2.8306808471679688,
+          25.30512046813965,
+          25.333887100219727
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 54,
+      "triangles": 88,
+      "material_ids": [
+        {
+          "id": 1,
+          "triangles": 88,
+          "area_m2": 4533.229592075969,
+          "poly_faces": 37
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 144,
+          "faces": 88,
+          "exists": true,
+          "bounds": [
+            [
+              3.469223737716675,
+              0.41956907510757446,
+              0.0
+            ],
+            [
+              3.575218677520752,
+              0.5255639553070068,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 36,
+        "18": 1
+      },
+      "poly_faces_by_id": {
+        "1": 37
+      },
+      "diagnostic_buffer": "geometry-538.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 539,
+      "name": "Col_058",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        5.076221866082923e-15,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        5.076221866082923e-15,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -43.2908935546875,
+          -20.11576271057129,
+          25.340330123901367
+        ],
+        [
+          -2.438730239868164,
+          20.11576271057129,
+          46.96378707885742
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -43.2908935546875,
+          -20.11576271057129,
+          25.340330123901367
+        ],
+        [
+          -2.438730239868164,
+          20.11576271057129,
+          46.96378707885742
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 72,
+      "triangles": 140,
+      "material_ids": [
+        {
+          "id": 1,
+          "triangles": 88,
+          "area_m2": 3213.173458896888,
+          "poly_faces": 37
+        },
+        {
+          "id": 3,
+          "triangles": 52,
+          "area_m2": 1292.2624699138053,
+          "poly_faces": 19
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 216,
+          "faces": 140,
+          "exists": true,
+          "bounds": [
+            [
+              1.3503416776657104,
+              0.42001909017562866,
+              0.0
+            ],
+            [
+              3.5747687816619873,
+              0.5472909212112427,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 54,
+        "18": 2
+      },
+      "poly_faces_by_id": {
+        "1": 37,
+        "3": 19
+      },
+      "diagnostic_buffer": "geometry-539.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 540,
+      "name": "Col_059",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -38.19141387939453,
+          -15.093758583068848,
+          46.97115707397461
+        ],
+        [
+          -7.5382080078125,
+          15.093756675720215,
+          57.9998893737793
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -38.19141387939453,
+          -15.093758583068848,
+          46.97115707397461
+        ],
+        [
+          -7.5382080078125,
+          15.093756675720215,
+          57.9998893737793
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 36,
+      "triangles": 68,
+      "material_ids": [
+        {
+          "id": 2,
+          "triangles": 68,
+          "area_m2": 2502.8404655064396,
+          "poly_faces": 20
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 72,
+          "faces": 68,
+          "exists": true,
+          "bounds": [
+            [
+              2.331035852432251,
+              0.35456687211990356,
+              0.0
+            ],
+            [
+              2.6045000553131104,
+              0.6280309557914734,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 18,
+        "18": 2
+      },
+      "poly_faces_by_id": {
+        "2": 20
+      },
+      "diagnostic_buffer": "geometry-540.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    },
+    {
+      "handle": 541,
+      "name": "Col_060",
+      "layer": "Colizii",
+      "class": "Editable_Poly",
+      "superclass": "GeometryClass",
+      "kind": "collision_candidate_noncompliant_name",
+      "position": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "pivot": [
+        -22.864810943603516,
+        0.0,
+        33.96940994262695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotation_quat": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bbox_native": [
+        [
+          -38.636268615722656,
+          -15.531853675842285,
+          58.00541305541992
+        ],
+        [
+          -7.093355178833008,
+          15.531851768493652,
+          68.42019653320312
+        ]
+      ],
+      "material": null,
+      "bbox_snapshot": [
+        [
+          -38.636268615722656,
+          -15.531853675842285,
+          58.00541305541992
+        ],
+        [
+          -7.093355178833008,
+          15.531851768493652,
+          68.42019653320312
+        ]
+      ],
+      "snapshot_native_bbox_max_error": 0.0,
+      "vertices": 54,
+      "triangles": 104,
+      "material_ids": [
+        {
+          "id": 2,
+          "triangles": 52,
+          "area_m2": 1209.5873187581215,
+          "poly_faces": 19
+        },
+        {
+          "id": 3,
+          "triangles": 52,
+          "area_m2": 1292.1743827564112,
+          "poly_faces": 19
+        }
+      ],
+      "uv_channels": [
+        {
+          "channel": 1,
+          "vertices": 144,
+          "faces": 104,
+          "exists": true,
+          "bounds": [
+            [
+              1.351340651512146,
+              0.4244423806667328,
+              0.0
+            ],
+            [
+              2.5346243381500244,
+              0.5581554174423218,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "evaluated_poly_face_degrees": {
+        "4": 36,
+        "18": 2
+      },
+      "poly_faces_by_id": {
+        "2": 19,
+        "3": 19
+      },
+      "diagnostic_buffer": "geometry-541.json",
+      "snapshot_bbox_parity_0_01mm": true,
+      "naming_status": "review_collision_naming_and_geometry"
+    }
+  ],
+  "other_nodes": [],
+  "native_readback_path": "C:\\x\\tec26-oks\\max-readback-v002\\truba.json",
+  "native_readback_sha256": "df8e72dec63150733c25eb7f9c51c8224cc7398a745918e59da38d26c55f47ef",
+  "diagnostic_buffer_root": "C:\\x\\tec26-oks\\max-readback-v002",
+  "classification_policy": "UCX prefix is naming only; Colizii_/Col_ are collision candidates by source labels, not validated hulls."
+}
