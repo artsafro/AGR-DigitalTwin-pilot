@@ -1,4 +1,4 @@
-"""Tests for tools/pr_body_identity.py (offline PR body identity snapshot check).
+"""new-case: tests for tools/pr_body_identity.py (offline PR body identity snapshot check).
 
 Data provenance:
 - SYNTHETIC: every body built by ``_synthetic_body`` is synthetic test text, not a real PR body.
