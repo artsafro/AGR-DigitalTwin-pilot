@@ -303,6 +303,51 @@ def test_agent_trace_inside_code_fence_is_not_a_section(tmp_path, capsys):
     assert code == 0, report
 
 
+# R1 P1 (PR #661 review): Card lines that Markdown does not render as a trace
+# declaration (inside an unclosed fence, indented code, HTML comment) must not match.
+HIDDEN_CARD_TRACES = {
+    "fence_closer_with_info_string": [
+        "```text",
+        "not a trace declaration",
+        "```not-a-closing-fence",
+        f"- Card: {GROUND_CARD}",
+    ],
+    "tilde_fence_closed_by_backticks": ["~~~", f"- Card: {GROUND_CARD}", "```"],
+    "shorter_closer": ["````", f"- Card: {GROUND_CARD}", "```"],
+    "indented_code_4_spaces": [f"    - Card: {GROUND_CARD}"],
+    "indented_code_tab": [f"\t- Card: {GROUND_CARD}"],
+    "html_comment_one_line": [f"<!-- - Card: {GROUND_CARD} -->"],
+    "html_comment_multi_line": ["<!--", f"- Card: {GROUND_CARD}", "-->"],
+    "html_comment_unclosed": ["<!-- draft", f"- Card: {GROUND_CARD}"],
+}
+
+
+@pytest.mark.parametrize("name", sorted(HIDDEN_CARD_TRACES))
+def test_card_hidden_from_markdown_render_is_missing(tmp_path, capsys, name):
+    body = _synthetic_body(HIDDEN_CARD_TRACES[name])
+    code, report = _run(tmp_path, _expected(body), _observed(body), capsys)
+    assert code == 2, report
+    assert report["identity_match"] is False
+    assert "trace_card_missing" in _codes(report)
+
+
+@pytest.mark.parametrize(
+    "trace",
+    [
+        ["```text", "- Card: t_fce04873", "```", f"- Card: {GROUND_CARD}"],
+        ["```text", "- Card: t_fce04873", "```  ", f"- Card: {GROUND_CARD}"],
+        ["~~~~", "- Card: t_fce04873", "~~~~~", f"- Card: {GROUND_CARD}"],
+        ["<!-- note -->", f"- Card: {GROUND_CARD}, dt-worker"],
+        ["<!--", "- Card: t_fce04873", "-->", f"   - Card: {GROUND_CARD}"],
+    ],
+)
+def test_card_after_properly_closed_fence_or_comment_matches(tmp_path, capsys, trace):
+    body = _synthetic_body(trace)
+    code, report = _run(tmp_path, _expected(body), _observed(body), capsys)
+    assert code == 0, report
+    assert report["observed_card"] == GROUND_CARD
+
+
 @pytest.mark.parametrize(
     ("which", "field", "value"),
     [

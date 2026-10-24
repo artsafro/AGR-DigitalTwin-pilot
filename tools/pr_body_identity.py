@@ -40,10 +40,11 @@ CARD_RE = re.compile(r"t_[0-9a-f]{8}")
 SHA1_RE = re.compile(r"[0-9a-f]{40}")
 SHA256_RE = re.compile(r"[0-9a-f]{64}")
 
-FENCE_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
+FENCE_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+CLOSE_FENCE_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})[ \t]*$")
 HEADING_RE = re.compile(r"^ {0,3}(#{1,6})[ \t]+(.*?)[ \t]*#*[ \t]*$")
 TRACE_TITLE_RE = re.compile(r"agent trace", re.IGNORECASE)
-DECL_RE = re.compile(r"^\s*(?:[-*+]\s+)?(?:\*\*)?Card:(?:\*\*)?\s*(.*)$", re.IGNORECASE)
+DECL_RE = re.compile(r"^ {0,3}(?:[-*+]\s+)?(?:\*\*)?Card:(?:\*\*)?\s*(.*)$", re.IGNORECASE)
 DECL_ID_RE = re.compile(r"(t_[0-9a-f]{8})(?=$|[;,\s])")
 ANY_ID_RE = re.compile(r"\bt_[0-9a-f]{8}\b")
 
@@ -164,6 +165,29 @@ def _validate(data: dict, schema: dict, label: str, diags: list) -> bool:
     return ok
 
 
+def _strip_html_comments(line: str, in_comment: bool) -> tuple[str | None, bool]:
+    """Remove HTML comment spans; return (visible text or None, still-in-comment)."""
+    out = []
+    i = 0
+    while i <= len(line):
+        if in_comment:
+            j = line.find("-->", i)
+            if j < 0:
+                break
+            in_comment, i = False, j + 3
+            continue
+        j = line.find("<!--", i)
+        if j < 0:
+            out.append(line[i:])
+            break
+        out.append(line[i:j])
+        in_comment, i = True, j + 4
+    visible = "".join(out)
+    if not visible.strip() and (in_comment or "<!--" in line or "-->" in line):
+        return None, in_comment
+    return visible, in_comment
+
+
 def trace_cards(body: str) -> tuple[list[str], list[dict]]:
     """Return card ids declared in the single Agent trace section, plus invalid diagnostics."""
     lines = [line.rstrip("\r") for line in body.split("\n")]
@@ -171,16 +195,21 @@ def trace_cards(body: str) -> tuple[list[str], list[dict]]:
     fence: str | None = None
     current: list[str] | None = None
     level = 0
+    in_comment = False
     for line in lines:
-        m = FENCE_RE.match(line)
-        if m:
-            marker = m.group(1)
-            if fence is None:
-                fence = marker
-            elif marker[0] == fence[0] and len(marker) >= len(fence):
+        if fence is not None:
+            # CommonMark: a closer is the same char, at least as long, nothing but
+            # trailing whitespace after it (an info string means it is NOT a closer).
+            c = CLOSE_FENCE_RE.match(line)
+            if c and c.group(1)[0] == fence[0] and len(c.group(1)) >= len(fence):
                 fence = None
             continue
-        if fence is not None:
+        line, in_comment = _strip_html_comments(line, in_comment)
+        if line is None:
+            continue
+        m = FENCE_RE.match(line)
+        if m and not (m.group(1)[0] == "`" and "`" in m.group(2)):
+            fence = m.group(1)
             continue
         h = HEADING_RE.match(line)
         if h:
