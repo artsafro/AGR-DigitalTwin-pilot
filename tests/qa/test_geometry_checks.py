@@ -3,7 +3,7 @@
 The box below is synthetic test data, not the user's etalon (issue #12): 10 x 10 m, levels
 0 / 3.3 / 6.6, parapet 0.6 m, one 1.5 x 1.5 m window per storey on wall 0 with reveals and an
 opening plane at 0.2 m — the numbers of tests/fixtures/spec-b01-v0.3.json (opening depth 0.2 m,
-npm_min plane at the full depth: C24 final, user decision 2026-10-10). The synthetic mesh is closed and welded:
+npm_min plane at the full depth: C24 final, user decision 2026-10-10 [D037]). The synthetic mesh is closed and welded:
 global height cuts on every wall, per-wall cuts at the opening edges, fans on the bottom and roof.
 """
 import json
@@ -16,12 +16,12 @@ import yaml
 import check_geometry
 from dt_ai.spec.model import Spec
 from twinqa.geometry import checks
-from twinqa.geometry.mesh import from_dump
+from twinqa.geometry.mesh import Soup, from_dump
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = Spec.model_validate(json.loads((ROOT / "tests/fixtures/spec-b01-v0.3.json").read_text(encoding="utf-8")))
 TOLERANCES = ROOT / "benchmark/bench-b01-box/tolerances.json"
-# the weld is the spec's (weld_m, user 2026-10-13); checks.run puts it into the tolerances
+# the weld is the spec's (weld_m, user 2026-10-13 [D068]); checks.run puts it into the tolerances
 TOL = {**json.loads(TOLERANCES.read_text(encoding="utf-8"))["geometry"], "weld_m": Spec.model_fields["weld_m"].default}
 WINDOWS = [(0, 2.0, 3.5, 0.9, 2.4), (0, 2.0, 3.5, 4.2, 5.7)]
 FACADE, REVEAL, PLANE, ROOF = 1, 6, 11, 21
@@ -31,7 +31,7 @@ def box_dump(size=10.0, roof=6.6, top=7.2, parapet_t=0.3, windows=WINDOWS, depth
              levels=(("L0", 0.0), ("L1", 3.3), ("roof", 6.6)), polygon_sizes=True, extra=(), roof_inset=0.005,
              roof_embed=0.02):
     """Mesh dump of a box with recessed windows, a parapet and, by default, an inset roof plate 5 mm above
-    the roof level (every slab is inset, user rule 2026-10-10); roof_inset=0 gives a solid roof (synthetic)."""
+    the roof level (every slab is inset, user rule 2026-10-10 [D038]); roof_inset=0 gives a solid roof (synthetic)."""
     faces = []  # (points, material id)
     corners = [np.array(p, float) for p in ((0, 0), (size, 0), (size, size), (0, size))]
     zcuts = sorted({0.0, top, *(w[3] for w in windows), *(w[4] for w in windows)})
@@ -101,7 +101,7 @@ def run(model_dump, etalon_dump=None, tol=TOL, spec=None):
 
 
 def plates(gap=0.005, overlap=0.02):
-    """The synthetic spec with the building's inset plate parameters (user 2026-10-10)."""
+    """The synthetic spec with the building's inset plate parameters (user 2026-10-10 [D039])."""
     return Spec.model_validate({**SPEC.model_dump(), "plate_gap_m": gap, "plate_overlap_m": overlap})
 
 
@@ -136,7 +136,7 @@ def _walk(node):
 def test_missing_opening_plane_fails_cover_and_leaves_a_hole():
     report = run(box_dump(planes=False, windows=WINDOWS))
     # the open window also stops the model section closing where the etalon's closes
-    # an open window is no allowed open loop (pattern roof-inset-plane, user rule 2026-10-10)
+    # an open window is no allowed open loop (pattern roof-inset-plane, user rule 2026-10-10 [D038])
     # and lets outside rays reach the back of the inner wall faces (orientation sees through the hole)
     assert report["failed"] == ["floor_areas", "mesh", "opening_planes", "orientation"]
     assert by_id(report)["opening_planes"]["value"] == 0.0
@@ -191,6 +191,138 @@ def test_material_id_out_of_range_and_unassigned_fail():
     dump["meshes"][0]["material_ids"][1] = 0
     ids = by_id(run(dump))["material_ids"]
     assert ids["status"] == "fail" and ids["value"] == {"out_of_range": [99], "unassigned_triangles": 1}
+
+
+def _id_soup(material_ids, triangles=None):
+    """Synthetic one-or-more triangles. Not a real building."""
+    ids = np.asarray(material_ids)
+    n = int(ids.shape[0]) if ids.ndim == 1 else 0
+    if triangles is None:
+        triangles = np.array([[0, 1, 2]] * max(n, 1), dtype=int) if n else np.zeros((0, 3), dtype=int)
+        if n == 0:
+            triangles = np.zeros((0, 3), dtype=int)
+    return Soup(np.zeros((4, 3), dtype=float), np.asarray(triangles), ids, None, {})
+
+
+def _id_check(material_ids, triangles=None):
+    return checks.check_material_ids(_id_soup(material_ids, triangles), {"unassigned_ids_max": 0}, checks.load_ranges())
+
+
+def test_working_mesh_id_5_passes_and_id_1012_fails():
+    """Reading-scheme ID 5 passes. 1012 is the team script's UDIM number and fails."""
+    good = _id_check([5])
+    bad = _id_check([1012])
+    assert good["status"] == "pass" and good["details"]["udim_as_material_id"] == []
+    assert bad["status"] == "fail" and bad["details"]["udim_as_material_id"] == [1012]
+    assert bad["value"]["out_of_range"] == [1012]
+
+
+def test_probe_ids_at_or_above_1001_fail():
+    """Synthetic. Invariant: every working-mesh material ID >= 1001 fails."""
+    ids = list(range(1001, 1101)) + [1101, 2000, 10_001]
+    seen = 0
+    for mid in ids:
+        report = _id_check([mid])
+        assert report["status"] == "fail", mid
+        assert report["details"]["udim_as_material_id"] == [mid], mid
+        assert mid in report["value"]["out_of_range"], mid
+        seen += 1
+    assert seen == len(ids) == 103
+
+
+def test_probe_exactly_1001_fails():
+    """Synthetic. Invariant: material ID exactly 1001 fails; 1000 is not a UDIM id."""
+    tiles = [1001 + u + 10 * v for u in range(10) for v in range(10)]
+    assert tiles[0] == 1001 and 1001 in tiles
+    seen = 0
+    for mid in tiles:
+        report = _id_check([mid])
+        assert report["status"] == "fail" and report["details"]["udim_as_material_id"] == [mid]
+        seen += 1
+    alone = _id_check([1001])
+    assert alone["status"] == "fail" and alone["details"]["udim_as_material_id"] == [1001]
+    below = _id_check([1000])
+    assert below["status"] == "fail" and below["details"]["udim_as_material_id"] == []
+    assert below["value"]["out_of_range"] == [1000]
+    assert seen == 100
+
+
+def test_probe_id_1000_follows_the_reading_scheme():
+    """Synthetic. Invariant: 1000 matches every other id outside 0..35 and below 1001."""
+    outside = sorted(set(list(range(36, 1001)) + [1000]))
+    legal = list(range(1, 36))
+    seen = 0
+    for mid in legal:
+        report = _id_check([mid])
+        assert report["status"] == "pass" and report["details"]["udim_as_material_id"] == [], mid
+        seen += 1
+    for mid in outside:
+        report = _id_check([mid])
+        assert report["status"] == "fail", mid
+        assert report["value"]["out_of_range"] == [mid], mid
+        assert report["details"]["udim_as_material_id"] == [], mid
+        seen += 1
+    ref = _id_check([99])
+    got = _id_check([1000])
+    assert got["status"] == ref["status"] == "fail"
+    assert got["value"]["out_of_range"] == [1000] and ref["value"]["out_of_range"] == [99]
+    assert got["details"]["udim_as_material_id"] == ref["details"]["udim_as_material_id"] == []
+    assert got["value"]["unassigned_triangles"] == ref["value"]["unassigned_triangles"] == 0
+    assert seen == len(legal) + len(outside) == 35 + 965
+
+
+def test_probe_material_ids_fail_closed():
+    """Synthetic. Empty, partial, unsupported, non-finite and the threshold never pass."""
+    tris2 = np.array([[0, 1, 2], [0, 2, 3]], dtype=int)
+    cases = {
+        "empty": _id_soup(np.zeros((0,), dtype=int)),
+        "no_triangles": _id_soup(np.array([5], dtype=int), np.zeros((0, 3), dtype=int)),
+        "partial_short": _id_soup(np.array([5], dtype=int), tris2),
+        "partial_long": _id_soup(np.array([5, 5], dtype=int), np.array([[0, 1, 2]], dtype=int)),
+        "bool": _id_soup(np.array([True])),
+        "float": _id_soup(np.array([5.0])),
+        "truncated_float": _id_soup(np.array([5.5])),
+        "none": _id_soup(np.array([None], dtype=object)),
+        "string": _id_soup(np.array(["5"], dtype=object)),
+        "nan": _id_soup(np.array([float("nan")])),
+        "inf": _id_soup(np.array([float("inf")])),
+        "ninf": _id_soup(np.array([float("-inf")])),
+        "threshold": _id_soup(np.array([1001], dtype=int)),
+    }
+    seen = 0
+    for name, soup in cases.items():
+        report = checks.check_material_ids(soup, {"unassigned_ids_max": 0}, checks.load_ranges())
+        assert report["status"] == "fail", name
+        assert report["status"] not in ("pass", "not_measured", "not_run")
+        seen += 1
+    assert seen == len(cases) == 13
+
+
+def test_id_1001_fails_even_if_a_configured_group_range_covers_it():
+    """Synthetic. A widened group range must not hide a UDIM number used as a MatID."""
+    import copy
+    ranges = copy.deepcopy(checks.load_ranges())
+    first = next(iter(ranges["groups"]))
+    ranges["groups"][first] = {**ranges["groups"][first], "first": 1, "last": 2000}
+    for mid in (1001, 1012, 1100):
+        report = checks.check_material_ids(_id_soup([5, mid]), {"unassigned_ids_max": 0}, ranges)
+        assert report["status"] == "fail" and report["details"]["udim_as_material_id"] == [mid]
+        assert report["value"]["out_of_range"] == []
+
+
+def test_repeated_and_mixed_ids_report_each_udim_id_once_and_5_alone_passes():
+    """Synthetic. Repeats collapse to one entry; one bad face among good faces fails the mesh."""
+    mixed = _id_check([5, 1012, 5, 1012, 1001, 7])
+    assert mixed["status"] == "fail" and mixed["details"]["udim_as_material_id"] == [1001, 1012]
+    assert _id_check([5, 5, 5])["status"] == "pass"
+
+
+def test_export_udim_tiles_stay_outside_the_working_mesh_check():
+    """Export keeps tiles 1001-1100 in udim_tiles; the working check reads material_ids only."""
+    dump = box_dump()
+    dump["meshes"][0]["udim_tiles"] = [1001, 1006, 1099]
+    ids = by_id(run(dump))["material_ids"]
+    assert ids["status"] == "pass" and ids["details"]["udim_as_material_id"] == []
 
 
 def test_face_two_mm_in_front_of_a_wall_is_an_overlap():
@@ -276,7 +408,7 @@ def test_section_open_in_both_is_listed_not_judged():
 
 
 
-# pattern roof-inset-plane (user rule 2026-10-10): open edges = bottom ring + the inset roof joint
+# pattern roof-inset-plane (user rule 2026-10-10 [D038]): open edges = bottom ring + the inset roof joint
 
 
 def loops_of(report):
@@ -290,7 +422,7 @@ def test_inset_roof_plane_joint_is_allowed():
 
 
 def test_a_solid_roof_in_a_parapet_fails():
-    # user rule 2026-10-10: every slab is inset; the checker requires the joint, it does not only allow it
+    # user rule 2026-10-10 [D038]: every slab is inset; the checker requires the joint, it does not only allow it
     report = run(box_dump(roof_inset=0.0), box_dump(roof_inset=0.0))
     mesh = by_id(report)["mesh"]
     assert mesh["status"] == "fail" and mesh["details"]["slabs_not_inset"] == ["roof"]
@@ -341,7 +473,7 @@ def test_lone_foot_or_plane_is_not_a_joint():
 @pytest.mark.parametrize("embed, ok", [(-0.02, False), (0.0, False), (0.005, False), (0.01, True), (0.02, True),
                                        (0.05, True), (0.08, False)])
 def test_plane_is_embedded_into_the_parapet_by_an_even_offset(embed, ok):
-    # user 2026-10-10: contour B outside contour A, the plane embedded into the parapet faces (B02: 20 mm)
+    # user 2026-10-10 [D038, D039]: contour B outside contour A, the plane embedded into the parapet faces (B02: 20 mm)
     report = run(box_dump(roof_inset=0.005, roof_embed=embed), box_dump(), spec=plates(overlap=max(embed, 0.001)))
     assert (by_id(report)["mesh"]["status"] == "pass") == ok
 
@@ -349,7 +481,7 @@ def test_plane_is_embedded_into_the_parapet_by_an_even_offset(embed, ok):
 @pytest.mark.parametrize("gap, overlap, ok", [(0.005, 0.02, True), (0.0054, 0.0204, True), (0.006, 0.02, False),
                                               (0.005, 0.03, False)])
 def test_plates_match_the_building_parameters_of_the_spec(gap, overlap, ok):
-    # user 2026-10-10: plate_gap_m / plate_overlap_m are building parameters; the checker compares within plate_tol_m
+    # user 2026-10-10 [D039]: plate_gap_m / plate_overlap_m are building parameters; the checker compares within plate_tol_m
     report = run(box_dump(), box_dump(), spec=plates(gap, overlap))
     mesh = by_id(report)["mesh"]
     assert (mesh["status"] == "pass") == ok and bool(mesh["details"]["plates_off_spec"]) != ok
@@ -415,7 +547,7 @@ def test_acute_corner_keeps_its_full_mitre():
 
 @pytest.mark.parametrize("shift, ok", [(0.0009, True), (0.0045, False)])
 def test_evenness_tolerance_is_the_weld_tolerance(shift, ok):
-    # Codex review 2 of PR #54: one side embedded more than the weld (3 mm, user 2026-10-13) is uneven
+    # Codex review 2 of PR #54: one side embedded more than the weld (3 mm, user 2026-10-13 [D068]) is uneven
     dump = box_dump(roof_inset=0.005)
     for v in dump["meshes"][0]["vertices"]:
         if abs(v[2] - 6.605) < 1e-6 and v[0] > 9:
@@ -503,7 +635,7 @@ def shaft_roof(inner_overlap=0.02):
 
 @pytest.mark.parametrize("inner, ok", [(0.02, True), (0.03, False)])
 def test_a_shaft_through_an_inset_roof_is_an_inner_outline_of_its_joint(inner, ok):
-    # KPP1 (user 2026-10-10, flat inset roof around its vent shaft): the shaft's foot is an inner outline
+    # KPP1 (user 2026-10-10 [D038], flat inset roof around its vent shaft): the shaft's foot is an inner outline
     # of the hole, the plate's hole around the shaft an inner outline of the plate, the same overlap
     report = run(shaft_roof(inner), shaft_roof(0.02))
     mesh = by_id(report)["mesh"]
@@ -601,7 +733,7 @@ def test_a_vanished_shaft_never_hides_behind_a_split_one():
 
 
 def test_material_ids_from_an_objects_udim_table():
-    # K01 (user 2026-10-11): finishes as UDIM tiles; ids from jobs/<object>/materials.json; unknown tile = 0
+    # K01 (user 2026-10-11 [D053]): finishes as UDIM tiles; ids from jobs/<object>/materials.json; unknown tile = 0
     from twinqa.geometry.mesh import assign_material_ids
     dump = {"meshes": [{"name": "body", "vertices": [], "triangles": [[0, 1, 2]] * 3, "material_ids": [1, 1, 1],
                         "udim_tiles": [1001, 1006, 1099]},

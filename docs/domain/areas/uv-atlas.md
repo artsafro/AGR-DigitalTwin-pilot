@@ -29,7 +29,7 @@ subsets need exported-FBX readback (`--scene`). This research ran no DCC or deli
 | UV-06 — Ground relief density band | reg p.10 §6.1; reg p.32 §6.2; [D097]; [D021] | only the relief surface inside the site: >= 10 and <= 40 (page text says "pixels per sq. metre", example 2048×2048 <-> square 204 × 204 m); C4 decided by the user [D097]: pixels per LINEAR metre, 10–40 px/m with 2K textures. Baking vs slicing: see UV-08 | Diffuse 512–1706 px/m, formula ρ = L_t ÷ L_p (texture side px / polygon length m); [D097] quotes 520–1706 px/m at 4K — differs from the regulation's 512, recorded as C36 (open, no side chosen); [D021] cut target about 4 × 4 m (1024 px/m) | Manual metric UV inspection; NPM Ground density has no general check; V009 unimplemented; OCR "+" vs image "÷" is C10 | none | [C4 / D097](../conflicts.md#a-inside-the-regulation), [C36](../conflicts.md#c-between-local-sources-project-decisionslessons), [VPM UV](../uv-textures.md#vpm-uv--udim) |
 | UV-07 — Density applicability and exemptions | reg p.10 §6.2; reg p.31–32 §6.1 | Density not applied to perimeter polygons extruded down (§3.4), Flora, OKS, GroundEl | Density applies only to Diffuse; ERM, Normal and placeholders exempt; for maps with alpha a higher density in the range is recommended (p.32 §6.2) | Manual target classification before grading | none | [NPM textures](../uv-textures.md#npm-textures-app1), [VPM UV](../uv-textures.md#vpm-uv--udim) |
 | UV-08 — Ground baking vs slicing approaches | reg p.18 fig.7–8 | Two example approaches for site landscaping and its atlas: «Запекание» (baking) and «Нарезка» (slicing); illustrative figures, not a numeric rule | Not shown for VPM | Choose and record the approach per site; manual atlas review | none | [NPM textures](../uv-textures.md#npm-textures-app1) |
-| UV-09 — VPM UDIM, single UV channel | reg p.31 §2.1.1; reg p.9 §5.1 | PNG atlases embedded in FBX (not UDIM) | `*_Main` and `*_Ground`: UV only by UDIM, one UV set on one channel | Exported-FBX readback of UV channel count | V008 — `scene_findings` `uv_channels != 1` (needs `--scene` readback) | [VPM UV](../uv-textures.md#vpm-uv--udim), [implementation](../../../src/twinqa/scene.py) |
+| UV-09 — VPM UDIM, single UV channel | reg p.31 §2.1.1; reg p.9 §5.1 | PNG atlases embedded in FBX (not UDIM) | `*_Main` and `*_Ground`: UV only by UDIM, one UV set on one channel | Exported-FBX readback of UV channel count; pre-export Max scene dump: map channel 1 named `UV`, channels 2+ listed (origin: team script `ClearCustomAttributesAndObjProp_010.ms`, #547) | V008 — `scene_findings` `uv_channels != 1` (needs `--scene` readback); pre-export `twinqa.export_hygiene` | [VPM UV](../uv-textures.md#vpm-uv--udim), [implementation](../../../src/twinqa/scene.py) |
 | UV-10 — UDIM tile sequence | reg p.31 §2.1.3; reg p.39 | n/a (atlas) | Tiles filled from 1001 strictly sequentially, no gaps, 10 × 10 scheme (1001–1100, appendix 1 fig. 1.2) | Archive filename tile sequence; scene UV tile layout is not cross-checked against filenames | V008 — `uv.sequential_tiles` (archive filename sequence only) | [VPM UV](../uv-textures.md#vpm-uv--udim), [uv.py](../../../src/twinqa/uv.py) |
 | UV-11 — No mirrored islands | reg p.31 §2.1.4 | Not stated for NPM on p.9–10 | Mirrored UDIM islands forbidden; rotating islands not recommended | Mirrored-triangle readback; rotation is advisory and unchecked | V008 — `scene_findings` mirrored UV triangles (needs `--scene`) | [VPM UV](../uv-textures.md#vpm-uv--udim), [implementation](../../../src/twinqa/scene.py) |
 | UV-12 — Splitting, overlap, tile margins and seams | reg p.31 §2.1.2, §2.1.5–2.1.6 | NPM atlas rules (UV-13 padding) | Geometry larger than one UDIM tile at required density is split; repeating/similar islands placed by overlap; margin from UDIM tile borders; no visible seams, shifts or pattern mismatch between maps | Manual UV/render review; no island-overlap or margin metric implemented | none | [VPM UV](../uv-textures.md#vpm-uv--udim), [validation inventory](../validation.md#implementation-status-inventory-static-audit) |
@@ -73,6 +73,17 @@ The table contains **14 requirement rows**: **10** with `none` and **4** with pa
 
 Remaining work on the partial rows: UV-10 checks archive filename sequence only and does not cross-check scene UV tile layout against filenames; UV-14 checks meshes named `*MainGlass` only and does not check GroundGlass. V009 density is roadmap T-UV-3. The UV benchmark is roadmap T-UV-2. No complete UV L2 is claimed.
 
+**2026-10-20 update [D160]:** the VPM lower bound in the historical D097 quotations above is superseded: use 512-1706 px/m. C36 is decided; NPM Ground 10-40 is unchanged. See [2026 requirements](../requirements-2026.md).
+
 ## Notes
 
 No tests were added. This sheet is an L1 index and is not delivery acceptance.
+
+Working-mesh material IDs are not UDIM tiles [D030]. `UDIM-MultiSub_Universal(max22-26).ms` (not in this repo) writes the tile into the face material ID:
+
+```
+fn getUDIMFromUV u v =
+    return 1001 + udimU + (udimV * 10)
+```
+
+(`UDIM-MultiSub_Universal(max22-26).ms:1` and `:5`, `1001+floor(U)+10*floor(V)`). A working-mesh ID >= 1001 fails `check_material_ids`. Export still numbers tiles 1001-1100 (UV-10). See [Materials](../materials.md).

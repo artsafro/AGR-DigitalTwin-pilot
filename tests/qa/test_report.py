@@ -1,0 +1,479 @@
+"""Report stamps (standards digest, code commit) and --recheck of a stored report (issue #511).
+
+Pattern: new-case: validator report provenance and recheck (no modelling pattern applies).
+
+recheck reads an old report.json and says whether its verdict still holds now:
+current (standards and target unchanged), stale_standards (a rule file changed),
+evidence_missing (the target is gone or changed). The old report is never rewritten.
+"""
+import json
+import shutil
+import struct
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
+import validate_package as vp
+from twinqa.io import digest, digest_text
+from twinqa.profiles import DEFAULT_STANDARDS, load_profiles, standards_digest
+
+OLD_KEYS = {"profile", "target", "target_sha256", "source_sha256", "source_pdf_verified", "passed", "exit_code",
+            "machine_stage_counts", "manual_reviews_pending", "stages", "notes"}
+
+
+def fbx(version=7400):
+    return b"Kaydara FBX Binary  \x00\x1a\x00" + struct.pack("<I", version) + b"\x00" * 64
+
+
+@pytest.fixture
+def standards(tmp_path, monkeypatch):
+    folder = tmp_path / "standards"
+    shutil.copytree(DEFAULT_STANDARDS, folder, ignore=shutil.ignore_patterns("*.pdf"))
+    lock_path = folder / "source/source-lock.json"
+    lock = json.loads(lock_path.read_text(encoding="utf-8"))
+    lock["pdf_default_location"] = str(tmp_path / "absent.pdf")
+    lock_path.write_text(json.dumps(lock), encoding="utf-8")
+    monkeypatch.delenv("TWINQA_REGULATION_PDF", raising=False)
+    return folder
+
+
+@pytest.fixture
+def old(tmp_path, standards, capsys):
+    """A stored report.json of a header-only FBX, written by the CLI."""
+    target = tmp_path / "model.fbx"
+    target.write_bytes(fbx())
+    code = vp.main([str(target), "--json", "--standards", str(standards)])
+    report = tmp_path / "report.json"
+    report.write_text(capsys.readouterr().out, encoding="utf-8")
+    assert code == 2
+    return report
+
+
+def edit_threshold(folder, relock=True):
+    path = folder / "NPM_STANDARD.yaml"
+    text = path.read_text(encoding="utf-8")
+    assert "max_characters: 254" in text
+    path.write_text(text.replace("max_characters: 254", "max_characters: 200"), encoding="utf-8")
+    if relock:
+        lock_path = folder / "source/source-lock.json"
+        lock = json.loads(lock_path.read_text(encoding="utf-8"))
+        lock["profiles"]["NPM_STANDARD.yaml"] = digest_text(path)
+        lock_path.write_text(json.dumps(lock), encoding="utf-8")
+
+
+def make_passed(data, ok=True):
+    """Rewrite the stored stages so the report genuinely passed (ok) or failed; keeps it self-consistent."""
+    for stage in data["stages"]:
+        if stage["gate"] == "blocking":
+            status = "pass" if ok else "fail"
+            stage["findings"] = [{"name": "probe", "status": status, "observed": "x", "expected": "x",
+                                  "source_pdf_pages": [1], "evidence": "", "conflicts": []}]
+            stage["status"] = status
+    data["passed"], data["exit_code"] = ok, 0 if ok else 1
+    return data
+
+
+def recheck(old, standards, out, *extra):
+    return vp.main(["--recheck", str(old), "--output", str(out), "--standards", str(standards), *extra])
+
+
+# --- stamps -------------------------------------------------------------------------------------------
+
+def test_report_stamps_standards_digest_and_code_commit_keeping_old_keys(old, standards):
+    data = json.loads(old.read_text(encoding="utf-8"))
+    assert OLD_KEYS <= set(data)
+    assert data["standards_sha256"] == standards_digest(standards) == load_profiles(standards).standards_sha256
+    assert len(data["standards_sha256"]) == 64
+    head = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True,
+                          cwd=Path(vp.__file__).parent).stdout.strip()
+    assert data["code_commit"] == head and len(head) == 40
+
+
+def test_standards_digest_moves_with_a_threshold_and_ignores_line_endings(standards):
+    before = standards_digest(standards)
+    for name in ("NPM_STANDARD.yaml", "traceability.json"):
+        p = standards / name
+        p.write_bytes(p.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+    assert standards_digest(standards) == before
+    edit_threshold(standards)
+    assert standards_digest(standards) != before
+
+
+def test_standards_digest_ignores_machine_pdf_location(standards):
+    before = standards_digest(standards)
+    lock_path = standards / "source/source-lock.json"
+    lock = json.loads(lock_path.read_text(encoding="utf-8"))
+    lock["pdf_default_location"] = "Z:/elsewhere.pdf"
+    lock_path.write_text(json.dumps(lock), encoding="utf-8")
+    assert standards_digest(standards) == before
+
+
+def test_standards_digest_missing_rule_file_is_an_error(standards):
+    (standards / "VPM_STANDARD.yaml").unlink()
+    with pytest.raises(OSError):
+        standards_digest(standards)
+
+
+# --- recheck: the three verdicts ----------------------------------------------------------------------
+
+def run_recheck(old, standards, out, capsys):
+    before = old.read_bytes()
+    code = recheck(old, standards, out, "--json")
+    printed = capsys.readouterr().out
+    assert old.read_bytes() == before  # old report byte-identical
+    return code, printed
+
+
+def test_recheck_unchanged_is_current(old, standards, tmp_path, capsys):
+    out = tmp_path / "recheck.json"
+    code, printed = run_recheck(old, standards, out, capsys)
+    data = json.loads(out.read_text(encoding="utf-8"))
+    assert data["status"] == "current" and json.loads(printed) == data
+    assert code == data["exit_code"] == json.loads(old.read_text(encoding="utf-8"))["exit_code"] == 2
+    assert data["recheck_of_sha256"] == digest(old.read_bytes())
+
+
+def test_recheck_current_keeps_a_stored_pass(old, standards, tmp_path, capsys):
+    data = json.loads(old.read_text(encoding="utf-8"))
+    make_passed(data)
+    old.write_text(json.dumps(data), encoding="utf-8")
+    out = tmp_path / "recheck.json"
+    code, _ = run_recheck(old, standards, out, capsys)
+    new = json.loads(out.read_text(encoding="utf-8"))
+    assert (code, new["status"], new["passed"]) == (0, "current", True)
+
+
+@pytest.mark.parametrize("relock", [True, False])
+def test_recheck_edited_threshold_is_stale_standards(old, standards, tmp_path, capsys, relock):
+    edit_threshold(standards, relock)
+    out = tmp_path / "recheck.json"
+    code, printed = run_recheck(old, standards, out, capsys)
+    data = json.loads(out.read_text(encoding="utf-8"))
+    assert data["status"] == "stale_standards" and data["passed"] is False
+    assert code == data["exit_code"] != 0
+
+
+@pytest.mark.parametrize("change", ["delete", "modify"])
+def test_recheck_target_gone_or_changed_is_evidence_missing(old, standards, tmp_path, capsys, change):
+    target = tmp_path / "model.fbx"
+    if change == "delete":
+        target.unlink()
+    else:
+        target.write_bytes(fbx(7500))
+    out = tmp_path / "recheck.json"
+    code, _ = run_recheck(old, standards, out, capsys)
+    data = json.loads(out.read_text(encoding="utf-8"))
+    assert data["status"] == "evidence_missing" and data["passed"] is False
+    assert code == data["exit_code"] != 0
+
+
+def test_recheck_both_changed_reports_evidence_missing_with_both_reasons(old, standards, tmp_path, capsys):
+    (tmp_path / "model.fbx").unlink()
+    edit_threshold(standards)
+    out = tmp_path / "recheck.json"
+    code, _ = run_recheck(old, standards, out, capsys)
+    data = json.loads(out.read_text(encoding="utf-8"))
+    assert data["status"] == "evidence_missing" and code != 0
+    assert len(data["reasons"]) == 2
+
+
+@pytest.mark.parametrize("break_it", ["stale", "missing"])
+def test_stale_or_missing_text_never_prints_pass(old, standards, tmp_path, capsys, break_it):
+    data = json.loads(old.read_text(encoding="utf-8"))
+    make_passed(data)  # even a stored pass is not re-confirmed
+    old.write_text(json.dumps(data), encoding="utf-8")
+    if break_it == "stale":
+        edit_threshold(standards)
+    else:
+        (tmp_path / "model.fbx").unlink()
+    code = recheck(old, standards, tmp_path / "r.json")
+    text = capsys.readouterr().out
+    assert code != 0 and "pass" not in text.lower()
+    assert json.loads((tmp_path / "r.json").read_text(encoding="utf-8"))["passed"] is False
+
+
+def test_legacy_report_without_standards_digest_is_stale(old, standards, tmp_path, capsys):
+    data = json.loads(old.read_text(encoding="utf-8"))
+    del data["standards_sha256"]
+    old.write_text(json.dumps(data), encoding="utf-8")
+    out = tmp_path / "recheck.json"
+    code, _ = run_recheck(old, standards, out, capsys)
+    assert json.loads(out.read_text(encoding="utf-8"))["status"] == "stale_standards" and code != 0
+
+
+# --- recheck: output is a new file, inputs are never touched -----------------------------------------
+
+@pytest.mark.parametrize("alias", ["old", "target", "existing", "old_partial", "target_partial"])
+def test_output_aliasing_an_input_or_existing_file_is_refused(old, standards, tmp_path, alias, capsys):
+    target = tmp_path / "model.fbx"
+    if alias == "existing":
+        out = tmp_path / "exists.json"
+        out.write_text("keep", encoding="utf-8")
+    elif alias == "old":
+        out = tmp_path / "." / "report.json"
+    elif alias == "target":
+        out = target
+    elif alias == "old_partial":  # out.partial would be the old report
+        old2 = tmp_path / "x.json.partial"
+        old2.write_bytes(old.read_bytes())
+        old, out = old2, tmp_path / "x.json"
+    else:
+        data = json.loads(old.read_text(encoding="utf-8"))
+        data["target"] = str(tmp_path / "t.fbx.partial")
+        (tmp_path / "t.fbx.partial").write_bytes(target.read_bytes())
+        data["target_sha256"] = digest(target.read_bytes())
+        old.write_text(json.dumps(data), encoding="utf-8")
+        out = tmp_path / "t.fbx"
+    snapshot = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    assert recheck(old, standards, out) != 0
+    assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == snapshot
+    assert "pass" not in capsys.readouterr().out.lower()
+
+
+@pytest.mark.parametrize("body", ["", "[]", "{}", "{not json", '{"recheck_of": "a"}'])
+def test_malformed_old_report_is_an_error_and_writes_nothing(standards, tmp_path, body, capsys):
+    old = tmp_path / "bad.json"
+    old.write_text(body, encoding="utf-8")
+    out = tmp_path / "r.json"
+    assert recheck(old, standards, out) != 0
+    assert not out.exists() and not Path(str(out) + ".partial").exists()
+    assert "pass" not in capsys.readouterr().out.lower()
+
+
+@pytest.mark.parametrize("field, value", [("passed", "true"), ("exit_code", 7), ("exit_code", True),
+                                          ("target_sha256", "abc"), ("target", ""), ("passed", None),
+                                          ("standards_sha256", 5)])
+def test_old_report_with_bad_field_types_is_an_error(old, standards, tmp_path, field, value):
+    data = json.loads(old.read_text(encoding="utf-8"))
+    data[field] = value
+    old.write_text(json.dumps(data), encoding="utf-8")
+    out = tmp_path / "r.json"
+    assert recheck(old, standards, out) != 0 and not out.exists()
+
+
+@pytest.mark.parametrize("forge", ["passed_only", "passed_and_exit", "exit_only", "bad_stage"])
+def test_forged_or_inconsistent_verdict_is_an_error(old, standards, tmp_path, forge):
+    """The stored verdict must match its own stages: a hand-edited pass is never re-confirmed."""
+    data = json.loads(old.read_text(encoding="utf-8"))
+    if forge == "passed_only":
+        data["passed"] = True  # exit_code stays 2
+    elif forge == "passed_and_exit":
+        data["passed"], data["exit_code"] = True, 0  # stages still not_run
+    elif forge == "exit_only":
+        data["exit_code"] = 1  # no fail finding
+    else:
+        next(st for st in data["stages"] if st["findings"])["findings"][0]["status"] = "great"
+    old.write_text(json.dumps(data), encoding="utf-8")
+    assert recheck(old, standards, tmp_path / "r.json") != 0 and not (tmp_path / "r.json").exists()
+
+
+def test_recheck_requires_output_and_excludes_a_target(old, standards, tmp_path):
+    with pytest.raises(SystemExit) as exc:
+        vp.main(["--recheck", str(old), "--standards", str(standards)])
+    assert exc.value.code != 0
+    with pytest.raises(SystemExit) as exc:
+        vp.main([str(tmp_path / "model.fbx"), "--recheck", str(old), "--output", str(tmp_path / "r.json")])
+    assert exc.value.code != 0
+
+
+def test_recheck_in_a_fresh_process(old, standards, tmp_path):
+    edit_threshold(standards)
+    out = tmp_path / "r.json"
+    script = Path(vp.__file__)
+    proc = subprocess.run([sys.executable, str(script), "--recheck", str(old), "--output", str(out),
+                           "--standards", str(standards)], capture_output=True, text=True, encoding="utf-8")
+    assert proc.returncode != 0 and "pass" not in proc.stdout.lower(), proc.stderr
+    assert json.loads(out.read_text(encoding="utf-8"))["status"] == "stale_standards"
+
+
+@pytest.mark.parametrize("cwd, status", [("tmp", "current"), ("standards", "evidence_missing")])
+def test_relative_target_resolves_against_cwd_like_validate(old, standards, tmp_path, capsys, monkeypatch,
+                                                            cwd, status):
+    data = json.loads(old.read_text(encoding="utf-8"))
+    data["target"] = "model.fbx"
+    old.write_text(json.dumps(data), encoding="utf-8")
+    monkeypatch.chdir(tmp_path if cwd == "tmp" else standards)
+    out = tmp_path / "r.json"
+    run_recheck(old, standards, out, capsys)
+    assert json.loads(out.read_text(encoding="utf-8"))["status"] == status
+
+
+# --- probe: every combination of target x standards x stored verdict ---------------------------------
+
+@pytest.mark.parametrize("stored_ok", [True, False])
+@pytest.mark.parametrize("std", ["same", "edited", "edited_unlocked", "legacy"])
+@pytest.mark.parametrize("tgt", ["same", "changed", "deleted"])
+def test_probe_recheck_matrix(old, standards, tmp_path, capsys, tgt, std, stored_ok):
+    data = json.loads(old.read_text(encoding="utf-8"))
+    make_passed(data, stored_ok)
+    if std == "legacy":
+        del data["standards_sha256"], data["code_commit"]
+    old.write_text(json.dumps(data), encoding="utf-8")
+    if std.startswith("edited"):
+        edit_threshold(standards, relock=std == "edited")
+    target = tmp_path / "model.fbx"
+    if tgt == "changed":
+        target.write_bytes(target.read_bytes() + b"\x00")
+    elif tgt == "deleted":
+        target.unlink()
+    before = old.read_bytes()
+    out = tmp_path / "probe.json"
+    code = recheck(old, standards, out)
+    text = capsys.readouterr().out
+    new = json.loads(out.read_text(encoding="utf-8"))
+    expected = "evidence_missing" if tgt != "same" else "stale_standards" if std != "same" else "current"
+    assert old.read_bytes() == before and new["status"] == expected
+    if expected == "current":
+        assert code == new["exit_code"] == data["exit_code"] and new["passed"] is stored_ok
+    else:
+        assert code == new["exit_code"] in (3, 4) and new["passed"] is False and "pass" not in text.lower()
+
+
+def test_missing_standards_folder_is_an_error_and_writes_nothing(old, tmp_path):
+    out = tmp_path / "r.json"
+    assert recheck(old, tmp_path / "no-standards", out) == 2 and not out.exists()
+
+
+def test_output_case_alias_of_old_report_is_refused(old, standards, tmp_path):
+    before = old.read_bytes()
+    assert recheck(old, standards, tmp_path / "REPORT.JSON") != 0
+    assert old.read_bytes() == before
+
+
+# --- review round 1: stage inventory at the recheck boundary (P1-1) ------------------------------------
+
+def _blocking(data):
+    return [s for s in data["stages"] if s["gate"] == "blocking"]
+
+
+def forge_inventory(data, how):
+    make_passed(data)
+    first = _blocking(data)[0]
+    if how == "drop_stages":  # only one passing stage left
+        data["stages"] = [first]
+    elif how == "drop_one_mandatory":
+        data["stages"].remove(_blocking(data)[-1])
+    elif how == "gate_unsupported":  # other mandatory stages renamed out of the blocking gate
+        for s in _blocking(data)[1:]:
+            s["gate"], s["findings"], s["status"] = "unsupported", [], "not_run"
+    elif how == "gate_manual_review":  # a valid gate, but not the one the standards give
+        s = _blocking(data)[-1]
+        s["gate"], s["findings"], s["status"] = "manual_review", [], "not_run"
+    elif how == "duplicate_stage":
+        data["stages"].append(json.loads(json.dumps(first)))
+    elif how == "unknown_stage":
+        extra = json.loads(json.dumps(first))
+        extra["id"] = "V999"
+        data["stages"].append(extra)
+    elif how == "check_text":
+        first["check"] = "anything"
+    elif how == "reordered":
+        data["stages"].reverse()
+    elif how == "profile_unknown":
+        data["profile"] = "ifc"
+    elif how == "profile_other":  # the VPM stage set does not match the stored NPM stages
+        data["profile"] = "vpm" if data["profile"] == "npm" else "npm"
+    data["passed"], data["exit_code"] = True, 0
+    return data
+
+
+INVENTORY_FORGERIES = ["drop_stages", "drop_one_mandatory", "gate_unsupported", "gate_manual_review",
+                       "duplicate_stage", "unknown_stage", "check_text", "reordered", "profile_unknown",
+                       "profile_other"]
+
+
+@pytest.mark.parametrize("how", INVENTORY_FORGERIES)
+def test_incomplete_or_regated_stage_inventory_is_an_error(old, standards, tmp_path, capsys, how):
+    data = forge_inventory(json.loads(old.read_text(encoding="utf-8")), how)
+    old.write_text(json.dumps(data), encoding="utf-8")
+    before = old.read_bytes()
+    out = tmp_path / "recheck.json"
+    code = recheck(old, standards, out)
+    captured = capsys.readouterr()
+    assert code == 2 and not out.exists() and not Path(str(out) + ".partial").exists()
+    assert "PASSED" not in captured.out and "old report" in captured.err
+    assert old.read_bytes() == before
+
+
+@pytest.mark.parametrize("ok, code", [(True, 0), (False, 1)])
+def test_complete_inventory_controls_stay_current(old, standards, tmp_path, capsys, ok, code):
+    data = make_passed(json.loads(old.read_text(encoding="utf-8")), ok)
+    old.write_text(json.dumps(data), encoding="utf-8")
+    out = tmp_path / "recheck.json"
+    assert recheck(old, standards, out) == code
+    assert json.loads(out.read_text(encoding="utf-8"))["status"] == "current"
+
+
+def test_complete_inventory_survives_crlf_standards(old, standards, tmp_path, capsys):
+    data = make_passed(json.loads(old.read_text(encoding="utf-8")))
+    old.write_text(json.dumps(data), encoding="utf-8")
+    for name in ("DELIVERY_VALIDATOR.yaml", "NPM_STANDARD.yaml"):
+        p = standards / name
+        p.write_bytes(p.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+    out = tmp_path / "recheck.json"
+    assert recheck(old, standards, out) == 0
+    assert json.loads(out.read_text(encoding="utf-8"))["status"] == "current"
+
+
+@pytest.mark.parametrize("legacy", [True, False])
+def test_partial_report_on_stale_standards_is_stale_never_pass(old, standards, tmp_path, capsys, legacy):
+    """Stale standards may legitimately prescribe other stages: not an input error, but never a pass."""
+    data = forge_inventory(json.loads(old.read_text(encoding="utf-8")), "drop_stages")
+    if legacy:
+        del data["standards_sha256"]
+    else:
+        edit_threshold(standards)
+    old.write_text(json.dumps(data), encoding="utf-8")
+    out = tmp_path / "recheck.json"
+    code = recheck(old, standards, out)
+    printed = capsys.readouterr().out
+    new = json.loads(out.read_text(encoding="utf-8"))
+    assert (code, new["status"], new["passed"]) == (3, "stale_standards", False)
+    assert "PASSED" not in printed
+
+
+def test_unknown_gate_is_an_error_even_on_stale_standards(old, standards, tmp_path):
+    data = forge_inventory(json.loads(old.read_text(encoding="utf-8")), "gate_unsupported")
+    old.write_text(json.dumps(data), encoding="utf-8")
+    edit_threshold(standards)
+    out = tmp_path / "recheck.json"
+    assert recheck(old, standards, out) == 2 and not out.exists()
+
+
+def test_broken_validator_yaml_is_an_error_and_writes_nothing(old, standards, tmp_path):
+    (standards / "DELIVERY_VALIDATOR.yaml").write_text("stages: [\n", encoding="utf-8")
+    out = tmp_path / "recheck.json"
+    assert recheck(old, standards, out) == 2 and not out.exists()
+
+
+# --- review round 1: the stamp describes the parsed rules (P1-2) ---------------------------------------
+
+def test_edit_during_load_cannot_stamp_parsed_rules_with_the_new_digest(standards, monkeypatch):
+    """Edit max_characters 254 -> 200 (relocked) after the rule files were read, before the stamp."""
+    import twinqa.profiles as profiles
+    original_digest = standards_digest(standards)
+    real, edited = profiles.rule_paths, []
+
+    def mutate_then(value, path):
+        if not edited:
+            edit_threshold(standards)
+            edited.append(True)
+        return real(value, path)
+
+    monkeypatch.setattr(profiles, "rule_paths", mutate_then)
+    loaded = profiles.load_profiles(standards)
+    assert edited
+    assert "'max_characters': 254" in str(loaded.npm)
+    assert standards_digest(standards) != original_digest  # the files really moved
+    assert loaded.standards_sha256 == original_digest  # stamp = the bytes the rules came from
+
+
+def test_unchanged_and_crlf_load_stamp_equals_file_digest(standards):
+    first = load_profiles(standards).standards_sha256
+    assert first == standards_digest(standards)
+    for name in ("NPM_STANDARD.yaml", "traceability.json", "DELIVERY_VALIDATOR.yaml"):
+        p = standards / name
+        p.write_bytes(p.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+    assert load_profiles(standards).standards_sha256 == first == standards_digest(standards)

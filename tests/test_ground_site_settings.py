@@ -1,0 +1,251 @@
+"""new-case: reusable Ground site data; flat datum retains method-C spacing."""
+import copy
+import importlib.util
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+import numpy as np
+import pytest
+from shapely.geometry import box, mapping
+
+spec = importlib.util.spec_from_file_location('ground_site_builder', Path(__file__).parents[1] / 'jobs/VATUTINO-SITE/build_ground.py')
+builder = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(builder)
+
+
+def cli(tmp_path, text=None, out=None):
+    d = fixture()
+    d['coverings']['asphalt']['geometry'] = mapping(box(1, 0, 6, 4))
+    src = tmp_path / 'input.json'
+    src.write_text(json.dumps(d), encoding='utf-8')
+    config = tmp_path / 'site.json'
+    config.write_text(text if text is not None else json.dumps(settings()), encoding='utf-8')
+    target = out or tmp_path / 'output'
+    run = subprocess.run([sys.executable, str(spec.origin), str(src), '--site-settings', str(config),
+                          '--out', str(target), '--footprint-min', '10', '--chord', '0'],
+                         capture_output=True, text=True)
+    return run, target
+
+
+def test_approved_curb_joint_config_reaches_builder(tmp_path):
+    from shapely.geometry import LineString
+    d = fixture()
+    d['coverings']['asphalt']['geometry'] = mapping(box(0, 0, 10, 4))
+    d['ground_elements'] = [
+        dict(ref='drive', role='curb_drive', geometry=mapping(LineString([(1, 2), (9, 2)]))),
+        dict(ref='garden', role='curb_garden', geometry=mapping(LineString([(5, .5), (5, 3.5)]))),
+    ]
+    s = settings()
+    s['separate_curbs'] = True
+    # synthetic approval record (#512), not a real project decision
+    s['curb_joint_approval'] = dict(approved_by='synthetic-test-approver', approved_at='2026-10-21',
+                                    decision_id='D-test')
+    src, config, out = tmp_path/'curbs.json', tmp_path/'site.json', tmp_path/'output'
+    src.write_text(json.dumps(d))
+    config.write_text(json.dumps(s))
+    run = subprocess.run([sys.executable, str(spec.origin), str(src), '--site-settings', str(config),
+                          '--out', str(out), '--chord', '0', '--snap', '.003'], capture_output=True, text=True)
+    assert run.returncode == 0, run.stderr + run.stdout
+    rep = json.loads((out/'ground_report.json').read_text())
+    assert all(g['pass'] for g in rep['gates'].values())
+    rows = {r['ref']: r for r in rep['details']}
+    assert rows['garden']['joint_gap_m'] == .006
+    assert rows['garden']['joint_trim_m2'] > 0
+    assert rows['drive']['joint_trim_m2'] == 0
+    assert rep['codirectional']['pairs_below'] == 0
+    assert rows['garden']['decision_id'] == 'D-test'
+    assert rep['curb_joints'] and all(j['approved_by'] == 'synthetic-test-approver' for j in rep['curb_joints'])
+
+
+@pytest.mark.parametrize('approval', [None, {}, dict(approved_by='', approved_at='2026-10-21', decision_id='D-test'),
+                                      dict(approved_by='x', approved_at=' ', decision_id='D-test')],
+                         ids=['missing', 'empty', 'by-empty', 'at-blank'])
+def test_unapproved_curb_joint_config_fails_before_writing(tmp_path, approval):
+    from shapely.geometry import LineString
+    d = fixture()
+    d['ground_elements'] = [dict(ref='drive', role='curb_drive', geometry=mapping(LineString([(1, 2), (9, 2)])))]
+    s = settings()
+    s['separate_curbs'] = True
+    if approval is not None:
+        s['curb_joint_approval'] = approval
+    src, config, out = tmp_path/'curbs.json', tmp_path/'site.json', tmp_path/'output'
+    src.write_text(json.dumps(d))
+    config.write_text(json.dumps(s))
+    run = subprocess.run([sys.executable, str(spec.origin), str(src), '--site-settings', str(config),
+                          '--out', str(out), '--chord', '0', '--snap', '.003'], capture_output=True, text=True)
+    assert run.returncode != 0
+    assert 'CurbJointApprovalError' in run.stderr
+    assert not out.exists()
+
+
+def test_visible_covering_priority_preserves_tile_and_reports_hidden_drop():
+    d = fixture()
+    d['coverings'].update(tile={'geometry': mapping(box(2, 0, 4, 4))},
+                          geogrid={'geometry': mapping(box(3.999, 0, 8, 4))})
+    s = settings()
+    s['slots'].update(tile='Tile', geogrid='Geogrid')
+    s['covering_priority'] = [['Tile', 'Geogrid']]
+    before = copy.deepcopy(d)
+    plan, _ = builder.site_plan(d, s, 1000)
+    tiles = [l for l in plan.layers if l.slot == 'Tile']
+    assert len(tiles) == 1 and tiles[0].level == 1
+    assert tiles[0].geom.area == pytest.approx(8)
+    grid = [l for l in plan.layers if l.slot == 'Geogrid']
+    assert sum(l.geom.area for l in grid) == pytest.approx(16)
+    assert tiles[0].geom.intersection(grid[0].geom).area == 0
+    drops = plan.report['covering_priority_dispositions']
+    assert drops == [dict(visible_slot='Tile', hidden_covering='geogrid',
+                          removed_m2=pytest.approx(.004), reason='hidden_by_visible_covering')]
+    assert d == before
+
+
+@pytest.mark.parametrize('priority', [None, 'Tile', [['Tile']], [['Unknown', 'Geogrid']],
+    [['Tile', 'Tile']], [['Tile', 'Geogrid'], ['Geogrid', 'Tile']], [[float('nan'), 'Geogrid']]])
+def test_covering_priority_rejects_ambiguous_policy(priority):
+    d = fixture()
+    s = settings()
+    s['covering_priority'] = priority
+    with pytest.raises(ValueError, match='covering_priority'):
+        builder.site_plan(d, s, 1000)
+
+
+def test_site_cli_fresh_process(tmp_path):
+    run, out = cli(tmp_path)
+    assert run.returncode == 0, run.stderr + run.stdout
+    rep = json.loads((out / 'ground_report.json').read_text())
+    assert rep['relief']['mode'] == 'flat by user decision'
+    assert rep['relief']['spot_points'] == 0
+    assert rep['relief']['flat_datum_m'] == 0
+    assert all(g['pass'] for g in rep['gates'].values())
+    assert len(json.loads((out / 'ground_master_npm.json').read_text())['faces']) > 0
+
+
+@pytest.mark.parametrize('text', ['{}', 'null', '{"slots":{},"slots":{}}'])
+def test_invalid_site_cli_does_not_write(tmp_path, text):
+    run, out = cli(tmp_path, text)
+    assert run.returncode != 0
+    assert not out.exists()
+
+
+def test_site_cli_rejects_nonempty_output(tmp_path):
+    out = tmp_path / 'old'
+    out.mkdir()
+    sentinel = out / 'ground_master_npm.json'
+    sentinel.write_text('old export')
+    run, _ = cli(tmp_path, out=out)
+    assert run.returncode != 0
+    assert list(out.iterdir()) == [sentinel]
+    assert sentinel.read_text() == 'old export'
+
+
+def fixture():
+    # Synthetic: asphalt at left, a 16 m2 approved large gap, 4 m2 lawn remainder.
+    return {'boundary': mapping(box(0, 0, 10, 4)), 'base_covering': 'asphalt',
+            'coverings': {'asphalt': {'geometry': mapping(box(0, 0, 5, 4))}},
+            'elevations': []}
+
+
+def settings():
+    return {'slots': {'asphalt': 'Asphalt', 'lawn': 'Lawn'},
+            'uncovered_covering': 'lawn', 'flat_datum_m': 0.0}
+
+
+@pytest.mark.skipif(not Path('C:/x/ground-cod-22/intake-v001/cod_ground_inputs.json').exists(), reason='local copied COD intake required')
+def test_real_cod_touching_lawn_overlay():
+    d = json.loads(Path('C:/x/ground-cod-22/intake-v001/cod_ground_inputs.json').read_text(encoding='utf-8'))
+    s = json.loads((Path(__file__).parents[1] / 'jobs/COD-20207/build-settings.json').read_text())
+    plan, _ = builder.site_plan(d, s, footprint_min=1000)
+    assert len(plan.holes) == 1
+    assert plan.holes[0].area == pytest.approx(1670.085519, abs=.03)
+    assert any(l.covering == 'lawn' for l in plan.layers)
+
+
+def test_second_site_flat_plan_uses_config_not_vatutino_slots():
+    d = fixture()
+    # Separate the unhatched hole (16 m2) from the small lawn region (4 m2).
+    d['coverings']['asphalt']['geometry'] = mapping(box(1, 0, 6, 4))
+    old = copy.deepcopy(d)
+    plan, points = builder.site_plan(d, settings(), footprint_min=10)
+    assert d == old
+    assert sum(p.area for p in plan.holes) == pytest.approx(16)
+    lawn = [l for l in plan.layers if l.covering == 'lawn']
+    assert len(lawn) == 1 and lawn[0].geom.area == pytest.approx(4)
+    assert lawn[0].slot == 'Lawn' and lawn[0].level == 1
+    assert plan.layers[0].slot == 'Asphalt' and plan.step == .006
+    assert np.asarray(points)[:, 2].tolist() == [0., 0., 0., 0.]
+    sampler = builder.gc.ReliefSampler(builder.gc.build_tin(points))
+    flat = builder.gc.build_flat(plan, cell=4, chord=0, sampler=sampler)
+    projected, misses = builder.gc.project_z(flat, sampler, .006)
+    assert not misses
+    assert set(np.round(projected.verts[:, 2], 6)) == {0., .006}
+
+
+@pytest.mark.parametrize('value', [None, 1, 'true', [], float('nan')])
+def test_joint_policy_is_boolean_only(value):
+    s = settings()
+    s['separate_curbs'] = value
+    with pytest.raises(ValueError, match='separate_curbs'):
+        builder.site_plan(fixture(), s, 10)
+
+
+@pytest.mark.parametrize('which', ['source', 'settings'])
+@pytest.mark.parametrize('target', ['ground_master_npm.json', 'ground_master_vpm.json', 'ground_report.json'])
+def test_site_cli_rejects_hardlink_output_alias(tmp_path, which, target):
+    import os
+    d = fixture()
+    src, config, out = tmp_path/'input.json', tmp_path/'site.json', tmp_path/'out'
+    src.write_text(json.dumps(d))
+    config.write_text(json.dumps(settings()))
+    out.mkdir()
+    protected = src if which == 'source' else config
+    before = protected.read_bytes()
+    os.link(protected, out/target)
+    result = builder.main([str(src), '--site-settings', str(config), '--out', str(out)])
+    assert result == 2
+    assert protected.read_bytes() == before
+    assert [p.name for p in out.iterdir()] == [target]
+
+
+def test_inputs_changing_during_build_leave_no_deliverable(tmp_path, monkeypatch):
+    d = fixture()
+    d['coverings']['asphalt']['geometry'] = mapping(box(1, 0, 6, 4))
+    src, config, out = tmp_path/'input.json', tmp_path/'site.json', tmp_path/'out'
+    src.write_text(json.dumps(d))
+    config.write_text(json.dumps(settings()))
+    original = builder.gc.build_flat
+    def changed(*args, **kwargs):
+        result = original(*args, **kwargs)
+        config.write_text(config.read_text() + '\n')
+        return result
+    monkeypatch.setattr(builder.gc, 'build_flat', changed)
+    with pytest.raises(ValueError, match='inputs changed'):
+        builder.main([str(src), '--site-settings', str(config), '--out', str(out), '--footprint-min', '10'])
+    assert not list(out.iterdir())
+
+
+def test_duplicate_source_key_fails_without_output(tmp_path):
+    src, config, out = tmp_path/'input.json', tmp_path/'site.json', tmp_path/'out'
+    src.write_text('{"boundary":null,"boundary":null}')
+    config.write_text(json.dumps(settings()))
+    with pytest.raises(ValueError, match='duplicate JSON key'):
+        builder.main([str(src), '--site-settings', str(config), '--out', str(out)])
+    assert not out.exists()
+
+
+@pytest.mark.parametrize('mutate,match', [
+    (lambda s: s.update(flat_datum_m=float('nan')), 'flat_datum_m'),
+    (lambda s: s.update(flat_datum_m=float('inf')), 'flat_datum_m'),
+    (lambda s: s.update(flat_datum_m=True), 'flat_datum_m'),
+    (lambda s: s['slots'].pop('asphalt'), 'asphalt'),
+    (lambda s: s['slots'].update(unknown='Unknown'), 'unknown'),
+    (lambda s: s['slots'].update(lawn=''), 'lawn'),
+    (lambda s: s.update(uncovered_covering='asphalt'), 'uncovered_covering'),
+    (lambda s: s.update(typo=0), 'typo'),
+])
+def test_site_settings_fail_closed(mutate, match):
+    s = settings()
+    mutate(s)
+    with pytest.raises(ValueError, match=match):
+        builder.site_plan(fixture(), s, footprint_min=10)

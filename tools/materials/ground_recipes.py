@@ -44,6 +44,8 @@ CANONICAL_SLOTS = (
     "TileDark",
     "FlowerBed",
     "Skirt",
+    "CurbGarden",
+    "Stairs",
 )
 FAMILIES = frozenset({"tile", "particles", "lawn", "ecogrid", "foliage", "soil"})
 DELIVERY_DIR = Path("C:/x/vatutino-ground-textures/v001")
@@ -79,7 +81,7 @@ def require_px_per_m(profile: str, value) -> None:
         raise GroundRecipeError(f"unknown profile {profile}")
     if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
         raise GroundRecipeError(f"{profile} px_per_m must be a finite number")
-    low, high = (10, 40) if profile == "npm" else (520, 1706)
+    low, high = (10, 40) if profile == "npm" else (512, 1706)  # [D160] supersedes the VPM lower bound of D097
     if value < low or value > high:
         raise GroundRecipeError(f"{profile} px_per_m {value} is outside {low}-{high}")
 
@@ -326,11 +328,11 @@ def main(argv=None) -> int:
     except SystemExit as exc:
         return int(exc.code) if exc.code else 0
     try:
-        write_delivery(args.recipe, args.out, version=args.version, address=args.address)
+        manifest = write_delivery(args.recipe, args.out, version=args.version, address=args.address)
     except GroundRecipeError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
-    print("wrote 20 ground diffuse maps")
+    print(f"wrote {len(manifest['maps'])} ground diffuse maps")
     return 0
 
 

@@ -1,0 +1,20 @@
+F
+================================== FAILURES ===================================
+____________________________ test_single_index[1] _____________________________
+
+k = 1
+
+    @pytest.mark.parametrize("k", range(1, 33))
+    def test_single_index(k):
+        sc = scene(k)
+        sc["objects"] = CountingObjects(sc["objects"])
+        check_complexity(sc, TOL)
+>       assert sc["objects"].starts == 7
+E       AssertionError: assert 8 == 7
+E        +  where 8 = [{'mesh': 'm0', 'group': 'piers'}].starts
+
+tests\qa\test_complexity_group_index.py:95: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/qa/test_complexity_group_index.py::test_single_index[1] - Assert...
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed in 0.18s

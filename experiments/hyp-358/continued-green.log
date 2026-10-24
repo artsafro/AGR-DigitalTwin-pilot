@@ -1,0 +1,64 @@
+..........................................................E....          [100%]
+=================================== ERRORS ====================================
+_ ERROR at setup of test_missing_or_unmapped_hatches_error_without_source_mutation[empty] _
+
+self = WindowsPath('C:/x/pi-t_b617b43f'), mode = 448, parents = False
+exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileExistsError: [WinError 183] Невозможно создать файл, так как он уже существует: 'C:\\x\\pi-t_b617b43f'
+
+..\..\..\..\AppData\Roaming\uv\python\cpython-3.14-windows-x86_64-none\Lib\pathlib\__init__.py:1011: FileExistsError
+============================== warnings summary ===============================
+.venv\Lib\site-packages\ezdxf\queryparser.py:50
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:50: PyparsingDeprecationWarning: 'addParseAction' deprecated - use 'add_parse_action'
+    number.addParseAction(lambda t: float(t[0]))  # convert to float
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:51
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:51: PyparsingDeprecationWarning: 'addParseAction' deprecated - use 'add_parse_action'
+    string_ = quotedString.addParseAction(lambda t: t[0][1:-1])  # remove quotes
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:57
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:57: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    Relation = oneOf(["==", "!=", "<", "<=", ">", ">=", "?", "!?"])
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:63
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:63: PyparsingDeprecationWarning: 'setResultsName' deprecated - use 'set_results_name'
+    ).setResultsName("EntityQuery")
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:65
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:65: PyparsingDeprecationWarning: 'infixNotation' deprecated - use 'infix_notation'
+    InfixBoolQuery = infixNotation(
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:72
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:72: PyparsingDeprecationWarning: 'setResultsName' deprecated - use 'set_results_name'
+    ).setResultsName("AttribQuery")
+
+.venv\Lib\site-packages\ezdxf\queryparser.py:74
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\queryparser.py:74: PyparsingDeprecationWarning: 'setResultsName' deprecated - use 'set_results_name'
+    AttribQueryOptions = Literal("i").setResultsName("AttribQueryOptions")
+
+tests/test_inspect_ground_dxf.py: 11 warnings
+experiments/hyp-358/test_experiment.py: 12 warnings
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\ezdxf\query.py:444: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    query_args = EntityQueryParser.parseString(query, parseAll=True)
+
+tests/test_inspect_ground_dxf.py: 11 warnings
+experiments/hyp-358/test_experiment.py: 12 warnings
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\pyparsing\util.py:466: PyparsingDeprecationWarning: 'parseAll' argument is deprecated, use 'parse_all'
+    return fn(self, *args, **kwargs)
+
+experiments/hyp-358/test_experiment.py::test_missing_or_unmapped_hatches_error_without_source_mutation[empty]
+  C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_b617b43f\.venv\Lib\site-packages\_pytest\pathlib.py:95: PytestWarning: (rm_rf) error removing \\?\C:\x\pi-t_b617b43f
+  <class 'OSError'>: [WinError 145] Папка не пуста: '\\\\?\\C:\\x\\pi-t_b617b43f'
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR experiments/hyp-358/test_experiment.py::test_missing_or_unmapped_hatches_error_without_source_mutation[empty]
+62 passed, 54 warnings, 1 error in 13.50s

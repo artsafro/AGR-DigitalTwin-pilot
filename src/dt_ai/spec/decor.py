@@ -1,6 +1,6 @@
 """Facade decor from the non-body parts of a mesh dump (pattern facade-decor-inset; spec v0.5).
 
-User decisions 2026-10-11/12: one simple solid per element; projection <= 0.10 m is texture, > 0.10 m
+User decisions 2026-10-11/12 [D051, D054, D056]: one simple solid per element; projection <= 0.10 m is texture, > 0.10 m
 geometry, boundary included, never a question; source pieces with the same cross-section on one axis with
 seams up to plate_gap_m x 12 are one element (a pilaster split per storey); a free-standing column is its
 own element. A question only where these rules do not cover a piece.
@@ -10,11 +10,11 @@ face (within SHARE_TOL_M) or embedded up to EMBED_MAX_M, nothing further out tha
 that wall's span, and on a wall of the same line and span in every storey it crosses. It must be a box in
 the wall frame: faces axis-aligned and its front face covering its whole front rectangle at full projection
 (an L, a stepped profile or a flat sheet is no box). A wall piece that fails this, or is deeper than
-ATTACHMENT_FROM_M is no decor but an attachment candidate (balcony, canopy, bay: EG2; user 2026-10-12): kept
+ATTACHMENT_FROM_M is no decor but an attachment candidate (balcony, canopy, bay: EG2; user 2026-10-12 [D057]): kept
 out of the spec, listed in the report and asked once per type. A column stands free: an axis-aligned box
 COLUMN_MIN_H_M high, COLUMN_MIN_M to COLUMN_MAX_M a side, its bottom on a level; one starting mid-storey is a
-`decor-column` question (user 2026-10-12). Questions are grouped by type: one kind and one cross-section
-(projection and height) is one question, its count and positions listed (user 2026-10-12: no avalanche). Every other
+`decor-column` question (user 2026-10-12 [D056]). Questions are grouped by type: one kind and one cross-section
+(projection and height) is one question, its count and positions listed (user 2026-10-12 [D058]: no avalanche). Every other
 part stays an attachment, as before. Pieces join when the joined pieces fill one rectangle up to the seams
 (a row, a stack or a full grid); any other arrangement of joinable pieces is a `decor-merge` question and
 the pieces stay apart (reviews of PR #74).
@@ -31,12 +31,12 @@ from dt_ai.spec.model import DECOR_TEXTURE_M
 SHARE_TOL_M = 0.005       # a piece's back at the wall face within this
 EMBED_MAX_M = 0.05        # ... or embedded into the wall up to this
 PROJECTION_MAX_M = 1.5    # deeper than this off a wall is no facade decor (canopy, balcony)
-ATTACHMENT_FROM_M = 0.8   # projection over this: an attachment candidate, not decor (user 2026-10-12)
+ATTACHMENT_FROM_M = 0.8   # projection over this: an attachment candidate, not decor (user 2026-10-12 [D057])
 SPAN_TOL_M = 0.01         # a piece lies within its wall's span within this ...
 RUN_ON_MAX_M = 0.8        # ... or runs on past a building corner by at most this (an element's projection)
 SAME_M = 0.005            # one cross-section / one axis within this
 COVER = 0.99              # a box's front face covers this share of its front rectangle
-SEAM_FACTOR = 12          # seams up to plate_gap_m x 12 (0.06 m by default) join pieces (user 2026-10-12)
+SEAM_FACTOR = 12          # seams up to plate_gap_m x 12 (0.06 m by default) join pieces (user 2026-10-12 [D054])
 AXIS_COS = np.cos(np.radians(1.0))
 COLUMN_MIN_H_M = 2.0
 COLUMN_MAX_M = 1.5
@@ -122,7 +122,7 @@ def _is_box(t, u, n, c, gap, hosts=()):
     may be open (inset decor); an end face may start gap (plate_gap_m) off the wall face (the engine's corner
     ends, #101). Inner s / z values are allowed: pieces of a row or a stack welded into one.
     An end (top, bottom or a side end) may be missing where it lies inside another element of the wall line
-    (hosts: {s0, s1, z0, z1, d1} absolute): a subordinate element run into a main one (user 2026-10-12); its
+    (hosts: {s0, s1, z0, z1, d1} absolute): a subordinate element run into a main one (user 2026-10-12 [D059]); its
     extent is then clipped at the main one's face. Returns the clip {key: value} (empty when whole), or None
     when it is no box."""
     normals, _, t = _normals(t)
@@ -195,7 +195,7 @@ def _piece(v, part_tris, levels, contours, polys, gap):
         s = (p[:, :2] - a) @ u
         d = (p[:, :2] - a) @ n
         # at a building corner the main element runs on past the wall end by the other's projection
-        # (user 2026-10-12); a piece fully inside the span is preferred
+        # (user 2026-10-12 [D059]); a piece fully inside the span is preferred
         if (d.min() < -EMBED_MAX_M or d.min() > SHARE_TOL_M or d.max() > PROJECTION_MAX_M or d.max() <= 0
                 or s.min() < -RUN_ON_MAX_M or s.max() > length + RUN_ON_MAX_M):
             continue
@@ -232,7 +232,7 @@ def _piece(v, part_tris, levels, contours, polys, gap):
 
 def _corner_arms(v, tris, part, levels, contours):
     """A part round one or more convex building corners (elements meeting there, or a belt wrapped round),
-    split into one arm per wall, or None (user 2026-10-12: of one rank the longer continues; review 2 of PR
+    split into one arm per wall, or None (user 2026-10-12 [D059]: of one rank the longer continues; review 2 of PR
     #75: any number of corners). A triangle belongs to the wall whose span holds its centre (in front of that
     wall); a corner block past two wall ends goes to the longer of the two arms; an oblique corner: None; the other higher than the longer: "decor-corner"."""
     p = v[np.unique(tris[part])]
@@ -275,7 +275,7 @@ def _corner_arms(v, tris, part, levels, contours):
         zm = v[tris[part[own == main_w]]][..., 2]
         zo = v[tris[part[own == other_w]]][..., 2]
         if zo.min() < zm.min() - SAME_M or zo.max() > zm.max() + SAME_M:
-            return "decor-corner"                        # the other higher than the main one (user 2026-10-12)
+            return "decor-corner"                        # the other higher than the main one (user 2026-10-12 [D059])
     return [part[own == w] for w in arms]
 
 
@@ -354,7 +354,7 @@ def _at(piece, s):
 
 def _grouped(questions, names):
     """One question per type: same kind and cross-section (projection and height within SAME_M); the first
-    position stands for the group, all positions and the count are listed (user 2026-10-12)."""
+    position stands for the group, all positions and the count are listed (user 2026-10-12 [D058])."""
     groups = []
     for q in sorted(questions, key=lambda q: (names.index(q["levels"][0]), q["heights_m"][0], q["at"] or [0, 0])):
         h = q["heights_m"][1] - q["heights_m"][0]
@@ -406,9 +406,9 @@ def extract(v, tris, mats, parts, levels, contours, polys, plate_gap_m, attachme
                     or o["foot"].distance(m["foot"]) > AT_FACE_M):
                 continue
             if o["z0"] < m["z0"] - SAME_M or o["z1"] > m["z1"] + SAME_M:
-                o["type"] = "corner"                     # user 2026-10-12: its part beyond the main one is open
+                o["type"] = "corner"                     # user 2026-10-12 [D059]: its part beyond the main one is open
     whole = [pc for _, pc in pieces if pc["type"] == "wall"]
-    for part, pc in pieces:                           # a subordinate element run into a main one (user 2026-10-12)
+    for part, pc in pieces:                           # a subordinate element run into a main one (user 2026-10-12 [D059])
         if pc["type"] == "shape" and pc["on_walls"]:
             hosts = [{"s0": h["s0"], "s1": h["s1"], "z0": h["z0"], "z1": h["z1"], "d1": h["c"] + h["out"]}
                      for h in whole if h is not pc and h["u"] @ pc["u"] >= AXIS_COS and abs(h["c"] - pc["c"]) <= SAME_M]

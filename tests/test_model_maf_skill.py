@@ -1,7 +1,7 @@
 """Contract of the `model-maf` project skill (#182).
 
 The skill is an agent procedure: specification and SPOZU points -> library pick -> model from the reference ->
-dimension check -> NPM light version -> one 512 atlas -> hard edges -> placement with sinking -> checks, each step
+dimension check -> NPM light version -> hard edges -> one 512 atlas -> placement with sinking -> checks, each step
 with a tool route, a Needs marker and a completion criterion, and links instead of copied rule text.
 `skill_findings` is the checker; the generated mutations prove it rejects each kind of breakage, not only that the
 real file passes. The procedure probes below implement the dimension, seating, smoothing and atlas rules in pure
@@ -32,8 +32,8 @@ STEPS = [
     (3, ("model", "reference")),
     (4, ("check", "specification")),
     (5, ("light version", "npm")),
-    (6, ("shared", "512", "atlas")),
-    (7, ("hard edges", "angle")),
+    (6, ("hard edges", "angle")),
+    (7, ("shared", "512", "atlas")),
     (8, ("placement", "spozu", "sinking")),
     (9, ("checks", "handover")),
 ]
@@ -43,8 +43,8 @@ STEP_TOKENS = {
     3: ("manufacturer picture", "legend scheme", "separate verify line"),
     4: ("10 cm", "[D094]", "colour", "material layout", "construction", "review"),
     5: ("fewer segments", "round parts", "[D097]", "npm_matches"),
-    6: ("512", "64", "128", "patterned", "atlas_maf.py"),
-    7: ("30-45", "360/N"),
+    6: ("30-45", "360/N", "smoothing"),
+    7: ("512", "64", "128", "patterned", "atlas_maf.py", "material IDs", "VPM textures", "NPM atlas"),
     8: ("lowest point", "10 cm", "[D095]", "[D096]", "project", "bottom faces", "rotation", "downhill"),
     9: ("separate", "verify line", "validate-delivery", "[D096]"),
 }
@@ -163,6 +163,28 @@ def test_skill_has_no_findings(text):
 
 def test_steps_in_issue_order(text):
     assert [n for n, _, _ in _steps(text)] == list(range(1, 10))
+
+
+def test_workflow_order_smoothing_before_materials(text):
+    """#489 review round 1: smoothing 30-45 deg comes before material IDs -> VPM textures -> NPM atlas 512.
+
+    The issue workflow ends "smoothing 30-45 deg -> material IDs from the approved list -> VPM
+    textures -> NPM atlas 512". The current (wrong) order put the shared atlas step before the hard
+    edges step; the expected order is hard edges (smoothing) as step 6 and the shared atlas as step 7.
+    """
+    # Expected order is accepted.
+    assert skill_findings(text) == []
+    by_number = {n: (title, body) for n, title, body in _steps(text)}
+    assert "hard edges" in by_number[6][0].lower() and "smoothing" in by_number[6][1].lower()
+    assert "atlas" in by_number[7][0].lower() and "512" in by_number[7][1]
+    body7 = by_number[7][1].lower()
+    assert body7.index("material ids") < body7.index("vpm textures") < body7.index("npm atlas")
+    # Current (wrong) order -- atlas as step 6, hard edges as step 7 -- is rejected.
+    block = {n: f"### Step {n} — {title}{body}" for n, title, body in _steps(text)}
+    swapped = text.replace(block[6] + block[7], block[7] + block[6])
+    assert swapped != text
+    findings = skill_findings(swapped)
+    assert any(f.startswith("steps:") for f in findings), findings
 
 
 def test_every_step_has_route_needs_done(text):

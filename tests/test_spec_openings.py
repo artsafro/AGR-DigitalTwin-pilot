@@ -43,7 +43,7 @@ def test_hole_with_glass_is_one_opening():
     spec, report = extract_spec(building(boxes=[(0, 2.0, 3.5, 0.9, 2.4, 0.0)],
                                          extra=[pane("Glass", 2.1, 3.4, 1.0, 2.3)]), OBJECT)
     assert openings(spec) == [(0, 2.0, 0.9, 1.5, 1.5, None, "hole+glass")]
-    # no reveal: the default depth, marked in the report, never 0 and no question (OD1, user 2026-10-11)
+    # no reveal: the default depth, marked in the report, never 0 and no question (OD1, user 2026-10-11 [D048])
     assert report["questions"] == []
     assert report["openings"]["openings_depth_by_default"] == 1
 
@@ -432,13 +432,13 @@ def test_partial_material_ids_are_an_error():
         extract_spec(d, OBJECT)
 
 
-def test_pier_check_stays_cheap_on_a_comb():
+@pytest.mark.perf
+def test_pier_check_stays_cheap_on_a_comb(measure_process_time):
     # N9: many short teeth; the pier search is bounded by the gap plus two reveals
-    import time
     segs = [[(0, 0), (100, 0)]] + [[(x, 0), (x, 0.3)] for x in np.arange(0.5, 100, 0.5)]
-    t = time.perf_counter()
-    op.close_section(segs)
-    assert time.perf_counter() - t < 5.0
+    median, wall = measure_process_time(lambda: op.close_section(segs))
+    print(f"[perf] comb pier: median CPU {median:.4f}s, wall {wall:.4f}s, budget 5s")
+    assert median < 5.0
 
 
 @pytest.mark.parametrize("n, open_ends", [(50, 41), (100, 68)])
@@ -473,14 +473,14 @@ def test_pier_search_reuse_keeps_the_pairing():
     assert sorted(round(float(a[0]), 3) for a, _ in unresolved) == [-5.0, 10.0]
 
 
-def test_pier_search_stays_fast_at_two_hundred_ends():
+@pytest.mark.perf
+def test_pier_search_stays_fast_at_two_hundred_ends(measure_process_time):
     # R7 (#24): 200 dangling ends took 54 s per section (r3_v_cost.json)
-    import time
     xs = np.linspace(0.0, 7.5, 200)
     segs = [[(0.0, 0.0), (7.5, 0.0)]] + [[(x, 0.0), (x, 0.3)] for x in xs]
-    t = time.perf_counter()
-    op.close_section(segs)
-    assert time.perf_counter() - t < 10.0
+    median, wall = measure_process_time(lambda: op.close_section(segs))
+    print(f"[perf] 200 ends pier: median CPU {median:.4f}s, wall {wall:.4f}s, budget 10s")
+    assert median < 10.0
 
 
 # --- regressions from Codex review 3 of PR #20 -------------------------------------------------
@@ -522,7 +522,7 @@ def test_remote_or_high_flat_objects_are_not_questions():
 
 
 def test_plane_at_the_back_of_its_reveal_gives_the_opening_depth():
-    # C24 final (user 2026-10-10): the depth is facade -> back polygon; the plane is that polygon in npm_min
+    # C24 final (user 2026-10-10 [D037]): the depth is facade -> back polygon; the plane is that polygon in npm_min
     b = Mesh("Body")
     walls(b, SQUARE10, 0.0, 6.6, [(0, 2.0, 3.5, 0.9, 2.4, 0.0)])
     reveal(b, 2.0, 3.5, 0.9, 2.4, 0.4)
@@ -581,7 +581,7 @@ def test_glass_position_never_sets_the_depth(glass_y):
 
 
 def test_od1_default_depth_is_0_4_and_marked():
-    """OD1 (user 2026-10-11): without a value in object.json the default is 0.4; openings whose source gives no
+    """OD1 (user 2026-10-11 [D048]): without a value in object.json the default is 0.4; openings whose source gives no
     depth take it and are listed in the report as 'depth by default', never 0 or a minimum."""
     obj = {k: v for k, v in OBJECT.items() if k != "opening_depth_default_m"}
     spec, report = extract_spec(building(boxes=[(0, 2.0, 3.5, 0.9, 2.4, 0.0)]), obj)

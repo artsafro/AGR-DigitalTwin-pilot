@@ -1,0 +1,49 @@
+.FFF                                                                     [100%]
+================================== FAILURES ===================================
+____________________ test_linear_normal_selection_work[8] _____________________
+
+n = 8
+
+    @pytest.mark.parametrize('n', [4, 8, 16, 32])
+    def test_linear_normal_selection_work(n):
+        poly = [tuple(Coordinate(c) for c in (i, 2*i, 3*i)) for i in range(n)]
+        Coordinate.subtractions = 0
+        assert core._has_proper_crossing(poly) is False
+>       assert Coordinate.subtractions <= 6*n + 3
+E       assert 336 <= ((6 * 8) + 3)
+E        +  where 336 = Coordinate.subtractions
+
+experiments\hyp-359\test_projection_work.py:23: AssertionError
+____________________ test_linear_normal_selection_work[16] ____________________
+
+n = 16
+
+    @pytest.mark.parametrize('n', [4, 8, 16, 32])
+    def test_linear_normal_selection_work(n):
+        poly = [tuple(Coordinate(c) for c in (i, 2*i, 3*i)) for i in range(n)]
+        Coordinate.subtractions = 0
+        assert core._has_proper_crossing(poly) is False
+>       assert Coordinate.subtractions <= 6*n + 3
+E       assert 3360 <= ((6 * 16) + 3)
+E        +  where 3360 = Coordinate.subtractions
+
+experiments\hyp-359\test_projection_work.py:23: AssertionError
+____________________ test_linear_normal_selection_work[32] ____________________
+
+n = 32
+
+    @pytest.mark.parametrize('n', [4, 8, 16, 32])
+    def test_linear_normal_selection_work(n):
+        poly = [tuple(Coordinate(c) for c in (i, 2*i, 3*i)) for i in range(n)]
+        Coordinate.subtractions = 0
+        assert core._has_proper_crossing(poly) is False
+>       assert Coordinate.subtractions <= 6*n + 3
+E       assert 29760 <= ((6 * 32) + 3)
+E        +  where 29760 = Coordinate.subtractions
+
+experiments\hyp-359\test_projection_work.py:23: AssertionError
+=========================== short test summary info ===========================
+FAILED experiments/hyp-359/test_projection_work.py::test_linear_normal_selection_work[8]
+FAILED experiments/hyp-359/test_projection_work.py::test_linear_normal_selection_work[16]
+FAILED experiments/hyp-359/test_projection_work.py::test_linear_normal_selection_work[32]
+3 failed, 1 passed in 0.20s

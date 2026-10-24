@@ -1,0 +1,67 @@
+schema_version: 1.0.0
+job_id: VATUTINO-SITE
+run_id: issue-351-inventory-v001
+synthetic: false
+path: standard
+inputs: &id001
+- path: jobs/VATUTINO-SITE/ground-parts.json
+  sha256: b724a369683b91336932034106f720b55610af7f918ec8c2d9db33177e7c4317
+- path: jobs/VATUTINO-SITE/ground-build-v014.md
+  sha256: b4197ef9ec2d0ec9f7600eb6207ae6c09ee12f1663179b0ed76864790f1ea4e5
+- path: jobs/VATUTINO-SITE/maf/site-maf-set.json
+  sha256: 72e3ab7f72ba43ec0c1f882dd73397e2193d604da5736ecf18b2c3c3a4ceae64
+artifacts: []
+deviations: []
+gates:
+  inputs:
+    status: review
+    note: Repository artifacts recorded; original DWG/album and external exports are
+      not in this checkout
+    evidence: *id001
+  parts:
+    status: review
+    note: Ground decomposition and MAF mapping exist; ground-parts.json is not PartsList.schema.json
+    evidence:
+    - path: jobs/VATUTINO-SITE/ground-parts.json
+      sha256: b724a369683b91336932034106f720b55610af7f918ec8c2d9db33177e7c4317
+    - path: jobs/VATUTINO-SITE/maf/source-dimension-gate.md
+      sha256: f879748be0684059fe360ad89450d8cb633a0de2a30f2cf7e40a0c1b45d99872
+  operations:
+    status: review
+    note: Builder and geometry evidence exist; no kernel before/after receipt for
+      full site
+    evidence:
+    - path: jobs/VATUTINO-SITE/build_ground.py
+      sha256: e2f661593edebba91a64426afb818cb799005ef40485845742308341953d1cc4
+      commit: 55b5d3e58e5746660301158ed115ef18724edcbd
+    - path: jobs/VATUTINO-SITE/ground-build-v014.md
+      sha256: b4197ef9ec2d0ec9f7600eb6207ae6c09ee12f1663179b0ed76864790f1ea4e5
+  budgets:
+    status: review
+    note: Ground counts/density documented; no measured full-site budget receipt
+    evidence:
+    - path: jobs/VATUTINO-SITE/ground-build-v014.md
+      sha256: b4197ef9ec2d0ec9f7600eb6207ae6c09ee12f1663179b0ed76864790f1ea4e5
+  export_readback:
+    status: review
+    note: v014 report names FBX hashes/readback on C:/x; external exports and raw
+      receipts not committed
+    evidence:
+    - path: jobs/VATUTINO-SITE/ground-build-v014.md
+      sha256: b4197ef9ec2d0ec9f7600eb6207ae6c09ee12f1663179b0ed76864790f1ea4e5
+  report:
+    status: pass
+    note: Delivery report explicitly not passed
+    evidence:
+    - path: docs/deliveries/vatutino-ground-2026-10-20.md
+      sha256: 2fb88dbf2dfa6ca3e0b9102db55969086e38eaf1bf99c0da43d882f6e27f2211
+  visual:
+    status: missing
+    note: No user approval through review tool for these exact final site exports
+    evidence: []
+  checker:
+    status: missing
+    note: General validator has review/not_run; no complete SINTEZ acceptance
+    evidence:
+    - path: jobs/VATUTINO-SITE/ground-build-v014.md
+      sha256: b4197ef9ec2d0ec9f7600eb6207ae6c09ee12f1663179b0ed76864790f1ea4e5

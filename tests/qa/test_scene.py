@@ -70,6 +70,8 @@ def test_v008_uv_contract_excludes_collision_only(uv, expected):
     found = scene_findings(rb(mesh(name="SM_Test_Ground", uv=uv),
                               mesh(name="UCX_SM_Test_Ground_001", uv=0)), "vpm", "ground", PROFILES.vpm)
     assert statuses(found, "V008")["one UV channel"] == expected
+    assert statuses(found, "V008")["texel density"] == "not_run"
+    assert statuses(found, "V008")["texel density upper"] == "not_run"
     assert statuses(found, "V010")["UCX present"] == "pass"
     assert statuses(found, "V010")["UCX triangle budget"] == "pass"
 
@@ -78,7 +80,12 @@ def test_clean_vpm_mesh_passes_scene_stages():
     found = scene_findings(rb(mesh()), "vpm", "oks", PROFILES.vpm)
     assert set(statuses(found, "V003").values()) == {"pass"}
     assert statuses(found, "V004") == {"applied transforms": "pass", "topology defects": "pass", "co-directional clearance": "not_run"}
-    assert set(statuses(found, "V008").values()) == {"pass"}
+    assert statuses(found, "V008") == {
+        "one UV channel": "pass",
+        "mirrored islands": "pass",
+        "texel density": "not_run",
+        "texel density upper": "not_run",
+    }
 
 
 @pytest.mark.parametrize("tris, status", [(150_000, "pass"), (150_001, "review"), (1_000_000, "review"),
@@ -92,6 +99,15 @@ def test_vpm_oks_triangles_project_target_and_hard_limit_conflict_1(tris, status
                                            (3_000_000, 100_000)])
 def test_ucx_budget_is_checker_formula_conflict_3(model, budget):
     assert ucx_triangle_limit(model) == budget
+
+
+@pytest.mark.parametrize("ucx_tris,status", [(5_000, "pass"), (5_001, "fail")])
+def test_ucx_triangle_budget_at_limit_inclusive(ucx_tris, status):
+    """UCX budget (reg p.36-37 §13.7-13.8): model 100 000 -> ceil(5 %) = 5 000 UCX triangles;
+    exactly at the budget passes and budget+1 fails (the gate is `>` not `>=`)."""
+    found = scene_findings(rb(mesh(tris=100_000), mesh(name="UCX_SM_Test_K_1_Main_001", tris=ucx_tris)),
+                           "vpm", "oks", PROFILES.vpm)
+    assert statuses(found, "V010")["UCX triangle budget"] == status
 
 
 def test_ucx_excluded_from_model_triangles_and_budget_checked():
@@ -548,7 +564,13 @@ def test_blender_roundtrip_through_validator(tmp_path, variant):
         assert st["V002"].findings[0].status == "pass"  # Blender writes binary FBX 7400
         assert st["V002"].status == "pass"
         assert {st[k].status for k in ("V003", "V004")} == {"pass"}
-        assert st["V008"].status == "pass"
+        v008 = {item.name: item.status for item in st["V008"].findings}
+        assert v008["one UV channel"] == "pass"
+        assert v008["mirrored islands"] == "pass"
+        # The cube FBX has no diffuse size, so density stays not_run and the stage cannot pass.
+        assert v008["texel density"] == "not_run"
+        assert v008["texel density upper"] == "not_run"
+        assert st["V008"].status == "not_run"
     else:
         assert st["V003"].status == "fail" and st["V008"].status == "fail"
         assert st["V002"].status == "fail"
@@ -764,6 +786,17 @@ def test_ucx_gap_outside_band_is_review(gap_m):
                ucx_box("UCX_SM_Test_K_1_Main_002", (1 + gap_m, 0, 0), (2 + gap_m, 1, 1)))
     assert st["UCX intersections"] == "pass"
     assert st["UCX piece gap (advisory)"] == "review"
+
+
+@pytest.mark.parametrize("gap_m,status", [(0.002, "pass"), (0.01, "pass"),
+                                          (0.00199, "review"), (0.01001, "review")])
+def test_ucx_gap_exact_boundaries_inclusive_d098(gap_m, status):
+    """D098: neighbour gap 2 mm - 1 cm inclusive (reg p.36 §13.4). The floor (2 mm) and ceiling
+    (10 mm) pass at equality; one 0.01 mm beyond (1.99 mm / 10.01 mm) flips to review."""
+    st = _pair(ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1)),
+               ucx_box("UCX_SM_Test_K_1_Main_002", (1 + gap_m, 0, 0), (2 + gap_m, 1, 1)))
+    assert st["UCX intersections"] == "pass"
+    assert st["UCX piece gap (advisory)"] == status
 
 
 def test_ucx_one_metre_apart_is_not_a_neighbour():
@@ -1020,3 +1053,770 @@ def test_blender_ucx_hull_roundtrip(tmp_path, variant):
     assert other and all("hull" not in m for m in other)
     st = statuses(scene_findings(report, "vpm", "oks", PROFILES.vpm), "V010")
     assert st["UCX intersections"] == ("fail" if variant == "overlap" else "pass")
+
+
+# --- #510: VPM Ground triangle limit from the site-area table (reg p.28-29 §3.10, [D010]) -------------------
+
+def _ground_tri_finding(tris, kind="vpm", area=None, profile=None):
+    found = scene_findings(rb(mesh(name="SM_Test_Ground", tris=tris), mesh(name="UCX_SM_Test_Ground_001", tris=4)),
+                           kind, "ground", profile or (PROFILES.vpm if kind == "vpm" else PROFILES.npm),
+                           ground_area_m2=area)
+    return next(f for f in found["V003"] if f.name == "triangle count")
+
+
+def _ground_bands():
+    return PROFILES.vpm["geometry"]["ground_triangles_max_by_area_ha"]
+
+
+@pytest.mark.parametrize("tris, status", [(1_650_000, "pass"), (1_650_001, "fail")])
+def test_vpm_ground_triangles_by_site_area_boundary(tris, status):
+    f = _ground_tri_finding(tris, area=3431.50)
+    assert f.status == status
+    assert f.data["area_m2"] == 3431.50 and f.data["area_ha"] == pytest.approx(0.34315)
+    assert f.data["band"] == {"area_max": 0.5, "triangles_max": 1_650_000}
+    assert "1650000" in f.expected
+
+
+@pytest.mark.parametrize("area_m2, limit", [(500, 300_000), (500.0001, 705_000), (15_000, 3_150_000),
+                                            (15_001, 4_500_000), (0.01, 300_000), (10**7, 4_500_000)])
+def test_vpm_ground_limit_examples(area_m2, limit):
+    from twinqa.scene import ground_triangle_limit
+    assert ground_triangle_limit(PROFILES.vpm, area_m2)[0] == limit
+
+
+@pytest.mark.parametrize("index", range(8))
+def test_vpm_ground_limit_every_band_from_standard(index):
+    """Every band edge comes from VPM_STANDARD.yaml: the upper edge is inclusive, just above the
+    previous edge already belongs to this band; at the limit passes, limit + 1 fails."""
+    from twinqa.scene import ground_triangle_limit
+    bands = _ground_bands()
+    assert len(bands) == 8
+    band = bands[index]
+    probes = [band["area_max"] * 10_000] if "area_max" in band else [band["area_above"] * 10_000 + 1]
+    if index:
+        probes.append(bands[index - 1]["area_max"] * 10_000 + 0.01)
+    for area in probes:
+        limit, chosen = ground_triangle_limit(PROFILES.vpm, area)
+        assert (limit, chosen) == (band["triangles_max"], band)
+        assert _ground_tri_finding(limit, area=area).status == "pass"
+        assert _ground_tri_finding(limit + 1, area=area).status == "fail"
+
+
+def test_vpm_ground_limit_follows_the_standard_not_code():
+    import copy
+    from twinqa.scene import ground_triangle_limit
+    profile = copy.deepcopy(PROFILES.vpm)
+    profile["geometry"]["ground_triangles_max_by_area_ha"][3]["triangles_max"] = 1_234_567
+    assert ground_triangle_limit(profile, 3431.5)[0] == 1_234_567
+    assert _ground_tri_finding(1_234_568, area=3431.5, profile=profile).status == "fail"
+
+
+@pytest.mark.parametrize("tris", [12, 10_000_000])
+def test_vpm_ground_without_area_stays_review_naming_operand(tris):
+    f = _ground_tri_finding(tris)
+    assert f.status == "review"
+    assert "ground_area_m2" in f.observed and "missing" in f.observed
+    assert f.data == {"area_m2": None, "area_ha": None, "band": None,
+                      "basis": PROFILES.vpm["geometry"]["ground_area_basis"]}
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), float("-inf"), -1, 0, -0.0, True, "3431.5", [3431.5]])
+def test_vpm_ground_area_invalid_is_an_error_never_pass(bad):
+    from twinqa.scene import ground_triangle_limit
+    with pytest.raises(ValueError, match="ground_area_m2"):
+        ground_triangle_limit(PROFILES.vpm, bad)
+    with pytest.raises(ValueError, match="ground_area_m2"):
+        _ground_tri_finding(12, area=bad)
+
+
+def _edge_cases():
+    """(area_m2, expected band index) at nextafter below / exact / nextafter above every YAML edge."""
+    from decimal import Decimal
+    bands = _ground_bands()
+    cases = []
+    for i, band in enumerate(bands[:-1]):
+        edge = float(Decimal(repr(band["area_max"])) * 10_000)  # exact decimal m2 edge (0.05 ha -> 500.0)
+        cases += [(math.nextafter(edge, 0), i, "below"), (edge, i, "exact"), (math.nextafter(edge, math.inf), i + 1, "above")]
+    return cases
+
+
+@pytest.mark.parametrize("area, index, side", _edge_cases(),
+                         ids=[f"{c[0]!r}-{c[2]}" for c in _edge_cases()])
+def test_vpm_ground_band_edge_nextafter(area, index, side):
+    """Review #516 P1: an area one ulp above an edge belongs to the next band (500.00000000000006 m2 ->
+    705 000); a rounded ha quotient must not drop it into the lower band and fail a valid count."""
+    from twinqa.scene import ground_triangle_limit
+    band = _ground_bands()[index]
+    assert ground_triangle_limit(PROFILES.vpm, area) == (band["triangles_max"], band)
+    assert _ground_tri_finding(band["triangles_max"], area=area).status == "pass"
+    assert _ground_tri_finding(band["triangles_max"] + 1, area=area).status == "fail"
+
+
+@pytest.mark.parametrize("area, tris", [(500.00000000000006, 705_000), (1000.0000000000001, 1_125_000)])
+def test_vpm_ground_review_witnesses_pass(area, tris):
+    f = _ground_tri_finding(tris, area=area)
+    assert (f.status, f.data["band"]["triangles_max"]) == ("pass", tris)
+    assert (f.measured, f.threshold) == (tris, tris)
+
+
+def test_vpm_ground_finding_data_survives_report_round_trip():
+    """Finding.data (area operands) and measured/threshold/margin (#462) both serialise and load back."""
+    from dataclasses import asdict
+    from twinqa.report import Finding
+    f = _ground_tri_finding(1_650_001, area=3431.5)
+    back = Finding.from_dict(json.loads(json.dumps(asdict(f))))
+    assert back == f and back.data["band"]["triangles_max"] == 1_650_000 and back.margin < 0
+    with pytest.raises(ValueError, match="data"):
+        Finding.from_dict({**asdict(f), "data": [1]})
+
+
+def test_report_json_carries_data_only_when_present():
+    """Full-suite witness after merging #462: findings without operands keep the old key set; the
+    Ground finding carries `data` and loads back through ValidationReport.from_dict."""
+    from twinqa.report import Stage, ValidationReport
+    ground = _ground_tri_finding(1_650_001, area=3431.5)
+    plain = _ground_tri_finding(12, kind="npm")
+    report = ValidationReport("vpm", "x.fbx", "a" * 64, "b" * 64, True,
+                              [Stage("V003", "geometry", "blocking", [28], [ground, plain])])
+    found = report.to_dict()["stages"][0]["findings"]
+    assert found[0]["data"]["band"]["triangles_max"] == 1_650_000 and "data" not in found[1]
+    back = ValidationReport.from_dict(json.loads(json.dumps(report.to_dict())))
+    assert back.stages[0].findings == [ground, plain]
+
+
+@pytest.mark.parametrize("table", [
+    None, [],
+    [{"area_max": 0.1, "triangles_max": 1}, {"area_max": 0.05, "triangles_max": 2}],
+    [{"area_max": 0.05, "triangles_max": 1}, {"area_above": 0.1, "triangles_max": 2}],
+    [{"area_max": 0.05}],
+    [{"area_max": 0.05, "triangles_max": 1}],
+    [{"area_above": 0.05, "triangles_max": 1}, {"area_max": 0.1, "triangles_max": 2}],
+    [{"area_max": float("nan"), "triangles_max": 1}, {"area_above": float("nan"), "triangles_max": 2}],
+])
+def test_vpm_ground_malformed_table_is_an_error_naming_the_key(table):
+    import copy
+    from twinqa.scene import ground_triangle_limit
+    profile = copy.deepcopy(PROFILES.vpm)
+    if table is None:
+        del profile["geometry"]["ground_triangles_max_by_area_ha"]
+    else:
+        profile["geometry"]["ground_triangles_max_by_area_ha"] = table
+    with pytest.raises(ValueError, match="ground_triangles_max_by_area_ha"):
+        ground_triangle_limit(profile, 3431.5)
+
+
+def test_vpm_ground_limit_brute_force_matches_decimal_reference():
+    """Probe: 5 000 seeded areas (plus every edge +-1e-6 m2) against an independent Decimal reference;
+    the limit never decreases with area."""
+    from decimal import Decimal
+    from twinqa.scene import ground_triangle_limit
+    bands = _ground_bands()
+
+    def reference(area_m2):
+        ha = Decimal(repr(area_m2)) / 10_000
+        for b in bands:
+            if "area_max" in b and ha <= Decimal(repr(b["area_max"])):
+                return b["triangles_max"]
+        return bands[-1]["triangles_max"]
+
+    rng = random.Random(510)
+    areas = [rng.uniform(0.001, 30_000) for _ in range(5_000)]
+    for b in bands:
+        edge = b.get("area_max", b.get("area_above")) * 10_000
+        areas += [edge - 1e-6, edge, edge + 1e-6]
+    previous = 0
+    for area in sorted(areas):
+        limit = ground_triangle_limit(PROFILES.vpm, area)[0]
+        assert limit == reference(area), area
+        assert limit >= previous
+        previous = limit
+
+
+@pytest.mark.parametrize("tris, status", [(180_000, "pass"), (180_001, "fail")])
+@pytest.mark.parametrize("area", [None, 3431.5])
+def test_npm_ground_total_unchanged_by_area(tris, status, area):
+    f = _ground_tri_finding(tris, kind="npm", area=area)
+    assert f.status == status and f.data == {}
+
+
+@pytest.mark.parametrize("tris, status", [(150_000, "pass"), (150_001, "review"), (1_000_001, "fail")])
+def test_vpm_oks_limits_unchanged_by_area(tris, status):
+    found = scene_findings(rb(mesh(tris=tris)), "vpm", "oks", PROFILES.vpm, ground_area_m2=3431.5)
+    assert next(f for f in found["V003"] if f.name == "triangle count").status == status
+
+
+def _ground_cli(monkeypatch, tmp_path, tris, *extra):
+    fbx = tmp_path / "SM_Test_Ground.fbx"
+    fbx.write_bytes(b"Kaydara FBX Binary  \x00")
+    monkeypatch.setattr(vp, "readback", lambda path, blender=None, timeout=600: rb(
+        mesh(name="SM_Test_Ground", tris=tris), mesh(name="UCX_SM_Test_Ground_001", tris=4)))
+    return vp.main([str(fbx), "--profile", "vpm", "--scene", "--json", *extra])
+
+
+def _cli_triangle_finding(capsys):
+    data = json.loads(capsys.readouterr().out)
+    v003 = next(s for s in data["stages"] if s["id"] == "V003")
+    return next(f for f in v003["findings"] if f["name"] == "triangle count")
+
+
+@pytest.mark.parametrize("tris, status", [(1_650_000, "pass"), (1_650_001, "fail")])
+def test_validate_package_cli_passes_ground_area(monkeypatch, tmp_path, capsys, tris, status):
+    _ground_cli(monkeypatch, tmp_path, tris, "--ground-area-m2", "3431.50")
+    f = _cli_triangle_finding(capsys)
+    assert f["status"] == status
+    assert f["data"]["area_m2"] == 3431.5 and f["data"]["band"]["triangles_max"] == 1_650_000
+
+
+def test_validate_package_cli_without_area_is_review(monkeypatch, tmp_path, capsys):
+    _ground_cli(monkeypatch, tmp_path, 10_000_000)
+    f = _cli_triangle_finding(capsys)
+    assert f["status"] == "review" and "ground_area_m2" in f["observed"]
+
+
+@pytest.mark.parametrize("bad", ["nan", "inf", "-5", "0", "abc", ""])
+def test_validate_package_cli_rejects_bad_area(monkeypatch, tmp_path, capsys, bad):
+    with pytest.raises(SystemExit) as exc:
+        _ground_cli(monkeypatch, tmp_path, 12, "--ground-area-m2", bad)
+    assert exc.value.code == 2
+    assert "--ground-area-m2" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("profile, scene, unused", [("npm", False, True), ("vpm", False, True),
+                                                     ("npm", True, False), ("vpm", True, False)])
+def test_validate_package_unused_ground_area_is_noted(monkeypatch, tmp_path, profile, scene, unused):
+    """The unused note stays on a header-only read. A --scene readback consumes the area
+    (VPM triangle band, and footprint coverage on both profiles), so it must not say unused."""
+    fbx = tmp_path / "SM_Test_Ground.fbx"
+    fbx.write_bytes(b"Kaydara FBX Binary  \x00")
+    monkeypatch.setattr(vp, "readback", lambda path, blender=None, timeout=600: rb(mesh(name="SM_Test_Ground", tris=12)))
+    report = vp.validate(fbx, profile, PROFILES, scene=scene, ground_area_m2=3431.5)
+    noted = any("ground_area_m2 3431.5 unused" in n for n in report.notes)
+    assert noted is unused
+    if scene:
+        names = [finding.name for stage in report.stages for finding in stage.findings]
+        assert "ground footprint coverage" in names
+
+
+# --- #651: Ground readback footprint coverage (top-down area vs ground_area_m2) -------------------
+
+VATUTINO_GROUND_M2 = 3431.50
+FOOTPRINT_HOLE_M2 = 1670.09
+
+
+def _ground_surface(name, rects):
+    """One render mesh. ``rects`` are (x0, y0, x1, y1) on Z=0; area is the union of those rectangles."""
+    vertices, polygons = [], []
+    for x0, y0, x1, y1 in rects:
+        base = len(vertices)
+        vertices.extend([[x0, y0, 0.0], [x1, y0, 0.0], [x1, y1, 0.0], [x0, y1, 0.0]])
+        polygons.extend([[base, base + 1, base + 2], [base, base + 2, base + 3]])
+    item = mesh(name=name, tris=len(polygons), degrees={"3": len(polygons)})
+    item["face_geometry"] = {"vertices": vertices, "polygons": polygons}
+    return item
+
+
+def _footprint_finding(rects, area=VATUTINO_GROUND_M2, kind="vpm", extra=(), source="C:/x/SM_Vatutino_Ground.fbx"):
+    profile = PROFILES.vpm if kind == "vpm" else PROFILES.npm
+    report = rb(_ground_surface("SM_Vatutino_Ground", rects), *extra)
+    report["source"] = source
+    found = scene_findings(report, kind, "ground", profile, ground_area_m2=area)
+    return next(item for item in found["V003"] if item.name == "ground footprint coverage")
+
+
+def _area_tol():
+    from twinqa.scene import GROUND_AREA_TOL_M2
+    return GROUND_AREA_TOL_M2
+
+
+def test_vatutino_ground_area_within_tolerance_passes():
+    """3431.50 m2 top-down rectangle matches ground_area_m2; the finding stores measured / expected / difference."""
+    finding = _footprint_finding([(0.0, 0.0, VATUTINO_GROUND_M2, 1.0)])
+    assert finding.status == "pass"
+    assert finding.data["measured_m2"] == pytest.approx(VATUTINO_GROUND_M2, abs=1e-6)
+    assert finding.data["expected_m2"] == VATUTINO_GROUND_M2
+    assert finding.data["difference_m2"] == pytest.approx(0.0, abs=1e-6)
+    assert "filled_absence_m2" not in finding.data
+    observed = finding.observed
+    assert "3431.5" in observed and "measured" in observed and "expected" in observed and "difference" in observed
+
+
+def test_net_excess_of_1670_09_fails():
+    """A +1670.09 m2 net excess fails the scalar area check. It is not a hole-coverage measurement."""
+    finding = _footprint_finding([
+        (0.0, 0.0, VATUTINO_GROUND_M2, 1.0),
+        (VATUTINO_GROUND_M2, 0.0, VATUTINO_GROUND_M2 + FOOTPRINT_HOLE_M2, 1.0),
+    ])
+    assert finding.status == "fail"
+    assert finding.data["measured_m2"] == pytest.approx(VATUTINO_GROUND_M2 + FOOTPRINT_HOLE_M2, abs=1e-4)
+    assert finding.data["expected_m2"] == VATUTINO_GROUND_M2
+    assert finding.data["difference_m2"] == pytest.approx(FOOTPRINT_HOLE_M2, abs=1e-4)
+    assert "filled_absence_m2" not in finding.data
+    assert "filled absence" not in finding.observed
+    assert "1670.09" in finding.observed or "1670.090" in finding.observed
+
+
+def test_half_square_metre_fill_above_tolerance_fails():
+    finding = _footprint_finding([
+        (0.0, 0.0, VATUTINO_GROUND_M2, 1.0),
+        (VATUTINO_GROUND_M2, 0.0, VATUTINO_GROUND_M2 + 0.5, 1.0),
+    ])
+    assert finding.status == "fail"
+    assert finding.data["difference_m2"] == pytest.approx(0.5, abs=1e-9)
+    assert "filled_absence_m2" not in finding.data
+    assert abs(finding.data["difference_m2"]) > _area_tol()
+
+
+def test_ground_area_missing_is_not_run_never_pass():
+    profile = PROFILES.vpm
+    report = rb(_ground_surface("SM_Vatutino_Ground", [(0.0, 0.0, VATUTINO_GROUND_M2, 1.0)]))
+    found = scene_findings(report, "vpm", "ground", profile)
+    finding = next(item for item in found["V003"] if item.name == "ground footprint coverage")
+    assert finding.status == "not_run"
+    assert finding.status != "pass"
+
+
+def test_ground_without_face_data_is_not_run_never_pass():
+    found = scene_findings(rb(mesh(name="SM_Vatutino_Ground"), mesh(name="UCX_SM_Vatutino_Ground_001", tris=4)),
+                           "vpm", "ground", PROFILES.vpm, ground_area_m2=VATUTINO_GROUND_M2)
+    finding = next(item for item in found["V003"] if item.name == "ground footprint coverage")
+    assert finding.status == "not_run"
+    assert finding.status != "pass"
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), float("-inf")])
+def test_non_finite_ground_coordinates_fail(bad):
+    item = _ground_surface("SM_Vatutino_Ground", [(0.0, 0.0, VATUTINO_GROUND_M2, 1.0)])
+    item["face_geometry"]["vertices"][0][0] = bad
+    found = scene_findings(rb(item), "vpm", "ground", PROFILES.vpm, ground_area_m2=VATUTINO_GROUND_M2)
+    finding = next(f for f in found["V003"] if f.name == "ground footprint coverage")
+    assert finding.status == "fail"
+    assert finding.status != "pass"
+
+
+def test_empty_face_geometry_fails_closed():
+    item = mesh(name="SM_Vatutino_Ground", tris=0, degrees={"3": 0})
+    item["face_geometry"] = {"vertices": [], "polygons": []}
+    found = scene_findings(rb(item), "vpm", "ground", PROFILES.vpm, ground_area_m2=VATUTINO_GROUND_M2)
+    finding = next(f for f in found["V003"] if f.name == "ground footprint coverage")
+    assert finding.status == "fail"
+
+
+def test_partial_face_geometry_fails_closed():
+    faced = _ground_surface("SM_Vatutino_Ground", [(0.0, 0.0, VATUTINO_GROUND_M2, 1.0)])
+    bare = mesh(name="SM_Vatutino_GroundGlass")
+    found = scene_findings(rb(faced, bare), "vpm", "ground", PROFILES.vpm, ground_area_m2=VATUTINO_GROUND_M2)
+    finding = next(f for f in found["V003"] if f.name == "ground footprint coverage")
+    assert finding.status == "fail"
+
+
+def test_unsupported_face_geometry_fails_closed():
+    item = mesh(name="SM_Vatutino_Ground")
+    item["face_geometry"] = {"vertices": {"0": [0.0, 0.0, 0.0]}, "polygons": []}
+    found = scene_findings(rb(item), "vpm", "ground", PROFILES.vpm, ground_area_m2=VATUTINO_GROUND_M2)
+    finding = next(f for f in found["V003"] if f.name == "ground footprint coverage")
+    assert finding.status == "fail"
+
+
+def test_exactly_at_area_tolerance_fails_closed():
+    """|difference| == GROUND_AREA_TOL_M2 fails; the gate is strict so the threshold itself is not a pass."""
+    tol = _area_tol()
+    over = _footprint_finding([
+        (0.0, 0.0, VATUTINO_GROUND_M2, 1.0),
+        (VATUTINO_GROUND_M2, 0.0, VATUTINO_GROUND_M2 + tol, 1.0),
+    ])
+    under = _footprint_finding([(0.0, 0.0, VATUTINO_GROUND_M2 - tol, 1.0)])
+    assert over.status == "fail" and over.data["difference_m2"] == pytest.approx(tol, abs=1e-9)
+    assert under.status == "fail" and under.data["difference_m2"] == pytest.approx(-tol, abs=1e-9)
+    assert "filled_absence_m2" not in over.data and "filled_absence_m2" not in under.data
+    inside = _footprint_finding([
+        (0.0, 0.0, VATUTINO_GROUND_M2, 1.0),
+        (VATUTINO_GROUND_M2, 0.0, VATUTINO_GROUND_M2 + tol / 2, 1.0),
+    ])
+    assert inside.status == "pass"
+    assert inside.data["difference_m2"] == pytest.approx(tol / 2, abs=1e-9)
+    assert "filled_absence_m2" not in inside.data
+
+
+def test_ucx_area_is_excluded_and_stacked_cover_does_not_double_count():
+    ucx = _ground_surface("UCX_SM_Vatutino_Ground_001", [(0.0, 0.0, FOOTPRINT_HOLE_M2, 1.0)])
+    finding = _footprint_finding([(0.0, 0.0, VATUTINO_GROUND_M2, 1.0)], extra=(ucx,))
+    assert finding.status == "pass"
+    assert finding.data["measured_m2"] == pytest.approx(VATUTINO_GROUND_M2, abs=1e-6)
+    stacked = _footprint_finding([
+        (0.0, 0.0, VATUTINO_GROUND_M2, 1.0),
+        (0.0, 0.0, VATUTINO_GROUND_M2, 1.0),
+    ])
+    assert stacked.status == "pass"
+    assert stacked.data["measured_m2"] == pytest.approx(VATUTINO_GROUND_M2, abs=1e-6)
+
+
+def test_npm_ground_uses_the_same_area_when_provided():
+    finding = _footprint_finding([(0.0, 0.0, VATUTINO_GROUND_M2, 1.0)], kind="npm")
+    assert finding.status == "pass"
+    assert finding.data["difference_m2"] == pytest.approx(0.0, abs=1e-6)
+    bare = scene_findings(rb(mesh(name="SM_Vatutino_Ground")), "npm", "ground", PROFILES.npm)
+    assert next(item for item in bare["V003"] if item.name == "ground footprint coverage").status == "not_run"
+
+
+def test_oks_does_not_grow_a_footprint_finding():
+    item = _ground_surface("SM_Test_K_1_Main", [(0.0, 0.0, 10.0, 10.0)])
+    found = scene_findings(rb(item), "vpm", "oks", PROFILES.vpm, ground_area_m2=VATUTINO_GROUND_M2)
+    assert "ground footprint coverage" not in {f.name for f in found["V003"]}
+
+
+def test_fill_above_tolerance_never_passes():
+    """Invariant: a rectangular fill whose area is above GROUND_AREA_TOL_M2 never passes.
+
+    Each case builds a site rectangle with a rectangular hole (four non-overlapping pieces) and
+    checks the holed mesh against site-minus-hole, then drops a fill strictly inside the hole.
+    """
+    tol = _area_tol()
+    rng = random.Random(651)
+    cases = 0
+    for _ in range(24):
+        site_w = rng.uniform(40.0, 90.0)
+        site_h = rng.uniform(40.0, 90.0)
+        inset = rng.uniform(2.0, 6.0)
+        hole_w = site_w - 2 * inset
+        hole_h = site_h - 2 * inset
+        frame = [
+            (0.0, 0.0, site_w, inset),
+            (0.0, site_h - inset, site_w, site_h),
+            (0.0, inset, inset, site_h - inset),
+            (site_w - inset, inset, site_w, site_h - inset),
+        ]
+        expected = site_w * site_h - hole_w * hole_h
+        holed = _footprint_finding(frame, area=expected)
+        assert holed.status == "pass", holed.data
+        assert holed.data["measured_m2"] == pytest.approx(expected, abs=1e-4)
+        fill_w = min(hole_w * 0.5, tol + rng.uniform(0.02, 2.0))
+        fill_h = 1.0
+        if fill_w * fill_h <= tol:
+            fill_h = (tol / fill_w) + rng.uniform(0.05, 0.5)
+        assert fill_w * fill_h > tol and fill_w < hole_w and fill_h < hole_h
+        filled_rects = frame + [(inset, inset, inset + fill_w, inset + fill_h)]
+        filled = _footprint_finding(filled_rects, area=expected)
+        assert filled.status == "fail"
+        assert filled.data["difference_m2"] == pytest.approx(fill_w * fill_h, abs=1e-4)
+        assert filled.data["difference_m2"] > tol
+        assert "filled_absence_m2" not in filled.data
+        cases += 1
+    assert cases == 24
+
+
+# --- #651 review: spatial footprint-hole coverage, independent of net area -----------------------
+
+FRAME_AREA_M2 = 3600.0
+
+
+def _frame_rects():
+    """100x100 frame with the open rectangle (10,10)-(90,90). Union area is 3600 m2."""
+    return [
+        (0.0, 0.0, 100.0, 10.0),
+        (0.0, 90.0, 100.0, 100.0),
+        (0.0, 10.0, 10.0, 90.0),
+        (90.0, 10.0, 100.0, 90.0),
+    ]
+
+
+def _frame_hole_ring():
+    return [(10.0, 10.0), (90.0, 10.0), (90.0, 90.0), (10.0, 90.0)]
+
+
+def _witness_rects():
+    """Same frame, minus (0,0)-(0.05,10) outside the hole, plus (10,10)-(10.5,11) inside it.
+
+    Both patches are 0.5 m2, so the net top-down area stays 3600 m2.
+    """
+    rects = _frame_rects()
+    rects[0] = (0.05, 0.0, 100.0, 10.0)
+    rects.append((10.0, 10.0, 10.5, 11.0))
+    return rects
+
+
+def _coverage_findings(rects, area, holes, kind="vpm", extra=(), source="C:/x/SM_Frame_Ground.fbx"):
+    profile = PROFILES.vpm if kind == "vpm" else PROFILES.npm
+    report = rb(_ground_surface("SM_Frame_Ground", rects), *extra)
+    report["source"] = source
+    found = scene_findings(report, kind, "ground", profile, ground_area_m2=area, footprint_holes=holes)
+    area_finding = next(item for item in found["V003"] if item.name == "ground footprint coverage")
+    hole_finding = next(item for item in found["V003"] if item.name == "ground footprint hole coverage")
+    return area_finding, hole_finding
+
+
+def _assert_no_filled_absence_name(finding):
+    blob = " ".join([finding.name, finding.observed, finding.expected, " ".join(finding.data)])
+    assert "filled_absence" not in blob
+    assert "filled absence" not in blob
+
+
+def test_651_compensated_frame_hole_fill_fails():
+    """100x100 frame, hole (10,10)-(90,90). Losing 0.5 m2 outside and covering 0.5 m2 inside
+    keeps the net area at 3600. The hole-coverage finding still fails."""
+    area_finding, hole_finding = _coverage_findings(_witness_rects(), FRAME_AREA_M2, [_frame_hole_ring()])
+    assert area_finding.status == "pass"
+    assert area_finding.data["measured_m2"] == pytest.approx(FRAME_AREA_M2, abs=1e-4)
+    assert area_finding.data["difference_m2"] == pytest.approx(0.0, abs=1e-4)
+    assert hole_finding.status == "fail"
+    assert hole_finding.data["hole_coverage_m2"] == pytest.approx(0.5, abs=1e-6)
+    assert hole_finding.data["hole_coverage_m2"] > _area_tol()
+    _assert_no_filled_absence_name(area_finding)
+    _assert_no_filled_absence_name(hole_finding)
+
+
+@pytest.mark.parametrize("kind", ["vpm", "npm"])
+def test_651_clean_frame_hole_coverage_passes(kind):
+    area_finding, hole_finding = _coverage_findings(_frame_rects(), FRAME_AREA_M2, [_frame_hole_ring()], kind=kind)
+    assert area_finding.status == "pass"
+    assert area_finding.data["difference_m2"] == pytest.approx(0.0, abs=1e-4)
+    assert hole_finding.status == "pass"
+    assert hole_finding.data["hole_coverage_m2"] == pytest.approx(0.0, abs=1e-6)
+    _assert_no_filled_absence_name(hole_finding)
+
+
+def test_651_negative_face_indices_fail():
+    """The 3431.50 m2 quad addressed as [-4,-3,-2] / [-4,-2,-1] is the same two triangles.
+    Negative indices are a broken readback and fail closed."""
+    item = _ground_surface("SM_Vatutino_Ground", [(0.0, 0.0, VATUTINO_GROUND_M2, 1.0)])
+    assert item["face_geometry"]["polygons"] == [[0, 1, 2], [0, 2, 3]]
+    item["face_geometry"]["polygons"] = [[-4, -3, -2], [-4, -2, -1]]
+    finding = _footprint_finding_from(item)
+    assert finding.status == "fail"
+    assert "negative face index" in finding.observed
+
+
+def test_651_polygon_with_fewer_than_3_indices_fails():
+    item = _ground_surface("SM_Vatutino_Ground", [(0.0, 0.0, VATUTINO_GROUND_M2, 1.0)])
+    item["face_geometry"]["polygons"].append([0, 1])
+    finding = _footprint_finding_from(item)
+    assert finding.status == "fail"
+    assert "fewer than 3 indices" in finding.observed
+
+
+def test_651_vertex_missing_z_fails():
+    item = _ground_surface("SM_Vatutino_Ground", [(0.0, 0.0, VATUTINO_GROUND_M2, 1.0)])
+    item["face_geometry"]["vertices"] = [vertex[:2] for vertex in item["face_geometry"]["vertices"]]
+    finding = _footprint_finding_from(item)
+    assert finding.status == "fail"
+    assert "missing Z" in finding.observed
+
+
+def test_651_out_of_range_face_index_fails():
+    item = _ground_surface("SM_Vatutino_Ground", [(0.0, 0.0, VATUTINO_GROUND_M2, 1.0)])
+    item["face_geometry"]["polygons"] = [[0, 1, 99]]
+    finding = _footprint_finding_from(item)
+    assert finding.status == "fail"
+    assert "out-of-range face index" in finding.observed
+
+
+def test_651_compensated_hole_fill_with_short_polygon_fails():
+    """The area-compensated witness plus a polygon [0, 1] fails both findings by name.
+    A short polygon must not be skipped so the compensated fill can pass."""
+    item = _ground_surface("SM_Frame_Ground", _witness_rects())
+    item["face_geometry"]["polygons"].append([0, 1])
+    report = rb(item)
+    report["source"] = "C:/x/SM_Frame_Ground.fbx"
+    found = scene_findings(report, "vpm", "ground", PROFILES.vpm,
+                           ground_area_m2=FRAME_AREA_M2, footprint_holes=[_frame_hole_ring()])
+    area_finding = next(item for item in found["V003"] if item.name == "ground footprint coverage")
+    hole_finding = next(item for item in found["V003"] if item.name == "ground footprint hole coverage")
+    assert area_finding.status == "fail" and "fewer than 3 indices" in area_finding.observed
+    assert hole_finding.status == "fail" and "fewer than 3 indices" in hole_finding.observed
+
+
+def test_651_hole_coverage_exactly_at_tolerance_fails_closed():
+    """Coverage equal to GROUND_AREA_TOL_M2 fails. Half of that, with the same area removed
+    outside the hole, passes. The scalar net stays inside the tolerance either way."""
+    tol = _area_tol()
+    area_finding, hole_finding = _coverage_findings(
+        _compensated_fill_rects(tol), FRAME_AREA_M2, [_frame_hole_ring()])
+    assert area_finding.status == "pass"
+    assert hole_finding.status == "fail"
+    assert hole_finding.data["hole_coverage_m2"] == pytest.approx(tol, abs=1e-6)
+    under_area, under_hole = _coverage_findings(
+        _compensated_fill_rects(tol / 2), FRAME_AREA_M2, [_frame_hole_ring()])
+    assert under_area.status == "pass"
+    assert under_hole.status == "pass"
+    assert under_hole.data["hole_coverage_m2"] == pytest.approx(tol / 2, abs=1e-6)
+
+
+def test_651_spatial_check_without_hole_reference_is_not_run():
+    """No hole polygon: the scalar check still runs; the hole check is not_run and never a pass."""
+    area_finding, hole_finding = _coverage_findings(
+        [(0.0, 0.0, VATUTINO_GROUND_M2, 1.0),
+         (VATUTINO_GROUND_M2, 0.0, VATUTINO_GROUND_M2 + 0.5, 1.0)],
+        VATUTINO_GROUND_M2, None)
+    assert area_finding.status == "fail"
+    assert area_finding.data["difference_m2"] == pytest.approx(0.5, abs=1e-6)
+    assert "filled_absence_m2" not in area_finding.data
+    assert hole_finding.status == "not_run"
+    assert hole_finding.status != "pass"
+    _assert_no_filled_absence_name(area_finding)
+    _assert_no_filled_absence_name(hole_finding)
+
+
+def test_651_hole_coverage_without_ground_area_still_fails_the_fill():
+    report = rb(_ground_surface("SM_Frame_Ground", _witness_rects()))
+    report["source"] = "C:/x/SM_Frame_Ground.fbx"
+    found = scene_findings(report, "vpm", "ground", PROFILES.vpm, footprint_holes=[_frame_hole_ring()])
+    area_finding = next(item for item in found["V003"] if item.name == "ground footprint coverage")
+    hole_finding = next(item for item in found["V003"] if item.name == "ground footprint hole coverage")
+    assert area_finding.status == "not_run"
+    assert hole_finding.status == "fail"
+    assert hole_finding.data["hole_coverage_m2"] == pytest.approx(0.5, abs=1e-6)
+
+
+def test_651_hole_check_without_face_data_is_not_run():
+    found = scene_findings(rb(mesh(name="SM_Vatutino_Ground")), "vpm", "ground", PROFILES.vpm,
+                           ground_area_m2=VATUTINO_GROUND_M2, footprint_holes=[_frame_hole_ring()])
+    hole_finding = next(item for item in found["V003"] if item.name == "ground footprint hole coverage")
+    assert hole_finding.status == "not_run"
+    assert hole_finding.status != "pass"
+
+
+def test_651_ucx_inside_hole_does_not_count():
+    ucx = _ground_surface("UCX_SM_Frame_Ground_001", [(10.0, 10.0, 20.0, 20.0)])
+    area_finding, hole_finding = _coverage_findings(
+        _frame_rects(), FRAME_AREA_M2, [_frame_hole_ring()], extra=(ucx,))
+    assert area_finding.status == "pass"
+    assert hole_finding.status == "pass"
+    assert hole_finding.data["hole_coverage_m2"] == pytest.approx(0.0, abs=1e-6)
+
+
+def test_651_malformed_hole_reference_fails():
+    _area_finding, hole_finding = _coverage_findings(
+        _frame_rects(), FRAME_AREA_M2, [[(0.0, 0.0), (1.0, 0.0)]])
+    assert hole_finding.status == "fail"
+    assert "footprint hole ring has fewer than 3 points" in hole_finding.observed
+
+
+def test_651_validate_package_passes_footprint_holes(monkeypatch, tmp_path):
+    fbx = tmp_path / "SM_Frame_Ground.fbx"
+    fbx.write_bytes(b"Kaydara FBX Binary  \x00")
+    item = _ground_surface("SM_Frame_Ground", _witness_rects())
+    monkeypatch.setattr(vp, "readback", lambda path, blender=None, timeout=600: rb(item))
+    report = vp.validate(fbx, "vpm", PROFILES, scene=True, ground_area_m2=FRAME_AREA_M2,
+                         footprint_holes=[_frame_hole_ring()])
+    findings = [finding for stage in report.stages for finding in stage.findings]
+    hole_finding = next(finding for finding in findings if finding.name == "ground footprint hole coverage")
+    assert hole_finding.status == "fail"
+    assert hole_finding.data["hole_coverage_m2"] == pytest.approx(0.5, abs=1e-6)
+
+
+def test_651_hole_fill_above_tolerance_never_passes():
+    """Invariant: Ground coverage inside the footprint hole above GROUND_AREA_TOL_M2 never passes.
+
+    Each case also removes a slightly larger patch outside the hole, so the scalar net
+    difference stays inside the tolerance and would pass on its own.
+    """
+    tol = _area_tol()
+    rng = random.Random(651)
+    cases = 0
+    for _ in range(24):
+        site_w = rng.uniform(40.0, 90.0)
+        site_h = rng.uniform(40.0, 90.0)
+        inset = rng.uniform(3.0, 8.0)
+        hole_w = site_w - 2 * inset
+        hole_h = site_h - 2 * inset
+        frame = [
+            (0.0, 0.0, site_w, inset),
+            (0.0, site_h - inset, site_w, site_h),
+            (0.0, inset, inset, site_h - inset),
+            (site_w - inset, inset, site_w, site_h - inset),
+        ]
+        expected = site_w * site_h - hole_w * hole_h
+        ring = [
+            (inset, inset),
+            (site_w - inset, inset),
+            (site_w - inset, site_h - inset),
+            (inset, site_h - inset),
+        ]
+        _clean_area, clean_hole = _coverage_findings(frame, expected, [ring])
+        assert clean_hole.status == "pass"
+        assert clean_hole.data["hole_coverage_m2"] == pytest.approx(0.0, abs=1e-4)
+        max_w = hole_w - 0.4
+        max_h = hole_h - 0.4
+        fill_w = min(max_w, rng.uniform(0.4, 2.5))
+        fill_h = min(max_h, (tol / fill_w) + rng.uniform(0.05, 0.8))
+        if fill_w * fill_h <= tol:
+            fill_h = min(max_h, (tol / fill_w) + 0.05)
+        assert fill_w * fill_h > tol
+        assert fill_w < max_w and fill_h < max_h
+        fill = (inset + 0.1, inset + 0.1, inset + 0.1 + fill_w, inset + 0.1 + fill_h)
+        removed = fill_w * fill_h + rng.uniform(0.01, 0.05)
+        cut_h = min(inset * 0.5, 1.0)
+        cut_w = removed / cut_h
+        if cut_w >= site_w * 0.9:
+            cut_h = removed / (site_w * 0.5)
+            cut_w = removed / cut_h
+        assert 0.0 < cut_h < inset and 0.0 < cut_w < site_w
+        mutated = [
+            (cut_w, 0.0, site_w, cut_h),
+            (0.0, cut_h, site_w, inset),
+            frame[1], frame[2], frame[3],
+            fill,
+        ]
+        area_finding, hole_finding = _coverage_findings(mutated, expected, [ring])
+        assert hole_finding.status == "fail"
+        assert hole_finding.data["hole_coverage_m2"] == pytest.approx(fill_w * fill_h, abs=1e-3)
+        assert hole_finding.data["hole_coverage_m2"] > tol
+        assert area_finding.status == "pass"
+        assert "filled absence" not in hole_finding.observed
+        cases += 1
+    assert cases == 24
+
+
+def _footprint_finding_from(item):
+    found = scene_findings(rb(item), "vpm", "ground", PROFILES.vpm, ground_area_m2=VATUTINO_GROUND_M2)
+    return next(finding for finding in found["V003"] if finding.name == "ground footprint coverage")
+
+
+def _compensated_fill_rects(fill_area):
+    """Frame plus a fill_area patch inside the hole and the same area removed from the outer strip."""
+    rects = _frame_rects()
+    cut_w = fill_area / 10.0
+    rects[0] = (cut_w, 0.0, 100.0, 10.0)
+    rects.append((10.0, 10.0, 10.0 + fill_area, 11.0))
+    return rects
+
+
+def _oks_clearance(item, role="oks"):
+    found = scene_findings(rb(item), "vpm", role, PROFILES.vpm)
+    return next(f for f in found["V004"] if f.name == "co-directional clearance")
+
+
+def test_651_oks_clean_control_clearance_passes():
+    item = _ground_surface("SM_Oks", [(0.0, 0.0, 10.0, 10.0)])
+    assert _oks_clearance(item).status == "pass"
+
+
+def test_651_oks_vertices_missing_z_fail_clearance():
+    item = _ground_surface("SM_Oks", [(0.0, 0.0, 10.0, 10.0)])
+    item["face_geometry"]["vertices"] = [v[:2] for v in item["face_geometry"]["vertices"]]
+    finding = _oks_clearance(item)
+    assert finding.status == "fail"
+    assert "malformed face geometry" in finding.observed and "SM_Oks#0" in finding.observed
+
+
+def test_651_oks_out_of_range_index_fails_clearance():
+    item = _ground_surface("SM_Oks", [(0.0, 0.0, 10.0, 10.0)])
+    item["face_geometry"]["polygons"] = [[0, 1, 99]]
+    finding = _oks_clearance(item)
+    assert finding.status == "fail"
+    assert "out of range" in finding.observed
+
+
+def test_651_oks_negative_index_fails_clearance():
+    item = _ground_surface("SM_Oks", [(0.0, 0.0, 10.0, 10.0)])
+    item["face_geometry"]["polygons"] = [[-4, -3, -2]]
+    assert _oks_clearance(item).status == "fail"
+
+
+def test_651_ground_compensated_hole_and_malformed_both_fail():
+    item = _ground_surface("SM_Frame_Ground", _witness_rects())
+    item["face_geometry"]["polygons"].append([0, 1, 99])
+    report = rb(item)
+    found = scene_findings(report, "vpm", "ground", PROFILES.vpm, ground_area_m2=FRAME_AREA_M2,
+                           footprint_holes=[_frame_hole_ring()])
+    assert next(f for f in found["V003"] if f.name == "ground footprint hole coverage").status == "fail"
+    assert next(f for f in found["V004"] if f.name == "co-directional clearance").status == "fail"

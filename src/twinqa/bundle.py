@@ -1,7 +1,7 @@
 # Ported from AGR src/dt_ai/publish/bundle.py (sha256 0d190a116dd4) on 2026-10-06;
 # changes: read_bundle only (package() dropped), BundleError, caller-supplied uncompressed
 # limit, CRC check, directory entries skipped; size_finding() moved here from the previous
-# tools/qa/validate_package.py; conflict #12 decided 2026-10-07 (binary units).
+# tools/qa/validate_package.py; conflict #12 decided 2026-10-07 [D015] (binary units).
 """Safe ZIP reading (no extraction of archive-controlled paths) and archive size rules."""
 import zipfile
 from pathlib import PurePosixPath
@@ -36,7 +36,7 @@ def read_bundle(path, max_uncompressed: int) -> dict[str, bytes]:
 
 
 def size_status(size_bytes: int, limit_bytes: int) -> tuple[str, str]:
-    """Limits are binary bytes (MiB/GiB), as SINTEZ AGR Checker (conflict #12, decided 2026-10-07)."""
+    """Limits are binary bytes (MiB/GiB), as SINTEZ AGR Checker (conflict #12, decided 2026-10-07 [D015])."""
     label = f"{limit_bytes / 1024 ** 2:g} MiB"
     if size_bytes > limit_bytes:
         return "fail", f"{size_bytes} B exceeds {label}"

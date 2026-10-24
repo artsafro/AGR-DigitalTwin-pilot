@@ -77,6 +77,7 @@ class InvariantResult:
     passed: bool
     count: int
     offenders: tuple = ()      # up to 5 short descriptions
+    gating: bool = True        # False = report-only: shown, but does not fail the report (#370)
 
 
 @dataclass(frozen=True)
@@ -85,15 +86,16 @@ class InvariantReport:
     passed: bool = field(init=False)
 
     def __post_init__(self):
-        object.__setattr__(self, "passed", all(r.passed for r in self.results))
+        object.__setattr__(self, "passed", all(r.passed for r in self.results if r.gating))
 
     @property
     def broken(self) -> tuple:
-        return tuple(r for r in self.results if not r.passed)
+        return tuple(r for r in self.results if not r.passed and r.gating)
 
     def to_dict(self) -> dict:
         return {"passed": self.passed,
-                "results": [{"name": r.name, "passed": r.passed, "count": r.count, "offenders": list(r.offenders)}
+                "results": [{"name": r.name, "passed": r.passed, "count": r.count, "offenders": list(r.offenders),
+                             "gating": r.gating}
                             for r in self.results]}
 
 

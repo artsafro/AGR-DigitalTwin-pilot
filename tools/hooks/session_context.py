@@ -116,7 +116,7 @@ def _line(text):
 
 
 def _rename_prompt(branch):
-    """Lines (each under LINE) telling the agent to get the auto-generated branch renamed (user 2026-10-14)."""
+    """Lines (each under LINE) telling the agent to get the auto-generated branch renamed (user 2026-10-14 [D078])."""
     return [f"BRANCH NAME: `{branch}` is an auto-generated worktree name (docs/agents/NAMING.md).",
             "In your first reply, in one line, propose a branch name for this task by NAMING.md: " + RENAME_HINT
             + ".",

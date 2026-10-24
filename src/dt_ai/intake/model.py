@@ -1,4 +1,4 @@
-"""Intake formats (docs/HARNESS_PLAN.md §15, user decisions 2026-10-11): what "study the sources" writes to
+"""Intake formats (docs/HARNESS_PLAN.md §15, user decisions 2026-10-11 [D049]): what "study the sources" writes to
 jobs/<JOB>/intake/ — sources.json (the inventory) and spec-draft.json (a spec whose blocks may be null,
 each with a confidence and its sources). picture.md and questions.md are Markdown (dt_ai.intake.check).
 Pattern: none — intake code (REVIEW_CHECKLIST Q1: new-case, HARNESS_PLAN §15).
@@ -43,6 +43,10 @@ class SourceEntry(Part):
     version: str | None = None
     opened: bool
     not_opened_reason: str | None = None
+    waiver_question: str | None = Field(
+        default=None, pattern=r"^Q\d+$",
+        description="User waiver of opening this source: answered question ID in questions.md; "
+                    "never authorizes citing an unread source as evidence.")
     role: Literal["primary", "check", "materials", "none"] = Field(
         description="primary: the best-ranked source that gives geometry or dimensions; lower-ranked sources "
                     "only check it or give materials (§15)")

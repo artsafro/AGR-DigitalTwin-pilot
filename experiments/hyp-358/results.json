@@ -1,0 +1,983 @@
+{
+  "all_measured_thresholds_satisfied": true,
+  "blockers": [
+    "Full issue #358 and its frozen prediction table are absent from task context/worktree.",
+    "External ACCEPTANCE_TABLE.md is outside the permitted worktree; not read.",
+    "Issue-specific reference convergence and diagnostics gates cannot be reconstructed."
+  ],
+  "boundary_tols_m": [
+    0.0001,
+    0.0005,
+    1e-06,
+    1e-07
+  ],
+  "code_hashes": {
+    "experiments\\hyp-358\\experiment.py": "962af2893ba148bacc97035caa527da54f3d89687ade9c780893c2b88a41ac0c",
+    "tests\\test_inspect_ground_dxf.py": "cc31e70ec6d565dad6b7c8defa178b4b936b44255407711c8b4e0f82c3687a83",
+    "tools\\source\\inspect_ground_dxf.py": "f2c8d63ae0d48c368532aba0a9be0467255c7f95c942b7ebfc8b6a45a6559439"
+  },
+  "delivery_passed": false,
+  "environment": {
+    "ezdxf": "1.4.3",
+    "geos": "3.13.1",
+    "python": "3.14.7",
+    "shapely": "2.1.2"
+  },
+  "hatch_tol_m": 0.001,
+  "measured_user_threshold_checks": {
+    "150B41/clip_area_difference_m2": true,
+    "150B41/symmetric_difference_m2": true,
+    "181ECB/clip_area_difference_m2": true,
+    "181ECB/symmetric_difference_m2": true,
+    "FAA81/clip_area_difference_m2": true,
+    "FAA81/symmetric_difference_m2": true,
+    "area_error_m2": true,
+    "boundary_symmetric_difference_m2": true,
+    "hausdorff_m": true,
+    "perimeter_error_m": true,
+    "reduction": true
+  },
+  "repeatable": true,
+  "runs": [
+    {
+      "boundary_handle": "30",
+      "bulges": 4,
+      "candidate_vs_baseline": {
+        "boundary_symmetric_difference_m2": 0.02681643411427921,
+        "hatches": {
+          "150B41": {
+            "clip_area_difference_m2": 0.0,
+            "symmetric_difference_m2": 0.0
+          },
+          "181ECB": {
+            "clip_area_difference_m2": 0.0,
+            "symmetric_difference_m2": 0.0
+          },
+          "FAA81": {
+            "clip_area_difference_m2": 0.0033774603011806903,
+            "symmetric_difference_m2": 0.0034466036410542257
+          }
+        }
+      },
+      "comparisons": {
+        "0.0001": {
+          "boundary_symmetric_difference_m2": 0.0065945029123094905,
+          "hatches": {
+            "150B41": {
+              "clip_area_difference_m2": 0.0,
+              "symmetric_difference_m2": 0.0
+            },
+            "181ECB": {
+              "clip_area_difference_m2": 0.0,
+              "symmetric_difference_m2": 0.0
+            },
+            "FAA81": {
+              "clip_area_difference_m2": 0.0008403699218888505,
+              "symmetric_difference_m2": 0.0008403702617112577
+            }
+          },
+          "hausdorff_m": 9.98555041672336e-05
+        },
+        "0.0005": {
+          "boundary_symmetric_difference_m2": 0.03286439067001077,
+          "hatches": {
+            "150B41": {
+              "clip_area_difference_m2": 0.0,
+              "symmetric_difference_m2": 0.0
+            },
+            "181ECB": {
+              "clip_area_difference_m2": 0.0,
+              "symmetric_difference_m2": 0.0
+            },
+            "FAA81": {
+              "clip_area_difference_m2": 0.004217830223069541,
+              "symmetric_difference_m2": 0.004217830290579173
+            }
+          },
+          "hausdorff_m": 0.0004988256095001787
+        }
+      },
+      "element_accounting": {
+        "drops": [],
+        "input": 4,
+        "output": 4
+      },
+      "exact_area_m2": 25854.048800748475,
+      "exact_perimeter_m": 641.9473560690752,
+      "input_sha256": "2da237ebc0a74b2ecd29c007a1ce340f0efc542cbf38a064159cf59e45f1e0d7",
+      "reduction": 0.5382003395585739,
+      "reference_convergence": {
+        "area_delta_m2": 5.9618829254759476e-05,
+        "hatches": {
+          "150B41": {
+            "area_delta_m2": 0.0,
+            "symmetric_difference_m2": 0.0
+          },
+          "181ECB": {
+            "area_delta_m2": 0.0,
+            "symmetric_difference_m2": 0.0
+          },
+          "FAA81": {
+            "area_delta_m2": 7.609088470417191e-06,
+            "symmetric_difference_m2": 7.643417515664661e-06
+          }
+        },
+        "hausdorff_m": 9.99955151844459e-07,
+        "perimeter_delta_m": 1.138713173531869e-06,
+        "symmetric_difference_m2": 5.988831612854217e-05
+      },
+      "rows": {
+        "0.0001": {
+          "area_error_m2": 0.006601130600756733,
+          "area_m2": 25854.042199617874,
+          "empty": false,
+          "hatches": {
+            "150B41": {
+              "area": 2016.152219153689,
+              "area_in_plot": 2016.1522191536799,
+              "handle": "31",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 11,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "181ECB": {
+              "area": 611.545624130927,
+              "area_in_plot": 611.5456241309269,
+              "handle": "32",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 8,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "FAA81": {
+              "area": 562.8586095999234,
+              "area_in_plot": 301.13583801451443,
+              "handle": "33",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 2,
+              "pattern": "AR-B816",
+              "style": 1
+            }
+          },
+          "holes": 0,
+          "inventory_checks": {
+            "hatch_total": 3,
+            "hatches_invalid": 0,
+            "hatches_measured": 3,
+            "insert_total": 0,
+            "layer_table": 2,
+            "layers_used_in_msp": 2,
+            "msp_entities": 4,
+            "sum_block_insert_counts": 0,
+            "sum_layer_type_counts": 4
+          },
+          "perimeter_error_m": 0.00012609619625436608,
+          "perimeter_m": 641.947229972879,
+          "type": "Polygon",
+          "valid": true,
+          "vertices": 589,
+          "wkb_sha256": "996dc6f8492fb75faf9b1ff5d67343fff7669f6d166b29fd5316caa6a68f0cab"
+        },
+        "0.0005": {
+          "area_error_m2": 0.03287102049216628,
+          "area_m2": 25854.015929727982,
+          "empty": false,
+          "hatches": {
+            "150B41": {
+              "area": 2016.152219153689,
+              "area_in_plot": 2016.1522191536799,
+              "handle": "31",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 11,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "181ECB": {
+              "area": 611.545624130927,
+              "area_in_plot": 611.5456241309269,
+              "handle": "32",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 8,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "FAA81": {
+              "area": 562.8586095999234,
+              "area_in_plot": 301.13246055421325,
+              "handle": "33",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 2,
+              "pattern": "AR-B816",
+              "style": 1
+            }
+          },
+          "holes": 0,
+          "inventory_checks": {
+            "hatch_total": 3,
+            "hatches_invalid": 0,
+            "hatches_measured": 3,
+            "insert_total": 0,
+            "layer_table": 2,
+            "layers_used_in_msp": 2,
+            "msp_entities": 4,
+            "sum_block_insert_counts": 0,
+            "sum_layer_type_counts": 4
+          },
+          "perimeter_error_m": 0.0006301305606939422,
+          "perimeter_m": 641.9467259385145,
+          "type": "Polygon",
+          "valid": true,
+          "vertices": 272,
+          "wkb_sha256": "44d0177a1babbfbe0908d3cf73d723f62c5a23a311b19e3b56bb96fd89afb1b9"
+        },
+        "1e-06": {
+          "area_error_m2": 6.624924935749732e-05,
+          "area_m2": 25854.048734499225,
+          "empty": false,
+          "hatches": {
+            "150B41": {
+              "area": 2016.152219153689,
+              "area_in_plot": 2016.1522191536799,
+              "handle": "31",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 11,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "181ECB": {
+              "area": 611.545624130927,
+              "area_in_plot": 611.5456241309269,
+              "handle": "32",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 8,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "FAA81": {
+              "area": 562.8586095999234,
+              "area_in_plot": 301.13667077534785,
+              "handle": "33",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 2,
+              "pattern": "AR-B816",
+              "style": 1
+            }
+          },
+          "holes": 0,
+          "inventory_checks": {
+            "hatch_total": 3,
+            "hatches_invalid": 0,
+            "hatches_measured": 3,
+            "insert_total": 0,
+            "layer_table": 2,
+            "layers_used_in_msp": 2,
+            "msp_entities": 4,
+            "sum_block_insert_counts": 0,
+            "sum_layer_type_counts": 4
+          },
+          "perimeter_error_m": 1.2652564009840717e-06,
+          "perimeter_m": 641.9473548038188,
+          "type": "Polygon",
+          "valid": true,
+          "vertices": 5745,
+          "wkb_sha256": "bb7aa38e06af0668b0dd2edcdbb80925380a39ec6d5d9e55b9f1d315f6e29a3c"
+        },
+        "1e-07": {
+          "area_error_m2": 6.630420102737844e-06,
+          "area_m2": 25854.048794118055,
+          "empty": false,
+          "hatches": {
+            "150B41": {
+              "area": 2016.152219153689,
+              "area_in_plot": 2016.1522191536799,
+              "handle": "31",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 11,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "181ECB": {
+              "area": 611.545624130927,
+              "area_in_plot": 611.5456241309269,
+              "handle": "32",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 8,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "FAA81": {
+              "area": 562.8586095999234,
+              "area_in_plot": 301.1366783844363,
+              "handle": "33",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 2,
+              "pattern": "AR-B816",
+              "style": 1
+            }
+          },
+          "holes": 0,
+          "inventory_checks": {
+            "hatch_total": 3,
+            "hatches_invalid": 0,
+            "hatches_measured": 3,
+            "insert_total": 0,
+            "layer_table": 2,
+            "layers_used_in_msp": 2,
+            "msp_entities": 4,
+            "sum_block_insert_counts": 0,
+            "sum_layer_type_counts": 4
+          },
+          "perimeter_error_m": 1.265432274522027e-07,
+          "perimeter_m": 641.947355942532,
+          "type": "Polygon",
+          "valid": true,
+          "vertices": 18130,
+          "wkb_sha256": "384c9055d756a475229b8961e785d31c3902037b7a2b33cfef320871a4e427b5"
+        }
+      }
+    },
+    {
+      "boundary_handle": "30",
+      "bulges": 4,
+      "candidate_vs_baseline": {
+        "boundary_symmetric_difference_m2": 0.02681643411427921,
+        "hatches": {
+          "150B41": {
+            "clip_area_difference_m2": 0.0,
+            "symmetric_difference_m2": 0.0
+          },
+          "181ECB": {
+            "clip_area_difference_m2": 0.0,
+            "symmetric_difference_m2": 0.0
+          },
+          "FAA81": {
+            "clip_area_difference_m2": 0.0033774603011806903,
+            "symmetric_difference_m2": 0.0034466036410542257
+          }
+        }
+      },
+      "comparisons": {
+        "0.0001": {
+          "boundary_symmetric_difference_m2": 0.0065945029123094905,
+          "hatches": {
+            "150B41": {
+              "clip_area_difference_m2": 0.0,
+              "symmetric_difference_m2": 0.0
+            },
+            "181ECB": {
+              "clip_area_difference_m2": 0.0,
+              "symmetric_difference_m2": 0.0
+            },
+            "FAA81": {
+              "clip_area_difference_m2": 0.0008403699218888505,
+              "symmetric_difference_m2": 0.0008403702617112577
+            }
+          },
+          "hausdorff_m": 9.98555041672336e-05
+        },
+        "0.0005": {
+          "boundary_symmetric_difference_m2": 0.03286439067001077,
+          "hatches": {
+            "150B41": {
+              "clip_area_difference_m2": 0.0,
+              "symmetric_difference_m2": 0.0
+            },
+            "181ECB": {
+              "clip_area_difference_m2": 0.0,
+              "symmetric_difference_m2": 0.0
+            },
+            "FAA81": {
+              "clip_area_difference_m2": 0.004217830223069541,
+              "symmetric_difference_m2": 0.004217830290579173
+            }
+          },
+          "hausdorff_m": 0.0004988256095001787
+        }
+      },
+      "element_accounting": {
+        "drops": [],
+        "input": 4,
+        "output": 4
+      },
+      "exact_area_m2": 25854.048800748475,
+      "exact_perimeter_m": 641.9473560690752,
+      "input_sha256": "2da237ebc0a74b2ecd29c007a1ce340f0efc542cbf38a064159cf59e45f1e0d7",
+      "reduction": 0.5382003395585739,
+      "reference_convergence": {
+        "area_delta_m2": 5.9618829254759476e-05,
+        "hatches": {
+          "150B41": {
+            "area_delta_m2": 0.0,
+            "symmetric_difference_m2": 0.0
+          },
+          "181ECB": {
+            "area_delta_m2": 0.0,
+            "symmetric_difference_m2": 0.0
+          },
+          "FAA81": {
+            "area_delta_m2": 7.609088470417191e-06,
+            "symmetric_difference_m2": 7.643417515664661e-06
+          }
+        },
+        "hausdorff_m": 9.99955151844459e-07,
+        "perimeter_delta_m": 1.138713173531869e-06,
+        "symmetric_difference_m2": 5.988831612854217e-05
+      },
+      "rows": {
+        "0.0001": {
+          "area_error_m2": 0.006601130600756733,
+          "area_m2": 25854.042199617874,
+          "empty": false,
+          "hatches": {
+            "150B41": {
+              "area": 2016.152219153689,
+              "area_in_plot": 2016.1522191536799,
+              "handle": "31",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 11,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "181ECB": {
+              "area": 611.545624130927,
+              "area_in_plot": 611.5456241309269,
+              "handle": "32",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 8,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "FAA81": {
+              "area": 562.8586095999234,
+              "area_in_plot": 301.13583801451443,
+              "handle": "33",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 2,
+              "pattern": "AR-B816",
+              "style": 1
+            }
+          },
+          "holes": 0,
+          "inventory_checks": {
+            "hatch_total": 3,
+            "hatches_invalid": 0,
+            "hatches_measured": 3,
+            "insert_total": 0,
+            "layer_table": 2,
+            "layers_used_in_msp": 2,
+            "msp_entities": 4,
+            "sum_block_insert_counts": 0,
+            "sum_layer_type_counts": 4
+          },
+          "perimeter_error_m": 0.00012609619625436608,
+          "perimeter_m": 641.947229972879,
+          "type": "Polygon",
+          "valid": true,
+          "vertices": 589,
+          "wkb_sha256": "996dc6f8492fb75faf9b1ff5d67343fff7669f6d166b29fd5316caa6a68f0cab"
+        },
+        "0.0005": {
+          "area_error_m2": 0.03287102049216628,
+          "area_m2": 25854.015929727982,
+          "empty": false,
+          "hatches": {
+            "150B41": {
+              "area": 2016.152219153689,
+              "area_in_plot": 2016.1522191536799,
+              "handle": "31",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 11,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "181ECB": {
+              "area": 611.545624130927,
+              "area_in_plot": 611.5456241309269,
+              "handle": "32",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 8,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "FAA81": {
+              "area": 562.8586095999234,
+              "area_in_plot": 301.13246055421325,
+              "handle": "33",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 2,
+              "pattern": "AR-B816",
+              "style": 1
+            }
+          },
+          "holes": 0,
+          "inventory_checks": {
+            "hatch_total": 3,
+            "hatches_invalid": 0,
+            "hatches_measured": 3,
+            "insert_total": 0,
+            "layer_table": 2,
+            "layers_used_in_msp": 2,
+            "msp_entities": 4,
+            "sum_block_insert_counts": 0,
+            "sum_layer_type_counts": 4
+          },
+          "perimeter_error_m": 0.0006301305606939422,
+          "perimeter_m": 641.9467259385145,
+          "type": "Polygon",
+          "valid": true,
+          "vertices": 272,
+          "wkb_sha256": "44d0177a1babbfbe0908d3cf73d723f62c5a23a311b19e3b56bb96fd89afb1b9"
+        },
+        "1e-06": {
+          "area_error_m2": 6.624924935749732e-05,
+          "area_m2": 25854.048734499225,
+          "empty": false,
+          "hatches": {
+            "150B41": {
+              "area": 2016.152219153689,
+              "area_in_plot": 2016.1522191536799,
+              "handle": "31",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 11,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "181ECB": {
+              "area": 611.545624130927,
+              "area_in_plot": 611.5456241309269,
+              "handle": "32",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 8,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "FAA81": {
+              "area": 562.8586095999234,
+              "area_in_plot": 301.13667077534785,
+              "handle": "33",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 2,
+              "pattern": "AR-B816",
+              "style": 1
+            }
+          },
+          "holes": 0,
+          "inventory_checks": {
+            "hatch_total": 3,
+            "hatches_invalid": 0,
+            "hatches_measured": 3,
+            "insert_total": 0,
+            "layer_table": 2,
+            "layers_used_in_msp": 2,
+            "msp_entities": 4,
+            "sum_block_insert_counts": 0,
+            "sum_layer_type_counts": 4
+          },
+          "perimeter_error_m": 1.2652564009840717e-06,
+          "perimeter_m": 641.9473548038188,
+          "type": "Polygon",
+          "valid": true,
+          "vertices": 5745,
+          "wkb_sha256": "bb7aa38e06af0668b0dd2edcdbb80925380a39ec6d5d9e55b9f1d315f6e29a3c"
+        },
+        "1e-07": {
+          "area_error_m2": 6.630420102737844e-06,
+          "area_m2": 25854.048794118055,
+          "empty": false,
+          "hatches": {
+            "150B41": {
+              "area": 2016.152219153689,
+              "area_in_plot": 2016.1522191536799,
+              "handle": "31",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 11,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "181ECB": {
+              "area": 611.545624130927,
+              "area_in_plot": 611.5456241309269,
+              "handle": "32",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 8,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "FAA81": {
+              "area": 562.8586095999234,
+              "area_in_plot": 301.1366783844363,
+              "handle": "33",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 2,
+              "pattern": "AR-B816",
+              "style": 1
+            }
+          },
+          "holes": 0,
+          "inventory_checks": {
+            "hatch_total": 3,
+            "hatches_invalid": 0,
+            "hatches_measured": 3,
+            "insert_total": 0,
+            "layer_table": 2,
+            "layers_used_in_msp": 2,
+            "msp_entities": 4,
+            "sum_block_insert_counts": 0,
+            "sum_layer_type_counts": 4
+          },
+          "perimeter_error_m": 1.265432274522027e-07,
+          "perimeter_m": 641.947355942532,
+          "type": "Polygon",
+          "valid": true,
+          "vertices": 18130,
+          "wkb_sha256": "384c9055d756a475229b8961e785d31c3902037b7a2b33cfef320871a4e427b5"
+        }
+      }
+    },
+    {
+      "boundary_handle": "30",
+      "bulges": 4,
+      "candidate_vs_baseline": {
+        "boundary_symmetric_difference_m2": 0.02681643411427921,
+        "hatches": {
+          "150B41": {
+            "clip_area_difference_m2": 0.0,
+            "symmetric_difference_m2": 0.0
+          },
+          "181ECB": {
+            "clip_area_difference_m2": 0.0,
+            "symmetric_difference_m2": 0.0
+          },
+          "FAA81": {
+            "clip_area_difference_m2": 0.0033774603011806903,
+            "symmetric_difference_m2": 0.0034466036410542257
+          }
+        }
+      },
+      "comparisons": {
+        "0.0001": {
+          "boundary_symmetric_difference_m2": 0.0065945029123094905,
+          "hatches": {
+            "150B41": {
+              "clip_area_difference_m2": 0.0,
+              "symmetric_difference_m2": 0.0
+            },
+            "181ECB": {
+              "clip_area_difference_m2": 0.0,
+              "symmetric_difference_m2": 0.0
+            },
+            "FAA81": {
+              "clip_area_difference_m2": 0.0008403699218888505,
+              "symmetric_difference_m2": 0.0008403702617112577
+            }
+          },
+          "hausdorff_m": 9.98555041672336e-05
+        },
+        "0.0005": {
+          "boundary_symmetric_difference_m2": 0.03286439067001077,
+          "hatches": {
+            "150B41": {
+              "clip_area_difference_m2": 0.0,
+              "symmetric_difference_m2": 0.0
+            },
+            "181ECB": {
+              "clip_area_difference_m2": 0.0,
+              "symmetric_difference_m2": 0.0
+            },
+            "FAA81": {
+              "clip_area_difference_m2": 0.004217830223069541,
+              "symmetric_difference_m2": 0.004217830290579173
+            }
+          },
+          "hausdorff_m": 0.0004988256095001787
+        }
+      },
+      "element_accounting": {
+        "drops": [],
+        "input": 4,
+        "output": 4
+      },
+      "exact_area_m2": 25854.048800748475,
+      "exact_perimeter_m": 641.9473560690752,
+      "input_sha256": "2da237ebc0a74b2ecd29c007a1ce340f0efc542cbf38a064159cf59e45f1e0d7",
+      "reduction": 0.5382003395585739,
+      "reference_convergence": {
+        "area_delta_m2": 5.9618829254759476e-05,
+        "hatches": {
+          "150B41": {
+            "area_delta_m2": 0.0,
+            "symmetric_difference_m2": 0.0
+          },
+          "181ECB": {
+            "area_delta_m2": 0.0,
+            "symmetric_difference_m2": 0.0
+          },
+          "FAA81": {
+            "area_delta_m2": 7.609088470417191e-06,
+            "symmetric_difference_m2": 7.643417515664661e-06
+          }
+        },
+        "hausdorff_m": 9.99955151844459e-07,
+        "perimeter_delta_m": 1.138713173531869e-06,
+        "symmetric_difference_m2": 5.988831612854217e-05
+      },
+      "rows": {
+        "0.0001": {
+          "area_error_m2": 0.006601130600756733,
+          "area_m2": 25854.042199617874,
+          "empty": false,
+          "hatches": {
+            "150B41": {
+              "area": 2016.152219153689,
+              "area_in_plot": 2016.1522191536799,
+              "handle": "31",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 11,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "181ECB": {
+              "area": 611.545624130927,
+              "area_in_plot": 611.5456241309269,
+              "handle": "32",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 8,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "FAA81": {
+              "area": 562.8586095999234,
+              "area_in_plot": 301.13583801451443,
+              "handle": "33",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 2,
+              "pattern": "AR-B816",
+              "style": 1
+            }
+          },
+          "holes": 0,
+          "inventory_checks": {
+            "hatch_total": 3,
+            "hatches_invalid": 0,
+            "hatches_measured": 3,
+            "insert_total": 0,
+            "layer_table": 2,
+            "layers_used_in_msp": 2,
+            "msp_entities": 4,
+            "sum_block_insert_counts": 0,
+            "sum_layer_type_counts": 4
+          },
+          "perimeter_error_m": 0.00012609619625436608,
+          "perimeter_m": 641.947229972879,
+          "type": "Polygon",
+          "valid": true,
+          "vertices": 589,
+          "wkb_sha256": "996dc6f8492fb75faf9b1ff5d67343fff7669f6d166b29fd5316caa6a68f0cab"
+        },
+        "0.0005": {
+          "area_error_m2": 0.03287102049216628,
+          "area_m2": 25854.015929727982,
+          "empty": false,
+          "hatches": {
+            "150B41": {
+              "area": 2016.152219153689,
+              "area_in_plot": 2016.1522191536799,
+              "handle": "31",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 11,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "181ECB": {
+              "area": 611.545624130927,
+              "area_in_plot": 611.5456241309269,
+              "handle": "32",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 8,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "FAA81": {
+              "area": 562.8586095999234,
+              "area_in_plot": 301.13246055421325,
+              "handle": "33",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 2,
+              "pattern": "AR-B816",
+              "style": 1
+            }
+          },
+          "holes": 0,
+          "inventory_checks": {
+            "hatch_total": 3,
+            "hatches_invalid": 0,
+            "hatches_measured": 3,
+            "insert_total": 0,
+            "layer_table": 2,
+            "layers_used_in_msp": 2,
+            "msp_entities": 4,
+            "sum_block_insert_counts": 0,
+            "sum_layer_type_counts": 4
+          },
+          "perimeter_error_m": 0.0006301305606939422,
+          "perimeter_m": 641.9467259385145,
+          "type": "Polygon",
+          "valid": true,
+          "vertices": 272,
+          "wkb_sha256": "44d0177a1babbfbe0908d3cf73d723f62c5a23a311b19e3b56bb96fd89afb1b9"
+        },
+        "1e-06": {
+          "area_error_m2": 6.624924935749732e-05,
+          "area_m2": 25854.048734499225,
+          "empty": false,
+          "hatches": {
+            "150B41": {
+              "area": 2016.152219153689,
+              "area_in_plot": 2016.1522191536799,
+              "handle": "31",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 11,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "181ECB": {
+              "area": 611.545624130927,
+              "area_in_plot": 611.5456241309269,
+              "handle": "32",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 8,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "FAA81": {
+              "area": 562.8586095999234,
+              "area_in_plot": 301.13667077534785,
+              "handle": "33",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 2,
+              "pattern": "AR-B816",
+              "style": 1
+            }
+          },
+          "holes": 0,
+          "inventory_checks": {
+            "hatch_total": 3,
+            "hatches_invalid": 0,
+            "hatches_measured": 3,
+            "insert_total": 0,
+            "layer_table": 2,
+            "layers_used_in_msp": 2,
+            "msp_entities": 4,
+            "sum_block_insert_counts": 0,
+            "sum_layer_type_counts": 4
+          },
+          "perimeter_error_m": 1.2652564009840717e-06,
+          "perimeter_m": 641.9473548038188,
+          "type": "Polygon",
+          "valid": true,
+          "vertices": 5745,
+          "wkb_sha256": "bb7aa38e06af0668b0dd2edcdbb80925380a39ec6d5d9e55b9f1d315f6e29a3c"
+        },
+        "1e-07": {
+          "area_error_m2": 6.630420102737844e-06,
+          "area_m2": 25854.048794118055,
+          "empty": false,
+          "hatches": {
+            "150B41": {
+              "area": 2016.152219153689,
+              "area_in_plot": 2016.1522191536799,
+              "handle": "31",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 11,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "181ECB": {
+              "area": 611.545624130927,
+              "area_in_plot": 611.5456241309269,
+              "handle": "32",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 8,
+              "pattern": "AR-B816",
+              "style": 1
+            },
+            "FAA81": {
+              "area": 562.8586095999234,
+              "area_in_plot": 301.1366783844363,
+              "handle": "33",
+              "issues": [],
+              "layer": "hatch",
+              "loops": 2,
+              "pattern": "AR-B816",
+              "style": 1
+            }
+          },
+          "holes": 0,
+          "inventory_checks": {
+            "hatch_total": 3,
+            "hatches_invalid": 0,
+            "hatches_measured": 3,
+            "insert_total": 0,
+            "layer_table": 2,
+            "layers_used_in_msp": 2,
+            "msp_entities": 4,
+            "sum_block_insert_counts": 0,
+            "sum_layer_type_counts": 4
+          },
+          "perimeter_error_m": 1.265432274522027e-07,
+          "perimeter_m": 641.947355942532,
+          "type": "Polygon",
+          "valid": true,
+          "vertices": 18130,
+          "wkb_sha256": "384c9055d756a475229b8961e785d31c3902037b7a2b33cfef320871a4e427b5"
+        }
+      }
+    }
+  ],
+  "thresholds_from_user_message": {
+    "area_error_m2": 0.05,
+    "boundary_symmetric_difference_m2": 0.05,
+    "clip_area_difference_m2": 0.05,
+    "hausdorff_m": 0.00051,
+    "perimeter_error_m": 0.005,
+    "reduction": 0.5,
+    "symmetric_difference_m2": 0.05
+  },
+  "verdict": "inconclusive"
+}

@@ -52,7 +52,7 @@ lease, start DCCs, save/reset scenes, delete/quarantine directories, or certify 
 
 ```bash
 uv run pytest -q tests/test_dcc_fixture_manager.py
-uv run pytest -q -m 'not blender and not dcc'
+uv run pytest -q  # default lane from pyproject addopts: excludes blender, dcc, acad, perf, max
 uv run dt profiles check
 uv run dt schemas --check
 ```
@@ -79,6 +79,7 @@ Reject stale evidence; reopen/export-readback independently. Exit 0 alone is not
 ### Blender
 
 The approved baseline is 5.1.2, not the older version mentioned in some domain/history files.
+`--python-exit-code 1` is mandatory on every headless Blender call: without it a Python exception inside Blender exits 0 and a checker reads success.
 An isolated FBX readback candidate (input is an already exported FBX, not `working.blend`):
 
 ```bash

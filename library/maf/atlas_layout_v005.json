@@ -1,0 +1,1937 @@
+{
+ "schema": "library-maf-atlas-layout",
+ "version": "v005",
+ "status": "proposed",
+ "generated_by": "tools/library/maf_atlas_layout.py",
+ "inputs": {
+  "ids": {
+   "path": "library/maf/material_ids_v005.json",
+   "sha256": "d286d3da48596d7dda927921835b58077a45a20b891ae7dc7a85a010b02f95b2"
+  },
+  "spec": {
+   "path": "library/maf/atlas_layout_v005_spec.json",
+   "sha256": "4a3a3c0244c4fddc8aedc3a2d561f52e672462e60ce7d6541671dde2f56aba7c"
+  }
+ },
+ "rule_id_corner": "ID number small in the bottom-right corner of every cell (id_corner_px); UV islands stay inside content_px and outside id_corner_px (Artem 2026-10-21)",
+ "profiles": {
+  "vpm_4k": {
+   "size": 4096,
+   "padding_px": 16,
+   "cells": [
+    {
+     "id": 1,
+     "key": "paint_ral9005",
+     "size_class": "S",
+     "slot_px": [
+      2048,
+      1536,
+      256,
+      256
+     ],
+     "content_px": [
+      2056,
+      1544,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      2260,
+      1748,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 2,
+     "key": "paint_ral7016",
+     "size_class": "S",
+     "slot_px": [
+      2304,
+      1536,
+      256,
+      256
+     ],
+     "content_px": [
+      2312,
+      1544,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      2516,
+      1748,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 3,
+     "key": "paint_ral7040",
+     "size_class": "S",
+     "slot_px": [
+      2048,
+      1792,
+      256,
+      256
+     ],
+     "content_px": [
+      2056,
+      1800,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      2260,
+      2004,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 4,
+     "key": "paint_ral7047",
+     "size_class": "S",
+     "slot_px": [
+      2304,
+      1792,
+      256,
+      256
+     ],
+     "content_px": [
+      2312,
+      1800,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      2516,
+      2004,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 5,
+     "key": "paint_ral9003",
+     "size_class": "S",
+     "slot_px": [
+      2560,
+      1536,
+      256,
+      256
+     ],
+     "content_px": [
+      2568,
+      1544,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      2772,
+      1748,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 6,
+     "key": "paint_orange",
+     "size_class": "S",
+     "slot_px": [
+      2816,
+      1536,
+      256,
+      256
+     ],
+     "content_px": [
+      2824,
+      1544,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      3028,
+      1748,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 7,
+     "key": "paint_red",
+     "size_class": "S",
+     "slot_px": [
+      2560,
+      1792,
+      256,
+      256
+     ],
+     "content_px": [
+      2568,
+      1800,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      2772,
+      2004,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 8,
+     "key": "paint_green_light",
+     "size_class": "S",
+     "slot_px": [
+      2816,
+      1792,
+      256,
+      256
+     ],
+     "content_px": [
+      2824,
+      1800,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      3028,
+      2004,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 9,
+     "key": "paint_green",
+     "size_class": "S",
+     "slot_px": [
+      3072,
+      1024,
+      256,
+      256
+     ],
+     "content_px": [
+      3080,
+      1032,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      3284,
+      1236,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 10,
+     "key": "paint_green_dark",
+     "size_class": "S",
+     "slot_px": [
+      3328,
+      1024,
+      256,
+      256
+     ],
+     "content_px": [
+      3336,
+      1032,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      3540,
+      1236,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 11,
+     "key": "paint_blue",
+     "size_class": "S",
+     "slot_px": [
+      3072,
+      1280,
+      256,
+      256
+     ],
+     "content_px": [
+      3080,
+      1288,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      3284,
+      1492,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 12,
+     "key": "paint_blue_grey",
+     "size_class": "S",
+     "slot_px": [
+      3328,
+      1280,
+      256,
+      256
+     ],
+     "content_px": [
+      3336,
+      1288,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      3540,
+      1492,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 13,
+     "key": "paint_brown_dark",
+     "size_class": "S",
+     "slot_px": [
+      3584,
+      1024,
+      256,
+      256
+     ],
+     "content_px": [
+      3592,
+      1032,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      3796,
+      1236,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 14,
+     "key": "wood_light",
+     "size_class": "L",
+     "slot_px": [
+      0,
+      0,
+      1024,
+      1024
+     ],
+     "content_px": [
+      8,
+      8,
+      1008,
+      1008
+     ],
+     "id_corner_px": [
+      864,
+      864,
+      152,
+      152
+     ]
+    },
+    {
+     "id": 15,
+     "key": "wood_medium",
+     "size_class": "L",
+     "slot_px": [
+      1024,
+      0,
+      1024,
+      1024
+     ],
+     "content_px": [
+      1032,
+      8,
+      1008,
+      1008
+     ],
+     "id_corner_px": [
+      1888,
+      864,
+      152,
+      152
+     ]
+    },
+    {
+     "id": 16,
+     "key": "wood_dark",
+     "size_class": "L",
+     "slot_px": [
+      0,
+      1024,
+      1024,
+      1024
+     ],
+     "content_px": [
+      8,
+      1032,
+      1008,
+      1008
+     ],
+     "id_corner_px": [
+      864,
+      1888,
+      152,
+      152
+     ]
+    },
+    {
+     "id": 17,
+     "key": "wood_grey_washed",
+     "size_class": "M",
+     "slot_px": [
+      2048,
+      0,
+      512,
+      512
+     ],
+     "content_px": [
+      2056,
+      8,
+      496,
+      496
+     ],
+     "id_corner_px": [
+      2477,
+      429,
+      75,
+      75
+     ]
+    },
+    {
+     "id": 18,
+     "key": "wood_log_end",
+     "size_class": "M",
+     "slot_px": [
+      2560,
+      0,
+      512,
+      512
+     ],
+     "content_px": [
+      2568,
+      8,
+      496,
+      496
+     ],
+     "id_corner_px": [
+      2989,
+      429,
+      75,
+      75
+     ]
+    },
+    {
+     "id": 19,
+     "key": "plywood",
+     "size_class": "M",
+     "slot_px": [
+      2048,
+      512,
+      512,
+      512
+     ],
+     "content_px": [
+      2056,
+      520,
+      496,
+      496
+     ],
+     "id_corner_px": [
+      2477,
+      941,
+      75,
+      75
+     ]
+    },
+    {
+     "id": 20,
+     "key": "steel_stainless",
+     "size_class": "S",
+     "slot_px": [
+      3840,
+      1024,
+      256,
+      256
+     ],
+     "content_px": [
+      3848,
+      1032,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      4052,
+      1236,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 21,
+     "key": "metal_bronze_brushed",
+     "size_class": "S",
+     "slot_px": [
+      3584,
+      1280,
+      256,
+      256
+     ],
+     "content_px": [
+      3592,
+      1288,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      3796,
+      1492,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 22,
+     "key": "cap_black",
+     "size_class": "S",
+     "slot_px": [
+      3840,
+      1280,
+      256,
+      256
+     ],
+     "content_px": [
+      3848,
+      1288,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      4052,
+      1492,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 23,
+     "key": "rubber_black",
+     "size_class": "S",
+     "slot_px": [
+      3072,
+      1536,
+      256,
+      256
+     ],
+     "content_px": [
+      3080,
+      1544,
+      240,
+      240
+     ],
+     "id_corner_px": [
+      3284,
+      1748,
+      36,
+      36
+     ]
+    },
+    {
+     "id": 24,
+     "key": "concrete_arch",
+     "size_class": "M",
+     "slot_px": [
+      2560,
+      512,
+      512,
+      512
+     ],
+     "content_px": [
+      2568,
+      520,
+      496,
+      496
+     ],
+     "id_corner_px": [
+      2989,
+      941,
+      75,
+      75
+     ]
+    },
+    {
+     "id": 25,
+     "key": "terrazzo",
+     "size_class": "M",
+     "slot_px": [
+      3072,
+      0,
+      512,
+      512
+     ],
+     "content_px": [
+      3080,
+      8,
+      496,
+      496
+     ],
+     "id_corner_px": [
+      3501,
+      429,
+      75,
+      75
+     ]
+    },
+    {
+     "id": 26,
+     "key": "sand",
+     "size_class": "M",
+     "slot_px": [
+      3584,
+      0,
+      512,
+      512
+     ],
+     "content_px": [
+      3592,
+      8,
+      496,
+      496
+     ],
+     "id_corner_px": [
+      4013,
+      429,
+      75,
+      75
+     ]
+    },
+    {
+     "id": 27,
+     "key": "mesh_chainlink",
+     "size_class": "M",
+     "slot_px": [
+      3072,
+      512,
+      512,
+      512
+     ],
+     "content_px": [
+      3080,
+      520,
+      496,
+      496
+     ],
+     "id_corner_px": [
+      3501,
+      941,
+      75,
+      75
+     ]
+    },
+    {
+     "id": 28,
+     "key": "perforation",
+     "size_class": "M",
+     "slot_px": [
+      3584,
+      512,
+      512,
+      512
+     ],
+     "content_px": [
+      3592,
+      520,
+      496,
+      496
+     ],
+     "id_corner_px": [
+      4013,
+      941,
+      75,
+      75
+     ]
+    },
+    {
+     "id": 29,
+     "key": "rope_pp",
+     "size_class": "M",
+     "slot_px": [
+      2048,
+      1024,
+      512,
+      512
+     ],
+     "content_px": [
+      2056,
+      1032,
+      496,
+      496
+     ],
+     "id_corner_px": [
+      2477,
+      1453,
+      75,
+      75
+     ]
+    },
+    {
+     "id": 30,
+     "key": "sheet_profiled",
+     "size_class": "M",
+     "slot_px": [
+      2560,
+      1024,
+      512,
+      512
+     ],
+     "content_px": [
+      2568,
+      1032,
+      496,
+      496
+     ],
+     "id_corner_px": [
+      2989,
+      1453,
+      75,
+      75
+     ]
+    }
+   ],
+   "excluded": [
+    {
+     "id": 31,
+     "key": "polycarbonate",
+     "reason": "proposed, not in the atlas: polycarbonate / glass - GroundElGlass, no texture set (MAF-06)"
+    }
+   ],
+   "free_share": 0.527,
+   "decal_reserve_px": [
+    1024,
+    1024,
+    1024,
+    1024
+   ],
+   "file": "MAF_Atlas_v005_Diffuse.1001.png",
+   "udim": 1001,
+   "png": {
+    "path": "C:/x/ev_t_e12b5c0c/layout_v005/MAF_Atlas_v005_Diffuse.1001.png",
+    "sha256": "b3a6d95bb76e8e25dd03ade1066f5bcc25d7ad668b4e35cc0c21b050c26c037e",
+    "size": [
+     4096,
+     4096
+    ]
+   }
+  },
+  "npm_2k": {
+   "size": 2048,
+   "padding_px": 8,
+   "cells": [
+    {
+     "id": 1,
+     "key": "paint_ral9005",
+     "size_class": "S",
+     "slot_px": [
+      1024,
+      768,
+      128,
+      128
+     ],
+     "content_px": [
+      1028,
+      772,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      1130,
+      874,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 2,
+     "key": "paint_ral7016",
+     "size_class": "S",
+     "slot_px": [
+      1152,
+      768,
+      128,
+      128
+     ],
+     "content_px": [
+      1156,
+      772,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      1258,
+      874,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 3,
+     "key": "paint_ral7040",
+     "size_class": "S",
+     "slot_px": [
+      1024,
+      896,
+      128,
+      128
+     ],
+     "content_px": [
+      1028,
+      900,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      1130,
+      1002,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 4,
+     "key": "paint_ral7047",
+     "size_class": "S",
+     "slot_px": [
+      1152,
+      896,
+      128,
+      128
+     ],
+     "content_px": [
+      1156,
+      900,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      1258,
+      1002,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 5,
+     "key": "paint_ral9003",
+     "size_class": "S",
+     "slot_px": [
+      1280,
+      768,
+      128,
+      128
+     ],
+     "content_px": [
+      1284,
+      772,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      1386,
+      874,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 6,
+     "key": "paint_orange",
+     "size_class": "S",
+     "slot_px": [
+      1408,
+      768,
+      128,
+      128
+     ],
+     "content_px": [
+      1412,
+      772,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      1514,
+      874,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 7,
+     "key": "paint_red",
+     "size_class": "S",
+     "slot_px": [
+      1280,
+      896,
+      128,
+      128
+     ],
+     "content_px": [
+      1284,
+      900,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      1386,
+      1002,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 8,
+     "key": "paint_green_light",
+     "size_class": "S",
+     "slot_px": [
+      1408,
+      896,
+      128,
+      128
+     ],
+     "content_px": [
+      1412,
+      900,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      1514,
+      1002,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 9,
+     "key": "paint_green",
+     "size_class": "S",
+     "slot_px": [
+      1536,
+      512,
+      128,
+      128
+     ],
+     "content_px": [
+      1540,
+      516,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      1642,
+      618,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 10,
+     "key": "paint_green_dark",
+     "size_class": "S",
+     "slot_px": [
+      1664,
+      512,
+      128,
+      128
+     ],
+     "content_px": [
+      1668,
+      516,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      1770,
+      618,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 11,
+     "key": "paint_blue",
+     "size_class": "S",
+     "slot_px": [
+      1536,
+      640,
+      128,
+      128
+     ],
+     "content_px": [
+      1540,
+      644,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      1642,
+      746,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 12,
+     "key": "paint_blue_grey",
+     "size_class": "S",
+     "slot_px": [
+      1664,
+      640,
+      128,
+      128
+     ],
+     "content_px": [
+      1668,
+      644,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      1770,
+      746,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 13,
+     "key": "paint_brown_dark",
+     "size_class": "S",
+     "slot_px": [
+      1792,
+      512,
+      128,
+      128
+     ],
+     "content_px": [
+      1796,
+      516,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      1898,
+      618,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 14,
+     "key": "wood_light",
+     "size_class": "L",
+     "slot_px": [
+      0,
+      0,
+      512,
+      512
+     ],
+     "content_px": [
+      4,
+      4,
+      504,
+      504
+     ],
+     "id_corner_px": [
+      432,
+      432,
+      76,
+      76
+     ]
+    },
+    {
+     "id": 15,
+     "key": "wood_medium",
+     "size_class": "L",
+     "slot_px": [
+      512,
+      0,
+      512,
+      512
+     ],
+     "content_px": [
+      516,
+      4,
+      504,
+      504
+     ],
+     "id_corner_px": [
+      944,
+      432,
+      76,
+      76
+     ]
+    },
+    {
+     "id": 16,
+     "key": "wood_dark",
+     "size_class": "L",
+     "slot_px": [
+      0,
+      512,
+      512,
+      512
+     ],
+     "content_px": [
+      4,
+      516,
+      504,
+      504
+     ],
+     "id_corner_px": [
+      432,
+      944,
+      76,
+      76
+     ]
+    },
+    {
+     "id": 17,
+     "key": "wood_grey_washed",
+     "size_class": "M",
+     "slot_px": [
+      1024,
+      0,
+      256,
+      256
+     ],
+     "content_px": [
+      1028,
+      4,
+      248,
+      248
+     ],
+     "id_corner_px": [
+      1238,
+      214,
+      38,
+      38
+     ]
+    },
+    {
+     "id": 18,
+     "key": "wood_log_end",
+     "size_class": "M",
+     "slot_px": [
+      1280,
+      0,
+      256,
+      256
+     ],
+     "content_px": [
+      1284,
+      4,
+      248,
+      248
+     ],
+     "id_corner_px": [
+      1494,
+      214,
+      38,
+      38
+     ]
+    },
+    {
+     "id": 19,
+     "key": "plywood",
+     "size_class": "M",
+     "slot_px": [
+      1024,
+      256,
+      256,
+      256
+     ],
+     "content_px": [
+      1028,
+      260,
+      248,
+      248
+     ],
+     "id_corner_px": [
+      1238,
+      470,
+      38,
+      38
+     ]
+    },
+    {
+     "id": 20,
+     "key": "steel_stainless",
+     "size_class": "S",
+     "slot_px": [
+      1920,
+      512,
+      128,
+      128
+     ],
+     "content_px": [
+      1924,
+      516,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      2026,
+      618,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 21,
+     "key": "metal_bronze_brushed",
+     "size_class": "S",
+     "slot_px": [
+      1792,
+      640,
+      128,
+      128
+     ],
+     "content_px": [
+      1796,
+      644,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      1898,
+      746,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 22,
+     "key": "cap_black",
+     "size_class": "S",
+     "slot_px": [
+      1920,
+      640,
+      128,
+      128
+     ],
+     "content_px": [
+      1924,
+      644,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      2026,
+      746,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 23,
+     "key": "rubber_black",
+     "size_class": "S",
+     "slot_px": [
+      1536,
+      768,
+      128,
+      128
+     ],
+     "content_px": [
+      1540,
+      772,
+      120,
+      120
+     ],
+     "id_corner_px": [
+      1642,
+      874,
+      18,
+      18
+     ]
+    },
+    {
+     "id": 24,
+     "key": "concrete_arch",
+     "size_class": "M",
+     "slot_px": [
+      1280,
+      256,
+      256,
+      256
+     ],
+     "content_px": [
+      1284,
+      260,
+      248,
+      248
+     ],
+     "id_corner_px": [
+      1494,
+      470,
+      38,
+      38
+     ]
+    },
+    {
+     "id": 25,
+     "key": "terrazzo",
+     "size_class": "M",
+     "slot_px": [
+      1536,
+      0,
+      256,
+      256
+     ],
+     "content_px": [
+      1540,
+      4,
+      248,
+      248
+     ],
+     "id_corner_px": [
+      1750,
+      214,
+      38,
+      38
+     ]
+    },
+    {
+     "id": 26,
+     "key": "sand",
+     "size_class": "M",
+     "slot_px": [
+      1792,
+      0,
+      256,
+      256
+     ],
+     "content_px": [
+      1796,
+      4,
+      248,
+      248
+     ],
+     "id_corner_px": [
+      2006,
+      214,
+      38,
+      38
+     ]
+    },
+    {
+     "id": 27,
+     "key": "mesh_chainlink",
+     "size_class": "M",
+     "slot_px": [
+      1536,
+      256,
+      256,
+      256
+     ],
+     "content_px": [
+      1540,
+      260,
+      248,
+      248
+     ],
+     "id_corner_px": [
+      1750,
+      470,
+      38,
+      38
+     ]
+    },
+    {
+     "id": 28,
+     "key": "perforation",
+     "size_class": "M",
+     "slot_px": [
+      1792,
+      256,
+      256,
+      256
+     ],
+     "content_px": [
+      1796,
+      260,
+      248,
+      248
+     ],
+     "id_corner_px": [
+      2006,
+      470,
+      38,
+      38
+     ]
+    },
+    {
+     "id": 29,
+     "key": "rope_pp",
+     "size_class": "M",
+     "slot_px": [
+      1024,
+      512,
+      256,
+      256
+     ],
+     "content_px": [
+      1028,
+      516,
+      248,
+      248
+     ],
+     "id_corner_px": [
+      1238,
+      726,
+      38,
+      38
+     ]
+    },
+    {
+     "id": 30,
+     "key": "sheet_profiled",
+     "size_class": "M",
+     "slot_px": [
+      1280,
+      512,
+      256,
+      256
+     ],
+     "content_px": [
+      1284,
+      516,
+      248,
+      248
+     ],
+     "id_corner_px": [
+      1494,
+      726,
+      38,
+      38
+     ]
+    }
+   ],
+   "excluded": [
+    {
+     "id": 31,
+     "key": "polycarbonate",
+     "reason": "proposed, not in the atlas: polycarbonate / glass - GroundElGlass, no texture set (MAF-06)"
+    }
+   ],
+   "free_share": 0.527,
+   "decal_reserve_px": [
+    512,
+    512,
+    512,
+    512
+   ],
+   "file": "T_MAF_Atlas_v005_GroundEl_d.png",
+   "udim": null,
+   "png": {
+    "path": "C:/x/ev_t_e12b5c0c/layout_v005/T_MAF_Atlas_v005_GroundEl_d.png",
+    "sha256": "2a73056ce548b40170953666982ef9ad9a7d97959b63e302616db1e38720de0a",
+    "size": [
+     2048,
+     2048
+    ]
+   }
+  }
+ },
+ "site_sets": {
+  "vatutino": {
+   "size": 512,
+   "padding_px": 8,
+   "cells": [
+    {
+     "id": 4,
+     "key": "paint_ral7047",
+     "kind": "solid",
+     "slot_px": [
+      256,
+      0,
+      64,
+      64
+     ],
+     "content_px": [
+      260,
+      4,
+      56,
+      56
+     ],
+     "id_corner_px": [
+      300,
+      44,
+      16,
+      16
+     ]
+    },
+    {
+     "id": 14,
+     "key": "wood_light",
+     "kind": "patterned",
+     "slot_px": [
+      0,
+      0,
+      256,
+      256
+     ],
+     "content_px": [
+      4,
+      4,
+      248,
+      248
+     ],
+     "id_corner_px": [
+      214,
+      214,
+      38,
+      38
+     ]
+    },
+    {
+     "id": 29,
+     "key": "rope_pp",
+     "kind": "solid",
+     "slot_px": [
+      320,
+      0,
+      64,
+      64
+     ],
+     "content_px": [
+      324,
+      4,
+      56,
+      56
+     ],
+     "id_corner_px": [
+      364,
+      44,
+      16,
+      16
+     ]
+    }
+   ],
+   "positions": [
+    {
+     "set_id": "VAT_MAF_T3510_01",
+     "catalogue_id": "MAF_0326",
+     "slot": "1",
+     "material": "larch_light_oak",
+     "id": 14,
+     "key": "wood_light",
+     "uv_safe": [
+      0.007812,
+      0.507812,
+      0.492188,
+      0.992188
+     ],
+     "id_corner_uv": [
+      0.417969,
+      0.507812,
+      0.492188,
+      0.582031
+     ]
+    },
+    {
+     "set_id": "VAT_MAF_T3510_01",
+     "catalogue_id": "MAF_0326",
+     "slot": "2",
+     "material": "steel_ral7047",
+     "id": 4,
+     "key": "paint_ral7047",
+     "uv_safe": [
+      0.507812,
+      0.882812,
+      0.617188,
+      0.992188
+     ],
+     "id_corner_uv": [
+      0.585938,
+      0.882812,
+      0.617188,
+      0.914062
+     ]
+    },
+    {
+     "set_id": "VAT_MAF_T3510_02",
+     "catalogue_id": "MAF_0794",
+     "slot": "*",
+     "material": "steel_ral7047",
+     "id": 4,
+     "key": "paint_ral7047"
+    },
+    {
+     "set_id": "VAT_MAF_T3510_07",
+     "catalogue_id": "MAF_0747",
+     "slot": "*",
+     "material": "larch_light_oak",
+     "id": 14,
+     "key": "wood_light"
+    },
+    {
+     "set_id": "VAT_MAF_T3510_09",
+     "catalogue_id": "MAF_0506",
+     "slot": "Material #2125652641",
+     "material": "steel_ral7047",
+     "id": 4,
+     "key": "paint_ral7047"
+    },
+    {
+     "set_id": "VAT_MAF_T3510_09",
+     "catalogue_id": "MAF_0506",
+     "slot": "Material #2125652648",
+     "material": "larch_light_oak",
+     "id": 14,
+     "key": "wood_light"
+    },
+    {
+     "set_id": "VAT_MAF_T3510_11",
+     "catalogue_id": "MAF_0322",
+     "slot": "1",
+     "material": "larch_light_oak",
+     "id": 14,
+     "key": "wood_light"
+    },
+    {
+     "set_id": "VAT_MAF_T3510_11",
+     "catalogue_id": "MAF_0322",
+     "slot": "2",
+     "material": "steel_ral7047",
+     "id": 4,
+     "key": "paint_ral7047"
+    },
+    {
+     "set_id": "VAT_MAF_T3510_12",
+     "catalogue_id": "MAF_0920",
+     "slot": "*",
+     "material": "steel_ral7047",
+     "id": 4,
+     "key": "paint_ral7047"
+    },
+    {
+     "set_id": "VAT_MAF_T3510_16",
+     "catalogue_id": "MAF_0803",
+     "slot": "*",
+     "material": "larch_light_oak",
+     "id": 14,
+     "key": "wood_light"
+    },
+    {
+     "set_id": "VAT_MAF_T3510_26",
+     "catalogue_id": "MAF_0677",
+     "slot": "Material #2125652641",
+     "material": "hpl_satin_wood",
+     "id": 14,
+     "key": "wood_light",
+     "uv_safe": [
+      0.007812,
+      0.507812,
+      0.492188,
+      0.992188
+     ],
+     "id_corner_uv": [
+      0.417969,
+      0.507812,
+      0.492188,
+      0.582031
+     ]
+    },
+    {
+     "set_id": "VAT_MAF_T3510_26",
+     "catalogue_id": "MAF_0677",
+     "slot": "Material #2125652643",
+     "material": "hpl_satin_wood",
+     "id": 14,
+     "key": "wood_light",
+     "uv_safe": [
+      0.007812,
+      0.507812,
+      0.492188,
+      0.992188
+     ],
+     "id_corner_uv": [
+      0.417969,
+      0.507812,
+      0.492188,
+      0.582031
+     ]
+    },
+    {
+     "set_id": "VAT_MAF_T3510_26",
+     "catalogue_id": "MAF_0677",
+     "slot": "Material #2125652648",
+     "material": "steel_ral7047",
+     "id": 4,
+     "key": "paint_ral7047",
+     "uv_safe": [
+      0.507812,
+      0.882812,
+      0.617188,
+      0.992188
+     ],
+     "id_corner_uv": [
+      0.585938,
+      0.882812,
+      0.617188,
+      0.914062
+     ]
+    },
+    {
+     "set_id": "VAT_MAF_T3510_27",
+     "catalogue_id": "MAF_0219",
+     "slot": "1",
+     "material": "larch_light_oak",
+     "id": 14,
+     "key": "wood_light"
+    },
+    {
+     "set_id": "VAT_MAF_T3510_27",
+     "catalogue_id": "MAF_0219",
+     "slot": "3",
+     "material": "steel_ral7047",
+     "id": 4,
+     "key": "paint_ral7047"
+    },
+    {
+     "set_id": "VAT_MAF_T3510_28",
+     "catalogue_id": "MAF_0127",
+     "slot": "3",
+     "material": "steel_ral7047",
+     "id": 4,
+     "key": "paint_ral7047",
+     "uv_safe": [
+      0.507812,
+      0.882812,
+      0.617188,
+      0.992188
+     ],
+     "id_corner_uv": [
+      0.585938,
+      0.882812,
+      0.617188,
+      0.914062
+     ]
+    },
+    {
+     "set_id": "VAT_MAF_T3510_28",
+     "catalogue_id": "MAF_0127",
+     "slot": "4",
+     "material": "rope_pp",
+     "id": 29,
+     "key": "rope_pp",
+     "uv_safe": [
+      0.632812,
+      0.882812,
+      0.742188,
+      0.992188
+     ],
+     "id_corner_uv": [
+      0.710938,
+      0.882812,
+      0.742188,
+      0.914062
+     ]
+    },
+    {
+     "set_id": "VAT_MAF_T3510_29",
+     "catalogue_id": "MAF_0159",
+     "slot": "*",
+     "material": "larch_light_oak",
+     "id": 14,
+     "key": "wood_light"
+    },
+    {
+     "set_id": "VAT_MAF_T3510_31",
+     "catalogue_id": "MAF_0722",
+     "slot": "*",
+     "material": "larch_light_oak",
+     "id": 14,
+     "key": "wood_light"
+    },
+    {
+     "set_id": "VAT_MAF_T3510_32",
+     "catalogue_id": "MAF_0687",
+     "slot": "*",
+     "material": "steel_ral7047",
+     "id": 4,
+     "key": "paint_ral7047"
+    }
+   ],
+   "file": "T_Vatutino_MAF_v005_GroundEl_d_512.png",
+   "proof": [
+    {
+     "set_id": "VAT_MAF_T3510_01",
+     "catalogue_id": "MAF_0326",
+     "slot": "1",
+     "material": "larch_light_oak",
+     "id": 14,
+     "key": "wood_light",
+     "uv_safe": [
+      0.007812,
+      0.507812,
+      0.492188,
+      0.992188
+     ],
+     "id_corner_uv": [
+      0.417969,
+      0.507812,
+      0.492188,
+      0.582031
+     ]
+    },
+    {
+     "set_id": "VAT_MAF_T3510_01",
+     "catalogue_id": "MAF_0326",
+     "slot": "2",
+     "material": "steel_ral7047",
+     "id": 4,
+     "key": "paint_ral7047",
+     "uv_safe": [
+      0.507812,
+      0.882812,
+      0.617188,
+      0.992188
+     ],
+     "id_corner_uv": [
+      0.585938,
+      0.882812,
+      0.617188,
+      0.914062
+     ]
+    },
+    {
+     "set_id": "VAT_MAF_T3510_26",
+     "catalogue_id": "MAF_0677",
+     "slot": "Material #2125652641",
+     "material": "hpl_satin_wood",
+     "id": 14,
+     "key": "wood_light",
+     "uv_safe": [
+      0.007812,
+      0.507812,
+      0.492188,
+      0.992188
+     ],
+     "id_corner_uv": [
+      0.417969,
+      0.507812,
+      0.492188,
+      0.582031
+     ]
+    },
+    {
+     "set_id": "VAT_MAF_T3510_26",
+     "catalogue_id": "MAF_0677",
+     "slot": "Material #2125652643",
+     "material": "hpl_satin_wood",
+     "id": 14,
+     "key": "wood_light",
+     "uv_safe": [
+      0.007812,
+      0.507812,
+      0.492188,
+      0.992188
+     ],
+     "id_corner_uv": [
+      0.417969,
+      0.507812,
+      0.492188,
+      0.582031
+     ]
+    },
+    {
+     "set_id": "VAT_MAF_T3510_26",
+     "catalogue_id": "MAF_0677",
+     "slot": "Material #2125652648",
+     "material": "steel_ral7047",
+     "id": 4,
+     "key": "paint_ral7047",
+     "uv_safe": [
+      0.507812,
+      0.882812,
+      0.617188,
+      0.992188
+     ],
+     "id_corner_uv": [
+      0.585938,
+      0.882812,
+      0.617188,
+      0.914062
+     ]
+    },
+    {
+     "set_id": "VAT_MAF_T3510_28",
+     "catalogue_id": "MAF_0127",
+     "slot": "3",
+     "material": "steel_ral7047",
+     "id": 4,
+     "key": "paint_ral7047",
+     "uv_safe": [
+      0.507812,
+      0.882812,
+      0.617188,
+      0.992188
+     ],
+     "id_corner_uv": [
+      0.585938,
+      0.882812,
+      0.617188,
+      0.914062
+     ]
+    },
+    {
+     "set_id": "VAT_MAF_T3510_28",
+     "catalogue_id": "MAF_0127",
+     "slot": "4",
+     "material": "rope_pp",
+     "id": 29,
+     "key": "rope_pp",
+     "uv_safe": [
+      0.632812,
+      0.882812,
+      0.742188,
+      0.992188
+     ],
+     "id_corner_uv": [
+      0.710938,
+      0.882812,
+      0.742188,
+      0.914062
+     ]
+    }
+   ],
+   "source": {
+    "path": "jobs/VATUTINO-SITE/maf/site-maf-set.json",
+    "sha256": "72e3ab7f72ba43ec0c1f882dd73397e2193d604da5736ecf18b2c3c3a4ceae64"
+   },
+   "png": {
+    "path": "C:/x/ev_t_e12b5c0c/layout_v005/T_Vatutino_MAF_v005_GroundEl_d_512.png",
+    "sha256": "aba9ee2c19daab84e7f136be747634c80b90d704c9e0c8d6ad29f6dba37cca31",
+    "size": [
+     512,
+     512
+    ]
+   }
+  }
+ }
+}

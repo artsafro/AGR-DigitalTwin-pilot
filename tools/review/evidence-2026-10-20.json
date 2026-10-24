@@ -1,0 +1,101 @@
+{
+  "mode": "headless 3dsmaxbatch 2026.3",
+  "user_acceptance": "pending",
+  "cleanup": {
+    "command": "uv run python tools/review/cleanup.py --days 7",
+    "candidates": [],
+    "applied": false
+  },
+  "pending_excerpt": [
+    {
+      "task": "#348",
+      "path": "C:/x/review/2026-10-20/348-ground-v014/348-ground-v014.max",
+      "what": "Ground v014, ВПМ: масштаб 1 м, материалы и камера обзора."
+    },
+    {
+      "task": "#348",
+      "path": "C:/x/review/2026-10-20/348-flora-library-v003/348-flora-library-v003.max",
+      "what": "Библиотека Flora v003: растения, материалы и камера обзора."
+    },
+    {
+      "task": "#348",
+      "path": "C:/x/review/2026-10-20/348-ground-v014-review-v002/348-ground-v014-review-v002.max",
+      "what": "Ground v014: проверить рельеф, бордюры, масштаб и материалы; UCX включены."
+    },
+    {
+      "task": "#348",
+      "path": "C:/x/review/2026-10-20/348-flora-library-v003-review-v002/348-flora-library-v003-review-v002.max",
+      "what": "Flora v003: проверить растения, масштаб и карты материалов; видовая идентичность и stand-in ограничения остаются по каталогу."
+    }
+  ],
+  "publications": [
+    {
+      "files": [
+        {
+          "path": "C:/x/review/2026-10-20/348-ground-v014-review-v002/348-ground-v014-review-v002.max",
+          "bytes": 2330624,
+          "sha256": "53dfc0bf5ea532bf9f6df9a0bdd5413624f56c7adb3c86c689b447b0579cf326"
+        },
+        {
+          "path": "C:/x/review/2026-10-20/348-ground-v014-review-v002/preview.png",
+          "bytes": 241290,
+          "sha256": "5177b4017435f31eafde5902c621bfda1ef54c5b7db83764c42c06281148973f",
+          "pixels": [
+            640,
+            360
+          ]
+        },
+        {
+          "path": "C:/x/review/2026-10-20/348-ground-v014-review-v002/README.txt",
+          "bytes": 776,
+          "sha256": "9c6a25a4c6a190fe6ce9ef6a11fc646aea01210331f50e4d555167c29a97f78d"
+        }
+      ],
+      "meshes": 716,
+      "triangles": 55131,
+      "uv_vertices": 65759,
+      "units": "meters",
+      "unit_scale": 1.0,
+      "cameras": [
+        "Review_Camera",
+        "Review_Target"
+      ],
+      "bitmap_paths": 0,
+      "missing_bitmaps": []
+    },
+    {
+      "files": [
+        {
+          "path": "C:/x/review/2026-10-20/348-flora-library-v003-review-v002/348-flora-library-v003-review-v002.max",
+          "bytes": 2561364,
+          "sha256": "75fc026d2f5c374b2f79362d6dd8ce4db5592c333e0cecf7bf171e17edaaf5fc"
+        },
+        {
+          "path": "C:/x/review/2026-10-20/348-flora-library-v003-review-v002/preview.png",
+          "bytes": 157056,
+          "sha256": "00bc44932b7fe12204f016d8e614675c2ee4eb41a6e8c1754cebe09819079b1a",
+          "pixels": [
+            640,
+            360
+          ]
+        },
+        {
+          "path": "C:/x/review/2026-10-20/348-flora-library-v003-review-v002/README.txt",
+          "bytes": 877,
+          "sha256": "1f20b080e9cfeb8252a4055a652859a1a367663e70a115f572826b31053b7f83"
+        }
+      ],
+      "meshes": 99,
+      "triangles": 42601,
+      "uv_vertices": 97375,
+      "units": "meters",
+      "unit_scale": 1.0,
+      "cameras": [
+        "Review_Camera",
+        "Review_Target"
+      ],
+      "bitmap_paths": 122,
+      "missing_bitmaps": []
+    }
+  ]
+}

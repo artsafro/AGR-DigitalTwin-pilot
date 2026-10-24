@@ -61,6 +61,62 @@ bundle pass is an accepted delivery; all mandatory checks and manual gates below
 | V016 | VPM · manual_review | None (strictly manual gate; constructed from standards spec via [`tools/qa/validate_package.py:build_stages`](../../tools/qa/validate_package.py#L38); [`src/twinqa/report.py:Stage`](../../src/twinqa/report.py#L28) only carries the gate attribute). | Manual only; automated clearance verification of archways, passages, courtyards, and height-zone collision offsets is not implemented; no signed-review ingestion claimed. | Mandatory manual review of walkthrough clearances and collision boundary offsets. |
 | V017 | Both · manual_review | None (strictly manual gate; constructed from standards spec via [`tools/qa/validate_package.py:build_stages`](../../tools/qa/validate_package.py#L38); [`src/twinqa/report.py:Stage`](../../src/twinqa/report.py#L28) only carries the gate attribute). | Manual only; automated alignment verification against approved DWG/SPOZU within 0.5 m tolerance is not implemented; no signed-review ingestion claimed. | Mandatory manual review against approved surveyor DWG/SPOZU drawings. |
 
+## SINTEZ 1.6.1 check-group mapping
+
+[2026 requirements](requirements-2026.md) contains all LP 80 / HP 154 rows and the
+LP 36 / HP 88 changed-vs-V4 editorial markers. Source inventory:
+[`sintez_checks_1.6.1.json`](../agr/sintez_checks_1.6.1.json), researched in [PR #429](../research/sintez-agr-checker-dissection.md).
+The 36 groups below reproduce that static mapping (17 LP + 19 HP), not new parity evidence.
+`same` means the inventoried threshold agrees, not that a complete delivery is verified.
+Missing/partial groups remain missing/partial; the detailed V001-V017 inventory above is newer
+for package-level coverage. In particular, `bundle.py` and `tools/qa/validate_package.py` already
+cover archive/file-count subsets that the SINTEZ research labelled missing in `src/twinqa`.
+
+Policy resolved by #431: [D160] VPM 512-1706 px/m, NPM Ground 10-40 unchanged; [D161] OKS
+150,000 project target vs 1,000,000 regulation ceiling; [D162] BOTH UCX too-close <0.2 mm
+and D098 2 mm-1 cm inclusive band, separately reported. UCX parity code is not implemented here.
+[D163] UKEP verification is the applicant's responsibility; missing signature file is info only,
+never a claim of cryptographic validity. No signature checker is added by this documentation task.
+
+| Group | Profile | Requirement numbers | Our module / mapped subset | Research coverage / policy update |
+|---|---|---|---|---|
+| `lp_fbx_format` | LP | 1.1.1, 2.3.13, 2.9.1 | src/twinqa/fbx_header.py check_fbx_header | same |
+| `lp_files` | LP | 2.1.1, 2.1.2, 2.10.1, 2.10.2 | missing (no archive/file-count check in src/twinqa) | missing |
+| `lp_archive_structure` | LP | 2.1.1 | missing | missing |
+| `lp_signatures` | LP | 2.1.1 | missing | not our verification responsibility (D163); missing file info only |
+| `lp_naming_masks` | LP | 2.10.3.1, 2.10.3.2, 2.10.3.3, 2.10.3.4, 2.10.3.5 | src/twinqa/naming.py mesh_name_violation | same |
+| `lp_transforms` | LP | 2.3.14 | src/twinqa/scene.py _v002_scale_bad | same |
+| `lp_pivot` | LP | 4.1.5 | src/twinqa/scene.py _pivot_findings | same |
+| `lp_polycount` | LP | 2.3.6, 2.3.11 | src/twinqa/scene.py PROJECT_TRIANGLE_TARGET | same |
+| `lp_duplicates` | LP | 2.3.7 | src/twinqa/geometry/topology.py | same |
+| `lp_texel` | LP | 2.6.1 | missing (D097 has values, no checker) | missing |
+| `lp_fbx_objects` | LP | 2.1.2, 2.1.3a, 2.1.4, 2.1.5, 2.1.6, 2.3.5 | partial (src/twinqa/scene.py) | partial |
+| `lp_materials` | LP | 2.1.5, 2.4.2, 2.4.3, 2.4.6, 2.5.11, 2.5.12, 2.5.13 | partial (src/twinqa/geometry/checks.py check_material_ids) | partial |
+| `lp_texture_sets` | LP | 2.4.5 | partial (src/twinqa/png.py npm_texture_findings) | partial |
+| `lp_uv` | LP | 4.1.3 | src/twinqa/uv.py face_issue | same |
+| `lp_district_code` | LP | 2.10.3.1 | missing (geo_utils.find_district has no twinqa equivalent) | missing |
+| `lp_height` | LP | 4.1.4 | missing | missing |
+| `lp_color_attributes` | LP | 4.1.1 | missing | missing |
+| `hp_images` | HP | 2.5.1.1 | missing | missing |
+| `hp_udim_numbers` | HP | 2.5.1.2, 2.5.1.3, 2.5.2.1.3 | partial (src/twinqa/uv.py sequential_tiles) | partial |
+| `hp_meshes_transforms` | HP | 2.3.18, 2.9.3 | src/twinqa/scene.py | same |
+| `hp_polycount` | HP | 2.13.7, 2.3.17, 2.3.9 | src/twinqa/scene.py PROJECT_TRIANGLE_TARGET | stricter project target retained by D161 |
+| `hp_duplicates` | HP | 2.3.11 | src/twinqa/geometry/topology.py | same |
+| `hp_texel` | HP | 2.5.1.4, 2.5.1.8, 2.5.2.1.2, 2.5.2.1.5, 2.6.2 | No general twinqa V009; Ground recipe/binding density helpers only | missing; lower bound resolved by D160 |
+| `hp_naming_symbols` | HP | 2.10.1, 2.10.2 | src/twinqa/naming.py | same |
+| `hp_naming_masks` | HP | 1.3.6, 1.3.7, 2.10.4.1, 2.10.4.2, 2.10.4.3, 2.10.4.4, 2.10.4.5, 2.10.4.6 | src/twinqa/naming.py | same |
+| `hp_fbx_objects` | HP | 2.13.3, 2.3.1a, 2.3.2, 2.3.8, 2.8.1 | partial (src/twinqa/scene.py) | partial |
+| `hp_glasses_uv` | HP | 2.5.2.2.1a | missing | missing |
+| `hp_materials` | HP | 2.13.1, 2.4.3, 2.4.5, 2.5.2.1.1, 2.5.2.2.2, 2.8.2 | partial (src/twinqa/geometry/checks.py) | partial |
+| `hp_material_links` | HP | 2.4.2 | missing | missing |
+| `hp_lights` | HP | 2.15.2, 2.15.4, 2.15.5, 2.15.8, 2.15.9 | partial (D017 lights only in Light.fbx) | partial |
+| `hp_collision` | HP | 2.10.4.2, 2.13.1, 2.13.4 | src/twinqa/geometry/ucx_audit.py | partial; both gap policies retained by D162, parity code separate |
+| `hp_uv` | HP | 2.5.2.1.4, 2.5.2.1.4b, 4.1.3 | src/twinqa/uv.py | partial |
+| `hp_height` | HP | 4.1.4 | missing | missing |
+| `hp_json_properties` | HP | 2.2.1, 2.2.3, 2.2.5, 2.2.6, 2.2.7, 1.3.6 | src/twinqa/geojson.py geojson_findings | same |
+| `hp_pivot` | HP | 2.9.4a, 2.9.5 | src/twinqa/scene.py _pivot_findings | same |
+| `hp_png` | HP | 2.5.1.6, 2.5.1.9, 2.5.3.1, 2.5.3.3, 2.5.3.4, 4.1.2 | src/twinqa/png.py vpm_texture_findings | same |
+
 ## General QA procedure (project)
 - Validate the actual exported files re-read from the ZIP (FBX/PNG/GeoJSON), in a separate clean process; scene-only checks insufficient. local: docs/agr/DIGITAL_TWIN_AI_PROJECT_BRIEF.md#4 (project decision).
 - Check the saved and reopened file after last Attach: groups, face degrees, duplicate/near verts, duplicate/overlapping/intersecting faces, connectivity, boundaries, normals; compare contour/openings/sizes with source; list problem IDs. local: docs/agr/GEOMETRY_RULES.md#Проверка (project decision).
@@ -85,6 +141,7 @@ bundle pass is an accepted delivery; all mandatory checks and manual gates below
 - GeoAGR `ucx_check.exe`: exit 0 even with findings; misses fully nested volumes; treats face contact as finding; outputs names only. Check convexity/closure/coverage/gap/nesting separately. local: docs/agr/inventory/GEOAGR_13_63_REVIEW.md#GEN-11 (lesson).
 - Max `Collizii.ms` precise test is bbox-only (returns true without tri test); `isConvex` true for < 4 verts; `UCX_Check.ms` misses nested volumes and doesn't measure gap; `UDIM Viewer` detects ERM/ORM but doesn't wire them, clamps negative UVs; MatID by average face UV. local: docs/agr/research/max-workbench/REVIEW.md; local: docs/agr/inventory/ZAVOD_AND_MAX_PLUGINS_REVIEW.md (lesson).
 - Generic DirectX check of arbitrary normal map is not possible without context; RGB-only tests don't cover alpha/glass branches. local: docs/agr/READINESS_REPORT.md#4; local: docs/agr/decisions/ADR-0002-source-discrepancies.md#7.
+- 3ds Max xView Overlapping Faces (5 mm) flags a face pair only when a vertex of one face (not shared) projects into the other within the tolerance and the normals are within 0.81 deg (|cos| >= 0.9999); it also flags zero-area contact and misses faces that cross edge over edge. Overlapping Vertices (2 mm) counts every index pair, so `convertToPoly` of a non-manifold mesh shows coincident split vertices. Deliverables are xView-clean [D152]; kernel invariant `xview_overlaps` reproduces it. local: docs/research/xview-parity-ground-v014.md (measured, #370).
 
 ## Pitfalls (lessons)
 - Zero face-clearance audit != no visible gaps (v006 0 pairs but light slits from wrong window depth). local: jobs/GLB-NPM/CLEARANCE_RULES.md.
@@ -96,3 +153,5 @@ bundle pass is an accepted delivery; all mandatory checks and manual gates below
 - Material ID selection by old number after renumbering selects nothing; check actual face counts per ID first. local: docs/agr/case_studies/GLB_A_MAIN_ATLAS.md.
 - Save over a file erased previous readback evidence; snapshot versions, approved files frozen, new iterations to new paths. local: docs/agr/case_studies/GLB_A_MAIN_ATLAS.md; local: jobs/OBR22-K02/STATE.md.
 - User praise/% ratings and renders are not QA metrics; ray coverage vs Revit is a completeness gauge, not tolerance. local: jobs/GLB-NPM/STATE.md; local: jobs/MASHI-LP/AUDIT_AND_PLAN.md.
+
+- Team-script defaults are not delivery rules [D180]: UCX pads 0.04/0.035 (bbox-side fractions), hull merge 500 mm, 12 pieces, light index 001-050, A101 bitmap ladder 128-2048 with the 8-bit warning, Flora Atlas padding 2 px and size 8192, and team overlap angles about 11.5 deg / 8 deg do not override the values in this file.

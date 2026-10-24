@@ -55,6 +55,14 @@ following three items:
    Replace `<worktree>` with your own absolute worktree path so outputs remain isolated inside your
    worktree. In the PR body, report the report path (`<worktree>/tmp/evals/report.json`) and the passed,
    failed, and not measured counts with their reasons.
+   Before `review_requested`, verify the exact PR receipt line against that report:
+   ```bash
+   uv run dt evals --check-receipt "Regression evals: <worktree>/tmp/evals/report.json; P passed / F failed / N not measured (<reasons>)" --output <worktree>/tmp/evals
+   ```
+   Replace P/F/N with the report counts. The read-only check exits 0 only for a nonempty regression
+   report with matching path, counts and rows; otherwise it exits 1 with a one-line reason.
+   Comma-separated counts (the receipt template below) are also accepted. Exit 0 verifies the
+   receipt, not an eval pass: an all-not-measured report remains unmeasured, and failures still block merge.
    - An all-not-measured run (`0 passed, 0 failed, N not measured` with `exit 2`, such as when there is
      `no Claude transcript` on Hermes-driven branches) is a valid receipt, not a pass or waived check.
    - Preserve `--references` after grader changes (run `--references` as well after a change to a grader).
@@ -81,6 +89,26 @@ Require `## Author receipts` in the PR body with the following lines:
 - `Pattern: <pattern id | new-case | n/a if no new module>`
 - `Regression evals: <report path>; <passed> passed, <failed> failed, <not measured> not measured (<reasons>)`
 - `Probe: <invariant -> probe -> N/N with command/seed/bounds/evidence path | n/a: <reason>>`
+- `Local CI: CI-RECEIPT v1 pasted in the PR body; python tools/ci_receipt.py --verify <file> --sha <full HEAD sha> exits 0`
+
+### Handoff evidence check (#584)
+
+The author owns the full suite: a PR body never hands it to the reviewer, and evidence that is
+missing, "not run" or "not measured" is not a pass. Before `review_requested` the PR body has each
+line below exactly once (`.github/pull_request_template.md`, "Evidence"), and this read-only check exits 0:
+```bash
+uv run dt evals --check-handoff <pr-body.md> --sha <full HEAD sha> --output <worktree>/tmp/evals
+```
+- `Full suite:` run through `suite_slot.py` on the head sha, `N passed`, `0 failed` (a failure only
+  with its `known #<issue>` owner). After a rework (rule 49) it may name an ancestor of the head, and then an
+  `Affected tests:` line on the head with `0 failed` is required.
+- `Regression evals:` as above. It is verified with `check_receipt`, and the all-not-measured `no Claude transcript` receipt is valid.
+- `Before (RED):` names a commit before the head and has ≥ 1 failed or error, or `n/a: <reason>`.
+  `After (GREEN):` names the head and has ≥ 1 passed and 0 failed; it has no `n/a`. A GREEN or
+  `Affected tests:` line that says `not run`, `pending`, `n/a` etc. is not a run, even next to counts.
+  Every count is a plain integer: `nan failed`, `-1 failed`, `1.5 passed` are errors, never zero.
+- `Sample output:` gives the output the acceptance asks for (path or inline), or `n/a: <reason>`.
+Exit 1 prints one `ERROR:` line per problem. Fix the evidence or run the missing step. Never edit a line to pass the check.
 
 ## Questions-only
 
@@ -417,6 +445,20 @@ Worktree ownership first; reject prohibited operations even with authorization. 
 to new versioned paths and read back geometry, UV, materials and transforms. Unknown or
 arbitrary-code operations are destructive until their behavior is inspected. This is a
 manual DCC skill/reviewer gate, not a generic MCP sandbox.
+
+## Performance lane (#361)
+
+Wall-clock / CPU-time budgets are opt-in: marked `perf` and excluded from the default `addopts`.
+Run the lane through the suite-slot limiter — `uv run pytest -m perf -p no:cacheprovider` (via
+`scripts/suite_slot.py`) — it is not part of a card's full-suite receipt.
+
+## Real 3ds Max lane (#518)
+
+A test that launches real 3ds Max (`max_adapter.default_adapter()` without a mocked `_call`, or any
+`dcc_batch.py` call) is marked `max` and excluded from the default `addopts` in `pyproject.toml`
+(the single place of the default lane expression). Run it on purpose, through the suite-slot limiter:
+`uv run pytest -m max -p no:cacheprovider`. It takes the shared cross-card Max lock and may report
+`busy`. `tests/test_max_marker_contract.py` fails any unmarked real-Max test.
 
 ## Git
 

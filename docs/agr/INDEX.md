@@ -19,6 +19,7 @@ find the line for your question, then read that file. One line per tracked file.
 | `BODY_SHELL_ADAPTER.md` | BODY/Shell adapter: exterior quads → inward Shell with reveals, no inner faces; Obr22 only | Building a shelled BODY from an exterior surface |
 | `EXPERIENCE_CAPTURE.md` | Rule for recording a user-accepted result as a case study | User praises/accepts a result and a case must be written |
 | `READINESS_REPORT.md` | Readiness audit 2026-09-26: NPM vs VPM, norm conflicts, app readiness, skills registry | Checking historical readiness, NPM/VPM differences or source contradictions |
+| `sintez_checks_1.6.1.json` | SINTEZ AGR Checker 1.6.1 dissection (#429): 36 checks, 10 fixers, thresholds, 2026 VPM/NPM req_nums vs our checkers | Comparing our checks or thresholds with the SINTEZ AGR Checker |
 | `traceability.html` | HTML table rule → PDF page → verification method (single-line file) | Tracing a profile rule to its regulation PDF page |
 
 ## decisions
@@ -53,6 +54,7 @@ find the line for your question, then read that file. One line per tracked file.
 | `case_studies/WINDOW_FRAMES_BOX_LIGHTS.md` | Decorative frames: box lights on upper inner frame faces v002 (Blender) | Placing box lights on decorative frames |
 | `case_studies/KPP1_VPM_NPM_V005.md` | KPP1: VPM+NPM from Revit v005, ~90% accepted; GeoJSON etc. open | Producing VPM/NPM from Revit with quads ≤4 m |
 | `case_studies/PSU275_VPM_NPM_DELIVERY_V003.md` | PSU275 main building and OKS: VPM+NPM delivery-v003, mesh cleanup accepted | Cleaning/optimising quad masters for multi-OKS delivery |
+| `case_studies/VYATSKAYA_TOW02_MIDPOLY.md` | Vyatskaya TOW02 panelised curtain-wall tower: mid-poly master + OKS 013 atlas accepted as a base, finished by the user by hand | Mid-poly from a panelised (no-shell) curtain-wall source |
 
 ## inventory
 

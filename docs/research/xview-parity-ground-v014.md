@@ -1,0 +1,101 @@
+# xView parity on Ground v014 (#370)
+
+Kernel invariant `xview_overlaps` (`src/dt_ai/ops/inv_xview.py`) against the real 3ds Max xView checkers
+"Overlapping Vertices" (0.002 m) and "Overlapping Faces" (0.005 m), Artem's production thresholds.
+Technical evidence only; no Ground output file was changed. Acceptance of the gate is a separate, human step.
+
+## How it was measured
+
+- 3ds Max 2026.3, headless (`hermes_kanban/scripts/dcc_batch.py max`), on COPIES of
+  `C:/x/t_d94665f2/ground_v014/npm/SM_Vatutino_Ground.fbx` (SHA-256 `94357c5f048b...`) and
+  `.../vpm/SM_Vatutino_Ground.fbx` (`a41266757fe3...`) in `%LOCALAPPDATA%/Temp/agr-max-t_3013550d/`.
+- MAXScript interfaces `OverlappingVertices` / `OverlappingFaces` (`.tolerance`, `.Check <time> <node> &results`) -
+  the same checkers the xView menu runs (`xViewChecker` ids 7 / 2). System units metres, tolerance read back
+  0.002 / 0.005. Max returns 1-based vertex / face ids.
+- `tools/qa/xview_dump.ms` writes the Max ids plus the node's vertices (metres, 7 decimals) and faces;
+  `uv run python tools/qa/xview_parity.py <dump.json>` runs our invariant on exactly that mesh and compares ids.
+  It exits 2 and writes nothing on an empty, partial or failed dump (no nodes, no vertices/faces, counts that differ
+  from the lists, a checker result other than `#vertices` / `#faces`, ids out of range or not integers) and when
+  `--out` is the input (same path, link or hardlink); exit 1 = measured but not equal, 0 = every node equal.
+- Triangulation (review round 1): convex polygons are fanned from the first vertex, concave ones ear-clipped, and
+  self-intersecting ones raise. The four dumps were re-compared after this change, and the ids are unchanged
+  (146/146, 351/351, 0/0, 118/118).
+- Two node states: the FBX as imported (`Editable_mesh`, 27 281 vertices, 46 343 triangles) and after
+  `convertToPoly` (`Editable_Poly`, 27 340 vertices, 46 343 faces) - the state Artem works in.
+- NPM and VPM have identical geometry (they differ in materials / UV), so their results are identical.
+
+## Result
+
+| file / node state | Max OV vertices | ours OV vertices (pairs) | Max OF faces | ours `contact` faces | ours all faces (`contact` + `area`) | ids equal |
+|---|---|---|---|---|---|---|
+| NPM, Editable_mesh | 0 | 0 (0) | 146 | 146 | 167 | yes |
+| VPM, Editable_mesh | 0 | 0 (0) | 146 | 146 | 167 | yes |
+| NPM, Editable_Poly | 118 | 118 (59) | 351 | 351 | 372 | yes |
+| VPM, Editable_Poly | 118 | 118 (59) | 351 | 351 | 372 | yes |
+
+Face pairs by kind (both states): `area+contact` 136, `area` 67; `contact` only 19 (mesh) / 225 (poly).
+
+### Differences, case by case
+
+1. **Editable_Poly adds 59 vertex pairs at 0.000 mm** (118 vertices). `convertToPoly` splits the 59 non-manifold
+   vertices of the imported mesh into coincident copies; xView and our invariant both count them (distance 0 <= 2 mm).
+   This is what Artem saw as "small errors" in Overlapping Vertices. Not a checker difference.
+2. **Our `area` rule flags 21 more faces (67 pairs) than xView.** All 67 pairs are opposite-facing; 65 share no
+   vertex, 62 of them are vertical faces back-to-back about 1.3 mm apart (e.g. faces 36330 / 36458, 0.047 m2 overlap).
+   They cross edge over edge with no vertex of one face inside the other, so xView's vertex-in-face rule cannot see
+   them. Isolated in Max, the pair 36330 / 36458 returns `f=[]`; the synthetic `cross_no_vertex_in` case likewise.
+   Kept on purpose: the issue defines an overlapping face pair by overlapping area, either orientation.
+3. No face or vertex flagged by Max is missed by us (`faces_only_max` = `vertices_only_max` = []).
+
+## What xView actually checks (measured on synthetic meshes in Max)
+
+| case | Max result | our invariant |
+|---|---|---|
+| two vertices 1.5 mm / 2.0 mm / 2.5 mm apart | 1.5 flagged, 2.0 and 2.5 not | 1.5 and 2.0 flagged (`<=`, fail-closed), 2.5 not |
+| unused vertex 1 mm from a used one | flagged | flagged |
+| quads 50 % overlap, z = 0 / 1 / 4 / 4.9 mm, same or opposite facing | flagged | flagged |
+| same, z = 5.0 mm | flagged | flagged |
+| same, z = 5.1 / 6 mm | not | not |
+| quads touching along an edge (unwelded coincident vertices) | faces + 4 vertices flagged | `contact` pair + 2 vertex pairs |
+| quads 3 mm apart in plane | not | not |
+| T-vertex on the middle of the other face's edge, z <= 5 mm | flagged | `contact` |
+| vertex inside the other face, tilt 0.600-0.810 deg | flagged | flagged |
+| same, tilt 0.815-0.95 deg | not | not (`PARALLEL_COS_MIN` = 0.9999 = 0.8103 deg) |
+| faces crossing at 5 deg / 90 deg | not | not |
+| two faces crossing edge over edge, no vertex inside (1 mm apart) | **not** | `area` pair |
+| duplicate face with the same vertex ids | **not** | `area` pair |
+| Editable_Poly: ids returned | polygon ids | polygon ids |
+
+So xView "Overlapping Faces" = a vertex of one face, not shared with the other, projects into the other face
+(boundary included) at a plane distance <= tolerance, with |cos| of the normals >= 0.9999. That rule (`contact` in our
+report) reproduces all 146 / 351 faces on v014. The issue's area rule is added on top.
+
+## Status
+
+- `xview_overlaps` is wired report-only: `check_operation_xview(..., gating=False)` appends a non-gating result, and
+  `jobs/VATUTINO-SITE/build_ground.py` writes `ground_report.json["xview_overlaps"]` outside `gates`.
+- It becomes a gate (`gating=True`, and a `gates` entry in the Ground build) once a person accepts this parity.
+- v014 is not xView-clean under the delivery rule [D152]: 146 / 351 faces and 0 / 118 vertices. Fixing the Ground is
+  a separate task.
+
+## Speed and incremental re-check (#535)
+
+Same PC, same process, result identical pair for pair (ids, kind, separation): TOW02 export-v005 (35 407 quads)
+`part_report` 25.4 s -> 5.0-5.4 s (185 faces = Max keep, 0 vertex pairs); user 013 FBX (73 594 tris) 22.6 -> 5.8-6.0 s
+(0 faces, 5 vertex pairs = 10 vertices); Ground v014 NPM dumps 10.9 -> 5.7-6.6 s (146) and 12.5 -> 5.8-6.4 s (351 / 118).
+How: convex quads (with a float margin) fanned in numpy, everything else through the exact per-polygon path; a
+uniform grid over the boxes padded by `face_m / parallel_cos_min` instead of the x sweep (1.1 M box pairs instead
+of about 70 M sweep candidates); polygon ownership by `searchsorted`; shapely only on pairs whose separation range
+can reach `face_m`. Tolerances and the rule are unchanged.
+`xview_state` / `xview_state_incremental` (faces labelled by part): the incremental run reuses pairs between
+unchanged parts and re-checks the faces of the changed parts in their grid cells; TOW02 v005 split into 15 parts
+(connected components by 5 m z band), one part moved by -4..+20 mm: equal to the full run, 0.4-3.2 s vs 5.8-8.2 s.
+It fails closed (error naming the part) when a part not listed as changed differs, vertex sharing between unchanged
+parts differs, or the unchanged faces are reordered. Parity on the stored Max lists:
+`tools/qa/xview_parity.py --keep <keep> --npz <arrays.npz>` (TOW02 185/185) and `<dump.json>` (Ground 146/146).
+Interactive Blender path (not in the repository until the user says yes, backlog R18): the user's add-on
+`xview_overlapping_faces_improved.py` patched to v1.1.0 (option "Exact xView rule (AGR dt_ai)", default on, runs
+`inv_xview.mesh_report` through `uv run --project <repo>` in a polled subprocess; tolerance default 5 mm, the float32 UI
+value rounded to 1e-9 m; overlay and selection kept). Blender 5.1.2 headless with the add-on registered: TOW02
+export-v005 185 faces = the Max keep ids (9.4 s incl. uv start), the user's 013 FBX 0 faces (10.5 s).
+Evidence: `G:/Мой диск/AGR-evidence/535-fast-xview/` (+ `SHA256SUMS.txt`; patched add-on SHA-256 `6df2c019e1de...`).

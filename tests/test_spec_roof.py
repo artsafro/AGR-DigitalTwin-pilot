@@ -1,4 +1,4 @@
-"""Sloped and separate roofs, frames per source (issue #9, user decisions 2026-10-08). Synthetic data."""
+"""Sloped and separate roofs, frames per source (issue #9, user decisions 2026-10-08 [D024]). Synthetic data."""
 import math
 
 import pytest
@@ -326,7 +326,7 @@ def test_roof_without_a_parapet_keeps_its_edge_ring():
 
 
 def test_parapet_is_measured_from_the_roof_level_not_from_an_inset_roof_plane():
-    # B02 (user rule 2026-10-10, pattern roof-inset-plane): the roof plane is inset 5 mm above the
+    # B02 (user rule 2026-10-10 [D038], pattern roof-inset-plane): the roof plane is inset 5 mm above the
     # parapet foot; the spec heights come from LEVEL_roof (6.6), so the parapet is 0.6, not 0.595
     b = Mesh("Body")
     inner = [[0.3, 0.3], [9.7, 0.3], [9.7, 9.7], [0.3, 9.7]]

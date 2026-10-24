@@ -61,6 +61,10 @@ def parser():
     intake.add_argument("action", choices=["check"])
     intake.add_argument("--dir", type=Path, required=True, help="jobs/<JOB>/intake")
     evals = sub.add_parser("evals", help="Run agent-behaviour eval tasks (evals/<task>/task.json); report in a new run folder")
+    evals.add_argument("--check-receipt", help="verify a regression receipt against --output/report.json (read-only)")
+    evals.add_argument("--check-handoff", type=Path, metavar="BODY",
+                       help="verify the PR body's handoff evidence before review_requested (read-only, #584)")
+    evals.add_argument("--sha", help="with --check-handoff: full head sha (default: git rev-parse HEAD)")
     evals.add_argument("--suite", choices=["regression", "capability"])
     evals.add_argument("--task", help="one task id (its folder under evals/)")
     evals.add_argument("--references", action="store_true",
@@ -71,6 +75,16 @@ def parser():
     evals.add_argument("--main", type=Path, help="main checkout holding logs/ (default: from git)")
     evals.add_argument("--evals-dir", type=Path, help="default: <repo>/evals")
     evals.add_argument("--output", type=Path, help="new run folder (default: <main>/logs/evals/runs/<time>-<selector>)")
+    qa = sub.add_parser("qa", help="Mesh QA gates; xview = inv_xview overlap gate (#527), postcondition of a build step")
+    qa.add_argument("check", choices=["xview"])
+    qa.add_argument("input", type=Path, help="FBX, .blend (headless Blender) or parts .npz")
+    qa.add_argument("--out", type=Path, required=True, help="new report.json (never the input, never overwritten)")
+    qa.add_argument("--parts", nargs="+", help="check only these objects / named parts (default: every mesh)")
+    qa.add_argument("--profile", default="NPM", help="NPM or VPM (-OKS / -GROUND): xView 2 mm / 5 mm thresholds")
+    qa.add_argument("--coords", default="local", choices=["local", "inplace", "as-stored"],
+                    help="local = object location subtracted, float64 (default)")
+    qa.add_argument("--blender", default=os.environ.get("DT_BLENDER"), help="Blender executable for FBX / .blend")
+    qa.add_argument("--timeout", type=float, default=3600, help="Blender dump timeout, seconds")
     for name in ("build", "validate"):
         item = sub.add_parser(name, help="Build/check a labelled development bundle; never certify delivery")
         item.add_argument("--job" if name == "build" else "--archive", type=Path, required=True)
@@ -141,6 +155,35 @@ def main(argv=None):
             write_json(args.output / "modules-scene.json", scene)
             print(f"from-source: {args.output}; {report['triangles']} triangles; spec {len(spec_doc['floors'])} floors")
         elif args.command == "evals":
+            if args.check_handoff is not None:
+                from twinqa.evals.handoff import check_handoff_file, head_sha
+                if (args.suite or args.task or args.references or args.evidence or args.branch
+                        or args.main or args.evals_dir or args.check_receipt is not None):
+                    print("ERROR: --check-handoff accepts only --sha and --output, not run options", file=sys.stderr)
+                    return 1
+                sha = head_sha(Path.cwd()) if args.sha is None else args.sha
+                problems = check_handoff_file(args.check_handoff, sha, args.output, Path.cwd())
+                for problem in problems:
+                    print("ERROR: " + " ".join(str(problem).splitlines()), file=sys.stderr)
+                if problems:
+                    return 1
+                print(f"OK: handoff evidence complete for {sha}")
+                return 0
+            if args.sha is not None:
+                print("ERROR: --sha needs --check-handoff", file=sys.stderr)
+                return 1
+            if args.check_receipt is not None:
+                from twinqa.evals.receipt import check_receipt
+                try:
+                    if (args.suite or args.task or args.references or args.evidence or args.branch
+                            or args.main or args.evals_dir):
+                        raise ValueError("--check-receipt accepts only --output, not run options")
+                    check_receipt(args.check_receipt, args.output)
+                except (ValueError, OSError) as exc:
+                    print("ERROR: " + " ".join(str(exc).splitlines()), file=sys.stderr)
+                    return 1
+                print("OK: regression evals receipt matches report")
+                return 0
             from twinqa.evals import runner
             try:
                 overrides = dict(item.split("=", 1) for item in args.evidence)
@@ -222,6 +265,17 @@ def main(argv=None):
                   f"{report['parts']} parts "
                   f"({report['attachment_parts_ignored']} not body, {report['decor']['elements']} decor elements), "
                   f"{len(report['questions'])} questions")
+        elif args.command == "qa":
+            from dt_ai.ops import xview_gate
+            try:
+                rep = xview_gate.run(args.input, args.out, args.profile, args.coords, args.parts, args.blender,
+                                     args.timeout)
+            except (ValueError, OSError, RuntimeError) as exc:     # input / setup error: 2, never a verdict
+                print("ERROR: " + " ".join(str(exc).splitlines()), file=sys.stderr)
+                return 2
+            print("\n".join(xview_gate.summary_lines(rep)))
+            print(f"Report: {args.out}")
+            return 0 if rep["passed"] else 1
         elif args.command == "registry":
             current = MaterialRegistry.model_validate(read_json(args.current.read_bytes()))
             proposal = MaterialRegistry.model_validate(read_json(args.proposal.read_bytes()))

@@ -5,6 +5,7 @@ the spec is tests/fixtures/spec-b01-v0.3.json. Build inputs the spec does not ca
 thickness, material IDs) are given explicitly, as `jobs/<object>/materials.json` will.
 """
 import json
+from dataclasses import replace
 import subprocess
 from pathlib import Path
 
@@ -71,7 +72,7 @@ def test_model_is_all_quads_welded_and_open_only_at_the_bottom_and_the_roof_inse
     assert counts.max() <= 2                                   # no fin
     assert t_junctions(dump) == 0
     open_z = soup.vertices[np.unique(ids, return_index=True)[1]][edges[counts == 1].ravel(), 2]
-    # only the bottom ring and the inset roof joint: the hole at 6.6, the plate 5 mm above it (user 2026-10-10)
+    # only the bottom ring and the inset roof joint: the hole at 6.6, the plate 5 mm above it (user 2026-10-10 [D038])
     assert set(np.round(open_z, 6).tolist()) == {0.0, 6.6, 6.605}
     assert {lv["name"] for lv in dump["helpers"]} == {"LEVEL_L0", "LEVEL_L1", "LEVEL_roof"}
 
@@ -150,7 +151,7 @@ def topology_ok(dump):
     soup = from_dump(dump)
     _, counts, _ = edge_uses(soup.triangles, weld(soup.vertices, TOL["weld_m"]))
     loops = checks.check_mesh(soup, TOL, checks.load_ranges())["details"]["open_loops"]
-    # open only at the bottom and at the inset slab joints (pattern roof-inset-plane, user rule 2026-10-10)
+    # open only at the bottom and at the inset slab joints (pattern roof-inset-plane, user rule 2026-10-10 [D038])
     return counts.max() <= 2 and t_junctions(dump) == 0 and all(lp["allowed"] for lp in loops)         and [lp["kind"] for lp in loops].count("bottom") == 1
 
 
@@ -164,7 +165,7 @@ def test_ledge_where_the_floor_below_reaches_out():
 
 
 def test_soffit_where_the_floor_above_overhangs():
-    # user 2026-10-10: the soffit under an overhang takes the facade ID
+    # user 2026-10-10 [D043]: the soffit under an overhang takes the facade ID
     s = stepped([[4, 0], [10, 0], [10, 10], [4, 10]], [[0, 0], [10, 0], [10, 10], [0, 10]])
     dump = build(s, INPUTS)
     soup = from_dump(dump)
@@ -249,7 +250,7 @@ def test_cross_level_opening_in_a_typical_template_is_asked_not_copied():
 
 @pytest.mark.parametrize("profile, seat", [("npm_min", 0.2), ("mid", 0.1)])
 def test_plane_seat_follows_the_profile(profile, seat):
-    # C24 final, user decision 2026-10-10: npm_min at the full opening depth (0.2 m), mid at half of it
+    # C24 final, user decision 2026-10-10 [D037]: npm_min at the full opening depth (0.2 m), mid at half of it
     soup = from_dump(build(edited(lambda d: d.update({"profile": profile})), INPUTS))
     c = soup.corners()
     planes, reveals = c[soup.material_ids == PLANE], c[soup.material_ids == REVEAL]
@@ -566,7 +567,7 @@ def test_near_degenerate_inputs_build_clean_or_stop(contour, window):
 
 @pytest.mark.parametrize("contour, wall, x_m", [
     ([[0, 0], [10, 0], [10, 10], [0, 10]], 0, 0.0031),               # just past the 3 mm weld from the start
-    ([[0, 0], [10, 0], [10, 10], [0, 10]], 0, 8.9969),               # just past it from the end (user 2026-10-13)
+    ([[0, 0], [10, 0], [10, 10], [0, 10]], 0, 8.9969),               # just past it from the end (user 2026-10-13 [D068])
 ])
 def test_windows_just_past_the_weld_are_built(contour, wall, x_m):
     def edit(d):
@@ -578,7 +579,7 @@ def test_windows_just_past_the_weld_are_built(contour, wall, x_m):
 
 
 def test_window_within_the_weld_of_a_wall_end_is_welded_to_it():
-    # user 2026-10-13: 3 mm (inclusive) is the building's weld - the window's end is the wall's end, a corner opening
+    # user 2026-10-13 [D068]: 3 mm (inclusive) is the building's weld - the window's end is the wall's end, a corner opening
     def edit(d):
         d["floors"][0]["openings"] = [{"wall": 0, "x_m": 0.003, "sill_m": 0.9, "w_m": 1.0, "h_m": 1.5, "kind": "window"}]
     with pytest.raises(BuildError, match="reaches the wall end"):
@@ -612,7 +613,7 @@ def test_inputs_at_the_limit_that_would_break_under_the_weld_are_errors():
         d["roof"] = {"parapet_h_m": 0.0}
     with pytest.raises(BuildError):
         build(edited(window_case), INPUTS)
-    # user 2026-10-13: the two floors 0.1 mm apart are one line under the 3 mm weld - built, closed
+    # user 2026-10-13 [D068]: the two floors 0.1 mm apart are one line under the 3 mm weld - built, closed
     assert topology_ok(build(edited(step_case), INPUTS))
 
 
@@ -670,7 +671,7 @@ def test_plan_weld_within_2d_bound_still_builds(shift):
         assert distances.min(axis=1).max() <= sp.weld_m + 1e-9
 
 
-# pattern terrace (spec v0.4, user decisions 2026-10-10): a parapet along a ledge's outer edges
+# pattern terrace (spec v0.4, user decisions 2026-10-10 [D041]): a parapet along a ledge's outer edges
 
 
 def terraced(spec_data_edit, h=0.6):
@@ -691,7 +692,7 @@ def test_terrace_parapet_on_a_ledge():
     dump = build(s, INPUTS)
     soup = from_dump(dump)
     assert topology_ok(dump)
-    assert horizontal(soup, 3.3, ROOF, True) == 0.0                              # the hole (user rule 2026-10-10)
+    assert horizontal(soup, 3.3, ROOF, True) == 0.0                              # the hole (user rule 2026-10-10 [D038])
     assert horizontal(soup, 3.305, ROOF, True) == pytest.approx(3.74 * 9.44)     # walkable plate: 3.7 x 9.4 + 20 mm
     assert horizontal(soup, 3.9, ROOF, True) == pytest.approx(5.22)             # cap: 0.3 x 10 + 2 x 0.3 x 3.7
     c = soup.corners()
@@ -895,7 +896,7 @@ def test_a_slab_joint_the_spec_implies_no_slab_for_is_not_allowed():
 
 
 def test_a_plate_gap_within_the_weld_is_no_spec():
-    # user 2026-10-13: every gap of the spec lies beyond weld_m, else it would weld shut
+    # user 2026-10-13 [D068]: every gap of the spec lies beyond weld_m, else it would weld shut
     with pytest.raises(ValueError, match="larger than weld_m"):
         Spec.model_validate({**spec().model_dump(), "plate_gap_m": 0.003})
 
@@ -982,7 +983,7 @@ def test_a_plate_wider_than_the_faces_around_it_is_a_build_error():
         build(spec(), BuildInputs(**{**INPUTS.__dict__, "parapet_thickness_m": 0.01}))
 
 
-# plate_gap_m / plate_overlap_m: building parameters in the spec (user 2026-10-10)
+# plate_gap_m / plate_overlap_m: building parameters in the spec (user 2026-10-10 [D039])
 
 
 def test_the_extractor_reads_the_plate_parameters_back():
@@ -1101,7 +1102,7 @@ def test_plate_parameters_keep_their_precision_and_the_agreement_limit():
 
 @pytest.mark.parametrize("inner, read", [(0.02, True), (0.03, False)])
 def test_the_extractor_reads_a_plate_around_a_shaft(inner, read):
-    # KPP1 (user 2026-10-10): a shaft stands in the hole as a part of its own; its foot is an inner outline
+    # KPP1 (user 2026-10-10 [D038]): a shaft stands in the hole as a part of its own; its foot is an inner outline
     from dt_ai.spec import extract_spec
     from test_geometry_checks import shaft_roof
     spec_, report = extract_spec(shaft_roof(inner), SYNTH_OBJECT)
@@ -1122,7 +1123,7 @@ def test_engine_takes_the_parapet_thickness_from_the_spec():
 
 
 def test_terrace_parapet_takes_the_roof_thickness_of_the_spec():
-    """Review 1 of #81 / user 2026-10-13 (Q10 a): one parapet thickness per building - with the spec's roof
+    """Review 1 of #81 / user 2026-10-13 [D065] (Q10 a): one parapet thickness per building - with the spec's roof
     thickness 0.2 and a build input of 0.3 the terrace parapet is 0.2 too and the model builds."""
     from dt_ai.spec import extract_spec
 
@@ -1136,7 +1137,7 @@ def test_terrace_parapet_takes_the_roof_thickness_of_the_spec():
     assert back.roof.parapet_thickness_m == 0.2 and [t.level for t in back.terraces] == ["L1"]
 
 
-# --- spec v0.7 roof_structures (pattern roof-screen-enclosure, user 2026-10-13) ----------------------------
+# --- spec v0.7 roof_structures (pattern roof-screen-enclosure, user 2026-10-13 [D067]) ----------------------------
 
 SCREEN = {"kind": "screen", "outline": [[3, 3], [7, 3], [7, 7], [3, 7]], "z_top_m": 9.0}
 
@@ -1160,9 +1161,326 @@ def test_engine_builds_a_screen_enclosure_as_planes_with_roof_ids():
     assert not all(lp["allowed"] for lp in plain)          # without the spec's structure its bottom is an open loop
 
 
-def test_engine_builds_no_screen_shell_for_mid_yet():
-    with pytest.raises(BuildError, match="issue #91"):
-        build(with_screen("mid"), INPUTS)
+def _shell(outline, z_top, t, inputs=INPUTS):
+    """Build a mid screen enclosure with `t` (None = no thickness_m in the spec) and return its mesh."""
+    rs_ = {"kind": "screen", "outline": outline, "z_top_m": z_top, **({"thickness_m": t} if t is not None else {})}
+    dump = build(edited(lambda d: d.update({"spec_version": "0.7", "roof_structures": [rs_], "profile": "mid"})),
+                 inputs)
+    return dump, next(m for m in dump["meshes"] if m["name"] == "roof_structures")
+
+
+def _shell_facts(rs_):
+    """(closed manifold, consistently oriented, signed volume) of a built enclosure mesh."""
+    v = np.asarray(rs_["vertices"], float)
+    edges = {}
+    for poly in rs_["polygons"]:
+        for a, b in zip(poly, poly[1:] + poly[:1]):
+            edges.setdefault((a, b), 0)
+            edges[(a, b)] += 1
+    closed = all(edges.get((b, a), 0) == 1 and n == 1 for (a, b), n in edges.items())
+    t = v[np.asarray(rs_["triangles"])]
+    vol = float(np.einsum("ij,ij->i", t[:, 0], np.cross(t[:, 1], t[:, 2])).sum() / 6)
+    return closed, vol
+
+
+def test_engine_builds_a_screen_enclosure_as_a_shell_for_mid():
+    """Issue #91 (pattern roof-screen-enclosure rule 3): mid / VPM - the npm_min planes with the screen's thickness
+    inward (a Shell): outer walls and top, inner walls and a ceiling t below the top, the rim on the roof; closed,
+    roof ids, nothing inside (the equipment is not decided)."""
+    dump, rs_ = _shell(SCREEN["outline"], 9.0, 0.2)
+    v = np.asarray(rs_["vertices"])
+    assert set(rs_["material_ids"]) == {INPUTS.roof_id}
+    assert v[:, 2].min() == pytest.approx(6.6) and v[:, 2].max() == pytest.approx(9.0)
+    assert sorted({round(z, 6) for z in v[:, 2]}) == [6.6, 8.8, 9.0]          # roof, ceiling, top
+    assert sorted({round(x, 6) for x in v[:, 0]}) == [3.0, 3.2, 6.8, 7.0]      # outline and its 0.2 m inset
+    closed, vol = _shell_facts(rs_)
+    assert closed and vol == pytest.approx(4 * 4 * 2.4 - 3.6 * 3.6 * 2.2)      # outward normals, box minus hollow
+    soup = from_dump(dump)
+    structures = [(shapely.Polygon(SCREEN["outline"]), 6.6, 9.0)]
+    mesh_ = checks.check_mesh(soup, TOL, checks.load_ranges(), structures=structures)
+    assert not any(lp["kind"].startswith("roof-structure") for lp in mesh_["details"]["open_loops"])
+    assert checks.check_horizontal_faces(soup, TOL)["status"] == "pass"
+
+
+def _clean(rs_):
+    """No repeated vertex in a polygon and no polygon under 1 um^2 (a face the output grid did not collapse)."""
+    v = np.asarray(rs_["vertices"], float)
+    def area(p):
+        q = v[p]
+        return float(np.linalg.norm(sum(np.cross(q[i], q[(i + 1) % len(q)]) for i in range(len(q)))) / 2)
+    return all(len(set(p)) == len(p) and area(p) > 1e-12 for p in rs_["polygons"])
+
+
+SUBGRID = [1e-8, 1e-7, 4e-7, 1e-6, 1.5e-6, 2e-6]   # 2e-6: exactly at the floor, a stop
+SHIFTS = [(0.0, 0.0), (0.4e-6, 0.0), (0.5e-6, 0.5e-6), (0.49e-6, -0.51e-6), (1.2345678, -0.7000004)]
+
+
+def _shell_by_input(outline, t):
+    """The build-input fallback alone: no thickness_m on the screen, the building's parapet keeps its own 0.3 m
+    from the spec (rule 4), so only the screen sees the build input's `t`."""
+    rs_ = {"kind": "screen", "outline": outline, "z_top_m": 9.0}
+    def edit(d):
+        d.update({"spec_version": "0.7", "roof_structures": [rs_], "profile": "mid"})
+        d["roof"] = {**(d.get("roof") or {}), "parapet_thickness_m": 0.3}
+    dump = build(edited(edit), replace(INPUTS, parapet_thickness_m=t))
+    return dump, next(m for m in dump["meshes"] if m["name"] == "roof_structures")
+
+
+@pytest.mark.parametrize("t", SUBGRID)
+@pytest.mark.parametrize("dx,dy", SHIFTS)
+def test_a_screen_shell_thinner_than_the_output_grid_is_a_stop(t, dx, dy):
+    """Review PR #500 round 1 (P1): a thickness whose surfaces collapse on the 1 um output grid (degenerate
+    polygons, zero volume, non-manifold) is a named BuildError, never returned geometry and never clamped; also
+    with the outline moved off the grid, and for the build-input fallback thickness."""
+    outline = [[x + dx, y + dy] for x, y in SCREEN["outline"]]
+    with pytest.raises(BuildError, match="output grid"):
+        _shell(outline, 9.0, t)
+    with pytest.raises(BuildError, match="output grid"):
+        _shell_by_input(outline, t)
+
+
+@pytest.mark.parametrize("t", [2.5e-6, 1e-5, 1e-3, 0.1, 0.2, 0.3])
+@pytest.mark.parametrize("dx,dy", SHIFTS)
+def test_an_ordinary_screen_shell_stays_a_clean_closed_solid(t, dx, dy):
+    """Controls for the grid guard: ordinary and thin-but-representable shells build closed, clean, positive."""
+    outline = [[x + dx, y + dy] for x, y in SCREEN["outline"]]
+    for got in (_shell(outline, 9.0, t)[1], _shell_by_input(outline, t)[1]):
+        closed, vol = _shell_facts(got)
+        assert closed and _clean(got) and vol == pytest.approx(16 * 2.4 - (4 - 2 * t) ** 2 * (2.4 - t), rel=1e-6)
+
+
+def _box(m, lo, hi, drop=0, flip=False):
+    """An axis-aligned box of quads into `m` (outward normals; `flip` inward; `drop` faces left out)."""
+    (x0, y0, z0), (x1, y1, z1) = lo, hi
+    c = [[x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0], [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]]
+    faces = [(0, 3, 2, 1), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)][drop:]
+    for f in faces:
+        ids = [m.vertex(c[i]) for i in f]
+        m.faces.append((ids[::-1] if flip else ids, ROOF))
+
+
+@pytest.mark.parametrize("hi, drop, flip, why", [
+    ((1, 1, 4e-7), 0, False, "collapses a face"),      # top and bottom weld: repeated vertices
+    ((1, 1, 1), 1, False, "not closed"),               # a face missing
+    ((1, 1, 1), 0, True, "no volume"),                 # inside out
+])
+def test_the_shell_grid_check_stops_each_failure(hi, drop, flip, why):
+    """The safety net behind SHELL_MIN_M, one witness per check; a clean unit box passes."""
+    from dt_ai.geometry.from_spec import _check_closed_solid, _Mesh
+    m = _Mesh()
+    _box(m, (0, 0, 0), hi, drop, flip)
+    with pytest.raises(BuildError, match=why):
+        _check_closed_solid(m, "probe", 0.0)
+    ok = _Mesh()
+    _box(ok, (0, 0, 0), (1, 1, 1))
+    _check_closed_solid(ok, "probe", 0.0)
+
+
+def test_the_merged_check_stops_two_boxes_welded_on_a_face():
+    """The backstop after the cross-structure weld: two clean boxes sharing a face are not one closed solid."""
+    from dt_ai.geometry.from_spec import _check_closed_solid, _Mesh
+    m = _Mesh()
+    _box(m, (0, 0, 0), (1, 1, 1))
+    _box(m, (1, 0, 0), (2, 1, 1))
+    with pytest.raises(BuildError, match="the weld of the shells leaves the shell not closed"):
+        _check_closed_solid(m, "roof structures (merged)", None)
+
+
+def _two_shells(shift, t1=0.2, t2=0.2, by_input=False):
+    """Two mid screens: SCREEN and SCREEN moved by `shift` (dx, dy); `by_input` drops thickness_m (build input t1)."""
+    first = {**SCREEN, **({} if by_input else {"thickness_m": t1})}
+    second = {**SCREEN, "outline": [[x + shift[0], y + shift[1]] for x, y in SCREEN["outline"]],
+              **({} if by_input else {"thickness_m": t2})}
+    def edit(d):
+        d.update({"spec_version": "0.7", "profile": "mid", "roof_structures": [first, second]})
+        d["roof"] = {**(d.get("roof") or {}), "parapet_thickness_m": 0.3}
+    dump = build(edited(edit), replace(INPUTS, parapet_thickness_m=t1) if by_input else INPUTS)
+    return next(m for m in dump["meshes"] if m["name"] == "roof_structures")
+
+
+CONTACTS = [(4.0, 0.0), (4.0000004, 0.0), (4.0000009, 0.0), (4.0, 4.0), (4.0000004, 3.9999996), (2.0, 0.0),
+            (0.0, 0.0), (1.0, 1.0), (4.0, 1.0)]   # shared wall, wall welded on the grid, corner, overlap, same, T
+
+
+@pytest.mark.parametrize("shift", CONTACTS)
+@pytest.mark.parametrize("by_input", [False, True])
+def test_mid_screen_shells_that_touch_are_a_stop(shift, by_input):
+    """Review PR #500 round 2 (P1): two shells that are each clean but touch, overlap or weld on the 1 um output
+    grid would merge into a non-manifold mesh; a named BuildError naming both structures, never returned geometry
+    (spec thickness and the build-input fallback)."""
+    with pytest.raises(BuildError, match=r"roof structures 0 \(screen\) and 1 \(screen\) touch"):
+        _two_shells(shift, by_input=by_input)
+
+
+@pytest.mark.parametrize("t", [1e-8, 1e-6, 2e-6])
+@pytest.mark.parametrize("shift", [(4.0, 0.0), (4.0000004, 0.0), (5.0, 0.0)])
+def test_the_thickness_floor_still_stops_with_a_second_shell(t, shift):
+    """Combined with round 1: a sub-grid second shell is still the thickness stop, touching or not."""
+    with pytest.raises(BuildError, match="roof structure 1 .*output grid"):
+        _two_shells(shift, t2=t)
+
+
+@pytest.mark.parametrize("shift", [(4.000002, 0.0), (4.00001, 0.0), (5.0, 0.0), (0.0, 4.000002), (4.000002, 4.000002)])
+@pytest.mark.parametrize("by_input", [False, True])
+def test_separated_mid_screen_shells_build_as_two_clean_solids(shift, by_input):
+    """Controls: shells apart by two grid steps or more build; the mesh is closed, clean, twice one shell."""
+    got = _two_shells(shift, by_input=by_input)
+    closed, vol = _shell_facts(got)
+    assert closed and _clean(got) and vol == pytest.approx(2 * (16 * 2.4 - 3.6 ** 2 * 2.2), rel=1e-9)
+
+
+def test_two_screen_shell_contact_probe():
+    """Probe (seed 501): random gaps -1e-5..1e-5 m between two shells along x and y: at or under SHELL_MIN_M a
+    named BuildError, over it a clean closed mesh of both volumes; never a non-manifold mesh returned."""
+    from dt_ai.geometry.from_spec import SHELL_MIN_M
+    rng = np.random.default_rng(501)
+    n = 0
+    for _ in range(40):
+        gap = float(rng.uniform(-1e-5, 1e-5))
+        axis = int(rng.integers(2))
+        shift = (4.0 + gap, 0.0) if axis == 0 else (0.0, 4.0 + gap)
+        if gap <= SHELL_MIN_M:
+            with pytest.raises(BuildError, match="touch"):
+                _two_shells(shift)
+        else:
+            got = _two_shells(shift)
+            closed, vol = _shell_facts(got)
+            assert closed and _clean(got), gap
+        n += 1
+    assert n == 40
+
+
+def test_screen_shell_grid_probe_random_thickness_and_offsets():
+    """Probe (seed 500): log-uniform thickness 1e-9..1e-3 m and sub-grid / far offsets: every build is a named
+    BuildError at or under SHELL_MIN_M, and over it a clean closed solid of the expected volume; never a
+    collapsed shell returned."""
+    from dt_ai.geometry.from_spec import SHELL_MIN_M
+    rng = np.random.default_rng(500)
+    n = 0
+    for _ in range(60):
+        t = float(10 ** rng.uniform(-9, -3))
+        dx, dy = (float(c) for c in rng.uniform(-1.5, 1.5, 2) + rng.uniform(-1e-6, 1e-6, 2))
+        outline = [[x + dx, y + dy] for x, y in SCREEN["outline"]]
+        if t <= SHELL_MIN_M:
+            with pytest.raises(BuildError, match="output grid"):
+                _shell(outline, 9.0, t)
+        else:
+            got = _shell(outline, 9.0, t)[1]
+            closed, vol = _shell_facts(got)
+            assert closed and _clean(got), (t, dx, dy)
+            assert vol == pytest.approx(16 * 2.4 - (4 - 2 * t) ** 2 * (2.4 - t), rel=1e-6)
+        n += 1
+    assert n == 60
+
+def test_screen_shell_thickness_falls_back_to_the_build_input():
+    """Rule 4 as the parapet's: the spec's thickness_m wins, else the build input's parapet thickness, else a stop."""
+    from dataclasses import replace
+    _, rs_ = _shell(SCREEN["outline"], 9.0, None)
+    assert sorted({round(x, 6) for x in np.asarray(rs_["vertices"])[:, 0]}) == [3.0, 3.3, 6.7, 7.0]   # INPUTS 0.3
+    _, rs_ = _shell(SCREEN["outline"], 9.0, 0.1, replace(INPUTS, parapet_thickness_m=0.3))
+    assert sorted({round(x, 6) for x in np.asarray(rs_["vertices"])[:, 0]}) == [3.0, 3.1, 6.9, 7.0]
+    with pytest.raises(BuildError, match="needs a thickness"):
+        _shell(SCREEN["outline"], 9.0, None, replace(INPUTS, parapet_thickness_m=0.0))
+
+
+@pytest.mark.parametrize("outline, z_top, t, why", [
+    ([[3, 3], [7, 3], [7, 7], [3, 7]], 9.0, 2.0, "leaves no single hollow"),        # exactly half the side
+    ([[3, 3], [7, 3], [7, 7], [3, 7]], 9.0, 2.5, "leaves no single hollow"),
+    ([[3, 3], [5, 3], [5, 3.8], [6, 3.8], [6, 3], [8, 3], [8, 5], [6, 5], [6, 4.2], [5, 4.2], [5, 5], [3, 5]], 9.0, 0.3,
+     "leaves no single hollow"),                                                    # a 0.4 m neck splits it
+    ([[3, 3], [7, 3], [7, 7], [3, 7]], 6.8, 0.2, "no hollow under the top"),        # exactly at the threshold
+    ([[3, 3], [7, 3], [7, 7], [3, 7]], 6.7, 0.2, "no hollow under the top"),
+])
+def test_a_screen_shell_that_leaves_no_hollow_is_a_stop(outline, z_top, t, why):
+    with pytest.raises(BuildError, match=why):
+        _shell(outline, z_top, t)
+
+
+@pytest.mark.parametrize("bad", [0.0, -0.1, float("nan"), float("inf")])
+def test_a_screen_thickness_must_be_positive_and_finite(bad):
+    with pytest.raises(ValueError):
+        edited(lambda d: d.update({"spec_version": "0.7", "roof_structures": [{**SCREEN, "thickness_m": bad}]}))
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf")])
+def test_a_screen_top_must_be_finite(bad):
+    """Probe: a NaN / inf top never reaches the engine (SpecPart allow_inf_nan=False)."""
+    with pytest.raises(ValueError):
+        edited(lambda d: d.update({"spec_version": "0.7", "roof_structures": [{**SCREEN, "z_top_m": bad}]}))
+
+
+def test_npm_min_keeps_the_planes_whatever_the_thickness():
+    """npm_min builds planes (no thickness) even with thickness_m in the spec: the rule is per profile."""
+    dump = build(edited(lambda d: d.update({"spec_version": "0.7", "profile": "npm_min",
+                                             "roof_structures": [{**SCREEN, "thickness_m": 0.2}]})), INPUTS)
+    rs_ = next(m for m in dump["meshes"] if m["name"] == "roof_structures")
+    assert rs_["polygon_sizes"].count(4) == 4 and rs_["polygon_sizes"].count(3) == 2
+
+
+def test_screen_shell_probe_random_outlines():
+    """Probe: for generated simple orthogonal outlines (seeded) and thicknesses, every mid shell that builds is closed,
+    outward, roof ids only, and its volume is outline x height minus the mitred hollow; the others are a BuildError."""
+    rng = np.random.default_rng(91)
+    built = stopped = 0
+    for _ in range(60):
+        x0, y0 = rng.uniform(1, 3, 2)
+        w, h = rng.uniform(1, 6, 2)
+        poly = shapely.box(x0, y0, x0 + w, y0 + h)
+        if rng.random() < 0.5:                                   # an L: a notch out of one corner
+            poly = poly.difference(shapely.box(x0 + w * rng.uniform(0.3, 0.7), y0 + h * rng.uniform(0.3, 0.7),
+                                               x0 + w + 1, y0 + h + 1))
+        outline = [list(map(float, p)) for p in list(poly.exterior.coords)[:-1]]
+        t = float(rng.uniform(0.05, 1.5))
+        z_top = 6.6 + float(rng.uniform(0.1, 3))
+        try:
+            _, rs_ = _shell(outline, z_top, t)
+        except BuildError:
+            hollow = poly.buffer(-t, join_style="mitre")
+            assert hollow.is_empty or hollow.geom_type != "Polygon" or z_top - t <= 6.6
+            stopped += 1
+            continue
+        closed, vol = _shell_facts(rs_)
+        hollow = poly.buffer(-t, join_style="mitre")
+        assert closed and set(rs_["material_ids"]) == {INPUTS.roof_id}
+        assert vol == pytest.approx(poly.area * (z_top - 6.6) - hollow.area * (z_top - t - 6.6), rel=1e-6)
+        built += 1
+    assert built >= 20 and stopped >= 5
+
+
+@pytest.mark.parametrize("t", [0.08, 0.2])
+def test_a_mid_screen_shell_round_trips(t):
+    """The extractor reads the engine's mid shell back: same outline, top and thickness (measured)."""
+    from dt_ai.spec import extract_spec
+    dump, _ = _shell(SCREEN["outline"], 9.0, t)
+    for m in dump["meshes"]:
+        if m["name"] == "roof_structures":
+            m["name"] = "Screens"
+    back, report = extract_spec(dump, {**SYNTH_OBJECT, "roof_screens": ["Screens"]})
+    (rs,) = back.roof_structures
+    assert rs.z_top_m == 9.0 and rs.thickness_m == t and report["roof_structures"][0]["thickness"]["by"] == "measured"
+    assert np.allclose(sorted(map(tuple, rs.outline)), sorted(map(tuple, SCREEN["outline"])), atol=0.01)
+
+
+def test_screen_shell_round_trip_probe():
+    """Probe (seed 9101): every generated mid shell the engine builds is read back with its top and its thickness,
+    ceilings below and above the screens' mid height alike."""
+    from dt_ai.spec import extract_spec
+    rng = np.random.default_rng(9101)
+    read = 0
+    for _ in range(20):
+        x0, y0 = rng.uniform(1, 3, 2)
+        w, h = rng.uniform(2, 5, 2)
+        outline = [[x0, y0], [x0 + w, y0], [x0 + w, y0 + h], [x0, y0 + h]]
+        t = round(float(rng.uniform(0.03, 0.9)), 3)
+        z_top = round(6.6 + float(rng.uniform(t + 0.2, 3)), 3)
+        dump, _ = _shell(outline, z_top, t)
+        for m in dump["meshes"]:
+            if m["name"] == "roof_structures":
+                m["name"] = "Screens"
+        (rs,) = extract_spec(dump, {**SYNTH_OBJECT, "roof_screens": ["Screens"]})[0].roof_structures
+        assert (rs.z_top_m, rs.thickness_m) == (z_top, t), (outline, z_top, t)
+        read += 1
+    assert read == 20
 
 
 def test_the_extractor_reads_a_marked_screen_enclosure_back():
@@ -1201,7 +1519,7 @@ def test_a_shaft_top_on_a_screen_outline_is_no_screen_bottom():
     assert not any(lp["kind"] == "roof-structure" for lp in loops) and not all(lp["allowed"] for lp in loops)
 
 
-# the building's weld (spec weld_m 3 mm inclusive, user 2026-10-13): lines closer than it are one, never an error
+# the building's weld (spec weld_m 3 mm inclusive, user 2026-10-13 [D068]): lines closer than it are one, never an error
 
 
 @pytest.mark.parametrize("off, merged", [(0.002, True), (0.003, True), (0.0035, False)])
@@ -1235,7 +1553,7 @@ def test_a_near_axis_wall_is_welded_straight():
     [[0, 0], [10, 0], [10, 4], [10.4, 5], [10, 6], [10, 10], [0, 10]],
 ])
 def test_pointed_corners_build_as_triangle_fans(contour):
-    """User 2026-10-13: a face piece with one side a point on a strip line is a triangle (a fan to the other
+    """User 2026-10-13 [D145]: a face piece with one side a point on a strip line is a triangle (a fan to the other
     side's cuts); the model stays closed, welded, without T-junctions."""
     def edit(d):
         d["floors"][0]["contour"] = contour

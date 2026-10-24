@@ -1,0 +1,7 @@
+{
+ "schema": "library-maf-material-ids-pointer",
+ "active": "v005",
+ "path": "library/maf/material_ids_v005.json",
+ "sha256": "21a605c72c76136c83c71649f53dd203b089e495aea044cc279b92d0cbe61ff9",
+ "note": "Active MAF material ID list. v005 is approved-v1. The v003 proposal that used to live at this path stays a generator output, not the active list. Nothing is reassigned in library MAF scenes."
+}

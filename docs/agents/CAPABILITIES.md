@@ -303,6 +303,11 @@ Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `per
   `{source: hook, decision: reject}` (or a `PreToolUse:<tool> hook error:` tool_result); synthetic references.
   Run on this branch's real handover transcript: 1 denial found (a Write into another worktree).
 - Tests: `tests/test_evals.py`.
+- Handoff evidence check (#584): `uv run dt evals --check-handoff <pr-body.md> [--sha <full head>] --output
+  <evals dir>` (read-only, `src/twinqa/evals/handoff.py`). It exits 0 only when the body has the Full suite
+  (`suite_slot.py`, exact head), Regression evals (`check_receipt`), RED, GREEN and Sample output lines and
+  does not hand the full suite to the reviewer. Rules: `docs/agents/WORKFLOW.md#handoff-evidence-check-584`.
+  Tests: `tests/test_evals_handoff.py`.
 
 ### Skills sync — `tools/sync_skills.py`
 - Status: WORKING (2026-10-06): `.agents/skills/` is canonical; the script regenerates
@@ -445,6 +450,23 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
   `reserved_triangles=` for UCX already in the file.
 - Facade-oriented 8-vertex boxes (Main) or quadtree hexahedra (Ground), 4 mm gap, [D012] budget; check
   the output with `tools/blender/ucx_audit.py` and the validator scene checks.
+
+### Overlap gate (xView parity) — `dt qa xview`, `src/dt_ai/ops/inv_xview.py`, `src/dt_ai/ops/xview_gate.py` (#527)
+- Status: WORKING (dt-worker, 2026-10-21; #370 / #380 kernel, #527 CLI). `inv_xview` reproduces 3ds Max xView
+  Overlapping Vertices (2 mm) / Overlapping Faces (5 mm, contact rule) without Max; the `area` rule adds pairs xView misses.
+- `uv run dt qa xview <file.fbx|.blend|.npz> --out <new report.json> [--parts NAME ...] [--profile NPM|VPM]
+  [--coords local|inplace|as-stored] [--blender <exe>]`. FBX / .blend go through headless Blender 5.1.2
+  (`tools/blender/xview_dump.py`, evaluated meshes, float64); default `local` = object location subtracted. Report per
+  object: Overlapping Vertices / Faces counts and ids, vertex pairs (`double` / `bowtie`), face pairs with partner,
+  kind (contact / area / area+contact), separation and centres, bow-tie (non-manifold) vertices, dropped non-mesh
+  objects, input SHA-256, units. Blender units become metres via `scene.unit_settings.scale_length` (a missing,
+  non-positive or non-finite scale, or system NONE with scale != 1, is an error). Report and `<report>.blender.log`
+  are published no-clobber: a file created at either name by another writer is kept and the run exits 2.
+  Exit 0 pass, 1 overlaps, 2 error (no verdict).
+- Measured on vyatskaya-tow02 (review #514): ours export-v005 185 faces (= xView ids 1:1, centres <= 0.50 mm) and
+  0 vertices, ~35 s; user FBX `_05` object 013: 0 faces, 10 vertices = 5 coincident pairs, all `bowtie`, local and
+  in place. Postcondition of every build / fix step: `docs/procedure/TASK_TO_MODEL.md`.
+- Limits: pairs only within one object (a joined mesh is one object, as in xView); FBX / .blend need Blender.
 
 ### Face overlap check — `tools/qa/check_clearance.py`
 - Status: WORKING (2026-10-06; AGR boundary cases + FBX planes 3 mm apart)
