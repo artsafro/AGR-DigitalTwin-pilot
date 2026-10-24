@@ -1,7 +1,7 @@
 """Finalize #369 repair recommendations, never asset acceptance.
 
 Pattern: n/a | new-case: control-calibrated source-defect/limitation routing.
-User decision: t_49156f66, 2026-10-20 20:27. Keep raw failures; calibrate on
+User decision: t_49156f66, 2026-10-20 20:27 [D155]. Keep raw failures; calibrate on
 valid controls instead of requiring all authored originals to pass D155.
 Consumes frozen offline evidence only. Does not render, edit maps or run DCC.
 """
