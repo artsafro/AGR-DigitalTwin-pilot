@@ -1,0 +1,65 @@
+{
+  "measured": false,
+  "dump_version": 2,
+  "reason": "3dsmax.exe was already running (pid 145692, started 2026-10-22 10:19). A second Max was not started, so xView was not run. Source hashes before and after each run are not measured.",
+  "runs": [
+    {
+      "id": "v005-plain",
+      "source_role": "export_v005_fbx",
+      "mode": "plain",
+      "expected_flagged_faces": 185,
+      "sha256_before": "not measured",
+      "sha256_after": "not measured"
+    },
+    {
+      "id": "013-plain",
+      "source_role": "user_013_max",
+      "node": "013",
+      "mode": "plain",
+      "expected_flagged_faces": 0,
+      "expected_flagged_vertices": 10,
+      "sha256_before": "not measured",
+      "sha256_after": "not measured"
+    },
+    {
+      "id": "013-weld",
+      "source_role": "user_013_max",
+      "node": "013",
+      "mode": "weld",
+      "expected_flagged_faces": 0,
+      "expected_flagged_vertices": 0,
+      "sha256_before": "not measured",
+      "sha256_after": "not measured"
+    },
+    {
+      "id": "013-weldpoly",
+      "source_role": "user_013_max",
+      "node": "013",
+      "mode": "weldpoly",
+      "expected_flagged_faces": 0,
+      "expected_flagged_vertices": 10,
+      "sha256_before": "not measured",
+      "sha256_after": "not measured"
+    }
+  ],
+  "not_measured": [
+    "export-v005 SM_Vyatskaya_Vl_47_49_013_Main overlapping faces and vertices",
+    "user for_placement/sceene.max node 013 mode plain",
+    "user for_placement/sceene.max node 013 mode weld",
+    "user for_placement/sceene.max node 013 mode weldpoly"
+  ],
+  "sources": [
+    {
+      "role": "user_013_max",
+      "path": "C:/Users/artsafro/Desktop/!3D viz/NTR/26_Vyatskoe/001 - Моделирование НПМ с нуля/001 - Моделирование НПМ с нуля/for_placement/sceene.max",
+      "bytes": 26944848,
+      "sha256": "d4e209269c988ba135916ae20b84bb1e9907a29d44ab26c8597d146987ff59f5"
+    },
+    {
+      "role": "export_v005_fbx",
+      "path": "C:/Users/artsafro/.AGR-DigitalTwin_pilot/jobs/vyatskaya-tow02/outputs/export-v005/SM_Vyatskaya_Vl_47_49_013_Main.fbx",
+      "bytes": 1391596,
+      "sha256": "ff8994dc4b7c05560eedd2b5af0827c03a919ba513b71ef8f60d2788fe28080a"
+    }
+  ]
+}
