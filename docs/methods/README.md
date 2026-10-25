@@ -1,7 +1,7 @@
 # Methods catalog
 
 Several ways to solve each modelling, texturing and source task, measured on the same fixed objects, with a
-short guide saying when each way is better. Judged by numbers, not by eye (user 2026-10-25, #706).
+short guide saying when each way is better. Judged by numbers, not by eye (requirement of issue #706).
 
 - One folder per task class: `docs/methods/<class>/`.
 - `VARIANTS.md`: each variant's idea, tool (3ds Max / pymxs, Blender / bpy or geometry nodes, our kernel,

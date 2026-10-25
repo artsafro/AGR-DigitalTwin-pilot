@@ -512,7 +512,8 @@ def test_end_to_end_tiny_fbx_in_blender(tmp_path):
     make.write_text("import bpy,sys\nbpy.ops.wm.read_factory_settings(use_empty=True)\n"
                     "bpy.ops.mesh.primitive_cube_add(size=2)\nbpy.context.object.name='SM_Test_Main'\n"
                     "bpy.ops.export_scene.fbx(filepath=sys.argv[-1])\n", encoding="utf-8")
-    subprocess.run([exe, "--background", "--factory-startup", "--python", str(make), "--", str(src)], check=True,
+    subprocess.run([exe, "--background", "--factory-startup", "--python-exit-code", "1", "--python", str(make), "--",
+                    str(src)], check=True,
                    capture_output=True, timeout=300)
     out = tmp_path / "v" / "SM_Test.fbx"
     subprocess.run([exe, "--background", "--factory-startup", "--python-exit-code", "1", "--python",
