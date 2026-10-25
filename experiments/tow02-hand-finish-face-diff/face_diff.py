@@ -73,10 +73,15 @@ def mesh(path, want):
     v = kid(g, "Vertices")[0][1][0]
     verts = [(v[i], v[i + 1], v[i + 2]) for i in range(0, len(v), 3)]
     polys, cur = [], []
-    for i in kid(g, "PolygonVertexIndex")[0][1][0]:
+    pvi = kid(g, "PolygonVertexIndex")[0][1][0]
+    for i in pvi:
         cur.append(~i if i < 0 else i)
         if i < 0:
             polys.append(cur); cur = []
+    if cur:  # an unclosed tail is not a smaller mesh (research fbx-polygon-stream-consumption-boundary #1)
+        raise ValueError("%s: %d trailing PolygonVertexIndex entries %s at positions %d..%d are not closed by a "
+                         "negative end marker" % (path, len(cur), list(pvi[len(pvi) - len(cur):]),
+                                                  len(pvi) - len(cur), len(pvi) - 1))
     uvl = kid(g, "LayerElementUV")[0]
     return verts, polys, kid(uvl, "UV")[0][1][0], kid(uvl, "UVIndex")[0][1][0]
 
@@ -133,9 +138,50 @@ def classify(fuv, z, atlas):
     return "TOW02_top" if z >= Z_TOP else "body"           # wall/roof/soffit/reveal/louvre/coping/ledge by z
 
 
+def check_uv(path, polys, uv, uvi):
+    """Source UV inventory must be consumed exactly by the closed-face walk (research #2); target UVs are unused.
+
+    Each component a UVIndex entry reads must be finite. Pairs no index reads are not inspected.
+    """
+    if not polys:
+        raise ValueError("%s: source mesh has 0 complete polygons" % path)
+    corners = sum(len(p) for p in polys)
+    if len(uv) % 2:
+        raise ValueError("%s: UV has %d values: incomplete (u, v) pair" % (path, len(uv)))
+    if len(uvi) != corners:
+        raise ValueError("%s: UVIndex has %d entries, expected %d (corners of %d complete polygons)"
+                         % (path, len(uvi), corners, len(polys)))
+    for k, idx in enumerate(uvi):
+        if not 0 <= idx < len(uv) // 2:
+            raise ValueError("%s: UVIndex[%d] = %d outside UV pairs 0..%d" % (path, k, idx, len(uv) // 2 - 1))
+        if not math.isfinite(uv[2 * idx]):
+            raise ValueError("%s: UVIndex[%d] u is not finite" % (path, k))
+        if not math.isfinite(uv[2 * idx + 1]):
+            raise ValueError("%s: UVIndex[%d] v is not finite" % (path, k))
+
+
+def check_face_numeric(path, fi, poly, k, verts, uv, uvi, atlas):
+    """One face of the historical walk: sum, divide, then the atlas pixel products. Returns (uvc, cen)."""
+    n = len(poly)
+    su = sum(uv[2 * uvi[k + i]] for i in range(n))
+    u = su / n
+    sv = sum(uv[2 * uvi[k + i] + 1] for i in range(n))
+    v = sv / n
+    uvc = (u, v)
+    cen = tuple(sum(verts[i][a] for i in poly) / n for a in range(3))
+    px = uvc[0] * atlas["size"]
+    py = (1 - uvc[1]) * atlas["size"]
+    for name, value in (("su", su), ("sv", sv), ("uvc[0]", uvc[0]), ("uvc[1]", uvc[1]),
+                        ("z", cen[2]), ("uvc[0]*size", px), ("(1-uvc[1])*size", py)):
+        if not math.isfinite(value):
+            raise ValueError("%s: face %d %s is not finite" % (path, fi, name))
+    return uvc, cen
+
+
 def main(out_dir):
     atlas = json.load(open(ATLAS, encoding="utf-8"))
     AV, AP, AUV, AUI = mesh(V5, OBJ)
+    check_uv(V5, AP, AUV, AUI)
     BV, BP, _, _ = mesh(USER, OBJ)
     B = [tri(BV, p) for p in BP]
     assert all(len(p) == 3 for p in BP), "user mesh expected fully triangulated"
@@ -152,11 +198,12 @@ def main(out_dir):
                 best, bd = j, d
         return best, bd
 
-    faces, k = [], 0
+    numeric, k = [], 0
     for fi, p in enumerate(AP):
-        uvc = (sum(AUV[2 * AUI[k + i]] for i in range(len(p))) / len(p),
-               sum(AUV[2 * AUI[k + i] + 1] for i in range(len(p))) / len(p)); k += len(p)
-        cen = tuple(sum(AV[i][a] for i in p) / len(p) for a in range(3))
+        numeric.append(check_face_numeric(V5, fi, p, k, AV, AUV, AUI, atlas))
+        k += len(p)
+    faces = []
+    for fi, (p, (uvc, cen)) in enumerate(zip(AP, numeric)):
         diags = [[(p[0], p[1], p[2])]] if len(p) == 3 else \
             [[(p[0], p[1], p[2]), (p[0], p[2], p[3])], [(p[1], p[2], p[3]), (p[1], p[3], p[0])]]
         faces.append(dict(i=fi, c=cen, part=classify(uvc, cen[2], atlas), diags=[[tri(AV, t) for t in d] for d in diags]))
