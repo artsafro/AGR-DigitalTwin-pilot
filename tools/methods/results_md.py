@@ -86,7 +86,7 @@ def write(results: Path) -> Path:
     cls = rows[0]["class"] if rows else results.parent.name
     out = results.with_name("RESULTS.md")
     partial = out.with_name(out.name + ".partial")
-    partial.write_text(render(rows, cls), encoding="utf-8")
+    partial.write_text(render(rows, cls), encoding="utf-8", newline="\n")
     os.replace(partial, out)
     return out
 

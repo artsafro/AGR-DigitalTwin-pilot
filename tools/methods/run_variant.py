@@ -187,7 +187,8 @@ def append_row(results: Path, row: dict) -> int:
     lines = [ln for ln in old.splitlines() if ln.strip()]
     row = {"row": f"R{len(lines) + 1}", **row}
     partial = results.with_name(results.name + ".partial")
-    partial.write_text(old + json.dumps(row, ensure_ascii=False, sort_keys=False) + "\n", encoding="utf-8")
+    partial.write_text(old + json.dumps(row, ensure_ascii=False, sort_keys=False) + "\n", encoding="utf-8",
+                       newline="\n")
     os.replace(partial, results)
     return len(lines) + 1
 
