@@ -417,6 +417,29 @@ def test_slice_prisms_cut_at_levels():
     assert info["levels_m"] == [0.0, 3.0, 6.0] and len(pieces) == 2
 
 
+def test_slice_prisms_near_collinear_plan_gives_convex_pieces_after_float32():
+    """Regression (TOW02 R12: 48/49 non-convex): near-collinear plan points made sliver cap triangles."""
+    from twinqa.geometry.ucx_audit import is_closed, is_convex, weld
+
+    ring = []
+    for x in np.linspace(0, 30, 61):  # long facade bulging out by < 1 mm: all 61 points are on the hull
+        ring.append((100 + x, 200 - 8e-4 * (1 - ((x - 15) / 15) ** 2)))
+    ring += [(130, 215), (100, 215)]
+    v, t = [], []
+    for z0, z1 in ((0, 3), (3, 6)):
+        base = len(v)
+        v += [(x, y, z0) for x, y in ring] + [(x, y, z1) for x, y in ring]
+        k = len(ring)
+        t += [(base + i, base + (i + 1) % k, base + k + i) for i in range(k)]
+        t += [(base, base + i + 1, base + i) for i in range(1, k - 1)]  # bottom cap: horizontal face -> level
+    pieces, _ = uv_.build("slice-prisms", np.array(v, float), np.array(t), model_triangles=len(t))
+    for pv, pt in pieces:
+        f32 = [tuple(float(c) for c in np.float32(p)) for p in pv]
+        wv, wt = weld(f32, [tuple(map(int, f)) for f in pt])
+        assert is_closed(wt) and is_convex(wv, wt)
+        assert len(pv) <= 2 * 8  # the 61 facade points are one edge after simplification
+
+
 @pytest.mark.parametrize("bad", [np.zeros((0, 3)), np.array([[0, 0, 0], [1, 0, 0], [np.nan, 1, 0]])])
 def test_variants_fail_closed_on_empty_and_nan(bad):
     t = np.zeros((0, 3), np.int64) if len(bad) == 0 else np.array([[0, 1, 2]])
