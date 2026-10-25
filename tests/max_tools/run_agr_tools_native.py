@@ -163,6 +163,69 @@ assert hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest() =
 assert hashlib.sha256((OUT / 'fixture-source.max').read_bytes()).hexdigest() == source_hash
 results['version'] = list(rt.maxVersion())
 results['source_sha256'] = source_hash
+# R1: native xView must measure physical, not unbaked object-space distances.
+# Exercise the installed package, including the earlier boundary/unit guards.
+transform_results = []
+for units, factor in (('meters', 1), ('millimeters', 1000)):
+    rt.units.SystemType = rt.name(units)
+    for case, scale, parent_scale in (
+        ('identity', (1, 1, 1), None),
+        ('uniform_small', (.1, .1, .1), None),
+        ('uniform_large', (10, 10, 10), None),
+        ('nonuniform_small', (2, .5, .1), None),
+        ('nonuniform_large', (.5, 2, 10), None),
+        ('mirrored', (-2, .5, .1), None),
+        ('parent_small', (1, 1, 1), (2, .5, .1)),
+        ('parent_large', (1, 1, 1), (-.5, 2, 10)),
+    ):
+        for gap_mm in (1, 2, 10):
+            z_scale = scale[2] * (parent_scale[2] if parent_scale else 1)
+            gap = gap_mm / 1000 * factor / z_scale
+            n = rt.mesh(name='synthetic_transform_' + case,
+                        vertices=[rt.point3(0,0,0), rt.point3(factor,0,0), rt.point3(0,factor,0),
+                                  rt.point3(0,0,gap), rt.point3(factor,0,gap), rt.point3(0,factor,gap)],
+                        faces=[rt.point3(1,2,3), rt.point3(4,5,6)])
+            rt.convertToPoly(n)
+            parent = None
+            if parent_scale:
+                parent = rt.point(name='synthetic_parent')
+                n.parent = parent
+                rt.scale(parent, rt.point3(*parent_scale))
+            rt.scale(n, rt.point3(*scale))
+            before = agr.snapshot([n])
+            transforms = (str(n.transform), str(n.objectTransform), str(n.parent),
+                          str(parent.transform) if parent else None)
+            count = len(list(rt.objects))
+            tolerances = (rt.OverlappingVertices.tolerance, rt.OverlappingFaces.tolerance)
+            measured_mm = float(rt.distance(rt.polyop.getVert(n, 1), rt.polyop.getVert(n, 4))) / factor * 1000
+            assert abs(measured_mm - gap_mm) < .0001
+            row = {'case': case, 'units': units, 'gap_mm': gap_mm, 'measured_mm': measured_mm}
+            try:
+                if gap_mm == 2:
+                    row['error'] = raises(lambda: agr.xview([n]), 'threshold')
+                else:
+                    row['report'] = agr.xview([n])
+                    expected = {'overlap_vertices': [1,2,3,4,5,6], 'overlap_faces': [1,2]} if gap_mm == 1 else {}
+                    assert findings(row['report']) == expected, row['report']
+                    assert list(rt.selection) == ([n] if gap_mm == 1 else [])
+                row['passed'] = True
+            except AssertionError as e:
+                row['passed'] = False
+                row['failure'] = str(e)
+            assert agr.snapshot([n]) == before, 'xView changed source geometry/attributes'
+            assert transforms == (str(n.transform), str(n.objectTransform), str(n.parent),
+                                  str(parent.transform) if parent else None), 'xView changed transforms/hierarchy'
+            assert count == len(list(rt.objects)), 'xView leaked temporary geometry'
+            assert tolerances == (rt.OverlappingVertices.tolerance, rt.OverlappingFaces.tolerance)
+            transform_results.append(row)
+            rt.delete(n)
+            if parent:
+                rt.delete(parent)
+rt.units.SystemType = rt.name('meters')
+with (OUT / 'transform-results.json').open('x', encoding='utf-8') as f:
+    json.dump(transform_results, f, indent=2)
+assert all(row['passed'] for row in transform_results), 'physical-distance transform regressions: ' + str([r for r in transform_results if not r['passed']])
+results['guards']['physical_distance_transforms'] = len(transform_results)
 with (OUT / 'results.json').open('x', encoding='utf-8') as f:
     json.dump(results, f, indent=2, default=str, allow_nan=False)
     print('AGR_NATIVE_COMPLETE clean=3 planted=3 dry_run_unchanged=true originals_unchanged=true')
