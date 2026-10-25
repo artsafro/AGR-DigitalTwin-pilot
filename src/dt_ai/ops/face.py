@@ -61,7 +61,8 @@ def _inside_deep(points: np.ndarray, walls: list, embed_m: float) -> np.ndarray:
 
 
 def _face(scene: Scene, part: str, walls: tuple, view: str, embed_m: float, max_reach_m: float, close_gaps_m: float,
-          allow_multi: bool, silhouette_max_m: float, notes: dict, embed_min_m: float = EMBED_MIN_M) -> Scene:
+          allow_multi: bool, silhouette_max_m: float, notes: dict, embed_min_m: float = EMBED_MIN_M,
+          outward_sign: int | None = None, border_growth_m: float = 0.0) -> Scene:
     if view not in VIEWS:
         raise OperationRefused(f"unknown view {view!r}; which of {', '.join(VIEWS)} is the panel normal?")
     for name, value, lo in (("embed_m", embed_m, max(EMBED_MIN_M, embed_min_m)), ("max_reach_m", max_reach_m, 0.0),
@@ -71,6 +72,13 @@ def _face(scene: Scene, part: str, walls: tuple, view: str, embed_m: float, max_
     if close_gaps_m > silhouette_max_m / 2:
         raise OperationRefused(f"close_gaps_m {close_gaps_m} closes joints wider than the silhouette limit allows "
                                f"({silhouette_max_m / 2} m); which joints should stay?")
+    if outward_sign is not None and (type(outward_sign) is not int or outward_sign not in (-1, 1)):
+        raise OperationRefused("outward_sign must be an explicit -1 or +1, or None")
+    if (isinstance(border_growth_m, bool) or not isinstance(border_growth_m, (int, float))
+            or not math.isfinite(border_growth_m) or not 0 <= border_growth_m <= .020):
+        raise OperationRefused("border_growth_m must be finite and between 0 and 20 mm")
+    if border_growth_m and outward_sign is None:
+        raise OperationRefused("border growth requires an explicit source-bound outward_sign")
     if not walls:
         raise OperationRefused("no wall given; which closed neighbour should hide the open border?")
     if len(set(walls)) != len(walls):
@@ -95,6 +103,13 @@ def _face(scene: Scene, part: str, walls: tuple, view: str, embed_m: float, max_
     wall = _join(wall_list)
     axis = VIEWS[view]
     pieces = _contour(mesh, axis, None)
+    if border_growth_m:
+        original_topology = sorted(len(p.interiors) for p in pieces)
+        grown = shapely.union_all(pieces).buffer(border_growth_m, join_style="mitre")
+        grown_pieces = _contour(mesh, axis, grown)
+        if sorted(len(p.interiors) for p in grown_pieces) != original_topology:
+            raise OperationRefused("border growth changes source pieces or holes; which source contour is intended?")
+        pieces = grown_pieces
     if close_gaps_m > 0:
         merged = shapely.union_all(pieces).buffer(close_gaps_m, join_style="mitre").buffer(-close_gaps_m,
                                                                                           join_style="mitre")
@@ -115,10 +130,16 @@ def _face(scene: Scene, part: str, walls: tuple, view: str, embed_m: float, max_
         pts[:, keep[0]], pts[:, keep[1]], pts[:, axis] = uv[:, 0], uv[:, 1], w
         return pts
 
-    reach = [(sign, any(_inside_deep(at(probe, w0 + sign * t), wall_list, embed_m).all()
-                        for t in np.arange(_STEP_M, max_reach_m + 1e-12, _STEP_M)))
-             for sign, w0 in ((-1.0, hi_w), (1.0, lo_w))]
-    sides = [sign for sign, hit in reach if hit]
+    # A real opening frame need not contain the panel's centre. An explicit
+    # source-bound orientation can choose the cap, but cannot waive the border,
+    # silhouette or four scene invariants below. No opacity exception is added.
+    if outward_sign is None:
+        reach = [(sign, any(_inside_deep(at(probe, w0 + sign * t), wall_list, embed_m).all()
+                            for t in np.arange(_STEP_M, max_reach_m + 1e-12, _STEP_M)))
+                 for sign, w0 in ((-1.0, hi_w), (1.0, lo_w))]
+        sides = [sign for sign, hit in reach if hit]
+    else:
+        sides = [-float(outward_sign)]
     if len(sides) != 1:
         where = "on neither side" if not sides else "on both sides"
         raise OperationRefused(f"the wall {walls} is {where} of the part within {max_reach_m} m along the {view} "
@@ -166,7 +187,8 @@ def _face(scene: Scene, part: str, walls: tuple, view: str, embed_m: float, max_
     # The skirt runs inside the wall, so the visible silhouette is the part's together with its wall.
     deviations = silhouette_deviations(_join([mesh, wall]), _join([face, wall]), silhouette_max_m / 4)
     notes.update(view=view, walls=list(walls), w_out=w_out, inward=inward, depth_m=depth, pieces=len(pieces),
-                 thickness_m=hi_w - lo_w, deviations_m=deviations)
+                 thickness_m=hi_w - lo_w, deviations_m=deviations,
+                 outward_sign=outward_sign, border_growth_m=border_growth_m)
     worst = max(deviations.items(), key=lambda kv: kv[1])
     if worst[1] > silhouette_max_m + 1e-9:
         raise OperationRefused(f"the face would change the silhouette by {worst[1] * 1000:.0f} mm in the {worst[0]} "
@@ -289,20 +311,26 @@ def band_between_walls(scene: Scene, part: str, walls, view: str, ctx: Context =
 
 
 def face_on_wall(scene: Scene, part: str, walls, view: str, embed_m: float = EMBED_MIN_M,
-                 max_reach_m: float = MAX_REACH_M, close_gaps_m: float = 0.0, allow_multi: bool = False,
-                 ctx: Context = Context(), silhouette_max_m: float = SILHOUETTE_MAX_M) -> OperationResult:
+                  max_reach_m: float = MAX_REACH_M, close_gaps_m: float = 0.0, allow_multi: bool = False,
+                  ctx: Context = Context(), silhouette_max_m: float = SILHOUETTE_MAX_M,
+                  outward_sign: int | None = None, border_growth_m: float = 0.0) -> OperationResult:
     """Replace `part` by its exterior `view` face + a skirt into `walls`, through `run_operation("from_face")`.
 
     `walls`: one part name or several (closed meshes of the same scene). `embed_m` below `ctx.embed_min_m` (or 10 mm) is refused, never raised silently.
     The notes carry faces before / after, the outward side, skirt depth, pieces and per-view deviations.
+    An explicit source-bound outward_sign also supports real opening frames with no solid behind
+    the centre. Up to 20 mm border growth may seat a source panel in that frame. Neither option
+    waives border embedding, silhouette, back-face or other invariants; opaque panels stay opaque.
     """
     walls = (walls,) if isinstance(walls, str) else tuple(walls)
     notes: dict = {}
     params = {"view": view, "walls": list(walls), "embed_m": embed_m, "max_reach_m": max_reach_m,
-              "close_gaps_m": close_gaps_m, "allow_multi": allow_multi}
+              "close_gaps_m": close_gaps_m, "allow_multi": allow_multi,
+              "outward_sign": outward_sign, "border_growth_m": border_growth_m}
     if part not in scene:
         raise ValueError(f"unknown part {part!r}")
     result = run_operation(scene, OPERATION, part,
                            lambda s: _face(s, part, walls, view, embed_m, max_reach_m, close_gaps_m, allow_multi,
-                                           silhouette_max_m, notes, ctx.embed_min_m), ctx, params)
+                                          silhouette_max_m, notes, ctx.embed_min_m,
+                                          outward_sign, border_growth_m), ctx, params)
     return replace(result, notes={**(result.notes or {}), **notes})
