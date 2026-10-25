@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 
 HEAD = ("| Row | Object | Variant | Build s | Model tris | UCX pcs / tris / limit | UCX check | Failed / open checks "
-        "| Closed convex | Model->UCX max / p95 m | UCX outside model | xView V / F | Texel min / median px/m "
+        "| Closed convex | Model->UCX max / p95 m | UCX outside model | Envelope uncovered | xView V / F | Texel min / median px/m "
         "| MatID | File KB | Render SSIM |")
 
 
@@ -41,6 +41,7 @@ def _row(r: dict) -> str:
         f"{_v(ucx.get('closed_convex'))}/{_v(ucx.get('pieces'))}",
         f"{_v(fit.get('model_to_ucx_max_m'))} / {_v(fit.get('model_to_ucx_p95_m'))}",
         "-" if out_share is None else f"{out_share:.1%} ({fit.get('ucx_outside_model_m3')} m3)",
+        "-" if fit.get("envelope_uncovered_share") is None else f"{fit['envelope_uncovered_share']:.1%}",
         f"{_v(x.get('overlapping_vertices'))} / {_v(x.get('overlapping_faces'))}",
         f"{_v(tex.get('min_px_m'))} / {_v(tex.get('median_px_m'))}",
         {True: "pass", False: "fail", None: "-"}[mat.get("passed")],
