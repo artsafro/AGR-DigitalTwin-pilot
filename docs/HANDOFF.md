@@ -40,7 +40,7 @@ The job is closed at the review stage [D185].
 - Job closed; `_05.fbx` stays; zero-UV finding agreed; texture findings disputed until texture rules are refined
   [D185] (user 2026-10-22) — backlog Q8.
 - Mesh + Weld 0.002 m on Editable Mesh before export, no Poly round trip; weld fixes vertices, not faces
-  (user 2026-10-21) — to be recorded as D<n> by #534.
+  (user 2026-10-21) [D177] [D178].
 
 ## Waiting for the user
 
