@@ -20,7 +20,6 @@ import datetime as dt
 import hashlib
 import json
 import math
-import os
 import subprocess
 import sys
 import tempfile
@@ -33,13 +32,10 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import methods_metrics as metrics  # noqa: E402
+from safe_write import Refused, check_target, publish_text, refuse_aliases, same_file  # noqa: E402,F401
 
 BENCHMARKS = ROOT / "benchmark" / "methods" / "benchmarks.json"
 EXTRA = Path(__file__).resolve().parent / "extra_readback_blender.py"
-
-
-class Refused(ValueError):
-    pass
 
 
 def sha256(path: Path) -> str:
@@ -48,13 +44,6 @@ def sha256(path: Path) -> str:
         for block in iter(lambda: f.read(1 << 20), b""):
             h.update(block)
     return h.hexdigest()
-
-
-def same_file(a: Path, b: Path) -> bool:
-    try:
-        return a.resolve() == b.resolve() or (b.exists() and os.path.samefile(a, b))
-    except OSError:
-        return False
 
 
 def load_benchmark(path: Path, bench_id: str, cls: str) -> dict:
@@ -179,17 +168,15 @@ def build_row(*, rb: dict, extra: dict | None, output: Path, bench: dict, cls: s
 
 
 def append_row(results: Path, row: dict) -> int:
-    """Append through a .partial copy + os.replace; returns the 1-based row number (= RESULTS.md row id)."""
-    results.parent.mkdir(parents=True, exist_ok=True)
+    """Append by publishing old + row through an exclusive unique temp (safe_write.publish_text); returns the
+    1-based row number (= RESULTS.md row id). A pre-existing file of any other name is never touched."""
+    check_target(results)
     old = results.read_text(encoding="utf-8") if results.exists() else ""
     if old and not old.endswith("\n"):
         raise metrics.MetricError(f"{results} does not end with a newline (partial write?)")
     lines = [ln for ln in old.splitlines() if ln.strip()]
     row = {"row": f"R{len(lines) + 1}", **row}
-    partial = results.with_name(results.name + ".partial")
-    partial.write_text(old + json.dumps(row, ensure_ascii=False, sort_keys=False) + "\n", encoding="utf-8",
-                       newline="\n")
-    os.replace(partial, results)
+    publish_text(results, old + json.dumps(row, ensure_ascii=False, sort_keys=False) + "\n")
     return len(lines) + 1
 
 
@@ -215,10 +202,9 @@ def main(argv=None) -> int:
         inputs = [a.output, a.benchmarks] + [p for p in (a.variant_report, a.readback, a.extra) if p]
         renders = parse_renders(a.render)
         inputs += list(renders.values())
-        for p in inputs:
-            for dst in (results, results.with_name(results.name + ".partial")):
-                if same_file(p, dst):
-                    raise Refused(f"results path {dst} aliases input {p}; nothing written")
+        inputs += [Path(r["local_path"]) for r in (bench.get("reference_pictures") or {}).values()]
+        refuse_aliases([results], inputs)
+        check_target(results)
         wall = wall_time(a.variant_report, a.wall_time_s)
     except (Refused, OSError, KeyError, json.JSONDecodeError) as exc:
         print(f"RUN_VARIANT refused: {exc}", file=sys.stderr)

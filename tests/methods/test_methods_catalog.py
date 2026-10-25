@@ -7,6 +7,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import math
+import os
 import re
 import subprocess
 import sys
@@ -369,6 +370,138 @@ def test_partial_results_file_refused(tmp_path):
     res.write_text('{"row": "R1"', encoding="utf-8")
     with pytest.raises(mm.MetricError, match="newline"):
         rv.append_row(res, {"x": 1})
+
+
+# ---- review round 1 (PR #709): no input or unrelated file is ever removed or overwritten ---------------------------
+
+SENTINEL = b"UNRELATED SENTINEL\r\n"
+
+
+def test_runner_preserves_unrelated_partial_sentinels(tmp_path):
+    """P1-2 witness: a pre-existing results.jsonl.partial / RESULTS.md.partial survives byte for byte."""
+    rb, extra = scene()
+    res = tmp_path / "results.jsonl"
+    for name in ("results.jsonl.partial", "RESULTS.md.partial"):
+        (tmp_path / name).write_bytes(SENTINEL)
+    assert rv.main(cli_args(tmp_path, rb, extra, wall_time_s=1)) == 0  # control: ordinary append works
+    assert rv.main(cli_args(tmp_path, rb, extra, wall_time_s=1)) == 0
+    assert [json.loads(ln)["row"] for ln in res.read_text(encoding="utf-8").splitlines()] == ["R1", "R2"]
+    rmd.write(res)  # control: ordinary regenerate works
+    assert "| R2 | synth | v1 |" in (tmp_path / "RESULTS.md").read_text(encoding="utf-8")
+    for name in ("results.jsonl.partial", "RESULTS.md.partial"):
+        assert (tmp_path / name).read_bytes() == SENTINEL
+    assert sorted(p.name for p in tmp_path.iterdir() if p.name.startswith(".")) == []  # no temp left behind
+
+
+def test_runner_refuses_hardlinked_results_and_results_md(tmp_path):
+    """P1-2 alias witness: a results.jsonl / RESULTS.md that is a hard link of another file is never replaced."""
+    rb, extra = scene()
+    other = tmp_path / "other.txt"
+    other.write_bytes(SENTINEL)
+    res = tmp_path / "results.jsonl"
+    os.link(other, res)
+    assert rv.main(cli_args(tmp_path, rb, extra)) == 4
+    assert other.read_bytes() == SENTINEL and res.read_bytes() == SENTINEL
+    res.unlink()
+    assert rv.main(cli_args(tmp_path, rb, extra)) == 0
+    os.link(other, tmp_path / "RESULTS.md")
+    with pytest.raises(rv.Refused, match="hard link"):
+        rmd.write(res)
+    assert other.read_bytes() == SENTINEL
+    with pytest.raises(rv.Refused, match="aliases"):  # results named RESULTS.md would publish over itself
+        rmd.write(tmp_path / "RESULTS.md")
+
+
+def test_symlinked_results_refused_and_case_alias_of_input_refused(tmp_path):
+    rb, extra = scene()
+    other = tmp_path / "other.txt"
+    other.write_bytes(SENTINEL)
+    try:
+        os.symlink(other, tmp_path / "results.jsonl")
+    except OSError:
+        pytest.skip("no symlink privilege on this host")
+    assert rv.main(cli_args(tmp_path, rb, extra)) == 4 and other.read_bytes() == SENTINEL
+    (tmp_path / "results.jsonl").unlink()
+    if sys.platform == "win32":  # case-folded alias of the output FBX
+        args = cli_args(tmp_path, rb, extra, results=tmp_path / "sm_test.FBX")
+        assert rv.main(args) == 4 and (tmp_path / "SM_Test.fbx").read_bytes() == b"synthetic fbx bytes"
+
+
+def test_runner_refuses_results_aliasing_a_reference_picture(tmp_path):
+    rb, extra = scene()
+    res = tmp_path / "ref.png"
+    refs = {"south": {"local_path": str(tmp_path / "sub" / ".." / "ref.png"), "sha256": "0" * 64}}
+    args = cli_args(tmp_path, rb, extra, results=res, benchmarks=bench_file(tmp_path, refs=refs))
+    assert rv.main(args) == 4 and not res.exists()
+
+
+rbm = _load("run_benchmarks", TOOLS / "ucx" / "run_benchmarks.py")
+
+
+def _batch_bench(tmp_path, src):
+    data = {"schema": "methods-benchmarks/1", "objects": [
+        {"id": "synth", "classes": ["ucx-collisions"],
+         "source": {"kind": "fbx", "local_path": str(src), "sha256": rv.sha256(src)}}]}
+    p = tmp_path / "bench.json"
+    p.write_text(json.dumps(data), encoding="utf-8")
+    return p
+
+
+def _no_build(*a, **k):
+    raise AssertionError("Blender must not start after a refused preflight")
+
+
+def test_batch_refuses_out_aliasing_its_source_before_any_side_effect(tmp_path, monkeypatch):
+    """P1-1 witness: the source at <out>/synth/part-boxes/SM_Test.fbx is neither deleted nor rebuilt."""
+    out = tmp_path / "out"
+    src = out / "synth" / "part-boxes" / "SM_Test.fbx"
+    src.parent.mkdir(parents=True)
+    src.write_bytes(b"source bytes")
+    bench = _batch_bench(tmp_path, src)
+    res = tmp_path / "res" / "results.jsonl"
+    monkeypatch.setattr(rbm.subprocess, "run", _no_build)
+    base = ["--bench", "synth", "--variant", "part-boxes", "--benchmarks", str(bench), "--results", str(res)]
+    assert rbm.main(base + ["--out", str(out)]) == 4
+    assert src.read_bytes() == b"source bytes" and not res.parent.exists()
+    # hard-linked alias: a stale output that is the same file as the source
+    src2 = tmp_path / "src2" / "SM_Test.fbx"
+    src2.parent.mkdir()
+    src2.write_bytes(b"source 2")
+    bench2 = _batch_bench(tmp_path, src2)
+    out2 = tmp_path / "out2"
+    (out2 / "synth" / "part-boxes").mkdir(parents=True)
+    os.link(src2, out2 / "synth" / "part-boxes" / "SM_Test.fbx")
+    base2 = ["--bench", "synth", "--variant", "part-boxes", "--benchmarks", str(bench2), "--results", str(res)]
+    assert rbm.main(base2 + ["--out", str(out2)]) == 4
+    assert src2.read_bytes() == b"source 2"
+    # results / RESULTS.md aliasing the manifest or the source
+    assert rbm.main(base2[:-1] + [str(bench2), "--out", str(tmp_path / "out3")]) == 4
+    assert rbm.main(base2[:-1] + [str(src2), "--out", str(tmp_path / "out3")]) == 4
+    assert src2.read_bytes() == b"source 2"
+    assert json.loads(bench2.read_text(encoding="utf-8"))["objects"][0]["id"] == "synth"
+    assert not (tmp_path / "out3").exists()
+
+
+def test_batch_distinct_output_control_runs_and_keeps_source(tmp_path, monkeypatch):
+    """Control: a distinct --out passes preflight, the (stubbed) build fails -> one failed row, source intact."""
+    src = tmp_path / "src" / "SM_Test.fbx"
+    src.parent.mkdir()
+    src.write_bytes(b"source bytes")
+    bench = _batch_bench(tmp_path, src)
+    res = tmp_path / "res" / "results.jsonl"
+    calls = []
+
+    def fake_run(cmd, **k):
+        calls.append(cmd)
+        return subprocess.CompletedProcess(cmd, 1, "", "stub build")
+
+    monkeypatch.setattr(rbm.subprocess, "run", fake_run)
+    code = rbm.main(["--bench", "synth", "--variant", "part-boxes", "--benchmarks", str(bench), "--results", str(res),
+                     "--out", str(tmp_path / "out")])
+    assert code == 1 and len(calls) == 1 and src.read_bytes() == b"source bytes"
+    row = last_row(res)
+    assert row["row"] == "R1" and row["ucx"]["status"] == "build_failed"
+    assert (res.parent / "RESULTS.md").is_file()
 
 
 # ---- variants ---------------------------------------------------------------------------------------------------------------

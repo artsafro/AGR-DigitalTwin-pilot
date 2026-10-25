@@ -10,9 +10,11 @@ metric shows as "-" and its reason is listed under the table; nothing is filled 
 from __future__ import annotations
 
 import json
-import os
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from safe_write import check_target, publish_text, refuse_aliases  # noqa: E402
 
 HEAD = ("| Row | Object | Variant | Build s | Model tris | UCX pcs / tris / limit | UCX check | Failed / open checks "
         "| Closed convex | Model->UCX max / p95 m | UCX outside model | Envelope uncovered | xView V / F | Texel min / median px/m "
@@ -82,13 +84,12 @@ def read_rows(results: Path) -> list[dict]:
 
 
 def write(results: Path) -> Path:
+    out = results.with_name("RESULTS.md")
+    refuse_aliases([out], [results])
+    check_target(out)
     rows = read_rows(results)
     cls = rows[0]["class"] if rows else results.parent.name
-    out = results.with_name("RESULTS.md")
-    partial = out.with_name(out.name + ".partial")
-    partial.write_text(render(rows, cls), encoding="utf-8", newline="\n")
-    os.replace(partial, out)
-    return out
+    return publish_text(out, render(rows, cls))
 
 
 if __name__ == "__main__":

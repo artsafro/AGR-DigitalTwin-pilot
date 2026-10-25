@@ -42,7 +42,9 @@ uv run python tools/methods/run_variant.py <output .fbx|.zip> --bench <id> --cla
 ```
 
 Exit 0 appends one row; 2 = measurement error, nothing appended; 4 = refused (unknown benchmark or class,
-results path aliasing an input, bad wall time). The results file is rewritten through a `.partial` copy.
+results path aliasing an input, bad wall time). `results.jsonl` and `RESULTS.md` are published through an
+exclusively created unique temporary file (`tools/methods/safe_write.py`); a symlinked or hard-linked target
+is refused, and the batch checks every planned output against every benchmark input before its first write.
 
 ## Row fields
 
