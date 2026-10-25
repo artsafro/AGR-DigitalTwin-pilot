@@ -150,8 +150,49 @@ def test_legacy_lone_surrogate_in_developer_stays_out_of_findings(tmp_path):
     text = r.stdout.decode("utf-8", errors="strict")
     report = json.loads(text)
     assert report["passed"] is False and report["exit_code"] == 2
+    _assert_developer_report(report, text)
+
+
+def _has_surrogate(node) -> bool:
+    if isinstance(node, str):
+        return any(0xD800 <= ord(c) <= 0xDFFF for c in node)
+    if isinstance(node, dict):
+        return any(_has_surrogate(k) or _has_surrogate(v) for k, v in node.items())
+    if isinstance(node, list):
+        return any(_has_surrogate(v) for v in node)
+    return False
+
+
+def _assert_developer_report(report: dict, text: str) -> None:
+    """Developer-only surrogate: V011 passes, no surrogate in any decoded finding, others not_run."""
     v011 = _v011(report)
     assert v011["status"] == "pass"
-    assert all(f["status"] == "pass" for f in v011["findings"])
+    assert v011["findings"] and all(f["status"] == "pass" for f in v011["findings"])
+    assert not _has_surrogate(report["stages"])
     assert not any(0xD800 <= ord(c) <= 0xDFFF for c in text)
-    assert [s["status"] for s in report["stages"] if s["id"] != "V011"].count("not_run") >= 1
+    others = [s for s in report["stages"] if s["id"] != "V011"]
+    assert others and all(s["status"] == "not_run" for s in others)
+
+
+def _developer_report(tmp_path):
+    data = _geojson(GOOD_GLASS, developer_json='"\\uD800"')
+    r = _cli(_write(tmp_path, "devbase", data))
+    text = r.stdout.decode("utf-8", errors="strict")
+    return json.loads(text), text
+
+
+def test_legacy_developer_check_rejects_injected_finding_surrogate(tmp_path):
+    report, text = _developer_report(tmp_path)
+    _assert_developer_report(report, text)  # unmutated baseline passes
+    v011 = _v011(report)
+    v011["findings"][0]["observed"] = chr(0xD800)  # decoded surrogate hidden from the raw text
+    with pytest.raises(AssertionError):
+        _assert_developer_report(report, text)
+
+
+def test_legacy_developer_check_rejects_unexpected_stage_status(tmp_path):
+    report, text = _developer_report(tmp_path)
+    other = next(s for s in report["stages"] if s["id"] != "V011")
+    other["status"] = "pass"
+    with pytest.raises(AssertionError):
+        _assert_developer_report(report, text)
