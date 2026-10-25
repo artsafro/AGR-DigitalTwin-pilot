@@ -140,6 +140,37 @@ def test_unknown_part_is_an_error():
         face_on_wall({"wall": WALL}, "p", "wall", "front")
 
 
+def test_cap_already_embedded_in_receiving_frame_needs_no_skirt():
+    """Source pane edges are already inside receiving solids; do not build eight hidden skirt triangles."""
+    scene = {
+        "left": box((0, -0.04, 0), (1.05, 0.2, 3)),
+        "right": box((1.95, -0.04, 0), (4, 0.2, 3)),
+        "bottom": box((1.05, -0.04, 0), (1.95, 0.2, 1.05)),
+        "top": box((1.05, -0.04, 1.95), (1.95, 0.2, 3)),
+        "back": box((0, 0.2, 0), (4, 0.4, 3)),
+        "p": panel(),
+    }
+    before = {name: (m.vertices.copy(), m.triangles.copy()) for name, m in scene.items()}
+    r = face_on_wall(scene, "p", tuple(name for name in scene if name != "p"), "front")
+    assert r.applied, r.question
+    face = r.scene["p"]
+    assert len(face.triangles) == 2
+    assert np.allclose(face.vertices[:, 1], -0.02)
+    assert r.notes["depth_m"] == 0.0
+    edges = border_edges(face)
+    pts = (edges[:, :1] + np.linspace(0, 1, 101)[None, :, None] *
+           (edges[:, 1:] - edges[:, :1])).reshape(-1, 3)
+    hidden = np.zeros(len(pts), dtype=bool)
+    for name, wall in scene.items():
+        if name != "p":
+            hidden |= ((np.abs(winding_number(pts, wall)) > 0.5) &
+                       (distance_to_surface(pts, wall) >= EMBED_MIN_M - 1e-9))
+            assert r.scene[name] is wall
+        assert np.array_equal(wall.vertices, before[name][0])
+        assert np.array_equal(wall.triangles, before[name][1])
+    assert hidden.all()
+
+
 def test_embed_exactly_at_threshold_is_kept_and_border_meets_it():
     r = face_on_wall({"wall": WALL, "p": panel()}, "p", "wall", "front", embed_m=EMBED_MIN_M)
     assert r.applied, r.question
