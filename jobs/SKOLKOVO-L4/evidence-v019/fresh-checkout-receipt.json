@@ -1,0 +1,35 @@
+{
+  "passed": false,
+  "purpose": "fresh committed-byte gate materialization, not completed production",
+  "source_commit": "1fb6bed59a1c05068164581366684169c2d28cf7",
+  "new_module_docstring_new_case": {
+    "checked": 6,
+    "matched": 6
+  },
+  "new_evidence_git_blob_byte_parity": {
+    "checked": 11,
+    "matched": 11
+  },
+  "materialized_gate_paths": 18,
+  "external_historical_dependency": {
+    "path": "tmp/skolkovo-l4-v011/parts-confirmed-v011.json",
+    "sha256": "78c0331b2d8ff994f5f7d155c56ef977a0e53acb004e951be19c07111e4d8931"
+  },
+  "initial_fresh_walk": {
+    "exit": 1,
+    "pin_lookup_errors": 3,
+    "reason": "Nested materialization inherits parent Git prefix; commit:./path resolves beneath tmp/fresh instead of repository root."
+  },
+  "corrected_fresh_walk": {
+    "exit": 1,
+    "validation_errors": 0,
+    "passed": false,
+    "environment": "Command-local GIT_DIR=own worktree metadata; GIT_WORK_TREE=materialized root; no Git mutation or global environment change."
+  },
+  "logs": {
+    "fresh-walk.json": "6b027784c8abd3423368400df2a7a542897f2655122777711a38066f6280c452",
+    "fresh-walk.log": "6b027784c8abd3423368400df2a7a542897f2655122777711a38066f6280c452",
+    "fresh-walk-v002.json": "3b210d260a9887c756a5f12df80ad4625277a151febbf041e36dcd5d9bef8dcb",
+    "fresh-walk-v002.log": "3b210d260a9887c756a5f12df80ad4625277a151febbf041e36dcd5d9bef8dcb"
+  }
+}

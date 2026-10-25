@@ -15,5 +15,12 @@
     "members": 15,
     "member_hashes_verified": 14,
     "crc_verified": true
+  },
+  "fresh_byte_walk_supplement": {
+    "archive": "fresh-byte-walk-v001.zip",
+    "sha256": "fbf87d79e4931635f146bf04cec7a200f0eb9fb3fa9de0a32b8c0333ad255123",
+    "members": 6,
+    "member_hashes_verified": 5,
+    "crc_verified": true
   }
 }
