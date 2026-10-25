@@ -17,12 +17,14 @@ Variants
   re-hulled until every pair is at least `gap` apart.
 - slice-prisms: the mesh is cut at its levels (z of horizontal faces with >= 1 m2 area); each band
   becomes one prism over the plan convex hull of the band (vertices plus edge/plane crossings), bands
-  `gap` apart vertically, so pieces never intersect.
+  `gap` apart vertically, so pieces never intersect; plan vertices within 1 cm of their neighbours' chord
+  are dropped (no sliver caps).
 - single-hull: one convex hull of the whole mesh (baseline: always valid, loosest fit).
 """
 from __future__ import annotations
 
 import importlib.util
+import math
 import sys
 from pathlib import Path
 
@@ -32,6 +34,7 @@ ROOT = Path(__file__).resolve().parents[3]
 VARIANTS = ("kernel-boxes", "slice-prisms", "part-boxes", "part-hulls", "single-hull")
 LEVEL_AREA_M2 = 1.0  # slice-prisms: a horizontal face area at one z of at least this starts a level
 LEVEL_MIN_M = 0.5  # slice-prisms: levels closer than this are one level
+SIMPLIFY_M = 0.01  # slice-prisms: a plan vertex closer than this to its neighbours' chord is dropped
 MERGE_GAP_M = 0.003  # = ucx_build.GAP_BUILD_M[0]: float32 read-back stays inside the [D098] 2 mm - 1 cm band
 WELD_M = 1e-4  # parts: vertices closer than this (grid) are one vertex; FBX splits vertices per face
 MIN_THICK_M = 0.02  # a flat part (glass pane) gets a box this thick so the piece has a volume
@@ -254,6 +257,27 @@ def plan_hull(xy) -> np.ndarray:
     return np.array(lower[:-1] + upper[:-1])
 
 
+def simplify(poly, tol: float = SIMPLIFY_M) -> np.ndarray:
+    """Drop convex-polygon vertices within `tol` of the chord of their neighbours (the polygon shrinks by
+    at most `tol`); near-collinear vertices otherwise give sliver cap triangles that read back non-convex."""
+    pts = [tuple(p) for p in np.asarray(poly, float)]
+    changed = True
+    while changed and len(pts) > 3:
+        changed = False
+        best, idx = tol, None
+        for i in range(len(pts)):
+            a, p, b = np.array(pts[i - 1]), np.array(pts[i]), np.array(pts[(i + 1) % len(pts)])
+            ab = b - a
+            n = math.hypot(ab[0], ab[1])
+            d = abs(ab[0] * (p[1] - a[1]) - ab[1] * (p[0] - a[0])) / n if n > 0 else 0.0
+            if d < best:
+                best, idx = d, i
+        if idx is not None:
+            pts.pop(idx)
+            changed = True
+    return np.array(pts)
+
+
 def prism(poly, z0: float, z1: float):
     """Closed convex prism over a CCW convex k-gon: 2k vertices, 4k - 4 outward triangles."""
     k = len(poly)
@@ -298,7 +322,7 @@ def slice_prisms(verts, tris, gap: float = MERGE_GAP_M):
             cross = (a[:, 2] - z) * (b[:, 2] - z) < 0
             s = (z - a[cross, 2]) / (b[cross, 2] - a[cross, 2])
             pts.append((a[cross] + (b[cross] - a[cross]) * s[:, None])[:, :2])
-        poly = plan_hull(np.concatenate(pts))
+        poly = simplify(plan_hull(np.concatenate(pts)))
         if len(poly) < 3:
             continue  # no plan area in this band (a line of vertices): reported through the band count
         pieces.append(prism(poly, z0 + gap / 2, z1 - gap / 2))
