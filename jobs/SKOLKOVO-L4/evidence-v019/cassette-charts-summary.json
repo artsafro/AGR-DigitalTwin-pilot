@@ -1,0 +1,20 @@
+{
+  "passed": false,
+  "scope": "candidate UV charts; not final export or whole-building acceptance",
+  "part": "facade_cassette_perimeter_profiles_frame_contour_rebuild",
+  "partslist_sha256": "fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a",
+  "source_candidate_sha256": "35855e79f93e52c1438d55f5c300d6a42cc9189b4726024bab97f41d9d10808a",
+  "objects": 2632,
+  "qualified": 2632,
+  "strict_passed": 204,
+  "faces": 15792,
+  "aspect_diagnostic_faces": 9712,
+  "tiles": 99,
+  "global_chart_padding_pairs_failed": 0,
+  "max_density_pair_error_px": 2.2737367544323206e-13,
+  "min_padding_px": 32.0,
+  "triangles": 31584,
+  "triangle_budget": 21056,
+  "budget_passed": false,
+  "seconds": 8.391633199993521
+}

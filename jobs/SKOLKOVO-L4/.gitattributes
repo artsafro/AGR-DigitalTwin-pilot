@@ -17,3 +17,6 @@ REPORT-v011.md -text
 # v018 generated receipts are pinned by raw SHA256; do not convert CRLF at commit/checkout.
 evidence-v018/*.json -text whitespace=cr-at-eol
 REPORT-v018.md -text
+# v019 raw evidence/report hashes must survive a fresh Windows checkout unchanged.
+evidence-v019/*.json -text whitespace=cr-at-eol
+REPORT-v019.md -text

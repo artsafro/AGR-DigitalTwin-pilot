@@ -1,0 +1,19 @@
+{
+  "drive_directory": "G:/Мой диск/AGR-evidence/353-skolkovo-l4/evidence-v019-20261025",
+  "archive": "skolkovo-l4-v019.zip",
+  "archive_sha256": "0be4fc4336222c1bf2bf73bbe39c90fac15593e7d8ccd9f502a552ea3d9c366d",
+  "archive_bytes": 2149145,
+  "zip_members": 814,
+  "member_hashes_verified": 813,
+  "crc_verified": true,
+  "code_commit": "50e913afbb1f5917fb2c0c8196265c4bd0c91c0b",
+  "raw_scope": "v019 raw drivers, logs, candidate NPZ/UV arrays and pre-guard opening prototype; inherited source buffers stay in earlier hash-pinned archives",
+  "passed": false,
+  "handoff_text_supplement": {
+    "archive": "handoff-text-v001.zip",
+    "sha256": "7bc171ac5e72edf226020a8c75478e8473449e72858ee089c63a4d427da3a8e2",
+    "members": 15,
+    "member_hashes_verified": 14,
+    "crc_verified": true
+  }
+}

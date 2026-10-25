@@ -5,7 +5,34 @@ Input copies: `C:/x/l4-skolkovo/`; originals are read-only and were not opened f
 Profiles: both NPM and VPM from one <=150,000-triangle master (D010).
 Base: pilot `48e2a55`; #348 and #351 are closed. No building output is approved.
 
-## Current status — v011
+## Current continuation — v019
+
+Read [REPORT-v019.md](REPORT-v019.md) and its exact source-ownership question.
+`passed=false`; no final FBX/visual/SINTEZ/PR. Original Gate1 proposal bytes and
+all budgets are unchanged. Prior mast/KNS/Revit/92-exclusion decisions stay settled.
+
+Orchestrator 2026-10-25 22:43 made aspect >8 diagnostic for long thin rectangular
+cassette profiles ONLY with measured tile/density/padding proof, pending Artem review.
+Job UV proof: 2632/2632 candidates, strict checker unchanged; 99 candidate tiles and
+31584/21056 triangles are NOT final texture/budget acceptance.
+
+New data decision: 33 one-to-one retained baseline/revision Element-ID pairs include
+22 near-coincident pairs and 11 changed bounds/types; a further ID is many-to-many.
+Are the 33 revision replacements (with reported superseded v1 refs) or separate parts?
+Exact refs/names/bounds and finite surface witnesses are committed in evidence-v019.
+No additional source was dropped; an ID/bbox match alone does not grant authority.
+
+Code: mixed polygon/edge-on silhouette fix, opaque opening-panel frame support with
+all invariants retained, job-only measured UV proof. Final affected tests 598 passed
+in113.06s; RED logs saved. Twelve of23 retained refusals now have kernel candidates;
+six mullions independently pass BODY-J/quad/texel. Mixed coverage6852/6863,11 unbuilt,
+170537/150000 staged tris; from_face38023/15692. Not an assembled/exported model.
+104/104 source/reference hashes unchanged; no DCC/Revit run. Source ownership must
+be settled before rebuilding final receiving contexts and completing the remaining gates.
+
+Transcript: Hermes task t_b205c8e1, v019 continuation after orchestrator comment2026-10-25 22:43.
+
+## Historical status — v011
 
 Artem granted revised exact-hash Gate1 at2026-10-21 16:58 on
 `fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a`.
@@ -350,7 +377,7 @@ failed component-stage report, not a final delivered FBX or user geometry approv
 
 Transcript: Hermes session local-132f5ae91dd294db4d9458c18885baef27e67b65176af5c7739935625c367fbc (task t_b205c8e1).
 
-## Latest continuation — v018, context-face execution; aspect policy pending
+## Historical continuation — v018, context-face execution; aspect question answered in v019
 
 The v009/v011 questions above are history, not current blockers. See `REPORT-v018.md`,
 `evidence-v018/summary-v018.json` and current `job.yaml` (`issue-353-context-face-v018`).

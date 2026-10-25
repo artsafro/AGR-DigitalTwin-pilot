@@ -1,0 +1,1345 @@
+{
+  "passed": false,
+  "scope": "cross-document ID plus registered bbox diagnostic; NOT deletion permission or a final overlap certificate",
+  "partslist_sha256": "fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a",
+  "unique_one_to_one_shared_ids": 33,
+  "ambiguous_shared_ids": 1,
+  "coincident_bbox_candidates": 22,
+  "v1_candidates_by_part": {
+    "v1_roof_substrate_skins_wall_from_face": 4,
+    "v1_additional_exterior_slabs_access_slab_contour_rebuild": 5,
+    "v1_exterior_substrate_reveals_wall_from_face": 10,
+    "v1_opaque_glazing_glazing_from_face": 3
+  },
+  "rows": [
+    {
+      "element_id": "1711642",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/6",
+        "part": "v1_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_150 [1711642]",
+        "lo": [
+          46.39998742675781,
+          -0.5647910156249978,
+          0.5
+        ],
+        "hi": [
+          46.549987045288084,
+          36.56420678710938,
+          13.399999618530273
+        ],
+        "triangles": 136
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/3850",
+        "part": "facade_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_160 [1711642]",
+        "lo": [
+          46.400001525878906,
+          -0.5744972229003906,
+          0.5
+        ],
+        "hi": [
+          46.560001373291016,
+          36.465003967285156,
+          13.399999618530273
+        ],
+        "triangles": 154
+      },
+      "max_bbox_coordinate_delta_m": 0.09920281982422097,
+      "bbox_intersection_over_smaller_volume": 0.9972344146486595,
+      "coincident_bbox_candidate": false
+    },
+    {
+      "element_id": "1711687",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7",
+        "part": "v1_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_150 [1711687]",
+        "lo": [
+          8.799985137939451,
+          -0.5647910156249978,
+          0.5
+        ],
+        "hi": [
+          46.39998742675781,
+          -0.41478948974609153,
+          13.399999618530273
+        ],
+        "triangles": 140
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/3851",
+        "part": "facade_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_160 [1711687]",
+        "lo": [
+          8.799999237060547,
+          -0.5744972229003906,
+          0.5
+        ],
+        "hi": [
+          46.400001525878906,
+          -0.41449737548828125,
+          13.399999618530273
+        ],
+        "triangles": 140
+      },
+      "max_bbox_coordinate_delta_m": 0.009706207275392842,
+      "bbox_intersection_over_smaller_volume": 0.9999996250233978,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "2276473",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/54",
+        "part": "v1_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_150 [2276473]",
+        "lo": [
+          -0.5500133361816424,
+          36.41420526123047,
+          0.5
+        ],
+        "hi": [
+          46.39998742675781,
+          36.56420678710938,
+          13.399999618530273
+        ],
+        "triangles": 168
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/3901",
+        "part": "facade_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_160 [2276473]",
+        "lo": [
+          -0.5600013732910156,
+          36.41449737548828,
+          0.5
+        ],
+        "hi": [
+          46.400001525878906,
+          36.574501037597656,
+          15.75
+        ],
+        "triangles": 188
+      },
+      "max_bbox_coordinate_delta_m": 2.3500003814697266,
+      "bbox_intersection_over_smaller_volume": 0.9980525914246626,
+      "coincident_bbox_candidate": false
+    },
+    {
+      "element_id": "2276960",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/55",
+        "part": "v1_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_150 [2276960]",
+        "lo": [
+          8.64998742675781,
+          26.549707122802737,
+          11.725502967834473
+        ],
+        "hi": [
+          12.149996963500975,
+          26.699708648681643,
+          15.75
+        ],
+        "triangles": 44
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/3902",
+        "part": "facade_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_160 [2276960]",
+        "lo": [
+          8.639999389648438,
+          26.540000915527344,
+          11.725333213806152
+        ],
+        "hi": [
+          12.15001106262207,
+          26.700000762939453,
+          15.75
+        ],
+        "triangles": 44
+      },
+      "max_bbox_coordinate_delta_m": 0.009988037109373238,
+      "bbox_intersection_over_smaller_volume": 1.0,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "2276961",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/56",
+        "part": "v1_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_150 [2276961]",
+        "lo": [
+          11.999982086181639,
+          26.699708648681643,
+          11.728049278259277
+        ],
+        "hi": [
+          12.149996963500975,
+          36.48920983886719,
+          15.75
+        ],
+        "triangles": 48
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/3903",
+        "part": "facade_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_160 [2276961]",
+        "lo": [
+          11.989994049072266,
+          26.700000762939453,
+          11.550000190734863
+        ],
+        "hi": [
+          12.15001106262207,
+          36.41449737548828,
+          15.75
+        ],
+        "triangles": 58
+      },
+      "max_bbox_coordinate_delta_m": 0.17804908752441406,
+      "bbox_intersection_over_smaller_volume": 0.9923382635969323,
+      "coincident_bbox_candidate": false
+    },
+    {
+      "element_id": "2379246",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/115",
+        "part": "v1_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_150 [2379246]",
+        "lo": [
+          -0.5500133361816424,
+          -0.5647910156249978,
+          0.5
+        ],
+        "hi": [
+          -0.40001562500000176,
+          36.41420526123047,
+          13.399999618530273
+        ],
+        "triangles": 58
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/3964",
+        "part": "facade_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_160 [2379246]",
+        "lo": [
+          -0.5600013732910156,
+          -0.5744972229003906,
+          0.5
+        ],
+        "hi": [
+          -0.40000152587890625,
+          36.41449737548828,
+          13.399999618530273
+        ],
+        "triangles": 60
+      },
+      "max_bbox_coordinate_delta_m": 0.009988037109373238,
+      "bbox_intersection_over_smaller_volume": 1.0,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "2467095",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/216",
+        "part": "v1_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_150 [2467095]",
+        "lo": [
+          -0.40001562500000176,
+          -0.5647910156249978,
+          0.5
+        ],
+        "hi": [
+          8.799985137939451,
+          -0.41478948974609153,
+          13.399999618530273
+        ],
+        "triangles": 28
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4067",
+        "part": "facade_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_160 [2467095]",
+        "lo": [
+          -0.40000152587890625,
+          -0.5744972229003906,
+          0.5
+        ],
+        "hi": [
+          8.799999237060547,
+          -0.41449737548828125,
+          13.399999618530273
+        ],
+        "triangles": 28
+      },
+      "max_bbox_coordinate_delta_m": 0.009706207275392842,
+      "bbox_intersection_over_smaller_volume": 0.9999984674869644,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "3118267",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/308",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ОС-2_Зашивка сэндвич-панель 50 мм [3118267]",
+        "lo": [
+          20.099988189697264,
+          -0.21479254150390403,
+          -8.067988922309229e-24
+        ],
+        "hi": [
+          30.299987045288084,
+          -0.16478948974609153,
+          11.350000381469727
+        ],
+        "triangles": 82
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4184",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall Ст-2_ Сэндвич-панель_150мм [3118267]",
+        "lo": [
+          20.10000228881836,
+          -0.21450042724609375,
+          3.9700002670288086
+        ],
+        "hi": [
+          30.150001525878906,
+          -0.0644989013671875,
+          11.350000381469727
+        ],
+        "triangles": 48
+      },
+      "max_bbox_coordinate_delta_m": 3.9700002670288086,
+      "bbox_intersection_over_smaller_volume": 0.6369155337192348,
+      "coincident_bbox_candidate": false
+    },
+    {
+      "element_id": "3309697",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/449",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ОС-2_Зашивка сэндвич-панель 50 мм [3309697]",
+        "lo": [
+          45.049987045288084,
+          36.16420526123047,
+          4.800000190734863
+        ],
+        "hi": [
+          45.64998694992065,
+          36.21420831298828,
+          11.350000381469727
+        ],
+        "triangles": 12
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4323",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall Ст-2_ Сэндвич-панель_150мм [3309697]",
+        "lo": [
+          45.05000305175781,
+          36.06450653076172,
+          4.800000190734863
+        ],
+        "hi": [
+          45.650001525878906,
+          36.214500427246094,
+          11.350000381469727
+        ],
+        "triangles": 16
+      },
+      "max_bbox_coordinate_delta_m": 0.09969873046875222,
+      "bbox_intersection_over_smaller_volume": 0.9999733225462125,
+      "coincident_bbox_candidate": false
+    },
+    {
+      "element_id": "3372758",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/472",
+        "part": "v1_additional_exterior_slabs_access_slab_contour_rebuild",
+        "name": "Floor Тип пола_15__ [3372758]",
+        "lo": [
+          4.8019878540039045,
+          36.41420526123047,
+          -0.07500000298023224
+        ],
+        "hi": [
+          8.981988159179686,
+          38.06420678710938,
+          -0.020000001415610313
+        ],
+        "triangles": 40
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4341",
+        "part": "facade_additional_exterior_slabs_access_slab_contour_rebuild",
+        "name": "Floor Тип пола_4__ [3372758]",
+        "lo": [
+          4.802001953125,
+          36.41449737548828,
+          -0.07500000298023224
+        ],
+        "hi": [
+          8.982002258300781,
+          38.06449890136719,
+          -0.020000001415610313
+        ],
+        "triangles": 40
+      },
+      "max_bbox_coordinate_delta_m": 0.0002921142578102831,
+      "bbox_intersection_over_smaller_volume": 0.9998195888215136,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "3372841",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/473",
+        "part": "v1_additional_exterior_slabs_access_slab_contour_rebuild",
+        "name": "Floor Тип пола_15__ [3372841]",
+        "lo": [
+          5.988961425781248,
+          -1.850290588378904,
+          -0.06499999761581421
+        ],
+        "hi": [
+          8.788960662841795,
+          -0.41478948974609153,
+          -0.010000000707805157
+        ],
+        "triangles": 48
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4342",
+        "part": "facade_additional_exterior_slabs_access_slab_contour_rebuild",
+        "name": "Floor Тип пола_4__ [3372841]",
+        "lo": [
+          5.988975524902344,
+          -1.8499984741210938,
+          -0.06499999761581421
+        ],
+        "hi": [
+          8.78897476196289,
+          -0.41449737548828125,
+          -0.010000000707805157
+        ],
+        "triangles": 48
+      },
+      "max_bbox_coordinate_delta_m": 0.0002921142578102831,
+      "bbox_intersection_over_smaller_volume": 0.9997914727394176,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "3385419",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/482",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель экструд_150 [3385419]",
+        "lo": [
+          -0.890013488769533,
+          -0.7553008117675759,
+          -0.6000000238418579
+        ],
+        "hi": [
+          -0.7400119628906268,
+          31.49970788574219,
+          -0.10000000149011612
+        ],
+        "triangles": 16
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4351",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Цоколь_Утеплитель экструд_150 [3385419]",
+        "lo": [
+          -0.8899993896484375,
+          -0.7550086975097656,
+          -0.6000000238418579
+        ],
+        "hi": [
+          -0.7399978637695312,
+          31.5,
+          -0.10000000149011612
+        ],
+        "triangles": 16
+      },
+      "max_bbox_coordinate_delta_m": 0.0002921142578102831,
+      "bbox_intersection_over_smaller_volume": 0.9998969512668427,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "3386179",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/483",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель экструд_150 [3386179]",
+        "lo": [
+          -0.890013488769533,
+          31.49970788574219,
+          -0.6000000238418579
+        ],
+        "hi": [
+          -0.7400119628906268,
+          36.904706665039065,
+          -0.10000000149011612
+        ],
+        "triangles": 16
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4352",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Цоколь_Утеплитель экструд_150 [3386179]",
+        "lo": [
+          -0.8899993896484375,
+          31.5,
+          -0.6000000238418579
+        ],
+        "hi": [
+          -0.7399978637695312,
+          36.904998779296875,
+          -0.10000000149011612
+        ],
+        "triangles": 16
+      },
+      "max_bbox_coordinate_delta_m": 0.0002921142578102831,
+      "bbox_intersection_over_smaller_volume": 0.999851966692102,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "3386445",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/484",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель экструд_150 [3386445]",
+        "lo": [
+          -0.7400119628906268,
+          36.75470513916016,
+          -0.6000000238418579
+        ],
+        "hi": [
+          8.791985717773436,
+          36.904706665039065,
+          -0.10000000149011612
+        ],
+        "triangles": 16
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4353",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Цоколь_Утеплитель экструд_150 [3386445]",
+        "lo": [
+          -0.7399978637695312,
+          36.75499725341797,
+          -0.6000000238418579
+        ],
+        "hi": [
+          8.791999816894531,
+          36.904998779296875,
+          -0.10000000149011612
+        ],
+        "triangles": 16
+      },
+      "max_bbox_coordinate_delta_m": 0.0002921142578102831,
+      "bbox_intersection_over_smaller_volume": 0.9980511151691265,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "3386794",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/485",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель экструд_150 [3386794]",
+        "lo": [
+          11.799987045288084,
+          36.75469750976563,
+          -0.6000000238418579
+        ],
+        "hi": [
+          46.889987197875975,
+          36.90469903564453,
+          -0.10000000149011612
+        ],
+        "triangles": 16
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4354",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Цоколь_Утеплитель экструд_150 [3386794]",
+        "lo": [
+          11.80000114440918,
+          36.75498962402344,
+          -0.6000000238418579
+        ],
+        "hi": [
+          46.88999938964844,
+          36.904991149902344,
+          -0.10000000149011612
+        ],
+        "triangles": 16
+      },
+      "max_bbox_coordinate_delta_m": 0.0002921142578102831,
+      "bbox_intersection_over_smaller_volume": 0.9980522446583272,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "3386946",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/486",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель экструд_150 [3386946]",
+        "lo": [
+          46.73998710250854,
+          29.24970788574219,
+          -0.6000000238418579
+        ],
+        "hi": [
+          46.889987197875975,
+          36.75469750976563,
+          -0.10000000149011612
+        ],
+        "triangles": 16
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4355",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Цоколь_Утеплитель экструд_150 [3386946]",
+        "lo": [
+          46.7400016784668,
+          29.25,
+          -0.6000000238418579
+        ],
+        "hi": [
+          46.88999938964844,
+          36.75498962402344,
+          -0.10000000149011612
+        ],
+        "triangles": 16
+      },
+      "max_bbox_coordinate_delta_m": 0.0002921142578102831,
+      "bbox_intersection_over_smaller_volume": 0.9998798007672018,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "3387160",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/487",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель экструд_150 [3387160]",
+        "lo": [
+          46.73998710250854,
+          -0.7553008117675759,
+          -0.6000000238418579
+        ],
+        "hi": [
+          46.889987197875975,
+          20.84971017456055,
+          -0.10000000149011612
+        ],
+        "triangles": 12
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4356",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Цоколь_Утеплитель экструд_150 [3387160]",
+        "lo": [
+          46.7400016784668,
+          -0.7550086975097656,
+          -0.6000000238418579
+        ],
+        "hi": [
+          46.88999938964844,
+          20.85000228881836,
+          -0.10000000149011612
+        ],
+        "triangles": 12
+      },
+      "max_bbox_coordinate_delta_m": 0.0002921142578102831,
+      "bbox_intersection_over_smaller_volume": 0.9999052007040716,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "3387329",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/488",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель экструд_150 [3387329]",
+        "lo": [
+          -0.890013488769533,
+          -0.9053023376464822,
+          -0.6000000238418579
+        ],
+        "hi": [
+          46.889987197875975,
+          -0.7553008117675759,
+          -0.10000000149011612
+        ],
+        "triangles": 84
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4357",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Цоколь_Утеплитель экструд_150 [3387329]",
+        "lo": [
+          -0.8899993896484375,
+          -0.9050102233886719,
+          -0.6000000238418579
+        ],
+        "hi": [
+          46.88999938964844,
+          -0.7550086975097656,
+          -0.10000000149011612
+        ],
+        "triangles": 84
+      },
+      "max_bbox_coordinate_delta_m": 0.0002921142578102831,
+      "bbox_intersection_over_smaller_volume": 0.9980523367568013,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "3597109",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/524",
+        "part": "v1_additional_exterior_slabs_access_slab_contour_rebuild",
+        "name": "Floor Тип пола_15__ [3597109]",
+        "lo": [
+          8.999985900878904,
+          36.41420526123047,
+          -0.5149999856948853
+        ],
+        "hi": [
+          11.799987045288084,
+          38.06420678710938,
+          -0.46000000834465027
+        ],
+        "triangles": 48
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4393",
+        "part": "facade_additional_exterior_slabs_access_slab_contour_rebuild",
+        "name": "Floor Тип пола_4__ [3597109]",
+        "lo": [
+          9.0,
+          36.41449737548828,
+          -0.5149999856948853
+        ],
+        "hi": [
+          11.80000114440918,
+          38.06449890136719,
+          -0.46000000834465027
+        ],
+        "triangles": 48
+      },
+      "max_bbox_coordinate_delta_m": 0.0002921142578102831,
+      "bbox_intersection_over_smaller_volume": 0.9998179267127211,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "3898364",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/858",
+        "part": "v1_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_150 [3898364]",
+        "lo": [
+          8.64998742675781,
+          26.699708648681643,
+          11.736695289611816
+        ],
+        "hi": [
+          8.799985137939451,
+          36.48920983886719,
+          15.75
+        ],
+        "triangles": 34
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4719",
+        "part": "facade_roof_substrate_skins_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_160 [3898364]",
+        "lo": [
+          8.639999389648438,
+          26.700000762939453,
+          11.736695289611816
+        ],
+        "hi": [
+          8.799999237060547,
+          36.41449737548828,
+          15.75
+        ],
+        "triangles": 34
+      },
+      "max_bbox_coordinate_delta_m": 0.07471246337890847,
+      "bbox_intersection_over_smaller_volume": 0.9923382635969324,
+      "coincident_bbox_candidate": false
+    },
+    {
+      "element_id": "4206374",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/1090",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ОС-2_Зашивка сэндвич-панель 50 мм [4206374]",
+        "lo": [
+          46.14998694992065,
+          27.36420983886719,
+          4.800000190734863
+        ],
+        "hi": [
+          46.199987140655516,
+          35.63520593261719,
+          11.350000381469727
+        ],
+        "triangles": 34
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4959",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall Ст-2_ Сэндвич-панель_150мм [4206374]",
+        "lo": [
+          46.05000305175781,
+          31.87450408935547,
+          4.800000190734863
+        ],
+        "hi": [
+          46.20000076293945,
+          35.635498046875,
+          11.350000381469727
+        ],
+        "triangles": 40
+      },
+      "max_bbox_coordinate_delta_m": 4.510294250488279,
+      "bbox_intersection_over_smaller_volume": 0.45468548172855566,
+      "coincident_bbox_candidate": false
+    },
+    {
+      "element_id": "4244692",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/1100",
+        "part": "v1_additional_exterior_slabs_access_slab_contour_rebuild",
+        "name": "Floor Тип пола_15__ [4244692]",
+        "lo": [
+          13.799985137939451,
+          -1.850290588378904,
+          -0.06499999761581421
+        ],
+        "hi": [
+          16.599988189697264,
+          -0.41478948974609153,
+          -0.010000000707805157
+        ],
+        "triangles": 48
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4969",
+        "part": "facade_additional_exterior_slabs_access_slab_contour_rebuild",
+        "name": "Floor Тип пола_4__ [4244692]",
+        "lo": [
+          13.799999237060547,
+          -1.8499984741210938,
+          -0.06499999761581421
+        ],
+        "hi": [
+          16.60000228881836,
+          -0.41449737548828125,
+          -0.010000000707805157
+        ],
+        "triangles": 48
+      },
+      "max_bbox_coordinate_delta_m": 0.0002921142578102831,
+      "bbox_intersection_over_smaller_volume": 0.9997914727462766,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "4246109",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/1101",
+        "part": "v1_additional_exterior_slabs_access_slab_contour_rebuild",
+        "name": "Floor Тип пола_15__ [4246109]",
+        "lo": [
+          37.199987140655516,
+          -1.850290588378904,
+          -0.06499999761581421
+        ],
+        "hi": [
+          39.9999870929718,
+          -0.41478948974609153,
+          -0.010000000707805157
+        ],
+        "triangles": 48
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4970",
+        "part": "facade_additional_exterior_slabs_access_slab_contour_rebuild",
+        "name": "Floor Тип пола_4__ [4246109]",
+        "lo": [
+          37.20000076293945,
+          -1.8499984741210938,
+          -0.06499999761581421
+        ],
+        "hi": [
+          40.0,
+          -0.41449737548828125,
+          -0.010000000707805157
+        ],
+        "triangles": 48
+      },
+      "max_bbox_coordinate_delta_m": 0.0002921142578102831,
+      "bbox_intersection_over_smaller_volume": 0.9997918984003596,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "4316511",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/1592",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ОС-2_Зашивка сэндвич-панель 50 мм [4316511]",
+        "lo": [
+          9.349988189697264,
+          -0.21479254150390403,
+          4.800000190734863
+        ],
+        "hi": [
+          18.849988189697264,
+          -0.16478948974609153,
+          11.350000381469727
+        ],
+        "triangles": 34
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/5417",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall Ст-2_ Сэндвич-панель_150мм [4316511]",
+        "lo": [
+          9.35000228881836,
+          -0.21450042724609375,
+          4.800000190734863
+        ],
+        "hi": [
+          18.850000381469727,
+          -0.0644989013671875,
+          11.350000381469727
+        ],
+        "triangles": 38
+      },
+      "max_bbox_coordinate_delta_m": 0.10029058837890403,
+      "bbox_intersection_over_smaller_volume": 0.9941565959589204,
+      "coincident_bbox_candidate": false
+    },
+    {
+      "element_id": "4323494",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/1640",
+        "part": "v1_additional_exterior_doors_door_from_face",
+        "name": "AC_Дверь_Однопольная_Стальная ДП-4.1_1000*2100 [4323494]",
+        "lo": [
+          11.897982803344725,
+          34.696706481933596,
+          12.0
+        ],
+        "hi": [
+          12.061984268188475,
+          35.696706481933596,
+          14.100000381469727
+        ],
+        "triangles": 852
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/5465",
+        "part": "facade_additional_exterior_doors_door_from_face",
+        "name": "AC_Дверь_Однопольная_Стальная ДП-4.1_1000*2100_П [4323494]",
+        "lo": [
+          11.929997444152832,
+          34.69700622558594,
+          12.0
+        ],
+        "hi": [
+          11.999998092651367,
+          35.69700622558594,
+          14.100000381469727
+        ],
+        "triangles": 84
+      },
+      "max_bbox_coordinate_delta_m": 0.06198617553710761,
+      "bbox_intersection_over_smaller_volume": 0.9997002563476586,
+      "coincident_bbox_candidate": false
+    },
+    {
+      "element_id": "5387772",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/1883",
+        "part": "v1_opaque_glazing_glazing_from_face",
+        "name": "Системная панель ADSK_Cтеклопакет_25 мм [5387772]",
+        "lo": [
+          7.264985290527342,
+          36.50171441650391,
+          4.824999809265137
+        ],
+        "hi": [
+          8.329987731933592,
+          36.52670831298828,
+          5.649999618530273
+        ],
+        "triangles": 12
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/8513",
+        "part": "facade_stemalite_glazing_from_face",
+        "name": "АР_ПНВ_Легендарный_стеклопакет Стемалит_(RAL_7035) СПО_71_(101010.4-20-88.4)(смещ_61) [5387772]",
+        "lo": [
+          7.265000820159912,
+          36.47951126098633,
+          4.824999809265137
+        ],
+        "hi": [
+          8.330000877380371,
+          36.550010681152344,
+          5.649999618530273
+        ],
+        "triangles": 60
+      },
+      "max_bbox_coordinate_delta_m": 0.023302368164060283,
+      "bbox_intersection_over_smaller_volume": 0.9999854182188075,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "5387773",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/1884",
+        "part": "v1_opaque_glazing_glazing_from_face",
+        "name": "Системная панель ADSK_Cтеклопакет_25 мм [5387773]",
+        "lo": [
+          5.964986053466795,
+          36.50171441650391,
+          4.824999809265137
+        ],
+        "hi": [
+          7.214986053466795,
+          36.52670831298828,
+          5.649999618530273
+        ],
+        "triangles": 12
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/8514",
+        "part": "facade_stemalite_glazing_from_face",
+        "name": "АР_ПНВ_Легендарный_стеклопакет Стемалит_(RAL_7035) СПО_71_(101010.4-20-88.4)(смещ_61) [5387773]",
+        "lo": [
+          5.965000152587891,
+          36.47951126098633,
+          4.824999809265137
+        ],
+        "hi": [
+          7.215000152587891,
+          36.550010681152344,
+          5.649999618530273
+        ],
+        "triangles": 60
+      },
+      "max_bbox_coordinate_delta_m": 0.023302368164060283,
+      "bbox_intersection_over_smaller_volume": 0.9999887207031236,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "5387774",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/1885",
+        "part": "v1_opaque_glazing_glazing_from_face",
+        "name": "Системная панель ADSK_Cтеклопакет_25 мм [5387774]",
+        "lo": [
+          4.949990478515623,
+          36.50171441650391,
+          4.824999809265137
+        ],
+        "hi": [
+          5.914986816406248,
+          36.52670831298828,
+          5.649999618530273
+        ],
+        "triangles": 12
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/8515",
+        "part": "facade_stemalite_glazing_from_face",
+        "name": "АР_ПНВ_Легендарный_стеклопакет Стемалит_(RAL_7035) СПО_71_(101010.4-20-88.4)(смещ_61) [5387774]",
+        "lo": [
+          4.950002670288086,
+          36.47951126098633,
+          4.824999809265137
+        ],
+        "hi": [
+          5.915002822875977,
+          36.550010681152344,
+          5.649999618530273
+        ],
+        "triangles": 60
+      },
+      "max_bbox_coordinate_delta_m": 0.023302368164060283,
+      "bbox_intersection_over_smaller_volume": 0.9999873659909536,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "5481916",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/1974",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_150 [5481916]",
+        "lo": [
+          -0.5500133361816424,
+          -0.41478948974609153,
+          -0.10000000149011612
+        ],
+        "hi": [
+          -0.40001562500000176,
+          36.56420678710938,
+          0.5
+        ],
+        "triangles": 48
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/8621",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_160 [5481916]",
+        "lo": [
+          -0.5600013732910156,
+          -0.41449737548828125,
+          -0.10000000149011612
+        ],
+        "hi": [
+          -0.40000152587890625,
+          36.489501953125,
+          0.5
+        ],
+        "triangles": 32
+      },
+      "max_bbox_coordinate_delta_m": 0.07470483398437722,
+      "bbox_intersection_over_smaller_volume": 0.9979719041674171,
+      "coincident_bbox_candidate": false
+    },
+    {
+      "element_id": "5482760",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/1976",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_150 [5482760]",
+        "lo": [
+          -0.5500133361816424,
+          -0.5647910156249978,
+          -0.10000000149011612
+        ],
+        "hi": [
+          8.799985137939451,
+          -0.41478948974609153,
+          0.5
+        ],
+        "triangles": 38
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/8622",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_160 [5482760]",
+        "lo": [
+          -0.5600013732910156,
+          -0.5744972229003906,
+          -0.10000000149011612
+        ],
+        "hi": [
+          8.799999237060547,
+          -0.41449737548828125,
+          0.5
+        ],
+        "triangles": 38
+      },
+      "max_bbox_coordinate_delta_m": 0.009988037109373238,
+      "bbox_intersection_over_smaller_volume": 1.0,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "5483521",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/1977",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_150 [5483521]",
+        "lo": [
+          8.799985137939451,
+          -0.5647910156249978,
+          -0.10000000149011612
+        ],
+        "hi": [
+          46.549987045288084,
+          -0.41478948974609153,
+          0.5
+        ],
+        "triangles": 70
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/8623",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_160 [5483521]",
+        "lo": [
+          8.799999237060547,
+          -0.5744972229003906,
+          -0.10000000149011612
+        ],
+        "hi": [
+          46.560001373291016,
+          -0.41449737548828125,
+          0.5
+        ],
+        "triangles": 70
+      },
+      "max_bbox_coordinate_delta_m": 0.01001432800293145,
+      "bbox_intersection_over_smaller_volume": 0.9999996265133673,
+      "coincident_bbox_candidate": true
+    },
+    {
+      "element_id": "5483978",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/1978",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_150 [5483978]",
+        "lo": [
+          -0.40001562500000176,
+          36.41420526123047,
+          -0.10000000149011612
+        ],
+        "hi": [
+          46.39998742675781,
+          36.56420678710938,
+          0.5
+        ],
+        "triangles": 40
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/8624",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_160 [5483978]",
+        "lo": [
+          -0.40000152587890625,
+          36.41449737548828,
+          -0.10000000149011612
+        ],
+        "hi": [
+          46.560001373291016,
+          36.574501037597656,
+          0.5
+        ],
+        "triangles": 48
+      },
+      "max_bbox_coordinate_delta_m": 0.1600139465332049,
+      "bbox_intersection_over_smaller_volume": 0.9980522907480935,
+      "coincident_bbox_candidate": false
+    },
+    {
+      "element_id": "5484222",
+      "v1": {
+        "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/1979",
+        "part": "v1_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_150 [5484222]",
+        "lo": [
+          46.39998742675781,
+          -0.41478948974609153,
+          -0.10000000149011612
+        ],
+        "hi": [
+          46.549987045288084,
+          36.41420526123047,
+          0.5
+        ],
+        "triangles": 28
+      },
+      "revision": {
+        "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/8625",
+        "part": "facade_exterior_substrate_reveals_wall_from_face",
+        "name": "Basic Wall ADSK_Наружная_Утеплитель_160 [5484222]",
+        "lo": [
+          46.400001525878906,
+          -0.41449737548828125,
+          -0.10000000149011612
+        ],
+        "hi": [
+          46.560001373291016,
+          36.41449737548828,
+          0.5
+        ],
+        "triangles": 28
+      },
+      "max_bbox_coordinate_delta_m": 0.01001432800293145,
+      "bbox_intersection_over_smaller_volume": 0.9998980747277565,
+      "coincident_bbox_candidate": true
+    }
+  ],
+  "ambiguous": [
+    {
+      "element_id": "5111482",
+      "v1_refs": [
+        "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/565",
+        "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/566",
+        "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/602",
+        "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/603",
+        "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/615",
+        "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/616",
+        "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/653",
+        "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/654",
+        "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/691",
+        "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/692"
+      ],
+      "revision_refs": [
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4404",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4410",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4416",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4422",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4428",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4434",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4435",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4441",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4447",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4453",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4459",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4465",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4471",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4472",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4478",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4484",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4485",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4491",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4492",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4498",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4504",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4510",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4516",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4522",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4523",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4529",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4530",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4536",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4542",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4548",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4554",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4560",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4561",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4567",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4573",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4579",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4585",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4591",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4592",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4598",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4599",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4605",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4611",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4612",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4618",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4624",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4625",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4803",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4809",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4815",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4821",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4827",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4833",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4839",
+        "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4846"
+      ]
+    }
+  ],
+  "seconds": 0.8034487999975681
+}

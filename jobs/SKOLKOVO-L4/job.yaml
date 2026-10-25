@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "job_id": "SKOLKOVO-L4",
-  "run_id": "issue-353-context-face-v018",
+  "run_id": "issue-353-revision-ownership-v019",
   "synthetic": false,
   "path": "deviation",
   "inputs": [
@@ -46,12 +46,19 @@
       "what_was_tried": "v018 seated caps and contacted source bands in kernel commit45598d3; reuse hash/bbox-pinned v008 supplement29/29; contour and covering-revolve repairs; preserve every failed result and all current budgets. No DCC/Revit/source mutation.",
       "new_tool_written": "src/dt_ai/ops/face.py at45598d3 plus tests/ops/test_face.py; job-only v018 drivers and candidates on Drive (see REPORT-v018.md/index). No new dependency.",
       "result": "549 focused ops tests pass. Staged local candidates cover6840/6863 retained-in-scope objects;23 remain unbuilt. Mixed arithmetic163241 triangles and from_face38023 still fail budgets.619/651 audited bands pass texel.16 aerators pass kernel/BODY-J/quad/texel. No accepted whole model or fresh export. Need user aspect/representation decision, not budget increase."
+    },
+    {
+      "gate": "operations",
+      "what_failed": "v019 cassette bands0/24 and context face replay0/834; source mixed polygon/edge-on projection loses geometry; opaque opening support assumes a solid centre. Retained source census discovers33 one-to-one baseline/revision ID collisions (22 near-coincident) plus one many-to-many group.",
+      "what_was_tried": "Tests-first mixed-projection repair and explicit opening-frame orientation/border growth without opacity exemption or relaxed invariants; source-contour precision repair; measured cassette loop-UV charts under the delegated scoped aspect rule. Preserve all refused/ambiguous prototypes. No source deletion, DCC/Revit or budget increase. Handoff consolidates the deviation log; it is not a machine pass receipt.",
+      "new_tool_written": "src/dt_ai/ops/silhouette.py and face.py; job-only jobs/SKOLKOVO-L4/cassette_uv.py, tests and archived v019 drivers. Code snapshot50e913afbb1f5917fb2c0c8196265c4bd0c91c0b; no new library.",
+      "result": "598 affected tests passed;12/23 new kernel candidates, six mullions BODY-J/quad/strict texel6/6;6852/6863 mixed coverage and170537/150000 arithmetic tris, from_face38023/15692.2632 cassette chart proofs do not waive31584/21056 triangles or99 candidate tiles. New source-ownership answer needed; no additional ref dropped, no final export/visual/SINTEZ/PR."
     }
   ],
   "gates": {
     "inputs": {
       "status": "pass",
-      "note": "Full pinned inventory remains unchanged; v018 independently rehashed104/104 copied source/reference files. Inventory identity only, not geometry approval.",
+      "note": "Full pinned inventory unchanged; v019 independently rehashed104/104 copies. File identity only; baseline/revision retained ownership is still under parts review.",
       "evidence": [
         {
           "path": "jobs/SKOLKOVO-L4/inventory.json",
@@ -61,7 +68,7 @@
     },
     "parts": {
       "status": "review",
-      "note": "Historical exact-hash Gate1 remains recorded and canonical bytes unchanged. Artem2026-10-22 10:37 explicitly excludes92 external-frame refs and chooses from_face variant B without raising15692. These answered changes need consolidated execution-plan bookkeeping; no new question about them. Slender-strip aspect/representation policy remains for the user; no new budget/recipe approval is fabricated.",
+      "note": "Historical exact-hash Gate1 and settled92-exclusion/from_face-B decisions remain. Orchestrator2026-10-25 22:43 scoped aspect decision is recorded pending Artem review, not an Artem waiver. New retained source-ownership question:33 one-to-one v1/revision ID pairs (22 near-coincident), plus a many-to-many ID not paired. Do not silently drop either authority or mutate the approved proposal.",
       "evidence": [
         {
           "path": "tmp/skolkovo-l4-v011/parts-confirmed-v011.json",
@@ -78,13 +85,21 @@
         {
           "path": "jobs/SKOLKOVO-L4/evidence-v018/excluded-external-frame.json",
           "sha256": "e437313fa317891476ce2b501f2bfeb708f90450de9f875ee67652298e0e3e4d"
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v019/revision-overlap.json",
+          "sha256": "55aceaa811773a4750df1b714c72775f67317e49a275df8c46d6055e359d5b8e"
         }
       ]
     },
     "operations": {
       "status": "fail",
-      "note": "v018 remains incomplete: local/historical candidates only,23 source refs unresolved; D129 failures and whole-scene joints/checks pending. Revit audit is cancelled by the later FBX-only decision, not a current access blocker.",
+      "note": "v019 mixed candidates only:12/23 newly applied;6 mullions separately measured BODY-J/quad/texel,6 contours still need D129.11 refs unbuilt, final contexts/joints/whole-scene checks incomplete. No opacity exemption; Revit is not a current access blocker.",
       "evidence": [
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v019/summary-v019.json",
+          "sha256": "fd8dc439c44777b561156b0ce6c65ea5fd33a5ecd48e37bdcb390897786cd60e"
+        },
         {
           "path": "jobs/SKOLKOVO-L4/evidence-v018/summary-v018.json",
           "sha256": "eeef8bb416f1caaf01256f3e9f4f243d10de881f44e1ae382fd1f55d757d0ac8"
@@ -96,13 +111,32 @@
         {
           "path": "jobs/SKOLKOVO-L4/evidence-v009/source-before-invariants.json",
           "sha256": "e4f196be3e6198f8b8947572fede4324722e8e23e7719961bdc3e7288bd1694d"
+        },
+        {
+          "path": "src/dt_ai/ops/silhouette.py",
+          "sha256": "a2b95baf98250f22b8492583e2fb7a03f47ee565bc66cff933897c8425f2bb47",
+          "commit": "50e913afbb1f5917fb2c0c8196265c4bd0c91c0b"
+        },
+        {
+          "path": "src/dt_ai/ops/face.py",
+          "sha256": "9bf93f3156a8e3fbe5a76be0b3028ecaac755b790806cbc9b8b9bbc6c1c2bc6f",
+          "commit": "50e913afbb1f5917fb2c0c8196265c4bd0c91c0b"
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/cassette_uv.py",
+          "sha256": "264ea167c34793a47cbcff18e796c20a78b0b18358ded7f83d48570123fb8459",
+          "commit": "50e913afbb1f5917fb2c0c8196265c4bd0c91c0b"
         }
       ]
     },
     "budgets": {
       "status": "fail",
-      "note": "v018 mixed staged arithmetic163241/150000 and from_face38023/15692; not an assembled/exported measurement. Primary/KNS successes remain historical v015/v016. No budget is raised and no closed fallback is treated as accepted variant B.",
+      "note": "v019 arithmetic across mixed candidate contexts170537/150000; from_face unchanged38023/15692. Cassette chart proof is not31584/21056 budget or99-tile acceptance. Not an assembled/exported measurement; no budget raised.",
       "evidence": [
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v019/summary-v019.json",
+          "sha256": "fd8dc439c44777b561156b0ce6c65ea5fd33a5ecd48e37bdcb390897786cd60e"
+        },
         {
           "path": "jobs/SKOLKOVO-L4/evidence-v018/summary-v018.json",
           "sha256": "eeef8bb416f1caaf01256f3e9f4f243d10de881f44e1ae382fd1f55d757d0ac8"
@@ -119,13 +153,17 @@
     },
     "export_readback": {
       "status": "missing",
-      "note": "Historical v017 diagnostic export/readback is not a current final delivery receipt. No new v018 export.",
+      "note": "Historical v017 diagnostic export is not a final receipt. No new v019 export; source-ownership and production gates remain unresolved.",
       "evidence": []
     },
     "report": {
       "status": "review",
-      "note": "v018 measured continuation, failed budgets, named unresolved refs, tests and explicit user aspect/representation question. Not final delivery or user approval.",
+      "note": "v019 measured continuation, delegated aspect policy, retained revision-ownership question, tests and rejected/ambiguous attempts. Not final delivery or user approval.",
       "evidence": [
+        {
+          "path": "jobs/SKOLKOVO-L4/REPORT-v019.md",
+          "sha256": "8ad7e32d0c2f6f5395fca42f741494505d6ef2cfd8e085249910f4a92bfbc52f"
+        },
         {
           "path": "jobs/SKOLKOVO-L4/REPORT-v018.md",
           "sha256": "53e051269995b0ac0fe8c7c3609bf17f4bab91a295d169c4e1a5920820e9da3d"

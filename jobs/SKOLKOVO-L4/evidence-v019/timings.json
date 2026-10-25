@@ -1,0 +1,53 @@
+{
+  "method": "New Windows log birth-to-last-write intervals, approximate wall time. Concurrent stages MUST NOT be summed; not CPU time.",
+  "stages": [
+    {
+      "stage": "charts-01.log",
+      "wall_seconds": 8.611642837524414,
+      "wall_hours": 0.0023921230104234485,
+      "log_sha256": "6cf6ecf5d45f65556e4cdb99e7814d369802d54a3a20917da2a0cdb7376754e1"
+    },
+    {
+      "stage": "context-01.log",
+      "wall_seconds": 287.309289932251,
+      "wall_hours": 0.07980813609229194,
+      "log_sha256": "30009b62f3284c022d632e45dc45a5e57c36fada3177098110826ac758609b7a"
+    },
+    {
+      "stage": "cassette-band-sample-01.log",
+      "wall_seconds": 14.51111102104187,
+      "wall_hours": 0.00403086417251163,
+      "log_sha256": "375e92c3680fa42407134cd03c82629f51bfe607bbb725def1b511f88a4299fa"
+    },
+    {
+      "stage": "precision-01.log",
+      "wall_seconds": 117.18393564224243,
+      "wall_hours": 0.03255109323395623,
+      "log_sha256": "54687583413053359c74bc10d82ceeb6be0e6d3081210102c17952e34f7f98f5"
+    },
+    {
+      "stage": "repair-02.log",
+      "wall_seconds": 378.04771757125854,
+      "wall_hours": 0.10501325488090515,
+      "log_sha256": "05e9711659e4562ab3da4dcd21d5aae3c94ad7be3a26f38effce06018ef5948d"
+    },
+    {
+      "stage": "opening-sample-01.log",
+      "wall_seconds": 49.2056610584259,
+      "wall_hours": 0.013668239182896084,
+      "log_sha256": "7ffb5e49608ccc5627cdcaed0886cbb55d773cd82cbc1bef08757f2a2594ef26"
+    },
+    {
+      "stage": "ops.log",
+      "wall_seconds": 134.17020320892334,
+      "wall_hours": 0.037269500891367595,
+      "log_sha256": "2c5da879f5965ca9f56fd4f149d06406b805d0497fd36557d813e4b7f662c330"
+    },
+    {
+      "stage": "seat-probes-v002.log",
+      "wall_seconds": 15.943389892578125,
+      "wall_hours": 0.0044287194146050346,
+      "log_sha256": "21cafad892cd36d7ffe5c1ecb6801d6e944f189f92b59c61b0538c2bd1c1a006"
+    }
+  ]
+}

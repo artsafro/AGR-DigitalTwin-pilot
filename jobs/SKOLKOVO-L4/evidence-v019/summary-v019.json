@@ -1,0 +1,167 @@
+{
+  "passed": false,
+  "assembled": false,
+  "exported": false,
+  "partslist_sha256": "fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a",
+  "old_in_scope_references": 6863,
+  "old_staged_coverage": 6840,
+  "v019_new_kernel_candidates": 12,
+  "v019_new_candidate_triangles": 7296,
+  "mixed_staged_coverage": 6852,
+  "retained_unbuilt": 11,
+  "arithmetic_staged_triangles": 170537,
+  "master_budget": 150000,
+  "coverage_warning": "Mixed historical/local contexts; not an assembled all-six-invariant/exported result. Six new mullions have separate BODY-J/quad/texel proofs; six other contour candidates do not.",
+  "from_face_staged_triangles": 38023,
+  "from_face_budget": 15692,
+  "new_mullion_body_j_quad_texel_passed": 6,
+  "new_opaque_opening_panels_selected": 0,
+  "new_opaque_opening_panel_attempts": 2,
+  "context_replay_applied": 0,
+  "context_replay_total": 834,
+  "new_kernel_candidates": [
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/10059",
+      "part": "facade_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5927508]",
+      "tris": 184,
+      "operation": "precision_contour:side"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/7968",
+      "part": "facade_additional_exterior_railings_railing_contour_rebuild",
+      "name": "Railing ADSK_МГН_h 1200 [4667836]",
+      "tris": 1000,
+      "operation": "precision_contour:side"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/8022",
+      "part": "facade_additional_exterior_railings_railing_contour_rebuild",
+      "name": "Railing ADSK_МГН_h 1200 [4668108]",
+      "tris": 1000,
+      "operation": "precision_contour:side"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9464",
+      "part": "facade_mullions_frame_contour_rebuild",
+      "name": "Прямоугольный импост 50х100 мм [5749335]",
+      "tris": 12,
+      "operation": "primitive_box"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9469",
+      "part": "facade_mullions_frame_contour_rebuild",
+      "name": "Прямоугольный импост 50х100 мм [5749340]",
+      "tris": 12,
+      "operation": "primitive_box"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9475",
+      "part": "facade_mullions_frame_contour_rebuild",
+      "name": "Прямоугольный импост 50х100 мм [5749347]",
+      "tris": 12,
+      "operation": "primitive_box"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9496",
+      "part": "facade_mullions_frame_contour_rebuild",
+      "name": "Прямоугольный импост 50х100 мм [5749745]",
+      "tris": 12,
+      "operation": "primitive_box"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9501",
+      "part": "facade_mullions_frame_contour_rebuild",
+      "name": "Прямоугольный импост 50х100 мм [5749750]",
+      "tris": 12,
+      "operation": "primitive_box"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9507",
+      "part": "facade_mullions_frame_contour_rebuild",
+      "name": "Прямоугольный импост 50х100 мм [5749757]",
+      "tris": 12,
+      "operation": "primitive_box"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9521",
+      "part": "facade_roofs_slab_contour_rebuild",
+      "name": "Basic Roof ТН_КРОВЛЯ Солид [5783763]",
+      "tris": 4696,
+      "operation": "precision_contour:top"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9534",
+      "part": "facade_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5819517]",
+      "tris": 180,
+      "operation": "precision_contour:side"
+    },
+    {
+      "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/2960",
+      "part": "v1_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5819534]",
+      "tris": 164,
+      "operation": "precision_contour:side"
+    }
+  ],
+  "unbuilt_objects": [
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/10060",
+      "part": "facade_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5927667]"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/3906",
+      "part": "facade_roof_and_entrance_details_other_contour_rebuild",
+      "name": "Ladder-Precision_Ladders-Tubular_Ladder_With_Parapet_Platform_and_Roof-Side Fixed Ladder With Cage, Platform & Roofside Return [2277003]"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/8046",
+      "part": "facade_additional_exterior_railings_railing_contour_rebuild",
+      "name": "Railing ADSK_МГН_h 1200 [4672094]"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9532",
+      "part": "facade_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5819454]"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9535",
+      "part": "facade_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5819573]"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9528",
+      "part": "facade_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5802837]"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9536",
+      "part": "facade_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5819596]"
+    },
+    {
+      "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10401",
+      "part": "v1_baseline_roof_access_rod_ladder_contour_rebuild",
+      "name": "Лестничный марш ТA Лестничный марш ТA [5922442]"
+    },
+    {
+      "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10439",
+      "part": "v1_baseline_roof_access_rod_ladder_contour_rebuild",
+      "name": "Лестничный марш ТA Лестничный марш ТA [5923699]"
+    },
+    {
+      "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9240",
+      "part": "v1_roof_and_entrance_details_other_contour_rebuild",
+      "name": "Ladder-Precision_Ladders-Tubular_Ladder_With_Parapet_Platform_and_Roof-Side Fixed Ladder With Cage, Platform & Roofside Return [4219121]"
+    },
+    {
+      "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/11171",
+      "part": "v1_baseline_roof_access_rod_ladder_contour_rebuild",
+      "name": "Лестничный марш ТA Лестничный марш ТA [6743475]"
+    }
+  ],
+  "source_authority_question": "Are the 33 retained one-to-one baseline/revision ID pairs replacements (22 near-coincident, 11 changed bounds), or distinct components? No source ref is dropped without resolution.",
+  "aspect_decision": "Orchestrator 2026-10-25 22:43, pending Artem review: diagnostics only for long thin rectangular cassette profiles with measured tile fit, density and padding; all other rules/budgets unchanged."
+}

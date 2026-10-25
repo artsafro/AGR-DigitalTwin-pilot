@@ -1,0 +1,120 @@
+{
+  "passed": false,
+  "scope": "six local source-derived mullion candidates only",
+  "rows": [
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9464",
+      "mesh_sha256": "43a02cf8295e75c68e5fadaff77c07574a72536e56e371b58aac50fa34908d15",
+      "body_j": {
+        "duplicate_vertices": 0,
+        "duplicate_edges": 0,
+        "duplicate_polygons": 0,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 0,
+        "tol_m": 0.002
+      },
+      "quad_passed": true,
+      "texel_passed": true,
+      "local_all_measured_passed": true
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9469",
+      "mesh_sha256": "94f5f329270e94c274f8b566dd087e4927e2d99b3724076570375145555e9385",
+      "body_j": {
+        "duplicate_vertices": 0,
+        "duplicate_edges": 0,
+        "duplicate_polygons": 0,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 0,
+        "tol_m": 0.002
+      },
+      "quad_passed": true,
+      "texel_passed": true,
+      "local_all_measured_passed": true
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9475",
+      "mesh_sha256": "3d4a008046de211bf492fa074850ccbcbb099a1bdc19873a8c4a25efa51f490b",
+      "body_j": {
+        "duplicate_vertices": 0,
+        "duplicate_edges": 0,
+        "duplicate_polygons": 0,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 0,
+        "tol_m": 0.002
+      },
+      "quad_passed": true,
+      "texel_passed": true,
+      "local_all_measured_passed": true
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9496",
+      "mesh_sha256": "ba63a0821aba829184afbb8da07e128f3371c3136df89aea019699ec60fbdb7a",
+      "body_j": {
+        "duplicate_vertices": 0,
+        "duplicate_edges": 0,
+        "duplicate_polygons": 0,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 0,
+        "tol_m": 0.002
+      },
+      "quad_passed": true,
+      "texel_passed": true,
+      "local_all_measured_passed": true
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9501",
+      "mesh_sha256": "abbd90d64cd4b958e05ed8315449770efe099473d832fec41f4949a1f2fc364a",
+      "body_j": {
+        "duplicate_vertices": 0,
+        "duplicate_edges": 0,
+        "duplicate_polygons": 0,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 0,
+        "tol_m": 0.002
+      },
+      "quad_passed": true,
+      "texel_passed": true,
+      "local_all_measured_passed": true
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9507",
+      "mesh_sha256": "81c9cab8cb680f85ddb9acf07d3dc99abff039e0196723de8bd736883208056d",
+      "body_j": {
+        "duplicate_vertices": 0,
+        "duplicate_edges": 0,
+        "duplicate_polygons": 0,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 0,
+        "tol_m": 0.002
+      },
+      "quad_passed": true,
+      "texel_passed": true,
+      "local_all_measured_passed": true
+    }
+  ]
+}

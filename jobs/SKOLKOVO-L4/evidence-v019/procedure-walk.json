@@ -1,0 +1,158 @@
+{
+  "passed": false,
+  "gates": [
+    {
+      "gate": "inputs",
+      "status": "pass",
+      "evidence_exists": [
+        {
+          "path": "jobs/SKOLKOVO-L4/inventory.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Full pinned inventory unchanged; v019 independently rehashed104/104 copies. File identity only; baseline/revision retained ownership is still under parts review.",
+      "ready": true
+    },
+    {
+      "gate": "parts",
+      "status": "review",
+      "evidence_exists": [
+        {
+          "path": "tmp/skolkovo-l4-v011/parts-confirmed-v011.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/GATE1-APPROVAL-v011.md",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v010/primary-source-profile-recipe-v010.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v018/excluded-external-frame.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v019/revision-overlap.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Historical exact-hash Gate1 and settled92-exclusion/from_face-B decisions remain. Orchestrator2026-10-25 22:43 scoped aspect decision is recorded pending Artem review, not an Artem waiver. New retained source-ownership question:33 one-to-one v1/revision ID pairs (22 near-coincident), plus a many-to-many ID not paired. Do not silently drop either authority or mutate the approved proposal.",
+      "ready": false
+    },
+    {
+      "gate": "operations",
+      "status": "fail",
+      "evidence_exists": [
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v019/summary-v019.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v018/summary-v018.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v011/component-kernel-rollback-v011.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v009/source-before-invariants.json",
+          "verified": true
+        },
+        {
+          "path": "src/dt_ai/ops/silhouette.py",
+          "verified": true
+        },
+        {
+          "path": "src/dt_ai/ops/face.py",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/cassette_uv.py",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "v019 mixed candidates only:12/23 newly applied;6 mullions separately measured BODY-J/quad/texel,6 contours still need D129.11 refs unbuilt, final contexts/joints/whole-scene checks incomplete. No opacity exemption; Revit is not a current access blocker.",
+      "ready": false
+    },
+    {
+      "gate": "budgets",
+      "status": "fail",
+      "evidence_exists": [
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v019/summary-v019.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v018/summary-v018.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v011/kns-profile-summary-v011.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v011/primary-profile-summary-v011.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "v019 arithmetic across mixed candidate contexts170537/150000; from_face unchanged38023/15692. Cassette chart proof is not31584/21056 budget or99-tile acceptance. Not an assembled/exported measurement; no budget raised.",
+      "ready": false
+    },
+    {
+      "gate": "export_readback",
+      "status": "missing",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "Historical v017 diagnostic export is not a final receipt. No new v019 export; source-ownership and production gates remain unresolved.",
+      "ready": false
+    },
+    {
+      "gate": "report",
+      "status": "review",
+      "evidence_exists": [
+        {
+          "path": "jobs/SKOLKOVO-L4/REPORT-v019.md",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/REPORT-v018.md",
+          "verified": true
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/REPORT-v011.md",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "v019 measured continuation, delegated aspect policy, retained revision-ownership question, tests and rejected/ambiguous attempts. Not final delivery or user approval.",
+      "ready": false
+    },
+    {
+      "gate": "visual",
+      "status": "missing",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "Source diagnostic sheet is not output visual approval; board-tool/user gate still required.",
+      "ready": false
+    },
+    {
+      "gate": "checker",
+      "status": "missing",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "Complete final SINTEZ only after output visual approval.",
+      "ready": false
+    }
+  ],
+  "errors": [],
+  "job_id": "SKOLKOVO-L4",
+  "run_id": "issue-353-revision-ownership-v019",
+  "synthetic": false
+}

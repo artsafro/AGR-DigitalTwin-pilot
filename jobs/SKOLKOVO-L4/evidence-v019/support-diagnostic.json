@@ -1,0 +1,148 @@
+{
+  "passed": false,
+  "scope": "bbox coverage of panel contour interior probe; not a solid or final receiver certificate",
+  "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/3917",
+  "part": "facade_opaque_glazing_glazing_from_face",
+  "name": "Системная панель ADSK_Cтеклопакет_25 мм [2326504]",
+  "axis": 1,
+  "bbox": [
+    [
+      7.265000820159912,
+      36.502010345458984,
+      0.05000000074505806
+    ],
+    [
+      8.330000877380371,
+      36.52701187133789,
+      2.375
+    ]
+  ],
+  "probe_uv": [
+    7.797500848770142,
+    1.212500000372529
+  ],
+  "retained_other_bboxes_covering_probe": 12,
+  "within_300mm": 3,
+  "nearest": [
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/3901",
+      "part": "facade_roof_substrate_skins_wall_from_face",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_160 [2276473]",
+      "normal_gap_m": 0,
+      "normal_bounds": [
+        36.41449737548828,
+        36.574501037597656
+      ]
+    },
+    {
+      "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/54",
+      "part": "v1_roof_substrate_skins_wall_from_face",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_150 [2276473]",
+      "normal_gap_m": 0,
+      "normal_bounds": [
+        36.41420526123047,
+        36.56420678710938
+      ]
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4946",
+      "part": "facade_exterior_substrate_reveals_wall_from_face",
+      "name": "Basic Wall АР_Наружная_Газобетон_200 (ДО 4х метров) [4177437]",
+      "normal_gap_m": 0.08751296997070312,
+      "normal_bounds": [
+        36.214500427246094,
+        36.41449737548828
+      ]
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/3938",
+      "part": "facade_exterior_substrate_reveals_wall_from_face",
+      "name": "Basic Wall Ст-2_ Сэндвич-панель_100мм [2327724]",
+      "normal_gap_m": 2.0020103454589844,
+      "normal_bounds": [
+        34.400001525878906,
+        34.5
+      ]
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/3939",
+      "part": "facade_opaque_glazing_glazing_from_face",
+      "name": "Системная панель ADSK_Cтеклопакет_25 мм [2330448]",
+      "normal_gap_m": 2.0395050048828125,
+      "normal_bounds": [
+        34.437503814697266,
+        34.46250534057617
+      ]
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/3854",
+      "part": "facade_exterior_substrate_reveals_wall_from_face",
+      "name": "Basic Wall Ст-2_ Сэндвич-панель_100мм [1754355]",
+      "normal_gap_m": 13.117008209228516,
+      "normal_bounds": [
+        23.285003662109375,
+        23.38500213623047
+      ]
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/10356",
+      "part": "facade_external_reveals_band_from_face",
+      "name": "АР_Откос Откос В-2 [6051979]",
+      "normal_gap_m": 36.65650740265846,
+      "normal_bounds": [
+        -0.31449708342552185,
+        -0.15449705719947815
+      ]
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4949",
+      "part": "facade_exterior_substrate_reveals_wall_from_face",
+      "name": "Basic Wall ОС-1.1_Металлический лист [4194009]",
+      "normal_gap_m": 36.65650939941406,
+      "normal_bounds": [
+        -0.16449737548828125,
+        -0.15449905395507812
+      ]
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/7915",
+      "part": "facade_exterior_substrate_reveals_wall_from_face",
+      "name": "Basic Wall ОС-2_Зашивка сэндвич-панель 50 мм [4483116]",
+      "normal_gap_m": 36.666507720947266,
+      "normal_bounds": [
+        -0.21450042724609375,
+        -0.16449737548828125
+      ]
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9518",
+      "part": "facade_entrance_glazing_door_from_face",
+      "name": "AC_ДверьВитражная_Двупольная_Алюминиевая1 Остекленные_Полуторная [5749769]",
+      "normal_gap_m": 36.83400842547417,
+      "normal_bounds": [
+        -0.4119981825351715,
+        -0.3319980800151825
+      ]
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/4067",
+      "part": "facade_roof_substrate_skins_wall_from_face",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_160 [2467095]",
+      "normal_gap_m": 36.916507720947266,
+      "normal_bounds": [
+        -0.5744972229003906,
+        -0.41449737548828125
+      ]
+    },
+    {
+      "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/216",
+      "part": "v1_roof_substrate_skins_wall_from_face",
+      "name": "Basic Wall ADSK_Наружная_Утеплитель_150 [2467095]",
+      "normal_gap_m": 36.916799835205076,
+      "normal_bounds": [
+        -0.5647910156249978,
+        -0.41478948974609153
+      ]
+    }
+  ]
+}
