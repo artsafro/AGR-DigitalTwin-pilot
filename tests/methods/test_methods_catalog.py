@@ -1,4 +1,7 @@
-"""Methods catalog (#706): metric runner, variants, RESULTS generator, benchmark set and docs structure."""
+"""Methods catalog (#706): metric runner, variants, RESULTS generator, benchmark set and docs structure.
+
+Pattern: new-case: tests of the methods catalog (#706).
+"""
 from __future__ import annotations
 
 import importlib.util
