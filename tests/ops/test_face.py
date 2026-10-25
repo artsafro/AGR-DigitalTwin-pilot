@@ -1,4 +1,4 @@
-"""from_face in the context of the neighbouring wall (#353, user decision 2026-10-22 variant B). All meshes SYNTHETIC."""
+"""new-case: from_face in neighbouring-wall context (#353, user 2026-10-22 variant B). All meshes SYNTHETIC."""
 import math
 
 import numpy as np
@@ -106,6 +106,7 @@ EMPTY = Mesh(np.zeros((0, 3)), np.zeros((0, 3), int))
     ("no wall", {"wall": WALL, "p": panel()}, (), "front", {}, "no wall"),
     ("wall missing", {"wall": WALL, "p": panel()}, "nope", "front", {}, "not another part"),
     ("wall is part", {"wall": WALL, "p": panel()}, "p", "front", {}, "not another part"),
+    ("duplicate wall", {"wall": WALL, "p": panel()}, ("wall", "wall"), "front", {}, "unique"),
     ("empty part", {"wall": WALL, "p": EMPTY}, "wall", "front", {}, "no faces"),
     ("empty wall", {"wall": EMPTY, "p": panel()}, "wall", "front", {}, "has no faces"),
     ("open wall", {"wall": box((0, 0, 0), (4, 0.3, 3), drop=("front",)), "p": panel()}, "wall", "front", {},
@@ -142,11 +143,13 @@ def test_unknown_part_is_an_error():
 
 def test_cap_already_embedded_in_receiving_frame_needs_no_skirt():
     """Source pane edges are already inside receiving solids; do not build eight hidden skirt triangles."""
+    from shapely.geometry import Polygon
+    from dt_ai.ops.contour import extrude_polygon
+
+    frame = Polygon([(0, 0), (4, 0), (4, 3), (0, 3)],
+                    holes=[[(1.05, 1.05), (1.95, 1.05), (1.95, 1.95), (1.05, 1.95)]])
     scene = {
-        "left": box((0, -0.04, 0), (1.05, 0.2, 3)),
-        "right": box((1.95, -0.04, 0), (4, 0.2, 3)),
-        "bottom": box((1.05, -0.04, 0), (1.95, 0.2, 1.05)),
-        "top": box((1.05, -0.04, 1.95), (1.95, 0.2, 3)),
+        "frame": extrude_polygon(frame, 1, -0.04, 0.24),
         "back": box((0, 0.2, 0), (4, 0.4, 3)),
         "p": panel(),
     }
@@ -169,6 +172,166 @@ def test_cap_already_embedded_in_receiving_frame_needs_no_skirt():
         assert np.array_equal(wall.vertices, before[name][0])
         assert np.array_equal(wall.triangles, before[name][1])
     assert hidden.all()
+
+
+def test_source_band_can_hide_both_end_rings_in_contacting_slabs():
+    """A roof-support skin between two actual slab contacts needs four sides, not a closed box."""
+    import dt_ai.ops.face as face_ops
+
+    build = getattr(face_ops, "band_between_walls", None)
+    assert callable(build), "missing source-band operation"
+    scene = {
+        "floor": box((-1, -1, -0.2), (2, 2, 0)),
+        "ceiling": box((-1, -1, 0.6), (2, 2, 0.8)),
+        "p": box((0, 0, 0), (0.5, 0.1, 0.6)),
+    }
+    r = build(scene, "p", ("floor", "ceiling"), "top")
+    assert r.applied, r.question
+    band = r.scene["p"]
+    assert len(band.triangles) == 8
+    assert r.scene["floor"] is scene["floor"]
+    assert r.scene["ceiling"] is scene["ceiling"]
+    assert band.vertices[:, 2].min() >= -0.02
+    assert band.vertices[:, 2].max() <= 0.62
+    assert np.allclose(np.unique(band.vertices[:, 0]), [0, 0.5])
+    assert np.allclose(np.unique(band.vertices[:, 1]), [0, 0.1])
+    assert r.report is not None and r.report.passed
+    assert r.notes["faces_before"] == 12 and r.notes["faces_after"] == 8
+    pts = border_points(band)
+    hidden = np.zeros(len(pts), dtype=bool)
+    for name in ("floor", "ceiling"):
+        wall = scene[name]
+        hidden |= ((np.abs(winding_number(pts, wall)) > 0.5) &
+                   (distance_to_surface(pts, wall) >= EMBED_MIN_M - 1e-9))
+    assert hidden.all()
+
+
+def band_scene():
+    return {
+        "floor": box((-1, -1, -0.2), (2, 2, 0)),
+        "ceiling": box((-1, -1, 0.6), (2, 2, 0.8)),
+        "p": box((0, 0, 0), (0.5, 0.1, 0.6)),
+    }
+
+
+@pytest.mark.parametrize("axis,view", [(0, "side"), (1, "front"), (2, "top")])
+@pytest.mark.parametrize("seed", range(10))
+def test_generated_source_bands_keep_receivers_and_visible_section(axis, view, seed):
+    from dt_ai.ops.face import band_between_walls
+
+    rng = np.random.default_rng(seed)
+    scale = rng.uniform(0.8, 1.8)
+    shift = rng.uniform(-20, 20, 3)
+    perm = {0: [2, 0, 1], 1: [1, 2, 0], 2: [0, 1, 2]}[axis]
+    scene = {name: Mesh((m.vertices * scale)[:, perm] + shift, m.triangles)
+             for name, m in band_scene().items()}
+    frozen = {n: (m.vertices.copy(), m.triangles.copy()) for n, m in scene.items()}
+    r = band_between_walls(scene, "p", ("floor", "ceiling"), view)
+    assert r.applied, r.question
+    band = r.scene["p"]
+    assert len(band.triangles) == 8
+    for a in range(3):
+        if a != axis:
+            assert np.array_equal(np.unique(band.vertices[:, a]), np.unique(scene["p"].vertices[:, a]))
+    for name, m in scene.items():
+        assert np.array_equal(m.vertices, frozen[name][0])
+        assert np.array_equal(m.triangles, frozen[name][1])
+        if name != "p":
+            assert r.scene[name] is m
+    assert r.report is not None and r.report.passed
+
+
+@pytest.mark.parametrize("kind", ["air_gap", "no_receiver", "empty_part", "empty_receiver", "open_receiver",
+                                 "duplicate_receiver", "self_receiver", "unknown_receiver", "unknown_view",
+                                 "nan_limit", "inf_limit", "too_far", "below_embed"])
+def test_band_fail_closed(kind):
+    from dt_ai.ops.face import band_between_walls
+
+    scene = band_scene()
+    walls, view, kw = ("floor", "ceiling"), "top", {}
+    if kind == "air_gap":
+        scene["ceiling"] = box((-1, -1, 0.601), (2, 2, 0.8))
+    elif kind == "no_receiver":
+        walls = ()
+    elif kind == "empty_part":
+        scene["p"] = EMPTY
+    elif kind == "empty_receiver":
+        scene["ceiling"] = EMPTY
+    elif kind == "open_receiver":
+        scene["ceiling"] = box((-1, -1, 0.6), (2, 2, 0.8), drop=("front",))
+    elif kind == "duplicate_receiver":
+        walls = ("floor", "floor", "ceiling")
+    elif kind == "self_receiver":
+        walls = ("floor", "p")
+    elif kind == "unknown_receiver":
+        walls = ("floor", "missing_wall")
+    elif kind == "unknown_view":
+        view = "back"
+    elif kind == "nan_limit":
+        kw["max_embed_m"] = math.nan
+    elif kind == "inf_limit":
+        kw["max_embed_m"] = math.inf
+    elif kind == "too_far":
+        kw["max_embed_m"] = 0.021
+    elif kind == "below_embed":
+        kw["max_embed_m"] = EMBED_MIN_M
+    frozen = {name: (m.vertices.copy(), m.triangles.copy()) for name, m in scene.items()}
+    r = band_between_walls(scene, "p", walls, view, **kw)
+    assert not r.applied and r.question and r.scene is scene
+    for name, mesh in scene.items():
+        assert np.array_equal(mesh.vertices, frozen[name][0])
+        assert np.array_equal(mesh.triangles, frozen[name][1])
+
+
+def test_open_ended_source_band_uses_its_actual_section_loop():
+    from dt_ai.ops.face import band_between_walls
+
+    scene = band_scene()
+    scene["p"] = box((0, 0, 0), (0.5, 0.1, 0.6), drop=("top", "bottom"))
+    assert len(scene["p"].triangles) == 8
+    r = band_between_walls(scene, "p", ("floor", "ceiling"), "top")
+    assert r.applied, r.question
+    assert len(r.scene["p"].triangles) == 8
+    assert np.allclose(np.unique(r.scene["p"].vertices[:, 0]), [0, 0.5])
+    assert np.allclose(np.unique(r.scene["p"].vertices[:, 1]), [0, 0.1])
+
+
+def test_source_band_can_trim_an_already_buried_end_without_moving_visible_faces():
+    from dt_ai.ops.face import band_between_walls
+
+    scene = band_scene()
+    scene["floor"] = box((-1, -1, 0), (2, 2, 0.2))
+    r = band_between_walls(scene, "p", ("floor", "ceiling"), "top")
+    assert r.applied, r.question
+    assert len(r.scene["p"].triangles) == 8
+    assert 0 < r.notes["embedded_ends_m"][0] <= 0.020
+    assert r.scene["floor"] is scene["floor"]
+
+
+def test_one_exposed_band_end_keeps_its_source_cap_only_when_requested():
+    from dt_ai.ops.face import band_between_walls
+
+    scene = band_scene()
+    del scene["ceiling"]
+    refused = band_between_walls(scene, "p", "floor", "top")
+    assert not refused.applied and refused.scene is scene
+    r = band_between_walls(scene, "p", "floor", "top", allow_exposed_end=True)
+    assert r.applied, r.question
+    face = r.scene["p"]
+    assert len(face.triangles) == 10
+    cap = np.isclose(face.corners()[:, :, 2], 0.6).all(axis=1)
+    assert cap.sum() == 2
+    assert r.notes["exposed_ends"] == [False, True]
+    assert_border_deep(face, scene["floor"])
+
+
+def test_band_cannot_lower_the_ten_mm_embedding_floor_via_context():
+    from dt_ai.ops.face import band_between_walls
+    from dt_ai.ops.invariants import Context
+
+    scene = band_scene()
+    r = band_between_walls(scene, "p", ("floor", "ceiling"), "top", ctx=Context(embed_min_m=-1))
+    assert not r.applied and r.scene is scene and "embed" in r.question
 
 
 def test_embed_exactly_at_threshold_is_kept_and_border_meets_it():

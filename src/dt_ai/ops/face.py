@@ -7,7 +7,14 @@ contour in one object view (`top` / `front` / `side`, the normal axis of the pan
 straight back into the wall, so deep that every open border sample lies inside the wall at least `embed_m` (10 mm,
 the invariants' `embed_min_m`). There is no inner cap: the wall closes the back. A rectangle costs 2 + 8 triangles,
 and a whole cluster of coplanar panels (one part, joints closed by `close_gaps_m`) costs the same plus 2 per extra
-contour vertex.
+contour vertex. If the cap border is already embedded in receiving solids, retain only the cap (2 triangles for a
+rectangle). Border eligibility uses ring vertices and edge midpoints, matching the current kernel invariant;
+this finite sampling is not a continuous whole-edge certificate.
+
+`band_between_walls` retains the sides of a source section between contacted receivers, embedding each hidden
+end by at most 20 mm (and retaining one original exposed cap only by explicit request). It can recover an
+open-ended prismatic source's actual projected section loop; it never invents a missing loop or bridges an air gap.
+This is a candidate-producing capability, not a whole-building topology, D129 or delivery acceptance receipt.
 
 The operation refuses (a question, the scene unchanged) when the view is unknown, the part or the wall is empty or
 not finite, the wall is not a closed oriented 2-manifold, the part is the wall, the wall is on both sides or on
@@ -66,6 +73,8 @@ def _face(scene: Scene, part: str, walls: tuple, view: str, embed_m: float, max_
                                f"({silhouette_max_m / 2} m); which joints should stay?")
     if not walls:
         raise OperationRefused("no wall given; which closed neighbour should hide the open border?")
+    if len(set(walls)) != len(walls):
+        raise OperationRefused("receiving walls must be unique")
     for w in walls:
         if w not in scene or w == part:
             raise OperationRefused(f"wall {w!r} is not another part of the scene; which wall?")
@@ -106,8 +115,8 @@ def _face(scene: Scene, part: str, walls: tuple, view: str, embed_m: float, max_
         pts[:, keep[0]], pts[:, keep[1]], pts[:, axis] = uv[:, 0], uv[:, 1], w
         return pts
 
-    reach = [(sign, np.any([_inside_deep(at(probe, w0 + sign * t), wall_list, embed_m).all()
-                            for t in np.arange(_STEP_M, max_reach_m + 1e-12, _STEP_M)]))
+    reach = [(sign, any(_inside_deep(at(probe, w0 + sign * t), wall_list, embed_m).all()
+                        for t in np.arange(_STEP_M, max_reach_m + 1e-12, _STEP_M)))
              for sign, w0 in ((-1.0, hi_w), (1.0, lo_w))]
     sides = [sign for sign, hit in reach if hit]
     if len(sides) != 1:
@@ -123,11 +132,14 @@ def _face(scene: Scene, part: str, walls: tuple, view: str, embed_m: float, max_
             c = np.asarray(ring.coords)
             border += [c[:-1], (c[:-1] + c[1:]) / 2]
     border = np.concatenate(border)
-    depth = None
-    for t in np.arange(_STEP_M, max_reach_m + 1e-12, _STEP_M):
-        if _inside_deep(at(border, w_out + inward * t), wall_list, embed_m).all():
-            depth = float(t) + _MARGIN_M
-            break
+    # A seated face can already have its entire sampled border embedded in receiving frames.
+    # Do not add a hidden skirt in that case; the same operation invariants still gate the cap.
+    depth = 0.0 if _inside_deep(at(border, w_out), wall_list, embed_m).all() else None
+    if depth is None:
+        for t in np.arange(_STEP_M, max_reach_m + 1e-12, _STEP_M):
+            if _inside_deep(at(border, w_out + inward * t), wall_list, embed_m).all():
+                depth = float(t) + _MARGIN_M
+                break
     if depth is None or depth > max_reach_m + 1e-12 or \
             not _inside_deep(at(border, w_out + inward * depth), wall_list, embed_m).all():
         raise OperationRefused(f"the border does not reach {embed_m * 1000:.0f} mm inside the wall {walls} within "
@@ -135,14 +147,21 @@ def _face(scene: Scene, part: str, walls: tuple, view: str, embed_m: float, max_
     meshes = []
     for p in pieces:
         try:
-            prism = extrude_polygon(p, axis, min(w_out, w_out + inward * depth), depth)
+            prism_depth = depth if depth else _STEP_M
+            prism = extrude_polygon(p, axis, min(w_out, w_out + inward * prism_depth), prism_depth)
         except ValueError as why:
             raise OperationRefused(f"the {view} contour cannot be built ({why}); which contour?") from None
         n = len(prism.vertices) // 2
         caps = (len(prism.triangles) - 2 * n) // 2
-        drop = slice(caps, 2 * caps) if inward > 0 else slice(0, caps)      # the cap inside the wall
-        tris = np.delete(prism.triangles, np.arange(len(prism.triangles))[drop], axis=0)
-        meshes.append(Mesh(prism.vertices, tris))
+        if depth == 0.0:
+            # Use only the outward cap of a temporary prism, without unused back vertices.
+            tris = prism.triangles[:caps] if inward > 0 else prism.triangles[caps:2 * caps]
+            used, inverse = np.unique(tris, return_inverse=True)
+            meshes.append(Mesh(prism.vertices[used], inverse.reshape(-1, 3)))
+        else:
+            drop = slice(caps, 2 * caps) if inward > 0 else slice(0, caps)  # the cap inside the wall
+            tris = np.delete(prism.triangles, np.arange(len(prism.triangles))[drop], axis=0)
+            meshes.append(Mesh(prism.vertices, tris))
     face = _join(meshes)
     # The skirt runs inside the wall, so the visible silhouette is the part's together with its wall.
     deviations = silhouette_deviations(_join([mesh, wall]), _join([face, wall]), silhouette_max_m / 4)
@@ -153,6 +172,120 @@ def _face(scene: Scene, part: str, walls: tuple, view: str, embed_m: float, max_
         raise OperationRefused(f"the face would change the silhouette by {worst[1] * 1000:.0f} mm in the {worst[0]} "
                                f"view (limit {silhouette_max_m * 1000:.0f} mm); which view or operation instead?")
     return {**scene, part: face}
+
+
+def band_between_walls(scene: Scene, part: str, walls, view: str, ctx: Context = Context(),
+                       max_embed_m: float = 0.020, allow_exposed_end: bool = False) -> OperationResult:
+    """Retain a source contour's side faces, hiding contacted end rings in unchanged receivers.
+
+    For example, a roof-support skin touching a slab at both ends costs eight triangles, not twelve.
+    Extend or trim only a contacted end into its receiver, by at most 20 mm; never bridge an air gap.
+    By explicit request one exposed end retains its original cap; at least one end must embed.
+    The standard geometric operation invariants gate the entire local scene. D129 remains a separate check.
+    """
+    walls = (walls,) if isinstance(walls, str) else tuple(walls)
+    notes: dict = {}
+
+    def apply(s):
+        if view not in VIEWS:
+            raise OperationRefused(f"unknown view {view!r}")
+        if (isinstance(ctx.embed_min_m, bool) or not isinstance(ctx.embed_min_m, (int, float)) or
+                not math.isfinite(ctx.embed_min_m) or ctx.embed_min_m < EMBED_MIN_M):
+            raise OperationRefused("context embed_min_m must be finite and at least 10 mm")
+        if not isinstance(allow_exposed_end, bool):
+            raise OperationRefused("allow_exposed_end must be a boolean")
+        if (isinstance(max_embed_m, bool) or not isinstance(max_embed_m, (int, float)) or
+                not math.isfinite(max_embed_m) or not ctx.embed_min_m + _MARGIN_M <= max_embed_m <= 0.020):
+            raise OperationRefused("max_embed_m must be finite, at least embed_min_m + 1 mm and at most 20 mm")
+        if not walls or len(set(walls)) != len(walls):
+            raise OperationRefused("receiving walls must be nonempty and unique")
+        for w in walls:
+            if w not in s or w == part:
+                raise OperationRefused(f"wall {w!r} is not another part of the scene")
+            if not len(s[w].triangles) or not np.isfinite(s[w].vertices).all():
+                raise OperationRefused(f"wall {w!r} has no finite faces")
+            problem = topology_problem(s[w])
+            if problem:
+                raise OperationRefused(f"wall {w!r} is not closed and oriented ({problem})")
+        mesh = s[part]
+        if not len(mesh.triangles) or not np.isfinite(mesh.vertices).all():
+            raise OperationRefused("the part has no finite faces")
+        axis = VIEWS[view]
+        pieces = _contour(mesh, axis, None)
+        section_recovered = False
+        if sum(p.area for p in pieces) < 1e-8:
+            # Open-ended prismatic source skins have only zero-area side projections.
+            # Recover actual closed section loops, using the same 0.1 mm coordinate grid as the kernel weld.
+            uv_axes = [i for i in range(3) if i != axis]
+            uv = np.round(mesh.vertices[:, uv_axes] / 1e-4) * 1e-4
+            edges = np.vstack([mesh.triangles[:, [0, 1]], mesh.triangles[:, [1, 2]], mesh.triangles[:, [2, 0]]])
+            lines = [shapely.LineString(uv[e]) for e in edges if np.linalg.norm(uv[e[1]] - uv[e[0]]) > 0]
+            loops = shapely.polygonize(shapely.get_parts(shapely.union_all(lines)))
+            pieces = _contour(mesh, axis, loops)
+            section_recovered = True
+        if len(pieces) != 1 or pieces[0].interiors:
+            raise OperationRefused("the source band must have one unperforated contour")
+        poly = pieces[0]
+        ring = np.asarray(poly.exterior.coords)[:-1]
+        samples = np.vstack([ring, (ring + np.roll(ring, -1, axis=0)) / 2])
+        keep = [i for i in range(3) if i != axis]
+        span = mesh.vertices[mesh.triangles.ravel(), axis]
+        lo, hi = float(span.min()), float(span.max())
+        if hi - lo <= _STEP_M:
+            raise OperationRefused("the band has no axial extent")
+        neighbours = [s[w] for w in walls]
+        ends, exposed = [], []
+        for end, sign in ((lo, -1), (hi, 1)):
+            pts = np.zeros((len(samples), 3))
+            pts[:, keep] = samples
+            pts[:, axis] = end
+            # A depth change is allowed only from actual surface contact or existing embed.
+            contact = np.zeros(len(pts), bool)
+            for wall in neighbours:
+                contact |= ((distance_to_surface(pts, wall) <= 1e-6) |
+                            (np.abs(winding_number(pts, wall)) > 0.5))
+            if not contact.all():
+                if allow_exposed_end:
+                    ends.append(end)
+                    exposed.append(True)
+                    continue
+                raise OperationRefused(f"the {end:g} end has no actual receiver contact; no artificial bridge")
+            selected = None
+            for step in np.arange(0.0, max_embed_m + 1e-12, _STEP_M):
+                for direction in (sign, -sign):
+                    pts[:, axis] = end + direction * step
+                    if _inside_deep(pts, neighbours, ctx.embed_min_m + _MARGIN_M).all():
+                        selected = end + direction * float(step)
+                        break
+                if selected is not None:
+                    break
+            if selected is None:
+                raise OperationRefused(f"the {end:g} end cannot embed within {max_embed_m:g} m")
+            ends.append(selected)
+            exposed.append(False)
+        if all(exposed) or ends[1] - ends[0] <= 0:
+            raise OperationRefused("the band needs at least one embedded end and positive axial extent")
+        prism = extrude_polygon(poly, axis, ends[0], ends[1] - ends[0])
+        n = len(prism.vertices) // 2
+        caps = (len(prism.triangles) - 2 * n) // 2
+        kept = np.ones(len(prism.triangles), bool)
+        if not exposed[0]:
+            kept[:caps] = False
+        if not exposed[1]:
+            kept[caps:2 * caps] = False
+        band = Mesh(prism.vertices, prism.triangles[kept])
+        deviations = silhouette_deviations(_join([mesh, *neighbours]), _join([band, *neighbours]),
+                                          SILHOUETTE_MAX_M / 4)
+        if max(deviations.values()) > SILHOUETTE_MAX_M:
+            raise OperationRefused("the band changes the silhouette beyond 0.07 m")
+        notes.update(view=view, walls=list(walls), source_ends_m=[lo, hi], embedded_ends_m=ends,
+                     exposed_ends=exposed, section_recovered=section_recovered, deviations_m=deviations)
+        return {**s, part: band}
+
+    result = run_operation(scene, OPERATION, part, apply, ctx,
+                           {"view": view, "walls": list(walls), "max_embed_m": max_embed_m,
+                            "allow_exposed_end": allow_exposed_end, "mode": "band"})
+    return replace(result, notes={**(result.notes or {}), **notes})
 
 
 def face_on_wall(scene: Scene, part: str, walls, view: str, embed_m: float = EMBED_MIN_M,
