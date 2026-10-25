@@ -405,6 +405,14 @@ def test_stored_zip_ordinary_member_v011_passes_and_v001_fails(tmp_path):
     names = {item.name for item in stages["V001"].findings}
     assert "main FBX" in names and "PNG count" in names
     assert report.passed is False and report.exit_code == 1
+    proc = _run_cli_path(path)
+    assert path.read_bytes() == before
+    assert list(tmp_path.glob("*.json")) == []
+    cli = _assert_cli_report(proc, exit_code=1)
+    cli_stages = {stage["id"]: stage for stage in cli["stages"]}
+    assert cli_stages["V001"]["status"] == "fail"
+    cli_names = {item["name"] for item in cli_stages["V001"]["findings"]}
+    assert "main FBX" in cli_names and "PNG count" in cli_names
 
 
 @needs_measured_runtime
