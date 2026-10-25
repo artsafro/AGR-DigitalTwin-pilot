@@ -146,6 +146,14 @@ def xview(nodes=None):
         local tf = OverlappingFaces.Check currentTime n &rf
         if tv != #vertices do throw ("OverlappingVertices failed: " + tv as string)
         if tf != #faces do throw ("OverlappingFaces failed: " + tf as string)
+        -- A wider float32 ambiguity probe may reject, never supply findings.
+        -- The reported findings above always use the unchanged 5 mm threshold.
+        local guard = #()
+        OverlappingFaces.tolerance = ft * (1 + 2e-7)
+        local tg = OverlappingFaces.Check currentTime n &guard
+        if tg != #faces do throw ("OverlappingFaces guard failed: " + tg as string)
+        for id in guard where findItem rf id == 0 do
+            throw "face exactly at threshold (float32 ambiguity); no clean verdict"
         #(rv, rf)
     )''')
     previous = (rt.OverlappingVertices.tolerance, rt.OverlappingFaces.tolerance)
@@ -154,6 +162,15 @@ def xview(nodes=None):
         for n in nodes:
             copy = _poly_copy(n)
             try:
+                # Native xView reads object-space vertices. Detach the disposable
+                # copy (Max preserves its world transform), then bake scale/shear
+                # into its mesh. Both native checkers and the boundary guard now
+                # measure physical system-unit distances, including parent scale.
+                # Never reset transforms on the original or its shared base.
+                copy.parent = None
+                rt.resetXForm(copy)
+                rt.collapseStack(copy)
+                rt.convertToPoly(copy)
                 _reject_vertex_boundary([tuple(float(v) for v in rt.polyop.getVert(copy, i))
                                          for i in range(1, int(rt.polyop.getNumVerts(copy)) + 1)], 0.002 * scale)
                 result = rt.agrNativeXView(copy, 0.002 * scale, 0.005 * scale)

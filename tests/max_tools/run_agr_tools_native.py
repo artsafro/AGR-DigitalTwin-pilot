@@ -24,7 +24,7 @@ rt.execute('global AGRToolsInstallRoot; global AGRToolsStartupRoot')
 rt.AGRToolsInstallRoot = str(OUT / 'installed') + '/'
 rt.AGRToolsStartupRoot = str(OUT / 'startup') + '/'
 rt.makeDir(rt.AGRToolsStartupRoot, all=True)
-rt.fileIn(str(ROOT / 'tmp/AGR-Tools-0.1.0.mzp'))
+rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.1.0.mzp'))))
 assert rt.execute('global AGRToolsRegistered; AGRToolsRegistered == true'), 'MZP macros not registered'
 print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open')
 sys.path.insert(0, str(OUT / 'installed'))
@@ -158,7 +158,7 @@ rt.AGRToolsRegistered = False
 rt.fileIn(str(OUT / 'startup/AGRTools-0.1.0.ms'))
 assert rt.AGRToolsRegistered
 install_hash = hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest()
-results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(ROOT / 'tmp/AGR-Tools-0.1.0.mzp')), 'already exists')
+results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.1.0.mzp')))), 'already exists')
 assert hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest() == install_hash
 assert hashlib.sha256((OUT / 'fixture-source.max').read_bytes()).hexdigest() == source_hash
 results['version'] = list(rt.maxVersion())
@@ -177,9 +177,11 @@ for units, factor in (('meters', 1), ('millimeters', 1000)):
         ('mirrored', (-2, .5, .1), None),
         ('parent_small', (1, 1, 1), (2, .5, .1)),
         ('parent_large', (1, 1, 1), (-.5, 2, 10)),
+        ('parent_shear', (1, 1, 1), (2, .5, .1)),
+        ('mirrored_z', (2, .5, -1), None),
     ):
-        for gap_mm in (1, 2, 10):
-            z_scale = scale[2] * (parent_scale[2] if parent_scale else 1)
+        for gap_mm in (1, 2, 4.99, 5, 5.01, 10):
+            z_scale = abs(scale[2] * (parent_scale[2] if parent_scale else 1))
             gap = gap_mm / 1000 * factor / z_scale
             n = rt.mesh(name='synthetic_transform_' + case,
                         vertices=[rt.point3(0,0,0), rt.point3(factor,0,0), rt.point3(0,factor,0),
@@ -190,6 +192,8 @@ for units, factor in (('meters', 1), ('millimeters', 1000)):
             if parent_scale:
                 parent = rt.point(name='synthetic_parent')
                 n.parent = parent
+                if case == 'parent_shear':
+                    rt.rotate(n, rt.angleaxis(45, rt.point3(0, 0, 1)))
                 rt.scale(parent, rt.point3(*parent_scale))
             rt.scale(n, rt.point3(*scale))
             before = agr.snapshot([n])
@@ -203,11 +207,20 @@ for units, factor in (('meters', 1), ('millimeters', 1000)):
             try:
                 if gap_mm == 2:
                     row['error'] = raises(lambda: agr.xview([n]), 'threshold')
+                elif gap_mm == 5:
+                    try:
+                        row['report'] = agr.xview([n])
+                    except (ValueError, RuntimeError) as e:
+                        assert 'threshold' in str(e).lower(), str(e)
+                        row['error'] = str(e)
+                    else:
+                        assert findings(row['report']) == {'overlap_faces': [1,2]}, row['report']
                 else:
                     row['report'] = agr.xview([n])
-                    expected = {'overlap_vertices': [1,2,3,4,5,6], 'overlap_faces': [1,2]} if gap_mm == 1 else {}
+                    expected = ({'overlap_vertices': [1,2,3,4,5,6], 'overlap_faces': [1,2]} if gap_mm == 1
+                                else {'overlap_faces': [1,2]} if gap_mm <= 5 else {})
                     assert findings(row['report']) == expected, row['report']
-                    assert list(rt.selection) == ([n] if gap_mm == 1 else [])
+                    assert list(rt.selection) == ([n] if gap_mm <= 5 else [])
                 row['passed'] = True
             except AssertionError as e:
                 row['passed'] = False

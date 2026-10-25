@@ -32,12 +32,16 @@ never a clean result. Objects are identified by unique Max handles as well as na
 
 - **xView check**: native OverlappingVertices at **2 mm**, OverlappingFaces at
   **5 mm**; check evaluated temporary copies, select original offending objects.
-  Scene units are converted; native tolerance values are restored. No topology
+  Scene units are converted; native tolerance values are restored. Unbaked
+  uniform/nonuniform/mirrored and parent transforms are baked only on a detached
+  disposable copy before checking physical distances (Reset XForm + collapse). No topology
   conversion of working objects. Pilot #370 / BODY-J/K; native xView semantics,
   not the kernel's additional projected-area diagnostic. Exactly 2 mm vertices
   follow native Max's strict boundary; a float32 ambiguity band (relative 2e-7)
   around exactly 2 mm returns an explicit error, never clean, without changing
-  either native threshold. The kernel intentionally uses inclusive vertices.
+  either native finding threshold. A face ambiguity-only probe at 5 mm ×
+  (1 + 2e-7) rejects additional near-boundary faces with an explicit error; its
+  results never become findings. The kernel intentionally uses inclusive vertices.
 - **Pre-export clean-up**: first shows a dry-run from the existing
   `twinqa.export_hygiene.repair_plan` (generated stdlib-only slice, not a rewrite).
   CA owners: node, base, modifiers, recursive material tree; clear UDP except map

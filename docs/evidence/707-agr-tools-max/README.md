@@ -5,7 +5,46 @@ built entirely from new adapter code and our existing Python hygiene planner.
 The original team scripts were not opened during implementation; only the two
 public audit documents were consulted. Reviewer spot-check remains independent.
 
-## Measured results
+## Rework R1 — physical-distance frame (current candidate)
+
+The initial results below are historical evidence for `4723827`, not the current
+package. Reviewer R1 found that unbaked object scale changed native xView's
+physical thresholds. `3d393ce` adds a test-first installed-package regression:
+14/48 cases fail on the previous implementation. The repair detaches and bakes
+only evaluated disposable copies; originals and hierarchy remain unchanged.
+
+- Current MZP SHA256: `84122ef47e61e7d5ce380218e389bedc6517c3bb454ac0e9e94145e5538253b8`;
+  two fresh builds agree. Storage: `G:/Мой диск/AGR-evidence/707-agr-tools-max/t_17f45574-v002/`.
+  `rework-SHA256SUMS.txt` pins both packages and synthetic source/copy fixtures.
+- Final matrix: 10 transforms × 6 physical gaps × 2 system-unit settings =
+  **120/120** assertions in Max 2024 and **120/120** in Max 2026. Transforms:
+  identity, uniform small/large, nonuniform small/large, mirrored X/Z,
+  parent small/large, rotated-child/nonuniform-parent shear. Gaps in mm:
+  1, 2, 4.99, 5, 5.01, 10. Exact IDs and original-offender selection asserted;
+  source geometry/attributes/transforms/parent, checker settings and scene node
+  counts verified unchanged even on threshold errors.
+- 1 mm: vertices 1–6 and faces 1–2; 2 mm: explicit ambiguity error;
+  4.99 mm: faces 1–2; 5 mm: native faces 1–2 or explicit ambiguity error,
+  never clean; 5.01/10 mm: zero findings. Primary thresholds remain 2/5 mm.
+  A separate face ambiguity probe at 5 mm × (1 + 2e-7) may only reject additional
+  faces; it never supplies findings. This follows an expanded RED case where
+  nominal 5 mm × scale .1 became 5.00000035 mm after float32 baking.
+- Max 2024: **native exit 0**, 37.1 s; baseline installation, three clean/planted
+  checks and all earlier dry-run/guard controls also pass. Max 2026: final reports
+  and completion marker verified, 37.8 s, but native exit 4294967166 retains the
+  known external startup CLR error; not claimed as a clean process.
+- Affected Python tests: `uv run pytest -q tests/max_tools -p no:cacheprovider
+  --basetemp=C:/x/t_17f45574/rework-final`: **31 passed**, 0 failed (0.26 s).
+  Per rule 49, no second full suite: the first-review 15201-pass receipt stays
+  bound to `4723827`, not relabelled as current-head evidence.
+
+`rework-summary.json` records repair attempts; `rework-red-transforms.json`
+retains the original failing matrix. `rework-max2024-*` and `rework-max2026-*`
+are the current complete raw logs, baseline results and transform reports.
+Use `AGR_TEST_PACKAGE=<new-built-mzp>` to select a package without overwriting
+an earlier artifact; `AGR_TEST_OUTPUT` must be a new native `C:/...` path.
+
+## Measured results (initial candidate)
 
 - Builder: two fresh outputs, SHA256
   `6cdd47073c7c532a346a52c2dc6c654519d825d6e0d93aeb401e2e7feba51406`.
