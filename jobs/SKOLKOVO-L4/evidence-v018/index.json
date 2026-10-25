@@ -17,5 +17,10 @@
     "The 29 supplemental raw buffers remain in v008 baseline-supplement-v002; their native identity/hash controls are mandatory. v017 receiver NPZs/manifests remain upstream evidence.",
     "Only procedure-walk-v018c.json is current. v018.json is a stale v011 snapshot after a refused write; v018b.json is the preserved bad input-evidence configuration.",
     "band-01 is historical prototype geometry, not a current-head whole-scene pass. band-audit-01 adds BODY-J/D129 evidence; 32 candidates still fail texel."
-  ]
+  ],
+  "portability_supplement": {
+    "directory": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v018-20261025\\portability-v001",
+    "verified_files": 5,
+    "manifest_sha256": "510ba61a35ec721c334f033cf47f656156f308f77c9bf8dc5791ad14224a7fa3"
+  }
 }

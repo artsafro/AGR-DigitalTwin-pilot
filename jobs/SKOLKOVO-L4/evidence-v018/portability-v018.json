@@ -1,0 +1,71 @@
+{
+  "passed": false,
+  "portability_passed": true,
+  "scope": "Raw hash-pinned text portability only; not model acceptance",
+  "red": {
+    "commit": "7c4add7d485dc5e1ff928bcf9c001cef90bfea9c",
+    "checked": 4,
+    "working_matches": 4,
+    "git_matches": 1,
+    "rows": [
+      {
+        "path": "jobs/SKOLKOVO-L4/evidence-v018/excluded-external-frame.json",
+        "expected": "e437313fa317891476ce2b501f2bfeb708f90450de9f875ee67652298e0e3e4d",
+        "working_matches": true,
+        "git_matches": false
+      },
+      {
+        "path": "jobs/SKOLKOVO-L4/evidence-v018/summary-v018.json",
+        "expected": "eeef8bb416f1caaf01256f3e9f4f243d10de881f44e1ae382fd1f55d757d0ac8",
+        "working_matches": true,
+        "git_matches": false
+      },
+      {
+        "path": "jobs/SKOLKOVO-L4/evidence-v018/summary-v018.json",
+        "expected": "eeef8bb416f1caaf01256f3e9f4f243d10de881f44e1ae382fd1f55d757d0ac8",
+        "working_matches": true,
+        "git_matches": false
+      },
+      {
+        "path": "jobs/SKOLKOVO-L4/REPORT-v018.md",
+        "expected": "53e051269995b0ac0fe8c7c3609bf17f4bab91a295d169c4e1a5920820e9da3d",
+        "working_matches": true,
+        "git_matches": true
+      }
+    ]
+  },
+  "green": {
+    "commit": "5218a199740732b98a18428d31f9b1c91dc07941",
+    "checked": 4,
+    "working_matches": 4,
+    "git_matches": 4,
+    "rows": [
+      {
+        "path": "jobs/SKOLKOVO-L4/evidence-v018/excluded-external-frame.json",
+        "expected": "e437313fa317891476ce2b501f2bfeb708f90450de9f875ee67652298e0e3e4d",
+        "working_matches": true,
+        "git_matches": true
+      },
+      {
+        "path": "jobs/SKOLKOVO-L4/evidence-v018/summary-v018.json",
+        "expected": "eeef8bb416f1caaf01256f3e9f4f243d10de881f44e1ae382fd1f55d757d0ac8",
+        "working_matches": true,
+        "git_matches": true
+      },
+      {
+        "path": "jobs/SKOLKOVO-L4/evidence-v018/summary-v018.json",
+        "expected": "eeef8bb416f1caaf01256f3e9f4f243d10de881f44e1ae382fd1f55d757d0ac8",
+        "working_matches": true,
+        "git_matches": true
+      },
+      {
+        "path": "jobs/SKOLKOVO-L4/REPORT-v018.md",
+        "expected": "53e051269995b0ac0fe8c7c3609bf17f4bab91a295d169c4e1a5920820e9da3d",
+        "working_matches": true,
+        "git_matches": true
+      }
+    ]
+  },
+  "fix": "Job-scoped evidence-v018/*.json -text whitespace=cr-at-eol and REPORT-v018.md -text; new commit, no history rewrite",
+  "reproduction": "uv run python tmp/skolkovo-l4-v018/probe_portability_v018.py <new-report.json>"
+}
