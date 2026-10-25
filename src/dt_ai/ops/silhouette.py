@@ -5,8 +5,9 @@ object system: the top (drop z) and the two facade views (drop y, drop x); the o
 view has the same silhouette, so the four facades and the top are three distinct views. The deviation of two
 silhouettes is the largest distance from a point of one that the other does not cover to the other (the Hausdorff
 distance of the regions), sampled on a grid of `step_m`; it is accurate to about one step.
-Pure numpy + shapely. Edge-on projections remain line/point geometries and use Hausdorff distance directly;
-polygon-to-polygon sampling is unchanged (#292, orchestrator 2026-10-19). A difference the grid misses uses the
+Pure numpy + shapely. Edge-on projections remain line/point geometries, including beside polygon projections.
+Pure edge-on comparisons use Hausdorff distance directly; mixed comparisons retain directed
+line/point reach alongside the unchanged polygon grid (#292, #353). A difference the grid misses uses the
 directed distance from that sliver to the other region. A polygon with holes also contributes an interior point:
 both rings can lie on the other region while the material between them does not.
 """
@@ -28,12 +29,15 @@ def silhouette(mesh: Mesh, axis: int):
         return shapely.Polygon()
     e1, e2 = tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0]
     area2 = e1[:, 0] * e2[:, 1] - e1[:, 1] * e2[:, 0]                     # twice the signed area (no 2-D np.cross)
-    polygons = tri[np.abs(area2) > 1e-12]
+    polygon_mask = np.abs(area2) > 1e-12
+    polygons = tri[polygon_mask]
     if not len(polygons):
         # Preserve edge-on triangles as line segments (or points), not empty polygons.
         return shapely.union_all([shapely.MultiPoint(t).convex_hull for t in tri])
     rings = np.concatenate([polygons, polygons[:, :1]], axis=1)
-    return shapely.union_all(shapely.make_valid(shapely.polygons(rings)))
+    projected = list(shapely.make_valid(shapely.polygons(rings)))
+    projected.extend(shapely.MultiPoint(t).convex_hull for t in tri[~polygon_mask])
+    return shapely.union_all(projected)
 
 
 def _pieces(geom):
@@ -96,6 +100,11 @@ def _uncovered_reach(region, other, step_m: float) -> float:
         return _directed_reach(left, other, step)
     pts = shapely.points(xs[inside], ys[inside])
     reached = float(shapely.distance(other, pts).max())
+    # contains_xy samples only area. A mixed uncovered region can also contain a
+    # separate line/point, which must not disappear because a polygon had samples.
+    edge_reach = max((_directed_reach(g, other, step) for g in _pieces(left)
+                      if g.geom_type != "Polygon"), default=0.0)
+    reached = max(reached, edge_reach)
     return reached if np.isfinite(reached) else float("inf")
 
 

@@ -54,3 +54,10 @@ def test_mixed_projection_retains_diagnostic_for_a_removed_fin():
     full=Mesh(v,np.array([[0,1,2],[0,2,3],[4,5,6]]))
     reduced=Mesh(v[:4],np.array([[0,1,2],[0,2,3]]))
     assert silhouette_deviations(full,reduced)['top'] == pytest.approx(2.)
+
+
+def test_uncovered_polygon_sampling_does_not_hide_a_separate_line():
+    v=np.array([[0,0,0],[1,0,0],[1,1,0],[0,1,0], [2,0,0],[3,0,0],[3,0,1]])
+    full=Mesh(v,np.array([[0,1,2],[0,2,3],[4,5,6]]))
+    reduced=Mesh(np.array([[0,0,0],[.9,0,0],[.9,1,0],[0,1,0]]),np.array([[0,1,2],[0,2,3]]))
+    assert silhouette_deviations(full,reduced)['top'] == pytest.approx(2.1)
